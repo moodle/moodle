@@ -3981,8 +3981,9 @@ function forum_get_subscribed_forums($course) {
  * Adds user to the subscriber list
  */
 function forum_subscribe($userid, $forumid) {
+    global $DB;
 
-    if (record_exists("forum_subscriptions", "userid", $userid, "forum", $forumid)) {
+    if ($DB->record_exists("forum_subscriptions", array("userid"=>$userid, "forum"=>$forumid))) {
         return true;
     }
 
@@ -3990,14 +3991,15 @@ function forum_subscribe($userid, $forumid) {
     $sub->userid  = $userid;
     $sub->forum = $forumid;
 
-    return insert_record("forum_subscriptions", $sub);
+    return $DB->insert_record("forum_subscriptions", $sub);
 }
 
 /**
  * Removes user from the subscriber list
  */
 function forum_unsubscribe($userid, $forumid) {
-    return delete_records("forum_subscriptions", "userid", $userid, "forum", $forumid);
+    global $DB;
+    return $DB->delete_records("forum_subscriptions", array("userid"=>$userid, "forum"=>$forumid));
 }
 
 /**

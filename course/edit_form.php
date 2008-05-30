@@ -25,7 +25,7 @@ class course_edit_form extends moodleform {
                 $disable_meta = get_string('metaalreadyinmeta');
 
             } else if ($course->metacourse) {
-                if (count_records('course_meta', 'parent_course', $course->id) > 0) {
+                if ($DB->count_records('course_meta', array('parent_course'=>$course->id)) > 0) {
                     $disable_meta = get_string('metaalreadyhascourses');
                 }
 
@@ -76,15 +76,24 @@ class course_edit_form extends moodleform {
 
         $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
         $mform->setHelpButton('fullname', array('coursefullname', get_string('fullnamecourse')), true);
-        $mform->setDefault('fullname', get_string('defaultcoursefullname'));
         $mform->addRule('fullname', get_string('missingfullname'), 'required', null, 'client');
         $mform->setType('fullname', PARAM_MULTILANG);
 
         $mform->addElement('text','shortname', get_string('shortnamecourse'),'maxlength="100" size="20"');
         $mform->setHelpButton('shortname', array('courseshortname', get_string('shortnamecourse')), true);
-        $mform->setDefault('shortname', get_string('defaultcourseshortname'));
         $mform->addRule('shortname', get_string('missingshortname'), 'required', null, 'client');
         $mform->setType('shortname', PARAM_MULTILANG);
+
+        $fullname  = get_string('defaultcoursefullname');
+        $shortname = get_string('defaultcourseshortname');
+        while ($DB->record_exists('course', array('fullname'=>$fullname))
+            or $DB->record_exists('course', array('fullname'=>$fullname))) {
+            $fullname++;
+            $shortname++;
+        }
+        $mform->setDefault('fullname', $fullname);
+        $mform->setDefault('shortname', $shortname);
+
 
         $mform->addElement('text','idnumber', get_string('idnumbercourse'),'maxlength="100"  size="10"');
         $mform->setHelpButton('idnumber', array('courseidnumber', get_string('idnumbercourse')), true);
@@ -183,12 +192,12 @@ class course_edit_form extends moodleform {
         $roles = get_assignable_roles($context);
         if (!empty($course)) {
             // add current default role, so that it is selectable even when user can not assign it
-            if ($current_role = get_record('role', 'id', $course->defaultrole)) {
+            if ($current_role = $DB->get_record('role', array('id'=>$course->defaultrole))) {
                 $roles[$current_role->id] = strip_tags(format_string($current_role->name, true));
             }
         }
         $choices = array();
-        if ($sitedefaultrole = get_record('role', 'id', $CFG->defaultcourseroleid)) {
+        if ($sitedefaultrole = $DB->get_record('role', array('id'=>$CFG->defaultcourseroleid))) {
             $choices[0] = get_string('sitedefault').' ('.$sitedefaultrole->name.')';
         } else {
             $choices[0] = get_string('sitedefault');
@@ -372,11 +381,11 @@ class course_edit_form extends moodleform {
         $mform->addElement('header','rolerenaming', get_string('rolerenaming'));
         $mform->setHelpButton('rolerenaming', array('rolerenaming', get_string('rolerenaming')), true);
 
-        if ($roles = get_records('role')) {
+        if ($roles = $DB->get_records('role')) {
             foreach ($roles as $role) {
                 $mform->addElement('text', 'role_'.$role->id, $role->name);
                 if ($coursecontext) {
-                    if ($rolename = get_record('role_names', 'roleid', $role->id, 'contextid', $coursecontext->id)) {
+                    if ($rolename = $DB->get_record('role_names', array('roleid'=>$role->id, 'contextid'=>$coursecontext->id))) {
                         $mform->setDefault('role_'.$role->id, $rolename->name); 
                     }  
                 }
@@ -397,14 +406,14 @@ class course_edit_form extends moodleform {
     }
 
     function definition_after_data() {
-        global $CFG;
+        global $DB;
 
         $mform =& $this->_form;
 
         // add availabe groupings
         if ($courseid = $mform->getElementValue('id') and $mform->elementExists('defaultgroupingid')) {
             $options = array();
-            if ($groupings = get_records('groupings', 'courseid', $courseid)) {
+            if ($groupings = $DB->get_records('groupings', array('courseid'=>$courseid))) {
                 foreach ($groupings as $grouping) {
                     $options[$grouping->id] = format_string($grouping->name);
                 }
@@ -417,8 +426,10 @@ class course_edit_form extends moodleform {
 
 /// perform some extra moodle validation
     function validation($data, $files) {
+        global $DB;
+
         $errors = parent::validation($data, $files);
-        if ($foundcourses = get_records('course', 'shortname', $data['shortname'])) {
+        if ($foundcourses = $DB->get_records('course', array('shortname'=>$data['shortname']))) {
             if (!empty($data['id'])) {
                 unset($foundcourses[$data['id']]);
             }

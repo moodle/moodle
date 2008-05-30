@@ -19,17 +19,17 @@
             print_error('cannoteditsiteform');
         }
 
-        if (!$course = get_record('course', 'id', $id)) {
+        if (!$course = $DB->get_record('course', array('id'=>$id))) {
             print_error('invalidcourseid');
         }
         require_login($course->id);
-        $category = get_record('course_categories', 'id', $course->category);
+        $category = $DB->get_record('course_categories', array('id'=>$course->category));
         require_capability('moodle/course:update', get_context_instance(CONTEXT_COURSE, $course->id));
 
     } else if ($categoryid) { // creating new course in this category
         $course = null;
         require_login();
-        if (!$category = get_record('course_categories', 'id', $categoryid)) {
+        if (!$category = $DB->get_record('course_categories', array('id'=>$categoryid))) {
             print_error('unknowcategory');
         }
         require_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $category->id));
@@ -42,7 +42,7 @@
     if (!empty($course)) {
         $allowedmods = array();
         if (!empty($course)) {
-            if ($am = get_records('course_allowed_modules','course',$course->id)) {
+            if ($am = $DB->get_records('course_allowed_modules', array('course'=>$course->id))) {
                 foreach ($am as $m) {
                     $allowedmods[] = $m->module;
                 }
@@ -78,7 +78,7 @@
             redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
         }
 
-    } else if ($data = $editform->get_data()) {
+    } else if ($data = $editform->get_data(false)) {
 
         $data->password = $data->enrolpassword;  // we need some other name for password field MDL-9929
 /// process data if submitted

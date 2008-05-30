@@ -56,7 +56,7 @@
           ?>
          </select>
          <br />
-         <input type="text" name="searchtext" size="30" value="<?php p($searchtext, true) ?>" 
+         <input type="text" name="searchtext" size="30" value="<?php p($searchtext) ?>" 
                   onFocus ="getElementById('subscriberform').add.disabled=true;
                             getElementById('subscriberform').remove.disabled=true;
                             getElementById('subscriberform').removeselect.selectedIndex=-1;
@@ -69,7 +69,7 @@
          <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
          <?php
               if (!empty($searchusers)) {
-                  echo '<input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
+                  echo '<input name="showall" id="showall" type="submit" value="'.s($strshowall).'" />'."\n";
               }
          ?>
        </td>

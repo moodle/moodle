@@ -15,6 +15,8 @@
     $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
 
+    $searchtext = stripslashes($searchtext); // TODO: remove soon
+
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }

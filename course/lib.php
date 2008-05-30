@@ -146,7 +146,7 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
 
 function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limitfrom='', $limitnum='',
                    $modname="", $modid=0, $modaction="", $groupid=0) {
-
+    global $DB;
     // It is assumed that $date is the GMT time of midnight for that day,
     // and so the next 86400 seconds worth of logs are printed.
 
@@ -163,27 +163,34 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
     }
 
     $joins = array();
+    $oarams = array();
 
     if ($course->id != SITEID || $modid != 0) {
-        $joins[] = "l.course='$course->id'";
+        $joins[] = "l.course = :courseid";
+        $params['courseid'] = $course->id;
     }
 
     if ($modname) {
-        $joins[] = "l.module = '$modname'";
+        $joins[] = "l.module = :modname";
+        $params['modname'] = $modname; 
     }
 
     if ('site_errors' === $modid) {
         $joins[] = "( l.action='error' OR l.action='infected' )";
     } else if ($modid) {
-        $joins[] = "l.cmid = '$modid'";
+        $joins[] = "l.cmid = :modid";
+        $params['modid'] = $modid;
     }
 
     if ($modaction) {
+        $ILIKE = $DB->sql_ilike();
         $firstletter = substr($modaction, 0, 1);
         if (preg_match('/[[:alpha:]]/', $firstletter)) {
-            $joins[] = "lower(l.action) LIKE '%" . strtolower($modaction) . "%'";
+            $joins[] = "l.action $ILIKE :modaction";
+            $params['modaction'] = '%'.$modaction.'%';
         } else if ($firstletter == '-') {
-            $joins[] = "lower(l.action) NOT LIKE '%" . strtolower(substr($modaction, 1)) . "%'";
+            $joins[] = "l.action NOT $ILIKE :modaction";
+            $params['modaction'] = '%'.substr($modaction, 1).'%';
         }
     }
 
@@ -198,19 +205,22 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
         }
     }
     else if ($user) {
-        $joins[] = "l.userid = '$user'";
+        $joins[] = "l.userid = :userid";
+        $params['userid'] = $user;
     }
 
     if ($date) {
         $enddate = $date + 86400;
-        $joins[] = "l.time > '$date' AND l.time < '$enddate'";
+        $joins[] = "l.time > :date AND l.time < :enddate";
+        $params['date'] = $date;
+        $params['enddate'] = $enddate;
     }
 
     $selector = implode(' AND ', $joins);
 
     $totalcount = 0;  // Initialise
     $result = array();
-    $result['logs'] = get_logs($selector, $order, $limitfrom, $limitnum, $totalcount);
+    $result['logs'] = get_logs($selector, $params, $order, $limitfrom, $limitnum, $totalcount);
     $result['totalcount'] = $totalcount;
     return $result;
 }
@@ -2940,13 +2950,13 @@ function can_delete_course($courseid) {
 }
 
 
-/* 
+/**
  * Create a course and either return a $course object or false
  *
  * @param object $data  - all the data needed for an entry in the 'course' table
  */
 function create_course($data) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     // preprocess allowed mods
     $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
@@ -2961,14 +2971,14 @@ function create_course($data) {
 
     // place at beginning of category
     fix_course_sortorder();
-    $data->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM {$CFG->prefix}course WHERE category=$data->category");
+    $data->sortorder = $DB->get_field_sql("SELECT MIN(sortorder)-1 FROM {course} WHERE category=?", array($data->category));
     if (empty($data->sortorder)) {
         $data->sortorder = 100;
     }
 
-    if ($newcourseid = insert_record('course', $data)) {  // Set up new course
+    if ($newcourseid = $DB->insert_record('course', $data)) {  // Set up new course
 
-        $course = get_record('course', 'id', $newcourseid);
+        $course = $DB->get_record('course', array('id'=>$newcourseid));
 
         // Setup the blocks
         $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
@@ -2979,7 +2989,7 @@ function create_course($data) {
         $section = new object();
         $section->course = $course->id;   // Create a default section.
         $section->section = 0;
-        $section->id = insert_record('course_sections', $section);
+        $section->id = $DB->insert_record('course_sections', $section);
 
         fix_course_sortorder();
 
@@ -2992,13 +3002,13 @@ function create_course($data) {
 }
 
 
-/* 
+/**
  * Update a course and return true or false
  *
  * @param object $data  - all the data needed for an entry in the 'course' table
  */
 function update_course($data) {
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     // Preprocess allowed mods
     $allowedmods = empty($data->allowedmods) ? array() : $data->allowedmods;
@@ -3010,19 +3020,20 @@ function update_course($data) {
     }
 
     $movecat = false;
-    $oldcourse = get_record('course', 'id', $data->id); // should not fail, already tested above
+    $oldcourse = $DB->get_record('course', array('id'=>$data->id)); // should not fail, already tested above
     if (!has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $oldcourse->category))
       or !has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $data->category))) {
         // can not move to new category, keep the old one
         unset($data->category);
+
     } elseif ($oldcourse->category != $data->category) {
         $movecat = true;
     }
 
     // Update with the new data
-    if (update_record('course', $data)) {
+    if ($DB->update_record('course', $data)) {
 
-        $course = get_record('course', 'id', $data->id);
+        $course = $DB->get_record('course', array('id'=>$data->id));
 
         add_to_log($course->id, "course", "update", "edit.php?id=$course->id", $course->id);
 
@@ -3061,19 +3072,19 @@ function update_course($data) {
             
             if (empty($dvalue)) {
                 
-                delete_records('role_names', 'contextid', $context->id, 'roleid', $roleid);
+                $DB->delete_records('role_names', array('contextid'=>$context->id, 'roleid'=>$roleid));
             
-            } else if ($t = get_record('role_names', 'contextid', $context->id, 'roleid', $roleid)) {
+            } else if ($t = $DB->get_record('role_names', array('contextid'=>$context->id, 'roleid'=>$roleid))) {
                 
                 $t->name = $dvalue;
-                update_record('role_names', $t);    
+                $DB->update_record('role_names', $t);    
                        
             } else {
                 
                 $t->contextid = $context->id;
                 $t->roleid = $roleid;
                 $t->name = $dvalue;
-                insert_record('role_names', $t);  
+                $DB->insert_record('role_names', $t);  
             }
             
         }

@@ -1219,8 +1219,7 @@ function get_all_subcategories($catid) {
 *       safely from 1.4 to 1.5
 */
 function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $count = 0;
 
@@ -1229,13 +1228,13 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
 
     if ($categoryid > 0){
         // update depth and path
-        $cat   = get_record('course_categories', 'id', $categoryid);
+        $cat   = $DB->get_record('course_categories', array('id'=>$categoryid));
         if ($cat->parent == 0) {
             $depth = 0;
             $path  = '';
         } else if ($depth == 0 ) { // doesn't make sense; get from DB
             // this is only called if the $depth parameter looks dodgy
-            $parent = get_record('course_categories', 'id', $cat->parent);
+            $parent = $DB->get_record('course_categories', array('id'=>$cat->parent));
             $path  = $parent->path;
             $depth = $parent->depth;
         }
@@ -1243,20 +1242,20 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
         $depth = $depth + 1;
 
         if ($cat->path !== $path) {
-            set_field('course_categories', 'path',  addslashes($path),  'id', $categoryid);
+            $DB->set_field('course_categories', 'path',  $path,  array('id'=>$categoryid));
         }
         if ($cat->depth != $depth) {
-            set_field('course_categories', 'depth', $depth, 'id', $categoryid);
+            $DB->set_field('course_categories', 'depth', $depth, array('id'=>$categoryid));
         }
     }
 
     // get some basic info about courses in the category
-    $info = get_record_sql('SELECT MIN(sortorder) AS min,
-                                   MAX(sortorder) AS max,
-                                   COUNT(sortorder)  AS count
-                            FROM ' . $CFG->prefix . 'course
-                            WHERE category=' . $categoryid);
-    if (is_object($info)) { // no courses?
+    $info = $DB->get_record_sql("SELECT MIN(sortorder) AS min,
+                                        MAX(sortorder) AS max,
+                                        COUNT(sortorder) AS count
+                                   FROM {course}
+                                  WHERE category=?", array($categoryid));
+    if ($info) { // no courses?
         $max   = $info->max;
         $count = $info->count;
         $min   = $info->min;
@@ -1293,9 +1292,9 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
                 $shift = $count + $catgap;
             }
             // UPDATE course SET sortorder=sortorder+$shift
-            execute_sql("UPDATE {$CFG->prefix}course
-                         SET sortorder=sortorder+$shift
-                         WHERE category=$categoryid", 0);
+            $DB->execute("UPDATE {course}
+                             SET sortorder=sortorder+?
+                           WHERE category=?", array($shift, $categoryid));
             $n = $n + $catgap + $count;
 
         } else { // do it slowly
@@ -1304,25 +1303,24 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
             // will stop us -- shift things aside for a moment...
             if ($safe || ($n >= $min && $n+$count+1 < $min && $CFG->dbfamily==='mysql')) {
                 $shift = $max + $n + 1000;
-                execute_sql("UPDATE {$CFG->prefix}course
-                         SET sortorder=sortorder+$shift
-                         WHERE category=$categoryid", 0);
+                $DB->execute_sql("UPDATE {$CFG->prefix}course
+                                     SET sortorder=sortorder+?
+                                   WHERE category=?", array($shift, $categoryid));
             }
 
             $courses = get_courses($categoryid, 'c.sortorder ASC', 'c.id,c.sortorder');
-            begin_sql();
+            $DB->begin_sql();
             $tx = true; // transaction sanity
             foreach ($courses as $course) {
                 if ($tx && $course->sortorder != $n ) { // save db traffic
-                    $tx = $tx && set_field('course', 'sortorder', $n,
-                                           'id', $course->id);
+                    $tx = $tx && $DB->set_field('course', 'sortorder', $n, array('id'=>$course->id));
                 }
                 $n++;
             }
             if ($tx) {
-                commit_sql();
+                $DB->commit_sql();
             } else {
-                rollback_sql();
+                $DB->rollback_sql();
                 if (!$safe) {
                     // if we failed when called with !safe, try
                     // to recover calling self with safe=true
@@ -1331,10 +1329,10 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
             }
         }
     }
-    set_field('course_categories', 'coursecount', $count, 'id', $categoryid);
+    $DB->set_field('course_categories', 'coursecount', $count, array('id'=>$categoryid));
 
     // $n could need updating
-    $max = get_field_sql("SELECT MAX(sortorder) from {$CFG->prefix}course WHERE category=$categoryid");
+    $max = $DB->get_field_sql("SELECT MAX(sortorder) FROM {course} WHERE category=?", array($categoryid));
     if ($max > $n) {
         $n = $max;
     }
@@ -1353,43 +1351,42 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
  * useful if a category has been removed manually
  **/
 function fix_coursecategory_orphans() {
-
-    global $CFG;
+    global $DB;
 
     // Note: the handling of sortorder here is arguably
     // open to race conditions. Hard to fix here, unlikely
     // to hit anyone in production.
 
     $sql = "SELECT c.id, c.category, c.shortname
-            FROM {$CFG->prefix}course c
-            LEFT OUTER JOIN {$CFG->prefix}course_categories cc ON c.category=cc.id
-            WHERE cc.id IS NULL AND c.id != " . SITEID;
+              FROM {course} c
+              LEFT OUTER JOIN {course_categories} cc ON c.category=cc.id
+             WHERE cc.id IS NULL AND c.id <> " . SITEID;
 
-    $rs = get_recordset_sql($sql);
+    if (!$rs = $DB->get_recordset_sql($sql)) {
+        return;
+    }
 
-    if (!rs_EOF($rs)) { // we have some orphans
+    if ($rs->valid()) { // we have some orphans
 
         // the "default" category is the lowest numbered...
-        $default   = get_field_sql("SELECT MIN(id)
-                                    FROM {$CFG->prefix}course_categories");
-        $sortorder = get_field_sql("SELECT MAX(sortorder)
-                                    FROM {$CFG->prefix}course
-                                    WHERE category=$default");
+        $default   = $DB->get_field_sql("SELECT MIN(id)
+                                           FROM {course_categories}");
+        $sortorder = $DB->get_field_sql("SELECT MAX(sortorder)
+                                           FROM {course}
+                                          WHERE category=?", array($default));
 
 
-        begin_sql();
-        $tx = true;
-        while ($tx && $course = rs_fetch_next_record($rs)) {
-            $tx = $tx && set_field('course', 'category',  $default,     'id', $course->id);
-            $tx = $tx && set_field('course', 'sortorder', ++$sortorder, 'id', $course->id);
+        $DB->begin_sql();
+        foreach ($rs as $course) {
+            if (!$DB->set_field('course', 'category',  $default, array('id'=>$course->id))
+              or !$DB->set_field('course', 'sortorder', ++$sortorder, array('id'=>$course->id))) {
+                $DB->rollback_sql();
+                return;
+            }
         }
-        if ($tx) {
-            commit_sql();
-        } else {
-            rollback_sql();
-        }
+        $DB->commit_sql();
     }
-    rs_close($rs);
+    $rs->close();
 }
 
 /**
@@ -1400,7 +1397,7 @@ function fix_coursecategory_orphans() {
  * @return array {@link $COURSE} of course objects
  */
 function get_my_remotecourses($userid=0) {
-    global $CFG, $USER;
+    global $DB, $USER;
 
     if (empty($userid)) {
         $userid = $USER->id;
@@ -1409,12 +1406,12 @@ function get_my_remotecourses($userid=0) {
     $sql = "SELECT c.remoteid, c.shortname, c.fullname,
                    c.hostid, c.summary, c.cat_name,
                    h.name AS hostname
-            FROM   {$CFG->prefix}mnet_enrol_course c
-            JOIN   {$CFG->prefix}mnet_enrol_assignments a ON c.id=a.courseid
-            JOIN   {$CFG->prefix}mnet_host h        ON c.hostid=h.id
-            WHERE  a.userid={$userid}";
+              FROM {mnet_enrol_course} c
+              JOIN {mnet_enrol_assignments} a ON c.id=a.courseid
+              JOIN {mnet_host} h              ON c.hostid=h.id
+             WHERE a.userid=?";
 
-    return get_records_sql($sql);
+    return $DB->get_records_sql($sql, array($userid));
 }
 
 /**
@@ -1444,12 +1441,9 @@ function get_my_remotehosts() {
  * strings and files is a bit odd, but this is because we
  * need to maintain backward compatibility with many different
  * existing language translations and older sites.
- *
- * @uses $CFG
  */
 function make_default_scale() {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $defaultscale = NULL;
     $defaultscale->courseid = 0;
@@ -1480,10 +1474,10 @@ function make_default_scale() {
         $file = '';
     }
 
-    $defaultscale->description = addslashes(implode('', $file));
+    $defaultscale->description = implode('', $file);
 
-    if ($defaultscale->id = insert_record('scale', $defaultscale)) {
-        execute_sql('UPDATE '. $CFG->prefix .'forum SET scale = \''. $defaultscale->id .'\'', false);
+    if ($defaultscale->id = $DB->insert_record('scale', $defaultscale)) {
+        $DB->execute("UPDATE {forum} SET scale = ?", array($defaultscale->id));
     }
 }
 
@@ -1496,20 +1490,21 @@ function make_default_scale() {
  * @return object
  */
 function get_scales_menu($courseid=0) {
+    global $DB;
 
-    global $CFG;
-
-    $sql = "SELECT id, name FROM {$CFG->prefix}scale
-             WHERE courseid = '0' or courseid = '$courseid'
+    $sql = "SELECT id, name
+              FROM {scale}
+             WHERE courseid = 0 or courseid = ?
           ORDER BY courseid ASC, name ASC";
+    $params = array($courseid);
 
-    if ($scales = get_records_sql_menu($sql)) {
+    if ($scales = $DB->get_records_sql_menu($sql, $params)) {
         return $scales;
     }
 
     make_default_scale();
 
-    return get_records_sql_menu($sql);
+    return $DB->get_records_sql_menu($sql, $params);
 }
 
 
@@ -1521,19 +1516,17 @@ function get_scales_menu($courseid=0) {
  * @param array $timezones An array of timezone records
  */
 function update_timezone_records($timezones) {
-/// Given a set of timezone records, put them in the database
-
-    global $CFG;
+    global $DB;
 
 /// Clear out all the old stuff
-    execute_sql('TRUNCATE TABLE '.$CFG->prefix.'timezone', false);
+    $DB->execute("TRUNCATE TABLE {timezone}");
 
 /// Insert all the new stuff
     foreach ($timezones as $timezone) {
         if (is_array($timezone)) {
             $timezone = (object)$timezone;
         }
-        insert_record('timezone', $timezone);
+        $DB->insert_record('timezone', $timezone);
     }
 }
 
@@ -1543,22 +1536,20 @@ function update_timezone_records($timezones) {
 /**
  * Just gets a raw list of all modules in a course
  *
- * @uses $CFG
  * @param int $courseid The id of the course as found in the 'course' table.
  * @return object
  */
 function get_course_mods($courseid) {
-    global $CFG;
+    global $DB;
 
     if (empty($courseid)) {
         return false; // avoid warnings
     }
 
-    return get_records_sql("SELECT cm.*, m.name as modname
-                            FROM {$CFG->prefix}modules m,
-                                 {$CFG->prefix}course_modules cm
-                            WHERE cm.course = ".intval($courseid)."
-                            AND cm.module = m.id AND m.visible = 1"); // no disabled mods
+    return $DB->get_records_sql("SELECT cm.*, m.name as modname
+                                   FROM {modules} m, {course_modules} cm
+                                  WHERE cm.course = ? AND cm.module = m.id AND m.visible = 1",
+                                array($courseid)); // no disabled mods
 }
 
 
@@ -1571,20 +1562,25 @@ function get_course_mods($courseid) {
  * @return object course module instance with instance and module name
  */
 function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
+    global $DB;
 
-    global $CFG;
+    $params = array();
+    $courseselect = ""; 
 
-    $courseselect = ($courseid) ? 'cm.course = '.intval($courseid).' AND ' : '';
+    if ($courseid) {
+        $courseselect = "cm.course = :courseid AND ";
+        $params['courseid'] = $courseid;
+    } 
+    $params['cmid'] = $cmid;
+    $params['modulename'] = $modulename;
 
-    return get_record_sql("SELECT cm.*, m.name, md.name as modname
-                           FROM {$CFG->prefix}course_modules cm,
-                                {$CFG->prefix}modules md,
-                                {$CFG->prefix}$modulename m
-                           WHERE $courseselect
-                                 cm.id = ".intval($cmid)." AND
-                                 cm.instance = m.id AND
-                                 md.name = '$modulename' AND
-                                 md.id = cm.module");
+    return $DB->get_record_sql("SELECT cm.*, m.name, md.name as modname
+                                  FROM {course_modules} cm, {modules} md, {".$modulename."} m
+                                 WHERE $courseselect
+                                       cm.id = :cmid AND
+                                       cm.instance = m.id AND
+                                       md.name = :modulename AND
+                                       md.id = cm.module", $params);
 }
 
 /**
@@ -1596,20 +1592,25 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
  * @return object course module instance with instance and module name
  */
 function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
+    global $DB;
 
-    global $CFG;
+    $params = array();
+    $courseselect = ""; 
 
-    $courseselect = ($courseid) ? 'cm.course = '.intval($courseid).' AND ' : '';
+    if ($courseid) {
+        $courseselect = "cm.course = :courseid AND ";
+        $params['courseid'] = $courseid;
+    } 
+    $params['instance'] = $instance;
+    $params['modulename'] = $modulename;
 
-    return get_record_sql("SELECT cm.*, m.name, md.name as modname
-                           FROM {$CFG->prefix}course_modules cm,
-                                {$CFG->prefix}modules md,
-                                {$CFG->prefix}$modulename m
-                           WHERE $courseselect
-                                 cm.instance = m.id AND
-                                 md.name = '$modulename' AND
-                                 md.id = cm.module AND
-                                 m.id = ".intval($instance));
+    return $DB->get_record_sql("SELECT cm.*, m.name, md.name as modname
+                                  FROM {course_modules} cm, {modules} md, {".$modulename."} m
+                                 WHERE $courseselect
+                                       cm.instance = m.id AND
+                                       md.name = :$modulename AND
+                                       md.id = cm.module AND
+                                       m.id = :$instance", $params);
 
 }
 
@@ -1621,19 +1622,22 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
  * @return array of cm objects, false if not found or error
  */
 function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
-    global $CFG;
+    global $DB;
 
     if (!empty($extrafields)) {
         $extrafields = ", $extrafields";
     }
-    return get_records_sql("SELECT cm.*, m.name, md.name as modname $extrafields
-                              FROM {$CFG->prefix}course_modules cm,
-                                   {$CFG->prefix}modules md,
-                                   {$CFG->prefix}$modulename m
-                             WHERE cm.course = $courseid AND
-                                   cm.instance = m.id AND
-                                   md.name = '$modulename' AND
-                                   md.id = cm.module");
+    $params = array();
+    $params['courseid'] = $courseid;
+    $params['modulename'] = $modulename;
+
+
+    return $DB->get_records_sql("SELECT cm.*, m.name, md.name as modname $extrafields
+                                   FROM {course_modules} cm, {modules} md, {".$modulename."} m
+                                  WHERE cm.course = :courseid AND
+                                        cm.instance = m.id AND
+                                        md.name = :modulename AND
+                                        md.id = cm.module");
 }
 
 /**
@@ -1652,7 +1656,7 @@ function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
  *          and course_sections tables, or an empty array if an error occurred.
  */
 function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $includeinvisible=false) {
-    global $CFG;
+    global $CFG, $DB;
 
     $outputarray = array();
 
@@ -1660,17 +1664,18 @@ function get_all_instances_in_courses($modulename, $courses, $userid=NULL, $incl
         return $outputarray;
     }
 
-    if (!$rawmods = get_records_sql("SELECT cm.id AS coursemodule, m.*, cw.section, cm.visible AS visible,
-                                            cm.groupmode, cm.groupingid, cm.groupmembersonly
-                                       FROM {$CFG->prefix}course_modules cm,
-                                            {$CFG->prefix}course_sections cw,
-                                            {$CFG->prefix}modules md,
-                                            {$CFG->prefix}$modulename m
-                                      WHERE cm.course IN (".implode(',',array_keys($courses)).") AND
-                                            cm.instance = m.id AND
-                                            cm.section = cw.id AND
-                                            md.name = '$modulename' AND
-                                            md.id = cm.module")) {
+    list($coursessql, $params) = $DB->get_in_or_equal(array_keys($courses), SQL_PARAMS_NAMED, 'c0');
+    $params['modulename'] = $modulename;
+
+    if (!$rawmods = $DB->get_records_sql("SELECT cm.id AS coursemodule, m.*, cw.section, cm.visible AS visible,
+                                                 cm.groupmode, cm.groupingid, cm.groupmembersonly
+                                            FROM {course_modules} cm, {course_sections} cw, {modules} md,
+                                                 {".$modulename."} m
+                                           WHERE cm.course $coursessql AND
+                                                 cm.instance = m.id AND
+                                                 cm.section = cw.id AND
+                                                 md.name = :modulename AND
+                                                 md.id = cm.module", $params)) {
         return $outputarray;
     }
 
@@ -1729,23 +1734,21 @@ function get_all_instances_in_course($modulename, $course, $userid=NULL, $includ
  * and the module's type (eg "forum") returns whether the object
  * is visible or not, groupmembersonly visibility not tested
  *
- * @uses $CFG
  * @param $moduletype Name of the module eg 'forum'
  * @param $module Object which is the instance of the module
  * @return bool
  */
 function instance_is_visible($moduletype, $module) {
-
-    global $CFG;
+    global $DB;
 
     if (!empty($module->id)) {
-        if ($records = get_records_sql("SELECT cm.instance, cm.visible, cm.groupingid, cm.id, cm.groupmembersonly, cm.course
-                                        FROM {$CFG->prefix}course_modules cm,
-                                             {$CFG->prefix}modules m
-                                       WHERE cm.course = '$module->course' AND
-                                             cm.module = m.id AND
-                                             m.name = '$moduletype' AND
-                                             cm.instance = '$module->id'")) {
+        $params = array('courseid'=>$module->course, 'moduletype'=>$moduletype, 'moduleid'=>$module->id); 
+        if ($records = $DB->get_records_sql("SELECT cm.instance, cm.visible, cm.groupingid, cm.id, cm.groupmembersonly, cm.course
+                                               FROM {course_modules} cm, {modules} m
+                                              WHERE cm.course = :courseid AND
+                                                    cm.module = m.id AND
+                                                    m.name = :moduletype AND
+                                                    cm.instance = :moduleid")) {
 
             foreach ($records as $record) { // there should only be one - use the first one
                 return $record->visible;
@@ -1896,7 +1899,6 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
  * @return void
  */
 function user_accesstime_log($courseid=0) {
-
     global $USER, $CFG, $DB;
 
     if (!isloggedin() or !empty($USER->realuser)) {
@@ -1964,8 +1966,8 @@ function user_accesstime_log($courseid=0) {
 /**
  * Select all log records based on SQL criteria
  *
- * @uses $CFG
  * @param string $select SQL select criteria
+ * @param array $params named sql type params
  * @param string $order SQL order by clause to sort the records returned
  * @param string $limitfrom ?
  * @param int $limitnum ?
@@ -1973,20 +1975,33 @@ function user_accesstime_log($courseid=0) {
  * @return object
  * @todo Finish documenting this function
  */
-function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
-    global $CFG;
+function get_logs($select, array $params=null, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
+    global $DB;
 
     if ($order) {
-        $order = 'ORDER BY '. $order;
+        $order = "ORDER BY $order";
     }
 
-    $selectsql = $CFG->prefix .'log l LEFT JOIN '. $CFG->prefix .'user u ON l.userid = u.id '. ((strlen($select) > 0) ? 'WHERE '. $select : '');
-    $countsql = $CFG->prefix.'log l '.((strlen($select) > 0) ? ' WHERE '. $select : '');
+    $selectsql = "";
+    $countsql  = "";
 
-    $totalcount = count_records_sql("SELECT COUNT(*) FROM $countsql");
+    if ($select) {
+        $select = "WHERE $select";
+    }
 
-    return get_records_sql('SELECT l.*, u.firstname, u.lastname, u.picture
-                                FROM '. $selectsql .' '. $order, $limitfrom, $limitnum) ;
+    $sql = "SELECT COUNT(*)
+              FROM {log} l
+           $select";
+
+    $totalcount = $DB->count_records_sql($sql, $params);
+
+    $sql = "SELECT l.*, u.firstname, u.lastname, u.picture
+              FROM {log} l 
+              LEFT JOIN {user} u ON l.userid = u.id
+           $select 
+            $order";
+
+    return $DB->get_records_sql($sql, $params, $limitfrom, $limitnum) ;
 }
 
 
@@ -2001,19 +2016,23 @@ function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$
  * @todo Finish documenting this function
  */
 function get_logs_usercourse($userid, $courseid, $coursestart) {
-    global $CFG;
+    global $DB;
 
+    $params = array();
+
+    $courseselect = '';
     if ($courseid) {
-        $courseselect = ' AND course = \''. $courseid .'\' ';
-    } else {
-        $courseselect = '';
+        $courseselect = "AND course = :courseid";
+        $params['courseid'] = $courseid; 
     }
+    $params['userid'] = $userid;
+    $params['coursestart'] = $coursestart; 
 
-    return get_records_sql("SELECT floor((time - $coursestart)/". DAYSECS .") as day, count(*) as num
-                            FROM {$CFG->prefix}log
-                           WHERE userid = '$userid'
-                             AND time > '$coursestart' $courseselect
-                        GROUP BY floor((time - $coursestart)/". DAYSECS .") ");
+    return $DB->get_records_sql("SELECT FLOOR((time - :coursestart)/". DAYSECS .") AS day, COUNT(*) AS num
+                                   FROM {log}
+                                  WHERE userid = :userid
+                                        AND time > :coursestart $courseselect
+                               GROUP BY FLOOR((time - :coursestart)/". DAYSECS .")", $params);
 }
 
 /**
@@ -2028,19 +2047,23 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
  * @todo Finish documenting this function
  */
 function get_logs_userday($userid, $courseid, $daystart) {
-    global $CFG;
+    global $DB;
 
+    $params = array();
+
+    $courseselect = '';
     if ($courseid) {
-        $courseselect = ' AND course = \''. $courseid .'\' ';
-    } else {
-        $courseselect = '';
+        $courseselect = "AND course = :courseid";
+        $params['courseid'] = $courseid; 
     }
+    $params['userid'] = $userid;
+    $params['daystart'] = $daystart; 
 
-    return get_records_sql("SELECT floor((time - $daystart)/". HOURSECS .") as hour, count(*) as num
-                            FROM {$CFG->prefix}log
-                           WHERE userid = '$userid'
-                             AND time > '$daystart' $courseselect
-                        GROUP BY floor((time - $daystart)/". HOURSECS .") ");
+    return $DB->get_records_sql("SELECT FLOOR((time - :daystart)/". HOURSECS .") AS hour, COUNT(*) AS num
+                                   FROM {log}
+                                  WHERE userid = :userid
+                                        AND time > :daystart $courseselect
+                               GROUP BY FLOOR((time - :daystart)/". HOURSECS .") ");
 }
 
 /**
@@ -2057,16 +2080,20 @@ function get_logs_userday($userid, $courseid, $daystart) {
  * @return int
  */
 function count_login_failures($mode, $username, $lastlogin) {
+    global $DB;
 
-    $select = 'module=\'login\' AND action=\'error\' AND time > '. $lastlogin;
+    $params = array('mode'=>$mode, 'username'=>$username, 'lastlogin'=>$lastlogin);
+    $select = "module='login' AND action='error' AND time > :lastlogin";
+
+    $count = new object();
 
     if (has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {    // Return information about all accounts
-        if ($count->attempts = count_records_select('log', $select)) {
-            $count->accounts = count_records_select('log', $select, 'COUNT(DISTINCT info)');
+        if ($count->attempts = $DB->count_records_select('log', $select, $params)) {
+            $count->accounts = $DB->count_records_select('log', $select, $params, 'COUNT(DISTINCT info)');
             return $count;
         }
     } else if ($mode == 'everybody' or ($mode == 'teacher' and isteacherinanycourse())) {
-        if ($count->attempts = count_records_select('log', $select .' AND info = \''. $username .'\'')) {
+        if ($count->attempts = $DB->count_records_select('log', "$select AND info = :username", $params)) {
             return $count;
         }
     }
@@ -2112,7 +2139,7 @@ function print_object($object) {
  * @return bool
  */
 function course_parent_visible($course = null) {
-    global $CFG;
+    global $CFG, $DB;
     //return true;
     static $mycache;
 
@@ -2136,16 +2163,15 @@ function course_parent_visible($course = null) {
     if (isset($course->categorypath)) {
         $path = $course->categorypath;
     } else {
-        $path = get_field('course_categories', 'path',
-                          'id', $course->category);
+        $path = $DB->get_field('course_categories', 'path', array('id'=>$course->category));
     }
     $catids = substr($path,1); // strip leading slash
     $catids = str_replace('/',',',$catids);
 
     $sql = "SELECT MIN(visible)
-            FROM {$CFG->prefix}course_categories
-            WHERE id IN ($catids)";
-    $vis = get_field_sql($sql);
+              FROM {course_categories}
+             WHERE id IN ($catids)";
+    $vis = $DB->get_field_sql($sql);
 
     // cast to force assoc array
     $k = (string)$course->category;
@@ -2190,9 +2216,10 @@ function user_can_create_courses() {
  * @return array
  */
 function get_creatable_categories() {
+    global $DB;
 
     $creatablecats = array();
-    if ($cats = get_records('course_categories')) {
+    if ($cats = $DB->get_records('course_categories')) {
         foreach ($cats as $cat) {
             if (has_capability('moodle/course:create', get_context_instance(CONTEXT_COURSECAT, $cat->id))) {
                 $creatablecats[$cat->id] = $cat->name;

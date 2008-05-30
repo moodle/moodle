@@ -7,15 +7,15 @@
     $group = optional_param('group',0,PARAM_INT);      // change of group
     $edit  = optional_param('edit',-1,PARAM_BOOL);     // Turn editing on and off
 
-    if (! $forum = $DB->get_record("forum", array("id"=>$id))) {
+    if (! $forum = $DB->get_record('forum', array('id'=>$id))) {
         print_error('invalidforumid', 'forum');
     }
 
-    if (! $course = $DB->get_record("course", array("id"=>$forum->course))) {
+    if (! $course = $DB->get_record('course', array('id'=>$forum->course))) {
         print_error('invalidcourseid');
     }
 
-    if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+    if (! $cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
         $cm->id = 0;
     }
 
@@ -93,7 +93,7 @@
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
 
-    if ($frm = data_submitted()) {
+    if ($frm = data_submitted(false)) {
 
 /// A form was submitted so process the input
 

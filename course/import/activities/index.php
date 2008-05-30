@@ -10,6 +10,8 @@
     $page             = optional_param('page', 0, PARAM_INT);
     $filename         = optional_param('filename', 0, PARAM_PATH);
 
+    $fromcoursesearch = stripslashes($fromcoursesearch); // TODO: remove soon
+
     $strimportactivities = get_string('importactivities');
 
     if (! ($course = get_record("course", "id", $id)) ) {
