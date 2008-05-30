@@ -73,9 +73,11 @@ function events_load_def($component) {
  * INTERNAL - to be used from eventslib only
  */
 function events_get_cached($component) {
+    global $DB;
+
     $cachedhandlers = array();
 
-    if ($storedhandlers = get_records('events_handlers', 'handlermodule', $component)) {
+    if ($storedhandlers = $DB->get_records('events_handlers', array('handlermodule'=>$component))) {
         foreach ($storedhandlers as $handler) {
             $cachedhandlers[$handler->eventname] = array (
                 'id'              => $handler->id,
@@ -100,6 +102,7 @@ function events_get_cached($component) {
  * @return boolean
  */
 function events_update_definition($component='moodle') {
+    global $DB;
 
     // load event definition from events.php
     $filehandlers = events_load_def($component);
@@ -127,7 +130,7 @@ function events_update_definition($component='moodle') {
                 $handler->handlerfunction = serialize($filehandler['handlerfunction']); // static class methods stored as array
                 $handler->schedule        = $filehandler['schedule'];
 
-                update_record('events_handlers', $handler);
+                $DB->update_record('events_handlers', $handler);
 
                 unset($cachedhandlers[$eventname]);
                 continue;
@@ -143,7 +146,7 @@ function events_update_definition($component='moodle') {
             $handler->handlerfunction = serialize($filehandler['handlerfunction']); // static class methods stored as array
             $handler->schedule        = $filehandler['schedule'];
 
-            insert_record('events_handlers', $handler);
+            $DB->insert_record('events_handlers', $handler);
         }
     }
 
@@ -172,15 +175,17 @@ function events_uninstall($component) {
  * INTERNAL - to be used from eventslib only
  */
 function events_cleanup($component, $cachedhandlers) {
+    global $DB;
+
     $deletecount = 0;
     foreach ($cachedhandlers as $eventname => $cachedhandler) {
-        if ($qhandlers = get_records('events_queue_handlers', 'handlerid', $cachedhandler['id'])) {
+        if ($qhandlers = $DB->get_records('events_queue_handlers', array('handlerid'=>$cachedhandler['id']))) {
             debugging("Removing pending events from queue before deleting of event handler: $component - $eventname");
             foreach ($qhandlers as $qhandler) {
                 events_dequeue($qhandler);
             }
         }
-        if (delete_records('events_handlers', 'eventname', $eventname, 'handlermodule', $component)) {
+        if ($DB->delete_records('events_handlers', array('eventname'=>$eventname, 'handlermodule'=>$component))) {
             $deletecount++;
         }
     }
@@ -198,8 +203,9 @@ function events_cleanup($component, $cachedhandlers) {
  * INTERNAL - to be used from eventslib only
  */
 function events_queue_handler($handler, $event, $errormessage) {
+    global $DB;
 
-    if ($qhandler = get_record('events_queue_handlers', 'queuedeventid', $event->id, 'handlerid', $handler->id)) {
+    if ($qhandler = $DB->get_record('events_queue_handlers', array('queuedeventid'=>$event->id, 'handlerid'=>$handler->id))) {
         debugging("Please check code: Event id $event->id is already queued in handler id $qhandler->id");
         return $qhandler->id;
     }
@@ -208,7 +214,7 @@ function events_queue_handler($handler, $event, $errormessage) {
     $qhandler = new object();
     $qhandler->queuedeventid  = $event->id;
     $qhandler->handlerid      = $handler->id;
-    $qhandler->errormessage   = addslashes($errormessage);
+    $qhandler->errormessage   = $errormessage;
     $qhandler->timemodified   = time();
     if ($handler->schedule == 'instant' and $handler->status == 1) {
         $qhandler->status     = 1; //already one failed attempt to dispatch this event
@@ -216,7 +222,7 @@ function events_queue_handler($handler, $event, $errormessage) {
         $qhandler->status     = 0;
     }
 
-    return insert_record('events_queue_handlers', $qhandler);
+    return $DB->insert_record('events_queue_handlers', $qhandler);
 }
 
 /**
@@ -262,10 +268,10 @@ function events_dispatch($handler, $eventdata, &$errormessage) {
  * INTERNAL - to be used from eventslib only
  */
 function events_process_queued_handler($qhandler) {
-    global $CFG;
+    global $CFG, $DB;
 
     // get handler
-    if (!$handler = get_record('events_handlers', 'id', $qhandler->handlerid)) {
+    if (!$handler = $DB->get_record('events_handlers', array('id'=>$qhandler->handlerid))) {
         debugging("Error processing queue handler $qhandler->id, missing handler id: $qhandler->handlerid");
         //irrecoverable error, remove broken queue handler
         events_dequeue($qhandler);
@@ -273,7 +279,7 @@ function events_process_queued_handler($qhandler) {
     }
 
     // get event object
-    if (!$event = get_record('events_queue', 'id', $qhandler->queuedeventid)) {
+    if (!$event = $DB->get_record('events_queue', array('id'=>$qhandler->queuedeventid))) {
         // can't proceed with no event object - might happen when two crons running at the same time
         debugging("Error processing queue handler $qhandler->id, missing event id: $qhandler->queuedeventid");
         //irrecoverable error, remove broken queue handler
@@ -292,10 +298,10 @@ function events_process_queued_handler($qhandler) {
         //dispatching failed
         $qh = new object();
         $qh->id           = $qhandler->id;
-        $qh->errormessage = addslashes($errormessage);
+        $qh->errormessage = $errormessage;
         $qh->timemodified = time();
         $qh->status       = $qhandler->status + 1;
-        update_record('events_queue_handlers', $qh);
+        $DB->update_record('events_queue_handlers', $qh);
         return false;
     }
 }
@@ -308,12 +314,14 @@ function events_process_queued_handler($qhandler) {
  * INTERNAL - to be used from eventslib only
  */
 function events_dequeue($qhandler) {
+    global $DB;
+
     // first delete the queue handler
-    delete_records('events_queue_handlers', 'id', $qhandler->id);
+    $DB->delete_records('events_queue_handlers', array('id'=>$qhandler->id));
 
     // if no more queued handler is pointing to the same event - delete the event too
-    if (!record_exists('events_queue_handlers', 'queuedeventid', $qhandler->queuedeventid)) {
-        delete_records('events_queue', 'id', $qhandler->queuedeventid);
+    if (!$DB->record_exists('events_queue_handlers', array('queuedeventid'=>$qhandler->queuedeventid))) {
+        $DB->delete_records('events_queue', array('id'=>$qhandler->queuedeventid));
     }
 }
 
@@ -330,22 +338,26 @@ function events_dequeue($qhandler) {
  * PUBLIC
  */
 function events_cron($eventname='') {
-    global $CFG;
+    global $DB;
 
     $failed = array();
     $processed = 0;
 
     if ($eventname) {
-        $sql = "SELECT qh.* FROM {$CFG->prefix}events_queue_handlers qh, {$CFG->prefix}events_handlers h
-                WHERE qh.handlerid = h.id AND h.eventname='$eventname'
-                ORDER BY qh.id";
+        $sql = "SELECT qh.*
+                  FROM {events_queue_handlers} qh, {events_handlers} h
+                 WHERE qh.handlerid = h.id AND h.eventname=?
+              ORDER BY qh.id";
+        $params = array($eventname);
     } else {
-        $sql = "SELECT * FROM {$CFG->prefix}events_queue_handlers
-                ORDER BY id";
+        $sql = "SELECT *
+                  FROM {events_queue_handlers}
+              ORDER BY id";
+        $params = array();
     }
 
-    if ($rs = get_recordset_sql($sql)) {
-        while ($qhandler = rs_fetch_next_record($rs)) {
+    if ($rs = $DB->get_recordset_sql($sql, $params)) {
+        foreach ($rs as $qhandler) {
             if (in_array($qhandler->handlerid, $failed)) {
                 // do not try to dispatch any later events when one already failed
                 continue;
@@ -357,7 +369,7 @@ function events_cron($eventname='') {
                 $processed++;
             }
         }
-        rs_close($rs);
+        $rs->close();
     }
     return $processed;
 }
@@ -372,13 +384,13 @@ function events_cron($eventname='') {
  * PUBLIC
  */
 function events_trigger($eventname, $eventdata) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     $failedcount = 0; // number of failed events.
     $event = false;
 
     // pull out all registered event handlers
-    if ($handlers = get_records('events_handlers', 'eventname', $eventname)) {
+    if ($handlers = $DB->get_records('events_handlers', array('eventname'=>$eventname))) {
         foreach ($handlers as $handler) {
 
            $errormessage = '';
@@ -386,10 +398,10 @@ function events_trigger($eventname, $eventdata) {
            if ($handler->schedule == 'instant') {
                 if ($handler->status) {
                     //check if previous pending events processed
-                    if (!record_exists('events_queue_handlers', 'handlerid', $handler->id)) {
+                    if (!$DB->record_exists('events_queue_handlers', array('handlerid'=>$handler->id))) {
                         // ok, queue is empty, lets reset the status back to 0 == ok
                         $handler->status = 0;
-                        set_field('events_handlers', 'status', 0, 'id', $handler->id);
+                        $DB->set_field('events_handlers', 'status', 0, array('id'=>$handler->id));
                     }
                 }
 
@@ -400,12 +412,12 @@ function events_trigger($eventname, $eventdata) {
                         continue;
                     }
                     // set error count to 1 == send next instant into cron queue
-                    set_field('events_handlers', 'status', 1, 'id', $handler->id);
+                    $DB->set_field('events_handlers', 'status', 1, array('id'=>$handler->id));
 
                 } else {
                     // increment the error status counter
                     $handler->status++;
-                    set_field('events_handlers', 'status', $handler->status, 'id', $handler->id);
+                    $DB->set_field('events_handlers', 'status', $handler->status, array('id'=>$handler->id));
                 }
 
                 // update the failed counter
@@ -439,11 +451,11 @@ function events_trigger($eventname, $eventdata) {
                         }
                         $dump .= "\n";
                     }
-                    $event->stackdump = addslashes($dump);
+                    $event->stackdump = $dump;
                } else {
                     $event->stackdump = '';
                 }
-                $event->id = insert_record('events_queue', $event);
+                $event->id = $DB->insert_record('events_queue', $event);
             }
             events_queue_handler($handler, $event, $errormessage);
         }
@@ -463,7 +475,8 @@ function events_trigger($eventname, $eventdata) {
  * PUBLIC
  */
 function events_is_registered($eventname, $component) {
-    return record_exists('events_handlers', 'handlermodule', $component, 'eventname', $eventname);
+    global $DB;
+    return $DB->record_exists('events_handlers', array('handlermodule'=>$component, 'eventname'=>$eventname));
 }
 
 /**
@@ -474,10 +487,11 @@ function events_is_registered($eventname, $component) {
  * PUBLIC
  */
 function events_pending_count($eventname) {
-    global $CFG;
+    global $CFG, $DB;
 
-    $sql = "SELECT COUNT(*) FROM {$CFG->prefix}events_queue_handlers qh, {$CFG->prefix}events_handlers h
-            WHERE qh.handlerid = h.id AND h.eventname='$eventname'";
-    return count_records_sql($sql);
+    $sql = "SELECT COUNT('x')
+              FROM {events_queue_handlers} qh, {events_handlers} h
+             WHERE qh.handlerid = h.id AND h.eventname=?";
+    return $DB->count_records_sql($sql, array($eventname));
 }
 ?>
