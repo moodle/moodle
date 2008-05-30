@@ -352,7 +352,11 @@ class quiz_report extends quiz_default_report {
 
         $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
 
-        $sort = $table->get_sql_sort();
+        if (!$download){
+            $sort = $table->get_sql_sort();
+        } else {
+            $sort = '';
+        }
         // Fix some wired sorting
         if (empty($sort)) {
             $sort = ' ORDER BY uniqueid';
