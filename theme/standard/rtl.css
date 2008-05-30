@@ -178,12 +178,12 @@ select#uninstalllang {
     direction: ltr;
 }
 
-.mod-forum .indent {
 /* in forums, fix top and bottom navigation bars' buttons */
 li form .invisiblefieldset {
 	display: inline;
 }
 
+.mod-forum .indent {
     margin-right: 30px;
     margin-left: 0px;
 }
