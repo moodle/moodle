@@ -130,7 +130,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
 /*
  * TODO:
- *   drop adodb_logsql table and create a ner general sql log table
+ *   drop adodb_logsql table and create a new general sql log table
  *
  */
 
