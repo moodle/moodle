@@ -3774,7 +3774,7 @@ function get_roles_used_in_context($context, $view = false) {
  * @return string
  */
 function get_user_roles_in_context($userid, $context, $view=true){
-    global $CFG, $USER;
+    global $CFG, $DB,$USER;
 
     $rolestring = '';
     $sql = "SELECT *
