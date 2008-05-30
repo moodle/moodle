@@ -31,7 +31,7 @@
     if ($mform_signup->is_cancelled()) {
         redirect($CFG->httpswwwroot.'/login/index.php');
 
-    } else if ($user = $mform_signup->get_data()) {
+    } else if ($user = $mform_signup->get_data(false)) {
         $user->confirmed   = 0;
         $user->lang        = current_language();
         $user->firstaccess = time();

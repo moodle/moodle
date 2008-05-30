@@ -11,7 +11,7 @@
     $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
-    if (!$course = get_record('course', 'id', $course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$course))) {
         print_error('Course ID was incorrect');
     }
 
@@ -30,7 +30,7 @@
     }
 
     // The user profile we are editing
-    if (!$user = get_record('user', 'id', $userid)) {
+    if (!$user = $DB->get_record('user', array('id'=>$userid))) {
         print_error('User ID was incorrect');
     }
 
@@ -89,7 +89,7 @@
     $userform = new user_edit_form();
     $userform->set_data($user);
 
-    if ($usernew = $userform->get_data()) {
+    if ($usernew = $userform->get_data(false)) {
 
         add_to_log($course->id, 'user', 'update', "view.php?id=$user->id&course=$course->id", '');
 
@@ -97,14 +97,14 @@
 
         $usernew->timemodified = time();
 
-        if (!update_record('user', $usernew)) {
+        if (!$DB->update_record('user', $usernew)) {
             print_error('Error updating user record');
         }
 
         // pass a true $userold here
         if (! $authplugin->user_update($user, $userform->get_data(false))) {
             // auth update failed, rollback for moodle
-            update_record('user', addslashes_object($user));
+            $DB->update_record('user', $user);
             print_error('Failed to update user data on external auth: '.$user->auth.
                     '. See the server logs for more details.');
         }
@@ -133,7 +133,7 @@
 
         if ($USER->id == $user->id) {
             // Override old $USER session variable if needed
-            $usernew = (array)get_record('user', 'id', $user->id); // reload from db
+            $usernew = $DB->get_record('user', array('id'=>$user->id)); // reload from db
             foreach ($usernew as $variable => $value) {
                 $USER->$variable = $value;
             }

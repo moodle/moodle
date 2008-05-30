@@ -483,7 +483,7 @@ if ($formdata = $mform->is_cancelled()) {
                     continue;
                 }
                 // save custom profile fields data from csv file
-                profile_save_data(addslashes_recursive($existinguser));
+                profile_save_data($existinguser);
             }
 
             if ($bulk == 2 or $bulk == 3) {

@@ -39,7 +39,7 @@ class user_edit_form extends moodleform {
     }
 
     function definition_after_data() {
-        global $CFG;
+        global $CFG, $DB;
 
         $mform =& $this->_form;
         $userid = $mform->getElementValue('id');
@@ -54,7 +54,7 @@ class user_edit_form extends moodleform {
             }
         }
 
-        if ($user = get_record('user', 'id', $userid)) {
+        if ($user = $DB->get_record('user', array('id'=>$userid))) {
 
             // print picture
             if (!empty($CFG->gdversion)) {
@@ -92,17 +92,17 @@ class user_edit_form extends moodleform {
     }
 
     function validation($usernew, $files) {
-        global $CFG;
+        global $CFG, $DB;
 
         $errors = parent::validation($usernew, $files);
 
         $usernew = (object)$usernew;
-        $user    = get_record('user', 'id', $usernew->id);
+        $user    = $DB->get_record('user', array('id'=>$usernew->id));
 
         // validate email
         if (!validate_email($usernew->email)) {
             $errors['email'] = get_string('invalidemail');
-        } else if (($usernew->email !== $user->email) and record_exists('user', 'email', $usernew->email, 'mnethostid', $CFG->mnet_localhost_id)) {
+        } else if (($usernew->email !== $user->email) and $DB->record_exists('user', array('email'=>$usernew->email, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             $errors['email'] = get_string('emailexists');
         }
 

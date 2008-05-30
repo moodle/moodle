@@ -37,7 +37,8 @@ class user_filter_profilefield extends user_filter_type {
      * @return array of profile fields
      */
     function get_profile_fields() {
-        if (!$fields = get_records_select('user_info_field', '', 'shortname', 'id,shortname')) {
+        global $DB;
+        if (!$fields = $DB->get_records('user_info_field', null, 'shortname', 'id,shortname')) {
             return null;
         }
         $res = array(0 => get_string('anyfield', 'filters'));

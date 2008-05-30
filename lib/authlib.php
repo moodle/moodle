@@ -194,7 +194,7 @@ class auth_plugin_base {
      * Sign up a new user ready for confirmation.
      * Password is passed in plaintext.
      *
-     * @param object $user new user object (with system magic quotes)
+     * @param object $user new user object
      * @param boolean $notify print notice with link and terminate
      */
     function user_signup($user, $notify=true) {

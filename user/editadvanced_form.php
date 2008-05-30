@@ -53,11 +53,11 @@ class user_editadvanced_form extends moodleform {
     }
 
     function definition_after_data() {
-        global $USER, $CFG;
+        global $USER, $CFG, $DB;
 
         $mform =& $this->_form;
         if ($userid = $mform->getElementValue('id')) {
-            $user = get_record('user', 'id', $userid);
+            $user = $DB->get_record('user', array('id'=>$userid));
         } else {
             $user = false;
         }
@@ -108,12 +108,12 @@ class user_editadvanced_form extends moodleform {
     }
 
     function validation($usernew, $files) {
-        global $CFG;
+        global $CFG, $DB;
 
         $usernew = (object)$usernew;
         $usernew->username = trim($usernew->username);
 
-        $user = get_record('user', 'id', $usernew->id);
+        $user = $DB->get_record('user', array('id'=>$usernew->id));
         $err = array();
 
         if (!empty($usernew->newpassword)) {
@@ -128,7 +128,7 @@ class user_editadvanced_form extends moodleform {
             $err['username'] = get_string('required');
         } else if (!$user or $user->username !== $usernew->username) {
             //check new username does not exist
-            if (record_exists('user', 'username', $usernew->username, 'mnethostid', $CFG->mnet_localhost_id)) {
+            if ($DB->record_exists('user', array('username'=>$usernew->username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
                 $err['username'] = get_string('usernameexists');
             }
             //check allowed characters
@@ -147,7 +147,7 @@ class user_editadvanced_form extends moodleform {
         if (!$user or $user->email !== $usernew->email) {
             if (!validate_email($usernew->email)) {
                 $err['email'] = get_string('invalidemail');
-            } else if (record_exists('user', 'email', $usernew->email, 'mnethostid', $CFG->mnet_localhost_id)) {
+            } else if ($DB->record_exists('user', array('email'=>$usernew->email, 'mnethostid'=>$CFG->mnet_localhost_id))) {
                 $err['email'] = get_string('emailexists');
             }
         }

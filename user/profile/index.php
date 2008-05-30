@@ -106,7 +106,7 @@ if (count_records('user_info_category') == 0) {
 }
 
 /// Show all categories
-$categories = get_records_select('user_info_category', '', 'sortorder ASC');
+$categories = $DB->get_records('user_info_category', null, 'sortorder ASC');
 
 foreach ($categories as $category) {
     $table = new object();
@@ -116,7 +116,7 @@ foreach ($categories as $category) {
     $table->class = 'generaltable profilefield';
     $table->data = array();
 
-    if ($fields = get_records_select('user_info_field', "categoryid=$category->id", 'sortorder ASC')) {
+    if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
         foreach ($fields as $field) {
             $table->data[] = array($field->name, profile_field_icons($field));
         }
@@ -159,15 +159,15 @@ die;
  * @return  string   the icon string
  */
 function profile_category_icons ($category) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     $strdelete   = get_string('delete');
     $strmoveup   = get_string('moveup');
     $strmovedown = get_string('movedown');
     $stredit     = get_string('edit');
 
-    $categorycount = count_records('user_info_category');
-    $fieldcount    = count_records('user_info_field', 'categoryid', $category->id);
+    $categorycount = $DB->count_records('user_info_category');
+    $fieldcount    = $DB->count_records('user_info_field', array('categoryid'=>$category->id));
 
     /// Edit
     $editstr = '<a title="'.$stredit.'" href="index.php?id='.$category->id.'&amp;action=editcategory"><img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" class="iconsmall" /></a> ';
@@ -203,8 +203,8 @@ function profile_category_icons ($category) {
  * @param   object   the field object
  * @return  string   the icon string
  */
-function profile_field_icons ($field) {
-    global $CFG, $USER;
+function profile_field_icons($field) {
+    global $CFG, $USER, $DB;
 
     if (empty($str)) {
         $strdelete   = get_string('delete');
@@ -213,8 +213,8 @@ function profile_field_icons ($field) {
         $stredit     = get_string('edit');
     }
 
-    $fieldcount = count_records('user_info_field', 'categoryid',$field->categoryid);
-    $datacount  = count_records('user_info_data', 'fieldid', $field->id);
+    $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$field->categoryid));
+    $datacount  = $DB->count_records('user_info_data', array('fieldid'=>$field->id));
 
     /// Edit
     $editstr = '<a title="'.$stredit.'" href="index.php?id='.$field->id.'&amp;action=editfield"><img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" class="iconsmall" /></a> ';

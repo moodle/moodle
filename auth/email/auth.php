@@ -70,16 +70,16 @@ class auth_plugin_email extends auth_plugin_base {
      * Sign up a new user ready for confirmation.
      * Password is passed in plaintext.
      *
-     * @param object $user new user object (with system magic quotes)
+     * @param object $user new user object
      * @param boolean $notify print notice with link and terminate
      */
     function user_signup($user, $notify=true) {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
         
         $user->password = hash_internal_user_password($user->password);
 
-        if (! ($user->id = insert_record('user', $user)) ) {
+        if (! ($user->id = $DB->insert_record('user', $user)) ) {
             print_error('auth_emailnoinsert','auth');
         }
         

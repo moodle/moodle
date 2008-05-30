@@ -120,6 +120,8 @@ class user_filter_courserole extends user_filter_type {
      * @return string active filter label
      */
     function get_label($data) {
+        global $DB;
+
         $value      = $data['value'];
         $roleid     = $data['roleid'];
         $categoryid = $data['categoryid'];
@@ -128,14 +130,14 @@ class user_filter_courserole extends user_filter_type {
         $a->label = $this->_label;
 
         if ($roleid) {
-            $rolename = get_field('role', 'name', 'id', $roleid);
+            $rolename = $DB->get_field('role', 'name', array('id'=>$roleid));
             $a->rolename = '"'.format_string($rolename).'"';
         } else {
             $a->rolename = get_string('anyrole', 'filters');
         }
 
         if ($categoryid) {
-            $catname = get_field('course_categories', 'name', 'id', $categoryid);
+            $catname = $DB->get_field('course_categories', 'name', array('id'=>$categoryid));
             $a->categoryname = '"'.format_string($catname).'"';
         } else {
             $a->categoryname = get_string('anycategory', 'filters');
@@ -143,7 +145,7 @@ class user_filter_courserole extends user_filter_type {
 
         if ($value) {
             $a->coursename = '"'.s($value).'"';
-            if (!record_exists('course', 'shortname', addslashes($value))) {
+            if (!$DB->record_exists('course', array('shortname'=>$value))) {
                 return '<span class="notifyproblem">'.get_string('courserolelabelerror', 'filters', $a).'</span>';
             }
         } else {

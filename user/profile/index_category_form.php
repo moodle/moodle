@@ -26,15 +26,15 @@ class category_form extends moodleform {
 
 /// perform some moodle validation
     function validation($data, $files) {
-        global $CFG;
+        global $CFG, $DB;
         $errors = parent::validation($data, $files);
 
         $data  = (object)$data;
 
-        $category = get_record('user_info_category', 'id', $data->id);
+        $category = $DB->get_record('user_info_category', array('id'=>$data->id));
 
         /// Check the name is unique
-        if ($category and ($category->name !== $data->name) and (record_exists('user_info_category', 'name', $data->name))) {
+        if ($category and ($category->name !== $data->name) and ($DB->record_exists('user_info_category', array('name'=>$data->name)))) {
             $errors['name'] = get_string('profilecategorynamenotunique', 'admin');
         }
 

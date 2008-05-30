@@ -375,7 +375,7 @@ class auth_plugin_ldap extends auth_plugin_base {
      * Sign up a new user ready for confirmation.
      * Password is passed in plaintext.
      *
-     * @param object $user new user object (with system magic quotes)
+     * @param object $user new user object
      * @param boolean $notify print notice with link and terminate
      */
     function user_signup($user, $notify=true) {
@@ -393,7 +393,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             print_error('auth_ldap_create_error', 'auth');
         }
 
-        if (! ($user->id = insert_record('user', $user)) ) {
+        if (! ($user->id = $DB->insert_record('user', $user)) ) {
             print_error('auth_emailnoinsert', 'auth');
         }
 

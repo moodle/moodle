@@ -4173,14 +4173,14 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
 
 /**
  * Store changed settings, this function updates the errors variable in $ADMIN
- * @param object $formdata from form (without magic quotes)
+ * @param object $formdata from form
  * @return int number of changed settings
  */
 function admin_write_settings($formdata) {
     global $CFG, $SITE, $COURSE, $DB;
 
     $olddbsessions = !empty($CFG->dbsessions);
-    $formdata = (array)stripslashes_recursive($formdata);
+    $formdata = (array)$formdata;
 
     $data = array();
     foreach ($formdata as $fullname=>$value) {

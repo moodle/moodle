@@ -89,8 +89,7 @@ class profile_define_base {
      * @return  array    associative array of error messages
      */
     function define_validate_common($data, $files) {
-
-        global $USER;
+        global $USER, $DB;
 
         $err = array();
 
@@ -100,7 +99,7 @@ class profile_define_base {
 
         } else {
         /// Fetch field-record from DB
-            $field = get_record('user_info_field', 'shortname', $data->shortname);
+            $field = $DB->get_record('user_info_field', array('shortname'=>$data->shortname));
         /// Check the shortname is unique
             if ($field and $field->id <> $data->id) {
                 $err['shortname'] = get_string('profileshortnamenotunique', 'admin');
@@ -140,24 +139,25 @@ class profile_define_base {
      * @return  boolean  status of the insert/update record
      */
     function define_save($data) {
+        global $DB;
 
         $data = $this->define_save_preprocess($data); /// hook for child classes
 
-        $old = get_record('user_info_field', 'id', $data->id);
+        $old = $DB->get_record('user_info_field', array('id'=>(int)$data->id));
 
         /// check to see if the category has changed
         if (!$old or $old->categoryid != $data->categoryid) {
-            $data->sortorder = count_records_select('user_info_field', 'categoryid='.$data->categoryid) + 1;
+            $data->sortorder = $DB->count_records('user_info_field', array('categoryid'=>$data->categoryid)) + 1;
         }
 
 
         if (empty($data->id)) {
             unset($data->id);
-            if (!$data->id = insert_record('user_info_field', $data)) {
+            if (!$data->id = $DB->insert_record('user_info_field', $data)) {
                 print_error('Error creating new field');
             }
         } else {
-            if (!update_record('user_info_field', $data)) {
+            if (!$DB->update_record('user_info_field', $data)) {
                 print_error('Error updating field');
             }
         }
@@ -184,15 +184,17 @@ class profile_define_base {
  * at the field at the given startorder
  */
 function profile_reorder_fields() {
-    if ($categories = get_records_select('user_info_category')) {
+    global $DB;
+
+    if ($categories = $DB->get_records('user_info_category')) {
         foreach ($categories as $category) {
             $i = 1;
-            if ($fields = get_records_select('user_info_field', 'categoryid='.$category->id, 'sortorder ASC')) {
+            if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
                 foreach ($fields as $field) {
                     $f = new object();
                     $f->id = $field->id;
                     $f->sortorder = $i++;
-                    update_record('user_info_field', $f);
+                    $DB->update_record('user_info_field', $f);
                 }
             }
         }
@@ -204,13 +206,15 @@ function profile_reorder_fields() {
  * at the given startorder
  */
 function profile_reorder_categories() {
+    global $DB;
+
     $i = 1;
-    if ($categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
+    if ($categories = $DB->get_records('user_info_category', null, 'sortorder ASC')) {
         foreach ($categories as $cat) {
             $c = new object();
             $c->id = $cat->id;
             $c->sortorder = $i++;
-            update_record('user_info_category', $c);
+            $DB->update_record('user_info_category', $c);
         }
     }
 }
@@ -221,12 +225,14 @@ function profile_reorder_categories() {
  * @return  boolean   success of operation
  */
 function profile_delete_category($id) {
+    global $DB;
+
     /// Retrieve the category
-    if (!$category = get_record('user_info_category', 'id', $id)) {
+    if (!$category = $DB->get_record('user_info_category', array('id'=>$id))) {
         print_error('Incorrect category id');
     }
 
-    if (!$categories = get_records_select('user_info_category', '', 'sortorder ASC')) {
+    if (!$categories = $DB->get_records('user_info_category', null, 'sortorder ASC')) {
         print_error('Error no categories!?!?');
     }
 
@@ -246,22 +252,22 @@ function profile_delete_category($id) {
             $newcategory = reset($categories); // get first category if sortorder broken
         }
 
-        $sortorder = count_records('user_info_field', 'categoryid', $newcategory->id) + 1;
+        $sortorder = $DB->count_records('user_info_field', array('categoryid'=>$newcategory->id)) + 1;
 
-        if ($fields = get_records_select('user_info_field', 'categoryid='.$category->id, 'sortorder ASC')) {
+        if ($fields = $DB->get_records('user_info_field', array('categoryid'=>$category->id), 'sortorder ASC')) {
             foreach ($fields as $field) {
                 $f = new object();
                 $f->id = $field->id;
                 $f->sortorder = $sortorder++;
                 $f->categoryid = $newcategory->id;
-                update_record('user_info_field', $f);
-                echo "<pre>";var_dump($f);echo"</pre>";
+                $DB->update_record('user_info_field', $f);
+                //echo "<pre>";var_dump($f);echo"</pre>";
             }
         }
     }
 
     /// Finally we get to delete the category
-    if (!delete_records('user_info_category', 'id', $category->id)) {
+    if (!$DB->delete_records('user_info_category', array('id'=>$category->id))) {
         print_error('Error while deliting category');
     }
     profile_reorder_categories();
@@ -270,14 +276,15 @@ function profile_delete_category($id) {
 
 
 function profile_delete_field($id) {
+    global $DB;
 
     /// Remove any user data associated with this field
-    if (!delete_records('user_info_data', 'fieldid', $id)) {
+    if (!$DB->delete_records('user_info_data', array('fieldid'=>$id))) {
         print_error('Error deleting custom field data');
     }
 
     /// Try to remove the record from the database
-    delete_records('user_info_field', 'id', $id);
+    $DB->delete_records('user_info_field', array('id'=>$id));
 
     /// Reorder the remaining fields in the same category
     profile_reorder_fields();
@@ -290,12 +297,14 @@ function profile_delete_field($id) {
  * @return  boolean   success of operation
  */
 function profile_move_field($id, $move) {
+    global $DB;
+
     /// Get the field object
-    if (!$field = get_record('user_info_field', 'id', $id, '', '', '', '', 'id, sortorder, categoryid')) {
+    if (!$field = $DB->get_record('user_info_field', array('id'=>$id), 'id, sortorder, categoryid')) {
         return false;
     }
     /// Count the number of fields in this category
-    $fieldcount = count_records_select('user_info_field', 'categoryid='.$field->categoryid);
+    $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$field->categoryid));
 
     /// Calculate the new sortorder
     if ( ($move == 'up') and ($field->sortorder > 1)) {
@@ -307,15 +316,15 @@ function profile_move_field($id, $move) {
     }
 
     /// Retrieve the field object that is currently residing in the new position
-    if ($swapfield = get_record('user_info_field', 'categoryid', $field->categoryid, 'sortorder', $neworder, '', '', 'id, sortorder')) {
+    if ($swapfield = $DB->get_record('user_info_field', array('categoryid'=>$field->categoryid, 'sortorder'=>$neworder), 'id, sortorder')) {
 
         /// Swap the sortorders
         $swapfield->sortorder = $field->sortorder;
         $field->sortorder     = $neworder;
 
         /// Update the field records
-        update_record('user_info_field', $field);
-        update_record('user_info_field', $swapfield);
+        $DB->update_record('user_info_field', $field);
+        $DB->update_record('user_info_field', $swapfield);
     }
 
     profile_reorder_fields();
@@ -328,13 +337,14 @@ function profile_move_field($id, $move) {
  * @return  boolean   success of operation
  */
 function profile_move_category($id, $move) {
+    global $DB;
     /// Get the category object
-    if (!($category = get_record('user_info_category', 'id', $id, '', '', '', '', 'id, sortorder'))) {
+    if (!($category = $DB->get_record('user_info_category', array('id'=>$id), 'id, sortorder'))) {
         return false;
     }
 
     /// Count the number of categories
-    $categorycount = count_records('user_info_category');
+    $categorycount = $DB->count_records('user_info_category');
 
     /// Calculate the new sortorder
     if ( ($move == 'up') and ($category->sortorder > 1)) {
@@ -346,14 +356,14 @@ function profile_move_category($id, $move) {
     }
 
     /// Retrieve the category object that is currently residing in the new position
-    if ($swapcategory = get_record('user_info_category', 'sortorder', $neworder, '', '', '', '', 'id, sortorder')) {
+    if ($swapcategory = $DB->get_record('user_info_category', array('sortorder'=>$neworder),'id, sortorder')) {
 
         /// Swap the sortorders
         $swapcategory->sortorder = $category->sortorder;
         $category->sortorder     = $neworder;
 
         /// Update the category records
-        if (update_record('user_info_category', $category) and update_record('user_info_category', $swapcategory)) {
+        if ($DB->update_record('user_info_category', $category) and $DB->update_record('user_info_category', $swapcategory)) {
             return true;
         }
     }
@@ -388,7 +398,8 @@ function profile_list_datatypes() {
  * @return   array
  */
 function profile_list_categories() {
-    if (!$categories = get_records_select_menu('user_info_category', '', 'sortorder ASC', 'id, name')) {
+    global $DB;
+    if (!$categories = $DB->get_records_menu('user_info_category', NULL, 'sortorder ASC', 'id, name')) {
         $categories = array();
     }
     return $categories;
@@ -397,27 +408,27 @@ function profile_list_categories() {
 
 /// Are we adding or editing a cateogory?
 function profile_edit_category($id, $redirect) {
-    global $CFG;
+    global $CFG, $DB;
 
     require_once('index_category_form.php');
     $categoryform = new category_form();
 
-    if ($category = get_record('user_info_category', 'id', $id)) {
+    if ($category = $DB->get_record('user_info_category', array('id'=>$id))) {
         $categoryform->set_data($category);
     }
 
     if ($categoryform->is_cancelled()) {
         redirect($redirect);
     } else {
-        if ($data = $categoryform->get_data()) {
+        if ($data = $categoryform->get_data(false)) {
             if (empty($data->id)) {
                 unset($data->id);
                 $data->sortorder = count_records('user_info_category') + 1;
-                if (!insert_record('user_info_category', $data, false)) {
+                if (!$DB->insert_record('user_info_category', $data, false)) {
                     print_error('There was a problem adding the record to the database');
                 }
             } else {
-                if (!update_record('user_info_category', $data)) {
+                if (!$DB->update_record('user_info_category', $data)) {
                     print_error('There was a problem updating the record in the database');
                 }
             }
@@ -443,9 +454,9 @@ function profile_edit_category($id, $redirect) {
 }
 
 function profile_edit_field($id, $datatype, $redirect) {
-    global $CFG;
+    global $CFG, $DB;
 
-    if (!$field = get_record('user_info_field', 'id', $id)) {
+    if (!$field = $DB->get_record('user_info_field', array('id'=>$id))) {
         $field = new object();
         $field->datatype = $datatype;
     }

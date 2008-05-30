@@ -120,7 +120,7 @@ class user_filtering {
                 return new user_filter_simpleselect('auth', get_string('authentication'), $advanced, 'auth', $choices);
 
             case 'mnethostid':
-                if (!$hosts = get_records('mnet_host', '', '', 'id', 'id, wwwroot, name')) {
+                if (!$hosts = $DB->get_records('mnet_host', null, 'id', 'id, wwwroot, name')) {
                     return null;
                 }
                 $choices = array();
