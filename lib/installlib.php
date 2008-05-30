@@ -238,7 +238,7 @@ function validate_option_values($options){
         $values[$i++]=$val;
     }
     if (isset($values['lang'])) {
-        if (!valid_language($INSTALL['lang'])) {
+        if (!valid_language($values['lang'])) {
             console_write(STDERR,'invalidvalueforlanguage');
         console_write(STDOUT, "\n", '', false);
         }
