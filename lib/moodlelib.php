@@ -3012,8 +3012,8 @@ function guest_user() {
  * the session up.
  *
  * @uses $CFG
- * @param string $username  User's username (with system magic quotes)
- * @param string $password  User's password (with system magic quotes)
+ * @param string $username  User's username
+ * @param string $password  User's password
  * @return user|flase A {@link $USER} object or false if error
  */
 function authenticate_user_login($username, $password) {

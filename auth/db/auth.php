@@ -38,18 +38,17 @@ class auth_plugin_db extends auth_plugin_base {
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
-     * @param string $username The username (with system magic quotes)
-     * @param string $password The password (with system magic quotes)
+     * @param string $username The username
+     * @param string $password The password
      *
      * @return bool Authentication success or failure.
      */
     function user_login($username, $password) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $textlib = textlib_get_instance();
-        $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->extencoding);
-        $extpassword = $textlib->convert(stripslashes($password), 'utf-8', $this->config->extencoding);
+        $extusername = $textlib->convert($username, 'utf-8', $this->config->extencoding);
+        $extpassword = $textlib->convert($password, 'utf-8', $this->config->extencoding);
 
         $authdb = $this->db_init();
 
@@ -70,7 +69,7 @@ class auth_plugin_db extends auth_plugin_base {
                 $authdb->Close();
                 // user exists exterally
                 // check username/password internally
-                if ($user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id)) {
+                if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
                     return validate_internal_user_password($user, $password);
                 }
             } else {

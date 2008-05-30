@@ -86,8 +86,8 @@ class auth_plugin_ldap extends auth_plugin_base {
         }
 
         $textlib = textlib_get_instance();
-        $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
-        $extpassword = $textlib->convert(stripslashes($password), 'utf-8', $this->config->ldapencoding);
+        $extusername = $textlib->convert($username, 'utf-8', $this->config->ldapencoding);
+        $extpassword = $textlib->convert($password, 'utf-8', $this->config->ldapencoding);
 
         //
         // Before we connect to LDAP, check if this is an AD SSO login
