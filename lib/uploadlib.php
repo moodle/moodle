@@ -116,7 +116,8 @@ class upload_manager {
                 }
                 if (!$this->status) {
                     if (!$this->config->recoverifmultiple && count($this->files) > 1) {
-                        $a->name = $this->files[$name]['originalname'];
+                        $a = new object();
+                        $a->name    = $this->files[$name]['originalname'];
                         $a->problem = $this->files[$name]['uploadlog'];
                         if (!$this->config->silent) {
                             notify(get_string('uploadfailednotrecovering','moodle',$a));
@@ -141,6 +142,7 @@ class upload_manager {
                 else {
                     $newname = clean_filename($this->files[$name]['name']);
                     if ($newname != $this->files[$name]['name']) {
+                        $a = new object();
                         $a->oldname = $this->files[$name]['name'];
                         $a->newname = $newname;
                         $this->files[$name]['uploadlog'] .= get_string('uploadrenamedchars','moodle', $a);
@@ -646,6 +648,7 @@ function clam_scan_moodle_file(&$file, $course) {
     case 0: // glee! we're ok.
         return 1; // translate clam return code into reasonable return code consistent with everything else.
     case 1:  // bad wicked evil, we have a virus.
+        $info = new object();
         if (!empty($course)) {
             $info->course = $course->fullname;
         }
@@ -764,10 +767,11 @@ function clam_log_upload($newfilepath, $course=null, $nourl=false) {
  * @param int $userid The user id of the user who uploaded the file.
  */
 function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
+    global $DB;
 
     add_to_log(0, 'upload', 'infected', $_SERVER['HTTP_REFERER'], $oldfilepath, 0, $userid);
     
-    $user = get_record('user', 'id', $userid);
+    $user = $DB->get_record('user', array('id'=>$userid));
     
     $errorstr = 'Clam AV has found a file that is infected with a virus. It was uploaded by '
         . ((empty($user)) ? ' an unknown user ' : fullname($user))
@@ -788,18 +792,17 @@ function clam_log_infected($oldfilepath='', $newfilepath='', $userid=0) {
  * @param boolean $update If true this function will overwrite old record (used for forum moving etc).
  */
 function clam_change_log($oldpath, $newpath, $update=true) {
-    global $CFG;
+    global $DB;
     
-    if (!$record = get_record('log', 'info', $oldpath, 'module', 'upload')) {
+    if (!$record = $DB->get_record('log', array('info'=>$oldpath, 'module'=>'upload'))) {
         return false;
     }
     $record->info = $newpath;
     if ($update) {
-        update_record('log', $record);
-    }
-    else {
+        $DB->update_record('log', $record);
+    } else {
         unset($record->id);
-        insert_record('log', $record);
+        $DB->insert_record('log', $record);
     }
 }
 ?>
