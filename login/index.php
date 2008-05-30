@@ -90,11 +90,11 @@ httpsrequired();
         if ($user) {
             $frm->username = $user->username;
         } else {
-            $frm = data_submitted();
+            $frm = data_submitted(false);
         }
 
     } else {
-        $frm = data_submitted();
+        $frm = data_submitted(false);
     }
 
 /// Check if the user has actually submitted login data to us

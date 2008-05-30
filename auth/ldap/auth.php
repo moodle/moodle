@@ -156,13 +156,13 @@ class auth_plugin_ldap extends auth_plugin_base {
      * Function should return all information available. If you are saving
      * this information to moodle user-table you should honor syncronization flags
      *
-     * @param string $username username (with system magic quotes)
+     * @param string $username username
      *
      * @return mixed array with no magic quotes or false on error
      */
     function get_userinfo($username) {
         $textlib = textlib_get_instance();
-        $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
+        $extusername = $textlib->convert($username, 'utf-8', $this->config->ldapencoding);
 
         $ldapconnection = $this->ldap_connect();
         $attrmap = $this->ldap_attributes();

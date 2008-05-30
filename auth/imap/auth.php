@@ -69,7 +69,7 @@ class auth_plugin_imap extends auth_plugin_base {
             }
 
             error_reporting(0);
-            $connection = imap_open($host, stripslashes($username), stripslashes($password), OP_HALFOPEN);
+            $connection = imap_open($host, $username, $password, OP_HALFOPEN);
             error_reporting($CFG->debug);
 
             if ($connection) {

@@ -145,7 +145,7 @@ class auth_plugin_db extends auth_plugin_base {
      * Reads any other information for a user from external database,
      * then returns it in an array
      *
-     * @param string $username (with system magic quotes)
+     * @param string $username
      *
      * @return array without magic quotes
      */
@@ -154,7 +154,7 @@ class auth_plugin_db extends auth_plugin_base {
         global $CFG;
 
         $textlib = textlib_get_instance();
-        $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->extencoding);
+        $extusername = $textlib->convert($username, 'utf-8', $this->config->extencoding);
 
         $authdb = $this->db_init();
 

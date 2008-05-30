@@ -2889,10 +2889,11 @@ function update_user_record($username, $authplugin) {
     return get_complete_user_data('username', $username);
 }
 
+/**
+ * will truncate userinfo as it comes from auth_get_userinfo (from external auth) 
+ * which may have large fields
+ */
 function truncate_userinfo($info) {
-/// will truncate userinfo as it comes from auth_get_userinfo (from external auth)
-/// which may have large fields
-
     // define the limits
     $limit = array(
                     'username'    => 100,

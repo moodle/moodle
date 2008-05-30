@@ -35,8 +35,8 @@ class auth_plugin_nntp extends auth_plugin_base {
      * Returns true if the username and password work and false if they are
      * wrong or don't exist.
      *
-     * @param string $username The username (with system magic quotes)
-     * @param string $password The password (with system magic quotes)
+     * @param string $username The username
+     * @param string $password The password
      * @return bool Authentication success or failure.
      */
     function user_login ($username, $password) {
@@ -53,7 +53,7 @@ class auth_plugin_nntp extends auth_plugin_base {
             $host = '{' . trim($host) . ':' . $this->config->port . '/nntp}';
 
             error_reporting(0);
-            $connection = imap_open($host, stripslashes($username), stripslashes($password), OP_HALFOPEN);
+            $connection = imap_open($host, $username, $password, OP_HALFOPEN);
             error_reporting($CFG->debug);
 
             if ($connection) {
