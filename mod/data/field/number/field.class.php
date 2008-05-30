@@ -23,7 +23,6 @@
 ///////////////////////////////////////////////////////////////////////////
 
 class data_field_number extends data_field_base {
-
     var $type = 'number';
 
     function data_field_number($field=0, $data=0) {
@@ -54,9 +53,14 @@ class data_field_number extends data_field_base {
                 return false;
             }
             $number = $content->content;
-            $decimals = intval($this->field->param1);
-            if (isset($decimals) && is_int($decimals) && $decimals >= 0) {
-                $str = number_format($number, $decimals, '.', '');
+            $decimals = trim($this->field->param1);
+            // only apply number formatting if param1 contains an integer number >= 0:
+            if (preg_match("/^\d+$/", $decimals)) {
+                $decimals = $decimals * 1;
+                // removes leading zeros (eg. '007' -> '7'; '00' -> '0')
+                $str = format_float($number, $decimals, true);
+                // For debugging only:
+#                $str .= " ($decimals)";
             } else {
                 $str = $number;
             }
@@ -66,7 +70,7 @@ class data_field_number extends data_field_base {
     }
 
     function display_search_field($value = '') {
-        return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';   
+        return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';
     }
 
     function parse_search_field() {
@@ -75,17 +79,20 @@ class data_field_number extends data_field_base {
     
     // need to cast?
     function generate_sql($tablealias, $value) {
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') "; 
+        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') ";
     }
-    
+
     function get_sort_sql($fieldname) {
         global $CFG;
         switch ($CFG->dbfamily) {
-            case 'mysql':   // string in an arithmetic operation is converted to a floating-point number
+            case 'mysql':
+                // string in an arithmetic operation is converted to a floating-point number
                 return '('.$fieldname.'+0.0)';
-            case 'postgres': // cast for PG
+            case 'postgres':
+                // cast for PG
                 return 'CAST('.$fieldname.' AS REAL)';
-            default: // the rest, just the field name. TODO: Analyse behaviour under MSSQL and Oracle
+            default:
+                // the rest, just the field name. TODO: Analyse behaviour under MSSQL and Oracle
                 return $fieldname;
         }
     }
