@@ -7,7 +7,7 @@
     require_once($CFG->libdir.'/tablelib.php');
 
     $filterfull = required_param('filter', PARAM_PATH);
-    $forcereset  = optional_param('reset', 0, PARAM_BOOL);
+    $forcereset = optional_param('reset', 0, PARAM_BOOL);
 
     $filtername =  substr($filterfull, strpos( $filterfull, '/' )+1 ) ;
 
@@ -17,17 +17,17 @@
 
 
     // get translated strings for use on page
-    $txt = new Object;
-    $txt->managefilters = get_string( 'managefilters' );
+    $txt = new object();
+    $txt->managefilters  = get_string( 'managefilters' );
     $txt->administration = get_string( 'administration' );
-    $txt->configuration = get_string( 'configuration' );
+    $txt->configuration  = get_string( 'configuration' );
 
     //======================
     // Process Actions
     //======================
 
     // if reset pressed let filter config page handle it
-    if ($config = data_submitted() and !$forcereset) {
+    if ($config = data_submitted(false) and !$forcereset) {
 
         // check session key
         if (!confirm_sesskey()) {
@@ -48,7 +48,7 @@
             // run through submitted data
             // reject if does not start with filter_
             foreach ($config as $name => $value) {
-                set_config($name, stripslashes($value));
+                set_config($name, $value);
             }
         }
 

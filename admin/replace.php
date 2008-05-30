@@ -10,6 +10,9 @@ admin_externalpage_setup('replace');
 $search  = optional_param('search', '', PARAM_RAW);
 $replace = optional_param('replace', '', PARAM_RAW);
 
+$search  = stripslashes($search); // TODO: remove soon
+$replace = stripslashes($replace); // TODO: remove soon
+
 ###################################################################
 admin_externalpage_print_header();
 
@@ -34,7 +37,7 @@ if (!data_submitted() or !$search or !$replace or !confirm_sesskey()) {   /// Pr
 
 print_simple_box_start('center');
 
-if (!db_replace(stripslashes($search), stripslashes($replace))) {
+if (!db_replace($search, $replace)) {
     print_error('erroroccur', debug);
 }
 

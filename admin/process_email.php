@@ -9,6 +9,7 @@ $address = $tmp[0];
 
 // BOUNCE EMAILS TO NOREPLY
 if ($_ENV['RECIPIENT'] == $CFG->noreplyaddress) {
+    $user = new pbject();
     $user->email = $_ENV['SENDER'];
 
     if (!validate_email($user->email)) {
@@ -53,7 +54,7 @@ if ($modid == '0') { // special
     $modname = 'moodle';
 }
 else {
-    $modname = get_field("modules","name","id",$modid);
+    $modname = $DB->get_field("modules", "name", array("id"=>$modid));
     include_once('mod/'.$modname.'/lib.php');
 }
 $function = $modname.'_process_email';

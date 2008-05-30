@@ -275,8 +275,8 @@ class problem_000004 extends problem_base {
         return 'cron.php is not set up to run automatically';
     }
     function exists() {
-        global $CFG;
-        $lastcron = get_field_sql('SELECT max(lastcron) FROM '.$CFG->prefix.'modules');
+        global $DB;
+        $lastcron = $DB->get_field_sql('SELECT max(lastcron) FROM {modules}');
         return (time() - $lastcron > 3600 * 24);
     }
     function severity() {

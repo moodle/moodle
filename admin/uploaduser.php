@@ -76,7 +76,7 @@ $STD_FIELDS = array('id', 'firstname', 'lastname', 'username', 'email',
 
 $PRF_FIELDS = array();
 
-if ($prof_fields = get_records('user_info_field')) {
+if ($prof_fields = $DB->get_records('user_info_field')) {
     foreach ($prof_fields as $prof_field) {
         $PRF_FIELDS[] = 'profile_field_'.$prof_field->shortname;
     }
@@ -264,7 +264,7 @@ if ($formdata = $mform->is_cancelled()) {
             continue;
         }
 
-        if ($existinguser = get_record('user', 'username', addslashes($user->username), 'mnethostid', $user->mnethostid)) {
+        if ($existinguser = $DB->get_record('user', array('username'=>$user->username, 'mnethostid'=>$user->mnethostid))) {
             $upt->track('id', $existinguser->id, 'normal', false);
         }
 
@@ -342,14 +342,14 @@ if ($formdata = $mform->is_cancelled()) {
                 continue;
             }
 
-            if ($olduser = get_record('user', 'username', addslashes($oldusername), 'mnethostid', addslashes($user->mnethostid))) {
+            if ($olduser = $DB->get_record('user', array('username'=>$oldusername, 'mnethostid'=>$user->mnethostid))) {
                 $upt->track('id', $olduser->id, 'normal', false);
                 if (has_capability('moodle/site:doanything', $systemcontext, $olduser->id)) {
                     $upt->track('status', $strusernotrenamedadmin, 'error');
                     $renameerrors++;
                     continue;
                 }
-                if (set_field('user', 'username', addslashes($user->username), 'id', $olduser->id)) {
+                if ($DB->set_field('user', 'username', $user->username, array('id'=>$olduser->id))) {
                     $upt->track('username', '', 'normal', false); // clear previous
                     $upt->track('username', $oldusername.'-->'.$user->username, 'info');
                     $upt->track('status', $struserrenamed);
@@ -444,7 +444,7 @@ if ($formdata = $mform->is_cancelled()) {
                         }
                         if ($existinguser->$column !== $user->$column) {
                             if ($column == 'email') {
-                                if (record_exists('user', 'email', addslashes($user->email))) {
+                                if ($DB->record_exists('user', array('email'=>$user->email))) {
                                     if ($noemailduplicates) {
                                         $upt->track('email', $stremailduplicate, 'error');
                                         $upt->track('status', $strusernotupdated, 'error');
@@ -474,7 +474,7 @@ if ($formdata = $mform->is_cancelled()) {
                     $upt->track('auth', $struserauthunsupported, 'warning');
                 }
 
-                if (update_record('user', addslashes_recursive($existinguser))) {
+                if ($DB->update_record('user', $existinguser)) {
                     $upt->track('status', $struserupdated);
                     $usersupdated++;
                 } else {
@@ -516,7 +516,7 @@ if ($formdata = $mform->is_cancelled()) {
                 }
             }
 
-            if (record_exists('user', 'email', addslashes($user->email))) {
+            if ($DB->record_exists('user', array('email'=>$user->email))) {
                 if ($noemailduplicates) {
                     $upt->track('email', $stremailduplicate, 'error');
                     $upt->track('status', $strusernotaddederror, 'error');
@@ -527,7 +527,7 @@ if ($formdata = $mform->is_cancelled()) {
                 }
             }
 
-            if ($user->id = insert_record('user', addslashes_recursive($user))) {
+            if ($user->id = $DB->insert_record('user', $user)) {
                 $info = ': ' . $user->username .' (ID = ' . $user->id . ')';
                 $upt->track('status', $struseradded);
                 $upt->track('id', $user->id, 'normal', false);
@@ -566,7 +566,7 @@ if ($formdata = $mform->is_cancelled()) {
 
             $shortname = $user->{'course'.$i};
             if (!array_key_exists($shortname, $ccache)) {
-                if (!$course = get_record('course', 'shortname', addslashes($shortname), '', '', '', '', 'id, shortname, defaultrole')) {
+                if (!$course = $DB->get_record('course', array('shortname'=>$shortname), 'id, shortname, defaultrole')) {
                     $upt->track('enrolments', get_string('unknowncourse', 'error', $shortname), 'error');
                     continue;
                 }
@@ -883,13 +883,15 @@ function validate_user_upload_columns(&$columns) {
  * @return incremented username which does not exist yet
  */
 function increment_username($username, $mnethostid) {
+    global $DB;
+
     if (!preg_match_all('/(.*?)([0-9]+)$/', $username, $matches)) {
         $username = $username.'2';
     } else {
         $username = $matches[1][0].($matches[2][0]+1);
     }
 
-    if (record_exists('user', 'username', addslashes($username), 'mnethostid', addslashes($mnethostid))) {
+    if ($DB->record_exists('user', array('username'=>$username, 'mnethostid'=>$mnethostid))) {
         return increment_username($username, $mnethostid);
     } else {
         return $username;

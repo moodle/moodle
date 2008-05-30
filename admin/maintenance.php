@@ -15,14 +15,14 @@
 
     $filename = $CFG->dataroot.'/'.SITEID.'/maintenance.html';
 
-    if ($form = data_submitted()) {
+    if ($form = data_submitted(false)) {
         if (confirm_sesskey()) {
             if ($form->action == "disable") {
                 unlink($filename);
                 redirect('maintenance.php', get_string('sitemaintenanceoff','admin'));
             } else {
                 $file = fopen($filename, 'w');
-                fwrite($file, stripslashes($form->text));
+                fwrite($file, $form->text);
                 fclose($file);
                 redirect('maintenance.php', get_string('sitemaintenanceon', 'admin'));
             }

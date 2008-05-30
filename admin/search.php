@@ -5,7 +5,9 @@
 require_once('../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$query = trim(stripslashes(optional_param('query', '', PARAM_NOTAGS)));  // Search string
+$query = trim(optional_param('query', '', PARAM_NOTAGS));  // Search string
+
+$query = stripslashes($query); // TODO: remove soon
 
 $adminroot =& admin_get_root(); // need all settings here
 $adminroot->search = $query; // So we can reference it in search boxes later in this invocation
@@ -16,7 +18,7 @@ $focus = '';
 admin_externalpage_setup('search'); // now hidden page
 
 // now we'll deal with the case that the admin has submitted the form with changed settings
-if ($data = data_submitted() and confirm_sesskey()) {
+if ($data = data_submitted(false) and confirm_sesskey()) {
     if (admin_write_settings($data)) {
         $statusmsg = get_string('changessaved');
     }

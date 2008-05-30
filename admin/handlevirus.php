@@ -38,8 +38,8 @@ while(!feof($fd)) {
     $action = clam_handle_infected_file($file,$log->userid,true);
     clam_replace_infected_file($file);
     
-    $user = get_record("user","id",$log->userid);
-    $course = get_record("course","id",$log->course);
+    $user = $DB->get_record("user", array("id"=>$log->userid));
+    $course = $DB->get_record("course", array("id"=>$log->course));
     $subject = get_string('virusfoundsubject','moodle',format_string($site->fullname));
     $a->date = userdate($log->time);
 

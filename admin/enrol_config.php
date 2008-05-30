@@ -17,9 +17,9 @@
 
 /// If data submitted, then process and store.
 
-    if ($frm = data_submitted()) {
+    if ($frm = data_submitted(false)) {
         if (!confirm_sesskey()) {
-            error(get_string('confirmsesskeybad', 'error'));
+            print_error('confirmsesskeybad', 'error');
         }
         if ($enrolment->process_config($frm)) {
             redirect("enrol.php?sesskey=$USER->sesskey", get_string("changessaved"), 1);

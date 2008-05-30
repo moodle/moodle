@@ -49,7 +49,7 @@ foreach ($tables as $table) {
     }
     $fulltable = $DB->get_prefix().$table;
     if ($columns = $DB->get_columns($table)) {
-        if (!array_key_exists('id', $columns) and !array_key_exists('ID', $columns)) {
+        if (!array_key_exists('id', $columns)) {
             continue; // moodle tables have id
         }
         foreach ($columns as $column => $data) {
