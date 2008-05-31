@@ -116,10 +116,11 @@ class auth_plugin_email extends auth_plugin_base {
     /**
      * Confirm the new user as registered.
      *
-     * @param string $username (with system magic quotes)
-     * @param string $confirmsecret (with system magic quotes)
+     * @param string $username
+     * @param string $confirmsecret
      */
     function user_confirm($username, $confirmsecret) {
+        global $DB;
         $user = get_complete_user_data('username', $username);
 
         if (!empty($user)) {
@@ -129,11 +130,11 @@ class auth_plugin_email extends auth_plugin_base {
             } else if ($user->auth != 'email') {
                 return AUTH_CONFIRM_ERROR;
 
-            } else if ($user->secret == stripslashes($confirmsecret)) {   // They have provided the secret key to get in
-                if (!set_field("user", "confirmed", 1, "id", $user->id)) {
+            } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
+                if (!$DB->set_field("user", "confirmed", 1, array("id"=>$user->id))) {
                     return AUTH_CONFIRM_FAIL;
                 }
-                if (!set_field("user", "firstaccess", time(), "id", $user->id)) {
+                if (!$DB->set_field("user", "firstaccess", time(), array("id"=>$user->id))) {
                     return AUTH_CONFIRM_FAIL;
                 }
                 return AUTH_CONFIRM_OK;

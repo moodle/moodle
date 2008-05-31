@@ -304,7 +304,7 @@
              * get_users_by_capability() because                                    *
              * 1) get_users_by_capability() does not deal with searching by name    *
              * 2) exceptions array can be potentially large for large courses       *
-             * 3) get_recordset_sql() is more efficient                             *
+             * 3) $DB->get_recordset_sql() is more efficient                        *
              *                                                                      *
              ************************************************************************/
 

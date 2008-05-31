@@ -62,7 +62,7 @@ admin_externalpage_print_header();
 print_heading_with_help($struploadpictures, 'uploadpictures');
 
 $mform = new admin_uploadpicture_form();
-if ($formdata = $mform->get_data()) {
+if ($formdata = $mform->get_data(false)) {
     if (!array_key_exists($userfield, $userfields)) {
         notify(get_string('uploadpicture_baduserfield','admin'));
     } else {
@@ -115,8 +115,7 @@ if ($formdata = $mform->get_data()) {
                                                 strlen($basename) -
                                                 strlen($extension) - 1);
                             // userfield names are safe, so don't quote them.
-                            if (!($user = get_record('user', $userfields[$userfield],
-                                                     addslashes($uservalue)))) {
+                            if (!($user = $DB->get_record('user', array($userfields[$userfield], $uservalue)))) {
                                 $userserrors++;
                                 $a = new Object();
                                 $a->userfield = clean_param($userfields[$userfield], PARAM_CLEANHTML);
@@ -124,7 +123,7 @@ if ($formdata = $mform->get_data()) {
                                 notify(get_string('uploadpicture_usernotfound', 'admin', $a));
                                 continue;
                             }
-                            $haspicture = get_field('user', 'picture', 'id', $user->id);
+                            $haspicture = $DB->get_field('user', 'picture', array('id'=>$user->id));
                             if ($haspicture && !$overwritepicture) {
                                 notify(get_string('uploadpicture_userskipped', 'admin', $user->username));
                                 continue;

@@ -215,8 +215,8 @@ class auth_plugin_base {
     /**
      * Confirm the new user as registered.
      *
-     * @param string $username (with system magic quotes)
-     * @param string $confirmsecret (with system magic quotes)
+     * @param string $username
+     * @param string $confirmsecret
      */
     function user_confirm($username, $confirmsecret) {
         //override when can confirm

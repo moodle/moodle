@@ -8,7 +8,7 @@
     $courseid  = optional_param('courseid', 0, PARAM_INT); // needed for user tabs
     $cancel    = optional_param('cancel', 0, PARAM_BOOL);
 
-    if (!$context = get_record('context', 'id', $contextid)) {
+    if (!$context = $DB->get_record('context', array('id'=>$contextid))) {
         print_error('wrongcontextid', 'error');
     }
 

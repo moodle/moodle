@@ -39,13 +39,13 @@
     admin_externalpage_print_header();
 
     if ($confirmuser and confirm_sesskey()) {
-        if (!$user = get_record('user', 'id', $confirmuser)) {
+        if (!$user = $DB->get_record('user', array('id'=>$confirmuser))) {
             print_error('nousers');
         }
 
         $auth = get_auth_plugin($user->auth);
 
-        $result = $auth->user_confirm(addslashes($user->username), addslashes($user->secret));
+        $result = $auth->user_confirm($user->username, $user->secret);
 
         if ($result == AUTH_CONFIRM_OK or $result == AUTH_CONFIRM_ALREADY) {
             notify(get_string('userconfirmed', '', fullname($user, true)) );
@@ -59,7 +59,7 @@
             print_error('nopermissions', 'error', '', 'delete a user');
         }
 
-        if (!$user = get_record('user', 'id', $delete)) {
+        if (!$user = $DB->get_record('user', array('id'=>$delete))) {
             print_error('nousers', 'error');
         }
 
@@ -86,7 +86,7 @@
             // TODO: this should be under a separate capability
             print_error('nopermissions', 'error', '', 'modify the NMET access control list');
         }
-        if (!$user = get_record('user', 'id', $acl)) {
+        if (!$user = $DB->get_record('user', array('id'=>$acl))) {
             print_error('nousers', 'error');
         }
         if (!is_mnet_remote_user($user)) {
@@ -96,22 +96,22 @@
         if ($accessctrl != 'allow' and $accessctrl != 'deny') {
             print_error('invalidaccessparameter', 'error');
         }
-        $aclrecord = get_record('mnet_sso_access_control', 'username', $user->username, 'mnet_host_id', $user->mnethostid);
+        $aclrecord = $DB->get_record('mnet_sso_access_control', array('username'=>$user->username, 'mnet_host_id'=>$user->mnethostid));
         if (empty($aclrecord)) {
             $aclrecord = new object();
             $aclrecord->mnet_host_id = $user->mnethostid;
             $aclrecord->username = $user->username;
             $aclrecord->accessctrl = $accessctrl;
-            if (!insert_record('mnet_sso_access_control', $aclrecord)) {
+            if (!$DB->insert_record('mnet_sso_access_control', $aclrecord)) {
                 print_error('dbnotinsert', 'debug', '', 'the MNET access control list');
             }
         } else {
             $aclrecord->accessctrl = $accessctrl;
-            if (!update_record('mnet_sso_access_control', $aclrecord)) {
+            if (!$DB->update_record('mnet_sso_access_control', $aclrecord)) {
                 print_error('dbnotupdate', 'debug', '', 'the MNET access control list');
             }
         }
-        $mnethosts = get_records('mnet_host', '', '', 'id', 'id,wwwroot,name');
+        $mnethosts = $DB->get_records('mnet_host', null, 'id', 'id,wwwroot,name');
         notify("MNET access control list updated: username '$user->username' from host '"
                 . $mnethosts[$user->mnethostid]->name
                 . "' access now set to '$accessctrl'.");
@@ -181,7 +181,7 @@
 
         $countries = get_list_of_countries();
         if (empty($mnethosts)) {
-            $mnethosts = get_records('mnet_host', '', '', 'id', 'id,wwwroot,name');
+            $mnethosts = $DB->get_records('mnet_host', null, 'id', 'id,wwwroot,name');
         }
 
         foreach ($users as $key => $user) {
@@ -239,7 +239,7 @@
             // for remote users, shuffle columns around and display MNET stuff
             if (is_mnet_remote_user($user)) {
                 $accessctrl = 'allow';
-                if ($acl = get_record('mnet_sso_access_control', 'username', $user->username, 'mnet_host_id', $user->mnethostid)) {
+                if ($acl = $DF->get_record('mnet_sso_access_control', array('username'=>$user->username, 'mnet_host_id'=>$user->mnethostid))) {
                     $accessctrl = $acl->accessctrl;
                 }
                 $changeaccessto = ($accessctrl == 'deny' ? 'allow' : 'deny');

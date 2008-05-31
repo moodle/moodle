@@ -433,8 +433,8 @@ class auth_plugin_ldap extends auth_plugin_base {
     /**
      * Confirm the new user as registered.
      *
-     * @param string $username (with system magic quotes)
-     * @param string $confirmsecret (with system magic quotes)
+     * @param string $username
+     * @param string $confirmsecret
      */
     function user_confirm($username, $confirmsecret) {
         $user = get_complete_user_data('username', $username);
@@ -446,7 +446,7 @@ class auth_plugin_ldap extends auth_plugin_base {
             } else if ($user->auth != 'ldap') {
                 return AUTH_CONFIRM_ERROR;
 
-            } else if ($user->secret == stripslashes($confirmsecret)) {   // They have provided the secret key to get in
+            } else if ($user->secret == $confirmsecret) {   // They have provided the secret key to get in
                 if (!$this->user_activate($username)) {
                     return AUTH_CONFIRM_FAIL;
                 }

@@ -33,43 +33,42 @@
 /// If data submitted, then process and store.
 
     if (!empty($hide) and confirm_sesskey()) {
-        if (!$module = get_record("modules", "name", $hide)) {
+        if (!$module = $DB->get_record("modules", array("name"=>$hide))) {
             print_error('moduledoesnotexist', 'error');
         }
-        set_field("modules", "visible", "0", "id", $module->id); // Hide main module
+        $DB->set_field("modules", "visible", "0", array("id"=>$module->id)); // Hide main module
         // Remember the visibility status in visibleold
         // and hide...
-        $sql = "UPDATE {$CFG->prefix}course_modules
-                SET visibleold=visible,
-                    visible=0
-                WHERE  module={$module->id}";
-        execute_sql($sql, false);
+        $sql = "UPDATE {course_modules}
+                   SET visibleold=visible, visible=0
+                 WHERE module=?";
+        $DB->execute($sql, array($module->id));
         // clear the course modinfo cache for courses
         // where we just deleted something
-        $sql = "UPDATE {$CFG->prefix}course
-                SET modinfo=''
-                WHERE id IN (SELECT DISTINCT course
-                             FROM {$CFG->prefix}course_modules
-                             WHERE visibleold=1 AND module={$module->id})";
-        execute_sql($sql, false);
+        $sql = "UPDATE {course}
+                   SET modinfo=''
+                 WHERE id IN (SELECT DISTINCT course
+                                FROM {course_modules}
+                               WHERE visibleold=1 AND module=?)";
+        $DB->execute($sql, array($module->id));
         admin_get_root(true, false);  // settings not required - only pages
     }
 
     if (!empty($show) and confirm_sesskey()) {
-        if (!$module = get_record("modules", "name", $show)) {
+        if (!$module = $DB->get_record("modules", array("name"=>$show))) {
             print_error('moduledoesnotexist', 'error');
         }
-        set_field("modules", "visible", "1", "id", $module->id); // Show main module
-        set_field('course_modules', 'visible', '1', 'visibleold',
-                  '1', 'module', $module->id); // Get the previous saved visible state for the course module.
+        $DB->set_field("modules", "visible", "1", array("id"=>$module->id)); // Show main module
+        $DB->set_field('course_modules', 'visible', '1', 'visibleold',
+                  '1', array('module'=>$module->id)); // Get the previous saved visible state for the course module.
         // clear the course modinfo cache for courses
         // where we just made something visible
-        $sql = "UPDATE {$CFG->prefix}course
-                SET modinfo=''
-                WHERE id IN (SELECT DISTINCT course
-                             FROM {$CFG->prefix}course_modules
-                             WHERE visible=1 AND module={$module->id})";
-        execute_sql($sql, false);
+        $sql = "UPDATE {course}
+                   SET modinfo = ''
+                 WHERE id IN (SELECT DISTINCT course
+                                FROM {course_modules}
+                               WHERE visible=1 AND module=?)";
+        $DB->execute($sql, array($module->id));
         admin_get_root(true, false);  // settings not required - only pages
     }
 
@@ -92,12 +91,12 @@
                 print_error("cannotdeleteforummudule", 'forum');
             }
 
-            if (!$module = get_record("modules", "name", $delete)) {
+            if (!$module = $DB->get_record("modules", array("name"=>$delete))) {
                 print_error('moduledoesnotexist', 'error');
             }
 
             // OK, first delete all the relevant instances from all course sections
-            if ($coursemods = get_records("course_modules", "module", $module->id)) {
+            if ($coursemods = $DB->get_records("course_modules", array("module"=>$module->id))) {
                 foreach ($coursemods as $coursemod) {
                     if (! delete_mod_from_section($coursemod->id, $coursemod->section)) {
                         notify("Could not delete the $strmodulename with id = $coursemod->id from section $coursemod->section");
@@ -106,41 +105,41 @@
             }
 
             // delete calendar events
-            if (!delete_records("event", "modulename", $delete)) {
+            if (!$DB->delete_records("event", array("modulename"=>$delete))) {
                 notify("Error occurred while deleting all $strmodulename records in calendar event table");
             }
 
             // clear course.modinfo for courses
             // that used this module...
-            $sql = "UPDATE {$CFG->prefix}course
-                    SET modinfo=''
-                    WHERE id IN (SELECT DISTINCT course
-                                 FROM {$CFG->prefix}course_modules
-                                 WHERE module={$module->id})";
-            execute_sql($sql, false);
+            $sql = "UPDATE {course}
+                       SET modinfo=''
+                     WHERE id IN (SELECT DISTINCT course
+                                    FROM {course_modules}
+                                   WHERE module=?)";
+            $DB->execute_sql($sql, array($module->id));
 
             // Now delete all the course module records
-            if (!delete_records("course_modules", "module", $module->id)) {
+            if (!$DB->delete_records("course_modules", array("module"=>$module->id))) {
                 notify("Error occurred while deleting all $strmodulename records in course_modules table");
             }
 
             // Then delete all the logs
-            if (!delete_records("log", "module", $module->name)) {
+            if (!$DB->delete_records("log", array("module"=>$module->name))) {
                 notify("Error occurred while deleting all $strmodulename records in log table");
             }
 
             // And log_display information
-            if (!delete_records("log_display", "module", $module->name)) {
+            if (!$DB->delete_records("log_display", array("module"=>$module->name))) {
                 notify("Error occurred while deleting all $strmodulename records in log_display table");
             }
 
             // And the module entry itself
-            if (!delete_records("modules", "name", $module->name)) {
+            if (!$DB->delete_records("modules", array("name"=>$module->name))) {
                 notify("Error occurred while deleting the $strmodulename record from modules table");
             }
 
             // And the module configuration records
-            if (!execute_sql("DELETE FROM {$CFG->prefix}config WHERE name LIKE '{$module->name}_%'")) {
+            if (!$DB->execute("DELETE FROM {config} WHERE name LIKE ?", array("{$module->name}_%"))) {
                 notify("Error occurred while deleting the $strmodulename records from the config table");
             }
 
@@ -179,7 +178,7 @@
 
 /// Get and sort the existing modules
 
-    if (!$modules = get_records("modules")) {
+    if (!$modules = $DB->get_records("modules")) {
         print_error('moduledoesnotexist', 'error');
     }
 
@@ -218,7 +217,7 @@
             $settings = "";
         }
 
-        $count = count_records_select("$module->name",'course<>0');
+        $count = $DB->count_records_select($module->name, "course<>0");
         if ($count>0) {
             $countlink = "<a href=\"{$CFG->wwwroot}/course/search.php?modulelist=$module->name" .
                 "&amp;sesskey={$USER->sesskey}\" title=\"$strshowmodulecourse\">$count</a>";

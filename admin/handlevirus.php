@@ -29,7 +29,7 @@ while(!feof($fd)) {
     $bits = explode('/',$file);
     $a->filename = $bits[count($bits)-1];
 
-    if (!$log = get_record("log","module","upload","info",$file,"action","upload")) {
+    if (!$log = $DB->get_record("log", array("module"=>"upload", "info"=>$file, "action"=>"upload"))) {
         $a->action = clam_handle_infected_file($file,0,false);
         clam_replace_infected_file($file);
         notify_admins_unknown($file,$a);
