@@ -300,6 +300,10 @@ $string['phpversionhelp'] = '<p>Moodle erwartet PHP mindestens in der Version 4.
 <p>Sie müssen Ihre PHP-Verson aktualisieren oder auf einen Rechner wechseln, der eine neuere Version von PHP nutzt.<br />
 (Im Falle von 5.0.x könnten Sie auch zu einer Version 4.3.x/4.4.x downgraden)</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
+$string['prefixcannotbeempty'] = '<p>Fehler: Datenbanktabellen-Prefix kann nicht leer sein.(§a)</p>
+<p>Der Administrator muss dieses Problem beseitigen.</p>';
+$string['prefixtoolong'] = '<p>Fehler: Datenbanktabellen-Prefix ist zu lang ($a->dbfamily)</p>
+<p>Der Administrator muß dieses Problem anpassen. Tabellen -Prefixes in $a->dbfamily ist max. $a->maxlength Zeichen lang.</p>';
 $string['previous'] = 'Frühere';
 $string['qtyperqpwillberemoved'] = 'Während des Updates wird der Fragentyp RQP entfernt. Da Sie diesen Fragentyp nicht benutzen, sollten Sie keinerlei Probleme bekommen.';
 $string['qtyperqpwillberemovedanyway'] = 'Während des Updates wird der Fragentyp RQP entfernt. Sie haben einige RQP Fragen in Ihrer Datenbank, die nicht mehr funktionieren werden, falls Sie nicht den dafür notwendigen Code vor der Fortsetzung dieses Updates installieren. http://moodle.org/mod/data/view.php?d=13&amp;rid=797';
