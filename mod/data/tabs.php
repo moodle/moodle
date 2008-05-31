@@ -21,8 +21,9 @@
 //          http://www.gnu.org/copyleft/gpl.html                         //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
-/// This file to be included so we can assume config.php has already been included.
-/// We also assume that $user, $course, $currenttab have been set
+
+// This file to be included so we can assume config.php has already been included.
+// We also assume that $user, $course, $currenttab have been set
 
 
     if (empty($currenttab) or empty($data) or empty($course)) {
@@ -69,6 +70,8 @@
                          get_string('fields','data'));
             $row[] = new tabobject('presets', $CFG->wwwroot.'/mod/data/preset.php?d='.$data->id,
                          get_string('presets', 'data'));
+            $row[] = new tabobject('export', $CFG->wwwroot.'/mod/data/export.php?d='.$data->id,
+                         get_string('export', 'data'));
         }
     }
 
@@ -95,7 +98,7 @@
         $activetwo = array('templates');
     }
 
-/// Print out the tabs and continue!
+// Print out the tabs and continue!
     print_tabs($tabs, $currenttab, $inactive, $activetwo);
 
 ?>

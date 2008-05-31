@@ -22,7 +22,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-/// Some constants
+// Some constants
 define ('DATA_MAX_ENTRIES', 50);
 define ('DATA_PERPAGE_SINGLE', 1);
 
@@ -42,7 +42,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
     var $iconheight = 16;   /// Width of the icon for this fieldtype
 
 
-/// Constructor function
+// Constructor function
     function data_field_base($field=0, $data=0) {   // Field or data or both, each can be id or object
 
         if (empty($field) && empty($data)) {
@@ -80,7 +80,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
     }
 
 
-/// This field just sets up a default field object
+// This field just sets up a default field object
     function define_default_field() {
         if (empty($this->data->id)) {
             notify('Programmer error: dataid not defined in field class');
@@ -98,7 +98,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         return true;
     }
 
-/// Set up the field object according to data in an object.  Now is the time to clean it!
+// Set up the field object according to data in an object.  Now is the time to clean it!
     function define_field($data) {
         $this->field->type        = $this->type;
         $this->field->dataid      = $this->data->id;
@@ -125,8 +125,8 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         return true;
     }
 
-/// Insert a new field in the database
-/// We assume the field object is already defined as $this->field
+// Insert a new field in the database
+// We assume the field object is already defined as $this->field
     function insert_field() {
         if (empty($this->field)) {
             notify('Programmer error: Field has not been defined yet!  See define_field()');
@@ -141,7 +141,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
     }
 
 
-/// Update a field in the database
+// Update a field in the database
     function update_field() {
         if (!update_record('data_fields', $this->field)) {
             notify('updating of new field failed!');
@@ -150,7 +150,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         return true;
     }
 
-/// Delete a field completely
+// Delete a field completely
     function delete_field() {
         if (!empty($this->field->id)) {
             delete_records('data_fields', 'id', $this->field->id);
@@ -159,7 +159,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         return true;
     }
 
-/// Print the relevant form element in the ADD template for this field
+// Print the relevant form element in the ADD template for this field
     function display_add_field($recordid=0){
         if ($recordid){
             $content = get_field('data_content', 'content', 'fieldid', $this->field->id, 'recordid', $recordid);
@@ -174,8 +174,8 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         return $str;
     }
 
-/// Print the relevant form element to define the attributes for this field
-/// viewable by teachers only.
+// Print the relevant form element to define the attributes for this field
+// viewable by teachers only.
     function display_edit_field() {
         global $CFG;
 
@@ -211,7 +211,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         print_simple_box_end();
     }
 
-/// Display the content of the field in browse mode
+// Display the content of the field in browse mode
     function display_browse_field($recordid, $template) {
         if ($content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
             if (isset($content->content)) {
@@ -231,7 +231,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         return false;
     }
 
-/// Update the content of one data field in the data_content table
+// Update the content of one data field in the data_content table
     function update_content($recordid, $value, $name=''){
         $content = new object();
         $content->fieldid = $this->field->id;
@@ -246,7 +246,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         }
     }
 
-/// Delete all content associated with the field
+// Delete all content associated with the field
     function delete_content($recordid=0) {
 
         $this->delete_content_files($recordid);
@@ -258,7 +258,7 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         }
     }
 
-/// Deletes any files associated with this field
+// Deletes any files associated with this field
     function delete_content_files($recordid='') {
         global $CFG;
 
@@ -273,37 +273,37 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
     }
 
 
-/// Check if a field from an add form is empty
+// Check if a field from an add form is empty
     function notemptyfield($value, $name) {
         return !empty($value);
     }
 
-/// Just in case a field needs to print something before the whole form
+// Just in case a field needs to print something before the whole form
     function print_before_form() {
     }
 
-/// Just in case a field needs to print something after the whole form
+// Just in case a field needs to print something after the whole form
     function print_after_form() {
     }
 
 
-/// Returns the sortable field for the content. By default, it's just content
-/// but for some plugins, it could be content 1 - content4
+// Returns the sortable field for the content. By default, it's just content
+// but for some plugins, it could be content 1 - content4
     function get_sort_field() {
         return 'content';
     }
 
-/// Returns the SQL needed to refer to the column.  Some fields may need to CAST() etc.
+// Returns the SQL needed to refer to the column.  Some fields may need to CAST() etc.
     function get_sort_sql($fieldname) {
         return $fieldname;
     }
 
-/// Returns the name/type of the field
-    function name(){
+// Returns the name/type of the field
+    function name() {
         return get_string('name'.$this->type, 'data');
     }
 
-/// Prints the respective type icon
+// Prints the respective type icon
     function image() {
         global $CFG;
 
@@ -313,9 +313,19 @@ class data_field_base {     /// Base class for Database Field Types (see field/*
         return $str;
     }
 
+//  Per default, it is assumed that fields support text exporting. Override this (return false) on fields not supporting text exporting. 
+    function text_export_supported() {
+        return true;
+    }
 
-}  //end of major class data_field_base
+//  Per default, return the record's text value only from the "content" field. Override this in fields class if necesarry. 
+    function export_text_value($record) {
+        if ($this->text_export_supported()) {
+            return $record->content;
+        }
+    }
 
+}
 
 
 /*****************************************************************************
@@ -333,7 +343,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
         return '';
     }
 
-    //get all the fields for that database
+    // get all the fields for that database
     if ($fields = get_records('data_fields', 'dataid', $data->id, 'id')) {
 
         $str = '<div class="defaulttemplate">';
@@ -356,11 +366,11 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             $str .= '</td>';
 
             $str .='<td>';
-            if ($form) {   /// Print forms instead of data
+            if ($form) {   // Print forms instead of data
                 $fieldobj = data_get_field($field, $data);
                 $str .= $fieldobj->display_add_field($recordid);
 
-            } else {           /// Just print the tag
+            } else {           // Just print the tag
                 $str .= '[['.$field->name.']]';
             }
             $str .= '</td></tr>';
@@ -602,10 +612,10 @@ function data_add_record($data, $groupid=0){
  * output bool                                                     *
  *******************************************************************/
 function data_tags_check($dataid, $template){
-    //first get all the possible tags
+    // first get all the possible tags
     $fields = get_records('data_fields','dataid',$dataid);
-    ///then we generate strings to replace
-    $tagsok = true; //let's be optimistic
+    // then we generate strings to replace
+    $tagsok = true; // let's be optimistic
     foreach ($fields as $field){
         $pattern="/\[\[".$field->name."\]\]/i";
         if (preg_match_all($pattern, $template, $dummy)>1){
@@ -613,7 +623,7 @@ function data_tags_check($dataid, $template){
             notify ('[['.$field->name.']] - '.get_string('multipletags','data'));
         }
     }
-    //else return true
+    // else return true
     return $tagsok;
 }
 
@@ -670,7 +680,7 @@ function data_update_instance($data) {
 /************************************************************************
  * deletes an instance of a data                                        *
  ************************************************************************/
-function data_delete_instance($id) {    //takes the dataid
+function data_delete_instance($id) {    // takes the dataid
 
     global $CFG;
 
@@ -678,7 +688,7 @@ function data_delete_instance($id) {    //takes the dataid
         return false;
     }
 
-    /// Delete all the associated information
+    // Delete all the associated information
 
     // get all the records in this data
     $sql = 'SELECT c.* FROM '.$CFG->prefix.'data_records r LEFT JOIN '.
@@ -714,9 +724,7 @@ function data_delete_instance($id) {    //takes the dataid
  * returns a summary of data activity of this user                      *
  ************************************************************************/
 function data_user_outline($course, $user, $mod, $data) {
-
     global $CFG;
-
     if ($countrecords = count_records('data_records', 'dataid', $data->id, 'userid', $user->id)) {
         $result = new object();
         $result->info = get_string('numrecords', 'data', $countrecords);
@@ -727,19 +735,15 @@ function data_user_outline($course, $user, $mod, $data) {
         return $result;
     }
     return NULL;
-
 }
 
 /************************************************************************
  * Prints all the records uploaded by this user                         *
  ************************************************************************/
 function data_user_complete($course, $user, $mod, $data) {
-
     if ($records = get_records_select('data_records', 'dataid = '.$data->id.' AND userid = '.$user->id,
                                                       'timemodified DESC')) {
-
         data_print_template('singletemplate', $records, $data);
-
     }
 }
 
@@ -862,8 +866,8 @@ function data_grade_item_delete($data) {
  * returns a list of participants of this database                      *
  ************************************************************************/
 function data_get_participants($dataid) {
-//Returns the users with data in one data
-//(users with records in data_records, data_comments and data_ratings)
+// Returns the users with data in one data
+// (users with records in data_records, data_comments and data_ratings)
     global $CFG;
 
     $records = get_records_sql("SELECT DISTINCT u.id, u.id
@@ -908,7 +912,7 @@ function data_get_participants($dataid) {
     return $participants;
 }
 
-///junk functions
+// junk functions
 /************************************************************************
  * takes a list of records, the current data, a search string,          *
  * and mode to display prints the translated template                   *
@@ -948,17 +952,17 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 
     foreach ($records as $record) {   /// Might be just one for the single template
 
-    /// Replacing tags
+    // Replacing tags
         $patterns = array();
         $replacement = array();
 
-    /// Then we generate strings to replace for normal tags
+    // Then we generate strings to replace for normal tags
         foreach ($fields as $field) {
             $patterns[]='[['.$field->field->name.']]';
             $replacement[] = highlight($search, $field->display_browse_field($record->id, $template));
         }
 
-    /// Replacing special tags (##Edit##, ##Delete##, ##More##)
+    // Replacing special tags (##Edit##, ##Delete##, ##More##)
         $patterns[]='##edit##';
         $patterns[]='##delete##';
         if (has_capability('mod/data:manageentries', $context) or data_isowner($record->id)) {
@@ -1001,10 +1005,10 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
             $replacement[] = '';
         }
 
-        ///actual replacement of the tags
+        // actual replacement of the tags
         $newtext = str_ireplace($patterns, $replacement, $data->{$template});
 
-        /// no more html formatting and filtering - see MDL-6635
+        // no more html formatting and filtering - see MDL-6635
         if ($return) {
             return $newtext;
         } else {
@@ -1069,7 +1073,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     }
     echo ';" >&nbsp;&nbsp;&nbsp;<label for="pref_search">'.get_string('search').'</label> <input type="text" size="16" name="search" id= "pref_search" value="'.s($search).'" /></div>';
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
-    //foreach field, print the option
+    // foreach field, print the option
     echo '<select name="sort" id="pref_sortby">';
     if ($fields = get_records('data_fields','dataid',$data->id, 'name')) {
         echo '<optgroup label="'.get_string('fields', 'data').'">';
@@ -1196,11 +1200,11 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $isteacher = has_capability('mod/data:managetemplates', $context);
     }
 
-    /// Replacing tags
+    // Replacing tags
     $patterns = array();
     $replacement = array();
 
-    /// Then we generate strings to replace for normal tags
+    // Then we generate strings to replace for normal tags
     foreach ($fields as $field) {
         $fieldname = $field->field->name;
         $fieldname = preg_quote($fieldname, '/');
@@ -1234,9 +1238,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '</div>';
     echo '</div>';
     echo '</form>';
-    echo '</div>'; 
-
-    
+    echo '</div>';
 }
 
 function data_print_ratings($data, $record) {
@@ -1280,8 +1282,8 @@ function data_print_ratings($data, $record) {
 }
 
 function data_print_ratings_mean($recordid, $scale, $link=true) {
-/// Print the multiple ratings on a post given to the current user by others.
-/// Scale is an array of ratings
+// Print the multiple ratings on a post given to the current user by others.
+// Scale is an array of ratings
 
     static $strrate;
 
@@ -1304,9 +1306,9 @@ function data_print_ratings_mean($recordid, $scale, $link=true) {
 
 
 function data_get_ratings_mean($recordid, $scale, $ratings=NULL) {
-/// Return the mean rating of a post given to the current user by others.
-/// Scale is an array of possible ratings in the scale
-/// Ratings is an optional simple array of actual ratings (just integers)
+// Return the mean rating of a post given to the current user by others.
+// Scale is an array of possible ratings in the scale
+// Ratings is an optional simple array of actual ratings (just integers)
 
     if (!$ratings) {
         $ratings = array();
@@ -1342,9 +1344,9 @@ function data_get_ratings_mean($recordid, $scale, $ratings=NULL) {
 
 
 function data_print_rating_menu($recordid, $userid, $scale) {
-/// Print the menu of ratings as part of a larger form.
-/// If the post has already been - set that value.
-/// Scale is an array of ratings
+// Print the menu of ratings as part of a larger form.
+// If the post has already been - set that value.
+// Scale is an array of ratings
 
     static $strrate;
 
@@ -1361,7 +1363,7 @@ function data_print_rating_menu($recordid, $userid, $scale) {
 
 
 function data_get_ratings($recordid, $sort="u.firstname ASC") {
-/// Returns a list of ratings for a particular post - sorted.
+// Returns a list of ratings for a particular post - sorted.
     global $CFG;
     return get_records_sql("SELECT u.*, r.rating
                               FROM {$CFG->prefix}data_ratings r,
@@ -1373,7 +1375,7 @@ function data_get_ratings($recordid, $sort="u.firstname ASC") {
 }
 
 
-//prints all comments + a text box for adding additional comment
+// prints all comments + a text box for adding additional comment
 function data_print_comments($data, $record, $page=0, $mform=false) {
 
     global $CFG;
@@ -1409,7 +1411,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
     }
 }
 
-//prints a single comment entry
+// prints a single comment entry
 function data_print_comment($data, $comment, $page=0) {
 
     global $USER, $CFG;
@@ -1444,14 +1446,14 @@ function data_print_comment($data, $comment, $page=0) {
         echo '&nbsp;';
     }
 
-/// Actual content
+// Actual content
 
     echo '</td><td class="content" align="left">'."\n";
 
     // Print whole message
     echo format_text($comment->content, $comment->format);
 
-/// Commands
+// Commands
 
     echo '<div class="commands">';
     if (data_isowner($comment->recordid) or has_capability('mod/data:managecomments', $context)) {
@@ -1731,17 +1733,17 @@ function data_print_header($course, $cm, $data, $currenttab='') {
 
     print_heading(format_string($data->name));
 
-/// Groups needed for Add entry tab
+// Groups needed for Add entry tab
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
 
-    /// Print the tabs
+    ///Print the tabs
 
     if ($currenttab) {
         include('tabs.php');
     }
 
-    /// Print any notices
+    // Print any notices
 
     if (!empty($displaynoticegood)) {
         notify($displaynoticegood, 'notifysuccess');    // good (usually green)
@@ -1778,7 +1780,6 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode) {
     }
 }
 
-// pulled directly out of preset.php Penny 20070426
 
 function is_directory_a_preset($directory) {
     $directory = rtrim($directory, '/\\') . '/';
@@ -2149,7 +2150,7 @@ class PresetImporter {
             }
         }
 
-    /// handle special settings here
+    // handle special settings here
         if (!empty($settings->defaultsort)) {
             if (is_numeric($settings->defaultsort)) {
                 //old broken value
@@ -2351,7 +2352,7 @@ function data_reset_userdata($data) {
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
     }
 
-    /// updating dates - shift may be negative too
+    // updating dates - shift may be negative too
     if ($data->timeshift) {
         shift_course_mod_dates('data', array('timeavailablefrom', 'timeavailableto', 'timeviewfrom', 'timeviewto'), $data->timeshift, $data->courseid);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
