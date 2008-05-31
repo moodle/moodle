@@ -1099,6 +1099,7 @@ error('fix temporary table code in CAS');
                     }
 
                     $nuvalue = $textlib->convert($newuser->$key, 'utf-8', $this->config->ldapencoding);
+                    empty($nuvalue) ? $nuvalue = array() : $nuvalue;
                     $ouvalue = $textlib->convert($olduser->$key, 'utf-8', $this->config->ldapencoding);
 
                     foreach ($ldapkeys as $ldapkey) {
