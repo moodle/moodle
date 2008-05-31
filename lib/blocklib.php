@@ -986,7 +986,7 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
 }
 
 function blocks_repopulate_page($page) {
-    global $CFG;
+    global $CFG, $DB;
 
     $allblocks = blocks_get_record();
 
