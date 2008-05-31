@@ -49,7 +49,7 @@ class LessonPageSearchDocument extends SearchDocument {
         // module specific information
         $data->lesson      = $page['lessonid'];
         
-        parent::__construct($doc, $data, $course_id, 0, 0, PATH_FOR_SEARCH_TYPE_LESSON);
+        parent::__construct($doc, $data, $course_id, 0, 0, 'mod/'.SEARCH_TYPE_LESSON);
     } 
 }
 
@@ -210,7 +210,7 @@ function lesson_check_text_access($path, $itemtype, $this_id, $user, $group_id, 
 *
 */
 function lesson_link_post_processing($title){
-     return mb_convert_encoding($title, 'UTF-8', 'auto');
+     return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 
 ?>

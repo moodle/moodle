@@ -50,7 +50,7 @@ class WikiSearchDocument extends SearchDocument {
         $data->wiki     = $wiki_id;
         
         // construct the parent class
-        parent::__construct($doc, $data, $course_id, $group_id, $user_id, PATH_FOR_SEARCH_TYPE_WIKI);
+        parent::__construct($doc, $data, $course_id, $group_id, $user_id, 'mod/'.SEARCH_TYPE_WIKI);
     } 
 }
 

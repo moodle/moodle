@@ -51,7 +51,7 @@ class ForumSearchDocument extends SearchDocument {
         $data->forum      = $forum_id;
         $data->discussion = $post['discussion'];
         
-        parent::__construct($doc, $data, $course_id, $post['groupid'], $post['userid'], PATH_FOR_SEARCH_TYPE_FORUM);
+        parent::__construct($doc, $data, $course_id, $post['groupid'], $post['userid'], 'mod/'.SEARCH_TYPE_FORUM);
     } 
 }
 
@@ -87,6 +87,7 @@ function forum_get_content_for_index(&$forum) {
     if (!$forum) return $documents;
 
     $posts = forum_get_discussions_fast($forum->id);
+    mtrace("Found ".count($posts)." discussions to analyse in forum ".$forum->name);
     if (!$posts) return $documents;
 
     $coursemodule = get_field('modules', 'id', 'name', 'forum');
@@ -96,11 +97,13 @@ function forum_get_content_for_index(&$forum) {
     foreach($posts as $aPost) {
         $aPost->itemtype = 'head';
         if ($aPost) {
-            if (strlen($aPost->message) > 0) {
+            if (!empty($aPost->message)) {
+                echo "*";
                 $documents[] = new ForumSearchDocument(get_object_vars($aPost), $forum->id, $forum->course, 'head', $context->id);
             } 
             if ($children = forum_get_child_posts_fast($aPost->id, $forum->id)) {
                 foreach($children as $aChild) {
+                    echo ".";
                     $aChild->itemtype = 'post';
                     if (strlen($aChild->message) > 0) {
                         $documents[] = new ForumSearchDocument(get_object_vars($aChild), $forum->id, $forum->course, 'post', $context->id);
@@ -109,6 +112,7 @@ function forum_get_content_for_index(&$forum) {
             } 
         } 
     } 
+    mtrace("Finished discussion");
     return $documents;
 }
 

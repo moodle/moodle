@@ -15,10 +15,10 @@
 
 /**
 * @param object $resource
-* @uses CFG, USER
+* @uses $CFG
 */
 function get_text_for_indexing_xml(&$resource, $directfile = ''){
-    global $CFG, $USER;
+    global $CFG;
     
     // SECURITY : do not allow non admin execute anything on system !!
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;

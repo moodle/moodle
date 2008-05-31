@@ -49,7 +49,7 @@ class AssignmentSearchDocument extends SearchDocument {
         $data->assignmenttype         = $assignmentitem['assignmenttype'];
         
         // construct the parent class
-        parent::__construct($doc, $data, $course_id, 0, 0, PATH_FOR_SEARCH_TYPE_ASSIGNMENT);
+        parent::__construct($doc, $data, $course_id, 0, 0, 'mod/'.SEARCH_TYPE_ASSIGNMENT);
     } 
 }
 
@@ -343,8 +343,10 @@ function assignment_check_text_access($path, $itemtype, $this_id, $user, $group_
 */
 function assignment_link_post_processing($title){
 
-     function search_assignment_getstring($matches){
-        return get_string($matches[1], 'assignment');
+     if (!function_exists('search_assignment_getstring')){
+         function search_assignment_getstring($matches){
+            return get_string($matches[1], 'assignment');
+         }
      }
 
      $title = preg_replace_callback('/^(description|submitted)/', 'search_assignment_getstring', $title);

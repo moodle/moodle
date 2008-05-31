@@ -16,10 +16,10 @@
 /**
 * MS Word extractor
 * @param object $resource 
-* @uses CFG, USER
+* @uses $CFG
 */
 function get_text_for_indexing_doc(&$resource, $directfile = ''){
-    global $CFG, $USER;
+    global $CFG;
     
     // SECURITY : do not allow non admin execute anything on system !!
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;
@@ -44,7 +44,7 @@ function get_text_for_indexing_doc(&$resource, $directfile = ''){
             mtrace("Executing : $text_converter_cmd");
             $result = shell_exec($text_converter_cmd);
             if ($result){
-                return mb_convert_encoding($result, 'UTF8', 'auto');
+                return mb_convert_encoding($result, 'UTF-8', 'auto');
             } else {
                 mtrace('Error with MSWord to text converter command : execution failed. ');
                 return '';

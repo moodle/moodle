@@ -44,7 +44,7 @@ class ResourceSearchDocument extends SearchDocument {
         $data = array();
         
         // construct the parent class
-        parent::__construct($doc, $data, $resource['course'], 0, 0, PATH_FOR_SEARCH_TYPE_RESOURCE);
+        parent::__construct($doc, $data, $resource['course'], 0, 0, 'mod/'.SEARCH_TYPE_RESOURCE);
     } //constructor
 } //ResourceSearchDocument
 
@@ -323,6 +323,7 @@ function resource_check_text_access($path, $itemtype, $this_id, $user, $group_id
 * @param string $title
 */
 function resource_link_post_processing($title){
-    return mb_convert_encoding($title, 'UTF-8', 'auto');
+    // return mb_convert_encoding($title, 'UTF-8', 'auto');
+    return mb_convert_encoding($title, 'auto', 'UTF-8');
 }
 ?>

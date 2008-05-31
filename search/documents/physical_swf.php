@@ -19,10 +19,10 @@
 
 /**
 * @param object $resource
-* @uses CFG, USER
+* @uses $CFG
 */
 function get_text_for_indexing_swf(&$resource, $directfile = ''){
-    global $CFG, $USER;
+    global $CFG;
     
     // SECURITY : do not allow non admin execute anything on system !!
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) return;
@@ -36,6 +36,7 @@ function get_text_for_indexing_swf(&$resource, $directfile = ''){
 
     // just call pdftotext over stdout and capture the output
     if (!empty($CFG->block_search_pdf_to_text_cmd)){
+        $command = trim($CFG->block_search_swf_to_text_cmd);
         if (!file_exists("{$moodleroot}{$command}")){
             mtrace('Error with swf to text converter command : executable not found as '.$moodleroot.$command);
         } else {
@@ -44,7 +45,6 @@ function get_text_for_indexing_swf(&$resource, $directfile = ''){
             } else {
                 $file = escapeshellarg("{$CFG->dataroot}/{$directfile}");
             }
-            $command = trim($CFG->block_search_swf_to_text_cmd);
             $text_converter_cmd = "{$moodleroot}{$command} -t $file";
             $result = shell_exec($text_converter_cmd);
             
