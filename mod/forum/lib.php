@@ -6113,7 +6113,7 @@ function forum_tp_clean_read_records() {
  * Sets the last post for a given discussion
  **/
 function forum_discussion_update_last_post($discussionid) {
-    global $CFG, $db;
+    global $CFG, $DB;
 
 // Check the given discussion exists
     if (!record_exists('forum_discussions', 'id', $discussionid)) {

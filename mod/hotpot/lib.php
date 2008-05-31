@@ -1387,7 +1387,7 @@ function hotpot_scale_used_anywhere($scaleid) {
 
 
 function hotpot_add_attempt($hotpotid) {
-    global $db, $CFG, $USER;
+    global $DB, $CFG, $USER;
 
     // get start time of this attempt
     $time = time();

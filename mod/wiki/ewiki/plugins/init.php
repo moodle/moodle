@@ -48,11 +48,11 @@ function ewiki_initialization_wizard($id, &$data, &$action) {
 
          #-- analyze and print settings and misconfigurations
          $pf_db = $ewiki_plugins["database"][0];
-         $db = substr($pf_db, strrpos($pf_db, "_") + 1);
+         $xdb = substr($pf_db, strrpos($pf_db, "_") + 1);
          $o .= '<table border="0" width="90%" class="diagnosis">';
          $o .= '<tr><td>DatabaseBackend</td><td>';
-         $o .= "<b>" . $db . "</b><br />";
-         if ($db == "files") {
+         $o .= "<b>" . $xdb . "</b><br />";
+         if ($xdb == "files") {
             $o .= "<small>_DBFILES_DIR='</small><tt>" . EWIKI_DBFILES_DIRECTORY . "'</tt>";
             if (strpos(EWIKI_DBFILES_DIRECTORY, "tmp")) {
                $o .= "<br /><b>Warning</b>: Storing your pages into a temporary directory is not what you want (there they would get deleted randomly), except for testing purposes of course. See the README.";

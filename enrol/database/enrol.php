@@ -37,7 +37,7 @@ function setup_enrolments(&$user) {
 
         /// Get the authoritative list of enrolments from the external database table
         /// We're using the ADOdb functions natively here and not our datalib functions
-        /// because we didn't want to mess with the $db global
+        /// because we didn't want to mess with the $ db global
 
         $useridfield = $enroldb->quote($user->{$CFG->enrol_localuserfield});
 

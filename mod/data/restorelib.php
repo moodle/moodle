@@ -321,8 +321,7 @@ function data_content_restore_mods ($old_record_id, $new_record_id, $old_data_id
 
 
 function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_field_id, $old_record_id, $new_record_id, $recinfo, $restore) {
-
-    global $CFG, $db;
+    global $CFG, $DB;
 
     $status = true;
     $todo = false;

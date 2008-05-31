@@ -194,7 +194,7 @@ function my_file_get_contents($filename, $use_include_path = 0) {
 // Read the records from the given file.
 // Perform a simple field count check for each record.
 function data_get_records_csv($filename, $fielddelimiter=',', $fieldenclosure="\n") {
-    global $db;
+    global $DB;
 
     if (empty($fielddelimiter)) {
         $fielddelimiter = ',';

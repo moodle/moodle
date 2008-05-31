@@ -339,7 +339,7 @@ function survey_print_all_responses($cmid, $results, $courseid) {
 
 
 function survey_get_template_name($templateid) {
-    global $db;
+    global $DB;
 
     if ($templateid) {
         if ($ss = get_record("surveys", "id", $templateid)) {
@@ -363,7 +363,7 @@ function survey_shorten_name ($name, $numwords) {
 
 
 function survey_print_multi($question) {
-    global $USER, $db, $qnum, $checklist;
+    global $USER, $DB, $qnum, $checklist;
 
     $stripreferthat = get_string("ipreferthat", "survey");
     $strifoundthat = get_string("ifoundthat", "survey");
@@ -458,7 +458,7 @@ function survey_print_multi($question) {
 
 
 function survey_print_single($question) {
-    global $db, $qnum;
+    global $DB, $qnum;
 
     $rowclass = survey_question_rowclass(0);
 

@@ -76,7 +76,7 @@ class check_bigints extends XMLDBAction {
         $this->does_generate = ACTION_GENERATE_HTML;
 
     /// These are always here
-        global $CFG, $XMLDB, $db, $DB;
+        global $CFG, $XMLDB, $DB;
 
         $dbman = $DB->get_manager();
         $dbfamily = $DB->get_dbfamily();

@@ -112,12 +112,11 @@
  * On success it prints a continue link. On failure it prints an error.
  *
  * @uses $CFG
- * @uses $db to do something really evil with the debug setting that should probably be eliminated. TODO!
  * @param string $continueto a URL passed to print_continue() if the local upgrades succeed.
  */
 function upgrade_local_db($continueto) {
 
-    global $CFG, $db;
+    global $CFG, $DB;
 
     // if we don't have code version or a db upgrade file, just return true, we're unneeded
     if (!file_exists($CFG->dirroot.'/local/version.php') || !file_exists($CFG->dirroot.'/local/db/upgrade.php')) {

@@ -25,7 +25,7 @@
 
     function survey_restore_mods($mod,$restore) {
 
-        global $CFG,$db;
+        global $CFG,$DB;
 
         $status = true;
 

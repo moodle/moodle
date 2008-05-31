@@ -199,7 +199,7 @@ class IndexDBControl {
     * @deprecated Database is installed at install and should not be dropped out
     */
     public function checkDB() {
-        global $CFG, $db;
+        global $CFG, $DB;
         
         $sqlfile = "{$CFG->dirroot}/search/db/$CFG->dbtype.sql";
         $ret = false;
@@ -222,7 +222,7 @@ class IndexDBControl {
     * @uses db, CFG
     */
     public function addDocument($document=null) {
-        global $db, $CFG;
+        global $DB, $CFG;
         
         if ($document == null) {
              return false;
@@ -251,7 +251,7 @@ class IndexDBControl {
     * @uses db
     */
     public function delDocument($document) {
-        global $db;
+        global $DB;
         
         delete_records(SEARCH_DATABASE_TABLE, 'id', $document->dbid);
     }

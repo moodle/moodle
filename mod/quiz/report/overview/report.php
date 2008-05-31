@@ -17,7 +17,7 @@ class quiz_report extends quiz_default_report {
      * Display the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $db;
+        global $CFG, $DB;
         // Define some strings
         $strreallydel  = addslashes(get_string('deleteattemptcheck','quiz'));
         $strtimeformat = get_string('strftimedatetime');

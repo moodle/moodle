@@ -116,7 +116,6 @@ $response = mnet_server_dispatch($payload);
  * |                                                |
  * |________________________________________________|
  *
- * @uses $db
  * @param   string  $HTTP_RAW_POST_DATA   The XML that the client sent
  * @return  string                        The XMLRPC payload.
  */

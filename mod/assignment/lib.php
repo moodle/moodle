@@ -1005,7 +1005,7 @@ class assignment_base {
      *  Display all the submissions ready for grading
      */
     function display_submissions($message='') {
-        global $CFG, $db, $USER;
+        global $CFG, $DB, $USER;
         require_once($CFG->libdir.'/gradelib.php');
 
         /* first we check to see if the form has just been submitted

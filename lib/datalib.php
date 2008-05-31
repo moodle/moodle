@@ -1797,7 +1797,6 @@ function coursemodule_visible_for_user($cm, $userid=0) {
  *
  * @uses $CFG
  * @uses $USER
- * @uses $db
  * @uses $REMOTE_ADDR
  * @uses SITEID
  * @param    int     $courseid  The course id

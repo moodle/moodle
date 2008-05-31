@@ -997,7 +997,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //in backup_ids when restoring in a existing course
     function restore_create_sections(&$restore, $xml_file) {
 
-        global $CFG,$db;
+        global $CFG;
 
         $status = true;
         //Check it exists
@@ -1164,7 +1164,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //Called to set up any course-format specific data that may be in the file
     function restore_set_format_data($restore,$xml_file) {
-        global $CFG,$db;
+        global $CFG;
 
         $status = true;
         //Check it exists
@@ -1202,7 +1202,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //about each incidence
     function restore_create_metacourse($restore,$xml_file) {
 
-        global $CFG,$db;
+        global $CFG;
 
         $status = true;
         //Check it exists
@@ -2356,7 +2356,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //user_course_creators and user_admins from xml
     function restore_create_users($restore,$xml_file) {
 
-        global $CFG, $db;
+        global $CFG;
         require_once ($CFG->dirroot.'/tag/lib.php');
 
         $status = true;
@@ -3078,7 +3078,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //from xml
     function restore_create_questions($restore,$xml_file) {
 
-        global $CFG, $db;
+        global $CFG;
 
         $status = true;
         //Check it exists
@@ -3106,7 +3106,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function creates all the scales
     function restore_create_scales($restore,$xml_file) {
 
-        global $CFG, $db;
+        global $CFG;
 
         $status = true;
         //Check it exists
@@ -3499,7 +3499,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function creates all the course events
     function restore_create_events($restore,$xml_file) {
 
-        global $CFG, $db;
+        global $CFG;
 
         $status = true;
         //Check it exists
@@ -3957,7 +3957,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //Depending what has been selected.
     function restore_create_logs($restore,$xml_file) {
 
-        global $CFG,$db;
+        global $CFG;
 
         //Number of records to get in every chunk
         $recordset_size = 4;

@@ -680,7 +680,7 @@ function environment_check_php($version) {
  * @return object results encapsulated in one environment_result object
  */
 function environment_check_unicode($version) {
-    global $db, $DB;
+    global $DB;
 
     $result = new environment_results('unicode');
 
