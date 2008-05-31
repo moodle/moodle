@@ -18,6 +18,11 @@ class mod_data_export_form extends moodleform {
         $mform =& $this->_form;
         $mform->addElement('header', 'notice', get_string('chooseexportformat', 'data'));
         $choices = csv_import_reader::get_delimiter_list();
+        $key = array_search(';', $choices);
+        if (! $key === FALSE) {
+            // array $choices contains the semicolon -> drop it (because its encrypted form also contains a semicolon):
+            unset($choices[$key]);
+        }
         $typesarray = array();
         $typesarray[] = &MoodleQuickForm::createElement('radio', 'exporttype', null, get_string('csvwithselecteddelimiter', 'data') . '&nbsp;', 'csv');
         $typesarray[] = &MoodleQuickForm::createElement('select', 'delimiter_name', null, $choices);
