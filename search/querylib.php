@@ -26,7 +26,8 @@ public  $url,
         $doctype,
         $author,
         $score,
-        $number;
+        $number,
+        $courseid;
 } 
 
 
@@ -220,6 +221,7 @@ class SearchQuery {
         global $USER;
 
         $term = mb_convert_case($this->term, MB_CASE_LOWER, 'UTF-8');
+        $page = optional_param('page', 1, PARAM_INT);
         
         //experimental - return more results
         $strip_arr = array('author:', 'title:', '+', '-', 'doctype:');
@@ -233,48 +235,57 @@ class SearchQuery {
 
         if ($hitcount == 0) return array();
 
-        $totalpages = ceil($hitcount/$this->results_per_page);
+        $resultdoc  = new SearchResult();
+        $resultdocs = array();
+        $searchables = search_collect_searchables(false, false);
 
+        $realindex = 0;
+
+        /**
         if (!$all) {
-            if ($hitcount < $this->results_per_page) {
+            if ($finalresults < $this->results_per_page) {
                 $this->pagenumber = 1;
-            } else if ($this->pagenumber > $totalpages) {
+            } elseif ($this->pagenumber > $totalpages) {
                 $this->pagenumber = $totalpages;
             }
 
             $start = ($this->pagenumber - 1) * $this->results_per_page;
             $end = $start + $this->results_per_page;
 
-            if ($end > $hitcount) {
-                $end = $hitcount;
+            if ($end > $finalresults) {
+                $end = $finalresults;
             } 
         } else {
             $start = 0;
-            $end = $hitcount;
-        }
+            $end = $finalresults;
+        } */
 
-        $resultdoc  = new SearchResult();
-        $resultdocs = array();
-
-        for ($i = $start; $i < $end; $i++) {
+        for ($i = 0; $i < min($hitcount, ($page) * $this->results_per_page); $i++) {
             $hit = $hits[$i];
 
             //check permissions on each result
-            if ($this->can_display($USER, $hit->docid, $hit->doctype, $hit->course_id, $hit->group_id, $hit->path, $hit->itemtype, $hit->context_id )) {
-                $resultdoc->number  = $i;
-                $resultdoc->url     = $hit->url;
-                $resultdoc->title   = $hit->title;
-                $resultdoc->score   = $hit->score;
-                $resultdoc->doctype = $hit->doctype;
-                $resultdoc->author  = $hit->author;
-
-                //and store it
-                $resultdocs[] = clone($resultdoc);
+            if ($this->can_display($USER, $hit->docid, $hit->doctype, $hit->course_id, $hit->group_id, $hit->path, $hit->itemtype, $hit->context_id, $searchables )) {
+                if ($i >= ($page - 1) * $this->results_per_page){
+                    $resultdoc->number  = $realindex;
+                    $resultdoc->url     = $hit->url;
+                    $resultdoc->title   = $hit->title;
+                    $resultdoc->score   = $hit->score;
+                    $resultdoc->doctype = $hit->doctype;
+                    $resultdoc->author  = $hit->author;
+                    $resultdoc->courseid = $hit->course_id;
+                    
+                    //and store it
+                    $resultdocs[] = clone($resultdoc);
+                }
+                $realindex++;
             } else {
                // lowers total_results one unit
                $this->total_results--;
             }
         }
+
+        $totalpages = ceil($this->total_results/$this->results_per_page);
+
 
         return $resultdocs;
     }
@@ -298,7 +309,7 @@ class SearchQuery {
             } 
         } else {
             //no caching :(
-            //print "Caching disabled!";
+            // print "Caching disabled!";
             $resultdocs = $this->process_results();
         } 
         return $resultdocs;
@@ -370,7 +381,7 @@ class SearchQuery {
     * @uses CFG
     * // TODO reorder parameters more consistently
     */
-    private function can_display(&$user, $this_id, $doctype, $course_id, $group_id, $path, $item_type, $context_id) {
+    private function can_display(&$user, $this_id, $doctype, $course_id, $group_id, $path, $item_type, $context_id, &$searchables) {
         global $CFG;
        
       /**
@@ -381,45 +392,50 @@ class SearchQuery {
         return true;
       }
             
-      // first check course compatibility against user : enrolled users to that course can see. 
-      $myCourses = get_my_courses($user->id);
-      $unenroled = !in_array($course_id, array_keys($myCourses));
-      
-      // if guests are allowed, logged guest can see
-      $isallowedguest = (isguest()) ? get_field('course', 'guest', 'id', $course_id) : false ;
-      
-      if ($unenroled && !$isallowedguest){
-         return false;
-      }
-
-      // if user is enrolled or is allowed user and course is hidden, can he see it ?
-      $visibility = get_field('course', 'visible', 'id', $course_id);
-      if ($visibility <= 0){
-          if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course_id))){
-              return false;
-          }
-      }
-
-      /**
-      * prerecorded capabilities
-      */
-      // get context caching information and tries to discard unwanted records here
-
-      
-      /**
-      * final checks
-      */
-      // then give back indexing data to the module for local check
-      include_once "{$CFG->dirroot}/search/documents/{$doctype}_document.php";
-      $access_check_function = "{$doctype}_check_text_access";
-      
-      if (function_exists($access_check_function)){
-          $modulecheck = $access_check_function($path, $item_type, $this_id, $user, $group_id, $context_id);
-          // echo "module said $modulecheck for item $doctype/$item_type/$this_id";
-          return($modulecheck);
-      }
+        // first check course compatibility against user : enrolled users to that course can see. 
+        $myCourses = get_my_courses($user->id);
+        $unenroled = !in_array($course_id, array_keys($myCourses));
         
-      return true;
+        // if guests are allowed, logged guest can see
+        $isallowedguest = (isguest()) ? get_field('course', 'guest', 'id', $course_id) : false ;
+        
+        if ($unenroled && !$isallowedguest){
+            return false;
+        }
+        
+        // if user is enrolled or is allowed user and course is hidden, can he see it ?
+        $visibility = get_field('course', 'visible', 'id', $course_id);
+        if ($visibility <= 0){
+            if (!has_capability('moodle/course:viewhiddencourses', get_context_instance(CONTEXT_COURSE, $course_id))){
+                return false;
+            }
+        }
+        
+        /**
+        * prerecorded capabilities
+        */
+        // get context caching information and tries to discard unwanted records here
+        
+        
+        /**
+        * final checks
+        */
+        // then give back indexing data to the module for local check
+        $searchable_instance = $searchables[$doctype];
+        if ($searchable_instance->location == 'internal'){
+            include_once "{$CFG->dirroot}/search/documents/{$doctype}_document.php";
+        } else {
+            include_once "{$CFG->dirroot}/{$searchable_instance->location}/$doctype/search_document.php";
+        }
+        $access_check_function = "{$doctype}_check_text_access";
+        
+        if (function_exists($access_check_function)){
+            $modulecheck = $access_check_function($path, $item_type, $this_id, $user, $group_id, $context_id);
+            // echo "module said $modulecheck for item $doctype/$item_type/$this_id";
+            return($modulecheck);
+        }
+          
+        return true;
     }
 
     /**

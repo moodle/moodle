@@ -93,8 +93,9 @@
             
             $query_string = '';
             
-            // get all available module types
+            // get all available module types adding third party modules
             $module_types = array_merge(array('all'), array_values(search_get_document_types()));
+            $module_types = array_merge($module_types, array_values(search_get_document_types('X_SEARCH_TYPE')));
             $adv->module = in_array($adv->module, $module_types) ? $adv->module : 'all';
             
             // convert '1 2' into '+1 +2' for required words field
@@ -141,7 +142,7 @@
             $page_number = 1;
         } 
     
-        //run the query against the index
+        //run the query against the index ensuring internal coding works in UTF-8
         Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8());
         $sq = new SearchQuery($query_string, $page_number, 10, false);
     } 
@@ -308,7 +309,8 @@
     <?php
     print_box_end();
     
-    // prints all the results in a box
+/// prints all the results in a box
+
     if ($sq->is_valid()) {
         print_box_start();
         
@@ -336,26 +338,42 @@
             $typestr = get_string('type', 'search');
             $scorestr = get_string('score', 'search');
             $authorstr = get_string('author', 'search');
+
+            $searchables = search_collect_searchables(false, false);
+
             foreach ($hits as $listing) {
+
+                $iconpath = $CFG->modpixpath.'/'.$listing->doctype.'/icon.gif';
+              	$coursename = get_field('course', 'fullname', 'id', $listing->courseid);
+                $courseword = mb_convert_case(get_string('course', 'moodle'), MB_CASE_LOWER, 'UTF-8');
                 //if ($CFG->unicodedb) {
                 //$listing->title = mb_convert_encoding($listing->title, 'auto', 'UTF8');
                 //}
                 $title_post_processing_function = $listing->doctype.'_link_post_processing';
-                require_once "{$CFG->dirroot}/search/documents/{$listing->doctype}_document.php";
+                $searchable_instance = $searchables[$listing->doctype];
+                if ($searchable_instance->location == 'internal'){
+                    require_once "{$CFG->dirroot}/search/documents/{$listing->doctype}_document.php";
+                } else {
+                    require_once "{$CFG->dirroot}/{$searchable_instance->location}/{$listing->doctype}/search_document.php";
+                }
                 if (function_exists($title_post_processing_function)) {
                     $listing->title = $title_post_processing_function($listing->title);
                 }
     
-                print "<li value='".($listing->number+1)."'><a href='".str_replace('DEFAULT_POPUP_SETTINGS', DEFAULT_POPUP_SETTINGS ,$listing->url)."'>$listing->title</a><br />\n"
-                   ."<em>".search_shorten_url($listing->url, 70)."</em><br />\n"
-                   ."{$typestr}: ".$listing->doctype.", {$scorestr}: ".round($listing->score, 3);
+                echo "<li value='".($listing->number+1)."'><a href='"
+                    .str_replace('DEFAULT_POPUP_SETTINGS', DEFAULT_POPUP_SETTINGS ,$listing->url)
+                    ."'><img align=\"top\" src=\"".$iconpath
+                    ."\" class=\"activityicon\" alt=\"\"/> $listing->title</a><strong> (".$courseword.": '".$coursename."')</strong><br />\n";
+                // print "<li value='".($listing->number+1)."'><a href='".str_replace('DEFAULT_POPUP_SETTINGS', DEFAULT_POPUP_SETTINGS ,$listing->url)."'>$listing->title</a><br />\n"
+                // ."<em>".search_shorten_url($listing->url, 70)."</em><br />\n"
+                // ."{$typestr}: ".$listing->doctype.", {$scorestr}: ".round($listing->score, 3);
                 if (!empty($listing->author)){
-                    print ", {$authorstr}: ".$listing->author."\n"
+                    echo ", {$authorstr}: ".$listing->author."\n"
                         ."</li>\n";
                 }
             }            
-            print "</ol>";
-            print $page_links;
+            echo "</ol>";
+            echo $page_links;
         }     
         print_box_end();
     ?>

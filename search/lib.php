@@ -18,7 +18,9 @@
 
 /*
 // function reference
+function search_collect_searchables($namelist=false, $verbose=true){
 function search_get_document_types($prefix = 'SEARCH_TYPE_') {
+function search_get_document_types($prefix = 'X_SEARCH_TYPE_') {
 function search_get_additional_modules() {
 function search_shorten_url($url, $length=30) {
 function search_escape_string($str) {
@@ -35,8 +37,8 @@ include "{$CFG->dirroot}/search/searchtypes.php";
 
 /**
 * collects all searchable items identities
-* @param boolean $namelist
-* @param boolean $verbose
+* @param boolean $namelist if true, only returns list of names of searchable items
+* @param boolean $verbose if true, prints a discovering status
 * @return an array of names or an array of type descriptors
 */
 function search_collect_searchables($namelist=false, $verbose=true){
@@ -53,13 +55,13 @@ function search_collect_searchables($namelist=false, $verbose=true){
         foreach($mods as $mod){
             if (in_array($mod->name, $searchabletypes)){
                 $mod->location = 'internal';
-                $searchables[] = $mod;
+                $searchables[$mod->name] = $mod;
                 $searchables_names[] = $mod->name;
             } else {
                 $documentfile = $CFG->dirroot."/mod/{$mod->name}/search_document.php";
                 $mod->location = 'mod';
                 if (file_exists($documentfile)){
-                    $searchables[] = $mod;
+                    $searchables[$mod->name] = $mod;
                     $searchables_names[] = $mod->name;
                 }
             }        
@@ -82,7 +84,7 @@ function search_collect_searchables($namelist=false, $verbose=true){
                 $documentfile = $CFG->dirroot."/blocks/{$block->dirname}/search_document.php";
                 if (file_exists($documentfile)){
                     $mod->location = 'blocks';
-                    $blocks_searchables[] = $block;
+                    $blocks_searchables[$block->name] = $block;
                     $searchables_names[] = $block->name;
                 }
             }        
@@ -105,7 +107,7 @@ function search_collect_searchables($namelist=false, $verbose=true){
 }
 
 /**
-* returns all the document type constants
+* returns all the document type constants that are known in core implementation
 * @param prefix a pattern for recognizing constants
 * @return an array of type labels
 */
@@ -138,7 +140,7 @@ function search_get_additional_modules() {
     foreach($extras as $extra) {
         $temp->name = $extra;
         $temp->location = 'internal';
-        $ret[] = clone($temp);
+        $ret[$temp->name] = clone($temp);
     } 
     return $ret;
 } //search_get_additional_modules
