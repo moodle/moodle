@@ -41,14 +41,14 @@
     $inmeta = 0;
     if ($context->contextlevel == CONTEXT_COURSE) {
         $courseid = $context->instanceid;
-        if ($course = get_record('course', 'id', $courseid)) {
+        if ($course = $DB->get_record('course', array('id'=>$courseid))) {
             $inmeta = $course->metacourse;
         } else {
             print_error('invalidcourse', 'error');
         }
 
     } else if (!empty($courseid)){ // we need this for user tabs in user context
-        if (!$course = get_record('course', 'id', $courseid)) {
+        if (!$course = $DB->get_record('course', array('id', $courseid))) {
             print_error('invalidcourse', 'error');
         }
 
@@ -114,7 +114,7 @@
     }
 
     if ($userid) {
-        $user = get_record('user', 'id', $userid);
+        $user = $DB->get_record('user', array('id', $userid));
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
     }
 
@@ -177,7 +177,7 @@
                     } else {
                         $managerroles = get_roles_with_capability('moodle/course:managemetacourse', CAP_ALLOW, $context);
                         if (!empty($managerroles) and !array_key_exists($roleid, $managerroles)) {
-                            $erruser = get_record('user', 'id', $adduser, '','','','', 'id, firstname, lastname');
+                            $erruser = $DB->get_record('user', array('id'=>$adduser), 'id, firstname, lastname');
                             $errors[] = get_string('metaassignerror', 'role', fullname($erruser));
                             $allow = false;
                         }
@@ -210,7 +210,7 @@
                 }
             }
             
-            $rolename = get_field('role', 'name', 'id', $roleid);
+            $rolename = $DB->get_field('role', 'name', array('id'=>$roleid));
             add_to_log($course->id, 'role', 'assign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
         } else if ($remove and !empty($frm->removeselect) and confirm_sesskey()) {
 
@@ -239,14 +239,14 @@
                     sync_metacourse($courseid);
                     $newroles = get_user_roles($context, $removeuser, false);
                     if (!empty($newroles) and !array_key_exists($roleid, $newroles)) {
-                        $erruser = get_record('user', 'id', $removeuser, '','','','', 'id, firstname, lastname');
+                        $erruser = $DB->get_record('user', array('id'=>$removeuser), 'id, firstname, lastname');
                         $errors[] = get_string('metaunassignerror', 'role', fullname($erruser));
                         $allow = false;
                     }
                 }
             }
             
-            $rolename = get_field('role', 'name', 'id', $roleid);
+            $rolename = $DB->get_field('role', 'name', array('id'=>$roleid));
             add_to_log($course->id, 'role', 'unassign', 'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
         } else if ($showall) {
             $searchtext = '';
@@ -277,19 +277,19 @@
         }
 
         $select  = "username <> 'guest' AND deleted = 0 AND confirmed = 1";
+        $params = array();
 
-        $usercount = count_records_select('user', $select) - count($contextusers);
+        $usercount = $DB->count_records_select('user', $select, $params) - count($contextusers);
 
         $searchtext = trim($searchtext);
 
         if ($searchtext !== '') {   // Search for a subset of remaining users
-            $LIKE      = sql_ilike();
-            $FULLNAME  = sql_fullname();
+            $LIKE      = $DB->sql_ilike();
+            $FULLNAME  = $DB->sql_fullname();
 
-            $selectsql = " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
-            $select  .= $selectsql;
-        } else {
-            $selectsql = "";
+            $select .= " AND ($FULLNAME $LIKE :search1 OR email $LIKE :search2) ";
+            $params['search1'] = "%$searchtext%";
+            $params['search2'] = "%$searchtext%";
         }
 
         if ($context->contextlevel > CONTEXT_COURSE) { // mod or block (or group?)
@@ -327,27 +327,30 @@
                 if ($validroleids) {
                     $roleids =  '('.implode(',', $validroleids).')';
 
-                    $select = " SELECT u.id, u.firstname, u.lastname, u.email";
-                    $countselect = "SELECT COUNT(u.id)";
-                    $from   = " FROM {$CFG->prefix}user u
-                                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
-                                INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid";
-                    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
-                                AND u.deleted = 0
-                                AND ra.roleid in $roleids";
-                    $excsql = " AND u.id NOT IN (
-                                    SELECT u.id
-                                    FROM {$CFG->prefix}role_assignments r,
-                                    {$CFG->prefix}user u
-                                    WHERE r.contextid = $contextid
-                                    AND u.id = r.userid
-                                    AND r.roleid = $roleid
-                                    $selectsql)";
+                    $fields      = "SELECT u.id, u.firstname, u.lastname, u.email";
+                    $countfields = "SELECT COUNT('x')";
 
-                    $availableusers = get_recordset_sql($select . $from . $where . $selectsql . $excsql);
+                    $sql   = " FROM {user} u
+                               JOIN {role_assignments} ra ON ra.userid = u.id
+                               JOIN {role} r ON r.id = ra.roleid
+                              WHERE ra.contextid ".get_related_contexts_string($context)."
+                                    AND $select AND ra.roleid in $roleids
+                                    AND u.id NOT IN (
+                                       SELECT u.id
+                                         FROM {role_assignments} r, {user} u
+                                        WHERE r.contextid = :contextid
+                                              AND u.id = r.userid
+                                              AND r.roleid = :roleid)";
+                    $params['contextid'] = $contextid;
+                    $params['roleid']    = $roleid;
+
+                    $availableusers = $DB->get_recordset_sql("$fields $sql", $params);
+                    $usercount      = $DB->count_records_sql("$countfields $sql", $params);
+
+                } else {
+                    $availableusers = array();
+                    $usercount = 0;
                 }
-
-                $usercount =  $availableusers->_numOfRows;
             }
 
         } else {
@@ -361,20 +364,24 @@
 
             /// MDL-11111 do not include user already assigned this role in this context as available users
             /// so that the number of available users is right and we save time looping later
-            $availableusers = get_recordset_sql('SELECT id, firstname, lastname, email
-                                                FROM '.$CFG->prefix.'user
-                                                WHERE '.$select.'
-                                                AND id NOT IN (
-                                                    SELECT u.id
-                                                    FROM '.$CFG->prefix.'role_assignments r,
-                                                    '.$CFG->prefix.'user u
-                                                    WHERE r.contextid = '.$contextid.'
-                                                    AND u.id = r.userid
-                                                    AND r.roleid = '.$roleid.'
-                                                    '.$selectsql.')
-                                                ORDER BY lastname ASC, firstname ASC');
+            $fields      = "SELECT id, firstname, lastname, email";
+            $countfields = "SELECT COUNT('x')";
 
-            $usercount = $availableusers->_numOfRows;         
+            $sql = " FROM {user}
+                    WHERE $select
+                          AND id NOT IN (
+                             SELECT u.id
+                               FROM {role_assignments} r, {user} u
+                              WHERE r.contextid = :contextid
+                                    AND u.id = r.userid
+                                    AND r.roleid = :roleid)";
+            $order = "ORDER BY lastname ASC, firstname ASC";
+
+            $params['contextid'] = $contextid;
+            $params['roleid']    = $roleid;
+
+            $availableusers = $DB->get_recordset_sql("$fields $sql $order", $params);
+            $usercount      = $DB->count_records_sql("$countfields $sql", $params);
         }
 
         echo '<div class="selector">';

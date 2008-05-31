@@ -20,7 +20,7 @@
 
     $roles = get_all_roles();
 
-    if ($grant = data_submitted()) {
+    if ($grant = data_submitted(false)) {
 
         foreach ($grant as $grole => $val) {
             if ($grole == 'dummy') {
@@ -35,11 +35,11 @@
         foreach ($roles as $srole) {
             foreach ($roles as $trole) {
                 if (isset($temp[$srole->id][$trole->id])) { // if set, need to write to db
-                    if (!$record = get_record('role_allow_override', 'roleid', $srole->id, 'allowoverride', $trole->id)) {
+                    if (!$record = $DB->get_record('role_allow_override', array('roleid'=>$srole->id, 'allowoverride'=>$trole->id))) {
                         allow_override($srole->id, $trole->id);
                     }
                 } else { //if set, means can access, attempt to remove it from db
-                    delete_records('role_allow_override', 'roleid', $srole->id, 'allowoverride', $trole->id);
+                    $DB->delete_records('role_allow_override', array('roleid'=>$srole->id, 'allowoverride'=>$trole->id));
                 }
             }
         }
@@ -85,10 +85,11 @@
     admin_externalpage_print_footer();
 
 // returns array
-function get_box_list($roleid, $arraylist){
+function get_box_list($roleid, $arraylist) {
+    global $DB;
 
     foreach ($arraylist as $targetid) {
-        if (get_record('role_allow_override', 'roleid', $roleid, 'allowoverride', $targetid)) {
+        if ($DB->get_record('role_allow_override', array('roleid'=>$roleid, 'allowoverride'=>$targetid))) {
             $array[] = '<input type="checkbox" name="s_'.$roleid.'_'.$targetid.'" value="1" checked="checked"/>';
         } else {
             $array[] = '<input type="checkbox" name="s_'.$roleid.'_'.$targetid.'" value="1" />';

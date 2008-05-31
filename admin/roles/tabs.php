@@ -24,7 +24,7 @@ if ($currenttab != 'update') {
             break;
 
         case CONTEXT_COURSECAT:
-            $category = get_record('course_categories', 'id', $context->instanceid);
+            $category = $DB->get_record('course_categories', array('id'=>$context->instanceid));
             $strcategories = get_string("categories");
             $strcategory = get_string("category");
             $strcourses = get_string("courses");
@@ -44,7 +44,7 @@ if ($currenttab != 'update') {
             if ($context->instanceid != SITEID) {
                 $streditcoursesettings = get_string("editcoursesettings");
 
-                $course = get_record('course', 'id', $context->instanceid);
+                $course = $DB->get_record('course', array('id'=>$context->instanceid));
 
                 require_login($course);
                 $navlinks[] = array('name' => get_string('roles'),
@@ -60,16 +60,16 @@ if ($currenttab != 'update') {
 
         case CONTEXT_MODULE:
             // get module type?
-            if (!$cm = get_record('course_modules','id',$context->instanceid)) {
+            if (!$cm = $DB->get_record('course_modules', array('id'=>$context->instanceid))) {
                 print_error('invalidcoursemodule', 'error');
             }
-            if (!$module = get_record('modules','id',$cm->module)) {  //$module->name;
+            if (!$module = $DB->get_record('modules', array('id'=>$cm->module))) {  //$module->name;
                 print_error('invalidmodule', 'error');
             }
-            if (!$course = get_record('course','id',$cm->course)) {
+            if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
                 print_error('invalidcourse');
             }
-            if (!$instance = get_record($module->name, 'id', $cm->instance)) {
+            if (!$instance = $DB->get_record($module->name, array('id'=>$cm->instance))) {
                 print_error('moduledoesnotexist', 'error');
             }
 
@@ -104,14 +104,14 @@ if ($currenttab != 'update') {
             break;
 
         case CONTEXT_BLOCK:
-            if ($blockinstance = get_record('block_instance', 'id', $context->instanceid)) {
-                if ($block = get_record('block', 'id', $blockinstance->blockid)) {
+            if ($blockinstance = $DB->get_record('block_instance', array('id'=>$context->instanceid))) {
+                if ($block = $DB->get_record('block', array('id'=>$blockinstance->blockid))) {
                     $blockname = print_context_name($context);
 
 
                     switch ($blockinstance->pagetype) {
                         case 'course-view':
-                            if ($course = get_record('course', 'id', $blockinstance->pageid)) {
+                            if ($course = $DB->get_record('course', array('id'=>$blockinstance->pageid))) {
 
                                 require_login($course);
 

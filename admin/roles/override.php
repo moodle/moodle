@@ -25,7 +25,7 @@
     }
 
     if ($courseid) {
-        if (!$course = get_record('course', 'id', $courseid)) {
+        if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
             print_error('invalidcourse');
         }
     } else {
@@ -67,7 +67,7 @@
     }
 
     if ($userid) {
-        $user = get_record('user', 'id', $userid);
+        $user = $DB->get_record('user', array('id'=>$userid));
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
     }
 
@@ -75,10 +75,10 @@
     $capabilities = fetch_context_capabilities($context);
 
 /// Process incoming role override
-    if ($data = data_submitted() and $roleid and confirm_sesskey()) {
+    if ($data = data_submitted(false) and $roleid and confirm_sesskey()) {
         $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
 
-        $localoverrides = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id",
+        $localoverrides = $DB->get_records_select('role_capabilities', "roleid = ? AND contextid = ?", array($roleid, $context->id), 
                                              '', 'capability, permission, id');
 
         foreach ($capabilities as $cap) {
@@ -110,7 +110,7 @@
 
         // force accessinfo refresh for users visiting this context...
         mark_context_dirty($context->path);
-        $rolename = get_field('role', 'name', 'id', $roleid);
+        $rolename = $DB->get_field('role', 'name', array('id'=>$roleid));
         add_to_log($course->id, 'role', 'override', 'admin/roles/override.php?contextid='.$context->id.'&roleid='.$roleid, $rolename, '', $USER->id);
         redirect($baseurl);
     }
@@ -171,7 +171,7 @@
 
         $r_caps = role_context_capabilities($roleid, $parentcontext);
 
-        $localoverrides = get_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id",
+        $localoverrides = $DB->get_records_select('role_capabilities', "roleid = ? AND contextid = ?", array($roleid, $context->id),
                                              '', 'capability, permission, id');
 
         $lang = str_replace('_utf8', '', current_language());
@@ -199,7 +199,7 @@
 
         foreach ($overridableroles as $roleid => $rolename) {
             $countusers = 0;
-            $overridecount = count_records_select('role_capabilities', "roleid = $roleid AND contextid = $context->id");
+            $overridecount = $DB->count_records_select('role_capabilities', "roleid = ? AND contextid = ?", array($roleid, $context->id));
             $description = format_string(get_field('role', 'description', 'id', $roleid));
             $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $description, $overridecount);
         }

@@ -37,11 +37,11 @@
         foreach ($roles as $srole) {
             foreach ($roles as $trole) {
                 if (isset($temp[$srole->id][$trole->id])) { // if set, need to write to db
-                    if (!$record = get_record('role_allow_assign', 'roleid', $srole->id, 'allowassign', $trole->id)) {
+                    if (!$record = $DB->get_record('role_allow_assign', array('roleid'=>$srole->id, 'allowassign'=>$trole->id))) {
                         allow_assign($srole->id, $trole->id);
                     }
                 } else { //if set, means can access, attempt to remove it from db
-                    delete_records('role_allow_assign', 'roleid', $srole->id, 'allowassign', $trole->id);
+                    $DB->delete_records('role_allow_assign', array('roleid'=>$srole->id, 'allowassign'=>$trole->id));
                 }
             }
         }
@@ -88,10 +88,11 @@
 
 
 
-function get_box_list($roleid, $arraylist){
+function get_box_list($roleid, $arraylist) {
+    global $DB;
 
     foreach ($arraylist as $targetid) {
-        if (get_record('role_allow_assign', 'roleid', $roleid, 'allowassign', $targetid)) {
+        if ($DB->get_record('role_allow_assign', array('roleid'=>$roleid, 'allowassign'=>$targetid))) {
             $array[] = '<input type="checkbox" name="s_'.$roleid.'_'.$targetid.'" value="1" checked="checked"/>';
         } else {
             $array[] = '<input type="checkbox" name="s_'.$roleid.'_'.$targetid.'" value="1" />';

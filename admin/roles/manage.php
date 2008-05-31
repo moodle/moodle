@@ -38,9 +38,9 @@
         $rolesort[$i] = $rolex->id;
         if ($rolex->sortorder != $i) {
             $r = new object();
-            $r->id = $rolex->id;
+            $r->id        = $rolex->id;
             $r->sortorder = $i;
-            update_record('role', $r);
+            $DB->update_record('role', $r);
             $roles[$rolex->id]->sortorder = $i;
         }
         $i++;
@@ -56,7 +56,7 @@
 /// form processing, editing a role, adding a role, deleting a role etc.
     switch ($action) {
         case 'add':
-            if ($data = data_submitted() and confirm_sesskey()) {
+            if ($data = data_submitted(false) and confirm_sesskey()) {
 
                 $shortname = moodle_strtolower(clean_param(clean_filename($shortname), PARAM_SAFEDIR)); // only lowercase safe ASCII characters
                 $legacytype = required_param('legacytype', PARAM_RAW);
@@ -124,7 +124,7 @@
                 mark_context_dirty($sitecontext->path);
 
                 if (empty($errors)) {
-                    $rolename = get_field('role', 'name', 'id', $newroleid);
+                    $rolename = $DB->get_field('role', 'name', array('id'=>$newroleid));
                     add_to_log(SITEID, 'role', 'add', 'admin/roles/manage.php?action=add', $rolename, '', $USER->id);
                     redirect('manage.php');
                 }
@@ -133,7 +133,7 @@
             break;
 
         case 'edit':
-            if ($data = data_submitted() and confirm_sesskey()) {
+            if ($data = data_submitted(false) and confirm_sesskey()) {
 
                 $shortname = moodle_strtolower(clean_param(clean_filename($shortname), PARAM_SAFEDIR)); // only lowercase safe ASCII characters
                 $legacytype = required_param('legacytype', PARAM_RAW);
@@ -275,7 +275,7 @@
                 $a->id = $roleid;
                 $a->name = $roles[$roleid]->name;
                 $a->shortname = $roles[$roleid]->shortname;
-                $a->count = (int)count_records('role_assignments', 'roleid', $roleid);
+                $a->count = $DB->count_records('role_assignments', array('roleid'=>$roleid));
                 notice_yesno(get_string('deleterolesure', 'role', $a), 'manage.php', 'manage.php', $optionsyes, NULL, 'post', 'get');
                 admin_externalpage_print_footer();
                 die;
