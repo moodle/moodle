@@ -912,6 +912,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                     }
 
                     $nuvalue = $textlib->convert($newuser->$key, 'utf-8', $this->config->ldapencoding);
+                    empty($nuvalue) ? $nuvalue = array() : $nuvalue;
                     $ouvalue = $textlib->convert($olduser->$key, 'utf-8', $this->config->ldapencoding);
 
                     foreach ($ldapkeys as $ldapkey) {
