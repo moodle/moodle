@@ -2605,11 +2605,23 @@ function update_user_record($username, $authplugin) {
     if ($newinfo = $userauth->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
         foreach ($newinfo as $key => $value){
-            $confkey = 'field_updatelocal_' . $key;
-            if (!empty($userauth->config->$confkey) and $userauth->config->$confkey === 'onlogin') {
+            $confval = $userauth->config->{'field_updatelocal_' . $key};
+            $lockval = $userauth->config->{'field_lock_' . $key};
+            if (empty($confval) || empty($lockval)) {
+                continue;
+            }
+            if ($confval === 'onlogin') {
                 $value = addslashes(stripslashes($value));   // Just in case
-                set_field('user', $key, $value, 'username', $username)
-                    or error_log("Error updating $key for $username");
+                // MDL-4207 Don't overwrite modified user profile values with
+                // empty LDAP values when 'unlocked if empty' is set. The purpose
+                // of the setting 'unlocked if empty' is to allow the user to fill
+                // in a value for the selected field _if LDAP is giving
+                // nothing_ for this field. Thus it makes sense to let this value
+                // stand in until LDAP is giving a value for this field.
+                if (!(empty($value) && $lockval === 'unlockedifempty')) {
+                    set_field('user', $key, $value, 'username', $username)
+                        || error_log("Error updating $key for $username");
+                }
             }
         }
     }
