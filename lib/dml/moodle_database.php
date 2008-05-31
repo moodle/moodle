@@ -1032,12 +1032,16 @@ abstract class moodle_database {
 
     /**
      * Delete the records from a table where all the given conditions met.
+     * If conditions not specified, table is truncated.
      *
      * @param string $table the table to delete from.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
      * @return returns success.
      */
-    public function delete_records($table, array $conditions) {
+    public function delete_records($table, array $conditions=null) {
+        if (is_null($conditions)) {
+            return $this->execute("TRUNCATE TABLE {".$table."}");
+        }
         list($select, $params) = $this->where_clause($conditions);
         return $this->delete_records_select($table, $select, $params);
     }

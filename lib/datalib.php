@@ -1519,7 +1519,7 @@ function update_timezone_records($timezones) {
     global $DB;
 
 /// Clear out all the old stuff
-    $DB->execute("TRUNCATE TABLE {timezone}");
+    $DB->delete_records('timezone');
 
 /// Insert all the new stuff
     foreach ($timezones as $timezone) {

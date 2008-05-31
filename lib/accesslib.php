@@ -5175,8 +5175,6 @@ function build_context_path($force=false) {
                        WHERE temp.id={context}.id";
     }
 
-    $udelsql = "TRUNCATE TABLE {context_temp}";
-
     // Top level categories
     $sql = "UPDATE {context}
                SET depth=2, path=" . $DB->sql_concat("'$base/'", 'id') . "
@@ -5188,13 +5186,13 @@ function build_context_path($force=false) {
                    $emptyclause";
 
     $DB->execute($sql);
-    $DB->execute($udelsql);
+    $DB->delete_records('context_temp');
 
     // Deeper categories - one query per depthlevel
     $maxdepth = $DB->get_field_sql("SELECT MAX(depth)
                                FROM {course_categories}");
     for ($n=2; $n<=$maxdepth; $n++) {
-        $sql = "INSERT INTO {context}_temp (id, path, depth)
+        $sql = "INSERT INTO {context_temp} (id, path, depth)
                 SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", $n+1
                   FROM {context} ctx
                   JOIN {course_categories} c ON ctx.instanceid=c.id
@@ -5203,7 +5201,7 @@ function build_context_path($force=false) {
                        AND pctx.contextlevel=".CONTEXT_COURSECAT."
                        AND c.depth=$n
                        AND NOT EXISTS (SELECT 'x'
-                                       FROM {context}_temp temp
+                                       FROM {context_temp} temp
                                        WHERE temp.id = ctx.id)
                        $ctxemptyclause";
         $DB->execute($sql);
@@ -5211,11 +5209,11 @@ function build_context_path($force=false) {
         // this is needed after every loop
         // MDL-11532
         $DB->execute($updatesql);
-        $DB->execute($udelsql);
+        $DB->delete_records('context_temp');
     }
 
     // Courses -- except sitecourse
-    $sql = "INSERT INTO {context}_temp (id, path, depth)
+    $sql = "INSERT INTO {context_temp} (id, path, depth)
             SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
               FROM {context} ctx
               JOIN {course} c ON ctx.instanceid=c.id
@@ -5224,16 +5222,16 @@ function build_context_path($force=false) {
                    AND c.id!=".SITEID."
                    AND pctx.contextlevel=".CONTEXT_COURSECAT."
                        AND NOT EXISTS (SELECT 'x'
-                                       FROM {context}_temp temp
+                                       FROM {context_temp} temp
                                        WHERE temp.id = ctx.id)
                    $ctxemptyclause";
     $DB->execute($sql);
 
     $DB->execute($updatesql);
-    $DB->execute($udelsql);
+    $DB->delete_records('context_temp');
 
     // Module instances
-    $sql = "INSERT INTO {context}_temp (id, path, depth)
+    $sql = "INSERT INTO {context_temp} (id, path, depth)
             SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
               FROM {context} ctx
               JOIN {course_modules} cm ON ctx.instanceid=cm.id
@@ -5241,16 +5239,16 @@ function build_context_path($force=false) {
              WHERE ctx.contextlevel=".CONTEXT_MODULE."
                    AND pctx.contextlevel=".CONTEXT_COURSE."
                        AND NOT EXISTS (SELECT 'x'
-                                       FROM {context}_temp temp
+                                       FROM {context_temp} temp
                                        WHERE temp.id = ctx.id)
                    $ctxemptyclause";
     $DB->execute($sql);
 
     $DB->execute($updatesql);
-    $DB->execute($udelsql);
+    $DB->delete_records('context_temp');
 
     // Blocks - non-pinned course-view only
-    $sql = "INSERT INTO {context}_temp (id, path, depth)
+    $sql = "INSERT INTO {context_temp} (id, path, depth)
             SELECT ctx.id, ".$DB->sql_concat('pctx.path', "'/'", 'ctx.id').", pctx.depth+1
               FROM {context} ctx
               JOIN {block_instance} bi ON ctx.instanceid = bi.id
@@ -5259,13 +5257,13 @@ function build_context_path($force=false) {
                    AND pctx.contextlevel=".CONTEXT_COURSE."
                    AND bi.pagetype='course-view'
                        AND NOT EXISTS (SELECT 'x'
-                                       FROM {context}_temp temp
+                                       FROM {context_temp} temp
                                        WHERE temp.id = ctx.id)
                    $ctxemptyclause";
     $DB->execute($sql);
 
     $DB->execute($updatesql);
-    $DB->execute($udelsql);
+    $DB->delete_records('context_temp');
 
     // Blocks - others
     $sql = "UPDATE {context}
