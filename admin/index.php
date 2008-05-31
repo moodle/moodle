@@ -72,7 +72,7 @@
 
     $dirroot = dirname(realpath("../index.php"));
     if (!empty($dirroot) and $dirroot != $CFG->dirroot) {
-        print_error('fixsetting', 'debug', '', array(addslashes($CFG->dirroot), addslashes($dirroot)));
+        print_error('fixsetting', 'debug', '', array($CFG->dirroot, $dirroot));
     }
 
 /// Set some necessary variables during set-up to avoid PHP warnings later on this page
