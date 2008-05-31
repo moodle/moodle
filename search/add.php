@@ -40,12 +40,6 @@
     
 /// check for php5 (lib.php)
 
-    if (!search_check_php5()) {
-        $phpversion = phpversion();
-        mtrace("Sorry, global search requires PHP 5.0.0 or later (currently using version ".phpversion().")");
-        exit(0);
-    } 
-    
     try {
         $index = new Zend_Search_Lucene(SEARCH_INDEX_PATH);
     } catch(LuceneException $e) {

@@ -50,7 +50,6 @@
     
 /// check for php5, but don't die yet (see line 52)
 
-    if ($check = search_check_php5()) {
         require_once("{$CFG->dirroot}/search/querylib.php");
     
         $page_number  = optional_param('page', -1, PARAM_INT);
@@ -145,7 +144,6 @@
         //run the query against the index ensuring internal coding works in UTF-8
         Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8());
         $sq = new SearchQuery($query_string, $page_number, 10, false);
-    } 
     
     if (!$site = get_site()) {
         redirect("index.php");
@@ -166,13 +164,6 @@
         print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
     }
     
-    //keep things pretty, even if php5 isn't available
-    if (!$check) {
-        print_heading(search_check_php5(true));
-        print_footer();
-        exit(0);
-    } 
-
     if (!empty($error)){
         notice ($error);
     }

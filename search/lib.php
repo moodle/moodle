@@ -24,7 +24,6 @@ function search_get_document_types($prefix = 'X_SEARCH_TYPE_') {
 function search_get_additional_modules() {
 function search_shorten_url($url, $length=30) {
 function search_escape_string($str) {
-function search_check_php5($feedback = false) {
 function search_stopwatch($cli = false) {
 function search_pexit($str = "") {
 */
@@ -174,23 +173,6 @@ function search_escape_string($str) {
     }
     return $s;
 } //search_escape_string
-
-/**
-* get a real php 5 version number, using 5.0.0 arbitrarily
-* @param feedback if true, prints a feedback message to output.
-* @return true if version of PHP is high enough
-*/
-function search_check_php5($feedback = false) {
-    if (!check_php_version("5.0.0")) {
-        if ($feedback) {
-            print_heading(get_string('versiontoolow', 'search'));
-        }
-        return false;
-    } 
-    else {
-      return true;
-    } 
-} //search_check_php5
 
 /**
 * simple timer function, on first call, records a current microtime stamp, outputs result on 2nd call

@@ -65,11 +65,6 @@ $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
     
 /// check for php5 (lib.php)
 
-    if (!search_check_php5()) {
-        mtrace("Sorry, global search requires PHP 5.0.0 or later (currently using version ".phpversion().")");
-        exit(0);
-    } 
-    
     //php5 found, continue including php5-only files
     //require_once("$CFG->dirroot/search/Zend/Search/Lucene.php");
     require_once("$CFG->dirroot/search/indexlib.php");
