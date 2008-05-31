@@ -19,7 +19,7 @@
 
 function xmldb_survey_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
 
     $result = true;
 
@@ -31,6 +31,8 @@ function xmldb_survey_upgrade($oldversion=0) {
 /// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
+
+//===== 1.9.0 upgrade line ======//
 
     return $result;
 }

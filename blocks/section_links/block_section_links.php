@@ -8,8 +8,10 @@ class block_section_links extends block_base {
     }
 
     function instance_config($instance) {
+        global $DB;
+
         parent::instance_config($instance);
-        $course = get_record('course', 'id', $this->instance->pageid);
+        $course = get_record('course', array('id'=>$this->instance->pageid));
         if (isset($course->format)) {
             if ($course->format == 'topics') {
                 $this->title = get_string('topics', 'block_section_links');
@@ -26,7 +28,7 @@ class block_section_links extends block_base {
     }
 
     function get_content() {
-        global $CFG, $USER, $COURSE;
+        global $CFG, $USER, $COURSE, $DB;
 
         $highlight = 0;
 
@@ -45,7 +47,7 @@ class block_section_links extends block_base {
         if ($this->instance->pageid == $COURSE->id) {
             $course = $COURSE;
         } else {
-            $course = get_record('course', 'id', $this->instance->pageid);
+            $course = get_record('course', array('id'=>$this->instance->pageid));
         }
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
 

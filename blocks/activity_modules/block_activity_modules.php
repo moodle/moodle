@@ -7,7 +7,7 @@ class block_activity_modules extends block_list {
     }
 
     function get_content() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -21,7 +21,7 @@ class block_activity_modules extends block_list {
         if ($COURSE->id == $this->instance->pageid) {
             $course = $COURSE;
         } else {
-            $course = get_record('course', 'id', $this->instance->pageid);
+            $course = get_record('course', array('id'=>$this->instance->pageid));
         }
 
         require_once($CFG->dirroot.'/course/lib.php');

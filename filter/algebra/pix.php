@@ -40,7 +40,7 @@
 
     if (!file_exists($pathname)) {
         $md5 = str_replace('.gif','',$image);
-        if ($texcache = get_record('cache_filters', 'filter', 'algebra', 'md5key', $md5)) {
+        if ($texcache = $DB->get_record('cache_filters', array('filter'=>'algebra', 'md5key'=>$md5))) {
             if (!file_exists($CFG->dataroot.'/filter/algebra')) {
                 make_upload_directory('filter/algebra');
             }

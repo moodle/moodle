@@ -19,7 +19,9 @@
 
 function xmldb_blocks_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
+
+    $dbman = $DB->get_manager();
 
     $result = true;
 
@@ -40,7 +42,7 @@ function xmldb_blocks_upgrade($oldversion=0) {
         $field->set_attributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'visible');
 
     /// Launch change of nullability for field configdata
-        $result = $result && change_field_notnull($table, $field);
+        $result = $result && $dbman->change_field_notnull($table, $field);
     }
 
 

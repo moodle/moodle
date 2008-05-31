@@ -19,7 +19,7 @@
 
 function xmldb_resource_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
 
     $result = true;
 
@@ -32,36 +32,7 @@ function xmldb_resource_upgrade($oldversion=0) {
 ///     $result = result of "/lib/ddllib.php" function calls
 /// }
 
-    if ($result && $oldversion < 2007011700) {
-        //move format from options to reference field because it was colliding with course blocks setting
-        execute_sql("UPDATE {$CFG->prefix}resource SET reference=options WHERE type='text' AND reference='' AND options!='showblocks'");
-        //ignore result
-    }
-
-    if ($result && $oldversion < 2007012000) {
-
-    /// Changing nullability of field summary on table resource to null
-        $table = new XMLDBTable('resource');
-        $field = new XMLDBField('summary');
-        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'reference');
-
-    /// Launch change of nullability for field summary
-        $result = $result && change_field_notnull($table, $field);
-    }
-
-    if ($result && $oldversion < 2007012001) {
-
-        if ($CFG->dbfamily == 'mysql') { // Only needed under mysql. The rest are long texts since ages
-
-        /// Changing precision of field alltext on table resource to (medium)
-            $table = new XMLDBTable('resource');
-            $field = new XMLDBField('alltext');
-            $field->setAttributes(XMLDB_TYPE_TEXT, 'medium', null, XMLDB_NOTNULL, null, null, null, null, 'summary');
-
-        /// Launch change of precision for field alltext
-            $result = $result && change_field_precision($table, $field);
-        }
-    }
+//===== 1.9.0 upgrade line ======//
 
     return $result;
 }

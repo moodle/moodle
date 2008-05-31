@@ -19,7 +19,7 @@
 
 function xmldb_forum_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
 
     $result = true;
 
@@ -54,21 +54,21 @@ function xmldb_forum_upgrade($oldversion=0) {
         $roles = implode(',', $roles);
 
         $sql = "SELECT fs.userid, f.id AS forumid
-                  FROM {$CFG->prefix}forum f
-                       JOIN {$CFG->prefix}course c                 ON c.id = f.course
-                       JOIN {$CFG->prefix}context ctx              ON (ctx.instanceid = c.id AND ctx.contextlevel = ".CONTEXT_COURSE.")
-                       JOIN {$CFG->prefix}forum_subscriptions fs   ON fs.forum = f.id
-                       LEFT JOIN {$CFG->prefix}role_assignments ra ON (ra.contextid = ctx.id AND ra.userid = fs.userid AND ra.roleid IN ($roles))
+                  FROM {forum} f
+                       JOIN {course} c                 ON c.id = f.course
+                       JOIN {context} ctx              ON (ctx.instanceid = c.id AND ctx.contextlevel = ".CONTEXT_COURSE.")
+                       JOIN {forum_subscriptions} fs   ON fs.forum = f.id
+                       LEFT JOIN {role_assignments} ra ON (ra.contextid = ctx.id AND ra.userid = fs.userid AND ra.roleid IN ($roles))
                  WHERE ra.id IS NULL";
 
-        if ($rs = get_recordset_sql($sql)) {
+        if ($rs = $DB->get_recordset_sql($sql)) {
             $DB->set_debug(false);
-            while ($remove = rs_fetch_next_record($rs)) {
-                delete_records('forum_subscriptions', 'userid', $remove->userid, 'forum', $remove->forumid);
+            foreach ($rs as $remove) {
+                $DB->delete_records('forum_subscriptions', array('userid'=>$remove->userid, 'forum'=>$remove->forumid));
                 echo '.';
             }
             $DB->set_debug(true);
-            rs_close($rs);
+            $rs-close();
         }
     }
 

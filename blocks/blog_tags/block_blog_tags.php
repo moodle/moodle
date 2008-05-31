@@ -39,8 +39,7 @@ class block_blog_tags extends block_base {
     }
 
     function get_content() {
-
-        global $CFG, $SITE, $COURSE, $USER;
+        global $CFG, $SITE, $COURSE, $USER, $DB;
 
         if (empty($CFG->usetags) || empty($CFG->bloglevel)) {
             $this->content->text = '';
@@ -74,20 +73,20 @@ class block_blog_tags extends block_base {
 
         $timewithin = time() - $this->config->timewithin * 24 * 60 * 60; /// convert to seconds
 
-        $sql  = 'SELECT t.id, t.tagtype, t.rawname, t.name, COUNT(DISTINCT ti.id) AS ct ';
-        $sql .= "FROM {$CFG->prefix}tag t, {$CFG->prefix}tag_instance ti, {$CFG->prefix}post p ";
-        $sql .= 'WHERE t.id = ti.tagid ';
-        $sql .= 'AND p.id = ti.itemid ';
-
         // admins should be able to read all tags      
         if (!has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM))) {
-            $sql .= 'AND (p.publishstate = \'site\' or p.publishstate=\'public\') ';
+            $type .= " AND (p.publishstate = 'site' or p.publishstate='public')";
         }
-        $sql .= "AND ti.timemodified > {$timewithin} ";
-        $sql .= 'GROUP BY t.id, t.tagtype, t.name, t.rawname ';
-        $sql .= 'ORDER BY ct DESC, t.name ASC';
 
-        if ($tags = get_records_sql($sql, 0, $this->config->numberoftags)) {
+        $sql  = "SELECT t.id, t.tagtype, t.rawname, t.name, COUNT(DISTINCT ti.id) AS ct
+                   FROM {tag} t, {tag_instance} ti, {post} p
+                  WHERE t.id = ti.tagid AND p.id = ti.itemid
+                        $type
+                        AND ti.timemodified > $timewithin
+               GROUP BY t.id, t.tagtype, t.name, t.rawname
+               ORDER BY ct DESC, t.name ASC";
+
+        if ($tags = get_records_sql($sql, null, 0, $this->config->numberoftags)) {
 
         /// There are 2 things to do:
         /// 1. tags with the same count should have the same size class

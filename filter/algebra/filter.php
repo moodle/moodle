@@ -86,8 +86,7 @@ function string_file_picture_algebra($imagefile, $tex= "", $height="", $width=""
 
 
 function algebra_filter ($courseid, $text) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     /// Do a quick check using stripos to avoid unnecessary wor
     if (!preg_match('/<algebra/i',$text) && !strstr($text,'@@')) {
@@ -101,9 +100,9 @@ function algebra_filter ($courseid, $text) {
 #    }
 #    if (strstr($scriptname,'post.php')) {
 #        $parent = forum_get_post_full($_GET['reply']);
-#        $discussion = get_record("forum_discussions","id",$parent->discussion);
+#        $discussion = $DB->get_record("forum_discussions",array("id"=>$parent->discussion));
 #    } else if (strstr($scriptname,'discuss.php')) {
-#        $discussion = get_record("forum_discussions","id",$_GET['d'] );
+#        $discussion = $DB->get_record("forum_discussions", array("id"=>$_GET['d']));
 #    } else {
 #        return $text;
 #    }
@@ -140,7 +139,7 @@ function algebra_filter ($courseid, $text) {
         }
         $md5 =  md5($algebra);
         $filename =  $md5  . ".gif";
-        if (! $texcache = get_record("cache_filters","filter","algebra", "md5key", $md5)) {
+        if (! $texcache = $DB->get_record("cache_filters", array("filter"=>"algebra", "md5key"=>$md5))) {
            $algebra = str_replace('&lt;','<',$algebra);
            $algebra = str_replace('&gt;','>',$algebra);
            $algebra = str_replace('<>','#',$algebra);
@@ -219,9 +218,9 @@ function algebra_filter ($courseid, $text) {
               $texcache->filter = 'algebra';
               $texcache->version = 1;
               $texcache->md5key = $md5;
-              $texcache->rawtext = addslashes($texexp);
+              $texcache->rawtext = $texexp;
               $texcache->timemodified = time();
-              insert_record("cache_filters",$texcache, false);
+              $DB->insert_record("cache_filters",$texcache, false);
               $text = str_replace( $matches[0][$i], string_file_picture_algebra($filename, $texexp, '', '', $align), $text);
            } else {
               $text = str_replace( $matches[0][$i],"<b>Undetermined error:</b> ",$text);

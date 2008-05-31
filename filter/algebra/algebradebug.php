@@ -28,7 +28,7 @@
       $algebra = substr($query,8,$splitpos);
       $md5 = md5($algebra);
       if (strpos($query,'ShowDB') || strpos($query,'DeleteDB')) {
-        $texcache = get_record("cache_filters","filter","algebra", "md5key", $md5);
+        $texcache = $DB->get_record("cache_filters", array("filter"=>"algebra", "md5key"=>$md5));
       }
       if (strpos($query,'ShowDB')) {
         if ($texcache) {

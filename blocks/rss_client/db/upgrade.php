@@ -19,7 +19,7 @@
 
 function xmldb_block_rss_client_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
 
     $result = true;
 
@@ -30,7 +30,7 @@ function xmldb_block_rss_client_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2007080100) { //New version in version.php
     /// block_rss_timeout config setting must be block_rss_client_timeout
-        set_field('config', 'name', 'block_rss_client_timeout', 'name', 'block_rss_timeout');
+        $DB->set_field('config', 'name', 'block_rss_client_timeout', array('name'=>'block_rss_timeout'));
     }
 
     return $result;

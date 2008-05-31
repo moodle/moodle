@@ -5,8 +5,7 @@
     //Modifications by stronk7.
 
     function activitynames_filter($courseid, $text) {
-
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         // Trivial-cache - keyed on $cachedcourseid
         static $activitylist = null;
@@ -30,7 +29,7 @@
             if ($COURSE->id == $courseid) {
                 $course = $COURSE;
             } else {
-                $course = get_record("course", "id", $courseid);
+                $course = $DB->get_record("course", array("id"=>$courseid));
             }
 
             if (!isset($course->modinfo)) {

@@ -19,7 +19,7 @@
 
 function xmldb_block_calendar_month_upgrade($oldversion=0) {
 
-    global $CFG, $THEME, $db;
+    global $CFG, $THEME, $DB;
 
     $result = true;
 
