@@ -30,6 +30,8 @@ class oci8po_adodb_moodle_recordset extends adodb_moodle_recordset {
     }
 
     public function rewind() {
+        //TODO - this does not work in Oracle :-(
+        error('Implement rewind in oracle by doing query again');
         $this->rs->MoveFirst();
     }
 

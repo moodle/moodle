@@ -4,7 +4,7 @@ require_once("../config.php");
 $id    = required_param('id', PARAM_INT);              // course id
 $users = optional_param('userid', array(), PARAM_INT); // array of user id
 
-if (! $course = get_record('course', 'id', $id)) {
+if (! $course = $DB->get_record('course', array('id'=>$id))) {
     print_error("Course ID is incorrect");
 }
 
@@ -22,10 +22,10 @@ if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
 
     foreach ($form->userid as $k => $v) {
         // find all roles this student have in this course
-        if ($students = get_records_sql("SELECT ra.id, ra.roleid, ra.timestart, ra.timeend
-                                       FROM {$CFG->prefix}role_assignments ra
-                                       WHERE userid = $v
-                                       AND contextid = $context->id")) {
+        if ($students = $DB->get_records_sql("SELECT ra.id, ra.roleid, ra.timestart, ra.timeend
+                                                FROM {role_assignments} ra
+                                               WHERE userid = ?
+                                                     AND contextid = ?", array($v, $context->id))) {
             // enrol these users again, with time extension
             // not that this is not necessarily a student role
             foreach ($students as $student) {
@@ -124,9 +124,10 @@ $notavailable = get_string('notavailable');
 foreach ($_POST as $k => $v) {
     if (preg_match('/^user(\d+)$/',$k,$m)) {
 
-        if (!($user = get_record_sql("SELECT * FROM {$CFG->prefix}user u
-                                    INNER JOIN {$CFG->prefix}role_assignments ra ON u.id=ra.userid
-                                    WHERE u.id={$m[1]} AND ra.contextid = $context->id"))) {
+        if (!($user = $DB->get_record_sql("SELECT *
+                                             FROM {user} u
+                                             JOIN {role_assignments} ra ON u.id=ra.userid
+                                            WHERE u.id=? AND ra.contextid = ?", array($m[1], $context->id)))) {
             continue;
         }
         $userbasemenu = $basemenu;

@@ -7,7 +7,7 @@ $users = optional_param('userid', array(), PARAM_INT); // array of user id
 $content = optional_param('content', '', PARAM_RAW); // note content
 $state = optional_param('state', '', PARAM_ALPHA); // note publish state
 
-if (! $course = get_record('course', 'id', $id)) {
+if (! $course = $DB->get_record('course', array('id'=>$id))) {
     print_error("Course ID is incorrect");
 }
 
@@ -24,7 +24,7 @@ if (!empty($users) && !empty($content) && confirm_sesskey()) {
     $note->content = $content;
     $note->publishstate = $state;
     foreach ($users as $k => $v) {
-        if(!$user = get_record('user', 'id', $v)) {
+        if(!$user = $DB->get_record('user', array('id'=>$v))) {
             continue;
         }
         $note->id = 0;
@@ -69,7 +69,7 @@ $strpublishstate = get_string('publishstate', 'notes');
 
 $userlist = array();
 foreach ($users as $k => $v) {
-    if(!$user = get_record('user', 'id', $v)) {
+    if (!$user = $DB->get_record('user', array('id'=>$v))) {
         continue;
     }
     echo '<input type="hidden" name="userid['.$k.']" value="'.$v.'" />';

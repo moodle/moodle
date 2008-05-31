@@ -6,7 +6,7 @@ $id    = required_param('id', PARAM_INT);              // course id
 $users = optional_param('userid', array(), PARAM_INT); // array of user id
 $contents = optional_param('contents', array(), PARAM_RAW); // array of user notes
 $states = optional_param('states', array(), PARAM_ALPHA); // array of notes states
-if (! $course = get_record('course', 'id', $id)) {
+if (! $course = $DB->get_record('course', array('id'=>$id))) {
     print_error("Course ID is incorrect");
 }
 
@@ -25,7 +25,7 @@ if (!empty($users) && confirm_sesskey()) {
     $note->courseid = $id;
     $note->format = FORMAT_PLAIN;
     foreach ($users as $k => $v) {
-        if(!$user = get_record('user', 'id', $v) || empty($contents[$k])) {
+        if(!$user = $DB->get_record('user', array('id'=>$v)) || empty($contents[$k])) {
             continue;
         }
         $note->id = 0;
@@ -74,7 +74,7 @@ if (empty($users)) {
 }
 
 foreach ($users as $k => $v) {
-    if(!$user = get_record('user', 'id', $v)) {
+    if(!$user = $DB->get_record('user', array('id'=>$v))) {
         continue;
     }
     $checkbox = choose_from_menu($state_names, 'states[' . $k . ']', empty($states[$k]) ? NOTES_STATE_PUBLIC : $states[$k], '', '', '0', true);

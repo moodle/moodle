@@ -27,11 +27,11 @@
         if (! $context = get_context_instance_by_id($contextid)) {
             error("Context ID is incorrect");
         }
-        if (! $course = get_record('course', 'id', $context->instanceid)) {
+        if (! $course = $DB->get_record('course', array('id'=>$context->instanceid))) {
             error("Course ID is incorrect");
         }
     } else {
-        if (! $course = get_record('course', 'id', $courseid)) {
+        if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
             error("Course ID is incorrect");
         }
         if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
@@ -220,16 +220,16 @@
     // get minimum lastaccess for this course and display a dropbox to filter by lastaccess going back this far.
     // we need to make it diferently for normal courses and site course
     if ($context->id != $frontpagectx->id) {
-        $minlastaccess = get_field_sql('SELECT min(timeaccess)
-                                          FROM '.$CFG->prefix.'user_lastaccess
-                                         WHERE courseid = '.$course->id.'
-                                           AND timeaccess != 0');
-        $lastaccess0exists = record_exists('user_lastaccess', 'courseid', $course->id, 'timeaccess', 0);
+        $minlastaccess = $DB->get_field_sql('SELECT min(timeaccess)
+                                               FROM {user_lastaccess}
+                                              WHERE courseid = ?
+                                                    AND timeaccess != 0', array($course->id));
+        $lastaccess0exists = $DB->record_exists('user_lastaccess', array('courseid'=>$course->id, 'timeaccess'=>0));
     } else {
-        $minlastaccess = get_field_sql('SELECT min(lastaccess)
-                                          FROM '.$CFG->prefix.'user
-                                         WHERE lastaccess != 0');
-        $lastaccess0exists = record_exists('user','lastaccess',0);
+        $minlastaccess = $DB->get_field_sql('SELECT min(lastaccess)
+                                               FROM {user}
+                                              WHERE lastaccess != 0');
+        $lastaccess0exists = $DB->record_exists('user', array('lastaccess'=>0));
     }
 
     $now = usergetmidnight(time());
@@ -383,7 +383,7 @@
                 ));
     $table->setup();
 
-
+    $params = array();
     // we are looking for all users with this role assigned in this context or higher
     if ($usercontexts = get_parent_contexts($context)) {
         $listofcontexts = '('.implode(',', $usercontexts).')';
@@ -391,7 +391,8 @@
         $listofcontexts = '('.$sitecontext->id.')'; // must be site
     }
     if ($roleid > 0) {
-        $selectrole = " AND r.roleid = $roleid ";
+        $selectrole = " AND r.roleid = :roleid ";
+        $params['roleid'] = $roleid;
     } else {
         $selectrole = " ";
     }
@@ -424,18 +425,19 @@
     }
 
     if ($context->id != $frontpagectx->id or $roleid >= 0) {
-        $from   = "FROM {$CFG->prefix}user u
-                LEFT OUTER JOIN {$CFG->prefix}context ctx
-                    ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.")
-                JOIN {$CFG->prefix}role_assignments r
-                    ON u.id=r.userid
-                LEFT OUTER JOIN {$CFG->prefix}user_lastaccess ul
-                    ON (r.userid=ul.userid and ul.courseid = $course->id) ";
+        $from   = "FROM {user} u
+                   LEFT OUTER JOIN {context} ctx
+                        ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.")
+                   JOIN {role_assignments} r
+                        ON u.id=r.userid
+                   LEFT OUTER JOIN {user_lastaccess} ul
+                        ON (r.userid=ul.userid and ul.courseid = :courseid) ";
+        $params['courseid'] = $course->id;
     } else {
         // on frontpage and we want all registered users
-        $from = "FROM {$CFG->prefix}user u
-                LEFT OUTER JOIN {$CFG->prefix}context ctx
-                    ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.") ";
+        $from = "FROM {user} u
+                 LEFT OUTER JOIN {context} ctx
+                      ON (u.id=ctx.instanceid AND ctx.contextlevel = ".CONTEXT_USER.") ";
     }
 
     $hiddensql = has_capability('moodle/role:viewhiddenassigns', $context)? '':' AND r.hidden = 0 ';
@@ -455,18 +457,18 @@
 
     if ($context->id != $frontpagectx->id) {
         $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
-            AND u.deleted = 0 $selectrole
-            AND (ul.courseid = $course->id OR ul.courseid IS NULL)
-            AND u.username != 'guest'
-            $adminroles
-            $hiddensql ";
+                         AND u.deleted = 0 $selectrole
+                         AND (ul.courseid = $course->id OR ul.courseid IS NULL)
+                         AND u.username != 'guest'
+                         $adminroles
+                         $hiddensql ";
             $where .= get_course_lastaccess_sql($accesssince);
     } else {
         if ($roleid >= 0) {
             $where = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
-                AND u.deleted = 0 $selectrole
-                AND u.username != 'guest'";
-                $where .= get_user_lastaccess_sql($accesssince);
+                      AND u.deleted = 0 $selectrole
+                      AND u.username != 'guest'";
+            $where .= get_user_lastaccess_sql($accesssince);
         } else {
             $where = "WHERE u.deleted = 0
                 AND u.username != 'guest'";
@@ -476,19 +478,22 @@
     $wheresearch = '';
 
     if (!empty($search)) {
-        $LIKE = sql_ilike();
-        $fullname  = sql_fullname('u.firstname','u.lastname');
-        $wheresearch .= ' AND ('. $fullname .' '. $LIKE .'\'%'. $search .'%\' OR email '. $LIKE .'\'%'. $search .'%\' OR idnumber '.$LIKE.' \'%'.$search.'%\') ';
-
+        $LIKE = $DB->sql_ilike();
+        $fullname = $DB->sql_fullname('u.firstname','u.lastname');
+        $wheresearch .= " AND ($fullname $LIKE :search1 OR email $LIKE :search2 OR idnumber $LIKE :search3) ";
+        $params['search1'] = "%$search%";
+        $params['search2'] = "%$search%";
+        $params['search3'] = "%$search%";
     }
 
     if ($currentgroup) {    // Displaying a group by choice
         // FIX: TODO: This will not work if $currentgroup == 0, i.e. "those not in a group"
-        $from  .= 'LEFT JOIN '.$CFG->prefix.'groups_members gm ON u.id = gm.userid ';
-        $where .= ' AND gm.groupid = '.$currentgroup;
+        $from  .= 'LEFT JOIN {groups_members} gm ON u.id = gm.userid ';
+        $where .= ' AND gm.groupid = :currentgroup';
+        $params['curentgroup'] = $currentgroup;
     }
 
-    $totalcount = count_records_sql('SELECT COUNT(distinct u.id) '.$from.$where);   // Each user could have > 1 role
+    $totalcount = $DB->count_records_sql("SELECT COUNT(distinct u.id) $from $where", $params);   // Each user could have > 1 role
 
     if ($table->get_sql_where()) {
         $where .= ' AND '.$table->get_sql_where();
@@ -510,12 +515,12 @@
         }
     }
 
-    $matchcount = count_records_sql('SELECT COUNT(distinct u.id) '.$from.$where.$wheresearch);
+    $matchcount = $DB->count_records_sql("SELECT COUNT(distinct u.id) $from $where $wheresearch", $params);
 
     $table->initialbars(true);
     $table->pagesize($perpage, $matchcount);
 
-    $userlist = get_recordset_sql($select.$from.$where.$wheresearch.$sort,
+    $userlist = $DB->get_recordset_sql("$select $from $where $wheresearch $sort", $params,
             $table->get_page_start(),  $table->get_page_size());
 
     //
@@ -527,25 +532,20 @@
     if ($mode===MODE_ENROLDETAILS) {
         $userids = array();
 
-        while ($user = rs_fetch_next_record($userlist)) {
+        foreach ($userlist as $user) {
             $userids[] = $user->id;
         }
         $userlist_extra = get_participants_extra($userids, $avoidroles, $course, $context);
 
         // Only Oracle cannot seek backwards
         // and must re-query...
-        if ($userlist->canSeek === true) {
-            $userlist->MoveFirst();
-        } else {
-            $userlist = get_recordset_sql($select.$from.$where.$wheresearch.$sort,
-                                          $table->get_page_start(),  $table->get_page_size());
-        }
+        $userlist->rewind();
     }
 
     if ($context->id == $frontpagectx->id) {
         $strallsiteusers = get_string('allsiteusers', 'role');
         if ($CFG->defaultfrontpageroleid) {
-            if ($fprole = get_record('role', 'id', $CFG->defaultfrontpageroleid)) {
+            if ($fprole = $DB->get_record('role', array('id'=>$CFG->defaultfrontpageroleid))) {
                 $fprole = role_get_name($fprole, $frontpagectx);
                 $strallsiteusers = "$strallsiteusers ($fprole)";
             }
@@ -579,7 +579,7 @@
     }
 
     if ($roleid > 0) {
-        if (!$currentrole = get_record('role','id',$roleid)) {
+        if (!$currentrole = $DB->get_record('role', array('id'=>$roleid))) {
             error('That role does not exist');
         }
         $a->number = $totalcount;
@@ -715,7 +715,7 @@
 
             if ($matchcount > 0) {
                 $usersprinted = array();
-                while ($user = rs_fetch_next_record($userlist)) {
+                foreach ($userlist as $user) {
                     if (in_array($user->id, $usersprinted)) { /// Prevent duplicates by r.hidden - MDL-13935
                         continue;
                     }
@@ -746,7 +746,7 @@
             }
 
             $usersprinted = array();
-            while ($user = rs_fetch_next_record($userlist)) {
+            foreach ($userlist as $user) {
                 if (in_array($user->id, $usersprinted)) { /// Prevent duplicates by r.hidden - MDL-13935
                     continue;
                 }
@@ -898,7 +898,7 @@
     print_footer($course);
 
     if ($userlist) {
-        rs_close($userlist);
+        $userlist->close();
     }
 
 
@@ -925,12 +925,13 @@ function get_user_lastaccess_sql($accesssince='') {
 }
 
 function get_participants_extra ($userids, $avoidroles, $course, $context) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     if (count($userids) === 0 || count($avoidroles) === 0) {
         return array();
     }
+
+    $params = array();
 
     $userids = implode(',', $userids);
 
@@ -946,10 +947,10 @@ function get_participants_extra ($userids, $avoidroles, $course, $context) {
     }
 
     if (!empty($CFG->enablegroupings)) {
-        $gpjoin = "LEFT OUTER JOIN {$CFG->prefix}groupings_groups gpg
-                     ON gpg.groupid=g.id
-                   LEFT OUTER JOIN {$CFG->prefix}groupings gp
-                     ON (gp.courseid={$course->id} AND gp.id=gpg.groupingid)";
+        $gpjoin = "LEFT OUTER JOIN {groupings_groups} gpg
+                        ON gpg.groupid=g.id
+                   LEFT OUTER JOIN {groupings} gp
+                        ON (gp.courseid={$course->id} AND gp.id=gpg.groupingid)";
         $gpselect = ',gp.id AS gpid, gp.name AS gpname ';
     } else {
         $gpjoin   = '';
@@ -967,27 +968,27 @@ function get_participants_extra ($userids, $avoidroles, $course, $context) {
                    ra.enrol AS enrolplugin,
                    g.id     AS gid, g.name AS gname
                    $gpselect
-            FROM {$CFG->prefix}role_assignments ra
-            JOIN {$CFG->prefix}context ctx
-              ON (ra.contextid=ctx.id)
-            LEFT OUTER JOIN {$CFG->prefix}course_categories cc
-              ON (ctx.contextlevel=40 AND ctx.instanceid=cc.id)
+              FROM {role_assignments} ra
+              JOIN {context} ctx
+                   ON (ra.contextid=ctx.id)
+              LEFT JOIN {course_categories} cc
+                   ON (ctx.contextlevel=40 AND ctx.instanceid=cc.id)
 
             /* only if groups active */
-            LEFT OUTER JOIN {$CFG->prefix}groups_members gm
-              ON (ra.userid=gm.userid)
-            LEFT OUTER JOIN {$CFG->prefix}groups g
-              ON (gm.groupid=g.id AND g.courseid={$course->id})
+              LEFT JOIN {groups_members} gm
+                   ON (ra.userid=gm.userid)
+              LEFT JOIN {groups} g
+                   ON (gm.groupid=g.id AND g.courseid={$course->id})
             /* and if groupings is enabled... */
             $gpjoin
 
-            WHERE ra.userid IN ( $userids ) 
-                  AND ra.contextid in ( $contextids ) 
-                  $avoidrolescond
+             WHERE ra.userid IN ( $userids ) 
+                   AND ra.contextid in ( $contextids ) 
+                   $avoidrolescond
 
-            ORDER BY ra.userid, ctx.depth DESC";
+          ORDER BY ra.userid, ctx.depth DESC";
 
-    $rs = get_recordset_sql($sql);
+    $rs = $DB->get_recordset_sql($sql, $params);
     $extra = array();
 
     // Data structure -
@@ -1005,7 +1006,7 @@ function get_participants_extra ($userids, $avoidroles, $course, $context) {
     // and modifierid (with an outer join to mdl_user!
     //
 
-    while ($rec = rs_fetch_next_record($rs)) {
+    foreach ($rs as $rec) {
         $userid = $rec->userid;
 
         // Prime an initial user rec...
@@ -1032,6 +1033,7 @@ function get_participants_extra ($userids, $avoidroles, $course, $context) {
 
         }
     }
+    $rs->close();
     return $extra;
 
 }

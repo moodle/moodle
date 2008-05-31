@@ -16,11 +16,11 @@
         $id = $USER->id;
     }
 
-    if (! $user = get_record("user", "id", $id) ) {
+    if (! $user = $DB->get_record("user", array("id"=>$id))) {
         print_error("No such user in this course");
     }
 
-    if (! $course = get_record("course", "id", $course) ) {
+    if (! $course = $DB->get_record("course", array("id"=>$course))) {
         print_error("No such course id");
     }
 
@@ -42,7 +42,7 @@
 
     if (!empty($CFG->forcelogin) || $course->id != SITEID) {
         // do not force parents to enrol
-        if (!get_record('role_assignments', 'userid', $USER->id, 'contextid', $usercontext->id)) {
+        if (!$DB->get_record('role_assignments', array('userid'=>$USER->id, 'contextid'=>$usercontext->id))) {
             require_login($course->id);
         }
     }
@@ -150,7 +150,7 @@
 
     if ($course->id != SITEID) {
         $user->lastaccess = false;
-        if ($lastaccess = get_record('user_lastaccess', 'userid', $user->id, 'courseid', $course->id)) {
+        if ($lastaccess = $DB->get_record('user_lastaccess', array('userid'=>$user->id, 'courseid'=>$course->id))) {
             $user->lastaccess = $lastaccess->timeaccess;
         }
     }
@@ -175,23 +175,13 @@
 
     if (is_mnet_remote_user($user)) {
         $sql = "
-             SELECT DISTINCT
-                 h.id,
-                 h.name,
-                 h.wwwroot,
-                 a.name as application,
-                 a.display_name
-             FROM
-                 {$CFG->prefix}mnet_host h,
-                 {$CFG->prefix}mnet_application a
-             WHERE
-                 h.id = '{$user->mnethostid}' AND
-                 h.applicationid = a.id
-             ORDER BY
-                 a.display_name,
-                 h.name";
+             SELECT DISTINCT h.id, h.name, h.wwwroot,
+                             a.name as application, a.display_name
+               FROM {mnet_host} h, {mnet_application} a
+              WHERE h.id = ? AND h.applicationid = a.id
+           ORDER BY a.display_name, h.name";
 
-        $remotehost = get_record_sql($sql);
+        $remotehost = $DB->get_record_sql($sql, array($user->mnethostid));
 
         echo '<p class="errorboxcontent">'.get_string('remote'.$remotehost->application.'user')." <br />\n";
         if ($USER->id == $user->id) {

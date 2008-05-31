@@ -18,7 +18,7 @@
     }
 
     if (($filtertype == 'site' && $filterselect) || ($filtertype=='user' && $filterselect)) {
-        $user = get_record('user','id',$filterselect);
+        $user = $DB->get_record('user', array('id'=>$filterselect));
     }
 
     $inactive = NULL;
@@ -48,7 +48,7 @@
      **************************************/
     } else if ($filtertype == 'course' && $filterselect) {
 
-        $course = get_record('course','id',$filterselect);
+        $course = $DB->get_record('course', array('id'=>$filterselect));
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         print_heading(format_string($course->fullname));
 
@@ -85,7 +85,7 @@
      **************************************/
     } else {
         if (isset($userid)) {
-            $user = get_record('user','id', $userid);
+            $user = $DB->get_record('user', array('id'=>$userid));
         }
         print_heading(fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id))));
 

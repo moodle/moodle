@@ -12,7 +12,7 @@
     $format = optional_param('format',FORMAT_MOODLE,PARAM_INT);
     $deluser = optional_param('deluser',0,PARAM_INT);
 
-    if (!$course = get_record('course','id',$id)) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error("Invalid course id");
     }
 
@@ -46,7 +46,7 @@
     foreach ($_POST as $k => $v) {
         if (preg_match('/^(user|teacher)(\d+)$/',$k,$m)) {
             if (!array_key_exists($m[2],$SESSION->emailto[$id])) {
-                if ($user = get_record_select('user','id = '.$m[2],'id,firstname,lastname,idnumber,email,emailstop,mailformat,lastaccess')) {
+                if ($user = $DB->get_record_select('user', "id = ?", array($m[2]), 'id,firstname,lastname,idnumber,email,emailstop,mailformat,lastaccess')) {
                     $SESSION->emailto[$id][$m[2]] = $user;
                     $SESSION->emailto[$id][$m[2]]->teacher = ($m[1] == 'teacher');
                     $count++;
@@ -79,7 +79,7 @@
 
     if ($count) {
         if ($count == 1) {
-            $heading =  get_string('addedrecip','moodle',$count);
+            $heading = get_string('addedrecip','moodle',$count);
         } else {
             $heading = get_string('addedrecips','moodle',$count);
         }
