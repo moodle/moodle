@@ -32,14 +32,14 @@ define ('DATA_APPROVED', -3);
 define ('DATA_TIMEADDED', 0);
 define ('DATA_TIMEMODIFIED', -4);
 
-class data_field_base {     /// Base class for Database Field Types (see field/*/field.class.php)
+class data_field_base {     // Base class for Database Field Types (see field/*/field.class.php)
 
-    var $type = 'unknown';  /// Subclasses must override the type with their name
-    var $data = NULL;       /// The database object that this field belongs to
-    var $field = NULL;      /// The field object itself, if we know it
+    var $type = 'unknown';  // Subclasses must override the type with their name
+    var $data = NULL;       // The database object that this field belongs to
+    var $field = NULL;      // The field object itself, if we know it
 
-    var $iconwidth = 16;    /// Width of the icon for this fieldtype
-    var $iconheight = 16;   /// Width of the icon for this fieldtype
+    var $iconwidth = 16;    // Width of the icon for this fieldtype
+    var $iconheight = 16;   // Width of the icon for this fieldtype
 
 
 // Constructor function
@@ -950,7 +950,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         return;
     }
 
-    foreach ($records as $record) {   /// Might be just one for the single template
+    foreach ($records as $record) {   // Might be just one for the single template
 
     // Replacing tags
         $patterns = array();
@@ -1223,7 +1223,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     $patterns[]    = '/##lastname##/';
     $replacement[] = '<input type="text" size="16" name="u_ln" value="'.$ln.'" />';
 
-    ///actual replacement of the tags
+    // actual replacement of the tags
     $newtext = preg_replace($patterns, $replacement, $data->asearchtemplate);
 
     $options = new object();
@@ -1647,7 +1647,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
  */
 function data_preset_name($shortname, $path) {
 
-    /// We are looking inside the preset itself as a first choice, but also in normal data directory
+    // We are looking inside the preset itself as a first choice, but also in normal data directory
     $string = get_string('modulename', 'datapreset_'.$shortname);
 
     if (substr($string, 0, 1) == '[') {
@@ -1737,7 +1737,7 @@ function data_print_header($course, $cm, $data, $currenttab='') {
     $currentgroup = groups_get_activity_group($cm);
     $groupmode = groups_get_activity_groupmode($cm);
 
-    ///Print the tabs
+    // Print the tabs
 
     if ($currenttab) {
         include('tabs.php');
@@ -1856,7 +1856,6 @@ function data_presets_export($course, $cm, $data) {
     fclose($asearchtemplate);
 
     /* All the display data is now done. Now assemble preset.xml */
-    $fields = get_records('data_fields', 'dataid', $data->id);
     $presetfile = fopen($tempfolder.'/preset.xml', 'w');
     $presetxml = "<preset>\n\n";
 
@@ -1879,7 +1878,9 @@ function data_presets_export($course, $cm, $data) {
     // note: grading settings are not exported intentionally
     $presetxml .= "</settings>\n\n";
 
-    /* Now for the fields. Grabs all settings that are non-empty */
+    // Now for the fields. Grab all that are non-empty
+    $fields = get_records('data_fields', 'dataid', $data->id);
+    ksort($fields);
     if (!empty($fields)) {
         foreach ($fields as $field) {
             $presetxml .= "<field>\n";
@@ -1902,17 +1903,18 @@ function data_presets_export($course, $cm, $data) {
     }
 
     $filelist = array(
-            'singletemplate.html',
-            'listtemplate.html',
-            'listtemplateheader.html',
-            'listtemplatefooter.html',
-            'addtemplate.html',
-            'rsstemplate.html',
-            'rsstitletemplate.html',
-            'csstemplate.css',
-            'jstemplate.js',
-            'preset.xml',
-            'asearchtemplate.html');
+        'singletemplate.html',
+        'listtemplate.html',
+        'listtemplateheader.html',
+        'listtemplatefooter.html',
+        'addtemplate.html',
+        'rsstemplate.html',
+        'rsstitletemplate.html',
+        'csstemplate.css',
+        'jstemplate.js',
+        'preset.xml',
+        'asearchtemplate.html'
+    );
 
     foreach ($filelist as $key => $file) {
         $filelist[$key] = $tempfolder.'/'.$filelist[$key];
@@ -2000,7 +2002,7 @@ class PresetImporter {
         if (file_exists($this->folder."/asearchtemplate.html")) {
             $settings->asearchtemplate = file_get_contents($this->folder."/asearchtemplate.html");
         } else {
-            $settings->asearchtemplate =  NULL;
+            $settings->asearchtemplate = NULL;
         }
 
         $settings->instance = $this->data->id;
@@ -2153,7 +2155,7 @@ class PresetImporter {
     // handle special settings here
         if (!empty($settings->defaultsort)) {
             if (is_numeric($settings->defaultsort)) {
-                //old broken value
+                // old broken value
                 $settings->defaultsort = 0;
             } else {
                 $settings->defaultsort = (int)get_field('data_fields', 'id', 'dataid', $this->data->id, 'name', addslashes($settings->defaultsort));
