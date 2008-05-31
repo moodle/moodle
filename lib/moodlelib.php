@@ -2884,7 +2884,6 @@ function update_user_record($username, $authplugin) {
                 continue;
             }
             if ($confval === 'onlogin') {
-                $value = addslashes(stripslashes($value));   // Just in case
                 // MDL-4207 Don't overwrite modified user profile values with
                 // empty LDAP values when 'unlocked if empty' is set. The purpose
                 // of the setting 'unlocked if empty' is to allow the user to fill

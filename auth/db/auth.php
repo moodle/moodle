@@ -306,7 +306,7 @@ class auth_plugin_db extends auth_plugin_base {
 
                     foreach ($update_users as $user) {
                         echo "\t"; print_string('auth_dbupdatinguser', 'auth', array($user->username, $user->id));
-                        if (!$this->update_user_record(addslashes($user->username), $updatekeys)) {
+                        if (!$this->update_user_record($user->username, $updatekeys)) {
                             echo " - ".get_string('skipped');
                         }
                         echo "\n";
@@ -451,16 +451,16 @@ class auth_plugin_db extends auth_plugin_base {
      * If you don't pass $updatekeys, there is a performance hit and
      * values removed from DB won't be removed from moodle.
      *
-     * @param string $username username (with system magic quotes)
+     * @param string $username username
      */
     function update_user_record($username, $updatekeys=false) {
-        global $CFG;
+        global $CFG, $DB;
 
         //just in case check text case
         $username = trim(moodle_strtolower($username));
 
         // get the current user record
-        $user = get_record('user', 'username', $username, 'mnethostid', $CFG->mnet_localhost_id);
+        $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id));
         if (empty($user)) { // trouble
             error_log("Cannot update non-existent user: $username");
             print_error('auth_dbusernotexist','auth',$username);
@@ -486,12 +486,12 @@ class auth_plugin_db extends auth_plugin_base {
 
                 if (!empty($this->config->{'field_updatelocal_' . $key})) {
                     if ($user->{$key} != $value) { // only update if it's changed
-                        set_field('user', $key, addslashes($value), 'id', $userid);
+                        $DB->set_field('user', $key, $value, array('id'=>$userid));
                     }
                 }
             }
         }
-        return get_record_select('user', "id = $userid AND deleted = 0");
+        return $DB->get_record('user', array('id'=>$userid, 'deleted'=>0));
     }
 
     /**
