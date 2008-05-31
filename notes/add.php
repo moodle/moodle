@@ -8,7 +8,7 @@
     $userid        = required_param('user', PARAM_INT);
 
 /// locate course information
-    if (!($course = get_record('course', 'id', $courseid))) {
+    if (!($course = $DB->get_record('course', array('id'=>$courseid)))) {
         print_error('Incorrect course id found');
     }
 
@@ -23,7 +23,7 @@
 
 
 /// locate user information
-    if (!($user = get_record('user', 'id', $userid))) {
+    if (!($user = $DB->get_record('user', array('id'=>$userid)))) {
         print_error('Incorrect user id found');
     }
 
@@ -39,12 +39,12 @@
     }
 
 /// if data was submitted and validated, then save it to database
-    if ($formdata = $noteform->get_data()) {
+    if ($formdata = $noteform->get_data(false)) {
         $note = new object();
-        $note->courseid = $formdata->course;
-        $note->content = $formdata->content;
-        $note->format = FORMAT_PLAIN;
-        $note->userid = $formdata->user;
+        $note->courseid     = $formdata->course;
+        $note->content      = $formdata->content;
+        $note->format       = FORMAT_PLAIN;
+        $note->userid       = $formdata->user;
         $note->publishstate = $formdata->publishstate;
         if (note_save($note)) {
             add_to_log($note->courseid, 'notes', 'add', 'index.php?course='.$note->courseid.'&amp;user='.$note->userid . '#note-' . $note->id , 'add note');
@@ -53,15 +53,15 @@
         redirect($CFG->wwwroot . '/notes/index.php?course=' . $note->courseid . '&amp;user=' . $note->userid);
     }
 
-    if($noteform->is_submitted()) {
+    if ($noteform->is_submitted()) {
         // if data was submitted with errors, then use it as default for new form
         $note = $noteform->get_submitted_data(false);
     } else {
         // if data was not submitted yet, then use default values
         $note = new object();
-        $note->id = 0;
-        $note->course = $courseid;
-        $note->user = $userid;
+        $note->id           = 0;
+        $note->course       = $courseid;
+        $note->user         = $userid;
         $note->publishstate = optional_param('state', NOTES_STATE_PUBLIC, PARAM_ALPHA);
     }
     $noteform->set_data($note);

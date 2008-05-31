@@ -12,12 +12,12 @@ if (!$note = note_load($noteid)) {
 }
 
 // locate course information
-if (!$course = get_record('course', 'id', $note->courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$note->courseid))) {
     print_error('Incorrect course id found');
 }
 
 // locate user information
-    if (!$user = get_record('user', 'id', $note->userid)) {
+    if (!$user = $DB->get_record('user', array('id'=>$note->userid))) {
         print_error('Incorrect user id found');
     }
 
@@ -32,7 +32,7 @@ if (!has_capability('moodle/notes:manage', $context)) {
     print_error('You may not delete this note');
 }
 
-if (data_submitted() && confirm_sesskey()) {
+if (data_submitted(false) && confirm_sesskey()) {
 //if data was submitted and is valid, then delete note
     $returnurl = $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $note->userid;
     if (note_delete($noteid)) {

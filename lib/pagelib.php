@@ -335,7 +335,7 @@ class page_course extends page_base {
         if ($this->id == $COURSE->id) {
             $this->courserecord = $COURSE;
         } else {
-            $this->courserecord = $DB->get_record('course', 'id', $this->id);
+            $this->courserecord = $DB->get_record('course', array('id'=>$this->id));
         }
 
         if(empty($this->courserecord) && !defined('ADMIN_STICKYBLOCKS')) {

@@ -61,7 +61,7 @@
     }
 
 
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         rss_not_found();
     }
 

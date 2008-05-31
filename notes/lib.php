@@ -32,26 +32,34 @@ define('NOTES_SHOW_FOOT', 0x04);
  * @return array of note objects
  */
 function note_list($courseid=0, $userid=0, $state = '', $author = 0, $order='lastmodified DESC', $limitfrom=0, $limitnum=0) {
+    global $DB;
+
     // setup filters
     $selects = array();
-    if($courseid) {
-        $selects[] = 'courseid=' . $courseid;
+    $params = array();
+    if ($courseid) {
+        $selects[] = 'courseid=?';
+        $params[]  = $courseid;
     }
-    if($userid) {
-        $selects[] = 'userid=' . $userid;
+    if ($userid) {
+        $selects[] = 'userid=?';
+        $params[]  = $userid;
     }
-    if($author) {
-        $selects[] = 'usermodified=' . $author;
+    if ($author) {
+        $selects[] = 'usermodified=?';
+        $params[]  = $author;
     }
-    if($state) {
-        $selects[] = "publishstate='$state'";
+    if ($state) {
+        $selects[] = 'publishstate=?';
+        $params[]  = $state;
     }
-    $selects[] = "module='notes'";
+    $selects[] = "module=?";
+    $params[]  = 'notes';
+
     $select = implode(' AND ', $selects);
     $fields = 'id,courseid,userid,content,format,created,lastmodified,usermodified,publishstate';
     // retrieve data
-    $rs =& get_recordset_select('post', $select, $order, $fields, $limitfrom, $limitnum);
-    return recordset_to_array($rs);
+    return $DB->get_records_select('post', $select, $params, $order, $fields, $limitfrom, $limitnum);
 }
 
 /**
@@ -61,8 +69,10 @@ function note_list($courseid=0, $userid=0, $state = '', $author = 0, $order='las
  * @return note object
  */
 function note_load($note_id) {
+    global $DB;
+
     $fields = 'id,courseid,userid,content,format,created,lastmodified,usermodified,publishstate';
-    return get_record_select('post', "id=$note_id AND module='notes'", $fields);
+    return $DB->get_record('post', array('id'=>$note_id, 'module'=>'notes'), $fields);
 }
 
 /**
@@ -73,9 +83,10 @@ function note_load($note_id) {
  * @return boolean true if the object was saved; false otherwise
  */
 function note_save(&$note) {
-    global $USER;
+    global $USER, $DB;
+
     // setup & clean fields
-    $note->module = 'notes';
+    $note->module       = 'notes';
     $note->lastmodified = time();
     $note->usermodified = $USER->id;
     if(empty($note->format)) {
@@ -88,7 +99,7 @@ function note_save(&$note) {
     if(empty($note->id)) {
         // insert new note
         $note->created = $note->lastmodified;
-        if($id = insert_record('post', $note)) {
+        if ($id = $DB->insert_record('post', $note)) {
             $note->id = $id;
             $result = true;
         } else {
@@ -96,7 +107,7 @@ function note_save(&$note) {
         }
     } else {
         // update old note
-        $result = update_record('post', $note);
+        $result = $DB->update_record('post', $note);
     }
     unset($note->module);
     return $result;
@@ -109,7 +120,9 @@ function note_save(&$note) {
  * @return boolean true if the object was deleted; false otherwise
  */
 function note_delete($noteid) {
-    return delete_records_select('post', "id=$noteid AND module='notes'");
+    global $DB;
+
+    return $DB->delete_records('post', array('id'=>$noteid, 'module'=>'notes'));
 }
 
 /**
@@ -124,7 +137,11 @@ function note_get_state_name($state) {
     if (empty($states)) {
         $states = note_get_state_names();
     }
-    return @$states[$state];
+    if (isset($states[$state])) {
+        return $states[$state];
+    } else {
+        return null;
+    }
 }
 
 /**
@@ -147,20 +164,20 @@ function note_get_state_names() {
  * @param int   $detail OR-ed NOTES_SHOW_xyz flags that specify which note parts to print
  */
 function note_print($note, $detail = NOTES_SHOW_FULL) {
+    global $CFG, $USER, $DB;
 
-    global $CFG, $USER;
-    if (!$user = get_record('user','id',$note->userid)) {
+    if (!$user = $DB->get_record('user', array('id'=>$note->userid))) {
         debugging("User $note->userid not found");
         return;
     }
-    if (!$author = get_record('user','id',$note->usermodified)) {
+    if (!$author = $DB->get_record('user', array('id'=>$note->usermodified))) {
         debugging("User $note->usermodified not found");
         return;
     }
     $context = get_context_instance(CONTEXT_COURSE, $note->courseid);
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
-    $authoring = new object;
+    $authoring = new object();
     $authoring->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$author->id.'&amp;course='.$note->courseid.'">'.fullname($author).'</a>';
     $authoring->date = userdate($note->lastmodified);
 
@@ -227,9 +244,9 @@ function note_print_list($notes, $detail = NOTES_SHOW_FULL) {
  * @param string  $state state of the notes (i.e. draft, public, site) ('' means any)
  * @param int     $author id of the user who modified the note last time (0 means any)
  */
-function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $courseid = 0, $userid = 0, $state = '', $author = 0)
-{
+function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $courseid = 0, $userid = 0, $state = '', $author = 0) {
     global $CFG;
+
     if ($header) {
         echo '<h3 class="notestitle">' . $header . '</h3>';
         echo '<div class="notesgroup">';
@@ -242,7 +259,7 @@ function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $coursei
         }
     }
     if ($viewnotes) {
-        $notes =& note_list($courseid, $userid, $state, $author);
+        $notes = note_list($courseid, $userid, $state, $author);
         if ($notes) {
             note_print_list($notes);
         }
@@ -260,6 +277,8 @@ function note_print_notes($header, $addcourseid = 0, $viewnotes = true, $coursei
  * @return bool success
  */
 function note_delete_all($courseid) {
-    return delete_records('post', 'module', 'notes', 'courseid', $courseid);
+    global $DB;
+
+    return $DB->delete_records('post', array('module'=>'notes', 'courseid'=>$courseid));
 }
 ?>

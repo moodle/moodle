@@ -12,12 +12,12 @@
     }
 
 /// locate course information
-    if (!$course = get_record('course', 'id', $note->courseid)) {
+    if (!$course = $DB->get_record('course', array('id'=>$note->courseid))) {
         print_error('Incorrect course id found');
     }
 
 /// locate user information
-    if (!$user = get_record('user', 'id', $note->userid)) {
+    if (!$user = $DB->get_record('user', array('id'=>$note->userid))) {
         print_error('Incorrect user id found');
     }
 
@@ -45,10 +45,10 @@
 
 /// if data was submitted and validated, then save it to database
     if ($formdata = $noteform->get_data()){
-        $note->courseid = $formdata->course;
-        $note->userid = $formdata->user;
-        $note->content = $formdata->content;
-        $note->format = FORMAT_PLAIN;
+        $note->courseid     = $formdata->course;
+        $note->userid       = $formdata->user;
+        $note->content      = $formdata->content;
+        $note->format       = FORMAT_PLAIN;
         $note->publishstate = $formdata->publishstate;
         if (note_save($note)) {
             add_to_log($note->courseid, 'notes', 'update', 'index.php?course='.$note->courseid.'&amp;user='.$note->userid . '#note-' . $note->id, 'update note');
@@ -63,9 +63,9 @@
         $note = $noteform->get_submitted_data(false);
     } else {
         // if data was not submitted yet, then used values retrieved from the database
-        $note->user = $note->userid;
+        $note->user   = $note->userid;
         $note->course = $note->courseid;
-        $note->note = $note->id;
+        $note->note   = $note->id;
     }
     $noteform->set_data($note);
     $strnotes = get_string('editnote', 'notes');

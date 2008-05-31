@@ -26,13 +26,13 @@
     }
 
 /// locate course information
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('Incorrect course id specified');
     }
 
 /// locate user information
     if ($userid) {
-        if (!$user = get_record('user', 'id', $userid)) {
+        if (!$user = $DB->get_record('user', array('id'=>$userid))) {
             print_error('Incorrect user id specified');
         }
         $filtertype = 'user';
