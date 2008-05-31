@@ -24,10 +24,11 @@ if (empty($CFG->messaging)) {
 
 if ($confirm and !empty($msg) and confirm_sesskey()) {
     $in = implode(',', $SESSION->bulk_users);
-    if ($rs = get_recordset_select('user', "id IN ($in)")) {
-        while ($user = rs_fetch_next_record($rs)) {
+    if ($rs = $DB->get_recordset_select('user', "id IN ($in)", null)) {
+        foreach ($rs as $user) {
             message_post_message($USER, $user, $msg, FORMAT_HTML, 'direct');
         }
+        $rs->close();
     }
     redirect($return);
 }
@@ -51,7 +52,7 @@ if ($msgform->is_cancelled()) {
     $msg = format_text($formdata->messagebody, $formdata->format, $options);
 
     $in = implode(',', $SESSION->bulk_users);
-    $userlist = get_records_select_menu('user', "id IN ($in)", 'fullname', 'id,'.sql_fullname().' AS fullname');
+    $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
     $usernames = implode(', ', $userlist);
     $optionsyes = array();
     $optionsyes['confirm'] = 1;

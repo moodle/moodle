@@ -25,21 +25,21 @@ if ($confirm and confirm_sesskey()) {
     $primaryadmin = get_admin();
 
     $in = implode(',', $SESSION->bulk_users);
-    if ($rs = get_recordset_select('user', "id IN ($in)")) {
-        while ($user = rs_fetch_next_record($rs)) {
+    if ($rs = $DB->get_recordset_select('user', "id IN ($in)", null)) {
+        foreach ($rs as $user) {
             if ($primaryadmin->id != $user->id and $USER->id != $user->id and delete_user($user)) {
                 unset($SESSION->bulk_users[$user->id]);
             } else {
                 notify(get_string('deletednot', '', fullname($user, true)));
             }
         }
-        rs_close($rs);
+        $rs->close;
     }
     redirect($return, get_string('changessaved'));
 
 } else {
     $in = implode(',', $SESSION->bulk_users);
-    $userlist = get_records_select_menu('user', "id IN ($in)", 'fullname', 'id,'.sql_fullname().' AS fullname');
+    $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.sql_fullname().' AS fullname');
     $usernames = implode(', ', $userlist);
     $optionsyes = array();
     $optionsyes['confirm'] = 1;

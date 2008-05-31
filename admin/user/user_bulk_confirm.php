@@ -23,8 +23,8 @@ admin_externalpage_print_header();
 
 if ($confirm and confirm_sesskey()) {
     $in = implode(',', $SESSION->bulk_users);
-    if ($rs = get_recordset_select('user', "id IN ($in)", '', 'id, username, secret, confirmed, auth, firstname, lastname')) {
-        while ($user = rs_fetch_next_record($rs)) {
+    if ($rs = $DB->get_recordset_select('user', "id IN ($in)", null, '', 'id, username, secret, confirmed, auth, firstname, lastname')) {
+        foreach ($rs as $user) {
             if ($user->confirmed) {
                 continue;
             }
@@ -34,13 +34,13 @@ if ($confirm and confirm_sesskey()) {
                 notify(get_string('usernotconfirmed', '', fullname($user, true)));
             }
         }
-        rs_close($rs);
+        $rs->close();
     }
     redirect($return, get_string('changessaved'));
 
 } else {
     $in = implode(',', $SESSION->bulk_users);
-    $userlist = get_records_select_menu('user', "id IN ($in)", 'fullname', 'id,'.sql_fullname().' AS fullname');
+    $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.sql_fullname().' AS fullname');
     $usernames = implode(', ', $userlist);
     $optionsyes = array();
     $optionsyes['confirm'] = 1;

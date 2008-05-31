@@ -25,7 +25,7 @@ admin_externalpage_print_header();
 $countries = get_list_of_countries();
 
 foreach ($users as $key => $id) {
-    $user = get_record('user', 'id', $id, null, null, null, null, 'id, firstname, lastname, username, email, country, lastaccess, city');
+    $user = $DB->get_record('user', array('id'=>$id), 'id, firstname, lastname, username, email, country, lastaccess, city');
     $user->fullname = fullname($user, true);
     $user->country = @$countries[$user->country];
     unset($user->firstname);
