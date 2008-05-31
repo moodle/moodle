@@ -86,7 +86,7 @@ class block_blog_tags extends block_base {
                GROUP BY t.id, t.tagtype, t.name, t.rawname
                ORDER BY ct DESC, t.name ASC";
 
-        if ($tags = get_records_sql($sql, null, 0, $this->config->numberoftags)) {
+        if ($tags = $DB->get_records_sql($sql, null, 0, $this->config->numberoftags)) {
 
         /// There are 2 things to do:
         /// 1. tags with the same count should have the same size class

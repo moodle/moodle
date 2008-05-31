@@ -11,7 +11,7 @@ class block_section_links extends block_base {
         global $DB;
 
         parent::instance_config($instance);
-        $course = get_record('course', array('id'=>$this->instance->pageid));
+        $course = $DB->get_record('course', array('id'=>$this->instance->pageid));
         if (isset($course->format)) {
             if ($course->format == 'topics') {
                 $this->title = get_string('topics', 'block_section_links');

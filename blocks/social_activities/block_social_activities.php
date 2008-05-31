@@ -29,7 +29,7 @@ class block_social_activities extends block_list {
         if ($COURSE->id == $this->instance->pageid) {
             $course = $COURSE;
         } else {
-            $course = get_record('course', array('id'=>$this->instance->pageid));
+            $course = $DB->get_record('course', array('id'=>$this->instance->pageid));
         }
 
         require_once($CFG->dirroot.'/course/lib.php');
