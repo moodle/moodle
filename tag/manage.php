@@ -16,7 +16,7 @@ $perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
 require_login();
 
 if (empty($CFG->usetags)) {
-    error(get_string('tagsaredisabled', 'tag'));
+    print_error('tagsaredisabled', 'tag');
 }
 
 //managing tags requires moodle/tag:manage capability
@@ -35,7 +35,7 @@ $notice = '';
 
 // get all the possible tag types from db
 $existing_tagtypes = array();
-if ($ptypes = get_records_sql("SELECT DISTINCT(tagtype) FROM {$CFG->prefix}tag")) {
+if ($ptypes = $DB->get_records_sql("SELECT DISTINCT(tagtype) FROM {tag}")) {
     foreach ($ptypes as $ptype) {
         $existing_tagtypes[$ptype->tagtype] = $ptype->tagtype;
     }
@@ -182,6 +182,8 @@ TABLE_VAR_PAGE    => 'spage'
 
 $table->setup();
 
+$params = array();
+
 if ($table->get_sql_sort()) {
     $sort = 'ORDER BY '. $table->get_sql_sort();
 } else {
@@ -194,13 +196,13 @@ if ($table->get_sql_where()) {
     $where = '';
 }
 
-$query = 'SELECT tg.id, tg.name, tg.rawname, tg.tagtype, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified, u.firstname, u.lastname '.
-    'FROM '. $CFG->prefix .'tag_instance ti RIGHT JOIN '. $CFG->prefix .'tag tg ON tg.id = ti.tagid LEFT JOIN '. $CFG->prefix .'user u ON tg.userid = u.id '.
-    $where .' '.
-    'GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, u.id, tg.flag, tg.timemodified, u.firstname, u.lastname '.
-    $sort;
-
-$totalcount = count_records_sql('SELECT COUNT(DISTINCT(tg.id)) FROM '. $CFG->prefix .'tag tg LEFT JOIN '. $CFG->prefix .'user u ON u.id = tg.userid '. $where);
+$query = 'SELECT tg.id, tg.name, tg.rawname, tg.tagtype, COUNT(ti.id) AS count, u.id AS owner, tg.flag, tg.timemodified, u.firstname, u.lastname
+            FROM {tag_instance} ti RIGHT JOIN {tag} tg ON tg.id = ti.tagid LEFT JOIN {user} u ON tg.userid = u.id
+        '.$where.'
+        GROUP BY tg.id, tg.name, tg.rawname, tg.tagtype, u.id, tg.flag, tg.timemodified, u.firstname, u.lastname
+         '.$sort;
+$totalcount = $DB->count_records_sql('SELECT COUNT(DISTINCT(tg.id))
+                                   FROM {tag} tg LEFT JOIN {user} u ON u.id = tg.userid '. $where, $params);
 
 $table->initialbars(true); // always initial bars
 $table->pagesize($perpage, $totalcount);
@@ -208,11 +210,11 @@ $table->pagesize($perpage, $totalcount);
 echo '<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php"><div>';
 
 //retrieve tags from DB
-if ($tagrecords = get_records_sql($query, $table->get_page_start(),  $table->get_page_size())) {
+if ($tagrecords = $DB->get_records_sql($query, $params, $table->get_page_start(),  $table->get_page_size())) {
 
     $taglist = array_values($tagrecords);
 
-    //print_tag_cloud(array_values(get_records_sql($query)), false);
+    //print_tag_cloud(array_values($DB->get_records_sql($query)), false);
     //populate table with data
     foreach ($taglist as $tag ){
         $id             =   $tag->id;

@@ -16,16 +16,15 @@
  * @param $return if true return html string
  */
 function tag_print_cloud($nr_of_tags=150, $return=false) {
-
-    global $CFG;
+    global $CFG, $DB;
     
     $can_manage_tags = has_capability('moodle/tag:manage', get_context_instance(CONTEXT_SYSTEM));
 
-    if ( !$tagcloud = get_records_sql('SELECT tg.rawname, tg.id, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag '.
-        'FROM '. $CFG->prefix .'tag_instance ti INNER JOIN '. $CFG->prefix .'tag tg ON tg.id = ti.tagid '.
-        'WHERE ti.itemtype != \'tag\' '.
-        'GROUP BY tg.id, tg.rawname, tg.name, tg.flag, tg.tagtype '.
-        'ORDER BY count DESC, tg.name ASC', 0, $nr_of_tags) ) {
+    if ( !$tagcloud = $DB->get_records_sql('SELECT tg.rawname, tg.id, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag
+                                              FROM {tag_instance} ti JOIN {tag} tg ON tg.id = ti.tagid
+                                             WHERE ti.itemtype <> \'tag\'
+                                          GROUP BY tg.id, tg.rawname, tg.name, tg.flag, tg.tagtype
+                                          ORDER BY count DESC, tg.name ASC', null, 0, $nr_of_tags) ) {
         $tagcloud = array();
     }
 
