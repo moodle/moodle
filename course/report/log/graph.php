@@ -10,7 +10,7 @@
     $user = optional_param('user', 0, PARAM_INT);  // Student ID
     $date = optional_param('date', 0, PARAM_INT);  // A time of a day (in GMT)
 
-    if (! $course = get_record("course", "id", $id)) {
+    if (! $course = $DB->get_record("course", array("id"=>$id))) {
         print_error('invalidcourseid');
     }
 
@@ -23,7 +23,7 @@
     }
 
     if ($user) {
-        if (! $user = get_record("user", "id", $user)) {
+        if (! $user = $DB->get_record("user", array("id"=>$user))) {
             print_error("nousers");
         }
     }

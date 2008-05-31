@@ -22,6 +22,7 @@
     if ($mode == STATS_MODE_DETAILED) {
         $param = stats_get_parameters($time,null,$course->id,$mode); // we only care about the table and the time string (if we have time)
 
+        //TODO: lceanup this ugly mess
         $sql = 'SELECT DISTINCT s.userid, u.firstname, u.lastname, u.idnumber
                      FROM '.$CFG->prefix.'stats_user_'.$param->table.' s
                      JOIN '.$CFG->prefix.'user u ON u.id = s.userid
@@ -30,7 +31,7 @@
             . ((!empty($time)) ? ' AND timeend >= '.$param->timeafter : '')
             .' ORDER BY u.lastname, u.firstname ASC';
 
-        if (!$us = get_records_sql($sql)) {
+        if (!$us = $DB->get_records_sql($sql, $param->params)) {
             print_error('nousers');
         }
 
@@ -80,6 +81,7 @@
         if (!empty($param->sql)) {
             $sql = $param->sql;
         } else {
+            //TODO: lceanup this ugly mess
             $sql = 'SELECT '.((empty($param->fieldscomplete)) ? 'id,roleid,timeend,' : '').$param->fields
                 .' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
                 .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
@@ -91,7 +93,7 @@
                 .' ORDER BY timeend DESC';
         }
 
-        $stats = get_records_sql($sql);
+        $stats = $DB->get_records_sql($sql, $params);
 
         if (empty($stats)) {
             notify(get_string('statsnodata'));

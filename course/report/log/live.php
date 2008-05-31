@@ -7,7 +7,7 @@
     $id   = required_param('id', PARAM_INT);
     $page = optional_param('page', 0, PARAM_INT);     // which page to show
 
-    if (! $course = get_record("course", "id", $id) ) {
+    if (! $course = $DB->get_record("course", array("id"=>$id))) {
         print_error('invalidcourseid');
     }
 

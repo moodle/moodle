@@ -28,12 +28,12 @@
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/report/stats/index.php?time='.$time);
     }
 
-    if (!$course = get_record("course","id",$courseid)) {
+    if (!$course = $DB->get_record("course", array("id"=>$courseid))) {
         print_error("invalidcourseid");
     }
 
     if (!empty($userid)) {
-        if (!$user = get_record('user','id',$userid)) {
+        if (!$user = $DB->get_record('user', array('id'=>$userid))) {
             print_error("nousers");
         }
     }

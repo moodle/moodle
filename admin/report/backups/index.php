@@ -49,7 +49,7 @@
         print_heading($backuploglaststatus);
         print_simple_box_start('center');
     /// Now, get every record from backup_courses
-        $courses = get_records("backup_courses");
+        $courses = $DB->get_records("backup_courses");
 
         if (!$courses) {
             notify(get_string('nologsfound'));
@@ -96,10 +96,10 @@
         print_simple_box_start('center');
 
     /// First, me get all the distinct backups for that course in backup_log
-        $executions = get_records_sql("SELECT DISTINCT laststarttime,laststarttime
-                                       FROM {$CFG->prefix}backup_log
-                                       WHERE courseid = '$courseid'
-                                       ORDER BY laststarttime DESC");
+        $executions = $DB->get_records_sql("SELECT DISTINCT laststarttime,laststarttime
+                                              FROM {backup_log}
+                                             WHERE courseid = ?
+                                          ORDER BY laststarttime DESC", array($courseid));
 
     /// Iterate over backup executions
         if (!$executions) {
@@ -112,11 +112,10 @@
                 print_simple_box("<center>".userdate($execution->laststarttime)."</center>", "center");
                 echo "</td>";
                 echo "</tr>";
-                $logs = get_records_sql("SELECT *
-                                         FROM {$CFG->prefix}backup_log
-                                         WHERE courseid = '$courseid'  AND
-                                               laststarttime = '$execution->laststarttime'
-                                         ORDER BY id");
+                $logs = $DB->get_records_sql("SELECT *
+                                                FROM {backup_log}
+                                               WHERE courseid = ? AND laststarttime = ?
+                                            ORDER BY id", array($courseid, $execution->laststarttime));
                 if ($logs) {
                     foreach ($logs as $log) {
                         echo "<tr>";

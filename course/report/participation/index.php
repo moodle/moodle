@@ -18,11 +18,11 @@
         $action = ''; // default to all (don't restrict)
     }
 
-    if (!$course = get_record('course', 'id', $id)) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error('invalidcourse');
     }
 
-    if ($roleid != 0 and !$role = get_record('role', 'id', $roleid)) {
+    if ($roleid != 0 and !$role = $DB->get_record('role', array('id'=>$roleid))) {
         print_error('invalidrole');
     }
 
@@ -55,7 +55,7 @@
 
     $modinfo = get_fast_modinfo($course);
 
-    $modules = get_records_select('modules', "visible = 1 AND name <> 'label'", 'name ASC');
+    $modules = $DB->get_records_select('modules', "visible = 1 AND name <> 'label'", null, 'name ASC');
 
     $instanceoptions = array();
     foreach ($modules as $module) {
@@ -71,7 +71,7 @@
 
     $timeoptions = array();
     // get minimum log time for this course
-    $minlog = get_field_sql('SELECT min(time) FROM '.$CFG->prefix.'log WHERE course = '.$course->id);
+    $minlog = $DB->get_field_sql('SELECT min(time) FROM {log} WHERE course = ?', array($course->id));
 
     $now = usergetmidnight(time());
 
@@ -139,7 +139,7 @@
         $postfun = $cm->modname.'_get_post_actions';
 
         if (!function_exists($viewfun) || !function_exists($postfun)) {
-            error(get_string('modulemissingcode','error',$cm->modname), $baseurl);
+            print_error('modulemissingcode', 'error', $baseurl, $cm->modname);
         }
 
         $viewnames = $viewfun();
@@ -170,26 +170,32 @@
 
         switch ($action) {
             case 'view':
-                $actionsql = 'l.action IN (\''.implode('\',\'', $viewnames).'\' )';
+                $actions = $viewnames;
                 break;
             case 'post':
-                $actionsql = 'l.action IN (\''.implode('\',\'', $postnames).'\' )';
+                $actions = $postnames;
                 break;
             default:
                 // some modules have stuff we want to hide, ie mail blocked etc so do actually need to limit here.
-                $actionsql = 'l.action IN (\''.implode('\',\'', array_merge($viewnames, $postnames)).'\' )';
+                $actions = array_merge($viewnames, $postnames);
         }
+
+        list($actionsql, $params) = $DB->get_in_or_equal($actions, SQL_PARAMS_NAMED, 'action0');
+        $actionsql = "l.action $actionsql"; 
 
         $relatedcontexts = get_related_contexts_string($context);
 
         $sql = "SELECT ra.userid, u.firstname, u.lastname, u.idnumber, COUNT(l.action) AS count
-                  FROM {$CFG->prefix}role_assignments ra
-                       JOIN {$CFG->prefix}user u           ON u.id = ra.userid
-                       LEFT OUTER JOIN {$CFG->prefix}log l ON l.userid = ra.userid
-                 WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid AND
+                  FROM {role_assignments} ra
+                       JOIN {user} u           ON u.id = ra.userid
+                       LEFT JOIN {log} l ON l.userid = ra.userid
+                 WHERE ra.contextid $relatedcontexts AND ra.roleid = :roleid AND
                        (l.id IS NULL OR
-                          (l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
+                          (l.cmid = :instanceid AND l.time > :timefrom AND $actionsql)
                        )";
+        $params['roleid'] = $roleid;
+        $params['instanceid'] = $instanceid;
+        $params['timefrom'] = $timefrom;
 
         if ($table->get_sql_where()) {
             $sql .= ' AND '.$table->get_sql_where(); //initial bar
@@ -205,15 +211,15 @@
                        FROM {$CFG->prefix}role_assignments ra
                             JOIN {$CFG->prefix}user u           ON u.id = ra.userid
                             LEFT OUTER JOIN {$CFG->prefix}log l ON l.userid = ra.userid
-                      WHERE ra.contextid $relatedcontexts AND ra.roleid = $roleid AND
+                      WHERE ra.contextid $relatedcontexts AND ra.roleid = :roleid AND
                             (l.id IS NULL OR
-                               (l.cmid = $instanceid AND l.time > $timefrom AND $actionsql)
+                               (l.cmid = :instanceid AND l.time > :timefrom AND $actionsql)
                             )";
 
-        $totalcount = count_records_sql($countsql);
+        $totalcount = $DB->count_records_sql($countsql, $params);
 
         if ($table->get_sql_where()) {
-            $matchcount = count_records_sql($countsql.' AND '.$table->get_sql_where());
+            $matchcount = $DB->count_records_sql($countsql.' AND '.$table->get_sql_where(), $params);
         } else {
             $matchcount = $totalcount;
         }
@@ -225,7 +231,7 @@
         $table->initialbars($totalcount > $perpage);
         $table->pagesize($perpage, $matchcount);
 
-        if (!$users = get_records_sql($sql, $table->get_page_start(), $table->get_page_size())) {
+        if (!$users = $DB->get_records_sql($sql, $params, $table->get_page_start(), $table->get_page_size())) {
             $users = array(); // tablelib will handle saying 'Nothing to display' for us.
         }
 

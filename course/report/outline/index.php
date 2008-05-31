@@ -7,7 +7,7 @@
 
     $id = required_param('id',PARAM_INT);       // course id
 
-    if (!$course = get_record('course', 'id', $id)) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error('invalidcourseid');
     }
 
@@ -46,12 +46,12 @@
     $modinfo = get_fast_modinfo($course);
 
     $sql = "SELECT cm.id, COUNT('x') AS numviews, MAX(time) AS lasttime
-              FROM {$CFG->prefix}course_modules cm
-                   JOIN {$CFG->prefix}modules m ON m.id = cm.module
-                   JOIN {$CFG->prefix}log l     ON l.cmid = cm.id
-             WHERE cm.course = $course->id AND l.action LIKE 'view%' AND m.visible = 1
+              FROM {course_modules} cm
+                   JOIN {modules} m ON m.id = cm.module
+                   JOIN {log} l     ON l.cmid = cm.id
+             WHERE cm.course = ? AND l.action LIKE 'view%' AND m.visible = 1
           GROUP BY cm.id";
-    $views = get_records_sql($sql);
+    $views = $DB->get_records_sql($sql, array($course->id));
 
     $ri = 0;
     $prevsecctionnum = 0;

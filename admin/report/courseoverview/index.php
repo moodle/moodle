@@ -68,15 +68,16 @@
         if (!empty($param->sql)) {
             $sql = $param->sql;
         } else {
-            $sql = "SELECT courseid,".$param->fields." FROM ".$CFG->prefix.'stats_'.$param->table
-                ." WHERE timeend >= $param->timeafter AND stattype = 'activity' AND roleid = 0"
-                ." GROUP BY courseid "
-                .$param->extras
-                ." ORDER BY ".$param->orderby;
+            $sql = "SELECT courseid,".$param->fields."
+                      FROM {".'stats_'.$param->table."}
+                     WHERE timeend >= $param->timeafter AND stattype = 'activity' AND roleid = 0
+                  GROUP BY courseid
+                           $param->extras
+                  ORDER BY $param->orderby";
         }
-        error_log($sql);
+        //error_log($sql);
 
-        $courses = get_records_sql($sql, 0, $numcourses);
+        $courses = $DB->get_records_sql($sql, $pram->params, 0, $numcourses);
 
         if (empty($courses)) {
             notify(get_string('statsnodata'));echo '</td></tr></table>';echo '<p>after notify</p>';

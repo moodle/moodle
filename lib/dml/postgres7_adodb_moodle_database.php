@@ -425,6 +425,10 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         return ' CAST(' . $fieldname . ' AS INT) ';
     }
 
+    public function sql_cast_char2real($fieldname, $text=false) {
+        return " $fieldname::real ";
+    }
+
     /**
      * Does this driver suppoer regex syntax when searching
      */

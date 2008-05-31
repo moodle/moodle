@@ -977,9 +977,10 @@ function stats_clean_old() {
 }
 
 function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
-    global $CFG,$db;
+    global $CFG, $DB;
 
     $param = new object();
+    $params->params = array();
 
     if ($time < 10) { // dailies
         // number of days to go back = 7* time
@@ -997,12 +998,6 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
 
     $param->extras = '';
 
-    // compatibility - if we're in postgres, cast to real for some reports.
-    $real = '';
-    if ($CFG->dbfamily == 'postgres') {
-        $real = '::real';
-    }
-
     switch ($report) {
     // ******************** STATS_MODE_GENERAL ******************** //
     case STATS_REPORT_LOGINS:
@@ -1017,33 +1012,33 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
         break;
 
     case STATS_REPORT_READS:
-        $param->fields = sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, stat1 as line1';
+        $param->fields = $DB->sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, stat1 as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
         $param->aggregategroupby = 'roleid';
         $param->stattype = 'activity';
         $param->crosstab = true;
         $param->extras = 'GROUP BY timeend,roleid,stat1';
         if ($courseid == SITEID) {
-            $param->fields = sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, sum(stat1) as line1';
+            $param->fields = $DB->sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, sum(stat1) as line1';
             $param->extras = 'GROUP BY timeend,roleid';
         }
         break;
 
     case STATS_REPORT_WRITES:
-        $param->fields = sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, stat2 as line1';
+        $param->fields = $DB->sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, stat2 as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
         $param->aggregategroupby = 'roleid';
         $param->stattype = 'activity';
         $param->crosstab = true;
         $param->extras = 'GROUP BY timeend,roleid,stat2';
         if ($courseid == SITEID) {
-            $param->fields = sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, sum(stat2) as line1';
+            $param->fields = $DB->sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, sum(stat2) as line1';
             $param->extras = 'GROUP BY timeend,roleid';
         }
         break;
 
     case STATS_REPORT_ACTIVITY:
-        $param->fields = sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, sum(stat1+stat2) as line1';
+        $param->fields = $DB->sql_concat('timeend','roleid').' AS uniqueid, timeend, roleid, sum(stat1+stat2) as line1';
         $param->fieldscomplete = true; // set this to true to avoid anything adding stuff to the list and breaking complex queries.
         $param->aggregategroupby = 'roleid';
         $param->stattype = 'activity';
@@ -1112,13 +1107,13 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
                         activity.all_activity / enrolments.highest_enrolments as line3
                        FROM (
                             SELECT courseid, (stat1+stat2) AS all_activity
-                              FROM '.$CFG->prefix.'stats_'.$param->table.'
+                              FROM {stats_'.$param->table.'}
                              WHERE stattype=\'activity\' AND timeend >= '.$param->timeafter.' AND roleid = 0
                        ) activity
                        INNER JOIN
                             (
                             SELECT courseid, max(stat1) AS highest_enrolments 
-                              FROM '.$CFG->prefix.'stats_'.$param->table.'
+                              FROM {stats_'.$param->table.'}
                              WHERE stattype=\'enrolments\' AND timeend >= '.$param->timeafter.' AND stat1 > '.$threshold.' 
                           GROUP BY courseid
                       ) enrolments
@@ -1140,8 +1135,8 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
                          ceil(avg(active_enrolments)) as line2, avg(proportion_active) AS line3
                        FROM (
                            SELECT courseid, timeend, stat2 as active_enrolments,
-                                  stat1 as all_enrolments, stat2'.$real.'/stat1'.$real.' as proportion_active
-                             FROM '.$CFG->prefix.'stats_'.$param->table.'
+                                  stat1 as all_enrolments, '.$DB->sql_cast_char2real('stat2').'/'.$DB->sql_cast_char2real('stat1').' AS proportion_active
+                             FROM {stats_'.$param->table.'}
                             WHERE stattype=\'enrolments\' AND roleid = 0 AND stat1 > '.$threshold.'
                        ) aq
                        WHERE timeend >= '.$param->timeafter.'
@@ -1160,8 +1155,8 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
                            avg(proportion_active) AS line3
                          FROM (
                            SELECT courseid, timeend, stat1 as views, stat2 AS posts,
-                                  stat2'.$real.'/stat1'.$real.' as proportion_active
-                             FROM '.$CFG->prefix.'stats_'.$param->table.'
+                                  '.$DB->sql_cast_char2real('stat2').'/'.$DB->sql_cast_char2real('stat1').' as proportion_active
+                             FROM {stats_'.$param->table.'}
                             WHERE stattype=\'activity\' AND roleid = 0 AND stat1 > 0
                        ) aq
                        WHERE timeend >= '.$param->timeafter.'
@@ -1181,7 +1176,7 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
     }
     */
     //TODO must add the SITEID reports to the rest of the reports.
-    return $param;
+    return array($sql, $params);
 }
 
 function stats_get_view_actions() {

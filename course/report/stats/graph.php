@@ -11,12 +11,12 @@
     $userid   = optional_param('userid', 0, PARAM_INT);
     $roleid   = optional_param('roleid',0,PARAM_INT);
 
-    if (!$course = get_record("course","id",$courseid)) {
+    if (!$course = $DB->get_record("course", array("id"=>$courseid))) {
         print_error("invalidcourseid");
     }
 
     if (!empty($userid)) {
-        if (!$user = get_record('user','id',$userid)) {
+        if (!$user = $DB->get_record('user', array('id'=>$userid))) {
             print_error("nousers");
         }
     }
@@ -36,6 +36,7 @@
         $param->table = 'user_'.$param->table;
     }
 
+    // TODO: cleanup this ugly mess!
     $sql = 'SELECT '.((empty($param->fieldscomplete)) ? 'id,roleid,timeend,' : '').$param->fields
     .' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
     .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
@@ -46,7 +47,7 @@
     .' '.$param->extras
     .' ORDER BY timeend DESC';
 
-    $stats = get_records_sql($sql);
+    $stats = $DB->get_records_sql($sql, $param->params);
 
     $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
 

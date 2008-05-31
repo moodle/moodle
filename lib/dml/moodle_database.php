@@ -1113,6 +1113,20 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns the SQL to be used in order to CAST one CHAR column to REAL number.
+     *
+     * Be aware that the CHAR column you're trying to cast contains really
+     * numbers or the RDBMS will throw an error!
+     *
+     * @param string fieldname the name of the field to be casted
+     * @param boolean text to specify if the original column is one TEXT (CLOB) column (true). Defaults to false.
+     * @return string the piece of SQL code to be used in your statement.
+     */
+    public function sql_cast_char2real($fieldname, $text=false) {
+        return ' ' . $fieldname . ' ';
+    }
+
+    /**
      * Returns the SQL text to be used to compare one TEXT (clob) column with
      * one varchar column, because some RDBMS doesn't support such direct
      * comparisons.

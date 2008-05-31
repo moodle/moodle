@@ -9,12 +9,12 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     $mnet_peer = new mnet_peer();
     $mnet_peer->set_id($hostid);
 
-    $sql = "select distinct course, hostid, coursename from {$CFG->prefix}mnet_log";
-    $courses = get_records_sql($sql);
+    $sql = "SELECT DISTINCT course, hostid, coursename FROM {mnet_log}";
+    $courses = $DB->get_records_sql($sql);
     $remotecoursecount = count($courses);
 
     // first check to see if we can override showcourses and showusers
-    $numcourses = $remotecoursecount + count_records_select("course", "", "COUNT(id)");
+    $numcourses = $remotecoursecount + $DB->count_records('course');
     if ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN && !$showcourses) {
         $showcourses = 1;
     }
@@ -75,14 +75,14 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
                 h.id,
                 h.name
             from
-                {$CFG->prefix}mnet_host h,
-                {$CFG->prefix}mnet_log l
+                {mnet_host} h,
+                {mnet_log} l
             where
                 h.id = l.hostid
             order by
                 h.name";
 
-    if ($hosts = get_records_sql($sql)) {
+    if ($hosts = $DB->get_records_sql($sql)) {
         foreach($hosts as $host) {
             $hostarray[$host->id] = $host->name;
         }
@@ -96,7 +96,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
         $sites = array();
         if ($CFG->mnet_localhost_id == $hostid) {
             if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
-                if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
+                if ($ccc = $DB->get_records("course", null, "fullname","id,fullname,category")) {
                     foreach ($ccc as $cc) {
                         if ($cc->id == SITEID) {
                             $sites["$hostid/$cc->id"]   = format_string($cc->fullname).' ('.get_string('site').')';
@@ -108,8 +108,8 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
             }
         } else {
             if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
-                $sql = "select distinct course, coursename from {$CFG->prefix}mnet_log where hostid = '$hostid'";
-                if ($ccc = get_records_sql($sql)) {
+                $sql = "SELECT DISTINCT course, coursename FROM {mnet_log} where hostid = ?";
+                if ($ccc = $DB->get_records_sql($sql, array($hostid))) {
                     foreach ($ccc as $cc) {
                         if (1 == $cc->course) { // TODO: this might be wrong - site course may have another id
                             $sites["$hostid/$cc->course"]   = $cc->coursename.' ('.get_string('site').')';
@@ -247,7 +247,7 @@ function print_mnet_log_selector_form($hostid, $course, $selecteduser=0, $select
     else {
         $users = array();
         if (!empty($selecteduser)) {
-            $user = get_record('user','id',$selecteduser);
+            $user = $DB->get_record('user', array('id'=>$selecteduser));
             $users[$selecteduser] = fullname($user);
         }
         else {
@@ -278,7 +278,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     global $USER, $CFG, $DB;
 
     // first check to see if we can override showcourses and showusers
-    $numcourses =  count_records_select("course", "", "COUNT(id)");
+    $numcourses =  $DB->count_records("course");
     if ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN && !$showcourses) {
         $showcourses = 1;
     }
@@ -326,7 +326,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     }
 
     if (has_capability('moodle/site:viewreports', $sitecontext) && $showcourses) {
-        if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
+        if ($ccc = $DB->get_records("course", null, "fullname", "id,fullname,category")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
                     $courses["$cc->id"] = format_string($cc->fullname);
@@ -459,7 +459,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate='today'
     else {
         $users = array();
         if (!empty($selecteduser)) {
-            $user = get_record('user','id',$selecteduser);
+            $user = $DB->get_record('user', array('id'=>$selecteduser));
             $users[$selecteduser] = fullname($user);
         }
         else {
