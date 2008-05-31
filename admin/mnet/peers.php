@@ -155,7 +155,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
         include('./mnet_review_allhosts.html');
     }
 } else {
-    $hosts = get_records_sql('  SELECT 
+    $hosts = $DB->get_records_sql('  SELECT 
                                     h.id, 
                                     h.wwwroot, 
                                     h.ip_address, 
@@ -171,15 +171,15 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                                     a.display_name as app_display_name, 
                                     a.xmlrpc_server_url
                                 FROM  
-                                    '.$CFG->prefix.'mnet_host h,  
-                                    '.$CFG->prefix.'mnet_application a  
+                                    {mnet_host} h,  
+                                    {mnet_application} a  
                                 WHERE 
-                                    h.id != \''.$CFG->mnet_localhost_id.'\' AND  
-                                    h.deleted = \'0\' AND  
+                                    h.id <> ? AND  
+                                    h.deleted = 0 AND  
                                     h.applicationid=a.id');
 
     if (empty($hosts)) $hosts = array();
-    $applications = get_records('mnet_application');
+    $applications = $DB->get_records('mnet_application', array($CFG->mnet_localhost_id));
     include('./peers.html');
 }
 ?>

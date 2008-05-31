@@ -7,7 +7,7 @@
     include_once($CFG->dirroot.'/mnet/xmlrpc/client.php');
 
     if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
+        print_error('confirmsesskeybad', 'error');
     }
 
     admin_externalpage_setup('mnetenrol');
@@ -24,7 +24,7 @@
         print_error('hostcoursenotfound','mnet');
     }
 
-    $course = get_record('mnet_enrol_course', 'id', $courseid, 'hostid', $mnet_peer->id);
+    $course = $DB->get_record('mnet_enrol_course', array('id'=>$courseid, 'hostid'=>$mnet_peer->id));
 
     if (empty($course)) {
         print_error('hostcoursenotfound','mnet');
@@ -50,7 +50,7 @@
 
 /// Process incoming role assignment
 
-    if ($frm = data_submitted()) {
+    if ($frm = data_submitted(false)) {
         if ($add and !empty($frm->addselect) and confirm_sesskey()) {
             $timemodified = time();
 
@@ -89,19 +89,19 @@
 
     unset($mnet_request);
     
-    $select = '';
     $all_enrolled_usernames = '';
     $timemodified = array();
 /// List all the users (homed on this server) who are enrolled on the course
 /// This will include mnet-enrolled users, and those who have enrolled 
 /// themselves, etc.
     if (is_array($all_enrolled_users) && count($all_enrolled_users)) {
-        foreach($all_enrolled_users as $username => $data) {
-            $all_enrolled_usernames .= "'$username', ";
-        }
-        $select = ' u.username IN (' .substr($all_enrolled_usernames, 0, -2) .') AND ';
+        list($select, $params) = $DB->get_in_or_equal(array_keys($all_enrolled_users), SQL_PARAMS_NAMED, 'un0'); 
+        $select = " u.username $select AND ";
+
     } else {
         $all_enrolled_users = array();
+        $params = array();
+        $select = '';
     }
 
 /// Synch our mnet_enrol_assignments with remote server
@@ -117,21 +117,23 @@
                 COALESCE(a.hostid, 0) as wehaverecord,
                 a.courseid
             FROM
-                {$CFG->prefix}user u
+                {user} u
             LEFT JOIN
-                {$CFG->prefix}mnet_enrol_assignments a
+                {mnet_enrol_assignments} a
             ON
-                a.userid = u.id AND a.courseid={$courseid}
+                a.userid = u.id AND a.courseid=:courseid
             WHERE
                 $select 
                 u.deleted = 0 AND
                 u.confirmed = 1 AND
-                u.mnethostid = {$CFG->mnet_localhost_id}
+                u.mnethostid = :mnetid
             ORDER BY
                 u.firstname ASC,
                 u.lastname ASC";
+    $params['courseid'] = $courseid;
+    $params['mnetid']   = $CFG->mnet_localhost_id;
 
-    if (!$enrolledusers = get_records_sql($sql)) {
+    if (!$enrolledusers = $DB->get_records_sql($sql, $params)) {
         $enrolledusers = array();
     }
 
@@ -149,9 +151,9 @@
             $dataobj->id = insert_record('mnet_enrol_assignments', $dataobj);
         } elseif (array_key_exists($user->username, $all_enrolled_users)) {
             $dataobj->id    = $user->enrolid;
-            update_record('mnet_enrol_assignments', $dataobj);
+            $DB->update_record('mnet_enrol_assignments', $dataobj);
         } elseif (is_array($all_enrolled_users) && count($all_enrolled_users)) {
-            delete_record('mnet_enrol_assignments', 'id', $user->enrolid);
+            $DB->delete_record('mnet_enrol_assignments', array('id'=>$user->enrolid));
         }
     }
     unset($enrolledusers);
@@ -169,20 +171,23 @@
                 a.enroltype,
                 a.courseid
             FROM
-                {$CFG->prefix}user u,
-                {$CFG->prefix}mnet_enrol_assignments a
+                {user} u,
+                {mnet_enrol_assignments} a
             WHERE
                 a.userid = u.id AND 
-                a.courseid={$courseid} AND
+                a.courseid=:courseid AND
                 a.enroltype = 'mnet'   AND
                 u.deleted = 0 AND
                 u.confirmed = 1 AND
-                u.mnethostid = {$CFG->mnet_localhost_id}
+                u.mnethostid = :mnetid
             ORDER BY
                 u.firstname ASC,
                 u.lastname ASC";
+    $params = array();
+    $params['courseid'] = $courseid;
+    $params['mnetid']   = $CFG->mnet_localhost_id;
 
-    if (!$mnetenrolledusers = get_records_sql($sql)) {
+    if (!$mnetenrolledusers = $DB->get_records_sql($sql, $params)) {
         $mnetenrolledusers = array();
     }
     $sql = "
@@ -194,22 +199,27 @@
                 a.enroltype,
                 a.courseid
             FROM
-                {$CFG->prefix}user u,
-                {$CFG->prefix}mnet_enrol_assignments a
+                {user} u,
+                {mnet_enrol_assignments} a
             WHERE
                 a.userid = u.id AND 
-                a.courseid={$courseid} AND
+                a.courseid=:courseid AND
                 a.enroltype != 'mnet'  AND
                 u.deleted = 0 AND
                 u.confirmed = 1 AND
-                u.mnethostid = {$CFG->mnet_localhost_id}
+                u.mnethostid = :mnetid
             ORDER BY
                 u.firstname ASC,
                 u.lastname ASC";
+    $params = array();
+    $params['courseid'] = $courseid;
+    $params['mnetid']   = $CFG->mnet_localhost_id;
 
-    if (!$remtenrolledusers = get_records_sql($sql)) {
+    if (!$remtenrolledusers = $DB->get_records_sql($sql, $params)) {
         $remtenrolledusers = array();
     }
+
+    $params = array();
 
     $select = '';
     $exclude = array_merge(array_keys($mnetenrolledusers), array_keys($remtenrolledusers));
@@ -220,20 +230,30 @@
     $searchtext = trim($searchtext);
 
     if ($searchtext !== '') {   // Search for a subset of remaining users
-        $LIKE      = sql_ilike();
-        $FULLNAME  = sql_fullname();
+        $LIKE      = $DB->sql_ilike();
+        $FULLNAME  = $DB->sql_fullname();
 
-        $select  .= " AND ($FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%') ";
+        $select  .= " AND ($FULLNAME $LIKE :search1 OR email $LIKE :search2) ";
+        $params['search1'] = "%$searchtext%";
+        $params['search2'] = "%$searchtext%";
     }
 
-    $sql = ('SELECT id, firstname, lastname, email 
-            FROM '.$CFG->prefix.'user u
-            WHERE deleted = 0 AND confirmed = 1 
-                  AND mnethostid = '.$CFG->mnet_localhost_id.' '
-            .$select
-            .'ORDER BY lastname ASC, firstname ASC');
+    $sql = ("SELECT id, firstname, lastname, email 
+               FROM {user} u
+              WHERE deleted = 0 AND confirmed = 1 
+                    AND mnethostid = :mnetid
+                    $select
+           ORDER BY lastname ASC, firstname ASC");
+    $params['mnetid'] = $CFG->mnet_localhost_id;
 
-    $availableusers = get_recordset_sql($sql, 0, MAX_USERS_PER_PAGE);
+    $availableusers = $DB->get_recordset_sql($sql, $params, 0, MAX_USERS_PER_PAGE);
+
+    $sql = ("SELECT COUNT('x') 
+               FROM {user} u
+              WHERE deleted = 0 AND confirmed = 1 
+                    AND mnethostid = :mnetid
+                    $select");
+    $availablecount = $DB->count_records_sql($sql, $params);
 
 
 

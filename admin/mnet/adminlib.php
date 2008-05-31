@@ -21,7 +21,8 @@
  * @return bool                     True on success, else false
  */
 function mnet_get_functions($type, $parentname) {
-    global $CFG;
+    global $CFG, $DB;
+
     $dataobject = new stdClass();
     $docname = $type.'.php';
     $publishes = array();
@@ -59,12 +60,12 @@ function mnet_get_functions($type, $parentname) {
 
     // Disable functions that don't exist (any more) in the source
     // Should these be deleted? What about their permissions records?
-    $rpcrecords = get_records_select('mnet_rpc', ' parent=\''.$parentname.'\' AND parent_type=\''.$type.'\' ', 'function_name ASC ');
+    $rpcrecords = $DB->get_records('mnet_rpc', array('parent'=>$parentname, 'parent_type'=>$type), 'function_name ASC ');
     if (!empty($rpcrecords)) {
         foreach($rpcrecords as $rpc) {
             if (!array_key_exists($rpc->function_name, $methodServiceArray)) {
                 $rpc->enabled = 0;
-                update_record('mnet_rpc', $rpc);
+                $DB->update_record('mnet_rpc', $rpc);
             }
         }
     }
@@ -98,16 +99,16 @@ function mnet_get_functions($type, $parentname) {
         $dataobject->parent        = $parentname;
         $dataobject->enabled       = '0';
 
-        if ($record_exists = get_record('mnet_rpc', 'xmlrpc_path', $dataobject->xmlrpc_path)) {
+        if ($record_exists = $DB->get_record('mnet_rpc', array('xmlrpc_path'=>$dataobject->xmlrpc_path))) {
             $dataobject->id      = $record_exists->id;
             $dataobject->enabled = $record_exists->enabled;
-            update_record('mnet_rpc', $dataobject);
+            $DB->update_record('mnet_rpc', $dataobject);
         } else {
             $dataobject->id = insert_record('mnet_rpc', $dataobject, true);
         }
 
         foreach($servicearray as $service) {
-            $serviceobj = get_record('mnet_service', 'name', $service['name']);
+            $serviceobj = $DB->get_record('mnet_service', array('name'=>$service['name']));
             if (false == $serviceobj) {
                 $serviceobj = new stdClass();
                 $serviceobj->name        = $service['name'];
@@ -116,11 +117,11 @@ function mnet_get_functions($type, $parentname) {
                 $serviceobj->id          = insert_record('mnet_service', $serviceobj, true);
             }
 
-            if (false == get_record('mnet_service2rpc', 'rpcid', $dataobject->id, 'serviceid', $serviceobj->id)) {
+            if (false == $DB->get_record('mnet_service2rpc', array('rpcid'=>$dataobject->id, 'serviceid'=>$serviceobj->id))) {
                 $obj = new stdClass();
                 $obj->rpcid = $dataobject->id;
                 $obj->serviceid = $serviceobj->id;
-                insert_record('mnet_service2rpc', $obj, true);
+                $DB->insert_record('mnet_service2rpc', $obj, true);
             }
         }
     }

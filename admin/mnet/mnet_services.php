@@ -44,7 +44,7 @@
         $mnet_peer->set_id($hostid);
         $treevals = array();
         foreach($_POST['exists'] as $key => $value) {
-            $host2service   = get_record('mnet_host2service', 'hostid', $_POST['hostid'], 'serviceid', $key);
+            $host2service   = $DB->get_record('mnet_host2service', array('hostid'=>$_POST['hostid'], 'serviceid'=>$key));
             $publish        = (isset($_POST['publish'][$key]) && $_POST['publish'][$key] == 'on')? 1 : 0;
             $subscribe      = (isset($_POST['subscribe'][$key]) && $_POST['subscribe'][$key] == 'on')? 1 : 0;
 
@@ -53,7 +53,7 @@
                     // We don't have or need a record - do nothing!
                 } else {
                     // We don't need the record - delete it
-                    delete_records('mnet_host2service', 'hostid', $_POST['hostid'], 'serviceid', $key);
+                    $DB->delete_records('mnet_host2service', array('hostid', $_POST['hostid'], 'serviceid'=>$key));
                 }
             } elseif (false == $host2service && ($publish == 1 || $subscribe == 1)) {
                 $host2service = new stdClass();
@@ -63,11 +63,11 @@
                 $host2service->publish = $publish;
                 $host2service->subscribe = $subscribe;
 
-                $host2service->id = insert_record('mnet_host2service', $host2service);
+                $host2service->id = $DB->insert_record('mnet_host2service', $host2service);
             } elseif ($host2service->publish != $publish || $host2service->subscribe != $subscribe) {
                 $host2service->publish   = $publish;
                 $host2service->subscribe = $subscribe;
-                $tf = update_record('mnet_host2service', $host2service);
+                $tf = $DB->update_record('mnet_host2service', $host2service);
             }
         }
     }
@@ -81,7 +81,7 @@
             $id_list .= ', '.$CFG->mnet_all_hosts_id;
         }
 
-        $concat = sql_concat('COALESCE(h2s.id,0) ', ' \'-\' ', ' svc.id');
+        $concat = $DB->sql_concat('COALESCE(h2s.id,0) ', ' \'-\' ', ' svc.id');
 
         $query = "
             SELECT DISTINCT
@@ -96,11 +96,11 @@
                 h2s.publish,
                 h2s.subscribe
             FROM
-                {$CFG->prefix}mnet_service2rpc s2r,
-                {$CFG->prefix}mnet_rpc r,
-                {$CFG->prefix}mnet_service svc
+                {mnet_service2rpc} s2r,
+                {mnet_rpc} r,
+                {mnet_service} svc
             LEFT JOIN
-                {$CFG->prefix}mnet_host2service h2s
+                {mnet_host2service} h2s
             ON
                 h2s.hostid in ($id_list) AND
                 h2s.serviceid = svc.id
@@ -111,7 +111,7 @@
             ORDER BY
                 svc.name ASC";
 
-        $resultset = get_records_sql($query);
+        $resultset = $DB->get_records_sql($query);
 
         if (is_array($resultset)) {
             $resultset = array_values($resultset);

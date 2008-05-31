@@ -37,7 +37,7 @@
     }
 
 /// If data submitted, process and store
-    if (($form = data_submitted()) && confirm_sesskey()) {
+    if (($form = data_submitted(false)) && confirm_sesskey()) {
         if (!empty($form->submit) && $form->submit == get_string('savechanges')) {
             if (in_array($form->mode, array("off", "strict", "dangerous"))) {
                 if (set_config('mnet_dispatcher_mode', $form->mode)) {
@@ -87,7 +87,7 @@
             exit;
         }
     }
-    $hosts = get_records_select('mnet_host', " id != '{$CFG->mnet_localhost_id}' AND deleted = '0' ",'wwwroot ASC' );
+    $hosts = $DB->get_records_select('mnet_host', "id <> ? AND deleted = 0", array($CFG->mnet_localhost_id), 'wwwroot ASC');
 
     admin_externalpage_print_header();
 ?>

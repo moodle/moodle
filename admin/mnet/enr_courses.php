@@ -6,7 +6,7 @@
     require_once($CFG->libdir.'/adminlib.php');
 
     if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
+        print_error('confirmsesskeybad', 'error');
     }
 
 
@@ -17,7 +17,7 @@
     $enrolment = enrolment_factory::factory('mnet');
 
     $mnethost = required_param('host', PARAM_INT);
-    $host = get_record('mnet_host', 'id', $mnethost);
+    $host = $DB->get_record('mnet_host', array('id'=>$mnethost));
 
     $courses = $enrolment->fetch_remote_courses($mnethost);
 

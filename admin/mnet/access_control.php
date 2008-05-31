@@ -44,14 +44,14 @@ if (!empty($action) and confirm_sesskey()) {
 
     // fetch the record in question
     $id = required_param('id', PARAM_INT);
-    if (!$idrec = get_record('mnet_sso_access_control', 'id', $id)) {
+    if (!$idrec = $DB->get_record('mnet_sso_access_control', array('id'=>$id))) {
         print_error('recordnoexists','mnet', "$CFG->wwwroot/$CFG->admin/mnet/access_control.php");
     }
 
     switch ($action) {
 
         case "delete":
-            delete_records('mnet_sso_access_control', 'id', $id);
+            $DB->delete_records('mnet_sso_access_control', array('id'=>$id));
             redirect('access_control.php', get_string('deleteuserrecord', 'mnet', array($idrec->username, $mnethosts[$idrec->mnet_host_id])));
             break;
 
@@ -80,7 +80,7 @@ if (!empty($action) and confirm_sesskey()) {
 
 
 // process the form results
-if ($form = data_submitted() and confirm_sesskey()) {
+if ($form = data_submitted(false) and confirm_sesskey()) {
 
     // check permissions and verify form input
     if (!has_capability('moodle/user:delete', $sitecontext)) {
@@ -156,8 +156,8 @@ foreach ($columns as $column) {
     $headings[$column] = "<a href=\"?sort=$column&amp;dir=$columndir&amp;\">".$string[$column]."</a>$columnicon";
 }
 $headings['delete'] = '';
-$acl = get_records('mnet_sso_access_control', '', '', "$sort $dir", '*'); //, $page * $perpage, $perpage);
-$aclcount = count_records('mnet_sso_access_control');
+$acl = $DB->get_records('mnet_sso_access_control', null, "$sort $dir", '*'); //, $page * $perpage, $perpage);
+$aclcount = $DB->count_records('mnet_sso_access_control');
 
 if (!$acl) {
     print_heading(get_string('noaclentries','mnet'));

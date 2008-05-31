@@ -12,7 +12,7 @@
       </td>
       <td></td>
       <td valign="top">
-          <?php print_string('potentialusers', 'role', $availableusers->_numOfRows); ?>
+          <?php print_string('potentialusers', 'role', $availablecount); ?>
       </td>
     </tr>
     <tr>
@@ -44,8 +44,8 @@
           <?php
 
               if (!empty($searchtext)) {
-                  echo "<optgroup label=\"$strsearchresults (" . $availableusers->_numOfRows . ")\">\n";
-                  while ($user = rs_fetch_next_record($availableusers)) {
+                  echo "<optgroup label=\"$strsearchresults (" . $availablecount . ")\">\n";
+                  foreach ($availableusers as $user) {
                       if (!isset($enrolledusers[$user->id])) {
                           $fullname = fullname($user, true);
                           echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
@@ -54,11 +54,11 @@
                   echo "</optgroup>\n";
 
               } else {
-                  if ($availableusers->_numOfRows > MAX_USERS_PER_PAGE) {
+                  if ($availablecount > MAX_USERS_PER_PAGE) {
                       echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
                           .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";
                   } else {
-                      while ($user = rs_fetch_next_record($availableusers)) {
+                      foreach ($availableusers as $user) {
                           $fullname = fullname($user, true);
                           echo "<option value=\"$user->id\">".$fullname.", ".$user->email."</option>\n";
                       }
