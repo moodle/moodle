@@ -69,7 +69,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
                                                                                                                                                                               'all' => 'All courses',
                                                                                                                                                                               'requested' => 'Requested courses')));
     $temp->add(new admin_setting_configcheckbox('restrictbydefault', get_string('restrictbydefault', 'admin'), get_string('configrestrictbydefault', 'admin'), 0));
-    if (!$options = get_records("modules")) {
+    if (!$options = $DB->get_records('modules')) {
         $options = array();
     }
     $options2 = array();

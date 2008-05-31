@@ -4,7 +4,7 @@ if ($hassiteconfig) {
 
     $ADMIN->add('modules', new admin_category('modsettings', get_string('activities')));
     $ADMIN->add('modsettings', new admin_page_managemods());
-    if ($modules = get_records('modules')) {
+    if ($modules = $DB->get_records('modules')) {
         $modulebyname = array();
 
         foreach ($modules as $module) {
@@ -41,7 +41,7 @@ if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('blocksettings', get_string('blocks')));
     $ADMIN->add('blocksettings', new admin_page_manageblocks());
     $ADMIN->add('blocksettings', new admin_externalpage('stickyblocks', get_string('stickyblocks', 'admin'), "$CFG->wwwroot/$CFG->admin/stickyblocks.php"));
-    if (!empty($CFG->blocks_version) and $blocks = get_records('block')) {
+    if (!empty($CFG->blocks_version) and $blocks = $DB->get_records('block')) {
         $blockbyname = array();
 
         foreach ($blocks as $block) {

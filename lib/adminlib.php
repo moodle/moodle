@@ -4087,7 +4087,7 @@ function admin_externalpage_print_footer() {
  * @return reference
  */
 function &admin_get_root($reload=false, $requirefulltree=true) {
-    global $CFG;
+    global $CFG, $DB;
 
     static $ADMIN = NULL;
 
