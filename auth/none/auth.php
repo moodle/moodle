@@ -52,8 +52,8 @@ class auth_plugin_none extends auth_plugin_base {
      *
      * called when the user password is updated.
      *
-     * @param  object  $user        User table object  (with system magic quotes)
-     * @param  string  $newpassword Plaintext password (with system magic quotes)
+     * @param  object  $user        User table object
+     * @param  string  $newpassword Plaintext password
      * @return boolean result
      *
      */

@@ -12,7 +12,7 @@
 
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
-    if (!$course = get_record('course', 'id', $id)) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error('No such course!');
     }
 
@@ -36,7 +36,7 @@
 
     if (is_mnet_remote_user($USER)) {
         $message = get_string('usercannotchangepassword', 'mnet');
-        if ($idprovider = get_record('mnet_host', 'id', $USER->mnethostid)) {
+        if ($idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
             $message .= get_string('userchangepasswordlink', 'mnet', $idprovider);
         }
         print_error($message);
@@ -62,9 +62,9 @@
 
     if ($mform->is_cancelled()) {
         redirect($CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id);
-    } else if ($data = $mform->get_data()) {
+    } else if ($data = $mform->get_data(false)) {
 
-        if (!$userauth->user_update_password(addslashes_recursive($USER), $data->newpassword1)) {
+        if (!$userauth->user_update_password($USER, $data->newpassword1)) {
             print_error('errorpasswordupdate', 'auth');
         }
 

@@ -15,8 +15,8 @@ $navigation = build_navigation(array(array('name' => 'MNET ID Provider', 'link' 
 print_header('MNET ID Provider', 'MNET ID Provider', $navigation, 'form.email' );
 
 if ($form = data_submitted() and confirm_sesskey()) {
-    if ($user = get_record('user', 'username', $username, 'email', $form->email)) {
-        if (!empty($user->mnethostid) and $host = get_record('mnet_host', 'id', $user->mnethostid)) {
+    if ($user = $DB->get_record('user', array('username'=>$username, 'email'=>$form->email))) {
+        if (!empty($user->mnethostid) and $host = $DB->get_record('mnet_host', array('id'=>$user->mnethostid))) {
             notice("You should be able to login at your <a href=\"{$host->wwwroot}/login/\">{$host->name}</a> provider.");
         }
     }

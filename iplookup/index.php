@@ -52,7 +52,7 @@ if ($match[1] == '127' or $match[1] == '10' or ($match[1] == '172' and $match[2]
 }
 
 if ($user) {
-    if ($user = get_record('user', 'id', $user, 'deleted', 0)) {
+    if ($user = $DB->get_record('user', array('id'=>$user, 'deleted'=>0))) {
         $info[] = fullname($user);
     }
 }
