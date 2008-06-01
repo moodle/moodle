@@ -667,25 +667,6 @@ function records_to_menu($records, $field1, $field2) {
 /**
  * Get the first two columns from a number of records as an associative array.
  *
- * Arguments as for @see function get_recordset_select.
- * Return value as for @see function get_records_menu.
- *
- * @param string $table The database table to be checked against.
- * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
- * @param string $sort Sort order (optional) - a valid SQL order parameter
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an associative array, or false if no records were found or an error occured.
- */
-function get_records_select_menu($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-    $rs = get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
-    return recordset_to_menu($rs);
-}
-
-/**
- * Get the first two columns from a number of records as an associative array.
- *
  * Arguments as for @see function get_recordset_sql.
  * Return value as for @see function get_records_menu.
  *

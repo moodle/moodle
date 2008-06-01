@@ -352,7 +352,8 @@ class question_category_object {
     }
 
     function move_questions($oldcat, $newcat){
-        $questionids = get_records_select_menu('question', "category = $oldcat AND (parent = 0 OR parent = id)", '', 'id,1');
+        global $DB;
+        $questionids = $DB->get_records_select_menu('question', "category = ? AND (parent = 0 OR parent = id)", array($oldcat), '', 'id,1');
         if (!question_move_questions_to_category(implode(',', array_keys($questionids)), $newcat)) {
             print_error('errormovingquestions', 'question', $returnurl, $ids);
         }

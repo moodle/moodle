@@ -485,7 +485,7 @@ function scorm_course_format_display($user,$course) {
 }
 
 function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
-    global $CFG;
+    global $CFG, $DB;
 
     if ($scorm->updatefreq == UPDATE_EVERYTIME){
         require_once($CFG->dirroot.'/mod/scorm/lib.php');
@@ -503,7 +503,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     if (empty($organization)) {
         $organization = $scorm->launch;
     }
-    if ($orgs = get_records_select_menu('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,title')) {
+    if ($orgs = $DB->get_records_select_menu('scorm_scoes', array('scorm'=>$scorm->id, 'organization'=>'', 'launch'=>''), 'id', 'id,title')) {
         if (count($orgs) > 1) {
  ?>
             <div class='center'>

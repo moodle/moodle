@@ -1029,7 +1029,9 @@ function feedback_create_pagebreak($feedbackid) {
  *  @return array all ordered pagebreak positions
  */
 function feedback_get_all_break_positions($feedbackid) {
-    if(!$allbreaks = get_records_select_menu('feedback_item', "typ = 'pagebreak' AND feedback = ".$feedbackid, 'position', 'id, position')) return false;
+    global $DB;
+
+    if(!$allbreaks = $DB->get_records_menu('feedback_item', array('typ'=>'pagebreak', 'feedback'=>$feedbackid), 'position', 'id, position')) return false;
     return array_values($allbreaks);
 }
 
@@ -1359,16 +1361,15 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false){
  *  @return boolean true if the feedback already is submitted otherwise false
  */
 function feedback_is_already_submitted($feedbackid, $courseid = false) {
-    global $USER;
+    global $USER, $DB;
     
-    $select = 'userid = '.$USER->id.' AND feedback = '.$feedbackid;
-    if(!$trackings = get_records_select_menu('feedback_tracking', $select, '', 'id, completed')) {
+    if (!$trackings = $DB->get_records_menu('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedbackid), '', 'id, completed')) {
         return false;
     }
 
     if($courseid) {
-        $select = 'completed IN ('.implode(',',$trackings).') AND course_id = '.$courseid;
-        if(!$values = get_records_select('feedback_value', $select)) {
+        $select = 'completed IN ('.implode(',',$trackings).') AND course_id = ?';
+        if(!$values = $DB->get_records_select('feedback_value', $select, array($courseid))) {
             return false;
         }
     }

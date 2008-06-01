@@ -431,3 +431,7 @@ function get_recordset_list($table, $field='', $values='', $sort='', $fields='*'
 function get_records_menu($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
     error('get_records_menu() removed');
 }
+
+function get_records_select_menu($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_records_select_menu() removed');
+}

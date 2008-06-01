@@ -556,6 +556,8 @@ function question_delete_course($course, $feedback=true) {
  * @return boolean
  */
 function question_delete_course_category($category, $newcategory, $feedback=true) {
+    global $DB;
+
     $context = get_context_instance(CONTEXT_COURSECAT, $category->id);
     if (empty($newcategory)) {
         $feedbackdata   = array(); // To store feedback to be showed at the end of the process
@@ -578,7 +580,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
                     // still in use somehow, even though quizzes in courses in this category will
                     // already have been deteted. This could happen, for example, if questions are
                     // added to a course, and then that course is moved to another category (MDL-14802).
-                    $questionids = get_records_select_menu('question', 'category = ' . $category->id, '', 'id,1');
+                    $questionids = $DB->get_records_menu('question', array('category'=>$category->id), '', 'id,1');
                     if (!empty($questionids)) {
                         if (!$rescueqcategory = question_save_from_deletion(implode(',', array_keys($questionids)),
                                 get_parent_contextid($context), print_context_name($context), $rescueqcategory)) {

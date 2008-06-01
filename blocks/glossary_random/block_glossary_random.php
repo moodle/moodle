@@ -109,7 +109,7 @@ class block_glossary_random extends block_base {
     }
 
     function instance_config_print() {
-        global $CFG;
+        global $CFG, $DB;
 
         if (!isset($this->config)) {
             // ... teacher has not yet configured the block, let's put some default values here to explain things
@@ -123,7 +123,7 @@ class block_glossary_random extends block_base {
         }
 
         // select glossaries to put in dropdown box ...
-        $glossaries = get_records_select_menu('glossary', 'course='.$this->course->id,'name','id,name');
+        $glossaries = $DB->get_records_menu('glossary', array('course'=>$this->course->id),'name','id,name');
 
         //format menu texts to avoid html and to filter multilang values
         if(!empty($glossaries)) {
