@@ -940,7 +940,7 @@ abstract class moodle_database {
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
      * @return int The count of records returned from the specified criteria.
      */
-    public function count_records($table, array $conditions=null, array $params=null) {
+    public function count_records($table, array $conditions=null) {
         list($select, $params) = $this->where_clause($conditions);
         return $this->count_records_select($table, $select, $params);
     }
