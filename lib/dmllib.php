@@ -456,3 +456,7 @@ function set_field_select($table, $newfield, $newvalue, $select, $localcall = fa
     error('set_field_select() removed');
 }
 
+function get_fieldset_select($table, $return, $select) {
+    error('get_fieldset_select() removed');
+}
+
