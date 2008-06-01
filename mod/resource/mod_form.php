@@ -5,12 +5,12 @@ class mod_resource_mod_form extends moodleform_mod {
     var $_resinstance;
 
     function definition() {
-        global $CFG;
+        global $CFG, $DB;
         $mform =& $this->_form;
 
         // this hack is needed for different settings of each subtype
         if (!empty($this->_instance)) {
-            if($res = get_record('resource', 'id', (int)$this->_instance)) {
+            if($res = $DB->get_record('resource', array('id', $this->_instance))) {
                 $type = $res->type;
             } else {
                 print_error('incorrect assignment');

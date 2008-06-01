@@ -4,12 +4,12 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_assignment_mod_form extends moodleform_mod {
 
     function definition() {
-        global $CFG;
+        global $CFG, $DB;
         $mform =& $this->_form;
 
         // this hack is needed for different settings of each subtype
         if (!empty($this->_instance)) {
-            if($ass = get_record('assignment', 'id', (int)$this->_instance)) {
+            if($ass = $DB->get_record('assignment', array('id', $this->_instance))) {
                 $type = $ass->assignmenttype;
             } else {
                 print_error('invalidassignment', 'assignment');

@@ -88,44 +88,44 @@
 
             if ( $xmlglossary['NAME'][0]['#'] ) {
                 unset($glossary);
-                $glossary->name = addslashes($xmlglossary['NAME'][0]['#']);
+                $glossary->name = ($xmlglossary['NAME'][0]['#']);
                 $glossary->course = $course->id;
-                $glossary->globalglossary = addslashes($xmlglossary['GLOBALGLOSSARY'][0]['#']);
-                $glossary->intro = addslashes($xmlglossary['INTRO'][0]['#']);
-                $glossary->showspecial = addslashes($xmlglossary['SHOWSPECIAL'][0]['#']);
-                $glossary->showalphabet = addslashes($xmlglossary['SHOWALPHABET'][0]['#']);
-                $glossary->showall = addslashes($xmlglossary['SHOWALL'][0]['#']);
+                $glossary->globalglossary = ($xmlglossary['GLOBALGLOSSARY'][0]['#']);
+                $glossary->intro = ($xmlglossary['INTRO'][0]['#']);
+                $glossary->showspecial = ($xmlglossary['SHOWSPECIAL'][0]['#']);
+                $glossary->showalphabet = ($xmlglossary['SHOWALPHABET'][0]['#']);
+                $glossary->showall = ($xmlglossary['SHOWALL'][0]['#']);
                 $glossary->timecreated = time();
                 $glossary->timemodified = time();
 
                 // Setting the default values if no values were passed
                 if ( isset($xmlglossary['ENTBYPAGE'][0]['#']) ) {
-                    $glossary->entbypage = addslashes($xmlglossary['ENTBYPAGE'][0]['#']);
+                    $glossary->entbypage = ($xmlglossary['ENTBYPAGE'][0]['#']);
                 } else {
                     $glossary->entbypage = $CFG->glossary_entbypage;
                 }
                 if ( isset($xmlglossary['ALLOWDUPLICATEDENTRIES'][0]['#']) ) {
-                    $glossary->allowduplicatedentries = addslashes($xmlglossary['ALLOWDUPLICATEDENTRIES'][0]['#']);
+                    $glossary->allowduplicatedentries = ($xmlglossary['ALLOWDUPLICATEDENTRIES'][0]['#']);
                 } else {
                     $glossary->allowduplicatedentries = $CFG->glossary_dupentries;
                 }
                 if ( isset($xmlglossary['DISPLAYFORMAT'][0]['#']) ) {
-                    $glossary->displayformat = addslashes($xmlglossary['DISPLAYFORMAT'][0]['#']);
+                    $glossary->displayformat = ($xmlglossary['DISPLAYFORMAT'][0]['#']);
                 } else {
                     $glossary->displayformat = 2;
                 }
                 if ( isset($xmlglossary['ALLOWCOMMENTS'][0]['#']) ) {
-                    $glossary->allowcomments = addslashes($xmlglossary['ALLOWCOMMENTS'][0]['#']);
+                    $glossary->allowcomments = ($xmlglossary['ALLOWCOMMENTS'][0]['#']);
                 } else {
                     $glossary->allowcomments = $CFG->glossary_allowcomments;
                 }
                 if ( isset($xmlglossary['USEDYNALINK'][0]['#']) ) {
-                    $glossary->usedynalink = addslashes($xmlglossary['USEDYNALINK'][0]['#']);
+                    $glossary->usedynalink = ($xmlglossary['USEDYNALINK'][0]['#']);
                 } else {
                     $glossary->usedynalink = $CFG->glossary_linkentries;
                 }
                 if ( isset($xmlglossary['DEFAULTAPPROVAL'][0]['#']) ) {
-                    $glossary->defaultapproval = addslashes($xmlglossary['DEFAULTAPPROVAL'][0]['#']);
+                    $glossary->defaultapproval = ($xmlglossary['DEFAULTAPPROVAL'][0]['#']);
                 } else {
                     $glossary->defaultapproval = $CFG->glossary_defaultapproval;
                 }

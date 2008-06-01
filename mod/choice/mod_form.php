@@ -4,7 +4,7 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_choice_mod_form extends moodleform_mod {
 
     function definition() {
-        global $CHOICE_SHOWRESULTS, $CHOICE_PUBLISH, $CHOICE_DISPLAY;
+        global $CHOICE_SHOWRESULTS, $CHOICE_PUBLISH, $CHOICE_DISPLAY, $DB;
 
         $mform    =& $this->_form;
 
@@ -37,7 +37,7 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform->setHelpButton('limitanswers', array('limit', get_string('limit', 'choice'), 'choice'));
 
         if ($this->_instance){
-            $repeatno=count_records('choice_options', 'choiceid', $this->_instance);
+            $repeatno = $DB->count_records('choice_options', array('choiceid'=>$this->_instance));
             $repeatno += 2;
         } else {
             $repeatno = 5;

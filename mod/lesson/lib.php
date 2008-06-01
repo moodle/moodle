@@ -19,17 +19,17 @@ define("LESSON_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
  * @return int
  **/
 function lesson_add_instance($lesson) {
-    global $SESSION;
+    global $SESSION, $DB;
 
     lesson_process_pre_save($lesson);
 
-    if (!$lesson->id = insert_record("lesson", $lesson)) {
+    if (!$lesson->id = $DB->insert_record("lesson", $lesson)) {
         return false; // bad
     }
 
     lesson_process_post_save($lesson);
 
-    lesson_grade_item_update(stripslashes_recursive($lesson));
+    lesson_grade_item_update($lesson);
 
     return $lesson->id;
 }
@@ -43,22 +43,23 @@ function lesson_add_instance($lesson) {
  * @return boolean
  **/
 function lesson_update_instance($lesson) {
+    global $DB;
 
     $lesson->id = $lesson->instance;
 
     lesson_process_pre_save($lesson);
 
-    if (!$result = update_record("lesson", $lesson)) {
+    if (!$result = $DB->update_record("lesson", $lesson)) {
         return false; // Awe man!
     }
 
     lesson_process_post_save($lesson);
 
     // update grade item definition
-    lesson_grade_item_update(stripslashes_recursive($lesson));
+    lesson_grade_item_update($lesson);
 
     // update grades - TODO: do it only when grading style changes
-    lesson_update_grades(stripslashes_recursive($lesson), 0, false);
+    lesson_update_grades($lesson, 0, false);
 
     return $result;
 }
@@ -66,48 +67,49 @@ function lesson_update_instance($lesson) {
 
 /*******************************************************************/
 function lesson_delete_instance($id) {
+    global $DB;
 /// Given an ID of an instance of this module,
 /// this function will permanently delete the instance
 /// and any data that depends on it.
 
-    if (! $lesson = get_record("lesson", "id", "$id")) {
+    if (! $lesson = $DB->get_record("lesson", array("id"=>$id))) {
         return false;
     }
 
     $result = true;
 
-    if (! delete_records("lesson", "id", "$lesson->id")) {
+    if (! $DB->delete_records("lesson", array("id"=>$lesson->id))) {
         $result = false;
     }
-    if (! delete_records("lesson_pages", "lessonid", "$lesson->id")) {
+    if (! $DB->delete_records("lesson_pages", array("lessonid"=>$lesson->id))) {
         $result = false;
     }
-    if (! delete_records("lesson_answers", "lessonid", "$lesson->id")) {
+    if (! $DB->delete_records("lesson_answers", array("lessonid"=>$lesson->id))) {
         $result = false;
     }
-    if (! delete_records("lesson_attempts", "lessonid", "$lesson->id")) {
+    if (! $DB->delete_records("lesson_attempts", array("lessonid"=>$lesson->id))) {
         $result = false;
     }
-    if (! delete_records("lesson_grades", "lessonid", "$lesson->id")) {
+    if (! $DB->delete_records("lesson_grades", array("lessonid"=>$lesson->id))) {
         $result = false;
     }
-    if (! delete_records("lesson_timer", "lessonid", "$lesson->id")) {
+    if (! $DB->delete_records("lesson_timer", array("lessonid"=>$lesson->id))) {
             $result = false;
     }
-    if (! delete_records("lesson_branch", "lessonid", "$lesson->id")) {
+    if (! $DB->delete_records("lesson_branch", array("lessonid"=>$lesson->id))) {
             $result = false;
     }
-    if (! delete_records("lesson_high_scores", "lessonid", "$lesson->id")) {
+    if (! $DB->delete_records("lesson_high_scores", array("lessonid"=>$lesson->id))) {
             $result = false;
     }
-    if ($events = get_records_select('event', "modulename = 'lesson' and instance = '$lesson->id'")) {
+    if ($events = $DB->get_records('event', array("modulename"=>'lesson', "instance"=>$lesson->id))) {
         foreach($events as $event) {
             delete_event($event->id);
         }
     }
     $pagetypes = page_import_types('mod/lesson/');
     foreach ($pagetypes as $pagetype) {
-        if (!delete_records('block_instance', 'pageid', $lesson->id, 'pagetype', $pagetype)) {
+        if (!$DB->delete_records('block_instance', array('pageid'=>$lesson->id, 'pagetype'=>$pagetype))) {
             $result = false;
         }
     }
@@ -540,7 +542,9 @@ function lesson_process_pre_save(&$lesson) {
  * @return void
  **/
 function lesson_process_post_save(&$lesson) {
-    if ($events = get_records_select('event', "modulename = 'lesson' and instance = '$lesson->id'")) {
+    global $DB;
+
+    if ($events = $DB->get_records('event', array('modulename'=>'lesson', 'instance'=>$lesson->id))) {
         foreach($events as $event) {
             delete_event($event->id);
         }

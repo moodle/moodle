@@ -29,6 +29,7 @@ $feedback_names = feedback_load_feedback_items('mod/feedback/item');
 * @return int
 */
 function feedback_add_instance($feedback) {
+    global $DB;
 
     $feedback->timemodified = time();
     $feedback->id = '';
@@ -45,7 +46,7 @@ function feedback_add_instance($feedback) {
     }
 
     //saving the feedback in db
-    if(!$feedbackid = insert_record("feedback", $feedback)) {
+    if (!$feedbackid = $DB->insert_record("feedback", $feedback)) {
         return false;
     }
     
@@ -60,6 +61,7 @@ function feedback_add_instance($feedback) {
 * @return boolean
 */
 function feedback_update_instance($feedback) {
+    global $DB;
 
     $feedback->timemodified = time();
     $feedback->id = $feedback->instance;
@@ -76,7 +78,7 @@ function feedback_update_instance($feedback) {
     }
 
     //save the feedback into the db
-    if(!update_record("feedback", $feedback)) {
+    if (!$DB->update_record("feedback", $feedback)) {
         return false;
     }
 
@@ -93,30 +95,32 @@ function feedback_update_instance($feedback) {
 * @return boolean
 */
 function feedback_delete_instance($id) {
+    global $DB;
+
     //get all referenced items
-    $feedbackitems = get_records('feedback_item', 'feedback', $id);
+    $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$id));
     
     //deleting all referenced items and values
     if (is_array($feedbackitems)){
         foreach($feedbackitems as $feedbackitem){
-            @delete_records("feedback_value", "item", $feedbackitem->id);
-            @delete_records("feedback_valuetmp", "item", $feedbackitem->id);
+            $DB->delete_records("feedback_value", array("item"=>$feedbackitem->id));
+            $DB->delete_records("feedback_valuetmp", array("item"=>$feedbackitem->id));
         }
-        @delete_records("feedback_item", "feedback", $id);
+        $DB->delete_records("feedback_item", array("feedback"=>$id));
     }
     
     //deleting the referenced tracking data
-    @delete_records('feedback_tracking', 'feedback', $id);
+    $DB->delete_records('feedback_tracking', array('feedback'=>$id));
     
     //deleting the completeds
-    @delete_records("feedback_completed", "feedback", $id);
+    $DB->delete_records("feedback_completed", array("feedback"=>$id));
     
     //deleting the unfinished completeds
-    @delete_records("feedback_completedtmp", "feedback", $id);
+    $DB->delete_records("feedback_completedtmp", array("feedback"=>$id));
     
     //deleting old events
-    @delete_records('event', 'modulename', 'feedback', 'instance', $id);
-    return @delete_records("feedback", "id", $id);
+    $DB->delete_records('event', array('modulename'=>'feedback', 'instance'=>$id));
+    return $DB->delete_records("feedback", array("id"=>$id));
 }
 
 /**
@@ -292,8 +296,10 @@ function feedback_reset_course_form($course) {
  *  @return void
  */
 function feedback_set_events($feedback) {
+    global $DB;
+
     // adding the feedback to the eventtable (I have seen this at quiz-module)
-    delete_records('event', 'modulename', 'feedback', 'instance', $feedback->id);
+    $DB->delete_records('event', array('modulename'=>'feedback', 'instance'=>$feedback->id));
 
     // the open-event
     if($feedback->timeopen > 0) {
@@ -304,7 +310,7 @@ function feedback_set_events($feedback) {
         $event->groupid      = 0;
         $event->userid        = 0;
         $event->modulename  = 'feedback';
-        $event->instance     = $feedbackid;
+        $event->instance     = $feedback->id;
         $event->eventtype    = 'open';
         $event->timestart    = $feedback->timeopen;
         $event->visible      = instance_is_visible('feedback', $feedback);
@@ -326,7 +332,7 @@ function feedback_set_events($feedback) {
         $event->groupid      = 0;
         $event->userid        = 0;
         $event->modulename  = 'feedback';
-        $event->instance     = $feedbackid;
+        $event->instance     = $feedback->id;
         $event->eventtype    = 'close';
         $event->timestart    = $feedback->timeclose;
         $event->visible      = instance_is_visible('feedback', $feedback);

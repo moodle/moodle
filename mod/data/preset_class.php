@@ -442,7 +442,7 @@ class Data_Preset
     * TODO document
     */
     function import() {
-        global $CFG;
+        global $CFG, $DB;
 
         list($settings, $newfields, $currentfields) = $this->load_from_file();
         $preservedfields = array();
@@ -507,13 +507,13 @@ class Data_Preset
                         }
                     }
                     */
-                    delete_records('data_content', 'fieldid', $id);
-                    delete_records('data_fields', 'id', $id);
+                    $DB->delete_records('data_content', array('fieldid'=>$id));
+                    $DB->delete_records('data_fields', array('id'=>$id));
                 }
             }
         }
 
-        data_update_instance(addslashes_object($settings));
+        data_update_instance($settings);
 
         if (strstr($this->directory, '/temp/')) clean_preset($this->directory); /* Removes the temporary files */
         return true;

@@ -194,12 +194,14 @@ define("HOTPOT_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 //  $hotpot->mode         : 'add' or 'update'
 //  $hotpot->sesskey      : unique string required for Moodle's session management
 
-function hotpot_add_instance(&$hotpot) {
+function hotpot_add_instance($hotpot) {
+    global $DB;
+
     if (hotpot_set_form_values($hotpot)) {
-        if ($result = insert_record('hotpot', $hotpot)) {
+        if ($result = $DB->insert_record('hotpot', $hotpot)) {
             $hotpot->id = $result;
             hotpot_update_events($hotpot);
-            hotpot_grade_item_update(stripslashes_recursive($hotpot));
+            hotpot_grade_item_update($hotpot);
         }
     } else {
         $result=  false;
@@ -207,12 +209,14 @@ function hotpot_add_instance(&$hotpot) {
     return $result;
 }
 
-function hotpot_update_instance(&$hotpot) {
+function hotpot_update_instance($hotpot) {
+    global $DB;
+
     if (hotpot_set_form_values($hotpot)) {
         $hotpot->id = $hotpot->instance;
-        if ($result = update_record('hotpot', $hotpot)) {
+        if ($result = $DB->update_record('hotpot', $hotpot)) {
             hotpot_update_events($hotpot);
-            hotpot_grade_item_update(stripslashes_recursive($hotpot));
+            hotpot_grade_item_update($hotpot);
         }
     } else {
         $result=  false;
@@ -220,9 +224,10 @@ function hotpot_update_instance(&$hotpot) {
     return $result;
 }
 function hotpot_update_events($hotpot) {
+    global $DB;
 
     // remove any previous calendar events for this hotpot
-    delete_records('event', 'modulename', 'hotpot', 'instance', $hotpot->id);
+    $DB->delete_records('event', array('modulename'=>'hotpot', 'instance'=>$hotpot->id));
 
     $event = new stdClass();
     $event->description = $hotpot->summary;
@@ -259,12 +264,12 @@ function hotpot_update_events($hotpot) {
             add_event($event);
         }
     } elseif ($hotpot->timeopen) { // only an open date
-        $event->name          = addslashes($hotpot->name).' ('.get_string('hotpotopens', 'hotpot').')';
+        $event->name          = $hotpot->name.' ('.get_string('hotpotopens', 'hotpot').')';
         $event->eventtype   = 'open';
         $event->timeduration = 0;
         add_event($event);
     } elseif ($hotpot->timeclose) { // only a closing date
-        $event->name         = addslashes($hotpot->name).' ('.get_string('hotpotcloses', 'hotpot').')';
+        $event->name         = $hotpot->name.' ('.get_string('hotpotcloses', 'hotpot').')';
         $event->timestart    = $hotpot->timeclose;
         $event->eventtype    = 'close';
         $event->timeduration = 0;
@@ -878,28 +883,29 @@ function hotpot_update_chain(&$hotpot) {
     return $ok;
 }
 function hotpot_delete_instance($id) {
+    global $DB;
 /// Given an ID of an instance of this module,
 /// this function will permanently delete the instance
 /// and any data that depends on it.
 
-    if (! $hotpot = get_record("hotpot", "id", $id)) {
+    if (! $hotpot = $DB->get_record("hotpot", array("id"=>$id))) {
         return false;
     }
 
-    if (! delete_records("hotpot", "id", "$id")) {
+    if (! $DB->delete_records("hotpot", array("id"=>$id))) {
         return false;
     }
 
-    delete_records("hotpot_questions", "hotpot", "$id");
-    if ($attempts = get_records_select("hotpot_attempts", "hotpot='$id'")) {
+    $DB->delete_records("hotpot_questions", array("hotpot"=>$id));
+    if ($attempts = $DB->get_records("hotpot_attempts", array("hotpot"=>$id))) {
         $ids = implode(',', array_keys($attempts));
-        delete_records_select("hotpot_attempts",  "id IN ($ids)");
-        delete_records_select("hotpot_details",   "attempt IN ($ids)");
-        delete_records_select("hotpot_responses", "attempt IN ($ids)");
+        $DB->delete_records_select("hotpot_attempts",  "id IN ($ids)");
+        $DB->delete_records_select("hotpot_details",   "attempt IN ($ids)");
+        $DB->delete_records_select("hotpot_responses", "attempt IN ($ids)");
     }
 
      // remove calendar events for this hotpot
-    delete_records('event', 'modulename', 'hotpot', 'instance', $id);
+    $DB->delete_records('event', array('modulename'=>'hotpot', 'instance'=>$id));
 
      // remove grade item for this hotpot
     hotpot_grade_item_delete($hotpot);

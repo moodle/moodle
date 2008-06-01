@@ -631,7 +631,7 @@ function data_tags_check($dataid, $template){
  * Adds an instance of a data                                           *
  ************************************************************************/
 function data_add_instance($data) {
-    global $CFG;
+    global $CFG, $DB;
 
     if (empty($data->assessed)) {
         $data->assessed = 0;
@@ -639,11 +639,10 @@ function data_add_instance($data) {
 
     $data->timemodified = time();
 
-    if (! $data->id = insert_record('data', $data)) {
+    if (! $data->id = $DB->insert_record('data', $data)) {
         return false;
     }
 
-    $data = stripslashes_recursive($data);
     data_grade_item_update($data);
 
     return $data->id;
@@ -653,7 +652,7 @@ function data_add_instance($data) {
  * updates an instance of a data                                        *
  ************************************************************************/
 function data_update_instance($data) {
-    global $CFG;
+    global $CFG, $DB;
 
     $data->timemodified = time();
     $data->id           = $data->instance;
@@ -666,11 +665,10 @@ function data_update_instance($data) {
         $data->notification = 0;
     }
 
-    if (! update_record('data', $data)) {
+    if (! $DB->update_record('data', $data)) {
         return false;
     }
 
-    $data = stripslashes_recursive($data);
     data_grade_item_update($data);
 
     return true;
@@ -681,39 +679,37 @@ function data_update_instance($data) {
  * deletes an instance of a data                                        *
  ************************************************************************/
 function data_delete_instance($id) {    // takes the dataid
+    global $CFG, $DB;
 
-    global $CFG;
-
-    if (! $data = get_record('data', 'id', $id)) {
+    if (! $data = $DB->get_record('data', array('id'=>$id))) {
         return false;
     }
 
     // Delete all the associated information
 
     // get all the records in this data
-    $sql = 'SELECT c.* FROM '.$CFG->prefix.'data_records r LEFT JOIN '.
-           $CFG->prefix.'data_content c ON c.recordid = r.id WHERE r.dataid = '.$id;
+    $sql = 'SELECT c.* FROM {data_records} r LEFT JOIN {data_content} c ON c.recordid = r.id WHERE r.dataid =?';
 
-    if ($contents = get_records_sql($sql)){
+    if ($contents = $DB->get_records_sql($sql, array($id))){
 
         foreach($contents as $content){
 
-            $field = get_record('data_fields','id',$content->fieldid);
+            $field = $DB->get_record('data_fields', array('id'=>$content->fieldid));
             if ($g = data_get_field($field, $data)){
                 $g->delete_content_files($id, $content->recordid, $content->content);
             }
             //delete the content itself
-            delete_records('data_content','id', $content->id);
+            $DB->delete_records('data_content', array('id'=>$content->id));
         }
     }
 
     // delete all the records and fields
-    delete_records('data_records', 'dataid', $id);
-    delete_records('data_fields','dataid',$id);
+    $DB->delete_records('data_records', array('dataid'=>$id));
+    $DB->delete_records('data_fields', array('dataid'=>$id));
 
     // Delete the instance itself
 
-    $result = delete_records('data', 'id', $id);
+    $result = $DB->delete_records('data', array('id'=>$id));
 
     data_grade_item_delete($data);
 

@@ -8,7 +8,7 @@ class mod_quiz_mod_form extends moodleform_mod {
 
     function definition() {
 
-        global $COURSE, $CFG;
+        global $COURSE, $CFG, $DB;
         $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $repeatarray[] = &MoodleQuickForm::createElement('text', 'feedbackboundaries', get_string('gradeboundary', 'quiz'), array('size' => 10));
 
         if (!empty($this->_instance)) {
-            $this->_feedbacks = get_records('quiz_feedback', 'quizid', $this->_instance, 'mingrade DESC');
+            $this->_feedbacks = $DB->get_records('quiz_feedback', array('quizid'=>$this->_instance), 'mingrade DESC');
         } else {
             $this->_feedbacks = array();
         }

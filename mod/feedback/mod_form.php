@@ -13,7 +13,7 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_feedback_mod_form extends moodleform_mod {
 
     function definition() {
-        global $CFG;
+        global $CFG, $DB;
 
         $mform    =& $this->_form;
 
@@ -58,7 +58,7 @@ class mod_feedback_mod_form extends moodleform_mod {
         $mform->setHelpButton('email_notification', array('emailnotification', get_string('email_notification', 'feedback'), 'feedback'));
         
         // check if there is existing responses to this feedback
-        if (is_numeric($this->_instance) AND $this->_instance and $feedback = get_record("feedback", "id", $this->_instance)) {
+        if (is_numeric($this->_instance) AND $this->_instance and $feedback = $DB->get_record("feedback", array("id"=>$this->_instance))) {
             $completedFeedbackCount = feedback_get_completeds_group_count($feedback);
         } else {
             $completedFeedbackCount = false;

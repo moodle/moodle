@@ -205,6 +205,7 @@ class resource_base {
 
 
     function add_instance($resource) {
+        global $DB;
     // Given an object containing all the necessary data,
     // (defined by the form in mod_form.php) this function
     // will create a new instance and return the id number
@@ -212,11 +213,12 @@ class resource_base {
 
         $resource->timemodified = time();
 
-        return insert_record("resource", $resource);
+        return $DB->insert_record("resource", $resource);
     }
 
 
     function update_instance($resource) {
+        global $DB;
     // Given an object containing all the necessary data,
     // (defined by the form in mod_form.php) this function
     // will update an existing instance with new data.
@@ -224,18 +226,19 @@ class resource_base {
         $resource->id = $resource->instance;
         $resource->timemodified = time();
 
-        return update_record("resource", $resource);
+        return $DB->update_record("resource", $resource);
     }
 
 
     function delete_instance($resource) {
+        global $DB;
     // Given an object containing the resource data
     // this function will permanently delete the instance
     // and any data that depends on it.
 
         $result = true;
 
-        if (! delete_records("resource", "id", "$resource->id")) {
+        if (! $DB->delete_records("resource", array("id"=>$resource->id))) {
             $result = false;
         }
 
@@ -279,9 +282,9 @@ function resource_update_instance($resource) {
 }
 
 function resource_delete_instance($id) {
-    global $CFG;
+    global $CFG, $DB;
 
-    if (! $resource = get_record("resource", "id", "$id")) {
+    if (! $resource = $DB->get_record("resource", array("id"=>$id))) {
         return false;
     }
 

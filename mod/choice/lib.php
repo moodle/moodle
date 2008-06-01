@@ -48,6 +48,7 @@ function choice_user_complete($course, $user, $mod, $choice) {
 
 
 function choice_add_instance($choice) {
+    global $DB;
 // Given an object containing all the necessary data,
 // (defined by the form in mod_form.php) this function
 // will create a new instance and return the id number
@@ -61,7 +62,7 @@ function choice_add_instance($choice) {
     }
 
     //insert answers
-    if ($choice->id = insert_record("choice", $choice)) {
+    if ($choice->id = $DB->insert_record("choice", $choice)) {
         foreach ($choice->option as $key => $value) {
             $value = trim($value);
             if (isset($value) && $value <> '') {
@@ -72,7 +73,7 @@ function choice_add_instance($choice) {
                     $option->maxanswers = $choice->limit[$key];
                 }
                 $option->timemodified = time();
-                insert_record("choice_options", $option);
+                $DB->insert_record("choice_options", $option);
             }
         }
     }
@@ -81,6 +82,7 @@ function choice_add_instance($choice) {
 
 
 function choice_update_instance($choice) {
+    global $DB;
 // Given an object containing all the necessary data,
 // (defined by the form in mod_form.php) this function
 // will update an existing instance with new data.
@@ -107,18 +109,18 @@ function choice_update_instance($choice) {
         if (isset($choice->optionid[$key]) && !empty($choice->optionid[$key])){//existing choice record
             $option->id=$choice->optionid[$key];
             if (isset($value) && $value <> '') {
-                update_record("choice_options", $option);
+                $DB->update_record("choice_options", $option);
             } else { //empty old option - needs to be deleted.
-                delete_records("choice_options", "id", $option->id);
+                $DB->delete_records("choice_options", array("id"=>$option->id));
             }
         } else {
             if (isset($value) && $value <> '') {
-                insert_record("choice_options", $option);
+                $DB->insert_record("choice_options", $option);
             }
         }
     }
 
-    return update_record('choice', $choice);
+    return $DB->update_record('choice', $choice);
 
 }
 
@@ -575,25 +577,26 @@ function choice_delete_responses($attemptids, $choiceid) {
 
 
 function choice_delete_instance($id) {
+    global $DB;
 // Given an ID of an instance of this module,
 // this function will permanently delete the instance
 // and any data that depends on it.
 
-    if (! $choice = get_record("choice", "id", "$id")) {
+    if (! $choice = $DB->get_record("choice", array("id"=>"$id"))) {
         return false;
     }
 
     $result = true;
 
-    if (! delete_records("choice_answers", "choiceid", "$choice->id")) {
+    if (! $DB->delete_records("choice_answers", array("choiceid"=>"$choice->id"))) {
         $result = false;
     }
 
-    if (! delete_records("choice_options", "choiceid", "$choice->id")) {
+    if (! $DB->delete_records("choice_options", array("choiceid"=>"$choice->id"))) {
         $result = false;
     }
 
-    if (! delete_records("choice", "id", "$choice->id")) {
+    if (! $DB->delete_records("choice", array("id"=>"$choice->id"))) {
         $result = false;
     }
 

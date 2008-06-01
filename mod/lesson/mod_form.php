@@ -14,7 +14,7 @@ require_once('locallib.php');
 class mod_lesson_mod_form extends moodleform_mod {
 
     function definition() {
-        global $LESSON_NEXTPAGE_ACTION, $COURSE;
+        global $LESSON_NEXTPAGE_ACTION, $COURSE, $DB;
 
         $mform    =& $this->_form;
 

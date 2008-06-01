@@ -21,6 +21,7 @@ define("GLOSSARY_APPROVAL_VIEW", 7);
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
 function glossary_add_instance($glossary) {
+    global $DB;
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod_form.php) this function
 /// will create a new instance and return the id number
@@ -52,9 +53,8 @@ function glossary_add_instance($glossary) {
         print_error("This format doesn't exist!");
     }
 
-    if ($returnid = insert_record("glossary", $glossary)) {
+    if ($returnid = $DB->insert_record("glossary", $glossary)) {
         $glossary->id = $returnid;
-        $glossary = stripslashes_recursive($glossary);
         glossary_grade_item_update($glossary);
     }
 
@@ -66,7 +66,7 @@ function glossary_update_instance($glossary) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod_form.php) this function
 /// will update an existing instance with new data.
-    global $CFG;
+    global $CFG, $DB;
 
     if (empty($glossary->globalglossary)) {
         $glossary->globalglossary = 0;
@@ -95,11 +95,10 @@ function glossary_update_instance($glossary) {
         print_error("This format doesn't exist!");
     }
 
-    if ($return = update_record("glossary", $glossary)) {
+    if ($return = $DB->update_record("glossary", $glossary)) {
         if ($glossary->defaultapproval) {
-            execute_sql("update {$CFG->prefix}glossary_entries SET approved = 1 where approved != 1 and glossaryid = " . $glossary->id,false);
+            $DB->execute("UPDATE {glossary_entries} SET approved = 1 where approved <> 1 and glossaryid = ?", array($glossary->id));
         }
-        $glossary = stripslashes_recursive($glossary);
         glossary_grade_item_update($glossary);
     }
 
@@ -108,11 +107,12 @@ function glossary_update_instance($glossary) {
 
 
 function glossary_delete_instance($id) {
+    global $DB;
 /// Given an ID of an instance of this module,
 /// this function will permanently delete the instance
 /// and any data that depends on it.
 
-    if (! $glossary = get_record("glossary", "id", "$id")) {
+    if (! $glossary = $DB->get_record("glossary", array("id"=>"$id"))) {
         return false;
     }
 
@@ -120,40 +120,40 @@ function glossary_delete_instance($id) {
 
     # Delete any dependent records here #
 
-    if (! delete_records("glossary", "id", "$glossary->id")) {
+    if (! $DB->delete_records("glossary", array("id"=>$glossary->id))) {
         $result = false;
     } else {
-        if ($categories = get_records("glossary_categories","glossaryid",$glossary->id)) {
+        if ($categories = $DB->get_records("glossary_categories", array("glossaryid"=>$glossary->id))) {
             $cats = "";
             foreach ( $categories as $cat ) {
                 $cats .= "$cat->id,";
             }
             $cats = substr($cats,0,-1);
             if ($cats) {
-                delete_records_select("glossary_entries_categories", "categoryid in ($cats)");
-                delete_records("glossary_categories", "glossaryid", $glossary->id);
+                $DB->delete_records_select("glossary_entries_categories", "categoryid in ($cats)");
+                $DB->delete_records("glossary_categories", array("glossaryid"=>$glossary->id));
             }
         }
-        if ( $entries = get_records("glossary_entries", "glossaryid", $glossary->id) ) {
+        if ( $entries = $DB->get_records("glossary_entries", array("glossaryid"=>$glossary->id))) {
             $ents = "";
             foreach ( $entries as $entry ) {
                 if ( $entry->sourceglossaryid ) {
                     $entry->glossaryid = $entry->sourceglossaryid;
                     $entry->sourceglossaryid = 0;
-                    update_record("glossary_entries",$entry);
+                    $DB->update_record("glossary_entries",$entry);
                 } else {
                     $ents .= "$entry->id,";
                 }
             }
             $ents = substr($ents,0,-1);
             if ($ents) {
-                delete_records_select("glossary_comments", "entryid in ($ents)");
-                delete_records_select("glossary_alias", "entryid in ($ents)");
-                delete_records_select("glossary_ratings", "entryid in ($ents)");
+                $DB->delete_records_select("glossary_comments", "entryid in ($ents)");
+                $DB->delete_records_select("glossary_alias", "entryid in ($ents)");
+                $DB->delete_records_select("glossary_ratings", "entryid in ($ents)");
             }
         }
         glossary_delete_attachments($glossary);
-        delete_records("glossary_entries", "glossaryid", "$glossary->id");
+        $DB->delete_records("glossary_entries", array("glossaryid"=>$glossary->id));
     }
     glossary_grade_item_delete($glossary);
 

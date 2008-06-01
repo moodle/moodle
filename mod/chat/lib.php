@@ -23,6 +23,7 @@ $CHAT_HTMLHEAD_MSGINPUT_JS = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Trans
 $CHAT_DUMMY_DATA = "<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n";
 
 function chat_add_instance($chat) {
+    global $DB;
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod_form.php) this function
 /// will create a new instance and return the id number
@@ -30,7 +31,7 @@ function chat_add_instance($chat) {
 
     $chat->timemodified = time();
 
-    if ($returnid = insert_record("chat", $chat)) {
+    if ($returnid = $DB->insert_record("chat", $chat)) {
 
         $event = NULL;
         $event->name        = $chat->name;
@@ -52,6 +53,7 @@ function chat_add_instance($chat) {
 
 
 function chat_update_instance($chat) {
+    global $DB;
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod_form.php) this function
 /// will update an existing instance with new data.
@@ -60,11 +62,11 @@ function chat_update_instance($chat) {
     $chat->id = $chat->instance;
 
 
-    if ($returnid = update_record("chat", $chat)) {
+    if ($returnid = $DB->update_record("chat", $chat)) {
 
         $event = new object();
 
-        if ($event->id = get_field('event', 'id', 'modulename', 'chat', 'instance', $chat->id)) {
+        if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'chat', 'instance'=>$chat->id))) {
 
             $event->name        = $chat->name;
             $event->description = $chat->intro;
@@ -79,11 +81,12 @@ function chat_update_instance($chat) {
 
 
 function chat_delete_instance($id) {
+    global $DB;
 /// Given an ID of an instance of this module,
 /// this function will permanently delete the instance
 /// and any data that depends on it.
 
-    if (! $chat = get_record('chat', 'id', $id)) {
+    if (! $chat = $DB->get_record('chat', array('id'=>$id))) {
         return false;
     }
 
@@ -91,24 +94,24 @@ function chat_delete_instance($id) {
 
     # Delete any dependent records here #
 
-    if (! delete_records('chat', 'id', $chat->id)) {
+    if (! $DB->delete_records('chat', array('id'=>$chat->id))) {
         $result = false;
     }
-    if (! delete_records('chat_messages', 'chatid', $chat->id)) {
+    if (! $DB->delete_records('chat_messages', array('chatid'=>$chat->id))) {
         $result = false;
     }
-    if (! delete_records('chat_users', 'chatid', $chat->id)) {
+    if (! $DB->delete_records('chat_users', array('chatid'=>$chat->id))) {
         $result = false;
     }
 
     $pagetypes = page_import_types('mod/chat/');
     foreach($pagetypes as $pagetype) {
-        if(!delete_records('block_instance', 'pageid', $chat->id, 'pagetype', $pagetype)) {
+        if (!$DB->delete_records('block_instance', array('pageid'=>$chat->id, 'pagetype'=>$pagetype))) {
             $result = false;
         }
     }
 
-    if (! delete_records('event', 'modulename', 'chat', 'instance', $chat->id)) {
+    if (! $DB->delete_records('event', array('modulename'=>'chat', 'instance'=>$chat->id))) {
         $result = false;
     }
 

@@ -4,8 +4,8 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_forum_mod_form extends moodleform_mod {
 
     function definition() {
+        global $CFG, $COURSE, $DB;
 
-        global $CFG, $COURSE;
         $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------

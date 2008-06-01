@@ -17,7 +17,7 @@
         $section = required_param('section', PARAM_INT);
         $course = required_param('course', PARAM_INT);
 
-        if (! $course = get_record("course", "id", $course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$course))) {
             print_error("invalidcourseid");
         }
 
@@ -25,7 +25,7 @@
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:manageactivities', $context);
 
-        if (! $module = get_record("modules", "name", $add)) {
+        if (! $module = $DB->get_record("modules", array("name"=>$add))) {
             print_error("moduledoesnotexist");
         }
 
@@ -37,6 +37,7 @@
 
         $cm = null;
 
+        $form = new object();
         $form->section          = $section;  // The section number itself - relative!!! (section column in course_sections)
         $form->visible          = $cw->visible;
         $form->course           = $course->id;
@@ -73,12 +74,13 @@
         }
 
         $navlinksinstancename = '';
+
     } else if (!empty($update)) {
-        if (! $cm = get_record("course_modules", "id", $update)) {
+        if (! $cm = $DB->get_record("course_modules", array("id"=>$update))) {
             print_error("cmunknown");
         }
 
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error("invalidcourseid");
         }
 
@@ -86,18 +88,15 @@
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         require_capability('moodle/course:manageactivities', $context);
 
-        if (! $module = get_record("modules", "id", $cm->module)) {
+        if (! $module = $DB->get_record("modules", array("id"=>$cm->module))) {
             print_error("moduledoesnotexist");
         }
 
-        if (! $form = get_record($module->name, "id", $cm->instance)) {
-            print_error("moduleinstancedoesnotexist");
-        }
-
-        if (! $cw = get_record("course_sections", "id", $cm->section)) {
+        if (! $cw = $DB->get_record("course_sections", array("id"=>$cm->section))) {
             print_error("sectionnotexist");
         }
 
+        $form = clone($cm);
         $form->coursemodule     = $cm->id;
         $form->section          = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
         $form->visible          = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
@@ -188,20 +187,20 @@
         } else {
             redirect("$CFG->wwwroot/course/view.php?id=$course->id#section-".$cw->section);
         }
-    } else if ($fromform = $mform->get_data()) {
+    } else if ($fromform = $mform->get_data(false)) {
         if (empty($fromform->coursemodule)) { //add
             $cm = null;
-            if (! $course = get_record("course", "id", $fromform->course)) {
+            if (! $course = $DB->get_record("course", array("id"=>$fromform->course))) {
                 print_error("invalidcourseid");
             }
             $fromform->instance = '';
             $fromform->coursemodule = '';
         } else { //update
-            if (! $cm = get_record("course_modules", "id", $fromform->coursemodule)) {
+            if (! $cm = $DB->get_record("course_modules", array("id"=>$fromform->coursemodule))) {
                 print_error("cmunknown");
             }
 
-            if (! $course = get_record("course", "id", $cm->course)) {
+            if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
                 print_error("invalidcourseid");
             }
             $fromform->instance = $cm->instance;
@@ -296,7 +295,7 @@
                 print_error("cannotaddcmtosection");
             }
 
-            if (! set_field("course_modules", "section", $sectionid, "id", $fromform->coursemodule)) {
+            if (! $DB->set_field("course_modules", "section", $sectionid, array("id"=>$fromform->coursemodule))) {
                 print_error("cannotupdatecm");
             }
 

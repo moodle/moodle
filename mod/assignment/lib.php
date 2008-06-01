@@ -342,12 +342,12 @@ class assignment_base {
      * @return int The id of the assignment
      */
     function add_instance($assignment) {
-        global $COURSE;
+        global $COURSE, $DB;
 
         $assignment->timemodified = time();
         $assignment->courseid = $assignment->course;
 
-        if ($returnid = insert_record("assignment", $assignment)) {
+        if ($returnid = $DB->insert_record("assignment", $assignment)) {
             $assignment->id = $returnid;
 
             if ($assignment->timedue) {
@@ -366,7 +366,6 @@ class assignment_base {
                 add_event($event);
             }
 
-            $assignment = stripslashes_recursive($assignment);
             assignment_grade_item_update($assignment);
 
         }
@@ -383,21 +382,21 @@ class assignment_base {
      * @return boolean False indicates error
      */
     function delete_instance($assignment) {
-        global $CFG;
+        global $CFG, $DB;
 
         $assignment->courseid = $assignment->course;
 
         $result = true;
 
-        if (! delete_records('assignment_submissions', 'assignment', $assignment->id)) {
+        if (! $DB->delete_records('assignment_submissions', array('assignment'=>$assignment->id))) {
             $result = false;
         }
 
-        if (! delete_records('assignment', 'id', $assignment->id)) {
+        if (! $DB->delete_records('assignment', array('id'=>$assignment->id))) {
             $result = false;
         }
 
-        if (! delete_records('event', 'modulename', 'assignment', 'instance', $assignment->id)) {
+        if (! $DB->delete_records('event', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
             $result = false;
         }
 
@@ -423,21 +422,21 @@ class assignment_base {
      * @return int The assignment id
      */
     function update_instance($assignment) {
-        global $COURSE;
+        global $COURSE, $DB;
 
         $assignment->timemodified = time();
 
         $assignment->id = $assignment->instance;
         $assignment->courseid = $assignment->course;
 
-        if (!update_record('assignment', $assignment)) {
+        if (!$DB->update_record('assignment', $assignment)) {
             return false;
         }
 
         if ($assignment->timedue) {
             $event = new object();
 
-            if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
+            if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
 
                 $event->name        = $assignment->name;
                 $event->description = $assignment->description;
@@ -460,12 +459,10 @@ class assignment_base {
                 add_event($event);
             }
         } else {
-            delete_records('event', 'modulename', 'assignment', 'instance', $assignment->id);
+            $DB->delete_records('event', array('modulename'=>'assignment', 'instance'=>$assignment->id));
         }
 
         // get existing grade item
-        $assignment = stripslashes_recursive($assignment);
-
         assignment_grade_item_update($assignment);
 
         return true;
@@ -1940,9 +1937,9 @@ class assignment_base {
  * This is done by calling the delete_instance() method of the assignment type class
  */
 function assignment_delete_instance($id){
-    global $CFG;
+    global $CFG, $DB;
 
-    if (! $assignment = get_record('assignment', 'id', $id)) {
+    if (! $assignment = $DB->get_record('assignment', array('id'=>$id))) {
         return false;
     }
 

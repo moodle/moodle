@@ -6,51 +6,54 @@
 define("LABEL_MAX_NAME_LENGTH", 50);
 
 function label_add_instance($label) {
+    global $DB;
 /// Given an object containing all the necessary data, 
 /// (defined by the form in mod_form.php) this function 
 /// will create a new instance and return the id number 
 /// of the new instance.
     $textlib = textlib_get_instance();
 
-    $label->name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
+    $label->name = strip_tags(format_string($label->content));
     if ($textlib->strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
         $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
     }
     $label->timemodified = time();
 
-    return insert_record("label", $label);
+    return $DB->insert_record("label", $label);
 }
 
 
 function label_update_instance($label) {
+    global $DB;
 /// Given an object containing all the necessary data, 
 /// (defined by the form in mod_form.php) this function 
 /// will update an existing instance with new data.
     $textlib = textlib_get_instance();
 
-    $label->name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
+    $label->name = strip_tags(format_string($label->content));
     if ($textlib->strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
         $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
     }
     $label->timemodified = time();
     $label->id = $label->instance;
 
-    return update_record("label", $label);
+    return $DB->update_record("label", $label);
 }
 
 
 function label_delete_instance($id) {
+    global $DB;
 /// Given an ID of an instance of this module, 
 /// this function will permanently delete the instance 
 /// and any data that depends on it.  
 
-    if (! $label = get_record("label", "id", "$id")) {
+    if (! $label = $DB->get_record("label", array("id"=>$id))) {
         return false;
     }
 
     $result = true;
 
-    if (! delete_records("label", "id", "$label->id")) {
+    if (! $DB->delete_records("label", array("id"=>$label->id))) {
         $result = false;
     }
 

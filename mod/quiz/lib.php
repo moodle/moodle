@@ -68,6 +68,7 @@ define("QUIZ_MAX_EVENT_LENGTH", 5*24*60*60);   // 5 days maximum
  *          false or a string error message on failure.
  */
 function quiz_add_instance($quiz) {
+    global $DB;
 
     // Process the options from the form.
     $quiz->created = time();
@@ -78,7 +79,7 @@ function quiz_add_instance($quiz) {
     }
 
     // Try to store it in the database.
-    if (!$quiz->id = insert_record("quiz", $quiz)) {
+    if (!$quiz->id = $DB->insert_record("quiz", $quiz)) {
         return false;
     }
 
@@ -97,6 +98,7 @@ function quiz_add_instance($quiz) {
  * @return mixed true on success, false or a string error message on failure.
  */
 function quiz_update_instance($quiz) {
+    global $DB;
 
     // Process the options from the form.
     $result = quiz_process_options($quiz);
@@ -106,7 +108,7 @@ function quiz_update_instance($quiz) {
 
     // Update the database.
     $quiz->id = $quiz->instance;
-    if (!update_record("quiz", $quiz)) {
+    if (!$DB->update_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
 
@@ -114,30 +116,31 @@ function quiz_update_instance($quiz) {
     quiz_after_add_or_update($quiz);
 
     // Delete any previous preview attempts
-    delete_records('quiz_attempts', 'preview', '1', 'quiz', $quiz->id);
+    $DB->delete_records('quiz_attempts', 'preview', '1', array('quiz'=>$quiz->id));
 
     return true;
 }
 
 
 function quiz_delete_instance($id) {
+    global $DB;
 /// Given an ID of an instance of this module,
 /// this function will permanently delete the instance
 /// and any data that depends on it.
 
-    if (! $quiz = get_record("quiz", "id", "$id")) {
+    if (! $quiz = $DB->get_record("quiz", array("id"=>$id))) {
         return false;
     }
 
     $result = true;
 
-    if ($attempts = get_records("quiz_attempts", "quiz", "$quiz->id")) {
+    if ($attempts = $DB->get_records("quiz_attempts", array("quiz"=>$quiz->id))) {
         foreach ($attempts as $attempt) {
             // TODO: this should use the delete_attempt($attempt->uniqueid) function in questionlib.php
-            if (! delete_records("question_states", "attempt", "$attempt->uniqueid")) {
+            if (! $DB->delete_records("question_states", array("attempt"=>$attempt->uniqueid))) {
                 $result = false;
             }
-            if (! delete_records("question_sessions", "attemptid", "$attempt->uniqueid")) {
+            if (! $DB->delete_records("question_sessions", array("attemptid"=>$attempt->uniqueid))) {
                 $result = false;
             }
         }
@@ -152,19 +155,19 @@ function quiz_delete_instance($id) {
         'quiz' => 'id'
     );
     foreach ($tables_to_purge as $table => $keyfield) {
-        if (!delete_records($table, $keyfield, $quiz->id)) {
+        if (!$DB->delete_records($table, array($keyfield=>$quiz->id))) {
             $result = false;
         }
     }
 
     $pagetypes = page_import_types('mod/quiz/');
     foreach($pagetypes as $pagetype) {
-        if(!delete_records('block_instance', 'pageid', $quiz->id, 'pagetype', $pagetype)) {
+        if (!$DB->delete_records('block_instance', array('pageid'=>$quiz->id, 'pagetype'=>$pagetype))) {
             $result = false;
         }
     }
 
-    if ($events = get_records_select('event', "modulename = 'quiz' and instance = '$quiz->id'")) {
+    if ($events = $DB->get_records('event', array("modulename"=>'quiz', "instance"=>$quiz->id))) {
         foreach($events as $event) {
             delete_event($event->id);
         }
@@ -855,9 +858,10 @@ function quiz_process_options(&$quiz) {
  * @param object $quiz the quiz object.
  */
 function quiz_after_add_or_update($quiz) {
+    global $DB;
 
     // Save the feedback
-    delete_records('quiz_feedback', 'quizid', $quiz->id);
+    $DB->delete_records('quiz_feedback', array('quizid'=>$quiz->id));
 
     for ($i = 0; $i <= $quiz->feedbackboundarycount; $i += 1) {
         $feedback = new stdClass;
@@ -865,7 +869,7 @@ function quiz_after_add_or_update($quiz) {
         $feedback->feedbacktext = $quiz->feedbacktext[$i];
         $feedback->mingrade = $quiz->feedbackboundaries[$i];
         $feedback->maxgrade = $quiz->feedbackboundaries[$i - 1];
-        if (!insert_record('quiz_feedback', $feedback, false)) {
+        if (!$DB->insert_record('quiz_feedback', $feedback, false)) {
             return "Could not save quiz feedback.";
         }
     }
@@ -874,7 +878,7 @@ function quiz_after_add_or_update($quiz) {
     // Update the events relating to this quiz.
     // This is slightly inefficient, deleting the old events and creating new ones. However,
     // there are at most two events, and this keeps the code simpler.
-    if ($events = get_records_select('event', "modulename = 'quiz' and instance = '$quiz->id'")) {
+    if ($events = $DB->get_records('event', array('modulename'=>'quiz', 'instance'=>$quiz->id))) {
         foreach($events as $event) {
             delete_event($event->id);
         }
@@ -913,7 +917,7 @@ function quiz_after_add_or_update($quiz) {
     }
 
     //update related grade item
-    quiz_grade_item_update(stripslashes_recursive($quiz));
+    quiz_grade_item_update($quiz);
 }
 
 function quiz_get_view_actions() {

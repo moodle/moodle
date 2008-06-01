@@ -56,6 +56,7 @@ function wiki_get_students($wiki, $groups='', $sort='u.lastaccess', $fields='u.*
 
 
 function wiki_add_instance($wiki) {
+    global $DB;
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod_form.php) this function
 /// will create a new instance and return the id number
@@ -68,11 +69,12 @@ function wiki_add_instance($wiki) {
     /// Determine the pagename for this wiki and save.
     $wiki->pagename = wiki_page_name($wiki);
 
-    return insert_record("wiki", $wiki);
+    return $DB->insert_record("wiki", $wiki);
 }
 
 
 function wiki_update_instance($wiki) {
+    global $DB;
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod_form.php) this function
 /// will update an existing instance with new data.
@@ -82,7 +84,7 @@ function wiki_update_instance($wiki) {
 
     $wiki->timemodified = time();
     $wiki->id = $wiki->instance;
-    return update_record("wiki", $wiki);
+    return $DB->update_record("wiki", $wiki);
 }
 
 /// Delete all Directories recursively
@@ -103,9 +105,9 @@ function wiki_delete_instance($id) {
 /// Given an ID of an instance of this module,
 /// this function will permanently delete the instance
 /// and any data that depends on it.
-    global $CFG;
+    global $CFG, $DB;
 
-    if (! $wiki = get_record("wiki", "id", $id)) {
+    if (! $wiki = $DB->get_record("wiki", array("id"=>$id))) {
         return false;
     }
 
@@ -130,21 +132,21 @@ function wiki_delete_instance($id) {
     }
 
     # Delete any dependent records here #
-    if(!delete_records("wiki_locks","wikiid",$wiki->id)) {
+    if(!$DB->delete_records("wiki_locks", array("wikiid"=>$wiki->id))) {
         $result = false;
     }
 
-    if (! delete_records("wiki", "id", $wiki->id)) {
+    if (! $DB->delete_records("wiki", array("id"=>$wiki->id))) {
         $result = false;
     }
 
     /// Delete all wiki_entries and wiki_pages.
     if (($wiki_entries = wiki_get_entries($wiki)) !== false) {
         foreach ($wiki_entries as $wiki_entry) {
-            if (! delete_records("wiki_pages", "wiki", "$wiki_entry->id")) {
+            if (! $DB->delete_records("wiki_pages", array("wiki"=>$wiki_entry->id))) {
                 $result = false;
             }
-            if (! delete_records("wiki_entries", "id", "$wiki_entry->id")) {
+            if (! $DB->delete_records("wiki_entries", array("id"=>$wiki_entry->id))) {
                 $result = false;
             }
         }

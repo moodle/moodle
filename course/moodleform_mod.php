@@ -174,7 +174,7 @@ class moodleform_mod extends moodleform {
      * @param mixed array or object describing supported features - groups, groupings, groupmembersonly, etc.
      */
     function standard_coursemodule_elements($features=null){
-        global $COURSE, $CFG;
+        global $COURSE, $CFG, $DB;
         $mform =& $this->_form;
 
         // deal with legacy $supportgroups param
@@ -242,7 +242,7 @@ class moodleform_mod extends moodleform {
                 //groupings selector - used for normal grouping mode or also when restricting access with groupmembersonly
                 $options = array();
                 $options[0] = get_string('none');
-                if ($groupings = get_records('groupings', 'courseid', $COURSE->id)) {
+                if ($groupings = $DB->get_records('groupings', array('courseid'=>$COURSE->id))) {
                     foreach ($groupings as $grouping) {
                         $options[$grouping->id] = format_string($grouping->name);
                     }

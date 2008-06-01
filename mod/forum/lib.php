@@ -37,7 +37,7 @@ define ('FORUM_AGGREGATE_SUM', 5);
  * @return int intance id
  */
 function forum_add_instance($forum) {
-    global $CFG;
+    global $CFG, $DB;
 
     $forum->timemodified = time();
 
@@ -50,7 +50,7 @@ function forum_add_instance($forum) {
         $forum->assesstimefinish = 0;
     }
 
-    if (!$forum->id = insert_record('forum', $forum)) {
+    if (!$forum->id = $DB->insert_record('forum', $forum)) {
         return false;
     }
 
@@ -79,7 +79,6 @@ function forum_add_instance($forum) {
         }
     }
 
-    $forum = stripslashes_recursive($forum);
     forum_grade_item_update($forum);
 
     return $forum->id;
@@ -94,6 +93,8 @@ function forum_add_instance($forum) {
  * @return bool success
  */
 function forum_update_instance($forum) {
+    global $DB;
+
     $forum->timemodified = time();
     $forum->id           = $forum->instance;
 
@@ -106,7 +107,7 @@ function forum_update_instance($forum) {
         $forum->assesstimefinish = 0;
     }
 
-    $oldforum = get_record('forum', 'id', $forum->id);
+    $oldforum = $DB->get_record('forum', array('id'=>$forum->id));
 
     // MDL-3942 - if the aggregation type or scale (i.e. max grade) changes then recalculate the grades for the entire forum
     // if  scale changes - do we need to recheck the ratings, if ratings higher than scale how do we want to respond?
@@ -116,15 +117,15 @@ function forum_update_instance($forum) {
     }
 
     if ($forum->type == 'single') {  // Update related discussion and post.
-        if (! $discussion = get_record('forum_discussions', 'forum', $forum->id)) {
-            if ($discussions = get_records('forum_discussions', 'forum', $forum->id, 'timemodified ASC')) {
+        if (! $discussion = $DB->get_record('forum_discussions', array('forum'=>$forum->id))) {
+            if ($discussions = $DB->get_records('forum_discussions', array('forum'=>$forum->id), 'timemodified ASC')) {
                 notify('Warning! There is more than one discussion in this forum - using the most recent');
                 $discussion = array_pop($discussions);
             } else {
                 error('Could not find the discussion in this forum');
             }
         }
-        if (! $post = get_record('forum_posts', 'id', $discussion->firstpost)) {
+        if (! $post = $DB->get_record('forum_posts', array('id'=>$discussion->firstpost))) {
             error('Could not find the first post in this forum discussion');
         }
 
@@ -132,22 +133,21 @@ function forum_update_instance($forum) {
         $post->message  = $forum->intro;
         $post->modified = $forum->timemodified;
 
-        if (! update_record('forum_posts', ($post))) {
+        if (! $DB->update_record('forum_posts', ($post))) {
             error('Could not update the first post');
         }
 
         $discussion->name = $forum->name;
 
-        if (! update_record('forum_discussions', ($discussion))) {
+        if (! $DB->update_record('forum_discussions', ($discussion))) {
             error('Could not update the discussion');
         }
     }
 
-    if (!update_record('forum', $forum)) {
+    if (!$DB->update_record('forum', $forum)) {
         error('Can not update forum');
     }
 
-    $forum = stripslashes_recursive($forum);
     forum_grade_item_update($forum);
 
     return true;
@@ -162,14 +162,15 @@ function forum_update_instance($forum) {
  * @return bool success
  */
 function forum_delete_instance($id) {
+    global $DB;
 
-    if (!$forum = get_record('forum', 'id', $id)) {
+    if (!$forum = $DB->get_record('forum', array('id'=>$id))) {
         return false;
     }
 
     $result = true;
 
-    if ($discussions = get_records('forum_discussions', 'forum', $forum->id)) {
+    if ($discussions = $DB->get_records('forum_discussions', array('forum'=>$forum->id))) {
         foreach ($discussions as $discussion) {
             if (!forum_delete_discussion($discussion, true)) {
                 $result = false;
@@ -177,13 +178,13 @@ function forum_delete_instance($id) {
         }
     }
 
-    if (!delete_records('forum_subscriptions', 'forum', $forum->id)) {
+    if (!$DB->delete_records('forum_subscriptions', array('forum'=>$forum->id))) {
         $result = false;
     }
 
     forum_tp_delete_read_records(-1, -1, -1, $forum->id);
 
-    if (!delete_records('forum', 'id', $forum->id)) {
+    if (!$DF->delete_records('forum', array('id'=>$forum->id))) {
         $result = false;
     }
 
@@ -3681,14 +3682,13 @@ function forum_print_attachments($post, $return=NULL) {
  *
  */
 function forum_add_attachment($post, $inputname,&$message) {
+    global $CFG, $DB;
 
-    global $CFG;
-
-    if (!$forum = get_record("forum", "id", $post->forum)) {
+    if (!$forum = $DB->get_record("forum", array("id"=>$post->forum))) {
         return "";
     }
 
-    if (!$course = get_record("course", "id", $forum->course)) {
+    if (!$course = $DB->get_record("course", array("id"=>$forum->course))) {
         return "";
     }
 
@@ -3783,15 +3783,14 @@ function forum_update_post($post,&$message) {
  * create a new discussion and return the id
  */
 function forum_add_discussion($discussion,&$message) {
-
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     $timenow = time();
 
     // The first post is stored as a real post, and linked
     // to from the discuss entry.
 
-    $forum = get_record('forum', 'id', $discussion->forum);
+    $forum = $DB->get_record('forum', array('id'=>$discussion->forum));
 
     $post = new object();
     $post->discussion  = 0;
@@ -3808,12 +3807,12 @@ function forum_add_discussion($discussion,&$message) {
     $post->format      = $discussion->format;
     $post->mailnow     = $discussion->mailnow;
 
-    if (! $post->id = insert_record("forum_posts", $post) ) {
+    if (! $post->id = $DB->insert_record("forum_posts", $post) ) {
         return 0;
     }
 
     if ($post->attachment = forum_add_attachment($post, 'attachment',$message)) {
-        set_field("forum_posts", "attachment", $post->attachment, "id", $post->id); //ignore errors
+        $DB->set_field("forum_posts", "attachment", $post->attachment, array("id"=>$post->id)); //ignore errors
     }
 
     // Now do the main entry for the discussion,
@@ -3824,15 +3823,15 @@ function forum_add_discussion($discussion,&$message) {
     $discussion->usermodified = $post->userid;
     $discussion->userid = $USER->id;
 
-    if (! $post->discussion = insert_record("forum_discussions", $discussion) ) {
-        delete_records("forum_posts", "id", $post->id);
+    if (! $post->discussion = $DB->insert_record("forum_discussions", $discussion) ) {
+        $DB->delete_records("forum_posts", array("id"=>$post->id));
         return 0;
     }
 
     // Finally, set the pointer on the post.
-    if (! set_field("forum_posts", "discussion", $post->discussion, "id", $post->id)) {
-        delete_records("forum_posts", "id", $post->id);
-        delete_records("forum_discussions", "id", $post->discussion);
+    if (! $DB->set_field("forum_posts", "discussion", $post->discussion, array("id"=>$post->id))) {
+        $DB->delete_records("forum_posts", array("id"=>$post->id));
+        $DB->delete_records("forum_discussions", array("id"=>$post->discussion));
         return 0;
     }
 

@@ -25,12 +25,13 @@ define("SURVEY_CIQ",                     "5");
 // STANDARD FUNCTIONS ////////////////////////////////////////////////////////
 
 function survey_add_instance($survey) {
+    global $DB;
 // Given an object containing all the necessary data, 
 // (defined by the form in mod_form.php) this function 
 // will create a new instance and return the id number 
 // of the new instance.
 
-    if (!$template = get_record("survey", "id", $survey->template)) {
+    if (!$template = $DB->get_record("survey", array("id"=>$survey->template))) {
         return 0;
     }
 
@@ -38,17 +39,18 @@ function survey_add_instance($survey) {
     $survey->timecreated  = time();
     $survey->timemodified = $survey->timecreated;
 
-    return insert_record("survey", $survey);
+    return $DB->insert_record("survey", $survey);
 
 }
 
 
 function survey_update_instance($survey) {
+    global $DB;
 // Given an object containing all the necessary data, 
 // (defined by the form in mod_form.php) this function 
 // will update an existing instance with new data.
 
-    if (!$template = get_record("survey", "id", $survey->template)) {
+    if (!$template = $DB->get_record("survey", array("id"=>$survey->template))) {
         return 0;
     }
 
@@ -56,29 +58,30 @@ function survey_update_instance($survey) {
     $survey->questions    = $template->questions; 
     $survey->timemodified = time();
 
-    return update_record("survey", $survey);
+    return $DB->update_record("survey", $survey);
 }
 
 function survey_delete_instance($id) {
+    global $DB;
 // Given an ID of an instance of this module, 
 // this function will permanently delete the instance 
 // and any data that depends on it.  
 
-    if (! $survey = get_record("survey", "id", "$id")) {
+    if (! $survey = $DB->get_record("survey", array("id"=>$id))) {
         return false;
     }
 
     $result = true;
 
-    if (! delete_records("survey_analysis", "survey", "$survey->id")) {
+    if (! $DB->delete_records("survey_analysis", array("survey"=>$survey->id))) {
         $result = false;
     }
 
-    if (! delete_records("survey_answers", "survey", "$survey->id")) {
+    if (! $DB->delete_records("survey_answers", array("survey"=>$survey->id))) {
         $result = false;
     }
 
-    if (! delete_records("survey", "id", "$survey->id")) {
+    if (! $DB->delete_records("survey", array("id"=>$survey->id))) {
         $result = false;
     }
 

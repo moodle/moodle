@@ -11,7 +11,7 @@
 */
 //require_once('locallib.php');
 function scorm_add_instance($scorm) {
-    global $CFG;
+    global $CFG, $DB;
 
     require_once('locallib.php');
 
@@ -42,7 +42,7 @@ function scorm_add_instance($scorm) {
         }
         $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
-        $id = insert_record('scorm', $scorm);
+        $id = $DB->insert_record('scorm', $scorm);
 
         if (scorm_external_link($scorm->reference) || ((basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#'))) {
             // Rename temp scorm dir to scorm id
@@ -54,10 +54,10 @@ function scorm_add_instance($scorm) {
         if ($scorm->parse == 1) {
             $scorm->id = $id;
             $scorm->launch = scorm_parse($scorm);
-            set_field('scorm','launch',$scorm->launch,'id',$scorm->id);
+            $DB->set_field('scorm', 'launch', $scorm->launch, array('id'=>$scorm->id));
         }
 
-        scorm_grade_item_update(stripslashes_recursive($scorm));
+        scorm_grade_item_update($scorm);
 
         return $id;
     } else {
@@ -74,7 +74,7 @@ function scorm_add_instance($scorm) {
 * @return int
 */
 function scorm_update_instance($scorm) {
-    global $CFG;
+    global $CFG, $DB;
 
     require_once('locallib.php');
 
@@ -119,12 +119,12 @@ function scorm_update_instance($scorm) {
 
         $scorm->launch = scorm_parse($scorm);
     } else {
-        $oldscorm = get_record('scorm','id',$scorm->id);
+        $oldscorm = $DB->get_record('scorm', array('id'=>$scorm->id));
         $scorm->reference = $oldscorm->reference; // This fix a problem with Firefox when the teacher choose Cancel on overwrite question
     }
     
-    if ($result = update_record('scorm', $scorm)) {
-        scorm_grade_item_update(stripslashes_recursive($scorm));
+    if ($result = $DB->update_record('scorm', $scorm)) {
+        scorm_grade_item_update($scorm);
     }
 
     return $result;
@@ -139,10 +139,9 @@ function scorm_update_instance($scorm) {
 * @return boolean
 */
 function scorm_delete_instance($id) {
+    global $CFG, $DB;
 
-    global $CFG;
-
-    if (! $scorm = get_record('scorm', 'id', $id)) {
+    if (! $scorm = $DB->get_record('scorm', array('id'=>$id))) {
         return false;
     }
 
@@ -156,46 +155,46 @@ function scorm_delete_instance($id) {
     }
 
     // Delete any dependent records
-    if (! delete_records('scorm_scoes_track', 'scormid', $scorm->id)) {
+    if (! $DB->delete_records('scorm_scoes_track', array('scormid'=>$scorm->id))) {
         $result = false;
     }
-    if ($scoes = get_records('scorm_scoes','scorm',$scorm->id)) {
+    if ($scoes = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id))) {
         foreach ($scoes as $sco) {
-            if (! delete_records('scorm_scoes_data', 'scoid', $sco->id)) {
+            if (! $DB->delete_records('scorm_scoes_data', array('scoid'=>$sco->id))) {
                 $result = false;
             }
         } 
-        delete_records('scorm_scoes', 'scorm', $scorm->id);
+        $DB->delete_records('scorm_scoes', array('scorm'=>$scorm->id));
     } else {
         $result = false;
     }
-    if (! delete_records('scorm', 'id', $scorm->id)) {
+    if (! $DB->delete_records('scorm', array('id'=>$scorm->id))) {
         $result = false;
     }
 
-    /*if (! delete_records('scorm_sequencing_controlmode', 'scormid', $scorm->id)) {
+    /*if (! $DB->delete_records('scorm_sequencing_controlmode', array('scormid'=>$scorm->id))) {
         $result = false;
     }
-    if (! delete_records('scorm_sequencing_rolluprules', 'scormid', $scorm->id)) {
+    if (! $DB->delete_records('scorm_sequencing_rolluprules', array('scormid'=>$scorm->id))) {
         $result = false;
     }
-    if (! delete_records('scorm_sequencing_rolluprule', 'scormid', $scorm->id)) {
+    if (! $DB->delete_records('scorm_sequencing_rolluprule', array('scormid'=>$scorm->id))) {
         $result = false;
     }
-    if (! delete_records('scorm_sequencing_rollupruleconditions', 'scormid', $scorm->id)) {
+    if (! $DB->delete_records('scorm_sequencing_rollupruleconditions', array('scormid'=>$scorm->id))) {
         $result = false;
     }
-    if (! delete_records('scorm_sequencing_rolluprulecondition', 'scormid', $scorm->id)) {
+    if (! $DB->delete_records('scorm_sequencing_rolluprulecondition', array('scormid'=>$scorm->id))) {
         $result = false;
     }
-    if (! delete_records('scorm_sequencing_rulecondition', 'scormid', $scorm->id)) {
+    if (! $DB->delete_records('scorm_sequencing_rulecondition', array('scormid'=>$scorm->id))) {
         $result = false;
     }
-    if (! delete_records('scorm_sequencing_ruleconditions', 'scormid', $scorm->id)) {
+    if (! $DB->delete_records('scorm_sequencing_ruleconditions', array('scormid'=>$scorm->id))) {
         $result = false;
     }*/     
 
-    scorm_grade_item_delete(stripslashes_recursive($scorm));
+    scorm_grade_item_delete($scorm);
   
     return $result;
 }
