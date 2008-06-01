@@ -20,7 +20,6 @@
     $delete        = optional_param('delete', 0, PARAM_INT);
     $course        = optional_param('course', 0, PARAM_INT);
     $groupmode     = optional_param('groupmode', -1, PARAM_INT);
-    $duplicate     = optional_param('duplicate', 0, PARAM_INT);
     $cancel        = optional_param('cancel', 0, PARAM_BOOL);
     $cancelcopy    = optional_param('cancelcopy', 0, PARAM_BOOL);
     $confirm       = optional_param('confirm', 0, PARAM_BOOL);

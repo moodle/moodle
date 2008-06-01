@@ -186,7 +186,7 @@
         if ($return && !empty($cm->id)){
             redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id");
         } else {
-            redirect("view.php?id=$course->id#section-".$cw->section);
+            redirect("$CFG->wwwroot/course/view.php?id=$course->id#section-".$cw->section);
         }
     } else if ($fromform = $mform->get_data()) {
         if (empty($fromform->coursemodule)) { //add
