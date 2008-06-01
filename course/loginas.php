@@ -45,7 +45,7 @@
         print_error('confirmsesskeybad');
     }
 
-    if (! $course = get_record('course', 'id', $id)) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error("invalidcourseid");
     }
 
