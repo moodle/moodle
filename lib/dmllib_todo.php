@@ -612,30 +612,6 @@ function get_records_sql($sql, $limitfrom='', $limitnum='') {
 }
 
 /**
- * Utility function
- * Similar to recordset_to_menu
- *
- * field1, field2 is needed because the order from get_records_sql is not reliable
- * @param records - records from get_records_sql() or get_records()
- * @param field1 - field to be used as menu index
- * @param field2 - feild to be used as coresponding menu value
- * @return mixed an associative array, or false if an error occured or the RecordSet was empty.
- */
-function records_to_menu($records, $field1, $field2) {
-
-    $menu = array();
-    foreach ($records as $record) {
-        $menu[$record->$field1] = $record->$field2;
-    }
-
-    if (!empty($menu)) {
-        return $menu;
-    } else {
-        return false;
-    }
-}
-
-/**
  * Get a single value from a table row where a particular select clause is true.
  *
  * @uses $CFG

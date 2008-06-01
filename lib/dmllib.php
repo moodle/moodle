@@ -448,3 +448,7 @@ function recordset_to_menu($rs) {
     error('recordset_to_menu() removed');
 }
 
+function records_to_menu($records, $field1, $field2) {
+    error('records_to_menu() removed');
+}
+
