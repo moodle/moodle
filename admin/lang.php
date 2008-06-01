@@ -555,7 +555,7 @@
                 $linescounter++ ;
                 if (LANG_SUBMIT_REPEAT &&  $editable && $linescounter % LANG_SUBMIT_REPEAT_EVERY == 0) {
                     $o .= '<tr><td>&nbsp;</td><td><br />';
-                    $o .= '<input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
+                    $o .= '<input type="submit" tabindex="'.$missingcounter.'" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
                     $o .= '<br />&nbsp;</td></tr>';
                 }
                 $envalue = nl2br(htmlspecialchars($envalue));
