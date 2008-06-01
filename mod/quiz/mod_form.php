@@ -352,11 +352,7 @@ class mod_quiz_mod_form extends moodleform_mod {
             }
         }
 
-        if (count($errors) == 0) {
-            return true;
-        } else {
-            return $errors;
-        }
+        return $errors;
     }
 
 }

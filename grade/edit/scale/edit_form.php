@@ -107,7 +107,7 @@ class edit_scale_form extends moodleform {
 
 /// perform extra validation before submission
     function validation($data, $files) {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         $errors = parent::validation($data, $files);
 
@@ -128,7 +128,7 @@ class edit_scale_form extends moodleform {
         }
 
         if (array_key_exists('scale', $data)) {
-            $count = count_records('scale', 'courseid', $courseid, 'scale', $data['scale']);
+            $count = $DB->count_records('scale', array('courseid'=>$courseid, 'scale'=>$data['scale']));
 
             if (empty($old->id) or $old->courseid != $courseid) {
                 if ($count) {

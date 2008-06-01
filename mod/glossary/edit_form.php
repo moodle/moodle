@@ -95,7 +95,8 @@ class mod_glossary_entry_form extends moodleform {
     }
 
     function validation($data, $files) {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
+
         $errors = parent::validation($data, $files);
         $e = $this->_customdata['e'];
         $glossary = $this->_customdata['glossary'];
@@ -105,7 +106,7 @@ class mod_glossary_entry_form extends moodleform {
             //We are updating an entry, so we compare current session user with
             //existing entry user to avoid some potential problems if secureforms=off
             //Perhaps too much security? Anyway thanks to skodak (Bug 1823)
-            $old = get_record('glossary_entries', 'id', $e);
+            $old = $DB->get_record('glossary_entries', array('id'=>$e));
             $ineditperiod = ((time() - $old->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
             if ( (!$ineditperiod  || $USER->id != $old->userid) and !has_capability('mod/glossary:manageentries', $context)) {
                 if ( $USER->id != $old->userid ) {
@@ -115,7 +116,7 @@ class mod_glossary_entry_form extends moodleform {
                 }
             }
             if ( !$glossary->allowduplicatedentries ) {
-                if ($dupentries = get_records('glossary_entries', 'lower(concept)', moodle_strtolower($data['concept']))) {
+                if ($dupentries = $DB->get_records('glossary_entries', array('lower(concept)'=>moodle_strtolower($data['concept'])))) {
                     foreach ($dupentries as $curentry) {
                         if ( $glossary->id == $curentry->glossaryid ) {
                            if ( $curentry->id != $e ) {
@@ -129,7 +130,7 @@ class mod_glossary_entry_form extends moodleform {
 
         } else {
             if ( !$glossary->allowduplicatedentries ) {
-                if ($dupentries = get_record('glossary_entries', 'lower(concept)', moodle_strtolower($data['concept']), 'glossaryid', $glossary->id)) {
+                if ($dupentries = $DB->get_record('glossary_entries', array('lower(concept)'=>moodle_strtolower($data['concept']), 'glossaryid'=>$glossary->id))) {
                     $errors['concept'] = get_string('errconceptalreadyexists', 'glossary');
                 }
             }

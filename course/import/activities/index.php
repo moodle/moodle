@@ -14,7 +14,7 @@
 
     $strimportactivities = get_string('importactivities');
 
-    if (! ($course = get_record("course", "id", $id)) ) {
+    if (! ($course = $DB->get_record("course", array("id"=>$id)))) {
         print_error("invalidcourseid");
     }
 
@@ -38,7 +38,7 @@
         $creator = true;
     }
 
-    if ($from = get_record('course', 'id', $fromcourse)) {
+    if ($from = $DB->get_record('course', array('id'=>$fromcourse))) {
         if (!has_capability('moodle/course:manageactivities', $fromcontext)) {
             print_error('nopermissiontoimportact');
         }

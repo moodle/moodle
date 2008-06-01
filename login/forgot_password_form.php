@@ -20,7 +20,7 @@ class login_forgot_password_form extends moodleform {
     }
 
     function validation($data, $files) {
-        global $CFG;
+        global $CFG, $DB;
 
         $errors = parent::validation($data, $files);
 
@@ -32,7 +32,7 @@ class login_forgot_password_form extends moodleform {
             if (!validate_email($data['email'])) {
                 $errors['email'] = get_string('invalidemail');
 
-            } else if (count_records('user', 'email', $data['email']) > 1) {
+            } else if ($DB->count_records('user', array('email'=>$data['email'])) > 1) {
                 $errors['email'] = get_string('forgottenduplicate');
 
             } else {

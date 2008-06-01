@@ -121,7 +121,7 @@ class moodleform_mod extends moodleform {
 
     // form verification
     function validation($data, $files) {
-        global $COURSE;
+        global $COURSE, $DB;
         $errors = parent::validation($data, $files);
 
         $mform =& $this->_form;
@@ -138,7 +138,7 @@ class moodleform_mod extends moodleform {
         $grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$data['modulename'],
                      'iteminstance'=>$data['instance'], 'itemnumber'=>0, 'courseid'=>$COURSE->id));
         if ($data['coursemodule']) {
-            $cm = get_record('course_modules', 'id', $data['coursemodule']);
+            $cm = $DB->get_record('course_modules', array('id'=>$data['coursemodule']));
         } else {
             $cm = null;
         }

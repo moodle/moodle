@@ -90,12 +90,12 @@ class login_signup_form extends moodleform {
     }
 
     function validation($data, $files) {
-        global $CFG;
+        global $CFG, $DB;
         $errors = parent::validation($data, $files);
 
         $authplugin = get_auth_plugin($CFG->registerauth);
 
-        if (record_exists('user', 'username', $data['username'], 'mnethostid', $CFG->mnet_localhost_id)) {
+        if ($DB->record_exists('user', array('username'=>$data['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
             $errors['username'] = get_string('usernameexists');
         } else {
             if (empty($CFG->extendedusernamechars)) {
@@ -116,7 +116,7 @@ class login_signup_form extends moodleform {
         if (! validate_email($data['email'])) {
             $errors['email'] = get_string('invalidemail');
 
-        } else if (record_exists('user', 'email', $data['email'])) {
+        } else if ($DB->record_exists('user', array('email'=>$data['email']))) {
             $errors['email'] = get_string('emailexists').' <a href="forgot_password.php">'.get_string('newpassword').'?</a>';
         }
         if (empty($data['email2'])) {

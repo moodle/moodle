@@ -32,13 +32,15 @@ class course_request_form extends moodleform {
     }
 
     function validation($data, $files) {
+        global $DB;
+
         $errors = parent::validation($data, $files);
         $foundcourses = null;
         $foundreqcourses = null;
 
         if (!empty($data['shortname'])) {
-            $foundcourses = get_records('course', 'shortname', $data['shortname']);
-            $foundreqcourses = get_records('course_request', 'shortname', $data['shortname']);
+            $foundcourses = $DB->get_records('course', array('shortname'=>$data['shortname']));
+            $foundreqcourses = $DB->get_records('course_request', array('shortname'=>$data['shortname']));
         }
         if (!empty($foundreqcourses)) {
             if (!empty($foundcourses)) {
@@ -59,7 +61,7 @@ class course_request_form extends moodleform {
                         $foundcoursenames[] = $foundcourse->fullname;
                     }
                 }
-                $foundcoursenamestring = addslashes(implode(',', $foundcoursenames));
+                $foundcoursenamestring = implode(',', $foundcoursenames);
 
                 $errors['shortname'] = get_string('shortnametaken', '', $foundcoursenamestring);
                 if (!empty($pending)) {

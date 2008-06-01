@@ -260,10 +260,10 @@ class mod_hotpot_mod_form extends moodleform_mod {
     function data_preprocessing(&$defaults){
     }
 
-    function validation(&$data) {
-        // http://docs.moodle.org/en/Development:lib/formslib.php_Validation
-        global $CFG, $COURSE;
-        $errors = array();
+    function validation($data, $files) {
+        global $CFG, $USER, $DB;
+
+        $errors = parent::validation($data, $files);
 
 // location
         if (empty($data['location'])) {

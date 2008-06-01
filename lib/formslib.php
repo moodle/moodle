@@ -330,7 +330,7 @@ class moodleform {
                 $file_val = false;
             }
 
-            $data = $mform->exportValues(null, true);
+            $data = $mform->exportValues(null, false);
             $moodle_val = $this->validation($data, $files);
             if ((is_array($moodle_val) && count($moodle_val)!==0)) {
                 // non-empty array means errors

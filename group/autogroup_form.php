@@ -109,14 +109,14 @@ class autogroup_form extends moodleform {
         }
 
         //try to detect group name duplicates
-        $name = groups_parse_name(stripslashes(trim($data['namingscheme'])), 0);
+        $name = groups_parse_name(trim($data['namingscheme']), 0);
         if (groups_get_group_by_name($COURSE->id, $name)) {
             $errors['namingscheme'] = get_string('groupnameexists', 'group', $name);
         }
 
         // check grouping name duplicates
         if ( isset($data['grouping']) && $data['grouping'] == '-1') {
-            $name = trim(stripslashes($data['groupingname']));
+            $name = trim($data['groupingname']);
             if (empty($name)) {
                 $errors['groupingname'] = get_string('required');
             } else if (groups_get_grouping_by_name($COURSE->id, $name)) {
