@@ -358,8 +358,8 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     } else {
         $popupcaption .= get_string('eventsfor', 'calendar', userdate($event_timestart, get_string('strftimedayshort')));
     }
-    $popupcontent = addslashes_js($popupcontent);
-    $popupcaption = addslashes_js($popupcaption);
+    $popupcontent = addslashes_js(s($popupcontent));
+    $popupcaption = addslashes_js(s($popupcaption));
     $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
     return $popup;
 }
