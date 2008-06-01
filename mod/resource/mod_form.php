@@ -10,7 +10,7 @@ class mod_resource_mod_form extends moodleform_mod {
 
         // this hack is needed for different settings of each subtype
         if (!empty($this->_instance)) {
-            if($res = $DB->get_record('resource', array('id', $this->_instance))) {
+            if($res = $DB->get_record('resource', array('id'=>$this->_instance))) {
                 $type = $res->type;
             } else {
                 print_error('incorrect assignment');

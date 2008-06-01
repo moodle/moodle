@@ -92,11 +92,14 @@
             print_error("moduledoesnotexist");
         }
 
+        if (! $form = get_record($module->name, "id", $cm->instance)) {
+            print_error("moduleinstancedoesnotexist");
+        }
+
         if (! $cw = $DB->get_record("course_sections", array("id"=>$cm->section))) {
             print_error("sectionnotexist");
         }
 
-        $form = clone($cm);
         $form->coursemodule     = $cm->id;
         $form->section          = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
         $form->visible          = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
