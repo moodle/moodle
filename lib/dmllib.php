@@ -443,3 +443,8 @@ function get_records_sql_menu($sql, $limitfrom='', $limitnum='') {
 function column_type($table, $column) {
     error('column_type() removed');
 }
+
+function recordset_to_menu($rs) {
+    error('recordset_to_menu() removed');
+}
+

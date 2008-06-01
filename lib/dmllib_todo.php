@@ -612,35 +612,6 @@ function get_records_sql($sql, $limitfrom='', $limitnum='') {
 }
 
 /**
- * Utility function used by the following 3 methods.
- *
- * @param object an ADODB RecordSet object with two columns.
- * @return mixed an associative array, or false if an error occured or the RecordSet was empty.
- */
-function recordset_to_menu($rs) {
-    global $CFG;
-    $menu = array();
-    if ($rs && !rs_EOF($rs)) {
-        $keys = array_keys($rs->fields);
-        $key0=$keys[0];
-        $key1=$keys[1];
-        while (!$rs->EOF) {
-            $menu[$rs->fields[$key0]] = $rs->fields[$key1];
-            $rs->MoveNext();
-        }
-        /// Really DIRTY HACK for Oracle, but it's the only way to make it work
-        /// until we got all those NOT NULL DEFAULT '' out from Moodle
-        if ($CFG->dbfamily == 'oracle') {
-            array_walk($menu, 'onespace2empty');
-        }
-        /// End of DIRTY HACK
-        return $menu;
-    } else {
-        return false;
-    }
-}
-
-/**
  * Utility function
  * Similar to recordset_to_menu
  *
