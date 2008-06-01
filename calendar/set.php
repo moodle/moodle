@@ -76,7 +76,7 @@
                 calendar_set_referring_course(0);
             }
             else {
-                if(get_record('course', 'id', $id) === false) {
+                if($DB->get_record('course', array('id'=>$id)) === false) {
                     // There is no such course
                     $SESSION->cal_courses_shown = array();
                     calendar_set_referring_course(0);

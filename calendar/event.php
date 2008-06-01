@@ -87,7 +87,7 @@
     }
 
     // If a course has been supplied in the URL, change the filters to show that one
-    if($urlcourse > 0 && record_exists('course', 'id', $urlcourse)) {
+    if($urlcourse > 0 && $DB->record_exists('course', array('id'=>$urlcourse))) {
         require_login($urlcourse, false);
 
         if($urlcourse == SITEID) {
@@ -105,7 +105,7 @@
     switch($action) {
         case 'delete':
             $title = get_string('deleteevent', 'calendar');
-            $event = get_record('event', 'id', $eventid);
+            $event = $DB->get_record('event', array('id'=>$eventid));
             if($event === false) {
                 print_error('invalidevent');
             }
@@ -116,17 +116,17 @@
 
         case 'edit':
             $title = get_string('editevent', 'calendar');
-            $event = get_record('event', 'id', $eventid);
+            $event = $DB->get_record('event', array('id'=>$eventid));
             $repeats = optional_param('repeats', 0, PARAM_INT);
 
-            if($event === false) {
+            if ($event === false) {
                 print_error('invalidevent');
             }
-            if(!calendar_edit_event_allowed($event)) {
+            if (!calendar_edit_event_allowed($event)) {
                 print_error('nopermissions');
             }
 
-            if($form = data_submitted()) {
+            if($form = data_submitted(false)) {
 
                 $form->name = clean_param(strip_tags($form->name,'<lang><span>'), PARAM_CLEAN);
 
@@ -157,25 +157,27 @@
                             $timestartoffset = 'timestart - '.($event->timestart - $form->timestart);
                         }
 
-                        execute_sql('UPDATE '.$CFG->prefix.'event SET '.
-                            'name = '.addslashes($form->name).','.
-                            'description = '.addslashes($form->description).','.
-                            'timestart = '.$timestartoffset.','.
-                            'timeduration = '.$form->timeduration.','.
-                            'timemodified = '.time().' WHERE repeatid = '.$event->repeatid);
+                        $sql = "UPDATE {event}
+                                   SET name = ?,
+                                       description = ?,
+                                       timestart = ?,
+                                       timeduration = ?,
+                                       timemodified = ?
+                                 WHERE repeatid = ?";
+                        $params = array($form->name, $form->description, $timestartoffset, $form->timeduration, time(), $event->repeatid);
+
+                        $DB->execute_sql($sql, $params);
 
                         /// Log the event update.
-                        $form->name = stripslashes($form->name);  //To avoid double-slashes
                         add_to_log($form->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$form->id, $form->name);
                     }
 
                     else {
                         // Update this
                         $form->timemodified = time();
-                        update_record('event', $form);
+                        $DB->update_record('event', $form);
 
                         /// Log the event update.
-                        $form->name = stripslashes($form->name);  //To avoid double-slashes
                         add_to_log($form->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$form->id, $form->name);
                     }
 
@@ -192,7 +194,7 @@
 
         case 'new':
             $title = get_string('newevent', 'calendar');
-            $form = data_submitted();
+            $form = data_submitted(false);
             if(!empty($form) && !empty($form->name)) {
 
                 $form->name = clean_text(strip_tags($form->name, '<lang><span>'));
@@ -218,16 +220,16 @@
                     $form->timemodified = time();
 
                     /// Get the event id for the log record.
-                    $eventid = insert_record('event', $form, true);
+                    $eventid = $DB->insert_record('event', $form);
                     
                     /// Use the event id as the repeatid to link repeat entries together
                     if ($form->repeat) {
                         $form->repeatid = $form->id = $eventid;
-                        update_record('event', $form);         // update the row, to set its repeatid        	
+                        $DB->update_record('event', $form);         // update the row, to set its repeatid        	
                     }
 
                     /// Log the event entry.
-                    add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, stripslashes($form->name));
+                    add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
 
                     if ($form->repeat) {
                         for($i = 1; $i < $form->repeats; $i++) {
@@ -240,10 +242,10 @@
                             $form->timestart += $dst_offset_prev - dst_offset_on($form->timestart);
 
                             /// Get the event id for the log record.
-                            $eventid = insert_record('event', $form, true);
+                            $eventid = $DB->insert_record('event', $form);
 
                             /// Log the event entry.
-                            add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, stripslashes($form->name));
+                            add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
                         }
                     }
                     // OK, now redirect to day view
@@ -264,7 +266,7 @@
 
     if (!empty($SESSION->cal_course_referer)) {
         // TODO: This is part of the Great $course Hack in Moodle. Replace it at some point.
-        $course = get_record('course', 'id', $SESSION->cal_course_referer);
+        $course = $DB->get_record('course', array('id'=>$SESSION->cal_course_referer));
     } else {
         $course = $site;
     }
@@ -281,20 +283,19 @@
     echo '<table id="calendar">';
     echo '<tr><td class="maincalendar">';
 
-    switch($action) {
+    switch ($action) {
         case 'delete':
             $confirm = optional_param('confirm', 0, PARAM_INT);
             $repeats = optional_param('repeats', 0, PARAM_INT);
-            if($confirm) {
+            if ($confirm) {
                 // Kill it and redirect to day view
-                if(($event = get_record('event', 'id', $eventid)) !== false) {
+                if(($event = $DB->get_record('event', array('id'=>$eventid))) !== false) {
 
-                    if($event->repeatid && $repeats) {
-                        delete_records('event', 'repeatid', $event->repeatid);
+                    if ($event->repeatid && $repeats) {
+                        $DB->delete_records('event', array('repeatid'=>$event->repeatid));
                         add_to_log($event->courseid, 'calendar', 'delete all', '', $event->name);
-                    }
-                    else {
-                        delete_records('event', 'id', $eventid);
+                    } else {
+                        $DB->delete_records('event', array('id'=>$eventid));
                         add_to_log($event->courseid, 'calendar', 'delete', '', $event->name);
                     }
                 }
@@ -308,11 +309,9 @@
                 $d = $eventtime['mday'];
                 $y = $eventtime['year'];
 
-                if($event->repeatid) {
-                    $fetch = get_record_sql('SELECT 1, COUNT(id) AS repeatcount FROM '.$CFG->prefix.'event WHERE repeatid = '.$event->repeatid);
-                    $repeatcount = $fetch->repeatcount;
-                }
-                else {
+                if ($event->repeatid) {
+                    $repeatcount = $DB->count_records('event', array('repeatid'=>$event->repeatid));
+                } else {
                     $repeatcount = 0;
                 }
 
@@ -358,16 +357,15 @@
 
             if (!empty($form->courseid)) {
                 // TODO: This is part of the Great $course Hack in Moodle. Replace it at some point.
-                $course = get_record('course', 'id', $form->courseid);
+                $course = $DB->get_record('course', array('id'=>$form->courseid));
             } else {
                 $course = $site;
             }
 
-            if($event->repeatid) {
-                $fetch = get_record_sql('SELECT 1, COUNT(id) AS repeatcount FROM '.$CFG->prefix.'event WHERE repeatid = '.$event->repeatid);
+            if ($event->repeatid) {
+                $repeatcount = $DB->count_records('event', array('repeatid'=>$event->repeatid));
                 $repeatcount = $fetch->repeatcount;
-            }
-            else {
+            } else {
                 $repeatcount = 0;
             }
 
@@ -446,7 +444,7 @@
                 break;
                 case 'course':
                     $courseid = optional_param('courseid', 0, PARAM_INT);
-                    if(!record_exists('course', 'id', $courseid)) {
+                    if (!$DB->record_exists('course', array('id'=>$courseid))) {
                         calendar_get_allowed_types($allowed);
                         $eventtype = 'select';
                     }
@@ -503,7 +501,7 @@
                 if ($courseid == 0) { // workaround by Dan for bug #6130
                     $courseid = SITEID;
                 }
-                if (!$course = get_record('course', 'id', $courseid)) {
+                if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
                     print_error('invalidcourse');
                 }
                 
@@ -565,6 +563,7 @@
 
 
 function validate_form(&$form, &$err) {
+    global $DB;
 
     $form->name = trim($form->name);
     $form->description = trim($form->description);
@@ -591,7 +590,7 @@ function validate_form(&$form, &$err) {
     }
     if(!empty($form->courseid)) {
         // Timestamps must be >= course startdate
-        $course = get_record('course', 'id', $form->courseid);
+        $course = $DB->get_record('course', array('id'=>$form->courseid));
         if($course === false) {
             print_error('invalidcourse');
         }
@@ -602,7 +601,7 @@ function validate_form(&$form, &$err) {
 }
 
 function calendar_add_event_allowed($event) {
-    global $USER;
+    global $USER, $DB;
 
     // can not be using guest account
     if (empty($USER->id) or $USER->username == 'guest') {
@@ -623,7 +622,7 @@ function calendar_add_event_allowed($event) {
             // Allow users to add/edit group events if:
             // 1) They have manageentries (= entries for whole course)
             // 2) They have managegroupentries AND are in the group
-            $group = get_record('groups', 'id', $event->groupid);         
+            $group = $DB->get_record('groups', array('id'=>$event->groupid));         
             return $group && (
                 has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $group->courseid)) ||
                 (has_capability('moodle/calendar:managegroupentries', get_context_instance(CONTEXT_COURSE, $group->courseid))

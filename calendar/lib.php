@@ -46,6 +46,8 @@ define('CALENDAR_DEFAULT_STARTING_WEEKDAY',   1);
 // Default value = 65 = 64 + 1 = 2^6 + 2^0 = Saturday & Sunday
 define('CALENDAR_DEFAULT_WEEKEND',            65);
 
+//TODO: fix this ehm "not nice code at all"
+
 // Fetch the correct values from admin settings/lang pack
 // If no such settings found, use the above defaults
 $firstday = isset($CFG->calendar_startwday) ? $CFG->calendar_startwday : get_string('firstdayofweek');
@@ -356,14 +358,14 @@ function calendar_get_popup($is_today, $event_timestart, $popupcontent='') {
     } else {
         $popupcaption .= get_string('eventsfor', 'calendar', userdate($event_timestart, get_string('strftimedayshort')));
     }
-    $popupcontent = str_replace("'", "\'", htmlspecialchars($popupcontent));
-    $popupcaption = str_replace("'", "\'", htmlspecialchars($popupcaption));
+    $popupcontent = addslashes_js($popupcontent);
+    $popupcaption = addslashes_js($popupcaption);
     $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
     return $popup;
 }
 
 function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxevents, $fromtime=0) {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $DB;
 
     $display = new stdClass;
     $display->range = $daysinfuture; // How many days in the future we 'll look
@@ -430,7 +432,7 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
                 if ($event->modulename == 'assignment'){
                     // TODO: rewrite this hack somehow
                     if (!calendar_edit_event_allowed($event)){ // cannot manage entries, eg. student  
-                        if(!$assignment = get_record('assignment','id',$event->instance)){
+                        if (!$assignment = $DB->get_record('assignment', array('id'=>$event->instance))) {
                             // print_error("invalidid", 'assignment');
                             continue;
                         }
@@ -586,6 +588,8 @@ function calendar_print_event($event) {
  * @return array of selected events or an empty array if there aren't any (or there was an error)
  */
 function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withduration=true, $ignorehidden=true) {
+    global $DB;
+
     $whereclause = '';
     // Quick test
     if(is_bool($users) && is_bool($groups) && is_bool($courses)) {
@@ -679,7 +683,7 @@ function calendar_get_events($tstart, $tend, $users, $groups, $courses, $withdur
         $whereclause .= ' AND visible = 1';
     }
 
-    $events = get_records_select('event', $whereclause, 'timestart');
+    $events = $DB->get_records_select('event', $whereclause, null, 'timestart');
     if ($events === false) {
         $events = array();
     }
@@ -1125,12 +1129,13 @@ function calendar_get_module_cached(&$coursecache, $modulename, $instance) {
 }
 
 function calendar_get_course_cached(&$coursecache, $courseid) {
-    global $COURSE;
+    global $COURSE, $DB;
+
     if (!isset($coursecache[$courseid])) {
         if ($courseid == $COURSE->id) {
             $coursecache[$courseid] = $COURSE;
         } else {
-            $coursecache[$courseid] = get_record('course', 'id', $courseid);
+            $coursecache[$courseid] = $DB->get_record('course', array('id'=>$courseid));
         }
     }
     return $coursecache[$courseid];
@@ -1202,7 +1207,7 @@ function calendar_set_referring_course($courseid) {
 }
 
 function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NULL, $groupeventsfrom = NULL, $ignorefilters = false) {
-    global $SESSION, $USER, $CFG;
+    global $SESSION, $USER, $CFG, $DB;
 
     // Insidious bug-wannabe: setting $SESSION->cal_courses_shown to $course->id would cause
     // the code to function incorrectly UNLESS we convert it to an integer. One case where
@@ -1219,12 +1224,12 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
     // we probably should do some clean up and make sure that session is set to use the proper form
     if (is_int($courseeventsfrom)) { // case of an int, e.g. calendar view page
         $c = array();
-        $c[$courseeventsfrom] = get_record('course', 'id', $courseeventsfrom);
+        $c[$courseeventsfrom] = $DB->get_record('course', array('id'=>$courseeventsfrom));
         $courseeventsfrom = $c;
     } else if (is_array($courseeventsfrom)) { // case of an array of ints, e.g. course home page
         foreach ($courseeventsfrom as $i=>$courseid) { // TODO: this seems wrong, the array is often constructed as [courseid] => 1 ???
             if (is_int($courseid)) {
-                $courseeventsfrom[$i] = get_record('course', 'id', $courseid);
+                $courseeventsfrom[$i] = $DB->get_record('course', array('id'=>$courseid));
             } 
         }    
     }
@@ -1316,9 +1321,9 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
                         if (is_object($courseeventsfrom[$courseid])) { // SHOULD be set MDL-11221
                             $courserecord = $courseeventsfrom[$courseid];
                         } else {
-                            $courserecord = get_record('course', 'id', $courseid);
+                            $courserecord = $DB->get_record('course', array('id'=>$courseid));
                         } 
-                        $courserecord = get_record('course', 'id', $courseid);
+                        $courserecord = $DB->get_record('course', array('id'=>$courseid));
                         if ($courserecord->groupmode != NOGROUPS || !$courserecord->groupmodeforce) {
                             $groupids[] = $courseid;
                         }
@@ -1339,10 +1344,10 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 
             if (!empty($groupids)) {
                 $sql = "SELECT *
-                        FROM {$CFG->prefix}groups
+                        FROM {groups}
                         WHERE courseid IN (".implode(',', $groupids).')';
 
-                if ($grouprecords= get_records_sql($sql)) {
+                if ($grouprecords = $DB->get_records_sql($sql, null)) {
                     foreach ($grouprecords as $grouprecord) {
                         $grouparray[] = $grouprecord->id;
                     }
@@ -1364,8 +1369,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 }
 
 function calendar_edit_event_allowed($event) {
-
-    global $USER;
+    global $USER, $DB;
 
     // Must be logged in
     if (!isloggedin()) {
@@ -1388,7 +1392,7 @@ function calendar_edit_event_allowed($event) {
         // Allow users to add/edit group events if:
         // 1) They have manageentries (= entries for whole course)
         // 2) They have managegroupentries AND are in the group
-        $group = get_record('groups', 'id', $event->groupid);
+        $group = $DB->get_record('groups', array('id'=>$event->groupid));
         return $group && (
             has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, $group->courseid)) ||
             (has_capability('moodle/calendar:managegroupentries', get_context_instance(CONTEXT_COURSE, $group->courseid))
@@ -1405,7 +1409,7 @@ function calendar_edit_event_allowed($event) {
 }
 
 function calendar_get_default_courses($ignoreref = false) {
-    global $USER, $CFG, $SESSION;
+    global $USER, $CFG, $SESSION, $DB;
 
     if(!empty($SESSION->cal_course_referer) && !$ignoreref) {
         return array($SESSION->cal_course_referer => 1);
@@ -1418,7 +1422,7 @@ function calendar_get_default_courses($ignoreref = false) {
     $courses = array();
     if (has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_SYSTEM))) {
         if (!empty($CFG->calendar_adminseesall)) {
-            $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
+            $courses = $DB->get_records_sql('SELECT id, 1 FROM {course}');
             return $courses;
         }
     }
@@ -1572,7 +1576,7 @@ function calendar_set_filters_status($packed_bitfield) {
 }
 
 function calendar_get_allowed_types(&$allowed) {
-    global $USER, $CFG, $SESSION;
+    global $USER, $CFG, $SESSION, $DB;
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
     $allowed->user = has_capability('moodle/calendar:manageownentries', $sitecontext);
     $allowed->groups = false; // This may change just below
@@ -1580,7 +1584,7 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->site = has_capability('moodle/calendar:manageentries', get_context_instance(CONTEXT_COURSE, SITEID));
 
     if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID) {
-        $course = get_record('course', 'id', $SESSION->cal_course_referer);
+        $course = $DB->get_record('course', array('id'=>$SESSION->cal_course_referer));
         $coursecontext = get_context_instance(CONTEXT_COURSE, $SESSION->cal_course_referer);
 
         if(has_capability('moodle/calendar:manageentries', $coursecontext)) {

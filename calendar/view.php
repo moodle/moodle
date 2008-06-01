@@ -98,7 +98,7 @@
 
     // If a course has been supplied in the URL, change the filters to show that one
     if (!empty($courseid)) {
-        if ($course = get_record('course', 'id', $courseid)) {
+        if ($course = $DB->get_record('course', array('id'=>$courseid))) {
             if ($course->id == SITEID) {
                 // If coming from the home page, show all courses
                 $SESSION->cal_courses_shown = calendar_get_default_courses(true);
@@ -125,10 +125,10 @@
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
     if ($SESSION->cal_course_referer != SITEID &&
-       ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
+       ($shortname = $DB->get_field('course', 'shortname', array('id'=>$SESSION->cal_course_referer))) !== false) {
         require_login();
         if (empty($course)) {
-            $course = get_record('course', 'id', $SESSION->cal_course_referer); // Useful to have around
+            $course = $DB->get_record('course', array('id'=>$SESSION->cal_course_referer)); // Useful to have around
         }
     }
 
@@ -307,7 +307,7 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users, $course
 
     $getvars = 'from=month&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
 
-    $display = &New stdClass;
+    $display = new stdClass;
     $display->minwday = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
     $display->maxwday = $display->minwday + 6;
 

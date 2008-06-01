@@ -5,7 +5,7 @@
     require_once($CFG->dirroot.'/calendar/lib.php');
 
     if (isset($SESSION->cal_course_referer)) {
-        if (! $course = get_record('course', 'id', $SESSION->cal_course_referer)) {
+        if (! $course = $DB->get_record('course', array('id'=>$SESSION->cal_course_referer))) {
             $course = get_site();
         }
     }
@@ -18,7 +18,7 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted()) {
+    if ($form = data_submitted(false)) {
         foreach ($form as $preference => $value) {
             switch ($preference) {
                 case 'timeformat':
