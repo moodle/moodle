@@ -890,35 +890,6 @@ function delete_records_select($table, $select='') {
 }
 
 /**
- * Get the data type of a table column, using an ADOdb MetaType() call.
- *
- * @uses $CFG
- * @uses $db
- * @param string $table The name of the database table
- * @param string $column The name of the field in the table
- * @return string Field type or false if error
- */
-
-function column_type($table, $column) {
-    global $CFG, $db;
-
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
-    $sql = 'SELECT '.$column.' FROM '.$CFG->prefix.$table.' WHERE 1=2';
-    if(!$rs = $db->Execute($sql)) {
-        debugging($db->ErrorMsg() .'<br /><br />'. s($sql));
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
-        }
-        return false;
-    }
-
-    $field = $rs->FetchField(0);
-    return $rs->MetaType($field->type);
-}
-
-/**
  * This function will handle all the records before being inserted/updated to DB for Oracle
  * installations. This is because the "special feature" of Oracle where the empty string is
  * equal to NULL and this presents a problem with all our currently NOT NULL default '' fields.

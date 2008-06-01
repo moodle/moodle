@@ -439,3 +439,7 @@ function get_records_select_menu($table, $select='', $sort='', $fields='*', $lim
 function get_records_sql_menu($sql, $limitfrom='', $limitnum='') {
     error('get_records_sql_menu() removed');
 }
+
+function column_type($table, $column) {
+    error('column_type() removed');
+}
