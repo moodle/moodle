@@ -194,7 +194,7 @@ function get_recent_enrolments($courseid, $timestart) {
                    AND l.course = ?
                    AND l.module = 'course'
                    AND l.action = 'enrol'
-                   AND l.info = u.id
+                   AND ".$DB->sql_cast_char2int('l.info')." = u.id
                    AND u.id = ra.userid
                    AND ra.contextid ".get_related_contexts_string($context)."
           ORDER BY l.time ASC";
