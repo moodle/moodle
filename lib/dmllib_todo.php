@@ -663,55 +663,6 @@ function get_field_sql($sql) {
 }
 
 /**
- * Get an array of data from one or more fields from a database
- * use to get a column, or a series of distinct values
- *
- * @uses $CFG
- * @uses $db
- * @param string $sql The SQL string you wish to be executed.
- * @return mixed|false Returns the value return from the SQL statment or false if an error occured.
- * @todo Finish documenting this function
- */
-function get_fieldset_sql($sql) {
-
-    global $db, $CFG;
-
-    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
-
-    $rs = $db->Execute($sql);
-    if (!$rs) {
-        debugging($db->ErrorMsg() .'<br /><br />'. s($sql));
-        if (!empty($CFG->dblogerror)) {
-            $debug=array_shift(debug_backtrace());
-            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
-        }
-        return false;
-    }
-
-    if ( !rs_EOF($rs) ) {
-        $keys = array_keys($rs->fields);
-        $key0 = $keys[0];
-        $results = array();
-        while (!$rs->EOF) {
-            array_push($results, $rs->fields[$key0]);
-            $rs->MoveNext();
-        }
-        /// DIRTY HACK to retrieve all the ' ' (1 space) fields converted back
-        /// to '' (empty string) for Oracle. It's the only way to work with
-        /// all those NOT NULL DEFAULT '' fields until we definetively delete them
-        if ($CFG->dbfamily == 'oracle') {
-            array_walk($results, 'onespace2empty');
-        }
-        /// End of DIRTY HACK
-        rs_close($rs);
-        return $results;
-    } else {
-        rs_close($rs);
-        return false;
-    }
-}
-
-/**
  * Delete one or more records from a table
  *
  * @uses $CFG

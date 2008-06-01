@@ -460,3 +460,6 @@ function get_fieldset_select($table, $return, $select) {
     error('get_fieldset_select() removed');
 }
 
+function get_fieldset_sql($sql) {
+    error('get_fieldset_sql() removed');
+}
