@@ -342,35 +342,6 @@ function get_recordset_select($table, $select='', $sort='', $fields='*', $limitf
 }
 
 /**
- * Get a number of records as an ADODB RecordSet.
- *
- * Only records where $field takes one of the values $values are returned.
- * $values should be a comma-separated list of values, for example "4,5,6,10"
- * or "'foo','bar','baz'".
- *
- * Other arguments and the return type as for @see function get_recordset.
- *
- * @param string $table the table to query.
- * @param string $field a field to check (optional).
- * @param string $values comma separated list of values the field must have (requred if field is given, else optional).
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an ADODB RecordSet object, or false if an error occured.
- */
-function get_recordset_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-
-    if ($field) {
-        $select = "$field IN ($values)";
-    } else {
-        $select = '';
-    }
-
-    return get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
-}
-
-/**
  * Get a number of records as an ADODB RecordSet.  $sql must be a complete SQL query.
  * Since this method is a little less readable, use of it should be restricted to
  * code where it's possible there might be large datasets being returned.  For known
@@ -628,25 +599,6 @@ function get_records_select($table, $select='', $sort='', $fields='*', $limitfro
  *
  * Return value as for @see function get_records.
  *
- * @param string $table The database table to be checked against.
- * @param string $field The field to search
- * @param string $values Comma separated list of possible value
- * @param string $sort Sort order (as valid SQL sort parameter)
- * @param string $fields A comma separated list of fields to be returned from the chosen table. If specified,
- *   the first field should be a unique one such as 'id' since it will be used as a key in the associative
- *   array.
- * @return mixed an array of objects, or false if no records were found or an error occured.
- */
-function get_records_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-    $rs = get_recordset_list($table, $field, $values, $sort, $fields, $limitfrom, $limitnum);
-    return recordset_to_array($rs);
-}
-
-/**
- * Get a number of records as an array of objects.
- *
- * Return value as for @see function get_records.
- *
  * @param string $sql the SQL select query to execute. The first column of this SELECT statement
  *   must be a unique value (usually the 'id' field), as it will be used as the key of the
  *   returned array.
@@ -710,30 +662,6 @@ function records_to_menu($records, $field1, $field2) {
     } else {
         return false;
     }
-}
-
-/**
- * Get the first two columns from a number of records as an associative array.
- *
- * Arguments as for @see function get_recordset.
- *
- * If no errors occur, and at least one records is found, the return value
- * is an associative whose keys come from the first field of each record,
- * and whose values are the corresponding second fields. If no records are found,
- * or an error occurs, false is returned.
- *
- * @param string $table the table to query.
- * @param string $field a field to check (optional).
- * @param string $value the value the field must have (requred if field1 is given, else optional).
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an associative array, or false if no records were found or an error occured.
- */
-function get_records_menu($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-    $rs = get_recordset($table, $field, $value, $sort, $fields, $limitfrom, $limitnum);
-    return recordset_to_menu($rs);
 }
 
 /**

@@ -382,11 +382,7 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
 
 
 
-
-
-
-
-///// DELETED - must not be used anymore
+///// DELETED - must not be used anymore!
 
 function configure_dbconnection() {
     error('configure_dbconnection() removed');
@@ -422,4 +418,16 @@ function where_clause($field1='', $value1='', $field2='', $value2='', $field3=''
 
 function execute_sql_arr($sqlarr, $continue=true, $feedback=true) {
     error('execute_sql_arr() removed');
+}
+
+function get_records_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_records_list() removed');
+}
+
+function get_recordset_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_recordset_list() removed');
+}
+
+function get_records_menu($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_records_menu() removed');
 }
