@@ -2,7 +2,7 @@
 require_once ($CFG->libdir.'/formslib.php');
 /**
  * This class adds extra methods to form wrapper specific to be used for module
- * add / update forms (mod/{modname}.mod_form.php replaces deprecated mod/{modname}/mod.html
+ * add / update forms (mod/{modname}.mod_form.php replaces deprecated mod/{modname}/mod_form.php
  *
  */
 class moodleform_mod extends moodleform {

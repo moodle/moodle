@@ -2573,7 +2573,7 @@ function course_in_meta ($course) {
 
 
 /**
- * Print standard form elements on module setup forms in mod/.../mod.html
+ * Print standard form elements on module setup forms in mod/.../mod_form.php
  */
 function print_standard_coursemodule_settings($form, $features=null) {
     global $DB;
@@ -2588,7 +2588,7 @@ function print_standard_coursemodule_settings($form, $features=null) {
 }
 
 /**
- * Print groupmode form element on module setup forms in mod/.../mod.html
+ * Print groupmode form element on module setup forms in mod/.../mod_form.php
  */
 function print_groupmode_setting($form, $course=NULL) {
     global $DB;
@@ -2622,7 +2622,7 @@ function print_groupmode_setting($form, $course=NULL) {
 }
 
 /**
- * Print groupmode form element on module setup forms in mod/.../mod.html
+ * Print groupmode form element on module setup forms in mod/.../mod_form.php
  */
 function print_grouping_settings($form, $course=NULL) {
     global $DB;
@@ -2662,7 +2662,7 @@ function print_grouping_settings($form, $course=NULL) {
 }
 
 /**
- * Print visibility setting form element on module setup forms in mod/.../mod.html
+ * Print visibility setting form element on module setup forms in mod/.../mod_form.php
  */
 function print_visible_setting($form, $course=NULL) {
     global $DB;

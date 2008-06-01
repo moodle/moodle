@@ -332,13 +332,13 @@ class assignment_base {
      * Create a new assignment activity
      *
      * Given an object containing all the necessary data,
-     * (defined by the form in mod.html) this function
+     * (defined by the form in mod_form.php) this function
      * will create a new instance and return the id number
      * of the new instance.
      * The due data is added to the calendar
      * This is common to all assignment types.
      *
-     * @param $assignment object The data from the form on mod.html
+     * @param $assignment object The data from the form on mod_form.php
      * @return int The id of the assignment
      */
     function add_instance($assignment) {
@@ -414,12 +414,12 @@ class assignment_base {
      * Updates a new assignment activity
      *
      * Given an object containing all the necessary data,
-     * (defined by the form in mod.html) this function
+     * (defined by the form in mod_form.php) this function
      * will update the assignment instance and return the id number
      * The due date is updated in the calendar
      * This is common to all assignment types.
      *
-     * @param $assignment object The data from the form on mod.html
+     * @param $assignment object The data from the form on mod_form.php
      * @return int The assignment id
      */
     function update_instance($assignment) {

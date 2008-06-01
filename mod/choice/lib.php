@@ -49,7 +49,7 @@ function choice_user_complete($course, $user, $mod, $choice) {
 
 function choice_add_instance($choice) {
 // Given an object containing all the necessary data,
-// (defined by the form in mod.html) this function
+// (defined by the form in mod_form.php) this function
 // will create a new instance and return the id number
 // of the new instance.
 
@@ -82,7 +82,7 @@ function choice_add_instance($choice) {
 
 function choice_update_instance($choice) {
 // Given an object containing all the necessary data,
-// (defined by the form in mod.html) this function
+// (defined by the form in mod_form.php) this function
 // will update an existing instance with new data.
 
     $choice->id = $choice->instance;

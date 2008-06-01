@@ -24,7 +24,7 @@ $CHAT_DUMMY_DATA = "<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!--
 
 function chat_add_instance($chat) {
 /// Given an object containing all the necessary data,
-/// (defined by the form in mod.html) this function
+/// (defined by the form in mod_form.php) this function
 /// will create a new instance and return the id number
 /// of the new instance.
 
@@ -53,7 +53,7 @@ function chat_add_instance($chat) {
 
 function chat_update_instance($chat) {
 /// Given an object containing all the necessary data,
-/// (defined by the form in mod.html) this function
+/// (defined by the form in mod_form.php) this function
 /// will update an existing instance with new data.
 
     $chat->timemodified = time();

@@ -57,7 +57,7 @@ function wiki_get_students($wiki, $groups='', $sort='u.lastaccess', $fields='u.*
 
 function wiki_add_instance($wiki) {
 /// Given an object containing all the necessary data,
-/// (defined by the form in mod.html) this function
+/// (defined by the form in mod_form.php) this function
 /// will create a new instance and return the id number
 /// of the new instance.
 
@@ -74,7 +74,7 @@ function wiki_add_instance($wiki) {
 
 function wiki_update_instance($wiki) {
 /// Given an object containing all the necessary data,
-/// (defined by the form in mod.html) this function
+/// (defined by the form in mod_form.php) this function
 /// will update an existing instance with new data.
 
     /// Determine the pagename for this wiki.

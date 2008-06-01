@@ -30,7 +30,7 @@ define ('FORUM_AGGREGATE_SUM', 5);
 
 /**
  * Given an object containing all the necessary data,
- * (defined by the form in mod.html) this function
+ * (defined by the form in mod_form.php) this function
  * will create a new instance and return the id number
  * of the new instance.
  * @param object $forum add forum instance (with magic quotes)
@@ -88,7 +88,7 @@ function forum_add_instance($forum) {
 
 /**
  * Given an object containing all the necessary data,
- * (defined by the form in mod.html) this function
+ * (defined by the form in mod_form.php) this function
  * will update an existing instance with new data.
  * @param object $forum forum instance (with magic quotes)
  * @return bool success

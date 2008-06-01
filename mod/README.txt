@@ -6,7 +6,7 @@ These are main modules in Moodle, allowing various activities.
 
 Each of these modules contains a number of expected components:
 
-  mod.html: a form to setup/update a module instance
+  mod_form.php: a form to setup/update a module instance
 
   version.php: defines some meta-info and provides upgrading code
 

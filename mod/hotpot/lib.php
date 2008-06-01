@@ -183,7 +183,7 @@ define("HOTPOT_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 //  true (or non-zero number):
 //        continue to $hotpot->redirect (if set) OR hotpot/view.php (to displsay quiz)
 
-// $hotpot is an object containing the values of the form in mod.html
+// $hotpot is an object containing the values of the form in mod_form.php
 // i.e. all the fields in the 'hotpot' table, plus the following:
 //  $hotpot->course       : an id in the 'course' table
 //  $hotpot->coursemodule : an id in the 'course_modules' table

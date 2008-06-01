@@ -26,7 +26,7 @@ define("SURVEY_CIQ",                     "5");
 
 function survey_add_instance($survey) {
 // Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
+// (defined by the form in mod_form.php) this function 
 // will create a new instance and return the id number 
 // of the new instance.
 
@@ -45,7 +45,7 @@ function survey_add_instance($survey) {
 
 function survey_update_instance($survey) {
 // Given an object containing all the necessary data, 
-// (defined by the form in mod.html) this function 
+// (defined by the form in mod_form.php) this function 
 // will update an existing instance with new data.
 
     if (!$template = get_record("survey", "id", $survey->template)) {
