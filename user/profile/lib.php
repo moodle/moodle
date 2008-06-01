@@ -351,7 +351,7 @@ function profile_validation($usernew, $files) {
 function profile_save_data($usernew) {
     global $CFG, $DB;
 
-    if ($fields = $DB->get_records_select('user_info_field')) {
+    if ($fields = $DB->get_records('user_info_field')) {
         foreach ($fields as $field) {
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
