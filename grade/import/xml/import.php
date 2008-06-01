@@ -31,7 +31,7 @@ $url       = required_param('url', PARAM_URL); // only real urls here
 $id        = required_param('id', PARAM_INT); // course id
 $feedback  = optional_param('feedback', 0, PARAM_BOOL);
 
-if (!$course = get_record('course', 'id', $id)) {
+if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('nocourseid');
 }
 

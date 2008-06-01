@@ -173,7 +173,7 @@
             $thissection->section = $section;
             $thissection->summary = '';
             $thissection->visible = 1;
-            if (!$thissection->id = insert_record('course_sections', $thissection)) {
+            if (!$thissection->id = $DB->insert_record('course_sections', $thissection)) {
                 notify('Error inserting new week!');
             }
         }

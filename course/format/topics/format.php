@@ -43,7 +43,7 @@
 
     if (($marker >=0) && has_capability('moodle/course:setcurrentsection', $context) && confirm_sesskey()) {
 	$course->marker = $marker;
-	if (! set_field("course", "marker", $marker, "id", $course->id)) {
+	if (! $DB->set_field("course", "marker", $marker, array("id"=>$course->id))) {
 	    print_error("cannotmarktopic");
 	}
     }
@@ -169,11 +169,11 @@
 
         } else {
             unset($thissection);
-            $thissection->course = $course->id;   // Create a new section structure
+            $thissection->course  = $course->id;   // Create a new section structure
             $thissection->section = $section;
-            $thissection->summary = '';
-            $thissection->visible = 1;
-            if (!$thissection->id = insert_record('course_sections', $thissection)) {
+            $thissection->summary  = '';
+            $thissection->visible  = 1;
+            if (!$thissection->id = $DB->insert_record('course_sections', $thissection)) {
                 notify('Error inserting new topic!');
             }
         }

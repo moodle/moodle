@@ -29,7 +29,7 @@ require_once 'grade_export_ods.php';
 
 $id = required_param('id', PARAM_INT); // course id
 
-if (!$course = get_record('course', 'id', $id)) {
+if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error('nocourseid');
 }
 

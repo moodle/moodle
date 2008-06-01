@@ -5,7 +5,7 @@
 
     $id = required_param('id', PARAM_INT);   // course id to import TO
 
-    if (!$course = get_record('course', 'id', $id)) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error("That's an invalid course id");
     }
 

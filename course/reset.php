@@ -13,7 +13,7 @@ require_once('reset_form.php');
 
 $id = required_param('id', PARAM_INT);
 
-if (!$course = get_record('course', 'id', $id)) {
+if (!$course = $DB->get_record('course', array('id'=>$id))) {
     print_error("invalidcourseid");
 }
 

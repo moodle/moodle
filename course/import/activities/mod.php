@@ -65,7 +65,7 @@
             $options[$ccourse->id] = format_string($ccourse->fullname);
         }
     }
-    $cat = get_record("course_categories","id",$course->category);
+    $cat = $DB->get_record("course_categories", array("id"=>$course->category));
 
     if (count($options) > 0) {
         $mform_post = new course_import_activities_form_1($CFG->wwwroot.'/course/import/activities/index.php', array('options'=>$options, 'courseid' => $course->id, 'text' => get_string('coursescategory')));
