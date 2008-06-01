@@ -668,7 +668,7 @@
                 $o .= '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
                 $o .= '<input type="hidden" name="currentfile" value="'.$currentfile.'" />';
                 $o .= '<input type="hidden" name="mode" value="compare" />';
-                $o .= '<input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
+                $o .= '<input type="submit" name="update" tabindex="'.$missingcounter.'" value="'.get_string('savechanges').': '.$currentfile.'" />';
                 $o .= '</td></tr>';
             }
             $o .= '</table>';
