@@ -23,266 +23,103 @@
     $duplicate     = optional_param('duplicate', 0, PARAM_INT);
     $cancel        = optional_param('cancel', 0, PARAM_BOOL);
     $cancelcopy    = optional_param('cancelcopy', 0, PARAM_BOOL);
-
-    if (isset($SESSION->modform)) {   // Variables are stored in the session
-        $mod = $SESSION->modform;
-        unset($SESSION->modform);
-    } else {
-        $mod = (object)$_POST;
-    }
+    $confirm       = optional_param('confirm', 0, PARAM_BOOL);
 
     if ($cancel) {
-        if (!empty($SESSION->returnpage)) {
-            $return = $SESSION->returnpage;
-            unset($SESSION->returnpage);
-            redirect($return);
-        } else {
-            redirect("view.php?id=$mod->course#section-$sectionreturn");
-        }
+        redirect($return);
     }
 
     //check if we are adding / editing a module that has new forms using formslib
     if (!empty($add)){
-        $modname=$add;
-        if (file_exists("../mod/$modname/mod_form.php")) {
-            $id          = required_param('id', PARAM_INT);
-            $section     = required_param('section', PARAM_INT);
-            $type        = optional_param('type', '', PARAM_ALPHA);
-            $returntomod = optional_param('return', 0, PARAM_BOOL);
-
-            redirect("modedit.php?add=$add&type=$type&course=$id&section=$section&return=$returntomod");
-        }
-    }elseif (!empty($update)){
-        if (!$modname=get_field_sql("SELECT md.name
-                           FROM {$CFG->prefix}course_modules cm,
-                                {$CFG->prefix}modules md
-                           WHERE cm.id = '$update' AND
-                                 md.id = cm.module")){
-            print_error('invalidcourseid');
-        }
+        $id          = required_param('id', PARAM_INT);
+        $section     = required_param('section', PARAM_INT);
+        $type        = optional_param('type', '', PARAM_ALPHA);
         $returntomod = optional_param('return', 0, PARAM_BOOL);
-        if (file_exists("../mod/$modname/mod_form.php")) {
-            redirect("modedit.php?update=$update&return=$returntomod");
+
+        redirect("$CFG->wwwroot/course/modedit.php?add=$add&type=$type&course=$id&section=$section&return=$returntomod");
+
+    } else if (!empty($update)){
+        $cm = get_cm($update); 
+        $returntomod = optional_param('return', 0, PARAM_BOOL);
+        redirect("$CFG->wwwroot/course/modedit.php?update=$update&return=$returntomod");
+
+    } else if (!empty($delete)) {
+        $cm = get_cm($delete); 
+
+        if (!$course = $DB->get_record("course", array("id"=>$cm->course))) {
+            print_error("invalidcourseid");
         }
-    }
-    //not adding / editing a module that has new forms using formslib
-    //carry on
-
-    if (!empty($course) and confirm_sesskey()) {    // add, delete or update form submitted
-
-        if (empty($mod->coursemodule)) { //add
-            if (! $course = get_record("course", "id", $mod->course)) {
-                print_error("invalidcourse");
-            }
-            $mod->instance = '';
-            $mod->coursemodule = '';
-        } else { //delete and update
-            if (! $cm = get_record("course_modules", "id", $mod->coursemodule)) {
-                print_error("cmunknown");
-            }
-
-            if (! $course = get_record("course", "id", $cm->course)) {
-                print_error("invalidcourseid");
-            }
-            $mod->instance = $cm->instance;
-            $mod->coursemodule = $cm->id;
-        }
-
         require_login($course->id); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:manageactivities', $context);
 
-        $mod->course = $course->id;
-        $mod->modulename = clean_param($mod->modulename, PARAM_SAFEDIR);  // For safety
-        $modlib = "$CFG->dirroot/mod/$mod->modulename/lib.php";
+        $return = "$CFG->wwwroot/course/view.php?id=$cm->course#section-$cm->sectionnum";
+
+        if (!$confirm or !confirm_sesskey()) {
+            $fullmodulename = get_string("modulename", $cm->modname);
+    
+            $optionsyes = array('confirm'=>1, 'delete'=>$cm->id, 'sesskey'=>sesskey());
+            $optionsno  = array('id'=>$cm->course);
+    
+            $strdeletecheck = get_string('deletecheck', '', $fullmodulename);
+            $strdeletecheckfull = get_string('deletecheckfull', '', "$fullmodulename '$cm->name'");
+    
+            $CFG->pagepath = 'mod/'.$cm->modname.'/delete';
+    
+            print_header_simple($strdeletecheck, '', build_navigation(array(array('name'=>$strdeletecheck,'link'=>'','type'=>'misc'))));
+    
+            print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
+            notice_yesno($strdeletecheckfull, 'mod.php', $return, $optionsyes, $optionsno, 'post', 'get');
+            print_simple_box_end();
+            print_footer($course);
+    
+            exit;
+        }
+
+        $modlib = "$CFG->dirroot/mod/$cm->modname/lib.php";
 
         if (file_exists($modlib)) {
-            include_once($modlib);
+            require_once($modlib);
         } else {
             print_error('modulemissingcode', '', '', $modlib);
         }
-        $addinstancefunction    = $mod->modulename."_add_instance";
-        $updateinstancefunction = $mod->modulename."_update_instance";
-        $deleteinstancefunction = $mod->modulename."_delete_instance";
-        $moderr = "$CFG->dirroot/mod/$mod->modulename/moderr.html";
 
-        switch ($mod->mode) {
-            case "update":
+        $deleteinstancefunction = $cm->modname."_delete_instance";
 
-                if (isset($mod->name)) {
-                    if (trim($mod->name) == '') {
-                        unset($mod->name);
-                    }
-                }
-
-                $return = $updateinstancefunction($mod);
-                if (!$return) {
-                    if (file_exists($moderr)) {
-                        $form = $mod;
-                        include_once($moderr);
-                        die;
-                    }
-                    print_error('cannotupdatemod', '', 'view.php?id=$course->id', $mod->modulename);
-                }
-                if (is_string($return)) {
-                    print_error($return, '', "view.php?id=$course->id");
-                }
-
-                if (isset($mod->visible)) {
-                    set_coursemodule_visible($mod->coursemodule, $mod->visible);
-                }
-
-                if (isset($mod->groupmode)) {
-                    set_coursemodule_groupmode($mod->coursemodule, $mod->groupmode);
-                }
-                
-                if (isset($mod->groupingid)) {
-                    set_coursemodule_groupingid($mod->coursemodule, $mod->groupingid);
-                }
-                
-                if (isset($mod->groupmembersonly)) {
-                    set_coursemodule_groupmembersonly($mod->coursemodule, $mod->groupmembersonly);
-                }
-
-                if (isset($mod->redirect)) {
-                    $SESSION->returnpage = $mod->redirecturl;
-                } else {
-                    $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
-                }
-
-                add_to_log($course->id, "course", "update mod",
-                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
-                           "$mod->modulename $mod->instance");
-                add_to_log($course->id, $mod->modulename, "update",
-                           "view.php?id=$mod->coursemodule",
-                           "$mod->instance", $mod->coursemodule);
-                break;
-
-            case "add":
-
-                if (!course_allowed_module($course,$mod->modulename)) {
-                    print_error('moduledisable', '', '', $mod->modulename);
-                }
-
-                if (!isset($mod->name) || trim($mod->name) == '') {
-                    $mod->name = get_string("modulename", $mod->modulename);
-                }
-
-                $return = $addinstancefunction($mod);
-                if (!$return) {
-                    if (file_exists($moderr)) {
-                        $form = $mod;
-                        include_once($moderr);
-                        die;
-                    }
-                    print_error('cannotaddnewmodule', '', "view.php?id=$course->id", $mod->modulename);
-                }
-                if (is_string($return)) {
-                    print_error($return, '', "view.php?id=$course->id");
-                }
-
-                if (!isset($mod->groupmode)) { // to deal with pre-1.5 modules
-                    $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
-                }
-                
-                if (isset($mod->groupingid)) {
-                    set_coursemodule_groupingid($mod->coursemodule, $mod->groupingid);
-                }
-                
-                if (isset($mod->groupmembersonly)) {
-                    set_coursemodule_groupmembersonly($mod->coursemodule, $mod->groupmembersonly);
-                }
-                $mod->instance = $return;
-
-                // course_modules and course_sections each contain a reference
-                // to each other, so we have to update one of them twice.
-
-                if (! $mod->coursemodule = add_course_module($mod) ) {
-                    print_error("cannotaddcoursemodule");
-                }
-                if (! $sectionid = add_mod_to_section($mod) ) {
-                    print_error("cannotaddcmtosection");
-                }
-
-                if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
-                    print_error("cannotupdatecm");
-                }
-
-                if (!isset($mod->visible)) {   // We get the section's visible field status
-                    $mod->visible = get_field("course_sections","visible","id",$sectionid);
-                }
-                // make sure visibility is set correctly (in particular in calendar)
-                set_coursemodule_visible($mod->coursemodule, $mod->visible);
-
-                if (isset($mod->redirect)) {
-                    $SESSION->returnpage = $mod->redirecturl;
-                } else {
-                    $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
-                }
-
-                add_to_log($course->id, "course", "add mod",
-                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
-                           "$mod->modulename $mod->instance");
-                add_to_log($course->id, $mod->modulename, "add",
-                           "view.php?id=$mod->coursemodule",
-                           "$mod->instance", $mod->coursemodule);
-                break;
-
-            case "delete":
-                if ($cm and $cw = get_record("course_sections", "id", $cm->section)) {
-                    $sectionreturn = $cw->section;
-                }
-
-                if (! $deleteinstancefunction($mod->instance)) {
-                    notify("Could not delete the $mod->modulename (instance)");
-                }
-                if (! delete_course_module($mod->coursemodule)) {
-                    notify("Could not delete the $mod->modulename (coursemodule)");
-                }
-                if (! delete_mod_from_section($mod->coursemodule, "$mod->section")) {
-                    notify("Could not delete the $mod->modulename from that section");
-                }
-
-                unset($SESSION->returnpage);
-
-                add_to_log($course->id, "course", "delete mod",
-                           "view.php?id=$mod->course",
-                           "$mod->modulename $mod->instance", $mod->coursemodule);
-                break;
-            default:
-                print_error('unknowaction');
-
+        if (! $deleteinstancefunction($cm->instance)) {
+            notify("Could not delete the $cm->modname (instance)");
         }
+        if (! delete_course_module($cm->id)) {
+            notify("Could not delete the $cm->modname (coursemodule)");
+        }
+        if (! delete_mod_from_section($cm->id, "$cm->section")) {
+            notify("Could not delete the $cm->modname from that section");
+        }
+
+        add_to_log($course->id, "course", "delete mod",
+                   "view.php?id=$cm->course",
+                   "$cm->modname $cm->instance", $cm->id);
 
         rebuild_course_cache($course->id);
 
-        if (!empty($SESSION->returnpage)) {
-            $return = $SESSION->returnpage;
-            unset($SESSION->returnpage);
-            redirect($return);
-        } else {
-            redirect("view.php?id=$course->id#section-$sectionreturn");
-        }
-        exit;
+        redirect($return);
     }
 
-    if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
-        if (! $cm = get_record("course_modules", "id", $USER->activitycopy)) {
-            print_error('copiedcmnotexist');
-        }
+    if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
+        $cm = get_cm($USER->activitycopy, 'copiedcmnotexist');
 
         if (!empty($movetosection)) {
-            if (! $section = get_record("course_sections", "id", $movetosection)) {
+            if (! $section = $DB->get_record("course_sections", array("id"=>$movetosection))) {
                 print_error("sectionnotexist");
             }
             $beforecm = NULL;
 
         } else {                      // normal moveto
-            if (! $beforecm = get_record("course_modules", "id", $moveto)) {
+            if (! $beforecm = $DB->get_record("course_modules", array("id"=>$moveto))) {
                 print_error("destinationcmnotexit");
             }
-            if (! $section = get_record("course_sections", "id", $beforecm->section)) {
+            if (! $section = $DB->get_record("course_sections", array("id"=>$beforecm->section))) {
                 print_error("sectionnotexist");
             }
         }
@@ -310,12 +147,8 @@
         }
 
     } else if (!empty($indent) and confirm_sesskey()) {
-
         $id = required_param('id',PARAM_INT);
-
-        if (! $cm = get_record("course_modules", "id", $id)) {
-            print_error("cmunknown");
-        }
+        $cm = get_cm($id);
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
@@ -327,22 +160,18 @@
             $cm->indent = 0;
         }
 
-        if (!set_field("course_modules", "indent", $cm->indent, "id", $cm->id)) {
+        if (!$DB->set_field("course_modules", "indent", $cm->indent, array("id"=>$cm->id))) {
             print_error("cannotupdatelevel");
         }
 
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#section-$sectionreturn");
+            redirect("view.php?id=$cm->course#section-$cm->sectionnum");
         }
-        exit;
 
     } else if (!empty($hide) and confirm_sesskey()) {
-
-        if (! $cm = get_record("course_modules", "id", $hide)) {
-            print_error("cmunknown");
-        }
+        $cm = get_cm($hide);
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -355,25 +184,21 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#section-$sectionreturn");
+            redirect("view.php?id=$cm->course#section-$cm->sectionnum");
         }
-        exit;
 
     } else if (!empty($show) and confirm_sesskey()) {
-
-        if (! $cm = get_record("course_modules", "id", $show)) {
-            print_error("cmunknown");
-        }
+        $cm = get_cm($show);
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         require_capability('moodle/course:activityvisibility', $context);
 
-        if (! $section = get_record("course_sections", "id", $cm->section)) {
+        if (! $section = $DB->get_record("course_sections", array("id"=>$cm->section))) {
             print_error("sectionnotexist");
         }
 
-        if (! $module = get_record("modules", "id", $cm->module)) {
+        if (! $module = $DB->get_record("modules", array("id"=>$cm->module))) {
             print_error("moduledoesnotexist");
         }
 
@@ -385,17 +210,13 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#section-$sectionreturn");
+            redirect("view.php?id=$cm->course#section-$cm->sectionnum");
         }
-        exit;
 
     } else if ($groupmode > -1 and confirm_sesskey()) {
 
         $id = required_param( 'id', PARAM_INT );
-
-        if (! $cm = get_record("course_modules", "id", $id)) {
-            print_error("cmunknown");
-        }
+        $cm = get_cm($id);
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -408,29 +229,25 @@
         if (SITEID == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#section-$sectionreturn");
+            redirect("view.php?id=$cm->course#section-$cm->sectionnum");
         }
-        exit;
 
     } else if (!empty($copy) and confirm_sesskey()) { // value = course module
-
-        if (! $cm = get_record("course_modules", "id", $copy)) {
-            print_error("cmunknown");
-        }
+        $cm = get_cm($copy);
 
         require_login($cm->course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_COURSE, $cm->course);
         require_capability('moodle/course:manageactivities', $context);
 
-        if (! $section = get_record("course_sections", "id", $cm->section)) {
+        if (! $section = $DB->get_record("course_sections", array("id"=>$cm->section))) {
             print_error("sectionnotexist");
         }
 
-        if (! $module = get_record("modules", "id", $cm->module)) {
+        if (! $module = $DB->get_record("modules", array("id"=>$cm->module))) {
             print_error("moduledoesnotexist");
         }
 
-        if (! $instance = get_record($module->name, "id", $cm->instance)) {
+        if (! $instance = $DB->get_record($module->name, array("id"=>$cm->instance))) {
             print_error("moduleinstancedoesnotexist");
         }
 
@@ -448,291 +265,28 @@
         unset($USER->activitycopycourse);
         unset($USER->activitycopyname);
 
-        redirect("view.php?id=$courseid#section-$sectionreturn");
-
-    } else if (!empty($delete) and confirm_sesskey()) {   // value = course module
-
-        if (! $cm = get_record("course_modules", "id", $delete)) {
-            print_error('cmunknown');
-        }
-
-        if (! $course = get_record("course", "id", $cm->course)) {
-            print_error("invalidcourseid");
-        }
-
-        require_login($cm->course); // needed to setup proper $COURSE
-        $context = get_context_instance(CONTEXT_COURSE, $cm->course);
-        require_capability('moodle/course:manageactivities', $context);
-
-        if (! $module = get_record("modules", "id", $cm->module)) {
-            print_error("moduledoesnotexist");
-        }
-
-        if (! $instance = get_record($module->name, "id", $cm->instance)) {
-            // Delete this module from the course right away
-            if (! delete_mod_from_section($cm->id, $cm->section)) {
-                notify("Could not delete the $module->name from that section");
-            }
-            if (! delete_course_module($cm->id)) {
-                notify("Could not delete the $module->name (coursemodule)");
-            }
-            print_error("moduleinstancedoesnotexist",'', 
-                    "$CFG->wwwroot/course/view.php?id=$course->id");
-        }
-
-        $fullmodulename = get_string("modulename", $module->name);
-
-        $form->coursemodule = $cm->id;
-        $form->section      = $cm->section;
-        $form->course       = $cm->course;
-        $form->instance     = $cm->instance;
-        $form->modulename   = $module->name;
-        $form->fullmodulename  = $fullmodulename;
-        $form->instancename = $instance->name;
-        $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
-
-        $strdeletecheck = get_string('deletecheck', '', $form->fullmodulename);
-        $strdeletecheckfull = get_string('deletecheckfull', '', "$form->fullmodulename '$form->instancename'");
-
-        $CFG->pagepath = 'mod/'.$module->name.'/delete';
-
-        print_header_simple($strdeletecheck, '', build_navigation(array(array('name'=>$strdeletecheck,'link'=>'','type'=>'misc'))));
-
-        print_simple_box_start('center', '60%', '#FFAAAA', 20, 'noticebox');
-        print_heading($strdeletecheckfull);
-        include_once('mod_delete.html');
-        print_simple_box_end();
-        print_footer($course);
-
-        exit;
-
-
-    } else if (!empty($update) and confirm_sesskey()) {   // value = course module
-
-        if (! $cm = get_record("course_modules", "id", $update)) {
-            print_error("cmunknown");
-        }
-
-        if (! $course = get_record("course", "id", $cm->course)) {
-            print_error("invalidcourseid");
-        }
-
-        require_login($course->id); // needed to setup proper $COURSE
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/course:manageactivities', $context);
-
-        if (! $module = get_record("modules", "id", $cm->module)) {
-            print_error("moduledoesnotexist");
-        }
-
-        if (! $form = get_record($module->name, "id", $cm->instance)) {
-            print_error("moduleinstancedoesnotexist");
-        }
-
-        if (! $cw = get_record("course_sections", "id", $cm->section)) {
-            print_error("sectionnotexist");
-        }
-
-        if (isset($return)) {
-            $SESSION->returnpage = "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
-        }
-
-        $form->coursemodule = $cm->id;
-        $form->section      = $cm->section;     // The section ID
-        $form->course       = $course->id;
-        $form->module       = $module->id;
-        $form->modulename   = $module->name;
-        $form->instance     = $cm->instance;
-        $form->mode         = "update";
-        $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
-
-        $sectionname = get_section_name($course->format);
-        $fullmodulename = get_string("modulename", $module->name);
-
-        if ($form->section && $course->format != 'site') {
-            $heading->what = $fullmodulename;
-            $heading->in   = "$sectionname $cw->section";
-            $pageheading = get_string("updatingain", "moodle", $heading);
-        } else {
-            $pageheading = get_string("updatinga", "moodle", $fullmodulename);
-        }
-        $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">".format_string($form->name,true)."</a> ->";
-
-        if ($module->name == 'resource') {
-            $CFG->pagepath = 'mod/'.$module->name.'/'.$form->type;
-        } else {
-            $CFG->pagepath = 'mod/'.$module->name.'/mod';
-        }
-
-    } else if (!empty($duplicate) and confirm_sesskey()) {   // value = course module
-
-
-        if (! $cm = get_record("course_modules", "id", $duplicate)) {
-            print_error("cmunknown");
-        }
-
-        if (! $course = get_record("course", "id", $cm->course)) {
-            print_error("invalidcourseid");
-        }
-
-        require_login($course->id); // needed to setup proper $COURSE
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/course:manageactivities', $context);
-
-        if (! $module = get_record("modules", "id", $cm->module)) {
-            print_error("moduledoesnotexist");
-        }
-
-        if (! $form = get_record($module->name, "id", $cm->instance)) {
-            print_error("moduleinstancedoesnotexist");
-        }
-
-        if (! $cw = get_record("course_sections", "id", $cm->section)) {
-            print_error("sectionnotexist");
-        }
-
-        if (isset($return)) {
-            $SESSION->returnpage = "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
-        }
-
-        $section = get_field('course_sections', 'section', 'id', $cm->section);
-
-        $form->coursemodule = $cm->id;
-        $form->section      = $section;     // The section ID
-        $form->course       = $course->id;
-        $form->module       = $module->id;
-        $form->modulename   = $module->name;
-        $form->instance     = $cm->instance;
-        $form->mode         = "add";
-        $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
-
-        $sectionname    = get_string("name$course->format");
-        $fullmodulename = get_string("modulename", $module->name);
-
-        if ($form->section) {
-            $heading->what = $fullmodulename;
-            $heading->in   = "$sectionname $cw->section";
-            $pageheading = get_string("duplicatingain", "moodle", $heading);
-        } else {
-            $pageheading = get_string("duplicatinga", "moodle", $fullmodulename);
-        }
-        $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$form->name</a> ->";
-
-        $CFG->pagepath = 'mod/'.$module->name.'/mod';
-
-
-    } else if (!empty($add) and confirm_sesskey()) {
-
-        $id = required_param('id',PARAM_INT);
-        $section = required_param('section',PARAM_INT);
-
-        if (!$course = $DB->get_record('course', array('id'=>$id))) {
-            print_error("invalidcourseid");
-        }
-
-        if (! $module = get_record("modules", "name", $add)) {
-            print_error("moduledoesnotexist");
-        }
-
-        $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        require_capability('moodle/course:manageactivities', $context);
-
-        if (!course_allowed_module($course,$module->id)) {
-            print_error("moduledisable");
-        }
-
-        require_login($course->id); // needed to setup proper $COURSE
-
-        $form->section    = $section;         // The section number itself
-        $form->course     = $course->id;
-        $form->module     = $module->id;
-        $form->modulename = $module->name;
-        $form->instance   = "";
-        $form->coursemodule = "";
-        $form->mode       = "add";
-        $form->sesskey    = !empty($USER->id) ? $USER->sesskey : '';
-        if (!empty($type)) {
-            $form->type = $type;
-        }
-
-        $sectionname    = get_string("name$course->format");
-        $fullmodulename = get_string("modulename", $module->name);
-
-        if ($form->section && $course->format != 'site') {
-            $heading->what = $fullmodulename;
-            $heading->to   = "$sectionname $form->section";
-            $pageheading = get_string("addinganewto", "moodle", $heading);
-        } else {
-            $pageheading = get_string("addinganew", "moodle", $fullmodulename);
-        }
-
-        $CFG->pagepath = 'mod/'.$module->name;
-        if (!empty($type)) {
-            $CFG->pagepath .= '/' . $type;
-        }
-        else {
-            $CFG->pagepath .= '/mod';
-        }
+        redirect("view.php?id=$courseid");
 
     } else {
         print_error("unknowaction");
     }
 
-    require_login($course->id); // needed to setup proper $COURSE
-    $context = get_context_instance(CONTEXT_COURSE, $course->id);
-    require_capability('moodle/course:manageactivities', $context);
+function get_cm($id, $error='cmunknown') {
+    global $DB;
 
-    $streditinga = get_string("editinga", "moodle", $fullmodulename);
-    $strmodulenameplural = get_string("modulenameplural", $module->name);
+    if (!$modname = $DB->get_field_sql("SELECT md.name
+                                          FROM {course_modules} cm, {modules} md
+                                         WHERE cm.id = ? AND md.id = cm.module", array($id))){
+        print_error($error);
+    }
 
-    if ($module->name == "label") {
-        $focuscursor = "form.content";
+    $cm = get_coursemodule_from_id($modname, $id);
+    if ($cw = $DB->get_record("course_sections", array("id"=>$cm->section))) {
+        $cm->sectionnum = $cw->section;
     } else {
-        $focuscursor = "form.name";
+        $cm->sectionnum = 0;
     }
 
-    $navlinks = array();
-    $navlinks[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
-    $navlinks[] = array('name' => $streditinga, 'link' => '', 'type' => 'action');
-    $navigation = build_navigation($navlinks);
-
-    print_header_simple($streditinga, '', $navigation, $focuscursor, "", false);
-
-    if (!empty($cm->id)) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $currenttab = 'update';
-        $overridableroles = get_overridable_roles($context);
-        $assignableroles  = get_assignable_roles($context);
-        include_once($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
-    }
-
-    unset($SESSION->modform); // Clear any old ones that may be hanging around.
-
-    $modform = "../mod/$module->name/mod.html";
-
-    if (file_exists($modform)) {
-
-        if ($usehtmleditor = can_use_html_editor()) {
-            $defaultformat = FORMAT_HTML;
-            $editorfields = '';
-        } else {
-            $defaultformat = FORMAT_MOODLE;
-        }
-
-        $icon = '<img class="icon" src="'.$CFG->modpixpath.'/'.$module->name.'/icon.gif" alt="'.get_string('modulename',$module->name).'"/>';
-
-        print_heading_with_help($pageheading, "mods", $module->name, $icon);
-        print_simple_box_start('center', '', '', 5, 'generalbox', $module->name);
-        include_once($modform);
-        print_simple_box_end();
-
-        if ($usehtmleditor and empty($nohtmleditorneeded)) {
-            use_html_editor($editorfields);
-        }
-
-    } else {
-        notice("This module cannot be added to this course yet! (No file found at: $modform)", "$CFG->wwwroot/course/view.php?id=$course->id");
-    }
-
-    print_footer($course);
+    return $cm;
+}
 ?>
