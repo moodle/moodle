@@ -167,7 +167,7 @@ foreach ($nonmembers as $userid => $potentalmember) {
         $usergrouplist = '<ul>';
 
         foreach ($usergroups[$userid] as $groupitem) {
-            $usergrouplist .= '<li>'.addslashes(format_string($groupitem->name)).'</li>';
+            $usergrouplist .= '<li>'.addslashes_js(format_string($groupitem->name)).'</li>';
         }
         $usergrouplist .= '</ul>';
     }
