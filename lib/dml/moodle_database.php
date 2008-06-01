@@ -578,7 +578,7 @@ abstract class moodle_database {
      *   array.
      * @return mixed an array of objects, or empty array if no records were found, or false if an error occured.
      */
-    public function get_records_list($table, $field, array $values=null, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
+    public function get_records_list($table, $field, array $values, $sort='', $fields='*', $limitfrom=0, $limitnum=0) {
         $params = array();
         $select = array();
         $values = (array)$values;
@@ -592,6 +592,10 @@ abstract class moodle_database {
                 $select[] = "$field = ?";
                 $params[] = $value;
             }
+        }
+        if (empty($select)) {
+            // nothing to return
+            return array();
         }
         $select = implode(" AND ", $select);
         return $this->get_records_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);

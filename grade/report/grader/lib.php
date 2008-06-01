@@ -645,7 +645,7 @@ class grade_report_grader extends grade_report {
      * @return string HTML
      */
     function get_studentshtml() {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         $studentshtml = '';
         $strfeedback  = $this->get_lang_string("feedback");
@@ -656,12 +656,12 @@ class grade_report_grader extends grade_report {
         $numusers      = count($this->users);
 
         // Preload scale objects for items with a scaleid
-        $scales_list = '';
+        $scales_list = array();
         $tabindices = array();
 
         foreach ($this->gtree->items as $item) {
             if (!empty($item->scaleid)) {
-                $scales_list .= "$item->scaleid,";
+                $scales_list[] = $item->scaleid;
             }
 
             $tabindices[$item->id]['grade'] = $gradetabindex;
@@ -671,8 +671,7 @@ class grade_report_grader extends grade_report {
         $scales_array = array();
 
         if (!empty($scales_list)) {
-            $scales_list = substr($scales_list, 0, -1);
-            $scales_array = get_records_list('scale', 'id', $scales_list);
+            $scales_array = $DB->get_records_list('scale', 'id', $scales_list);
         }
         
         $row_classes = array(' even ', ' odd ');

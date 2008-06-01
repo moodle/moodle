@@ -83,7 +83,7 @@
             print_box(format_text($survey->intro), 'generalbox', 'intro');
             print_spacer(30);
 
-            $questions = get_records_list("survey_questions", "id", $survey->questions);
+            $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
             $questionorder = explode(",", $survey->questions);
             foreach ($questionorder as $key => $val) {
                 $question = $questions[$val];
@@ -114,7 +114,7 @@
     print_simple_box(format_text($survey->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
 
 // Get all the major questions and their proper order
-    if (! $questions = get_records_list("survey_questions", "id", $survey->questions)) {
+    if (! $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions))) {
         print_error("Couldn't find any questions in this survey!!");
     }
     $questionorder = explode( ",", $survey->questions);

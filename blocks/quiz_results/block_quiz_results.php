@@ -18,7 +18,7 @@ class block_quiz_results extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG;
+        global $USER, $CFG, $DB;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -282,7 +282,7 @@ class block_quiz_results extends block_base {
                 return $this->content;
             }
 
-            $mygroupsusers = get_records_list('groups_members', 'groupid', implode(',', array_keys($mygroups)), '', 'userid, id');
+            $mygroupsusers = $DB->get_records_list('groups_members', 'groupid', array_keys($mygroups), '', 'userid, id');
             // There should be at least one user there, ourselves. So no more tests.
 
             // Just filter out the grades belonging to other users, and proceed as if there were no groups
@@ -318,7 +318,7 @@ class block_quiz_results extends block_base {
 
             // Now grab all the users from the database
             $userids = array_merge(array_keys($best), array_keys($worst));
-            $users = get_records_list('user', 'id', implode(',',$userids), '', 'id, firstname, lastname, idnumber');
+            $users = $DB->get_records_list('user', 'id', $userids, '', 'id, firstname, lastname, idnumber');
 
             // Ready for output!
 

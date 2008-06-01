@@ -632,11 +632,12 @@ class question_match_qtype extends default_questiontype {
      * @return bool success or failure.
      */
     function decode_content_links_caller($questionids, $restore, &$i) {
+        global $DB;
+
         $status = true;
 
         // Decode links in the question_match_sub table.
-        if ($subquestions = get_records_list('question_match_sub', 'question',
-                implode(',',  $questionids), '', 'id, questiontext')) {
+        if ($subquestions = $DB->get_records_list('question_match_sub', 'question', $questionids, '', 'id, questiontext')) {
 
             foreach ($subquestions as $subquestion) {
                 $questiontext = restore_decode_content_links_worker($subquestion->questiontext, $restore);

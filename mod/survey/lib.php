@@ -99,14 +99,14 @@ function survey_user_outline($course, $user, $mod, $survey) {
 
 
 function survey_user_complete($course, $user, $mod, $survey) {
-    global $CFG;
+    global $CFG, $DB;
 
     if (survey_already_done($survey->id, $user->id)) {
         if ($survey->template == SURVEY_CIQ) { // print out answers for critical incidents
             $table = NULL;
             $table->align = array("left", "left");
 
-            $questions = get_records_list("survey_questions", "id", $survey->questions);
+            $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
             $questionorder = explode(",", $survey->questions);
             
             foreach ($questionorder as $key=>$val) {
@@ -363,7 +363,7 @@ function survey_shorten_name ($name, $numwords) {
 
 
 function survey_print_multi($question) {
-    global $USER, $DB, $qnum, $checklist;
+    global $USER, $DB, $qnum, $checklist, $DB;
 
     $stripreferthat = get_string("ipreferthat", "survey");
     $strifoundthat = get_string("ifoundthat", "survey");
@@ -395,7 +395,7 @@ function survey_print_multi($question) {
         echo "<tr><th scope=\"col\" colspan=\"7\">$question->intro</th></tr>\n"; 
     }
 
-    $subquestions = get_records_list("survey_questions", "id", $question->multi);
+    $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
 
     foreach ($subquestions as $q) {
         $qnum++;

@@ -145,7 +145,7 @@
 
         } else {
 
-            $questions = get_records_list("survey_questions", "id", $survey->questions);
+            $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
             $questionorder = explode(",", $survey->questions);
 
             foreach ($questionorder as $key => $val) {
@@ -174,7 +174,7 @@
       case "questions":
 
         if ($qid) {     // just get one multi-question
-            $questions = get_records_list("survey_questions", "id", $qid);
+            $questions = $DB->get_record("survey_questions", "id", $qid);
             $questionorder = explode(",", $qid);
 
             if ($scale = get_records("survey_questions", "multi", "$qid")) {
@@ -185,7 +185,7 @@
             }
 
         } else {        // get all top-level questions
-            $questions = get_records_list("survey_questions", "id", $survey->questions);
+            $questions = $DB->get_records_list("survey_questions", "id", explode(',',$survey->questions));
             $questionorder = explode(",", $survey->questions);
 
             print_heading($strallquestions);
@@ -215,7 +215,7 @@
                 if ($question->multi) {
                     echo "<h3>$question->text:</h3>";
 
-                    $subquestions = get_records_list("survey_questions", "id", $question->multi);
+                    $subquestions = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
                     $subquestionorder = explode(",", $question->multi);
                     foreach ($subquestionorder as $key => $val) {
                         $subquestion = $subquestions[$val];
@@ -346,7 +346,7 @@
          print_user_picture($user->id, $course->id, $user->picture, true);
          echo "</p>";
 
-         $questions = get_records_list("survey_questions", "id", $survey->questions);
+         $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
          $questionorder = explode(",", $survey->questions);
 
          if ($showscales) {

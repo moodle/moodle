@@ -136,7 +136,7 @@
        $options = explode(",",$question->options);
        $questionorder = explode( ",", $question->multi);
 
-       $qqq = get_records_list("survey_questions", "id", $question->multi);
+       $qqq = $DB->get_records_list("survey_questions", "id", explode(',',$question->multi));
 
        foreach ($questionorder as $i => $val) {
            $names[$i] = get_string($qqq["$val"]->shorttext, "survey");
@@ -258,7 +258,7 @@
 
      case "overall.png":
 
-       $qqq = get_records_list("survey_questions", "id", $survey->questions);
+       $qqq = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
 
 
        foreach ($qqq as $key => $qq) {
@@ -399,7 +399,7 @@
 
      case "student.png":
 
-       $qqq = get_records_list("survey_questions", "id", $survey->questions);
+       $qqq = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
 
        foreach ($qqq as $key => $qq) {
            if ($qq->multi) {
@@ -572,7 +572,7 @@
        $options = explode(",",$question->options);
        $questionorder = explode( ",", $question->multi);
 
-       $qqq = get_records_list("survey_questions", "id", $question->multi);
+       $qqq = $DB->get_records_list("survey_questions", "id", explode(',', $question->multi));
 
        foreach ($questionorder as $i => $val) {
            $names[$i] = get_string($qqq[$val]->shorttext, "survey");

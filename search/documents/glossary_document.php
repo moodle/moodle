@@ -122,6 +122,7 @@ function glossary_iterator() {
 * @return an array of searchable documents
 */
 function glossary_get_content_for_index(&$glossary) {
+    global $DB;
 
     // get context
     $coursemodule = get_field('modules', 'id', 'name', 'glossary');
@@ -144,8 +145,7 @@ function glossary_get_content_for_index(&$glossary) {
     
     // index comments
     if (count($entryIds)){
-        $entryIdList = implode(',', $entryIds);
-        $comments = get_records_list('glossary_comments', 'entryid', $entryIdList);
+        $comments = $DB->get_records_list('glossary_comments', 'entryid', $entryIds);
         if ($comments){
             foreach($comments as $comment) {
                 if (strlen($comment->entrycomment) > 0) {

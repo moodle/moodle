@@ -365,6 +365,7 @@ function hotpot_set_form_values(&$hotpot) {
     return $ok;
 }
 function hotpot_get_chain(&$cm) {
+    global $DB;
     // get details of course_modules in this section
     $course_module_ids = get_field('course_sections', 'sequence', 'id', $cm->section);
     if (empty($course_module_ids)) {
@@ -386,7 +387,7 @@ function hotpot_get_chain(&$cm) {
     if (empty($ids)) {
         $hotpots = array();
     } else {
-        $hotpots = get_records_list('hotpot', 'id', implode(',', $ids));
+        $hotpots = $DB->get_records_list('hotpot', 'id', $ids);
     }
 
     $found = false;

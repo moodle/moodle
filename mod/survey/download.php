@@ -40,7 +40,7 @@
 
 // Get all the questions and their proper order
 
-    $questions = get_records_list("survey_questions", "id", $survey->questions);
+    $questions = $DB->get_records_list("survey_questions", "id", explode(',', $survey->questions));
     $order = explode(",", $survey->questions);
 
     $virtualscales = false;
@@ -52,13 +52,9 @@
         }
     }
 
-    $fullorderlist = "";
+    $fullorderlist = array();
     foreach ($order as $key => $qid) {    // build up list of actual questions
         $question = $questions[$qid];
-
-        if (!(empty($fullorderlist))) {
-            $fullorderlist .= ",";
-        }
 
         if ($question->multi) {
             $addlist = $question->multi;
@@ -67,14 +63,14 @@
         }
 
         if ($virtualscales && ($question->type < 0)) {        // only use them
-            $fullorderlist .= $addlist;
+            $fullorderlist[] = $addlist;
 
         } else if (!$virtualscales && ($question->type >= 0)){   // ignore them
-            $fullorderlist .= $addlist;
+            $fullorderlist[] = $addlist;
         }
     }
 
-    $fullquestions = get_records_list("survey_questions", "id", $fullorderlist);
+    $fullquestions = $DB->get_records_list("survey_questions", "id", $fullorderlist);
 
 //  Question type of multi-questions overrides the type of single questions
     foreach ($order as $key => $qid) {

@@ -1318,6 +1318,7 @@ class default_questiontype {
     * @param integer $cmid optional The id of the course module currently being edited
     */
     function print_replacement_options($question, $course, $cmid='0') {
+        global $DB;
 
         // Disable until the versioning code has been fixed
         if (true) {
@@ -1337,8 +1338,7 @@ class default_questiontype {
         foreach($instances as $instance) {
             $quizlist[$instance->quiz] = $instance->quiz;
         }
-        $quizlist = implode(',', $quizlist);
-        if(empty($quizlist) or !$quizzes = get_records_list('quiz', 'id', $quizlist)) {
+        if(empty($quizlist) or !$quizzes = $DB->get_records_list('quiz', 'id', $quizlist)) {
             $quizzes = array();
         }
 

@@ -16,20 +16,19 @@
 
     $strimport = get_string("importdata");
 
-    $tcourseids = '';
+    $tcourseids = array();
 
     if ($teachers = get_user_capability_course('moodle/course:update')) {
         foreach ($teachers as $teacher) {
             if ($teacher->id != $course->id && $teacher->id != SITEID){
-                $tcourseids .= $teacher->id.',';
+                $tcourseids[] = $teacher->id;
             }
         }
     }
 
     $taught_courses = array();
     if (!empty($tcourseids)) {
-        $tcourseids = substr($tcourseids,0,-1);
-        $taught_courses = get_records_list('course', 'id', $tcourseids);
+        $taught_courses = $DB->get_records_list('course', 'id', $tcourseids);
     }
 
     if (!empty($creator)) {

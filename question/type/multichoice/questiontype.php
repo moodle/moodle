@@ -556,11 +556,13 @@ class question_multichoice_qtype extends default_questiontype {
      * @return bool success or failure.
      */
     function decode_content_links_caller($questionids, $restore, &$i) {
+        global $DB;
+
         $status = true;
 
         // Decode links in the question_multichoice table.
-        if ($multichoices = get_records_list('question_multichoice', 'question',
-                implode(',',  $questionids), '', 'id, correctfeedback, partiallycorrectfeedback, incorrectfeedback')) {
+        if ($multichoices = $DB->get_records_list('question_multichoice', 'question',
+                $questionids, '', 'id, correctfeedback, partiallycorrectfeedback, incorrectfeedback')) {
 
             foreach ($multichoices as $multichoice) {
                 $correctfeedback = restore_decode_content_links_worker($multichoice->correctfeedback, $restore);

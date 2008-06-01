@@ -940,8 +940,7 @@
     }
 
     function quiz_restore_pre15_multianswer ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1023,7 +1022,7 @@
             //Remap question_answers records from the original multianswer question
             //to their newly created question
             if ($newid) {
-                $answersdb = get_records_list('question_answers','id',$multianswer->answers);
+                $answersdb = $DB->get_records_list('question_answers','id', explode(',',$multianswer->answers));
                 foreach ($answersdb as $answerdb) {
                     set_field('question_answers','question',$newid,'id',$answerdb->id);
                 }

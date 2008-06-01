@@ -24,7 +24,7 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function get_question_options(&$question) {
-        global $QTYPES;
+        global $QTYPES, $DB;
 
         // Get relevant data indexed by positionkey from the multianswers table
         if (!$sequence = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
@@ -32,7 +32,7 @@ class embedded_cloze_qtype extends default_questiontype {
             return false;
         }
 
-        $wrappedquestions = get_records_list('question', 'id', $sequence, 'id ASC');
+        $wrappedquestions = $DB->get_records_list('question', 'id', explode(',', $sequence), 'id ASC');
 
         // We want an array with question ids as index and the positions as values
         $sequence = array_flip(explode(',', $sequence));
@@ -58,7 +58,7 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
-        global $QTYPES;
+        global $QTYPES, $DB;
         $result = new stdClass;
 
         // This function needs to be able to handle the case where the existing set of wrapped
@@ -72,7 +72,7 @@ class embedded_cloze_qtype extends default_questiontype {
         if (!$oldwrappedids = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
             $oldwrappedids = array();
         } else {
-            $oldwrappedids = get_records_list('question', 'id', $oldwrappedids, 'id ASC','id');
+            $oldwrappedids = $DB->get_records_list('question', 'id', explode(',', $oldwrappedids), 'id ASC','id');
         }
         $sequence = array();
         foreach($question->options->questions as $wrapped) {

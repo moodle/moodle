@@ -73,6 +73,8 @@ class grade_report_grader_ajax extends grade_report_grader {
      * @return array
      */
     function get_scales_array() {
+        global $DB;
+
         if (empty($this->gtree->items)) {
             return false;
         }
@@ -81,18 +83,17 @@ class grade_report_grader_ajax extends grade_report_grader {
             return $this->scales_array;
         }
 
-        $scales_list = '';
+        $scales_list = array();
         $scales_array = array();
         
         foreach ($this->gtree->items as $item) {
             if (!empty($item->scaleid)) {
-                $scales_list .= "$item->scaleid,";
+                $scales_list[] = $item->scaleid;
             }
         }
         
         if (!empty($scales_list)) {
-            $scales_list = substr($scales_list, 0, -1);
-            $scales_array = get_records_list('scale', 'id', $scales_list);
+            $scales_array = $DB->get_records_list('scale', 'id', $scales_list);
             $this->scales_array = $scales_array;
             return $scales_array;
         } else {
