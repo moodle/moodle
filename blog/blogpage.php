@@ -41,11 +41,15 @@ class page_blog extends page_base {
         }
     }
 
-    // Here you should load up all heavy-duty data for your page. Basically everything that
-    // does not NEED to be loaded for the class to make basic decisions should NOT be loaded
-    // in init_quick() and instead deferred here. Of course this function had better recognize
-    // $this->full_init_done to prevent wasteful multiple-time data retrieval.
+    /**
+     * Here you should load up all heavy-duty data for your page. Basically everything that
+     * does not NEED to be loaded for the class to make basic decisions should NOT be loaded
+     * in init_quick() and instead deferred here. Of course this function had better recognize
+     * $this->full_init_done to prevent wasteful multiple-time data retrieval.
+     */
     function init_full() {
+        global $DB;
+
         if ($this->full_init_done) {
             return;
         }
@@ -56,7 +60,7 @@ class page_blog extends page_base {
             $this->courseid = '';
             $courserecord = NULL;
         } else {
-            if (! ($courserecord = get_record('course', 'id', $this->courseid)) ) {
+            if (! ($courserecord = $DB->get_record('course', array('id'=>$this->courseid))) ) {
                 print_error('invalidcourseid', 'error', '',  $this->courseid);
             }
         }

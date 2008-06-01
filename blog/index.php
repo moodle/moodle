@@ -42,7 +42,7 @@ if (empty($filtertype)) {
     } else if (has_capability('moodle/blog:view', $sitecontext) and $CFG->bloglevel > BLOG_USER_LEVEL) {
         if ($postid) {
             $filtertype = 'user';
-            if (!$postobject = get_record('post', 'module', 'blog', 'id', $postid)) {
+            if (!$postobject = $DB->get_record('post', array('module'=>'blog', 'id'=>$postid))) {
                 error('No such blog entry');
             }
             $filterselect = $postobject->userid;
@@ -77,7 +77,7 @@ switch ($filtertype) {
         if ($CFG->bloglevel < BLOG_COURSE_LEVEL) {
             print_error('courseblogdisable', 'blog');
         }
-        if (!$course = get_record('course', 'id', $filterselect)) {
+        if (!$course = $DB->get_record('course', array('id'=>$filterselect))) {
             print_error('invalidcourseid');
         }
         $courseid = $course->id;
@@ -97,7 +97,7 @@ switch ($filtertype) {
         if (! $group = groups_get_group($filterselect)) { //TODO:check.
             print_error('invalidgroupid');
         }
-        if (!$course = get_record('course', 'id', $group->courseid)) {
+        if (!$course = $DB->get_record('course', array('id'=>$group->courseid))) {
             print_error('invalidcourseid');
         }
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -119,7 +119,7 @@ switch ($filtertype) {
         if ($CFG->bloglevel < BLOG_USER_LEVEL) {
             print_error('blogdisable', 'blog');
         }
-        if (!$user = get_record('user', 'id', $filterselect)) {
+        if (!$user = $DB->get_record('user', array('id'=>$filterselect))) {
             print_error('invaliduserid');
         }
         if ($USER->id == $filterselect) {

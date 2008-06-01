@@ -16,7 +16,7 @@ $blockid     = optional_param('blockid',    0, PARAM_INT);
 blog_check_and_install_blocks();
 
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourseid', '', '', $courseid);
 }
 
@@ -83,7 +83,7 @@ if ($editing) {
 }
 
 if (!empty($tagid)) {
-    $taginstance = get_record('tag', 'id', $tagid);
+    $taginstance = $DB->get_record('tag', array('id'=>$tagid));
 } elseif (!empty($tag)) {
     $taginstance = tag_id($tag);
 }
@@ -98,7 +98,7 @@ $blogstring = get_string('blogs','blog');
 $tagstring = get_string('tag');
 
 // needed also for user tabs later
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourseid', '', '', $courseid);
 }
 
@@ -164,7 +164,7 @@ $navlinks = array();
 
         case 'user':
             $participants = get_string('participants');
-            if (!$user = get_record('user', 'id', $filterselect)) {
+            if (!$user = $DB->get_record('user', array('id'=>$filterselect))) {
                print_error('invaliduserid');
             }
 

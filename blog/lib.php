@@ -21,13 +21,14 @@
      * default blocks (blog_menu and blog_tags).
      */
     function blog_check_and_install_blocks() {
-        global $USER;
+        global $USER, $DB;
+
         if (isloggedin() && !isguest()) {
             // if this user has not visited this page before
             if (!get_user_preferences('blogpagesize')) {
                 // find the correct ids for blog_menu and blog_from blocks
-                $menublock = get_record('block','name','blog_menu');
-                $tagsblock = get_record('block','name','blog_tags');
+                $menublock = $DB->get_record('block', array('name'=>'blog_menu'));
+                $tagsblock = $DB->get_record('block', array('name'=>'blog_tags'));
                 // add those 2 into block_instance page
 
                 // add blog_menu block
@@ -38,12 +39,12 @@
                 $newblock->position = 'r';
                 $newblock->weight   = 0;
                 $newblock->visible  = 1;
-                insert_record('block_instance', $newblock);
+                $DB->insert_record('block_instance', $newblock);
 
                 // add blog_tags menu
                 $newblock -> blockid = $tagsblock->id;
                 $newblock -> weight  = 1;
-                insert_record('block_instance', $newblock);
+                $DB->insert_record('block_instance', $newblock);
 
                 // finally we set the page size pref
                 set_user_preference('blogpagesize', 10);
@@ -140,15 +141,14 @@
      *     display the entry in its abbreviated format (eg. index page)
      */
     function blog_print_entry($blogEntry, $viewtype='full', $filtertype='', $filterselect='', $mode='loud') {
-
-        global $USER, $CFG, $COURSE, $ME;
+        global $USER, $CFG, $COURSE, $ME, $DB;
 
         $template['body'] = format_text($blogEntry->summary, $blogEntry->format);
         //$template['title'] = '<a name="'. $blogEntry->subject .'"></a>';
         //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
         $template['title'] = '<span class="nolink">'.$blogEntry->subject.'</span>';
         $template['userid'] = $blogEntry->userid;
-        $template['author'] = fullname(get_record('user','id',$blogEntry->userid));
+        $template['author'] = fullname($DB->get_record('user', array('id'=>$blogEntry->userid)));
         $template['lastmod'] = userdate($blogEntry->lastmodified);
         $template['created'] = userdate($blogEntry->created);
         $template['publishstate'] = $blogEntry->publishstate;
@@ -164,7 +164,7 @@
         $stredit = get_string('edit');
         $strdelete = get_string('delete');
 
-        $user = get_record('user','id',$template['userid']);
+        $user = $DB->get_record('user', array('id'=>$template['userid']));
 
         /// Start printing of the blog
 
@@ -247,10 +247,11 @@
 
     }
 
+    /**
+     * Creates a directory file name, suitable for make_upload_directory()
+     * $CFG->dataroot/blog/attachments/xxxx/file.jpg
+     */
     function blog_file_area_name($blogentry) {
-    //  Creates a directory file name, suitable for make_upload_directory()
-        global $CFG;
-        // $CFG->dataroot/blog/attachments/xxxx/file.jpg
         return "blog/attachments/$blogentry->id";
     }
 
@@ -258,10 +259,11 @@
         return make_upload_directory( blog_file_area_name($blogentry) );
     }
 
+    /**
+     * Deletes all the user files in the attachments area for a post
+     * EXCEPT for any file named $exception
+     */
     function blog_delete_old_attachments($post, $exception="") {
-    // Deletes all the user files in the attachments area for a post
-    // EXCEPT for any file named $exception
-
         if ($basedir = blog_file_area($post)) {
             if ($files = get_directory_list($basedir)) {
                 foreach ($files as $file) {
@@ -277,11 +279,12 @@
         }
     }
 
+    /**
+     * if return=html, then return a html string.
+     * if return=text, then return a text-only string.
+     * otherwise, print HTML for non-images, and return image HTML
+     */
     function blog_print_attachments($blogentry, $return=NULL) {
-    // if return=html, then return a html string.
-    // if return=text, then return a text-only string.
-    // otherwise, print HTML for non-images, and return image HTML
-
         global $CFG;
 
         $filearea = blog_file_area_name($blogentry);
@@ -338,7 +341,6 @@
      *                choose_from_menu function.
      */
     function blog_applicable_publish_states($courseid='') {
-
         global $CFG;
 
         // everyone gets draft access
@@ -366,7 +368,6 @@
      * This also applies to deleting of posts.
      */
     function blog_user_can_edit_post($blogEntry) {
-
         global $CFG, $USER;
 
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
@@ -390,7 +391,7 @@
      * in blog/index.php
      */
     function blog_user_can_view_user_post($targetuserid, $blogEntry=null) {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         if (empty($CFG->bloglevel)) {
             return false; // blog system disabled
@@ -442,7 +443,7 @@
                 $usercourses = array_keys(get_my_courses($targetuserid));
                 $shared = array_intersect($mycourses, $usercourses);
                 foreach ($shared as $courseid) {
-                    $course = get_record('course', 'id', $courseid);
+                    $course = $DB->get_record('course', array('id'=>$courseid));
                     $coursecontext = get_context_instance(CONTEXT_COURSE, $courseid);
                     if (has_capability('moodle/site:accessallgroups', $coursecontext)
                       or groups_get_course_groupmode($course) != SEPARATEGROUPS) {
@@ -474,17 +475,16 @@
      * Main filter function.
      */
     function blog_fetch_entries($postid='', $fetchlimit=10, $fetchstart='', $filtertype='', $filterselect='', $tagid='', $tag ='', $sort='lastmodified DESC', $limit=true) {
-
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         /// the post table will be used for other things too
-        $typesql = " AND p.module = 'blog' ";
+        $typesql = "AND p.module = 'blog'";
 
         /// set the tag id for searching
         if ($tagid) {
             $tag = $tagid;
         } else if ($tag) {
-            if ($tagrec = get_record_sql('SELECT * FROM '.$CFG->prefix.'tag WHERE name LIKE "'.$tag.'"')) {
+            if ($tagrec = $DB->get_record_sql("SELECT * FROM {tag} WHERE name LIKE ?", array($tag))) {
                 $tag = $tagrec->id;
             } else {
                 $tag = -1;    //no records found
@@ -495,12 +495,11 @@
         // Just return 1 entry
 
         if ($postid) {
-
-            if ($post = get_record('post', 'id', $postid)) {
+            if ($post = $DB->get_record('post', array('id'=>$postid))) {
 
                 if (blog_user_can_view_user_post($post->userid, $post)) {
 
-                    if ($user = get_record('user', 'id', $post->userid)) {
+                    if ($user = $DB->get_record('user', array('id'=>$post->userid))) {
                         $post->email = $user->email;
                         $post->firstname = $user->firstname;
                         $post->lastname = $user->lastname;
@@ -516,18 +515,22 @@
             }
         }
 
+        $params = array();
+
         if ($tag) {
-            $tagtablesql = $CFG->prefix.'tag_instance ti, ';
-            $tagquerysql = ' AND ti.itemid = p.id AND ti.tagid = '.$tag.' AND ti.itemtype = \'post\' ';
+            $tagtablesql = ", {tag_instance} ti";
+            $tagquerysql = "AND ti.itemid = p.id AND ti.tagid = :tag AND ti.itemtype = 'post'";
+            $params['tag'] = $tag;
         } else {
             $tagtablesql = '';
             $tagquerysql = '';
         }
 
         if (isloggedin() && !has_capability('moodle/legacy:guest', get_context_instance(CONTEXT_SYSTEM), $USER->id, false)) {
-            $permissionsql =  'AND (p.publishstate = \'site\' OR p.publishstate = \'public\' OR p.userid = '.$USER->id.')';
+            $permissionsql = "AND (p.publishstate = 'site' OR p.publishstate = 'public' OR p.userid = :userid)";
+            $params['userid'] = $USER->id;
         } else {
-            $permissionsql =  'AND p.publishstate = \'public\'';
+            $permissionsql = "AND p.publishstate = 'public'";
         }
 
         // fix for MDL-9165, use with readuserblogs capability in a user context can read that user's private blogs
@@ -542,7 +545,7 @@
          * different possible sqls              *
          ****************************************/
 
-        $requiredfields = 'p.*, u.firstname,u.lastname,u.email';
+        $requiredfields = "p.*, u.firstname,u.lastname,u.email";
 
         if ($filtertype == 'course' && $filterselect == SITEID) {  // Really a site
             $filtertype = 'site';
@@ -552,11 +555,11 @@
 
             case 'site':
 
-                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                        .$CFG->prefix.'user u
-                        WHERE p.userid = u.id '.$tagquerysql.'
-                        AND u.deleted = 0
-                        '.$permissionsql.$typesql;
+                $SQL = "SELECT $requiredfields
+                          FROM {post} p, {user} u $tagtablesql
+                         WHERE p.userid = u.id $tagquerysql
+                               AND u.deleted = 0
+                               $permissionsql $typesql";
 
             break;
 
@@ -568,37 +571,39 @@
                 if (has_capability('moodle/role:viewhiddenassigns', $context)) {
                     $hiddensql = '';
                 } else {
-                    $hiddensql = ' AND ra.hidden = 0 ';
+                    $hiddensql = 'AND ra.hidden = 0';
                 }
 
-                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                        .$CFG->prefix.'role_assignments ra, '.$CFG->prefix.'user u
-                        WHERE p.userid = ra.userid '.$tagquerysql.'
-                        AND ra.contextid '.get_related_contexts_string($context).'
-                        AND u.id = p.userid
-                        AND u.deleted = 0
-                        '.$hiddensql.$permissionsql.$typesql;
+                $SQL = "SELECT $requiredfields
+                          FROM {post} p, {user} u, {role_assignments} ra $tagtablesql
+                         WHERE p.userid = ra.userid $tagquerysql
+                               AND ra.contextid ".get_related_contexts_string($context)."
+                               AND u.id = p.userid
+                               AND u.deleted = 0
+                               $hiddensql $permissionsql $typesql";
 
             break;
 
             case 'group':
 
-                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                          .$CFG->prefix.'groups_members gm, '.$CFG->prefix.'user u
-                        WHERE p.userid = gm.userid AND u.id = p.userid '.$tagquerysql.'
-                          AND gm.groupid = '.$filterselect.'
-                          AND u.deleted = 0
-                          '.$permissionsql.$typesql;
+                $SQL = "SELECT $requiredfields
+                          FROM {post} p, {user} u, {groups_members} gm $tagtablesql
+                         WHERE p.userid = gm.userid AND u.id = p.userid $tagquerysql
+                               AND gm.groupid = :groupid
+                               AND u.deleted = 0
+                               $permissionsql $typesql";
+                $params['groupid'] = $filterselect;
             break;
 
             case 'user':
 
-                $SQL = 'SELECT '.$requiredfields.' FROM '.$CFG->prefix.'post p, '.$tagtablesql
-                        .$CFG->prefix.'user u
-                        WHERE p.userid = u.id '.$tagquerysql.'
-                        AND u.id = '.$filterselect.'
-                        AND u.deleted = 0
-                        '.$permissionsql.$typesql;
+                $SQL = "SELECT $requiredfields
+                          FROM {post} p, {user} u $tagtablesql
+                         WHERE p.userid = u.id $tagquerysql
+                               AND u.id = :uid
+                               AND u.deleted = 0
+                               $permissionsql $typesql";
+               $params['uid'] = $filterselect;
             break;
         }
 
@@ -610,9 +615,9 @@
             $limitnum = $fetchlimit;
         }
 
-        $orderby = ' ORDER BY '. $sort .' ';
+        $orderby = "ORDER BY $sort";
 
-        $records = get_records_sql($SQL . $orderby, $limitfrom, $limitnum);
+        $records = $DB->get_records_sql("$SQL $orderby", $params, $limitfrom, $limitnum);
 
         if (empty($records)) {
             return array();
@@ -686,12 +691,10 @@
      * Used in backup of site courses.
      */
     function blog_get_participants() {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql("SELECT userid as id 
-                                  FROM {$CFG->prefix}post
-                                 WHERE module = 'blog'
-                                   AND courseid = 0");
+        return $DB->get_records_sql("SELECT userid AS id 
+                                       FROM {post}
+                                      WHERE module = 'blog' AND courseid = 0");
     }
 ?>

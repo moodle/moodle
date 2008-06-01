@@ -26,7 +26,7 @@ if (!has_capability('moodle/blog:create', $sitecontext) and !has_capability('moo
 
 // Make sure that the person trying to edit have access right
 if ($id) {
-    if (!$existing = get_record('post', 'id', $id)) {
+    if (!$existing = $DB->get_record('post', array('id'=>$id))) {
         print_error('wrongpostid', 'blog');
     }
 
@@ -50,7 +50,7 @@ if (!empty($courseid)) {
 
 $strblogs = get_string('blogs','blog');
 
-if ($action=='delete'){
+if ($action === 'delete'){
     if (!$existing) {
         print_error('wrongpostid', 'blog');
     }
@@ -74,7 +74,7 @@ $blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext'));
 
 if ($blogeditform->is_cancelled()){
     redirect($returnurl);
-} else if ($fromform = $blogeditform->get_data()){
+} else if ($fromform = $blogeditform->get_data(false)){
     //save stuff in db
     switch ($action) {
         case 'add':
@@ -128,7 +128,7 @@ switch ($action) {
 }
 
 // done here in order to allow deleting of posts with wrong user id above
-if (!$user = get_record('user', 'id', $userid)) {
+if (!$user = $DB->get_record('user', array('id'=>$userid))) {
     print_error('invaliduserid');
 }
 $navlinks = array();
@@ -149,13 +149,13 @@ die;
 
 /*****************************   edit.php functions  ***************************/
 
-/*
+/**
 * Delete blog post from database
 */
 function do_delete($post) {
-    global $returnurl;
+    global $returnurl, $DB;
 
-    $status = delete_records('post', 'id', $post->id);
+    $status = $DB->delete_records('post', array('id'=>$post->id));
     //$status = delete_records('blog_tag_instance', 'entryid', $post->id) and $status;
     tag_set('post', $post->id, array());
     
@@ -172,7 +172,7 @@ function do_delete($post) {
  * Write a new blog entry into database
  */
 function do_add($post, $blogeditform) {
-    global $CFG, $USER, $returnurl;
+    global $CFG, $USER, $returnurl, $DB;
 
     $post->module       = 'blog';
     $post->userid       = $USER->id;
@@ -180,12 +180,12 @@ function do_add($post, $blogeditform) {
     $post->created      = time();
 
     // Insert the new blog entry.
-    if ($id = insert_record('post', $post)) {
+    if ($id = $DB->insert_record('post', $post)) {
         $post->id = $id;
         // add blog attachment
         $dir = blog_file_area_name($post);
         if ($blogeditform->save_files($dir) and $newfilename = $blogeditform->get_new_filename()) {
-            set_field("post", "attachment", $newfilename, "id", $post->id);
+            $DB->set_field("post", "attachment", $newfilename, array("id"=>$post->id));
         }
         add_tags_info($post->id);
         add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
@@ -202,9 +202,7 @@ function do_add($post, $blogeditform) {
  * @todo complete documenting this function. enable trackback and pingback between entries on the same server
  */
 function do_edit($post, $blogeditform) {
-
-    global $CFG, $USER, $returnurl;
-
+    global $CFG, $USER, $returnurl, $DB;
 
     $post->lastmodified = time();
 
@@ -214,7 +212,7 @@ function do_edit($post, $blogeditform) {
     }
 
     // update record
-    if (update_record('post', $post)) {
+    if ($DB->update_record('post', $post)) {
         // delete all tags associated with this entry
         
         //delete_records('blog_tag_instance', 'entryid', $post->id);

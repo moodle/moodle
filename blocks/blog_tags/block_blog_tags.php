@@ -73,9 +73,10 @@ class block_blog_tags extends block_base {
 
         $timewithin = time() - $this->config->timewithin * 24 * 60 * 60; /// convert to seconds
 
-        // admins should be able to read all tags      
+        // admins should be able to read all tags
+        $type = '';
         if (!has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM))) {
-            $type .= " AND (p.publishstate = 'site' or p.publishstate='public')";
+            $type = " AND (p.publishstate = 'site' or p.publishstate='public')";
         }
 
         $sql  = "SELECT t.id, t.tagtype, t.rawname, t.name, COUNT(DISTINCT ti.id) AS ct

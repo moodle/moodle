@@ -5,8 +5,8 @@ require_once($CFG->libdir.'/formslib.php');
 class blog_edit_form extends moodleform {
 
     function definition() {
-
         global $CFG, $COURSE, $USER;
+
         $mform    =& $this->_form;
 
         $post = $this->_customdata['existing'];
@@ -75,13 +75,14 @@ class blog_edit_form extends moodleform {
      *
      */
     function otags_select_setup(){
-        global $CFG;
+        global $CFG, $DB;
+
         $mform =& $this->_form;
         if ($otagsselect =& $mform->getElement('otags')) {
             $otagsselect->removeOptions();
         }
         $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
-        if ($otags = get_records_sql_menu('SELECT id, '.$namefield.' from '.$CFG->prefix.'tag WHERE tagtype=\'official\' ORDER by name ASC')){
+        if ($otags = $DB->get_records_sql_menu("SELECT id, $namefield FROM {tag} WHERE tagtype='official' ORDER by name ASC")){
             $otagsselect->loadArray($otags);
         }
     }

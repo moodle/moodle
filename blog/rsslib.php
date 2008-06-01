@@ -50,7 +50,7 @@
 
     // Generate any blog RSS feed via one function (called by ../rss/file.php)
     function blog_generate_rss_feed($type, $id, $tagid=0) {
-        global $CFG, $SITE;
+        global $CFG, $SITE, $DB;
 
         if (empty($CFG->enablerssfeeds)) {
             debugging('Sorry, RSS feeds are disabled on this site');
@@ -74,7 +74,7 @@
             $items = array();
             foreach ($blogposts as $blogpost) {
                 $item = NULL;
-                $item->author = fullname(get_record('user','id',$blogpost->userid));
+                $item->author = fullname($DB->get_record('user', array('id'=>$blogpost->userid))); // TODO: this is slow
                 $item->title = $blogpost->subject;
                 $item->pubdate = $blogpost->lastmodified;
                 $item->link = $CFG->wwwroot.'/blog/index.php?postid='.$blogpost->id;
@@ -90,10 +90,10 @@
      
         switch ($type) {
             case 'user':
-                $info = fullname(get_record('user', 'id', $id, '','','','','firstname,lastname'));
+                $info = fullname($DB->get_record('user', array('id'=>$id), 'firstname,lastname'));
                 break;
             case 'course':
-                $info = get_field('course', 'fullname', 'id', $id);
+                $info = $DB->get_field('course', 'fullname', array('id'=>$id));
                 break;
             case 'site':
                 $info = $SITE->fullname;
@@ -108,7 +108,7 @@
         }
 
         if ($tagid) {
-            $info .= ': '.get_field('tags', 'text', 'id', $tagid);
+            $info .= ': '.$DB->get_field('tags', 'text', array('id'=>$tagid));
         }
 
         $header = rss_standard_header(get_string($type.'blog','blog', $info), 
