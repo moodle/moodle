@@ -39,19 +39,19 @@ function quiz_get_newgraded_states($attemptids, $idxattemptq = true){
 }
 
 function quiz_get_average_grade_for_questions($quiz, $userids){
-    global $CFG;
+    global $CFG, $DB;
     $qmfilter = quiz_report_qm_filter_subselect($quiz, 'qa.userid');
     $questionavgssql = "SELECT qs.question, AVG(qs.grade) FROM " .
             "{$CFG->prefix}question_sessions qns, " .
             "{$CFG->prefix}quiz_attempts qa, " .
             "{$CFG->prefix}question_states qs " .
             "WHERE qns.attemptid = qa.uniqueid AND " .
-            "qa.quiz = {$quiz->id} AND " .
+            "qa.quiz = ? AND " .
             ($qmfilter?$qmfilter.' AND ':'').
             "qa.userid IN ({$userids}) AND " .
             "qs.event IN (".QUESTION_EVENTS_GRADED.") AND ".
             "qns.newgraded = qs.id GROUP BY qs.question";
-    return get_records_sql_menu($questionavgssql);
+    return $DB->get_records_sql_menu($questionavgssql, array($quiz->id));
 }
 
 function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
@@ -164,17 +164,16 @@ function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
 }
 
 function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist){
-    global $CFG;
+    global $CFG, $DB;
     $sql = "SELECT
         FLOOR(qg.grade/$bandwidth) AS band,
         COUNT(1) AS num
     FROM
-        {$CFG->prefix}quiz_grades qg, 
-        {$CFG->prefix}quiz q
-    WHERE qg.quiz = q.id AND qg.quiz = $quizid AND qg.userid IN ($useridlist)
+        {quiz_grades} qg,  {quiz} q
+    WHERE qg.quiz = q.id AND qg.quiz = ? AND qg.userid IN ($useridlist)
     GROUP BY band
     ORDER BY band";
-    $data = get_records_sql_menu($sql);
+    $data = $DB->get_records_sql_menu($sql, array($quizid));
     //need to create array elements with values 0 at indexes where there is no element
     $data =  $data + array_fill(0, $bands+1, 0);
     ksort($data);

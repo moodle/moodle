@@ -145,15 +145,16 @@
                 </script>';
 
 
-        $sql = 'select c.id, c.shortname from '.$CFG->prefix.'course c, '.
-                                              $CFG->prefix.'feedback_value fv, '.$CFG->prefix.'feedback_item fi '.
+        $sql = 'select c.id, c.shortname from {course} c, '.
+                                              '{feedback_value} fv, {feedback_item} fi '.
                                               'where c.id = fv.course_id and fv.item = fi.id '.
-                                              'and fi.feedback = '.$feedback->id.' '.
+                                              'and fi.feedback = ?'.
                                               'and 
-                                              (c.shortname '.sql_ilike().' \'%'.$searchcourse.'%\'
-                                              OR c.fullname '.sql_ilike().' \'%'.$searchcourse.'%\')';
+                                              (c.shortname '.$DB->sql_ilike().' ?
+                                              OR c.fullname '.$DB->sql_ilike().' ?)';
+        $params = array($feedback->id, "%$searchcourse%", "%$searchcourse%");
         
-        if ($courses = get_records_sql_menu($sql)) {
+        if ($courses = $DB->get_records_sql_menu($sql, $params)) {
 
              echo ' ' . get_string('filter_by_course', 'feedback') . ': ';
              choose_from_menu ($courses, 'coursefilter', $coursefilter, 'choose', 'this.form.submit()');

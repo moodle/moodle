@@ -406,13 +406,13 @@ class hotpot_report extends hotpot_default_report {
 		);
 	}
 	function set_data_attempt(&$attempt, &$strftimedate, &$strftimetime, &$blank) {
-		global $CFG;
-		$records = get_records_sql_menu("
+		global $CFG, $DB;
+		$records = $DB->get_records_sql_menu("
 			SELECT userid, MAX(time) AS logintime
-			FROM {$CFG->prefix}log
-			WHERE userid=$attempt->userid AND action='login' AND time<$attempt->timestart
+			FROM {log}
+			WHERE userid=? AND action='login' AND time<?
 			GROUP BY userid
-		");
+		", array($attempt->userid, $attempt->timestart));
 		if (empty($records)) {
 			$logindate = $blank;
 			$logintime = $blank;
@@ -421,12 +421,12 @@ class hotpot_report extends hotpot_default_report {
 			$logindate = trim(userdate($logintime, $strftimedate));
 			$logintime = trim(userdate($logintime, $strftimetime));
 		}
-		$records = get_records_sql_menu("
+		$records = $DB->get_records_sql_menu("
 			SELECT userid, MIN(time) AS logouttime
-			FROM {$CFG->prefix}log
-			WHERE userid=$attempt->userid AND action='logout' AND time>$attempt->cr_timefinish 
+			FROM {log}
+			WHERE userid=? AND action='logout' AND time>? 
 			GROUP BY userid
-		");
+		", array($attempt->userid, $attempt->cr_timefinish));
 		if (empty($records)) {
 			$logouttime = $blank;
 		} else {

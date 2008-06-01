@@ -6,7 +6,7 @@
 class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
-        global $CFG, $SESSION, $QTYPES;
+        global $CFG, $SESSION, $QTYPES, $DB;
         $strnoattempts = get_string('noattempts','quiz');
     /// Only print headers if not asked to download data
         $download = optional_param('download', NULL);
@@ -72,10 +72,10 @@ class quiz_report extends quiz_default_report {
 
         if ($attemptselection != QUIZ_ALLATTEMPTS) {
             $sql = 'SELECT qa.userid '.$limit.
-                    'FROM '.$CFG->prefix.'user u LEFT JOIN '.$CFG->prefix.'quiz_attempts qa ON u.id = qa.userid '.
-                    'WHERE qa.quiz = '.$quiz->id.' AND qa.preview = 0 '.
+                    'FROM {user} u LEFT JOIN {quiz_attempts} qa ON u.id = qa.userid '.
+                    'WHERE qa.quiz = ? AND qa.preview = 0 '.
                     $group;
-            $usermax = get_records_sql_menu($sql);
+            $usermax = $DB->get_records_sql_menu($sql, array($quiz->id));
         }else {
             $usermax = '';
         }

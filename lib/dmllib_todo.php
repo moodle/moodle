@@ -665,22 +665,6 @@ function records_to_menu($records, $field1, $field2) {
 }
 
 /**
- * Get the first two columns from a number of records as an associative array.
- *
- * Arguments as for @see function get_recordset_sql.
- * Return value as for @see function get_records_menu.
- *
- * @param string $sql The SQL string you wish to be executed.
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an associative array, or false if no records were found or an error occured.
- */
-function get_records_sql_menu($sql, $limitfrom='', $limitnum='') {
-    $rs = get_recordset_sql($sql, $limitfrom, $limitnum);
-    return recordset_to_menu($rs);
-}
-
-/**
  * Get a single value from a table row where a particular select clause is true.
  *
  * @uses $CFG

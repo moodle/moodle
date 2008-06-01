@@ -1,7 +1,7 @@
 <?php // $Id$
 
 function glossary_filter($courseid, $text) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Trivial-cache - keyed on $cachedcourseid
     static $nothingtodo;
@@ -28,17 +28,15 @@ function glossary_filter($courseid, $text) {
     if (empty($conceptlist)) {
 
     /// Find all the glossaries we need to examine
-        if (!$glossaries = get_records_sql_menu ('SELECT g.id, g.name
-                                                    FROM '.$CFG->prefix.'glossary g,
-                                                         '.$CFG->prefix.'course_modules cm,
-                                                         '.$CFG->prefix.'modules m
+        if (!$glossaries = $DB->get_records_sql_menu('SELECT g.id, g.name
+                                                    FROM {glossary} g, {course_modules} cm, {modules} m
                                                     WHERE m.name = \'glossary\' AND
                                                           cm.module = m.id AND
                                                           cm.visible = 1 AND
                                                           g.id = cm.instance AND
-                                                          g.usedynalink != 0 AND
-                                                          (g.course = \''.$courseid.'\' OR g.globalglossary = 1)
-                                                    ORDER BY g.globalglossary, g.id')) {
+                                                          g.usedynalink <> 0 AND
+                                                          (g.course = ? OR g.globalglossary = 1)
+                                                    ORDER BY g.globalglossary, g.id', array($courseid))) {
             $nothingtodo = true;
             return $text;
         }

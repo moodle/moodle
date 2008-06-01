@@ -68,8 +68,8 @@ class data_field_radiobutton extends data_field_base {
     }
     
      function display_search_field($value = '') {
-        global $CFG;
-        $temp = get_records_sql_menu('SELECT id, content from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
+        global $CFG, $DB;
+        $temp = $DB->get_records_sql_menu('SELECT id, content FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
         $options = array();
         if(!empty($temp)) {
             $options[''] = '';              //Make first index blank.

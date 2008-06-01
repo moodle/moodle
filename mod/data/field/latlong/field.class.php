@@ -69,9 +69,9 @@ class data_field_latlong extends data_field_base {
     }
 
     function display_search_field($value = '') {
-        global $CFG;
-        $lats = get_records_sql_menu('SELECT id, content from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
-        $longs = get_records_sql_menu('SELECT id, content1 from '.$CFG->prefix.'data_content WHERE fieldid='.$this->field->id.' GROUP BY content ORDER BY content');
+        global $CFG, $DB;
+        $lats = $DB->get_records_sql_menu('SELECT id, content FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
+        $longs = $DB->get_records_sql_menu('SELECT id, content1 FROM {data_content} WHERE fieldid=? GROUP BY content ORDER BY content', array($this->field->id));
         $options = array();
         if(!empty($lats) && !empty($longs)) {
             $options[''] = '';

@@ -931,19 +931,17 @@ function quiz_get_post_actions() {
  * @return array of strings
  */
 function quiz_question_list_instances($questionid) {
-    global $CFG;
+    global $CFG, $DB;
 
     // TODO: we should also consider other questions that are used by
     // random questions in this quiz, but that is very hard.
 
     $sql = "SELECT q.id, q.name
-            FROM {$CFG->prefix}quiz q
-            INNER JOIN
-                 {$CFG->prefix}quiz_question_instances qqi
-            ON q.id = qqi.quiz
-            WHERE qqi.question = '$questionid'";
+            FROM {quiz} q
+            JOIN {quiz_question_instances} qqi ON q.id = qqi.quiz
+            WHERE qqi.question = ?";
 
-    if ($instances = get_records_sql_menu($sql)) {
+    if ($instances = $DB->get_records_sql_menu($sql, array($questionid))) {
         return $instances;
     }
     return array();

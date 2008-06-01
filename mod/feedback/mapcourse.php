@@ -96,12 +96,13 @@
     echo '<input type="hidden" name="id" value="'.$id.'" />';
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     
-    $sql = "select c.id, c.shortname from {$CFG->prefix}course c
-            where
-                c.shortname ".sql_ilike()." '%{$searchcourse}%'
-            OR c.fullname ".sql_ilike()." '%{$searchcourse}%'";
+    $sql = "select c.id, c.shortname
+              from {course} c
+             where c.shortname ".$DB->sql_ilike()." ?
+                   OR c.fullname ".$DB->sql_ilike()." ?";
+    $params = array("%{$searchcourse}%", "%{$searchcourse}%");
     
-    if (($courses = get_records_sql_menu($sql)) && !empty($searchcourse)) {
+    if (($courses = $DB->get_records_sql_menu($sql, $params)) && !empty($searchcourse)) {
         echo ' ' . get_string('courses') . ': ';
         choose_from_menu ($courses, 'coursefilter', $coursefilter, 'choose');
         echo '<input type="submit" value="'.get_string('mapcourse', 'feedback').'"/>';

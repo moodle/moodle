@@ -90,10 +90,10 @@
                                 FROM 
                                     {$CFG->prefix}{$table}
                                 WHERE 
-                                    doctype = '{$mod->name}'
+                                    doctype = ?
                                     $itemtypes
                             ";
-                            $docIds = get_records_sql_menu($query);
+                            $docIds = $DB->get_records_sql_menu($query, array($mod->name));
                             $docIdList = ($docIds) ? implode("','", array_keys($docIds)) : '' ;
                             
                             $query =  "

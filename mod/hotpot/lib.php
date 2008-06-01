@@ -1170,7 +1170,7 @@ function hotpot_grades($hotpotid) {
     return $return;
 }
 function hotpot_get_grades($hotpot, $user_ids='') {
-    global $CFG;
+    global $CFG, $DB;
 
     $grades = array();
 
@@ -1201,12 +1201,12 @@ function hotpot_get_grades($hotpot, $user_ids='') {
 
     if ($grade) {
         $userid_condition = empty($user_ids) ? '' : "AND userid IN ($user_ids) ";
-        $grades = get_records_sql_menu("
+        $grades = $DB->get_records_sql_menu("
             SELECT userid, $grade
-            FROM {$CFG->prefix}hotpot_attempts
-            WHERE timefinish>0 AND hotpot='$hotpot->id' $userid_condition
+            FROM {hotpot_attempts}
+            WHERE timefinish>0 AND hotpot=:hid $userid_condition
             GROUP BY userid
-        ");
+        ", array('hid'=>$hotpot->id));
         if ($grades) {
             if ($hotpot->grademethod==HOTPOT_GRADEMETHOD_FIRST || $hotpot->grademethod==HOTPOT_GRADEMETHOD_LAST) {
                 // remove left hand characters in $grade (up to and including the underscore)

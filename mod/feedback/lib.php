@@ -1670,8 +1670,7 @@ function feedback_print_numeric_option_list($startval, $endval, $selectval = '',
  *  @return void
  */
 function feedback_send_email($cm, $feedback, $course, $userid) {
-    
-    global $CFG;
+    global $CFG, $DB;
     
     if ($feedback->email_notification == 0) {  // No need to do anything
         return;
@@ -1680,13 +1679,12 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
     $user = get_record('user', 'id', $userid);
     
     if (groupmode($course, $cm) == SEPARATEGROUPS) {    // Separate groups are being used
-        $groups = get_records_sql_menu("SELECT g.name, g.id
-                                          FROM {$CFG->prefix}groups g,
-                                                 {$CFG->prefix}groups_members m
-                                          WHERE g.courseid = '$course->id'
-                                             AND g.id = m.groupid
-                                             AND m.userid = '$userid'
-                                             ORDER BY name ASC");
+        $groups = $DB->get_records_sql_menu("SELECT g.name, g.id
+                                               FROM {groups} g, {groups_members} m
+                                              WHERE g.courseid = ?
+                                                    AND g.id = m.groupid
+                                                    AND m.userid = ?
+                                           ORDER BY name ASC", array($course->id, $userid));
         $groups = array_values($groups);
         
         $teachers = feedback_get_receivemail_users($cm->id, $groups);
