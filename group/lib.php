@@ -344,7 +344,7 @@ function groups_get_users_not_in_group_by_role($courseid, $groupid, $searchtext=
     $orderby = " ORDER BY $sort";
 
     return groups_calculate_role_people(get_recordset_sql(
-        $select.$from.$where.$orderby),$context->id);
+        $select.$from.$where.$orderby),$context);
 }
 
 
@@ -540,7 +540,7 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*', $sort='u
                                    AND ra.contextid ".get_related_contexts_string($context)."
                               ORDER BY r.sortorder,$sort");
 
-    return groups_calculate_role_people($rs,$context->id);
+    return groups_calculate_role_people($rs,$context);
 }
 
 /**
@@ -549,19 +549,17 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*', $sort='u
  * roles on a course.
  *
  * @param object $rs The record set (may be false)
- * @param int $contextid ID of course context
+ * @param object $context of course
  * @return array As described in groups_get_members_by_role 
  */
-function groups_calculate_role_people($rs,$contextid) {
+function groups_calculate_role_people($rs,$context) {
     global $CFG;
     if(!$rs) {
         return false;
     }
     
-    // Get role aliases for course in array of roleid => obj->text
-    if(!($aliasnames=get_records('role_names','contextid',$contextid,'','roleid,name'))) {
-        $aliasnames=array();
-    }
+    $roles = get_records_menu('role', null, 'name', 'id, name');
+    $aliasnames = role_fix_names($roles, $context);
 
     // Array of all involved roles
     $roles=array();
@@ -592,7 +590,7 @@ function groups_calculate_role_people($rs,$contextid) {
                 $roledata->id=$rec->roleid;
                 $roledata->shortname=$rec->roleshortname;
                 if(array_key_exists($rec->roleid,$aliasnames)) {
-                    $roledata->name=$aliasnames[$rec->roleid]->name;
+                    $roledata->name=$aliasnames[$rec->roleid];
                 } else {
                     $roledata->name=$rec->rolename;
                 }
