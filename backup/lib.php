@@ -6,20 +6,24 @@
 
     //Sets a name/value pair in backup_config table
     function backup_set_config($name, $value) {
-        if (get_field("backup_config", "name", "name", $name)) {
-            return set_field("backup_config", "value", addslashes($value), "name", $name);
+        global $DB;
+
+        if ($DB->get_field("backup_config", "name", array("name"=>$name))) {
+            return $DB->set_field("backup_config", "value", $value, array("name"=>$name));
         } else {
             $config = new object();
-            $config->name = $name;
-            $config->value = addslashes($value);
-            return insert_record("backup_config", $config);
+            $config->name  = $name;
+            $config->value = $value;
+            return $DB->insert_record("backup_config", $config);
         }
     }
 
     //Gets all the information from backup_config table
     function backup_get_config() {
+        global $DB;
+
         $backup_config = null;
-        if ($configs = get_records("backup_config")) {
+        if ($configs = $DB->get_records("backup_config")) {
             foreach ($configs as $config) {
                 $backup_config[$config->name] = $config->value;
             }
@@ -30,8 +34,7 @@
     //Delete old data in backup tables (if exists)
     //Four hours seem to be appropiate now that backup is stable
     function backup_delete_old_data() {
-
-        global $CFG;
+        global $CFG, $DB;
 
         //Change this if you want !!
         $hours = 4;
@@ -39,11 +42,11 @@
         $seconds = $hours * 60 * 60;
         $delete_from = time()-$seconds;
         //Now delete from tables
-        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
-                               WHERE backup_code < '$delete_from'",false);
+        $status = $DB->execute("DELETE FROM {backup_ids}
+                                 WHERE backup_code < ?", array($delete_from));
         if ($status) {
-            $status = execute_sql("DELETE FROM {$CFG->prefix}backup_files
-                                   WHERE backup_code < '$delete_from'",false);
+            $status = $DB->execute("DELETE FROM {backup_files}
+                                     WHERE backup_code < ?", array($delete_from));
         }
         //Now, delete old directory (if exists)
         if ($status) {
@@ -85,7 +88,6 @@
     //Function to check and create the needed dir to
     //save all the backup
     function check_and_create_backup_dir($backup_unique_code) {
-
         global $CFG;
 
         $status = check_dir_exists($CFG->dataroot."/temp",true);
@@ -164,7 +166,6 @@
 
     //Function to clear (empty) the contents of the backup_dir
     function clear_backup_dir($backup_unique_code) {
-
         global $CFG;
 
         $rootdir = $CFG->dataroot."/temp/backup/".$backup_unique_code;
@@ -177,15 +178,12 @@
 
     //Returns the module type of a course_module's id in a course
     function get_module_type ($courseid,$moduleid) {
+        global $DB;
 
-        global $CFG;
-
-        $results = get_records_sql ("SELECT cm.id, m.name
-                                    FROM {$CFG->prefix}course_modules cm,
-                                         {$CFG->prefix}modules m
-                                    WHERE cm.course = '$courseid' AND
-                                          cm.id = '$moduleid' AND
-                                          m.id = cm.module");
+        $results = $DB->get_records_sql("SELECT cm.id, m.name
+                                           FROM {course_modules} cm, {modules} m
+                                          WHERE cm.course = ? AND cm.id = ? AND
+                                                m.id = cm.module", array($courseid, $moduleid));
 
         if ($results) {
             $name = $results[$moduleid]->name;
@@ -234,20 +232,16 @@
     //This function clean data from backup tables and
     //delete all temp files used
     function clean_temp_data ($preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //true->do it, false->don't do it. To debug if necessary.
         if (true) {
             //Now delete from tables
-            $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
-                                   WHERE backup_code = '$preferences->backup_unique_code'",false);
-            if ($status) {
-                $status = execute_sql("DELETE FROM {$CFG->prefix}backup_files
-                                       WHERE backup_code = '$preferences->backup_unique_code'",false);
-            }
+            $status = $DB->delete_records('backup_ids', array('backup_code'=>$preferences->backup_unique_code))
+                   && $DB->delete_records('backup_files', array('backup_code'=>$preferences->backup_unique_code));
+
             //Now, delete temp directory (if exists)
             $file_path = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code;
             if (is_dir($file_path)) {
@@ -270,7 +264,6 @@
     //Little modifications done
 
     function backup_copy_file ($from_file,$to_file,$log_clam=false) {
-
         global $CFG;
 
         if (is_file($from_file)) {
@@ -297,7 +290,6 @@
     }
 
     function backup_copy_dir($from_file,$to_file) {
-
         global $CFG;
 
         $status = true; // Initialize this, next code will change its value if needed
@@ -447,9 +439,8 @@
     //This function is used to insert records in the backup_ids table
     //If the info field is greater than max_db_storage, then its info
     //is saved to filesystem
-    function backup_putid ($backup_unique_code, $table, $old_id, $new_id, $info="") {
-
-        global $CFG;
+    function backup_putid($backup_unique_code, $table, $old_id, $new_id, $info="") {
+        global $CFG, $DB;
 
         $max_db_storage = 128;  //Max bytes to save to db, else save to file
 
@@ -473,7 +464,7 @@
             $info_to_save = "infile";
         } else {
             //Saving to db, addslashes
-            $info_to_save = addslashes($info_ser);
+            $info_to_save = $info_ser;
         }
 
         //Now, insert the record
@@ -486,7 +477,7 @@
             $rec->new_id = ($new_id === null? 0 : $new_id);
             $rec->info = $info_to_save;
 
-            if (!insert_record('backup_ids', $rec, false)) {
+            if (!$DB->insert_record('backup_ids', $rec, false)) {
                 $status = false;
             }
         }
@@ -496,31 +487,21 @@
     //This function is used to delete recods from the backup_ids table
     //If the info field is "infile" then the file is deleted too
     function backup_delid ($backup_unique_code, $table, $old_id) {
-
-        global $CFG;
-
-        $status = true;
-
-        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
-                               WHERE backup_code = $backup_unique_code AND
-                                     table_name = '$table' AND
-                                     old_id = '$old_id'",false);
-        return $status;
+        global $DB;
+        return $DB->delete_records('backup_ids', array('backup_code'=>$backup_unique_code, '$table_name'=>$table, 'old_id'=>$old_id));
     }
 
     //This function is used to get a record from the backup_ids table
     //If the info field is "infile" then its info
     //is read from filesystem
     function backup_getid ($backup_unique_code, $table, $old_id) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         $status2 = true;
 
-        $status = get_record ("backup_ids","backup_code",$backup_unique_code,
-                                           "table_name",$table,
-                                           "old_id", $old_id);
+        $status = $DB->get_record("backup_ids", array("backup_code"=>$backup_unique_code, 
+                                  "table_name"=>$table, "old_id"=>$old_id));
 
         //If info field = "infile", get file contents
         if (!empty($status->info) && $status->info == "infile") {
@@ -541,7 +522,7 @@
                     debugging('Incorrect string "needed" in $status->info, please fix the code (table:'.$table.'; old_id:'.$old_id.').', DEBUG_DEVELOPER);
                 } else {
                     ////First strip slashes
-                    $temp = stripslashes($status->info);
+                    $temp = $status->info;
                     //Now unserialize
                     $status->info = unserialize($temp);
                 }
@@ -636,7 +617,7 @@
      *   messages
      */
     function import_backup_file_silently($pathtofile,$destinationcourse,$emptyfirst=false,$userdata=false, $preferences=array()) {
-        global $CFG,$SESSION,$USER; // is there such a thing on cron? I guess so..
+        global $CFG,$SESSION,$USER, $DB; // is there such a thing on cron? I guess so..
         global $restore; // ick
         if (empty($USER)) {
             $USER = get_admin();
@@ -649,7 +630,7 @@
         $cleanupafter = false;
         $errorstr = ''; // passed by reference to restore_precheck to get errors from.
 
-        if (!$course = get_record('course','id',$destinationcourse)) {
+        if (!$course = $DB->get_record('course', array('id'=>$destinationcourse))) {
             mtrace($debuginfo.'Course with id $destinationcourse was not a valid course!');
             return false;
         }
@@ -726,7 +707,7 @@
         }
 
         // we also need modules...
-        if ($allmods = get_records("modules")) {
+        if ($allmods = $DB->get_records("modules")) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 //Now check that we have that module info in the backup file
@@ -756,9 +737,9 @@
     * @param array $prefs see {@link backup_generate_preferences_artificially}
     */
     function backup_course_silently($courseid, $prefs, &$errorstring) {
-        global $CFG, $preferences; // global preferences here because something else wants it :(
+        global $CFG, $preferences, $DB; // global preferences here because something else wants it :(
         define('BACKUP_SILENTLY', 1);
-        if (!$course = get_record('course', 'id', $courseid)) {
+        if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
             debugging("Couldn't find course with id $courseid in backup_course_silently");
             return false;
         }
@@ -788,13 +769,13 @@
     */
 
     function backup_generate_preferences_artificially($course, $prefs) {
-        global $CFG;
+        global $CFG, $DB;
         $preferences = new StdClass;
         $preferences->backup_unique_code = time();
         $preferences->backup_name = backup_get_zipfile_name($course, $preferences->backup_unique_code);
         $count = 0;
 
-        if ($allmods = get_records("modules") ) {
+        if ($allmods = $DB->get_records("modules") ) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
@@ -812,7 +793,7 @@
                 $preferences->$var = true;
                 $count++;
                 // check that there are instances and we can back them up individually
-                if (!count_records('course_modules','course',$course->id,'module',$mod->id) || !function_exists($modbackupone)) {
+                if (!$DB->count_records('course_modules', array('course'=>$course->id), array('module'=>$mod->id)) || !function_exists($modbackupone)) {
                     continue;
                 }
                 $var = 'exists_one_'.$modname;

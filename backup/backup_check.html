@@ -70,7 +70,7 @@
     //inform the user.
     // TODO: Move this logic to one function to be shared by any (manual, scheduled) backup
     if ($backupprefs->backup_users == 2) {
-        if ($allmods = get_records('modules') ) {
+        if ($allmods = $DB->get_records('modules') ) {
             foreach ($allmods as $mod) {
             /// Reset global user_info settings to "no" (0)
                 $modname = $mod->name;
@@ -129,7 +129,7 @@
     //This is the alignment of every row in the table
     $table->align = array ("left","right");
 
-    if ($allmods = get_records("modules") ) {
+    if ($allmods = $DB->get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = $CFG->dirroot.'/mod/'.$modname.'/backuplib.php';

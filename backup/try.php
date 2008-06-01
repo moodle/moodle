@@ -25,7 +25,7 @@
 
     $status = true;
 
-    $courses = get_records("course");
+    $courses = $DB->get_records("course");
     foreach ($courses as $course) {
         echo "Start course ". format_string($course->fullname);
         $preferences = schedule_backup_course_configure($course);

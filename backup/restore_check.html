@@ -5,6 +5,9 @@
     //It puts all the restore info in the session.
     //Finally, it calls restore_execute to do the hard work
     //Get objects from session
+
+    global $DB;
+
     if ($SESSION) {
         $info = $SESSION->info;
         $course_header = $SESSION->course_header;
@@ -60,7 +63,7 @@
         //file
         $file = required_param( 'file');
         //Checks for the required restoremod parameters
-        if ($allmods = get_records("modules")) {
+        if ($allmods = $DB->get_records("modules")) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $var = "restore_".$modname;
@@ -109,7 +112,7 @@
         //Create the restore object and put it in the session
         $restore->backup_unique_code = $backup_unique_code;
         $restore->file = $file;
-        if ($allmods = get_records("modules")) {
+        if ($allmods = $DB->get_records("modules")) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $var = "restore_".$modname;

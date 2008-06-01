@@ -1,5 +1,6 @@
 <?php //$Id$
     //This page prints the backup form to select everything
+    global $DB;
 
     //Check login
     require_login();
@@ -28,7 +29,7 @@
     //Checks for the required files/functions to backup every mod
     //And check if there is data about it
     $count = 0;
-    if ($allmods = get_records('modules', 'visible', 1) ) {
+    if ($allmods = $DB_>get_records('modules', array('visible'=>1)) ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
@@ -42,7 +43,7 @@
                    $$var = true;
                    $count++;
                    // check that there are instances and we can back them up individually
-                   if (count_records('course_modules','course',$course->id,'module',$mod->id) && function_exists($modbackupone)) {
+                   if ($DB->count_records('course_modules',array('course'=>$course->id,'module'=>$mod->id)) && function_exists($modbackupone)) {
                        $var = 'exists_one_'.$modname;
                        $$var = true;
                    }
@@ -121,7 +122,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 /// Acummulator for hidden options and proper XHTML output
     $hidden_options = '';
     //Now, check modules and info and show posibilities
-    if ($allmods = get_records('modules', 'visible', 1) ) {
+    if ($allmods = $DB->get_records('modules', array('visible'=>1)) ) {
         //Print option to select/deselect everything with 1 click.
         echo "<tr>";
         echo "<td align=\"right\">";
@@ -331,7 +332,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "<td align=\"right\" valign=\"top\" colspan=\"2\"><b>";
         echo get_string("backuproleassignments");
         echo "</b></td><td colspan=\"2\">";
-        $roles = get_records('role', '', '', 'sortorder');
+        $roles = $DB->get_records('role', null, 'sortorder');
         foreach ($roles as $role) {
             print_checkbox('backupassignments_' . $role->shortname, 1, true, strip_tags(format_string($role->name, true)));
             echo "<br />";
