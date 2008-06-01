@@ -92,7 +92,7 @@
             print_error("moduledoesnotexist");
         }
 
-        if (! $form = get_record($module->name, "id", $cm->instance)) {
+        if (! $form = $DB->get_record($module->name, array("id"=>$cm->instance))) {
             print_error("moduleinstancedoesnotexist");
         }
 
