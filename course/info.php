@@ -8,16 +8,18 @@
     $id   = optional_param('id', false, PARAM_INT); // Course id
     $name = optional_param('name', false, PARAM_RAW); // Course short name
 
+    $name = stripslashes($name); // TODO: remove soon
+
     if (!$id and !$name) {
         print_error("unspecifycourseid");
     }
 
     if ($name) {
-        if (! $course = get_record("course", "shortname", $name) ) {
+        if (!$course = $DB->get_record("course", array("shortname"=>$name))) {
             print_error("invalidshortname");
         }
     } else {
-        if (! $course = get_record("course", "id", $id) ) {
+        if (!$course = get_record("course", array("id"=>$id))) {
             print_error("invalidcourseid");
         }
     }

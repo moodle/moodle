@@ -49,9 +49,9 @@
 
       /// Print form for creating new categories
 
-        $countcategories = count_records('course_categories');
+        $countcategories = $DB->count_records('course_categories');
 
-        if ($countcategories > 1 || ($countcategories == 1 && count_records('course') > 200)) {
+        if ($countcategories > 1 || ($countcategories == 1 && $DB->count_records('course') > 200)) {
             $strcourses = get_string('courses');
             $strcategories = get_string('categories');
 
@@ -99,7 +99,7 @@
     if (!empty($delete) and confirm_sesskey()) {
         require_once('delete_category_form.php');
 
-        if (!$deletecat = get_record('course_categories', 'id', $delete)) {
+        if (!$deletecat = $DB->get_record('course_categories', array('id'=>$delete))) {
             error('Incorrect category id', 'index.php');
         }
 
@@ -151,9 +151,9 @@
 /// Create a default category if necessary
     if (!$categories = get_categories()) {    /// No category yet!
         // Try and make one
-        unset($tempcat);
+        $tempcat = new object();
         $tempcat->name = get_string('miscellaneous');
-        if (!$tempcat->id = insert_record('course_categories', $tempcat)) {
+        if (!$tempcat->id = $DB->insert_record('course_categories', $tempcat)) {
             print_error('cannotsetupcategory');
         }
         $tempcat->context = get_context_instance(CONTEXT_COURSECAT, $tempcat->id);
@@ -164,9 +164,9 @@
 /// Move a category to a new parent if required
 
     if (!empty($move) and ($moveto>=0) and confirm_sesskey()) {
-        if ($tempcat = get_record('course_categories', 'id', $move)) {
+        if ($tempcat = $DB->get_record('course_categories', array('id'=>$move))) {
             if ($tempcat->parent != $moveto) {
-                $newp = get_record('course_categories', 'id', $moveto);
+                $newp = $DB->get_record('course_categories', array('id'=>$moveto));
                 if (! move_category($tempcat, $newp)) {
                     notify('Could not update that category!');
                 }
@@ -178,17 +178,17 @@
 /// Hide or show a category
     if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
         if (!empty($hide)) {
-            $tempcat = get_record('course_categories', 'id', $hide);
+            $tempcat = $DB->get_record('course_categories', array('id'=>$hide));
             $visible = 0;
         } else {
-            $tempcat = get_record('course_categories', 'id', $show);
+            $tempcat = $DB->get_record('course_categories', array('id'=>$show));
             $visible = 1;
         }
         if ($tempcat) {
-            if (! set_field('course_categories', 'visible', $visible, 'id', $tempcat->id)) {
+            if (!$DB->set_field('course_categories', 'visible', $visible, array('id'=>$tempcat->id))) {
                 notify('Could not update that category!');
             }
-            if (! set_field('course', 'visible', $visible, 'category', $tempcat->id)) {
+            if (!$DB->set_field('course', 'visible', $visible, array('category'=>$tempcat->id))) {
                 notify('Could not hide/show any courses in this category !');
             }
         }
@@ -203,7 +203,7 @@
         $movecategory = NULL;
 
         if (!empty($moveup)) {
-            if ($movecategory = get_record('course_categories', 'id', $moveup)) {
+            if ($movecategory = $DB->get_record('course_categories', array('id'=>$moveup))) {
                 $categories = get_categories($movecategory->parent);
 
                 foreach ($categories as $category) {
@@ -216,7 +216,7 @@
             }
         }
         if (!empty($movedown)) {
-            if ($movecategory = get_record('course_categories', 'id', $movedown)) {
+            if ($movecategory = $DB->get_record('course_categories', array('id'=>$movedown))) {
                 $categories = get_categories($movecategory->parent);
 
                 $choosenext = false;
@@ -241,7 +241,7 @@
                 } else if ($category->id == $movecategory->id) {
                     $category = $swapcategory;
                 }
-                if (! set_field('course_categories', 'sortorder', $count, 'id', $category->id)) {
+                if (!$DB->set_field('course_categories', 'sortorder', $count, array('id'=>$category->id))) {
                     notify('Could not update that category!');
                 }
             }

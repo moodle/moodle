@@ -54,7 +54,7 @@
 
     print_heading(get_string('childcourses'));
 
-    if (!$frm = data_submitted()) {
+    if (!$frm = data_submitted(false)) {
         $note = get_string("importmetacoursenote");
         print_simple_box($note, "center", "50%");
 
