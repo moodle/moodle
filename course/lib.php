@@ -1548,8 +1548,12 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
     global $COURSE, $DB;
 
     if ($clearonly) {
-        $courseselect = empty($courseid) ? "" : "id = $courseid";
-        set_field_select('course', 'modinfo', null, $courseselect);
+        if (empty($courseid)) {
+            $courseselect = array();
+        } else {
+            $courseselect = array('id'=>$courseid);
+        }
+        $DB->set_field('course', 'modinfo', null, $courseselect);
         // update cached global COURSE too ;-)
         if ($courseid == $COURSE->id) {
             $COURSE->modinfo = null; 

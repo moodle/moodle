@@ -713,13 +713,15 @@ function question_delete_activity($cm, $feedback=true) {
  * @param integer $newcategory the id of the category to move to.
  */
 function question_move_questions_to_category($questionids, $newcategory) {
+    global $DB;
+
     $result = true;
 
     // Move the questions themselves.
-    $result = $result && set_field_select('question', 'category', $newcategory, "id IN ($questionids)");
+    $result = $result && $DB->set_field_select('question', 'category', $newcategory, "id IN ($questionids)");
 
     // Move any subquestions belonging to them.
-    $result = $result && set_field_select('question', 'category', $newcategory, "parent IN ($questionids)");
+    $result = $result && $DB->set_field_select('question', 'category', $newcategory, "parent IN ($questionids)");
 
     // TODO Deal with datasets.
 

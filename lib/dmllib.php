@@ -452,3 +452,7 @@ function records_to_menu($records, $field1, $field2) {
     error('records_to_menu() removed');
 }
 
+function set_field_select($table, $newfield, $newvalue, $select, $localcall = false) {
+    error('set_field_select() removed');
+}
+
