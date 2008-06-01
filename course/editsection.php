@@ -6,11 +6,11 @@
 
     $id = required_param('id',PARAM_INT);    // Week ID
 
-    if (! $section = get_record("course_sections", "id", $id)) {
+    if (! $section = $DB->get_record("course_sections", array("id"=>$id))) {
         print_error("sectionnotexist");
     }
 
-    if (! $course = get_record("course", "id", $section->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$section->course))) {
         print_error("invalidcourseid");
     }
 
@@ -20,11 +20,11 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted() and confirm_sesskey()) {
+    if ($form = data_submitted(false) and confirm_sesskey()) {
 
         $timenow = time();
 
-        if (! set_field("course_sections", "summary", $form->summary, "id", $section->id)) {
+        if ($DB->set_field("course_sections", "summary", $form->summary, array("id"=>$section->id))) {
             print_error("cannotupdatesummary");
         }
 
@@ -38,8 +38,6 @@
 
     if (empty($form)) {
         $form = $section;
-    } else {
-        $form = stripslashes_safe($form);
     }
 
     // !! no db access using data from $form beyond this point !!

@@ -13,7 +13,7 @@
 
     $id = required_param('id', PARAM_INT);
 
-    if (! $course = get_record("course", "id", $id)) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         error("Course ID is incorrect");
     }
     $capabilities = feedback_load_course_capabilities($course->id);

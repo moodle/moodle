@@ -54,12 +54,12 @@ if ($mform->is_cancelled()){
     } else {
         redirect($CFG->wwwroot.'/course/category.php?categoryedit=on&id='.$category->id);
     } 
-} else if (($data = $mform->get_data())) {
+} else if (($data = $mform->get_data(false))) {
     $newcategory = new stdClass();
-    $newcategory->name = $data->name;
+    $newcategory->name        = $data->name;
     $newcategory->description = $data->description;
-    $newcategory->sortorder = 999;
-    $newcategory->parent = $data->parent; // if $id = 0, the new category will be a top-level category
+    $newcategory->sortorder   = 999;
+    $newcategory->parent      = $data->parent; // if $id = 0, the new category will be a top-level category
 
     if (!empty($data->theme) && !empty($CFG->allowcategorythemes)) {
         $newcategory->theme = $data->theme;
@@ -67,7 +67,7 @@ if ($mform->is_cancelled()){
     }
 
     if (empty($category) && has_capability('moodle/category:create', $context)) { // Create a new category 
-        if (!$newcategory->id = insert_record('course_categories', $newcategory)) {
+        if (!$newcategory->id = $DB->insert_record('course_categories', $newcategory)) {
             notify( "Could not insert the new category '$newcategory->name' ");
         } else {
             $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
@@ -78,11 +78,11 @@ if ($mform->is_cancelled()){
         $newcategory->id = $category->id;
 
         if ($newcategory->parent != $category->parent) {
-            $parent_cat = get_record('course_categories', 'id', $newcategory->parent);
+            $parent_cat = $DB->get_record('course_categories', array('id'=>$newcategory->parent));
             move_category($newcategory, $parent_cat);
         }
 
-        if (!update_record('course_categories', $newcategory)) {
+        if (!$DB->update_record('course_categories', $newcategory)) {
             print_error( "cannotupdatecategory", '', '', $newcategory->name);
         } else {
             if ($newcategory->parent == 0) {

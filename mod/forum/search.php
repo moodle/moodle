@@ -84,7 +84,7 @@
         $search = forum_clean_search_terms($search);
     }
 
-    if (! $course = get_record("course", "id", $id)) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         error("Course id is incorrect.");
     }
 

@@ -8,7 +8,7 @@
 
     $id = required_param('id', PARAM_INT);    // Course id
 
-    if (! $course = $DB->get_record('course', array('id'=>$id) )) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error('invalidcourseid');
     }
 
@@ -140,7 +140,7 @@
                 //if idnumber is set, we use that.
                 //unset invalid courseid
                 if (isset($newgroup->idnumber)){
-                    if (!$mycourse = get_record('course', 'idnumber',$newgroup->idnumber)){
+                    if (!$mycourse = $DB->get_record('course', array('idnumber'=>$newgroup->idnumber))) {
                         notify(get_string('unknowncourseidnumber', 'error', $newgroup->idnumber));
                         unset($newgroup->courseid);//unset so 0 doesnt' get written to database
                     }
@@ -150,7 +150,7 @@
                 //unset invalid coursename (if no id)
 
                 else if (isset($newgroup->coursename)){
-                    if (!$mycourse = get_record('course', 'shortname',$newgroup->coursename)){
+                    if (!$mycourse = $DB->get_record('course', array('shortname', $newgroup->coursename))) {
                         notify(get_string('unknowncourse', 'error', $newgroup->coursename));
                         unset($newgroup->courseid);//unset so 0 doesnt' get written to database
                     }

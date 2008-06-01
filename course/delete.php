@@ -20,11 +20,11 @@
     $stradministration = get_string("administration");
     $strcategories = get_string("categories");
 
-    if (! $course = get_record("course", "id", $id)) {
+    if (! $course = $DB->get_record("course", array("id"=>$id))) {
         print_error("invalidcourseid");
     }
 
-    $category = get_record("course_categories", "id", $course->category);
+    $category = $DB->get_record("course_categories", array("id"=>$course->category));
     $navlinks = array();
 
     if (! $delete) {
