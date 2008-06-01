@@ -28,12 +28,12 @@ class grouping_form extends moodleform {
     }
 
     function validation($data, $files) {
-        global $COURSE;
+        global $COURSE, $DB;
 
         $errors = parent::validation($data, $files);
 
         $name = trim(stripslashes($data['name']));
-        if ($data['id'] and $grouping = get_record('groupings', 'id', $data['id'])) {
+        if ($data['id'] and $grouping = $DB->get_record('groupings', array('id'=>$data['id']))) {
             if ($grouping->name != $name) {
                 if (groups_get_grouping_by_name($COURSE->id,  $name)) {
                     $errors['name'] = get_string('groupingnameexists', 'group', $name);

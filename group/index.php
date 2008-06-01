@@ -203,7 +203,7 @@ if ($sel_groupid) {
 
     if ($groupmemberroles = groups_get_members_by_role($groupid,$courseid,'u.id,u.firstname,u.lastname')) {
         foreach($groupmemberroles as $roleid=>$roledata) {
-            echo '<optgroup label="'.htmlspecialchars($roledata->name).'">';
+            echo '<optgroup label="'.s($roledata->name).'">';
             foreach($roledata->users as $member) {
                 echo '<option value="'.$member->id.'">'.fullname($member, true).'</option>';
                 $atleastonemember = true;

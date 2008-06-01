@@ -8,11 +8,11 @@ require_once('lib.php');
 
 $groupingid = required_param('id', PARAM_INT);
 
-if (!$grouping = get_record('groupings', 'id', $groupingid)) {
+if (!$grouping = $DB->get_record('groupings', array('id'=>$groupingid))) {
     print_error('invalidgroupid');
 }
 
-if (! $course = get_record('course', 'id', $grouping->courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$grouping->courseid))) {
     print_error('invalidcourse');
 }
 $courseid = $course->id;
@@ -24,7 +24,7 @@ require_capability('moodle/course:managegroups', $context);
 $returnurl = $CFG->wwwroot.'/group/groupings.php?id='.$courseid;
 
 
-if ($frm = data_submitted() and confirm_sesskey()) {
+if ($frm = data_submitted(false) and confirm_sesskey()) {
 
     if (isset($frm->cancel)) {
         redirect($returnurl);
@@ -45,8 +45,8 @@ if ($frm = data_submitted() and confirm_sesskey()) {
 $currentmembers = array();
 $potentialmembers  = array();
 
-if ($groups = get_records('groups', 'courseid', $courseid, 'name')) {
-    if ($assignment = get_records('groupings_groups', 'groupingid', $grouping->id)) {
+if ($groups = $DB->get_records('groups', 'courseid', array($courseid=>'name'))) {
+    if ($assignment = $DB->get_records('groupings_groups', array('groupingid'=>$grouping->id))) {
         foreach ($assignment as $ass) {
             $currentmembers[$ass->groupid] = $groups[$ass->groupid];
             unset($groups[$ass->groupid]);
@@ -67,7 +67,7 @@ if ($currentmembers) {
     if ($managerroles = get_config('', 'coursemanager')) {
         $coursemanagerroles = split(',', $managerroles);
         foreach ($coursemanagerroles as $roleid) {
-            $role = get_record('role','id',$roleid);
+            $role = $DB->get_record('role', array('id'=>$roleid));
             $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
             $managers = get_role_users($roleid, $context, true, 'u.id', 'u.id ASC', $canseehidden);
         }
@@ -113,7 +113,7 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
     <table summary="" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
-          <label for="removeselect"><?php print_string('existingmembers', 'group', $currentmemberscount); //count($contextusers) ?></label>
+          <label for="removeselect"><?php print_string('existingmembers', 'group', $currentmemberscount); ?></label>
           <br />
           <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
                   onfocus="document.getElementById('assignform').add.disabled=true;
@@ -131,7 +131,7 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
         </p>
       </td>
       <td valign="top">
-          <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); //$usercount ?></label>
+          <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); ?></label>
           <br />
           <select name="addselect[]" size="20" id="addselect" multiple="multiple"
                   onfocus="document.getElementById('assignform').add.disabled=false;

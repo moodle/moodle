@@ -20,7 +20,7 @@ $delete   = optional_param('delete', 0, PARAM_BOOL);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($id) {
-    if (!$group = get_record('groups', 'id', $id)) {
+    if (!$group = $DB->get_record('groups', array('id'=>$id))) {
         print_error('invalidgroupid');
     }
     $group->description = clean_text($group->description);
@@ -31,12 +31,12 @@ if ($id) {
         print_error('invalidcourseid');
     }
 
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
 
 } else {
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
     $group = new object();
@@ -62,7 +62,7 @@ if ($id and $delete) {
         if (groups_delete_group($id)) {
             // MDL-9983
             $eventdata = new object();
-            $eventdata->group = $id;
+            $eventdata->group  = $id;
             $eventdata->course = $courseid;
             events_trigger('group_deleted', $eventdata);
             redirect('index.php?id='.$course->id);

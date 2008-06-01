@@ -18,7 +18,7 @@ if (!defined('AUTOGROUP_MIN_RATIO')) {
 
 $courseid = required_param('courseid', PARAM_INT);
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourseid');
 }
 

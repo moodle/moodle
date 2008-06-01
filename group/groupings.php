@@ -6,7 +6,7 @@ require_once $CFG->dirroot.'/group/lib.php';
 
 $courseid = required_param('id', PARAM_INT);
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('nocourseid');
 }
 
@@ -40,7 +40,7 @@ require('tabs.php');
 print_heading($strgroupings);
 
 $data = array();
-if ($groupings = get_records('groupings', 'courseid', $course->id, 'name')) {
+if ($groupings = $DB->get_records('groupings', array('courseid'=>$course->id), 'name')) {
     foreach($groupings as $grouping) {
         $line = array();
         $line[0] = format_string($grouping->name);
@@ -54,7 +54,7 @@ if ($groupings = get_records('groupings', 'courseid', $course->id, 'name')) {
         } else {
             $line[1] = get_string('none');
         }
-        $line[2] = (int)count_records('course_modules', 'course', $course->id, 'groupingid', $grouping->id);
+        $line[2] = $DB->count_records('course_modules', array('course'=>$course->id, 'groupingid'=>$grouping->id));
 
         $buttons  = "<a title=\"$stredit\" href=\"grouping.php?id=$grouping->id\"><img".
                     " src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a> ";

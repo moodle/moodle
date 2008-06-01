@@ -17,7 +17,7 @@ $groupingid = optional_param('grouping', 0, PARAM_INT);
 $returnurl = $CFG->wwwroot.'/group/index.php?id='.$courseid;
 $rooturl   = $CFG->wwwroot.'/group/overview.php?id='.$courseid;
 
-if (!$course = get_record('course', 'id',$courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     print_error('invalidcourse');
 }
 
@@ -58,10 +58,10 @@ if (!$groups = $DB->get_records('groups', array('courseid'=>$courseid), 'name'))
     $groups = array();
 }
 
-$params = array($courseid);
+$params = array('courseid'=>$courseid);
 if ($groupid) {
-    $groupwhere = "AND g.id = ?";
-    $params[]   = $groupid;
+    $groupwhere = "AND g.id = :groupid";
+    $params['groupid']   = $groupid;
 } else {
     $groupwhere = "";
 }
@@ -71,12 +71,12 @@ if (empty($CFG->enablegroupings)) {
               FROM {groups} g
                    LEFT JOIN {groups_members} gm ON g.id = gm.groupid
                    LEFT JOIN {user} u ON gm.userid = u.id
-             WHERE g.courseid = ? $groupwhere
+             WHERE g.courseid = :courseid $groupwhere
           ORDER BY g.name, u.lastname, u.firstname";
 } else {
     if ($groupingid) {
-        $groupingwhere = "AND gg.groupingid = ";
-        $params[]      = $groupingid;
+        $groupingwhere = "AND gg.groupingid = :groupingid";
+        $params['groupingid'] = $groupingid;
     } else {
         $groupingwhere = "";
     }
@@ -85,7 +85,7 @@ if (empty($CFG->enablegroupings)) {
                    LEFT JOIN {groupings_groups} gg ON g.id = gg.groupid
                    LEFT JOIN {groups_members} gm ON g.id = gm.groupid
                    LEFT JOIN {user} u ON gm.userid = u.id
-             WHERE g.courseid = ? $groupwhere $groupingwhere
+             WHERE g.courseid = :courseid $groupwhere $groupingwhere
           ORDER BY g.name, u.lastname, u.firstname";
 }
 
@@ -105,7 +105,7 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
         }
         $members[$row->groupingid][$row->groupid][] = $user;
     }
-    rs_close($rs);
+    $rs->close();
 }
 
 

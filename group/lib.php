@@ -21,6 +21,8 @@
  * member of the group, false otherwise.
  */
 function groups_add_member($groupid, $userid) {
+    global $DB;
+
     if (!groups_group_exists($groupid)) {
         return false;
     }
@@ -34,12 +36,12 @@ function groups_add_member($groupid, $userid) {
     $member->userid    = $userid;
     $member->timeadded = time();
 
-    if (!insert_record('groups_members', $member)) {
+    if (!$DB->insert_record('groups_members', $member)) {
         return false;
     }
 
     //update group info
-    set_field('groups', 'timemodified', $member->timeadded, 'id', $groupid);
+    $DB->set_field('groups', 'timemodified', $member->timeadded, array('id'=>$groupid));
 
     // MDL-9983
     $eventdata = new object();
@@ -57,6 +59,8 @@ function groups_add_member($groupid, $userid) {
  * @return boolean True if deletion was successful, false otherwise
  */
 function groups_remove_member($groupid, $userid) {
+    global $DB;
+
     if (!groups_group_exists($groupid)) {
         return false;
     }
@@ -65,11 +69,11 @@ function groups_remove_member($groupid, $userid) {
         return true;
     }
 
-    if (!delete_records('groups_members', 'groupid', $groupid, 'userid', $userid)) {
+    if (!$DB->delete_records('groups_members', array('groupid'=>$groupid, 'userid'=>$userid))) {
         return false;
     }
     //update group info
-    set_field('groups', 'timemodified', time(), 'id', $groupid);
+    $DB->set_field('groups', 'timemodified', time(), array('id'=>$groupid));
 
     return true;
 }
@@ -81,18 +85,18 @@ function groups_remove_member($groupid, $userid) {
  * @return id of group or false if error
  */
 function groups_create_group($data, $um=false) {
-    global $CFG;
+    global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
 
-    $data->timecreated = time();
+    $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
-    $data->name = trim($data->name);
-    $id = insert_record('groups', $data);
+    $data->name         = trim($data->name);
+    $id = $DB->insert_record('groups', $data);
 
     if ($id and $um) {
         //update image
         if (save_profile_image($id, $um, 'groups')) {
-            set_field('groups', 'picture', 1, 'id', $id);
+            $DB->set_field('groups', 'picture', 1, array('id'=>$id));
         }
     }
 
@@ -105,12 +109,12 @@ function groups_create_group($data, $um=false) {
  * @return id of grouping or false if error
  */
 function groups_create_grouping($data) {
-    global $CFG;
+    global $DB;
 
-    $data->timecreated = time();
+    $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
-    $data->name = trim($data->name);
-    return insert_record('groupings', $data);
+    $data->name         = trim($data->name);
+    return $DB->insert_record('groupings', $data);
 }
 
 /**
@@ -120,17 +124,17 @@ function groups_create_grouping($data) {
  * @return boolean success
  */
 function groups_update_group($data, $um=false) {
-    global $CFG;
+    global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
 
     $data->timemodified = time();
-    $data->name = trim($data->name);
-    $result = update_record('groups', $data);
+    $data->name         = trim($data->name);
+    $result = $DB->update_record('groups', $data);
 
     if ($result and $um) {
         //update image
         if (save_profile_image($data->id, $um, 'groups')) {
-            set_field('groups', 'picture', 1, 'id', $data->id);
+            $DB->set_field('groups', 'picture', 1, array('id'=>$data->id));
         }
     }
 
@@ -143,10 +147,10 @@ function groups_update_group($data, $um=false) {
  * @return boolean success
  */
 function groups_update_grouping($data) {
-    global $CFG;
+    global $DB;
     $data->timemodified = time();
-    $data->name = trim($data->name);
-    return update_record('groupings', $data);
+    $data->name         = trim($data->name);
+    return $DB->update_record('groupings', $data);
 }
 
 /**
@@ -156,7 +160,7 @@ function groups_update_grouping($data) {
  * @return boolean True if deletion was successful, false otherwise
  */
 function groups_delete_group($groupid) {
-    global $CFG;
+    global $CFG, $DB;
     require_once($CFG->libdir.'/gdlib.php');
 
     if (empty($groupid)) {
@@ -164,15 +168,15 @@ function groups_delete_group($groupid) {
     }
 
     // delete group calendar events
-    delete_records('event', 'groupid', $groupid);
+    $DB->delete_records('event', array('groupid'=>$groupid));
     //first delete usage in groupings_groups
-    delete_records('groupings_groups', 'groupid', $groupid);
+    $DB->delete_records('groupings_groups', array('groupid'=>$groupid));
     //delete members
-    delete_records('groups_members', 'groupid', $groupid);
+    $DB->delete_records('groups_members', array('groupid'=>$groupid));
     //then imge
     delete_profile_image($groupid, 'groups');
     //group itself last
-    return delete_records('groups', 'id', $groupid);
+    return $DB->delete_records('groups', array('id'=>$groupid));
 }
 
 /**
@@ -181,19 +185,21 @@ function groups_delete_group($groupid) {
  * @return bool success
  */
 function groups_delete_grouping($groupingid) {
+    global $DB;
+
     if (empty($groupingid)) {
         return false;
 
     }
 
     //first delete usage in groupings_groups
-    delete_records('groupings_groups', 'groupingid', $groupingid);
+    $DB->delete_records('groupings_groups', array('groupingid'=>$groupingid));
     // remove the default groupingid from course
-    set_field('course', 'defaultgroupingid', 0, 'defaultgroupingid', $groupingid);
+    $DB->set_field('course', 'defaultgroupingid', 0, array('defaultgroupingid'=>$groupingid));
     // remove the groupingid from all course modules
-    set_field('course_modules', 'groupingid', 0, 'groupingid', $groupingid);
+    $DB->set_field('course_modules', 'groupingid', 0, array('groupingid'=>$groupingid));
     //group itself last
-    return delete_records('groupings', 'id', $groupingid);
+    return $DB->delete_records('groupings', array('id'=>$groupingid));
 }
 
 /**
@@ -203,10 +209,10 @@ function groups_delete_grouping($groupingid) {
  * @return bool success
  */
 function groups_delete_group_members($courseid, $showfeedback=false) {
-    global $CFG;
+    global $DB;
 
-    $groupssql = "SELECT id FROM {$CFG->prefix}groups g WHERE g.courseid = $courseid";
-    delete_records_select('groups_members', "groupid IN ($groupssql)");
+    $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
+    $DB->delete_records_select('groups_members', "groupid IN ($groupssql)", array($courseid));
 
     if ($showfeedback) {
         notify(get_string('deleted').' groups_members');
@@ -222,10 +228,10 @@ function groups_delete_group_members($courseid, $showfeedback=false) {
  * @return bool success
  */
 function groups_delete_groupings_groups($courseid, $showfeedback=false) {
-    global $CFG;
+    global $DB;
 
-    $groupssql = "SELECT id FROM {$CFG->prefix}groups g WHERE g.courseid = $courseid";
-    delete_records_select('groupings_groups', "groupid IN ($groupssql)");
+    $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
+    $DB->delete_records_select('groupings_groups', "groupid IN ($groupssql)", array($courseid));
 
     if ($showfeedback) {
         notify(get_string('deleted').' groupings_groups');
@@ -241,26 +247,25 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
  * @return bool success
  */
 function groups_delete_groups($courseid, $showfeedback=false) {
-    global $CFG;
+    global $CFG, $DB;
     require_once($CFG->libdir.'/gdlib.php');
-
-    $groupssql = "SELECT id FROM {$CFG->prefix}groups g WHERE g.courseid = $courseid";
 
     // delete any uses of groups
     groups_delete_groupings_groups($courseid, $showfeedback);
     groups_delete_group_members($courseid, $showfeedback);
 
     // delete group pictures
-    if ($groups = get_records('groups', 'courseid', $courseid)) {
+    if ($groups = $DB->get_records('groups', array('courseid'=>$courseid))) {
         foreach($groups as $group) {
             delete_profile_image($group->id, 'groups');
         }
     }
 
     // delete group calendar events
-    delete_records_select('event', "groupid IN ($groupssql)");
+    $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
+    $DB->delete_records_select('event', "groupid IN ($groupssql)", array($courseid));
 
-    delete_records('groups', 'courseid', $courseid);
+    $DB->delete_records('groups', array('courseid'=>$courseid));
     if ($showfeedback) {
         notify(get_string('deleted').' groups');
     }
@@ -275,19 +280,19 @@ function groups_delete_groups($courseid, $showfeedback=false) {
  * @return bool success
  */
 function groups_delete_groupings($courseid, $showfeedback=false) {
-    global $CFG;
+    global $DB;
 
     // delete any uses of groupings
-    $sql = "DELETE FROM {$CFG->prefix}groupings_groups
-             WHERE groupingid in (SELECT id FROM {$CFG->prefix}groupings g WHERE g.courseid = $courseid)";
-    execute_sql($sql, false);
+    $sql = "DELETE FROM {groupings_groups}
+             WHERE groupingid in (SELECT id FROM {groupings} g WHERE g.courseid = ?)";
+    $DB->execute($sql, array($courseid));
 
     // remove the default groupingid from course
-    set_field('course', 'defaultgroupingid', 0, 'id', $courseid);
+    $DB->set_field('course', 'defaultgroupingid', 0, array('id'=>$courseid));
     // remove the groupingid from all course modules
-    set_field('course_modules', 'groupingid', 0, 'course', $courseid);
+    $DB->set_field('course_modules', 'groupingid', 0, array('course'=>$courseid));
 
-    delete_records('groupings', 'courseid', $courseid);
+    $DB->delete_records('groupings', array('courseid'=>$courseid));
     if ($showfeedback) {
         notify(get_string('deleted').' groupings');
     }
@@ -309,42 +314,44 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
  *   including a list of users
  */
 function groups_get_users_not_in_group_by_role($courseid, $groupid, $searchtext='', $sort = 'u.lastname ASC') {
+    global $CFG, $DB;
 
-    global $CFG;
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
+
+/// Get list of allowed roles     
+    if (!$validroleids = groups_get_possible_roles($context)) {
+        return array();
+    }
+    list($roleids, $params) = $DB->get_in_or_equal($validroleids, SQL_PARAMS_NAMED, $start='r0');
     
     if ($searchtext !== '') {   // Search for a subset of remaining users
-        $LIKE      = sql_ilike();
-        $FULLNAME  = sql_fullname();
-        $wheresearch = " AND u.id IN (SELECT id FROM {$CFG->prefix}user WHERE $FULLNAME $LIKE '%$searchtext%' OR email $LIKE '%$searchtext%' )";
+        $LIKE      = $DB->sql_ilike();
+        $FULLNAME  = $DB->sql_fullname();
+        $wheresearch = " AND u.id IN (SELECT id FROM {user} WHERE $FULLNAME $LIKE :search1 OR email $LIKE :search2)";
+        $params['search1'] = "%$searchtext%";
+        $params['search2'] = "%$searchtext%";
     } else {
         $wheresearch = '';
     }
 
-/// Get list of allowed roles     
-    if(!($validroleids=groups_get_possible_roles($context))) {
-        return;
-    }
-    $roleids = '('.implode(',', $validroleids).')';
-
 /// Construct the main SQL
-    $select = " SELECT r.id AS roleid,r.shortname AS roleshortname,r.name AS rolename,
-                       u.id AS userid, u.firstname, u.lastname";
-    $from   = " FROM {$CFG->prefix}user u
-                INNER JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
-                INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid";
+    $sql = " SELECT r.id AS roleid,r.shortname AS roleshortname,r.name AS rolename,
+                    u.id AS userid, u.firstname, u.lastname
+               FROM {user} u
+               JOIN {role_assignments} ra ON ra.userid = u.id
+               JOIN {role} r ON r.id = ra.roleid
+              WHERE ra.contextid ".get_related_contexts_string($context)."
+                    AND u.deleted = 0
+                    AND ra.roleid $roleids
+                    AND u.id NOT IN (SELECT userid
+                                      FROM {groups_members}
+                                     WHERE groupid = :groupid)
+                    $wheresearch
+           ORDER BY $sort";
+    $params['groupid'] = $groupid;
 
-    $where  = " WHERE ra.contextid ".get_related_contexts_string($context)."
-                  AND u.deleted = 0
-                  AND ra.roleid in $roleids
-                  AND u.id NOT IN (SELECT userid
-                                   FROM {$CFG->prefix}groups_members
-                                   WHERE groupid = $groupid)
-                  $wheresearch";
-    $orderby = " ORDER BY $sort";
-
-    return groups_calculate_role_people(get_recordset_sql(
-        $select.$from.$where.$orderby),$context->id);
+    $rs = $DB->get_recordset_sql($sql, $params);
+    return groups_calculate_role_people($rs, $context);
 }
 
 
@@ -399,7 +406,7 @@ function groups_get_possible_roles($context) {
  * @return array An array of the users
  */
 function groups_get_potential_members($courseid, $roleid = null, $orderby = 'lastname,firstname') {
-	global $CFG;
+	global $DB;
 
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
@@ -426,38 +433,38 @@ function groups_get_potential_members($courseid, $roleid = null, $orderby = 'las
         }
     }
 
-    $select = 'SELECT u.id, u.username, u.firstname, u.lastname, u.idnumber ';
-    $from   = "FROM {$CFG->prefix}user u INNER JOIN
-               {$CFG->prefix}role_assignments r on u.id=r.userid ";
-
     if ($avoidroles) {
-        $adminroles = 'AND r.roleid NOT IN (';
-        $adminroles .= implode(',', $avoidroles);
-        $adminroles .= ')';
+        list($adminroles, $params) = $DB->get_in_or_equal($avoidroles, SQL_PARAMS_NAMED, 'ar0', false);
+        $adminroles = "AND r.roleid $adminroles";
     } else {
-        $adminroles = '';
+        $adminroles = "";
+        $params = array();
     }
 
     // we are looking for all users with this role assigned in this context or higher
     if ($usercontexts = get_parent_contexts($context)) {
-        $listofcontexts = '('.implode(',', $usercontexts).')';
+        $listofcontexts = 'IN ('.implode(',', $usercontexts).')';
     } else {
-        $listofcontexts = '('.$sitecontext->id.')'; // must be site
+        $listofcontexts = '='.$sitecontext->id.')'; // must be site
     }
 
     if ($roleid) {
-        $selectrole = " AND r.roleid = $roleid ";
+        $selectrole = "AND r.roleid = :roleid";
+        $params['roleid'] = $roleid;
     } else {
-        $selectrole = " ";
+        $selectrole = "";
     }
 
-    $where  = "WHERE (r.contextid = $context->id OR r.contextid in $listofcontexts)
-                     AND u.deleted = 0 $selectrole
-                     AND u.username != 'guest'
-                     $adminroles ";
-    $order = "ORDER BY $orderby ";
+    $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.idnumber
+              FROM {user} u
+              JOIN {role_assignments} r on u.id=r.userid
+             WHERE (r.contextid = :contextid OR r.contextid $listofcontexts)
+                   AND u.deleted = 0 AND u.username != 'guest'
+                   $selectrole $adminroles
+          ORDER BY $orderby";
+    $params['contextid'] = $context->id;
 
-    return(get_records_sql($select.$from.$where.$order));
+    return $DB->get_records_sql($sql, $params);
 
 }
 
@@ -487,14 +494,16 @@ function groups_parse_name($format, $groupnumber) {
  * @return bool success
  */
 function groups_assign_grouping($groupingid, $groupid) {
-    if (record_exists('groupings_groups', 'groupingid', $groupingid, 'groupid', $groupid)) {
+    global $DB;
+
+    if ($DB->record_exists('groupings_groups', array('groupingid'=>$groupingid, 'groupid'=>$groupid))) {
         return true;
     }
     $assign = new object();
     $assign->groupingid = $groupingid;
-    $assign->groupid = $groupid;
-    $assign->timeadded = time();
-    return (bool)insert_record('groupings_groups', $assign);
+    $assign->groupid    = $groupid;
+    $assign->timeadded  = time();
+    return (bool)$DB->insert_record('groupings_groups', $assign);
 }
 
 /**
@@ -504,7 +513,9 @@ function groups_assign_grouping($groupingid, $groupid) {
  * @return bool success
  */
 function groups_unassign_grouping($groupingid, $groupid) {
-    return delete_records('groupings_groups', 'groupingid', $groupingid, 'groupid', $groupid);
+    global $DB;
+
+    return $DB->delete_records('groupings_groups', array('groupingid'=>$groupingid, 'groupid'=>$groupid));
 }
 
 /**
@@ -524,23 +535,25 @@ function groups_unassign_grouping($groupingid, $groupid) {
  * @return array Complex array as described above
  */
 function groups_get_members_by_role($groupid, $courseid, $fields='u.*', $sort='u.lastname ASC') {
-    global $CFG;
+    global $CFG, $DB;
 
     // Retrieve information about all users and their roles on the course or
     // parent ('related') contexts 
-    $context=get_context_instance(CONTEXT_COURSE,$courseid);
-    $rs=get_recordset_sql($crap="SELECT r.id AS roleid,r.shortname AS roleshortname,r.name AS rolename,
-                                        u.id AS userid,$fields
-                                  FROM {$CFG->prefix}groups_members gm
-                            INNER JOIN {$CFG->prefix}user u ON u.id = gm.userid
-                            INNER JOIN {$CFG->prefix}role_assignments ra 
-                                       ON ra.userid = u.id 
-                            INNER JOIN {$CFG->prefix}role r ON r.id = ra.roleid
-                                 WHERE gm.groupid='$groupid'
-                                   AND ra.contextid ".get_related_contexts_string($context)."
-                              ORDER BY r.sortorder,$sort");
+    $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
-    return groups_calculate_role_people($rs,$context->id);
+    $sql = "SELECT r.id AS roleid, r.shortname AS roleshortname, r.name AS rolename,
+                   u.id AS userid, $fields
+              FROM {groups_members} gm
+              JOIN {user} u ON u.id = gm.userid
+              JOIN {role_assignments} ra ON ra.userid = u.id 
+              JOIN {role} r ON r.id = ra.roleid
+             WHERE gm.groupid=?
+                   AND ra.contextid ".get_related_contexts_string($context)."
+          ORDER BY r.sortorder, $sort";
+    $params = array($groupid);
+    $rs = $DB->get_recordset_sql($sql, $params);
+
+    return groups_calculate_role_people($rs, $context);
 }
 
 /**
@@ -552,25 +565,24 @@ function groups_get_members_by_role($groupid, $courseid, $fields='u.*', $sort='u
  * @param int $contextid ID of course context
  * @return array As described in groups_get_members_by_role 
  */
-function groups_calculate_role_people($rs,$contextid) {
-    global $CFG;
-    if(!$rs) {
-        return false;
-    }
-    
-    // Get role aliases for course in array of roleid => obj->text
-    if(!($aliasnames=get_records('role_names','contextid',$contextid,'','roleid,name'))) {
-        $aliasnames=array();
+function groups_calculate_role_people($rs, $context) {
+    global $CFG, $DB;
+
+    if (!$rs) {
+        return array();
     }
 
+    $roles = $DB->get_records_menu('role', null, 'name', 'id, name');
+    $aliasnames = role_fix_names($roles, $context);
+
     // Array of all involved roles
-    $roles=array();
+    $roles = array();
     // Array of all retrieved users
-    $users=array();
+    $users = array();
     // Fill arrays
-    while($rec=rs_fetch_next_record($rs)) {
+    foreach ($rs as $rec) {
         // Create information about user if this is a new one
-        if(!array_key_exists($rec->userid,$users)) {
+        if (!array_key_exists($rec->userid, $users)) {
             // User data includes all the optional fields, but not any of the
             // stuff we added to get the role details
             $userdata=clone($rec);
@@ -578,60 +590,60 @@ function groups_calculate_role_people($rs,$contextid) {
             unset($userdata->roleshortname);
             unset($userdata->rolename);
             unset($userdata->userid);
-            $userdata->id=$rec->userid;
+            $userdata->id = $rec->userid;
 
             // Make an array to hold the list of roles for this user
-            $userdata->roles=array();
-            $users[$rec->userid]=$userdata;
+            $userdata->roles = array();
+            $users[$rec->userid] = $userdata;
         }
         // If user has a role...
-        if(!is_null($rec->roleid)) {
+        if (!is_null($rec->roleid)) {
             // Create information about role if this is a new one
-            if(!array_key_exists($rec->roleid,$roles)) {
-                $roledata=new StdClass;
-                $roledata->id=$rec->roleid;
-                $roledata->shortname=$rec->roleshortname;
-                if(array_key_exists($rec->roleid,$aliasnames)) {
-                    $roledata->name=$aliasnames[$rec->roleid]->name;
+            if (!array_key_exists($rec->roleid,$roles)) {
+                $roledata = new object();
+                $roledata->id        = $rec->roleid;
+                $roledata->shortname = $rec->roleshortname;
+                if (array_key_exists($rec->roleid, $aliasnames)) {
+                    $roledata->name = $aliasnames[$rec->roleid];
                 } else {
-                    $roledata->name=$rec->rolename;
+                    $roledata->name = $rec->rolename;
                 }
-                $roledata->users=array();
-                $roles[$roledata->id]=$roledata;
+                $roledata->users = array();
+                $roles[$roledata->id] = $roledata;
             }
             // Record that user has role
             $users[$rec->userid]->roles[] = $roles[$rec->roleid];
         }
     }
-    rs_close($rs);
+    $rs->close();
 
     // Return false if there weren't any users
-    if(count($users)==0) {
+    if (count($users)==0) {
         return false;
     }
 
     // Add pseudo-role for multiple roles
-    $roledata=new StdClass;
-    $roledata->name=get_string('multipleroles','role');
-    $roledata->users=array();
-    $roles['*']=$roledata;
+    $roledata = new object();
+    $roledata->name = get_string('multipleroles','role');
+    $roledata->users = array();
+    $roles['*'] = $roledata;
 
     // Now we rearrange the data to store users by role
-    foreach($users as $userid=>$userdata) {
-        $rolecount=count($userdata->roles);
-        if($rolecount==0) {
+    foreach ($users as $userid=>$userdata) {
+        $rolecount = count($userdata->roles);
+        if ($rolecount==0) {
             debugging("Unexpected: user $userid is missing roles");
         } else if($rolecount>1) {
-            $roleid='*';
+            $roleid = '*';
         } else {
-            $roleid=$userdata->roles[0]->id;
+            $roleid = $userdata->roles[0]->id;
         }
-        $roles[$roleid]->users[$userid]=$userdata;
+        $roles[$roleid]->users[$userid] = $userdata;
     }
 
     // Delete roles not used
-    foreach($roles as $key=>$roledata) {
-        if(count($roledata->users)===0) {
+    foreach ($roles as $key=>$roledata) {
+        if (count($roledata->users)===0) {
             unset($roles[$key]);
         }
     }

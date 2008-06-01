@@ -17,15 +17,17 @@ $groupid    = required_param('group', PARAM_INT);
 $searchtext = optional_param('searchtext', '', PARAM_RAW); // search string
 $showall    = optional_param('showall', 0, PARAM_BOOL);
 
+$searchtext = stripslashes($searchtext); // TODO: remove soon
+
 if ($showall) {
     $searchtext = '';
 }
 
-if (!$group = get_record('groups', 'id', $groupid)) {
+if (!$group = $DB->get_record('groups', array('id'=>$groupid))) {
     print_error('invalidgroupid');
 }
 
-if (!$course = get_record('course', 'id', $group->courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$group->courseid))) {
     print_error('invalidcourse');
 }
 $courseid = $course->id;
@@ -80,7 +82,7 @@ $groupmemberscount = 0;
 // Get members, organised by role, and display
 if ($groupmemberroles = groups_get_members_by_role($groupid,$courseid,'u.id,u.firstname,u.lastname')) {
     foreach($groupmemberroles as $roleid=>$roledata) {
-        $groupmembersoptions .= '<optgroup label="'.htmlspecialchars($roledata->name).'">';
+        $groupmembersoptions .= '<optgroup label="'.s($roledata->name).'">';
         foreach($roledata->users as $member) {
             $groupmembersoptions .= '<option value="'.$member->id.'">'.fullname($member, true).'</option>';
             $groupmemberscount ++;
@@ -101,31 +103,33 @@ $potentialmemberscount=0;
 $potentialmembersids=array();
 if (!empty($potentialmembersbyrole)) {
     foreach($potentialmembersbyrole as $roledata) {
-        $potentialmemberscount+=count($roledata->users);
-        $potentialmembersids=array_merge($potentialmembersids,array_keys($roledata->users));
+        $potentialmemberscount += count($roledata->users);
+        $potentialmembersids = array_merge($potentialmembersids, array_keys($roledata->users));
     }
 }
 
 if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
-
-    if ($potentialmemberscount != 0) {
+    if ($potentialmemberscount > 0) {
         // Get other groups user already belongs to
-        $sql = "SELECT u.id AS userid, g.* FROM {$CFG->prefix}user u " .
-                    "INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid " .
-                    "INNER JOIN {$CFG->prefix}groups g ON gm.groupid = g.id " .
-               "WHERE u.id IN (".implode(',',$potentialmembersids).") AND g.courseid = {$course->id} ";
-        $rs = get_recordset_sql($sql);
-        $groups = array();
+        list($potentialmembersids, $params) = $DB->get_in_or_equal($potentialmembersids, SQL_PARAMS_NAMED, 'pm0');
+        $sql = "SELECT u.id AS userid, g.*
+                  FROM {user} u
+                  JOIN {groups_members} gm ON u.id = gm.userid
+                  JOIN {groups} g ON gm.groupid = g.id
+                 WHERE u.id $potentialmembersids AND g.courseid = :courseid ";
+        $params['courseid'] = $course->id;
         $usergroups = array();
-        while ($usergroup =  rs_fetch_next_record($rs)) {
-            $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
+        if ($rs = $DB->get_recordset_sql($sql, $params)) {
+            foreach ($rs as $usergroup) {
+                $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
+            }
+            $rs->close();
         }
-        rs_close($rs);
 
-        foreach($potentialmembersbyrole as $roleid=>$roledata) {
-            $potentialmembersoptions .= '<optgroup label="'.htmlspecialchars($roledata->name).'">';
+        foreach ($potentialmembersbyrole as $roleid=>$roledata) {
+            $potentialmembersoptions .= '<optgroup label="'.s($roledata->name).'">';
             foreach($roledata->users as $member) {
-                $name=htmlspecialchars(fullname($member, true));
+                $name = s(fullname($member, true));
                 $potentialmembersoptions .= '<option value="'.$member->id.
                     '" title="'.$name.'">'.$name.
                     ' ('.@count($usergroups[$member->id]).')</option>';
@@ -167,7 +171,7 @@ foreach ($nonmembers as $userid => $potentalmember) {
         $usergrouplist = '<ul>';
 
         foreach ($usergroups[$userid] as $groupitem) {
-            $usergrouplist .= '<li>'.addslashes(format_string($groupitem->name)).'</li>';
+            $usergrouplist .= '<li>'.addslashes_js(format_string($groupitem->name)).'</li>';
         }
         $usergrouplist .= '</ul>';
     }
@@ -221,7 +225,7 @@ function updateUserSummary() {
     <tr>
       <td valign="top">
           <p>
-            <label for="removeselect"><?php print_string('existingmembers', 'group', $groupmemberscount); //count($contextusers) ?></label>
+            <label for="removeselect"><?php print_string('existingmembers', 'group', $groupmemberscount); ?></label>
           </p>
           <select name="removeselect[]" size="20" id="removeselect" multiple="multiple"
                   onfocus="document.getElementById('assignform').add.disabled=true;
@@ -242,7 +246,7 @@ function updateUserSummary() {
       </td>
       <td valign="top">
           <p>
-            <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); //$usercount ?></label>
+            <label for="addselect"><?php print_string('potentialmembers', 'group', $potentialmemberscount); ?></label>
           </p>
           <select name="addselect[]" size="20" id="addselect" multiple="multiple"
                   onfocus="updateUserSummary();document.getElementById('assignform').add.disabled=false;
@@ -260,7 +264,7 @@ function updateUserSummary() {
          </select>
          <br />
          <label for="searchtext" class="accesshide"><?php p($strsearch) ?></label>
-         <input type="text" name="searchtext" id="searchtext" size="21" value="<?php p($searchtext, true) ?>"
+         <input type="text" name="searchtext" id="searchtext" size="21" value="<?php p($searchtext) ?>"
                   onfocus ="getElementById('assignform').add.disabled=true;
                             getElementById('assignform').remove.disabled=true;
                             getElementById('assignform').removeselect.selectedIndex=-1;
@@ -273,7 +277,7 @@ function updateUserSummary() {
          <input name="search" id="search" type="submit" value="<?php p($strsearch) ?>" />
          <?php
               if (!empty($searchtext)) {
-                  echo '<br /><input name="showall" id="showall" type="submit" value="'.$strshowall.'" />'."\n";
+                  echo '<br /><input name="showall" id="showall" type="submit" value="'.s($strshowall).'" />'."\n";
               }
          ?>
        </td>
