@@ -101,7 +101,7 @@ class user_filter_profilefield extends user_filter_type {
      * @return array sql string and $params
      */
     function get_sql_filter($data) {
-        global $CFG;
+        global $CFG, $DB;
         static $counter = 0;
         $name = 'ex_profilefield'.$counter++;
 
@@ -121,7 +121,7 @@ class user_filter_profilefield extends user_filter_type {
 
         $where = "";
         $op = " IN ";
-        $ilike = sql_ilike();
+        $ilike = $DB->sql_ilike();
 
         if ($operator < 5 and $value === '') {
             return '';

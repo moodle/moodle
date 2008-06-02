@@ -94,11 +94,11 @@ class user_filtering {
      * @return object filter
      */
     function get_field($fieldname, $advanced) {
-        global $USER;
+        global $USER, $DB;
 
         switch ($fieldname) {
             case 'username':    return new user_filter_text('username', get_string('username'), $advanced, 'username');
-            case 'realname':    return new user_filter_text('realname', get_string('fullnameuser'), $advanced, sql_fullname());
+            case 'realname':    return new user_filter_text('realname', get_string('fullnameuser'), $advanced, $DB->sql_fullname());
             case 'lastname':    return new user_filter_text('lastname', get_string('lastname'), $advanced, 'lastname');
             case 'firstname':    return new user_filter_text('firstname', get_string('firstname'), $advanced, 'firstname');
             case 'email':       return new user_filter_text('email', get_string('email'), $advanced, 'email');

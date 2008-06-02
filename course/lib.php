@@ -730,7 +730,7 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
         }
         if ($ld && !empty($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == sql_concat('firstname', "' '" , 'lastname'))) {
+            if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
             } else {
                 $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));

@@ -81,7 +81,7 @@ class user_filter_courserole extends user_filter_type {
      * @return array sql string and $params
      */
     function get_sql_filter($data) {
-        global $CFG;
+        global $CFG, $DB;
         static $counter = 0;
         $name = 'ex_courserole'.$counter++;
 
@@ -104,7 +104,7 @@ class user_filter_courserole extends user_filter_type {
             $where .= " AND c.category=$categoryid";
         }
         if ($value) {
-            $where .= " AND c.shortname ".sql_ilike()." :$name";
+            $where .= " AND c.shortname ".$DB->sql_ilike()." :$name";
             $params[$name] = $value;
         }
         return array("id IN (SELECT userid

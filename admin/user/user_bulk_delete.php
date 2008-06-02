@@ -39,7 +39,7 @@ if ($confirm and confirm_sesskey()) {
 
 } else {
     $in = implode(',', $SESSION->bulk_users);
-    $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.sql_fullname().' AS fullname');
+    $userlist = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
     $usernames = implode(', ', $userlist);
     $optionsyes = array();
     $optionsyes['confirm'] = 1;

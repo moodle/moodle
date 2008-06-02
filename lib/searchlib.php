@@ -444,9 +444,9 @@ function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfie
 
 function search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
                              $userfirstnamefield, $userlastnamefield, $timefield, $instancefield) {
-    global $CFG;
+    global $CFG, $DB;
 
-    $LIKE = sql_ilike();
+    $LIKE = $DB->sql_ilike();
     $NOTLIKE = 'NOT ' . $LIKE;
     if ($CFG->dbfamily == "postgres") {
         $REGEXP = "~*";

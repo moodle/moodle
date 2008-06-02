@@ -75,6 +75,7 @@ class user_filter_text extends user_filter_type {
      * @return array sql string and $params
      */
     function get_sql_filter($data) {
+        global $DB;
         static $counter = 0;
         $name = 'ex_text'.$counter++;
 
@@ -88,7 +89,7 @@ class user_filter_text extends user_filter_type {
             return '';
         }
 
-        $ilike = sql_ilike();
+        $ilike = $DB->sql_ilike();
 
         switch($operator) {
             case 0: // contains
