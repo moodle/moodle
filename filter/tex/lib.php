@@ -52,7 +52,7 @@ function tex_filter_get_cmd($pathname, $texexp) {
  * Purge all caches when settings changed.
  */
 function filter_tex_updatedcallback($name) {
-    global $CFG;
+    global $CFG, $DB;
     reset_text_filters_cache();
 
     if (file_exists("$CFG->dataroot/filter/tex")) {
@@ -65,8 +65,8 @@ function filter_tex_updatedcallback($name) {
         remove_dir("$CFG->dataroot/temp/latex");
     }
 
-    delete_records('cache_filters', 'filter', 'tex');
-    delete_records('cache_filters', 'filter', 'algebra');
+    $DB->delete_records('cache_filters', array('filter'=>'tex'));
+    $DB->delete_records('cache_filters', array('filter'=>'algebra'));
 }
 
 ?>

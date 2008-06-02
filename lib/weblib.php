@@ -1583,9 +1583,9 @@ function text_format_name( $key ) {
  * @return void
  */
 function reset_text_filters_cache() {
-    global $CFG;
+    global $CFG, $DB;
 
-    delete_records('cache_text');
+    $DB->delete_records('cache_text');
     $purifdir = $CFG->dataroot.'/cache/htmlpurifier';
     remove_dir($purifdir, true);
 }

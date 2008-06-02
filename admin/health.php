@@ -518,10 +518,10 @@ class problem_000011 extends problem_base {
         }
     }
     function solution() {
-        global $CFG;
+        global $CFG, $DB;
         if (optional_param('resetsesserrorcounter', 0, PARAM_BOOL)) {
             if ($DB->get_field('config', 'name', array('name'=>'session_error_counter'))) {
-                delete_records('config', 'name', 'session_error_counter');
+                $DB->delete_records('config', array('name'=>'session_error_counter'));
             }
             return 'Error counter was cleared.';
         } else {

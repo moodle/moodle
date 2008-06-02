@@ -3700,12 +3700,12 @@ function reset_course_userdata($data) {
     }
 
     if (!empty($data->reset_logs)) {
-        delete_records('log', 'course', $data->courseid);
+        $DB->delete_records('log', array('course'=>$data->courseid));
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deletelogs'), 'error'=>false);
     }
 
     if (!empty($data->reset_events)) {
-        delete_records('event', 'courseid', $data->courseid);
+        $DB->delete_records('event', array('courseid'=>$data->courseid));
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteevents', 'calendar'), 'error'=>false);
     }
 

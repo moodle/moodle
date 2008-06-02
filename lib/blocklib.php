@@ -1016,7 +1016,7 @@ function blocks_repopulate_page($page) {
     // indexed and the indexes match, so we can work straight away... but CAREFULLY!
 
     // Ready to start creating block instances, but first drop any existing ones
-    delete_records('block_instance', 'pageid', $page->get_id(), 'pagetype', $page->get_type());
+    $DB->delete_records('block_instance', array('pageid'=>$page->get_id(), 'pagetype'=>$page->get_type()));
 
     // Here we slyly count $posblocks and NOT $positions. This can actually make a difference
     // if the textual representation has undefined slots in the end. So we only work with as many
@@ -1420,7 +1420,7 @@ function upgrade_blocks_plugins($continueto) {
         upgrade_log_start();
         $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
         blocks_repopulate_page($page);
-        delete_records('config', 'name', 'siteblocksadded');
+        $DB->delete_records('config', array('name'=>'siteblocksadded'));
     }
 
     upgrade_log_finish();

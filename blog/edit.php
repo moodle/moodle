@@ -156,7 +156,7 @@ function do_delete($post) {
     global $returnurl, $DB;
 
     $status = $DB->delete_records('post', array('id'=>$post->id));
-    //$status = delete_records('blog_tag_instance', 'entryid', $post->id) and $status;
+    //$status = $DB->delete_records('blog_tag_instance', array('entryid'=>$post->id)) and $status;
     tag_set('post', $post->id, array());
     
     blog_delete_old_attachments($post);
@@ -215,8 +215,8 @@ function do_edit($post, $blogeditform) {
     if ($DB->update_record('post', $post)) {
         // delete all tags associated with this entry
         
-        //delete_records('blog_tag_instance', 'entryid', $post->id);
-        //delete_records('tag_instance', 'itemid', $post->id, 'itemtype', 'blog');
+        //$DB->delete_records('blog_tag_instance', array('entryid'=>$post->id));
+        //$DB->delete_records('tag_instance', array('itemid'=>$post->id, 'itemtype'=>'blog'));
         //untag_an_item('post', $post->id);
         // add them back
         add_tags_info($post->id);

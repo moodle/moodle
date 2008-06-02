@@ -52,7 +52,7 @@
     if ($action=='DeleteDB') {
         if ($texcache) {
             $output = "Deleting DB cache_filters entry for $texexp\n";
-            $result =  delete_records("cache_filters","id",$texcache->id);
+            $result =  $DB->delete_records("cache_filters", array("id"=>$texcache->id));
             if ($result) {
                 $result = 1;
             } else {

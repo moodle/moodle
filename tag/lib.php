@@ -519,7 +519,7 @@ function tag_delete($tagids) {
         }
         // only delete the main entry if there were no problems deleting all the 
         // instances - that (and the fact we won't often delete lots of tags) 
-        // is the reason for not using delete_records_select()
+        // is the reason for not using $DB->delete_records_select()
         if ($DB->delete_records('tag_instance', array('tagid'=>$tagid)) ) {
             $success &= (bool) $DB->delete_records('tag', array('id'=>$tagid));
         }

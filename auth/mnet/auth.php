@@ -475,7 +475,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      *   @return bool
      */
     function update_enrolments($username, $courses) {
-        global $MNET_REMOTE_CLIENT, $CFG;
+        global $MNET_REMOTE_CLIENT, $CFG, $DB;
 
         if (empty($username) || !is_array($courses)) {
             return false;
@@ -490,9 +490,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         if (empty($courses)) { // no courses? clear out quickly
-            delete_records('mnet_enrol_assignments',
-                           'hostid', (int)$MNET_REMOTE_CLIENT->id,
-                           'userid', $userid);
+            $DB->delete_records('mnet_enrol_assignments', array('hostid'=>$MNET_REMOTE_CLIENT->id, 'userid'=>$userid));
             return true;
         }
 

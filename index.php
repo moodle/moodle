@@ -140,7 +140,7 @@
     if ($SITE->numsections > 0) {
 
         if (!$section = $DB->get_record('course_sections', array('course'=>$SITE->id, 'section'=>1))) {
-            delete_records('course_sections', 'course', $SITE->id, 'section', 1); // Just in case
+            $DB->delete_records('course_sections', array('course'=>$SITE->id, 'section'=>1)); // Just in case
             $section->course = $SITE->id;
             $section->section = 1;
             $section->summary = '';
