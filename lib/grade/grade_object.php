@@ -132,7 +132,7 @@ abstract class grade_object {
         if ($instances = grade_object::fetch_all_helper($table, $classname, $params)) {
             if (count($instances) > 1) {
                 // we should not tolerate any errors here - problems might appear later
-                print_error('morethanonerecordinfetch');
+                print_error('morethanonerecordinfetch','debug');
             }
             return reset($instances);
         } else {
