@@ -639,7 +639,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
 
     function create_virtual_qtype() {
-        print_error("novirtualquestion", 'question', '', $this->name());
+        print_error("novirtualquestiontype", 'question', '', $this->name());
     }
 
     function get_virtual_qtype() {
