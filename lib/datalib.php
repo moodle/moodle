@@ -1637,7 +1637,7 @@ function get_coursemodules_in_course($modulename, $courseid, $extrafields='') {
                                   WHERE cm.course = :courseid AND
                                         cm.instance = m.id AND
                                         md.name = :modulename AND
-                                        md.id = cm.module");
+                                        md.id = cm.module", $params);
 }
 
 /**
