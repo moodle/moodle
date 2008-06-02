@@ -65,16 +65,16 @@ class block_html extends block_base {
      * @return boolean
      **/
     function decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
 
-        if ($restored_blocks = get_records_select("backup_ids","table_name = 'block_instance' AND backup_code = $restore->backup_unique_code AND new_id > 0", "", "new_id")) {
+        if ($restored_blocks = $DB->get_records_select("backup_ids", "table_name = 'block_instance' AND backup_code = ? AND new_id > 0", array($restore->backup_unique_code), "", "new_id")) {
             $restored_blocks = implode(',', array_keys($restored_blocks));
             $sql = "SELECT bi.*
-                      FROM {$CFG->prefix}block_instance bi
-                           JOIN {$CFG->prefix}block b ON b.id = bi.blockid
+                      FROM {block_instance} bi
+                           JOIN {block} b ON b.id = bi.blockid
                      WHERE b.name = 'html' AND bi.id IN ($restored_blocks)"; 
 
-            if ($instances = get_records_sql($sql)) {
+            if ($instances = $DB->get_records_sql($sql)) {
                 foreach ($instances as $instance) {
                     $blockobject = block_instance('html', $instance);
                     $blockobject->config->text = restore_decode_absolute_links($blockobject->config->text);

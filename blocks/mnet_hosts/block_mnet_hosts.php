@@ -19,7 +19,7 @@ class block_mnet_hosts extends block_list {
     }
 
     function get_content() {
-        global $THEME, $CFG, $USER;
+        global $THEME, $CFG, $USER, $DB;
 
         // only for logged in users!
         if (!isloggedin() || isguest()) {
@@ -50,14 +50,14 @@ class block_mnet_hosts extends block_list {
                  a.name as application,
                  a.display_name
              FROM 
-                 {$CFG->prefix}mnet_host h,
-                 {$CFG->prefix}mnet_application a,
-                 {$CFG->prefix}mnet_host2service h2s_IDP,
-                 {$CFG->prefix}mnet_service s_IDP,
-                 {$CFG->prefix}mnet_host2service h2s_SP,
-                 {$CFG->prefix}mnet_service s_SP
+                 {mnet_host} h,
+                 {mnet_application} a,
+                 {mnet_host2service} h2s_IDP,
+                 {mnet_service} s_IDP,
+                 {mnet_host2service} h2s_SP,
+                 {mnet_service} s_SP
              WHERE
-                 h.id != '{$CFG->mnet_localhost_id}' AND
+                 h.id <> ? AND
                  h.id = h2s_IDP.hostid AND
                  h.applicationid = a.id AND
                  h2s_IDP.serviceid = s_IDP.id AND
@@ -71,7 +71,7 @@ class block_mnet_hosts extends block_list {
                  a.display_name,
                  h.name";
 
-        $hosts = get_records_sql($sql);
+        $hosts = $DB->get_records_sql($sql, array($CFG->mnet_localhost_id));
 
         $this->content = new stdClass;
         $this->content->items = array();

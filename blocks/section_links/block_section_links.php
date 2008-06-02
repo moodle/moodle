@@ -47,7 +47,7 @@ class block_section_links extends block_base {
         if ($this->instance->pageid == $COURSE->id) {
             $course = $COURSE;
         } else {
-            $course = get_record('course', array('id'=>$this->instance->pageid));
+            $course = $DB->get_record('course', array('id'=>$this->instance->pageid));
         }
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
@@ -79,12 +79,12 @@ class block_section_links extends block_base {
         }
 
         $sql = "SELECT section, visible
-                  FROM {$CFG->prefix}course_sections
-                 WHERE course = $course->id AND
+                  FROM {course_sections}
+                 WHERE course = ? AND
                        section < ".($course->numsections+1)."
               ORDER BY section";
 
-        if ($sections = get_records_sql($sql)) {
+        if ($sections = $DB->get_records_sql($sql, array($course->id))) {
             $text = '<ol class="inline-list">';
             for ($i = $inc; $i <= $course->numsections; $i += $inc) {
                 if (!isset($sections[$i])) {

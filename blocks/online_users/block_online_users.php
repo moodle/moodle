@@ -14,7 +14,7 @@ class block_online_users extends block_base {
     function has_config() {return true;}
 
     function get_content() {
-        global $USER, $CFG, $COURSE;
+        global $USER, $CFG, $COURSE, $DB;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -47,42 +47,39 @@ class block_online_users extends block_base {
 
         $groupmembers = "";
         $groupselect = "";
+        $params = array();
 
         //Add this to the SQL to show only group users
         if ($currentgroup !== NULL) {
-            $groupmembers = ",  {$CFG->prefix}groups_members gm ";
-            $groupselect = " AND u.id = gm.userid AND gm.groupid = '$currentgroup'";
+            $groupmembers = ", {groups_members} gm";
+            $groupselect = "AND u.id = gm.userid AND gm.groupid = :currentgroup";
+            $params['currentgroup'] = $currentgroup;
         }
 
         if ($COURSE->id == SITEID) {  // Site-level
-            $select = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, max(u.lastaccess) as lastaccess ";
-            $from = "FROM {$CFG->prefix}user u 
-                          $groupmembers ";
-            $where = "WHERE u.lastaccess > $timefrom
-                      $groupselect ";
-            $order = "ORDER BY lastaccess DESC ";
+            $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, MAX(u.lastaccess) AS lastaccess
+                      FROM {user} u $groupmembers
+                     WHERE u.lastaccess > $timefrom
+                           $groupselect
+                  GROUP BY u.id, u.username, u.firstname, u.lastname, u.picture
+                  ORDER BY lastaccess DESC ";
             
         } else { // Course-level
-            $courseselect = "AND ul.courseid = '".$COURSE->id."'";
-            $select = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, max(ul.timeaccess) as lastaccess ";
-            $from = "FROM {$CFG->prefix}user_lastaccess ul,
-                          {$CFG->prefix}user u
-                          $groupmembers ";
-            $where =  "WHERE ul.timeaccess > $timefrom
-                       AND u.id = ul.userid
-                       AND ul.courseid = $COURSE->id
-                       $groupselect ";
-            $order = "ORDER BY lastaccess DESC ";
+            $sql = "SELECT u.id, u.username, u.firstname, u.lastname, u.picture, MAX(ul.timeaccess) AS lastaccess
+                      FROM {user_lastaccess} ul, {user} u $groupmembers
+                     WHERE ul.timeaccess > $timefrom
+                           AND u.id = ul.userid
+                           AND ul.courseid = :courseid
+                           $groupselect
+                  GROUP BY u.id, u.username, u.firstname, u.lastname, u.picture
+                  ORDER BY lastaccess DESC";
+            $params['courseid'] = $COURSE->id;
         }
         
-        $groupby = "GROUP BY u.id, u.username, u.firstname, u.lastname, u.picture ";
-        
-        $SQL = $select . $from . $where . $groupby . $order;
-
         $users = array();        
         $pcontext = get_related_contexts_string($context);
     
-        if ($pusers = get_records_sql($SQL, 0, 50)) {   // We'll just take the most recent 50 maximum
+        if ($pusers = $DB->get_records_sql($sql, $params, 0, 50)) {   // We'll just take the most recent 50 maximum
             $hidden = false;
 
             if (!has_capability('moodle/role:viewhiddenassigns', $context)) {
@@ -92,10 +89,10 @@ class block_online_users extends block_base {
                 $userids = array_keys($pusers);
                 $userids = implode(',', $userids);
                 $sql = "SELECT userid
-                          FROM {$CFG->prefix}role_assignments
+                          FROM {role_assignments}
                          WHERE userid IN ($userids) AND contextid $pcontext AND hidden = 1
                       GROUP BY userid";
-                $hidden = get_records_sql($sql);
+                $hidden = $DB->get_records_sql($sql);
             }
 
             foreach ($pusers as $puser) {

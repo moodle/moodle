@@ -7,7 +7,7 @@ class block_messages extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG;
+        global $USER, $CFG, $DB;
 
         if (!$CFG->messaging) {
             return ''; 
@@ -27,13 +27,11 @@ class block_messages extends block_base {
 
         $this->content->footer = '<a href="'.$CFG->wwwroot.'/message/index.php" onclick="this.target=\'message\'; return openpopup(\'/message/index.php\', \'message\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);">'.get_string('messages', 'message').'</a>...';
 
-        $users = get_records_sql("SELECT m.useridfrom as id, COUNT(m.useridfrom) as count,
-                                         u.firstname, u.lastname, u.picture, u.imagealt, u.lastaccess
-                                       FROM {$CFG->prefix}user u, 
-                                            {$CFG->prefix}message m 
-                                       WHERE m.useridto = '$USER->id' 
-                                         AND u.id = m.useridfrom
-                                    GROUP BY m.useridfrom, u.firstname,u.lastname,u.picture,u.lastaccess,u.imagealt");
+        $users = $DB->get_records_sql("SELECT m.useridfrom AS id, COUNT(m.useridfrom) AS count,
+                                              u.firstname, u.lastname, u.picture, u.imagealt, u.lastaccess
+                                         FROM {user} u, {message} m 
+                                        WHERE m.useridto = ? AND u.id = m.useridfrom
+                                     GROUP BY m.useridfrom, u.firstname,u.lastname,u.picture,u.lastaccess,u.imagealt", array($USER->id));
 
 
         //Now, we have in users, the list of users to show

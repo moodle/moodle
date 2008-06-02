@@ -13,7 +13,7 @@ class block_glossary_random extends block_base {
     }
 
     function specialization() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
         $this->course = $COURSE;
 
         // load userdefined title and make sure it's never empty
@@ -35,8 +35,8 @@ class block_glossary_random extends block_base {
         if (time() > $this->config->nexttime) {
 
             // place glossary concept and definition in $pref->cache
-            if (!$numberofentries = count_records('glossary_entries','glossaryid',$this->config->glossary,
-                                                  'approved',1)) {
+            if (!$numberofentries = $DB->count_records('glossary_entries',
+                                                       array('glossaryid'=>$this->config->glossary, 'approved'=>1))) {
                 $this->config->cache = get_string('noentriesyet','block_glossary_random');
                 $this->instance_config_commit();
             }
@@ -72,11 +72,10 @@ class block_glossary_random extends block_base {
                     break;
             }
 
-            if ($entry = get_records_sql('  SELECT concept, definition, format '.
-                                         '    FROM '.$CFG->prefix.'glossary_entries'.
-                                         '   WHERE glossaryid = '.$this->config->glossary.
-                                         '     AND approved = 1 '.
-                                         'ORDER BY timemodified '.$SORT, $limitfrom, $limitnum)) {
+            if ($entry = $DB->get_records_sql("SELECT concept, definition, format
+                                                 FROM {glossary_entries}
+                                                WHERE glossaryid = ? AND approved = 1
+                                             ORDER BY timemodified $SORT", array($this->config->glossary), $limitfrom, $limitnum)) {
 
                 $entry = reset($entry);
 
@@ -153,7 +152,7 @@ class block_glossary_random extends block_base {
     }
 
     function get_content() {
-        global $USER, $CFG, $COURSE;
+        global $USER, $CFG, $COURSE, $DB;
 
         if (empty($this->config->glossary)) {
             $this->content->text   = get_string('notyetconfigured','block_glossary_random');
@@ -166,7 +165,7 @@ class block_glossary_random extends block_base {
         if ($this->course->id == $COURSE->id) {
             $course = $COURSE;
         } else {
-            $course = get_record('course', 'id', $this->course->id); 
+            $course = $DB->get_record('course', array('id'=>$this->course->id)); 
         }
 
         require_once($CFG->dirroot.'/course/lib.php');

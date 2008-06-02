@@ -6,7 +6,7 @@
     </td>
     <td>
         <?php
-            $quizzes = get_records('quiz', 'course', $this->instance->pageid, '', 'id, name');
+            $quizzes = $DB->get_records('quiz', array('course'=>$this->instance->pageid), '', 'id, name');
             if(empty($quizzes)) {
                 echo '<strong>'.get_string('config_no_quizzes_in_course', 'block_quiz_results').'</strong>';
                 echo '<p><input type="hidden" name="quizid" value="0" /></p>';

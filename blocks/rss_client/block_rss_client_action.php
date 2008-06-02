@@ -15,7 +15,6 @@ require_once($CFG->libdir .'/rsslib.php');
 require_once(MAGPIE_DIR .'rss_fetch.inc');
 
 require_login();
-global $USER;
 
 
 if (isset($_SERVER['HTTP_REFERER'])) {
@@ -59,7 +58,7 @@ if (!defined('MAGPIE_OUTPUT_ENCODING')) {
 if (!empty($id)) {
     // we get the complete $course object here because print_header assumes this is
     // a complete object (needed for proper course theme settings)
-    if ($course = get_record('course', 'id', $id)) {
+    if ($course = $DB->get_record('course', array('id'=>$id))) {
         $context = get_context_instance(CONTEXT_COURSE, $id);
     }
 } else {
@@ -86,7 +85,7 @@ if ( !isset($act) ) {
 }
 
 if ( isset($rssid) ) {
-    $rss_record = get_record('block_rss_client', 'id', $rssid);
+    $rss_record = $DB->get_record('block_rss_client', array('id'=>$rssid));
 }
 
 
@@ -130,18 +129,18 @@ if ($act == 'updfeed') {
         $dataobject->preferredtitle = '';
         $dataobject->shared = 0;
     } else {
-        $dataobject->description = addslashes($rss->channel['description']);
-        $dataobject->title = addslashes($rss->channel['title']);
-        $dataobject->preferredtitle = addslashes($preferredtitle);
+        $dataobject->description = $rss->channel['description'];
+        $dataobject->title = $rss->channel['title'];
+        $dataobject->preferredtitle = $preferredtitle;
         if ($shared == 1 && $canaddsharedfeeds) {
             $dataobject->shared = 1;
         } else {
             $dataobject->shared = 0;
         }
     }
-    $dataobject->url = addslashes($url);
+    $dataobject->url = $url;
 
-    if (!update_record('block_rss_client', $dataobject)) {
+    if (!$DB->update_record('block_rss_client', $dataobject)) {
         print_error('updatersserror', 'error', '', $rssid);
     }
 
@@ -164,8 +163,8 @@ if ($act == 'updfeed') {
     $dataobject->userid = $USER->id;
     $dataobject->description = '';
     $dataobject->title = '';
-    $dataobject->url = addslashes($url);
-    $dataobject->preferredtitle = addslashes($preferredtitle);
+    $dataobject->url = $url;
+    $dataobject->preferredtitle = $preferredtitle;
 
     if ($shared == 1 && $canaddsharedfeeds) {
         $dataobject->shared = 1;
@@ -173,7 +172,7 @@ if ($act == 'updfeed') {
         $dataobject->shared = 0;
     }
 
-    $rssid = insert_record('block_rss_client', $dataobject);
+    $rssid = $DB->insert_record('block_rss_client', $dataobject);
     if (!$rssid) {
         print_error('updatersserror', 'error', '', $url);
     }
@@ -195,12 +194,12 @@ if ($act == 'updfeed') {
 
         $dataobject->id = $rssid;
         if (!empty($rss->channel['description'])) {
-            $dataobject->description = addslashes($rss->channel['description']);
+            $dataobject->description = $rss->channel['description'];
         }
         if (!empty($rss->channel['title'])) {
-            $dataobject->title = addslashes($rss->channel['title']);
+            $dataobject->title = $rss->channel['title'];
         }
-        if (!update_record('block_rss_client', $dataobject)) {
+        if (!$DB->update_record('block_rss_client', $dataobject)) {
             print_error('updatersserror', 'error', '', $rssid);
         }
         $message .= '<br />'. get_string('feedadded', 'block_rss_client');
@@ -212,12 +211,12 @@ if ($act == 'updfeed') {
 */
 } else if ( isset($rss_record) && $act == 'rssedit' ) {
 
-    $preferredtitle = stripslashes_safe($rss_record->preferredtitle);
+    $preferredtitle = $rss_record->preferredtitle;
     if (empty($preferredtitle)) {
-        $preferredtitle = stripslashes_safe($rss_record->title);
+        $preferredtitle = $rss_record->title;
     }
-    $url = stripslashes_safe($rss_record->url);
-    $shared = stripslashes_safe($rss_record->shared);
+    $url = $rss_record->url;
+    $shared = $rss_record->shared;
     rss_display_feeds($id, $USER->id, $rssid, $context);
     rss_print_form($act, $url, $rssid, $preferredtitle, $shared, $id, $context);
 
@@ -236,7 +235,7 @@ if ($act == 'updfeed') {
     }
 
     // echo "DEBUG: act = delfeed"; //debug
-    delete_records('block_rss_client', 'id', $rssid);
+    $DB->delete_records('block_rss_client', array('id'=>$rssid));
 
     redirect($referrer, get_string('feeddeleted', 'block_rss_client') );
 

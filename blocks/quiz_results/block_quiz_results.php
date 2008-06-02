@@ -42,9 +42,9 @@ class block_quiz_results extends block_base {
             $quizid    = $this->instance->pageid;
 
             // A trick to take advantage of instance config and save queries
-            if(empty($this->config->courseid)) {
-                $modrecord = get_record('modules', 'name', 'quiz');
-                $cmrecord  = get_record('course_modules', 'module', $modrecord->id, 'instance', $quizid);
+            if (empty($this->config->courseid)) {
+                $modrecord = $DB->get_record('modules', array('name'=>'quiz'));
+                $cmrecord  = $DB->get_record('course_modules', array('module'=>$modrecord->id, 'instance'=>$quizid));
                 $this->config->courseid = intval($cmrecord->course);
                 $this->instance_config_commit();
             }
@@ -54,22 +54,22 @@ class block_quiz_results extends block_base {
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
 
 
-        if(empty($quizid)) {
+        if (empty($quizid)) {
             $this->content->text = get_string('error_emptyquizid', 'block_quiz_results');
             return $this->content;
         }
 
         // Get the quiz record
-        $quiz = get_record('quiz', 'id', $quizid);
-        if(empty($quiz)) {
+        $quiz = $DB->get_record('quiz', array('id'=>$quizid));
+        if (empty($quiz)) {
             $this->content->text = get_string('error_emptyquizrecord', 'block_quiz_results');
             return $this->content;
         }
 
         // Get the grades for this quiz
-        $grades = get_records('quiz_grades', 'quiz', $quizid, 'grade, timemodified DESC');
+        $grades = $DB->get_records('quiz_grades', array('quiz'=>$quizid), 'grade, timemodified DESC');
 
-        if(empty($grades)) {
+        if (empty($grades)) {
             // No grades, sorry
             // The block will hide itself in this case
             return $this->content;
@@ -88,8 +88,8 @@ class block_quiz_results extends block_base {
 
         // If the block is configured to operate in group mode, or if the name display format
         // is other than "fullname", then we need to retrieve the full course record
-        if(!empty($this->config->usegroups) || $nameformat != B_QUIZRESULTS_NAME_FORMAT_FULL) {
-            $course = get_record_select('course', 'id = '.$courseid, 'groupmode, groupmodeforce, student');
+        if (!empty($this->config->usegroups) || $nameformat != B_QUIZRESULTS_NAME_FORMAT_FULL) {
+            $course = $DB->get_record('course', array('id'=>$courseid), 'groupmode, groupmodeforce, student');
         }
 
         if(!empty($this->config->usegroups)) {
@@ -98,13 +98,13 @@ class block_quiz_results extends block_base {
                 $groupmode = $course->groupmode;
             }
             else {
-                $module = get_record_sql('SELECT cm.groupmode FROM '.$CFG->prefix.'modules m LEFT JOIN '.$CFG->prefix.'course_modules cm ON m.id = cm.module WHERE m.name = \'quiz\' AND cm.instance = '.$quizid);
+                $module = $DB->get_record_sql('SELECT cm.groupmode FROM {modules} m LEFT JOIN {course_modules} cm ON m.id = cm.module WHERE m.name = \'quiz\' AND cm.instance = ?', array($quizid));
                 $groupmode = $module->groupmode;
             }
             // The actual groupmode for the quiz is now known to be $groupmode
         }
 
-        if(has_capability('moodle/site:accessallgroups', $context) && $groupmode == SEPARATEGROUPS) {
+        if (has_capability('moodle/site:accessallgroups', $context) && $groupmode == SEPARATEGROUPS) {
             // We 'll make an exception in this case
             $groupmode = VISIBLEGROUPS;
         }
@@ -127,9 +127,9 @@ class block_quiz_results extends block_base {
             }
 
             // Now find which groups these users belong in
-            $groupofuser = get_records_sql(
-            'SELECT m.userid, m.groupid, g.name FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'groups_members m ON g.id = m.groupid '.
-            'WHERE g.courseid = '.$courseid.' AND m.userid IN ('.implode(',', $userids).')'
+            $groupofuser = $DB->get_records_sql(
+            'SELECT m.userid, m.groupid, g.name FROM {groups} g LEFT JOIN {groups_members} m ON g.id = m.groupid '.
+            'WHERE g.courseid = ? AND m.userid IN ('.implode(',', $userids).')', array($courseid)
             );
 
             $groupgrades = array();

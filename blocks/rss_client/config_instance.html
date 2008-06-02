@@ -78,12 +78,12 @@ print_box_start();
             }
             global $USER;
 
-            if ($rssfeeds = get_records_select('block_rss_client', 'userid = '.$USER->id.' OR shared = 1')) {
+            if ($rssfeeds = $DB->get_records_select('block_rss_client', 'userid = ? OR shared = 1', array($USER->id))) {
                 foreach($rssfeeds as $rssfeed) {
                     if (!empty($rssfeed->preferredtitle)) {
-                        $feedtitle = stripslashes_safe($rssfeed->preferredtitle);
+                        $feedtitle = $rssfeed->preferredtitle;
                     } else {
-                        $feedtitle = stripslashes_safe($rssfeed->title);
+                        $feedtitle = $rssfeed->title;
                     }
                     $checked = '';
                     if (in_array($rssfeed->id, $selectedarray)) {

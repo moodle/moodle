@@ -174,7 +174,7 @@
      * @return string|NULL
      */
     function get_rss_by_id($rssid, $display_description, $shownumentries, $showtitle=false) {
-        global $CFG;
+        global $CFG, $DB;
         $returnstring = '';
         $now = time();
         require_once($CFG->libdir .'/rsslib.php');
@@ -183,7 +183,7 @@
             define('MAGPIE_OUTPUT_ENCODING', 'utf-8');  // see bug 3107
         }
 
-        $rss_record = get_record('block_rss_client', 'id', $rssid);
+        $rss_record = $DB->get_record('block_rss_client', array('id'=>$rssid));
         if (isset($rss_record) && isset($rss_record->id)) {
             // By capturing the output from fetch_rss this way
             // error messages do not display and clutter up the moodle interface
@@ -305,8 +305,7 @@
 
     // cron function, used to refresh all the RSS feeds from Moodle cron
     function cron() {
-
-        global $CFG;
+        global $CFG, $DB;
 
     /// We are going to measure execution times
         $starttime =  microtime();
@@ -323,10 +322,10 @@
         }
 
     /// Fetch all site feeds.
-        $rs = get_recordset('block_rss_client');
+        $rs = $DB->get_recordset('block_rss_client');
         $counter = 0;
         mtrace('');
-        while  ($rec = rs_fetch_next_record($rs)) {
+        foreach ($rs as $rec) {
             mtrace('    ' . $rec->url . ' ', '');
         /// Fetch the rss feed, using standard magpie caching
         /// so feeds will be renewed only if cache has expired
@@ -341,7 +340,7 @@
             }
             $counter ++;
         }
-        rs_close($rs);
+        $rs->close();
 
     /// Show times
         mtrace($counter . ' feeds refreshed (took ' . microtime_diff($starttime, microtime()) . ' seconds)');

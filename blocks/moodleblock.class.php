@@ -704,12 +704,12 @@ class block_base {
      * @todo finish documenting this function
      */
     function instance_config_print() {
+        global $CFG, $DB;
         // Default behavior: print the config_instance.html file
         // You don't need to override this if you're satisfied with the above
         if (!$this->instance_allow_multiple() && !$this->instance_allow_config()) {
             return false;
         }
-        global $CFG;
 
         if (is_file($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html')) {
             print_simple_box_start('center', '', '', 5, 'blockconfiginstance');
