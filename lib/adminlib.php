@@ -2481,6 +2481,7 @@ class admin_setting_courselist_frontpage extends admin_setting {
     }
 
     function load_choices() {
+        global $DB;
         if (is_array($this->choices)) {
             return true;
         }
@@ -2489,7 +2490,7 @@ class admin_setting_courselist_frontpage extends admin_setting {
                                FRONTPAGECATEGORYNAMES => get_string('frontpagecategorynames'),
                                FRONTPAGECATEGORYCOMBO => get_string('frontpagecategorycombo'),
                                'none'                 => get_string('none'));
-        if ($this->name == 'frontpage' and count_records('course') > FRONTPAGECOURSELIMIT) {
+        if ($this->name == 'frontpage' and $DB->count_records('course') > FRONTPAGECOURSELIMIT) {
             unset($this->choices[FRONTPAGECOURSELIST]);
         }
         return true;

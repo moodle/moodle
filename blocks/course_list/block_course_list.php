@@ -13,7 +13,7 @@ class block_course_list extends block_list {
     }
 
     function get_content() {
-        global $THEME, $CFG, $USER;
+        global $THEME, $CFG, $USER, $DB;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -62,7 +62,7 @@ class block_course_list extends block_list {
 
         $categories = get_categories("0");  // Parent = 0   ie top-level categories only
         if ($categories) {   //Check we have categories
-            if (count($categories) > 1 || (count($categories) == 1 && count_records('course') > 200)) {     // Just print top level category links
+            if (count($categories) > 1 || (count($categories) == 1 && $DB->count_records('course') > 200)) {     // Just print top level category links
                 foreach ($categories as $category) {
                     $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
                     $this->content->items[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">" . format_string($category->name) . "</a>";

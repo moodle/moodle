@@ -104,7 +104,7 @@
 
 /// Print headings
 
-    $numcategories = count_records("course_categories");
+    $numcategories = $DB->count_records("course_categories");
 
     $stradministration = get_string("administration");
     $strcategories = get_string("categories");

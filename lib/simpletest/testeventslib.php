@@ -100,9 +100,9 @@ class eventslib_test extends UnitTestCase {
      * Tests the installation of event handlers from file
      */
     function test__events_update_definition__install() {
-        global $CFG;
+        global $CFG, $DB;
 
-        $dbcount = count_records('events_handlers', 'handlermodule', 'unittest');
+        $dbcount = $DB->count_records('events_handlers', array('handlermodule'=>'unittest'));
         $handlers = array();
         require($CFG->libdir.'/simpletest/fixtures/events.php');
         $filecount = count($handlers);
@@ -113,8 +113,10 @@ class eventslib_test extends UnitTestCase {
      * Tests the uninstallation of event handlers from file
      */
     function test__events_update_definition__uninstall() {
+        global $DB;
+
         events_uninstall('unittest');
-        $this->assertEqual(0, count_records('events_handlers', 'handlermodule', 'unittest'), 'All handlers should be uninstalled: %s');
+        $this->assertEqual(0, count_records('events_handlers', array('handlermodule'=>'unittest')), 'All handlers should be uninstalled: %s');
     }
 
     /**

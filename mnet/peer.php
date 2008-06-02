@@ -88,19 +88,21 @@ class mnet_peer {
     }
 
     function delete() {
+        global $DB;
+
         if ($this->deleted) return true;
 
-        $users = count_records('user','mnethostid', $this->id);
+        $users = $DB->count_records('user', array('mnethostid'=>$this->id));
         if ($users > 0) {
             $this->deleted = 1;
         }
 
-        $actions = count_records('mnet_log','hostid', $this->id);
+        $actions = $DB->count_records('mnet_log', array('hostid'=>$this->id));
         if ($actions > 0) {
             $this->deleted = 1;
         }
 
-        $obj = delete_records('mnet_rpc2host', 'host_id', $this->id);
+        $obj = $DB->delete_records('mnet_rpc2host', array('host_id'=>$this->id));
 
         $this->delete_all_sessions();
 
@@ -108,27 +110,29 @@ class mnet_peer {
         // provides a foreign key, then we can delete the record. Otherwise, we
         // just mark it as deleted.
         if (0 == $this->deleted) {
-            delete_records('mnet_host', "id", $this->id);
+            $DB->delete_records('mnet_host', array("id"=>$this->id));
         } else {
             $this->commit();
         }
     }
 
     function count_live_sessions() {
+        global $DB;
         $obj = $this->delete_expired_sessions();
-        return count_records('mnet_session','mnethostid', $this->id);
+        return $DB->count_records('mnet_session', array('mnethostid'=>$this->id));
     }
 
     function delete_expired_sessions() {
+        global $DB;
         $now = time();
-        return delete_records_select('mnet_session', " mnethostid = '{$this->id}' AND expires < '$now' ");
+        return $DB->delete_records_select('mnet_session', " mnethostid = ? AND expires < ? ", array($this->id, $now));
     }
 
     function delete_all_sessions() {
-        global $CFG;
+        global $CFG, $DB;
         // TODO: Expires each PHP session individually
         // $sessions = get_records('mnet_session', 'mnethostid', $this->id);
-        $sessions = get_records('mnet_session', 'mnethostid', $this->id);
+        $sessions = $DB->get_records('mnet_session', array('mnethostid'=>$this->id));
 
         if (count($sessions) > 0 && file_exists($CFG->dirroot.'/auth/mnet/auth.php')) {
             require_once($CFG->dirroot.'/auth/mnet/auth.php');
@@ -136,7 +140,7 @@ class mnet_peer {
             $auth->end_local_sessions($sessions);
         }
 
-        $deletereturn = delete_records_select('mnet_session', " mnethostid = '{$this->id}'");
+        $deletereturn = $DB->delete_records('mnet_session', array('mnethostid'=>$this->id));
         return true;
     }
 
@@ -171,6 +175,7 @@ class mnet_peer {
     }
 
     function commit() {
+        global $DB;
         $obj = new stdClass();
 
         $obj->wwwroot               = $this->wwwroot;
@@ -187,9 +192,9 @@ class mnet_peer {
 
         if (isset($this->id) && $this->id > 0) {
             $obj->id = $this->id;
-            return update_record('mnet_host', $obj);
+            return $DB->update_record('mnet_host', $obj);
         } else {
-            $this->id = insert_record('mnet_host', $obj);
+            $this->id = $DB->insert_record('mnet_host', $obj);
             return $this->id > 0;
         }
     }
@@ -216,9 +221,9 @@ class mnet_peer {
     }
 
     function set_wwwroot($wwwroot) {
-        global $CFG;
+        global $CFG, $DB;
 
-        $hostinfo = get_record('mnet_host', 'wwwroot', $wwwroot);
+        $hostinfo = $DB->get_record('mnet_host', array('wwwroot'=>$wwwroot));
 
         if ($hostinfo != false) {
             $this->populate($hostinfo);
@@ -228,7 +233,7 @@ class mnet_peer {
     }
 
     function set_id($id) {
-        global $CFG;
+        global $CFG, $DB;
 
         if (clean_param($id, PARAM_INT) != $id) {
             $this->errno[]  = 1;
@@ -240,11 +245,11 @@ class mnet_peer {
                 SELECT
                     h.*
                 FROM
-                    {$CFG->prefix}mnet_host h
+                    {mnet_host} h
                 WHERE
-                    h.id = '". $id ."'";
+                    h.id = ?";
 
-        if ($hostinfo = get_record_sql($sql)) {
+        if ($hostinfo = $DB->get_record_sql($sql, array($id))) {
             $this->populate($hostinfo);
             return true;
         }
@@ -259,6 +264,7 @@ class mnet_peer {
      * @return  void
      */
     function populate($hostinfo) {
+        global $DB;
         $this->id                   = $hostinfo->id;
         $this->wwwroot              = $hostinfo->wwwroot;
         $this->ip_address           = $hostinfo->ip_address;
@@ -271,7 +277,7 @@ class mnet_peer {
         $this->force_theme          = $hostinfo->force_theme;
         $this->theme                = $hostinfo->theme;
         $this->applicationid        = $hostinfo->applicationid;
-        $this->application = get_record('mnet_application', 'id', $this->applicationid);
+        $this->application = $DB->get_record('mnet_application', array('id'=>$this->applicationid));
     }
 
     function get_public_key() {

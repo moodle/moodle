@@ -49,7 +49,7 @@ switch ($action) {
         }
 
         //ask for confirmation
-        $fieldcount = count_records('user_info_field', 'categoryid', $id);
+        $fieldcount = $DB->count_records('user_info_field', array('categoryid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletecategory', 'sesskey'=>sesskey());
         admin_externalpage_print_header();
         print_heading('profiledeletecategory', 'admin');
@@ -67,7 +67,7 @@ switch ($action) {
         }
 
         //ask for confirmation
-        $datacount = count_records('user_info_data', 'fieldid', $id);
+        $datacount = $DB->count_records('user_info_data', array('fieldid'=>$id));
         $optionsyes = array ('id'=>$id, 'confirm'=>1, 'action'=>'deletefield', 'sesskey'=>sesskey());
         admin_externalpage_print_header();
         print_heading('profiledeletefield', 'admin');

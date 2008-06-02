@@ -478,7 +478,7 @@
 
     if (!empty($CFG->messaging) and !isguest() and has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM))) {
         if (!empty($USER->id) and ($USER->id == $user->id)) {
-            if ($countmessages = count_records('message', 'useridto', $user->id)) {
+            if ($countmessages = $DB->count_records('message', array('useridto'=>$user->id))) {
                 $messagebuttonname = get_string("messages", "message")."($countmessages)";
             } else {
                 $messagebuttonname = get_string("messages", "message");

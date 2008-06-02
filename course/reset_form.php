@@ -52,7 +52,7 @@ class course_reset_form extends moodleform {
         if ($allmods = $DB->get_records('modules') ) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
-                if (!count_records($modname, 'course', $COURSE->id)) {
+                if (!$DB->count_records($modname, array('course'=>$COURSE->id))) {
                     continue; // skip mods with no instances
                 }
                 $modfile = $CFG->dirroot."/mod/$modname/lib.php";

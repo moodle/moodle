@@ -243,7 +243,7 @@ function profile_delete_category($id) {
     }
 
     /// Does the category contain any fields
-    if (count_records('user_info_field', 'categoryid', $category->id)) {
+    if ($DB->count_records('user_info_field', array('categoryid'=>$category->id))) {
         if (array_key_exists($category->sortorder-1, $categories)) {
             $newcategory = $categories[$category->sortorder-1];
         } else if (array_key_exists($category->sortorder+1, $categories)) {
@@ -423,7 +423,7 @@ function profile_edit_category($id, $redirect) {
         if ($data = $categoryform->get_data(false)) {
             if (empty($data->id)) {
                 unset($data->id);
-                $data->sortorder = count_records('user_info_category') + 1;
+                $data->sortorder = $DB->count_records('user_info_category') + 1;
                 if (!$DB->insert_record('user_info_category', $data, false)) {
                     print_error('There was a problem adding the record to the database');
                 }

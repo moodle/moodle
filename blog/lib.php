@@ -631,7 +631,7 @@
      * get the count of viewable entries, easiest way is to count blog_fetch_entries
      * this is used for print_paging_bar
      * this is not ideal, but because of the UNION in the sql in blog_fetch_entries,
-     * it is hard to use count_records_sql
+     * it is hard to use $DB->count_records_sql
      */
     function get_viewable_entry_count($postid='', $fetchlimit=10,
                 $fetchstart='', $filtertype='', $filterselect='', $tagid='',

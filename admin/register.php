@@ -110,18 +110,18 @@
     echo '<div class="fitemtitle"><label>'.get_string("statistics")."<br />(".get_string("notpublic").')'.'</label></div>';
     echo '<div class="felement ftext">';
 
-    $count = count_records('course')-1;
+    $count = $DB->count_records('course')-1;
     echo get_string("courses").": ".$count;
     echo "<input type=\"hidden\" name=\"courses\" value=\"$count\" />\n";
     echo '<br />';
 
-    $count = count_records('user', 'deleted', 0);
+    $count = $DB->count_records('user', array('deleted'=>0));
     echo get_string("users").": ".$count;
     echo "<input type=\"hidden\" name=\"users\" value=\"$count\" />\n";
     echo '<br />';
 
     // total number of role assignments
-    $count = count_records('role_assignments');
+    $count = $DB->count_records('role_assignments');
     echo get_string('roleassignments', 'role').": ".$count;
     echo "<input type=\"hidden\" name=\"roleassignments\" value=\"$count\" />\n";
     echo '<br />';
@@ -129,29 +129,29 @@
     // first find all distinct roles with mod/course:update
     // please change the name and strings to something appropriate to reflect the new data collected
     $sql = "SELECT COUNT(DISTINCT u.id)
-            FROM {$CFG->prefix}role_capabilities rc,
-                 {$CFG->prefix}role_assignments ra,
-                 {$CFG->prefix}user u
-            WHERE (rc.capability = 'moodle/course:update' or rc.capability='moodle/site:doanything')
+              FROM {role_capabilities} rc,
+                   {role_assignments} ra,
+                   {user} u
+             WHERE (rc.capability = 'moodle/course:update' or rc.capability='moodle/site:doanything')
                    AND rc.roleid = ra.roleid
                    AND u.id = ra.userid";
 
-    $count = count_records_sql($sql);
+    $count = $DB->count_records_sql($sql);
     echo get_string("teachers").": ".$count;
     echo "<input type=\"hidden\" name=\"courseupdaters\" value=\"$count\" />\n";
     echo '<br />';
 
-    $count = count_records('forum_posts');
+    $count = $DB->count_records('forum_posts');
     echo get_string("posts", 'forum').": ".$count;
     echo "<input type=\"hidden\" name=\"posts\" value=\"$count\" />\n";
     echo '<br />';
 
-    $count = count_records('question');
+    $count = $DB->count_records('question');
     echo get_string("questions", 'quiz').": ".$count;
     echo "<input type=\"hidden\" name=\"questions\" value=\"$count\" />\n";
     echo '<br />';
 
-    $count = count_records('resource');
+    $count = $DB->count_records('resource');
     echo get_string("modulenameplural", "resource").": ".$count;
     echo "<input type=\"hidden\" name=\"resources\" value=\"$count\" />\n";
     echo '</div>';
