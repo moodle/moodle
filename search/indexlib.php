@@ -229,18 +229,19 @@ class IndexDBControl {
         }
                 
         // object to insert into db
+        $doc = new object();
         $doc->doctype   = $document->doctype;
         $doc->docid     = $document->docid;
         $doc->itemtype  = $document->itemtype;
-        $doc->title     = search_escape_string($document->title);
-        $doc->url       = search_escape_string($document->url);
+        $doc->title     = $document->title;
+        $doc->url       = $document->url;
         $doc->updated   = time();
         $doc->docdate   = $document->date;
         $doc->courseid  = $document->course_id;
         $doc->groupid   = $document->group_id;
         
         //insert summary into db
-        $id = insert_record(SEARCH_DATABASE_TABLE, $doc);
+        $id = $DB->insert_record(SEARCH_DATABASE_TABLE, $doc);
         
         return $id;
     } 

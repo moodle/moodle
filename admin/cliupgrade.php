@@ -1206,7 +1206,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         $newsite->students = get_string("defaultcoursestudents");
         $newsite->timemodified = time();
         
-        if ($newid = insert_record('course', $newsite)) {
+        if ($newid = $DB->insert_record('course', $newsite)) {
             // Site created, add blocks for it
             $page = page_create_object(PAGE_COURSE_VIEW, $newid);
             blocks_repopulate_page($page); // Return value not checked because you can always edit later
@@ -1214,7 +1214,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             $cat = new Object();
             $cat->name = get_string('miscellaneous');
             $cat->depth = 1;
-            if ($catid = insert_record('course_categories', $cat)) {
+            if ($catid = $DB->insert_record('course_categories', $cat)) {
                 // make sure category context exists
                 get_context_instance(CONTEXT_COURSECAT, $catid);
                 mark_context_dirty('/'.SYSCONTEXTID);

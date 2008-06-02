@@ -148,7 +148,7 @@
 
         if ($user->wehaverecord == 0) {
             $dataobj->enroltime = $all_enrolled_users[$user->username]['timemodified'];
-            $dataobj->id = insert_record('mnet_enrol_assignments', $dataobj);
+            $dataobj->id = $DB->insert_record('mnet_enrol_assignments', $dataobj);
         } elseif (array_key_exists($user->username, $all_enrolled_users)) {
             $dataobj->id    = $user->enrolid;
             $DB->update_record('mnet_enrol_assignments', $dataobj);

@@ -104,7 +104,7 @@ function mnet_get_functions($type, $parentname) {
             $dataobject->enabled = $record_exists->enabled;
             $DB->update_record('mnet_rpc', $dataobject);
         } else {
-            $dataobject->id = insert_record('mnet_rpc', $dataobject, true);
+            $dataobject->id = $DB->insert_record('mnet_rpc', $dataobject, true);
         }
 
         foreach($servicearray as $service) {
@@ -114,7 +114,7 @@ function mnet_get_functions($type, $parentname) {
                 $serviceobj->name        = $service['name'];
                 $serviceobj->apiversion  = $service['apiversion'];
                 $serviceobj->offer       = 1;
-                $serviceobj->id          = insert_record('mnet_service', $serviceobj, true);
+                $serviceobj->id          = $DB->insert_record('mnet_service', $serviceobj, true);
             }
 
             if (false == $DB->get_record('mnet_service2rpc', array('rpcid'=>$dataobject->id, 'serviceid'=>$serviceobj->id))) {

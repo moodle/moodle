@@ -33,10 +33,10 @@
 
         redirect($CFG->wwwroot);
 
-    }elseif ($data = $requestform->get_data()) {
+    }elseif ($data = $requestform->get_data(false)) {
         $data->requester = $USER->id;
 
-        if (insert_record('course_request', $data)) {
+        if ($DB->insert_record('course_request', $data)) {
             notice(get_string('courserequestsuccess'));
         } else {
             notice(get_string('courserequestfailed'));
