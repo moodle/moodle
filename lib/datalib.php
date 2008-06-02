@@ -1608,9 +1608,9 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
                                   FROM {course_modules} cm, {modules} md, {".$modulename."} m
                                  WHERE $courseselect
                                        cm.instance = m.id AND
-                                       md.name = :$modulename AND
+                                       md.name = :modulename AND
                                        md.id = cm.module AND
-                                       m.id = :$instance", $params);
+                                       m.id = :instance", $params);
 
 }
 
@@ -1849,7 +1849,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         $url=$tl->substr($url,0,97).'...';
         debugging('Warning: logged very long URL',DEBUG_DEVELOPER);
     }
-    
+
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->logwrites++;};
 
     if ($CFG->type = 'oci8po') {
