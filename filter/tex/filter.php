@@ -149,7 +149,7 @@ function tex_filter ($courseid, $text) {
             $texcache->filter = 'tex';
             $texcache->version = 1;
             $texcache->md5key = $md5;
-            $texcache->rawtext = addslashes($texexp);
+            $texcache->rawtext = $texexp;
             $texcache->timemodified = time();
             $DB->insert_record("cache_filters",$texcache, false);
         }

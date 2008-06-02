@@ -30,7 +30,7 @@
     // look up in cache if required
     if ($action=='ShowDB' or $action=='DeleteDB') {
         $md5 = md5($texexp);
-        $texcache = get_record("cache_filters","filter","tex", "md5key", $md5);
+        $texcache = $DB->get_record("cache_filters", array("filter"=>"tex", "md5key"=>$md5));
     }
 
     // Action: Show DB Entry
