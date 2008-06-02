@@ -87,7 +87,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             }
             unset($temp_wwwroot);
             $mnet_peer->set_applicationid($form->applicationid);
-            $application = get_field('mnet_application', 'name', 'id', $form->applicationid);
+            $application = $DB->get_field('mnet_application', 'name', array('id'=>$form->applicationid));
             $mnet_peer->bootstrap($form->wwwroot, null, $application);
         }
 

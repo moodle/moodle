@@ -1026,7 +1026,7 @@ function get_array_of_activities($courseid) {
                        }
                    }
                    if (!isset($mod[$seq]->name)) {
-                       $mod[$seq]->name = urlencode(get_field($rawmods[$seq]->modname, "name", "id", $rawmods[$seq]->instance));
+                       $mod[$seq]->name = urlencode($DB->get_field($rawmods[$seq]->modname, "name", array("id"=>$rawmods[$seq]->instance)));
                    }
                }
             }
@@ -2205,22 +2205,22 @@ function add_mod_to_section($mod, $beforemod=NULL) {
 
 function set_coursemodule_groupmode($id, $groupmode) {
     global $DB;
-    return set_field("course_modules", "groupmode", $groupmode, array("id"=>$id));
+    return $DB->set_field("course_modules", "groupmode", $groupmode, array("id"=>$id));
 }
 
 function set_coursemodule_groupingid($id, $groupingid) {
     global $DB;
-    return set_field("course_modules", "groupingid", $groupingid, array("id"=>$id));
+    return $DB->set_field("course_modules", "groupingid", $groupingid, array("id"=>$id));
 }
 
 function set_coursemodule_groupmembersonly($id, $groupmembersonly) {
     global $DB;
-    return set_field("course_modules", "groupmembersonly", $groupmembersonly, array("id"=>$id));
+    return $DB->set_field("course_modules", "groupmembersonly", $groupmembersonly, array("id"=>$id));
 }
 
 function set_coursemodule_idnumber($id, $idnumber) {
     global $DB;
-    return set_field("course_modules", "idnumber", $idnumber, array("id"=>$id));  
+    return $DB->set_field("course_modules", "idnumber", $idnumber, array("id"=>$id));  
 }
 /**
 * $prevstateoverrides = true will set the visibility of the course module

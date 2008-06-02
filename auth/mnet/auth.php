@@ -240,7 +240,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      *   @return array The local user record.
      */
     function confirm_mnet_session($token, $remotewwwroot) {
-        global $CFG, $MNET, $SESSION;
+        global $CFG, $MNET, $SESSION, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // verify the remote host is configured locally before attempting RPC call
@@ -425,7 +425,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 $extra = get_records_sql($sql);
 
                 $keys = array_keys($courses);
-                $defaultrolename = get_field('role', 'shortname', 'id', $CFG->defaultcourseroleid);
+                $defaultrolename = $DB->get_field('role', 'shortname', array('id'=>$CFG->defaultcourseroleid));
                 foreach ($keys AS $id) {
                     if ($courses[$id]->visible == 0) {
                         unset($courses[$id]);

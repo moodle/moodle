@@ -246,11 +246,11 @@
 
         if (has_capability('moodle/course:useremail', $coursecontext) or $currentuser) {   /// Can use the enable/disable email stuff
             if (!empty($enable)) {     /// Recieved a parameter to enable the email address
-                set_field('user', 'emailstop', 0, 'id', $user->id);
+                $DB->set_field('user', 'emailstop', 0, array('id'=>$user->id));
                 $user->emailstop = 0;
             }
             if (!empty($disable)) {     /// Recieved a parameter to disable the email address
-                set_field('user', 'emailstop', 1, 'id', $user->id);
+                $DB->set_field('user', 'emailstop', 1, array('id'=>$user->id));
                 $user->emailstop = 1;
             }
         }

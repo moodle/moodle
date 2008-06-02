@@ -28,9 +28,9 @@
 
     $tableprefix = $CFG->prefix.'stats_';
 
-    $earliestday = get_field_sql('SELECT timeend FROM '.$tableprefix.'daily ORDER BY timeend');
-    $earliestweek = get_field_sql('SELECT timeend FROM '.$tableprefix.'weekly ORDER BY timeend');
-    $earliestmonth = get_field_sql('SELECT timeend FROM '.$tableprefix.'monthly ORDER BY timeend');
+    $earliestday = $DB->get_field_sql('SELECT timeend FROM {daily} ORDER BY timeend');
+    $earliestweek = $DB->get_field_sql('SELECT timeend FROM {weekly} ORDER BY timeend');
+    $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {monthly} ORDER BY timeend');
 
     if (empty($earliestday)) $earliestday = time();
     if (empty($earliestweek)) $earliestweek = time();
@@ -101,7 +101,7 @@
 
             foreach  ($courses as $c) {
                 $a = array();
-                $a[] = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$c->courseid.'">'.get_field('course','shortname','id',$c->courseid).'</a>';
+                $a[] = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$c->courseid.'">'.$DB->get_field('course', 'shortname', array('id'=>$c->courseid)).'</a>';
 
                 $a[] = $c->line1;
                 if (isset($c->line2)) {

@@ -69,6 +69,8 @@ var $imsroles = array(
 * For example, IMS role '01' is 'Learner', so may map to 'student' in Moodle.
 */
 function determine_default_rolemapping($imscode) {
+    global $DB;
+
     switch($imscode) {
         case '01':
         case '04':
@@ -89,7 +91,7 @@ function determine_default_rolemapping($imscode) {
         default:
             return 0; // Zero for no match
     }
-    return get_field('role', 'id', 'shortname', $shortname);
+    return $DB->get_field('role', 'id', array('shortname'=>$shortname));
 }
 
 
@@ -469,7 +471,7 @@ function process_group_tag($tagcontents){
         /* -----------Course aliasing is DEACTIVATED until a more general method is in place---------------
 
        // Second, look in the course alias table to see if the code should be translated to something else
-        if($aliases = get_field('enrol_coursealias', 'toids', 'fromid', $group->coursecode)){
+        if($aliases = $DB->get_field('enrol_coursealias', 'toids', array('fromid'=>$group->coursecode))){
             $this->log_line("Found alias of course code: Translated $group->coursecode to $aliases");
             // Alias is allowed to be a comma-separated list, so let's split it
             $group->coursecode = explode(',', $aliases);
@@ -561,7 +563,7 @@ function process_group_tag($tagcontents){
                     $this->log_line('Failed to create course '.$coursecode.' in Moodle');
                 }
               }
-            }elseif($recstatus==3 && ($courseid = get_field('course', 'id', 'idnumber', $coursecode))){
+            }elseif($recstatus==3 && ($courseid = $DB->get_field('course', 'id', array('idnumber'=>$coursecode)))){
                 // If course does exist, but recstatus==3 (delete), then set the course as hidden
                 $DB->set_field('course', 'visible', '0', array('id'=>$courseid));
             }

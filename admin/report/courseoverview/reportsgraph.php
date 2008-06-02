@@ -47,7 +47,7 @@
     }
 
     foreach ($courses as $c) {
-        $graph->x_data[] = get_field('course','shortname','id',$c->courseid);
+        $graph->x_data[] = $DB->get_field('course', 'shortname', array('id'=>$c->courseid));
         $graph->y_data['bar1'][] = $c->{$param->graphline};
     }
     $graph->y_order = array('bar1');

@@ -133,7 +133,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
             $count = $count->max + 100;
             begin_sql();
             foreach ($courses as $course) {
-                set_field('course', 'sortorder', $count, 'id', $course->id);
+                $DB->set_field('course', 'sortorder', $count, array('id'=>$course->id));
                 $count++;
             }
             commit_sql();
@@ -226,7 +226,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
                 $visible = 1;
             }
             if ($category) {
-                if (! set_field("course_categories", "visible", $visible, "id", $category->id)) {
+                if (! $DB->set_field("course_categories", "visible", $visible, array("id"=>$category->id))) {
                     notify("Could not update that category!");
                 }
             }
@@ -259,9 +259,9 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
 
             if ($swapcourse and $movecourse) {        // Renumber everything for robustness
                 begin_sql();
-                if (!(    set_field("course", "sortorder", $max, "id", $swapcourse->id)
-                       && set_field("course", "sortorder", $swapcourse->sortorder, "id", $movecourse->id)
-                       && set_field("course", "sortorder", $movecourse->sortorder, "id", $swapcourse->id)
+                if (!(    $DB->set_field("course", "sortorder", $max, aray("id"=>$swapcourse->id))
+                       && $DB->set_field("course", "sortorder", $swapcourse->sortorder, array("id"=>$movecourse->id))
+                       && $DB->set_field("course", "sortorder", $movecourse->sortorder, array("id"=>$swapcourse->id))
                     )) {
                     notify("Could not update that course!");
                 }

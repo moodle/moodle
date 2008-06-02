@@ -100,7 +100,7 @@
                 break;
             case 'group':
                 $group = groups_get_group($id, false);
-                $info = $group->name; //TODO: get_field('groups', 'name', 'id', $id)
+                $info = $group->name; //TODO: $DB->get_field('groups', 'name', array('id'=>$id))
                 break;
             default:
                 $info = '';

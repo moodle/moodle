@@ -78,7 +78,9 @@ class user_filter_globalrole extends user_filter_type {
      * @return string active filter label
      */
     function get_label($data) {
-        $rolename = get_field('role', 'name', 'id', $data['value']);
+        global $DB;
+
+        $rolename = $DB->get_field('role', 'name', array('id'=>$data['value']));
 
         $a = new object();
         $a->label = $this->_label;

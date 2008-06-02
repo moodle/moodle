@@ -30,7 +30,7 @@
 
 
     function report_stats_timeoptions($mode) {
-        global $CFG;
+        global $CFG, $DB;
         
         $tableprefix = $CFG->prefix.'stats_';
 
@@ -38,9 +38,9 @@
             $tableprefix = $CFG->prefix.'stats_user_';
         }
 
-        $earliestday = get_field_sql('SELECT timeend FROM '.$tableprefix.'daily ORDER BY timeend');
-        $earliestweek = get_field_sql('SELECT timeend FROM '.$tableprefix.'weekly ORDER BY timeend');
-        $earliestmonth = get_field_sql('SELECT timeend FROM '.$tableprefix.'monthly ORDER BY timeend');
+        $earliestday = $DB->get_field_sql('SELECT timeend FROM {daily} ORDER BY timeend');
+        $earliestweek = $DB->get_field_sql('SELECT timeend FROM {weekly} ORDER BY timeend');
+        $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {monthly} ORDER BY timeend');
 
         if (empty($earliestday)) $earliestday = time();
         if (empty($earliestweek)) $earliestweek = time();

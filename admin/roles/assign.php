@@ -454,7 +454,7 @@
         }
 
         foreach ($assignableroles as $roleid => $rolename) {
-            $description = format_string(get_field('role', 'description', 'id', $roleid));
+            $description = format_string($DB->get_field('role', 'description', array('id'=>$roleid)));
             $row = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>',$description, $rolehodlercount[$roleid]);
             if ($showroleholders) {
                 $row[] = $rolehodlernames[$roleid];

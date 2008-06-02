@@ -200,7 +200,7 @@
         foreach ($overridableroles as $roleid => $rolename) {
             $countusers = 0;
             $overridecount = $DB->count_records_select('role_capabilities', "roleid = ? AND contextid = ?", array($roleid, $context->id));
-            $description = format_string(get_field('role', 'description', 'id', $roleid));
+            $description = format_string($DB->get_field('role', 'description', array('id'=>$roleid)));
             $table->data[] = array('<a href="'.$baseurl.'&amp;roleid='.$roleid.'">'.$rolename.'</a>', $description, $overridecount);
         }
 

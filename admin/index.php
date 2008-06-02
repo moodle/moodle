@@ -590,7 +590,7 @@
     }
 
 /// If no recently cron run
-    $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
+    $lastcron = $DB->get_field_sql('SELECT MAX(lastcron) FROM {modules}');
     if (time() - $lastcron > 3600 * 24) {
         $strinstallation = get_string('installation', 'install');
         $helpbutton = helpbutton('install', $strinstallation, 'moodle', true, false, '', true);

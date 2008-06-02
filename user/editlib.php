@@ -20,14 +20,14 @@ function useredit_update_user_preference($usernew) {
 }
 
 function useredit_update_picture(&$usernew, &$userform) {
-    global $CFG;
+    global $CFG, $DB;
 
     if (isset($usernew->deletepicture) and $usernew->deletepicture) {
         $location = make_user_directory($usernew->id, true);
         @remove_dir($location);
-        set_field('user', 'picture', 0, 'id', $usernew->id);
+        $DB->set_field('user', 'picture', 0, array('id'=>$usernew->id));
     } else if ($usernew->picture = save_profile_image($usernew->id, $userform->get_um(), 'user')) {
-        set_field('user', 'picture', 1, 'id', $usernew->id);
+        $DB->set_field('user', 'picture', 1, array('id'=>$usernew->id));
     }
 }
 

@@ -31,7 +31,7 @@
 
     print_heading(format_string($course->fullname));
 
-    if (!$logstart = get_field_sql("SELECT MIN(time) FROM {$CFG->prefix}log")) {
+    if (!$logstart = $DB->get_field_sql("SELECT MIN(time) FROM {log}")) {
         print_error('logfilenotavailable');
     }
 

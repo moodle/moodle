@@ -104,7 +104,7 @@
 
             print_heading(format_string($course->shortname).' - '.get_string('statsreport'.$report)
                     .((!empty($user)) ? ' '.get_string('statsreportforuser').' ' .fullname($user,true) : '')
-                    .((!empty($roleid)) ? ' '.get_field('role','name','id',$roleid) : ''));
+                    .((!empty($roleid)) ? ' '.$DB->get_field('role','name', array('id'=>$roleid)) : ''));
 
 
             if (empty($CFG->gdversion)) {

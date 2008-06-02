@@ -386,7 +386,7 @@
                 // reset a role sitewide...
                 mark_context_dirty($sitecontext->path);
 
-                $rolename = get_field('role', 'name', 'id', $roleid);
+                $rolename = $DB->get_field('role', 'name', array('id'=>$roleid));
                 add_to_log(SITEID, 'role', 'reset', 'admin/roles/manage.php?roleid='.$roleid.'&action=reset', $rolename, '', $USER->id);
 
                 redirect('manage.php?action=view&amp;roleid='.$roleid);

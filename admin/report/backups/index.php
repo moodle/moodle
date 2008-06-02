@@ -63,7 +63,7 @@
             echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strnext</font></td></tr>";
             foreach ($courses as $course) {
             /// Get the course shortname
-                $coursename = get_field ("course","fullname","id",$course->courseid);
+                $coursename = $DB->get_field ("course", "fullname", array("id"=>$course->courseid));
                 if ($coursename) {
                     echo "<tr>";
                     echo "<td nowrap=\"nowrap\"><font size=\"2\"><a href=\"index.php?courseid=$course->courseid\">".$coursename."</a></font></td>";
@@ -90,7 +90,7 @@
     } else {
         print_heading($backuplogdetailed);
 
-        $coursename = get_field("course","fullname","id","$courseid");
+        $coursename = $DB->get_field("course", "fullname", array("id"=>"$courseid"));
         print_heading("$strcourse: $coursename");
 
         print_simple_box_start('center');

@@ -728,13 +728,15 @@ class block_base {
      * @todo finish documenting this function
      */
     function instance_config_save($data,$pinned=false) {
-        $data = stripslashes_recursive($data);
+        global $DB;
+
+        $data = $data;
         $this->config = $data;
         $table = 'block_instance';
         if (!empty($pinned)) {
             $table = 'block_pinned';
         }
-        return set_field($table, 'configdata', base64_encode(serialize($data)), 'id', $this->instance->id);
+        return $DB->set_field($table, 'configdata', base64_encode(serialize($data)), array('id'=>$this->instance->id));
     }
 
     /**
@@ -743,11 +745,13 @@ class block_base {
      * @todo finish documenting this function
      */
     function instance_config_commit($pinned=false) {
+        global $DB;
+
         $table = 'block_instance';
         if (!empty($pinned)) {
             $table = 'block_pinned';
         }
-        return set_field($table, 'configdata', base64_encode(serialize($this->config)), 'id', $this->instance->id);
+        return $DB->set_field($table, 'configdata', base64_encode(serialize($this->config)), array('id'=>$this->instance->id));
     }
 
      /**

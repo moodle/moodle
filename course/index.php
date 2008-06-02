@@ -82,7 +82,7 @@
         }
         if (has_capability('moodle/course:create', $sysctx)) {       // Print link to create a new course
         /// Get the 1st available category
-            $options = array('category' => get_field('course_categories', 'id', 'parent', '0'));
+            $options = array('category' => $DB->get_field('course_categories', 'id', array('parent'=>'0')));
             print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
         }
         if (has_capability('moodle/site:approvecourse', $sysctx)  and !empty($CFG->enablecourserequests)) {
@@ -292,7 +292,7 @@
         if (has_capability('moodle/course:create', $sysctx)) {
             // print create course link to first category
             $options = array();
-            $options = array('category' => get_field('course_categories', 'id', 'parent', '0'));
+            $options = array('category' => $DB->get_field('course_categories', 'id', array('parent'=>'0')));
             print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
         }
     }

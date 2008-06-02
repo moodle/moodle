@@ -129,7 +129,7 @@ if ($formdata = $mform->get_data(false)) {
                                 continue;
                             }
                             if (my_save_profile_image($user->id, $zipdir.'/'.$item)) {
-                                set_field('user', 'picture', 1, 'id', $user->id);
+                                $DB->set_field('user', 'picture', 1, array('id'=>$user->id));
                                 $usersupdated++;
                                 notify(get_string('uploadpicture_userupdated', 'admin', $user->username));
                             } else {

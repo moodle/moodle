@@ -520,7 +520,7 @@ class problem_000011 extends problem_base {
     function solution() {
         global $CFG;
         if (optional_param('resetsesserrorcounter', 0, PARAM_BOOL)) {
-            if (get_field('config', 'name', 'name', 'session_error_counter')) {
+            if ($DB->get_field('config', 'name', array('name'=>'session_error_counter'))) {
                 delete_records('config', 'name', 'session_error_counter');
             }
             return 'Error counter was cleared.';

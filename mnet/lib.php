@@ -289,10 +289,10 @@ function mnet_encrypt_message($message, $remote_certificate) {
  * @return  string              The signature over that text
  */
 function mnet_get_keypair() {
-    global $CFG;
+    global $CFG, $DB;;
     static $keypair = null;
     if (!is_null($keypair)) return $keypair;
-    if ($result = get_field('config_plugins', 'value', 'plugin', 'mnet', 'name', 'openssl')) {
+    if ($result = $DB->get_field('config_plugins', 'value', array('plugin'=>'mnet', 'name'=>'openssl'))) {
         list($keypair['certificate'], $keypair['keypair_PEM']) = explode('@@@@@@@@', $result);
         $keypair['privatekey'] = openssl_pkey_get_private($keypair['keypair_PEM']);
         $keypair['publickey']  = openssl_pkey_get_public($keypair['certificate']);

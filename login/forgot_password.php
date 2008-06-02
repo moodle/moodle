@@ -62,7 +62,7 @@ if ($p_secret !== false) {
 
         // Clear secret so that it can not be used again
         $user->secret = '';
-        if (!set_field('user', 'secret', $user->secret, 'id', $user->id)) {
+        if (!$DB->set_field('user', 'secret', $user->secret, array('id'=>$user->id))) {
             print_error('Error resetting user secret string');
         }
 
@@ -114,7 +114,7 @@ if ($mform->is_cancelled()) {
 
             // set 'secret' string
             $user->secret = random_string(15);
-            if (!set_field('user', 'secret', $user->secret, 'id', $user->id)) {
+            if (!$DB->set_field('user', 'secret', $user->secret, array('id'=>$user->id))) {
                 print_error('error setting user secret string');
             }
 
