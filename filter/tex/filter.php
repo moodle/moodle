@@ -92,8 +92,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
 }
 
 function tex_filter ($courseid, $text) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     /// Do a quick check using stripos to avoid unnecessary work
     if (!preg_match('/<tex/i',$text) and !strstr($text,'$$') and !strstr($text,'\\[') and !preg_match('/\[tex/i',$text)) { //added one more tag (dlnsk)
@@ -107,9 +106,9 @@ function tex_filter ($courseid, $text) {
 #    }
 #    if (strstr($scriptname,'post.php')) {
 #        $parent = forum_get_post_full($_GET['reply']);
-#        $discussion = get_record("forum_discussions","id",$parent->discussion);
+#        $discussion = $DB->get_record("forum_discussions", array("id"=>$parent->discussion));
 #    } else if (strstr($scriptname,'discuss.php')) {
-#        $discussion = get_record("forum_discussions","id",$_GET['d'] );
+#        $discussion = $DB->get_record("forum_discussions", array("id"=>$_GET['d']));
 #    } else {
 #        return $text;
 #    }
@@ -146,13 +145,13 @@ function tex_filter ($courseid, $text) {
           $texexp = preg_replace('/^align=top /','',$texexp);
         }
         $md5 = md5($texexp);
-        if (! $texcache = get_record("cache_filters","filter","tex", "md5key", $md5)) {
+        if (! $texcache = $DB->get_record("cache_filters", array("filter"=>"tex", "md5key"=>$md5))) {
             $texcache->filter = 'tex';
             $texcache->version = 1;
             $texcache->md5key = $md5;
             $texcache->rawtext = addslashes($texexp);
             $texcache->timemodified = time();
-            insert_record("cache_filters",$texcache, false);
+            $DB->insert_record("cache_filters",$texcache, false);
         }
         $filename = $md5 . ".gif";
         $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp, '', '', $align, $alt), $text);
