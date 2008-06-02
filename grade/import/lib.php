@@ -59,7 +59,7 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
     /// first select distinct new grade_items with this batch
 
     if ($newitems = get_records_sql("SELECT *
-                                       FROM {$CFG->prefix}grade_import_newitem
+                                       FROM {grade_import_newitem}
                                       WHERE importcode = $importcode AND importer={$USER->id}")) {
 
         // instances of the new grade_items created, cached
@@ -98,7 +98,7 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
     /// then find all existing items
 
     if ($gradeitems = get_records_sql("SELECT DISTINCT (itemid)
-                                         FROM {$CFG->prefix}grade_import_values
+                                         FROM {grade_import_values}
                                         WHERE importcode = $importcode AND importer={$USER->id} AND itemid > 0")) {
 
         $modifieditems = array();
@@ -157,7 +157,7 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
 
 /**
  * This function returns an array of grades that were included in the import,
- * but wherer the user does not currenly have a graded role on the course. These gradse 
+ * but wherer the user does not currenly have a graded role on the course. These gradse
  * are still stored in the database, but will not be visible in the gradebook unless
  * this user subsequently enrols on the course in a graded roles.
  *
@@ -170,15 +170,15 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
 function get_unenrolled_users_in_import($importcode, $courseid) {
     global $CFG;
     $relatedctxcondition = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $courseid));
-    
-    $sql = "SELECT giv.id, u.firstname, u.lastname, u.idnumber AS useridnumber, 
+
+    $sql = "SELECT giv.id, u.firstname, u.lastname, u.idnumber AS useridnumber,
                 COALESCE(gi.idnumber, gin.itemname) AS gradeidnumber
             FROM
-                {$CFG->prefix}grade_import_values giv
-                JOIN {$CFG->prefix}user u ON giv.userid = u.id
-                LEFT JOIN {$CFG->prefix}grade_items gi ON gi.id = giv.itemid
-                LEFT JOIN {$CFG->prefix}grade_import_newitem gin ON gin.id = giv.newgradeitem
-                LEFT JOIN {$CFG->prefix}role_assignments ra ON (giv.userid = ra.userid AND
+                {grade_import_values} giv
+                JOIN {user} u ON giv.userid = u.id
+                LEFT JOIN {grade_items} gi ON gi.id = giv.itemid
+                LEFT JOIN {grade_import_newitem} gin ON gin.id = giv.newgradeitem
+                LEFT JOIN {role_assignments} ra ON (giv.userid = ra.userid AND
                     ra.roleid IN ($CFG->gradebookroles) AND
                     ra.contextid $relatedctxcondition)
                 WHERE giv.importcode = $importcode

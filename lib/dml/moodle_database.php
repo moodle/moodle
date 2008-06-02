@@ -1212,7 +1212,7 @@ abstract class moodle_database {
     /**
      * Returns SQL WHERE conditions
      * @param array conditions - must not contain numeric indexes
-     * @return array sql part and params 
+     * @return array sql part and params
      */
     public function where_clause(array $conditions=null) {
         $allowed_types = $this->allowed_param_types();

@@ -36,12 +36,12 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 // a bit complex access control :-O
 if ($id) {
     /// editing existing outcome
-    if (!$outcome_rec = get_record('grade_outcomes', 'id', $id)) {
+    if (!$outcome_rec = $DB->get_record('grade_outcomes', array('id' => $id))) {
         print_error('invalidoutcome');
     }
     if ($outcome_rec->courseid) {
         $outcome_rec->standard = 0;
-        if (!$course = get_record('course', 'id', $outcome_rec->courseid)) {
+        if (!$course = $DB->get_record('course', array('id' => $outcome_rec->courseid))) {
             print_error('invalidcourseid');
         }
         require_login($course);
@@ -50,7 +50,7 @@ if ($id) {
         $courseid = $course->id;
     } else {
         if ($courseid) {
-            if (!$course = get_record('course', 'id', $courseid)) {
+            if (!$course = $DB->get_record('course', array('id' => $courseid))) {
                 print_error('invalidcourseid');
             }
         }
@@ -62,7 +62,7 @@ if ($id) {
 
 } else if ($courseid){
     /// adding new outcome from course
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
         print_error('nocourseid');
     }
     $outcome_rec = new object();

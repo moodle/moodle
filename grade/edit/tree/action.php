@@ -31,7 +31,7 @@ $action   = required_param('action', PARAM_ALPHA);
 $eid      = required_param('eid', PARAM_ALPHANUM);
 
 /// Make sure they can even access this course
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 require_login($course);

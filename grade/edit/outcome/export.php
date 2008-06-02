@@ -1,5 +1,5 @@
 <?php // $Id$
-      // Exports selected outcomes in CSV format. 
+      // Exports selected outcomes in CSV format.
 
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
@@ -10,7 +10,7 @@ $action   = optional_param('action', '', PARAM_ALPHA);
 
 /// Make sure they can even access this course
 if ($courseid) {
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
         print_error('nocourseid');
     }
     require_login($course);
@@ -34,7 +34,7 @@ if (!confirm_sesskey()) {
 $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
 header("Content-Type: text/csv; charset=utf-8");
-// TODO: make the filename more useful, include a date, a specific name, something... 
+// TODO: make the filename more useful, include a date, a specific name, something...
 header('Content-Disposition: attachment; filename=outcomes.csv');
 
 // sending header with clear names, to make 'what is what' as easy as possible to understand
@@ -44,7 +44,7 @@ echo format_csv($header, ';', '"');
 $outcomes = array();
 if ( $courseid ) {
     $outcomes = array_merge(grade_outcome::fetch_all_global(), grade_outcome::fetch_all_local($courseid));
-} else { 
+} else {
     $outcomes = grade_outcome::fetch_all_global();
 }
 
@@ -55,12 +55,12 @@ foreach($outcomes as $outcome) {
     $line[] = $outcome->get_name();
     $line[] = $outcome->get_shortname();
     $line[] = $outcome->description;
-    
+
     $scale = $outcome->load_scale();
     $line[] = $scale->get_name();
     $line[] = $scale->compact_items();
     $line[] = $scale->description;
-    
+
     echo format_csv($line, ';', '"');
 }
 

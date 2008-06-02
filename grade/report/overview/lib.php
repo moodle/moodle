@@ -141,7 +141,7 @@ class grade_report_overview extends grade_report {
                 } else if (!is_null($finalgrade)) {
                     /// find the number of users with a higher grade
                     $sql = "SELECT COUNT(DISTINCT(userid))
-                              FROM {$CFG->prefix}grade_grades
+                              FROM {grade_grades}
                              WHERE finalgrade IS NOT NULL AND finalgrade > $finalgrade
                                    AND itemid = {$grade_item->id}";
                     $rank = count_records_sql($sql) + 1;
@@ -202,7 +202,7 @@ function grade_report_overview_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_overview_showrank', get_string('showrank', 'grades'), $options);
-    $mform->setHelpButton('report_overview_showrank', array('showrank', get_string('showrank', 'grades'), 'grade')); 
+    $mform->setHelpButton('report_overview_showrank', array('showrank', get_string('showrank', 'grades'), 'grade'));
 }
 
 ?>

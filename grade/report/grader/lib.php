@@ -40,13 +40,13 @@ class grade_report_grader extends grade_report {
      * The final grades.
      * @var array $grades
      */
-    var $grades;
+    public $grades;
 
     /**
      * Array of errors for bulk grades updating.
      * @var array $gradeserror
      */
-    var $gradeserror = array();
+    public $gradeserror = array();
 
 //// SQL-RELATED
 
@@ -54,36 +54,42 @@ class grade_report_grader extends grade_report {
      * The id of the grade_item by which this report will be sorted.
      * @var int $sortitemid
      */
-    var $sortitemid;
+    public $sortitemid;
 
     /**
      * Sortorder used in the SQL selections.
      * @var int $sortorder
      */
-    var $sortorder;
+    public $sortorder;
 
     /**
      * An SQL fragment affecting the search for users.
      * @var string $userselect
      */
-    var $userselect;
+    public $userselect;
+
+    /**
+     * The bound params for $userselect
+     * @var array $userselect_params
+     */
+    public $userselect_params = array();
 
     /**
      * List of collapsed categories from user preference
      * @var array $collapsed
      */
-    var $collapsed;
+    public $collapsed;
 
     /**
      * A count of the rows, used for css classes.
      * @var int $rowcount
      */
-    var $rowcount = 0;
+    public $rowcount = 0;
 
     /**
      * Capability check caching
      * */
-    var $canviewhidden;
+    public $canviewhidden;
 
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
@@ -93,9 +99,9 @@ class grade_report_grader extends grade_report {
      * @param int $page The current page being viewed (when report is paged)
      * @param int $sortitemid The id of the grade_item by which to sort the table
      */
-    function grade_report_grader($courseid, $gpr, $context, $page=null, $sortitemid=null) {
+    public function __construct($courseid, $gpr, $context, $page=null, $sortitemid=null) {
         global $CFG;
-        parent::grade_report($courseid, $gpr, $context, $page);
+        parent::__construct($courseid, $gpr, $context, $page);
 
         $this->canviewhidden = has_capability('moodle/grade:viewhidden', get_context_instance(CONTEXT_COURSE, $this->course->id));
 
@@ -150,7 +156,7 @@ class grade_report_grader extends grade_report {
      * @param array $data form submission (with magic quotes)
      * @return array empty array if success, array of warnings if something fails.
      */
-    function process_data($data) {
+    public function process_data($data) {
         $warnings = array();
 
         // always initialize all arrays
@@ -236,7 +242,7 @@ class grade_report_grader extends grade_report {
      * all this should be in the new table class that we might need to use
      * for displaying grades.
      */
-    function setup_sortitemid() {
+    private function setup_sortitemid() {
 
         global $SESSION;
 
@@ -251,7 +257,7 @@ class grade_report_grader extends grade_report {
                 // this is the first sort, i.e. by last name
                 if (!isset($SESSION->gradeuserreport->sortitemid)) {
                     if ($this->sortitemid == 'firstname' || $this->sortitemid == 'lastname') {
-                        $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';    
+                        $this->sortorder = $SESSION->gradeuserreport->sort = 'ASC';
                     } else {
                         $this->sortorder = $SESSION->gradeuserreport->sort = 'DESC';
                     }
@@ -295,18 +301,21 @@ class grade_report_grader extends grade_report {
      * this is check for user roles because there could be some users with grades
      * but not supposed to be displayed
      */
-    function load_users() {
-        global $CFG;
+    public function load_users() {
+        global $CFG, $DB;
+        $params = array();
+        list($usql, $gbr_params) = $DB->get_in_or_equal(explode(',', $this->gradebookroles));
 
         if (is_numeric($this->sortitemid)) {
+            $params = array_merge(array($this->sortitemid), $gbr_params, $this->groupwheresql_params);
             $sort = "g.finalgrade $this->sortorder";
 
             $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
-                      FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
-                           {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $this->sortitemid)
-                           LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                      FROM {grade_grades} g RIGHT OUTER JOIN
+                           {user} u ON (u.id = g.userid AND g.itemid = ?)
+                           LEFT JOIN {role_assignments} ra ON u.id = ra.userid
                            $this->groupsql
-                     WHERE ra.roleid in ($this->gradebookroles)
+                     WHERE ra.roleid in $usql
                            $this->groupwheresql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                   ORDER BY $sort";
@@ -322,25 +331,27 @@ class grade_report_grader extends grade_report {
                     $sort = "u.idnumber $this->sortorder"; break;
             }
 
+            $params = array_merge($gbr_params, $this->groupwheresql_params);
             $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
-                      FROM {$CFG->prefix}user u
-                           JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                      FROM {user} u
+                           JOIN {role_assignments} ra ON u.id = ra.userid
                            $this->groupsql
-                     WHERE ra.roleid in ($this->gradebookroles)
+                     WHERE ra.roleid $usql
                            $this->groupwheresql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                   ORDER BY $sort";
         }
 
 
-        $this->users = get_records_sql($sql, $this->get_pref('studentsperpage') * $this->page,
-                            $this->get_pref('studentsperpage'));
+        $this->users = $DB->get_records_sql($sql, $params, $this->get_pref('studentsperpage') * $this->page, $this->get_pref('studentsperpage'));
 
         if (empty($this->users)) {
             $this->userselect = '';
             $this->users = array();
         } else {
-            $this->userselect = 'AND g.userid in ('.implode(',', array_keys($this->users)).')';
+            list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users));
+            $this->userselect = "AND g.userid $usql";
+            $this->userselect_params = $params;
         }
 
         return $this->users;
@@ -350,35 +361,36 @@ class grade_report_grader extends grade_report {
      * we supply the userids in this query, and get all the grades
      * pulls out all the grades, this does not need to worry about paging
      */
-    function load_final_grades() {
-        global $CFG;
+    public function load_final_grades() {
+        global $CFG, $DB;
 
         // please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
+        $params = array_merge(array($this->courseid), $this->userselect_params);
         $sql = "SELECT g.*
-                  FROM {$CFG->prefix}grade_items gi,
-                       {$CFG->prefix}grade_grades g
-                 WHERE g.itemid = gi.id AND gi.courseid = {$this->courseid} {$this->userselect}";
+                  FROM {grade_items} gi,
+                       {grade_grades} g
+                 WHERE g.itemid = gi.id AND gi.courseid = ? {$this->userselect}";
 
         $userids = array_keys($this->users);
 
 
-        if ($grades = get_records_sql($sql)) {
+        if ($grades = $DB->get_records_sql($sql, $params)) {
             foreach ($grades as $graderec) {
-                if (in_array($graderec->userid, $userids) and array_key_exists($graderec->itemid, $this->gtree->items)) { // some items may not be present!!
+                if (in_array($graderec->userid, $userids) and array_key_exists($graderec->itemid, $this->gtree->get_items())) { // some items may not be present!!
                     $this->grades[$graderec->userid][$graderec->itemid] = new grade_grade($graderec, false);
-                    $this->grades[$graderec->userid][$graderec->itemid]->grade_item =& $this->gtree->items[$graderec->itemid]; // db caching
+                    $this->grades[$graderec->userid][$graderec->itemid]->grade_item =& $this->gtree->get_item($graderec->itemid); // db caching
                 }
             }
         }
 
         // prefil grades that do not exist yet
         foreach ($userids as $userid) {
-            foreach ($this->gtree->items as $itemid=>$unused) {
+            foreach ($this->gtree->get_items() as $itemid=>$unused) {
                 if (!isset($this->grades[$userid][$itemid])) {
                     $this->grades[$userid][$itemid] = new grade_grade();
                     $this->grades[$userid][$itemid]->itemid = $itemid;
                     $this->grades[$userid][$itemid]->userid = $userid;
-                    $this->grades[$userid][$itemid]->grade_item =& $this->gtree->items[$itemid]; // db caching
+                    $this->grades[$userid][$itemid]->grade_item =& $this->gtree->get_item($itemid); // db caching
                 }
             }
         }
@@ -388,7 +400,7 @@ class grade_report_grader extends grade_report {
      * Builds and returns a div with on/off toggles.
      * @return string HTML code
      */
-    function get_toggles_html() {
+    public function get_toggles_html() {
         global $CFG, $USER;
 
         $html = '<div id="grade-report-toggles">';
@@ -434,7 +446,7 @@ class grade_report_grader extends grade_report {
     * @param bool $return Whether to return the HTML string rather than printing it
     * @return void
     */
-    function print_toggle($type, $return=false) {
+    public function print_toggle($type, $return=false) {
         global $CFG;
 
         $icons = array('eyecons' => 't/hide.gif',
@@ -488,7 +500,7 @@ class grade_report_grader extends grade_report {
      * Builds and returns the HTML code for the headers.
      * @return string $headerhtml
      */
-    function get_headerhtml() {
+    public function get_headerhtml() {
         global $CFG, $USER;
 
         $strsortasc   = $this->get_lang_string('sortasc', 'grades');
@@ -519,12 +531,12 @@ class grade_report_grader extends grade_report {
         // Prepare Table Headers
         $headerhtml = '';
 
-        $numrows = count($this->gtree->levels);
+        $numrows = count($this->gtree->get_levels());
 
         $columns_to_unset = array();
 
 
-        foreach ($this->gtree->levels as $key=>$row) {
+        foreach ($this->gtree->get_levels() as $key=>$row) {
             $columncount = 0;
             if ($key == 0) {
                 // do not display course grade category
@@ -644,7 +656,7 @@ class grade_report_grader extends grade_report {
      * Builds and return the HTML rows of the table (grades headed by student).
      * @return string HTML
      */
-    function get_studentshtml() {
+    public function get_studentshtml() {
         global $CFG, $USER, $DB;
 
         $studentshtml = '';
@@ -659,7 +671,7 @@ class grade_report_grader extends grade_report {
         $scales_list = array();
         $tabindices = array();
 
-        foreach ($this->gtree->items as $item) {
+        foreach ($this->gtree->get_items() as $item) {
             if (!empty($item->scaleid)) {
                 $scales_list[] = $item->scaleid;
             }
@@ -673,7 +685,7 @@ class grade_report_grader extends grade_report {
         if (!empty($scales_list)) {
             $scales_array = $DB->get_records_list('scale', 'id', $scales_list);
         }
-        
+
         $row_classes = array(' even ', ' odd ');
 
         $row_classes = array(' even ', ' odd ');
@@ -684,7 +696,7 @@ class grade_report_grader extends grade_report {
                 $altered = array();
                 $unknown = array();
             } else {
-                $hiding_affected = grade_grade::get_hiding_affected($this->grades[$userid], $this->gtree->items);
+                $hiding_affected = grade_grade::get_hiding_affected($this->grades[$userid], $this->gtree->get_items());
                 $altered = $hiding_affected['altered'];
                 $unknown = $hiding_affected['unknown'];
                 unset($hiding_affected);
@@ -707,8 +719,8 @@ class grade_report_grader extends grade_report {
                         $user->idnumber.'</a></th>';
             }
 
-            foreach ($this->gtree->items as $itemid=>$unused) {
-                $item =& $this->gtree->items[$itemid];
+            foreach ($this->gtree->get_items() as $itemid=>$unused) {
+                $item =& $this->gtree->get_item($itemid);
                 $grade = $this->grades[$userid][$item->id];
 
                 // Get the decimal points preference for this item
@@ -769,7 +781,7 @@ class grade_report_grader extends grade_report {
                     $hidden = ' hidden ';
                 }
 
-                $gradepass = ' gradefail '; 
+                $gradepass = ' gradefail ';
                 if ($grade->is_passed($item)) {
                     $gradepass = ' gradepass ';
                 } elseif (is_null($grade->is_passed($item))) {
@@ -891,8 +903,8 @@ class grade_report_grader extends grade_report {
      * @param  bool $grouponly Whether to return only group averages or all averages.
      * @return string HTML
      */
-    function get_avghtml($grouponly=false) {
-        global $CFG, $USER;
+    public function get_avghtml($grouponly=false) {
+        global $CFG, $USER, $DB;
 
         if (!$this->canviewhidden) {
             // totals might be affected by hiding, if user can not see hidden grades the aggregations might be altered
@@ -914,12 +926,14 @@ class grade_report_grader extends grade_report {
             $showaverages = $this->currentgroup && $this->get_pref('showgroups');
             $groupsql = $this->groupsql;
             $groupwheresql = $this->groupwheresql;
+            $groupwheresql_params = $this->groupwheresql_params;
             $avgcssclass = 'groupavg';
         } else {
             $straverage = get_string('overallaverage', 'grades');
             $showaverages = $this->get_pref('showaverages');
             $groupsql = "";
             $groupwheresql = "";
+            $groupwheresql_params = array();
         }
 
         if ($shownumberofgrades) {
@@ -928,23 +942,26 @@ class grade_report_grader extends grade_report {
 
         $totalcount = $this->get_numusers($grouponly);
 
+        list($usql, $roles_params) = $DB->get_in_or_equal(explode(',', $this->gradebookroles));
+
         if ($showaverages) {
+            $params = array_merge(array($this->courseid), $roles_params, $groupwheresql_params);
 
             // find sums of all grade items in course
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) AS sum
-                      FROM {$CFG->prefix}grade_items gi
-                           JOIN {$CFG->prefix}grade_grades g      ON g.itemid = gi.id 
-                           JOIN {$CFG->prefix}user u              ON u.id = g.userid 
-                           JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
+                      FROM {grade_items} gi
+                           JOIN {grade_grades} g      ON g.itemid = gi.id
+                           JOIN {user} u              ON u.id = g.userid
+                           JOIN {role_assignments} ra ON ra.userid = u.id
                            $groupsql
-                     WHERE gi.courseid = $this->courseid
-                           AND ra.roleid in ($this->gradebookroles)
+                     WHERE gi.courseid = ?
+                           AND ra.roleid $usql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                            AND g.finalgrade IS NOT NULL
                            $groupwheresql
                   GROUP BY g.itemid";
             $sum_array = array();
-            if ($sums = get_records_sql($SQL)) {
+            if ($sums = $DB->get_records_sql($SQL, $params)) {
                 foreach ($sums as $itemid => $csum) {
                     $sum_array[$itemid] = $csum->sum;
                 }
@@ -964,20 +981,21 @@ class grade_report_grader extends grade_report {
 
             // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
+            $params = array_merge(array($this->courseid), $roles_params, $groupwheresql_params);
             $SQL = "SELECT gi.id, COUNT(u.id) AS count
-                      FROM {$CFG->prefix}grade_items gi
-                           CROSS JOIN {$CFG->prefix}user u
-                           JOIN {$CFG->prefix}role_assignments ra        ON ra.userid = u.id
-                           LEFT OUTER JOIN  {$CFG->prefix}grade_grades g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL) 
+                      FROM {grade_items} gi
+                           CROSS JOIN {user} u
+                           JOIN {role_assignments} ra        ON ra.userid = u.id
+                           LEFT OUTER JOIN  {grade_grades} g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL)
                            $groupsql
-                     WHERE gi.courseid = $this->courseid
-                           AND ra.roleid in ($this->gradebookroles)
+                     WHERE gi.courseid = ?
+                           AND ra.roleid $usql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                            AND g.id IS NULL
                            $groupwheresql
                   GROUP BY gi.id";
 
-            $ungraded_counts = get_records_sql($SQL);
+            $ungraded_counts = $DB->get_records_sql($SQL, $params);
 
             foreach ($this->gtree->items as $itemid=>$unused) {
                 $item =& $this->gtree->items[$itemid];
@@ -1049,7 +1067,7 @@ class grade_report_grader extends grade_report {
      * Builds and return the HTML row of ranges for each column (i.e. range).
      * @return string HTML
      */
-    function get_rangehtml() {
+    public function get_rangehtml() {
         global $USER;
         $showuseridnumber      = $this->get_pref('showuseridnumber');
 
@@ -1071,8 +1089,8 @@ class grade_report_grader extends grade_report {
                 $columncount++;
             }
 
-            foreach ($this->gtree->items as $itemid=>$unused) {
-                $item =& $this->gtree->items[$itemid];
+            foreach ($this->gtree->get_items() as $itemid=>$unused) {
+                $item =& $this->gtree->get_item($itemid);
 
                 // Determine which display type to use for this average
                 if ($USER->gradeediting[$this->courseid]) {
@@ -1113,12 +1131,12 @@ class grade_report_grader extends grade_report {
         }
         return $scalehtml;
     }
-    
+
     /**
      * Builds and return the HTML row of ranges for each column (i.e. range).
      * @return string HTML
      */
-    function get_iconshtml() {
+    public function get_iconshtml() {
         global $USER;
 
         $iconshtml = '';
@@ -1133,10 +1151,10 @@ class grade_report_grader extends grade_report {
                        . '<th class="header c0 range" scope="row" '.$colspan.'>'.$this->get_lang_string('controls','grades').'</th>';
 
             $columncount = 1;
-            foreach ($this->gtree->items as $itemid=>$unused) {
+            foreach ($this->gtree->get_items() as $itemid=>$unused) {
                 // emulate grade element
-                $item =& $this->gtree->items[$itemid];
-                 
+                $item =& $this->gtree->get_item($itemid);
+
                 $eid = $this->gtree->get_item_eid($item);
                 $element = $this->gtree->locate_element($eid);
 
@@ -1155,7 +1173,7 @@ class grade_report_grader extends grade_report {
      * @param object $object
      * @return string HTML
      */
-    function get_icons($element) {
+    protected function get_icons($element) {
         global $CFG, $USER;
 
         if (!$USER->gradeediting[$this->courseid]) {
@@ -1191,7 +1209,7 @@ class grade_report_grader extends grade_report {
      * @param object $object
      * @return string HTML
      */
-    function get_collapsing_icon($element) {
+    protected function get_collapsing_icon($element) {
         global $CFG;
 
         $contract_expand_icon = '';
@@ -1223,7 +1241,7 @@ class grade_report_grader extends grade_report {
      * @param string $action Which action to take (edit, delete etc...)
      * @return
      */
-    function process_action($target, $action) {
+    public function process_action($target, $action) {
         // TODO: this code should be in some grade_tree static method
         $targettype = substr($target, 0, 1);
         $targetid = substr($target, 1);

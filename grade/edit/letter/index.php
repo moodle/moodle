@@ -30,7 +30,7 @@ require_once $CFG->libdir.'/gradelib.php';
 $courseid  = optional_param('id', SITEID, PARAM_INT);
 $action   = optional_param('action', '', PARAM_ALPHA);
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 require_login($course);

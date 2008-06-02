@@ -42,7 +42,7 @@ $toggle        = optional_param('toggle', NULL, PARAM_INT);
 $toggle_type   = optional_param('toggle_type', 0, PARAM_ALPHANUM);
 
 /// basic access checks
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 require_login($course);
@@ -124,12 +124,12 @@ $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid)
 // Initialise the grader report object
 if (ajaxenabled() && $report->get_pref('enableajax')) {
     require_once $CFG->dirroot.'/grade/report/grader/ajaxlib.php';
-    
-    require_js(array('yui_yahoo', 
-                     'yui_dom', 
-                     'yui_event', 
-                     'yui_json', 
-                     'yui_connection', 
+
+    require_js(array('yui_yahoo',
+                     'yui_dom',
+                     'yui_event',
+                     'yui_json',
+                     'yui_connection',
                      'yui_dragdrop',
                      'yui_animation'));
 
@@ -219,7 +219,7 @@ echo $reporthtml;
 
 // print submit button
 if ($USER->gradeediting[$course->id] && ($report->get_pref('showquickfeedback')
-    || 
+    ||
     $report->get_pref('quickgrading')) && !$report->get_pref('enableajax')) {
     echo '<div class="submit"><input type="submit" value="'.get_string('update').'" /></div>';
     echo '</div></form>';

@@ -27,13 +27,13 @@ require_once $CFG->libdir.'/formslib.php';
 
 class edit_letter_form extends moodleform {
 
-    function definition() {
+    public function definition() {
         $mform =& $this->_form;
         $num   = $this->_customdata['num'];
         $admin = $this->_customdata['admin'];
 
         $mform->addElement('header', 'gradeletters', get_string('gradeletters', 'grades'));
-        
+
         // Only show "override site defaults" checkbox if editing the course grade letters
         if (!$admin) {
             $mform->addElement('checkbox', 'override', get_string('overridesitedefaultgradedisplaytype', 'grades'));
@@ -59,7 +59,7 @@ class edit_letter_form extends moodleform {
                 $mform->setHelpButton($gradelettername, array('gradeletter', get_string('gradeletter', 'grades'), 'grade'));
             }
             $mform->setType($gradelettername, PARAM_TEXT);
-            
+
             if (!$admin) {
                 $mform->disabledIf($gradelettername, 'override', 'notchecked');
                 $mform->disabledIf($gradelettername, $gradeboundaryname, 'eq', -1);
@@ -71,7 +71,7 @@ class edit_letter_form extends moodleform {
             }
             $mform->setDefault($gradeboundaryname, -1);
             $mform->setType($gradeboundaryname, PARAM_INT);
-            
+
             if (!$admin) {
                 $mform->disabledIf($gradeboundaryname, 'override', 'notchecked');
             }

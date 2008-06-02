@@ -30,16 +30,16 @@ require_once $CFG->libdir.'/gradelib.php';
  * Returns detailed info about users and their grades.
  */
 class graded_users_iterator {
-    var $course;
-    var $grade_items;
-    var $groupid;
-    var $users_rs;
-    var $grades_rs;
-    var $gradestack;
-    var $sortfield1;
-    var $sortorder1;
-    var $sortfield2;
-    var $sortorder2;
+    public $course;
+    public $grade_items;
+    public $groupid;
+    public $users_rs;
+    public $grades_rs;
+    public $gradestack;
+    public $sortfield1;
+    public $sortorder1;
+    public $sortfield2;
+    public $sortorder2;
 
     /**
      * Constructor
@@ -51,7 +51,7 @@ class graded_users_iterator {
      * @param string $sortfield2 The second field of the users table by which the array of users will be sorted
      * @param string $sortorder2 The order in which the second sorting field will be sorted (ASC or DESC)
      */
-    function graded_users_iterator($course, $grade_items=null, $groupid=0, $sortfield1='lastname', $sortorder1='ASC', $sortfield2='firstname', $sortorder2='ASC') {
+    public function graded_users_iterator($course, $grade_items=null, $groupid=0, $sortfield1='lastname', $sortorder1='ASC', $sortfield2='firstname', $sortorder2='ASC') {
         $this->course      = $course;
         $this->grade_items = $grade_items;
         $this->groupid     = $groupid;
@@ -67,8 +67,8 @@ class graded_users_iterator {
      * Initialise the iterator
      * @return boolean success
      */
-    function init() {
-        global $CFG;
+    public function init() {
+        global $CFG, $DB;
 
         $this->close();
 
@@ -79,17 +79,15 @@ class graded_users_iterator {
             return false;
         }
 
-        if (strpos($CFG->gradebookroles, ',') === false) {
-            $gradebookroles = " = {$CFG->gradebookroles}";
-        } else {
-            $gradebookroles = " IN ({$CFG->gradebookroles})";
-        }
+        list($gradebookroles_sql, $params) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles));
 
         $relatedcontexts = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $this->course->id));
 
         if ($this->groupid) {
-            $groupsql = "INNER JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id";
-            $groupwheresql = "AND gm.groupid = {$this->groupid}";
+            $groupsql = "INNER JOIN {groups_members} gm ON gm.userid = u.id";
+            $groupwheresql = "AND gm.groupid = ?";
+            // $params contents: gradebookroles
+            $params[] = $this->groupid;
         } else {
             $groupsql = "";
             $groupwheresql = "";
@@ -114,32 +112,35 @@ class graded_users_iterator {
             }
         }
 
+        // $params contents: gradebookroles and groupid (for $groupwheresql)
         $users_sql = "SELECT u.* $ofields
-                        FROM {$CFG->prefix}user u
-                             INNER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                        FROM {user} u
+                             INNER JOIN {role_assignments} ra ON u.id = ra.userid
                              $groupsql
-                       WHERE ra.roleid $gradebookroles
+                       WHERE ra.roleid $gradebookroles_sql;
                              AND ra.contextid $relatedcontexts
                              $groupwheresql
                     ORDER BY $order";
 
-        $this->users_rs = get_recordset_sql($users_sql);
+        $this->users_rs = $DB->get_recordset_sql($users_sql, $params);
 
         if (!empty($this->grade_items)) {
             $itemids = array_keys($this->grade_items);
-            $itemids = implode(',', $itemids);
+            list($itemidsql, $grades_params) = $DB->get_in_or_equal($itemids);
+            $params = array_merge($params, $grades_params);
 
+            // $params contents: gradebookroles, groupid (for $groupwheresql) and itemids
             $grades_sql = "SELECT g.* $ofields
-                             FROM {$CFG->prefix}grade_grades g
-                                  INNER JOIN {$CFG->prefix}user u ON g.userid = u.id
-                                  INNER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                             FROM {grade_grades} g
+                                  INNER JOIN {user} u ON g.userid = u.id
+                                  INNER JOIN {role_assignments} ra ON u.id = ra.userid
                                   $groupsql
-                            WHERE ra.roleid $gradebookroles
+                            WHERE ra.roleid $gradebookroles_sql
                                   AND ra.contextid $relatedcontexts
-                                  AND g.itemid IN ($itemids)
                                   $groupwheresql
+                                  AND g.itemid $itemidsql
                          ORDER BY $order, g.itemid ASC";
-            $this->grades_rs = get_recordset_sql($grades_sql);
+            $this->grades_rs = $DB->get_recordset_sql($grades_sql, $params);
         } else {
             $this->grades_rs = false;
         }
@@ -156,7 +157,7 @@ class graded_users_iterator {
             return false; // no users present
         }
 
-        if (!$user = rs_fetch_next_record($this->users_rs)) {
+        if (!$user = $this->users_rs->next()) {
             if ($current = $this->_pop()) {
                 // this is not good - user or grades updated between the two reads above :-(
             }
@@ -213,11 +214,11 @@ class graded_users_iterator {
      */
     function close() {
         if ($this->users_rs) {
-            rs_close($this->users_rs);
+            $this->users_rs->close();
             $this->users_rs = null;
         }
         if ($this->grades_rs) {
-            rs_close($this->grades_rs);
+            $this->grades_rs->close();
             $this->grades_rs = null;
         }
         $this->gradestack = array();
@@ -234,12 +235,13 @@ class graded_users_iterator {
      * Internal function
      */
     function _pop() {
+        global $DB;
         if (empty($this->gradestack)) {
             if (!$this->grades_rs) {
                 return NULL; // no grades present
             }
 
-            if (!$grade = rs_fetch_next_record($this->grades_rs)) {
+            if (!$grade = $this->grades_rs->next()) {
                 return NULL; // no more grades
             }
 
@@ -458,17 +460,17 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
  * Utility class used for return tracking when using edit and other forms in grade plugins
  */
 class grade_plugin_return {
-    var $type;
-    var $plugin;
-    var $courseid;
-    var $userid;
-    var $page;
+    public $type;
+    public $plugin;
+    public $courseid;
+    public $userid;
+    public $page;
 
     /**
      * Constructor
      * @param array $params - associative array with return parameters, if null parameter are taken from _GET or _POST
      */
-    function grade_plugin_return ($params=null) {
+    public function grade_plugin_return ($params=null) {
         if (empty($params)) {
             $this->type     = optional_param('gpr_type', null, PARAM_SAFEDIR);
             $this->plugin   = optional_param('gpr_plugin', null, PARAM_SAFEDIR);
@@ -489,7 +491,7 @@ class grade_plugin_return {
      * Returns return parameters as options array suitable for buttons.
      * @return array options
      */
-    function get_options() {
+    public function get_options() {
         if (empty($this->type)) {
             return array();
         }
@@ -520,7 +522,7 @@ class grade_plugin_return {
      * @param string $default default url when params not set
      * @return string url
      */
-    function get_return_url($default, $extras=null) {
+    public function get_return_url($default, $extras=null) {
         global $CFG;
 
         if (empty($this->type) or empty($this->plugin)) {
@@ -559,7 +561,7 @@ class grade_plugin_return {
      * Returns string with hidden return tracking form elements.
      * @return string
      */
-    function get_form_fields() {
+    public function get_form_fields() {
         if (empty($this->type)) {
             return '';
         }
@@ -588,7 +590,7 @@ class grade_plugin_return {
      * @param object $mform moodle form object
      * @return void
      */
-    function add_mform_elements(&$mform) {
+    public function add_mform_elements(&$mform) {
         if (empty($this->type)) {
             return;
         }
@@ -622,7 +624,7 @@ class grade_plugin_return {
      * @param string $url
      * @return string $url with erturn tracking params
      */
-    function add_url_params($url) {
+    public function add_url_params($url) {
         if (empty($this->type)) {
             return $url;
         }
@@ -760,14 +762,14 @@ function grade_build_nav($path, $pagename=null, $id=null) {
  * General structure representing grade items in course
  */
 class grade_structure {
-    var $context;
+    public $context;
 
-    var $courseid;
+    public $courseid;
 
     /**
      * 1D array of grade items only
      */
-    var $items;
+    public $items;
 
     /**
      * Returns icon of element
@@ -775,7 +777,7 @@ class grade_structure {
      * @param bool $spacerifnone return spacer if no icon found
      * @return string icon or spacer
      */
-    function get_element_icon(&$element, $spacerifnone=false) {
+    public function get_element_icon(&$element, $spacerifnone=false) {
         global $CFG;
 
         switch ($element['type']) {
@@ -832,7 +834,7 @@ class grade_structure {
      * @param bool $spacerifnone return spacer if no icon found
      * @return header string
      */
-    function get_element_header(&$element, $withlink=false, $icon=true, $spacerifnone=false) {
+    public function get_element_header(&$element, $withlink=false, $icon=true, $spacerifnone=false) {
         global $CFG;
 
         $header = '';
@@ -874,7 +876,7 @@ class grade_structure {
      * @param $grade_grade object
      * @return string eid
      */
-    function get_grade_eid($grade_grade) {
+    public function get_grade_eid($grade_grade) {
         if (empty($grade_grade->id)) {
             return 'n'.$grade_grade->itemid.'u'.$grade_grade->userid;
         } else {
@@ -887,7 +889,7 @@ class grade_structure {
      * @param $grade_item object
      * @return string eid
      */
-    function get_item_eid($grade_item) {
+    public function get_item_eid($grade_item) {
         return 'i'.$grade_item->id;
     }
 
@@ -922,7 +924,7 @@ class grade_structure {
      * @param object $element
      * @return string
      */
-    function get_edit_icon($element, $gpr) {
+    public function get_edit_icon($element, $gpr) {
         global $CFG;
 
         if (!has_capability('moodle/grade:manage', $this->context)) {
@@ -999,7 +1001,7 @@ class grade_structure {
      * @param object $element
      * @return string
      */
-    function get_hiding_icon($element, $gpr) {
+    public function get_hiding_icon($element, $gpr) {
         global $CFG;
 
         if (!has_capability('moodle/grade:manage', $this->context) and !has_capability('moodle/grade:hide', $this->context)) {
@@ -1038,19 +1040,19 @@ class grade_structure {
      * @param object $element
      * @return string
      */
-    function get_locking_icon($element, $gpr) {
+    public function get_locking_icon($element, $gpr) {
         global $CFG;
 
         $strparams = $this->get_params_for_iconstr($element);
         $strunlock = get_string('unlockverbose', 'grades', $strparams);
         $strlock = get_string('lockverbose', 'grades', $strparams);
-        
+
         // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon
         if ($element['type'] == 'grade' && $element['object']->grade_item->is_locked()) {
             $strparamobj = new stdClass();
             $strparamobj->itemname = $element['object']->grade_item->itemname;
             $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
-            $action  = '<img src="'.$CFG->pixpath.'/t/unlock_gray.gif" alt="'.$strnonunlockable.'" class="iconsmall" title="'.$strnonunlockable.'"/>'; 
+            $action  = '<img src="'.$CFG->pixpath.'/t/unlock_gray.gif" alt="'.$strnonunlockable.'" class="iconsmall" title="'.$strnonunlockable.'"/>';
         } elseif ($element['object']->is_locked()) {
             $icon = 'unlock';
             $tooltip = $strunlock;
@@ -1086,7 +1088,7 @@ class grade_structure {
      * @param object $element
      * @return string
      */
-    function get_calculation_icon($element, $gpr) {
+    public function get_calculation_icon($element, $gpr) {
         global $CFG;
         if (!has_capability('moodle/grade:manage', $this->context)) {
             return '';
@@ -1129,12 +1131,12 @@ class grade_seq extends grade_structure {
      * A string of GET URL variables, namely courseid and sesskey, used in most URLs built by this class.
      * @var string $commonvars
      */
-    var $commonvars;
+    public $commonvars;
 
     /**
      * 1D array of elements
      */
-    var $elements;
+    public $elements;
 
     /**
      * Constructor, retrieves and stores array of all grade_category and grade_item
@@ -1143,7 +1145,7 @@ class grade_seq extends grade_structure {
      * @param boolean $category_grade_last category grade item is the last child
      * @param array $collapsed array of collapsed categories
      */
-    function grade_seq($courseid, $category_grade_last=false, $nooutcomes=false) {
+    public function grade_seq($courseid, $category_grade_last=false, $nooutcomes=false) {
         global $USER, $CFG;
 
         $this->courseid   = $courseid;
@@ -1166,7 +1168,7 @@ class grade_seq extends grade_structure {
      * @param array $element The seed of the recursion
      * @return void
      */
-    function flatten(&$element, $category_grade_last, $nooutcomes) {
+    public function flatten(&$element, $category_grade_last, $nooutcomes) {
         if (empty($element['children'])) {
             return array();
         }
@@ -1204,7 +1206,7 @@ class grade_seq extends grade_structure {
      * @param int $eid
      * @return object element
      */
-    function locate_element($eid) {
+    public function locate_element($eid) {
         // it is a grade - construct a new object
         if (strpos($eid, 'n') === 0) {
             if (!preg_match('/n(\d+)u(\d+)/', $eid, $matches)) {
@@ -1261,23 +1263,23 @@ class grade_tree extends grade_structure {
      * The basic representation of the tree as a hierarchical, 3-tiered array.
      * @var object $top_element
      */
-    var $top_element;
+    public $top_element;
 
     /**
      * A string of GET URL variables, namely courseid and sesskey, used in most URLs built by this class.
      * @var string $commonvars
      */
-    var $commonvars;
+    public $commonvars;
 
     /**
      * 2D array of grade items and categories
      */
-    var $levels;
+    public $levels;
 
     /**
      * Grade items
      */
-    var $items;
+    public $items;
 
     /**
      * Constructor, retrieves and stores a hierarchical array of all grade_category and grade_item
@@ -1287,7 +1289,7 @@ class grade_tree extends grade_structure {
      * @param boolean $category_grade_last category grade item is the last child
      * @param array $collapsed array of collapsed categories
      */
-    function grade_tree($courseid, $fillers=true, $category_grade_last=false, $collapsed=null, $nooutcomes=false) {
+    public function grade_tree($courseid, $fillers=true, $category_grade_last=false, $collapsed=null, $nooutcomes=false) {
         global $USER, $CFG;
 
         $this->courseid   = $courseid;
@@ -1331,7 +1333,7 @@ class grade_tree extends grade_structure {
      * @param array $collapsed array of collapsed categories
      * @return void
      */
-    function category_collapse(&$element, $collapsed) {
+    public function category_collapse(&$element, $collapsed) {
         if ($element['type'] != 'category') {
             return;
         }
@@ -1361,7 +1363,7 @@ class grade_tree extends grade_structure {
      * @param array $element The seed of the recursion
      * @return void
      */
-    function no_outcomes(&$element) {
+    public function no_outcomes(&$element) {
         if ($element['type'] != 'category') {
             return;
         }
@@ -1382,7 +1384,7 @@ class grade_tree extends grade_structure {
      * @param array $element The seed of the recursion
      * @return void
      */
-    function category_grade_last(&$element) {
+    public function category_grade_last(&$element) {
         if (empty($element['children'])) {
             return;
         }
@@ -1409,7 +1411,7 @@ class grade_tree extends grade_structure {
      * @param int $depth
      * @return void
      */
-    function fill_levels(&$levels, &$element, $depth) {
+    public function fill_levels(&$levels, &$element, $depth) {
         if (!array_key_exists($depth, $levels)) {
             $levels[$depth] = array();
         }
@@ -1442,7 +1444,7 @@ class grade_tree extends grade_structure {
     /**
      * Static recursive helper - makes full tree (all leafes are at the same level)
      */
-    function inject_fillers(&$element, $depth) {
+    public function inject_fillers(&$element, $depth) {
         $depth++;
 
         if (empty($element['children'])) {
@@ -1482,7 +1484,7 @@ class grade_tree extends grade_structure {
     /**
      * Static recursive helper - add colspan information into categories
      */
-    function inject_colspans(&$element) {
+    public function inject_colspans(&$element) {
         if (empty($element['children'])) {
             return 1;
         }
@@ -1500,7 +1502,7 @@ class grade_tree extends grade_structure {
      * @param int $eid
      * @return object element
      */
-    function locate_element($eid) {
+    public function locate_element($eid) {
         // it is a grade - construct a new object
         if (strpos($eid, 'n') === 0) {
             if (!preg_match('/n(\d+)u(\d+)/', $eid, $matches)) {
@@ -1548,13 +1550,13 @@ class grade_tree extends grade_structure {
 
         return null;
     }
-    
+
     /**
      * Returns a well-formed XML representation of the grade-tree using recursion.
      * @param array $root The current element in the recursion. If null, starts at the top of the tree.
      * @return string $xml
      */
-    function exportToXML($root=null, $tabs="\t") {
+    public function exportToXML($root=null, $tabs="\t") {
         $xml = null;
         $first = false;
         if (is_null($root)) {
@@ -1563,7 +1565,7 @@ class grade_tree extends grade_structure {
             $xml .= "<gradetree>\n";
             $first = true;
         }
-        
+
         $type = 'undefined';
         if (strpos($root['object']->table, 'grade_categories') !== false) {
             $type = 'category';
@@ -1572,7 +1574,7 @@ class grade_tree extends grade_structure {
         } elseif (strpos($root['object']->table, 'grade_outcomes') !== false) {
             $type = 'outcome';
         }
-        
+
         $xml .= "$tabs<element type=\"$type\">\n";
         foreach ($root['object'] as $var => $value) {
             if (!is_object($value) && !is_array($value) && !empty($value)) {
@@ -1587,16 +1589,16 @@ class grade_tree extends grade_structure {
             }
             $xml .= "$tabs\t</children>\n";
         }
-        
+
         $xml .= "$tabs</element>\n";
 
         if ($first) {
             $xml .= "</gradetree>";
         }
-        
+
         return $xml;
     }
-    
+
     /**
      * Returns a JSON representation of the grade-tree using recursion.
      * @param array $root The current element in the recursion. If null, starts at the top of the tree.
@@ -1604,28 +1606,28 @@ class grade_tree extends grade_structure {
      * @param int    $switch The position (first or last) of the aggregations
      * @return string $xml
      */
-    function exportToJSON($root=null, $tabs="\t") {
+    public function exportToJSON($root=null, $tabs="\t") {
         $json = null;
         $first = false;
         if (is_null($root)) {
             $root = $this->top_element;
             $first = true;
         }
-        
+
         $name = '';
 
 
         if (strpos($root['object']->table, 'grade_categories') !== false) {
             $name = $root['object']->fullname;
             if ($name == '?') {
-                $name = $root['object']->get_name(); 
+                $name = $root['object']->get_name();
             }
         } elseif (strpos($root['object']->table, 'grade_items') !== false) {
             $name = $root['object']->itemname;
         } elseif (strpos($root['object']->table, 'grade_outcomes') !== false) {
             $name = $root['object']->itemname;
         }
-        
+
         $json .= "$tabs {\n";
         $json .= "$tabs\t \"type\": \"{$root['type']}\",\n";
         $json .= "$tabs\t \"name\": \"$name\",\n";
@@ -1635,9 +1637,9 @@ class grade_tree extends grade_structure {
                 $json .= "$tabs\t \"$var\": \"$value\",\n";
             }
         }
-        
+
         $json = substr($json, 0, strrpos($json, ','));
-        
+
         if (!empty($root['children'])) {
             $json .= ",\n$tabs\t\"children\": [\n";
             foreach ($root['children'] as $sortorder => $child) {
@@ -1645,15 +1647,31 @@ class grade_tree extends grade_structure {
             }
             $json = substr($json, 0, strrpos($json, ','));
             $json .= "\n$tabs\t]\n";
-        } 
+        }
 
         if ($first) {
             $json .= "\n}";
         } else {
             $json .= "\n$tabs},\n";
         }
-        
+
         return $json;
+    }
+
+    public function get_levels() {
+        return $this->levels;
+    }
+
+    public function get_items() {
+        return $this->items;
+    }
+
+    public function get_item($itemid) {
+        if (array_key_exists($itemid, $this->items)) {
+            return $this->items[$itemid];
+        } else {
+            return false;
+        }
     }
 }
 

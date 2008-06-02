@@ -72,7 +72,7 @@ foreach ($letters as $boundary=>$letter) {
     $data->$gradeboundaryname = $boundary;
     $i++;
 }
-$data->override = record_exists('grade_letters', 'contextid', $contextid);
+$data->override = $DB->record_exists('grade_letters', array('contextid' => $contextid));
 
 $mform = new edit_letter_form(null, array('num'=>$num, 'admin'=>$admin));
 $mform->set_data($data);
@@ -82,7 +82,7 @@ if ($mform->is_cancelled()) {
 
 } else if ($data = $mform->get_data()) {
     if (!$admin and empty($data->override)) {
-        delete_records('grade_letters', 'contextid', $context->id);
+        $DB->delete_records('grade_letters', array('contextid' => $context->id));
         redirect($returnurl);
     }
 
@@ -102,7 +102,7 @@ if ($mform->is_cancelled()) {
     krsort($letters, SORT_NUMERIC);
 
     $old_ids = array();
-    if ($records = get_records('grade_letters', 'contextid', $context->id, 'lowerboundary ASC', 'id')) {
+    if ($records = $DB->get_records('grade_letters', array('contextid' => $context->id), 'lowerboundary ASC', 'id')) {
         $old_ids = array_keys($records);
     }
 
@@ -114,14 +114,14 @@ if ($mform->is_cancelled()) {
 
         if ($old_id = array_pop($old_ids)) {
             $record->id = $old_id;
-            update_record('grade_letters', $record);
+            $DB->update_record('grade_letters', $record);
         } else {
-            insert_record('grade_letters', $record);
+            $DB->insert_record('grade_letters', $record);
         }
     }
 
     foreach($old_ids as $old_id) {
-        delete_records('grade_letters', 'id', $old_id);
+        $DB->delete_records('grade_letters', array('id' => $old_id));
     }
 
     redirect($returnurl);

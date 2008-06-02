@@ -23,7 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 
-require_once '../../../config.php'; 
+require_once '../../../config.php';
 require_once $CFG->libdir.'/gradelib.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 // require_once $CFG->dirroot.'/grade/report/grader/ajaxlib.php';
@@ -43,7 +43,7 @@ switch ($action) {
             if (!$grade_item = grade_item::fetch(array('id'=>$itemid, 'courseid'=>$courseid))) { // we must verify course id here!
                 print_error('invalidgradeitmeid');
             }
-            
+
             /**
              * Code copied from grade/report/grader/lib.php line 187+
              */
@@ -83,7 +83,7 @@ switch ($action) {
                     $gradestr->itemname = $grade_item->get_name();
                     $json_object->message = get_string($errorstr, 'grades', $gradestr);
                     $json_object->result = "error";
-                    
+
                 }
 
                 $finalvalue = $finalgrade;
@@ -99,13 +99,13 @@ switch ($action) {
 
                 $finalvalue = $feedback;
             }
-            
+
             if (!empty($json_object->result) && $json_object->result == 'error') {
                 echo json_encode($json_object);
                 die();
             } else {
                 $json_object->gradevalue = $finalvalue;
-            
+
                 if ($grade_item->update_final_grade($userid, $finalgrade, 'gradebook', $feedback, FORMAT_MOODLE)) {
                     $json_object->result = 'success';
                     $json_object->message = false;
@@ -115,10 +115,10 @@ switch ($action) {
                     echo json_encode();
                     die();
                 }
-                
+
                 // Get row data
                 $sql = "SELECT gg.id, gi.id AS itemid, gi.scaleid AS scale, gg.userid AS userid, finalgrade, gg.overridden AS overridden "
-                     . "FROM {$CFG->prefix}grade_grades gg, {$CFG->prefix}grade_items gi WHERE " 
+                     . "FROM {grade_grades} gg, {grade_items} gi WHERE "
                      . "gi.courseid = $courseid AND gg.itemid = gi.id AND gg.userid = $userid";
                 $records = get_records_sql($sql);
                 $json_object->row = $records;
@@ -128,7 +128,7 @@ switch ($action) {
         } else {
             $json_object = new stdClass();
             $json_object->result = "error";
-            $json_object->message = "Missing parameter to ajax UPDATE callback: \n" . 
+            $json_object->message = "Missing parameter to ajax UPDATE callback: \n" .
                                     "  userid: $userid,\n  itemid: $itemid\n,  type: $type\n,  newvalue: $newvalue";
             echo json_encode($json_object);
         }

@@ -31,7 +31,7 @@ require_once $CFG->libdir.'/gradelib.php';
 $courseid = required_param('id', PARAM_INT);
 
 /// Make sure they can even access this course
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 require_login($course);
@@ -47,7 +47,7 @@ $co_custom           = grade_outcome::fetch_all_local($courseid);
 $co_standard_used    = array();
 $co_standard_notused = array();
 
-if ($courseused = get_records('grade_outcomes_courses', 'courseid', $courseid, '', 'outcomeid')) {
+if ($courseused = $DB->get_records('grade_outcomes_courses', array('courseid' => $courseid), '', 'outcomeid')) {
     $courseused = array_keys($courseused);
 } else {
     $courseused = array();
@@ -56,7 +56,7 @@ if ($courseused = get_records('grade_outcomes_courses', 'courseid', $courseid, '
 // fix wrong entries in outcomes_courses
 foreach ($courseused as $oid) {
     if (!array_key_exists($oid, $standardoutcomes) and !array_key_exists($oid, $co_custom)) {
-        delete_records('grade_outcomes_courses', 'outcomeid', $oid, 'courseid', $courseid);
+        $DB->delete_records('grade_outcomes_courses', array('outcomeid' => $oid, 'courseid' => $courseid));
     }
 }
 
@@ -67,15 +67,16 @@ foreach($co_custom as $oid=>$outcome) {
         $goc = new object();
         $goc->courseid = $courseid;
         $goc->outcomeid = $oid;
-        insert_record('grade_outcomes_courses', $goc);
+        $DB->insert_record('grade_outcomes_courses', $goc);
     }
 }
 
 // now check all used standard outcomes are in outcomes_course too
+$params = array($courseid);
 $sql = "SELECT DISTINCT outcomeid
-          FROM {$CFG->prefix}grade_items
-         WHERE courseid=$courseid and outcomeid IS NOT NULL";
-if ($realused = get_records_sql($sql)) {
+          FROM {grade_items}
+         WHERE courseid=? and outcomeid IS NOT NULL";
+if ($realused = $DB->get_records_sql($sql, $params)) {
     $realused = array_keys($realused);
     foreach ($realused as $oid) {
         if (array_key_exists($oid, $standardoutcomes)) {
@@ -88,7 +89,7 @@ if ($realused = get_records_sql($sql)) {
                 $goc = new object();
                 $goc->courseid = $courseid;
                 $goc->outcomeid = $oid;
-                insert_record('grade_outcomes_courses', $goc);
+                $DB->insert_record('grade_outcomes_courses', $goc);
             }
         }
     }
@@ -116,7 +117,7 @@ if ($data = data_submitted()) {
             $goc = new object();
             $goc->courseid = $courseid;
             $goc->outcomeid = $add;
-            insert_record('grade_outcomes_courses', $goc);
+            $DB->insert_record('grade_outcomes_courses', $goc);
         }
 
     } else if (!empty($data->remove) && !empty($data->removeoutcomes)) {
@@ -126,7 +127,7 @@ if ($data = data_submitted()) {
             if (!array_key_exists($remove, $co_standard_notused)) {
                 continue;
             }
-            delete_records('grade_outcomes_courses', 'courseid', $courseid, 'outcomeid', $remove);
+            $DB->delete_records('grade_outcomes_courses', array('courseid' => $courseid, 'outcomeid' => $remove));
         }
     }
     redirect('course.php?id='.$courseid); // we must redirect to get fresh data

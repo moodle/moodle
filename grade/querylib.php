@@ -222,13 +222,14 @@ function grade_get_course_grade($userid, $courseid_or_ids=null) {
  * @return mixed - array of grade item instances (one if $only_main_item true), false if error or not found
  */
 function grade_get_grade_items_for_activity($cm, $only_main_item=false) {
-    global $CFG;
+    global $CFG, $DB;
 
     if (!isset($cm->modname)) {
-        $cm = get_record_sql("SELECT cm.*, m.name, md.name as modname
-                                FROM {$CFG->prefix}course_modules cm,
-                                     {$CFG->prefix}modules md,
-                               WHERE cm.id = {$cm->id} AND md.id = cm.module");
+        $params = array($cm->id);
+        $cm = $DB->get_record_sql("SELECT cm.*, m.name, md.name as modname
+                                    FROM {course_modules} cm,
+                                         {modules} md,
+                                   WHERE cm.id = ? AND md.id = cm.module", $params);
     }
 
 
@@ -288,10 +289,10 @@ function grade_is_user_graded_in_activity($cm, $userid) {
  * @return array $cm objects
  */
 function grade_get_gradable_activities($courseid, $modulename='') {
-    global $CFG;
+    global $CFG, $DB;
 
     if (empty($modulename)) {
-        if (!$modules = get_records('modules', 'visible', '1')) {
+        if (!$modules = $DB->get_records('modules', array('visible' => '1'))) {
             return false;
         }
         $result = array();
@@ -307,18 +308,19 @@ function grade_get_gradable_activities($courseid, $modulename='') {
         }
     }
 
+    $params = array($courseid, $modulename, GRADE_TYPE_NONE, $modulename);
     $sql = "SELECT cm.*, m.name, md.name as modname
-              FROM {$CFG->prefix}grade_items gi, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules md, {$CFG->prefix}$modulename m
-             WHERE gi.courseid = $courseid AND
+              FROM {grade_items} gi, {course_modules} cm, {modules} md, {$modulename} m
+             WHERE gi.courseid = ? AND
                    gi.itemtype = 'mod' AND
-                   gi.itemmodule = '$modulename' AND
+                   gi.itemmodule = ? AND
                    gi.itemnumber = 0 AND
-                   gi.gradetype != ".GRADE_TYPE_NONE." AND
+                   gi.gradetype != ? AND
                    gi.iteminstance = cm.instance AND
                    cm.instance = m.id AND
-                   md.name = '$modulename' AND
+                   md.name = ? AND
                    md.id = cm.module";
 
-    return get_records_sql($sql);
+    return $DB->get_records_sql($sql, $params);
 }
 ?>

@@ -4,7 +4,7 @@ require_once($CFG->dirroot.'/lib/formslib.php');
 
 class import_outcomes_form extends moodleform {
 
-    function definition() {
+    public function definition() {
         global $COURSE, $USER;
 
         $mform =& $this->_form;
@@ -19,7 +19,7 @@ class import_outcomes_form extends moodleform {
             $mform->addElement('radio', 'scope', get_string('importstandard', 'grades'), null, 'global');
             $mform->setDefault('scope', 'custom');
         }
-        
+
         $mform->addElement('file', 'userfile', get_string('importoutcomes', 'grades'));
 
         $mform->addElement('submit', 'save', get_string('uploadthisfile'));

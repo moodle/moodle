@@ -35,7 +35,7 @@ class course_settings_form extends moodleform {
         global $USER, $CFG;
 
         $mform =& $this->_form;
-        
+
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
         $can_view_admin_links = false;
         if (has_capability('moodle/grade:manage', $systemcontext)) {
@@ -102,7 +102,7 @@ class course_settings_form extends moodleform {
                         if ($can_view_admin_links) {
                             $link = '<a href="' . $CFG->wwwroot . '/admin/settings.php?section=gradereport' . $plugin . '">' . $strchangedefaults . '</a>';
                             $mform->addElement('static', 'gradeitemsettingslink', $link);
-                        }    
+                        }
                         $functionname($mform);
                     }
                 }

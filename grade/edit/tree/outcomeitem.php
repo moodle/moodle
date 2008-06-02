@@ -140,7 +140,7 @@ if ($data = $mform->get_data(false)) {
 
     } else {
         $module = get_record_sql("SELECT cm.*, m.name as modname
-                                    FROM {$CFG->prefix}modules m, {$CFG->prefix}course_modules cm
+                                    FROM {modules} m, {course_modules} cm
                                    WHERE cm.id = {$data->cmid} AND cm.module = m.id ");
         $grade_item->itemtype     = 'mod';
         $grade_item->itemmodule   = $module->modname;

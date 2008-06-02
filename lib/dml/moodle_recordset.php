@@ -1,10 +1,10 @@
 <?php  //$Id$
 
 /**
- * Abstarct class for resultsets returned from database functions.
+ * Abstract class for resultsets returned from database functions.
  * This is a simple Iterator with needed recorset closing support.
  *
- * The differnece from old recorset is that the records are returned
+ * The difference from old recorset is that the records are returned
  * as objects, not arrays. You should use "foreach ($recordset as $record) {}"
  * followed by "$recordset->close()".
  *

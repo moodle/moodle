@@ -33,7 +33,7 @@ $action   = optional_param('action', '', PARAM_ALPHA);
 
 /// Make sure they can even access this course
 if ($courseid) {
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
         print_error('nocourseid');
     }
     require_login($course);

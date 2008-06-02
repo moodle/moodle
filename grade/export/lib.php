@@ -80,7 +80,7 @@ class grade_export {
         $this->userkey         = '';
         $this->previewrows     = false;
         $this->updatedgradesonly = $updatedgradesonly;
-        
+
         $this->displaytype = $displaytype;
         $this->decimalpoints = $decimalpoints;
     }
@@ -227,12 +227,12 @@ class grade_export {
             // if (empty($user->idnumber)) {   // Not sure why this was here, ccommented out for MDL-13722
             //     continue;
             // }
-            
+
             $gradeupdated = false; // if no grade is update at all for this user, do not display this row
             $rowstr = '';
             foreach ($this->columns as $itemid=>$unused) {
                 $gradetxt = $this->format_grade($userdata->grades[$itemid]);
-                
+
                 // get the status of this grade, and put it through track to get the status
                 $g = new grade_export_update_buffer();
                 $grade_grade = new grade_grade(array('itemid'=>$itemid, 'userid'=>$user->id));
@@ -244,22 +244,22 @@ class grade_export {
                     $rowstr .= "<td>$gradetxt</td>";
                     $gradeupdated = true;
                 }
-                
+
                 if ($this->export_feedback) {
                     $rowstr .=  '<td>'.$this->format_feedback($userdata->feedbacks[$itemid]).'</td>';
                 }
             }
 
-            // if we are requesting updated grades only, we are not interested in this user at all            
+            // if we are requesting updated grades only, we are not interested in this user at all
             if (!$gradeupdated && $this->updatedgradesonly) {
-                continue; 
+                continue;
             }
 
             echo '<tr>';
-            echo "<td>$user->firstname</td><td>$user->lastname</td><td>$user->idnumber</td><td>$user->institution</td><td>$user->department</td><td>$user->email</td>";           
+            echo "<td>$user->firstname</td><td>$user->lastname</td><td>$user->idnumber</td><td>$user->institution</td><td>$user->department</td><td>$user->email</td>";
             echo $rowstr;
             echo "</tr>";
-            
+
             $i++; // increment the counter
         }
         echo '</table>';
@@ -340,7 +340,7 @@ class grade_export_update_buffer {
 
         if (count($this->update_list) > $buffersize) {
             $list = implode(',', $this->update_list);
-            $sql = "UPDATE {$CFG->prefix}grade_grades SET exported = {$this->export_time} WHERE id IN ($list)";
+            $sql = "UPDATE {grade_grades} SET exported = {$this->export_time} WHERE id IN ($list)";
             execute_sql($sql, false);
             $this->update_list = array();
         }

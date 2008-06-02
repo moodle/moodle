@@ -26,8 +26,8 @@
 require_once $CFG->libdir.'/formslib.php';
 
 class edit_calculation_form extends moodleform {
-    var $available;
-    var $noidnumbers;
+    public $available;
+    public $noidnumbers;
 
     function definition() {
         global $COURSE;

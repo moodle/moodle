@@ -36,12 +36,12 @@ $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 // a bit complex access control :-O
 if ($id) {
     /// editing existing scale
-    if (!$scale_rec = get_record('scale', 'id', $id)) {
+    if (!$scale_rec = $DB->get_record('scale', array('id' => $id))) {
         print_error('invalidscaleid');
     }
     if ($scale_rec->courseid) {
         $scale_rec->standard = 0;
-        if (!$course = get_record('course', 'id', $scale_rec->courseid)) {
+        if (!$course = $DB->get_record('course', array('id' => $scale_rec->courseid))) {
             print_error('invalidcourseid');
         }
         require_login($course);
@@ -50,7 +50,7 @@ if ($id) {
         $courseid = $course->id;
     } else {
         if ($courseid) {
-            if (!$course = get_record('course', 'id', $courseid)) {
+            if (!$course = $DB->get_record('course', array('id' => $courseid))) {
                 print_error('invalidcourseid');
             }
         }
@@ -62,7 +62,7 @@ if ($id) {
 
 } else if ($courseid){
     /// adding new scale from course
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
         print_error('nocourseid');
     }
     $scale_rec = new object();

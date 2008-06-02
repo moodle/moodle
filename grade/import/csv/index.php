@@ -152,7 +152,7 @@ if ($formdata = $mform->get_data()) {
     $mform2->display();
 
 //} else if (($formdata = data_submitted()) && !empty($formdata->map)) {
- 
+
 // else if grade import mapping form is submitted
 } else if ($formdata = $mform2->get_data()) {
 
@@ -427,7 +427,7 @@ if ($formdata = $mform->get_data()) {
             if ($status and !empty($newfeedbacks)) {
                 foreach ($newfeedbacks as $newfeedback) {
                     $sql = "SELECT *
-                              FROM {$CFG->prefix}grade_import_values
+                              FROM {grade_import_values}
                              WHERE importcode=$importcode AND userid=$studentid AND itemid=$newfeedback->itemid AND importer={$USER->id}";
                     if ($feedback = get_record_sql($sql)) {
                         $newfeedback->id = $feedback->id;

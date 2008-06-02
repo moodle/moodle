@@ -265,7 +265,7 @@ class grade_report_user extends grade_report {
                 } else {
                     /// find the number of users with a higher grade
                     $sql = "SELECT COUNT(DISTINCT(userid))
-                              FROM {$CFG->prefix}grade_grades
+                              FROM {grade_grades}
                              WHERE finalgrade > {$grade_grade->finalgrade}
                                    AND itemid = {$grade_item->id}";
                     $rank = count_records_sql($sql) + 1;
@@ -327,7 +327,7 @@ function grade_report_user_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_user_showrank', get_string('showrank', 'grades'), $options);
-    $mform->setHelpButton('report_user_showrank', array('showrank', get_string('showrank', 'grades'), 'grade')); 
+    $mform->setHelpButton('report_user_showrank', array('showrank', get_string('showrank', 'grades'), 'grade'));
 
     $options = array(-1 => get_string('default', 'grades'),
                       0 => get_string('hide'),
@@ -341,7 +341,7 @@ function grade_report_user_settings_definition(&$mform) {
     }
 
     $mform->addElement('select', 'report_user_showhiddenitems', get_string('showhiddenitems', 'grades'), $options);
-    $mform->setHelpButton('report_user_showhiddenitems', array('showhiddenitems', get_string('showhiddenitems', 'grades'), 'grade')); 
+    $mform->setHelpButton('report_user_showhiddenitems', array('showhiddenitems', get_string('showhiddenitems', 'grades'), 'grade'));
 }
 
 function grade_report_user_profilereport($course, $user) {

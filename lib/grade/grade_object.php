@@ -145,16 +145,13 @@ abstract class grade_object {
      * @static final protected
      * @return mixed array of object instances or false if not found
      */
-    protected static function fetch_all_helper($table, $classname, $params) {
+    public static function fetch_all_helper($table, $classname, $params) {
         $instance = new $classname();
 
         $classvars = (array)$instance;
         $params    = (array)$params;
 
         $wheresql = array();
-
-        // remove incorrect params
-        $params = array();
 
         foreach ($params as $var=>$value) {
             if (!in_array($var, $instance->required_fields) and !array_key_exists($var, $instance->optional_fields)) {
