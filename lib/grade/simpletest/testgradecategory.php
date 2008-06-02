@@ -222,11 +222,11 @@ class grade_category_test extends grade_test {
         $this->assertTrue(method_exists($category, 'generate_grades'));
         $category->load_grade_item();
 
-        $grades = get_records('grade_grades', 'itemid', $category->grade_item->id);
+        $grades = $DB->get_records('grade_grades', array('itemid'=>$category->grade_item->id));
         $this->assertFalse($grades);
 
         $category->generate_grades();
-        $grades = get_records('grade_grades', 'itemid', $category->grade_item->id);
+        $grades = $DB->get_records('grade_grades', array('itemid'=>$category->grade_item->id));
         $this->assertEqual(3, count($grades));
 
         $rawvalues = array();

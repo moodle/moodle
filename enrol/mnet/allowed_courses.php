@@ -83,7 +83,7 @@ if ($form = data_submitted() and confirm_sesskey()) {
 
 // setup arrays for allowed categories and courses
 $categories = array();
-if ($categories = get_records('course_categories', '', '', 'name', 'id, name')) {
+if ($categories = $DB->get_records('course_categories', null, 'name', 'id, name')) {
     $allowedcategories = array();
     if (empty($CFG->enrol_mnet_allowed_categories)) {
         $potentialcategories = $categories;
@@ -100,7 +100,7 @@ if ($categories = get_records('course_categories', '', '', 'name', 'id, name')) 
     }
 }
 $courses = array();
-if ($courses = get_records('course', '', '', 'shortname', 'id, shortname')) {
+if ($courses = $DB->get_records('course', null, 'shortname', 'id, shortname')) {
     unset($courses[SITEID]); // never list or offer the siteid
     $allowedcourses = array();
     if (empty($CFG->enrol_mnet_allowed_courses)) {

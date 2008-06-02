@@ -12,7 +12,7 @@ class enrolment_plugin_ldap {
  * This function syncs a user's enrolments with those on the LDAP server.
  */
 function setup_enrolments(&$user) {
-    global $CFG;
+    global $CFG, $DB;
 
     //error_log('[ENROL_LDAP] setup_enrolments called');
 
@@ -27,13 +27,13 @@ function setup_enrolments(&$user) {
     // we are connected OK, continue...
 
     // Get all the possible roles
-    $roles = get_records('role');
+    $roles = $DB->get_records('role');
 
     // Make sure the config settings have been upgraded.
     $this->check_legacy_config();
 
     // Get the entire list of role assignments that currently exist for this user.
-    $roleassignments = get_records('role_assignments', 'userid', $user->id);
+    $roleassignments = $DB->get_records('role_assignments', array('userid'=>$user->id));
     if (!$roleassignments) {
         $roleassignments = array();
     }
@@ -61,17 +61,13 @@ function setup_enrolments(&$user) {
             }
             
             // create the course  ir required
-            $course_obj = get_record( 'course',
-                                      $this->enrol_localcoursefield,
-                                      $course_ext_id );
+            $course_obj = $DB->get_record('course', array($this->enrol_localcoursefield, $course_ext_id));
 
             if (empty($course_obj)){ // course doesn't exist
                 if($CFG->enrol_ldap_autocreate){ // autocreate
                     error_log("[ENROL_LDAP] CREATE User $user->username enrolled to a nonexistant course $course_ext_id \n");
                     $newcourseid = $this->create_course($enrol);
-                    $course_obj = get_record( 'course',
-                                      $this->enrol_localcoursefield,
-                                       $newcourseid);
+                    $course_obj = $DB->get_record('course', array($this->enrol_localcoursefield=>$newcourseid));
                 } else {
                     error_log("[ENROL_LDAP] User $user->username enrolled to a nonexistant course $course_ext_id \n");
                 }
@@ -83,7 +79,7 @@ function setup_enrolments(&$user) {
                 $context = get_context_instance(CONTEXT_COURSE, $course_obj->id);
                 //$courseroles = get_user_roles($context, $user->id);
             
-                if (!get_record('role_assignments', 'roleid', $role->id, 'userid', $user->id, 'contextid', $context->id)) {
+                if (!$DB->get_record('role_assignments', array('roleid'=>$role->id, 'userid'=>$user->id, 'contextid'=>$context->id))) {
                     //error_log("[ENROL_LDAP] Assigning role '{$role->name}' to {$user->id} ({$user->username}) in course {$course_obj->id} ({$course_obj->shortname})");
                     if (!role_assign($role->id, $user->id, 0, $context->id, 0, 0, 0, 'ldap')){
                         error_log("[ENROL_LDAP] Failed to assign role '{$role->name}' to $user->id ($user->username) into course $course_obj->id ($course_obj->shortname)");
@@ -123,10 +119,10 @@ function setup_enrolments(&$user) {
 
 /// sync enrolments with ldap, create courses if required.
 function sync_enrolments($type, $enrol = false) {
-    global $CFG;
+    global $CFG, $DB;
 
     // Get the role. If it doesn't exist, that is bad.
-    $role = get_record('role', 'shortname', $type);
+    $role = $DB->get_record('role', array('shortname'=>$type));
     if (!$role) {
         notify("No such role: $type");
         return false;
@@ -212,14 +208,12 @@ function sync_enrolments($type, $enrol = false) {
                 print "== Synching $idnumber\n";
                 // does the course exist in moodle already? 
                 $course_obj = false;
-                $course_obj = get_record( 'course',
-                                          $this->enrol_localcoursefield,
-                                          $idnumber );
+                $course_obj = $DB->get_record('course', array($this->enrol_localcoursefield=>$idnumber));
                 if (!is_object($course_obj)) {
                     // ok, now then let's create it!
                     print "Creating Course $idnumber...";
                     $newcourseid = $this->create_course($course, true); // we are skipping fix_course_sortorder()
-                    $course_obj = get_record( 'course', 'id', $newcourseid);
+                    $course_obj = $DB->get_record('course', array('id'=>$newcourseid));
                     if (is_object($course_obj)) {
                         print "OK!\n";
                     } else {
@@ -249,17 +243,19 @@ function sync_enrolments($type, $enrol = false) {
                     // hopefully they'll fit in the max buffer size for the RDBMS
                     $sql = '
                         SELECT enr.userid AS user, 1
-                        FROM '.$CFG->prefix.'role_assignments enr
-                        JOIN '.$CFG->prefix.'user usr ON usr.id=enr.userid
+                        FROM {role_assignments} enr
+                        JOIN {user} usr ON usr.id=enr.userid
                         WHERE enr.roleid = '.$role->id.'
                          AND enr.contextid = '.$context->id.'
                          AND enr.enrol = \'ldap\' ';
                     if (!empty($ldapmembers)) {
-                        $sql .= 'AND usr.idnumber NOT IN (\''. join('\',\'', $ldapmembers).'\')';
+                        list($ldapml, $params) = $DB->get_in_or_equal($ldapmembers, SQL_PARAMS_NAMED, 'm0', false);
+                        $sql .= "AND usr.idnumber $ldapml";
                     } else {
                         print ("Empty enrolment for $course_obj->shortname \n");
+                        $params = array();
                     }
-                    $todelete = get_records_sql($sql);
+                    $todelete = $DB->get_records_sql($sql, $params);
                     if(!empty($todelete)){
                         foreach ($todelete as $member) {
                             $member = $member->user;
@@ -275,18 +271,17 @@ function sync_enrolments($type, $enrol = false) {
                     // insert current enrolments 
                     // bad we can't do INSERT IGNORE with postgres...
                     foreach ($ldapmembers as $ldapmember) {
-                        $sql = 'SELECT id,1 FROM '.$CFG->prefix.'user '
-                                ." WHERE idnumber='$ldapmember'";
-                        $member = get_record_sql($sql); 
+                        $sql = 'SELECT id,1 FROM {user} '
+                                ." WHERE idnumber=?";
+                        $member = $DB->get_record_sql($sql, array($ldapmember)); 
 //                        print "sql: $sql \nidnumber = $ldapmember \n" . var_dump($member); 
                         if(empty($member) || empty($member->id)){
                             print "Could not find user $ldapmember, skipping\n";
                             continue;
                         }
                         $member = $member->id;
-                        if (!get_record('role_assignments', 'roleid', $role->id, 
-                                        'contextid', $context->id, 
-                                        'userid', $member, 'enrol', 'ldap')){
+                        if (!$DB->get_record('role_assignments', array('roleid'=>$role->id, 
+                                             'contextid'=>$context->id, 'userid'=>$member, 'enrol'=>'ldap'))){
                             if (role_assign($role->id, $member, 0, $context->id, 0, 0, 0, 'ldap')){
                                 print "Assigned role $type to $member ($ldapmember) for course $course_obj->id ($course_obj->shortname)\n";
                             } else {
@@ -323,6 +318,7 @@ function config_form($frm) {
 
 /// Override the base process_config() function
 function process_config($config) {
+    global $DB;
 
     $this->check_legacy_config();
 
@@ -401,7 +397,7 @@ function process_config($config) {
     }
     set_config('enrol_ldap_autocreate', $config->enrol_ldap_autocreate);
 
-    $roles = get_records('role');
+    $roles = $DB->get_records('role');
     foreach ($roles as $role) {
         if (!isset($config->{'enrol_ldap_contexts_role'.$role->id})) {
             $config->{'enrol_ldap_contexts_role'.$role->id} = '';
@@ -551,11 +547,11 @@ function find_ext_enrolments ($ldap_connection, $memberuid, $role){
 // you will want to call fix_course_sortorder() after your are done
 // with course creation
 function create_course ($course_ext,$skip_fix_course_sortorder=0){
-    global $CFG;
+    global $CFG, $DB;
 
     // override defaults with template course
     if(!empty($CFG->enrol_ldap_template)){
-        $course = get_record("course", 'shortname', $CFG->enrol_ldap_template);
+        $course = $DB->get_record("course", array('shortname'=>$CFG->enrol_ldap_template));
         unset($course->id); // so we are clear to reinsert the record
         unset($course->sortorder);
     } else {
@@ -593,7 +589,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     }
 
     // define the sortorder (yuck)
-    $sort = get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM ' . $CFG->prefix . 'course WHERE category=' . $course->category);
+    $sort = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM {course} WHERE category=?', array($course->category));
     $sort = $sort->max;
     $sort++;
     $course->sortorder = $sort; 
@@ -602,15 +598,13 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     $course->startdate = time();
     $course->timecreated = time();
     $course->visible     = 1;
-    
-    $course = addslashes_recursive($course);
 
     // store it and log
-    if ($newcourseid = insert_record("course", $course)) {  // Set up new course
+    if ($newcourseid = $DB->insert_record("course", $course)) {  // Set up new course
         $section = new object();
         $section->course = $newcourseid;   // Create a default section.
         $section->section = 0;
-        $section->id = insert_record("course_sections", $section);
+        $section->id = $DB->insert_record("course_sections", $section);
         $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
         blocks_repopulate_page($page); // Return value no
 
@@ -635,10 +629,10 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
  * @uses $CFG
  */
 function check_legacy_config () {
-    global $CFG;
+    global $CFG, $DB;
 
     if (isset($CFG->enrol_ldap_student_contexts)) {
-        if ($student_role = get_record('role', 'shortname', 'student')) {
+        if ($student_role = $DB->get_record('role', array('shortname'=>'student'))) {
             set_config('enrol_ldap_contexts_role'.$student_role->id, $CFG->enrol_ldap_student_contexts);
         }
 
@@ -647,7 +641,7 @@ function check_legacy_config () {
 
     if (isset($CFG->enrol_ldap_student_memberattribute)) {
         if (isset($student_role)
-         or $student_role = get_record('role', 'shortname', 'student')) {
+         or $student_role = $DB->get_record('role', array('shortname'=>'student'))) {
             set_config('enrol_ldap_memberattribute_role'.$student_role->id, $CFG->enrol_ldap_student_memberattribute);
         }
 
@@ -655,7 +649,7 @@ function check_legacy_config () {
     }
 
     if (isset($CFG->enrol_ldap_teacher_contexts)) {
-        if ($teacher_role = get_record('role', 'shortname', 'teacher')) {
+        if ($teacher_role = $DB->get_record('role', array('shortname'=>'teacher'))) {
             set_config('enrol_ldap_contexts_role'.$teacher_role->id, $CFG->enrol_ldap_student_contexts);
         }
 
@@ -664,7 +658,7 @@ function check_legacy_config () {
     
     if (isset($CFG->enrol_ldap_teacher_memberattribute)) {
         if (isset($teacher_role)
-         or $teacher_role = get_record('role', 'shortname', 'teacher')) {
+         or $teacher_role = $DB->get_record('role', array('shortname'=>'teacher'))) {
             set_config('enrol_ldap_memberattribute_role'.$teacher_role->id, $CFG->enrol_ldap_teacher_memberattribute);
         }
 

@@ -13,7 +13,7 @@ class enrolment_plugin_flatfile {
 
 /// Override the base config_form() function
 function config_form($frm) {
-    global $CFG;
+    global $CFG, $DB;
 
     $vars = array('enrol_flatfilelocation', 'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
     foreach ($vars as $var) {
@@ -22,7 +22,7 @@ function config_form($frm) {
         } 
     }
 
-    $roles = get_records('role', '', '', '', 'id, name, shortname');
+    $roles = $DB->get_records('role', null, '', 'id, name, shortname');
     $ffconfig = get_config('enrol_flatfile');
 
     $frm->enrol_flatfilemapping = array();
@@ -40,6 +40,7 @@ function config_form($frm) {
 
 /// Override the base process_config() function
 function process_config($config) {
+    global $DB;
 
     if (!isset($config->enrol_flatfilelocation)) {
         $config->enrol_flatfilelocation = '';
@@ -61,7 +62,7 @@ function process_config($config) {
     }
     set_config('enrol_mailadmins', $config->enrol_mailadmins);
 
-    foreach(get_records('role', '', '', '', 'id, shortname') as $id => $role) {
+    foreach($DB->get_records('role', null, '', 'id, shortname') as $id => $role) {
         if (isset($config->{"enrol_flatfilemapping_{$id}"})) {
             set_config('map_'.$role->shortname, $config->{"enrol_flatfilemapping_{$id}"}, 'enrol_flatfile');
         } else {
@@ -91,7 +92,7 @@ function get_access_icons($course) {
 *   endtime          = end time (in seconds since epoch) - optional
 */
     function cron() {
-        global $CFG;
+        global $CFG, $DB;
 
         if (empty($CFG->enrol_flatfilelocation)) {
             $filename = "$CFG->dataroot/1/enrolments.txt";  // Default location
@@ -157,13 +158,13 @@ function get_access_icons($course) {
                         continue;
                     }
 
-                    if (! $user = get_record("user", "idnumber", $fields[2]) ) {
+                    if (! $user = $DB->get_record("user", array("idnumber"=>$fields[2]))) {
                         $this->log .= "Unknown user idnumber in field 3 - ignoring line\n";
                         continue;
                     }
 
 
-                    if (! $course = get_record("course", "idnumber", $fields[3]) ) {
+                    if (! $course = $DB->get_record("course", array("idnumber"=>$fields[3]))) {
                         $this->log .= "Unknown course idnumber in field 4 - ignoring line\n";
                         continue;
                     }
@@ -265,8 +266,10 @@ function get_access_icons($course) {
      * @return array ($roles, $rolemap)
      */
     function get_roles() {
+        global $DB;
+
         // Get a list of all the roles in the database, indexed by their short names.
-        $roles = get_records('role', '', '', '', 'shortname, id');
+        $roles = $DB->get_records('role', null, '', 'shortname, id');
         array_walk($roles, create_function('&$value', '$value = $value->id;'));
 
         // Get any name mappings. These will be of the form 'map_shortname' => 'flatfilename'.

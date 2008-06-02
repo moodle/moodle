@@ -245,7 +245,7 @@ function process_config($config) {
 * @return void
 */
 function cron() {
-    global $CFG, $USER, $SITE;
+    global $CFG, $USER, $SITE, $DB;
 
     if (!isset($CFG->lastexpirynotify)) {
         set_config('lastexpirynotify', 0);
@@ -256,13 +256,13 @@ function cron() {
         return;
     }
 
-    if ($rs = get_recordset_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0')) {
+    if ($rs = $DB->get_recordset_select('course', 'enrolperiod > 0 AND expirynotify > 0 AND expirythreshold > 0')) {
 
         $cronuser = clone($USER);
 
         $admin = get_admin();
 
-        while($course = rs_fetch_next_record($rs)) {
+        foreach ($rs as $course) {
             $a = new object();
             $a->coursename = $course->shortname .'/'. $course->fullname; // must be processed by format_string later
             $a->threshold  = $course->expirythreshold / 86400;
@@ -279,10 +279,10 @@ function cron() {
                 continue;
             }
 
-            if ($oldenrolments = get_records_sql("
+            if ($oldenrolments = $DB->get_records_sql("
                       SELECT u.*, ra.timeend
-                        FROM {$CFG->prefix}user u
-                             JOIN {$CFG->prefix}role_assignments ra ON (ra.userid = u.id)
+                        FROM {user} u
+                             JOIN {role_assignments} ra ON (ra.userid = u.id)
                         WHERE ra.contextid = $context->id
                               AND ra.timeend > 0 AND ra.timeend <= $expiry
                               AND ra.enrol = 'manual'")) {
@@ -338,6 +338,7 @@ function cron() {
         }
         $USER = $cronuser;
         course_setup($course);   // More environment
+        $rs->close();
     }
 
     set_config('lastexpirynotify', date('Ymd'));

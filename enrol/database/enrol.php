@@ -6,13 +6,13 @@ class enrolment_plugin_database {
 
     var $log;
 
-/*
+/**
  * For the given user, let's go out and look in an external database
  * for an authoritative list of enrolments, and then adjust the
  * local Moodle assignments to match.
  */
 function setup_enrolments(&$user) {
-    global $CFG;
+    global $CFG, $DB;
 
     // NOTE: if $this->enrol_connect() succeeds you MUST remember to call
     // $this->enrol_disconnect() as it is doing some nasty vodoo with $CFG->prefix
@@ -26,7 +26,7 @@ function setup_enrolments(&$user) {
     // we execute the below code for every role type.  Otherwise we just
     // execute it once with null (hence the dummy array).
     $roles = !empty($CFG->enrol_db_remoterolefield) && !empty($CFG->enrol_db_localrolefield)
-        ? get_records('role')
+        ? $DB->get_records('role')
         : array(null);
 
     //error_log('[ENROL_DB] found ' . count($roles) . ' roles:');
@@ -46,7 +46,7 @@ function setup_enrolments(&$user) {
         /// Check if a particular role has been forced by the plugin site-wide
         /// (if we aren't doing a role-based select)
         if (!$have_role && $CFG->enrol_db_defaultcourseroleid) {
-            $role = get_record('role', 'id', $CFG->enrol_db_defaultcourseroleid);
+            $role = $DB->get_record('role', array('id'=>$CFG->enrol_db_defaultcourseroleid));
         }
 
         /// Whether to fetch the default role on a per-course basis (below) or not.
@@ -68,11 +68,11 @@ function setup_enrolments(&$user) {
 
             // We'll use this to see what to add and remove
             $existing = $role
-                ? get_records_sql("
-                    SELECT * FROM {$CFG->prefix}role_assignments
-                    WHERE userid = {$user->id}
-                     AND roleid = {$role->id}")
-                : get_records('role_assignments', 'userid', $user->id);
+                ? $DB->get_records_sql("SELECT *
+                                          FROM {role_assignments}
+                                         WHERE userid = ? AND roleid = ?",
+                                       array($user->id, $role->id))
+                : $DB->get_records('role_assignments', array('userid'=>$user->id));
 
             if (!$existing) {
                 $existing = array();
@@ -92,7 +92,7 @@ function setup_enrolments(&$user) {
                 //error_log('[ENROL_DB] Found '.count($existing).' existing roles and '.$count.' in external database');
 
                 foreach ($courselist as $coursefield) {   /// Check the list of courses against existing
-                    $course = get_record('course', $CFG->enrol_localcoursefield, $coursefield);
+                    $course = $DB->get_record('course', array($CFG->enrol_localcoursefield=>$coursefield));
                     if (!is_object($course)) {
                         if (empty($CFG->enrol_db_autocreate)) { // autocreation not allowed
                             if (debugging('',DEBUG_ALL)) {
@@ -107,7 +107,7 @@ function setup_enrolments(&$user) {
                         $course->fullname  = $coursefield;
                         $course->shortname = $coursefield;
                         if (!($newcourseid = $this->create_course($course, true)
-                            and $course = get_record( 'course', 'id', $newcourseid))) {
+                            and $course = $DB->get_record( 'course', array('id'=>$newcourseid)))) {
                             error_log( "Creating course $coursefield failed");
                             continue; // nothing left to do...
                         }
@@ -173,8 +173,7 @@ function setup_enrolments(&$user) {
  * used.
  */
 function sync_enrolments($role = null) {
-    global $CFG;
-    global $db;
+    global $CFG, $db, $DB;
     error_reporting(E_ALL);
 
     // Connect to the external database
@@ -197,7 +196,7 @@ function sync_enrolments($role = null) {
 
     if (!$have_role) {
         if (!empty($CFG->enrol_db_defaultcourseroleid)
-         and $role = get_record('role', 'id', $CFG->enrol_db_defaultcourseroleid)) {
+         and $role = $DB->get_record('role', array('id'=>$CFG->enrol_db_defaultcourseroleid))) {
             echo "=== Using enrol_db_defaultcourseroleid: {$role->id} ({$role->shortname}) ===\n";
         } elseif (isset($role)) {
             echo "!!! WARNING: Role specified by caller, but no (or invalid) role configuration !!!\n";
@@ -219,7 +218,7 @@ function sync_enrolments($role = null) {
         return true;
     }
 
-    begin_sql();
+    $DB->begin_sql();
     $extcourses = array();
     while ($extcourse_obj = rs_fetch_next_record($rs)) { // there are more course records
         $extcourse = $extcourse_obj->{$CFG->enrol_remotecoursefield};
@@ -227,9 +226,7 @@ function sync_enrolments($role = null) {
 
         // does the course exist in moodle already?
         $course = false;
-        $course = get_record( 'course',
-                              $CFG->enrol_localcoursefield,
-                              $extcourse );
+        $course = $DB->get_record('course', array($CFG->enrol_localcoursefield=>$extcourse));
 
         if (!is_object($course)) {
             if (empty($CFG->enrol_db_autocreate)) { // autocreation not allowed
@@ -245,7 +242,7 @@ function sync_enrolments($role = null) {
             $course->fullname  = $extcourse;
             $course->shortname = $extcourse;
             if (!($newcourseid = $this->create_course($course, true)
-             and $course = get_record( 'course', 'id', $newcourseid))) {
+             and $course = $DB->get_record('course', array('id'=>$newcourseid)))) {
                 error_log( "Creating course $extcourse failed");
                 continue; // nothing left to do...
             }
@@ -296,15 +293,23 @@ function sync_enrolments($role = null) {
         // correctly.
         //
         if (!$CFG->enrol_db_disableunenrol) {
-            $to_prune = get_records_sql("
-             SELECT ra.*
-             FROM {$CFG->prefix}role_assignments ra
-              JOIN {$CFG->prefix}user u ON ra.userid = u.id
-             WHERE ra.enrol = 'database'
-              AND ra.contextid = {$context->id}
-              AND ra.roleid = ". $role->id . ($extenrolments
-                ? " AND u.{$CFG->enrol_localuserfield} NOT IN (".join(", ", array_map(array(&$db, 'quote'), $extenrolments)).")"
-                : ''));
+            if ($extenrolments) {
+                list($extlist, $params) = $DB->get_in_or_equal($extenrolments, SQL_PARAMS_NAMED, 'e0', false);
+                $extsql = "AND u.{$CFG->enrol_localuserfield} $extlist";
+            } else {
+                $extsql = "";
+                $params = array();
+            }
+            $params['roleid']    = $role->id;
+            $params['contextid'] = $context->id;
+            
+            $to_prune = $DB->get_records_sql("
+                             SELECT ra.*
+                               FROM {role_assignments} ra
+                               JOIN {user} u ON ra.userid = u.id
+                              WHERE ra.enrol = 'database'
+                                    AND ra.contextid = :contextid
+                                    AND ra.roleid = :roleid", $params);
 
             if ($to_prune) {
                 foreach ($to_prune as $role_assignment) {
@@ -324,28 +329,26 @@ function sync_enrolments($role = null) {
         foreach ($extenrolments as $member) {
             // Get the user id and whether is enrolled in one fell swoop
             $sql = "
-                SELECT u.id AS userid, ra.id AS enrolmentid
-                FROM {$CFG->prefix}user u
-                 LEFT OUTER JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                  AND ra.roleid = {$role->id}
-                  AND ra.contextid = {$context->id}
-                 WHERE u.{$CFG->enrol_localuserfield} = ".$db->quote($member) .
-                 " AND (u.deleted IS NULL OR u.deleted=0) ";
+                SELECT u.id, ra.id AS enrolmentid
+                  FROM {user} u
+                  LEFT JOIN {role_assignments} ra ON u.id = ra.userid
+                       AND ra.roleid = ?
+                       AND ra.contextid = ?
+                 WHERE u.{$CFG->enrol_localuserfield} = ?
+                       AND (u.deleted IS NULL OR u.deleted=0)";
 
-            $ers = $db->Execute($sql);
-            if (!$ers) {
-                trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
+            $eusers = $DB->get_records($sql, array($role->id, $context->id, $member));
+            if ($eusers === false) {
+                trigger_error('error STATEMENT: '. $sql);
                 return false;
             }
-            if ( $ers->EOF ) { // if this returns empty, it means we don't have the student record.
+            if (!$eusers) { // if this returns empty, it means we don't have the student record.
                                               // should not happen -- but skip it anyway
                 trigger_error('weird! no user record entry?');
                 continue;
             }
-            $user_obj = rs_fetch_record($ers);
-            $userid      = $user_obj->userid;
+            $userid      = $user_obj->id;
             $enrolmentid = $user_obj->enrolmentid;
-            rs_close($ers); // release the handle
 
             if ($enrolmentid) { // already enrolled - skip
                 continue;
@@ -373,39 +376,44 @@ function sync_enrolments($role = null) {
     // correctly.
     //
     if (!$CFG->enrol_db_disableunenrol) {
+        if ($extcourses) {
+            list($extlist, $params) = $DB->get_in_or_equal($extcourses, SQL_PARAMS_QM, 'e0', false);
+            $extsql = "AND u.{$CFG->enrol_localcoursefield} $extlist";
+        } else {
+            $extsql = "";
+            $params = array();
+        }
+        $params['roleid']    = $role->id;
+        $params['contextid'] = $context->id;
+
         $sql = "
             SELECT ra.roleid, ra.userid, ra.contextid
-            FROM {$CFG->prefix}role_assignments ra
-                JOIN {$CFG->prefix}context cn ON cn.id = ra.contextid
-                JOIN {$CFG->prefix}course c ON c.id = cn.instanceid
-            WHERE ra.enrol = 'database'
-              AND cn.contextlevel = ".CONTEXT_COURSE." " .
-                ($have_role ? ' AND ra.roleid = '.$role->id : '') .
-                ($extcourses
-                    ? " AND c.{$CFG->enrol_localcoursefield} NOT IN (" . join(",", array_map(array(&$db, 'quote'), $extcourses)) . ")"
-                    : '');
+              FROM {role_assignments} ra
+              JOIN {context} cn ON cn.id = ra.contextid
+              JOIN {course} c ON c.id = cn.instanceid
+             WHERE ra.enrol = 'database'
+                   AND cn.contextlevel = ".CONTEXT_COURSE." " .
+                  ($have_role ? " AND ra.roleid = :roleid " : '') ."
+                   $extsql";
 
-        $ers = $db->Execute($sql);
-        if (!$ers) {
-            trigger_error($db->ErrorMsg() .' STATEMENT: '. $sql);
+        if (!$ers = $DB->get_recordset_sql($sql, $params)) {
+            trigger_error('error STATEMENT: '. $sql);
             return false;
         }
-        if ( !$ers->EOF ) {
-            while ($user_obj = rs_fetch_next_record($ers)) {
-                $roleid     = $user_obj->roleid;
-                $user       = $user_obj->userid;
-                $contextid  = $user_obj->contextid;
-                if (role_unassign($roleid, $user, 0, $contextid)){
-                    error_log( "Unassigned role {$roleid} from user $user in context $contextid");
-                } else {
-                    error_log( "Failed unassign role {$roleid} from user $user in context $contextid");
-                }
+        foreach ($ers as $user_obj) {
+            $roleid     = $user_obj->roleid;
+            $user       = $user_obj->userid;
+            $contextid  = $user_obj->contextid;
+            if (role_unassign($roleid, $user, 0, $contextid)){
+                error_log( "Unassigned role {$roleid} from user $user in context $contextid");
+            } else {
+                error_log( "Failed unassign role {$roleid} from user $user in context $contextid");
             }
-            rs_close($ers); // release the handle
         }
+        $ers->close(); // release the handle
     }
 
-    commit_sql();
+    $DB->commit_sql();
 
     // we are done now, a bit of housekeeping
     fix_course_sortorder();
@@ -543,11 +551,11 @@ function process_config($config) {
 // you will want to call fix_course_sortorder() after your are done
 // with course creation
 function create_course ($course,$skip_fix_course_sortorder=0){
-    global $CFG;
+    global $CFG, $DB;
 
     // define a template
     if(!empty($CFG->enrol_db_template)){
-        $template = get_record("course", 'shortname', $CFG->enrol_db_template);
+        $template = $DB->get_record("course", array('shortname'=>$CFG->enrol_db_template));
         $template = (array)$template;
     } else {
         $site = get_site();
@@ -583,9 +591,7 @@ function create_course ($course,$skip_fix_course_sortorder=0){
     }
 
     // define the sortorder
-    $sort = get_field_sql('SELECT COALESCE(MAX(sortorder)+1, 100) AS max ' .
-                          ' FROM ' . $CFG->prefix . 'course ' .
-                          ' WHERE category=' . $course->category);
+    $sort = $DB->get_field_sql('SELECT COALESCE(MAX(sortorder)+1, 100) AS max FROM {course} WHERE category= ?', array($course->category));
     $course->sortorder = $sort;
 
     // override with local data
@@ -601,11 +607,11 @@ function create_course ($course,$skip_fix_course_sortorder=0){
     $course->shortname = substr($course->shortname, 0, 100);
 
     // store it and log
-    if ($newcourseid = insert_record("course", addslashes_object($course))) {  // Set up new course
+    if ($newcourseid = $DB->insert_record("course", $course)) {  // Set up new course
         $section = NULL;
         $section->course = $newcourseid;   // Create a default section.
         $section->section = 0;
-        $section->id = insert_record("course_sections", $section);
+        $section->id = $DB->insert_record("course_sections", $section);
         $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
         blocks_repopulate_page($page); // Return value no
 

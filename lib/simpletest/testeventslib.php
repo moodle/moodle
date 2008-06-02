@@ -122,16 +122,16 @@ class eventslib_test extends UnitTestCase {
      */
     function test__events_update_definition__update() {
         // first modify directly existing handler
-        $handler = get_record('events_handlers', 'handlermodule', 'unittest', 'eventname', 'test_instant');
+        $handler = $DB->get_record('events_handlers', array('handlermodule'=>'unittest', 'eventname'=>'test_instant'));
 
         $original = $handler->handlerfunction;
 
         // change handler in db
-        set_field('events_handlers', 'handlerfunction', serialize('some_other_function_handler'), 'id', $handler->id);
+        $DB->set_field('events_handlers', 'handlerfunction', serialize('some_other_function_handler'), array('id'=>$handler->id));
 
         // update the definition, it should revert the handler back
         events_update_definition('unittest');
-        $handler = get_record('events_handlers', 'handlermodule', 'unittest', 'eventname', 'test_instant');
+        $handler = $DB->get_record('events_handlers', array('handlermodule'=>'unittest', 'eventname'=>'test_instant'));
         $this->assertEqual($handler->handlerfunction, $original, 'update should sync db with file definition: %s');
     }
 

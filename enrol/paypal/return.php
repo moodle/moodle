@@ -5,7 +5,7 @@
 
     $id = required_param('id', PARAM_INT);
 
-    if (!$course = get_record("course", "id", $id)) {
+    if (!$course = $DB->get_record("course", array("id"=>$id))) {
         redirect($CFG->wwwroot);
     }
 

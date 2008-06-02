@@ -26,7 +26,7 @@
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
 
-    if (! $course = get_record("course", "id", $id) ) {
+    if (! $course = $DB->get_record("course", array("id"=>$id))) {
         print_error('invalidcourseid');
     }
 

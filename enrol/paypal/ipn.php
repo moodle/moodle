@@ -46,12 +46,12 @@
 
 /// get the user and course records
 
-    if (! $user = get_record("user", "id", $data->userid) ) {
+    if (! $user = $DB->get_record("user", array("id"=>$data->userid))) {
         email_paypal_error_to_admin("Not a valid user id", $data);
         die;
     }
 
-    if (! $course = get_record("course", "id", $data->courseid) ) {
+    if (! $course = $DB->get_record("course", array("id"=>$data->courseid))) {
         email_paypal_error_to_admin("Not a valid course id", $data);
         die;
     }
@@ -119,7 +119,7 @@
 
 
 
-            if ($existing = get_record("enrol_paypal", "txn_id", addslashes($data->txn_id))) {   // Make sure this transaction doesn't exist already
+            if ($existing = $DB->get_record("enrol_paypal", array("txn_id"=>$data->txn_id))) {   // Make sure this transaction doesn't exist already
                 email_paypal_error_to_admin("Transaction $data->txn_id is being repeated!", $data);
                 die;
 
@@ -131,12 +131,12 @@
 
             }
 
-            if (!$user = get_record('user', 'id', $data->userid)) {   // Check that user exists
+            if (!$user = $DB->get_record('user', array('id'=>$data->userid))) {   // Check that user exists
                 email_paypal_error_to_admin("User $data->userid doesn't exist", $data);
                 die;
             }
 
-            if (!$course = get_record('course', 'id', $data->courseid)) { // Check that course exists
+            if (!$course = $DB->get_record('course', array('id'=>$data->courseid))) { // Check that course exists
                 email_paypal_error_to_admin("Course $data->courseid doesn't exist", $data);;
                 die;
             }
@@ -157,7 +157,7 @@
 
             // ALL CLEAR !
 
-            if (!insert_record("enrol_paypal", addslashes_object($data))) {       // Insert a transaction record
+            if (!$DB->insert_record("enrol_paypal", $data)) {       // Insert a transaction record
                 email_paypal_error_to_admin("Error while trying to insert valid transaction", $data);
             }
 
@@ -195,7 +195,7 @@
 
 
         } else if (strcmp ($result, "INVALID") == 0) { // ERROR
-            insert_record("enrol_paypal", addslashes_object($data), false);
+            $DB->insert_record("enrol_paypal", $data, false);
             email_paypal_error_to_admin("Received an invalid payment notification!! (Fake payment?)", $data);
         }
     }

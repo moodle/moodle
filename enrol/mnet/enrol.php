@@ -83,7 +83,7 @@ class enrolment_plugin_mnet {
     * @return bool              Whether the user can login from the remote host
     */
     function available_courses() {
-        global $CFG;
+        global $CFG, $DB;
 
         if (!empty($CFG->enrol_mnet_allow_allcourses)) {
 
@@ -104,21 +104,19 @@ class enrolment_plugin_mnet {
                 co.defaultrole AS defaultroleid,
                 r.name         AS defaultrolename 
             FROM
-                {$CFG->prefix}course_categories ca
+                {course_categories} ca
             JOIN
-                {$CFG->prefix}course co ON
-                ca.id = co.category
+                {course} co ON ca.id = co.category
             LEFT JOIN
-                {$CFG->prefix}role r ON
-                r.id = co.defaultrole
+                {role} r ON r.id = co.defaultrole
             WHERE
-                co.visible = '1' AND
-                co.enrollable = '1'
+                co.visible = 1 AND
+                co.enrollable = 1
             ORDER BY
                 sortorder ASC
                 ";
 
-            return get_records_sql($query);
+            return $DB->get_records_sql($query);
 
         } elseif (!empty($CFG->enrol_mnet_allowed_categories)) {
 
@@ -132,7 +130,7 @@ class enrolment_plugin_mnet {
             "SELECT
                 id, name
             FROM
-                {$CFG->prefix}course_categories ca
+                {course_categories} ca
             WHERE
                 ca.id IN ({$CFG->enrol_mnet_allowed_categories})
                 OR ( $cats )
@@ -142,7 +140,7 @@ class enrolment_plugin_mnet {
                 ";
             unset($cats);
 
-            $rs = get_records_sql($query);
+            $rs = $DB->get_records_sql($query);
 
             if (!empty($rs)) {
                 $cats = array_keys($rs);
@@ -173,21 +171,19 @@ class enrolment_plugin_mnet {
                 co.defaultrole as defaultroleid,
                 r.name
             FROM
-                {$CFG->prefix}course_categories ca
+                {course_categories} ca
             JOIN
-                {$CFG->prefix}course co ON
-                ca.id = co.category
+                {course} co ON ca.id = co.category
             LEFT JOIN
-                {$CFG->prefix}role r ON
-                r.id = co.defaultrole
+                {role} r ON r.id = co.defaultrole
             WHERE
-                co.visible = '1' AND
-                co.enrollable = '1' $where
+                co.visible = 1 AND
+                co.enrollable = 1 $where
             ORDER BY
                 sortorder ASC
                 ";
 
-            return get_records_sql($query);
+            return $DB->get_records_sql($query);
 
         } elseif (!empty($CFG->enrol_mnet_allowed_courses)) {
 
@@ -208,22 +204,20 @@ class enrolment_plugin_mnet {
                     co.defaultrole as defaultroleid,
                     r.name
                 FROM
-                    {$CFG->prefix}course_categories ca
+                    {course_categories} ca
                 JOIN
-                    {$CFG->prefix}course co ON
-                    ca.id = co.category
+                    {course} co ON ca.id = co.category
                 LEFT JOIN
-                    {$CFG->prefix}role r ON
-                    r.id = co.defaultrole
+                    {role} r ON r.id = co.defaultrole
                 WHERE
-                    co.visible = '1' AND
-                    co.enrollable = '1' AND
-                    co.id in ({$CFG->enrol_mnet_allowed_courses})
+                    co.visible = 1 AND
+                    co.enrollable = 1 AND
+                    co.id IN ({$CFG->enrol_mnet_allowed_courses})
                 ORDER BY
                     sortorder ASC
                     ";
 
-            return get_records_sql($query);
+            return $DB->get_records_sql($query);
 
         }
 
@@ -246,9 +240,9 @@ class enrolment_plugin_mnet {
      *                              client machine
      */
     function course_enrolments($courseid, $roles = '') {
-        global $MNET_REMOTE_CLIENT, $CFG;
+        global $MNET_REMOTE_CLIENT, $CFG, $DB;
 
-        if (! $course = get_record('course', 'id', $courseid) ) {
+        if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
             return 'no course';
             //error("That's an invalid course id");
         }
@@ -264,11 +258,11 @@ class enrolment_plugin_mnet {
                     r.name,
                     r.shortname
                 FROM
-                    {$CFG->prefix}role_assignments a,
-                    {$CFG->prefix}role r,
-                    {$CFG->prefix}user u
+                    {role_assignments} a,
+                    {role} r,
+                    {user} u
                 WHERE
-                    a.contextid = '{$context->id}' AND
+                    a.contextid = {$context->id} AND
                     a.roleid = r.id AND
                     a.userid = u.id AND
                     u.mnethostid = '{$MNET_REMOTE_CLIENT->id}'
@@ -280,7 +274,7 @@ class enrolment_plugin_mnet {
                     a.roleid in ('".str_replace(',',  "', '",  $roles)."')";
         } 
 
-        $enrolments = get_records_sql($sql);
+        $enrolments = $DB->get_records_sql($sql);
 
         $returnarray = array();
         foreach($enrolments as $user) {
@@ -300,27 +294,27 @@ class enrolment_plugin_mnet {
     * @return bool              Whether the enrolment has been successful
     */
     function enrol_user($user, $courseid) {
-        global $MNET, $MNET_REMOTE_CLIENT;
+        global $MNET, $MNET_REMOTE_CLIENT, $DB;
 
-        $userrecord = get_record('user','username',addslashes($user['username']), 'mnethostid',$MNET_REMOTE_CLIENT->id);
+        $userrecord = $DB->get_record('user',array('username'=>$user['username'], 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
 
         if ($userrecord == false) {
             $userrecord = new stdClass();
-            $userrecord->username   = addslashes($user['username']);
-            $userrecord->email      = addslashes($user['email']);
-            $userrecord->firstname  = addslashes($user['firstname']);
-            $userrecord->lastname   = addslashes($user['lastname']);
+            $userrecord->username   = $user['username'];
+            $userrecord->email      = $user['email'];
+            $userrecord->firstname  = $user['firstname'];
+            $userrecord->lastname   = $user['lastname'];
             $userrecord->mnethostid = $MNET_REMOTE_CLIENT->id;
 
-            if ($userrecord->id = insert_record('user', $userrecord)) {
-                $userrecord = get_record('user','id', $userrecord->id);
+            if ($userrecord->id = $DB->insert_record('user', $userrecord)) {
+                $userrecord = $DB->get_record('user', array('id'=>$userrecord->id));
             } else {
                 // TODO: Error out
                 return false;
             }
         }
 
-        if (! $course = get_record('course', 'id', $courseid) ) {
+        if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
             // TODO: Error out
             return false;
         }
@@ -343,15 +337,15 @@ class enrolment_plugin_mnet {
     * @return bool              Whether the user can login from the remote host
     */
     function unenrol_user($user, $courseid) {
-        global $MNET_REMOTE_CLIENT;
+        global $MNET_REMOTE_CLIENT, $DB;
 
-        $userrecord = get_record('user','username',$user['username'], 'mnethostid',$MNET_REMOTE_CLIENT->id);
+        $userrecord = $DB->get_record('user', array('username'=>$user['username'], 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
 
         if ($userrecord == false) {
             // TODO: Error out
         }
 
-        if (! $course = get_record('course', 'id', $courseid) ) {
+        if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
             // TODO: Error out
         }
 
@@ -381,23 +375,23 @@ class enrolment_plugin_mnet {
     * @return array
     */
     function list_remote_servers() {
-        global $CFG;
+        global $CFG, $DB;
 
         $sql = "
             SELECT DISTINCT 
                 h.id, 
                 h.name
             FROM 
-                {$CFG->prefix}mnet_host h,
-                {$CFG->prefix}mnet_host2service h2s,
-                {$CFG->prefix}mnet_service s
+                {mnet_host} h,
+                {mnet_host2service} h2s,
+                {mnet_service} s
             WHERE
                 h.id          = h2s.hostid   AND
                 h2s.serviceid = s.id         AND
                 s.name        = 'mnet_enrol' AND
                 h2s.subscribe = 1";
 
-        $res = get_records_sql($sql);
+        $res = $DB->get_records_sql($sql);
         if (is_array($res)) {
             return $res;
         } else {
@@ -412,9 +406,7 @@ class enrolment_plugin_mnet {
     * @return array              Whether the user can login from the remote host
     */
     function fetch_remote_courses($mnethostid) {
-        global $CFG;
-        global $USER;
-        global $MNET;
+        global $CFG, $USER, $MNET, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // get the Service Provider info
@@ -435,9 +427,7 @@ class enrolment_plugin_mnet {
             $courses = $mnetrequest->response;
 
             // get the cached courses key'd on remote id - only need remoteid and id fields
-            $cachedcourses = get_records('mnet_enrol_course',
-                                         'hostid', $mnethostid,
-                                         'remoteid', 'remoteid, id' );
+            $cachedcourses = $DB->get_records('mnet_enrol_course', array('hostid'=>$mnethostid), 'remoteid', 'remoteid, id' );
 
             // Update cache and transform $courses into objects
             // in-place for the benefit of our caller...
@@ -459,22 +449,22 @@ class enrolment_plugin_mnet {
                 // sanitise strings for DB NOTE - these are not sane
                 // for printing, so we'll use a different object
                 $dbcourse = clone($course);
-                $dbcourse->cat_name        = addslashes($dbcourse->cat_name);
-                $dbcourse->cat_description = addslashes($dbcourse->cat_description);
-                $dbcourse->fullname        = addslashes($dbcourse->fullname);
-                $dbcourse->shortname       = addslashes($dbcourse->shortname);
-                $dbcourse->idnumber        = addslashes($dbcourse->idnumber);
-                $dbcourse->summary         = addslashes($dbcourse->summary);
-                $dbcourse->currency        = addslashes($dbcourse->currency);
-                $dbcourse->defaultrolename = addslashes($dbcourse->defaultrolename);
+                $dbcourse->cat_name        = $dbcourse->cat_name;
+                $dbcourse->cat_description = $dbcourse->cat_description;
+                $dbcourse->fullname        = $dbcourse->fullname;
+                $dbcourse->shortname       = $dbcourse->shortname;
+                $dbcourse->idnumber        = $dbcourse->idnumber;
+                $dbcourse->summary         = $dbcourse->summary;
+                $dbcourse->currency        = $dbcourse->currency;
+                $dbcourse->defaultrolename = $dbcourse->defaultrolename;
 
                 // insert or update
                 if (empty($cachedcourses[$course->remoteid])) {
-                    $course->id = insert_record('mnet_enrol_course', $dbcourse);
+                    $course->id = $DB->insert_record('mnet_enrol_course', $dbcourse);
                 } else {
                     $course->id = $cachedcourses[$course->remoteid]->id;
                     $cachedcourses[$course->remoteid]->seen=true;
-                    update_record('mnet_enrol_course', $dbcourse);
+                    $DB->update_record('mnet_enrol_course', $dbcourse);
                 }
                 // free tmp obj
                 unset($dbcourse);
@@ -490,7 +480,7 @@ class enrolment_plugin_mnet {
                     }
                 }
                 if (!empty($stale)) {
-                    delete_records_select('mnet_enrol_course', 'id IN ('.join(',',$stale).')');
+                    $DB->delete_records_select('mnet_enrol_course', 'id IN ('.join(',',$stale).')');
                 }
             }
 
@@ -512,17 +502,15 @@ class enrolment_plugin_mnet {
     * @return array              Whether the user can login from the remote host
     */
     function req_enrol_user($userid, $courseid) {
-        global $CFG;
-        global $USER;
-        global $MNET;
+        global $CFG, $USER, $MNET, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // Prepare a basic user record
         // in case the remote host doesn't have it
-        $user = get_record('user', 'id', $userid, '','','','', 'username, email, firstname, lastname');
+        $user = $DB->get_record('user', array('id'=>$userid), 'username, email, firstname, lastname');
         $user = (array)$user;
 
-        $course = get_record('mnet_enrol_course', 'id', $courseid);
+        $course = $DB->get_record('mnet_enrol_course', array('id'=>$courseid));
 
         // get the Service Provider info
         $mnet_sp = new mnet_peer();
@@ -544,7 +532,7 @@ class enrolment_plugin_mnet {
                 $assignment->courseid = $course->id;
                 $assignment->enroltype = 'mnet';
                 // TODO: other fields
-                if (insert_record('mnet_enrol_assignments', $assignment)) {
+                if ($DB->insert_record('mnet_enrol_assignments', $assignment)) {
                     return true;
                 }
             }
@@ -560,16 +548,14 @@ class enrolment_plugin_mnet {
     * @return array              Whether the user can login from the remote host
     */
     function req_unenrol_user($userid, $courseid) {
-        global $CFG;
-        global $USER;
-        global $MNET;
+        global $CFG, $USER, $MNET, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // in case the remote host doesn't have it
-        $user = get_record('user', 'id', $userid, '','','','', 'username, email');
+        $user = $DB->get_record('user', array('id'=>$userid), 'username, email');
         $user = $user->username;
 
-        $course = get_record('mnet_enrol_course', 'id', $courseid);
+        $course = $DB->get_record('mnet_enrol_course', array('id'=>$courseid));
 
         // get the Service Provider info
         $mnet_sp = new mnet_peer();
@@ -589,8 +575,8 @@ class enrolment_plugin_mnet {
         if ($mnetrequest->send($mnet_sp) === true) {
             if ($mnetrequest->response == true) {
                 // remove enrolment cached in mnet_enrol_assignments
-                delete_records_select('mnet_enrol_assignments',
-                                      "userid={$userid} AND courseid={$course->id}");
+                $DB->delete_records_select('mnet_enrol_assignments',
+                                      "userid=? AND courseid=?", array($userid, $course->id));
 
                 return true;
             }

@@ -439,7 +439,7 @@ function get_recstatus($tagdata, $tagname){
 * @param string $tagconents The raw contents of the XML element
 */
 function process_group_tag($tagcontents){
-    global $CFG;
+    global $CFG, $DB;
 
     // Process tag contents
     unset($group);
@@ -482,7 +482,7 @@ function process_group_tag($tagcontents){
         // Third, check if the course(s) exist
         foreach($group->coursecode as $coursecode){
             $coursecode = trim($coursecode);
-            if(!get_field('course', 'id', 'idnumber', $coursecode)) {
+            if(!$DB->get_field('course', 'id', array('idnumber'=>$coursecode))) {
               if(!$CFG->enrol_createnewcourses) {
                   $this->log_line("Course $coursecode not found in Moodle's course idnumbers.");
               } else {
@@ -510,13 +510,13 @@ function process_group_tag($tagcontents){
                 // Handle course categorisation (taken from the group.org.orgunit field if present)
                 if(strlen($group->category)>0){
                     // If the category is defined and exists in Moodle, we want to store it in that one
-                    if($catid = get_field('course_categories', 'id', 'name', addslashes($group->category))){
+                    if($catid = $DB->get_field('course_categories', 'id', array('name'=>$group->category))){
                         $course->category = $catid;
                     }elseif($CFG->enrol_createnewcategories){
                         // Else if we're allowed to create new categories, let's create this one
                         $newcat->name = $group->category;
                        $newcat->visible = 0;
-                       if($catid = insert_record('course_categories', $newcat)){
+                       if($catid = $DB->insert_record('course_categories', $newcat)){
                            $course->category = $catid;
                            $this->log_line("Created new (hidden) category, #$catid: $newcat->name");
                        }else{
@@ -534,9 +534,7 @@ function process_group_tag($tagcontents){
                 $course->startdate = time();
                 $course->numsections = 1;
                 // Choose a sort order that puts us at the start of the list!
-                $sortinfo = get_record_sql('SELECT MIN(sortorder) AS min,
-                           MAX(sortorder) AS max
-                            FROM ' . $CFG->prefix . 'course WHERE category<>0');
+                $sortinfo = $DB->get_record_sql('SELECT MIN(sortorder) AS min, MAX(sortorder) AS max FROM {course} WHERE category<>0');
                 if (is_object($sortinfo)) { // no courses?
                     $max   = $sortinfo->max;
                     $min   = $sortinfo->min;
@@ -545,7 +543,7 @@ function process_group_tag($tagcontents){
                 }else{
                     $course->sortorder = 1000;
                 }
-                if($course->id = insert_record('course', addslashes_object($course))){
+                if($course->id = $DB->insert_record('course', $course)){
 
                     // Setup the blocks
                     $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
@@ -554,7 +552,7 @@ function process_group_tag($tagcontents){
                     $section = new object();
                     $section->course = $course->id;   // Create a default section.
                     $section->section = 0;
-                    $section->id = insert_record("course_sections", $section);
+                    $section->id = $DB->insert_record("course_sections", $section);
 
                     add_to_log(SITEID, "course", "new", "view.php?id=$course->id", "$course->fullname (ID $course->id)");
 
@@ -565,7 +563,7 @@ function process_group_tag($tagcontents){
               }
             }elseif($recstatus==3 && ($courseid = get_field('course', 'id', 'idnumber', $coursecode))){
                 // If course does exist, but recstatus==3 (delete), then set the course as hidden
-                set_field('course', 'visible', '0', 'id', $courseid);
+                $DB->set_field('course', 'visible', '0', array('id'=>$courseid));
             }
         } // End of foreach(coursecode)
     }
@@ -576,7 +574,7 @@ function process_group_tag($tagcontents){
 * @param string $tagconents The raw contents of the XML element
 */
 function process_person_tag($tagcontents){
-    global $CFG;
+    global $CFG, $DB;
 
     if(preg_match('{<sourcedid>.*?<id>(.+?)</id>.*?</sourcedid>}is', $tagcontents, $matches)){
         $person->idnumber = trim($matches[1]);
@@ -630,7 +628,7 @@ function process_person_tag($tagcontents){
 
         if($CFG->enrol_imsdeleteusers){ // If we're allowed to delete user records
             // Make sure their "deleted" field is set to one
-            set_field('user', 'deleted', 1, 'username', $person->username);
+            $DB->set_field('user', 'deleted', 1, array('username'=>$person->username));
             $this->log_line("Marked user record for user '$person->username' (ID number $person->idnumber) as deleted.");
         }else{
             $this->log_line("Ignoring deletion request for user '$person->username' (ID number $person->idnumber).");
@@ -640,14 +638,14 @@ function process_person_tag($tagcontents){
 
 
         // If the user exists (matching sourcedid) then we don't need to do anything.
-        if(!get_field('user', 'id', 'idnumber', $person->idnumber) && $CFG->enrol_createnewusers){
+        if(!$DB->get_field('user', 'id', array('idnumber'=>$person->idnumber)) && $CFG->enrol_createnewusers){
             // If they don't exist and haven't a defined username, we log this as a potential problem.
             if((!isset($person->username)) || (strlen($person->username)==0)){
                 $this->log_line("Cannot create new user for ID # $person->idnumber - no username listed in IMS data for this person.");
-            }elseif(get_field('user', 'id', 'username', $person->username)){
+            } else if ($DB->get_field('user', 'id', array('username'=>$person->username))){
                 // If their idnumber is not registered but their user ID is, then add their idnumber to their record
-                set_field('user', 'idnumber', addslashes($person->idnumber), 'username', $person->username);
-            }else{
+                $DB->set_field('user', 'idnumber', $person->idnumber, array('username'=>$person->username));
+            } else {
 
             // If they don't exist and they have a defined username, and $CFG->enrol_createnewusers == true, we create them.
             $person->lang = 'manual'; //TODO: this needs more work due tu multiauth changes
@@ -655,7 +653,7 @@ function process_person_tag($tagcontents){
             $person->confirmed = 1;
             $person->timemodified = time();
             $person->mnethostid = $CFG->mnet_localhost_id;
-            if($id = insert_record('user', addslashes_object($person))){
+            if($id = $DB->insert_record('user', addslashes_object($person))){
     /*
     Photo processing is deactivated until we hear from Moodle dev forum about modification to gdlib.
 
@@ -670,7 +668,7 @@ function process_person_tag($tagcontents){
                                    //Llibreria creada per nosaltres mateixos.
                                    require_once($CFG->dirroot.'/lib/gdlib.php');
                                    if ($usernew->picture = save_profile_image($id, $person->urlphoto,'user')) {
-                                     set_field('user', 'picture', $usernew->picture, 'id', $id);  /// Note picture in DB
+                                     $DB->set_field('user', 'picture', $usernew->picture, array('id'=>$id));  /// Note picture in DB
                                    }
                                  }
     */
@@ -683,7 +681,7 @@ function process_person_tag($tagcontents){
             $this->log_line("User record already exists for user '$person->username' (ID number $person->idnumber).");
 
             // Make sure their "deleted" field is set to zero.
-            set_field('user', 'deleted', 0, 'idnumber', $person->idnumber);
+            $DB->set_field('user', 'deleted', 0, array('idnumber'=>$person->idnumber));
         }else{
             $this->log_line("No user record found for '$person->username' (ID number $person->idnumber).");
         }
@@ -698,7 +696,7 @@ function process_person_tag($tagcontents){
 * @param string $tagconents The raw contents of the XML element
 */
 function process_membership_tag($tagcontents){
-    global $CFG;
+    global $CFG, $DB;
     $memberstally = 0;
     $membersuntally = 0;
 
@@ -709,7 +707,7 @@ function process_membership_tag($tagcontents){
         $ship->coursecode = ($CFG->enrol_truncatecoursecodes > 0)
                                  ? substr(trim($matches[1]), 0, intval($CFG->enrol_truncatecoursecodes))
                                  : trim($matches[1]);
-        $ship->courseid = get_field('course', 'id', 'idnumber', $ship->coursecode);
+        $ship->courseid = $DB->get_field('course', 'id', array('idnumber'=>$ship->coursecode));
     }
     if($ship->courseid && preg_match_all('{<member>(.*?)</member>}is', $tagcontents, $membermatches, PREG_SET_ORDER)){
         foreach($membermatches as $mmatch){
@@ -750,7 +748,7 @@ function process_membership_tag($tagcontents){
 //print_r($rolecontext);
 
             // Add or remove this student or teacher to the course...
-            $memberstoreobj->userid = get_field('user', 'id', 'idnumber', $member->idnumber);
+            $memberstoreobj->userid = $DB->get_field('user', 'id', array('idnumber'=>$member->idnumber));
             $memberstoreobj->enrol = 'imsenterprise';
             $memberstoreobj->course = $ship->courseid;
             $memberstoreobj->time = time();
@@ -781,16 +779,16 @@ function process_membership_tag($tagcontents){
                             if(isset($groupids[$member->groupname])){
                                 $member->groupid = $groupids[$member->groupname]; // Recall the group ID from cache if available
                             }else{
-                                if($groupid = get_field('groups', 'id', 'name', addslashes($member->groupname), 'courseid', $ship->courseid)){
+                                if($groupid = $DB->get_field('groups', 'id', 'name', $member->groupname, array('courseid'=>$ship->courseid))){
                                     $member->groupid = $groupid;
                                     $groupids[$member->groupname] = $groupid; // Store ID in cache
                                 }else{
                                     // Attempt to create the group
-                                    $group->name = addslashes($member->groupname);
+                                    $group->name = $member->groupname;
                                     $group->courseid = $ship->courseid;
                                     $group->timecreated = time();
                                     $group->timemodified = time();
-                                    $groupid = insert_record('groups', $group);
+                                    $groupid = $DB->insert_record('groups', $group);
                                     $this->log_line('Added a new group for this course: '.$group->name);
                                     $groupids[$member->groupname] = $groupid; // Store ID in cache
                                     $member->groupid = $groupid;
@@ -874,10 +872,12 @@ function decode_timeframe($string){ // Pass me the INNER CONTENTS of a <timefram
 * how an IMS-E role corresponds to a Moodle role
 */
 function load_role_mappings() {
+    global $DB;
+
     $this->rolemappings = array();
     foreach($this->imsroles as $imsrolenum=>$imsrolename) {
         $this->rolemappings[$imsrolenum] = $this->rolemappings[$imsrolename]
-            = get_field('config', 'value', 'name', 'enrol_imse_imsrolemap' . $imsrolenum);
+            = $DB->get_field('config', 'value', array('name'=>'enrol_imse_imsrolemap' . $imsrolenum));
     }
 }
 
