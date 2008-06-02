@@ -37,7 +37,7 @@
         print_error("unknowcategory");
     }
 
-    if (!$category = get_record("course_categories", "id", $id)) {
+    if (!$category = $DB->get_record("course_categories", array("id"=>$id))) {
         print_error("unknowcategory");
     }
 
@@ -222,8 +222,8 @@
                 $movecourse = $DB->get_record('course', array('id'=>$moveup));
                 $swapcourse = $DB->get_record('course', array('category'=>$category->id, 'sortorder'=>($movecourse->sortorder-1)));
             } else {
-                $movecourse = get_record('course', array('id'=>$movedown));
-                $swapcourse = get_record('course', array('category'=>$category->id, 'sortorder'=>($movecourse->sortorder+1)));
+                $movecourse = $DB->get_record('course', array('id'=>$movedown));
+                $swapcourse = $DB->get_record('course', array('category'=>$category->id, 'sortorder'=>($movecourse->sortorder+1)));
             }
 
             if ($swapcourse and $movecourse) {        // Renumber everything for robustness

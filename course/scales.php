@@ -28,7 +28,7 @@
 
     print_header($strscales);
 
-    if ($scales = get_records("scale", "courseid", "$course->id", "name ASC")) {
+    if ($scales = $DB->get_records("scale", array("courseid"=>$course->id), "name ASC")) {
         print_heading($strcustomscales);
 
         if (has_capability('moodle/course:managescales', $context)) {
@@ -58,7 +58,7 @@
         }
     }
 
-    if ($scales = get_records("scale", "courseid", "0", "name ASC")) {
+    if ($scales = $DB->get_records("scale", array("courseid"=>0), "name ASC")) {
         print_heading($strstandardscales);
         foreach ($scales as $scale) {
             $scalemenu = make_menu_from_list($scale->scale);

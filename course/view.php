@@ -26,15 +26,15 @@
     }
 
     if (!empty($name)) {
-        if (! ($course = get_record('course', 'shortname', $name)) ) {
+        if (! ($course = $DB->get_record('course', array('shortname'=>$name)))) {
             print_error('invalidcoursenameshort', 'error');
         }
     } else if (!empty($idnumber)) {
-        if (! ($course = get_record('course', 'idnumber', $idnumber)) ) {
+        if (! ($course = $DB->get_record('course', array('idnumber'=>$idnumber)))) {
             print_error('invalidcourseid', 'error');
         }
     } else {
-        if (! ($course = get_record('course', 'id', $id)) ) {
+        if (! ($course = $DB->get_record('course', array('id'=>$id)))) {
             print_error('invalidcourseid', 'error');
         }
     }
@@ -211,11 +211,11 @@
 
     if (! $sections = get_all_sections($course->id)) {   // No sections found
         // Double-check to be extra sure
-        if (! $section = get_record('course_sections', 'course', $course->id, 'section', 0)) {
+        if (! $section = $DB->get_record('course_sections', array('course'=>$course->id, 'section'=>0))) {
             $section->course = $course->id;   // Create a default section.
             $section->section = 0;
             $section->visible = 1;
-            $section->id = insert_record('course_sections', $section);
+            $section->id = $DB->insert_record('course_sections', $section);
         }
         if (! $sections = get_all_sections($course->id) ) {      // Try again
             print_error('cannotcreateorfindstructs', 'error');

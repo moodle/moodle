@@ -53,14 +53,14 @@
 
         if ($hide or $show and confirm_sesskey()) {
             if ($hide) {
-                $course = get_record("course", "id", $hide);
+                $course = $DB->get_record("course", array("id"=>$hide));
                 $visible = 0;
             } else {
-                $course = get_record("course", "id", $show);
+                $course = $DB->get_record("course", array("id"=>$show));
                 $visible = 1;
             }
             if ($course) {
-                if (! set_field("course", "visible", $visible, "id", $course->id)) {
+                if (! $DB->set_field("course", "visible", $visible, array("id"=>$course->id))) {
                     notify("Could not update that course!");
                 }
             }
@@ -107,9 +107,9 @@
         exit;
     }
 
-    if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
+    if (!empty($moveto) and $data = data_submitted(false) and confirm_sesskey()) {   // Some courses are being moved
 
-        if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
+        if (! $destcategory = $DB->get_record("course_categories", array("id"=>$data->moveto))) {
             print_error('cannotfindcategory', '', '', $data->moveto);
         }
 
@@ -125,8 +125,8 @@
     // get list of courses containing blocks if required
     if (!empty($blocklist) and confirm_sesskey()) {
         $blockid = $blocklist;
-        if (!$blocks = get_records('block_instance', 'blockid', $blockid)) {
-            print_error( 'blockcannotread', '', '',  $blockid);
+        if (!$blocks = $DB->get_records('block_instance', array('blockid'=>$blockid))) {
+            print_error('blockcannotread', '', '',  $blockid);
         }
 
         // run through blocks and get (unique) courses
@@ -138,7 +138,7 @@
             if ($courseid==0 || $block->pagetype != 'course-view') {
                 continue;
             }
-            if (!$course = get_record('course', 'id', $courseid)) {
+            if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
                 print_error('invalidcourseid', '', '', $courseid);
             }
             $courses[$courseid] = $course;
@@ -148,7 +148,7 @@
     // get list of courses containing modules if required
     elseif (!empty($modulelist) and confirm_sesskey()) {
         $modulename = $modulelist;
-        if (!$modules = get_records($modulename)) {
+        if (!$modules = $DB->get_records($modulename)) {
             print_error('invalidmodulename', '', '', $modulename);
         }
 
@@ -159,7 +159,7 @@
             if ($courseid==0) {
                 continue;
             }
-            if (!$course = get_record('course', 'id', $courseid)) {
+            if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
                 print_error('invalidcourseid', '', '', $courseid);
             }
             $courses[$courseid] = $course;
@@ -180,7 +180,7 @@
     $navlinks = array();
     $navlinks[] = array('name' => $strcourses, 'link' => 'index.php', 'type' => 'misc');
     $navlinks[] = array('name' => $strsearch, 'link' => 'search.php', 'type' => 'misc');
-    $navlinks[] = array('name' => "'".s($search, true)."'", 'link' => null, 'type' => 'misc');
+    $navlinks[] = array('name' => "'".s($search)."'", 'link' => null, 'type' => 'misc');
     $navigation = build_navigation($navlinks);
 
     print_header("$site->fullname : $strsearchresults", $site->fullname, $navigation, "", "", "", $searchform);
@@ -191,7 +191,7 @@
 
         print_heading("$strsearchresults: $totalcount");
 
-        $encodedsearch = urlencode(stripslashes($search));
+        $encodedsearch = urlencode($search);
         print_paging_bar($totalcount, $page, $perpage, "search.php?search=$encodedsearch&amp;perpage=$perpage&amp;",'page',($perpage == 99999));
 
         if ($perpage != 99999 && $totalcount > $perpage) {
@@ -215,7 +215,7 @@
 
             echo "<form id=\"movecourses\" action=\"search.php\" method=\"post\">\n";
             echo "<div><input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-            echo "<input type=\"hidden\" name=\"search\" value=\"".s($search, true)."\" />\n";
+            echo "<input type=\"hidden\" name=\"search\" value=\"".s($search)."\" />\n";
             echo "<input type=\"hidden\" name=\"page\" value=\"$page\" />\n";
             echo "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" /></div>\n";
             echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"4\" class=\"generalbox boxaligncenter\">\n<tr>\n";
@@ -329,7 +329,7 @@
 
     } else {
         if (!empty($search)) {
-            print_heading(get_string("nocoursesfound", "", s($search, true)));
+            print_heading(get_string("nocoursesfound", "", s($search)));
         }
         else {
             print_heading( $strnovalidcourses );

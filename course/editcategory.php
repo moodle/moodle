@@ -32,7 +32,7 @@ if ($categoryadd) { // Show Add category form: if $id is given, it is used as th
 } elseif (!is_null($id) && !$categoryadd) { // Show Edit category form: $id is given as the identifier of the category being edited
     $strtitle = get_string("editcategorysettings");
     $context = get_context_instance(CONTEXT_COURSECAT, $id); 
-    if (!$category = get_record("course_categories", "id", $id)) {
+    if (!$category = $DB->get_record("course_categories", array("id"=>$id))) {
         print_error("unknowcategory");
     }
 }
@@ -128,7 +128,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
     if ($resort and confirm_sesskey()) {
         if ($courses = get_courses($id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
             // move it off the range
-            $count = get_record_sql('SELECT MAX(sortorder) AS max, 1
+            $count = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1
                                      FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
             $count = $count->max + 100;
             begin_sql();
@@ -209,7 +209,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
             require_capability('moodle/category:update', $context);
             require_capability('moodle/category:update', get_context_instance(CONTEXT_COURSECAT, $moveto));
 
-            if (!$destcategory = get_record("course_categories", "id", $data->moveto)) {
+            if (!$destcategory = $DB->get_record("course_categories", array("id"=>$data->moveto))) {
                 pritn_error("unknowcategory");
             } 
             // TODO function to move the category
@@ -219,10 +219,10 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
         if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
             require_capability('moodle/category:visibility', $context);
             if (!empty($hide)) {
-                $category = get_record("course_categories", "id", $hide);
+                $category = $DB->get_record("course_categories", array("id"=>$hide));
                 $visible = 0;
             } else {
-                $category = get_record("course_categories", "id", $show);
+                $category = $DB->get_record("course_categories", array("id"=>$show));
                 $visible = 1;
             }
             if ($category) {
@@ -242,19 +242,19 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
             // TODO something like fix_course_sortorder() ?
 
             // we are going to need to know the range
-            $max = get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM ' . $CFG->prefix . 'course_categories WHERE id=' . $category->id);
+            $max = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM ' . $CFG->prefix . 'course_categories WHERE id=' . $category->id);
             $max = $max->max + 100;
 
             if (!empty($moveup)) {
-                $movecategory = get_record('course_categories', 'id', $moveup);
-                $swapcategory = get_record('course_categories',
-                                         'category',  $category->id,
-                                         'sortorder', $movecategory->sortorder - 1);
+                $movecategory = $DB->get_record('course_categories', array('id'=>$moveup));
+                $swapcategory = $DB->get_record('course_categories',
+                                         array('category'=>$category->id,
+                                         'sortorder'=>$movecategory->sortorder - 1));
             } else {
-                $movecategory = get_record('course_categories', 'id', $movedown);
-                $swapcategory = get_record('course_categories',
-                                         'category',  $category->id,
-                                         'sortorder', $movecategory->sortorder + 1);
+                $movecategory = $DB->get_record('course_categories', array('id'=>$movedown));
+                $swapcategory = $DB->get_record('course_categories',
+                                         array('category'=> $category->id,
+                                         'sortorder'=>$movecategory->sortorder + 1));
             }
 
             if ($swapcourse and $movecourse) {        // Renumber everything for robustness
@@ -273,7 +273,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
     } // End of editing stuff
 
     // Print out all the sub-categories
-    if ($subcategories = get_records("course_categories", "parent", $category->id, "sortorder ASC")) {
+    if ($subcategories = $DB->get_records("course_categories", array("parent"=>$category->id), "sortorder ASC")) {
         $firstentry = true;
         foreach ($subcategories as $subcategory) {
             if ($subcategory->visible or has_capability('moodle/course:create', $context)) {

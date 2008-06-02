@@ -23,7 +23,7 @@ $visible    = optional_param('visible', 0, PARAM_INT);
 
 
 // Authorise the user and verify some incoming data
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
     error_log('AJAX commands.php: Course does not exist');
     die;
 }
@@ -69,7 +69,7 @@ switch($_SERVER['REQUEST_METHOD']) {
 
             case 'section':
  
-                if (!record_exists('course_sections','course',$course->id,'section',$id)) {
+                if (!$DB->record_exists('course_sections', array('course'=>$course->id, 'section'=>$id))) {
                     error_log('AJAX commands.php: Bad Section ID '.$id);
                     die;
                 }
@@ -87,7 +87,7 @@ switch($_SERVER['REQUEST_METHOD']) {
                 break;
 
             case 'resource':
-                if (!$mod = get_record('course_modules', 'id', $id, 'course', $course->id)) {
+                if (!$mod = $DB->get_record('course_modules', array('id'=>$id, 'course'=>$course->id))) {
                     error_log('AJAX commands.php: Bad course module ID '.$id);
                     die;
                 }
@@ -113,13 +113,13 @@ switch($_SERVER['REQUEST_METHOD']) {
                         break;
 
                     case 'move':
-                        if (!$section = get_record('course_sections','course',$course->id,'section',$sectionid)) {
+                        if (!$section = $DB->get_record('course_sections', array('course'=>$course->id, 'section'=>$sectionid))) {
                             error_log('AJAX commands.php: Bad section ID '.$sectionid);
                             die;
                         }
                         
                         if ($beforeid > 0){
-                            $beforemod = get_record('course_modules', 'id', $beforeid);
+                            $beforemod = $DB->get_record('course_modules', array('id'=>$beforeid));
                         } else {
                             $beforemod = NULL;
                         }
@@ -140,7 +140,7 @@ switch($_SERVER['REQUEST_METHOD']) {
                         $newcourse = new object;
                         $newcourse->id = $course->id;
                         $newcourse->marker = $value;
-                        if (!update_record('course',$newcourse)) {
+                        if (!$DB->update_record('course', $newcourse)) {
                             error_log('AJAX commands.php: Failed to update course marker for course '.$newcourse->id);
                             die;
                         }
@@ -157,11 +157,11 @@ switch($_SERVER['REQUEST_METHOD']) {
                 break; 
                 
             case 'resource':
-                if (!$cm = get_record('course_modules', 'id', $id, 'course', $course->id)) {
+                if (!$cm = $DB->get_record('course_modules', array('id'=>$id, 'course'=>$course->id))) {
                     error_log('AJAX rest.php: Bad course module ID '.$id);
                     die;
                 }
-                if (!$mod = get_record('modules', 'id', $cm->module)) {
+                if (!$mod = $DB->get_record('modules', array('id'=>$cm->module))) {
                     error_log('AJAX rest.php: Bad module ID '.$cm->module);
                     die;
                 }

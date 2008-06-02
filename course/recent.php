@@ -8,7 +8,7 @@
 
     $id = required_param('id', PARAM_INT);
 
-    if (!$course = get_record('course', 'id', $id) ) {
+    if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error("That's an invalid course id");
     }
 
@@ -45,7 +45,7 @@
     $dateinfo = get_string('alldays');
 
     if (!empty($param->user)) {
-        if (!$u = get_record('user', 'id', $param->user) ) {
+        if (!$u = $DB->get_record('user', array('id'=>$param->user))) {
             print_error("That's an invalid user!");
         }
         $userinfo = fullname($u);
@@ -70,11 +70,11 @@
         $hiddenfilter = "AND cs.visible = 1";
     }
     $sections = array();
-    if ($ss = get_records_sql("SELECT cs.id, cs.section, cs.sequence, cs.summary, cs.visible
-                                 FROM {$CFG->prefix}course_sections cs
-                                WHERE cs.course = $course->id AND cs.section <= $course->numsections
-                                      $hiddenfilter
-                             ORDER BY section")) {
+    if ($ss = $DB->get_records_sql("SELECT cs.id, cs.section, cs.sequence, cs.summary, cs.visible
+                                      FROM {course_sections} cs
+                                     WHERE cs.course = ? AND cs.section <= ?
+                                           $hiddenfilter
+                                  ORDER BY section", array($course->id, $course->numsections))) {
         foreach ($ss as $section) {
             $sections[$section->section] = $section;
         }

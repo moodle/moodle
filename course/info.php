@@ -19,7 +19,7 @@
             print_error("invalidshortname");
         }
     } else {
-        if (!$course = get_record("course", array("id"=>$id))) {
+        if (!$course = $DB->get_record("course", array("id"=>$id))) {
             print_error("invalidcourseid");
         }
     }
@@ -61,7 +61,7 @@
     if ($managerroles = get_config('', 'coursemanager')) {
         $coursemanagerroles = split(',', $managerroles);
         foreach ($coursemanagerroles as $roleid) {
-            $role = get_record('role','id',$roleid);
+            $role = $DB->get_record('role', array('id'=>$roleid));
             $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
             $roleid = (int) $roleid;
             if ($users = get_role_users($roleid, $context, true, '', 'u.lastname ASC', $canseehidden)) {

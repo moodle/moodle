@@ -15,7 +15,7 @@
     $rejectnotice = optional_param('rejectnotice', '', PARAM_CLEANHTML);
 
     if (!empty($approve) and confirm_sesskey()) {
-        if ($course = get_record("course_request","id",$approve)) {
+        if ($course = $DB->get_record("course_request", array("id"=>$approve))) {
             foreach (array_keys((array)$course) as $key) {
                 $course->$key = addslashes($course->$key);
             }
@@ -23,13 +23,13 @@
             // place at beginning of category
             fix_course_sortorder();
 
-            if (empty($CFG->defaultrequestcategory) or !record_exists('course_categories', 'id', $CFG->defaultrequestcategory)) {
+            if (empty($CFG->defaultrequestcategory) or !$DB->record_exists('course_categories', array('id'=>$CFG->defaultrequestcategory))) {
                 // default to first top level directory, hacky but means things don't break
-                $CFG->defaultrequestcategory = get_field('course_categories', 'id', 'parent', '0');
+                $CFG->defaultrequestcategory = $DB->get_field('course_categories', 'id', array('parent'=>'0'));
             }
 
             $course->category = $CFG->defaultrequestcategory;
-            $course->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM {$CFG->prefix}course WHERE category=$course->category");
+            $course->sortorder = $DB->get_field_sql("SELECT min(sortorder)-1 FROM {course} WHERE category=?", array($course->category));
             if (empty($course->sortorder)) {
                 $course->sortorder = 1000;
             }
@@ -45,7 +45,7 @@
             if (!empty($CFG->restrictmodulesfor) && $CFG->restrictmodulesfor != 'none' && !empty($CFG->restrictbydefault)) {
                 $course->restrictmodules = 1;
             }
-            if ($courseid = insert_record("course",$course)) {
+            if ($courseid = $DB->insert_record("course",$course)) {
                 $page = page_create_object(PAGE_COURSE_VIEW, $courseid);
                 blocks_repopulate_page($page); // Return value not checked because you can always edit later
                 $context = get_context_instance(CONTEXT_COURSE, $courseid);
@@ -55,11 +55,11 @@
                     $allowedmods = explode(',',$CFG->defaultallowedmodules);
                     update_restricted_mods($course,$allowedmods);
                 }
-                delete_records('course_request','id',$approve);
+                $DB->delete_records('course_request', array('id'=>$approve));
                 $success = 1;
             }
             if (!empty($success)) {
-                $user = get_record('user','id',$teacherid);
+                $user = $DB->get_record('user', array('id'=>$teacherid));
                 $a->name = $course->fullname;
                 $a->url = $CFG->wwwroot.'/course/view.php?id='.$courseid;
                 $a->teacher = $course->teacher;
@@ -80,7 +80,7 @@
     print_header($strtitle,$strheading,build_navigation(array(array('name'=>$strheading,'link'=>'','type'=>'misc'))));
 
     if (!empty($reject) and confirm_sesskey()) {
-        if ($reject = get_record("course_request","id",$reject)) {
+        if ($reject = $DB->get_record("course_request", array("id"=>$reject))) {
             if (empty($rejectnotice)) {
                 //  display a form for writing a reason
                 print_simple_box_start('center');
@@ -89,13 +89,13 @@
                 print_simple_box_end();
             }
             else {
-                $user = get_record("user","id",$reject->requester);
+                $user = $DB->get_record("user", array("id"=>$reject->requester));
                 email_to_user($user,$USER,get_string('courserejectsubject'),get_string('courserejectemail','moodle',$rejectnotice));
-                delete_records("course_request","id",$reject->id);
+                $DB->delete_records("course_request", array("id"=>$reject->id));
                 notice(get_string('courserejected'),'pending.php');
             }
         }
-    } else if ($pending = get_records("course_request")) {
+    } else if ($pending = $DB->get_records("course_request")) {
         // loop through
         $table->cellpadding = 4;
         $table->cellspacing = 3;
@@ -104,9 +104,9 @@
                                get_string('requestreason'),'');
         $strrequireskey = get_string('requireskey');
         foreach ($pending as $course) {
-            $requester = get_record('user','id',$course->requester);
+            $requester = $DB->get_record('user', array('id'=>$course->requester));
             // check here for shortname collisions and warn about them.
-            if ($match = get_record("course","shortname",$course->shortname)) {
+            if ($match = $DB->get_record("course", array("shortname"=>$course->shortname))) {
                 $course->shortname .= ' [*]';
                 $collision = 1;
             }

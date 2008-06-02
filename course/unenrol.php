@@ -90,7 +90,7 @@
     print_header("$course->shortname: $strunenrol", $course->fullname, $navigation);
 
     if ($userid) {
-        if (!$user = get_record('user', 'id', $userid)) {
+        if (!$user = $DB->get_record('user', array('id'=>$userid))) {
             print_error('nousers');
         }
         $strunenrolsure  = get_string('unenrolsure', '', fullname($user, true));

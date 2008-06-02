@@ -3,7 +3,7 @@ require_once $CFG->libdir.'/formslib.php';
 
 class course_reset_form extends moodleform {
     function definition (){
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         $mform =& $this->_form;
 
@@ -49,7 +49,7 @@ class course_reset_form extends moodleform {
         }
 
         $unsupported_mods = array();
-        if ($allmods = get_records('modules') ) {
+        if ($allmods = $DB->get_records('modules') ) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 if (!count_records($modname, 'course', $COURSE->id)) {
@@ -91,7 +91,7 @@ class course_reset_form extends moodleform {
     }
 
     function load_defaults() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         $mform =& $this->_form;
 
@@ -103,7 +103,7 @@ class course_reset_form extends moodleform {
             $defaults['reset_roles'] = array($CFG->defaultcourseroleid);
         }
 
-        if ($allmods = get_records('modules') ) {
+        if ($allmods = $DB->get_records('modules') ) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $modfile = $CFG->dirroot."/mod/$modname/lib.php";

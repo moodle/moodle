@@ -17,7 +17,7 @@
         print_error('invalidcourseid', 'error');
     }
 
-    if (! $user = get_record("user", "id", $user)) {
+    if (! $user = $DB->get_record("user", array("id"=>$user))) {
         print_error('invaliduserid', 'error');
     }
 
@@ -77,7 +77,7 @@
             require_once $CFG->dirroot.'/grade/lib.php';
             require_once $CFG->dirroot.'/grade/report/'.$CFG->grade_profilereport.'/lib.php';
 
-            $course = get_record('course', 'id', required_param('id', PARAM_INT));
+            $course = $DB->get_record('course', array('id'=>required_param('id', PARAM_INT)));
             $functionname = 'grade_report_'.$CFG->grade_profilereport.'_profilereport';
             if (function_exists($functionname)) {
                 $functionname($course, $user);
@@ -112,9 +112,9 @@
                 notify ($statsstatus);
             }
 
-            $earliestday = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_daily ORDER BY timeend');
-            $earliestweek = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_weekly ORDER BY timeend');
-            $earliestmonth = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_monthly ORDER BY timeend');
+            $earliestday   = $DB->get_field_sql('SELECT timeend FROM {stats_user_daily} ORDER BY timeend');
+            $earliestweek  = $DB_>get_field_sql('SELECT timeend FROM {stats_user_weekly} ORDER BY timeend');
+            $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {stats_user_monthly} ORDER BY timeend');
 
             if (empty($earliestday)) $earliestday = time();
             if (empty($earliestweek)) $earliestweek = time();
@@ -134,16 +134,15 @@
             $time = array_pop(array_keys($timeoptions));
 
             $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW,$course->id,STATS_MODE_DETAILED);
+            $params = $param->params;
 
             $param->table = 'user_'.$param->table;
 
-            $sql = 'SELECT timeend,'.$param->fields.' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
+            $sql = 'SELECT timeend,'.$param->fields.' FROM {stats_'.$param->table.'} WHERE '
             .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
-                .' userid = '.$user->id
-                .' AND timeend >= '.$param->timeafter
-                .$param->extras
+                .' userid = '.$user->id.' AND timeend >= '.$param->timeafter .$param->extras
                 .' ORDER BY timeend DESC';
-            $stats = get_records_sql($sql);
+            $stats = $DB->get_records_sql($sql, $params); //TODO: improve these params!!
 
             if (empty($stats)) {
                 print_error('nostatstodisplay', '', $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
@@ -220,7 +219,7 @@
                                     continue;
                                 }
 
-                                $instance = get_record("$mod->modname", "id", "$mod->instance");
+                                $instance = $DB->get_record("$mod->modname", array("id"=>$mod->instance));
                                 $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
 
                                 if (file_exists($libfile)) {

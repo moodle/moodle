@@ -414,7 +414,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
         if (isset($ldcache[$log->module][$log->action])) {
             $ld = $ldcache[$log->module][$log->action];
         } else {
-            $ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
+            $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
             $ldcache[$log->module][$log->action] = $ld;
         }
         if (0 && $ld && !empty($log->info)) {
@@ -511,7 +511,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
         if (isset($ldcache[$log->module][$log->action])) {
             $ld = $ldcache[$log->module][$log->action];
         } else {
-            $ld = get_record('log_display', 'module', $log->module, 'action', $log->action);
+            $ld = $DB->get_record('log_display', array('module'=>$log->module, 'action'=>$log->action));
             $ldcache[$log->module][$log->action] = $ld;
         }
         if ($ld && !empty($log->info)) {
@@ -781,10 +781,10 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
 
 
 function print_overview($courses) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     $htmlarray = array();
-    if ($modules = get_records('modules')) {
+    if ($modules = $DB->get_records('modules')) {
         foreach ($modules as $mod) {
             if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php')) {
                 include_once(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php');
