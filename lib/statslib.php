@@ -1179,7 +1179,7 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
     }
     */
     //TODO must add the SITEID reports to the rest of the reports.
-    return array($param);
+    return $param;
 }
 
 function stats_get_view_actions() {
