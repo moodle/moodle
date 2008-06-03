@@ -37,8 +37,7 @@ $fieldids = array();    //array in the format of $fieldids[$oldid]=$newid. This 
 
     //Return a content encoded to support interactivities linking. Every module
 function data_restore_mods($mod,$restore) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $status = true;
 
@@ -100,11 +99,11 @@ function data_restore_mods($mod,$restore) {
             unset($database->notification);    /// Unset it if null to get proper Moodle 2.0 default (0) applied
         }
 
-        $newid = insert_record ('data', $database);
+        $newid = $DB->insert_record ('data', $database);
 
         //Do some output
         if (!defined('RESTORE_SILENTLY')) {
-            echo "<li>".get_string("modulename","data")." \"".format_string(stripslashes($database->name),true)."\"</li>";
+            echo "<li>".get_string("modulename","data")." \"".format_string($database->name,true)."\"</li>";
         }
 
         if ($newid) {
@@ -161,8 +160,7 @@ function data_restore_mods($mod,$restore) {
 }
 
 function data_fields_restore_mods ($old_data_id, $new_data_id, $info, $restore) {
-
-    global $CFG, $fieldids;
+    global $CFG, $fieldids, $DB;
 
 
     $fields = $info['MOD']['#']['FIELDS']['0']['#']['FIELD'];
@@ -187,7 +185,7 @@ function data_fields_restore_mods ($old_data_id, $new_data_id, $info, $restore) 
         $field -> param9 = backup_todb($fie_info['#']['PARAM9']['0']['#']);
         $field -> param10 = backup_todb($fie_info['#']['PARAM10']['0']['#']);
 
-        $newid = insert_record ("data_fields",$field);
+        $newid = $DB->insert_record ("data_fields",$field);
 
         $fieldids[$oldid] = $newid;    //so we can use them in sub tables that depends on both fieldid and recordid
 
@@ -215,8 +213,7 @@ function data_fields_restore_mods ($old_data_id, $new_data_id, $info, $restore) 
 }
 
 function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore) {
-
-    global $CFG, $fieldids;
+    global $CFG, $fieldids, $DB;
 
     $status = true;
 
@@ -244,7 +241,7 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
             $record->groupid= $group->new_id;
         }
 
-        $newid = insert_record ("data_records",$record);
+        $newid = $DB->insert_record ("data_records",$record);
 
         //Do some output
         if (($i+1) % 50 == 0) {
@@ -273,8 +270,7 @@ function data_records_restore_mods ($old_data_id, $new_data_id, $info, $restore)
 }
 
 function data_content_restore_mods ($old_record_id, $new_record_id, $old_data_id, $new_data_id, $recinfo, $restore) {
-
-    global $CFG, $fieldids;
+    global $CFG, $fieldids, $DB;
 
     $status = true;
 
@@ -294,7 +290,7 @@ function data_content_restore_mods ($old_record_id, $new_record_id, $old_data_id
         $content -> content2 = backup_todb($con_info['#']['CONTENT2']['0']['#']);
         $content -> content3 = backup_todb($con_info['#']['CONTENT3']['0']['#']);
         $content -> content4 = backup_todb($con_info['#']['CONTENT4']['0']['#']);
-        $newid = insert_record ("data_content",$content);
+        $newid = $DB->insert_record ("data_content",$content);
 
         //Do some output
         if (($i+1) % 50 == 0) {
@@ -374,8 +370,7 @@ function data_restore_files ($old_data_id, $new_data_id, $old_field_id, $new_fie
 }
 
 function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $status = true;
 
@@ -392,7 +387,7 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
         $rating -> userid = backup_todb($rat_info['#']['USERID']['0']['#']);
         $rating -> rating = backup_todb($rat_info['#']['RATING']['0']['#']);
 
-        if (! insert_record ("data_ratings",$rating)) {
+        if (! $DB->insert_record ("data_ratings",$rating)) {
             $status = false;
         }
     }
@@ -400,8 +395,7 @@ function data_ratings_restore_mods ($oldid, $newid, $info, $rec_info) {
 }
 
 function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $status = true;
 
@@ -420,7 +414,7 @@ function data_comments_restore_mods ($oldid, $newid, $info, $rec_info) {
         $comment -> content = backup_todb($com_info['#']['CONTENT']['0']['#']);
         $comment -> created = backup_todb($com_info['#']['CREATED']['0']['#']);
         $comment -> modified = backup_todb($com_info['#']['MODIFIED']['0']['#']);
-        if (! insert_record ("data_comments",$comment)) {
+        if (! $DB->insert_record ("data_comments",$comment)) {
             $status = false;
         }
 

@@ -433,6 +433,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
+        global $DB;
 
         $status = true;
 
@@ -460,7 +461,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             }
 
             //The structure is equal to the db, so insert the question_numerical
-            $newid = insert_record ("question_numerical", $numerical);
+            $newid = $DB->insert_record ("question_numerical", $numerical);
 
             //Do some output
             if (($i+1) % 50 == 0) {

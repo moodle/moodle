@@ -23,8 +23,7 @@
 
     //This function executes all the restore procedure about this mod
     function chat_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -53,11 +52,11 @@
             $chat->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the chat
-            $newid = insert_record ("chat",$chat);
+            $newid = $db->insert_record ("chat",$chat);
 
             //Do some output     
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","chat")." \"".format_string(stripslashes($chat->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","chat")." \"".format_string($chat->name,true)."\"</li>";
             }
             backup_flush(300);
 
@@ -82,8 +81,7 @@
 
     //This function restores the chat_messages
     function chat_messages_restore_mods($old_chat_id, $new_chat_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -123,7 +121,7 @@
             }
 
             //The structure is equal to the db, so insert the chat_message
-            $newid = insert_record ("chat_messages",$message);
+            $newid = $DB->insert_record ("chat_messages",$message);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -250,7 +248,6 @@
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function chat_restore_logs($restore,$log) {
-
         $status = false;
 
         //Depending of the action, we recode different things

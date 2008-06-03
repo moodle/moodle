@@ -18,8 +18,7 @@
 
     //This function executes all the restore procedure about this mod
     function label_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -40,11 +39,11 @@
             $label->timemodified = $info['MOD']['#']['TIMEMODIFIED']['0']['#'];
  
             //The structure is equal to the db, so insert the label
-            $newid = insert_record ("label",$label);
+            $newid = $DB->insert_record ("label",$label);
 
             //Do some output     
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","label")." \"".format_string(stripslashes($label->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","label")." \"".format_string($label->name,true)."\"</li>";
             }
             backup_flush(300);
 

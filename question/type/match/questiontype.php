@@ -458,6 +458,7 @@ class question_match_qtype extends default_questiontype {
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
+        global $DB;
 
         $status = true;
 
@@ -486,7 +487,7 @@ class question_match_qtype extends default_questiontype {
             $match_sub->answertext = backup_todb($mat_info['#']['ANSWERTEXT']['0']['#']);
 
             //The structure is equal to the db, so insert the question_match_sub
-            $newid = insert_record ("question_match_sub",$match_sub);
+            $newid = $DB->insert_record ("question_match_sub",$match_sub);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -521,7 +522,7 @@ class question_match_qtype extends default_questiontype {
         $match->subquestions = $subquestions_field;
 
         //The structure is equal to the db, so insert the question_match_sub
-        $newid = insert_record ("question_match",$match);
+        $newid = $DB->insert_record ("question_match",$match);
 
         if (!$newid) {
             $status = false;

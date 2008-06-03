@@ -1016,6 +1016,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
+        global $DB;
 
         $status = true;
 
@@ -1044,7 +1045,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             }
 
             //The structure is equal to the db, so insert the question_calculated
-            $newid = insert_record ("question_calculated",$calculated);
+            $newid = $DB->insert_record ("question_calculated",$calculated);
 
             //Do some output
             if (($i+1) % 50 == 0) {

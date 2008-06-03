@@ -33,8 +33,7 @@
     //-----------------------------------------------------------
 
     function forum_restore_mods($mod,$restore) {
-        
-        global $CFG,$DB;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -91,7 +90,7 @@
                 }
             }
             
-            $newid = insert_record("forum", $forum);
+            $newid = $DB->insert_record("forum", $forum);
 
 
             //Do some output
@@ -124,7 +123,7 @@
                 // If forum type is single, just recreate the initial discussion/post automatically
                 // if it hasn't been created still (because no user data was selected on backup or
                 // restore.
-                if ($forum->type == 'single' && !record_exists('forum_discussions', 'forum', $newid)) {
+                if ($forum->type == 'single' && !$DB->record_exists('forum_discussions', array('forum'=>$newid))) {
                     //Load forum/lib.php
                     require_once ($CFG->dirroot.'/mod/forum/lib.php');
                     // Calculate the default format
@@ -146,7 +145,7 @@
                     $sdid = forum_add_discussion($sd, $sd->intro, $forum);
                     //Now, mark the initial post of the discussion as mailed!
                     if ($sdid) {
-                        set_field ('forum_posts','mailed', '1', 'discussion', $sdid);
+                        $DB->set_field ('forum_posts','mailed', '1', array('discussion'=>$sdid));
                     }
                 }
             
@@ -159,7 +158,7 @@
             // was made pre Moodle 1.7.
             if (isset($forum->open) && isset($forum->assesspublic)) {
 
-                $forummod = get_record('modules', 'name', 'forum');
+                $forummod = $DB->get_record('modules', array('name'=>'forum'));
                 
                 if (!$teacherroles = get_roles_with_capability('moodle/legacy:teacher', CAP_ALLOW)) {
                       notice('Default teacher role was not found. Roles and permissions '.
@@ -188,8 +187,7 @@
 
     //This function restores the forum_subscriptions
     function forum_subscriptions_restore_mods($forum_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -221,7 +219,7 @@
             }
 
             //The structure is equal to the db, so insert the forum_subscription
-            $newid = insert_record ("forum_subscriptions",$subscription);
+            $newid = $DB->insert_record ("forum_subscriptions",$subscription);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -248,8 +246,7 @@
 
     //This function restores the forum_discussions
     function forum_discussions_restore_mods($forum_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -306,7 +303,7 @@
             }
 
             //The structure is equal to the db, so insert the forum_discussions
-            $newid = insert_record ("forum_discussions",$discussion);
+            $newid = $DB->insert_record ("forum_discussions",$discussion);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -332,7 +329,7 @@
                 if ($rec) {
                     //Put its new firstpost
                     $discussion->firstpost = $rec->new_id;
-                    if ($post = get_record("forum_posts", "id", $discussion->firstpost)) {
+                    if ($post = $DB->get_record("forum_posts", array("id"=>$discussion->firstpost))) {
                         $discussion->userid = $post->userid;
                     }
                 } else {
@@ -344,7 +341,7 @@
                 $temp_discussion->firstpost = $discussion->firstpost;
                 $temp_discussion->userid = $discussion->userid;
                 //Update discussion (only firstpost and userid will be changed)
-                $status = update_record("forum_discussions",$temp_discussion);
+                $status = $DB->update_record("forum_discussions",$temp_discussion);
                 //echo "Updated firstpost ".$old_firstpost." to ".$temp_discussion->firstpost."<br />";                //Debug
             } else {
                 $status = false;
@@ -356,8 +353,7 @@
 
     //This function restores the forum_read
     function forum_read_restore_mods($forum_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -415,7 +411,7 @@
             //The structure is equal to the db, so insert the forum_read
             $newid = 0;
             if ($toinsert) {
-                $newid = insert_record ("forum_read",$read);
+                $newid = $DB->insert_record ("forum_read",$read);
             }
 
             //Do some output
@@ -443,8 +439,7 @@
 
     //This function restores the forum_posts
     function forum_posts_restore_mods($new_forum_id,$discussion_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -485,7 +480,7 @@
             }
 
             //The structure is equal to the db, so insert the forum_posts
-            $newid = insert_record ("forum_posts",$post);
+            $newid = $DB->insert_record ("forum_posts",$post);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -504,9 +499,9 @@
                              $newid);
 
                 //Get old forum id from backup_ids
-                $rec = get_record("backup_ids","backup_code",$restore->backup_unique_code,
-                                               "table_name","forum",
-                                               "new_id",$new_forum_id);
+                $rec =$DB->get_record("backup_ids", array("backup_code"=>$restore->backup_unique_code,
+                                               "table_name"=>"forum",
+                                               "new_id"=>$new_forum_id));
                 //Now copy moddata associated files
                 $status = forum_restore_files ($rec->old_id, $new_forum_id,
                                                     $oldid, $newid, $restore);
@@ -520,7 +515,7 @@
         }
 
         //Now we get every post in this discussion_id and recalculate its parent post
-        $posts = get_records ("forum_posts","discussion",$discussion_id);
+        $posts = $DB->get_records ("forum_posts",array("discussion"=>$discussion_id));
         if ($posts) {
             //Iterate over each post
             foreach ($posts as $post) {
@@ -539,7 +534,7 @@
                 $temp_post->parent = $post->parent;
                 //echo "Updated parent ".$old_parent." to ".$temp_post->parent."<br />";                //Debug
                 //Update post (only parent will be changed)
-                $status = update_record("forum_posts",$temp_post);
+                $status = $DB->update_record("forum_posts",$temp_post);
             }
         }
 
@@ -549,7 +544,6 @@
     //This function copies the forum related info from backup temp dir to course moddata folder,
     //creating it if needed and recoding everything (forum id and post id)
     function forum_restore_files ($oldforid, $newforid, $oldpostid, $newpostid, $restore) {
-
         global $CFG;
 
         $status = true;
@@ -602,8 +596,7 @@
 
     //This function restores the forum_ratings
     function forum_ratings_restore_mods($new_post_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -637,7 +630,7 @@
             }
 
             //The structure is equal to the db, so insert the forum_ratings
-            $newid = insert_record ("forum_ratings",$rating);
+            $newid = $DB->insert_record ("forum_ratings",$rating);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -665,24 +658,23 @@
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module
     function forum_restore_wiki2markdown ($restore) {
-    
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Convert forum_posts->message
-        if ($records = get_records_sql ("SELECT p.id, p.message, p.format
-                                         FROM {$CFG->prefix}forum_posts p,
-                                              {$CFG->prefix}forum_discussions d,
-                                              {$CFG->prefix}forum f,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE d.id = p.discussion AND
-                                               f.id = d.forum AND
-                                               f.course = $restore->course_id AND
-                                               p.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'forum_posts' AND
-                                               b.new_id = p.id")) {
+        if ($records = $DB->get_records_sql("SELECT p.id, p.message, p.format
+                                               FROM {forum_posts} p,
+                                                    {forum_discussions} d,
+                                                    {forum} f,
+                                                    {backup_ids} b
+                                              WHERE d.id = p.discussion AND
+                                                    f.id = d.forum AND
+                                                    f.course = ? AND
+                                                    p.format = ".FORMAT_WIKI. " AND
+                                                    b.backup_code = ? AND
+                                                    b.table_name = 'forum_posts' AND
+                                                    b.new_id = p.id", array($restore->course_id, $restore->backup_unique_code))) {
             foreach ($records as $record) {
                 //Rebuild wiki links
                 $record->message = restore_decode_wiki_content($record->message, $restore);
@@ -690,7 +682,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->message = $wtm->convert($record->message, $restore->course_id);
                 $record->format = FORMAT_MARKDOWN;
-                $status = update_record('forum_posts', addslashes_object($record));
+                $status = $DB->update_record('forum_posts', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
@@ -1130,7 +1122,7 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function forum_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
         
         //Process every POST (message) in the course
@@ -1148,8 +1140,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $post->message = addslashes($result);
-                    $status = update_record("forum_posts",$post);
+                    $post->message = $result;
+                    $status = $DB->update_record("forum_posts",$post);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';

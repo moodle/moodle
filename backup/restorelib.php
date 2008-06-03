@@ -85,7 +85,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //from backup format to destination site/course in order to mantain inter-activities
     //working in the backup/restore process
     function restore_decode_content_links($restore) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -117,7 +117,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             echo '<li>'.get_string ('from').' '.get_string('blocks');
         }
 
-        if ($blocks = get_records('block', 'visible', 1)) {
+        if ($blocks = $DB->get_records('block', array('visible'=>1))) {
             foreach ($blocks as $block) {
                 if ($blockobject = block_instance($block->name)) {
                     $blockobject->decode_content_links_caller($restore);
@@ -150,6 +150,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //its task is to ask all modules (maybe other linkable objects) to restore
     //links to them.
     function restore_decode_content_links_worker($content,$restore) {
+        global $DB;
+
         foreach($restore->mods as $name => $info) {
             $function_name = $name."_decode_content_links";
             if (function_exists($function_name)) {
@@ -161,7 +163,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         static $blockobjects = null; 
         if (!isset($blockobjects)) { 
             $blockobjects = array(); 
-            if ($blocks = get_records('block', 'visible', 1)) { 
+            if ($blocks = $DB->get_records('block', array('visible'=>1))) { 
                 foreach ($blocks as $block) { 
                     if ($blockobject = block_instance($block->name)) {
                         $blockobjects[] = $blockobject; 
@@ -211,7 +213,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //return it with every link to modules " modulename:moduleid"
     //converted if possible. See the space before modulename!!
     function restore_decode_wiki_content($content,$restore) {
-
         global $CFG;
 
         $result = $content;
@@ -603,8 +604,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function create a new course record.
     //When finished, course_header contains the id of the new course
     function restore_create_new_course($restore,&$course_header) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -625,8 +625,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $currentfullname = $fullname.$suffixfull;
             // Limit the size of shortname - database column accepts <= 100 chars
             $currentshortname = substr($shortname, 0, 100 - strlen($suffixshort)).$suffixshort;
-            $coursefull  = get_record("course","fullname",addslashes($currentfullname));
-            $courseshort = get_record("course","shortname",addslashes($currentshortname));
+            $coursefull  = $DB->get_record("course", array("fullname"=>$currentfullname));
+            $courseshort = $DB->get_record("course", array("shortname"=>$currentshortname));
             $counter++;
         } while ($coursefull || $courseshort);
 
@@ -636,36 +636,36 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         // first try to get it from restore
         if ($restore->restore_restorecatto) {
-            $category = get_record('course_categories', 'id', $restore->restore_restorecatto);
+            $category = $DB->get_record('course_categories', array('id'=>$restore->restore_restorecatto));
         }
 
         // else we try to get it from the xml file
         //Now calculate the category
         if (!$category) {
-            $category = get_record("course_categories","id",$course_header->category->id,
-                                   "name",addslashes($course_header->category->name));
+            $category = $DB->get_record("course_categories",array("id"=>$course_header->category->id,
+                                   "name"=>$course_header->category->name));
         }
 
         //If no exists, try by name only
         if (!$category) {
-            $category = get_record("course_categories","name",addslashes($course_header->category->name));
+            $category = $DB->get_record("course_categories", array("name"=>$course_header->category->name));
         }
 
         //If no exists, get category id 1
         if (!$category) {
-            $category = get_record("course_categories","id","1");
+            $category = $DB->get_record("course_categories", array("id"=>"1"));
         }
 
         //If category 1 doesn'exists, lets create the course category (get it from backup file)
         if (!$category) {
             $ins_category = new object();
-            $ins_category->name = addslashes($course_header->category->name);
+            $ins_category->name = $course_header->category->name;
             $ins_category->parent = 0;
             $ins_category->sortorder = 0;
             $ins_category->coursecount = 0;
             $ins_category->visible = 0;            //To avoid interferences with the rest of the site
             $ins_category->timemodified = time();
-            $newid = insert_record("course_categories",$ins_category);
+            $newid = $DB->insert_record("course_categories",$ins_category);
             $category->id = $newid;
             $category->name = $course_header->category->name;
         }
@@ -683,64 +683,64 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Create the course_object
         if ($status) {
             $course = new object();
-            $course->category = addslashes($course_header->category->id);
-            $course->password = addslashes($course_header->course_password);
-            $course->fullname = addslashes($course_header->course_fullname);
-            $course->shortname = addslashes($course_header->course_shortname);
-            $course->idnumber = addslashes($course_header->course_idnumber);
+            $course->category = $course_header->category->id;
+            $course->password = $course_header->course_password;
+            $course->fullname = $course_header->course_fullname;
+            $course->shortname = $course_header->course_shortname;
+            $course->idnumber = $course_header->course_idnumber;
             $course->idnumber = ''; //addslashes($course_header->course_idnumber); // we don't want this at all.
             $course->summary = backup_todb($course_header->course_summary);
-            $course->format = addslashes($course_header->course_format);
-            $course->showgrades = addslashes($course_header->course_showgrades);
-            $course->newsitems = addslashes($course_header->course_newsitems);
-            $course->teacher = addslashes($course_header->course_teacher);
-            $course->teachers = addslashes($course_header->course_teachers);
-            $course->student = addslashes($course_header->course_student);
-            $course->students = addslashes($course_header->course_students);
-            $course->guest = addslashes($course_header->course_guest);
-            $course->startdate = addslashes($course_header->course_startdate);
+            $course->format = $course_header->course_format;
+            $course->showgrades = $course_header->course_showgrades;
+            $course->newsitems = $course_header->course_newsitems;
+            $course->teacher = $course_header->course_teacher;
+            $course->teachers = $course_header->course_teachers;
+            $course->student = $course_header->course_student;
+            $course->students = $course_header->course_students;
+            $course->guest = $course_header->course_guest;
+            $course->startdate = $course_header->course_startdate;
             $course->startdate += $restore->course_startdateoffset;
-            $course->numsections = addslashes($course_header->course_numsections);
+            $course->numsections = $course_header->course_numsections;
             //$course->showrecent = addslashes($course_header->course_showrecent);   INFO: This is out in 1.3
-            $course->maxbytes = addslashes($course_header->course_maxbytes);
-            $course->showreports = addslashes($course_header->course_showreports);
+            $course->maxbytes = $course_header->course_maxbytes;
+            $course->showreports = $course_header->course_showreports;
             if (isset($course_header->course_groupmode)) {
-                $course->groupmode = addslashes($course_header->course_groupmode);
+                $course->groupmode = $course_header->course_groupmode;
             }
             if (isset($course_header->course_groupmodeforce)) {
-                $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
+                $course->groupmodeforce = $course_header->course_groupmodeforce;
             }
             if (isset($course_header->course_defaultgroupingid)) {
                 //keep the original now - convert after groupings restored
-                $course->defaultgroupingid = addslashes($course_header->course_defaultgroupingid);
+                $course->defaultgroupingid = $course_header->course_defaultgroupingid;
             }
-            $course->lang = addslashes($course_header->course_lang);
-            $course->theme = addslashes($course_header->course_theme);
-            $course->cost = addslashes($course_header->course_cost);
-            $course->currency = isset($course_header->course_currency)?addslashes($course_header->course_currency):'';
-            $course->marker = addslashes($course_header->course_marker);
-            $course->visible = addslashes($course_header->course_visible);
-            $course->hiddensections = addslashes($course_header->course_hiddensections);
-            $course->timecreated = addslashes($course_header->course_timecreated);
-            $course->timemodified = addslashes($course_header->course_timemodified);
-            $course->metacourse = addslashes($course_header->course_metacourse);
-            $course->expirynotify = isset($course_header->course_expirynotify) ? addslashes($course_header->course_expirynotify):0;
-            $course->notifystudents = isset($course_header->course_notifystudents) ? addslashes($course_header->course_notifystudents) : 0;
-            $course->expirythreshold = isset($course_header->course_expirythreshold) ? addslashes($course_header->course_expirythreshold) : 0;
-            $course->enrollable = isset($course_header->course_enrollable) ? addslashes($course_header->course_enrollable) : 1;
-            $course->enrolstartdate = isset($course_header->course_enrolstartdate) ? addslashes($course_header->course_enrolstartdate) : 0;
+            $course->lang = $course_header->course_lang;
+            $course->theme = $course_header->course_theme;
+            $course->cost = $course_header->course_cost;
+            $course->currency = isset($course_header->course_currency)?$course_header->course_currency:'';
+            $course->marker = $course_header->course_marker;
+            $course->visible = $course_header->course_visible;
+            $course->hiddensections = $course_header->course_hiddensections;
+            $course->timecreated = $course_header->course_timecreated;
+            $course->timemodified = $course_header->course_timemodified;
+            $course->metacourse = $course_header->course_metacourse;
+            $course->expirynotify = isset($course_header->course_expirynotify) ? $course_header->course_expirynotify:0;
+            $course->notifystudents = isset($course_header->course_notifystudents) ? $course_header->course_notifystudents : 0;
+            $course->expirythreshold = isset($course_header->course_expirythreshold) ? $course_header->course_expirythreshold : 0;
+            $course->enrollable = isset($course_header->course_enrollable) ? $course_header->course_enrollable : 1;
+            $course->enrolstartdate = isset($course_header->course_enrolstartdate) ? $course_header->course_enrolstartdate : 0;
             if ($course->enrolstartdate)  { //Roll course dates
                 $course->enrolstartdate += $restore->course_startdateoffset;
             }
-            $course->enrolenddate = isset($course_header->course_enrolenddate) ? addslashes($course_header->course_enrolenddate) : 0;
+            $course->enrolenddate = isset($course_header->course_enrolenddate) ? $course_header->course_enrolenddate : 0;
             if ($course->enrolenddate) { //Roll course dates
                 $course->enrolenddate  += $restore->course_startdateoffset;
             }
-            $course->enrolperiod = addslashes($course_header->course_enrolperiod);
+            $course->enrolperiod = $course_header->course_enrolperiod;
             //Calculate sortorder field
-            $sortmax = get_record_sql('SELECT MAX(sortorder) AS max
-                                       FROM ' . $CFG->prefix . 'course
-                                       WHERE category=' . $course->category);
+            $sortmax = $DB->get_record_sql('SELECT MAX(sortorder) AS max
+                                              FROM {course}
+                                             WHERE category=?', array($course->category));
             if (!empty($sortmax->max)) {
                 $course->sortorder = $sortmax->max + 1;
                 unset($sortmax);
@@ -765,7 +765,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
 
             //Now insert the record
-            $newid = insert_record("course",$course);
+            $newid = $DB->insert_record("course",$course);
             if ($newid) {
                 //save old and new course id
                 backup_putid ($restore->backup_unique_code,"course",$course_header->course_id,$newid);
@@ -785,10 +785,10 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //It calls selectively to  restore_create_block_instances() for 1.5
     //and above backups. Upwards compatible with old blocks.
     function restore_create_blocks($restore, $backup_block_format, $blockinfo, $xml_file) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
-        delete_records('block_instance', 'pageid', $restore->course_id, 'pagetype', PAGE_COURSE_VIEW);
+        $DB->delete_records('block_instance', array('pageid'=>$restore->course_id, 'pagetype'=>PAGE_COURSE_VIEW));
         if (empty($backup_block_format)) {     // This is a backup from Moodle < 1.5
             if (empty($blockinfo)) {
                 // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
@@ -796,7 +796,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 blocks_repopulate_page($newpage);
             } else if (!empty($CFG->showblocksonmodpages)) {
                 // We just have a blockinfo field, this is a legacy 1.4 or 1.3 backup
-                $blockrecords = get_records_select('block', '', '', 'name, id');
+                $blockrecords = $DB->get_records('block', null, '', 'name, id');
                 $temp_blocks_l = array();
                 $temp_blocks_r = array();
                 @list($temp_blocks_l, $temp_blocks_r) = explode(':', $blockinfo);
@@ -821,7 +821,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $blockinstance->pagetype = PAGE_COURSE_VIEW;
                         $blockinstance->position = $blockposition;
                         $blockinstance->weight   = $blockweight;
-                        if(!$status = insert_record('block_instance', $blockinstance)) {
+                        if(!$status = $DB->insert_record('block_instance', $blockinstance)) {
                             $status = false;
                         }
                         ++$blockweight;
@@ -839,7 +839,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function creates all the block_instances from xml when restoring in a
     //new course
     function restore_create_block_instances($restore,$xml_file) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
         //Check it exists
@@ -901,7 +901,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $pageinstances[$instance->pagetype][$instance->pageid][] = $instance;
         }
 
-        $blocks = get_records_select('block', 'visible = 1', '', 'name, id, multiple');
+        $blocks = $DB->get_records('block', array('visible'=>1), '', 'name, id, multiple');
 
         // For each type of page we have restored
         foreach($pageinstances as $thistypeinstances) {
@@ -940,14 +940,14 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $instance->blockid = $blocks[$instance->name]->id;
 
                     // This will only be set if we come from 1.7 and above backups
-                    //  Also, must do this before insert (insert_record unsets id)
+                    //  Also, must do this before insert ($DB->insert_record unsets id)
                     if (!empty($instance->id)) { 
                         $oldid = $instance->id;
                     } else {
                         $oldid = 0;
                     }
 
-                    if ($instance->id = insert_record('block_instance', $instance)) {
+                    if ($instance->id = $DB->insert_record('block_instance', $instance)) {
                         // Create block instance
                         if (!$blockobj = block_instance($instance->name, $instance)) {
                             $status = false;
@@ -996,8 +996,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //when restoring in a new course or simply checks sections and create records
     //in backup_ids when restoring in a existing course
     function restore_create_sections(&$restore, $xml_file) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         //Check it exists
@@ -1026,16 +1025,16 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $newid = 0;
                 if ($restore->restoreto == 2) {
                     //Save it to db (only if restoring to new course)
-                    $newid = insert_record("course_sections",$section);
+                    $newid = $DB->insert_record("course_sections",$section);
                 } else {
                     //Get section id when restoring in existing course
-                    $rec = get_record("course_sections","course",$restore->course_id,
-                                                        "section",$section->section);
+                    $rec = $DB->get_record("course_sections", array("course"=>$restore->course_id,
+                                                        "section"=>$section->section));
                     //If that section doesn't exist, get section 0 (every mod will be
                     //asigned there
                     if(!$rec) {
-                        $rec = get_record("course_sections","course",$restore->course_id,
-                                                            "section","0");
+                        $rec = $DB->get_record("course_sections", array("course"=>$restore->course_id,
+                                                            "section"=>"0"));
                     }
                     //New check. If section 0 doesn't exist, insert it here !!
                     //Teorically this never should happen but, in practice, some users
@@ -1046,7 +1045,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $zero_sec->section = 0;
                         $zero_sec->summary = "";
                         $zero_sec->sequence = "";
-                        $newid = insert_record("course_sections",$zero_sec);
+                        $newid = $DB->insert_record("course_sections",$zero_sec);
                         $rec->id = $newid;
                         $rec->sequence = "";
                     }
@@ -1090,7 +1089,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         && !empty($restore->mods[$mod->type]->instances[$mod->instance]->restore))) {
 
                                     //Get the module id from modules
-                                    $module = get_record("modules","name",$mod->type);
+                                    $module = $DB->get_record("modules", array("name"=>$mod->type));
                                     if ($module) {
                                         $course_module = new object();
                                         $course_module->course = $restore->course_id;
@@ -1118,7 +1117,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                             }
                                         }
 
-                                        $newidmod = insert_record("course_modules", addslashes_recursive($course_module));
+                                        $newidmod = $DB->insert_record("course_modules", $course_module);
                                         if ($newidmod) {
                                             //save old and new module id
                                             //In the info field, we save the original instance of the module
@@ -1152,7 +1151,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $update_rec = new object();
                         $update_rec->id = $newid;
                         $update_rec->sequence = $sequence;
-                        $status = update_record("course_sections",$update_rec);
+                        $status = $DB->update_record("course_sections",$update_rec);
                     }
                 }
             }
@@ -1164,7 +1163,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //Called to set up any course-format specific data that may be in the file
     function restore_set_format_data($restore,$xml_file) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         //Check it exists
@@ -1178,7 +1177,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         //Process format data if there is any
         if (isset($info->format_data)) {
-                if(!$format=get_field('course','format','id',$restore->course_id)) {
+                if(!$format=$DB->get_field('course','format', array('id'=>$restore->course_id))) {
                     return false;
                 }
                 // If there was any data then it must have a restore method
@@ -1201,8 +1200,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function creates all the metacourse data from xml, notifying
     //about each incidence
     function restore_create_metacourse($restore,$xml_file) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         //Check it exists
@@ -1226,19 +1224,19 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     //(by id in the same server or by idnumber and shortname in other server)
                     if ($restore->original_wwwroot == $CFG->wwwroot) {
                         //Same server, lets see by id
-                        $dbcourse = get_record('course','id',$child->id);
+                        $dbcourse = $DB->get_record('course', array('id'=>$child->id));
                     } else {
                         //Different server, lets see by idnumber and shortname, and only ONE record
-                        $dbcount = count_records('course','idnumber',$child->idnumber,'shortname',$child->shortname);
+                        $dbcount = $DB->count_records('course', array('idnumber'=>$child->idnumber, 'shortname'=>$child->shortname));
                         if ($dbcount == 1) {
-                            $dbcourse = get_record('course','idnumber',$child->idnumber,'shortname',$child->shortname);
+                            $dbcourse = $DB->get_record('course', array('idnumber'=>$child->idnumber, 'shortname'=>$child->shortname));
                         }
                     }
                     //If child course has been found, insert data
                     if ($dbcourse) {
                         $dbmetacourse->child_course = $dbcourse->id;
                         $dbmetacourse->parent_course = $restore->course_id;
-                        $status = insert_record ('course_meta',$dbmetacourse);
+                        $status = $DB->insert_record('course_meta',$dbmetacourse);
                     } else {
                         //Child course not found, notice!
                         if (!defined('RESTORE_SILENTLY')) {
@@ -1258,12 +1256,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     //(by id in the same server or by idnumber and shortname in other server)
                     if ($restore->original_wwwroot == $CFG->wwwroot) {
                         //Same server, lets see by id
-                        $dbcourse = get_record('course','id',$parent->id);
+                        $dbcourse = $DB->get_record('course', array('id'=>$parent->id));
                     } else {
                         //Different server, lets see by idnumber and shortname, and only ONE record
-                        $dbcount = count_records('course','idnumber',$parent->idnumber,'shortname',$parent->shortname);
+                        $dbcount = $DB->count_records('course', array('idnumber'=>$parent->idnumber, 'shortname'=>$parent->shortname));
                         if ($dbcount == 1) {
-                            $dbcourse = get_record('course','idnumber',$parent->idnumber,'shortname',$parent->shortname);
+                            $dbcourse = $DB->get_record('course', array('idnumber'=>$parent->idnumber, 'shortname'=>$parent->shortname));
                         }
                     }
                     //If parent course has been found, insert data if it is a metacourse
@@ -1271,7 +1269,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         if ($dbcourse->metacourse) {
                             $dbmetacourse->parent_course = $dbcourse->id;
                             $dbmetacourse->child_course = $restore->course_id;
-                            $status = insert_record ('course_meta',$dbmetacourse);
+                            $status = $DB->insert_record ('course_meta',$dbmetacourse);
                             //Now, recreate student enrolments in parent course
                             sync_metacourse($dbcourse->id);
                         } else {
@@ -1297,7 +1295,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
      * This function migrades all the pre 1.9 gradebook data from xml
      */
     function restore_migrate_old_gradebook($restore,$xml_file) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         //Check it exists
@@ -1352,12 +1350,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     /// Process letters
         $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
         // respect current grade letters if defined
-        if ($status and $restoreall and !record_exists('grade_letters', 'contextid', $context->id)) {
+        if ($status and $restoreall and !$DB->record_exists('grade_letters', array('contextid'=>$context->id))) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeletters','grades').'</li>';
             }
             // Fetch recordset_size records in each iteration
-            $recs = get_records_select("backup_ids","table_name = 'grade_letter' AND backup_code = $restore->backup_unique_code",
+            $recs = $DB->get_records("backup_ids", array("table_name"=>'grade_letter', "backup_code"=>$restore->backup_unique_code),
                                         "",
                                         "old_id");
             if ($recs) {
@@ -1370,7 +1368,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $dbrec->contextid     = $context->id;
                         $dbrec->lowerboundary = backup_todb($info['GRADE_LETTER']['#']['GRADE_LOW']['0']['#']);
                         $dbrec->letter        = backup_todb($info['GRADE_LETTER']['#']['LETTER']['0']['#']);
-                        insert_record('grade_letters', $dbrec);
+                        $DB->insert_record('grade_letters', $dbrec);
                     }
                 }
             }
@@ -1380,7 +1378,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             echo '<li>'.get_string('categories','grades').'</li>';
         }
         //Fetch recordset_size records in each iteration
-        $recs = get_records_select("backup_ids","table_name = 'grade_category' AND backup_code = $restore->backup_unique_code",
+        $recs = $DB->get_records("backup_ids", array('table_name'=>'grade_category', 'backup_code'=>$restore->backup_unique_code),
                                    "old_id",
                                    "old_id");
         $cat_count = count($recs);
@@ -1482,7 +1480,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
      * This function creates all the gradebook data from xml
      */
     function restore_create_gradebook($restore,$xml_file) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         //Check it exists
@@ -1531,7 +1529,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             unset($prev_grade_cats);
 
             if ($restoreall) {
-                if ($recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = $restore->backup_unique_code", "", "old_id")) {
+                if ($recs = $DB->get_records("backup_ids", array('table_name'=>'grade_items', 'backup_code'=>$restore->backup_unique_code), "", "old_id")) {
                     foreach ($recs as $rec) {
                         if ($data = backup_getid($restore->backup_unique_code,'grade_items',$rec->old_id)) {
 
@@ -1575,7 +1573,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 echo '<li>'.get_string('gradeletters','grades').'</li>';
             }
             // Fetch recordset_size records in each iteration
-            $recs = get_records_select("backup_ids","table_name = 'grade_letters' AND backup_code = $restore->backup_unique_code",
+            $recs = $DB->get_records("backup_ids", array('table_name'=>'grade_letters', 'backup_code'=>$restore->backup_unique_code),
                                         "",
                                         "old_id");
             if ($recs) {
@@ -1588,7 +1586,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $dbrec->contextid     = $context->id;
                         $dbrec->lowerboundary = backup_todb($info['GRADE_LETTER']['#']['LOWERBOUNDARY']['0']['#']);
                         $dbrec->letter        = backup_todb($info['GRADE_LETTER']['#']['LETTER']['0']['#']);
-                        insert_record('grade_letters', $dbrec);
+                        $DB->insert_record('grade_letters', $dbrec);
                     }
                 }
             }
@@ -1599,7 +1597,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeoutcomes','grades').'</li>';
             }
-            $recs = get_records_select("backup_ids","table_name = 'grade_outcomes' AND backup_code = '$restore->backup_unique_code'",
+            $recs = $DB->get_records("backup_ids", array('table_name'=>'grade_outcomes', 'backup_code'=>$restore->backup_unique_code),
                                         "",
                                         "old_id");
             if ($recs) {
@@ -1612,11 +1610,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         //first find out if outcome already exists
                         $shortname = backup_todb($info['GRADE_OUTCOME']['#']['SHORTNAME']['0']['#']);
 
-                        if ($candidates = get_records_sql("SELECT *
-                                                             FROM {$CFG->prefix}grade_outcomes
-                                                            WHERE (courseid IS NULL OR courseid = $restore->course_id)
-                                                                  AND shortname = '$shortname'
-                                                         ORDER BY courseid ASC, id ASC")) {
+                        if ($candidates = $DB->get_records_sql("SELECT *
+                                                                  FROM {grade_outcomes}
+                                                                 WHERE (courseid IS NULL OR courseid = ?)
+                                                                       AND shortname = ?
+                                                              ORDER BY courseid ASC, id ASC", array($restore->course_id, $shortname))) {
                             $grade_outcome = reset($candidates);
                             $outcomes[$rec->old_id] = $grade_outcome;
                             continue;
@@ -1672,7 +1670,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $counter = 0;
 
             //Fetch recordset_size records in each iteration
-            $recs = get_records_select("backup_ids","table_name = 'grade_items' AND backup_code = '$restore->backup_unique_code'",
+            $recs = $DB->get_records("backup_ids", array('table_name'=>'grade_items', 'backup_code'=>$restore->backup_unique_code),
                                         "id", // restore in the backup order
                                         "old_id");
 
@@ -1939,10 +1937,10 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         if ($status and !$importing and $restore_histories) {
             /// following code is very inefficient 
 
-            $gchcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_categories_history');
-            $gghcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_grades_history');
-            $gihcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_items_history');
-            $gohcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_outcomes_history');
+            $gchcount = $DB->count_records('backup_ids', array('backup_code'=>$restore->backup_unique_code, 'table_name'=>'grade_categories_history'));
+            $gghcount = $DB->count_records('backup_ids', array('backup_code'=>$restore->backup_unique_code, 'table_name'=>'grade_grades_history'));
+            $gihcount = $DB->count_records('backup_ids', array('backup_code'=>$restore->backup_unique_code, 'table_name'=>'grade_items_history'));
+            $gohcount = $DB->count_records('backup_ids', array('backup_code'=>$restore->backup_unique_code, 'table_name'=>'grade_outcomes_history'));
 
             // Number of records to get in every chunk
             $recordset_size = 2;
@@ -1955,7 +1953,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $counter = 0;
                 while ($counter < $gchcount) {
                     //Fetch recordset_size records in each iteration
-                    $recs = get_records_select("backup_ids","table_name = 'grade_categories_history' AND backup_code = '$restore->backup_unique_code'",
+                    $recs = $DB->get_records("backup_ids",array('table_name'=>'grade_categories_history', 'backup_code'=>$restore->backup_unique_code),
                                                 "old_id",
                                                 "old_id",
                                                 $counter,
@@ -2024,7 +2022,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $dbrec->aggregatesubcats = backup_todb($info['GRADE_CATEGORIES_HISTORY']['#']['AGGREGATESUBCATS']['0']['#']);
     
                                 $dbrec->courseid = $restore->course_id;
-                                insert_record('grade_categories_history', $dbrec);
+                                $DB->insert_record('grade_categories_history', $dbrec);
                                 unset($dbrec);
     
                             }
@@ -2053,7 +2051,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $counter = 0;
                 while ($counter < $gghcount) {
                     //Fetch recordset_size records in each iteration
-                    $recs = get_records_select("backup_ids","table_name = 'grade_grades_history' AND backup_code = '$restore->backup_unique_code'",
+                    $recs = $DB->get_records("backup_ids", array('table_name'=>'grade_grades_history', 'backup_code'=>$restore->backup_unique_code),
                                                 "old_id",
                                                 "old_id",
                                                 $counter,
@@ -2115,7 +2113,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $dbrec->information = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATION']['0']['#']);
                                 $dbrec->informationformat = backup_todb($info['GRADE_TEXT_HISTORY']['#']['INFORMATIONFORMAT']['0']['#']);
     
-                                insert_record('grade_grades_history', $dbrec);
+                                $DB->insert_record('grade_grades_history', $dbrec);
                                 unset($dbrec);
     
                             }
@@ -2145,7 +2143,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $counter = 0;
                 while ($counter < $gihcount) {
                     //Fetch recordset_size records in each iteration
-                    $recs = get_records_select("backup_ids","table_name = 'grade_items_history' AND backup_code = '$restore->backup_unique_code'",
+                    $recs = $DB->get_records("backup_ids", array('table_name'=>'grade_items_history', 'backup_code'=>$restore->backup_unique_code),
                                                 "old_id",
                                                 "old_id",
                                                 $counter,
@@ -2222,7 +2220,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         // find the course category with depth 1, and course id = current course id
                                         // this would have been already restored
     
-                                        $cat = get_record('grade_categories', 'depth', 1, 'courseid', $restore->course_id);
+                                        $cat = $DB->get_record('grade_categories', array('depth'=>1, 'courseid'=>$restore->course_id));
                                         $dbrec->iteminstance = $cat->id;
     
                                     } else {
@@ -2258,7 +2256,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $dbrec->locktime = backup_todb($info['GRADE_ITEM_HISTORY']['#']['LOCKTIME']['0']['#']);
                                 $dbrec->needsupdate = backup_todb($info['GRADE_ITEM_HISTORY']['#']['NEEDSUPDATE']['0']['#']);
     
-                                insert_record('grade_items_history', $dbrec);
+                                $DB->insert_record('grade_items_history', $dbrec);
                                 unset($dbrec);
     
                             }
@@ -2287,7 +2285,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $counter = 0;
                 while ($counter < $gohcount) {
                     //Fetch recordset_size records in each iteration
-                    $recs = get_records_select("backup_ids","table_name = 'grade_outcomes_history' AND backup_code = '$restore->backup_unique_code'",
+                    $recs = $DB->get_records("backup_ids", array('table_name'=>'grade_outcomes_history', 'backup_code'=>$restore->backup_unique_code),
                                                 "old_id",
                                                 "old_id",
                                                 $counter,
@@ -2323,7 +2321,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $dbrec->scaleid = $oldobj->new_id;
                                 $dbrec->description = backup_todb($info['GRADE_OUTCOME_HISTORY']['#']['DESCRIPTION']['0']['#']);
     
-                                insert_record('grade_outcomes_history', $dbrec);
+                                $DB->insert_record('grade_outcomes_history', $dbrec);
                                 unset($dbrec);
     
                             }
@@ -2355,8 +2353,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function creates all the user, user_students, user_teachers
     //user_course_creators and user_admins from xml
     function restore_create_users($restore,$xml_file) {
-
-        global $CFG;
+        global $CFG, $DB;
         require_once ($CFG->dirroot.'/tag/lib.php');
 
         $status = true;
@@ -2377,7 +2374,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         if (!empty($info->users)) {
 
         /// Grab mnethosts keyed by wwwroot, to map to id
-            $mnethosts = get_records('mnet_host', '', '',
+            $mnethosts = $DB->get_records('mnet_host', null,
                                      'wwwroot', 'wwwroot, id');
 
         /// Get languages for quick search later
@@ -2454,8 +2451,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $newid=null;
                 //check if it exists (by username) and get its id
                 $user_exists = true;
-                $user_data = get_record("user","username",addslashes($user->username),
-                                        'mnethostid', $user->mnethostid);
+                $user_data = $DB->get_record("user", array("username"=>$user->username,
+                                        'mnethostid'=>$user->mnethostid));
                 if (!$user_data) {
                     $user_exists = false;
                 } else {
@@ -2532,7 +2529,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     //We are going to create the user
                     //The structure is exactly as we need
 
-                    $newid = insert_record ("user", addslashes_recursive($user));
+                    $newid = $DB->insert_record("user", $user);
                     //Put the new id
                     $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,"new");
                 }
@@ -2648,7 +2645,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     }
                     if (!$is_course_user) {
                         //If the record (user) doesn't exists
-                        if (!record_exists("user","id",$newid)) {
+                        if (!$DB->record_exists("user", array("id"=>$newid))) {
                             //Put status in backup_ids
                             $currinfo = $currinfo."user,";
                             $status = backup_putid($restore->backup_unique_code,"user",$userid,$newid,$currinfo);
@@ -2662,13 +2659,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         foreach($user->user_custom_profile_fields as $udata) {
                         /// If the profile field has data and the profile shortname-datatype is defined in server
                             if ($udata->field_data) {
-                                if ($field = get_record('user_info_field', 'shortname', $udata->field_name, 'datatype', $udata->field_type)) {
+                                if ($field = $DB->get_record('user_info_field', array('shortname'=>$udata->field_name, 'datatype'=>$udata->field_type))) {
                                 /// Insert the user_custom_profile_field
                                     $rec = new object();
                                     $rec->userid = $newid;
                                     $rec->fieldid = $field->id;
                                     $rec->data    = $udata->field_data;
-                                    insert_record('user_info_data', $rec);
+                                    $DB->insert_record('user_info_data', $rec);
                                 }
                             }
                         }
@@ -2692,10 +2689,10 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     if (isset($user->user_preferences)) {
                         foreach($user->user_preferences as $user_preference) {
                             //We check if that user_preference exists in DB
-                            if (!record_exists("user_preferences","userid",$newid,"name",$user_preference->name)) {
+                            if (!$DB->record_exists("user_preferences", array("userid"=>$newid, "name"=>$user_preference->name))) {
                                 //Prepare the record and insert it
                                 $user_preference->userid = $newid;
-                                $status = insert_record("user_preferences",$user_preference);
+                                $status = $DB->insert_record("user_preferences",$user_preference);
                             }
                         }
                     }
@@ -2720,8 +2717,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function creates all the structures messages and contacts
     function restore_create_messages($restore,$xml_file) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         //Check it exists
@@ -2738,9 +2734,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //If we have info, then process messages & contacts
             if ($info > 0) {
                 //Count how many we have
-                $unreadcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message');
-                $readcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message_read');
-                $contactcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message_contacts');
+                $unreadcount  = $DB->count_records ('backup_ids', array('backup_code'=>$restore->backup_unique_code, 'table_name'=>'message'));
+                $readcount    = $DB->count_records ('backup_ids', array('backup_code'=>$restore->backup_unique_code, 'table_name'=>'message_read'));
+                $contactcount = $DB->count_records ('backup_ids', array('backup_code'=>$restore->backup_unique_code, 'table_name'=>'message_contacts'));
                 if ($unreadcount || $readcount || $contactcount) {
                     //Start ul
                     if (!defined('RESTORE_SILENTLY')) {
@@ -2757,7 +2753,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $counter = 0;
                         while ($counter < $unreadcount) {
                             //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'message' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
+                            $recs = $DB->get_records("backup_ids", array('table_name'=>'message', 'backup_code'=>$restore->backup_unique_code),"old_id","old_id",$counter,$recordset_size);
                             if ($recs) {
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
@@ -2789,12 +2785,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                             $dbrec->useridto = $user->new_id;
                                         }
                                         //Check if the record doesn't exist in DB!
-                                        $exist = get_record('message','useridfrom',$dbrec->useridfrom,
-                                                                      'useridto',  $dbrec->useridto,
-                                                                      'timecreated',$dbrec->timecreated);
+                                        $exist = $DB->get_record('message', array('useridfrom'=>$dbrec->useridfrom,
+                                                                                  'useridto'=>$dbrec->useridto,
+                                                                                  'timecreated'=>$dbrec->timecreated));
                                         if (!$exist) {
                                             //Not exist. Insert
-                                            $status = insert_record('message',$dbrec);
+                                            $status = $DB->insert_record('message',$dbrec);
                                         } else {
                                             //Duplicate. Do nothing
                                         }
@@ -2823,7 +2819,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $counter = 0;
                         while ($counter < $readcount) {
                             //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'message_read' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
+                            $recs = $DB->get_records("backup_ids", array('table_name'=>'message_read', 'backup_code'=>$restore->backup_unique_code),"old_id","old_id",$counter,$recordset_size);
                             if ($recs) {
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
@@ -2856,12 +2852,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                             $dbrec->useridto = $user->new_id;
                                         }
                                         //Check if the record doesn't exist in DB!
-                                        $exist = get_record('message_read','useridfrom',$dbrec->useridfrom,
-                                                                           'useridto',  $dbrec->useridto,
-                                                                           'timecreated',$dbrec->timecreated);
+                                        $exist = $DB->get_record('message_read', array('useridfrom'=>$dbrec->useridfrom,
+                                                                                       'useridto'=>$dbrec->useridto,
+                                                                                       'timecreated'=>$dbrec->timecreated));
                                         if (!$exist) {
                                             //Not exist. Insert
-                                            $status = insert_record('message_read',$dbrec);
+                                            $status = $DB->insert_record('message_read',$dbrec);
                                         } else {
                                             //Duplicate. Do nothing
                                         }
@@ -2890,7 +2886,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $counter = 0;
                         while ($counter < $contactcount) {
                             //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'message_contacts' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
+                            $recs = $DB->get_records("backup_ids", array('table_name'=>'message_contacts', 'backup_code'=>$restore->backup_unique_code),"old_id","old_id",$counter,$recordset_size);
                             if ($recs) {
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
@@ -2918,11 +2914,11 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                             $dbrec->contactid = $user->new_id;
                                         }
                                         //Check if the record doesn't exist in DB!
-                                        $exist = get_record('message_contacts','userid',$dbrec->userid,
-                                                                               'contactid',  $dbrec->contactid);
+                                        $exist = $DB->get_record('message_contacts', array('userid'=>$dbrec->userid,
+                                                                                           'contactid'=>$dbrec->contactid));
                                         if (!$exist) {
                                             //Not exist. Insert
-                                            $status = insert_record('message_contacts',$dbrec);
+                                            $status = $DB->insert_record('message_contacts',$dbrec);
                                         } else {
                                             //Duplicate. Do nothing
                                         }
@@ -2955,8 +2951,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function creates all the structures for blogs and blog tags
     function restore_create_blogs($restore,$xml_file) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         //Check it exists
@@ -2972,7 +2967,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             //If we have info, then process blogs & blog_tags
             if ($info > 0) {
                 //Count how many we have
-                $blogcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'blog');
+                $blogcount = $DB->count_records('backup_ids', array('backup_code'=>$restore->backup_unique_code, 'table_name'=>'blog'));
                 if ($blogcount) {
                     //Number of records to get in every chunk
                     $recordset_size = 4;
@@ -2982,7 +2977,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $counter = 0;
                         while ($counter < $blogcount) {
                             //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'blog' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
+                            $recs = $DB->get_records("backup_ids", array("table_name"=>'blog', 'backup_code'=>$restore->backup_unique_code),"old_id","old_id",$counter,$recordset_size);
                             if ($recs) {
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
@@ -3021,13 +3016,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         }
 
                                         //Check if the record doesn't exist in DB!
-                                        $exist = get_record('post','userid', $dbrec->userid,
-                                                                   'subject', $dbrec->subject,
-                                                                   'created', $dbrec->created);
+                                        $exist = $DB->get_record('post', array('userid'=>$dbrec->userid,
+                                                                               'subject'=>$dbrec->subject,
+                                                                               'created'=>$dbrec->created));
                                         $newblogid = 0;
                                         if (!$exist) {
                                             //Not exist. Insert
-                                            $newblogid = insert_record('post',$dbrec);
+                                            $newblogid = $DB->insert_record('post',$dbrec);
                                         }
 
                                         //Going to restore related tags. Check they are enabled and we have inserted a blog
@@ -3077,7 +3072,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function creates all the categories and questions
     //from xml
     function restore_create_questions($restore,$xml_file) {
-
         global $CFG;
 
         $status = true;
@@ -3105,8 +3099,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function creates all the scales
     function restore_create_scales($restore,$xml_file) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         //Check it exists
@@ -3157,11 +3150,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             $course_to_search = $restore->course_id;
                         }
 
-                        // scale is not course unique, use get_record_sql to suppress warning
+                        // scale is not course unique
 
-                        $sca_db = get_record_sql("SELECT * FROM {$CFG->prefix}scale
-                                                           WHERE scale = '$sca->scale'
-                                                           AND courseid = $course_to_search", true);
+                        $sca_db = $DB->get_records('scale', array('scale'=>$sca->scale, 'courseid'=>$course_to_search), true);
 
                         //If it doesn't exist, create
                         if (!$sca_db) {
@@ -3182,7 +3173,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $sca->userid = $adminid;
                             }
                             //The structure is equal to the db, so insert the scale
-                            $newid = insert_record ("scale",$sca);
+                            $newid = $DB->insert_record ("scale",$sca);
                         } else {
                             //get current scale id
                             $newid = $sca_db->id;
@@ -3231,8 +3222,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function creates all the groups
     function restore_create_groups($restore,$xml_file) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         //Check it exists
         if (!file_exists($xml_file)) {
@@ -3280,18 +3270,19 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 //restore->course_id course
                 //Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides.
                 $description_clause = '';
+                $params = array('courseid'=>$restore->course_id, 'grname'=>$gro->name);
                 if (!empty($gro->description)) { /// Only for groups having a description
-                    $literal_description = "'" . $gro->description . "'";
                     $description_clause = " AND " .
-                                          sql_compare_text('description') . " = " .
-                                          sql_compare_text($literal_description);
+                                          $DB->sql_compare_text('description') . " = " .
+                                          $DB->sql_compare_text(':desc');
+                    $params['desc'] = $gro->description;
                 }
-                if (!$gro_db = get_record_sql("SELECT *
-                                          FROM {$CFG->prefix}groups
-                                          WHERE courseid = $restore->course_id AND
-                                                name = '{$gro->name}'" . $description_clause, true)) {
+                if (!$gro_db = $DB->get_record_sql("SELECT *
+                                                      FROM {groups}
+                                                     WHERE courseid = :courseid AND
+                                                name = :grname $description_clause", $params, true)) {
                     //If it doesn't exist, create
-                    $newid = insert_record('groups', $gro);
+                    $newid = $DB->insert_record('groups', $gro);
 
                 } else {
                     //get current group id
@@ -3327,6 +3318,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function restores the groups_members
     function restore_create_groups_members($group_id,$info,$restore) {
+        global $DB;
 
         if (! isset($info['GROUP']['#']['MEMBERS']['0']['#']['MEMBER'])) {
             //OK, some groups have no members.
@@ -3361,7 +3353,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $group_member->userid = $user->new_id;
 
             //The structure is equal to the db, so insert the groups_members
-            if (!insert_record ("groups_members", $group_member)) {
+            if (!$DB->insert_record ("groups_members", $group_member)) {
                 $status = false;
                 continue;
             }
@@ -3383,6 +3375,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function creates all the groupings
     function restore_create_groupings($restore,$xml_file) {
+        global $DB;
 
         //Check it exists
         if (!file_exists($xml_file)) {
@@ -3413,13 +3406,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $gro->timecreated = backup_todb($info['GROUPING']['#']['TIMECREATED']['0']['#']);
 
                 //Now search if that group exists (by name and description field) in
-                if ($gro_db = get_record('groupings', 'courseid', $restore->course_id, 'name', $gro->name, 'description', $gro->description)) {
+                if ($gro_db = $DB->get_record('groupings', array('courseid'=>$restore->course_id, 'name'=>$gro->name, 'description'=>$gro->description))) {
                     //get current group id
                     $newid = $gro_db->id;
 
                 } else {
                     //The structure is equal to the db, so insert the grouping
-                    if (!$newid = insert_record('groupings', $gro)) {
+                    if (!$newid = $DB->insert_record('groupings', $gro)) {
                         $status = false;
                         continue;
                     }
@@ -3433,12 +3426,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
 
         // now fix the defaultgroupingid in course
-        $course = get_record('course', 'id', $restore->course_id);
+        $course = $DB->get_record('course', array('id'=>$restore->course_id));
         if ($course->defaultgroupingid) {
             if ($grouping = restore_grouping_getid($restore, $course->defaultgroupingid)) { 
-                set_field('course', 'defaultgroupingid', $grouping->new_id, 'id', $course->id);
+                $DB->set_field('course', 'defaultgroupingid', $grouping->new_id, array('id'=>$course->id));
             } else {
-                set_field('course', 'defaultgroupingid', 0, 'id', $course->id);
+                $DB->set_field('course', 'defaultgroupingid', 0, array('id'=>$course->id));
             }
         }
 
@@ -3447,6 +3440,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function creates all the groupingsgroups
     function restore_create_groupings_groups($restore,$xml_file) {
+        global $DB;
 
         //Check it exists
         if (!file_exists($xml_file)) {
@@ -3485,8 +3479,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
                 $gro_member->groupid    = $group->new_id;
                 $gro_member->groupingid = $grouping->new_id;
-                if (!get_record('groupings_groups', 'groupid', $gro_member->groupid, 'groupingid', $gro_member->groupingid)) {
-                    if (!insert_record('groupings_groups', $gro_member)) {
+                if (!$DB->get_record('groupings_groups', array('groupid'=>$gro_member->groupid, 'groupingid'=>$gro_member->groupingid))) {
+                    if (!$DB->insert_record('groupings_groups', $gro_member)) {
                         $status = false;
                     }
                 }
@@ -3498,6 +3492,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function creates all the course events
     function restore_create_events($restore,$xml_file) {
+        global $DB;
 
         global $CFG;
 
@@ -3561,8 +3556,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
                         //Now search if that event exists (by name, description, timestart fields) in
                         //restore->course_id course
-                        $eve_db = get_record_select("event",
-                            "courseid={$eve->courseid} AND name='{$eve->name}' AND description='{$eve->description}' AND timestart=$eve->timestart");
+                        $eve_db = $DB->get_records("event",
+                            array('courseid'=>$eve->courseid, 'name'=>$eve->name, 'description'=>$eve->description, 'timestart'=>$eve->timestart));
                         //If it doesn't exist, create
                         if (!$eve_db) {
                             $create_event = true;
@@ -3589,7 +3584,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             }
 
                             //The structure is equal to the db, so insert the event
-                            $newid = insert_record ("event",$eve);
+                            $newid = $DB->insert_record ("event",$eve);
 
                             //We must recode the repeatid if the event has it
                             //The repeatid now refers to the id of the original event. (see Bug#5956)
@@ -3604,7 +3599,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 }
                                 $eve->id = $newid;
                                 // update the record to contain the correct repeatid
-                                update_record('event',$eve);
+                                $DB->update_record('event',$eve);
                             }
                         } else {
                             //get current event id
@@ -3633,8 +3628,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //step in the restore execution, because we need to have it
     //finished to know all the oldid, newid equivaleces
     function restore_decode_absolute_links($content) {
-
-        global $CFG,$restore;
+        global $CFG, $restore;
 
     /// MDL-14072: Prevent NULLs, empties and numbers to be processed by the
     /// heavy interlinking. Just a few cpu cycles saved.
@@ -3743,8 +3737,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function restores the groupfiles from the temp (group_files) directory to the
     //dataroot/groups directory
     function restore_group_files($restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -3766,9 +3759,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $counter = 0;
                 foreach ($list as $dir) {
                     //Look for dir like groupid in backup_ids
-                    $data = get_record ("backup_ids","backup_code",$restore->backup_unique_code,
-                                                     "table_name","groups",
-                                                     "old_id",$dir);
+                    $data = $DB->get_record ("backup_ids", array("backup_code"=>$restore->backup_unique_code,
+                                                     "table_name"=>"groups",
+                                                     "old_id"=>$dir));
                     //If that group exists in backup_ids
                     if ($data) {
                         if (!file_exists($dest_dir."/".$data->new_id)) {
@@ -3800,7 +3793,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function restores the course files from the temp (course_files) directory to the
     //dataroot/course_id directory
     function restore_course_files($restore) {
-
         global $CFG;
 
         $status = true;
@@ -3853,7 +3845,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function restores the site files from the temp (site_files) directory to the
     //dataroot/SITEID directory
     function restore_site_files($restore) {
-
         global $CFG;
 
         $status = true;
@@ -3907,8 +3898,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function creates all the structures for every module in backup file
     //Depending what has been selected.
     function restore_create_modules($restore,$xml_file) {
-
         global $CFG;
+
         $status = true;
         //Check it exists
         if (!file_exists($xml_file)) {
@@ -3956,8 +3947,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function creates all the structures for every log in backup file
     //Depending what has been selected.
     function restore_create_logs($restore,$xml_file) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         //Number of records to get in every chunk
         $recordset_size = 4;
@@ -3988,7 +3978,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             while ($counter < $count_logs) {
                 //Get a chunk of records
                 //Take old_id twice to avoid adodb limitation
-                $logs = get_records_select("backup_ids","table_name = 'log' AND backup_code = '$restore->backup_unique_code'","old_id","old_id",$counter,$recordset_size);
+                $logs = $DB->get_records("backup_ids", array("table_name"=>'log', 'backup_code'=>$restore->backup_unique_code),"old_id","old_id",$counter,$recordset_size);
                 //We have logs
                 if ($logs) {
                     //Iterate
@@ -4067,6 +4057,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
     //This function inserts a course log record, calculating the URL field as necessary
     function restore_log_course($restore,$log) {
+        global $DB;
 
         $status = true;
         $toinsert = false;
@@ -4222,13 +4213,14 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Now if $toinsert is set, insert the record
         if ($toinsert) {
             //echo "Inserting record<br />";                                              //Debug
-            $status = insert_record("log",$log);
+            $status = $DB->insert_record("log",$log);
         }
         return $status;
     }
 
     //This function inserts a user log record, calculating the URL field as necessary
     function restore_log_user($restore,$log) {
+        global $DB;
 
         $status = true;
         $toinsert = false;
@@ -4301,13 +4293,14 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Now if $toinsert is set, insert the record
         if ($toinsert) {
             //echo "Inserting record<br />";                                              //Debug
-            $status = insert_record("log",$log);
+            $status = $DB->insert_record("log",$log);
         }
         return $status;
     }
 
     //This function inserts a module log record, calculating the URL field as necessary
     function restore_log_module($restore,$log) {
+        global $DB;
 
         $status = true;
         $toinsert = false;
@@ -4332,7 +4325,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         //Now if $toinsert is set, insert the record
         if ($toinsert) {
             //echo "Inserting record<br />";                                              //Debug
-            $status = insert_record("log",$log);
+            $status = $DB->insert_record("log",$log);
         }
         return $status;
     }
@@ -4340,25 +4333,24 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //This function adjusts the instance field into course_modules. It's executed after
     //modules restore. There, we KNOW the new instance id !!
     function restore_check_instances($restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //We are going to iterate over each course_module saved in backup_ids
-        $course_modules = get_records_sql("SELECT old_id,new_id
-                                           FROM {$CFG->prefix}backup_ids
-                                           WHERE backup_code = '$restore->backup_unique_code' AND
-                                                 table_name = 'course_modules'");
+        $course_modules = $DB->get_records_sql("SELECT old_id,new_id
+                                                  FROM {backup_ids}
+                                                 WHERE backup_code = ? AND
+                                                       table_name = 'course_modules'", array($restore->backup_unique_code));
         if ($course_modules) {
             foreach($course_modules as $cm) {
                 //Get full record, using backup_getids
                 $cm_module = backup_getid($restore->backup_unique_code,"course_modules",$cm->old_id);
                 //Now we are going to the REAL course_modules to get its type (field module)
-                $module = get_record("course_modules","id",$cm_module->new_id);
+                $module = $DB->get_record("course_modules", array("id"=>$cm_module->new_id));
                 if ($module) {
                     //We know the module type id. Get the name from modules
-                    $type = get_record("modules","id",$module->module);
+                    $type = $DB->get_record("modules", array("id"=>$module->module));
                     if ($type) {
                         //We know the type name and the old_id. Get its new_id
                         //from backup_ids. It's the instance !!!
@@ -4367,7 +4359,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             //We have the new instance, so update the record in course_modules
                             $module->instance = $instance->new_id;
                             //print_object ($module);                             //Debug
-                            $status = update_record("course_modules",$module);
+                            $status = $DB->update_record("course_modules",$module);
                         } else {
                             $status = false;
                         }
@@ -7361,12 +7353,12 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     }
 
     function restore_setup_for_check(&$restore,$backup_unique_code) {
-        global $SESSION;
+        global $SESSION, $DB;
         $restore->backup_unique_code=$backup_unique_code;
         $restore->users = 2; // yuk
         $restore->course_files = $SESSION->restore->restore_course_files;
         $restore->site_files = $SESSION->restore->restore_site_files;
-        if ($allmods = get_records("modules")) {
+        if ($allmods = $DB->get_records("modules")) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $var = "restore_".$modname;
@@ -7418,13 +7410,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     }
 
     function restore_execute(&$restore,$info,$course_header,&$errorstr) {
+        global $CFG, $USER, $DB;
 
-        global $CFG, $USER;
         $status = true;
 
         //Checks for the required files/functions to restore every module
         //and include them
-        if ($allmods = get_records("modules") ) {
+        if ($allmods = $DB->get_records("modules") ) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $modfile = "$CFG->dirroot/mod/$modname/restorelib.php";
@@ -7484,7 +7476,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             }
 
         } else {
-            $course = get_record("course","id",$restore->course_id);
+            $course = $DB->get_record("course", array("id"=>$restore->course_id));
             if ($course) {
                 if (!defined('RESTORE_SILENTLY')) {
                     echo "<li>".get_string("usingexistingcourse");
@@ -7545,9 +7537,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
             //Now print info about the work done
             if ($status) {
-                $recs = get_records_sql("select old_id, new_id from {$CFG->prefix}backup_ids
-                                     where backup_code = '$restore->backup_unique_code' and
-                                     table_name = 'user'");
+                $recs = $DB->get_records_sql("select old_id, new_id from {backup_ids}
+                                               where backup_code = ? and
+                                                     table_name = 'user'", array($restore->backup_unique_code));
                 //We've records
                 if ($recs) {
                     $new_count = 0;
@@ -8116,7 +8108,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 echo "<li>".get_string("checkingcourse");
             }
             //categories table
-            $course = get_record("course","id",$restore->course_id);
+            $course = $DB->get_record("course", array("id"=>$restore->course_id));
             fix_course_sortorder();
             // Check if the user has course update capability in the newly restored course
             // there is no need to load his capabilities again, because restore_roles_settings
@@ -8185,7 +8177,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     }
     //Create, open and write header of the html log file
     function restore_open_html($restore,$course_header) {
-
         global $CFG;
 
         $status = true;
@@ -8229,7 +8220,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     }
     //Create & close footer of the html log file
     function restore_close_html($restore) {
-
         global $CFG;
 
         $status = true;
@@ -8269,6 +8259,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
      * It isn't now, just overwriting
      */
     function restore_create_roles($restore, $xmlfile) {
+        global $DB;
         if (!defined('RESTORE_SILENTLY')) {
             echo "<li>".get_string("creatingrolesdefinitions").'</li>';
         }
@@ -8323,8 +8314,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $currentfullname = $fullname.$suffixfull;
                         // Limit the size of shortname - database column accepts <= 100 chars
                         $currentshortname = substr($shortname, 0, 100 - strlen($suffixshort)).$suffixshort;
-                        $coursefull  = get_record("role","name",addslashes($currentfullname));
-                        $courseshort = get_record("role","shortname",addslashes($currentshortname));
+                        $coursefull  = $DB->get_record("role", array("name"=>$currentfullname));
+                        $courseshort = $DB->get_record("role", array("shortname"=>$currentshortname));
                         $counter++;
                     } while ($coursefull || $courseshort);
 
@@ -8333,7 +8324,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
                     // done finding a unique name
 
-                    $newroleid = create_role(addslashes($roledata->name),addslashes($roledata->shortname),'');
+                    $newroleid = create_role($roledata->name, $roledata->shortname, '');
                     $status = backup_putid($restore->backup_unique_code,"role",$oldroleid,
                                      $newroleid); // adding a new id
                     foreach ($roledata->capabilities as $capability) {
@@ -8344,7 +8335,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $roleinfo->capability = $capability->name;
                         $roleinfo->roleid = $newroleid;
 
-                        insert_record('role_capabilities', $roleinfo);
+                        $DB->insert_record('role_capabilities', $roleinfo);
                     }
                 }
             /// Now, restore role nameincourse
@@ -8356,9 +8347,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $rolename = new object();
                         $rolename->roleid = $newrole->new_id;
                         $rolename->contextid = $coursecontext->id;
-                        $rolename->name = addslashes($roledata->nameincourse);
+                        $rolename->name = $roledata->nameincourse;
 
-                        insert_record('role_names', $rolename);
+                        $DB->insert_record('role_names', $rolename);
                     }
                 }
             }

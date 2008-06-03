@@ -23,8 +23,7 @@
 
     //This function executes all the restore procedure about this mod
     function assignment_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -87,17 +86,17 @@
 
             if (!in_array($assignment->assignmenttype, $plugins)) {
                 if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li><strong>".get_string("modulename","assignment")." \"".format_string(stripslashes($assignment->name),true)."\" - plugin '{$assignment->assignmenttype}' not available!</strong></li>";
+                    echo "<li><strong>".get_string("modulename","assignment")." \"".format_string($assignment->name,true)."\" - plugin '{$assignment->assignmenttype}' not available!</strong></li>";
                 }
                 return true; // do not fail the restore
             }
 
             //The structure is equal to the db, so insert the assignment
-            $newid = insert_record ("assignment",$assignment);
+            $newid = $DB->insert_record ("assignment",$assignment);
 
             //Do some output     
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","assignment")." \"".format_string(stripslashes($assignment->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","assignment")." \"".format_string($assignment->name,true)."\"</li>";
             }
             backup_flush(300);
 
@@ -122,8 +121,7 @@
 
     //This function restores the assignment_submissions
     function assignment_submissions_restore_mods($old_assignment_id, $new_assignment_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -177,7 +175,7 @@
             } 
 
             //The structure is equal to the db, so insert the assignment_submission
-            $newid = insert_record ("assignment_submissions",$submission);
+            $newid = $DB->insert_record ("assignment_submissions",$submission);
 
             //Do some output
             if (($i+1) % 50 == 0) {

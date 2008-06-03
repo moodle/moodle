@@ -40,8 +40,7 @@
 
     //This function executes all the restore procedure about this mod
     function lesson_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -101,11 +100,11 @@
             $lesson->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the lesson
-            $newid = insert_record("lesson", $lesson);
+            $newid = $DB->insert_record("lesson", $lesson);
 
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","lesson")." \"".format_string(stripslashes($lesson->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","lesson")." \"".format_string($lesson->name,true)."\"</li>";
             }
             backup_flush(300);
 
@@ -147,8 +146,7 @@
 
     //This function restores the lesson_pages
     function lesson_pages_restore_mods($lessonid,$info,$restore,$userdata=false) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -179,11 +177,11 @@
             $page->contents = backup_todb($page_info['#']['CONTENTS']['0']['#']);
 
             //The structure is equal to the db, so insert the lesson_pages
-            $newid = insert_record ("lesson_pages",$page);
+            $newid = $DB->insert_record ("lesson_pages",$page);
 
             //Fix the forwards link of the previous page
             if ($prevpageid) {
-                if (!set_field("lesson_pages", "nextpageid", $newid, "id", $prevpageid)) {
+                if (!$DB->set_field("lesson_pages", "nextpageid", $newid, array("id"=>$prevpageid))) {
                     print_error("Lesson restorelib: unable to update link");
                 }
             }
@@ -213,7 +211,7 @@
                     if (($page->qtype == 3 && $page->qoption) ||
                          $page->qtype == 5) {
                         // get all the attempt records for this page
-                        if ($attempts = get_records("lesson_attempts", "pageid", $newid)) {
+                        if ($attempts = $DB->get_records("lesson_attempts", array("pageid"=>$newid))) {
                             foreach ($attempts as $attempt) {
                                 unset($newuseranswer);
                                 if ($attempt->useranswer != NULL) {
@@ -227,7 +225,7 @@
                                     // get the useranswer in the right format
                                     $attempt->useranswer = implode(",", $newuseranswer);
                                     // update it
-                                    update_record("lesson_attempts", $attempt);
+                                    $DB->update_record("lesson_attempts", $attempt);
                                 }
                             }
                         }
@@ -247,13 +245,13 @@
 
         //We've restored all the pages and answers, we now need to fix the jumps in the
         //answer records if they are absolute
-        if ($answers = get_records("lesson_answers", "lessonid", $lessonid)) {
+        if ($answers = $DB->get_records("lesson_answers", array("lessonid"=>$lessonid))) {
             foreach ($answers as $answer) {
                 if ($answer->jumpto > 0) {
                     // change the absolute page id
                     $page = backup_getid($restore->backup_unique_code,"lesson_pages",$answer->jumpto);
                     if ($page) {
-                        if (!set_field("lesson_answers", "jumpto", $page->new_id, "id", $answer->id)) {
+                        if (!$DB->set_field("lesson_answers", "jumpto", $page->new_id, array("id"=>$answer->id))) {
                             print_error("Lesson restorelib: unable to reset jump");
                         }
                     }
@@ -266,8 +264,7 @@
 
     //This function restores the lesson_answers
     function lesson_answers_restore($lessonid,$pageid,$info,$restore,$userdata=false) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -285,8 +282,8 @@
                         $newanswer->pageid = $pageid;
                         $newanswer->timecreated = $time;
                         $newanswer->timemodified = 0;
-                        insert_record('lesson_answers', $newanswer);
-                        insert_record('lesson_answers', $newanswer);
+                        $DB->insert_record('lesson_answers', $newanswer);
+                        $DB->insert_record('lesson_answers', $newanswer); // TODO: why is this here twice?
                     }
                 }
             }
@@ -317,7 +314,7 @@
                 $answer->response = backup_todb($answer_info['#']['RESPONSE']['0']['#']);
 
                 //The structure is equal to the db, so insert the lesson_answers
-                $newid = insert_record ("lesson_answers",$answer);
+                $newid = $DB->insert_record ("lesson_answers",$answer);
 
                 //Do some output
                 if (($i+1) % 10 == 0) {
@@ -350,8 +347,7 @@
 
     //This function restores the attempts
     function lesson_attempts_restore($lessonid, $pageid, $answerid, $info, $restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -385,7 +381,7 @@
                 }
 
                 //The structure is equal to the db, so insert the lesson_attempt
-                $newid = insert_record ("lesson_attempts",$attempt);
+                $newid = $DB->insert_record ("lesson_attempts",$attempt);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -405,8 +401,7 @@
 
     //This function restores the lesson_grades
     function lesson_grades_restore_mods($lessonid, $info, $restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -438,7 +433,7 @@
                 }
 
                 //The structure is equal to the db, so insert the lesson_grade
-                $newid = insert_record ("lesson_grades",$grade);
+                $newid = $DB->insert_record ("lesson_grades",$grade);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -464,8 +459,7 @@
     
     //This function restores the lesson_branch
     function lesson_branch_restore($lessonid, $pageid, $info, $restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -497,7 +491,7 @@
                 }
 
                 //The structure is equal to the db, so insert the lesson_attempt
-                $newid = insert_record ("lesson_branch",$branch);
+                $newid = $DB->insert_record ("lesson_branch",$branch);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -517,8 +511,7 @@
 
     //This function restores the lesson_timer
     function lesson_timer_restore_mods($lessonid, $info, $restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         //Get the timer array (optional)
@@ -547,7 +540,7 @@
                 }
 
                 //The structure is equal to the db, so insert the lesson_grade
-                $newid = insert_record ("lesson_timer",$time);
+                $newid = $DB->insert_record ("lesson_timer",$time);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -571,8 +564,7 @@
 
     //This function restores the lesson_high_scores
     function lesson_high_scores_restore_mods($lessonid, $info, $restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -602,7 +594,7 @@
                 }
                 
                 //The structure is equal to the db, so insert the lesson_grade
-                $newid = insert_record ("lesson_high_scores",$highscore);
+                $newid = $DB->insert_record ("lesson_high_scores",$highscore);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -626,8 +618,7 @@
     
     //This function restores the lesson_default
     function lesson_default_restore_mods($info, $restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -677,7 +668,7 @@
                 $default->maxhighscores = backup_todb($default_info['#']['MAXHIGHSCORES']['0']['#']);
 
                 //The structure is equal to the db, so insert the lesson_grade
-                $newid = insert_record ("lesson_default",$default);
+                $newid = $DB->insert_record ("lesson_default",$default);
                 
                 if ($newid) {
                     backup_putid($restore->backup_unique_code,'lesson_default',
@@ -709,7 +700,6 @@
     //lesson_decode_content_links_caller() function in each module
     //in the restore process
     function lesson_decode_content_links ($content,$restore) {
-            
         global $CFG;
             
         $result = $content;

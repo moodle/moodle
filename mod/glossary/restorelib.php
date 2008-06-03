@@ -30,8 +30,7 @@
 
     //This function executes all the restore procedure about this mod
     function glossary_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -113,11 +112,11 @@
             }
 
             //The structure is equal to the db, so insert the glossary
-            $newid = insert_record ("glossary",$glossary);
+            $newid = $DB->insert_record ("glossary",$glossary);
 
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","glossary")." \"".format_string(stripslashes($glossary->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","glossary")." \"".format_string($glossary->name,true)."\"</li>";
             }
             backup_flush(300);
 
@@ -141,8 +140,7 @@
 
     //This function restores the glossary_entries
     function glossary_entries_restore_mods($old_glossary_id,$new_glossary_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -189,7 +187,7 @@
             //If it's a teacher entry or userinfo was selected, restore the entry
             if ($entry->teacherentry or restore_userdata_selected($restore,'glossary',$old_glossary_id)) {
                 //The structure is equal to the db, so insert the glossary_entries
-                $newid = insert_record ("glossary_entries",$entry);
+                $newid = $DB->insert_record ("glossary_entries",$entry);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -226,8 +224,7 @@
 
     //This function restores the glossary_comments
     function glossary_comments_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -262,7 +259,7 @@
             }
 
             //The structure is equal to the db, so insert the glossary_comments
-            $newid = insert_record ("glossary_comments",$comment);
+            $newid = $DB->insert_record ("glossary_comments",$comment);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -287,8 +284,7 @@
 
     //This function restores the glossary_ratings
     function glossary_ratings_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -315,7 +311,7 @@
             }
 
             //The structure is equal to the db, so insert the glossary_ratings
-            $newid = insert_record ("glossary_ratings",$rating);
+            $newid = $DB->insert_record ("glossary_ratings",$rating);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -338,8 +334,7 @@
 
     //This function restores the glossary_alias table
     function glossary_alias_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -355,7 +350,7 @@
             $alias->alias = backup_todb(trim($alias_info['#']['ALIAS_TEXT']['0']['#']));
 
             //The structure is equal to the db, so insert the glossary_comments
-            $newid = insert_record ("glossary_alias",$alias);
+            $newid = $DB->insert_record ("glossary_alias",$alias);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -378,8 +373,7 @@
 
     //This function restores the glossary_categories
     function glossary_categories_restore_mods($old_glossary_id,$new_glossary_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -401,7 +395,7 @@
             $category->name = backup_todb($cat_info['#']['NAME']['0']['#']);
             $category->usedynalink = backup_todb($cat_info['#']['USEDYNALINK']['0']['#']);
 
-            $newid = insert_record ("glossary_categories",$category);
+            $newid = $DB->insert_record ("glossary_categories",$category);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -430,8 +424,7 @@
 
     //This function restores the glossary_entries_categories
     function glossary_entries_categories_restore_mods($old_category_id,$new_category_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -455,7 +448,7 @@
                 $entry_category->entryid = $entry->new_id;
              }
 
-            $newid = insert_record ("glossary_entries_categories",$entry_category);
+            $newid = $DB->insert_record ("glossary_entries_categories",$entry_category);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -479,7 +472,6 @@
     //This function copies the glossary related info from backup temp dir to course moddata folder,
     //creating it if needed and recoding everything (glossary id and entry id)
     function glossary_restore_files ($oldgloid, $newgloid, $oldentryid, $newentryid, $restore) {
-
         global $CFG;
 
         $status = true;

@@ -28,8 +28,7 @@
 
     //This function executes all the restore procedure about this mod
     function choice_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -84,7 +83,7 @@
                 }
             }
             //The structure is equal to the db, so insert the choice
-            $newid = insert_record ("choice",$choice);
+            $newid = $DB->insert_record ("choice",$choice);
             
             if ($newid) {
                 //We have the newid, update backup_ids
@@ -114,7 +113,7 @@
                             $option->choiceid = $newid;
                             $option->text = $options[$i];
                             $option->timemodified = $choice->timemodified;
-                            $newoptionid = insert_record ("choice_options",$option);
+                            $newoptionid = $DB->insert_record ("choice_options",$option);
                             //Save this choice_option to backup_ids
                             backup_putid($restore->backup_unique_code,"choice_options",$i,$newoptionid);
                         }
@@ -134,7 +133,7 @@
 
             //Do some output     
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","choice")." \"".format_string(stripslashes($choice->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","choice")." \"".format_string($choice->name,true)."\"</li>";
             }
             backup_flush(300);
 

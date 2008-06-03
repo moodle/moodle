@@ -437,6 +437,7 @@ class question_multichoice_qtype extends default_questiontype {
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
+        global $DB;
 
         $status = true;
 
@@ -493,7 +494,7 @@ class question_multichoice_qtype extends default_questiontype {
             $multichoice->answers = $answers_field;
 
             //The structure is equal to the db, so insert the question_shortanswer
-            $newid = insert_record ("question_multichoice",$multichoice);
+            $newid = $DB->insert_record ("question_multichoice",$multichoice);
 
             //Do some output
             if (($i+1) % 50 == 0) {

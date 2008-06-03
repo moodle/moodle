@@ -28,8 +28,7 @@
 
     //This function executes all the restore procedure about this mod
     function scorm_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -125,10 +124,10 @@
             $scorm->timemodified = time();
 
             //The structure is equal to the db, so insert the scorm
-            $newid = insert_record ("scorm",$scorm);
+            $newid = $DB->insert_record ("scorm",$scorm);
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","scorm")." \"".format_string(stripslashes($scorm->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","scorm")." \"".format_string($scorm->name,true)."\"</li>";
             }
             backup_flush(300);
 
@@ -145,7 +144,7 @@
                     if ($status) {
                         $launchsco = backup_getid($restore->backup_unique_code,"scorm_scoes",$oldlaunch);
                         $scorm->launch = $launchsco->new_id;
-                        update_record('scorm',$scorm);
+                        $DB->update_record('scorm',$scorm);
                     }
                 } 
                 
@@ -161,8 +160,7 @@
 
     //This function restores the scorm_scoes
     function scorm_scoes_restore_mods($scorm_id,$info,$restore,$oldmodid) {
-    
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -191,7 +189,7 @@
             }
 
             //The structure is equal to the db, so insert the scorm_scoes
-            $newid = insert_record ("scorm_scoes",$sco);
+            $newid = $DB->insert_record ("scorm_scoes",$sco);
             
             if ($newid) {
                 //We have the newid, update backup_ids
@@ -221,8 +219,7 @@
 
 
      function scorm_scoes_seq_objective_restore_mods($sco_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -248,7 +245,7 @@
             $objective->minnormalizedmeasure = backup_todb($obj_info['#']['MINNORMALIZEDMEASURE']['0']['#']);
             
             //The structure is equal to the db, so insert the forum_discussions
-            $newid = insert_record ("scorm_seq_objective",$objective);
+            $newid = $DB->insert_record ("scorm_seq_objective",$objective);
 
             if ($newid) {
                 //We have the newid, update backup_ids
@@ -280,8 +277,7 @@
 
 
     function scorm_scoes_seq_rolluprule_restore_mods($sco_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -308,7 +304,7 @@
             $rolluprule->action = backup_todb($rol_info['#']['ACTION']['0']['#']);
             
             //The structure is equal to the db, so insert the forum_discussions
-            $newid = insert_record ("scorm_seq_rolluprule",$rolluprule);
+            $newid = $DB->insert_record ("scorm_seq_rolluprule",$rolluprule);
 
             if ($newid) {
                 //We have the newid, update backup_ids
@@ -338,8 +334,7 @@
     }
 
      function scorm_scoes_seq_ruleconds_restore_mods($sco_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -364,7 +359,7 @@
             $rulecond->action = backup_todb($rul_info['#']['ACTION']['0']['#']);
             
             //The structure is equal to the db, so insert the forum_discussions
-            $newid = insert_record ("scorm_seq_ruleconds",$rulecond);
+            $newid = $DB->insert_record ("scorm_seq_ruleconds",$rulecond);
 
             if ($newid) {
                 //We have the newid, update backup_ids
@@ -394,7 +389,6 @@
     }
 
     function scorm_scoes_seq_rulecond_restore_mods($sco_id,$rulecondid,$info,$restore) {
-
         global $CFG;
 
         $status = true;
@@ -422,7 +416,7 @@
             $rulecondd->cond = backup_todb($ruld_info['#']['COND']['0']['#']);
             
             //The structure is equal to the db, so insert the forum_discussions
-            $newid = insert_record ("scorm_seq_rulecond",$rulecondd);
+            $newid = $DB->insert_record ("scorm_seq_rulecond",$rulecondd);
 
             if ($newid) {
                 //We have the newid, update backup_ids
@@ -450,8 +444,7 @@
     }
 
     function scorm_scoes_seq_rolluprulecond_restore_mods($sco_id,$rolluprule,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -477,7 +470,7 @@
 
 
             //The structure is equal to the db, so insert the forum_discussions
-            $newid = insert_record ("scorm_seq_rolluprulecond",$rolluprulecond);
+            $newid = $DB->insert_record ("scorm_seq_rolluprulecond",$rolluprulecond);
 
             if ($newid) {
                 //We have the newid, update backup_ids
@@ -505,8 +498,7 @@
     }
 
     function scorm_scoes_seq_mapinfo_restore_mods($sco_id,$objectiveid,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -535,7 +527,7 @@
 
             
             //The structure is equal to the db, so insert the forum_discussions
-            $newid = insert_record ("scorm_seq_mapinfo",$mapinfo);
+            $newid = $DB->insert_record ("scorm_seq_mapinfo",$mapinfo);
 
             if ($newid) {
                 //We have the newid, update backup_ids
@@ -560,8 +552,7 @@
 
     //This function restores the scorm_scoes_track
     function scorm_scoes_tracks_restore_mods($scorm_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         $scotracks = NULL;
@@ -597,7 +588,7 @@
 
             $scotrack->timemodified = time();
             //The structure is equal to the db, so insert the scorm_scoes_track
-            $newid = insert_record ("scorm_scoes_track",$scotrack);
+            $newid = $DB->insert_record ("scorm_scoes_track",$scotrack);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -617,8 +608,7 @@
     
     //This function restores the scorm_scoes_track from Moodle 1.4
     function scorm_scoes_tracks_restore_mods_pre15 ($scorm_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         $scousers = NULL;
@@ -675,7 +665,7 @@
                     }
 
                     //The structure is equal to the db, so insert the scorm_scoes_track
-                    $newid = insert_record ("scorm_scoes_track",$scotrack);
+                    $newid = $DB->insert_record ("scorm_scoes_track",$scotrack);
                 }
                 $pos++;
             }

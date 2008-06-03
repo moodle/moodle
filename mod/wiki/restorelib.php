@@ -23,8 +23,7 @@
     //-----------------------------------------------------------
 
     function wiki_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -60,11 +59,11 @@
             $wiki->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the wiki
-            $newid = insert_record ("wiki",$wiki);
+            $newid = $DB->insert_record ("wiki",$wiki);
 
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","wiki")." \"".format_string(stripslashes($wiki->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","wiki")." \"".format_string($wiki->name,true)."\"</li>";
             }
             backup_flush(300);
 
@@ -89,8 +88,7 @@
 
     //This function restores the wiki_entries
     function wiki_entries_restore_mods($old_wiki_id,$new_wiki_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -128,7 +126,7 @@
             }
 
             //The structure is equal to the db, so insert the wiki_entries
-            $newid = insert_record ("wiki_entries",$entry);
+            $newid = $DB->insert_record ("wiki_entries",$entry);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -159,8 +157,7 @@
 
     //This function restores the wiki_pages
     function wiki_pages_restore_mods($old_entry_id,$new_entry_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -199,7 +196,7 @@
                 $page->userid = $user->new_id;
             }
             //The structure is equal to the db, so insert the wiki_pages
-            $newid = insert_record ("wiki_pages",$page);
+            $newid = $DB->insert_record ("wiki_pages",$page);
 
             //Do some output
             if (($i+1) % 50 == 0) {

@@ -24,8 +24,7 @@
 
 
     function survey_restore_mods($mod,$restore) {
-
-        global $CFG,$DB;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -50,11 +49,11 @@
             $survey->questions = backup_todb($info['MOD']['#']['QUESTIONS']['0']['#']);
 
             //The structure is equal to the db, so insert the survey
-            $newid = insert_record ("survey",$survey);
+            $newid = $DB->insert_record ("survey",$survey);
 
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","survey")." \"".format_string(stripslashes($survey->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","survey")." \"".format_string($survey->name,true)."\"</li>";
             }
             backup_flush(300);
 
@@ -83,8 +82,7 @@
 
     //This function restores the survey_answers
     function survey_answers_restore_mods($survey_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -117,7 +115,7 @@
             }
 
             //The structure is equal to the db, so insert the survey_answers
-            $newid = insert_record ("survey_answers",$answer);
+            $newid = $DB->insert_record ("survey_answers",$answer);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -144,8 +142,7 @@
 
     //This function restores the survey_analysis
     function survey_analysis_restore_mods($survey_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -175,7 +172,7 @@
             }
 
             //The structure is equal to the db, so insert the survey_analysis
-            $newid = insert_record ("survey_analysis",$analys);
+            $newid = $DB->insert_record ("survey_analysis",$analys);
 
             //Do some output
             if (($i+1) % 50 == 0) {

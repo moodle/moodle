@@ -138,6 +138,8 @@
     }
 
     function restore_question_category($category, $restore){
+        global $DB;
+
         $status = true;
         //Skip empty categories (some backups can contain them)
         if (!empty($category->id)) {
@@ -180,7 +182,7 @@
                 //does cat exist ?? if it does we check if the cat and questions already exist whether we have
                 //add permission or not if we have no permission to add questions to SYSTEM or COURSECAT context
                 //AND the question does not already exist then we create questions in COURSE context.
-                if (!$fcat = get_record('question_categories','contextid', $question_cat->contextid, 'stamp', $question_cat->stamp)){
+                if (!$fcat = $DB->get_record('question_categories', array('contextid'=>$question_cat->contextid, 'stamp'=>$question_cat->stamp))) {
                     //no preexisting cat
                     if ((($tocontext->contextlevel == CONTEXT_SYSTEM) ||  ($tocontext->contextlevel == CONTEXT_COURSECAT))
                             && !has_capability('moodle/question:add', $tocontext)){
@@ -189,7 +191,7 @@
                         $tocontext = get_context_instance(CONTEXT_COURSE, $restore->course_id);
                     }
                     $question_cat->contextid = $tocontext->id;
-                    if (!$fcat = get_record('question_categories','contextid', $question_cat->contextid, 'stamp', $question_cat->stamp)){
+                    if (!$fcat = $DB->get_record('question_categories', array('contextid'=>$question_cat->contextid, 'stamp'=>$question_cat->stamp))) {
                         $question_cat->id = insert_record ("question_categories", $question_cat);
                     } else {
                         $question_cat = $fcat;
@@ -294,8 +296,7 @@
     }
 
     function restore_questions ($old_category_id, $best_question_cat, $info, $restore) {
-
-        global $CFG, $QTYPES;
+        global $CFG, $QTYPES, $DB;
 
         $status = true;
         $restored_questions = array();
@@ -347,7 +348,7 @@
 
             //Check if the question exists by category, stamp, and version
             //first check for the question in the context specified in backup
-            $existingquestion = get_record ("question", "category", $best_question_cat->id, "stamp", $question->stamp,"version",$question->version);
+            $existingquestion = $DB->get_record ("question", array("category"=>$best_question_cat->id, "stamp"=>$question->stamp,"version"=>$question->version));
             //If the question exists, only record its id
             //always use existing question, no permissions check here
             if ($existingquestion) {
@@ -364,8 +365,8 @@
                         $course_question_cat = clone($best_question_cat);
                         $course_question_cat->contextid = $coursecontext->id;
                         //create cat if it doesn't exist
-                        if (!$fcat = get_record('question_categories','contextid', $course_question_cat->contextid, 'stamp', $course_question_cat->stamp)){
-                            $course_question_cat->id = insert_record ("question_categories", $course_question_cat);
+                        if (!$fcat = $DB->get_record('question_categories', array('contextid'=>$course_question_cat->contextid, 'stamp'=>$course_question_cat->stamp))) {
+                            $course_question_cat->id = $DB->insert_record("question_categories", $course_question_cat);
                             backup_putid($restore->backup_unique_code, "question_categories", $old_category_id, $course_question_cat->id);
                         } else {
                             $course_question_cat = $fcat;
@@ -382,7 +383,7 @@
                 }
                 if (!$existingquestion){
                     //The structure is equal to the db, so insert the question
-                    $question->id = insert_record ("question", $question);
+                    $question->id = $DB->insert_record ("question", $question);
                     $creatingnewquestion = true;
                 } else {
                     $question = $existingquestion;
@@ -394,7 +395,7 @@
             //                   see: $QTYPES['random']->get_question_options()
             if ($question->qtype == 'random' && $creatingnewquestion) {
                 $question->parent = $question->id;
-                $status = set_field('question', 'parent', $question->parent, 'id', $question->id);
+                $status = $DB->set_field('question', 'parent', $question->parent, array('id'=>$question->id));
             }
 
             //Save newid to backup tables
@@ -434,7 +435,7 @@
                     if ($parent = backup_getid($restore->backup_unique_code,"question",$question->parent)) {
                         $question->parent = $parent->new_id;
                         if ($question->parent != $restored_questions[$i]->parent) {
-                            if (!set_field('question', 'parent', $question->parent, 'id', $newid)) {
+                            if (!$DB->set_field('question', 'parent', $question->parent, array('id'=>$newid))) {
                                 echo 'Could not update parent '.$question->parent.' for question '.$oldid.'<br />';
                                 $status = false;
                             }
@@ -491,8 +492,7 @@
     }
 
     function question_restore_answers ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         $qtype = backup_todb($info['#']['QTYPE']['0']['#']);
@@ -524,7 +524,7 @@
                 }
 
                 //The structure is equal to the db, so insert the question_answers
-                $newid = insert_record ("question_answers",$answer);
+                $newid = $DB->insert_record ("question_answers",$answer);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -551,8 +551,7 @@
     }
 
     function question_restore_map_answers ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -585,8 +584,8 @@
             //mappings in backup_ids to use them later where restoring states (user level).
 
             //Get the answer from DB (by question and answer)
-            $db_answer = get_record ("question_answers","question",$new_question_id,
-                                                    "answer",$answer->answer);
+            $db_answer = $DB->get_record ("question_answers", array("question"=>$new_question_id,
+                                                    "answer"=>$answer->answer));
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -612,8 +611,7 @@
     }
 
     function question_restore_numerical_units($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -634,7 +632,7 @@
             // Check to see if this until already exists in the database, which it might, for
             // Historical reasons.
             $unit = backup_todb($nu_info['#']['UNIT']['0']['#']);
-            if (!record_exists('question_numerical_units', 'question', $new_question_id, 'unit', $unit)) {
+            if (!$DB->record_exists('question_numerical_units', array('question'=>$new_question_id, 'unit'=>$unit))) {
 
                 //Now, build the question_numerical_UNITS record structure.
                 $numerical_unit = new stdClass;
@@ -643,7 +641,7 @@
                 $numerical_unit->unit = $unit;
 
                 //The structure is equal to the db, so insert the question_numerical_units
-                $newid = insert_record("question_numerical_units", $numerical_unit);
+                $newid = $DB->insert_record("question_numerical_units", $numerical_unit);
 
                 if (!$newid) {
                     $status = false;
@@ -655,8 +653,7 @@
     }
 
     function question_restore_dataset_definitions ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -697,11 +694,9 @@
             } else {
                 //The category isn't 0, so it's a category question dataset_definition, we have to see if it exists
                 //Look for a definition with the same category, name and type
-                if ($definitionrec = get_record_sql("SELECT d.*
-                                                     FROM {$CFG->prefix}question_dataset_definitions d
-                                                     WHERE d.category = '$dataset_definition->category' AND
-                                                           d.name = '$dataset_definition->name' AND
-                                                           d.type = '$dataset_definition->type'")) {
+                if ($definitionrec = $DB->get_records('question_dataset_definitions', array('category'=>$dataset_definition->category,
+                                                           'name'=>$dataset_definition->name,
+                                                           'type'=>$dataset_definition->type))) {
                     //Such dataset_definition exist. Now we must check if it has enough itemcount
                     if ($definitionrec->itemcount < $dataset_definition->itemcount) {
                         //We haven't enough itemcount, so we have to create the definition as an individual question one.
@@ -721,7 +716,7 @@
             //If we've to create the definition, do it
             if ($create_definition) {
                 //The structure is equal to the db, so insert the question_dataset_definitions
-                $newid = insert_record ("question_dataset_definitions",$dataset_definition);
+                $newid = $DB->insert_record ("question_dataset_definitions",$dataset_definition);
                 if ($newid) {
                     //Restore question_dataset_items
                     $status = question_restore_dataset_items($newid,$dd_info,$restore);
@@ -734,7 +729,7 @@
                 $question_dataset = new stdClass;
                 $question_dataset->question = $new_question_id;
                 $question_dataset->datasetdefinition = $newid;
-                $newid = insert_record ("question_datasets",$question_dataset);
+                $newid = $DB->insert_record ("question_datasets",$question_dataset);
             }
 
             if (!$newid) {
@@ -746,8 +741,7 @@
     }
 
     function question_restore_dataset_items ($definitionid,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -768,7 +762,7 @@
             $dataset_item->value = backup_todb($di_info['#']['VALUE']['0']['#']);
 
             //The structure is equal to the db, so insert the question_dataset_items
-            $newid = insert_record ("question_dataset_items",$dataset_item);
+            $newid = $DB->insert_record ("question_dataset_items",$dataset_item);
 
             if (!$newid) {
                 $status = false;
@@ -781,8 +775,7 @@
 
     //This function restores the question_states
     function question_states_restore_mods($attempt_id,$info,$restore) {
-
-        global $CFG, $QTYPES;
+        global $CFG, $QTYPES, $DB;
 
         $status = true;
 
@@ -833,7 +826,7 @@
             //We have to recode the answer field
             //It depends of the question type !!
             //We get the question first
-            if (!$question = get_record("question","id",$state->question)) {
+            if (!$question = $DB->get_record("question", array("id"=>$state->question))) {
                 print_error("Can't find the record for question $state->question for which I am trying to restore a state");
             }
             //Depending on the qtype, we make different recodes
@@ -842,7 +835,7 @@
             }
 
             //The structure is equal to the db, so insert the question_states
-            $newid = insert_record ("question_states",$state);
+            $newid = $DB->insert_record ("question_states",$state);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -913,7 +906,7 @@
             }
 
             //The structure is equal to the db, so insert the question_sessions
-            $newid = insert_record ("question_sessions",$session);
+            $newid = $DB->insert_record ("question_sessions",$session);
 
         }
 

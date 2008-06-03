@@ -534,14 +534,11 @@
 
     //This function is used to add slashes (and decode from UTF-8 if needed)
     //It's used intensivelly when restoring modules and saving them in db
-    function backup_todb ($data, $addslashes=true) {
+    function backup_todb ($data) {
         // MDL-10770
         if ($data === '$@NULL@$') {
             return null;
         } else {
-            if ($addslashes) {
-                $data = addslashes($data);
-            }
             return restore_decode_absolute_links($data);
         }
     }

@@ -37,8 +37,7 @@
     include_once("$CFG->dirroot/question/restorelib.php");
 
     function quiz_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -94,11 +93,11 @@
             $quiz->questions = quiz_recode_layout($quiz->questions, $restore);
 
             //The structure is equal to the db, so insert the quiz
-            $newid = insert_record ("quiz",$quiz);
+            $newid = $DB->insert_record ("quiz",$quiz);
 
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","quiz")." \"".format_string(stripslashes($quiz->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","quiz")." \"".format_string($quiz->name,true)."\"</li>";
             }
             backup_flush(300);
 
@@ -133,8 +132,7 @@
 
     //This function restores the quiz_question_instances
     function quiz_question_instances_restore_mods($quiz_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -168,7 +166,7 @@
             }
 
             //The structure is equal to the db, so insert the quiz_question_instances
-            $newid = insert_record ("quiz_question_instances",$instance);
+            $newid = $DB->insert_record ("quiz_question_instances",$instance);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -195,6 +193,8 @@
 
     //This function restores the quiz_question_instances
     function quiz_feedback_restore_mods($quiz_id, $info, $restore, $quiz) {
+        global $DB;
+
         $status = true;
 
         //Get the quiz_feedback array
@@ -218,7 +218,7 @@
                 $feedback->maxgrade = backup_todb($feedback_info['#']['MAXGRADE']['0']['#']);
     
                 //The structure is equal to the db, so insert the quiz_question_instances
-                $newid = insert_record('quiz_feedback', $feedback);
+                $newid = $DB->insert_record('quiz_feedback', $feedback);
     
                 if ($newid) {
                     //We have the newid, update backup_ids
@@ -233,7 +233,7 @@
             $feedback->feedbacktext = '';
             $feedback->mingrade = 0;
             $feedback->maxgrade = $quiz->grade + 1;
-            insert_record('quiz_feedback', $feedback);
+            $DB->insert_record('quiz_feedback', $feedback);
         }
 
         return $status;
@@ -241,8 +241,7 @@
 
     //This function restores the quiz_question_versions
     function quiz_question_versions_restore_mods($quiz_id,$info,$restore) {
-
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         $status = true;
 
@@ -299,7 +298,7 @@
             }
 
             //The structure is equal to the db, so insert the quiz_question_versions
-            $newid = insert_record ("quiz_question_versions",$version);
+            $newid = $DB->insert_record ("quiz_question_versions",$version);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -326,8 +325,7 @@
 
     //This function restores the quiz_attempts
     function quiz_attempts_restore_mods($quiz_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -374,7 +372,7 @@
             $attempt->layout = quiz_recode_layout($attempt->layout, $restore);
 
             //The structure is equal to the db, so insert the quiz_attempts
-            $newid = insert_record ("quiz_attempts",$attempt);
+            $newid = $DB->insert_record ("quiz_attempts",$attempt);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -404,8 +402,7 @@
 
     //This function restores the quiz_grades
     function quiz_grades_restore_mods($quiz_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -441,7 +438,7 @@
             }
 
             //The structure is equal to the db, so insert the quiz_grades
-            $newid = insert_record ("quiz_grades",$grade);
+            $newid = $DB->insert_record ("quiz_grades",$grade);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -471,7 +468,6 @@
     //quiz_decode_content_links_caller() function in each module
     //in the restore process
     function quiz_decode_content_links ($content,$restore) {
-            
         global $CFG;
             
         $result = $content;

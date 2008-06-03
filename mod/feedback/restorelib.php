@@ -29,8 +29,7 @@
     define('FEEDBACK_MULTICHOICERESTORE_TYPE_SEP', '>>>>>');
 
     function feedback_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
         
         // $allValues = array();
         // $allTrackings = array();
@@ -63,7 +62,7 @@
             $feedback->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the feedback
-            $newid = insert_record ("feedback",$feedback);
+            $newid = $DB->insert_record ("feedback",$feedback);
             
             //create events
             // the open-event
@@ -178,7 +177,7 @@
                         $item->position = backup_todb($item_info['#']['POSITION']['0']['#']);
                         $item->required = backup_todb($item_info['#']['REQUIRED']['0']['#']);
                         //put this new item into the database
-                        $newitemid = insert_record('feedback_item', $item);
+                        $newitemid = $DB->insert_record('feedback_item', $item);
 
                         //Now check if want to restore user data and do it.
                         if ($restore_userdata) {
@@ -192,10 +191,10 @@
                                     $value->completed = 0;
                                     $value->tmp_completed = backup_todb($value_info['#']['COMPLETED']['0']['#']);
                                     $value->value = backup_todb($value_info['#']['VAL']['0']['#']);
-                                    $value->value = addslashes($value->value);
+                                    $value->value = $value->value;
                                     $value->course_id = backup_todb($value_info['#']['COURSE_ID']['0']['#']);
                                     //put this new value into the database
-                                    $newvalueid = insert_record('feedback_value', $value);
+                                    $newvalueid = $DB->insert_record('feedback_value', $value);
                                     $value->id = $newvalueid;
                                     // $allValues[] = $value;
                                 }
@@ -224,7 +223,7 @@
                             }
                             
                             //save the tracking
-                            $newtrackingid = insert_record('feedback_tracking', $tracking);
+                            $newtrackingid = $DB->insert_record('feedback_tracking', $tracking);
                             $tracking->id = $newtrackingid;
                             // $allTrackings[] = $tracking;
                         }
@@ -255,25 +254,25 @@
                             $oldcompletedid = backup_todb($completed_info['#']['ID']['0']['#']);
                             
                             //save the completed
-                            $newcompletedid = insert_record('feedback_completed', $completed);
+                            $newcompletedid = $DB->insert_record('feedback_completed', $completed);
                             
                             //the newcompletedid have to be changed at every values
-                            $tochangevals = get_records('feedback_value', 'tmp_completed', $oldcompletedid);
+                            $tochangevals = $DB->get_records('feedback_value', array('tmp_completed'=>$oldcompletedid));
                             if($tochangevals) {
                                 foreach($tochangevals as $tmpVal) {
                                     $tmpVal->completed = $newcompletedid;
                                     $tmpVal->tmp_completed = 0;
-                                    update_record('feedback_value', $tmpVal);
+                                    $DB->update_record('feedback_value', $tmpVal);
                                 }
                             }
                         
                             //the newcompletedid have to be changed at every tracking
-                            $tochangetracks = get_records('feedback_tracking', 'completed', $oldcompletedid);
+                            $tochangetracks = $DB->get_records('feedback_tracking', array('completed'=>$oldcompletedid));
                             if($tochangetracks) {
                                 foreach($tochangetracks as $tmpTrack) {
                                     $tmpTrack->completed = $newcompletedid;
                                     $tmpTrack->tmp_completed = 0;
-                                    update_record('feedback_tracking', $tmpTrack);
+                                    $DB->update_record('feedback_tracking', $tmpTrack);
                                 }
                             }
                         }

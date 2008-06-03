@@ -18,8 +18,7 @@
 
     //This function executes all the restore procedure about this mod
     function resource_restore_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -79,11 +78,11 @@
             }
  
             //The structure is equal to the db, so insert the resource
-            $newid = insert_record ("resource",$resource);
+            $newid = $DB->insert_record ("resource",$resource);
 
             //Do some output     
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","resource")." \"".format_string(stripslashes($resource->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","resource")." \"".format_string($resource->name,true)."\"</li>";
             }
             backup_flush(300);
 

@@ -546,6 +546,7 @@ class embedded_cloze_qtype extends default_questiontype {
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
+        global $DB;
 
         $status = true;
 
@@ -585,7 +586,7 @@ class embedded_cloze_qtype extends default_questiontype {
             //We have the answers field recoded to its new ids
             $multianswer->sequence = $sequence_field;
             //The structure is equal to the db, so insert the question_multianswer
-            $newid = insert_record("question_multianswer", $multianswer);
+            $newid = $DB->insert_record("question_multianswer", $multianswer);
 
             //Save ids in backup_ids
             if ($newid) {
@@ -609,6 +610,7 @@ class embedded_cloze_qtype extends default_questiontype {
     }
 
     function restore_map($old_question_id,$new_question_id,$info,$restore) {
+        global $DB;
 
         $status = true;
 
@@ -634,8 +636,8 @@ class embedded_cloze_qtype extends default_questiontype {
             //mappings in backup_ids to use them later where restoring states (user level).
 
             //Get the multianswer from DB (by question and positionkey)
-            $db_multianswer = get_record ("question_multianswer","question",$new_question_id,
-                                                      "positionkey",$multianswer->positionkey);
+            $db_multianswer = $DB->get_record ("question_multianswer",array("question"=>$new_question_id,
+                                                      "positionkey"=>$multianswer->positionkey));
             //Do some output
             if (($i+1) % 50 == 0) {
                 if (!defined('RESTORE_SILENTLY')) {

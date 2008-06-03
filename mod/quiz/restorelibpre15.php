@@ -97,8 +97,7 @@
     //STEP 1. Restore categories/questions and associated structures
     //    (course independent)
     function quiz_restore_pre15_question_categories($category,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -127,7 +126,7 @@
                 if (!$quiz_cat->stamp) {
                     $quiz_cat->stamp = make_unique_id_code();   
                 }
-                $newid = insert_record ("question_categories",$quiz_cat);
+                $newid = $DB->insert_record ("question_categories",$quiz_cat);
             }
 
             //Do some output
@@ -163,8 +162,7 @@
     }
 
     function quiz_restore_pre15_questions ($old_category_id,$new_category_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -223,17 +221,17 @@
 
             //Check if the question exists
             //by category and stamp
-            $question_exists = get_record ("question","category",$question->category,
-                                                            "stamp",$question->stamp);
+            $question_exists = $DB->get_record ("question", array("category"=>$question->category,
+                                                            "stamp"=>$question->stamp));
             //If the stamp doesn't exists, check if question exists
             //by category, name and questiontext and calculate stamp
             //Mantains pre Beta 1.1 compatibility !!
             if (!$question->stamp) {
                 $question->stamp = make_unique_id_code();
                 $question->version = 1;
-                $question_exists = get_record ("question","category",$question->category,
-                                                                "name",$question->name,
-                                                                "questiontext",$question->questiontext);
+                $question_exists = $DB->get_record ("question", array("category"=>$question->category,
+                                                                "name"=>$question->name,
+                                                                "questiontext"=>$question->questiontext));
             }
 
             //If the question exists, only record its id
@@ -243,10 +241,10 @@
             //Else, create a new question
             } else {
                 //The structure is equal to the db, so insert the question
-                $newid = insert_record ("question",$question);
+                $newid = $DB->insert_record ("question",$question);
                 //If it is a random question, parent = id
                 if ($newid && $question->qtype == RANDOM) {
-                    set_field ('question', 'parent', $newid, 'id', $newid);
+                    $DB->set_field ('question', 'parent', $newid, array('id'=>$newid));
                 }
                 $creatingnewquestion = true;
             }
@@ -328,8 +326,7 @@
     }
 
     function quiz_restore_pre15_answers ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -354,7 +351,7 @@
                 $answer->feedback = backup_todb($ans_info['#']['FEEDBACK']['0']['#']);
 
                 //The structure is equal to the db, so insert the question_answers
-                $newid = insert_record ("question_answers",$answer);
+                $newid = $DB->insert_record ("question_answers",$answer);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
@@ -381,8 +378,7 @@
     }
 
     function quiz_restore_pre15_map_answers ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -415,9 +411,9 @@
             //mappings in backup_ids to use them later where restoring responses (user level).
 
             //Get the answer from DB (by question, answer and fraction)
-            $db_answer = get_record ("question_answers","question",$new_question_id,
-                                                    "answer",$answer->answer,
-                                                    "fraction",$answer->fraction);
+            $db_answer = $DB->get_record ("question_answers", array("question"=>$new_question_id,
+                                                    "answer"=>$answer->answer,
+                                                    "fraction"=>$answer->fraction));
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -443,8 +439,7 @@
     }
 
     function quiz_restore_pre15_shortanswer ($old_question_id,$new_question_id,$info,$restore,$restrictto = '') {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -488,7 +483,7 @@
             //The structure is equal to the db, so insert the question_shortanswer
             //Only if there aren't restrictions or there are restriction concordance
             if (empty($restrictto) || (!empty($restrictto) && $shortanswer->answers == $restrictto)) {
-                $newid = insert_record ("question_shortanswer",$shortanswer);
+                $newid = $DB->insert_record ("question_shortanswer",$shortanswer);
             } 
 
             //Do some output
@@ -511,8 +506,7 @@
     }
 
     function quiz_restore_pre15_truefalse ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -544,7 +538,7 @@
             }
 
             //The structure is equal to the db, so insert the question_truefalse
-            $newid = insert_record ("question_truefalse",$truefalse);
+            $newid = $DB->insert_record ("question_truefalse",$truefalse);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -566,8 +560,7 @@
     }
 
     function quiz_restore_pre15_multichoice ($old_question_id,$new_question_id,$info,$restore, $restrictto = '') {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -612,7 +605,7 @@
             //The structure is equal to the db, so insert the question_shortanswer
             //Only if there aren't restrictions or there are restriction concordance
             if (empty($restrictto) || (!empty($restrictto) && $multichoice->answers == $restrictto)) {
-                $newid = insert_record ("question_multichoice",$multichoice);
+                $newid = $DB->insert_record ("question_multichoice",$multichoice);
             }
 
             //Do some output
@@ -635,8 +628,7 @@
     }
 
     function quiz_restore_pre15_match ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -663,7 +655,7 @@
             $match_sub->answertext = backup_todb($mat_info['#']['ANSWERTEXT']['0']['#']);
 
             //The structure is equal to the db, so insert the question_match_sub
-            $newid = insert_record ("question_match_sub",$match_sub);
+            $newid = $DB->insert_record ("question_match_sub",$match_sub);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -697,7 +689,7 @@
         $match->subquestions = $subquestions_field;
 
         //The structure is equal to the db, so insert the question_match_sub
-        $newid = insert_record ("question_match",$match);
+        $newid = $DB->insert_record ("question_match",$match);
 
         if (!$newid) {
             $status = false;
@@ -707,8 +699,7 @@
     }
 
     function quiz_restore_pre15_map_match ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -740,9 +731,9 @@
             //mappings in backup_ids to use them later where restoring responses (user level).
 
             //Get the match_sub from DB (by question, questiontext and answertext)
-            $db_match_sub = get_record ("question_match_sub","question",$new_question_id,
-                                                      "questiontext",$match_sub->questiontext,
-                                                      "answertext",$match_sub->answertext);
+            $db_match_sub = $DB->get_record ("question_match_sub", array("question"=>$new_question_id,
+                                                      "questiontext"=>$match_sub->questiontext,
+                                                      "answertext"=>$match_sub->answertext));
             //Do some output
             if (($i+1) % 50 == 0) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -768,8 +759,7 @@
     }
 
     function quiz_restore_pre15_randomsamatch ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -788,7 +778,7 @@
             $randomsamatch->choose = backup_todb($ran_info['#']['CHOOSE']['0']['#']);
 
             //The structure is equal to the db, so insert the question_randomsamatch
-            $newid = insert_record ("question_randomsamatch",$randomsamatch);
+            $newid = $DB->insert_record ("question_randomsamatch",$randomsamatch);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -810,8 +800,7 @@
     }
 
     function quiz_restore_pre15_numerical ($old_question_id,$new_question_id,$info,$restore, $restrictto = '') {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -847,7 +836,7 @@
             //The structure is equal to the db, so insert the question_numerical
             //Only if there aren't restrictions or there are restriction concordance
             if (empty($restrictto) || (!empty($restrictto) && in_array($numerical->answer,explode(",",$restrictto)))) {
-                $newid = insert_record ("question_numerical",$numerical);
+                $newid = $DB->insert_record ("question_numerical",$numerical);
             }
 
             //Do some output
@@ -875,8 +864,7 @@
     }
 
     function quiz_restore_pre15_calculated ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -910,7 +898,7 @@
             }
 
             //The structure is equal to the db, so insert the question_calculated
-            $newid = insert_record ("question_calculated",$calculated);
+            $newid = $DB->insert_record ("question_calculated",$calculated);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -945,7 +933,7 @@
         $status = true;
 
         //We need some question fields here so we get the full record from DB
-        $parentquestion = get_record('question','id',$new_question_id);
+        $parentquestion = $DB->get_record('question', array('id'=>$new_question_id));
 
         //We need to store all the positions with their created questions
         //to be able to calculate the sequence field
@@ -1002,7 +990,7 @@
             $question->stamp              = make_unique_id_code();
 
             //Save the new question to DB
-            $newid = insert_record('question', $question);
+            $newid = $DB->insert_record('question', $question);
 
             if ($newid) {
                 $createdquestions[$multianswer->positionkey] = $newid;
@@ -1050,7 +1038,7 @@
             $multianswerdb = new object;
             $multianswerdb->question = $parentquestion->id;
             $multianswerdb->sequence = implode(",",$createdquestions);
-            $mid = insert_record('question_multianswer', $multianswerdb);
+            $mid = $DB->insert_record('question_multianswer', $multianswerdb);
   
             if (!$mid) {
                 $status = false;
@@ -1061,8 +1049,7 @@
     }
 
     function quiz_restore_pre15_numerical_units ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1082,7 +1069,7 @@
             $numerical_unit->unit = backup_todb($nu_info['#']['UNIT']['0']['#']);
 
             //The structure is equal to the db, so insert the question_numerical_units
-            $newid = insert_record ("question_numerical_units",$numerical_unit);
+            $newid = $DB->insert_record ("question_numerical_units",$numerical_unit);
 
             if (!$newid) {
                 $status = false;
@@ -1093,8 +1080,7 @@
     }
 
     function quiz_restore_pre15_dataset_definitions ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1132,11 +1118,9 @@
             } else {
                 //The category isn't 0, so it's a category question dataset_definition, we have to see if it exists
                 //Look for a definition with the same category, name and type
-                if ($definitionrec = get_record_sql("SELECT d.*
-                                                     FROM {$CFG->prefix}question_dataset_definitions d
-                                                     WHERE d.category = '$dataset_definition->category' AND
-                                                           d.name = '$dataset_definition->name' AND
-                                                           d.type = '$dataset_definition->type'")) {
+                if ($definitionrec = $DB->get_records('question_dataset_definitions', array('category'=>$dataset_definition->category,
+                                                           'name'=>$dataset_definition->name,
+                                                           'type'=>$dataset_definition->type))) {
                     //Such dataset_definition exist. Now we must check if it has enough itemcount
                     if ($definitionrec->itemcount < $dataset_definition->itemcount) {
                         //We haven't enough itemcount, so we have to create the definition as an individual question one.
@@ -1156,7 +1140,7 @@
             //If we've to create the definition, do it
             if ($create_definition) {
                 //The structure is equal to the db, so insert the question_dataset_definitions
-                $newid = insert_record ("question_dataset_definitions",$dataset_definition);
+                $newid = $DB->insert_record ("question_dataset_definitions",$dataset_definition);
                 if ($newid) {
                     //Restore question_dataset_items
                     $status = quiz_restore_pre15_dataset_items($newid,$dd_info,$restore);
@@ -1168,7 +1152,7 @@
             if ($newid) {
                 $question_dataset->question = $new_question_id;
                 $question_dataset->datasetdefinition = $newid;
-                $newid = insert_record ("question_datasets",$question_dataset);
+                $newid = $DB->insert_record ("question_datasets",$question_dataset);
             }
 
             if (!$newid) {
@@ -1180,8 +1164,7 @@
     }
 
     function quiz_restore_pre15_dataset_items ($definitionid,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1201,7 +1184,7 @@
             $dataset_item->value = backup_todb($di_info['#']['VALUE']['0']['#']);
 
             //The structure is equal to the db, so insert the question_dataset_items
-            $newid = insert_record ("question_dataset_items",$dataset_item);
+            $newid = $DB-insert_record ("question_dataset_items",$dataset_item);
 
             if (!$newid) {
                 $status = false;
@@ -1214,8 +1197,7 @@
     //STEP 2. Restore quizzes and associated structures
     //    (course dependent)
     function quiz_restore_pre15_mods($mod,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1292,11 +1274,11 @@
             $quiz->review = $review;
 
             //The structure is equal to the db, so insert the quiz
-            $newid = insert_record ("quiz",$quiz);
+            $newid = $DB->insert_record ("quiz",$quiz);
 
             //Do some output
             if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","quiz")." \"".format_string(stripslashes($quiz->name),true)."\"</li>";
+                echo "<li>".get_string("modulename","quiz")." \"".format_string($quiz->name,true)."\"</li>";
             }
             backup_flush(300);
 
@@ -1329,8 +1311,7 @@
 
     //This function restores the quiz_question_instances (old quiz_question_grades)
     function quiz_question_instances_restore_pre15_mods($quiz_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1359,7 +1340,7 @@
             }
 
             //The structure is equal to the db, so insert the quiz_question_grades
-            $newid = insert_record ("quiz_question_instances",$grade);
+            $newid = $DB->insert_record ("quiz_question_instances",$grade);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -1386,8 +1367,7 @@
 
     //This function restores the quiz_question_versions
     function quiz_question_versions_restore_pre15_mods($quiz_id,$info,$restore) {
-
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         $status = true;
 
@@ -1432,7 +1412,7 @@
             }
 
             //The structure is equal to the db, so insert the quiz_question_versions
-            $newid = insert_record ("quiz_question_versions",$version);
+            $newid = $DB->insert_record ("quiz_question_versions",$version);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -1459,8 +1439,7 @@
 
     //This function restores the quiz_attempts
     function quiz_attempts_restore_pre15_mods($quiz_id,$info,$restore,$quizquestions) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1506,7 +1485,7 @@
             $attempt->uniqueid = question_new_attempt_uniqueid();
 
             //The structure is equal to the db, so insert the quiz_attempts
-            $newid = insert_record ("quiz_attempts",$attempt);
+            $newid = $DB->insert_record ("quiz_attempts",$attempt);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -1535,8 +1514,7 @@
 
     //This function restores the question_states (old quiz_responses)
     function question_states_restore_pre15_mods($attempt_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1577,7 +1555,7 @@
             //We have to recode the answer field
             //It depends of the question type !!
             //We get the question first
-            $question = get_record("question","id",$response->question);
+            $question = $DB->get_record("question", array("id"=>$response->question));
             //It exists
             if ($question) {
                 //Depending of the qtype, we make different recodes
@@ -1692,7 +1670,7 @@
                     case 9:    //MULTIANSWER QTYPE
                         //The answer is a comma separated list of hypen separated multianswer ids and answers. We must recode them.
                         //We need to have the sequence of questions here to be able to detect qtypes
-                        $multianswerdb = get_record('question_multianswer','question',$response->question);
+                        $multianswerdb = $DB->get_record('question_multianswer',array('question'=>$response->question));
                         //Make an array of sequence to easy access
                         $sequencearr = explode(",",$multianswerdb->sequence);
                         $answer_field = "";
@@ -1713,7 +1691,7 @@
                                 continue;
                             }
                             //Calculate question type
-                            $questiondb = get_record('question','id',$sequencearr[$counter-1]);
+                            $questiondb = $DB->get_record('question', array('id'=>$sequencearr[$counter-1]));
                             $questiontype = $questiondb->qtype;
                             //Now, depending of the answertype field in question_multianswer
                             //we do diferent things
@@ -1756,7 +1734,7 @@
             }
 
             //The structure is equal to the db, so insert the question_states
-            $newid = insert_record ("question_states",$response);
+            $newid = $DB->insert_record ("question_states",$response);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -1783,8 +1761,7 @@
 
     //This function restores the quiz_grades
     function quiz_grades_restore_pre15_mods($quiz_id,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1815,7 +1792,7 @@
             }
 
             //The structure is equal to the db, so insert the quiz_grades
-            $newid = insert_record ("quiz_grades",$grade);
+            $newid = $DB->insert_record ("quiz_grades",$grade);
 
             //Do some output
             if (($i+1) % 10 == 0) {
@@ -1843,19 +1820,18 @@
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module
     function quiz_restore_pre15_wiki2markdown ($restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Convert question->questiontext
-        if ($records = get_records_sql ("SELECT q.id, q.questiontext, q.questiontextformat
-                                         FROM {$CFG->prefix}question q,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'question' AND
-                                               q.id = b.new_id AND
-                                               q.questiontextformat = ".FORMAT_WIKI)) {
+        if ($records = $DB->get_records_sql ("SELECT q.id, q.questiontext, q.questiontextformat
+                                                FROM {question} q,
+                                                     {backup_ids} b
+                                               WHERE b.backup_code = ? AND
+                                                     b.table_name = 'question' AND
+                                                     q.id = b.new_id AND
+                                                     q.questiontextformat = ".FORMAT_WIKI, array($restore->backup_unique_code))) {
             foreach ($records as $record) {
                 //Rebuild wiki links
                 $record->questiontext = restore_decode_wiki_content($record->questiontext, $restore);
@@ -1863,7 +1839,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->questiontext = $wtm->convert($record->questiontext, $restore->course_id);
                 $record->questiontextformat = FORMAT_MARKDOWN;
-                $status = update_record('question', addslashes_object($record));
+                $status = $DB->update_record('question', addslashes_object($record));
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {

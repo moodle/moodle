@@ -279,6 +279,7 @@ class question_truefalse_qtype extends default_questiontype {
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
+        global $DB;
 
         $status = true;
 
@@ -312,7 +313,7 @@ class question_truefalse_qtype extends default_questiontype {
             }
 
             //The structure is equal to the db, so insert the question_truefalse
-            $newid = insert_record ("question_truefalse", $truefalse);
+            $newid = $DB->insert_record ("question_truefalse", $truefalse);
 
             //Do some output
             if (($i+1) % 50 == 0) {

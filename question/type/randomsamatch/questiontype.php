@@ -300,6 +300,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
      * This is used in question/restorelib.php
      */
     function restore($old_question_id,$new_question_id,$info,$restore) {
+        global $DB;
 
         $status = true;
 
@@ -315,7 +316,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
             $randomsamatch->choose = backup_todb($ran_info['#']['CHOOSE']['0']['#']);
 
             //The structure is equal to the db, so insert the question_randomsamatch
-            $newid = insert_record ("question_randomsamatch",$randomsamatch);
+            $newid = $DB->insert_record ("question_randomsamatch",$randomsamatch);
 
             //Do some output
             if (($i+1) % 50 == 0) {

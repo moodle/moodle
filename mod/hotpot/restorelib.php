@@ -296,6 +296,8 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
     //    if the $record->$secondarykey value does not already exist in $table
 
     // maintain a cache of info on table columns
+    global $DB;
+
     static $table_columns = array();
     if (empty($table_columns[$table])) {
         global $CFG, $DB; 
@@ -387,7 +389,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
         // if there is a secondary key field  ...
         if ($secondary_key) {
             // check to see if a record with the same value already exists
-            $key_record = get_record($table, $secondary_key, $record->$secondary_key);
+            $key_record = $DB->get_record($table, array($secondary_key=>$record->$secondary_key));
             if ($key_record) {
                 // set new record id from already existing record
                 $record->id = $key_record->id;
@@ -395,7 +397,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
         }
         if (empty($record->id)) {
             // add the $record (and get new id)
-            $record->id = insert_record($table, $record);
+            $record->id = $DB->insert_record($table, $record);
         }
         // check $record was added (or found)
         if (is_numeric($record->id)) {
