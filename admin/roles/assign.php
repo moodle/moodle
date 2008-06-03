@@ -48,7 +48,7 @@
         }
 
     } else if (!empty($courseid)){ // we need this for user tabs in user context
-        if (!$course = $DB->get_record('course', array('id', $courseid))) {
+        if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
             print_error('invalidcourse', 'error');
         }
 
