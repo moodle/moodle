@@ -18,12 +18,12 @@
 
     //This function executes all the backup procedure about this mod
     function label_backup_mods($bf,$preferences) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true; 
 
         ////Iterate over label table
-        if ($labels = get_records ("label","course", $preferences->backup_course,"id")) {
+        if ($labels = $DB->get_records ("label","course", array($preferences->backup_course=>"id"))) {
             foreach ($labels as $label) {
                 if (backup_mod_selected($preferences,'label',$label->id)) {
                     $status = label_backup_one_mod($bf,$preferences,$label);
@@ -34,11 +34,10 @@
     }
    
     function label_backup_one_mod($bf,$preferences,$label) {
-
-        global $CFG;
+        global $CFG, $DB;
     
         if (is_numeric($label)) {
-            $label = get_record('label','id',$label);
+            $label = $DB->get_record('label', array('id'=>$label));
         }
     
         $status = true;
@@ -59,6 +58,8 @@
 
     ////Return an array of info (name,value)
     function label_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
+        global $DB;
+
         if (!empty($instances) && is_array($instances) && count($instances)) {
             $info = array();
             foreach ($instances as $id => $instance) {
@@ -69,7 +70,7 @@
         
          //First the course data
          $info[0][0] = get_string("modulenameplural","label");
-         $info[0][1] = count_records("label", "course", "$course");
+         $info[0][1] = $DB->count_records("label", array("course"=>$course));
          return $info;
     } 
 
