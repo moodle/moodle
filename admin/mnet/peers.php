@@ -176,10 +176,11 @@ if (($form = data_submitted()) && confirm_sesskey()) {
                                 WHERE 
                                     h.id <> ? AND  
                                     h.deleted = 0 AND  
-                                    h.applicationid=a.id');
+                                    h.applicationid=a.id',
+                        array($CFG->mnet_localhost_id));;
 
     if (empty($hosts)) $hosts = array();
-    $applications = $DB->get_records('mnet_application', array($CFG->mnet_localhost_id));
+    $applications = $DB->get_records('mnet_application');
     include('./peers.html');
 }
 ?>
