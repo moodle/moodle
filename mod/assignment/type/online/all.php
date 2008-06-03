@@ -24,6 +24,10 @@
 
     require_course_login($course);
 
+    // check for view capability at course level
+    $context = get_context_instance(CONTEXT_COURSE,$course->id);
+    require_capability('mod/assignment:view',$context);
+
     // various strings
     $str = new stdClass; 
     $str->assignments = get_string("modulenameplural", "assignment");
@@ -68,6 +72,12 @@
         if ($assignment->assignmenttype != 'online') {
             continue;
         } 
+
+        // check we are allowed to view this
+        $context = get_context_instance(CONTEXT_MODULE, $assignment->coursemodule);
+        if (!has_capability('mod/assignment:view',$context)) {
+            continue;
+        }
 
         // create instance of assignment class to get 
         // submitted assignments
