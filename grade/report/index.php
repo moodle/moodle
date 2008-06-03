@@ -27,7 +27,7 @@ require '../../config.php';
 $courseid = required_param('id', PARAM_INT);
 
 /// basic access checks
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 require_login($course);

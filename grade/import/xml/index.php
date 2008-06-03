@@ -49,7 +49,7 @@ if (!empty($CFG->gradepublishing)) {
 
 $mform = new grade_import_form();
 
-if ($data = $mform->get_data()) {
+if ($data = $mform->get_data(false)) {
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
     // to free up memory.

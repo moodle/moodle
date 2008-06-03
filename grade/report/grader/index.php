@@ -149,7 +149,7 @@ if (ajaxenabled() && $report->get_pref('enableajax')) {
 }
 
 /// processing posted grades & feedback here
-if ($data = data_submitted() and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {
+if ($data = data_submitted(false) and confirm_sesskey() and has_capability('moodle/grade:edit', $context)) {
     $warnings = $report->process_data($data);
 } else {
     $warnings = array();

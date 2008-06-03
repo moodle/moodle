@@ -27,16 +27,16 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_xml extends grade_export {
 
-    var $plugin = 'xml';
-    var $updatedgradesonly = false; // default to export ALL grades
-    
+    public $plugin = 'xml';
+    public $updatedgradesonly = false; // default to export ALL grades
+
     /**
      * To be implemented by child classes
      * @param boolean $feedback
      * @param boolean $publish Whether to output directly, or send as a file
      * @return string
      */
-    function print_grades($feedback = false) {
+    public function print_grades($feedback = false) {
         global $CFG;
         require_once($CFG->libdir.'/filelib.php');
 
@@ -75,12 +75,12 @@ class grade_export_xml extends grade_export {
                 $grade_item = $this->grade_items[$itemid];
                 $grade->grade_item =& $grade_item;
                 $gradestr = $this->format_grade($grade); // no formating for now
-                
+
                 // MDL-11669, skip exported grades or bad grades (if setting says so)
                 if ($export_tracking) {
                     $status = $geub->track($grade);
                     if ($this->updatedgradesonly && ($status == 'nochange' || $status == 'unknown')) {
-                        continue; 
+                        continue;
                     }
                 }
 

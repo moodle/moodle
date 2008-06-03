@@ -117,7 +117,7 @@ class graded_users_iterator {
                         FROM {user} u
                              INNER JOIN {role_assignments} ra ON u.id = ra.userid
                              $groupsql
-                       WHERE ra.roleid $gradebookroles_sql;
+                       WHERE ra.roleid $gradebookroles_sql
                              AND ra.contextid $relatedcontexts
                              $groupwheresql
                     ORDER BY $order";
@@ -157,12 +157,15 @@ class graded_users_iterator {
             return false; // no users present
         }
 
-        if (!$user = $this->users_rs->next()) {
+        if (!$this->users_rs->valid()) {
             if ($current = $this->_pop()) {
                 // this is not good - user or grades updated between the two reads above :-(
             }
 
             return false; // no more users
+        } else {
+            $user = $this->users_rs->current();
+            $this->users_rs->next();
         }
 
         // find grades of this user
@@ -170,6 +173,10 @@ class graded_users_iterator {
         while (true) {
             if (!$current = $this->_pop()) {
                 break; // no more grades
+            }
+
+            if (empty($current->userid)) {
+                break;
             }
 
             if ($current->userid != $user->id) {
@@ -241,11 +248,11 @@ class graded_users_iterator {
                 return NULL; // no grades present
             }
 
-            if (!$grade = $this->grades_rs->next()) {
+            if ($this->grades_rs->next()) {
                 return NULL; // no more grades
             }
 
-            return $grade;
+            return $this->grades_rs->current();
         } else {
             return array_pop($this->gradestack);
         }
@@ -278,6 +285,8 @@ function print_graded_users_selector($course, $actionpage, $userid=null, $return
     if ($userid !== 0) {
         $menu[0] = get_string('allusers', 'grades');
     }
+
+    $nextuser = $gui->next_user();
 
     while ($userdata = $gui->next_user()) {
         $user = $userdata->user;

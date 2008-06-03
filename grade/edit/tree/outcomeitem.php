@@ -31,7 +31,7 @@ require_once 'outcomeitem_form.php';
 $courseid = required_param('courseid', PARAM_INT);
 $id       = optional_param('id', 0, PARAM_INT);
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 
@@ -139,9 +139,10 @@ if ($data = $mform->get_data(false)) {
         $grade_item->itemnumber   = 0;
 
     } else {
-        $module = get_record_sql("SELECT cm.*, m.name as modname
+        $params = array($data->cmid);
+        $module = $DB->get_record_sql("SELECT cm.*, m.name as modname
                                     FROM {modules} m, {course_modules} cm
-                                   WHERE cm.id = {$data->cmid} AND cm.module = m.id ");
+                                   WHERE cm.id = ? AND cm.module = m.id ", $params);
         $grade_item->itemtype     = 'mod';
         $grade_item->itemmodule   = $module->modname;
         $grade_item->iteminstance = $module->instance;

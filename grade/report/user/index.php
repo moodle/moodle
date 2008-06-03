@@ -31,7 +31,7 @@ $courseid = required_param('id');
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
 
 /// basic access checks
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 require_login($course);
@@ -115,18 +115,18 @@ if ($access) {
             print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
             if ($report->fill_table()) {
                 echo $report->print_table(true);
-            } 
+            }
         }
-    } else { //Students will see just their own report 
+    } else { //Students will see just their own report
 
-    // Create a report instance
-    $report = new grade_report_user($courseid, $gpr, $context, $userid);
+        // Create a report instance
+        $report = new grade_report_user($courseid, $gpr, $context, $userid);
 
-    // print the page
-    print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
+        // print the page
+        print_heading(get_string('modulename', 'gradereport_user'). ' - '.fullname($report->user));
 
-    if ($report->fill_table()) {
-        echo $report->print_table(true);
+        if ($report->fill_table()) {
+            echo $report->print_table(true);
         }
     }
 

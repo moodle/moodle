@@ -56,7 +56,7 @@ $mform->set_data($settings);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
-} else if ($data = $mform->get_data()) {
+} else if ($data = $mform->get_data(false)) {
     $data = (array)$data;
     $general = array('displaytype', 'decimalpoints', 'aggregationposition');
     foreach ($data as $key=>$value) {

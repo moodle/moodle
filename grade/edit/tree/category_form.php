@@ -234,7 +234,7 @@ class edit_category_form extends moodleform {
                         $mform->setHelpButton('aggregationcoef', array('aggregationcoef', get_string('aggregationcoef', 'grades'), 'grade'), true);
                     }
                 }
-                
+
             }
 
             if ($grade_item->is_calculated()) {
@@ -258,7 +258,7 @@ class edit_category_form extends moodleform {
                     $mform->removeElement('aggregatesubcats');
                 }
             }
-            
+
             // If it is a course category, remove the "required" rule from the "fullname" element
             if ($grade_category->is_course_category()) {
                 unset($mform->_rules['fullname']);
@@ -268,8 +268,8 @@ class edit_category_form extends moodleform {
 
             // If it is a course category and its fullname is ?, show an empty field
             if ($grade_category->is_course_category() && $mform->getElementValue('fullname') == '?') {
-                $mform->setDefault('fullname', ''); 
-            } 
+                $mform->setDefault('fullname', '');
+            }
         }
 
         // no parent header for course category
@@ -277,7 +277,7 @@ class edit_category_form extends moodleform {
             $mform->removeElement('headerparent');
         }
 
-    } 
+    }
 }
 
 ?>

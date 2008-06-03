@@ -41,18 +41,18 @@ class grade_report_overview extends grade_report {
      * The user.
      * @var object $user
      */
-    var $user;
+    public $user;
 
     /**
      * A flexitable to hold the data.
      * @var object $table
      */
-    var $table;
+    public $table;
 
     /**
      * show student ranks
      */
-    var $showrank;
+    public $showrank;
 
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
@@ -60,14 +60,14 @@ class grade_report_overview extends grade_report {
      * @param object $gpr grade plugin return tracking object
      * @param string $context
      */
-    function grade_report_overview($userid, $gpr, $context) {
-        global $CFG, $COURSE;
-        parent::grade_report($COURSE->id, $gpr, $context);
+    public function __construct($userid, $gpr, $context) {
+        global $CFG, $COURSE, $DB;
+        parent::__construct($COURSE->id, $gpr, $context);
 
         $this->showrank = grade_get_setting($this->courseid, 'report_overview_showrank', !empty($CFG->grade_report_overview_showrank));
 
         // get the user (for full name)
-        $this->user = get_record('user', 'id', $userid);
+        $this->user = $DB->get_record('user', array('id' => $userid));
 
         // base url for sorting by first/last name
         $this->baseurl = $CFG->wwwroot.'/grade/overview/index.php?id='.$userid;
@@ -79,7 +79,7 @@ class grade_report_overview extends grade_report {
     /**
      * Prepares the headers and attributes of the flexitable.
      */
-    function setup_table() {
+    public function setup_table() {
         /*
          * Table has 3 columns
          *| course  | final grade | rank (optional) |
@@ -109,7 +109,7 @@ class grade_report_overview extends grade_report {
         $this->table->setup();
     }
 
-    function fill_table() {
+    public function fill_table() {
         global $CFG;
 
         // MDL-11679, only show 'mycourses' instead of all courses
@@ -140,11 +140,12 @@ class grade_report_overview extends grade_report {
 
                 } else if (!is_null($finalgrade)) {
                     /// find the number of users with a higher grade
+                    $params = array($finalgrade, $grade_item->id);
                     $sql = "SELECT COUNT(DISTINCT(userid))
                               FROM {grade_grades}
-                             WHERE finalgrade IS NOT NULL AND finalgrade > $finalgrade
-                                   AND itemid = {$grade_item->id}";
-                    $rank = count_records_sql($sql) + 1;
+                             WHERE finalgrade IS NOT NULL AND finalgrade > ?
+                                   AND itemid = ?";
+                    $rank = $DB->count_records_sql($sql, $params) + 1;
 
                     $data[] = "$rank/$numusers";
 
@@ -168,7 +169,7 @@ class grade_report_overview extends grade_report {
      * @param bool $return Whether or not to return the data instead of printing it directly.
      * @return string
      */
-    function print_table($return=false) {
+    public function print_table($return=false) {
         ob_start();
         $this->table->print_html();
         $html = ob_get_clean();
@@ -184,7 +185,10 @@ class grade_report_overview extends grade_report {
      * @var array $data
      * @return bool Success or Failure (array of errors).
      */
-    function process_data($data) {
+    public function process_data($data) {
+    }
+
+    public function process_action($target, $action) {
     }
 }
 

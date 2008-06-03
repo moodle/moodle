@@ -33,7 +33,7 @@ $delete   = optional_param('delete', 0, PARAM_BOOL);
 $confirm  = optional_param('confirm', 0, PARAM_BOOL);
 
 if ($id) {
-    if (!$key = get_record('user_private_key', 'id', $id)) {
+    if (!$key = $DB->get_record('user_private_key', array('id' => $id))) {
         print_error('invalidgroupid');
     }
     if (empty($courseid)) {
@@ -43,12 +43,12 @@ if ($id) {
         print_error('invalidcourseid');
     }
 
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
         print_error('invalidcourseid');
     }
 
 } else {
-    if (!$course = get_record('course', 'id', $courseid)) {
+    if (!$course = $DB->get_record('course', array('id' => $courseid))) {
         print_error('invalidcourseid');
     }
     $key = new object();
@@ -77,7 +77,7 @@ if ($id and $delete) {
         die;
 
     } else if (confirm_sesskey()){
-        delete_records('user_private_key', 'id', $id);
+        $DB->delete_records('user_private_key', array('id' => $id));
         redirect('keymanager.php?id='.$course->id);
     }
 }
@@ -89,14 +89,14 @@ $editform->set_data($key);
 if ($editform->is_cancelled()) {
     redirect($returnurl);
 
-} elseif ($data = $editform->get_data()) {
+} elseif ($data = $editform->get_data(false)) {
 
     if ($data->id) {
         $record = new object();
         $record->id            = $data->id;
         $record->iprestriction = $data->iprestriction;
         $record->validuntil    = $data->validuntil;
-        update_record('user_private_key', $record);
+        $DB->update_record('user_private_key', $record);
     } else {
         create_user_key('grade/import', $USER->id, $course->id, $data->iprestriction, $data->validuntil);
     }

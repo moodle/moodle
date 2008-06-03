@@ -33,7 +33,7 @@ $id        = required_param('id', PARAM_INT);
 $section   = optional_param('section', 'calculation', PARAM_ALPHA);
 $idnumbers = optional_param('idnumbers', null, PARAM_RAW);
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 
@@ -51,7 +51,7 @@ if (!$grade_item = grade_item::fetch(array('id'=>$id, 'courseid'=>$course->id)))
 
 // activity items and items without grade can not have calculation
 if ($grade_item->is_external_item() or ($grade_item->gradetype != GRADE_TYPE_VALUE and $grade_item->gradetype != GRADE_TYPE_SCALE)) {
-    redirect($returnurl, get_string('errornocalculationallowed', 'grades')); 
+    redirect($returnurl, get_string('errornocalculationallowed', 'grades'));
 }
 
 $mform = new edit_calculation_form(null, array('gpr'=>$gpr, 'itemid' => $grade_item->id));

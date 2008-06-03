@@ -33,7 +33,7 @@ $id       = optional_param('id', 0, PARAM_INT);
 $itemid   = optional_param('itemid', 0, PARAM_INT);
 $userid   = optional_param('userid', 0, PARAM_INT);
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 
@@ -49,7 +49,7 @@ $returnurl = $gpr->get_return_url($CFG->wwwroot.'/grade/report.php?id='.$course-
 
 // security checks!
 if (!empty($id)) {
-    if (!$grade = get_record('grade_grades', 'id', $id)) {
+    if (!$grade = $DB->get_record('grade_grades', array('id' => $id))) {
         print_error('invalidgroupid');
     }
 
@@ -92,7 +92,7 @@ if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS and !has_capability('
 
 $mform = new edit_grade_form(null, array('grade_item'=>$grade_item, 'gpr'=>$gpr));
 
-if ($grade = get_record('grade_grades', 'itemid', $grade_item->id, 'userid', $userid)) {
+if ($grade = $DB->get_record('grade_grades', array('itemid' => $grade_item->id, 'userid' => $userid))) {
 
     // always clean existing feedback - grading should not have XSS risk
     if (can_use_html_editor()) {

@@ -31,7 +31,7 @@ $courseid = optional_param('id', $COURSE->id, PARAM_INT);
 $userid   = optional_param('userid', $USER->id, PARAM_INT);
 
 /// basic access checks
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 require_login($course);

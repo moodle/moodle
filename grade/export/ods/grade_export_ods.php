@@ -26,7 +26,7 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_ods extends grade_export {
 
-    var $plugin = 'ods';
+    public $plugin = 'ods';
 
     /**
      * To be implemented by child classes

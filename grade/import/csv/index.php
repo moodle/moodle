@@ -89,7 +89,7 @@ if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
 $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
 
 // if import form is submitted
-if ($formdata = $mform->get_data()) {
+if ($formdata = $mform->get_data(false)) {
 
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
@@ -151,10 +151,10 @@ if ($formdata = $mform->get_data()) {
     $mform2->set_data(array('importcode'=>$importcode, 'id'=>$id));
     $mform2->display();
 
-//} else if (($formdata = data_submitted()) && !empty($formdata->map)) {
+//} else if (($formdata = data_submitted(false)) && !empty($formdata->map)) {
 
 // else if grade import mapping form is submitted
-} else if ($formdata = $mform2->get_data()) {
+} else if ($formdata = $mform2->get_data(false)) {
 
     $importcode = clean_param($formdata->importcode, PARAM_FILE);
     $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;
@@ -255,7 +255,7 @@ if ($formdata = $mform->get_data()) {
 
                 switch ($t0) {
                     case 'userid': //
-                        if (!$user = get_record('user','id', addslashes($value))) {
+                        if (!$user = $DB->get_record('user', array('id' => $value))) {
                             // user not found, abort whold import
                             import_cleanup($importcode);
                             notify("user mapping error, could not find user with id \"$value\"");
@@ -265,7 +265,7 @@ if ($formdata = $mform->get_data()) {
                         $studentid = $value;
                     break;
                     case 'useridnumber':
-                        if (!$user = get_record('user', 'idnumber', addslashes($value))) {
+                        if (!$user = $DB->get_record('user', array('idnumber' => $value))) {
                              // user not found, abort whold import
                             import_cleanup($importcode);
                             notify("user mapping error, could not find user with idnumber \"$value\"");
@@ -275,7 +275,7 @@ if ($formdata = $mform->get_data()) {
                         $studentid = $user->id;
                     break;
                     case 'useremail':
-                        if (!$user = get_record('user', 'email', addslashes($value))) {
+                        if (!$user = $DB->get_record('user', array('email' => $value))) {
                             import_cleanup($importcode);
                             notify("user mapping error, could not find user with email address \"$value\"");
                             $status = false;
@@ -284,7 +284,7 @@ if ($formdata = $mform->get_data()) {
                         $studentid = $user->id;
                     break;
                     case 'username':
-                        if (!$user = get_record('user', 'username', addslashes($value))) {
+                        if (!$user = $DB->get_record('user', array('username' => $value))) {
                             import_cleanup($importcode);
                             notify("user mapping error, could not find user with username \"$value\"");
                             $status = false;
@@ -303,7 +303,7 @@ if ($formdata = $mform->get_data()) {
                             $newgradeitem->importer   = $USER->id;
 
                             // failed to insert into new grade item buffer
-                            if (!$newgradeitems[$key] = insert_record('grade_import_newitem', addslashes_recursive($newgradeitem))) {
+                            if (!$newgradeitems[$key] = $DB->insert_record('grade_import_newitem', $newgradeitem)) {
                                 $status = false;
                                 import_cleanup($importcode);
                                 notify(get_string('importfailed', 'grades'));
@@ -413,7 +413,7 @@ if ($formdata = $mform->get_data()) {
                     $newgrade->importcode = $importcode;
                     $newgrade->userid     = $studentid;
                     $newgrade->importer   = $USER->id;
-                    if (!insert_record('grade_import_values', addslashes_recursive($newgrade))) {
+                    if (!$DB->insert_record('grade_import_values', $newgrade)) {
                         // could not insert into temporary table
                         $status = false;
                         import_cleanup($importcode);
@@ -428,17 +428,17 @@ if ($formdata = $mform->get_data()) {
                 foreach ($newfeedbacks as $newfeedback) {
                     $sql = "SELECT *
                               FROM {grade_import_values}
-                             WHERE importcode=$importcode AND userid=$studentid AND itemid=$newfeedback->itemid AND importer={$USER->id}";
-                    if ($feedback = get_record_sql($sql)) {
+                             WHERE importcode=? AND userid=? AND itemid=? AND importer=?";
+                    if ($feedback = $DB->get_record_sql($sql, array($importcode, $studentid, $newfeedback->itemid, $USER->id))) {
                         $newfeedback->id = $feedback->id;
-                        update_record('grade_import_values', addslashes_recursive($newfeedback));
+                        $DB->update_record('grade_import_values', $newfeedback);
 
                     } else {
                         // the grade item for this is not updated
                         $newfeedback->importcode = $importcode;
                         $newfeedback->userid     = $studentid;
                         $newfeedback->importer   = $USER->id;
-                        insert_record('grade_import_values', addslashes_recursive($newfeedback));
+                        $DB->insert_record('grade_import_values', $newfeedback);
                     }
                 }
             }

@@ -29,7 +29,7 @@ require_once $CFG->dirroot.'/grade/lib.php';
 
 $courseid = required_param('id', PARAM_INT);                   // course id
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 
@@ -57,7 +57,7 @@ $outcomes = grade_outcome::fetch_all_available($courseid);
 
 // Get grade_items that use each outcome
 foreach ($outcomes as $outcomeid => $outcome) {
-    $report_info[$outcomeid]['items'] = get_records_select('grade_items', "outcomeid = $outcomeid AND courseid = $courseid");
+    $report_info[$outcomeid]['items'] = $DB->get_records_select('grade_items', "outcomeid = ? AND courseid = ?", array($outcomeid, $courseid));
     $report_info[$outcomeid]['outcome'] = $outcome;
 
     // Get average grades for each item
@@ -65,9 +65,9 @@ foreach ($outcomes as $outcomeid => $outcome) {
         foreach ($report_info[$outcomeid]['items'] as $itemid => $item) {
             $sql = "SELECT itemid, AVG(finalgrade) AS avg, COUNT(finalgrade) AS count
                       FROM {grade_grades}
-                     WHERE itemid = $itemid
+                     WHERE itemid = ?
                   GROUP BY itemid";
-            $info = get_records_sql($sql);
+            $info = $DB->get_records_sql($sql, array($itemid));
 
             if (!$info) {
                 unset($report_info[$outcomeid]['items'][$itemid]);

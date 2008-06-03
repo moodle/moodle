@@ -77,7 +77,7 @@ switch ($action) {
                 }
 
                 if ($errorstr) {
-                    $user = get_record('user', 'id', $userid, '', '', '', '', 'id, firstname, lastname');
+                    $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');
                     $gradestr = new object();
                     $gradestr->username = fullname($user);
                     $gradestr->itemname = $grade_item->get_name();
@@ -119,8 +119,8 @@ switch ($action) {
                 // Get row data
                 $sql = "SELECT gg.id, gi.id AS itemid, gi.scaleid AS scale, gg.userid AS userid, finalgrade, gg.overridden AS overridden "
                      . "FROM {grade_grades} gg, {grade_items} gi WHERE "
-                     . "gi.courseid = $courseid AND gg.itemid = gi.id AND gg.userid = $userid";
-                $records = get_records_sql($sql);
+                     . "gi.courseid = ? AND gg.itemid = gi.id AND gg.userid = ?";
+                $records = $DB->get_records_sql($sql, array($courseid, $userid));
                 $json_object->row = $records;
                 echo json_encode($json_object);
                 die();

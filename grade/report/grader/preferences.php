@@ -31,7 +31,7 @@ $courseid      = required_param('id', PARAM_INT);
 
 /// Make sure they can even access this course
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 
@@ -49,7 +49,7 @@ if ($mform->is_cancelled()){
 }
 
 // If data submitted, then process and store.
-if ($data = $mform->get_data()) {
+if ($data = $mform->get_data(false)) {
     foreach ($data as $preference => $value) {
         if (substr($preference, 0, 6) !== 'grade_') {
             continue;

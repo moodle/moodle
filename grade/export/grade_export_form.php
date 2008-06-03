@@ -27,7 +27,7 @@ require_once $CFG->libdir.'/formslib.php';
 
 class grade_export_form extends moodleform {
     function definition() {
-        global $CFG, $COURSE, $USER;
+        global $CFG, $COURSE, $USER, $DB;
 
         $mform =& $this->_form;
         if (isset($this->_customdata)) {  // hardcoding plugin names here is hacky
@@ -42,8 +42,8 @@ class grade_export_form extends moodleform {
         $mform->setDefault('export_feedback', 0);
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
-        $mform->addElement('select', 'previewrows', get_string('previewrows', 'grades'), $options); 
-        
+        $mform->addElement('select', 'previewrows', get_string('previewrows', 'grades'), $options);
+
         if (!empty($features['updategradesonly'])) {
             $mform->addElement('advcheckbox', 'updatedgradesonly', get_string('updatedgradesonly', 'grades'));
         }
@@ -53,7 +53,7 @@ class grade_export_form extends moodleform {
         $options = array(GRADE_DISPLAY_TYPE_REAL       => get_string('real', 'grades'),
                          GRADE_DISPLAY_TYPE_PERCENTAGE => get_string('percentage', 'grades'),
                          GRADE_DISPLAY_TYPE_LETTER     => get_string('letter', 'grades'));
-        
+
         /*
         foreach ($options as $key=>$option) {
             if ($key == $default_gradedisplaytype) {
@@ -62,9 +62,9 @@ class grade_export_form extends moodleform {
             }
         }
         */
-        $mform->addElement('select', 'display', get_string('gradeexportdisplaytype', 'grades'), $options);  
+        $mform->addElement('select', 'display', get_string('gradeexportdisplaytype', 'grades'), $options);
         $mform->setDefault('display', $CFG->grade_export_displaytype);
-        
+
         //$default_gradedecimals = $CFG->grade_export_decimalpoints;
         $options = array(0=>0, 1=>1, 2=>2, 3=>3, 4=>4, 5=>5);
         $mform->addElement('select', 'decimals', get_string('gradeexportdecimalpoints', 'grades'), $options);
@@ -87,7 +87,9 @@ class grade_export_form extends moodleform {
         if (!empty($CFG->gradepublishing) and !empty($features['publishing'])) {
             $mform->addElement('header', 'publishing', get_string('publishing', 'grades'));
             $options = array(get_string('nopublish', 'grades'), get_string('createnewkey', 'userkey'));
-            if ($keys = get_records_select('user_private_key', "script='grade/export' AND instance={$COURSE->id} AND userid={$USER->id}")) {
+            $keys = $DB->get_records_select('user_private_key', "script='grade/export' AND instance=? AND userid=?",
+                            array($COURSE->id, $USER->id));
+            if ($keys) {
                 foreach ($keys as $key) {
                     $options[$key->value] = $key->value; // TODO: add more details - ip restriction, valid until ??
                 }
@@ -110,7 +112,7 @@ class grade_export_form extends moodleform {
         }
 
         $mform->addElement('header', 'gradeitems', get_string('gradeitemsinc', 'grades'));
-        
+
         $switch = grade_get_setting($COURSE->id, 'aggregationposition', $CFG->grade_aggregationposition);
 
         // Grab the grade_seq for this course
@@ -128,7 +130,7 @@ class grade_export_form extends moodleform {
                     $needs_multiselect = true;
                 }
                 }
-            
+
             if ($needs_multiselect) {
                 $this->add_checkbox_controller(1, null, null, 1); // 1st argument is group name, 2nd is link text, 3rd is attributes and 4th is original value
             }

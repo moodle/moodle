@@ -30,10 +30,10 @@ require_once($CFG->libdir.'/gradelib.php');
  * @return int importcode
  */
 function get_new_importcode() {
-    global $USER;
+    global $USER, $DB;
 
     $importcode = time();
-    while (get_record('grade_import_values', 'importcode', $importcode, 'importer', $USER->id)) {
+    while ($DB->get_record('grade_import_values', array('importcode' => $importcode, 'importer' => $USER->id))) {
         $importcode--;
     }
 
@@ -51,16 +51,16 @@ function get_new_importcode() {
  * @return bool success
  */
 function grade_import_commit($courseid, $importcode, $importfeedback=true, $verbose=true) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     $commitstart = time(); // start time in case we need to roll back
     $newitemids = array(); // array to hold new grade_item ids from grade_import_newitem table, mapping array
 
     /// first select distinct new grade_items with this batch
-
-    if ($newitems = get_records_sql("SELECT *
-                                       FROM {grade_import_newitem}
-                                      WHERE importcode = $importcode AND importer={$USER->id}")) {
+    $params = array($importcode, $USER->id);
+    if ($newitems = $DB->get_records_sql("SELECT *
+                                           FROM {grade_import_newitem}
+                                          WHERE importcode = ? AND importer=?", $params)) {
 
         // instances of the new grade_items created, cached
         // in case grade_update fails, so that we can remove them
@@ -69,7 +69,7 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
         foreach ($newitems as $newitem) {
             // get all grades with this item
 
-            if ($grades = get_records('grade_import_values', 'newgradeitem', $newitem->id)) {
+            if ($grades = $DB->get_records('grade_import_values', array('newgradeitem' => $newitem->id))) {
                 /// create a new grade item for this - must use false as second param!
                 /// TODO: we need some bounds here too
                 $gradeitem = new grade_item(array('courseid'=>$courseid, 'itemtype'=>'manual', 'itemname'=>$newitem->itemname), false);
@@ -97,9 +97,10 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
 
     /// then find all existing items
 
-    if ($gradeitems = get_records_sql("SELECT DISTINCT (itemid)
-                                         FROM {grade_import_values}
-                                        WHERE importcode = $importcode AND importer={$USER->id} AND itemid > 0")) {
+    if ($gradeitems = $DB->get_records_sql("SELECT DISTINCT (itemid)
+                                             FROM {grade_import_values}
+                                            WHERE importcode = ? AND importer=? AND itemid > 0",
+                                            array($importcode, $USER->id))) {
 
         $modifieditems = array();
 
@@ -111,7 +112,7 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
                 return false;
             }
             // get all grades with this item
-            if ($grades = get_records('grade_import_values', 'itemid', $itemid)) {
+            if ($grades = $DB->get_records('grade_import_values', array('itemid' => $itemid))) {
 
                 // make the grades array for update_grade
                 foreach ($grades as $grade) {
@@ -168,8 +169,10 @@ function grade_import_commit($courseid, $importcode, $importfeedback=true, $verb
  * @return mixed and array of user objects, or false if none.
  */
 function get_unenrolled_users_in_import($importcode, $courseid) {
-    global $CFG;
+    global $CFG, $DB;
     $relatedctxcondition = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $courseid));
+
+    list($usql, $params) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles));
 
     $sql = "SELECT giv.id, u.firstname, u.lastname, u.idnumber AS useridnumber,
                 COALESCE(gi.idnumber, gin.itemname) AS gradeidnumber
@@ -179,13 +182,14 @@ function get_unenrolled_users_in_import($importcode, $courseid) {
                 LEFT JOIN {grade_items} gi ON gi.id = giv.itemid
                 LEFT JOIN {grade_import_newitem} gin ON gin.id = giv.newgradeitem
                 LEFT JOIN {role_assignments} ra ON (giv.userid = ra.userid AND
-                    ra.roleid IN ($CFG->gradebookroles) AND
+                    ra.roleid $usql AND
                     ra.contextid $relatedctxcondition)
-                WHERE giv.importcode = $importcode
+                WHERE giv.importcode = ?
                     AND ra.id IS NULL
                 ORDER BY gradeidnumber, u.lastname, u.firstname";
+    $params[] = $importcode;
 
-    return get_records_sql($sql);
+    return $DB->get_records_sql($sql, $params);
 }
 
 /**
@@ -194,11 +198,11 @@ function get_unenrolled_users_in_import($importcode, $courseid) {
  * @param string importcode - import batch identifier
  */
 function import_cleanup($importcode) {
-    global $USER;
+    global $USER, $DB;
 
     // remove entries from buffer table
-    delete_records('grade_import_values', 'importcode', $importcode, 'importer', $USER->id);
-    delete_records('grade_import_newitem', 'importcode', $importcode, 'importer', $USER->id);
+    $DB->delete_records('grade_import_values', array('importcode' => $importcode, 'importer' => $USER->id));
+    $DB->delete_records('grade_import_newitem', array('importcode' => $importcode, 'importer' => $USER->id));
 }
 
 ?>

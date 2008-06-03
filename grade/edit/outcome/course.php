@@ -105,7 +105,7 @@ foreach ($standardoutcomes as $oid=>$outcome) {
 
 
 /// form processing
-if ($data = data_submitted()) {
+if ($data = data_submitted(false)) {
     require_capability('moodle/grade:manageoutcomes', $context);
     if (!empty($data->add) && !empty($data->addoutcomes)) {
     /// add all selected to course list

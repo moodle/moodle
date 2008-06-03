@@ -1,14 +1,14 @@
 
-.grade-report-user table#user-grade .datesubmitted {
+.grade-report-user table.user-grades .datesubmitted {
   font-size: 0.7em;
 }
 
-.grade-report-user table#user-grade .courseitem,
-.grade-report-user table#user-grade .categoryitem {
+.grade-report-user table.user-grades .courseitem,
+.grade-report-user table.user-grades .categoryitem {
   font-weight: bold;
 }
 
-.grade-report-user table#user-grade td.cell {
+.grade-report-user table.user-grades td.cell {
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -19,7 +19,7 @@
 }
 
 /* this must be last if we want to override other category and course item colors */
-.grade-report-user table#user-grade .hidden,
-.grade-report-user table#user-grade .hidden a {
+.grade-report-user table.user-grades .hidden,
+.grade-report-user table.user-grades .hidden a {
   color:#aaaaaa;
 }

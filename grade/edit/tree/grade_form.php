@@ -28,7 +28,7 @@ require_once $CFG->libdir.'/formslib.php';
 class edit_grade_form extends moodleform {
 
     function definition() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         $mform =& $this->_form;
 
@@ -60,7 +60,7 @@ class edit_grade_form extends moodleform {
             }
 
             $i = 1;
-            if ($scale = get_record('scale', 'id', $grade_item->scaleid)) {
+            if ($scale = $DB->get_record('scale', array('id' => $grade_item->scaleid))) {
                 foreach (split(",", $scale->scale) as $option) {
                     $scaleopt[$i] = $option;
                     $i++;
@@ -124,7 +124,7 @@ class edit_grade_form extends moodleform {
     }
 
     function definition_after_data() {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         $context = get_context_instance(CONTEXT_COURSE, $COURSE->id);
 
@@ -133,7 +133,7 @@ class edit_grade_form extends moodleform {
 
         // fill in user name if user still exists
         $userid = $mform->getElementValue('userid');
-        if ($user = get_record('user', 'id', $userid)) {
+        if ($user = $DB->get_record('user', array('id' => $userid))) {
             $username = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$userid.'">'.fullname($user).'</a>';
             $user_el =& $mform->getElement('user');
             $user_el->setValue($username);

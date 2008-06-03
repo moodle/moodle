@@ -27,12 +27,12 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_xls extends grade_export {
 
-    var $plugin = 'xls';
+    public $plugin = 'xls';
 
     /**
      * To be implemented by child classes
      */
-    function print_grades() {
+    public function print_grades() {
         global $CFG;
         require_once($CFG->dirroot.'/lib/excellib.class.php');
 

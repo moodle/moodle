@@ -30,25 +30,26 @@ require_once($CFG->dirroot.'/grade/export/grade_export_form.php');
 /**
  * Base export class
  */
-class grade_export {
+abstract class grade_export {
 
-    var $plugin; // plgin name - must be filled in subclasses!
+    public $plugin; // plgin name - must be filled in subclasses!
 
-    var $grade_items; // list of all course grade items
-    var $groupid;     // groupid, 0 means all groups
-    var $course;      // course object
-    var $columns;     // array of grade_items selected for export
+    public $grade_items; // list of all course grade items
+    public $groupid;     // groupid, 0 means all groups
+    public $course;      // course object
+    public $columns;     // array of grade_items selected for export
 
-    var $previewrows;     // number of rows in preview
-    var $export_letters;  // export letters
-    var $export_feedback; // export feedback
-    var $userkey;         // export using private user key
+    public $previewrows;     // number of rows in preview
+    public $export_letters;  // export letters
+    public $export_feedback; // export feedback
+    public $userkey;         // export using private user key
 
-    var $updatedgradesonly; // only export updated grades
-    var $displaytype; // display type (e.g. real, percentages, letter) for exports
-    var $decimalpoints; // number of decimal points for exports
+    public $updatedgradesonly; // only export updated grades
+    public $displaytype; // display type (e.g. real, percentages, letter) for exports
+    public $decimalpoints; // number of decimal points for exports
     /**
      * Constructor should set up all the private variables ready to be pulled
+     * @access public
      * @param object $course
      * @param int $groupid id of selected group, 0 means all
      * @param string $itemlist comma separated list of item ids, empty means all
@@ -56,7 +57,7 @@ class grade_export {
      * @param boolean $export_letters
      * @note Exporting as letters will lead to data loss if that exported set it re-imported.
      */
-    function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2) {
+    public function grade_export($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2) {
         $this->course = $course;
         $this->groupid = $groupid;
         $this->grade_items = grade_item::fetch_all(array('courseid'=>$this->course->id));
@@ -131,7 +132,7 @@ class grade_export {
      * Update exported field in grade_grades table
      * @return boolean
      */
-    function track_exports() {
+    public function track_exports() {
         global $CFG;
 
         /// Whether this plugin is entitled to update export time
@@ -151,7 +152,7 @@ class grade_export {
      * @param $object $grade instance of grade_grade class
      * @return string
      */
-    function format_grade($grade) {
+    public function format_grade($grade) {
         return grade_format_gradevalue($grade->finalgrade, $this->grade_items[$grade->itemid], false, $this->displaytype, $this->decimalpoints);
     }
 
@@ -161,7 +162,7 @@ class grade_export {
      * @param boolena $feedback feedback colum
      * &return string
      */
-    function format_column_name($grade_item, $feedback=false) {
+    public function format_column_name($grade_item, $feedback=false) {
         if ($grade_item->itemtype == 'mod') {
             $name = get_string('modulename', $grade_item->itemmodule).': '.$grade_item->get_name();
         } else {
@@ -180,19 +181,19 @@ class grade_export {
      * @param object $feedback object with properties feedback and feedbackformat
      * @return string
      */
-    function format_feedback($feedback) {
+    public function format_feedback($feedback) {
         return strip_tags(format_text($feedback->feedback, $feedback->feedbackformat));
     }
 
     /**
      * Implemented by child class
      */
-    function print_grades() { }
+    public abstract function print_grades();
 
     /**
      * Prints preview of exported grades on screen as a feedback mechanism
      */
-    function display_preview() {
+    public function display_preview() {
 
         print_heading(get_string('previewrows', 'grades'));
 
@@ -270,7 +271,7 @@ class grade_export {
      * Returns array of parameters used by dump.php and export.php.
      * @return array
      */
-    function get_export_params() {
+    public function get_export_params() {
         $itemids = array_keys($this->columns);
 
         $params = array('id'                =>$this->course->id,
@@ -290,7 +291,7 @@ class grade_export {
      * or prints the URL for the published data.
      * @return void
      */
-    function print_continue() {
+    public function print_continue() {
         global $CFG;
 
         $params = $this->get_export_params();
@@ -324,24 +325,26 @@ class grade_export {
  * It does internal buffering to speedup the db operations.
  */
 class grade_export_update_buffer {
-    var $update_list;
-    var $export_time;
+    public $update_list;
+    public $export_time;
 
     /**
      * Constructor - creates the buffer and initialises the time stamp
      */
-    function grade_export_update_buffer() {
+    public function grade_export_update_buffer() {
         $this->update_list = array();
         $this->export_time = time();
     }
 
-    function flush($buffersize) {
-        global $CFG;
+    public function flush($buffersize) {
+        global $CFG, $DB;
 
         if (count($this->update_list) > $buffersize) {
-            $list = implode(',', $this->update_list);
-            $sql = "UPDATE {grade_grades} SET exported = {$this->export_time} WHERE id IN ($list)";
-            execute_sql($sql, false);
+            list($usql, $params) = $DB->get_in_or_equal($this->update_list);
+            $params = array_merge(array($this->export_time), $params);
+
+            $sql = "UPDATE {grade_grades} SET exported = ? WHERE id $usql";
+            $DB->execute_sql($sql, $params, false);
             $this->update_list = array();
         }
     }
@@ -351,7 +354,7 @@ class grade_export_update_buffer {
      * @param object $grade_grade
      * @return string $status (unknow, new, regrade, nochange)
      */
-    function track($grade_grade) {
+    public function track($grade_grade) {
 
         if (empty($grade_grade->exported) or empty($grade_grade->timemodified)) {
             if (is_null($grade_grade->finalgrade)) {
@@ -382,7 +385,7 @@ class grade_export_update_buffer {
     /**
      * Flush and close the buffer.
      */
-    function close() {
+    public function close() {
         $this->flush(0);
     }
 }

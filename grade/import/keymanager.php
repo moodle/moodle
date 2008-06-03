@@ -47,7 +47,8 @@ $stredit         = get_string('edit');
 $strdelete       = get_string('delete');
 
 $data = array();
-if ($keys = get_records_select('user_private_key', "script='grade/import' AND instance={$course->id} AND userid={$USER->id}")) {
+$params = array($course->id, $USER->id);
+if ($keys = $DB->get_records_select('user_private_key', "script='grade/import' AND instance=? AND userid=?"), $params) {
     foreach($keys as $key) {
         $line = array();
         $line[0] = format_string($key->value);

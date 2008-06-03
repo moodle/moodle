@@ -139,7 +139,7 @@ abstract class grade_report {
      * @param int $page The current page being viewed (when report is paged)
      */
     public function __construct($courseid, $gpr, $context, $page=null) {
-        global $CFG, $COURSE;
+        global $CFG, $COURSE, $DB;
 
         if (empty($CFG->gradebookroles)) {
             error ('no roles defined in admin->appearance->graderoles');
@@ -150,7 +150,7 @@ abstract class grade_report {
         if ($this->courseid == $COURSE->id) {
             $this->course = $COURSE;
         } else {
-            $this->course = get_record('course', 'id', $this->courseid);
+            $this->course = $DB->get_record('course', array('id' => $this->courseid));
         }
 
         $this->gpr       = $gpr;

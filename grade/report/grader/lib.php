@@ -157,6 +157,7 @@ class grade_report_grader extends grade_report {
      * @return array empty array if success, array of warnings if something fails.
      */
     public function process_data($data) {
+        global $DB;
         $warnings = array();
 
         // always initialize all arrays
@@ -213,7 +214,7 @@ class grade_report_grader extends grade_report {
                     $errorstr = 'morethanmax';
                 }
                 if ($errorstr) {
-                    $user = get_record('user', 'id', $userid, '', '', '', '', 'id, firstname, lastname');
+                    $user = $DB->get_record('user', array('id' => $userid), 'id, firstname, lastname');
                     $gradestr = new object();
                     $gradestr->username = fullname($user);
                     $gradestr->itemname = $grade_item->get_name();

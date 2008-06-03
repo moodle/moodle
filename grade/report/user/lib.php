@@ -41,28 +41,28 @@ class grade_report_user extends grade_report {
      * The user.
      * @var object $user
      */
-    var $user;
+    public $user;
 
     /**
      * A flexitable to hold the data.
      * @var object $table
      */
-    var $table;
+    public $table;
 
     /**
      * Flat structure similar to grade tree
      */
-    var $gseq;
+    public $gseq;
 
     /**
      * show student ranks
      */
-    var $showrank;
+    public $showrank;
 
     /**
      * Show hidden items even when user does not have required cap
      */
-    var $showhiddenitems;
+    public $showhiddenitems;
 
     /**
      * Constructor. Sets local copies of user preferences and initialises grade_tree.
@@ -71,9 +71,9 @@ class grade_report_user extends grade_report {
      * @param string $context
      * @param int $userid The id of the user
      */
-    function grade_report_user($courseid, $gpr, $context, $userid) {
-        global $CFG;
-        parent::grade_report($courseid, $gpr, $context);
+    public function __construct($courseid, $gpr, $context, $userid) {
+        global $CFG, $DB;
+        parent::__construct($courseid, $gpr, $context);
 
         $this->showrank        = grade_get_setting($this->courseid, 'report_user_showrank', $CFG->grade_report_user_showrank);
         $this->showhiddenitems = grade_get_setting($this->courseid, 'report_user_showhiddenitems', $CFG->grade_report_user_showhiddenitems);
@@ -84,7 +84,7 @@ class grade_report_user extends grade_report {
         $this->gseq = new grade_seq($this->courseid, $switch);
 
         // get the user (for full name)
-        $this->user = get_record('user', 'id', $userid);
+        $this->user = $DB->get_record('user', array('id' => $userid));
 
         // base url for sorting by first/last name
         $this->baseurl = $CFG->wwwroot.'/grade/report?id='.$courseid.'&amp;userid='.$userid;
@@ -97,7 +97,7 @@ class grade_report_user extends grade_report {
     /**
      * Prepares the headers and attributes of the flexitable.
      */
-    function setup_table() {
+    public function setup_table() {
         global $CFG;
         /*
          * Table has 5-6 columns
@@ -124,8 +124,7 @@ class grade_report_user extends grade_report {
         $this->table->define_baseurl($this->baseurl);
 
         $this->table->set_attribute('cellspacing', '0');
-        $this->table->set_attribute('id', 'user-grade');
-        $this->table->set_attribute('class', 'boxaligncenter generaltable');
+        $this->table->set_attribute('class', 'user-grades boxaligncenter generaltable');
 
         // not sure tables should be sortable or not, because if we allow it then sorted results distort grade category structure and sortorder
         $this->table->set_control_variables(array(
@@ -140,7 +139,7 @@ class grade_report_user extends grade_report {
         $this->table->setup();
     }
 
-    function fill_table() {
+    public function fill_table() {
         global $CFG;
         $numusers = $this->get_numusers(false); // total course users
         $items =& $this->gseq->items;
@@ -293,7 +292,7 @@ class grade_report_user extends grade_report {
      * @param bool $return Whether or not to return the data instead of printing it directly.
      * @return string
      */
-    function print_table($return=false) {
+    public function print_table($return=false) {
         ob_start();
         $this->table->print_html();
         $html = ob_get_clean();
@@ -309,7 +308,10 @@ class grade_report_user extends grade_report {
      * @var array $data
      * @return bool Success or Failure (array of errors).
      */
-    function process_data($data) {
+    public function process_data($data) {
+    }
+
+    public function process_action($target, $action) {
     }
 }
 

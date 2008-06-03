@@ -34,7 +34,7 @@ $eid      = optional_param('eid', 0, PARAM_ALPHANUM);
 
 /// Make sure they can even access this course
 
-if (!$course = get_record('course', 'id', $courseid)) {
+if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     print_error('nocourseid');
 }
 
@@ -258,7 +258,7 @@ function element_deletable($element) {
     }
 
     $grade_item = $element['object'];
-    
+
     if ($grade_item->itemtype != 'mod' or $grade_item->is_outcome_item() or $grade_item->gradetype == GRADE_TYPE_NONE) {
         return true;
     }

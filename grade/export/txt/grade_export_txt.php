@@ -26,29 +26,29 @@ require_once($CFG->dirroot.'/grade/export/lib.php');
 
 class grade_export_txt extends grade_export {
 
-    var $plugin = 'txt';
+    public $plugin = 'txt';
 
-    var $separator; // default separator
+    public $separator; // default separator
 
-    function grade_export_txt($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2, $separator='comma') {
+    public function grade_export_txt($course, $groupid=0, $itemlist='', $export_feedback=false, $updatedgradesonly = false, $displaytype = GRADE_DISPLAY_TYPE_REAL, $decimalpoints = 2, $separator='comma') {
         $this->grade_export($course, $groupid, $itemlist, $export_feedback, $updatedgradesonly, $displaytype, $decimalpoints);
         $this->separator = $separator;
     }
 
-    function process_form($formdata) {
-        parent::process_form($formdata);
+    public function __construct($formdata) {
+        parent::__construct($formdata);
         if (isset($formdata->separator)) {
             $this->separator = $formdata->separator;
         }
     }
 
-    function get_export_params() {
+    public function get_export_params() {
         $params = parent::get_export_params();
         $params['separator'] = $this->separator;
         return $params;
     }
 
-    function print_grades() {
+    public function print_grades() {
         global $CFG;
 
         $export_tracking = $this->track_exports();

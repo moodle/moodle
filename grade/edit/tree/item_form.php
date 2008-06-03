@@ -26,10 +26,10 @@
 require_once $CFG->libdir.'/formslib.php';
 
 class edit_item_form extends moodleform {
-    var $displayoptions;
+    private $displayoptions;
 
     function definition() {
-        global $COURSE, $CFG;
+        global $COURSE, $CFG, $DB;
 
         $mform =& $this->_form;
 
@@ -57,7 +57,7 @@ class edit_item_form extends moodleform {
         //$mform->disabledIf('calculation', 'gradetype', 'eq', GRADE_TYPE_NONE);
 
         $options = array(0=>get_string('usenoscale', 'grades'));
-        if ($scales = get_records('scale')) {
+        if ($scales = $DB->get_records('scale')) {
             foreach ($scales as $scale) {
                 $options[$scale->id] = format_string($scale->name);
             }

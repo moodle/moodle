@@ -26,7 +26,7 @@ require_once $CFG->libdir.'/formslib.php';
 
 class grade_import_form extends moodleform {
     function definition () {
-        global $COURSE, $USER, $CFG;
+        global $COURSE, $USER, $CFG, $DB;
 
         $mform =& $this->_form;
 
@@ -51,7 +51,10 @@ class grade_import_form extends moodleform {
         if (!empty($CFG->gradepublishing)) {
             $mform->addElement('header', 'publishing', get_string('publishing', 'grades'));
             $options = array(get_string('nopublish', 'grades'), get_string('createnewkey', 'userkey'));
-            if ($keys = get_records_select('user_private_key', "script='grade/import' AND instance={$COURSE->id} AND userid={$USER->id}")) {
+            $keys = $DB->get_records_select('user_private_key',
+                            "script='grade/import' AND instance=? AND userid=?",
+                            array($COURSE->id, $USER->id));
+            if ($keys) {
                 foreach ($keys as $key) {
                     $options[$key->value] = $key->value; // TODO: add more details - ip restriction, valid until ??
                 }
