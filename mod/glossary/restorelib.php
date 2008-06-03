@@ -591,15 +591,15 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function glossary_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
         
         //Process every glossary ENTRY in the course
-        if ($entries = get_records_sql ("SELECT e.id, e.definition
-                                   FROM {$CFG->prefix}glossary_entries e,
-                                        {$CFG->prefix}glossary g
-                                   WHERE g.course = $restore->course_id AND
-                                         e.glossaryid = g.id")) {
+        if ($entries = $DB->get_records_sql("SELECT e.id, e.definition
+                                               FROM {glossary_entries} e,
+                                                    {glossary} g
+                                              WHERE g.course = ? AND
+                                                    e.glossaryid = g.id", array($restore->course_id))) {
             //Iterate over each post->message
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($entries as $entry) {
@@ -609,8 +609,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $entry->definition = addslashes($result);
-                    $status = update_record("glossary_entries",$entry);
+                    $entry->definition = $result;
+                    $status = $DB->update_record("glossary_entries",$entry);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -631,9 +631,7 @@
         }
 
         //Process every glossary (intro) in the course
-        if ($glossarys = get_records_sql ("SELECT g.id, g.intro
-                                   FROM {$CFG->prefix}glossary g
-                                   WHERE g.course = $restore->course_id")) {
+        if ($glossarys = $DB->get_records('glossary', array('course'=>$restore->course_id), '', "id,intro")) {
             //Iterate over each glossary->intro
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($glossarys as $glossary) {
@@ -643,8 +641,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $glossary->intro = addslashes($result);
-                    $status = update_record("glossary",$glossary);
+                    $glossary->intro = $result;
+                    $status = $DB->update_record("glossary",$glossary);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -670,24 +668,23 @@
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module
     function glossary_restore_wiki2markdown ($restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Convert glossary_comments->entrycomment
-        if ($records = get_records_sql ("SELECT c.id, c.entrycomment, c.format
-                                         FROM {$CFG->prefix}glossary_comments c,
-                                              {$CFG->prefix}glossary_entries e,
-                                              {$CFG->prefix}glossary g,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE e.id = c.entryid AND
-                                               g.id = e.glossaryid AND
-                                               g.course = $restore->course_id AND
-                                               c.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'glossary_comments' AND
-                                               b.new_id = c.id")) {
+        if ($records = $DB->get_records_sql("SELECT c.id, c.entrycomment, c.format
+                                               FROM {glossary_comments} c,
+                                                    {glossary_entries} e,
+                                                    {glossary} g,
+                                                    {backup_ids} b
+                                              WHERE e.id = c.entryid AND
+                                                    g.id = e.glossaryid AND
+                                                    g.course = ? AND
+                                                    c.format = ".FORMAT_WIKI. " AND
+                                                    b.backup_code = ? AND
+                                                    b.table_name = 'glossary_comments' AND
+                                                    b.new_id = c.id", array($restore->course_id, $restore->backup_unique_code))) {
             foreach ($records as $record) {
                 //Rebuild wiki links
                 $record->entrycomment = restore_decode_wiki_content($record->entrycomment, $restore);
@@ -695,7 +692,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->entrycomment = $wtm->convert($record->entrycomment, $restore->course_id);
                 $record->format = FORMAT_MARKDOWN;
-                $status = update_record('glossary_comments', addslashes_object($record));
+                $status = $DB->update_record('glossary_comments', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
@@ -712,16 +709,16 @@
         }
 
         //Convert glossary_entries->definition
-        if ($records = get_records_sql ("SELECT e.id, e.definition, e.format
-                                         FROM {$CFG->prefix}glossary_entries e,
-                                              {$CFG->prefix}glossary g,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE g.id = e.glossaryid AND
-                                               g.course = $restore->course_id AND
-                                               e.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'glossary_entries' AND
-                                               b.new_id = e.id")) {
+        if ($records = $DB->get_records_sql("SELECT e.id, e.definition, e.format
+                                               FROM {glossary_entries} e,
+                                                    {glossary} g,
+                                                    {backup_ids} b
+                                              WHERE g.id = e.glossaryid AND
+                                                    g.course = ? AND
+                                                    e.format = ".FORMAT_WIKI. " AND
+                                                    b.backup_code = ? AND
+                                                    b.table_name = 'glossary_entries' AND
+                                                    b.new_id = e.id", array($restore->course_id, $restore->backup_unique_code))) {
             foreach ($records as $record) {
                 //Rebuild wiki links
                 $record->definition = restore_decode_wiki_content($record->definition, $restore);
@@ -729,7 +726,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->definition = $wtm->convert($record->definition, $restore->course_id);
                 $record->format = FORMAT_MARKDOWN;
-                $status = update_record('glossary_entries', addslashes_object($record));
+                $status = $DB->update_record('glossary_entries', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {

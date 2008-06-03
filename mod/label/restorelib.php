@@ -63,12 +63,10 @@
     }
 
     function label_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
-        if ($labels = get_records_sql ("SELECT l.id, l.content
-                                   FROM {$CFG->prefix}label l
-                                   WHERE l.course = $restore->course_id")) {
+        if ($labels = $DB->get_records('label', array('course'=>$restore->course_id), '', "id,content")) {
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($labels as $label) {
                 //Increment counter
@@ -78,8 +76,8 @@
 
                 if ($result != $content) {
                     //Update record
-                    $label->content = addslashes($result);
-                    $status = update_record("label", $label);
+                    $label->content = $result;
+                    $status = $DB->update_record("label", $label);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';

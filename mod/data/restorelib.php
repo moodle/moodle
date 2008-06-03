@@ -555,17 +555,17 @@ function data_decode_content_links ($content,$restore) {
  * @return boolean status of the execution
  */
 function data_decode_content_links_caller($restore) {
+    global $CFG, $DB;
 
-    global $CFG;
     $status = true;
 
 /// Process every DATA (intro, all HTML templates) in the course
 /// Supported fields for main table:
     $supportedfields = array('intro','singletemplate','listtemplate',
         'listtemplateheader','addtemplate','rsstemplate','rsstitletemplate');
-    if ($datas = get_records_sql ("SELECT d.id, ".implode(',',$supportedfields)."
-                                  FROM {$CFG->prefix}data d
-                                  WHERE d.course = $restore->course_id")) {
+    if ($datas = $DB->get_records_sql ("SELECT d.id, ".implode(',',$supportedfields)."
+                                          FROM {data} d
+                                         WHERE d.course = ?", array($restore->course_id))) {
     /// Iterate over each data
         $i = 0;   //Counter to send some output to the browser to avoid timeouts
         foreach ($datas as $data) {
@@ -573,7 +573,7 @@ function data_decode_content_links_caller($restore) {
             $i++;
 
         /// Make a new copy of the data object with nothing in, to use if
-        /// changes are necessary (allows us to do update_record without
+        /// changes are necessary (allows us to do $DB->update_record without
         /// worrying about every single field being included and needing
         /// slashes).
             $newdata = new stdClass;
@@ -584,7 +584,7 @@ function data_decode_content_links_caller($restore) {
             foreach($supportedfields as $field) {
                 $result = restore_decode_content_links_worker($data->{$field},$restore);
                 if ($result != $data->{$field}) {
-                    $newdata->{$field} = addslashes($result);
+                    $newdata->{$field} = $result;
                     $changed = true;
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
@@ -596,7 +596,7 @@ function data_decode_content_links_caller($restore) {
 
         /// Update record if any field changed
             if($changed) {
-                $status = update_record("data",$newdata);
+                $status = $DB->update_record("data",$newdata);
             }
 
         /// Do some output
@@ -613,13 +613,13 @@ function data_decode_content_links_caller($restore) {
     }
 
 /// Process every COMMENT (content) in the course
-    if ($comments = get_records_sql ("SELECT dc.id, dc.content
-                                      FROM {$CFG->prefix}data d,
-                                           {$CFG->prefix}data_records dr,
-                                           {$CFG->prefix}data_comments dc
-                                      WHERE d.course = $restore->course_id
-                                        AND dr.dataid = d.id
-                                        AND dc.recordid = dr.id")) {
+    if ($comments = $DB->get_records_sql ("SELECT dc.id, dc.content
+                                             FROM {data} d,
+                                                  {data_records} dr,
+                                                  {data_comments} dc
+                                            WHERE d.course = ?
+                                                  AND dr.dataid = d.id
+                                                  AND dc.recordid = dr.id", array($restore->course_id))) {
     /// Iterate over each data_comments->content
         $i = 0;   //Counter to send some output to the browser to avoid timeouts
         foreach ($comments as $comment) {
@@ -629,8 +629,8 @@ function data_decode_content_links_caller($restore) {
             $result = restore_decode_content_links_worker($content,$restore);
             if ($result != $content) {
             /// Update record
-                $comment->content = addslashes($result);
-                $status = update_record("data_comments",$comment);
+                $comment->content = $result;
+                $status = $DB->update_record("data_comments",$comment);
                 if (debugging()) {
                     if (!defined('RESTORE_SILENTLY')) {
                         echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -651,13 +651,13 @@ function data_decode_content_links_caller($restore) {
     }
 
 /// Process every CONTENT (content, content1, content2, content3, content4) in the course
-    if ($contents = get_records_sql ("SELECT dc.id, dc.content, dc.content1, dc.content2, dc.content3, dc.content4
-                                      FROM {$CFG->prefix}data d,
-                                           {$CFG->prefix}data_records dr,
-                                           {$CFG->prefix}data_content dc
-                                      WHERE d.course = $restore->course_id
-                                        AND dr.dataid = d.id
-                                        AND dc.recordid = dr.id")) {
+    if ($contents = $DB->get_records_sql("SELECT dc.id, dc.content, dc.content1, dc.content2, dc.content3, dc.content4
+                                            FROM {data} d,
+                                                 {data_records} dr,
+                                                 {data_content} dc
+                                           WHERE d.course = ?
+                                                 AND dr.dataid = d.id
+                                                 AND dc.recordid = dr.id", array($restore->course_id))) {
     /// Iterate over each data_content->content, content1, content2, content3 and content4
         $i = 0;   //Counter to send some output to the browser to avoid timeouts
         foreach ($contents as $cnt) {
@@ -683,22 +683,22 @@ function data_decode_content_links_caller($restore) {
                 unset($cnt->content4);
             /// Conditionally set the fields
                 if ($result != $content) {
-                    $cnt->content = addslashes($result);
+                    $cnt->content = $result;
                 }
                 if ($result1 != $content1) {
-                    $cnt->content1 = addslashes($result1);
+                    $cnt->content1 = $result1;
                 }
                 if ($result2 != $content2) {
-                    $cnt->content2 = addslashes($result2);
+                    $cnt->content2 = $result2;
                 }
                 if ($result3 != $content3) {
-                    $cnt->content3 = addslashes($result3);
+                    $cnt->content3 = $result3;
                 }
                 if ($result4 != $content4) {
-                    $cnt->content4 = addslashes($result4);
+                    $cnt->content4 = $result4;
                 }
             /// Update record with the changed fields
-                $status = update_record("data_content",$cnt);
+                $status = $DB->update_record("data_content",$cnt);
                 if (debugging()) {
                     if (!defined('RESTORE_SILENTLY')) {
                         echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';

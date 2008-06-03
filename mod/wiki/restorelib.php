@@ -339,15 +339,14 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function wiki_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
         
         //Process every wiki PAGE in the course
-        if ($pages = get_records_sql ("SELECT p.id, p.content
-                                   FROM {$CFG->prefix}wiki_pages p,
-                                        {$CFG->prefix}wiki w
-                                   WHERE w.course = $restore->course_id AND
-                                         p.wiki = w.id")) {
+        if ($pages = $DB->get_records_sql("SELECT p.id, p.content
+                                             FROM {wiki_pages} p, {wiki} w
+                                            WHERE w.course = ? AND
+                                                  p.wiki = w.id", array($restore->course_id))) {
             //Iterate over each post->message
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($pages as $page) {
@@ -357,8 +356,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $page->content = addslashes($result);
-                    $status = update_record("wiki_pages",$page);
+                    $page->content = $result;
+                    $status = $DB->update_record("wiki_pages",$page);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -379,9 +378,7 @@
         }
 
         //Process every wiki (summary) in the course
-        if ($wikis = get_records_sql ("SELECT w.id, w.summary
-                                   FROM {$CFG->prefix}wiki w
-                                   WHERE w.course = $restore->course_id")) {
+        if ($wikis = $DB->get_records('wiki', array('course'=>$restore->course_id), '', "id,summary")) {
             //Iterate over each wiki->summary
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($wikis as $wiki) {
@@ -391,8 +388,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $wiki->summary = addslashes($result);
-                    $status = update_record("wiki",$wiki);
+                    $wiki->summary = $result;
+                    $status = $DB->update_record("wiki",$wiki);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';

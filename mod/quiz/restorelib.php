@@ -554,12 +554,10 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function quiz_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
         
-        if ($quizs = get_records_sql ("SELECT q.id, q.intro
-                                   FROM {$CFG->prefix}quiz q
-                                   WHERE q.course = $restore->course_id")) {
+        if ($quizs = $DB->get_records('quiz', array('course'=>$restore->course_id), '', "id,intro")) {
                                                //Iterate over each quiz->intro
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($quizs as $quiz) {
@@ -569,8 +567,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $quiz->intro = addslashes($result);
-                    $status = update_record("quiz",$quiz);
+                    $quiz->intro = $result;
+                    $status = $DB->update_record("quiz",$quiz);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -596,19 +594,18 @@
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module
     function quiz_restore_wiki2markdown ($restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Convert question->questiontext
-        if ($records = get_records_sql ("SELECT q.id, q.questiontext, q.questiontextformat
-                                         FROM {$CFG->prefix}question q,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'question' AND
-                                               q.id = b.new_id AND
-                                               q.questiontextformat = ".FORMAT_WIKI)) {
+        if ($records = $DB->get_records_sql("SELECT q.id, q.questiontext, q.questiontextformat
+                                               FROM {question} q,
+                                                    {backup_ids} b
+                                              WHERE b.backup_code = ? AND
+                                                    b.table_name = 'question' AND
+                                                    q.id = b.new_id AND
+                                                    q.questiontextformat = ".FORMAT_WIKI, array($restore->backup_unique_code))) {
             $i = 0;
             foreach ($records as $record) {
                 //Rebuild wiki links
@@ -617,7 +614,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->questiontext = $wtm->convert($record->questiontext, $restore->course_id);
                 $record->questiontextformat = FORMAT_MARKDOWN;
-                $status = update_record('question', addslashes_object($record));
+                $status = $DB->update_record('question', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {

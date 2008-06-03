@@ -266,12 +266,10 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function survey_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
         
-        if ($surveys = get_records_sql ("SELECT s.id, s.intro
-                                   FROM {$CFG->prefix}survey s
-                                   WHERE s.course = $restore->course_id")) {
+        if ($surveys = $DB->get_records('survey', array('course'=>$restore->course_id), '', "id,intro")) {
                                                //Iterate over each survey->intro
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($surveys as $survey) {
@@ -281,8 +279,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $survey->intro = addslashes($result);
-                    $status = update_record("survey",$survey);
+                    $survey->intro = $result;
+                    $status = $DB->update_record("survey",$survey);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';

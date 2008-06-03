@@ -808,9 +808,7 @@
         global $CFG;
         $status = true;
 
-        if ($scorms = get_records_sql ("SELECT s.id, s.summary
-                                   FROM {$CFG->prefix}scorm s
-                                   WHERE s.course = $restore->course_id")) {
+        if ($scorms = $DB->get_records('scorm', array('course'=>$restore->course_id), '', "id,summary")) {
 
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($scorms as $scorm) {
@@ -821,11 +819,11 @@
 
                 if ($result != $content) {
                     //Update record
-                    $scorm->summary = addslashes($result);
-                    $status = update_record("scorm",$scorm);
+                    $scorm->summary = $result;
+                    $status = $DB->update_record("scorm",$scorm);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+                            echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
                         }
                     }
                 }

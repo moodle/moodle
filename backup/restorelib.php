@@ -3268,7 +3268,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
                 //Now search if that group exists (by name and description field) in
                 //restore->course_id course
-                //Going to compare LOB columns so, use the cross-db sql_compare_text() in both sides.
+                //Going to compare LOB columns so, use the cross-db $DB->sql_compare_text() in both sides.
                 $description_clause = '';
                 $params = array('courseid'=>$restore->course_id, 'grname'=>$gro->name);
                 if (!empty($gro->description)) { /// Only for groups having a description

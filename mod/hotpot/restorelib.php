@@ -212,6 +212,7 @@ function hotpot_restore_responses(&$restore, $status, &$xml, &$record) {
     );
 }
 function hotpot_restore_details(&$restore, $status, &$xml, &$record) {
+    global $DB;
     // $xml is an XML tree for an attempt record
     // $record is the newly added attempt record
     if (empty($record->details)) {
@@ -220,7 +221,7 @@ function hotpot_restore_details(&$restore, $status, &$xml, &$record) {
         $details = new stdClass();
         $details->attempt = $record->id;
         $details->details = $record->details;
-        if (insert_record('hotpot_details', $details)) {
+        if ($DB->insert_record('hotpot_details', $details)) {
             $status = true;
         } else {
             if (!defined('RESTORE_SILENTLY')) {

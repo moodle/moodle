@@ -703,6 +703,7 @@
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function forum_restore_logs($restore,$log) {
+        global $DB;
 
         $status = false;
 
@@ -871,7 +872,7 @@
                 $pos = backup_getid($restore->backup_unique_code,"forum_posts",$log->info);
                 if ($pos) {
                     //Get the post record from database
-                    $dbpos = get_record("forum_posts","id","$pos->new_id");
+                    $dbpos = $DB->get_record("forum_posts", array("id"=>$pos->new_id));
                     if ($dbpos) {
                         $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
                         $log->info = $pos->new_id;
@@ -886,7 +887,7 @@
                 $pos = backup_getid($restore->backup_unique_code,"forum_posts",$log->info);
                 if ($pos) {
                     //Get the post record from database
-                    $dbpos = get_record("forum_posts","id","$pos->new_id");
+                    $dbpos = $DB->get_record("forum_posts", array("id"=>$pos->new_id));
                     if ($dbpos) {
                         $log->url = "discuss.php?d=".$dbpos->discussion;
                         $log->info = $pos->new_id;
@@ -901,7 +902,7 @@
                 $pos = backup_getid($restore->backup_unique_code,"forum_posts",$log->info);
                 if ($pos) {
                     //Get the post record from database
-                    $dbpos = get_record("forum_posts","id","$pos->new_id");
+                    $dbpos = $DB->get_record("forum_posts", array("id"=>$pos->new_id));
                     if ($dbpos) {
                         $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
                         $log->info = $pos->new_id;
@@ -1122,15 +1123,15 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function forum_decode_content_links_caller($restore) {
-        global $CFG, $DB;
+        global $CFG, $DB, $DB;
         $status = true;
         
         //Process every POST (message) in the course
-        if ($posts = get_records_sql ("SELECT p.id, p.message
-                                   FROM {$CFG->prefix}forum_posts p,
-                                        {$CFG->prefix}forum_discussions d
-                                   WHERE d.course = $restore->course_id AND
-                                         p.discussion = d.id")) {
+        if ($posts = $DB->get_records_sql("SELECT p.id, p.message
+                                             FROM {forum_posts} p,
+                                                  {forum_discussions} d
+                                            WHERE d.course = ? AND
+                                                  p.discussion = d.id", array($restore->course_id))) {
             //Iterate over each post->message
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($posts as $post) {
@@ -1162,9 +1163,7 @@
         }
 
         //Process every FORUM (intro) in the course
-        if ($forums = get_records_sql ("SELECT f.id, f.intro
-                                   FROM {$CFG->prefix}forum f
-                                   WHERE f.course = $restore->course_id")) {
+        if ($forums = $DB->get_records('forum', array('course'=>$restore->course_id), '', "id,intro")) {
             //Iterate over each forum->intro
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($forums as $forum) {
@@ -1174,8 +1173,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $forum->intro = addslashes($result);
-                    $status = update_record("forum",$forum);
+                    $forum->intro = $result;
+                    $status = $DB->update_record("forum",$forum);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';

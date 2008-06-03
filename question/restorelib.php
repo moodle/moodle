@@ -94,6 +94,8 @@
     * @return object best context instance for this category to be in
     */
     function restore_question_get_best_category_context($restore, $contextinfo) {
+        global $DB;
+
         switch ($contextinfo['LEVEL'][0]['#']) {
             case 'module':
                 if (!$instanceinfo = backup_getid($restore->backup_unique_code, 'course_modules', $contextinfo['INSTANCE'][0]['#'])){
@@ -109,9 +111,9 @@
                 //search COURSECATEGORYLEVEL steps up the course cat tree or
                 //to the top of the tree if steps are exhausted.
                 $catno = $contextinfo['COURSECATEGORYLEVEL'][0]['#'];
-                $catid = get_field('course', 'category', 'id', $restore->course_id);
+                $catid = $DB->get_field('course', 'category', array('id'=>$restore->course_id));
                 while ($catno > 1){
-                    $nextcatid = get_field('course_categories', 'parent', 'id', $catid);
+                    $nextcatid = $DB->get_field('course_categories', 'parent', array('id'=>$catid));
                     if ($nextcatid == 0){
                         break;
                     }
@@ -192,7 +194,7 @@
                     }
                     $question_cat->contextid = $tocontext->id;
                     if (!$fcat = $DB->get_record('question_categories', array('contextid'=>$question_cat->contextid, 'stamp'=>$question_cat->stamp))) {
-                        $question_cat->id = insert_record ("question_categories", $question_cat);
+                        $question_cat->id = $DB->insert_record ("question_categories", $question_cat);
                     } else {
                         $question_cat = $fcat;
                     }
@@ -231,17 +233,17 @@
     }
 
     function restore_recode_category_parents($restore){
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
         //Now we have to recode the parent field of each restored category
-        $categories = get_records_sql("SELECT old_id, new_id
-                                       FROM {$CFG->prefix}backup_ids
-                                       WHERE backup_code = $restore->backup_unique_code AND
-                                             table_name = 'question_categories'");
+        $categories = $DB->get_records_sql("SELECT old_id, new_id
+                                              FROM {backup_ids}
+                                             WHERE backup_code = ? AND
+                                                   table_name = 'question_categories'", array($restore->backup_unique_code));
         if ($categories) {
             //recode all parents to point at their old parent cats no matter what context the parent is now in
             foreach ($categories as $category) {
-                $restoredcategory = get_record('question_categories','id',$category->new_id);
+                $restoredcategory = $DB->get_record('question_categories', array('id'=>$category->new_id));
                 if ($restoredcategory && $restoredcategory->parent != 0) {
                     $updateobj = new object();
                     $updateobj->id = $restoredcategory->id;
@@ -251,7 +253,7 @@
                     } else {
                         $updateobj->parent = 0;
                     }
-                    $status = $status && update_record('question_categories', $updateobj);
+                    $status = $status && $DB->update_record('question_categories', $updateobj);
                 }
             }
             //now we have recoded all parents, check through all parents and set parent to be
@@ -259,11 +261,11 @@
             //or else set parent to 0 (top level category).
             $toupdate = array();
             foreach ($categories as $category) {
-                $restoredcategory = get_record('question_categories','id',$category->new_id);
+                $restoredcategory = $DB->get_record('question_categories', array('id'=>$category->new_id));
                 if ($restoredcategory && $restoredcategory->parent != 0) {
                     $nextparentid = $restoredcategory->parent;
                     do {
-                        if (!$parent = get_record('question_categories', 'id', $nextparentid)){
+                        if (!$parent = $DB->get_record('question_categories', array('id'=>$nextparentid))) {
                             if (!defined('RESTORE_SILENTLY')) {
                                 echo 'Could not find parent for question category '. $category->id.' recoding as top category item.<br />';
                             }
@@ -289,7 +291,7 @@
                 $updateobj = new object();
                 $updateobj->id = $id;
                 $updateobj->parent = $parent;
-                $status = $status && update_record('question_categories', $updateobj);
+                $status = $status && $DB->update_record('question_categories', $updateobj);
             }
         }
         return $status;
@@ -376,7 +378,7 @@
                     }
                     $question->category = $course_question_cat->id;
                     //does question already exist in course cat
-                    $existingquestion = get_record ("question", "category", $question->category, "stamp", $question->stamp, "version", $question->version);
+                    $existingquestion = $DB->get_record("question", array("category"=>$question->category, "stamp"=>$question->stamp, "version"=>$question->version));
                 } else {
                     //permissions ok, restore to best cat
                     $question->category = $best_question_cat->id;
@@ -919,7 +921,7 @@
      * @return boolean whether the operation succeeded.
      */
     function question_decode_content_links_caller($restore) {
-        global $CFG, $QTYPES;
+        global $CFG, $QTYPES, $DB;
         $status = true;
         $i = 1;   //Counter to send some output to the browser to avoid timeouts
 
@@ -935,7 +937,7 @@
         $coursemodulecontexts = array();
         $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
         $coursemodulecontexts[] = $context->id;
-        $cms = get_records('course_modules', 'course', $restore->course_id, '', 'id');
+        $cms = $DB->get_records('course_modules', array('course'=>$restore->course_id), '', 'id');
         if ($cms){
             foreach ($cms as $cm){
                 $context =  get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -944,19 +946,18 @@
         }
         $coursemodulecontextslist = join($coursemodulecontexts, ',');
         // Decode links in questions.
-        if ($questions = get_records_sql('SELECT q.id, q.qtype, q.questiontext, q.generalfeedback '.
-                 'FROM ' . $CFG->prefix . 'question q, '.
-                 $CFG->prefix . 'question_categories qc '.
-                 'WHERE q.category = qc.id '.
-                 'AND qc.contextid IN (' .$coursemodulecontextslist.')')) {
+        if ($questions = $DB->get_records_sql('SELECT q.id, q.qtype, q.questiontext, q.generalfeedback
+                                                 FROM {question} q, {question_categories} qc
+                                                WHERE q.category = qc.id
+                                                      AND qc.contextid IN (' .$coursemodulecontextslist.')')) {
 
             foreach ($questions as $question) {
                 $questiontext = restore_decode_content_links_worker($question->questiontext, $restore);
                 $generalfeedback = restore_decode_content_links_worker($question->generalfeedback, $restore);
                 if ($questiontext != $question->questiontext || $generalfeedback != $question->generalfeedback) {
-                    $question->questiontext = addslashes($questiontext);
-                    $question->generalfeedback = addslashes($generalfeedback);
-                    if (!update_record('question', $question)) {
+                    $question->questiontext = $questiontext;
+                    $question->generalfeedback = $generalfeedback;
+                    if (!$DB->update_record('question', $question)) {
                         $status = false;
                     }
                 }
@@ -981,13 +982,11 @@
         }
 
         // Decode links in answers.
-        if ($answers = get_records_sql('SELECT qa.id, qa.answer, qa.feedback, q.qtype
-               FROM ' . $CFG->prefix . 'question_answers qa,
-                    ' . $CFG->prefix . 'question q,
-                    ' . $CFG->prefix . 'question_categories qc
-               WHERE qa.question = q.id
-                 AND q.category = qc.id '.
-                 'AND qc.contextid IN ('.$coursemodulecontextslist.')')) {
+        if ($answers = $DB->get_records_sql('SELECT qa.id, qa.answer, qa.feedback, q.qtype
+                                               FROM {question_answers} qa, {question} q, {question_categories} qc
+                                              WHERE qa.question = q.id
+                                                    AND q.category = qc.id
+                                                    AND qc.contextid IN ('.$coursemodulecontextslist.')')) {
 
             foreach ($answers as $answer) {
                 $feedback = restore_decode_content_links_worker($answer->feedback, $restore);
@@ -998,9 +997,9 @@
                 }
                 if ($feedback != $answer->feedback || $answertext != $answer->answer) {
                     unset($answer->qtype);
-                    $answer->feedback = addslashes($feedback);
-                    $answer->answer = addslashes($answertext);
-                    if (!update_record('question_answers', $answer)) {
+                    $answer->feedback = $feedback;
+                    $answer->answer = $answertext;
+                    if (!$DB->update_record('question_answers', $answer)) {
                         $status = false;
                     }
                 }

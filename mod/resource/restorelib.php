@@ -200,12 +200,10 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function resource_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
-        if ($resources = get_records_sql ("SELECT r.id, r.alltext, r.summary, r.reference
-                                   FROM {$CFG->prefix}resource r
-                                   WHERE r.course = $restore->course_id")) {
+        if ($resources = $DB->get_records('resource', array('course'=>$restore->course_id), '', "id, alltext, summary, reference")) {
 
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($resources as $resource) {
@@ -220,10 +218,10 @@
 
                 if ($result1 != $content1 || $result2 != $content2 ||  $result3 != $content3) {
                     //Update record
-                    $resource->alltext = addslashes($result1);
-                    $resource->summary = addslashes($result2);
-                    $resource->reference = addslashes($result3);
-                    $status = update_record("resource",$resource);
+                    $resource->alltext = $result1;
+                    $resource->summary = $result2;
+                    $resource->reference = $result3;
+                    $status = $DB->update_record("resource",$resource);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content1).'<br />changed to<br />'.s($result1).'<hr /><br />';
@@ -250,20 +248,19 @@
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module
     function resource_restore_wiki2markdown ($restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Convert resource->alltext
-        if ($records = get_records_sql ("SELECT r.id, r.alltext, r.options
-                                         FROM {$CFG->prefix}resource r,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE r.course = $restore->course_id AND
-                                               options = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'resource' AND
-                                               b.new_id = r.id")) {
+        if ($records = $DB->get_records_sql("SELECT r.id, r.alltext, r.options
+                                               FROM {resource} r,
+                                                    {backup_ids} b
+                                              WHERE r.course = ? AND
+                                                    options = ".FORMAT_WIKI. " AND
+                                                    b.backup_code = ? AND
+                                                    b.table_name = 'resource' AND
+                                                    b.new_id = r.id", array($restore->course_id, $restore->backup_unique_code))) {
             foreach ($records as $record) {
                 //Rebuild wiki links
                 $record->alltext = restore_decode_wiki_content($record->alltext, $restore);
@@ -271,7 +268,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->alltext = $wtm->convert($record->alltext, $restore->course_id);
                 $record->options = FORMAT_MARKDOWN;
-                $status = update_record('resource', addslashes_object($record));
+                $status = $DB->update_record('resource', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {

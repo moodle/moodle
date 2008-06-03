@@ -328,12 +328,10 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function assignment_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
-        if ($assignments = get_records_sql ("SELECT a.id, a.description
-                                   FROM {$CFG->prefix}assignment a
-                                   WHERE a.course = $restore->course_id")) {
+        if ($assignments = $DB->get_records('assignment', array('course'=>$restore->course_id), '', "id,description")) {
             //Iterate over each assignment->description
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($assignments as $assignment) {
@@ -343,8 +341,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $assignment->description = addslashes($result);
-                    $status = update_record("assignment",$assignment);
+                    $assignment->description = $result;
+                    $status = $DB->update_record("assignment",$assignment);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -369,20 +367,18 @@
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module
     function assignment_restore_wiki2markdown ($restore) {
-    
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Convert assignment->description
-        if ($records = get_records_sql ("SELECT a.id, a.description, a.format
-                                         FROM {$CFG->prefix}assignment a,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE a.course = $restore->course_id AND
+        if ($records = $DB->get_records_sql ("SELECT a.id, a.description, a.format
+                                                FROM {assignment} a, {backup_ids} b
+                                               WHERE a.course = ? AND
                                                a.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
+                                               b.backup_code = ? AND
                                                b.table_name = 'assignment' AND
-                                               b.new_id = a.id")) {
+                                               b.new_id = a.id", array($restore->course_id, $restore->backup_unique_code))) {
             foreach ($records as $record) {
                 //Rebuild wiki links
                 $record->description = restore_decode_wiki_content($record->description, $restore);
@@ -390,7 +386,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->description = $wtm->convert($record->description, $restore->course_id);
                 $record->format = FORMAT_MARKDOWN;
-                $status = update_record('assignment', addslashes_object($record));
+                $status = $DB->update_record('assignment', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {

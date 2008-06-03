@@ -144,8 +144,7 @@
     }
 
 function choice_options_restore_mods($choiceid,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -169,7 +168,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
             $option->timemodified = backup_todb($opt_info['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the choice_options
-            $newid = insert_record ("choice_options",$option);
+            $newid = $DB->insert_record ("choice_options",$option);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -196,8 +195,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
 
     //This function restores the choice_answers
     function choice_answers_restore_mods($choiceid,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -239,7 +237,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
             }
 
             //The structure is equal to the db, so insert the choice_answers
-            $newid = insert_record ("choice_answers",$answer);
+            $newid = $DB->insert_record ("choice_answers",$answer);
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -336,9 +334,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
         global $CFG;
         $status = true;
         
-        if ($choices = get_records_sql ("SELECT c.id, c.text
-                                   FROM {$CFG->prefix}choice c
-                                   WHERE c.course = $restore->course_id")) {
+        if ($choices = $DB->get_records('chat', array('course'=>$restore->course_id), '', "id,text")) {
                                                //Iterate over each choice->text
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($choices as $choice) {
@@ -348,8 +344,8 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $choice->text = addslashes($result);
-                    $status = update_record("choice",$choice);
+                    $choice->text = $result;
+                    $status = $DB->update_record("choice",$choice);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -375,20 +371,18 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module
     function choice_restore_wiki2markdown ($restore) {
-    
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Convert choice->text
-        if ($records = get_records_sql ("SELECT c.id, c.text, c.format
-                                         FROM {$CFG->prefix}choice c,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE c.course = $restore->course_id AND
-                                               c.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'choice' AND
-                                               b.new_id = c.id")) {
+        if ($records = $DB->get_records_sql("SELECT c.id, c.text, c.format
+                                               FROM {choice} c, {backup_ids} b
+                                              WHERE c.course = ? AND
+                                                    c.format = ".FORMAT_WIKI. " AND
+                                                    b.backup_code = ? AND
+                                                    b.table_name = 'choice' AND
+                                                    b.new_id = c.id", array($restore->course_id, $restore->backup_unique_code))) {
             foreach ($records as $record) {
                 //Rebuild wiki links
                 $record->text = restore_decode_wiki_content($record->text, $restore);
@@ -396,7 +390,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
                 $wtm = new WikiToMarkdown();
                 $record->text = $wtm->convert($record->text, $restore->course_id);
                 $record->format = FORMAT_MARKDOWN;
-                $status = update_record('choice', addslashes_object($record));
+                $status = $DB->update_record('choice', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {

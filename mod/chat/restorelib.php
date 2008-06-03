@@ -206,12 +206,10 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function chat_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
         
-        if ($chats = get_records_sql ("SELECT c.id, c.intro
-                                   FROM {$CFG->prefix}chat c
-                                   WHERE c.course = $restore->course_id")) {
+        if ($chats = $DB->get_records('chat', array('course'=>$restore->course_id), '', "id,intro")) {
                                                //Iterate over each chat->intro
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($chats as $chat) {
@@ -221,8 +219,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $chat->intro = addslashes($result);
-                    $status = update_record("chat",$chat);
+                    $chat->intro = $result;
+                    $status = $DB->update_record("chat",$chat);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';

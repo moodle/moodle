@@ -274,7 +274,7 @@
             // pre moodle 1.5.  Matching questions need two answer fields designated
             // for correct and wrong responses before the rest of the answer fields.
             if ($restore->backup_version <= 2004083124) {  // Backup version for 1.4.5+
-                if ($ismatching = get_record('lesson_pages', 'id', $pageid)) {  // get the page we just inserted
+                if ($ismatching = $DB->get_record('lesson_pages', array('id'=>$pageid))) {  // get the page we just inserted
                     if ($ismatching->qtype == 5) { // check to make sure it is a matching question
                         $time = time();  // this may need to be changed
                         // make our 2 response answers
@@ -763,15 +763,15 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function lesson_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
         
         //Process every lesson PAGE in the course
-        if ($pages = get_records_sql ("SELECT p.id, p.contents
-                                   FROM {$CFG->prefix}lesson_pages p,
-                                        {$CFG->prefix}lesson l
-                                   WHERE l.course = $restore->course_id AND
-                                         p.lessonid = l.id")) {
+        if ($pages = $DB->get_records_sql("SELECT p.id, p.contents
+                                             FROM {lesson_pages} p,
+                                                  {lesson} l
+                                            WHERE l.course = ? AND
+                                                  p.lessonid = l.id", array($restore->course_id))) {
             //Iterate over each page->message
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
             foreach ($pages as $page) {
@@ -781,8 +781,8 @@
                 $result = restore_decode_content_links_worker($content,$restore);
                 if ($result != $content) {
                     //Update record
-                    $page->contents = addslashes($result);
-                    $status = update_record("lesson_pages",$page);
+                    $page->contents = $result;
+                    $status = $DB->update_record("lesson_pages",$page);
                     if (debugging()) {
                         if (!defined('RESTORE_SILENTLY')) {
                             echo '<br /><hr />'.s($content).'<br />changed to<br />'.s($result).'<hr /><br />';
@@ -803,10 +803,10 @@
         }
 
         // Remap activity links
-        if ($lessons = get_records_select('lesson', "activitylink != 0 AND course = $restore->course_id", '', 'id, activitylink')) {
+        if ($lessons = $DB->get_records_select('lesson', "activitylink <> 0 AND course = ?", array($restore->course_id), '', 'id, activitylink')) {
             foreach ($lessons as $lesson) {
                 if ($newcmid = backup_getid($restore->backup_unique_code, 'course_modules', $lesson->activitylink)) {
-                    $status = $status and set_field('lesson', 'activitylink', $newcmid->new_id, 'id', $lesson->id);
+                    $status = $status and $DB->set_field('lesson', 'activitylink', $newcmid->new_id, array('id'=>$lesson->id));
                 }
             }
         }
