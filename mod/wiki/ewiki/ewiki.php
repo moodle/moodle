@@ -1147,7 +1147,7 @@ function ewiki_page_search($id, &$data, $action) {
 function ewiki_page_info($id, &$data, $action) {
 
    global $ewiki_plugins, $ewiki_config, $ewiki_links;
-   global $CFG, $course;  // MOODLE HACK
+   global $CFG, $COURSE, $DB;  // MOODLE HACK
 
    $pnum = optional_param(EWIKI_UP_PAGENUM, 0);
    $pend = optional_param(EWIKI_UP_PAGEEND, 0);
@@ -1267,12 +1267,12 @@ function ewiki_page_info($id, &$data, $action) {
          }
          elseif ($i == "userid") {
              $i = 'author';
-             if ($user = get_record('user', 'id', $value)) {
-                 if (!isset($course->id)) {
-                     $course->id = 1;
+             if ($user = $DB->get_record('user', array('id'=>$value))) {
+                 if (!isset($COURSE->id)) {
+                     $COURSE->id = SITEID;
                  }
-                 $picture = print_user_picture($user->id, $course->id, $user->picture, false, true, true);
-                 $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">".fullname($user)."</a>";
+                 $picture = print_user_picture($user->id, $COURSE->id, $user->picture, false, true, true);
+                 $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$COURSE->id\">".fullname($user)."</a>";
              } else {
                  continue;
                  //$value = @$current['author'];

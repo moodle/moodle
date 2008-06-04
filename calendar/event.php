@@ -166,7 +166,7 @@
                                  WHERE repeatid = ?";
                         $params = array($form->name, $form->description, $timestartoffset, $form->timeduration, time(), $event->repeatid);
 
-                        $DB->execute_sql($sql, $params);
+                        $DB->execute($sql, $params);
 
                         /// Log the event update.
                         add_to_log($form->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$form->id, $form->name);

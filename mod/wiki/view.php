@@ -41,19 +41,19 @@
             print_error("Course Module ID was incorrect");
         }
 
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error("Course is misconfigured");
         }
 
-        if (! $wiki = get_record("wiki", "id", $cm->instance)) {
+        if (! $wiki = $DB->get_record("wiki", array("id"=>$cm->instance))) {
             print_error("Course module is incorrect");
         }
 
     } else {
-        if (! $wiki = get_record("wiki", "id", $wid)) {
+        if (! $wiki = $DB->get_record("wiki", array("id"=>$wid))) {
             print_error("Course module is incorrect");
         }
-        if (! $course = get_record("course", "id", $wiki->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$wiki->course))) {
             print_error("Course is misconfigured");
         }
         if (! $cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {
@@ -262,11 +262,11 @@
 /// Moodle Log
     if ($editsave != NULL) { /// We've submitted an edit and have been redirected back here
         add_to_log($course->id, "wiki", 'edit', 
-               addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
+               "view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title",
                format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
     } else if ($ewiki_action != 'edit') {
         add_to_log($course->id, "wiki", $ewiki_action, 
-               addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
+               "view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title",
                format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
     } 
 
@@ -417,7 +417,7 @@
             $a=new stdClass;
             $a->since=userdate($lock->lockedsince);
             $a->seen=userdate($lock->lockedseen);
-            $user=get_record('user','id',$lock->lockedby);
+            $user=$DB->get_record('user', array('id'=>$lock->lockedby));
             $a->name=fullname($user, 
               has_capability('moodle/site:viewfullnames', $modcontext));
                 
@@ -443,7 +443,7 @@
         } else {
             if (ajaxenabled()) {
                 // OK, the page is now locked to us. Put in the AJAX for keeping the lock
-                $strlockcancelled=addslashes(get_string('lockcancelled','wiki'));
+                $strlockcancelled=addslashes_js(get_string('lockcancelled','wiki'));
                 $strnojslockwarning=get_string('nojslockwarning','wiki');
                 $intervalms=WIKI_LOCK_RECONFIRM*1000;
                 print "

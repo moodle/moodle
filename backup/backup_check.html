@@ -36,7 +36,7 @@
         notice("No backupable modules are installed!");
     }
 
-    if (!execute_sql("DELETE FROM {$CFG->prefix}backup_ids WHERE backup_code = '{$backupprefs->backup_unique_code}'",false)){
+    if (!$DB->delete_records("backup_ids", array('backup_code'=>$backupprefs->backup_unique_code))){
         print_error('cannotdeletebackupids');
     }
 

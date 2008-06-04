@@ -344,7 +344,7 @@ class grade_export_update_buffer {
             $params = array_merge(array($this->export_time), $params);
 
             $sql = "UPDATE {grade_grades} SET exported = ? WHERE id $usql";
-            $DB->execute_sql($sql, $params, false);
+            $DB->execute($sql, $params);
             $this->update_list = array();
         }
     }

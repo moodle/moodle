@@ -18,10 +18,10 @@ $page=required_param('page',PARAM_RAW);
 if (! $cm = get_coursemodule_from_id('wiki', $id)) {
     print_error("Course Module ID was incorrect");
 }
-if (! $course = get_record("course", "id", $cm->course)) {
+if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
     print_error("Course is misconfigured");
 }
-if (! $wiki = get_record("wiki", "id", $cm->instance)) {
+if (! $wiki = $DB->get_record("wiki", array("id"=>$cm->instance))) {
     print_error("Course module is incorrect");
 }
 
@@ -43,8 +43,8 @@ $actions = explode('/', $page,2);
 if(count($actions)!=2) {
     print_error("Unsupported page value");
 }
-$pagename=addslashes($actions[1]);
-if(!delete_records('wiki_locks','pagename',$pagename,'wikiid', $wiki->id)) {
+$pagename=$actions[1];
+if(!$DB->delete_records('wiki_locks', array('pagename'=>$pagename, 'wikiid'=>$wiki->id))) {
     print_error('Unable to delete lock record');
 }
 

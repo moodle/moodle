@@ -159,7 +159,7 @@ function stats_cron_daily($maxdays=1) {
               GROUP BY stattype, timeend, courseid, userid
                 HAVING count(l.id) > 0";
 
-        if ($logspresent and !$DB->execute_sql($sql)) {
+        if ($logspresent and !$DB->execute($sql)) {
             $failed = true;
             break;
         }

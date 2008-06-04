@@ -836,7 +836,7 @@ function blocks_move_block($page, &$instance, $destpos, $destweight=NULL, $pinne
                               AND pagetype = ? AND pageid = ?";
         $params = array($destweight, $destpos, $instance->pagetype, $instance->pageid);
     }
-    if (!$DB->execute_sql($opengapsql, $params)) {
+    if (!$DB->execute($opengapsql, $params)) {
         return false;
     }
 

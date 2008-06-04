@@ -116,7 +116,7 @@
                      WHERE id IN (SELECT DISTINCT course
                                     FROM {course_modules}
                                    WHERE module=?)";
-            $DB->execute_sql($sql, array($module->id));
+            $DB->execute($sql, array($module->id));
 
             // Now delete all the course module records
             if (!$DB->delete_records("course_modules", array("module"=>$module->id))) {

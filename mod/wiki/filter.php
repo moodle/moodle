@@ -7,8 +7,7 @@
     require_once($CFG->dirroot.'/mod/wiki/lib.php');
 
     function wiki_filter($courseid, $text) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         // Trivial-cache - keyed on $cachedcourseid
         static $nothingtodo;
@@ -48,7 +47,7 @@
                 
                 /// Walk through each entry and get the pages.
                     foreach ($wiki_entries as $wiki_entry) {
-                        if ($wiki_pages = get_records('wiki_pages', 'wiki', $wiki_entry->id, 'pagename, version DESC')) {
+                        if ($wiki_pages = $DB->get_records('wiki_pages', array('wiki'=>$wiki_entry->id), 'pagename, version DESC')) {
                         /// Walk through each page and filter.
                             $wikientries = array();
                             foreach ($wiki_pages as $wiki_page) {

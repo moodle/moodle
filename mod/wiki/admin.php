@@ -17,19 +17,19 @@
             print_error("Course Module ID was incorrect");
         }
 
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error("Course is misconfigured");
         }
 
-        if (! $wiki = get_record("wiki", "id", $cm->instance)) {
+        if (! $wiki = $DB->get_record("wiki", array("id"=>$cm->instance))) {
             print_error("Course module is incorrect");
         }
 
     } else {
-        if (! $wiki = get_record("wiki", "id", $a)) {
+        if (! $wiki = $DB->get_record("wiki", array("id"=>$a))) {
             print_error("Course module is incorrect");
         }
-        if (! $course = get_record("course", "id", $wiki->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$wiki->course))) {
             print_error("Course is misconfigured");
         }
         if (! $cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {

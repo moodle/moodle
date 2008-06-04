@@ -19,7 +19,7 @@ define("EWIKI_DB_TABLE_NAME", "wiki_pages");
 
 
 function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
-   global $wiki, $wiki_entry, $CFG;
+   global $wiki, $wiki_entry, $CFG, $DB;
    #-- result array
    $r = array();
 
@@ -32,8 +32,14 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
       */
       # Ugly, but we need to choose which wiki we are about to change/read
      case "GET":
-         $id = "'" . anydb_escape_string($args["id"]) . "'";
-         ($version = 0 + @$args["version"]) and ($version = "AND (version=$version)") or ($version="");
+         $params = array('id'=>$args["id"]);
+         if ($version = 0 + @$args["version"]) {
+            $params['version'] = $version;
+            $versionsql = "AND version = :version";
+         } else {
+            $versionsql = "";
+            
+         }
 
          # $result = mysql_query("SELECT * FROM " . EWIKI_DB_TABLE_NAME
          #   . " WHERE (pagename=$id) $version  ORDER BY version DESC  LIMIT 1"
@@ -46,9 +52,11 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          #   $r["meta"] = @unserialize($r["meta"]);
          #}
 
-         $select="(pagename=$id) AND wiki=".$wiki_entry->id."  $version ";
+         $select="(pagename=:id) AND wiki= :weid $versionsql ";
+         $params['weid'] = $wiki_entry->id;
          $sort="version DESC";
-         if ($result_arr = get_records_select(EWIKI_DB_TABLE_NAME, $select,$sort,"*",0,1)) {
+
+         if ($result_arr = $DB->get_records_select(EWIKI_DB_TABLE_NAME, $select, $params, $sort,"*",0,1)) {
              //Iterate to get the first (and unique!)
              foreach ($result_arr as $obj) {
                  $result_obj = $obj;
@@ -70,9 +78,9 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
       */
       case "HIT":
          #mysql_query("UPDATE " . EWIKI_DB_TABLE_NAME . " SET hits=(hits+1) WHERE pagename='" . anydb_escape_string($args["id"]) . "'");
-         # set_field does not work because of the "hits+1" construct
+         # $DB->set_field does not work because of the "hits+1" construct
          #print "DO ".anydb__escape_string($args["id"]); exit;
-         execute_sql("UPDATE " .$CFG->prefix.EWIKI_DB_TABLE_NAME . " SET hits=(hits+1) WHERE pagename='" . anydb_escape_string($args["id"]) . "' and wiki=".$wiki_entry->id, 0);
+         $DB->execute("UPDATE {".EWIKI_DB_TABLE_NAME."} SET hits=(hits+1) WHERE pagename=? and wiki=?", array($args["id"], $wiki_entry->id));
          break;
     /*  Stores the $data array into the database, while not overwriting
           existing entries (using WRITE); returns 0 on failure and 1 if
@@ -113,13 +121,13 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 
          # Check if Record exists
          if($COMMAND=="REPLACE") {
-             if(count_records(EWIKI_DB_TABLE_NAME,"wiki", $wiki_entry->id,"pagename",$args["pagename"],"version",$args["version"])) {
-               delete_record(EWIKI_DB_TABLE_NAME,"wiki", $wiki_entry->id,"pagename",$args["pagename"],"version",$args["version"]);
+             if ($DB->count_records(EWIKI_DB_TABLE_NAME, array("wiki"=>$wiki_entry->id,"pagename"=>$args["pagename"],"version"=>$args["version"]))) {
+               $DB->delete_record(EWIKI_DB_TABLE_NAME, array("wiki"=>$wiki_entry->id,"pagename"=>$args["pagename"],"version"=>$args["version"]));
              }
          }
 
          # Write
-         $result=insert_record(EWIKI_DB_TABLE_NAME,(object)$args,false);
+         $result=$DB->insert_record(EWIKI_DB_TABLE_NAME,(object)$args,false);
 
          #$result = mysql_query("$COMMAND INTO " . EWIKI_DB_TABLE_NAME .
          #   " (" . $sql1 . ") VALUES (" . $sql2 . ")"
@@ -139,21 +147,22 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
       */
       case "FIND":
          $select = "";
+         $params = array();
+         $p=0;
          foreach (array_values($args) as $id) {
            if (strlen($id)) {
+            $p++;
+            $pname = "par$p";
             $r[$id] = 0;
             $select .= ($select ? " OR " : "") .
-                    "(pagename='" . anydb_escape_string($id) . "')";
+                    "(pagename= :$pname)";
+            $params[$pname] = $id;
             }
          }
          if($select) {
-           $select = "(".$select.") AND wiki=".$wiki_entry->id;
-           $result = get_records_select(EWIKI_DB_TABLE_NAME,$select);
-           #$sql = "SELECT pagename AS id, meta FROM " .
-           #   EWIKI_DB_TABLE_NAME . " WHERE $sql "
-           #);
-           #while ($result && ($row = mysql_fetch_row($result))) {
-           #   $r[$row[0]] = strpos($row[1], 's:5:"image"') ? $row[1] : 1;
+           $select = "(".$select.") AND wiki= :weid ";
+           $params['weid'] = $wiki_entry->id;
+           $result = $DB->get_records_select(EWIKI_DB_TABLE_NAME,$select, $params);
 
            while(list($key, $val) = @each($result)) {
              $r[$val->pagename]=strpos($val->meta, 's:5:"image"') ? $val->meta : 1;
@@ -165,12 +174,12 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
       */
       case "COUNTVERSIONS":
          $sql= "SELECT pagename AS id, count(*) as versioncount".
-            " FROM ". $CFG->prefix.EWIKI_DB_TABLE_NAME .
-            " WHERE wiki = ".$wiki_entry->id.
+            " FROM {".EWIKI_DB_TABLE_NAME."}
+              WHERE wiki = ?".
             " GROUP BY pagename";
 
          #print "$sql";
-         $result=get_records_sql($sql);
+         $result=$DB->get_records_sql($sql, array($wiki_entry->id));
          while(list($key, $val) = each($result)) {
             $r[$key]=$val->versioncount;
          }
@@ -188,8 +197,8 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
                  // ON (pagename)
                  $sql= "SELECT DISTINCT ON (pagename) pagename AS id, ".
                       implode(", ", $args) .
-                      " FROM ". $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                      " WHERE wiki = ".$wiki_entry->id.
+                      " FROM {".EWIKI_DB_TABLE_NAME."}".
+                      " WHERE wiki = ?".
                       " ORDER BY pagename, version DESC";
                  break;
              case 'mysql':
@@ -197,12 +206,12 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
                  // mysql-specific GROUP BY-semantics
                  $sql= "SELECT pagename AS id, ".
                  implode(", ", $args) .
-                      " FROM ". $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                      " WHERE wiki = ".$wiki_entry->id.
+                      " FROM {".EWIKI_DB_TABLE_NAME."}".
+                      " WHERE wiki = ?".
                       " GROUP BY id, version DESC " ;
              default:
                  // All but the latest version are here eliminated in
-                 // get_records_sql, since it will return an array
+                 // $DB->get_records_sql, since it will return an array
                  // with only one result per id-field value. Note,
                  // that for this to work the query needs to order the
                  // records ascending by version, so later versions
@@ -210,12 +219,12 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
                  // recordset_to_array. This is not pretty.
                  $sql= "SELECT pagename AS id, ".
                  implode(", ", $args) .
-                      " FROM ". $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                      " WHERE wiki = ".$wiki_entry->id.
+                      " FROM {".EWIKI_DB_TABLE_NAME."}".
+                      " WHERE wiki = ?".
                       " ORDER BY version";
          }
 
-         $result=get_records_sql($sql);
+         $result = $DB->get_records_sql($sql, array($wiki_entry->id));
          $r = new ewiki_dbquery_result($args);
 
          if ($result) {
@@ -239,10 +248,10 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          if ($field == "id") { $field = "pagename"; }
          $sql= "SELECT pagename AS id, version, flags" .
              (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
-             " FROM " . $CFG->prefix.EWIKI_DB_TABLE_NAME .
-             " WHERE $field " . sql_ilike() . " '%".anydb_escape_string($content)."%'  and wiki=".$wiki_entry->id .
+             " FROM {".EWIKI_DB_TABLE_NAME."}".
+             " WHERE $field " . $DB->sql_ilike() . " ? and wiki= ?".
              " ORDER BY id, version ASC";
-         $result=get_records_sql($sql);
+         $result=$DB->get_records_sql($sql, array("%$content%", $wiki_entry->id));
 
          $r = new ewiki_dbquery_result(array("id","version",$field));
          $drop = "";
@@ -265,13 +274,13 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 
 
       case "DELETE":
-         $id = anydb_escape_string($args["id"]);
+         $id = $args["id"];
          $version = $args["version"];
 
          #mysql_query("DELETE FROM " . EWIKI_DB_TABLE_NAME ."
          #   WHERE pagename='$id' AND version=$version");
          # print "DELETING wiki:".$wiki_entry->id."Pagename: $id Version: $version <br />\n";
-         delete_records(EWIKI_DB_TABLE_NAME,"wiki", $wiki_entry->id,"pagename",$id,"version",$version);
+         $DB->delete_records(EWIKI_DB_TABLE_NAME, array("wiki"=>$wiki_entry->id,"pagename"=>$id,"version"=>$version));
 
          break;
 

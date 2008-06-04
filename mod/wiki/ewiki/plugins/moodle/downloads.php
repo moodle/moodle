@@ -294,7 +294,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
 function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
-   global $ewiki_binary_icons, $ewiki_upload_sections;
+   global $ewiki_binary_icons, $ewiki_upload_sections, $DB;
 
    $meta = &$row["meta"];
 
@@ -345,7 +345,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
    $info->comment = format_text($p_comment);
 
    if ($fullinfo) {
-        if ($user = get_record('user', 'id', $row['userid'])) {
+        if ($user = $DB->get_record('user', array('id'=>$row['userid']))) {
             if (!isset($course->id)) {
                 $course->id = 1;
             }

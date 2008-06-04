@@ -24,12 +24,12 @@
 
     //This function executes all the backup procedure about this mod
     function wiki_backup_mods($bf,$preferences) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         ////Iterate over wiki table
-        if ($wikis = get_records ("wiki","course", $preferences->backup_course,"id")) {
+        if ($wikis = $DB->get_records ("wiki","course", array($preferences->backup_course=>"id"))) {
             foreach ($wikis as $wiki) {
                 if (backup_mod_selected($preferences,'wiki',$wiki->id)) {
                     wiki_backup_one_mod($bf,$preferences,$wiki);
@@ -41,11 +41,12 @@
     }
 
     function wiki_backup_one_mod($bf,$preferences,$wiki) {
+        global $DB;
 
         $status = true;
 
         if (is_numeric($wiki)) {
-            $wiki = get_record('wiki','id',$wiki);
+            $wiki = $DB->get_record('wiki', array('id'=>$wiki));
         }
         
         //Start mod
@@ -89,6 +90,7 @@
 
     ////Return an array of info (name,value)
     function wiki_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
+        global $DB;
         if (!empty($instances) && is_array($instances) && count($instances)) {
             $info = array();
             foreach ($instances as $id => $instance) {
@@ -98,18 +100,17 @@
         }
         //First the course data
         $info[0][0] = get_string("modulenameplural","wiki");
-        $info[0][1] = count_records("wiki", "course", "$course");
+        $info[0][1] = $DB->count_records("wiki", array("course"=>$course));
         return $info;
     }
 
      //Backup wiki_entries contents (executed from wiki_backup_mods)
     function backup_wiki_entries ($bf,$preferences,$wiki, $userinfo) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $wiki_entries = get_records("wiki_entries","wikiid",$wiki,"id");
+        $wiki_entries = $DB->get_records("wiki_entries", array("wikiid"=>$wiki), "id");
         //If there are entries
         if ($wiki_entries) {
             //Write start tag
@@ -139,12 +140,11 @@
 
     //Write wiki_pages contents
     function backup_wiki_pages ($bf,$preferences,$entryid) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $pages = get_records("wiki_pages","wiki",$entryid);
+        $pages = $DB_>get_records("wiki_pages", array("wiki"=>$entryid));
         if ($pages) {
             //Start tag
             $status =fwrite ($bf,start_tag("PAGES",6,true));
@@ -173,8 +173,7 @@
     }
     
     function backup_wiki_files_instance($bf,$preferences,$instanceid) {
-
-        global $CFG;
+        global $CFG, $DB;
         
         $status = true;
         
@@ -196,7 +195,6 @@
 
     //Backup wiki binary files
     function backup_wiki_files($bf,$preferences) {
-
         global $CFG;
 
         $status = true;
@@ -227,7 +225,6 @@
     //Return a content encoded to support interactivities linking. Every module
     //should have its own. They are called automatically from the backup procedure.
     function wiki_encode_content_links ($content,$preferences) {
-
         global $CFG;
 
         $base = preg_quote($CFG->wwwroot,"/");

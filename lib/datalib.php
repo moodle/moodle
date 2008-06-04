@@ -1303,9 +1303,9 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
             // will stop us -- shift things aside for a moment...
             if ($safe || ($n >= $min && $n+$count+1 < $min && $CFG->dbfamily==='mysql')) {
                 $shift = $max + $n + 1000;
-                $DB->execute_sql("UPDATE {course}
-                                     SET sortorder=sortorder+?
-                                   WHERE category=?", array($shift, $categoryid));
+                $DB->execute("UPDATE {course}
+                                 SET sortorder=sortorder+?
+                               WHERE category=?", array($shift, $categoryid));
             }
 
             $courses = get_courses($categoryid, 'c.sortorder ASC', 'c.id,c.sortorder');

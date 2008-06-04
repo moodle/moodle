@@ -22,9 +22,9 @@ if($lockid == 0) {
     exit;
 }
 
-if($lock=get_record('wiki_locks','id',$lockid)) {
+if($lock=$DB->get_record('wiki_locks', array('id'=>$lockid))) {
     $lock->lockedseen=time();
-    update_record('wiki_locks',$lock);
+    $DB->update_record('wiki_locks',$lock);
     print 'ok';   
 } else {
     print 'cancel'; // Tells user their lock has been cancelled.
