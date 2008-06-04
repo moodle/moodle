@@ -488,7 +488,7 @@
     //If the info field is "infile" then the file is deleted too
     function backup_delid ($backup_unique_code, $table, $old_id) {
         global $DB;
-        return $DB->delete_records('backup_ids', array('backup_code'=>$backup_unique_code, '$table_name'=>$table, 'old_id'=>$old_id));
+        return $DB->delete_records('backup_ids', array('backup_code'=>$backup_unique_code, 'table_name'=>$table, 'old_id'=>$old_id));
     }
 
     //This function is used to get a record from the backup_ids table

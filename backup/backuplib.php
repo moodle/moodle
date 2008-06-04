@@ -2350,7 +2350,7 @@
         $status = check_and_create_user_files_dir($preferences->backup_unique_code);
         //now get a list of users that we need for this backup.
         $backup_users = $DB->get_recordset("backup_ids",
-            array('backup_code'=>$preferences->backup_unique_code, array('table_name'=>'user'), "", "id, old_id"));
+            array('backup_code'=>$preferences->backup_unique_code, 'table_name'=>'user'), "", "id, old_id");
         foreach ($backup_users as $user) {
             //If this user's directory exists, copy it
             $userdir = make_user_directory($user->old_id, true);
