@@ -597,7 +597,7 @@ abstract class moodle_database {
             // nothing to return
             return array();
         }
-        $select = implode(" AND ", $select);
+        $select = implode(" OR ", $select);
         return $this->get_records_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 
