@@ -33,8 +33,8 @@ class resource_base {
     * @param cmid   integer, the current course module id - not set for new resources
     */
     function resource_base($cmid=0) {
+        global $CFG, $COURSE, $DB;
 
-        global $CFG, $COURSE;
         $this->navlinks = array();
 
         if ($cmid) {
@@ -42,11 +42,11 @@ class resource_base {
                 print_error("Course Module ID was incorrect");
             }
 
-            if (! $this->course = get_record("course", "id", $this->cm->course)) {
+            if (! $this->course = $DB->get_record("course", array("id"=>$this->cm->course))) {
                 print_error("Course is misconfigured");
             }
 
-            if (! $this->resource = get_record("resource", "id", $this->cm->instance)) {
+            if (! $this->resource = $DB->get_record("resource", array("id"=>$this->cm->instance))) {
                 print_error("Resource ID was incorrect");
             }
 
@@ -80,9 +80,7 @@ class resource_base {
     */
     function display_course_blocks_start() {
 
-        global $CFG;
-        global $USER;
-        global $THEME;
+        global $CFG, $USER, $THEME;
 
         require_once($CFG->libdir.'/blocklib.php');
         require_once($CFG->libdir.'/pagelib.php');
@@ -151,9 +149,7 @@ class resource_base {
      * Finish displaying the resource with the course blocks
      */
     function display_course_blocks_end() {
-
-        global $CFG;
-        global $THEME;
+        global $CFG, $THEME;
 
         $PAGE = $this->PAGE;
         $pageblocks = blocks_setup($PAGE);
@@ -299,8 +295,10 @@ function resource_delete_instance($id) {
 
 
 function resource_user_outline($course, $user, $mod, $resource) {
-    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource'
-                                           AND action='view' AND info='$resource->id'", "time ASC")) {
+    global $DB;
+
+    if ($logs = $DB->get_records("log", array('userid'=>$user->id, 'module'=>'resource',
+                                              'action'=>'view', 'info'=>$resource->id), "time ASC")) {
 
         $numviews = count($logs);
         $lastlog = array_pop($logs);
@@ -316,10 +314,10 @@ function resource_user_outline($course, $user, $mod, $resource) {
 
 
 function resource_user_complete($course, $user, $mod, $resource) {
-    global $CFG;
+    global $CFG, $DB;
 
-    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource'
-                                           AND action='view' AND info='$resource->id'", "time ASC")) {
+    if ($logs = $DB->get_records("log", array('userid'=>$user->id, 'module'=>'resource',
+                                              'action'=>'view', 'info'=>$resource->id), "time ASC")) {
         $numviews = count($logs);
         $lastlog = array_pop($logs);
 
@@ -347,12 +345,11 @@ function resource_get_coursemodule_info($coursemodule) {
 ///
 /// See get_array_of_activities() in course/lib.php
 ///
-
-   global $CFG;
+   global $CFG, $DB;
 
    $info = NULL;
 
-   if ($resource = get_record("resource", "id", $coursemodule->instance, '', '', '', '', 'id, popup, reference, type, name')) {
+   if ($resource = $DB->get_record("resource", array("id"=>$coursemodule->instance), 'id, popup, reference, type, name')) {
        $info = new object();
        $info->name = $resource->name;
        if (!empty($resource->popup)) {
@@ -568,7 +565,7 @@ function resource_get_post_actions() {
 }
 
 function resource_renamefiles($course, $wdir, $oldname, $name) {
-    global $CFG;
+    global $CFG, $DB;
 
     $status = '<p align=\"center\"><strong>'.get_string('affectedresources', 'resource').':</strong><ul>';
     $updates = false;
@@ -577,30 +574,29 @@ function resource_renamefiles($course, $wdir, $oldname, $name) {
     $new = trim($wdir.'/'.$name, '/');
 
     $sql = "SELECT r.id, r.reference, r.name, cm.id AS cmid
-             FROM {$CFG->prefix}resource r,
-                  {$CFG->prefix}course_modules cm,
-                  {$CFG->prefix}modules m
-             WHERE r.course    = '{$course->id}'
-               AND m.name      = 'resource'
-               AND cm.module   = m.id
-               AND cm.instance = r.id
-               AND (r.type = 'file' OR r.type = 'directory')
-               AND (r.reference LIKE '{$old}/%' OR r.reference = '{$old}')";
-    if ($resources = get_records_sql($sql)) {
+              FROM {resource} r, {course_modules} cm, {modules} m
+             WHERE r.course    = :courseid
+                   AND m.name      = 'resource'
+                   AND cm.module   = m.id
+                   AND cm.instance = r.id
+                   AND (r.type = 'file' OR r.type = 'directory')
+                   AND (r.reference LIKE :old1 OR r.reference = :old2)";
+    $params = array('courseid'=>$course->id, 'old1'=>"{$old}/%", 'old2'=>$old);
+    if ($resources = $DB->get_records_sql($sql, $params)) {
         foreach ($resources as $resource) {
             $r = new object();
             $r->id = $resource->id;
             $r->reference = '';
             if ($resource->reference == $old) {
-                $r->reference = addslashes($new);
+                $r->reference = $new;
             } else {
-                $r->reference = addslashes(preg_replace('|^'.preg_quote($old, '|').'/|', $new.'/', $resource->reference));
+                $r->reference = preg_replace('|^'.preg_quote($old, '|').'/|', $new.'/', $resource->reference);
             }
             if ($r->reference !== '') {
                 $updates = true;
                 $status .= "<li><a href=\"$CFG->wwwroot/mod/resource/view.php?id=$resource->cmid\" target=\"_blank\">$resource->name</a>: $resource->reference ==> $r->reference</li>";
                 if (!empty($CFG->resource_autofilerename)) {
-                    if (!update_record('resource', $r)) {
+                    if (!$DB->update_record('resource', $r)) {
                         print_error("Error updating resource with ID $r->id.");
                     }
                 }
@@ -618,7 +614,7 @@ function resource_renamefiles($course, $wdir, $oldname, $name) {
 }
 
 function resource_delete_warning($course, $files) {
-    global $CFG;
+    global $CFG, $DB;
 
     $found = array();
 
@@ -626,15 +622,15 @@ function resource_delete_warning($course, $files) {
         $files[$key] = trim($file, '/');
     }
     $sql = "SELECT r.id, r.reference, r.name, cm.id AS cmid
-             FROM {$CFG->prefix}resource r,
-                  {$CFG->prefix}course_modules cm,
-                  {$CFG->prefix}modules m
-             WHERE r.course    = '{$course->id}'
-               AND m.name      = 'resource'
-               AND cm.module   = m.id
-               AND cm.instance = r.id
-               AND (r.type = 'file' OR r.type = 'directory')";
-    if ($resources = get_records_sql($sql)) {
+              FROM {resource} r,
+                   {course_modules} cm,
+                   {modules} m
+             WHERE r.course    = ?
+                   AND m.name      = 'resource'
+                   AND cm.module   = m.id
+                   AND cm.instance = r.id
+                   AND (r.type = 'file' OR r.type = 'directory')";
+    if ($resources = $DB->get_records_sql($sql, array($course->id))) {
         foreach ($resources as $resource) {
             if ($resource->reference == '') {
                 continue; // top shared directory does not prevent anything

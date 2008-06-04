@@ -18,7 +18,6 @@
 // using the functions defined in lib/ddllib.php
 
 function xmldb_resource_upgrade($oldversion=0) {
-
     global $CFG, $THEME, $DB;
 
     $result = true;

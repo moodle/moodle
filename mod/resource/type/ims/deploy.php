@@ -45,9 +45,9 @@
     $inpopup    = optional_param ('inpopup', 0, PARAM_BOOL);
 
 /// Fetch some records from DB
-    $course   = get_record ('course', 'id', $courseid);
+    $course   = $DB->get_record ('course', array('id'=>$courseid));
     $cm       = get_coursemodule_from_id('resource', $cmid);
-    $resource = get_record ('resource', 'id', $cm->instance);
+    $resource = $DB->get_record ('resource', array('id'=>$cm->instance));
 
 /// Get some needed strings
     $strdeploy = get_string('deploy','resource');
@@ -73,9 +73,9 @@
 
 /// Security Constraints (sesskey and isteacheredit)
     if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
+        print_error('confirmsesskeybad', 'error');
     } else if (!has_capability('moodle/course:manageactivities', get_context_instance(CONTEXT_COURSE, $courseid))) {
-        error(get_string('onlyeditingteachers', 'error'));
+        print_error('onlyeditingteachers', 'error');
     }
 
 ///

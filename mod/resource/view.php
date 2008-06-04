@@ -7,7 +7,7 @@
     $r  = optional_param('r', 0, PARAM_INT);  // Resource
 
     if ($r) {  // Two ways to specify the resource
-        if (! $resource = get_record('resource', 'id', $r)) {
+        if (! $resource = $DB->get_record('resource', array('id'=>$r))) {
             print_error('Resource ID was incorrect');
         }
 
@@ -20,14 +20,14 @@
             print_error('Course Module ID was incorrect');
         }
 
-        if (! $resource = get_record('resource', 'id', $cm->instance)) {
+        if (! $resource = $DB->get_record('resource', array('id'=>$cm->instance))) {
             print_error('Resource ID was incorrect');
         }
     } else {
         print_error('No valid parameters!!');
     }
 
-    if (! $course = get_record('course', 'id', $cm->course)) {
+    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
         print_error('Incorrect course id');
     }
 

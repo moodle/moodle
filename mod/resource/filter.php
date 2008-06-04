@@ -4,8 +4,7 @@
     //Williams, Stronk7, Martin D
 
     function resource_filter($courseid, $text) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         // Trivial-cache - keyed on $cachedcourseid
         static $nothingtodo;
@@ -38,17 +37,15 @@
              * link to the top resource first.
              */
             $resource_sql  = "SELECT r.id, r.name 
-                FROM {$CFG->prefix}resource r, 
-                     {$CFG->prefix}course_modules cm, 
-                     {$CFG->prefix}modules m
-                WHERE m.name = 'resource' AND
-                        cm.module = m.id AND
-                        cm.visible =  1 AND
-                        r.id = cm.instance AND
-                        cm.course = {$courseid}
-                ORDER BY CHAR_LENGTH(r.name) DESC, cm.section ASC;";
+                                FROM {resource} r, {course_modules} cm, {modules} m
+                               WHERE m.name = 'resource' AND
+                                     cm.module = m.id AND
+                                     cm.visible =  1 AND
+                                     r.id = cm.instance AND
+                                     cm.course = ?
+                            ORDER BY CHAR_LENGTH(r.name) DESC, cm.section ASC";
 
-            if (!$resources = get_records_sql($resource_sql) ){
+            if (!$resources = $DB->get_records_sql($resource_sql, array($courseid)) ){
                 $nothingtodo = true;
                 return $text;
             }

@@ -18,12 +18,12 @@
 
     //This function executes all the backup procedure about this mod
     function resource_backup_mods($bf,$preferences) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true; 
 
         ////Iterate over resource table
-        $resources = get_records ("resource","course",$preferences->backup_course,"id");
+        $resources = $DB->get_records ("resource", array("course"=>$preferences->backup_course),"id");
         if ($resources) {
             foreach ($resources as $resource) {
                 if (backup_mod_selected($preferences,'resource',$resource->id)) {
@@ -35,11 +35,10 @@
     }
    
     function resource_backup_one_mod($bf,$preferences,$resource) {
-
-        global $CFG;
+        global $CFG, $DB;
     
         if (is_numeric($resource)) {
-            $resource = get_record('resource','id',$resource);
+            $resource = $DB->get_record('resource', array('id'=>$resource));
         }
     
         $status = true;
@@ -124,12 +123,11 @@
 
     //Returns an array of resources id
     function resource_ids ($course) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT a.id, a.course
-                                 FROM {$CFG->prefix}resource a
-                                 WHERE a.course = '$course'");
+        return $DB->get_records_sql("SELECT a.id, a.course
+                                       FROM {resource} a
+                                      WHERE a.course = ?", array($course));
     }
    
     function resource_backup_files($bf,$preferences,$resource) {
