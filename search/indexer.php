@@ -104,13 +104,6 @@ $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
     Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8());
     $index = new Zend_Search_Lucene($index_path, true);
     
-    /*
-    OBSOLETE REGENERATION - DB installs with search block by now
-    if (!$dbcontrol->checkDB()) {
-        search_pexit("Database error. Please check settings/files.");
-    }
-    */
-
 /// New regeneration
 
     mtrace('Deleting old index entries.');

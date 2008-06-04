@@ -194,29 +194,6 @@ class IndexDBControl {
     } //checkTableExists
 
     /**
-    * is our database setup valid?
-    * @uses db, CFG
-    * @deprecated Database is installed at install and should not be dropped out
-    */
-    public function checkDB() {
-        global $CFG, $DB;
-        
-        $sqlfile = "{$CFG->dirroot}/search/db/$CFG->dbtype.sql";
-        $ret = false;
-        if ($this->checkTableExists()) {
-            execute_sql('drop table '.$CFG->prefix.SEARCH_DATABASE_TABLE, false);
-        }
-
-        //turn output buffering on - to hide modify_database() output
-        ob_start(); 
-        $ret = modify_database($sqlfile, '', false);
-
-        //chuck the buffer and resume normal operation
-        ob_end_clean(); 
-        return $ret;
-    } //checkDB
-
-    /**
     * add a document record to the table
     * @param document must be a Lucene SearchDocument instance
     * @uses db, CFG
