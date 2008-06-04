@@ -144,7 +144,7 @@
 
         $status = true;
 
-        $pages = $DB_>get_records("wiki_pages", array("wiki"=>$entryid));
+        $pages = $DB->get_records("wiki_pages", array("wiki"=>$entryid));
         if ($pages) {
             //Start tag
             $status =fwrite ($bf,start_tag("PAGES",6,true));

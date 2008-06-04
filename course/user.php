@@ -113,7 +113,7 @@
             }
 
             $earliestday   = $DB->get_field_sql('SELECT timeend FROM {stats_user_daily} ORDER BY timeend');
-            $earliestweek  = $DB_>get_field_sql('SELECT timeend FROM {stats_user_weekly} ORDER BY timeend');
+            $earliestweek  = $DB->get_field_sql('SELECT timeend FROM {stats_user_weekly} ORDER BY timeend');
             $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {stats_user_monthly} ORDER BY timeend');
 
             if (empty($earliestday)) $earliestday = time();

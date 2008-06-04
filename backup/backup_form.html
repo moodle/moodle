@@ -29,7 +29,7 @@
     //Checks for the required files/functions to backup every mod
     //And check if there is data about it
     $count = 0;
-    if ($allmods = $DB_>get_records('modules', array('visible'=>1)) ) {
+    if ($allmods = $DB->get_records('modules', array('visible'=>1)) ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
