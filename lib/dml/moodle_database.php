@@ -692,8 +692,9 @@ abstract class moodle_database {
         $menu = array();
         if ($records = $this->get_records_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum)) {
             foreach ($records as $record) {
-                $key   = array_unshift($record);
-                $value = array_unshift($record);
+                $record = (array)$record;
+                $key   = array_shift($record);
+                $value = array_shift($record);
                 $menu[$key] = $value;
             }
         }
@@ -716,8 +717,9 @@ abstract class moodle_database {
         $menu = array();
         if ($records = $this->get_records_sql($sql, $params, $limitfrom, $limitnum)) {
             foreach ($records as $record) {
-                $key   = array_unshift($record);
-                $value = array_unshift($record);
+                $record = (array)$record;
+                $key   = array_shift($record);
+                $value = array_shift($record);
                 $menu[$key] = $value;
             }
         }
