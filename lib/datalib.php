@@ -1748,7 +1748,7 @@ function instance_is_visible($moduletype, $module) {
                                               WHERE cm.course = :courseid AND
                                                     cm.module = m.id AND
                                                     m.name = :moduletype AND
-                                                    cm.instance = :moduleid")) {
+                                                    cm.instance = :moduleid", $params)) {
 
             foreach ($records as $record) { // there should only be one - use the first one
                 return $record->visible;
