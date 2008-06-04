@@ -124,17 +124,19 @@ class auth_plugin_manual extends auth_plugin_base {
      * but it may be necessary if the user auth_method is changed to manual 
      * before the user is confirmed.
      */
-    function user_confirm($username, $confirmsecret = null) {        
+    function user_confirm($username, $confirmsecret = null) {      
+        global $DB;
+
         $user = get_complete_user_data('username', $username);
 
         if (!empty($user)) {
             if ($user->confirmed) {
                 return AUTH_CONFIRM_ALREADY;
             } else { 
-                if (!set_field("user", "confirmed", 1, "id", $user->id)) {
+                if (!$DB->set_field("user", "confirmed", 1, array("id"=>$user->id))) {
                     return AUTH_CONFIRM_FAIL;
                 }
-                if (!set_field("user", "firstaccess", time(), "id", $user->id)) {
+                if (!$DB->set_field("user", "firstaccess", time(), array("id"=>$user->id))) {
                     return AUTH_CONFIRM_FAIL;
                 }
                 return AUTH_CONFIRM_OK;

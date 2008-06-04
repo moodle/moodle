@@ -73,10 +73,10 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return array  $userdata Array of user info for remote host
      */
     function user_authorise($token, $useragent) {
-        global $CFG, $MNET, $SITE, $MNET_REMOTE_CLIENT;
+        global $CFG, $MNET, $SITE, $MNET_REMOTE_CLIENT, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/server.php';
 
-        $mnet_session = get_record('mnet_session', 'token', $token, 'useragent', $useragent);
+        $mnet_session = $DB->get_record('mnet_session', array('token'=>$token, 'useragent'=>$useragent));
         if (empty($mnet_session)) {
             echo mnet_server_fault(1, get_string('authfail_nosessionexists', 'mnet'));
             exit;
@@ -89,7 +89,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         // session okay, try getting the user
-        if (!$user = get_record('user', 'id', $mnet_session->userid)) {
+        if (!$user = $DB->get_record('user', array('id'=>$mnet_session->userid))) {
             echo mnet_server_fault(3, get_string('authfail_usermismatch', 'mnet'));
             exit;
         }
@@ -133,19 +133,19 @@ class auth_plugin_mnet extends auth_plugin_base {
                     h.id as hostid,
                     count(c.id) as count
                 FROM
-                    {$CFG->prefix}mnet_enrol_course c,
-                    {$CFG->prefix}mnet_enrol_assignments a,
-                    {$CFG->prefix}mnet_host h
+                    {mnet_enrol_course} c,
+                    {mnet_enrol_assignments} a,
+                    {mnet_host} h
                 WHERE
                     c.id      =  a.courseid   AND
                     c.hostid  =  h.id         AND
-                    a.userid  = '{$user->id}' AND
-                    c.hostid != '{$MNET_REMOTE_CLIENT->id}'
+                    a.userid  = ? AND
+                    c.hostid != ?
                 GROUP BY
                     h.name,
                     h.id,
                     h.wwwroot";
-        if ($courses = get_records_sql($sql)) {
+        if ($courses = $DB->get_records_sql($sql, array($user->id, $MNET_REMOTE_CLIENT->id))) {
             foreach($courses as $course) {
                 $userdata['myhosts'][] = array('name'=> $course->hostname, 'url' => $CFG->wwwroot.'/auth/mnet/jump.php?hostid='.$course->hostid, 'count' => $course->count);
             }
@@ -165,9 +165,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * Starts an RPC jump session and returns the jump redirect URL.
      */
     function start_jump_session($mnethostid, $wantsurl) {
-        global $CFG;
-        global $USER;
-        global $MNET;
+        global $CFG, $USER, $MNET, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // check remote login permissions
@@ -194,10 +192,9 @@ class auth_plugin_mnet extends auth_plugin_base {
         $mnet_peer->set_id($mnethostid);
 
         // set up the session
-        $mnet_session = get_record('mnet_session',
-                                   'userid',     $USER->id,
-                                   'mnethostid', $mnethostid,
-                                   'useragent',  sha1($_SERVER['HTTP_USER_AGENT']));
+        $mnet_session = $DB->get_record('mnet_session',
+                                   array('userid'=>$USER->id, 'mnethostid'=>$mnethostid,
+                                   'useragent'=>sha1($_SERVER['HTTP_USER_AGENT'])));
         if ($mnet_session == false) {
             $mnet_session = new object();
             $mnet_session->mnethostid = $mnethostid;
@@ -208,7 +205,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->confirm_timeout = time() + $this->config->rpc_negotiation_timeout;
             $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
             $mnet_session->session_id = session_id();
-            if (! $mnet_session->id = insert_record('mnet_session', addslashes_object($mnet_session))) {
+            if (! $mnet_session->id = $DB->insert_record('mnet_session', $mnet_session)) {
                 print_error('databaseerror', 'mnet');
             }
         } else {
@@ -217,7 +214,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->confirm_timeout = time() + $this->config->rpc_negotiation_timeout;
             $mnet_session->expires = time() + (integer)ini_get('session.gc_maxlifetime');
             $mnet_session->session_id = session_id();
-            if (false == update_record('mnet_session', addslashes_object($mnet_session))) {
+            if (false == $DB->update_record('mnet_session', $mnet_session)) {
                 print_error('databaseerror', 'mnet');
             }
         }
@@ -244,7 +241,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // verify the remote host is configured locally before attempting RPC call
-        if (! $remotehost = get_record('mnet_host', 'wwwroot', $remotewwwroot)) {
+        if (! $remotehost = $DB->get_record('mnet_host', array('wwwroot'=>$remotewwwroot))) {
             print_error('notpermittedtoland', 'mnet');
         }
 
@@ -285,7 +282,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $firsttime = false;
 
         // get the local record for the remote user
-        $localuser = get_record('user', 'username', addslashes($remoteuser->username), 'mnethostid', $remotehost->id);
+        $localuser = $DB->get_record('user', array('username'=>$remoteuser->username, 'mnethostid'=>$remotehost->id));
 
         // add the remote user to the database if necessary, and if allowed
         // TODO: refactor into a separate function
@@ -298,7 +295,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 print_error('databaseerror', 'mnet');
             }
             $firsttime = true;
-            if (! $localuser = get_record('user', 'username', addslashes($remoteuser->username), 'mnethostid', $remotehost->id)) {
+            if (! $localuser = $DB->get_record('user', array('username'=>$remoteuser->username, 'mnethostid'=>$remotehost->id))) {
                 print_error('nolocaluser', 'mnet');
             }
         }
@@ -368,7 +365,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         $localuser->mnethostid = $remotepeer->id;
 
-        $bool = update_record('user', addslashes_object($localuser));
+        $bool = $DB->update_record('user', $localuser);
         if (!$bool) {
             // TODO: Jonathan to clean up mess
             // Actually, this should never happen (modulo race conditions) - ML
@@ -376,10 +373,9 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
 
         // set up the session
-        $mnet_session = get_record('mnet_session',
-                                   'userid',     $localuser->id,
-                                   'mnethostid', $remotepeer->id,
-                                   'useragent',  sha1($_SERVER['HTTP_USER_AGENT']));
+        $mnet_session = $DB->get_record('mnet_session',
+                                   array('userid'=>$localuser->id, 'mnethostid'=>$remotepeer->id,
+                                   'useragent'=>sha1($_SERVER['HTTP_USER_AGENT'])));
         if ($mnet_session == false) {
             $mnet_session = new object();
             $mnet_session->mnethostid = $remotepeer->id;
@@ -391,12 +387,12 @@ class auth_plugin_mnet extends auth_plugin_base {
             $mnet_session->confirm_timeout = time();
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
             $mnet_session->session_id = session_id();
-            if (! $mnet_session->id = insert_record('mnet_session', addslashes_object($mnet_session))) {
+            if (! $mnet_session->id = $DB->insert_record('mnet_session', $mnet_session)) {
                 print_error('databaseerror', 'mnet');
             }
         } else {
             $mnet_session->expires = time() + (integer)$session_gc_maxlifetime;
-            update_record('mnet_session', addslashes_object($mnet_session));
+            $DB->update_record('mnet_session', $mnet_session);
         }
 
         if (!$firsttime) {
@@ -418,11 +414,11 @@ class auth_plugin_mnet extends auth_plugin_base {
                 $sql = "SELECT c.id,
                                cc.name AS cat_name, cc.description AS cat_description,
                                r.shortname as defaultrolename
-                        FROM {$CFG->prefix}course c
-                          JOIN {$CFG->prefix}course_categories cc ON c.category = cc.id
-                          LEFT OUTER JOIN {$CFG->prefix}role r  ON c.defaultrole = r.id
-                        WHERE c.id IN (" . join(',',array_keys($courses)) . ')';
-                $extra = get_records_sql($sql);
+                          FROM {course} c
+                          JOIN {course_categories} cc ON c.category = cc.id
+                          LEFT OUTER JOIN {role} r  ON c.defaultrole = r.id
+                         WHERE c.id IN (" . join(',',array_keys($courses)) . ')';
+                $extra = $DB->get_records_sql($sql);
 
                 $keys = array_keys($courses);
                 $defaultrolename = $DB->get_field('role', 'shortname', array('id'=>$CFG->defaultcourseroleid));
@@ -482,9 +478,8 @@ class auth_plugin_mnet extends auth_plugin_base {
         }
         // make sure it is a user we have an in active session
         // with that host...
-        $userid = get_field('mnet_session', 'userid',
-                            'username', addslashes($username),
-                            'mnethostid', (int)$MNET_REMOTE_CLIENT->id);
+        $userid = $DB->get_field('mnet_session', 'userid',
+                            array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
         if (!$userid) {
             return false;
         }
@@ -516,17 +511,16 @@ class auth_plugin_mnet extends auth_plugin_base {
                     c.defaultrolename,
                     a.id as assignmentid
                 FROM
-                    '.$CFG->prefix.'mnet_enrol_course c
-                LEFT JOIN
-                    '.$CFG->prefix.'mnet_enrol_assignments a
+                    {mnet_enrol_course} c
+                LEFT JOIN {mnet_enrol_assignments} a
                 ON
                    (a.courseid = c.id AND
                     a.hostid   = c.hostid AND
-                    a.userid = \''.$userid.'\')
+                    a.userid = ?)
                 WHERE
-                    c.hostid = \''.(int)$MNET_REMOTE_CLIENT->id.'\'';
+                    c.hostid = ?';
 
-        $currentcourses = get_records_sql($sql);
+        $currentcourses = $DB->get_records_sql($sql, array($userid, $MNET_REMOTE_CLIENT->id));
 
         $local_courseid_array = array();
         foreach($courses as $course) {
@@ -538,7 +532,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             // First up - do we have a record for this course?
             if (!array_key_exists($course['remoteid'], $currentcourses)) {
                 // No record - we must create it
-                $course['id']  =  insert_record('mnet_enrol_course', addslashes_object((object)$course));
+                $course['id']  =  $DB->insert_record('mnet_enrol_course', (object)$course);
                 $currentcourse = (object)$course;
             } else {
                 // Pointer to current course:
@@ -556,7 +550,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 }
 
                 if ($saveflag) {
-                    update_record('mnet_enrol_course', addslashes_object($currentcourse));
+                    $DB->update_record('mnet_enrol_course', $currentcourse);
                 }
 
                 if (isset($currentcourse->assignmentid) && is_numeric($currentcourse->assignmentid)) {
@@ -579,14 +573,14 @@ class auth_plugin_mnet extends auth_plugin_base {
                 $assignObj->hostid    = (int)$MNET_REMOTE_CLIENT->id;
                 $assignObj->courseid  = $course['id'];
                 $assignObj->rolename  = $course['defaultrolename'];
-                $assignObj->id = insert_record('mnet_enrol_assignments', addslashes_object($assignObj));
+                $assignObj->id = $DB->insert_record('mnet_enrol_assignments', $assignObj);
             }
         }
 
         // Clean up courses that the user is no longer enrolled in.
         $local_courseid_string = implode(', ', $local_courseid_array);
-        $whereclause = " userid = '$userid' AND hostid = '{$MNET_REMOTE_CLIENT->id}' AND courseid NOT IN ($local_courseid_string)";
-        delete_records_select('mnet_enrol_assignments', $whereclause);
+        $whereclause = " userid = ? AND hostid = ? AND courseid NOT IN ($local_courseid_string)";
+        $DB->delete_records_select('mnet_enrol_assignments', $whereclause, array($userid, $MNET_REMOTE_CLIENT->id));
     }
 
     /**
@@ -628,7 +622,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @param array $page An object containing all the data for this page.
      */
     function config_form($config, $err, $user_fields) {
-        global $CFG;
+        global $CFG, $DB;
 
          $query = "
             SELECT
@@ -642,39 +636,39 @@ class auth_plugin_mnet extends auth_plugin_base {
                 h2sp.subscribe as spsubscribe,
                 sp.name as spname
             FROM
-                {$CFG->prefix}mnet_host h
+                {mnet_host} h
             LEFT JOIN
-                {$CFG->prefix}mnet_host2service h2idp
+                {mnet_host2service} h2idp
             ON
                (h.id = h2idp.hostid AND
                (h2idp.publish = 1 OR
                 h2idp.subscribe = 1))
             INNER JOIN
-                {$CFG->prefix}mnet_service idp
+                {mnet_service} idp
             ON
                (h2idp.serviceid = idp.id AND
                 idp.name = 'sso_idp')
             LEFT JOIN
-                {$CFG->prefix}mnet_host2service h2sp
+                {mnet_host2service} h2sp
             ON
                (h.id = h2sp.hostid AND
                (h2sp.publish = 1 OR
                 h2sp.subscribe = 1))
             INNER JOIN
-                {$CFG->prefix}mnet_service sp
+                {mnet_service} sp
             ON
                (h2sp.serviceid = sp.id AND
                 sp.name = 'sso_sp')
             WHERE
                ((h2idp.publish = 1 AND h2sp.subscribe = 1) OR
                (h2sp.publish = 1 AND h2idp.subscribe = 1)) AND
-                h.id != {$CFG->mnet_localhost_id}
+                h.id != ?
             ORDER BY
                 h.name ASC";
 
         $id_providers       = array();
         $service_providers  = array();
-        if ($resultset = get_records_sql($query)) {
+        if ($resultset = $DB->get_records_sql($query, array($CFG->mnet_localhost_id))) {
             foreach($resultset as $hostservice) {
                 if(!empty($hostservice->idppublish) && !empty($hostservice->spsubscribe)) {
                     $service_providers[]= array('id' => $hostservice->id, 'name' => $hostservice->hostname, 'wwwroot' => $hostservice->wwwroot);
@@ -714,7 +708,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return  void
      */
     function keepalive_client() {
-        global $CFG, $MNET;
+        global $CFG, $MNET, $DB;
         $cutoff = time() - 300; // TODO - find out what the remote server's session
                                 // cutoff is, and preempt that
 
@@ -724,14 +718,14 @@ class auth_plugin_mnet extends auth_plugin_base {
                 username,
                 mnethostid
             from
-                {$CFG->prefix}user
+                {user}
             where
-                lastaccess > '$cutoff' AND
-                mnethostid != '{$CFG->mnet_localhost_id}'
+                lastaccess > ? AND
+                mnethostid != ?
             order by
                 mnethostid";
 
-        $immigrants = get_records_sql($sql);
+        $immigrants = $DB->get_records_sql($sql, array($cutoff, $CFG->mnet_localhost_id));
 
         if ($immigrants == false) {
             return true;
@@ -786,18 +780,18 @@ class auth_plugin_mnet extends auth_plugin_base {
                           c.modinfo as modinfo,
                           u.username
                       FROM
-                          {$CFG->prefix}user u,
-                          {$CFG->prefix}log l,
-                          {$CFG->prefix}course c
+                          {user} u,
+                          {log} l,
+                          {course} c
                       WHERE
                           l.userid = u.id AND
-                          u.mnethostid = '$mnethostid' AND
-                          l.id > '".$mnet_request->response['last log id']."' AND
+                          u.mnethostid = ? AND
+                          l.id > ? AND
                           c.id = l.course
                       ORDER BY
                           remoteid ASC";
 
-            $results = get_records_sql($query);
+            $results = $DB->get_records_sql($query, array($mnethostid, $mnet_request->response['last log id']));
 
             if (false == $results) continue;
 
@@ -859,13 +853,13 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return  string              "All ok" or an error message
      */
     function refresh_log($array) {
-        global $CFG, $MNET_REMOTE_CLIENT;
+        global $CFG, $MNET_REMOTE_CLIENT, $DB;
 
         // We don't want to output anything to the client machine
         $start = ob_start();
 
         $returnString = '';
-        begin_sql();
+        $DB->begin_sql();
         $useridarray = array();
 
         foreach($array as $logEntry) {
@@ -875,7 +869,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             if (isset($useridarray[$logEntryObj->username])) {
                 $logEntryObj->userid = $useridarray[$logEntryObj->username];
             } else {
-                $logEntryObj->userid = get_field('user','id','username',$logEntryObj->username);
+                $logEntryObj->userid = $DB->get_field('user', 'id', array('username'=>$logEntryObj->username));
                 if ($logEntryObj->userid == false) {
                     $logEntryObj->userid = 0;
                 }
@@ -884,7 +878,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
             unset($logEntryObj->username);
 
-            $insertok = insert_record('mnet_log', addslashes_object($logEntryObj), false);
+            $insertok = $DB->insert_record('mnet_log', $logEntryObj, false);
 
             if ($insertok) {
                 $MNET_REMOTE_CLIENT->last_log_id = $logEntryObj->remoteid;
@@ -893,7 +887,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             }
         }
         $MNET_REMOTE_CLIENT->commit();
-        commit_sql();
+        $DB->commit_sql();
 
         $end = ob_end_clean();
 
@@ -909,7 +903,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return  string              "All ok" or an error message
      */
     function keepalive_server($array) {
-        global $MNET_REMOTE_CLIENT, $CFG;
+        global $MNET_REMOTE_CLIENT, $CFG, $DB;
 
         $CFG->usesid = true;
         // Addslashes to all usernames, so we can build the query string real
@@ -927,8 +921,8 @@ class auth_plugin_mnet extends auth_plugin_base {
         foreach($superArray as $subArray) {
             $subArray = array_values($subArray);
             $instring = "('".implode("', '",$subArray)."')";
-            $query = "select id, session_id, username from {$CFG->prefix}mnet_session where username in $instring";
-            $results = get_records_sql($query);
+            $query = "select id, session_id, username from {mnet_session} where username in $instring";
+            $results = $DB->get_records_sql($query);
 
             if ($results == false) {
                 // We seem to have a username that breaks our query:
@@ -983,6 +977,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return void
      */
     function cron() {
+        global $DB;
 
         // run the keepalive client
         $this->keepalive_client();
@@ -992,7 +987,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         if ($random100 < 10) {     // Approximately 10% of the time.
             // nuke olden sessions
             $longtime = time() - (1 * 3600 * 24);
-            delete_records_select('mnet_session', "expires < $longtime");
+            $DB->delete_records_select('mnet_session', "expires < ?", array($longtime));
         }
     }
 
@@ -1030,24 +1025,25 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return  string                  A plaintext report of what has happened
      */
     function kill_parent($username, $useragent) {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
+
         require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
         $sql = "
             select
                 *
             from
-                {$CFG->prefix}mnet_session s
+                {mnet_session} s
             where
-                s.username   = '".addslashes($username)."' AND
-                s.useragent  = '$useragent' AND
-                s.mnethostid = '{$USER->mnethostid}'";
+                s.username   = ? AND
+                s.useragent  = ? AND
+                s.mnethostid = ?";
 
-        $mnetsessions = get_records_sql($sql);
+        $mnetsessions = $DB->get_records_sql($sql, array($username, $useragent, $USER->mnethostid));
 
-        $ignore = delete_records('mnet_session',
-                                 'username', addslashes($username),
-                                 'useragent', $useragent,
-                                 'mnethostid', $USER->mnethostid);
+        $ignore = $DB->delete_records('mnet_session',
+                                 array('username'=>$username,
+                                 'useragent'=>$useragent,
+                                 'mnethostid'=>$USER->mnethostid));
 
         if (false != $mnetsessions) {
             $mnet_peer = new mnet_peer();
@@ -1077,20 +1073,20 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return  string                  A plaintext report of what has happened
      */
     function kill_children($username, $useragent) {
-        global $CFG, $USER, $MNET_REMOTE_CLIENT;
+        global $CFG, $USER, $MNET_REMOTE_CLIENT, $DB;
         require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
 
-        $userid = get_field('user', 'id', 'mnethostid', $CFG->mnet_localhost_id, 'username', addslashes($username));
+        $userid = $DB->get_field('user', 'id', array('mnethostid'=>$CFG->mnet_localhost_id, 'username'=>$username));
 
         $returnstring = '';
         $sql = "
             select
                 *
             from
-                {$CFG->prefix}mnet_session s
+                {mnet_session} s
             where
-                s.userid     = '{$userid}' AND
-                s.useragent  = '{$useragent}'";
+                s.userid     = ? AND
+                s.useragent  = ?";
 
         // If we are being executed from a remote machine (client) we don't have
         // to kill the moodle session on that machine.
@@ -1100,7 +1096,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             $excludeid = -1;
         }
 
-        $mnetsessions = get_records_sql($sql);
+        $mnetsessions = $DB->get_records_sql($sql, array($userid, $useragent));
 
         if (false == $mnetsessions) {
             $returnstring .= "Could find no remote sessions\n$sql\n";
@@ -1127,9 +1123,8 @@ class auth_plugin_mnet extends auth_plugin_base {
             }
         }
 
-        $ignore = delete_records('mnet_session',
-                                 'useragent', $useragent,
-                                 'userid',    $userid);
+        $ignore = $DB->delete_records('mnet_session',
+                                 array('useragent'=>$useragent, 'userid'=>$userid));
 
         if (isset($MNET_REMOTE_CLIENT) && isset($MNET_REMOTE_CLIENT->id)) {
             $start = ob_start();
@@ -1175,8 +1170,8 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return  bool                    True on success
      */
     function kill_child($username, $useragent) {
-        global $CFG, $MNET_REMOTE_CLIENT;
-        $session = get_record('mnet_session', 'username', addslashes($username), 'mnethostid', $MNET_REMOTE_CLIENT->id, 'useragent', $useragent);
+        global $CFG, $MNET_REMOTE_CLIENT, $DB;
+        $session = $DB->get_record('mnet_session', array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id, 'useragent'=>$useragent));
         if (false != $session) {
             $start = ob_start();
 
@@ -1258,9 +1253,9 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return string     The encoded image
      */
     function fetch_user_image($username) {
-        global $CFG;
+        global $CFG, $DB;
 
-        if ($user = get_record('user', 'username', addslashes($username), 'mnethostid', $CFG->mnet_localhost_id)) {
+        if ($user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id))) {
             $filename1 = make_user_directory($user->id, true) . "/f1.jpg";
             $filename2 = make_user_directory($user->id, true) . "/f2.jpg";
             $return = array();
@@ -1299,7 +1294,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return bool                Whether the service is available on the remote host
      */
     function has_service($mnethostid, $servicename) {
-        global $CFG;
+        global $CFG, $DB;
 
         $sql = "
             SELECT
@@ -1310,15 +1305,15 @@ class auth_plugin_mnet extends auth_plugin_base {
                 svc.apiversion,
                 h2s.id as h2s_id
             FROM
-                {$CFG->prefix}mnet_service svc,
-                {$CFG->prefix}mnet_host2service h2s
+                {mnet_service} svc,
+                {mnet_host2service} h2s
             WHERE
-                h2s.hostid = '$mnethostid' AND
+                h2s.hostid = ? AND
                 h2s.serviceid = svc.id AND
-                svc.name = '$servicename' AND
+                svc.name = ? AND
                 h2s.subscribe = '1'";
 
-        return get_records_sql($sql);
+        return $DB->get_records_sql($sql, array($mnethostid, $servicename));
     }
 
     /**
@@ -1330,8 +1325,10 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @return bool              Whether the user can login from the remote host
      */
     function can_login_remotely($username, $mnethostid) {
+        global $DB;
+
         $accessctrl = 'allow';
-        $aclrecord = get_record('mnet_sso_access_control', 'username', addslashes($username), 'mnet_host_id', $mnethostid);
+        $aclrecord = $DB->get_record('mnet_sso_access_control', array('username'=>$username, 'mnet_host_id'=>$mnethostid));
         if (!empty($aclrecord)) {
             $accessctrl = $aclrecord->accessctrl;
         }
@@ -1339,10 +1336,10 @@ class auth_plugin_mnet extends auth_plugin_base {
     }
 
     function logoutpage_hook() {
-        global $USER, $CFG, $redirect;
+        global $USER, $CFG, $redirect, $DB;
 
         if (!empty($USER->mnethostid) and $USER->mnethostid != $CFG->mnet_localhost_id) {
-            $host = get_record('mnet_host', 'id', $USER->mnethostid);
+            $host = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid));
             $redirect = $host->wwwroot.'/';
         }
     }
