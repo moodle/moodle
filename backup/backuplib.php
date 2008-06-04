@@ -17,6 +17,7 @@
      * @return array one array (key, value) sumarizing the result of the function (number of users)
      */
     function user_check_backup($courseid,$backup_unique_code,$backup_users,$backup_messages,$backup_blogs) {
+        global $DB;
 
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
         $count_users = 0;
@@ -68,7 +69,7 @@
             /// And read data acordingly with backup_getid() when needed.
             /// TODO: Also analyse it the "needed" info is really needed for anything. Drop if not.
             /// Insert the user to the backup_ids table. backup_user_info() will use that info
-                $status = insert_record('backup_ids', $backupids_rec, false);
+                $status = $DB->insert_record('backup_ids', $backupids_rec, false);
                 $count_users++;
             }
         /// Do some output
@@ -91,18 +92,15 @@
     //WARNING: It returns only NEEDED users, not every
     //   every student and teacher in the course, so it
     //must be merged with backup_get_enrrolled_users !!
-
     function backup_get_needed_users ($courseid, $includemessages=false, $includeblogs=false) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $result = false;
 
-        $course_modules = get_records_sql ("SELECT cm.id, m.name, cm.instance
-                                            FROM {$CFG->prefix}modules m,
-                                                 {$CFG->prefix}course_modules cm
-                                            WHERE m.id = cm.module and
-                                                  cm.course = '$courseid'");
+        $course_modules = $DB->get_records_sql("SELECT cm.id, m.name, cm.instance
+                                                  FROM {modules} m, {course_modules} cm
+                                                 WHERE m.id = cm.module and
+                                                       cm.course = ?", array($courseid));
 
         if ($course_modules) {
             //Iterate over each module
@@ -126,9 +124,9 @@
 
         //Now, add scale users (from site and course scales)
         //Get users
-        $scaleusers = get_records_sql("SELECT DISTINCT userid,userid
-                                       FROM {$CFG->prefix}scale
-                                       WHERE courseid = '0' or courseid = '$courseid'");
+        $scaleusers = $DB->get_records_sql("SELECT DISTINCT userid,userid
+                                              FROM {scale}
+                                             WHERE courseid = 0 or courseid = ?", array($courseid));
         //Add scale users to results
         if ($scaleusers) {
             foreach ($scaleusers as $scaleuser) {
@@ -178,7 +176,6 @@
     //Returns every enrolled user (student and teacher) in a course
 
     function backup_get_enrolled_users ($courseid) {
-
         global $CFG;
 
         // get all users with moodle/course:view capability, this will include people
@@ -189,18 +186,18 @@
 
     //Returns all users ids (every record in users table)
     function backup_get_all_users() {
+        global $DB;
 
-        return get_records('user', '', '', '', 'id, id');
+        return $DB->get_records('user', null, '', 'id, id');
     }
 
     //Calculate the number of log entries to backup
     //Return an array of info (name,value)
     function log_check_backup($course) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         //Now execute the count
-        $ids = count_records("log","course",$course);
+        $ids = $DB->count_records("log", array("course"=>$course));
 
         //Gets the user data
         $info[0][0] = get_string("logs");
@@ -217,14 +214,14 @@
     //Under $CFG->dataroot/users
     //Return an array of info (name,value)
     function user_files_check_backup($course,$backup_unique_code) {
+        global $CFG, $DB;
 
-        global $CFG;
         $count = 0;
-        
-        $backup_users = get_recordset_select("backup_ids",
-            "backup_code='$backup_unique_code' AND table_name='user'", "", "id, old_id");
- 
-        while ($user = rs_fetch_next_record($backup_users)) {               
+
+        $backup_users = $DB->get_recordset("backup_ids",
+            array('backup_code'=>$backup_unique_code, 'table_name'=>'user'), "", "id, old_id");
+
+        foreach ($backup_users as $user) {
             //Is this user needed in the backup?
             $userdir = make_user_directory($user->old_id, true);
             if (check_dir_exists($userdir)) {
@@ -233,7 +230,7 @@
             //Do some output
             backup_flush(30);
         }
-        rs_close($backup_users);
+        $backup_users->close();
         //Gets the user data
         $info[0][0] = get_string("userswithfiles");
         $info[0][1] = $count;
@@ -248,8 +245,7 @@
      * Return an array of info (name,value)
      */
     function course_files_check_backup($course, $backup_unique_code) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $rootdir = $CFG->dataroot."/$course";
         //Check if directory exists
@@ -261,10 +257,11 @@
                 //Check it isn't backupdata_dir
                 if (strpos($dir,$backupdata_dir)!==0) {
                     //Insert them into backup_files
-                    $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
-                                                  (backup_code, file_type, path)
-                                           VALUES
-                                              ('$backup_unique_code','course','".addslashes($dir)."')",false);
+                    $file = new object();
+                    $file->backup_code = $backup_unique_code;
+                    $file->file_type   = 'course';
+                    $file->path        = $dir;
+                    $status = $DB->insert("backup_files", $file);
                 }
             //Do some output
             backup_flush(30);
@@ -272,10 +269,10 @@
         }
 
         //Now execute the select
-        $ids = get_records_sql("SELECT DISTINCT b.path, b.old_id
-                                FROM {$CFG->prefix}backup_files b
-                                WHERE backup_code = '$backup_unique_code' AND
-                                      file_type = 'course'");
+        $ids = $DB->get_records_sql("SELECT DISTINCT b.path, b.old_id
+                                       FROM {backup_files} b
+                                      WHERE backup_code = ? AND
+                                            file_type = 'course'", array($backup_unique_code));
         //Gets the user data
         $info = array();
         $info[0] = array();
@@ -298,13 +295,13 @@
      * Return an array of info (name,value)
      */
     function site_files_check_backup($course, $backup_unique_code) {
-        global $CFG;
+        global $CFG, $DB;
 
         //execute the select, records have been inserted by modules during their ****_check_backup_mods function.
-        $ids = get_records_sql("SELECT DISTINCT b.path
-                                FROM {$CFG->prefix}backup_files b
-                                WHERE backup_code = '$backup_unique_code' AND
-                                      file_type = 'site'");
+        $ids = $DB->get_records_sql("SELECT DISTINCT b.path
+                                       FROM {backup_files} b
+                                      WHERE backup_code = ? AND
+                                            file_type = 'site'", array($backup_unique_code));
         //Gets the user data
         $info = array();
         $info[0] = array();
@@ -323,7 +320,6 @@
     //to be able to restore it, but in restore we check for
     //$CFG->moddata !!
     function check_and_create_moddata_dir($backup_unique_code) {
-
         global $CFG;
 
         $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/moddata",true);
@@ -334,7 +330,6 @@
     //Function to check and create the "user_files" dir to
     //save all the user files we need from "users" dir
     function check_and_create_user_files_dir($backup_unique_code) {
-
         global $CFG;
 
         $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true);
@@ -345,7 +340,6 @@
     //Function to check and create the "group_files" dir to
     //save all the user files we need from "groups" dir
     function check_and_create_group_files_dir($backup_unique_code) {
-
         global $CFG;
 
         $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/group_files",true);
@@ -356,7 +350,6 @@
     //Function to check and create the "course_files" dir to
     //save all the course files we need from "CFG->datadir/course" dir
     function check_and_create_course_files_dir($backup_unique_code) {
-
         global $CFG;
 
         $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/course_files",true);
@@ -367,7 +360,6 @@
     //Function to check and create the "site_files" dir to
     //save all the course files we need from "CFG->datadir/SITEID" dir
     function check_and_create_site_files_dir($backup_unique_code) {
-
         global $CFG;
 
         $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/site_files",true);
@@ -377,7 +369,6 @@
 
     //Function to create, open and write header of the xml file
     function backup_open_xml($backup_unique_code) {
-
         global $CFG;
 
         $status = true;
@@ -433,12 +424,12 @@
 
     //Return the start tag, the contents and the end tag
     function full_tag($tag,$level=0,$endline=true,$content,$attributes=null) {
-
         global $CFG;
+
         //Here we encode absolute links
         // MDL-10770
         if (is_null($content)) {
-            $content = '$@NULL@$'; 
+            $content = '$@NULL@$';
         } else {
             $content = backup_encode_absolute_links($content);
         }
@@ -466,8 +457,7 @@
     //Prints General info about the course
     //name, moodle_version (internal and release), backup_version, date, info in file...
     function backup_general_info ($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         fwrite ($bf,start_tag("INFO",1,true));
 
@@ -491,11 +481,11 @@
         }
         //Indicate if it includes external MNET users
         $sql = "SELECT b.old_id
-                   FROM   {$CFG->prefix}backup_ids b
-                     JOIN {$CFG->prefix}user       u ON b.old_id=u.id
-                   WHERE b.backup_code = '$preferences->backup_unique_code'
-                         AND b.table_name = 'user' AND u.mnethostid != '{$CFG->mnet_localhost_id}'";
-        if (record_exists_sql($sql)) {
+                  FROM {backup_ids} b
+                  JOIN {user} u ON b.old_id=u.id
+                 WHERE b.backup_code = ?
+                       AND b.table_name = 'user' AND u.mnethostid != ?";
+        if ($DB->record_exists_sql($sql, array($preferences->backup_unique_code, $CFG->mnet_localhost_id))) {
             fwrite ($bf,full_tag("MNET_REMOTEUSERS",2,false,'true'));
         }
         fwrite ($bf,full_tag("ZIP_METHOD",2,false,$zipmethod));
@@ -638,11 +628,11 @@
                     fwrite ($bf,full_tag('PERMISSION', 5, false, $value));
                     // use this to pull out the other info (timemodified and modifierid)
 
-                    $cap = get_record_sql("SELECT *
-                                           FROM {$CFG->prefix}role_capabilities
-                                           WHERE capability = '$capability'
-                                                 AND contextid = $sitecontext->id
-                                                 AND roleid = $role->id");
+                    $cap = $DB->get_record_sql("SELECT *
+                                                  FROM {role_capabilities}
+                                                 WHERE capability = ?
+                                                       AND contextid = ?
+                                                       AND roleid = ?", array($capability, $sitecontext->id, $role->id));
                     fwrite ($bf, full_tag("TIMEMODIFIED", 5, false, $cap->timemodified));
                     fwrite ($bf, full_tag("MODIFIERID", 5, false, $cap->modifierid));
                     fwrite ($bf,end_tag('CAPABILITY',4,true));
@@ -657,8 +647,7 @@
 
     //Prints course's general info (table course)
     function backup_course_start ($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -668,13 +657,13 @@
         fwrite ($bf,start_tag("HEADER",2,true));
 
         //Get info from course
-        $course = get_record("course","id",$preferences->backup_course);
+        $course = $DB->get_record("course", array("id"=>$preferences->backup_course));
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         if ($course) {
             //Prints course info
             fwrite ($bf,full_tag("ID",3,false,$course->id));
             //Obtain the category
-            $category = get_record("course_categories","id","$course->category");
+            $category = $DB->get_record("course_categories", array("id"=>"$course->category"));
             if ($category) {
                 //Prints category info
                 fwrite ($bf,start_tag("CATEGORY",3,true));
@@ -753,22 +742,19 @@
 
     //Prints course's metacourse info (table course_meta)
     function backup_course_metacourse ($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Get info from meta
-        $parents = get_records_sql ("SELECT m.*, c.idnumber, c.shortname
-                                     FROM {$CFG->prefix}course_meta m,
-                                          {$CFG->prefix}course c
-                                          WHERE m.child_course = '$preferences->backup_course' AND
-                                                m.parent_course = c.id");
-        $childs =  get_records_sql ("SELECT m.*, c.idnumber, c.shortname
-                                     FROM {$CFG->prefix}course_meta m,
-                                          {$CFG->prefix}course c
-                                          WHERE m.parent_course = '$preferences->backup_course' AND
-                                                m.child_course = c.id");
+        $parents = $DB->get_records_sql ("SELECT m.*, c.idnumber, c.shortname
+                                            FROM {course_meta} m, {course} c
+                                           WHERE m.child_course = ? AND
+                                                 m.parent_course = c.id", array($preferences->backup_course));
+        $childs =  $DB->get_records_sql ("SELECT m.*, c.idnumber, c.shortname
+                                            FROM {course_meta} m, {course} c
+                                           WHERE m.parent_course = ? AND
+                                                 m.child_course = c.id", array($preferences->backup_course));
 
         if ($parents || $childs) {
             //metacourse open tag
@@ -811,15 +797,14 @@
 
     //Prints course's messages info (tables message, message_read and message_contacts)
     function backup_messages ($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
     /// Check we have something to backup
-        $unreads = count_records ('message');
-        $reads   = count_records ('message_read');
-        $contacts= count_records ('message_contacts');
+        $unreads = $DB->count_records ('message');
+        $reads   = $DB->count_records ('message_read');
+        $contacts= $DB->count_records ('message_contacts');
 
         if ($unreads || $reads || $contacts) {
             $counter = 0;
@@ -827,9 +812,9 @@
             fwrite ($bf,start_tag("MESSAGES",2,true));
 
             if ($unreads) {
-                $rs_unreads = get_recordset('message');
+                $rs_unreads = $DB->get_recordset('message');
             /// Iterate over every unread
-                while ($unread = rs_fetch_next_record($rs_unreads)) {
+                foreach ($rs_unreads as $unread) {
                 /// start message
                     fwrite($bf, start_tag("MESSAGE",3,true));
                     fwrite ($bf,full_tag("ID",4,false,$unread->id));
@@ -853,13 +838,13 @@
                         backup_flush(300);
                     }
                 }
-                rs_close($rs_unreads);
+                $rs_unreads->close();
             }
 
             if ($reads) {
-                $rs_reads = get_recordset('message_read');
+                $rs_reads = $DB->get_recordset('message_read');
             /// Iterate over every unread
-                while ($read = rs_fetch_next_record($rs_reads)) {
+                foreach ($rs_reads as $read) {
                 /// start message
                     fwrite($bf, start_tag("MESSAGE",3,true));
                     fwrite ($bf,full_tag("ID",4,false,$read->id));
@@ -885,14 +870,14 @@
                         backup_flush(300);
                     }
                 }
-                rs_close($rs_reads);
+                $rs_reads->close();
             }
 
             if ($contacts) {
                 fwrite($bf, start_tag("CONTACTS",3,true));
-                $rs_contacts = get_recordset('message_contacts');
+                $rs_contacts = $DB->get_recordset('message_contacts');
             /// Iterate over every contact
-                while ($contact = rs_fetch_next_record($rs_contacts)) {
+                foreach ($rs_contacts as $contact) {
                 /// start contact
                     fwrite($bf, start_tag("CONTACT",4,true));
                     fwrite ($bf,full_tag("ID",5,false,$contact->id));
@@ -912,7 +897,7 @@
                         backup_flush(300);
                     }
                 }
-                rs_close($rs_contacts);
+                $rs_contacts->close();
                 fwrite($bf, end_tag("CONTACTS",3,true));
             }
 
@@ -926,13 +911,12 @@
 
     //Print blogs info (post table, module=blog, course=0)
     function backup_blogs($bf, $preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
     /// Check we have something to backup
-        $siteblogs = count_records('post', 'module', 'blog', 'courseid', 0);
+        $siteblogs = $DB->count_records('post', array('module'=>'blog', 'courseid'=>0));
 
         if ($siteblogs) {
             $counter = 0;
@@ -940,11 +924,9 @@
             fwrite ($bf, start_tag("BLOGS",2,true));
 
             if ($siteblogs) {
-                $rs_blogs = get_recordset_sql("SELECT * from {$CFG->prefix}post
-                                                WHERE module = 'blog'
-                                                  AND courseid = 0");
+                $rs_blogs = $DB->get_recordset('post', array('module'=>'blog', 'courseid'=>0));
             /// Iterate over every blog
-                while ($blog = rs_fetch_next_record($rs_blogs)) {
+                foreach ($rs_blogs as $blog) {
                 /// start blog
                     fwrite($bf, start_tag("BLOG",3,true));
                 /// blog body
@@ -1001,7 +983,7 @@
                         backup_flush(300);
                     }
                 }
-                rs_close($rs_blogs);
+                $rs_blogs-close();
             }
         /// blogs close tag
             $status = fwrite($bf, end_tag("BLOGS",2,true));
@@ -1010,10 +992,11 @@
         return $status;
     }
 
-    //Prints course's blocks info (table block_instance)
+    /**
+     * Prints course's blocks info (table block_instance)
+     */
     function backup_course_blocks ($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1025,7 +1008,7 @@
 
         if (!empty($CFG->showblocksonmodpages)) {
             // get course structure
-            $course  = get_record('course', 'id', $preferences->backup_course);
+            $course  = $DB->get_record('course', array('id'=>$preferences->backup_course));
             $modinfo =& get_fast_modinfo($course);
 
             foreach($preferences->mods as $module) {
@@ -1111,15 +1094,14 @@
 
     //Prints course's sections info (table course_sections)
     function backup_course_sections ($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
 
         //Get info from sections
         $section=false;
-        if ($sections = get_records("course_sections","course",$preferences->backup_course,"section")) {
+        if ($sections = $DB->get_records("course_sections", array("course"=>$preferences->backup_course),"section")) {
             //Section open tag
             fwrite ($bf,start_tag("SECTIONS",2,true));
             //Iterate over every section (ordered by section)
@@ -1145,10 +1127,10 @@
 
     //Prints course's format data (any data the format might want to save).
     function backup_format_data ($bf,$preferences) {
-        global $CFG;
+        global $CFG, $DB;
 
         // Check course format
-        if(!($format=get_field('course','format','id',$preferences->backup_course))) {
+        if(!($format = $DB->get_field('course','format', array('id'=>$preferences->backup_course)))) {
                 return false;
         }
         // Write appropriate tag. Note that we always put this tag there even if
@@ -1175,8 +1157,7 @@
     //Prints course's modules info (table course_modules)
     //Only for selected mods in preferences
     function backup_course_modules ($bf,$preferences,$section) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1199,11 +1180,11 @@
                $context = get_context_instance(CONTEXT_MODULE, $tok);
                //Gets course_module data from db - verify activity exists and is enabled!
                $sql = "SELECT cm.*
-                         FROM {$CFG->prefix}course_modules cm
-                              JOIN {$CFG->prefix}modules m     ON m.id = cm.module
-                              JOIN {$CFG->prefix}$moduletype a ON a.id = cm.instance
+                         FROM {course_modules} cm
+                              JOIN {modules} m     ON m.id = cm.module
+                              JOIN {".$moduletype."} a ON a.id = cm.instance
                         WHERE m.visible = 1 AND cm.id = $tok";
-               if (!$course_module = get_record_sql($sql)) {
+               if (!$course_module = $DB->get_record_sql($sql)) {
                    // cm exists but activity instance missing - probably caused by double clicking
                    $tok = strtok(",");
                    continue;
@@ -1224,7 +1205,7 @@
                }
 
                // find all role values that has an override in this context
-               $roles = get_records('role_capabilities', 'contextid', $context->id);
+               $roles = $DB->get_records('role_capabilities', array('contextid'=>$context->id));
 
                //Print mod info from course_modules
                fwrite ($bf,start_tag("MOD",5,true));
@@ -1264,29 +1245,28 @@
     //Only users previously calculated in backup_ids will output
     //
     function backup_user_info ($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
         require_once ($CFG->dirroot.'/tag/lib.php');
 
         $status = true;
 
         // Use a recordset to for the memory handling on to
         // the DB and run faster
-        $users = get_recordset_sql("SELECT b.old_id, b.table_name, b.info,
-                                           u.*, m.wwwroot
-                                    FROM   {$CFG->prefix}backup_ids b
-                                      JOIN {$CFG->prefix}user       u ON b.old_id=u.id
-                                      JOIN {$CFG->prefix}mnet_host  m ON u.mnethostid=m.id
-                                    WHERE b.backup_code = '$preferences->backup_unique_code' AND
-                                          b.table_name = 'user'");
+        $users = $DB->get_recordset_sql("SELECT b.old_id, b.table_name, b.info,
+                                                u.*, m.wwwroot
+                                           FROM {backup_ids} b
+                                           JOIN {user}       u ON b.old_id=u.id
+                                           JOIN {mnet_host}  m ON u.mnethostid=m.id
+                                          WHERE b.backup_code = ? AND
+                                                b.table_name = 'user'", array($preferences->backup_unique_code));
 
         //If we have users to backup
-        if ($users && !rs_EOF($users)) {
+        if ($users && $users->valid()) {
             //Begin Users tag
             fwrite ($bf,start_tag("USERS",2,true));
             $counter = 0;
             //With every user
-            while ($user = rs_fetch_next_record($users)) {
+            foreach ($users as $user) {
                 //Begin User tag
                 fwrite ($bf,start_tag("USER",3,true));
                 //Output all user data
@@ -1370,11 +1350,11 @@
                 fwrite ($bf,end_tag("ROLES",4,true));
 
                 //Check if we have custom profile fields to backup
-                if ($cpfields = get_records_sql("SELECT uif.shortname, uif.datatype, uid.data
-                                                 FROM {$CFG->prefix}user_info_field uif,
-                                                      {$CFG->prefix}user_info_data uid
-                                                 WHERE uif.id = uid.fieldid
-                                                   AND uid.userid = $user->id")) {
+                if ($cpfields = $DB->get_records_sql("SELECT uif.shortname, uif.datatype, uid.data
+                                                        FROM {user_info_field} uif,
+                                                             {user_info_data} uid
+                                                       WHERE uif.id = uid.fieldid
+                                                             AND uid.userid = ?", array($user->id))) {
                     //Start USER_CUSTOM_PROFILE_FIELDS tag
                     fwrite ($bf,start_tag("USER_CUSTOM_PROFILE_FIELDS",4,true));
                     //Write custom profile fields
@@ -1407,7 +1387,7 @@
                 }
 
                 //Check if we have user_preferences to backup
-                if ($preferences_data = get_records("user_preferences","userid",$user->old_id)) {
+                if ($preferences_data = $DB->get_records("user_preferences", array("userid"=>$user->old_id))) {
                     //Start USER_PREFERENCES tag
                     fwrite ($bf,start_tag("USER_PREFERENCES",4,true));
                     //Write each user_preference
@@ -1446,7 +1426,7 @@
         }
 
         if ($users) {
-            rs_close($users);
+            $users->close();
         }
 
         return $status;
@@ -1454,8 +1434,7 @@
 
     //Backup log info (time ordered)
     function backup_log_info($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         //Number of records to get in every chunk
         $recordset_size = 1000;
@@ -1466,7 +1445,7 @@
         $counter = 0;
 
         //Count records
-        $count_logs = count_records("log","course",$preferences->backup_course);
+        $count_logs = $DB->count_records("log", array("course"=>$preferences->backup_course));
 
         //Pring logs header
         if ($count_logs > 0 ) {
@@ -1474,7 +1453,7 @@
         }
         while ($counter < $count_logs) {
             //Get a chunk of records
-            $logs = get_records ("log","course",$preferences->backup_course,"time","*",$counter,$recordset_size);
+            $logs = $DB->get_records ("log", array("course"=>$preferences->backup_course),"time","*",$counter,$recordset_size);
 
             //We have logs
             if ($logs) {
@@ -1523,7 +1502,7 @@
 
     //Backup gradebook info
     function backup_gradebook_info($bf, $preferences) {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->libdir.'/gradelib.php');
 
         //first make sure items are properly sorted and everything is ok
@@ -1536,10 +1515,10 @@
         // if not, we do not need to backup grade category and associated grade items/grades
         $backupall = true;
 
-        if ($grade_items = get_records_sql("SELECT *
-                                              FROM {$CFG->prefix}grade_items
-                                             WHERE courseid = $preferences->backup_course
-                                                   AND itemtype = 'mod'")) {
+        if ($grade_items = $DB->get_records_sql("SELECT *
+                                                   FROM {grade_items}
+                                                  WHERE courseid = ?
+                                                        AND itemtype = 'mod'", array($preferences->backup_course))) {
             foreach ($grade_items as $grade_item) {
                 // get module information
                 // if no user data selected, we do not backup categories
@@ -1578,18 +1557,17 @@
     }
 
     function backup_gradebook_category_info($bf, $preferences) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
         // get grade categories in proper order - specified in category grade items
         $course_item = grade_item::fetch_course_item($preferences->backup_course);
-        $grade_categories = get_records_sql("SELECT gc.*, gi.sortorder
-                                               FROM {$CFG->prefix}grade_categories gc
-                                                    JOIN {$CFG->prefix}grade_items gi
-                                                      ON (gi.iteminstance = gc.id)
-                                              WHERE gc.courseid = $preferences->backup_course
-                                                    AND (gi.itemtype='course' OR gi.itemtype='category')
-                                           ORDER BY gi.sortorder ASC");
+        $grade_categories = $DB->get_records_sql("SELECT gc.*, gi.sortorder
+                                                    FROM {grade_categories} gc
+                                                    JOIN {grade_items} gi ON (gi.iteminstance = gc.id)
+                                                   WHERE gc.courseid = ?
+                                                         AND (gi.itemtype='course' OR gi.itemtype='category')
+                                                ORDER BY gi.sortorder ASC", array($preferences->backup_course));
 
         if ($grade_categories) {
             //Begin grade_categories tag
@@ -1625,16 +1603,16 @@
 
     //Backup gradebook_item (called from backup_gradebook_info
     function backup_gradebook_item_info($bf, $preferences, $backupall) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         // get all the grade_items, ordered by sort order since upon restoring, it is not always
         // possible to use the same sort order. We could at least preserve the sortorder by restoring
         // grade_items in the original sortorder
-        if ($grade_items = get_records_sql("SELECT *
-                                              FROM {$CFG->prefix}grade_items
-                                             WHERE courseid = $preferences->backup_course
-                                          ORDER BY sortorder ASC")) {
+        if ($grade_items = $DB->get_records_sql("SELECT *
+                                                   FROM {grade_items}
+                                                  WHERE courseid = ?
+                                               ORDER BY sortorder ASC", array($preferences->backup_course))) {
 
             //Begin grade_items tag
             fwrite ($bf,start_tag("GRADE_ITEMS",3,true));
@@ -1711,13 +1689,13 @@
     //Backup gradebook_item (called from backup_gradebook_info
 
     function backup_gradebook_grade_letters_info($bf, $preferences) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
         $context = get_context_instance(CONTEXT_COURSE, $preferences->backup_course);
-        $grade_letters = get_records_sql("SELECT *
-                                            FROM {$CFG->prefix}grade_letters
-                                           WHERE contextid = $context->id");
+        $grade_letters = $DB->get_records_sql("SELECT *
+                                                 FROM {grade_letters}
+                                                 WHERE contextid = ?", array($context->id));
         if ($grade_letters) {
             //Begin grade_l tag
             fwrite ($bf,start_tag("GRADE_LETTERS",3,true));
@@ -1741,15 +1719,14 @@
     }
 
     function backup_gradebook_outcomes_info($bf, $preferences) {
+        global $CFG, $DB;
 
-        global $CFG;
         $status = true;
         // only back up courses already in the grade_outcomes_courses table
-        $grade_outcomes = get_records_sql("SELECT go.*
-                                             FROM {$CFG->prefix}grade_outcomes go
-                                                  JOIN {$CFG->prefix}grade_outcomes_courses goc
-                                                    ON (goc.outcomeid = go.id)
-                                            WHERE goc.courseid = $preferences->backup_course");
+        $grade_outcomes = $DB->get_records_sql("SELECT go.*
+                                                  FROM {grade_outcomes} go
+                                                       JOIN {grade_outcomes_courses} goc ON (goc.outcomeid = go.id)
+                                                 WHERE goc.courseid = ?", array($preferences->backup_course));
 
         if (!empty($grade_outcomes)) {
             //Begin grade_outcomes tag
@@ -1780,13 +1757,12 @@
     }
 
     function backup_gradebook_grades_info($bf,$preferences, $itemid) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         // find all grades belonging to this item
-        if ($grades = get_records('grade_grades', 'itemid', $itemid)) {
+        if ($grades = $DB->get_records('grade_grades', array('itemid'=>$itemid))) {
             fwrite ($bf,start_tag("GRADE_GRADES",5,true));
             foreach ($grades as $grade) {
             /// Grades are only sent to backup if the user is one target user
@@ -1821,12 +1797,12 @@
     }
 
     function backup_gradebook_categories_history_info($bf, $preferences) {
+        global $CFG, $DB;
 
-        global $CFG;
         $status = true;
 
         // find all grade categories history
-        if ($chs = get_records('grade_categories_history', 'courseid', $preferences->backup_course)) {
+        if ($chs = $DB->get_records('grade_categories_history', array('courseid'=>$preferences->backup_course))) {
             fwrite ($bf,start_tag("GRADE_CATEGORIES_HISTORIES",5,true));
             foreach ($chs as $ch) {
                 fwrite ($bf,start_tag("GRADE_CATEGORIES_HISTORY",6,true));
@@ -1854,16 +1830,14 @@
     }
 
     function backup_gradebook_grades_history_info($bf, $preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
         // find all grade categories history
-        if ($chs = get_records_sql("SELECT ggh.*
-                                      FROM {$CFG->prefix}grade_grades_history ggh
-                                           JOIN {$CFG->prefix}grade_items gi
-                                             ON gi.id = ggh.itemid
-                                     WHERE gi.courseid = $preferences->backup_course")) {
+        if ($chs = $DB->get_records_sql("SELECT ggh.*
+                                           FROM {grade_grades_history} ggh
+                                                JOIN {grade_item} gi ON gi.id = ggh.itemid
+                                          WHERE gi.courseid = ?", array($preferences->backup_course))) {
             fwrite ($bf,start_tag("GRADE_GRADES_HISTORIES",5,true));
             foreach ($chs as $ch) {
             /// Grades are only sent to backup if the user is one target user
@@ -1902,12 +1876,11 @@
     }
 
     function backup_gradebook_items_history_info($bf, $preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
         // find all grade categories history
-        if ($chs = get_records('grade_items_history','courseid', $preferences->backup_course)) {
+        if ($chs = $DB->get_records('grade_items_history', array('courseid'=>$preferences->backup_course))) {
             fwrite ($bf,start_tag("GRADE_ITEM_HISTORIES",5,true));
             foreach ($chs as $ch) {
                 fwrite ($bf,start_tag("GRADE_ITEM_HISTORY",6,true));
@@ -1951,11 +1924,11 @@
     }
 
     function backup_gradebook_outcomes_history($bf, $preferences) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
         // find all grade categories history
-        if ($chs = get_records('grade_outcomes_history','courseid', $preferences->backup_course)) {
+        if ($chs = $DB->get_records('grade_outcomes_history', array('courseid'=>$preferences->backup_course))) {
             fwrite ($bf,start_tag("GRADE_OUTCOME_HISTORIES",5,true));
             foreach ($chs as $ch) {
                 fwrite ($bf,start_tag("GRADE_OUTCOME_HISTORY",6,true));
@@ -1978,8 +1951,7 @@
 
     //Backup scales info (common and course scales)
     function backup_scales_info($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -1987,9 +1959,9 @@
         $counter = 0;
 
         //Get scales (common and course scales)
-        $scales = get_records_sql("SELECT id, courseid, userid, name, scale, description, timemodified
-                                     FROM {$CFG->prefix}scale
-                                    WHERE courseid = 0 OR courseid = $preferences->backup_course");
+        $scales = $DB->get_records_sql("SELECT id, courseid, userid, name, scale, description, timemodified
+                                          FROM {scale}
+                                         WHERE courseid = 0 OR courseid = ?", array($preferences->backup_course));
 
         //Copy only used scales to $backupscales. They will be in backup (unused no). See Bug 1223.
         $backupscales = array();
@@ -2028,8 +2000,7 @@
 
     //Backup events info (course events)
     function backup_events_info($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -2037,7 +2008,7 @@
         $counter = 0;
 
         //Get events (course events)
-        $events = get_records_select("event","courseid='$preferences->backup_course' AND instance='0'","id");
+        $events = $DB->get_records("event", array("courseid"=>$preferences->backup_course, 'instance'=>0),"id");
 
         //Pring events header
         if ($events) {
@@ -2072,14 +2043,13 @@
 
     //Backup groups info
     function backup_groups_info($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         $status2 = true;
 
         //Get groups
-        $groups = get_records("groups","courseid",$preferences->backup_course);
+        $groups = $DB->get_records("groups", array("courseid"=>$preferences->backup_course));
 
         //Pring groups header
         if ($groups) {
@@ -2121,18 +2091,16 @@
 
     //Backup groups_members info
     function backup_groups_members_info($bf,$preferences,$groupid) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Get groups_members that are being included in backup
-        $groups_members = get_records_sql("SELECT gm.*
-                                           FROM {$CFG->prefix}groups_members gm,
-                                                {$CFG->prefix}backup_ids bi
-                                           WHERE gm.groupid = $groupid
-                                             AND bi.backup_code = $preferences->backup_unique_code
-                                             AND bi.table_name = 'user'");
+        $groups_members = $DB->get_records_sql("SELECT gm.*
+                                                  FROM {groups_members} gm, {backup_ids} bi
+                                                 WHERE gm.groupid = ?
+                                                       AND bi.backup_code = ?
+                                                       AND bi.table_name = 'user'", array($groupid, $preferences->backup_unique_code));
 
         //Pring groups_members header
         if ($groups_members) {
@@ -2157,13 +2125,12 @@
 
     //Backup groupings info
     function backup_groupings_info($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Get groups
-        $groupings = get_records("groupings","courseid",$preferences->backup_course);
+        $groupings = $DB->get_records("groupings", array("courseid"=>$preferences->backup_course));
 
         //Pring groups header
         if ($groupings) {
@@ -2195,16 +2162,15 @@
 
     //Backup groupings-groups info
     function backup_groupings_groups_info($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Get grouping_groups
         $courseid = $preferences->backup_course;
-        $sql = "SELECT gg.* FROM {$CFG->prefix}groupings g, {$CFG->prefix}groupings_groups gg
-                 WHERE g.courseid=$courseid AND g.id=gg.groupingid";
-        $grouping_groups = get_records_sql($sql);
+        $sql = "SELECT gg.* FROM {groupings} g, {groupings_groups} gg
+                 WHERE g.courseid=? AND g.id=gg.groupingid";
+        $grouping_groups = $DB->get_records_sql($sql, array($courseid));
 
         //Pring grouping_groups header
         if ($grouping_groups) {
@@ -2243,8 +2209,7 @@
     //This function makes all the necesary calls to every mod
     //to export itself and its files !!!
     function backup_module($bf,$preferences,$module) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         $statusm = true;
@@ -2292,8 +2257,7 @@
     // - Every module xxxx_encode_content_links() is executed too
     //
     function backup_encode_absolute_links($content) {
-
-        global $CFG,$preferences;
+        global $CFG,$preferences, $DB;
 
     /// MDL-14072: Prevent NULLs, empties and numbers to be processed by the
     /// heavy interlinking. Just a few cpu cycles saved.
@@ -2354,7 +2318,7 @@
         static $blockobjects = null;
         if (!isset($blockobjects)) {
             $blockobjects = array();
-            if ($blocks = get_records('block', 'visible', 1)) {
+            if ($blocks = $DB->get_records('block', array('visible'=>1))) {
                 foreach ($blocks as $block) {
                     if ($blockobject = block_instance($block->name)) {
                         $blockobjects[] = $blockobject;
@@ -2377,8 +2341,7 @@
     //This function copies all the needed files under the "user" directory to the "user_files"
     //directory under temp/backup
     function backup_copy_user_files ($preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -2386,9 +2349,9 @@
         //in temp/backup/$backup_code  dir
         $status = check_and_create_user_files_dir($preferences->backup_unique_code);
         //now get a list of users that we need for this backup.
-        $backup_users = get_recordset_select("backup_ids",
-            "backup_code='$preferences->backup_unique_code' AND table_name='user'", "", "id, old_id");
-        while ($user = rs_fetch_next_record($backup_users)) {
+        $backup_users = $DB->get_recordset("backup_ids",
+            array('backup_code'=>$preferences->backup_unique_code, array('table_name'=>'user'), "", "id, old_id"));
+        foreach ($backup_users as $user) {
             //If this user's directory exists, copy it
             $userdir = make_user_directory($user->old_id, true);
             if (check_dir_exists($userdir)) {
@@ -2403,13 +2366,13 @@
                     $status = check_dir_exists("$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/". $group, true);
                 }
 
-                $status = $status && backup_copy_file($userdir, 
+                $status = $status && backup_copy_file($userdir,
                     "$CFG->dataroot/temp/backup/$preferences->backup_unique_code/user_files/$group/$user->old_id");
             }
             //Do some output
             backup_flush(30);
         }
-        rs_close($backup_users);
+        $backup_users->close();
 
         return $status;
     }
@@ -2417,8 +2380,7 @@
     //This function copies all the needed files under the "groups" directory to the "group_files"
     //directory under temp/backup
     function backup_copy_group_files ($preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -2437,8 +2399,7 @@
                 //Iterate
                 foreach ($list as $dir) {
                     //Look for dir like group in groups table
-                    $data = get_record ('groups', 'courseid', $preferences->backup_course,
-                                                  'id',$dir);
+                    $data = $DB->get_record ('groups', array('courseid'=>$preferences->backup_course, 'id'=>$dir));
                     //If exists, copy it
                     if ($data) {
                         $status = backup_copy_file($rootdir."/".$dir,
@@ -2453,8 +2414,7 @@
     //This function copies all the course files under the course directory (except the moddata
     //directory to the "course_files" directory under temp/backup
     function backup_copy_course_files ($preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -2484,13 +2444,13 @@
         }
         return $status;
     }
-    /*
+
+    /**
      * This function copies all the site files under the site directory (except the moddata and backupdata
      * directories to the "site_files" directory under temp/backup
      */
     function backup_copy_site_files ($preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -2506,8 +2466,7 @@
 
 
 
-        $files = get_records_select('backup_files',
-                        "backup_code = '$preferences->backup_unique_code' AND file_type = 'site'");
+        $files = $DB->get_records('backup_files', array('backup_code'=>$preferences->backup_unique_code, 'file_type'=>'site'));
         if ($files) {
             //Iterate
             foreach ($files as $fileobj) {
@@ -2526,8 +2485,7 @@
     //the "oficial" name of the backup
     //It uses "pclzip" if available or system "zip" (unix only)
     function backup_zip ($preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -2553,8 +2511,7 @@
 
     //This function copies the final zip to the course dir
     function copy_zip_to_course_dir ($preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -2622,12 +2579,12 @@
                     && !empty($preferences->mods[$modname]->instances[$modid]->backup)));
     }
 
-    /*
+    /**
      * Checks for the required files/functions to backup every mod
      * And check if there is data about it
      */
     function backup_fetch_prefs_from_request(&$preferences,&$count,$course) {
-        global $CFG,$SESSION;
+        global $CFG,$SESSION, $DB;
 
         // check to see if it's in the session already
         if (!empty($SESSION->backupprefs)  && array_key_exists($course->id,$SESSION->backupprefs) && !empty($SESSION->backupprefs[$course->id])) {
@@ -2642,7 +2599,7 @@
             return true;
         }
 
-        if ($allmods = get_records("modules") ) {
+        if ($allmods = $DB->get_records("modules") ) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
@@ -2660,7 +2617,7 @@
                 $preferences->$var = true;
                 $count++;
                 // check that there are instances and we can back them up individually
-                if (!count_records('course_modules','course',$course->id,'module',$mod->id) || !function_exists($modbackupone)) {
+                if (!$DB->count_records('course_modules', array('course'=>$course->id,'module'=>$mod->id)) || !function_exists($modbackupone)) {
                     continue;
                 }
                 $var = 'exists_one_'.$modname;
@@ -2713,7 +2670,7 @@
         $preferences->backup_name = required_param('backup_name',PARAM_FILE);
         $preferences->backup_unique_code =  required_param('backup_unique_code');
 
-        $roles = get_records('role', '', '', 'sortorder');
+        $roles = $DB->get_records('role', null, 'sortorder');
         $preferences->backuproleassignments = array();
         foreach ($roles as $role) {
             if (optional_param('backupassignments_' . $role->shortname, 0, PARAM_INT)) {
@@ -2725,14 +2682,15 @@
         $SESSION->backupprefs[$course->id] = $preferences;
     }
 
-    /* Finds all related roles used in course, mod and blocks context
+    /**
+     * Finds all related roles used in course, mod and blocks context
      * @param object $preferences
      * @param object $course
      * @return array of role objects
      */
     function backup_fetch_roles($preferences) {
+        global $CFG, $DB;
 
-        global $CFG;
         $contexts = array();
         $roles = array();
 
@@ -2757,10 +2715,10 @@
 
         // add all roles assigned at user context
         if ($preferences->backup_users) {
-            if ($users = get_records_sql("SELECT u.old_id, u.table_name,u.info
-                                            FROM {$CFG->prefix}backup_ids u
-                                            WHERE u.backup_code = '$preferences->backup_unique_code' AND
-                                            u.table_name = 'user'")) {
+            if ($users = $DB->get_records_sql("SELECT u.old_id, u.table_name,u.info
+                                                 FROM {backup_ids} u
+                                                WHERE u.backup_code = ? AND
+                                                      u.table_name = 'user'", array($preferences->backup_unique_code))) {
                 foreach ($users as $user) {
                     $context = get_context_instance(CONTEXT_USER, $user->old_id);
                     $contexts[$context->id] = $context;
@@ -2770,10 +2728,10 @@
         }
 
         // add all roles assigned at block context
-        if ($courseblocks = get_records_sql("SELECT *
-                                             FROM {$CFG->prefix}block_instance
-                                             WHERE pagetype = '".PAGE_COURSE_VIEW."'
-                                                   AND pageid = {$preferences->backup_course}")) {
+        if ($courseblocks = $DB->get_records_sql("SELECT *
+                                                    FROM {block_instance}
+                                                   WHERE pagetype = '".PAGE_COURSE_VIEW."'
+                                                         AND pageid = ?", array($preferences->backup_course))) {
 
             foreach ($courseblocks as $courseblock) {
 
@@ -2794,7 +2752,9 @@
         return $roles;
     }
 
-    /* function to print xml for overrides */
+    /**
+     * function to print xml for overrides
+     */
     function write_role_overrides_xml($bf, $context, $startlevel) {
         fwrite ($bf, start_tag("ROLES_OVERRIDES", $startlevel, true));
         if ($roles = get_roles_with_override_on_context($context)) {
@@ -2824,7 +2784,9 @@
         fwrite ($bf, end_tag("ROLES_OVERRIDES", $startlevel, true));
     }
 
-    /* function to print xml for assignment */
+    /**
+     * function to print xml for assignment
+     */
     function write_role_assignments_xml($bf, $preferences, $context, $startlevel) {
     /// write role_assign code here
         fwrite ($bf, start_tag("ROLES_ASSIGNMENTS", $startlevel, true));
@@ -2869,7 +2831,7 @@
 
 
     function backup_execute(&$preferences, &$errorstr) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
         //Check for temp and backup and backup_unique_code directory

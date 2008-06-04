@@ -78,6 +78,8 @@
     require_once("$CFG->libdir/questionlib.php");
 
     function backup_question_category_context($bf, $contextid, $course) {
+        global $DB;
+
         $status = true;
         $context = get_context_instance_by_id($contextid);
         $status = $status && fwrite($bf,start_tag("CONTEXT",4,true));
@@ -90,7 +92,7 @@
                 $status = $status && fwrite($bf,full_tag("LEVEL",5,false, 'course'));
                 break;
             case CONTEXT_COURSECAT:
-                $thiscourse = get_record('course', 'id', $course);
+                $thiscourse = $DB->get_record('course', array('id'=>$course));
                 $cat = $thiscourse->category;
                 $catno = 1;
                 while($context->instanceid != $cat){
@@ -98,7 +100,7 @@
                     if ($cat ==0) {
                         return false;
                     }
-                    $cat = get_field('course_categories', 'parent', 'id', $cat);
+                    $cat = $DB->get_field('course_categories', 'parent', array('id'=>$cat));
                 }
                 $status = $status && fwrite($bf,full_tag("LEVEL",5,false, 'coursecategory'));
                 $status = $status && fwrite($bf,full_tag("COURSECATEGORYLEVEL",5,false, $catno));
@@ -114,8 +116,7 @@
     }
 
     function backup_question_categories($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -131,7 +132,7 @@
                 //Start category
                 $status = $status && fwrite ($bf,start_tag("QUESTION_CATEGORY",3,true));
                 //Get category data from question_categories
-                $category = get_record ("question_categories","id",$cat->old_id);
+                $category = $DB->get_record ("question_categories", array("id"=>$cat->old_id));
                 //Print category contents
                 $status = $status && fwrite($bf,full_tag("ID",4,false,$category->id));
                 $status = $status && fwrite($bf,full_tag("NAME",4,false,$category->name));
@@ -155,8 +156,7 @@
     //This function backups all the questions in selected category and their
     //asociated data
     function backup_question($bf,$preferences,$category, $level = 4) {
-
-        global $CFG, $QTYPES;
+        global $CFG, $QTYPES, $DB;
 
         $status = true;
 
@@ -164,11 +164,11 @@
         // (these are the ones which could be parents themselves) are backed up first. This
         // is important for the recoding of the parent field during the restore process
         // Only select questions with ids in backup_ids table
-        $questions = get_records_sql("SELECT q.* FROM {$CFG->prefix}backup_ids bk, {$CFG->prefix}question q ".
-                                    "WHERE q.category= $category AND ".
-                                    "bk.old_id=q.id AND ".
-                                    "bk.backup_code = {$preferences->backup_unique_code} ".
-                                    "ORDER BY parent ASC, id");
+        $questions = $DB->get_records_sql("SELECT q.* FROM {backup_ids} bk, {question} q
+                                            WHERE q.category= ? AND
+                                                  bk.old_id=q.id AND
+                                                  bk.backup_code = ?
+                                         ORDER BY parent ASC, id", array($category, $preferences->backup_unique_code));
         //If there are questions
         if ($questions) {
             //Write start tag
@@ -220,12 +220,11 @@
     //This function backups the answers data in some question types
     //(truefalse, shortanswer,multichoice,numerical,calculated)
     function question_backup_answers($bf,$preferences,$question, $level = 6) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $answers = get_records("question_answers","question",$question,"id");
+        $answers = $DB->get_records("question_answers", array("question"=>$question), "id");
         //If there are answers
         if ($answers) {
             $status = $status && fwrite ($bf,start_tag("ANSWERS",$level,true));
@@ -246,12 +245,11 @@
 
     //This function backups question_numerical_units from different question types
     function question_backup_numerical_units($bf,$preferences,$question,$level=7) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $numerical_units = get_records("question_numerical_units","question",$question,"id");
+        $numerical_units = $DB->get_records("question_numerical_units", array("question"=>$question), "id");
         //If there are numericals_units
         if ($numerical_units) {
             $status = $status && fwrite ($bf,start_tag("NUMERICAL_UNITS",$level,true));
@@ -273,13 +271,12 @@
 
     //This function backups dataset_definitions (via question_datasets) from different question types
     function question_backup_datasets($bf,$preferences,$question,$level=7) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //First, we get the used datasets for this question
-        $question_datasets = get_records("question_datasets","question",$question,"id");
+        $question_datasets = $DB->get_records("question_datasets", array("question"=>$question), "id");
         //If there are question_datasets
         if ($question_datasets) {
             $status = $status &&fwrite ($bf,start_tag("DATASET_DEFINITIONS",$level,true));
@@ -287,7 +284,7 @@
             foreach ($question_datasets as $question_dataset) {
                 $def = NULL;
                 //Get dataset_definition
-                if ($def = get_record("question_dataset_definitions","id",$question_dataset->datasetdefinition)) {;
+                if ($def = $DB->get_record("question_dataset_definitions", array("id"=>$question_dataset->datasetdefinition))) {;
                     $status = $status &&fwrite ($bf,start_tag("DATASET_DEFINITION",$level+1,true));
                     //Print question_dataset contents
                     fwrite ($bf,full_tag("CATEGORY",$level+2,false,$def->category));
@@ -310,13 +307,12 @@
 
     //This function backups datases_items from dataset_definitions
     function question_backup_dataset_items($bf,$preferences,$datasetdefinition,$level=9) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //First, we get the datasets_items for this dataset_definition
-        $dataset_items = get_records("question_dataset_items","definition",$datasetdefinition,"id");
+        $dataset_items = $DB->get_records("question_dataset_items", array("definition"=>$datasetdefinition), "id");
         //If there are dataset_items
         if ($dataset_items) {
             $status = $status &&fwrite ($bf,start_tag("DATASET_ITEMS",$level,true));
@@ -339,12 +335,11 @@
 
     //Backup question_states contents (executed from backup_quiz_attempts)
     function backup_question_states ($bf,$preferences,$attempt, $level = 6) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $question_states = get_records("question_states","attempt",$attempt,"id");
+        $question_states = $DB->get_records("question_states", array("attempt"=>$attempt),"id");
         //If there are states
         if ($question_states) {
             //Write start tag
@@ -374,11 +369,11 @@
 
     //Backup question_sessions contents (executed from backup_quiz_attempts)
     function backup_question_sessions ($bf,$preferences,$attempt, $level = 6) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $question_sessions = get_records("question_sessions","attemptid",$attempt,"id");
+        $question_sessions = $DB->get_records("question_sessions", array("attemptid"=>$attempt), "id");
         //If there are sessions
         if ($question_sessions) {
             //Write start tag (the funny name 'newest states' has historical reasons)
@@ -405,54 +400,50 @@
 
     //Returns an array of categories id
     function question_category_ids_by_backup ($backup_unique_code) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT a.old_id, a.backup_code
-                                 FROM {$CFG->prefix}backup_ids a
-                                 WHERE a.backup_code = '$backup_unique_code' AND
-                                       a.table_name = 'question_categories'");
+        return $DB->get_records_sql("SELECT a.old_id, a.backup_code
+                                       FROM {backup_ids} a
+                                      WHERE a.backup_code = ? AND
+                                            a.table_name = 'question_categories'", array($backup_unique_code));
     }
 
     function question_ids_by_backup ($backup_unique_code) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT old_id, backup_code
-                                 FROM {$CFG->prefix}backup_ids
-                                 WHERE backup_code = '$backup_unique_code' AND
-                                       table_name = 'question'");
+        return $DB->get_records_sql("SELECT old_id, backup_code
+                                       FROM {backup_ids}
+                                      WHERE backup_code = ? AND
+                                            table_name = 'question'", array($backup_unique_code));
     }
     
     //Function for inserting question and category ids into db that are all called from
     // quiz_check_backup_mods during execution of backup_check.html 
 
-
     function question_insert_c_and_q_ids_for_course($coursecontext, $backup_unique_code){
-        global $CFG;
+        global $CFG, $DB;
             // First, all categories from this course's context.
-        $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
-                                   (backup_code, table_name, old_id, info)
-                               SELECT '$backup_unique_code', 'question_categories', qc.id, 'course'
-                               FROM {$CFG->prefix}question_categories qc
-                               WHERE qc.contextid = {$coursecontext->id}", false);
+        $status = $DB->execute("INSERT INTO {backup_ids} (backup_code, table_name, old_id, info)
+                                SELECT '$backup_unique_code', 'question_categories', qc.id, 'course'
+                                  FROM {question_categories} qc
+                                 WHERE qc.contextid = ?", array($coursecontext->id));
         $status = $status && question_insert_q_ids($backup_unique_code, 'course');
         return $status;
     }
-    /*
+
+    /**
      * Insert all question ids for categories whose ids have already been inserted in the backup_ids table
      * Insert code to identify categories to later insert all question ids later eg. course, quiz or other module name.
      */
     function question_insert_q_ids($backup_unique_code, $info){
         global $CFG;
             //put the ids of the questions from all these categories into the db.
-        $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
-                                       (backup_code, table_name, old_id, info)
-                                       SELECT '$backup_unique_code', 'question', q.id, ''
-                                       FROM {$CFG->prefix}question q, {$CFG->prefix}backup_ids bk
-                                       WHERE q.category = bk.old_id AND bk.table_name = 'question_categories' 
-                                       AND bk.info = '$info'
-                                       AND bk.backup_code = '$backup_unique_code'", false);
+        $status = $DB->execute("INSERT INTO {backup_ids} (backup_code, table_name, old_id, info)
+                                SELECT '$backup_unique_code', 'question', q.id, ''
+                                  FROM {question} q, {backup_ids} bk
+                                 WHERE q.category = bk.old_id AND bk.table_name = 'question_categories' 
+                                       AND bk.info = ?
+                                       AND bk.backup_code = ?", array($info, $backup_unique_code));
         return $status;
     }
     
@@ -471,24 +462,23 @@
         }
                                     
         if ($cmcontexts){
-            $status = $status && execute_sql("INSERT INTO {$CFG->prefix}backup_ids
-                                       (backup_code, table_name, old_id, info)
-                                   SELECT '$backup_unique_code', 'question_categories', qc.id, '$modulename'
-                                   FROM {$CFG->prefix}question_categories qc
-                                   WHERE qc.contextid IN (".join(array_keys($cmcontexts), ', ').")", false);
+            $status = $status && $DB->execute("INSERT INTO {backup_ids} (backup_code, table_name, old_id, info)
+                                               SELECT '$backup_unique_code', 'question_categories', qc.id, '$modulename'
+                                                 FROM {question_categories} qc
+                                                WHERE qc.contextid IN (".join(array_keys($cmcontexts), ', ').")");
         }
         $status = $status && question_insert_q_ids($backup_unique_code, $modulename);
         return $status;
     }
 
     function question_insert_site_file_names($course, $backup_unique_code){
-        global $QTYPES, $CFG;
+        global $QTYPES, $CFG, $DB;
         $status = true;
         $questionids = question_ids_by_backup ($backup_unique_code);
         $urls = array();
         if ($questionids){
             foreach ($questionids as $question_bk){
-                $question = get_record('question', 'id', $question_bk->old_id);
+                $question = $DB->get_record('question', array('id'=>$question_bk->old_id));
                 $QTYPES[$question->qtype]->get_question_options($question);
                 $urls = array_merge_recursive($urls, $QTYPES[$question->qtype]->find_file_links($question, SITEID));
             }
@@ -500,8 +490,8 @@
                 $inserturl->backup_code = $backup_unique_code;
                 $inserturl->file_type = 'site';
                 $url = clean_param($url, PARAM_PATH);
-                $inserturl->path = addslashes($url);
-                $status = $status && insert_record('backup_files', $inserturl);
+                $inserturl->path = $url;
+                $status = $status && $DB->insert_record('backup_files', $inserturl);
             } else {
                 notify(get_string('linkedfiledoesntexist', 'question', $url));
             }

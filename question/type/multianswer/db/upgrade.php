@@ -45,20 +45,21 @@ function xmldb_qtype_multianswer_upgrade($oldversion=0) {
  * that have been moved between categories will be in the wrong category, This code fixes these up.
  */
 function question_multianswer_fix_subquestion_parents_and_categories() {
-    global $CFG;
+    global $CFG, $DB;
 
     $result = true;
-    $rs = get_recordset_sql('SELECT q.id, q.category, qma.sequence FROM ' . $CFG->prefix .
-            'question q JOIN ' . $CFG->prefix . 'question_multianswer qma ON q.id = qma.question');
+    $rs = $DB->get_recordset_sql('SELECT q.id, q.category, qma.sequence
+                                    FROM {question} q JOIN {question_multianswer} qma ON q.id = qma.question');
     if ($rs) {
-        while ($q = rs_fetch_next_record($rs)) {
+        foreach ($rs as $q) {
             if (!empty($q->sequence)) {
-                $result = $result && execute_sql('UPDATE ' . $CFG->prefix . 'question' .
-                        ' SET parent = ' . $q->id . ', category = ' . $q->category .
-                        ' WHERE id IN (' . $q->sequence . ') AND parent <> 0');
+                $result = $result && $DB->execute("UPDATE {question}
+                                                      SET parent = ?, category = ?
+                                                    WHERE id IN ($q->sequence) AND parent <> 0",
+                                                  array($q->id, $q->category));
             }
         }
-        rs_close($rs);
+        $rs->close();
     } else {
         $result = false;
     }
