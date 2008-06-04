@@ -521,7 +521,7 @@ abstract class moodle_database {
         if ($sort) {
             $sort = " ORDER BY $sort";
         }
-        return $this->get_recordset_sql("SELECT * FROM {$this->prefix}$table $select $sort", $params, $limitfrom, $limitnum);
+        return $this->get_recordset_sql("SELECT $fields FROM {$this->prefix}$table $select $sort", $params, $limitfrom, $limitnum);
     }
 
     /**
