@@ -238,7 +238,7 @@ function feedback_convert_to_win($text) {
     
     if(!isset($newwincharset)) {
         if(!isset($CFG->latinexcelexport) || !$CFG->latinexcelexport) {
-            $newwincharset = get_string('UTF-16LE');
+            $newwincharset = 'UTF-16LE';
         }else {
             $newwincharset = get_string('localewincharset');
             if($newwincharset == '') {
