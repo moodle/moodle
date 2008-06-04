@@ -27,7 +27,8 @@ $CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhoriz
 /// Standard functions /////////////////////////////////////////////////////////
 
 function choice_user_outline($course, $user, $mod, $choice) {
-    if ($answer = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
+    global $DB;
+    if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $user->id))) {
         $result->info = "'".format_string(choice_get_option_text($choice, $answer->optionid))."'";
         $result->time = $answer->timemodified;
         return $result;
@@ -37,7 +38,8 @@ function choice_user_outline($course, $user, $mod, $choice) {
 
 
 function choice_user_complete($course, $user, $mod, $choice) {
-    if ($answer = get_record('choice_answers', "choiceid", $choice->id, "userid", $user->id)) {
+    global $DB;
+    if ($answer = $DB->get_record('choice_answers', array("choiceid" => $choice->id, "userid" => $user->id))) {
         $result->info = "'".format_string(choice_get_option_text($choice, $answer->optionid))."'";
         $result->time = $answer->timemodified;
         echo get_string("answered", "choice").": $result->info. ".get_string("updated", '', userdate($result->time));
@@ -125,7 +127,7 @@ function choice_update_instance($choice) {
 }
 
 function choice_show_form($choice, $user, $cm, $allresponses) {
-
+    global $DB;
 //$cdisplay is an array of the display info for a choice $cdisplay[$optionid]->text  - text name of option.
 //                                                                            ->maxanswers -maxanswers for this option
 //                                                                            ->full - whether this option is full or not. 0=not full, 1=full
@@ -151,13 +153,13 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
             } else {
                 $cdisplay[$aid]->countanswers = 0;
             }
-            if ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id, 'optionid', $optionid)) {
+            if ($current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $user->id, 'optionid' => $optionid))) {
                 $cdisplay[$aid]->checked = ' checked="checked" ';
             } else {
                 $cdisplay[$aid]->checked = '';
             }
-            if ( $choice->limitanswers && 
-                ($cdisplay[$aid]->countanswers >= $cdisplay[$aid]->maxanswers) && 
+            if ( $choice->limitanswers &&
+                ($cdisplay[$aid]->countanswers >= $cdisplay[$aid]->maxanswers) &&
                 (empty($cdisplay[$aid]->checked)) ) {
                 $cdisplay[$aid]->disabled = ' disabled="disabled" ';
             } else {
@@ -231,7 +233,7 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
         } else {
             echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
         }
-        if ($choice->allowupdate && $aaa = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
+        if ($choice->allowupdate && $aaa = $DB->get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
             echo "<br /><a href='view.php?id=".$cm->id."&amp;action=delchoice'>".get_string("removemychoice","choice")."</a>";
         }
     } else {
@@ -241,8 +243,8 @@ function choice_show_form($choice, $user, $cm, $allresponses) {
 }
 
 function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $cm) {
-
-    $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $userid);
+    global $DB;
+    $current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $userid));
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $countanswers=0;
@@ -257,18 +259,18 @@ function choice_user_submit_response($formanswer, $choice, $userid, $courseid, $
             // If groups are being used, retrieve responses only for users in
             // current group
             global $CFG;
-            $answers = get_records_sql("
-SELECT 
+            $answers = $DB->get_records_sql("
+SELECT
     ca.*
-FROM 
-    {$CFG->prefix}choice_answers ca
-    INNER JOIN {$CFG->prefix}groups_members gm ON ca.userid=gm.userid
+FROM
+    {choice_answers} ca
+    INNER JOIN {groups_members} gm ON ca.userid=gm.userid
 WHERE
-    optionid=$formanswer
-    AND gm.groupid=$currentgroup");
+    optionid=?
+    AND gm.groupid=?", array($formanswer, $currentgroup));
         } else {
             // Groups are not used, retrieve all answers for this option ID
-            $answers = get_records("choice_answers", "optionid", $formanswer);
+            $answers = $DB->get_records("choice_answers", array("optionid" => $formanswer));
         }
 
         if ($answers) {
@@ -287,7 +289,7 @@ WHERE
             $newanswer = $current;
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
-            if (! update_record("choice_answers", $newanswer)) {
+            if (! $DB->update_record("choice_answers", $newanswer)) {
                 print_error('cannotupdatechoice', 'choice');
             }
             add_to_log($courseid, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
@@ -297,7 +299,7 @@ WHERE
             $newanswer->userid = $userid;
             $newanswer->optionid = $formanswer;
             $newanswer->timemodified = time();
-            if (! insert_record("choice_answers", $newanswer)) {
+            if (! $DB->insert_record("choice_answers", $newanswer)) {
                 print_error('cannotsavechoice', 'choice');
             }
             add_to_log($courseid, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
@@ -324,7 +326,7 @@ function choice_show_reportlink($user, $cm) {
 
 function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {
     global $CFG, $COLUMN_HEIGHT;
-    
+
     print_heading(get_string("responses", "choice"));
     if (empty($forcepublish)) { //alow the publish setting to be overridden
         $forcepublish = $choice->publish;
@@ -340,12 +342,12 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
             $totalresponsecount += count($userlist);
         }
     }
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     $hascapfullnames = has_capability('moodle/site:viewfullnames', $context);
-    
-    $viewresponses = has_capability('mod/choice:readresponses', $context); 
+
+    $viewresponses = has_capability('mod/choice:readresponses', $context);
     switch ($forcepublish) {
         case CHOICE_PUBLISH_NAMES:
                 echo '<div id="tablecontainer">';
@@ -356,7 +358,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
 
             echo "<table cellpadding=\"5\" cellspacing=\"10\" class=\"results names\">";
             echo "<tr>";
-  
+
             $columncount = array(); // number of votes in each column
             if ($choice->showunanswered) {
                 $columncount[0] = 0;
@@ -421,11 +423,11 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
             }
             echo "</tr><tr>";
             $count = 0;
-            
+
             if ($choice->showunanswered) {
                 echo "<td></td>";
             }
-            
+
             foreach ($choice->option as $optionid => $optiontext) {
                 echo "<td align=\"center\" class=\"count\">";
                 if ($choice->limitanswers) {
@@ -433,7 +435,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                     echo $columncount[$optionid];
                     echo "<br/>";
                     echo get_string("limit", "choice").":";
-                    $choice_option = get_record("choice_options", "id", $optionid);
+                    $choice_option = $DB->get_record("choice_options", array("id" => $optionid));
                     echo $choice_option->maxanswers;
                 } else {
                     if (isset($columncount[$optionid])) {
@@ -444,7 +446,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 $count++;
             }
             echo "</tr>";
-            
+
             /// Print "Select all" etc.
             if ($viewresponses and has_capability('mod/choice:deleteresponses',$context)) {
                 echo '<tr><td></td><td>';
@@ -459,14 +461,14 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 echo '<script type="text/javascript">'."\n<!--\n".'document.getElementById("noscriptmenuaction").style.display = "none";'."\n-->\n".'</script>';
                 echo '</td><td></td></tr>';
             }
-            
+
             echo "</table>";
             if ($viewresponses) {
                 echo "</div></form></div>";
             }
             break;
-        
-        
+
+
         case CHOICE_PUBLISH_ANONYMOUS:
 
             echo "<table cellpadding=\"5\" cellspacing=\"0\" class=\"results anonymous\">";
@@ -488,7 +490,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 echo "<th class=\"col$count header\" scope=\"col\">";
                 echo format_string($optiontext);
                 echo "</th>";
-                
+
                 $column[$optionid] = 0;
                 if (isset($allresponses[$optionid])) {
                     $column[$optionid] = count($allresponses[$optionid]);
@@ -539,7 +541,7 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                     echo get_string("taken", "choice").":";
                     echo $column[$optionid].'<br />';
                     echo get_string("limit", "choice").":";
-                    $choice_option = get_record("choice_options", "id", $optionid);
+                    $choice_option = $DB->get_record("choice_options", array("id" => $optionid));
                     echo $choice_option->maxanswers;
                 } else {
                     echo $column[$optionid];
@@ -549,14 +551,14 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 $count++;
             }
             echo "</tr></table>";
-            
+
             break;
     }
 }
 
 
 function choice_delete_responses($attemptids, $choiceid) {
-
+    global $DB;
     if(!is_array($attemptids) || empty($attemptids)) {
         return false;
     }
@@ -568,8 +570,8 @@ function choice_delete_responses($attemptids, $choiceid) {
     }
 
     foreach($attemptids as $attemptid) {
-        if ($todelete = get_record('choice_answers', 'choiceid', $choiceid, 'userid', $attemptid)) {
-            delete_records('choice_answers', 'choiceid', $choiceid, 'userid', $attemptid);
+        if ($todelete = $DB->get_record('choice_answers', array('choiceid' => $choiceid, 'userid' => $attemptid))) {
+            $DB->delete_records('choice_answers', array('choiceid' => $choiceid, 'userid' => $attemptid));
         }
     }
     return true;
@@ -610,11 +612,11 @@ function choice_get_participants($choiceid) {
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.id, u.id
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}choice_answers a
-                                 WHERE a.choiceid = '$choiceid' and
-                                       u.id = a.userid");
+    $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                 FROM {user} u,
+                                      {choice_answers} a
+                                 WHERE a.choiceid = ? AND
+                                       u.id = a.userid", array($choiceid));
 
     //Return students array (it contains an array of unique users)
     return ($students);
@@ -622,8 +624,9 @@ function choice_get_participants($choiceid) {
 
 
 function choice_get_option_text($choice, $id) {
+    global $DB;
 // Returns text string which is the answer that matches the id
-    if ($result = get_record("choice_options", "id", $id)) {
+    if ($result = $DB->get_record("choice_options", array("id" => $id))) {
         return $result->text;
     } else {
         return get_string("notanswered", "choice");
@@ -631,10 +634,11 @@ function choice_get_option_text($choice, $id) {
 }
 
 function choice_get_choice($choiceid) {
+    global $DB;
 // Gets a full choice record
 
-    if ($choice = get_record("choice", "id", $choiceid)) {
-        if ($options = get_records("choice_options", "choiceid", $choiceid, "id")) {
+    if ($choice = $DB->get_record("choice", array("id" => $choiceid))) {
+        if ($options = $DB->get_records("choice_options", array("choiceid" => $choiceid), "id")) {
             foreach ($options as $option) {
                 $choice->option[$option->id] = $option->text;
                 $choice->maxanswers[$option->id] = $option->maxanswers;
@@ -678,17 +682,17 @@ function choice_reset_course_form_defaults($course) {
  * @return array status array
  */
 function choice_reset_userdata($data) {
-    global $CFG;
+    global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', 'choice');
     $status = array();
 
     if (!empty($data->reset_choice)) {
         $choicessql = "SELECT ch.id
-                         FROM {$CFG->prefix}choice ch
-                        WHERE ch.course={$data->courseid}";
+                         FROM {choice} ch
+                        WHERE ch.course=?";
 
-        delete_records_select('choice_answers', "choiceid IN ($choicessql)");
+        $DB->delete_records_select('choice_answers', "choiceid IN ($choicessql)", array($data->courseid));
         $status[] = array('component'=>$componentstr, 'item'=>get_string('removeresponses', 'choice'), 'error'=>false);
     }
 
@@ -702,7 +706,7 @@ function choice_reset_userdata($data) {
 }
 
 function choice_get_response_data($choice, $cm, $groupmode) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -721,7 +725,7 @@ function choice_get_response_data($choice, $cm, $groupmode) {
     $allresponses[0] = get_users_by_capability($context, 'mod/choice:choose', 'u.id, u.picture, u.firstname, u.lastname, u.idnumber', 'u.firstname ASC', '', '', $currentgroup, '', false, true);
 
 /// Get all the recorded responses for this choice
-    $rawresponses = get_records('choice_answers', 'choiceid', $choice->id);
+    $rawresponses = $DB->get_records('choice_answers', array('choiceid' => $choice->id));
 
 /// Use the responses to move users into the correct column
 

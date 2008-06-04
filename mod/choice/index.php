@@ -27,12 +27,12 @@
     }
 
     $sql = "SELECT cha.*
-              FROM {$CFG->prefix}choice ch, {$CFG->prefix}choice_answers cha
+              FROM {choice} ch, {choice_answers} cha
              WHERE cha.choiceid = ch.id AND
-                   ch.course = $course->id AND cha.userid = $USER->id";
+                   ch.course = ? AND cha.userid = ?";
 
     $answers = array () ;
-    if (isloggedin() and !isguestuser() and $allanswers = get_records_sql($sql)) {
+    if (isloggedin() and !isguestuser() and $allanswers = $DB->get_records_sql($sql, array($course->id, $USER->id))) {
         foreach ($allanswers as $aa) {
             $answers[$aa->choiceid] = $aa;
         }
@@ -76,7 +76,7 @@
             }
             $currentsection = $choice->section;
         }
-        
+
         //Calculate the href
         if (!$choice->visible) {
             //Show dimmed if the mod is hidden

@@ -15,7 +15,7 @@
     //                        |                |
     //                        |                |
     //                   choice_answers        |
-    //        (UL,pk->id, fk->choiceid, fk->optionid)       
+    //        (UL,pk->id, fk->choiceid, fk->optionid)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -56,7 +56,7 @@
             $choice->display = backup_todb($info['MOD']['#']['DISPLAY']['0']['#']);
             $choice->allowupdate = backup_todb($info['MOD']['#']['ALLOWUPDATE']['0']['#']);
             $choice->showunanswered = backup_todb($info['MOD']['#']['SHOWUNANSWERED']['0']['#']);
-            $choice->limitanswers = backup_todb($info['MOD']['#']['LIMITANSWERS']['0']['#']); 
+            $choice->limitanswers = backup_todb($info['MOD']['#']['LIMITANSWERS']['0']['#']);
             $choice->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
             $choice->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
             $choice->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
@@ -66,7 +66,7 @@
             if (! isset($info['MOD']['#']['SHOWRESULTS']['0']['#'])) {   //check for previous versions
                 if (! isset($info['MOD']['#']['RELEASE']['0']['#'])) {  //It's a pre-14 backup filea
                     //Set the allowupdate field
-                    if ($choice->publish == 0) { 
+                    if ($choice->publish == 0) {
                         $choice->allowupdate = 1;
                     }
                     //Set the showresults field as defined by the old publish field
@@ -84,21 +84,21 @@
             }
             //The structure is equal to the db, so insert the choice
             $newid = $DB->insert_record ("choice",$choice);
-            
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
-                
-                //Check to see how answers (curently choice_options) are stored in the table 
+
+                //Check to see how answers (curently choice_options) are stored in the table
                 //If answer1 - answer6 exist, this is a pre 1.5 version of choice
-                if (isset($info['MOD']['#']['ANSWER1']['0']['#']) || 
-                    isset($info['MOD']['#']['ANSWER2']['0']['#']) || 
-                    isset($info['MOD']['#']['ANSWER3']['0']['#']) || 
-                    isset($info['MOD']['#']['ANSWER4']['0']['#']) || 
-                    isset($info['MOD']['#']['ANSWER5']['0']['#']) || 
+                if (isset($info['MOD']['#']['ANSWER1']['0']['#']) ||
+                    isset($info['MOD']['#']['ANSWER2']['0']['#']) ||
+                    isset($info['MOD']['#']['ANSWER3']['0']['#']) ||
+                    isset($info['MOD']['#']['ANSWER4']['0']['#']) ||
+                    isset($info['MOD']['#']['ANSWER5']['0']['#']) ||
                     isset($info['MOD']['#']['ANSWER6']['0']['#']) ) {
-              
+
                     //This is a pre 1.5 choice backup, special work begins
                     $options = array();
                     $options[1] = backup_todb($info['MOD']['#']['ANSWER1']['0']['#']);
@@ -107,8 +107,8 @@
                     $options[4] = backup_todb($info['MOD']['#']['ANSWER4']['0']['#']);
                     $options[5] = backup_todb($info['MOD']['#']['ANSWER5']['0']['#']);
                     $options[6] = backup_todb($info['MOD']['#']['ANSWER6']['0']['#']);
-                
-                    for($i = 1; $i < 7; $i++) { //insert old answers (in 1.4)  as choice_options (1.5) to db.  
+
+                    for($i = 1; $i < 7; $i++) { //insert old answers (in 1.4)  as choice_options (1.5) to db.
                         if (!empty($options[$i])) {  //make sure this option has something in it!
                             $option->choiceid = $newid;
                             $option->text = $options[$i];
@@ -125,13 +125,13 @@
                  //now restore the answers for this choice.
                  if (restore_userdata_selected($restore,'choice',$mod->id)) {
                     //Restore choice_answers
-                    $status = choice_answers_restore_mods($newid,$info,$restore);     
-                 }                               
+                    $status = choice_answers_restore_mods($newid,$info,$restore);
+                 }
             } else {
                 $status = false;
             }
 
-            //Do some output     
+            //Do some output
             if (!defined('RESTORE_SILENTLY')) {
                 echo "<li>".get_string("modulename","choice")." \"".format_string($choice->name,true)."\"</li>";
             }
@@ -267,13 +267,13 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
     //choice_decode_content_links_caller() function in each module
     //in the restore process
     function choice_decode_content_links ($content,$restore) {
-            
+
         global $CFG;
-            
+
         $result = $content;
-                
+
         //Link to the list of choices
-                
+
         $searchstring='/\$@(CHOICEINDEX)\*([0-9]+)@\$/';
         //We look for it
         preg_match_all($searchstring,$content,$foundset);
@@ -290,7 +290,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
                 if($rec->new_id) {
                     //Now replace it
                     $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/choice/index.php?id='.$rec->new_id,$result);
-                } else { 
+                } else {
                     //It's a foreign link so leave it as original
                     $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/choice/index.php?id='.$old_id,$result);
                 }
@@ -331,9 +331,9 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function choice_decode_content_links_caller($restore) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
-        
+
         if ($choices = $DB->get_records('chat', array('course'=>$restore->course_id), '', "id,text")) {
                                                //Iterate over each choice->text
             $i = 0;   //Counter to send some output to the browser to avoid timeouts
@@ -411,9 +411,9 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function choice_restore_logs($restore,$log) {
-                    
+
         $status = false;
-                    
+
         //Depending of the action, we recode different things
         switch ($log->action) {
         case "add":

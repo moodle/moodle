@@ -6,12 +6,12 @@
     $id         = required_param('id', PARAM_INT);                 // Course Module ID
     $action     = optional_param('action', '', PARAM_ALPHA);
     $attemptids = optional_param('attemptid', array(), PARAM_INT); // array of attempt ids for delete action
-    
+
     if (! $cm = get_coursemodule_from_id('choice', $id)) {
         print_error('invalidcoursemodule');
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
         print_error('coursemisconf');
     }
 
@@ -20,7 +20,7 @@
     if (!$choice = choice_get_choice($cm->instance)) {
         print_error('invalidcoursemodule');
     }
-    
+
     $strchoice = get_string('modulename', 'choice');
     $strchoices = get_string('modulenameplural', 'choice');
 
@@ -29,9 +29,9 @@
     }
 
     if ($action == 'delchoice') {
-        if ($answer = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) {
+        if ($answer = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) {
             //print_object($answer);
-            delete_records('choice_answers', 'id', $answer->id);
+            $DB->delete_records('choice_answers', array('id' => $answer->id));
         }
     }
 
@@ -40,7 +40,7 @@
     if ($form = data_submitted() && has_capability('mod/choice:choose', $context)) {
         $timenow = time();
         if (has_capability('mod/choice:deleteresponses', $context)) {
-            if ($action == 'delete') { //some responses need to be deleted     
+            if ($action == 'delete') { //some responses need to be deleted
                 choice_delete_responses($attemptids); //delete responses.
                 redirect("view.php?id=$cm->id");
             }
@@ -66,14 +66,14 @@
 
     /// Check to see if groups are being used in this choice
     $groupmode = groups_get_activity_groupmode($cm);
-    
+
     if ($groupmode) {
         groups_get_activity_group($cm, true);
         groups_print_activity_menu($cm, 'view.php?id='.$id);
     }
     $allresponses = choice_get_response_data($choice, $cm, $groupmode);   // Big function, approx 6 SQL calls per user
 
-    
+
     if (has_capability('mod/choice:readresponses', $context)) {
         choice_show_reportlink($allresponses, $cm);
     }
@@ -86,7 +86,7 @@
 
     $current = false;  // Initialise for later
     //if user has already made a selection, and they are not allowed to update it, show their selected answer.
-    if (!empty($USER->id) && ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) &&
+    if (!empty($USER->id) && ($current = $DB->get_record('choice_answers', array('choiceid' => $choice->id, 'userid' => $USER->id))) &&
         empty($choice->allowupdate) ) {
         print_simple_box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)), "center");
     }
@@ -106,12 +106,12 @@
         }
     }
 
-    if ( (!$current or $choice->allowupdate) and 
-         ($choice->timeclose >= time() or $choice->timeclose == 0) and 
+    if ( (!$current or $choice->allowupdate) and
+         ($choice->timeclose >= time() or $choice->timeclose == 0) and
           has_capability('mod/choice:choose', $context) ) {
     // They haven't made their choice yet or updates allowed and choice is open
 
-        echo '<form id="form" method="post" action="view.php">';        
+        echo '<form id="form" method="post" action="view.php">';
 
         choice_show_form($choice, $USER, $cm, $allresponses);
 
@@ -143,7 +143,7 @@
             print_simple_box_start('center', '60%', '', 5, 'generalbox', 'notice');
             echo '<p align="center">'. get_string('noguestchoose', 'choice') .'</p>';
             echo '<div class="continuebutton">';
-            print_single_button($CFG->wwwroot.'/course/enrol.php?id='.$course->id, NULL, 
+            print_single_button($CFG->wwwroot.'/course/enrol.php?id='.$course->id, NULL,
                                 get_string('enrolme', '', format_string($course->shortname)), 'post', $CFG->framename);
             echo '</div>'."\n";
             print_simple_box_end();
@@ -161,7 +161,7 @@
 
     } else if (!$choiceformshown) {
         print_simple_box(get_string('noresultsviewable', 'choice'), 'center');
-    } 
+    }
 
 
     print_footer($course);

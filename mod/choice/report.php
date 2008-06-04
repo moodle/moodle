@@ -12,16 +12,16 @@
         print_error("invalidcoursemodule");
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
         print_error("coursemisconf");
     }
 
     require_login($course->id, false, $cm);
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     require_capability('mod/choice:readresponses', $context);
-    
+
     if (!$choice = choice_get_choice($cm->instance)) {
         print_error('invalidcoursemodule');
     }
@@ -31,13 +31,13 @@
     $strresponses = get_string("responses", "choice");
 
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id",$cm->id);
-      
+
     if ($action == 'delete' && has_capability('mod/choice:deleteresponses',$context)) {
         $attemptids = isset($_POST['attemptid']) ? $_POST['attemptid'] : array(); //get array of repsonses to delete.
         choice_delete_responses($attemptids, $choice->id); //delete responses.
         redirect("report.php?id=$cm->id");
     }
-        
+
     if (!$download) {
 
         $navigation = build_navigation($strresponses, $cm);
@@ -54,8 +54,8 @@
 
     if ($download == "ods" && has_capability('mod/choice:downloadresponses', $context)) {
         require_once("$CFG->libdir/odslib.class.php");
-  
-    /// Calculate file name 
+
+    /// Calculate file name
         $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.ods';
     /// Creating a workbook
         $workbook = new MoodleODSWorkbook("-");
@@ -72,7 +72,7 @@
         $myxls->write_string(0,4,get_string("choice","choice"));
 
     /// generate the data for the body of the spreadsheet
-        $i=0;  
+        $i=0;
         $row=1;
         if ($users) {
             foreach ($users as $option => $userid) {
@@ -91,7 +91,7 @@
                     $myxls->write_string($row,3,$ug2);
 
                     if (isset($option_text)) {
-                        $myxls->write_string($row,4,format_string($useroption,true));
+                        $myxls->write_string($row,4,format_string($option_text,true));
                     }
                     $row++;
                     $pos=4;
@@ -107,8 +107,8 @@
     //print spreadsheet if one is asked for:
     if ($download == "xls" && has_capability('mod/choice:downloadresponses', $context)) {
         require_once("$CFG->libdir/excellib.class.php");
-  
-    /// Calculate file name 
+
+    /// Calculate file name
         $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.xls';
     /// Creating a workbook
         $workbook = new MoodleExcelWorkbook("-");
@@ -123,10 +123,10 @@
         $myxls->write_string(0,2,get_string("idnumber"));
         $myxls->write_string(0,3,get_string("group"));
         $myxls->write_string(0,4,get_string("choice","choice"));
-        
-              
+
+
     /// generate the data for the body of the spreadsheet
-        $i=0;  
+        $i=0;
         $row=1;
         if ($users) {
             foreach ($users as $option => $userid) {
@@ -156,7 +156,7 @@
         exit;
     }
 
-    // print text file  
+    // print text file
     if ($download == "txt" && has_capability('mod/choice:downloadresponses', $context)) {
         $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.txt';
 
@@ -170,10 +170,10 @@
 
         echo get_string("firstname")."\t".get_string("lastname") . "\t". get_string("idnumber") . "\t";
         echo get_string("group"). "\t";
-        echo get_string("choice","choice"). "\n";        
+        echo get_string("choice","choice"). "\n";
 
         /// generate the data for the body of the spreadsheet
-        $i=0;  
+        $i=0;
         if ($users) {
             foreach ($users as $option => $userid) {
                 $option_text = choice_get_option_text($choice, $option);
@@ -203,20 +203,20 @@
     }
     choice_show_results($choice, $course, $cm, $users, $format); //show table with students responses.
 
-   //now give links for downloading spreadsheets. 
+   //now give links for downloading spreadsheets.
     if (has_capability('mod/choice:downloadresponses',$context)) {
         echo "<br />\n";
         echo "<table class=\"downloadreport\"><tr>\n";
         echo "<td>";
         $options = array();
-        $options["id"] = "$cm->id";   
+        $options["id"] = "$cm->id";
         $options["download"] = "ods";
         print_single_button("report.php", $options, get_string("downloadods"));
         echo "</td><td>";
         $options["download"] = "xls";
         print_single_button("report.php", $options, get_string("downloadexcel"));
         echo "</td><td>";
-        $options["download"] = "txt";    
+        $options["download"] = "txt";
         print_single_button("report.php", $options, get_string("downloadtext"));
 
         echo "</td></tr></table>";

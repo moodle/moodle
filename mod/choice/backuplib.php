@@ -4,18 +4,18 @@
 
     //This is the "graphical" structure of the choice mod:
     //
-    //                      choice                                      
+    //                      choice
     //                    (CL,pk->id)----------|
     //                        |                |
     //                        |                |
     //                        |                |
     //                  choice_options         |
-    //             (UL,pk->id, fk->choiceid)   |  
+    //             (UL,pk->id, fk->choiceid)   |
     //                        |                |
     //                        |                |
     //                        |                |
     //                   choice_answers        |
-    //        (UL,pk->id, fk->choiceid, fk->optionid)     
+    //        (UL,pk->id, fk->choiceid, fk->optionid)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -27,13 +27,13 @@
     //-----------------------------------------------------------
 
     function choice_backup_mods($bf,$preferences) {
-        
-        global $CFG;
+
+        global $CFG, $DB;
 
         $status = true;
 
         //Iterate over choice table
-        $choices = get_records ("choice","course",$preferences->backup_course,"id");
+        $choices = $DB->get_records("choice", array("course" => $preferences->backup_course), "id");
         if ($choices) {
             foreach ($choices as $choice) {
                 if (backup_mod_selected($preferences,'choice',$choice->id)) {
@@ -46,12 +46,12 @@
 
     function choice_backup_one_mod($bf,$preferences,$choice) {
 
-        global $CFG;
-    
+        global $CFG, $DB;
+
         if (is_numeric($choice)) {
-            $choice = get_record('choice','id',$choice);
+            $choice = $DB->get_record('choice',array('id' => $choice));
         }
-    
+
         $status = true;
 
         //Start mod
@@ -88,11 +88,11 @@
     //Backup choice_answers contents (executed from choice_backup_mods)
     function backup_choice_answers ($bf,$preferences,$choice) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $choice_answers = get_records("choice_answers","choiceid",$choice,"id");
+        $choice_answers = $DB->get_records("choice_answers", array("choiceid" => $choice),"id");
         //If there is answers
         if ($choice_answers) {
             //Write start tag
@@ -119,13 +119,13 @@
     //backup choice_options contents (executed from choice_backup_mods)
     function backup_choice_options ($bf,$preferences,$choice) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
-        
-        $choice_options = get_records("choice_options","choiceid",$choice,"id");
+
+        $choice_answers = $DB->get_records("choice_options", array("choiceid" => $choice),"id");
         //If there is options
-        if ($choice_options) {            
+        if ($choice_options) {
             //Write start tag
             $status =fwrite ($bf,start_tag("OPTIONS",4,true));
             //Iterate over each answer
@@ -145,7 +145,7 @@
         }
         return $status;
     }
-   
+
    ////Return an array of info (name,value)
    function choice_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
 
@@ -218,32 +218,32 @@
     //Returns an array of choices id
     function choice_ids ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT a.id, a.course
-                                 FROM {$CFG->prefix}choice a
-                                 WHERE a.course = '$course'");
+        return $DB->get_records_sql ("SELECT a.id, a.course
+                                     FROM {choice} a
+                                     WHERE a.course = ?", array($course));
     }
-   
+
     //Returns an array of choice_answers id
     function choice_answer_ids_by_course ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT s.id , s.choiceid
-                                 FROM {$CFG->prefix}choice_answers s,
-                                      {$CFG->prefix}choice a
-                                 WHERE a.course = '$course' AND
-                                       s.choiceid = a.id");
+        return $DB->get_records_sql ("SELECT s.id , s.choiceid
+                                     FROM {choice_answers} s,
+                                          {choice} a
+                                     WHERE a.course = ? AND
+                                           s.choiceid = a.id", array($course));
     }
 
     //Returns an array of choice_answers id
     function choice_answer_ids_by_instance ($instanceid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT s.id , s.choiceid
-                                 FROM {$CFG->prefix}choice_answers s
-                                 WHERE s.choiceid = $instanceid");
+        return $DB->get_records_sql ("SELECT s.id , s.choiceid
+                                 FROM {choice_answers} s
+                                 WHERE s.choiceid = ?", array($instanceid));
     }
 ?>
