@@ -114,7 +114,7 @@
     }
 
     if ($userid) {
-        $user = $DB->get_record('user', array('id', $userid));
+        $user = $DB->get_record('user', array('id'=>$userid));
         $fullname = fullname($user, has_capability('moodle/site:viewfullnames', $context));
     }
 

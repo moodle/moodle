@@ -2153,7 +2153,7 @@ function get_course_section($section, $courseid) {
     $cw->summary  = "";
     $cw->sequence = "";
     $id = $DB->insert_record("course_sections", $cw);
-    return $DB->get_record("course_sections", "id", $id);
+    return $DB->get_record("course_sections", array("id"=>$id));
 }
 /**
  * Given a full mod object with section and course already defined, adds this module to that section.
