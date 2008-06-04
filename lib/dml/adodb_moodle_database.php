@@ -331,7 +331,7 @@ abstract class adodb_moodle_database extends moodle_database {
             $result = true;
             $rs->Close();
         } else {
-            $this-report_error($sql, $params);
+            $this->report_error($sql, $params);
         }
         return $result;
     }
