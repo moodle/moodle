@@ -43,7 +43,7 @@ SCORM MODULE Schema:
 
 Insert and Update an activity:
 
-mod.html <-- onsubmit --> validate.php (-- include --> validatordomxml.php)
+mod_edit.php <-- onsubmit --> validate.php (-- include --> validatordomxml.php)
    ||   \
    ||    \
  submit  load
