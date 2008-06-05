@@ -896,7 +896,7 @@ class test extends XMLDBAction {
             $tests['insert record '. $textlen . ' bytes (binary)'] = $test;
         }
 
-    /// 49th test. update_record with TEXT and BINARY contents
+    /// 49th test. $DB->update_record with TEXT and BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
