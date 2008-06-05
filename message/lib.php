@@ -17,7 +17,7 @@ if (!isset($CFG->message_offline_time)) {
 
 
 function message_print_contacts() {
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     $timetoshowusers = 300; //Seconds default
     if (isset($CFG->block_online_users_timetosee)) {
@@ -39,20 +39,16 @@ function message_print_contacts() {
     // and count messages we have waiting from each of them
     $contactsql = "SELECT u.id, u.firstname, u.lastname, u.picture, 
                           u.imagealt, u.lastaccess, count(m.id) as messagecount
-                   FROM {$CFG->prefix}message_contacts mc
-                   JOIN {$CFG->prefix}user u
-                      ON u.id = mc.contactid
-                   LEFT OUTER JOIN {$CFG->prefix}message m
-                      ON m.useridfrom = mc.contactid
-                      AND m.useridto = {$USER->id}
-                   WHERE mc.userid = {$USER->id}
-                         AND mc.blocked = 0 
-                   GROUP BY u.id, u.firstname, u.lastname, u.picture,
-                            u.imagealt, u.lastaccess
-                   ORDER BY u.firstname ASC;";
+                     FROM {message_contacts} mc
+                     JOIN {user} u ON u.id = mc.contactid
+                     LEFT OUTER JOIN {message} m ON m.useridfrom = mc.contactid AND m.useridto = ?
+                    WHERE mc.userid = ? AND mc.blocked = 0 
+                 GROUP BY u.id, u.firstname, u.lastname, u.picture,
+                          u.imagealt, u.lastaccess
+                 ORDER BY u.firstname ASC;";
 
-    if($rs = get_recordset_sql($contactsql)){
-        while($rd = rs_fetch_next_record($rs)){
+    if ($rs = $DB->get_recordset_sql($contactsql, array($USER->id, $USER->id))){
+        foreach($rs as $rd){
 
             if($rd->lastaccess >= $timefrom){
                 // they have been active recently, so are counted online
@@ -62,7 +58,7 @@ function message_print_contacts() {
             }
         }
         unset($rd);
-        rs_close($rs);
+        $rs->close();
     }
 
 
@@ -70,23 +66,20 @@ function message_print_contacts() {
     // of messages we have from each of them
     $strangersql = "SELECT u.id, u.firstname, u.lastname, u.picture, 
                            u.imagealt, u.lastaccess, count(m.id) as messagecount
-                    FROM {$CFG->prefix}message m
-                    JOIN {$CFG->prefix}user u 
-                        ON u.id = m.useridfrom
-                    LEFT OUTER JOIN {$CFG->prefix}message_contacts mc
-                        ON mc.contactid = m.useridfrom AND 
-                           mc.userid = m.useridto
-                    WHERE mc.id IS NULL AND m.useridto = {$USER->id} 
-                    GROUP BY u.id, u.firstname, u.lastname, u.picture,
-                             u.imagealt, u.lastaccess
-                    ORDER BY u.firstname ASC;";
+                      FROM {message} m
+                      JOIN {user} u  ON u.id = m.useridfrom
+                      LEFT OUTER JOIN {message_contacts} mc ON mc.contactid = m.useridfrom AND mc.userid = m.useridto
+                     WHERE mc.id IS NULL AND m.useridto = ? 
+                  GROUP BY u.id, u.firstname, u.lastname, u.picture,
+                           u.imagealt, u.lastaccess
+                  ORDER BY u.firstname ASC;";
 
-    if($rs = get_recordset_sql($strangersql)){
-        while($rd= rs_fetch_next_record($rs)){
+    if($rs = $DB->get_recordset_sql($strangersql, array($USER->id))){
+        foreach($rs as $rd){
             $strangers[] = $rd;
         }
         unset($rd);
-        rs_close($rs);
+        $rs->close();
     }
 
     $countonlinecontacts  = count($onlinecontacts);
@@ -186,7 +179,7 @@ function message_count_messages($messagearray, $field='', $value='') {
 function message_print_search() {
     global $USER;
 
-    if ($frm = data_submitted()) {
+    if ($frm = data_submitted(false)) {
 
         message_print_search_results($frm);
 
@@ -210,7 +203,7 @@ function message_print_search() {
 function message_print_settings() {
     global $USER;
 
-    if ($frm = data_submitted()) {
+    if ($frm = data_submitted(false)) {
 
         $pref = array();
         $pref['message_showmessagewindow'] = (isset($frm->showmessagewindow)) ? '1' : '0';
@@ -248,19 +241,19 @@ function message_print_settings() {
 
 
 function message_add_contact($contactid, $blocked=0) {
-    global $USER;
+    global $USER, $DB;
 
-    if (!record_exists('user', 'id', $contactid)) { // invalid userid
+    if (!$DB->record_exists('user', array('id'=>$contactid))) { // invalid userid
         return false;
     }
 
-    if (($contact = get_record('message_contacts', 'userid', $USER->id, 'contactid', $contactid)) !== false) {
+    if (($contact = $DB->get_record('message_contacts', array('userid'=>$USER->id, 'contactid'=>$contactid))) !== false) {
     /// record already exists - we may be changing blocking status
 
         if ($contact->blocked !== $blocked) {
         /// change to blocking status
             $contact->blocked = $blocked;
-            return update_record('message_contacts', $contact);
+            return $DB->update_record('message_contacts', $contact);
         } else {
         /// no changes to blocking status
             return true;
@@ -272,18 +265,18 @@ function message_add_contact($contactid, $blocked=0) {
         $contact->userid = $USER->id;
         $contact->contactid = $contactid;
         $contact->blocked = $blocked;
-        return insert_record('message_contacts', $contact, false);
+        return $DB->insert_record('message_contacts', $contact, false);
     }
 }
 
 function message_remove_contact($contactid) {
-    global $USER;
-    return delete_records('message_contacts', 'userid', $USER->id, 'contactid', $contactid);
+    global $USER, $DB;
+    return $DB->delete_records('message_contacts', array('userid'=>$USER->id, 'contactid'=>$contactid));
 }
 
 function message_unblock_contact($contactid) {
-    global $USER;
-    return delete_records('message_contacts', 'userid', $USER->id, 'contactid', $contactid);
+    global $USER, $DB;
+    return $DB->delete_records('message_contacts', array('userid'=>$USER->id, 'contactid'=>$contactid));
 }
 
 function message_block_contact($contactid) {
@@ -291,14 +284,14 @@ function message_block_contact($contactid) {
 }
 
 function message_get_contact($contactid) {
-    global $USER;
-    return get_record('message_contacts', 'userid', $USER->id, 'contactid', $contactid);
+    global $USER, $DB;
+    return $DB->get_record('message_contacts', array('userid'=>$USER->id, 'contactid'=>$contactid));
 }
 
 
 
 function message_print_search_results($frm) {
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     echo '<div align="center">';
 
@@ -391,7 +384,7 @@ function message_print_search_results($frm) {
         if (($messages = message_search($keywords, $fromme, $tome, $courseid)) !== false) {
 
         /// get a list of contacts
-            if (($contacts = get_records('message_contacts', 'userid', $USER->id, '', 'contactid, blocked') ) === false) {
+            if (($contacts = $DB->get_records('message_contacts', array('userid'=>$USER->id), '', 'contactid, blocked') ) === false) {
                 $contacts = array();
             }
 
@@ -424,7 +417,7 @@ function message_print_search_results($frm) {
 
             /// load up user to record
                 if ($message->useridto !== $USER->id) {
-                    $userto = get_record('user', 'id', $message->useridto);
+                    $userto = $DB->get_record('user', array('id'=>$message->useridto));
                     $tocontact = (array_key_exists($message->useridto, $contacts) and
                                     ($contacts[$message->useridto]->blocked == 0) );
                     $toblocked = (array_key_exists($message->useridto, $contacts) and
@@ -437,7 +430,7 @@ function message_print_search_results($frm) {
 
             /// load up user from record
                 if ($message->useridfrom !== $USER->id) {
-                    $userfrom = get_record('user', 'id', $message->useridfrom);
+                    $userfrom = $DB->get_record('user', array('id'=>$message->useridfrom));
                     $fromcontact = (array_key_exists($message->useridfrom, $contacts) and
                                     ($contacts[$message->useridfrom]->blocked == 0) );
                     $fromblocked = (array_key_exists($message->useridfrom, $contacts) and
@@ -628,7 +621,7 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
  * @todo Finish documenting this function
  */
 function message_search_users($courseid, $searchtext, $sort='', $exceptions='') {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     $fullname = sql_fullname();
     $LIKE     = sql_ilike();
@@ -649,29 +642,32 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
     $fields = 'u.id, u.firstname, u.lastname, u.picture, u.imagealt, mc.id as contactlistid, mc.blocked';
 
     if (!$courseid or $courseid == SITEID) {
-        return get_records_sql("SELECT $fields
-                      FROM {$CFG->prefix}user u
-                      LEFT OUTER JOIN {$CFG->prefix}message_contacts mc
-                      ON mc.contactid = u.id AND mc.userid = {$USER->id} 
-                      WHERE $select
-                          AND ($fullname $LIKE '%$searchtext%')
-                          $except $order");
+        $params = array($USER->id, "%$searchtext%");
+        return $DB->get_records_sql("SELECT $fields
+                                       FROM {user{ u
+                                       LEFT JOIN {message_contacts} mc
+                                            ON mc.contactid = u.id AND mc.userid = ? 
+                                      WHERE $select
+                                            AND ($fullname $LIKE ?)
+                                            $except
+                                     $order", $params);
     } else {
 
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
         $contextlists = get_related_contexts_string($context);
 
         // everyone who has a role assignement in this course or higher
-        $users = get_records_sql("SELECT $fields
-                                 FROM {$CFG->prefix}user u
-                                 JOIN {$CFG->prefix}role_assignments ra
-                                 ON ra.userid = u.id
-                                 LEFT OUTER JOIN {$CFG->prefix}message_contacts mc
-                                 ON mc.contactid = u.id AND mc.userid = {$USER->id} 
-                                 WHERE $select
-                                       AND ra.contextid $contextlists
-                                       AND ($fullname $LIKE '%$searchtext%')
-                                       $except $order");
+        $params = array($USER->id, "%$searchtext%");
+        $users = $DB->get_records_sql("SELECT $fields
+                                         FROM {user} u
+                                         JOIN {role_assignments} ra ON ra.userid = u.id
+                                         LEFT JOIN {message_contacts} mc
+                                              ON mc.contactid = u.id AND mc.userid = ? 
+                                        WHERE $select
+                                              AND ra.contextid $contextlists
+                                              AND ($fullname $LIKE ?)
+                                              $except
+                                       $order", $params);
 
         return $users;
     }
@@ -684,14 +680,13 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
 /// Returns a list of posts found using an array of search terms
 /// eg   word  +word -word
 ///
-
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     /// If no userid sent then assume current user
     if ($userid == 0) $userid = $USER->id;
 
     /// Some differences in SQL syntax
-    $LIKE = sql_ilike();
+    $LIKE = $DB->sql_ilike();
     $NOTLIKE = 'NOT ' . $LIKE;
     if ($CFG->dbfamily == "postgres") {
         $REGEXP = "~*";
@@ -889,11 +884,13 @@ function message_get_fragment($message, $keywords) {
 
 
 function message_get_history($user1, $user2) {
-    $messages = get_records_select('message_read', "(useridto = '$user1->id' AND useridfrom = '$user2->id') OR
-                                                    (useridto = '$user2->id' AND useridfrom = '$user1->id')",
+    global $DB;
+
+    $messages = $DB->get_records_select('message_read', "(useridto = ? AND useridfrom = ?) OR
+                                                    (useridto = ? AND useridfrom = ?)", array($user1->id, $user2->id, $user2->id, $user1->id),
                                                     'timecreated');
-    if ($messages_new =  get_records_select('message', "(useridto = '$user1->id' AND useridfrom = '$user2->id') OR
-                                                    (useridto = '$user2->id' AND useridfrom = '$user1->id')",
+    if ($messages_new =  $DB->get_records_select('message', "(useridto = ? AND useridfrom = ?) OR
+                                                    (useridto = ? AND useridfrom = ?)", array($user1->id, $user2->id, $user2->id, $user1->id),
                                                     'timecreated')) {
         foreach ($messages_new as $message) {
             $messages[] = $message;
@@ -914,6 +911,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
         }
     }
     $time = userdate($message->timecreated, $dateformat);
+    $options = new object();
     $options->para = false;
     $messagetext = format_text($message->message, $message->format, $options);
     if ($keywords) {
@@ -922,13 +920,12 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
     return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a><span class="author">'.s(fullname($user)).'</span> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
 }
 
-/*
+/**
  * Inserts a message into the database, but also forwards it
  * via other means if appropriate.
  */
 function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
-
-    global $CFG, $SITE, $USER;
+    global $CFG, $SITE, $USER, $DB;
 
 /// Set up current language to suit the receiver of the message
     $savelang = $USER->lang;
@@ -948,7 +945,7 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $savemessage->messagetype   = 'direct';
 
     if ($CFG->messaging) {
-        if (!$savemessage->id = insert_record('message', $savemessage)) {
+        if (!$savemessage->id = $DB->insert_record('message', $savemessage)) {
             return false;
         }
         $emailforced = false;
@@ -1007,21 +1004,20 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
 }
 
 
-/*
+/**
  * Returns a list of all user ids who have used messaging in the site
  * This was the simple way to code the SQL ... is it going to blow up
  * on large datasets?
  */
 function message_get_participants() {
+    global $CFG, $DB;
 
-    global $CFG;
-
-        return get_records_sql("SELECT useridfrom as id,1 FROM {$CFG->prefix}message
-                           UNION SELECT useridto as id,1 FROM {$CFG->prefix}message
-                           UNION SELECT useridfrom as id,1 FROM {$CFG->prefix}message_read
-                           UNION SELECT useridto as id,1 FROM {$CFG->prefix}message_read
-                           UNION SELECT userid as id,1 FROM {$CFG->prefix}message_contacts
-                           UNION SELECT contactid as id,1 from {$CFG->prefix}message_contacts");
+        return get_records_sql("SELECT useridfrom as id,1 FROM {message}
+                           UNION SELECT useridto as id,1 FROM {message}
+                           UNION SELECT useridfrom as id,1 FROM {message_read}
+                           UNION SELECT useridto as id,1 FROM {message_read}
+                           UNION SELECT userid as id,1 FROM {message_contacts}
+                           UNION SELECT contactid as id,1 from {message_contacts}");
 }
 
 /**
