@@ -11,18 +11,18 @@
             print_error('invalidcoursemodule');
         }
 
-        if (! $assignment = get_record("assignment", "id", $cm->instance)) {
+        if (! $assignment = $DB->get_record("assignment", array("id"=>$cm->instance))) {
             print_error('invalidid', 'assignment');
         }
 
-        if (! $course = get_record("course", "id", $assignment->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$assignment->course))) {
             print_error('coursemisconf', 'assignment');
         }
     } else {
-        if (!$assignment = get_record("assignment", "id", $a)) {
+        if (!$assignment = $DB->get_record("assignment", array("id"=>$a))) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = get_record("course", "id", $assignment->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$assignment->course))) {
             print_error('invalidid', 'assignment');
         }
         if (! $cm = get_coursemodule_from_instance("assignment", $assignment->id, $course->id)) {

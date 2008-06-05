@@ -23,13 +23,12 @@
 
     //This function executes all the backup procedure about this mod
     function assignment_backup_mods($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Iterate over assignment table
-        $assignments = get_records ("assignment","course",$preferences->backup_course,"id");
+        $assignments = $DB->get_records ("assignment", array("course"=>$preferences->backup_course),"id");
         if ($assignments) {
             foreach ($assignments as $assignment) {
                 if (backup_mod_selected($preferences,'assignment',$assignment->id)) {
@@ -42,11 +41,10 @@
     }
 
     function assignment_backup_one_mod($bf,$preferences,$assignment) {
-        
-        global $CFG;
+        global $CFG, $DB;
     
         if (is_numeric($assignment)) {
-            $assignment = get_record('assignment','id',$assignment);
+            $assignment = $DB->get_record('assignment', array('id'=>$assignment));
         }
     
         $status = true;
@@ -89,12 +87,11 @@
 
     //Backup assignment_submissions contents (executed from assignment_backup_mods)
     function backup_assignment_submissions ($bf,$preferences,$assignment) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $assignment_submissions = get_records("assignment_submissions","assignment",$assignment,"id");
+        $assignment_submissions = $DB->get_records("assignment_submissions", array("assignment"=>$assignment),"id");
         //If there is submissions
         if ($assignment_submissions) {
             //Write start tag
@@ -129,8 +126,7 @@
     //Backup assignment files because we've selected to backup user info
     //and files are user info's level
     function backup_assignment_files($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
        
         $status = true;
 
@@ -151,8 +147,7 @@
     } 
 
     function backup_assignment_files_instance($bf,$preferences,$instanceid) {
-
-        global $CFG;
+        global $CFG, $DB;
        
         $status = true;
 
@@ -220,7 +215,6 @@
     //Return a content encoded to support interactivities linking. Every module
     //should have its own. They are called automatically from the backup procedure.
     function assignment_encode_content_links ($content,$preferences) {
-
         global $CFG;
 
         $base = preg_quote($CFG->wwwroot,"/");
@@ -240,33 +234,30 @@
 
     //Returns an array of assignments id 
     function assignment_ids ($course) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT a.id, a.course
-                                 FROM {$CFG->prefix}assignment a
-                                 WHERE a.course = '$course'");
+        return $DB->get_records_sql ("SELECT a.id, a.course
+                                        FROM {assignment} a
+                                       WHERE a.course = ?", array($course));
     }
     
     //Returns an array of assignment_submissions id
     function assignment_submission_ids_by_course ($course) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.assignment
-                                 FROM {$CFG->prefix}assignment_submissions s,
-                                      {$CFG->prefix}assignment a
-                                 WHERE a.course = '$course' AND
-                                       s.assignment = a.id");
+        return $DB->get_records_sql ("SELECT s.id , s.assignment
+                                        FROM {assignment_submissions} s,
+                                             {assignment} a
+                                       WHERE a.course = ? AND
+                                             s.assignment = a.id", array($course));
     }
 
     //Returns an array of assignment_submissions id
     function assignment_submission_ids_by_instance ($instanceid) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.assignment
-                                 FROM {$CFG->prefix}assignment_submissions s
-                                 WHERE s.assignment = $instanceid");
+        return $DB->get_records_sql ("SELECT s.id , s.assignment
+                                        FROM {assignment_submissions} s
+                                       WHERE s.assignment = ?", array($instanceid));
     }
 ?>
