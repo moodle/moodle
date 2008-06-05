@@ -738,6 +738,7 @@ class assignment_base {
      * @return string User-friendly representation of grade
      */
     function display_grade($grade) {
+        global $DB;
 
         static $scalegrades = array();   // Cache scales for each assignment - they might have different scales!!
 
@@ -750,7 +751,7 @@ class assignment_base {
 
         } else {                                // Scale
             if (empty($scalegrades[$this->assignment->id])) {
-                if ($scale = get_record('scale', 'id', -($this->assignment->grade))) {
+                if ($scale = $DB->get_record('scale', array('id'=>-($this->assignment->grade)))) {
                     $scalegrades[$this->assignment->id] = make_menu_from_list($scale->scale);
                 } else {
                     return '-';
@@ -1886,7 +1887,7 @@ class assignment_base {
         global $CFG, $DB;
         require_once($CFG->libdir.'/filelib.php');
 
-        if (!count_records('assignment', 'course', $data->courseid, 'assignmenttype', $this->type)) {
+        if (!$DB->count_records('assignment', array('course'=>$data->courseid, 'assignmenttype'=>$this->type))) {
             return array(); // no assignments of this type present
         }
 
@@ -2390,17 +2391,17 @@ function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
 
     // do not use log table if possible, it may be huge
 
-    if (!$submissions = get_records_sql("SELECT asb.id, asb.timemodified, cm.id AS cmid, asb.userid,
-                                                u.firstname, u.lastname, u.email, u.picture
-                                           FROM {assignment_submissions} asb
-                                                JOIN {assignment} a      ON a.id = asb.assignment
-                                                JOIN {course_modules} cm ON cm.instance = a.id
-                                                JOIN {modules} md        ON md.id = cm.module
-                                                JOIN {user} u            ON u.id = asb.userid
-                                          WHERE asb.timemodified > ? AND
-                                                a.course = ? AND
-                                                md.name = 'assignment'
-                                       ORDER BY asb.timemodified ASC", array($timestart, $course->id))) {
+    if (!$submissions = $DB->get_records_sql("SELECT asb.id, asb.timemodified, cm.id AS cmid, asb.userid,
+                                                     u.firstname, u.lastname, u.email, u.picture
+                                                FROM {assignment_submissions} asb
+                                                     JOIN {assignment} a      ON a.id = asb.assignment
+                                                     JOIN {course_modules} cm ON cm.instance = a.id
+                                                     JOIN {modules} md        ON md.id = cm.module
+                                                     JOIN {user} u            ON u.id = asb.userid
+                                               WHERE asb.timemodified > ? AND
+                                                     a.course = ? AND
+                                                     md.name = 'assignment'
+                                            ORDER BY asb.timemodified ASC", array($timestart, $course->id))) {
          return false;
     }
 
@@ -2688,7 +2689,7 @@ function assignment_get_unmailed_submissions($starttime, $endtime) {
  * @return int The number of submissions
  */
 function assignment_count_real_submissions($cm, $groupid=0) {
-    global $CFG;
+    global $CFG, $DB;
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -2710,11 +2711,11 @@ function assignment_count_real_submissions($cm, $groupid=0) {
 
     $userlists = implode(',', $users);
 
-    return count_records_sql("SELECT COUNT('x')
-                                FROM {$CFG->prefix}assignment_submissions
-                               WHERE assignment = $cm->instance AND
-                                     timemodified > 0 AND
-                                     userid IN ($userlists)");
+    return $DB->count_records_sql("SELECT COUNT('x')
+                                     FROM {assignment_submissions}
+                                    WHERE assignment = ? AND
+                                          timemodified > 0 AND
+                                          userid IN ($userlists)", array($cm->instance));
 }
 
 
@@ -2729,7 +2730,7 @@ function assignment_count_real_submissions($cm, $groupid=0) {
  */
 function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
 /// Return all assignment submissions by ENROLLED students (even empty)
-    global $CFG;
+    global $CFG, $DB;
 
     if ($sort == "lastname" or $sort == "firstname") {
         $sort = "u.$sort $dir";
@@ -2745,12 +2746,11 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
         $select = '';
     }*/
 
-    return get_records_sql("SELECT a.*
-                              FROM {$CFG->prefix}assignment_submissions a,
-                                   {$CFG->prefix}user u
-                             WHERE u.id = a.userid
-                               AND a.assignment = '$assignment->id'
-                          ORDER BY $sort");
+    return $DB->get_records_sql("SELECT a.*
+                                   FROM {assignment_submissions} a, {user} u
+                                  WHERE u.id = a.userid
+                                        AND a.assignment = ?
+                               ORDER BY $sort", array($assignment->id));
 
 }
 
@@ -2766,9 +2766,9 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
  *
  */
 function assignment_get_coursemodule_info($coursemodule) {
-    global $CFG;
+    global $CFG, $DB;
 
-    if (! $assignment = get_record('assignment', 'id', $coursemodule->instance, '', '', '', '', 'id, assignmenttype, name')) {
+    if (! $assignment = $DB->get_record('assignment', array('id'=>$coursemodule->instance), 'id, assignmenttype, name')) {
         return false;
     }
 
@@ -2815,7 +2815,6 @@ function assignment_types() {
  * Executes upgrade scripts for assignment types when necessary
  */
 function assignment_upgrade_submodules() {
-
     global $CFG;
 
 /// Install/upgrade assignment types (it uses, simply, the standard plugin architecture)
@@ -2824,8 +2823,7 @@ function assignment_upgrade_submodules() {
 }
 
 function assignment_print_overview($courses, &$htmlarray) {
-
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();
@@ -2877,11 +2875,12 @@ function assignment_print_overview($courses, &$htmlarray) {
             $submissions = 0; // init
             if ($students = get_users_by_capability($context, 'mod/assignment:submit', '', '', '', '', 0, '', false)) {
                  foreach ($students as $student) {
-                    if (record_exists_sql("SELECT id FROM {$CFG->prefix}assignment_submissions
-                                           WHERE assignment = $assignment->id AND
-                                               userid = $student->id AND
-                                               teacher = 0 AND
-                                               timemarked = 0")) {
+                    if ($DB->record_exists_sql("SELECT id
+                                                  FROM {assignment_submissions}
+                                                 WHERE assignment = ? AND
+                                                       userid = ? AND
+                                                       teacher = 0 AND
+                                                       timemarked = 0", array($assignment->id, $student->id))) {
                         $submissions++;
                     }
                 }
@@ -2892,10 +2891,11 @@ function assignment_print_overview($courses, &$htmlarray) {
             }
         } else {
             $sql = "SELECT *
-                      FROM {$CFG->prefix}assignment_submissions
-                     WHERE userid = '$USER->id'
-                       AND assignment = '{$assignment->id}'";
-            if ($submission = get_record_sql($sql)) {
+                      FROM {assignment_submissions}
+                     WHERE userid = ?
+                       AND assignment = ?";
+            $params = array($USER->id, $assignment->id);
+            if ($submission = $DB->get_record_sql($sql, $params)) {
                 if ($submission->teacher == 0 && $submission->timemarked == 0) {
                     $str .= $strsubmitted . ', ' . $strnotgradedyet;
                 } else if ($submission->grade <= 0) {
@@ -2987,15 +2987,19 @@ function assignment_get_types() {
  * @param string optional type
  */
 function assignment_reset_gradebook($courseid, $type='') {
-    global $CFG;
+    global $CFG, $DB;
 
-    $type = $type ? "AND a.assignmenttype='$type'" : '';
+    $params = array('courseid'=>$courseid);
+    if ($type) {
+        $type = "AND a.assignmenttype= :type";
+        $params['type'] = $type;
+    }
 
     $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
-              FROM {$CFG->prefix}assignment a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-             WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id AND a.course=$courseid $type";
+              FROM {assignment} a, {course_modules} cm, {modules} m
+             WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id AND a.course=:courseid $type";
 
-    if ($assignments = get_records_sql($sql)) {
+    if ($assignments = $DB->get_records_sql($sql, $params)) {
         foreach ($assignments as $assignment) {
             assignment_grade_item_update($assignment, 'reset');
         }

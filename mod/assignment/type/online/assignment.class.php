@@ -159,7 +159,7 @@ class assignment_online extends assignment_base {
     }
 
     function update_submission($data) {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         $submission = $this->get_submission($USER->id, true);
 
@@ -169,7 +169,7 @@ class assignment_online extends assignment_base {
         $update->data2        = $data->format;
         $update->timemodified = time();
 
-        if (!update_record('assignment_submissions', $update)) {
+        if (!$DB->update_record('assignment_submissions', $update)) {
             return false;
         }
 

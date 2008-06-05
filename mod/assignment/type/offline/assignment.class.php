@@ -38,7 +38,7 @@ class assignment_offline extends assignment_base {
 
     // needed for the timemodified override
     function process_feedback() {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
         require_once($CFG->libdir.'/gradelib.php');
 
         if (!$feedback = data_submitted()) {      // No incoming data?
@@ -85,7 +85,7 @@ class assignment_offline extends assignment_base {
                 $submission->timemodified = time();
             }
 
-            if (! update_record('assignment_submissions', $submission)) {
+            if (! $DB->update_record('assignment_submissions', $submission)) {
                 return false;
             }
 

@@ -96,8 +96,7 @@ class assignment_uploadsingle extends assignment_base {
 
 
     function upload() {
-
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         require_capability('mod/assignment:submit', get_context_instance(CONTEXT_MODULE, $this->cm->id));
 
@@ -122,10 +121,10 @@ class assignment_uploadsingle extends assignment_base {
                 if ($submission) {
                     $submission->timemodified = time();
                     $submission->numfiles     = 1;
-                    $submission->submissioncomment = addslashes($submission->submissioncomment);
+                    $submission->submissioncomment = $submission->submissioncomment;
                     unset($submission->data1);  // Don't need to update this.
                     unset($submission->data2);  // Don't need to update this.
-                    if (update_record("assignment_submissions", $submission)) {
+                    if ($DB->update_record("assignment_submissions", $submission)) {
                         add_to_log($this->course->id, 'assignment', 'upload',
                                 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                         $submission = $this->get_submission($USER->id);
@@ -139,7 +138,7 @@ class assignment_uploadsingle extends assignment_base {
                     $newsubmission = $this->prepare_new_submission($USER->id);
                     $newsubmission->timemodified = time();
                     $newsubmission->numfiles = 1;
-                    if (insert_record('assignment_submissions', $newsubmission)) {
+                    if ($DB->insert_record('assignment_submissions', $newsubmission)) {
                         add_to_log($this->course->id, 'assignment', 'upload',
                                 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                         $submission = $this->get_submission($USER->id);

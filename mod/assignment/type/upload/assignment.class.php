@@ -72,7 +72,7 @@ class assignment_upload extends assignment_base {
 
 
     function view_feedback($submission=NULL) {
-        global $USER, $CFG;
+        global $USER, $CFG, $DB;
         require_once($CFG->libdir.'/gradelib.php');
 
         if (!$submission) { /// Get submission for this assignment
@@ -104,7 +104,7 @@ class assignment_upload extends assignment_base {
         $graded_by   = $grade->usermodified;
 
     /// We need the teacher info
-        if (!$teacher = get_record('user', 'id', $graded_by)) {
+        if (!$teacher = $DB->get_record('user', array('id'=>$graded_by))) {
             print_error('cannotfindteacher');
         }
 
@@ -502,14 +502,14 @@ class assignment_upload extends assignment_base {
             die;
         }
 
-        if ($data = $mform->get_data() and $action == 'savenotes') {
+        if ($data = $mform->get_data(false) and $action == 'savenotes') {
             $submission = $this->get_submission($USER->id, true); // get or create submission
             $updated = new object();
             $updated->id           = $submission->id;
             $updated->timemodified = time();
             $updated->data1        = $data->text;
 
-            if (update_record('assignment_submissions', $updated)) {
+            if ($DB->update_record('assignment_submissions', $updated)) {
                 add_to_log($this->course->id, 'assignment', 'upload', 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                 redirect($returnurl);
                 $submission = $this->get_submission($USER->id);
@@ -564,7 +564,7 @@ class assignment_upload extends assignment_base {
     }
 
     function upload_file() {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
 
         $mode   = optional_param('mode', '', PARAM_ALPHA);
         $offset = optional_param('offset', 0, PARAM_INT);
@@ -594,7 +594,7 @@ class assignment_upload extends assignment_base {
             $updated->id           = $submission->id;
             $updated->timemodified = time();
 
-            if (update_record('assignment_submissions', $updated)) {
+            if ($DB->update_record('assignment_submissions', $updated)) {
                 add_to_log($this->course->id, 'assignment', 'upload',
                         'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                 $submission = $this->get_submission($USER->id);
@@ -621,7 +621,7 @@ class assignment_upload extends assignment_base {
     }
 
     function finalize() {
-        global $USER;
+        global $USER, $DB;
 
         $confirm    = optional_param('confirm', 0, PARAM_BOOL);
         $returnurl  = 'view.php?id='.$this->cm->id;
@@ -646,7 +646,7 @@ class assignment_upload extends assignment_base {
         $updated->data2        = ASSIGNMENT_STATUS_SUBMITTED;
         $updated->timemodified = time();
 
-        if (update_record('assignment_submissions', $updated)) {
+        if ($DB->update_record('assignment_submissions', $updated)) {
             add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
                     'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
             $submission = $this->get_submission($USER->id);
@@ -663,6 +663,8 @@ class assignment_upload extends assignment_base {
     }
 
     function finalizeclose() {
+        global $DB;
+
         $userid    = optional_param('userid', 0, PARAM_INT);
         $mode      = required_param('mode', PARAM_ALPHA);
         $offset    = required_param('offset', PARAM_INT);
@@ -679,7 +681,7 @@ class assignment_upload extends assignment_base {
         $updated->id    = $submission->id;
         $updated->data2 = ASSIGNMENT_STATUS_CLOSED;
 
-        if (update_record('assignment_submissions', $updated)) {
+        if ($DB->update_record('assignment_submissions', $updated)) {
             add_to_log($this->course->id, 'assignment', 'upload', //TODO: add finalize action to log
                     'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
             $submission = $this->get_submission($userid, false, true);
@@ -689,6 +691,7 @@ class assignment_upload extends assignment_base {
     }
 
     function unfinalize() {
+        global $DB;
 
         $userid = required_param('userid', PARAM_INT);
         $mode   = required_param('mode', PARAM_ALPHA);
@@ -696,14 +699,14 @@ class assignment_upload extends assignment_base {
 
         $returnurl = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset&amp;forcerefresh=1";
 
-        if (data_submitted('nomatch')
+        if (data_submitted()
           and $submission = $this->get_submission($userid)
           and $this->can_unfinalize($submission)) {
 
             $updated = new object();
             $updated->id = $submission->id;
             $updated->data2 = '';
-            if (update_record('assignment_submissions', $updated)) {
+            if ($DB->update_record('assignment_submissions', $updated)) {
                 //TODO: add unfinalize action to log
                 add_to_log($this->course->id, 'assignment', 'view submission', 'submissions.php?id='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                 $submission = $this->get_submission($userid);
@@ -752,7 +755,7 @@ class assignment_upload extends assignment_base {
         $urlreturn = 'submissions.php';
         $optionsreturn = array('id'=>$this->cm->id, 'offset'=>$offset, 'mode'=>$mode, 'userid'=>$userid);
 
-        if (!data_submitted('nomatch') or !$confirm) {
+        if (!data_submitted() or !$confirm) {
             $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'action'=>'response', 'mode'=>$mode, 'offset'=>$offset);
             print_header(get_string('delete'));
             print_heading(get_string('delete'));
@@ -780,7 +783,7 @@ class assignment_upload extends assignment_base {
 
 
     function delete_file() {
-        global $CFG;
+        global $CFG, $DB;
 
         $file     = required_param('file', PARAM_FILE);
         $userid   = required_param('userid', PARAM_INT);
@@ -810,7 +813,7 @@ class assignment_upload extends assignment_base {
         }
         $dir = $this->file_area_name($userid);
 
-        if (!data_submitted('nomatch') or !$confirm) {
+        if (!data_submitted() or !$confirm) {
             $optionsyes = array ('id'=>$this->cm->id, 'file'=>$file, 'userid'=>$userid, 'confirm'=>1, 'sesskey'=>sesskey(), 'mode'=>$mode, 'offset'=>$offset);
             if (empty($mode)) {
                 $this->view_header(get_string('delete'));
@@ -833,7 +836,7 @@ class assignment_upload extends assignment_base {
                 $updated = new object();
                 $updated->id = $submission->id;
                 $updated->timemodified = time();
-                if (update_record('assignment_submissions', $updated)) {
+                if ($DB->update_record('assignment_submissions', $updated)) {
                     add_to_log($this->course->id, 'assignment', 'upload', //TODO: add delete action to log
                             'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                     $submission = $this->get_submission($userid);
