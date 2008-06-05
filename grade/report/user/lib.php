@@ -140,7 +140,7 @@ class grade_report_user extends grade_report {
     }
 
     public function fill_table() {
-        global $CFG;
+        global $CFG, $DB;
         $numusers = $this->get_numusers(false); // total course users
         $items =& $this->gseq->items;
         $grades = array();
@@ -265,9 +265,9 @@ class grade_report_user extends grade_report {
                     /// find the number of users with a higher grade
                     $sql = "SELECT COUNT(DISTINCT(userid))
                               FROM {grade_grades}
-                             WHERE finalgrade > {$grade_grade->finalgrade}
-                                   AND itemid = {$grade_item->id}";
-                    $rank = count_records_sql($sql) + 1;
+                             WHERE finalgrade > ?
+                                   AND itemid = ?";
+                    $rank = $DB->count_records_sql($sql, array($grade_grade->finalgrade, $grade_item->id)) + 1;
 
                     $data[] = '<span class="'.$hidden.$class.'">'."$rank/$numusers".'</span>';
                 }
