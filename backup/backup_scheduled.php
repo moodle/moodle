@@ -70,8 +70,8 @@ function schedule_backup_cron() {
                 //Search if it exists
                 if (!$exists = $DB->get_record('course', array('id'=>$bckcourse->courseid))) {
                     //Doesn't exist, so delete from backup tables
-                    delete_records('backup_courses', 'courseid', "$bckcourse->courseid");
-                    delete_records('backup_log', 'courseid', "$bckcourse->courseid");
+                    $DB->delete_records('backup_courses', array('courseid'=>$bckcourse->courseid));
+                    $DB->delete_records('backup_log', array('courseid'=>$bckcourse->courseid));
                     $skipped++;
                 }
             }
