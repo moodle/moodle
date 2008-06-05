@@ -2154,6 +2154,16 @@ body#group-index #groupeditform {
   text-align: center;
 }
 
+#add, #remove{
+    width:100px; 
+    height:35px 
+}
+#add{
+    text-align:left;
+}
+#remove{
+    text-align:right;
+}
 
 /***
  *** Doc
@@ -4284,14 +4294,4 @@ wikiadminactions {
     border-left: 3px solid gray;
     padding-left: 7px;
     float: left;
-}
-#add, #remove{
-    width:100px; 
-    height:35px 
-}
-#add{
-    text-align:left;
-}
-#remove{
-    text-align:right;
 }
