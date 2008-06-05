@@ -61,9 +61,8 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
 
     function toHtml(){
         if ($this->_canUseHtmlEditor && !$this->_flagFrozen){
-            ob_start();
-            use_html_editor($this->getName(), '', $this->getAttribute('id'));
-            $script=ob_get_clean();
+            global $htmlEditorObject;
+            $script = $htmlEditorObject->activateEditor($this->getName(), $this->getAttribute('id'));
         } else {
             $script='';
         }
