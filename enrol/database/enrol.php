@@ -15,7 +15,7 @@ function setup_enrolments(&$user) {
     global $CFG, $DB;
 
     // NOTE: if $this->enrol_connect() succeeds you MUST remember to call
-    // $this->enrol_disconnect() as it is doing some nasty vodoo with $CFG->prefix
+    // $this->enrol_disconnect() as it is doing some nasty vodoo with table prefix
     $enroldb = $this->enrol_connect();
     if (!$enroldb) {
         error_log('[ENROL_DB] Could not make a connection');
@@ -632,7 +632,7 @@ function create_course ($course,$skip_fix_course_sortorder=0){
 /// DB Connect
 /// NOTE: You MUST remember to disconnect
 /// when you stop using it -- as this call will
-/// sometimes modify $CFG->prefix for the whole of Moodle!
+/// sometimes modify table prefix for the whole of Moodle!
 function enrol_connect() {
     global $CFG;
 

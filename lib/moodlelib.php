@@ -3691,7 +3691,7 @@ function reset_course_userdata($data) {
         // change course start data
         $DB->set_field('course', 'startdate', $data->reset_start_date, array('id'=>$data->courseid));
         // update all course and group events - do not move activity events
-        $updatesql = "UPDATE {$CFG->prefix}event
+        $updatesql = "UPDATE {event}
                          SET timestart = timestart + ?
                        WHERE courseid=? AND instance=0";
         $DB->execute($updatesql, array($data->timeshift, $data->courseid));
@@ -6321,7 +6321,7 @@ function notify_login_failures() {
 /// Get all the INFOs with more than notifyloginthreshold failures since lastnotifyfailure
 /// and insert them into the cache_flags temp table
     $sql = "SELECT info, count(*)
-              FROM {$CFG->prefix}log
+              FROM {log}
              WHERE module = 'login' AND action = 'error'
                    AND time > ?
           GROUP BY info

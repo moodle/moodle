@@ -4522,7 +4522,7 @@ function db_replace($search, $replace) {
             $DB->set_debug(true);
             foreach ($columns as $column => $data) {
                 if (in_array($data->meta_type, array('C', 'X'))) {  // Text stuff only
-                    $DB->execute("UPDATE {$CFG->prefix}$table SET $column = REPLACE($column, ?, ?)", array($search, $replace));
+                    $DB->execute("UPDATE {".$table."} SET $column = REPLACE($column, ?, ?)", array($search, $replace));
                 }
             }
             $DB->set_debug(false);

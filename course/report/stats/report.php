@@ -24,8 +24,8 @@
 
         //TODO: lceanup this ugly mess
         $sql = 'SELECT DISTINCT s.userid, u.firstname, u.lastname, u.idnumber
-                     FROM '.$CFG->prefix.'stats_user_'.$param->table.' s
-                     JOIN '.$CFG->prefix.'user u ON u.id = s.userid
+                     FROM {stats_user_'.$param->table.'} s
+                     JOIN {user} u ON u.id = s.userid
                      WHERE courseid = '.$course->id
             . ((!empty($param->stattype)) ? ' AND stattype = \''.$param->stattype.'\'' : '')
             . ((!empty($time)) ? ' AND timeend >= '.$param->timeafter : '')

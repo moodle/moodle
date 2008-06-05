@@ -129,7 +129,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
         if ($courses = get_courses($id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
             // move it off the range
             $count = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1
-                                     FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
+                                     FROM {course} WHERE category=' . $category->id);
             $count = $count->max + 100;
             begin_sql();
             foreach ($courses as $course) {
@@ -242,7 +242,7 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
             // TODO something like fix_course_sortorder() ?
 
             // we are going to need to know the range
-            $max = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM ' . $CFG->prefix . 'course_categories WHERE id=' . $category->id);
+            $max = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM {course_categories} WHERE id=' . $category->id);
             $max = $max->max + 100;
 
             if (!empty($moveup)) {

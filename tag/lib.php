@@ -267,7 +267,7 @@ function tag_get_tags($record_type, $record_id, $type=null) {
     // the tag has been deleted.  This shouldn't happen, but if it did, using 
     // this query could help "clean it up".  This causes bugs at this time.
     //$tags = $DB->get_records_sql("SELECT ti.tagid, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering ".
-    //    "FROM {$CFG->prefix}tag_instance ti LEFT JOIN {$CFG->prefix}tag tg ON ti.tagid = tg.id ".
+    //    "FROM {tag_instance} ti LEFT JOIN {tag} tg ON ti.tagid = tg.id ".
     //    "WHERE ti.itemtype = '{$record_type}' AND ti.itemid = '{$record_id}' {$type} ".
     //    "ORDER BY ti.ordering ASC");
 }
