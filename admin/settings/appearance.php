@@ -47,8 +47,20 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $ADMIN->add('appearance', $temp);
 
     // "htmleditor" settingpage
-    $temp = new admin_settingpage('htmleditor', get_string('htmleditor', 'admin'));
-    $temp->add(new admin_setting_configcheckbox('htmleditor', get_string('usehtmleditor', 'admin'), get_string('confightmleditor','admin'), 1));
+    $ADMIN->add('appearance', new admin_category('htmleditor', get_string('htmleditor', 'admin')));
+
+    $temp = new admin_settingpage('htmleditorsettings', get_string('htmleditorsettings', 'admin'));
+
+    $htmleditors = array();
+    foreach (get_available_html_editors() as $editor) {
+        //$htmleditors[$editor] = get_string($editor, 'admin');
+        $htmleditors[$editor] = $editor;
+    }
+    $temp->add(new admin_setting_configselect('defaulthtmleditor', get_string('defaulthtmleditor', 'admin'), null, 'tinymce', $htmleditors));
+    $temp->add(new admin_setting_configcheckbox('usehtmleditor', get_string('usehtmleditor', 'admin'), get_string('confightmleditor','admin'), 1));
+    $ADMIN->add('htmleditor', $temp);
+
+    $temp = new admin_settingpage('htmlarea', get_string('htmlarea', 'admin'));
     $temp->add(new admin_setting_configtext('editorbackgroundcolor', get_string('editorbackgroundcolor', 'admin'), get_string('edhelpbgcolor'), '#ffffff', PARAM_NOTAGS));
     $temp->add(new admin_setting_configtext('editorfontfamily', get_string('editorfontfamily', 'admin'), get_string('edhelpfontfamily'), 'Trebuchet MS,Verdana,Arial,Helvetica,sans-serif', PARAM_NOTAGS));
     $temp->add(new admin_setting_configtext('editorfontsize', get_string('editorfontsize', 'admin'), get_string('edhelpfontsize'), '', PARAM_NOTAGS));
@@ -60,7 +72,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     }
     $temp->add(new admin_setting_special_editorhidebuttons());
     $temp->add(new admin_setting_emoticons());
-    $ADMIN->add('appearance', $temp);
+    $ADMIN->add('htmleditor', $temp);
+
+    $temp = new admin_settingpage('tinymce', get_string('tinymce', 'admin'));
+    // add tinymce configuration options here
+    $ADMIN->add('htmleditor', $temp);
 
     // "documentation" settingpage
     $temp = new admin_settingpage('documentation', get_string('moodledocs'));
