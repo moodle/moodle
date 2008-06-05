@@ -11,17 +11,17 @@
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
             print_error("Course Module ID was incorrect");
         }
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error("Course is misconfigured");
         }
-        if (! $scorm = get_record("scorm", "id", $cm->instance)) {
+        if (! $scorm = $DB->get_record("scorm", array("id"=>$cm->instance))) {
             print_error("Course module is incorrect");
         }
     } else if (!empty($a)) {
-        if (! $scorm = get_record("scorm", "id", $a)) {
+        if (! $scorm = $DB->get_record("scorm", array("id"=>$a))) {
             print_error("Course module is incorrect");
         }
-        if (! $course = get_record("course", "id", $scorm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$scorm->course))) {
             print_error("Course is misconfigured");
         }
         if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {

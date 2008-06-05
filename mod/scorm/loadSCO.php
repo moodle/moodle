@@ -12,17 +12,17 @@
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
             print_error('Course Module ID was incorrect');
         }
-        if (! $course = get_record('course', 'id', $cm->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
             print_error('Course is misconfigured');
         }
-        if (! $scorm = get_record('scorm', 'id', $cm->instance)) {
+        if (! $scorm = $DB->get_record('scorm', array('id'=>$cm->instance))) {
             print_error('Course module is incorrect');
         }
     } else if (!empty($a)) {
-        if (! $scorm = get_record('scorm', 'id', $a)) {
+        if (! $scorm = $DB->get_record('scorm', array('id'=>$a))) {
             print_error('Course module is incorrect');
         }
-        if (! $course = get_record('course', 'id', $scorm->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$scorm->course))) {
             print_error('Course is misconfigured');
         }
         if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
@@ -40,7 +40,7 @@
         if ($sco = scorm_get_sco($scoid)) {
             if ($sco->launch == '') {
                 // Search for the next launchable sco
-                if ($scoes = get_records_select('scorm_scoes','scorm='.$scorm->id." AND launch<>'' AND id>".$sco->id,'id ASC')) {
+                if ($scoes = $DB->get_records_select('scorm_scoes',"scorm=? AND launch<>'' AND id>?",array($scorm->id, $sco->id), 'id ASC')) {
                     $sco = current($scoes);
                 }
             }
@@ -50,7 +50,7 @@
     // If no sco was found get the first of SCORM package
     //
     if (!isset($sco)) {
-        $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id." AND launch<>''",'id ASC');
+        $scoes = $DB->get_records_select('scorm_scoes',"scorm=? AND launch<>''", array($scorm->id),'id ASC');
         $sco = current($scoes);
     }
 

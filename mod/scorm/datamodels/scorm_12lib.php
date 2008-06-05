@@ -155,7 +155,7 @@ function scorm_eval_prerequisites($prerequisites,$usertracks) {
 }
 
 function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false) {
-    global $CFG;
+    global $CFG, $DB;
     
     $strexpand = get_string('expcoll','scorm');
     $modestr = '';
@@ -173,13 +173,13 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     //
     // Get the current organization infos
     //
-    $organizationsql = '';
+    $conditions = array();;
     if (!empty($currentorg)) {
-        if (($organizationtitle = get_field('scorm_scoes','title','scorm',$scorm->id,'identifier',$currentorg)) != '') {
+        if (($organizationtitle = $DB->get_field('scorm_scoes','title', array('scorm'=>$scorm->id,'identifier'=>$currentorg))) != '') {
             $result->toc .= "\t<li>$organizationtitle</li>\n";
             $tocmenus[] = $organizationtitle;
         }
-        $organizationsql = "AND organization='$currentorg'";
+        $conditions['organization'] = $currentorg;
     }
     //
     // If not specified retrieve the last attempt number
@@ -188,7 +188,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
     $result->attemptleft = $scorm->maxattempt - $attempt;
-    if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
+    $conditions['scorm'] = $scorm->id;
+    if ($scoes = $DB->get_records('scorm_scoes', $conditions, "id ASC")){
         // drop keys so that we can access array sequentially
         $scoes = array_values($scoes); 
         //
@@ -215,7 +216,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         
         foreach ($scoes as $pos=>$sco) {
             $isvisible = false;
-            $sco->title = stripslashes($sco->title);
+            $sco->title = $sco->title;
             if ($optionaldatas = scorm_get_sco($sco->id, SCO_DATA)) {
                 if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
                     $isvisible = true;

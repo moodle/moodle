@@ -27,13 +27,12 @@
     //-----------------------------------------------------------
 
     function scorm_backup_mods($bf,$preferences) {
-        
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Iterate over scorm table
-        $scorms = get_records ('scorm','course',$preferences->backup_course,'id');
+        $scorms = $DB->get_records ('scorm', array('course'=>$preferences->backup_course),'id');
         if ($scorms) {
             foreach ($scorms as $scorm) {
                 if (backup_mod_selected($preferences,'scorm',$scorm->id)) {
@@ -45,10 +44,12 @@
     }
 
     function scorm_backup_one_mod($bf,$preferences,$scorm) {
+        global $DB;
+
         $status = true;
 
         if (is_numeric($scorm)) {
-            $scorm = get_record('scorm','id',$scorm);
+            $scorm = $DB->get_record('scorm', array('id'=>$scorm));
         }
 
         //Start mod
@@ -93,12 +94,11 @@
 
     //Backup scorm_scoes contents (executed from scorm_backup_mods)
     function backup_scorm_scoes ($bf,$preferences,$scorm) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $scorm_scoes = get_records('scorm_scoes','scorm',$scorm,'id');
+        $scorm_scoes = $DB->get_records('scorm_scoes', array('scorm'=>$scorm),'id');
         //If there is scoes
         if ($scorm_scoes) {
             //Write start tag
@@ -131,12 +131,11 @@
   
    //Backup scorm_scoes_data contents (executed from scorm_backup_scorm_scoes)
     function backup_scorm_scoes_data ($bf,$preferences,$sco) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $scorm_sco_datas = get_records('scorm_scoes_data','scoid',$sco,'id');
+        $scorm_sco_datas = $DB->get_records('scorm_scoes_data', array('scoid'=>$sco),'id');
         //If there is data
         if ($scorm_sco_datas) {
             //Write start tag
@@ -161,12 +160,11 @@
    
    //Backup scorm_scoes_track contents (executed from scorm_backup_mods)
     function backup_scorm_scoes_track ($bf,$preferences,$scorm) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $scorm_scoes_track = get_records('scorm_scoes_track','scormid',$scorm,'id');
+        $scorm_scoes_track = $DB->get_records('scorm_scoes_track', array('scormid'=>$scorm),'id');
         //If there is track
         if ($scorm_scoes_track) {
             //Write start tag
@@ -194,12 +192,11 @@
 
 
     function backup_scorm_seq_ruleconds ($bf,$preferences,$sco) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $scorm_seq_ruleconditions = get_records('scorm_seq_ruleconds','scoid',$sco,'id');
+        $scorm_seq_ruleconditions = $DB->get_records('scorm_seq_ruleconds', array('scoid'=>$sco),'id');
         //If there is rulecondition
         if ($scorm_seq_ruleconditions) {
             //Write start tag
@@ -227,12 +224,11 @@
 
 
     function backup_scorm_seq_rulecond ($bf,$preferences,$ruleconditions) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $scorm_seq_ruleconditions = get_records('scorm_seq_rulecond','ruleconditionsid',$ruleconditions,'id');
+        $scorm_seq_ruleconditions = $DB->get_records('scorm_seq_rulecond', array('ruleconditionsid'=>$ruleconditions),'id');
         //If there is rulecondition
         if ($scorm_seq_ruleconditions) {
             //Write start tag
@@ -259,12 +255,11 @@
     }
 
     function backup_scorm_seq_rolluprule ($bf,$preferences,$sco) {
-
         global $CFG;
 
         $status = true;
 
-        $scorm_seq_rolluprules = get_records('scorm_seq_rolluprule','scoid',$sco,'id');
+        $scorm_seq_rolluprules = $DB->get_records('scorm_seq_rolluprule', array('scoid'=>$sco),'id');
         //If there is rulecondition
         if ($scorm_seq_rolluprules) {
             //Write start tag
@@ -293,12 +288,11 @@
 
 
     function backup_scorm_seq_rolluprulecond ($bf,$preferences,$rolluprule) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $scorm_seq_rollupruleconditions = get_records('scorm_seq_rolluprulecond','rollupruleid',$rolluprule,'id');
+        $scorm_seq_rollupruleconditions = $DB->get_records('scorm_seq_rolluprulecond', array('rollupruleid'=>$rolluprule), 'id');
         //If there is rulecondition
         if ($scorm_seq_rollupruleconditions) {
             //Write start tag
@@ -325,12 +319,11 @@
 
 
 function backup_scorm_seq_objective ($bf,$preferences,$sco) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $scorm_seq_objectives = get_records('scorm_seq_objective','scoid',$sco,'id');
+        $scorm_seq_objectives = $DB->get_records('scorm_seq_objective', array('scoid'=>$sco),'id');
         //If there is rulecondition
         if ($scorm_seq_objectives) {
             //Write start tag
@@ -358,12 +351,11 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
     }
 
     function backup_scorm_seq_mapinfo ($bf,$preferences,$objectives) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $scorm_seq_objectives = get_records('scorm_seq_mapinfo','objectiveid',$objectives,'id');
+        $scorm_seq_objectives = $DB->get_records('scorm_seq_mapinfo', array('objectiveid'=>$objectives),'id');
         //If there is rulecondition
         if ($scorm_seq_objectives) {
             //Write start tag
@@ -508,33 +500,29 @@ function backup_scorm_seq_objective ($bf,$preferences,$sco) {
 
     //Returns an array of scorms id
     function scorm_ids ($course) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT a.id, a.course
-                                 FROM {$CFG->prefix}scorm a
-                                 WHERE a.course = '$course'");
+        return $DB->get_records_sql ("SELECT a.id, a.course
+                                        FROM {scorm} a
+                                       WHERE a.course = ?", array($course));
     }
    
     //Returns an array of scorm_scoes id
     function scorm_scoes_track_ids_by_course ($course) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.scormid
-                                 FROM {$CFG->prefix}scorm_scoes_track s,
-                                      {$CFG->prefix}scorm a
-                                 WHERE a.course = '$course' AND
-                                       s.scormid = a.id");
+        return $DB->get_records_sql ("SELECT s.id , s.scormid
+                                        FROM {scorm_scoes_track} s, {scorm} a
+                                       WHERE a.course = ? AND
+                                             s.scormid = a.id", array($course));
     }
 
     //Returns an array of scorm_scoes id
     function scorm_scoes_track_ids_by_instance ($instanceid) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.scormid
-                                 FROM {$CFG->prefix}scorm_scoes_track s
-                                 WHERE s.scormid = $instanceid");
+        return $DB->get_records_sql ("SELECT s.id , s.scormid
+                                        FROM {scorm_scoes_track} s
+                                       WHERE s.scormid = ?", array($instanceid));
     }
 ?>

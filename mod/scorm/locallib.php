@@ -186,13 +186,15 @@ function scorm_external_link($link) {
 */
 
 function scorm_get_sco($id,$what=SCO_ALL) {
-    if ($sco = get_record('scorm_scoes','id',$id)) {
+    global $DB;
+
+    if ($sco = $DB->get_record('scorm_scoes', array('id'=>$id))) {
         $sco = ($what == SCO_DATA) ? new stdClass() : $sco;
-        if (($what != SCO_ONLY) && ($scodatas = get_records('scorm_scoes_data','scoid',$id))) {
+        if (($what != SCO_ONLY) && ($scodatas = $DB->get_records('scorm_scoes_data', array('scoid'=>$id)))) {
             foreach ($scodatas as $scodata) {
                 $sco->{$scodata->name} = $scodata->value;
             }
-        } else if (($what != SCO_ONLY) && (!($scodatas = get_records('scorm_scoes_data','scoid',$id)))) {
+        } else if (($what != SCO_ONLY) && (!($scodatas = $DB->get_records('scorm_scoes_data', array('scoid'=>$id))))) {
             $sco->parameters = ''; 
         }
         return $sco;
@@ -201,25 +203,27 @@ function scorm_get_sco($id,$what=SCO_ALL) {
     }
 }
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
+    global $DB;
+
     $id = null;
-    if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND attempt='$attempt' AND element='$element'")) {
+    if ($track = $DB->get_record('scorm_scoes_track',array('userid'=>$userid, 'scormid'=>$scormid, 'scoid'=>$scoid, 'attempt'=>$attempt, 'element'=>$element))) {
         $track->value = $value;
         $track->timemodified = time();
-        $id = update_record('scorm_scoes_track',$track);
+        $id = $DB->update_record('scorm_scoes_track',$track);
     } else {
         $track->userid = $userid;
         $track->scormid = $scormid;
         $track->scoid = $scoid;
         $track->attempt = $attempt;
         $track->element = $element;
-        $track->value = addslashes($value);
+        $track->value = $value;
         $track->timemodified = time();
-        $id = insert_record('scorm_scoes_track',$track);
+        $id = $DB->insert_record('scorm_scoes_track',$track);
     }
     
     // MDL-9552, update the gradebook everything raw score is sent
     if (strstr($element, '.score.raw')) {
-        $scorm = get_record('scorm', 'id', $scormid);
+        $scorm = $DB->get_record('scorm', array('id'=>$scormid));
         include_once('lib.php');
         scorm_update_grades($scorm, $userid);    
     }
@@ -229,17 +233,16 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
 
 function scorm_get_tracks($scoid,$userid,$attempt='') {
 /// Gets all tracks of specified sco and user
-    global $CFG;
+    global $CFG, $DB;
 
     if (empty($attempt)) {
-        if ($scormid = get_field('scorm_scoes','scorm','id',$scoid)) {
+        if ($scormid = $DB->get_field('scorm_scoes','scorm', array('id'=>$scoid))) {
             $attempt = scorm_get_last_attempt($scormid,$userid);
         } else {
             $attempt = 1;
         }
     }
-    $attemptsql = ' AND attempt=' . $attempt;
-    if ($tracks = get_records_select('scorm_scoes_track',"userid=$userid AND scoid=$scoid".$attemptsql,'element ASC')) {
+    if ($tracks = $DB->get_records('scorm_scoes_track', array('userid'=>$userid, 'scoid'=>$scoid, 'attempt'=>$attempt),'element ASC')) {
         $usertrack->userid = $userid;
         $usertrack->scoid = $scoid; 
         // Defined in order to unify scorm1.2 and scorm2004
@@ -283,13 +286,15 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
 }
 
 function scorm_get_user_data($userid) {
+    global $DB;
 /// Gets user info required to display the table of scorm results
 /// for report.php
 
-    return get_record('user','id',$userid,'','','','','firstname, lastname, picture');
+    return $DB->get_record('user', array('id'=>$userid),'firstname, lastname, picture');
 }
 
 function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
+    global $DB;
     $attemptscore = NULL; 
     $attemptscore->scoes = 0;
     $attemptscore->values = 0;
@@ -297,7 +302,7 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
     $attemptscore->sum = 0;
     $attemptscore->lastmodify = 0;
     
-    if (!$scoes = get_records('scorm_scoes','scorm',$scorm->id)) {
+    if (!$scoes = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id))) {
         return NULL;
     }
 
@@ -416,16 +421,22 @@ function scorm_grade_user($scorm, $userid, $time=false) {
 }
 
 function scorm_count_launchable($scormid,$organization='') {
-    $strorganization = '';
+    global $DB;
+
+    $sqlorganization = '';
+    $params = array($scormid);
     if (!empty($organization)) {
-        $strorganization = " AND organization='$organization'";
+        $sqlorganization = " AND organization=?";
+        $params[] = $organization;
     }
-    return count_records_select('scorm_scoes',"scorm=$scormid$strorganization AND launch<>''");
+    return $DB->count_records_select('scorm_scoes',"scorm=$scormid $sqlorganization AND launch<>''", $params);
 }
 
 function scorm_get_last_attempt($scormid, $userid) {
+    global $DB;
+
 /// Find the last attempt number for the given user id and scorm id
-    if ($lastattempt = get_record('scorm_scoes_track', 'userid', $userid, 'scormid', $scormid, '', '', 'max(attempt) as a')) {
+    if ($lastattempt = $DB->get_record('scorm_scoes_track', array('userid'=>$userid, 'scormid'=>$scormid), 'max(attempt) as a')) {
         if (empty($lastattempt->a)) {
             return '1';
         } else {
@@ -435,7 +446,7 @@ function scorm_get_last_attempt($scormid, $userid) {
 }
 
 function scorm_course_format_display($user,$course) {
-    global $CFG;
+    global $CFG, $DB;
 
     $strupdate = get_string('update');
     $strmodule = get_string('modulename','scorm');
@@ -460,7 +471,7 @@ function scorm_course_format_display($user,$course) {
             }
             $headertext .= '</td>';
             // Display report link
-            $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
+            $trackedusers = $DB->get_record('scorm_scoes_track', array('scormid'=>$scorm->id), 'count(distinct(userid)) as c');
             if ($trackedusers->c > 0) {
                 $headertext .= '<td class="reportlink">'.
                               '<a '.$CFG->frametarget.'" href="'.$CFG->wwwroot.'/mod/scorm/report.php?id='.$cm->id.'">'.
@@ -526,7 +537,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 
 /*
  $orgidentifier = '';
-    if ($org = get_record('scorm_scoes','id',$organization)) {
+    if ($org = $DB->get_record('scorm_scoes', array('id'=>$organization))) {
         if (($org->organization == '') && ($org->launch == '')) {
             $orgidentifier = $org->identifier;
         } else {
@@ -574,9 +585,11 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 <?php
 }
 function scorm_simple_play($scorm,$user) {
+    global $DB;
+
    $result = false;
   
-   $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>\'\'');
+   $scoes = $DB->get_records_select('scorm_scoes', 'scorm=? AND launch<>\'\'', array($scorm->id));
    
    if ($scoes && (count($scoes) == 1)) {
        if ($scorm->skipview >= 1) {
@@ -594,8 +607,9 @@ function scorm_simple_play($scorm,$user) {
 }
 /*
 function scorm_simple_play($scorm,$user) {
+    global $DB;
     $result = false;
-    if ($scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>""')) {
+    if ($scoes = $DB->get_records_select('scorm_scoes','scorm=? AND launch<>""', array($scorm->id))) {
         if (count($scoes) == 1) {
             if ($scorm->skipview >= 1) {
                 $sco = current($scoes);
@@ -688,7 +702,7 @@ function scorm_validate_aicc($packagedir) {
 
 
 function scorm_validate($data) {
-    global $CFG;
+    global $CFG, $DB;
 
     $validation = new stdClass();
     $validation->errors = array();
@@ -710,7 +724,7 @@ function scorm_validate($data) {
     $scormid = $data['instance'];                 // scorm ID 
     $scorm = new stdClass();
     if (!empty($scormid)) {
-        if (!$scorm = get_record('scorm','id',$scormid)) {
+        if (!$scorm = $DB->get_record('scorm', array('id'=>$scormid))) {
             $validation->errors['reference'] = get_string('missingparam','scorm');
             $validation->result = false;
             return $validation;
@@ -718,7 +732,7 @@ function scorm_validate($data) {
     }
 
     if ($reference[0] == '#') {
-        require_once($repositoryconfigfile);
+        require_once($repositoryconfigfile); // TODO: undefined
         if ($CFG->repositoryactivate) {
             $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
         } else {
@@ -794,7 +808,7 @@ function scorm_validate($data) {
 }
 
 function scorm_check_package($data) {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $DB;
 
     $courseid = $data->course;                  // Course Module ID
     $reference = $data->reference;              // Package path
@@ -810,7 +824,7 @@ function scorm_check_package($data) {
         if (empty($reference)) {
             $validation = null;
         } else if ($reference[0] == '#') {
-            require_once($repositoryconfigfile);
+            require_once($repositoryconfigfile); // TODO: undefined
             if ($CFG->repositoryactivate) {
                 $referencefield = $reference.'/imsmanfest.xml';
                 $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
@@ -839,7 +853,7 @@ function scorm_check_package($data) {
                     }
                 }
                 
-                if ($scorm = get_record('scorm','id',$scormid)) {
+                if ($scorm = $DB->get_record('scorm', array('id'=>$scormid))) {
                     if ($scorm->reference[0] == '#') {
                         require_once($repositoryconfigfile);
                         if ($CFG->repositoryactivate) {
@@ -951,24 +965,25 @@ function scorm_check_package($data) {
 
 
 function scorm_get_count_users($scormid, $groupingid=null) {
-    
-    global $CFG;
+    global $CFG, $DB;
     
     if (!empty($CFG->enablegroupings) && !empty($groupingid)) {
         $sql = "SELECT COUNT(DISTINCT st.userid)
-                FROM {$CFG->prefix}scorm_scoes_track st
-                    INNER JOIN {$CFG->prefix}groups_members gm ON st.userid = gm.userid
-                    INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid 
-                WHERE st.scormid = $scormid AND gg.groupingid = $groupingid
+                FROM {scorm_scoes_track} st
+                    INNER JOIN {groups_members} gm ON st.userid = gm.userid
+                    INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid 
+                WHERE st.scormid = ? AND gg.groupingid = ?
                 ";
+        $params = array($scormid, $groupingid);
     } else {
         $sql = "SELECT COUNT(DISTINCT st.userid)
-                FROM {$CFG->prefix}scorm_scoes_track st 
-                WHERE st.scormid = $scormid
+                FROM {scorm_scoes_track} st 
+                WHERE st.scormid = ?
                 ";
+        $params = array($scormid);
     }
     
-    return(count_records_sql($sql));
+    return ($DB->count_records_sql($sql, $params));
 }
 
 ?>

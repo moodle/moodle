@@ -15,24 +15,24 @@
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
             print_error('Course Module ID was incorrect');
         }
-        if (! $course = get_record('course', 'id', $cm->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
             print_error('Course is misconfigured');
         }
-        if (! $scorm = get_record('scorm', 'id', $cm->instance)) {
+        if (! $scorm = $DB->get_record('scorm', array('id'=>$cm->instance))) {
             print_error('Course module is incorrect');
         }
     } else {
         if (!empty($b)) {
-            if (! $sco = get_record('scorm_scoes', 'id', $b)) {
+            if (! $sco = $DB->get_record('scorm_scoes', array('id'=>$b))) {
                 print_error('Scorm activity is incorrect');
             }
             $a = $sco->scorm;
         }
         if (!empty($a)) {
-            if (! $scorm = get_record('scorm', 'id', $a)) {
+            if (! $scorm = $DB->get_record('scorm', array('id'=>$a))) {
                 print_error('Course module is incorrect');
             }
-            if (! $course = get_record('course', 'id', $scorm->course)) {
+            if (! $course = $DB->get_record('course', array('id'=>$scorm->course))) {
                 print_error('Course is misconfigured');
             }
             if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
@@ -101,21 +101,23 @@
             
             if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
                 $sql = "SELECT st.userid, st.scormid
-                        FROM {$CFG->prefix}scorm_scoes_track st
-                            INNER JOIN {$CFG->prefix}groups_members gm ON st.userid = gm.userid
-                            INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid 
-                        WHERE st.scormid = {$scorm->id} AND gg.groupingid = {$cm->groupingid}
+                        FROM {scorm_scoes_track} st
+                            INNER JOIN {groups_members} gm ON st.userid = gm.userid
+                            INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid 
+                        WHERE st.scormid = ? AND gg.groupingid = ?
                         GROUP BY st.userid,st.scormid
                         ";
+                $params = array($scorm->id, $cm->groupingid);
             } else {
                 $sql = "SELECT st.userid, st.scormid
-                        FROM {$CFG->prefix}scorm_scoes_track st 
-                        WHERE st.scormid = {$scorm->id}
+                        FROM {scorm_scoes_track} st 
+                        WHERE st.scormid = ?
                         GROUP BY st.userid,st.scormid
                         ";
+                $params = array($scorm->id);
             }
             
-            if ($scousers=get_records_sql($sql)) {
+            if ($scousers=$DB->get_records_sql($sql, $params)) {
                 $table = new stdClass();
                 $table->head = array('&nbsp;', get_string('name'));
                 $table->align = array('center', 'left');
@@ -152,8 +154,9 @@
                         $row[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$scouser->userid.'&course='.$course->id.'">'.
                                  fullname($userdata).'</a>';
                         $row[] = '<a href="report.php?a='.$scorm->id.'&user='.$scouser->userid.'&attempt='.$a.'">'.$a.'</a>';
-                        $select = 'scormid = '.$scorm->id.' and userid = '.$scouser->userid.' and attempt = '.$a;
-                        $timetracks = get_record_select('scorm_scoes_track', $select,'min(timemodified) as started, max(timemodified) as last');      
+                        $select = 'scormid = ? and userid = ? and attempt = ?';
+                        $params = array($scorm->id, $scouser->userid, $a);
+                        $timetracks = $DB->get_record_select('scorm_scoes_track', $select, $params, 'min(timemodified) as started, max(timemodified) as last');      
                         $row[] = userdate($timetracks->started, get_string('strftimedaydatetime'));
                         $row[] = userdate($timetracks->last, get_string('strftimedaydatetime'));
  
@@ -166,7 +169,7 @@
         } else {
             if (!empty($user)) {
                 // User SCORM report
-                if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' ORDER BY id")) {
+                if ($scoes = $DB->get_records_select('scorm_scoes',"scorm=? ORDER BY id", array($scorm->id))) {
                     if (!empty($userdata)) {
                         print_simple_box_start('center');
                         echo '<div align="center">'."\n";

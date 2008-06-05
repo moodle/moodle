@@ -31,14 +31,14 @@
         }
 
         if ($sco = scorm_get_sco($scoid, SCO_ONLY)) {
-            if (!$scorm = get_record('scorm','id',$sco->scorm)) {
+            if (!$scorm = $DB->get_record('scorm', array('id'=>$sco->scorm))) {
                 print_error('Invalid script call');
             }
         } else {
             print_error('Invalid script call');
         }
 
-        if ($scorm = get_record('scorm','id',$sco->scorm)) {
+        if ($scorm = $DB->get_record('scorm', array('id'=>$sco->scorm))) {
             switch ($command) {
                 case 'getparam':
                     if ($status == 'Not Initialized') {
@@ -312,12 +312,12 @@
                 case 'exitau':
                     if ($status == 'Running') {
                         if (isset($SESSION->scorm_session_time) && ($SESSION->scorm_session_time != '')) {
-                            if ($track = get_record_select('scorm_scoes_track',"userid='$USER->id' AND scormid='$scorm->id' AND scoid='$sco->id' AND element='cmi.core.total_time'")) {
+                            if ($track = $DB->get_record('scorm_scoes_track', array('userid'=>$USER->id,'scormid'=>$scorm->id, 'scoid'=>$sco->id, 'element'=>'cmi.core.total_time'))) {
                                 // Add session_time to total_time
                                 $value = scorm_add_time($track->value, $SESSION->scorm_session_time);
                                 $track->value = $value;
                                 $track->timemodified = time();
-                                update_record('scorm_scoes_track',$track);
+                                $DB->update_record('scorm_scoes_track',$track);
                                 $id = $track->id;
                             } else {
                                 $track = new object();
@@ -327,7 +327,7 @@
                                 $track->element = 'cmi.core.total_time';
                                 $track->value = $SESSION->scorm_session_time;
                                 $track->timemodified = time();
-                                $id = insert_record('scorm_scoes_track',$track);
+                                $id = $DB->insert_record('scorm_scoes_track',$track);
                             }
                             scorm_update_grades($scorm, $USER->id);
                         }

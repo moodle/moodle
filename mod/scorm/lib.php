@@ -230,7 +230,7 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
 * @return boolean
 */
 function scorm_user_complete($course, $user, $mod, $scorm) {
-    global $CFG;
+    global $CFG, $DB;
 
     $liststyle = 'structlist';
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
@@ -240,22 +240,23 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     $sometoreport = false;
     $report = '';
     
-    if ($orgs = get_records_select('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,identifier,title')) {
+    if ($orgs = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id, 'organization'=>'', 'launch'=>''),'id','id,identifier,title')) {
         if (count($orgs) <= 1) {
             unset($orgs);
             $orgs[]->identifier = '';
         }
         $report .= '<div class="mod-scorm">'."\n";
         foreach ($orgs as $org) {
-            $organizationsql = '';
+            $conditions = array();
             $currentorg = '';
             if (!empty($org->identifier)) {
                 $report .= '<div class="orgtitle">'.$org->title.'</div>';
                 $currentorg = $org->identifier;
-                $organizationsql = "AND organization='$currentorg'";
+                $conditions['organization'] = $currentorg;
             }
             $report .= "<ul id='0' class='$liststyle'>";
-            if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
+                $conditions['scorm'] = $scorm->id;
+            if ($scoes = $DB->get_records('scorm_scoes', $conditions, "id ASC")){
                 // drop keys so that we can access array sequentially
                 $scoes = array_values($scoes); 
                 $level=0;
@@ -369,8 +370,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
 * @return boolean
 */
 function scorm_cron () {
-
-    global $CFG;
+    global $CFG, $DB;
 
     require_once('locallib.php');
 
@@ -389,7 +389,7 @@ function scorm_cron () {
 
         mtrace('Updating scorm packages which require daily update');//We are updating
 
-        $scormsupdate = get_records('scorm','updatefreq',UPDATE_EVERYDAY);
+        $scormsupdate = $DB->get_records('scorm', array('updatefreq'=>UPDATE_EVERYDAY));
         if (!empty($scormsupdate)) {
             foreach($scormsupdate as $scormupdate) {
                 $scormupdate->instance = $scormupdate->id;
@@ -409,12 +409,12 @@ function scorm_cron () {
  * @return array array of grades, false if none
  */
 function scorm_get_user_grades($scorm, $userid=0) {
-    global $CFG;
+    global $CFG, $DB;
     require_once('locallib.php');
 
     $grades = array();
     if (empty($userid)) {
-        if ($scousers = get_records_select('scorm_scoes_track', "scormid='$scorm->id' GROUP BY userid", "", "userid,null")) {
+        if ($scousers = $DB->get_records_select('scorm_scoes_track', "scormid=? GROUP BY userid", array($scorm->id), "", "userid,null")) {
             foreach ($scousers as $scouser) {
                 $grades[$scouser->userid] = new object();
                 $grades[$scouser->userid]->id         = $scouser->userid;
@@ -426,7 +426,7 @@ function scorm_get_user_grades($scorm, $userid=0) {
         }
 
     } else {
-        if (!get_records_select('scorm_scoes_track', "scormid='$scorm->id' AND userid='$userid' GROUP BY userid", "", "userid,null")) {
+        if (!$DB->get_records_select('scorm_scoes_track', "scormid=? AND userid=? GROUP BY userid", array($scorm->id, $userid), "", "userid,null")) {
             return false; //no attempt yet
         }
         $grades[$userid] = new object();
@@ -445,7 +445,7 @@ function scorm_get_user_grades($scorm, $userid=0) {
  * @param int $userid specific user only, 0 mean all
  */
 function scorm_update_grades($scorm=null, $userid=0, $nullifnone=true) {
-    global $CFG;
+    global $CFG, $DB;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
     }
@@ -466,13 +466,13 @@ function scorm_update_grades($scorm=null, $userid=0, $nullifnone=true) {
 
     } else {
         $sql = "SELECT s.*, cm.idnumber as cmidnumber
-                  FROM {$CFG->prefix}scorm s, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                  FROM {scorm} s, {course_modules} cm, {modules} m
                  WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
-        if ($rs = get_recordset_sql($sql)) {
-            while ($scorm = rs_fetch_next_record($rs)) {
+        if ($rs = $DB->get_recordset_sql($sql)) {
+            foreach ($rs as $scorm) {
                 scorm_update_grades($scorm, 0, false);
             }
-            rs_close($rs);
+            $rs->close();
         }
     }
 }
@@ -485,7 +485,7 @@ function scorm_update_grades($scorm=null, $userid=0, $nullifnone=true) {
  * @return object grade_item
  */
 function scorm_grade_item_update($scorm, $grades=NULL) {
-    global $CFG;
+    global $CFG, $DB;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
     }
@@ -493,7 +493,7 @@ function scorm_grade_item_update($scorm, $grades=NULL) {
     $params = array('itemname'=>$scorm->name, 'idnumber'=>$scorm->cmidnumber);
 
     if (($scorm->grademethod % 10) == 0) { // GRADESCOES
-        if ($maxgrade = count_records_select('scorm_scoes',"scorm='$scorm->id' AND launch<>''")) {
+        if ($maxgrade = $DB->count_records_select('scorm_scoes',"scorm=? AND launch<>''", array($scorm->id))) {
             $params['gradetype'] = GRADE_TYPE_VALUE;
             $params['grademax']  = $maxgrade;
             $params['grademin']  = 0;
@@ -581,13 +581,13 @@ function scorm_reset_course_form_defaults($course) {
  * @param string optional type
  */
 function scorm_reset_gradebook($courseid, $type='') {
-    global $CFG;
+    global $CFG, $DB;
 
     $sql = "SELECT s.*, cm.idnumber as cmidnumber, s.course as courseid
-              FROM {$CFG->prefix}scorm s, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-             WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id AND s.course=$courseid";
+              FROM {scorm} s, {course_modules} cm, {modules} m
+             WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id AND s.course=?";
 
-    if ($scorms = get_records_sql($sql)) {
+    if ($scorms = $DB->get_records_sql($sql, array($courseid))) {
         foreach ($scorms as $scorm) {
             scorm_grade_item_update($scorm, 'reset');
         }
@@ -601,17 +601,17 @@ function scorm_reset_gradebook($courseid, $type='') {
  * @return array status array
  */
 function scorm_reset_userdata($data) {
-    global $CFG;
+    global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', 'scorm');
     $status = array();
 
     if (!empty($data->reset_scorm)) {
         $scormssql = "SELECT s.id
-                         FROM {$CFG->prefix}scorm s
-                        WHERE s.course={$data->courseid}";
+                         FROM {scorm} s
+                        WHERE s.course=?";
 
-        delete_records_select('scorm_scoes_track', "scormid IN ($scormssql)");
+        $DB->delete_records_select('scorm_scoes_track', "scormid IN ($scormssql)", array($data->courseid));
 
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {

@@ -91,6 +91,8 @@ function scorm_forge_cols_regexp($columns,$remodule='(".*")?,') {
 }
 
 function scorm_parse_aicc($pkgdir,$scormid) {
+    global $DB;
+
     $version = 'AICC';
     $ids = array();
     $courses = array();
@@ -199,7 +201,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
     }
     //print_r($courses);
 
-    $oldscoes = get_records('scorm_scoes','scorm',$scormid);
+    $oldscoes = $DB->get_records('scorm_scoes', array('scorm'=>$scormid));
     
     $launch = 0;
     if (isset($courses)) {
@@ -214,11 +216,12 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             $sco->scormtype = '';
 
             //print_r($sco);
-            if (get_record('scorm_scoes','scorm',$scormid,'identifier',$sco->identifier)) {
-                $id = update_record('scorm_scoes',$sco);
+            if ($ss = $DB->get_record('scorm_scoes', array('scorm'=>$scormid,'identifier'=>$sco->identifier))) {
+                $id = $ss->id;
+                $DB->update_record('scorm_scoes',$sco);
                 unset($oldscoes[$id]);
             } else {
-                $id = insert_record('scorm_scoes',$sco);
+                $id = $DB->insert_record('scorm_scoes',$sco);
             }
 
             if ($launch == 0) {
@@ -245,11 +248,11 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                         $id = null;
                         if ($oldscoid = scorm_array_search('identifier',$sco->identifier,$oldscoes)) {
                             $sco->id = $oldscoid;
-                            $id = update_record('scorm_scoes',$sco);
-                            delete_records('scorm_scoes_data','scoid',$oldscoid);
+                            $id = $DB->update_record('scorm_scoes',$sco);
+                            $DB->delete_records('scorm_scoes_data', array('scoid'=>$oldscoid));
                             unset($oldscoes[$oldscoid]);
                         } else {
-                            $id = insert_record('scorm_scoes',$sco);
+                            $id = $DB->insert_record('scorm_scoes',$sco);
                         }
                         if (!empty($id)) {
                             unset($scodata);
@@ -257,27 +260,27 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                             if (isset($element->web_launch)) {
                                 $scodata->name = 'parameters';
                                 $scodata->value = $element->web_launch;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = $DB->insert_record('scorm_scoes_data',$scodata);
                             }
                             if (isset($element->prerequisites)) {
                                 $scodata->name = 'prerequisites';
                                 $scodata->value = $element->prerequisites;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = $DB->insert_record('scorm_scoes_data',$scodata);
                             }
                             if (isset($element->max_time_allowed)) {
                                 $scodata->name = 'max_time_allowed';
                                 $scodata->value = $element->max_time_allowed;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = $DB->insert_record('scorm_scoes_data',$scodata);
                             }
                             if (isset($element->time_limit_action)) {
                                 $scodata->name = 'time_limit_action';
                                 $scodata->value = $element->time_limit_action;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = $DB->insert_record('scorm_scoes_data',$scodata);
                             }
                             if (isset($element->mastery_score)) {
                                 $scodata->name = 'mastery_score';
                                 $scodata->value = $element->mastery_score;
-                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                                $dataid = $DB->insert_record('scorm_scoes_data',$scodata);
                             }
                         }
                         if ($launch==0) {
@@ -290,16 +293,16 @@ function scorm_parse_aicc($pkgdir,$scormid) {
     }
     if (!empty($oldscoes)) {
         foreach($oldscoes as $oldsco) {
-            delete_records('scorm_scoes','id',$oldsco->id);
-            delete_records('scorm_scoes_track','scoid',$oldsco->id);
+            $DB->delete_records('scorm_scoes', array('id'=>$oldsco->id));
+            $DB->delete_records('scorm_scoes_track', array('scoid'=>$oldsco->id));
         }
     }
-    set_field('scorm','version','AICC','id',$scormid);
+    $DB->set_field('scorm','version','AICC', array('id'=>$scormid));
     return $launch;
 }
 
 function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false) {
-    global $CFG;
+    global $CFG, $DB;
     
     $strexpand = get_string('expcoll','scorm');
     $modestr = '';
@@ -317,13 +320,13 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     //
     // Get the current organization infos
     //
-    $organizationsql = '';
+    $conditions = array();
     if (!empty($currentorg)) {
-        if (($organizationtitle = get_field('scorm_scoes','title','scorm',$scorm->id,'identifier',$currentorg)) != '') {
+        if (($organizationtitle = $DB->get_field('scorm_scoes','title', array('scorm'=>$scorm->id,'identifier'=>$currentorg))) != '') {
             $result->toc .= "\t<li>$organizationtitle</li>\n";
             $tocmenus[] = $organizationtitle;
         }
-        $organizationsql = "AND organization='$currentorg'";
+        $conditions['organization'] = $currentorg;
     }
     //
     // If not specified retrieve the last attempt number
@@ -332,7 +335,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
     $result->attemptleft = $scorm->maxattempt - $attempt;
-    if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
+    $conditions['scorm'] = $scorm->id;
+    if ($scoes = $DB->get_records('scorm_scoes', $conditions, "id ASC")){
         // drop keys so that we can access array sequentially
         $scoes = array_values($scoes); 
         //
@@ -359,7 +363,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         
         foreach ($scoes as $pos=>$sco) {
             $isvisible = false;
-            $sco->title = stripslashes($sco->title);
+            $sco->title = $sco->title;
             if ($optionaldatas = scorm_get_sco($sco->id, SCO_DATA)) {
                 if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
                     $isvisible = true;
