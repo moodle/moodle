@@ -29,18 +29,23 @@ function zero_cost($course) {
 
 function prevent_double_paid($course)
 {
-    global $CFG, $SESSION, $USER;
+    global $CFG, $SESSION, $USER, $DB;
 
-    $sql = "SELECT id FROM {$CFG->prefix}enrol_authorize WHERE userid = '$USER->id' AND courseid = '$course->id' ";
+    $sql = "SELECT id FROM {enrol_authorize} WHERE userid = ? AND courseid = ? ";
+    $params = array($USER->id, $course->id);
 
     if (empty($CFG->an_test)) { // Real mode
-        $sql .= 'AND status IN('.AN_STATUS_AUTH.','.AN_STATUS_UNDERREVIEW.','.AN_STATUS_APPROVEDREVIEW.')';
+        $sql .= 'AND status IN(?,?,?)';
+        $params[] = AN_STATUS_AUTH;
+        $params[] = AN_STATUS_UNDERREVIEW;
+        $params[] = AN_STATUS_APPROVEDREVIEW;
     }
     else { // Test mode
-        $sql .= 'AND status='.AN_STATUS_NONE;
+        $sql .= 'AND status=?';
+        $params[] = AN_STATUS_NONE;
     }
 
-    if (($recid = get_field_sql($sql))) {
+    if (($recid = $DB->get_field_sql($sql, $params))) {
         $a = new stdClass;
         $a->orderid = $recid;
         $a->url = "$CFG->wwwroot/enrol/authorize/index.php?order=$a->orderid";

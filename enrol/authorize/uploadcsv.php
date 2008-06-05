@@ -53,7 +53,7 @@
 
 function authorize_process_csv($filename)
 {
-    global $CFG, $SITE;
+    global $CFG, $SITE, $DB;
 
 /// We need these fields
     $myfields = array(
@@ -120,22 +120,22 @@ function authorize_process_csv($filename)
         $settlementdate = strtotime($data[$csvfields['Settlement Date/Time']]);
 
         if ($transstatus == 'Approved Review' || $transstatus == 'Review Failed') {
-            if (($order = get_record('enrol_authorize', 'transid', $transid))) {
+            if (($order = $DB->get_record('enrol_authorize', array('transid'=>$transid)))) {
                 $order->status = ($transstatus == 'Approved Review') ? AN_STATUS_APPROVEDREVIEW : AN_STATUS_REVIEWFAILED;
-                update_record('enrol_authorize', $order);
+                $DB->update_record('enrol_authorize', $order);
                 $updated++; // Updated order status
             }
             continue;
         }
 
         if (!empty($reftransid) && is_numeric($reftransid) && 'Settled Successfully' == $transstatus && 'Credit' == $transtype) {
-            if (($order = get_record('enrol_authorize', 'transid', $reftransid))) {
+            if (($order = $DB->get_record('enrol_authorize', array('transid'=>$reftransid)))) {
                 if (AN_METHOD_ECHECK == $order->paymentmethod) {
-                    $refund = get_record('enrol_authorize_refunds', 'transid', $transid);
+                    $refund = $DB->get_record('enrol_authorize_refunds', array('transid'=>$transid));
                     if ($refund) {
                         $refund->status = AN_STATUS_CREDIT;
                         $refund->settletime = $settlementdate;
-                        update_record('enrol_authorize_refunds', $refund);
+                        $DB->update_record('enrol_authorize_refunds', $refund);
                         $updated++;
                     }
                     else {
@@ -158,7 +158,7 @@ function authorize_process_csv($filename)
         }
 
         // TransactionId must match
-        $order = get_record('enrol_authorize', 'transid', $transid);
+        $order = $DB->get_record('enrol_authorize', array('transid'=>$transid));
         if (!$order) {
             $ignored++;
             $ignoredlines .= $transid . ": Not our business\n";
@@ -168,7 +168,7 @@ function authorize_process_csv($filename)
         // Authorized/Captured and Settled
         $order->status = AN_STATUS_AUTHCAPTURE;
         $order->settletime = $settlementdate;
-        update_record('enrol_authorize', $order);
+        $DB->update_record('enrol_authorize', $order);
         $updated++; // Updated order status and settlement date
 
         if ($order->paymentmethod != AN_METHOD_ECHECK) {
@@ -178,7 +178,7 @@ function authorize_process_csv($filename)
         }
 
         // Get course and context
-        $course = get_record('course', 'id', $order->courseid);
+        $course = $DB->get_record('course', array('id'=>$order->courseid));
         if (!$course) {
             $ignored++;
             $ignoredlines .= $transid . ": Could not find this course: " . $order->courseid . "\n";
@@ -192,7 +192,7 @@ function authorize_process_csv($filename)
         }
 
         // Get user
-        $user = get_record('user', 'id', $order->userid);
+        $user = $DB->get_record('user', array('id'=>$order->userid));
         if (!$user) {
             $ignored++;
             $ignoredlines .= $transid . ": Could not find this user: " . $order->userid . "\n";

@@ -103,22 +103,27 @@ function authorize_print_orders($courseid, $userid)
     $table->setup();
 
     $select = "SELECT e.id, e.paymentmethod, e.refundinfo, e.transid, e.courseid, e.userid, e.status, e.ccname, e.timecreated, e.settletime ";
-    $from   = "FROM {$CFG->prefix}enrol_authorize e ";
+    $from   = "FROM {enrol_authorize} e ";
     $where  = "WHERE (1=1) ";
+    $params = array();
 
     if (!empty($searchquery)) {
         switch($searchtype) {
             case 'orderid':
-                $where = "WHERE (e.id = '$searchquery') ";
+                $where = "WHERE (e.id = :searchquery) ";
+                $params['searchquery'] = $searchquery;
                 break;
 
             case 'transid':
-                $where = "WHERE (e.transid = '$searchquery') ";
+                $where = "WHERE (e.transid = :searchquery) ";
+                $params['searchquery'] = $searchquery;
                 break;
 
             case 'cclastfour':
                 $searchquery = sprintf("%04d", $searchquery);
-                $where = "WHERE (e.refundinfo = '$searchquery') AND (e.paymentmethod='" . AN_METHOD_CC . "') ";
+                $where = "WHERE (e.refundinfo = :searchquery) AND (e.paymentmethod=:method) ";
+                $params['searchquery'] = $searchquery;
+                $params['method'] = AN_METHOD_CC;
                 break;
         }
     }
@@ -127,48 +132,58 @@ function authorize_print_orders($courseid, $userid)
         {
             case AN_STATUS_NONE:
                 if (empty($CFG->an_test)) {
-                    $where .= "AND (e.status != '" . AN_STATUS_NONE . "') ";
+                    $where .= "AND (e.status != :status) ";
+                    $params['status'] = AN_STATUS_NONE;
                 }
                 break;
 
             case AN_STATUS_TEST:
                 $newordertime = time() - 120; // -2 minutes. Order may be still in process.
-                $where .= "AND (e.status = '" . AN_STATUS_NONE . "') AND (e.transid = '0') AND (e.timecreated < $newordertime) ";
+                $where .= "AND (e.status = :status) AND (e.transid = '0') AND (e.timecreated < :newordertime) ";
+                $params['status'] = AN_STATUS_NONE;
+                $params['newordertime'] = $newordertime;
                 break;
 
             case AN_STATUS_AUTH | AN_STATUS_UNDERREVIEW | AN_STATUS_APPROVEDREVIEW:
-                $where .= 'AND (e.status IN('.AN_STATUS_AUTH.','.AN_STATUS_UNDERREVIEW.','.AN_STATUS_APPROVEDREVIEW.')) ';
+                $where .= 'AND (e.status IN(:status1,:status2,:status3)) ';
+                $params['status1'] = AN_STATUS_AUTH;
+                $params['status2'] = AN_STATUS_UNDERREVIEW;
+                $params['status3'] = AN_STATUS_APPROVEDREVIEW;
                 break;
 
             case AN_STATUS_CREDIT:
-                $from .= "INNER JOIN {$CFG->prefix}enrol_authorize_refunds r ON e.id = r.orderid ";
-                $where .= "AND (e.status = '" . AN_STATUS_AUTHCAPTURE . "') ";
+                $from .= "INNER JOIN {enrol_authorize_refunds} r ON e.id = r.orderid ";
+                $where .= "AND (e.status = :status) ";
+                $params['status'] = AN_STATUS_AUTHCAPTURE;
                 break;
 
             default:
-                $where .= "AND (e.status = '$status') ";
+                $where .= "AND (e.status = :status) ";
+                $params['status'] = $status;
                 break;
         }
 
         if (SITEID != $courseid) {
-            $where .= "AND (e.courseid = '" . $courseid . "') ";
+            $where .= "AND (e.courseid = :courseid') ";
+            $params['courseid'] = $courseid;
         }
     }
 
     // This must be always LAST where!!!
     if ($userid > 0) {
-        $where .= "AND (e.userid = '" . $userid . "') ";
+        $where .= "AND (e.userid = :userid) ";
+        $params['userid'] = $userid;
     }
 
     if (($sort = $table->get_sql_sort())) {
         $sort = ' ORDER BY ' . $sort;
     }
 
-    $totalcount = count_records_sql('SELECT COUNT(*) ' . $from . $where);
+    $totalcount = $DB->count_records_sql('SELECT COUNT(*) ' . $from . $where, $params);
     $table->initialbars($totalcount > $perpage);
     $table->pagesize($perpage, $totalcount);
 
-    if (($records = get_records_sql($select . $from . $where . $sort, $table->get_page_start(), $table->get_page_size()))) {
+    if (($records = $DB->get_records_sql($select . $from . $where . $sort, $params, $table->get_page_start(), $table->get_page_size()))) {
         foreach ($records as $record) {
             $actionstatus = authorize_get_status_action($record);
             $color = authorize_get_status_color($actionstatus->status);
@@ -204,23 +219,23 @@ function authorize_print_orders($courseid, $userid)
  */
 function authorize_print_order($orderid)
 {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
     global $strs, $authstrs;
 
     $do = optional_param('do', '', PARAM_ALPHA);
     $unenrol = optional_param('unenrol', 0, PARAM_BOOL);
     $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-    if (!$order = get_record('enrol_authorize', 'id', $orderid)) {
+    if (!$order = $DB->get_record('enrol_authorize', array('id'=>$orderid))) {
         print_error('orderidnotfound', '',
                 "$CFG->wwwroot/enrol/authorize/index.php", $orderid);
     }
 
-    if (!$course = get_record('course', 'id', $order->courseid)) {
+    if (!$course = $DB->get_record('course', array('id'=>$order->courseid))) {
         print_error('invalidcourseid', '', "$CFG->wwwroot/enrol/authorize/index.php");
     }
 
-    if (!$user = get_record('user', 'id', $order->userid)) {
+    if (!$user = $DB->get_record('user', array('id'=>$order->userid))) {
         print_error('nousers', '', "$CFG->wwwroot/enrol/authorize/index.php");
     }
 
@@ -310,11 +325,11 @@ function authorize_print_order($orderid)
     elseif (ORDER_REFUND == $do && in_array(ORDER_REFUND, $statusandactions->actions)) {
         $refunded = 0.0;
         $sql = "SELECT SUM(amount) AS refunded
-                  FROM {$CFG->prefix}enrol_authorize_refunds
-                 WHERE (orderid = '" . $orderid . "')
-                   AND (status = '" . AN_STATUS_CREDIT . "')";
+                  FROM {enrol_authorize_refunds}
+                 WHERE (orderid = ?)
+                   AND (status = ?)";
 
-        if (($refundval = get_field_sql($sql))) {
+        if (($refundval = $DB->get_field_sql($sql, array($orderid, AN_STATUS_CREDIT)))) {
             $refunded = floatval($refundval);
         }
         $upto = round($order->amount - $refunded, 2);
@@ -367,7 +382,7 @@ function authorize_print_order($orderid)
             if (!empty($unenrol)) {
                 role_unassign(0, $order->userid, 0, $coursecontext->id);
             }
-            delete_records('enrol_authorize', 'id', $orderid);
+            $DB->delete_records('enrol_authorize', array('id'=>$orderid));
             redirect("$CFG->wwwroot/enrol/authorize/index.php");
         }
         $table->data[] = array("<b>$strs->confirm:</b>",
@@ -398,14 +413,14 @@ function authorize_print_order($orderid)
         }
         elseif (!empty($suborderid)) { // cancel refunded
             $sql = "SELECT r.*, e.courseid, e.paymentmethod
-                      FROM {$CFG->prefix}enrol_authorize_refunds r
-                INNER JOIN {$CFG->prefix}enrol_authorize e
+                      FROM {enrol_authorize_refunds} r
+                INNER JOIN {enrol_authorize} e
                         ON r.orderid = e.id
-                     WHERE r.id = '$suborderid'
-                       AND r.orderid = '$orderid'
-                       AND r.status = '" .AN_STATUS_CREDIT. "'";
+                     WHERE r.id = ?
+                       AND r.orderid = ?
+                       AND r.status = ?";
 
-            $suborder = get_record_sql($sql);
+            $suborder = $DB->get_record_sql($sql, array($suborderid, $orderid, AN_STATUS_CREDIT));
             if (!$suborder) { // not found
                 print_error('transactionvoid', '', "$CFG->wwwroot/enrol/authorize/index.php?order=$orderid");
             }
@@ -449,12 +464,12 @@ function authorize_print_order($orderid)
             $t2->head = array($authstrs->settlementdate, $authstrs->transid, $strs->status, $strs->action, $authstrs->amount);
 
             $sql = "SELECT r.*, e.courseid, e.paymentmethod
-                      FROM {$CFG->prefix}enrol_authorize_refunds r
-                INNER JOIN {$CFG->prefix}enrol_authorize e
+                      FROM {enrol_authorize_refunds} r
+                INNER JOIN {enrol_authorize} e
                         ON r.orderid = e.id
-                     WHERE r.orderid = '$orderid'";
+                     WHERE r.orderid = ?";
 
-            if (($refunds = get_records_sql($sql))) {
+            if (($refunds = $DB->get_records_sql($sql, array($orderid)))) {
                 $sumrefund = floatval(0.0);
                 foreach ($refunds as $rf) {
                     $subactions = '';
