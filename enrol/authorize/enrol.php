@@ -147,7 +147,7 @@ class enrolment_plugin_authorize
      */
     private function cc_submit($form, $course)
     {
-        global $CFG, $USER, $SESSION;
+        global $CFG, $USER, $SESSION, $DB;
 
         prevent_double_paid($course);
 
@@ -169,7 +169,7 @@ class enrolment_plugin_authorize
         $order->timecreated = $timenow;
         $order->amount = $curcost['cost'];
         $order->currency = $curcost['currency'];
-        $order->id = insert_record("enrol_authorize", $order);
+        $order->id = $DB->insert_record("enrol_authorize", $order);
         if (!$order->id) {
             email_to_admin("Error while trying to insert new data", $order);
             return "Insert record error. Admin has been notified!";
@@ -324,7 +324,7 @@ class enrolment_plugin_authorize
      */
     private function echeck_submit($form, $course)
     {
-        global $CFG, $USER, $SESSION;
+        global $CFG, $USER, $SESSION, $DB;
 
         prevent_double_paid($course);
 
@@ -346,7 +346,7 @@ class enrolment_plugin_authorize
         $order->timecreated = $timenow;
         $order->amount = $curcost['cost'];
         $order->currency = $curcost['currency'];
-        $order->id = insert_record("enrol_authorize", $order);
+        $order->id = $DB->insert_record("enrol_authorize", $order);
         if (!$order->id) {
             email_to_admin("Error while trying to insert new data", $order);
             return "Insert record error. Admin has been notified!";
@@ -433,7 +433,7 @@ class enrolment_plugin_authorize
      */
     public function config_form($frm)
     {
-        global $CFG;
+        global $CFG, $DB;
         $mconfig = get_config('enrol/authorize');
 
         if (!check_curl_available()) {
@@ -470,7 +470,7 @@ class enrolment_plugin_authorize
             }
         }
 
-        if (($count = count_records('enrol_authorize', 'status', AN_STATUS_AUTH))) {
+        if (($count = $DB->count_records('enrol_authorize', array('status'=>AN_STATUS_AUTH)))) {
             $a = new stdClass;
             $a->count = $count;
             $a->url = $CFG->wwwroot."/enrol/authorize/index.php?status=".AN_STATUS_AUTH;
@@ -600,7 +600,7 @@ class enrolment_plugin_authorize
      */
     public function cron()
     {
-        global $CFG;
+        global $CFG, $DB;
 
         $oneday = 86400;
         $timenow = time();
@@ -624,8 +624,9 @@ class enrolment_plugin_authorize
         }
 
         $timediffcnf = $settlementtime - (intval($CFG->an_capture_day) * $oneday);
-        $select = "(status = '" .AN_STATUS_AUTH. "') AND (timecreated < '$timediffcnf') AND (timecreated > '$timediff30')";
-        if (!($ordercount = count_records_select('enrol_authorize', $select))) {
+        $select = "(status = ?) AND (timecreated < ?) AND (timecreated > ?)";
+        $params = array(AN_STATUS_AUTH, $timediffcnf, $timediff30);
+        if (!($ordercount = $DB->count_records_select('enrol_authorize', $select, $params))) {
             mtrace("no pending orders");
             return;
         }
@@ -647,14 +648,15 @@ class enrolment_plugin_authorize
         $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
 
         $lastcourseid = 0;
-        for ($rs = get_recordset_select('enrol_authorize', $select, 'courseid'); ($order = rs_fetch_next_record($rs)); )
+        $rs = $DB->get_recordset_select('enrol_authorize', $select, 'courseid', $params);
+        foreach ( $rs as $order)
         {
             $message = '';
             $extra = NULL;
             if (AN_APPROVED == AuthorizeNet::process($order, $message, $extra, AN_ACTION_PRIOR_AUTH_CAPTURE)) {
                 if ($lastcourseid != $order->courseid) {
                     $lastcourseid = $order->courseid;
-                    $course = get_record('course', 'id', $lastcourseid);
+                    $course = $DB->get_record('course', array('id'=>$lastcourseid));
                     $role = get_default_course_role($course);
                     $context = get_context_instance(CONTEXT_COURSE, $lastcourseid);
                 }
@@ -663,7 +665,7 @@ class enrolment_plugin_authorize
                     $timestart = $timenow;
                     $timeend = $order->settletime + $course->enrolperiod;
                 }
-                $user = get_record('user', 'id', $order->userid);
+                $user = $DB->get_record('user', array('id'=>$order->userid));
                 if (role_assign($role->id, $user->id, 0, $context->id, $timestart, $timeend, 0, 'authorize')) {
                     $this->log .= "User($user->id) has been enrolled to course($course->id).\n";
                     if (!empty($CFG->enrol_mailstudents)) {
@@ -681,7 +683,7 @@ class enrolment_plugin_authorize
                 $this->log .= "Error, Order# $order->id: " . $message . "\n";
             }
         }
-        rs_close($rs);
+        $rs->close();
         mtrace("processed");
 
         $timenow = time();
@@ -714,7 +716,7 @@ class enrolment_plugin_authorize
      */
     private function cron_daily()
     {
-        global $CFG, $SITE;
+        global $CFG, $SITE, $DB;
 
         $oneday = 86400;
         $timenow = time();
@@ -722,25 +724,29 @@ class enrolment_plugin_authorize
         $settlementtime = AuthorizeNet::getsettletime($timenow);
         $timediff30 = $settlementtime - (30 * $oneday);
 
-        $select = "(status='".AN_STATUS_NONE."') AND (timecreated<'$timediff30')";
-        if (delete_records_select('enrol_authorize', $select)) {
+        $select = "(status=?) AND (timecreated<?)";
+        $params = array(AN_STATUS_NONE, $timediff30);
+        if ($DB->delete_records_select('enrol_authorize', $select, $params)) {
             mtrace("        orders no transaction made have deleted");
         }
 
-        $select = "(status='".AN_STATUS_AUTH."') AND (timecreated<'$timediff30')";
-        if (execute_sql("UPDATE {$CFG->prefix}enrol_authorize SET status='".AN_STATUS_EXPIRE."' WHERE $select", false)) {
+        $select = "(status=?) AND (timecreated<?)";
+        $params = array(AN_STATUS_EXPIRE, AN_STATUS_AUTH, $timediff30);
+        if ($DB->execute("UPDATE {enrol_authorize SET status=? WHERE $select", $params)) {
             mtrace("        pending orders to expire have updated");
         }
 
         $timediff60 = $settlementtime - (60 * $oneday);
-        $select = "(status='".AN_STATUS_EXPIRE."') AND (timecreated<'$timediff60')";
-        if (delete_records_select('enrol_authorize', $select)) {
+        $select = "(status=?) AND (timecreated<?)";
+        $params = array(AN_STATUS_EXPIRE, $timediff30);
+        if ($DB->delete_records_select('enrol_authorize', $select, $params)) {
             mtrace("        orders expired older than 60 days have deleted");
         }
 
         $adminuser = get_admin();
-        $select = "status IN(".AN_STATUS_UNDERREVIEW.",".AN_STATUS_APPROVEDREVIEW.") AND (timecreated<'$onepass') AND (timecreated>'$timediff60')";
-        if (($count = count_records_select('enrol_authorize', $select)) &&
+        $select = "status IN(?,?) AND (timecreated<?) AND (timecreated>?)";
+        $params = array(AN_STATUS_UNDERREVIEW, AN_STATUS_APPROVEDREVIEW, $onepass, $timediff30);
+        if (($count = $DB->count_records_select('enrol_authorize', $select, $params)) &&
             ($csvusers = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM), 'enrol/authorize:uploadcsv'))) {
             $a = new stdClass;
             $a->count = $count;
@@ -764,8 +770,9 @@ class enrolment_plugin_authorize
 
 
         $timediffem = $settlementtime - ((30 - intval($CFG->an_emailexpired)) * $oneday);
-        $select = "(status='". AN_STATUS_AUTH ."') AND (timecreated<'$timediffem') AND (timecreated>'$timediff30')";
-        $count = count_records_select('enrol_authorize', $select);
+        $select = "(status=?) AND (timecreated<?) AND (timecreated>?)";
+        $params = array(AN_STATUS_AUTH, $timediffem, $timediff30);
+        $count = $DB->count_records_select('enrol_authorize', $select, $params);
         if (!$count) {
             mtrace("no orders prior to $CFG->an_emailexpired days");
             return;
@@ -794,15 +801,17 @@ class enrolment_plugin_authorize
         $sorttype = empty($CFG->an_sorttype) ? 'ttl' : $CFG->an_sorttype;
         $sql = "SELECT e.courseid, e.currency, c.fullname, c.shortname,
                   COUNT(e.courseid) AS cnt, SUM(e.amount) as ttl
-                FROM {$CFG->prefix}enrol_authorize e
-                  INNER JOIN {$CFG->prefix}course c ON c.id = e.courseid
-                WHERE (e.status = ". AN_STATUS_AUTH .")
-                  AND (e.timecreated < $timediffem)
-                  AND (e.timecreated > $timediff30)
+                FROM {enrol_authorize} e
+                  INNER JOIN {course} c ON c.id = e.courseid
+                WHERE (e.status = ?)
+                  AND (e.timecreated < ?)
+                  AND (e.timecreated > ?)
                 GROUP BY e.courseid
                 ORDER BY $sorttype DESC";
+        $params = array(AN_STATUS_AUTH, $timediffem, $timediff30);
 
-        for ($rs = get_recordset_sql($sql); ($courseinfo = rs_fetch_next_record($rs)); )
+        $rs = $DB->get_recordset_sql($sql, $params);
+        foreach ($rs as $courseinfo)
         {
             $lastcourse = $courseinfo->courseid;
             $context = get_context_instance(CONTEXT_COURSE, $lastcourse);
@@ -825,7 +834,7 @@ class enrolment_plugin_authorize
                 }
             }
         }
-        rs_close($rs);
+        $rs->close();
     }
 }
 ?>

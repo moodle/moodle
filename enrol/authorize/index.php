@@ -13,7 +13,7 @@
     $userid   = optional_param('user', 0, PARAM_INT);
 
 /// Get course
-    if (! $course = get_record('course', 'id', $courseid)) {
+    if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invaliduserid');
     }
 

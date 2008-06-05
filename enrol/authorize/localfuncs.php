@@ -120,7 +120,7 @@ function email_to_admin($subject, $data)
 
 function send_welcome_messages($orderdata)
 {
-    global $CFG, $SITE;
+    global $CFG, $SITE, $DB;
 
     if (empty($orderdata)) {
         return;
@@ -131,12 +131,12 @@ function send_welcome_messages($orderdata)
     }
 
     $sql = "SELECT e.id, e.courseid, e.userid, c.fullname
-              FROM {$CFG->prefix}enrol_authorize e
-        INNER JOIN {$CFG->prefix}course c ON c.id = e.courseid
+              FROM {enrol_authorize} e
+        INNER JOIN {course} c ON c.id = e.courseid
              WHERE e.id IN(" . implode(',', $orderdata) . ")
           ORDER BY e.userid";
 
-    if (($rs = get_recordset_sql($sql)) && ($ei = rs_fetch_next_record($rs)))
+    if (($rs = $DB->get_recordset_sql($sql)) && ($ei = rs_fetch_next_record($rs)))
     {
         if (1 < count($orderdata)) {
             $sender = get_admin();
@@ -157,7 +157,7 @@ function send_welcome_messages($orderdata)
                 $ei = rs_fetch_next_record($rs);
             }
 
-            if (($user = get_record('user', 'id', $lastuserid))) {
+            if (($user = $DB->get_record('user', array('id'=>$lastuserid)))) {
                 $a = new stdClass;
                 $a->name = $user->firstname;
                 $a->courses = implode("\n", $usercourses);
