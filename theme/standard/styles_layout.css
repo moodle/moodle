@@ -1189,17 +1189,6 @@ body#admin-modules table.generaltable td.c0
   padding-right: 3px;
 }
 
-#add, #remove{
-    width:100px; 
-    height:35px 
-}
-#add{
-    text-align:left;
-}
-#remove{
-    text-align:right;
-}
-
 /***
  *** Blocks
  ***/
@@ -2142,6 +2131,16 @@ body#group-index #groupeditform {
   text-align: center;
 }
 
+#add, #remove{
+    width:100px; 
+    height:35px 
+}
+#add{
+    text-align:left;
+}
+#remove{
+    text-align:right;
+}
 
 /***
  *** Doc
