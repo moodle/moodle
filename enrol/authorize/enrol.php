@@ -463,7 +463,7 @@ class enrolment_plugin_authorize
             $captureday = intval($frm->an_capture_day);
             $emailexpired = intval($frm->an_emailexpired);
             if ($captureday > 0 || $emailexpired > 0) {
-                $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
+                $lastcron = $DB->get_field_sql('SELECT max(lastcron) FROM {modules}');
                 if ((time() - intval($lastcron) > 3600 * 24)) {
                     notify(get_string('admincronsetup', 'enrol_authorize'));
                 }
@@ -499,7 +499,7 @@ class enrolment_plugin_authorize
      */
     public function process_config($config)
     {
-        global $CFG;
+        global $CFG, $DB;
         $mconfig = get_config('enrol/authorize');
 
         // site settings
@@ -539,7 +539,7 @@ class enrolment_plugin_authorize
         $emailexpired = ($emailexpired > 5) ? 5 : (($emailexpired < 0) ? 0 : $emailexpired);
 
         if (!empty($reviewval) && ($captureday > 0 || $emailexpired > 0)) {
-            $lastcron = get_field_sql('SELECT max(lastcron) FROM ' . $CFG->prefix . 'modules');
+            $lastcron = $DB->get_field_sql('SELECT max(lastcron) FROM {modules}');
             if (time() - intval($lastcron) > 3600 * 24) {
                 return false;
             }
