@@ -966,7 +966,7 @@ class test extends XMLDBAction {
             $tests['set field '. $textlen . ' cc. (text)'] = $test;
         }
 
-    /// 51th test. set_field with BINARY contents
+    /// 51th test. $DB->set_field with BINARY contents
         if ($test->status) {
             $test = new stdClass;
             $test->status = false;
