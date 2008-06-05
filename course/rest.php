@@ -103,13 +103,13 @@ switch($_SERVER['REQUEST_METHOD']) {
                     case 'indentleft':
                         if ($mod->indent > 0) {
                             $mod->indent--;
-                            update_record('course_modules', $mod);
+                            $DB->update_record('course_modules', $mod);
                         }
                         break;
 
                     case 'indentright':
                         $mod->indent++;
-                        update_record('course_modules', $mod);
+                        $DB->update_record('course_modules', $mod);
                         break;
 
                     case 'move':
