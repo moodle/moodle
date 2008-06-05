@@ -4,10 +4,10 @@
 
     //This is the "graphical" structure of the forum mod:
     //
-    //                               forum                                      
+    //                               forum
     //                            (CL,pk->id)
     //                                 |
-    //         ---------------------------------------------------        
+    //         ---------------------------------------------------
     //         |                                                 |
     //    subscriptions                                  forum_discussions
     //(UL,pk->id, fk->forum)           ---------------(UL,pk->id, fk->forum)
@@ -16,7 +16,7 @@
     //                                 |                         |
     //                                 |                     forum_posts
     //                                 |-------------(UL,pk->id,fk->discussion,
-    //                                 |                  nt->parent,files) 
+    //                                 |                  nt->parent,files)
     //                                 |                         |
     //                                 |                         |
     //                                 |                         |
@@ -33,13 +33,13 @@
     //-----------------------------------------------------------
 
     function forum_backup_mods($bf,$preferences) {
-       
-        global $CFG;
+
+        global $CFG, $DB;
 
         $status = true;
 
         //Iterate over forum table
-        $forums = get_records ("forum","course",$preferences->backup_course,"id");
+        $forums = $DB->get_records ("forum",array("course" => $preferences->backup_course),"id");
         if ($forums) {
             foreach ($forums as $forum) {
                 if (backup_mod_selected($preferences,'forum',$forum->id)) {
@@ -53,19 +53,19 @@
 
 
     function forum_backup_one_mod($bf,$preferences,$forum) {
-    
-        global $CFG;
-        
+
+        global $CFG, $DB;
+
         if (is_numeric($forum)) {
-            $forum = get_record('forum','id',$forum);
+            $forum = $DB->get_record('forum',array('id'=>$forum));
         }
         $instanceid = $forum->id;
-        
+
         $status = true;
-        
+
         //Start mod
         fwrite ($bf,start_tag("MOD",3,true));
-        
+
         //Print forum data
         fwrite ($bf,full_tag("ID",4,false,$forum->id));
         fwrite ($bf,full_tag("MODTYPE",4,false,"forum"));
@@ -85,7 +85,7 @@
         fwrite ($bf,full_tag("WARNAFTER",4,false,$forum->warnafter));
         fwrite ($bf,full_tag("BLOCKAFTER",4,false,$forum->blockafter));
         fwrite ($bf,full_tag("BLOCKPERIOD",4,false,$forum->blockperiod));
-        
+
         //if we've selected to backup users info, then execute backup_forum_suscriptions and
         //backup_forum_discussions
         if (backup_userdata_selected($preferences,'forum',$forum->id)) {
@@ -141,14 +141,14 @@
         return $info;
     }
 
-    //Backup forum_subscriptions contents (executed from forum_backup_mods)     
-    function backup_forum_subscriptions ($bf,$preferences,$forum) {     
+    //Backup forum_subscriptions contents (executed from forum_backup_mods)
+    function backup_forum_subscriptions ($bf,$preferences,$forum) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $forum_subscriptions = get_records("forum_subscriptions","forum",$forum,"id");
+        $forum_subscriptions = $DB->get_records("forum_subscriptions",array("forum" => $forum),"id");
         //If there is subscriptions
         if ($forum_subscriptions) {
             //Write start tag
@@ -172,11 +172,11 @@
     //Backup forum_discussions contents (executed from forum_backup_mods)
     function backup_forum_discussions ($bf,$preferences,$forum) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $forum_discussions = get_records("forum_discussions","forum",$forum,"id");
+        $forum_discussions = $DB->get_records("forum_discussions",array("forum" => $forum),"id");
         //If there are discussions
         if ($forum_discussions) {
             //Write start tag
@@ -207,14 +207,14 @@
         return $status;
     }
 
-    //Backup forum_read contents (executed from forum_backup_mods)     
-    function backup_forum_read ($bf,$preferences,$forum) {     
+    //Backup forum_read contents (executed from forum_backup_mods)
+    function backup_forum_read ($bf,$preferences,$forum) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $forum_read = get_records("forum_read","forumid",$forum,"id");
+        $forum_read = $DB->get_records("forum_read",array("forumid" => $forum),"id");
         //If there are read
         if ($forum_read) {
             //Write start tag
@@ -242,11 +242,11 @@
     //Backup forum_posts contents (executed from backup_forum_discussions)
     function backup_forum_posts ($bf,$preferences,$discussion) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $forum_posts = get_records("forum_posts","discussion",$discussion,"id");
+        $forum_posts = $DB->get_records("forum_posts",array("discussion" => $discussion),"id");
         //If there are posts
         if ($forum_posts) {
             //Write start tag
@@ -284,11 +284,11 @@
     //Backup forum_ratings contents (executed from backup_forum_posts)
     function backup_forum_ratings ($bf,$preferences,$post) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $forum_ratings = get_records("forum_ratings","post",$post,"id");
+        $forum_ratings = $DB->get_records("forum_ratings",array("post" => $post),"id");
         //If there are ratings
         if ($forum_ratings) {
             //Write start tag
@@ -368,7 +368,7 @@
 
    ////Return an array of info (name,value)
    function forum_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
-       
+
        if (!empty($instances) && is_array($instances) && count($instances)) {
            $info = array();
            foreach ($instances as $id => $instance) {
@@ -458,110 +458,110 @@
     //Returns an array of forums id
     function forum_ids ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT a.id, a.course
-                                 FROM {$CFG->prefix}forum a
-                                 WHERE a.course = '$course'");
+        return $DB->get_records_sql ("SELECT a.id, a.course
+                                 FROM {forum} a
+                                 WHERE a.course = ?", array($course));
     }
 
     //Returns an array of forum subscriptions id
     function forum_subscription_ids_by_course ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT s.id , s.forum
-                                 FROM {$CFG->prefix}forum_subscriptions s,
-                                      {$CFG->prefix}forum a
-                                 WHERE a.course = '$course' AND
-                                       s.forum = a.id");
+        return $DB->get_records_sql ("SELECT s.id , s.forum
+                                 FROM {forum_subscriptions} s,
+                                      {forum} a
+                                 WHERE a.course = ? AND
+                                       s.forum = a.id", array($course));
     }
 
-    //Returns an array of forum subscriptions id 
+    //Returns an array of forum subscriptions id
     function forum_subscription_ids_by_instance($instanceid) {
- 
-        global $CFG;
-        
-        return get_records_sql ("SELECT s.id , s.forum
-                                 FROM {$CFG->prefix}forum_subscriptions s
-                                 WHERE s.forum = $instanceid");
+
+        global $CFG, $DB;
+
+        return $DB->get_records_sql ("SELECT s.id , s.forum
+                                 FROM {forum_subscriptions} s
+                                 WHERE s.forum = ?", array($instanceid));
     }
 
     //Returns an array of forum discussions id
     function forum_discussion_ids_by_course ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT s.id , s.forum      
-                                 FROM {$CFG->prefix}forum_discussions s,    
-                                      {$CFG->prefix}forum a 
-                                 WHERE a.course = '$course' AND
-                                       s.forum = a.id"); 
+        return $DB->get_records_sql ("SELECT s.id , s.forum
+                                 FROM {forum_discussions} s,
+                                      {forum} a
+                                 WHERE a.course = ? AND
+                                       s.forum = a.id", array($course));
     }
 
     //Returns an array of forum discussions id
     function forum_discussion_ids_by_instance ($instanceid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT s.id , s.forum      
-                                 FROM {$CFG->prefix}forum_discussions s   
-                                 WHERE s.forum = $instanceid"); 
+        return $DB->get_records_sql ("SELECT s.id , s.forum
+                                 FROM {forum_discussions} s
+                                 WHERE s.forum = ?", array($instanceid));
     }
 
     //Returns an array of forum posts id
     function forum_post_ids_by_course ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT p.id , p.discussion, s.forum
-                                 FROM {$CFG->prefix}forum_posts p,
-                                      {$CFG->prefix}forum_discussions s,
-                                      {$CFG->prefix}forum a
-                                 WHERE a.course = '$course' AND
+        return $DB->get_records_sql ("SELECT p.id , p.discussion, s.forum
+                                 FROM {forum_posts} p,
+                                      {forum_discussions} s,
+                                      {forum} a
+                                 WHERE a.course = ? AND
                                        s.forum = a.id AND
-                                       p.discussion = s.id");
+                                       p.discussion = s.id", array($course));
     }
 
     //Returns an array of forum posts id
     function forum_post_ids_by_instance ($instanceid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT p.id , p.discussion, s.forum
-                                 FROM {$CFG->prefix}forum_posts p,
-                                      {$CFG->prefix}forum_discussions s
-                                 WHERE s.forum = $instanceid AND
-                                       p.discussion = s.id");
+        return $DB->get_records_sql ("SELECT p.id , p.discussion, s.forum
+                                 FROM {forum_posts} p,
+                                      {forum_discussions} s
+                                 WHERE s.forum = ? AND
+                                       p.discussion = s.id", array($instanceid));
     }
 
-    //Returns an array of ratings posts id      
-    function forum_rating_ids_by_course ($course) {      
+    //Returns an array of ratings posts id
+    function forum_rating_ids_by_course ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT r.id, r.post, p.discussion, s.forum
-                                 FROM {$CFG->prefix}forum_ratings r,
-                                      {$CFG->prefix}forum_posts p,
-                                      {$CFG->prefix}forum_discussions s,
-                                      {$CFG->prefix}forum a    
-                                 WHERE a.course = '$course' AND
-                                       s.forum = a.id AND   
+        return $DB->get_records_sql ("SELECT r.id, r.post, p.discussion, s.forum
+                                 FROM {forum_ratings} r,
+                                      {forum_posts} p,
+                                      {forum_discussions} s,
+                                      {forum} a
+                                 WHERE a.course = ? AND
+                                       s.forum = a.id AND
                                        p.discussion = s.id AND
-                                       r.post = p.id");
+                                       r.post = p.id", array($course));
     }
 
-    //Returns an array of ratings posts id      
-    function forum_rating_ids_by_instance ($instanceid) {      
+    //Returns an array of ratings posts id
+    function forum_rating_ids_by_instance ($instanceid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT r.id, r.post, p.discussion, s.forum
-                                 FROM {$CFG->prefix}forum_ratings r,
-                                      {$CFG->prefix}forum_posts p,
-                                      {$CFG->prefix}forum_discussions s
-                                 WHERE s.forum = $instanceid AND   
+        return $DB->get_records_sql ("SELECT r.id, r.post, p.discussion, s.forum
+                                 FROM {forum_ratings} r,
+                                      {forum_posts} p,
+                                      {forum_discussions} s
+                                 WHERE s.forum = ? AND
                                        p.discussion = s.id AND
-                                       r.post = p.id");
+                                       r.post = p.id", array($instanceid));
     }
 ?>

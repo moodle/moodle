@@ -8,11 +8,11 @@
     $id         = required_param('id',PARAM_INT);                           // The forum to subscribe or unsubscribe to
     $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
-    if (! $forum = get_record("forum", "id", $id)) {
+    if (! $forum = $DB->get_record("forum", array("id" => $id))) {
         error("Forum ID was incorrect");
     }
 
-    if (! $course = get_record("course", "id", $forum->course)) {
+    if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
         error("Forum doesn't belong to a course!");
     }
 

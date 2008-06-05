@@ -8,7 +8,7 @@
     $subscribe = optional_param('subscribe', null, PARAM_INT);  // Subscribe/Unsubscribe all forums
 
     if ($id) {
-        if (! $course = get_record('course', 'id', $id)) {
+        if (! $course = $DB->get_record('course', array('id' => $id))) {
             error("Course ID is incorrect");
         }
     } else {
@@ -80,7 +80,7 @@
     // some special ones are not.  These get placed in the general forums
     // category with the forums in section 0.
 
-    $forums = get_records('forum', 'course', $course->id);
+    $forums = $DB->get_records('forum', array('course' => $course->id));
 
     $generalforums  = array();
     $learningforums = array();

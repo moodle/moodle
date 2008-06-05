@@ -13,15 +13,15 @@
     $mark   = optional_param('mark', '', PARAM_ALPHA);       // Used for tracking read posts if user initiated.
     $postid = optional_param('postid', 0, PARAM_INT);        // Used for tracking read posts if user initiated.
 
-    if (!$discussion = get_record('forum_discussions', 'id', $d)) {
+    if (!$discussion = $DB->get_record('forum_discussions', array('id' => $d))) {
         error("Discussion ID was incorrect or no longer exists");
     }
 
-    if (!$course = get_record('course', 'id', $discussion->course)) {
+    if (!$course = $DB->get_record('course', array('id' => $discussion->course))) {
         error("Course ID is incorrect - discussion is faulty");
     }
 
-    if (!$forum = get_record('forum', 'id', $discussion->forum)) {
+    if (!$forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
         notify("Bad forum ID stored in this discussion");
     }
 
@@ -52,7 +52,7 @@
             error('Cannot move discussion from a simple single discussion forum', $return);
         }
 
-        if (!$forumto = get_record('forum', 'id', $move)) {
+        if (!$forumto = $DB->get_record('forum', array('id' => $move))) {
             error('You can\'t move to that forum - it doesn\'t exist!', $return);
         }
 
@@ -67,8 +67,8 @@
         if (!forum_move_attachments($discussion, $forumto->id)) {
             notify("Errors occurred while moving attachment directories - check your file permissions");
         }
-        set_field('forum_discussions', 'forum', $forumto->id, 'id', $discussion->id);
-        set_field('forum_read', 'forumid', $forumto->id, 'discussionid', $discussion->id);
+        $DB->set_field('forum_discussions', 'forum', $forumto->id, array('id' => $discussion->id));
+        $DB->set_field('forum_read', 'forumid', $forumto->id, array('discussionid' => $discussion->id));
         add_to_log($course->id, 'forum', 'move discussion', "discuss.php?d=$discussion->id", $discussion->id, $cmto->id);
 
         require_once($CFG->libdir.'/rsslib.php');

@@ -17,11 +17,11 @@
         $id = $USER->id;
     }
 
-    if (! $user = get_record("user", "id", $id)) {
+    if (! $user = $DB->get_record("user", array("id" => $id))) {
         error("User ID is incorrect");
     }
 
-    if (! $course = get_record("course", "id", $course)) {
+    if (! $course = $DB->get_record("course", array("id" => $course))) {
         error("Course id is incorrect.");
     }
 
@@ -29,12 +29,12 @@
     $usercontext   = get_context_instance(CONTEXT_USER, $id);
 
     // do not force parents to enrol
-    if (!get_record('role_assignments', 'userid', $USER->id, 'contextid', $usercontext->id)) {
+    if (!$DB->get_record('role_assignments', array('userid' => $USER->id, 'contextid' => $usercontext->id))) {
         require_course_login($course);
     }
 
     add_to_log($course->id, "forum", "user report",
-            "user.php?course=$course->id&amp;id=$user->id&amp;mode=$mode", "$user->id"); 
+            "user.php?course=$course->id&amp;id=$user->id&amp;mode=$mode", "$user->id");
 
     $strforumposts   = get_string('forumposts', 'forum');
     $strparticipants = get_string('participants');
@@ -99,7 +99,7 @@
         foreach ($posts as $post) {
 
             if (!isset($discussions[$post->discussion])) {
-                if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
+                if (! $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
                     error('Discussion ID was incorrect');
                 }
                 $discussions[$post->discussion] = $discussion;
@@ -108,7 +108,7 @@
             }
 
             if (!isset($forums[$discussion->forum])) {
-                if (! $forum = get_record('forum', 'id', $discussion->forum)) {
+                if (! $forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
                     error("Could not find forum $discussion->forum");
                 }
                 $forums[$discussion->forum] = $forum;
@@ -144,7 +144,7 @@
             }
 
             if ($course->id == SITEID && has_capability('moodle/site:config', $syscontext)) {
-                $postcoursename = get_field('course', 'shortname', 'id', $forum->course);
+                $postcoursename = $DB->get_field('course', array('shortname' => 'id'), $forum->course);
                 $fullsubject = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$forum->course.'">'.$postcoursename.'</a> -> '. $fullsubject;
             }
 

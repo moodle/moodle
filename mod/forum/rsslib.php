@@ -6,7 +6,7 @@
     //build one XML rss structure.
     function forum_rss_feeds() {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -19,7 +19,7 @@
         //It's working so we start...
         } else {
             //Iterate over all forums
-            if ($forums = get_records("forum")) {
+            if ($forums = $DB->get_records("forum")) {
                 foreach ($forums as $forum) {
                     if (!empty($forum->rsstype) && !empty($forum->rssarticles) && $status) {
 
@@ -149,7 +149,7 @@
     //for a Type=discussions forum
     function forum_rss_feed_discussions($forum, $newsince=0) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $items = array();
 
@@ -159,22 +159,23 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT d.id AS discussionid, 
-                                             d.name AS discussionname, 
-                                             u.id AS userid, 
+        if ($recs = $DB->get_records_sql ("SELECT d.id AS discussionid,
+                                             d.name AS discussionname,
+                                             u.id AS userid,
                                              u.firstname AS userfirstname,
                                              u.lastname AS userlastname,
                                              p.message AS postmessage,
                                              p.created AS postcreated,
                                              p.format AS postformat
-                                      FROM {$CFG->prefix}forum_discussions d,
-                                           {$CFG->prefix}forum_posts p,
-                                           {$CFG->prefix}user u
+                                      FROM {forum_discussions} d,
+                                           {forum_posts} p,
+                                           {user} u
                                       WHERE d.forum = '$forum->id' AND
                                             p.discussion = d.id AND
                                             p.parent = 0 AND
                                             u.id = p.userid $newsince
-                                      ORDER BY p.created desc", 0, $forum->rssarticles)) {
+                                      ORDER BY p.created desc",
+                                      array($forum->id, $newsince), 0, $forum->rssarticles)) {
 
             $item = NULL;
             $user = NULL;
@@ -202,7 +203,7 @@
     //for a Type=posts forum
     function forum_rss_feed_posts($forum, $newsince=0) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $items = array();
 
@@ -212,7 +213,7 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT p.id AS postid,
+        if ($recs = $DB->get_records_sql ("SELECT p.id AS postid,
                                              d.id AS discussionid,
                                              d.name AS discussionname,
                                              u.id AS userid,
@@ -222,13 +223,13 @@
                                              p.message AS postmessage,
                                              p.created AS postcreated,
                                              p.format AS postformat
-                                      FROM {$CFG->prefix}forum_discussions d,
-                                           {$CFG->prefix}forum_posts p,
-                                           {$CFG->prefix}user u
-                                      WHERE d.forum = '$forum->id' AND
+                                      FROM {forum_discussions} d,
+                                           {forum_posts} p,
+                                           {user} u
+                                      WHERE d.forum = ? AND
                                             p.discussion = d.id AND
-                                            u.id = p.userid $newsince
-                                      ORDER BY p.created desc", 0, $forum->rssarticles)) {
+                                            u.id = p.userid ?
+                                      ORDER BY p.created desc", array($forum->id, $newsince), 0, $forum->rssarticles)) {
 
             $item = NULL;
             $user = NULL;
@@ -251,16 +252,16 @@
 
                 $post_file_area_name = str_replace('//', '/', "$forum->course/$CFG->moddata/forum/$forum->id/$rec->postid");
                 $post_files = get_directory_list("$CFG->dataroot/$post_file_area_name");
-                
-                if (!empty($post_files)) {            
+
+                if (!empty($post_files)) {
                     $item->attachments = array();
-                    foreach ($post_files as $file) {                    
+                    foreach ($post_files as $file) {
                         $attachment = new stdClass;
                         if ($CFG->slasharguments) {
                             $attachment->url = "{$CFG->wwwroot}/file.php/$post_file_area_name/$file";
                         } else {
                             $attachment->url = "{$CFG->wwwroot}/file.php?file=/$post_file_area_name/$file";
-                        }                         
+                        }
                         $attachment->length = filesize("$CFG->dataroot/$post_file_area_name/$file");
                         $item->attachments[] = $attachment;
                     }

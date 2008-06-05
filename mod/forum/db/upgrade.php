@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the forum module
 //
 // Sometimes, changes between versions involve
@@ -23,8 +23,8 @@ function xmldb_forum_upgrade($oldversion=0) {
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
+/// And upgrade begins here. For each one, you'll need one
+/// block of code similar to the next one. Please, delete
 /// this comment lines once this file start handling proper
 /// upgrade code.
 
@@ -51,17 +51,17 @@ function xmldb_forum_upgrade($oldversion=0) {
 
         $roles = get_roles_with_capability('moodle/course:view', CAP_ALLOW);
         $roles = array_keys($roles);
-        $roles = implode(',', $roles);
 
+        list($usql, $params) = $DB->get_in_or_equal($roles);
         $sql = "SELECT fs.userid, f.id AS forumid
                   FROM {forum} f
                        JOIN {course} c                 ON c.id = f.course
                        JOIN {context} ctx              ON (ctx.instanceid = c.id AND ctx.contextlevel = ".CONTEXT_COURSE.")
                        JOIN {forum_subscriptions} fs   ON fs.forum = f.id
-                       LEFT JOIN {role_assignments} ra ON (ra.contextid = ctx.id AND ra.userid = fs.userid AND ra.roleid IN ($roles))
+                       LEFT JOIN {role_assignments} ra ON (ra.contextid = ctx.id AND ra.userid = fs.userid AND ra.roleid $usql)
                  WHERE ra.id IS NULL";
 
-        if ($rs = $DB->get_recordset_sql($sql)) {
+        if ($rs = $DB->get_recordset_sql($sql, $params)) {
             $DB->set_debug(false);
             foreach ($rs as $remove) {
                 $DB->delete_records('forum_subscriptions', array('userid'=>$remove->userid, 'forum'=>$remove->forumid));

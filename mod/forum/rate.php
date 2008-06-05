@@ -8,11 +8,11 @@
 
     $forumid = required_param('forumid', PARAM_INT); // The forum the rated posts are from
 
-    if (!$forum = get_record('forum', 'id', $forumid)) {
+    if (!$forum = $DB->get_record('forum', array('id' => $forumid))) {
         print_error('invalidforumid', 'forum');
     }
 
-    if (!$course = get_record('course', 'id', $forum->course)) {
+    if (!$course = $DB->get_record('course', array('id' => $forum->course))) {
         print_error('invalidcourseid');
     }
 
@@ -46,10 +46,10 @@
 
             // following query validates the submitted postid too
             $sql = "SELECT fp.*
-                      FROM {$CFG->prefix}forum_posts fp, {$CFG->prefix}forum_discussions fd
-                     WHERE fp.id = '$postid' AND fp.discussion = fd.id AND fd.forum = $forum->id";
+                      FROM {forum_posts} fp, {forum_discussions} fd
+                     WHERE fp.id = ? AND fp.discussion = fd.id AND fd.forum = ?";
 
-            if (!$post = get_record_sql($sql)) {
+            if (!$post = $DB->get_record_sql($sql, array($postid, $forum->id))) {
                 print_error('invalidpostid', 'forum', '', $postid);
             }
 
@@ -63,14 +63,14 @@
             }
 
             if ($rating == FORUM_UNSET_POST_RATING) {
-                delete_records('forum_ratings', 'post', $postid, 'userid', $USER->id);
+                $DB->delete_records('forum_ratings', array('post' => $postid, 'userid' => $USER->id));
                 forum_update_grades($forum, $post->userid);
 
-            } else if ($oldrating = get_record('forum_ratings', 'userid', $USER->id, 'post', $post->id)) {
+            } else if ($oldrating = $DB->get_record('forum_ratings', 'userid', $USER->id, 'post', $post->id)) {
                 if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time   = time();
-                    if (! update_record('forum_ratings', $oldrating)) {
+                    if (!$DB->update_record('forum_ratings', $oldrating)) {
                         print_error('cannotupdaterate', 'forum', '',
                                 array($post->id, $rating));
                     }
@@ -84,7 +84,7 @@
                 $newrating->post   = $post->id;
                 $newrating->rating = $rating;
 
-                if (! insert_record('forum_ratings', $newrating)) {
+                if (! $DB->insert_record('forum_ratings', $newrating)) {
                     print_error('cannotinsertrate', 'forum', '',
                             array($postid, $rating));
                 }

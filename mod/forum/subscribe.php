@@ -9,11 +9,11 @@
     $force = optional_param('force','',PARAM_ALPHA);  // Force everyone to be subscribed to this forum?
     $user = optional_param('user',0,PARAM_INT);
 
-    if (! $forum = get_record("forum", "id", $id)) {
+    if (! $forum = $DB->get_record("forum", array("id" => $id))) {
         error("Forum ID was incorrect");
     }
 
-    if (! $course = get_record("course", "id", $forum->course)) {
+    if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
         error("Forum doesn't belong to a course!");
     }
 
@@ -28,7 +28,7 @@
         if (!has_capability('mod/forum:managesubscriptions', $context)) {
             error('You do not have the permission to subscribe/unsubscribe other people!');
         }
-        if (!$user = get_record("user", "id", $user)) {
+        if (!$user = $DB->get_record("user", array("id" => $user))) {
             error("User ID was incorrect");
         }
     } else {
@@ -50,18 +50,18 @@
         if (!empty($CFG->loginhttps)) {
             $wwwroot = str_replace('http:','https:', $wwwroot);
         }
-        
+
         $navigation = build_navigation('', $cm);
         print_header($course->shortname, $course->fullname, $navigation, '', '', true, "", navmenu($course, $cm));
-        
+
         notice_yesno(get_string('noguestsubscribe', 'forum').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
         print_footer($course);
         exit;
     }
 
-    $returnto = optional_param('backtoindex',0,PARAM_INT) 
-        ? "index.php?id=".$course->id 
+    $returnto = optional_param('backtoindex',0,PARAM_INT)
+        ? "index.php?id=".$course->id
         : "view.php?f=$id";
 
     if ($force and has_capability('mod/forum:managesubscriptions', $context)) {

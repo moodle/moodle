@@ -8,19 +8,19 @@
     $id   = required_param('id', PARAM_INT);
     $sort = optional_param('sort', '', PARAM_ALPHA);
 
-    if (! $post = get_record('forum_posts', 'id', $id)) {
+    if (! $post = $DB->get_record('forum_posts', array('id' => $id))) {
         print_error('invalidpostid','forum');
     }
 
-    if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
+    if (! $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
         print_error('invaliddiscussion', 'forum');
     }
 
-    if (! $forum = get_record('forum', 'id', $discussion->forum)) {
+    if (! $forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
         print_error('invalidforumid', 'forum');
     }
 
-    if (! $course = get_record('course', 'id', $forum->course)) {
+    if (! $course = $DB->get_record('course', array('id' => $forum->course))) {
         print_error('invalidcourseid');
     }
 

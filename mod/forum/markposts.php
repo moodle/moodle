@@ -10,11 +10,11 @@
     $d          = optional_param('d',0,PARAM_INT); // Discussion to mark.
     $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
-    if (! $forum = get_record("forum", "id", $f)) {
+    if (! $forum = $DB->get_record("forum", array("id" => $f))) {
         error("Forum ID was incorrect");
     }
 
-    if (! $course = get_record("course", "id", $forum->course)) {
+    if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
         error("Forum doesn't belong to a course!");
     }
 
@@ -52,7 +52,7 @@
 
     if ($mark == 'read') {
         if (!empty($d)) {
-            if (! $discussion = get_record('forum_discussions', 'id', $d, 'forum', $forum->id)) {
+            if (! $discussion = $DB->get_record('forum_discussions', array('id'=> $d, 'forum'=> $forum->id))) {
                 error("Discussion ID was incorrect");
             }
 

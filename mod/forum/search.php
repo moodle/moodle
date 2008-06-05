@@ -181,10 +181,10 @@
 
         // Replace the simple subject with the three items forum name -> thread name -> subject
         // (if all three are appropriate) each as a link.
-        if (! $discussion = get_record('forum_discussions', 'id', $post->discussion)) {
+        if (! $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
             error('Discussion ID was incorrect');
         }
-        if (! $forum = get_record('forum', 'id', "$discussion->forum")) {
+        if (! $forum = $DB->get_record('forum', array('id' => "$discussion->forum"))) {
             error("Could not find forum $discussion->forum");
         }
 

@@ -29,21 +29,21 @@
         }
 
         if (!empty($forum)) {      // User is starting a new discussion in a forum
-            if (! $forum = get_record('forum', 'id', $forum)) {
+            if (! $forum = $DB->get_record('forum', array('id' => $forum))) {
                 error('The forum number was incorrect');
             }
         } else if (!empty($reply)) {      // User is writing a new reply
             if (! $parent = forum_get_post_full($reply)) {
                 error('Parent post ID was incorrect');
             }
-            if (! $discussion = get_record('forum_discussions', 'id', $parent->discussion)) {
+            if (! $discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
                 error('This post is not part of a discussion!');
             }
-            if (! $forum = get_record('forum', 'id', $discussion->forum)) {
+            if (! $forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
                 error('The forum number was incorrect');
             }
         }
-        if (! $course = get_record('course', 'id', $forum->course)) {
+        if (! $course = $DB->get_record('course', array('id' => $forum->course))) {
             error('The course number was incorrect');
         }
 
@@ -69,10 +69,10 @@
     require_login(0, false);   // Script is useless unless they're logged in
 
     if (!empty($forum)) {      // User is starting a new discussion in a forum
-        if (! $forum = get_record("forum", "id", $forum)) {
+        if (! $forum = $DB->get_record("forum", array("id" => $forum))) {
             error("The forum number was incorrect ($forum)");
         }
-        if (! $course = get_record("course", "id", $forum->course)) {
+        if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
             error("The course number was incorrect ($forum->course)");
         }
         if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
@@ -126,13 +126,13 @@
         if (! $parent = forum_get_post_full($reply)) {
             error("Parent post ID was incorrect");
         }
-        if (! $discussion = get_record("forum_discussions", "id", $parent->discussion)) {
+        if (! $discussion = $DB->get_record("forum_discussions", array("id" => $parent->discussion))) {
             error("This post is not part of a discussion!");
         }
-        if (! $forum = get_record("forum", "id", $discussion->forum)) {
+        if (! $forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
             error("The forum number was incorrect ($discussion->forum)");
         }
-        if (! $course = get_record("course", "id", $discussion->course)) {
+        if (! $course = $DB->get_record("course", array("id" => $discussion->course))) {
             error("The course number was incorrect ($discussion->course)");
         }
         if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
@@ -198,13 +198,13 @@
             }
         }
 
-        if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
+        if (! $discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
             error("This post is not part of a discussion! ($edit)");
         }
-        if (! $forum = get_record("forum", "id", $discussion->forum)) {
+        if (! $forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
             error("The forum number was incorrect ($discussion->forum)");
         }
-        if (! $course = get_record("course", "id", $discussion->course)) {
+        if (! $course = $DB->get_record("course", array("id" => $discussion->course))) {
             error("The course number was incorrect ($discussion->course)");
         }
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
@@ -240,16 +240,16 @@
         if (! $post = forum_get_post_full($delete)) {
             error("Post ID was incorrect");
         }
-        if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
+        if (! $discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
             error("This post is not part of a discussion!");
         }
-        if (! $forum = get_record("forum", "id", $discussion->forum)) {
+        if (! $forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
             error("The forum number was incorrect ($discussion->forum)");
         }
         if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) {
             error('Could not get the course module for the forum instance.');
         }
-        if (!$course = get_record('course', 'id', $forum->course)) {
+        if (!$course = $DB->get_record('course', array('id' => $forum->course))) {
             error('Incorrect course');
         }
 
@@ -346,10 +346,10 @@
         if (!$post = forum_get_post_full($prune)) {
             error("Post ID was incorrect");
         }
-        if (!$discussion = get_record("forum_discussions", "id", $post->discussion)) {
+        if (!$discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion))) {
             error("This post is not part of a discussion!");
         }
-        if (!$forum = get_record("forum", "id", $discussion->forum)) {
+        if (!$forum = $DB->get_record("forum", array("id" => $discussion->forum))) {
             error("The forum number was incorrect ($discussion->forum)");
         }
         if ($forum->type == 'single') {
@@ -381,7 +381,7 @@
             $newdiscussion->timestart    = $discussion->timestart;
             $newdiscussion->timeend      = $discussion->timeend;
 
-            if (!$newid = insert_record('forum_discussions', $newdiscussion)) {
+            if (!$newid = $DB->insert_record('forum_discussions', $newdiscussion)) {
                 error('Could not create new discussion');
             }
 
@@ -390,7 +390,7 @@
             $newpost->parent  = 0;
             $newpost->subject = $name;
 
-            if (!update_record("forum_posts", $newpost)) {
+            if (!$DB->update_record("forum_posts", $newpost)) {
                 error('Could not update the original post');
             }
 
@@ -407,7 +407,7 @@
 
         } else { // User just asked to prune something
 
-            $course = get_record('course', 'id', $forum->course);
+            $course = $DB->get_record('course', array('id' => $forum->course));
 
             $navlinks = array();
             $navlinks[] = array('name' => format_string($post->subject, true), 'link' => "discuss.php?d=$discussion->id", 'type' => 'title');
@@ -464,7 +464,7 @@
             $message = '';
 
             //fix for bug #4314
-            if (!$realpost = get_record('forum_posts', 'id', $fromform->id)) {
+            if (!$realpost = $DB->get_record('forum_posts', array('id' => $fromform->id))) {
                 $realpost = new object;
                 $realpost->userid = -1;
             }
@@ -490,7 +490,7 @@
             if (($forum->type == 'single') && ($updatepost->parent == '0')){ // updating first post of single discussion type -> updating forum intro
                 $forum->intro = $updatepost->message;
                 $forum->timemodified = time();
-                if (!update_record("forum", $forum)) {
+                if (!$DB->update_record("forum", $forum)) {
                     print_error("couldnotupdate", "forum", $errordestination);
                 }
             }
@@ -630,7 +630,7 @@
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if ($post->discussion) {
-        if (! $toppost = get_record("forum_posts", "discussion", $post->discussion, "parent", 0)) {
+        if (! $toppost = $DB->get_record("forum_posts", array("discussion" => $post->discussion, "parent" => 0))) {
             error("Could not find top parent of post $post->id");
         }
     } else {
@@ -691,7 +691,7 @@
     forum_check_throttling($forum, $cm);
 
     if (!empty($parent)) {
-        if (! $discussion = get_record('forum_discussions', 'id', $parent->discussion)) {
+        if (! $discussion = $DB->get_record('forum_discussions', array('id' => $parent->discussion))) {
             error('This post is not part of a discussion!');
         }
 

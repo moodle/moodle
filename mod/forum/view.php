@@ -20,10 +20,10 @@
         if (! $cm = get_coursemodule_from_id('forum', $id)) {
             error("Course Module ID was incorrect");
         }
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
             error("Course is misconfigured");
         }
-        if (! $forum = get_record("forum", "id", $cm->instance)) {
+        if (! $forum = $DB->get_record("forum", array("id" => $cm->instance))) {
             error("Forum ID was incorrect");
         }
         $strforums = get_string("modulenameplural", "forum");
@@ -32,10 +32,10 @@
 
     } else if ($f) {
 
-        if (! $forum = get_record("forum", "id", $f)) {
+        if (! $forum = $DB->get_record("forum", array("id" => $f))) {
             error("Forum ID was incorrect or no longer exists");
         }
-        if (! $course = get_record("course", "id", $forum->course)) {
+        if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
             error("Forum is misconfigured - don't know what course it's from");
         }
 
@@ -94,8 +94,8 @@
     // If it's a simple single discussion forum, we need to print the display
     // mode control.
     if ($forum->type == 'single') {
-        if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
-            if ($discussions = get_records("forum_discussions", "forum", $forum->id, "timemodified ASC")) {
+        if (! $discussion = $DB->get_record("forum_discussions", array("forum" => $forum->id))) {
+            if ($discussions = $DB->get_records("forum_discussions", array("forum", $forum->id), "timemodified ASC")) {
                 $discussion = array_pop($discussions);
             }
         }
@@ -205,8 +205,8 @@
 
     switch ($forum->type) {
         case 'single':
-            if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
-                if ($discussions = get_records("forum_discussions", "forum", $forum->id, "timemodified ASC")) {
+            if (! $discussion = $DB->get_record("forum_discussions", array("forum" => $forum->id))) {
+                if ($discussions = $DB->get_records("forum_discussions", array("forum" => $forum->id), "timemodified ASC")) {
                     notify("Warning! There is more than one discussion in this forum - using the most recent");
                     $discussion = array_pop($discussions);
                 } else {
