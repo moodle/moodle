@@ -1568,7 +1568,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     /// Process letters
         $context = get_context_instance(CONTEXT_COURSE, $restore->course_id);
         // respect current grade letters if defined
-        if ($status and $restoreall and !record_exists('grade_letters', 'contextid', $context->id)) {
+        if ($status and $restoreall and !$DB->record_exists('grade_letters', array('contextid'=>$context->id))) {
             if (!defined('RESTORE_SILENTLY')) {
                 echo '<li>'.get_string('gradeletters','grades').'</li>';
             }

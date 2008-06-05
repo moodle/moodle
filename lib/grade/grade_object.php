@@ -233,7 +233,7 @@ abstract class grade_object {
 
         $data = $this->get_record_data();
 
-        if (delete_records($this->table, 'id', $this->id)) {
+        if ($DB->delete_records($this->table, array('id'=>$this->id))) {
             if (empty($CFG->disablegradehistory)) {
                 unset($data->id);
                 unset($data->timecreated);

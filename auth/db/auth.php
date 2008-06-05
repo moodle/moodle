@@ -363,7 +363,7 @@ class auth_plugin_db extends auth_plugin_base {
                     $user->id = $old_user->id;
                     $DB->set_field('user', 'deleted', 0, array('username'=>$user->username));
                     echo "\t"; print_string('auth_dbreviveuser', 'auth', array($user->username, $user->id)); echo "\n";
-                } elseif ($id = insert_record ('user',$user)) { // it is truly a new user
+                } elseif ($id = $DB->insert_record ('user',$user)) { // it is truly a new user
                     echo "\t"; print_string('auth_dbinsertuser','auth',array($user->username, $id)); echo "\n";
                     // if relevant, tag for password generation
                     if ($this->config->passtype === 'internal') {

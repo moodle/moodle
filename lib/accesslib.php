@@ -2659,7 +2659,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         return false;
     }
 
-    if ($userid && !record_exists('user', 'id', $userid)) {
+    if ($userid && !$DB->record_exists('user', array('id'=>$userid))) {
         debugging('User ID '.intval($userid).' does not exist!');
         return false;
     }

@@ -1233,7 +1233,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     }
 
     /// Check if the guest user exists.  If not, create one.
-    if (! record_exists("user", "username", "guest")) {
+    if (!$DB->record_exists("user", array("username"=>"guest"))) {
         if (! $guest = create_guest_record()) {
             notify("Could not create guest user record !!!");
         }
