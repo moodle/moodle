@@ -418,7 +418,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
                     $preferences->mods[$mod->modname]->instances[$mod->instance]->backup = $preferences->mods[$mod->modname]->backup;
                     $preferences->mods[$mod->modname]->instances[$mod->instance]->userinfo = $preferences->mods[$mod->modname]->userinfo;
                     // there isn't really a nice way to do this...
-                    $preferences->mods[$mod->modname]->instances[$mod->instance]->name = get_field($mod->modname,'name','id',$mod->instance);
+                    $preferences->mods[$mod->modname]->instances[$mod->instance]->name = $DB->get_field($mod->modname,'name', array('id'=>$mod->instance));
                 }
             }
         }
