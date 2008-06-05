@@ -644,7 +644,7 @@ function message_search_users($courseid, $searchtext, $sort='', $exceptions='') 
     if (!$courseid or $courseid == SITEID) {
         $params = array($USER->id, "%$searchtext%");
         return $DB->get_records_sql("SELECT $fields
-                                       FROM {user{ u
+                                       FROM {user} u
                                        LEFT JOIN {message_contacts} mc
                                             ON mc.contactid = u.id AND mc.userid = ? 
                                       WHERE $select
@@ -686,48 +686,57 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     if ($userid == 0) $userid = $USER->id;
 
     /// Some differences in SQL syntax
-    $LIKE = $DB->sql_ilike();
-    $NOTLIKE = 'NOT ' . $LIKE;
-    if ($CFG->dbfamily == "postgres") {
-        $REGEXP = "~*";
-        $NOTREGEXP = "!~*";
-    } else {
-        $REGEXP = "REGEXP";
-        $NOTREGEXP = "NOT REGEXP";
+    if ($DB->sql_regex_supported()) {
+        $REGEXP    = $DB->sql_regex(true);
+        $NOTREGEXP = $DB->sql_regex(false);
     }
 
-    $messagesearch = "";
+    $LIKE = $DB->sql_ilike();
+
+    $searchcond = array();
+    $params = array();
+    $i = 0;
 
     foreach ($searchterms as $searchterm) {
+        $i++;
+
+        $NOT = ''; /// Initially we aren't going to perform NOT LIKE searches, only MSSQL and Oracle
+
         if (strlen($searchterm) < 2) {
             continue;
         }
     /// Under Oracle and MSSQL, trim the + and - operators and perform
     /// simpler LIKE search
-        if ($CFG->dbfamily == 'oracle' || $CFG->dbfamily == 'mssql') {
+        if (!$DB->sql_regex_supported()) {
+            if (substr($searchterm, 0, 1) == '-') {
+                $NOT = ' NOT ';
+            }
             $searchterm = trim($searchterm, '+-');
-        }
-
-        if ($messagesearch) {
-            $messagesearch .= " AND ";
         }
 
         if (substr($searchterm,0,1) == "+") {
             $searchterm = substr($searchterm,1);
-            $messagesearch .= " m.message $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $searchterm = preg_quote($searchterm, '|');
+            $searchcond[] = "m.message $REGEXP :ss$i";
+            $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+
         } else if (substr($searchterm,0,1) == "-") {
             $searchterm = substr($searchterm,1);
-            $messagesearch .= " m.message $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+            $searchterm = preg_quote($searchterm, '|');
+            $searchcond[] = "m.message $NOTREGEXP :ss$i";
+            $params['ss'.$i] = "(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)";
+
         } else {
-            $messagesearch .= " m.message $LIKE '%$searchterm%' ";
+            $searchcond[] = "m.message $NOT $LIKE :ss$i";
+            $params['ss'.$i] = "%$searchterm%";
         }
     }
 
-    if ($messagesearch == '') { // if only 1 letter words searched
-        return false;
+    if (empty($searchcond)) {
+        return array();
     }
 
-    $messagesearch = "($messagesearch) ";
+    $searchcond = implode(" AND ", $searchcond);
 
 
     /// There are several possibilities
@@ -740,43 +749,52 @@ function message_search($searchterms, $fromme=true, $tome=true, $courseid='none'
     ///    c.  Messages to and from user
 
     if ($courseid == SITEID) { /// admin is searching all messages
-        $m_read   = get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
-                                     FROM {$CFG->prefix}message_read m
-                                     WHERE $messagesearch");
-        $m_unread = get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
-                                     FROM {$CFG->prefix}message m
-                                     WHERE $messagesearch");
+        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+                                            FROM {message_read} m
+                                           WHERE $searchcond", $params);
+        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+                                            FROM {message} m
+                                           WHERE $searchcond", $params);
 
-        if ($m_read   === false) $m_read   = array();
-        if ($m_unread === false) $m_unread = array();
-
-    } elseif ($courseid !== 'none') {
+    } else if ($courseid !== 'none') {
         /// This has not been implemented due to security concerns
+        $m_read   = array();
+        $m_unread = array();
 
     } else {
 
-        if     ($fromme and $tome) $messagesearch .= "AND (m.useridfrom='$userid' OR m.useridto='$userid') ";
-        elseif ($fromme)           $messagesearch .= "AND m.useridfrom='$userid' ";
-        elseif ($tome)             $messagesearch .= "AND m.useridto='$userid' ";
+        if ($fromme and $tome) {
+            $searchcond .= " AND (m.useridfrom=:userid1 OR m.useridto=:userid2)";
+            $params['userid1'] = $userid;
+            $params['userid2'] = $userid;
 
-        $m_read   = get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
-                                     FROM {$CFG->prefix}message_read m
-                                     WHERE $messagesearch");
-        $m_unread = get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
-                                     FROM {$CFG->prefix}message m
-                                     WHERE $messagesearch");
+        } else if ($fromme) {
+            $searchcond .= " AND m.useridfrom=:userid";
+            $params['userid'] = $userid;
 
-        if ($m_read   === false) $m_read   = array();
-        if ($m_unread === false) $m_unread = array();
+        } else if ($tome) {
+            $searchcond .= " AND m.useridto=:userid";
+            $params['userid'] = $userid;
+        }
+
+        $m_read   = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+                                            FROM {message_read} m
+                                           WHERE $searchcond", $params);
+        $m_unread = $DB->get_records_sql("SELECT m.id, m.useridto, m.useridfrom, m.message, m.timecreated
+                                            FROM {message} m
+                                           WHERE $searchcond", $params);
 
     }
 
     /// The keys may be duplicated in $m_read and $m_unread so we can't
     /// do a simple concatenation
     $message = array();
-    foreach ($m_read as $m) $messages[] = $m;
-    foreach ($m_unread as $m) $messages[] = $m;
-
+    foreach ($m_read as $m) {
+        $messages[] = $m;
+    }
+    foreach ($m_unread as $m) {
+        $messages[] = $m;
+    }
 
     return (empty($messages)) ? false : $messages;
 }
@@ -835,7 +853,7 @@ function message_shorten_message($message, $minlength=0) {
 }
 
 
-/*
+/**
  * Given a string and an array of keywords, this function looks
  * for the first keyword in the string, and then chops out a
  * small section from the text that shows that word in context.
