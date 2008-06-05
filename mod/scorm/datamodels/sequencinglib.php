@@ -2009,7 +2009,7 @@ function scorm_content_delivery_environment ($seq,$userid){
 				if(!scorm_seq_is('suspended',$activity->id,$userid)){
 					$r = $DB->get_record('scorm_scoes_track', array('scoid'=>$activity->id,'userid'=>$userid,'element'=>'activityattemptcount'));
 					$r->value = ($r->value)+1;
-					update_record ('scorm_scoes_track',$r);
+					$DB->update_record ('scorm_scoes_track',$r);
 					if ($r->value == 1){
 						scorm_seq_set('activityprogressstatus', $activity->id, $userid, 'true');
 					}
