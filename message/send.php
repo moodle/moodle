@@ -42,12 +42,12 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     $format   = optional_param('format', FORMAT_MOODLE, PARAM_INT);
 
 /// Check the user we are talking to is valid
-    if (! $user = get_record('user', 'id', $userid)) {
+    if (! $user = $DB->get_record('user', array('id'=>$userid))) {
         print_error("User ID was incorrect");
     }
 
 /// Check that the user is not blocking us!!
-    if ($contact = get_record('message_contacts', 'userid', $user->id, 'contactid', $USER->id)) {
+    if ($contact = $DB->get_record('message_contacts', array('userid'=>$user->id, 'contactid'=>$USER->id))) {
         if ($contact->blocked and !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
             print_heading(get_string('userisblockingyou', 'message'));
             exit;

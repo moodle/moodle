@@ -16,13 +16,13 @@
 
 /// Script parameters
     $userid1 = required_param('user1', PARAM_INT);
-    if (! $user1 = get_record("user", "id", $userid1)) {  // Check it's correct
+    if (! $user1 = $DB->get_record("user", array("id"=>$userid1))) {  // Check it's correct
         print_error("User ID 1 was incorrect");
     }
 
     if (has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {             // Able to see any discussion
         $userid2 = optional_param('user2', $USER->id, PARAM_INT);
-        if (! $user2 = get_record("user", "id", $userid2)) {  // Check
+        if (! $user2 = $DB->get_record("user", array("id"=>$userid2))) {  // Check
             print_error("User ID 2 was incorrect");
         }
     } else {

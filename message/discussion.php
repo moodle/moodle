@@ -18,7 +18,7 @@
     $noframesjs = optional_param('noframesjs', 0, PARAM_BOOL);
 
 /// Check the user we are talking to is valid
-    if (! $user = get_record('user', 'id', $userid)) {
+    if (! $user = $DB->get_record('user', array('id'=>$userid))) {
         print_error("User ID was incorrect");
     }
 
@@ -92,7 +92,7 @@
     }
 
 /// Check that the user is not blocking us!!
-    if ($contact = get_record('message_contacts', 'userid', $user->id, 'contactid', $USER->id)) {
+    if ($contact = $DB->get_record('message_contacts', array('userid'=>$user->id, 'contactid'=>$USER->id))) {
         if ($contact->blocked and !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
             print_heading(get_string('userisblockingyou', 'message'));
             exit;
@@ -127,7 +127,7 @@
     echo print_user_picture($user, SITEID, $user->picture, 48, true, true, 'userwindow');
     echo '<div class="name"><h1>'.$userfullname.'</h1></div>';
     echo '<div class="commands"><ul>';
-    if ($contact = get_record('message_contacts', 'userid', $USER->id, 'contactid', $user->id)) {
+    if ($contact = $DB->get_record('message_contacts', array('userid'=>$USER->id, 'contactid'=>$user->id))) {
         if ($contact->blocked) {
             echo '<li>';
             message_contact_link($user->id, 'add', false, 'discussion.php?id='.$user->id.'&amp;noframesjs='.$noframesjs.'&amp;newonly='.$newonly.'&amp;last='.$last, true);
@@ -191,13 +191,18 @@
     $options->para = false;
     $options->newlines = true;
 
+    $params = array('uid1'=>$USER->id ,'userid1'=>$userid, 'start1'=>$start, 'uid2'=>$USER->id ,'userid2'=>$userid, 'start2'=>$start);
     if ($newonly) {
-        $lastsql = " AND timecreated > $last";
+        $lastsql1 = " AND timecreated > :last1";
+        $lastsql2 = " AND timecreated > :last2";
+        $params['last1'] = $last;
+        $params['last2'] = $last;
     } else {
-        $lastsql = "";
+        $lastsql1 = "";
+        $lastsql2 = "";
     }
 
-    if ($messages = get_records_select('message_read', "(useridto = '$USER->id' AND useridfrom = '$userid' AND timeread > '$start' $lastsql) OR (useridto = '$userid' AND useridfrom = '$USER->id' AND timeread > '$start' $lastsql)")) {
+    if ($messages = $DB->get_records_select('message_read', "(useridto = :uid1 AND useridfrom = :userid1 AND timeread > :start1 $lastsql1) OR (useridto = :userid2 AND useridfrom = :uid2 AND timeread > :start2 $lastsql2)", $params)) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
             
@@ -221,7 +226,7 @@
         }
     }
 
-    if ($messages = get_records_select('message', "useridto = '$userid' AND useridfrom = '$USER->id' $lastsql")) {
+    if ($messages = $DB->get_records_select('message', "useridto = :userid1 AND useridfrom = :uid1 $lastsql1", $params)) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
 
@@ -239,7 +244,7 @@
         }
     }
 
-    if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$userid' $lastsql")) {
+    if ($messages = $DB->get_records_select('message', "useridto = :uid2 AND useridfrom = userid2 $lastsql2", $params)) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
 
@@ -260,9 +265,8 @@
             $messageid = $message->id;
             unset($message->id);
             $message->timeread = time();
-            $message = addslashes_object($message);
-            if (insert_record('message_read', $message)) {
-                delete_records('message', 'id', $messageid);
+            if ($DB->insert_record('message_read', $message)) {
+                $DB->delete_records('message', array('id'=>$messageid));
             }
             if ($message->timecreated < $start) {
                 $start = $message->timecreated; // move start back so that we see all current history

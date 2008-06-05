@@ -47,8 +47,7 @@
     @ob_implicit_flush(true);
     @ob_end_flush();
 
-    if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$userid'",
-                                       'timecreated')) {
+    if ($messages = $DB->get_records('message', array('useridto'=>$USER->id, 'useridfrom'=>$userid), 'timecreated')) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
 
@@ -64,11 +63,10 @@
 
             /// Move the entry to the other table
             $message->timeread = time();
-            $message = addslashes_object($message);
             $messageid = $message->id;
             unset($message->id);
-            if (insert_record('message_read', $message)) {
-                delete_records('message', 'id', $messageid);
+            if ($DB->insert_record('message_read', $message)) {
+                $DB->delete_records('message', array('id'=>$messageid));
             }
         }
         if (get_user_preferences('message_beepnewmessage', 0)) {

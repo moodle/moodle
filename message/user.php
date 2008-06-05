@@ -22,7 +22,7 @@
     $unblockcontact = optional_param('unblockcontact', 0, PARAM_INT); // unblocking a contact
 
 /// Check the user we are talking to is valid
-    if (! $user = get_record('user', 'id', $userid)) {
+    if (! $user = $DB->get_record('user', array('id'=>$userid))) {
         print_error("User ID was incorrect");
     }
 
@@ -70,7 +70,7 @@
     //echo '</font>';
 
     echo '<div class="commands">';
-    if ($contact = get_record('message_contacts', 'userid', $USER->id, 'contactid', $user->id)) {
+    if ($contact = $DB->get_record('message_contacts', array('userid'=>$USER->id, 'contactid'=>$user->id))) {
          if ($contact->blocked) {
              message_contact_link($user->id, 'add', false, 'user.php?id='.$user->id, true); 
              message_contact_link($user->id, 'unblock', false, 'user.php?id='.$user->id, true); 
