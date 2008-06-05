@@ -404,7 +404,7 @@
     /// isn't there (so the action defaults to 'view'), filter it.
     /// If the page does not yet exist, the display will default to 'edit'.
     if((count($actions) < 2 || $actions[0] == "view") && $wiki_entry && 
-        record_exists('wiki_pages', 'pagename', addslashes($page), 'wiki', $wiki_entry->id)) {
+        $DB->record_exists('wiki_pages', array('pagename'=>$page, 'wiki'=>$wiki_entry->id))) {
         print(format_text($content, $moodle_format));
     } else if($actions[0]=='edit' && $reallyedit) {
         // Check the page isn't locked before printing out standard wiki content. (Locking
