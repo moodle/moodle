@@ -192,6 +192,7 @@ class quiz_report extends quiz_default_report {
 
             $table->column_suppress('picture');
             $table->column_suppress('fullname');
+            $table->column_suppress('idnumber');
             
             $table->no_sorting('feedbacktext');
 
