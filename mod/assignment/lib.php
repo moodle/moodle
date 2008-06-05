@@ -40,7 +40,7 @@ class assignment_base {
      * @param course   object, usually null, but if we have it we pass it to save db access
      */
     function assignment_base($cmid='staticonly', $assignment=NULL, $cm=NULL, $course=NULL) {
-        global $COURSE;
+        global $COURSE, $DB;
 
         if ($cmid == 'staticonly') {
             //use static functions only!
@@ -61,13 +61,13 @@ class assignment_base {
             $this->course = $course;
         } else if ($this->cm->course == $COURSE->id) {
             $this->course = $COURSE;
-        } else if (! $this->course = get_record('course', 'id', $this->cm->course)) {
+        } else if (! $this->course = $DB->get_record('course', array('id'=>$this->cm->course))) {
             print_error('invalidid', 'assignment');
         }
 
         if ($assignment) {
             $this->assignment = $assignment;
-        } else if (! $this->assignment = get_record('assignment', 'id', $this->cm->instance)) {
+        } else if (! $this->assignment = $DB->get_record('assignment', array('id'=>$this->cm->instance))) {
             print_error('invalidid', 'assignment');
         }
 
@@ -206,7 +206,7 @@ class assignment_base {
      * @param $submission object The submission object or NULL in which case it will be loaded
      */
     function view_feedback($submission=NULL) {
-        global $USER, $CFG;
+        global $USER, $CFG, $DB;
         require_once($CFG->libdir.'/gradelib.php');
 
         if (!has_capability('mod/assignment:submit', $this->context, $USER->id, false)) {
@@ -234,7 +234,7 @@ class assignment_base {
         $graded_by   = $grade->usermodified;
 
     /// We need the teacher info
-        if (!$teacher = get_record('user', 'id', $graded_by)) {
+        if (!$teacher = $DB->get_record('user', array('id'=>$graded_by))) {
             print_error('cannotfindteacher');
         }
 
@@ -567,7 +567,7 @@ class assignment_base {
                     }
                     if ($commenting) {
                         $commentvalue = trim($_POST['submissioncomment'][$id]);
-                        $updatedb = $updatedb || ($submission->submissioncomment != stripslashes($commentvalue));
+                        $updatedb = $updatedb || ($submission->submissioncomment != $commentvalue);
                         $submission->submissioncomment = $commentvalue;
                     } else {
                         unset($submission->submissioncomment);  // Don't need to update this.
@@ -588,12 +588,12 @@ class assignment_base {
                             if (!isset($submission->submissioncomment)) {
                                 $submission->submissioncomment = '';
                             }
-                            if (!$sid = insert_record('assignment_submissions', $submission)) {
+                            if (!$sid = $DB->insert_record('assignment_submissions', $submission)) {
                                 return false;
                             }
                             $submission->id = $sid;
                         } else {
-                            if (!update_record('assignment_submissions', $submission)) {
+                            if (!$DB->update_record('assignment_submissions', $submission)) {
                                 return false;
                             }
                         }
@@ -775,15 +775,14 @@ class assignment_base {
      * This method gets its arguments from the page parameters userid and offset
      */
     function display_submission($extra_javascript = '') {
-
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->libdir.'/gradelib.php');
         require_once($CFG->libdir.'/tablelib.php');
 
         $userid = required_param('userid', PARAM_INT);
         $offset = required_param('offset', PARAM_INT);//offset for where to start looking for student.
 
-        if (!$user = get_record('user', 'id', $userid)) {
+        if (!$user = $DB->get_record('user', array('id'=>$userid))) {
             print_error('nousers');
         }
 
@@ -826,8 +825,8 @@ class assignment_base {
                               s.id AS submissionid, s.grade, s.submissioncomment,
                               s.timemodified, s.timemarked,
                               COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
-            $sql = 'FROM '.$CFG->prefix.'user u '.
-                   'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid
+            $sql = 'FROM {user} u '.
+                   'LEFT JOIN {assignment_submissions} s ON u.id = s.userid
                                                                       AND s.assignment = '.$this->assignment->id.' '.
                    'WHERE u.id IN ('.implode(',', $users).') ';
 
@@ -835,7 +834,7 @@ class assignment_base {
                 $sort = 'ORDER BY '.$sort.' ';
             }
 
-            if (($auser = get_records_sql($select.$sql.$sort, $offset+1, 1)) !== false) {
+            if (($auser = $DB->get_records_sql($select.$sql.$sort, null, $offset+1, 1)) !== false) {
                 $nextuser = array_shift($auser);
             /// Calculate user status
                 $nextuser->status = ($nextuser->timemarked > 0) && ($nextuser->timemarked >= $nextuser->timemodified);
@@ -871,7 +870,7 @@ class assignment_base {
         echo '<tr>';
         echo '<td class="picture teacher">';
         if ($submission->teacher) {
-            $teacher = get_record('user', 'id', $submission->teacher);
+            $teacher = $DB->get_record('user', array('id'=>$submission->teacher));
         } else {
             global $USER;
             $teacher = $USER;
@@ -1002,7 +1001,7 @@ class assignment_base {
      *  Display all the submissions ready for grading
      */
     function display_submissions($message='') {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $DB;
         require_once($CFG->libdir.'/gradelib.php');
 
         /* first we check to see if the form has just been submitted
@@ -1153,8 +1152,8 @@ class assignment_base {
                           s.id AS submissionid, s.grade, s.submissioncomment,
                           s.timemodified, s.timemarked,
                           COALESCE(SIGN(SIGN(s.timemarked) + SIGN(s.timemarked - s.timemodified)), 0) AS status ';
-        $sql = 'FROM '.$CFG->prefix.'user u '.
-               'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid
+        $sql = 'FROM {user} u '.
+               'LEFT JOIN {assignment_submissions} s ON u.id = s.userid
                                                                   AND s.assignment = '.$this->assignment->id.' '.
                'WHERE '.$where.'u.id IN ('.implode(',',$users).') ';
 
@@ -1167,7 +1166,7 @@ class assignment_base {
         $strgrade  = get_string('grade');
         $grademenu = make_grades_menu($this->assignment->grade);
 
-        if (($ausers = get_records_sql($select.$sql.$sort, $table->get_page_start(), $table->get_page_size())) !== false) {
+        if (($ausers = $DB->get_records_sql($select.$sql.$sort, null, $table->get_page_start(), $table->get_page_size())) !== false) {
             $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, array_keys($ausers));
             foreach ($ausers as $auser) {
                 $final_grade = $grading_info->items[0]->grades[$auser->id];
@@ -1376,7 +1375,7 @@ class assignment_base {
         global $CFG, $USER;
         require_once($CFG->libdir.'/gradelib.php');
 
-        if (!$feedback = data_submitted()) {      // No incoming data?
+        if (!$feedback = data_submitted(false)) {      // No incoming data?
             return false;
         }
 
@@ -1420,7 +1419,7 @@ class assignment_base {
                 // $submission->timemodified = time();
             }
 
-            if (! update_record('assignment_submissions', $submission)) {
+            if (! $DB->update_record('assignment_submissions', $submission)) {
                 return false;
             }
 
@@ -1444,7 +1443,7 @@ class assignment_base {
 
         require_once($CFG->libdir.'/gradelib.php');
 
-        if (!$formdata = data_submitted()) {
+        if (!$formdata = data_submitted(false)) {
             return;
         }
 
@@ -1474,23 +1473,23 @@ class assignment_base {
      * @return object The submission
      */
     function get_submission($userid=0, $createnew=false, $teachermodified=false) {
-        global $USER;
+        global $USER, $DB;
 
         if (empty($userid)) {
             $userid = $USER->id;
         }
 
-        $submission = get_record('assignment_submissions', 'assignment', $this->assignment->id, 'userid', $userid);
+        $submission = $DB->get_record('assignment_submissions', array('assignment'=>$this->assignment->id, 'userid'=>$userid));
 
         if ($submission || !$createnew) {
             return $submission;
         }
         $newsubmission = $this->prepare_new_submission($userid, $teachermodified);
-        if (!insert_record("assignment_submissions", $newsubmission)) {
+        if (!$DB->insert_record("assignment_submissions", $newsubmission)) {
             print_error('cannotinsertempty', 'assignment');
         }
 
-        return get_record('assignment_submissions', 'assignment', $this->assignment->id, 'userid', $userid);
+        return $DB->get_record('assignment_submissions', array('assignment'=>$this->assignment->id, 'userid'=>$userid));
     }
 
     /**
@@ -1555,13 +1554,13 @@ class assignment_base {
      * @param $submission object The submission that has changed
      */
     function email_teachers($submission) {
-        global $CFG;
+        global $CFG, $DB;
 
         if (empty($this->assignment->emailteachers)) {          // No need to do anything
             return;
         }
 
-        $user = get_record('user', 'id', $submission->userid);
+        $user = $DB->get_record('user', array('id'=>$submission->userid));
 
         if ($teachers = $this->get_graders($user)) {
 
@@ -1884,7 +1883,7 @@ class assignment_base {
      * Reset all submissions
      */
     function reset_userdata($data) {
-        global $CFG;
+        global $CFG, $DB;
         require_once($CFG->libdir.'/filelib.php');
 
         if (!count_records('assignment', 'course', $data->courseid, 'assignmenttype', $this->type)) {
@@ -1898,12 +1897,13 @@ class assignment_base {
 
         if (!empty($data->reset_assignment_submissions)) {
             $assignmentssql = "SELECT a.id
-                                 FROM {$CFG->prefix}assignment a
-                                WHERE a.course={$data->courseid} AND a.assignmenttype='{$this->type}'";
+                                 FROM {assignment} a
+                                WHERE a.course=? AND a.assignmenttype=?";
+            $params = array($data->courseid, $this->type);
 
-            delete_records_select('assignment_submissions', "assignment IN ($assignmentssql)");
+            $DB->delete_records_select('assignment_submissions', "assignment IN ($assignmentssql)", $params);
 
-            if ($assignments = get_records_sql($assignmentssql)) {
+            if ($assignments = $DB->get_records_sql($assignmentssql, $params)) {
                 foreach ($assignments as $assignmentid=>$unused) {
                     fulldelete($CFG->dataroot.'/'.$data->courseid.'/moddata/assignment/'.$assignmentid);
                 }
@@ -2027,8 +2027,7 @@ function assignment_user_complete($course, $user, $mod, $assignment) {
  * Finds all assignment notifications that have yet to be mailed out, and mails them
  */
 function assignment_cron () {
-
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     /// first execute all crons in plugins
     if ($plugins = get_list_of_plugins('mod/assignment/type')) {
@@ -2053,7 +2052,7 @@ function assignment_cron () {
         $realuser = clone($USER);
 
         foreach ($submissions as $key => $submission) {
-            if (! set_field("assignment_submissions", "mailed", "1", "id", "$submission->id")) {
+            if (! $DB->set_field("assignment_submissions", "mailed", "1", array("id"=>$submission->id))) {
                 echo "Could not update the mailed field for id $submission->id.  Not mailed.\n";
                 unset($submissions[$key]);
             }
@@ -2065,12 +2064,12 @@ function assignment_cron () {
 
             echo "Processing assignment submission $submission->id\n";
 
-            if (! $user = get_record("user", "id", "$submission->userid")) {
+            if (! $user = $DB->get_record("user", array("id"=>$submission->userid))) {
                 echo "Could not find user $post->userid\n";
                 continue;
             }
 
-            if (! $course = get_record("course", "id", "$submission->course")) {
+            if (! $course = $DB->get_record("course", array("id"=>$submission->course))) {
                 echo "Could not find course $submission->course\n";
                 continue;
             }
@@ -2085,7 +2084,7 @@ function assignment_cron () {
                 continue;
             }
 
-            if (! $teacher = get_record("user", "id", "$submission->teacher")) {
+            if (! $teacher = $DB->get_record("user", array("id"=>$submission->teacher))) {
                 echo "Could not find teacher $submission->teacher\n";
                 continue;
             }
@@ -2146,17 +2145,23 @@ function assignment_cron () {
  * @return array array of grades, false if none
  */
 function assignment_get_user_grades($assignment, $userid=0) {
-    global $CFG;
+    global $CFG, $DB;
 
-    $user = $userid ? "AND u.id = $userid" : "";
+    if ($userid) {
+        $user = "AND u.id = :userid";
+        $params = array('userid'=>$userid);
+    } else {
+        $user = "";
+    }
+    $params['aid'] = $assignment->id;
 
     $sql = "SELECT u.id, u.id AS userid, s.grade AS rawgrade, s.submissioncomment AS feedback, s.format AS feedbackformat,
                    s.teacher AS usermodified, s.timemarked AS dategraded, s.timemodified AS datesubmitted
-              FROM {$CFG->prefix}user u, {$CFG->prefix}assignment_submissions s
-             WHERE u.id = s.userid AND s.assignment = $assignment->id
+              FROM {user} u, {assignment_submissions} s
+             WHERE u.id = s.userid AND s.assignment = :aid
                    $user";
 
-    return get_records_sql($sql);
+    return $DB->get_records_sql($sql, $params);
 }
 
 /**
@@ -2166,10 +2171,8 @@ function assignment_get_user_grades($assignment, $userid=0) {
  * @param int $userid specific user only, 0 mean all
  */
 function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true) {
-    global $CFG;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
 
     if ($assignment != null) {
         if ($grades = assignment_get_user_grades($assignment, $userid)) {
@@ -2185,17 +2188,17 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
 
     } else {
         $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
-                  FROM {$CFG->prefix}assignment a, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                  FROM {assignment} a, {course_modules} cm, {modules} m
                  WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
-        if ($rs = get_recordset_sql($sql)) {
-            while ($assignment = rs_fetch_next_record($rs)) {
+        if ($rs = $DB->get_recordset_sql($sql)) {
+            foreach ($rs as $assignment) {
                 if ($assignment->grade != 0) {
                     assignment_update_grades($assignment);
                 } else {
                     assignment_grade_item_update($assignment);
                 }
             }
-            rs_close($rs);
+            $rs->close();
         }
     }
 }
@@ -2209,9 +2212,7 @@ function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true)
  */
 function assignment_grade_item_update($assignment, $grades=NULL) {
     global $CFG;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    require_once($CFG->libdir.'/gradelib.php');
 
     if (!isset($assignment->courseid)) {
         $assignment->courseid = $assignment->course;
@@ -2264,21 +2265,20 @@ function assignment_grade_item_delete($assignment) {
  * @return array of user objects
  */
 function assignment_get_participants($assignmentid) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.id, u.id
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}assignment_submissions a
-                                 WHERE a.assignment = '$assignmentid' and
-                                       u.id = a.userid");
+    $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                        FROM {user} u,
+                                             {assignment_submissions} a
+                                       WHERE a.assignment = ? and
+                                             u.id = a.userid", array($assignmentid));
     //Get teachers
-    $teachers = get_records_sql("SELECT DISTINCT u.id, u.id
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}assignment_submissions a
-                                 WHERE a.assignment = '$assignmentid' and
-                                       u.id = a.teacher");
+    $teachers = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                        FROM {user} u,
+                                             {assignment_submissions} a
+                                       WHERE a.assignment = ? and
+                                             u.id = a.teacher", array($assignmentid));
 
     //Add teachers to students
     if ($teachers) {
@@ -2299,10 +2299,11 @@ function assignment_get_participants($assignmentid) {
  * @return boolean True if the scale is used by the assignment
  */
 function assignment_scale_used($assignmentid, $scaleid) {
+    global $DB;
 
     $return = false;
 
-    $rec = get_record('assignment','id',$assignmentid,'grade',-$scaleid);
+    $rec = $DB->get_record('assignment', array('id'=>$assignmentid,'grade'=>-$scaleid));
 
     if (!empty($rec) && !empty($scaleid)) {
         $return = true;
@@ -2319,7 +2320,9 @@ function assignment_scale_used($assignmentid, $scaleid) {
  * @return boolean True if the scale is used by any assignment
  */
 function assignment_scale_used_anywhere($scaleid) {
-    if ($scaleid and record_exists('assignment', 'grade', -$scaleid)) {
+    global $DB;
+
+    if ($scaleid and $DB->record_exists('assignment', array('grade'=>-$scaleid))) {
         return true;
     } else {
         return false;
@@ -2339,25 +2342,26 @@ function assignment_scale_used_anywhere($scaleid) {
  * @return boolean Always returns true
  */
 function assignment_refresh_events($courseid = 0) {
+    global $DB;
 
     if ($courseid == 0) {
-        if (! $assignments = get_records("assignment")) {
+        if (! $assignments = $DB->get_records("assignment")) {
             return true;
         }
     } else {
-        if (! $assignments = get_records("assignment", "course", $courseid)) {
+        if (! $assignments = $DB->get_records("assignment", array("course"=>$courseid))) {
             return true;
         }
     }
-    $moduleid = get_field('modules', 'id', 'name', 'assignment');
+    $moduleid = $DB->get_field('modules', 'id', array('name'=>'assignment'));
 
     foreach ($assignments as $assignment) {
         $event = NULL;
-        $event->name        = addslashes($assignment->name);
-        $event->description = addslashes($assignment->description);
+        $event->name        = $assignment->name;
+        $event->description = $assignment->description;
         $event->timestart   = $assignment->timedue;
 
-        if ($event->id = get_field('event', 'id', 'modulename', 'assignment', 'instance', $assignment->id)) {
+        if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
             update_event($event);
 
         } else {
@@ -2368,7 +2372,7 @@ function assignment_refresh_events($courseid = 0) {
             $event->instance    = $assignment->id;
             $event->eventtype   = 'due';
             $event->timeduration = 0;
-            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $assignment->id);
+            $event->visible     = $DB->get_field('course_modules', 'visible', array('module'=>$moduleid, 'instance'=>$assignment->id));
             add_event($event);
         }
 
@@ -2382,21 +2386,21 @@ function assignment_refresh_events($courseid = 0) {
  * This is used by the recent activity block
  */
 function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     // do not use log table if possible, it may be huge
 
     if (!$submissions = get_records_sql("SELECT asb.id, asb.timemodified, cm.id AS cmid, asb.userid,
                                                 u.firstname, u.lastname, u.email, u.picture
-                                           FROM {$CFG->prefix}assignment_submissions asb
-                                                JOIN {$CFG->prefix}assignment a      ON a.id = asb.assignment
-                                                JOIN {$CFG->prefix}course_modules cm ON cm.instance = a.id
-                                                JOIN {$CFG->prefix}modules md        ON md.id = cm.module
-                                                JOIN {$CFG->prefix}user u            ON u.id = asb.userid
-                                          WHERE asb.timemodified > $timestart AND
-                                                a.course = {$course->id} AND
+                                           FROM {assignment_submissions} asb
+                                                JOIN {assignment} a      ON a.id = asb.assignment
+                                                JOIN {course_modules} cm ON cm.instance = a.id
+                                                JOIN {modules} md        ON md.id = cm.module
+                                                JOIN {user} u            ON u.id = asb.userid
+                                          WHERE asb.timemodified > ? AND
+                                                a.course = ? AND
                                                 md.name = 'assignment'
-                                       ORDER BY asb.timemodified ASC")) {
+                                       ORDER BY asb.timemodified ASC", array($timestart, $course->id))) {
          return false;
     }
 
@@ -2475,42 +2479,47 @@ function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
  * Returns all assignments since a given time in specified forum.
  */
 function assignment_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid=0, $groupid=0)  {
-
-    global $CFG, $COURSE, $USER;
+    global $CFG, $COURSE, $USER, $DB;
 
     if ($COURSE->id == $courseid) {
         $course = $COURSE;
     } else {
-        $course = get_record('course', 'id', $courseid);
+        $course = $DB->get_record('course', array('id'=>$courseid));
     }
 
     $modinfo =& get_fast_modinfo($course);
 
     $cm = $modinfo->cms[$cmid];
 
+    $params = array();
     if ($userid) {
-        $userselect = "AND u.id = $userid";
+        $userselect = "AND u.id = :userid";
+        $params['userid'] = $userid;
     } else {
         $userselect = "";
     }
 
     if ($groupid) {
-        $groupselect = "AND gm.groupid = $groupid";
-        $groupjoin   = "JOIN {$CFG->prefix}groups_members gm ON  gm.userid=u.id";
+        $groupselect = "AND gm.groupid = :groupid";
+        $groupjoin   = "JOIN {groups_members} gm ON  gm.userid=u.id";
+        $params['groupid'] = $groupid;
     } else {
         $groupselect = "";
         $groupjoin   = "";
     }
 
-    if (!$submissions = get_records_sql("SELECT asb.id, asb.timemodified, asb.userid,
-                                                u.firstname, u.lastname, u.email, u.picture
-                                           FROM {$CFG->prefix}assignment_submissions asb
-                                                JOIN {$CFG->prefix}assignment a      ON a.id = asb.assignment
-                                                JOIN {$CFG->prefix}user u            ON u.id = asb.userid
-                                                $groupjoin
-                                          WHERE asb.timemodified > $timestart AND a.id = $cm->instance
-                                                $userselect $groupselect
-                                       ORDER BY asb.timemodified ASC")) {
+    $params['cminstance'] = $cm->instance;
+    $params['timestart'] = $timestart;
+
+    if (!$submissions = $DB->get_records_sql("SELECT asb.id, asb.timemodified, asb.userid,
+                                                     u.firstname, u.lastname, u.email, u.picture
+                                                FROM {assignment_submissions} asb
+                                                JOIN {assignment} a      ON a.id = asb.assignment
+                                                JOIN {user} u            ON u.id = asb.userid
+                                          $groupjoin
+                                               WHERE asb.timemodified > :timestart AND a.id = :cminstance
+                                                     $userselect $groupselect
+                                            ORDER BY asb.timemodified ASC", $params)) {
          return;
     }
 
@@ -2646,12 +2655,11 @@ function assignment_print_recent_mod_activity($activity, $courseid, $detail, $mo
  * @return array with assignment name and user firstname and lastname
  */
 function assignment_log_info($log) {
-    global $CFG;
-    return get_record_sql("SELECT a.name, u.firstname, u.lastname
-                             FROM {$CFG->prefix}assignment a,
-                                  {$CFG->prefix}user u
-                            WHERE a.id = '$log->info'
-                              AND u.id = '$log->userid'");
+    global $CFG, $DB;
+
+    return $DB->get_record_sql("SELECT a.name, u.firstname, u.lastname
+                                  FROM {assignment} a, {user} u
+                                 WHERE a.id = ? AND u.id = ?", array($log->info, $log->userid));
 }
 
 /**
@@ -2660,28 +2668,15 @@ function assignment_log_info($log) {
  * @return array
  */
 function assignment_get_unmailed_submissions($starttime, $endtime) {
+    global $CFG, $DB;
 
-    global $CFG;
-
-    return get_records_sql("SELECT s.*, a.course, a.name
-                              FROM {$CFG->prefix}assignment_submissions s,
-                                   {$CFG->prefix}assignment a
-                             WHERE s.mailed = 0
-                               AND s.timemarked <= $endtime
-                               AND s.timemarked >= $starttime
-                               AND s.assignment = a.id");
-
-    /* return get_records_sql("SELECT s.*, a.course, a.name
-                              FROM {$CFG->prefix}assignment_submissions s,
-                                   {$CFG->prefix}assignment a,
-                                   {$CFG->prefix}user_students us
-                             WHERE s.mailed = 0
-                               AND s.timemarked <= $endtime
-                               AND s.timemarked >= $starttime
-                               AND s.assignment = a.id
-                               AND s.userid = us.userid
-                               AND a.course = us.course");
-    */
+    return $DB->get_records_sql("SELECT s.*, a.course, a.name
+                                   FROM {assignment_submissions} s,
+                                        {assignment} a
+                                  WHERE s.mailed = 0
+                                        AND s.timemarked <= ?
+                                        AND s.timemarked >= ?
+                                        AND s.assignment = a.id", array($endtime, $starttime));
 }
 
 /**
@@ -2757,15 +2752,6 @@ function assignment_get_all_submissions($assignment, $sort="", $dir="DESC") {
                                AND a.assignment = '$assignment->id'
                           ORDER BY $sort");
 
-    /* return get_records_sql("SELECT a.*
-                              FROM {$CFG->prefix}assignment_submissions a,
-                                   {$CFG->prefix}user_students s,
-                                   {$CFG->prefix}user u
-                             WHERE a.userid = s.userid
-                               AND u.id = a.userid
-                               AND $select a.assignment = '$assignment->id'
-                          ORDER BY $sort");
-    */
 }
 
 /**
