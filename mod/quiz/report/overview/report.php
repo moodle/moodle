@@ -335,26 +335,38 @@ class quiz_report extends quiz_default_report {
                 $where = ' WHERE u.id IN (' .$allowed. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
                 break;
         }
+
+        $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, 0)').')) '.$from.$where;
+
         
-        // Add extra limits due to sorting by question grade
+        // Add table joins so we can sort by question grade
+        // unfortunately can't join all tables necessary to fetch all grades
+        // to get the state for one question per attempt row we must join two tables
+        // and there is a limit to how many joins you can have in one query. In MySQL it
+        // is 61. This means that when having more than 29 questions the query will fail.
+        // So we join just the tables needed to sort the attempts.
         if ($detailedmarks) {
-            $from .= ' ';
-            // we want to display marks for all questions
-            foreach (array_keys($questions) as $qid) {
-                $select .=  ", qs$qid.grade AS qsgrade$qid, qs$qid.event AS qsevent$qid, qs$qid.id AS qsid$qid";
-                $from .= "LEFT JOIN {$CFG->prefix}question_sessions qns$qid ON qns$qid.attemptid = qa.uniqueid AND qns$qid.questionid = $qid ";
-                $from .=  "LEFT JOIN  {$CFG->prefix}question_states qs$qid ON qs$qid.id = qns$qid.newgraded ";
+            if($sort = $table->get_sql_sort()) {
+                $from .= ' ';
+                $sortparts    = explode(',', $sort);
+                $matches = array();
+                foreach($sortparts as $sortpart) {
+                    $sortpart = trim($sortpart);
+                    if (preg_match('/^qsgrade([0-9]+)/', $sortpart, $matches)){
+                        $qid = intval($matches[1]);
+                        $select .=  ", qs$qid.grade AS qsgrade$qid, qs$qid.event AS qsevent$qid, qs$qid.id AS qsid$qid";
+                        $from .= "LEFT JOIN {$CFG->prefix}question_sessions qns$qid ON qns$qid.attemptid = qa.uniqueid AND qns$qid.questionid = $qid ";
+                        $from .=  "LEFT JOIN  {$CFG->prefix}question_states qs$qid ON qs$qid.id = qns$qid.newgraded ";
+                    } else {
+                        $newsort[] = $sortpart;
+                    }
+                }
+                $select .= ' ';
             }
-            $select .= ' ';
         }
+       
 
-        
-
-        $countsql = 'SELECT COUNT(DISTINCT('.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).')) '.$from.$where;
-
-        if (!$download){
-            $sort = $table->get_sql_sort();
-        } else {
+        if ($download){
             $sort = '';
         }
         // Fix some wired sorting
@@ -363,13 +375,13 @@ class quiz_report extends quiz_default_report {
         } else {
             $sort = ' ORDER BY '.$sort;
         }
-         if (!$download) {
+
+        if (!$download) {
             // Add extra limits due to initials bar
             if($table->get_sql_where()) {
                 $where .= ' AND '.$table->get_sql_where();
             }
 
-            // Count the records NOW, before funky question grade sorting messes up $from
             if (!empty($countsql)) {
                 $totalinitials = count_records_sql($countsql);
                 if ($table->get_sql_where()) {
@@ -395,7 +407,17 @@ class quiz_report extends quiz_default_report {
             $table->initialbars($totalinitials>20);
         }
         if ($attempts) {
-
+            if($detailedmarks) {
+                //get all the attempt ids we want to display on this page
+                //or to export for download.
+                $attemptids = array();
+                foreach ($attempts as $attempt){
+                    if ($attempt->attemptuniqueid > 0){
+                        $attemptids[] = $attempt->attemptuniqueid;
+                    }
+                }
+                $gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
+            }
             foreach ($attempts as $attempt) {
 
                 // Username columns.
@@ -476,17 +498,16 @@ class quiz_report extends quiz_default_report {
                         }
                     } else {
                         foreach($questions as $questionid => $question) {
-                            $state = new object();
-                            $state->event = $attempt->{'qsevent'.$questionid};
-                            if (question_state_is_graded($state)) {
-                                $grade = quiz_rescale_grade($attempt->{'qsgrade'.$questionid}, $quiz);
+                            $stateforqinattempt = $gradedstatesbyattempt[$attempt->attemptuniqueid][$questionid];
+                            if (question_state_is_graded($stateforqinattempt)) {
+                                $grade = quiz_rescale_grade($stateforqinattempt->grade, $quiz);
                             } else {
                                 $grade = '--';
                             }
                             if (!$download) {
                                 $grade = $grade.'/'.quiz_rescale_grade($question->grade, $quiz);
                                 $row[] = link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
-                                        $attempt->{'qsid'.$questionid}.'&amp;number='.$question->number,
+                                        $stateforqinattempt->id.'&amp;number='.$question->number,
                                         'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
                             } else {
                                 $row[] = $grade;
