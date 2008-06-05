@@ -26,11 +26,9 @@
 
     $reportoptions = stats_get_report_options($course->id,STATS_MODE_RANKED);
 
-    $tableprefix = $CFG->prefix.'stats_';
-
-    $earliestday = $DB->get_field_sql('SELECT timeend FROM {daily} ORDER BY timeend');
-    $earliestweek = $DB->get_field_sql('SELECT timeend FROM {weekly} ORDER BY timeend');
-    $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {monthly} ORDER BY timeend');
+    $earliestday = $DB->get_field_sql('SELECT timeend FROM {stats_daily} ORDER BY timeend');
+    $earliestweek = $DB->get_field_sql('SELECT timeend FROM {stats_weekly} ORDER BY timeend');
+    $earliestmonth = $DB->get_field_sql('SELECT timeend FROM {stats_monthly} ORDER BY timeend');
 
     if (empty($earliestday)) $earliestday = time();
     if (empty($earliestweek)) $earliestweek = time();
