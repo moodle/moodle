@@ -416,7 +416,7 @@ function forum_cron() {
                     $queue->discussionid = $discussion->id;
                     $queue->postid       = $post->id;
                     $queue->timemodified = $post->created;
-                    if (!insert_record('forum_queue', $queue)) {
+                    if (!$DB->insert_record('forum_queue', $queue)) {
                         mtrace("Error: mod/forum/cron.php: Could not queue for digest mail for id $post->id to user $userto->id ($userto->email) .. not trying again.");
                     }
                     continue;
@@ -507,7 +507,7 @@ function forum_cron() {
 
     // Delete any really old ones (normally there shouldn't be any)
     $weekago = $timenow - (7 * 24 * 3600);
-    delete_records_select('forum_queue', "timemodified < $weekago");
+    $DB->delete_records_select('forum_queue', "timemodified < ?", array($weekago));
     mtrace ('Cleaned old digest records');
 
     if ($CFG->digestmailtimelast < $digesttime and $timenow > $digesttime) {
