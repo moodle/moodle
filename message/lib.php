@@ -1030,12 +1030,12 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
 function message_get_participants() {
     global $CFG, $DB;
 
-        return get_records_sql("SELECT useridfrom as id,1 FROM {message}
-                           UNION SELECT useridto as id,1 FROM {message}
-                           UNION SELECT useridfrom as id,1 FROM {message_read}
-                           UNION SELECT useridto as id,1 FROM {message_read}
-                           UNION SELECT userid as id,1 FROM {message_contacts}
-                           UNION SELECT contactid as id,1 from {message_contacts}");
+        return $DB->get_records_sql("SELECT useridfrom as id,1 FROM {message}
+                               UNION SELECT useridto as id,1 FROM {message}
+                               UNION SELECT useridfrom as id,1 FROM {message_read}
+                               UNION SELECT useridto as id,1 FROM {message_read}
+                               UNION SELECT userid as id,1 FROM {message_contacts}
+                               UNION SELECT contactid as id,1 from {message_contacts}");
 }
 
 /**
