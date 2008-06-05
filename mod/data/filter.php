@@ -7,7 +7,7 @@
     // Modified for data module by Vy-Shane SF.
 
     function data_filter($courseid, $text) {
-        global $CFG;
+        global $CFG, $DB;
 
         static $nothingtodo;
         static $contentlist;
@@ -29,11 +29,11 @@
                    'dr.id AS recordid, ' .
                    'dc.content AS content, ' .
                    'd.id AS dataid ' .
-                        'FROM '.$CFG->prefix.'data d, ' .
-                        $CFG->prefix.'data_fields df, ' .
-                        $CFG->prefix.'data_records dr, ' .
-                        $CFG->prefix.'data_content dc ' .
-                            "WHERE (d.course = '$courseid' or d.course = '".SITEID."')" .
+                        'FROM {data} d, ' .
+                             '{data_fields} df, ' .
+                             '{data_records} dr, ' .
+                             '{data_content} dc ' .
+                            "WHERE (d.course = ? or d.course = '".SITEID."')" .
                             'AND d.id = df.dataid ' .
                             'AND df.id = dc.fieldid ' .
                             'AND d.id = dr.dataid ' .
@@ -41,7 +41,7 @@
                             "AND df.type = 'text' " .
                             'AND df.param1 = 1';
 
-            if (!$datacontents = get_records_sql($sql)) {
+            if (!$datacontents = $DB->get_records_sql($sql, array($courseid))) {
                 return $text;
             }
 

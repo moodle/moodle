@@ -35,12 +35,13 @@ class data_field_picture extends data_field_file {
     }
 
     function display_add_field($recordid=0) {
-        global $CFG;
+        global $CFG, $DB;
+
         $filepath = '';
         $filename = '';
         $description = '';
         if ($recordid) {
-            if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+            if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 $filename = $content->content;
                 $description = $content->content1;
             }
@@ -79,8 +80,9 @@ class data_field_picture extends data_field_file {
     }
 
     function display_browse_field($recordid, $template) {
-        global $CFG;
-        if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)){
+        global $CFG, $DB;
+
+        if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             if (isset($content->content)) {
                 $contents[0] = $content->content;
                 $contents[1] = $content->content1;
@@ -118,9 +120,11 @@ class data_field_picture extends data_field_file {
     }
 
     function update_field() {
+        global $DB;
+
         // Get the old field data so that we can check whether the thumbnail dimensions have changed
-        $oldfield = get_record('data_fields', 'id', $this->field->id);
-        if (!update_record('data_fields', $this->field)) {
+        $oldfield = $DB->get_record('data_fields', array('id'=>$this->field->id));
+        if (!$DB->update_record('data_fields', $this->field)) {
             notify('updating of new field failed!');
             return false;
         }
@@ -128,7 +132,7 @@ class data_field_picture extends data_field_file {
         // Have the thumbnail dimensions changed?
         if ($oldfield && ($oldfield->param4 != $this->field->param4 || $oldfield->param5 != $this->field->param5)) {
             // Check through all existing records and update the thumbnail
-            if ($contents = get_records('data_content', 'fieldid', $this->field->id)) {
+            if ($contents = $DB->get_records('data_content', array('fieldid'=>$this->field->id))) {
                 if (count($contents) > 20) {
                     notify(get_string('resizingimages', 'data'), 'notifysuccess');
                     echo "\n\n";
@@ -146,8 +150,10 @@ class data_field_picture extends data_field_file {
     }
 
     function update_content($recordid, $value, $name) {
+        global $DB;
+
         parent::update_content($recordid, $value, $name);
-        $content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid);
+        $content = $DB->get_record('data_content',array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
         $this->update_thumbnail($content);
         // Regenerate the thumbnail
     }

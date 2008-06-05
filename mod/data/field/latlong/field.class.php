@@ -48,11 +48,12 @@ class data_field_latlong extends data_field_base {
     }
 
     function display_add_field($recordid=0) {
-        global $CFG;
+        global $CFG, $DB;
+
         $lat = '';
         $long = '';
         if ($recordid) {
-            if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+            if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 $lat  = $content->content;
                 $long = $content->content1;
             }
@@ -95,8 +96,9 @@ class data_field_latlong extends data_field_base {
     }
 
     function display_browse_field($recordid, $template) {
-        global $CFG;
-        if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+        global $CFG, $DB;
+
+        if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             $lat = empty($content->content)? '':$content->content;
             $long = empty($content->content1)? '':$content->content1;
             if (empty($lat) or empty($long)) {
@@ -153,6 +155,8 @@ class data_field_latlong extends data_field_base {
     }
 
     function update_content($recordid, $value, $name='') {
+        global $DB;
+
         $content = new object;
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
@@ -169,11 +173,11 @@ class data_field_latlong extends data_field_base {
             default:
                 break;
         }
-        if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+        if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             $content->id = $oldcontent->id;
-            return update_record('data_content', $content);
+            return $DB->update_record('data_content', $content);
         } else {
-            return insert_record('data_content', $content);
+            return $DB->insert_record('data_content', $content);
         }
     }
 

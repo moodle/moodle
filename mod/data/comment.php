@@ -14,13 +14,13 @@
     $confirm = optional_param('confirm','',PARAM_INT);
 
 
-    if (! $record = get_record('data_records', 'id', $rid)) {
+    if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
         print_error('invalidrecord', 'data');
     }
-    if (! $data = get_record('data', 'id', $record->dataid)) {
+    if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
         print_error('invalidid', 'data');
     }
-    if (! $course = get_record('course', 'id', $data->course)) {
+    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
         print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
@@ -32,7 +32,7 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if ($commentid) {
-        if (! $comment = get_record('data_comments', 'id', $commentid)) {
+        if (! $comment = $DB->get_record('data_comments', array('id'=>$commentid))) {
             print_error('commentmisconf');
         }
         if ($comment->recordid != $record->id) {
@@ -68,7 +68,7 @@
 
     switch ($mode) {
         case 'add':
-            if (!$formadata = $mform->get_data()) {
+            if (!$formadata = $mform->get_data(false)) {
                 break; // something is wrong here, try again
             }
 
@@ -78,7 +78,7 @@
             $newcomment->modified = time();
             $newcomment->content  = $formadata->content;
             $newcomment->recordid = $formadata->rid;
-            if (insert_record('data_comments',$newcomment)) {
+            if ($DB->insert_record('data_comments',$newcomment)) {
                 redirect('view.php?rid='.$record->id.'&amp;page='.$page);
             } else {
                 print_error('cannotsavecomment');
@@ -97,7 +97,7 @@
             $updatedcomment->format   = $formadata->format;
             $updatedcomment->modified = time();
 
-            if (update_record('data_comments',$updatedcomment)) {
+            if ($DB->update_record('data_comments', $updatedcomment)) {
                 redirect('view.php?rid='.$record->id.'&amp;page='.$page);
             } else {
                 print_error('cannotsavecomment');
@@ -106,7 +106,7 @@
 
         case 'delete':    //deletes single comment from db
             if ($confirm and confirm_sesskey() and $comment) {
-                delete_records('data_comments','id',$comment->id);
+                $DB->delete_records('data_comments', array('id'=>$comment->id));
                 redirect('view.php?rid='.$record->id.'&amp;page='.$page, get_string('commentdeleted', 'data'));
 
             } else {    //print confirm delete form

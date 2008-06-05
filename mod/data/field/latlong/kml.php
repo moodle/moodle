@@ -13,38 +13,38 @@ $rid     = optional_param('rid', 0, PARAM_INT);    //record id
 
 
 if ($rid) {
-    if (! $record = get_record('data_records', 'id', $rid)) {
+    if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
         print_error('invalidrecord', 'data');
     }
-    if (! $data = get_record('data', 'id', $record->dataid)) {
+    if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
         print_error('invalidid', 'data');
     }
-    if (! $course = get_record('course', 'id', $data->course)) {
+    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
         print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
         print_error('invalidcoursemodule');
     }
-    if (! $field = get_record('data_fields', 'id', $fieldid)) {
+    if (! $field = $DB->get_record('data_fields', array('id'=>$fieldid))) {
         print_error('invalidfieldid', 'data');
     }
     if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
         print_error('invalidfieldtype', 'data');
     }
-    if (! $content = get_record('data_content', 'fieldid', $fieldid, 'recordid', $rid)) {
+    if (! $content = $DB->get_record('data_content', array('fieldid'=>$fieldid, 'recordid'=>$rid))) {
         print_error('nofieldcontent', 'data');
     }
 } else {   // We must have $d
-    if (! $data = get_record('data', 'id', $d)) {
+    if (! $data = $DB->get_record('data', array('id'=>$d))) {
         print_error('invalidid', 'data');
     }
-    if (! $course = get_record('course', 'id', $data->course)) {
+    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
         print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
         print_error('invalidcoursemodule');
     }
-    if (! $field = get_record('data_fields', 'id', $fieldid)) {
+    if (! $field = $DB->get_record('data_fields', array('id'=>$fieldid))) {
         print_error('invalidfieldid', 'data');
     }
     if (! $field->type == 'latlong') { // Make sure we're looking at a latlong data type!
@@ -65,7 +65,7 @@ if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities'
 
 /// If we have an empty Database then redirect because this page is useless without data
 if (has_capability('mod/data:managetemplates', $context)) {
-    if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
+    if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {      // Brand new database!
         redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
     }
 }
@@ -88,7 +88,7 @@ if($rid) { // List one single item
     echo data_latlong_kml_placemark($pm);
 } else {   // List all items in turn
 
-    $contents = get_records('data_content', 'fieldid', $fieldid);
+    $contents = $DB->get_records('data_content', array('fieldid'=>$fieldid));
 
     echo '<Document>';
 
@@ -147,7 +147,7 @@ function data_latlong_kml_get_item_name($content, $field) {
     $name = '';
 
     if($field->param2 > 0) {
-        $name = htmlspecialchars(get_field('data_content', 'content', 'fieldid', $field->param2, 'recordid', $content->recordid));
+        $name = htmlspecialchars($DB->get_field('data_content', 'content', array('fieldid'=>$field->param2, 'recordid'=>$content->recordid)));
     }elseif($field->param2 == -2) {
         $name = $content->content . ', ' . $content->content1;
     }

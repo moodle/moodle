@@ -39,9 +39,10 @@ class data_field_date extends data_field_base {
     }
 
     function display_add_field($recordid=0) {
+        global $DB;
 
         if ($recordid) {
-            $content = (int) get_field('data_content', 'content', 'fieldid', $this->field->id, 'recordid', $recordid);
+            $content = (int)$DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
         } else {
             $content = time();
         }
@@ -81,6 +82,7 @@ class data_field_date extends data_field_base {
     }
 
     function update_content($recordid, $value, $name='') {
+        global $DB;
 
         $names = explode('_',$name);
         $name = $names[2];          // day month or year
@@ -94,20 +96,19 @@ class data_field_date extends data_field_base {
             $content->recordid = $recordid;
             $content->content = make_timestamp($this->year, $this->month, $this->day, 12, 0, 0, 0, false);
 
-            if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+            if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 $content->id = $oldcontent->id;
-                return update_record('data_content', $content);
+                return $DB->update_record('data_content', $content);
             } else {
-                return insert_record('data_content', $content);
+                return $DB->insert_record('data_content', $content);
             }
         }
     }
 
     function display_browse_field($recordid, $template) {
+        global $CFG, $DB;
 
-        global $CFG;
-
-        if ($content = get_field('data_content', 'content', 'fieldid', $this->field->id, 'recordid', $recordid)){
+        if ($content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             return userdate($content, get_string('strftimedate'), 0);
         }
     }

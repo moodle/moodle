@@ -37,18 +37,18 @@
         if (! $cm = get_coursemodule_from_id('data', $id)) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = get_record('course', 'id', $cm->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
             print_error('coursemisconf');
         }
-        if (! $data = get_record('data', 'id', $cm->instance)) {
+        if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
             print_error('invalidcoursemodule');
         }
 
     } else {
-        if (! $data = get_record('data', 'id', $d)) {
+        if (! $data = $DB->get_record('data', array('id'=>$d))) {
             print_error('invalidid', 'data');
         }
-        if (! $course = get_record('course', 'id', $data->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
             print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
@@ -75,7 +75,7 @@
 
 /// Can't use this if there are no fields
     if (has_capability('mod/data:managetemplates', $context)) {
-        if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
+        if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
     }
@@ -141,14 +141,14 @@
 
 /// Process incoming data for adding/updating records
 
-    if ($datarecord = data_submitted($CFG->wwwroot.'/mod/data/edit.php') and confirm_sesskey()) {
+    if ($datarecord = data_submitted(false) and confirm_sesskey()) {
 
         $ignorenames = array('MAX_FILE_SIZE','sesskey','d','rid','saveandview','cancel');  // strings to be ignored in input data
 
         if ($rid) {                                          /// Update some records
 
             /// All student edits are marked unapproved by default
-            $record = get_record('data_records','id',$rid);
+            $record = $DB->get_record('data_records', array('id'=>$rid));
 
             /// reset approved flag after student edit
             if (!has_capability('mod/data:approve', $context)) {
@@ -157,7 +157,7 @@
 
             $record->groupid = $currentgroup;
             $record->timemodified = time();
-            update_record('data_records',$record);
+            $DB->update_record('data_records', $record);
 
             /// Update all content
             $field = NULL;
@@ -216,11 +216,11 @@
             if (!$emptyform && $recordid = data_add_record($data, $currentgroup)) {    //add instance to data_record
 
                 /// Insert a whole lot of empty records to make sure we have them
-                $fields = get_records('data_fields','dataid',$data->id);
+                $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
                 foreach ($fields as $field) {
                     $content->recordid = $recordid;
                     $content->fieldid = $field->id;
-                    insert_record('data_content',$content);
+                    $DB->insert_record('data_content',$content);
                 }
 
                 //for each field in the add form, add it to the data_content.
@@ -268,7 +268,7 @@
      * Regular expression replacement section *
      ******************************************/
     if ($data->addtemplate){
-        $possiblefields = get_records('data_fields','dataid',$data->id,'id');
+        $possiblefields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id');
 
         ///then we generate strings to replace
         foreach ($possiblefields as $eachfield){
@@ -340,7 +340,7 @@
 /// Finish the page
 
     // Print the stuff that need to come after the form fields.
-    if (!$fields = get_records('data_fields', 'dataid', $data->id)) {
+    if (!$fields = $DB->get_records('data_fields', array('dataid'=>$data->id))) {
         print_error('nofieldindatabase', 'data');
     }
     foreach ($fields as $eachfield) {

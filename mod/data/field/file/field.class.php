@@ -30,9 +30,9 @@ class data_field_file extends data_field_base {
     }
 
     function display_add_field($recordid=0) {
-        global $CFG;
+        global $CFG, $DB;
         if ($recordid){
-            if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+            if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 $contents[0] = $content->content;
                 $contents[1] = $content->content1;
             } else {
@@ -87,8 +87,9 @@ class data_field_file extends data_field_base {
     }
 
     function display_browse_field($recordid, $template) {
-        global $CFG;
-        if (!$content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+        global $CFG, $DB;
+
+        if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             return false;
         }
         $width = $this->field->param1 ? ' width = "'.s($this->field->param1).'" ':' ';
@@ -109,13 +110,14 @@ class data_field_file extends data_field_base {
 
     // content: "a##b" where a is the file name, b is the display name
     function update_content($recordid, $value, $name) {
-        global $CFG;
-        if (!$oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+        global $CFG, $DB;
+
+        if (!$oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
         // Quickly make one now!
             $oldcontent = new object;
             $oldcontent->fieldid = $this->field->id;
             $oldcontent->recordid = $recordid;
-            if ($oldcontent->id = insert_record('data_content', $oldcontent)) {
+            if ($oldcontent->id = $DB->insert_record('data_content', $oldcontent)) {
                 print_error('cannotinsertempty', 'data');
             }
         }
@@ -137,7 +139,7 @@ class data_field_file extends data_field_base {
                     if ($um->process_file_uploads($dir)) {
                         $newfile_name = $um->get_new_filename();
                         $content->content = $newfile_name;
-                        update_record('data_content',$content);
+                        $DB->update_record('data_content',$content);
                     }
                 }
                 break;
@@ -145,7 +147,7 @@ class data_field_file extends data_field_base {
             case 'filename':
                 // only changing alt tag
                 $content->content1 = clean_param($value, PARAM_NOTAGS);
-                update_record('data_content', $content);
+                $DB->update_record('data_content', $content);
                 break;
 
             default:

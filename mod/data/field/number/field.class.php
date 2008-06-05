@@ -30,6 +30,8 @@ class data_field_number extends data_field_base {
     }
 
     function update_content($recordid, $value, $name='') {
+        global $DB;
+
         $content = new object;
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
@@ -39,16 +41,18 @@ class data_field_number extends data_field_base {
         } else {
             $content->content = null;
         }
-        if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+        if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             $content->id = $oldcontent->id;
-            return update_record('data_content', $content);
+            return $DB->update_record('data_content', $content);
         } else {
-            return insert_record('data_content', $content);
+            return $DB->insert_record('data_content', $content);
         }
     }
 
     function display_browse_field($recordid, $template) {
-        if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+        global $DB;
+
+        if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             if (strlen($content->content) < 1) {
                 return false;
             }

@@ -32,10 +32,10 @@ class data_field_radiobutton extends data_field_base {
 
 
     function display_add_field($recordid=0) {
-        global $CFG;
+        global $CFG, $DB;
 
         if ($recordid){
-            $content = trim(get_field('data_content', 'content', 'fieldid', $this->field->id, 'recordid', $recordid));
+            $content = trim($DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid)));
         } else {
             $content = '';
         }

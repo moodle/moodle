@@ -31,9 +31,10 @@ class data_field_menu extends data_field_base {
     }
 
     function display_add_field($recordid=0) {
+        global $DB;
 
         if ($recordid){
-            $content = get_field('data_content', 'content', 'fieldid', $this->field->id, 'recordid', $recordid);
+            $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
             $content = trim($content);
         } else {
             $content = '';
@@ -58,13 +59,13 @@ class data_field_menu extends data_field_base {
     }
     
     function display_search_field($content = '') {
-        global $CFG;
+        global $CFG, $DB;
 
         $usedoptions = array();
         $sql = "SELECT DISTINCT content
-                  FROM {$CFG->prefix}data_content
-                 WHERE fieldid={$this->field->id} AND content IS NOT NULL";
-        if ($used = get_records_sql($sql)) {
+                  FROM {data_content}
+                 WHERE fieldid=: AND content IS NOT NULL";
+        if ($used = $DB->get_records_sql($sql, array($this->field->id))) {
             foreach ($used as $data) {
                 $value = $data->content;
                 if ($value === '') {

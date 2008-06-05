@@ -8,7 +8,7 @@ require_once('export_form.php');
 $d = required_param('d', PARAM_INT);
 // database ID
 
-if (! $data = get_record('data', 'id', $d)) {
+if (! $data = $DB->get_record('data', array('id'=>$d))) {
     print_error('wrongdataid', 'data');
 }
 
@@ -16,7 +16,7 @@ if (! $cm = get_coursemodule_from_instance('data', $data->id, $data->course)) {
     print_error('invalidcoursemodule');
 }
 
-if(! $course = get_record('course', 'id', $cm->course)) {
+if(! $course = $DB->get_record('course', array('id'=>$cm->course))) {
     print_error('invalidcourseid', '', '', $cm->course);
 }
 
@@ -33,7 +33,7 @@ require_login($course->id, false, $cm);
 require_capability('mod/data:managetemplates', $context);
 
 // get fields for this database
-$fieldrecords = get_records('data_fields','dataid', $data->id, 'id');
+$fieldrecords = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id');
 
 if(empty($fieldrecords)) {
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -85,12 +85,12 @@ foreach($fields as $key => $field) {
     }
 }
 
-$datarecords = get_records('data_records', 'dataid', $data->id);
+$datarecords = $DB->get_records('data_records', array('dataid'=>$data->id));
 ksort($datarecords);
 $line = 1;
 foreach($datarecords as $record) {
     // get content indexed by fieldid
-    if( $content = get_records('data_content', 'recordid', $record->id, 'fieldid', 'fieldid, content, content1, content2, content3, content4') ) {
+    if( $content = $DB->get_records('data_content', array('recordid'=>$record->id), 'fieldid', 'fieldid, content, content1, content2, content3, content4') ) {
         foreach($fields as $field) {
             $contents = '';
             if(isset($content[$field->field->id])) {

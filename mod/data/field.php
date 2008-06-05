@@ -44,18 +44,18 @@
         if (! $cm = get_coursemodule_from_id('data', $id)) {
             error('Course Module ID was incorrect');
         }
-        if (! $course = get_record('course', 'id', $cm->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
             error('Course is misconfigured');
         }
-        if (! $data = get_record('data', 'id', $cm->instance)) {
+        if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
             error('Course module is incorrect');
         }
 
     } else {
-        if (! $data = get_record('data', 'id', $d)) {
+        if (! $data = $DB->get_record('data', array('id'=>$d))) {
             error('Data ID is incorrect');
         }
-        if (! $course = get_record('course', 'id', $data->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
             error('Course is misconfigured');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
@@ -74,7 +74,7 @@
     switch ($mode) {
 
         case 'add':    ///add a new field
-            if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/field.php')){
+            if (confirm_sesskey() and $fieldinput = data_submitted(false)){
 
                 //$fieldinput->name = data_clean_field_name($fieldinput->name);
 
@@ -96,7 +96,7 @@
                     $field->insert_field();
 
                 /// Update some templates
-                    data_append_new_field_to_templates($data, stripslashes($fieldinput->name));
+                    data_append_new_field_to_templates($data, $fieldinput->name);
 
                     add_to_log($course->id, 'data', 'fields add',
                                "field.php?d=$data->id&amp;mode=display&amp;fid=$fid", $fid, $cm->id);
@@ -108,7 +108,7 @@
 
 
         case 'update':    ///update a field
-            if (confirm_sesskey() and $fieldinput = data_submitted($CFG->wwwroot.'/mod/data/field.php')){
+            if (confirm_sesskey() and $fieldinput = data_submitted(false)){
 
                 //$fieldinput->name = data_clean_field_name($fieldinput->name);
 
@@ -168,7 +168,7 @@
                             $rec->id = $data->id;
                             $rec->defaultsort = 0;
                             $rec->defaultsortdir = 0;
-                            if (!update_record('data', $rec)) {
+                            if (!$DB->update_record('data', $rec)) {
                                 error('There was an error updating the database');
                             }
                         }
@@ -203,7 +203,7 @@
                 $rec->defaultsort = $defaultsort;
                 $rec->defaultsortdir = $defaultsortdir;
 
-                if (update_record('data', $rec)) {
+                if ($DB->update_record('data', $rec)) {
                     redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id, get_string('changessaved'), 2);
                 } else {
                     error('There was an error updating the database');
@@ -250,7 +250,7 @@
         data_print_header($course,$cm,$data,'fields');
 
 
-        if (!record_exists('data_fields','dataid',$data->id)) {
+        if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {
             notify(get_string('nofieldindatabase','data'));  // nothing in database
             notify(get_string('pleaseaddsome','data', 'preset.php?id='.$cm->id));      // link to presets
 
@@ -260,7 +260,7 @@
             $table->align = array('left','left','left', 'center');
             $table->wrap = array(false,false,false,false);
 
-            if ($fff = get_records('data_fields','dataid',$data->id,'id')){
+            if ($fff = $DB->get_records('data_fields', array('dataid'=>$data->id),'id')){
                 foreach ($fff as $ff) {
 
                     $field = data_get_field($ff, $data);
@@ -302,7 +302,7 @@
         echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<label for="defaultsort">'.get_string('defaultsortfield','data').'</label>';
         echo '<select id="defaultsort" name="defaultsort">';
-        if ($fields = get_records('data_fields','dataid',$data->id)) {
+        if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id))) {
             echo '<optgroup label="'.get_string('fields', 'data').'">';
             foreach ($fields as $field) {
                 if ($data->defaultsort == $field->id) {

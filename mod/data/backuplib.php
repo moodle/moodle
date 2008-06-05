@@ -37,12 +37,12 @@
     //Return a content encoded to support interactivities linking. Every module
 
 function data_backup_mods($bf,$preferences) {
-    global $CFG;
+    global $CFG, $DB;
 
     $status = true;
 
     // iterate
-    if ($datas = get_records('data','course',$preferences->backup_course,"id")) {
+    if ($datas = $DB->get_records('data', array('course'=>$preferences->backup_course),"id")) {
         foreach ($datas as $data) {
            if (function_exists('backup_mod_selected')) {
                     // Moodle 1.6
@@ -61,10 +61,10 @@ function data_backup_mods($bf,$preferences) {
 }
 
 function data_backup_one_mod($bf,$preferences,$data) {
-    global $CFG;
+    global $CFG, $DB;
 
     if (is_numeric($data)) { // backwards compatibility
-        $data = get_record('data','id',$data);
+        $data = $DB->get_record('data', array('id'=>$data));
     }
     $instanceid = $data->id;
 
@@ -125,10 +125,10 @@ function data_backup_one_mod($bf,$preferences,$data) {
 
 
 function backup_data_fields($bf,$preferences,$dataid){
-    global $CFG;
+    global $CFG, $DB;
     $status = true;
 
-    $data_fields = get_records("data_fields","dataid",$dataid);
+    $data_fields = $DB->get_records("data_fields", array("dataid"=>$dataid));
 
         //If there is submissions
         if ($data_fields) {
@@ -165,10 +165,10 @@ function backup_data_fields($bf,$preferences,$dataid){
 }
 
 function backup_data_content($bf,$preferences,$recordid){
-    global $CFG;
+    global $CFG, $DB;
     $status = true;
 
-    $data_contents = get_records("data_content","recordid",$recordid);
+    $data_contents = $DB->get_records("data_content", array("recordid"=>$recordid));
 
         //If there is submissions
         if ($data_contents) {
@@ -197,9 +197,10 @@ function backup_data_content($bf,$preferences,$recordid){
 
 }
 function backup_data_ratings($bf,$preferences,$recordid){
-    global $CFG;
+    global $CFG, $DB;
+
     $status = true;
-    $data_ratings = get_records("data_ratings","recordid",$recordid);
+    $data_ratings = $DB->get_records("data_ratings", array("recordid"=>$recordid));
 
     //If there is submissions
     if ($data_ratings) {
@@ -225,9 +226,10 @@ function backup_data_ratings($bf,$preferences,$recordid){
     return $status;
 }
 function backup_data_comments($bf,$preferences,$recordid){
-    global $CFG;
+    global $CFG, $DB;
+
     $status = true;
-    $data_comments = get_records("data_comments","recordid",$recordid);
+    $data_comments = $DB->get_records("data_comments", array("recordid"=>$recordid));
 
     //If there is submissions
     if ($data_comments) {
@@ -275,11 +277,11 @@ function backup_data_files_instance($bf,$preferences,$instanceid) {
 }
 
 function backup_data_records($bf,$preferences,$dataid){
+    global $CFG, $DB;
 
-    global $CFG;
     $status = true;
 
-    $data_records = get_records("data_records","dataid",$dataid);
+    $data_records = $DB->get_records("data_records", array("dataid"=>$dataid));
         //If there is submissions
         if ($data_records) {
             //Write start tag
@@ -312,7 +314,6 @@ function backup_data_records($bf,$preferences,$dataid){
 }
 
 function backup_data_files($bf,$preferences) {
-
     global $CFG;
 
     $status = true;
@@ -333,8 +334,8 @@ function backup_data_files($bf,$preferences) {
 }
 
 function backup_data_file_instance($bf,$preferences,$instanceid) {
-
     global $CFG;
+
     $status = true;
 
         //First we check to moddata exists and create it as necessary
@@ -396,7 +397,6 @@ function data_check_backup_mods($course,$user_data=false,$backup_unique_code,$in
  * @return string the content encoded
  */
 function data_encode_content_links ($content,$preferences) {
-
     global $CFG;
 
     $base = preg_quote($CFG->wwwroot,"/");

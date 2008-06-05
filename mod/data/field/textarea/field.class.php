@@ -32,13 +32,13 @@ class data_field_textarea extends data_field_base {
 
 
     function display_add_field($recordid=0) {
-        global $CFG;
+        global $CFG, $DB;
 
         $text   = '';
         $format = 0;
 
         if ($recordid){
-            if ($content = get_record('data_content', 'fieldid', $this->field->id, 'recordid', $recordid)) {
+            if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
                 $text   = $content->content;
                 $format = $content->content1;
             }
@@ -96,6 +96,8 @@ class data_field_textarea extends data_field_base {
 
 
     function update_content($recordid, $value, $name='') {
+        global $DB;
+
         $content = new object;
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
@@ -107,11 +109,11 @@ class data_field_textarea extends data_field_base {
             $content->content = clean_param($value, PARAM_CLEAN);
         }
 
-        if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+        if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             $content->id = $oldcontent->id;
-            return update_record('data_content', $content);
+            return $DB->update_record('data_content', $content);
         } else {
-            return insert_record('data_content', $content);
+            return $DB->insert_record('data_content', $content);
         }
     }
 }

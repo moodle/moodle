@@ -12,7 +12,7 @@
             <?php echo get_string('maxsize', 'data'); ?></label></td>
         <td class="c1">
             <?php
-                $course->maxbytes = get_field('course', 'maxbytes', 'id', $this->data->course);
+                $course->maxbytes = $DB->get_field('course', 'maxbytes', array('id'=>$this->data->course));
                 $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
                 choose_from_menu($choices, 'param3', $this->field->param3, '', '', 0, false, false, 0, 'param3');
             ?>

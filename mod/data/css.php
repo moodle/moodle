@@ -29,7 +29,7 @@
 
     $d = optional_param('d', 0, PARAM_INT);   // database id
 
-    if ($data = get_record('data', 'id', $d)) {
+    if ($data = $DB->get_record('data', array('id'=>$d))) {
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');
         header('Expires: ' . gmdate("D, d M Y H:i:s", time() + $lifetime) . ' GMT');
         header('Cache-control: max_age = '. $lifetime);

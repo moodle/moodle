@@ -177,7 +177,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 // Print the relevant form element to define the attributes for this field
 // viewable by teachers only.
     function display_edit_field() {
-        global $CFG;
+        global $CFG, $DB;
 
         if (empty($this->field)) {   // No field has been defined yet, try and make one
             $this->define_default_field();

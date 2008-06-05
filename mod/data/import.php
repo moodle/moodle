@@ -38,18 +38,18 @@
         if (! $cm = get_coursemodule_from_id('data', $id)) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = get_record('course', 'id', $cm->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
             print_error('coursemisconf');
         }
-        if (! $data = get_record('data', 'id', $cm->instance)) {
+        if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
             print_error('invalidcoursemodule');
         }
 
     } else {
-        if (! $data = get_record('data', 'id', $d)) {
+        if (! $data = $DB->get_record('data', array('id'=>$d))) {
             print_error('invalidid', 'data');
         }
-        if (! $course = get_record('course', 'id', $data->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
             print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
@@ -108,14 +108,14 @@
 
             foreach ($records as $record) {
                 if ($recordid = data_add_record($data, 0)) {  // add instance to data_record
-                    $fields = get_records('data_fields', 'dataid', $data->id, '', 'name, id, type');
+                    $fields = $DB->get_records('data_fields', array('dataid'=>$data->id), '', 'name, id, type');
 
                     // Insert new data_content fields with NULL contents:
                     foreach ($fields as $field) {
                         $content = new object();
                         $content->recordid = $recordid;
                         $content->fieldid = $field->id;
-                        if (! insert_record('data_content', $content)) {
+                        if (! $DB->insert_record('data_content', $content)) {
                             print_error('cannotinsertrecord', '', '', $recordid);
                         }
                     }
@@ -137,7 +137,6 @@
                             $replacements[] = '&gt;';
                             $value = preg_replace($patterns, $replacements, $value);
                         }
-                        $value = addslashes($value);
                         // for now, only for "latlong" and "url" fields, but that should better be looked up from
                         // $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php'
                         // once there is stored how many contents the field can have. 
@@ -148,9 +147,9 @@
                         } else {
                             $content->content = $value;
                         }
-                        $oldcontent = get_record('data_content', 'fieldid', $field->id, 'recordid', $recordid);
+                        $oldcontent = $DB->get_record('data_content', array('fieldid'=>$field->id, 'recordid'=>$recordid));
                         $content->id = $oldcontent->id;
-                        if (! update_record('data_content', $content)) {
+                        if (! $DB->update_record('data_content', $content)) {
                             print_error('cannotupdaterecord', '', '', $recordid);
                         }
                     }
