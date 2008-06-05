@@ -7,7 +7,7 @@ require_once('comment_form.php');
 $action = optional_param('action','add', PARAM_ACTION);
 
 if (isguest()) {
-    print_error('Guests are not allowed to post comments!');
+    print_error('guestnocomment');
 }
 
 switch ($action) {
@@ -21,7 +21,7 @@ switch ($action) {
         glossary_comment_edit();
         die;
     default:
-        print_error('Incorrect action specified');
+        print_error('invalidaction');
 }
 
 /**
@@ -33,23 +33,23 @@ function glossary_comment_add() {
     $eid = optional_param('eid', 0, PARAM_INT); // Entry ID
 
     if (!$entry = get_record('glossary_entries', 'id', $eid)) {
-        print_error('Entry is incorrect');
+        print_error('invalidentry');
     }
     if (!$glossary = get_record('glossary', 'id', $entry->glossaryid)) {
-        print_error('Incorrect glossary');
+        print_error('invalidid', 'glossary');
     }
     if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
     if (!$course = get_record('course', 'id', $cm->course)) {
-        print_error('Course is misconfigured');
+        print_error('coursemisconf');
     }
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     /// Both the configuration and capability must allow comments
     if (!$glossary->allowcomments or !has_capability('mod/glossary:comment', $context)) {
-        print_error('You can\'t add comments to this glossary!');
+        print_error('nopermissiontocomment');
     }
 
     $mform = new mod_glossary_comment_form();
@@ -70,7 +70,7 @@ function glossary_comment_add() {
         $newcomment->userid       = $USER->id;
 
         if (!$newcomment->id = insert_record('glossary_comments', $newcomment)) {
-            print_error('Could not insert this new comment');
+            print_error('cannotinsertcomment');
         } else {
             add_to_log($course->id, 'glossary', 'add comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$newcomment->id", $cm->id);
         }
@@ -94,28 +94,28 @@ function glossary_comment_delete() {
     $confirm = optional_param('confirm', 0, PARAM_BOOL); // delete confirmation
 
     if (!$comment = get_record('glossary_comments', 'id', $cid)) {
-        print_error('Comment is incorrect');
+        print_error('invalidcomment');
     }
     if (!$entry = get_record('glossary_entries', 'id', $comment->entryid)) {
-        print_error('Entry is incorrect');
+        print_error('invalidentry');
     }
     if (!$glossary = get_record('glossary', 'id', $entry->glossaryid)) {
-        print_error('Incorrect glossary');
+        print_error('invalidid', 'glossary');
     }
     if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
     if (!$course = get_record('course', 'id', $cm->course)) {
-        print_error('Course is misconfigured');
+        print_error('coursemisconf');
     }
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (($comment->userid <> $USER->id) and !has_capability('mod/glossary:managecomments', $context)) {
-        print_error('You can\'t delete other people\'s comments!');
+        print_error('nopermissiontodelcomment', 'glossary');
     }
     if (!$glossary->allowcomments and !has_capability('mod/glossary:managecomments', $context)) {
-        print_error('You can\'t delete comments in this glossary!');
+        print_error('nopermissiontodelinglossary', 'glossary');
     }
 
     if (data_submitted() and $confirm) {
@@ -147,32 +147,32 @@ function glossary_comment_edit() {
     $cid = optional_param('cid', 0, PARAM_INT); // Comment ID
 
     if (!$comment = get_record('glossary_comments', 'id', $cid)) {
-        print_error('Comment is incorrect');
+        print_error('invalidcomment');
     }
     if (!$entry = get_record('glossary_entries', 'id', $comment->entryid)) {
-        print_error('Entry is incorrect');
+        print_error('invalidentry');
     }
     if (!$glossary = get_record('glossary', 'id', $entry->glossaryid)) {
-        print_error('Incorrect glossary');
+        print_error('invalidid', 'glossary');
     }
     if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
     if (!$course = get_record('course', 'id', $cm->course)) {
-        print_error('Course is misconfigured');
+        print_error('coursemisconf');
     }
 
     require_login($course->id, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     if (!$glossary->allowcomments and !has_capability('mod/glossary:managecomments', $context)) {
-        print_error('You can\'t edit comments in this glossary!');
+        print_error('nopermissiontodelinglossary', 'glossary');
     }
     if (($comment->userid <> $USER->id) and !has_capability('mod/glossary:managecomments', $context)) {
-        print_error('You can\'t edit other people\'s comments!');
+        print_error('nopermissiontoeditcomment');
     }
     $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
     if ((!has_capability('mod/glossary:comment', $context) or !$ineditperiod) and !has_capability('mod/glossary:managecomments', $context)) {
-        print_error('You can\'t edit this. Time expired!');
+        print_error('cannoteditcommentexpired');
     }
 
     $mform = new mod_glossary_comment_form();
@@ -189,7 +189,7 @@ function glossary_comment_edit() {
         $updatedcomment->timemodified = time();
 
         if (!update_record('glossary_comments', $updatedcomment)) {
-            print_error('Could not update this comment');
+            print_error('cannotupdatecomment');
         } else {
             add_to_log($course->id, 'glossary', 'update comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$updatedcomment->id",$cm->id);
         }

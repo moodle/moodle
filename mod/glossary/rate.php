@@ -9,27 +9,27 @@
     $glossaryid = required_param('glossaryid', PARAM_INT); // The forum the rated posts are from
 
     if (!$glossary = get_record('glossary', 'id', $glossaryid)) {
-        print_error("Incorrect glossary id");
+        print_error('invalidid', 'glossary');
     }
 
     if (!$course = get_record('course', 'id', $glossary->course)) {
-        print_error("Course ID was incorrect");
+        print_error('invalidcourseid');
     }
 
     if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     require_login($course, false, $cm);
 
     if (isguestuser()) {
-        print_error("Guests are not allowed to rate entries.");
+        print_error('guestnorate');
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!$glossary->assessed) {
-        print_error("Rating of items not allowed!");
+        print_error('nopermissiontorate');
     }
 
     if ($glossary->assessed == 2) {
@@ -52,7 +52,7 @@
             }
 
             if ($entry->glossaryid != $glossary->id) {
-                print_error("This is not valid entry!");
+                print_error('invalidentry');
             }
 
             if ($glossary->assesstimestart and $glossary->assesstimefinish) {
@@ -77,7 +77,7 @@
                     $oldrating->rating = $rating;
                     $oldrating->time = time();
                     if (! update_record("glossary_ratings", $oldrating)) {
-                        print_error("Could not update an old rating ($entry = $rating)");
+                        print_error('cannotinsertrate', '', '', array($entry, $rating));
                     }
                     glossary_update_grades($glossary, $entry->userid);
                 }
@@ -90,7 +90,7 @@
                 $newrating->rating  = $rating;
 
                 if (! insert_record("glossary_ratings", $newrating)) {
-                    print_error("Could not insert a new rating ($entry->id = $rating)");
+                    print_error('cannotinsertrate', '', '', array($entry->id, $rating));
                 }
                 glossary_update_grades($glossary, $entry->userid);
             }
@@ -99,7 +99,7 @@
         redirect($returnurl, get_string("ratingssaved", "glossary"));
 
     } else {
-        print_error("This page was not accessed correctly");
+        print_error('invalidaccess');
     }
 
 ?>
