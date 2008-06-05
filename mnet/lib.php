@@ -46,7 +46,7 @@ function mnet_get_hostname_from_uri($uri = null) {
  * @return string           A PEM formatted SSL Certificate.
  */
 function mnet_get_public_key($uri, $application=null) {
-    global $CFG, $MNET;
+    global $CFG, $MNET, $DB;
     // The key may be cached in the mnet_set_public_key function...
     // check this first
     $key = mnet_set_public_key($uri);
@@ -55,7 +55,7 @@ function mnet_get_public_key($uri, $application=null) {
     }
 
     if (empty($application)) {
-        $application = get_record('mnet_application', 'name', 'moodle');
+        $application = $DB->get_record('mnet_application', array('name'=>'moodle'));
     }
 
     $rq = xmlrpc_encode_request('system/keyswap', array($CFG->wwwroot, $MNET->public_key, $application->name), array("encoding" => "utf-8"));
@@ -316,13 +316,13 @@ function mnet_get_keypair() {
  * @return  string      The signature over that text
  */
 function mnet_generate_keypair($dn = null, $days=28) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
     $host = strtolower($CFG->wwwroot);
     $host = ereg_replace("^http(s)?://",'',$host);
     $break = strpos($host.'/' , '/');
     $host   = substr($host, 0, $break);
 
-    if ($result = get_record_select('course'," id ='".SITEID."' ")) {
+    if ($result = $DB->get_record('course', array("id"=>SITEID))) {
         $organization = $result->fullname;
     } else {
         $organization = 'None';
@@ -443,17 +443,17 @@ function mnet_permit_rpc_call($includefile, $functionname, $class=false) {
         SELECT
             count(r.id)
         FROM
-            {$CFG->prefix}mnet_host2service h2s,
-            {$CFG->prefix}mnet_service2rpc s2r,
-            {$CFG->prefix}mnet_rpc r
+            {mnet_host2service} h2s,
+            {mnet_service2rpc} s2r,
+            {mnet_rpc} r
         WHERE
             h2s.serviceid = s2r.serviceid AND
             s2r.rpcid = r.id AND
-            r.xmlrpc_path = '$callprefix/$functionname' AND
+            r.xmlrpc_path = ? AND
             h2s.hostid in ($id_list) AND
             h2s.publish = '1'";
-
-    $permissionobj = record_exists_sql($sql);
+    $params = array("$callprefix/$functionname");
+    $permissionobj = $DB->record_exists_sql($sql, $params);
 
     if ($permissionobj === false && 'dangerous' != $CFG->mnet_dispatcher_mode) {
         return RPC_FORBIDDENMETHOD;
@@ -512,11 +512,13 @@ function mnet_permit_rpc_call($includefile, $functionname, $class=false) {
 }
 
 function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
-    $mnethost = get_record('mnet_host', 'id', $mnet_host_id);
-    if ($aclrecord = get_record('mnet_sso_access_control', 'username', $username, 'mnet_host_id', $mnet_host_id)) {
+    global $DB;
+
+    $mnethost = $DB->get_record('mnet_host', array('id'=>$mnet_host_id));
+    if ($aclrecord = $DB->get_record('mnet_sso_access_control', array('username'=>$username, 'mnet_host_id'=>$mnet_host_id))) {
         // update
         $aclrecord->accessctrl = $accessctrl;
-        if (update_record('mnet_sso_access_control', $aclrecord)) {
+        if ($DB->update_record('mnet_sso_access_control', $aclrecord)) {
             add_to_log(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php',
                     "SSO ACL: $accessctrl user '$username' from {$mnethost->name}");
         } else {
@@ -528,7 +530,7 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
         $aclrecord->username = $username;
         $aclrecord->accessctrl = $accessctrl;
         $aclrecord->mnet_host_id = $mnet_host_id;
-        if ($id = insert_record('mnet_sso_access_control', $aclrecord)) {
+        if ($id = $DB->insert_record('mnet_sso_access_control', $aclrecord)) {
             add_to_log(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php',
                     "SSO ACL: $accessctrl user '$username' from {$mnethost->name}");
         } else {

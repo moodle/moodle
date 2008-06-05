@@ -519,7 +519,7 @@ function mnet_server_dispatch($payload) {
  * @return mixed              Response data - any kind of PHP variable
  */
 function mnet_system($method, $params, $hostinfo) {
-    global $CFG;
+    global $CFG, $DB;
 
     if (empty($hostinfo)) return array();
 
@@ -538,9 +538,9 @@ function mnet_system($method, $params, $hostinfo) {
                     rpc.help,
                     rpc.profile
                 FROM
-                    '.$CFG->prefix.'mnet_host2service h2s,
-                    '.$CFG->prefix.'mnet_service2rpc s2r,
-                    '.$CFG->prefix.'mnet_rpc rpc
+                    {mnet_host2service} h2s,
+                    {mnet_service2rpc} s2r,
+                    {mnet_rpc} rpc
                 WHERE
                     s2r.rpcid = rpc.id AND
                     h2s.serviceid = s2r.serviceid AND 
@@ -548,6 +548,7 @@ function mnet_system($method, $params, $hostinfo) {
                     h2s.publish =\'1\'
                 ORDER BY
                     rpc.xmlrpc_path ASC';
+            $params = array();
 
         } else {
             $query = '
@@ -558,22 +559,23 @@ function mnet_system($method, $params, $hostinfo) {
                     rpc.help,
                     rpc.profile
                 FROM
-                    '.$CFG->prefix.'mnet_host2service h2s,
-                    '.$CFG->prefix.'mnet_service2rpc s2r,
-                    '.$CFG->prefix.'mnet_service svc,
-                    '.$CFG->prefix.'mnet_rpc rpc
+                    {mnet_host2service} h2s,
+                    {mnet_service2rpc} s2r,
+                    {mnet_service} svc,
+                    {mnet_rpc} rpc
                 WHERE
                     s2r.rpcid = rpc.id AND
                     h2s.serviceid = s2r.serviceid AND 
                     h2s.hostid in ('.$id_list .') AND
                     h2s.publish =\'1\' AND
                     svc.id = h2s.serviceid AND
-                    svc.name = \''.$params[0].'\'
+                    svc.name = ?
                 ORDER BY
                     rpc.xmlrpc_path ASC';
+            $params = array($params[0]);
 
         }
-        $resultset = array_values(get_records_sql($query));
+        $resultset = array_values($DB->get_records_sql($query, $params));
         $methods = array();
         foreach($resultset as $result) {
             $methods[] = $result->xmlrpc_path;
@@ -588,17 +590,18 @@ function mnet_system($method, $params, $hostinfo) {
                 rpc.help,
                 rpc.profile
             FROM
-                '.$CFG->prefix.'mnet_host2service h2s,
-                '.$CFG->prefix.'mnet_service2rpc s2r,
-                '.$CFG->prefix.'mnet_rpc rpc
+                {mnet_host2service} h2s,
+                {mnet_service2rpc} s2r,
+                {mnet_rpc rpc}
             WHERE
-                rpc.xmlrpc_path = \''.$params[0].'\' AND
+                rpc.xmlrpc_path = ? AND
                 s2r.rpcid = rpc.id AND
                 h2s.serviceid = s2r.serviceid AND 
                 h2s.publish =\'1\' AND
                 h2s.hostid in ('.$id_list .')';
+        $params = array($params[0]);
 
-        $result = get_records_sql($query);
+        $result = $DB->get_records_sql($query, $params);
         $methodsigs = array();
 
         if (is_array($result)) {
@@ -617,17 +620,18 @@ function mnet_system($method, $params, $hostinfo) {
                 rpc.help,
                 rpc.profile
             FROM
-                '.$CFG->prefix.'mnet_host2service h2s,
-                '.$CFG->prefix.'mnet_service2rpc s2r,
-                '.$CFG->prefix.'mnet_rpc rpc
+                {mnet_host2service} h2s,
+                {mnet_service2rpc} s2r,
+                {mnet_rpc} rpc
             WHERE
-                rpc.xmlrpc_path = \''.$params[0].'\' AND
+                rpc.xmlrpc_path = ? AND
                 s2r.rpcid = rpc.id AND
                 h2s.publish =\'1\' AND
                 h2s.serviceid = s2r.serviceid AND 
                 h2s.hostid in ('.$id_list .')';
+        $params = array($params[0]);
 
-        $result = get_record_sql($query);
+        $result = $DB->get_record_sql($query, $params);
 
         if (is_object($result)) {
             return $result->help;
@@ -641,16 +645,17 @@ function mnet_system($method, $params, $hostinfo) {
                 h2s.publish,
                 h2s.subscribe
             FROM
-                '.$CFG->prefix.'mnet_host2service h2s,
-                '.$CFG->prefix.'mnet_service s
+                {mnet_host2service} h2s,
+                {mnet_service} s
             WHERE
                 h2s.serviceid = s.id AND
                (h2s.publish =\'1\' OR h2s.subscribe =\'1\') AND
                 h2s.hostid in ('.$id_list .')
             ORDER BY
                 s.name ASC';
+        $params = array();
 
-        $result = get_records_sql($query);
+        $result = $DB->get_records_sql($query, $params);
         $services = array();
 
         if (is_array($result)) {

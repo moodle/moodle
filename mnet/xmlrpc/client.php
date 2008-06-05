@@ -122,7 +122,7 @@ class mnet_xmlrpc_client {
      *                                  remote function
      */
     function send($mnet_peer) {
-        global $CFG, $MNET;
+        global $CFG, $MNET, $DB;
 
         $this->uri = $mnet_peer->wwwroot.$mnet_peer->application->xmlrpc_server_url;
 
@@ -151,17 +151,17 @@ class mnet_xmlrpc_client {
                 SELECT
                     *
                 FROM
-                    {$CFG->prefix}mnet_rpc r,
-                    {$CFG->prefix}mnet_service2rpc s2r,
-                    {$CFG->prefix}mnet_host2service h2s
+                    {mnet_rpc} r,
+                    {mnet_service2rpc} s2r,
+                    {mnet_host2service} h2s
                 WHERE
-                    r.xmlrpc_path = '{$this->method}' AND
+                    r.xmlrpc_path = ? AND
                     s2r.rpcid = r.id AND
                     s2r.serviceid = h2s.serviceid AND
                     h2s.subscribe = '1' AND
                     h2s.hostid in ({$id_list})";
 
-            $permission = get_record_sql($sql);
+            $permission = $DB->get_record_sql($sql, array($this->method));
             if ($permission == false) {
                 global $USER;
                 $this->error[] = '7:User with ID '. $USER->id .
@@ -310,7 +310,7 @@ class mnet_xmlrpc_client {
                     $details                    = openssl_x509_parse($record->public_key);
                     if(is_array($details) && isset($details['validTo_time_t'])) {
                         $record->public_key_expires = $details['validTo_time_t'];
-                        update_record('mnet_host', $record);
+                        $DB->update_record('mnet_host', $record);
                         $mnet_peer2 = new mnet_peer();
                         $mnet_peer2->set_id($record->id);
                         $mnet_peer2->re_key = true;

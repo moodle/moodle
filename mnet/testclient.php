@@ -28,7 +28,7 @@ echo '<?xml version="1.0" encoding="utf-8"?>';
 <H1>Hosts</H1>
 <?php
 
-$hosts = get_records('mnet_host');
+$hosts = $DB->get_records('mnet_host');
 
 foreach ($hosts as $id => $host) {
     // Skip the 'all hosts' option
@@ -56,11 +56,11 @@ if (!empty($_GET['hostid']) && array_key_exists($_GET['hostid'], $hosts)) {
 
     echo '<hr /><br /><h3>Services available on host: '.$host->wwwroot .'</h3><table><tr valign="top"><th>&nbsp;&nbsp;Service ID&nbsp;&nbsp;</th><th>&nbsp;&nbsp;Service&nbsp;&nbsp;</th><th>&nbsp;&nbsp;Version&nbsp;&nbsp;</th><th>&nbsp;&nbsp;They Publish&nbsp;&nbsp;</th><th>&nbsp;&nbsp;They Subscribe&nbsp;&nbsp;</th><th></th></tr>';
     foreach ($services as $id => $service) {
-        $sql = 'select c.id, c.parent_type, c.parent from '.$CFG->prefix.'mnet_service2rpc a,'.$CFG->prefix.'mnet_service b, '.$CFG->prefix.'mnet_rpc c where a.serviceid = b.id and b.name=\''.addslashes($service['name']).'\' and c.id = a.rpcid ';
+        $sql = 'select c.id, c.parent_type, c.parent from {mnet_service2rpc} a, {mnet_service} b, {mnet_rpc} c where a.serviceid = b.id and b.name=? and c.id = a.rpcid ';
 
         echo '<tr valign="top">
                 <td>'.$service['name'].'</td>';
-        if ($detail = get_record_sql($sql)) {
+        if ($detail = $DB->get_record_sql($sql, array($service['name']))) {
             $service['humanname'] = get_string($service['name'].'_name', $detail->parent_type.'_'.$detail->parent);
             echo '<td>'.$service['humanname'].'</td>';
         } else {

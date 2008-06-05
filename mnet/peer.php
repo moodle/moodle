@@ -29,6 +29,7 @@ class mnet_peer {
     }
 
     function bootstrap($wwwroot, $pubkey = null, $application) {
+        global $DB;
 
         if (substr($wwwroot, -1, 1) == '/') {
             $wwwroot = substr($wwwroot, 0, -1);
@@ -63,9 +64,9 @@ class mnet_peer {
             $this->ip_address           = $ip_address;
             $this->deleted              = 0;
 
-            $this->application = get_record('mnet_application', 'name', $application);
+            $this->application = $DB->get_record('mnet_application', array('name'=>$application));
             if (empty($this->application)) {
-                $this->application = get_record('mnet_application', 'name', 'moodle');
+                $this->application = $DB->get_record('mnet_application', array('name'=>'moodle'));
             }
 
             $this->applicationid = $this->application->id;
@@ -131,7 +132,6 @@ class mnet_peer {
     function delete_all_sessions() {
         global $CFG, $DB;
         // TODO: Expires each PHP session individually
-        // $sessions = get_records('mnet_session', 'mnethostid', $this->id);
         $sessions = $DB->get_records('mnet_session', array('mnethostid'=>$this->id));
 
         if (count($sessions) > 0 && file_exists($CFG->dirroot.'/auth/mnet/auth.php')) {
