@@ -291,7 +291,7 @@ class auth_plugin_mnet extends auth_plugin_base {
                 print_error('nolocaluser', 'mnet');
             }
             $remoteuser->mnethostid = $remotehost->id;
-            if (! insert_record('user', addslashes_object($remoteuser))) {
+            if (! $DB->insert_record('user', $remoteuser)) {
                 print_error('databaseerror', 'mnet');
             }
             $firsttime = true;

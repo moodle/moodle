@@ -224,7 +224,7 @@ class auth_plugin_db extends auth_plugin_base {
      */
     function sync_users($do_updates=false) {
 
-        global $CFG;
+        global $CFG, $DB;
         $pcfg = get_config('auth/db');
 
 /// list external users
@@ -238,14 +238,14 @@ class auth_plugin_db extends auth_plugin_base {
             // find obsolete users
             if (count($userlist)) {
                 $sql = "SELECT u.id, u.username, u.email, u.auth
-                        FROM {$CFG->prefix}user u
+                        FROM {user} u
                         WHERE u.auth='db' AND u.deleted=0 AND u.username NOT IN ($quoteduserlist)";
             } else {
                 $sql = "SELECT u.id, u.username, u.email, u.auth
-                        FROM {$CFG->prefix}user u
+                        FROM {user} u
                         WHERE u.auth='db' AND u.deleted=0";
             }
-            $remove_users = get_records_sql($sql);
+            $remove_users = $DB->get_records_sql($sql);
 
             if (!empty($remove_users)) {
                 print_string('auth_dbuserstoremove','auth', count($remove_users)); echo "\n";
@@ -261,7 +261,7 @@ class auth_plugin_db extends auth_plugin_base {
                         $updateuser = new object();
                         $updateuser->id   = $user->id;
                         $updateuser->auth = 'nologin';
-                        if (update_record('user', $updateuser)) {
+                        if ($DB->update_record('user', $updateuser)) {
                             echo "\t"; print_string('auth_dbsuspenduser', 'auth', array($user->username, $user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbsuspendusererror', 'auth', $user->username); echo "\n";
@@ -299,9 +299,9 @@ class auth_plugin_db extends auth_plugin_base {
             // have fields to update locally
             if (!empty($updatekeys)) {
                 $sql = 'SELECT u.id, u.username
-                        FROM ' . $CFG->prefix .'user u
+                        FROM {user} u
                         WHERE u.auth=\'db\' AND u.deleted=\'0\' AND u.username IN (' . $quoteduserlist . ')';
-                if ($update_users = get_records_sql($sql)) {
+                if ($update_users = $DB->get_records_sql($sql)) {
                     print "User entries to update: ". count($update_users). "\n";
 
                     foreach ($update_users as $user) {
@@ -323,10 +323,10 @@ class auth_plugin_db extends auth_plugin_base {
         // NOTE: this is very memory intensive
         // and generally inefficient
         $sql = 'SELECT u.id, u.username
-                FROM ' . $CFG->prefix .'user u
+                FROM {user} u
                 WHERE u.auth=\'db\' AND u.deleted=\'0\'';
 
-        $users = get_records_sql($sql);
+        $users = $DB->get_records_sql($sql);
 
         // simplify down to usernames
         $usernames = array();
@@ -359,12 +359,12 @@ class auth_plugin_db extends auth_plugin_base {
 
                 $user = addslashes_object($user);
                 // maybe the user has been deleted before
-                if ($old_user = get_record('user', 'username', $user->username, 'deleted', 1, 'mnethostid', $user->mnethostid)) {
+                if ($old_user = $DB->get_record('user', array('username'=>$user->username, 'deleted'=>1, 'mnethostid'=>$user->mnethostid))) {
                     $user->id = $old_user->id;
-                    set_field('user', 'deleted', 0, 'username', $user->username);
-                    echo "\t"; print_string('auth_dbreviveuser', 'auth', array(stripslashes($user->username), $user->id)); echo "\n";
+                    $DB->set_field('user', 'deleted', 0, array('username'=>$user->username));
+                    echo "\t"; print_string('auth_dbreviveuser', 'auth', array($user->username, $user->id)); echo "\n";
                 } elseif ($id = insert_record ('user',$user)) { // it is truly a new user
-                    echo "\t"; print_string('auth_dbinsertuser','auth',array(stripslashes($user->username), $id)); echo "\n";
+                    echo "\t"; print_string('auth_dbinsertuser','auth',array($user->username, $id)); echo "\n";
                     // if relevant, tag for password generation
                     if ($this->config->passtype === 'internal') {
                         set_user_preference('auth_forcepasswordchange', 1, $id);
@@ -386,7 +386,7 @@ class auth_plugin_db extends auth_plugin_base {
         $result = false;
 
         $textlib = textlib_get_instance();
-        $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->extencoding);
+        $extusername = $textlib->convert($username, 'utf-8', $this->config->extencoding);
 
         $authdb = $this->db_init();
 
@@ -499,8 +499,8 @@ class auth_plugin_db extends auth_plugin_base {
      * Modifies user in external database. It takes olduser (before changes) and newuser (after changes)
      * conpares information saved modified information to external db.
      *
-     * @param mixed $olduser     Userobject before modifications    (without system magic quotes)
-     * @param mixed $newuser     Userobject new modified userobject (without system magic quotes)
+     * @param mixed $olduser     Userobject before modifications
+     * @param mixed $newuser     Userobject new modified userobject
      * @return boolean result
      *
      */
@@ -536,7 +536,7 @@ class auth_plugin_db extends auth_plugin_base {
             if (!isset($newuser->$key)) {
                 continue;
             }
-            $nuvalue = stripslashes($newuser->$key);
+            $nuvalue = $newuser->$key;
             if ($nuvalue != $value) {
                 $update[] = $this->config->{"field_map_$key"}."='".$this->ext_addslashes($textlib->convert($nuvalue, 'utf-8', $this->config->extencoding))."'";
             }
