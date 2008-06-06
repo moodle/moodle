@@ -7,15 +7,15 @@
     $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
 
     if (!$chat = get_record('chat', 'id', $id)) {
-        print_error('Could not find that chat room!');
+        print_error('invalidid', 'chat');
     }
 
     if (!$course = get_record('course', 'id', $chat->course)) {
-        print_error('Could not find the course this belongs to!');
+        print_error('invalidcourseid');
     }
 
     if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
     
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);

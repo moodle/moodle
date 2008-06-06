@@ -10,16 +10,16 @@
     $last    = optional_param('last', 0, PARAM_INT);     // last time refresh or sending
     $newonly = optional_param('newonly', 0, PARAM_BOOL); // show only new messages
 
-    if (!$chat = get_record('chat', 'id', $id)) {
-        print_error('Could not find that chat room!');
+    if (!$chat = $DB->get_record('chat', array('id'=>$id))) {
+        print_error('invalidid', 'chat');
     }
 
-    if (!$course = get_record('course', 'id', $chat->course)) {
-        print_error('Could not find the course this belongs to!');
+    if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
+        print_error('invalidcourseid');
     }
 
     if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -30,7 +30,7 @@
      if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
         if ($groupid = groups_get_activity_group($cm)) {
             if (!$group = groups_get_group($groupid, false)) {
-                print_error("That group (id $groupid) doesn't exist!");
+                print_error('invalidgroupid');
             }
             $groupname = ': '.$group->name;
         } else {
@@ -45,7 +45,7 @@
     $strchats = get_string('modulenameplural', 'chat');
     $stridle  = get_String('idle', 'chat');
     if (!$chat_sid = chat_login_user($chat->id, 'basic', $groupid, $course)) {
-        print_error('Could not log in to chat room!!');
+        print_error('cantlogin', 'chat');
     }
 
     if (!$chatusers = chat_get_users($chat->id, $groupid, $cm->groupingid)) {
@@ -81,7 +81,7 @@
             $newmessage->message = $message;
             $newmessage->timestamp = time();
             if (!insert_record('chat_messages', $newmessage)) {
-                print_error('Could not insert a chat message!');
+                print_error('cantinsert', 'chat');
             }
 
             set_field('chat_users', 'lastmessageping', time(), 'sid', $chat_sid);
@@ -148,8 +148,8 @@
     }
 
     $groupselect = $groupid ? "AND (groupid='$groupid' OR groupid='0')" : "";
-    $messages = get_records_select("chat_messages",
-                        "chatid = '$chat->id' AND timestamp > $chatentered $lastsql $groupselect",
+    $messages = $DB->get_records_select("chat_messages",
+                        "chatid = '$chat->id' AND timestamp > $chatentered $lastsql $groupselect", null,
                         "timestamp DESC");
 
     if ($messages) {

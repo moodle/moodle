@@ -9,17 +9,17 @@
     $beep       = optional_param('beep', 0, PARAM_INT);  // beep target
 
     if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
-        print_error('Not logged in!');
+        print_error('notlogged', 'chat');
     }
 
     //Get the minimal course
     if (!$course = get_record('course','id',$chatuser->course,'','','','','id,theme,lang')) {
-        print_error('incorrect course id');
+        print_error('invalidcourseid');
     }
 
     //Get the user theme and enough info to be used in chat_format_message() which passes it along to
     if (!$USER = get_record('user','id',$chatuser->userid)) { // no optimisation here, it would break again in future!
-        print_error('User does not exist!');
+        print_error('invaliduser');
     }
     $USER->description = '';
 
@@ -29,7 +29,7 @@
     $courseid = $chatuser->course;
 
     if (!$cm = get_coursemodule_from_instance('chat', $chatuser->chatid, $courseid)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
 
     if ($beep) {
@@ -41,7 +41,7 @@
         $message->timestamp = time();
 
         if (!insert_record('chat_messages', $message)) {
-            print_error('Could not insert a chat message!');
+            print_error('cantinsert', 'chat');
         }
 
         $chatuser->lastmessageping = time();          // A beep is a ping  ;-)

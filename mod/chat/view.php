@@ -13,30 +13,30 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('chat', $id)) {
-            print_error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
 
-        if (! $course = get_record('course', 'id', $cm->course)) {
-            print_error('Course is misconfigured');
+        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
+            print_error('coursemisconf');
         }
 
         chat_update_chat_times($cm->instance);
 
-        if (! $chat = get_record('chat', 'id', $cm->instance)) {
-            print_error('Course module is incorrect');
+        if (! $chat = $DB->get_record('chat', array('id'=>$cm->instance))) {
+            print_error('invalidid', 'chat');
         }
 
     } else {
         chat_update_chat_times($c);
 
-        if (! $chat = get_record('chat', 'id', $c)) {
-            print_error('Course module is incorrect');
+        if (! $chat = $DB->get_record('chat', array('id'=>$c))) {
+            print_error('coursemisconf');
         }
-        if (! $course = get_record('course', 'id', $chat->course)) {
-            print_error('Course is misconfigured');
+        if (! $course = get_record('course', array('id'=>$chat->course))) {
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-            print_error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
     }
 

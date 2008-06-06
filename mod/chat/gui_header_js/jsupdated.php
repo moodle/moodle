@@ -31,19 +31,19 @@
     $chat_lastrow  = optional_param('chat_lastrow',   1, PARAM_INT);
     $chat_lastid   = optional_param('chat_lastid',    0, PARAM_INT);
 
-    if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
-        print_error('Not logged in!');
+    if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
+        print_error('notlogged', 'chat');
     }
 
     //Get the minimal course
-    if (!$course = get_record('course','id',$chatuser->course,'','','','','id,theme,lang')) {
-        print_error('incorrect course id');
+    if (!$course = $DB->get_record('course', array('id'=>$chatuser->course), 'id,theme,lang')) {
+        print_error('invalidcourseid');
     }
 
     //Get the user theme and enough info to be used in chat_format_message() which passes it along to
     // chat_format_message_manually() -- and only id and timezone are used.
-    if (!$USER = get_record('user','id',$chatuser->userid)) { // no optimisation here, it would break again in future!
-        print_error('User does not exist!');
+    if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) { // no optimisation here, it would break again in future!
+        print_error('invaliduser');
     }
     $USER->description = '';
 
@@ -133,8 +133,8 @@
             $newcriteria = "timestamp > $chat_lasttime";
         }
         
-        $messages = get_records_select("chat_messages",
-                                       "chatid = '$chatuser->chatid' AND $newcriteria $groupselect",
+        $messages = $DB->get_records_select("chat_messages",
+                                       "chatid = '$chatuser->chatid' AND $newcriteria $groupselect", null,
                                        "timestamp ASC");
         
         if ($messages) {
