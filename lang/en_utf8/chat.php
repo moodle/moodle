@@ -3,6 +3,8 @@
 
 
 $string['beep'] = 'beep';
+$string['cantlogin'] = 'Could not log in to chat room!!';
+$string['cantinsert'] = 'Could not insert a chat message!';
 $string['chat:chat'] = 'Talk in a chat';
 $string['chat:deletelog'] = 'Delete chat logs';
 $string['chat:readlog'] = 'Read chat logs';
@@ -32,6 +34,7 @@ $string['explainmethodnormal'] = 'These settings matter <strong>only</strong> if
 $string['generalconfig'] = 'General configuration';
 $string['helpchatting'] = 'Help with chatting';
 $string['idle'] = 'Idle';
+$string['invalidid'] = 'Could not find that chat room!';
 $string['messagebeepseveryone'] = '$a beeps everyone!';
 $string['messagebeepsyou'] = '$a has just beeped you!';
 $string['messageenter'] = '$a has just entered this chat';
@@ -48,6 +51,7 @@ $string['noguests'] = 'The chat is not open to guests';
 $string['nomessages'] = 'No messages yet';
 $string['normalkeepalive'] = 'KeepAlive';
 $string['normalstream'] = 'Stream';
+$string['notlogged'] = 'Not logged in!';
 $string['noscheduledsession'] = 'No scheduled session';
 $string['oldping'] = 'Disconnect timeout';
 $string['pastchats'] = 'Past chat sessions';
