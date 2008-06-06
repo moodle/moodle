@@ -35,6 +35,7 @@ $string['notables'] = 'No Tables!';
 $string['nopageclass'] = 'Imported $a but found no page classes';
 $string['noreports'] = 'No reports accessible';
 $string['nomodules'] = 'No modules found!!';
+$string['modulenotexist'] = '$a module doesn\'t exist';
 $string['phpvaroff'] = 'The PHP server variable \'$a[0]\' should be Off - $a[1]';
 $string['phpvaron'] = 'The PHP server variable \'$a[0]\' is not turned On - $a[1]';
 $string['prefixcannotbeempty'] = 'Table prefix \"$a[0]\" cannot be empty for your target DB ($a[1])'; // obsoleted 2.0
