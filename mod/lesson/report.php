@@ -17,25 +17,26 @@
     $nothingtodisplay = false;
 
     list($cm, $course, $lesson) = lesson_get_basics($id);
-    
+    $params = array("lessonid" => $lesson->id);
     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+        $params["groupid"] = $cm->groupingid;
         $sql = "SELECT DISTINCT u.*
-                FROM {$CFG->prefix}lesson_attempts a 
-                    INNER JOIN {$CFG->prefix}user u ON u.id = a.userid
-                    INNER JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id
-                    INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = {$cm->groupingid}
-                WHERE a.lessonid = '$lesson->id'
+                FROM {lesson_attempts} a 
+                    INNER JOIN {user} u ON u.id = a.userid
+                    INNER JOIN {groups_members} gm ON gm.userid = u.id
+                    INNER JOIN {groupings_groups} gg ON gm.groupid = :groupid
+                WHERE a.lessonid = :lessonid
                 ORDER BY u.lastname";
     } else {
         $sql = "SELECT u.*
-                FROM {$CFG->prefix}user u,
-                     {$CFG->prefix}lesson_attempts a
-                WHERE a.lessonid = '$lesson->id' and
+                FROM {user} u,
+                     {lesson_attempts} a
+                WHERE a.lessonid = :lessonid and
                       u.id = a.userid
                 ORDER BY u.lastname";
     }
     
-    if (! $students = get_records_sql($sql)) {
+    if (! $students = $DB->get_records_sql($sql, $params)) {
         $nothingtodisplay = true;
     }
     
@@ -63,26 +64,27 @@
                     $try -= $modifier;
                 
                 /// Clean up the timer table
-                    $timeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_timer 
-                                             WHERE userid = $userid AND lessonid = $lesson->id 
-                                             ORDER BY starttime", $try, 1);
+                $params = array ("userid" => $userid, "lessonid" => $lesson->id);
+                    $timeid = $DB->get_field_sql("SELECT id FROM {lesson_timer} 
+                                             WHERE userid = :userid AND lessonid = :lessonid 
+                                             ORDER BY starttime", $params, $try, 1);
                 
-                    delete_records('lesson_timer', 'id', $timeid);
+                    $DB->delete_records('lesson_timer', array('id' => $timeid));
             
                 /// Remove the grade from the grades and high_scores tables
-                    $gradeid = get_field_sql("SELECT id FROM {$CFG->prefix}lesson_grades 
-                                              WHERE userid = $userid AND lessonid = $lesson->id 
-                                              ORDER BY completed", $try, 1);
+                    $gradeid = $DB->get_field_sql("SELECT id FROM {lesson_grades} 
+                                              WHERE userid = :userid AND lessonid = :lessonid 
+                                              ORDER BY completed", $params, $try, 1);
                 
-                    delete_records('lesson_grades', 'id', $gradeid);
-                    delete_records('lesson_high_scores', 'gradeid', $gradeid, 'lessonid', $lesson->id, 'userid', $userid);
+                    $DB->delete_records('lesson_grades', array('id' => $gradeid));
+                    $DB->delete_records('lesson_high_scores', array('gradeid' => $gradeid, 'lessonid' => $lesson->id, 'userid' => $userid));
             
                 /// Remove attempts and update the retry number
-                    delete_records('lesson_attempts', 'userid', $userid, 'lessonid', $lesson->id, 'retry', $try);
+                    $DB->delete_records('lesson_attempts', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
                     execute_sql("UPDATE {$CFG->prefix}lesson_attempts SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
             
                 /// Remove seen branches and update the retry number    
-                    delete_records('lesson_branch', 'userid', $userid, 'lessonid', $lesson->id, 'retry', $try);
+                    $DB->delete_records('lesson_branch', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
                     execute_sql("UPDATE {$CFG->prefix}lesson_branch SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
 
                 /// update central gradebook
@@ -95,15 +97,15 @@
         }
     }
 
-    if (! $attempts = get_records('lesson_attempts', 'lessonid', $lesson->id, 'timeseen')) {
+    if (! $attempts = $DB->get_records('lesson_attempts', array('lessonid' => $lesson->id), 'timeseen')) {
         $nothingtodisplay = true;
     }
 
-    if (! $grades = get_records('lesson_grades', 'lessonid', $lesson->id, 'completed')) {
+    if (! $grades = $DB->get_records('lesson_grades', array('lessonid' => $lesson->id), 'completed')) {
         $grades = array();
     }
     
-    if (! $times = get_records('lesson_timer', 'lessonid', $lesson->id, 'starttime')) {
+    if (! $times = $DB->get_records('lesson_timer', array('lessonid' => $lesson->id), 'starttime')) {
         $times = array();
     }
 
@@ -343,10 +345,10 @@
         $userid = optional_param('userid', NULL, PARAM_INT); // if empty, then will display the general detailed view
         $try    = optional_param('try', NULL, PARAM_INT);
 
-        if (! $lessonpages = get_records("lesson_pages", "lessonid", $lesson->id)) {
+        if (! $lessonpages = $DB->get_records("lesson_pages", array("lessonid" => $lesson->id))) {
             print_error("Could not find Lesson Pages");
         }
-        if (! $pageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
+        if (! $pageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0))) {
             print_error("Could not find first page");
         }
 
@@ -355,8 +357,8 @@
         $pagestats = array();
         while ($pageid != 0) { // EOL
             $page = $lessonpages[$pageid];
-
-            if ($allanswers = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid = $page->id", "timeseen")) {
+            $params = array ("lessonid" => $lesson->id, "pageid" => $page->id);
+            if ($allanswers = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND pageid = :pageid", $params, "timeseen")) {
                 // get them ready for processing
                 $orderedanswers = array();
                 foreach ($allanswers as $singleanswer) {
@@ -522,9 +524,10 @@
                 $useranswer = NULL;
                 $answerdata->score = NULL;
                 $answerdata->response = NULL;
-            } elseif ($useranswers = get_records_select("lesson_attempts",
-                                                         "lessonid = $lesson->id AND userid = $userid AND retry = $try AND pageid = $page->id", "timeseen")) {
-                                                         // get the user's answer for this page
+            } elseif ($useranswers = $DB->get_records_select("lesson_attempts",
+                                                         "lessonid = :lessonid AND userid = :userid AND retry = :retry AND pageid = :pageid", 
+                                                         array("lessonid" => $lesson->id, "userid" => $userid, "retry" => $try, "pageid" => $page->id), "timeseen")) {
+                // get the user's answer for this page
                 // need to find the right one
                 $i = 0;
                 foreach ($useranswers as $userattempt) {
@@ -543,7 +546,7 @@
 
             }
             // build up the answer data
-            if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
+            if ($answers = $DB->get_records("lesson_answers", array("pageid" => $page->id), "id")) {
                 $i = 0;
                 $n = 0;
                 // go through each answer and display it properly with statistics, highlight if correct answer,
@@ -835,7 +838,8 @@
             $table->align = array("right", "left");
             $table->class = 'generaltable userinfotable';
 
-            if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $userid", "completed", "*", $try, 1)) {
+            $params = array ("lessonid" => $lesson->id, "userid" => $userid);
+            if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed", "*", $try, 1)) {
                 $grade = -1;
                 $completed = -1;
             } else {
@@ -843,7 +847,7 @@
                 $completed = $grade->completed;
                 $grade = round($grade->grade, 2);
             }
-            if (!$times = get_records_select("lesson_timer", "lessonid = $lesson->id and userid = $userid", "starttime", "*", $try, 1)) {
+            if (!$times = $DB->get_records_select("lesson_timer", "lessonid = :lessonid and userid = :userid", $params, "starttime", "*", $try, 1)) {
                 $timetotake = -1;
             } else {
                 $timetotake = current($times);

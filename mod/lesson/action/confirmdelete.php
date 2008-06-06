@@ -9,16 +9,17 @@
     confirm_sesskey();
 
     $pageid = required_param('pageid', PARAM_INT);
-    if (!$thispage = get_record("lesson_pages", "id", $pageid)) {
+    if (!$thispage = $DB->get_record("lesson_pages", array ("id" => $pageid))) {
         print_error("Confirm delete: the page record not found");
     }
     print_heading(get_string("deletingpage", "lesson", format_string($thispage->title)));
     // print the jumps to this page
-    if ($answers = get_records_select("lesson_answers", "lessonid = $lesson->id AND jumpto = $pageid + 1")) {
+    $params = array("lessonid" => $lesson->id, "pageid" => $pageid);
+    if ($answers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid AND jumpto = :pageid + 1", $params)) {
         print_heading(get_string("thefollowingpagesjumptothispage", "lesson"));
         echo "<p align=\"center\">\n";
         foreach ($answers as $answer) {
-            if (!$title = get_field("lesson_pages", "title", "id", $answer->pageid)) {
+            if (!$title = $DB->get_field("lesson_pages", "title", array("id" => $answer->pageid))) {
                 print_error("Confirm delete: page title not found");
             }
             echo $title."<br />\n";

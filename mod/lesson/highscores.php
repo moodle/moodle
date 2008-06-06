@@ -53,29 +53,31 @@
                 if ($mode == 'add') {
                     break;
                 }
-                
-                if (!$grades = get_records_select('lesson_grades', "lessonid = $lesson->id", 'completed')) {
+                $params = array ("lessonid" => $lesson->id);
+                if (!$grades = $DB->get_records_select('lesson_grades', "lessonid = :lessonid", $params, 'completed')) {
                     print_error('Error: could not find grades');
                 }
-                if (!$newgrade = get_record_sql("SELECT * 
-                                                   FROM {$CFG->prefix}lesson_grades 
-                                                  WHERE lessonid = $lesson->id
-                                                    AND userid = $USER->id 
-                                               ORDER BY completed DESC", true)) {
+                $paremeters = array ("lessonid" => $lesson->id, "userid" => $USER->id);
+                if (!$newgrade = $DB->get_record_sql("SELECT * 
+                                                   FROM {lesson_grades} 
+                                                  WHERE lessonid = :lessonid
+                                                    AND userid = :userid 
+                                               ORDER BY completed DESC", $paremeters, true)) {
                     print_error('Error: could not find newest grade');
                 }
                 
                 // Check for multiple submissions
-                if (record_exists('lesson_high_scores', 'gradeid', $newgrade->id)) {
+                if ($DB->record_exists('lesson_high_scores', array('gradeid' => $newgrade->id))) {
                     print_error('Only one posting per grade');
                 }
                 
                 // Find out if we need to delete any records
-                if ($highscores = get_records_sql("SELECT h.*, g.grade 
-                                                     FROM {$CFG->prefix}lesson_grades g, {$CFG->prefix}lesson_high_scores h 
+                $params = array ("lessonid" => $lesson->id);
+                if ($highscores = $DB->get_records_sql("SELECT h.*, g.grade 
+                                                     FROM {lesson_grades} g, {lesson_high_scores} h 
                                                     WHERE h.gradeid = g.id
-                                                    AND h.lessonid = $lesson->id
-                                                    ORDER BY g.grade DESC")) {
+                                                    AND h.lessonid = :lessonid
+                                                    ORDER BY g.grade DESC", $params)) {
                     // Only count unique scores in our total for max high scores
                     $uniquescores = array();
                     foreach ($highscores as $highscore) {
@@ -102,7 +104,7 @@
                             // Now, delete all high scores with the low score
                             foreach ($highscores as $highscore) {
                                 if ($highscore->grade == $lowscore) {
-                                    delete_records('lesson_high_scores', 'id', $highscore->id);
+                                    $DB->delete_records('lesson_high_scores', array('id' => $highscore->id));
                                 }
                             }
                         }
@@ -115,7 +117,7 @@
                 $newhighscore->gradeid = $newgrade->id;
                 $newhighscore->nickname = $name;
 
-                if (!insert_record('lesson_high_scores', $newhighscore)) {
+                if (!$DB->insert_record('lesson_high_scores', $newhighscore)) {
                     print_error("Insert of new high score Failed!");
                 }
                 
@@ -150,13 +152,14 @@
             print_simple_box_end();
             break;
         default:
-            if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
+            $params = array ("lessonid" => $lesson->id);
+            if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid", $params, "completed")) {
                 $grades = array();
             }
         
             print_heading(get_string("topscorestitle", "lesson", $lesson->maxhighscores), 'center', 4);
 
-            if (!$highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
+            if (!$highscores = $DB->get_records_select("lesson_high_scores", "lessonid = :lessonid", $params)) {
                 print_heading(get_string("nohighscores", "lesson"), 'center', 3);
             } else {
                 foreach ($highscores as $highscore) {

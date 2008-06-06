@@ -130,9 +130,10 @@ function lesson_delete_instance($id) {
  * @return boolean
  */
 function lesson_delete_course($course, $feedback=true) {
+    global $DB;
 
     $count = count_records('lesson_default', 'course', $course->id);
-    delete_records('lesson_default', 'course', $course->id);
+    $DB->delete_records('lesson_default', array('course' => $course->id));
 
     //Inform about changes performed if feedback is enabled
     if ($feedback) {
@@ -149,8 +150,10 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
-
-    if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND userid = $user->id",
+    global $DB;
+    
+    $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
+    if ($grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid AND userid = :userid", $params,
                 "grade DESC")) {
         foreach ($grades as $grade) {
             $max_grade = number_format($grade->grade * $lesson->grade / 100.0, 1);
@@ -173,8 +176,10 @@ function lesson_user_outline($course, $user, $mod, $lesson) {
 function lesson_user_complete($course, $user, $mod, $lesson) {
 /// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
-
-    if ($attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $user->id",
+    global $DB;
+    
+    $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
+    if ($attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid", $params,
                 "retry, timeseen")) {
         print_simple_box_start();
         $table->head = array (get_string("attempt", "lesson"),  get_string("numberofpagesviewed", "lesson"),
@@ -213,7 +218,8 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
         print_table($table);
         print_simple_box_end();
         // also print grade summary
-        if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND userid = $user->id",
+        $params = array ("lessonid" => $lesson->id, "userid" => $user->id);
+        if ($grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid AND userid = :userid", $params,
                     "grade DESC")) {
             foreach ($grades as $grade) {
                 $max_grade = number_format($grade->grade * $lesson->grade / 100.0, 1);
@@ -317,22 +323,39 @@ function lesson_cron () {
  * @return array array of grades, false if none
  */
 function lesson_get_user_grades($lesson, $userid=0) {
-    global $CFG;
+    global $CFG, $DB;
 
-    $user = $userid ? "AND u.id = $userid" : "";
-    $fuser = $userid ? "AND uu.id = $userid" : "";
+    $params = array();
+    
+    if (isset($userid)) {
+        $params["userid"] = $userid;
+        $user = "AND u.id = :userid";
+    }
+    else {
+        $user="";
+    }
+    
+    if (isset($fuser)) {
+        $params["userid"] = $userid;
+        $fuser = "AND uu.id = :userid";
+    }
+    else {
+        $fuser="";
+    }
 
+    $params["lessonid"] = $lesson->id;
+    
     if ($lesson->retake) {
         if ($lesson->usemaxgrade) {
             $sql = "SELECT u.id, u.id AS userid, MAX(g.grade) AS rawgrade
-                      FROM {$CFG->prefix}user u, {$CFG->prefix}lesson_grades g
-                     WHERE u.id = g.userid AND g.lessonid = $lesson->id
+                      FROM {user} u, {lesson_grades} g
+                     WHERE u.id = g.userid AND g.lessonid = :lessonid
                            $user
                   GROUP BY u.id";
         } else {
             $sql = "SELECT u.id, u.id AS userid, AVG(g.grade) AS rawgrade
-                      FROM {$CFG->prefix}user u, {$CFG->prefix}lesson_grades g
-                     WHERE u.id = g.userid AND g.lessonid = $lesson->id
+                      FROM {user} u, {lesson_grades} g
+                     WHERE u.id = g.userid AND g.lessonid = :lessonid
                            $user
                   GROUP BY u.id";
         }
@@ -340,19 +363,19 @@ function lesson_get_user_grades($lesson, $userid=0) {
     } else {
         // use only first attempts (with lowest id in lesson_grades table)
         $firstonly = "SELECT uu.id AS userid, MIN(gg.id) AS firstcompleted
-                        FROM {$CFG->prefix}user uu, {$CFG->prefix}lesson_grades gg
-                       WHERE uu.id = gg.userid AND gg.lessonid = $lesson->id
+                        FROM {user} uu, {lesson_grades} gg
+                       WHERE uu.id = gg.userid AND gg.lessonid = :lessonid
                              $fuser
                        GROUP BY uu.id";
 
         $sql = "SELECT u.id, u.id AS userid, g.grade AS rawgrade
-                  FROM {$CFG->prefix}user u, {$CFG->prefix}lesson_grades g, ($firstonly) f
-                 WHERE u.id = g.userid AND g.lessonid = $lesson->id
+                  FROM {user} u, {lesson_grades} g, ($firstonly) f
+                 WHERE u.id = g.userid AND g.lessonid = :lessonid
                        AND g.id = f.firstcompleted AND g.userid=f.userid
                        $user";
     }
 
-    return get_records_sql($sql);
+    return $DB->get_records_sql($sql, $params);
 }
 
 /**
@@ -362,7 +385,7 @@ function lesson_get_user_grades($lesson, $userid=0) {
  * @param int $userid specific user only, 0 mean all
  */
 function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
-    global $CFG;
+    global $CFG, $DB;
     if (!function_exists('grade_update')) { //workaround for buggy PHP versions
         require_once($CFG->libdir.'/gradelib.php');
     }
@@ -383,17 +406,17 @@ function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
 
     } else {
         $sql = "SELECT l.*, cm.idnumber as cmidnumber, l.course as courseid
-                  FROM {$CFG->prefix}lesson l, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                  FROM {lesson} l, {course_modules} cm, {modules} m
                  WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
-        if ($rs = get_recordset_sql($sql)) {
-            while ($lesson = rs_fetch_next_record($rs)) {
+        if ($rs = $DB->get_recordset_sql($sql)) {
+            foreach ($rs as $lesson) {
                 if ($lesson->grade != 0) {
                     lesson_update_grades($lesson, 0, false);
                 } else {
                     lesson_grade_item_update($lesson);
                 }
             }
-            rs_close($rs);
+            $rs->close();
         }
     }
 }
@@ -456,14 +479,15 @@ function lesson_get_participants($lessonid) {
 //for a given instance of lesson. Must include every user involved
 //in the instance, independient of his role (student, teacher, admin...)
 
-    global $CFG;
+    global $CFG, $DB;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.id, u.id
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}lesson_attempts a
-                                 WHERE a.lessonid = '$lessonid' and
-                                       u.id = a.userid");
+    $params = array ("lessonid" => $lessonid);
+    $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                 FROM {user} u,
+                                      {lesson_attempts} a
+                                 WHERE a.lessonid = :lessonid and
+                                       u.id = a.userid", $params);
 
     //Return students array (it contains an array of unique users)
     return ($students);
@@ -485,6 +509,8 @@ function lesson_get_post_actions() {
  * @return void
  **/
 function lesson_process_pre_save(&$lesson) {
+    global $DB;
+    
     $lesson->timemodified = time();
 
     if (empty($lesson->timed)) {
@@ -507,7 +533,7 @@ function lesson_process_pre_save(&$lesson) {
     $conditions->timespent = $lesson->timespent;
     $conditions->completed = $lesson->completed;
     $conditions->gradebetterthan = $lesson->gradebetterthan;
-    $lesson->conditions = addslashes(serialize($conditions));
+    $lesson->conditions = serialize($conditions);
     unset($lesson->timespent);
     unset($lesson->completed);
     unset($lesson->gradebetterthan);
@@ -525,10 +551,10 @@ function lesson_process_pre_save(&$lesson) {
         unset($default->timemodified);
         unset($default->available);
         unset($default->deadline);
-        if ($default->id = get_field('lesson_default', 'id', 'course', $default->course)) {
-            update_record('lesson_default', $default);
+        if ($default->id = $DB->get_field('lesson_default', 'id', array('course' => $default->course))) {
+            $DB->update_record('lesson_default', $default);
         } else {
-            insert_record('lesson_default', $default);
+            $DB->insert_record('lesson_default', $default);
         }
     }
     unset($lesson->lessondefault);
@@ -559,7 +585,9 @@ function lesson_process_post_save(&$lesson) {
     $event->instance    = $lesson->id;
     $event->eventtype   = 'open';
     $event->timestart   = $lesson->available;
+    
     $event->visible     = instance_is_visible('lesson', $lesson);
+   
     $event->timeduration = ($lesson->deadline - $lesson->available);
 
     if ($lesson->deadline and $lesson->available and $event->timeduration <= LESSON_MAX_EVENT_LENGTH) {
@@ -607,13 +635,13 @@ function lesson_reset_course_form_defaults($course) {
  * @param string optional type
  */
 function lesson_reset_gradebook($courseid, $type='') {
-    global $CFG;
+    global $CFG, $DB;
 
     $sql = "SELECT l.*, cm.idnumber as cmidnumber, l.course as courseid
-              FROM {$CFG->prefix}lesson l, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-             WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id AND l.course=$courseid";
-
-    if ($lessons = get_records_sql($sql)) {
+              FROM {lesson} l, {course_modules} cm, {modules} m
+             WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id AND l.course=:course";
+    $params = array ("course" => $courseid);
+    if ($lessons = $DB->get_records_sql($sql,$params)) {
         foreach ($lessons as $lesson) {
             lesson_grade_item_update($lesson, 'reset');
         }
@@ -627,21 +655,21 @@ function lesson_reset_gradebook($courseid, $type='') {
  * @return array status array
  */
 function lesson_reset_userdata($data) {
-    global $CFG;
+    global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', 'lesson');
     $status = array();
 
     if (!empty($data->reset_lesson)) {
         $lessonssql = "SELECT l.id
-                         FROM {$CFG->prefix}lesson l
-                        WHERE l.course={$data->courseid}";
+                         FROM {lesson} l
+                        WHERE l.course=:course";
 
-
-        delete_records_select('lesson_timer', "lessonid IN ($lessonssql)");
-        delete_records_select('lesson_high_scores', "lessonid IN ($lessonssql)");
-        delete_records_select('lesson_grades', "lessonid IN ($lessonssql)");
-        delete_records_select('lesson_attempts', "lessonid IN ($lessonssql)");
+        $params = array ("course" => $data->courseid);
+        $DB->delete_records_select('lesson_timer', "lessonid IN ($lessonssql)", $params);
+        $DB->delete_records_select('lesson_high_scores', "lessonid IN ($lessonssql)", $params);
+        $DB->delete_records_select('lesson_grades', "lessonid IN ($lessonssql)", $params);
+        $DB->delete_records_select('lesson_attempts', "lessonid IN ($lessonssql)", $params);
 
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {

@@ -15,11 +15,11 @@
     $timenow = time();
     
     if ($pageid == 0) {
-        if (!$page = get_record("lesson_pages", "prevpageid", 0, "lessonid", $lesson->id)) {
+        if (!$page = $DB->get_record("lesson_pages", array("prevpageid" => 0, "lessonid" => $lesson->id))) {
             print_error("Error: Add cluster: page record not found");
         }
     } else {
-        if (!$page = get_record("lesson_pages", "id", $pageid)) {
+        if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
             print_error("Error: Add cluster: page record not found");
         }
     }
@@ -35,12 +35,12 @@
     $newpage->timecreated = $timenow;
     $newpage->title = get_string("clustertitle", "lesson");
     $newpage->contents = get_string("clustertitle", "lesson");
-    if (!$newpageid = insert_record("lesson_pages", $newpage)) {
+    if (!$newpageid = $DB->insert_record("lesson_pages", $newpage)) {
         print_error("Insert page: new page not inserted");
     }
     // update the linked list...
     if ($pageid != 0) {
-        if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $pageid)) {
+        if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
             print_error("Add cluster: unable to update link");
         }
     }
@@ -50,7 +50,7 @@
     }        
     if ($page->nextpageid) {
         // the new page is not the last page
-        if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->nextpageid)) {
+        if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
             print_error("Insert page: unable to update previous link");
         }
     }
@@ -60,7 +60,7 @@
     $newanswer->pageid = $newpageid;
     $newanswer->timecreated = $timenow;
     $newanswer->jumpto = LESSON_CLUSTERJUMP;
-    if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
+    if(!$newanswerid = $DB->insert_record("lesson_answers", $newanswer)) {
         print_error("Add cluster: answer record not inserted");
     }
     lesson_set_message(get_string('addedcluster', 'lesson'), 'notifysuccess');

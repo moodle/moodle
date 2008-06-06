@@ -26,27 +26,32 @@
     switch ($mode) {
         case 'display':  // Default view - get the necessary data
             // Get lesson pages that are essay
-            if ($pages = get_records_select('lesson_pages', "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) {
+            $params = array ("lessonid" => $lesson->id, "qtype" => LESSON_ESSAY);
+            if ($pages = $DB->get_records_select('lesson_pages', "lessonid = :lessonid AND qtype = :qtype", $params)) {
                 // Get only the attempts that are in response to essay questions
-                if ($essayattempts = get_records_select('lesson_attempts', 'pageid IN('.implode(',', array_keys($pages)).')')) {
+                list($usql, $parameters) = $DB->get_in_or_equal(array_keys($pages));
+                if ($essayattempts = $DB->get_records_select('lesson_attempts', 'pageid $usql', $parameters)) {
                     // Get all the users who have taken this lesson, order by their last name
+                    $paras = array();
+                    $paras["lessonid"] = $lesson->id;
                     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
+                        $paras["groupinid"] = $cm->groupingid;
                         $sql = "SELECT DISTINCT u.*
-                                FROM {$CFG->prefix}lesson_attempts a 
-                                    INNER JOIN {$CFG->prefix}user u ON u.id = a.userid
-                                    INNER JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id
-                                    INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = {$cm->groupingid}
-                                WHERE a.lessonid = '$lesson->id'
+                                FROM {lesson_attempts} a 
+                                    INNER JOIN {user} u ON u.id = a.userid
+                                    INNER JOIN {groups_members} gm ON gm.userid = u.id
+                                    INNER JOIN {groupings_groups} gg ON gm.groupid = :groupinid
+                                WHERE a.lessonid = :lessonid
                                 ORDER BY u.lastname";
                     } else {
                         $sql = "SELECT u.*
-                                FROM {$CFG->prefix}user u,
-                                     {$CFG->prefix}lesson_attempts a
-                                WHERE a.lessonid = '$lesson->id' and
+                                FROM {user} u,
+                                     {lesson_attempts} a
+                                WHERE a.lessonid = :lessonid and
                                       u.id = a.userid
                                 ORDER BY u.lastname";
                     }
-                    if (!$users = get_records_sql($sql)) {
+                    if (!$users = $DB->get_records_sql($sql, $paras)) {
                         $mode = 'none'; // not displaying anything
                         lesson_set_message(get_string('noonehasanswered', 'lesson'));
                     }
@@ -64,16 +69,16 @@
             
             $attemptid = required_param('attemptid', PARAM_INT);
 
-            if (!$attempt = get_record('lesson_attempts', 'id', $attemptid)) {
+            if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid))) {
                 print_error('Error: could not find attempt');
             }
-            if (!$page = get_record('lesson_pages', 'id', $attempt->pageid)) {
+            if (!$page = $DB->get_record('lesson_pages', array('id' => $attempt->pageid))) {
                 print_error('Error: could not find lesson page');
             }
-            if (!$user = get_record('user', 'id', $attempt->userid)) {
+            if (!$user = $DB->get_record('user', array('id' => $attempt->userid))) {
                 print_error('Error: could not find users');
             }
-            if (!$answer = get_record('lesson_answers', 'lessonid', $lesson->id, 'pageid', $page->id)) {
+            if (!$answer = $DB->get_record('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $page->id))) {
                 print_error('Error: could not find answer');
             }
             break;
@@ -85,10 +90,11 @@
                 
                 $attemptid = required_param('attemptid', PARAM_INT);
                 
-                if (!$attempt = get_record('lesson_attempts', 'id', $attemptid)) {
+                if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid))) {
                     print_error('Error: could not find essay');
                 }
-                if (!$grades = get_records_select('lesson_grades', "lessonid = $lesson->id and userid = $attempt->userid", 'completed', '*', $attempt->retry, 1)) {
+                $params = array ("lessonid" => $lesson->id, "userid" => $attempt->userid);
+                if (!$grades = $DB->get_records_select('lesson_grades', "lessonid = :lessonid and userid = :userid", $params, 'completed', '*', $attempt->retry, 1)) {
                     print_error('Error: could not find grades');
                 }
 
@@ -107,7 +113,7 @@
 
                 $attempt->useranswer = addslashes(serialize($essayinfo));
 
-                if (!update_record('lesson_attempts', $attempt)) {
+                if (!$DB->update_record('lesson_attempts', $attempt)) {
                     print_error('Could not update essay score');
                 }
                 
@@ -118,7 +124,7 @@
                 // Set and update
                 $updategrade->id = $grade->id;
                 $updategrade->grade = $gradeinfo->grade;
-                if(update_record('lesson_grades', $updategrade)) {
+                if($DB->update_record('lesson_grades', $updategrade)) {
                     // Log it
                     add_to_log($course->id, 'lesson', 'update grade', "essay.php?id=$cm->id", $lesson->name, $cm->id);
                     
@@ -140,34 +146,41 @@
             
             // Get our users (could be singular)
             if ($userid = optional_param('userid', 0, PARAM_INT)) {
-                $queryadd = " AND userid = $userid";
-                if (! $users = get_records('user', 'id', $userid)) {
+                $queryadd = " AND userid = :userid";
+                if (! $users = $DB->get_records('user', array('id' => $userid))) {
                     print_error('Error: could not find users');
                 }
             } else {
                 $queryadd = '';
-                if (!$users = get_records_sql("SELECT u.*
-                                         FROM {$CFG->prefix}user u,
-                                              {$CFG->prefix}lesson_attempts a
-                                         WHERE a.lessonid = '$lesson->id' and
+                $params = array ("lessonid" => $lesson->id);
+                if (!$users = $DB->get_records_sql("SELECT u.*
+                                         FROM {user} u,
+                                              {lesson_attempts} a
+                                         WHERE a.lessonid = :lessonid and
                                                u.id = a.userid
-                                         ORDER BY u.lastname")) {
+                                         ORDER BY u.lastname", $params)) {
                     print_error('Error: could not find users');
                 }
             }
 
             // Get lesson pages that are essay
-            if (!$pages = get_records_select('lesson_pages', "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) {
+            $params = array ("lessonid" => $lesson->id, "qtype" => LESSON_ESSAY);
+            if (!$pages = $DB->get_records_select('lesson_pages', "lessonid = :lessonid AND qtype = :qtype", $params)) {
                 print_error('Error: could not find lesson pages');
             }
 
             // Get only the attempts that are in response to essay questions
-            $pageids = implode(',', array_keys($pages)); // all the pageids in comma seperated list
-            if (!$attempts = get_records_select('lesson_attempts', "pageid IN($pageids)".$queryadd)) {
+            list($usql, $params) = $DB->get_in_or_equal(array_keys($pages));
+            if (isset($queryadd) && $queryadd!='') {
+                $params["userid"] = $userid;
+            }
+            if (!$attempts = $DB->get_records_select('lesson_attempts', "pageid $usql".$queryadd, $params)) {
                 error ('No one has answered essay questions yet...');
             }
             // Get the answers
-            if (!$answers = get_records_select('lesson_answers', "lessonid = $lesson->id AND pageid IN($pageids)", '', 'pageid, score')) {
+            list($answerUsql, $parameters) = $DB->get_in_or_equal(array_keys($pages));
+            $parameters["lessonid"] = $lesson->id;
+            if (!$answers = $DB->get_records_select('lesson_answers', "lessonid = :lessonid AND pageid $answerUsql", $parameters, '', 'pageid, score')) {
                 error ('Could not find answer records.');
             }
             $options = new stdClass;
@@ -180,7 +193,8 @@
                     $a = new stdClass;
                     
                     // Set the grade
-                    $grades = get_records_select('lesson_grades', "lessonid = $lesson->id and userid = $attempt->userid", 'completed', '*', $attempt->retry, 1);
+                    $params = array ("lessonid" => $lesson->id, "userid" => $attempt->userid);
+                    $grades = $DB->get_records_select('lesson_grades', "lessonid = :lessonid and userid = :userid", $params, 'completed', '*', $attempt->retry, 1);
                     $grade  = current($grades);
                     $a->newgrade = $grade->grade;
                     
@@ -210,7 +224,7 @@
                     if(email_to_user($users[$attempt->userid], $USER, $subject, $plaintxt, $message)) {
                         $essayinfo->sent = 1;
                         $attempt->useranswer = addslashes(serialize($essayinfo));
-                        update_record('lesson_attempts', $attempt);
+                        $DB->update_record('lesson_attempts', $attempt);
                         // Log it
                         add_to_log($course->id, 'lesson', 'update email essay grade', "essay.php?id=$cm->id", format_string($pages[$attempt->pageid]->title,true).': '.fullname($users[$attempt->userid]), $cm->id);
                     } else {

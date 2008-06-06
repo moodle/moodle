@@ -21,7 +21,8 @@
     // get time information for this user
     $timer = new stdClass;
     if (!has_capability('mod/lesson:manage', $context)) {
-        if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
+        $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
+        if (!$timer = $DB->get_records_select('lesson_timer', "lessonid = :lessonid AND userid = :userid", $params, 'starttime')) {
             print_error('Error: could not find records');
         } else {
             $timer = array_pop($timer); // this will get the latest start time record
@@ -42,14 +43,14 @@
         }
         
         $timer->lessontime = time();
-        if (!update_record("lesson_timer", $timer)) {
+        if (!$DB->update_record("lesson_timer", $timer)) {
             print_error("Error: could not update lesson_timer table");
         }
     }
 
     // record answer (if necessary) and show response (if none say if answer is correct or not)
     $pageid = required_param('pageid', PARAM_INT);
-    if (!$page = get_record("lesson_pages", "id", $pageid)) {
+    if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
         print_error("Continue: Page record not found");
     }
     // set up some defaults
@@ -68,7 +69,7 @@
             }
             $useranswer = clean_param($useranswer, PARAM_RAW);
         
-            if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
+            if (!$answers = $DB->get_records("lesson_answers", array("pageid" => $pageid), "id")) {
                 print_error("Continue: No answers found");
             }
             $correctanswer = false;
@@ -93,7 +94,7 @@
             }            
             $useranswer = s(stripslashes(clean_param($useranswer, PARAM_RAW)));
             $userresponse = addslashes($useranswer);
-            if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
+            if (!$answers = $DB->get_records("lesson_answers", array("pageid" => $pageid), "id")) {
                 print_error("Continue: No answers found");
             }
             $i=0;
@@ -196,7 +197,7 @@
                 break;
             }
             $answerid = required_param('answerid', PARAM_INT); 
-            if (!$answer = get_record("lesson_answers", "id", $answerid)) {
+            if (!$answer = $DB->get_record("lesson_answers", array("id" => $answerid))) {
                 print_error("Continue: answer record not found");
             } 
             if (lesson_iscorrect($pageid, $answer->jumpto)) {
@@ -229,7 +230,7 @@
                 // get what the user answered
                 $userresponse = implode(",", $useranswers);
                 // get the answers in a set order, the id order
-                if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
+                if (!$answers = $DB->get_records("lesson_answers", array("pageid" => $pageid), "id")) {
                     print_error("Continue: No answers found");
                 }
                 $ncorrect = 0;
@@ -344,7 +345,7 @@
                     break;
                 }
                 $answerid = required_param('answerid', PARAM_INT); 
-                if (!$answer = get_record("lesson_answers", "id", $answerid)) {
+                if (!$answer = $DB->get_record("lesson_answers", array("id" => $answerid))) {
                     print_error("Continue: answer record not found");
                 }
                 if (lesson_iscorrect($pageid, $answer->jumpto)) {
@@ -373,7 +374,7 @@
                 break;
             }
 
-            if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
+            if (!$answers = $DB->get_records("lesson_answers", array("pageid" => $pageid), "id")) {
                 print_error("Continue: No answers found");
             }
 
@@ -454,7 +455,7 @@
                 break;
             }
             $studentanswer = $userresponse = $useranswer;
-            if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
+            if (!$answers = $DB->get_records("lesson_answers", array("pageid" => $pageid), "id")) {
                 print_error("Continue: No answers found");
             }
             foreach ($answers as $answer) {
@@ -496,8 +497,9 @@
             } else {
                 $branchflag = 0;
             }
-            if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id AND userid = $USER->id",
-                        "grade DESC")) {
+            $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
+            if ($grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid AND userid = :userid",
+                         $params, "grade DESC")) {
                 $retries = count($grades);
             } else {
                 $retries = 0;
@@ -510,7 +512,7 @@
             $branch->flag = $branchflag;
             $branch->timeseen = time();
         
-            if (!insert_record("lesson_branch", $branch)) {
+            if (!$DB->insert_record("lesson_branch", $branch)) {
                 print_error("Error: could not insert row into lesson_branch table");
             }
 
@@ -570,7 +572,7 @@
             if (isset($USER->modattempts[$lesson->id])) {
                 $attempt->retry = $nretakes - 1; // they are going through on review, $nretakes will be too high
             }
-            if (!$newattemptid = insert_record("lesson_attempts", $attempt)) {
+            if (!$newattemptid = $DB->insert_record("lesson_attempts", $attempt)) {
                 print_error("Continue: attempt not inserted");
             }
             // "number of attempts remaining" message if $lesson->maxattempts > 1
@@ -599,7 +601,7 @@
             if ($lesson->nextpagedefault) {
                 // in Flash Card mode...
                 // ... first get the page ids (lessonid the 5th param is needed to make get_records play)
-                $allpages = get_records("lesson_pages", "lessonid", $lesson->id, "id", "id,lessonid,qtype");
+                $allpages = $DB->get_records("lesson_pages", array("lessonid" => $lesson->id), "id", "id,lessonid,qtype");
                 shuffle ($allpages);
                 $found = false;
                 if ($lesson->nextpagedefault == LESSON_UNSEENPAGE) {
@@ -669,7 +671,7 @@
         
         if ($response) {
             //optionally display question page title
-            //if ($title = get_field("lesson_pages", "title", "id", $pageid)) {
+            //if ($title = $DB->get_field("lesson_pages", "title", array("id" => $pageid))) {
             //    print_heading($title);
             //}
             if ($lesson->review and !$correctanswer and !$isessayquestion) {
@@ -705,7 +707,8 @@
             $newpageid = LESSON_EOL;
         } else {
             $nretakes--; // make sure we are looking at the right try.
-            $attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $nretakes", "timeseen", "id, pageid");
+            $params = array ("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $nretakes);
+            $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params, "timeseen", "id, pageid");
             $found = false;
             $temppageid = 0;
             foreach($attempts as $attempt) {
@@ -720,13 +723,13 @@
             }
         }
     } elseif ($newpageid != LESSON_CLUSTERJUMP && $pageid != 0 && $newpageid > 0) {  // going to check to see if the page that the user is going to view next, is a cluster page.  If so, dont display, go into the cluster.  The $newpageid > 0 is used to filter out all of the negative code jumps.
-        if (!$page = get_record("lesson_pages", "id", $newpageid)) {
+        if (!$page = $DB->get_record("lesson_pages", array("id" => $newpageid))) {
             print_error("Error: could not find page");
         }
         if ($page->qtype == LESSON_CLUSTER) {
             $newpageid = lesson_cluster_jump($lesson->id, $USER->id, $page->id);
         } elseif ($page->qtype == LESSON_ENDOFCLUSTER) {
-            $jump = get_field("lesson_answers", "jumpto", "pageid", $page->id, "lessonid", $lesson->id);
+            $jump = $DB->get_field("lesson_answers", "jumpto", array("pageid" => $page->id, "lessonid" => $lesson->id));
             if ($jump == LESSON_NEXTPAGE) {
                 if ($page->nextpageid == 0) {
                     $newpageid = LESSON_EOL;

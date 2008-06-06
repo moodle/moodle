@@ -22,7 +22,7 @@
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
     if (!isset($course)) {
-        $course = get_record('course', 'id', $lesson->course);
+        $course = $DB->get_record('course', array('id' => $lesson->course));
     }
 
     $tabs = $row = $inactive = $activated = array();

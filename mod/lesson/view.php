@@ -85,7 +85,7 @@
             }
         
         } else if ($lesson->dependency) { // check for dependencies
-            if ($dependentlesson = get_record('lesson', 'id', $lesson->dependency)) {
+            if ($dependentlesson = $DB->get_record('lesson', array('id' => $lesson->dependency))) {
                 // lesson exists, so we can proceed            
                 $conditions = unserialize($lesson->conditions);
                 // assume false for all
@@ -94,7 +94,8 @@
                 $gradebetterthan = false;
                 // check for the timespent condition
                 if ($conditions->timespent) {
-                    if ($attempttimes = get_records_select('lesson_timer', "userid = $USER->id AND lessonid = $dependentlesson->id")) {
+                    $params = array ("userid" => $USER->id, "lessonid" => $dependentlesson->id);
+                    if ($attempttimes = $DB->get_records_select('lesson_timer', "userid = :userid AND lessonid = :lessonid", $params)) {
                         // go through all the times and test to see if any of them satisfy the condition
                         foreach($attempttimes as $attempttime) {
                             $duration = $attempttime->lessontime - $attempttime->starttime;
@@ -109,7 +110,8 @@
 
                 // check for the gradebetterthan condition
                 if($conditions->gradebetterthan) {
-                    if ($studentgrades = get_records_select('lesson_grades', "userid = $USER->id AND lessonid = $dependentlesson->id")) {
+                    $params = array ("userid" => $USER->id, "lessonid" => $dependentlesson->id);
+                    if ($studentgrades = $DB->get_records_select('lesson_grades', "userid = :userid AND lessonid = :lessonid", $params)) {
                         // go through all the grades and test to see if any of them satisfy the condition
                         foreach($studentgrades as $studentgrade) {
                             if ($studentgrade->grade >= $conditions->gradebetterthan) {
@@ -174,7 +176,7 @@
    $attemptflag = false;
     if (empty($pageid)) {
         // make sure there are pages to view
-        if (!get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
+        if (!$DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
             if (!has_capability('mod/lesson:manage', $context)) {
                 lesson_set_message(get_string('lessonnotready', 'lesson', $course->teacher)); // a nice message to the student
             } else {
@@ -189,7 +191,8 @@
         add_to_log($course->id, 'lesson', 'start', 'view.php?id='. $cm->id, $lesson->id, $cm->id);
         
         // if no pageid given see if the lesson has been started
-        if ($grades = get_records_select('lesson_grades', 'lessonid = '. $lesson->id .' AND userid = '. $USER->id,
+        $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
+        if ($grades = $DB->get_records_select('lesson_grades', 'lessonid = :lessonid AND userid = :userid', $params,
                     'grade DESC')) {
             $retries = count($grades);
         } else {
@@ -204,18 +207,18 @@
         }
         
         // if there are any questions have been answered correctly in this attempt
-        if ($attempts = get_records_select('lesson_attempts', 
-                    "lessonid = $lesson->id AND userid = $USER->id AND retry = $retries AND 
-                    correct = 1", 'timeseen DESC')) {
+        $params = array ("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries);
+        if ($attempts = $DB->get_records_select('lesson_attempts', 
+                    "lessonid = :lessonid AND userid = :userid AND retry = :retry AND 
+                    correct = 1", $params, 'timeseen DESC')) {
             
             foreach ($attempts as $attempt) {
-                $jumpto = get_field('lesson_answers', 'jumpto', 'id', $attempt->answerid);
+                $jumpto = $DB->get_field('lesson_answers', 'jumpto', array('id' => $attempt->answerid));
                 // convert the jumpto to a proper page id
                 if ($jumpto == 0) { // unlikely value!
                     $lastpageseen = $attempt->pageid;
                 } elseif ($jumpto == LESSON_NEXTPAGE) {
-                    if (!$lastpageseen = get_field('lesson_pages', 'nextpageid', 'id', 
-                                $attempt->pageid)) {
+                    if (!$lastpageseen = $DB->get_field('lesson_pages', 'nextpageid', array('id' => $attempt->pageid))) {
                         // no nextpage go to end of lesson
                         $lastpageseen = LESSON_EOL;
                     }
@@ -228,8 +231,9 @@
             $attempts = NULL;
         }
 
-        if ($branchtables = get_records_select('lesson_branch', 
-                            "lessonid = $lesson->id AND userid = $USER->id AND retry = $retries", 'timeseen DESC')) {
+        $params = array ("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $retries);
+        if ($branchtables = $DB->get_records_select('lesson_branch', 
+                            "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params, 'timeseen DESC')) {
             // in here, user has viewed a branch table
             $lastbranchtable = current($branchtables);
             if ($attempts != NULL) {
@@ -248,8 +252,8 @@
         //if ($lastpageseen != $firstpageid) {
         if (isset($lastpageseen) and count_records('lesson_attempts', 'lessonid', $lesson->id, 'userid', $USER->id, 'retry', $retries) > 0) {
             // get the first page
-            if (!$firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id,
-                        'prevpageid', 0)) {
+            if (!$firstpageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id,
+                        'prevpageid' => 0))) {
                 print_error('Navigation: first page not found');
             }
             lesson_print_header($cm, $course, $lesson);
@@ -308,7 +312,7 @@
             }
         }
         // start at the first page
-        if (!$pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
+        if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
                 print_error('Navigation: first page not found');
         }
         /// This is the code for starting a timed test
@@ -320,7 +324,7 @@
             $startlesson->starttime = time();
             $startlesson->lessontime = time();
             
-            if (!insert_record('lesson_timer', $startlesson)) {
+            if (!$DB->insert_record('lesson_timer', $startlesson)) {
                 print_error('Error: could not insert row into lesson_timer table');
             }
             if ($lesson->timed) {
@@ -332,16 +336,17 @@
         /// This is the code updates the lessontime for a timed test
         if ($startlastseen = optional_param('startlastseen', '', PARAM_ALPHA)) {  /// this deletes old records  not totally sure if this is necessary anymore
             if ($startlastseen == 'no') {
-                if ($grades = get_records_select('lesson_grades', "lessonid = $lesson->id AND userid = $USER->id",
+                $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
+                if ($grades = $DB->get_records_select('lesson_grades', "lessonid = :lessonid AND userid = :userid", $params,
                             'grade DESC')) {
                     $retries = count($grades);
                 } else {
                     $retries = 0;
                 }
-                if (!delete_records('lesson_attempts', 'userid', $USER->id, 'lessonid', $lesson->id, 'retry', $retries)) {
+                if (!$DB->delete_records('lesson_attempts', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries))) {
                     print_error('Error: could not delete old attempts');
                 }
-                if (!delete_records('lesson_branch', 'userid', $USER->id, 'lessonid', $lesson->id, 'retry', $retries)) {
+                if (!$DB->delete_records('lesson_branch', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries))) {
                     print_error('Error: could not delete old seen branches');
                 }
             }
@@ -349,7 +354,7 @@
         
         add_to_log($course->id, 'lesson', 'view', 'view.php?id='. $cm->id, $pageid, $cm->id);
         
-        if (!$page = get_record('lesson_pages', 'id', $pageid)) {
+        if (!$page = $DB->get_record('lesson_pages', array('id' => $pageid))) {
             print_error('Navigation: the page record not found');
         }
 
@@ -358,14 +363,14 @@
                 // get new id
                 $pageid = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
                 // get new page info
-                if (!$page = get_record('lesson_pages', 'id', $pageid)) {
+                if (!$page = $DB->get_record('lesson_pages', array('id' => $pageid))) {
                     print_error('Navigation: the page record not found');
                 }
                 add_to_log($course->id, 'lesson', 'view', 'view.php?id='. $cm->id, $pageid, $cm->id);
             } else {
                 // get the next page
                 $pageid = $page->nextpageid;
-                if (!$page = get_record('lesson_pages', 'id', $pageid)) {
+                if (!$page = $DB->get_record('lesson_pages', array('id' => $pageid))) {
                     print_error('Navigation: the page record not found');
                 }
             }
@@ -377,7 +382,7 @@
             }
             redirect("$CFG->wwwroot/mod/lesson/view.php?id=$cm->id&amp;pageid=$nextpageid");
         } else if ($page->qtype == LESSON_ENDOFBRANCH) { // Check for endofbranches
-            if ($answers = get_records('lesson_answers', 'pageid', $page->id, 'id')) {
+            if ($answers = $DB->get_records('lesson_answers', array('pageid' => $page->id), 'id')) {
                 // print_heading(get_string('endofbranch', 'lesson'));
                 foreach ($answers as $answer) {
                     // just need the first answer
@@ -424,7 +429,8 @@
         // get time information for this user
         $timer = new stdClass;
         if(!has_capability('mod/lesson:manage', $context)) {
-            if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
+            $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
+            if (!$timer = $DB->get_records_select('lesson_timer', "lessonid = :lessonid AND userid = :userid", $params, 'starttime')) {
                 print_error('Error: could not find records');
             } else {
                 $timer = array_pop($timer); // this will get the latest start time record
@@ -463,7 +469,7 @@
         // update the clock
         if (!has_capability('mod/lesson:manage', $context)) {
             $timer->lessontime = time();
-            if (!update_record('lesson_timer', $timer)) {
+            if (!$DB->update_record('lesson_timer', $timer)) {
                 print_error('Error: could not update lesson_timer table');
             }
         }
@@ -545,14 +551,15 @@
         if (isset($USER->modattempts[$lesson->id])) {            
             $retries = count_records('lesson_grades', "lessonid", $lesson->id, "userid", $USER->id);
             $retries--;
-            if (! $attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND pageid = $page->id AND retry = $retries", "timeseen")) {
+            $params = array ("lessonid" => $lesson->id, "userid" => $USER->id, "pageid" => $page->id, "retry" => $retries);
+            if (! $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND pageid = :pageid AND retry = :retry", $params, "timeseen")) {
                 print_error("Previous attempt record could not be found!");
             }
             $attempt = end($attempts);
         }
         
         // get the answers in a set order, the id order
-        if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
+        if ($answers = $DB->get_records("lesson_answers", array("pageid" => $page->id), "id")) {
             if ($page->qtype != LESSON_BRANCHTABLE) {  // To fix XHTML problem (BT have their own forms)
                 echo "<form id=\"answerform\" method =\"post\" action=\"lesson.php\" autocomplete=\"off\">";
                 echo '<fieldset class="invisiblefieldset">';
@@ -771,7 +778,7 @@
                 // ...first get number of retakes
                 $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
                 // ...then get the page ids (lessonid the 5th param is needed to make get_records play)
-                $allpages = get_records("lesson_pages", "lessonid", $lesson->id, "id", "id,lessonid");
+                $allpages = $DB->get_records("lesson_pages", array("lessonid" => $lesson->id), "id", "id,lessonid");
                 shuffle ($allpages);
                 $found = false;
                 if ($lesson->nextpagedefault == LESSON_UNSEENPAGE) {
@@ -805,7 +812,7 @@
                 }
             } else {
                 // in normal lesson mode...
-                if (!$newpageid = get_field("lesson_pages", "nextpageid", "id", $pageid)) {
+                if (!$newpageid = $DB->get_field("lesson_pages", "nextpageid", array("id" => $pageid))) {
                     // this is the last page - flag end of lesson
                     $newpageid = LESSON_EOL;
                 }
@@ -828,14 +835,15 @@
         // Update the clock / get time information for this user
         if (!has_capability('mod/lesson:manage', $context)) {
             unset($USER->startlesson[$lesson->id]);
-            if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
+            $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
+            if (!$timer = $DB->get_records_select('lesson_timer', "lessonid = :lessonid AND userid = :userid", $params, 'starttime')) {
                 print_error('Error: could not find records');
             } else {
                 $timer = array_pop($timer); // this will get the latest start time record
             }
             $timer->lessontime = time();
             
-            if (!update_record("lesson_timer", $timer)) {
+            if (!$DB->update_record("lesson_timer", $timer)) {
                 print_error("Error: could not update lesson_timer table");
             }
         }
@@ -888,21 +896,22 @@
                 $grade->completed = time();
                 if (!$lesson->practice) {
                     if (isset($USER->modattempts[$lesson->id])) { // if reviewing, make sure update old grade record
-                        if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $USER->id", "completed")) {
+                        $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
+                        if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed")) {
                             print_error("Could not find Grade Records");
                         }
                         $oldgrade = end($grades);
                         $grade->id = $oldgrade->id;
-                        if (!$update = update_record("lesson_grades", $grade)) {
+                        if (!$update = $DB->update_record("lesson_grades", $grade)) {
                             print_error("Navigation: grade not updated");
                         }
                     } else {
-                        if (!$newgradeid = insert_record("lesson_grades", $grade)) {
+                        if (!$newgradeid = $DB->insert_record("lesson_grades", $grade)) {
                             print_error("Navigation: grade not inserted");
                         }
                     }
                 } else {
-                    if (!delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id, "retry", $ntries)) {
+                    if (!$DB->delete_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries))) {
                         print_error("Could not delete lesson attempts");
                     }
                 }
@@ -915,7 +924,7 @@
                         $grade->grade = 0;
                         $grade->completed = time();
                         if (!$lesson->practice) {
-                            if (!$newgradeid = insert_record("lesson_grades", $grade)) {
+                            if (!$newgradeid = $DB->insert_record("lesson_grades", $grade)) {
                                 print_error("Navigation: grade not inserted");
                             }
                         }
@@ -944,9 +953,10 @@
         // high scores code
         if ($lesson->highscores && !has_capability('mod/lesson:manage', $context) && !$lesson->practice) {
             echo "<div style=\"text-align:center;\"><br />";
-            if ($grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
+            $params = array ("lessonid" => $lesson->id);
+            if ($grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid", $params, "completed")) {
                 $madeit = false;
-                if ($highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
+                if ($highscores = $DB->get_records_select("lesson_high_scores", "lessonid = :lessonid", $params)) {
                     // get all the high scores into an array
                     $topscores = array();
                     $uniquescores = array();
@@ -989,7 +999,8 @@
             // look at the attempt records to find the first QUESTION page that the user answered, then use that page id
             // to pass to view again.  This is slick cause it wont call the empty($pageid) code
             // $ntries is decremented above
-            if (!$attempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries", "timeseen")) {
+            $params = array ("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries);
+            if (!$attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params, "timeseen")) {
                 $attempts = array();
             }
             $firstattempt = current($attempts);
@@ -1004,9 +1015,9 @@
         }
         
         if ($lesson->activitylink) {
-            if ($module = get_record('course_modules', 'id', $lesson->activitylink)) {
-                if ($modname = get_field('modules', 'name', 'id', $module->module))
-                    if ($instance = get_record($modname, 'id', $module->instance)) {
+            if ($module = $DB->get_record('course_modules', array('id' => $lesson->activitylink))) {
+                if ($modname = $DB->get_field('modules', 'name', array('id' => $module->module)))
+                    if ($instance = $DB->get_record($modname, array('id' => $module->instance))) {
                         echo "<div style=\"text-align:center; padding:5px;\" class=\"lessonbutton standardbutton\">".
                                 "<a href=\"$CFG->wwwroot/mod/$modname/view.php?id=$lesson->activitylink\">".
                                 get_string('activitylinkname', 'lesson', $instance->name)."</a></div>\n";

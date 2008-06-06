@@ -40,12 +40,12 @@
     //This function executes all the backup procedure about this mod
     function lesson_backup_mods($bf, $preferences) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Iterate over lesson table
-        $lessons = get_records("lesson", "course", $preferences->backup_course, "id");
+        $lessons = $DB->get_records("lesson", array ("course" => $preferences->backup_course), "id");
         if ($lessons) {
             foreach ($lessons as $lesson) {
                 if (backup_mod_selected($preferences,'lesson',$lesson->id)) {
@@ -58,10 +58,10 @@
 
     function lesson_backup_one_mod($bf,$preferences,$lesson) {
 
-        global $CFG;
+        global $CFG, $DB;
     
         if (is_numeric($lesson)) {
-            $lesson = get_record('lesson','id',$lesson);
+            $lesson = $DB->get_record('lesson',array ('id' => $lesson));
         }
     
         $status = true;
@@ -140,12 +140,13 @@
     //Backup lesson_pages contents (executed from lesson_backup_mods)
     function backup_lesson_pages ($bf, $preferences, $lessonid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         // run through the pages in their logical order, get the first page
-        if ($page = get_record_select("lesson_pages", "lessonid = $lessonid AND prevpageid = 0")) {
+        $params = array ("lessonid" => $lessonid, "prevpageid" => 0);
+        if ($page = $DB->get_record_select("lesson_pages", "lessonid = :lessonid AND prevpageid = :prevpageid", $params)) {
             //Write start tag
             $status =fwrite ($bf,start_tag("PAGES",4,true));
             //Iterate over each page
@@ -174,7 +175,7 @@
                 $status =fwrite ($bf,end_tag("PAGE",5,true));
                 // move to the next (logical) page
                 if ($page->nextpageid) {
-                    if (!$page = get_record("lesson_pages", "id", $page->nextpageid)) {
+                    if (!$page = $DB->get_record("lesson_pages", array ("id" => $page->nextpageid))) {
                         print_error("Lesson Backup: Next page not found!");
                     }
                 } else {
@@ -192,12 +193,12 @@
     //Backup lesson_answers contents (executed from backup_lesson_pages)
     function backup_lesson_answers($bf,$preferences,$pageno) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         // get the answers in a set order, the id order
-        $lesson_answers = get_records("lesson_answers", "pageid", $pageno, "id");
+        $lesson_answers = $DB->get_records("lesson_answers", array("pageid" => $pageno), "id");
 
         //If there is lesson_answers
         if ($lesson_answers) {
@@ -233,11 +234,11 @@
     //Backup lesson_attempts contents (executed from lesson_backup_answers)
     function backup_lesson_attempts ($bf,$preferences,$answerid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $lesson_attempts = get_records("lesson_attempts","answerid", $answerid);
+        $lesson_attempts = $DB->get_records("lesson_attempts", array("answerid" => $answerid));
         //If there are attempts
         if ($lesson_attempts) {
             //Write start tag
@@ -265,11 +266,11 @@
    //Backup lesson_grades contents (executed from backup_lesson_mods)
     function backup_lesson_grades ($bf,$preferences,$lessonid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $grades = get_records("lesson_grades", "lessonid", $lessonid);
+        $grades = $DB->get_records("lesson_grades", array("lessonid" => $lessonid));
 
         //If there is grades
         if ($grades) {
@@ -296,12 +297,12 @@
     //Backup lesson_branch contents (executed from backup_lesson_pages)
     function backup_lesson_branch($bf,$preferences,$pageno) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         // get the branches in a set order, the id order
-        $lesson_branch = get_records("lesson_branch", "pageid", $pageno, "id");
+        $lesson_branch = $DB->get_records("lesson_branch", array("pageid" => $pageno), "id");
 
         //If there is lesson_branch
         if ($lesson_branch) {
@@ -328,11 +329,11 @@
    //Backup lesson_timer contents (executed from backup_lesson_mods)
     function backup_lesson_timer ($bf,$preferences,$lessonid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $times = get_records("lesson_timer", "lessonid", $lessonid);
+        $times = $DB->get_records("lesson_timer", array("lessonid" => $lessonid));
 
         //If there is times
         if ($times) {
@@ -357,11 +358,11 @@
     
     // backup lesson_high_score contents (executed from backup_lesson_mods)
     function backup_lesson_high_scores($bf, $preferences, $lessonid) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $highscores = get_records("lesson_high_scores", "lessonid", $lessonid);
+        $highscores = $DB->get_records("lesson_high_scores", array("lessonid" => $lessonid));
 
         //If there is highscores
         if ($highscores) {
@@ -386,12 +387,12 @@
     
     // backup lesson_default contents (executed from backup_lesson_mods)
     function backup_lesson_default ($bf,$preferences) {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //only one default record per course
-        $default = get_record("lesson_default", "course", $preferences->backup_course);
+        $default = $DB->get_record("lesson_default", array("course" => $preferences->backup_course));
         if ($default) {
             //Start mod
             $status =fwrite ($bf,start_tag("DEFAULTS",4,true));            
@@ -503,32 +504,35 @@
     //Returns an array of lesson id 
     function lesson_ids ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT l.id, l.course
-                                 FROM {$CFG->prefix}lesson l
-                                 WHERE l.course = '$course'");
+        $params = array ("course" => $course);
+        return $DB->get_records_sql ("SELECT l.id, l.course
+                                 FROM {lesson} l
+                                 WHERE l.course = :course", $params);
     }
     
     //Returns an array of lesson_submissions id
     function lesson_attempts_ids_by_course ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT a.id , a.lessonid
-                                 FROM {$CFG->prefix}lesson_attempts a,
-                                      {$CFG->prefix}lesson l
-                                 WHERE l.course = '$course' AND
-                                       a.lessonid = l.id");
+        $params = array ("course" => $course);
+        return $DB->get_records_sql ("SELECT a.id , a.lessonid
+                                 FROM {lesson_attempts} a,
+                                      {lesson} l
+                                 WHERE l.course = :course AND
+                                       a.lessonid = l.id", $params);
     }
 
     //Returns an array of lesson_submissions id
     function lesson_attempts_ids_by_instance ($instanceid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT a.id , a.lessonid
-                                 FROM {$CFG->prefix}lesson_attempts a
-                                 WHERE a.lessonid = $instanceid");
+        $params = array ("lessonid" => $instanceid);
+        return $DB->get_records_sql ("SELECT a.id , a.lessonid
+                                 FROM {lesson_attempts} a
+                                 WHERE a.lessonid = :lessonid", $params);
     }
 ?>

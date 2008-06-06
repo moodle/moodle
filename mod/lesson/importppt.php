@@ -24,16 +24,16 @@
         print_error("Course Module ID was incorrect");
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
         print_error("Course is misconfigured");
     }
     
     // allows for adaption for multiple modules
-    if(! $modname = get_field('modules', 'name', 'id', $cm->module)) {
+    if(! $modname = $DB->get_field('modules', 'name', array('id' => $cm->module))) {
         print_error("Could not find module name");
     }
 
-    if (! $mod = get_record($modname, "id", $cm->instance)) {
+    if (! $mod = $DB->get_record($modname, array("id" => $cm->instance))) {
         print_error("Course module is incorrect");
     }
 
@@ -523,17 +523,19 @@ function prep_page($pageobject, $count) {
     Saves the branchtable objects to the DB
 */
 function lesson_save_objects($branchtables, $lessonid, $after) {
+    global $DB;
+    
     // first set up the prevpageid and nextpageid
     if ($after == 0) { // adding it to the top of the lesson
         $prevpageid = 0;
         // get the id of the first page.  If not found, then no pages in the lesson
-        if (!$nextpageid = get_field('lesson_pages', 'id', 'prevpageid', 0, 'lessonid', $lessonid)) {
+        if (!$nextpageid = $DB->get_field('lesson_pages', 'id', array('prevpageid' => 0, 'lessonid' => $lessonid))) {
             $nextpageid = 0;
         }
     } else {
         // going after an actual page
         $prevpageid = $after;
-        $nextpageid = get_field('lesson_pages', 'nextpageid', 'id', $after);
+        $nextpageid = $DB->get_field('lesson_pages', 'nextpageid', array('id' => $after));
     }
     
     foreach ($branchtables as $branchtable) {
@@ -543,13 +545,13 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
         $branchtable->page->prevpageid = $prevpageid;
         
         // insert the page
-        if(!$id = insert_record('lesson_pages', $branchtable->page)) {
+        if(!$id = $DB->insert_record('lesson_pages', $branchtable->page)) {
             print_error("insert page");
         }
     
         // update the link of the page previous to the one we just updated
         if ($prevpageid != 0) {  // if not the first page
-            if (!set_field("lesson_pages", "nextpageid", $id, "id", $prevpageid)) {
+            if (!$DB->set_field("lesson_pages", "nextpageid", $id, array("id" => $prevpageid))) {
                 print_error("Insert page: unable to update next link $prevpageid");
             }
         }
@@ -557,7 +559,7 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
         // insert the answers
         foreach ($branchtable->answers as $answer) {
             $answer->pageid = $id;
-            if(!insert_record('lesson_answers', $answer)) {
+            if(!$DB->insert_record('lesson_answers', $answer)) {
                 print_error("insert answer $id");
             }
         }
@@ -567,7 +569,7 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
     
     // all done with inserts.  Now check to update our last page (this is when we import between two lesson pages)
     if ($nextpageid != 0) {  // if the next page is not the end of lesson
-        if (!set_field("lesson_pages", "prevpageid", $id, "id", $nextpageid)) {
+        if (!$DB->set_field("lesson_pages", "prevpageid", $id, array("id" => $nextpageid))) {
             print_error("Insert page: unable to update next link $prevpageid");
         }
     }
@@ -579,9 +581,11 @@ function lesson_save_objects($branchtables, $lessonid, $after) {
     Save the chapter objects to the database
 */
 function book_save_objects($chapters, $bookid, $pageid='0') {
+    global $DB;
+    
     // nothing fancy, just save them all in order
     foreach ($chapters as $chapter) {
-        if (!$chapter->id = insert_record('book_chapters', $chapter)) {
+        if (!$chapter->id = $DB->insert_record('book_chapters', $chapter)) {
             print_error('Could not update your book');
         }
     }

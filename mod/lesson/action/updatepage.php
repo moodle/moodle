@@ -47,7 +47,7 @@
     $page->contents = trim($form->contents);
     $page->title = addslashes($page->title);
     
-    if (!update_record("lesson_pages", $page)) {
+    if (!$DB->update_record("lesson_pages", $page)) {
         print_error("Update page: page not updated");
     }
     if ($page->qtype == LESSON_ENDOFBRANCH || $page->qtype == LESSON_ESSAY || $page->qtype == LESSON_CLUSTER || $page->qtype == LESSON_ENDOFCLUSTER) {
@@ -62,16 +62,17 @@
         // delete other answers  this if mainly for essay questions.  If one switches from using a qtype like Multichoice,
         // then switches to essay, the old answers need to be removed because essay is
         // supposed to only have one answer record
-        if ($answers = get_records_select("lesson_answers", "pageid = ".$page->id)) {
+        $params = array ("pageid" => $page->id);
+        if ($answers = $DB->get_records_select("lesson_answers", "pageid = :pageid", $params)) {
             foreach ($answers as $answer) {
                 if ($answer->id != clean_param($form->answerid[0], PARAM_INT)) {
-                    if (!delete_records("lesson_answers", "id", $answer->id)) {
+                    if (!$DB->delete_records("lesson_answers", array("id" => $answer->id))) {
                         print_error("Update page: unable to delete answer record");
                     }
                 }
             }
         }        
-        if (!update_record("lesson_answers", $oldanswer)) {
+        if (!$DB->update_record("lesson_answers", $oldanswer)) {
             print_error("Update page: EOB not updated");
         }
     } else {
@@ -106,7 +107,7 @@
                     if (isset($form->score[$i])) {
                         $oldanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
-                    if (!update_record("lesson_answers", $oldanswer)) {
+                    if (!$DB->update_record("lesson_answers", $oldanswer)) {
                         print_error("Update page: answer $i not updated");
                     }
                 } else {
@@ -131,7 +132,7 @@
                     if (isset($form->score[$i])) {
                         $newanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
-                    $newanswerid = insert_record("lesson_answers", $newanswer);
+                    $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
                     if (!$newanswerid) {
                         print_error("Update page: answer record not inserted");
                     }
@@ -141,7 +142,7 @@
                     if ($i >= 2) {
                         if ($form->answerid[$i]) {
                             // need to delete blanked out answer
-                            if (!delete_records("lesson_answers", "id", clean_param($form->answerid[$i], PARAM_INT))) {
+                            if (!$DB->delete_records("lesson_answers", array("id" => clean_param($form->answerid[$i], PARAM_INT)))) {
                                 print_error("Update page: unable to delete answer record");
                             }
                         }
@@ -158,13 +159,13 @@
                                             $form->responseeditor[$i] * LESSON_RESPONSE_EDITOR;
                         $oldanswer->timemodified = $timenow;
                         $oldanswer->answer = NULL;
-                        if (!update_record("lesson_answers", $oldanswer)) {
+                        if (!$DB->update_record("lesson_answers", $oldanswer)) {
                             print_error("Update page: answer $i not updated");
                         }
                     }                        
                 } elseif (!empty($form->answerid[$i])) {
                     // need to delete blanked out answer
-                    if (!delete_records("lesson_answers", "id", clean_param($form->answerid[$i], PARAM_INT))) {
+                    if (!$DB->delete_records("lesson_answers", array("id" => clean_param($form->answerid[$i], PARAM_INT)))) {
                         print_error("Update page: unable to delete answer record");
                     }
                 }

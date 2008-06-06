@@ -268,21 +268,23 @@ function lesson_print_header($cm, $course, $lesson, $currenttab = '') {
  * @return array array($cm, $course, $lesson)
  **/
 function lesson_get_basics($cmid = 0, $lessonid = 0) {
+    global $DB;
+    
     if ($cmid) {
         if (!$cm = get_coursemodule_from_id('lesson', $cmid)) {
             print_error('Course Module ID was incorrect');
         }
-        if (!$course = get_record('course', 'id', $cm->course)) {
+        if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
             print_error('Course is misconfigured');
         }
-        if (!$lesson = get_record('lesson', 'id', $cm->instance)) {
+        if (!$lesson = $DB->get_record('lesson', array('id' => $cm->instance))) {
             print_error('Course module is incorrect');
         }
     } else if ($lessonid) {
-        if (!$lesson = get_record('lesson', 'id', $lessonid)) {
+        if (!$lesson = $DB->get_record('lesson', array('id' => $lessonid))) {
             print_error('Course module is incorrect');
         }
-        if (!$course = get_record('course', 'id', $lesson->course)) {
+        if (!$course = $DB->get_record('course', array('id' => $lesson->course))) {
             print_error('Course is misconfigured');
         }
         if (!$cm = get_coursemodule_from_instance('lesson', $lesson->id, $course->id)) {
@@ -571,6 +573,8 @@ function lesson_get_qtype_name($qtype) {
  * @return string
  **/
 function lesson_get_jump_name($jumpto) {
+    global $DB;
+    
     if ($jumpto == 0) {
         $jumptitle = get_string('thispage', 'lesson');
     } elseif ($jumpto == LESSON_NEXTPAGE) {
@@ -588,7 +592,7 @@ function lesson_get_jump_name($jumpto) {
     } elseif ($jumpto == LESSON_CLUSTERJUMP) {
         $jumptitle = get_string('clusterjump', 'lesson');
     } else {
-        if (!$jumptitle = get_field('lesson_pages', 'title', 'id', $jumpto)) {
+        if (!$jumptitle = $DB->get_field('lesson_pages', 'title', array('id' => $jumpto))) {
             $jumptitle = '<strong>'.get_string('notdefined', 'lesson').'</strong>';
         }
     }
@@ -614,6 +618,7 @@ function lesson_get_jump_name($jumpto) {
  * @return object Returns $result->error or $result->notice.
  **/
 function lesson_save_question_options($question) {
+    global $DB;
     
     $timenow = time();
     switch ($question->qtype) {
@@ -635,7 +640,7 @@ function lesson_save_question_options($question) {
                     $answer->grade = $question->fraction[$key] * 100;
                     $answer->answer   = $dataanswer;
                     $answer->response = $question->feedback[$key];
-                    if (!$answer->id = insert_record("lesson_answers", $answer)) {
+                    if (!$answer->id = $DB->insert_record("lesson_answers", $answer)) {
                         $result->error = "Could not insert shortanswer quiz answer!";
                         return $result;
                     }
@@ -675,7 +680,7 @@ function lesson_save_question_options($question) {
                     $answer->answer   = $min.":".$max;
                     // $answer->answer   = $question->min[$key].":".$question->max[$key]; original line for min/max
                     $answer->response = $question->feedback[$key];
-                    if (!$answer->id = insert_record("lesson_answers", $answer)) {
+                    if (!$answer->id = $DB->insert_record("lesson_answers", $answer)) {
                         $result->error = "Could not insert numerical quiz answer!";
                         return $result;
                     }
@@ -710,7 +715,7 @@ function lesson_save_question_options($question) {
             if (isset($question->feedbacktrue)) {
                 $answer->response = $question->feedbacktrue;
             }
-            if (!$true->id = insert_record("lesson_answers", $answer)) {
+            if (!$true->id = $DB->insert_record("lesson_answers", $answer)) {
                 $result->error = "Could not insert quiz answer \"true\")!";
                 return $result;
             }
@@ -728,7 +733,7 @@ function lesson_save_question_options($question) {
             if (isset($question->feedbackfalse)) {
                 $answer->response = $question->feedbackfalse;
             }
-            if (!$false->id = insert_record("lesson_answers", $answer)) {
+            if (!$false->id = $DB->insert_record("lesson_answers", $answer)) {
                 $result->error = "Could not insert quiz answer \"false\")!";
                 return $result;
             }
@@ -764,7 +769,7 @@ function lesson_save_question_options($question) {
                     // end Replace
                     $answer->answer   = $dataanswer;
                     $answer->response = $question->feedback[$key];
-                    if (!$answer->id = insert_record("lesson_answers", $answer)) {
+                    if (!$answer->id = $DB->insert_record("lesson_answers", $answer)) {
                         $result->error = "Could not insert multichoice quiz answer! ";
                         return $result;
                     }
@@ -814,7 +819,7 @@ function lesson_save_question_options($question) {
                         // first answer contains the correct answer jump
                         $answer->jumpto = LESSON_NEXTPAGE;
                     }
-                    if (!$subquestion->id = insert_record("lesson_answers", $answer)) {
+                    if (!$subquestion->id = $DB->insert_record("lesson_answers", $answer)) {
                         $result->error = "Could not insert quiz match subquestion!";
                         return $result;
                     }
@@ -834,14 +839,14 @@ function lesson_save_question_options($question) {
         case LESSON_RANDOMSAMATCH:
             $options->question = $question->id;
             $options->choose = $question->choose;
-            if ($existing = get_record("quiz_randomsamatch", "question", $options->question)) {
+            if ($existing = $DB->get_record("quiz_randomsamatch", array("question" => $options->question))) {
                 $options->id = $existing->id;
-                if (!update_record("quiz_randomsamatch", $options)) {
+                if (!$DB->update_record("quiz_randomsamatch", $options)) {
                     $result->error = "Could not update quiz randomsamatch options!";
                     return $result;
                 }
             } else {
-                if (!insert_record("quiz_randomsamatch", $options)) {
+                if (!$DB->insert_record("quiz_randomsamatch", $options)) {
                     $result->error = "Could not insert quiz randomsamatch options!";
                     return $result;
                 }
@@ -849,7 +854,7 @@ function lesson_save_question_options($question) {
         break;
 
         case LESSON_MULTIANSWER:
-            if (!$oldmultianswers = get_records("quiz_multianswers", "question", $question->id, "id ASC")) {
+            if (!$oldmultianswers = $DB->get_records("quiz_multianswers", array("question" => $question->id), "id ASC")) {
                 $oldmultianswers = array();
             }
 
@@ -868,7 +873,7 @@ function lesson_save_question_options($question) {
                         $result->error = "Could not update multianswer alternatives! (id=$multianswer->id)";
                         return $result;
                     }
-                    if (!update_record("quiz_multianswers", $multianswer)) {
+                    if (!$DB->update_record("quiz_multianswers", $multianswer)) {
                         $result->error = "Could not update quiz multianswer! (id=$multianswer->id)";
                         return $result;
                     }
@@ -886,7 +891,7 @@ function lesson_save_question_options($question) {
                         $result->error = "Could not insert multianswer alternatives! (questionid=$question->id)";
                         return $result;
                     }
-                    if (!insert_record("quiz_multianswers", $multianswer)) {
+                    if (!$DB->insert_record("quiz_multianswers", $multianswer)) {
                         $result->error = "Could not insert quiz multianswer!";
                         return $result;
                     }
@@ -919,6 +924,7 @@ function lesson_save_question_options($question) {
  * @return boolean True or false after a series of tests.
  **/
 function lesson_iscorrect($pageid, $jumpto) {
+    global $DB;
     
     // first test the special values
     if (!$jumpto) {
@@ -936,8 +942,8 @@ function lesson_iscorrect($pageid, $jumpto) {
         return true;
     }
     // we have to run through the pages from pageid looking for jumpid
-    if ($lessonid = get_field('lesson_pages', 'lessonid', 'id', $pageid)) {
-        if ($pages = get_records('lesson_pages', 'lessonid', $lessonid, '', 'id, nextpageid')) {
+    if ($lessonid = $DB->get_field('lesson_pages', 'lessonid', array('id' => $pageid))) {
+        if ($pages = $DB->get_records('lesson_pages', array('lessonid' => $lessonid), '', 'id, nextpageid')) {
             $apageid = $pages[$pageid]->nextpageid;
             while ($apageid != 0) {
                 if ($jumpto == $apageid) {
@@ -960,12 +966,15 @@ function lesson_iscorrect($pageid, $jumpto) {
  * @return boolean True or false.
  **/
 function lesson_display_branch_jumps($lessonid, $pageid) {
+    global $DB;
+    
     if($pageid == 0) {
         // first page
         return false;
     }
     // get all of the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
+    $params = array ("lessonid" => $lessonid);
+    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
         // adding first page
         return false;
     }
@@ -987,12 +996,15 @@ function lesson_display_branch_jumps($lessonid, $pageid) {
  * @return boolean True or false.
  **/
 function lesson_display_cluster_jump($lesson, $pageid) {
+    global $DB;
+    
     if($pageid == 0) {
         // first page
         return false;
     }
     // get all of the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson")) {
+    $params = array ("lessonid" => $lesson);
+    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
         // adding first page
         return false;
     }
@@ -1016,8 +1028,11 @@ function lesson_display_cluster_jump($lesson, $pageid) {
  * @return boolean True or false.
  **/
 function lesson_display_teacher_warning($lesson) {
+    global $DB;
+    
     // get all of the lesson answers
-    if (!$lessonanswers = get_records_select("lesson_answers", "lessonid = $lesson")) {
+    $params = array ("lessonid" => $lesson);
+    if (!$lessonanswers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid", $params)) {
         // no answers, then not useing cluster or unseen
         return false;
     }
@@ -1048,13 +1063,16 @@ function lesson_display_teacher_warning($lesson) {
  * @return int The id of the next page.
  **/
 function lesson_cluster_jump($lessonid, $userid, $pageid) {
+    global $DB;
+    
     // get the number of retakes
     if (!$retakes = count_records("lesson_grades", "lessonid", $lessonid, "userid", $userid)) {
         $retakes = 0;
     }
 
     // get all the lesson_attempts aka what the user has seen
-    if ($seen = get_records_select("lesson_attempts", "lessonid = $lessonid AND userid = $userid AND retry = $retakes", "timeseen DESC")) {
+    $params = array ("lessonid" => $lessonid, "userid" => $userid, "retry" => $retakes);
+    if ($seen = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params, "timeseen DESC")) {
         foreach ($seen as $value) { // load it into an array that I can more easily use
             $seenpages[$value->pageid] = $value->pageid;
         }
@@ -1063,7 +1081,8 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
     }
 
     // get the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
+    $parameters = array ("lessonid" => $lessonid);
+    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $parameters)) {
         print_error("Error: could not find records in lesson_pages table");
     }
     // find the start of the cluster
@@ -1080,7 +1099,7 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
     while (true) {  // now load all the pages into the cluster that are not already inside of a branch table.
         if ($lessonpages[$pageid]->qtype == LESSON_ENDOFCLUSTER) {
             // store the endofcluster page's jump
-            $exitjump = get_field("lesson_answers", "jumpto", "pageid", $pageid, "lessonid", $lessonid);
+            $exitjump = $DB->get_field("lesson_answers", "jumpto", array("pageid" => $pageid, "lessonid" => $lessonid));
             if ($exitjump == LESSON_NEXTPAGE) {
                 $exitjump = $lessonpages[$pageid]->nextpageid;
             }
@@ -1176,13 +1195,16 @@ function lesson_pages_in_branch($lessonpages, $branchid) {
  * @return int Id of the next page.
  **/
 function lesson_unseen_question_jump($lesson, $user, $pageid) {
+    global $DB;
+    
     // get the number of retakes
     if (!$retakes = count_records("lesson_grades", "lessonid", $lesson, "userid", $user)) {
         $retakes = 0;
     }
 
     // get all the lesson_attempts aka what the user has seen
-    if ($viewedpages = get_records_select("lesson_attempts", "lessonid = $lesson AND userid = $user AND retry = $retakes", "timeseen DESC")) {
+    $params = array ("lessonid" => $lesson, "userid" => $user, "retry" => $retakes);
+    if ($viewedpages = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params, "timeseen DESC")) {
         foreach($viewedpages as $viewed) {
             $seenpages[] = $viewed->pageid;
         }
@@ -1191,7 +1213,8 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
     }
 
     // get the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lesson")) {
+    $parameters = array ("lessonid" => $lesson);
+    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $parameters)) {
         print_error("Error: could not find records in lesson_pages table");
     }
     
@@ -1243,17 +1266,21 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
  * @return int Will return the page id of a branch table or end of lesson
  **/
 function lesson_unseen_branch_jump($lessonid, $userid) {
+    global $DB;
+    
     if (!$retakes = count_records("lesson_grades", "lessonid", $lessonid, "userid", $userid)) {
         $retakes = 0;
     }
 
-    if (!$seenbranches = get_records_select("lesson_branch", "lessonid = $lessonid AND userid = $userid AND retry = $retakes",
+    $params = array ("lessonid" => $lessonid, "userid" => $userid, "retry" => $retakes);
+    if (!$seenbranches = $DB->get_records_select("lesson_branch", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params,
                 "timeseen DESC")) {
         print_error("Error: could not find records in lesson_branch table");
     }
 
     // get the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
+    $parameters = array ("lessonid" => $lessonid);
+    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $parameters)) {
         print_error("Error: could not find records in lesson_pages table");
     }
     
@@ -1299,8 +1326,11 @@ function lesson_unseen_branch_jump($lessonid, $userid) {
  * @return int The pageid of a random page that is within a branch table
  **/
 function lesson_random_question_jump($lessonid, $pageid) {
+    global $DB;
+    
     // get the lesson pages
-    if (!$lessonpages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
+    $params = array ("lessonid" => $lessonid);
+    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
         print_error("Error: could not find records in lesson_pages table");
     }
 
@@ -1396,7 +1426,7 @@ function lesson_is_page_in_cluster($pages, $pageid) {
                     manualpoints => point value for manually graded questions }
  */
 function lesson_grade($lesson, $ntries, $userid = 0) {  
-    global $USER;
+    global $USER, $DB;
 
     if (empty($userid)) {
         $userid = $USER->id;
@@ -1413,8 +1443,9 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
     $total        = 0;
     $earned       = 0;
 
-    if ($useranswers = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
-            userid = $userid AND retry = $ntries", "timeseen")) {
+    $params = array ("lessonid" => $lesson->id, "userid" => $userid, "retry" => $ntries);
+    if ($useranswers = $DB->get_records_select("lesson_attempts",  "lessonid = :lessonid AND 
+            userid = :userid AND retry = :retry", $params, "timeseen")) {
         // group each try with its page
         $attemptset = array();
         foreach ($useranswers as $useranswer) {
@@ -1426,11 +1457,11 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
             $attemptset[$key] = array_slice($set, 0, $lesson->maxattempts);
         }
         
-        $pageids = implode(",", array_keys($attemptset));
-        
         // get only the pages and their answers that the user answered
-        $pages = get_records_select("lesson_pages", "lessonid = $lesson->id AND id IN($pageids)");
-        $answers = get_records_select("lesson_answers", "lessonid = $lesson->id AND pageid IN($pageids)");
+        list($usql, $parameters) = $DB->get_in_or_equal(array_keys($attemptset));
+        $parameters["lessonid"] = $lesson->id;
+        $pages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid AND id $usql", $parameters);
+        $answers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid AND pageid $usql", $parameters);
         
         // Number of pages answered
         $nquestions = count($pages);
@@ -1573,7 +1604,7 @@ function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
  * @return boolean The return is not significant as of yet.  Will return true/false.
  **/
 function lesson_print_progress_bar($lesson, $course) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
     $cm = get_coursemodule_from_instance('lesson', $lesson->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -1589,7 +1620,7 @@ function lesson_print_progress_bar($lesson, $course) {
     }
     if (!isset($USER->modattempts[$lesson->id])) {
         // all of the lesson pages
-        if (!$pages = get_records('lesson_pages', 'lessonid', $lesson->id)) {
+        if (!$pages = $DB->get_records('lesson_pages', array('lessonid' => $lesson->id))) {
             return false;
         } else {
             foreach ($pages as $page) {
@@ -1608,11 +1639,12 @@ function lesson_print_progress_bar($lesson, $course) {
         $viewedpageids = array();
     
         // collect all of the correctly answered questions
-        if ($viewedpages = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries AND correct = 1", 'timeseen DESC', 'pageid, id')) {
+        $params = array ("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries);
+        if ($viewedpages = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND retry = :retry AND correct = 1", $params, 'timeseen DESC', 'pageid, id')) {
             $viewedpageids = array_keys($viewedpages);
         }
         // collect all of the branch tables viewed
-        if ($viewedbranches = get_records_select("lesson_branch", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries", 'timeseen DESC', 'pageid, id')) {
+        if ($viewedbranches = $DB->get_records_select("lesson_branch", "lessonid = :lessonid AND userid = :userid AND retry = :retry", $params, 'timeseen DESC', 'pageid, id')) {
             $viewedpageids = array_merge($viewedpageids, array_keys($viewedbranches));
         }
 
@@ -1681,11 +1713,12 @@ function lesson_print_progress_bar($lesson, $course) {
  * @return boolean 0 if the user cannot see, or $lesson->displayleft to keep displayleft unchanged
  **/
 function lesson_displayleftif($lesson) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
     
     if (!empty($lesson->displayleftif)) {
         // get the current user's max grade for this lesson
-        if ($maxgrade = get_record_sql('SELECT userid, MAX(grade) AS maxgrade FROM '.$CFG->prefix.'lesson_grades WHERE userid = '.$USER->id.' AND lessonid = '.$lesson->id.' GROUP BY userid')) {
+        $params = array ("userid" => $USER->id, "lessonid" => $lesson->id);
+        if ($maxgrade = $DB->get_record_sql('SELECT userid, MAX(grade) AS maxgrade FROM {lesson_grades} WHERE userid = :userid AND lessonid = :lessonid GROUP BY userid', $params)) {
             if ($maxgrade->maxgrade < $lesson->displayleftif) {
                 return 0;  // turn off the displayleft
             }
@@ -1761,11 +1794,12 @@ function lesson_print_clock_block($cmid, $lesson, $timer) {
  * @return void
  **/
 function lesson_print_menu_block($cmid, $lesson) {
-    global $CFG;
+    global $CFG, $DB;
 
     if ($lesson->displayleft) {
-        $pageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0);
-        $pages  = get_records_select('lesson_pages', "lessonid = $lesson->id");
+        $pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0));
+        $params = array ("lessonid" => $lesson->id);
+        $pages  = $DB->get_records_select('lesson_pages', "lessonid = :lessonid", $params);
         $currentpageid = optional_param('pageid', $pageid, PARAM_INT);
 
         if ($pageid and $pages) {

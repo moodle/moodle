@@ -31,6 +31,8 @@ class qformat_default {
     }
 
     function importprocess($filename, $lesson, $pageid) {
+        global $DB;
+        
     /// Processes a given file.  There's probably little need to change this
         $timenow = time();
 
@@ -85,28 +87,29 @@ class qformat_default {
                     // set up page links
                     if ($pageid) {
                         // the new page follows on from this page
-                        if (!$page = get_record("lesson_pages", "id", $pageid)) {
+                        if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
                             error ("Format: Page $pageid not found");
                         }
                         $newpage->prevpageid = $pageid;
                         $newpage->nextpageid = $page->nextpageid;
                         // insert the page and reset $pageid
-                        if (!$newpageid = insert_record("lesson_pages", $newpage)) {
+                        if (!$newpageid = $DB->insert_record("lesson_pages", $newpage)) {
                             print_error("Format: Could not insert new page!");
                         }
                         // update the linked list
-                        if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $pageid)) {
+                        if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
                             print_error("Format: unable to update link");
                         }
 
                     } else {
                         // new page is the first page
                         // get the existing (first) page (if any)
-                        if (!$page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
+                        $params = array ("lessonid" => $lesson->id, "prevpageid" => 0);
+                        if (!$page = $DB->get_record_select("lesson_pages", "lessonid = :lessonid AND prevpageid = :prevpageid", $params)) {
                             // there are no existing pages
                             $newpage->prevpageid = 0; // this is a first page
                             $newpage->nextpageid = 0; // this is the only page
-                            $newpageid = insert_record("lesson_pages", $newpage);
+                            $newpageid = $DB->insert_record("lesson_pages", $newpage);
                             if (!$newpageid) {
                                 print_error("Insert page: new first page not inserted");
                             }
@@ -114,12 +117,12 @@ class qformat_default {
                             // there are existing pages put this at the start
                             $newpage->prevpageid = 0; // this is a first page
                             $newpage->nextpageid = $page->id;
-                            $newpageid = insert_record("lesson_pages", $newpage);
+                            $newpageid = $DB->insert_record("lesson_pages", $newpage);
                             if (!$newpageid) {
                                 print_error("Insert page: first page not inserted");
                             }
                             // update the linked list
-                            if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->id)) {
+                            if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->id))) {
                                 print_error("Insert page: unable to update link");
                             }
                         }

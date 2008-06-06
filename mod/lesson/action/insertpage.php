@@ -20,7 +20,7 @@
     $newanswer = new stdClass;
     if ($form->pageid) {
         // the new page is not the first page
-        if (!$page = get_record("lesson_pages", "id", $form->pageid)) {
+        if (!$page = $DB->get_record("lesson_pages", array("id" => $form->pageid))) {
             print_error("Insert page: page record not found");
         }
         $newpage->lessonid = clean_param($lesson->id, PARAM_INT);
@@ -46,24 +46,25 @@
         $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
         $newpage->contents = trim($form->contents);
         $newpage->title = addslashes($newpage->title);
-        $newpageid = insert_record("lesson_pages", $newpage);
+        $newpageid = $DB->insert_record("lesson_pages", $newpage);
         if (!$newpageid) {
             print_error("Insert page: new page not inserted");
         }
         // update the linked list (point the previous page to this new one)
-        if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $newpage->prevpageid)) {
+        if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $newpage->prevpageid))) {
             print_error("Insert page: unable to update next link");
         }
         if ($page->nextpageid) {
             // new page is not the last page
-            if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->nextpageid)) {
+            if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
                 print_error("Insert page: unable to update previous link");
             }
         }
     } else {
         // new page is the first page
         // get the existing (first) page (if any)
-        if (!$page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
+        $params = array ("lessonid" => $lesson->id, "prevpageid" => 0);
+        if (!$page = $DB->get_record_select("lesson_pages", "lessonid = :lessonid AND prevpageid = :prevpageid", $params)) {
             // there are no existing pages
             $newpage->lessonid = $lesson->id;
             $newpage->prevpageid = 0; // this is a first page
@@ -88,7 +89,7 @@
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = trim($form->contents);
             $newpage->title = addslashes($newpage->title);
-            $newpageid = insert_record("lesson_pages", $newpage);
+            $newpageid = $DB->insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
                 print_error("Insert page: new first page not inserted");
             }
@@ -117,12 +118,12 @@
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = trim($form->contents);
             $newpage->title = addslashes($newpage->title);
-            $newpageid = insert_record("lesson_pages", $newpage);
+            $newpageid = $DB->insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
                 print_error("Insert page: first page not inserted");
             }
             // update the linked list
-            if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $newpage->nextpageid)) {
+            if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $newpage->nextpageid))) {
                 print_error("Insert page: unable to update link");
             }
         }
@@ -138,7 +139,7 @@
         if (isset($form->score[0])) {
             $newanswer->score = clean_param($form->score[0], PARAM_INT);
         }
-        $newanswerid = insert_record("lesson_answers", $newanswer);
+        $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
         if (!$newanswerid) {
             print_error("Insert Page: answer record not inserted");
         }
@@ -164,7 +165,7 @@
                         $newanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
                 }
-                $newanswerid = insert_record("lesson_answers", $newanswer);
+                $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
                 if (!$newanswerid) {
                     print_error("Insert Page: answer record $i not inserted");
                 }
@@ -174,7 +175,7 @@
                         $newanswer->lessonid = $lesson->id;
                         $newanswer->pageid = $newpageid;
                         $newanswer->timecreated = $timenow;
-                        $newanswerid = insert_record("lesson_answers", $newanswer);
+                        $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
                         if (!$newanswerid) {
                             print_error("Insert Page: answer record $i not inserted");
                         }

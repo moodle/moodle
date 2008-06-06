@@ -14,17 +14,17 @@
     $timenow = time();
 
     // the new page is not the first page (end of branch always comes after an existing page)
-    if (!$page = get_record("lesson_pages", "id", $pageid)) {
+    if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
         print_error("Add end of branch: page record not found");
     }
     // chain back up to find the (nearest branch table)
     $btpageid = $pageid;
-    if (!$btpage = get_record("lesson_pages", "id", $btpageid)) {
+    if (!$btpage = $DB->get_record("lesson_pages", array("id" => $btpageid))) {
         print_error("Add end of branch: btpage record not found");
     }
     while (($btpage->qtype != LESSON_BRANCHTABLE) AND ($btpage->prevpageid > 0)) {
         $btpageid = $btpage->prevpageid;
-        if (!$btpage = get_record("lesson_pages", "id", $btpageid)) {
+        if (!$btpage = $DB->get_record("lesson_pages", array("id" => $btpageid))) {
             print_error("Add end of branch: btpage record not found");
         }
     }
@@ -37,16 +37,16 @@
         $newpage->timecreated = $timenow;
         $newpage->title = get_string("endofbranch", "lesson");
         $newpage->contents = get_string("endofbranch", "lesson");
-        if (!$newpageid = insert_record("lesson_pages", $newpage)) {
+        if (!$newpageid = $DB->insert_record("lesson_pages", $newpage)) {
             print_error("Insert page: new page not inserted");
         }
         // update the linked list...
-        if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $pageid)) {
+        if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
             print_error("Add end of branch: unable to update link");
         }
         if ($page->nextpageid) {
             // the new page is not the last page
-            if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->nextpageid)) {
+            if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
                 print_error("Insert page: unable to update previous link");
             }
         }
@@ -56,7 +56,7 @@
         $newanswer->pageid = $newpageid;
         $newanswer->timecreated = $timenow;
         $newanswer->jumpto = $btpageid;
-        if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
+        if(!$newanswerid = $DB->insert_record("lesson_answers", $newanswer)) {
             print_error("Add end of branch: answer record not inserted");
         }
         

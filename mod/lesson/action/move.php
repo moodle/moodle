@@ -8,10 +8,11 @@
  **/
    
     $pageid = required_param('pageid', PARAM_INT);
-    $title = get_field("lesson_pages", "title", "id", $pageid);
+    $title = $DB->get_field("lesson_pages", "title", array("id" => $pageid));
     print_heading(get_string("moving", "lesson", format_string($title)));
    
-    if (!$page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
+    $params = array ("lessonid" => $lesson->id, "prevpageid" => 0);
+    if (!$page = $DB->get_record_select("lesson_pages", "lessonid = :lessonid AND prevpageid = :prevpageid", $params)) {
         print_error("Move: first page not found");
     }
 
@@ -28,7 +29,7 @@
                 get_string("movepagehere", "lesson")."</small></a></td></tr>\n";
         }
         if ($page->nextpageid) {
-            if (!$page = get_record("lesson_pages", "id", $page->nextpageid)) {
+            if (!$page = $DB->get_record("lesson_pages", array("id" => $page->nextpageid))) {
                 print_error("Teacher view: Next page not found!");
             }
         } else {

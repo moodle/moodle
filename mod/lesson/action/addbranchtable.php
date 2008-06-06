@@ -19,14 +19,14 @@
     $jump[LESSON_PREVIOUSPAGE] = get_string("previouspage", "lesson");
     $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
     if (!optional_param('firstpage', 0, PARAM_INT)) {
-        if (!$apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
+        if (!$apageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0))) {
             print_error("Add page: first page not found");
         }
         while (true) {
             if ($apageid) {
-                $title = get_field("lesson_pages", "title", "id", $apageid);
+                $title = $DB->get_field("lesson_pages", "title", array("id" => $apageid));
                 $jump[$apageid] = $title;
-                $apageid = get_field("lesson_pages", "nextpageid", "id", $apageid);
+                $apageid = $DB->get_field("lesson_pages", "nextpageid", array("id" => $apageid));
             } else {
                 // last page reached
                 break;

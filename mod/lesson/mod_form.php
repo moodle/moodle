@@ -295,6 +295,8 @@ class mod_lesson_mod_form extends moodleform_mod {
      * @return void
      **/
     function data_preprocessing(&$default_values) {
+        global $DB;
+        //var_dump($default_values);
         if (isset($default_values['conditions'])) {
             $conditions = unserialize($default_values['conditions']);
             $default_values['timespent'] = $conditions->timespent;
@@ -304,7 +306,7 @@ class mod_lesson_mod_form extends moodleform_mod {
         if (isset($default_values['password'])) {
             unset($default_values['password']);
         }
-        if (isset($default_values['add']) and $defaults = get_record('lesson_default', 'course', $default_values['course'])) {
+        if (isset($default_values['add']) and $defaults = $DB->get_record('lesson_default', array('course' => $default_values['course']))) {
             foreach ($defaults as $fieldname => $default) {
                 switch ($fieldname) {
                     case 'conditions':

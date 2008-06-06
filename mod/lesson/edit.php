@@ -22,14 +22,14 @@
     
     list($cm, $course, $lesson) = lesson_get_basics($id);
     
-    if ($firstpage = get_record('lesson_pages', 'lessonid', $lesson->id, 'prevpageid', 0)) {
-        if (!$pages = get_records('lesson_pages', 'lessonid', $lesson->id)) {
+    if ($firstpage = $DB->get_record('lesson_pages', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
+        if (!$pages = $DB->get_records('lesson_pages', array('lessonid' => $lesson->id))) {
             print_error('Could not find lesson pages');
         }
     }
     
     if ($pageid) {
-        if (!$singlepage = get_record('lesson_pages', 'id', $pageid)) {
+        if (!$singlepage = $DB->get_record('lesson_pages', array('id' => $pageid))) {
             print_error('Could not find page ID: '.$pageid);
         }
     }
@@ -83,7 +83,8 @@
                     }
 
                     $jumps = array();
-                    if($answers = get_records_select("lesson_answers", "lessonid = $lesson->id and pageid = $pageid", 'id', '*', $limitfrom, $limitnum)) {
+                    $params = array ("lessonid" => $lesson->id, "pageid" => $pageid);
+                    if($answers = $DB->get_records_select("lesson_answers", "lessonid = :lessonid and pageid = :pageid", $params, 'id', '*', $limitfrom, $limitnum)) {
                         foreach ($answers as $answer) {
                             $jumps[] = lesson_get_jump_name($answer->jumpto);
                         }
@@ -129,7 +130,7 @@
                     echo format_text($page->contents, FORMAT_MOODLE, $options);
                     echo "</td></tr>\n";
                     // get the answers in a set order, the id order
-                    if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
+                    if ($answers = $DB->get_records("lesson_answers", array("pageid" => $page->id), "id")) {
                         echo "<tr><td colspan=\"2\" align=\"center\"><strong>\n";
                         echo lesson_get_qtype_name($page->qtype);
                         switch ($page->qtype) {
@@ -277,7 +278,7 @@
                     // links were not used in those versions
                     if ($page->prevpageid != $prevpageid) {
                         // fix it
-                        set_field("lesson_pages", "prevpageid", $prevpageid, "id", $page->id);
+                        $DB->set_field("lesson_pages", "prevpageid", $prevpageid, array("id" => $page->id));
                         debugging("<p>***prevpageid of page $page->id set to $prevpageid***");
                     }
                     

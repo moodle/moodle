@@ -14,7 +14,7 @@
     $timenow = time();
     
     // the new page is not the first page (end of cluster always comes after an existing page)
-    if (!$page = get_record("lesson_pages", "id", $pageid)) {
+    if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
         print_error("Error: Could not find page");
     }
     
@@ -28,16 +28,16 @@
     $newpage->timecreated = $timenow;
     $newpage->title = get_string("endofclustertitle", "lesson");
     $newpage->contents = get_string("endofclustertitle", "lesson");
-    if (!$newpageid = insert_record("lesson_pages", $newpage)) {
+    if (!$newpageid = $DB->insert_record("lesson_pages", $newpage)) {
         print_error("Insert page: end of cluster page not inserted");
     }
     // update the linked list...
-    if (!set_field("lesson_pages", "nextpageid", $newpageid, "id", $pageid)) {
+    if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
         print_error("Add end of cluster: unable to update link");
     }
     if ($page->nextpageid) {
         // the new page is not the last page
-        if (!set_field("lesson_pages", "prevpageid", $newpageid, "id", $page->nextpageid)) {
+        if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
             print_error("Insert end of cluster: unable to update previous link");
         }
     }
@@ -47,7 +47,7 @@
     $newanswer->pageid = $newpageid;
     $newanswer->timecreated = $timenow;
     $newanswer->jumpto = LESSON_NEXTPAGE;
-    if(!$newanswerid = insert_record("lesson_answers", $newanswer)) {
+    if(!$newanswerid = $DB->insert_record("lesson_answers", $newanswer)) {
         print_error("Add end of cluster: answer record not inserted");
     }
     lesson_set_message(get_string('addedendofcluster', 'lesson'), 'notifysuccess');

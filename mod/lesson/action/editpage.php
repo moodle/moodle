@@ -11,7 +11,7 @@
     $pageid = required_param('pageid', PARAM_INT);
     $redirect = optional_param('redirect', '', PARAM_ALPHA);
     
-    if (!$page = get_record("lesson_pages", "id", $pageid)) {
+    if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
         print_error("Edit page: page record not found");
     }
 
@@ -33,12 +33,12 @@
         $jump[LESSON_CLUSTERJUMP] = get_string("clusterjump", "lesson");
     }
     $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
-    if (!$apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
+    if (!$apageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0))) {
         print_error("Edit page: first page not found");
     }
     while (true) {
         if ($apageid) {
-            if (!$apage = get_record("lesson_pages", "id", $apageid)) {
+            if (!$apage = $DB->get_record("lesson_pages", array("id" => $apageid))) {
                 print_error("Edit page: apage record not found");
             }
             // removed != LESSON_ENDOFBRANCH...
@@ -161,7 +161,7 @@
     echo "</td></tr>\n";
     // get the answers in a set order, the id order
 
-    if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
+    if ($answers = $DB->get_records("lesson_answers", array("pageid" => $page->id), "id")) {
         foreach ($answers as $answer) {
             $flags = intval($answer->flags); // force into an integer
             $nplus1 = $n + 1;
