@@ -135,7 +135,7 @@ class quiz_report extends quiz_default_report {
 
         // Print information on the number of existing attempts
         if (!$table->is_downloading()) { //do not print notices when downloading
-            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, false, $currentgroup)) {
+            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
         }
