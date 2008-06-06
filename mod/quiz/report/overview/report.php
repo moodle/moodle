@@ -108,9 +108,28 @@ class quiz_report extends quiz_default_report {
 
         // Print information on the number of existing attempts
         if (!$download) { //do not print notices when downloading
-            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, false, $currentgroup)) {
+            if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
+        }
+
+        if (!$students = get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)){
+            notify(get_string('nostudentsyet'));
+            return true;
+        }
+        
+        $studentslist = join(',',array_keys($students));
+        if (empty($currentgroup)) {
+            // all users who can attempt quizzes
+            $groupstudentslist = '';
+            $allowedlist = $studentslist;
+        } else {
+            // all users who can attempt quizzes and who are in the currently selected group
+            if (!$groupstudents = get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)){
+                $groupstudents = array();
+            }
+            $groupstudentslist = join(',', array_keys($groupstudents));
+            $allowedlist = $groupstudentslist;
         }
 
         // Print information on the grading method and whether we are displaying
@@ -295,16 +314,6 @@ class quiz_report extends quiz_default_report {
             echo implode("\t", $headers)." \n";
         }
 
-        $students = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)));
-        if (empty($currentgroup)) {
-            // all users who can attempt quizzes
-            $groupstudents = '';
-            $allowed = $students;
-        } else {
-            // all users who can attempt quizzes and who are in the currently selected group
-            $groupstudents = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)));
-            $allowed = $groupstudents;
-        }
 
         // Construct the SQL
         $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
@@ -325,15 +334,15 @@ class quiz_report extends quiz_default_report {
                 break;
             case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
                 // Show only students with attempts
-                $where = ' WHERE u.id IN (' .$allowed. ') AND qa.preview = 0 AND qa.id IS NOT NULL';
+                $where = ' WHERE u.id IN (' .$allowedlist. ') AND qa.preview = 0 AND qa.id IS NOT NULL';
                 break;
             case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
                 // Show only students without attempts
-                $where = ' WHERE u.id IN (' .$allowed. ') AND qa.id IS NULL';
+                $where = ' WHERE u.id IN (' .$allowedlist. ') AND qa.id IS NULL';
                 break;
             case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
                 // Show all students with or without attempts
-                $where = ' WHERE u.id IN (' .$allowed. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
+                $where = ' WHERE u.id IN (' .$allowedlist. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
                 break;
         }
 
@@ -548,24 +557,24 @@ class quiz_report extends quiz_default_report {
                         "WHERE quiz=".$quiz->id;
                         
                 $table->add_separator();
-                if ($groupstudents){
-                    $groupaveragesql = $averagesql." AND qg.userid IN ($groupstudents)";
+                if ($groupstudentslist){
+                    $groupaveragesql = $averagesql." AND qg.userid IN ($groupstudentslist)";
                     $groupaverage = get_record_sql($groupaveragesql);
                     $groupaveragerow = array('fullname' => get_string('groupavg', 'grades'),
                             'sumgrades' => round($groupaverage->grade, $quiz->decimalpoints),
                             'feedbacktext'=> quiz_report_feedback_for_grade($groupaverage->grade, $quiz->id));
                     if($detailedmarks && $qmsubselect) {
-                        $avggradebyq = quiz_get_average_grade_for_questions($quiz, $groupstudents);
+                        $avggradebyq = quiz_get_average_grade_for_questions($quiz, $groupstudentslist);
                         $groupaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
                     }
                     $table->add_data_keyed($groupaveragerow);
                 }
-                $overallaverage = get_record_sql($averagesql." AND qg.userid IN ($students)");
+                $overallaverage = get_record_sql($averagesql." AND qg.userid IN ($studentslist)");
                 $overallaveragerow = array('fullname' => get_string('overallaverage', 'grades'),
                             'sumgrades' => round($overallaverage->grade, $quiz->decimalpoints),
                             'feedbacktext'=> quiz_report_feedback_for_grade($overallaverage->grade, $quiz->id));
                 if($detailedmarks && $qmsubselect) {
-                    $avggradebyq = quiz_get_average_grade_for_questions($quiz, $students);
+                    $avggradebyq = quiz_get_average_grade_for_questions($quiz, $studentslist);
                     $overallaveragerow += quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download);
                 }
                 $table->add_data_keyed($overallaveragerow);
