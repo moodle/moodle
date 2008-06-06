@@ -57,7 +57,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
         $htmleditors[$editor] = $editor;
     }
     $temp->add(new admin_setting_configselect('defaulthtmleditor', get_string('defaulthtmleditor', 'admin'), null, 'tinymce', $htmleditors));
-    $temp->add(new admin_setting_configcheckbox('usehtmleditor', get_string('usehtmleditor', 'admin'), get_string('confightmleditor','admin'), 1));
+    $temp->add(new admin_setting_configcheckbox('htmleditor', get_string('usehtmleditor', 'admin'), get_string('confightmleditor','admin'), 1));
     $ADMIN->add('htmleditor', $temp);
 
     $temp = new admin_settingpage('htmlarea', get_string('htmlarea', 'admin'));
