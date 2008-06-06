@@ -95,23 +95,31 @@ class quiz_report extends quiz_default_report {
         $currentgroup = groups_get_activity_group($cm, true);
 
         //work out the sql for this table.
-        $students = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)));
+        if (!$students = get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)){
+            $students = array();
+        }
+        
+        $studentslist = join(',',array_keys($students));
         if (empty($currentgroup)) {
             // all users who can attempt quizzes
-            $groupstudents = '';
-            $allowed = $students;
+            $groupstudentslist = '';
+            $allowedlist = $studentslist;
         } else {
             // all users who can attempt quizzes and who are in the currently selected group
-            $groupstudents = join(',',array_keys(get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)));
-            $allowed = $groupstudents;
+            if (!$groupstudents = get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)){
+                $groupstudents = array();
+            }
+            $groupstudentslist = join(',', array_keys($groupstudents));
+            $allowedlist = $groupstudentslist;
         }
+
         if ($detailedmarks) {
             $questions = quiz_report_load_questions($quiz);
         } else {
             $questions = array();
         }
-        $table = new quiz_report_overview_table($quiz , $qmsubselect, $groupstudents,
-                $students, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions);
+        $table = new quiz_report_overview_table($quiz , $qmsubselect, $groupstudentslist,
+                $studentslist, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions);
         $table->is_downloading($download, get_string('reportoverview','quiz'),
                     "$COURSE->shortname ".format_string($quiz->name,true));
         if (!$table->is_downloading()) {
@@ -131,7 +139,10 @@ class quiz_report extends quiz_default_report {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
         }
-
+        if (!$students){
+            notify(get_string('nostudentsyet'));
+            return true;
+        }
         // Print information on the grading method and whether we are displaying
         // 
         if (!$table->is_downloading()) { //do not print notices when downloading
@@ -164,15 +175,15 @@ class quiz_report extends quiz_default_report {
                  break;
              case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
                  // Show only students with attempts
-                $where = 'u.id IN (' .$allowed. ') AND qa.preview = 0 AND qa.id IS NOT NULL';
+                $where = 'u.id IN (' .$allowedlist. ') AND qa.preview = 0 AND qa.id IS NOT NULL';
                  break;
              case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
                  // Show only students without attempts
-                $where = 'u.id IN (' .$allowed. ') AND qa.id IS NULL';
+                $where = 'u.id IN (' .$allowedlist. ') AND qa.id IS NULL';
                  break;
              case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
                  // Show all students with or without attempts
-                $where = 'u.id IN (' .$allowed. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
+                $where = 'u.id IN (' .$allowedlist. ') AND (qa.preview = 0 OR qa.preview IS NULL)';
                  break;
          }
         $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where");
