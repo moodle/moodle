@@ -44,6 +44,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
 // Constructor function
     function data_field_base($field=0, $data=0) {   // Field or data or both, each can be id or object
+        global $DB;
 
         if (empty($field) && empty($data)) {
             error('Programmer error: You must specify field and/or data when defining field class. ');
@@ -52,11 +53,11 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         if (!empty($field)) {
             if (is_object($field)) {
                 $this->field = $field;  // Programmer knows what they are doing, we hope
-            } else if (!$this->field = get_record('data_fields','id',$field)) {
+            } else if (!$this->field = $DB->get_record('data_fields', array('id'=>$field))) {
                 error('Bad field ID encountered: '.$field);
             }
             if (empty($data)) {
-                if (!$this->data = get_record('data','id',$this->field->dataid)) {
+                if (!$this->data = $DB->get_record('data', array('id'=>$this->field->dataid))) {
                     error('Bad data ID encountered in field data');
                 }
             }
@@ -66,7 +67,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             if (!empty($data)) {
                 if (is_object($data)) {
                     $this->data = $data;  // Programmer knows what they are doing, we hope
-                } else if (!$this->data = get_record('data','id',$data)) {
+                } else if (!$this->data = $DB->get_record('data', array('id'=>$data))) {
                     error('Bad data ID encountered: '.$data);
                 }
             } else {                      // No way to define it!
@@ -128,12 +129,14 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 // Insert a new field in the database
 // We assume the field object is already defined as $this->field
     function insert_field() {
+        global $DB;
+
         if (empty($this->field)) {
             notify('Programmer error: Field has not been defined yet!  See define_field()');
             return false;
         }
 
-        if (!$this->field->id = insert_record('data_fields',$this->field)){
+        if (!$this->field->id = $DB->insert_record('data_fields',$this->field)){
             notify('Insertion of new field failed!');
             return false;
         }
@@ -143,7 +146,9 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
 // Update a field in the database
     function update_field() {
-        if (!update_record('data_fields', $this->field)) {
+        global $DB;
+
+        if (!$DB->update_record('data_fields', $this->field)) {
             notify('updating of new field failed!');
             return false;
         }
@@ -152,8 +157,10 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
 // Delete a field completely
     function delete_field() {
+        global $DB;
+
         if (!empty($this->field->id)) {
-            delete_records('data_fields', 'id', $this->field->id);
+            $DB->delete_records('data_fields', array('id'=>$this->field->id));
             $this->delete_content();
         }
         return true;
@@ -161,8 +168,10 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
 // Print the relevant form element in the ADD template for this field
     function display_add_field($recordid=0){
+        global $DB;
+
         if ($recordid){
-            $content = get_field('data_content', 'content', 'fieldid', $this->field->id, 'recordid', $recordid);
+            $content = $DB->get_field('data_content', 'content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
         } else {
             $content = '';
         }
@@ -213,7 +222,9 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
 // Display the content of the field in browse mode
     function display_browse_field($recordid, $template) {
-        if ($content = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+        global $DB;
+
+        if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             if (isset($content->content)) {
                 $options = new object();
                 if ($this->field->param1 == '1') {  // We are autolinking this field, so disable linking within us
@@ -233,28 +244,31 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
 // Update the content of one data field in the data_content table
     function update_content($recordid, $value, $name=''){
+        global $DB;
+
         $content = new object();
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
         $content->content = clean_param($value, PARAM_NOTAGS);
 
-        if ($oldcontent = get_record('data_content','fieldid', $this->field->id, 'recordid', $recordid)) {
+        if ($oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
             $content->id = $oldcontent->id;
-            return update_record('data_content', $content);
+            return $DB->update_record('data_content', $content);
         } else {
-            return insert_record('data_content', $content);
+            return $DB->insert_record('data_content', $content);
         }
     }
 
 // Delete all content associated with the field
     function delete_content($recordid=0) {
+        global $DB;
 
         $this->delete_content_files($recordid);
 
         if ($recordid) {
-            return delete_records('data_content', 'fieldid', $this->field->id, 'recordid', $recordid);
+            return $DB->delete_records('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
         } else {
-            return delete_records('data_content', 'fieldid', $this->field->id);
+            return $DB->delete_records('data_content', array('fieldid'=>$this->field->id));
         }
     }
 
@@ -335,6 +349,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
  * output null                                                               *
  *****************************************************************************/
 function data_generate_default_template(&$data, $template, $recordid=0, $form=false, $update=true) {
+    global $DB;
 
     if (!$data && !$template) {
         return false;
@@ -344,7 +359,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
     }
 
     // get all the fields for that database
-    if ($fields = get_records('data_fields', 'dataid', $data->id, 'id')) {
+    if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id')) {
 
         $str = '<div class="defaulttemplate">';
         $str .= '<table cellpadding="5">';
@@ -396,7 +411,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             $newdata = new object();
             $newdata->id = $data->id;
             $newdata->{$template} = $str;
-            if (!update_record('data', $newdata)) {
+            if (!$DB->update_record('data', $newdata)) {
                 notify('Error updating template');
             } else {
                 $data->{$template} = $str;
@@ -414,6 +429,8 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
  * field from the form.                                                *
  ***********************************************************************/
 function data_replace_field_in_templates($data, $searchfieldname, $newfieldname) {
+    global $DB;
+
     if (!empty($newfieldname)) {
         $prestring = '[[';
         $poststring = ']]';
@@ -427,22 +444,22 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
 
     $newdata = new object();
     $newdata->id = $data->id;
-    $newdata->singletemplate = addslashes(str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->singletemplate));
+    $newdata->singletemplate = str_ireplace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->singletemplate);
 
-    $newdata->listtemplate = addslashes(str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->listtemplate));
+    $newdata->listtemplate = str_ireplace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->listtemplate);
 
-    $newdata->addtemplate = addslashes(str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->addtemplate));
+    $newdata->addtemplate = str_ireplace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->addtemplate);
 
-    $newdata->addtemplate = addslashes(str_ireplace('[['.$searchfieldname.'#id]]',
-            $prestring.$newfieldname.$idpart.$poststring, $data->addtemplate));
+    $newdata->addtemplate = str_ireplace('[['.$searchfieldname.'#id]]',
+            $prestring.$newfieldname.$idpart.$poststring, $data->addtemplate);
 
-    $newdata->rsstemplate = addslashes(str_ireplace('[['.$searchfieldname.']]',
-            $prestring.$newfieldname.$poststring, $data->rsstemplate));
+    $newdata->rsstemplate = str_ireplace('[['.$searchfieldname.']]',
+            $prestring.$newfieldname.$poststring, $data->rsstemplate);
 
-    return update_record('data', $newdata);
+    return $DB->update_record('data', $newdata);
 }
 
 
@@ -450,25 +467,26 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
  * Appends a new field at the end of the form template. *
  ********************************************************/
 function data_append_new_field_to_templates($data, $newfieldname) {
+    global $DB;
 
     $newdata = new object();
     $newdata->id = $data->id;
     $change = false;
 
     if (!empty($data->singletemplate)) {
-        $newdata->singletemplate = addslashes($data->singletemplate.' [[' . $newfieldname .']]');
+        $newdata->singletemplate = $data->singletemplate.' [[' . $newfieldname .']]';
         $change = true;
     }
     if (!empty($data->addtemplate)) {
-        $newdata->addtemplate = addslashes($data->addtemplate.' [[' . $newfieldname . ']]');
+        $newdata->addtemplate = $data->addtemplate.' [[' . $newfieldname . ']]';
         $change = true;
     }
     if (!empty($data->rsstemplate)) {
-        $newdata->rsstemplate = addslashes($data->singletemplate.' [[' . $newfieldname . ']]');
+        $newdata->rsstemplate = $data->singletemplate.' [[' . $newfieldname . ']]';
         $change = true;
     }
     if ($change) {
-        update_record('data', $newdata);
+        $DB->update_record('data', $newdata);
     }
 }
 
@@ -478,7 +496,9 @@ function data_append_new_field_to_templates($data, $newfieldname) {
  * this function creates an instance of the particular subfield class   *
  ************************************************************************/
 function data_get_field_from_name($name, $data){
-    $field = get_record('data_fields','name',$name);
+    global $DB;
+
+    $field = $DB->get_record('data_fields', array('name'=>$name));
 
     if ($field) {
         return data_get_field($field, $data);
@@ -492,7 +512,9 @@ function data_get_field_from_name($name, $data){
  * this function creates an instance of the particular subfield class   *
  ************************************************************************/
 function data_get_field_from_id($fieldid, $data){
-    $field = get_record('data_fields','id',$fieldid);
+    global $DB;
+
+    $field = $DB->get_record('data_fields', array('id'=>$fieldid));
 
     if ($field) {
         return data_get_field($field, $data);
@@ -537,13 +559,13 @@ function data_get_field($field, $data) {
  * output bool                                                             *
  ***************************************************************************/
 function data_isowner($rid){
-    global $USER;
+    global $USER, $DB;
 
     if (empty($USER->id)) {
         return false;
     }
 
-    if ($record = get_record('data_records','id',$rid)) {
+    if ($record = $DB->get_record('data_records', array('id'=>$rid))) {
         return ($record->userid == $USER->id);
     }
 
@@ -571,10 +593,9 @@ function data_atmaxentries($data){
  * output int                                                         *
  **********************************************************************/
 function data_numentries($data){
-    global $USER;
-    global $CFG;
-    $sql = 'SELECT COUNT(*) FROM '.$CFG->prefix.'data_records WHERE dataid='.$data->id.' AND userid='.$USER->id;
-    return count_records_sql($sql);
+    global $USER, $CFG, $DB;
+    $sql = 'SELECT COUNT(*) FROM {data_records} WHERE dataid=? AND userid=?';
+    return $DB->count_records_sql($sql, array($data->id, $USER->id));
 }
 
 /****************************************************************
@@ -584,7 +605,7 @@ function data_numentries($data){
  * output bool                                                  *
  ****************************************************************/
 function data_add_record($data, $groupid=0){
-    global $USER;
+    global $USER, $DB;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -599,7 +620,7 @@ function data_add_record($data, $groupid=0){
     } else {
         $record->approved = 0;
     }
-    return insert_record('data_records',$record);
+    return $DB->insert_record('data_records', $record);
 }
 
 /*******************************************************************
@@ -611,9 +632,11 @@ function data_add_record($data, $groupid=0){
  *       @param string $template                                   *
  * output bool                                                     *
  *******************************************************************/
-function data_tags_check($dataid, $template){
+function data_tags_check($dataid, $template) {
+    global $DB;
+
     // first get all the possible tags
-    $fields = get_records('data_fields','dataid',$dataid);
+    $fields = $DB->get_records('data_fields', array('dataid'=>$dataid));
     // then we generate strings to replace
     $tagsok = true; // let's be optimistic
     foreach ($fields as $field){
@@ -720,13 +743,14 @@ function data_delete_instance($id) {    // takes the dataid
  * returns a summary of data activity of this user                      *
  ************************************************************************/
 function data_user_outline($course, $user, $mod, $data) {
-    global $CFG;
-    if ($countrecords = count_records('data_records', 'dataid', $data->id, 'userid', $user->id)) {
+    global $CFG, $DB;
+
+    if ($countrecords = $DB->count_records('data_records', array('dataid'=>$data->id, 'userid'=>$user->id))) {
         $result = new object();
         $result->info = get_string('numrecords', 'data', $countrecords);
-        $lastrecord   = get_record_sql('SELECT id,timemodified FROM '.$CFG->prefix.'data_records
-                                         WHERE dataid = '.$data->id.' AND userid = '.$user->id.'
-                                      ORDER BY timemodified DESC', true);
+        $lastrecord   = $DB->get_record_sql('SELECT id,timemodified FROM {data_records}
+                                              WHERE dataid = ? AND userid = ?
+                                           ORDER BY timemodified DESC', array($data->id, $user->id), true);
         $result->time = $lastrecord->timemodified;
         return $result;
     }
@@ -737,8 +761,9 @@ function data_user_outline($course, $user, $mod, $data) {
  * Prints all the records uploaded by this user                         *
  ************************************************************************/
 function data_user_complete($course, $user, $mod, $data) {
-    if ($records = get_records_select('data_records', 'dataid = '.$data->id.' AND userid = '.$user->id,
-                                                      'timemodified DESC')) {
+    global $DB;
+
+    if ($records = $DB->get_records('data_records', array('dataid'=>$data->id,'userid'=>$user->id), 'timemodified DESC')) {
         data_print_template('singletemplate', $records, $data);
     }
 }
@@ -751,19 +776,20 @@ function data_user_complete($course, $user, $mod, $data) {
  * @return array array of grades, false if none
  */
 function data_get_user_grades($data, $userid=0) {
-    global $CFG;
+    global $CFG, $DB;
 
-    $user = $userid ? "AND u.id = $userid" : "";
+    $user = $userid ? "AND u.id = :userid" : "";
+    $params = array('userid'=>$userid, 'dataid'=>$data->id);
 
     $sql = "SELECT u.id, u.id AS userid, avg(drt.rating) AS rawgrade
-              FROM {$CFG->prefix}user u, {$CFG->prefix}data_records dr,
-                   {$CFG->prefix}data_ratings drt
+              FROM {user} u, {data_records} dr,
+                   {data_ratings} drt
              WHERE u.id = dr.userid AND dr.id = drt.recordid
-                   AND drt.userid != u.id AND dr.dataid = $data->id
+                   AND drt.userid != u.id AND dr.dataid = :dataid
                    $user
           GROUP BY u.id";
 
-    return get_records_sql($sql);
+    return $DB->get_records_sql($sql, $params);
 }
 
 /**
@@ -773,10 +799,8 @@ function data_get_user_grades($data, $userid=0) {
  * @param int $userid specific user only, 0 mean all
  */
 function data_update_grades($data=null, $userid=0, $nullifnone=true) {
-    global $CFG;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
 
     if ($data != null) {
         if ($grades = data_get_user_grades($data, $userid)) {
@@ -794,17 +818,17 @@ function data_update_grades($data=null, $userid=0, $nullifnone=true) {
 
     } else {
         $sql = "SELECT d.*, cm.idnumber as cmidnumber
-                  FROM {$CFG->prefix}data d, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+                  FROM {data} d, {course_modules} cm, {modules} m
                  WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id";
-        if ($rs = get_recordset_sql($sql)) {
-            while ($data = rs_fetch_next_record($rs)) {
+        if ($rs = $DB->get_recordset_sql($sql)) {
+            foreach ($rs as $data) {
                 if ($data->assessed) {
                     data_update_grades($data, 0, false);
                 } else {
                     data_grade_item_update($data);
                 }
             }
-            rs_close($rs);
+            $rs->close();
         }
     }
 }
@@ -818,9 +842,7 @@ function data_update_grades($data=null, $userid=0, $nullifnone=true) {
  */
 function data_grade_item_update($data, $grades=NULL) {
     global $CFG;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    require_once($CFG->libdir.'/gradelib.php');
 
     $params = array('itemname'=>$data->name, 'idnumber'=>$data->cmidnumber);
 
@@ -864,29 +886,20 @@ function data_grade_item_delete($data) {
 function data_get_participants($dataid) {
 // Returns the users with data in one data
 // (users with records in data_records, data_comments and data_ratings)
-    global $CFG;
+    global $CFG, $DB;
 
-    $records = get_records_sql("SELECT DISTINCT u.id, u.id
-                                FROM {$CFG->prefix}user u,
-                                     {$CFG->prefix}data_records r
-                                WHERE r.dataid = '$dataid'
-                                  AND u.id = r.userid");
+    $records = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                       FROM {user} u, {data_records} r
+                                      WHERE r.dataid = ? AND u.id = r.userid", array($dataid));
 
-    $comments = get_records_sql("SELECT DISTINCT u.id, u.id
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}data_records r,
-                                      {$CFG->prefix}data_comments c
-                                 WHERE r.dataid = '$dataid'
-                                   AND u.id = r.userid
-                                   AND r.id = c.recordid");
+    $comments = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                        FROM {user} u, {data_records} r, {data_comments} c
+                                       WHERE r.dataid = ? AND u.id = r.userid AND r.id = c.recordid", array($dataid));
 
-    $ratings = get_records_sql("SELECT DISTINCT u.id, u.id
-                                FROM {$CFG->prefix}user u,
-                                     {$CFG->prefix}data_records r,
-                                     {$CFG->prefix}data_ratings a
-                                WHERE r.dataid = '$dataid'
-                                  AND u.id = r.userid
-                                  AND r.id = a.recordid");
+    $ratings = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                       FROM {user} u, {data_records} r, {data_ratings} a
+                                      WHERE r.dataid = ? AND u.id = r.userid AND r.id = a.recordid", array($dataid));
+
     $participants = array();
 
     if ($records){
@@ -919,7 +932,7 @@ function data_get_participants($dataid) {
  * output null                                                          *
  ************************************************************************/
 function data_print_template($template, $records, $data, $search='',$page=0, $return=false) {
-    global $CFG;
+    global $CFG, $DB;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -935,7 +948,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
     }
 
     if (empty($fields)) {
-        $fieldrecords = get_records('data_fields','dataid', $data->id);
+        $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$data->id));
         foreach ($fieldrecords as $fieldrecord) {
             $fields[]= data_get_field($fieldrecord, $data);
         }
@@ -995,7 +1008,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
 
         $patterns[]='##comments##';
         if (($template == 'listtemplate') && ($data->comments)) {
-            $comments = count_records('data_comments','recordid',$record->id);
+            $comments = $DB->count_records('data_comments', array('recordid'=>$record->id));
             $replacement[] = '<a href="view.php?rid='.$record->id.'#comments">'.get_string('commentsn','data', $comments).'</a>';
         } else {
             $replacement[] = '';
@@ -1044,7 +1057,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
  * output null                                                          *
  ************************************************************************/
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC', $search_array = '', $advanced = 0, $mode= ''){
-    global $CFG;
+    global $CFG, $DB;
     
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1071,7 +1084,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';
     // foreach field, print the option
     echo '<select name="sort" id="pref_sortby">';
-    if ($fields = get_records('data_fields','dataid',$data->id, 'name')) {
+    if ($fields = $DB->get_records('data_fields', array('dataid'=>$data->id), 'name')) {
         echo '<optgroup label="'.get_string('fields', 'data').'">';
         foreach ($fields as $field) {
             if ($field->id == $sort) {
@@ -1188,7 +1201,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     }
 
     if (empty($fields)) {
-        $fieldrecords = get_records('data_fields','dataid', $data->id);
+        $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$data->id));
         foreach ($fieldrecords as $fieldrecord) {
             $fields[]= data_get_field($fieldrecord, $data);
         }
@@ -1238,7 +1251,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
 }
 
 function data_print_ratings($data, $record) {
-    global $USER;
+    global $USER, $DB;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1262,7 +1275,7 @@ function data_print_ratings($data, $record) {
             }
 
             if ($data->scale < 0) {
-                if ($scale = get_record('scale', 'id', abs($data->scale))) {
+                if ($scale = $DB->get_record('scale', array('id'=>abs($data->scale)))) {
                     print_scale_menu_helpbutton($data->course, $scale );
                 }
             }
@@ -1280,7 +1293,6 @@ function data_print_ratings($data, $record) {
 function data_print_ratings_mean($recordid, $scale, $link=true) {
 // Print the multiple ratings on a post given to the current user by others.
 // Scale is an array of ratings
-
     static $strrate;
 
     $mean = data_get_ratings_mean($recordid, $scale);
@@ -1305,10 +1317,11 @@ function data_get_ratings_mean($recordid, $scale, $ratings=NULL) {
 // Return the mean rating of a post given to the current user by others.
 // Scale is an array of possible ratings in the scale
 // Ratings is an optional simple array of actual ratings (just integers)
+    global $DB;
 
     if (!$ratings) {
         $ratings = array();
-        if ($rates = get_records("data_ratings", "recordid", $recordid)) {
+        if ($rates = $DB->get_records("data_ratings", array("recordid"=>$recordid))) {
             foreach ($rates as $rate) {
                 $ratings[] = $rate->rating;
             }
@@ -1343,10 +1356,11 @@ function data_print_rating_menu($recordid, $userid, $scale) {
 // Print the menu of ratings as part of a larger form.
 // If the post has already been - set that value.
 // Scale is an array of ratings
+    global $DB;
 
     static $strrate;
 
-    if (!$rating = get_record("data_ratings", "userid", $userid, "recordid", $recordid)) {
+    if (!$rating = $DB->get_record("data_ratings", array("userid"=>$userid, "recordid"=>$recordid))) {
         $rating->rating = -999;
     }
 
@@ -1360,25 +1374,22 @@ function data_print_rating_menu($recordid, $userid, $scale) {
 
 function data_get_ratings($recordid, $sort="u.firstname ASC") {
 // Returns a list of ratings for a particular post - sorted.
-    global $CFG;
-    return get_records_sql("SELECT u.*, r.rating
-                              FROM {$CFG->prefix}data_ratings r,
-                                   {$CFG->prefix}user u
-                             WHERE r.recordid = $recordid
-                               AND r.userid = u.id
-                             ORDER BY $sort");
+    global $CFG, $DB;
 
+    return $DB->get_records_sql("SELECT u.*, r.rating
+                                   FROM {data_ratings} r, {user} u
+                                  WHERE r.recordid = ? AND r.userid = u.id
+                               ORDER BY $sort", array($recordid));
 }
 
 
 // prints all comments + a text box for adding additional comment
 function data_print_comments($data, $record, $page=0, $mform=false) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     echo '<a name="comments"></a>';
 
-    if ($comments = get_records('data_comments','recordid',$record->id)) {
+    if ($comments = $DB->get_records('data_comments', array('recordid'=>$record->id))) {
         foreach ($comments as $comment) {
             data_print_comment($data, $comment, $page);
         }
@@ -1409,8 +1420,7 @@ function data_print_comments($data, $record, $page=0, $mform=false) {
 
 // prints a single comment entry
 function data_print_comment($data, $comment, $page=0) {
-
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -1418,7 +1428,7 @@ function data_print_comment($data, $comment, $page=0) {
     $stredit = get_string('edit');
     $strdelete = get_string('delete');
 
-    $user = get_record('user','id',$comment->userid);
+    $user = $DB->get_record('user', array('id'=>$comment->userid));
 
     echo '<table cellspacing="0" align="center" width="50%" class="datacomment forumpost">';
 
@@ -1473,16 +1483,16 @@ function data_get_post_actions() {
 }
 
 function data_fieldname_exists($name, $dataid, $fieldid=0) {
-    global $CFG;
+    global $CFG, $DB;
 
-    $LIKE = sql_ilike();
+    $LIKE = $DB->sql_ilike();
     if ($fieldid) {
-        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields df
-                                  WHERE df.name $LIKE '$name' AND df.dataid = $dataid
-                                    AND ((df.id < $fieldid) OR (df.id > $fieldid))");
+        return $DB->record_exists_sql("SELECT * FROM {data_fields} df
+                                        WHERE df.name $LIKE ? AND df.dataid = ?
+                                              AND ((df.id < ?) OR (df.id > ?))", array($name, $dataid, $fieldid, $fieldid));
     } else {
-        return record_exists_sql("SELECT * from {$CFG->prefix}data_fields df
-                                  WHERE df.name $LIKE '$name' AND df.dataid = $dataid");
+        return $DB->record_exists_sql("SELECT * FROM {data_fields} df
+                                        WHERE df.name $LIKE ? AND df.dataid = ?", array($name, $dataid));
     }
 }
 
@@ -1513,8 +1523,7 @@ function data_convert_arrays_to_strings(&$fieldinput) {
  * @return boolean      - data module was converted or not
  */
 function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array(), $cmid=NULL) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     if (!isset($data->participants) && !isset($data->assesspublic)
             && !isset($data->groupmode)) {
@@ -1612,7 +1621,7 @@ function data_convert_to_roles($data, $teacherroles=array(), $studentroles=array
     }
 
     if (empty($cm)) {
-        $cm = get_record('course_modules', 'id', $cmid);
+        $cm = $DB->get_record('course_modules', array('id'=>$cmid));
     }
 
     switch ($cm->groupmode) {
@@ -1814,7 +1823,7 @@ function clean_preset($folder) {
 
 
 function data_presets_export($course, $cm, $data) {
-    global $CFG;
+    global $CFG, $DB;
 
     /* Info Collected. Now need to make files in moodledata/temp */
     $tempfolder = $CFG->dataroot.'/temp';
@@ -1875,7 +1884,7 @@ function data_presets_export($course, $cm, $data) {
     $presetxml .= "</settings>\n\n";
 
     // Now for the fields. Grab all that are non-empty
-    $fields = get_records('data_fields', 'dataid', $data->id);
+    $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
     ksort($fields);
     if (!empty($fields)) {
         foreach ($fields as $field) {
@@ -1937,7 +1946,7 @@ class PresetImporter {
     }
 
     function get_settings() {
-        global $CFG;
+        global $CFG, $DB;
 
         if (!is_directory_a_preset($this->folder)) {
             error("$this->userid/$this->shortname Not a preset");
@@ -1977,7 +1986,7 @@ class PresetImporter {
                 if (!is_array($value)) {
                     continue;
                 }
-                $f->$param = addslashes($value[0]['#']);
+                $f->$param = $value[0]['#'];
             }
             $f->dataid = $this->data->id;
             $f->type = clean_param($f->type, PARAM_ALPHA);
@@ -2005,7 +2014,7 @@ class PresetImporter {
 
         /* Now we look at the current structure (if any) to work out whether we need to clear db
            or save the data */
-        if (!$currentfields = get_records('data_fields', 'dataid', $this->data->id)) {
+        if (!$currentfields = $DB->get_records('data_fields', array('dataid'=>$this->data->id))) {
             $currentfields = array();
         }
 
@@ -2077,7 +2086,7 @@ class PresetImporter {
     }
 
     function import() {
-        global $CFG;
+        global $CFG, $DB;
 
         list($settings, $newfields, $currentfields) = $this->get_settings();
         $preservedfields = array();
@@ -2135,15 +2144,15 @@ class PresetImporter {
                     $id = $currentfield->id;
                     //Why delete existing data records and related comments/ratings??
 /*
-                    if ($content = get_records('data_content', 'fieldid', $id)) {
+                    if ($content = $DB->get_records('data_content', array('fieldid'=>$id))) {
                         foreach ($content as $item) {
-                            delete_records('data_ratings', 'recordid', $item->recordid);
-                            delete_records('data_comments', 'recordid', $item->recordid);
-                            delete_records('data_records', 'id', $item->recordid);
+                            $DB->delete_records('data_ratings', array('recordid'=>$item->recordid));
+                            $DB->delete_records('data_comments', array('recordid'=>$item->recordid));
+                            $DB->delete_records('data_records', array('id'=>$item->recordid));
                         }
                     }*/
-                    delete_records('data_content', 'fieldid', $id);
-                    delete_records('data_fields', 'id', $id);
+                    $DB->delete_records('data_content', array('fieldid'=>$id));
+                    $DB->delete_records('data_fields', array('id'=>$id));
                 }
             }
         }
@@ -2154,7 +2163,7 @@ class PresetImporter {
                 // old broken value
                 $settings->defaultsort = 0;
             } else {
-                $settings->defaultsort = (int)get_field('data_fields', 'id', 'dataid', $this->data->id, 'name', addslashes($settings->defaultsort));
+                $settings->defaultsort = (int)$DB->get_field('data_fields', 'id', array('dataid'=>$this->data->id, 'name'=>$settings->defaultsort));
             }
         } else {
             $settings->defaultsort = 0;
@@ -2178,7 +2187,7 @@ class PresetImporter {
             }
         }
 
-        data_update_instance(addslashes_object($this->data));
+        data_update_instance($this->data);
 
         if (strstr($this->folder, '/temp/')) {
         // Removes the temporary files
@@ -2239,13 +2248,13 @@ function data_reset_course_form_defaults($course) {
  * @param string optional type
  */
 function data_reset_gradebook($courseid, $type='') {
-    global $CFG;
+    global $CFG, $DB;
 
     $sql = "SELECT d.*, cm.idnumber as cmidnumber, d.course as courseid
-              FROM {$CFG->prefix}data d, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
-             WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id AND d.course=$courseid";
+              FROM {data} d, {course_modules} cm, {modules} m
+             WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id AND d.course=?";
 
-    if ($datas = get_records_sql($sql)) {
+    if ($datas = $DB->get_records_sql($sql, array($courseid))) {
         foreach ($datas as $data) {
             data_grade_item_update($data, 'reset');
         }
@@ -2259,29 +2268,29 @@ function data_reset_gradebook($courseid, $type='') {
  * @return array status array
  */
 function data_reset_userdata($data) {
-    global $CFG;
+    global $CFG, $DB;
     require_once($CFG->libdir.'/filelib.php');
 
     $componentstr = get_string('modulenameplural', 'data');
     $status = array();
 
     $allrecordssql = "SELECT r.id
-                        FROM {$CFG->prefix}data_records r
-                             INNER JOIN {$CFG->prefix}data d ON r.dataid = d.id
-                       WHERE d.course = {$data->courseid}";
+                        FROM {data_records} r
+                             INNER JOIN {data} d ON r.dataid = d.id
+                       WHERE d.course = ?";
 
     $alldatassql = "SELECT d.id
-                      FROM {$CFG->prefix}data d
-                     WHERE d.course={$data->courseid}";
+                      FROM {data} d
+                     WHERE d.course=?";
 
     // delete entries if requested
     if (!empty($data->reset_data)) {
-        delete_records_select('data_ratings', "recordid IN ($allrecordssql)");
-        delete_records_select('data_comments', "recordid IN ($allrecordssql)");
-        delete_records_select('data_content', "recordid IN ($allrecordssql)");
-        delete_records_select('data_records', "dataid IN ($alldatassql)");
+        $DB->delete_records_select('data_ratings', "recordid IN ($allrecordssql)", array($data->courseid));
+        $DB->delete_records_select('data_comments', "recordid IN ($allrecordssql)", array($data->courseid));
+        $DB->delete_records_select('data_content', "recordid IN ($allrecordssql)", array($data->courseid));
+        $DB->delete_records_select('data_records', "dataid IN ($alldatassql)", array($data->courseid));
 
-        if ($datas = get_records_sql($alldatassql)) {
+        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
             foreach ($datas as $dataid=>$unused) {
                 fulldelete("$CFG->dataroot/$data->courseid/moddata/data/$dataid");
             }
@@ -2297,25 +2306,25 @@ function data_reset_userdata($data) {
     // remove entries by users not enrolled into course
     if (!empty($data->reset_data_notenrolled)) {
         $recordssql = "SELECT r.id, r.userid, r.dataid, u.id AS userexists, u.deleted AS userdeleted
-                         FROM {$CFG->prefix}data_records r
-                              INNER JOIN {$CFG->prefix}data d ON r.dataid = d.id
-                              LEFT OUTER JOIN {$CFG->prefix}user u ON r.userid = u.id
-                        WHERE d.course = {$data->courseid} AND r.userid > 0";
+                         FROM {data_records} r
+                              JOIN {data} d ON r.dataid = d.id
+                              LEFT JOIN {user} u ON r.userid = u.id
+                        WHERE d.course = ? AND r.userid > 0";
 
         $course_context = get_context_instance(CONTEXT_COURSE, $data->courseid);
         $notenrolled = array();
         $fields = array();
-        if ($rs = get_recordset_sql($recordssql)) {
-            while ($record = rs_fetch_next_record($rs)) {
+        if ($rs = $DB->get_recordset_sql($recordssql, array($data->courseid))) {
+            foreach ($rs as $record) {
                 if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
                   or !has_capability('moodle/course:view', $course_context , $record->userid)) {
-                    delete_records('data_ratings', 'recordid', $record->id);
-                    delete_records('data_comments', 'recordid', $record->id);
-                    delete_records('data_content', 'recordid', $record->id);
-                    delete_records('data_records', 'id', $record->id);
+                    $DB->delete_records('data_ratings', array('recordid'=>$record->id));
+                    $DB->delete_records('data_comments', array('recordid'=>$record->id));
+                    $DB->delete_records('data_content', array('recordid'=>$record->id));
+                    $DB->delete_records('data_records', array('id'=>$record->id));
                     // HACK: this is ugly - the recordid should be before the fieldid!
                     if (!array_key_exists($record->dataid, $fields)) {
-                        if ($fs = get_records('data_fields', 'dataid', $record->dataid)) {
+                        if ($fs = $DB->get_records('data_fields', array('dataid'=>$record->dataid))) {
                             $fields[$record->dataid] = array_keys($fs);
                         } else {
                             $fields[$record->dataid] = array();
@@ -2327,14 +2336,14 @@ function data_reset_userdata($data) {
                     $notenrolled[$record->userid] = true;
                 }
             }
-            rs_close($rs);
+            $rs->close();
             $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotenrolled', 'data'), 'error'=>false);
         }
     }
 
     // remove all ratings
     if (!empty($data->reset_data_ratings)) {
-        delete_records_select('data_ratings', "recordid IN ($allrecordssql)");
+        $DB->delete_records_select('data_ratings', "recordid IN ($allrecordssql)", array($data->courseid));
 
         if (empty($data->reset_gradebook_grades)) {
             // remove all grades from gradebook
@@ -2346,7 +2355,7 @@ function data_reset_userdata($data) {
 
     // remove all comments
     if (!empty($data->reset_data_comments)) {
-        delete_records_select('data_comments', "recordid IN ($allrecordssql)");
+        $DB->delete_records_select('data_comments', "recordid IN ($allrecordssql)", array($data->courseid));
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
     }
 
