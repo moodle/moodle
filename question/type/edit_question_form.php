@@ -26,12 +26,12 @@ class question_edit_form extends moodleform {
      *
      * @var object
      */
-    var $question;
+    public $question;
 
-    var $contexts;
-    var $category;
-    var $categorycontext;
-    var $coursefilesid;
+    public $contexts;
+    public $category;
+    public $categorycontext;
+    public $coursefilesid;
 
     function question_edit_form($submiturl, $question, $category, $contexts, $formeditable = true){
 
@@ -57,7 +57,7 @@ class question_edit_form extends moodleform {
      * override this method and remove the ones you don't want with $mform->removeElement().
      */
     function definition() {
-        global $COURSE, $CFG;
+        global $COURSE, $CFG, $DB;
 
         $qtype = $this->qtype();
         $langfile = "qtype_$qtype";
@@ -151,7 +151,7 @@ class question_edit_form extends moodleform {
             $a = new object();
             if (!empty($this->question->createdby)){
                 $a->time = userdate($this->question->timecreated);
-                $a->user = fullname(get_record('user', 'id', $this->question->createdby));
+                $a->user = fullname($DB->get_record('user', array('id' => $this->question->createdby)));
             } else {
                 $a->time = get_string('unknown', 'question');
                 $a->user = get_string('unknown', 'question');
@@ -160,7 +160,7 @@ class question_edit_form extends moodleform {
             if (!empty($this->question->modifiedby)){
                 $a = new object();
                 $a->time = userdate($this->question->timemodified);
-                $a->user = fullname(get_record('user', 'id', $this->question->modifiedby));
+                $a->user = fullname($DB->get_record('user', array('id' => $this->question->modifiedby)));
                 $mform->addElement('static', 'modified', get_string('modified', 'question'), get_string('byandon', 'question', $a));
             }
         }

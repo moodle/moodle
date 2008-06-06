@@ -46,8 +46,8 @@
                                     $param->moveupcontext, $param->movedowncontext, $param->tocontext);
         }
     }
-    if ($param->delete && ($questionstomove = count_records("question", "category", $param->delete))){
-        if (!$category = get_record("question_categories", "id", $param->delete)) {  // security
+    if ($param->delete && ($questionstomove = $DB->count_records("question", array("category" => $param->delete)))){
+        if (!$category = $DB->get_record("question_categories", array("id" => $param->delete))) {  // security
             print_error('nocate', 'question', $thispageurl->out(), $param->delete);
         }
         $categorycontext = get_context_instance_by_id($category->contextid);
@@ -60,7 +60,7 @@
             list($tocategoryid, $tocontextid) = explode(',', $formdata->category);
             $qcobject->move_questions_and_delete_category($formdata->delete, $tocategoryid);
             $thispageurl->remove_params('cat');
-            $thispageurl->remove_params('category'); // TODO check in fix for bug 5353 
+            $thispageurl->remove_params('category'); // TODO check in fix for bug 5353
             redirect($thispageurl->out());
         }
     } else {

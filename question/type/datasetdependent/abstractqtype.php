@@ -16,7 +16,7 @@ define("LINK", "3");
 
 class question_dataset_dependent_questiontype extends default_questiontype {
 
-    var $virtualqtype = false;
+    public $virtualqtype = false;
 
     function name() {
         return 'datasetdependent';
@@ -29,13 +29,13 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
         // Find out how many datasets are available
-        global $CFG;
-        if(!$maxnumber = (int)get_field_sql(
+        global $CFG, $DB;
+        if(!$maxnumber = (int)$DB->get_field_sql(
                             "SELECT MIN(a.itemcount)
-                            FROM {$CFG->prefix}question_dataset_definitions a,
-                                 {$CFG->prefix}question_datasets b
-                            WHERE b.question = $question->id
-                            AND   a.id = b.datasetdefinition")) {
+                            FROM {question_dataset_definitions} a,
+                                 {question_datasets} b
+                            WHERE b.question = ?
+                            AND   a.id = b.datasetdefinition", array($question->id))) {
             print_error('cannotgetdsforquestion', 'question', '', $question->id);
         }
 
@@ -68,12 +68,12 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
 
     function save_session_and_responses(&$question, &$state) {
+        global $DB;
         $responses = 'dataset'.$state->options->datasetitem.'-'.
          $state->responses[''];
 
         // Set the legacy answer field
-        if (!set_field('question_states', 'answer', $responses, 'id',
-         $state->id)) {
+        if (!$DB->set_field('question_states', 'answer', $responses, array('id', $state->id))) {
             return false;
         }
         return true;
@@ -90,15 +90,15 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     function uses_quizfile($question, $relativefilepath) {
         // Check whether the specified file is available by any
         // dataset item on this question...
-        global $CFG;
-        if (get_record_sql(" SELECT *
-                 FROM {$CFG->prefix}question_dataset_items i,
-                      {$CFG->prefix}question_dataset_definitions d,
-                      {$CFG->prefix}question_datasets q
-                WHERE i.value = '$relativefilepath'
+        global $CFG, $DB;
+        if ($DB->get_record_sql(" SELECT *
+                 FROM {question_dataset_items} i,
+                      {question_dataset_definitions} d,
+                      {question_datasets} q
+                WHERE i.value = ?
                   AND d.id = i.definition AND d.type = 2
                   AND d.id = q.datasetdefinition
-                  AND q.question = $question->id ")) {
+                  AND q.question = ? ", array($relativefilepath, $question->id))) {
 
             return true;
         } else {
@@ -323,17 +323,18 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
 
     function get_dataset_definitions($questionid, $newdatasets) {
+        global $DB;
         //get the existing datasets for this question
         $datasetdefs = array();
         if (!empty($questionid)) {
             global $CFG;
             $sql = "SELECT i.*
-                    FROM {$CFG->prefix}question_datasets d,
-                         {$CFG->prefix}question_dataset_definitions i
-                    WHERE d.question = '$questionid'
+                    FROM {question_datasets} d,
+                         {question_dataset_definitions} i
+                    WHERE d.question = ?
                     AND   d.datasetdefinition = i.id
                    ";
-            if ($records = get_records_sql($sql)) {
+            if ($records = $DB->get_records_sql($sql, array($questionid->id))) {
                 foreach ($records as $r) {
                     $datasetdefs["$r->type-$r->category-$r->name"] = $r;
                 }
@@ -361,6 +362,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     }
 
     function save_dataset_definitions($form) {
+        global $DB;
         // Save datasets
         $datasetdefinitions = $this->get_dataset_definitions($form->id, $form->dataset);
         $tmpdatasets = array_flip($form->dataset);
@@ -370,14 +372,10 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             if (isset($datasetdef->id)) {
                 if (!isset($tmpdatasets[$defid])) {
                 // This dataset is not used any more, delete it
-                    delete_records('question_datasets',
-                               'question', $form->id,
-                               'datasetdefinition', $datasetdef->id);
+                    $DB->delete_records('question_datasets', array('question' => $form->id, 'datasetdefinition' => $datasetdef->id));
                     if ($datasetdef->category == 0) { // Question local dataset
-                        delete_records('question_dataset_definitions',
-                         'id', $datasetdef->id);
-                        delete_records('question_dataset_items',
-                         'definition', $datasetdef->id);
+                        $DB->delete_records('question_dataset_definitions', array('id' => $datasetdef->id));
+                        $DB->delete_records('question_dataset_items', array('definition' => $datasetdef->id));
                     }
                 }
                 // This has already been saved or just got deleted
@@ -385,8 +383,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 continue;
             }
 
-            if (!$datasetdef->id = insert_record(
-                    'question_dataset_definitions', $datasetdef)) {
+            if (!$datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef)) {
                 print_error("cannotcreatedataset", 'question', '', $defid);
             }
 
@@ -396,17 +393,15 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 // By first creating the datasetdefinition above we
                 // can manage to automatically take care of
                 // some possible realtime concurrence
-                if ($olderdatasetdefs = get_records_select(
-                        'question_dataset_definitions',
-                        "type = '$datasetdef->type'
-                        AND name = '$datasetdef->name'
-                        AND category = '$datasetdef->category'
-                        AND id < $datasetdef->id
-                        ORDER BY id DESC")) {
+                if ($olderdatasetdefs = $DB->get_records_select( 'question_dataset_definitions',
+                        "type = ?
+                        AND name = ?
+                        AND category = ?
+                        AND id < ?
+                        ORDER BY id DESC", array($datasetdef->type, $datasetdef->name, $datasetdef->category, $datasetdef->id))) {
 
                     while ($olderdatasetdef = array_shift($olderdatasetdefs)) {
-                        delete_records('question_dataset_definitions',
-                                   'id', $datasetdef->id);
+                        $DB->delete_records('question_dataset_definitions', array('id' => $datasetdef->id));
                         $datasetdef = $olderdatasetdef;
                     }
                 }
@@ -416,8 +411,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             $questiondataset = new stdClass;
             $questiondataset->question = $form->id;
             $questiondataset->datasetdefinition = $datasetdef->id;
-            if (!insert_record('question_datasets',
-                               $questiondataset)) {
+            if (!$DB->insert_record('question_datasets', $questiondataset)) {
                 print_error('cannotcreaterelation', 'question', '', $name);
             }
             unset($datasetdefinitions[$defid]);
@@ -427,14 +421,11 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         // to datasets in other categories:
         if (!empty($datasetdefinitions)) {
             foreach ($datasetdefinitions as $def) {
-                delete_records('question_datasets',
-                               'question', $form->id,
-                               'datasetdefinition', $def->id);
+                $DB->delete_records('question_datasets', array('question' => $form->id, 'datasetdefinition' => $def->id));
 
                 if ($def->category == 0) { // Question local dataset
-                    delete_records('question_dataset_definitions', 'id', $def->id);
-                    delete_records('question_dataset_items',
-                                   'definition', $def->id);
+                    $DB->delete_records('question_dataset_definitions', array('id' => $def->id));
+                    $DB->delete_records('question_dataset_items', array('definition' => $def->id));
                 }
             }
         }
@@ -445,7 +436,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
     * save_dataset_definitions()
     */
     function save_as_new_dataset_definitions($form, $initialid) {
-    global $CFG ;
+    global $CFG, $DB;
         // Get the datasets from the intial question
         $datasetdefinitions = $this->get_dataset_definitions($initialid, $form->dataset);
         // $tmpdatasets contains those of the new question
@@ -465,27 +456,26 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                    $olddatasetid = $datasetdef->id ;
                    $olditemcount = $datasetdef->itemcount ;
                    $datasetdef->itemcount =0;
-                   if (!$datasetdef->id = insert_record(
-                        'question_dataset_definitions', $datasetdef)) {
+                   if (!$datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef)) {
                         print_error('cannotcreatedataset', 'question', '', $defid);
                    }
                    //copy the dataitems
-                   $olditems = get_records_sql( // Use number as key!!
+                   $olditems = $DB->get_records_sql( // Use number as key!!
                         " SELECT itemnumber, value
-                          FROM {$CFG->prefix}question_dataset_items
-                          WHERE definition =  $olddatasetid ");
+                          FROM {question_dataset_items}
+                          WHERE definition =  ? ", array($olddatasetid));
                    if (count($olditems) > 0 ) {
                         $itemcount = 0;
                         foreach($olditems as $item ){
                             $item->definition = $datasetdef->id;
-                        if (!insert_record('question_dataset_items', $item)) {
+                        if (!$DB->insert_record('question_dataset_items', $item)) {
                             print_error('cannotinsertitem', 'question', '', array($item->itemnumber, $item->value, $datasetdef->name));
                         }
                         $itemcount++;
                         }
                         //update item count
                         $datasetdef->itemcount =$itemcount;
-                        update_record('question_dataset_definitions', $datasetdef);
+                        $DB->update_record('question_dataset_definitions', $datasetdef);
                     } // end of  copy the dataitems
                 }// end of  copy the datasetdef
                 // Create relation to the new question with this
@@ -493,16 +483,14 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 $questiondataset = new stdClass;
                 $questiondataset->question = $form->id;
                 $questiondataset->datasetdefinition = $datasetdef->id;
-                if (!insert_record('question_datasets',
-                                   $questiondataset)) {
+                if (!$DB->insert_record('question_datasets', $questiondataset)) {
                     print_error('cannotcreaterelation', 'question', '', $name);
                 }
                 unset($datasetdefinitions[$defid]);
                 continue;
             }// end of datasetdefs from the initial question
             // really new one code similar to save_dataset_definitions()
-            if (!$datasetdef->id = insert_record(
-                    'question_dataset_definitions', $datasetdef)) {
+            if (!$datasetdef->id = $DB->insert_record('question_dataset_definitions', $datasetdef)) {
                 print_error('cannotcreatedataset', 'question', '', $defid);
             }
 
@@ -512,17 +500,16 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                 // By first creating the datasetdefinition above we
                 // can manage to automatically take care of
                 // some possible realtime concurrence
-                if ($olderdatasetdefs = get_records_select(
+                if ($olderdatasetdefs = $DB->get_records_select(
                         'question_dataset_definitions',
-                        "type = '$datasetdef->type'
-                        AND name = '$datasetdef->name'
-                        AND category = '$datasetdef->category'
-                        AND id < $datasetdef->id
-                        ORDER BY id DESC")) {
+                        "type = ?
+                        AND name = ?
+                        AND category = ?
+                        AND id < ?
+                        ORDER BY id DESC", array($datasetdef->type, $datasetdef->name, $datasetdef->category, $datasetdef->id))) {
 
                     while ($olderdatasetdef = array_shift($olderdatasetdefs)) {
-                        delete_records('question_dataset_definitions',
-                                   'id', $datasetdef->id);
+                        $DB->delete_records('question_dataset_definitions', array('id' => $datasetdef->id));
                         $datasetdef = $olderdatasetdef;
                     }
                 }
@@ -532,8 +519,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             $questiondataset = new stdClass;
             $questiondataset->question = $form->id;
             $questiondataset->datasetdefinition = $datasetdef->id;
-            if (!insert_record('question_datasets',
-                               $questiondataset)) {
+            if (!$DB->insert_record('question_datasets', $questiondataset)) {
                 print_error('cannotcreaterelation', 'question', '', $name);
             }
             unset($datasetdefinitions[$defid]);
@@ -543,14 +529,11 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         // to datasets in other categories:
         if (!empty($datasetdefinitions)) {
             foreach ($datasetdefinitions as $def) {
-                delete_records('question_datasets',
-                               'question', $form->id,
-                               'datasetdefinition', $def->id);
+                $DB->delete_records('question_datasets', array('question' => $form->id, 'datasetdefinition' => $def->id));
 
                 if ($def->category == 0) { // Question local dataset
-                    delete_records('question_dataset_definitions', 'id', $def->id);
-                    delete_records('question_dataset_items',
-                                   'definition', $def->id);
+                    $DB->delete_records('question_dataset_definitions', array('id' => $def->id));
+                    $DB->delete_records('question_dataset_items', array('definition' => $def->id));
                 }
             }
         }
@@ -622,16 +605,16 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         // Select a dataset in the following format:
         // An array indexed by the variable names (d.name) pointing to the value
         // to be substituted
-        global $CFG;
-        if (!$dataset = get_records_sql(
+        global $CFG, $DB;
+        if (!$dataset = $DB->get_records_sql(
                         "SELECT d.name, i.value
-                        FROM {$CFG->prefix}question_dataset_definitions d,
-                             {$CFG->prefix}question_dataset_items i,
-                             {$CFG->prefix}question_datasets q
-                        WHERE q.question = $question->id
+                        FROM {question_dataset_definitions} d,
+                             {question_dataset_items} i,
+                             {question_datasets} q
+                        WHERE q.question = ?
                         AND q.datasetdefinition = d.id
                         AND d.id = i.definition
-                        AND i.itemnumber = $datasetitem")) {
+                        AND i.itemnumber = ?", array($question->id, $datasetitem))) {
             print_error('cannotgetdsfordependent', 'question', '', array($question->id, $datasetitem));
         }
         array_walk($dataset, create_function('&$val', '$val = $val->value;'));
@@ -693,14 +676,14 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         $options['0'] = get_string($prefix.'nodataset', $langfile);
 
         // Construct question local options
-        global $CFG;
-        $currentdatasetdef = get_record_sql(
+        global $CFG, $DB;
+        $currentdatasetdef = $DB->get_record_sql(
                 "SELECT a.*
-                   FROM {$CFG->prefix}question_dataset_definitions a,
-                        {$CFG->prefix}question_datasets b
+                   FROM {question_dataset_definitions} a,
+                        {question_datasets} b
                   WHERE a.id = b.datasetdefinition
-                    AND b.question = '$form->id'
-                    AND a.name = '$name'")
+                    AND b.question = ?
+                    AND a.name = ?", array($form->id, $name))
         or $currentdatasetdef->type = '0';
         foreach (array( LITERAL, FILE, LINK) as $type) {
             $key = "$type-0-$name";
@@ -713,13 +696,13 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         }
 
         // Construct question category options
-        $categorydatasetdefs = get_records_sql(
+        $categorydatasetdefs = $DB->get_records_sql(
                 "SELECT a.type, a.id
-                   FROM {$CFG->prefix}question_dataset_definitions a,
-                        {$CFG->prefix}question_datasets b
+                   FROM {question_dataset_definitions} a,
+                        {question_datasets} b
                   WHERE a.id = b.datasetdefinition
-                    AND a.category = '$form->category'
-                    AND a.name = '$name'");
+                    AND a.category = ?
+                    AND a.name = ?", array($form->category, $name));
         foreach(array( LITERAL, FILE, LINK) as $type) {
             $key = "$type-$form->category-$name";
             if (isset($categorydatasetdefs[$type])

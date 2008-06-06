@@ -19,9 +19,8 @@
  * that is what this update does.
  */
 function question_fix_random_question_parents() {
-    global $CFG;
-    return execute_sql('UPDATE ' . $CFG->prefix . 'question SET parent = id ' .
-    		"WHERE qtype = 'random' AND parent <> id");
+    global $CFG, $DB;
+    return $DB->execute("UPDATE {question} SET parent = id WHERE qtype = 'random' AND parent <> id");
 }
 
 ?>

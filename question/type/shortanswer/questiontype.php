@@ -23,15 +23,15 @@ class question_shortanswer_qtype extends default_questiontype {
     }
 
     function get_question_options(&$question) {
+        global $DB;
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = get_record('question_shortanswer', 'question', $question->id)) {
+        if (!$question->options = $DB->get_record('question_shortanswer', array('question' => $question->id))) {
             notify('Error: Missing question options!');
             return false;
         }
 
-        if (!$question->options->answers = get_records('question_answers', 'question',
-                $question->id, 'id ASC')) {
+        if (!$question->options->answers = $DB->get_records('question_answers', array('question' => $question->id), 'id ASC')) {
             notify('Error: Missing question answers for shortanswer question ' . $question->id . '!');
             return false;
         }
@@ -39,9 +39,10 @@ class question_shortanswer_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
+        global $DB;
         $result = new stdClass;
 
-        if (!$oldanswers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
+        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
             $oldanswers = array();
         }
 
@@ -56,7 +57,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     $answer->answer   = trim($dataanswer);
                     $answer->fraction = $question->fraction[$key];
                     $answer->feedback = $question->feedback[$key];
-                    if (!update_record("question_answers", $answer)) {
+                    if (!$DB->update_record("question_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
                     }
@@ -66,7 +67,7 @@ class question_shortanswer_qtype extends default_questiontype {
                     $answer->question = $question->id;
                     $answer->fraction = $question->fraction[$key];
                     $answer->feedback = $question->feedback[$key];
-                    if (!$answer->id = insert_record("question_answers", $answer)) {
+                    if (!$answer->id = $DB->insert_record("question_answers", $answer)) {
                         $result->error = "Could not insert quiz answer!";
                         return $result;
                     }
@@ -78,10 +79,10 @@ class question_shortanswer_qtype extends default_questiontype {
             }
         }
 
-        if ($options = get_record("question_shortanswer", "question", $question->id)) {
+        if ($options = $DB->get_record("question_shortanswer", array("question" => $question->id))) {
             $options->answers = implode(",",$answers);
             $options->usecase = $question->usecase;
-            if (!update_record("question_shortanswer", $options)) {
+            if (!$DB->update_record("question_shortanswer", $options)) {
                 $result->error = "Could not update quiz shortanswer options! (id=$options->id)";
                 return $result;
             }
@@ -90,7 +91,7 @@ class question_shortanswer_qtype extends default_questiontype {
             $options->question = $question->id;
             $options->answers = implode(",",$answers);
             $options->usecase = $question->usecase;
-            if (!insert_record("question_shortanswer", $options)) {
+            if (!$DB->insert_record("question_shortanswer", $options)) {
                 $result->error = "Could not insert quiz shortanswer options!";
                 return $result;
             }
@@ -99,7 +100,7 @@ class question_shortanswer_qtype extends default_questiontype {
         // delete old answer records
         if (!empty($oldanswers)) {
             foreach($oldanswers as $oa) {
-                delete_records('question_answers', 'id', $oa->id);
+                $DB->delete_records('question_answers', array('id' => $oa->id));
             }
         }
 
@@ -120,7 +121,8 @@ class question_shortanswer_qtype extends default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($questionid) {
-        delete_records("question_shortanswer", "question", $questionid);
+        global $DB;
+        $DB->delete_records("question_shortanswer", array("question" => $questionid));
         return true;
     }
 
@@ -246,10 +248,11 @@ class question_shortanswer_qtype extends default_questiontype {
      * This is used in question/backuplib.php
      */
     function backup($bf,$preferences,$question,$level=6) {
+        global $DB;
 
         $status = true;
 
-        $shortanswers = get_records('question_shortanswer', 'question', $question, 'id ASC');
+        $shortanswers = $DB->get_records('question_shortanswer', array('question' =>  $question), 'id ASC');
         //If there are shortanswers
         if ($shortanswers) {
             //Iterate over each shortanswer

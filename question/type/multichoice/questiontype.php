@@ -19,15 +19,16 @@ class question_multichoice_qtype extends default_questiontype {
     }
 
     function get_question_options(&$question) {
+        global $DB;
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = get_record('question_multichoice', 'question',
-         $question->id)) {
+        if (!$question->options = $DB->get_record('question_multichoice', array('question' => $question->id))) {
             notify('Error: Missing question options for multichoice question'.$question->id.'!');
             return false;
         }
 
-        if (!$question->options->answers = get_records_select('question_answers', 'id IN ('.$question->options->answers.')', 'id')) {
+        list ($usql, $params) = $DB->get_in_or_equal(explode(',', $question->options->answers));
+        if (!$question->options->answers = $DB->get_records_select('question_answers', "id $usql", $params, 'id')) {
            notify('Error: Missing question answers for multichoice question'.$question->id.'!');
            return false;
         }
@@ -36,9 +37,9 @@ class question_multichoice_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
+        global $DB;
         $result = new stdClass;
-        if (!$oldanswers = get_records("question_answers", "question",
-                                       $question->id, "id ASC")) {
+        if (!$oldanswers = $DB->get_records("question_answers", array("question" => $question->id), "id ASC")) {
             $oldanswers = array();
         }
 
@@ -68,7 +69,7 @@ class question_multichoice_qtype extends default_questiontype {
                     $answer->answer     = $dataanswer;
                     $answer->fraction   = $question->fraction[$key];
                     $answer->feedback   = $question->feedback[$key];
-                    if (!update_record("question_answers", $answer)) {
+                    if (!$DB->update_record("question_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
                     }
@@ -78,7 +79,7 @@ class question_multichoice_qtype extends default_questiontype {
                     $answer->question = $question->id;
                     $answer->fraction = $question->fraction[$key];
                     $answer->feedback = $question->feedback[$key];
-                    if (!$answer->id = insert_record("question_answers", $answer)) {
+                    if (!$answer->id = $DB->insert_record("question_answers", $answer)) {
                         $result->error = "Could not insert quiz answer! ";
                         return $result;
                     }
@@ -95,7 +96,7 @@ class question_multichoice_qtype extends default_questiontype {
         }
 
         $update = true;
-        $options = get_record("question_multichoice", "question", $question->id);
+        $options = $DB->get_record("question_multichoice", array("question" => $question->id));
         if (!$options) {
             $update = false;
             $options = new stdClass;
@@ -110,12 +111,12 @@ class question_multichoice_qtype extends default_questiontype {
         $options->partiallycorrectfeedback = trim($question->partiallycorrectfeedback);
         $options->incorrectfeedback = trim($question->incorrectfeedback);
         if ($update) {
-            if (!update_record("question_multichoice", $options)) {
+            if (!$DB->update_record("question_multichoice", $options)) {
                 $result->error = "Could not update quiz multichoice options! (id=$options->id)";
                 return $result;
             }
         } else {
-            if (!insert_record("question_multichoice", $options)) {
+            if (!$DB->insert_record("question_multichoice", $options)) {
                 $result->error = "Could not insert quiz multichoice options!";
                 return $result;
             }
@@ -124,7 +125,7 @@ class question_multichoice_qtype extends default_questiontype {
         // delete old answer records
         if (!empty($oldanswers)) {
             foreach($oldanswers as $oa) {
-                delete_records('question_answers', 'id', $oa->id);
+                $DB->delete_records('question_answers', array('id' => $oa->id));
             }
         }
 
@@ -153,7 +154,8 @@ class question_multichoice_qtype extends default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($questionid) {
-        delete_records("question_multichoice", "question", $questionid);
+        global $DB;
+        $DB->delete_records("question_multichoice", array("question" => $questionid));
         return true;
     }
 
@@ -217,6 +219,7 @@ class question_multichoice_qtype extends default_questiontype {
     }
 
     function save_session_and_responses(&$question, &$state) {
+        global $DB;
         // Bundle the answer order and the responses into the legacy answer
         // field.
         // The serialized format for multiple choice quetsions
@@ -230,8 +233,7 @@ class question_multichoice_qtype extends default_questiontype {
         $responses .= implode(',', $state->responses);
 
         // Set the legacy answer field
-        if (!set_field('question_states', 'answer', $responses, 'id',
-         $state->id)) {
+        if (!$DB->set_field('question_states', 'answer', $responses, array('id' => $state->id))) {
             return false;
         }
         return true;
@@ -404,10 +406,11 @@ class question_multichoice_qtype extends default_questiontype {
      */
     function backup($bf,$preferences,$question,$level=6) {
 
+        global $DB;
         $status = true;
 
-        $multichoices = get_records("question_multichoice","question",$question,"id");
-        //If there are multichoices
+        $multichoices = $DB->get_records("question_multichoice",array("question"=>$question),"id");
+        $multichoices = $DB->get_records("question_multichoice",array("question" => $question),"id");
         if ($multichoices) {
             //Iterate over each multichoice
             foreach ($multichoices as $multichoice) {
@@ -575,7 +578,7 @@ class question_multichoice_qtype extends default_questiontype {
                     $subquestion->correctfeedback = addslashes($correctfeedback);
                     $subquestion->partiallycorrectfeedback = addslashes($partiallycorrectfeedback);
                     $subquestion->incorrectfeedback = addslashes($incorrectfeedback);
-                    if (!update_record('question_multichoice', $multichoice)) {
+                    if (!$DB->update_record('question_multichoice', $multichoice)) {
                         $status = false;
                     }
                 }
@@ -646,10 +649,11 @@ class question_multichoice_qtype extends default_questiontype {
     }
 
     function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
+        global $DB;
         parent::replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination);
         // replace links in the question_match_sub table.
         // We need to use a separate object, because in load_question_options, $question->options->answers
-        // is changed from a comma-separated list of ids to an array, so calling update_record on
+        // is changed from a comma-separated list of ids to an array, so calling $DB->update_record on
         // $question->options stores 'Array' in that column, breaking the question.
         $optionschanged = false;
         $newoptions = new stdClass;
@@ -658,7 +662,7 @@ class question_multichoice_qtype extends default_questiontype {
         $newoptions->partiallycorrectfeedback  = question_replace_file_links_in_html($question->options->partiallycorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
         $newoptions->incorrectfeedback = question_replace_file_links_in_html($question->options->incorrectfeedback, $fromcourseid, $tocourseid, $url, $destination, $optionschanged);
         if ($optionschanged){
-            if (!update_record('question_multichoice', addslashes_recursive($newoptions))) {
+            if (!$DB->update_record('question_multichoice', $newoptions)) {
                 print_error('Couldn\'t update \'question_multichoice\' record '.$newoptions->id);
             }
         }
@@ -666,7 +670,7 @@ class question_multichoice_qtype extends default_questiontype {
         foreach ($question->options->answers as $answer) {
             $answer->answer = question_replace_file_links_in_html($answer->answer, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
             if ($answerchanged){
-                if (!update_record('question_answers', addslashes_recursive($answer))){
+                if (!$DB->update_record('question_answers', $answer)){
                     print_error('Couldn\'t update \'question_answers\' record '.$answer->id);
                 }
             }

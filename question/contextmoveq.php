@@ -46,11 +46,12 @@ if ($cmid){
 }
 $contexts = new question_edit_contexts($thiscontext);
 
+list($usql, $params) = $DB->get_in_or_equal(explode(',', $ids));
 
-if (!$questions = get_records_sql("SELECT q.*, c.contextid FROM {$CFG->prefix}question q, {$CFG->prefix}question_categories c  WHERE q.id IN ($ids) AND c.id = q.category")) {
+if (!$questions = $DB->get_records_sql("SELECT q.*, c.contextid FROM {question} q, {question_categories} c  WHERE q.id $usql AND c.id = q.category", $params)) {
     print_error('questiondoesnotexist', 'question', $returnurl);
 }
-if (!$tocat = get_record('question_categories', 'id', $tocatid)){
+if (!$tocat = $DB->get_record('question_categories', array('id' => $tocatid))){
     print_error('categorydoesnotexist', 'question', $returnurl);
 }
 $tocat->context = get_context_instance_by_id($tocat->contextid);

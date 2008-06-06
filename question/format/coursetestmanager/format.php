@@ -25,8 +25,7 @@ class qformat_coursetestmanager extends qformat_default {
     }
 
     function importprocess($filename) {
-        global $CFG, $USER, $strimportquestions,$form,$question_category,$category,$COURSE,
-            $hostname, $mdapath, $mdbpath;
+        global $CFG, $USER, $strimportquestions,$form,$question_category,$category,$COURSE, $DB, $hostname, $mdapath, $mdbpath;
         if ((PHP_OS == "Linux") and isset($hostname)) {
             $hostname = trim($hostname);
             // test the ODBC socket server connection
@@ -204,8 +203,8 @@ class qformat_coursetestmanager extends qformat_default {
                             $question->feedback[$i-3] = (($qrec[8] == $i-3)?"Correct. ":"Incorrect. ") . $ref;
                         }
                     }
-                    if ($fractionset == 0) { 
-                        $question->fraction[1] = 1; 
+                    if ($fractionset == 0) {
+                        $question->fraction[1] = 1;
                     }
                 break;
                 case 2:  // TRUE FALSE
@@ -213,10 +212,10 @@ class qformat_coursetestmanager extends qformat_default {
                     $question->questiontext = addslashes(trim($qrec[2]));
                     $question->name = preg_replace("/<br />/", "", $question->questiontext);
                     // for TF, $question->answer should be 1 for true, 0 for false
-                    if ($qrec[8] == "T") { 
+                    if ($qrec[8] == "T") {
                         $question->answer =1;
-                    } else { 
-                        $question->answer = 0; 
+                    } else {
+                        $question->answer = 0;
                     }
                       // for TF, use $question->feedbacktrue and feedbackfalse
                     $question->feedbacktrue = (($qrec[8] =="T")?"Correct. ":"Incorrect. ") . $ref;
@@ -246,8 +245,8 @@ class qformat_coursetestmanager extends qformat_default {
                     notify("Misformatted Record.  Question Skipped.");
                 break;
             }
-            if ($question) { 
-                $questions[] = $question; 
+            if ($question) {
+                $questions[] = $question;
             }
         }
         $count = 0;
@@ -263,7 +262,7 @@ class qformat_coursetestmanager extends qformat_default {
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
             $question->createdby = $USER->id;
             $question->timecreated = time();
-            if (!$question->id = insert_record("question", $question)) {
+            if (!$question->id = $DB->insert_record("question", $question)) {
                 print_error('cannotinsertquestion', 'question');
             }
             $this->questionids[] = $question->id;
@@ -280,7 +279,7 @@ class qformat_coursetestmanager extends qformat_default {
                 return true;
             }
             // Give the question a unique version stamp determined by question_hash()
-            set_field('question', 'version', question_hash($question), 'id', $question->id);
+            $DB->set_field('question', 'version', question_hash($question), array('id', $question->id));
         }
         $this->deletedatabase($filename);
         return true;
@@ -475,15 +474,15 @@ class qformat_coursetestmanager extends qformat_default {
     }
 
     function getcoursedirs() {
-        global $CFG;
+        global $CFG, $DB;
         // for every course in the system, find the root of the data directory
-        $courses = get_records_sql("select distinct id,fullname from ".$CFG->prefix."course");
+        $courses = $DB->get_records_sql("select distinct id,fullname from {course}");
         $dirs = array();
         if ($courses) {
             foreach ($courses as $course) {
                 $dir = $CFG->dataroot . "/" . $course->id;
-                if (is_dir($dir)) { 
-                    $dirs[] = $dir; 
+                if (is_dir($dir)) {
+                    $dirs[] = $dir;
                 }
             }
         }
@@ -528,7 +527,7 @@ class qformat_coursetestmanager extends qformat_default {
     //handler for character data
     function quiz_xmldata($parser, $data) {
         global $result, $row, $col, $incolumn;
-        if ($incolumn) { 
+        if ($incolumn) {
             $result[$row][$col] = $result[$row][$col] . $data;
         }
     }

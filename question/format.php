@@ -197,7 +197,7 @@ class qformat_default {
      * @return boolean success
      */
     function importprocess() {
-        global $USER;
+        global $USER, $DB;
 
        // reset the timer in case file upload was slow
        @set_time_limit();
@@ -293,7 +293,7 @@ class qformat_default {
             $question->createdby = $USER->id;
             $question->timecreated = time();
 
-            if (!$question->id = insert_record("question", $question)) {
+            if (!$question->id = $DB->insert_record("question", $question)) {
                 print_error('cannotinsert','quiz');
             }
 
@@ -316,16 +316,16 @@ class qformat_default {
             }
 
             // Give the question a unique version stamp determined by question_hash()
-            set_field('question', 'version', question_hash($question), 'id', $question->id);
+            $DB->set_field('question', 'version', question_hash($question), array('id', $question->id));
         }
         return true;
     }
     /**
      * Count all non-category questions in the questions array.
-     * 
+     *
      * @param array questions An array of question objects.
      * @return int The count.
-     * 
+     *
      */
     function count_questions($questions) {
         $count = 0;
@@ -354,6 +354,7 @@ class qformat_default {
      * @return mixed category object or null if fails
      */
     function create_category_path($catpath, $delimiter='/') {
+        global $DB;
         $catpath = clean_param($catpath, PARAM_PATH);
         $catnames = explode($delimiter, $catpath);
         $parent = 0;
@@ -371,7 +372,7 @@ class qformat_default {
             $context = get_context_instance_by_id($this->category->contextid);
         }
         foreach ($catnames as $catname) {
-            if ($category = get_record( 'question_categories', 'name', $catname, 'contextid', $context->id, 'parent', $parent)) {
+            if ($category = $DB->get_record( 'question_categories', array('name' => $catname, 'contextid' => $context->id, 'parent' => $parent))) {
                 $parent = $category->id;
             } else {
                 require_capability('moodle/question:managecategory', $context);
@@ -383,7 +384,7 @@ class qformat_default {
                 $category->parent = $parent;
                 $category->sortorder = 999;
                 $category->stamp = make_unique_id_code();
-                if (!($id = insert_record('question_categories', $category))) {
+                if (!($id = $DB->insert_record('question_categories', $category))) {
                     print_error( "cannot create new category - $catname" );
                 }
                 $category->id = $id;
@@ -714,8 +715,9 @@ class qformat_default {
      * @return string the path
      */
     function get_category_path($id, $delimiter='/', $includecontext = true) {
+        global $DB;
         $path = '';
-        if (!$firstcategory = get_record('question_categories','id',$id)) {
+        if (!$firstcategory = $DB->get_record('question_categories',array('id' =>$id))) {
             print_error('cannotfindcategory', 'error', '', $id);
         }
         $category = $firstcategory;
@@ -729,7 +731,7 @@ class qformat_default {
             else {
                 $path = $name;
             }
-        } while ($category = get_record( 'question_categories','id',$id ));
+        } while ($category = $DB->get_record( 'question_categories',array('id' =>$id )));
 
         if ($includecontext){
             $path = '$'.$contextstring.'$'."{$delimiter}{$path}";

@@ -5,7 +5,7 @@ require_once($CFG->libdir.'/formslib.php');
 class question_category_edit_form extends moodleform {
 
     function definition() {
-        global $CFG;
+        global $CFG, $DB;
         $mform    =& $this->_form;
 
         $contexts   = $this->_customdata['contexts'];
@@ -16,7 +16,11 @@ class question_category_edit_form extends moodleform {
         $questioncategoryel = $mform->addElement('questioncategory', 'parent', get_string('parent', 'quiz'),
                     array('contexts'=>$contexts, 'top'=>true, 'currentcat'=>$currentcat, 'nochildrenof'=>$currentcat));
         $mform->setType('parent', PARAM_SEQUENCE);
-        if (1 == count_records_sql("SELECT count(*) FROM {$CFG->prefix}question_categories c1, {$CFG->prefix}question_categories c2 WHERE c2.id = $currentcat AND c1.contextid = c2.contextid")){
+        if (1 == $DB->count_records_sql("SELECT count(*)
+                                           FROM {question_categories} c1,
+                                                {question_categories} c2
+                                          WHERE c2.id = ?
+                                            AND c1.contextid = c2.contextid", array($currentcat))){
             $mform->hardFreeze('parent');
         }
         $mform->setHelpButton('parent', array('categoryparent', get_string('parent', 'quiz'), 'question'));

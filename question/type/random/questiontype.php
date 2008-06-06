@@ -1,12 +1,12 @@
 <?php  // $Id$
 /**
  * Class for the random question type.
- * 
- * The random question type does not have any options. When the question is 
+ *
+ * The random question type does not have any options. When the question is
  * attempted, it picks a question at random from the category it is in (and
  * optionally its subcategories). For details see create_session_and_responses.
  * Then all other method calls as delegated to that other question.
- * 
+ *
  * @package questionbank
  * @subpackage questiontypes
  */
@@ -46,6 +46,7 @@ class random_qtype extends default_questiontype {
     }
 
     function save_question($question, $form, $course) {
+        global $DB;
         // If the category is changing, set things up as default_questiontype::save_question expects.
         list($formcategory, $unused) = explode(',', $form->category);
         if (isset($question->id) && $formcategory != $question->category) {
@@ -53,25 +54,26 @@ class random_qtype extends default_questiontype {
         }
         $form->name = '';
         $question = parent::save_question($question, $form, $course);
-        if (!$category = get_record('question_categories', 'id', $question->category)) {
+        if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
             print_error('cannotretrieveqcat', 'question');
         }
         $question->name = $this->question_name($category);
-        if (!set_field('question', 'name', addslashes($question->name), 'id', $question->id)) {
+        if (!$DB->set_field('question', 'name', $question->name, array('id', $question->id))) {
             print_error('cannotupdaterandomqname', 'question');
         }
         return $question;
     }
 
     function save_question_options($question) {
+        global $DB;
         // No options, but we set the parent field to the question's own id.
         // Setting the parent field has the effect of hiding this question in
         // various places.
-        return (set_field('question', 'parent', $question->id, 'id',
-         $question->id) ? true : false);
+        return ($DB->set_field('question', 'parent', $question->id, array('id' => $question->id)) ? true : false);
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+        global $DB;
         global $QTYPE_EXCLUDE_FROM_RANDOM;
         // Choose a random question from the category:
         // We need to make sure that no question is used more than once in the
@@ -94,7 +96,7 @@ class random_qtype extends default_questiontype {
             } else {
                 $categorylist = $question->category;
             }
-            if ($catrandoms = get_records_select('question',
+            if ($catrandoms = $DB->get_records_select('question',
                     "category IN ($categorylist)
                          AND parent = '0'
                          AND hidden = '0'
@@ -112,7 +114,7 @@ class random_qtype extends default_questiontype {
             if (!ereg("(^|,)$wrappedquestion->id(,|$)", $cmoptions->questionsinuse)) {
                 /// $randomquestion is not in use and will therefore be used
                 /// as the randomquestion here...
-                $wrappedquestion = get_record('question', 'id', $wrappedquestion->id);
+                $wrappedquestion = $DB->get_record('question', array('id' => $wrappedquestion->id));
                 global $QTYPES;
                 $QTYPES[$wrappedquestion->qtype]
                  ->get_question_options($wrappedquestion);
@@ -150,7 +152,7 @@ class random_qtype extends default_questiontype {
         /// From version 1.5 and later the question type random works like all
         /// the other question types in that it now only needs one response
         /// record per question.
-        global $QTYPES;
+        global $QTYPES, $DB;
         if (!ereg('^random([0-9]+)-(.*)$', $state->responses[''], $answerregs)) {
             if (empty($state->responses[''])) {
                 // This is the case if there weren't enough questions available in the category.
@@ -160,16 +162,16 @@ class random_qtype extends default_questiontype {
                 return true;
             }
             // this must be an old-style state which stores only the id for the wrapped question
-            if (!$wrappedquestion = get_record('question', 'id', $state->responses[''])) {
+            if (!$wrappedquestion = $DB->get_record('question', array('id' => $state->responses['']))) {
                 notify("Can not find wrapped question {$state->responses['']}");
             }
             // In the old model the actual response was stored in a separate entry in
             // the state table and fortunately there was only a single state per question
-            if (!$state->responses[''] = get_field('question_states', 'answer', 'attempt', $state->attempt, 'question', $wrappedquestion->id)) {
+            if (!$state->responses[''] = $DB->get_field('question_states', 'answer', array('attempt' => $state->attempt, 'question' => $wrappedquestion->id))) {
                 notify("Wrapped state missing");
             }
         } else {
-            if (!$wrappedquestion = get_record('question', 'id', $answerregs[1])) {
+            if (!$wrappedquestion = $DB->get_record('question', array('id' => $answerregs[1]))) {
                 // The teacher must have deleted this question by mistake
                 // Convert it into a description type question with an explanation to the student
                 $wrappedquestion = clone($question);
@@ -196,7 +198,7 @@ class random_qtype extends default_questiontype {
     }
 
     function save_session_and_responses(&$question, &$state) {
-        global $QTYPES;
+        global $QTYPES, $DB;
         $wrappedquestion = &$state->options->question;
 
         // Trick the wrapped question into pretending to be the random one.
@@ -207,7 +209,7 @@ class random_qtype extends default_questiontype {
 
         // Read what the wrapped question has just set the answer field to
         // (if anything)
-        $response = get_field('question_states', 'answer', 'id', $state->id);
+        $response = $DB->get_field('question_states', 'answer', array('id' => $state->id));
         if(false === $response) {
             return false;
         }
@@ -216,8 +218,7 @@ class random_qtype extends default_questiontype {
         $response = "random$realqid-$response";
 
         // ... and save it again.
-        if (!set_field('question_states', 'answer', addslashes($response), 'id', $state->id)) {
-            return false;
+        if (!$DB->set_field('question_states', 'answer', $response, array('id' => $state->id))) {
         }
 
         // Restore the real id
@@ -293,7 +294,7 @@ class random_qtype extends default_questiontype {
         // state of the random question and store the response
         // in a separate state for the wrapped question
 
-        global $QTYPES;
+        global $QTYPES, $DB;
         $answer_field = "";
 
         if (ereg('^random([0-9]+)-(.*)$', $state->answer, $answerregs)) {
@@ -304,7 +305,7 @@ class random_qtype extends default_questiontype {
               return($answer_field);
             }
             // Get the question type for recursion
-            if (!$wrappedquestion->qtype = get_field('question', 'qtype', 'id', $wrapped->new_id)) {
+            if (!$wrappedquestion->qtype = $DB->get_field('question', 'qtype', array('id' => $wrapped->new_id))) {
               echo 'Could not get qtype while recoding question random-'.$answerregs[1].'<br />';
               return($answer_field);
             }

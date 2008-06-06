@@ -15,14 +15,14 @@ require_once($CFG->libdir.'/questionlib.php');
 define('DEFAULT_QUESTIONS_PER_PAGE', 20);
 
 function get_module_from_cmid($cmid){
-    global $CFG;
-    if (!$cmrec = get_record_sql("SELECT cm.*, md.name as modname
-                               FROM {$CFG->prefix}course_modules cm,
-                                    {$CFG->prefix}modules md
-                               WHERE cm.id = '$cmid' AND
-                                     md.id = cm.module")){
+    global $CFG, $DB;
+    if (!$cmrec = $DB->get_record_sql("SELECT cm.*, md.name as modname
+                               FROM {course_modules} cm,
+                                    {modules} md
+                               WHERE cm.id = ? AND
+                                     md.id = cm.module", array($cmid))){
         print_error('cmunknown');
-    } elseif (!$modrec =get_record($cmrec->modname, 'id', $cmrec->instance)) {
+    } elseif (!$modrec =$DB->get_record($cmrec->modname, array('id' => $cmrec->instance))) {
         print_error('cmunknown');
     }
     $modrec->instance = $modrec->id;
@@ -42,7 +42,7 @@ function get_module_from_cmid($cmid){
 */
 function get_questions_category( $category, $noparent=false, $recurse=true, $export=true ) {
 
-    global $QTYPES;
+    global $QTYPES, $DB;
 
     // questions will be added to an array
     $qresults = array();
@@ -62,7 +62,8 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
     }
 
     // get the list of questions for the category
-    if ($questions = get_records_select("question","category IN ($categorylist) $npsql", "qtype, name ASC")) {
+    list ($usql, $params) = $DB->get_in_or_equal(explode(',', $categorylist));
+    if ($questions = $DB->get_records_select("question","category $usql $npsql", $params, "qtype, name ASC")) {
 
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
@@ -78,10 +79,10 @@ function get_questions_category( $category, $noparent=false, $recurse=true, $exp
 
 
 function question_can_delete_cat($todelete){
-    global $CFG;
-    $record = get_record_sql("SELECT count(*) as count, c1.contextid as contextid FROM {$CFG->prefix}question_categories c1,
-                {$CFG->prefix}question_categories c2 WHERE c2.id = $todelete
-                AND c1.contextid = c2.contextid GROUP BY c1.contextid");
+    global $CFG, $DB;
+    $record = $DB->get_record_sql("SELECT count(*) as count, c1.contextid as contextid FROM {question_categories} c1,
+                {question_categories} c2 WHERE c2.id = ?
+                AND c1.contextid = c2.contextid GROUP BY c1.contextid", array($todelete));
     $contextid = $record->contextid;
     $count = $record->count;
     if ($count < 2) {
@@ -146,7 +147,7 @@ function question_category_form_checkbox($name, $checked) {
 function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
         $recurse=1, $page=0, $perpage=100, $showhidden=false, $sortorder='typename', $sortorderdecoded='qtype, name ASC',
         $showquestiontext = false, $addcontexts = array()) {
-    global $USER, $CFG, $THEME, $COURSE;
+    global $USER, $CFG, $THEME, $COURSE, $DB;
 
     list($categoryid, $contextid)=  explode(',', $categoryandcontext);
 
@@ -181,7 +182,7 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
         return;
     }
 
-    if (!$category = get_record('question_categories', 'id', $categoryid, 'contextid', $contextid)) {
+    if (!$category = $DB->get_record('question_categories', array('id' => $categoryid, 'contextid' => $contextid))) {
         notify('Category not found!');
         return;
     }
@@ -239,18 +240,19 @@ function question_list($contexts, $pageurl, $categoryandcontext, $cm = null,
 
     // hide-feature
     $showhidden = $showhidden ? '' : " AND hidden = '0'";
-
-    if (!$totalnumber = count_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden")) {
+    $categorylist_array =  explode(',', $categorylist);
+    list($usql, $params) = $DB->get_in_or_equal($categorylist_array);
+    if (!$totalnumber = $DB->count_records_select('question', "category $usql AND parent = '0' $showhidden", $params)) {
         echo "<p style=\"text-align:center;\">";
         print_string("noquestions", "quiz");
         echo "</p>";
         return;
     }
 
-    if (!$questions = get_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorderdecoded, '*', $page*$perpage, $perpage)) {
+    if (!$questions = $DB->get_records_select('question', "category $usql AND parent = '0' $showhidden", $params, $sortorderdecoded, '*', $page*$perpage, $perpage)) {
         // There are no questions on the requested page.
         $page = 0;
-        if (!$questions = get_records_select('question', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorderdecoded, '*', 0, $perpage)) {
+        if (!$questions = $DB->get_records_select('question', "category $usql AND parent = '0' $showhidden", $params, $sortorderdecoded, '*', 0, $perpage)) {
             // There are no questions at all
             echo "<p style=\"text-align:center;\">";
             print_string("noquestions", "quiz");
@@ -412,12 +414,12 @@ function question_sort_options($pageurl, $sortorder){
 }
 
 function question_showbank_actions($pageurl, $cm){
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $DB;
     /// Now, check for commands on this page and modify variables as necessary
     if (optional_param('move', false, PARAM_BOOL) and confirm_sesskey()) { /// Move selected questions to new category
         $category = required_param('category', PARAM_SEQUENCE);
         list($tocategoryid, $contextid) = explode(',', $category);
-        if (! $tocategory = get_record('question_categories', 'id', $tocategoryid, 'contextid', $contextid)) {
+        if (! $tocategory = $DB->get_record('question_categories', array('id' => $tocategoryid, 'contextid' => $contextid))) {
             error('Could not find category record');
         }
         $tocontext = get_context_instance_by_id($contextid);
@@ -431,9 +433,9 @@ function question_showbank_actions($pageurl, $cm){
             }
         }
         if ($questionids){
-            $questionidlist = join($questionids, ',');
-            $sql = "SELECT q.*, c.contextid FROM {$CFG->prefix}question q, {$CFG->prefix}question_categories c WHERE q.id IN ($questionidlist) AND c.id = q.category";
-            if (!$questions = get_records_sql($sql)){
+            list($usql, $params) = $DB->get_in_or_equal($questionids);
+            $sql = "SELECT q.*, c.contextid FROM {question} q, {question_categories} c WHERE q.id $usql AND c.id = q.category";
+            if (!$questions = $DB->get_records_sql($sql, $params)){
                 print_error('questiondoesnotexist', 'question', $pageurl->out());
             }
             $checkforfiles = false;
@@ -474,8 +476,8 @@ function question_showbank_actions($pageurl, $cm){
                     // for each question either hide it if it is in use or delete it
                     foreach ($questionlist as $questionid) {
                         question_require_capability_on($questionid, 'edit');
-                        if (record_exists('quiz_question_instances', 'question', $questionid)) {
-                            if (!set_field('question', 'hidden', 1, 'id', $questionid)) {
+                        if ($DB->record_exists('quiz_question_instances', array('question' => $questionid))) {
+                            if (!$DB->set_field('question', 'hidden', 1, array('id', $questionid))) {
                                 question_require_capability_on($questionid, 'edit');
                                 error('Was not able to hide question');
                             }
@@ -494,7 +496,7 @@ function question_showbank_actions($pageurl, $cm){
     // Unhide a question
     if(($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
         question_require_capability_on($unhide, 'edit');
-        if(!set_field('question', 'hidden', 0, 'id', $unhide)) {
+        if(!$DB->set_field('question', 'hidden', 0, array('id', $unhide))) {
             error("Failed to unhide the question.");
         }
         redirect($pageurl->out());
@@ -519,7 +521,7 @@ function question_showbank_actions($pageurl, $cm){
  * @param moodle_url $pageurl object representing this pages url.
  */
 function question_showbank($tabname, $contexts, $pageurl, $cm, $page, $perpage, $sortorder, $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
-    global $COURSE;
+    global $COURSE, $DB;
 
     if (optional_param('deleteselected', false, PARAM_BOOL)){ // teacher still has to confirm
         // make a list of all the questions that are selected
@@ -533,11 +535,11 @@ function question_showbank($tabname, $contexts, $pageurl, $cm, $page, $perpage, 
                 $key = $matches[1];
                 $questionlist .= $key.',';
                 question_require_capability_on($key, 'edit');
-                if (record_exists('quiz_question_instances', 'question', $key)) {
+                if ($DB->record_exists('quiz_question_instances', array('question' => $key))) {
                     $questionnames .= '* ';
                     $inuse = true;
                 }
-                $questionnames .= get_field('question', 'name', 'id', $key).'<br />';
+                $questionnames .= $DB->get_field('question', 'name', array('id' => $key)).'<br />';
             }
         }
         if (!$questionlist) { // no questions were selected
@@ -580,7 +582,7 @@ function question_showbank($tabname, $contexts, $pageurl, $cm, $page, $perpage, 
  * @return array $thispageurl, $contexts, $cmid, $cm, $module, $pagevars
  */
 function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = true){
-    global $COURSE, $QUESTION_EDITTABCAPS;
+    global $COURSE, $QUESTION_EDITTABCAPS, $DB;
 
     //$thispageurl is used to construct urls for all question edit pages we link to from this page. It contains an array
     //of parameters that are passed from page to page.
@@ -673,7 +675,8 @@ function question_edit_setup($edittab, $requirecmid = false, $requirecourseid = 
     $contextlist = join($contextlistarr, ' ,');
     if (!empty($pagevars['cat'])){
         $catparts = explode(',', $pagevars['cat']);
-        if (!$catparts[0] || (FALSE !== array_search($catparts[1], $contextlistarr)) || !count_records_select("question_categories", "id = '".$catparts[0]."' AND contextid = $catparts[1]")) {
+        if (!$catparts[0] || (FALSE !== array_search($catparts[1], $contextlistarr)) ||
+                !$DB->count_records_select("question_categories", "id = ? AND contextid = ?", array($catparts[0], $catparts[1]))) {
             print_error('invalidcategory', 'quiz');
         }
     } else {
@@ -870,6 +873,7 @@ $QUESTION_EDITTABCAPS = array(
  * Make sure user is logged in as required in this context.
  */
 function require_login_in_context($contextorid = null){
+    global $DB;
     if (!is_object($contextorid)){
         $context = get_context_instance_by_id($contextorid);
     } else {
@@ -878,8 +882,8 @@ function require_login_in_context($contextorid = null){
     if ($context && ($context->contextlevel == CONTEXT_COURSE)) {
         require_login($context->instanceid);
     } else if ($context && ($context->contextlevel == CONTEXT_MODULE)) {
-        if ($cm = get_record('course_modules','id',$context->instanceid)) {
-            if (!$course = get_record('course', 'id', $cm->course)) {
+        if ($cm = $DB->get_record('course_modules',array('id' =>$context->instanceid))) {
+            if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
                 print_error('invalidcourseid');
             }
             require_course_login($course, true, $cm);

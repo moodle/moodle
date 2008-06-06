@@ -15,7 +15,7 @@
 class question_edit_multianswer_form extends question_edit_form {
 
     //  $questiondisplay will contain the qtype_multianswer_extract_question from the questiontext
-    var $questiondisplay ; 
+    var $questiondisplay ;
 
     function definition_inner(&$mform) {
         $question_type_names = question_type_menu();
@@ -23,15 +23,15 @@ class question_edit_multianswer_form extends question_edit_form {
 
         // Remove meaningless defaultgrade field.
         $mform->removeElement('defaultgrade');
-     
+
          // display the questions from questiontext;
         if  (  "" != optional_param('questiontext','', PARAM_RAW)) {
-        
+
             $this->questiondisplay = fullclone(qtype_multianswer_extract_question(optional_param('questiontext','', PARAM_RAW))) ;
-            
+
         }else {
             $this->questiondisplay = "";
-        }       
+        }
 
         if ( isset($this->questiondisplay->options->questions) && is_array($this->questiondisplay->options->questions) ) {
             $countsubquestions =0;
@@ -39,7 +39,7 @@ class question_edit_multianswer_form extends question_edit_form {
                 if ($subquestion != ''){
                    $countsubquestions++;
                 }
-            } 
+            }
         } else {
             $countsubquestions =0;
         }
@@ -50,7 +50,7 @@ class question_edit_multianswer_form extends question_edit_form {
         for ($sub =1;$sub <=$countsubquestions ;$sub++) {
             $this->editas[$sub] =  'unknown type';
             if (isset( $this->questiondisplay->options->questions[$sub]->qtype) ) {
-                $this->editas[$sub] =  $this->questiondisplay->options->questions[$sub]->qtype ; 
+                $this->editas[$sub] =  $this->questiondisplay->options->questions[$sub]->qtype ;
             } else if (optional_param('sub_'.$sub."_".'qtype', '', PARAM_RAW) != '') {
                 $this->editas[$sub] = optional_param('sub_'.$sub."_".'qtype', '', PARAM_RAW);
             }
@@ -68,26 +68,27 @@ class question_edit_multianswer_form extends question_edit_form {
 
                 if ($this->questiondisplay->options->questions[$sub]->qtype =='multichoice'  ) {
                     $mform->addElement('checkbox', 'sub_'.$sub."_".'layout', get_string('layout', 'quiz')) ;//, $gradeoptions);
-                }    
+                }
             foreach ($this->questiondisplay->options->questions[$sub]->answer as $key =>$ans) {
 
                $mform->addElement('static', 'sub_'.$sub."_".'answer['.$key.']', get_string('answer', 'quiz'), array('cols'=>60, 'rows'=>1));
-                
+
                 if ($this->questiondisplay->options->questions[$sub]->qtype =='numerical' && $key == 0 ) {
                     $mform->addElement('static', 'sub_'.$sub."_".'tolerance['.$key.']', get_string('acceptederror', 'quiz')) ;//, $gradeoptions);
-                }    
+                }
 
                 $mform->addElement('static', 'sub_'.$sub."_".'fraction['.$key.']', get_string('grade')) ;//, $gradeoptions);
 
                 $mform->addElement('static', 'sub_'.$sub."_".'feedback['.$key.']', get_string('feedback', 'quiz'));
-            } 
+            }
 
         }
 
     }
 
-        
+
     function set_data($question) {
+        global $DB;
         $default_values =array();
         if (isset($question->id) and $question->id and $question->qtype and $question->questiontext) {
 
@@ -129,7 +130,7 @@ class question_edit_multianswer_form extends question_edit_form {
                     }
                     $parsableanswerdef .= '}';
                     // Fix the questiontext fields of old questions
-                    set_field('question', 'questiontext', addslashes($parsableanswerdef), 'id', $wrapped->id);
+                    $DB->set_field('question', 'questiontext', $parsableanswerdef, array('id' => $wrapped->id));
                 } else {
                     $parsableanswerdef = str_replace('&#', '&\#', $wrapped->questiontext);
                 }
@@ -137,13 +138,13 @@ class question_edit_multianswer_form extends question_edit_form {
             }
         }
         }
-                
+
         // set default to $questiondisplay questions elements
-        if (isset($this->questiondisplay->options->questions)) {                
-            $subquestions = fullclone($this->questiondisplay->options->questions) ;           
+        if (isset($this->questiondisplay->options->questions)) {
+            $subquestions = fullclone($this->questiondisplay->options->questions) ;
             if (count($subquestions)) {
-                $sub =1; 
-                foreach ($subquestions as $subquestion) {          
+                $sub =1;
+                foreach ($subquestions as $subquestion) {
                     $prefix = 'sub_'.$sub.'_' ;
 
                     // validate parameters
@@ -163,14 +164,14 @@ class question_edit_multianswer_form extends question_edit_form {
                             }
                             if ($subquestion->fraction[$key] == 1) {
                                 $maxgrade = true;
-                            }                       
+                            }
                             if ($subquestion->fraction[$key] > $maxfraction) {
                                 $maxfraction = $subquestion->fraction[$key] ;
                             }
                         }
-                                        
-                        $default_values[$prefix.'answer['.$key.']']  = $answer;                         
-                    }                                                     
+
+                        $default_values[$prefix.'answer['.$key.']']  = $answer;
+                    }
                     if ($answercount == 0) {
                         if ($subquestion->qtype == 'multichoice' ) {
                             $this->_form->setElementError($prefix.'answer[0]' ,  get_string('notenoughanswers', 'qtype_multichoice', 2));
@@ -180,21 +181,21 @@ class question_edit_multianswer_form extends question_edit_form {
                     }
                     if ($maxgrade == false) {
                         $this->_form->setElementError($prefix.'fraction[0]' ,get_string('fractionsnomax', 'question'));
-                    }   
+                    }
                     foreach ($subquestion->feedback as $key=>$answer) {
-                        
+
                         $default_values[$prefix.'feedback['.$key.']']  = $answer;
-                    }                                  
+                    }
                        foreach ( $subquestion->fraction as $key=>$answer) {
                         $default_values[$prefix.'fraction['.$key.']']  = $answer;
-                    }       
-  
-                 
-                     $sub++;                     
+                    }
+
+
+                     $sub++;
                 }
             }
         }
-           if( $default_values != "")   { 
+           if( $default_values != "")   {
             $question = (object)((array)$question + $default_values);
         }
         parent::set_data($question);
@@ -202,13 +203,13 @@ class question_edit_multianswer_form extends question_edit_form {
 
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
-                 
+
         if (isset($this->questiondisplay->options->questions)) {
-                
-           $subquestions = fullclone($this->questiondisplay->options->questions) ;           
+
+           $subquestions = fullclone($this->questiondisplay->options->questions) ;
             if (count($subquestions)) {
-                $sub =1; 
-                foreach ($subquestions as $subquestion) {          
+                $sub =1;
+                foreach ($subquestions as $subquestion) {
                     $prefix = 'sub_'.$sub.'_' ;
                     $answercount = 0;
                     $maxgrade = false;
@@ -222,12 +223,12 @@ class question_edit_multianswer_form extends question_edit_form {
         }
                             if ($subquestion->fraction[$key] == 1) {
                                 $maxgrade = true;
-                            }                       
+                            }
                             if ($subquestion->fraction[$key] > $maxfraction) {
                                 $maxfraction = $subquestion->fraction[$key] ;
                             }
-                        }                                        
-                    }                                                     
+                        }
+                    }
                     if ($answercount==0) {
                         if ( $subquestion->qtype =='multichoice' ) {
                             $errors[$prefix.'answer[0]']= get_string('notenoughanswers', 'qtype_multichoice', 2);
@@ -237,11 +238,11 @@ class question_edit_multianswer_form extends question_edit_form {
                     }
                     if ($maxgrade == false) {
                         $errors[$prefix.'fraction[0]']=get_string('fractionsnomax', 'question');
-                    }   
-                    $sub++;                     
+                    }
+                    $sub++;
                 }
             } else {
-                $errors['questiontext']=get_string('questionsmissing', 'qtype_multianswer');  
+                $errors['questiontext']=get_string('questionsmissing', 'qtype_multianswer');
             }
         }
 

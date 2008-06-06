@@ -7,28 +7,28 @@ class question_dataset_dependent_items_form extends moodleform {
      *
      * @var object
      */
-    var $question;
+    public $question;
     /**
      * Reference to question type object
      *
      * @var question_dataset_dependent_questiontype
      */
-    var $qtypeobj;
+    public $qtypeobj;
 
-    var $datasetdefs;
+    public $datasetdefs;
 
-    var $maxnumber = -1;
+    public $maxnumber = -1;
 
-    var $regenerate;
+    public $regenerate;
 
-    var $noofitems;
+    public $noofitems;
     /**
      * Add question-type specific form fields.
      *
      * @param MoodleQuickForm $mform the form being built.
      */
     function question_dataset_dependent_items_form($submiturl, $question, $regenerate){
-        global $QTYPES, $SESSION, $CFG;
+        global $QTYPES, $SESSION, $CFG, $DB;
         $this->regenerate = $regenerate;
         $this->question = $question;
         $this->qtypeobj =& $QTYPES[$this->question->qtype];
@@ -51,10 +51,10 @@ class question_dataset_dependent_items_form extends moodleform {
         }
         foreach ($this->datasetdefs as $defid => $datasetdef) {
             if (isset($datasetdef->id)) {
-                $this->datasetdefs[$defid]->items = get_records_sql( // Use number as key!!
+                $this->datasetdefs[$defid]->items = $DB->get_records_sql( // Use number as key!!
                         " SELECT itemnumber, definition, id, value
-                          FROM {$CFG->prefix}question_dataset_items
-                          WHERE definition = $datasetdef->id ");
+                          FROM {question_dataset_items}
+                          WHERE definition = ? ", array($datasetdef->id));
             }
         }
         parent::moodleform($submiturl);
@@ -75,7 +75,7 @@ class question_dataset_dependent_items_form extends moodleform {
         foreach ($this->datasetdefs as $defkey => $datasetdef){
             $mform->addElement('text', "number[$j]", get_string('param', 'qtype_datasetdependent', $datasetdef->name));
             $mform->setType("number[$j]", PARAM_NUMBER);
-            $this->qtypeobj->custom_generator_tools_part(&$mform, $idx, $j);
+            $this->qtypeobj->custom_generator_tools_part($mform, $idx, $j);
             $idx++;
             $mform->addElement('hidden', "definition[$j]");
             $mform->addElement('hidden', "itemid[$j]");
@@ -162,7 +162,7 @@ class question_dataset_dependent_items_form extends moodleform {
 
         $mform->addElement('hidden', 'wizard', 'datasetitems');
         $mform->setType('wizard', PARAM_ALPHA);
-        
+
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_LOCALURL);
         $mform->setDefault('returnurl', 0);

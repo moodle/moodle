@@ -210,6 +210,10 @@
                     E_USER_ERROR => 'E_USER_ERROR',
                     E_USER_WARNING => 'E_USER_WARNING',
                     E_USER_NOTICE => 'E_USER_NOTICE');
+            if (!isset($map[$severity])) {
+                debug_print_backtrace();
+                die();
+            }
             return $map[$severity];
         }
     }

@@ -24,7 +24,8 @@ class question_randomsamatch_qtype extends question_match_qtype {
     }
 
     function get_question_options(&$question) {
-        if (!$question->options = get_record('question_randomsamatch', 'question', $question->id)) {
+        global $DB;
+        if (!$question->options = $DB->get_record('question_randomsamatch', array('question' => $question->id))) {
             notify('Error: Missing question options for random short answer question '.$question->id.'!');
             return false;
         }
@@ -38,6 +39,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
     }
 
     function save_question_options($question) {
+        global $DB;
         $options->question = $question->id;
         $options->choose = $question->choose;
 
@@ -46,15 +48,14 @@ class question_randomsamatch_qtype extends question_match_qtype {
             return $result;
         }
 
-        if ($existing = get_record("question_randomsamatch",
-                                   "question", $options->question)) {
+        if ($existing = $DB->get_record("question_randomsamatch", array("question" => $options->question))) {
             $options->id = $existing->id;
-            if (!update_record("question_randomsamatch", $options)) {
+            if (!$DB->update_record("question_randomsamatch", $options)) {
                 $result->error = "Could not update quiz randomsamatch options!";
                 return $result;
             }
         } else {
-            if (!insert_record("question_randomsamatch", $options)) {
+            if (!$DB->insert_record("question_randomsamatch", $options)) {
                 $result->error = "Could not insert quiz randomsamatch options!";
                 return $result;
             }
@@ -69,7 +70,8 @@ class question_randomsamatch_qtype extends question_match_qtype {
     * @param object $question  The question being deleted
     */
     function delete_question($questionid) {
-        delete_records("question_randomsamatch", "question", $questionid);
+        global $DB;
+        $DB->delete_records("question_randomsamatch", array("question" => $questionid));
         return true;
     }
 
@@ -170,6 +172,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
     }
 
     function restore_session_and_responses(&$question, &$state) {
+        global $DB;
         global $QTYPES;
         if (empty($state->responses[''])) {
             $question->questiontext = "Insufficient selection options are
@@ -186,8 +189,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
             $state->responses = array();
             foreach ($responses as $response) {
                 $state->responses[$response[0]] = $response[1];
-                if (!$wrappedquestion = get_record('question', 'id',
-                 $response[0])) {
+                if (!$wrappedquestion = $DB->get_record('question', array('id' => $response[0]))) {
                     notify("Couldn't get question (id=$response[0])!");
                     return false;
                 }
@@ -239,12 +241,16 @@ class question_randomsamatch_qtype extends question_match_qtype {
     }
 
     function get_sa_candidates($categorylist, $questionsinuse=0) {
-        return get_records_select('question',
-         "qtype = '".'shortanswer'."' " .
-         "AND category IN ($categorylist) " .
+        global $DB;
+        list ($usql, $params) = $DB->get_in_or_equal(explode(',', $categorylist));
+        list ($ques_usql, $ques_params) = $DB->get_in_or_equal(explode(',', $questionsinuse), SQL_PARAMS_QM, null, false);
+        $params = array_merge($params, $ques_params);
+        return $DB->get_records_select('question',
+         "qtype = 'shortanswer' " .
+         "AND category $usql " .
          "AND parent = '0' " .
          "AND hidden = '0'" .
-         "AND id NOT IN ($questionsinuse)");
+         "AND id $ques_usql", $params);
     }
     function get_all_responses($question, $state) {
         $answers = array();
@@ -253,7 +259,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
                 if ($answer->questiontext) {
                     foreach($answer->options->answers as $ans ){
                        $answer->answertext = $ans->answer ;
-                    } 
+                    }
                     $r = new stdClass;
                     $r->answer = $answer->questiontext . ": " . $answer->answertext;
                     $r->credit = 1;
@@ -266,7 +272,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
         $result->responses = $answers;
         return $result;
     }
-    
+
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*
@@ -275,10 +281,11 @@ class question_randomsamatch_qtype extends question_match_qtype {
      * This is used in question/backuplib.php
      */
     function backup($bf,$preferences,$question,$level=6) {
+        global $DB;
 
         $status = true;
 
-        $randomsamatchs = get_records("question_randomsamatch","question",$question,"id");
+        $randomsamatchs = $DB->get_records("question_randomsamatch",array("question" => $question),"id");
         //If there are randomsamatchs
         if ($randomsamatchs) {
             //Iterate over each randomsamatch
@@ -352,7 +359,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
             if (!$que = backup_getid($restore->backup_unique_code,"question",$question_id)) {
                 echo 'Could not recode randomsamatch question '.$question_id.'<br />';
             }
-            
+
             if ($answer_id == 0) { // no response yet
                 $ans->new_id = 0;
             } else {

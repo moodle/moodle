@@ -9,8 +9,8 @@
 require_once("$CFG->libdir/xmlize.php");
 
 class qformat_examview extends qformat_default {
-    
-    var $qtypes = array(
+
+    public $qtypes = array(
         'tf' => TRUEFALSE,
         'mc' => MULTICHOICE,
         'yn' => TRUEFALSE,
@@ -24,13 +24,13 @@ class qformat_examview extends qformat_default {
         'ot' => 99,
         'sa' => ESSAY
         );
-    
-    var $matching_questions = array();
+
+    public $matching_questions = array();
 
     function provide_import() {
         return true;
     }
-    
+
     /**
      * unxmlise reconstructs part of the xml data structure in order
      * to identify the actual data therein
@@ -47,7 +47,7 @@ class qformat_examview extends qformat_default {
             $text = '';
             foreach ($xml as $tag=>$data) {
                 // if tag is '@' then it's attributes and we don't care
-                if ($tag!=='@') { 
+                if ($tag!=='@') {
                     $text = $text . $this->unxmlise( $data );
                 }
             }
@@ -57,7 +57,7 @@ class qformat_examview extends qformat_default {
         $text = strip_tags($text);
         return $text;
     }
-    
+
     function parse_matching_groups($matching_groups)
     {
         if (empty($matching_groups)) {
@@ -81,7 +81,7 @@ class qformat_examview extends qformat_default {
             $this->matching_questions[$groupname] = $newgroup;
         }
     }
-    
+
     function parse_ma($qrec, $groupname)
     {
         $match_group = $this->matching_questions[$groupname];
@@ -93,7 +93,7 @@ class qformat_examview extends qformat_default {
         $this->matching_questions[$groupname] = $match_group;
         return NULL;
     }
-    
+
     function process_matches(&$questions)
     {
         if (empty($this->matching_questions)) {
@@ -117,7 +117,7 @@ class qformat_examview extends qformat_default {
             $questions[] = $question;
         }
     }
-    
+
     function cleanUnicode($text) {
         return str_replace('&#x2019;', "'", $text);
     }
@@ -129,7 +129,7 @@ class qformat_examview extends qformat_default {
 
         $questions = array();
         $currentquestion = array();
-        
+
         $text = implode($lines, ' ');
         $text = $this->cleanUnicode($text);
 
@@ -137,22 +137,22 @@ class qformat_examview extends qformat_default {
         if (!empty($xml['examview']['#']['matching-group'])) {
             $this->parse_matching_groups($xml['examview']['#']['matching-group']);
         }
-        
+
         $questionNode = $xml['examview']['#']['question'];
         foreach($questionNode as $currentquestion) {
             if ($question = $this->readquestion($currentquestion)) {
                 $questions[] = $question;
             }
         }
-        
+
         $this->process_matches($questions);
         return $questions;
     }
     // end readquestions
-    
+
     function readquestion($qrec)
     {
-        
+
         $type = trim($qrec['@']['type']);
         $question = $this->defaultquestion();
         if (array_key_exists($type, $this->qtypes)) {
@@ -166,7 +166,7 @@ class qformat_examview extends qformat_default {
         $htmltext = $this->unxmlise($qrec['#']['text'][0]['#']);
         $question->questiontext = $htmltext;
         $question->name = shorten_text( $question->questiontext, 250 );
-        
+
         switch ($question->qtype) {
         case MULTICHOICE:
             $question = $this->parse_mc($qrec['#'], $question);
@@ -193,11 +193,11 @@ class qformat_examview extends qformat_default {
             $question = NULL;
         }
         // end switch ($question->qtype)
-        
+
         return $question;
     }
     // end readquestion
-    
+
     function parse_tf_yn($qrec, $question)
     {
         $choices = array('T' => 1, 'Y' => 1, 'F' => 0, 'N' => 0 );
@@ -213,15 +213,15 @@ class qformat_examview extends qformat_default {
         }
         return $question;
     }
-    
+
     function parse_mc($qrec, $question)
     {
         $answer = 'choice-'.strtolower(trim($qrec['answer'][0]['#']));
-        
+
         $choices = $qrec['choices'][0]['#'];
         foreach($choices as $key => $value) {
             if (strpos(trim($key),'choice-') !== FALSE) {
-               
+
                 $question->answer[$key] = s($this->unxmlise($value[0]['#']));
                 if (strcmp($key, $answer) == 0) {
                     $question->fraction[$key] = 1;
@@ -234,14 +234,14 @@ class qformat_examview extends qformat_default {
         }
         return $question;
     }
-    
+
     function parse_co($qrec, $question)
     {
         $question->usecase = 0;
         $answer = trim($this->unxmlise($qrec['answer'][0]['#']));
         $answer = strip_tags( $answer );
         $answers = explode("\n",$answer);
-        
+
         foreach($answers as $key => $value) {
             $value = trim($value);
             if (strlen($value) > 0) {
@@ -259,13 +259,13 @@ class qformat_examview extends qformat_default {
         $question->fraction = 0;
         return $question;
     }
-    
+
     function parse_nr($qrec, $question)
     {
         $answer = trim($this->unxmlise($qrec['answer'][0]['#']));
         $answer = strip_tags( $answer );
         $answers = explode("\n",$answer);
-        
+
         foreach($answers as $key => $value) {
             $value = trim($value);
             if (is_numeric($value)) {
@@ -278,8 +278,8 @@ class qformat_examview extends qformat_default {
             }
         }
         return $question;
-    } 
-    
+    }
+
 }
 // end class
 

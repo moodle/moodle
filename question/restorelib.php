@@ -586,8 +586,7 @@
             //mappings in backup_ids to use them later where restoring states (user level).
 
             //Get the answer from DB (by question and answer)
-            $db_answer = $DB->get_record ("question_answers", array("question"=>$new_question_id,
-                                                    "answer"=>$answer->answer));
+            $db_answer = $DB->get_record ("question_answers", array("question"=>$new_question_id, "answer"=>$answer->answer));
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -602,8 +601,7 @@
 
             if ($db_answer) {
                 //We have the database answer, update backup_ids
-                backup_putid($restore->backup_unique_code,"question_answers",$oldid,
-                             $db_answer->id);
+                backup_putid($restore->backup_unique_code,"question_answers",$oldid, $db_answer->id);
             } else {
                 $status = false;
             }
@@ -946,10 +944,11 @@
         }
         $coursemodulecontextslist = join($coursemodulecontexts, ',');
         // Decode links in questions.
-        if ($questions = $DB->get_records_sql('SELECT q.id, q.qtype, q.questiontext, q.generalfeedback
+        list($usql, $params) = $DB->get_in_or_equal(explode(',', $coursemodulecontextslist));
+        if ($questions = $DB->get_records_sql("SELECT q.id, q.qtype, q.questiontext, q.generalfeedback
                                                  FROM {question} q, {question_categories} qc
                                                 WHERE q.category = qc.id
-                                                      AND qc.contextid IN (' .$coursemodulecontextslist.')')) {
+                                                      AND qc.contextid $usql", $params)) {
 
             foreach ($questions as $question) {
                 $questiontext = restore_decode_content_links_worker($question->questiontext, $restore);
@@ -982,11 +981,11 @@
         }
 
         // Decode links in answers.
-        if ($answers = $DB->get_records_sql('SELECT qa.id, qa.answer, qa.feedback, q.qtype
+        if ($answers = $DB->get_records_sql("SELECT qa.id, qa.answer, qa.feedback, q.qtype
                                                FROM {question_answers} qa, {question} q, {question_categories} qc
                                               WHERE qa.question = q.id
                                                     AND q.category = qc.id
-                                                    AND qc.contextid IN ('.$coursemodulecontextslist.')')) {
+                                                    AND qc.contextid $usql", $params)) {
 
             foreach ($answers as $answer) {
                 $feedback = restore_decode_content_links_worker($answer->feedback, $restore);

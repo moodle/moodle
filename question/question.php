@@ -53,7 +53,7 @@ if (!$returnurl) {
 
 
 if ($id) {
-    if (!$question = get_record('question', 'id', $id)) {
+    if (!$question = $DB->get_record('question', array('id' => $id))) {
         print_error('questiondoesnotexist', 'question', $returnurl);
     }
     get_question_options($question);
@@ -66,7 +66,7 @@ if ($id) {
 }
 
 // Validate the question category.
-if (!$category = get_record('question_categories', 'id', $question->category)) {
+if (!$category = $DB->get_record('question_categories', array('id' => $question->category))) {
     print_error('categorydoesnotexist', 'question', $returnurl);
 }
 

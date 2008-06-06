@@ -25,7 +25,7 @@
     $onerrorurl = $CFG->wwwroot.'/question/category.php?'.$thispageurl->get_query_string();
     list($toparent, $contextto) = explode(',', $toparent);
     if (!empty($toparent)){//not top level category, make it a child of $toparent
-        if (!$toparent = get_record('question_categories', 'id', $toparent)){
+        if (!$toparent = $DB->get_record('question_categories', array('id' => $toparent))){
             print_error('invalidcategoryidforparent', 'question', $onerrorurl);
         }
         $contextto = $toparent->contextid;
@@ -34,7 +34,7 @@
         $toparent->id = 0;
         $toparent->contextid = $contextto;
     }
-    if (!$cattomove = get_record('question_categories', 'id', $cattomove)){
+    if (!$cattomove = $DB->get_record('question_categories', array('id' => $cattomove))){
         print_error('invalidcategoryidtomove', 'question', $onerrorurl);
     }
     if ($cattomove->contextid == $contextto){
@@ -57,7 +57,8 @@
     $fromcoursefilesid = get_filesdir_from_context($contextfrom);//siteid or courseid
     $tocoursefilesid = get_filesdir_from_context($contextto);//siteid or courseid
     if ($fromcoursefilesid != $tocoursefilesid){
-        $questions = get_records_select('question', "category IN ({$cattomove->categorylist})");
+        list($usql, $params) = $DB->get_in_or_equal(explode(',', $cattomove->categorylist));
+        $questions = $DB->get_records_select('question', "category $usql", $params);
         $urls = array();
         if ($questions){
             foreach ($questions as $id => $question){
@@ -154,7 +155,7 @@
         }
 
         //adjust sortorder before we make the cat a peer of it's new peers
-        $peers = $DB->get_records_select_menu('question_categories', "contextid = ? AND parent = ?", array($toparent->contextid, $toparent->id), 
+        $peers = $DB->get_records_select_menu('question_categories', "contextid = ? AND parent = ?", array($toparent->contextid, $toparent->id),
                                                                      "sortorder ASC", "id, id");
         $peers = array_keys($peers);
         if ($totop){
@@ -164,7 +165,7 @@
         }
         $sortorder = 0;
         foreach ($peers as $peer) {
-            if (! set_field('question_categories', "sortorder", $sortorder, "id", $peer)) {
+            if (! $DB->set_field('question_categories', "sortorder", $sortorder, array("id" => $peer))) {
                 print_error('listupdatefail', '', $onerrorurl);
             }
             $sortorder++;
@@ -174,11 +175,14 @@
         $cat->id = $cattomove->id;
         $cat->parent = $toparent->id;
         //set context of category we are moving and all children also!
-        if (!execute_sql("UPDATE {$CFG->prefix}question_categories SET contextid = {$contextto->id} WHERE id IN ({$cattomove->categorylist})", false)){
+        list($usql, $params) = $DB->get_in_or_equal(explode(',', $cattomove->categorylist));
+        $params = array_merge(array($contextto->id), $params);
+
+        if (!$DB->execute("UPDATE {question_categories} SET contextid = ? WHERE id $usql", $params)){
             print_error('cannotmovefromto', 'question', $onerrorurl, array($newname, $contexttostring));
         }
         //finally set the new parent id
-        if (!update_record("question_categories", $cat)) {
+        if (!$DB->update_record("question_categories", $cat)) {
             print_error('cannotupdatecate', 'question', $onerrorurl, $updatename);
         }
         $thispageurl->remove_params('cattomove', 'toparent', 'totop');

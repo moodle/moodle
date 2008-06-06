@@ -16,15 +16,17 @@ class question_match_qtype extends default_questiontype {
     }
 
     function get_question_options(&$question) {
-        $question->options = get_record('question_match', 'question', $question->id);
-        $question->options->subquestions = get_records('question_match_sub', 'question', $question->id, 'id ASC');
+        global $DB;
+        $question->options = $DB->get_record('question_match', array('question' => $question->id));
+        $question->options->subquestions = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC');
         return true;
     }
 
     function save_question_options($question) {
+        global $DB;
         $result = new stdClass;
 
-        if (!$oldsubquestions = get_records("question_match_sub", "question", $question->id, "id ASC")) {
+        if (!$oldsubquestions = $DB->get_records("question_match_sub", array("question" => $question->id), "id ASC")) {
             $oldsubquestions = array();
         }
 
@@ -38,7 +40,7 @@ class question_match_qtype extends default_questiontype {
                 if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
-                    if (!update_record("question_match_sub", $subquestion)) {
+                    if (!$DB->update_record("question_match_sub", $subquestion)) {
                         $result->error = "Could not insert match subquestion! (id=$subquestion->id)";
                         return $result;
                     }
@@ -46,13 +48,13 @@ class question_match_qtype extends default_questiontype {
                     $subquestion = new stdClass;
                     // Determine a unique random code
                     $subquestion->code = rand(1,999999999);
-                    while (record_exists('question_match_sub', 'code', $subquestion->code, 'question', $question->id)) {
+                    while ($DB->record_exists('question_match_sub', array('code' => $subquestion->code, 'question' => $question->id))) {
                         $subquestion->code = rand();
                     }
                     $subquestion->question = $question->id;
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
-                    if (!$subquestion->id = insert_record("question_match_sub", $subquestion)) {
+                    if (!$subquestion->id = $DB->insert_record("question_match_sub", $subquestion)) {
                         $result->error = "Could not insert match subquestion!";
                         return $result;
                     }
@@ -67,14 +69,14 @@ class question_match_qtype extends default_questiontype {
         // delete old subquestions records
         if (!empty($oldsubquestions)) {
             foreach($oldsubquestions as $os) {
-                delete_records('question_match_sub', 'id', $os->id);
+                $DB->delete_records('question_match_sub', array('id' => $os->id));
             }
         }
 
-        if ($options = get_record("question_match", "question", $question->id)) {
+        if ($options = $DB->get_record("question_match", array("question" => $question->id))) {
             $options->subquestions = implode(",",$subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
-            if (!update_record("question_match", $options)) {
+            if (!$DB->update_record("question_match", $options)) {
                 $result->error = "Could not update match options! (id=$options->id)";
                 return $result;
             }
@@ -83,7 +85,7 @@ class question_match_qtype extends default_questiontype {
             $options->question = $question->id;
             $options->subquestions = implode(",",$subquestions);
             $options->shuffleanswers = $question->shuffleanswers;
-            if (!insert_record("question_match", $options)) {
+            if (!$DB->insert_record("question_match", $options)) {
                 $result->error = "Could not insert match options!";
                 return $result;
             }
@@ -108,13 +110,15 @@ class question_match_qtype extends default_questiontype {
     * @param integer $question->id
     */
     function delete_question($questionid) {
-        delete_records("question_match", "question", $questionid);
-        delete_records("question_match_sub", "question", $questionid);
+        global $DB;
+        $DB->delete_records("question_match", array("question" => $questionid));
+        $DB->delete_records("question_match_sub", array("question" => $questionid));
         return true;
     }
 
     function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
-        if (!$state->options->subquestions = get_records('question_match_sub', 'question', $question->id, 'id ASC')) {
+        global $DB;
+        if (!$state->options->subquestions = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC')) {
             notify('Error: Missing subquestions!');
             return false;
         }
@@ -143,6 +147,7 @@ class question_match_qtype extends default_questiontype {
     }
 
     function restore_session_and_responses(&$question, &$state) {
+        global $DB;
         // The serialized format for matching questions is a comma separated
         // list of question answer pairs (e.g. 1-1,2-3,3-2), where the ids of
         // both refer to the id in the table question_match_sub.
@@ -150,7 +155,7 @@ class question_match_qtype extends default_questiontype {
         $responses = array_map(create_function('$val',
          'return explode("-", $val);'), $responses);
 
-        if (!$questions = get_records('question_match_sub', 'question', $question->id, 'id ASC')) {
+        if (!$questions = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC')) {
            notify('Error: Missing subquestions!');
            return false;
         }
@@ -180,6 +185,7 @@ class question_match_qtype extends default_questiontype {
     }
 
     function save_session_and_responses(&$question, &$state) {
+        global $DB;
          $subquestions = &$state->options->subquestions;
 
         // Prepare an array to help when disambiguating equal answers.
@@ -213,7 +219,7 @@ class question_match_qtype extends default_questiontype {
         $responses = implode(',', $responses);
 
         // Set the legacy answer field
-        if (!set_field('question_states', 'answer', $responses, 'id', $state->id)) {
+        if (!$DB->set_field('question_states', 'answer', $responses, array('id' => $state->id))) {
             return false;
         }
         return true;
@@ -428,10 +434,10 @@ class question_match_qtype extends default_questiontype {
      * This is used in question/backuplib.php
      */
     function backup($bf,$preferences,$question,$level=6) {
-
+        global $DB;
         $status = true;
 
-        $matchs = get_records('question_match_sub', 'question', $question, 'id ASC');
+        $matchs = $DB->get_records('question_match_sub', array('question' =>  $question), 'id ASC');
         //If there are matchs
         if ($matchs) {
             $status = fwrite ($bf,start_tag("MATCHS",6,true));
@@ -532,7 +538,7 @@ class question_match_qtype extends default_questiontype {
     }
 
     function restore_map($old_question_id,$new_question_id,$info,$restore) {
-
+        global $DB;
         $status = true;
 
         //Get the matchs array
@@ -560,9 +566,9 @@ class question_match_qtype extends default_questiontype {
             //mappings in backup_ids to use them later where restoring states (user level).
 
             //Get the match_sub from DB (by question, questiontext and answertext)
-            $db_match_sub = get_record ("question_match_sub","question",$new_question_id,
-                                                      "questiontext",$match_sub->questiontext,
-                                                      "answertext",$match_sub->answertext);
+            $db_match_sub = $DB->get_record ("question_match_sub",array("question"=>$new_question_id,
+                                                      "questiontext"=>$match_sub->questiontext,
+                                                      "answertext"=>$match_sub->answertext));
             //Do some output
             if (($i+1) % 50 == 0) {
                 if (!defined('RESTORE_SILENTLY')) {
@@ -644,7 +650,7 @@ class question_match_qtype extends default_questiontype {
                 $questiontext = restore_decode_content_links_worker($subquestion->questiontext, $restore);
                 if ($questiontext != $subquestion->questiontext) {
                     $subquestion->questiontext = addslashes($questiontext);
-                    if (!update_record('question_match_sub', $subquestion)) {
+                    if (!$DB->update_record('question_match_sub', $subquestion)) {
                         $status = false;
                     }
                 }
@@ -682,6 +688,7 @@ class question_match_qtype extends default_questiontype {
     }
 
     function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
+        global $DB;
         parent::replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination);
         // replace links in the question_match_sub table.
         if (isset($question->options->subquestions)){
@@ -689,7 +696,7 @@ class question_match_qtype extends default_questiontype {
                 $subquestionchanged = false;
                 $subquestion->questiontext = question_replace_file_links_in_html($subquestion->questiontext, $fromcourseid, $tocourseid, $url, $destination, $subquestionchanged);
                 if ($subquestionchanged){//need to update rec in db
-                    if (!update_record('question_match_sub', addslashes_recursive($subquestion))) {
+                    if (!$DB->update_record('question_match_sub', $subquestion)) {
                         print_error('Couldn\'t update \'question_match_sub\' record '.$subquestion->id);
                     }
 

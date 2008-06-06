@@ -47,7 +47,7 @@
 
     // security: check that the user has permission to access this file
     $haspermission = false;
-    if ($attempt = get_record("question_attempts", "id", $args[0])) {
+    if ($attempt = $DB->get_record("question_attempts", array("id" => $args[0]))) {
         $modfile = $CFG->dirroot .'/mod/'. $attempt->modulename .'/lib.php';
         $modcheckfileaccess = $attempt->modulename .'_check_file_access';
         if (file_exists($modfile)) {

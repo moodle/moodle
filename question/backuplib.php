@@ -416,9 +416,9 @@
                                       WHERE backup_code = ? AND
                                             table_name = 'question'", array($backup_unique_code));
     }
-    
+
     //Function for inserting question and category ids into db that are all called from
-    // quiz_check_backup_mods during execution of backup_check.html 
+    // quiz_check_backup_mods during execution of backup_check.html
 
     function question_insert_c_and_q_ids_for_course($coursecontext, $backup_unique_code){
         global $CFG, $DB;
@@ -441,12 +441,12 @@
         $status = $DB->execute("INSERT INTO {backup_ids} (backup_code, table_name, old_id, info)
                                 SELECT '$backup_unique_code', 'question', q.id, ''
                                   FROM {question} q, {backup_ids} bk
-                                 WHERE q.category = bk.old_id AND bk.table_name = 'question_categories' 
+                                 WHERE q.category = bk.old_id AND bk.table_name = 'question_categories'
                                        AND bk.info = ?
                                        AND bk.backup_code = ?", array($info, $backup_unique_code));
         return $status;
     }
-    
+
     function question_insert_c_and_q_ids_for_module($backup_unique_code, $course, $modulename, $instances){
         global $CFG, $DB;
         $status = true;
@@ -454,18 +454,21 @@
         // if two key names are the same.
         $cmcontexts = array();
         if(!empty($instances)) {
+            list($usql, $params) = $DB->get_in_or_equal(array_keys($instances));
+            $params[] = $modulename;
+            $params[] = $course;
             $cmcontexts = $DB->get_records_sql_menu("SELECT c.id, c.id AS dummykeyname FROM {modules} m,
                                                         {course_modules} cm, {context} c
-                               WHERE m.name = ? AND m.id = cm.module AND cm.id = c.instanceid
-                                    AND c.contextlevel = ".CONTEXT_MODULE." AND cm.course = ?
-                                    AND cm.instance IN (".implode(',',array_keys($instances)).")", array($modulename, $course));
+                               WHERE cm.instance $usql AND m.name = ? AND m.id = cm.module AND cm.id = c.instanceid
+                                    AND c.contextlevel = ".CONTEXT_MODULE." AND cm.course = ?", $params);
         }
-                                    
+
         if ($cmcontexts){
+            list($usql, $params) = $DB->get_in_or_equal(array_keys($cmcontexts));
             $status = $status && $DB->execute("INSERT INTO {backup_ids} (backup_code, table_name, old_id, info)
                                                SELECT '$backup_unique_code', 'question_categories', qc.id, '$modulename'
                                                  FROM {question_categories} qc
-                                                WHERE qc.contextid IN (".join(array_keys($cmcontexts), ', ').")");
+                                                WHERE qc.contextid $usql", $params);
         }
         $status = $status && question_insert_q_ids($backup_unique_code, $modulename);
         return $status;

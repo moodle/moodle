@@ -23,7 +23,7 @@
     $txt->importquestions = get_string("importquestions", "quiz");
 
     list($catid, $catcontext) = explode(',', $pagevars['cat']);
-    if (!$category = get_record("question_categories", "id", $catid)) {
+    if (!$category = $DB->get_record("question_categories", array("id" => $catid))) {
         print_error('nocategory','quiz');
     }
 

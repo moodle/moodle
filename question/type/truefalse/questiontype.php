@@ -16,10 +16,11 @@ class question_truefalse_qtype extends default_questiontype {
     }
 
     function save_question_options($question) {
+        global $DB;
         $result = new stdClass;
 
         // fetch old answer ids so that we can reuse them
-        if (!$oldanswers = get_records("question_answers", "question", $question->id, "id ASC")) {
+        if (!$oldanswers = $DB->get_records("question_answers", array("question" =>  $question->id), "id ASC")) {
             $oldanswers = array();
         }
 
@@ -28,7 +29,7 @@ class question_truefalse_qtype extends default_questiontype {
             $true->answer   = get_string("true", "quiz");
             $true->fraction = $question->correctanswer;
             $true->feedback = $question->feedbacktrue;
-            if (!update_record("question_answers", $true)) {
+            if (!$DB->update_record("question_answers", $true)) {
                 $result->error = "Could not update quiz answer \"true\")!";
                 return $result;
             }
@@ -38,7 +39,7 @@ class question_truefalse_qtype extends default_questiontype {
             $true->question = $question->id;
             $true->fraction = $question->correctanswer;
             $true->feedback = $question->feedbacktrue;
-            if (!$true->id = insert_record("question_answers", $true)) {
+            if (!$true->id = $DB->insert_record("question_answers", $true)) {
                 $result->error = "Could not insert quiz answer \"true\")!";
                 return $result;
             }
@@ -49,7 +50,7 @@ class question_truefalse_qtype extends default_questiontype {
             $false->answer   = get_string("false", "quiz");
             $false->fraction = 1 - (int)$question->correctanswer;
             $false->feedback = $question->feedbackfalse;
-            if (!update_record("question_answers", $false)) {
+            if (!$DB->update_record("question_answers", $false)) {
                 $result->error = "Could not insert quiz answer \"false\")!";
                 return $result;
             }
@@ -59,7 +60,7 @@ class question_truefalse_qtype extends default_questiontype {
             $false->question = $question->id;
             $false->fraction = 1 - (int)$question->correctanswer;
             $false->feedback = $question->feedbackfalse;
-            if (!$false->id = insert_record("question_answers", $false)) {
+            if (!$false->id = $DB->insert_record("question_answers", $false)) {
                 $result->error = "Could not insert quiz answer \"false\")!";
                 return $result;
             }
@@ -68,17 +69,17 @@ class question_truefalse_qtype extends default_questiontype {
         // delete any leftover old answer records (there couldn't really be any, but who knows)
         if (!empty($oldanswers)) {
             foreach($oldanswers as $oa) {
-                delete_records('question_answers', 'id', $oa->id);
+                $DB->delete_records('question_answers', array('id' => $oa->id));
             }
         }
 
         // Save question options in question_truefalse table
-        if ($options = get_record("question_truefalse", "question", $question->id)) {
+        if ($options = $DB->get_record("question_truefalse", array("question" => $question->id))) {
             // No need to do anything, since the answer IDs won't have changed
             // But we'll do it anyway, just for robustness
             $options->trueanswer  = $true->id;
             $options->falseanswer = $false->id;
-            if (!update_record("question_truefalse", $options)) {
+            if (!$DB->update_record("question_truefalse", $options)) {
                 $result->error = "Could not update quiz truefalse options! (id=$options->id)";
                 return $result;
             }
@@ -87,7 +88,7 @@ class question_truefalse_qtype extends default_questiontype {
             $options->question    = $question->id;
             $options->trueanswer  = $true->id;
             $options->falseanswer = $false->id;
-            if (!insert_record("question_truefalse", $options)) {
+            if (!$DB->insert_record("question_truefalse", $options)) {
                 $result->error = "Could not insert quiz truefalse options!";
                 return $result;
             }
@@ -99,14 +100,15 @@ class question_truefalse_qtype extends default_questiontype {
     * Loads the question type specific options for the question.
     */
     function get_question_options(&$question) {
+        global $DB;
         // Get additional information from database
         // and attach it to the question object
-        if (!$question->options = get_record('question_truefalse', 'question', $question->id)) {
+        if (!$question->options = $DB->get_record('question_truefalse', array('question' => $question->id))) {
             notify('Error: Missing question options!');
             return false;
         }
         // Load the answers
-        if (!$question->options->answers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
+        if (!$question->options->answers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
            notify('Error: Missing question answers for truefalse question ' . $question->id . '!');
            return false;
         }
@@ -121,7 +123,8 @@ class question_truefalse_qtype extends default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($questionid) {
-        delete_records("question_truefalse", "question", $questionid);
+        global $DB;
+        $DB->delete_records("question_truefalse", array("question" => $questionid));
         return true;
     }
 
@@ -251,10 +254,11 @@ class question_truefalse_qtype extends default_questiontype {
      * This is used in question/backuplib.php
      */
     function backup($bf,$preferences,$question,$level=6) {
+        global $DB;
 
         $status = true;
 
-        $truefalses = get_records("question_truefalse","question",$question,"id");
+        $truefalses = $DB->get_records("question_truefalse",array("question" => $question),"id");
         //If there are truefalses
         if ($truefalses) {
             //Iterate over each truefalse

@@ -230,7 +230,7 @@ class default_questiontype {
     *       is itself an object, shown next to the form fields.
     */
     function save_question($question, $form, $course) {
-        global $USER;
+        global $USER, $DB;
         // This default implementation is suitable for most
         // question types.
 
@@ -278,10 +278,10 @@ class default_questiontype {
                 //a question to will get through the form cleaning code for the select box.
             }
             // keep existing unique stamp code
-            $question->stamp = get_field('question', 'stamp', 'id', $question->id);
+            $question->stamp = $DB->get_field('question', 'stamp', array('id' => $question->id));
             $question->modifiedby = $USER->id;
             $question->timemodified = time();
-            if (!update_record('question', $question)) {
+            if (!$DB->update_record('question', $question)) {
                 print_error('cannotupdatequestion', 'question');
             }
         } else {         // Question is a new one
@@ -301,7 +301,7 @@ class default_questiontype {
             $question->modifiedby = $USER->id;
             $question->timecreated = time();
             $question->timemodified = time();
-            if (!$question->id = insert_record('question', $question)) {
+            if (!$question->id = $DB->insert_record('question', $question)) {
                 print_error('cannotinsertquestion', 'question');
             }
         }
@@ -331,7 +331,7 @@ class default_questiontype {
         }
 
         // Give the question a unique version stamp determined by question_hash()
-        if (!set_field('question', 'version', question_hash($question), 'id', $question->id)) {
+        if (!$DB->set_field('question', 'version', question_hash($question), array('id' => $question->id))) {
             print_error('cannotupdatequestionver', 'question');
         }
 
@@ -347,13 +347,14 @@ class default_questiontype {
     *                          it is not a standard question object.
     */
     function save_question_options($question) {
+        global $DB;
         $extra_question_fields = $this->extra_question_fields();
 
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
 
             $function = 'update_record';
-            $options = get_record($question_extension_table, 'questionid', $question->id);
+            $options = $DB->get_record($question_extension_table, array('questionid' => $question->id));
             if (!$options) {
                 $function = 'insert_record';
                 $options = new stdClass;
@@ -369,7 +370,7 @@ class default_questiontype {
                 $options->$field = $question->$field;
             }
 
-            if (!$function($question_extension_table, $options)) {
+            if (!$DB->{$function}($question_extension_table, $options)) {
                 $result = new stdClass;
                 $result->error = 'Could not save question options for ' .
                         $this->name() . ' question id ' . $question->id;
@@ -416,7 +417,7 @@ class default_questiontype {
     *                         specific information (it is passed by reference).
     */
     function get_question_options(&$question) {
-        global $CFG;
+        global $CFG, $DB;
 
         if (!isset($question->options)) {
             $question->options = new object;
@@ -425,7 +426,7 @@ class default_questiontype {
         $extra_question_fields = $this->extra_question_fields();
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            $extra_data = get_record($question_extension_table, 'questionid', $question->id, '', '', '', '', implode(', ', $extra_question_fields));
+            $extra_data = $DB->get_record($question_extension_table, array('questionid' => $question->id), '', implode(', ', $extra_question_fields));
             if ($extra_data) {
                 foreach ($extra_question_fields as $field) {
                     $question->options->$field = $extra_data->$field;
@@ -440,10 +441,10 @@ class default_questiontype {
         $extra_answer_fields = $this->extra_answer_fields();
         if (is_array($extra_answer_fields)) {
             $answer_extension_table = array_shift($extra_answer_fields);
-            $question->options->answers = get_records_sql('
-                    SELECT qa.*, qax.' . implode(', qax.', $extra_answer_fields) . '
-                    FROM ' . $CFG->prefix . 'question_answers qa, ' . $CFG->prefix . '$answer_extension_table qax
-                    WHERE qa.questionid = ' . $question->id . ' AND qax.answerid = qa.id');
+            $question->options->answers = $DB->get_records_sql("
+                    SELECT qa.*, qax." . implode(', qax.', $extra_answer_fields) . "
+                    FROM {question_answers} qa, {$answer_extension_table} qax
+                    WHERE qa.questionid = ? AND qax.answerid = qa.id", array($question->id));
             if (!$question->options->answers) {
                 notify("Failed to load question answers from the table $answer_extension_table for questionid " .
                         $question->id);
@@ -451,7 +452,7 @@ class default_questiontype {
             }
         } else {
             // Don't check for success or failure because some question types do not use the answers table.
-            $question->options->answers = get_records('question_answers', 'question', $question->id, 'id ASC');
+            $question->options->answers = $DB->get_records('question_answers', array('question' => $question->id), 'id ASC');
         }
 
         return true;
@@ -476,23 +477,23 @@ class default_questiontype {
     * @param object $question  The question being deleted
     */
     function delete_question($questionid) {
-        global $CFG;
+        global $CFG, $DB;
         $success = true;
 
         $extra_question_fields = $this->extra_question_fields();
         if (is_array($extra_question_fields)) {
             $question_extension_table = array_shift($extra_question_fields);
-            $success = $success && delete_records($question_extension_table, 'questionid', $questionid);
+            $success = $success && $DB->delete_records($question_extension_table, array('questionid' => $questionid));
         }
 
         $extra_answer_fields = $this->extra_answer_fields();
         if (is_array($extra_answer_fields)) {
             $answer_extension_table = array_shift($extra_answer_fields);
-            $success = $success && delete_records_select($answer_extension_table,
-                    "answerid IN (SELECT qa.id FROM {$CFG->prefix}question_answers qa WHERE qa.question = $questionid)");
+            $success = $success && $DB->delete_records_select($answer_extension_table,
+                "answerid IN (SELECT qa.id FROM {question_answers} qa WHERE qa.question = ?)", array($questionid));
         }
 
-        $success = $success && delete_records('question_answers', 'question', $questionid);
+        $success = $success && $DB->delete_records('question_answers', array('question' => $questionid));
 
         return $success;
     }
@@ -595,7 +596,7 @@ class default_questiontype {
     * which is contained in ->responses[''] will not have to save this response,
     * it will already have been saved to the answer field of the question_states table.
     * Question types with more response fields should override this method to convert
-    * the data the ->responses array into a single string field, and save it in the 
+    * the data the ->responses array into a single string field, and save it in the
     * database. The implementation in the multichoice question type is a good model to follow.
     * http://cvs.moodle.org/contrib/plugins/question/type/opaque/questiontype.php?view=markup
     * has a solution that is probably quite generally applicable.
@@ -871,14 +872,15 @@ class default_questiontype {
      * Used by print_question()
      */
     function history($question, $state, $number, $cmoptions, $options) {
+        global $DB;
         $history = '';
         if(isset($options->history) and $options->history) {
             if ($options->history == 'all') {
                 // show all states
-                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event > '0'", 'seq_number ASC');
+                $states = $DB->get_records_select('question_states', "attempt = ? AND question = ? AND event > '0'", array($state->attempt, $question->id), 'seq_number ASC');
             } else {
                 // show only graded states
-                $states = get_records_select('question_states', "attempt = '$state->attempt' AND question = '$question->id' AND event IN (".QUESTION_EVENTS_GRADED.")", 'seq_number ASC');
+                $states = $DB->get_records_select('question_states', "attempt = ? AND question = ? AND event IN (".QUESTION_EVENTS_GRADED.")", 'seq_number ASC', array($state->attempt, $question->id));
             }
             if (count($states) > 1) {
                 $strreviewquestion = get_string('reviewresponse', 'quiz');
@@ -1332,7 +1334,7 @@ class default_questiontype {
 
         // get quizzes using the question (using the question_instances table)
         $quizlist = array();
-        if(!$instances = get_records('quiz_question_instances', 'question', $question->id)) {
+        if(!$instances = $DB->get_records('quiz_question_instances', array('question' => $question->id))) {
             $instances = array();
         }
         foreach($instances as $instance) {
@@ -1367,9 +1369,9 @@ class default_questiontype {
 
                 // find how many different students have already attempted this quiz
                 $students = array();
-                if($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'")) {
+                if($attempts = $DB->get_records_select('quiz_attempts', "quiz = ? AND preview = '0'", array($quiz->id))) {
                     foreach($attempts as $attempt) {
-                        if (record_exists('question_states', 'attempt', $attempt->uniqueid, 'question', $question->id, 'originalquestion', 0)) {
+                        if ($DB->record_exists('question_states', array('attempt' => $attempt->uniqueid, 'question' => $question->id), 'originalquestion', 0)) {
                             $students[$attempt->userid] = 1;
                         }
                     }
@@ -1482,7 +1484,7 @@ class default_questiontype {
      * @return array of files, file name is key and array with one item = question id as value
      */
     function replace_file_links($question, $fromcourseid, $tocourseid, $url, $destination){
-        global $CFG;
+        global $CFG, $DB;
         $updateqrec = false;
 
     /// Question image
@@ -1505,7 +1507,7 @@ class default_questiontype {
 
     /// If anything has changed, update it in the database.
         if ($updateqrec){
-            if (!update_record('question', addslashes_recursive($question))){
+            if (!$DB->update_record('question', $question)){
                 error ('Couldn\'t update question '.$question->name);
             }
         }
@@ -1524,7 +1526,7 @@ class default_questiontype {
                 $answer->feedback = question_replace_file_links_in_html($answer->feedback, $fromcourseid, $tocourseid, $url, $destination, $answerchanged);
             /// If anything has changed, update it in the database.
                 if ($answerchanged){
-                    if (!update_record('question_answers', addslashes_recursive($answer))){
+                    if (!$DB->update_record('question_answers', $answer)){
                         error ('Couldn\'t update question ('.$question->name.') answer '.$answer->id);
                     }
                 }

@@ -59,7 +59,7 @@
         redirect($url->out());
     }
     // Load the question information
-    if (!$questions = get_records('question', 'id', $id)) {
+    if (!$questions = $DB->get_records('question', array('id' =>  $id))) {
         error('Could not load question');
     }
     if (empty($quizid)) {
@@ -68,7 +68,7 @@
         $quiz->review = $CFG->quiz_review;
         require_login($courseid, false);
         $quiz->course = $courseid;
-    } else if (!$quiz = get_record('quiz', 'id', $quizid)) {
+    } else if (!$quiz = $DB->get_record('quiz', array('id' => $quizid))) {
         error("Quiz id $quizid does not exist");
     } else {
         require_login($quiz->course, false, get_coursemodule_from_instance('quiz', $quizid, $quiz->course));
@@ -76,7 +76,7 @@
 
 
 
-    if ($maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $id)) {
+    if ($maxgrade = $DB->get_field('quiz_question_instances', 'grade', array('quiz' => $quiz->id, 'question' => $id))) {
         $questions[$id]->maxgrade = $maxgrade;
     } else {
         $questions[$id]->maxgrade = $questions[$id]->defaultgrade;
@@ -85,7 +85,7 @@
     $quiz->id = 0; // just for safety
     $quiz->questions = $id;
 
-    if (!$category = get_record("question_categories", "id", $questions[$id]->category)) {
+    if (!$category = $DB->get_record("question_categories", array("id" => $questions[$id]->category))) {
         error("This question doesn't belong to a valid category!");
     }
 
@@ -188,8 +188,7 @@
 
     // Fill in the correct responses (unless the question is in readonly mode)
     if ($fillcorrect && !$options->readonly) {
-        $curstate->responses = $QTYPES[$questions[$id]->qtype]
-         ->get_correct_responses($questions[$id], $curstate);
+        $curstate->responses = $QTYPES[$questions[$id]->qtype]->get_correct_responses($questions[$id], $curstate);
     }
 
     $strpreview = get_string('preview', 'quiz').' '.format_string($questions[$id]->name);

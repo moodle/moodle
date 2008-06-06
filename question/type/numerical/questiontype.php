@@ -31,14 +31,14 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // Note: question_numerical is an extension of the answer table rather than
         //       the question table as is usually the case for qtype
         //       specific tables.
-        global $CFG;
-        if (!$question->options->answers = get_records_sql(
+        global $CFG, $DB;
+        if (!$question->options->answers = $DB->get_records_sql(
                                 "SELECT a.*, n.tolerance " .
-                                "FROM {$CFG->prefix}question_answers a, " .
-                                "     {$CFG->prefix}question_numerical n " .
-                                "WHERE a.question = $question->id " .
+                                "FROM {question_answers} a, " .
+                                "     {question_numerical} n " .
+                                "WHERE a.question = ? " .
                                 "    AND   a.id = n.answer " .
-                                "ORDER BY a.id ASC")) {
+                                "ORDER BY a.id ASC", array($question->id))) {
             notify('Error: Missing question answer for numerical question ' . $question->id . '!');
             return false;
         }
@@ -60,8 +60,8 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     }
 
     function get_numerical_units(&$question) {
-        if ($units = get_records('question_numerical_units',
-                                         'question', $question->id, 'id ASC')) {
+        global $DB;
+        if ($units = $DB->get_records('question_numerical_units', array('question' => $question->id), 'id ASC')) {
             $units  = array_values($units);
         } else {
             $units = array();
@@ -88,13 +88,13 @@ class question_numerical_qtype extends question_shortanswer_qtype {
      * Save the units and the answers associated with this question.
      */
     function save_question_options($question) {
-        
+        global $DB;
         // Get old versions of the objects
-        if (!$oldanswers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
+        if (!$oldanswers = $DB->get_records('question_answers', array('question' =>  $question->id), 'id ASC')) {
             $oldanswers = array();
         }
 
-        if (!$oldoptions = get_records('question_numerical', 'question', $question->id, 'answer ASC')) {
+        if (!$oldoptions = $DB->get_records('question_numerical', array('question' =>  $question->id), 'answer ASC')) {
             $oldoptions = array();
         }
 
@@ -108,7 +108,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         // Insert all the new answers
         foreach ($question->answer as $key => $dataanswer) {
-            if (!isset( $question->deleteanswer[$key] ) && !( trim($dataanswer) == 0 && $question->fraction[$key]== 0 &&trim($question->feedback[$key])=='')) { 
+            if (!isset( $question->deleteanswer[$key] ) && !( trim($dataanswer) == 0 && $question->fraction[$key]== 0 &&trim($question->feedback[$key])=='')) {
                 $answer = new stdClass;
                 $answer->question = $question->id;
                 if (trim($dataanswer) == '*') {
@@ -124,12 +124,12 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
-                    if (! update_record("question_answers", $answer)) {
+                    if (! $DB->update_record("question_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
                     }
                 } else { // This is a completely new answer
-                    if (! $answer->id = insert_record("question_answers", $answer)) {
+                    if (! $answer->id = $DB->insert_record("question_answers", $answer)) {
                         $result->error = "Could not insert quiz answer!";
                         return $result;
                     }
@@ -149,15 +149,15 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                         $result->notice = get_string('invalidnumerictolerance', 'quiz');
                     }
                 }
-                
+
                 // Save options
                 if (isset($options->id)) { // reusing existing record
-                    if (! update_record('question_numerical', $options)) {
+                    if (! $DB->update_record('question_numerical', $options)) {
                         $result->error = "Could not update quiz numerical options! (id=$options->id)";
                         return $result;
                     }
                 } else { // new options
-                    if (! insert_record('question_numerical', $options)) {
+                    if (! $DB->insert_record('question_numerical', $options)) {
                         $result->error = "Could not insert quiz numerical options!";
                         return $result;
                     }
@@ -167,14 +167,14 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // delete old answer records
         if (!empty($oldanswers)) {
             foreach($oldanswers as $oa) {
-                delete_records('question_answers', 'id', $oa->id);
+                $DB->delete_records('question_answers', array('id' => $oa->id));
             }
         }
 
         // delete old answer records
         if (!empty($oldoptions)) {
             foreach($oldoptions as $oo) {
-                delete_records('question_numerical', 'id', $oo->id);
+                $DB->delete_records('question_numerical', array('id' => $oo->id));
             }
         }
 
@@ -182,15 +182,16 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         if (!empty($result->notice)) {
             return $result;
         }
-        
+
         return true;
     }
 
     function save_numerical_units($question) {
+        global $DB;
         $result = new stdClass;
 
         // Delete the units previously saved for this question.
-        delete_records('question_numerical_units', 'question', $question->id);
+        $DB->delete_records('question_numerical_units', array('question' => $question->id));
 
         // Save the new units.
         $units = array();
@@ -201,7 +202,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 $units[$i]->question = $question->id;
                 $units[$i]->multiplier = $this->apply_unit($question->multiplier[$i], array());
                 $units[$i]->unit = $question->unit[$i];
-                if (! insert_record('question_numerical_units', $units[$i])) {
+                if (! $DB->insert_record('question_numerical_units', $units[$i])) {
                     $result->error = 'Unable to save unit ' . $units[$i]->unit . ' to the Databse';
                     return $result;
                 }
@@ -220,8 +221,9 @@ class question_numerical_qtype extends question_shortanswer_qtype {
      * @param object $question  The question being deleted
      */
     function delete_question($questionid) {
-        delete_records("question_numerical", "question", $questionid);
-        delete_records("question_numerical_units", "question", $questionid);
+        global $DB;
+        $DB->delete_records("question_numerical", array("question" => $questionid));
+        $DB->delete_records("question_numerical_units", array("question" => $questionid));
         return true;
     }
 
@@ -330,11 +332,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 $tolerance = abs($tolerance); // important - otherwise min and max are swapped
                 // $answer->tolerance 0 or something else
                 if ((float)$answer->tolerance == 0.0  &&  abs((float)$answer->answer) <= $tolerance ){
-                    $tolerance = (float) ("1.0e-".ini_get('precision')) * abs((float)$answer->answer) ; //tiny fraction 
+                    $tolerance = (float) ("1.0e-".ini_get('precision')) * abs((float)$answer->answer) ; //tiny fraction
                 } else if ((float)$answer->tolerance != 0.0 && abs((float)$answer->tolerance) < abs((float)$answer->answer) &&  abs((float)$answer->answer) <= $tolerance){
-                    $tolerance = (1+("1.0e-".ini_get('precision')) )* abs((float) $answer->tolerance) ;//tiny fraction 
-               }     
-               
+                    $tolerance = (1+("1.0e-".ini_get('precision')) )* abs((float) $answer->tolerance) ;//tiny fraction
+               }
+
                 $max = $answer->answer + $tolerance;
                 $min = $answer->answer - $tolerance;
                 break;
@@ -371,13 +373,13 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $search  = array(' ', ',');
         $replace = array('', '.');
         $rawresponse = str_replace($search, $replace, trim($rawresponse));
-        
+
         // Apply any unit that is present.
         if (ereg('^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$',
                 $rawresponse, $responseparts)) {
-                    
+
             if (!empty($responseparts[5])) {
-                
+
                 if (isset($tmpunits[$responseparts[5]])) {
                     // Valid number with unit.
                     return (float)$responseparts[1] / $tmpunits[$responseparts[5]];
@@ -394,7 +396,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // Invalid number. Must be wrong.
         return false;
     }
-    
+
     /// BACKUP FUNCTIONS ////////////////////////////
 
     /**
@@ -403,10 +405,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
      * This is used in question/backuplib.php
      */
     function backup($bf,$preferences,$question,$level=6) {
+        global $DB;
 
         $status = true;
 
-        $numericals = get_records('question_numerical', 'question', $question, 'id ASC');
+        $numericals = $DB->get_records('question_numerical', array('question' =>  $question), 'id ASC');
         //If there are numericals
         if ($numericals) {
             //Iterate over each numerical
