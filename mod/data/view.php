@@ -169,7 +169,7 @@
                 }
                 if (!empty($val)) {
                     $search_array[$field->id] = new object();
-                    $search_array[$field->id]->sql  = $searchfield->generate_sql('c'.$field->id, $val);
+                    list($search_array[$field->id]->sql, $search_array[$field->id]->params) = $searchfield->generate_sql('c'.$field->id, $val);
                     $search_array[$field->id]->data = $val;
                     $vals[] = $val;
                 } else {
@@ -189,18 +189,20 @@
         }
         if (!empty($fn)) {
             $search_array[DATA_FIRSTNAME] = new object();
-            $search_array[DATA_FIRSTNAME]->sql   = '';
-            $search_array[DATA_FIRSTNAME]->field = 'u.firstname';
-            $search_array[DATA_FIRSTNAME]->data  = $fn;
+            $search_array[DATA_FIRSTNAME]->sql    = '';
+            $search_array[DATA_FIRSTNAME]->params = array();
+            $search_array[DATA_FIRSTNAME]->field  = 'u.firstname';
+            $search_array[DATA_FIRSTNAME]->data   = $fn;
             $vals[] = $fn;
         } else {
             unset($search_array[DATA_FIRSTNAME]);
         }
         if (!empty($ln)) {
             $search_array[DATA_LASTNAME] = new object();
-            $search_array[DATA_LASTNAME]->sql   = '';
-            $search_array[DATA_LASTNAME]->field = 'u.lastname';
-            $search_array[DATA_LASTNAME]->data  = $ln;
+            $search_array[DATA_LASTNAME]->sql     = '';
+            $search_array[DATA_FIRSTNAME]->params = array();
+            $search_array[DATA_LASTNAME]->field   = 'u.lastname';
+            $search_array[DATA_LASTNAME]->data    = $ln;
             $vals[] = $ln;
         } else {
             unset($search_array[DATA_LASTNAME]);
@@ -370,6 +372,7 @@
         
     } else {
     /// Approve any requested records
+        $params = array(); // named params array
 
         $approvecap = has_capability('mod/data:approve', $context); 
 
@@ -398,7 +401,8 @@
     /// setup group and approve restrictions
         if (!$approvecap && $data->approval) {
             if (isloggedin()) {
-                $approveselect = ' AND (r.approved=1 OR r.userid='.$USER->id.') ';
+                $approveselect = ' AND (r.approved=1 OR r.userid=:myid1) ';
+                $params['myid1'] = $USER->id;
             } else {
                 $approveselect = ' AND r.approved=1 ';
             }
@@ -407,7 +411,8 @@
         }
 
         if ($currentgroup) {
-            $groupselect = " AND (r.groupid = '$currentgroup' OR r.groupid = 0)";
+            $groupselect = " AND (r.groupid = :currentgroup OR r.groupid = 0)";
+            $params['currentgroup'] = $currentgroup;
         } else {
             $groupselect = ' ';
         }
@@ -438,31 +443,40 @@
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname';
             $count = ' COUNT(DISTINCT c.recordid) ';
-            $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
+            $tables = '{data_content} c,{data_records} r, {data_content} cs, {user} u ';
             $where =  'WHERE c.recordid = r.id
-                         AND r.dataid = '.$data->id.'
+                         AND r.dataid = :dataid
                          AND r.userid = u.id
                          AND cs.recordid = r.id ';
+            $params['dataid'] = $data->id;
             $sortorder = ' ORDER BY '.$ordering.', r.id ASC ';
             $searchselect = '';
 
             // If requiredentries is not reached, only show current user's entries
             if (!$requiredentries_allowed) {
-                $where .= ' AND u.id = ' . $USER->id;
+                $where .= ' AND u.id = :myid2 ';
+                $params['myid2'] = $USER->id;
             }
 
             if (!empty($advanced)) {                                                  //If advanced box is checked.
+                $i = 0;
                 foreach($search_array as $key => $val) {                              //what does $search_array hold?
                     if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                        $searchselect .= " AND $val->field $ilike '%{$val->data}%'";
+                        $i++;
+                        $searchselect .= " AND $val->field $ilike :search_flname_$i";
+                        $params['search_flname_'.$i] = "%$val->data%";
                         continue;
                     }
-                    $tables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
+                    $tables .= ', {data_content} c'.$key.' ';
                     $where .= ' AND c'.$key.'.recordid = r.id';
                     $searchselect .= ' AND ('.$val->sql.') ';
+                    $params = array_merge($params, $val->params);
                 }
             } else if ($search) {
-                $searchselect = " AND (cs.content $ilike '%$search%' OR u.firstname $ilike '%$search%' OR u.lastname $ilike '%$search%' ) ";
+                $searchselect = " AND (cs.content $ilike :search1 OR u.firstname $ilike :search2 OR u.lastname $ilike :search3 ) ";
+                $params['search1'] = "%$search%";
+                $params['search2'] = "%$search%";
+                $params['search3'] = "%$search%";
             } else {
                 $searchselect = ' ';
             }
@@ -474,32 +488,41 @@
 
             $what = ' DISTINCT r.id, r.approved, r.timecreated, r.timemodified, r.userid, u.firstname, u.lastname, c.'.$sortcontent.', '.$sortcontentfull.' AS _order ';
             $count = ' COUNT(DISTINCT c.recordid) ';
-            $tables = $CFG->prefix.'data_content c,'.$CFG->prefix.'data_records r,'.$CFG->prefix.'data_content cs, '.$CFG->prefix.'user u ';
+            $tables = '{data_content} c, {data_records} r, {data_content} cs, {user} u ';
             $where =  'WHERE c.recordid = r.id
-                         AND c.fieldid = '.$sort.'
-                         AND r.dataid = '.$data->id.'
+                         AND c.fieldid = :sort
+                         AND r.dataid = :dataid
                          AND r.userid = u.id
                          AND cs.recordid = r.id ';
+            $params['dataid'] = $data->id;
+            $params['sort'] = $sort;
             $sortorder = ' ORDER BY _order '.$order.' , r.id ASC ';
             $searchselect = '';
 
             // If requiredentries is not reached, only show current user's entries
             if (!$requiredentries_allowed) {
                 $where .= ' AND u.id = ' . $USER->id;
+                $params['myid2'] = $USER->id;
             }
 
             if (!empty($advanced)) {                                                  //If advanced box is checked.
                 foreach($search_array as $key => $val) {                              //what does $search_array hold?
                     if ($key == DATA_FIRSTNAME or $key == DATA_LASTNAME) {
-                        $searchselect .= " AND $val->field $ilike '%{$val->data}%'";
+                        $i++;
+                        $searchselect .= " AND $val->field $ilike :search_flname_$i";
+                        $params['search_flname_'.$i] = "%$val->data%";
                         continue;
                     }
-                    $tables .= ', '.$CFG->prefix.'data_content c'.$key.' ';
+                    $tables .= ', {data_content} c'.$key.' ';
                     $where .= ' AND c'.$key.'.recordid = r.id';
                     $searchselect .= ' AND ('.$val->sql.') ';
+                    $params = array_merge($params, $val->params);
                 }
             } else if ($search) {
-                $searchselect = " AND (cs.content $ilike '%$search%' OR u.firstname $ilike '%$search%' OR u.lastname $ilike '%$search%' ) ";
+                $searchselect = " AND (cs.content $ilike :search1 OR u.firstname $ilike :search2 OR u.lastname $ilike :search3 ) ";
+                $params['search1'] = "%$search%";
+                $params['search2'] = "%$search%";
+                $params['search3'] = "%$search%";
             } else {
                 $searchselect = ' ';
             }
@@ -515,11 +538,11 @@
 
     /// Work out the paging numbers and counts
 
-        $totalcount = count_records_sql($sqlcount);
+        $totalcount = $DB->count_records_sql($sqlcount, $params);
         if (empty($searchselect)) {
             $maxcount = $totalcount;
         } else {
-            $maxcount = count_records_sql($sqlmax);
+            $maxcount = $DB->count_records_sql($sqlmax, $params);
         }
 
         if ($record) {     // We need to just show one, so where is it in context?
@@ -527,7 +550,7 @@
             $mode = 'single';
 
             $page = 0;
-            if ($allrecordids = get_records_sql($sqlrids)) {
+            if ($allrecordids = $DB->get_records_sql($sqlrids, $params)) {
                 $allrecordids = array_keys($allrecordids);
                 $page = (int)array_search($record->id, $allrecordids);
                 unset($allrecordids);
@@ -542,7 +565,7 @@
 
     /// Get the actual records
         
-        if (!$records = get_records_sql($sqlselect, $page * $nowperpage, $nowperpage)) {
+        if (!$records = $DB->get_records_sql($sqlselect, $params, $page * $nowperpage, $nowperpage)) {
             // Nothing to show!
             if ($record) {         // Something was requested so try to show that at least (bug 5132)
                 if (has_capability('mod/data:manageentries', $context) || empty($data->approval) ||

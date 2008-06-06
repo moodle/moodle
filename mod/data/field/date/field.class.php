@@ -62,7 +62,7 @@ class data_field_date extends data_field_base {
     }
     
     function generate_sql($tablealias, $value) {
-        return ' 1=1 ';
+        return array(' 1=1 ', array());
         //return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') "; 
     }
     

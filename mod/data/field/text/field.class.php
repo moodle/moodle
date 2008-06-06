@@ -39,7 +39,14 @@ class data_field_text extends data_field_base {
     }
     
     function generate_sql($tablealias, $value) {
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content LIKE '%{$value}%') "; 
+        global $DB;
+
+        $ILIKE = $DB->sql_ilike();
+
+        static $i=0;
+        $i++;
+        $name = "df_picture_$i";
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content $ILIKE :$name) ", array($name=>"%$value%"));
     }
     
 }

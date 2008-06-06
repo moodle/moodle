@@ -137,26 +137,38 @@ class data_field_multimenu extends data_field_base {
     }
 
     function generate_sql($tablealias, $value) {
+        static $i=0;
+        $i++;
+        $name = "df_multimenu_{$i}_";
+        $params = array();
+
         $allrequired = $value['allrequired'];
         $selected    = $value['selected'];
 
         if ($selected) {
             $conditions = array();
+            $j=0;
             foreach ($selected as $sel) {
+                $j++;
+                $xname = $name.$j;
                 $likesel = str_replace('%', '\%', $sel);
                 $likeselsel = str_replace('_', '\_', $likesel);
-                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content = '$sel'
-                                                                               OR {$tablealias}.content LIKE '$likesel##%'
-                                                                               OR {$tablealias}.content LIKE '%##$likesel'
-                                                                               OR {$tablealias}.content LIKE '%##$likesel##%'))";
+                $conditions[] = "({$tablealias}.fieldid = {$this->field->id} AND ({$tablealias}.content = :{$xname}a
+                                                                               OR {$tablealias}.content LIKE :{$xname}b
+                                                                               OR {$tablealias}.content LIKE :{$xname}c
+                                                                               OR {$tablealias}.content LIKE :{$xname}d))";
+                $params[$xname.'a'] = $sel;
+                $params[$xname.'b'] = "$likesel##%";
+                $params[$xname.'c'] = "%##$likesel";
+                $params[$xname.'d'] = "%##$likesel##%";
             }
             if ($allrequired) {
-                return " (".implode(" AND ", $conditions).") ";
+                return array(" (".implode(" AND ", $conditions).") ", $params);
             } else {
-                return " (".implode(" OR ", $conditions).") ";
+                return array(" (".implode(" OR ", $conditions).") ", $params);
             }
         } else {
-            return " ";
+            return array(" ", array());
         }
     }
 

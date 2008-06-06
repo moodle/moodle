@@ -85,7 +85,10 @@ class data_field_radiobutton extends data_field_base {
     }
     
     function generate_sql($tablealias, $value) {
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$value') "; 
+        static $i=0;
+        $i++;
+        $name = "df_number_$i";
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name) ", array($name=>$value)); 
     }
 
 }

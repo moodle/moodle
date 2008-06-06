@@ -89,10 +89,16 @@ class data_field_latlong extends data_field_base {
     }
 
     function generate_sql($tablealias, $value) {
+        static $i=0;
+        $i++;
+        $name1 = "df_latlong1_$i";
+        $name2 = "df_latlong2_$i";
+
         $latlong[0] = '';
         $latlong[1] = '';
         $latlong = explode (',', $value, 2);
-        return " ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = '$latlong[0]' AND {$tablealias}.content1 = '$latlong[1]') ";
+        return array(" ({$tablealias}.fieldid = {$this->field->id} AND {$tablealias}.content = :$name1 AND {$tablealias}.content1 = :$name2) ",
+                     array($name1=>$latlong[0], $name2=>$latlong[1]));
     }
 
     function display_browse_field($recordid, $template) {
