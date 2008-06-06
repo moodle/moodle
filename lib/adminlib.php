@@ -2630,10 +2630,10 @@ class admin_setting_special_frontpagedesc extends admin_setting {
     }
 
     function output_html($data, $query='') {
-        global $CFG;
+        global $CFG, $htmlEditorObject;
 
         $CFG->adminusehtmleditor = can_use_html_editor();
-        $return = '<div class="form-htmlarea">'.print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, $this->get_full_name(), $data, 0, true).'</div>';
+        $return = '<div class="form-htmlarea">'.print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, $this->get_full_name(), $data, 0, true, 'summary'). print($htmlEditorObject->activateEditor($this->get_full_name, 'summary')) .'</div>';
 
         return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
     }
