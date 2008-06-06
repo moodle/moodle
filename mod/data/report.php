@@ -8,15 +8,15 @@
     $id   = required_param('id', PARAM_INT);
     $sort = optional_param('sort', '', PARAM_ALPHA);
 
-    if (!$record = get_record('data_records', 'id', $id)) {
+    if (!$record = $DB->get_record('data_records', array('id'=>$id))) {
         print_error('invalidrecord', 'data');
     }
 
-    if (!$data = get_record('data', 'id', $record->dataid)) {
+    if (!$data = $DB->get_record('data', array('id'=>$record->dataid))) {
         print_error('invalidid', 'data');
     }
 
-    if (!$course = get_record('course', 'id', $data->course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$data->course))) {
         print_error('coursemisconf');
     }
 

@@ -4,11 +4,11 @@
 
     $dataid = required_param('dataid', PARAM_INT); // The forum the rated posts are from
 
-    if (!$data = get_record('data', 'id', $dataid)) {
+    if (!$data = $DB->get_record('data', array('id'=>$dataid))) {
         print_error('invalidid', 'data');
     }
 
-    if (!$course = get_record('course', 'id', $data->course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$data->course))) {
         print_error('invalidcourseid');
     }
 
@@ -40,7 +40,7 @@
             continue;
         }
 
-        if (!$record = get_record('data_records', 'id', $recordid)) {
+        if (!$record = $DB->get_record('data_records', array('id'=>$recordid))) {
             print_error('invalidid', 'data');
         }
 
@@ -56,14 +56,14 @@
 
         $count++;
 
-        if ($oldrating = get_record('data_ratings', 'userid', $USER->id, 'recordid', $record->id)) {
+        if ($oldrating = $DB->get_record('data_ratings', array('userid'=>$USER->id, 'recordid'=>$record->id))) {
             if ($rating == -999) {
-                delete_records('data_ratings', 'userid', $oldrating->userid, 'recordid', $oldrating->recordid);
+                $DB->delete_records('data_ratings', array('userid'=>$oldrating->userid, 'recordid'=>$oldrating->recordid));
                 data_update_grades($data, $record->userid);
 
             } else if ($rating != $oldrating->rating) {
                 $oldrating->rating = $rating;
-                if (! update_record('data_ratings', $oldrating)) {
+                if (!$DB->update_record('data_ratings', $oldrating)) {
                     print_error('cannotupdaterate', 'data', '', array($record->id, $rating));
                 }
                 data_update_grades($data, $record->userid);
@@ -75,7 +75,7 @@
             $newrating->userid   = $USER->id;
             $newrating->recordid = $record->id;
             $newrating->rating   = $rating;
-            if (! insert_record('data_ratings', $newrating)) {
+            if (! $DB->insert_record('data_ratings', $newrating)) {
                 print_error('cannotinsertrate', 'data', '', array($record->id, $rating));
             }
             data_update_grades($data, $record->userid);

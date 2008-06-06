@@ -100,8 +100,9 @@ class Data_Preset
     /**
      * Constructor
      */
-    function Data_Preset($shortname = null, $data_id = null, $directory = null, $user_id = null)
-    { 
+    function Data_Preset($shortname = null, $data_id = null, $directory = null, $user_id = null) {
+        global $DB;
+
         $this->shortname = $shortname;
         $this->user_id = $user_id;
         
@@ -112,7 +113,7 @@ class Data_Preset
         }
        
         if (!empty($data_id)) {  
-            if (!$this->data = get_record('data', 'id', $data_id)) {
+            if (!$this->data = $DB->get_record('data', array('id'=>$data_id))) {
                 print_error('wrongdataid','data'); 
             } else { 
                 $this->listtemplate       = $this->data->listtemplate;
@@ -127,7 +128,7 @@ class Data_Preset
         }
     }
     
-    /*
+    /**
      * Returns the best name to show for a preset
      * If the shortname has spaces in it, replace them with underscores. 
      * Convert the name to lower case.
@@ -233,7 +234,8 @@ class Data_Preset
     * @return string The path/name of the resulting zip file if successful.
     */
     function export() {
-        global $CFG;
+        global $CFG, $DB;
+
         $this->directory = $CFG->dataroot.'/temp';
         // write all templates, but not the xml yet
 
@@ -245,7 +247,7 @@ class Data_Preset
         }
 
         /* All the display data is now done. Now assemble preset.xml */
-        $fields = get_records('data_fields', 'dataid', $this->data->id);
+        $fields = $DB->get_records('data_fields', array('dataid'=>$this->data->id));
         $presetfile = fopen($this->directory.'/preset.xml', 'w');
         $presetxml = "<preset>\n\n";
 
@@ -313,7 +315,8 @@ class Data_Preset
     * TODO document
     */
     function load_from_file($directory = null) {
-        global $CFG;
+        global $CFG, $DB;
+
         if (empty($directory) && empty($this->directory)) {
             $this->directory = $this->get_path();
         }
@@ -363,7 +366,7 @@ class Data_Preset
         /* Now we look at the current structure (if any) to work out whether we need to clear db
            or save the data */
         $currentfields = array();
-        $currentfields = get_records('data_fields', 'dataid', $this->data->id);
+        $currentfields = $DB->get_records('data_fields', array('dataid'=>$this->data->id));
         $currentfields = array_merge($currentfields);
         return array($settings, $fields, $currentfields);
     }
@@ -499,11 +502,11 @@ class Data_Preset
                     $id = $currentfield->id;
                     // Why delete existing data records and related comments/ratings ??
                     /*
-                    if ($content = get_records('data_content', 'fieldid', $id)) {
+                    if ($content = $DB->get_records('data_content', array('fieldid'=>$id))) {
                         foreach ($content as $item) {
-                            delete_records('data_ratings', 'recordid', $item->recordid);
-                            delete_records('data_comments', 'recordid', $item->recordid);
-                            delete_records('data_records', 'id', $item->recordid);
+                            $DB->delete_records('data_ratings', array('recordid'=>$item->recordid));
+                            $DB->delete_records('data_comments', array('recordid'=>$item->recordid));
+                            $DB->delete_records('data_records', array('id'=>$item->recordid));
                         }
                     }
                     */
@@ -538,13 +541,11 @@ class Data_Preset
 // ACTION METHODS //
 ////////////////////
     
-    function action_base($params)
-    {
+    function action_base($params) {
         return null;
     }
 
-    function action_confirmdelete($params)
-    {
+    function action_confirmdelete($params) {
         global $CFG, $USER;
         $html = '';
         $course = $params['course'];
@@ -587,9 +588,9 @@ class Data_Preset
         exit();
     } 
 
-    function action_delete($params)
-    { 
+    function action_delete($params) { 
         global $CFG, $USER;
+
         $course = $params['course'];
         $shortname = $params['shortname'];
         
@@ -623,8 +624,7 @@ class Data_Preset
         notify("$shortname $strdeleted", 'notifysuccess');
     }
 
-    function action_importpreset($params)
-    { 
+    function action_importpreset($params) { 
         $course = $params['course'];
         if (!data_submitted() or !confirm_sesskey()) {
             print_error('invalidrequest');
@@ -641,8 +641,7 @@ class Data_Preset
         exit();
     }
 
-    function action_importzip($params)
-    {
+    function action_importzip($params) {
         global $CFG, $USER;
         $course = $params['course'];
         if (!data_submitted() or !confirm_sesskey()) {
@@ -667,8 +666,9 @@ class Data_Preset
         exit();
     }
 
-    function action_finishimport($params)
-    {
+    function action_finishimport($params) {
+        global $DB;
+
         if (!data_submitted() or !confirm_sesskey()) {
             print_error('invalidrequest'); 
         }
@@ -679,15 +679,14 @@ class Data_Preset
         $strimportsuccess = get_string('importsuccess', 'data');
         $straddentries = get_string('addentries', 'data');
         $strtodatabase = get_string('todatabase', 'data');
-        if (!get_records('data_records', 'dataid', $this->data->id)) {
+        if (!$DB->get_records('data_records', array('dataid'=>$this->data->id))) {
             notify('$strimportsuccess <a href="edit.php?d=' . $this->data->id . "\">$straddentries</a> $strtodatabase", 'notifysuccess');
         } else {
             notify("$strimportsuccess", 'notifysuccess');
         } 
     }
 
-    function action_export($params)
-    {
+    function action_export($params) {
         global $CFG, $USER;
         $course = $params['course'];
         $html = '';
@@ -720,8 +719,7 @@ class Data_Preset
     /**
      * First stage of saving a Preset: ask for a name
      */
-    function action_save1($params)
-    {
+    function action_save1($params) {
         $html = '';
         $sesskey = sesskey();
         $course = $params['course'];
@@ -751,8 +749,7 @@ class Data_Preset
      * Second stage of saving a preset: If the given name already exists, 
      * suggest to use a different name or offer to overwrite the existing preset.
      */
-    function action_save2($params)
-    {
+    function action_save2($params) {
         $course = $params['course'];
         $this->data = $params['data'];
 
@@ -798,8 +795,7 @@ class Data_Preset
     /**
      * Third stage of saving a preset, overwrites an existing preset with the new one.
      */
-    function action_save3($params)
-    {
+    function action_save3($params) {
         global $CFG, $USER;
         if (!data_submitted() or !confirm_sesskey()) {
             print_error('invalidrequest');

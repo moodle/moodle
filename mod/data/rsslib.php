@@ -7,7 +7,7 @@
 
 
     function data_rss_feeds() {
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -22,14 +22,14 @@
         // It's working so we start...
         else {
             // Iterate over all data.
-            if ($datas = get_records('data')) {
+            if ($datas = $DB->get_records('data')) {
                 foreach ($datas as $data) {
 
                     if ($data->rssarticles > 0) {
 
                         // Get the first field in the list  (a hack for now until we have a selector)
 
-                        if (!$firstfield = get_record_sql('SELECT id,name from '.$CFG->prefix.'data_fields WHERE dataid = '.$data->id.' ORDER by id', true)) {
+                        if (!$firstfield = $DB->get_record_sql('SELECT id,name FROM {data_fields} WHERE dataid = ? ORDER by id', array($data->id), true)) {
                             continue;
                         }
 
@@ -37,13 +37,13 @@
                         // Get the data_records out.
                         $approved = ($data->approval) ? ' AND dr.approved = 1 ' : ' ';
 
-                        $sql = 'SELECT dr.*, u.firstname, u.lastname ' .
-                                    "FROM {$CFG->prefix}data_records dr, {$CFG->prefix}user u " .
-                                    "WHERE dr.dataid = {$data->id} " .$approved.
-                                    '  AND dr.userid = u.id '.
-                                    'ORDER BY dr.timecreated DESC';
+                        $sql = "SELECT dr.*, u.firstname, u.lastname
+                                  FROM {data_records} dr, {user} u
+                                 WHERE dr.dataid = ? $approved
+                                       AND dr.userid = u.id
+                              ORDER BY dr.timecreated DESC";
 
-                        if (!$records = get_records_sql($sql, 0, $data->rssarticles)) {
+                        if (!$records = $DB->get_records_sql($sql, array($data->id), 0, $data->rssarticles)) {
                             continue;
                         }
 
@@ -72,8 +72,8 @@
                             if (!empty($data->rsstitletemplate)) {
                                 $item->title = data_print_template('rsstitletemplate', $recordarray, $data, '', 0, true);
                             } else { // else we guess
-                                $item->title   = strip_tags(get_field('data_content', 'content',
-                                                                  'fieldid', $firstfield->id, 'recordid', $record->id));
+                                $item->title   = strip_tags($DB->get_field('data_content', 'content',
+                                                                  array('fieldid'=>$firstfield->id, 'recordid'=>$record->id)));
                             }
                             $item->description = data_print_template('rsstemplate', $recordarray, $data, '', 0, true);
                             $item->pubdate = $record->timecreated;
@@ -81,7 +81,7 @@
 
                             array_push($items, $item);
                         }
-                        $course = get_record('course', 'id', $data->course);
+                        $course = $DB->get_record('course', array('id'=>$data->course));
 
                         // First all rss feeds common headers.
                         $header = rss_standard_header($course->shortname.': '.format_string($data->name,true),

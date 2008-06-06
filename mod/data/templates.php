@@ -34,18 +34,18 @@
         if (! $cm = get_coursemodule_from_id('data', $id)) {
             error('Course Module ID was incorrect');
         }
-        if (! $course = get_record('course', 'id', $cm->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
             error('Course is misconfigured');
         }
-        if (! $data = get_record('data', 'id', $cm->instance)) {
+        if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
             error('Course module is incorrect');
         }
 
     } else {
-        if (! $data = get_record('data', 'id', $d)) {
+        if (! $data = $DB->get_record('data', array('id'=>$d))) {
             error('Data ID is incorrect');
         }
-        if (! $course = get_record('course', 'id', $data->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
             error('Course is misconfigured');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
@@ -58,7 +58,7 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/data:managetemplates', $context);
 
-    if (!count_records('data_fields','dataid',$data->id)) {      // Brand new database!
+    if (!$DB->count_records('data_fields', array('dataid'=>$data->id))) {      // Brand new database!
         redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
     }
 
@@ -144,7 +144,7 @@
 
             // Check for multiple tags, only need to check for add template.
             if ($mode != 'addtemplate' or data_tags_check($data->id, $newtemplate->{$mode})) {
-                if (update_record('data', $newtemplate)) {
+                if ($DB->update_record('data', $newtemplate)) {
                     notify(get_string('templatesaved', 'data'), 'notifysuccess');
                 }
             }
@@ -172,7 +172,7 @@
 
     if (!$resettemplate) {
         // Only reload if we are not resetting the template to default.
-        $data = get_record('data', 'id', $d);
+        $data = $DB->get_record('data', array('id'=>$d));
     }
     print_simple_box_start('center','80%');
     echo '<table cellpadding="4" cellspacing="0" border="0">';
@@ -202,7 +202,7 @@
 
         echo '<select name="fields1[]" id="availabletags" size="12" onclick="insert_field_tags(this)">';
 
-        $fields = get_records('data_fields', 'dataid', $data->id);
+        $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
         echo '<optgroup label="'.get_string('fields', 'data').'">';
         foreach ($fields as $field) {
             echo '<option value="[['.$field->name.']]" title="'.$field->description.'">'.$field->name.' - [['.$field->name.']]</option>';

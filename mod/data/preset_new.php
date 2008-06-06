@@ -28,17 +28,17 @@ if ($id) {
     if (! $cm = get_coursemodule_from_id('data', $id)) {
         print_error('invalidcoursemodule');
     }
-    if (! $course = get_record('course', 'id', $cm->course)) {
+    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
         print_error('coursemisconf');
     }
-    if (! $data = get_record('data', 'id', $cm->instance)) {
+    if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
         print_error('invalidid', 'data');
     }
 } else if ($d) {
-    if (! $data = get_record('data', 'id', $d)) {
+    if (! $data = $DB->get_record('data', array('id'=>$d))) {
         print_error('invalidid', 'data');
     }
-    if (! $course = get_record('course', 'id', $data->course)) {
+    if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
         print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
@@ -139,7 +139,7 @@ $i = 0;
 foreach ($presets as $id => $preset) {
     $screenshot = '';
     if (!empty($preset->user_id)) {
-        $user = get_record('user', 'id', $preset->user_id);
+        $user = $DB->get_record('user', array('id'=>$preset->user_id));
         $desc = $preset->name.' ('.fullname($user, true).')';
     } else {
         $desc = $preset->name;

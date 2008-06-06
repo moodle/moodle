@@ -46,32 +46,32 @@
         if (! $cm = get_coursemodule_from_id('data', $id)) {
             error('Course Module ID was incorrect');
         }
-        if (! $course = get_record('course', 'id', $cm->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
             error('Course is misconfigured');
         }
-        if (! $data = get_record('data', 'id', $cm->instance)) {
+        if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
             error('Course module is incorrect');
         }
         $record = NULL;
 
     } else if ($rid) {
-        if (! $record = get_record('data_records', 'id', $rid)) {
+        if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
             error('Record ID is incorrect');
         }
-        if (! $data = get_record('data', 'id', $record->dataid)) {
+        if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
             error('Data ID is incorrect');
         }
-        if (! $course = get_record('course', 'id', $data->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
             error('Course is misconfigured');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
             error('Course Module ID was incorrect');
         }
     } else {   // We must have $d
-        if (! $data = get_record('data', 'id', $d)) {
+        if (! $data = $DB->get_record('data', array('id'=>$d))) {
             error('Data ID is incorrect');
         }
-        if (! $course = get_record('course', 'id', $data->course)) {
+        if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
             error('Course is misconfigured');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
@@ -87,7 +87,7 @@
 
 /// If we have an empty Database then redirect because this page is useless without data
     if (has_capability('mod/data:managetemplates', $context)) {
-        if (!record_exists('data_fields','dataid',$data->id)) {      // Brand new database!
+        if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {      // Brand new database!
             redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
         }
     }
@@ -129,7 +129,7 @@
     if (!empty($advanced)) {
         $search = '';
         $vals = array();
-        $fields = get_records('data_fields', 'dataid', $data->id);
+        $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
         
         //Added to ammend paging error. This error would occur when attempting to go from one page of advanced
         //search results to another.  All fields were reset in the page transfer, and there was no way of determining
@@ -316,17 +316,17 @@
 
     if ($delete && confirm_sesskey() && (has_capability('mod/data:manageentries', $context) or data_isowner($delete))) {
         if ($confirm = optional_param('confirm',0,PARAM_INT)) {
-            if ($deleterecord = get_record('data_records', 'id', $delete)) {   // Need to check this is valid
+            if ($deleterecord = $DB->get_record('data_records', array('id'=>$delete))) {   // Need to check this is valid
                 if ($deleterecord->dataid == $data->id) {                       // Must be from this database
-                    if ($contents = get_records('data_content','recordid', $deleterecord->id)) {
+                    if ($contents = $DB->get_records('data_content', array('recordid'=>$deleterecord->id))) {
                         foreach ($contents as $content) {  // Delete files or whatever else this field allows
                             if ($field = data_get_field_from_id($content->fieldid, $data)) { // Might not be there
                                 $field->delete_content($content->recordid);
                             }
                         }
                     }
-                    delete_records('data_content','recordid', $deleterecord->id);
-                    delete_records('data_records','id', $deleterecord->id);
+                    $DB->delete_records('data_content', array('recordid'=>$deleterecord->id));
+                    $DB->delete_records('data_records', array('id'=>$deleterecord->id));
 
                     add_to_log($course->id, 'data', 'record delete', "view.php?id=$cm->id", $data->id, $cm->id);
 
@@ -335,7 +335,7 @@
             }
 
         } else {   // Print a confirmation page
-            if ($deleterecord = get_record('data_records', 'id', $delete)) {   // Need to check this is valid
+            if ($deleterecord = $DB->get_record('data_records', array('id'=>$delete))) {   // Need to check this is valid
                 if ($deleterecord->dataid == $data->id) {                       // Must be from this database
                     notice_yesno(get_string('confirmdeleterecord','data'),
                             'view.php?d='.$data->id.'&amp;delete='.$delete.'&amp;confirm=1&amp;sesskey='.sesskey(),
@@ -374,11 +374,11 @@
         $approvecap = has_capability('mod/data:approve', $context); 
 
         if ($approve && confirm_sesskey() && $approvecap) {
-            if ($approverecord = get_record('data_records', 'id', $approve)) {   // Need to check this is valid
+            if ($approverecord = $DB->get_record('data_records', array('id'=>$approve))) {   // Need to check this is valid
                 if ($approverecord->dataid == $data->id) {                       // Must be from this database
                     $newrecord->id = $approverecord->id;
                     $newrecord->approved = 1;
-                    if (update_record('data_records', $newrecord)) {
+                    if ($DB->update_record('data_records', $newrecord)) {
                         notify(get_string('recordapproved','data'), 'notifysuccess');
                     }
                 }

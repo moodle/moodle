@@ -41,7 +41,7 @@ function xmldb_data_upgrade($oldversion=0) {
     if ($result && $oldversion <  2007101513) {
         // Upgrade all the data->notification currently being
         // NULL to 0
-        $sql = "UPDATE {$CFG->prefix}data SET notification=0 WHERE notification IS NULL";
+        $sql = "UPDATE {data} SET notification=0 WHERE notification IS NULL";
         $result = $DB->execute($sql);
 
         $table = new xmldb_table('data');
