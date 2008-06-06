@@ -16,7 +16,11 @@
     
     </td>
     <td>
-      <?php print_textarea($usehtmleditor, 25, 60, 660, 200, "summary", $form->summary); ?>
+      <?php 
+        print_textarea($usehtmleditor, 25, 60, 660, 200, 'summary', $form->summary, 0, false, 'summary');
+        print($htmlEditorObject->activateEditor('summary', 'summary'));
+      ?>
+
     </td>
 </tr>
 </table>

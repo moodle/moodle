@@ -61,10 +61,6 @@
     print_simple_box_start('center');
     include('editsection.html');
     print_simple_box_end();
-
-    if ($usehtmleditor) {
-        use_html_editor("summary");
-    }
     print_footer($course);
 
 ?>

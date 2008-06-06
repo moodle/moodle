@@ -4825,20 +4825,21 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         }
 
         if ($usehtmleditor) {
-            if (!empty($courseid) and has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $courseid))) {
-                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '&amp;httpsrequired=1';
-                // needed for course file area browsing in image insert plugin
-                $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
-                        $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php?id='.$courseid.$httpsrequired.'"></script>'."\n" : '';
-            } else {
-                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '?httpsrequired=1';
-                $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
-                         $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php'.$httpsrequired.'"></script>'."\n" : '';
 
-            }
-            $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
-                    $CFG->httpswwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
-            $scriptcount++;
+//            if (!empty($courseid) and has_capability('moodle/course:managefiles', get_context_instance(CONTEXT_COURSE, $courseid))) {
+//                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '&amp;httpsrequired=1';
+//                // needed for course file area browsing in image insert plugin
+//                $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+//                        $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php?id='.$courseid.$httpsrequired.'"></script>'."\n" : '';
+//            } else {
+//                $httpsrequired = empty($HTTPSPAGEREQUIRED) ? '' : '?httpsrequired=1';
+//                $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+//                         $CFG->httpswwwroot .'/lib/editor/htmlarea/htmlarea.php'.$httpsrequired.'"></script>'."\n" : '';
+
+//            }
+//            $str .= ($scriptcount < 1) ? '<script type="text/javascript" src="'.
+//                    $CFG->httpswwwroot .'/lib/editor/htmlarea/lang/en.php"></script>'."\n" : '';
+//            $scriptcount++;
 
             if ($height) {    // Usually with legacy calls
                 if ($rows < $minrows) {
