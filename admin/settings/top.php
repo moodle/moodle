@@ -43,7 +43,7 @@ foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
     if ($reportname[1] == '[') {
         $reportname = get_string($plugin, 'admin');
     }
-    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php"));
+    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php",'moodle/site:viewreports'));
 }
 
 $ADMIN->add('root', new admin_category('misc', get_string('miscellaneous')));
