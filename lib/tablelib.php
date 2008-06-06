@@ -7,6 +7,10 @@ define('TABLE_VAR_IFIRST', 4);
 define('TABLE_VAR_ILAST',  5);
 define('TABLE_VAR_PAGE',   6);
 
+define('TABLE_P_TOP',   1);
+define('TABLE_P_BOTTOM',  2);
+
+
 class flexible_table {
 
     var $uniqueid        = NULL;
@@ -35,6 +39,37 @@ class flexible_table {
     var $sort_default_order  = SORT_ASC;
     
     /**
+     * Array of positions in which to display download controls.
+     */
+    var $showdownloadbuttonsat= array(TABLE_P_TOP);
+
+    /**
+     * @var string which download plugin to use. Default '' means none - print
+     * html table with paging. Property set by is_downloading which typically
+     * passes in cleaned data from $
+     */
+    var $download  = '';
+    
+    /**
+     * @var boolean whether data is downloadable from table. Determines whether
+     * to display download buttons. Set by method downloadable().
+     */
+    var $downloadable = false;
+    
+    /**
+     * @var string which download plugin to use. Default '' means none - print
+     * html table with paging.
+     */
+    var $defaultdownloadformat  = 'csv';
+    
+    /**
+     * @var boolean Has start output been called yet?
+     */
+    var $started_output = false;
+    
+    var $exportclass = null;
+    
+    /**
      * Constructor
      * @param int $uniqueid
      * @todo Document properly
@@ -50,6 +85,58 @@ class flexible_table {
             TABLE_VAR_PAGE    => 'page'
         );
     }
+
+    /**
+     * Call this to pass the download type. Use :
+     *         $download = optional_param('download', '', PARAM_ALPHA);
+     * To get the download type. We assume that if you call this function with
+     * params that this table's data is downloadable, so we call is_downloadable
+     * for you (even if the param is '', which means no download this time.
+     * Also you can call this method with no params to get the current set
+     * download type.
+     * @param string $download download type. One of csv, tsv, xhtml, ods, etc
+     * @param string $filename filename for downloads without file extension.
+     * @param string $sheettitle title for downloaded data.
+     * @return string download type.  One of csv, tsv, xhtml, ods, etc
+     */
+    function is_downloading($download = null, $filename='', $sheettitle=''){
+        if ($download!==null){
+            $this->filename = clean_filename($filename);
+            $this->sheettitle = $sheettitle;
+            $this->is_downloadable(true);
+            $this->download = $download;
+            if (!empty($download)){
+                $classname = 'table_'.$download.'_export_format';
+                $this->exportclass = new $classname($this);
+            }
+        }
+        return $this->download;
+    }
+    /**
+     * Probably don't need to call this directly. Calling is_downloading with a
+     * param automatically sets table as downloadable.
+     * 
+     * @param boolean $downloadable optional param to set whether data from
+     * table is downloadable. If ommitted this function can be used to get
+     * current state of table.
+     * @return boolean whether table data is set to be downloadable.
+     */
+    function is_downloadable($downloadable = null){
+        if ($downloadable !== null){
+            $this->downloadable = $downloadable;
+        }
+        return $this->downloadable;
+    }
+    
+    /**
+     * Where to show download buttons.
+     * @param array $showat array of postions in which to show download buttons.
+     * Containing TABLE_P_TOP and/or TABLE_P_BOTTOM
+     */
+    function show_download_buttons_at($showat){
+        $this->showdownloadbuttonsat = $showat;
+    }
+    
     
     /**
      * Sets the is_sortable variable to the given boolean, sort_default_column to 
@@ -87,7 +174,6 @@ class flexible_table {
         }
         return !in_array($column, $this->column_nosort);
     }
-
     /**
      * Sets the is_collapsible variable to the given boolean.
      * @param bool $bool
@@ -153,7 +239,7 @@ class flexible_table {
     }
 
     /**
-     * I think that what this method does is set the column so that if the same data appears in 
+     * What this method does is set the column so that if the same data appears in 
      * consecutive rows, then it is not repeated.
      * 
      * For example, in the quiz overview report, the fullname column is set to be suppressed, so
@@ -193,7 +279,7 @@ class flexible_table {
     }
 
     /**
-     * Sets all columns of the given $property to the given $value in $this->column_style.
+     * Sets all columns' $propertys to the given $value in $this->column_style.
      * @param integer $property
      * @param string $value
      * @return void
@@ -206,8 +292,7 @@ class flexible_table {
 
     /**
      * Sets $this->reseturl to the given $url, and $this->baseurl to the given $url plus ? or &amp;
-     * @param type? $url
-     * @return type?
+     * @param string $url the url with params needed to call up this page
      */
     function define_baseurl($url) {
         $this->reseturl = $url;
@@ -220,8 +305,8 @@ class flexible_table {
     }
 
     /**
-     * @todo Document
-     * @return type?
+     * @param array $columns an array of identifying names for columns. If
+     * columns are sorted then column names must correspond to a field in sql.
      */
     function define_columns($columns) {
         $this->columns = array();
@@ -238,49 +323,19 @@ class flexible_table {
     }
 
     /**
-     * @todo Document
-     * @return type?
+     * @param array $headers numerical keyed array of displayed string titles
+     * for each column.
      */
     function define_headers($headers) {
         $this->headers = $headers;
     }
+    
+
+
 
     /**
-     * @todo Document
-     * @return type?
-     */
-    function make_styles_string(&$styles) {
-        if(empty($styles)) {
-            return '';
-        }
-
-        $string = ' style="';
-        foreach($styles as $property => $value) {
-            $string .= $property.':'.$value.';';
-        }
-        $string .= '"';
-        return $string;
-    }
-
-    /**
-     * @todo Document
-     * @return type?
-     */
-    function make_attributes_string(&$attributes) {
-        if(empty($attributes)) {
-            return '';
-        }
-
-        $string = ' ';
-        foreach($attributes as $attr => $value) {
-            $string .= ($attr.'="'.$value.'" ');
-        }
-
-        return $string;
-    }
-
-    /**
-     * @todo Document
+     * Must be called after table is defined. Use methods above first. Cannot
+     * use functions below till after calling this method.
      * @return type?
      */
     function setup() {
@@ -351,10 +406,7 @@ class flexible_table {
         }
 
         // If we didn't sort just now, then use the default sort order if one is defined and the column exists
-        if(empty($this->sess->sortby) && !empty($this->sort_default_column) && (isset($this->columns[$this->sort_default_column])
-                                                                                || (in_array('fullname',$this->columns)
-                                                                                    && in_array($this->sort_default_column,
-                                                                                                array('firstname','lastname')))))  {
+        if(empty($this->sess->sortby) && !empty($this->sort_default_column))  {
             $this->sess->sortby = array ($this->sort_default_column => ($this->sort_default_order == SORT_DESC ? SORT_DESC : SORT_ASC));
         }
 
@@ -428,8 +480,10 @@ class flexible_table {
     }
 
     /**
-     * @todo Document
-     * @return type?
+     * @param string $uniqueid used to identify the table you want the sql sort
+     * string for when method is called as a static method.
+     * @return string sql to put after ORDER BY or empty string if there is
+     * none.
      */
     function get_sql_sort($uniqueid = NULL) {
         if($uniqueid === NULL) {
@@ -462,8 +516,7 @@ class flexible_table {
     }
 
     /**
-     * @todo Document
-     * @return type?
+     * @return integer the offset for LIMIT clause of SQL
      */
     function get_page_start() {
         if(!$this->use_pages) {
@@ -473,8 +526,7 @@ class flexible_table {
     }
 
     /**
-     * @todo Document
-     * @return type?
+     * @return integer the pagesize for LIMIT clause of SQL
      */
     function get_page_size() {
         if(!$this->use_pages) {
@@ -484,8 +536,7 @@ class flexible_table {
     }
 
     /**
-     * @todo Document
-     * @return type?
+     * @return string sql to add to where statement.
      */
     function get_sql_where() {
         global $DB;
@@ -508,8 +559,103 @@ class flexible_table {
     }
 
     /**
-     * @todo Document
-     * @return type?
+     * Add a row of data to the table. This function takes an array with 
+     * column names as keys. 
+     * It ignores any elements with keys that are not defined as columns. It
+     * puts in empty strings into the row when there is no element in the passed
+     * array corresponding to a column in the table. It puts the row elements in
+     * the proper order.
+     * @param $rowwithkeys array
+     * 
+     */
+    function add_data_keyed($rowwithkeys){
+        $this->add_data($this->get_row_from_keyed($rowwithkeys));
+    }
+    
+    /**
+     * Add a seperator line to table.
+     */
+    function add_separator() {
+        if(!$this->setup) {
+            return false;
+        }
+        $this->add_data(NULL);
+    }
+    
+    /**
+     * This method actually directly echoes the row passed to it now or adds it
+     * to the download. If this is the first row and start_output has not
+     * already been called this method also calls start_output to open the table
+     * or send headers for the downloaded.
+     * Can be used as before. print_html now calls finish_html to close table.
+     * 
+     * @param array $row a numerically keyed row of data to add to the table.
+     * @return boolean success.
+     */
+    function add_data($row) {
+        if(!$this->setup) {
+            return false;
+        }
+        if (!$this->started_output){
+            $this->start_output();
+        }
+        if ($this->exportclass!==null){
+            if ($row === null){
+                $this->exportclass->add_seperator();
+            } else {
+                $this->exportclass->add_data($row);
+            }
+        } else {
+            $this->print_row($row);
+        }
+        return true;
+    }
+
+
+
+    /**
+     * You should call this to finish outputting the table data after adding
+     * data to the table with add_data or add_data_keyed.
+     * 
+     */
+    function finish_output(){
+        if ($this->exportclass!==null){
+            $this->exportclass->finish_output();
+        }else{
+            $this->finish_html();
+        }
+    }
+    
+    /**
+     * Hook that can be overridden in child classes to wrap a table in a form
+     * for example. Called only when there is data to display and not
+     * downloading.
+     */
+    function wrap_html_start(){
+    }
+
+    /**
+     * Hook that can be overridden in child classes to wrap a table in a form
+     * for example. Called only when there is data to display and not
+     * downloading.
+     */
+    function wrap_html_finish(){
+    }
+    
+    /**
+     * This method is deprecated although the old api is still supported.
+     * @deprecated 1.9.2 - Jun 2, 2008
+     */
+    function print_html() {
+        if(!$this->setup) {
+            return false;
+        }
+        $this->finish_html();
+    }
+
+    /**
+     * This function is not part of the public api.
+     * @return string initial of first name we are currently filtering by
      */
     function get_initial_first() {
         if(!$this->use_initials) {
@@ -520,8 +666,8 @@ class flexible_table {
     }
 
     /**
-     * @todo Document
-     * @return type?
+     * This function is not part of the public api.
+     * @return string initial of last name we are currently filtering by
      */
     function get_initial_last() {
         if(!$this->use_initials) {
@@ -530,27 +676,16 @@ class flexible_table {
 
         return $this->sess->i_last;
     }
-
+    
     /**
-     * @todo Document
-     * @return type?
+     * This function is not part of the public api.
      */
-    function print_html() {
-        global $CFG;
-
-        if(!$this->setup) {
-            return false;
-        }
-
-        $colcount = count($this->columns);
-
-        // Do we need to print initial bars?
-
+    function print_initials_bar(){
         if($this->use_initials && isset($this->columns['fullname'])) {
-
+    
             $strall = get_string('all');
             $alpha  = explode(',', get_string('alphabet'));
-
+    
             // Bar of first initials
          
             echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
@@ -567,9 +702,9 @@ class flexible_table {
                 }
             }
             echo '</div>';
-
+    
             // Bar of last initials
-
+    
             echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
             if(!empty($this->sess->i_last)) {
                 echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_ILAST].'=">'.$strall.'</a>';
@@ -584,27 +719,152 @@ class flexible_table {
                 }
             }
             echo '</div>';
+    
+        }
+    }
 
+    /**
+     * This function is not part of the public api.
+     */
+    function print_nothing_to_display(){
+        if ($this->get_initial_first()||$this->get_initial_last()){
+            // Do we need to print initial bars?
+            $this->print_initials_bar();
         }
 
-        // End of initial bars code
+        print_heading(get_string('nothingtodisplay'));
+    }
 
-        // Paging bar
-        if($this->use_pages) {
-            print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl, $this->request[TABLE_VAR_PAGE]);
+    /**
+     * This function is not part of the public api.
+     */
+    function get_row_from_keyed($rowwithkeys){
+        if (is_object($rowwithkeys)){
+            $rowwithkeys = (array)$rowwithkeys;
         }
-
-        if (empty($this->data)) {
-            print_heading(get_string('nothingtodisplay'));
-            return true;
+        foreach (array_keys($this->columns) as $column){
+            if (isset($rowwithkeys[$column])){
+                $row [] = $rowwithkeys[$column];
+            } else {
+                $row[] ='';
+            }
         }
+        return $row;
+    }
+    /**
+     * This function is not part of the public api.
+     */
+    function get_download_menu(){
+        $allclasses= get_declared_classes();
+        $exportclasses = array();
+        foreach ($allclasses as $class){
+            $matches = array();
+            if (preg_match('/^table\_([a-z]+)\_export\_format$/', $class, $matches)){
+                $type = $matches[1];
+                $exportclasses[$type]= get_string("download$type", 'table');
+            }
+        }
+        return $exportclasses;
+    }
+    
+    /**
+     * This function is not part of the public api.
+     */
+    function download_buttons(){
+        if ($this->is_downloadable() && !$this->is_downloading()){
+            $downloadoptions = $this->get_download_menu();
+            $html = '<form action="'. $this->baseurl .'" method="post">';
+            $html .= '<div class="mdl-align">';
+            $html .= '<input type="submit" value="'.get_string('downloadas', 'table').'"/>';
+            $html .= choose_from_menu ($downloadoptions, 'download', $this->defaultdownloadformat, '', '', '', true);
+            $html .= helpbutton('tableexportformats', get_string('tableexportformats', 'table'), 'moodle', true, false, '', true);
+            $html .= '</div></form>';
 
+            return $html;
+        } else {
+            return '';
+        }
+    }
+    /**
+     * This function is not part of the public api.
+     * You don't normally need to call this. It is called automatically when
+     * needed when you start adding data to the table.
+     * 
+     */
+    function start_output(){
+        $this->started_output = true;
+        if ($this->exportclass!==null){
+            $this->exportclass->start_output($this->filename, $this->sheettitle);
+            $this->exportclass->output_headers($this->headers);
+        } else {
+            $this->start_html();
+            $this->print_headers();
+        }
+    }
 
+    /**
+     * This function is not part of the public api.
+     */
+    function print_row($row){
+        static $suppress_lastrow = NULL;
+        static $oddeven = 1;
+        $colcount = count($this->columns);
+        $colbyindex = array_flip($this->columns);
+        echo '<tr class="r'.$oddeven.'">';
+
+        // If we have a separator, print it
+        if($row === NULL && $colcount) {
+            echo '<td colspan="'.$colcount.'"><div class="tabledivider"></div></td>';
+        }
+        else {
+            foreach($row as $index => $data) {
+                $column = $colbyindex[$index];
+                echo '<td class="cell c'.$index.$this->column_class[$column].'"'.$this->make_styles_string($this->column_style[$column]).'>';
+                if(empty($this->sess->collapse[$column])) {
+                    if($this->column_suppress[$column] && $suppress_lastrow !== NULL && $suppress_lastrow[$index] === $data) {
+                        echo '&nbsp;';
+                    }
+                    else {
+                        echo $data;
+                    }
+                }
+                else {
+                    echo '&nbsp;';
+                }
+                echo '</td>';
+            }
+        }
+        echo '</tr>';
+        $oddeven = $oddeven ? 0 : 1;
         $suppress_enabled = array_sum($this->column_suppress);
-        $suppress_lastrow = NULL;
-        // Start of main data table
-
-        echo '<table'.$this->make_attributes_string($this->attributes).'>';
+        if($suppress_enabled) {
+            $suppress_lastrow = $row;
+        }
+    }
+    /**
+     * This function is not part of the public api.
+     */
+    function finish_html(){
+        if (!$this->started_output) {
+            //no data has been added to the table.
+            $this->print_nothing_to_display();
+        } else {
+            echo '</table>';
+            $this->wrap_html_finish();
+            // Paging bar
+            if(in_array(TABLE_P_BOTTOM, $this->showdownloadbuttonsat)) {
+                echo $this->download_buttons();
+            }
+            if($this->use_pages) {
+                print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl, $this->request[TABLE_VAR_PAGE]);
+            }
+        }
+    }    
+    /**
+     * This function is not part of the public api.
+     */
+    function print_headers(){
+        global $CFG;
 
         echo '<tr>';
         foreach($this->columns as $column => $index) {
@@ -706,97 +966,493 @@ class flexible_table {
 
         }
         echo '</tr>';
-
-        if(!empty($this->data)) {
-            $oddeven = 1;
-            $colbyindex = array_flip($this->columns);
-            foreach($this->data as $row) {
-                $oddeven = $oddeven ? 0 : 1;
-                echo '<tr class="r'.$oddeven.'">';
-
-                // If we have a separator, print it
-                if($row === NULL && $colcount) {
-                    echo '<td colspan="'.$colcount.'"><div class="tabledivider"></div></td>';
-                }
-                else {
-                    foreach($row as $index => $data) {
-                        if($index >= $colcount) {
-                            break;
-                        }
-                        $column = $colbyindex[$index];
-                        echo '<td class="cell c'.$index.$this->column_class[$column].'"'.$this->make_styles_string($this->column_style[$column]).'>';
-                        if(empty($this->sess->collapse[$column])) {
-                            if($this->column_suppress[$column] && $suppress_lastrow !== NULL && $suppress_lastrow[$index] === $data) {
-                                echo '&nbsp;';
-                            }
-                            else {
-                                echo $data;
-                            }
-                        }
-                        else {
-                            echo '&nbsp;';
-                        }
-                        echo '</td>';
-                    }
-                }
-                echo '</tr>';
-                if($suppress_enabled) {
-                    $suppress_lastrow = $row;
-                }
-            }
-        }
-
-        echo '</table>';
+    }
+    
+    /**
+     * This function is not part of the public api.
+     */
+    function start_html(){
+            
+        // Do we need to print initial bars?
+        $this->print_initials_bar();
 
         // Paging bar
         if($this->use_pages) {
             print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl, $this->request[TABLE_VAR_PAGE]);
         }
+        
+        if(in_array(TABLE_P_TOP, $this->showdownloadbuttonsat)) {
+            echo $this->download_buttons();
+        }
+        
+        $this->wrap_html_start();
+        // Start of main data table
+
+        echo '<table'.$this->make_attributes_string($this->attributes).'>';
+        
     }
 
     /**
+     * This function is not part of the public api.
      * @todo Document
      * @return type?
      */
-    function add_data($row) {
-        if(!$this->setup) {
-            return false;
+    function make_styles_string(&$styles) {
+        if(empty($styles)) {
+            return '';
         }
-        $this->data[] = $row;
+
+        $string = ' style="';
+        foreach($styles as $property => $value) {
+            $string .= $property.':'.$value.';';
+        }
+        $string .= '"';
+        return $string;
     }
 
     /**
+     * This function is not part of the public api.
      * @todo Document
      * @return type?
      */
-    function add_separator() {
-        if(!$this->setup) {
-            return false;
+    function make_attributes_string(&$attributes) {
+        if(empty($attributes)) {
+            return '';
         }
-        $this->data[] = NULL;
+
+        $string = ' ';
+        foreach($attributes as $attr => $value) {
+            $string .= ($attr.'="'.$value.'" ');
+        }
+
+        return $string;
+    }
+}
+
+class table_sql extends flexible_table{
+    
+    var $countsql = NULL;
+    /**
+     * @var object sql for querying db. Has fields 'fields', 'from', 'where'.
+     */
+    var $sql = NULL;
+    /**
+     * @var array Data fetched from the db.
+     */
+    var $rawdata = NULL;
+    
+    /**
+     * @var boolean Overriding default for this.
+     */
+    var $is_sortable    = true;
+    /**
+     * @var boolean Overriding default for this.
+     */
+    var $is_collapsible = true;
+    
+    /**
+     * @var string Key of field returned by db query that is the id field of the
+     * user table or equivalent.
+     */
+    var $useridfield = 'id';
+    
+
+    /**
+     * @param string $uniqueid a string identifying this table.Used as a key in
+     *                          session  vars.
+     */
+    function table_sql($uniqueid){
+        parent::flexible_table($uniqueid);
+        // some sensible defaults
+        $this->set_attribute('cellspacing', '0');
+        $this->set_attribute('class', 'generaltable generalbox');
     }
     
     /**
-     * Add a row of data to the table. This function takes an array with 
-     * column names as keys. 
-     * It ignores any elements with keys that are not defined as columns. It
-     * puts in empty strings into the row when there is no element in the passed
-     * array corresponding to a column in the table. It puts the row elements in
-     * the proper order.
-     * @param $rowwithkeys array
+     * 
+     * @param array $row row of data from db used to make one row of the table.
+     * @return array one row for the table, added using add_data_keyed method.
+     */
+    function format_row($row){
+        $formattedrow = array();
+        foreach (array_keys($this->columns) as $column){
+            $colmethodname = 'col_'.$column;
+            if (method_exists($this, $colmethodname)){
+                $formattedcolumn = $this->$colmethodname($row);
+            } else {
+                $formattedcolumn = $this->other_cols($column, $row);
+                if ($formattedcolumn===NULL){
+                    $formattedcolumn = $row->$column;
+                }
+            }
+            $formattedrow[$column] = $formattedcolumn;
+        }
+        return $formattedrow;
+    }
+    
+    /**
+     * Fullname is treated as a special columname in tablelib and should always
+     * be treated the same as the fullname of a user.
+     * @uses $this->useridfield if the userid field is not expected to be id
+     * then you need to override $this->useridfield to point at the correct
+     * field for the user id.
      * 
      */
-    function add_data_keyed($rowwithkeys){
-        foreach (array_keys($this->columns) as $column){
-            if (isset($rowwithkeys[$column])){
-                $row [] = $rowwithkeys[$column];
-            } else {
-                $row[] ='';
+    function col_fullname($row){
+        global $COURSE, $CFG;
+        if (!$this->download){
+            
+            return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$row->{$this->useridfield}.
+                    '&amp;course='.$COURSE->id.'">'.fullname($row).'</a>';
+        } else {
+            return fullname($row);
+        }
+    }
+    
+    /**
+     * You can override this method in a child class. See the description of
+     * build_table which calls this method.
+     */
+    function other_cols($column, $row){
+        return NULL;
+    }
+
+    /**
+     * Take the data returned from the db_query and go through all the rows
+     * processing each col using either col_{columnname} method or other_cols
+     * method or if other_cols returns NULL then put the data straight into the
+     * table.
+     */
+    function build_table(){
+        if ($this->rawdata){
+            foreach($this->rawdata as $row){
+                $formattedrow = $this->format_row($row);
+                $this->add_data_keyed($formattedrow);
             }
         }
-        $this->add_data($row);
+    }
+
+    
+    /**
+     * This is only needed if you want to use different sql to count rows.
+     * Used for example when perhaps all db JOINS are not needed when counting
+     * records. You don't need to call this function the count_sql
+     * will be generated automatically.
+     * 
+     * We need to count rows returned by the db seperately to the query itself
+     * as we need to know how many pages of data we have to display.
+     */
+    function set_count_sql($sql){
+        $this->countsql = $sql;
+    }
+    
+    /**
+     * Set the sql to query the db. Query will be :
+     *      SELECT $fields FROM $from WHERE $where
+     * Of course you can use sub-queries, JOINS etc. by putting them in the
+     * appropriate clause of the query.
+     */
+    function set_sql($fields, $from, $where){
+        $this->sql = new object();
+        $this->sql->fields = $fields;
+        $this->sql->from = $from;
+        $this->sql->where = $where;
+    }
+    
+    /**
+     * Query the db. Store results in the table object for use by build_table.
+     * 
+     * @param integer $pagesize size of page for paginated displayed table.
+     * @param boolean $useinitialsbar do you want to use the initials bar. Bar
+     * will only be used if there is a fullname column defined for the table.
+     */
+    function query_db($pagesize, $useinitialsbar=true){
+        if (!$this->is_downloading()) {
+            if ($this->countsql === NULL){
+                $this->countsql = 'SELECT COUNT(1) FROM '.$this->sql->from.' WHERE '.$this->sql->where;
+            }
+            if ($useinitialsbar && !$this->is_downloading()) {
+                $totalinitials = count_records_sql($this->countsql);
+                $this->initialbars($totalinitials>$pagesize);
+            }
+            
+            if ($this->get_sql_where()) {
+                $this->countsql .= ' AND '.$this->get_sql_where();
+                $this->sql->where .= ' AND '.$this->get_sql_where();
+            }
+            $total  = count_records_sql($this->countsql);
+
+
+            $this->pagesize($pagesize, $total);
+        }
+
+        // Fetch the attempts
+        $sort = $this->get_sql_sort();
+        $sort = $sort?" ORDER BY {$sort}":'';
+        $sql = "SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}{$sort}";
+        if (!$this->is_downloading()) {
+            $this->rawdata = get_records_sql($sql, $this->get_page_start(), $this->get_page_size());
+        } else {
+            $this->rawdata = get_records_sql($sql);
+        }
+    }
+    
+    
+    /**
+     * Convenience method to call a number of methods for you to display the
+     * table.
+     */
+    function out($pagesize, $useinitialsbar, $downloadhelpbutton=''){
+        if (!$this->columns){
+            $onerow = get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}", true);
+            //if columns is not set then define columns as the keys of the rows returned
+            //from the db.
+            $this->define_columns(array_keys((array)$onerow));
+            $this->define_headers(array_keys((array)$onerow));
+        }
+        $this->setup();
+        $this->query_db($pagesize, $useinitialsbar);
+        $this->build_table();
+        $this->finish_output();
+    }
+}
+
+class table_default_export_format_parent{
+    /**
+     * @var flexible_table or child class reference pointing to table class
+     * object from which to export data.
+     */
+    var $table;
+    function table_default_export_format_parent(&$table){
+        $this->table =& $table;
+    }
+
+    function add_data($row) {
+        return false;
+    }
+    function add_seperator() {
+        return false;
+    }
+    function finish_output(){
+    }
+}
+
+class table_spreadsheet_export_format_parent extends table_default_export_format_parent{
+    var $rownum;
+    var $workbook;
+    var $worksheet;
+    /**
+     * @var object format object - format for normal table cells
+     */
+    var $formatnormal;
+    /**
+     * @var object format object - format for header table cells
+     */
+    var $formatheaders;
+
+    /** 
+     * should be overriden in child class.
+     */
+    var $fileextension;
+    
+    /**
+     * This method will be overridden in the child class.
+     */
+    function define_workbook(){
+    }
+    function start_output($filename, $sheettitle){
+        $this->filename = $filename.'.'.$this->fileextension;
+        $this->define_workbook();
+        // Creating the first worksheet
+        $this->worksheet =& $this->workbook->add_worksheet();
+        // format types
+        $this->formatnormal =& $this->workbook->add_format();
+        $this->formatnormal->set_bold(0);
+        $this->formatheaders =& $this->workbook->add_format();
+        $this->formatheaders->set_bold(1);
+        $this->formatheaders->set_align('center');
+
+        // Sending HTTP headers
+        $this->workbook->send($this->filename);
+        // Creating the first worksheet
+
+        $this->rownum=0;
+    }
+    function output_headers($headers){
+        $colnum = 0;
+        foreach ($headers as $item) {
+            $this->worksheet->write($this->rownum,$colnum,$item,$this->formatheaders);
+            $colnum++;
+        }
+        $this->rownum++;
+    }
+    function add_data($row){
+        $colnum = 0;
+        foreach($row as $item){
+            $this->worksheet->write($this->rownum,$colnum,$item,$this->formatnormal);
+            $colnum++;
+        }
+        $this->rownum++;
+        return true;
+    }
+    function add_seperator() {
+        $this->rownum++;
+        return true;
+    }
+    function finish_output(){
+        $this->workbook->close();
+        exit;
+    }
+}
+
+class table_excel_export_format extends table_spreadsheet_export_format_parent{
+    var $fileextension = 'xls';
+
+    function define_workbook(){
+        global $CFG;
+        require_once("$CFG->libdir/excellib.class.php");
+        // Creating a workbook
+        $this->workbook = new MoodleExcelWorkbook("-");
     }
 
 }
 
+class table_ods_export_format extends table_spreadsheet_export_format_parent{
+    var $fileextension = 'ods';
+    function define_workbook(){
+        global $CFG;
+        require_once("$CFG->libdir/odslib.class.php");
+        // Creating a workbook
+        $this->workbook = new MoodleODSWorkbook("-");
+    }
+}
+
+class table_text_export_format_parent extends table_default_export_format_parent{
+    var $seperator = "\t";
+    function start_output($filename, $sheettitle){
+        $this->filename = $filename.".txt";
+
+        header("Content-Type: application/download\n");
+        header("Content-Disposition: attachment; filename=\"$this->filename\"");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: public");
+    }
+    function output_headers($headers){
+        echo implode($this->seperator, $headers)." \n";
+    }
+    function add_data($row){
+        echo implode($this->seperator, $row)." \n";
+        return true;
+    }
+    function finish_output(){
+        exit;
+    }
+}
+
+class table_tsv_export_format extends table_text_export_format_parent{
+    var $seperator = "\t";
+
+}
+
+class table_csv_export_format extends table_text_export_format_parent{
+    var $seperator = ",";
+
+}
+
+class table_xhtml_export_format extends table_default_export_format_parent{
+    var $seperator = "\t";
+    function start_output($filename, $sheettitle){
+        $this->table->sortable(false);
+        $this->table->collapsible(false);
+        $this->filename = $filename.".html";
+
+        header("Content-Type: application/download\n");
+        header("Content-Disposition: attachment; filename=\"$this->filename\"");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: public");
+        
+        //html headers
+        
+        echo <<<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+
+<html xmlns="http://www.w3.org/1999/xhtml" 
+  xml:lang="en" lang="en">
+<style type="text/css">/*<![CDATA[*/
+
+.flexible th {
+white-space:normal;
+}
+th.header, td.header, div.header {
+border-color:#DDDDDD;
+background-color:lightGrey;
+}
+.flexible th {
+white-space:nowrap;
+}
+th {
+font-weight:bold;
+}
+
+.generaltable {
+border-style:solid;
+}
+.generalbox {
+border-style:solid;
+}
+body, table, td, th {
+font-family:Arial,Verdana,Helvetica,sans-serif;
+font-size:100%;
+}
+td {
+    border-style:solid;
+    border-width:1pt;
+}
+table {
+    border-collapse:collapse;
+    border-spacing:0pt;
+    width:80%;
+    margin:auto;
+}
+
+h1{
+    text-align:center;
+}
+.bold {
+font-weight:bold;
+}
+
+
+
+/*]]>*/</style>
+<head>
+  <title>$sheettitle</title>
+</head>
+<body>
+<h1>$sheettitle</h1>
+EOF;
+        $this->table->start_html();
+    }
+    function output_headers($headers){
+        $this->table->print_headers();
+    }
+    function add_data($row){
+        $this->table->print_row($row);
+        return true;
+    }
+    function add_seperator() {
+        $this->table->print_row(NULL);
+        return true;
+    }
+    function finish_output(){
+        $this->table->finish_html();
+        echo '</body>';
+        exit;
+    }
+}
 ?>
