@@ -14,34 +14,34 @@ $mode = optional_param('mode', '', PARAM_ALPHA);      // categories if by catego
 $hook = optional_param('hook', '', PARAM_ALPHANUM);   // CategoryID
 
 if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-    print_error("Course Module ID was incorrect");
+    print_error('invalidcoursemodule');
 }
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
 if (! $course = get_record("course", "id", $cm->course)) {
-    print_error("Course is misconfigured");
+    print_error('coursemisconf');
 }
 
 require_login($course->id, false, $cm);
 
 if ( isguest() ) {
-    print_error("Guests are not allowed to edit glossaries", $_SERVER["HTTP_REFERER"]);
+    print_error('guestnoedit', 'glossary', $_SERVER["HTTP_REFERER"]);
 }
 
 if (! $glossary = get_record("glossary", "id", $cm->instance)) {
-    print_error("Course module is incorrect");
+    print_error('invalidid', 'glossary');
 }
 
 
 if ($e) { // if entry is specified
     if (!$entry  = get_record("glossary_entries", "id", $e)) {
-        print_error("Incorrect entry id");
+        print_error('invalidentry');
     }
     $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
     if (!has_capability('mod/glossary:manageentries', $context) and !($entry->userid == $USER->id and ($ineditperiod and has_capability('mod/glossary:write', $context)))) {
         //expired edit time is the most probable cause here
-        print_error('erredittimeexpired', 'glossary', "view.php?id=$cm->id&amp;mode=entry&amp;hook=$e");
+        print_error('erredittimeexpired', 'glossary', 'view.php?id=$cm->id&amp;mode=entry&amp;hook=$e');
     }
 } else { // new entry
     require_capability('mod/glossary:write', $context);
@@ -98,7 +98,7 @@ if ($mform->is_cancelled()){
                        "view.php?id=$cm->id&amp;mode=entry&amp;hook=$todb->id",
                        $todb->id, $cm->id);
         } else {
-            print_error("Could not update your glossary");
+            print_error('cantupdateglossary', 'glossary');
         }
     } else {
 
@@ -117,7 +117,7 @@ if ($mform->is_cancelled()){
             add_to_log($course->id, "glossary", "add entry",
                        "view.php?id=$cm->id&amp;mode=entry&amp;hook=$todb->id", $todb->id,$cm->id);
         } else {
-            print_error("Could not insert this new entry");
+            print_error('cantinsertent', 'glossary');
         }
 
     }

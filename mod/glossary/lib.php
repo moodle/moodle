@@ -50,7 +50,7 @@ function glossary_add_instance($glossary) {
     //Check displayformat is a valid one
     $formats = get_list_of_plugins('mod/glossary/formats','TEMPLATE');
     if (!in_array($glossary->displayformat, $formats)) {
-        print_error("This format doesn't exist!");
+        print_error('unknowformat', '', '', $glossary->displayformat);
     }
 
     if ($returnid = $DB->insert_record("glossary", $glossary)) {
@@ -92,7 +92,7 @@ function glossary_update_instance($glossary) {
     //Check displayformat is a valid one
     $formats = get_list_of_plugins('mod/glossary/formats','TEMPLATE');
     if (!in_array($glossary->displayformat, $formats)) {
-        print_error("This format doesn't exist!");
+        print_error('unknowformat', '', '', $glossary->displayformat);
     }
 
     if ($return = $DB->update_record("glossary", $glossary)) {
@@ -1652,13 +1652,13 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
     if ( $entries ) {
         foreach ( $entries as $entry ) {
             if (! $glossary = get_record('glossary', 'id', $entry->glossaryid)) {
-                print_error('Glossary ID was incorrect or no longer exists');
+                print_error('invalidid', 'glossary');
             }
             if (! $course = get_record('course', 'id', $glossary->course)) {
-                print_error('Glossary is misconfigured - don\'t know what course it\'s from');
+                print_error('coursemisconf');
             }
             if (!$cm = get_coursemodule_from_instance('glossary', $entry->glossaryid, $glossary->course) ) {
-                print_error('Glossary is misconfigured - don\'t know what course module it is');
+                print_error('invalidid', 'glossary');
             }
 
             //If displayformat is present, override glossary->displayformat

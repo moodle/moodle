@@ -17,15 +17,15 @@
 
 
     if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-        print_error("Course Module ID was incorrect");
+        print_error("invalidcoursemodule");
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        print_error("Course is misconfigured");
+        print_error('coursemisconf');
     }
 
     if (! $entry = get_record("glossary_entries","id", $entry)) {
-        print_error("Entry ID was incorrect");
+        print_error('invalidentry');
     }
 
     require_login($course->id, false, $cm);
@@ -33,7 +33,7 @@
     $manageentries = has_capability('mod/glossary:manageentries', $context); 
     
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
-        print_error("Glossary is incorrect");
+        print_error('invalidid', 'glossary');
     }
 
 
@@ -45,11 +45,11 @@
                   navmenu($course, $cm));
 
     if (($entry->userid != $USER->id) and !$manageentries) { // guest id is never matched, no need for special check here
-        print_error("You can't delete other people's entries!");
+        print_error('nopermissiontodelentry');
     }
     $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
     if (!$ineditperiod and !$manageentries) {
-        print_error("You can't delete this. Time expired!");
+        print_error('errdeltimeexpired', 'glossary');
     }
 
 /// If data submitted, then process and store.
@@ -63,7 +63,7 @@
             $dbentry->glossaryid = $entry->sourceglossaryid;
             $dbentry->sourceglossaryid = 0;
             if (! update_record('glossary_entries', $dbentry)) {
-                print_error("Could not update your glossary");
+                print_error('cantupdateglossary', 'glossary');
             }
 
         } else {

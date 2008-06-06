@@ -9,30 +9,30 @@
     $sort = optional_param('sort', '', PARAM_ALPHA);
 
     if (! $entry = get_record('glossary_entries', 'id', $id)) {
-        print_error("Entry ID was incorrect");
+        print_error('invalidentry');
     }
 
     if (! $glossary = get_record('glossary', 'id', $entry->glossaryid)) {
-        print_error("Glossary ID was incorrect");
+        print_error('invalidid', 'glossary');
     }
 
     if (! $course = get_record('course', 'id', $glossary->course)) {
-        print_error("Course ID was incorrect");
+        print_error('invalidcourseid');
     }
 
     if (! $cm = get_coursemodule_from_instance('glossary', $glossary->id, $course->id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     require_login($course, false, $cm);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (!$glossary->assessed) {
-        print_error("This activity does not use ratings");
+        print_error('nopermissiontorate');
     }
 
     if (!has_capability('mod/glossary:manageentries', $context) and $USER->id != $entry->userid) {
-        print_error("You can only look at results for your own entries");
+        print_error('nopermissiontoviewresult', 'glossary');
     }
 
     switch ($sort) {

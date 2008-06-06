@@ -17,25 +17,25 @@
     $action = strtolower($action);
 
     if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        print_error("Course is misconfigured");
+        print_error('coursemisconf');
     }
 
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
-        print_error("Course module is incorrect");
+        print_error('invalidcoursemodule');
     }
 
     if ($hook > 0) {
         if ($category = get_record("glossary_categories","id",$hook)) {
             //Check it belongs to the same glossary
             if ($category->glossaryid != $glossary->id) {
-                print_error("Glossary is incorrect");
+                print_error('invalidid', 'glossary');
             }
         } else {
-            print_error("Category is incorrect");
+            print_error('invalidcategoryid');
         }
     }
 
@@ -68,7 +68,7 @@
                 $cat->usedynalink = $usedynalink;
 
                 if ( !update_record("glossary_categories", $cat) ) {
-                    print_error("Weird error. The category was not updated.");
+                    print_error('cannotupdatecategory');
                     redirect("editcategories.php?id=$cm->id");
                 } else {
                     add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
@@ -158,7 +158,7 @@
                 $cat->glossaryid = $glossary->id;
 
                 if ( ! $cat->id = insert_record("glossary_categories", $cat) ) {
-                    print_error("Weird error. The category was not inserted.");
+                    print_error('cannotinsertcategory');
 
                     redirect("editcategories.php?id=$cm->id");
                 } else {
