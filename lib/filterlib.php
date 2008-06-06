@@ -287,7 +287,7 @@ function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsc
     /// form regular expression
         $opentag  = str_replace('/','\/',$opentag); // delimit forward slashes
         $closetag = str_replace('/','\/',$closetag); // delimit forward slashes
-        $pregexp = '/'.$opentag.'(.+?)'.$closetag.'/is';
+        $pregexp = '/'.$opentag.'(.*?)'.$closetag.'/is';
         
         preg_match_all($pregexp, $text, $list_of_ignores);
         foreach (array_unique($list_of_ignores[0]) as $key=>$value) {
