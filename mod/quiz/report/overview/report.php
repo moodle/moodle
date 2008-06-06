@@ -177,15 +177,29 @@ class quiz_report extends quiz_default_report {
          }
         $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where");
 
-        if ($detailedmarks) {
-            // we want to display marks for all questions
-            // Add extra sql to get question grades
-            $from .= ' ';
-            // we want to display marks for all questions
-            foreach (array_keys($questions) as $qid) {
-                $fields .=  ", qs$qid.grade AS qsgrade$qid, qs$qid.event AS qsevent$qid, qs$qid.id AS qsid$qid";
-                $from .= "LEFT JOIN {$CFG->prefix}question_sessions qns$qid ON qns$qid.attemptid = qa.uniqueid AND qns$qid.questionid = $qid ";
-                $from .=  "LEFT JOIN  {$CFG->prefix}question_states qs$qid ON qs$qid.id = qns$qid.newgraded ";
+        // Add table joins so we can sort by question grade
+        // unfortunately can't join all tables necessary to fetch all grades
+        // to get the state for one question per attempt row we must join two tables
+        // and there is a limit to how many joins you can have in one query. In MySQL it
+        // is 61. This means that when having more than 29 questions the query will fail.
+        // So we join just the tables needed to sort the attempts.
+        if($sort = $table->get_sql_sort()) {
+            if (!$table->is_downloading() && $detailedmarks) {
+                $from .= ' ';
+                $sortparts    = explode(',', $sort);
+                $matches = array();
+                foreach($sortparts as $sortpart) {
+                    $sortpart = trim($sortpart);
+                    if (preg_match('/^qsgrade([0-9]+)/', $sortpart, $matches)){
+                        $qid = intval($matches[1]);
+                        $fields .=  ", qs$qid.grade AS qsgrade$qid, qs$qid.event AS qsevent$qid, qs$qid.id AS qsid$qid";
+                        $from .= "LEFT JOIN {$CFG->prefix}question_sessions qns$qid ON qns$qid.attemptid = qa.uniqueid AND qns$qid.questionid = $qid ";
+                        $from .=  "LEFT JOIN  {$CFG->prefix}question_states qs$qid ON qs$qid.id = qns$qid.newgraded ";
+                    } else {
+                        $newsort[] = $sortpart;
+                    }
+                }
+                $select .= ' ';
             }
         }
         

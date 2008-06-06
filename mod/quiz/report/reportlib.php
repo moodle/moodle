@@ -11,11 +11,11 @@ define('QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS', 3);
  * uniqueid field from quiz_attempt table not the id. Use question_state_is_graded
  * function to check that the question is actually graded.
  */
-function quiz_get_newgraded_states($attemptids, $idxattemptq = true){
+function quiz_get_newgraded_states($attemptids, $idxattemptq = true, $fields='qs.*'){
     global $CFG;
     if ($attemptids){
         $attemptidlist = join($attemptids, ',');
-        $gradedstatesql = "SELECT qs.* FROM " .
+        $gradedstatesql = "SELECT $fields FROM " .
                 "{$CFG->prefix}question_sessions qns, " .
                 "{$CFG->prefix}question_states qs " .
                 "WHERE qns.attemptid IN ($attemptidlist) AND " .
