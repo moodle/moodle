@@ -355,8 +355,8 @@ class quiz_report extends quiz_default_report {
         // and there is a limit to how many joins you can have in one query. In MySQL it
         // is 61. This means that when having more than 29 questions the query will fail.
         // So we join just the tables needed to sort the attempts.
-        if ($detailedmarks) {
-            if($sort = $table->get_sql_sort()) {
+        if($sort = $table->get_sql_sort()) {
+            if (!$download && $detailedmarks) {
                 $from .= ' ';
                 $sortparts    = explode(',', $sort);
                 $matches = array();
