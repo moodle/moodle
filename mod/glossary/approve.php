@@ -10,15 +10,15 @@
     $hook = optional_param('hook','ALL', PARAM_CLEAN);
 
     if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     if (! $course = get_record("course", "id", $cm->course)) {
-        print_error("Course is misconfigured");
+        print_error('coursemisconf');
     }
 
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
-        print_error("Course module is incorrect");
+        print_error('invalidid', 'glossary');
     }
 
     require_login($course->id, false, $cm);
@@ -31,7 +31,7 @@
     $newentry->timemodified = time(); // wee need this date here to speed up recent activity, TODO: use timestamp in approved field instead in 2.0
 
     if (! update_record("glossary_entries", $newentry)) {
-        print_error("Could not update your glossary");
+        print_error('cantupdateglossary', 'glossary');
     } else {
         add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&amp;eid=$eid", "$eid",$cm->id);
     }

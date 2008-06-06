@@ -51,7 +51,7 @@
     print_header("$strratings: $entry->concept");
 
     if (!$ratings = glossary_get_ratings($entry->id, $sqlsort)) {
-        print_error("No ratings for this entry: \"$entry->concept\"");
+        print_error("ratingno', 'glossary');
 
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" style=\"width:100%\">";

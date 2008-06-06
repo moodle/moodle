@@ -21,27 +21,27 @@
 
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('glossary', $id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
         if (! $course = get_record("course", "id", $cm->course)) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         if (! $glossary = get_record("glossary", "id", $cm->instance)) {
-            print_error("Course module is incorrect");
+            print_error('invalidid', 'glossary');
         }
     } else if (!empty($g)) {
         if (! $glossary = get_record("glossary", "id", $g)) {
-            print_error("Course module is incorrect");
+            print_error('invalidid', 'glossary');
         }
         if (! $course = get_record("course", "id", $glossary->course)) {
-            print_error("Could not determine which course this belonged to!");
+            print_error('invalidcourseid');
         }
         if (!$cm = get_coursemodule_from_instance("glossary", $glossary->id, $course->id)) {
-            print_error("Could not determine which course module this belonged to!");
+            print_error('invalidcoursemodule');
         }
         $id = $cm->id;
     } else {
-        print_error("Must specify glossary ID or course module ID");
+        print_error('invalidid', 'glossary');
     }
 
     require_course_login($course->id, true, $cm);
