@@ -58,11 +58,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -89,9 +89,9 @@
     require_course_login($course);
     
     if($courseid AND $courseid != SITEID) {
-        $course2 = get_record('course', 'id', $courseid);
+        $course2 = $DB->get_record('course', array('id'=>$courseid));
         require_course_login($course2); //this overwrites the object $course :-(
-        $course = get_record("course", "id", $cm->course); // the workaround
+        $course = $DB->get_record("course", array("id"=>$cm->course)); // the workaround
     }
     
     if(!$capabilities->complete) {
@@ -136,7 +136,7 @@
     //additional check for multiple-submit (prevent browsers back-button). the main-check is in view.php
     $feedback_can_submit = true;
     if($feedback->multiple_submit == 0 ) {
-        // if($multiple_count = get_record('feedback_tracking', 'userid', $USER->id, 'feedback', $feedback->id)) {
+        // if($multiple_count = $DB->get_record('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
         if(feedback_is_already_submitted($feedback->id, $courseid)) {
             $feedback_can_submit = false;
         }
@@ -177,7 +177,7 @@
             //exists there any pagebreak, so there are values in the feedback_valuetmp
             $userid = $USER->id; //arb changed from 0 to $USER->id - no strict anonymous feedbacks - if it is a guest taking it then I want to know that it was a guest (at least in the data saved in the feedback tables)
 
-            $feedbackcompletedtmp = get_record('feedback_completedtmp', 'id', $completedid);
+            $feedbackcompletedtmp = $DB->get_record('feedback_completedtmp', array('id'=>$completedid));
             
             //fake saving for switchrole
             $is_switchrole = feedback_check_is_switchrole();
@@ -209,15 +209,15 @@
         }
         
         //get the feedbackitems after the last shown pagebreak
-        $feedbackitems = get_records_select('feedback_item', 'feedback = '.$feedback->id.' AND position > '.$startposition, 'position');
+        $feedbackitems = $DB->get_records_select('feedback_item', 'feedback = ? AND position > ?', array($feedback->id, $startposition), 'position');
         //get the first pagebreak
-        if($pagebreaks = get_records_select('feedback_item', "feedback = ".$feedback->id." AND typ = 'pagebreak'", 'position')) {
+        if($pagebreaks = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'typ'=>'pagebreak'), 'position')) {
             $pagebreaks = array_values($pagebreaks);
             $firstpagebreak = $pagebreaks[0];
         }else {
             $firstpagebreak = false;
         }
-        $maxitemcount = count_records('feedback_item', 'feedback', $feedback->id);
+        $maxitemcount = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
         $feedbackcompletedtmp = feedback_get_current_completed($feedback->id, true, $courseid, $USER->sesskey);
 
         /// Print the main part of the page
@@ -280,13 +280,13 @@
                         &nbsp;
                       </td></tr>';
                 //check, if there exists required-elements
-                $countreq = count_records('feedback_item', 'feedback', $feedback->id, 'required', 1);
+                $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=>1));
                 if($countreq > 0) {
                     echo '<tr><td colspan="3"><font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font></td></tr>';
                 }
                 
                 unset($startitem);
-                $itemnr = count_records_select('feedback_item', 'feedback = '. $feedback->id . ' AND hasvalue = 1 AND position < '.$startposition);
+                $itemnr = $DB->count_records_select('feedback_item', 'feedback = ? AND hasvalue = 1 AND position < ?', array($feedback->id, $startposition));
                 foreach($feedbackitems as $feedbackitem){
                     if(!isset($startitem)) {
                         //avoid showing double pagebreaks

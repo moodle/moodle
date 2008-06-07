@@ -38,10 +38,12 @@ class feedback_item_numeric extends feedback_item_base {
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)
     function get_analysed($item, $groupid = false, $courseid = false) {
+        global $DB;
+
         $analysed = null;
         $analysed->data = array();
         $analysed->name = $item->name;
-        //$values = get_records('feedback_value', 'item', $item->id);
+        //$values = $DB->get_records('feedback_value', array('item'=>$item->id));
         $values = feedback_get_group_values($item, $groupid, $courseid);
         
         $avg = 0.0;

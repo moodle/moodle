@@ -21,11 +21,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -96,7 +96,7 @@
     }
     
     if( (intval($feedback->publish_stats) == 1) AND !( $capabilities->viewreports) ) {
-        if($multiple_count = count_records('feedback_tracking', 'userid', $USER->id, 'feedback', $feedback->id)) {
+        if($multiple_count = $DB->count_records('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
             echo '<div align="center"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
             echo get_string('completed_feedbacks', 'feedback').'</a>';
             echo '</div>';

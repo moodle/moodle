@@ -47,7 +47,7 @@ class feedback_item_captcha extends feedback_item_base {
     }
 
     function print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
-        global $SESSION, $CFG;
+        global $SESSION, $CFG, $DB;
         
         $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
         
@@ -58,7 +58,7 @@ class feedback_item_captcha extends feedback_item_base {
         if(!$readonly) {
             $feedbackid = $item->feedback;
             if($feedbackid > 0) {
-                $feedback = get_record('feedback', 'id', $feedbackid);
+                $feedback = $DB->get_record('feedback', array('id'=>$feedbackid));
                 if($cm = get_coursemodule_from_instance("feedback", $feedback->id, $feedback->course)) {
                     $cmid = $cm->id;
                 }

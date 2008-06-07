@@ -36,10 +36,12 @@ class feedback_item_textfield extends feedback_item_base {
 
     //liefert eine Struktur ->name, ->data = array(mit Antworten)
     function get_analysed($item, $groupid = false, $courseid = false) {
+        global $DB;
+
         $aVal = null;
         $aVal->data = null;
         $aVal->name = $item->name;
-        //$values = get_records('feedback_value', 'item', $item->id);
+        //$values = $DB->get_records('feedback_value', array('item'=>$item->id));
         $values = feedback_get_group_values($item, $groupid, $courseid);
         if($values) {
             $data = array();

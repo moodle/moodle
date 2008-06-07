@@ -30,11 +30,11 @@
             error("Course Module ID was incorrect");
         }
         
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
         
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -55,7 +55,7 @@
     
     //get the existing item or create it
     // $formdata->itemid = isset($formdata->itemid) ? $formdata->itemid : NULL;
-    if($itemid and $item = get_record('feedback_item', 'id', $itemid)){
+    if($itemid and $item = $DB->get_record('feedback_item', array('id'=>$itemid))) {
         $typ = $item->typ;
         $position = $item->position;
     }else {
@@ -82,7 +82,7 @@
         if (!$newitemid = feedback_create_item($formdata)) {
             $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
         }else {
-            $newitem = get_record('feedback_item', 'id', $newitemid);
+            $newitem = $DB->get_record('feedback_item', array('id'=>$newitemid));
             if (!feedback_move_item($newitem, $newposition)){
                 $SESSION->feedback->errors[] = get_string('item_creation_failed', 'feedback');
             }else {
@@ -148,7 +148,7 @@
     $i_form->addElement('hidden', 'feedbackid', $feedback->id);
     
 
-    $lastposition = count_records('feedback_item', 'feedback', $feedback->id);    
+    $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));    
     if($position == -1){
         $i_formselect_last = $lastposition + 1;
         $i_formselect_value = $lastposition + 1;
@@ -195,7 +195,7 @@
         echo '<input type="hidden" name="feedbackid" value="'.$feedback->id.'" />';
     
     //choose the position
-    $lastposition = count_records('feedback_item', 'feedback', $feedback->id);
+    $lastposition = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
     echo get_string('position', 'feedback').'&nbsp;';
     echo '<select name="position">';
         //Dropdown-Items for choosing the position

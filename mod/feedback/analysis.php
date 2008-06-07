@@ -31,11 +31,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -114,14 +114,14 @@
     $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid);
 
     //show the group, if available
-    if($mygroupid and $group = get_record('groups', 'id', $mygroupid)) {
+    if($mygroupid and $group = $DB->get_record('groups', array('id'=>$mygroupid))) {
         echo '<b>'.get_string('group').': '.$group->name. '</b><br />';
     }
     //show the count
     echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. '</b><br />';
 
     // get the items of the feedback
-    $items = get_records_select('feedback_item', 'feedback = '. $feedback->id . ' AND hasvalue = 1', 'position');
+    $items = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1), 'position');
     //show the count
     if(is_array($items)){
         echo '<b>'.get_string('questions', 'feedback').': ' .sizeof($items). ' </b><hr />';

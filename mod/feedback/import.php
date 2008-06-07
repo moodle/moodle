@@ -25,11 +25,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -155,7 +155,7 @@
     }
     
     function feedback_import_loaded_data(&$data, $feedbackid){
-        global $CFG;
+        global $CFG, $DB;
         
         $deleteolditems = optional_param('deleteolditems', 0, PARAM_INT);
         
@@ -174,7 +174,7 @@
             $position = 0;
         } else {
             //items will be add to the end of the existing items
-            $position = count_records('feedback_item', 'feedback', $feedbackid);
+            $position = $DB->count_records('feedback_item', array('feedback'=>$feedbackid));
         }
         
         foreach($data as $item) {
@@ -202,7 +202,7 @@
             }
             $newitem->required = intval($item['@']['REQUIRED']);
             $newitem->position = $position;
-            if(!insert_record('feedback_item', $newitem)) {
+            if (!$DB->insert_record('feedback_item', $newitem)) {
                 $error->stat = false;
                 $error->msg[] = 'item ('.$newitem->name.') not imported';
             }

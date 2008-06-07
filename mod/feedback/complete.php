@@ -60,11 +60,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -86,9 +86,9 @@
     }
     
     if($courseid AND $courseid != SITEID) {
-        $course2 = get_record('course', 'id', $courseid);
+        $course2 = $DB->get_record('course', array('id'=>$courseid));
         require_course_login($course2); //this overwrites the object $course :-(
-        $course = get_record("course", "id", $cm->course); // the workaround
+        $course = $DB->get_record("course", array("id"=>$cm->course)); // the workaround
     }
     
     if(!$capabilities->complete) {
@@ -179,7 +179,7 @@
             }else{
                 $feedbackcompleted = false;
             }
-            $feedbackcompletedtmp = get_record('feedback_completedtmp', 'id', $completedid);
+            $feedbackcompletedtmp = $DB->get_record('feedback_completedtmp', array('id'=>$completedid));
             //fake saving for switchrole
             $is_switchrole = feedback_check_is_switchrole();
             if($is_switchrole) {
@@ -194,11 +194,11 @@
                     feedback_send_email_anonym($cm, $feedback, $course, $userid);
                 }
                 //tracking the submit
-                $tracking = null;
+                $tracking = new object();
                 $tracking->userid = $USER->id;
                 $tracking->feedback = $feedback->id;
                 $tracking->completed = $new_completed_id;
-                insert_record('feedback_tracking', $tracking);
+                $DB->insert_record('feedback_tracking', $tracking);
                 unset($SESSION->feedback->is_started);
                 
             }else {
@@ -222,16 +222,16 @@
         }
         
         //get the feedbackitems after the last shown pagebreak
-        $feedbackitems = get_records_select('feedback_item', 'feedback = '.$feedback->id.' AND position > '.$startposition, 'position');
+        $feedbackitems = $DB->get_records_select('feedback_item', 'feedback = ? AND position > ?', array($feedback->id, $startposition), 'position');
         
         //get the first pagebreak
-        if($pagebreaks = get_records_select('feedback_item', "feedback = ".$feedback->id." AND typ = 'pagebreak'", 'position')) {
+        if($pagebreaks = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'typ'=>'pagebreak'), 'position')) {
             $pagebreaks = array_values($pagebreaks);
             $firstpagebreak = $pagebreaks[0];
         }else {
             $firstpagebreak = false;
         }
-        $maxitemcount = count_records('feedback_item', 'feedback', $feedback->id);
+        $maxitemcount = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
         
         //get the values of completeds before done. Anonymous user can not get these values.
         if((!isset($SESSION->feedback->is_started)) AND (!isset($savereturn)) AND ($feedback->anonymous == FEEDBACK_ANONYMOUS_NO)) {
@@ -267,6 +267,7 @@
                 }
             }
             if($feedback->site_after_submit) {
+var_dump($feedback->site_after_submit);
                 print_continue(feedback_encode_target_url($feedback->site_after_submit));
             }else {
                 if($courseid) {
@@ -304,13 +305,13 @@
                         break;
                 }
                 //check, if there exists required-elements
-                $countreq = count_records('feedback_item', 'feedback', $feedback->id, 'required', 1);
+                $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=>1));
                 if($countreq > 0) {
                     echo '<tr><td colspan="3"><font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font></td></tr>';
                 }
                 
                 unset($startitem);
-                $itemnr = count_records_select('feedback_item', 'feedback = '. $feedback->id . ' AND hasvalue = 1 AND position < '.$startposition);
+                $itemnr = $DB->count_records_select('feedback_item', 'feedback = ? AND hasvalue = 1 AND position < ?', array($feedback->id, $startposition));
                 foreach($feedbackitems as $feedbackitem){
                     if(!isset($startitem)) {
                         //avoid showing double pagebreaks

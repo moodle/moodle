@@ -33,11 +33,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -51,21 +51,21 @@
 
     //move up/down items
     if($moveupitem){
-        $item = get_record('feedback_item', 'id', $moveupitem);
+        $item = $DB->get_record('feedback_item', array('id'=>$moveupitem));
         feedback_moveup_item($item);
     }
     if($movedownitem){
-        $item = get_record('feedback_item', 'id', $movedownitem);
+        $item = $DB->get_record('feedback_item', array('id'=>$movedownitem));
         feedback_movedown_item($item);
     }
     
     //moving of items
     if($movehere && isset($SESSION->feedback->moving->movingitem)){
-        $item = get_record('feedback_item', 'id', intval($SESSION->feedback->moving->movingitem));
+        $item = $DB->get_record('feedback_item', array('id'=>$SESSION->feedback->moving->movingitem));
         feedback_move_item($item, intval($movehere));
     }
     if($moveitem){
-        $item = get_record('feedback_item', 'id', $moveitem);
+        $item = $DB->get_record('feedback_item', array('id'=>$moveitem));
         $SESSION->feedback->moving->shouldmoving = 1;
         $SESSION->feedback->moving->movingitem = $moveitem;
     } else {
@@ -73,7 +73,7 @@
     }
     
     if($switchitemrequired) {
-        $item = get_record('feedback_item', 'id', $switchitemrequired);
+        $item = $DB->get_record('feedback_item', array('id'=>$switchitemrequired));
         @feedback_switch_item_required($item);
         redirect($ME.'?'.feedback_edit_get_default_query($id, $do_show));
         exit;
@@ -110,7 +110,7 @@
 
     //get the feedbackitems
     $lastposition = 0;
-    $feedbackitems = get_records('feedback_item', 'feedback', $feedback->id, 'position');
+    $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
     if(is_array($feedbackitems)){
         $feedbackitems = array_values($feedbackitems);
         if(count($feedbackitems) > 0) {
@@ -219,7 +219,7 @@
             print_box_start('generalbox boxaligncenter boxwidthwide');
             
             //check, if there exists required-elements
-            $countreq = count_records('feedback_item', 'feedback', $feedback->id, 'required', 1);
+            $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id), 'required', 1);
             if($countreq > 0) {
                 // echo '<font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font>';
                 echo '<span class="feedback_required_mark">(*)' . get_string('items_are_required', 'feedback') . '</span>';

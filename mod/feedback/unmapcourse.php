@@ -19,11 +19,11 @@
             error("Course Module ID was incorrect");
         }
 
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
         
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -37,7 +37,7 @@
     // cleanup all lost entries after deleting courses or feedbacks
     feedback_clean_up_sitecourse_map();
 
-    if (delete_records('feedback_sitecourse_map', 'id', $cmapid)) {
+    if ($DB->delete_records('feedback_sitecourse_map', array('id'=>$cmapid))) {
         redirect (htmlspecialchars('mapcourse.php?id='.$id));
     } else {
         error('Database problem, unable to unmap');

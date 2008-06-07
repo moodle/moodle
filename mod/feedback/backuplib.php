@@ -28,12 +28,12 @@
 
     //This function executes all the backup procedure about this mod
    function feedback_backup_mods($bf,$preferences) {
-      global $CFG;
+      global $CFG, $DB;
 
       $status = true;
 
       //Iterate over feedback table
-      $feedbacks = get_records ("feedback","course",$preferences->backup_course,"id");
+      $feedbacks = $DB->get_records ("feedback", array("course"=>$preferences->backup_course), "id");
       if ($feedbacks) {
          foreach ($feedbacks as $feedback) {
             if (backup_mod_selected($preferences,'feedback',$feedback->id)) {
@@ -45,10 +45,10 @@
    }
 
    function feedback_backup_one_mod($bf,$preferences,$feedback) {
-      global $CFG;
+      global $CFG, $DB;
     
       if (is_numeric($feedback)) {
-         $feedback = get_record('feedback','id',$feedback);
+         $feedback = $DB->get_record('feedback', array('id'=>$feedback));
       }
       
       $status = true;
@@ -79,9 +79,10 @@
    }
    
    function feedback_backup_data($bf, $preferences, $feedbackid) {
-      global $CFG;
+      global $CFG, $DB;
+
       $status = true;
-      $feedbackitems = get_records('feedback_item', 'feedback', $feedbackid);
+      $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedbackid));
       if(function_exists('backup_userdata_selected')) { //compatibility-hack for moodle 1.5.x
          $backup_userdata = backup_userdata_selected($preferences,'feedback',$feedbackid);
       }else {
@@ -104,7 +105,7 @@
             
             if ($backup_userdata) {
                //backup the values of items
-               $feedbackvalues = get_records('feedback_value', 'item', $feedbackitem->id);
+               $feedbackvalues = $DB->get_records('feedback_value', array('item'=>$feedbackitem->id));
                if($feedbackvalues) {
                   $status =fwrite ($bf,start_tag("FBVALUES",6,true));
                   foreach($feedbackvalues as $feedbackvalue) {
@@ -130,7 +131,7 @@
       
       if($backup_userdata) {
          //backup of feedback-completeds
-         $feedbackcompleteds = get_records('feedback_completed', 'feedback', $feedbackid);
+         $feedbackcompleteds = $DB->get_records('feedback_completed', array('feedback'=>$feedbackid));
          if($feedbackcompleteds) {
             fwrite ($bf,start_tag("COMPLETEDS",4,true));
             foreach ($feedbackcompleteds as $feedbackcompleted) {
@@ -151,7 +152,7 @@
          }
          
          //backup of tracking-data
-         $feedbacktrackings = get_records('feedback_tracking', 'feedback', $feedbackid);
+         $feedbacktrackings = $DB->get_records('feedback_tracking', array('feedback'=>$feedbackid));
          if($feedbacktrackings) {
             fwrite ($bf,start_tag("TRACKINGS",4,true));
             foreach ($feedbacktrackings as $feedbacktracking) {
@@ -175,9 +176,10 @@
 
 
    function feedback_backup_template_data($bf, $templateid, $userinfo) {
-      global $CFG;
+      global $CFG, $DB;
+
       $status = true;
-      $templateitems = get_records('feedback_item', 'template', $templateid);
+      $templateitems = $DB->get_records('feedback_item', array('template'=>$templateid));
 
       if ($templateitems) {
          $status =fwrite ($bf,start_tag("ITEMS",5,true));
@@ -228,6 +230,8 @@
 
    ////Return an array of info (name,value)
    function feedback_check_backup_mods_instances($instance,$backup_unique_code) {
+      global $DB;
+
       //First the course data
       $info[$instance->id.'0'][0] = '<b>'.$instance->name.'</b>';
       $info[$instance->id.'0'][1] = '';
@@ -235,7 +239,7 @@
       //Now, if requested, the user_data
       if (!empty($instance->userdata)) {
          $info[$instance->id.'1'][0] = get_string("responses","feedback");
-         if ($responses_count = count_records ('feedback_completed', 'feedback', $instance->id)) {
+         if ($responses_count = $DB->count_records ('feedback_completed', array('feedback'=>$instance->id))) {
                $info[$instance->id.'1'][1] = $responses_count;
          } else {
                $info[$instance->id.'1'][1] = 0;
@@ -251,18 +255,20 @@
 
    //Returns an array of feedbacks ids 
    function feedback_count ($course) {
-      global $CFG;
-      return count_records('feedback', 'course', $course);
+      global $DB;
+
+      return $DB->count_records('feedback', array('course'=>$course));
    }
    
    function feedback_completed_count($course) {
-      global $CFG;
+      global $DB;
+
       $count = 0;
       //get all feedbacks
-      $feedbacks = get_records('feedback', 'course', $course);
+      $feedbacks = $DB->get_records('feedback', array('course'=>$course));
       if($feedbacks) {
          foreach($feedbacks as $feedback) {
-            $count += count_records('feedback_completed', 'feedback', $feedback->id);
+            $count += $DB->count_records('feedback_completed', array('feedback'=>$feedback->id));
          }
       }
       return $count;

@@ -21,11 +21,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -106,7 +106,7 @@
     }
 
     //get the questions (item-names)
-    $items = get_records_select('feedback_item', 'feedback = '. $feedback->id . ' AND hasvalue = 1', 'position');
+    $items = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1, 'position'));
     if(is_array($items)){
         $rowOffset1++;
         $worksheet1->write_string($rowOffset1, 0, $fstring->questions.': '. strval(sizeof($items)));
@@ -193,17 +193,17 @@
     }
     
     function feedback_excelprint_detailed_items(&$worksheet, $completed, $items, $rowOffset) {
-        global $fstring;
+        global $DB, $fstring;
         
         if(!$items) return;
         $colOffset = 0;
         $courseid = 0;
         
-        $feedback = get_record('feedback', 'id', $completed->feedback);
+        $feedback = $DB->get_record('feedback', array('id'=>$completed->feedback));
         //get the username
         //anonymous users are separated automatically because the userid in the completed is "0"
         $worksheet->setFormat('<l><f><ru2>');
-        if($user = get_record('user', 'id', $completed->userid)) {
+        if($user = $DB->get_record('user', array('id'=>$completed->userid))) {
             if ($completed->anonymous_response == FEEDBACK_ANONYMOUS_NO) {
                 $worksheet->write_string($rowOffset, $colOffset, $user->idnumber);
                 $colOffset++;
@@ -229,7 +229,7 @@
         
         $colOffset++;
         foreach($items as $item) {
-            $value = get_record('feedback_value', 'item', $item->id, 'completed', $completed->id);
+            $value = $DB->get_record('feedback_value', array('item'=>$item->id, 'completed'=>$completed->id));
             
             $itemclass = 'feedback_item_'.$item->typ;
             $itemobj = new $itemclass();
@@ -248,7 +248,7 @@
         }
         $worksheet->write_number($rowOffset, $colOffset, $courseid);
         $colOffset++;
-        if(isset($courseid) AND $course = get_record('course', 'id', $courseid)){
+        if(isset($courseid) AND $course = $DB->get_record('course', array('id'=>$courseid))) {
             $worksheet->write_string($rowOffset, $colOffset, $course->shortname);
         }
         return $rowOffset + 1;

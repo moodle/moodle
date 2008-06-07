@@ -31,11 +31,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -88,7 +88,7 @@
     echo '<b>'.get_string('completed_feedbacks', 'feedback').': '.$completedscount. '</b><br />';
     
     // get the items of the feedback
-    $items = get_records_select('feedback_item', 'feedback = '. $feedback->id . ' AND hasvalue = 1', 'position');
+    $items = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1), 'position');
     //show the count
     if(is_array($items)){
     	echo '<b>'.get_string('questions', 'feedback').': ' .sizeof($items). ' </b><hr />';
@@ -104,14 +104,13 @@
         if ($CFG->dbtype == 'postgres7') {
              $avgvalue = 'avg(cast (value as integer))';
         }
-        if ($courses = get_records_sql ('select fv.course_id, c.shortname, '.$avgvalue.' as avgvalue '.
-                                                  'from '.$CFG->prefix.'feedback_value fv, '.$CFG->prefix.'course c, '.
-                                                  $CFG->prefix.'feedback_item fi '.
-                                                  'where fv.course_id = c.id '.
-                                                  'and fi.id = fv.item and fi.typ = \''.$courseitemfiltertyp.'\' and fv.item = \''.
-                                                  $courseitemfilter.'\' '.
-                                                  'group by course_id, shortname order by avgvalue desc')) {
-             $item = get_record('feedback_item', 'id', $courseitemfilter);
+        if ($courses = $DB->get_records_sql ("SELECT fv.course_id, c.shortname, $avgvalue AS avgvalue
+                                                FROM {feedback_value} fv, {course} c, {feedback_item} fi
+                                               WHERE fv.course_id = c.id AND fi.id = fv.item AND fi.typ = ? AND fv.item = ?
+                                            GROUP BY course_id, shortname
+                                            ORDER BY avgvalue desc",
+                                              array($courseitemfiltertyp, $courseitemfilter))) {
+             $item = $DB->get_record('feedback_item', array('id'=>$courseitemfilter));
              echo '<tr><th colspan="2">'.$item->name.'</th></tr>';
              echo '<tr><td><table align="left">';
              echo '<tr><th>Course</th><th>Average</th></tr>';

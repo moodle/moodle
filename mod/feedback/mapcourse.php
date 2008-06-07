@@ -29,11 +29,11 @@
             error("Course Module ID was incorrect");
         }
     
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
         
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -49,8 +49,10 @@
         $map->feedbackid = $feedback->id;
         $map->courseid = $coursefilter;
         // insert a map only if it does exists yet
-        $sql = "select id, feedbackid from {$CFG->prefix}feedback_sitecourse_map where feedbackid = $map->feedbackid and courseid = $map->courseid";
-        if (!get_records_sql($sql) && !insert_record('feedback_sitecourse_map', $map)) {
+        $sql = "SELECT id, feedbackid
+                  FROM {feedback_sitecourse_map}
+                 WHERE feedbackid = ? AND courseid = ?";
+        if (!$DB->get_records_sql($sql, array($map->feedbackid, $map->courseid)) && !$DB->insert_record('feedback_sitecourse_map', $map)) {
             error("Database problem, unable to map feedback = $feedback->id to course = $course->id");
         }
     }
@@ -64,7 +66,7 @@
     // if ($course->category) {
         // $navigation = '<a href="'.htmlspecialchars('../../course/view.php?id='.$course->id).'">'.$course->shortname.'</a> ->';
     // }else if ($courseid > 0 AND $courseid != SITEID) {
-        // $usercourse = get_record('course', 'id', $courseid);
+        // $usercourse = $DB->get_record('course', array('id'=>$courseid));
         // $navigation = '<a href="'.htmlspecialchars('../../course/view.php?id='.$usercourse->id).'">'.$usercourse->shortname.'</a> ->';
         // $feedbackindex = '';
     // }

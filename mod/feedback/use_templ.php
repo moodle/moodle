@@ -25,11 +25,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -88,7 +88,7 @@
     // print_simple_box_end();
     print_box_end();
 
-    $templateitems = get_records('feedback_item', 'template', $templateid, 'position');
+    $templateitems = $DB->get_records('feedback_item', array('template'=>$templateid), 'position');
     if(is_array($templateitems)){
         $templateitems = array_values($templateitems);
     }

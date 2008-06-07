@@ -26,11 +26,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -45,18 +45,18 @@
 
     //get the completeds
     // if a new anonymous record has not been assigned a random response number
-    if ($feedbackcompleteds = get_records_select('feedback_completed','feedback='.$feedback->id.' AND random_response=0 AND anonymous_response='.FEEDBACK_ANONYMOUS_YES, 'random_response')){ //arb
+    if ($feedbackcompleteds = $DB->get_records('feedback_completed', array('feedback'=>$feedback->id, 'random_response'=>0, 'anonymous_response'=>FEEDBACK_ANONYMOUS_YES), 'random_response')){ //arb
         //then get all of the anonymous records and go through them  
-        $feedbackcompleteds = get_records_select('feedback_completed','feedback='.$feedback->id.' AND anonymous_response='.FEEDBACK_ANONYMOUS_YES,'id'); //arb
+        $feedbackcompleteds = $DB->get_records('feedback_completed', array('feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_YES), 'id'); //arb
         shuffle($feedbackcompleteds);
         $num = 1;
         foreach($feedbackcompleteds as $compl){
             $compl->random_response = $num;
-            update_record('feedback_completed', $compl);
+            $DB->update_record('feedback_completed', $compl);
             $num++;
         }
     }
-    $feedbackcompleteds = get_records_select('feedback_completed','feedback='.$feedback->id.' AND anonymous_response='.FEEDBACK_ANONYMOUS_YES, 'random_response'); //arb
+    $feedbackcompleteds = $DB->get_records('feedback_completed', array('feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_YES), 'random_response'); //arb
 
     /// Print the page header
     $strfeedbacks = get_string("modulenameplural", "feedback");
@@ -131,8 +131,8 @@
     //print the items
     if(isset($formdata->showanonym) && $formdata->showanonym == FEEDBACK_ANONYMOUS_YES) {
         //get the feedbackitems
-        $feedbackitems = get_records('feedback_item', 'feedback', $feedback->id, 'position');
-        $feedbackcompleted = get_record('feedback_completed', 'id', $formdata->completedid);
+        $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
+        $feedbackcompleted = $DB->get_record('feedback_completed', array('id'=>$formdata->completedid));
         if(is_array($feedbackitems)){
             if($feedbackcompleted) {
                 echo '<p align="center">'.get_string('chosen_feedback_response', 'feedback').'<br />('.get_string('anonymous', 'feedback').')</p>';//arb
@@ -147,7 +147,7 @@
             $itemnr = 0;
             foreach($feedbackitems as $feedbackitem){
                 //get the values
-                $value = get_record_select('feedback_value','completed ='.$feedbackcompleted->id.' AND item='.$feedbackitem->id);
+                $value = $DB->get_record('feedback_value', array('completed'=>$feedbackcompleted->id, 'item'=>$feedbackitem->id));
                 echo '<tr>';
                 if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                     $itemnr++;

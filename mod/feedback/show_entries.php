@@ -42,11 +42,11 @@
             error("Course Module ID was incorrect");
         }
      
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             error("Course is misconfigured");
         }
      
-        if (! $feedback = get_record("feedback", "id", $cm->instance)) {
+        if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
             error("Course module is incorrect");
         }
     }
@@ -77,8 +77,8 @@
     ////////////////////////////////////////////////////////
     if($do_show == 'showoneentry') {
         //get the feedbackitems
-        $feedbackitems = get_records('feedback_item', 'feedback', $feedback->id, 'position');
-        $feedbackcompleted = get_record_select('feedback_completed','feedback='.$feedback->id.' AND userid='.$formdata->userid.' AND anonymous_response='.FEEDBACK_ANONYMOUS_NO); //arb
+        $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id), 'position');
+        $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, 'userid'=>$formdata->userid, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO)); //arb
     }
     
     /// Print the page header
@@ -174,13 +174,13 @@
                 }
             } else{
                 echo print_string('non_anonymous_entries', 'feedback');
-                echo ' ('.count_records_select('feedback_completed', 'feedback = ' . $feedback->id.' AND anonymous_response='.FEEDBACK_ANONYMOUS_NO).')<hr />';
+                echo ' ('.$DB->count_records('feedback_completed', array('feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO)).')<hr />';
 
                 foreach ($students as $student){
-                    $completedCount = count_records_select('feedback_completed', 'userid = ' . $student->id . ' AND feedback = ' . $feedback->id.' AND anonymous_response='.FEEDBACK_ANONYMOUS_NO);
+                    $completedCount = $DB->count_records('feedback_completed', array('userid'=>$student->id, 'feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
                     if($completedCount > 0) {
                      // Are we assuming that there is only one response per user? Should westep through a feedbackcompleteds? I added the addition anonymous check to the select so that only non-anonymous submissions are retrieved. 
-                        $feedbackcompleted = get_record_select('feedback_completed','feedback='.$feedback->id.' AND userid='.$student->id.' AND anonymous_response='.FEEDBACK_ANONYMOUS_NO);
+                        $feedbackcompleted = $DB->get_record('feedback_completed', array('feedback'=>$feedback->id, ' userid'=>$student->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_NO));
                     ?>
                         <table width="100%">
                             <tr>
@@ -223,7 +223,7 @@
             <table width="100%">
                 <tr>
                     <td align="left" colspan="2">
-                        <?php print_string('anonymous_entries', 'feedback');?>&nbsp;(<?php echo count_records_select('feedback_completed', 'feedback = ' . $feedback->id.' AND anonymous_response='.FEEDBACK_ANONYMOUS_YES);?>)
+                        <?php print_string('anonymous_entries', 'feedback');?>&nbsp;(<?php echo $DB->count_records('feedback_completed', array('feedback'=>$feedback->id, 'anonymous_response'=>FEEDBACK_ANONYMOUS_YES));?>)
                     </td>
                     <td align="right">
                         <?php
@@ -250,7 +250,7 @@
         
         //print the items
         if(is_array($feedbackitems)){
-            $usr = get_record('user', 'id', $formdata->userid);
+            $usr = $DB->get_record('user', array('id'=>$formdata->userid));
             if($feedbackcompleted) {
                 echo '<p align="center">'.UserDate($feedbackcompleted->timemodified).'<br />('.fullname($usr).')</p>';
             } else {
@@ -264,7 +264,7 @@
             $itemnr = 0;
             foreach($feedbackitems as $feedbackitem){
                 //get the values
-                $value = get_record_select('feedback_value','completed ='.$feedbackcompleted->id.' AND item='.$feedbackitem->id);
+                $value = $DB->get_record('feedback_value', array('completed'=>$feedbackcompleted->id, 'item'=>$feedbackitem->id));
                 echo '<tr>';
                 if($feedbackitem->hasvalue == 1 AND $feedback->autonumbering) {
                     $itemnr++;
