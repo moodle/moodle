@@ -342,7 +342,7 @@ class auth_plugin_db extends auth_plugin_base {
 
         if (!empty($add_users)) {
             print_string('auth_dbuserstoadd','auth',count($add_users)); echo "\n";
-            begin_sql();
+            $DB->begin_sql();
             foreach($add_users as $user) {
                 $username = $user;
                 $user = $this->get_userinfo_asobj($user);
@@ -357,7 +357,6 @@ class auth_plugin_db extends auth_plugin_base {
                     $user->lang = $CFG->lang;
                 }
 
-                $user = addslashes_object($user);
                 // maybe the user has been deleted before
                 if ($old_user = $DB->get_record('user', array('username'=>$user->username, 'deleted'=>1, 'mnethostid'=>$user->mnethostid))) {
                     $user->id = $old_user->id;
@@ -374,7 +373,7 @@ class auth_plugin_db extends auth_plugin_base {
                     echo "\t"; print_string('auth_dbinsertusererror', 'auth', $user->username); echo "\n";
                 }
             }
-            commit_sql();
+            $DB->commit_sql();
             unset($add_users); // free mem
         }
         return true;

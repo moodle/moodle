@@ -43,6 +43,6 @@ if (!is_enabled_auth('cas')) {
 }
 
 $casauth = get_auth_plugin('cas');
-$casauth->sync_users(1000, true);
+$casauth->sync_users(true);
 
 ?>

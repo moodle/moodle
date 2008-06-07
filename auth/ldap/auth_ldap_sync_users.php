@@ -41,6 +41,6 @@ if (!is_enabled_auth('ldap')) {
 }
 
 $ldapauth = get_auth_plugin('ldap');
-$ldapauth->sync_users(1000, true);
+$ldapauth->sync_users(true);
 
 ?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @author Martin Dougiamas
  * @authro Jerome GUTIERREZ
@@ -43,7 +44,7 @@ class auth_plugin_cas extends auth_plugin_base {
         //hack prefix to objectclass
         if (empty($this->config->objectclass)) {        // Can't send empty filter
             $this->config->objectclass='objectClass=*';
-        } else if (strpos($this->config->objectclass, 'objectClass=') !== 0) {
+        } else if (stripos($this->config->objectclass, 'objectClass=') !== 0) {
             $this->config->objectclass = 'objectClass='.$this->config->objectclass;
         }
     }
@@ -361,10 +362,13 @@ if ( !is_object($PHPCAS_CLIENT) ) {
     function get_userinfo($username) {
         $textlib = textlib_get_instance();
         $extusername = $textlib->convert($username, 'utf-8', $this->config->ldapencoding);
+
         $ldapconnection = $this->ldap_connect();
         $attrmap = $this->ldap_attributes();
+
         $result = array();
         $search_attribs = array();
+
         foreach ($attrmap as $key=>$values) {
             if (!is_array($values)) {
                 $values = array($values);
@@ -388,7 +392,7 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                 $values = array($values);
             }
             $ldapval = NULL;
-           foreach ($values as $value) {
+            foreach ($values as $value) {
                 if ($value == 'dn') {
                     $result[$key] = $user_dn;
                 }
@@ -562,11 +566,11 @@ if ( !is_object($PHPCAS_CLIENT) ) {
     /**
      * checks if user exists on external db
      *
-     * @param string $username (with system magic quotes)
+     * @param string $username
      */
     function user_exists($username) {
         $textlib = textlib_get_instance();
-        $extusername = $textlib->convert(stripslashes($username), 'utf-8', $this->config->ldapencoding);
+        $extusername = $textlib->convert($username, 'utf-8', $this->config->ldapencoding);
         //returns true if given username exist on ldap
         $users = $this->ldap_get_userlist("({$this->config->user_attribute}=".$this->filter_addslashes($extusername).")");
         return count($users);
@@ -579,81 +583,55 @@ if ( !is_object($PHPCAS_CLIENT) ) {
      * Syncing users removes or suspends users that dont exists anymore in external db.
      * Creates new users and updates coursecreator status of users.
      *
-     * @param int $bulk_insert_records will insert $bulkinsert_records per insert statement
-     *                         valid only with $unsafe. increase to a couple thousand for
-     *                         blinding fast inserts -- but test it: you may hit mysqld's
-     *                         max_allowed_packet limit.
      * @param bool $do_updates will do pull in data updates from ldap if relevant
      */
-    function sync_users ($bulk_insert_records = 1000, $do_updates = true) {
-        global $CFG;
+    function sync_users ($do_updates = true) {
+
+        global $CFG, $DB;
+
         $textlib = textlib_get_instance();
-        $droptablesql = array(); /// sql commands to drop the table (because session scope could be a problem for
-                                 /// some persistent drivers like ODBTP (mssql) or if this function is invoked
-                                 /// from within a PHP application using persistent connections
-        // configure a temp table
+        $dbman = $DB->get_manager();
 
-/// TODO: move this to sql generators
-error('fix temporary table code in CAS');
+    /// Define table user to be created
+        $table = new xmldb_table('tmp_extuser');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('username', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_index('username', XMLDB_INDEX_UNIQUE, array('mnethostid', 'username'));
 
-        print "Configuring temp table\n";
-        switch (strtolower($CFG->dbfamily)) {
-            case 'mysql':
-                $temptable = $CFG->prefix . 'extuser';
-                $droptablesql[] = 'DROP TEMPORARY TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
-                echo "Creating temp table $temptable\n";
-                execute_sql('CREATE TEMPORARY TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username)) TYPE=MyISAM', false);
-                break;
-            case 'postgres':
-                $temptable = $CFG->prefix . 'extuser';
-                $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
-                echo "Creating temp table $temptable\n";
-                $bulk_insert_records = 1; // no support for multiple sets of values
-                execute_sql('CREATE TEMPORARY TABLE '. $temptable . ' (username VARCHAR(64), PRIMARY KEY (username))', false);
-                break;
-            case 'mssql':
-                $temptable = '#'.$CFG->prefix . 'extuser'; /// MSSQL temp tables begin with #
-                $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
-                echo "Creating temp table $temptable\n";
-                $bulk_insert_records = 1; // no support for multiple sets of values
-                execute_sql('CREATE TABLE ' . $temptable . ' (username VARCHAR(64), PRIMARY KEY (username))', false);
-                break;
-            case 'oracle':
-                $temptable = $CFG->prefix . 'extuser';
-                $droptablesql[] = 'TRUNCATE TABLE ' . $temptable; // oracle requires truncate before being able to drop a temp table
-                $droptablesql[] = 'DROP TABLE ' . $temptable; // sql command to drop the table (because session scope could be a problem)
-                execute_sql_arr($droptablesql, true, false); /// Drop temp table to avoid persistence problems later
-                echo "Creating temp table $temptable\n";
-                $bulk_insert_records = 1; // no support for multiple sets of values
-                execute_sql('CREATE GLOBAL TEMPORARY TABLE '.$temptable.' (username VARCHAR(64), PRIMARY KEY (username)) ON COMMIT PRESERVE ROWS', false);
-                break;
+        echo "Creating temp table $temptable\n";
+        if (!$dbman->create_temp_table($table)) {
+            print  "Failed to create temporary users table - aborting\n";
+            exit;
         }
+
         print "Connecting to ldap...\n";
         $ldapconnection = $this->ldap_connect();
+
         if (!$ldapconnection) {
             @ldap_close($ldapconnection);
             print get_string('auth_ldap_noconnect','auth',$this->config->host_url);
             exit;
         }
+
         ////
         //// get user's list from ldap to sql in a scalable fashion
         ////
         // prepare some data we'll need
         $filter = "(&(".$this->config->user_attribute."=*)(".$this->config->objectclass."))";
+
         $contexts = explode(";",$this->config->contexts);
+
         if (!empty($this->config->create_context)) {
               array_push($contexts, $this->config->create_context);
         }
+
         $fresult = array();
         foreach ($contexts as $context) {
             $context = trim($context);
             if (empty($context)) {
                 continue;
             }
-            begin_sql();
             if ($this->config->search_sub) {
                 //use ldap_search to find first user from subtree
                 $ldap_result = ldap_search($ldapconnection, $context,
@@ -665,49 +643,44 @@ error('fix temporary table code in CAS');
                                          $filter,
                                          array($this->config->user_attribute));
             }
+
             if ($entry = ldap_first_entry($ldapconnection, $ldap_result)) {
                 do {
                     $value = ldap_get_values_len($ldapconnection, $entry, $this->config->user_attribute);
                     $value = $textlib->convert($value[0], $this->config->ldapencoding, 'utf-8');
-                    array_push($fresult, $value);
-                    if (count($fresult) >= $bulk_insert_records) {
-                        $this->ldap_bulk_insert($fresult, $temptable);
-                        $fresult = array();
-                    }
+                    $this->ldap_bulk_insert($value);
                 } while ($entry = ldap_next_entry($ldapconnection, $entry));
             }
             unset($ldap_result); // free mem
-            // insert any remaining users and release mem
-            if (count($fresult)) {
-                $this->ldap_bulk_insert($fresult, $temptable);
-                $fresult = array();
-            }
-            commit_sql();
         }
+
         /// preserve our user database
         /// if the temp table is empty, it probably means that something went wrong, exit
         /// so as to avoid mass deletion of users; which is hard to undo
-        $count = get_record_sql('SELECT COUNT(username) AS count, 1 FROM ' . $temptable);
-        $count = $count->{'count'};
+        $count = $DB->count_records_sql('SELECT COUNT(username) AS count, 1 FROM {tmp_extuser}');
         if ($count < 1) {
             print "Did not get any users from LDAP -- error? -- exiting\n";
             exit;
         } else {
             print "Got $count records from LDAP\n\n";
         }
+
+
 /// User removal
         // find users in DB that aren't in ldap -- to be removed!
         // this is still not as scalable (but how often do we mass delete?)
         if (!empty($this->config->removeuser)) {
-            $sql = "SELECT u.id, u.username, u.email, u.auth
-                    FROM {$CFG->prefix}user u
-                        LEFT JOIN $temptable e ON u.username = e.username
-                    WHERE u.auth='cas'
-                        AND u.deleted=0
-                        AND e.username IS NULL";
-            $remove_users = get_records_sql($sql);
+            $sql = "SELECT u.id, u.username, u.email, u.auth 
+                      FROM {user} u
+                      LEFT JOIN {tmp_extuser} e ON (u.username = e.username AND u.mnethostid = ?)
+                     WHERE u.auth='cas'
+                           AND u.deleted=0
+                           AND e.username IS NULL";
+            $remove_users = $DB->get_records_sql($sql, array($CFG->mnet_localhost_id));
+
             if (!empty($remove_users)) {
                 print "User entries to remove: ". count($remove_users) . "\n";
+
                 foreach ($remove_users as $user) {
                     if ($this->config->removeuser == AUTH_REMOVEUSER_FULLDELETE) {
                         if (delete_user($user)) {
@@ -719,7 +692,7 @@ error('fix temporary table code in CAS');
                         $updateuser = new object();
                         $updateuser->id = $user->id;
                         $updateuser->auth = 'nologin';
-                        if (update_record('user', $updateuser)) {
+                        if ($DB->update_record('user', $updateuser)) {
                             echo "\t"; print_string('auth_dbsuspenduser', 'auth', array($user->username, $user->id)); echo "\n";
                         } else {
                             echo "\t"; print_string('auth_dbsuspendusererror', 'auth', $user->username); echo "\n";
@@ -731,32 +704,36 @@ error('fix temporary table code in CAS');
             }
             unset($remove_users); // free mem!
         }
+
 /// Revive suspended users
         if (!empty($this->config->removeuser) and $this->config->removeuser == AUTH_REMOVEUSER_SUSPEND) {
             $sql = "SELECT u.id, u.username
-                    FROM $temptable e, {$CFG->prefix}user u
-                    WHERE e.username=u.username
-                        AND u.auth='nologin'";
-            $revive_users = get_records_sql($sql);
+                      FROM {user} u
+                      JOIN {tmp_extuser} e ON (u.username = e.username AND u.mnethostid = ?)
+                     WHERE u.auth='nologin' AND u.deleted=0";
+            $revive_users = $DB->get_records_sql($sql, array($CFG->mnet_localhost_id));
+
             if (!empty($revive_users)) {
                 print "User entries to be revived: ". count($revive_users) . "\n";
-                begin_sql();
+
                 foreach ($revive_users as $user) {
                     $updateuser = new object();
                     $updateuser->id = $user->id;
-                    $updateuser->auth = 'cas';
-                    if (update_record('user', $updateuser)) {
+                    $updateuser->auth = 'ldap';
+                    if ($DB->pdate_record('user', $updateuser)) {
                         echo "\t"; print_string('auth_dbreviveser', 'auth', array($user->username, $user->id)); echo "\n";
                     } else {
                         echo "\t"; print_string('auth_dbreviveusererror', 'auth', $user->username); echo "\n";
                     }
                 }
-                commit_sql();
             } else {
                 print "No user entries to be revived\n";
             }
+
             unset($revive_users);
         }
+
+
 /// User Updates - time-consuming (optional)
         if ($do_updates) {
             // narrow down what fields we need to update
@@ -775,15 +752,17 @@ error('fix temporary table code in CAS');
             }
             // print_r($all_keys); print_r($updatekeys);
             unset($all_keys); unset($key);
+
         } else {
             print "No updates to be done\n";
         }
         if ( $do_updates and !empty($updatekeys) ) { // run updates only if relevant
-            $users = get_records_sql("SELECT u.username, u.id
-                                      FROM {$CFG->prefix}user u
-                                      WHERE u.deleted=0 AND u.auth='cas'");
+            $users = $DB->get_records_sql("SELECT u.username, u.id
+                                             FROM {user} u
+                                            WHERE u.deleted=0 AND u.auth='cas' AND u.mnethostid = ?", array($CFG->mnet_localhost_id));
             if (!empty($users)) {
                 print "User entries to update: ". count($users). "\n";
+
                 $sitecontext = get_context_instance(CONTEXT_SYSTEM);
                 if (!empty($this->config->creators) and !empty($this->config->memberattribute)
                   and $roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
@@ -791,9 +770,11 @@ error('fix temporary table code in CAS');
                 } else {
                     $creatorrole = false;
                 }
-                begin_sql();
+
+                $DB->begin_sql();
                 $xcount = 0;
                 $maxxcount = 100;
+
                 foreach ($users as $user) {
                     echo "\t"; print_string('auth_dbupdatinguser', 'auth', array($user->username, $user->id));
                     if (!$this->update_user_record($user->username, $updatekeys)) {
@@ -801,6 +782,7 @@ error('fix temporary table code in CAS');
                     }
                     echo "\n";
                     $xcount++;
+
                     // update course creators if needed
                     if ($creatorrole !== false) {
                         if ($this->iscreator($user->username)) {
@@ -809,13 +791,14 @@ error('fix temporary table code in CAS');
                             role_unassign($creatorrole->id, $user->id, 0, $sitecontext->id, 'cas');
                         }
                     }
+
                     if ($xcount++ > $maxxcount) {
-                        commit_sql();
-                        begin_sql();
+                        $DB->commit_sql();
+                        $DB->begin_sql();
                         $xcount = 0;
                     }
                 }
-                commit_sql();
+                $DB->commit_sql();
                 unset($users); // free mem
             }
         } else { // end do updates
@@ -823,15 +806,18 @@ error('fix temporary table code in CAS');
         }
 /// User Additions
         // find users missing in DB that are in LDAP
-        // note that get_records_sql wants at least 2 fields returned,
         // and gives me a nifty object I don't want.
         // note: we do not care about deleted accounts anymore, this feature was replaced by suspending to nologin auth plugin
-        $sql = "SELECT e.username, e.username
-                FROM $temptable e LEFT JOIN {$CFG->prefix}user u ON e.username = u.username
-                WHERE u.id IS NULL";
-        $add_users = get_records_sql($sql); // get rid of the fat
+        // mnetid not used here in join because we can not add users with the same username
+        $sql = "SELECT e.id, e.username
+                  FROM {user} u
+                  LEFT JOIN {tmp_extuser} e ON u.username = e.username
+                 WHERE u.id IS NULL";
+        $add_users = $DB->get_records_sql($sql); // get rid of the fat
+
         if (!empty($add_users)) {
             print "User entries to add: ". count($add_users). "\n";
+
             $sitecontext = get_context_instance(CONTEXT_SYSTEM);
             if (!empty($this->config->creators) and !empty($this->config->memberattribute)
               and $roles = get_roles_with_capability('moodle/legacy:coursecreator', CAP_ALLOW)) {
@@ -839,9 +825,11 @@ error('fix temporary table code in CAS');
             } else {
                 $creatorrole = false;
             }
-            begin_sql();
+
+            $DB->begin_sql();
             foreach ($add_users as $user) {
-                $user = $this->get_userinfo_asobj(addslashes($user->username));
+                $user = $this->get_userinfo_asobj($user->username);
+
                 // prep a few params
                 $user->modified   = time();
                 $user->confirmed  = 1;
@@ -850,9 +838,9 @@ error('fix temporary table code in CAS');
                 if (empty($user->lang)) {
                     $user->lang = $CFG->lang;
                 }
-                $user = addslashes_recursive($user);
-                if ($id = insert_record('user',$user)) {
-                    echo "\t"; print_string('auth_dbinsertuser', 'auth', array(stripslashes($user->username), $id)); echo "\n";
+
+                if ($id = $DB->insert_record('user', $user)) {
+                    echo "\t"; print_string('auth_dbinsertuser', 'auth', array($user->username, $id)); echo "\n";
                     $userobj = $this->update_user_record($user->username);
                     if (!empty($this->config->forcechangepassword)) {
                         set_user_preference('auth_forcepasswordchange', 1, $userobj->id);
@@ -860,18 +848,23 @@ error('fix temporary table code in CAS');
                 } else {
                     echo "\t"; print_string('auth_dbinsertusererror', 'auth', $user->username); echo "\n";
                 }
+
                 // add course creators if needed
-                if ($creatorrole !== false and $this->iscreator(stripslashes($user->username))) {
+                if ($creatorrole !== false and $this->iscreator($user->username)) {
                     role_assign($creatorrole->id, $user->id, 0, $sitecontext->id, 0, 0, 0, 'cas');
                 }
             }
-            commit_sql();
+            $DB->commit_sql();
             unset($add_users); // free mem
         } else {
             print "No users to be added\n";
         }
+
+        $dbman->drop_temp_table($table);
+
         return true;
     }
+
     /**
      * Update a local user record from an external source.
      * This is a lighter version of the one in moodlelib -- won't do
@@ -883,30 +876,36 @@ error('fix temporary table code in CAS');
      * @param string $username username
      */
     function update_user_record($username, $updatekeys = false) {
-        global $CFG, $DB;
+        global $CFG;
 
         //just in case check text case
         $username = trim(moodle_strtolower($username));
+
         // get the current user record
         $user = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$CFG->mnet_localhost_id));
         if (empty($user)) { // trouble
-            error_log("Cannot update non-existent user: ".stripslashes($username));
-            print_error('auth_dbusernotexist','auth',$username);
+            error_log("Cannot update non-existent user: ".$username);
+            print_error('auth_dbusernotexist','auth','',$username);
             die;
         }
+
         // Protect the userid from being overwritten
         $userid = $user->id;
+
         if ($newinfo = $this->get_userinfo($username)) {
             $newinfo = truncate_userinfo($newinfo);
+
             if (empty($updatekeys)) { // all keys? this does not support removing values
                 $updatekeys = array_keys($newinfo);
             }
+
             foreach ($updatekeys as $key) {
                 if (isset($newinfo[$key])) {
                     $value = $newinfo[$key];
                 } else {
                     $value = '';
                 }
+
                 if (!empty($this->config->{'field_updatelocal_' . $key})) {
                     if ($user->{$key} != $value) { // only update if it's changed
                         $DB->set_field('user', $key, $value, array('id'=>$userid));
@@ -920,17 +919,13 @@ error('fix temporary table code in CAS');
     }
     /**
      * Bulk insert in SQL's temp table
-     * @param array $users is an array of usernames
      */
-    function ldap_bulk_insert($users, $temptable) {
-        // bulk insert -- superfast with $bulk_insert_records
-        $sql = 'INSERT INTO ' . $temptable . ' (username) VALUES ';
-        // make those values safe
-        $users = addslashes_recursive($users);
-        // join and quote the whole lot
-        $sql = $sql . "('" . implode("'),('", $users) . "')";
-        print "\t+ " . count($users) . " users\n";
-        execute_sql($sql, false);
+    function ldap_bulk_insert($username) {
+        global $DB;
+
+        $username = moodle_strtolower($username); // usernames are __always__ lowercase.
+        $DB->insert_record_raw('tmp_extuser', array('username'=>$username), false, true);
+        print ".";
     }
     /**
      * Returns true if user should be coursecreator.
