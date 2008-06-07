@@ -159,6 +159,34 @@ abstract class sql_generator {
     }
 
     /**
+     * Given one xmldb_table, check if it exists in DB (true/false)
+     *
+     * @param mixed the table to be searched (string name or xmldb_table instance)
+     * @param bool temp table (might need different checks)
+     * @return boolean true/false
+     */
+    public function table_exists($table, $temptable=false) {
+    /// Do this function silenty (to avoid output in install/upgrade process)
+        $olddbdebug = $this->mdb->get_debug();
+        $this->mdb->set_debug(false);
+
+        if (is_string($table)) {
+            $tablename = $table;
+        } else {
+        /// Calculate the name of the table
+            $tablename = $table->getName();
+        }
+
+    /// get all tables in moodle database
+        $tables = $this->mdb->get_tables();
+        $exists = in_array($tablename, $tables);
+    /// Re-set original debug
+        $this->mdb->set_debug($olddbdebug);
+
+        return $exists;
+    }
+
+    /**
      * This function will return the SQL code needed to create db tables and statements
      */
     public function getCreateStructureSQL($xmldb_structure) {
@@ -342,6 +370,23 @@ abstract class sql_generator {
         }
 
         return $results;
+    }
+
+    /**
+     * Given one correct xmldb_table, returns the SQL statements
+     * to create temporary table (inside one array)
+     */
+    public function getCreateTempTableSQL($xmldb_table) {
+        $sqlarr = $this->getCreateTableSQL($xmldb_table);
+        $sqlarr = preg_replace('/^CREATE TABLE/', "CREATE TEMPORARY TABLE", $sqlarr);
+        return $sqlarr;
+    }
+
+    /**
+     * Tweaks the temp table instance - required for mssql # naming
+     */
+    public function tweakTempTable($xmldb_table) {
+        return $xmldb_table;
     }
 
     /**
@@ -574,6 +619,14 @@ abstract class sql_generator {
         $results = array_merge($results, $extra_sentences);
 
         return $results;
+    }
+
+    /**
+     * Given one correct xmldb_table and the new name, returns the SQL statements
+     * to drop it (inside one array)
+     */
+    public function getDropTempTableSQL($xmldb_table) {
+        return $this->getDropTableSQL($xmldb_table);
     }
 
     /**

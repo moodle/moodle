@@ -81,6 +81,45 @@ class mysql_sql_generator extends sql_generator {
     }
 
     /**
+     * Given one xmldb_table, check if it exists in DB (true/false)
+     *
+     * @param mixed the table to be searched (string name or xmldb_table instance)
+     * @param bool temp table (might need different checks)
+     * @return boolean true/false
+     */
+    public function table_exists($table, $temptable=false) {
+        if (!$temptable) {
+            return parent::table_exists($table, $temptable);
+        }
+
+        if (is_string($table)) {
+            $tablename = $table;
+        } else {
+        /// Calculate the name of the table
+            $tablename = $table->getName();
+        }
+
+        // ugly hack - mysql does not list temporary tables :-(
+        if ($this->mdb->execute("DESCRIBE {".$tablename."}") === false) {
+            $exists = false;
+        } else {
+            $exists = true;
+        }
+
+        return $exists;
+    }
+
+    /**
+     * Given one correct xmldb_table and the new name, returns the SQL statements
+     * to drop it (inside one array)
+     */
+    public function getDropTableSQL($xmldb_table) {
+        $sqlarr = parent::getDropTableSQL($xmldb_table);
+        $sqlarr = preg_replace('/^DROP TABLE/', "DROP TEMPORARY TABLE", $sqlarr);
+        return $sqlarr;
+    }
+
+    /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {

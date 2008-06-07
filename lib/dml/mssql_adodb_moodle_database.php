@@ -8,6 +8,10 @@ require_once($CFG->libdir.'/dml/adodb_moodle_database.php');
  * @package dmlib
  */
 class mssql_adodb_moodle_database extends adodb_moodle_database {
+    /**
+     * Ungly mssql hack needed for temp table names starting with '#'
+     */
+    public $temptables;
 
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
         if ($prefix == '' and !$this->external) {
@@ -82,6 +86,26 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         $str .= '<img src="pix/docs.gif' . '" alt="Docs" class="iconhelp" />';
         $str .= get_string('moodledocslink', 'install') . '</a></p>';
         return $str;
+    }
+
+    /**
+     * Converts short table name {tablename} to real table name
+     * @param string sql
+     * @return string sql
+     */
+    protected function fix_table_names($sql) {
+        // look for temporary tables, they must start with #
+        if (preg_match_all('/\{([a-z][a-z0-9_]*)\}/', $sql, $matches)) {
+            foreach($matches[0] as $key=>$match) {
+                $name = $matches[1][$key];
+                if (empty($this->temptables[$name])) {
+                    $sql = str_replace($match, $this->prefix.$name, $sql);
+                } else {
+                    $sql = str_replace($match, '#'.$this->prefix.$name, $sql);
+                }
+            }
+        }
+        return $sql;
     }
 
     /**

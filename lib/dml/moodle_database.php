@@ -201,6 +201,15 @@ abstract class moodle_database {
     }
 
     /**
+     * Converts short table name {tablename} to real table name
+     * @param string sql
+     * @return string sql
+     */
+    protected function fix_table_names($sql) {
+        return preg_replace('/\{([a-z][a-z0-9_]*)\}/', $this->prefix.'$1', $sql);
+    }
+
+    /**
      * Normalizes sql query parameters and verifies parameters.
      * @param string $sql query or part of it
      * @param array $params query parameters
@@ -210,7 +219,7 @@ abstract class moodle_database {
         $allowed_types = $this->allowed_param_types();
 
         // convert table names
-        $sql = preg_replace('/\{([a-z][a-z0-9_]*)\}/', $this->prefix.'$1', $sql);
+        $sql = $this->fix_table_names($sql);
 
         // NICOLAS C: Fixed regexp for negative backwards lookahead of double colons. Thanks for Sam Marshall's help
         $named_count = preg_match_all('/(?<!:):[a-z][a-z0-9_]*/', $sql, $named_matches); // :: used in pgsql casts

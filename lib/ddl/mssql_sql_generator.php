@@ -78,52 +78,37 @@ class mssql_sql_generator extends sql_generator {
     }
 
     /**
-     * This function will create the temporary table passed as argument with all its
-     * fields/keys/indexes/sequences, everything based in the XMLDB object
-     *
-     * TRUNCATE the table immediately after creation. A previous process using
-     * the same persistent connection may have created the temp table and failed to
-     * drop it. In that case, the table will exist, and create_temp_table() will
-     * will succeed.
-     *
-     * NOTE: The return value is the tablename - some DBs (MSSQL at least) use special
-     * names for temp tables.
-     *
-     * @uses $CFG, $db
-     * @param xmldb_table table object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return string tablename on success, false on error
+     * Given one correct xmldb_table, returns the SQL statements
+     * to create temporary table (inside one array)
      */
-    function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect create_table() $xmldb_table parameter');
-            return false;
+    public function getCreateTempTableSQL($xmldb_table) {
+        $sqlarr = $this->getCreateTableSQL($xmldb_table);
+        //ugly hack!
+        $this->mdb->temptables[trim($xmldb_table->getName(), '#')] = true;
+        return $sqlarr;
+    }
+
+    /**
+     * Given one correct xmldb_table and the new name, returns the SQL statements
+     * to drop it (inside one array)
+     */
+    public function getDropTempTableSQL($xmldb_table) {
+        $sqlarr = $this->getDropTableSQL($xmldb_table);
+        $tablename = $xmldb_table->getName();
+        array_unshift($sqlarr, "TRUNCATE TABLE {".$tablename."}"); // oracle requires truncate before being able to drop a temp table
+        //ugly hack!
+        unset($this->mdb->temptables[trim($xmldb_table->getName(), '#')]);
+        return $sqlarr;
+    }
+
+    /**
+     * Tweaks the temp table instance - required for mssql # naming
+     */
+    public function tweakTempTable($xmldb_table) {
+        if (strpos($xmldb_table->getName(), '#') !== 0) {
+            $xmldb_table->setName('#'.$xmldb_table->getName()); // MSSQL requires temp table names to start with #
         }
-
-    /// Check table doesn't exist
-        if ($this->table_exists($xmldb_table)) {
-            debugging('Table ' . $xmldb_table->getName() .
-                      ' already exists. Create skipped', DEBUG_DEVELOPER);
-            return $xmldb_table->getName(); //Table exists, nothing to do
-        }
-
-        if (!$sqlarr = $this->getCreateTableSQL($xmldb_table)) {
-            return $xmldb_table->getName(); //Empty array = nothing to do = no error
-        }
-
-        // TODO: somehow change the name to have a #
-        /*$temporary = '';
-
-        if (!empty($temporary)) {
-            $sqlarr = preg_replace('/^CREATE/', "CREATE $temporary", $sqlarr);
-        }*/
-
-        if (execute_sql_arr($sqlarr, $continue, $feedback)) {
-            return $xmldb_table->getName();
-        } else {
-            return false;
-        }
+        return $xmldb_table;
     }
 
     /**

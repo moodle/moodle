@@ -102,27 +102,11 @@ class database_manager {
      * Given one xmldb_table, check if it exists in DB (true/false)
      *
      * @param mixed the table to be searched (string name or xmldb_table instance)
+     * @param bool temp table (might need different checks)
      * @return boolean true/false
      */
-    public function table_exists($table) {
-    /// Do this function silenty (to avoid output in install/upgrade process)
-        $olddbdebug = $this->mdb->get_debug();
-        $this->mdb->set_debug(false);
-
-        if (is_string($table)) {
-            $tablename = $table;
-        } else {
-        /// Calculate the name of the table
-            $tablename = $table->getName();
-        }
-
-    /// get all tables in moodle database
-        $tables = $this->mdb->get_tables();
-        $exists = in_array($tablename, $tables);
-    /// Re-set original debug
-        $this->mdb->set_debug($olddbdebug);
-
-        return $exists;
+    public function table_exists($table, $temptable=false) {
+        return $this->generator->table_exists($table, $temptable);
     }
 
     /**
@@ -523,37 +507,33 @@ class database_manager {
      * This function will create the temporary table passed as argument with all its
      * fields/keys/indexes/sequences, everything based in the XMLDB object
      *
-     * TRUNCATE the table immediately after creation. A previous process using
-     * the same persistent connection may have created the temp table and failed to
-     * drop it. In that case, the table will exist, and create_temp_table() will
-     * will succeed.
-     *
-     * NOTE: The return value is the tablename - some DBs (MSSQL at least) use special
-     * names for temp tables.
-     *
-     * @TODO There is no way to know, from the return value alone, whether a table was actually created
-     *       or not: if an existing table is given as param, its name will be returned, but no DB action
-     *       will have occurred. This should be remedied using an Exception
+     * If table already exists it will be dropped and recreated, please make sure
+     * the table name does not collide with existing normal table!
      *
      * @param xmldb_table table object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
      * @param boolean feedback to specify to show status info (true) or not (false)
      * @return string tablename on success, false on error
      */
-    function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
+    public function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
         if (!($xmldb_table instanceof xmldb_table)) {
             debugging('Incorrect create_table() $xmldb_table parameter');
             return false;
         }
 
+    /// hack for mssql - it requires names to start with #
+        $xmldb_table = $this->generator->tweakTempTable($xmldb_table);
+
     /// Check table doesn't exist
-        if ($this->table_exists($xmldb_table)) {
-            debugging('Table ' . $xmldb_table->getName() .
-                      ' already exists. Create skipped', DEBUG_DEVELOPER);
-            return $xmldb_table->getName(); //Table exists, nothing to do
+        if ($this->table_exists($xmldb_table, true)) {
+            debugging('Temporary table ' . $xmldb_table->getName() .
+                      ' already exists, dropping and recreating it.', DEBUG_DEVELOPER);
+            if (!$this->drop_temp_table($xmldb_table, $continue, $feedback)) {
+                return false;
+            }
         }
 
-        if (!$sqlarr = $this->generator->getCreateTableSQL($xmldb_table)) {
+        if (!$sqlarr = $this->generator->getCreateTempTableSQL($xmldb_table)) {
             return $xmldb_table->getName(); //Empty array = nothing to do = no error
         }
 
@@ -562,6 +542,38 @@ class database_manager {
         } else {
             return false;
         }
+    }
+
+    /**
+     * This function will drop the temporary table passed as argument with all its
+     * fields/keys/indexes/sequences, everything based in the XMLDB object
+     *
+     * It is recommended to drop temp table when not used anymore.
+     *
+     * @param xmldb_table table object
+     * @param boolean continue to specify if must continue on error (true) or stop (false)
+     * @param boolean feedback to specify to show status info (true) or not (false)
+     * @return string tablename on success, false on error
+     */
+    public function drop_temp_table($xmldb_table, $continue=true, $feedback=true) {
+        if (!($xmldb_table instanceof xmldb_table)) {
+            debugging('Incorrect create_table() $xmldb_table parameter');
+            return false;
+        }
+
+    /// mssql requires names to start with #
+        $xmldb_table = $this->generator->tweakTempTable($xmldb_table);
+
+    /// Check table doesn't exist
+        if (!$this->table_exists($xmldb_table, true)) {
+            return true;
+        }
+
+        if (!$sqlarr = $this->generator->getDropTempTableSQL($xmldb_table)) {
+            return false; // error
+        }
+
+        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
     }
 
     /**

@@ -63,6 +63,27 @@ class oracle_sql_generator extends sql_generator {
     }
 
     /**
+     * Given one correct xmldb_table, returns the SQL statements
+     * to create temporary table (inside one array)
+     */
+    public function getCreateTempTableSQL($xmldb_table) {
+        $sqlarr = $this->getCreateTableSQL($xmldb_table);
+        $sqlarr = preg_replace('/^CREATE TABLE/', "CREATE GLOBAL TEMPORARY TABLE", $sqlarr);
+        return $sqlarr;
+    }
+
+    /**
+     * Given one correct xmldb_table and the new name, returns the SQL statements
+     * to drop it (inside one array)
+     */
+    public function getDropTempTableSQL($xmldb_table) {
+        $sqlarr = $this->getDropTableSQL($xmldb_table);
+        $tablename = $xmldb_table->getName();
+        array_unshift($sqlarr, "TRUNCATE TABLE {".$tablename."}"); // oracle requires truncate before being able to drop a temp table
+        return $sqlarr;
+    }
+
+    /**
      * Given one XMLDB Type, lenght and decimals, returns the DB proper SQL type
      */
     public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null) {
@@ -109,50 +130,6 @@ class oracle_sql_generator extends sql_generator {
                 break;
         }
         return $dbtype;
-    }
-
-    /**
-     * This function will create the temporary table passed as argument with all its
-     * fields/keys/indexes/sequences, everything based in the XMLDB object
-     *
-     * TRUNCATE the table immediately after creation. A previous process using
-     * the same persistent connection may have created the temp table and failed to
-     * drop it. In that case, the table will exist, and create_temp_table() will
-     * will succeed.
-     *
-     * NOTE: The return value is the tablename - some DBs (MSSQL at least) use special
-     * names for temp tables.
-     *
-     * @uses $CFG, $db
-     * @param xmldb_table table object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return string tablename on success, false on error
-     */
-    function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect create_table() $xmldb_table parameter');
-            return false;
-        }
-
-    /// Check table doesn't exist
-        if ($this->table_exists($xmldb_table)) {
-            debugging('Table ' . $xmldb_table->getName() .
-                      ' already exists. Create skipped', DEBUG_DEVELOPER);
-            return $xmldb_table->getName(); //Table exists, nothing to do
-        }
-
-        if (!$sqlarr = $this->getCreateTableSQL($xmldb_table)) {
-            return $xmldb_table->getName(); //Empty array = nothing to do = no error
-        }
-
-        $sqlarr = preg_replace('/^CREATE/', "CREATE GLOBAL TEMPORARY", $sqlarr);
-
-        if (execute_sql_arr($sqlarr, $continue, $feedback)) {
-            return $xmldb_table->getName();
-        } else {
-            return false;
-        }
     }
 
     /**
