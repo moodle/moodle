@@ -67,7 +67,7 @@ function setup_enrolments(&$user) {
                 if($CFG->enrol_ldap_autocreate){ // autocreate
                     error_log("[ENROL_LDAP] CREATE User $user->username enrolled to a nonexistant course $course_ext_id \n");
                     $newcourseid = $this->create_course($enrol);
-                    $course_obj = $DB->get_record('course', array($this->enrol_localcoursefield=>$newcourseid));
+                    $course_obj = $DB->get_record('course', array('id'=>$newcourseid));
                 } else {
                     error_log("[ENROL_LDAP] User $user->username enrolled to a nonexistant course $course_ext_id \n");
                 }
