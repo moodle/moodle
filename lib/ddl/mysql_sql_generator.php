@@ -88,6 +88,8 @@ class mysql_sql_generator extends sql_generator {
      * @return boolean true/false
      */
     public function table_exists($table, $temptable=false) {
+        global $CFG;
+
         if (!$temptable) {
             return parent::table_exists($table, $temptable);
         }
@@ -99,14 +101,36 @@ class mysql_sql_generator extends sql_generator {
             $tablename = $table->getName();
         }
 
+    /// Do this function silenty (to avoid output in install/upgrade process)
+        $olddbdebug = $this->mdb->get_debug();
+        $this->mdb->set_debug(false);
+        $oldcfgdebug = $CFG->debug;
+        $CFG->debug = 0;
+
         // ugly hack - mysql does not list temporary tables :-(
+        // this polutes the db log with errors :-(
+        // TODO: is there a better way?
         if ($this->mdb->execute("DESCRIBE {".$tablename."}") === false) {
             $exists = false;
         } else {
             $exists = true;
         }
 
+    /// Re-set original debug
+        $this->mdb->set_debug($olddbdebug);
+        $CFG->debug = $oldcfgdebug;
+
         return $exists;
+    }
+
+    /**
+     * Given one correct xmldb_table, returns the SQL statements
+     * to create temporary table (inside one array)
+     */
+    public function getCreateTempTableSQL($xmldb_table) {
+        $sqlarr = $this->getCreateTableSQL($xmldb_table);
+        $sqlarr = preg_replace('/^CREATE TABLE (.*)/s', 'CREATE TEMPORARY TABLE $1 TYPE=MyISAM', $sqlarr);
+        return $sqlarr;
     }
 
     /**

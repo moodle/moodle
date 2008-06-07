@@ -180,6 +180,7 @@ abstract class sql_generator {
     /// get all tables in moodle database
         $tables = $this->mdb->get_tables();
         $exists = in_array($tablename, $tables);
+
     /// Re-set original debug
         $this->mdb->set_debug($olddbdebug);
 

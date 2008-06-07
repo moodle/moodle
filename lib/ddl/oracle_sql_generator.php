@@ -68,7 +68,7 @@ class oracle_sql_generator extends sql_generator {
      */
     public function getCreateTempTableSQL($xmldb_table) {
         $sqlarr = $this->getCreateTableSQL($xmldb_table);
-        $sqlarr = preg_replace('/^CREATE TABLE/', "CREATE GLOBAL TEMPORARY TABLE", $sqlarr);
+        $sqlarr = preg_replace('/^CREATE TABLE (.*)/s', 'CREATE GLOBAL TEMPORARY TABLE $1 ON COMMIT PRESERVE ROWS', $sqlarr);
         return $sqlarr;
     }
 
