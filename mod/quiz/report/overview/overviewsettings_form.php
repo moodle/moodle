@@ -6,7 +6,7 @@ class mod_quiz_report_overview_settings extends moodleform {
         global $COURSE;
         $mform    =& $this->_form;
 //-------------------------------------------------------------------------------
-        $mform->addElement('header', 'general', get_string('preferencespage', 'quiz_overview'));
+        $mform->addElement('header', 'preferencespage', get_string('preferencespage', 'quiz_overview'));
 
         $options = array();
         $options[QUIZ_REPORT_ATTEMPTS_ALL] = get_string('optallattempts','quiz_overview');
@@ -22,7 +22,7 @@ class mod_quiz_report_overview_settings extends moodleform {
             $mform->addElement('advcheckbox', 'qmfilter', get_string('show', 'quiz_overview'), get_string('optonlygradedattempts', 'quiz_overview', $gm), null, array(0,1));
         }
 //-------------------------------------------------------------------------------
-        $mform->addElement('header', 'general', get_string('preferencesuser', 'quiz_overview'));
+        $mform->addElement('header', 'preferencesuser', get_string('preferencesuser', 'quiz_overview'));
 
         $mform->addElement('text', 'pagesize', get_string('pagesize', 'quiz_overview'));
         $mform->setType('pagesize', PARAM_INT);
