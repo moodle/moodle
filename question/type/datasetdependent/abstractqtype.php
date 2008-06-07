@@ -334,7 +334,7 @@ class question_dataset_dependent_questiontype extends default_questiontype {
                     WHERE d.question = ?
                     AND   d.datasetdefinition = i.id
                    ";
-            if ($records = $DB->get_records_sql($sql, array($questionid->id))) {
+            if ($records = $DB->get_records_sql($sql, array($questionid))) {
                 foreach ($records as $r) {
                     $datasetdefs["$r->type-$r->category-$r->name"] = $r;
                 }
