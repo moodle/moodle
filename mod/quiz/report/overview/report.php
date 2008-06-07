@@ -132,12 +132,16 @@ class quiz_report extends quiz_default_report {
                 groups_print_activity_menu($cm, $reporturl->out(false, $displayoptions));
             }
         }
-
         // Print information on the number of existing attempts
         if (!$table->is_downloading()) { //do not print notices when downloading
             if ($strattemptnum = quiz_num_attempt_summary($quiz, $cm, true, $currentgroup)) {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
+        }
+        if (!$table->is_downloading()) {
+            // Print display options
+            $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
+            $mform->display();
         }
         if (!$students){
             notify(get_string('nostudentsyet'));
@@ -297,9 +301,6 @@ class quiz_report extends quiz_default_report {
         $table->out($pagesize, true);
         
         if (!$table->is_downloading()) {
-            // Print display options
-            $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
-            $mform->display();
             if (count($table->totalrows)){
                  $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
                  print_heading(get_string('overviewreportgraph', 'quiz_overview'));
