@@ -131,12 +131,12 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
             $count = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1
                                      FROM {course} WHERE category=' . $category->id);
             $count = $count->max + 100;
-            begin_sql();
+            $DB->begin_sql();
             foreach ($courses as $course) {
                 $DB->set_field('course', 'sortorder', $count, array('id'=>$course->id));
                 $count++;
             }
-            commit_sql();
+            $DB->commit_sql();
             fix_course_sortorder($category->id);
         }
     }
@@ -258,14 +258,14 @@ if ($id && !$categoryadd && !$categoryupdate && false) {
             }
 
             if ($swapcourse and $movecourse) {        // Renumber everything for robustness
-                begin_sql();
+                $DB->begin_sql();
                 if (!(    $DB->set_field("course", "sortorder", $max, aray("id"=>$swapcourse->id))
                        && $DB->set_field("course", "sortorder", $swapcourse->sortorder, array("id"=>$movecourse->id))
                        && $DB->set_field("course", "sortorder", $movecourse->sortorder, array("id"=>$swapcourse->id))
                     )) {
                     notify("Could not update that course!");
                 }
-                commit_sql();
+                $DB->commit_sql();
             }
 
         }
