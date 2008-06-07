@@ -1964,7 +1964,7 @@ function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course, $stri
     $url = hotpot_convert_url($baseurl, $reference, $url, false);
 
     // is this a $url for another hotpot in this course ?
-    if (preg_match("|^$baseurl(.*)$|", $url, $matches)) {
+    if (preg_match("|^".preg_quote($baseurl)."(.*)$|", $url, $matches)) {
         if ($records = get_records_select('hotpot', "course='$course' AND reference='".$matches[1]."'")) {
             $ids = array_keys($records);
             $url = "$CFG->wwwroot/mod/hotpot/view.php?hp=".$ids[0];
