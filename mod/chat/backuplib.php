@@ -23,13 +23,12 @@
 
     //This function executes all the backup procedure about this mod
     function chat_backup_mods($bf,$preferences) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Iterate over chat table
-        $chats = get_records ("chat","course",$preferences->backup_course,"id");
+        $chats = $DB->get_records ("chat", array("course"=>$preferences->backup_course), "id");
         if ($chats) {
             foreach ($chats as $chat) {
                 if (backup_mod_selected($preferences,'chat',$chat->id)) {
@@ -41,11 +40,10 @@
     }
 
     function chat_backup_one_mod($bf,$preferences,$chat) {
-
-        global $CFG;
+        global $CFG, $DB;
     
         if (is_numeric($chat)) {
-            $chat = get_record('chat','id',$chat);
+            $chat = $DB->get_record('chat', array('id'=>$chat));
         }
     
         $status = true;
@@ -74,12 +72,11 @@
 
     //Backup chat_messages contents (executed from chat_backup_mods)
     function backup_chat_messages ($bf,$preferences,$chat) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $chat_messages = get_records("chat_messages","chatid",$chat,"id");
+        $chat_messages = $DB->get_records("chat_messages", array("chatid"=>$chat), "id");
         //If there is messages
         if ($chat_messages) {
             //Write start tag
@@ -175,33 +172,29 @@
 
     //Returns an array of chats id 
     function chat_ids ($course) {
+        global $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT c.id, c.course
-                                 FROM {$CFG->prefix}chat c
-                                 WHERE c.course = '$course'");
+        return $DB->get_records_sql("SELECT c.id, c.course
+                                       FROM {chat} c
+                                      WHERE c.course = ?", array($course));
     }
     
     //Returns an array of assignment_submissions id
     function chat_message_ids_by_course ($course) {
+        global $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT m.id , m.chatid
-                                 FROM {$CFG->prefix}chat_messages m,
-                                      {$CFG->prefix}chat c
-                                 WHERE c.course = '$course' AND
-                                       m.chatid = c.id");
+        return $DB->get_records_sql("SELECT m.id , m.chatid
+                                       FROM {chat_messages} m, {chat} c
+                                      WHERE c.course = ? AND
+                                            m.chatid = c.id", array($course));
     }
 
     //Returns an array of chat id
     function chat_message_ids_by_instance ($instanceid) {
+        global $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT m.id , m.chatid
-                                 FROM {$CFG->prefix}chat_messages m
-                                 WHERE m.chatid = $instanceid");
+        return $DB->get_records_sql("SELECT m.id , m.chatid
+                                       FROM {chat_messages} m
+                                      WHERE m.chatid = ?", array($instanceid));
     }
 ?>

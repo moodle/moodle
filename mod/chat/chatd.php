@@ -204,6 +204,8 @@ class ChatDaemon {
     }
 
     function user_lazy_update($sessionid) {
+        global $DB;
+
         // TODO: this can and should be written as a single UPDATE query
         if(empty($this->sets_info[$sessionid])) {
             $this->trace('user_lazy_update() called for an invalid SID: '.$sessionid, E_USER_WARNING);
@@ -217,7 +219,7 @@ class ChatDaemon {
         if($now - $this->sets_info[$sessionid]['lastinfocommit'] > $this->_freq_update_records) {
             // commit to permanent storage
             $this->sets_info[$sessionid]['lastinfocommit'] = $now;
-            update_record('chat_users', $this->sets_info[$sessionid]['chatuser']);
+            $DB->update_record('chat_users', $this->sets_info[$sessionid]['chatuser']);
         }
         return true;
     }
@@ -320,7 +322,7 @@ class ChatDaemon {
     }
 
     function dispatch_sidekick($handle, $type, $sessionid, $customdata) {
-        global $CFG;
+        global $CFG, $DB;
 
         switch($type) {
             case CHAT_SIDEKICK_BEEP:
@@ -334,7 +336,7 @@ class ChatDaemon {
                 $msg->timestamp = time();
 
                 // Commit to DB
-                insert_record('chat_messages', $msg, false);
+                $DB->insert_record('chat_messages', $msg, false);
 
                 // OK, now push it out to all users
                 $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
@@ -425,10 +427,10 @@ class ChatDaemon {
 
                 // A slight hack to prevent malformed SQL inserts
                 $origmsg = $msg->message;
-                $msg->message = addslashes($msg->message);
+                $msg->message = $msg->message;
 
                 // Commit to DB
-                insert_record('chat_messages', $msg, false);
+                $DB->insert_record('chat_messages', $msg, false);
 
                 // Undo the hack
                 $msg->message = $origmsg;
@@ -467,31 +469,32 @@ class ChatDaemon {
     }
 
     function promote_final($sessionid, $customdata) {
+        global $DB;
+
         if(isset($this->conn_sets[$sessionid])) {
             $this->trace('Set cannot be finalized: Session '.$sessionid.' is already active');
             return false;
         }
 
-        $chatuser = get_record('chat_users', 'sid', $sessionid);
+        $chatuser = $DB->get_record('chat_users', array('sid'=>$sessionid));
         if($chatuser === false) {
             $this->dismiss_half($sessionid);
             return false;
         }
-        $chat = get_record('chat', 'id', $chatuser->chatid);
+        $chat = $DB->get_record('chat', array('id'=>$chatuser->chatid));
         if($chat === false) {
             $this->dismiss_half($sessionid);
             return false;
         }
-        $user = get_record('user', 'id', $chatuser->userid);
+        $user = $DB->get_record('user', array('id'=>$chatuser->userid));
         if($user === false) {
             $this->dismiss_half($sessionid);
             return false;
         }
-        $course = get_record('course', 'id', $chat->course); {
-       if($course === false) {
+        $course = $DB->get_record('course', array('id'=>$chat->course));
+        if($course === false) {
             $this->dismiss_half($sessionid);
             return false;
-            }
         }
 
         global $CHAT_HTMLHEAD_JS, $CFG;
@@ -531,7 +534,7 @@ class ChatDaemon {
 
         // Finally, broadcast the "entered the chat" message
 
-        $msg = &New stdClass;
+        $msg = new stdClass;
         $msg->chatid = $chatuser->chatid;
         $msg->userid = $chatuser->userid;
         $msg->groupid = $chatuser->groupid;
@@ -539,7 +542,7 @@ class ChatDaemon {
         $msg->message = 'enter';
         $msg->timestamp = time();
 
-        insert_record('chat_messages', $msg, false);
+        $DB->insert_record('chat_messages', $msg, false);
         $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
 
         return true;
@@ -732,9 +735,11 @@ class ChatDaemon {
     }
 
     function disconnect_session($sessionid) {
+        global $DB;
+
         $info = $this->sets_info[$sessionid];
 
-        delete_records('chat_users', 'sid', $sessionid);
+        $DB->delete_records('chat_users', array('sid'=>$sessionid));
         $msg = &New stdClass;
         $msg->chatid = $info['chatid'];
         $msg->userid = $info['userid'];
@@ -744,7 +749,7 @@ class ChatDaemon {
         $msg->timestamp = time();
 
         $this->trace('User has disconnected, destroying uid '.$info['userid'].' with SID '.$sessionid, E_USER_WARNING);
-        insert_record('chat_messages', $msg, false);
+        $DB->insert_record('chat_messages', $msg, false);
 
         // *************************** IMPORTANT
         //
@@ -957,7 +962,7 @@ else {
 $DAEMON->trace('Started Moodle chatd on port '.$CFG->chat_serverport.', listening socket '.$DAEMON->listen_socket, E_USER_WARNING);
 
 /// Clear the decks of old stuff
-delete_records('chat_users', 'version', 'sockets');
+$DB->delete_records('chat_users', array('version'=>'sockets'));
 
 while(true) {
     $active = array();

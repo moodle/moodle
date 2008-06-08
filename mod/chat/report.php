@@ -14,10 +14,10 @@
     if (! $cm = get_coursemodule_from_id('chat', $id)) {
         print_error('invalidcoursemodule');
     }
-    if (! $chat = get_record('chat', 'id', $cm->instance)) {
+    if (! $chat = $DB->get_record('chat', array('id'=>$cm->instance))) {
         print_error('invalidcoursemodule');
     }
-    if (! $course = get_record('course', 'id', $chat->course)) {
+    if (! $course = $DB->get_record('course', array('id'=>$chat->course))) {
         print_error('coursemisconf');
     }
 
@@ -48,9 +48,10 @@
         $currentgroup = groups_get_activity_group($cm, true);
         groups_print_activity_menu($cm, "report.php?id=$cm->id");
 
+        $params = array('currentgroup'=>$currentgroup, 'chatid'=>$chat->id, 'start'=>$start, 'end'=>$end);
 
         if ($currentgroup) {
-            $groupselect = " AND groupid = '$currentgroup'";
+            $groupselect = " AND groupid = :currentgroup";
         } else {
             $groupselect = "";
         }
@@ -61,9 +62,9 @@
                          "report.php?id=$cm->id");
         }
 
-        if (!$messages = get_records_select('chat_messages', "chatid = $chat->id AND
-                                                              timestamp >= '$start' AND
-                                                              timestamp <= '$end' $groupselect", "timestamp ASC")) {
+        if (!$messages = $DB->get_records_select('chat_messages', "chatid = :chatid AND
+                                                                   timestamp >= :start AND
+                                                                   timestamp <= :end $groupselect", "timestamp ASC", $params)) {
             print_heading(get_string('nomessages', 'chat'));
 
         } else {
@@ -104,8 +105,10 @@
         $currentgroup = false;
     }
 
+    $params = array('currentgroup'=>$currentgroup, 'chatid'=>$chat->id, 'start'=>$start, 'end'=>$end);
+
     if (!empty($currentgroup)) {
-        $groupselect = " AND groupid = '$currentgroup'";
+        $groupselect = " AND groupid = :currentgroup";
     } else {
         $groupselect = "";
     }
@@ -113,9 +116,8 @@
 /// Delete a session if one has been specified
 
     if ($deletesession and has_capability('mod/chat:deletelog', $context) and $confirmdelete and $start and $end and confirm_sesskey()) {
-        delete_records_select('chat_messages', "chatid = $chat->id AND
-                                            timestamp >= '$start' AND
-                                            timestamp <= '$end' $groupselect");
+        $DB->delete_records_select('chat_messages', "chatid = :chatid AND timestamp >= :start AND
+                                                     timestamp <= :end $groupselect", $params);
         $strdeleted  = get_string('deleted');
         notify("$strdeleted: ".userdate($start).' --> '. userdate($end));
         unset($deletesession);
@@ -125,7 +127,7 @@
 /// Get the messages
 
     if (empty($messages)) {   /// May have already got them above
-        if (!$messages = get_records_select('chat_messages', "chatid = '$chat->id' $groupselect", "timestamp DESC")) {
+        if (!$messages = $DB->get_records_select('chat_messages', "chatid = :chatid $groupselect", $params, "timestamp DESC")) {
             print_heading(get_string('nomessages', 'chat'));
             print_footer($course);
             exit;
@@ -171,7 +173,7 @@
 
                 arsort($sessionusers);
                 foreach ($sessionusers as $sessionuser => $usermessagecount) {
-                    if ($user = get_record('user', 'id', $sessionuser)) {
+                    if ($user = $DB->get_record('user', array('id'=>$sessionuser))) {
                         print_user_picture($user, $course->id, $user->picture);
                         echo '&nbsp;'.fullname($user, true); // XXX TODO  use capability instead of true
                         echo "&nbsp;($usermessagecount)<br />";

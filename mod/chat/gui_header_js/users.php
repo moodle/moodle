@@ -2,23 +2,23 @@
 
     $nomoodlecookie = true;     // Session not needed!
 
-    include('../../../config.php');
-    include('../lib.php');
+    require('../../../config.php');
+    require('../lib.php');
 
     $chat_sid   = required_param('chat_sid', PARAM_ALPHANUM);
     $beep       = optional_param('beep', 0, PARAM_INT);  // beep target
 
-    if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
+    if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
         print_error('notlogged', 'chat');
     }
 
     //Get the minimal course
-    if (!$course = get_record('course','id',$chatuser->course,'','','','','id,theme,lang')) {
+    if (!$course = $DB->get_record('course', array('id'=>$chatuser->course), 'id,theme,lang')) {
         print_error('invalidcourseid');
     }
 
     //Get the user theme and enough info to be used in chat_format_message() which passes it along to
-    if (!$USER = get_record('user','id',$chatuser->userid)) { // no optimisation here, it would break again in future!
+    if (!$USER = $DB->get_record('user', array('id'=>$chatuser->userid))) { // no optimisation here, it would break again in future!
         print_error('invaliduser');
     }
     $USER->description = '';
@@ -40,7 +40,7 @@
         $message->system    = 0;
         $message->timestamp = time();
 
-        if (!insert_record('chat_messages', $message)) {
+        if (!$DB->insert_record('chat_messages', $message)) {
             print_error('cantinsert', 'chat');
         }
 
@@ -48,7 +48,7 @@
     }
 
     $chatuser->lastping = time();
-    set_field('chat_users', 'lastping', $chatuser->lastping, 'id', $chatuser->id  );
+    $DB->set_field('chat_users', 'lastping', $chatuser->lastping, array('id'=>$chatuser->id));
 
     $refreshurl = "users.php?chat_sid=$chat_sid";
 

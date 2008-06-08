@@ -103,7 +103,7 @@
         
         // ping first so we can later shortcut as needed.
         $chatuser->lastping = time();
-        set_field('chat_users', 'lastping', $chatuser->lastping, 'id', $chatuser->id  );
+        $DB->set_field('chat_users', 'lastping', $chatuser->lastping, array('id'=>$chatuser->id));
 
         if ($message = chat_get_latest_message($chatuser->chatid, $chatuser->groupid)) {
             $chat_newlasttime = $message->timestamp;
@@ -120,21 +120,21 @@
 
         $timenow    = time();
                 
-                
-        $groupselect = $chatuser->groupid ? " AND (groupid='".$chatuser->groupid."' OR groupid='0') " : "";
+        $params = array('groupid'=>$chatuser->groupid, 'lastid'=>$chat_lastid, 'lasttime'=>$chat_lasttime, 'chatid'=>$chatuser->chatid);
+        $groupselect = $chatuser->groupid ? " AND (groupid=:groupid OR groupid=0) " : "";
 
         $newcriteria = '';
         if ($chat_lastid > 0) {
-            $newcriteria = "id > $chat_lastid";
+            $newcriteria = "id > :lastid";
         } else {
             if ($chat_lasttime == 0) { //display some previous messages
                 $chat_lasttime = $timenow - $CFG->chat_old_ping; //TO DO - any better value??
             }
-            $newcriteria = "timestamp > $chat_lasttime";
+            $newcriteria = "timestamp > :lasttime";
         }
         
         $messages = $DB->get_records_select("chat_messages",
-                                       "chatid = '$chatuser->chatid' AND $newcriteria $groupselect", null,
+                                       "chatid = :chatid AND $newcriteria $groupselect", $params,
                                        "timestamp ASC");
         
         if ($messages) {

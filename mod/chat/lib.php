@@ -124,35 +124,31 @@ function chat_user_outline($course, $user, $mod, $chat) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
-
-    $return = NULL;
-    return $return;
+    return NULL;
 }
 
 function chat_user_complete($course, $user, $mod, $chat) {
 /// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
-
     return true;
 }
 
 function chat_print_recent_activity($course, $viewfullnames, $timestart) {
 /// Given a course and a date, prints a summary of all chat rooms past and present
 /// This function is called from course/lib.php: print_recent_activity()
-
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     // this is approximate only, but it is really fast ;-)
     $timeout = $CFG->chat_old_ping * 10;
 
-    if (!$mcms = get_records_sql("SELECT cm.id, MAX(chm.timestamp) AS lasttime
-                                    FROM {$CFG->prefix}course_modules cm
-                                         JOIN {$CFG->prefix}modules md        ON md.id = cm.module
-                                         JOIN {$CFG->prefix}chat ch           ON ch.id = cm.instance
-                                         JOIN {$CFG->prefix}chat_messages chm ON chm.chatid = ch.id
-                                   WHERE chm.timestamp > $timestart AND ch.course = {$course->id} AND md.name = 'chat'
-                                GROUP BY cm.id
-                                ORDER BY lasttime ASC")) {
+    if (!$mcms = $DB->get_records_sql("SELECT cm.id, MAX(chm.timestamp) AS lasttime
+                                         FROM {course_modules} cm
+                                         JOIN {modules} md        ON md.id = cm.module
+                                         JOIN {chat} ch           ON ch.id = cm.instance
+                                         JOIN {chat_messages} chm ON chm.chatid = ch.id
+                                        WHERE chm.timestamp > ? AND ch.course = ? AND md.name = 'chat'
+                                     GROUP BY cm.id
+                                     ORDER BY lasttime ASC", array($timestart, $course->id))) {
          return false;
     }
 
@@ -195,13 +191,13 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
         $mygroupids = implode(',', $mygroupids);
         $cm->mygroupids = $mygroupids;
 
-        if (!$mcm = get_record_sql("SELECT cm.id, MAX(chm.timestamp) AS lasttime
-                                      FROM {$CFG->prefix}course_modules cm
-                                           JOIN {$CFG->prefix}chat ch           ON ch.id = cm.instance
-                                           JOIN {$CFG->prefix}chat_messages chm ON chm.chatid = ch.id
-                                     WHERE chm.timestamp > $timestart AND cm.id = {$cm->id} AND
-                                           (chm.groupid IN ($mygroupids) OR chm.groupid = 0)
-                                  GROUP BY cm.id")) {
+        if (!$mcm = $DB->get_record_sql("SELECT cm.id, MAX(chm.timestamp) AS lasttime
+                                           FROM {course_modules} cm
+                                           JOIN {chat} ch           ON ch.id = cm.instance
+                                           JOIN {chat_messages} chm ON chm.chatid = ch.id
+                                          WHERE chm.timestamp > ? AND cm.id = ? AND
+                                                (chm.groupid IN ($mygroupids) OR chm.groupid = 0)
+                                       GROUP BY cm.id", array($timestart, $cm->id))) {
              continue;
         }
 
@@ -240,7 +236,9 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
         $timeoldext = time() - ($CFG->chat_old_ping*10); // JSless gui_basic needs much longer timeouts
         $timeoldext = floor($timeoldext/10)*10;  // better db caching
 
-        $timeout = "AND (chu.version<>'basic' AND chu.lastping>$timeold) OR (chu.version='basic' AND chu.lastping>$timeoldext)";
+        $params = array('timeold'=>$timeold, 'timeoldext'=>$timeoldext, 'cmid'=>$cm->id);
+
+        $timeout = "AND (chu.version<>'basic' AND chu.lastping>:timeold) OR (chu.version='basic' AND chu.lastping>:timeoldext)";
 
         foreach ($current as $cm) {
             //count users first
@@ -250,13 +248,13 @@ function chat_print_recent_activity($course, $viewfullnames, $timestart) {
                 $groupselect = "";
             }
 
-            if (!$users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email, u.picture
-                                             FROM {$CFG->prefix}course_modules cm
-                                             JOIN {$CFG->prefix}chat ch        ON ch.id = cm.instance
-                                             JOIN {$CFG->prefix}chat_users chu ON chu.chatid = ch.id
-                                             JOIN {$CFG->prefix}user u         ON u.id = chu.userid
-                                            WHERE cm.id = {$cm->id} $timeout $groupselect
-                                         GROUP BY u.id, u.firstname, u.lastname, u.email, u.picture")) {
+            if (!$users = $DB->get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email, u.picture
+                                                  FROM {course_modules} cm
+                                                  JOIN {chat} ch        ON ch.id = cm.instance
+                                                  JOIN {chat_users} chu ON chu.chatid = ch.id
+                                                  JOIN {user} u         ON u.id = chu.userid
+                                                 WHERE cm.id = :cmid $timeout $groupselect
+                                              GROUP BY u.id, u.firstname, u.lastname, u.email, u.picture", $params)) {
             }
 
             $link = $CFG->wwwroot.'/mod/chat/view.php?id='.$cm->id;
@@ -284,8 +282,7 @@ function chat_cron () {
 /// Function to be run periodically according to the moodle cron
 /// This function searches for things that need to be done, such
 /// as sending out mail, toggling flags etc ...
-
-    global $CFG;
+    global $DB;
 
     chat_update_chat_times();
 
@@ -294,14 +291,14 @@ function chat_cron () {
     /// Delete old messages with a
     /// single SQL query.
     $subselect = "SELECT c.keepdays
-                    FROM {$CFG->prefix}chat c
-                   WHERE c.id = {$CFG->prefix}chat_messages.chatid";
+                    FROM {chat} c
+                   WHERE c.id = {chat_messages}.chatid";
 
     $sql = "DELETE
-              FROM {$CFG->prefix}chat_messages
+              FROM {chat_messages}
              WHERE ($subselect) > 0 AND timestamp < ( ".time()." -($subselect) * 24 * 3600)"; 
 
-    execute_sql($sql, false);
+    $DB->execute($sql);
 
     return true;
 }
@@ -309,21 +306,21 @@ function chat_cron () {
 function chat_get_participants($chatid, $groupid=0) {
 //Returns the users with data in one chat
 //(users with records in chat_messages, students)
+    global $DB;
 
-    global $CFG;
+    $params = array('groupid'=>$groupid, 'chatid'=>$chatid);
 
     if ($groupid) {
-        $groupselect = " AND (c.groupid='$groupid' OR c.groupid='0')";
+        $groupselect = " AND (c.groupid=:groupid OR c.groupid='0')";
     } else {
         $groupselect = "";
     }
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.id, u.id
-                                 FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}chat_messages c
-                                 WHERE c.chatid = '$chatid' $groupselect
-                                   AND u.id = c.userid");
+    $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                        FROM {user} u, {chat_messages} c
+                                       WHERE c.chatid = :chatid $groupselect
+                                             AND u.id = c.userid", $params);
 
     //Return students array (it contains an array of unique users)
     return ($students);
@@ -335,25 +332,26 @@ function chat_refresh_events($courseid = 0) {
 // If courseid = 0, then every chat event in the site is checked, else
 // only chat events belonging to the course specified are checked.
 // This function is used, in its new format, by restore_refresh_events()
+    global $DB;
 
     if ($courseid) {
-        if (! $chats = get_records("chat", "course", $courseid)) {
+        if (! $chats = $DB->get_records("chat", array("course"=>$courseid))) {
             return true;
         }
     } else {
-        if (! $chats = get_records("chat")) {
+        if (! $chats = $DB->get_records("chat")) {
             return true;
         }
     }
-    $moduleid = get_field('modules', 'id', 'name', 'chat');
+    $moduleid = $DB->get_field('modules', 'id', array('name'=>'chat'));
 
     foreach ($chats as $chat) {
         $event = NULL;
-        $event->name        = addslashes($chat->name);
-        $event->description = addslashes($chat->intro);
+        $event->name        = $chat->name;
+        $event->description = $chat->intro;
         $event->timestart   = $chat->chattime;
 
-        if ($event->id = get_field('event', 'id', 'modulename', 'chat', 'instance', $chat->id)) {
+        if ($event->id = $DB->get_field('event', 'id', array('modulename'=>'chat', 'instance'=>$chat->id))) {
             update_event($event);
 
         } else {
@@ -364,7 +362,7 @@ function chat_refresh_events($courseid = 0) {
             $event->instance    = $chat->id;
             $event->eventtype   = $chat->schedule;
             $event->timeduration = 0;
-            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $chat->id);
+            $event->visible     = $DB->get_field('course_modules', 'visible', array('module'=>$moduleid, 'instance'=>$chat->id));
 
             add_event($event);
         }
@@ -377,50 +375,49 @@ function chat_refresh_events($courseid = 0) {
 /// Functions that require some SQL
 
 function chat_get_users($chatid, $groupid=0, $groupingid=0) {
+    global $DB;
 
-    global $CFG;
+    $params = array('chatid'=>$chatid, 'groupid'=>$groupid, 'groupingid'=>$groupingid);
 
     if ($groupid) {
-        $groupselect = " AND (c.groupid='$groupid' OR c.groupid='0')";
+        $groupselect = " AND (c.groupid=:groupid OR c.groupid='0')";
     } else {
         $groupselect = "";
     }
     
     if (!empty($CFG->enablegroupings) && !(empty($groupingid))) {
-        $groupingjoin = "INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid
-                         INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid AND gg.groupingid = $groupingid ";
+        $groupingjoin = "JOIN {groups_members} gm ON u.id = gm.userid
+                         JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
         
     } else {
         $groupingjoin = '';
     }
 
-    return get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping, u.imagealt
-                              FROM {$CFG->prefix}chat_users c
-                                INNER JOIN {$CFG->prefix}user u ON u.id = c.userid
-                                $groupingjoin
-                             WHERE c.chatid = '$chatid'
-                                $groupselect
-                             ORDER BY c.firstping ASC");
+    return $DB->get_records_sql("SELECT DISTINCT u.id, u.firstname, u.lastname, u.picture, c.lastmessageping, c.firstping, u.imagealt
+                                  FROM {chat_users} c
+                                  JOIN {user} u ON u.id = c.userid
+                         $groupingjoin
+                                 WHERE c.chatid = :chatid
+                                       $groupselect
+                              ORDER BY c.firstping ASC", $params);
 }
 
 function chat_get_latest_message($chatid, $groupid=0) {
     global $DB;
 
-    $params = array();
+    $params = array('chatid'=>$chatid, 'groupid'=>$groupid);
 
     if ($groupid) {
-        $groupselect = " AND (groupid=? OR groupid=0)";
-        $params[] = $groupid;
+        $groupselect = "AND (groupid=:groupid OR groupid=0)";
     } else {
         $groupselect = "";
     }
 
     $sql = "SELECT *
               FROM {chat_messages}
-             WHERE chatid = ?
+             WHERE chatid = :chatid
                    $groupselect
           ORDER BY timestamp DESC";
-    $params[] = $chatid;
 
     return $DB->get_record_sql($sql, $params, true);
 }
@@ -430,8 +427,9 @@ function chat_get_latest_message($chatid, $groupid=0) {
 // login if not already logged in
 
 function chat_login_user($chatid, $version, $groupid, $course) {
-    global $USER;
-    if (($version != 'sockets') and $chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid'")) {
+    global $USER, $DB;
+
+    if (($version != 'sockets') and $chatuser = $DB->get_record('chat_users', array('chatid'=>$chatid, 'userid'=>$USER->id, 'groupid'=>$groupid))) {
         $chatuser->version  = $version;
         $chatuser->ip       = $USER->lastip;
         $chatuser->lastping = time();
@@ -451,7 +449,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
          or ($chatuser->userid != $USER->id)) {
             return false;
         }
-        if (!update_record('chat_users', $chatuser)) {
+        if (!$DB->update_record('chat_users', $chatuser)) {
             return false;
         }
     } else {
@@ -477,7 +475,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         }
 
 
-        if (!insert_record('chat_users', $chatuser)) {
+        if (!$DB->insert_record('chat_users', $chatuser)) {
             return false;
         }
 
@@ -492,7 +490,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
             $message->system    = 1;
             $message->timestamp = time();
 
-            if (!insert_record('chat_messages', $message)) {
+            if (!$DB->insert_record('chat_messages', $message)) {
                 print_error('cantinsert', 'chat');
             }
         }
@@ -503,16 +501,16 @@ function chat_login_user($chatid, $version, $groupid, $course) {
 
 function chat_delete_old_users() {
 // Delete the old and in the way
-
-    global $CFG;
+    global $CFG, $DB;
 
     $timeold = time() - $CFG->chat_old_ping;
     $timeoldext = time() - ($CFG->chat_old_ping*10); // JSless gui_basic needs much longer timeouts
 
-    $query = "(version<>'basic' AND lastping<'$timeold') OR (version='basic' AND lastping<'$timeoldext')";
+    $query = "(version<>'basic' AND lastping<?) OR (version='basic' AND lastping<?)";
+    $params = array($timeold, $timeoldext);
 
-    if ($oldusers = get_records_select('chat_users', $query) ) {
-        delete_records_select('chat_users', $query);
+    if ($oldusers = $DB->get_records_select('chat_users', $query, $params) ) {
+        $DB->delete_records_select('chat_users', $query, $params);
         foreach ($oldusers as $olduser) {
             $message = new object();
             $message->chatid    = $olduser->chatid;
@@ -522,7 +520,7 @@ function chat_delete_old_users() {
             $message->system    = 1;
             $message->timestamp = time();
 
-            if (!insert_record('chat_messages', $message)) {
+            if (!$DB->insert_record('chat_messages', $message)) {
                 print_error('cantinsert', 'chat');
             }
         }
@@ -532,14 +530,18 @@ function chat_delete_old_users() {
 
 function chat_update_chat_times($chatid=0) {
 /// Updates chat records so that the next chat time is correct
+    global $DB;
 
     $timenow = time();
+
+    $params = array('timenow'=>$timenow, 'chatid'=>$chatid);
+
     if ($chatid) {
-        if (!$chats[] = get_record_select("chat", "id = '$chatid' AND chattime <= '$timenow' AND schedule > '0'")) {
+        if (!$chats[] = $DB->get_record_select("chat", "id = :chatid AND chattime <= :timenow AND schedule > 0", $params)) {
             return;
         }
     } else {
-        if (!$chats = get_records_select("chat", "chattime <= '$timenow' AND schedule > '0'")) {
+        if (!$chats = $DB->get_records_select("chat", "chattime <= :timenow AND schedule > 0", $params)) {
             return;
         }
     }
@@ -563,12 +565,14 @@ function chat_update_chat_times($chatid=0) {
                     }
                     break;
         }
-        update_record("chat", $chat);
+        $DB->update_record("chat", $chat);
 
-        $event = NULL;           // Update calendar too
-        $cond = "modulename='chat' AND instance = {$chat->id} 
-                 AND timestart != {$chat->chattime}";
-        if ($event->id = get_field_select('event', 'id', $cond)) {
+        $event = new object();           // Update calendar too
+
+        $cond = "modulename='chat' AND instance = :chatid AND timestart <> :chattime";
+        $params = array('chattime'=>$chat->chattime, 'chatid'=>$chatid);
+
+        if ($event->id = $DB->get_field_select('event', 'id', $cond, $params)) {
             $event->timestart   = $chat->chattime;
             update_event($event);
         }
@@ -688,12 +692,13 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
 /// Given a message object full of information, this function
 /// formats it appropriately into text and html, then
 /// returns the formatted data.
+    global $DB;
 
     static $users;     // Cache user lookups
 
     if (isset($users[$message->userid])) {
         $user = $users[$message->userid];
-    } else if ($user = get_record('user', 'id', $message->userid, '','','','','id,picture,firstname,lastname')) {
+    } else if ($user = $DB->get_record('user', array('id'=>$message->userid), 'id,picture,firstname,lastname')) {
         $users[$message->userid] = $user;
     } else {
         return NULL;
@@ -765,18 +770,19 @@ function chat_reset_course_form_defaults($course) {
  * @return array status array
  */
 function chat_reset_userdata($data) {
-    global $CFG;
+    global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', 'chat');
     $status = array();
 
     if (!empty($data->reset_chat)) {
         $chatessql = "SELECT ch.id
-                        FROM {$CFG->prefix}chat ch
-                       WHERE ch.course={$data->courseid}";
+                        FROM {chat} ch
+                       WHERE ch.course=?";
+        $params = array($data->courseid);
 
-        delete_records_select('chat_messages', "chatid IN ($chatessql)");
-        delete_records_select('chat_users', "chatid IN ($chatessql)");
+        $DB->delete_records_select('chat_messages', "chatid IN ($chatessql)", $params);
+        $DB->delete_records_select('chat_users', "chatid IN ($chatessql)", $params);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('removemessages', 'chat'), 'error'=>false);
     }
 

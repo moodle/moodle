@@ -7,12 +7,12 @@
 
     $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
 
-    if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
+    if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
         print_error('Not logged in!');
     }
 
     //Get the user theme
-    $USER = get_record('user', 'id', $chatuser->userid);
+    $USER = $DB->get_record('user', array('id'=>$chatuser->userid));
 
     //Setup course, lang and theme
     course_setup($chatuser->course);

@@ -45,10 +45,12 @@
 
     $timenow    = time();
 
-    $groupselect = $chatuser->groupid ? " AND (groupid='".$chatuser->groupid."' OR groupid='0') " : "";
+    $params = array('groupid'=>$chatuser->groupid, 'chatid'=>$chatuser->chatid, 'lasttime'=>$chat_lasttime); 
+
+    $groupselect = $chatuser->groupid ? " AND (groupid=:groupid OR groupid=0) " : "";
 
     $messages = $DB->get_records_select("chat_messages",
-                        "chatid = '$chatuser->chatid' AND timestamp > '$chat_lasttime' $groupselect", null,
+                        "chatid = :chatid AND timestamp > :lasttime $groupselect", $params,
                         "timestamp ASC");
 
     if ($messages) {
@@ -119,7 +121,7 @@
         }
 
         $chatuser->lastping = time();
-        set_field('chat_users', 'lastping', $chatuser->lastping, 'id', $chatuser->id  );
+        $DB->set_field('chat_users', 'lastping', $chatuser->lastping, array('id'=>$chatuser->id));
 
         if ($refreshusers) {
             echo "if (parent.users.document.anchors[0] != null) {" .

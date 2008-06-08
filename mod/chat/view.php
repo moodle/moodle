@@ -32,7 +32,7 @@
         if (! $chat = $DB->get_record('chat', array('id'=>$c))) {
             print_error('coursemisconf');
         }
-        if (! $course = get_record('course', array('id'=>$chat->course))) {
+        if (! $course = $DB->get_record('course', array('id'=>$chat->course))) {
             print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
@@ -113,10 +113,8 @@
                 groups_print_activity_menu($cm, "view.php?id=$cm->id");
 
                 if ($currentgroup) {
-                    $groupselect = " AND groupid = '$currentgroup'";
                     $groupparam = "&amp;groupid=$currentgroup";
                 } else {
-                    $groupselect = "";
                     $groupparam = "";
                 }
 

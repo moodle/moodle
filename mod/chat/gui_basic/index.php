@@ -52,7 +52,7 @@
         print_error('errornousers', 'chat');
     }
 
-    set_field('chat_users', 'lastping', time(), 'sid', $chat_sid);
+    $DB->set_field('chat_users', 'lastping', time(), array('sid'=>$chat_sid));
 
     if (!isset($SESSION->chatprefs)) {
         $SESSION->chatprefs = array();
@@ -80,11 +80,11 @@
             $newmessage->systrem = 0;
             $newmessage->message = $message;
             $newmessage->timestamp = time();
-            if (!insert_record('chat_messages', $newmessage)) {
+            if (!$DB->insert_record('chat_messages', $newmessage)) {
                 print_error('cantinsert', 'chat');
             }
 
-            set_field('chat_users', 'lastmessageping', time(), 'sid', $chat_sid);
+            $DB->set_field('chat_users', 'lastmessageping', time(), array('sid'=>$chat_sid));
 
             add_to_log($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id);
         }
@@ -141,15 +141,18 @@
     $options->para = false;
     $options->newlines = true;
 
+    $params = array('last'=>$last, 'groupid'=>$groupid, 'chatid'=>$chat->id, 'chatentered'=>$chatentered); 
+
     if ($newonly) {
-        $lastsql = "AND timestamp > $last";
+        $lastsql = "AND timestamp > :last";
     } else {
         $lastsql = "";
     }
 
-    $groupselect = $groupid ? "AND (groupid='$groupid' OR groupid='0')" : "";
+    $groupselect = $groupid ? "AND (groupid=:groupid OR groupid=0)" : "";
+
     $messages = $DB->get_records_select("chat_messages",
-                        "chatid = '$chat->id' AND timestamp > $chatentered $lastsql $groupselect", null,
+                        "chatid = :chatid AND timestamp > :chatentered $lastsql $groupselect", $params,
                         "timestamp DESC");
 
     if ($messages) {

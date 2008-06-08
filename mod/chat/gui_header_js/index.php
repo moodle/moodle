@@ -6,11 +6,11 @@
     $id      = required_param('id', PARAM_INT);
     $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
 
-    if (!$chat = get_record('chat', 'id', $id)) {
+    if (!$chat = $DB->get_record('chat', array('id'=>$id))) {
         print_error('invalidid', 'chat');
     }
 
-    if (!$course = get_record('course', 'id', $chat->course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
         print_error('invalidcourseid');
     }
 

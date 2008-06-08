@@ -6,15 +6,15 @@
     $chat_sid     = required_param('chat_sid', PARAM_ALPHANUM);
     $chat_message = required_param('chat_message', PARAM_RAW);
 
-    if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
+    if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
         print_error('Not logged in!');
     }
 
-    if (!$chat = get_record('chat', 'id', $chatuser->chatid)) {
+    if (!$chat = $DB->get_record('chat', array('id'=>$chatuser->chatid))) {
         print_error('No chat found');
     }
 
-    if (!$course = get_record('course', 'id', $chat->course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
         print_error('Could not find the course this belongs to!');
     }
 
@@ -36,7 +36,7 @@
 
 /// Clean up the message
 
-    $chat_message = addslashes(clean_text(stripslashes($chat_message), FORMAT_MOODLE));  // Strip bad tags
+    $chat_message = clean_text(stripslashes($chat_message), FORMAT_MOODLE);  // Strip bad tags
 
 /// Add the message to the database
 
@@ -49,12 +49,12 @@
         $message->message = $chat_message;
         $message->timestamp = time();
 
-        if (!insert_record('chat_messages', $message)) {
+        if (!$DB->insert_record('chat_messages', $message)) {
             print_error('Could not insert a chat message!');
         }
 
         $chatuser->lastmessageping = time() - 2;
-        update_record('chat_users', $chatuser);
+        $DB->update_record('chat_users', $chatuser);
 
         if ($cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
             add_to_log($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id);
