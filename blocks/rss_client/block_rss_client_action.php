@@ -73,7 +73,11 @@ if (empty($course)) {
     $link = '';
 }
 $navlinks = array();
-// $navlinks = array(array('name' => $course->shortname, 'link' => $link, 'type' => 'misc'));
+$navlinks = array(array('name' => get_string('administration'), 'link' => "$CFG->wwwroot/$CFG->admin/index.php", 'type' => 'misc'));
+$navlinks[] = array('name' => get_string('managemodules'), 'link' => null, 'type' => 'misc');
+$navlinks[] = array('name' => get_string('blocks'), 'link' => null, 'type' => 'misc');
+$navlinks[] = array('name' => get_string('feedstitle', 'block_rss_client'), 'link' => "$CFG->wwwroot/$CFG->admin/settings.php?section=blocksettingrss_client", 'type' => 'misc');
+$navlinks[] = array('name' => get_string('addnew', 'block_rss_client'), 'link' => null,  'type' => 'misc');
 $navigation = build_navigation($navlinks);
 print_header($straddedit, $straddedit, $navigation);
 
