@@ -11,6 +11,8 @@
     $student = optional_param('student', 0, PARAM_INT);   // Student ID
     $notes   = optional_param('notes', '', PARAM_RAW);    // Save teachers notes
 
+    $notes = stripslashes($notes); // TODO: remove soon
+
     $qids = explode(',', $qid);
     $qids = clean_param($qids, PARAM_INT);
     $qid = implode (',', $qids);
@@ -19,7 +21,7 @@
         print_error("Course Module ID was incorrect");
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error("Course is misconfigured");
     }
 
@@ -29,11 +31,11 @@
 
     require_capability('mod/survey:readresponses', $context);
 
-    if (! $survey = get_record("survey", "id", $cm->instance)) {
+    if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
         print_error("Survey ID was incorrect");
     }
 
-    if (! $template = get_record("survey", "id", $survey->template)) {
+    if (! $template = $DB->get_record("survey", array("id"=>$survey->template))) {
         print_error("Template ID was incorrect");
     }
 
@@ -177,7 +179,7 @@
             $questions = $DB->get_record("survey_questions", "id", $qid);
             $questionorder = explode(",", $qid);
 
-            if ($scale = get_records("survey_questions", "multi", "$qid")) {
+            if ($scale = $DB->get_records("survey_questions", array("multi"=>$qid))) {
                 $scale = array_pop($scale);
                 print_heading("$scale->text - $strselectedquestions");
             } else {
@@ -260,7 +262,7 @@
         break;
 
       case "question":
-        if (!$question = get_record("survey_questions", "id", $qid)) {
+        if (!$question = $DB->get_record("survey_questions", array("id"=>$qid))) {
             print_error("Question doesn't exist");
         }
         $question->text = get_string($question->text, "survey");
@@ -320,7 +322,7 @@
         break;
 
       case "student":
-         if (!$user = get_record("user", "id", $student)) {
+         if (!$user = $DB->get_record("user", array("id"=>$student))) {
              print_error("Student doesn't exist");
          }
 

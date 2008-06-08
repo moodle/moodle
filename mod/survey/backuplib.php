@@ -23,13 +23,12 @@
     //-----------------------------------------------------------
 
     function survey_backup_mods($bf,$preferences) {
-
-        global $CFG;
+        global $DB;
 
         $status = true;
 
         //Iterate over survey table
-        $surveys = get_records ("survey","course",$preferences->backup_course,"id");
+        $surveys = $DB->get_records ("survey", array("course"=>$preferences->backup_course),"id");
         if ($surveys) {
             foreach ($surveys as $survey) {
                 if (backup_mod_selected($preferences,'survey',$survey->id)) {
@@ -41,11 +40,12 @@
     }
 
     function survey_backup_one_mod($bf,$preferences,$survey) {
+        global $DB;
         
         $status = true;
         
         if (is_numeric($survey)) {
-            $survey = get_record('survey','id',$survey);
+            $survey = $DB->get_record('survey', array('id'=>$survey));
         }
         
         //Start mod
@@ -74,12 +74,11 @@
 
     //Backup survey_answers contents (executed from survey_backup_mods)
     function backup_survey_answers ($bf,$preferences,$survey) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $survey_answers = get_records("survey_answers","survey",$survey,"id");
+        $survey_answers = $DB->get_records("survey_answers", array("survey"=>$survey), "id");
         //If there is answers
         if ($survey_answers) {
             //Write start tag
@@ -106,12 +105,11 @@
 
     //Backup survey_analysis contents (executed from survey_backup_mods)
     function backup_survey_analysis ($bf,$preferences,$survey) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $survey_analysis = get_records("survey_analysis","survey",$survey,"id");
+        $survey_analysis = $DB->get_records("survey_analysis", array("survey"=>$survey,"id"));
         //If there is analysis
         if ($survey_analysis) {
             //Write start tag
@@ -202,33 +200,28 @@
 
     //Returns an array of surveys id
     function survey_ids ($course) {
+        global $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT a.id, a.course
-                                 FROM {$CFG->prefix}survey a
-                                 WHERE a.course = '$course'");
+        return $DB->get_records_sql ("SELECT a.id, a.course
+                                        FROM {survey} a
+                                       WHERE a.course = ?", array($course));
     }
 
     //Returns an array of survey answer id
     function survey_answer_ids_by_course ($course) {
+        global $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.survey
-                                 FROM {$CFG->prefix}survey_answers s,
-                                      {$CFG->prefix}survey a
-                                 WHERE a.course = '$course' AND
-                                       s.survey = a.id");
+        return $DB->get_records_sql ("SELECT s.id , s.survey
+                                        FROM {survey_answers} s, {survey} a
+                                       WHERE a.course = ? AND s.survey = a.id", array($course));
     }
 
     function survey_answer_ids_by_instance ($instanceid) {
+        global $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.survey
-                                 FROM {$CFG->prefix}survey_answers s
-                                 WHERE s.survey = $instanceid");
+        return $DB->get_records_sql ("SELECT s.id , s.survey
+                                        FROM {survey_answers} s
+                                       WHERE s.survey = ?", array($instanceid));
     }
 
 ?>

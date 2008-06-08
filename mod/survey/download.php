@@ -8,11 +8,11 @@
     $type  = optional_param('type', 'xls', PARAM_ALPHA);
     $group = optional_param('group', 0, PARAM_INT);
 
-    if (! $cm = get_record("course_modules", "id", $id)) {
+    if (! $cm = $DB->get_record("course_modules", array("id"=>$id))) {
         print_error("Course Module ID was incorrect");
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error("Course is misconfigured");
     }
 
@@ -21,7 +21,7 @@
     require_login($course->id, false, $cm);
     require_capability('mod/survey:download', $context) ;
 
-    if (! $survey = get_record("survey", "id", $cm->instance)) {
+    if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
         print_error("Survey ID was incorrect");
     }
 
@@ -84,7 +84,6 @@
         }
     }
 
-    $order     = explode(",", $fullorderlist);
     $questions = $fullquestions;
 
 //  Translate all the question texts
@@ -96,21 +95,21 @@
 
 // Get and collate all the results in one big array
 
-    if (! $aaa = get_records("survey_answers", "survey", "$survey->id", "time ASC")) {
+    if (! $aaa = $DB->get_records("survey_answers", array("survey"=>$survey->id), "time ASC")) {
         print_error("There are no answers for this survey yet.");
     }
 
     foreach ($aaa as $a) {
         if (!$group or isset($users[$a->userid])) {
-            if (empty($results["$a->userid"])) { // init new array
-                $results["$a->userid"]["time"] = $a->time;
-                foreach ($order as $key => $qid) {
-                    $results["$a->userid"]["$qid"]["answer1"] = "";
-                    $results["$a->userid"]["$qid"]["answer2"] = "";
+            if (empty($results[$a->userid])) { // init new array
+                $results[$a->userid]["time"] = $a->time;
+                foreach ($fullorderlist as $qid) {
+                    $results[$a->userid][$qid]["answer1"] = "";
+                    $results[$a->userid][$qid]["answer2"] = "";
                 }
             }
-            $results["$a->userid"]["$a->question"]["answer1"] = $a->answer1;
-            $results["$a->userid"]["$a->question"]["answer2"] = $a->answer2;
+            $results[$a->userid][$a->question]["answer1"] = $a->answer1;
+            $results[$a->userid][$a->question]["answer2"] = $a->answer2;
         }
     }
 
@@ -134,7 +133,7 @@
             $myxls->write_string(0,$col++,$item);
         }
         foreach ($order as $key => $qid) {
-            $question = $questions["$qid"];
+            $question = $questions[$qid];
             if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
                 $myxls->write_string(0,$col++,"$question->text");
             }
@@ -150,10 +149,10 @@
         foreach ($results as $user => $rest) {
             $col = 0;
             $row++;
-            if (! $u = get_record("user", "id", $user)) {
+            if (! $u = $DB->get_record("user", array("id"=>$user))) {
                 print_error("Error finding student # $user");
             }
-            if ($n = get_record("survey_analysis", "survey", $survey->id, "userid", $user)) {
+            if ($n = $DB->get_record("survey_analysis", array("survey"=>$survey->id, "userid"=>$user))) {
                 $notes = $n->notes;
             } else {
                 $notes = "No notes made";
@@ -165,17 +164,17 @@
             $myxls->write_string($row,$col++,$u->lastname);
             $myxls->write_string($row,$col++,$u->email);
             $myxls->write_string($row,$col++,$u->idnumber);
-            $myxls->write_string($row,$col++, userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p") );
-//          $myxls->write_number($row,$col++,$results["$user"]["time"],$date);
+            $myxls->write_string($row,$col++, userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p") );
+//          $myxls->write_number($row,$col++,$results[$user]["time"],$date);
             $myxls->write_string($row,$col++,$notes);
 
             foreach ($order as $key => $qid) {
-                $question = $questions["$qid"];
+                $question = $questions[$qid];
                 if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                    $myxls->write_string($row,$col++, $results["$user"]["$qid"]["answer1"] );
+                    $myxls->write_string($row,$col++, $results[$user][$qid]["answer1"] );
                 }
                 if ($question->type == "2" || $question->type == "3")  {
-                    $myxls->write_string($row, $col++, $results["$user"]["$qid"]["answer2"] );
+                    $myxls->write_string($row, $col++, $results[$user][$qid]["answer2"] );
                 }
             }
         }
@@ -204,7 +203,7 @@
             $myxls->write_string(0,$col++,$item);
         }
         foreach ($order as $key => $qid) {
-            $question = $questions["$qid"];
+            $question = $questions[$qid];
             if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
                 $myxls->write_string(0,$col++,"$question->text");
             }
@@ -220,10 +219,10 @@
         foreach ($results as $user => $rest) {
             $col = 0;
             $row++;
-            if (! $u = get_record("user", "id", $user)) {
+            if (! $u = $DB->get_record("user", array("id"=>$user))) {
                 print_error("Error finding student # $user");
             }
-            if ($n = get_record("survey_analysis", "survey", $survey->id, "userid", $user)) {
+            if ($n = $DB->get_record("survey_analysis", array("survey"=>$survey->id, "userid"=>$user))) {
                 $notes = $n->notes;
             } else {
                 $notes = "No notes made";
@@ -235,17 +234,17 @@
             $myxls->write_string($row,$col++,$u->lastname);
             $myxls->write_string($row,$col++,$u->email);
             $myxls->write_string($row,$col++,$u->idnumber);
-            $myxls->write_string($row,$col++, userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p") );
-//          $myxls->write_number($row,$col++,$results["$user"]["time"],$date);
+            $myxls->write_string($row,$col++, userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p") );
+//          $myxls->write_number($row,$col++,$results[$user]["time"],$date);
             $myxls->write_string($row,$col++,$notes);
 
             foreach ($order as $key => $qid) {
-                $question = $questions["$qid"];
+                $question = $questions[$qid];
                 if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                    $myxls->write_string($row,$col++, $results["$user"]["$qid"]["answer1"] );
+                    $myxls->write_string($row,$col++, $results[$user][$qid]["answer1"] );
                 }
                 if ($question->type == "2" || $question->type == "3")  {
-                    $myxls->write_string($row, $col++, $results["$user"]["$qid"]["answer2"] );
+                    $myxls->write_string($row, $col++, $results[$user][$qid]["answer2"] );
                 }
             }
         }
@@ -267,7 +266,7 @@
 
     echo "surveyid    surveyname    userid    firstname    lastname    email    idnumber    time    ";
     foreach ($order as $key => $qid) {
-        $question = $questions["$qid"];
+        $question = $questions[$qid];
         if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
             echo "$question->text    ";
         }
@@ -280,7 +279,7 @@
 // Print all the lines of data.
 
     foreach ($results as $user => $rest) {
-        if (! $u = get_record("user", "id", $user)) {
+        if (! $u = $DB->get_record("user", array("id"=>$user))) {
             print_error("Error finding student # $user");
         }
         echo $survey->id."\t";
@@ -290,15 +289,15 @@
         echo $u->lastname."\t";
         echo $u->email."\t";
         echo $u->idnumber."\t";
-        echo userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p")."\t";
+        echo userdate($results[$user]["time"], "%d-%b-%Y %I:%M:%S %p")."\t";
 
         foreach ($order as $key => $qid) {
-            $question = $questions["$qid"];
+            $question = $questions[$qid];
             if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
-                echo $results["$user"]["$qid"]["answer1"]."    ";
+                echo $results[$user][$qid]["answer1"]."    ";
             }
             if ($question->type == "2" || $question->type == "3")  {
-                echo $results["$user"]["$qid"]["answer2"]."    ";
+                echo $results[$user][$qid]["answer2"]."    ";
             }
         }
         echo "\n";

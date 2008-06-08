@@ -14,7 +14,7 @@
         print_error("Course Module ID was incorrect");
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error("Course is misconfigured");
     }
 
@@ -31,7 +31,7 @@
         }
     }
 
-    if (! $survey = get_record("survey", "id", $cm->instance)) {
+    if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
         print_error("Survey ID was incorrect");
     }
 
@@ -61,7 +61,7 @@
 
      case "question.png":
 
-       $question = get_record("survey_questions", "id", $qid);
+       $question = $DB->get_record("survey_questions", array("id"=>$qid));
        $question->text = get_string($question->text, "survey");
        $question->options = get_string($question->options, "survey");
 
@@ -72,7 +72,7 @@
            $buckets2[$key] = 0;
        }
 
-       if ($aaa = get_records_select("survey_answers", "survey = '$cm->instance' AND question = '$qid'")) {
+       if ($aaa = $DB->get_records('survey_answers', array('survey'=>$cm->instance, 'question'=>$qid))) {
            foreach ($aaa as $aa) {
                if (!$group or isset($users[$aa->userid])) {
                    if ($a1 = $aa->answer1) {
@@ -129,7 +129,7 @@
 
      case "multiquestion.png":
 
-       $question  = get_record("survey_questions", "id", $qid);
+       $question  = $DB->get_record("survey_questions", array("id"=>$qid));
        $question->text = get_string($question->text, "survey");
        $question->options = get_string($question->options, "survey");
 
@@ -149,7 +149,7 @@
            $stdev2[$i] = 0;
        }
 
-       $aaa = get_records_select("survey_answers", "((survey = $cm->instance) AND (question in ($question->multi)))");
+       $aaa = $DB->get_records_select("survey_answers", "((survey = ?) AND (question in ($question->multi)))", array($cm->instance));
 
        if ($aaa) {
            foreach ($aaa as $a) {
@@ -293,7 +293,7 @@
            $count1[$i] = 0;
            $count2[$i] = 0;
            $subquestions = $question[$i]->multi;   // otherwise next line doesn't work
-           $aaa = get_records_select("survey_answers", "((survey = $cm->instance) AND (question in ($subquestions)))");
+           $aaa = $DB->get_records_select("survey_answers", "((survey = ?) AND (question in ($subquestions)))", array($cm->instance));
 
            if ($aaa) {
                foreach ($aaa as $a) {
@@ -438,7 +438,7 @@
            $stdev2[$i] = 0.0;
 
            $subquestions = $question[$i]->multi;   // otherwise next line doesn't work
-           $aaa = get_records_select("survey_answers","((survey = $cm->instance) AND (question in ($subquestions)))");
+           $aaa = $DB->get_records_select("survey_answers","((survey = ?) AND (question in ($subquestions)))", array($cm->instance));
 
            if ($aaa) {
                foreach ($aaa as $a) {
@@ -565,7 +565,7 @@
 
      case "studentmultiquestion.png":
 
-       $question  = get_record("survey_questions", "id", $qid);
+       $question  = $DB->get_record("survey_questions", array("id"=>$qid));
        $question->text = get_string($question->text, "survey");
        $question->options = get_string($question->options, "survey");
 
@@ -589,7 +589,7 @@
            $stdev2[$i] = 0.0;
        }
 
-       $aaa = get_records_select("survey_answers", "((survey = $cm->instance) AND (question in ($question->multi)))");
+       $aaa = $DB->get_records_select("survey_answers", "((survey = ?) AND (question in ($question->multi)))", array($cm->instance));
 
        if ($aaa) {
            foreach ($aaa as $a) {

@@ -89,10 +89,12 @@ function survey_delete_instance($id) {
 }
 
 function survey_user_outline($course, $user, $mod, $survey) {
-    if ($answers = get_records_select("survey_answers", "survey='$survey->id' AND userid='$user->id'")) {
+    global $DB;
 
+    if ($answers = $DB->get_records("survey_answers", array('survey'=>$survey->id, 'userid'=>$user->id))) {
         $lastanswer = array_pop($answers);
 
+        $result = new object();
         $result->info = get_string("done", "survey");
         $result->time = $lastanswer->time;
         return $result;
@@ -136,7 +138,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
 }
 
 function survey_print_recent_activity($course, $viewfullnames, $timestart) {
-    global $CFG;
+    global $CFG, $DB;
 
     $modinfo = get_fast_modinfo($course);
     $ids = array();
@@ -156,25 +158,25 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
 
     $slist = implode(',', $ids); // there should not be hundreds of glossaries in one course, right?
 
-    if (!$rs = get_recordset_sql("SELECT sa.userid, sa.survey, MAX(sa.time) AS time,
-                                         u.firstname, u.lastname, u.email, u.picture
-                                    FROM {$CFG->prefix}survey_answers sa
-                                         JOIN {$CFG->prefix}user u ON u.id = sa.userid
-                                   WHERE sa.survey IN ($slist) AND sa.time > $timestart
-                                   GROUP BY sa.userid, sa.survey, u.firstname, u.lastname, u.email, u.picture
-                                   ORDER BY time ASC")) {
+    if (!$rs = $DB->get_recordset_sql("SELECT sa.userid, sa.survey, MAX(sa.time) AS time,
+                                              u.firstname, u.lastname, u.email, u.picture
+                                         FROM {survey_answers} sa
+                                         JOIN {user} u ON u.id = sa.userid
+                                        WHERE sa.survey IN ($slist) AND sa.time > ?
+                                     GROUP BY sa.userid, sa.survey, u.firstname, u.lastname, u.email, u.picture
+                                     ORDER BY time ASC", array($timestart))) {
         return false;
     }
 
     $surveys = array();
 
-    while ($survey = rs_fetch_next_record($rs)) {
+    foreach ($rs as $survey) {
         $cm = $modinfo->instances['survey'][$survey->survey];
         $survey->name = $cm->name;
         $survey->cmid = $cm->id;
         $surveys[] = $survey;
     } 
-    rs_close($rs);
+    $rs->close();
 
     if (!$surveys) {
         return false;
@@ -192,21 +194,18 @@ function survey_print_recent_activity($course, $viewfullnames, $timestart) {
 function survey_get_participants($surveyid) {
 //Returns the users with data in one survey
 //(users with records in survey_analysis and survey_answers, students)
-
-    global $CFG;
+    global $DB;
 
     //Get students from survey_analysis
-    $st_analysis = get_records_sql("SELECT DISTINCT u.id, u.id
-                                    FROM {$CFG->prefix}user u,
-                                         {$CFG->prefix}survey_analysis a
-                                    WHERE a.survey = '$surveyid' and
-                                          u.id = a.userid");
+    $st_analysis = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                           FROM {user} u, {survey_analysis} a
+                                          WHERE a.survey = ? AND
+                                                u.id = a.userid", array($surveyid));
     //Get students from survey_answers
-    $st_answers = get_records_sql("SELECT DISTINCT u.id, u.id
-                                   FROM {$CFG->prefix}user u,
-                                        {$CFG->prefix}survey_answers a
-                                   WHERE a.survey = '$surveyid' and
-                                         u.id = a.userid");
+    $st_answers = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
+                                          FROM {user} u, {survey_answers} a
+                                         WHERE a.survey = ? AND
+                                               u.id = a.userid", array($surveyid));
 
     //Add st_answers to st_analysis
     if ($st_answers) {
@@ -222,98 +221,100 @@ function survey_get_participants($surveyid) {
 
 
 function survey_log_info($log) {
-    global $CFG;
-    return get_record_sql("SELECT s.name, u.firstname, u.lastname, u.picture
-                             FROM {$CFG->prefix}survey s, 
-                                  {$CFG->prefix}user u
-                            WHERE s.id = '$log->info' 
-                              AND u.id = '$log->userid'");
+    global $DB;
+    return $DB->get_record_sql("SELECT s.name, u.firstname, u.lastname, u.picture
+                                  FROM {survey} s, {user} u
+                                 WHERE s.id = ?  AND u.id = ?", array($log->info, $log->userid));
 }
 
 function survey_get_responses($surveyid, $groupid, $groupingid) {
-    global $CFG;
+    global $DB;
+
+    $params = array('surveyid'=>$surveyid, 'groupid'=>$groupid, 'groupingid'=>$groupingid); 
 
     if ($groupid) {
-        $groupsjoin = "INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid AND gm.groupid = '$groupid' ";
+        $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid AND gm.groupid = :groupid ";
 
     } else if ($groupingid) {
-        $groupsjoin = "INNER JOIN {$CFG->prefix}groups_members gm ON u.id = gm.userid
-                       INNER JOIN {$CFG->prefix}groupings_groups gg ON gm.groupid = gg.groupid AND gg.groupingid = $groupingid ";
+        $groupsjoin = "JOIN {groups_members} gm ON u.id = gm.userid
+                       JOIN {groupings_groups} gg ON gm.groupid = gg.groupid AND gg.groupingid = :groupingid ";
     } else {
         $groupsjoin = "";
     }
 
-    return get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, MAX(a.time) as time
-                            FROM {$CFG->prefix}survey_answers a
-                                INNER JOIN {$CFG->prefix}user u ON a.userid = u.id
-                                $groupsjoin
-                            WHERE a.survey = $surveyid
-                            GROUP BY u.id, u.firstname, u.lastname, u.picture
-                            ORDER BY time ASC");
+    return $DB->get_records_sql("SELECT u.id, u.firstname, u.lastname, u.picture, MAX(a.time) as time
+                                   FROM {survey_answers} a
+                                   JOIN {user} u ON a.userid = u.id
+                            $groupsjoin
+                                  WHERE a.survey = :surveyid
+                               GROUP BY u.id, u.firstname, u.lastname, u.picture
+                               ORDER BY time ASC", $params);
 }
 
 function survey_get_analysis($survey, $user) {
-    global $CFG;
+    global $DB;
 
-    return get_record_sql("SELECT notes 
-                             FROM {$CFG->prefix}survey_analysis 
-                            WHERE survey='$survey' 
-                              AND userid='$user'");
+    return $DB->get_record_sql("SELECT notes 
+                                  FROM {survey_analysis}
+                                 WHERE survey=? AND userid=?", array($survey, $user));
 }
 
 function survey_update_analysis($survey, $user, $notes) {
-    global $CFG;
+    global $DB;
 
-    return execute_sql("UPDATE {$CFG->prefix}survey_analysis 
-                            SET notes='$notes' 
-                          WHERE survey='$survey' 
-                            AND userid='$user'");
+    return $DB->execute("UPDATE {survey_analysis}
+                            SET notes=? 
+                          WHERE survey=? 
+                            AND userid=?", array($notes, $survey, $user));
 }
 
 
 function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.answer1,sa.answer2 ASC") {
-    global $CFG;
+    global $DB;
+
+    $params = array('surveyid'=>$surveyid, 'questionid'=>$questionid, 'groupid'=>$groupid);
 
     if ($groupid) {
-        $groupsql = "AND gm.groupid = $groupid AND u.id = gm.userid";
+        $groupsql = "AND gm.groupid = :groupid AND u.id = gm.userid";
     } else {
         $groupsql = "";
     }
 
-    return get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture 
-                              FROM {$CFG->prefix}survey_answers sa, 
-                                   {$CFG->prefix}user u,
-                                   {$CFG->prefix}groups_members gm 
-                             WHERE sa.survey = '$surveyid' 
-                               AND sa.question = $questionid 
-                               AND u.id = sa.userid $groupsql
-                          ORDER BY $sort");
+    return $DB->get_records_sql("SELECT sa.*,u.firstname,u.lastname,u.picture 
+                                   FROM {survey_answers} sa,  {user} u, {groups_members} gm 
+                                  WHERE sa.survey = :surveyid 
+                                        AND sa.question = :questionid 
+                                        AND u.id = sa.userid $groupsql
+                               ORDER BY $sort", $params);
 }
 
 function survey_get_user_answer($surveyid, $questionid, $userid) {
-    global $CFG;
+    global $DB;
 
-    return get_record_sql("SELECT sa.* 
-                              FROM {$CFG->prefix}survey_answers sa
-                             WHERE sa.survey = '$surveyid' 
-                               AND sa.question = '$questionid' 
-                               AND sa.userid = '$userid'");
+    return $DB->get_record_sql("SELECT sa.* 
+                                  FROM {survey_answers} sa
+                                 WHERE sa.survey = ? 
+                                       AND sa.question = ? 
+                                       AND sa.userid = ?", array($surveyid, $questionid, $userid));
 }
 
 // MODULE FUNCTIONS ////////////////////////////////////////////////////////
 
 function survey_add_analysis($survey, $user, $notes) {
-    global $CFG;
+    global $DB;
 
+    $record = new object();
     $record->survey = $survey;
     $record->userid = $user;
     $record->notes = $notes;
 
-    return insert_record("survey_analysis", $record, false);
+    return $DB->insert_record("survey_analysis", $record, false);
 }
 
 function survey_already_done($survey, $user) {
-   return record_exists("survey_answers", "survey", $survey, "userid", $user);
+    global $DB;
+
+    return $DB->record_exists("survey_answers", array("survey"=>$survey, "userid"=>$user));
 }
 
 function survey_count_responses($surveyid, $groupid, $groupingid) {
@@ -327,6 +328,7 @@ function survey_count_responses($surveyid, $groupid, $groupingid) {
 
 function survey_print_all_responses($cmid, $results, $courseid) {
 
+    $table = new object();
     $table->head  = array ("", get_string("name"),  get_string("time"));
     $table->align = array ("", "left", "left");
     $table->size = array (35, "", "" );
@@ -345,7 +347,7 @@ function survey_get_template_name($templateid) {
     global $DB;
 
     if ($templateid) {
-        if ($ss = get_record("surveys", "id", $templateid)) {
+        if ($ss = $DB->get_record("surveys", array("id"=>$templateid))) {
             return $ss->name;
         }
     } else {
@@ -554,23 +556,24 @@ function survey_reset_course_form_defaults($course) {
  * @return array status array
  */
 function survey_reset_userdata($data) {
-    global $CFG;
+    global $DB;
 
     $componentstr = get_string('modulenameplural', 'survey');
     $status = array();
 
     $surveyssql = "SELECT ch.id
-                     FROM {$CFG->prefix}survey ch
-                    WHERE ch.course={$data->courseid}";
+                     FROM {survey} ch
+                    WHERE ch.course=?";
+    $params = array($data->courseid);
 
     if (!empty($data->reset_survey_answers)) {
-        delete_records_select('survey_answers', "survey IN ($surveyssql)");
-        delete_records_select('survey_analysis', "survey IN ($surveyssql)");
+        $DB->delete_records_select('survey_answers', "survey IN ($surveyssql)", $params);
+        $DB->delete_records_select('survey_analysis', "survey IN ($surveyssql)", $params);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallanswers', 'survey'), 'error'=>false);
     }
 
     if (!empty($data->reset_survey_analysis)) {
-        delete_records_select('survey_analysis', "survey IN ($surveyssql)");
+        $DB->delete_records_select('survey_analysis', "survey IN ($surveyssql)", $params);
         $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallanswers', 'survey'), 'error'=>false);
     }
 

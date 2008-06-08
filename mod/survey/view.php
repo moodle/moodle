@@ -9,7 +9,7 @@
         print_error("Course Module ID was incorrect");
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error("Course is misconfigured");
     }
 
@@ -19,16 +19,16 @@
 
     require_capability('mod/survey:participate', $context);
 
-    if (! $survey = get_record("survey", "id", $cm->instance)) {
+    if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
         print_error("Survey ID was incorrect");
     }
     $trimmedintro = trim($survey->intro);
     if (empty($trimmedintro)) {
-        $tempo = get_field("survey", "intro", "id", $survey->template);
+        $tempo = $DB->get_field("survey", "intro", array("id"=>$survey->template));
         $survey->intro = get_string($tempo, "survey");
     }
 
-    if (! $template = get_record("survey", "id", $survey->template)) {
+    if (! $template = $DB->get_record("survey", array("id"=>$survey->template))) {
         print_error("Template ID was incorrect");
     }
 
