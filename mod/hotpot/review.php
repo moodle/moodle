@@ -11,24 +11,24 @@
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error('coursemisconf');
         }
-        if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
+        if (! $hotpot = $DB->get_record("hotpot", array("id"=>$cm->instance))) {
             print_error('invalidcoursemodule');
         }
     } else {
-        if (! $hotpot = get_record("hotpot", "id", $hp)) {
+        if (! $hotpot = $DB->get_record("hotpot", array("id"=>$hp))) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = get_record("course", "id", $hotpot->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$hotpot->course))) {
             print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
             print_error('invalidcoursemodule');
         }
     }
-    if (! $attempt = get_record("hotpot_attempts", "id", $attempt)) {
+    if (! $attempt = $DB->get_record("hotpot_attempts", array("id"=>$attempt))) {
         print_error('invalidattemptid', 'hotpot');
     }
 
@@ -63,7 +63,7 @@
     hotpot_print_review_buttons($course, $hotpot, $attempt, $context);
     $action = has_capability('mod/hotpot:viewreport',$context) ? optional_param('action', '', PARAM_ALPHA) : '';
     if ($action) {
-        $xml = get_field('hotpot_details', 'details', 'attempt', $attempt->id);
+        $xml = $DB->get_field('hotpot_details', 'details', array('attempt'=>$attempt->id));
         print '<hr>';
         switch ($action) {
             case 'showxmltree':
@@ -130,10 +130,12 @@ function hotpot_print_attempt_summary(&$hotpot, &$attempt) {
     print_simple_box_end();
 }
 function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt, $context) {
+    global $DB;
+
     print "\n".'<table border="0" align="center" cellpadding="2" cellspacing="2" class="generaltable">';
     print "\n<tr>\n".'<td align="center">';
     print_single_button("report.php?hp=$hotpot->id", NULL, get_string('continue'), 'post');
-    if (has_capability('mod/hotpot:viewreport',$context) && record_exists('hotpot_details', 'attempt', $attempt->id)) {
+    if (has_capability('mod/hotpot:viewreport',$context) && $DB->record_exists('hotpot_details', array('attempt'=>$attempt->id))) {
         print "</td>\n".'<td align="center">';
         print_single_button("review.php?hp=$hotpot->id&attempt=$attempt->id&action=showxmlsource", NULL, get_string('showxmlsource', 'hotpot'), 'post');
         print "</td>\n".'<td align="center">';
@@ -149,6 +151,8 @@ function hotpot_print_review_buttons(&$course, &$hotpot, &$attempt, $context) {
     print "</table>\n";
 }
 function hotpot_print_attempt_details(&$hotpot, &$attempt) {
+    global $DB;
+
     // define fields to print
     $textfields = array('correct', 'ignored', 'wrong');
     $numfields = array('score', 'weighting', 'hints', 'clues', 'checks');
@@ -160,8 +164,8 @@ function hotpot_print_attempt_details(&$hotpot, &$attempt) {
         $f[$field] = array('count'=>0, 'name'=>$name);
     }
     // get questions and responses for this attempt
-    $questions = get_records_select('hotpot_questions', "hotpot='$hotpot->id'", 'id');
-    $responses = get_records_select('hotpot_responses', "attempt='$attempt->id'", 'id');
+    $questions = $DB->get_records('hotpot_questions', array('hotpot'=>$hotpot->id), 'id');
+    $responses = $DB->get_records('hotpot_responses', array('attempt'=>$attempt->id), 'id');
     if ($questions && $responses) {
         foreach ($responses as $response) {
             $id = $response->question;

@@ -139,6 +139,7 @@ function hotpot_restore_questions(&$restore, $status, &$xml, &$record) {
 function hotpot_restore_attempts(&$restore, $status, &$xml, &$record, $hotpot_v20=false) {
     // $xml is an XML tree for a hotpot record
     // $record is the newly added hotpot record
+    global $DB;
     $foreignkeys = array(
         'userid'=>'user',
         'hotpot'=>$record->id,
@@ -166,10 +167,11 @@ function hotpot_restore_attempts(&$restore, $status, &$xml, &$record, $hotpot_v2
         if ($status) {
             global $CFG;
             // based on code in "mod/hotpot/db/update_to_v2.php"
-            execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=1 WHERE hotpot=$record->id AND timefinish=0 AND score IS NULL", false);
-            execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=3 WHERE hotpot=$record->id AND timefinish>0 AND score IS NULL", false);
-            execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET status=4 WHERE hotpot=$record->id AND timefinish>0 AND score IS NOT NULL", false);
-            execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=id WHERE hotpot=$record->id AND clickreportid IS NULL", false);
+            $params = array($record->id);
+            $DB->execute("UPDATE {hotpot_attempts} SET status=1 WHERE hotpot=? AND timefinish=0 AND score IS NULL", $params);
+            $DB->execute("UPDATE {hotpot_attempts} SET status=3 WHERE hotpot=? AND timefinish>0 AND score IS NULL", $params);
+            $DB->execute("UPDATE {hotpot_attempts} SET status=4 WHERE hotpot=? AND timefinish>0 AND score IS NOT NULL", $params);
+            $DB->execute("UPDATE {hotpot_attempts} SET clickreportid=id WHERE hotpot=? AND clickreportid IS NULL", $params);
         }
     } else {
         $status = hotpot_restore_clickreportids($restore, $status);
@@ -179,13 +181,13 @@ function hotpot_restore_attempts(&$restore, $status, &$xml, &$record, $hotpot_v2
 }
 function hotpot_restore_clickreportids(&$restore, $status) {
     // update clickreport ids, if any
-    global $CFG;
+    global $CFG, $DB;
     foreach ($GLOBALS["hotpot_backup_clickreportids"] as $id=>$clickreportid) {
         if ($status) {
             $attempt_record = backup_getid($restore->backup_unique_code, 'hotpot_attempts', $clickreportid);
             if ($attempt_record) {
                 $new_clickreportid = $attempt_record->new_id;
-                $status = execute_sql("UPDATE {$CFG->prefix}hotpot_attempts SET clickreportid=$new_clickreportid WHERE id=$id", false);
+                $status = $DB->execute("UPDATE {hotpot_attempts} SET clickreportid=? WHERE id=?", array($new_clickreportid, $id));
             } else {
                 // New clickreport id could not be found
                 if (!defined('RESTORE_SILENTLY')) {

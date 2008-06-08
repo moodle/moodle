@@ -372,11 +372,11 @@ function hotpot_set_form_values(&$hotpot) {
 function hotpot_get_chain(&$cm) {
     global $DB;
     // get details of course_modules in this section
-    $course_module_ids = get_field('course_sections', 'sequence', 'id', $cm->section);
+    $course_module_ids = $DB->get_field('course_sections', 'sequence', array('id'=>$cm->section));
     if (empty($course_module_ids)) {
         $hotpot_modules = array();
     } else {
-        $hotpot_modules = get_records_select('course_modules', "id IN ($course_module_ids) AND module=$cm->module");
+        $hotpot_modules = $DB->get_records_select('course_modules', "id IN ($course_module_ids) AND module=?", array($cm->module));
         if (empty($hotpot_modules)) {
             $hotpot_modules = array();
         }
@@ -436,7 +436,7 @@ function hotpot_get_chain(&$cm) {
     return $found ? $chain : false;
 }
 function hotpot_is_visible(&$cm) {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $DB;
 
     // check grouping
     $modulecontext = get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -460,7 +460,7 @@ function hotpot_is_visible(&$cm) {
     }
 
     if (!isset($cm->sectionvisible)) {
-        if (! $section = get_record('course_sections', 'id', $cm->section)) {
+        if (! $section = $DB->get_record('course_sections', array('id'=>$cm->section))) {
             print_error('invalidsection');
         }
         $cm->sectionvisible = $section->visible;
@@ -482,7 +482,7 @@ function hotpot_is_visible(&$cm) {
 function hotpot_add_chain(&$hotpot) {
 /// add a chain of hotpot actiivities
 
-    global $CFG, $course;
+    global $CFG, $course, $DB;
 
     $ok = true;
     $hotpot->names = array();
@@ -572,9 +572,9 @@ function hotpot_add_chain(&$hotpot) {
         for ($i=0; $i<$i_max; $i++) {
 
             hotpot_set_name_summary_reference($hotpot, $i);
-            $hotpot->reference = addslashes($hotpot->reference);
+            $hotpot->reference = $hotpot->reference;
 
-            if (!$hotpot->instance = insert_record("hotpot", $hotpot)) {
+            if (!$hotpot->instance = $DB->insert_record("hotpot", $hotpot)) {
                 print_error('cannotaddnewinstance', '', 'view.php?id='.$hotpot->course, $hotpot->modulename);
             }
 
@@ -594,7 +594,7 @@ function hotpot_add_chain(&$hotpot) {
                 print_error('cannotaddcoursemoduletosection');
             }
 
-            if (! set_field('course_modules', 'section', $sectionid, "id", $hotpot->coursemodule)) {
+            if (! $DB->set_field('course_modules', 'section', $sectionid, array("id"=>$hotpot->coursemodule))) {
                 print_error('cannotupdatecoursemodule');
             }
 
@@ -615,7 +615,7 @@ function hotpot_add_chain(&$hotpot) {
 
         // settings for final activity in chain
         hotpot_set_name_summary_reference($hotpot, $i);
-        $hotpot->reference = addslashes($hotpot->references[$i]);
+        $hotpot->reference = $hotpot->references[$i];
         $hotpot->shownextquiz = HOTPOT_NO;
 
         if (isset($hotpot->startofchain)) {
@@ -758,15 +758,9 @@ function hotpot_get_titles_and_next_ex(&$hotpot, $filepath, $get_next=false) {
 }
 function hotpot_get_all_instances_in_course($modulename, $course) {
 /// called from index.php
+    global $CFG, $DB;
 
-    global $CFG;
     $instances = array();
-
-    if (isset($CFG->release) && substr($CFG->release, 0, 3)>=1.2) {
-        $groupmode = 'cm.groupmode,';
-    } else {
-        $groupmode = '';
-    }
 
     $query = "
         SELECT
@@ -776,25 +770,27 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
             cm.instance AS instance,
             -- cm.section AS section,
             cm.visible AS visible,
-            $groupmode
+            cm.groupmode,
             -- cs.section AS sectionnumber,
             cs.section AS section,
             cs.sequence AS sequence,
             cs.visible AS sectionvisible,
             thismodule.*
         FROM
-            {$CFG->prefix}course_modules cm,
-            {$CFG->prefix}course_sections cs,
-            {$CFG->prefix}modules m,
-            {$CFG->prefix}$modulename thismodule
+            {course_modules} cm,
+            {course_sections} cs,
+            {modules} m,
+            {".$modulename."} thismodule
         WHERE
-            m.name = '$modulename' AND
+            m.name = :modulename AND
             m.id = cm.module AND
-            cm.course = '$course->id' AND
+            cm.course = :courseid AND
             cm.section = cs.id AND
             cm.instance = thismodule.id
     ";
-    if ($rawmods = get_records_sql($query)) {
+    $params = array('modulename'=>$modulename, 'courseid'=>$course->id);
+
+    if ($rawmods = $DB->get_records_sql($query, $params)) {
 
         // cache $isteacher setting
         
@@ -837,6 +833,7 @@ function hotpot_get_all_instances_in_course($modulename, $course) {
 
 function hotpot_update_chain(&$hotpot) {
 /// update a chain of hotpot actiivities
+    global $DB;
 
     $ok = true;
     if ($hotpot_modules = hotpot_get_chain($hotpot)) {
@@ -873,7 +870,7 @@ function hotpot_update_chain(&$hotpot) {
                 }
 
                 // update $thishotpot, if required
-                if ($require_update && !update_record("hotpot", $thishotpot)) {
+                if ($require_update && !$DB->update_record("hotpot", $thishotpot)) {
                     print_error('cannotupdatemod', '',
                             'view.php?id='.$hotpot->course, $hotpot->modulename);
                 }
@@ -912,11 +909,13 @@ function hotpot_delete_instance($id) {
 
     return true;
 }
-function hotpot_delete_and_notify($table, $select, $strtable) {
-    $count = max(0, count_records_select($table, $select));
+function hotpot_delete_and_notify($table, $select, $params, $strtable) {
+    global $DB;
+
+    $count = max(0, $DB->count_records_select($table, $select, $params));
     if ($count) {
-        delete_records_select($table, $select);
-        $count -= max(0, count_records_select($table, $select));
+        $DB->delete_records_select($table, $select, $params);
+        $count -= max(0, $DB->count_records_select($table, $select, $params));
         if ($count) {
             notify(get_string('deleted')." $count x $strtable");
         }
@@ -943,9 +942,10 @@ function hotpot_user_outline($course, $user, $mod, $hotpot) {
 /// Used for user activity reports.
 /// $report->time = the time they did it
 /// $report->info = a short text description
+    global $DB;
 
     $report = NULL;
-    if ($records = get_records_select("hotpot_attempts", "hotpot='$hotpot->id' AND userid='$user->id'", "timestart ASC", "*")) {
+    if ($records = $DB->get_records("hotpot_attempts", array('hotpot'=>$hotpot->id, 'userid'=>$user->id), "timestart ASC", "*")) {
         $report = new stdClass();
         $scores = array();
         foreach ($records as $record){
@@ -988,26 +988,26 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
 /// Given a course and a time, this module should find recent activity
 /// that has occurred in hotpot activities and print it out.
 /// Return true if there was output, or false is there was none.
+    global $CFG, $DB;
 
-    global $CFG;
     $result = false;
 
-    $records = get_records_sql("
+    $records = $DB->get_records_sql("
         SELECT
             h.id AS id,
             h.name AS name,
             COUNT(*) AS count_attempts
         FROM
-            {$CFG->prefix}hotpot h,
-            {$CFG->prefix}hotpot_attempts a
+            {hotpot} h,
+            {hotpot_attempts} a
         WHERE
-            h.course = $course->id
+            h.course = ?
             AND h.id = a.hotpot
             AND a.id = a.clickreportid
-            AND a.starttime > $timestart
+            AND a.starttime > ?
         GROUP BY
             h.id, h.name
-    ");
+    ", array($course->id, $timestart));
     // note that PostGreSQL requires h.name in the GROUP BY clause
 
     if($records) {
@@ -1042,41 +1042,42 @@ function hotpot_print_recent_activity($course, $isteacher, $timestart) {
 
 function hotpot_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $cmid="", $userid="", $groupid="") {
 // Returns all quizzes since a given time.
-
-    global $CFG;
+    global $CFG, $DB;
 
     // If $cmid or $userid are specified, then this restricts the results
-    $cm_select = empty($cmid) ? "" : " AND cm.id = '$cmid'";
-    $user_select = empty($userid) ? "" : " AND u.id = '$userid'";
+    $cm_select = empty($cmid) ? "" : " AND cm.id = :cmid";
+    $user_select = empty($userid) ? "" : " AND u.id = :userid";
 
-    $records = get_records_sql("
+    $params = array('cmid'=>$cmid, 'userid'=>$userid, 'sincetime'=>$sincetime, 'courseid'=>$courseid);
+
+    $records = $DB->get_records_sql("
         SELECT
             a.*,
             h.name, h.course,
             cm.instance, cm.section,
             u.firstname, u.lastname, u.picture
         FROM
-            {$CFG->prefix}hotpot_attempts a,
-            {$CFG->prefix}hotpot h,
-            {$CFG->prefix}course_modules cm,
-            {$CFG->prefix}user u
+            {hotpot_attempts} a,
+            {hotpot} h,
+            {course_modules} cm,
+            {user} u
         WHERE
-            a.timefinish > '$sincetime'
+            a.timefinish > :sincetime
             AND a.id = a.clickreportid
             AND a.userid = u.id $user_select
             AND a.hotpot = h.id $cm_select
             AND cm.instance = h.id
-            AND cm.course = '$courseid'
+            AND cm.course = :courseid
             AND h.course = cm.course
         ORDER BY
             a.timefinish ASC
-    ");
+    ", $params);
 
     if (!empty($records)) {
         foreach ($records as $record) {
             if (empty($groupid) || groups_is_member($groupid, $record->userid)) {
 
-                unset($activity);
+                $activity = new object();
 
                 $activity->type = "hotpot";
                 $activity->defaultindex = $index;
@@ -1159,17 +1160,17 @@ function hotpot_cron () {
 /// Function to be run periodically according to the moodle cron
 /// This function searches for things that need to be done, such
 /// as sending out mail, toggling flags etc ...
-
-    global $CFG;
-
     return true;
 }
 
 function hotpot_grades($hotpotid) {
 /// Must return an array of grades for a given instance of this module,
 /// indexed by user.  It also returns a maximum allowed grade.
+    global $DB;
 
-    $hotpot = get_record('hotpot', 'id', $hotpotid);
+    $hotpot = $DB->get_record('hotpot', array('id'=>$hotpotid));
+
+    $return = new object();
     $return->grades = hotpot_get_grades($hotpot);
     $return->maxgrade = $hotpot->grade;
 
@@ -1195,12 +1196,12 @@ function hotpot_get_grades($hotpot, $user_ids='') {
             break;
         case HOTPOT_GRADEMETHOD_FIRST:
             $grade = "ROUND(score * $weighting, $precision)";
-            $grade = sql_concat('timestart', "'_'", $grade);
+            $grade = $DB->sql_concat('timestart', "'_'", $grade);
             $grade = "MIN($grade) AS grade";
             break;
         case HOTPOT_GRADEMETHOD_LAST:
             $grade = "ROUND(score * $weighting, $precision)";
-            $grade = sql_concat('timestart', "'_'", $grade);
+            $grade = $DB->sql_concat('timestart', "'_'", $grade);
             $grade = "MAX($grade) AS grade";
             break;
     }
@@ -1263,22 +1264,21 @@ function hotpot_get_user_grades($hotpot, $userid=0) {
  * @param int $userid specific user only, 0 means all users
  */
 function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
-    global $CFG;
-    if (! function_exists('grade_update')) {
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
+
     if (is_null($hotpot)) {
         // update (=create) grades for all hotpots
         $sql = "
             SELECT h.*, cm.idnumber as cmidnumber
-            FROM {$CFG->prefix}hotpot h, {$CFG->prefix}course_modules cm, {$CFG->prefix}modules m
+            FROM {hotpot} h, {course_modules} cm, {modules} m
             WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=h.id"
         ;
-        if ($rs = get_recordset_sql($sql)) {
-            while ($hotpot = rs_fetch_next_record($rs)) {
+        if ($rs = $DB->get_recordset_sql($sql)) {
+            foreach ($rs as $hotpot) {
                 hotpot_update_grades($hotpot, 0, false);
             }
-            rs_close($rs);
+            $rs->close();
         }
     } else {
         // update (=create) grade for a single hotpot
@@ -1308,9 +1308,8 @@ function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
  */
 function hotpot_grade_item_update($hotpot, $grades=null) {
     global $CFG;
-    if (! function_exists('grade_update')) {
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    require_once($CFG->libdir.'/gradelib.php');
+
     $params = array('itemname' => $hotpot->name);
     if (array_key_exists('cmidnumber', $hotpot)) {
         //cmidnumber may not be always present
@@ -1335,9 +1334,7 @@ function hotpot_grade_item_update($hotpot, $grades=null) {
  */
 function hotpot_grade_item_delete($hotpot) {
     global $CFG;
-    if (! function_exists('grade_update')) {
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    require_once($CFG->libdir.'/gradelib.php');
     return grade_update('mod/hotpot', $hotpot->course, 'mod', 'hotpot', $hotpot->id, 0, null, array('deleted'=>1));
 }
 
@@ -1346,18 +1343,18 @@ function hotpot_get_participants($hotpotid) {
 //for a given instance of hotpot. Must include every user involved
 //in the instance, independient of his role (student, teacher, admin...)
 //See other modules as example.
-    global $CFG;
+    global $DB;
 
-    return get_records_sql("
+    return $DB->get_records_sql("
         SELECT DISTINCT
             u.id, u.id
         FROM
-            {$CFG->prefix}user u,
-            {$CFG->prefix}hotpot_attempts a
+            {user} u,
+            {hotpot_attempts} a
         WHERE
             u.id = a.userid
-            AND a.hotpot = '$hotpotid'
-    ");
+            AND a.hotpot = ?
+    ", array($hotpotid));
 }
 
 function hotpot_scale_used ($hotpotid, $scaleid) {
@@ -1368,7 +1365,7 @@ function hotpot_scale_used ($hotpotid, $scaleid) {
 
     $report = false;
 
-    //$rec = get_record("hotpot","id","$hotpotid","scale","-$scaleid");
+    //$rec = $DB->get_record("hotpot", array("id"=>"$hotpotid","scale"=>-$scaleid));
     //
     //if (!empty($rec)  && !empty($scaleid)) {
     //  $report = true;
@@ -1400,7 +1397,7 @@ function hotpot_add_attempt($hotpotid) {
     $time = time();
 
     // set all previous "in progress" attempts at this quiz to "abandoned"
-    if ($attempts = get_records_select('hotpot_attempts', "hotpot='$hotpotid' AND userid='$USER->id' AND status='".HOTPOT_STATUS_INPROGRESS."'")) {
+    if ($attempts = $DB->get_records('hotpot_attempts', array('hotpot'=>$hotpotid, 'userid'=>$USER->id, 'status'=>HOTPOT_STATUS_INPROGRESS))) {
         foreach ($attempts as $attempt) {
             if ($attempt->timefinish==0) {
                 $attempt->timefinish = $time;
@@ -1409,7 +1406,7 @@ function hotpot_add_attempt($hotpotid) {
                 $attempt->clickreportid = $attempt->id;
             }
             $attempt->status = HOTPOT_STATUS_ABANDONED;
-            update_record('hotpot_attempts', $attempt);
+            $DB->update_record('hotpot_attempts', $attempt);
         }
     }    
 
@@ -1420,13 +1417,13 @@ function hotpot_add_attempt($hotpotid) {
     $attempt->attempt = hotpot_get_next_attempt($hotpotid);
     $attempt->timestart = $time;
 
-    return insert_record("hotpot_attempts", $attempt);
+    return $DB->insert_record("hotpot_attempts", $attempt);
 }
 function hotpot_get_next_attempt($hotpotid) {
-    global $USER;
+    global $USER, $DB;
 
     // get max attempt so far
-    $i = count_records_select('hotpot_attempts', "hotpot='$hotpotid' AND userid='$USER->id'", 'MAX(attempt)');
+    $i = $DB->count_records_select('hotpot_attempts', "hotpot=? AND userid=?", array($hotpotid, $USER->id), 'MAX(attempt)');
 
     return empty($i) ? 1 : ($i+1);
 }
@@ -1441,13 +1438,14 @@ function hotpot_get_question_name($question) {
     return $name;
 }
 function hotpot_strings($ids) {
+    global $DB;
 
     // array of ids of empty strings
     static $HOTPOT_EMPTYSTRINGS;
 
     if (!isset($HOTPOT_EMPTYSTRINGS)) { // first time only
         // get ids of empty strings
-        $emptystrings = get_records_select('hotpot_strings', 'LENGTH(TRIM(string))=0');
+        $emptystrings = $DB->get_records_select('hotpot_strings', 'LENGTH(TRIM(string))=0');
         $HOTPOT_EMPTYSTRINGS = empty($emptystrings) ? array() : array_keys($emptystrings);
     }
 
@@ -1463,7 +1461,8 @@ function hotpot_strings($ids) {
     return implode(',', $strings);
 }
 function hotpot_string($id) {
-    return get_field('hotpot_strings', 'string', 'id', $id);
+    global $DB;
+    return $DB->get_field('hotpot_strings', 'string', array('id'=>$id));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -1965,7 +1964,7 @@ function hotpot_convert_preloadimages_urls($baseurl, $reference, $urls, $stripsl
     return preg_replace($search, $replace, $urls);
 }
 function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course, $stripslashes=true) {
-    global $CFG;
+    global $CFG, $DB;
 
     if ($stripslashes) {
         $url = hotpot_stripslashes($url);
@@ -1974,7 +1973,7 @@ function hotpot_convert_navbutton_url($baseurl, $reference, $url, $course, $stri
 
     // is this a $url for another hotpot in this course ?
     if (preg_match("|^".preg_quote($baseurl)."(.*)$|", $url, $matches)) {
-        if ($records = get_records_select('hotpot', "course='$course' AND reference='".$matches[1]."'")) {
+        if ($records = $DB->get_records('hotpot', array('course'=>$course, 'reference'=>$matches[1]))) {
             $ids = array_keys($records);
             $url = "$CFG->wwwroot/mod/hotpot/view.php?hp=".$ids[0];
         }
@@ -2211,14 +2210,14 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
         }
 
         $question->md5key = md5($question->name);
-        if (!$question->id = get_field('hotpot_questions', 'id', 'hotpot', $attempt->hotpot, 'md5key', $question->md5key, 'name', $question->name)) {
+        if (!$question->id = $DB->get_field('hotpot_questions', 'id', array('hotpot'=>$attempt->hotpot, 'md5key'=>$question->md5key, 'name'=>$question->name))) {
             // add question record
-            if (!$question->id = insert_record('hotpot_questions', $question)) {
+            if (!$question->id = $DB->insert_record('hotpot_questions', $question)) {
                 print_error('cannotaddquestionrecord', 'hotpot', $next_url);
             }
         }
 
-        if (record_exists('hotpot_responses', 'attempt', $attempt->id, 'question', $question->id)) {
+        if ($DB->record_exists('hotpot_responses', array('attempt'=>$attempt->id, 'question'=>$question->id))) {
             // there is already a response to this question for this attempt
             // probably because this quiz has two questions with the same text
             //  e.g. Which one of these answers is correct?
@@ -2238,7 +2237,7 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
             $response->question = $question->id;
 
             // add response record
-            if(!$response->id = insert_record('hotpot_responses', $response)) {
+            if(!$response->id = $DB->insert_record('hotpot_responses', $response)) {
                 print_error('cannotaddresprecord', 'hotpot', $next_url);
             }
 
@@ -2378,12 +2377,14 @@ function hotpot_string_ids($field_value) {
     return implode(',', $ids);
 }
 function hotpot_string_id($str) {
+    global $DB;
+
     $id = '';
     if (isset($str) && $str<>'') {
 
         // get the id from the table if it is already there
         $md5key = md5($str);
-        if (!$id = get_field('hotpot_strings', 'id', 'md5key', $md5key, 'string', $str)) {
+        if (!$id = $DB->get_field('hotpot_strings', 'id', array('md5key'=>$md5key, 'string'=>$str))) {
 
             // create a string record
             $record = new stdClass();
@@ -2391,7 +2392,7 @@ function hotpot_string_id($str) {
             $record->md5key = $md5key;
 
             // try and add the new string record
-            if (!$id = insert_record('hotpot_strings', $record)) {
+            if (!$id = $DB->insert_record('hotpot_strings', $record)) {
                 global $DB;
                 print_error('cannotaddstrrecord', 'hotpot');
             }

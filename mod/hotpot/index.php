@@ -148,8 +148,8 @@
                     // delete questions and responses for this hotpot
                     if ($records = $DB->get_records('hotpot_questions', array('hotpot'=>$hotpot->id), '', 'id,hotpot')) {
                         $questionids = implode(',', array_keys($records));
-                        hotpot_delete_and_notify('hotpot_questions', "id IN ($questionids)", get_string('question', 'quiz'));
-                        hotpot_delete_and_notify('hotpot_responses', "question IN ($questionids)", get_string('answer', 'quiz'));
+                        hotpot_delete_and_notify('hotpot_questions', "id IN ($questionids)", array(), get_string('question', 'quiz'));
+                        hotpot_delete_and_notify('hotpot_responses', "question IN ($questionids)", array(), get_string('answer', 'quiz'));
                     }
 
                     // start attempt counter and timer

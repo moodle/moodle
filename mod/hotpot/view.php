@@ -15,18 +15,18 @@
             if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
                 print_error('invalidcoursemodule');
             }
-            if (! $course = get_record("course", "id", $cm->course)) {
+            if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
                 print_error('coursemisconf');
             }
-            if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
+            if (! $hotpot = $DB->get_record("hotpot", array("id"=>$cm->instance))) {
                 print_error('invalidcoursemodule');
             }
 
         } else {
-            if (! $hotpot = get_record("hotpot", "id", $hp)) {
+            if (! $hotpot = $DB->get_record("hotpot", array("id"=>$hp))) {
                 print_error('invalidhotpotid', 'hotpot');
             }
-            if (! $course = get_record("course", "id", $hotpot->course)) {
+            if (! $course = $DB->get_record("course", array("id"=>$hotpot->course))) {
                 print_error('coursemisconf');
             }
             if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
@@ -61,7 +61,7 @@
         } else if ($hotpot->subnet && !address_in_subnet($_SERVER['REMOTE_ADDR'], $hotpot->subnet)) {
             $error = get_string("subneterror", "quiz");
         // check number of attempts
-        } else if ($hotpot->attempts && $hotpot->attempts <= count_records_select('hotpot_attempts', 'hotpot='.$hotpot->id.' AND userid='.$USER->id, 'COUNT(DISTINCT clickreportid)')) { 
+        } else if ($hotpot->attempts && $hotpot->attempts <= $DB->count_records_select('hotpot_attempts', 'hotpot=? AND userid=?', array($hotpot->id, $USER->id), 'COUNT(DISTINCT clickreportid)')) { 
             $error = get_string("nomoreattempts", "quiz");
         // get password
         } else if ($hotpot->password && empty($hppassword)) {
@@ -226,8 +226,8 @@
             }
             break;
         case HOTPOT_FEEDBACK_MOODLEFORUM:
-            $module = get_record('modules', 'name', 'forum');
-            $forums = get_records('forum', 'course', "$course->id");
+            $module = $DB->get_record('modules', array('name'=>'forum'));
+            $forums = $DB->get_records('forum', array('course'=>$course->id));
             if (empty($module) || empty($module->visible) || empty($forums)) {
                 $hotpot->studentfeedback = HOTPOT_FEEDBACK_NONE;
             } else {

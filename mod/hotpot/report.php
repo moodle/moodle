@@ -12,18 +12,18 @@
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error('coursemisconf');
         }    
-        if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
+        if (! $hotpot = $DB->get_record("hotpot", array("id"=>$cm->instance))) {
             print_error('invalidhotpotid', 'hotpot');
         }
 
     } else {
-        if (! $hotpot = get_record("hotpot", "id", $hp)) {
+        if (! $hotpot = $DB->get_record("hotpot", array("id"=>$hp))) {
             print_error('invalidhotpotid', 'hotpot');
         }
-        if (! $course = get_record("course", "id", $hotpot->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$hotpot->course))) {
             print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
@@ -100,7 +100,7 @@
 
         case 'allusers':
             // anyone who has ever attempted this hotpot
-            if ($records = get_records_select('hotpot_attempts', "hotpot=$hotpot->id", '', 'id,userid')) {
+            if ($records = $DB->get_records('hotpot_attempts', array('hotpot'=>$hotpot->id), '', 'id,userid')) {
                 foreach ($records as $record) {
                     $users[$record->userid] = 0; // "0" means user is NOT currently allowed to attempt this HotPot
                 }
@@ -158,11 +158,12 @@
     }
 
     // database table and selection conditions
-    $table = "{$CFG->prefix}hotpot_attempts a";
-    $select = "a.hotpot=$hotpot->id AND a.userid IN ($user_ids)";
+    $table = "{hotpot_attempts} a";
+    $select = "a.hotpot=:hotpotid AND a.userid IN ($user_ids)";
     if ($mode!='overview') {
         $select .= ' AND a.status<>'.HOTPOT_STATUS_INPROGRESS;
     }
+    $params = array('hotpotid'=>$hotpot->id);
 
     // confine attempts if necessary
     switch ($formdata['reportattempts']) {
@@ -191,9 +192,10 @@
         // do nothing (i.e. get ALL attempts)
     } else {
         $groupby = 'userid';
-        $records = hotpot_get_records_groupby($function, $fieldnames, $table, $select, $groupby);
+        $records = hotpot_get_records_groupby($function, $fieldnames, $table, $select, $params, $groupby);
 
         $select = '';
+        $params = array();
         if ($records) {
             $ids = array();
             foreach ($records as $record) {
@@ -207,7 +209,7 @@
 
     // pick out last attempt in each clickreport series
     if ($select) {
-        $cr_attempts = hotpot_get_records_groupby('MAX', array('timefinish', 'id'), $table, $select, 'clickreportid');
+        $cr_attempts = hotpot_get_records_groupby('MAX', array('timefinish', 'id'), $table, $select, $params, 'clickreportid');
     } else {
         $cr_attempts = array();
     }
@@ -229,6 +231,7 @@
             sort($ids);
             $select = "a.id IN (".join(',', $ids).")";
         }
+        $params = array();
     }
 
     $attempts = array();
@@ -236,10 +239,10 @@
     if ($select) {
         // add user information to SQL query
         $select .= ' AND a.userid = u.id';
-        $table .= ", {$CFG->prefix}user u";
+        $table .= ", {user} u";
         $order = "u.lastname, a.attempt, a.timefinish";
         // get the attempts (at last!)
-        $attempts = get_records_sql("SELECT $fields FROM $table WHERE $select ORDER BY $order");
+        $attempts = $DB->get_records_sql("SELECT $fields FROM $table WHERE $select ORDER BY $order", $params);
     }
 
     // stop now if no attempts were found
@@ -249,7 +252,7 @@
     }
 
     // get the questions
-    if (!$questions = get_records_select('hotpot_questions', "hotpot='$hotpot->id'")) {
+    if (!$questions = $DB->get_records('hotpot_questions', array('hotpot'=>$hotpot->id))) {
         $questions = array();
     }
 
@@ -292,7 +295,7 @@
 
         // get reponses to these attempts
         $attempt_ids = join(',',array_keys($attempts));
-        if (!$responses = get_records_sql("SELECT * FROM {$CFG->prefix}hotpot_responses WHERE attempt IN ($attempt_ids)")) {
+        if (!$responses = $DB->get_records_sql("SELECT * FROM {hotpot_responses} WHERE attempt IN ($attempt_ids)")) {
             $responses = array();
         }
 
@@ -365,21 +368,25 @@ function hotpot_grade_heading($hotpot, $formdata) {
     return get_string('grade')."$nl($grademethod)";
 }
 function hotpot_delete_selected_attempts(&$hotpot, $del) {
+    global $DB;
 
     $select = '';
+    $params = array('hotpotid'=>$hotpot->id);
     switch ($del) {
         case 'all' :
-            $select = "hotpot='$hotpot->id'";
+            $select = "hotpot=:hotpotid";
             break;
         case 'abandoned':
-            $select = "hotpot='$hotpot->id' AND status=".HOTPOT_STATUS_ABANDONED;
+            $select = "hotpot=:hotpotid AND status=".HOTPOT_STATUS_ABANDONED;
             break;
         case 'selection':
             $ids = (array)data_submitted();
             unset($ids['del']);
             unset($ids['id']);
             if (!empty($ids)) {
-                $select = "hotpot='$hotpot->id' AND clickreportid IN (".implode(',', $ids).")";
+                list($ids, $idparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'crid0');
+                $params = array_merge($params, $idparams); 
+                $select = "hotpot=:hotpotid AND clickreportid $ids";
             }
             break;
     }
@@ -388,13 +395,14 @@ function hotpot_delete_selected_attempts(&$hotpot, $del) {
     if ($select) {
 
         $table = 'hotpot_attempts';
-        if ($attempts = get_records_select($table, $select)) {
+        if ($attempts = $DB->get_records_select($table, $select, $params)) {
 
-            hotpot_delete_and_notify($table, $select, get_string('attempts', 'quiz'));
+            hotpot_delete_and_notify($table, $select, $params, get_string('attempts', 'quiz'));
 
             $select = 'attempt IN ('.implode(',', array_keys($attempts)).')';
-            hotpot_delete_and_notify('hotpot_details', $select, get_string('rawdetails', 'hotpot'));
-            hotpot_delete_and_notify('hotpot_responses', $select, get_string('answer', 'quiz'));
+            $params = array();
+            hotpot_delete_and_notify('hotpot_details', $select, $params, get_string('rawdetails', 'hotpot'));
+            hotpot_delete_and_notify('hotpot_responses', $select, $params, get_string('answer', 'quiz'));
 
             // update grades for all users for this hotpot
             hotpot_update_grades($hotpot);
@@ -437,8 +445,7 @@ function hotpot_print_report_heading(&$course, &$cm, &$hotpot, &$mode) {
     print_heading($hotpot->name);
 }
 function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
-
-    global $CFG;
+    global $CFG, $DB;
 
     $reports = hotpot_get_report_names('overview,simplestat,fullstat');
 
@@ -474,17 +481,17 @@ function hotpot_print_report_selector(&$course, &$hotpot, &$formdata) {
     }
 
     // get users who have ever atetmpted this HotPot
-    $users = get_records_sql("
+    $users = $DB->get_records_sql("
         SELECT 
             u.id, u.firstname, u.lastname
         FROM 
-            {$CFG->prefix}user u,
-            {$CFG->prefix}hotpot_attempts ha
+            {user} u,
+            {hotpot_attempts} ha
         WHERE
-            u.id = ha.userid AND ha.hotpot=$hotpot->id
+            u.id = ha.userid AND ha.hotpot=?
         ORDER BY
             u.lastname
-    ");
+    ", array($hotpot->id));
 
     // get context
     $cm = get_coursemodule_from_instance('hotpot', $hotpot->id);
@@ -605,14 +612,15 @@ function hotpot_get_report_names($names='') {
     return $reports;
 }
 
-function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $groupby) {
+function hotpot_get_records_groupby($function, $fieldnames, $table, $select, $params, $groupby) {
     // $function is an SQL aggregate function (MAX or MIN)
+    global $DB;
 
-    $fields = sql_concat_join("'_'", $fieldnames);
+    $fields = $DB->sql_concat_join("'_'", $fieldnames);
     $fields = "$groupby, $function($fields) AS joinedvalues";
 
     if ($fields) {
-        $records = get_records_sql("SELECT $fields FROM $table WHERE $select GROUP BY $groupby");
+        $records = $DB->get_records_sql("SELECT $fields FROM $table WHERE $select GROUP BY $groupby", $params);
     }
 
     if (empty($fields) || empty($records)) {
