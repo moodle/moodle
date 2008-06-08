@@ -2214,7 +2214,7 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
         if (!$question->id = get_field('hotpot_questions', 'id', 'hotpot', $attempt->hotpot, 'md5key', $question->md5key, 'name', $question->name)) {
             // add question record
             if (!$question->id = insert_record('hotpot_questions', $question)) {
-                print_error("Could not add question record (attempt_id=$attempt->id): ".$DB->get_last_error(), '', $next_url);
+                print_error('cannotaddquestionrecord', 'hotpot', $next_url);
             }
         }
 
@@ -2239,7 +2239,7 @@ function hotpot_add_response(&$attempt, &$question, &$response) {
 
             // add response record
             if(!$response->id = insert_record('hotpot_responses', $response)) {
-                print_error("Could not add response record (attempt_id=$attempt->id, question_id=$question->id): ".$DB->get_last_error(), '', $next_url);
+                print_error('cannotaddresprecord', 'hotpot', $next_url);
             }
 
             // we can stop looping now
@@ -2393,7 +2393,7 @@ function hotpot_string_id($str) {
             // try and add the new string record
             if (!$id = insert_record('hotpot_strings', $record)) {
                 global $DB;
-                print_error("Could not add string record for '".htmlspecialchars($str)."': ".$DB->get_last_error());
+                print_error('cannotaddstrrecord', 'hotpot');
             }
         }
     }

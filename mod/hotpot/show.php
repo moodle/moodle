@@ -11,7 +11,7 @@
     require_login($params->course);
 
     if (!has_capability('mod/hotpot:viewreport',get_context_instance(CONTEXT_COURSE, $params->course))) {
-        print_error("You are not allowed to view this page!");
+        print_error('nopermissiontoviewpage');
     }
     if (has_capability('mod/hotpot:viewreport', get_context_instance(CONTEXT_SYSTEM))) {
         $params->location = optional_param('location', HOTPOT_LOCATION_COURSEFILES, PARAM_INT);

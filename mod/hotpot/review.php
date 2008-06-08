@@ -9,27 +9,27 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('hotpot', $id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
         if (! $course = get_record("course", "id", $cm->course)) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
-            print_error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     } else {
         if (! $hotpot = get_record("hotpot", "id", $hp)) {
-            print_error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
         if (! $course = get_record("course", "id", $hotpot->course)) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
     }
     if (! $attempt = get_record("hotpot_attempts", "id", $attempt)) {
-        print_error("Attempt ID was incorrect");
+        print_error('invalidattemptid', 'hotpot');
     }
 
     require_login($course, true, $cm);
@@ -43,7 +43,7 @@
         //  print_error("noreviewuntil", "quiz", '', userdate($hotpot->timeclose));
         //}
         if ($attempt->userid != $USER->id) {
-            print_error("This is not your attempt!");
+            print_error('notyourattempt', 'hotpot');
         }
     }
     add_to_log($course->id, "hotpot", "review", "review.php?id=$cm->id&attempt=$attempt->id", "$hotpot->id", "$cm->id");
