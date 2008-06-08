@@ -146,7 +146,7 @@
                     notify("<b>$hotpot->name</b>");
 
                     // delete questions and responses for this hotpot
-                    if ($records = get_records_select('hotpot_questions', "hotpot=$hotpot->id", '', 'id,hotpot')) {
+                    if ($records = $DB->get_records('hotpot_questions', array('hotpot'=>$hotpot->id), '', 'id,hotpot')) {
                         $questionids = implode(',', array_keys($records));
                         hotpot_delete_and_notify('hotpot_questions', "id IN ($questionids)", get_string('question', 'quiz'));
                         hotpot_delete_and_notify('hotpot_responses', "question IN ($questionids)", get_string('answer', 'quiz'));
@@ -157,12 +157,12 @@
                     $attemptcount = 0;
 
                     // regrade attempts, if any, for this hotpot
-                    if ($attempts = get_records_select('hotpot_attempts', "hotpot=$hotpot->id")) {
+                    if ($attempts = $DB->get_records('hotpot_attempts', array('hotpot'=>$hotpot->id))) {
                         foreach ($attempts as $attempt) {
-                            $attempt->details = get_field('hotpot_details', 'details', 'attempt', $attempt->id);
+                            $attempt->details = $DB->get_field('hotpot_details', 'details', array('attempt'=>$attempt->id));
                             if ($attempt->details) {
                                 hotpot_add_attempt_details($attempt);
-                                if (! update_record('hotpot_attempts', $attempt)) {
+                                if (! $DB->update_record('hotpot_attempts', $attempt)) {
                                     print_error('cannotupdateattempt', 'hotpot', $next_url, $DB->get_last_error());
                                 }
                             }
@@ -197,9 +197,9 @@
         $regrade_hotpots = array();
         $concat_field = sql_concat('hotpot', "'_'", 'name');
         if ($concat_field) {
-            $records = get_records_sql("
+            $records = $DB->get_records_sql("
                 SELECT $concat_field, COUNT(*), hotpot, name
-                FROM {$CFG->prefix}hotpot_questions 
+                FROM {hotpot_questions} 
                 WHERE hotpot IN ($hotpotids)
                 GROUP BY hotpot, name 
                 HAVING COUNT(*) >1
@@ -218,7 +218,8 @@
     $start = microtime();
 
     // get total number of attempts, users and details for these hotpots
-    $tables = "{$CFG->prefix}hotpot_attempts a";
+    $params = array();
+    $tables = "{hotpot_attempts} a";
     $fields = "
         a.hotpot AS hotpot,
         COUNT(DISTINCT a.clickreportid) AS attemptcount,
@@ -230,26 +231,27 @@
         // do nothing (=get all users)
     } else {
         // restrict results to this user only
-        $select .= " AND a.userid='$USER->id'";
+        $select .= " AND a.userid=:userid";
+        $params['userid'] = $USER->id;
     }
     $usejoin = 0;
     if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM)) && $usejoin) {
         // join attempts table and details table
-        $tables .= ",{$CFG->prefix}hotpot_details d";
+        $tables .= ",{hotpot_details} d";
         $fields .= ',COUNT(DISTINCT d.id) AS detailcount';
         $select .= " AND a.id=d.attempt";
 
         // this may take about twice as long as getting the gradecounts separately :-(
         // so this operation could be done after getting the $totals from the attempts table
     }
-    $totals = get_records_sql("SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot");
+    $totals = $DB->get_records_sql("SELECT $fields FROM $tables WHERE $select GROUP BY a.hotpot", $params);
 
     if (has_capability('mod/hotpot:grade', get_context_instance(CONTEXT_SYSTEM)) && empty($usejoin)) {
         foreach ($hotpots as $hotpot) {
             $totals[$hotpot->id]->detailcount = 0;
-            if ($ids = get_records('hotpot_attempts', 'hotpot', $hotpot->id)) {
+            if ($ids = $DB->get_records('hotpot_attempts', array('hotpot'=>$hotpot->id))) {
                 $ids = join(',', array_keys($ids));
-                $totals[$hotpot->id]->detailcount = count_records_select('hotpot_details', "attempt IN ($ids)");
+                $totals[$hotpot->id]->detailcount = $DB->count_records_select('hotpot_details', "attempt IN ($ids)");
             }
         }
     }

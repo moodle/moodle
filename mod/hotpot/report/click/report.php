@@ -379,8 +379,10 @@ class hotpot_report extends hotpot_default_report {
 		}
 	}
 	function set_data_exercise(&$cm, &$course, &$hotpot, &$questions, &$questionids, &$questioncount, &$blank) {
+        global $DB;
+
 		// get exercise details (course name, section number, activity number, quiztype and question count)
-		$record = get_record("course_sections", "id", $cm->section);
+		$record = $DB->get_record("course_sections", array("id"=>$cm->section));
 		$this->data['exercise'] = array(
 			'course'  => $course->shortname,
 			'section' => empty($record) ? $blank : $record->section+1,

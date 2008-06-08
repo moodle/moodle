@@ -5,16 +5,16 @@
     $attemptid = required_param('attemptid', PARAM_INT);
 
     // get attempt, hotpot, course and course_module records
-    if (! $attempt = get_record("hotpot_attempts", "id", $attemptid)) {
+    if (! $attempt = $DB->get_record("hotpot_attempts", array("id"=>$attemptid))) {
         print_error('invalidattemptid', 'hotpot');
     }
     if ($attempt->userid != $USER->id) {
         print_error("invaliduserid");
     }
-    if (! $hotpot = get_record("hotpot", "id", $attempt->hotpot)) {
+    if (! $hotpot = $DB->get_record("hotpot", array("id"=>$attempt->hotpot))) {
         print_error('invalidhotpotid', 'hotpot');
     }
-    if (! $course = get_record("course", "id", $hotpot->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$hotpot->course))) {
         print_error('invalidcourseid');
     }
     if (! $cm = get_coursemodule_from_instance("hotpot", $hotpot->id, $course->id)) {
@@ -68,18 +68,18 @@
     }
 
     // check if this is the second (or subsequent) click
-    if (get_field("hotpot_attempts", "timefinish", "id", $attempt->id)) {
+    if ($DB->get_field("hotpot_attempts", "timefinish", array("id"=>$attempt->id))) {
 
         if ($hotpot->clickreporting==HOTPOT_YES) {
             // add attempt record for each form submission
             // records are linked via the "clickreportid" field
 
             // update status in previous records in this group
-            set_field("hotpot_attempts", "status", $attempt->status, "clickreportid", $attempt->clickreportid);
+            $DB->set_field("hotpot_attempts", "status", $attempt->status, array("clickreportid"=>$attempt->clickreportid));
 
             // add new attempt record
             unset ($attempt->id);
-            $attempt->id = insert_record("hotpot_attempts", $attempt);
+            $attempt->id = $DB->insert_record("hotpot_attempts", $attempt);
 
             if (empty($attempt->id)) {
                 print_error('cannotinsertattempt', 'hotpot', $next_url, $DB->get_last_error());
@@ -87,17 +87,17 @@
 
             // add attempt details record, if necessary
             if (!empty($attempt->details)) {
-                unset($details);
+                $details = new object();
                 $details->attempt = $attempt->id;
                 $details->details = $attempt->details;
-                if (! insert_record("hotpot_details", $details, false)) {
+                if (! $DB->insert_record("hotpot_details", $details, false)) {
                     print_error('cannotinsertattempt', 'hotpot', $next_url, $DB->get_last_error());
                 }
             }
         } else {
             // remove previous responses for this attempt, if required
             // (N.B. this does NOT remove the attempt record, just the responses)
-            delete_records("hotpot_responses", "attempt", $attempt->id);
+            $DB->delete_records("hotpot_responses", array("attempt"=>$attempt->id));
         }
     }
 
@@ -108,10 +108,10 @@
     hotpot_add_attempt_details($attempt);
 
     // add slashes again, so the details can be added to the database
-    $attempt->details = addslashes($attempt->details);
+    $attempt->details = $attempt->details;
 
     // update the attempt record
-    if (! update_record("hotpot_attempts", $attempt)) {
+    if (! $DB->update_record("hotpot_attempts", $attempt)) {
         print_error('cannotupdateattempt', 'hotpot', $next_url, $DB->get_last_error());
     }
 
@@ -119,21 +119,21 @@
     hotpot_update_grades($hotpot, $attempt->userid);
 
     // get previous attempt details record, if any
-    $details_exist = record_exists("hotpot_details", "attempt", $attempt->id);
+    $details_exist = $DB->record_exists("hotpot_details", array("attempt"=>$attempt->id));
 
     // delete/update/add the attempt details record
     if (empty($attempt->details)) {
         if ($details_exist) {
-            delete_records("hotpot_details", "attempt", $attempt->id);
+            $DB->delete_records("hotpot_details", array("attempt"=>$attempt->id));
         }
     } else {
         if ($details_exist) {
-            set_field("hotpot_details", "details", $attempt->details, "attempt", $attempt->id);
+            $DB->set_field("hotpot_details", "details", $attempt->details, array("attempt"=>$attempt->id));
         } else {
-            unset($details);
+            $details = new object();
             $details->attempt = $attempt->id;
             $details->details = $attempt->details;
-            if (! insert_record("hotpot_details", $details)) {
+            if (! $DB->insert_record("hotpot_details", $details)) {
                 print_error('cannotinsertattempt', 'hotpot', $next_url, $DB->get_last_error());
             }
         }
@@ -171,16 +171,17 @@
 function hotpot_get_next_cm(&$cm) {
     // gets the next module in this section of the course
     // that is the same type of module as the current module
+    global $DB;
 
     $next_mod = false;
 
     // get a list of $ids of modules in this section
-    if ($ids = get_field('course_sections', 'sequence', 'id', $cm->section)) {
+    if ($ids = $DB->get_field('course_sections', 'sequence', array('id'=>$cm->section))) {
 
         $found = false;
         $ids = explode(',', $ids);
         foreach ($ids as $id) {
-            if ($found && ($cm->module==get_field('course_modules', 'module', 'id', $id))) {
+            if ($found && ($cm->module==$DB->get_field('course_modules', 'module', array('id'=>$id)))) {
                 $next_mod = $id;
                 break;
             } else if ($cm->id==$id) {
@@ -191,7 +192,7 @@ function hotpot_get_next_cm(&$cm) {
     return $next_mod;
 }
 function hotpot_set_attempt_details(&$attempt) {
-    global $CFG, $HOTPOT_QUIZTYPE;
+    global $CFG, $HOTPOT_QUIZTYPE, $DB;
 
     // optional_param('showallquestions', 0, PARAM_INT);
 
@@ -433,22 +434,22 @@ function hotpot_set_attempt_details(&$attempt) {
         }
 
         // get previous responses to this question (if any)
-        $records = get_records_sql("
+        $records = $DB->get_records_sql("
             SELECT
                 r.*
             FROM
-                {$CFG->prefix}hotpot_attempts a,
-                {$CFG->prefix}hotpot_questions q,
-                {$CFG->prefix}hotpot_responses r
+                {hotpot_attempts} a,
+                {hotpot_questions} q,
+                {hotpot_responses} r
             WHERE
-                a.clickreportid = $attempt->clickreportid AND
+                a.clickreportid = ? AND
                 a.id = r.attempt AND
                 r.question = q.id AND
-                q.name = '$questionname' AND
-                q.hotpot = $attempt->hotpot
+                q.name = ? AND
+                q.hotpot = ?
             ORDER BY
                 a.timefinish
-        ");
+        ", array($attempt->clickreportid, $questionname, $attempt->hotpot));
 
         if ($records) {
             foreach ($records as $record) {

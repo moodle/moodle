@@ -8,11 +8,11 @@
         print_error('invalidcoursemodule');
     }
 
-    if (! $hotpot = get_record("hotpot", "id", $cm->instance)) {
+    if (! $hotpot = $DB->get_record("hotpot", array("id"=>$cm->instance))) {
         print_error('invalidhotpotid', 'hotpot');
     }
 
-    if (! $course = get_record("course", "id", $hotpot->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$hotpot->course))) {
         print_error("invalidcourse");
     }
 

@@ -36,12 +36,12 @@
     //
     //-----------------------------------------------------------
     function hotpot_backup_mods($bf, $preferences) {
-        global $CFG;
+        global $DB;
 
         $status = true;
 
         //Iterate over hotpot table
-        $hotpots = get_records ("hotpot","course",$preferences->backup_course,"id");
+        $hotpots = $DB->get_records ("hotpot", array("course"=>$preferences->backup_course), "id");
         if ($hotpots) {
             foreach ($hotpots as $hotpot) {
                 if (function_exists('backup_mod_selected')) {
@@ -65,7 +65,8 @@
          $level = 3;
         $status = true;
         $table = 'hotpot';
-        $select = "course=$preferences->backup_course AND id='$instance'";
+        $select = "course=? AND id=?";
+        $params = array($preferences->backup_course, $instance);
         $records_tag = '';
         $records_tags = array();
         $record_tag = 'MOD';
@@ -88,7 +89,7 @@
         }
         return hotpot_backup_records(
             $bf, $status, $level,
-            $table, $select,
+            $table, $select, $params,
             $records_tag, $records_tags,
             $record_tag, $record_tags,
             $excluded_tags, $more_backup
@@ -97,7 +98,8 @@
     function hotpot_backup_attempts($bf, &$parent, $level, $status) {
         // $parent is a reference to a hotpot record
         $table = 'hotpot_attempts';
-        $select = "hotpot=$parent->id";
+        $select = "hotpot=?";
+        $params = array($parent->id);
         $records_tag = 'ATTEMPT_DATA';
         $records_tags = array();
         $record_tag = 'ATTEMPT';
@@ -108,7 +110,7 @@
         $excluded_tags = array('hotpot');
         return hotpot_backup_records(
             $bf, $status, $level,
-            $table, $select,
+            $table, $select, $params,
             $records_tag, $records_tags,
             $record_tag, $record_tags,
             $excluded_tags, $more_backup
@@ -117,7 +119,8 @@
     function hotpot_backup_details($bf, &$parent, $level, $status) {
         // $parent is a reference to an attempt record
         $table = 'hotpot_details';
-        $select = "attempt=$parent->id";
+        $select = "attempt=?";
+        $params = array($parent->id);
         $records_tag = '';
         $records_tags = array();
         $record_tag = '';
@@ -126,7 +129,7 @@
         $excluded_tags = array('id','attempt');
         return hotpot_backup_records(
             $bf, $status, $level,
-            $table, $select,
+            $table, $select, $params,
             $records_tag, $records_tags,
             $record_tag, $record_tags,
             $excluded_tags, $more_backup
@@ -135,7 +138,8 @@
     function hotpot_backup_responses($bf, &$parent, $level, $status) {
         // $parent is a reference to an attempt record
         $table = 'hotpot_responses';
-        $select = "attempt=$parent->id";
+        $select = "attempt=?";
+        $params = array($parent->id);
         $records_tag = 'RESPONSE_DATA';
         $records_tags = array();
         $record_tag = 'RESPONSE';
@@ -144,7 +148,7 @@
         $excluded_tags = array('id','attempt');
         return hotpot_backup_records(
             $bf, $status, $level,
-            $table, $select,
+            $table, $select, $params,
             $records_tag, $records_tags,
             $record_tag, $record_tags,
             $excluded_tags, $more_backup
@@ -153,7 +157,8 @@
     function hotpot_backup_questions($bf, &$parent, $level, $status) {
         // $parent is a reference to an hotpot record
         $table = 'hotpot_questions';
-        $select = "hotpot=$parent->id";
+        $select = "hotpot=?";
+        $params = array($parent->id);
         $records_tag = 'QUESTION_DATA';
         $records_tags = array();
         $record_tag = 'QUESTION';
@@ -204,6 +209,7 @@
             $ids = implode(',', $ids);
             $table = 'hotpot_strings';
             $select = "id IN ($ids)";
+            $params = array();
             $records_tag = 'STRING_DATA';
             $records_tags = array();
             $record_tag = 'STRING';
@@ -212,7 +218,7 @@
             $excluded_tags = array('');
             $status = hotpot_backup_records(
                 $bf, $status, $level,
-                $table, $select,
+                $table, $select, $params,
                 $records_tag, $records_tags,
                 $record_tag, $record_tags,
                 $excluded_tags, $more_backup
@@ -220,7 +226,7 @@
         }
         return $status;
     }
-    function hotpot_backup_records(&$bf, $status, $level, $table, $select, $records_tag, $records_tags, $record_tag, $record_tags, $excluded_tags, $more_backup) {
+    function hotpot_backup_records(&$bf, $status, $level, $table, $select, $params, $records_tag, $records_tags, $record_tag, $record_tags, $excluded_tags, $more_backup) {
         // general purpose backup function
         // $bf     : resource id of backup file
         // $status : current status of backup (true or false)
@@ -237,7 +243,9 @@
         // no further "fwrite"s will be attempted
         // and the function returns "false".
         // Otherwise, the function returns "true".
-        if ($status && ($records = get_records_select($table, $select, 'id'))) {
+        global $DB;
+
+        if ($status && ($records = $DB->get_records_select($table, $select, $params, 'id'))) {
             // start a group of records
             if ($records_tag) {
                 $status = $status && fwrite($bf, start_tag($records_tag, $level, true));
@@ -282,7 +290,7 @@
     }
     ////Return an array of info (name, value)
     function hotpot_check_backup_mods($course, $user_data=false, $backup_unique_code, $instances=null) {
-        global $CFG;
+        global $CFG, $DB;
         $info = array();
         if (isset($instances) && is_array($instances) && count($instances)) {
             foreach ($instances as $id => $instance) {
@@ -291,15 +299,16 @@
         } else {
             // the course data
             $info[0][0] = get_string('modulenameplural','hotpot');
-            $info[0][1] = count_records('hotpot', 'course', $course);
+            $info[0][1] = $DB->count_records('hotpot', array('course'=>$course));
 
             // the user_data, if requested
             if ($user_data) {
-                $table = "{$CFG->prefix}hotpot h, {$CFG->prefix}hotpot_attempts a";
-                $select = "h.course = $course AND h.id = a.hotpot";
+                $table = "{hotpot} h, {hotpot_attempts} a";
+                $select = "h.course = ? AND h.id = a.hotpot";
+                $params = array($course);
 
                 $info[1][0] = get_string('attempts', 'quiz');
-                $info[1][1] = count_records_sql("SELECT COUNT(*) FROM $table WHERE $select");
+                $info[1][1] = $DB->count_records_sql("SELECT COUNT(*) FROM $table WHERE $select", $params);
             }
         }
         return $info;
@@ -307,7 +316,7 @@
 
     ////Return an array of info (name, value)
     function hotpot_check_backup_mods_instances($instance,$backup_unique_code) {
-        global $CFG;
+        global $CFG, $DB;
         $info = array();
 
         // the course data
@@ -316,11 +325,12 @@
 
         // the user_data, if requested
         if (!empty($instance->userdata)) {
-            $table = "{$CFG->prefix}hotpot_attempts a";
-            $select = "a.hotpot = $instance->id";
+            $table = "{hotpot_attempts} a";
+            $select = "a.hotpot = ?";
+            $params = array($instance->id);
 
             $info[$instance->id.'1'][0] = get_string('attempts', 'quiz');
-            $info[$instance->id.'1'][1] = count_records_sql("SELECT COUNT(*) FROM $table WHERE $select");
+            $info[$instance->id.'1'][1] = $DB->count_records_sql("SELECT COUNT(*) FROM $table WHERE $select", $params);
         }
         return $info;
     }
