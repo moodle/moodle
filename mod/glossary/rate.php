@@ -8,11 +8,11 @@
 
     $glossaryid = required_param('glossaryid', PARAM_INT); // The forum the rated posts are from
 
-    if (!$glossary = get_record('glossary', 'id', $glossaryid)) {
+    if (!$glossary = $DB->get_record('glossary', array('id'=>$glossaryid))) {
         print_error('invalidid', 'glossary');
     }
 
-    if (!$course = get_record('course', 'id', $glossary->course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$glossary->course))) {
         print_error('invalidcourseid');
     }
 
@@ -42,12 +42,12 @@
         $returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
     }
 
-    if ($data = data_submitted()) {    // form submitted
+    if ($data = data_submitted(false)) {    // form submitted
         foreach ((array)$data as $entryid => $rating) {
             if (!is_numeric($entryid)) {
                 continue;
             }
-            if (!$entry = get_record('glossary_entries', 'id', $entryid)) {
+            if (!$entry = $DB->get_record('glossary_entries', array('id'=>$entryid))) {
                 continue;
             }
 
@@ -67,16 +67,16 @@
                 continue;
             }
 
-            if ($oldrating = get_record("glossary_ratings", "userid", $USER->id, "entryid", $entry->id)) {
+            if ($oldrating = $DB->get_record("glossary_ratings", array("userid"=>$USER->id, "entryid"=>$entry->id))) {
                 //Check if we must delete the rate
                 if ($rating == -999) {
-                    delete_records('glossary_ratings','userid',$oldrating->userid, 'entryid',$oldrating->entryid);
+                    $DB->delete_records('glossary_ratings', array('userid'=>$oldrating->userid, 'entryid'=>$oldrating->entryid));
                     glossary_update_grades($glossary, $entry->userid);
 
                 } else if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time = time();
-                    if (! update_record("glossary_ratings", $oldrating)) {
+                    if (! $DB->update_record("glossary_ratings", $oldrating)) {
                         print_error('cannotinsertrate', '', '', array($entry, $rating));
                     }
                     glossary_update_grades($glossary, $entry->userid);
@@ -89,7 +89,7 @@
                 $newrating->entryid = $entry->id;
                 $newrating->rating  = $rating;
 
-                if (! insert_record("glossary_ratings", $newrating)) {
+                if (! $DB->insert_record("glossary_ratings", $newrating)) {
                     print_error('cannotinsertrate', '', '', array($entry->id, $rating));
                 }
                 glossary_update_grades($glossary, $entry->userid);

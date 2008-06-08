@@ -56,7 +56,7 @@ asort($formats);
 
 $str = '<table>';
 foreach ($formats as $formatid=>$formatname) {
-    $recformat = get_record('glossary_formats','id',$formatid);
+    $recformat = $DB->get_record('glossary_formats', array('id'=>$formatid));
     $str .= '<tr>';
     $str .= '<td>' . $formatname . '</td>';
     $eicon = "<a title=\"".get_string("edit")."\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&amp;mode=edit\"><img class=\"iconsmall\" src=\"../pix/t/edit.gif\" alt=\"".get_string("edit")."\" /></a>";

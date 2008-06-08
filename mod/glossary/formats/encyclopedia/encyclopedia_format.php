@@ -1,10 +1,10 @@
 <?php  // $Id$
 
 function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons=1,$ratings=NULL, $aliases=true) {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
 
-    $user = get_record('user', 'id', $entry->userid);
+    $user = $DB->get_record('user', array('id'=>$entry->userid));
     $strby = get_string('writtenby', 'glossary');
 
     $return = false;
@@ -22,6 +22,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
         echo '</div>';
 
         $fullname = fullname($user);
+        $by = new object();
         $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
         $by->date = userdate($entry->timemodified);
         echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';

@@ -92,7 +92,7 @@
 
         // TODO: count only approved if not allowed to see them
 
-        $count = count_records_sql("SELECT COUNT(*) FROM {$CFG->prefix}glossary_entries where (glossaryid = $glossary->id or sourceglossaryid = $glossary->id)");
+        $count = $DB->count_records_sql("SELECT COUNT(*) FROM {glossary_entries} WHERE (glossaryid = ? OR sourceglossaryid = ?)", array($glossary->id, $glossary->id));
 
         //If this glossary has RSS activated, calculate it
         if ($show_rss) {

@@ -12,8 +12,8 @@
     }
 
     if ($eid) {
-        $entry = get_record("glossary_entries", "id", $eid);
-        $glossary = get_record('glossary','id',$entry->glossaryid);
+        $entry = $DB->get_record("glossary_entries", array("id"=>$eid));
+        $glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid));
         $entry->glossaryname = format_string($glossary->name,true);
         if (!$cm = get_coursemodule_from_instance("glossary", $glossary->id)) {
             print_error("invalidcoursemodule");
@@ -39,7 +39,7 @@
     }
 
     if (!empty($courseid)) {
-        $course = get_record("course", "id", $courseid);
+        $course = $DB->get_record("course", array("id"=>$courseid));
         if ($course->id != SITEID) {
             require_login($courseid);
         }

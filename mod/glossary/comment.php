@@ -28,20 +28,20 @@ switch ($action) {
  * Add new comment
  */
 function glossary_comment_add() {
-    global $USER;
+    global $USER, $DB;
 
     $eid = optional_param('eid', 0, PARAM_INT); // Entry ID
 
-    if (!$entry = get_record('glossary_entries', 'id', $eid)) {
+    if (!$entry = $DB->get_record('glossary_entries', array('id'=>$eid))) {
         print_error('invalidentry');
     }
-    if (!$glossary = get_record('glossary', 'id', $entry->glossaryid)) {
+    if (!$glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid))) {
         print_error('invalidid', 'glossary');
     }
     if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = get_record('course', 'id', $cm->course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
         print_error('coursemisconf');
     }
 
@@ -59,7 +59,7 @@ function glossary_comment_add() {
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
     }
 
-    if ($data = $mform->get_data()) {
+    if ($data = $mform->get_data(false)) {
         trusttext_after_edit($data->entrycomment, $context);
 
         $newcomment = new object();
@@ -69,7 +69,7 @@ function glossary_comment_add() {
         $newcomment->timemodified = time();
         $newcomment->userid       = $USER->id;
 
-        if (!$newcomment->id = insert_record('glossary_comments', $newcomment)) {
+        if (!$newcomment->id = $DB->insert_record('glossary_comments', $newcomment)) {
             print_error('cannotinsertcomment');
         } else {
             add_to_log($course->id, 'glossary', 'add comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$newcomment->id", $cm->id);
@@ -88,24 +88,24 @@ function glossary_comment_add() {
  * Deleting existing comments
  */
 function glossary_comment_delete() {
-    global $USER;
+    global $USER, $DB;
 
     $cid     = optional_param('cid', 0, PARAM_INT);      // Comment ID
     $confirm = optional_param('confirm', 0, PARAM_BOOL); // delete confirmation
 
-    if (!$comment = get_record('glossary_comments', 'id', $cid)) {
+    if (!$comment = $DB->get_record('glossary_comments', array('id'=>$cid))) {
         print_error('invalidcomment');
     }
-    if (!$entry = get_record('glossary_entries', 'id', $comment->entryid)) {
+    if (!$entry = $DB->get_record('glossary_entries', array('id'=>$comment->entryid))) {
         print_error('invalidentry');
     }
-    if (!$glossary = get_record('glossary', 'id', $entry->glossaryid)) {
+    if (!$glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid))) {
         print_error('invalidid', 'glossary');
     }
     if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = get_record('course', 'id', $cm->course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
         print_error('coursemisconf');
     }
 
@@ -119,7 +119,7 @@ function glossary_comment_delete() {
     }
 
     if (data_submitted() and $confirm) {
-        delete_records('glossary_comments','id', $cid);
+        $DB->delete_records('glossary_comments', array('id'=>$cid));
         add_to_log($course->id, 'glossary', 'delete comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$comment->id",$cm->id);
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
 
@@ -142,23 +142,23 @@ function glossary_comment_delete() {
  * Edit existing comments
  */
 function glossary_comment_edit() {
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
 
     $cid = optional_param('cid', 0, PARAM_INT); // Comment ID
 
-    if (!$comment = get_record('glossary_comments', 'id', $cid)) {
+    if (!$comment = $DB->get_record('glossary_comments', array('id'=>$cid))) {
         print_error('invalidcomment');
     }
-    if (!$entry = get_record('glossary_entries', 'id', $comment->entryid)) {
+    if (!$entry = $DB->get_record('glossary_entries', array('id'=>$comment->entryid))) {
         print_error('invalidentry');
     }
-    if (!$glossary = get_record('glossary', 'id', $entry->glossaryid)) {
+    if (!$glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid))) {
         print_error('invalidid', 'glossary');
     }
     if (!$cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
         print_error('invalidcoursemodule');
     }
-    if (!$course = get_record('course', 'id', $cm->course)) {
+    if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
         print_error('coursemisconf');
     }
 
@@ -179,7 +179,7 @@ function glossary_comment_edit() {
     trusttext_prepare_edit($comment->entrycomment, $comment->format, can_use_html_editor(), $context);
     $mform->set_data(array('cid'=>$cid, 'action'=>'edit', 'entrycomment'=>$comment->entrycomment, 'format'=>$comment->format));
 
-    if ($data = $mform->get_data()) {
+    if ($data = $mform->get_data(false)) {
         trusttext_after_edit($data->entrycomment, $context);
 
         $updatedcomment = new object();
@@ -188,7 +188,7 @@ function glossary_comment_edit() {
         $updatedcomment->format       = $data->format;
         $updatedcomment->timemodified = time();
 
-        if (!update_record('glossary_comments', $updatedcomment)) {
+        if (!$DB->update_record('glossary_comments', $updatedcomment)) {
             print_error('cannotupdatecomment');
         } else {
             add_to_log($course->id, 'glossary', 'update comment', "comments.php?id=$cm->id&amp;eid=$entry->id", "$updatedcomment->id",$cm->id);

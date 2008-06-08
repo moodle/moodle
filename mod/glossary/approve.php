@@ -13,11 +13,11 @@
         print_error('invalidcoursemodule');
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
 
-    if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+    if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
         print_error('invalidid', 'glossary');
     }
 
@@ -26,11 +26,12 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/glossary:approve', $context);
 
+    $newentry = new object();
     $newentry->id = $eid;
     $newentry->approved     = 1;
     $newentry->timemodified = time(); // wee need this date here to speed up recent activity, TODO: use timestamp in approved field instead in 2.0
 
-    if (! update_record("glossary_entries", $newentry)) {
+    if (! $DB->update_record("glossary_entries", $newentry)) {
         print_error('cantupdateglossary', 'glossary');
     } else {
         add_to_log($course->id, "glossary", "approve entry", "showentry.php?id=$cm->id&amp;eid=$eid", "$eid",$cm->id);

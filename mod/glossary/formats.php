@@ -10,7 +10,7 @@
 
     admin_externalpage_setup('managemodules'); // this is hacky, tehre should be a special hidden page for it
 
-    if ( !$displayformat = get_record("glossary_formats","id",$id) ) {
+    if ( !$displayformat = $DB->get_record("glossary_formats", array("id"=>$id))) {
         error ("Invalid Glossary Format");
     }
 
@@ -22,7 +22,7 @@
             } else {
                 $displayformat->visible = 1;
             }
-            update_record("glossary_formats",$displayformat);
+            $DB->update_record("glossary_formats",$displayformat);
         }
         redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettingglossary#glossary_formats_header");
         die;
@@ -35,7 +35,7 @@
         $displayformat->sortkey     = $form->sortkey;
         $displayformat->sortorder   = $form->sortorder;
 
-        update_record("glossary_formats",$displayformat);
+        $DB->update_record("glossary_formats",$displayformat);
         redirect("$CFG->wwwroot/$CFG->admin/settings.php?section=modsettingglossary#glossary_formats_header");
         die;
     }

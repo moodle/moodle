@@ -19,7 +19,7 @@ if (! $cm = get_coursemodule_from_id('glossary', $id)) {
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-if (! $course = get_record("course", "id", $cm->course)) {
+if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
     print_error('coursemisconf');
 }
 
@@ -29,13 +29,13 @@ if ( isguest() ) {
     print_error('guestnoedit', 'glossary', $_SERVER["HTTP_REFERER"]);
 }
 
-if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
     print_error('invalidid', 'glossary');
 }
 
 
 if ($e) { // if entry is specified
-    if (!$entry  = get_record("glossary_entries", "id", $e)) {
+    if (!$entry  = $DB->get_record("glossary_entries", array("id"=>$e))) {
         print_error('invalidentry');
     }
     $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
@@ -47,7 +47,7 @@ if ($e) { // if entry is specified
     require_capability('mod/glossary:write', $context);
 }
 
-$mform =& new mod_glossary_entry_form(null, compact('cm', 'glossary', 'hook', 'mode', 'e', 'context'));
+$mform = new mod_glossary_entry_form(null, compact('cm', 'glossary', 'hook', 'mode', 'e', 'context'));
 if ($mform->is_cancelled()){
     if ($e){
         redirect("view.php?id=$cm->id&amp;mode=entry&amp;hook=$e");
@@ -55,7 +55,7 @@ if ($mform->is_cancelled()){
         redirect("view.php?id=$cm->id");
     }
 
-} elseif ($fromform = $mform->get_data()) {
+} elseif ($fromform = $mform->get_data(false)) {
     trusttext_after_edit($fromform->definition, $context);
 
     if ( !isset($fromform->usedynalink) ) {
@@ -93,7 +93,7 @@ if ($mform->is_cancelled()){
             $todb->attachment = $newfilename;
         }
 
-        if (update_record('glossary_entries', $todb)) {
+        if ($DB->update_record('glossary_entries', $todb)) {
             add_to_log($course->id, "glossary", "update entry",
                        "view.php?id=$cm->id&amp;mode=entry&amp;hook=$todb->id",
                        $todb->id, $cm->id);
@@ -108,11 +108,11 @@ if ($mform->is_cancelled()){
         $todb->teacherentry = has_capability('mod/glossary:manageentries', $context);
 
 
-        if ($todb->id = insert_record("glossary_entries", $todb)) {
+        if ($todb->id = $DB->insert_record("glossary_entries", $todb)) {
             $e = $todb->id;
             $dir = glossary_file_area_name($todb);
             if ($mform->save_files($dir) and $newfilename = $mform->get_new_filename()) {
-                set_field("glossary_entries", "attachment", $newfilename, "id", $todb->id);
+                $DB->set_field("glossary_entries", "attachment", $newfilename, array("id"=>$todb->id));
             }
             add_to_log($course->id, "glossary", "add entry",
                        "view.php?id=$cm->id&amp;mode=entry&amp;hook=$todb->id", $todb->id,$cm->id);
@@ -122,15 +122,15 @@ if ($mform->is_cancelled()){
 
     }
 
-    delete_records("glossary_entries_categories", "entryid", $e);
-    delete_records("glossary_alias", "entryid", $e);
+    $DB->delete_records("glossary_entries_categories", array("entryid"=>$e));
+    $DB->delete_records("glossary_alias", array("entryid"=>$e));
 
     if (empty($fromform->notcategorised) && isset($fromform->categories)) {
         $newcategory->entryid = $e;
         foreach ($fromform->categories as $category) {
             if ( $category > 0 ) {
                 $newcategory->categoryid = $category;
-                insert_record("glossary_entries_categories", $newcategory, false);
+                $DB->insert_record("glossary_entries_categories", $newcategory, false);
             } else {
                 break;
             }
@@ -141,10 +141,10 @@ if ($mform->is_cancelled()){
             foreach ($aliases as $alias) {
                 $alias = trim($alias);
                 if ($alias) {
-                    unset($newalias);
+                    $newalias = new object();
                     $newalias->entryid = $e;
                     $newalias->alias = $alias;
-                    insert_record("glossary_alias", $newalias, false);
+                    $DB->insert_record("glossary_alias", $newalias, false);
                 }
             }
         }
@@ -153,7 +153,7 @@ if ($mform->is_cancelled()){
 
 } else {
     if ($e) {
-        $fromdb = get_record("glossary_entries", "id", $e);
+        $fromdb = $DB->get_record("glossary_entries", array("id"=>$e));
 
         $toform = new object();
 

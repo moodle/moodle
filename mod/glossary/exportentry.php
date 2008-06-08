@@ -17,7 +17,7 @@
     if ( ! $cm ) {
         $PermissionGranted = 0;
     } else {
-        $mainglossary = get_record('glossary','course',$cm->course, 'mainglossary',1);
+        $mainglossary = $DB->get_record('glossary', array('course'=>$cm->course), 'mainglossary',1);
         if ( ! $mainglossary ) {
             $PermissionGranted = 0;
         }
@@ -26,11 +26,11 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_capability('mod/glossary:export', $context);
 
-    if (! $course = get_record('course', 'id', $cm->course)) {
+    if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
         print_error('coursemisconf');
     }
 
-    if (! $glossary = get_record('glossary', 'id', $cm->instance)) {
+    if (! $glossary = $DB->get_record('glossary', array('id'=>$cm->instance))) {
         print_error('invalidid', 'glossary');
     }
 
@@ -42,7 +42,7 @@
     print_header_simple(format_string($glossary->name), '', $navigation, '', '', true, '', navmenu($course, $cm));
 
     if ( $PermissionGranted ) {
-        $entry = get_record('glossary_entries', 'id', $entry);
+        $entry = $DB->get_record('glossary_entries', array('id'=>$entry));
 
         if ( !$confirm ) {
             echo '<div class="boxaligncenter">';
@@ -53,7 +53,7 @@
             echo '</div>';
         } else {
             if ( ! $mainglossary->allowduplicatedentries ) {
-                $dupentry = get_record('glossary_entries','glossaryid', $mainglossary->id, 'lower(concept)',moodle_strtolower(addslashes($entry->concept)));
+                $dupentry = $DB->get_record('glossary_entries', array('glossaryid'=>$mainglossary->id, 'lower(concept)'=>moodle_strtolower($entry->concept)));
                 if ( $dupentry ) {
                     $PermissionGranted = 0;
                 }
@@ -65,7 +65,7 @@
                 $dbentry->glossaryid       = $mainglossary->id;
                 $dbentry->sourceglossaryid = $glossary->id;
                 
-                if (! update_record('glossary_entries', $dbentry)) {
+                if (! $DB->update_record('glossary_entries', $dbentry)) {
                     print_error('cantexportentry', 'glossary');
                 } else {
                     print_simple_box_start('center', '60%');

@@ -29,13 +29,12 @@
     //----------------------------------------------------------------------------------
 
     function glossary_backup_mods($bf,$preferences) {
-        
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
         //Iterate over glossary table
-        $glossaries = get_records ("glossary","course",$preferences->backup_course,"mainglossary");
+        $glossaries = $DB->get_records ("glossary", array("course"=>$preferences->backup_course), "mainglossary");
         if ($glossaries) {
             foreach ($glossaries as $glossary) {
                 if (backup_mod_selected($preferences,'glossary',$glossary->id)) {
@@ -47,11 +46,10 @@
     }
 
     function glossary_backup_one_mod($bf,$preferences,$glossary) {
-
-        global $CFG;
+        global $CFG, $DB;
     
         if (is_numeric($glossary)) {
-            $glossary = get_record('glossary','id',$glossary);
+            $glossary = $DB->get_record('glossary', array('id'=>$glossary));
         }
     
         $status = true;
@@ -100,12 +98,11 @@
 
     //Backup glossary_categories and entries_categories contents (executed from glossary_backup_mods)
     function backup_glossary_categories ($bf,$preferences,$glossary, $userinfo) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $glossary_categories = get_records("glossary_categories","glossaryid",$glossary,"id");
+        $glossary_categories = $DB->get_records("glossary_categories", array("glossaryid"=>$glossary),"id");
         //If there is categories
         if ($glossary_categories) {
             $status =fwrite ($bf,start_tag("CATEGORIES",4,true));
@@ -137,12 +134,11 @@
 
     //Backup entries_categories contents (executed from backup_glossary_categories)
     function backup_glossary_entries_categories ($bf,$preferences,$categoryid) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $entries = get_records("glossary_entries_categories","categoryid",$categoryid);
+        $entries = $DB->get_records("glossary_entries_categories", array("categoryid"=>$categoryid));
         if ($entries) {
             $status =fwrite ($bf,start_tag("ENTRIES",6,true));
             foreach ($entries as $entry) {
@@ -157,12 +153,11 @@
 
     //Backup glossary_entries contents (executed from glossary_backup_mods)
     function backup_glossary_entries ($bf,$preferences,$glossary, $userinfo) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $glossary_entries = get_records("glossary_entries","glossaryid",$glossary,"id");
+        $glossary_entries = $DB->get_records("glossary_entries", array("glossaryid"=>$glossary),"id");
         //If there is entries
         if ($glossary_entries) {            
             $dumped_entries = 0;
@@ -219,12 +214,11 @@
 
     //Backup glossary_comments contents (executed from backup_glossary_entries)
     function backup_glossary_comments ($bf,$preferences,$entryid) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $comments = get_records("glossary_comments","entryid",$entryid);
+        $comments = $DB->get_records("glossary_comments", array("entryid"=>$entryid));
         if ($comments) {
             $status =fwrite ($bf,start_tag("COMMENTS",6,true));
             foreach ($comments as $comment) {
@@ -245,12 +239,11 @@
 
    //Backup glossary_ratings contents (executed from backup_glossary_entries)
     function backup_glossary_ratings ($bf,$preferences,$entryid) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $ratings = get_records("glossary_ratings","entryid",$entryid);
+        $ratings = $DB->get_records("glossary_ratings", array("entryid"=>$entryid));
         if ($ratings) {
             $status =fwrite ($bf,start_tag("RATINGS",6,true));
             foreach ($ratings as $rating) {
@@ -270,12 +263,11 @@
    
     //Backup glossary_alias contents (executed from backup_glossary_entries)
     function backup_glossary_aliases ($bf,$preferences,$entryid) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
-        $aliases = get_records("glossary_alias","entryid",$entryid);
+        $aliases = $DB->get_records("glossary_alias", array("entryid"=>$entryid));
         if ($aliases) {
             $status =fwrite ($bf,start_tag("ALIASES",6,true));
             foreach ($aliases as $alias) {
@@ -293,7 +285,6 @@
     //Backup glossary files because we've selected to backup user info
     //or current entry is a teacher entry
     function backup_glossary_files($bf,$preferences,$glossary,$entry) {
-
         global $CFG;
 
         $status = true;
@@ -399,33 +390,28 @@
 
     //Returns an array of glossaries id
     function glossary_ids ($course) {
+        global $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT a.id, a.course
-                                 FROM {$CFG->prefix}glossary a
-                                 WHERE a.course = '$course'");
+        return $DB->get_records_sql ("SELECT a.id, a.course
+                                        FROM {glossary} a
+                                       WHERE a.course = ?", array($course));
     }
    
     //Returns an array of glossary_answers id
     function glossary_entries_ids_by_course ($course) {
+        global $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.glossaryid
-                                 FROM {$CFG->prefix}glossary_entries s,
-                                      {$CFG->prefix}glossary a
-                                 WHERE a.course = '$course' AND
-                                       s.glossaryid = a.id");
+        return $DB->get_records_sql ("SELECT s.id , s.glossaryid
+                                        FROM {glossary_entries} s, {glossary} a
+                                       WHERE a.course = ? AND s.glossaryid = a.id", array($course));
     }
 
     //Returns an array of glossary_answers id
     function glossary_entries_ids_by_instance ($instanceid) {
+        global $DB;
 
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.glossaryid
-                                 FROM {$CFG->prefix}glossary_entries s
-                                 WHERE s.glossaryid = $instanceid");
+        return $DB->get_records_sql ("SELECT s.id , s.glossaryid
+                                        FROM {glossary_entries} s
+                                       WHERE s.glossaryid = ?", array($instanceid));
     }
 ?>

@@ -23,17 +23,17 @@
         if (! $cm = get_coursemodule_from_id('glossary', $id)) {
             print_error('invalidcoursemodule');
         }
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
             print_error('coursemisconf');
         }
-        if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+        if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
             print_error('invalidid', 'glossary');
         }
     } else if (!empty($g)) {
-        if (! $glossary = get_record("glossary", "id", $g)) {
+        if (! $glossary = $DB->get_record("glossary", array("id"=>$g))) {
             print_error('invalidid', 'glossary');
         }
-        if (! $course = get_record("course", "id", $glossary->course)) {
+        if (! $course = $DB->get_record("course", array("id"=>$glossary->course))) {
             print_error('invalidcourseid');
         }
         if (!$cm = get_coursemodule_from_instance("glossary", $glossary->id, $course->id)) {
@@ -68,7 +68,7 @@
 
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
-    if ( $dp = get_record('glossary_formats','name', addslashes($glossary->displayformat)) ) {
+    if ( $dp = $DB->get_record('glossary_formats', array('name'=>$glossary->displayformat)) ) {
     /// Based on format->defaultmode, we build the defaulttab to be showed sometimes
         switch ($dp->defaultmode) {
             case 'cat':
@@ -146,7 +146,7 @@
 
     case 'entry':  /// Looking for a certain entry id
         $tab = GLOSSARY_STANDARD_VIEW;
-        if ( $dp = get_record("glossary_formats","name", $glossary->displayformat) ) {
+        if ( $dp = $DB->get_record("glossary_formats", array("name"=>$glossary->displayformat)) ) {
             $displayformat = $dp->popupformatname;
         }
     break;
@@ -154,7 +154,7 @@
     case 'cat':    /// Looking for a certain cat
         $tab = GLOSSARY_CATEGORY_VIEW;
         if ( $hook > 0 ) {
-            $category = get_record("glossary_categories","id",$hook);
+            $category = $DB->get_record("glossary_categories", array("id"=>$hook));
         }
     break;
 
@@ -268,7 +268,7 @@
     /// Decide about to print the approval link
         if (has_capability('mod/glossary:approve', $context)) {
         /// Check we have pending entries
-            if ($hiddenentries = count_records_select('glossary_entries',"glossaryid  = $glossary->id and approved = 0")) {
+            if ($hiddenentries = $DB->count_records('glossary_entries', array('glossaryid'=>$glossary->id, 'approved'=>0))) {
                 if ($availableoptions) {
                     $availableoptions .= '<br />';
                 }
@@ -441,7 +441,7 @@
                     // printing the user icon if defined (only when browsing authors)
                         echo '<th align="left">';
 
-                        $user = get_record("user","id",$entry->userid);
+                        $user = $DB->get_record("user", array("id"=>$entry->userid));
                         print_user_picture($user, $course->id, $user->picture);
                         $pivottoshow = fullname($user, has_capability('moodle/site:viewfullnames', get_context_instance(CONTEXT_COURSE, $course->id)));
                     } else {
@@ -495,7 +495,7 @@
 
         echo "<div class=\"boxaligncenter\"><input type=\"submit\" value=\"".get_string("sendinratings", "glossary")."\" />";
         if ($glossary->scale < 0) {
-            if ($scale = get_record("scale", "id", abs($glossary->scale))) {
+            if ($scale = $DB->get_record("scale", array("id"=>abs($glossary->scale)))) {
                 print_scale_menu_helpbutton($course->id, $scale );
             }
         }

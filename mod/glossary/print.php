@@ -18,11 +18,11 @@
         print_error('invalidcoursemodule');
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
 
-    if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+    if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
         print_error('invalidid', 'glossary');
     }
 
@@ -44,7 +44,7 @@
 
 /// setting the default values for the display mode of the current glossary
 /// only if the glossary is viewed by the first time
-    if ( $dp = get_record('glossary_formats','name', addslashes($glossary->displayformat)) ) {
+    if ( $dp = $DB->get_record('glossary_formats', array('name'=>$glossary->displayformat)) ) {
         $printpivot = $dp->showgroup;
         if ( $mode == '' and $hook == '' and $show == '') {
             $mode      = $dp->defaultmode;
@@ -88,7 +88,7 @@
     case 'cat':    /// Looking for a certain cat
         $tab = GLOSSARY_CATEGORY_VIEW;
         if ( $hook > 0 ) {
-            $category = get_record("glossary_categories","id",$hook);
+            $category = $DB->get_record("glossary_categories", array("id"=>$hook));
         }
     break;
 
@@ -143,7 +143,7 @@
         $alphabet = explode(",", get_string("alphabet"));
     }
 
-    $site = get_record("course","id",1);
+    $site = $DB->get_record("course", array("id"=>1));
     echo '<p style="text-align:right"><span style="font-size:0.75em">' . userdate(time()) . '</span></p>';
     echo get_string("site") . ': <strong>' . format_string($site->fullname) . '</strong><br />';
     echo get_string("course") . ': <strong>' . format_string($course->fullname) . ' ('. format_string($course->shortname) . ')</strong><br />';
@@ -169,7 +169,7 @@
                     $pivottoshow = $currentpivot;
                     if ( isset($entry->userispivot) ) {
                         // printing the user icon if defined (only when browsing authors)
-                        $user = get_record("user","id",$entry->userid);
+                        $user = $DB->get_record("user", array("id"=>$entry->userid));
                         $pivottoshow = fullname($user);
                     }
 

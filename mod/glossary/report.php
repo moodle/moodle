@@ -8,15 +8,15 @@
     $id   = required_param('id', PARAM_INT);
     $sort = optional_param('sort', '', PARAM_ALPHA);
 
-    if (! $entry = get_record('glossary_entries', 'id', $id)) {
+    if (! $entry = $DB->get_record('glossary_entries', array('id'=>$id))) {
         print_error('invalidentry');
     }
 
-    if (! $glossary = get_record('glossary', 'id', $entry->glossaryid)) {
+    if (! $glossary = $DB->get_record('glossary', array('id'=>$entry->glossaryid))) {
         print_error('invalidid', 'glossary');
     }
 
-    if (! $course = get_record('course', 'id', $glossary->course)) {
+    if (! $course = $DB->get_record('course', array('id'=>$glossary->course))) {
         print_error('invalidcourseid');
     }
 

@@ -20,11 +20,11 @@
         print_error("invalidcoursemodule");
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
 
-    if (! $entry = get_record("glossary_entries","id", $entry)) {
+    if (! $entry = $DB->get_record("glossary_entries", array("id"=>$entry))) {
         print_error('invalidentry');
     }
 
@@ -32,7 +32,7 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $manageentries = has_capability('mod/glossary:manageentries', $context); 
     
-    if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+    if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
         print_error('invalidid', 'glossary');
     }
 
@@ -62,7 +62,7 @@
             $dbentry->id = $entry->id;
             $dbentry->glossaryid = $entry->sourceglossaryid;
             $dbentry->sourceglossaryid = 0;
-            if (! update_record('glossary_entries', $dbentry)) {
+            if (! $DB->update_record('glossary_entries', $dbentry)) {
                 print_error('cantupdateglossary', 'glossary');
             }
 
@@ -70,10 +70,10 @@
             if ( $entry->attachment ) {
                 glossary_delete_old_attachments($entry);
             }
-            delete_records("glossary_comments", "entryid",$entry->id);
-            delete_records("glossary_alias", "entryid", $entry->id);
-            delete_records("glossary_ratings", "entryid", $entry->id);
-            delete_records("glossary_entries","id", $entry->id);
+            $DB->delete_records("glossary_comments", array("entryid"=>$entry->id));
+            $DB->delete_records("glossary_alias", array("entryid"=>$entry->id));
+            $DB->delete_records("glossary_ratings", array("entryid"=>$entry->id));
+            $DB->delete_records("glossary_entries", array("id"=>$entry->id));
         }
 
         add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&amp;mode=$prevmode&amp;hook=$hook", $entry->id,$cm->id);

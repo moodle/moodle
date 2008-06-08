@@ -15,11 +15,11 @@
         print_error('invalidcoursemodule');
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
 
-    if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+    if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
         print_error('invalidid', 'glossary');
     }
 

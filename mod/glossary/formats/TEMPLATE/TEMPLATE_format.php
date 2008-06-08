@@ -1,11 +1,10 @@
 <?php  // $Id$
 
 function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
-
-    global $CFG, $USER;
+    global $CFG, $USER, $DB;
     
 
-    $user = get_record('user', 'id', $entry->userid);
+    $user = $DB->get_record('user', array('id'=>$entry->userid));
     $strby = get_string('writtenby', 'glossary');
 
     if ($entry) {

@@ -5,8 +5,7 @@
     //rss feeds generation. Foreach site glossary with rss enabled
     //build one XML rss structure.
     function glossary_rss_feeds() {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -19,7 +18,7 @@
         //It's working so we start...
         } else {
             //Iterate over all glossaries
-            if ($glossaries = get_records("glossary")) {
+            if ($glossaries = $DB->get_records("glossary")) {
                 foreach ($glossaries as $glossary) {
                     if (!empty($glossary->rsstype) && !empty($glossary->rssarticles) && $status) {
 
@@ -83,8 +82,7 @@
     //This function return the XML rss contents about the glossary record passed as parameter
     //It returns false if something is wrong
     function glossary_rss_feed($glossary) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
 
@@ -136,31 +134,32 @@
     //This function returns "items" record array to be used to build the rss feed
     //for a Type=with author glossary
     function glossary_rss_feed_withauthor($glossary, $newsince=0) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $items = array();
 
+        $params = array('gid'=>$glossary->id, 'newsince'=>$newsince); 
+
         if ($newsince) {
-            $newsince = " AND e.timecreated > '$newsince'";
+            $newsince = "AND e.timecreated > :newsince";
         } else {
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT e.id AS entryid, 
-                                             e.concept AS entryconcept, 
-                                             e.definition AS entrydefinition, 
-                                             e.format AS entryformat, 
-                                             e.timecreated AS entrytimecreated, 
-                                             u.id AS userid, 
-                                             u.firstname AS userfirstname,
-                                             u.lastname AS userlastname
-                                      FROM {$CFG->prefix}glossary_entries e,
-                                           {$CFG->prefix}user u
-                                      WHERE e.glossaryid = '$glossary->id' AND
-                                            u.id = e.userid AND
-                                            e.approved = 1 $newsince
-                                      ORDER BY e.timecreated desc")) {
+        if ($recs = $DB->get_records_sql ("SELECT e.id AS entryid, 
+                                                  e.concept AS entryconcept, 
+                                                  e.definition AS entrydefinition, 
+                                                  e.format AS entryformat, 
+                                                  e.timecreated AS entrytimecreated, 
+                                                  u.id AS userid, 
+                                                  u.firstname AS userfirstname,
+                                                  u.lastname AS userlastname
+                                             FROM {glossary_entries} e,
+                                                  {user} u
+                                            WHERE e.glossaryid = :gid AND
+                                                  u.id = e.userid AND
+                                                  e.approved = 1 $newsince
+                                         ORDER BY e.timecreated desc", $params)) {
 
             //Are we just looking for new ones?  If so, then return now.
             if ($newsince) {
@@ -168,15 +167,13 @@
             }
             //Iterate over each entry to get glossary->rssarticles records
             $articlesleft = $glossary->rssarticles;
-            $item = NULL;
-            $user = NULL;
 
             $formatoptions = new object;
             $formatoptions->trusttext = true;
 
             foreach ($recs as $rec) {
-                unset($item);
-                unset($user);
+                $item = new object();
+                $user = new user();
                 $item->title = $rec->entryconcept;
                 $user->firstname = $rec->userfirstname;
                 $user->lastname = $rec->userlastname;
@@ -197,31 +194,32 @@
     //This function returns "items" record array to be used to build the rss feed
     //for a Type=without author glossary
     function glossary_rss_feed_withoutauthor($glossary, $newsince=0) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $items = array();
 
+        $params = array('gid'=>$glossary->id, 'newsince'=>$newsince); 
+
         if ($newsince) {
-            $newsince = " AND e.timecreated > '$newsince'";
+            $newsince = "AND e.timecreated > :newsince";
         } else {
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT e.id AS entryid,
-                                             e.concept AS entryconcept,
-                                             e.definition AS entrydefinition,
-                                             e.format AS entryformat,
-                                             e.timecreated AS entrytimecreated,
-                                             u.id AS userid,
-                                             u.firstname AS userfirstname,
-                                             u.lastname AS userlastname
-                                      FROM {$CFG->prefix}glossary_entries e,
-                                           {$CFG->prefix}user u
-                                      WHERE e.glossaryid = '$glossary->id' AND
-                                            u.id = e.userid AND
-                                            e.approved = 1 $newsince
-                                      ORDER BY e.timecreated desc")) {
+        if ($recs = $DB->get_records_sql ("SELECT e.id AS entryid,
+                                                  e.concept AS entryconcept,
+                                                  e.definition AS entrydefinition,
+                                                  e.format AS entryformat,
+                                                  e.timecreated AS entrytimecreated,
+                                                  u.id AS userid,
+                                                  u.firstname AS userfirstname,
+                                                  u.lastname AS userlastname
+                                             FROM {glossary_entries} e,
+                                                  {user} u
+                                            WHERE e.glossaryid = :gid AND
+                                                  u.id = e.userid AND
+                                                  e.approved = 1 $newsince
+                                         ORDER BY e.timecreated desc", $params)) {
 
             //Are we just looking for new ones?  If so, then return now.
             if ($newsince) {
@@ -230,15 +228,13 @@
 
             //Iterate over each entry to get glossary->rssarticles records
             $articlesleft = $glossary->rssarticles;
-            $item = NULL;
-            $user = NULL;
 
             $formatoptions = new object;
             $formatoptions->trusttext = true;
 
             foreach ($recs as $rec) {
-                unset($item);
-                unset($user);
+                $item = new object();
+                $user = new object();
                 $item->title = $rec->entryconcept;
                 $user->firstname = $rec->userfirstname;
                 $user->lastname = $rec->userlastname;

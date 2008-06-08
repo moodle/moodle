@@ -3,7 +3,6 @@
     require_once("../../config.php");
     require_once("lib.php");
     require_once("$CFG->dirroot/course/lib.php");
-    global $CFG, $USER;
 
     $id = required_param('id', PARAM_INT);    // Course Module ID
 
@@ -19,11 +18,11 @@
         print_error('invalidcoursemodule');
     }
     
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
 
-    if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+    if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
         print_error('invalidid', 'glossary');
     }
 
@@ -146,7 +145,7 @@
                     // course_modules and course_sections each contain a reference
                     // to each other, so we have to update one of them twice.
 
-                    if (! $currmodule = get_record("modules", "name", 'glossary')) {
+                    if (! $currmodule = $DB->get_record("modules", array("name"=>'glossary'))) {
                         print_error('modulenotexist', 'debug', '', 'Glossary');
                     }
                     $mod->module = $currmodule->id;
@@ -162,13 +161,13 @@
                         print_error('cannotaddcoursemoduletosection');
                     }
                     //We get the section's visible field status
-                    $visible = get_field("course_sections","visible","id",$sectionid);
+                    $visible = $DB->get_field("course_sections", "visible", array("id"=>$sectionid));
 
-                    if (! set_field("course_modules", "visible", $visible, "id", $mod->coursemodule)) {
+                    if (! $DB->set_field("course_modules", "visible", $visible, array("id"=>$mod->coursemodule))) {
                         print_error('cannotupdatemod', '', '', $mod->coursemodule);
                     }
 
-                    if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+                    if (! $DB->set_field("course_modules", "section", $sectionid, array("id"=>$mod->coursemodule))) {
                         print_error('cannotupdatemod', '', '', $mod->coursemodule);
                     }
                     add_to_log($course->id, "course", "add mod",
@@ -208,9 +207,9 @@
                 if ( !$glossary->allowduplicatedentries ) {
                     // checking if the entry is valid (checking if it is duplicated when should not be)
                     if ( $newentry->casesensitive ) {
-                        $dupentry = get_record("glossary_entries","concept",$newentry->concept,"glossaryid",$glossary->id);
+                        $dupentry = $DB->get_record("glossary_entries", array("concept"=>$newentry->concept, "glossaryid"=>$glossary->id));
                     } else {
-                        $dupentry = get_record("glossary_entries","lower(concept)",moodle_strtolower($newentry->concept),"glossaryid",$glossary->id);
+                        $dupentry = $DB->get_record("glossary_entries", array("lower(concept)"=>moodle_strtolower($newentry->concept)), array("glossaryid"=>$glossary->id));
                     }
                     if ($dupentry) {
                         $permissiongranted = 0;
@@ -225,23 +224,23 @@
                 $newentry->approved         = 1;
                 $newentry->userid           = $USER->id;
                 $newentry->teacherentry     = 1;
-                $newentry->format           = addslashes($xmlentry['#']['FORMAT'][0]['#']);
+                $newentry->format           = $xmlentry['#']['FORMAT'][0]['#'];
                 $newentry->timecreated      = time();
                 $newentry->timemodified     = time();
 
                 // Setting the default values if no values were passed
                 if ( isset($xmlentry['#']['USEDYNALINK'][0]['#']) ) {
-                    $newentry->usedynalink      = addslashes($xmlentry['#']['USEDYNALINK'][0]['#']);
+                    $newentry->usedynalink      = $xmlentry['#']['USEDYNALINK'][0]['#'];
                 } else {
                     $newentry->usedynalink      = $CFG->glossary_linkentries;
                 }
                 if ( isset($xmlentry['#']['FULLMATCH'][0]['#']) ) {
-                    $newentry->fullmatch        = addslashes($xmlentry['#']['FULLMATCH'][0]['#']);
+                    $newentry->fullmatch        = $xmlentry['#']['FULLMATCH'][0]['#'];
                 } else {
                     $newentry->fullmatch      = $CFG->glossary_fullmatch;
                 }
 
-                if ( $newentry->id = insert_record("glossary_entries",$newentry) )  {
+                if ( $newentry->id = $DB->insert_record("glossary_entries",$newentry) )  {
                     $importedentries++;
 
                     $xmlaliases = @$xmlentry['#']['ALIASES'][0]['#']['ALIAS']; // ignore missing ALIASES
@@ -251,10 +250,10 @@
                         $aliasname = $xmlalias['#']['NAME'][0]['#'];
 
                         if (!empty($aliasname)) {
-                            unset($newalias);
+                            $newalias = new object();
                             $newalias->entryid = $newentry->id;
-                            $newalias->alias = trim(addslashes($aliasname));
-                            $newalias->id = insert_record("glossary_alias",$newalias);
+                            $newalias->alias = trim($aliasname);
+                            $newalias->id = $DB->insert_record("glossary_alias",$newalias);
                         }
                     }
 
@@ -263,16 +262,16 @@
                         $xmlcats = @$xmlentry['#']['CATEGORIES'][0]['#']['CATEGORY']; // ignore missing CATEGORIES
                         for($k = 0; $k < sizeof($xmlcats); $k++) {
                             $xmlcat = $xmlcats[$k];
-                            unset($newcat);
 
-                            $newcat->name = addslashes($xmlcat['#']['NAME'][0]['#']);
-                            $newcat->usedynalink = addslashes($xmlcat['#']['USEDYNALINK'][0]['#']);
-                            if ( !$category = get_record("glossary_categories","glossaryid",$glossary->id,"name",$newcat->name) ) {
+                            $newcat = new object();
+                            $newcat->name = $xmlcat['#']['NAME'][0]['#'];
+                            $newcat->usedynalink = $xmlcat['#']['USEDYNALINK'][0]['#'];
+                            if ( !$category = $DB->get_record("glossary_categories", array("glossaryid"=>$glossary->id,"name"=>$newcat->name))) {
                                 // Create the category if it does not exist
-                                unset($category);
+                                $category = new object();
                                 $category->name = $newcat->name;
                                 $category->glossaryid = $glossary->id;
-                                if ( !$category->id = insert_record("glossary_categories",$category)) {
+                                if ( !$category->id = $DB->insert_record("glossary_categories",$category)) {
                                     // add to exception report (can't insert category)
                                     $rejections .= "<tr><td>&nbsp;<strong>" . get_string("category","glossary") . ":</strong>$newcat->name</td>" .
                                                    "<td>" . get_string("cantinsertcat","glossary"). "</td></tr>";
@@ -282,10 +281,10 @@
                             }
                             if ( $category ) {
                                 // inserting the new relation
-                                unset($entrycat);
+                                $entrycat = new opbject();
                                 $entrycat->entryid    = $newentry->id;
                                 $entrycat->categoryid = $category->id;
-                                if ( !insert_record("glossary_entries_categories",$entrycat) ) {
+                                if ( !$DB->insert_record("glossary_entries_categories",$entrycat) ) {
                                     // add to exception report (can't insert relation)
                                     $rejections .= "<tr><td>&nbsp;<strong>" . get_string("category","glossary") . ":</strong>$newcat->name</td>" .
                                                    "<td>" . get_string("cantinsertrel","glossary"). "</td></tr>";

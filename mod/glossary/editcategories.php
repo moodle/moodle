@@ -20,16 +20,16 @@
         print_error('invalidcoursemodule');
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
 
-    if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+    if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
         print_error('invalidcoursemodule');
     }
 
     if ($hook > 0) {
-        if ($category = get_record("glossary_categories","id",$hook)) {
+        if ($category = $DB->get_record("glossary_categories", array("id"=>$hook))) {
             //Check it belongs to the same glossary
             if ($category->glossaryid != $glossary->id) {
                 print_error('invalidid', 'glossary');
@@ -63,11 +63,12 @@
         if ( $action == "edit" ) {
             if ( $confirm ) {
                 $action = "";
+                $cat = new object();
                 $cat->id = $hook;
                 $cat->name = $name;
                 $cat->usedynalink = $usedynalink;
 
-                if ( !update_record("glossary_categories", $cat) ) {
+                if ( !$DB->update_record("glossary_categories", $cat) ) {
                     print_error('cannotupdatecategory');
                     redirect("editcategories.php?id=$cm->id");
                 } else {
@@ -85,8 +86,8 @@
 
         } elseif ( $action == "delete" ) {
             if ( $confirm ) {
-                delete_records("glossary_entries_categories","categoryid", $hook);
-                delete_records("glossary_categories","id", $hook);
+                $DB->delete_records("glossary_entries_categories", array("categoryid"=>$hook));
+                $DB->delete_records("glossary_categories", array("id"=>$hook));
 
                 print_simple_box_start("center","40%", "#FFBBBB");
                 echo "<div style=\"text-align:center\">" . get_string("categorydeleted","glossary") ."</div>";
@@ -103,7 +104,7 @@
                 print_simple_box_start("center","40%", "#FFBBBB");
                 echo "<div class=\"boxaligncenter\"><b>".format_text($category->name, FORMAT_PLAIN)."</b><br/>";
 
-                $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
+                $num_entries = $DB->count_records("glossary_entries_categories", array("categoryid"=>$category->id));
                 if ( $num_entries ) {
                     print_string("deletingnoneemptycategory","glossary");
                 }
@@ -141,7 +142,7 @@
     } elseif ( $action == "add" ) {
         if ( $confirm ) {
             $ILIKE = sql_ilike();
-            $dupcategory = get_records_sql("SELECT * FROM {$CFG->prefix}glossary_categories WHERE name $ILIKE '$name' AND glossaryid=$glossary->id");
+            $dupcategory = $DB->get_records_sql("SELECT * FROM {glossary_categories} WHERE name $ILIKE ? AND glossaryid=?", array($name, $glossary->id));
             if ( $dupcategory ) {
                 echo "<p style=\"text-align:center\">" . get_string("add"). " " . get_string("category","glossary");
 
@@ -153,11 +154,12 @@
 
             } else {
                 $action = "";
+                $cat = new object();
                 $cat->name = $name;
                 $cat->usedynalink = $usedynalink;
                 $cat->glossaryid = $glossary->id;
 
-                if ( ! $cat->id = insert_record("glossary_categories", $cat) ) {
+                if ( ! $cat->id = $DB->insert_record("glossary_categories", $cat) ) {
                     print_error('cannotinsertcategory');
 
                     redirect("editcategories.php?id=$cm->id");
@@ -192,12 +194,12 @@
         
 
 <?php
-    $categories = get_records("glossary_categories","glossaryid",$glossary->id,"name ASC");
+    $categories = $DB->get_records("glossary_categories", array("glossaryid"=>$glossary->id), "name ASC");
 
     if ( $categories ) {
         echo '<table width="100%">';
         foreach ($categories as $category) {
-            $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
+            $num_entries = $DB->count_records("glossary_entries_categories", array("categoryid"=>$category->id));
 ?>
 
              <tr>

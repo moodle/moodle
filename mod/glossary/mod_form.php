@@ -151,11 +151,12 @@ class mod_glossary_mod_form extends moodleform_mod {
     }
 
     function definition_after_data() {
+        global $COURSE, $DB;
+
         parent::definition_after_data();
-        global $COURSE;
         $mform    =& $this->_form;
         $mainglossaryel =& $mform->getElement('mainglossary');
-        $mainglossary = get_record('glossary', 'mainglossary', 1, 'course', $COURSE->id);
+        $mainglossary = $DB->get_record('glossary', array('mainglossary'=>1, 'course'=>$COURSE->id));
         if ($mainglossary && ($mainglossary->id != $mform->getElementValue('instance'))){
             //secondary glossary, a main one already exists in this course.
             $mainglossaryel->setValue(0);

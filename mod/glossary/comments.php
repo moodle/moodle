@@ -7,21 +7,19 @@
     $id  = required_param('id', PARAM_INT);           // Course Module ID
     $eid = required_param('eid', PARAM_INT);          // Entry ID
 
-    global $USER, $CFG;
-
     if (! $cm = get_coursemodule_from_id('glossary', $id)) {
         print_error('invalidcoursemodule');
     }
 
-    if (! $course = get_record("course", "id", $cm->course)) {
+    if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
         print_error('coursemisconf');
     }
 
-    if (! $glossary = get_record("glossary", "id", $cm->instance)) {
+    if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
         print_error('invalidcousemodule');
     }
 
-    if (! $entry = get_record("glossary_entries", "id", $eid)) {
+    if (! $entry = $DB->get_record("glossary_entries", array("id"=>$eid))) {
         print_error('invalidentry');
     }
 
@@ -61,7 +59,7 @@
         print_heading("<a href=\"comment.php?action=add&amp;eid=$entry->id\">$straddcomment <img title=\"$straddcomment\" src=\"comment.gif\" class=\"iconsmall\" alt=\"$straddcomment\" /></a>");
     }
 
-    if ($comments = get_records("glossary_comments","entryid",$entry->id,"timemodified ASC")) {
+    if ($comments = $DB->get_records("glossary_comments", array("entryid"=>$entry->id), "timemodified ASC")) {
         foreach ($comments as $comment) {
             glossary_print_comment($course, $cm, $glossary, $entry, $comment);
             echo '<br />';

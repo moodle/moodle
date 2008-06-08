@@ -42,30 +42,26 @@ function glossary_filter($courseid, $text) {
         }
 
     /// Make a list of glossary IDs for searching
-        $glossarylist = '';
-        foreach ($glossaries as $glossaryid => $glossaryname) {
-            $glossarylist .= $glossaryid.',';
-        }
-        $glossarylist = substr($glossarylist,0,-1);
+        $glossarylist = implode(',', array_keys($glossaries));
    
 
     /// Pull out all the raw data from the database for entries, categories and aliases
-        $entries = get_records_select('glossary_entries',
-                                      'glossaryid IN ('.$glossarylist.') AND usedynalink != 0 AND approved != 0 ', '',
-                                      'id,glossaryid, concept, casesensitive, 0 AS category, fullmatch');
+        $entries = $DB->get_records_select('glossary_entries',
+                                           'glossaryid IN ('.$glossarylist.') AND usedynalink != 0 AND approved != 0 ', '',
+                                           'id,glossaryid, concept, casesensitive, 0 AS category, fullmatch');
 
-        $categories = get_records_select('glossary_categories',
-                                         'glossaryid IN ('.$glossarylist.') AND usedynalink != 0', '',
-                                         'id,glossaryid,name AS concept, 1 AS casesensitive, 1 AS category, 1 AS fullmatch');
+        $categories = $DB->get_records_select('glossary_categories',
+                                              'glossaryid IN ('.$glossarylist.') AND usedynalink != 0', '',
+                                              'id,glossaryid,name AS concept, 1 AS casesensitive, 1 AS category, 1 AS fullmatch');
 
-        $aliases = get_records_sql('SELECT ga.id, ge.glossaryid, ga.alias as concept, ge.concept as originalconcept,
-                                           casesensitive, 0 AS category, fullmatch
-                                      FROM '.$CFG->prefix.'glossary_alias ga,
-                                           '.$CFG->prefix.'glossary_entries ge
-                                     WHERE ga.entryid = ge.id
-                                       AND ge.glossaryid IN ('.$glossarylist.')
-                                       AND ge.usedynalink != 0
-                                       AND ge.approved != 0');
+        $aliases = $DB->get_records_sql('SELECT ga.id, ge.glossaryid, ga.alias as concept, ge.concept as originalconcept,
+                                                casesensitive, 0 AS category, fullmatch
+                                           FROM {glossary_alias} ga,
+                                                {glossary_entries} ge
+                                          WHERE ga.entryid = ge.id
+                                                AND ge.glossaryid IN ('.$glossarylist.')
+                                                AND ge.usedynalink != 0
+                                                AND ge.approved != 0');
 
 
     /// Combine them into one big list
