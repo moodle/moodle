@@ -129,7 +129,7 @@ function setup_DB() {
         }
         print_error('dbconnectionfailed', 'error', '', $dberr);
     }
-    if (debugging('', DEBUG__ALL)) {
+    if (debugging('', DEBUG_ALL)) {
         ob_end_clean();
     } else {
         error_reporting($prevdebug);
