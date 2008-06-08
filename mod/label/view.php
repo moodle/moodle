@@ -7,26 +7,26 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('label', $id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
     
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
     
         if (! $label = $DB->get_record("label", array("id"=>$cm->instance))) {
-            print_error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
 
     } else {
         if (! $label = $DB->get_record("label", array("id"=>$l))) {
-            print_error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
         if (! $course = $DB->get_record("course", array("id"=>$label->course)) ){
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance("label", $label->id, $course->id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
     }
 
