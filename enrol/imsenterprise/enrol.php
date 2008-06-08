@@ -806,7 +806,7 @@ function process_membership_tag($tagcontents){
                 }elseif($CFG->enrol_imsunenrol){
                     // Unenrol
 
-                    if (! role_unassign($moodleroleid, $memberstoreobj->userid, 0, $rolecontext)) {
+                    if (! role_unassign($moodleroleid, $memberstoreobj->userid, 0, $rolecontext, 'imsenterprise')) {
                         $this->log_line("Error unenrolling $memberstoreobj->userid from role $moodleroleid in course");
                     }else{
                         $membersuntally++;
