@@ -1159,7 +1159,7 @@ abstract class moodle_database {
 
     /**
      * Returns the proper SQL to do CONCAT between the elements passed
-     * Can take many parameters - just a passthrough to $db->Concat()
+     * Can take many parameters
      *
      * @param string $element
      * @return string
@@ -1170,7 +1170,6 @@ abstract class moodle_database {
      * Returns the proper SQL to do CONCAT between the elements passed
      * with a given separator
      *
-     * @uses $db
      * @param string $separator
      * @param array  $elements
      * @return string

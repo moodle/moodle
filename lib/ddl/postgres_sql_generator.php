@@ -236,9 +236,6 @@ class postgres_sql_generator extends sql_generator {
      *     - Changes in default require the SET/DROP DEFAULT clause
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field) {
-
-        global $db;
-
         $results = array(); /// To store all the needed SQL commands
 
     /// Get the normla names of the table and field

@@ -188,9 +188,6 @@ class mssql_sql_generator extends sql_generator {
      * check constraints
      */
     public function getDropFieldSQL($xmldb_table, $xmldb_field) {
-
-        global $db;
-
         $results = array();
 
     /// Get the quoted name of the table and field

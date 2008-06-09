@@ -52,7 +52,7 @@
             $chat->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the chat
-            $newid = $db->insert_record ("chat",$chat);
+            $newid = $DB->insert_record ("chat",$chat);
 
             //Do some output     
             if (!defined('RESTORE_SILENTLY')) {

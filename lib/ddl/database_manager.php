@@ -218,7 +218,6 @@ class database_manager {
      * to 1 "enum-like" constraint. So, if more than one is returned, only the first one will be
      * retrieved by this funcion.
      *
-     * @uses, $db
      * @param xmldb_table the table to be searched
      * @param xmldb_field the field to be searched
      * @return string check constraint name or false
@@ -257,7 +256,6 @@ class database_manager {
     /**
      * Given one xmldb_field, check if it has a check constraint in DB
      *
-     * @uses, $db
      * @param xmldb_table the table
      * @param xmldb_field the field to be searched for any existing constraint
      * @return boolean true/false
@@ -273,7 +271,6 @@ class database_manager {
      * Given one xmldb_key, the function returns the name of the key in DB (if exists)
      * of false if it doesn't exist
      *
-     * @uses, $db
      * @param xmldb_table the table to be searched
      * @param xmldb_key the key to be searched
      * @return string key name of false
@@ -633,7 +630,6 @@ class database_manager {
     /**
      * This function will add the field to the table passed as arguments
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -675,7 +671,6 @@ class database_manager {
     /**
      * This function will drop the field from the table passed as arguments
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (just the name is mandatory)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -710,7 +705,6 @@ class database_manager {
     /**
      * This function will change the type of the field in the table passed as arguments
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -745,7 +739,6 @@ class database_manager {
     /**
      * This function will change the precision of the field in the table passed as arguments
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -761,7 +754,6 @@ class database_manager {
     /**
      * This function will change the unsigned/signed of the field in the table passed as arguments
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -777,7 +769,6 @@ class database_manager {
     /**
      * This function will change the nullability of the field in the table passed as arguments
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -843,7 +834,6 @@ class database_manager {
      * This function will change the default of the field in the table passed as arguments
      * One null value in the default field means delete the default
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -879,7 +869,6 @@ class database_manager {
      * This function will rename the field in the table passed as arguments
      * Before renaming the field, the function will check it exists
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field index object (full specs are required)
      * @param string new name of the field
@@ -948,7 +937,6 @@ class database_manager {
     /**
      * This function will create the key in the table passed as arguments
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_key index object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -981,7 +969,6 @@ class database_manager {
     /**
      * This function will drop the key in the table passed as arguments
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_key key object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -1015,7 +1002,6 @@ class database_manager {
      * This function will rename the key in the table passed as arguments
      * Experimental. Shouldn't be used at all in normal installation/upgrade!
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_key key object (full specs are required)
      * @param string new name of the key
@@ -1055,7 +1041,6 @@ class database_manager {
      * This function will create the index in the table passed as arguments
      * Before creating the index, the function will check it doesn't exists
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_index index object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -1091,7 +1076,6 @@ class database_manager {
      * This function will drop the index in the table passed as arguments
      * Before dropping the index, the function will check it exists
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_index index object (full specs are required)
      * @param boolean continue to specify if must continue on error (true) or stop (false)
@@ -1128,7 +1112,6 @@ class database_manager {
      * Before renaming the index, the function will check it exists
      * Experimental. Shouldn't be used at all!
      *
-     * @uses $CFG, $db
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_index index object (full specs are required)
      * @param string new name of the index

@@ -27,19 +27,3 @@ error('TODO: rewrite db perf code'); // TODO: rewrite
         print_header("$site->shortname: $strdatabaseperformance", "$site->fullname", $navigation);
         exit;
     }
-
-    if (!empty($bottomframe) or !empty($do)) {
-        $perf =&NewPerfMonitor($db);
-        $perf->UI($pollsecs=5);
-        exit;
-    }
-
-?>
-<head>
-<title><?php echo "$site->shortname: $strdatabaseperformance" ?></title>
-</head>
-
-<frameset rows="80,*">
-   <frame src="dbperformance.php?topframe=true">
-   <frame src="dbperformance.php?bottomframe=true">
-</frameset>

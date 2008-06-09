@@ -173,7 +173,7 @@ function setup_enrolments(&$user) {
  * used.
  */
 function sync_enrolments($role = null) {
-    global $CFG, $db, $DB;
+    global $CFG, $DB;
     error_reporting(E_ALL);
 
     // Connect to the external database
