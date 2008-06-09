@@ -32,10 +32,8 @@
                 list($usql, $parameters) = $DB->get_in_or_equal(array_keys($pages));
                 if ($essayattempts = $DB->get_records_select('lesson_attempts', 'pageid $usql', $parameters)) {
                     // Get all the users who have taken this lesson, order by their last name
-                    $paras = array();
-                    $paras["lessonid"] = $lesson->id;
                     if (!empty($CFG->enablegroupings) && !empty($cm->groupingid)) {
-                        $paras["groupinid"] = $cm->groupingid;
+                        $params["groupinid"] = $cm->groupingid;
                         $sql = "SELECT DISTINCT u.*
                                 FROM {lesson_attempts} a 
                                     INNER JOIN {user} u ON u.id = a.userid
@@ -51,7 +49,7 @@
                                       u.id = a.userid
                                 ORDER BY u.lastname";
                     }
-                    if (!$users = $DB->get_records_sql($sql, $paras)) {
+                    if (!$users = $DB->get_records_sql($sql, $params)) {
                         $mode = 'none'; // not displaying anything
                         lesson_set_message(get_string('noonehasanswered', 'lesson'));
                     }

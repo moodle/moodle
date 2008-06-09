@@ -325,25 +325,17 @@ function lesson_cron () {
 function lesson_get_user_grades($lesson, $userid=0) {
     global $CFG, $DB;
 
-    $params = array();
+    $params = array("lessonid" => $lesson->id);
     
     if (isset($userid)) {
         $params["userid"] = $userid;
         $user = "AND u.id = :userid";
-    }
-    else {
-        $user="";
-    }
-    
-    if (isset($fuser)) {
-        $params["userid"] = $userid;
         $fuser = "AND uu.id = :userid";
     }
     else {
+        $user="";
         $fuser="";
     }
-
-    $params["lessonid"] = $lesson->id;
     
     if ($lesson->retake) {
         if ($lesson->usemaxgrade) {

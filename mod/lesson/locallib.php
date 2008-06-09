@@ -1081,8 +1081,7 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
     }
 
     // get the lesson pages
-    $parameters = array ("lessonid" => $lessonid);
-    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $parameters)) {
+    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
         print_error("Error: could not find records in lesson_pages table");
     }
     // find the start of the cluster
@@ -1213,8 +1212,7 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
     }
 
     // get the lesson pages
-    $parameters = array ("lessonid" => $lesson);
-    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $parameters)) {
+    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
         print_error("Error: could not find records in lesson_pages table");
     }
     
@@ -1279,8 +1277,7 @@ function lesson_unseen_branch_jump($lessonid, $userid) {
     }
 
     // get the lesson pages
-    $parameters = array ("lessonid" => $lessonid);
-    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $parameters)) {
+    if (!$lessonpages = $DB->get_records_select("lesson_pages", "lessonid = :lessonid", $params)) {
         print_error("Error: could not find records in lesson_pages table");
     }
     

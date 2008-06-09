@@ -53,16 +53,16 @@
                 if ($mode == 'add') {
                     break;
                 }
-                $params = array ("lessonid" => $lesson->id);
+                $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
                 if (!$grades = $DB->get_records_select('lesson_grades', "lessonid = :lessonid", $params, 'completed')) {
                     print_error('Error: could not find grades');
                 }
-                $paremeters = array ("lessonid" => $lesson->id, "userid" => $USER->id);
+                
                 if (!$newgrade = $DB->get_record_sql("SELECT * 
                                                    FROM {lesson_grades} 
                                                   WHERE lessonid = :lessonid
                                                     AND userid = :userid 
-                                               ORDER BY completed DESC", $paremeters, true)) {
+                                               ORDER BY completed DESC", $params, true)) {
                     print_error('Error: could not find newest grade');
                 }
                 
@@ -72,7 +72,6 @@
                 }
                 
                 // Find out if we need to delete any records
-                $params = array ("lessonid" => $lesson->id);
                 if ($highscores = $DB->get_records_sql("SELECT h.*, g.grade 
                                                      FROM {lesson_grades} g, {lesson_high_scores} h 
                                                     WHERE h.gradeid = g.id
