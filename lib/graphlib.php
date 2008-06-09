@@ -978,8 +978,8 @@ class graph {
       $axis_size       = $this->parameter['axis_size'];
       $axis_colour     = $this->parameter['axis_colour'];
       $axis_angle      = $this->parameter['y_axis_angle'];
-      $y_tick_labels   = $this->parameter['y_tick_labels'];
-
+      $y_tick_labels   = $this->y_tick_labels;
+      
       $this->calculated['y_axis_left']['has_data'] = FALSE;
       $this->calculated['y_axis_right']['has_data'] = FALSE;
 
