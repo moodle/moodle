@@ -7,6 +7,7 @@ require_once($CFG->libdir.'/dml/moodle_recordset.php');
  * @package dmlib
  */
 class pdo_moodle_recordset extends moodle_recordset {
+
     private $sht;
 
     public function __construct($sth) {

@@ -7,7 +7,8 @@ require_once($CFG->libdir.'/dml/moodle_recordset.php');
  * @package dmlib
  */
 class adodb_moodle_recordset extends moodle_recordset {
-    private $rs;
+
+    protected $rs; ///ADOdb recordset
 
     public function __construct($rs) {
         $this->rs = $rs;
