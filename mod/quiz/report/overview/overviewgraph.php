@@ -58,8 +58,8 @@ for ($i=0;$i < $quiz->grade;$i += $bandwidth){
 }
 $line->x_data          = $bandlabels;
 
-$useridlist = join(',',array_keys(get_users_by_capability($modcontext, 'mod/quiz:attempt','','','','','','',false)));
-$line->y_data['allusers'] = quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist);
+$userids = array_keys(get_users_by_capability($modcontext, 'mod/quiz:attempt','','','','','','',false));
+$line->y_data['allusers'] = quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids);
 if ($currentgroup){
     //only turn on legends if there is more than one set of bars
     $line->parameter['legend']        = 'outside-top';

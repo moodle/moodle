@@ -53,7 +53,7 @@ class quiz_report extends quiz_default_report {
         $pageoptions['mode'] = 'overview';
 
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
-        list($qmsubselect, $params) = quiz_report_qm_filter_subselect($quiz); // careful: these are named params in $params!!
+        $qmsubselect = quiz_report_qm_filter_subselect($quiz); // careful: these are named params in $params!!
 
         $mform = new mod_quiz_report_overview_settings($reporturl, array('qmsubselect'=> $qmsubselect, 'quiz'=>$quiz));
         if ($fromform = $mform->get_data()){
@@ -98,20 +98,22 @@ class quiz_report extends quiz_default_report {
         //work out the sql for this table.
         if (!$students = get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)){
             $students = array();
+        } else {
+            $students = array_keys($students);
         }
 
-        $studentslist = join(',',array_keys($students));
         if (empty($currentgroup)) {
             // all users who can attempt quizzes
-            $groupstudentslist = '';
-            $allowedlist = explode(',', $studentslist);
+            $allowed = $students;
+            $groupstudents = array();
         } else {
             // all users who can attempt quizzes and who are in the currently selected group
             if (!$groupstudents = get_users_by_capability($context, 'mod/quiz:attempt','','','','',$currentgroup,'',false)){
                 $groupstudents = array();
+            } else {
+                $groupstudents = array_keys($groupstudents);
             }
-            $allowedlist = array_keys($groupstudents);
-            $groupstudentslist = join(',', $allowedlist);
+            $allowed = $groupstudents;
         }
 
         if ($detailedmarks) {
@@ -119,8 +121,8 @@ class quiz_report extends quiz_default_report {
         } else {
             $questions = array();
         }
-        $table = new quiz_report_overview_table($quiz , $qmsubselect, $groupstudentslist,
-                $studentslist, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions);
+        $table = new quiz_report_overview_table($quiz , $qmsubselect, $groupstudents,
+                $students, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions);
         $table->is_downloading($download, get_string('reportoverview','quiz'),
                     "$COURSE->shortname ".format_string($quiz->name,true));
         if (!$table->is_downloading()) {
@@ -170,7 +172,7 @@ class quiz_report extends quiz_default_report {
         // This part is the same for all cases - join users and quiz_attempts tables
         $from = '{user} u ';
         $from .= 'LEFT JOIN {quiz_attempts} qa ON qa.userid = u.id AND qa.quiz = :quizid';
-        $params["quizid"] = $quiz->id;
+        $params = array('quizid' => $quiz->id);
 
         if ($qmsubselect && $qmfilter){
             $from .= ' AND '.$qmsubselect;
@@ -182,19 +184,19 @@ class quiz_report extends quiz_default_report {
                  break;
              case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
                  // Show only students with attempts
-                 list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowedlist, SQL_PARAMS_NAMED, 'u0000');
+                 list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
                  $params += $allowed_params;
                 $where = "u.id $allowed_usql AND qa.preview = 0 AND qa.id IS NOT NULL";
                  break;
              case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
                  // Show only students without attempts
-                 list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowedlist, SQL_PARAMS_NAMED, 'u0000');
+                 list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
                  $params += $allowed_params;
                 $where = "u.id $allowed_usql AND qa.id IS NULL";
                  break;
              case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
                  // Show all students with or without attempts
-                 list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowedlist, SQL_PARAMS_NAMED, 'u0000');
+                 list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
                  $params += $allowed_params;
                 $where = "u.id $allowed_usql AND (qa.preview = 0 OR qa.preview IS NULL)";
                  break;
@@ -202,34 +204,10 @@ class quiz_report extends quiz_default_report {
 
         $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
 
-        // Add table joins so we can sort by question grade
-        // unfortunately can't join all tables necessary to fetch all grades
-        // to get the state for one question per attempt row we must join two tables
-        // and there is a limit to how many joins you can have in one query. In MySQL it
-        // is 61. This means that when having more than 29 questions the query will fail.
-        // So we join just the tables needed to sort the attempts.
-        if($sort = $table->get_sql_sort()) {
-            if (!$table->is_downloading() && $detailedmarks) {
-                $from .= ' ';
-                $sortparts    = explode(',', $sort);
-                $matches = array();
-                foreach($sortparts as $sortpart) {
-                    $sortpart = trim($sortpart);
-                    if (preg_match('/^qsgrade([0-9]+)/', $sortpart, $matches)){
-                        $qid = intval($matches[1]);
-                        $fields .=  ", qs$qid.grade AS qsgrade$qid, qs$qid.event AS qsevent$qid, qs$qid.id AS qsid$qid";
-                        $from .= "LEFT JOIN {question_sessions} qns$qid ON qns$qid.attemptid = qa.uniqueid AND qns$qid.questionid = :qid ";
-                        $from .=  "LEFT JOIN  {question_states} qs$qid ON qs$qid.id = qns$qid.newgraded ";
-                        $params['qid'] = $qid;
-                    } else {
-                        $newsort[] = $sortpart;
-                    }
-                }
-                $select .= ' ';
-            }
-        }
 
+        
         $table->set_sql($fields, $from, $where, $params);
+        
         // Define table columns
         $columns = array();
         $headers = array();

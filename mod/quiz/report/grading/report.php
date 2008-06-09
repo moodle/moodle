@@ -83,7 +83,6 @@ class quiz_report extends quiz_default_report {
 
         $currentgroup = groups_get_activity_group($this->cm, true);
         $this->users     = get_users_by_capability($this->context, 'mod/quiz:attempt','','','','',$currentgroup,'',false);
-        $this->userids   = implode(',', array_keys($this->users));
 
 
         if (!empty($questionid)) {
@@ -113,7 +112,7 @@ class quiz_report extends quiz_default_report {
 
         echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
-        if ($data = data_submitted()) {  // post data submitted, process it
+        if ($data = data_submitted() && $this->users) {  // post data submitted, process it
             confirm_sesskey();
 
             // now go through all of the responses and save them.
@@ -121,7 +120,7 @@ class quiz_report extends quiz_default_report {
             foreach($data->manualgrades as $uniqueid => $response) {
                 // get our attempt
                 $uniqueid = clean_param($uniqueid, PARAM_INT);
-                list($usql, $params) = $DB->get_in_or_equal(explode(',', $this->userids));
+                list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users));
 
                 if (!$attempt = $DB->get_record_sql("SELECT * FROM {quiz_attempts} " .
                                 "WHERE uniqueid = ? AND " .
@@ -171,8 +170,7 @@ class quiz_report extends quiz_default_report {
             }
             return true;
         }
-        $gradeablequestionids = implode(',',array_keys($gradeableqs));
-        $qattempts = quiz_get_total_qas_graded_and_ungraded($quiz, $gradeablequestionids, $this->userids);
+        $qattempts = quiz_get_total_qas_graded_and_ungraded($quiz, array_keys($gradeableqs), array_keys($this->users));
         if(empty($qattempts)) {
             notify(get_string('noattemptstoshow', 'quiz'));
             return true;
@@ -449,9 +447,9 @@ class quiz_report extends quiz_default_report {
                     "ON (qs.id = qns.newgraded AND qs.question = ?) ";
             $params[] = $questionid;
         }
-        list($usql, $u_params) = $DB->get_in_or_equal(explode(',', $this->userids));
+        list($usql, $u_params) = $DB->get_in_or_equal(array_keys($this->users));
         if ($gradenextungraded || $gradeungraded) { // get ungraded attempts
-            $where = 'WHERE u.id $usql AND qs.event NOT IN ('.QUESTION_EVENTS_GRADED.') ';
+            $where = "WHERE u.id $usql AND qs.event NOT IN (".QUESTION_EVENTS_GRADED.') ';
             $params = array_merge($params, $u_params);
         } else if ($userid) { // get all the attempts for a specific user
             $where = 'WHERE u.id=?';

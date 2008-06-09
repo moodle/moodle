@@ -41,7 +41,7 @@ class quiz_report_overview_table extends table_sql {
                 $namekey = 'fullname';
             }
             if ($this->groupstudents){
-                list($g_usql, $g_params) = $DB->get_in_or_equal(explode(',', $this->groupstudents));
+                list($g_usql, $g_params) = $DB->get_in_or_equal($this->groupstudents);
 
                 $groupaveragesql = $averagesql." AND qg.userid $g_usql";
                 $groupaverage = $DB->get_record_sql($groupaveragesql, array_merge($params, $g_params));
@@ -55,7 +55,7 @@ class quiz_report_overview_table extends table_sql {
                 $this->add_data_keyed($groupaveragerow);
             }
 
-            list($s_usql, $s_params) = $DB->get_in_or_equal(explode(',', $this->students));
+            list($s_usql, $s_params) = $DB->get_in_or_equal($this->students);
             $overallaverage = $DB->get_record_sql($averagesql." AND qg.userid $s_usql", array_merge($params, $s_params));
             $overallaveragerow = array($namekey => get_string('overallaverage', 'grades'),
                         'sumgrades' => round($overallaverage->grade, $this->quiz->decimalpoints),
@@ -217,6 +217,33 @@ class quiz_report_overview_table extends table_sql {
             return '-';
         }
 
+    }
+    
+    function query_db($pagesize, $useinitialsbar=true){
+        // Add table joins so we can sort by question grade
+        // unfortunately can't join all tables necessary to fetch all grades
+        // to get the state for one question per attempt row we must join two tables
+        // and there is a limit to how many joins you can have in one query. In MySQL it
+        // is 61. This means that when having more than 29 questions the query will fail.
+        // So we join just the tables needed to sort the attempts.
+        if($sort = $this->get_sql_sort()) {
+            if ($this->detailedmarks) {
+                $this->sql->from .= ' ';
+                $sortparts    = explode(',', $sort);
+                $matches = array();
+                foreach($sortparts as $sortpart) {
+                    $sortpart = trim($sortpart);
+                    if (preg_match('/^qsgrade([0-9]+)/', $sortpart, $matches)){
+                        $qid = intval($matches[1]);
+                        $this->sql->fields .=  ", qs$qid.grade AS qsgrade$qid, qs$qid.event AS qsevent$qid, qs$qid.id AS qsid$qid";
+                        $this->sql->from .= "LEFT JOIN {question_sessions} qns$qid ON qns$qid.attemptid = qa.uniqueid AND qns$qid.questionid = :qid$qid ";
+                        $this->sql->from .=  "LEFT JOIN  {question_states} qs$qid ON qs$qid.id = qns$qid.newgraded ";
+                        $this->sql->params['qid'.$qid] = $qid;
+                    }
+                }
+            }
+        }
+        parent::query_db($pagesize, $useinitialsbar);
     }
 }
 ?>

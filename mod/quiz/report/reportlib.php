@@ -40,9 +40,9 @@ function quiz_get_newgraded_states($attemptids, $idxattemptq = true, $fields='qs
 
 function quiz_get_average_grade_for_questions($quiz, $userids){
     global $CFG, $DB;
-    list($qmfilter, $params) = quiz_report_qm_filter_subselect($quiz, 'qa.userid'); //NAMED PARAMS!
-    $params['quizid2'] = $quiz->id;
-    list($usql, $u_params) = $DB->get_in_or_equal(explode(',', $userids), SQL_PARAMS_NAMED, 'u0000');
+    $qmfilter = quiz_report_qm_filter_subselect($quiz, 'qa.userid');
+    $params['quizid'] = $quiz->id;
+    list($usql, $u_params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u0000');
     $params += $u_params;
     $questionavgssql = "SELECT qs.question, AVG(qs.grade) FROM
                         {question_sessions} qns,
@@ -50,7 +50,7 @@ function quiz_get_average_grade_for_questions($quiz, $userids){
                         {question_states} qs
                         WHERE qns.attemptid = qa.uniqueid AND " .
                         ($qmfilter?$qmfilter.' AND ':'') . "
-                        qa.quiz = :quizid2 AND
+                        qa.quiz = :quizid AND
                         qa.userid $usql AND
                         qs.event IN (".QUESTION_EVENTS_GRADED.") AND
                         qns.newgraded = qs.id GROUP BY qs.question";
@@ -60,8 +60,8 @@ function quiz_get_average_grade_for_questions($quiz, $userids){
 function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
     global $CFG, $DB;
     $params = array($quiz->id);
-    list($u_sql, $u_params) = $DB->get_in_or_equal(explode(',', $userids));
-    list($q_sql, $q_params) = $DB->get_in_or_equal(explode(',', $questionids));
+    list($u_sql, $u_params) = $DB->get_in_or_equal($userids);
+    list($q_sql, $q_params) = $DB->get_in_or_equal($questionids);
 
     $params = array_merge($params, $u_params, $q_params);
     $sql = "SELECT qs.question, COUNT(1) AS totalattempts,
@@ -143,7 +143,7 @@ function quiz_report_load_questions($quiz){
  * one attempt that will be graded for each user. Or return
  * empty string if all attempts contribute to final grade.
  */
-function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
+function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id', $quizidsql = 'qa.quiz'){
     global $CFG;
     if ($quiz->attempts == 1) {//only one attempt allowed on this quiz
         return '';
@@ -164,21 +164,21 @@ function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
         break;
     }
 
-    $params = array();
+    //no new params in this query, it is assumed that quizid will be used somewhere else
+    //in the main query.
     if ($qmfilterattempts){
         $qmsubselect = "(SELECT id FROM {quiz_attempts} " .
-                "WHERE quiz = :quizid1 AND $useridsql = userid " .
+                "WHERE quiz = $quizidsql AND userid = $useridsql " .
                 "ORDER BY $qmorderby LIMIT 1)=qa.id";
-        $params['quizid1'] = $quiz->id;
     } else {
         $qmsubselect = '';
     }
-    return array($qmsubselect, $params);
+    return $qmsubselect;
 }
 
-function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist){
+function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids){
     global $CFG, $DB;
-    list($usql, $params) = $DB->get_in_or_equal(explode(',', $useridlist));
+    list($usql, $params) = $DB->get_in_or_equal($userids);
     $sql = "SELECT
         FLOOR(qg.grade/$bandwidth) AS band,
         COUNT(1) AS num
@@ -187,7 +187,7 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist){
     WHERE qg.quiz = q.id AND qg.userid $usql AND qg.quiz = ?
     GROUP BY band
     ORDER BY band";
-    $params[] = $quiz->id;
+    $params[] = $quizid;
     $data = $DB->get_records_sql_menu($sql, $params);
     //need to create array elements with values 0 at indexes where there is no element
     $data =  $data + array_fill(0, $bands+1, 0);
