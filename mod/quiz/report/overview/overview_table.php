@@ -1,13 +1,13 @@
 <?php  // $Id$
 
 class quiz_report_overview_table extends table_sql {
-    
+
     var $useridfield = 'userid';
-    
+
     var $candelete;
     var $reporturl;
     var $displayoptions;
-    
+
     function quiz_report_overview_table($quiz , $qmsubselect, $groupstudents,
                 $students, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions){
         parent::table_sql('mod-quiz-report-overview-report');
@@ -22,17 +22,18 @@ class quiz_report_overview_table extends table_sql {
         $this->displayoptions = $displayoptions;
     }
     function build_table(){
-        global $CFG;
+        global $CFG, $DB;
         if ($this->rawdata) {
             // Define some things we need later to process raw data from db.
             $this->strtimeformat = get_string('strftimedatetime');
             parent::build_table();
             //end of adding data from attempts data to table / download
             //now add averages at bottom of table :
+            $params = array($this->quiz->id);
             $averagesql = "SELECT AVG(qg.grade) AS grade " .
-                    "FROM {$CFG->prefix}quiz_grades qg " .
-                    "WHERE quiz=".$this->quiz->id;
-                    
+                    "FROM {quiz_grades} qg " .
+                    "WHERE quiz=?";
+
             $this->add_separator();
             if ($this->is_downloading()){
                 $namekey = 'lastname';
@@ -40,8 +41,10 @@ class quiz_report_overview_table extends table_sql {
                 $namekey = 'fullname';
             }
             if ($this->groupstudents){
-                $groupaveragesql = $averagesql." AND qg.userid IN ($this->groupstudents)";
-                $groupaverage = get_record_sql($groupaveragesql);
+                list($g_usql, $g_params) = $DB->get_in_or_equal(explode(',', $this->groupstudents));
+
+                $groupaveragesql = $averagesql." AND qg.userid $g_usql";
+                $groupaverage = $DB->get_record_sql($groupaveragesql, array_merge($params, $g_params));
                 $groupaveragerow = array($namekey => get_string('groupavg', 'grades'),
                         'sumgrades' => round($groupaverage->grade, $this->quiz->decimalpoints),
                         'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($groupaverage->grade, $this->quiz->id)));
@@ -51,7 +54,9 @@ class quiz_report_overview_table extends table_sql {
                 }
                 $this->add_data_keyed($groupaveragerow);
             }
-            $overallaverage = get_record_sql($averagesql." AND qg.userid IN ($this->students)");
+
+            list($s_usql, $s_params) = $DB->get_in_or_equal(explode(',', $this->students));
+            $overallaverage = $DB->get_record_sql($averagesql." AND qg.userid $s_usql", array_merge($params, $s_params));
             $overallaveragerow = array($namekey => get_string('overallaverage', 'grades'),
                         'sumgrades' => round($overallaverage->grade, $this->quiz->decimalpoints),
                         'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($overallaverage->grade, $this->quiz->id)));
@@ -62,7 +67,7 @@ class quiz_report_overview_table extends table_sql {
             $this->add_data_keyed($overallaveragerow);
         }
     }
-    
+
     function wrap_html_start(){
         if (!$this->is_downloading()) {
             if ($this->candelete) {
@@ -96,7 +101,7 @@ class quiz_report_overview_table extends table_sql {
         }
     }
 
-    
+
     function col_checkbox($attempt){
         if ($attempt->attempt){
             return '<input type="checkbox" name="attemptid[]" value="'.$attempt->attempt.'" />';
@@ -104,13 +109,13 @@ class quiz_report_overview_table extends table_sql {
             return '';
         }
     }
-    
+
     function col_picture($attempt){
         global $COURSE;
         return print_user_picture($attempt->userid, $COURSE->id, $attempt->picture, false, true);
     }
 
-    
+
     function col_timestart($attempt){
         if ($attempt->attempt) {
             $startdate = userdate($attempt->timestart, $this->strtimeformat);
@@ -139,7 +144,7 @@ class quiz_report_overview_table extends table_sql {
             return  '-';
         }
     }
-    
+
     function col_duration($attempt){
         if ($attempt->timefinish) {
             return format_time($attempt->duration);
@@ -195,12 +200,12 @@ class quiz_report_overview_table extends table_sql {
                         'none', true);
             } else {
                 return $grade;
-            }     
+            }
         } else {
             return NULL;
         }
     }
-    
+
     function col_feedbacktext($attempt){
         if ($attempt->timefinish) {
             if (!$this->is_downloading()) {
@@ -211,7 +216,7 @@ class quiz_report_overview_table extends table_sql {
         } else {
             return '-';
         }
-    
+
     }
 }
 ?>

@@ -20,36 +20,36 @@
     $number = optional_param('number', 0, PARAM_INT);  // question number
 
     if ($stateid) {
-        if (! $state = get_record('question_states', 'id', $stateid)) {
+        if (! $state = $DB->get_record('question_states', array('id' => $stateid))) {
             print_error('Invalid state id');
         }
-        if (! $attempt = get_record('quiz_attempts', 'uniqueid', $state->attempt)) {
+        if (! $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $state->attempt))) {
             print_error('No such attempt ID exists');
         }
     } elseif ($attemptid) {
-        if (! $attempt = get_record('quiz_attempts', 'id', $attemptid)) {
+        if (! $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid))) {
             print_error('No such attempt ID exists');
         }
-        if (! $neweststateid = get_field('question_sessions', 'newest', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
+        if (! $neweststateid = $DB->get_field('question_sessions', 'newest', array('attemptid' => $attempt->uniqueid, 'questionid' => $questionid))) {
             // newest_state not set, probably because this is an old attempt from the old quiz module code
-            if (! $state = get_record('question_states', 'question', $questionid, 'attempt', $attempt->uniqueid)) {
+            if (! $state = $DB->get_record('question_states', array('question' => $questionid, 'attempt' => $attempt->uniqueid))) {
                 print_error('Invalid question id');
             }
         } else {
-            if (! $state = get_record('question_states', 'id', $neweststateid)) {
+            if (! $state = $DB->get_record('question_states', array('id' => $neweststateid))) {
                 print_error('Invalid state id');
             }
         }
     } else {
         print_error('Parameter missing');
     }
-    if (! $question = get_record('question', 'id', $state->question)) {
+    if (! $question = $DB->get_record('question', array('id' => $state->question))) {
         print_error('Question for this state is missing');
     }
-    if (! $quiz = get_record('quiz', 'id', $attempt->quiz)) {
+    if (! $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
         print_error('Course module is incorrect');
     }
-    if (! $course = get_record('course', 'id', $quiz->course)) {
+    if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
         print_error('Course is misconfigured');
     }
     if (! $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id)) {
@@ -94,7 +94,7 @@
 /// Print heading
     print_heading(format_string($question->name));
 
-    $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
+    $question->maxgrade = $DB->get_field('quiz_question_instances', 'grade', array('quiz' => $quiz->id, 'question' => $question->id));
     // Some of the questions code is optimised to work with several questions
     // at once so it wants the question to be in an array.
     $key = $question->id;
@@ -104,7 +104,7 @@
         print_error("Unable to load questiontype specific question information");
     }
 
-    $session = get_record('question_sessions', 'attemptid', $attempt->uniqueid, 'questionid', $question->id);
+    $session = $DB->get_record('question_sessions', array('attemptid' => $attempt->uniqueid, 'questionid' => $question->id));
     $state->sumpenalty = $session->sumpenalty;
     $state->manualcomment = $session->manualcomment;
     restore_question_state($question, $state);
@@ -118,13 +118,14 @@
     $table->align  = array("right", "left");
     if ($attempt->userid <> $USER->id) {
         // Print user picture and name
-        $student = get_record('user', 'id', $attempt->userid);
+        $student = $DB->get_record('user', array('id' => $attempt->userid));
         $picture = print_user_picture($student, $course->id, $student->picture, false, true);
         $table->data[] = array($picture, fullname($student, true));
     }
     // print quiz name
     $table->data[] = array(get_string('modulename', 'quiz').':', format_string($quiz->name));
-    if (has_capability('mod/quiz:viewreports', $context) and count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
+    if (has_capability('mod/quiz:viewreports', $context) and
+            count($attempts = $DB->get_records_select('quiz_attempts', "quiz = ? AND userid =?", 'attempt ASC', array($quiz->id, $attempt->userid))) > 1) {
         // print list of attempts
         $attemptlist = '';
         foreach ($attempts as $at) {

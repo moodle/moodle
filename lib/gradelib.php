@@ -209,7 +209,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
 
     $count = count($grades);
     if ($count > 0 and $count < 200) {
-        list($uids, $params) = $DB->get_in_or_equal(array_keys($grades), SQL_PARAMS_NAMED, $start='uid0'); 
+        list($uids, $params) = $DB->get_in_or_equal(array_keys($grades), SQL_PARAMS_NAMED, $start='uid0');
         $params['gid'] = $grade_item->id;
         $sql = "SELECT * FROM {grade_grades} WHERE itemid = :gid AND userid $uids";
 
@@ -226,11 +226,8 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
         $grade_grade = null;
         $grade       = null;
 
-        while ($rs and $rs->valid()) {
-            $rs->next();
-            if (!$gd = $rs->current()) {
-                break;
-            }
+        foreach ($rs as $gd) {
+
             $userid = $gd->userid;
             if (!isset($grades[$userid])) {
                 // this grade not requested, continue
@@ -242,6 +239,7 @@ function grade_update($source, $courseid, $itemtype, $itemmodule, $iteminstance,
             unset($grades[$userid]);
             break;
         }
+
 
         if (is_null($grade_grade)) {
             if (count($grades) == 0) {

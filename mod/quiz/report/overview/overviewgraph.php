@@ -5,8 +5,8 @@ include $CFG->dirroot."/mod/quiz/report/reportlib.php";
 
 $quizid = required_param('id', PARAM_INT);
 
-$quiz = get_record('quiz', 'id', $quizid);
-$course = get_record('course', 'id', $quiz->course);
+$quiz = $DB->get_record('quiz', array('id' => $quizid));
+$course = $DB->get_record('course', array('id' => $quiz->course));
 require_login($course);
 $cm = get_coursemodule_from_instance('quiz', $quizid);
 $currentgroup = groups_get_activity_group($cm);
@@ -55,7 +55,7 @@ for ($i=0;$i < $quiz->grade;$i += $bandwidth){
         $label .= number_format($quiz->grade, $quiz->decimalpoints);
     }
     $bandlabels[] = $label;
-} 
+}
 $line->x_data          = $bandlabels;
 
 $useridlist = join(',',array_keys(get_users_by_capability($modcontext, 'mod/quiz:attempt','','','','','','',false)));
@@ -80,7 +80,7 @@ $line->y_format['allusers'] =
 
 
 $line->parameter['y_min_left'] = 0;  // start at 0
-$line->parameter['y_max_left'] = max($line->y_data['allusers']); 
+$line->parameter['y_max_left'] = max($line->y_data['allusers']);
 $line->parameter['y_decimal_left'] = 0; // 2 decimal places for y axis.
 
 
@@ -94,6 +94,6 @@ while ($gridlines >= 10){
     }
 }
 
-$line->parameter['y_axis_gridlines'] = $gridlines+1; 
+$line->parameter['y_axis_gridlines'] = $gridlines+1;
 $line->draw();
 ?>

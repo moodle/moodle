@@ -22,6 +22,7 @@ require_once("locallib.php");
 *                         This is updated by this function
 */
 function quiz_delete_quiz_question($id, &$quiz) {
+    global $DB;
     // TODO: For the sake of safety check that this question can be deleted
     // safely, i.e., that it is not already in use.
     $questions = explode(",", $quiz->questions);
@@ -42,10 +43,10 @@ function quiz_delete_quiz_question($id, &$quiz) {
     // Avoid duplicate page breaks
     $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
     // save new questionlist in database
-    if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
+    if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
         print_error('Could not save question list');
     }
-    delete_records('quiz_question_instances', 'quiz', $quiz->instance, 'question', $question);
+    $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->instance, 'question', $question));
     return true;
 }
 
@@ -62,6 +63,7 @@ function quiz_delete_quiz_question($id, &$quiz) {
 *                         This is updated by this function
 */
 function quiz_add_quiz_question($id, &$quiz) {
+    global $DB;
     $questions = explode(",", $quiz->questions);
 
     if (in_array($id, $questions)) {
@@ -85,12 +87,12 @@ function quiz_add_quiz_question($id, &$quiz) {
 
     // Save new questionslist in database
     $quiz->questions = implode(",", $questions);
-    if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id)) {
+    if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id))) {
         print_error('Could not save question list');
     }
 
     // update question grades
-    $questionrecord = get_record("question", "id", $id);
+    $questionrecord = $DB->get_record('question', array('id' => $id));
     $quiz->grades[$id]
             = $questionrecord->defaultgrade;
     quiz_update_question_instance($quiz->grades[$id], $id, $quiz->instance);
@@ -109,15 +111,16 @@ function quiz_add_quiz_question($id, &$quiz) {
 * @param integer $quizid  The id of the quiz to update / add the instances for.
 */
 function quiz_update_question_instance($grade, $questionid, $quizid) {
-    if ($instance = get_record("quiz_question_instances", "quiz", $quizid, 'question', $questionid)) {
+    global $DB;
+    if ($instance = $DB->get_record('quiz_question_instances', array('quiz' => $quizid, 'question' => $questionid))) {
         $instance->grade = $grade;
-        return update_record('quiz_question_instances', $instance);
+        return $DB->update_record('quiz_question_instances', $instance);
     } else {
         unset($instance);
         $instance->quiz = $quizid;
         $instance->question = $questionid;
         $instance->grade = $grade;
-        return insert_record("quiz_question_instances", $instance);
+        return $DB->insert_record("quiz_question_instances", $instance);
     }
 }
 
@@ -133,7 +136,7 @@ function quiz_update_question_instance($grade, $questionid, $quizid) {
 * @param boolean $showbreaks  Indicates whether the reorder tool should be displayed
 */
 function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreaks=true, $reordertool=false) {
-    global $USER, $CFG, $QTYPES;
+    global $USER, $CFG, $QTYPES, $DB;
 
     $strorder = get_string("order");
     $strquestionname = get_string("questionname", "quiz");
@@ -155,11 +158,12 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
         return 0;
     }
 
-    if (!$questions = get_records_sql("SELECT q.*,c.contextid
-                              FROM {$CFG->prefix}question q,
-                                   {$CFG->prefix}question_categories c
-                             WHERE q.id in ($quiz->questions)
-                               AND q.category = c.id")) {
+    list($usql, $params) = $DB->get_in_or_equal(explode(',', $quiz->questions));
+    if (!$questions = $DB->get_records_sql("SELECT q.*,c.contextid
+                              FROM {question} q,
+                                   {question_categories} c
+                             WHERE q.id $usql
+                               AND q.category = c.id", $params)) {
         echo "<p class=\"quizquestionlistcontrols\">";
         print_string("noquestions", "quiz");
         echo "</p>";
@@ -191,11 +195,11 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
     echo "</tr>\n";
 
 	// for RTL languages: switch right and left arrows /****/
-    if (right_to_left()) { 
-        $movearrow = 'moveleft.gif'; 
-    } else { 
-        $movearrow = 'removeright.gif'; 
-    } 
+    if (right_to_left()) {
+        $movearrow = 'moveleft.gif';
+    } else {
+        $movearrow = 'removeright.gif';
+    }
 
     foreach ($order as $i => $qnum) {
 

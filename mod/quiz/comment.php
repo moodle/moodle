@@ -12,13 +12,13 @@
     $attemptid =required_param('attempt', PARAM_INT); // attempt id
     $questionid =required_param('question', PARAM_INT); // question id
 
-    if (! $attempt = get_record('quiz_attempts', 'uniqueid', $attemptid)) {
+    if (! $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $attemptid))) {
         print_error('No such attempt ID exists');
     }
-    if (! $quiz = get_record('quiz', 'id', $attempt->quiz)) {
+    if (! $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
         print_error('Course module is incorrect');
     }
-    if (! $course = get_record('course', 'id', $quiz->course)) {
+    if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
         print_error('Course is misconfigured');
     }
 
@@ -35,10 +35,10 @@
     require_capability('mod/quiz:grade', $context);
 
     // Load question
-    if (! $question = get_record('question', 'id', $questionid)) {
+    if (! $question = $DB->get_record('question', array('id' => $questionid))) {
         print_error('Question for this session is missing');
     }
-    $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
+    $question->maxgrade = $DB->get_field('quiz_question_instances', 'grade', array('quiz' => $quiz->id, 'question' => $question->id));
     // Some of the questions code is optimised to work with several questions
     // at once so it wants the question to be in an array.
     $key = $question->id;

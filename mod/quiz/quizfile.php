@@ -18,26 +18,26 @@
     disable_debugging();
 
     $relativepath = get_file_argument('quizfile.php');
-    
+
     if (!$relativepath) {
         print_error('No valid arguments supplied or incorrect server configuration');
     }
-    
+
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
     if (count($args) < 3) { // always at least category, question and path
         print_error('No valid arguments supplied');
     }
-    
+
     $quizid       = (int)array_shift($args);
     $questionid   = (int)array_shift($args);
     $relativepath = implode ('/', $args);
 
-    if (!($question = get_record('question', 'id', $questionid))) {
+    if (!($question = $DB->get_record('question', array('id' => $questionid)))) {
         print_error('No valid arguments supplied');
     }
 
-    if (!($questioncategory = get_record('question_categories', 'id', $question->category))) {
+    if (!($questioncategory = $DB->get_record('question_categories', array('id' => $question->category)))) {
         print_error('No valid arguments supplied');
     }
 
@@ -54,17 +54,17 @@
             require_login($questioncategory->course);
             $cm = get_coursemodule_from_instance('quiz', $quizid);
             require_capability('mod/quiz:preview', get_context_instance(CONTEXT_MODULE, $cm->id));
-        }        
+        }
     } else {
-        if (!($quiz = get_record('quiz', 'id', $quizid))) {
+        if (!($quiz = $DB->get_record('quiz', array('id' => $quizid)))) {
             print_error('No valid arguments supplied');
         }
-        if (!($course = get_record('course', 'id', $quiz->course))) {
+        if (!($course = $DB->get_record('course', array('id' => $quiz->course)))) {
             print_error('No valid arguments supplied');
         }
         require_login($course->id);
-        
-        // For now, let's not worry about this.  The following check causes 
+
+        // For now, let's not worry about this.  The following check causes
         // problems sometimes when reviewing a quiz
         //if (!isteacher($course->id)
         //    and !quiz_get_user_attempt_unfinished($quiz->id, $USER->id)
@@ -73,13 +73,13 @@
         //{
         //    print_error("Logged-in user is not allowed to view this quiz");
         //}
-    
+
         ///////////////////////////////////////////////////
         // The logged-in user has the right to view material on this quiz!
         // Now verify the consistency between $quiz, $question, its category and $relativepathname
         ///////////////////////////////////////////////////
-    
-        // For now, let's not worry about this.  The following check doesn't 
+
+        // For now, let's not worry about this.  The following check doesn't
         // work for randomly selected questions and it gets complicated
         //if (!in_array($question->id, explode(',', $quiz->questions), FALSE)) {
         //    print_error("Specified question is not on the specified quiz");

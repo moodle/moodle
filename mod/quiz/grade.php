@@ -8,11 +8,11 @@
         print_error('Course Module ID was incorrect');
     }
 
-    if (! $quiz = get_record('quiz', 'id', $cm->instance)) {
+    if (! $quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
         print_error('quiz ID was incorrect');
     }
 
-    if (! $course = get_record('course', 'id', $quiz->course)) {
+    if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
         print_error('Course is misconfigured');
     }
 

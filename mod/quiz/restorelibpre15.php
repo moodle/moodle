@@ -124,7 +124,7 @@
                 $newid = $catfound;
             } else {
                 if (!$quiz_cat->stamp) {
-                    $quiz_cat->stamp = make_unique_id_code();   
+                    $quiz_cat->stamp = make_unique_id_code();
                 }
                 $newid = $DB->insert_record ("question_categories",$quiz_cat);
             }
@@ -484,7 +484,7 @@
             //Only if there aren't restrictions or there are restriction concordance
             if (empty($restrictto) || (!empty($restrictto) && $shortanswer->answers == $restrictto)) {
                 $newid = $DB->insert_record ("question_shortanswer",$shortanswer);
-            } 
+            }
 
             //Do some output
             if (($i+1) % 50 == 0) {
@@ -1012,7 +1012,7 @@
             if ($newid) {
                 $answersdb = $DB->get_records_list('question_answers','id', explode(',',$multianswer->answers));
                 foreach ($answersdb as $answerdb) {
-                    set_field('question_answers','question',$newid,'id',$answerdb->id);
+                    $DB->set_field('question_answers','question',$newid,array('id' =>$answerdb->id));
                 }
             }
 
@@ -1034,12 +1034,12 @@
         //Everything is created, just going to create the multianswer record
         if ($status) {
             ksort($createdquestions);
-           
+
             $multianswerdb = new object;
             $multianswerdb->question = $parentquestion->id;
             $multianswerdb->sequence = implode(",",$createdquestions);
             $mid = $DB->insert_record('question_multianswer', $multianswerdb);
-  
+
             if (!$mid) {
                 $status = false;
             }
@@ -1184,7 +1184,7 @@
             $dataset_item->value = backup_todb($di_info['#']['VALUE']['0']['#']);
 
             //The structure is equal to the db, so insert the question_dataset_items
-            $newid = $DB-insert_record ("question_dataset_items",$dataset_item);
+            $newid = $DB->insert_record ("question_dataset_items",$dataset_item);
 
             if (!$newid) {
                 $status = false;
@@ -1210,7 +1210,7 @@
             //if necessary, write to restorelog and adjust date/time fields
             if ($restore->course_startdateoffset) {
                 restore_log_date_changes('Quiz', $restore, $info['MOD']['#'], array('TIMEOPEN', 'TIMECLOSE'));
-            }            
+            }
             //traverse_xmlize($info);                                                                     //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
@@ -1839,7 +1839,7 @@
                 $wtm = new WikiToMarkdown();
                 $record->questiontext = $wtm->convert($record->questiontext, $restore->course_id);
                 $record->questiontextformat = FORMAT_MARKDOWN;
-                $status = $DB->update_record('question', addslashes_object($record));
+                $status = $DB->update_record('question', $record);
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {

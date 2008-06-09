@@ -28,17 +28,17 @@ class quiz_report extends quiz_default_report {
      * Displays the report.
      */
     function display($quiz, $cm, $course) {
-        global $CFG, $QTYPES;
-        
+        global $CFG, $QTYPES, $DB;
+
         $viewoptions = array('mode'=>'grading', 'q'=>$quiz->id);
 
         if ($questionid = optional_param('questionid', 0, PARAM_INT)){
             $viewoptions += array('questionid'=>$questionid);
         }
-        
+
         // grade question specific parameters
         $gradeungraded  = optional_param('gradeungraded', 0, PARAM_INT);
-        
+
         if ($userid    = optional_param('userid', 0, PARAM_INT)){
             $viewoptions += array('userid'=>$userid);
         }
@@ -54,10 +54,10 @@ class quiz_report extends quiz_default_report {
         if ($gradenextungraded  = optional_param('gradenextungraded', 0, PARAM_INT)){
             $viewoptions += array('gradenextungraded'=> $gradenextungraded);
         }
-        
-        
+
+
         $this->cm = $cm;
-        
+
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="grading");
 
         // Check permissions
@@ -73,7 +73,7 @@ class quiz_report extends quiz_default_report {
                 unset($gradeableqs[$qid]);
             }
         }
-        
+
         if (empty($gradeableqs)) {
             print_heading(get_string('noessayquestionsfound', 'quiz'));
             return false;
@@ -92,7 +92,7 @@ class quiz_report extends quiz_default_report {
             } else {
                 $question =& $gradeableqs[$questionid];
             }
-            $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
+            $question->maxgrade = $DB->get_field('quiz_question_instances', 'grade', array('quiz' => $quiz->id, 'question' => $question->id));
 
             // Some of the questions code is optimised to work with several questions
             // at once so it wants the question to be in an array. The array key
@@ -121,10 +121,12 @@ class quiz_report extends quiz_default_report {
             foreach($data->manualgrades as $uniqueid => $response) {
                 // get our attempt
                 $uniqueid = clean_param($uniqueid, PARAM_INT);
-                if (!$attempt = get_record_sql("SELECT * FROM {$CFG->prefix}quiz_attempts " .
-                                "WHERE uniqueid = $uniqueid AND " .
-                                "userid IN ($this->userids) AND " .
-                                "quiz=".$quiz->id)){
+                list($usql, $params) = $DB->get_in_or_equal(explode(',', $this->userids));
+
+                if (!$attempt = $DB->get_record_sql("SELECT * FROM {quiz_attempts} " .
+                                "WHERE uniqueid = ? AND " .
+                                "userid $usql AND " .
+                                "quiz=?", array_merge(array($uniqueid), $params, array($quiz->id)))){
                     error('No such attempt ID exists');
                 }
 
@@ -152,7 +154,7 @@ class quiz_report extends quiz_default_report {
                 notify(get_string('changessavedwitherrors', 'quiz'), 'notifysuccess');
             }
         }
-        $this->viewurl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $viewoptions); 
+        $this->viewurl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $viewoptions);
         /// find out current groups mode
 
         if ($groupmode = groups_get_activity_groupmode($this->cm)) {   // Groups are being used
@@ -231,8 +233,7 @@ class quiz_report extends quiz_default_report {
      *       Finnish documenting
      **/
     function view_question($quiz, $question, $totalattempts, $ungraded) {
-        global $CFG;
-
+        global $CFG, $DB;
 
         $usercount = count($this->users);
 
@@ -267,7 +268,7 @@ class quiz_report extends quiz_default_report {
         // get it ready!
         $table->setup();
 
-        list($select, $from, $where) = $this->attempts_sql($quiz->id, true, $question->id);
+        list($select, $from, $where, $params) = $this->attempts_sql($quiz->id, true, $question->id);
 
         if($table->get_sql_where()) { // forgot what this does
             $where .= 'AND '.$table->get_sql_where();
@@ -285,7 +286,7 @@ class quiz_report extends quiz_default_report {
         $table->pagesize(QUIZ_REPORT_DEFAULT_PAGE_SIZE, $totalattempts);
 
         // get the attempts and process them
-        if ($attempts = get_records_sql($select.$from.$where.$sort,$table->get_page_start(), $table->get_page_size())) {
+        if ($attempts = $DB->get_records_sql($select.$from.$where.$sort, $params, $table->get_page_start(), $table->get_page_size())) {
             // grade all link
             $links = "<strong><a href=\"report.php?mode=grading&amp;gradeall=1&amp;q=$quiz->id&amp;questionid=$question->id\">".get_string('gradeall', 'quiz_grading', $totalattempts).'</a></strong>';
             if ($ungraded>0){
@@ -337,7 +338,7 @@ class quiz_report extends quiz_default_report {
      * @todo Finish documenting this function
      **/
     function print_questions_and_form($quiz, $question, $userid, $attemptid, $gradeungraded, $gradenextungraded, $ungraded) {
-        global $CFG;
+        global $CFG, $DB;
 
         // TODO get the context, and put in proper roles an permissions checks.
         $context = NULL;
@@ -345,16 +346,16 @@ class quiz_report extends quiz_default_report {
         $questions[$question->id] = &$question;
         $usehtmleditor = can_use_html_editor();
 
-        list($select, $from, $where) = $this->attempts_sql($quiz->id, false, $question->id, $userid, $attemptid, $gradeungraded, $gradenextungraded);
+        list($select, $from, $where, $params) = $this->attempts_sql($quiz->id, false, $question->id, $userid, $attemptid, $gradeungraded, $gradenextungraded);
 
         $sort = 'ORDER BY u.firstname, u.lastname, qa.attempt ASC';
-        
+
         if ($gradenextungraded){
             $limit = ' LIMIT '.QUIZ_REPORT_DEFAULT_GRADING_PAGE_SIZE;
         } else {
             $limit = '';
         }
-        $attempts = get_records_sql($select.$from.$where.$sort.$limit);
+        $attempts = $DB->get_records_sql($select.$from.$where.$sort.$limit, $params);
         if ($attempts){
             $firstattempt = current($attempts);
             $fullname = fullname($firstattempt);
@@ -372,54 +373,54 @@ class quiz_report extends quiz_default_report {
             } else {
                 print_heading(get_string('gradingall','quiz_grading', count($attempts)), '', 3);
             }
-    
+
             // Display the form with one part for each selected attempt
-    
+
             echo '<form method="post" action="report.php">'.
                 '<input type="hidden" name="mode" value="grading" />'.
                 '<input type="hidden" name="q" value="'.$quiz->id.'" />'.
                 '<input type="hidden" name="sesskey" value="'.sesskey().'" />'.
                 '<input type="hidden" name="questionid" value="'.$question->id.'" />';
-    
+
             foreach ($attempts as $attempt) {
-    
+
                 // Load the state for this attempt (The questions array was created earlier)
                 $states = get_question_states($questions, $quiz, $attempt);
                 // The $states array is indexed by question id but because we are dealing
                 // with only one question there is only one entry in this array
                 $state = &$states[$question->id];
-    
+
                 $options = quiz_get_reviewoptions($quiz, $attempt, $context);
                 unset($options->questioncommentlink);
                 $copy = $state->manualcomment;
                 $state->manualcomment = '';
-    
+
                 $options->readonly = 1;
-                
+
                 $gradedclass = question_state_is_graded($state)?' class="highlightgraded" ':'';
                 $gradedstring = question_state_is_graded($state)?(' '.get_string('graded','quiz_grading')):'';
                 $a = new object();
                 $a->fullname = fullname($attempt, true);
                 $a->attempt = $attempt->attempt;
-                
+
                 // print the user name, attempt count, the question, and some more hidden fields
                 echo '<div class="boxaligncenter" width="80%" style="clear:left;padding:15px;">';
                 echo "<span$gradedclass>".get_string('gradingattempt','quiz_grading', $a);
                 echo $gradedstring."</span>";
-    
+
                 print_question($question, $state, '', $quiz, $options);
-    
+
                 $prefix         = "manualgrades[$attempt->uniqueid]";
                 $grade          = round($state->last_graded->grade, 3);
                 $state->manualcomment = $copy;
-    
+
                 include($CFG->dirroot . '/question/comment.html');
-    
+
                 echo '</div>';
             }
             echo '<div class="boxaligncenter"><input type="submit" value="'.get_string('savechanges').'" /></div>'.
                 '</form>';
-    
+
             if ($usehtmleditor) {
                 use_html_editor();
             }
@@ -427,40 +428,50 @@ class quiz_report extends quiz_default_report {
             notify(get_string('noattemptstoshow', 'quiz'));
         }
     }
-    
+
     function attempts_sql($quizid, $wantstateevent=false, $questionid=0, $userid=0, $attemptid=0, $gradeungraded=0, $gradenextungraded=0){
-        global $CFG;
+        global $CFG, $DB;
         // this sql joins the attempts table and the user table
         $select = 'SELECT qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, qa.preview,
                     u.id AS userid, u.firstname, u.lastname, u.picture ';
         if ($wantstateevent){
             $select .= ', qs.event ';
         }
-        $from   = 'FROM '.$CFG->prefix.'user u, ' .
-                $CFG->prefix.'quiz_attempts qa ';
+        $from   = 'FROM {user} u, ' .
+                '{quiz_attempts} qa ';
+        $params = array();
+
         if (($wantstateevent|| $gradenextungraded || $gradeungraded) && $questionid){
-            $from .= "LEFT JOIN {$CFG->prefix}question_sessions qns " .
-                    "ON (qns.attemptid = qa.uniqueid AND qns.questionid = $questionid) ";
-            $from .=  "LEFT JOIN  {$CFG->prefix}question_states qs " .
-                    "ON (qs.id = qns.newgraded AND qs.question = $questionid) ";
+            $from .= "LEFT JOIN {question_sessions} qns " .
+                    "ON (qns.attemptid = qa.uniqueid AND qns.questionid = ?) ";
+            $params[] = $questionid;
+            $from .=  "LEFT JOIN  {question_states} qs " .
+                    "ON (qs.id = qns.newgraded AND qs.question = ?) ";
+            $params[] = $questionid;
         }
+        list($usql, $u_params) = $DB->get_in_or_equal(explode(',', $this->userids));
         if ($gradenextungraded || $gradeungraded) { // get ungraded attempts
-            $where = 'WHERE u.id IN ('.$this->userids.') AND qs.event NOT IN ('.QUESTION_EVENTS_GRADED.') ';
+            $where = 'WHERE u.id $usql AND qs.event NOT IN ('.QUESTION_EVENTS_GRADED.') ';
+            $params = array_merge($params, $u_params);
         } else if ($userid) { // get all the attempts for a specific user
-            $where = 'WHERE u.id='.$userid.' ';
+            $where = 'WHERE u.id=?';
+            $params[] = $userid;
         } else if ($attemptid) { // get a specific attempt
-            $where = 'WHERE qa.id='.$attemptid.' ';
+            $where = 'WHERE qa.id=? ';
+            $params[] = $attemptid;
         } else { // get all user attempts
-            $where  = 'WHERE u.id IN ('.$this->userids.') ';
+            $where  = "WHERE u.id $usql ";
+            $params = array_merge($params, $u_params);
         }
-        
-        $where .= ' AND u.id = qa.userid AND qa.quiz = '.$quizid;
+
+        $where .= ' AND u.id = qa.userid AND qa.quiz = ?';
+        $params[] = $quizid;
         // ignore previews
         $where .= ' AND preview = 0 ';
 
         $where .= ' AND qa.timefinish != 0 ';
 
-        return array($select, $from, $where);
+        return array($select, $from, $where, $params);
     }
 
 }

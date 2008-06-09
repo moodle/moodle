@@ -6,7 +6,7 @@ require_once($CFG->libdir.'/tablelib.php');
 class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {
-        global $CFG;
+        global $CFG, $DB;
 
         // Print header
         $this->print_header_and_tabs($cm, $course, $quiz, $reportmode="regrade");
@@ -19,18 +19,18 @@ class quiz_report extends quiz_default_report {
         }
 
         // Fetch all attempts
-        if (!$attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = 0")) {
+        if (!$attempts = $DB->get_records_select('quiz_attempts', "quiz = ? AND preview = 0", array($quiz->id))) {
             print_heading(get_string('noattempts', 'quiz'));
             return true;
         }
 
         // Fetch all questions
-        $sql = "SELECT q.*, i.grade AS maxgrade FROM {$CFG->prefix}question q,
-                                         {$CFG->prefix}quiz_question_instances i
-                WHERE i.quiz = $quiz->id
+        $sql = "SELECT q.*, i.grade AS maxgrade FROM {question} q,
+                                         {quiz_question_instances} i
+                WHERE i.quiz = ?
                 AND i.question = q.id";
 
-        if (! $questions = get_records_sql($sql)) {
+        if (! $questions = $DB->get_records_sql($sql, array($quiz->id))) {
             print_error("Failed to get questions for regrading!");
         }
         get_question_options($questions);
@@ -65,17 +65,17 @@ class quiz_report extends quiz_default_report {
             $sumgrades = 0;
             $questionids = explode(',', quiz_questions_in_quiz($attempt->layout));
             foreach($questionids as $questionid) {
-                $lastgradedid = get_field('question_sessions', 'newgraded', 'attemptid', $attempt->uniqueid, 'questionid', $questionid);
-                $sumgrades += get_field('question_states', 'grade', 'id', $lastgradedid);
+                $lastgradedid = $DB->get_field('question_sessions', 'newgraded', array('attemptid' => $attempt->uniqueid, 'questionid' => $questionid));
+                $sumgrades += $DB->get_field('question_states', 'grade', array('id' => $lastgradedid));
             }
             if ($attempt->sumgrades != $sumgrades) {
                 $attemptschanged++;
-                set_field('quiz_attempts', 'sumgrades', $sumgrades, 'id', $attempt->id);
+                $DB->set_field('quiz_attempts', 'sumgrades', $sumgrades, array('id' => $attempt->id));
             }
         }
 
         // Update the overall quiz grades
-        if ($grades = get_records('quiz_grades', 'quiz', $quiz->id)) {
+        if ($grades = $DB->get_records('quiz_grades', array('quiz' => $quiz->id))) {
             foreach($grades as $grade) {
                 quiz_save_best_grade($quiz, $grade->userid);
             }

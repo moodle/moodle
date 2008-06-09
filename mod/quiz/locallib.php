@@ -140,10 +140,9 @@ function quiz_get_user_attempt_unfinished($quizid, $userid) {
  * @return mixed the attempt if there is one, false if not.
  */
 function quiz_get_latest_attempt_by_user($quizid, $userid) {
-    global $CFG;
-    $attempt = get_records_sql('SELECT qa.* FROM ' . $CFG->prefix . 'quiz_attempts qa
-            WHERE qa.quiz=' . $quizid . ' AND qa.userid=' . $userid .
-            ' ORDER BY qa.timestart DESC, qa.id DESC', 0, 1);
+    global $CFG, $DB;
+    $attempt = $DB->get_records_sql('SELECT qa.* FROM {quiz_attempts} qa
+            WHERE qa.quiz=? AND qa.userid= ? ORDER BY qa.timestart DESC, qa.id DESC', array($quizid, $userid), 0, 1);
     if ($attempt) {
         return array_shift($attempt);
     } else {
@@ -159,9 +158,10 @@ function quiz_get_latest_attempt_by_user($quizid, $userid) {
  * @param integer $attemptid the id of the attempt to load.
  */
 function quiz_load_attempt($attemptid) {
-    $attempt = get_record('quiz_attempts', 'id', $attemptid);
+    global $DB;
+    $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
 
-    if (!record_exists('question_sessions', 'attemptid', $attempt->uniqueid)) {
+    if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
     /// this attempt has not yet been upgraded to the new model
         quiz_upgrade_states($attempt);
     }
@@ -175,8 +175,9 @@ function quiz_load_attempt($attemptid) {
  * @param object $quiz the quiz object.
  */
 function quiz_delete_attempt($attempt, $quiz) {
+    global $DB;
     if (is_numeric($attempt)) {
-        if (!$attempt = get_record('quiz_attempts', 'id', $attempt)) {
+        if (!$attempt = $DB->get_record('quiz_attempts', array('id' => $attempt))) {
             return;
         }
     }
@@ -187,7 +188,7 @@ function quiz_delete_attempt($attempt, $quiz) {
         return;
     }
 
-    delete_records('quiz_attempts', 'id', $attempt->id);
+    $DB->delete_records('quiz_attempts', array('id' => $attempt->id));
     delete_attempt($attempt->uniqueid);
 
     // Search quiz_attempts for other instances by this user.
@@ -195,8 +196,8 @@ function quiz_delete_attempt($attempt, $quiz) {
     // else recalculate best grade
 
     $userid = $attempt->userid;
-    if (!record_exists('quiz_attempts', 'userid', $userid, 'quiz', $quiz->id)) {
-        delete_records('quiz_grades', 'userid', $userid,'quiz', $quiz->id);
+    if (!$DB->record_exists('quiz_attempts', array('userid' => $userid, 'quiz' => $quiz->id))) {
+        $DB->delete_records('quiz_grades', array('userid' => $userid,'quiz' => $quiz->id));
     } else {
         quiz_save_best_grade($quiz, $userid);
     }
@@ -252,12 +253,13 @@ function quiz_number_of_pages($layout) {
 function quiz_first_questionnumber($quizlayout, $pagelayout) {
     // this works by finding all the questions from the quizlayout that
     // come before the current page and then adding up their lengths.
-    global $CFG;
+    global $CFG, $DB;
     $start = strpos($quizlayout, ','.$pagelayout.',')-2;
     if ($start > 0) {
         $prevlist = substr($quizlayout, 0, $start);
-        return get_field_sql("SELECT sum(length)+1 FROM {$CFG->prefix}question
-         WHERE id IN ($prevlist)");
+        list($usql, $params) = $DB->get_in_or_equal(explode(',', $prevlist));
+        return $DB->get_field_sql("SELECT sum(length)+1 FROM {question}
+         WHERE id $usql", $params);
     } else {
         return 1;
     }
@@ -336,18 +338,24 @@ function quiz_print_navigation_panel($page, $pages) {
  * @param integer $quiz The quiz object
  */
 function quiz_get_all_question_grades($quiz) {
-    global $CFG;
+    global $CFG, $DB;
 
     $questionlist = quiz_questions_in_quiz($quiz->questions);
     if (empty($questionlist)) {
         return array();
     }
 
-    $instances = get_records_sql("SELECT question,grade,id
-                            FROM {$CFG->prefix}quiz_question_instances
-                            WHERE quiz = '$quiz->id'" .
-                            (is_null($questionlist) ? '' :
-                            "AND question IN ($questionlist)"));
+    $params = array($quiz->id);
+    $wheresql = '';
+    if (!is_null($questionlist)) {
+        list($usql, $question_params) = $DB->get_in_or_equal(explode(',', $questionlist));
+        $wheresql = " AND question $usql ";
+        $params = array_merge($params, $question_params);
+    }
+
+    $instances = $DB->get_records_sql("SELECT question,grade,id
+                                    FROM {quiz_question_instances}
+                                    WHERE quiz = ? $wheresql", $params);
 
     $list = explode(",", $questionlist);
     $grades = array();
@@ -370,7 +378,8 @@ function quiz_get_all_question_grades($quiz) {
  * @return float the user's current grade for this quiz.
  */
 function quiz_get_best_grade($quiz, $userid) {
-    $grade = get_field('quiz_grades', 'grade', 'quiz', $quiz->id, 'userid', $userid);
+    global $DB;
+    $grade = $DB->get_field('quiz_grades', 'grade', array('quiz' => $quiz->id, 'userid' => $userid));
 
     // Need to detect errors/no result, without catching 0 scores.
     if (is_numeric($grade)) {
@@ -409,8 +418,9 @@ function quiz_rescale_grade($rawgrade, $quiz, $round = true) {
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
 function quiz_feedback_for_grade($grade, $quizid) {
-    $feedback = get_field_select('quiz_feedback', 'feedbacktext',
-            "quizid = $quizid AND mingrade <= $grade AND $grade < maxgrade");
+    global $DB;
+    $feedback = $DB->get_field_select('quiz_feedback', 'feedbacktext',
+            "quizid = ? AND mingrade <= ? AND $grade < maxgrade", array($quizid, $grade));
 
     if (empty($feedback)) {
         $feedback = '';
@@ -429,10 +439,11 @@ function quiz_feedback_for_grade($grade, $quizid) {
  * @return boolean Whether this quiz has any non-blank feedback text.
  */
 function quiz_has_feedback($quizid) {
+    global $DB;
     static $cache = array();
     if (!array_key_exists($quizid, $cache)) {
-        $cache[$quizid] = record_exists_select('quiz_feedback',
-                "quizid = $quizid AND " . sql_isnotempty('quiz_feedback', 'feedbacktext', false, true));
+        $cache[$quizid] = $DB->record_exists_select('quiz_feedback',
+                "quizid = ? AND " . sql_isnotempty('quiz_feedback', 'feedbacktext', false, true), array($quizid));
     }
     return $cache[$quizid];
 }
@@ -447,6 +458,7 @@ function quiz_has_feedback($quizid) {
  * @return boolean indicating success or failure.
  */
 function quiz_set_grade($newgrade, &$quiz) {
+    global $DB;
     // This is potentially expensive, so only do it if necessary.
     if (abs($quiz->grade - $newgrade) < 1e-7) {
         // Nothing to do.
@@ -457,7 +469,7 @@ function quiz_set_grade($newgrade, &$quiz) {
     begin_sql();
 
     // Update the quiz table.
-    $success = set_field('quiz', 'grade', $newgrade, 'id', $quiz->instance);
+    $success = $DB->set_field('quiz', 'grade', $newgrade, array('id' => $quiz->instance));
 
     // Rescaling the other data is only possible if the old grade was non-zero.
     if ($quiz->grade > 1e-7) {
@@ -468,18 +480,18 @@ function quiz_set_grade($newgrade, &$quiz) {
 
         // Update the quiz_grades table.
         $timemodified = time();
-        $success = $success && execute_sql("
-                UPDATE {$CFG->prefix}quiz_grades
-                SET grade = $factor * grade, timemodified = $timemodified
-                WHERE quiz = $quiz->id
-        ", false);
+        $success = $success && $DB->execute("
+                UPDATE {quiz_grades}
+                SET grade = ? * grade, timemodified = ?
+                WHERE quiz = ?
+        ", array($factor, $timemodified, $quiz->id));
 
         // Update the quiz_grades table.
-        $success = $success && execute_sql("
-                UPDATE {$CFG->prefix}quiz_feedback
-                SET mingrade = $factor * mingrade, maxgrade = $factor * maxgrade
-                WHERE quizid = $quiz->id
-        ", false);
+        $success = $success && $DB->execute("
+                UPDATE {quiz_feedback}
+                SET mingrade = ? * mingrade, maxgrade = ? * maxgrade
+                WHERE quizid = ?
+        ", array($factor, $factor, $quiz->id));
     }
 
     // update grade item and send all grades to gradebook
@@ -487,9 +499,9 @@ function quiz_set_grade($newgrade, &$quiz) {
     quiz_update_grades($quiz);
 
     if ($success) {
-        return commit_sql();
+        return $DB->commit_sql();
     } else {
-        rollback_sql();
+        $DB->rollback_sql();
         return false;
     }
 }
@@ -502,6 +514,7 @@ function quiz_set_grade($newgrade, &$quiz) {
  * @return boolean Indicates success or failure.
  */
 function quiz_save_best_grade($quiz, $userid = null) {
+    global $DB;
     global $USER;
 
     if (empty($userid)) {
@@ -519,10 +532,10 @@ function quiz_save_best_grade($quiz, $userid = null) {
     $bestgrade = quiz_rescale_grade($bestgrade, $quiz);
 
     // Save the best grade in the database
-    if ($grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
+    if ($grade = $DB->get_record('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid))) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
-        if (!update_record('quiz_grades', $grade)) {
+        if (!$DB->update_record('quiz_grades', $grade)) {
             notify('Could not update best grade');
             return false;
         }
@@ -531,7 +544,7 @@ function quiz_save_best_grade($quiz, $userid = null) {
         $grade->userid = $userid;
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
-        if (!insert_record('quiz_grades', $grade)) {
+        if (!$DB->insert_record('quiz_grades', $grade)) {
             notify('Could not insert new best grade');
             return false;
         }
@@ -668,12 +681,13 @@ function quiz_parse_fieldname($name, $nameprefix='question') {
  * @param object $attempt  The attempt whose states need upgrading
  */
 function quiz_upgrade_states($attempt) {
+    global $DB;
     global $CFG;
     // The old quiz model only allowed a single response per quiz attempt so that there will be
     // only one state record per question for this attempt.
 
     // We set the timestamp of all states to the timemodified field of the attempt.
-    execute_sql("UPDATE {$CFG->prefix}question_states SET timestamp = '$attempt->timemodified' WHERE attempt = '$attempt->uniqueid'", false);
+    $DB->execute("UPDATE {question_states} SET timestamp = ? WHERE attempt = ?", array($attempt->timemodified, $attempt->uniqueid));
 
     // For each state we create an entry in the question_sessions table, with both newest and
     // newgraded pointing to this state.
@@ -683,12 +697,16 @@ function quiz_upgrade_states($attempt) {
     $session = new stdClass;
     $session->attemptid = $attempt->uniqueid;
     $questionlist = quiz_questions_in_quiz($attempt->layout);
-    if ($questionlist and $states = get_records_select('question_states', "attempt = '$attempt->uniqueid' AND question IN ($questionlist)")) {
+    $params = array($attempt->uniqueid);
+    list($usql, $question_params) = $DB->get_in_or_equal(explode(',',$questionlist));
+    $params = array_merge($params, $question_params);
+
+    if ($questionlist and $states = $DB->get_records_select('question_states', "attempt = ? AND question $usql", $params)) {
         foreach ($states as $state) {
             $session->newgraded = $state->id;
             $session->newest = $state->id;
             $session->questionid = $state->question;
-            insert_record('question_sessions', $session, false);
+            $DB->insert_record('question_sessions', $session, false);
         }
     }
 }

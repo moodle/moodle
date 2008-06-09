@@ -30,17 +30,17 @@
         if (! $cm = get_coursemodule_from_id('quiz', $id)) {
             print_error("There is no coursemodule with id $id");
         }
-        if (! $course = get_record("course", "id", $cm->course)) {
+        if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
             print_error("Course is misconfigured");
         }
-        if (! $quiz = get_record("quiz", "id", $cm->instance)) {
+        if (! $quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
             print_error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
         }
     } else {
-        if (! $quiz = get_record("quiz", "id", $q)) {
+        if (! $quiz = $DB->get_record('quiz', array('id' => $q))) {
             print_error("There is no quiz with id $q");
         }
-        if (! $course = get_record("course", "id", $quiz->course)) {
+        if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
             print_error("The course with id $quiz->course that the quiz with id $q belongs to is missing");
         }
         if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
@@ -85,7 +85,7 @@
     if ($canpreview && $forcenew) {
     /// Teacher wants a new preview, so we set a finish time on the
     /// current attempt (if any). It will then automatically be deleted below
-        set_field('quiz_attempts', 'timefinish', $timenow, 'quiz', $quiz->id, 'userid', $USER->id);
+        $DB->set_field('quiz_attempts', 'timefinish', $timenow, array('quiz' => $quiz->id, 'userid' => $USER->id));
     }
 
 /// Look for an existing attempt.
@@ -128,8 +128,8 @@
         $accessmanager->do_password_check($canpreview);
 
     /// Delete any previous preview attempts belonging to this user.
-        if ($oldattempts = get_records_select('quiz_attempts', "quiz = '$quiz->id'
-                AND userid = '$USER->id' AND preview = 1")) {
+        if ($oldattempts = $DB->get_records_select('quiz_attempts', "quiz = ?
+                AND userid = ? AND preview = 1", array($quiz->id, $USER->id))) {
             foreach ($oldattempts as $oldattempt) {
                 quiz_delete_attempt($oldattempt, $quiz);
             }
@@ -139,7 +139,7 @@
         $attempt = quiz_create_attempt($quiz, $attemptnumber, $lastattempt, $timenow, $canpreview);
 
     /// Save the attempt in the database.
-        if (!$attempt->id = insert_record('quiz_attempts', $attempt)) {
+        if (!$attempt->id = $DB->insert_record('quiz_attempts', $attempt)) {
             quiz_error($quiz, 'newattemptfail');
         }
 
@@ -238,7 +238,7 @@
         }
 
         $attempt->timemodified = $timenow;
-        if (!update_record('quiz_attempts', $attempt)) {
+        if (!$DB->update_record('quiz_attempts', $attempt)) {
             quiz_error($quiz, 'saveattemptfailed');
         }
     }
@@ -263,7 +263,7 @@
                 "$quiz->id", $cm->id);
 
     /// Update the quiz attempt record.
-        if (!update_record('quiz_attempts', $attempt)) {
+        if (!$DB->update_record('quiz_attempts', $attempt)) {
             quiz_error($quiz, 'saveattemptfailed');
         }
 
@@ -371,7 +371,7 @@
     }
 
 /// Print the submit buttons
-    $strconfirmattempt = addslashes(get_string("confirmclose", "quiz"));
+    $strconfirmattempt = get_string("confirmclose", "quiz");
     $onclick = "return confirm('$strconfirmattempt')";
     echo "<div class=\"submitbtns mdl-align\">\n";
 

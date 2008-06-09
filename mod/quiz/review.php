@@ -20,10 +20,10 @@
     if (!$attempt = quiz_load_attempt($attemptid)) {
         print_error("No such attempt ID exists");
     }
-    if (! $quiz = get_record("quiz", "id", $attempt->quiz)) {
+    if (! $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
         print_error("The quiz with id $attempt->quiz belonging to attempt $attempt is missing");
     }
-    if (! $course = get_record("course", "id", $quiz->course)) {
+    if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
         print_error("The course with id $quiz->course that the quiz with id $quiz->id belongs to is missing");
     }
     if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
@@ -151,14 +151,14 @@
 /// an array, then later we only output the table if there are any rows to show.
     $rows = array();
     if ($attempt->userid <> $USER->id) {
-        $student = get_record('user', 'id', $attempt->userid);
+        $student = $DB->get_record('user', array('id' => $attempt->userid));
         $picture = print_user_picture($student, $course->id, $student->picture, false, true);
         $rows[] = '<tr><th scope="row" class="cell">' . $picture . '</th><td class="cell"><a href="' .
                 $CFG->wwwroot . '/user/view.php?id=' . $student->id . '&amp;course=' . $course->id . '">' .
                 fullname($student, true) . '</a></td></tr>';
     }
     if (has_capability('mod/quiz:viewreports', $context) &&
-            count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
+            count($attempts = $DB->get_records_select('quiz_attempts', "quiz = ? AND userid = ?", array($quiz->id, $attempt->userid), 'attempt ASC')) > 1) {
     /// List of all this user's attempts for people who can see reports.
         $urloptions = '';
         if ($showall) {

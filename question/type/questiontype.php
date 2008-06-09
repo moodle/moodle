@@ -880,7 +880,7 @@ class default_questiontype {
                 $states = $DB->get_records_select('question_states', "attempt = ? AND question = ? AND event > '0'", array($state->attempt, $question->id), 'seq_number ASC');
             } else {
                 // show only graded states
-                $states = $DB->get_records_select('question_states', "attempt = ? AND question = ? AND event IN (".QUESTION_EVENTS_GRADED.")", 'seq_number ASC', array($state->attempt, $question->id));
+                $states = $DB->get_records_select('question_states', "attempt = ? AND question = ? AND event IN (".QUESTION_EVENTS_GRADED.")", array($state->attempt, $question->id), 'seq_number ASC');
             }
             if (count($states) > 1) {
                 $strreviewquestion = get_string('reviewresponse', 'quiz');

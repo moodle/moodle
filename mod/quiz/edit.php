@@ -36,11 +36,11 @@
         global $CFG;
         if ($canuse){
 			// for RTL languages: switch right and left arrows /****/
-			if (right_to_left()) { 
-				$movearrow = 'removeright.gif'; 
-			} else { 
-				$movearrow = 'moveleft.gif'; 
-			} 
+			if (right_to_left()) {
+				$movearrow = 'removeright.gif';
+			} else {
+				$movearrow = 'moveleft.gif';
+			}
             $straddtoquiz = get_string("addtoquiz", "quiz");
             $out = "<a title=\"$straddtoquiz\" href=\"edit.php?".$pageurl->get_query_string()."&amp;addquestion=$questionid&amp;sesskey=".sesskey()."\"><img
                   src=\"$CFG->pixpath/t/$movearrow\" alt=\"$straddtoquiz\" /></a>&nbsp;";
@@ -106,7 +106,7 @@
     $streditingquiz = get_string('editinga', 'moodle', $strquiz);
 
     // Get the course object and related bits.
-    if (! $course = get_record("course", "id", $quiz->course)) {
+    if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
         error("This course doesn't exist");
     }
 
@@ -140,7 +140,7 @@
             $quiz->questions = $quiz->questions . ',0';
             // Avoid duplicate page breaks
             $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
-            if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
+            if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
                 error('Could not save question list');
             }
             $significantchangemade = true;
@@ -157,7 +157,7 @@
             $quiz->questions = implode(",", $questions);
             // Avoid duplicate page breaks
             $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
-            if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
+            if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
                 error('Could not save question list');
             }
             $significantchangemade = true;
@@ -185,20 +185,20 @@
         $categoryid = required_param('categoryid', PARAM_INT);
         $randomcount = required_param('randomcount', PARAM_INT);
         // load category
-        if (! $category = get_record('question_categories', 'id', $categoryid)) {
+        if (! $category = $DB->get_record('question_categories', array('id' => $categoryid))) {
             error('Category ID is incorrect');
         }
         $catcontext = get_context_instance_by_id($category->contextid);
         require_capability('moodle/question:useall', $catcontext);
-        $category->name = addslashes($category->name);
+        $category->name = $category->name;
         // Find existing random questions in this category that are not used by any quiz.
-        if ($existingquestions = get_records_sql(
-                "SELECT * FROM " . $CFG->prefix . "question q
+        if ($existingquestions = $DB->get_records_sql(
+                "SELECT * FROM {question} q
                 WHERE qtype = '" . RANDOM . "'
-                    AND category = $category->id
-                    AND " . sql_compare_text('questiontext') . " = '$recurse'
-                    AND NOT EXISTS (SELECT * FROM " . $CFG->prefix . "quiz_question_instances WHERE question = q.id)
-                ORDER BY id")) {
+                    AND category = ?
+                    AND " . sql_compare_text('questiontext') . " = ?
+                    AND NOT EXISTS (SELECT * FROM {quiz_question_instances} WHERE question = q.id)
+                ORDER BY id", array($category->id, $recurse))) {
             // Take as many of these as needed.
             while (($existingquestion = array_shift($existingquestions)) and $randomcount > 0) {
                 quiz_add_quiz_question($existingquestion->id, $quiz);
@@ -233,12 +233,12 @@
         $questionsperpage = optional_param('questionsperpage', $quiz->questionsperpage, PARAM_INT);
         if ($questionsperpage != $quiz->questionsperpage) {
             $quiz->questionsperpage = $questionsperpage;
-            if (!set_field('quiz', 'questionsperpage', $quiz->questionsperpage, 'id', $quiz->id)) {
+            if (!$DB->set_field('quiz', 'questionsperpage', $quiz->questionsperpage, array('id' => $quiz->id))) {
                 error('Could not save number of questions per page');
             }
         }
         $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
-        if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id)) {
+        if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id))) {
             error('Could not save layout');
         }
         $significantchangemade = true;
@@ -287,7 +287,7 @@
             while (strpos($quiz->questions, ',0,0')) {
                 $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
             }
-            if (!set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->instance)) {
+            if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
                 error('Could not save question list');
             }
         }
@@ -304,8 +304,8 @@
 
 /// Delete any teacher preview attempts if the quiz has been modified
     if ($significantchangemade) {
-        $previewattempts = get_records_select('quiz_attempts',
-                'quiz = ' . $quiz->id . ' AND preview = 1');
+        $previewattempts = $DB->get_records_select('quiz_attempts',
+                'quiz = ? AND preview = 1', array($quiz->id));
         if ($previewattempts) {
             foreach ($previewattempts as $attempt) {
                 quiz_delete_attempt($attempt, $quiz);
@@ -318,7 +318,7 @@
 /// all commands have been dealt with, now print the page
 
     // Print basic page layout.
-    if (isset($quiz->instance) and record_exists_select('quiz_attempts', "quiz = '$quiz->instance' AND preview = '0'")){
+    if (isset($quiz->instance) and $DB->record_exists_select('quiz_attempts', "quiz = ? AND preview = '0'", array($quiz->instance))){
         // one column layout with table of questions used in this quiz
         $strupdatemodule = has_capability('moodle/course:manageactivities', $contexts->lowest())
                     ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
@@ -341,7 +341,7 @@
         echo "</div>\n";
 
         $sumgrades = quiz_print_question_list($quiz,  $thispageurl, false, $quiz_showbreaks, $quiz_reordertool);
-        if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $quiz->instance)) {
+        if (!$DB->set_field('quiz', 'sumgrades', $sumgrades, array('id' => $quiz->instance))) {
             error('Failed to set sumgrades');
         }
 
@@ -368,7 +368,7 @@
     print_heading(get_string('questionsinthisquiz', 'quiz'), '', 2);
 
     $sumgrades = quiz_print_question_list($quiz, $thispageurl, true, $quiz_showbreaks, $quiz_reordertool);
-    if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $quiz->instance)) {
+    if (!$DB->set_field('quiz', 'sumgrades', $sumgrades, array('id' => $quiz->instance))) {
         error('Failed to set sumgrades');
     }
 

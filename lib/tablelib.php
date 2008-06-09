@@ -37,7 +37,7 @@ class flexible_table {
     var $totalrows   = 0;
     var $sort_default_column = NULL;
     var $sort_default_order  = SORT_ASC;
-    
+
     /**
      * Array of positions in which to display download controls.
      */
@@ -49,26 +49,26 @@ class flexible_table {
      * passes in cleaned data from $
      */
     var $download  = '';
-    
+
     /**
      * @var boolean whether data is downloadable from table. Determines whether
      * to display download buttons. Set by method downloadable().
      */
     var $downloadable = false;
-    
+
     /**
      * @var string which download plugin to use. Default '' means none - print
      * html table with paging.
      */
     var $defaultdownloadformat  = 'csv';
-    
+
     /**
      * @var boolean Has start output been called yet?
      */
     var $started_output = false;
-    
+
     var $exportclass = null;
-    
+
     /**
      * Constructor
      * @param int $uniqueid
@@ -115,7 +115,7 @@ class flexible_table {
     /**
      * Probably don't need to call this directly. Calling is_downloading with a
      * param automatically sets table as downloadable.
-     * 
+     *
      * @param boolean $downloadable optional param to set whether data from
      * table is downloadable. If ommitted this function can be used to get
      * current state of table.
@@ -127,7 +127,7 @@ class flexible_table {
         }
         return $this->downloadable;
     }
-    
+
     /**
      * Where to show download buttons.
      * @param array $showat array of postions in which to show download buttons.
@@ -136,10 +136,10 @@ class flexible_table {
     function show_download_buttons_at($showat){
         $this->showdownloadbuttonsat = $showat;
     }
-    
-    
+
+
     /**
-     * Sets the is_sortable variable to the given boolean, sort_default_column to 
+     * Sets the is_sortable variable to the given boolean, sort_default_column to
      * the given string, and the sort_default_order to the given integer.
      * @param bool $bool
      * @param string $defaultcolumn
@@ -239,9 +239,9 @@ class flexible_table {
     }
 
     /**
-     * What this method does is set the column so that if the same data appears in 
+     * What this method does is set the column so that if the same data appears in
      * consecutive rows, then it is not repeated.
-     * 
+     *
      * For example, in the quiz overview report, the fullname column is set to be suppressed, so
      * that when one student has made multiple attempts, their name is only printed in the row
      * for their first attempt.
@@ -329,7 +329,7 @@ class flexible_table {
     function define_headers($headers) {
         $this->headers = $headers;
     }
-    
+
 
 
 
@@ -559,19 +559,19 @@ class flexible_table {
     }
 
     /**
-     * Add a row of data to the table. This function takes an array with 
-     * column names as keys. 
+     * Add a row of data to the table. This function takes an array with
+     * column names as keys.
      * It ignores any elements with keys that are not defined as columns. It
      * puts in empty strings into the row when there is no element in the passed
      * array corresponding to a column in the table. It puts the row elements in
      * the proper order.
      * @param $rowwithkeys array
-     * 
+     *
      */
     function add_data_keyed($rowwithkeys){
         $this->add_data($this->get_row_from_keyed($rowwithkeys));
     }
-    
+
     /**
      * Add a seperator line to table.
      */
@@ -581,14 +581,14 @@ class flexible_table {
         }
         $this->add_data(NULL);
     }
-    
+
     /**
      * This method actually directly echoes the row passed to it now or adds it
      * to the download. If this is the first row and start_output has not
      * already been called this method also calls start_output to open the table
      * or send headers for the downloaded.
      * Can be used as before. print_html now calls finish_html to close table.
-     * 
+     *
      * @param array $row a numerically keyed row of data to add to the table.
      * @return boolean success.
      */
@@ -616,7 +616,7 @@ class flexible_table {
     /**
      * You should call this to finish outputting the table data after adding
      * data to the table with add_data or add_data_keyed.
-     * 
+     *
      */
     function finish_output(){
         if ($this->exportclass!==null){
@@ -625,7 +625,7 @@ class flexible_table {
             $this->finish_html();
         }
     }
-    
+
     /**
      * Hook that can be overridden in child classes to wrap a table in a form
      * for example. Called only when there is data to display and not
@@ -641,7 +641,7 @@ class flexible_table {
      */
     function wrap_html_finish(){
     }
-    
+
     /**
      * This method is deprecated although the old api is still supported.
      * @deprecated 1.9.2 - Jun 2, 2008
@@ -676,18 +676,18 @@ class flexible_table {
 
         return $this->sess->i_last;
     }
-    
+
     /**
      * This function is not part of the public api.
      */
     function print_initials_bar(){
         if($this->use_initials && isset($this->columns['fullname'])) {
-    
+
             $strall = get_string('all');
             $alpha  = explode(',', get_string('alphabet'));
-    
+
             // Bar of first initials
-         
+
             echo '<div class="initialbar firstinitial">'.get_string('firstname').' : ';
             if(!empty($this->sess->i_first)) {
                 echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_IFIRST].'=">'.$strall.'</a>';
@@ -702,9 +702,9 @@ class flexible_table {
                 }
             }
             echo '</div>';
-    
+
             // Bar of last initials
-    
+
             echo '<div class="initialbar lastinitial">'.get_string('lastname').' : ';
             if(!empty($this->sess->i_last)) {
                 echo '<a href="'.$this->baseurl.$this->request[TABLE_VAR_ILAST].'=">'.$strall.'</a>';
@@ -719,7 +719,7 @@ class flexible_table {
                 }
             }
             echo '</div>';
-    
+
         }
     }
 
@@ -766,7 +766,7 @@ class flexible_table {
         }
         return $exportclasses;
     }
-    
+
     /**
      * This function is not part of the public api.
      */
@@ -789,7 +789,7 @@ class flexible_table {
      * This function is not part of the public api.
      * You don't normally need to call this. It is called automatically when
      * needed when you start adding data to the table.
-     * 
+     *
      */
     function start_output(){
         $this->started_output = true;
@@ -859,7 +859,7 @@ class flexible_table {
                 print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl, $this->request[TABLE_VAR_PAGE]);
             }
         }
-    }    
+    }
     /**
      * This function is not part of the public api.
      */
@@ -925,7 +925,7 @@ class flexible_table {
                 break;
 
                 case 'userpic':
-                    // do nothing, do not display sortable links      
+                    // do nothing, do not display sortable links
                 break;
 
                 default:
@@ -940,7 +940,7 @@ class flexible_table {
                             $localsortorder = get_string('desc');
                         }
                     } else {
-                        $localsortorder = get_string('asc');  
+                        $localsortorder = get_string('asc');
                     }
                     $this->headers[$index] = '<a href="'.$this->baseurl.$this->request[TABLE_VAR_SORT].'='.$column.'">'.$this->headers[$index].get_accesshide(get_string('sortby').' '.$this->headers[$index].' '.$localsortorder).'</a>';
                 }
@@ -967,12 +967,12 @@ class flexible_table {
         }
         echo '</tr>';
     }
-    
+
     /**
      * This function is not part of the public api.
      */
     function start_html(){
-            
+
         // Do we need to print initial bars?
         $this->print_initials_bar();
 
@@ -980,16 +980,16 @@ class flexible_table {
         if($this->use_pages) {
             print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl, $this->request[TABLE_VAR_PAGE]);
         }
-        
+
         if(in_array(TABLE_P_TOP, $this->showdownloadbuttonsat)) {
             echo $this->download_buttons();
         }
-        
+
         $this->wrap_html_start();
         // Start of main data table
 
         echo '<table'.$this->make_attributes_string($this->attributes).'>';
-        
+
     }
 
     /**
@@ -1030,32 +1030,33 @@ class flexible_table {
 }
 
 class table_sql extends flexible_table{
-    
-    var $countsql = NULL;
+
+    public $countsql = NULL;
+    public $countparams = NULL;
     /**
-     * @var object sql for querying db. Has fields 'fields', 'from', 'where'.
+     * @var object sql for querying db. Has fields 'fields', 'from', 'where', 'params'.
      */
-    var $sql = NULL;
+    public $sql = NULL;
     /**
      * @var array Data fetched from the db.
      */
-    var $rawdata = NULL;
-    
+    public $rawdata = NULL;
+
     /**
      * @var boolean Overriding default for this.
      */
-    var $is_sortable    = true;
+    public $is_sortable    = true;
     /**
      * @var boolean Overriding default for this.
      */
-    var $is_collapsible = true;
-    
+    public $is_collapsible = true;
+
     /**
      * @var string Key of field returned by db query that is the id field of the
      * user table or equivalent.
      */
-    var $useridfield = 'id';
-    
+    public $useridfield = 'id';
+
 
     /**
      * @param string $uniqueid a string identifying this table.Used as a key in
@@ -1067,9 +1068,9 @@ class table_sql extends flexible_table{
         $this->set_attribute('cellspacing', '0');
         $this->set_attribute('class', 'generaltable generalbox');
     }
-    
+
     /**
-     * 
+     *
      * @param array $row row of data from db used to make one row of the table.
      * @return array one row for the table, added using add_data_keyed method.
      */
@@ -1089,26 +1090,26 @@ class table_sql extends flexible_table{
         }
         return $formattedrow;
     }
-    
+
     /**
      * Fullname is treated as a special columname in tablelib and should always
      * be treated the same as the fullname of a user.
      * @uses $this->useridfield if the userid field is not expected to be id
      * then you need to override $this->useridfield to point at the correct
      * field for the user id.
-     * 
+     *
      */
     function col_fullname($row){
         global $COURSE, $CFG;
         if (!$this->download){
-            
+
             return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$row->{$this->useridfield}.
                     '&amp;course='.$COURSE->id.'">'.fullname($row).'</a>';
         } else {
             return fullname($row);
         }
     }
-    
+
     /**
      * You can override this method in a child class. See the description of
      * build_table which calls this method.
@@ -1132,55 +1133,58 @@ class table_sql extends flexible_table{
         }
     }
 
-    
+
     /**
      * This is only needed if you want to use different sql to count rows.
      * Used for example when perhaps all db JOINS are not needed when counting
      * records. You don't need to call this function the count_sql
      * will be generated automatically.
-     * 
+     *
      * We need to count rows returned by the db seperately to the query itself
      * as we need to know how many pages of data we have to display.
      */
-    function set_count_sql($sql){
+    function set_count_sql($sql, $params=array()){
         $this->countsql = $sql;
+        $this->countparams = $params;
     }
-    
+
     /**
      * Set the sql to query the db. Query will be :
      *      SELECT $fields FROM $from WHERE $where
      * Of course you can use sub-queries, JOINS etc. by putting them in the
      * appropriate clause of the query.
      */
-    function set_sql($fields, $from, $where){
+    function set_sql($fields, $from, $where, $params=array()){
         $this->sql = new object();
         $this->sql->fields = $fields;
         $this->sql->from = $from;
         $this->sql->where = $where;
+        $this->sql->params = $params;
     }
-    
+
     /**
      * Query the db. Store results in the table object for use by build_table.
-     * 
+     *
      * @param integer $pagesize size of page for paginated displayed table.
      * @param boolean $useinitialsbar do you want to use the initials bar. Bar
      * will only be used if there is a fullname column defined for the table.
      */
     function query_db($pagesize, $useinitialsbar=true){
+        global $DB;
         if (!$this->is_downloading()) {
             if ($this->countsql === NULL){
                 $this->countsql = 'SELECT COUNT(1) FROM '.$this->sql->from.' WHERE '.$this->sql->where;
             }
             if ($useinitialsbar && !$this->is_downloading()) {
-                $totalinitials = count_records_sql($this->countsql);
+                $totalinitials = $DB->count_records_sql($this->countsql, $this->countparams);
                 $this->initialbars($totalinitials>$pagesize);
             }
-            
+
             if ($this->get_sql_where()) {
                 $this->countsql .= ' AND '.$this->get_sql_where();
                 $this->sql->where .= ' AND '.$this->get_sql_where();
             }
-            $total  = count_records_sql($this->countsql);
+            $total  = $DB->count_records_sql($this->countsql, $this->countparams);
 
 
             $this->pagesize($pagesize, $total);
@@ -1191,20 +1195,21 @@ class table_sql extends flexible_table{
         $sort = $sort?" ORDER BY {$sort}":'';
         $sql = "SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}{$sort}";
         if (!$this->is_downloading()) {
-            $this->rawdata = get_records_sql($sql, $this->get_page_start(), $this->get_page_size());
+            $this->rawdata = $DB->get_records_sql($sql, $this->sql->params, $this->get_page_start(), $this->get_page_size());
         } else {
-            $this->rawdata = get_records_sql($sql);
+            $this->rawdata = $DB->get_records_sql($sql, $this->sql->params);
         }
     }
-    
-    
+
+
     /**
      * Convenience method to call a number of methods for you to display the
      * table.
      */
     function out($pagesize, $useinitialsbar, $downloadhelpbutton=''){
+        global $DB;
         if (!$this->columns){
-            $onerow = get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}", true);
+            $onerow = $DB->get_record_sql("SELECT {$this->sql->fields} FROM {$this->sql->from} WHERE {$this->sql->where}", $this->sql->params);
             //if columns is not set then define columns as the keys of the rows returned
             //from the db.
             $this->define_columns(array_keys((array)$onerow));
@@ -1250,11 +1255,11 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
      */
     var $formatheaders;
 
-    /** 
+    /**
      * should be overriden in child class.
      */
     var $fileextension;
-    
+
     /**
      * This method will be overridden in the child class.
      */
@@ -1372,16 +1377,16 @@ class table_xhtml_export_format extends table_default_export_format_parent{
         header("Expires: 0");
         header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
         header("Pragma: public");
-        
+
         //html headers
-        
+
         echo <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html
   PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" 
+<html xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en" lang="en">
 <style type="text/css">/*<![CDATA[*/
 

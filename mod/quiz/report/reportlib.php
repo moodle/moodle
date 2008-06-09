@@ -7,20 +7,20 @@ define('QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO', 1);
 define('QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH', 2);
 define('QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS', 3);
 /**
- * Get newest graded state or newest state for a number of attempts. Pass in the 
+ * Get newest graded state or newest state for a number of attempts. Pass in the
  * uniqueid field from quiz_attempt table not the id. Use question_state_is_graded
  * function to check that the question is actually graded.
  */
 function quiz_get_newgraded_states($attemptids, $idxattemptq = true, $fields='qs.*'){
-    global $CFG;
+    global $CFG, $DB;
     if ($attemptids){
-        $attemptidlist = join($attemptids, ',');
+        list($usql, $params) = $DB->get_in_or_equal($attemptids);
         $gradedstatesql = "SELECT $fields FROM " .
-                "{$CFG->prefix}question_sessions qns, " .
-                "{$CFG->prefix}question_states qs " .
-                "WHERE qns.attemptid IN ($attemptidlist) AND " .
+                "{question_sessions} qns, " .
+                "{question_states} qs " .
+                "WHERE qns.attemptid $usql AND " .
                 "qns.newgraded = qs.id";
-        $gradedstates = get_records_sql($gradedstatesql);
+        $gradedstates = $DB->get_records_sql($gradedstatesql, $params);
         if ($idxattemptq){
             $gradedstatesbyattempt = array();
             foreach ($gradedstates as $gradedstate){
@@ -40,36 +40,44 @@ function quiz_get_newgraded_states($attemptids, $idxattemptq = true, $fields='qs
 
 function quiz_get_average_grade_for_questions($quiz, $userids){
     global $CFG, $DB;
-    $qmfilter = quiz_report_qm_filter_subselect($quiz, 'qa.userid');
-    $questionavgssql = "SELECT qs.question, AVG(qs.grade) FROM " .
-            "{$CFG->prefix}question_sessions qns, " .
-            "{$CFG->prefix}quiz_attempts qa, " .
-            "{$CFG->prefix}question_states qs " .
-            "WHERE qns.attemptid = qa.uniqueid AND " .
-            "qa.quiz = ? AND " .
-            ($qmfilter?$qmfilter.' AND ':'').
-            "qa.userid IN ({$userids}) AND " .
-            "qs.event IN (".QUESTION_EVENTS_GRADED.") AND ".
-            "qns.newgraded = qs.id GROUP BY qs.question";
-    return $DB->get_records_sql_menu($questionavgssql, array($quiz->id));
+    list($qmfilter, $params) = quiz_report_qm_filter_subselect($quiz, 'qa.userid'); //NAMED PARAMS!
+    $params['quizid2'] = $quiz->id;
+    list($usql, $u_params) = $DB->get_in_or_equal(explode(',', $userids), SQL_PARAMS_NAMED, 'u0000');
+    $params += $u_params;
+    $questionavgssql = "SELECT qs.question, AVG(qs.grade) FROM
+                        {question_sessions} qns,
+                        {quiz_attempts} qa,
+                        {question_states} qs
+                        WHERE qns.attemptid = qa.uniqueid AND " .
+                        ($qmfilter?$qmfilter.' AND ':'') . "
+                        qa.quiz = :quizid2 AND
+                        qa.userid $usql AND
+                        qs.event IN (".QUESTION_EVENTS_GRADED.") AND
+                        qns.newgraded = qs.id GROUP BY qs.question";
+    return $DB->get_records_sql_menu($questionavgssql, $params);
 }
 
 function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
-    global $CFG;
-    $sql = "SELECT qs.question, COUNT(1) AS totalattempts, " .
-            "SUM(qs.event IN (".QUESTION_EVENTS_GRADED.")) AS gradedattempts " .
-            "FROM " .
-            "{$CFG->prefix}quiz_attempts qa, " .
-            "{$CFG->prefix}question_sessions qns, " .
-            "{$CFG->prefix}question_states qs " .
-            "WHERE " .
-            "qa.quiz = {$quiz->id} AND " .
-            "qa.userid IN ({$userids}) AND " .
-            "qns.attemptid = qa.uniqueid AND " .
-            "qns.newgraded = qs.id AND " .
-            "qs.question IN ({$questionids}) " .
-            "GROUP BY qs.question";
-    return get_records_sql($sql);
+    global $CFG, $DB;
+    $params = array($quiz->id);
+    list($u_sql, $u_params) = $DB->get_in_or_equal(explode(',', $userids));
+    list($q_sql, $q_params) = $DB->get_in_or_equal(explode(',', $questionids));
+
+    $params = array_merge($params, $u_params, $q_params);
+    $sql = "SELECT qs.question, COUNT(1) AS totalattempts,
+            SUM(qs.event IN (".QUESTION_EVENTS_GRADED.")) AS gradedattempts
+            FROM
+            {quiz_attempts} qa,
+            {question_sessions} qns,
+            {question_states} qs
+            WHERE
+            qa.quiz = ? AND
+            qa.userid $u_sql AND
+            qns.attemptid = qa.uniqueid AND
+            qns.newgraded = qs.id AND
+            qs.question $q_sql
+            GROUP BY qs.question";
+    return $DB->get_records_sql($sql, $params);
 }
 
 function quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz, $download){
@@ -99,20 +107,22 @@ function quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz
  * - Add grade from quiz_questions_instance
  */
 function quiz_report_load_questions($quiz){
-    global $CFG;
+    global $CFG, $DB;
     $questionlist = quiz_questions_in_quiz($quiz->questions);
-    //In fact in most cases the id IN $questionlist below is redundant 
+    //In fact in most cases the id IN $questionlist below is redundant
     //since we are also doing a JOIN on the qqi table. But will leave it in
     //since this double check will probably do no harm.
-    if (!$questions = get_records_sql("SELECT q.*, qqi.grade " .
-            "FROM {$CFG->prefix}question q, " .
-            "{$CFG->prefix}quiz_question_instances qqi " .
-            "WHERE q.id IN ($questionlist) AND " .
-            "qqi.question = q.id AND " .
-            "qqi.quiz =".$quiz->id)) {
+    list($usql, $params) = $DB->get_in_or_equal(explode(',', $questionlist));
+    $params[] = $quiz->id;
+    if (!$questions = $DB->get_records_sql("SELECT q.*, qqi.grade
+            FROM {question} q,
+            {quiz_question_instances} qqi
+            WHERE q.id $usql AND
+            qqi.question = q.id AND
+            qqi.quiz = ?", $params)) {
         print_error('No questions found');
     }
-    //Now we have an array of questions from a quiz we work out there question nos and remove 
+    //Now we have an array of questions from a quiz we work out there question nos and remove
     //questions with zero length ie. description questions etc.
     //also put questions in order.
     $number = 1;
@@ -130,7 +140,7 @@ function quiz_report_load_questions($quiz){
 }
 /**
  * Given the quiz grading method return sub select sql to find the id of the
- * one attempt that will be graded for each user. Or return 
+ * one attempt that will be graded for each user. Or return
  * empty string if all attempts contribute to final grade.
  */
 function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
@@ -153,31 +163,36 @@ function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
         $qmorderby = 'timestart DESC';
         break;
     }
+
+    $params = array();
     if ($qmfilterattempts){
-        $qmsubselect = "(SELECT id FROM {$CFG->prefix}quiz_attempts " .
-                "WHERE quiz = {$quiz->id} AND $useridsql = userid " .
+        $qmsubselect = "(SELECT id FROM {quiz_attempts} " .
+                "WHERE quiz = :quizid1 AND $useridsql = userid " .
                 "ORDER BY $qmorderby LIMIT 1)=qa.id";
+        $params['quizid1'] = $quiz->id;
     } else {
         $qmsubselect = '';
     }
-    return $qmsubselect;
+    return array($qmsubselect, $params);
 }
 
 function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist){
     global $CFG, $DB;
+    list($usql, $params) = $DB->get_in_or_equal(explode(',', $useridlist));
     $sql = "SELECT
         FLOOR(qg.grade/$bandwidth) AS band,
         COUNT(1) AS num
     FROM
         {quiz_grades} qg,  {quiz} q
-    WHERE qg.quiz = q.id AND qg.quiz = ? AND qg.userid IN ($useridlist)
+    WHERE qg.quiz = q.id AND qg.userid $usql AND qg.quiz = ?
     GROUP BY band
     ORDER BY band";
-    $data = $DB->get_records_sql_menu($sql, array($quizid));
+    $params[] = $quiz->id;
+    $data = $DB->get_records_sql_menu($sql, $params);
     //need to create array elements with values 0 at indexes where there is no element
     $data =  $data + array_fill(0, $bands+1, 0);
     ksort($data);
-    //place the maximum (prefect grade) into the last band i.e. make last 
+    //place the maximum (prefect grade) into the last band i.e. make last
     //band for example 9 <= g <=10 (where 10 is the perfect grade) rather than
     //just 9 <= g <10.
     $data[$bands-1] += $data[$bands];
@@ -207,9 +222,10 @@ function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)
  * @return string the comment that corresponds to this grade (empty string if there is not one.
  */
 function quiz_report_feedback_for_grade($grade, $quizid) {
+    global $DB;
     static $feedbackcache = array();
     if (!isset($feedbackcache[$quizid])){
-        $feedbackcache[$quizid] = get_records('quiz_feedback', 'quizid', $quizid);
+        $feedbackcache[$quizid] = $DB->get_records('quiz_feedback', array('quizid' => $quizid));
     }
     $feedbacks = $feedbackcache[$quizid];
     $feedbacktext = '';

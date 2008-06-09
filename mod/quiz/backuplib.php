@@ -39,7 +39,7 @@
      *     all categories and questions in contexts above course level that are used by quizzes that have been selected for backup
      */
     function quiz_insert_category_and_question_ids($course, $backup_unique_code, $instances = null) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
 
         // Create missing categories and reasign orphaned questions.
@@ -55,45 +55,50 @@
         // Then categories from parent contexts used by the quizzes we are backing up.
         //TODO this will need generalising when we have modules other than quiz using shared questions above course level.
         $parentcontexts = get_parent_contexts($coursecontext);
-        $from = "{$CFG->prefix}quiz quiz,";
-        $where = "AND quiz.course = '$course'
+        $params = array($course);
+        $from = "{quiz} quiz,";
+        $where = "AND quiz.course = ?
                      AND qqi.quiz = quiz.id";
         if (!empty($instances) && is_array($instances) && count($instances)) {
             $questionselectsqlfrom = '';
-            $questionselectsqlwhere = 'AND qqi.quiz IN ('.implode(',',array_keys($instances)).')';
+            list($quiz_usql, $quiz_params) = $DB->get_in_or_equal(array_keys($instances));
+            $questionselectsqlwhere = "AND qqi.quiz $quiz_usql";
+            $params = array_merge($params, $quiz_params);
         } else {
-            $questionselectsqlfrom = "{$CFG->prefix}quiz quiz,";
-            $questionselectsqlwhere = "AND quiz.course = '$course'
-                         AND qqi.quiz = quiz.id";
+            $questionselectsqlfrom = "{quiz} quiz,";
+            $questionselectsqlwhere = "AND quiz.course = ? AND qqi.quiz = quiz.id";
+            $params[] = $course;
         }
-        $categories = get_records_sql("
+
+        list($usql, $context_params) = $DB->get_in_or_equal($parentcontexts);
+        $params = array_merge($context_params, $params);
+        $categories = $DB->get_records_sql("
                 SELECT id, parent, 0 AS childrendone
-                FROM {$CFG->prefix}question_categories
-                WHERE contextid IN (".join($parentcontexts, ', ').")
+                FROM {question_categories}
+                WHERE contextid $usql
                   AND id IN (
                     SELECT DISTINCT question.category
-                    FROM {$CFG->prefix}question question,
+                    FROM {question} question,
                          $questionselectsqlfrom
-                         {$CFG->prefix}quiz_question_instances qqi
+                         {quiz_question_instances} qqi
                     WHERE qqi.question = question.id
                       $questionselectsqlwhere
-                )", false);
+                )", $params);
         if (!$categories) {
             $categories = array();
         } else {
             //put the ids of the used questions from all these categories into the db.
-            $status = $status && execute_sql("INSERT INTO {$CFG->prefix}backup_ids
+            $status = $status && $DB->execute("INSERT INTO {backup_ids}
                                        (backup_code, table_name, old_id, info)
                                        SELECT DISTINCT $backup_unique_code, 'question', q.id, ''
-                                       FROM {$CFG->prefix}question q,
+                                       FROM {question} q,
                                        $from
-                                       {$CFG->prefix}question_categories qc,
-                                       {$CFG->prefix}quiz_question_instances qqi
+                                       {question_categories} qc,
+                                       {quiz_question_instances} qqi
                                        WHERE (qqi.question = q.id
                                        OR qqi.question = q.parent)
                                        AND q.category = qc.id
-                                       AND qc.contextid IN (".join($parentcontexts, ', ').")
-                                       $where", false);
+                                       AND qc.contextid $usql $where", array_merge($context_params, array($course)));
 
             // Add the parent categories, of these categories up to the top of the category tree.
             // not backing up the questions in these categories.
@@ -104,12 +109,12 @@
                         break;
                     }
                     $currentid = $category->id;
-                    $category = get_record('question_categories', 'id', $category->parent, '', '', '', '', 'id, parent, 0 AS childrendone');
+                    $category = $DB->get_record('question_categories', array('id' => $category->parent), 'id, parent, 0 AS childrendone');
                     if ($category) {
                         $categories[$category->id] = $category;
                     } else {
                         // Parent not found: this indicates an error, but just fix it.
-                        set_field('question_categories', 'parent', 0, 'id', $currentid);
+                        $DB->set_field('question_categories', 'parent', 0, array('id' => $currentid));
                         break;
                     }
                 }
@@ -119,17 +124,17 @@
             // in our quizzes that select from the category and its subcategories. That implies
             // those subcategories also need to be backed up. (The categories themselves
             // and their parents will already have been included.)
-            $categorieswithrandom = get_records_sql("
+            $categorieswithrandom = $DB->get_records_sql("
                     SELECT question.category AS id, SUM(" .
                             sql_cast_char2int('questiontext', true) . ") AS numqsusingsubcategories
-                    FROM {$CFG->prefix}quiz_question_instances qqi,
+                    FROM {quiz_question_instances} qqi,
                          $from
-                         {$CFG->prefix}question question
+                         {question} question
                     WHERE question.id = qqi.question
                       AND question.qtype = '" . RANDOM . "'
                       $where
                     GROUP BY question.category
-                    ");
+                    ", array($course));
             $randomselectedquestions = array();
             if ($categorieswithrandom) {
                 foreach ($categorieswithrandom as $category) {
@@ -137,10 +142,11 @@
                         $status = $status && quiz_backup_add_sub_categories($categories, $randomselectedquestions, $category->id);
                     }
                 }
-                $returnval = get_records_sql("
+                list($usql, $params) = $DB->get_in_or_equal(array_keys($categorieswithrandom));
+                $returnval = $DB->get_records_sql("
                     SELECT question.id
-                    FROM {$CFG->prefix}question question
-                    WHERE question.category IN  (".join(array_keys($categorieswithrandom), ', ').")");
+                    FROM {question} question
+                    WHERE question.category $usql", $params);
                 if ($returnval) {
                     $randomselectedquestions += $returnval;
                 }
@@ -162,24 +168,23 @@
      * Helper function adding the id of all the subcategories of a category to an array.
      */
     function quiz_backup_add_sub_categories(&$categories, &$questions, $categoryid) {
-        global $CFG;
+        global $CFG, $DB;
         $status = true;
         if ($categories[$categoryid]->childrendone) {
             return $status;
         }
-        if ($subcategories = get_records('question_categories', 'parent', $categoryid, '', 'id, 0 AS childrendone')) {
+        if ($subcategories = $DB->get_records('question_categories', array('parent' => $categoryid), '', 'id, 0 AS childrendone')) {
             foreach ($subcategories as $subcategory) {
                 if (!array_key_exists($subcategory->id, $categories)) {
                     $categories[$subcategory->id] = $subcategory;
                 }
                 $status = $status && quiz_backup_add_sub_categories($categories, $questions, $subcategory->id);
             }
-            $subcatlist = join(array_keys($subcategories), ',');
-            $returnval = get_records_sql("
+            list($usql, $params) = $DB->get_in_or_equal(array_keys($subcategories));
+            $returnval = $DB->get_records_sql("
                 SELECT question.id
-                FROM {$CFG->prefix}question question
-                WHERE question.category IN ($subcatlist)
-                ");
+                FROM {question} question
+                WHERE question.category $usql", $params);
             if ($returnval) {
                 $questions += $returnval;
             }
@@ -195,18 +200,18 @@
     //executed in the upgrade process and, perhaps in the health center.
     function quiz_fix_orphaned_questions ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        $categories = get_records_sql("SELECT DISTINCT t.category, t.category
-                                       FROM {$CFG->prefix}question t,
-                                            {$CFG->prefix}quiz_question_instances g,
-                                            {$CFG->prefix}quiz q
-                                       WHERE q.course = '$course' AND
-                                             g.quiz = q.id AND
-                                             g.question = t.id",false);
+        $categories = $DB->get_records_sql("SELECT DISTINCT t.category, t.category
+                                           FROM {question} t,
+                                                {quiz_question_instances} g,
+                                                {quiz} q
+                                           WHERE q.course = ? AND
+                                                 g.quiz = q.id AND
+                                                 g.question = t.id",false, array($course));
         if ($categories) {
             foreach ($categories as $key => $category) {
-                $exist = get_record('question_categories','id', $key);
+                $exist = $DB->get_record('question_categories', array('id' => $key));
                 //If the category doesn't exist
                 if (!$exist) {
                     //Build a new category
@@ -217,11 +222,11 @@
                     $db_cat->info = get_string('recreatedcategory','',$key);
                     $db_cat->stamp = make_unique_id_code();
                     //Insert the new category
-                    $catid = insert_record('question_categories',$db_cat);
+                    $catid = $DB->insert_record('question_categories',$db_cat);
                     unset ($db_cat);
                     if ($catid) {
                         //Reasign orphaned questions to their new category
-                        set_field ('question','category',$catid,'category',$key);
+                        $DB->set_field ('question','category',$catid,array('category' =>$key));
                     }
                 }
             }
@@ -233,10 +238,11 @@
     //    (course dependent)
 
     function quiz_backup_one_mod($bf,$preferences,$quiz) {
+        global $DB;
         $status = true;
 
         if (is_numeric($quiz)) {
-            $quiz = get_record('quiz','id',$quiz);
+            $quiz = $DB->get_record('quiz', array('id' => $quiz));
         }
 
         //Start mod
@@ -292,13 +298,14 @@
 
 
     function quiz_backup_mods($bf,$preferences) {
+        global $DB;
 
         global $CFG;
 
         $status = true;
 
         //Iterate over quiz table
-        $quizzes = get_records ("quiz","course",$preferences->backup_course,"id");
+        $quizzes = $DB->get_records('quiz',array('course' => $preferences->backup_course),'id');
         if ($quizzes) {
             foreach ($quizzes as $quiz) {
                 if (backup_mod_selected($preferences,'quiz',$quiz->id)) {
@@ -311,9 +318,10 @@
 
     //Backup quiz_question_instances contents (executed from quiz_backup_mods)
     function backup_quiz_question_instances ($bf,$preferences,$quiz) {
+        global $DB;
         $status = true;
 
-        $quiz_question_instances = get_records("quiz_question_instances","quiz",$quiz,"id");
+        $quiz_question_instances = $DB->get_records('quiz_question_instances',array('quiz' =>$quiz),'id');
         //If there are question_instances
         if ($quiz_question_instances) {
             //Write start tag
@@ -337,9 +345,10 @@
 
     //Backup quiz_question_instances contents (executed from quiz_backup_mods)
     function backup_quiz_feedback ($bf,$preferences,$quiz) {
+        global $DB;
         $status = true;
 
-        $quiz_feedback = get_records('quiz_feedback', 'quizid', $quiz, 'id');
+        $quiz_feedback = $DB->get_records('quiz_feedback', array('quizid' => $quiz), 'id');
         // If there are question_instances ...
         if ($quiz_feedback) {
             // Write start tag.
@@ -370,9 +379,10 @@
 
     //Backup quiz_question_versions contents (executed from quiz_backup_mods)
     function backup_quiz_question_versions ($bf,$preferences,$quiz) {
+        global $DB;
         $status = true;
 
-        $quiz_question_versions = get_records("quiz_question_versions","quiz",$quiz,"id");
+        $quiz_question_versions = $DB->get_records('quiz_question_versions', array('quiz' =>$quiz),'id');
         //If there are question_versions
         if ($quiz_question_versions) {
             //Write start tag
@@ -400,9 +410,10 @@
 
     //Backup quiz_grades contents (executed from quiz_backup_mods)
     function backup_quiz_grades ($bf,$preferences,$quiz) {
+        global $DB;
         $status = true;
 
-        $quiz_grades = get_records("quiz_grades","quiz",$quiz,"id");
+        $quiz_grades = $DB->get_records('quiz_grades',array('quiz' => $quiz),'id');
         //If there are grades
         if ($quiz_grades) {
             //Write start tag
@@ -427,9 +438,10 @@
 
     //Backup quiz_attempts contents (executed from quiz_backup_mods)
     function backup_quiz_attempts ($bf,$preferences,$quiz) {
+        global $DB;
         $status = true;
 
-        $quiz_attempts = get_records("quiz_attempts","quiz",$quiz,"id");
+        $quiz_attempts = $DB->get_records('quiz_attempts', array('quiz' => $quiz),'id');
         //If there are attempts
         if ($quiz_attempts) {
             //Write start tag
@@ -574,31 +586,31 @@
     //Returns an array of quiz id
     function quiz_ids ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT a.id, a.course
-                                 FROM {$CFG->prefix}quiz a
-                                 WHERE a.course = '$course'");
+        return $DB->get_records_sql ("SELECT a.id, a.course
+                                     FROM {quiz} a
+                                     WHERE a.course = ?", array($course));
     }
 
     function quiz_grade_ids_by_course ($course) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT g.id, g.quiz
-                                 FROM {$CFG->prefix}quiz a,
-                                      {$CFG->prefix}quiz_grades g
-                                 WHERE a.course = '$course' and
-                                       g.quiz = a.id");
+        return $DB->get_records_sql ("SELECT g.id, g.quiz
+                                     FROM {quiz} a,
+                                          {quiz_grades} g
+                                     WHERE a.course = ? and
+                                           g.quiz = a.id", array($course));
     }
 
     function quiz_grade_ids_by_instance($instanceid) {
 
-        global $CFG;
+        global $CFG, $DB;
 
-        return get_records_sql ("SELECT g.id, g.quiz
-                                 FROM {$CFG->prefix}quiz_grades g
-                                 WHERE g.quiz = $instanceid");
+        return $DB->get_records_sql ("SELECT g.id, g.quiz
+                                     FROM {quiz_grades} g
+                                     WHERE g.quiz = ?", array($instanceid));
     }
 
 ?>
