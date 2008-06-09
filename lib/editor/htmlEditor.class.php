@@ -19,38 +19,9 @@ class htmlEditor {
         global $CFG;
 
         if ($editor == '') {
-            $editor = $CFG->defaulthtmleditor;
+            $editor = (isset($CFG->defaulthtmleditor) ? $CFG->defaulthtmleditor : '');
         }
 
-/*
-        if ($editor == '') {
-            switch ($CFG->htmleditorselection) {
-                case '0':
-                    return '';
-                    break;
-
-                case '1':
-                    $editor = 'tinymce';
-                    break;
-
-                case '2':
-                    $editor = 'fckeditor';
-                    break;
-
-                case '3':
-                    $editor = 'xinha';
-                    break;
-
-                case '4':
-                    $editor = 'yuirte';
-                    break;
-
-                default:
-                    return '';
-                    break;
-            }
-        }
-*/
         $configuration = '';
 
         switch ($editor) {
