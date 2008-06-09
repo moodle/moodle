@@ -43,7 +43,7 @@ if ($p_secret !== false) {
         print_header($strforgotten, $strforgotten, $navigation);
         print_error('secretalreadyused');
 
-    } else if (!empty($user) and $user->secret == stripslashes($p_secret)) {
+    } else if (!empty($user) and $user->secret == $p_secret) {
         // make sure that url relates to a valid user
 
         // check this isn't guest user

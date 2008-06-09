@@ -975,9 +975,9 @@ function restore_question_state(&$question, &$state) {
     global $QTYPES;
 
     // initialise response to the value in the answer field
-    $state->responses = array('' => addslashes($state->answer));
+    $state->responses = array('' => $state->answer);
     unset($state->answer);
-    $state->manualcomment = isset($state->manualcomment) ? addslashes($state->manualcomment) : '';
+    $state->manualcomment = isset($state->manualcomment) ? $state->manualcomment : '';
 
     // Set the changed field to false; any code which changes the
     // question session must set this to true and must increment

@@ -54,7 +54,7 @@ if (!empty($CFG->gradepublishing)) {
 $mform = new grade_export_form(null, array('publishing' => true));
 
 // process post information
-if ($data = $mform->get_data(false)) {
+if ($data = $mform->get_data()) {
     $export = new grade_export_xls($course, groups_get_course_group($course), '', false, false, $data->display, $data->decimals);
 
     // print the grades on screen for feedbacks

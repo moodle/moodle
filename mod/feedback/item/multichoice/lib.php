@@ -35,7 +35,7 @@ class feedback_item_multichoice extends feedback_item_base {
         
         $item_form->selecttype->setValue($info->subtype);
 
-        $itemvalues = str_replace(FEEDBACK_MULTICHOICE_LINE_SEP, "\n", stripslashes_safe($info->presentation));
+        $itemvalues = str_replace(FEEDBACK_MULTICHOICE_LINE_SEP, "\n", $info->presentation);
         $itemvalues = str_replace("\n\n", "\n", $itemvalues);
         $item_form->values->setValue($itemvalues);
         return $item_form;
@@ -54,7 +54,7 @@ class feedback_item_multichoice extends feedback_item_base {
         // $presentation = '';
         // @list($presentation) = explode(FEEDBACK_RADIO_ADJUST_SEP, $item->presentation); //remove the adjustment-info
         
-        $answers = explode (FEEDBACK_MULTICHOICE_LINE_SEP, stripslashes_safe($info->presentation));
+        $answers = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
         if(!is_array($answers)) return null;
 
         //die Werte holen
@@ -108,7 +108,7 @@ class feedback_item_multichoice extends feedback_item_base {
                 
         // @list($presentation) = explode(FEEDBACK_RADIO_ADJUST_SEP, $item->presentation); //remove the adjustment-info
         
-        $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, stripslashes_safe($info->presentation));
+        $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
         
         if($info->subtype == 'c') {
             $vallist = array_values(explode (FEEDBACK_MULTICHOICE_LINE_SEP, $value->value));
@@ -147,7 +147,7 @@ class feedback_item_multichoice extends feedback_item_base {
         $analysedItem = $this->get_analysed($item, $groupid, $courseid);
         if($analysedItem) {
             // $itemnr++;
-            $itemname = stripslashes($analysedItem[1]);
+            $itemname = $analysedItem[1];
             echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . $itemname .'</th></tr>';
             $analysedVals = $analysedItem[2];
             $pixnr = 0;
@@ -175,7 +175,7 @@ class feedback_item_multichoice extends feedback_item_base {
 
         $worksheet->setFormat("<l><f><ro2><vo><c:green>");
         //frage schreiben
-        $worksheet->write_string($rowOffset, 0, stripslashes($analysed_item[1]));
+        $worksheet->write_string($rowOffset, 0, $analysed_item[1]);
         if(is_array($data)) {
             for($i = 0; $i < sizeof($data); $i++) {
                 $aData = $data[$i];
@@ -197,7 +197,7 @@ class feedback_item_multichoice extends feedback_item_base {
         $info = $this->get_info($item);
         $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
         
-        $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, stripslashes_safe($info->presentation));
+        $presentation = explode (FEEDBACK_MULTICHOICE_LINE_SEP, $info->presentation);
         
         
         //test if required and no value is set so we have to mark this item
@@ -215,7 +215,7 @@ class feedback_item_multichoice extends feedback_item_base {
             }
             $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
             
-            echo '<td '.$highlight.' valign="top" align="'.$align.'">'.format_text(stripslashes_safe($item->name).$requiredmark, true, false, false).'</td>';
+            echo '<td '.$highlight.' valign="top" align="'.$align.'">'.format_text($item->name.$requiredmark, true, false, false).'</td>';
             echo '<td valign="top" align="'.$align.'">';
         }else {
             if($highlightrequire AND $item->required AND intval($value) <= 0) {
@@ -225,7 +225,7 @@ class feedback_item_multichoice extends feedback_item_base {
             }
             $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
             ?>
-                <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>"><?php echo format_text(stripslashes_safe($item->name) . $requiredmark, true, false, false);?></td>
+                <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>"><?php echo format_text($item->name . $requiredmark, true, false, false);?></td>
                 <td valign="top" align="<?php echo $align;?>">
             <?php
         }

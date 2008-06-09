@@ -6,7 +6,7 @@
 
 // Make sure this is a legitimate posting
 
-    if (!$formdata = data_submitted(false)) {
+    if (!$formdata = data_submitted()) {
         print_error("You are not supposed to use this script like that.");
     }
 

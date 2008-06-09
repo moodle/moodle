@@ -25,7 +25,7 @@
     switch ($mode) {
         case 'add':
             // Ensure that we came from view.php
-            if (!confirm_sesskey() or !data_submitted("$CFG->wwwroot/mod/lesson/view.php")) {
+            if (!confirm_sesskey() or !data_submitted()) {
                 print_error('Incorrect Form Data');
             }
             break;

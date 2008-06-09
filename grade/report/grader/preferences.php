@@ -49,7 +49,7 @@ if ($mform->is_cancelled()){
 }
 
 // If data submitted, then process and store.
-if ($data = $mform->get_data(false)) {
+if ($data = $mform->get_data()) {
     foreach ($data as $preference => $value) {
         if (substr($preference, 0, 6) !== 'grade_') {
             continue;

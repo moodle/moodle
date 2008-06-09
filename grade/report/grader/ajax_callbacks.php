@@ -94,7 +94,7 @@ switch ($action) {
                 if (empty($trimmed)) {
                     $feedback = NULL;
                 } else {
-                    $feedback = stripslashes($newvalue);
+                    $feedback = $newvalue;
                 }
 
                 $finalvalue = $feedback;

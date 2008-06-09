@@ -66,7 +66,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     if ($message!='' and confirm_sesskey()) {   /// Current user has just sent a message
 
     /// Save it to the database...
-        $messageid = message_post_message($USER, $user, addslashes($message), $format, 'direct');
+        $messageid = message_post_message($USER, $user, $message, $format, 'direct');
 
     /// Format the message as HTML
         $options = NULL;

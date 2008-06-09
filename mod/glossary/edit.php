@@ -55,7 +55,7 @@ if ($mform->is_cancelled()){
         redirect("view.php?id=$cm->id");
     }
 
-} elseif ($fromform = $mform->get_data(false)) {
+} elseif ($fromform = $mform->get_data()) {
     trusttext_after_edit($fromform->definition, $context);
 
     if ( !isset($fromform->usedynalink) ) {

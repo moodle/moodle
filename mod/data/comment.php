@@ -68,7 +68,7 @@
 
     switch ($mode) {
         case 'add':
-            if (!$formadata = $mform->get_data(false)) {
+            if (!$formadata = $mform->get_data()) {
                 break; // something is wrong here, try again
             }
 

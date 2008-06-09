@@ -16,7 +16,7 @@
     $choosefile = optional_param('choosefile', false, PARAM_PATH);
     $action = optional_param('action', false, PARAM_ALPHA);
 
-    if(($formdata = data_submitted('nomatch')) AND !confirm_sesskey()) {
+    if(($formdata = data_submitted()) AND !confirm_sesskey()) {
         error('no sesskey defined');
     }
     

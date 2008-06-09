@@ -67,7 +67,7 @@ class qformat_missingword extends qformat_default {
         $answertext = substr($text, $answerstart + 1, $answerlength - 1);
 
         /// Save the new question text
-        $question->questiontext = addslashes(substr_replace($text, "_____", $answerstart, $answerlength+1));
+        $question->questiontext = substr_replace($text, "_____", $answerstart, $answerlength+1);
         $question->name = $question->questiontext;
 
 
@@ -97,7 +97,7 @@ class qformat_missingword extends qformat_default {
                 if ($answer[0] == "=") {
                     $answer = substr($answer, 1);
                 }
-                $question->answer[]   = addslashes($answer);
+                $question->answer[]   = $answer;
                 $question->fraction[] = 1;
                 $question->feedback[] = "";
     
@@ -130,7 +130,7 @@ class qformat_missingword extends qformat_default {
 
                     if (strpos($answer,"#") > 0){
                         $hashpos = strpos($answer,"#");
-                        $comment = addslashes(substr(($answer),$hashpos+1));
+                        $comment = substr(($answer),$hashpos+1);
                         $answer  = substr($answer,0,$hashpos);
                     } else {
                         $comment = " ";
@@ -145,7 +145,7 @@ class qformat_missingword extends qformat_default {
 #                       $question->fraction[$key] = 0;
                         $question->fraction[$key] = $answeight;
                     }
-                    $question->answer[$key]   = addslashes($answer);
+                    $question->answer[$key]   = $answer;
                     $question->feedback[$key] = $comment;
                 }
     

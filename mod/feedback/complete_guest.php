@@ -22,7 +22,7 @@
 
     $highlightrequired = false;
 
-    if(($formdata = data_submitted('nomatch')) AND !confirm_sesskey()) {
+    if(($formdata = data_submitted()) AND !confirm_sesskey()) {
         error('no sesskey defined');
     }
     
@@ -230,7 +230,7 @@
             if($feedback->page_after_submit) {
                 // print_simple_box_start('center', '75%');
                 print_box_start('generalbox boxaligncenter boxwidthwide');
-                echo format_text(stripslashes_safe($feedback->page_after_submit));
+                echo format_text($feedback->page_after_submit);
                 // print_simple_box_end();
                 print_box_end();
             } else {

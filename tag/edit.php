@@ -58,7 +58,7 @@ $tagform->set_data($tag);
 // If new data has been sent, update the tag record
 if ($tagnew = $tagform->get_data()) {
 
-    tag_description_set($tag_id, stripslashes($tagnew->description), $tagnew->descriptionformat);
+    tag_description_set($tag_id, $tagnew->description, $tagnew->descriptionformat);
 
     if (has_capability('moodle/tag:manage', $systemcontext)) {
         if (($tag->tagtype != 'default') && (!isset($tagnew->tagtype) || ($tagnew->tagtype != '1'))) {

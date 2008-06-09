@@ -68,7 +68,7 @@
     $userform = new user_editadvanced_form();
     $userform->set_data($user);
 
-    if ($usernew = $userform->get_data(false)) {
+    if ($usernew = $userform->get_data()) {
         add_to_log($course->id, 'user', 'update', "view.php?id=$user->id&course=$course->id", '');
 
         if (empty($usernew->auth)) {
@@ -96,7 +96,7 @@
                 print_error('Error updating user record');
             }
             // pass a true $userold here
-            if (! $authplugin->user_update($user, $userform->get_data(false))) {
+            if (! $authplugin->user_update($user, $userform->get_data())) {
                 // auth update failed, rollback for moodle
                 $DB->update_record('user', $user);
                 print_error('Failed to update user data on external auth: '.$user->auth.

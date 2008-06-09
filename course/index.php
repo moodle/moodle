@@ -114,7 +114,7 @@
         if ($mform->is_cancelled()) {
             redirect('index.php');
 
-        } else if (!$data= $mform->get_data(false)) {
+        } else if (!$data= $mform->get_data()) {
             require_once($CFG->libdir . '/questionlib.php');
             print_category_edit_header();
             print_heading($heading);

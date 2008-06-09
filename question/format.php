@@ -784,7 +784,7 @@ class qformat_default {
         } else {
             $format = $question->questiontextformat;
         }
-        return format_text(stripslashes($question->questiontext), $format, $formatoptions);
+        return format_text($question->questiontext, $format, $formatoptions);
     }
 
 

@@ -50,7 +50,7 @@
 
 /// Process incoming role assignment
 
-    if ($frm = data_submitted(false)) {
+    if ($frm = data_submitted()) {
         if ($add and !empty($frm->addselect) and confirm_sesskey()) {
             $timemodified = time();
 

@@ -84,7 +84,7 @@ class question_essay_qtype extends default_questiontype {
 
         // get response value
         if (isset($state->responses[''])) {
-            $value = stripslashes_safe($state->responses['']);
+            $value = $state->responses[''];
         } else {
             $value = "";
         }

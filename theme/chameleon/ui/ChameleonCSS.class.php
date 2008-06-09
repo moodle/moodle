@@ -23,7 +23,7 @@ class ChameleonCSS {
             $this->error = 'couldn\'t open file';
             return false;
         }
-        fwrite($fp, stripslashes($content));
+        fwrite($fp, $content);
         fclose($fp);
         return true;
     }

@@ -56,7 +56,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         //die moeglichen Antworten extrahieren
         $info = $this->get_info($item);
         $lines = null;
-        $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, stripslashes_safe($info->presentation));
+        $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
         if(!is_array($lines)) return null;
 
         //die Werte holen
@@ -96,7 +96,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         
         $info = $this->get_info($item);
                 
-        $presentation = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, stripslashes_safe($info->presentation));
+        $presentation = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $index = 1;
         foreach($presentation as $pres){
             if($value->value == $index){
@@ -124,7 +124,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         if($analysedItem) {
             //echo '<table>';
             // $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . stripslashes($analysedItem[1]) .'</th></tr>';
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . $analysedItem[1] .'</th></tr>';
             $analysedVals = $analysedItem[2];
             $pixnr = 0;
             $avg = 0.0;
@@ -157,7 +157,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
 
         $worksheet->setFormat("<l><f><ro2><vo><c:green>");
         //frage schreiben
-        $worksheet->write_string($rowOffset, 0, stripslashes($analysed_item[1]));
+        $worksheet->write_string($rowOffset, 0, $analysed_item[1]);
         if(is_array($data)) {
             $avg = 0.0;
             for($i = 0; $i < sizeof($data); $i++) {
@@ -187,7 +187,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $align = get_string('thisdirection') == 'ltr' ? 'left' : 'right';
         $info = $this->get_info($item);
         
-        $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, stripslashes_safe($info->presentation));
+        $lines = explode (FEEDBACK_MULTICHOICERATED_LINE_SEP, $info->presentation);
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
         if($highlightrequire AND $item->required AND intval($value) <= 0) {
             $highlight = 'bgcolor="#FFAAAA" class="missingrequire"';
@@ -195,7 +195,7 @@ class feedback_item_multichoicerated extends feedback_item_base {
             $highlight = '';
         }
     ?>
-        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>"><?php echo format_text(stripslashes_safe($item->name) . $requiredmark, true, false, false);?></td>
+        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>"><?php echo format_text($item->name . $requiredmark, true, false, false);?></td>
         <td valign="top" align="<?php echo $align;?>">
     <?php
         $index = 1;

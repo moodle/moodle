@@ -575,9 +575,9 @@ class question_multichoice_qtype extends default_questiontype {
                 if ($correctfeedback != $multichoice->correctfeedback ||
                         $partiallycorrectfeedback != $multichoice->partiallycorrectfeedback ||
                         $incorrectfeedback != $multichoice->incorrectfeedback) {
-                    $subquestion->correctfeedback = addslashes($correctfeedback);
-                    $subquestion->partiallycorrectfeedback = addslashes($partiallycorrectfeedback);
-                    $subquestion->incorrectfeedback = addslashes($incorrectfeedback);
+                    $subquestion->correctfeedback = $correctfeedback;
+                    $subquestion->partiallycorrectfeedback = $partiallycorrectfeedback;
+                    $subquestion->incorrectfeedback = $incorrectfeedback;
                     if (!$DB->update_record('question_multichoice', $multichoice)) {
                         $status = false;
                     }

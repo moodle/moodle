@@ -66,7 +66,7 @@ class view_index_xml extends XMLDBAction {
         $select = required_param('select', PARAM_ALPHA); //original/edited
     /// Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
 
     /// Get the correct dir
         if ($select == 'original') {

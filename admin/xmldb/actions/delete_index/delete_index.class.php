@@ -64,7 +64,7 @@ class delete_index extends XMLDBAction {
 
     /// Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
         $tableparam = required_param('table', PARAM_PATH);
         $indexparam = required_param('index', PARAM_PATH);
 

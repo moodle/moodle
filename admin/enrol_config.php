@@ -17,7 +17,7 @@
 
 /// If data submitted, then process and store.
 
-    if ($frm = data_submitted(false)) {
+    if ($frm = data_submitted()) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', 'error');
         }

@@ -428,7 +428,7 @@ class question_category_object {
                                           WHERE c2.id = ?
                                             AND c1.contextid = c2.contextid", array($updateid))){
             // If the question name has changed, rename any random questions in that category.
-            if (addslashes($oldcat->name) != $cat->name) {
+            if ($oldcat->name != $cat->name) {
                 $randomqname = $QTYPES[RANDOM]->question_name($cat);
                 $DB->set_field('question', 'name', $randomqname, array('category' => $cat->id), 'qtype', RANDOM);
                 // Ignore errors here. It is not a big deal if the questions are not renamed.

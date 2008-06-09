@@ -544,7 +544,7 @@ function process_feedback($feedbackset, &$feedbacks) {
  */
 function process_common( $quest ) {
     $question = $this->defaultquestion();
-    $question->questiontext = addslashes($quest->QUESTION_BLOCK->text);
+    $question->questiontext = $quest->QUESTION_BLOCK->text;
     $question->name = shorten_text( $quest->id, 250 );
 
     return $question;
@@ -574,12 +574,12 @@ function process_tf($quest, &$questions) {
     
     if ($correct) {  // true is correct
         $question->answer = 1;
-        $question->feedbacktrue = addslashes($fback->correct);
-        $question->feedbackfalse = addslashes($fback->incorrect);
+        $question->feedbacktrue = $fback->correct;
+        $question->feedbackfalse = $fback->incorrect;
     } else {  // false is correct
         $question->answer = 0;
-        $question->feedbacktrue = addslashes($fback->incorrect);
-        $question->feedbackfalse = addslashes($fback->correct);
+        $question->feedbacktrue = $fback->incorrect;
+        $question->feedbackfalse = $fback->correct;
     }
     $question->correctanswer = $question->answer;
     $questions[] = $question;
@@ -613,10 +613,10 @@ function process_fblank($quest, &$questions) {
             if (isset($response->ident[0]['varequal'][0]['#'])) {
                 //for BB Fill in the Blank, only interested in correct answers
                 if ($response->feedback = 'correct') {
-                    $answers[] = addslashes($response->ident[0]['varequal'][0]['#']);
+                    $answers[] = $response->ident[0]['varequal'][0]['#'];
                     $fractions[] = 1;
                     if (isset($feedback['correct'])) {
-                        $feedbacks[] = addslashes($feedback['correct']);
+                        $feedbacks[] = $feedback['correct'];
                     }
                     else {
                         $feedbacks[] = '';
@@ -632,7 +632,7 @@ function process_fblank($quest, &$questions) {
     $answers[] = '*';
     $fractions[] = 0;
     if (isset($feedback['incorrect'])) {
-        $feedbacks[] = addslashes($feedback['incorrect']);
+        $feedbacks[] = $feedback['incorrect'];
     }
     else {
         $feedbacks[] = '';
@@ -658,7 +658,7 @@ function process_mc($quest, &$questions) {
     
     $feedback = array();
     foreach($quest->feedback as $fback) {
-        $feedback[$fback->ident] = addslashes($fback->text);
+        $feedback[$fback->ident] = $fback->text;
     }
  
     foreach($quest->responses as $response) {
@@ -679,7 +679,7 @@ function process_mc($quest, &$questions) {
 
     $i = 0;
     foreach($quest->RESPONSE_BLOCK->choices as $response) {
-        $question->answer[$i] = addslashes($response->text);
+        $question->answer[$i] = $response->text;
         if ($correct == $response->ident) {
             $question->fraction[$i] = 1;
             // this is a bit of a hack to catch the feedback... first we see if a 'correct' feedback exists
@@ -737,14 +737,14 @@ function process_ma($quest, &$questions) {
     }
     
     foreach ($quest->feedback as $fb) {
-        $feedback->{$fb->ident} = addslashes(trim($fb->text));
+        $feedback->{$fb->ident} = trim($fb->text);
     }
     
     $correct_answer_count = count($correct_answers);
     $choiceset = $quest->RESPONSE_BLOCK->choices;
     $i = 0;
     foreach($choiceset as $choice) {
-        $question->answer[$i] = addslashes(trim($choice->text));
+        $question->answer[$i] = trim($choice->text);
         if (in_array($choice->ident, $correct_answers)) {
             // correct answer
             $question->fraction[$i] = floor(100000/$correct_answer_count)/100000; // strange behavior if we have more than 5 decimal places
@@ -778,7 +778,7 @@ function process_essay($quest, &$questions) {
             // Added this code to put the possible solution that the
             // instructor gives as the Moodle answer for an essay question
             if ($feedback->ident == 'solution') {
-                $question->feedback = addslashes($feedback->text);
+                $question->feedback = $feedback->text;
             }
         }
         //Added because essay/questiontype.php:save_question_option is expecting a 
@@ -809,15 +809,15 @@ function process_matching($quest, &$questions) {
         foreach($quest->RESPONSE_BLOCK->subquestions as $qid => $subq) {
             foreach($quest->responses as $rid => $resp) {
                 if ($resp->ident == $subq->ident) {
-                    $correct = addslashes($resp->correct);
-                    $feedback = addslashes($resp->feedback);   
+                    $correct = $resp->correct;
+                    $feedback = $resp->feedback;   
                 }
             }
         
             foreach($subq->choices as $cid => $choice) {
                 if ($choice == $correct) {
-                    $question->subquestions[] = addslashes($subq->text);
-                    $question->subanswers[] = addslashes($quest->RIGHT_MATCH_BLOCK->matching_answerset[$cid]->text);
+                    $question->subquestions[] = $subq->text;
+                    $question->subanswers[] = $quest->RIGHT_MATCH_BLOCK->matching_answerset[$cid]->text;
                 }
             }
         }

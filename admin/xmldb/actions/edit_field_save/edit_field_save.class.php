@@ -75,20 +75,20 @@ class edit_field_save extends XMLDBAction {
 
     /// Do the job, setting result as needed
 
-        if (!data_submitted('nomatch')) { ///Basic prevention
+        if (!data_submitted()) { ///Basic prevention
             print_error('wrongcall', 'error');
         }
 
     /// Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
 
         $tableparam = strtolower(required_param('table', PARAM_PATH));
         $fieldparam = strtolower(required_param('field', PARAM_PATH));
         $name = substr(trim(strtolower(optional_param('name', $fieldparam, PARAM_PATH))),0,30);
 
         $comment = required_param('comment', PARAM_CLEAN);
-        $comment = trim(stripslashes_safe($comment));
+        $comment = trim($comment);
 
         $type       = required_param('type', PARAM_INT);
         $length     = strtolower(optional_param('length', NULL, PARAM_ALPHANUM));
@@ -98,9 +98,9 @@ class edit_field_save extends XMLDBAction {
         $sequence   = optional_param('sequence', false, PARAM_BOOL);
         $enum       = optional_param('enum', false, PARAM_BOOL);
         $enumvalues = optional_param('enumvalues', 0, PARAM_CLEAN);
-        $enumvalues = trim(stripslashes_safe($enumvalues));
+        $enumvalues = trim($enumvalues);
         $default    = optional_param('default', NULL, PARAM_PATH);
-        $default    = trim(stripslashes_safe($default));
+        $default    = trim($default);
 
         $editeddir =& $XMLDB->editeddirs[$dirpath];
         $structure =& $editeddir->xml_file->getStructure();

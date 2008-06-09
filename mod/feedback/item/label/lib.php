@@ -35,7 +35,7 @@ class feedback_item_label extends feedback_item_base {
     //used by create_item and update_item functions,
     //when provided $data submitted from feedback_show_edit
     function get_presentation($data) {
-        return stripslashes($data->presentation);
+        return $data->presentation;
     }
 
     function get_hasvalue() {

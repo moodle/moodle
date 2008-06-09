@@ -556,7 +556,7 @@ class MethodTable
                 if($key=="arguments"){
                     $result .= "array(";
                     for($i=0; $i<count($value); $i++){
-                        $result .= "\"" . addslashes($value[$i]) . "\"";
+                        $result .= "\"" . addslashes($value[$i]) . "\""; // TODO: fix this addslashes
                         if($i<count($value)-1){
                             $result .= ", ";
                         }

@@ -738,14 +738,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         console_write(STDERR,"The PHP server variable 'file_uploads' is not turned On" ,'',false);
     }
 
-    if (empty($CFG->prefix) && $CFG->dbfamily != 'mysql') {  //Enforce prefixes for everybody but mysql
-        console_write(STDERR,'$CFG->prefix can\'t be empty for your target DB (' . $CFG->dbtype . ')','',false);
-    }
-
-    if ($CFG->dbfamily == 'oracle' && strlen($CFG->prefix) > 2) { //Max prefix length for Oracle is 2cc
-        console_write(STDERR,'$CFG->prefix maximum allowed length for Oracle DBs is 2cc.','',false);
-    }
-
     /// Check that config.php has been edited
 
     if ($CFG->wwwroot == "http://example.com/moodle") {
@@ -1193,9 +1185,9 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         }
 
         $newsite = new Object();
-        $newsite->fullname = addslashes($sitefullname);
-        $newsite->shortname = addslashes($siteshortname);
-        $newsite->summary = addslashes($sitesummary);
+        $newsite->fullname = $sitefullname;
+        $newsite->shortname = $siteshortname;
+        $newsite->summary = $sitesummary;
         $newsite->newsitems = $sitenewsitems;
         $newsite->numsections = 0;
         $newsite->category = 0;

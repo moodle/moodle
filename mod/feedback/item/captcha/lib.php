@@ -87,7 +87,7 @@ class feedback_item_captcha extends feedback_item_base {
         $requiredmark = ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
     ?>
         <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
-            <?php echo format_text(stripslashes_safe($item->name) . $requiredmark, true, false, false);?>
+            <?php echo format_text($item->name . $requiredmark, true, false, false);?>
             <img alt="<?php echo $this->type;?>" src="<?php echo $CFG->wwwroot.htmlspecialchars('/mod/feedback/item/captcha/print_captcha.php?id='.$cmid);?>" />
         </td>
         <td valign="top" align="<?php echo $align;?>">
@@ -123,7 +123,7 @@ class feedback_item_captcha extends feedback_item_base {
     }
 
     function create_value($data) {
-        $data = addslashes(clean_text($data));
+        $data = clean_text($data);
         return $data;
     }
 

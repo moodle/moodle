@@ -420,7 +420,7 @@ function profile_edit_category($id, $redirect) {
     if ($categoryform->is_cancelled()) {
         redirect($redirect);
     } else {
-        if ($data = $categoryform->get_data(false)) {
+        if ($data = $categoryform->get_data()) {
             if (empty($data->id)) {
                 unset($data->id);
                 $data->sortorder = $DB->count_records('user_info_category') + 1;

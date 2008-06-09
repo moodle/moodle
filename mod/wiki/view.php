@@ -107,7 +107,7 @@
         define("EWIKI_PAGE_INDEX",$wiki_entry->pagename);
 
         /// If the page has a ' in it, it may have slashes added to it. Remove them if it does.
-        $page = ($page === false) ?  stripslashes(EWIKI_PAGE_INDEX) : stripslashes($page);
+        $page = ($page === false) ?  EWIKI_PAGE_INDEX : $page;
 
 ///     # Prevent ewiki getting id as PageID...
         unset($_REQUEST["id"]);
@@ -147,16 +147,6 @@
         define("EWIKI_PRINT_TITLE", $wiki->ewikiprinttitle);
 
         define("EWIKI_INIT_PAGES", wiki_content_dir($wiki));
-
-///     # Moodle always addslashes to everything so we are going to strip them always
-///     # to allow wiki itself to add them again. It's a triple add-strip-add but
-///     # was the only way to solve the problem without modifying how the rest of
-///     # the module works.
-        include($CFG->dirroot."/mod/wiki/ewiki/fragments/strip_wonderful_slashes.php");
-
-        if (ini_get("register_globals")) {
-            #    include($CFG->dirroot."/mod/wiki/ewiki/fragments/strike_register_globals.php");
-        }
 
         # Database Handler
         include_once($CFG->dirroot."/mod/wiki/ewikimoodlelib.php");

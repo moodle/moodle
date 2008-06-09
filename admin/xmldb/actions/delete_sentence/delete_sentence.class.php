@@ -64,7 +64,7 @@ class delete_sentence extends XMLDBAction {
 
     /// Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
         $statementparam = required_param('statement', PARAM_CLEAN);
         $sentenceparam = required_param('sentence', PARAM_INT);
 

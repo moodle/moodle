@@ -74,7 +74,7 @@
     switch ($mode) {
 
         case 'add':    ///add a new field
-            if (confirm_sesskey() and $fieldinput = data_submitted(false)){
+            if (confirm_sesskey() and $fieldinput = data_submitted()){
 
                 //$fieldinput->name = data_clean_field_name($fieldinput->name);
 
@@ -108,7 +108,7 @@
 
 
         case 'update':    ///update a field
-            if (confirm_sesskey() and $fieldinput = data_submitted(false)){
+            if (confirm_sesskey() and $fieldinput = data_submitted()){
 
                 //$fieldinput->name = data_clean_field_name($fieldinput->name);
 

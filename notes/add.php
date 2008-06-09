@@ -39,7 +39,7 @@
     }
 
 /// if data was submitted and validated, then save it to database
-    if ($formdata = $noteform->get_data(false)) {
+    if ($formdata = $noteform->get_data()) {
         $note = new object();
         $note->courseid     = $formdata->course;
         $note->content      = $formdata->content;
@@ -55,7 +55,7 @@
 
     if ($noteform->is_submitted()) {
         // if data was submitted with errors, then use it as default for new form
-        $note = $noteform->get_submitted_data(false);
+        $note = $noteform->get_submitted_data();
     } else {
         // if data was not submitted yet, then use default values
         $note = new object();

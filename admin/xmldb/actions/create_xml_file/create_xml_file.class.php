@@ -66,7 +66,7 @@ class create_xml_file extends XMLDBAction {
 
     /// Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
         $file = $dirpath . '/install.xml';
 
     /// Some variables

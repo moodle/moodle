@@ -64,7 +64,7 @@ class delete_statement extends XMLDBAction {
 
     /// Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
         $statementparam = required_param('statement', PARAM_CLEAN);
 
         $confirmed = optional_param('confirmed', false, PARAM_BOOL);

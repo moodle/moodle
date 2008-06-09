@@ -59,7 +59,7 @@ function glossary_comment_add() {
         redirect("comments.php?id=$cm->id&amp;eid=$entry->id");
     }
 
-    if ($data = $mform->get_data(false)) {
+    if ($data = $mform->get_data()) {
         trusttext_after_edit($data->entrycomment, $context);
 
         $newcomment = new object();
@@ -179,7 +179,7 @@ function glossary_comment_edit() {
     trusttext_prepare_edit($comment->entrycomment, $comment->format, can_use_html_editor(), $context);
     $mform->set_data(array('cid'=>$cid, 'action'=>'edit', 'entrycomment'=>$comment->entrycomment, 'format'=>$comment->format));
 
-    if ($data = $mform->get_data(false)) {
+    if ($data = $mform->get_data()) {
         trusttext_after_edit($data->entrycomment, $context);
 
         $updatedcomment = new object();

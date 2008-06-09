@@ -15,8 +15,6 @@
     $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
     $previoussearch = ($searchtext != '') or ($previoussearch) ? 1:0;
 
-    $searchtext = stripslashes($searchtext); // TODO: remove soon
-
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
     }
@@ -54,7 +52,7 @@
 
     print_heading(get_string('childcourses'));
 
-    if (!$frm = data_submitted(false)) {
+    if (!$frm = data_submitted()) {
         $note = get_string("importmetacoursenote");
         print_simple_box($note, "center", "50%");
 

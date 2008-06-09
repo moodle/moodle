@@ -510,7 +510,7 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid,
             // To this data, add anything the page itself needs to display
             $hiddendata = array_merge($hiddendata, $page->url_get_parameters());
 
-            if ($data = data_submitted(false)) {
+            if ($data = data_submitted()) {
                 $remove = array_keys($hiddendata);
                 foreach($remove as $item) {
                     unset($data->$item);

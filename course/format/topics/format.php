@@ -113,7 +113,7 @@
 
 /// If currently moving a file then show the current clipboard
     if (ismoving($course->id)) {
-        $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
+        $stractivityclipboard = strip_tags(get_string('activityclipboard', '', $USER->activitycopyname));
         $strcancel= get_string('cancel');
         echo '<li class="clipboard">';
         echo $stractivityclipboard.'&nbsp;&nbsp;(<a href="mod.php?cancelcopy=true&amp;sesskey='.$USER->sesskey.'">'.$strcancel.'</a>)';

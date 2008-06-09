@@ -502,7 +502,7 @@ class assignment_upload extends assignment_base {
             die;
         }
 
-        if ($data = $mform->get_data(false) and $action == 'savenotes') {
+        if ($data = $mform->get_data() and $action == 'savenotes') {
             $submission = $this->get_submission($USER->id, true); // get or create submission
             $updated = new object();
             $updated->id           = $submission->id;
@@ -544,7 +544,7 @@ class assignment_upload extends assignment_base {
 
         $returnurl = "submissions.php?id={$this->cm->id}&amp;userid=$userid&amp;mode=$mode&amp;offset=$offset";
 
-        if (data_submitted('nomatch') and $this->can_manage_responsefiles()) {
+        if (data_submitted() and $this->can_manage_responsefiles()) {
             $dir = $this->file_area_name($userid).'/responses';
             check_dir_exists($CFG->dataroot.'/'.$dir, true, true);
 

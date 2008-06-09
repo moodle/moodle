@@ -78,7 +78,7 @@
             redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
         }
 
-    } else if ($data = $editform->get_data(false)) {
+    } else if ($data = $editform->get_data()) {
 
         $data->password = $data->enrolpassword;  // we need some other name for password field MDL-9929
 /// process data if submitted

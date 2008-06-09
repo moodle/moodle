@@ -92,7 +92,7 @@ $mform->set_data($scale_rec);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
-} else if ($data = $mform->get_data(false)) {
+} else if ($data = $mform->get_data()) {
     $scale = new grade_scale(array('id'=>$id));
     $data->userid = $USER->id;
     grade_scale::set_properties($scale, $data);

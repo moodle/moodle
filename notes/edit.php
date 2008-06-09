@@ -60,7 +60,7 @@
 
     if ($noteform->is_submitted()) {
         // if data was submitted with errors, then use it as default for new form
-        $note = $noteform->get_submitted_data(false);
+        $note = $noteform->get_submitted_data();
     } else {
         // if data was not submitted yet, then used values retrieved from the database
         $note->user   = $note->userid;

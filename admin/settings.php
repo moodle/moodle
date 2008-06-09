@@ -31,7 +31,7 @@ $statusmsg = '';
 $errormsg  = '';
 $focus = '';
 
-if ($data = data_submitted(false) and confirm_sesskey()) {
+if ($data = data_submitted() and confirm_sesskey()) {
     if (admin_write_settings($data)) {
         $statusmsg = get_string('changessaved');
     }

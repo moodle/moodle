@@ -190,7 +190,7 @@
         } else {
             redirect("$CFG->wwwroot/course/view.php?id=$course->id#section-".$cw->section);
         }
-    } else if ($fromform = $mform->get_data(false)) {
+    } else if ($fromform = $mform->get_data()) {
         if (empty($fromform->coursemodule)) { //add
             $cm = null;
             if (! $course = $DB->get_record("course", array("id"=>$fromform->course))) {
@@ -337,7 +337,7 @@
             if ($fromform->gradecat == -1) {
                 $grade_category = new grade_category();
                 $grade_category->courseid = $COURSE->id;
-                $grade_category->fullname = stripslashes($fromform->name);
+                $grade_category->fullname = $fromform->name;
                 $grade_category->insert();
                 if ($grade_item) {
                     $parent = $grade_item->get_parent_category();

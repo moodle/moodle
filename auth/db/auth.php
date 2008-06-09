@@ -229,7 +229,7 @@ class auth_plugin_db extends auth_plugin_base {
 
 /// list external users
         $userlist = $this->get_userlist();
-        $quoteduserlist = implode("', '", addslashes_recursive($userlist));
+        $quoteduserlist = implode("', '", $userlist);
         $quoteduserlist = "'$quoteduserlist'";
 
 /// delete obsolete internal users
@@ -667,7 +667,6 @@ class auth_plugin_db extends auth_plugin_base {
             $config->changepasswordurl = '';
         }
 
-        $config = stripslashes_recursive($config);
         // save settings
         set_config('host',          $config->host,          'auth/db');
         set_config('type',          $config->type,          'auth/db');

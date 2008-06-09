@@ -545,7 +545,7 @@ function print_progress_redraw($thisbarid, $done, $total, $width, $donetext='') 
         return;
     }
     echo '<script>';
-    echo 'document.getElementById("text'.$thisbarid.'").innerHTML = "'.addslashes($donetext).'";'."\n";
+    echo 'document.getElementById("text'.$thisbarid.'").innerHTML = "'.addslashes_js($donetext).'";'."\n";
     echo 'document.getElementById("slider'.$thisbarid.'").style.width = \''.$width.'px\';'."\n";
     echo '</script>';
 }
@@ -1728,7 +1728,7 @@ class admin_setting_configtext extends admin_setting {
             return true;
 
         } else {
-            $cleaned = stripslashes(clean_param(addslashes($data), $this->paramtype));
+            $cleaned = clean_param($data, $this->paramtype);
             if ("$data" == "$cleaned") { // implicit conversion to string is needed to do exact comparison
                 return true;
             } else {
@@ -2580,7 +2580,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     }
 
     function validate($data) {
-        $cleaned = stripslashes(clean_param(addslashes($data), PARAM_MULTILANG));
+        $cleaned = clean_param($data, PARAM_MULTILANG);
         if ($cleaned === '') {
             return get_string('required');
         }

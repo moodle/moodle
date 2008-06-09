@@ -92,7 +92,7 @@ $mform->set_data($outcome_rec);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
-} else if ($data = $mform->get_data(false)) {
+} else if ($data = $mform->get_data()) {
     $outcome = new grade_outcome(array('id'=>$id));
     $data->usermodified = $USER->id;
     grade_outcome::set_properties($outcome, $data);

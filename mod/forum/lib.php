@@ -2550,8 +2550,8 @@ function forum_get_course_forum($courseid, $type) {
     $forum->type = "$type";
     switch ($forum->type) {
         case "news":
-            $forum->name  = addslashes(get_string("namenews", "forum"));
-            $forum->intro = addslashes(get_string("intronews", "forum"));
+            $forum->name  = get_string("namenews", "forum");
+            $forum->intro = get_string("intronews", "forum");
             $forum->forcesubscribe = FORUM_FORCESUBSCRIBE;
             $forum->assessed = 0;
             if ($courseid == SITEID) {
@@ -2560,8 +2560,8 @@ function forum_get_course_forum($courseid, $type) {
             }
             break;
         case "social":
-            $forum->name  = addslashes(get_string("namesocial", "forum"));
-            $forum->intro = addslashes(get_string("introsocial", "forum"));
+            $forum->name  = get_string("namesocial", "forum");
+            $forum->intro = get_string("introsocial", "forum");
             $forum->assessed = 0;
             $forum->forcesubscribe = 0;
             break;

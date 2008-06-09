@@ -56,7 +56,7 @@ $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'outcome', 'cours
 require_once('import_outcomes_form.php');
 $upload_form = new import_outcomes_form();
 
-if ($upload_form_data = $upload_form->get_data(false)) {
+if ($upload_form_data = $upload_form->get_data()) {
     require_once('import.php');
     exit();
 }

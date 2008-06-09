@@ -116,7 +116,7 @@
 /// html editor is by default disabled
     $editor = isset($SESSION->data_use_editor) ? $SESSION->data_use_editor : (can_use_html_editor() ? 1 : 0);
 
-    if (($mytemplate = data_submitted($CFG->wwwroot.'/mod/data/templates.php')) && confirm_sesskey()) {
+    if (($mytemplate = data_submitted()) && confirm_sesskey()) {
         $newtemplate->id = $data->id;
         $newtemplate->{$mode} = $mytemplate->template;
 

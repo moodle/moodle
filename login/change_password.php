@@ -62,7 +62,7 @@
 
     if ($mform->is_cancelled()) {
         redirect($CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id);
-    } else if ($data = $mform->get_data(false)) {
+    } else if ($data = $mform->get_data()) {
 
         if (!$userauth->user_update_password($USER, $data->newpassword1)) {
             print_error('errorpasswordupdate', 'auth');

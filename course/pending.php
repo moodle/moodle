@@ -16,9 +16,6 @@
 
     if (!empty($approve) and confirm_sesskey()) {
         if ($course = $DB->get_record("course_request", array("id"=>$approve))) {
-            foreach (array_keys((array)$course) as $key) {
-                $course->$key = addslashes($course->$key);
-            }
 
             // place at beginning of category
             fix_course_sortorder();

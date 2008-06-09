@@ -57,11 +57,6 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         /// DB using DOTS. Manually introduced floats (if using other characters) must be
         /// converted back to DOTs (like gradebook does)
         $this->db->Execute("ALTER SESSION SET NLS_NUMERIC_CHARACTERS='.,'");
-        /// Enable sybase quotes, so addslashes and stripslashes will use "'"
-        ini_set('magic_quotes_sybase', '1');
-        /// NOTE: Not 100% useful because GPC has been addslashed with the setting off
-        ///       so IT'S MANDATORY TO ENABLE THIS UNDER php.ini or .htaccess for this DB
-        ///       or to turn off magic_quotes to allow Moodle to do it properly
 
         return true;
     }

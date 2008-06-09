@@ -19,9 +19,9 @@
     $canceldelete = optional_param('canceldelete', false, PARAM_INT);
     $shoulddelete = optional_param('shoulddelete', false, PARAM_INT);
     $deletetempl = optional_param('deletetempl', false, PARAM_INT);
-    // $formdata = data_submitted('nomatch');
+    // $formdata = data_submitted();
     
-    if(($formdata = data_submitted('nomatch')) AND !confirm_sesskey()) {
+    if(($formdata = data_submitted()) AND !confirm_sesskey()) {
         error('no sesskey defined');
     }
     

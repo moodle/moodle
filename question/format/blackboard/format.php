@@ -104,7 +104,7 @@ function process_tf($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         }
-        $question->questiontext = addslashes($question->questiontext);
+        $question->questiontext = $question->questiontext;
         // put name in question object
         $question->name = substr($question->questiontext, 0, 254);
 
@@ -117,12 +117,12 @@ function process_tf($xml, &$questions) {
 
         if (strcmp($id, $correct_answer) == 0) {  // true is correct
             $question->answer = 1;
-            $question->feedbacktrue = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
-            $question->feedbackfalse = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+            $question->feedbacktrue = trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]);
+            $question->feedbackfalse = trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]);
         } else {  // false is correct
             $question->answer = 0;
-            $question->feedbacktrue = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
-            $question->feedbackfalse = addslashes(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+            $question->feedbacktrue = trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]);
+            $question->feedbackfalse = trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]);
         }
         $question->correctanswer = $question->answer;
         $questions[] = $question;
@@ -157,7 +157,7 @@ function process_mc($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         }
-        $question->questiontext = addslashes($question->questiontext);
+        $question->questiontext = $question->questiontext;
 
         // put name of question in question object, careful of length
         $question->name = substr($question->questiontext, 0, 254);
@@ -170,7 +170,7 @@ function process_mc($xml, &$questions) {
             if ($ishtml) {
                 $question->answer[$j] = html_entity_decode_php4($choice);
             }
-            $question->answer[$j] = addslashes($question->answer[$j]);
+            $question->answer[$j] = $question->answer[$j];
 
             $id = $choices[$j]["@"]["id"];
             $correct_answer_id = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"][0]["@"]["answer_id"];
@@ -180,13 +180,13 @@ function process_mc($xml, &$questions) {
                 if ($ishtml) {
                     $question->feedback[$j] = html_entity_decode_php4(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
                 }
-                $question->feedback[$j] = addslashes($question->feedback[$j]);
+                $question->feedback[$j] = $question->feedback[$j];
             } else {
                 $question->fraction[$j] = 0;
                 if ($ishtml) {
                     $question->feedback[$j] = html_entity_decode_php4(trim(@$thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
                 }
-                $question->feedback[$j] = addslashes($question->feedback[$j]);
+                $question->feedback[$j] = $question->feedback[$j];
             }
         }
         $questions[] = $question;
@@ -223,7 +223,7 @@ function process_ma($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         }
-        $question->questiontext = addslashes($question->questiontext);
+        $question->questiontext = $question->questiontext;
         // put name of question in question object
         $question->name = substr($question->questiontext, 0, 254);
 
@@ -234,7 +234,7 @@ function process_ma($xml, &$questions) {
 
             $choice = trim($choices[$j]["#"]["TEXT"][0]["#"]);
             // put this choice in the question object.
-            $question->answer[$j] = addslashes($choice);
+            $question->answer[$j] = $choice;
 
             $correctanswercount = sizeof($correctanswers);
             $id = $choices[$j]["@"]["id"];
@@ -249,10 +249,10 @@ function process_ma($xml, &$questions) {
             }
             if ($iscorrect) { 
                 $question->fraction[$j] = floor(100000/$correctanswercount)/100000; // strange behavior if we have more than 5 decimal places
-                $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][$j]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+                $question->feedback[$j] = trim($thisquestion["#"]["GRADABLE"][$j]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]);
             } else {
                 $question->fraction[$j] = 0;
-                $question->feedback[$j] = addslashes(trim($thisquestion["#"]["GRADABLE"][$j]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+                $question->feedback[$j] = trim($thisquestion["#"]["GRADABLE"][$j]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]);
             }
         }
 
@@ -287,24 +287,24 @@ function process_fib($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         }
-        $question->questiontext = addslashes($question->questiontext);
+        $question->questiontext = $question->questiontext;
         // put name of question in question object
         $question->name = substr($question->questiontext, 0, 254);
 
         $answer = trim($thisquestion["#"]["ANSWER"][0]["#"]["TEXT"][0]["#"]);
 
-        $question->answer[] = addslashes($answer);
+        $question->answer[] = $answer;
         $question->fraction[] = 1;
         $question->feedback = array();
 
         if (is_array( $thisquestion['#']['GRADABLE'][0]['#'] )) {
-            $question->feedback[0] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]));
+            $question->feedback[0] = trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_CORRECT"][0]["#"]);
         }
         else {
             $question->feedback[0] = '';
         }      
         if (is_array( $thisquestion["#"]["GRADABLE"][0]["#"] )) {
-            $question->feedback[1] = addslashes(trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]));
+            $question->feedback[1] = trim($thisquestion["#"]["GRADABLE"][0]["#"]["FEEDBACK_WHEN_INCORRECT"][0]["#"]);
         }
         else {
             $question->feedback[1] = '';
@@ -341,7 +341,7 @@ function process_matching($xml, &$questions) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode_php4(trim($thisquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         }
-        $question->questiontext = addslashes($question->questiontext);
+        $question->questiontext = $question->questiontext;
         // put name of question in question object
         $question->name = substr($question->questiontext, 0, 254);
 
@@ -353,7 +353,7 @@ function process_matching($xml, &$questions) {
             $choice = $choices[$j]["#"]["TEXT"][0]["#"];
             $choice_id = $choices[$j]["@"]["id"];
           
-            $question->subanswers[] = addslashes(trim($choice));
+            $question->subanswers[] = trim($choice);
  
             $correctanswers = $thisquestion["#"]["GRADABLE"][0]["#"]["CORRECTANSWER"];
             for ($k = 0; $k < sizeof ($correctanswers); $k++) {
@@ -370,7 +370,7 @@ function process_matching($xml, &$questions) {
                         if (strcmp ($current_ans_id, $answer_id) == 0) {
 
                             $answer = $answer["#"]["TEXT"][0]["#"];
-                            $question->subquestions[] = addslashes(trim($answer));
+                            $question->subquestions[] = trim($answer);
                             break;
 
                         }

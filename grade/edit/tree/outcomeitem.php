@@ -100,7 +100,7 @@ if (empty($parent_category)) {
 $mform->set_data($item);
 
 
-if ($data = $mform->get_data(false)) {
+if ($data = $mform->get_data()) {
 
     if (!isset($data->aggregationcoef)) {
         $data->aggregationcoef = 0;

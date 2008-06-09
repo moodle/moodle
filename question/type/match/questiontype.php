@@ -649,7 +649,7 @@ class question_match_qtype extends default_questiontype {
             foreach ($subquestions as $subquestion) {
                 $questiontext = restore_decode_content_links_worker($subquestion->questiontext, $restore);
                 if ($questiontext != $subquestion->questiontext) {
-                    $subquestion->questiontext = addslashes($questiontext);
+                    $subquestion->questiontext = $questiontext;
                     if (!$DB->update_record('question_match_sub', $subquestion)) {
                         $status = false;
                     }

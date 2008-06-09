@@ -2,7 +2,7 @@
 
     require('../config.php');
 
-    if ($form = data_submitted('nomatch')) { // form submitted, do not check referer (original page unknown)!
+    if ($form = data_submitted()) { // form submitted, do not check referer (original page unknown)!
 
     /// Only deal with real users
         if (!isloggedin()) { 

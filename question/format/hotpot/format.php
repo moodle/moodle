@@ -494,7 +494,7 @@ class qformat_hotpot extends qformat_default {
         // convert html entities to unicode and add slashes
         $str = preg_replace('/&#x([0-9a-f]+);/ie', "hotpot_charcode_to_utf8(hexdec('\\1'))", $str);
         $str = preg_replace('/&#([0-9]+);/e', "hotpot_charcode_to_utf8(\\1)", $str);
-        return addslashes($str);
+        return $str;
     }
 } // end class
 

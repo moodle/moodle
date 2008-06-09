@@ -37,7 +37,7 @@
 
     $mform = new recent_form();
     $mform->set_data($param);
-    if ($formdata = $mform->get_data(false)) {
+    if ($formdata = $mform->get_data()) {
         $param = $formdata;
     }
 

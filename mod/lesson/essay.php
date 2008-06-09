@@ -81,7 +81,7 @@
             }
             break;
         case 'update':
-            if (confirm_sesskey() and $form = data_submitted($CFG->wwwroot.'/mod/lesson/essay.php')) {
+            if (confirm_sesskey() and $form = data_submitted()) {
                 if (optional_param('cancel', 0)) {
                     redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
                 }
@@ -101,7 +101,7 @@
 
                 $essayinfo->graded = 1;
                 $essayinfo->score = clean_param($form->score, PARAM_INT);
-                $essayinfo->response = stripslashes_safe(clean_param($form->response, PARAM_RAW));
+                $essayinfo->response = clean_param($form->response, PARAM_RAW);
                 $essayinfo->sent = 0;
                 if (!$lesson->custom && $essayinfo->score == 1) {
                     $attempt->correct = 1;
@@ -109,7 +109,7 @@
                     $attempt->correct = 0;
                 }
 
-                $attempt->useranswer = addslashes(serialize($essayinfo));
+                $attempt->useranswer = serialize($essayinfo);
 
                 if (!$DB->update_record('lesson_attempts', $attempt)) {
                     print_error('Could not update essay score');
@@ -207,7 +207,7 @@
                     
                     // Set rest of the message values
                     $a->question = format_text($pages[$attempt->pageid]->contents, FORMAT_MOODLE, $options);
-                    $a->response = s(stripslashes_safe($essayinfo->answer));
+                    $a->response = s($essayinfo->answer);
                     $a->teacher  = $course->teacher;
                     $a->comment  = s($essayinfo->response);
                     
@@ -221,7 +221,7 @@
 
                     if(email_to_user($users[$attempt->userid], $USER, $subject, $plaintxt, $message)) {
                         $essayinfo->sent = 1;
-                        $attempt->useranswer = addslashes(serialize($essayinfo));
+                        $attempt->useranswer = serialize($essayinfo);
                         $DB->update_record('lesson_attempts', $attempt);
                         // Log it
                         add_to_log($course->id, 'lesson', 'update email essay grade', "essay.php?id=$cm->id", format_string($pages[$attempt->pageid]->title,true).': '.fullname($users[$attempt->userid]), $cm->id);
@@ -348,7 +348,7 @@
             $essayinfo = unserialize($attempt->useranswer);
             
             $table->head = array(get_string('studentresponse', 'lesson', fullname($user, true)));
-            $table->data[] = array(s(stripslashes_safe($essayinfo->answer)));
+            $table->data[] = array(s($essayinfo->answer));
 
             print_table($table);
 

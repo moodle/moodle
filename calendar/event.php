@@ -126,7 +126,7 @@
                 print_error('nopermissions');
             }
 
-            if($form = data_submitted(false)) {
+            if($form = data_submitted()) {
 
                 $form->name = clean_param(strip_tags($form->name,'<lang><span>'), PARAM_CLEAN);
 
@@ -194,7 +194,7 @@
 
         case 'new':
             $title = get_string('newevent', 'calendar');
-            $form = data_submitted(false);
+            $form = data_submitted();
             if(!empty($form) && !empty($form->name)) {
 
                 $form->name = clean_text(strip_tags($form->name, '<lang><span>'));

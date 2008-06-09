@@ -60,7 +60,7 @@ class qformat_default {
                 case MATCH :
                     $count++;
 
-                    echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+                    echo "<hr><p><b>$count</b>. ".$question->questiontext."</p>";
                     $newpage = new stdClass;
                     $newpage->lessonid = $lesson->id;
                     $newpage->qtype = $this->qtypeconvert[$question->qtype];

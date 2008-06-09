@@ -245,7 +245,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
             return true;
         }
 
-        $response = $this->apply_unit(stripslashes($state->responses['']), $question->options->units);
+        $response = $this->apply_unit($state->responses[''], $question->options->units);
 
         if ($response === false) {
             return false; // The student did not type a number.

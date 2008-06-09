@@ -26,12 +26,12 @@ class qformat_multianswer extends qformat_default {
 
         $questions= array();
         $thequestion= qtype_multianswer_extract_question(
-                addslashes(implode('',$lines)));
+                implode('',$lines));
         $thequestion->qtype = MULTIANSWER;
         $thequestion->course = $this->course;
 
         if (!empty($thequestion)) {
-            $thequestion->name = addslashes($lines[0]);
+            $thequestion->name = $lines[0];
             
             $questions[] = $thequestion;
         }

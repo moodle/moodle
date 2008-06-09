@@ -87,7 +87,7 @@ class feedback_item_numeric extends feedback_item_base {
         if(isset($values->data) AND is_array($values->data)) {
             //echo '<table>';2
             // $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . stripslashes($item->name) .'</th></tr>';
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . $item->name .'</th></tr>';
             foreach($values->data as $value) {
                 echo '<tr><td colspan="2" valign="top" align="left">-&nbsp;&nbsp;' . $value . '</td></tr>';
             }
@@ -106,7 +106,7 @@ class feedback_item_numeric extends feedback_item_base {
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
 
         $worksheet->setFormat("<l><f><ro2><vo><c:green>");
-        $worksheet->write_string($rowOffset, 0, stripslashes($item->name));
+        $worksheet->write_string($rowOffset, 0, $item->name);
         $data = $analysed_item->data;
         if(is_array($data)) {
             // $worksheet->setFormat("<l><ro2><vo>");
@@ -148,7 +148,7 @@ class feedback_item_numeric extends feedback_item_base {
     ?>
         <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>">
             <?php 
-                echo format_text(stripslashes_safe($item->name) . $requiredmark, true, false, false);
+                echo format_text($item->name . $requiredmark, true, false, false);
                 switch(true) {
                     case ($range_from === 0 AND $range_to > 0):
                         echo ' ('.get_string('maximal', 'feedback').': '.$range_to.')';

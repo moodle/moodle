@@ -64,7 +64,7 @@ class feedback_item_textfield extends feedback_item_base {
         if($values) {
             //echo '<table>';2
             // $itemnr++;
-            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . stripslashes_safe($item->name) .'</th></tr>';
+            echo '<tr><th colspan="2" align="left">'. $itemnr . '&nbsp;' . $item->name .'</th></tr>';
             foreach($values as $value) {
                 echo '<tr><td colspan="2" valign="top" align="left">-&nbsp;&nbsp;' . str_replace("\n", '<br />', $value->value) . '</td></tr>';
             }
@@ -77,7 +77,7 @@ class feedback_item_textfield extends feedback_item_base {
         $analysed_item = $this->get_analysed($item, $groupid, $courseid);
 
         $worksheet->setFormat("<l><f><ro2><vo><c:green>");
-        $worksheet->write_string($rowOffset, 0, stripslashes_safe($item->name));
+        $worksheet->write_string($rowOffset, 0, $item->name);
         $data = $analysed_item->data;
         if(is_array($data)) {
             $worksheet->setFormat("<l><ro2><vo>");
@@ -104,7 +104,7 @@ class feedback_item_textfield extends feedback_item_base {
         }
         $requiredmark =  ($item->required == 1)?'<span class="feedback_required_mark">*</span>':'';
     ?>
-        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>"><?php echo format_text(stripslashes_safe($item->name) . $requiredmark, true, false, false);?></td>
+        <td <?php echo $highlight;?> valign="top" align="<?php echo $align;?>"><?php echo format_text($item->name . $requiredmark, true, false, false);?></td>
         <td valign="top" align="<?php echo $align;?>">
     <?php
         if($readonly){
@@ -134,7 +134,7 @@ class feedback_item_textfield extends feedback_item_base {
     }
 
     function create_value($data) {
-        $data = addslashes(clean_text($data));
+        $data = clean_text($data);
         return $data;
     }
 

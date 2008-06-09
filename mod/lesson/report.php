@@ -47,7 +47,7 @@
 
 /// Process any form data before fetching attempts, grades and times
     if (has_capability('mod/lesson:edit', $context) and 
-        $form = data_submitted($CFG->wwwroot.'/mod/lesson/report.php') and 
+        $form = data_submitted() and 
         confirm_sesskey()) {
     /// Cycle through array of userids with nested arrays of tries
         if (!empty($form->attempts)) {
@@ -791,7 +791,7 @@
                                 // dont think this should ever be reached....
                                 $avescore = get_string("nooneansweredthisquestion", "lesson");
                             }
-                            $answerdata->answers[] = array(s(stripslashes_safe($essayinfo->answer)), $avescore);
+                            $answerdata->answers[] = array(s($essayinfo->answer), $avescore);
                             break;
                         case LESSON_BRANCHTABLE :
                             $data = "<input type=\"button\" name=\"$answer->id\" value=\"".strip_tags(format_text($answer->answer, FORMAT_MOODLE,$formattextdefoptions))."\" disabled=\"disabled\"> ";

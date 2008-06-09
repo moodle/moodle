@@ -13,7 +13,7 @@
 
     $id = required_param('id', PARAM_INT); 
 
-    $formdata = data_submitted('nomatch');
+    $formdata = data_submitted();
  
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {

@@ -87,7 +87,7 @@ function mnet_get_functions($type, $parentname) {
                 array_unshift($profile, $details['returns']);
             }
             $dataobject->profile       = serialize($profile);
-            $dataobject->help          = addslashes($details['description']);
+            $dataobject->help          = $details['description'];
         } else {
             $dataobject->profile       = serialize(array(array('type' => 'void', 'description' => 'No return value')));
             $dataobject->help          = '';

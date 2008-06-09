@@ -244,15 +244,16 @@ class moodleform {
      * form definition (new entry form); this function is used to load in data where values
      * already exist and data is being edited (edit entry form).
      *
+     * note: $slashed param removed
+     *
      * @param mixed $default_values object or array of default values
      * @param bool $slased true if magic quotes applied to data values
      */
-    function set_data($default_values, $slashed=false) {
+    function set_data($default_values) {
         if (is_object($default_values)) {
             $default_values = (array)$default_values;
         }
-        $filter = $slashed ? 'stripslashes' : NULL;
-        $this->_form->setDefaults($default_values, $filter);
+        $this->_form->setDefaults($default_values);
     }
 
     /**
@@ -369,15 +370,16 @@ class moodleform {
     /**
      * Return submitted data if properly submitted or returns NULL if validation fails or
      * if there is no submitted data.
+     * 
+     * note: $slashed param removed
      *
-     * @param bool $slashed true means return data with addslashes applied
      * @return object submitted data; NULL if not valid or not submitted
      */
-    function get_data($slashed=true) {
+    function get_data() {
         $mform =& $this->_form;
 
         if ($this->is_submitted() and $this->is_validated()) {
-            $data = $mform->exportValues(null, $slashed);
+            $data = $mform->exportValues();
             unset($data['sesskey']); // we do not need to return sesskey
             unset($data['_qf__'.$this->_formname]);   // we do not need the submission marker too
             if (empty($data)) {
@@ -392,15 +394,15 @@ class moodleform {
 
     /**
      * Return submitted data without validation or NULL if there is no submitted data.
+     * note: $slashed param removed
      *
-     * @param bool $slashed true means return data with addslashes applied
      * @return object submitted data; NULL if not submitted
      */
-    function get_submitted_data($slashed=true) {
+    function get_submitted_data() {
         $mform =& $this->_form;
 
         if ($this->is_submitted()) {
-            $data = $mform->exportValues(null, $slashed);
+            $data = $mform->exportValues();
             unset($data['sesskey']); // we do not need to return sesskey
             unset($data['_qf__'.$this->_formname]);   // we do not need the submission marker too
             if (empty($data)) {
@@ -976,19 +978,13 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                     $submission[$key] = clean_param($s, $this->_types[$key]);
                 }
             }
-            $this->_submitValues = $this->_recursiveFilter('stripslashes', $submission);
+            $this->_submitValues = $submission;
             $this->_flagSubmitted = true;
         }
 
         if (empty($files)) {
             $this->_submitFiles = array();
         } else {
-            if (1 == get_magic_quotes_gpc()) {
-                foreach (array_keys($files) as $elname) {
-                    // dangerous characters in filenames are cleaned later in upload_manager
-                    $files[$elname]['name'] = stripslashes($files[$elname]['name']);
-                }
-            }
             $this->_submitFiles = $files;
             $this->_flagSubmitted = true;
         }
@@ -1011,15 +1007,15 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * Initializes a default form value. Used to specify the default for a new entry where
      * no data is loaded in using moodleform::set_data()
      *
+     * note: $slashed param removed
+     *
      * @param     string   $elementname        element name
      * @param     mixed    $values             values for that element name
-     * @param     bool     $slashed            the default value is slashed
      * @access    public
      * @return    void
      */
-    function setDefault($elementName, $defaultValue, $slashed=false){
-        $filter = $slashed ? 'stripslashes' : NULL;
-        $this->setDefaults(array($elementName=>$defaultValue), $filter);
+    function setDefault($elementName, $defaultValue){
+        $this->setDefaults(array($elementName=>$defaultValue));
     } // end func setDefault
     /**
      * Add an array of buttons to the form
@@ -1060,7 +1056,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
         }
     }
 
-    function exportValues($elementList= null, $addslashes=true){
+    function exportValues($elementList = null){
         $unfiltered = array();
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
@@ -1090,11 +1086,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             }
         }
 
-        if ($addslashes){
-            return $this->_recursiveFilter('addslashes', $unfiltered);
-        } else {
-            return $unfiltered;
-        }
+        return $unfiltered;
     }
     /**
      * Adds a validation rule for the given field

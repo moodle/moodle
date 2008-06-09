@@ -128,11 +128,11 @@
                         //print_error('missingfield', 'error', 'uploaduser.php?sesskey='.$USER->sesskey, $name);
                     }
                     else if ($name == "groupname") {
-                        $newgroup->name = addslashes($value);
+                        $newgroup->name = $value;
                     }
                     // normal entry
                     else {
-                        $newgroup->{$name} = addslashes($value);
+                        $newgroup->{$name} = $value;
                     }
                 }
                 ///Find the courseid of the course with the given shortname

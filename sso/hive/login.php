@@ -8,7 +8,7 @@
     require_login();
 
     // get the login data 
-    $frm = data_submitted('');
+    $frm = data_submitted();
 
     // log back into Hive
     if (sso_user_login($frm->username, $frm->password)) {  

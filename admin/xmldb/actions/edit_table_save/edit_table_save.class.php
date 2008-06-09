@@ -65,18 +65,18 @@ class edit_table_save extends XMLDBAction {
 
     /// Do the job, setting result as needed
 
-        if (!data_submitted('nomatch')) { ///Basic prevention
+        if (!data_submitted()) { ///Basic prevention
             print_error('wrongcall', 'error');
         }
 
     /// Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
 
         $tableparam = strtolower(required_param('table', PARAM_PATH));
         $name = substr(trim(strtolower(required_param('name', PARAM_PATH))),0,28);
         $comment = required_param('comment', PARAM_CLEAN);
-        $comment = stripslashes_safe($comment);
+        $comment = $comment;
 
         $editeddir =& $XMLDB->editeddirs[$dirpath];
         $structure =& $editeddir->xml_file->getStructure();

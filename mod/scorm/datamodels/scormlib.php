@@ -5,7 +5,7 @@ function scorm_get_resources($blocks) {
         if ($block['name'] == 'RESOURCES') {
             foreach ($block['children'] as $resource) {
                 if ($resource['name'] == 'RESOURCE') {
-                    $resources[addslashes($resource['attrs']['IDENTIFIER'])] = $resource['attrs'];
+                    $resources[addslashes_js($resource['attrs']['IDENTIFIER'])] = $resource['attrs'];
                 }
             }
         }
@@ -43,7 +43,7 @@ function scorm_get_manifest($blocks,$scoes) {
                     }
                 break;
                 case 'MANIFEST':
-                    $manifest = addslashes($block['attrs']['IDENTIFIER']);
+                    $manifest = $block['attrs']['IDENTIFIER'];
                     $organization = '';
                     $resources = array();
                     $resources = scorm_get_resources($block['children']);
@@ -55,8 +55,8 @@ function scorm_get_manifest($blocks,$scoes) {
                                 $sco->identifier = $item;
                                 $sco->title = $item;
                                 $sco->parent = '/';
-                                $sco->launch = addslashes($resource['HREF']);
-                                $sco->scormtype = addslashes($resource['ADLCP:SCORMTYPE']);
+                                $sco->launch = $resource['HREF'];
+                                $sco->scormtype = $resource['ADLCP:SCORMTYPE'];
                                 $scoes->elements[$manifest][$organization][$item] = $sco;
                             }
                         }
@@ -64,12 +64,12 @@ function scorm_get_manifest($blocks,$scoes) {
                 break;
                 case 'ORGANIZATIONS':
                     if (!isset($scoes->defaultorg)) {
-                        $scoes->defaultorg = addslashes($block['attrs']['DEFAULT']);
+                        $scoes->defaultorg = $block['attrs']['DEFAULT'];
                     }
                     $scoes = scorm_get_manifest($block['children'],$scoes);
                 break;
                 case 'ORGANIZATION':
-                    $identifier = addslashes($block['attrs']['IDENTIFIER']);
+                    $identifier = $block['attrs']['IDENTIFIER'];
                     $organization = '';
                     $scoes->elements[$manifest][$organization][$identifier]->identifier = $identifier;
                     $scoes->elements[$manifest][$organization][$identifier]->parent = '/';
@@ -91,31 +91,31 @@ function scorm_get_manifest($blocks,$scoes) {
                     $parent = array_pop($parents);
                     array_push($parents, $parent);
 
-                    $identifier = addslashes($block['attrs']['IDENTIFIER']);
+                    $identifier = $block['attrs']['IDENTIFIER'];
                     $scoes->elements[$manifest][$organization][$identifier]->identifier = $identifier;
                     $scoes->elements[$manifest][$organization][$identifier]->parent = $parent->identifier;
                     if (!isset($block['attrs']['ISVISIBLE'])) {
                         $block['attrs']['ISVISIBLE'] = 'true';
                     }
-                    $scoes->elements[$manifest][$organization][$identifier]->isvisible = addslashes($block['attrs']['ISVISIBLE']);
+                    $scoes->elements[$manifest][$organization][$identifier]->isvisible = $block['attrs']['ISVISIBLE'];
                     if (!isset($block['attrs']['PARAMETERS'])) {
                         $block['attrs']['PARAMETERS'] = '';
                     }
-                    $scoes->elements[$manifest][$organization][$identifier]->parameters = addslashes($block['attrs']['PARAMETERS']);
+                    $scoes->elements[$manifest][$organization][$identifier]->parameters = $block['attrs']['PARAMETERS'];
                     if (!isset($block['attrs']['IDENTIFIERREF'])) {
                         $scoes->elements[$manifest][$organization][$identifier]->launch = '';
                         $scoes->elements[$manifest][$organization][$identifier]->scormtype = 'asset';
                     } else {
-                        $idref = addslashes($block['attrs']['IDENTIFIERREF']);
+                        $idref = $block['attrs']['IDENTIFIERREF'];
                         $base = '';
                         if (isset($resources[$idref]['XML:BASE'])) {
                             $base = $resources[$idref]['XML:BASE'];
                         }
-                        $scoes->elements[$manifest][$organization][$identifier]->launch = addslashes($base.$resources[$idref]['HREF']);
+                        $scoes->elements[$manifest][$organization][$identifier]->launch = $base.$resources[$idref]['HREF'];
                         if (empty($resources[$idref]['ADLCP:SCORMTYPE'])) {
                             $resources[$idref]['ADLCP:SCORMTYPE'] = 'asset';
                         }
-                        $scoes->elements[$manifest][$organization][$identifier]->scormtype = addslashes($resources[$idref]['ADLCP:SCORMTYPE']);
+                        $scoes->elements[$manifest][$organization][$identifier]->scormtype = $resources[$idref]['ADLCP:SCORMTYPE'];
                     }
 
                     $parent = new stdClass();
@@ -133,7 +133,7 @@ function scorm_get_manifest($blocks,$scoes) {
                     if (!isset($block['tagData'])) {
                         $block['tagData'] = '';
                     }
-                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->title = addslashes($block['tagData']);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->title = $block['tagData'];
                 break;
                 case 'ADLCP:PREREQUISITES':
                     if ($block['attrs']['TYPE'] == 'aicc_script') {
@@ -142,7 +142,7 @@ function scorm_get_manifest($blocks,$scoes) {
                         if (!isset($block['tagData'])) {
                             $block['tagData'] = '';
                         }
-                        $scoes->elements[$manifest][$parent->organization][$parent->identifier]->prerequisites = addslashes($block['tagData']);
+                        $scoes->elements[$manifest][$parent->organization][$parent->identifier]->prerequisites = $block['tagData'];
                     }
                 break;
                 case 'ADLCP:MAXTIMEALLOWED':
@@ -151,7 +151,7 @@ function scorm_get_manifest($blocks,$scoes) {
                     if (!isset($block['tagData'])) {
                         $block['tagData'] = '';
                     }
-                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->maxtimeallowed = addslashes($block['tagData']);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->maxtimeallowed = $block['tagData'];
                 break;
                 case 'ADLCP:TIMELIMITACTION':
                     $parent = array_pop($parents);
@@ -159,7 +159,7 @@ function scorm_get_manifest($blocks,$scoes) {
                     if (!isset($block['tagData'])) {
                         $block['tagData'] = '';
                     }
-                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->timelimitaction = addslashes($block['tagData']);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->timelimitaction = $block['tagData'];
                 break;
                 case 'ADLCP:DATAFROMLMS':
                     $parent = array_pop($parents);
@@ -167,7 +167,7 @@ function scorm_get_manifest($blocks,$scoes) {
                     if (!isset($block['tagData'])) {
                         $block['tagData'] = '';
                     }
-                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->datafromlms = addslashes($block['tagData']);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->datafromlms = $block['tagData'];
                 break;
                 case 'ADLCP:MASTERYSCORE':
                     $parent = array_pop($parents);
@@ -175,7 +175,7 @@ function scorm_get_manifest($blocks,$scoes) {
                     if (!isset($block['tagData'])) {
                         $block['tagData'] = '';
                     }
-                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->masteryscore = addslashes($block['tagData']);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->masteryscore = $block['tagData'];
                 break;
                 case 'ADLCP:COMPLETIONTHRESHOLD':
                     $parent = array_pop($parents);
@@ -183,7 +183,7 @@ function scorm_get_manifest($blocks,$scoes) {
                     if (!isset($block['tagData'])) {
                         $block['tagData'] = '';
                     }
-                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->threshold = addslashes($block['tagData']);
+                    $scoes->elements[$manifest][$parent->organization][$parent->identifier]->threshold = $block['tagData'];
                 break;
                 case 'ADLNAV:PRESENTATION':
                     $parent = array_pop($parents);
@@ -485,7 +485,7 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                         $newitem->organization = $organization;
                         $standarddatas = array('parent', 'identifier', 'launch', 'scormtype', 'title');
                         foreach ($standarddatas as $standarddata) {
-                            $newitem->$standarddata = addslashes($item->$standarddata);
+                            $newitem->$standarddata = $item->$standarddata;
                         }
                         
                         $id = 0; 

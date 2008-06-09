@@ -16,7 +16,7 @@ $ufiltering = new user_filtering();
 // array of bulk operations
 // create the bulk operations form
 $action_form = new user_bulk_action_form();
-if ($data = $action_form->get_data(false)) {
+if ($data = $action_form->get_data()) {
     // check if an action should be performed and do so
     switch ($data->action) {
         case 1: redirect($CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk_confirm.php');
@@ -29,7 +29,7 @@ if ($data = $action_form->get_data(false)) {
 
 $user_bulk_form = new user_bulk_form(null, get_selection_data($ufiltering));
 
-if ($data = $user_bulk_form->get_data(false)) {
+if ($data = $user_bulk_form->get_data()) {
     if (!empty($data->addall)) {
         add_selection_all($ufiltering);
 

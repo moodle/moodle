@@ -42,7 +42,7 @@
         $returnurl = $CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id;
     }
 
-    if ($data = data_submitted(false)) {    // form submitted
+    if ($data = data_submitted()) {    // form submitted
         foreach ((array)$data as $entryid => $rating) {
             if (!is_numeric($entryid)) {
                 continue;

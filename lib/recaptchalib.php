@@ -47,7 +47,7 @@ define("RECAPTCHA_VERIFY_SERVER", "api-verify.recaptcha.net");
 function _recaptcha_qsencode ($data) {
         $req = "";
         foreach ( $data as $key => $value )
-                $req .= $key . '=' . urlencode( stripslashes($value) ) . '&';
+                $req .= $key . '=' . urlencode( $value ) . '&';
 
         // Cut the last '&'
         $req=substr($req,0,strlen($req)-1);

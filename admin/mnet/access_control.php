@@ -80,7 +80,7 @@ if (!empty($action) and confirm_sesskey()) {
 
 
 // process the form results
-if ($form = data_submitted(false) and confirm_sesskey()) {
+if ($form = data_submitted() and confirm_sesskey()) {
 
     // check permissions and verify form input
     if (!has_capability('moodle/user:delete', $sitecontext)) {

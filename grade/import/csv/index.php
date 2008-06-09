@@ -89,7 +89,7 @@ if ($importcode = optional_param('importcode', '', PARAM_FILE)) {
 $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
 
 // if import form is submitted
-if ($formdata = $mform->get_data(false)) {
+if ($formdata = $mform->get_data()) {
 
     // Large files are likely to take their time and memory. Let PHP know
     // that we'll take longer, and that the process should be recycled soon
@@ -151,10 +151,10 @@ if ($formdata = $mform->get_data(false)) {
     $mform2->set_data(array('importcode'=>$importcode, 'id'=>$id));
     $mform2->display();
 
-//} else if (($formdata = data_submitted(false)) && !empty($formdata->map)) {
+//} else if (($formdata = data_submitted()) && !empty($formdata->map)) {
 
 // else if grade import mapping form is submitted
-} else if ($formdata = $mform2->get_data(false)) {
+} else if ($formdata = $mform2->get_data()) {
 
     $importcode = clean_param($formdata->importcode, PARAM_FILE);
     $filename = $CFG->dataroot.'/temp/gradeimport/cvs/'.$USER->id.'/'.$importcode;

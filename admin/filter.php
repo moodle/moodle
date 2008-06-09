@@ -27,7 +27,7 @@
     //======================
 
     // if reset pressed let filter config page handle it
-    if ($config = data_submitted(false) and !$forcereset) {
+    if ($config = data_submitted() and !$forcereset) {
 
         // check session key
         if (!confirm_sesskey()) {

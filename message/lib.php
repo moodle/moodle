@@ -179,7 +179,7 @@ function message_count_messages($messagearray, $field='', $value='') {
 function message_print_search() {
     global $USER;
 
-    if ($frm = data_submitted(false)) {
+    if ($frm = data_submitted()) {
 
         message_print_search_results($frm);
 
@@ -203,7 +203,7 @@ function message_print_search() {
 function message_print_settings() {
     global $USER;
 
-    if ($frm = data_submitted(false)) {
+    if ($frm = data_submitted()) {
 
         $pref = array();
         $pref['message_showmessagewindow'] = (isset($frm->showmessagewindow)) ? '1' : '0';
@@ -985,7 +985,6 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
         }
         if ($emailforced || (time() - $userto->lastaccess) > ((int)$preference->message_emailtimenosee * 60)) { // Long enough
 
-            $message = stripslashes_safe($message);
             $tagline = get_string('emailtagline', 'message', $SITE->shortname);
 
             $messagesubject = preg_replace('/\s+/', ' ', strip_tags($message)); // make sure it's all on one line

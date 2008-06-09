@@ -69,7 +69,7 @@ $editform->set_data(array('courseid' => $courseid, 'seed' => time()));
 if ($editform->is_cancelled()) {
     redirect($returnurl);
 
-} elseif ($data = $editform->get_data(false)) {
+} elseif ($data = $editform->get_data()) {
 
     /// Allocate members from the selected role to groups
     switch ($data->allocateby) {
@@ -190,7 +190,7 @@ if ($editform->is_cancelled()) {
                 $grouping = new object();
                 $grouping->courseid = $COURSE->id;
                 $grouping->name     = $groupingname;
-                if (!$grouping->id = groups_create_grouping(addslashes_recursive($grouping))) {
+                if (!$grouping->id = groups_create_grouping($grouping)) {
                     $error = 'Can not create grouping'; //should not happen
                     $failed = true;
                 }
@@ -210,7 +210,7 @@ if ($editform->is_cancelled()) {
             $newgroup = new object();
             $newgroup->courseid = $data->courseid;
             $newgroup->name     = $group['name'];
-            if (!$groupid = groups_create_group(addslashes_recursive($newgroup))) {
+            if (!$groupid = groups_create_group($newgroup)) {
                 $error = 'Can not create group!'; // should not happen
                 $failed = true;
                 break;

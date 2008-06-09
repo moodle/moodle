@@ -256,7 +256,7 @@ abstract class grade_object {
      */
     public function get_record_data() {
         $data = new object();
-        // we need to do this to prevent infinite loops in addslashes_recursive - grade_item -> category ->grade_item
+
         foreach ($this as $var=>$value) {
             if (in_array($var, $this->required_fields) or array_key_exists($var, $this->optional_fields)) {
                 if (is_object($value) or is_array($value)) {

@@ -222,7 +222,7 @@ function get_recent_enrolments($courseid, $timestart) {
 function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox', $id='', $return=false) {
     $output = '';
     $output .= print_simple_box_start($align, $width, $color, $padding, $class, $id, true);
-    $output .= stripslashes_safe($message);
+    $output .= $message;
     $output .= print_simple_box_end(true);
 
     if ($return) {
@@ -496,4 +496,16 @@ function error ($message, $link='') {
 
     die;
 }
+
+/// removed functions
+function addslashes_object( $dataobject ) {
+    error('addslashes() not available anymore');
+}
+
+function addslashes_recursive($var) {
+    error('addslashes_recursive() not available anymore');
+}
+
+
+
 ?>

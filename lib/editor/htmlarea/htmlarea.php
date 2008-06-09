@@ -1817,8 +1817,8 @@ HTMLArea.prototype._searchReplace = function() {
     var editor = this;
     var selectedtxt = "";
     <?php
-    $strreplaced = addslashes(get_string('itemsreplaced','editor'));
-    $strnotfound = addslashes(get_string('searchnotfound','editor'));
+    $strreplaced = addslashes_js(get_string('itemsreplaced','editor'));
+    $strnotfound = addslashes_js(get_string('searchnotfound','editor'));
     ?>
     var strReplaced = '<?php echo $strreplaced ?>';
     var strNotfound = '<?php echo $strnotfound ?>';
@@ -2076,10 +2076,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
             if (HTMLArea.is_gecko) {
                 if (confirm("<?php
                     $strmoz = get_string('cutpastemozilla','editor');
-                    $strmoz = preg_replace("/[\n|\r]+/", "", $strmoz);
-                    $strmoz = str_replace('<br />', '\\n', $strmoz);
-
-                    echo addslashes($strmoz);
+                    echo addslashes_js($strmoz);
 
                     ?>"))
                     window.open("http://moodle.org/mozillahelp");

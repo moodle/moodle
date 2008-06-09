@@ -140,7 +140,7 @@ class XMLDBAction {
     /// If we are used any dir, save it in the lastused session object
     /// Some actions can use it to perform positioning
         if ($lastused = optional_param ('dir', NULL, PARAM_PATH)) {
-            $SESSION->lastused = stripslashes_safe($lastused);
+            $SESSION->lastused = $lastused;
         }
 
         $this->postaction = optional_param ('postaction', NULL, PARAM_ALPHAEXT);

@@ -83,17 +83,16 @@
             $userresponse->score = 0;
             $userresponse->answer = $useranswer;
             $userresponse->response = "";
-            $userresponse = addslashes(serialize($userresponse));
+            $userresponse = serialize($userresponse);
             
-            $studentanswer = s(stripslashes_safe($useranswer));
+            $studentanswer = s($useranswer);
             break;
          case LESSON_SHORTANSWER :
             if (!$useranswer = $_POST['answer']) {
                 $noanswer = true;
                 break;
             }            
-            $useranswer = s(stripslashes(clean_param($useranswer, PARAM_RAW)));
-            $userresponse = addslashes($useranswer);
+            $useranswer = s(clean_param($useranswer, PARAM_RAW));
             if (!$answers = $DB->get_records("lesson_answers", array("pageid" => $pageid), "id")) {
                 print_error("Continue: No answers found");
             }
@@ -367,7 +366,7 @@
             if (isset($_POST['response']) && is_array($_POST['response'])) { // only arrays should be submitted
                 $response = array();
                 foreach ($_POST['response'] as $key => $value) {
-                    $response[$key] = stripslashes($value);
+                    $response[$key] = $value;
                 }
             } else {
                 $noanswer = true;

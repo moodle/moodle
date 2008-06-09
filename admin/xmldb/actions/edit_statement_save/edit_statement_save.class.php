@@ -64,12 +64,12 @@ class edit_statement_save extends XMLDBAction {
 
     /// Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
 
         $statementparam = strtolower(required_param('statement', PARAM_CLEAN));
         $name = trim(strtolower(required_param('name', PARAM_CLEAN)));
         $comment = required_param('comment', PARAM_CLEAN);
-        $comment = stripslashes_safe($comment);
+        $comment = $comment;
 
         $editeddir =& $XMLDB->editeddirs[$dirpath];
         $structure =& $editeddir->xml_file->getStructure();

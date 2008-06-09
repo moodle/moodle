@@ -197,7 +197,6 @@ define('PARAM_BOOL',     0x0800);
 
 /**
  * PARAM_CLEANHTML - cleans submitted HTML code and removes slashes
- * note: do not forget to addslashes() before storing into database!
  */
 define('PARAM_CLEANHTML',0x1000);
 
@@ -403,12 +402,9 @@ function clean_param($param, $type) {
             if (is_numeric($param)) {
                 return $param;
             }
-            $param = stripslashes($param);   // Needed for kses to work fine
-            $param = clean_text($param);     // Sweep for scripts, etc
-            return addslashes($param);       // Restore original request parameter slashes
+            return clean_text($param);     // Sweep for scripts, etc
 
         case PARAM_CLEANHTML:    // prepare html fragment for display, do not store it into db!!
-            $param = stripslashes($param);   // Remove any slashes
             $param = clean_text($param);     // Sweep for scripts, etc
             return trim($param);
 

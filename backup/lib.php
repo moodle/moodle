@@ -463,7 +463,7 @@
             //Set info_to save
             $info_to_save = "infile";
         } else {
-            //Saving to db, addslashes
+            //Saving to db
             $info_to_save = $info_ser;
         }
 

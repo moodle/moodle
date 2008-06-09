@@ -45,7 +45,7 @@
         }
         $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
         $newpage->contents = trim($form->contents);
-        $newpage->title = addslashes($newpage->title);
+        $newpage->title = $newpage->title;
         $newpageid = $DB->insert_record("lesson_pages", $newpage);
         if (!$newpageid) {
             print_error("Insert page: new page not inserted");
@@ -88,7 +88,7 @@
             }                
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = trim($form->contents);
-            $newpage->title = addslashes($newpage->title);
+            $newpage->title = $newpage->title;
             $newpageid = $DB->insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
                 print_error("Insert page: new first page not inserted");
@@ -117,7 +117,7 @@
             }                
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = trim($form->contents);
-            $newpage->title = addslashes($newpage->title);
+            $newpage->title = $newpage->title;
             $newpageid = $DB->insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
                 print_error("Insert page: first page not inserted");

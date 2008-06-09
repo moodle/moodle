@@ -62,7 +62,7 @@ admin_externalpage_print_header();
 print_heading_with_help($struploadpictures, 'uploadpictures');
 
 $mform = new admin_uploadpicture_form();
-if ($formdata = $mform->get_data(false)) {
+if ($formdata = $mform->get_data()) {
     if (!array_key_exists($userfield, $userfields)) {
         notify(get_string('uploadpicture_baduserfield','admin'));
     } else {

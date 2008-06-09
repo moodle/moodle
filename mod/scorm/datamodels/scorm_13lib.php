@@ -66,7 +66,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $parents[$level]='/';
         foreach ($scoes as $pos=>$sco) {
             $isvisible = false;
-            $sco->title = stripslashes($sco->title);
+            $sco->title = $sco->title;
             if (isset($optionaldatas[$sco->identifier])) {
                 if (!isset($optionaldatas[$sco->identifier]->isvisible) || 
                    (isset($optionaldatas[$sco->identifier]->isvisible) && ($optionaldatas[$sco->identifier]->isvisible == 'true'))) {

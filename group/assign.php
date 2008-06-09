@@ -24,7 +24,7 @@ require_capability('moodle/course:managegroups', $context);
 $returnurl = $CFG->wwwroot.'/group/groupings.php?id='.$courseid;
 
 
-if ($frm = data_submitted(false) and confirm_sesskey()) {
+if ($frm = data_submitted() and confirm_sesskey()) {
 
     if (isset($frm->cancel)) {
         redirect($returnurl);

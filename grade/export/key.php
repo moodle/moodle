@@ -89,7 +89,7 @@ $editform->set_data($key);
 if ($editform->is_cancelled()) {
     redirect($returnurl);
 
-} elseif ($data = $editform->get_data(false)) {
+} elseif ($data = $editform->get_data()) {
 
     if ($data->id) {
         $record = new object();

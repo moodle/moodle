@@ -32,7 +32,7 @@ if (!has_capability('moodle/notes:manage', $context)) {
     print_error('You may not delete this note');
 }
 
-if (data_submitted(false) && confirm_sesskey()) {
+if (data_submitted() && confirm_sesskey()) {
 //if data was submitted and is valid, then delete note
     $returnurl = $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $note->userid;
     if (note_delete($noteid)) {

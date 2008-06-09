@@ -88,7 +88,7 @@ class data_field_menu extends data_field_base {
             return '';
         }
 
-        return choose_from_menu($options, 'f_'.$this->field->id, stripslashes($content), '&nbsp;', '', 0, true);    
+        return choose_from_menu($options, 'f_'.$this->field->id, $content, '&nbsp;', '', 0, true);    
     }
 
      function parse_search_field() {

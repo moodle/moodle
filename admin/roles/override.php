@@ -75,7 +75,7 @@
     $capabilities = fetch_context_capabilities($context);
 
 /// Process incoming role override
-    if ($data = data_submitted(false) and $roleid and confirm_sesskey()) {
+    if ($data = data_submitted() and $roleid and confirm_sesskey()) {
         $allowed_values = array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT);
 
         $localoverrides = $DB->get_records_select('role_capabilities', "roleid = ? AND contextid = ?", array($roleid, $context->id), 

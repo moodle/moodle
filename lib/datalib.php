@@ -15,25 +15,6 @@
  define('LASTACCESS_UPDATE_SECS', 60); /// Number of seconds to wait before
                                        /// updating lastaccess information in DB.
 
-/**
- * Escape all dangerous characters in a data record
- *
- * $dataobject is an object containing needed data
- * Run over each field exectuting addslashes() function
- * to escape SQL unfriendly characters (e.g. quotes)
- * Handy when writing back data read from the database
- *
- * @param $dataobject Object containing the database record
- * @return object Same object with neccessary characters escaped
- */
-function addslashes_object( $dataobject ) {
-    $a = get_object_vars( $dataobject);
-    foreach ($a as $key=>$value) {
-      $a[$key] = addslashes( $value );
-    }
-    return (object)$a;
-}
-
 /// USER DATABASE ////////////////////////////////////////////////
 
 /**

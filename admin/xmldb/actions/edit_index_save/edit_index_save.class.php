@@ -69,24 +69,24 @@ class edit_index_save extends XMLDBAction {
 
     /// Do the job, setting result as needed
 
-        if (!data_submitted('nomatch')) { ///Basic prevention
+        if (!data_submitted()) { ///Basic prevention
             print_error('wrongcall', 'error');
         }
 
     /// Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
 
         $tableparam = strtolower(required_param('table', PARAM_PATH));
         $indexparam = strtolower(required_param('index', PARAM_PATH));
         $name = trim(strtolower(optional_param('name', $indexparam, PARAM_PATH)));
 
         $comment = required_param('comment', PARAM_CLEAN);
-        $comment = trim(stripslashes_safe($comment));
+        $comment = trim($comment);
 
         $unique = required_param('unique', PARAM_INT);
         $fields = required_param('fields', PARAM_CLEAN);
-        $fields = str_replace(' ', '', trim(strtolower(stripslashes_safe($fields))));
+        $fields = str_replace(' ', '', trim(strtolower($fields)));
 
         $editeddir =& $XMLDB->editeddirs[$dirpath];
         $structure =& $editeddir->xml_file->getStructure();

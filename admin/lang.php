@@ -1358,7 +1358,7 @@ function lang_help_save_file($helproot, $file, $content) {
     }
     error_reporting($CFG->debug);
 
-    fwrite($f, stripslashes($content));
+    fwrite($f, $content);
     fclose($f);
 
     // Remove file if its empty

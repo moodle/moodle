@@ -906,9 +906,6 @@ class auth_plugin_mnet extends auth_plugin_base {
         global $MNET_REMOTE_CLIENT, $CFG, $DB;
 
         $CFG->usesid = true;
-        // Addslashes to all usernames, so we can build the query string real
-        // simply with 'implode'
-        $array = array_map('addslashes', $array);
 
         // We don't want to output anything to the client machine
         $start = ob_start();

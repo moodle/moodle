@@ -191,7 +191,7 @@ class qformat_webct extends qformat_default {
 
             if (isset($questiontext) and is_string($questiontext)) {
                 if (ereg("^:",$line)) {
-                    $question->questiontext = addslashes(trim($questiontext));
+                    $question->questiontext = trim($questiontext);
                     unset($questiontext);
                 }
                  else {
@@ -202,7 +202,7 @@ class qformat_webct extends qformat_default {
 
             if (isset($answertext) and is_string($answertext)) {
                 if (ereg("^:",$line)) {
-                    $answertext = addslashes(trim($answertext));
+                    $answertext = trim($answertext);
                     $question->answer[$currentchoice] = $answertext;
                     $question->subanswers[$currentchoice] = $answertext;
                     unset($answertext);
@@ -215,7 +215,7 @@ class qformat_webct extends qformat_default {
 
             if (isset($responsetext) and is_string($responsetext)) {
                 if (ereg("^:",$line)) {
-                    $question->subquestions[$currentchoice] = addslashes(trim($responsetext));
+                    $question->subquestions[$currentchoice] = trim($responsetext);
                     unset($responsetext);
                 }
                  else {
@@ -226,7 +226,7 @@ class qformat_webct extends qformat_default {
 
             if (isset($feedbacktext) and is_string($feedbacktext)) {
                 if (ereg("^:",$line)) {
-                   $question->feedback[$currentchoice] = addslashes(trim($feedbacktext));
+                   $question->feedback[$currentchoice] = trim($feedbacktext);
                     unset($feedbacktext);
                 }
                  else {
@@ -237,7 +237,7 @@ class qformat_webct extends qformat_default {
 
             if (isset($generalfeedbacktext) and is_string($generalfeedbacktext)) {
                 if (ereg("^:",$line)) {
-                   $question->tempgeneralfeedback= addslashes(trim($generalfeedbacktext));
+                   $question->tempgeneralfeedback= trim($generalfeedbacktext);
                     unset($generalfeedbacktext);
                 }
                  else {
@@ -469,7 +469,7 @@ class qformat_webct extends qformat_default {
                     $name = substr($name,0,250)."...";
                     $warnings[] = get_string("questionnametoolong", "quiz", $nLineCounter);
                 }
-                $question->name = addslashes($name);
+                $question->name = $name;
                 continue;
             }
 

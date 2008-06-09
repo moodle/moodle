@@ -1376,7 +1376,7 @@ class assignment_base {
         global $CFG, $USER;
         require_once($CFG->libdir.'/gradelib.php');
 
-        if (!$feedback = data_submitted(false)) {      // No incoming data?
+        if (!$feedback = data_submitted()) {      // No incoming data?
             return false;
         }
 
@@ -1444,7 +1444,7 @@ class assignment_base {
 
         require_once($CFG->libdir.'/gradelib.php');
 
-        if (!$formdata = data_submitted(false)) {
+        if (!$formdata = data_submitted()) {
             return;
         }
 

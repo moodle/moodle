@@ -3,7 +3,7 @@
  * $Id$
  *
  * @author Moxiecode
- * @copyright Copyright © 2004-2007, Moxiecode Systems AB, All rights reserved.
+ * @copyright Copyright ï¿½ 2004-2007, Moxiecode Systems AB, All rights reserved.
  */
 
 class SpellChecker {
@@ -54,7 +54,7 @@ class SpellChecker {
 	 * @param {String} $str Message to send back to user.
 	 */
 	function throwError($str) {
-		die('{"result":null,"id":null,"error":{"errstr":"' . addslashes($str) . '","errfile":"","errline":null,"errcontext":"","level":"FATAL"}}');
+		die('{"result":null,"id":null,"error":{"errstr":"' . addslashes_js($str) . '","errfile":"","errline":null,"errcontext":"","level":"FATAL"}}');
 	}
 }
 

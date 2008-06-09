@@ -310,6 +310,6 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 }
 
 function anydb_escape_string($s) {
-   return(addslashes($s));
+   return($s);
 }
 

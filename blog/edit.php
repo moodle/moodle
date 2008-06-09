@@ -74,7 +74,7 @@ $blogeditform = new blog_edit_form(null, compact('existing', 'sitecontext'));
 
 if ($blogeditform->is_cancelled()){
     redirect($returnurl);
-} else if ($fromform = $blogeditform->get_data(false)){
+} else if ($fromform = $blogeditform->get_data()){
     //save stuff in db
     switch ($action) {
         case 'add':

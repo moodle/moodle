@@ -120,16 +120,16 @@ class hotpot_report extends hotpot_default_report {
 			$table->finish = '<center>'."\n";
 			$table->finish .= '<input type="submit" value="'.get_string("deleteselected").'" />&nbsp;'."\n";
 			if ($abandoned) {
-				$table->finish .= '<input type="button" value="'.get_string('deleteabandoned', 'hotpot').'" onClick="if(deletecheck('."'".addslashes(get_string('deleteabandonedcheck', 'hotpot', $abandoned))."', 'abandoned', true".')) document.getElementById(\'deleteform\').submit();" />'."\n";
+				$table->finish .= '<input type="button" value="'.get_string('deleteabandoned', 'hotpot').'" onClick="if(deletecheck('."'".addslashes_js(get_string('deleteabandonedcheck', 'hotpot', $abandoned))."', 'abandoned', true".')) document.getElementById(\'deleteform\').submit();" />'."\n";
 			}
-			$table->finish .= '<input type="button" value="'.get_string("deleteall").'" onClick="if(deletecheck('."'".addslashes($strdeletecheck)."', 'all', true".'))document.getElementById(\'deleteform\').submit();" />'."\n";
+			$table->finish .= '<input type="button" value="'.get_string("deleteall").'" onClick="if(deletecheck('."'".addslashes_js($strdeletecheck)."', 'all', true".'))document.getElementById(\'deleteform\').submit();" />'."\n";
 			$table->finish .= '</center>'."\n";
 			$table->finish .= '</form>'."\n";
 		}
 		$tables[] = &$table;
 	}
 	function deleteform_javascript() {
-		$strselectattempt = addslashes(get_string('selectattempt','hotpot'));
+		$strselectattempt = addslashes_js(get_string('selectattempt','hotpot'));
 		return <<<END_OF_JAVASCRIPT
 <script type="text/javascript">
 <!--

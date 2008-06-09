@@ -37,7 +37,7 @@ class qformat_aiken extends qformat_default {
             $newlines = explode($endchar,$line);
             $foundQ = 0;
             for ($i=0; $i < count($newlines);$i++){
-                $nowline = addslashes($newlines[$i]);
+                $nowline = $newlines[$i];
                 ///Go through the array and build an object called $question
                 ///When done, add $question to $questions
                 if (strlen($nowline)< 2) {
@@ -66,7 +66,7 @@ class qformat_aiken extends qformat_default {
                 } else {
                     //Must be the first line since no leader
                     $question->qtype = MULTICHOICE;
-                    $question->name = addslashes( substr($nowline,0,50) );
+                    $question->name = substr($nowline,0,50);
                     $question->questiontext = $nowline;
                     $question->single = 1;
                     $question->feedback[] = "";

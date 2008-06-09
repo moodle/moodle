@@ -19,8 +19,6 @@
     $resort       = optional_param('resort', 0, PARAM_BOOL);
     $categorytheme= optional_param('categorytheme', false, PARAM_CLEAN);
 
-    $rename = stripslashes($rename); // TODO: remove soon
-
     if ($CFG->forcelogin) {
         require_login();
     }
@@ -164,7 +162,7 @@
     if ($creatorediting) {
     /// Move a specified course to a new category
 
-        if (!empty($moveto) and $data = data_submitted(false) and confirm_sesskey()) {   // Some courses are being moved
+        if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
 
             // user must have category update in both cats to perform this
             require_capability('moodle/category:update', $context);

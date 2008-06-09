@@ -62,7 +62,7 @@ class save_xml_file extends XMLDBAction {
 
     /// Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
 
     /// Get the edited dir
         if (!empty($XMLDB->editeddirs)) {

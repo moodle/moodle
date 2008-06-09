@@ -65,7 +65,7 @@ class view_structure_php extends XMLDBAction {
     /// Do the job, setting result as needed
     /// Get the dir containing the file
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
 
     /// Get the correct dirs
         if (!empty($XMLDB->dbdirs)) {

@@ -251,14 +251,12 @@ function rollback_sql() {
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     global $DB;
 
-    $dataobject = stripslashes_recursive($dataobject);
     return $DB->insert_record($table, $dataobject, $returnid);
 }
 
 function update_record($table, $dataobject) {
     global $DB;
 
-    $dataobject = stripslashes_recursive($dataobject);
     return $DB->update_record($table, $dataobject, true);
 }
 
@@ -267,7 +265,7 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
 
     $conditions = array();
     if ($field) {
-        $conditions[$field] = stripslashes_recursive($value);
+        $conditions[$field] = $value;
     }
 
     return $DB->get_records($table, $conditions, $sort, $fields, $limitfrom, $limitnum);
@@ -278,13 +276,13 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
 
     $conditions = array();
     if ($field1) {
-        $conditions[$field1] = stripslashes_recursive($value1);
+        $conditions[$field1] = $value1;
     }
     if ($field2) {
-        $conditions[$field2] = stripslashes_recursive($value2);
+        $conditions[$field2] = $value2;
     }
     if ($field3) {
-        $conditions[$field3] = stripslashes_recursive($value3);
+        $conditions[$field3] = $value3;
     }
 
     return $DB->get_record($table, $conditions, $fields);
@@ -295,16 +293,16 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 
     $conditions = array();
     if ($field1) {
-        $conditions[$field1] = stripslashes_recursive($value1);
+        $conditions[$field1] = $value1;
     }
     if ($field2) {
-        $conditions[$field2] = stripslashes_recursive($value2);
+        $conditions[$field2] = $value2;
     }
     if ($field3) {
-        $conditions[$field3] = stripslashes_recursive($value3);
+        $conditions[$field3] = $value3;
     }
 
-    return $DB->set_field($table, $newfield, stripslashes_recursive($newvalue), $conditions);
+    return $DB->set_field($table, $newfield, $newvalue, $conditions);
 }
 
 function count_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
@@ -312,13 +310,13 @@ function count_records($table, $field1='', $value1='', $field2='', $value2='', $
 
     $conditions = array();
     if ($field1) {
-        $conditions[$field1] = stripslashes_recursive($value1);
+        $conditions[$field1] = $value1;
     }
     if ($field2) {
-        $conditions[$field2] = stripslashes_recursive($value2);
+        $conditions[$field2] = $value2;
     }
     if ($field3) {
-        $conditions[$field3] = stripslashes_recursive($value3);
+        $conditions[$field3] = $value3;
     }
 
     return $DB->count_records($table, $conditions);
@@ -329,13 +327,13 @@ function record_exists($table, $field1='', $value1='', $field2='', $value2='', $
 
     $conditions = array();
     if ($field1) {
-        $conditions[$field1] = stripslashes_recursive($value1);
+        $conditions[$field1] = $value1;
     }
     if ($field2) {
-        $conditions[$field2] = stripslashes_recursive($value2);
+        $conditions[$field2] = $value2;
     }
     if ($field3) {
-        $conditions[$field3] = stripslashes_recursive($value3);
+        $conditions[$field3] = $value3;
     }
 
     return $DB->record_exists($table, $conditions);
@@ -350,13 +348,13 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 
     $conditions = array();
     if ($field1) {
-        $conditions[$field1] = stripslashes_recursive($value1);
+        $conditions[$field1] = $value1;
     }
     if ($field2) {
-        $conditions[$field2] = stripslashes_recursive($value2);
+        $conditions[$field2] = $value2;
     }
     if ($field3) {
-        $conditions[$field3] = stripslashes_recursive($value3);
+        $conditions[$field3] = $value3;
     }
 
     return $DB->delete_records($table, $conditions);
@@ -367,13 +365,13 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
 
     $conditions = array();
     if ($field1) {
-        $conditions[$field1] = stripslashes_recursive($value1);
+        $conditions[$field1] = $value1;
     }
     if ($field2) {
-        $conditions[$field2] = stripslashes_recursive($value2);
+        $conditions[$field2] = $value2;
     }
     if ($field3) {
-        $conditions[$field3] = stripslashes_recursive($value3);
+        $conditions[$field3] = $value3;
     }
 
     return $DB->get_field($table, $return, $conditions);

@@ -75,30 +75,30 @@ class edit_key_save extends XMLDBAction {
 
     /// Do the job, setting result as needed
 
-        if (!data_submitted('nomatch')) { ///Basic prevention
+        if (!data_submitted()) { ///Basic prevention
             print_error('wrongcall', 'error');
         }
 
     /// Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
 
         $tableparam = strtolower(required_param('table', PARAM_PATH));
         $keyparam = strtolower(required_param('key', PARAM_PATH));
         $name = trim(strtolower(optional_param('name', $keyparam, PARAM_PATH)));
 
         $comment = required_param('comment', PARAM_CLEAN);
-        $comment = trim(stripslashes_safe($comment));
+        $comment = trim($comment);
 
         $type = required_param('type', PARAM_INT);
         $fields = required_param('fields', PARAM_CLEAN);
-        $fields = str_replace(' ', '', trim(strtolower(stripslashes_safe($fields))));
+        $fields = str_replace(' ', '', trim(strtolower($fields)));
 
         if ($type == XMLDB_KEY_FOREIGN ||
             $type == XMLDB_KEY_FOREIGN_UNIQUE) {
             $reftable = trim(strtolower(required_param('reftable', PARAM_PATH)));
             $reffields= required_param('reffields', PARAM_CLEAN);
-            $reffields = str_replace(' ', '', trim(strtolower(stripslashes_safe($reffields))));
+            $reffields = str_replace(' ', '', trim(strtolower($reffields)));
         }
 
         $editeddir =& $XMLDB->editeddirs[$dirpath];

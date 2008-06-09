@@ -15,7 +15,7 @@
 
     $filename = $CFG->dataroot.'/'.SITEID.'/maintenance.html';
 
-    if ($form = data_submitted(false)) {
+    if ($form = data_submitted()) {
         if (confirm_sesskey()) {
             if ($form->action == "disable") {
                 unlink($filename);

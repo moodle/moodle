@@ -385,36 +385,36 @@ global $HTTPSPAGEREQUIRED;
              . "cannot work with magic_quotes_gpc. Please disable "
              . "magic_quotes_gpc.");
     }
-/// A hack to get around magic_quotes_gpc being turned off
-/// It is strongly recommended to enable "magic_quotes_gpc"!
-    if (!ini_get_bool('magic_quotes_gpc') && !defined('MOODLE_SANE_INPUT') ) {
-        function addslashes_deep($value) {
+/// A hack to get around magic_quotes_gpc being turned on
+/// It is strongly recommended to disable "magic_quotes_gpc"!
+    if (ini_get_bool('magic_quotes_gpc')) {
+        function stripslashes_deep($value) {
             $value = is_array($value) ?
-                    array_map('addslashes_deep', $value) :
-                    addslashes($value);
+                    array_map('stripslashes_deep', $value) :
+                    stripslashes($value);
             return $value;
         }
-        $_POST = array_map('addslashes_deep', $_POST);
-        $_GET = array_map('addslashes_deep', $_GET);
-        $_COOKIE = array_map('addslashes_deep', $_COOKIE);
-        $_REQUEST = array_map('addslashes_deep', $_REQUEST);
+        $_POST = array_map('stripslashes_deep', $_POST);
+        $_GET = array_map('stripslashes_deep', $_GET);
+        $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
+        $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
         if (!empty($_SERVER['REQUEST_URI'])) {
-            $_SERVER['REQUEST_URI'] = addslashes($_SERVER['REQUEST_URI']);
+            $_SERVER['REQUEST_URI'] = stripslashes($_SERVER['REQUEST_URI']);
         }
         if (!empty($_SERVER['QUERY_STRING'])) {
-            $_SERVER['QUERY_STRING'] = addslashes($_SERVER['QUERY_STRING']);
+            $_SERVER['QUERY_STRING'] = stripslashes($_SERVER['QUERY_STRING']);
         }
         if (!empty($_SERVER['HTTP_REFERER'])) {
-            $_SERVER['HTTP_REFERER'] = addslashes($_SERVER['HTTP_REFERER']);
+            $_SERVER['HTTP_REFERER'] = stripslashes($_SERVER['HTTP_REFERER']);
         }
        if (!empty($_SERVER['PATH_INFO'])) {
-            $_SERVER['PATH_INFO'] = addslashes($_SERVER['PATH_INFO']);
+            $_SERVER['PATH_INFO'] = stripslashes($_SERVER['PATH_INFO']);
         }
         if (!empty($_SERVER['PHP_SELF'])) {
-            $_SERVER['PHP_SELF'] = addslashes($_SERVER['PHP_SELF']);
+            $_SERVER['PHP_SELF'] = stripslashes($_SERVER['PHP_SELF']);
         }
         if (!empty($_SERVER['PATH_TRANSLATED'])) {
-            $_SERVER['PATH_TRANSLATED'] = addslashes($_SERVER['PATH_TRANSLATED']);
+            $_SERVER['PATH_TRANSLATED'] = stripslashes($_SERVER['PATH_TRANSLATED']);
         }
     }
 

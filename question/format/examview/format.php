@@ -40,7 +40,7 @@ class qformat_examview extends qformat_default {
     function unxmlise( $xml ) {
         // if it's not an array then it's probably just data
         if (!is_array($xml)) {
-            $text = s(addslashes($xml));
+            $text = s($xml);
         }
         else {
             // otherwise parse the array
@@ -101,17 +101,17 @@ class qformat_examview extends qformat_default {
         }
         foreach($this->matching_questions as $match_group) {
             $question = $this->defaultquestion();
-            $htmltext = s(addslashes($match_group->questiontext));
+            $htmltext = s($match_group->questiontext);
             $question->questiontext = $htmltext;
             $question->name = $question->questiontext;
             $question->qtype = MATCH;
             $question->subquestions = array();
             $question->subanswers = array();
             foreach($match_group->subquestions as $key => $value) {
-                $htmltext = s(addslashes($value));
+                $htmltext = s($value);
                 $question->subquestions[] = $htmltext;
 
-                $htmltext = s(addslashes($match_group->subanswers[$key]));
+                $htmltext = s($match_group->subanswers[$key]);
                 $question->subanswers[] = $htmltext;
             }
             $questions[] = $question;
@@ -245,7 +245,7 @@ class qformat_examview extends qformat_default {
         foreach($answers as $key => $value) {
             $value = trim($value);
             if (strlen($value) > 0) {
-                $question->answer[$key] = addslashes($value);
+                $question->answer[$key] = $value;
                 $question->fraction[$key] = 1;
                 $question->feedback[$key] = "Correct";
             }

@@ -634,7 +634,7 @@ class default_questiontype {
         if ($question->options->answers) {
             foreach ($question->options->answers as $answer) {
                 if (((int) $answer->fraction) === 1) {
-                    return array('' => addslashes($answer->answer));
+                    return array('' => $answer->answer);
                 }
             }
         }
@@ -691,7 +691,7 @@ class default_questiontype {
     // ULPGC ecastro
     function get_actual_response($question, $state) {
        if (!empty($state->responses)) {
-           $responses[] = stripslashes($state->responses['']);
+           $responses[] = $state->responses[''];
        } else {
            $responses[] = '';
        }
@@ -851,7 +851,7 @@ class default_questiontype {
             $grade .= $question->maxgrade;
         }
 
-        $comment = stripslashes($state->manualcomment);
+        $comment = $state->manualcomment;
         $commentlink = '';
 
         if (isset($options->questioncommentlink) && $context && has_capability('mod/quiz:grade', $context)) {

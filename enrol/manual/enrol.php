@@ -146,7 +146,7 @@ function check_entry($form, $course) {
 
     $groupid = $this->check_group_entry($course->id, $form->password);
 
-    if ((stripslashes($form->password) == $course->password) or ($groupid !== false) ) {
+    if (($form->password == $course->password) or ($groupid !== false) ) {
 
         if (isguestuser()) { // only real user guest, do not use this for users with guest role
             $USER->enrolkey[$course->id] = true;
@@ -191,7 +191,7 @@ function check_group_entry ($courseid, $password) {
 
     if ($groups = groups_get_all_groups($courseid)) {
         foreach ($groups as $group) {
-            if ( !empty($group->enrolmentkey) and (stripslashes($password) == $group->enrolmentkey) ) {
+            if ( !empty($group->enrolmentkey) and ($password == $group->enrolmentkey) ) {
                 return $group->id;
             }
         }

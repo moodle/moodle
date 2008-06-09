@@ -54,7 +54,7 @@ if ($mform->is_cancelled()){
     } else {
         redirect($CFG->wwwroot.'/course/category.php?categoryedit=on&id='.$category->id);
     } 
-} else if (($data = $mform->get_data(false))) {
+} else if (($data = $mform->get_data())) {
     $newcategory = new stdClass();
     $newcategory->name        = $data->name;
     $newcategory->description = $data->description;

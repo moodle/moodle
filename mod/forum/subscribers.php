@@ -93,7 +93,7 @@
     $strsubscribers = get_string("subscribers", "forum");
     $strforums      = get_string("forums", "forum");
 
-    if ($frm = data_submitted(false)) {
+    if ($frm = data_submitted()) {
 
 /// A form was submitted so process the input
 

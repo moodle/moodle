@@ -102,7 +102,7 @@
     }
 
     // remove slashes added by lib/setup.php
-    $attempt->details = stripslashes($attempt->details);
+    $attempt->details = $attempt->details;
 
     // add details of this attempt
     hotpot_add_attempt_details($attempt);

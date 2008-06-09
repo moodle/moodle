@@ -48,7 +48,7 @@ class user_filtering {
 
         // fist the new filter form
         $this->_addform = new user_add_filter_form($baseurl, array('fields'=>$this->_fields, 'extraparams'=>$extraparams));
-        if ($adddata = $this->_addform->get_data(false)) {
+        if ($adddata = $this->_addform->get_data()) {
             foreach($this->_fields as $fname=>$field) {
                 $data = $field->check_data($adddata);
                 if ($data === false) {
@@ -66,7 +66,7 @@ class user_filtering {
 
         // now the active filters
         $this->_activeform = new user_active_filter_form($baseurl, array('fields'=>$this->_fields, 'extraparams'=>$extraparams));
-        if ($adddata = $this->_activeform->get_data(false)) {
+        if ($adddata = $this->_activeform->get_data()) {
             if (!empty($adddata->removeall)) {
                 $SESSION->user_filtering = array();
 

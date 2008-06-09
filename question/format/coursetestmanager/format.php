@@ -67,18 +67,18 @@ class qformat_coursetestmanager extends qformat_default {
 
             echo "<tr><td align=\"right\">";
             echo "What is the hostname or IP address of the ODBC Socket Server:</td><td>";
-            echo " <input name=\"hostname\" type=\"text\" size=\"50\" value=\"".stripslashes($hostname_access_error)."\" />";
+            echo " <input name=\"hostname\" type=\"text\" size=\"50\" value=\"".$hostname_access_error."\" />";
             echo " <input name=\"filename\" type=\"hidden\" value=\"".$filename."\" />";
             echo " <input name=\"category\" type=\"hidden\" value=\"".$category->id."\" />";
             echo " <input name=\"format\" type=\"hidden\" value=\"".$form->format."\" />";
             echo "</td><td>&nbsp;</td></tr>";
             echo "<tr><td align=\"right\">";
             echo "What is the location of the database (.mdb file) on the Socket Server:</td><td>";
-            echo " <input name=\"mdbpath\" type=\"text\" size=\"50\" value=\"".stripslashes($mdbpath)."\" />";
+            echo " <input name=\"mdbpath\" type=\"text\" size=\"50\" value=\"".$mdbpath."\" />";
             echo "</td><td>&nbsp;</td></tr>";
             echo "<tr><td align=\"right\">";
             echo "What is the location of the system database (System.mda file) on the Socket Server:</td><td>";
-            echo " <input name=\"mdapath\" type=\"text\" size=\"50\" value=\"".stripslashes($mdapath)."\" />";
+            echo " <input name=\"mdapath\" type=\"text\" size=\"50\" value=\"".$mdapath."\" />";
             echo "</td><td>&nbsp;</td></tr>";
             echo "<tr><td>&nbsp;</td><td>";
             echo " <input type=\"submit\" name=\"save\" value=\"Connect to Server\" />";
@@ -138,9 +138,9 @@ class qformat_coursetestmanager extends qformat_default {
             echo " <input name=\"category\" type=\"hidden\" value=\"".$category->id."\" />";
             echo " <input name=\"format\" type=\"hidden\" value=\"".$form->format."\" />";
             if (PHP_OS == "Linux") {
-                echo " <input name=\"hostname\" type=\"hidden\" value=\"".stripslashes(trim($hostname))."\" />";
-                echo " <input name=\"mdbpath\" type=\"hidden\" value=\"".stripslashes($mdbpath)."\" />";
-                echo " <input name=\"mdapath\" type=\"hidden\" value=\"".stripslashes($mdapath)."\" />";
+                echo " <input name=\"hostname\" type=\"hidden\" value=\"".trim($hostname)."\" />";
+                echo " <input name=\"mdbpath\" type=\"hidden\" value=\"".$mdbpath."\" />";
+                echo " <input name=\"mdapath\" type=\"hidden\" value=\"".$mdapath."\" />";
             }
             echo "</td><td>&nbsp;</td>";
             echo "</tr><tr><td>&nbsp;</td><td>";
@@ -186,14 +186,14 @@ class qformat_coursetestmanager extends qformat_default {
                 case 1:
                     $question->qtype = MULTICHOICE; // MULTICHOICE, SHORTANSWER, TRUEFALSE
         //          echo "<pre>";echo htmlspecialchars($qrec[2]); echo "</pre>";
-                    $question->questiontext = addslashes(trim($qrec[2]));
+                    $question->questiontext = trim($qrec[2]);
         //          echo "<pre>";echo $question->questiontext; echo "</pre>";
                     $question->name = preg_replace("/<br />/", "", $question->questiontext);
                     $question->single = 1;  // Only one answer is allowed -- used for multiple choicers
                     $fractionset = 0;
                     for ($i=4;$i<=7;$i++) {
                         if ($qrec[$i] != "") {
-                            $question->answer[$i-3]=addslashes($qrec[$i]);
+                            $question->answer[$i-3]=$qrec[$i];
                             if ($qrec[8] == $i-3) {  // if this is the index of CorrectAnswer
                                 $question->fraction[$i-3] = 1;
                                 $fractionset = 1;
@@ -209,7 +209,7 @@ class qformat_coursetestmanager extends qformat_default {
                 break;
                 case 2:  // TRUE FALSE
                     $question->qtype = TRUEFALSE;
-                    $question->questiontext = addslashes(trim($qrec[2]));
+                    $question->questiontext = trim($qrec[2]);
                     $question->name = preg_replace("/<br />/", "", $question->questiontext);
                     // for TF, $question->answer should be 1 for true, 0 for false
                     if ($qrec[8] == "T") {
@@ -223,7 +223,7 @@ class qformat_coursetestmanager extends qformat_default {
                 break;
                 case 3:
                     $question->qtype = SHORTANSWER;
-                    $question->questiontext = addslashes(trim($qrec[2]));
+                    $question->questiontext = trim($qrec[2]);
         //          echo "<pre>";echo $question->questiontext; echo "</pre>";
                     $question->name = preg_replace("/<br />/", "", $question->questiontext);
                     $question->usecase=0;  // Ignore case -- for SHORT ANSWER questions
@@ -231,7 +231,7 @@ class qformat_coursetestmanager extends qformat_default {
                     $question->answer[0]=" ";
                     $question->fraction[0]=1;
                     for ($i=0;$i<count($answers);$i++) {
-                        $question->answer[$i] = addslashes(trim($answers[$i]));
+                        $question->answer[$i] = trim($answers[$i]);
                         $question->feedback[$i] = $ref;
                         $question->fraction[$i] = 1; // 1 for 100%, 0 for none or somewhere in between
                     }
@@ -257,7 +257,7 @@ class qformat_coursetestmanager extends qformat_default {
         }
         foreach ($questions as $question) {   // Process and store each question
             $count++;
-            echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+            echo "<hr /><p><b>$count</b>. ".$question->questiontext."</p>";
             $question->category = $this->category->id;
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
             $question->createdby = $USER->id;

@@ -655,7 +655,7 @@ function process_person_tag($tagcontents){
             $person->confirmed = 1;
             $person->timemodified = time();
             $person->mnethostid = $CFG->mnet_localhost_id;
-            if($id = $DB->insert_record('user', addslashes_object($person))){
+            if($id = $DB->insert_record('user', $person)){
     /*
     Photo processing is deactivated until we hear from Moodle dev forum about modification to gdlib.
 

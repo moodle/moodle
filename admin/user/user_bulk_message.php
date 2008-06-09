@@ -43,7 +43,7 @@ $msgform = new user_message_form('user_bulk_message.php');
 if ($msgform->is_cancelled()) {
     redirect($return);
 
-} else if ($formdata = $msgform->get_data(false)) {
+} else if ($formdata = $msgform->get_data()) {
     $options = new object();
     $options->para     = false;
     $options->newlines = true;

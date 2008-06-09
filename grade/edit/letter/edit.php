@@ -80,7 +80,7 @@ $mform->set_data($data);
 if ($mform->is_cancelled()) {
     redirect($returnurl);
 
-} else if ($data = $mform->get_data(false)) {
+} else if ($data = $mform->get_data()) {
     if (!$admin and empty($data->override)) {
         $DB->delete_records('grade_letters', array('contextid' => $context->id));
         redirect($returnurl);

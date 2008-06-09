@@ -14,7 +14,7 @@
  
     $id = required_param('id', PARAM_INT);  //the POST dominated the GET
     
-    $formdata = data_submitted('nomatch');
+    $formdata = data_submitted();
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
@@ -177,7 +177,7 @@
         
         foreach($items as $item) {
             $worksheet->setFormat('<l><f><ru2>');
-            $worksheet->write_string($rowOffset, $colOffset, stripslashes_safe($item->name));
+            $worksheet->write_string($rowOffset, $colOffset, $item->name);
             $colOffset++;
         }
 

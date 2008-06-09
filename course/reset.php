@@ -32,7 +32,7 @@ $mform = new course_reset_form();
 if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot.'/course/view.php?id='.$id);
 
-} else if ($data = $mform->get_data(false)) { // no magic quotes
+} else if ($data = $mform->get_data()) { // no magic quotes
 
     if (isset($data->selectdefault)) {
         $_POST = array();

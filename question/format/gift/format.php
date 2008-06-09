@@ -59,7 +59,7 @@ class qformat_gift extends qformat_default {
         if (strpos($answer,"#") > 0){
             $hashpos = strpos($answer,"#");
             $comment = substr($answer, $hashpos+1);
-            $comment = addslashes(trim($this->escapedchar_post($comment)));
+            $comment = trim($this->escapedchar_post($comment));
             $answer  = substr($answer, 0, $hashpos);
         } else {
             $comment = " ";
@@ -159,7 +159,7 @@ class qformat_gift extends qformat_default {
                 // name will be assigned after processing question text below
             } else {
                 $questionname = substr($text, 0, $namefinish);
-                $question->name = addslashes(trim($this->escapedchar_post($questionname)));
+                $question->name = trim($this->escapedchar_post($questionname));
                 $text = trim(substr($text, $namefinish+2)); // Remove name from text
             }
         } else {
@@ -212,7 +212,7 @@ class qformat_gift extends qformat_default {
             }          
         }
         $question->questiontextformat = $questiontextformat;
-        $question->questiontext = addslashes(trim($this->escapedchar_post($questiontext)));
+        $question->questiontext = trim($this->escapedchar_post($questiontext));
 
         // set question name if not already set
         if ($question->name === false) {
@@ -325,7 +325,7 @@ class qformat_gift extends qformat_default {
                     }
                     $question->fraction[$key] = $answer_weight;
                     $question->feedback[$key] = $this->commentparser($answer); // commentparser also removes comment from $answer
-                    $question->answer[$key]   = addslashes($this->escapedchar_post($answer));
+                    $question->answer[$key]   = $this->escapedchar_post($answer);
                     $question->correctfeedback = '';
                     $question->partiallycorrectfeedback = '';
                     $question->incorrectfeedback = '';
@@ -360,8 +360,8 @@ class qformat_gift extends qformat_default {
                     }
 
                     $marker = strpos($answer,"->");
-                    $question->subquestions[$key] = addslashes(trim($this->escapedchar_post(substr($answer, 0, $marker))));
-                    $question->subanswers[$key]   = addslashes(trim($this->escapedchar_post(substr($answer, $marker+2))));
+                    $question->subquestions[$key] = trim($this->escapedchar_post(substr($answer, 0, $marker)));
+                    $question->subanswers[$key]   = trim($this->escapedchar_post(substr($answer, $marker+2)));
 
                 }  // end foreach answer
     
@@ -415,7 +415,7 @@ class qformat_gift extends qformat_default {
                     }
                     $question->fraction[$key] = $answer_weight;
                     $question->feedback[$key] = $this->commentparser($answer); //commentparser also removes comment from $answer
-                    $question->answer[$key]   = addslashes($this->escapedchar_post($answer));
+                    $question->answer[$key]   = $this->escapedchar_post($answer);
                 }     // end foreach
 
                 //$question->usecase = 0;  // Ignore case

@@ -141,7 +141,7 @@
 
 /// Process incoming data for adding/updating records
 
-    if ($datarecord = data_submitted(false) and confirm_sesskey()) {
+    if ($datarecord = data_submitted() and confirm_sesskey()) {
 
         $ignorenames = array('MAX_FILE_SIZE','sesskey','d','rid','saveandview','cancel');  // strings to be ignored in input data
 

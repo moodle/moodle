@@ -17,8 +17,6 @@ $groupid    = required_param('group', PARAM_INT);
 $searchtext = optional_param('searchtext', '', PARAM_RAW); // search string
 $showall    = optional_param('showall', 0, PARAM_BOOL);
 
-$searchtext = stripslashes($searchtext); // TODO: remove soon
-
 if ($showall) {
     $searchtext = '';
 }

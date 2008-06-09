@@ -125,7 +125,7 @@ if ($formdata = $mform->is_cancelled()) {
     $cir->cleanup(true);
     redirect($returnurl);
 
-} else if ($formdata = $mform->get_data(false)) { // no magic quotes here!!!
+} else if ($formdata = $mform->get_data()) {
     // Print the header
     admin_externalpage_print_header();
     print_heading(get_string('uploadusersresult', 'admin'));

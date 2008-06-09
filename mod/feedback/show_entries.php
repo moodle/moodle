@@ -64,7 +64,7 @@
 
     require_login($course->id, true, $cm);
     
-    if(($formdata = data_submitted('nomatch')) AND !confirm_sesskey()) {
+    if(($formdata = data_submitted()) AND !confirm_sesskey()) {
         error('no sesskey defined');
     }
     

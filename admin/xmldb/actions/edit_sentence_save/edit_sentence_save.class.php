@@ -67,15 +67,15 @@ class edit_sentence_save extends XMLDBAction {
 
     /// Get parameters
         $dirpath = required_param('dir', PARAM_PATH);
-        $dirpath = $CFG->dirroot . stripslashes_safe($dirpath);
+        $dirpath = $CFG->dirroot . $dirpath;
 
         $statementparam = strtolower(required_param('statement', PARAM_CLEAN));
         $sentenceparam = strtolower(required_param('sentence', PARAM_ALPHANUM));
 
         $fields = required_param('fields', PARAM_CLEAN);
-        $fields = trim(stripslashes_safe($fields));
+        $fields = trim($fields);
         $values = required_param('values', PARAM_CLEAN);
-        $values = trim(stripslashes_safe($values));
+        $values = trim($values);
 
         $editeddir =& $XMLDB->editeddirs[$dirpath];
         $structure =& $editeddir->xml_file->getStructure();

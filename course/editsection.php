@@ -20,7 +20,7 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted(false) and confirm_sesskey()) {
+    if ($form = data_submitted() and confirm_sesskey()) {
 
         $timenow = time();
 

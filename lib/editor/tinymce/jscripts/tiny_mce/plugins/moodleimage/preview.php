@@ -11,7 +11,7 @@
     @header('Content-Type: text/html; charset=utf-8');
 
 
-    $imagetag = clean_text('<img src="'.htmlSpecialChars(stripslashes_safe($imageurl)).'" alt="" />');
+    $imagetag = clean_text('<img src="'.htmlSpecialChars($imageurl).'" alt="" />');
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"

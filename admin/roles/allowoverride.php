@@ -20,7 +20,7 @@
 
     $roles = get_all_roles();
 
-    if ($grant = data_submitted(false)) {
+    if ($grant = data_submitted()) {
 
         foreach ($grant as $grole => $val) {
             if ($grole == 'dummy') {

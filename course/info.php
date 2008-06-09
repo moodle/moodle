@@ -8,8 +8,6 @@
     $id   = optional_param('id', false, PARAM_INT); // Course id
     $name = optional_param('name', false, PARAM_RAW); // Course short name
 
-    $name = stripslashes($name); // TODO: remove soon
-
     if (!$id and !$name) {
         print_error("unspecifycourseid");
     }

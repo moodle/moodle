@@ -67,7 +67,7 @@ $mform->set_data(array('courseid'=>$grade_item->courseid, 'calculation'=>$calcul
 
 $errors = array();
 
-if ($data = $mform->get_data(false)) {
+if ($data = $mform->get_data()) {
     $calculation = calc_formula::unlocalize($data->calculation);
     $grade_item->set_calculation($calculation);
 
@@ -88,7 +88,7 @@ if ($data = $mform->get_data(false)) {
                 continue;
             }
 
-            if (empty($gi->idnumber) and !$gi->add_idnumber(stripslashes($idnumbers[$gi->id]))) {
+            if (empty($gi->idnumber) and !$gi->add_idnumber($idnumbers[$gi->id])) {
                 $errors[$giid] = get_string('error');
                 continue;
             }

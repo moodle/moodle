@@ -206,7 +206,7 @@ class question_shortanswer_qtype extends default_questiontype {
     function test_response(&$question, $state, $answer) {
         // Trim the response before it is saved in the database. See MDL-10709
         $state->responses[''] = trim($state->responses['']);
-        return $this->compare_string_with_wildcard(stripslashes_safe($state->responses['']),
+        return $this->compare_string_with_wildcard($state->responses[''],
                 $answer->answer, !$question->options->usecase);
     }
 
@@ -235,7 +235,7 @@ class question_shortanswer_qtype extends default_questiontype {
     function get_correct_responses(&$question, &$state) {
         $response = parent::get_correct_responses($question, $state);
         if (is_array($response)) {
-            $response[''] = addslashes(str_replace('\*', '*', stripslashes($response[''])));
+            $response[''] = str_replace('\*', '*', $response['']);
         }
         return $response;
     }

@@ -688,7 +688,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $course->fullname = $course_header->course_fullname;
             $course->shortname = $course_header->course_shortname;
             $course->idnumber = $course_header->course_idnumber;
-            $course->idnumber = ''; //addslashes($course_header->course_idnumber); // we don't want this at all.
+            $course->idnumber = ''; //$course_header->course_idnumber; // we don't want this at all.
             $course->summary = backup_todb($course_header->course_summary);
             $course->format = $course_header->course_format;
             $course->showgrades = $course_header->course_showgrades;
@@ -701,7 +701,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $course->startdate = $course_header->course_startdate;
             $course->startdate += $restore->course_startdateoffset;
             $course->numsections = $course_header->course_numsections;
-            //$course->showrecent = addslashes($course_header->course_showrecent);   INFO: This is out in 1.3
+            //$course->showrecent = $course_header->course_showrecent;   INFO: This is out in 1.3
             $course->maxbytes = $course_header->course_maxbytes;
             $course->showreports = $course_header->course_showreports;
             if (isset($course_header->course_groupmode)) {
@@ -2491,7 +2491,6 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     //Unset the id because it's going to be inserted with a new one
                     unset ($user->id);
                     // relink the descriptions
-                    $user->description = stripslashes($user->description);
 
                 /// Disable pictures based on global setting or existing empty value (old backups can contain wrong empties)
                     if (!empty($CFG->disableuserimages) || empty($user->picture)) {
@@ -8205,7 +8204,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
         fwrite ($restorelog_file,"<title>".$course_header->course_shortname." Restored </title>");
         fwrite ($restorelog_file,"</head><body><br/><h1>The following changes were made during the Restoration of this Course.</h1><br/><br/>");
         fwrite ($restorelog_file,"The Course ShortName is now - ".$course_header->course_shortname." The FullName is now - ".$course_header->course_fullname."<br/><br/>");
-        $startdate = addslashes($course_header->course_startdate);
+        $startdate = $course_header->course_startdate;
         $date = usergetdate($startdate);
         fwrite ($restorelog_file,"The Originating Courses Start Date was " .$date['weekday'].", ".$date['mday']." ".$date['month']." ".$date['year']."");
         $startdate += $restore->course_startdateoffset;

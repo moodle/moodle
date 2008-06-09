@@ -148,7 +148,7 @@ $defaultfiletypes = "PDF,TXT,HTML,PPT,XML,DOC,HTM";
         <td valign="top" align="left">
             <input id="block_search_word_to_text_env" type="text" size="60" name="block_search_word_to_text_env" value="<?php 
             if(isset($CFG->block_search_word_to_text_env)) {
-                echo stripslashes($CFG->block_search_word_to_text_env);
+                echo $CFG->block_search_word_to_text_env;
             } else {
                 if ($CFG->ostype == 'WINDOWS'){
                     p("HOME={$CFG->dirroot}\\lib\\antiword\\win32");
@@ -196,7 +196,7 @@ if (!empty($types)){
             <input id="block_search_<?php p($type) ?>_to_text_env" type="text" size="60" name="block_search_<?php p($type) ?>_to_text_env" value="<?php 
             $propname = "block_search_{$type}_to_text_env";
             if(isset($CFG->$propname)) {
-                echo stripslashes($CFG->$propname);
+                echo $CFG->$propname;
             } ?>"/><br/><br/>
         </td>
     </tr>

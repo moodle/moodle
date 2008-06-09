@@ -36,7 +36,7 @@
 
 /// Clean up the message
 
-    $chat_message = clean_text(stripslashes($chat_message), FORMAT_MOODLE);  // Strip bad tags
+    $chat_message = clean_text($chat_message, FORMAT_MOODLE);  // Strip bad tags
 
 /// Add the message to the database
 

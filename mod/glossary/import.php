@@ -194,12 +194,12 @@
             // Inserting the entries
             $xmlentry = $xmlentries[$i];
             unset($newentry);
-            $newentry->concept = trim(addslashes($xmlentry['#']['CONCEPT'][0]['#']));
-            $newentry->definition = trusttext_strip(addslashes($xmlentry['#']['DEFINITION'][0]['#']));
+            $newentry->concept = trim($xmlentry['#']['CONCEPT'][0]['#']);
+            $newentry->definition = trusttext_strip($xmlentry['#']['DEFINITION'][0]['#']);
             if ( isset($xmlentry['#']['CASESENSITIVE'][0]['#']) ) {
-                $newentry->casesensitive    = addslashes($xmlentry['#']['CASESENSITIVE'][0]['#']);
+                $newentry->casesensitive = $xmlentry['#']['CASESENSITIVE'][0]['#'];
             } else {
-                $newentry->casesensitive      = $CFG->glossary_casesensitive;
+                $newentry->casesensitive = $CFG->glossary_casesensitive;
             }
 
             $permissiongranted = 1;

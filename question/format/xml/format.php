@@ -79,7 +79,7 @@ class qformat_xml extends qformat_default {
             return '';
         }
         $data = $text[0]['#'];
-        return addslashes(trim( $data ));
+        return trim($data);
     }
 
     /**
@@ -108,7 +108,7 @@ class qformat_xml extends qformat_default {
             if (!is_string($xml)) {
                 $this->error( 'Invalid xml file - string expected (use CDATA?)' );
             }
-            $xml = addslashes( trim( $xml ) );
+            $xml = trim( $xml );
         }
 
         return $xml;
@@ -135,7 +135,7 @@ class qformat_xml extends qformat_default {
         $image = $this->getpath( $question, array('#','image',0,'#'), $qo->image );
         $image_base64 = $this->getpath( $question, array('#','image_base64','0','#'),'' );
         if (!empty($image_base64)) {
-            $qo->image = $this->importimagefile( $image, stripslashes($image_base64) );
+            $qo->image = $this->importimagefile( $image, $image_base64);
         }
         $qo->generalfeedback = $this->getpath( $question, array('#','generalfeedback',0,'#','text',0,'#'), $qo->generalfeedback, true );
         $qo->defaultgrade = $this->getpath( $question, array('#','defaultgrade',0,'#'), $qo->defaultgrade );
@@ -755,7 +755,7 @@ class qformat_xml extends qformat_default {
             return '';
         }
 
-        $content = "    <image_base64>\n".addslashes(base64_encode( $binary ))."\n".
+        $content = "    <image_base64>\n".base64_encode( $binary )."\n".
             "\n    </image_base64>\n";
         return $content;
     }
@@ -922,7 +922,7 @@ class qformat_xml extends qformat_default {
         case MULTIANSWER:
             $a_count=1;
             foreach($question->options->questions as $question) {
-                $thispattern = addslashes("{#".$a_count."}");
+                $thispattern = addslashes("{#".$a_count."}"); // TODO: fix this addslashes
                 $thisreplace = $question->questiontext;
                 $expout=ereg_replace($thispattern, $thisreplace, $expout );
                 $a_count++;

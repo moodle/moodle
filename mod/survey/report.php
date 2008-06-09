@@ -11,8 +11,6 @@
     $student = optional_param('student', 0, PARAM_INT);   // Student ID
     $notes   = optional_param('notes', '', PARAM_RAW);    // Save teachers notes
 
-    $notes = stripslashes($notes); // TODO: remove soon
-
     $qids = explode(',', $qid);
     $qids = clean_param($qids, PARAM_INT);
     $qid = implode (',', $qids);

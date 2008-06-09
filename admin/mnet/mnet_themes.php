@@ -65,7 +65,7 @@ ini_set('display_errors', true);
                 $report = array('This theme is not installed!'.'3', 'errorbox');
             } else {
                 $mnet_peer->force_theme = 1;
-                $mnet_peer->theme = addslashes($choose);
+                $mnet_peer->theme = $choose;
                 if ($mnet_peer->commit()) {
                     $report = array(get_string('themesaved').'1', 'informationbox');
                 } else {

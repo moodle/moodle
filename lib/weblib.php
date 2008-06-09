@@ -449,20 +449,14 @@ class moodle_url {
  *
  * Checks that submitted POST data exists and returns it as object.
  *
- * @param bool slashes TEMPORARY - false if strip magic quotes
  * @return mixed false or object
  */
-function data_submitted($slashes=true) {
+function data_submitted() {
 
     if (empty($_POST)) {
         return false;
     } else {
-        if ($slashes===false) {
-            $post = stripslashes_recursive($_POST); // temporary hack before magic quotes removal
-            return (object)$post;
-        } else {
-            return (object)$_POST;
-        }
+        return (object)$_POST;
     }
 }
 
@@ -533,41 +527,6 @@ function stripslashes_recursive($var) {
         $new_var = stripslashes($var);
 
     } else {
-        $new_var = $var;
-    }
-
-    return $new_var;
-}
-
-/**
- * Recursive implementation of addslashes()
- *
- * This function will allow you to add the slashes from a variable.
- * If the variable is an array or object, slashes will be added
- * to the items (or properties) it contains, even if they are arrays
- * or objects themselves.
- *
- * @param mixed the variable to add slashes from
- * @return mixed
- */
-function addslashes_recursive($var) {
-    if (is_object($var)) {
-        $new_var = new object();
-        $properties = get_object_vars($var);
-        foreach($properties as $property => $value) {
-            $new_var->$property = addslashes_recursive($value);
-        }
-
-    } else if (is_array($var)) {
-        $new_var = array();
-        foreach($var as $property => $value) {
-            $new_var[$property] = addslashes_recursive($value);
-        }
-
-    } else if (is_string($var)) {
-        $new_var = addslashes($var);
-
-    } else { // nulls, integers, etc.
         $new_var = $var;
     }
 
@@ -1312,7 +1271,7 @@ function get_slash_arguments($file='file.php') {
     $pathinfo = explode($file, $string);
 
     if (!empty($pathinfo[1])) {
-        return addslashes($pathinfo[1]);
+        return $pathinfo[1];
     } else {
         return false;
     }
@@ -1811,10 +1770,6 @@ function trusttext_present($text) {
  * function that modifies the data! We do not know the origin of trusttext
  * in database, if it gets there in tweaked form we must not convert it
  * to supported form!!!
- *
- * Please be carefull not to use stripslashes on data from database
- * or twice stripslashes when processing data recieved from user.
- *
  * @param string $text text that may contain TRUSTTEXT marker
  * @return text without any TRUSTTEXT marker
  */
@@ -3834,7 +3789,7 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false) 
  */
 function print_heading_with_help($text, $helppage, $module='moodle', $icon='', $return=false) {
     $output = '<div class="heading-with-help">';
-    $output .= '<h2 class="main help">'.$icon.stripslashes_safe($text).'</h2>';
+    $output .= '<h2 class="main help">'.$icon.$text.'</h2>';
     $output .= helpbutton($helppage, $text, $module, true, false, '', true);
     $output .= '</div>';
 
@@ -3848,7 +3803,7 @@ function print_heading_with_help($text, $helppage, $module='moodle', $icon='', $
 
 function print_heading_block($heading, $class='', $return=false) {
     //Accessibility: 'headingblock' is now H1, see theme/standard/styles_*.css: ??
-    $output = '<h2 class="headingblock header '.$class.'">'.stripslashes($heading).'</h2>';
+    $output = '<h2 class="headingblock header '.$class.'">'.$heading.'</h2>';
 
     if ($return) {
         return $output;
@@ -3916,7 +3871,6 @@ function print_continue($link, $return=false) {
 function print_box($message, $classes='generalbox', $ids='', $return=false) {
 
     $output  = print_box_start($classes, $ids, true);
-    $output .= stripslashes_safe($message);
     $output .= print_box_end(true);
 
     if ($return) {
@@ -3977,7 +3931,6 @@ function print_box_end($return=false) {
 function print_container($message, $clearfix=false, $classes='', $idbase='', $return=false) {
 
     $output  = print_container_start($clearfix, $classes, $idbase, true);
-    $output .= stripslashes_safe($message);
     $output .= print_container_end(true);
 
     if ($return) {

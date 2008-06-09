@@ -665,9 +665,9 @@ function hotpot_set_name_summary_reference(&$hotpot, $chain_index=NULL) {
                 hotpot_get_titles_and_next_ex($hotpot, $xml_quiz->filepath);
             }
             if ($textfield=='name') {
-                $hotpot->$textfield = addslashes($hotpot->exercisetitle);
+                $hotpot->$textfield = $hotpot->exercisetitle;
             } else if ($textfield=='summary') {
-                $hotpot->$textfield = addslashes($hotpot->exercisesubtitle);
+                $hotpot->$textfield = $hotpot->exercisesubtitle;
             }
         }
         switch ($hotpot->$textsource) {

@@ -31,7 +31,6 @@
     $data = new object();
 
     foreach ($_POST as $key => $value) {
-        $value = stripslashes($value);
         $req .= "&$key=".urlencode($value);
         $data->$key = $value;
     }

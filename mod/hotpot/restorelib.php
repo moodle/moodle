@@ -78,7 +78,7 @@ function hotpot_restore_mods($mod, $restore) {
         $more_restore = '';
         // print a message after each hotpot is backed up
         if (!defined('RESTORE_SILENTLY')) {
-            $more_restore .= 'print "<li>".get_string("modulename", "hotpot")." &quot;".format_string(stripslashes($record->name),true)."&quot;</li>";';
+            $more_restore .= 'print "<li>".get_string("modulename", "hotpot")." &quot;".format_string($record->name,true)."&quot;</li>";';
         }
         $more_restore .= 'backup_flush(300);';
         if (function_exists('restore_userdata_selected')) {
@@ -148,7 +148,6 @@ function hotpot_restore_attempts(&$restore, $status, &$xml, &$record, $hotpot_v2
     $more_restore .= 'hotpot_restore_details($restore, $status, $xml, $record);';
     if ($hotpot_v20) {
         // HotPot v2.0.x (regenerate questions and responses from details)
-        $more_restore .= '$record->details=stripslashes($record->details);';
         $more_restore .= 'hotpot_add_attempt_details($record);'; // see "hotpot/lib.php"
     } else {
         // HotPot v2.1+

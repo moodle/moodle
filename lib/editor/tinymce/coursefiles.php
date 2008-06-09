@@ -388,7 +388,7 @@
             html_header($course, $wdir);
             if (($text != '') and confirm_sesskey()) {
                 $fileptr = fopen($basedir.$file,"w");
-                fputs($fileptr, stripslashes($text));
+                fputs($fileptr, $text);
                 fclose($fileptr);
                 displaydir($wdir);
 

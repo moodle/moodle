@@ -17,7 +17,7 @@
     $coursefilter = optional_param('coursefilter', '', PARAM_INT);
     $courseid = optional_param('courseid', false, PARAM_INT);
     
-    if(($formdata = data_submitted('nomatch')) AND !confirm_sesskey()) {
+    if(($formdata = data_submitted()) AND !confirm_sesskey()) {
         error('no sesskey defined');
     }
     

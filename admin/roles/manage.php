@@ -14,9 +14,6 @@
     $confirm     = optional_param('confirm', 0, PARAM_BOOL);
     $cancel      = optional_param('cancel', 0, PARAM_BOOL);
 
-    $name        = stripslashes($name);
-    $description = stripslashes($description);
-
     $sitecontext = get_context_instance(CONTEXT_SYSTEM);
 
     require_capability('moodle/role:manage', $sitecontext);
@@ -56,7 +53,7 @@
 /// form processing, editing a role, adding a role, deleting a role etc.
     switch ($action) {
         case 'add':
-            if ($data = data_submitted(false) and confirm_sesskey()) {
+            if ($data = data_submitted() and confirm_sesskey()) {
 
                 $shortname = moodle_strtolower(clean_param(clean_filename($shortname), PARAM_SAFEDIR)); // only lowercase safe ASCII characters
                 $legacytype = required_param('legacytype', PARAM_RAW);
@@ -133,7 +130,7 @@
             break;
 
         case 'edit':
-            if ($data = data_submitted(false) and confirm_sesskey()) {
+            if ($data = data_submitted() and confirm_sesskey()) {
 
                 $shortname = moodle_strtolower(clean_param(clean_filename($shortname), PARAM_SAFEDIR)); // only lowercase safe ASCII characters
                 $legacytype = required_param('legacytype', PARAM_RAW);

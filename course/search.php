@@ -15,8 +15,6 @@
     $blocklist = optional_param('blocklist', 0, PARAM_INT);
     $modulelist= optional_param('modulelist', '', PARAM_ALPHAEXT);
 
-    $search = stripslashes($search); // TODO: remove soon
-
     $search = trim(strip_tags($search)); // trim & clean raw searched string
 
     if ($search) {
@@ -107,7 +105,7 @@
         exit;
     }
 
-    if (!empty($moveto) and $data = data_submitted(false) and confirm_sesskey()) {   // Some courses are being moved
+    if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
 
         if (! $destcategory = $DB->get_record("course_categories", array("id"=>$data->moveto))) {
             print_error('cannotfindcategory', '', '', $data->moveto);
