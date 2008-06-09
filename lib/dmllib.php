@@ -37,8 +37,6 @@
 
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
 
-require_once($CFG->libdir.'/dmllib_todo.php');
-
 /**
  * Bitmask, indicates only :name type parameters are supported by db backend.
  */

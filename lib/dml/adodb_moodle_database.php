@@ -61,8 +61,6 @@ abstract class adodb_moodle_database extends moodle_database {
 
         $this->db = ADONewConnection($this->get_dbtype());
 
-        global $db; $db = $this->db; // TODO: BC only for now
-
         // See MDL-6760 for why this is necessary. In Moodle 1.8, once we start using NULLs properly,
         // we probably want to change this value to ''.
         $this->db->null2null = 'A long random string that will never, ever match something we want to insert into the database, I hope. \'';

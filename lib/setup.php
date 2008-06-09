@@ -54,11 +54,6 @@ global $MCACHE;
  */
 global $COURSE;
 /**
- * Legacy definition of db type TODO: remove in 2.0
- * @global object(db) $db
- */
-global $db;
-/**
  * Database instances
  * @global object(mdb) $DB
  */

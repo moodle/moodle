@@ -44,7 +44,6 @@ class backuplib_test extends UnitTestCase {
     var $real_dataroot;
     var $rs;   
     var $firstcolumn;
-    var $db;
     var $testfiles = array();
     var $userbasedir;
     

@@ -10,6 +10,27 @@ require_once($CFG->libdir.'/dml/adodb_moodle_database.php');
 class mysqli_adodb_moodle_database extends adodb_moodle_database {
 
     /**
+     * Attempt to create the database
+     * @param string $dbhost
+     * @param string $dbuser
+     * @param string $dbpass
+     * @param string $dbname
+     *
+     * @return bool success
+     */
+    public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
+        $this->db->database = ''; // reset database name cached by ADODB. Trick from MDL-9609
+        if ($this->db->Connect($dbhost, $dbuser, $dbpass)) { /// Try to connect without DB
+            if ($this->db->Execute("CREATE DATABASE $dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci")) {
+                $this->db->Disconnect();
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+    /**
      * Detects if all needed PHP stuff installed.
      * Do not connect to connect to db if this test fails.
      * @return mixed true if ok, string if something

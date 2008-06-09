@@ -464,6 +464,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         $errormsg = get_string('dbwronghostserver', 'install');
     }
 
+error('fix cml installer'); //TODO: fix cli installer
     if (empty($errormsg)) {
 
         /// Have the $db object ready because we are going to use it often

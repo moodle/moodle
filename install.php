@@ -320,19 +320,11 @@ if ($INSTALL['stage'] == DATABASE) {
         error_reporting(0);  // Hide errors
 
         if (! $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix'])) {
-            $db->database = ''; // reset database name cached by ADODB. Trick from MDL-9609
-            if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) { /// Try to connect without DB
-                switch ($INSTALL['dbtype']) {   /// Try to create a database
-                    case 'mysql':
-                    case 'mysqli':
-                        if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']} DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;")) {
-                            $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
-                        } else {
-                            $errormsg = get_string('dbcreationerror', 'install');
-                            $nextstage = DATABASE;
-                        }
-                        break;
-                }
+            if (!$DB->create_database($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'])) {
+                 $errormsg = get_string('dbcreationerror', 'install');
+                 $nextstage = DATABASE;
+            } else {
+                $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
             }
         } else {
 // TODO: db encoding checks ??
@@ -651,7 +643,7 @@ if ($nextstage == SAVE) {
 //==========================================================================//
 
 function form_table($nextstage, $formaction, $databases) {
-    global $INSTALL, $db;
+    global $INSTALL;
 
     /// Print the standard form if we aren't in the DOWNLOADLANG page
     /// because it has its own form.

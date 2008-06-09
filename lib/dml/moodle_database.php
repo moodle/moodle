@@ -109,6 +109,19 @@ abstract class moodle_database {
     public abstract function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null);
 
     /**
+     * Attempt to create the database
+     * @param string $dbhost
+     * @param string $dbuser
+     * @param string $dbpass
+     * @param string $dbname
+     *
+     * @return bool success
+     */
+    public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
+        return false;
+    }
+
+    /**
      * Close database connection and release all resources
      * and memory (especially circular memory references).
      * Do NOT use connect() again, create a new instance if needed.
