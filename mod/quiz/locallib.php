@@ -151,7 +151,7 @@ function quiz_get_latest_attempt_by_user($quizid, $userid) {
 }
 
 /**
- * Load an attempt by id. You need to use this method instead of get_record, because
+ * Load an attempt by id. You need to use this method instead of $DB->get_record, because
  * of some ancient history to do with the upgrade from Moodle 1.4 to 1.5, See the comment
  * after CREATE TABLE `prefix_quiz_newest_states` in mod/quiz/db/mysql.php.
  *
@@ -466,7 +466,7 @@ function quiz_set_grade($newgrade, &$quiz) {
     }
 
     // Use a transaction, so that on those databases that support it, this is safer.
-    begin_sql();
+    $DB->begin_sql();
 
     // Update the quiz table.
     $success = $DB->set_field('quiz', 'grade', $newgrade, array('id' => $quiz->instance));

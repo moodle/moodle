@@ -146,7 +146,7 @@ class quiz_report extends quiz_default_report {
                    " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
                    "   AND q.id IN ($questionlist)";
 
-            if (!$quizquestions = get_records_sql($sql)) {
+            if (!$quizquestions = $DB->get_records_sql($sql)) {
                 print_error('No questions found');
             }
 
