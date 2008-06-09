@@ -333,6 +333,7 @@ function get_mimetypes_array() {
         'xhtml'=> array ('type'=>'application/xhtml+xml', 'icon'=>'html.gif'),
         'htm'  => array ('type'=>'text/html', 'icon'=>'html.gif'),
         'ico'  => array ('type'=>'image/vnd.microsoft.icon', 'icon'=>'image.gif'),
+        'ics'  => array ('type'=>'text/calendar', 'icon'=>'text.gif'),
         'isf'  => array ('type'=>'application/inspiration', 'icon'=>'isf.gif'),
         'ist'  => array ('type'=>'application/inspiration.template', 'icon'=>'isf.gif'),
         'java' => array ('type'=>'text/plain', 'icon'=>'text.gif'),
