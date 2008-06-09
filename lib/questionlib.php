@@ -253,9 +253,9 @@ class cmoptions {
  * @return array of strings
  */
 function question_list_instances($questionid) {
-    global $CFG;
+    global $CFG, $DB;
     $instances = array();
-    $modules = get_records('modules');
+    $modules = $DB->get_records('modules');
     foreach ($modules as $module) {
         $fullmod = $CFG->dirroot . '/mod/' . $module->name;
         if (file_exists($fullmod . '/lib.php')) {
@@ -279,7 +279,7 @@ function question_list_instances($questionid) {
  *         any questions in them.
  */
 function question_context_has_any_questions($context) {
-    global $CFG;
+    global $DB;
     if (is_object($context)) {
         $contextid = $context->id;
     } else if (is_numeric($context)) {
@@ -287,9 +287,10 @@ function question_context_has_any_questions($context) {
     } else {
         print_error('invalidcontextinhasanyquestions', 'question');
     }
-    return record_exists_sql('SELECT * FROM ' . $CFG->prefix . 'question q ' .
-            'JOIN ' . $CFG->prefix . 'question_categories qc ON qc.id = q.category ' .
-            "WHERE qc.contextid = $contextid AND q.parent = 0");
+    return $DB->record_exists_sql("SELECT *
+                                     FROM {question} q
+                                     JOIN {question_categories} qc ON qc.id = q.category
+                                    WHERE qc.contextid = ? AND q.parent = 0", array($contextid));
 }
 
 /**
@@ -392,9 +393,10 @@ function match_grade_options($gradeoptionsfull, $grade, $matchgrades='error') {
  * @param boolean $recursive Whether to examine category children recursively
  */
 function question_category_isused($categoryid, $recursive = false) {
+    global $DB;
 
     //Look at each question in the category
-    if ($questions = get_records('question', 'category', $categoryid)) {
+    if ($questions = $DB->get_records('question', array('category'=>$categoryid))) {
         foreach ($questions as $question) {
             if (count(question_list_instances($question->id))) {
                 return true;
@@ -404,7 +406,7 @@ function question_category_isused($categoryid, $recursive = false) {
 
     //Look under child categories recursively
     if ($recursive) {
-        if ($children = get_records('question_categories', 'parent', $categoryid)) {
+        if ($children = $DB->get_records('question_categories', array('parent'=>$categoryid))) {
             foreach ($children as $child) {
                 if (question_category_isused($child->id, $recursive)) {
                     return true;
@@ -422,9 +424,9 @@ function question_category_isused($categoryid, $recursive = false) {
  * @param integer $attemptid The id of the attempt being deleted
  */
 function delete_attempt($attemptid) {
-    global $QTYPES;
+    global $QTYPES, $DB;
 
-    $states = get_records('question_states', 'attempt', $attemptid);
+    $states = $DB->get_records('question_states', array('attempt'=>$attemptid));
     if ($states) {
         $stateslist = implode(',', array_keys($states));
 
@@ -436,9 +438,9 @@ function delete_attempt($attemptid) {
 
     // delete entries from all other question tables
     // It is important that this is done only after calling the questiontype functions
-    delete_records("question_states", "attempt", $attemptid);
-    delete_records("question_sessions", "attemptid", $attemptid);
-    delete_records("question_attempts", "id", $attemptid);
+    $DB->delete_records("question_states", array("attempt"=>$attemptid));
+    $DB->delete_records("question_sessions", array("attemptid"=>$attemptid));
+    $DB->delete_records("question_attempts", array("id"=>$attemptid));
 }
 
 /**
@@ -448,7 +450,7 @@ function delete_attempt($attemptid) {
  * @param object $question  The question being deleted
  */
 function delete_question($questionid) {
-    global $QTYPES;
+    global $QTYPES, $DB;
 
     // Do not delete a question if it is used by an activity module
     if (count(question_list_instances($questionid))) {
@@ -456,7 +458,7 @@ function delete_question($questionid) {
     }
 
     // delete questiontype-specific data
-    $question = get_record('question', 'id', $questionid);
+    $question = $DB->get_record('question', array('id'=>$questionid));
     question_require_capability_on($question, 'edit');
     if ($question) {
         if (isset($QTYPES[$question->qtype])) {
@@ -466,7 +468,7 @@ function delete_question($questionid) {
         echo "Question with id $questionid does not exist.<br />";
     }
 
-    if ($states = get_records('question_states', 'question', $questionid)) {
+    if ($states = $DB->get_records('question_states', array('question'=>$questionid))) {
         $stateslist = implode(',', array_keys($states));
 
         // delete questiontype-specific data
@@ -477,12 +479,12 @@ function delete_question($questionid) {
 
     // delete entries from all other question tables
     // It is important that this is done only after calling the questiontype functions
-    delete_records("question_answers", "question", $questionid);
-    delete_records("question_states", "question", $questionid);
-    delete_records("question_sessions", "questionid", $questionid);
+    $DB->delete_records("question_answers", array("question"=>$questionid));
+    $DB->delete_records("question_states", array("question"=>$questionid));
+    $DB->delete_records("question_sessions", array("questionid"=>$questionid));
 
     // Now recursively delete all child questions
-    if ($children = get_records('question', 'parent', $questionid)) {
+    if ($children = $DB->get_records('question', array('parent'=>$questionid))) {
         foreach ($children as $child) {
             if ($child->id != $questionid) {
                 delete_question($child->id);
@@ -491,7 +493,7 @@ function delete_question($questionid) {
     }
 
     // Finally delete the question record itself
-    delete_records('question', 'id', $questionid);
+    $DB->delete_records('question', array('id'=>$questionid));
 
     return;
 }
@@ -504,13 +506,15 @@ function delete_question($questionid) {
  * @return boolean
  */
 function question_delete_course($course, $feedback=true) {
+    global $DB;
+
     //To store feedback to be showed at the end of the process
     $feedbackdata   = array();
 
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
     $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-    $categoriescourse = get_records('question_categories', 'contextid', $coursecontext->id, 'parent', 'id, parent, name');
+    $categoriescourse = $DB->get_records('question_categories', array('contextid'=>$coursecontext->id), 'parent', 'id, parent, name');
 
     if ($categoriescourse) {
 
@@ -522,14 +526,14 @@ function question_delete_course($course, $feedback=true) {
 
             //Delete it completely (questions and category itself)
             //deleting questions
-            if ($questions = get_records("question", "category", $category->id)) {
+            if ($questions = $DB->get_records("question", array("category"=>$category->id))) {
                 foreach ($questions as $question) {
                     delete_question($question->id);
                 }
-                delete_records("question", "category", $category->id);
+                $DB->delete_records("question", array("category"=>$category->id));
             }
             //delete the category
-            delete_records('question_categories', 'id', $category->id);
+            $DB->delete_records('question_categories', array('id'=>$category->id));
 
             //Fill feedback
             $feedbackdata[] = array($category->name, $strcatdeleted);
@@ -565,11 +569,11 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
 
         // Loop over question categories.
-        if ($categories = get_records('question_categories', 'contextid', $context->id, 'parent', 'id, parent, name')) {
+        if ($categories = $DB->get_records('question_categories', array('contextid'=>$context->id), 'parent', 'id, parent, name')) {
             foreach ($categories as $category) {
     
                 // Deal with any questions in the category.
-                if ($questions = get_records('question', 'category', $category->id)) {
+                if ($questions = $DB->get_records('question', array('category'=>$category->id))) {
 
                     // Try to delete each question.
                     foreach ($questions as $question) {
@@ -591,7 +595,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
                 }
 
                 // Now delete the category.
-                if (!delete_records('question_categories', 'id', $category->id)) {
+                if (!$DB->delete_records('question_categories', array('id'=>$category->id))) {
                     return false;
                 }
                 $feedbackdata[] = array($category->name, $strcatdeleted);
@@ -612,7 +616,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         if (!$newcontext = get_context_instance(CONTEXT_COURSECAT, $newcategory->id)) {
             return false;
         }
-        if (!set_field('question_categories', 'contextid', $newcontext->id, 'contextid', $context->id)) {
+        if (!$DB->set_field('question_categories', 'contextid', $newcontext->id, array('contextid'=>$context->id))) {
             return false;
         }
         if ($feedback) {
@@ -636,16 +640,18 @@ function question_delete_course_category($category, $newcategory, $feedback=true
  * @return mixed false on 
  */
 function question_save_from_deletion($questionids, $newcontextid, $oldplace, $newcategory = null) {
+    global $DB;
+
     // Make a category in the parent context to move the questions to.
     if (is_null($newcategory)) {
         $newcategory = new object();
         $newcategory->parent = 0;
         $newcategory->contextid = $newcontextid;
-        $newcategory->name = addslashes(get_string('questionsrescuedfrom', 'question', $oldplace));
-        $newcategory->info = addslashes(get_string('questionsrescuedfrominfo', 'question', $oldplace));
+        $newcategory->name = get_string('questionsrescuedfrom', 'question', $oldplace);
+        $newcategory->info = get_string('questionsrescuedfrominfo', 'question', $oldplace);
         $newcategory->sortorder = 999;
         $newcategory->stamp = make_unique_id_code();
-        if (!$newcategory->id = insert_record('question_categories', $newcategory)) {
+        if (!$newcategory->id = $DB->insert_record('question_categories', $newcategory)) {
             return false;
         }
     }
@@ -665,13 +671,15 @@ function question_save_from_deletion($questionids, $newcontextid, $oldplace, $ne
  * @return boolean
  */
 function question_delete_activity($cm, $feedback=true) {
+    global $DB;
+
     //To store feedback to be showed at the end of the process
     $feedbackdata   = array();
 
     //Cache some strings
     $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
-    if ($categoriesmods = get_records('question_categories', 'contextid', $modcontext->id, 'parent', 'id, parent, name')){
+    if ($categoriesmods = $DB->get_records('question_categories', array('contextid'=>$modcontext->id), 'parent', 'id, parent, name')){
         //Sort categories following their tree (parent-child) relationships
         //this will make the feedback more readable
         $categoriesmods = sort_categories_by_tree($categoriesmods);
@@ -680,14 +688,14 @@ function question_delete_activity($cm, $feedback=true) {
 
             //Delete it completely (questions and category itself)
             //deleting questions
-            if ($questions = get_records("question", "category", $category->id)) {
+            if ($questions = $DB->get_records("question", array("category"=>$category->id))) {
                 foreach ($questions as $question) {
                     delete_question($question->id);
                 }
-                delete_records("question", "category", $category->id);
+                $DB->delete_records("question", array("category"=>$category->id));
             }
             //delete the category
-            delete_records('question_categories', 'id', $category->id);
+            $DB->delete_records('question_categories', array('id'=>$category->id));
 
             //Fill feedback
             $feedbackdata[] = array($category->name, $strcatdeleted);
@@ -759,18 +767,18 @@ function questionbank_navigation_tabs(&$row, $contexts, $querystring) {
  * @return mixed array of question objects on success, a string error message on failure.
  */
 function question_load_questions($questionlist, $extrafields = '', $join = '') {
-    global $CFG;
+    global $CFG, $DB;
     if ($join) {
-        $join = ' JOIN ' . $CFG->prefix . $join;
+        $join = ' JOIN {'.$join.'}';
     }
     if ($extrafields) {
         $extrafields = ', ' . $extrafields;
     }
-    $sql = 'SELECT q.*' . $extrafields . ' FROM ' . $CFG->prefix . 'question q' . $join .
+    $sql = 'SELECT q.*' . $extrafields . ' FROM {question} q' . $join .
             ' WHERE q.id IN (' . $questionlist . ')';
 
     // Load the questions
-    if (!$questions = get_records_sql($sql)) {
+    if (!$questions = $DB->get_records_sql($sql)) {
         return 'Could not load questions.';
     }
 
@@ -846,32 +854,30 @@ function get_question_options(&$questions) {
 *                         building on a previous one, or false for a clean attempt.
 */
 function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid = false) {
-    global $CFG, $QTYPES;
+    global $CFG, $QTYPES, $DB;
 
     // get the question ids
     $ids = array_keys($questions);
     $questionlist = implode(',', $ids);
 
     // The question field must be listed first so that it is used as the
-    // array index in the array returned by get_records_sql
+    // array index in the array returned by $DB->get_records_sql
     $statefields = 'n.questionid as question, s.*, n.sumpenalty, n.manualcomment';
     // Load the newest states for the questions
-    $sql = "SELECT $statefields".
-           "  FROM {$CFG->prefix}question_states s,".
-           "       {$CFG->prefix}question_sessions n".
-           " WHERE s.id = n.newest".
-           "   AND n.attemptid = '$attempt->uniqueid'".
-           "   AND n.questionid IN ($questionlist)";
-    $states = get_records_sql($sql);
+    $sql = "SELECT $statefields
+              FROM {question_states} s, {question_sessions} n
+             WHERE s.id = n.newest
+                   AND n.attemptid = ?
+                   AND n.questionid IN ($questionlist)";
+    $states = $DB->get_records_sql($sql, array($attempt->uniqueid));
 
     // Load the newest graded states for the questions
-    $sql = "SELECT $statefields".
-           "  FROM {$CFG->prefix}question_states s,".
-           "       {$CFG->prefix}question_sessions n".
-           " WHERE s.id = n.newgraded".
-           "   AND n.attemptid = '$attempt->uniqueid'".
-           "   AND n.questionid IN ($questionlist)";
-    $gradedstates = get_records_sql($sql);
+    $sql = "SELECT $statefields
+              FROM {question_states} s, {question_sessions} n
+             WHERE s.id = n.newgraded
+                   AND n.attemptid = ?
+                   AND n.questionid IN ($questionlist)";
+    $gradedstates = $DB->get_records_sql($sql, array($attempt->uniqueid));
 
     // loop through all questions and set the last_graded states
     foreach ($ids as $i) {
@@ -892,13 +898,12 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
 
                 // Load the last graded state for the question
                 $statefields = 'n.questionid as question, s.*, n.sumpenalty';
-                $sql = "SELECT $statefields".
-                       "  FROM {$CFG->prefix}question_states s,".
-                       "       {$CFG->prefix}question_sessions n".
-                       " WHERE s.id = n.newgraded".
-                       "   AND n.attemptid = '$lastattemptid'".
-                       "   AND n.questionid = '$i'";
-                if (!$laststate = get_record_sql($sql)) {
+                $sql = "SELECT $statefields
+                          FROM {question_states} s, {question_sessions} n
+                         WHERE s.id = n.newgraded
+                               AND n.attemptid = ?
+                               AND n.questionid = ?";
+                if (!$laststate = $DB->get_record_sql($sql, array($lastattemptid, $i))) {
                     // Only restore previous responses that have been graded
                     continue;
                 }
@@ -1002,7 +1007,7 @@ function restore_question_state(&$question, &$state) {
 *                         is updated to hold the new ->id.
 */
 function save_question_session(&$question, &$state) {
-    global $QTYPES;
+    global $QTYPES, $DB;
     // Check if the state has changed
     if (!$state->changed && isset($state->id)) {
         return $state->id;
@@ -1012,9 +1017,9 @@ function save_question_session(&$question, &$state) {
 
     // Save the state
     if (!empty($state->update)) { // this forces the old state record to be overwritten
-        update_record('question_states', $state);
+        $DB->update_record('question_states', $state);
     } else {
-        if (!$state->id = insert_record('question_states', $state)) {
+        if (!$state->id = $DB->insert_record('question_states', $state)) {
             unset($state->id);
             unset($state->answer);
             return false;
@@ -1022,7 +1027,7 @@ function save_question_session(&$question, &$state) {
     }
 
     // create or update the session
-    if (!$session = get_record('question_sessions', 'attemptid',
+    if (!$session = $DB->get_record('question_sessions', 'attemptid',
             $state->attempt, 'questionid', $question->id)) {
         $session->attemptid = $state->attempt;
         $session->questionid = $question->id;
@@ -1032,7 +1037,7 @@ function save_question_session(&$question, &$state) {
         $session->newgraded = $state->id;
         $session->sumpenalty = $state->sumpenalty;
         $session->manualcomment = $state->manualcomment;
-        if (!insert_record('question_sessions', $session)) {
+        if (!$DB->insert_record('question_sessions', $session)) {
             print_error('cannotinsert', 'question');
         }
     } else {
@@ -1043,9 +1048,9 @@ function save_question_session(&$question, &$state) {
             $session->sumpenalty = $state->sumpenalty;
             $session->manualcomment = $state->manualcomment;
         } else {
-            $session->manualcomment = addslashes($session->manualcomment);
+            $session->manualcomment = $session->manualcomment;
         }
-        update_record('question_sessions', $session);
+        $DB->update_record('question_sessions', $session);
     }
 
     unset($state->answer);
@@ -1219,10 +1224,11 @@ function question_get_feedback_class($fraction) {
 * @param boolean $verbose    Optional. Whether to print progress information or not.
 */
 function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=false) {
+    global $DB;
 
     // load all states for this question in this attempt, ordered in sequence
-    if ($states = get_records_select('question_states',
-            "attempt = '{$attempt->uniqueid}' AND question = '{$question->id}'",
+    if ($states = $DB->get_records('question_states',
+            array('attempt'=>$attempt->uniqueid, 'question'=>$question->id),
             'seq_number ASC')) {
         $states = array_values($states);
 
@@ -1232,8 +1238,8 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 
         // Initialise the replaystate
         $state = clone($states[0]);
-        $state->manualcomment = get_field('question_sessions', 'manualcomment', 'attemptid',
-                $attempt->uniqueid, 'questionid', $question->id);
+        $state->manualcomment = $DB->get_field('question_sessions', 'manualcomment',
+                array('attemptid'=> $attempt->uniqueid, 'questionid'=>$question->id));
         restore_question_state($question, $state);
         $state->sumpenalty = 0.0;
         $replaystate = clone($state);
@@ -1296,7 +1302,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
         if ($changed) {
             // TODO, call a method in quiz to do this, where 'quiz' comes from
             // the question_attempts table.
-            update_record('quiz_attempts', $attempt);
+            $DB->update_record('quiz_attempts', $attempt);
         }
 
         return $changed;
@@ -1524,11 +1530,10 @@ function print_question_icon($question, $return = false) {
 * @param object $question The question object
 */
 function get_question_image($question) {
-
-    global $CFG;
+    global $CFG, $DB;
     $img = '';
 
-    if (!$category = get_record('question_categories', 'id', $question->category)){
+    if (!$category = $DB->get_record('question_categories', array('id'=>$question->category))) {
         print_error('invalidcategory');
     }
     $coursefilesdir = get_filesdir_from_context(get_context_instance_by_id($category->contextid));
@@ -1582,6 +1587,8 @@ function question_print_comment_box($question, $state, $attempt, $url) {
  *         (for example score out of range).
  */
 function question_process_comment($question, &$state, &$attempt, $comment, $grade) {
+    global $DB;
+
     if ($grade < 0 || $grade > $question->maxgrade) {
         $a = new stdClass;
         $a->grade = $grade;
@@ -1593,7 +1600,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     // Update the comment and save it in the database
     $comment = trim($comment);
     $state->manualcomment = $comment;
-    if (!set_field('question_sessions', 'manualcomment', $comment, 'attemptid', $attempt->uniqueid, 'questionid', $question->id)) {
+    if (!$DB->set_field('question_sessions', 'manualcomment', $comment, array('attemptid'=>$attempt->uniqueid, 'questionid'=>$question->id))) {
         return get_string('errorsavingcomment', 'question', $question);
     }
 
@@ -1601,7 +1608,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     if (abs($state->last_graded->grade - $grade) > 0.002) {
         $attempt->sumgrades = $attempt->sumgrades - $state->last_graded->grade + $grade;
         $attempt->timemodified = time();
-        if (!update_record('quiz_attempts', $attempt)) {
+        if (!$DB->update_record('quiz_attempts', $attempt)) {
             return get_string('errorupdatingattempt', 'question', $attempt);
         }
     }
@@ -1675,10 +1682,11 @@ function question_get_id_from_name_prefix($name) {
  * stores the return value in the 'uniqueid' field of its attempts table.
  */
 function question_new_attempt_uniqueid($modulename='quiz') {
-    global $CFG;
+    global $DB;
+
     $attempt = new stdClass;
     $attempt->modulename = $modulename;
-    if (!$id = insert_record('question_attempts', $attempt)) {
+    if (!$id = $DB->insert_record('question_attempts', $attempt)) {
         print_error('cannotcreate', 'question');
     }
     return $id;
@@ -1797,6 +1805,8 @@ function get_question_fraction_grade($question, $state) {
  * incorrect) to avoid missing any category from original array.
  */
 function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
+    global $DB;
+
     $children = array();
     $keys = array_keys($categories);
 
@@ -1811,7 +1821,7 @@ function sort_categories_by_tree(&$categories, $id = 0, $level = 1) {
     if ($level == 1) {
         foreach ($keys as $key) {
             //If not processed and it's a good candidate to start (because its parent doesn't exist in the course)
-            if (!isset($categories[$key]->processed) && !record_exists('question_categories', 'course', $categories[$key]->course, 'id', $categories[$key]->parent)) {
+            if (!isset($categories[$key]->processed) && !$DB->record_exists('question_categories', array('course'=>$categories[$key]->course, 'id'=>$categories[$key]->parent))) {
                 $children[$key] = $categories[$key];
                 $categories[$key]->processed = true;
                 $children = $children + sort_categories_by_tree($categories, $children[$key]->id, $level+1);
@@ -1919,25 +1929,28 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
 * @return object The default category - the category in the course context
 */
 function question_make_default_categories($contexts) {
+    global $DB;
+
     $toreturn = null;
     // If it already exists, just return it.
     foreach ($contexts as $key => $context) {
-        if (!$categoryrs = get_recordset_select("question_categories", "contextid = '{$context->id}'", 'sortorder, name', '*', '', 1)) {
+        $exists = $DB->record_exists("question_categories", array('contextid'=>$context->id));
+        
+        if ($exists === false) {
             print_error('cannotgetcats');
-        } else {
-            if (!$category = rs_fetch_record($categoryrs)){
-                // Otherwise, we need to make one
-                $category = new stdClass;
-                $contextname = print_context_name($context, false, true);
-                $category->name = addslashes(get_string('defaultfor', 'question', $contextname));
-                $category->info = addslashes(get_string('defaultinfofor', 'question', $contextname));
-                $category->contextid = $context->id;
-                $category->parent = 0;
-                $category->sortorder = 999; // By default, all categories get this number, and are sorted alphabetically.
-                $category->stamp = make_unique_id_code();
-                if (!$category->id = insert_record('question_categories', $category)) {
-                    print_error('cannotcreatedefaultcat', '', '', print_context_name($context));
-                }
+        }
+        if (!$exists){
+            // Otherwise, we need to make one
+            $category = new stdClass;
+            $contextname = print_context_name($context, false, true);
+            $category->name = get_string('defaultfor', 'question', $contextname);
+            $category->info = get_string('defaultinfofor', 'question', $contextname);
+            $category->contextid = $context->id;
+            $category->parent = 0;
+            $category->sortorder = 999; // By default, all categories get this number, and are sorted alphabetically.
+            $category->stamp = make_unique_id_code();
+            if (!$category->id = $DB->insert_record('question_categories', $category)) {
+                print_error('cannotcreatedefaultcat', '', '', print_context_name($context));
             }
         }
         if ($context->contextlevel == CONTEXT_COURSE){
@@ -1958,13 +1971,13 @@ function question_make_default_categories($contexts) {
  * @return array of category objects.
  */
 function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder, name ASC') {
-    global $CFG;
-    return get_records_sql("
-            SELECT *, (SELECT count(1) FROM {$CFG->prefix}question q
-                    WHERE c.id = q.category AND q.hidden='0' AND q.parent='0') as questioncount
-            FROM {$CFG->prefix}question_categories c
-            WHERE c.contextid IN ($contexts)
-            ORDER BY $sortorder");
+    global $DB;
+    return $DB->get_records_sql("
+            SELECT *, (SELECT count(1) FROM {question} q
+                        WHERE c.id = q.category AND q.hidden='0' AND q.parent='0') AS questioncount
+              FROM {question_categories} c
+             WHERE c.contextid IN ($contexts)
+          ORDER BY $sortorder");
 }
 
 /**
@@ -2041,9 +2054,11 @@ function question_add_tops($categories, $pcontexts){
  * Returns a comma separated list of ids of the category and all subcategories
  */
 function question_categorylist($categoryid) {
+    global $DB;
+
     // returns a comma separated list of ids of the category and all subcategories
     $categorylist = $categoryid;
-    if ($subcategories = get_records('question_categories', 'parent', $categoryid, 'sortorder ASC', 'id, id')) {
+    if ($subcategories = $DB->get_records('question_categories', array('parent'=>$categoryid), 'sortorder ASC', 'id, id')) {
         foreach ($subcategories as $subcategory) {
             $categorylist .= ','. question_categorylist($subcategory->id);
         }
@@ -2199,7 +2214,8 @@ class context_to_string_translator{
  * @return boolean this user has the capability $cap for this question $question?
  */
 function question_has_capability_on($question, $cap, $cachecat = -1){
-    global $USER;
+    global $USER, $DB;
+
     // these are capabilities on existing questions capabilties are
     //set per category. Each of these has a mine and all version. Append 'mine' and 'all'
     $question_questioncaps = array('edit', 'view', 'use', 'move');
@@ -2207,19 +2223,19 @@ function question_has_capability_on($question, $cap, $cachecat = -1){
     static $categories = array();
     static $cachedcat = array();
     if ($cachecat != -1 && (array_search($cachecat, $cachedcat)===FALSE)){
-        $questions += get_records('question', 'category', $cachecat);
+        $questions += $DB->get_records('question', array('category'=>$cachecat));
         $cachedcat[] = $cachecat;
     }
     if (!is_object($question)){
         if (!isset($questions[$question])){
-            if (!$questions[$question] = get_record('question', 'id', $question)){
+            if (!$questions[$question] = $DB->get_record('question', array('id'=>$question))) {
                 print_error('questiondoesnotexist', 'question');
             }
         }
         $question = $questions[$question];
     }
     if (!isset($categories[$question->category])){
-        if (!$categories[$question->category] = get_record('question_categories', 'id', $question->category)){
+        if (!$categories[$question->category] = $DB->get_record('question_categories', array('id'=>$question->category))) {
             print_error('invalidcategory', 'quiz');
         }
     }
@@ -2295,7 +2311,8 @@ function question_find_file_links_from_html($html, $courseid){
     }
     return $urls;
 }
-/*
+
+/**
  * Check that url doesn't point anywhere it shouldn't
  *
  * @param $url string relative url within course files directory
@@ -2311,7 +2328,7 @@ function question_url_check($url){
     }
 }
 
-/*
+/**
  * Find all course / site files linked to in a piece of html.
  * @param string html the html to search
  * @param int course search for files for courseid course or set to siteid for
@@ -2337,12 +2354,14 @@ function question_replace_file_links_in_html($html, $fromcourseid, $tocourseid, 
 }
 
 function get_filesdir_from_context($context){
+    global $DB;
+
     switch ($context->contextlevel){
         case CONTEXT_COURSE :
             $courseid = $context->instanceid;
             break;
         case CONTEXT_MODULE :
-            $courseid = get_field('course_modules', 'course', 'id', $context->instanceid);
+            $courseid = $DB->get_field('course_modules', 'course', array('id'=>$context->instanceid));
             break;
         case CONTEXT_COURSECAT :
         case CONTEXT_SYSTEM :
