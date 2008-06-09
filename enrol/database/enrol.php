@@ -83,11 +83,11 @@ function setup_enrolments(&$user) {
 
                 //$count = 0;
                 $courselist = array();
-                while ($fields_obj = rs_fetch_next_record($rs)) {         // Make a nice little array of courses to process
+                while ($fields_obj = (object)$rs->FetchRow()) {         // Make a nice little array of courses to process
                     $courselist[] = $fields_obj->enrolremotecoursefield;
                     //$count++;
                 }
-                rs_close($rs);
+                $rs->close();
 
                 //error_log('[ENROL_DB] Found '.count($existing).' existing roles and '.$count.' in external database');
 
@@ -220,7 +220,7 @@ function sync_enrolments($role = null) {
 
     $DB->begin_sql();
     $extcourses = array();
-    while ($extcourse_obj = rs_fetch_next_record($rs)) { // there are more course records
+    while ($extcourse_obj = (object)$rs->FetchRow()) { // there are more course records
         $extcourse = $extcourse_obj->{$CFG->enrol_remotecoursefield};
         array_push($extcourses, $extcourse);
 
@@ -275,10 +275,10 @@ function sync_enrolments($role = null) {
         }
 
         // slurp results into an array
-        while ($crs_obj = rs_fetch_next_record($crs)) {
+        while ($crs_obj = (object)$crs->FetchRow()) {
             array_push($extenrolments, $crs_obj->{$CFG->enrol_remoteuserfield});
         }
-        rs_close($crs); // release the handle
+        $crs->close(); // release the handle
 
         //
         // prune enrolments to users that are no longer in ext auth
@@ -362,7 +362,7 @@ function sync_enrolments($role = null) {
 
         } // end foreach member
     } // end while course records
-    rs_close($rs); //Close the main course recordset
+    $rs->close(); //Close the main course recordset
 
     //
     // prune enrolments to courses that are no longer in ext auth

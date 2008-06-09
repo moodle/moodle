@@ -195,7 +195,7 @@
         //  - other unidentified situations ?!
 
         $regrade_hotpots = array();
-        $concat_field = sql_concat('hotpot', "'_'", 'name');
+        $concat_field = $DB->sql_concat('hotpot', "'_'", 'name');
         if ($concat_field) {
             $records = $DB->get_records_sql("
                 SELECT $concat_field, COUNT(*), hotpot, name

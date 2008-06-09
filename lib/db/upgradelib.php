@@ -26,7 +26,7 @@ function upgrade_fix_category_depths() {
 
     // now add path and depth to top level categories
     $sql = "UPDATE {course_categories}
-               SET depth = 1, path = ".sql_concat("'/'", "id")."
+               SET depth = 1, path = ".$DB->sql_concat("'/'", "id")."
              WHERE parent = 0";
     $DB->execute($sql);
 

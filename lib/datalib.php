@@ -138,8 +138,8 @@ function count_courses_notin_metacourse($metacourseid) {
 function search_users($courseid, $groupid, $searchtext, $sort='', array $exceptions=null) {
     global $DB;
 
-    $LIKE      = sql_ilike();
-    $fullname  = sql_fullname('u.firstname', 'u.lastname');
+    $LIKE      = $DB->sql_ilike();
+    $fullname  = $DB->sql_fullname('u.firstname', 'u.lastname');
 
     if (!empty($exceptions)) {
         list($exceptions, $params) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex0000', false);
@@ -220,8 +220,8 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
                 'load so much data into memory.', DEBUG_DEVELOPER);
     }
 
-    $LIKE      = sql_ilike();
-    $fullname  = sql_fullname();
+    $LIKE      = $DB->sql_ilike();
+    $fullname  = $DB->sql_fullname();
 
     $select = " username <> :guest AND deleted = 0";
     $params = array('guest'=>'guest');
@@ -286,8 +286,8 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
                            $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams=null) {
     global $DB;
 
-    $LIKE      = sql_ilike();
-    $fullname  = sql_fullname();
+    $LIKE      = $DB->sql_ilike();
+    $fullname  = $DB->sql_fullname();
 
     $select = "deleted <> 1";
     $params = array();

@@ -623,8 +623,8 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
 function message_search_users($courseid, $searchtext, $sort='', $exceptions='') {
     global $CFG, $USER, $DB;
 
-    $fullname = sql_fullname();
-    $LIKE     = sql_ilike();
+    $fullname = $DB->sql_fullname();
+    $LIKE     = $DB->sql_ilike();
 
     if (!empty($exceptions)) {
         $except = ' AND u.id NOT IN ('. $exceptions .') ';

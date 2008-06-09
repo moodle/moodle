@@ -174,12 +174,12 @@ class auth_plugin_db extends auth_plugin_base {
                 " WHERE {$this->config->fielduser} = '".$this->ext_addslashes($extusername)."'";
             if ($rs = $authdb->Execute($sql)) {
                 if ( !$rs->EOF ) {
-                    $fields_obj = rs_fetch_record($rs);
+                    $fields_obj = $rs->FetchObj();
                     foreach ($selectfields as $localname=>$externalname) {
                         $result[$localname] = $textlib->convert($fields_obj->{$localname}, $this->config->extencoding, 'utf-8');
                      }
                  }
-                 rs_close($rs);
+                 $rs->Close();
             }
         }
         $authdb->Close();
@@ -418,7 +418,7 @@ class auth_plugin_db extends auth_plugin_base {
         if (!$rs) {
             print_error('auth_dbcantconnect','auth');
         } else if ( !$rs->EOF ) {
-            while ($rec = rs_fetch_next_record($rs)) {
+            while ($rec = $rs->FetchRow()) {
                 array_push($result, $rec->username);
             }
         }

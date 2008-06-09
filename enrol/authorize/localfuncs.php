@@ -137,11 +137,15 @@ function send_welcome_messages($orderdata)
 
     $sql = "SELECT e.id, e.courseid, e.userid, c.fullname
               FROM {enrol_authorize} e
-        INNER JOIN {course} c ON c.id = e.courseid
+              JOIN {course} c ON c.id = e.courseid
              WHERE e.id IN(" . implode(',', $orderdata) . ")
           ORDER BY e.userid";
 
-    if (($rs = $DB->get_recordset_sql($sql)) && ($ei = rs_fetch_next_record($rs)))
+    if (!$rs = $DB->get_recordset_sql($sql)) {
+        return;
+    }
+
+    if ($ts->valid() and $ei = current($rs))
     {
         if (1 < count($orderdata)) {
             $sender = get_admin();
@@ -159,7 +163,11 @@ function send_welcome_messages($orderdata)
 
             while ($ei && $ei->userid == $lastuserid) {
                 $usercourses[] = $ei->fullname;
-                $ei = rs_fetch_next_record($rs);
+                if (!$rs->valid()) {
+                    break;
+                }
+                $rs->next();
+                $ei = $rs->current();
             }
 
             if (($user = $DB->get_record('user', array('id'=>$lastuserid)))) {
@@ -174,7 +182,7 @@ function send_welcome_messages($orderdata)
         }
         while ($ei);
 
-        rs_close($rs);
+        $rs->close();
     }
 }
 

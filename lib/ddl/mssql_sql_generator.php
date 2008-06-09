@@ -460,10 +460,10 @@ class mssql_sql_generator extends sql_generator {
         $fieldname = $xmldb_field->getName();
 
     /// Look for any default constraint in this field and drop it
-        if ($default = get_record_sql("SELECT id, object_name(cdefault) AS defaultconstraint
-                                         FROM syscolumns
-                                        WHERE id = object_id('{$tablename}')
-                                          AND name = '{$fieldname}'")) {
+        if ($default = $this->mdb->get_record_sql("SELECT id, object_name(cdefault) AS defaultconstraint
+                                                     FROM syscolumns
+                                                    WHERE id = object_id(?)
+                                                          AND name = ?", array($tablename, $fieldname))) {
             return $default->defaultconstraint;
         } else {
             return false;
@@ -479,19 +479,20 @@ class mssql_sql_generator extends sql_generator {
      * If no check constraints are found, returns an empty array
      */
     public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
+        
 
         $results = array();
 
         $tablename = $this->getTableName($xmldb_table);
 
-        if ($constraints = get_records_sql("SELECT o.name, c.text AS description
-                                            FROM sysobjects o,
-                                                 sysobjects p,
-                                                 syscomments c
-                                           WHERE p.id = o.parent_obj
-                                             AND o.id = c.id
-                                             AND o.xtype = 'C'
-                                             AND p.name = '{$tablename}'")) {
+        if ($constraints = $this->mdb->get_records_sql("SELECT o.name, c.text AS description
+                                                          FROM sysobjects o,
+                                                               sysobjects p,
+                                                               syscomments c
+                                                         WHERE p.id = o.parent_obj
+                                                               AND o.id = c.id
+                                                               AND o.xtype = 'C'
+                                                               AND p.name = ?", array($tablename))) {
             foreach ($constraints as $constraint) {
                 $results[$constraint->name] = $constraint;
             }
@@ -529,17 +530,17 @@ class mssql_sql_generator extends sql_generator {
             case 'uk':
             case 'fk':
             case 'ck':
-                if ($check = get_records_sql("SELECT name
-                                              FROM sysobjects
-                                              WHERE lower(name) = '" . strtolower($object_name) . "'")) {
+                if ($check = $this->mdb->get_records_sql("SELECT name
+                                                            FROM sysobjects
+                                                           WHERE lower(name) = ?", array(strtolower($object_name)))) {
                     return true;
                 }
                 break;
             case 'ix':
             case 'uix':
-                if ($check = get_records_sql("SELECT name
-                                              FROM sysindexes
-                                              WHERE lower(name) = '" . strtolower($object_name) . "'")) {
+                if ($check = $this->mdb->get_records_sql("SELECT name
+                                                            FROM sysindexes
+                                                           WHERE lower(name) = ?", array(strtolower($object_name)))) {
                     return true;
                 }
                 break;

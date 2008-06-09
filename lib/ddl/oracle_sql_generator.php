@@ -325,10 +325,10 @@ class oracle_sql_generator extends sql_generator {
         if ($oldmetatype == 'N') {
             $uppertablename = strtoupper($tablename);
             $upperfieldname = strtoupper($fieldname);
-            if ($col = get_record_sql("SELECT cname, precision
-                                   FROM col
-                                   WHERE tname = '$uppertablename'
-                                     AND cname = '$upperfieldname'")) {
+            if ($col = $this->mdb->get_record_sql("SELECT cname, precision
+                                                     FROM col
+                                                     WHERE tname = ? AND cname = ?",
+                                                  array($uppertablename, $upperfieldname))) {
                 $oldlength = $col->precision;
             }
         }
@@ -517,11 +517,12 @@ class oracle_sql_generator extends sql_generator {
 
         $tablename = strtoupper($this->getTableName($xmldb_table));
 
-        if ($constraints = get_records_sql("SELECT lower(c.constraint_name) AS name, c.search_condition AS description
-                                              FROM user_constraints c
-                                             WHERE c.table_name = '{$tablename}'
-                                               AND c.constraint_type = 'C'
-                                               AND c.constraint_name not like 'SYS%'")) {
+        if ($constraints = $this->mdb->get_records_sql("SELECT lower(c.constraint_name) AS name, c.search_condition AS description
+                                                          FROM user_constraints c
+                                                         WHERE c.table_name = ?
+                                                               AND c.constraint_type = 'C'
+                                                               AND c.constraint_name not like 'SYS%'",
+                                                        array($tablename))) {
             foreach ($constraints as $constraint) {
                 $results[$constraint->name] = $constraint;
             }
@@ -559,10 +560,10 @@ class oracle_sql_generator extends sql_generator {
          $prefixupper  = strtoupper($this->prefix);
          $sequencename = false;
 
-        if ($trigger = get_record_sql("SELECT trigger_name, trigger_body
-                                         FROM user_triggers
-                                        WHERE table_name = '{$tablename}'
-                                          AND trigger_name LIKE '{$prefixupper}%_ID%_TRG'")) {
+        if ($trigger = $this->mdb->get_record_sql("SELECT trigger_name, trigger_body
+                                                     FROM user_triggers
+                                                    WHERE table_name = ? AND trigger_name LIKE ?",
+                                                  array($tablename, "{$prefixupper}%_ID%_TRG"))) {
         /// If trigger found, regexp it looking for the sequence name
             preg_match('/.*SELECT (.*)\.nextval/i', $trigger->trigger_body, $matches);
             if (isset($matches[1])) {
@@ -584,10 +585,10 @@ class oracle_sql_generator extends sql_generator {
         $prefixupper = strtoupper($this->prefix);
         $triggername = false;
 
-        if ($trigger = get_record_sql("SELECT trigger_name, trigger_body
-                                         FROM user_triggers
-                                        WHERE table_name = '{$tablename}'
-                                          AND trigger_name LIKE '{$prefixupper}%_ID%_TRG'")) {
+        if ($trigger = $this->mdb->get_record_sql("SELECT trigger_name, trigger_body
+                                                     FROM user_triggers
+                                                    WHERE table_name = ? AND trigger_name LIKE ?",
+                                                  array($tablename, "{$prefixupper}%_ID%_TRG"))) {
             $triggername = $trigger->trigger_name;
         }
 
@@ -605,9 +606,9 @@ class oracle_sql_generator extends sql_generator {
             case 'uix':
             case 'seq':
             case 'trg':
-                if ($check = get_records_sql("SELECT object_name
-                                              FROM user_objects
-                                              WHERE lower(object_name) = '" . strtolower($object_name) . "'")) {
+                if ($check = $this->mdb->get_records_sql("SELECT object_name
+                                                            FROM user_objects
+                                                           WHERE lower(object_name) = ?", array(strtolower($object_name)))) {
                     return true;
                 }
                 break;
@@ -615,9 +616,9 @@ class oracle_sql_generator extends sql_generator {
             case 'uk':
             case 'fk':
             case 'ck':
-                if ($check = get_records_sql("SELECT constraint_name
-                                              FROM user_constraints
-                                              WHERE lower(constraint_name) = '" . strtolower($object_name) . "'")) {
+                if ($check = $this->mdb->get_records_sql("SELECT constraint_name
+                                                            FROM user_constraints
+                                                           WHERE lower(constraint_name) = ?", array(strtolower($object_name)))) {
                     return true;
                 }
                 break;

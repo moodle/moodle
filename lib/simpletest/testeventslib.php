@@ -116,7 +116,7 @@ class eventslib_test extends UnitTestCase {
         global $DB;
 
         events_uninstall('unittest');
-        $this->assertEqual(0, count_records('events_handlers', array('handlermodule'=>'unittest')), 'All handlers should be uninstalled: %s');
+        $this->assertEqual(0, $DB->count_records('events_handlers', array('handlermodule'=>'unittest')), 'All handlers should be uninstalled: %s');
     }
 
     /**

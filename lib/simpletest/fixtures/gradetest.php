@@ -746,7 +746,7 @@ class grade_test extends UnitTestCase {
 
         if ($grade_category->id = $DB->insert_record('grade_categories', $grade_category)) {
             $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
-            update_record('grade_categories', $grade_category);
+            $DB->update_record('grade_categories', $grade_category);
             $this->grade_categories[0] = $grade_category;
         }
 
@@ -765,7 +765,7 @@ class grade_test extends UnitTestCase {
 
         if ($grade_category->id = $DB->insert_record('grade_categories', $grade_category)) {
             $grade_category->path = $this->grade_categories[0]->path.$grade_category->id.'/';
-            update_record('grade_categories', $grade_category);
+            $DB->update_record('grade_categories', $grade_category);
             $this->grade_categories[1] = $grade_category;
         }
 
@@ -784,7 +784,7 @@ class grade_test extends UnitTestCase {
 
         if ($grade_category->id = $DB->insert_record('grade_categories', $grade_category)) {
             $grade_category->path = $this->grade_categories[0]->path.$grade_category->id.'/';
-            update_record('grade_categories', $grade_category);
+            $DB->update_record('grade_categories', $grade_category);
             $this->grade_categories[2] = $grade_category;
         }
 
@@ -805,7 +805,7 @@ class grade_test extends UnitTestCase {
 
         if ($grade_category->id = $DB->insert_record('grade_categories', $grade_category)) {
             $grade_category->path = '/'.$course_category->id.'/'.$grade_category->id.'/';
-            update_record('grade_categories', $grade_category);
+            $DB->update_record('grade_categories', $grade_category);
             $this->grade_categories[3] = $grade_category;
         }
     }

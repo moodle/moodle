@@ -417,7 +417,7 @@
             $groupselect = ' ';
         }
 
-        $ilike = sql_ilike(); //Be case-insensitive
+        $ilike = $DB->sql_ilike(); //Be case-insensitive
 
     /// Find the field we are sorting on
         if ($sort <= 0 or !$sortfield = data_get_field_from_id($sort, $data)) {

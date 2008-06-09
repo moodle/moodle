@@ -196,7 +196,7 @@
                 "SELECT * FROM {question} q
                 WHERE qtype = '" . RANDOM . "'
                     AND category = ?
-                    AND " . sql_compare_text('questiontext') . " = ?
+                    AND " . $DB->sql_compare_text('questiontext') . " = ?
                     AND NOT EXISTS (SELECT * FROM {quiz_question_instances} WHERE question = q.id)
                 ORDER BY id", array($category->id, $recurse))) {
             // Take as many of these as needed.

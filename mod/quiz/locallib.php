@@ -443,7 +443,7 @@ function quiz_has_feedback($quizid) {
     static $cache = array();
     if (!array_key_exists($quizid, $cache)) {
         $cache[$quizid] = $DB->record_exists_select('quiz_feedback',
-                "quizid = ? AND " . sql_isnotempty('quiz_feedback', 'feedbacktext', false, true), array($quizid));
+                "quizid = ? AND " . $DB->sql_isnotempty('quiz_feedback', 'feedbacktext', false, true), array($quizid));
     }
     return $cache[$quizid];
 }

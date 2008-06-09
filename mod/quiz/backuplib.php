@@ -126,7 +126,7 @@
             // and their parents will already have been included.)
             $categorieswithrandom = $DB->get_records_sql("
                     SELECT question.category AS id, SUM(" .
-                            sql_cast_char2int('questiontext', true) . ") AS numqsusingsubcategories
+                            $DB->sql_cast_char2int('questiontext', true) . ") AS numqsusingsubcategories
                     FROM {quiz_question_instances} qqi,
                          $from
                          {question} question

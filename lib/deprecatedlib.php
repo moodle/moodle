@@ -436,7 +436,7 @@ function get_current_group($courseid, $full = false) {
  * @param string $message The message to display to the user about the error.
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  */
-function error ($message, $link='') {
+function error($message, $link='') {
 
     global $CFG, $SESSION, $THEME;
     debugging('error() is a deprecated function, please call print_error() instead of error()', DEBUG_DEVELOPER);
@@ -498,7 +498,7 @@ function error ($message, $link='') {
 }
 
 /// removed functions
-function addslashes_object( $dataobject ) {
+function addslashes_object($dataobject) {
     error('addslashes() not available anymore');
 }
 
@@ -506,6 +506,265 @@ function addslashes_recursive($var) {
     error('addslashes_recursive() not available anymore');
 }
 
+function execute_sql($command, $feedback=true) {
+    error('execute_sql() not available anymore');
+}
+
+function record_exists_select($table, $select='') {
+    error('record_exists_select() not available anymore');
+}
+
+function record_exists_sql($sql) {
+    error('record_exists_sql() not available anymore');
+}
+
+function count_records_select($table, $select='', $countitem='COUNT(*)') {
+    error('count_records_select() not available anymore');
+}
+
+function count_records_sql($sql) {
+    error('count_records_sql() not available anymore');
+}
+
+function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
+    error('get_record_sql() not available anymore');
+}
+
+function get_record_select($table, $select='', $fields='*') {
+    error('get_record_select() not available anymore');
+}
+
+function get_recordset($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_recordset() not available anymore');
+}
+
+function get_recordset_sql($sql, $limitfrom=null, $limitnum=null) {
+    error('get_recordset_sql() not available anymore');
+}
+
+function rs_fetch_record(&$rs) {
+    error('rs_fetch_record() not available anymore');
+}
+
+function rs_next_record(&$rs) {
+    error('rs_next_record() not available anymore');
+}
+
+function rs_fetch_next_record(&$rs) {
+    error('rs_fetch_next_record() not available anymore');
+}
+
+function rs_EOF($rs) {
+    error('rs_EOF() not available anymore');
+}
+
+function rs_close(&$rs) {
+    error('rs_close() not available anymore');
+}
+
+function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_records_select() not available anymore');
+}
+
+function get_field_select($table, $return, $select) {
+    error('get_field_select() not available anymore');
+}
+
+function get_field_sql($sql) {
+    error('get_field_sql() not available anymore');
+}
+
+function delete_records_select($table, $select='') {
+    delete_records_select('get_field_sql() not available anymore');
+}
 
 
-?>
+function configure_dbconnection() {
+    error('configure_dbconnection() removed');
+}
+
+function sql_max($field) {
+    error('sql_max() removed - use normal sql MAX() instead');
+}
+
+function sql_as() {
+    error('sql_as() removed - do not use AS for tables at all');
+}
+
+function sql_paging_limit($page, $recordsperpage) {
+    error('Function sql_paging_limit() is deprecated. Replace it with the correct use of limitfrom, limitnum parameters');
+}
+
+function db_uppercase() {
+    error('upper() removed - use normal sql UPPER()');
+}
+
+function db_lowercase() {
+    error('upper() removed - use normal sql LOWER()');
+}
+
+function modify_database($sqlfile='', $sqlstring='') {
+    error('modify_database() removed - use new XMLDB functions');
+}
+
+function where_clause($field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
+    error('where_clause() removed - use new functions with $conditions parameter');
+}
+
+function execute_sql_arr($sqlarr, $continue=true, $feedback=true) {
+    error('execute_sql_arr() removed');
+}
+
+function get_records_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_records_list() removed');
+}
+
+function get_recordset_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_recordset_list() removed');
+}
+
+function get_records_menu($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_records_menu() removed');
+}
+
+function get_records_select_menu($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_records_select_menu() removed');
+}
+
+function get_records_sql_menu($sql, $limitfrom='', $limitnum='') {
+    error('get_records_sql_menu() removed');
+}
+
+function column_type($table, $column) {
+    error('column_type() removed');
+}
+
+function recordset_to_menu($rs) {
+    error('recordset_to_menu() removed');
+}
+
+function records_to_menu($records, $field1, $field2) {
+    error('records_to_menu() removed');
+}
+
+function set_field_select($table, $newfield, $newvalue, $select, $localcall = false) {
+    error('set_field_select() removed');
+}
+
+function get_fieldset_select($table, $return, $select) {
+    error('get_fieldset_select() removed');
+}
+
+function get_fieldset_sql($sql) {
+    error('get_fieldset_sql() removed');
+}
+
+function sql_ilike() {
+    error('sql_ilike() not available anymore');
+}
+
+function sql_fullname($first='firstname', $last='lastname') {
+    error('sql_fullname() not available anymore');
+}
+
+function sql_concat() {
+    error('sql_concat() not available anymore');
+}
+
+function sql_empty() {
+    error('sql_empty() not available anymore');
+}
+
+function sql_substr() {
+    error('sql_substr() not available anymore');
+}
+
+function sql_bitand($int1, $int2) {
+    error('sql_bitand() not available anymore');
+}
+
+function sql_bitnot($int1) {
+    error('sql_bitnot() not available anymore');
+}
+
+function sql_bitor($int1, $int2) {
+    error('sql_bitor() not available anymore');
+}
+
+function sql_bitxor($int1, $int2) {
+    error('sql_bitxor() not available anymore');
+}
+
+function sql_cast_char2int($fieldname, $text=false) {
+    error('sql_cast_char2int() not available anymore');
+}
+
+function sql_compare_text($fieldname, $numchars=32) {
+    error('sql_compare_text() not available anymore');
+}
+
+function sql_order_by_text($fieldname, $numchars=32) {
+    error('sql_order_by_text() not available anymore');
+}
+
+function sql_concat_join($separator="' '", $elements=array()) {
+    error('sql_concat_join() not available anymore');
+}
+
+function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
+    error('sql_isempty() not available anymore');
+}
+
+function sql_isnotempty($tablename, $fieldname, $nullablefield, $textfield) {
+    error('sql_isnotempty() not available anymore');
+}
+
+function begin_sql() {
+    error('begin_sql() not available anymore');
+}
+
+function commit_sql() {
+    error('commit_sql() not available anymore');
+}
+
+function rollback_sql() {
+    error('rollback_sql() not available anymore');
+}
+
+function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
+    error('insert_record() not available anymore');
+}
+
+function update_record($table, $dataobject) {
+    error('update_record() not available anymore');
+}
+
+function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+    error('get_records() not available anymore');
+}
+
+function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields='*') {
+    error('get_record() not available anymore');
+}
+
+function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
+    error('set_field() not available anymore');
+}
+
+function count_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
+    error('count_records() not available anymore');
+}
+
+function record_exists($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
+    error('record_exists() not available anymore');
+}
+
+function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
+    error('delete_records() not available anymore');
+}
+
+function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
+    error('get_field() not available anymore');
+}
+
+    

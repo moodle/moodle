@@ -445,12 +445,11 @@ class postgres_sql_generator extends sql_generator {
 
         $tablename = $this->getTableName($xmldb_table);
 
-        if ($constraints = get_records_sql("SELECT co.conname AS name, co.consrc AS description
-                                              FROM pg_constraint co,
-                                                   pg_class cl
-                                             WHERE co.conrelid = cl.oid
-                                               AND co.contype = 'c'
-                                               AND cl.relname = '{$tablename}'")) {
+        if ($constraints = $this->mdb->get_records_sql("SELECT co.conname AS name, co.consrc AS description
+                                                          FROM pg_constraint co, pg_class cl
+                                                         WHERE co.conrelid = cl.oid
+                                                               AND co.contype = 'c' AND cl.relname = ?",
+                                                       array($tablename))) {
             foreach ($constraints as $constraint) {
                 $results[$constraint->name] = $constraint;
             }
@@ -492,10 +491,10 @@ function getSequenceFromDB($xmldb_table) {
     $tablename = $this->getTableName($xmldb_table);
     $sequencename = $tablename . '_id_seq';
 
-    if (!get_record_sql("SELECT *
-                     FROM pg_class
-                     WHERE relname = '{$sequencename}'
-                       AND relkind = 'S'")) {
+    if (!$this->mdb->get_record_sql("SELECT *
+                                       FROM pg_class
+                                      WHERE relname = ? AND relkind = 'S'",
+                                    array($sequencename))) {
         $sequencename = false;
     }
 
@@ -512,9 +511,9 @@ function getSequenceFromDB($xmldb_table) {
             case 'ix':
             case 'uix':
             case 'seq':
-                if ($check = get_records_sql("SELECT relname
-                                              FROM pg_class
-                                              WHERE lower(relname) = '" . strtolower($object_name) . "'")) {
+                if ($check = $this->mdb->get_records_sql("SELECT relname
+                                                            FROM pg_class
+                                                           WHERE lower(relname) = ?", array(strtolower($object_name)))) {
                     return true;
                 }
                 break;
@@ -522,16 +521,16 @@ function getSequenceFromDB($xmldb_table) {
             case 'uk':
             case 'fk':
             case 'ck':
-                if ($check = get_records_sql("SELECT conname
-                                              FROM pg_constraint
-                                              WHERE lower(conname) = '" . strtolower($object_name) . "'")) {
+                if ($check = $this->mdb->get_records_sql("SELECT conname
+                                                            FROM pg_constraint
+                                                           WHERE lower(conname) = ?", array(strtolower($object_name)))) {
                     return true;
                 }
                 break;
             case 'trg':
-                if ($check = get_records_sql("SELECT tgname
-                                              FROM pg_trigger
-                                              WHERE lower(tgname) = '" . strtolower($object_name) . "'")) {
+                if ($check = $this->mdb->get_records_sql("SELECT tgname
+                                                            FROM pg_trigger
+                                                           WHERE lower(tgname) = ?", array(strtolower($object_name)))) {
                     return true;
                 }
                 break;

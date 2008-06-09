@@ -965,7 +965,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
  */
 function forum_print_overview($courses,&$htmlarray) {
     global $USER, $CFG;
-    $LIKE = sql_ilike();
+    $LIKE = $DB->sql_ilike();
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
         return array();
@@ -1738,7 +1738,7 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
     $selectdiscussion = "(".implode(" OR ", $where).")";
 
     // Some differences SQL
-    $LIKE = sql_ilike();
+    $LIKE = $DB->sql_ilike();
     $NOTLIKE = 'NOT ' . $LIKE;
     if ($CFG->dbfamily == 'postgres') {
         $REGEXP = '~*';
