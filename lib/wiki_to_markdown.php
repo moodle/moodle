@@ -364,35 +364,5 @@ class WikiToMarkdown {
     //return $buffer;    
     return $buffer;
   }
-
-  function update( $thing, $textfield, $formatfield, $coursesql='' ) {
-    // converts the text in a particular activity (or sub-activity)
-    // $thing = the database name for that 'thing' (eg, resource, choice)
-    // $textfield = the name of the field that might hold the wiki-text
-    // $formatfield = the name of the field that contains the format type
-    // $coursesql = if supplied, the query to get the courseid, if not get from the 'course' field 
-    //   ($id of record is tacked on right at the end, so phrase accordingly)
-    // returns a count of records converted 
-    $count = 0;
-    if ($records = get_records( $thing,$formatfield,FORMAT_WIKI )) {
-        foreach( $records as $record ) {
-          $text = $record->$textfield;
-          $id = $record->id;
-          if (!$coursesql) {
-            $courseid = $record->course;
-          } else {
-            $r = get_record_sql( $coursesql . "$id" );
-            $courseid = $r->course;
-          }
-          $newtext = $this->convert( $text,$courseid );
-      
-          $record->$textfield = $newtext;
-          $record->$formatfield = FORMAT_MARKDOWN;
-          update_record( $thing, addslashes_object( $record ) );
-          $count++;
-        }
-    }
-    return $count; 
-  }
 }
 ?>

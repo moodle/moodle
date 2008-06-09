@@ -342,13 +342,17 @@ class moodle_list{
         $this->reorder_peers($peers);
     }
     function reorder_peers($peers){
+        global $DB;
+
         foreach ($peers as $key => $peer) {
-            if (! set_field("{$this->table}", "sortorder", $key, "id", $peer)) {
+            if (! $DB->set_field($this->table, "sortorder", $key, array("id"=>$peer))) {
                 print_error('listupdatefail');
             }
         }
     }
     function move_item_left($id) {
+        global $DB;
+
         $item = $this->find_item($id);
         if (!isset($item->parentlist->parentitem->parentlist)){
             print_error('listcantmoveleft');
@@ -359,7 +363,7 @@ class moodle_list{
             } else {
                 $newparent = 0; // top level item
             }
-            if (!set_field("{$this->table}", "parent", $newparent, "id", $item->id)) {
+            if (!$DB->set_field($this->table, "parent", $newparent, array("id"=>$item->id))) {
                 print_error('listupdatefail');
             } else {
                 $oldparentkey = array_search($item->parentlist->parentitem->id, $newpeers);
@@ -374,12 +378,14 @@ class moodle_list{
      * @param integer $id
      */
     function move_item_right($id) {
+        global $DB;
+
         $peers = $this->get_items_peers($id);
         $itemkey = array_search($id, $peers);
         if (!isset($peers[$itemkey-1])){
             print_error('listcantmoveright');
         } else {
-            if (!set_field("{$this->table}", "parent", $peers[$itemkey-1], "id", $peers[$itemkey])) {
+            if (!$DB->set_field($this->table, "parent", $peers[$itemkey-1], array("id"=>$peers[$itemkey]))) {
                 print_error('listupdatefail');
             } else {
                 $newparent = $this->find_item($peers[$itemkey-1]);
@@ -432,7 +438,7 @@ class moodle_list{
     }
 }
 
-class list_item{
+class list_item {
     /**
      * id of record, used if list is editable
      *
