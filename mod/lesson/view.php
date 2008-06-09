@@ -125,7 +125,7 @@
 
                 // check for the completed condition
                 if ($conditions->completed) {
-                    if (count_records('lesson_grades', 'userid', $USER->id, 'lessonid', $dependentlesson->id)) {
+                    if ($DB->count_records('lesson_grades', array('userid'=>$USER->id, 'lessonid'=>$dependentlesson->id))) {
                         $completed = true;
                     }
                 } else {
@@ -180,7 +180,7 @@
             if (!has_capability('mod/lesson:manage', $context)) {
                 lesson_set_message(get_string('lessonnotready', 'lesson', $course->teacher)); // a nice message to the student
             } else {
-                if (!count_records('lesson_pages', 'lessonid', $lesson->id)) {
+                if (!$DB->count_records('lesson_pages', array('lessonid'=>$lesson->id))) {
                     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id"); // no pages - redirect to add pages
                 } else {
                     lesson_set_message(get_string('lessonpagelinkingbroken', 'lesson'));  // ok, bad mojo
@@ -250,7 +250,7 @@
             }
         }
         //if ($lastpageseen != $firstpageid) {
-        if (isset($lastpageseen) and count_records('lesson_attempts', 'lessonid', $lesson->id, 'userid', $USER->id, 'retry', $retries) > 0) {
+        if (isset($lastpageseen) and $DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id, 'userid'=>$USER->id, 'retry'=>$retries)) > 0) {
             // get the first page
             if (!$firstpageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id,
                         'prevpageid' => 0))) {
@@ -486,7 +486,7 @@
         if ($page->qtype == LESSON_BRANCHTABLE) {
             if ($lesson->minquestions and !has_capability('mod/lesson:manage', $context)) {
                 // tell student how many questions they have seen, how many are required and their grade
-                $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
+                $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
                 
                 $gradeinfo = lesson_grade($lesson, $ntries);
                 
@@ -549,7 +549,7 @@
         // this is for modattempts option.  Find the users previous answer to this page,
         //   and then display it below in answer processing
         if (isset($USER->modattempts[$lesson->id])) {            
-            $retries = count_records('lesson_grades', "lessonid", $lesson->id, "userid", $USER->id);
+            $retries = $DB->count_records('lesson_grades', array("lessonid"=>$lesson->id, "userid"=>$USER->id));
             $retries--;
             $params = array ("lessonid" => $lesson->id, "userid" => $USER->id, "pageid" => $page->id, "retry" => $retries);
             if (! $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND pageid = :pageid AND retry = :retry", $params, "timeseen")) {
@@ -776,23 +776,22 @@
             if ($lesson->nextpagedefault) {
                 // in Flash Card mode...
                 // ...first get number of retakes
-                $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
-                // ...then get the page ids (lessonid the 5th param is needed to make get_records play)
+                $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id)); 
+                // ...then get the page ids (lessonid the 5th param is needed to make $DB->get_records play)
                 $allpages = $DB->get_records("lesson_pages", array("lessonid" => $lesson->id), "id", "id,lessonid");
                 shuffle ($allpages);
                 $found = false;
                 if ($lesson->nextpagedefault == LESSON_UNSEENPAGE) {
                     foreach ($allpages as $thispage) {
-                        if (!count_records("lesson_attempts", "pageid", $thispage->id, "userid", 
-                                    $USER->id, "retry", $nretakes)) {
+                        if (!$DB->count_records("lesson_attempts", array("pageid"=>$thispage->id, "userid"=>$USER->id, "retry"=>$nretakes))) {
                             $found = true;
                             break;
                         }
                     }
                 } elseif ($lesson->nextpagedefault == LESSON_UNANSWEREDPAGE) {
                     foreach ($allpages as $thispage) {
-                        if (!count_records_select("lesson_attempts", "pageid = $thispage->id AND
-                                    userid = $USER->id AND correct = 1 AND retry = $nretakes")) {
+                        if (!$DB->count_records_select("lesson_attempts", array('pageid'=>$thispage->id,
+                                    'userid'=>$USER->id, 'correct'=>1, 'retry'=>$nretakes))) {
                             $found = true;
                             break;
                         }
@@ -802,8 +801,8 @@
                     $newpageid = $thispage->id;
                     if ($lesson->maxpages) {
                         // check number of pages viewed (in the lesson)
-                        if (count_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id,
-                                "retry", $nretakes) >= $lesson->maxpages) {
+                        if ($DB->count_records("lesson_attempts", array("lessonid"=>$lesson->id, "userid"=>$USER->id,
+                                "retry"=>$nretakes)) >= $lesson->maxpages) {
                             $newpageid = LESSON_EOL;
                         }
                     }
@@ -853,7 +852,7 @@
         lesson_print_header($cm, $course, $lesson, 'view');
         print_heading(get_string("congratulations", "lesson"));
         print_simple_box_start("center");
-        $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
+        $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
         if (isset($USER->modattempts[$lesson->id])) {
             $ntries--;  // need to look at the old attempts :)
         }

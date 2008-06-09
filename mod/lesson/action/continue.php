@@ -553,7 +553,7 @@
         $newpageid = $pageid; // display same page again
         $feedback  = get_string('noanswer', 'lesson');
     } else {
-        $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
+        $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id)); 
         if (!has_capability('mod/lesson:manage', $context)) {
             // record student's attempt
             $attempt = new stdClass;
@@ -580,7 +580,7 @@
             if (!$correctanswer and ($newpageid == 0)) {
                 // wrong answer and student is stuck on this page - check how many attempts 
                 // the student has had at this page/question
-                $nattempts = count_records("lesson_attempts", "pageid", $pageid, "userid", $USER->id,
+                $nattempts = $DB->count_records("lesson_attempts", array("pageid"=>$pageid, "userid"=>$USER->id),
                     "retry", $nretakes);
                 
                 // retreive the number of attempts left counter for displaying at bottom of feedback page
@@ -600,14 +600,13 @@
         } elseif ($newpageid == LESSON_NEXTPAGE) {
             if ($lesson->nextpagedefault) {
                 // in Flash Card mode...
-                // ... first get the page ids (lessonid the 5th param is needed to make get_records play)
+                // ... first get the page ids (lessonid the 5th param is needed to make $DB->get_records play)
                 $allpages = $DB->get_records("lesson_pages", array("lessonid" => $lesson->id), "id", "id,lessonid,qtype");
                 shuffle ($allpages);
                 $found = false;
                 if ($lesson->nextpagedefault == LESSON_UNSEENPAGE) {
                     foreach ($allpages as $thispage) {
-                        if (!count_records("lesson_attempts", "pageid", $thispage->id, "userid", 
-                                    $USER->id, "retry", $nretakes)) {
+                        if (!$DB->count_records("lesson_attempts", array("pageid"=>$thispage->id, "userid"=>$USER->id, "retry"=>$nretakes))) {
                             $found = true;
                             break;
                         }
@@ -615,14 +614,12 @@
                 } elseif ($lesson->nextpagedefault == LESSON_UNANSWEREDPAGE) {
                     foreach ($allpages as $thispage) {
                         if ($thispage->qtype == LESSON_ESSAY) {
-                            if (!count_records_select("lesson_attempts", "pageid = $thispage->id AND
-                                        userid = $USER->id AND retry = $nretakes")) {
+                            if (!$DB->count_records("lesson_attempts", array('pageid'=>$thispage->id, 'userid'=>$USER->id, 'retry'=>$nretakes))) {
                                 $found = true;
                                 break;
                             }
                         } else {                             
-                            if (!count_records_select("lesson_attempts", "pageid = $thispage->id AND
-                                        userid = $USER->id AND correct = 1 AND retry = $nretakes")) {
+                            if (!$DB->count_records("lesson_attempts", array('pageid'=>$thispage->id, 'userid'=>$USER->id, 'correct'=>1, 'retry'=>$nretakes))) {
                                 $found = true;
                                 break;
                             }
@@ -633,8 +630,8 @@
                     $newpageid = $thispage->id;
                     if ($lesson->maxpages) {
                         // check number of pages viewed (in the lesson)
-                        if (count_records("lesson_attempts", "lessonid", $lesson->id, "userid", $USER->id,
-                                "retry", $nretakes) >= $lesson->maxpages) {
+                        if ($DB->count_records("lesson_attempts", array("lessonid"=>$lesson->id, "userid"=>$USER->id,
+                                "retry"=>$nretakes)) >= $lesson->maxpages) {
                             $newpageid = LESSON_EOL;
                         }
                     }
@@ -675,8 +672,8 @@
             //    print_heading($title);
             //}
             if ($lesson->review and !$correctanswer and !$isessayquestion) {
-                $nretakes = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id); 
-                $qattempts = count_records("lesson_attempts", "userid", $USER->id, "retry", $nretakes, "pageid", $pageid);
+                $nretakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id)); 
+                $qattempts = $DB->count_records("lesson_attempts", array("userid"=>$USER->id, "retry"=>$nretakes, "pageid"=>$pageid));
                 if ($qattempts == 1) {
                     $feedback = get_string("firstwrong", "lesson");
                 } else {

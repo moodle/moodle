@@ -29,7 +29,7 @@
 
 /// user attempt count for reports link hover (completed attempts - much faster)
     $counts           = new stdClass;
-    $counts->attempts = count_records('lesson_grades', 'lessonid', $lesson->id);
+    $counts->attempts = $DB->count_records('lesson_grades', array('lessonid'=>$lesson->id));
     $counts->student  = $course->student;
     
     $row[] = new tabobject('view', "$CFG->wwwroot/mod/lesson/view.php?id=$cm->id", get_string('preview', 'lesson'), get_string('previewlesson', 'lesson', format_string($lesson->name)));

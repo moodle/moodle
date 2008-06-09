@@ -461,13 +461,14 @@ function lesson_create_objects($pageobjects, $lessonid) {
     Creates objects an chapter object that is to be inserted into the database
 */
 function book_create_objects($pageobjects, $bookid) {
+    global $DB;
 
     $chapters = array();
     $chapter = new stdClass;
     
     // same for all chapters
     $chapter->bookid = $bookid;
-    $chapter->pagenum = count_records('book_chapters', 'bookid', $bookid)+1;
+    $chapter->pagenum = $DB->count_records('book_chapters', array('bookid'=>$bookid))+1;
     $chapter->timecreated = time();
     $chapter->timemodified = time();
     $chapter->subchapter = 0;
@@ -475,7 +476,7 @@ function book_create_objects($pageobjects, $bookid) {
     $i = 1; 
     foreach ($pageobjects as $pageobject) {
         $page = prep_page($pageobject, $i);  // get title and contents
-        $chapter->importsrc = addslashes($pageobject->source); // add the source
+        $chapter->importsrc = $pageobject->source; // add the source
         $chapter->title = $page->title;
         $chapter->content = $page->contents;
         $chapters[] = $chapter; 
@@ -495,7 +496,7 @@ function prep_page($pageobject, $count) {
     if ($pageobject->title == '') {
         $page->title = "Page $count";  // no title set so make a generic one
     } else {
-        $page->title = addslashes($pageobject->title);      
+        $page->title = $pageobject->title;      
     }
     
     $page->contents = '';
@@ -506,7 +507,7 @@ function prep_page($pageobject, $count) {
         $image = str_replace("\r", '', $image);
         $image = str_replace("'", '"', $image);  // imgstyle
                     
-        $page->contents .= addslashes($image);
+        $page->contents .= $image;
     }
     // go through the contents array and put <p> tags around each element and strip out \n which I have found to be uneccessary
     foreach ($pageobject->contents as $content) {
@@ -514,7 +515,7 @@ function prep_page($pageobject, $count) {
         $content = str_replace("\r", '', $content);
         $content = str_replace('&#13;', '', $content);  // puts in returns?
         $content = '<p>'.$content.'</p>';
-        $page->contents .= addslashes($content);
+        $page->contents .= $content;
     }
     return $page;
 }

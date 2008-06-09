@@ -81,11 +81,11 @@
             
                 /// Remove attempts and update the retry number
                     $DB->delete_records('lesson_attempts', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
-                    execute_sql("UPDATE {$CFG->prefix}lesson_attempts SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
+                    $DB->execute("UPDATE {lesson_attempts} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
             
                 /// Remove seen branches and update the retry number    
                     $DB->delete_records('lesson_branch', array('userid' => $userid, 'lessonid' => $lesson->id, 'retry' => $try));
-                    execute_sql("UPDATE {$CFG->prefix}lesson_branch SET retry = retry - 1 WHERE userid = $userid AND lessonid = $lesson->id AND retry > $try", false);
+                    $DB->execute("UPDATE {lesson_branch} SET retry = retry - 1 WHERE userid = ? AND lessonid = ? AND retry > ?", array($userid, $lesson->id, $try));
 
                 /// update central gradebook
                     lesson_update_grades($lesson, $userid);

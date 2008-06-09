@@ -1066,7 +1066,7 @@ function lesson_cluster_jump($lessonid, $userid, $pageid) {
     global $DB;
     
     // get the number of retakes
-    if (!$retakes = count_records("lesson_grades", "lessonid", $lessonid, "userid", $userid)) {
+    if (!$retakes = $DB->count_records("lesson_grades", array("lessonid"=>$lessonid, "userid"=>$userid))) {
         $retakes = 0;
     }
 
@@ -1197,7 +1197,7 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
     global $DB;
     
     // get the number of retakes
-    if (!$retakes = count_records("lesson_grades", "lessonid", $lesson, "userid", $user)) {
+    if (!$retakes = $DB->count_records("lesson_grades", array("lessonid"=>$lesson, "userid"=>$user))) {
         $retakes = 0;
     }
 
@@ -1266,7 +1266,7 @@ function lesson_unseen_question_jump($lesson, $user, $pageid) {
 function lesson_unseen_branch_jump($lessonid, $userid) {
     global $DB;
     
-    if (!$retakes = count_records("lesson_grades", "lessonid", $lessonid, "userid", $userid)) {
+    if (!$retakes = $DB->count_records("lesson_grades", array("lessonid"=>$lessonid, "userid"=>$userid))) {
         $retakes = 0;
     }
 
@@ -1541,14 +1541,15 @@ function lesson_grade($lesson, $ntries, $userid = 0) {
  * @return void
  **/
 function lesson_print_ongoing_score($lesson) {
-    global $USER;
+    global $USER, $DB;
+
     $cm = get_coursemodule_from_instance('lesson', $lesson->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     if (has_capability('mod/lesson:manage', $context)) {
         echo "<p align=\"center\">".get_string('teacherongoingwarning', 'lesson').'</p>';
     } else {
-        $ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id);
+        $ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id));
         if (isset($USER->modattempts[$lesson->id])) {
             $ntries--;
         }
@@ -1602,6 +1603,7 @@ function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
  **/
 function lesson_print_progress_bar($lesson, $course) {
     global $CFG, $USER, $DB;
+
     $cm = get_coursemodule_from_instance('lesson', $lesson->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -1629,7 +1631,7 @@ function lesson_print_progress_bar($lesson, $course) {
         }
     
         // current attempt number
-        if (!$ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id)) {
+        if (!$ntries = $DB->count_records("lesson_grades", array("lessonid"=>$lesson->id, "userid"=>$USER->id))) {
             $ntries = 0;  // may not be necessary
         }
     

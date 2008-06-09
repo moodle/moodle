@@ -132,7 +132,7 @@ function lesson_delete_instance($id) {
 function lesson_delete_course($course, $feedback=true) {
     global $DB;
 
-    $count = count_records('lesson_default', 'course', $course->id);
+    $count = $DB->count_records('lesson_default', array('course'=>$course->id));
     $DB->delete_records('lesson_default', array('course' => $course->id));
 
     //Inform about changes performed if feedback is enabled
@@ -251,7 +251,7 @@ function lesson_user_complete($course, $user, $mod, $lesson) {
  * @param array $htmlarray Store overview output array( course ID => 'lesson' => HTML output )
  */
 function lesson_print_overview($courses, &$htmlarray) {
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
 
     if (!$lessons = get_all_instances_in_courses('lesson', $courses)) {
         return;
@@ -283,11 +283,11 @@ function lesson_print_overview($courses, &$htmlarray) {
             // Attempt information
             if (has_capability('mod/lesson:manage', get_context_instance(CONTEXT_MODULE, $lesson->coursemodule))) {
                 // Number of user attempts
-                $attempts = count_records('lesson_attempts', 'lessonid', $lesson->id);
+                $attempts = $DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id));
                 $str     .= print_box(get_string('xattempts', 'lesson', $attempts), 'info', '', true);
             } else {
                 // Determine if the user has attempted the lesson or not
-                if (count_records('lesson_attempts', 'lessonid', $lesson->id, 'userid', $USER->id)) {
+                if ($DB->count_records('lesson_attempts', array('lessonid'=>$lesson->id, 'userid'=>$USER->id))) {
                     $str .= print_box($strattempted, 'info', '', true);
                 } else {
                     $str .= print_box($strnotattempted, 'info', '', true);
