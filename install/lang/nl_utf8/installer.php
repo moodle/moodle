@@ -33,7 +33,7 @@ $string['cannotdownloadzipfile'] = 'Kan ZIP-bestand niet downloaden.';
 $string['cannotfindcomponent'] = 'Kan component niet vinden.';
 $string['cannotsavemd5file'] = 'Kan md5-bestand niet bewaren.';
 $string['cannotsavezipfile'] = 'Kan ZIP-bestand niet bewaren.';
-$string['cannotunzipfile'] = 'Kan bestand niet unzippen';
+$string['cannotunzipfile'] = 'Kon bestand niet unzippen';
 $string['caution'] = 'Opgelet';
 $string['check'] = 'Controleer';
 $string['checkingphpsettings'] = 'Controleren PHP instellingen';
@@ -294,6 +294,10 @@ $string['phpversionerror'] = 'PHP-versie moet minstens 4.1.0 zijn';
 $string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.1.0 nodig.</p> <p>De huidige versie op je server is $a</p>
 <p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres 7)';
+$string['prefixcannotbeempty'] = '<p>Fout: databank tabel prefix kan niet leeg zijn ($a)</p>
+<p>De site-beheerder moet dit probleem oplossen.</p>';
+$string['prefixtoolong'] = '<p>Fout: databank tabel prefix is te lang ($a->dbfamily)</p>
+<p>De site-beheerder moet dit probleem oplossen. De maximum lengte voor de tabelprefix in $a->dbfamily is $a->maxlength tekens.</p>';
 $string['previous'] = 'Vorige';
 $string['qtyperqpwillberemoved'] = 'Tijdens de upgrade zal het RQP vraagtype verwijderd worden. Je gebruikte deze vraag niet, dus je zult hier geen problemen mee krijgen.';
 $string['qtyperqpwillberemovedanyway'] = 'Tijdens de upgrade zal het RQP vraagtype verwijderd worden. Er zijn vragen van dit type in je database. Die zullen stoppen met werken, tenzij je de code herinstalleert van  http://moodle.org/mod/data/view.php?d=13&amp;rid=797 voor je verder gaat met de upgrade.';
