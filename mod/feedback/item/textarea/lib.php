@@ -82,7 +82,9 @@ class feedback_item_textarea extends feedback_item_base {
         $data = $analysed_item->data;
         if(is_array($data)) {
             $worksheet->setFormat("<l><ro2><vo>");
-            $worksheet->write_string($rowOffset, 1, $data[0]);
+            if(isset($data[0])) {
+                $worksheet->write_string($rowOffset, 1, $data[0]);
+            }
             $rowOffset++;
             for($i = 1; $i < sizeof($data); $i++) {
                 $worksheet->setFormat("<l><vo>");
