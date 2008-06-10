@@ -243,4 +243,16 @@ function quiz_report_feedback_for_grade($grade, $quizid) {
 
     return $feedbacktext;
 }
+
+function quiz_report_scale_sumgrades_as_percentage($rawgrade, $quiz, $round = true) {
+    if ($quiz->sumgrades) {
+        $grade = $rawgrade * 100 / $quiz->sumgrades;
+        if ($round) {
+            $grade = number_format($grade, $quiz->decimalpoints);
+        }
+    } else {
+        $grade = 0;
+    }
+    return $grade.' %';
+}
 ?>
