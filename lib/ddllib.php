@@ -365,12 +365,5 @@ function rename_index($table, $index, $newname, $continue=true, $feedback=true) 
     return $DB->get_manager()->rename_index($table, $index, $newname, $continue, $feedback);
 }
 
-/// DELETED !!
-
-function table_column($table, $oldfield, $field, $type='integer', $size='10',
-                      $signed='unsigned', $default='0', $null='not null', $after='') {
-    error('table_column() was removed, please use new ddl functions');
-}
-
 
 ?>

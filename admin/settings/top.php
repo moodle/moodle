@@ -34,16 +34,16 @@ $ADMIN->add('root', new admin_category('mnet', get_string('net','mnet')));
 
 $ADMIN->add('root', new admin_category('reports', get_string('reports')));
 foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
-/// This snippet is temporary until simpletest can be fixed to use xmldb.   See MDL-7377   XXX TODO
-    if ($plugin == 'simpletest' && $CFG->dbfamily != 'mysql' && $CFG->dbfamily != 'postgres') {
-        continue;
+    $settingsfile = "$CFG->dirroot/$CFG->admin/report/$plugin/settings.php";
+    if (file_exists($settingsfile)) {
+        include($settingsfile);
+    } else {
+        $reportname = get_string($plugin, 'report_' . $plugin);
+        if ($reportname[1] == '[') {
+            $reportname = get_string($plugin, 'admin');
+        }
+        $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php",'moodle/site:viewreports'));
     }
-/// End of removable snippet
-    $reportname = get_string($plugin, 'report_' . $plugin);
-    if ($reportname[1] == '[') {
-        $reportname = get_string($plugin, 'admin');
-    }
-    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php",'moodle/site:viewreports'));
 }
 
 $ADMIN->add('root', new admin_category('misc', get_string('miscellaneous')));

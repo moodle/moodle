@@ -439,7 +439,6 @@ function get_current_group($courseid, $full = false) {
 function error($message, $link='') {
 
     global $CFG, $SESSION, $THEME;
-    debugging('error() is a deprecated function, please call print_error() instead of error()', DEBUG_DEVELOPER);
     $message = clean_text($message);   // In case nasties are in here
 
     /**
@@ -450,6 +449,8 @@ function error($message, $link='') {
         // code that might call error().
         throw new Exception('error() call: '.  $message.($link!=='' ? ' ['.$link.']' : ''));
     }
+
+    debugging('error() is a deprecated function, please call print_error() instead of error()', DEBUG_DEVELOPER);
 
     if (defined('FULLME') && FULLME == 'cron') {
         // Errors in cron should be mtrace'd.
@@ -767,4 +768,8 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
     error('get_field() not available anymore');
 }
 
+function table_column($table, $oldfield, $field, $type='integer', $size='10',
+                      $signed='unsigned', $default='0', $null='not null', $after='') {
+    error('table_column() was removed, please use new ddl functions');
+}
     
