@@ -584,7 +584,9 @@ class quiz_report extends quiz_default_report {
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="' . $reporturlwithdisplayoptions->out(true) .
                         '" onsubmit="confirm(\''.$strreallydel.'\');">';
+                echo '<div style="display: none;">';
                 echo $reporturlwithdisplayoptions->hidden_params_out();
+                echo '</div>';
                 echo '<div>';
 
                 // Print table
