@@ -76,7 +76,9 @@ class quiz_report_overview_table extends table_sql {
                 echo '<div id="tablecontainer">';
                 echo '<form id="attemptsform" method="post" action="' . $this->reporturl->out(true) .
                         '" onsubmit="confirm(\''.$strreallydel.'\');">';
+                echo '<div style="display: none;">';
                 echo $this->reporturl->hidden_params_out(array(), 0, $this->displayoptions);
+                echo '</div>';
                 echo '<div>';
             }
         }
