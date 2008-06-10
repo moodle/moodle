@@ -20,13 +20,13 @@
     $relativepath = get_file_argument('quizfile.php');
 
     if (!$relativepath) {
-        print_error('No valid arguments supplied or incorrect server configuration');
+        print_error('invalidargorconf');
     }
 
     // extract relative path components
     $args = explode('/', trim($relativepath, '/'));
     if (count($args) < 3) { // always at least category, question and path
-        print_error('No valid arguments supplied');
+        print_error('invalidarguments');
     }
 
     $quizid       = (int)array_shift($args);
@@ -34,11 +34,11 @@
     $relativepath = implode ('/', $args);
 
     if (!($question = $DB->get_record('question', array('id' => $questionid)))) {
-        print_error('No valid arguments supplied');
+        print_error('invalidarguments');
     }
 
     if (!($questioncategory = $DB->get_record('question_categories', array('id' => $question->category)))) {
-        print_error('No valid arguments supplied');
+        print_error('invalidarguments');
     }
 
     /////////////////////////////////////
@@ -48,7 +48,7 @@
         if ($questioncategory->publish) {
             require_login();
             if (!isteacherinanycourse()) {
-              print_error('No valid arguments supplied');
+                print_error('invalidarguments');
             }
         } else {
             require_login($questioncategory->course);
@@ -57,10 +57,10 @@
         }
     } else {
         if (!($quiz = $DB->get_record('quiz', array('id' => $quizid)))) {
-            print_error('No valid arguments supplied');
+            print_error('invalidarguments');
         }
         if (!($course = $DB->get_record('course', array('id' => $quiz->course)))) {
-            print_error('No valid arguments supplied');
+            print_error('invalidarguments');
         }
         require_login($course->id);
 
@@ -71,7 +71,7 @@
         //    and ! ($quiz->review  &&  time() > $quiz->timeclose)
         //        || !quiz_get_user_attempts($quiz->id, $USER->id) )
         //{
-        //    print_error("Logged-in user is not allowed to view this quiz");
+        //    print_error('noview', 'quiz');
         //}
 
         ///////////////////////////////////////////////////
@@ -82,14 +82,14 @@
         // For now, let's not worry about this.  The following check doesn't
         // work for randomly selected questions and it gets complicated
         //if (!in_array($question->id, explode(',', $quiz->questions), FALSE)) {
-        //    print_error("Specified question is not on the specified quiz");
+        //    print_error('specificquestionnotonquiz', 'quiz');
         //}
     }
 
     // Have the question check whether it uses this file or not
     if (!$QTYPES[$question->qtype]->uses_quizfile($question,
                                                        $relativepath)) {
-        print_error("The specified file path is not on the specified question");
+        print_error('specificapathnotonquestion', 'quiz');
     }
 
 

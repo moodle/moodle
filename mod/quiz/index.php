@@ -11,7 +11,7 @@
 
     $id = required_param('id', PARAM_INT);
     if (!$course = $DB->get_record('course', array('id' => $id))) {
-        print_error("Course ID is incorrect");
+        print_error('invalidcourseid');
     }
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
     require_login($course->id);

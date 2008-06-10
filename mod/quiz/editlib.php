@@ -44,7 +44,7 @@ function quiz_delete_quiz_question($id, &$quiz) {
     $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
     // save new questionlist in database
     if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
-        print_error('Could not save question list');
+        print_error('cannotsavequestion', 'quiz');
     }
     $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->instance, 'question', $question));
     return true;
@@ -88,7 +88,7 @@ function quiz_add_quiz_question($id, &$quiz) {
     // Save new questionslist in database
     $quiz->questions = implode(",", $questions);
     if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id))) {
-        print_error('Could not save question list');
+        print_error('cannotsavequestion', 'quiz');
     }
 
     // update question grades

@@ -13,23 +13,23 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('quiz', $id)) {
-            print_error("There is no coursemodule with id $id");
+            print_error('invalidcoursemodule');
         }
         if (! $course = $DB->get_record('course', array('id' => $cm->course))) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         if (! $quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
-            print_error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
+            print_error('invalidcoursemodule');
         }
     } else {
         if (! $quiz = $DB->get_record('quiz', array('id' => $q))) {
-            print_error("There is no quiz with id $q");
+            print_error('invalidquizid', 'quiz');
         }
         if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
-            print_error("The course with id $quiz->course that the quiz with id $q belongs to is missing");
+            print_error('invalidcourseid');
         }
         if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-            print_error("The course module for the quiz with id $q is missing");
+            print_error('invalidcoursemodule');
         }
     }
 

@@ -21,39 +21,39 @@
 
     if ($stateid) {
         if (! $state = $DB->get_record('question_states', array('id' => $stateid))) {
-            print_error('Invalid state id');
+            print_error('invalidstateid', 'quiz');
         }
         if (! $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $state->attempt))) {
-            print_error('No such attempt ID exists');
+            print_error('invalidattemptid', 'quiz');
         }
     } elseif ($attemptid) {
         if (! $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid))) {
-            print_error('No such attempt ID exists');
+            print_error('invalidattemptid', 'quiz');
         }
         if (! $neweststateid = $DB->get_field('question_sessions', 'newest', array('attemptid' => $attempt->uniqueid, 'questionid' => $questionid))) {
             // newest_state not set, probably because this is an old attempt from the old quiz module code
             if (! $state = $DB->get_record('question_states', array('question' => $questionid, 'attempt' => $attempt->uniqueid))) {
-                print_error('Invalid question id');
+                print_error('invalidquestionid', 'quiz');
             }
         } else {
             if (! $state = $DB->get_record('question_states', array('id' => $neweststateid))) {
-                print_error('Invalid state id');
+                print_error('invalidstateid', 'quiz');
             }
         }
     } else {
-        print_error('Parameter missing');
+        print_error('missingparameter');
     }
     if (! $question = $DB->get_record('question', array('id' => $state->question))) {
-        print_error('Question for this state is missing');
+        print_error('questionmissing', 'quiz');
     }
     if (! $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
-        print_error('Course module is incorrect');
+        print_error('invalidcoursemodule');
     }
     if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
-        print_error('Course is misconfigured');
+        print_error('coursemisconf');
     }
     if (! $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
 
     require_login($course->id, false, $cm);
@@ -77,7 +77,7 @@
             }
         }
         if ($attempt->userid != $USER->id) {
-            print_error('This is not your attempt!');
+            print_error('notyourattempt', 'quiz');
         }
     }
 
@@ -101,7 +101,7 @@
     $questions[$key] = &$question;
     // Add additional questiontype specific information to the question objects.
     if (!get_question_options($questions)) {
-        print_error("Unable to load questiontype specific question information");
+        print_error('cannotloadtypeinfo', 'quiz');
     }
 
     $session = $DB->get_record('question_sessions', array('attemptid' => $attempt->uniqueid, 'questionid' => $question->id));
