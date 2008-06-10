@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="lib/ddl/simpletest/fixtures" VERSION="20080521" COMMENT="XMLDB file DLL unit tests">
   <TABLES>
-    <TABLE NAME="anothertest" COMMENT="Just a test table">
+    <TABLE NAME="deftable1" COMMENT="Just a test table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="course"/>
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>

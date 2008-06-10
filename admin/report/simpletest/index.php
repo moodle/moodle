@@ -115,7 +115,7 @@ echo '<p>';
     echo '<label for="path">', get_string('onlytest', $langfile), '</label> ';
     echo '<input type="text" id="path" name="path" value="', $displaypath, '" size="40" />';
 echo '</p>';
-echo '<p>'; print_checkbox('rundbtests', 1, $rundbtests, get_string('rundbtests', $langfile)); echo '</p>';
+echo '<p>'; print_checkbox('rundbtests', 1, $rundbtests, get_string('rundbtests', $langfile)); echo '</p>'; // TODO: localise
 echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
 echo '</fieldset>';
 echo '</form>';

@@ -4,7 +4,7 @@
     <TABLE NAME="anothertest" COMMENT="Just a test table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="incorrect_next_field"/> <!-- invalid because of NEXT value -->
-        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/> 
         <FIELD NAME="name" TYPE="char" LENGTH="30" NOTNULL="false" SEQUENCE="false" DEFAULT="Moodle" ENUM="false" PREVIOUS="course" NEXT="secondname"/>
         <FIELD NAME="secondname" TYPE="char" LENGTH="30" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="intro"/>
         <FIELD NAME="intro" TYPE="text" LENGTH="medium" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="secondname" NEXT="avatar"/>

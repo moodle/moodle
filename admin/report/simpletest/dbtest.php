@@ -67,8 +67,8 @@ if ($dbinstance >= 0) {
     // Make the reporter, which is what displays the results.
     $reporter = new ExHtmlReporter($showpasses);
 
-//    $test->addTestFile($CFG->libdir . '/ddl/simpletest/testddllib.php');
     $test->addTestFile($CFG->libdir . '/dml/simpletest/testdmllib.php');
+    $test->addTestFile($CFG->libdir . '/ddl/simpletest/testddllib.php');
 
     // If we have something to test, do it.
     print_heading(get_string('moodleunittests', $langfile, get_string('all', $langfile)));

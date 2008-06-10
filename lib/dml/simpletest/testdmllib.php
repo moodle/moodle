@@ -53,16 +53,17 @@ class dmllib_test extends UnitTestCase {
         if ($dbmanager->table_exists($table)) {
             $dbmanager->drop_table($table, true, false);
         }
-
         $dbmanager->create_table($table);
-        $tables[$table->getName()] = $table;
+        $this->tables[$table->getName()] = $table;
 
     }
 
     function tearDown() {
-        foreach ($this->tables as $key => $table) {
-            if ($this->dbmanager->table_exists($table)) {
-                $this->dbmanager->drop_table($table, true, false);
+        $dbmanager = $this->db->get_manager();
+
+        foreach ($this->tables as $table) {
+            if ($dbmanager->table_exists($table)) {
+                $dbmanager->drop_table($table, true, false);
             }
         }
         $this->tables = array();
