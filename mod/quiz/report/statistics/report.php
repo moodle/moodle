@@ -101,13 +101,14 @@ class quiz_report extends quiz_default_report {
             $mform->set_data(array('useallattempts' => $useallattempts));
             $mform->display();
         }
-        
+        $fromqa = '{quiz_attempts} qa ';
+        $whereqa = 'quiz = ? AND preview=0 AND timefinish !=0 ';
         $sql = 'SELECT (attempt=1) AS isfirst, COUNT(1) AS countrecs, SUM(sumgrades) AS total ' .
-                'FROM {quiz_attempts} ' .
-                'WHERE quiz = :quiz AND preview=0 AND timefinish !=0 ' .
+                'FROM '.$fromqa.
+                'WHERE ' .$whereqa.
                 'GROUP BY (attempt=1)';
 
-        if (!$attempttotals = $DB->get_records_sql($sql, array('quiz' => $quiz->id))){
+        if (!$attempttotals = $DB->get_records_sql($sql, array($quiz->id))){
             print_heading(get_string('noattempts','quiz'));
             return true;
         } else {
@@ -133,8 +134,6 @@ class quiz_report extends quiz_default_report {
             print_table($quizoverallstatistics);
         }
         //get the median
-        
-        
         if (!$table->is_downloading()) {
             if ($useallattempts){
                 $usingattempts = $allattempts;
@@ -143,7 +142,7 @@ class quiz_report extends quiz_default_report {
             } else {
                 $usingattempts = $firstattempt;
                 $usingattempts->heading = get_string('statsforfirstattempts', 'quiz_statistics');
-                $usingattempts->sql = 'AND attempt=1 ';
+                $usingattempts->sql = 'AND qa.attempt=1 ';
             }
             print_heading($usingattempts->heading);
             if (($usingattempts->countrecs/2)==floor($usingattempts->countrecs/2)){
@@ -155,11 +154,11 @@ class quiz_report extends quiz_default_report {
                 $limit = 1;
             }
             $sql = 'SELECT id, sumgrades ' .
-                'FROM {quiz_attempts} ' .
-                'WHERE quiz = :quiz AND preview=0 AND timefinish !=0 ' .
+                'FROM ' .$fromqa.
+                'WHERE ' .$whereqa.
                 $usingattempts->sql.
                 'ORDER BY sumgrades';
-            if (!$mediangrades = $DB->get_records_sql_menu($sql, array('quiz' => $quiz->id), $limitoffset, $limit)){
+            if (!$mediangrades = $DB->get_records_sql_menu($sql, array($quiz->id), $limitoffset, $limit)){
                 print_error('errormedian', 'quiz_statistics');
             }
             if (count($mediangrades)==1){
@@ -173,13 +172,12 @@ class quiz_report extends quiz_default_report {
             //differences between grades and mean grade
             $mean = $usingattempts->total / $usingattempts->countrecs;
             $sql = "SELECT " .
-                "SUM(POWER((sumgrades - ?),2)) AS power2, " .
-                "SUM(POWER((sumgrades - ?),3)) AS power3, ".
-                "SUM(POWER((sumgrades - ?),4)) AS power4 ".
-                "FROM {quiz_attempts} " .
-                "WHERE quiz = ? AND preview=0 AND timefinish !=0 " .
-                $usingattempts->sql.
-                "ORDER BY sumgrades";
+                "SUM(POWER((qa.sumgrades - ?),2)) AS power2, " .
+                "SUM(POWER((qa.sumgrades - ?),3)) AS power3, ".
+                "SUM(POWER((qa.sumgrades - ?),4)) AS power4 ".
+                'FROM ' .$fromqa.
+                'WHERE ' .$whereqa.
+                $usingattempts->sql;
             $params = array($mean, $mean, $mean, $quiz->id);
             if (!$powers = $DB->get_record_sql($sql, $params)){
                 print_error('errorpowers', 'quiz_statistics');
@@ -211,9 +209,53 @@ class quiz_report extends quiz_default_report {
             $quizattsstatistics->data[] = array(get_string('standarddeviation', 'quiz_statistics'), quiz_report_scale_sumgrades_as_percentage($sd, $quiz));
             $quizattsstatistics->data[] = array(get_string('skewness', 'quiz_statistics'), $skewness);
             $quizattsstatistics->data[] = array(get_string('kurtosis', 'quiz_statistics'), $kurtosis);
-            print_table($quizattsstatistics);
-        }
 
+            $qgradeavgsql = "SELECT qs.question, AVG(qs.grade) FROM " .
+                    "{question_sessions} qns, " .
+                    "{question_states} qs, " .
+                    "{question} q, " .
+                    $fromqa.' '.
+                    'WHERE ' .$whereqa.
+                    'AND qns.attemptid = qa.uniqueid '.
+                    'AND qs.question = q.id ' .
+                    'AND q.length > 0 '.
+                    $usingattempts->sql.
+                    'AND qns.newgraded = qs.id GROUP BY qs.question';
+            $qgradeavgs = $DB->get_records_sql_menu($qgradeavgsql, array($quiz->id));
+            $sum = 0;
+            foreach ($qgradeavgs as $qid => $qgradeavg){
+                $sql = 'SELECT ' .
+                        'SUM(POWER((qs.grade - ?),2)) AS power2 ' .
+                        'FROM ' .
+                        '{question_sessions} qns, ' .
+                        '{question_states} qs, ' .
+                        '{question} q, ' .
+                        $fromqa.' '.
+                        'WHERE ' .$whereqa.
+                        'AND qns.attemptid = qa.uniqueid '.
+                        'AND qs.question = ? ' .
+                        $usingattempts->sql.
+                        'AND qns.newgraded = qs.id';
+                $params = array($qgradeavg, $quiz->id, $qid);
+                $power = $DB->get_field_sql($sql, $params);
+                if ($power === false){
+                    print_error('errorpowerquestions', 'quiz_statistics');
+                }
+                $sum += $power;
+            }
+            $sumofvarianceforallpositions = $sum / ($usingattempts->countrecs -1);
+            $p = count($qgradeavgs);//no of positions
+            $cic = (100 * $p / ($p -1)) * (1 - ($sumofvarianceforallpositions/$k2));
+            $quizattsstatistics->data[] = array(get_string('cic', 'quiz_statistics'), number_format($cic, $quiz->decimalpoints).' %');
+            $errorratio = 100 * sqrt(1-($cic/100));
+            $quizattsstatistics->data[] = array(get_string('errorratio', 'quiz_statistics'), number_format($errorratio, $quiz->decimalpoints).' %');
+            $standarderror = ($errorratio * $sd / 100);
+            $quizattsstatistics->data[] = array(get_string('standarderror', 'quiz_statistics'), 
+                quiz_report_scale_sumgrades_as_percentage($standarderror, $quiz));
+
+            print_table($quizattsstatistics);
+
+        }
         return true;
     }
 

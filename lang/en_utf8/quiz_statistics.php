@@ -19,9 +19,13 @@ $string['allattemptsavg'] = 'Average grade of all attempts';
 $string['attemptsall'] = 'all attempts';
 $string['attemptsfirst'] = 'first attempt';
 $string['errormedian'] = 'Error fetching median';
-$string['errorpowers'] = 'Error fetching powers';
+$string['errorpowers'] = 'Error fetching data to calculate variance for quiz grades';
+$string['errorpowerquestions'] = 'Error fetching data to calculate variance for question grades';
 $string['median'] = 'Median grade';
 $string['standarddeviation'] = 'Standard deviation';
 $string['skewness'] = 'Score distribution skewness';
 $string['kurtosis'] = 'Score distribution kurtosis';
+$string['cic'] = 'Coefficient of internal consistency';
+$string['errorratio'] = 'Error ratio';
+$string['standarderror'] = 'Standard error';
 ?>
