@@ -124,8 +124,8 @@
         $DB->set_field('chat_users', 'lastping', $chatuser->lastping, array('id'=>$chatuser->id));
 
         if ($refreshusers) {
-            echo "if (parent.users.document.anchors[0] != null) {" .
-                    "parent.users.location.href = parent.users.document.anchors[0].href;}\n";
+            echo "if (parent.users.document.anchors[1] != null) {" .
+                    "parent.users.location.href = parent.users.document.anchors[1].href;}\n";
         } else {
             foreach($us as $uid=>$lastping) {
                 $min = (int) ($lastping/60);
