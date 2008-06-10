@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="../../utils/mctabs.js"></script>
 	<script type="text/javascript" src="../../utils/form_utils.js"></script>
 	<script type="text/javascript" src="../../utils/validate.js"></script>
+	<script type="text/javascript" src="../../utils/editable_selects.js"></script>
 	<script type="text/javascript" src="js/table.js"></script>
 	<link href="css/table.css" rel="stylesheet" type="text/css" />
 	<base target="_self" />
@@ -56,7 +57,7 @@
 							  <tr id="styleSelectRow">
 								<td><label id="classlabel" for="class">{#class_name}</label></td>
 								<td colspan="3">
-								 <select id="class" name="class">
+								 <select id="class" name="class" class="mceEditableSelect">
 									<option value="" selected>{#not_set}</option>
 								 </select></td>
 							  </tr>
@@ -111,21 +112,7 @@
 							<td class="column1"><label for="frame">{#table_dlg.frame}</label></td> 
 							<td>
 								<select id="frame" name="frame" class="advfield"> 
-										<option value="">{#not_set}</option> 
-										<option value="none">{#table_dlg.frame_none}</option>
-										<option value="groups">{#table_dlg.frame_groups}</option>
-										<option value="rows">{#table_dlg.frame_rows}</option>
-										<option value="cols">{#table_dlg.frame_cols}</option>
-										<option value="all">{#table_dlg.frame_all}</option>
-								</select>
-							</td> 
-						</tr>
-
-						<tr>
-							<td class="column1"><label for="rules">{#table_dlg.rules}</label></td> 
-							<td>
-								<select id="rules" name="rules" class="advfield"> 
-										<option value="">{#not_set}</option> 
+										<option value="">{#not_set}</option>
 										<option value="void">{#table_dlg.rules_void}</option>
 										<option value="above">{#table_dlg.rules_above}</option> 
 										<option value="below">{#table_dlg.rules_below}</option> 
@@ -135,6 +122,20 @@
 										<option value="vsides">{#table_dlg.rules_vsides}</option> 
 										<option value="box">{#table_dlg.rules_box}</option> 
 										<option value="border">{#table_dlg.rules_border}</option> 
+								</select>
+							</td> 
+						</tr>
+
+						<tr>
+							<td class="column1"><label for="rules">{#table_dlg.rules}</label></td> 
+							<td>
+								<select id="rules" name="rules" class="advfield"> 
+										<option value="">{#not_set}</option> 
+										<option value="none">{#table_dlg.frame_none}</option>
+										<option value="groups">{#table_dlg.frame_groups}</option>
+										<option value="rows">{#table_dlg.frame_rows}</option>
+										<option value="cols">{#table_dlg.frame_cols}</option>
+										<option value="all">{#table_dlg.frame_all}</option>
 									</select>
 							</td> 
 						</tr>
