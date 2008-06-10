@@ -695,6 +695,24 @@ class question_match_qtype extends default_questiontype {
             }
         }
     }
+
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        list($form, $question) = parent::generate_test($name, $courseid);
+        $form->shuffleanswers = 1;
+        $form->noanswers = 3;
+        $form->subquestions = array('cat', 'dog', 'cow');
+        $form->subanswers = array('feline', 'canine', 'bovine');
+
+        if ($courseid) {
+            $course = get_record('course', 'id', $courseid);
+        }
+
+        return $this->save_question($question, $form, $course);
+    }
 }
 //// END OF CLASS ////
 
