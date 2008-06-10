@@ -5,17 +5,31 @@ written with earlier versions will fail with the newest ones. The most
 dramatic changes are in the alpha releases. Here is a list of possible
 problems and their fixes...
 
+No method getRelativeUrls() or getAbsoluteUrls()
+------------------------------------------------
+These methods were always a bit weird anyway, and
+the new parsing of the base tag makes them more so.
+They have been replaced with getUrls() instead. If
+you want the old functionality then simply chop
+off the current domain from getUrl().
+
+Method setWildcard() removed in mocks
+-------------------------------------
+Even setWildcard() has been removed in 1.0.1beta now.
+If you want to test explicitely for a '*' string, then
+simply pass in new IdenticalExpectation('*') instead.
+
 No method _getTest() on mocks
 -----------------------------
 This has finally been removed. It was a pretty esoteric
 flex point anyway. It was there to allow the mocks to
-work with other test tools, but no one does this anyway.
+work with other test tools, but no one does this.
 
 No method assertError(), assertNoErrors(), swallowErrors()
 ----------------------------------------------------------
 These have been deprecated in 1.0.1beta in favour of
 expectError() and expectException(). assertNoErrors() is
-redundant if you use expectError() as failures are now reporterted
+redundant if you use expectError() as failures are now reported
 immediately.
 
 No method TestCase::signal()

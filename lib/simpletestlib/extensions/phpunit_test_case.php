@@ -26,7 +26,7 @@
          *    @param $label        Test name to display.
          *    @public
          */
-        function TestCase($label) {
+        function TestCase($label = false) {
             $this->SimpleTestCase($label);
         }
         
