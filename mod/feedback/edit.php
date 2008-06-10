@@ -219,7 +219,7 @@
             print_box_start('generalbox boxaligncenter boxwidthwide');
             
             //check, if there exists required-elements
-            $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id), 'required', 1);
+            $countreq = $DB->count_records('feedback_item', array('feedback'=>$feedback->id, 'required'=> 1));
             if($countreq > 0) {
                 // echo '<font color="red">(*)' . get_string('items_are_required', 'feedback') . '</font>';
                 echo '<span class="feedback_required_mark">(*)' . get_string('items_are_required', 'feedback') . '</span>';
