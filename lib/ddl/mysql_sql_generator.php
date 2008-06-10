@@ -137,7 +137,7 @@ class mysql_sql_generator extends sql_generator {
      * Given one correct xmldb_table and the new name, returns the SQL statements
      * to drop it (inside one array)
      */
-    public function getDropTableSQL($xmldb_table) {
+    public function getDropTempTableSQL($xmldb_table) {
         $sqlarr = parent::getDropTableSQL($xmldb_table);
         $sqlarr = preg_replace('/^DROP TABLE/', "DROP TEMPORARY TABLE", $sqlarr);
         return $sqlarr;
