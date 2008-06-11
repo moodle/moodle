@@ -738,14 +738,14 @@ class enrolment_plugin_authorize
 
         $timediff60 = $settlementtime - (60 * $oneday);
         $select = "(status=?) AND (timecreated<?)";
-        $params = array(AN_STATUS_EXPIRE, $timediff30);
+        $params = array(AN_STATUS_EXPIRE, $timediff60);
         if ($DB->delete_records_select('enrol_authorize', $select, $params)) {
             mtrace("        orders expired older than 60 days have deleted");
         }
 
         $adminuser = get_admin();
         $select = "status IN(?,?) AND (timecreated<?) AND (timecreated>?)";
-        $params = array(AN_STATUS_UNDERREVIEW, AN_STATUS_APPROVEDREVIEW, $onepass, $timediff30);
+        $params = array(AN_STATUS_UNDERREVIEW, AN_STATUS_APPROVEDREVIEW, $onepass, $timediff60);
         if (($count = $DB->count_records_select('enrol_authorize', $select, $params)) &&
             ($csvusers = get_users_by_capability(get_context_instance(CONTEXT_SYSTEM), 'enrol/authorize:uploadcsv'))) {
             $a = new stdClass;

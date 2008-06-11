@@ -16,7 +16,7 @@ define('ORDER_VOID',    'void');
 function authorize_print_orders($courseid, $userid)
 {
     global $course;
-    global $CFG, $USER, $SITE;
+    global $CFG, $USER, $SITE, $DB;
     global $strs, $authstrs;
     require_once($CFG->libdir.'/tablelib.php');
 
