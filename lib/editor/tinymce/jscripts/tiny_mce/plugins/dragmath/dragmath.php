@@ -28,8 +28,8 @@
 
 <applet 
 	name="dragmath" 
-	codebase="<?php echo $CFG->wwwroot.'/lib/editor/tinymce/jscripts/tiny_mce/plugins/dragmath/applet/classes' ?>" 
-	code="Display.MainApplet.class" 
+	codebase="<?php echo $CFG->httpswwwroot.'/lib/editor/tinymce/jscripts/tiny_mce/plugins/dragmath/applet/classes' ?>" 
+	code="Display/MainApplet.class" 
 	archive="Project.jar,AbsoluteLayout.jar,swing-layout-1.0.jar,jdom.jar,jep.jar" 
 	width=540 height=300
 >
