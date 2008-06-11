@@ -218,7 +218,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
       <td width="55%" valign="top"><?php
           print_string("filebrowser","editor");
           echo "<br />";
-          echo "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"{$CFG->wwwroot}/lib/editor/tinymce/coursefiles.php?usecheckboxes=1&id=$id\" style=\"width: 100%; height: 200px;\"></iframe>";
+          echo "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"{$CFG->httpswwwroot}/lib/editor/tinymce/coursefiles.php?usecheckboxes=1&id=$id\" style=\"width: 100%; height: 200px;\"></iframe>";
       ?>
       </td>
       <td width="45%" valign="top"><?php print_string("preview","editor");?>:<br />
@@ -265,7 +265,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
     </tr>
     <tr>
       <td height="22">
-          <form id="cfolder" action="<?php echo $CFG->wwwroot;?>/lib/editor/tinymce/coursefiles.php" method="post" target="ibrowser">
+          <form id="cfolder" action="<?php echo $CFG->httpswwwroot;?>/lib/editor/tinymce/coursefiles.php" method="post" target="ibrowser">
           <input type="hidden" name="id" value="<?php print($id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="mkdir" />
@@ -276,7 +276,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           
           </form>
           <div class="space"></div>
-          <form action="<?php echo $CFG->wwwroot;?>/lib/editor/tinymce/coursefiles.php?id=<?php print($id);?>" method="post" enctype="multipart/form-data" target="ibrowser" id="uploader">
+          <form action="<?php echo $CFG->httpswwwroot;?>/lib/editor/tinymce/coursefiles.php?id=<?php print($id);?>" method="post" enctype="multipart/form-data" target="ibrowser" id="uploader">
           <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>" />
           <input type="hidden" name="id" VALUE="<?php print($id);?>" />
           <input type="hidden" name="wdir" value="" />
