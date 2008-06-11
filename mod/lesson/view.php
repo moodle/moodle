@@ -790,8 +790,10 @@
                     }
                 } elseif ($lesson->nextpagedefault == LESSON_UNANSWEREDPAGE) {
                     foreach ($allpages as $thispage) {
-                        if (!$DB->count_records_select("lesson_attempts", array('pageid'=>$thispage->id,
-                                    'userid'=>$USER->id, 'correct'=>1, 'retry'=>$nretakes))) {
+                        $params = array('pageid'=>$thispage->id,
+                                    'userid'=>$USER->id, 'correct'=>1, 'retry'=>$nretakes);
+                        if (!count_records_select("lesson_attempts", "pageid = :pageid AND
+                                     userid = :userid AND correct = 1 AND retry = :retry", $params)) {
                             $found = true;
                             break;
                         }
