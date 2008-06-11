@@ -594,11 +594,10 @@ fieldset.fdate_selector label {
   clear: left;
 }
 .mform div.fhtmleditor {
-  margin: 0 auto 10px auto;
-  width : 600px;
-  clear:both;
-  float:none;
-  padding: 25px 0 20px 0;
+  margin: 5px 0 0 10px;
+  padding: 0;
+  float: left;
+  display: block;
 }
 .mform span.error, .mform span.required {
   color: red;
@@ -2755,7 +2754,7 @@ body.notes .notesgroup {
 }
 
 .tabrow0 .here a:link:hover,
-.tabrow0 .here a:visited:hover, {
+.tabrow0 .here a:visited:hover {
   background-image: url(pix/tab/left.gif);
 }
 
@@ -4287,7 +4286,7 @@ wikiadminactions {
   padding: 3px;
 }
 #help #emoticons{
-    align: center;clear:both;width: 300px;margin-right: auto; margin-left:auto;
+    text-align: center;clear:both;width: 300px;margin-right: auto; margin-left:auto;
 }
 #help #emoticons ul{
     list-style-type: none;
