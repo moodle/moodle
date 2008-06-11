@@ -108,6 +108,8 @@ class quiz_report extends quiz_default_report {
                 'WHERE ' .$whereqa.
                 'GROUP BY (attempt=1)';
 
+        //Calculating_MEAN_of_grades_for_all_attempts_by_students
+        //http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Calculating_MEAN_of_grades_for_all_attempts_by_students
         if (!$attempttotals = $DB->get_records_sql($sql, array($quiz->id))){
             print_heading(get_string('noattempts','quiz'));
             return true;
@@ -185,16 +187,20 @@ class quiz_report extends quiz_default_report {
             
             $s = $usingattempts->countrecs;
             
+            //Standard_Deviation
+            //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Standard_Deviation
+            
             $sd = sqrt($powers->power2 / ($s -1));
             
+            //Skewness_and_Kurtosis
+            //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
             $m2= $powers->power2 / $s;
             $m3= $powers->power3 / $s;
             $m4= $powers->power4 / $s;
             
             $k2= $s*$m2/($s-1);
             $k3= $s*$s*$m3/(($s-1)*($s-2));
-            $k3= $s*$s*$s*$m3/(($s-1)*($s-2)*($s-3));
-            $k4= $s*$s*$s*(($s+1)*$m4-3*($s-1)*$m2*$m2)/(($s-1)*($s-2)*($s-3));
+            $k4= (($s*$s*$s)/(($s-1)*($s-2)*($s-3)))*((($s+1)*$m4)-(3*($s-1)*$m2*$m2));
             
             $skewness = $k3 / (pow($k2, 2/3));
             $kurtosis = $k4 / ($k2*$k2);
@@ -210,6 +216,8 @@ class quiz_report extends quiz_default_report {
             $quizattsstatistics->data[] = array(get_string('skewness', 'quiz_statistics'), $skewness);
             $quizattsstatistics->data[] = array(get_string('kurtosis', 'quiz_statistics'), $kurtosis);
 
+            //CIC, ER and SE.
+            //http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#CIC.2C_ER_and_SE
             $qgradeavgsql = "SELECT qs.question, AVG(qs.grade) FROM " .
                     "{question_sessions} qns, " .
                     "{question_states} qs, " .
@@ -223,19 +231,19 @@ class quiz_report extends quiz_default_report {
                     'AND qns.newgraded = qs.id GROUP BY qs.question';
             $qgradeavgs = $DB->get_records_sql_menu($qgradeavgsql, array($quiz->id));
             $sum = 0;
+            $sql = 'SELECT ' .
+                    'SUM(POWER((qs.grade - ?),2)) AS power2 ' .
+                    'FROM ' .
+                    '{question_sessions} qns, ' .
+                    '{question_states} qs, ' .
+                    '{question} q, ' .
+                    $fromqa.' '.
+                    'WHERE ' .$whereqa.
+                    'AND qns.attemptid = qa.uniqueid '.
+                    'AND qs.question = ? ' .
+                    $usingattempts->sql.
+                    'AND qns.newgraded = qs.id';
             foreach ($qgradeavgs as $qid => $qgradeavg){
-                $sql = 'SELECT ' .
-                        'SUM(POWER((qs.grade - ?),2)) AS power2 ' .
-                        'FROM ' .
-                        '{question_sessions} qns, ' .
-                        '{question_states} qs, ' .
-                        '{question} q, ' .
-                        $fromqa.' '.
-                        'WHERE ' .$whereqa.
-                        'AND qns.attemptid = qa.uniqueid '.
-                        'AND qs.question = ? ' .
-                        $usingattempts->sql.
-                        'AND qns.newgraded = qs.id';
                 $params = array($qgradeavg, $quiz->id, $qid);
                 $power = $DB->get_field_sql($sql, $params);
                 if ($power === false){
@@ -252,7 +260,6 @@ class quiz_report extends quiz_default_report {
             $standarderror = ($errorratio * $sd / 100);
             $quizattsstatistics->data[] = array(get_string('standarderror', 'quiz_statistics'), 
                 quiz_report_scale_sumgrades_as_percentage($standarderror, $quiz));
-
             print_table($quizattsstatistics);
 
         }
