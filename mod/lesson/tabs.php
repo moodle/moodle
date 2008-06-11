@@ -10,7 +10,7 @@
 */
 
 /// This file to be included so we can assume config.php has already been included.
-
+    global $DB;
     if (empty($lesson)) {
         print_error('You cannot call this script in that way');
     }
