@@ -94,7 +94,7 @@ function useredit_shared_definition(&$mform) {
     $choices['0'] = get_string('emailenable');
     $choices['1'] = get_string('emaildisable');
     $mform->addElement('select', 'emailstop', get_string('emailactive'), $choices);
-    $mform->setDefault('emailenable', 1);
+    $mform->setDefault('emailstop', 0);
 
     $choices = array();
     $choices['0'] = get_string('textformat');
