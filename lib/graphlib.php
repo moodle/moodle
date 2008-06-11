@@ -143,6 +143,8 @@ class graph {
     'thousand_sep'       => ',',           // symbol for thousand separation ',' or ''
 
   );
+  var $y_tick_labels     =   null;         // array of text values for y-axis tick labels
+  var $offset_relation   =   null;         // array of offsets for different sets of data
 
 
 
