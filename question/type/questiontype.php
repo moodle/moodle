@@ -101,7 +101,9 @@ class default_questiontype {
      *
      * @return mixed array as above, or null to tell the base class to do nothing.
      */
-
+     function extra_answer_fields() {
+         return null;
+     }
 
     /**
      * Return an instance of the question editing form definition. This looks for a
@@ -1597,7 +1599,7 @@ class default_questiontype {
 
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
         $newcategory = question_make_default_categories(array($context));
-        $form->category = $newcategory->id;
+        $form->category = $newcategory->id . ',1';
 
         $question = new stdClass();
         $question->courseid = $courseid;
