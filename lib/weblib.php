@@ -4746,23 +4746,27 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
 /**
  * Prints a basic textarea field.
  *
+ * When using this function, you should 
+ *
  * @uses $CFG
- * @param boolean $usehtmleditor ?
- * @param int $rows ?
- * @param int $cols ?
- * @param null $width <b>Legacy field no longer used!</b>  Set to zero to get control over mincols
- * @param null $height <b>Legacy field no longer used!</b>  Set to zero to get control over minrows
- * @param string $name ?
- * @param string $value ?
- * @param int $courseid ?
- * @todo Finish documenting this function
+ * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
+ * @param int $rows Number of rows to display  (minimum of 10 when $height is non-null)
+ * @param int $cols Number of columns to display (minimum of 65 when $width is non-null)
+ * @param null $width (Deprecated) Width of the element; if a value is passed, the minimum value for $cols will be 65. Value is otherwise ignored.
+ * @param null $height (Deprecated) Height of the element; if a value is passe, the minimum value for $rows will be 10. Value is otherwise ignored.
+ * @param string $name Name to use for the textarea element.
+ * @param string $value Initial content to display in the textarea.
+ * @param int $courseid Course ID to pass to the file manager (defaults to global $COURSE->id).
+ * @param bool $return If false, will output string. If true, will return string value.
+ * @param string $id CSS ID to add to the textarea element.
+ * @param string $class CSS classes to add to the textarea element. Use 'form-textarea-simple' to get a basic editor. Defaults to 'form-textarea-advanced' (complete editor).
  */
-function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0, $return=false, $id='') {
+function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0, $return=false, $id='', $class='form-textarea-advanced') {
 /// $width and height are legacy fields and no longer used as pixels like they used to be.
 /// However, you can set them to zero to override the mincols and minrows values below.
 
     global $CFG, $COURSE, $HTTPSPAGEREQUIRED;
-    static $scriptcount = 0; // For loading the htmlarea script only once.
+    //static $scriptcount = 0; // For loading the htmlarea script only once.
 
     $mincols = 65;
     $minrows = 10;
@@ -4806,7 +4810,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
             }
         }
     }
-    $str .= '<textarea class="form-textarea" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
+    $str .= "\n".'<textarea class="form-textarea '. $class .'" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
     if ($usehtmleditor) {
         $str .= htmlspecialchars($value); // needed for editing of cleaned text!
     } else {
@@ -4816,6 +4820,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
     if ($usehtmleditor) {
         // Show shortcuts button if HTML editor is in use, but only if JavaScript is enabled (MDL-9556)
+        $str .= '';
+        $str .= '<a href="javascript:toggleEditor(\''. $id .'\');"><img width="50" height="17" src="'. $CFG->httpswwwroot .'/lib/editor/tinymce/images/toggle.gif" alt="'. get_string('editortoggle') .'" title="'. get_string('editortoggle') .'" /></a>';
         $str .= '<script type="text/javascript">
 //<![CDATA[
 document.write(\''.addslashes_js(editorshortcutshelpbutton()).'\');
@@ -5897,6 +5903,13 @@ function emoticonhelpbutton($form, $field, $return = false) {
     } else {
         return $help;
     }
+}
+
+/**
+ * Print a button to toggle the html editor.
+ */
+function editortogglebutton($id) {
+    
 }
 
 /**

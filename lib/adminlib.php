@@ -1768,7 +1768,7 @@ class admin_setting_configtextarea extends admin_setting_configtext {
         } 
 
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-textarea" ><textarea rows="'.$this->rows.'" cols="'.$this->cols.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'">'.s($data).'</textarea></div>',
+                '<div class="form-textarea form-textarea-advanced" ><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
                 $this->description, true, '', $defaultinfo, $query);
     }
 }
@@ -2633,11 +2633,7 @@ class admin_setting_special_frontpagedesc extends admin_setting {
         global $CFG, $htmlEditorObject;
 
         $CFG->adminusehtmleditor = can_use_html_editor();
-        $return = '<div class="form-htmlarea">'.print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, $this->get_full_name(), $data, 0, true, 'summary');
-        if ($CFG->adminusehtmleditor && !is_null($htmlEditorObject)) {
-            $return .= $htmlEditorObject->activateEditor($this->get_full_name, 'summary');
-        }
-        $return .= '</div>';
+        $return = '<div class="form-htmlarea">'.print_textarea($CFG->adminusehtmleditor, 15, 60, 0, 0, $this->get_full_name(), $data, 0, true, 'summary') .'</div>';
 
         return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', NULL, $query);
     }

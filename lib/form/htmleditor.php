@@ -60,12 +60,13 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
     }
 
     function toHtml(){
-        if ($this->_canUseHtmlEditor && !$this->_flagFrozen){
-            global $htmlEditorObject;
-            $script = $htmlEditorObject->activateEditor($this->getName(), $this->getAttribute('id'));
-        } else {
-            $script='';
-        }
+        //if ($this->_canUseHtmlEditor && !$this->_flagFrozen){
+            //global $htmlEditorObject;
+            //$script = $htmlEditorObject->activateEditor($this->getName(), $this->getAttribute('id'));
+        //    $script = '';
+        //} else {
+        //    $script='';
+        //}
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         } else {
@@ -79,7 +80,7 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
                                     preg_replace("/(\r\n|\n|\r)/", '&#010;',$this->getValue()),
                                     $this->_options['course'],
                                     true,
-                                    $this->getAttribute('id')).$script;
+                                    $this->getAttribute('id'));//.$script;
         }
     } //end func toHtml
 
