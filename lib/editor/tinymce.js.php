@@ -101,7 +101,7 @@ $configuration = <<<EOF
 
 function createHTMLArea(id) {
 
-    random       = Math.ceil(1000*Math.random())
+    random       = Math.ceil(1000*Math.random());
     editor       = 'editor'+random;
     editorsubmit = 'editorsubmit'+random;
 
@@ -111,7 +111,6 @@ function createHTMLArea(id) {
         theme    : "advanced",
 
         plugins : "safari,spellchecker,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,pagebreak,imagemanager,filemanager",
-
         spellchecker_languages : "+English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr,German=de,Italian=it,Polish=pl,Portuguese=pt,Spanish=es,Swedish=sv",
 
         plugin_insertdate_dateFormat : "%Y-%m-%d",
@@ -120,7 +119,7 @@ function createHTMLArea(id) {
         content_css : "/$root/lib/editor/tinymce/examples/css/content.css",
 
         theme_advanced_toolbar_location : "top",
-        theme_advanced_toolbar_align : "left",
+        theme_advanced_toolbar_align : "top",
         theme_advanced_statusbar_location : "bottom",
 
         theme_advanced_resize_horizontal : true,
@@ -133,14 +132,64 @@ function createHTMLArea(id) {
 
     });
 
-    script = "document.getElementById(id).form."+editorsubmit+" = document.getElementById(id).form.onsubmit;";
-    script = script + "document.getElementById(id).form.onsubmit = function() { tinyMCE.triggerSave(); document.getElementById(id).form."+editorsubmit+"(); document.getElementById(id).form."+editorsubmit+" = null;}";
+    script = "document.getElementById("+id+").form."+editorsubmit+" = document.getElementById("+id+").form.onsubmit;";
+    script = script + "document.getElementById("+id+").form.onsubmit = function() { tinyMCE.triggerSave(); document.getElementById("+id+").form."+editorsubmit+"(); document.getElementById("+id+").form."+editorsubmit+" = null;}";
     eval(script);
 
 }
 
 EOF;
 
-echo $configuration;
+echo <<<EOF
+    tinyMCE.init({
+        mode: "textareas",
+        relative_urls: false,
+        editor_selector: "form-textarea-simple",
+        document_base_url: "$CFG->httpswwwroot",
+        theme: "simple",
+        skin: "o2k7",
+        apply_source_formatting: true, 
+        remove_script_host: false,
+        entity_encoding: "raw",
+        language: "en",
+        plugins: "spellchecker,emoticons,paste,standardmenu,directionality"
+    });
+    tinyMCE.init({
+        mode: "textareas",
+        relative_urls: false,
+        editor_selector: "form-textarea-advanced",
+        document_base_url: "$CFG->httpswwwroot",
+        theme: "advanced",
+        skin: "o2k7",
+        apply_source_formatting: true, 
+        remove_script_host: false,
+        entity_encoding: "raw",
+        language: "en",
+        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodleimage,moodlelink,dragmath,nonbreaking",
+        theme_standard_buttons1: "fontselect,fontsiizeselect,formatselect,|",
+        theme_standard_buttons1_add: "styleselect,selectall,pastetext,pasteword,insertlayer",
+        theme_standard_buttons2: "bold,italic,underline,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,sub,sup,undo,redo,cleanup,removeformat,code,|",
+        theme_standard_buttons2_add: "styleprops,ltr,rtl,table,nonbreaking,media,advhr,emoticons,charmap,dragmath,spellchecker,search,code,fullscreen",
+        theme_standard_buttons3: "bullist,numlist,outdent,indent,forecolor,backcolor,link,unlink,anchor,image,charmap,|",
+        theme_standard_buttons3_add: "media,emotions,emoticons,charmap,dragmath,spellchecker,search,code,fullscreen",
+        theme_standard_fonts: "Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings", 
+        moodleimage_course_id: $COURSE->id,
+        theme_advanced_resize_horizontal: true,
+        theme_advanced_resizing: true,
+        theme_advanced_toolbar_location : "top",
+        theme_advanced_statusbar_location : "bottom",
 
+EOF;
+// the xhtml ruleset must be the last one - no comma at the end of the file
+readfile('tinymce/xhtml_ruleset.txt');
+echo <<<EOF
+    });
+    function toggleEditor(id) {
+        var elm = document.getElementById(id);
+        if (tinyMCE.getInstanceById(id) == null)
+		    tinyMCE.execCommand('mceAddControl', false, id);
+	    else
+		    tinyMCE.execCommand('mceRemoveControl', false, id);
+    }
+EOF;
 ?>

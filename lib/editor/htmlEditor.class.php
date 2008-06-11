@@ -17,6 +17,7 @@ class htmlEditor {
     public function configure($editor = NULL) {
 
         global $CFG;
+        static $configured = Array();
 
         if ($editor == '') {
             $editor = (isset($CFG->defaulthtmleditor) ? $CFG->defaulthtmleditor : '');
@@ -27,10 +28,13 @@ class htmlEditor {
         switch ($editor) {
 
             case 'tinymce':
-                $configuration = <<<EOF
+                if (!isset($configured['tinymce'])) {
+                    $configuration = <<<EOF
 <script type="text/javascript" src="{$CFG->wwwroot}/lib/editor/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
 <script type="text/javascript" src="{$CFG->wwwroot}/lib/editor/tinymce.js.php"></script>
 EOF;
+                    $configured['tinymce'] = true;
+                }
                 break;
 
             case 'fckeditor':
@@ -82,19 +86,6 @@ EOF;
         return $configuration;
 
     }
-
-    public function activateEditor($name='', $id='') {
-
-        $configuration = <<<EOF
-<script type="text/javascript">
-createHTMLArea('$id');
-</script>
-EOF;
-
-        return $configuration;
-
-    }
-
 }
 
 ?>
