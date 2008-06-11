@@ -23,7 +23,7 @@
         print_error('noguest');
     }
 
-    /// Load strings. All strings should be defined here. locallib.php uses these strings.
+/// Load strings. All strings should be defined here. locallib.php uses these strings.
     $strs = get_strings(array('search','status','action','time','course','confirm','yes','no','cancel','all','none','error'));
     $authstrs = get_strings(array('orderid','nameoncard','echeckfirslasttname','void','capture','refund','delete',
         'allpendingorders','authcaptured','authorizedpendingcapture','capturedpendingsettle','settled',
@@ -31,7 +31,7 @@
         'paymentmethod','methodcc','methodecheck', 'paymentmanagement', 'orderdetails', 'cclastfour', 'isbusinesschecking','shopper',
         'transid','settlementdate','notsettled','amount','unenrolstudent'), 'enrol_authorize');
 
-    /// User wants to see all orders
+/// User wants to see all orders
     if (empty($orderid)) {
         authorize_print_orders($courseid, $userid);
     }
