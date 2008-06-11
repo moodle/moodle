@@ -2,8 +2,6 @@
 <table summary="Summary of week" cellpadding="5" class="boxaligncenter">
 <tr valign="top">
     <td align="right"><p><b><?php print_string("summary") ?>:</b></p>
-    <br />
-    
      <?php helpbutton("summaries", get_string("helpsummaries"), "moodle", true, true);
         echo "<br />";
         if ($usehtmleditor) { 
@@ -12,15 +10,9 @@
            helpbutton("text2", get_string("helptext"), "moodle", true, true);   
         } 
      ?>
-      <br />
-    
     </td>
     <td>
-      <?php 
-        print_textarea($usehtmleditor, 25, 60, 660, 200, 'summary', $form->summary, 0, false, 'summary');
-        print($htmlEditorObject->activateEditor('summary', 'summary'));
-      ?>
-
+        <?php print_textarea($usehtmleditor, 25, 60, 0, 0, 'summary', $form->summary, 0, false, 'summary'); ?>
     </td>
 </tr>
 </table>
