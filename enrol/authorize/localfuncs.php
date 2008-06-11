@@ -145,7 +145,7 @@ function send_welcome_messages($orderdata)
         return;
     }
 
-    if ($ts->valid() and $ei = current($rs))
+    if ($rs->valid() and $ei = current($rs))
     {
         if (1 < count($orderdata)) {
             $sender = get_admin();
