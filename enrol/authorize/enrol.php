@@ -648,7 +648,7 @@ class enrolment_plugin_authorize
         $this->log = "AUTHORIZE.NET AUTOCAPTURE CRON: " . userdate($timenow) . "\n";
 
         $lastcourseid = 0;
-        $rs = $DB->get_recordset_select('enrol_authorize', $select, 'courseid', $params);
+        $rs = $DB->get_recordset_select('enrol_authorize', $select, $params, 'courseid');
         foreach ( $rs as $order)
         {
             $message = '';
