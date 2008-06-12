@@ -150,13 +150,27 @@ class mnet_environment {
     }
 
     function replace_keys() {
-        global $DB;
+        global $DB, $CFG;
 
         $this->keypair = array();
         $this->keypair = mnet_generate_keypair();
         $this->public_key         = $this->keypair['certificate'];
         $details                  = openssl_x509_parse($this->public_key);
         $this->public_key_expires = $details['validTo_time_t'];
+
+        $this->wwwroot            = $CFG->wwwroot;
+        if (empty($_SERVER['SERVER_ADDR'])) {
+            // SERVER_ADDR is only returned by Apache-like webservers
+            $my_hostname = mnet_get_hostname_from_uri($CFG->wwwroot);
+            $my_ip       = gethostbyname($my_hostname);  // Returns unmodified hostname on failure. DOH!
+            if ($my_ip == $my_hostname) {
+                $this->ip_address = 'UNKNOWN';
+            } else {
+                $this->ip_address = $my_ip;
+            }
+        } else {
+            $this->ip_address = $_SERVER['SERVER_ADDR'];
+        }
 
         set_config('openssl', implode('@@@@@@@@', $this->keypair), 'mnet');
 
