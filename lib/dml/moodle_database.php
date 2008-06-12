@@ -369,7 +369,7 @@ abstract class moodle_database {
      * @return void
      */
     public function reset_columns() {
-        $this->columns[] = array();
+        $this->columns = array();
     }
 
     /**

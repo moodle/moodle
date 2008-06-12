@@ -150,8 +150,20 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
             if (!isset($columns[$field])) {
                 continue;
             }
+            $column = $columns[$field];
             if (is_bool($value)) {
                 $value = (int)$value; // prevent "false" problems
+            }
+            if (!empty($column->enums)) {
+                // workaround for problem with wrong enums in mysql
+                if (is_null($value) and !$column->not_null) {
+                    // ok - nulls allowed
+                } else {
+                    if (!in_array((string)$value, $column->enums)) {
+                        debugging('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
+                        return false;
+                    }
+                }
             }
             $cleaned[$field] = $value;
         }

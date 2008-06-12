@@ -36,8 +36,11 @@ class database_column_info {
     public $scale;
 
     /**
-     * Enumerated filed options,
+     * Enumerated field options,
      * null if not enum type
+     *
+     * For performance reasons this field is optional!
+     * You can use DDL sql_generator::getCheckConstraintsFromDB() if needed.
      */
     public $enums;
 

@@ -154,6 +154,14 @@ abstract class adodb_moodle_database extends moodle_database {
         foreach ($columns as $column) {
             // colum names must be lowercase
             $column->meta_type = substr($this->db->MetaType($column), 0 ,1); // only 1 character
+            if (!empty($column->enums)) {
+                // hack: fix the 'quotes' surrounding the values itroduced by adodb
+                foreach ($column->enums as $key=>$value) {
+                    if (strpos($value, "'") === 0 and strlen($value) > 2) {
+                        $column->enums[$key] = substr($value, 1, strlen($value)-2);
+                    }
+                }
+            } 
             $this->columns[$table][$column->name] = new database_column_info($column);
         }
 
