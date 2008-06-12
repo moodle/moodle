@@ -55,7 +55,7 @@ $string['databasesettingssub'] = '<b>Tipi:</b> mysql veya postgres7<br />
 <b>Kullanıcı:</b> veritabanı kullanıcısı<br />
 <b>Şifre:</b> kullanıcı şifresi<br />
 <b>Tablo öneki:</b> tüm tablo isimleri için isteğe bağlı önek';
-$string['databasesettingssub_mssql'] = '<b>Tipi:</b> SQL*Server (UTF-8 yok)<br />
+$string['databasesettingssub_mssql'] = '<b>Tipi:</b> SQL*Server (UTF-8 yok)<b><strong class=\"errormsg\">Deneysel! (gerçek kullanım için değil)</strong></b><br />
 <b>Sunucu:</b> ör: localhost veya db.iss.com<br />
 <b>Adı:</b> veritabanı adı, ör: moodle<br />
 <b>Kullanıcı:</b> veritabanı kullanıcısı<br />
@@ -85,7 +85,7 @@ $string['databasesettingssub_oci8po'] = '<b>Tipi:</b> Oracle<br />
 <b>Kullanıcı:</b> veritabanı kullanıcısı<br />
 <b>Şifre:</b> kullanıcı şifresi<br />
 <b>Tablo öneki:</b> tüm tablo isimleri için ön ek (gerekli, en fazla 2karakter)';
-$string['databasesettingssub_odbc_mssql'] = '<b>Tipi:</b> SQL*Server (ODBC üzerinden) <b><font color=\"red\">Deneysel! (gerçek kullanım için değil)</font></b><br />
+$string['databasesettingssub_odbc_mssql'] = '<b>Tipi:</b> SQL*Server (ODBC üzerinden) <b><strong class=\"errormsg\">Deneysel! (gerçek kullanım için değil)</strong></b><br />
 <b>Sunucu:</b> ODBC denetim öğesi DSN adı<br />
 <b>Adı:</b> veritabanı adı, ör: moodle<br />
 <b>Kullanıcı:</b> veritabanı kullanıcısı<br />
@@ -127,7 +127,7 @@ $string['dirroot'] = 'Moodle Dizini';
 $string['dirrooterror'] = '\'Moodle Dizini\' ayarları hatalı görünüyor - Burada bir Moodle kurulumu bulunamadı. Aşağıdaki değer yeniden ayarlandı.';
 $string['download'] = 'İndir';
 $string['downloadedfilecheckfailed'] = 'İndirilmiş dosya kontrol hatası';
-$string['downloadlanguagebutton'] = '&quot;$a&quot; dil paketini indir';
+$string['downloadlanguagebutton'] = '$a dil paketini indir';
 $string['downloadlanguagehead'] = 'Dil paketi indir';
 $string['downloadlanguagenotneeded'] = 'Varsayılan dil paketini \"$a\" kullanarak kurulum işlemine devam edebilirsiniz.';
 $string['downloadlanguagesub'] = 'Şu anda bir dil paketi indirme ve bu dilde kuruluma devam etme seçeneğiniz var.<br /><br />Dil paketini indiremezseniz kurulum işlemi İngilizce ile devam edecektir. (Kurulum işlemi bittiğinde ek dil paketlerini indirme ve kurma imkanınız vardır.)';
@@ -240,7 +240,7 @@ $string['password'] = 'Şifre';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP, PostgreSQL ile iletişim kurabilmek için pgsql uzantısı düzgün bir şekilde yapılandırılmamış. Lütfen php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';
 $string['php50restricted'] = 'PHP 5.0.x sürümünde çok fazla hata var. Lütfen sürümü, 5.1.x\'e yükseltin ya da 4.3.x veya 4.4.x sürümüne düşürün.';
 $string['phpversion'] = 'PHP sürümü';
-$string['phpversionerror'] = 'PHP sürümü en az 4.3.0 veya 5.1.0 olmalı (5.0.x sürümünde çok fazla hata var)';
+$string['phpversionerror'] = 'PHP sürümü en az 4.3.0 veya 5.1.0 olmalı (5.0.x sürümünde çok fazla hata var)'; // ORPHANED
 $string['phpversionhelp'] = '<p>Moodle, PHP sürümünün en az 4.3.0 veya 5.1.0 olmasını gerektirir (5.0.x sürümünde çok fazla hata var).</p>
 <p>Şu anda çalışan sürüm: $a</p>
 <p>PHP\'yi güncellemeli veya PHP\'nin yeni sürümünü kullananan bir hostinge taşınmalısınız!</p>';
