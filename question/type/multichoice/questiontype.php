@@ -669,6 +669,34 @@ class question_multichoice_qtype extends default_questiontype {
             }
         }
     }
+
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        list($form, $question) = parent::generate_test($name, $courseid);
+        $question->category = $form->category;
+        $form->questiontext = "How old is the sun?";
+        $form->generalfeedback = "General feedback";
+        $form->penalty = 0.1;
+        $form->single = 1;
+        $form->shuffleanswers = 1;
+        $form->answernumbering = 'abc';
+        $form->noanswers = 3;
+        $form->answer = array('Ancient', '5 billion years old', '4.5 billion years old');
+        $form->fraction = array(0.3, 0.9, 1);
+        $form->feedback = array('True, but lacking in accuracy', 'Close, but no cigar!', 'Yep, that is it!');
+        $form->correctfeedback = 'Excellent!';
+        $form->incorrectfeedback = 'Nope!';
+        $form->partiallycorrectfeedback = 'Not bad';
+
+        if ($courseid) {
+            $course = get_record('course', 'id', $courseid);
+        }
+
+        return $this->save_question($question, $form, $course);
+    }
 }
 
 // Register this question type with the question bank.

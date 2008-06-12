@@ -40,13 +40,13 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         if (!$options = get_records('question_calculated', 'question', $question->id)) {
             notify("No options were found for calculated question
              #{$question->id}! Proceeding with defaults.");
-        //     $options = new Array(); 
+        //     $options = new Array();
             $options= new stdClass;
             $options->tolerance           = 0.01;
             $options->tolerancetype       = 1; // relative
             $options->correctanswerlength = 2;
             $options->correctanswerformat = 1; // decimals
-        } 
+        }
 
         // For historic reasons we also need these fields in the answer objects.
         // This should eventually be removed and related code changed to use
@@ -62,13 +62,13 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
         $virtualqtype = $this->get_virtual_qtype();
         $virtualqtype->get_numerical_units($question);
-       
+
         if( isset($question->export_process)&&$question->export_process){
             $question->options->datasets = $this->get_datasets_for_export($question);
-        }   
+        }
         return true;
     }
-    
+
     function get_datasets_for_export(&$question){
         $datasetdefs = array();
         if (!empty($question->id)) {
@@ -79,25 +79,25 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     WHERE d.question = '$question->id'
                     AND   d.datasetdefinition = i.id
                    ";
-            if ($records = get_records_sql($sql)) {                
+            if ($records = get_records_sql($sql)) {
                 foreach ($records as $r) {
                     $def = $r ;
                     if ($def->category=='0'){
                         $def->status='private';
-                    } else {   
+                    } else {
                         $def->status='shared';
-                    }   
+                    }
                     $def->type ='calculated' ;
                     list($distribution, $min, $max,$dec) = explode(':', $def->options, 4);
                     $def->distribution=$distribution;
                     $def->minimum=$min;
                     $def->maximum=$max;
-                    $def->decimals=$dec ;                                         
+                    $def->decimals=$dec ;
                      if ($def->itemcount > 0 ) {
                         // get the datasetitems
                         $def->items = array();
                         $sql1= (" SELECT itemnumber, definition, id, value
-                        FROM {$CFG->prefix}question_dataset_items 
+                        FROM {$CFG->prefix}question_dataset_items
                         WHERE definition = '$def->id' order by itemnumber ASC ");
                         if ($items = get_records_sql($sql1)){
                             $n = 0;
@@ -110,18 +110,18 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                            $def->number_of_items=$n ;
                         }
                     }
-                    $datasetdefs["1-$r->category-$r->name"] = $def;                                                                                               
+                    $datasetdefs["1-$r->category-$r->name"] = $def;
                 }
             }
         }
         return $datasetdefs ;
-    } 
-      
+    }
+
     function save_question_options($question) {
         //$options = $question->subtypeoptions;
         // Get old answers:
         global $CFG;
-                
+
         // Get old versions of the objects
         if (!$oldanswers = get_records('question_answers', 'question', $question->id, 'id ASC')) {
             $oldanswers = array();
@@ -141,13 +141,13 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         // Insert all the new answers
         foreach ($question->answers as $key => $dataanswer) {
-            if (  trim($dataanswer) != '' ) { 
+            if (  trim($dataanswer) != '' ) {
                 $answer = new stdClass;
                 $answer->question = $question->id;
                 $answer->answer = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
                 $answer->feedback = trim($question->feedback[$key]);
- 
+
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
                     if (! update_record("question_answers", $answer)) {
@@ -171,7 +171,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 $options->tolerancetype  = trim($question->tolerancetype[$key]);
                 $options->correctanswerlength  = trim($question->correctanswerlength[$key]);
                 $options->correctanswerformat  = trim($question->correctanswerformat[$key]);
-                
+
                 // Save options
                 if (isset($options->id)) { // reusing existing record
                     if (! update_record('question_calculated', $options)) {
@@ -203,7 +203,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
         if( isset($question->import_process)&&$question->import_process){
             $this->import_datasets($question);
-         }   
+         }
         // Report any problems.
         if (!empty($result->notice)) {
             return $result;
@@ -214,12 +214,12 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     function import_datasets($question){
         $n = count($question->dataset);
         foreach ($question->dataset as $dataset) {
-            // name, type, option, 
+            // name, type, option,
             $datasetdef = new stdClass();
             $datasetdef->name = $dataset->name;
             $datasetdef->type = 1 ;
             $datasetdef->options =  $dataset->distribution.':'.$dataset->min.':'.$dataset->max.':'.$dataset->length;
-            $datasetdef->itemcount=$dataset->itemcount;                       
+            $datasetdef->itemcount=$dataset->itemcount;
             if ( $dataset->status =='private'){
                 $datasetdef->category = 0;
                 $todo='create' ;
@@ -238,18 +238,18 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     } else { // different so create a private one
                         $datasetdef->category = 0;
                         $todo='create' ;
-                    }    
+                    }
                 }else { // no so create one
                     $datasetdef->category =$question->category ;
                     $todo='create' ;
-               }     
-            }         
+               }
+            }
             if (  $todo=='create'){
                 if (!$datasetdef->id = insert_record(
                     'question_dataset_definitions', $datasetdef)) {
                     error("Unable to create dataset $defid");
-                } 
-           }  
+                }
+           }
            // Create relation to the dataset:
            $questiondataset = new stdClass;
            $questiondataset->question = $question->id;
@@ -267,11 +267,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     if (!insert_record('question_dataset_items', $datasetitem)) {
                         error("Unable to insert dataset item $item->itemnumber with $item->value for $datasetdef->name");
                     }
-                }     
-            }                                
+                }
+            }
         }
     }
-         
+
     function create_runtime_question($question, $form) {
         $question = parent::create_runtime_question($question, $form);
         $question->options->answers = array();
@@ -360,7 +360,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
              $unit = $unit->unit;
         } else {
             $unit = '';
-        }          
+        }
         // We modify the question to look like a numerical question
         $numericalquestion = fullclone($question);
         foreach ($numericalquestion->options->answers as $key => $answer) {
@@ -373,7 +373,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         $numericalquestion->questiontext = parent::substitute_variables(
         $numericalquestion->questiontext, $state->options->dataset);
-        //evaluate the equations i.e {=5+4)   
+        //evaluate the equations i.e {=5+4)
         $qtext = "";
         $qtextremaining = $numericalquestion->questiontext ;
         while  (ereg('\{=([^[:space:]}]*)}', $qtextremaining, $regs1)) {
@@ -385,17 +385,17 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 } else {
                     if( $formulaerrors = qtype_calculated_find_formula_errors($regs1[1])){
                         $str=$formulaerrors ;
-                    }else {  
-                        eval('$str = '.$regs1[1].';');            
+                    }else {
+                        eval('$str = '.$regs1[1].';');
                     }
                 }
-                $qtext = $qtext.$str ; 
-        } 
+                $qtext = $qtext.$str ;
+        }
         $numericalquestion->questiontext = $qtext.$qtextremaining ; // end replace equations
         $virtualqtype->print_question_formulation_and_controls($numericalquestion, $state, $cmoptions, $options);
     }
     function grade_responses(&$question, &$state, $cmoptions) {
-        // Forward the grading to the virtual qtype 
+        // Forward the grading to the virtual qtype
         // We modify the question to look like a numerical question
         $numericalquestion = fullclone($question);
        foreach ($numericalquestion->options->answers as $key => $answer) {
@@ -579,7 +579,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         global $CFG ;
         // max datasets = 100 items
         $max100 = 100 ;
-        if(isset($fromform->nextpageparam["forceregeneration"])) { 
+        if(isset($fromform->nextpageparam["forceregeneration"])) {
             $regenerate = $fromform->nextpageparam["forceregeneration"];
         }else{
             $regenerate = 0 ;
@@ -589,6 +589,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
         //get the old datasets for this question
         $datasetdefs = $this->get_dataset_definitions($question->id, array());
+
         // Handle generator options...
         $olddatasetdefs = fullclone($datasetdefs);
         $datasetdefs = $this->update_dataset_options($datasetdefs, $fromform);
@@ -675,7 +676,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                         //pp  echo "<pre>"; print_r( $datasetitem );
                         if (!insert_record('question_dataset_items', $datasetitem)) {
                             error("Error: Unable to insert new dataset item");
-                        }                        
+                        }
                     }
                 }//for number added
             }// datasetsdefs end
@@ -687,7 +688,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     update_record('question_dataset_definitions', $newdef);
                 }
             }
-        }        
+        }
 
         if (isset($fromform->deletebutton))  {
             if(isset($fromform->selectdelete)) $newmaxnumber = $maxnumber-$fromform->selectdelete ;
@@ -695,7 +696,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             if ($newmaxnumber < 0 ) $newmaxnumber = 0 ;
             foreach ($datasetdefs as $datasetdef) {
                 if ($datasetdef->itemcount == $maxnumber) {
-                    $datasetdef->itemcount= $newmaxnumber ;        
+                    $datasetdef->itemcount= $newmaxnumber ;
                     if (!update_record('question_dataset_definitions',
                                        $datasetdef)) {
                          error("Error: Unable to update itemcount");
@@ -705,6 +706,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
        }
     }
     function generate_dataset_item($options) {
+
         if (!ereg('^(uniform|loguniform):([^:]*):([^:]*):([0-9]*)$',
                 $options, $regs)) {
             // Unknown options...
@@ -775,7 +777,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $virtualqtype->get_tolerance_interval($calculated);
             if ($calculated->min === '') {
                 // This should mean that something is wrong
-                $stranswers .= " -$calculated->answer".'<br/><br/>';                
+                $stranswers .= " -$calculated->answer".'<br/><br/>';
             } else {
                 $stranswers .= $formula.' = '.$calculated->answer.'<br/>' ;
                 $stranswers .= $strmin. $delimiter.$calculated->min.'---';
@@ -796,7 +798,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     // Takes datasets from the parent implementation but
     // filters options that are currently not accepted by calculated
     // It also determines a default selection...
-    //$renameabledatasets not implemented anmywhere 
+    //$renameabledatasets not implemented anmywhere
         list($options, $selected) = parent::dataset_options($form, $name,'','qtype_calculated');
   //  list($options, $selected) = $this->dataset_optionsa($form, $name);
 
@@ -806,11 +808,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             }
         }
         if (!$selected) {
-            if ($mandatory){             
+            if ($mandatory){
             $selected = LITERAL . "-0-$name"; // Default
             }else {
                 $selected = "0"; // Default
-            }    
+            }
         }
         return array($options, $selected);
     }
@@ -849,7 +851,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
              $unit = $unit->unit;
         } else {
             $unit = '';
-        }          
+        }
         foreach ($question->options->answers as $answer) {
             if (((int) $answer->fraction) === 1) {
                 $answernumerical = qtype_calculated_calculate_answer(
@@ -871,24 +873,24 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         if (empty($formula)) {
             $str = '';
         } else {
-            eval('$str = '.$formula.';');            
+            eval('$str = '.$formula.';');
         }
         return $str;
     }
-    
+
     /**
     * This function retrieve the item count of the available category shareable
-    * wild cards that is added as a comment displayed when a wild card with 
+    * wild cards that is added as a comment displayed when a wild card with
     * the same name is displayed in datasetdefinitions_form.php
-    */ 
+    */
     function get_dataset_definitions_category($form) {
         global $CFG;
         $datasetdefs = array();
         $lnamemax = 30;
-        if (!empty($form->category)) {            
+        if (!empty($form->category)) {
             $sql = "SELECT i.*,d.*
                     FROM {$CFG->prefix}question_datasets d,
-                         {$CFG->prefix}question_dataset_definitions i    
+                         {$CFG->prefix}question_dataset_definitions i
                   WHERE i.id = d.datasetdefinition
                     AND i.category = '$form->category'
                     ;
@@ -898,18 +900,18 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                        if ( !isset ($datasetdefs["$r->name"])) $datasetdefs["$r->name"] = $r->itemcount;
                     }
                 }
-        }  
+        }
         return  $datasetdefs ;
-    }  
+    }
 
     /**
     * This function build a table showing the available category shareable
     * wild cards, their name, their definition (Min, Max, Decimal) , the item count
     * and the name of the question where they are used.
-    * This table is intended to be add before the question text to help the user use 
+    * This table is intended to be add before the question text to help the user use
     * these wild cards
-    */                          
-        
+    */
+
     function print_dataset_definitions_category($form) {
         global $CFG;
         $datasetdefs = array();
@@ -921,20 +923,20 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $questionusingstr = get_string('usedinquestion','qtype_calculated');
         $itemscountstr = get_string('itemscount','qtype_datasetdependent');
        $text ='';
-        if (!empty($form->category)) {  
+        if (!empty($form->category)) {
             list($category) = explode(',', $form->category);
             $sql = "SELECT i.*,d.*
                     FROM {$CFG->prefix}question_datasets d,
-                         {$CFG->prefix}question_dataset_definitions i    
+                         {$CFG->prefix}question_dataset_definitions i
                     WHERE i.id = d.datasetdefinition
-                    AND i.category = $category; 
+                    AND i.category = $category;
                     " ;
             if ($records = get_records_sql($sql)) {
                 foreach ($records as $r) {
                     $sql1 = "SELECT q.*
-                        FROM  {$CFG->prefix}question q                    
-                             WHERE q.id = $r->question                    
-                    ";                  
+                        FROM  {$CFG->prefix}question q
+                             WHERE q.id = $r->question
+                    ";
                     if ( !isset ($datasetdefs["$r->type-$r->category-$r->name"])){
                         $datasetdefs["$r->type-$r->category-$r->name"]= $r;
                     }
@@ -945,8 +947,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             }
         }
         if (!empty ($datasetdefs)){
-            
-            $text ="<table width=\"100%\" border=\"1\"><tr><th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\" >$namestr</th><th   style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$rangeofvaluestr</th><th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$itemscountstr</th><th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$questionusingstr</th></tr>";  
+
+            $text ="<table width=\"100%\" border=\"1\"><tr><th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\" >$namestr</th><th   style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$rangeofvaluestr</th><th  style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$itemscountstr</th><th style=\"white-space:nowrap;\" class=\"header\" scope=\"col\">$questionusingstr</th></tr>";
             foreach ($datasetdefs as $datasetdef){
                 list($distribution, $min, $max,$dec) = explode(':', $datasetdef->options, 4);
                 $text .="<tr><td valign=\"top\" align=\"center\"> $datasetdef->name </td><td align=\"center\" valign=\"top\"> $min <strong>-</strong> $max </td><td align=\"right\" valign=\"top\">$datasetdef->itemcount&nbsp;&nbsp;</td><td align=\"left\">";
@@ -958,16 +960,16 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     } else {
                         $qu->name = '';
                     }
-                    $text .=" &nbsp;&nbsp; $qu->name <br/>";  
-                }  
+                    $text .=" &nbsp;&nbsp; $qu->name <br/>";
+                }
                 $text .="</td></tr>";
             }
             $text .="</table>";
         }else{
-             $text .=get_string('nosharedwildcard', 'qtype_calculated'); 
+             $text .=get_string('nosharedwildcard', 'qtype_calculated');
         }
         return  $text ;
-    }    
+    }
 
 
 /// BACKUP FUNCTIONS ////////////////////////////
@@ -1069,6 +1071,54 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         }
 
         return $status;
+    }
+
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        list($form, $question) = parent::generate_test($name, $courseid);
+        $form->feedback = 1;
+        $form->multiplier = array(1, 1);
+        $form->shuffleanswers = 1;
+        $form->noanswers = 1;
+
+        $form->answers = array('{a} + {b}');
+        $form->fraction = array(1);
+        $form->tolerance = array(0.01);
+        $form->tolerancetype = array(1);
+        $form->correctanswerlength = array(2);
+        $form->correctanswerformat = array(1);
+        $form->questiontext = "What is {a} + {b}?";
+
+        if ($courseid) {
+            $course = get_record('course', 'id', $courseid);
+        }
+
+        $new_question = $this->save_question($question, $form, $course);
+
+        $dataset_form = new stdClass();
+        $dataset_form->number = array(1 => 2.4, 2 => 7.2, 3 => 6.7, 4 => 6.3);
+        $dataset_form->calcmin = array(1 => 1.0, 2 => 1.0);
+        $dataset_form->calcmax = array(1 => 10.0, 2 => 10.0);
+        $dataset_form->calclength = array(1 => 1, 2 => 1);
+        $dataset_form->calcdistribution = array(1 => 'uniform', 2 => 'uniform');
+        $dataset_form->definition = array(1 => "1-$new_question->category-b",
+                                          2 => "1-$new_question->category-a",
+                                          3 => "1-$new_question->category-b",
+                                          4 => "1-$new_question->category-a");
+        $dataset_form->itemid = array(1 => 2, 2 => 1, 3 => 0, 4 => 0);
+        $dataset_form->nextpageparam = array('forceregeneration' => false);
+        $dataset_form->addbutton = 1;
+        $dataset_form->selectadd = 1;
+        $dataset_form->selectdelete = 1;
+        $dataset_form->courseid = $courseid;
+        $dataset_form->cmid = 0;
+
+        $this->save_dataset_items($new_question, $dataset_form);
+
+        return $new_question;
     }
 }
 //// END OF CLASS ////

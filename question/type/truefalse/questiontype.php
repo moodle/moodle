@@ -345,6 +345,27 @@ class question_truefalse_qtype extends default_questiontype {
         }
     }
 
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        list($form, $question) = parent::generate_test($name, $courseid);
+        $question->category = $form->category;
+
+        $form->questiontext = "This question is really stupid";
+        $form->penalty = 1;
+        $form->defaultgrade = 1;
+        $form->correctanswer = 0;
+        $form->feedbacktrue = array('Can you justify such a hasty judgment?');
+        $form->feedbackfalse = array('Wisdom has spoken!');
+
+        if ($courseid) {
+            $course = get_record('course', 'id', $courseid);
+        }
+
+        return $this->save_question($question, $form, $course);
+    }
 }
 //// END OF CLASS ////
 

@@ -107,7 +107,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         // Insert all the new answers
         foreach ($question->answer as $key => $dataanswer) {
-            if (!isset( $question->deleteanswer[$key] ) && !( trim($dataanswer) == 0 && $question->fraction[$key]== 0 &&trim($question->feedback[$key])=='')) { 
+            if (!isset( $question->deleteanswer[$key] ) && !( trim($dataanswer) == 0 && $question->fraction[$key]== 0 &&trim($question->feedback[$key])=='')) {
                 $answer = new stdClass;
                 $answer->question = $question->id;
                 if (trim($dataanswer) == '*') {
@@ -148,7 +148,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                         $result->notice = get_string('invalidnumerictolerance', 'quiz');
                     }
                 }
-                
+
                 // Save options
                 if (isset($options->id)) { // reusing existing record
                     if (! update_record('question_numerical', $options)) {
@@ -181,7 +181,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         if (!empty($result->notice)) {
             return $result;
         }
-        
+
         return true;
     }
 
@@ -329,11 +329,11 @@ class question_numerical_qtype extends question_shortanswer_qtype {
                 $tolerance = abs($tolerance); // important - otherwise min and max are swapped
                 // $answer->tolerance 0 or something else
                 if ((float)$answer->tolerance == 0.0  &&  abs((float)$answer->answer) <= $tolerance ){
-                    $tolerance = (float) ("1.0e-".ini_get('precision')) * abs((float)$answer->answer) ; //tiny fraction 
+                    $tolerance = (float) ("1.0e-".ini_get('precision')) * abs((float)$answer->answer) ; //tiny fraction
                 } else if ((float)$answer->tolerance != 0.0 && abs((float)$answer->tolerance) < abs((float)$answer->answer) &&  abs((float)$answer->answer) <= $tolerance){
-                    $tolerance = (1+("1.0e-".ini_get('precision')) )* abs((float) $answer->tolerance) ;//tiny fraction 
-               }     
-               
+                    $tolerance = (1+("1.0e-".ini_get('precision')) )* abs((float) $answer->tolerance) ;//tiny fraction
+               }
+
                 $max = $answer->answer + $tolerance;
                 $min = $answer->answer - $tolerance;
                 break;
@@ -370,13 +370,13 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         $search  = array(' ', ',');
         $replace = array('', '.');
         $rawresponse = str_replace($search, $replace, trim($rawresponse));
-        
+
         // Apply any unit that is present.
         if (ereg('^([+-]?([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$',
                 $rawresponse, $responseparts)) {
-                    
+
             if (!empty($responseparts[5])) {
-                
+
                 if (isset($tmpunits[$responseparts[5]])) {
                     // Valid number with unit.
                     return (float)$responseparts[1] / $tmpunits[$responseparts[5]];
@@ -393,7 +393,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         // Invalid number. Must be wrong.
         return false;
     }
-    
+
     /// BACKUP FUNCTIONS ////////////////////////////
 
     /**
@@ -481,6 +481,34 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         }
 
         return $status;
+    }
+
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        list($form, $question) = default_questiontype::generate_test($name, $courseid);
+        $question->category = $form->category;
+
+        $form->questiontext = "What is 674 * 36?";
+        $form->generalfeedback = "Thank you";
+        $form->penalty = 0.1;
+        $form->defaultgrade = 1;
+        $form->noanswers = 3;
+        $form->answer = array('24264', '24264', '1');
+        $form->tolerance = array(10, 100, 0);
+        $form->fraction = array(1, 0.5, 0);
+        $form->nounits = 2;
+        $form->unit = array(0 => null, 1 => null);
+        $form->multiplier = array(1, 0);
+        $form->feedback = array('Very good', 'Close, but not quite there', 'Well at least you tried....');
+
+        if ($courseid) {
+            $course = get_record('course', 'id', $courseid);
+        }
+
+        return $this->save_question($question, $form, $course);
     }
 
 }

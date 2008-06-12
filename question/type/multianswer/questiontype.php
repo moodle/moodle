@@ -37,7 +37,7 @@ class embedded_cloze_qtype extends default_questiontype {
         // We want an array with question ids as index and the positions as values
         $sequence = array_flip(explode(',', $sequence));
         array_walk($sequence, create_function('&$val', '$val++;'));
-        //si une question est manquante l,indice est nul 
+        //si une question est manquante l,indice est nul
         foreach($sequence as $seq){
             $question->options->questions[$seq]= '';
         }
@@ -79,7 +79,7 @@ class embedded_cloze_qtype extends default_questiontype {
             if ($wrapped != ''){
             // if we still have some old wrapped question ids, reuse the next of them
                 if (is_array($oldwrappedids) && $oldwrappedid = array_shift($oldwrappedids)) {
-                    
+
                     if( $oldqtype = get_field('question', 'qtype', 'id',$oldwrappedid->id)){
                         $wrapped->id = $oldwrappedid->id;
                 if($oldqtype != $wrapped->qtype ) {
@@ -115,7 +115,7 @@ class embedded_cloze_qtype extends default_questiontype {
         }
 
         // Delete redundant wrapped questions
-        if(is_array($oldwrappedids) && count($oldwrappedids)){ 
+        if(is_array($oldwrappedids) && count($oldwrappedids)){
             foreach ($oldwrappedids as $id) {
                 delete_question($id) ;
             }
@@ -282,9 +282,9 @@ class embedded_cloze_qtype extends default_questiontype {
             $feedbackimg = '';
             $feedback = '' ;
             $correctanswer = '';
-            $strfeedbackwrapped  = $strfeedback; 
+            $strfeedbackwrapped  = $strfeedback;
            // if($wrapped->qtype == 'numerical' ||$wrapped->qtype == 'shortanswer'){
-                $testedstate = clone($state); 
+                $testedstate = clone($state);
                 if ($correctanswers =  $QTYPES[$wrapped->qtype]->get_correct_responses($wrapped, $testedstate)) {
                     if ($options->readonly && $options->correct_responses) {
                         $delimiter = '';
@@ -292,7 +292,7 @@ class embedded_cloze_qtype extends default_questiontype {
                             foreach ($correctanswers as $ca) {
                                 switch($wrapped->qtype){
                                     case 'numerical':
-                                    case 'shortanswer':                                    
+                                    case 'shortanswer':
                                         $correctanswer .= $delimiter.$ca;
                                         break ;
                                     case 'multichoice':
@@ -300,7 +300,7 @@ class embedded_cloze_qtype extends default_questiontype {
                                             $correctanswer .= $delimiter.$answers[$ca]->answer;
                                         }
                                         break ;
-                                }        
+                                }
                                 $delimiter = ', ';
                             }
                         }
@@ -364,7 +364,7 @@ class embedded_cloze_qtype extends default_questiontype {
                 }
             }
             if ($feedback !='' && $popup == ''){
-                $strfeedbackwrapped = get_string('correctanswer', 'qtype_multianswer'); 
+                $strfeedbackwrapped = get_string('correctanswer', 'qtype_multianswer');
                     $feedback = s(str_replace(array("\\", "'"), array("\\\\", "\\'"), $feedback));
                     $popup = " onmouseover=\"return overlib('$feedback', STICKY, MOUSEOFF, CAPTION, '$strfeedbackwrapped', FGCOLOR, '#FFFFFF');\" ".
                              " onmouseout=\"return nd();\" ";
@@ -379,18 +379,18 @@ class embedded_cloze_qtype extends default_questiontype {
                         if (strlen(trim($answer->answer)) > $size ){
                             $size = strlen(trim($answer->answer));
                         }
-                    } 
+                    }
                     if (strlen(trim($response))> $size ){
                             $size = strlen(trim($response))+1;
                     }
                     $size = $size + rand(0,$size*0.15);
-                    $size > 60 ? $size = 60 : $size = $size; 
+                    $size > 60 ? $size = 60 : $size = $size;
                     $styleinfo = "size=\"$size\"";
                     /**
                     * Uncomment the following lines if you want to limit for small sizes.
-                    * Results may vary with browsers see MDL-3274 
+                    * Results may vary with browsers see MDL-3274
                     */
-                    /*  
+                    /*
                     if ($size < 2) {
                         $styleinfo = 'style="width: 1.1em;"';
                     }
@@ -404,7 +404,7 @@ class embedded_cloze_qtype extends default_questiontype {
                         $styleinfo = 'style="width: 2.8em;"';
                     }
                     */
-                    
+
                     echo "<input $style $readonly $popup name=\"$inputname\"";
                     echo "  type=\"text\" value=\"".s($response, true)."\" ".$styleinfo." /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
@@ -448,7 +448,7 @@ class embedded_cloze_qtype extends default_questiontype {
             if(!  isset($question->options->questions[$positionkey])){
                 echo $regs[0];
             }else {
-                echo '<div class="error" >'.get_string('questionnotfound','qtype_multianswer',$positionkey).'</div>'; 
+                echo '<div class="error" >'.get_string('questionnotfound','qtype_multianswer',$positionkey).'</div>';
             }
        }
     }
@@ -456,7 +456,7 @@ class embedded_cloze_qtype extends default_questiontype {
         // Print the final piece of question text:
         echo $qtextremaining;
         $this->print_question_submit_buttons($question, $state, $cmoptions, $options);
-        echo '</div>'; 
+        echo '</div>';
     }
 
     function grade_responses(&$question, &$state, $cmoptions) {
@@ -702,6 +702,33 @@ class embedded_cloze_qtype extends default_questiontype {
         return $answer_field;
     }
 
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        list($form, $question) = parent::generate_test($name, $courseid);
+        $question->category = $form->category;
+        $form->questiontext = "This question consists of some text with an answer embedded right here {1:MULTICHOICE:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and right after that you will have to deal with this short answer {1:SHORTANSWER:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and finally we have a floating point number {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%23.8:2#Feedback for half credit answer in the nearby region of the correct answer}.
+
+Note that addresses like www.moodle.org and smileys :-) all work as normal:
+ a) How good is this? {:MULTICHOICE:=Yes#Correct~No#We have a different opinion}
+ b) What grade would you give it? {3:NUMERICAL:=3:2}
+
+Good luck!
+";
+        $form->feedback = "feedback";
+        $form->generalfeedback = "General feedback";
+        $form->fraction = 0;
+        $form->penalty = 0.1;
+        $form->versioning = 0;
+
+        if ($courseid) {
+            $course = get_record('course', 'id', $courseid);
+        }
+
+        return $this->save_question($question, $form, $course);
+    }
 
 }
 //// END OF CLASS ////
