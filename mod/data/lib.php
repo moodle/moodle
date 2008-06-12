@@ -32,6 +32,11 @@ define ('DATA_APPROVED', -3);
 define ('DATA_TIMEADDED', 0);
 define ('DATA_TIMEMODIFIED', -4);
 
+define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
+// Users having assigned the default role "Non-editing teacher" can export database records
+// Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
+// In Moodle >= 2, new roles may be introduced and used instead. 
+
 class data_field_base {     // Base class for Database Field Types (see field/*/field.class.php)
 
     var $type = 'unknown';  // Subclasses must override the type with their name
