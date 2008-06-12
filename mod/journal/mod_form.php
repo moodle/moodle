@@ -20,7 +20,7 @@ class mod_journal_mod_form extends moodleform_mod {
         $mform->addRule('intro', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('intro', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
-        $mform->addElement('format', 'format', get_string('format'));
+        $mform->addElement('format', 'introformat', get_string('format'));
 
         $mform->addElement('modgrade', 'assessed', get_string('grade'), false);
         $mform->setDefault('assessed', 0);
