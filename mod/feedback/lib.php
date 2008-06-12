@@ -23,7 +23,7 @@ define('FEEDBACK_MAX_PIX_LENGTH', '400'); //max. Breite des grafischen Balkens i
 $feedback_names = feedback_load_feedback_items('mod/feedback/item');
 
 /**
-* this will create a new instance and return the id number 
+* this will create a new instance and return the id number
 * of the new instance.
 * @param object $feedback the object given by mod_feedback_mod_form
 * @return int
@@ -49,9 +49,11 @@ function feedback_add_instance($feedback) {
     if (!$feedbackid = $DB->insert_record("feedback", $feedback)) {
         return false;
     }
-    
+
+    $feedback->id = $feedbackid;
+
     feedback_set_events($feedback);
-    
+
     return $feedbackid;
 }
 
@@ -84,7 +86,7 @@ function feedback_update_instance($feedback) {
 
     //create or update the new events
     feedback_set_events($feedback);
-     
+
     return true;
 }
 
@@ -99,7 +101,7 @@ function feedback_delete_instance($id) {
 
     //get all referenced items
     $feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$id));
-    
+
     //deleting all referenced items and values
     if (is_array($feedbackitems)){
         foreach($feedbackitems as $feedbackitem){
@@ -108,16 +110,16 @@ function feedback_delete_instance($id) {
         }
         $DB->delete_records("feedback_item", array("feedback"=>$id));
     }
-    
+
     //deleting the referenced tracking data
     $DB->delete_records('feedback_tracking', array('feedback'=>$id));
-    
+
     //deleting the completeds
     $DB->delete_records("feedback_completed", array("feedback"=>$id));
-    
+
     //deleting the unfinished completeds
     $DB->delete_records("feedback_completedtmp", array("feedback"=>$id));
-    
+
     //deleting old events
     $DB->delete_records('event', array('modulename'=>'feedback', 'instance'=>$id));
     return $DB->delete_records("feedback", array("id"=>$id));
@@ -137,7 +139,7 @@ function feedback_delete_course($course) {
 }
 
 /**
-* Return a small object with summary information about what a 
+* Return a small object with summary information about what a
 * user has done with a given particular instance of this module
 * Used for user activity reports.
 * $return->time = the time they did it
@@ -191,12 +193,12 @@ function feedback_scale_used ($feedbackid,$scaleid) {
  */
 function feedback_reset_userdata($data) {
     global $CFG, $DB;
-    
+
     $resetfeedbacks = array();
     $dropfeedbacks = array();
     $status = array();
     $componentstr = get_string('modulenameplural', 'feedback');
-    
+
     //get the relevant entries from $data
     foreach($data as $key => $value) {
         switch(true) {
@@ -214,14 +216,14 @@ function feedback_reset_userdata($data) {
             break;
         }
     }
-    
+
     //reset the selected feedbacks
     foreach($resetfeedbacks as $id) {
         $feedback = $DB->get_record('feedback', array('id'=>$id));
         feedback_delete_all_completeds($id);
         $status[] = array('component'=>$componentstr.':'.$feedback->name, 'item'=>get_string('resetting_data','feedback'), 'error'=>false);
     }
-    
+
     //drop the selected feedbacks
     // foreach($dropfeedbacks as $id) {
         // $cm = get_coursemodule_from_instance('feedback', $id);
@@ -240,7 +242,7 @@ function feedback_reset_course_form_definition(&$mform) {
     global $COURSE, $DB;
 
     $mform->addElement('header', 'feedbackheader', get_string('modulenameplural', 'feedback'));
-    
+
     if(!$feedbacks = $DB->get_records('feedback', array('course'=>$COURSE->id), 'name')){
         return;
     }
@@ -269,7 +271,7 @@ function feedback_reset_course_form_defaults($course) {
     return $return;
 }
 
-/** 
+/**
  * Called by course/reset.php and shows the formdata by coursereset.
  * it prints checkboxes for each feedback available at the given course
  * there are two checkboxes: 1) delete userdata and keep the feedback 2) delete userdata and drop the feedback
@@ -283,7 +285,7 @@ function feedback_reset_course_form($course) {
     if (!$feedbacks = $DB->get_records('feedback', array('course'=>$course->id), 'name')) {
         return;
     }
-    
+
     foreach($feedbacks as $feedback) {
         echo '<p>';
         echo get_string('name','feedback').': '.$feedback->name.'<br />';
@@ -293,7 +295,7 @@ function feedback_reset_course_form($course) {
     }
 }
 
-/** 
+/**
  *  This creates new events given as timeopen and closeopen by $feedback.
  *  @param object $feedback
  *  @return void
@@ -322,7 +324,7 @@ function feedback_set_events($feedback) {
         } else {
             $event->timeduration = 0;
         }
-    
+
         add_event($event);
     }
 
@@ -345,7 +347,7 @@ function feedback_set_events($feedback) {
     }
 }
 
-/** 
+/**
  *  this function is called by {@link feedback_delete_userdata()}
  *  it drops the feedback-instance from the course_module table
  *  @param int $id the id from the coursemodule
@@ -366,34 +368,34 @@ function feedback_delete_course_module($id) {
 //functions to handle capabilities
 ////////////////////////////////////////////////
 
-/** 
+/**
  *  returns the context-id related to the given coursemodule-id
  *  @param int $cmid the coursemodule-id
  *  @return object $context
  */
 function feedback_get_context($cmid) {
     static $context;
-    
+
     if(isset($context)) return $context;
-    
+
     if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
             print_error('badcontext');
     }
     return $context;
 }
 
-/** 
+/**
  *  get the capabilities for the feedback
  *  @param int $cmid
  *  @return object the available capabilities from current user
  */
 function feedback_load_capabilities($cmid) {
     static $cb;
-    
+
     if(isset($cb)) return $cb;
-    
+
     $context = feedback_get_context($cmid);
-    
+
     $cb = new object;
     $cb->view = has_capability('mod/feedback:view', $context, NULL, false);
     $cb->complete = has_capability('mod/feedback:complete', $context, NULL, false);
@@ -405,16 +407,16 @@ function feedback_load_capabilities($cmid) {
     $cb->createprivatetemplate = has_capability('mod/feedback:createprivatetemplate', $context, NULL, false);
     $cb->createpublictemplate = has_capability('mod/feedback:createpublictemplate', $context, NULL, false);
     $cb->deletetemplate = has_capability('mod/feedback:deletetemplate', $context, NULL, false);
-    
+
     $cb->siteadmin = has_capability('moodle/site:doanything', $context);
-    
+
     $cb->viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context, NULL, false);
-    
+
     return $cb;
 
 }
 
-/** 
+/**
  *  get the capabilities for the course.
  *  this is used by feedback/index.php
  *  @param int $courseid
@@ -422,11 +424,11 @@ function feedback_load_capabilities($cmid) {
  */
 function feedback_load_course_capabilities($courseid) {
     static $ccb;
-    
+
     if(isset($ccb)) return $ccb;
-    
+
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
-    
+
     $ccb = new object;
     $ccb->view = has_capability('mod/feedback:view', $context, NULL, false);
     $ccb->complete = has_capability('mod/feedback:complete', $context, NULL, false);
@@ -438,16 +440,16 @@ function feedback_load_course_capabilities($courseid) {
     $ccb->createprivatetemplate = has_capability('mod/feedback:createprivatetemplate', $context, NULL, false);
     $ccb->createpublictemplate = has_capability('mod/feedback:createpublictemplate', $context, NULL, false);
     $ccb->deletetemplate = has_capability('mod/feedback:deletetemplate', $context, NULL, false);
-    
+
     $ccb->siteadmin = has_capability('moodle/site:doanything', $context);
-    
+
     $ccb->viewhiddenactivities = has_capability('moodle/course:viewhiddenactivities', $context, NULL, false);
-    
+
     return $ccb;
 
 }
 
-/** 
+/**
  *  returns true if the current role is faked by switching role feature
  *  @return boolean
  */
@@ -459,7 +461,7 @@ function feedback_check_is_switchrole(){
     return false;
 }
 
-/** 
+/**
  *  get users which have the complete-capability
  *  @param int $cmid
  *  @param mixed $groups single groupid or array of groupids - group(s) user is in
@@ -470,12 +472,12 @@ function feedback_get_complete_users($cmid, $groups = false) {
     if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
             print_error('badcontext');
     }
-    
+
     //description of the call below: get_users_by_capability($context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true)
     return get_users_by_capability($context, 'mod/feedback:complete', '', 'lastname', '', '', $groups, '', false);
 }
 
-/** 
+/**
  *  get users which have the viewreports-capability
  *  @param int $cmid
  *  @param mixed $groups single groupid or array of groupids - group(s) user is in
@@ -486,12 +488,12 @@ function feedback_get_viewreports_users($cmid, $groups = false) {
     if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
             print_error('badcontext');
     }
-    
+
     //description of the call below: get_users_by_capability($context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true)
     return get_users_by_capability($context, 'mod/feedback:viewreports', '', 'lastname', '', '', $groups, '', false);
 }
 
-/** 
+/**
  *  get users which have the receivemail-capability
  *  @param int $cmid
  *  @param mixed $groups single groupid or array of groupids - group(s) user is in
@@ -502,7 +504,7 @@ function feedback_get_receivemail_users($cmid, $groups = false) {
     if (!$context = get_context_instance(CONTEXT_MODULE, $cmid)) {
             print_error('badcontext');
     }
-    
+
     //description of the call below: get_users_by_capability($context, $capability, $fields='', $sort='', $limitfrom='', $limitnum='', $groups='', $exceptions='', $doanything=true)
     return get_users_by_capability($context, 'mod/feedback:receivemail', '', 'lastname', '', '', $groups, '', true);
 }
@@ -512,7 +514,7 @@ function feedback_get_receivemail_users($cmid, $groups = false) {
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////
 
-/** 
+/**
  *  creates a new template-record.
  *  @param int $courseid
  *  @param string $name the name of template shown in the templatelist
@@ -530,7 +532,7 @@ function feedback_create_template($courseid, $name, $ispublic = 0) {
     return $DB->insert_record('feedback_template', $templ);
 }
 
-/** 
+/**
  *  creates new template items.
  *  all items will be copied and the attribute feedback will be set to 0
  *  and the attribute template will be set to the new templateid
@@ -545,7 +547,7 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     if (!$feedbackitems = $DB->get_records('feedback_item', array('feedback'=>$feedback->id))) {
         return false;
     }
-    
+
     if (!$newtempl = feedback_create_template($feedback->course, $name, $ispublic)) {
         return false;
     }
@@ -559,7 +561,7 @@ function feedback_save_as_template($feedback, $name, $ispublic = 0) {
     return true;
 }
 
-/** 
+/**
  *  deletes all feedback_items related to the given template id
  *  @param int $id the templateid
  *  @return void
@@ -571,7 +573,7 @@ function feedback_delete_template($id) {
     $DB->delete_records("feedback_template", array("id"=>$id));
 }
 
-/** 
+/**
  *  creates new feedback_item-records from template.
  *  if $deleteold is set true so the existing items of the given feedback will be deleted
  *  if $deleteold is set false so the new items will be appanded to the old items
@@ -586,7 +588,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
     if(!$templitems = $DB->get_records('feedback_item', array('template'=>$templateid))) {
         return false;
     }
-    
+
     //if deleteold then delete all old items before
     //get all items
     if($deleteold) {
@@ -606,7 +608,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
         //therefor the new position has an offset
         $positionoffset = $DB->count_records('feedback_item', array('feedback'=>$feedback->id));
     }
-    
+
     foreach($templitems as $newitem) {
         unset($newitem->id);
         $newitem->feedback = $feedback->id;
@@ -617,7 +619,7 @@ function feedback_items_from_template($feedback, $templateid, $deleteold = false
     }
 }
 
-/** 
+/**
  *  get the list of available templates.
  *  if the $onlyown param is set true so only templates from own course will be served
  *  this is important for droping templates
@@ -641,7 +643,7 @@ function feedback_get_template_list($course, $onlyown = false) {
 ////////////////////////////////////////////////
 ////////////////////////////////////////////////
 
-/** 
+/**
  *  load the available item plugins from given subdirectory of $CFG->dirroot
  *  the default is "mod/feedback/item"
  *  @param string $dir the subdir
@@ -661,28 +663,28 @@ function feedback_load_feedback_items($dir = 'mod/feedback/item') {
     return $ret_names;
 }
 
-/** 
+/**
  *  load the available item plugins to use as dropdown-options
  *  @return array pluginnames as string
  */
 function feedback_load_feedback_items_options() {
     global $CFG;
-    
+
     $feedback_options = array("pagebreak" => get_string('add_pagebreak', 'feedback'));
-    
+
     if (!$feedback_names = feedback_load_feedback_items('mod/feedback/item')) {
         return array();
     }
-    
+
     foreach($feedback_names as $fn) {
         $feedback_options[$fn] = get_string($fn,'feedback');
     }
     asort($feedback_options);
-    $feedback_options = array_merge( array(' ' => get_string('select')), $feedback_options );    
+    $feedback_options = array_merge( array(' ' => get_string('select')), $feedback_options );
     return $feedback_options;
 }
 
-/** 
+/**
  *  creates a new item-record
  *  @param object $data the data from edit_item_form
  *  @return int the new itemid
@@ -696,31 +698,31 @@ function feedback_create_item($data) {
     $item->template=0;
     if (isset($data->templateid)) {
 	    	$item->template = intval($data->templateid);
-    }    
+    }
 
     $itemname = trim($data->itemname);
     $item->name = ($itemname ? $data->itemname : get_string('no_itemname', 'feedback'));
-    
+
     //get the used class from item-typ
     $itemclass = 'feedback_item_'.$data->typ;
     //get the instance of the item class
     $itemobj = new $itemclass();
     $item->presentation = $itemobj->get_presentation($data);
-    
+
     $item->hasvalue = $itemobj->get_hasvalue();
-    
+
     $item->typ = $data->typ;
     $item->position = $data->position;
 
     $item->required=0;
     if (isset($data->required)) {
 	    	$item->required=$data->required;
-    }    
+    }
 
     return $DB->insert_record('feedback_item', $item);
 }
 
-/** 
+/**
  *  save the changes of a given item.
  *  @param object $item
  *  @param object $data the data from edit_item_form
@@ -732,7 +734,7 @@ function feedback_update_item($item, $data = null){
     if($data != null){
         $itemname = trim($data->itemname);
         $item->name = ($itemname ? $data->itemname : get_string('no_itemname', 'feedback'));
-    
+
         //get the used class from item-typ
         $itemclass = 'feedback_item_'.$data->typ;
         //get the instance of the item class
@@ -742,7 +744,7 @@ function feedback_update_item($item, $data = null){
         $item->required=0;
         if (isset($data->required)) {
 	    	$item->required=$data->required;
-        } 
+        }
     }else {
         $item->name = $item->name;
         $item->presentation = $item->presentation;
@@ -751,7 +753,7 @@ function feedback_update_item($item, $data = null){
     return $DB->update_record("feedback_item", $item);
 }
 
-/** 
+/**
  *  deletes a item and also deletes all related values
  *  @param int $itemid
  *  @param boolean $renumber should the kept items renumbered Yes/No
@@ -769,7 +771,7 @@ function feedback_delete_item($itemid, $renumber = true){
     }
 }
 
-/** 
+/**
  *  deletes all items of the given feedbackid
  *  @param int $feedbackid
  *  @return void
@@ -787,7 +789,7 @@ function feedback_delete_all_items($feedbackid){
     $DB->delete_records('feedback_completed', array('feedback'=>$feedbackid));
 }
 
-/** 
+/**
  *  this function toggled the item-attribute required (yes/no)
  *  @param object $item
  *  @return boolean
@@ -805,7 +807,7 @@ function feedback_switch_item_required($item) {
     return $DB->update_record('feedback_item', $item);
 }
 
-/** 
+/**
  *  renumbers all items of the given feedbackid
  *  @param int $feedbackid
  *  @return void
@@ -824,7 +826,7 @@ function feedback_renumber_items($feedbackid){
     }
 }
 
-/** 
+/**
  *  this decreases the position of the given item
  *  @param object $item
  *  @return void
@@ -840,7 +842,7 @@ function feedback_moveup_item($item){
     feedback_update_item($item);
 }
 
-/** 
+/**
  *  this increased the position of the given item
  *  @param object $item
  *  @return void
@@ -851,14 +853,14 @@ function feedback_movedown_item($item){
     if(!$item_after = $DB->get_record('feedback_item', array('feedback'=>$item->feedback, 'position'=>$item->position+1))) {
         return;
     }
-    
+
     $item_after->position = $item->position;
     $item->position++;
     feedback_update_item($item_after);
     feedback_update_item($item);
 }
 
-/** 
+/**
  *  here the position of the given item will be set to the value in $pos
  *  @param object $moveitem
  *  @param int $pos
@@ -877,7 +879,7 @@ function feedback_move_item($moveitem, $pos){
         $index = 1;
         foreach($allitems as $item) {
             if($item->id == $moveitem->id) continue; //the moving item is handled special
-            
+
             if($index == $pos) {
                 $moveitem->position = $index;
                 feedback_update_item($moveitem);
@@ -896,7 +898,7 @@ function feedback_move_item($moveitem, $pos){
     return false;
 }
 
-/** 
+/**
  *  prints the given item.
  *  if $readonly is set true so the ouput only is for showing responses and not for editing or completing.
  *  each item-class has an own print_item function implemented.
@@ -910,7 +912,7 @@ function feedback_move_item($moveitem, $pos){
 function feedback_print_item($item, $value = false, $readonly = false, $edit = false, $highlightrequire = false){
     if($item->typ == 'pagebreak') return;
     if($readonly)$ro = 'readonly="readonly" disabled="disabled"';
-        
+
     //get the class of the given item-typ
     $itemclass = 'feedback_item_'.$item->typ;
     //get the instance of the item-class
@@ -918,7 +920,7 @@ function feedback_print_item($item, $value = false, $readonly = false, $edit = f
     $itemobj->print_item($item, $value, $readonly, $edit, $highlightrequire);
 }
 
-/** 
+/**
  *  if the user completes a feedback and there is a pagebreak so the values are saved temporary.
  *  the values are saved permanently not until the user click on save button
  *  @param object $feedbackcompleted
@@ -950,7 +952,7 @@ function feedback_set_tmp_values($feedbackcompleted) {
     return $tmpcpl;
 }
 
-/** 
+/**
  *  this saves the temporary saved values permanently
  *  @param object $feedbackcompletedtmp the temporary completed
  *  @param object $feedbackcompleted the target completed
@@ -1013,7 +1015,7 @@ function feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted, $us
     }
 }
 
-/** 
+/**
  *  deletes the given temporary completed and all related temporary values
  *  @param int $tmpcplid
  *  @return void
@@ -1031,7 +1033,7 @@ function feedback_delete_completedtmp($tmpcplid) {
 //functions to handle the pagebreaks
 ////////////////////////////////////////////////
 
-/** 
+/**
  *  this creates a pagebreak.
  *  a pagebreak is a special kind of item
  *  @param int $feedbackid
@@ -1045,17 +1047,17 @@ function feedback_create_pagebreak($feedbackid) {
     if($lastposition == feedback_get_last_break_position($feedbackid)) {
         return false;
     }
-    
+
     $item = new object();
     $item->feedback = $feedbackid;
 
     $item->template=0;
 
     $item->name = '';
-    
+
     $item->presentation = '';
     $item->hasvalue = 0;
-    
+
     $item->typ = 'pagebreak';
     $item->position = $lastposition + 1;
 
@@ -1064,7 +1066,7 @@ function feedback_create_pagebreak($feedbackid) {
     return $DB->insert_record('feedback_item', $item);
 }
 
-/** 
+/**
  *  get all positions of pagebreaks in the given feedback
  *  @param int $feedbackid
  *  @return array all ordered pagebreak positions
@@ -1076,7 +1078,7 @@ function feedback_get_all_break_positions($feedbackid) {
     return array_values($allbreaks);
 }
 
-/** 
+/**
  *  get the position of the last pagebreak
  *  @param int $feedbackid
  *  @return int the position of the last pagebreak
@@ -1086,7 +1088,7 @@ function feedback_get_last_break_position($feedbackid) {
     return $allbreaks[count($allbreaks) - 1];
 }
 
-/** 
+/**
  *  this returns the position where the user can continue the completing.
  *  @param int $feedbackid
  *  @param int $courseid
@@ -1095,9 +1097,9 @@ function feedback_get_last_break_position($feedbackid) {
  */
 function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid) {
     global $CFG, $USER, $DB;
-    
+
     //is there any break?
-    
+
     if(!$allbreaks = feedback_get_all_break_positions($feedbackid)) return false;
 
     $params = array();
@@ -1107,7 +1109,7 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid)
     }else {
         $courseselect = "1";
     }
-    
+
     if($guestid) {
         $userselect = "AND fc.guestid = :guestid";
         $usergroup = "GROUP BY fc.guestid";
@@ -1143,7 +1145,7 @@ function feedback_get_page_to_continue($feedbackid, $courseid = false, $guestid)
 //functions to handle the values
 ////////////////////////////////////////////////
 
-/** 
+/**
  *  this saves the values of an completed.
  *  if the param $tmp is set true so the values are saved temporary in table feedback_valuetmp
  *  if there is already a completed and the userid is set so the values are updated
@@ -1159,7 +1161,7 @@ function feedback_save_values($data, $usrid, $tmp = false) {
     $tmpstr = $tmp ? 'tmp' : '';
          $time = time(); //arb
          $timemodified = mktime(0, 0, 0, date('m', $time),date('d', $time),date('Y', $time)); //arb
-//         $timemodified = time();		
+//         $timemodified = time();
     if($usrid == 0) {
         return feedback_create_values($data, $usrid, $timemodified, $tmp);
     }
@@ -1171,7 +1173,7 @@ function feedback_save_values($data, $usrid, $tmp = false) {
     }
 }
 
-/** 
+/**
  *  this saves the values from anonymous user such as guest on the main-site
  *  @param object $data the data form complete_guest form
  *  @param string $guestid the unique guestidentifier
@@ -1189,7 +1191,7 @@ function feedback_save_guest_values($data, $guestid) {
     }
 }
 
-/** 
+/**
  *  get the value from the given item related to the given completed.
  *  the value can come as temporary or as permanently value. the deciding is done by $tmp
  *  @param int $completeid
@@ -1204,7 +1206,7 @@ function feedback_get_item_value($completedid, $itemid, $tmp = false) {
     return $DB->get_field('feedback_value'.$tmpstr, 'value', array('completed'=>$completedid, 'item'=>$itemid));
 }
 
-/** 
+/**
  *  this function checks the correctness of values.
  *  the rules for this are implemented in the class of each item.
  *  it can be the required attribute or the value self e.g. numeric.
@@ -1233,12 +1235,12 @@ function feedback_check_values($data, $firstitem, $lastitem) {
         //<item-typ>_<item-id> eg. numeric_234
         //this is the key to get the value for the correct item
         $formvalname = $item->typ . '_' . $item->id;
-        
+
         //check if the value is set
         if((!isset($data[$formvalname])) AND ($item->required == 1)) {
             return false;
         }
-        
+
         //if there is a value so save it temporary
         $value = isset($data[$formvalname]) ? $data[$formvalname] : '';
 
@@ -1246,7 +1248,7 @@ function feedback_check_values($data, $firstitem, $lastitem) {
         $itemclass = 'feedback_item_'.$item->typ;
         //get the instance of the item-class
         $itemobj = new $itemclass();
-        
+
         //now we let check the value by the item-class
         if(!$itemobj->check_value($value, $item)) {
             return false;
@@ -1256,7 +1258,7 @@ function feedback_check_values($data, $firstitem, $lastitem) {
     return true;
 }
 
-/** 
+/**
  *  this function create a complete-record and the related value-records.
  *  depending on the $tmp (true/false) the values are saved temporary or permanently
  *  @param object $data the data of the complete form
@@ -1277,11 +1279,11 @@ function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $gue
     $completed->guestid            = $guestid;
     $completed->timemodified       = $timemodified;
     $completed->anonymous_response = $data['anonymous_response'];
-    
+
     if (!$completedid = $DB->insert_record('feedback_completed'.$tmpstr, $completed)) {
         return false;
     }
-    
+
     $completed = $DB->get_record('feedback_completed'.$tmpstr, array('id'=>$completedid));
 
     //$data includes an associative array. the keys are in the form like abc_xxx
@@ -1290,13 +1292,13 @@ function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $gue
     $errcount = 0;
     foreach($keys as $key){
         //ensure the keys are what we want
-        if(eregi('([a-z0-9]{1,})_([0-9]{1,})',$key)){            
+        if(eregi('([a-z0-9]{1,})_([0-9]{1,})',$key)){
             $value = new object();
             $itemnr = explode('_', $key);
             $value->item = intval($itemnr[1]);
             $value->completed = $completed->id;
             $value->course_id = intval($data['courseid']);
-            
+
             //get the class of item-typ
             $itemclass = 'feedback_item_'.$itemnr[0];
             //get the instance of item-class
@@ -1309,12 +1311,12 @@ function feedback_create_values($data, $usrid, $timemodified, $tmp = false, $gue
             }
         }
     }
-    
+
     //if nothing is wrong so we can return the completedid otherwise false
     return $errcount == 0 ? $completed->id : false;
 }
 
-/** 
+/**
  *  this function updates a complete-record and the related value-records.
  *  depending on the $tmp (true/false) the values are saved temporary or permanently
  *  @param object $data the data of the complete form
@@ -1326,31 +1328,31 @@ function feedback_update_values($data, $completed, $tmp = false) {
     global $DB;
 
     $tmpstr = $tmp ? 'tmp' : '';
-    
+
     $DB->update_record('feedback_completed'.$tmpstr, $completed);
     //get the values of this completed
     $values = $DB->get_records('feedback_value'.$tmpstr, array('completed'=>$completed->id));
-    
+
     //$data includes an associative array. the keys are in the form like abc_xxx
     //with explode we make an array with(abc, xxx) and (abc=typ und xxx=itemnr)
     $keys = array_keys($data);
     foreach($keys as $key){
         //ensure the keys are what we want
-        if(eregi('([a-z0-9]{1,})_([0-9]{1,})',$key)){            
+        if(eregi('([a-z0-9]{1,})_([0-9]{1,})',$key)){
             //build the new value to update([id], item, completed, value)
             $itemnr = explode('_', $key);
             $newvalue = new object();
             $newvalue->item      = $itemnr[1];
             $newvalue->completed = $completed->id;
             $newvalue->course_id = $data['courseid'];
-            
+
             //get the class of item-typ
             $itemclass = 'feedback_item_'.$itemnr[0];
             //get the instace of the item-class
             $itemobj = new $itemclass();
             //the kind of values can be absolutely different so we run create_value directly by the item-class
             $newvalue->value = $itemobj->create_value($data[$key]);
-            
+
             //check, if we have to create or update the value
             $exist = false;
             foreach($values as $value){
@@ -1365,14 +1367,14 @@ function feedback_update_values($data, $completed, $tmp = false) {
             }else {
                 $DB->insert_record('feedback_value'.$tmpstr, $newvalue);
             }
-            
+
         }
     }
 
     return $completed->id;
 }
 
-/** 
+/**
  *  get the values of an item depending on the given groupid.
  *  if the feedback is anonymous so the values are shuffled
  *  @param object $item
@@ -1388,8 +1390,8 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false){
         $query = 'SELECT fbv .  *
                     FROM {feedback_value} AS fbv, {feedback_completed} AS fbc, {groups_members} AS gm
                    WHERE fbv.item = ?
-                         AND fbv.completed = fbc.id 
-                         AND fbc.userid = gm.userid 
+                         AND fbv.completed = fbc.id
+                         AND fbc.userid = gm.userid
                          AND gm.groupid = ?
                 ORDER BY fbc.timemodified';
         $values = $DB->get_records_sql($query, array($item->id, $groupid));
@@ -1400,7 +1402,7 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false){
         } else {
              $values = $DB->get_records('feedback_value', array('item'=>$item->id));
         }
-    }    
+    }
     if ($DB->get_field('feedback', 'anonymous', array('id'=>$item->feedback)) == FEEDBACK_ANONYMOUS_YES) {
         if(is_array($values))
             shuffle($values);
@@ -1408,7 +1410,7 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false){
     return $values;
 }
 
-/** 
+/**
  *  check for multiple_submit = false.
  *  if the feedback is global so the courseid must be given
  *  @param int $feedbackid
@@ -1417,7 +1419,7 @@ function feedback_get_group_values($item, $groupid = false, $courseid = false){
  */
 function feedback_is_already_submitted($feedbackid, $courseid = false) {
     global $USER, $DB;
-    
+
     if (!$trackings = $DB->get_records_menu('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedbackid), '', 'id, completed')) {
         return false;
     }
@@ -1432,7 +1434,7 @@ function feedback_is_already_submitted($feedbackid, $courseid = false) {
     return true;
 }
 
-/** 
+/**
  *  if the completion of a feedback will be continued eg. by pagebreak or by multiple submit so the complete must be found.
  *  if the param $tmp is set true so all things are related to temporary completeds
  *  @param int $feedbackid
@@ -1443,9 +1445,9 @@ function feedback_is_already_submitted($feedbackid, $courseid = false) {
  */
 function feedback_get_current_completed($feedbackid, $tmp = false, $courseid = false, $guestid = false) {
     global $USER, $CFG, $DB;
-    
+
     $tmpstr = $tmp ? 'tmp' : '';
-    
+
     if(!$courseid) {
         if($guestid) {
             return $DB->get_record('feedback_completed'.$tmpstr, array('feedback'=>$feedbackid, 'guestid'=>$guestid));
@@ -1453,9 +1455,9 @@ function feedback_get_current_completed($feedbackid, $tmp = false, $courseid = f
             return $DB->get_record('feedback_completed'.$tmpstr, array('feedback'=>$feedbackid, 'userid'=>$USER->id));
         }
     }
-    
+
     $params = array();
-    
+
     if ($guestid) {
         $userselect = "AND fc.guestid = :guestid";
         $params['guestid'] = $guestid;
@@ -1481,7 +1483,7 @@ function feedback_get_current_completed($feedbackid, $tmp = false, $courseid = f
     }
 }
 
-/** 
+/**
  *  get the completeds depending on the given groupid.
  *  @param object $feedback
  *  @param int $groupid
@@ -1510,7 +1512,7 @@ function feedback_get_completeds_group($feedback, $groupid = false) {
     }
 }
 
-/** 
+/**
  *  get the count of completeds depending on the given groupid.
  *  @param object $feedback
  *  @param int $groupid
@@ -1522,7 +1524,7 @@ function feedback_get_completeds_group_count($feedback, $groupid = false, $cours
 
     if ($courseid > 0 AND !$groupid <= 0) {
         $sql = "SELECT id, COUNT(item) AS ci
-                  FROM {feedback_value} 
+                  FROM {feedback_value}
                  WHERE course_id  = ?
               GROUP BY item ORDER BY ci DESC";
         if ($foundrecs = $DB->get_records_sql($sql, array($courseid))) {
@@ -1543,7 +1545,7 @@ function feedback_get_completeds_group_count($feedback, $groupid = false, $cours
 @param object $cm
 function feedback_get_groupid($course, $cm) {
     $groupmode = groupmode($course, $cm);
-    
+
     //get groupid
     if($groupmode > 0 && !has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
         if($mygroupid = mygroupid($course->id)) {
@@ -1555,7 +1557,7 @@ function feedback_get_groupid($course, $cm) {
 }
  */
 
-/** 
+/**
  *  deletes all completed-recordsets from a feedback.
  *  all related data such as values also will be deleted
  *  @param int $feedbackid
@@ -1572,7 +1574,7 @@ function feedback_delete_all_completeds($feedbackid) {
     }
 }
 
-/** 
+/**
  *  deletes a completed given by completedid.
  *  all related data such values or tracking data also will be deleted
  *  @param int $completedid
@@ -1586,12 +1588,12 @@ function feedback_delete_completed($completedid) {
     }
     //first we delete all related values
     $DB->delete_records('feedback_value', array('completed'=>$completed->id));
-    
+
     //now we delete all tracking data
     if($tracking = $DB->get_record('feedback_tracking', array('completed'=>$completed->id, 'feedback'=>$completed->feedback))) {
         $DB->delete_records('feedback_tracking', array('completed'=>$completed->id));
     }
-        
+
     //last we delete the completed-record
     return $DB->delete_records('feedback_completed', array('id'=>$completed->id));
 }
@@ -1602,7 +1604,7 @@ function feedback_delete_completed($completedid) {
 //functions to handle sitecourse mapping
 ////////////////////////////////////////////////
 
-/** 
+/**
  *  checks if the course and the feedback is in the table feedback_sitecourse_map.
  *  @param int $feedbackid
  *  @param int $courseid
@@ -1613,7 +1615,7 @@ function feedback_is_course_in_sitecourse_map($feedbackid, $courseid) {
     return $DB->count_records('feedback_sitecourse_map', array('feedbackid'=>$feedbackid, 'courseid'=>$courseid));
 }
 
-/** 
+/**
  *  checks if the feedback is in the table feedback_sitecourse_map.
  *  @param int $feedbackid
  *  @return boolean
@@ -1623,7 +1625,7 @@ function feedback_is_feedback_in_sitecourse_map($feedbackid) {
     return $DB->record_exists('feedback_sitecourse_map', array('feedbackid'=>$feedbackid));
 }
 
-/** 
+/**
  *  gets the feedbacks from table feedback_sitecourse_map.
  *  this is used to show the global feedbacks on the feedback block
  *  all feedbacks with the following criteria will be selected:<br />
@@ -1634,21 +1636,21 @@ function feedback_is_feedback_in_sitecourse_map($feedbackid) {
  */
 function feedback_get_feedbacks_from_sitecourse_map($courseid) {
     global $DB;
-    
+
     //first get all feedbacks listed in sitecourse_map with named courseid
     $sql = "SELECT f.id AS id, cm.id AS cmid, f.name AS name, f.timeopen AS timeopen, f.timeclose AS timeclose
               FROM {feedback} f, {course_modules} cm, {feedback_sitecourse_map} sm, {modules} m
              WHERE f.id = cm.instance
                    AND f.course = '".SITEID."'
-                   AND m.id = cm.module 
+                   AND m.id = cm.module
                    AND m.name = 'feedback'
-                   AND sm.courseid = ? 
+                   AND sm.courseid = ?
                    AND sm.feedbackid = f.id";
-    
+
     if (!$feedbacks1 = $DB->get_records_sql($sql, array($courseid))) {
         $feedbacks1 = array();
     }
-    
+
     //second get all feedbacks not listed in sitecourse_map
     $feedbacks2 = array();
     $sql = "SELECT f.id AS id, cm.id AS cmid, f.name AS name, f.timeopen AS timeopen, f.timeclose AS timeclose
@@ -1665,30 +1667,30 @@ function feedback_get_feedbacks_from_sitecourse_map($courseid) {
             $feedbacks2[] = $a;
         }
     }
-    
+
     return array_merge($feedbacks1, $feedbacks2);
-    
+
 }
 
-/** 
+/**
  *  gets the courses from table feedback_sitecourse_map.
  *  @param int $feedbackid
  *  @return array the course-records
  */
 function feedback_get_courses_from_sitecourse_map($feedbackid) {
     global $DB;
-    
+
     $sql = "SELECT f.id, f.courseid, c.fullname, c.shortname
               FROM {feedback_sitecourse_map} f, {course} c
              WHERE c.id = f.courseid
                    AND f.feedbackid = ?
           ORDER BY c.fullname";
-    
+
     return $DB->get_records_sql($sql, array($feedbackid));
-    
+
 }
 
-/** 
+/**
  *  removes non existing courses or feedbacks from sitecourse_map.
  *  it shouldn't be called all too often
  *  a good place for it could be the mapcourse.php or unmapcourse.php
@@ -1707,7 +1709,7 @@ function feedback_clean_up_sitecourse_map() {
             $DB->delete_records('feedback_sitecourse_map', array('courseid'=>$map->courseid, 'feedbackid'=>$map->feedbackid));
             continue;
         }
-        
+
     }
 }
 
@@ -1717,7 +1719,7 @@ function feedback_clean_up_sitecourse_map() {
 //not relatable functions
 ////////////////////////////////////////////////
 
-/** 
+/**
  *  prints the option items of a selection-input item (dropdownlist).
  *  @param int $startval the first value of the list
  *  @param int $endval the last value of the list
@@ -1736,7 +1738,7 @@ function feedback_print_numeric_option_list($startval, $endval, $selectval = '',
     }
 }
 
-/** 
+/**
  *  sends an email to the teachers of the course where the given feedback is placed.
  *  @param object $cm the coursemodule-record
  *  @param $feedback
@@ -1746,13 +1748,13 @@ function feedback_print_numeric_option_list($startval, $endval, $selectval = '',
  */
 function feedback_send_email($cm, $feedback, $course, $userid) {
     global $CFG, $DB;
-    
+
     if ($feedback->email_notification == 0) {  // No need to do anything
         return;
     }
-    
+
     $user = $DB->get_record('user', array('id'=>$userid));
-    
+
     if (groupmode($course, $cm) == SEPARATEGROUPS) {    // Separate groups are being used
         $groups = $DB->get_records_sql_menu("SELECT g.name, g.id
                                                FROM {groups} g, {groups_members} m
@@ -1761,19 +1763,19 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
                                                     AND m.userid = ?
                                            ORDER BY name ASC", array($course->id, $userid));
         $groups = array_values($groups);
-        
+
         $teachers = feedback_get_receivemail_users($cm->id, $groups);
     } else {
         $teachers = feedback_get_receivemail_users($cm->id);
     }
-    
+
     if ($teachers) {
 
         $strfeedbacks = get_string('modulenameplural', 'feedback');
         $strfeedback  = get_string('modulename', 'feedback');
         $strcompleted  = get_string('completed', 'feedback');
         $printusername = $feedback->anonymous == FEEDBACK_ANONYMOUS_NO ? fullname($user) : get_string('anonymous_user', 'feedback');
-        
+
         foreach ($teachers as $teacher) {
             $info = new object();
             $info->username = $printusername;
@@ -1783,7 +1785,7 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
             $postsubject = $strcompleted.': '.$info->username.' -> '.$feedback->name;
             $posttext = feedback_send_email_text($info, $course);
             $posthtml = ($teacher->mailformat == 1) ? feedback_send_email_html($info, $course, $cm) : '';
-            
+
             if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
                 @email_to_user($teacher, $user, $postsubject, $posttext, $posthtml);
             }else {
@@ -1793,7 +1795,7 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
     }
 }
 
-/** 
+/**
  *  sends an email to the teachers of the course where the given feedback is placed.
  *  @param object $cm the coursemodule-record
  *  @param $feedback
@@ -1802,11 +1804,11 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
  */
 function feedback_send_email_anonym($cm, $feedback, $course) {
     global $CFG;
-    
+
     if ($feedback->email_notification == 0) {             // No need to do anything
         return;
     }
-    
+
     $teachers = feedback_get_receivemail_users($cm->id);
 
     if ($teachers) {
@@ -1815,7 +1817,7 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
         $strfeedback  = get_string('modulename', 'feedback');
         $strcompleted  = get_string('completed', 'feedback');
         $printusername = get_string('anonymous_user', 'feedback');
-        
+
         foreach ($teachers as $teacher) {
             $info = new object();
             $info->username = $printusername;
@@ -1825,13 +1827,13 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             $postsubject = $strcompleted.': '.$info->username.' -> '.$feedback->name;
             $posttext = feedback_send_email_text($info, $course);
             $posthtml = ($teacher->mailformat == 1) ? feedback_send_email_html($info, $course, $cm) : '';
-            
+
             @email_to_user($teacher, $teacher, $postsubject, $posttext, $posthtml);
         }
     }
 }
 
-/** 
+/**
  *  send the text-part of the email
  *  @param object $info includes some infos about the feedback you want to send
  *  @param object $course
@@ -1847,7 +1849,7 @@ function feedback_send_email_text($info, $course) {
 }
 
 
-/** 
+/**
  *  send the html-part of the email
  *  @param object $info includes some infos about the feedback you want to send
  *  @param object $course
@@ -1865,14 +1867,14 @@ function feedback_send_email_html($info, $course, $cm) {
     return $posthtml;
 }
 
-/** 
+/**
  *  print some errors to inform users about this.
  *  @return void
  */
 function feedback_print_errors() {
- 
+
     global $SESSION;
-		
+
     if(empty($SESSION->feedback->errors)) {
 		return;
     }
@@ -1884,12 +1886,12 @@ function feedback_print_errors() {
     echo '<p align="center"><b><font color="black"><pre>';
     print_r($SESSION->feedback->errors) . "\n";
     echo '</pre></font></b></p>';
-	
+
     // print_simple_box_end();
     print_box_end();
     echo '<br /><br />';
     $SESSION->feedback->errors = array(); //remove errors
-} 
+}
 
 function feedback_encode_target_url($url) {
     if (strpos($url, '?')) {
