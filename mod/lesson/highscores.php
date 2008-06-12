@@ -26,7 +26,7 @@
         case 'add':
             // Ensure that we came from view.php
             if (!confirm_sesskey() or !data_submitted()) {
-                print_error('Incorrect Form Data');
+                print_error('invalidformdata');
             }
             break;
             
@@ -55,7 +55,7 @@
                 }
                 $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
                 if (!$grades = $DB->get_records_select('lesson_grades', "lessonid = :lessonid", $params, 'completed')) {
-                    print_error('Error: could not find grades');
+                    print_error('cannotfindfirstgrade', 'lesson');
                 }
                 
                 if (!$newgrade = $DB->get_record_sql("SELECT * 
@@ -63,12 +63,12 @@
                                                   WHERE lessonid = :lessonid
                                                     AND userid = :userid 
                                                ORDER BY completed DESC", $params, true)) {
-                    print_error('Error: could not find newest grade');
+                    print_error('cannotfindnewestgrade', 'lesson');
                 }
                 
                 // Check for multiple submissions
                 if ($DB->record_exists('lesson_high_scores', array('gradeid' => $newgrade->id))) {
-                    print_error('Only one posting per grade');
+                    print_error('onpostperpage', 'lesson');
                 }
                 
                 // Find out if we need to delete any records
@@ -117,7 +117,7 @@
                 $newhighscore->nickname = $name;
 
                 if (!$DB->insert_record('lesson_high_scores', $newhighscore)) {
-                    print_error("Insert of new high score Failed!");
+                    print_error('cannotinserthighscore', 'lesson');
                 }
                 
                 // Log it
@@ -126,7 +126,7 @@
                 lesson_set_message(get_string('postsuccess', 'lesson'), 'notifysuccess');
                 redirect("$CFG->wwwroot/mod/lesson/highscores.php?id=$cm->id&amp;link=1");
             } else {
-                print_error('Something is wrong with the form data');
+                print_error('invalidformdata');
             }
             break;
     }

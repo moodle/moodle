@@ -13,7 +13,7 @@
    
     $params = array ("lessonid" => $lesson->id, "prevpageid" => 0);
     if (!$page = $DB->get_record_select("lesson_pages", "lessonid = :lessonid AND prevpageid = :prevpageid", $params)) {
-        print_error("Move: first page not found");
+        print_error('cannotfindfirstpage', 'lesson');
     }
 
     echo "<center><table cellpadding=\"5\" border=\"1\">\n";
@@ -30,7 +30,7 @@
         }
         if ($page->nextpageid) {
             if (!$page = $DB->get_record("lesson_pages", array("id" => $page->nextpageid))) {
-                print_error("Teacher view: Next page not found!");
+                print_error('cannotfindnextpage', 'lesson');
             }
         } else {
             // last page reached

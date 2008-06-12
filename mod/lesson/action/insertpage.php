@@ -21,7 +21,7 @@
     if ($form->pageid) {
         // the new page is not the first page
         if (!$page = $DB->get_record("lesson_pages", array("id" => $form->pageid))) {
-            print_error("Insert page: page record not found");
+            print_error('cannotfindpages', 'lesson');
         }
         $newpage->lessonid = clean_param($lesson->id, PARAM_INT);
         $newpage->prevpageid = clean_param($form->pageid, PARAM_INT);
@@ -48,16 +48,16 @@
         $newpage->title = $newpage->title;
         $newpageid = $DB->insert_record("lesson_pages", $newpage);
         if (!$newpageid) {
-            print_error("Insert page: new page not inserted");
+            print_error('cannotinsertpage', 'lesson');
         }
         // update the linked list (point the previous page to this new one)
         if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $newpage->prevpageid))) {
-            print_error("Insert page: unable to update next link");
+            print_error('cannotupdatelink', 'lesson');
         }
         if ($page->nextpageid) {
             // new page is not the last page
             if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
-                print_error("Insert page: unable to update previous link");
+                print_error('cannotupdatelink', 'lesson');
             }
         }
     } else {
@@ -91,7 +91,7 @@
             $newpage->title = $newpage->title;
             $newpageid = $DB->insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
-                print_error("Insert page: new first page not inserted");
+                print_error('cannotinsertpage', 'lesson');
             }
         } else {
             // there are existing pages put this at the start
@@ -120,11 +120,11 @@
             $newpage->title = $newpage->title;
             $newpageid = $DB->insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
-                print_error("Insert page: first page not inserted");
+                print_error('cannotfindfirstpage', 'lesson');
             }
             // update the linked list
             if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $newpage->nextpageid))) {
-                print_error("Insert page: unable to update link");
+                print_error('cannotupdatelink', 'lesson');
             }
         }
     }
@@ -141,7 +141,7 @@
         }
         $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
         if (!$newanswerid) {
-            print_error("Insert Page: answer record not inserted");
+            print_error('cannotinsertanswer', 'lesson');
         }
     } else {
         if ($form->qtype == LESSON_MATCHING) {
@@ -167,7 +167,7 @@
                 }
                 $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
                 if (!$newanswerid) {
-                    print_error("Insert Page: answer record $i not inserted");
+                    print_error('cannotinsertanswer', 'lesson');
                 }
             } else {
                 if ($form->qtype == LESSON_MATCHING) {
@@ -177,7 +177,7 @@
                         $newanswer->timecreated = $timenow;
                         $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
                         if (!$newanswerid) {
-                            print_error("Insert Page: answer record $i not inserted");
+                            print_error('cannotinsertanswer', 'lesson');
                         }
                     }
                 } else {

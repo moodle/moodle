@@ -15,7 +15,7 @@
     
     // the new page is not the first page (end of cluster always comes after an existing page)
     if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
-        print_error("Error: Could not find page");
+        print_error('cannotfindpages', 'lesson');
     }
     
     // could put code in here to check if the user really can insert an end of cluster
@@ -29,16 +29,16 @@
     $newpage->title = get_string("endofclustertitle", "lesson");
     $newpage->contents = get_string("endofclustertitle", "lesson");
     if (!$newpageid = $DB->insert_record("lesson_pages", $newpage)) {
-        print_error("Insert page: end of cluster page not inserted");
+        print_error('cannotinsertpage', 'lesson');
     }
     // update the linked list...
     if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
-        print_error("Add end of cluster: unable to update link");
+        print_error('cannotupdatelink', 'lesson');
     }
     if ($page->nextpageid) {
         // the new page is not the last page
         if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
-            print_error("Insert end of cluster: unable to update previous link");
+            print_error('cannotupdatelink', 'lesson');
         }
     }
     // ..and the single "answer"
@@ -48,7 +48,7 @@
     $newanswer->timecreated = $timenow;
     $newanswer->jumpto = LESSON_NEXTPAGE;
     if(!$newanswerid = $DB->insert_record("lesson_answers", $newanswer)) {
-        print_error("Add end of cluster: answer record not inserted");
+        print_error('cannotinsertanswer', 'lesson');
     }
     lesson_set_message(get_string('addedendofcluster', 'lesson'), 'notifysuccess');
     redirect("$CFG->wwwroot/mod/lesson/edit.php?id=$cm->id");

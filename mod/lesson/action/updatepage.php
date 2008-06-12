@@ -48,7 +48,7 @@
     $page->title = $page->title;
     
     if (!$DB->update_record("lesson_pages", $page)) {
-        print_error("Update page: page not updated");
+        print_error('cannotupdatepage', 'lesson');
     }
     if ($page->qtype == LESSON_ENDOFBRANCH || $page->qtype == LESSON_ESSAY || $page->qtype == LESSON_CLUSTER || $page->qtype == LESSON_ENDOFCLUSTER) {
         // there's just a single answer with a jump
@@ -67,13 +67,13 @@
             foreach ($answers as $answer) {
                 if ($answer->id != clean_param($form->answerid[0], PARAM_INT)) {
                     if (!$DB->delete_records("lesson_answers", array("id" => $answer->id))) {
-                        print_error("Update page: unable to delete answer record");
+                        print_error('cannotdeleteanswer', 'lesson');
                     }
                 }
             }
         }        
         if (!$DB->update_record("lesson_answers", $oldanswer)) {
-            print_error("Update page: EOB not updated");
+            print_error('cannotupdateanswer', 'lesson');
         }
     } else {
         // it's an "ordinary" page
@@ -108,7 +108,7 @@
                         $oldanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
                     if (!$DB->update_record("lesson_answers", $oldanswer)) {
-                        print_error("Update page: answer $i not updated");
+                        print_error('cannotupdateanswer', 'lesson');
                     }
                 } else {
                     // it's a new answer
@@ -134,7 +134,7 @@
                     }
                     $newanswerid = $DB->insert_record("lesson_answers", $newanswer);
                     if (!$newanswerid) {
-                        print_error("Update page: answer record not inserted");
+                        print_error('cannotinsertanswer', 'lesson');
                     }
                 }
             } else {
@@ -143,7 +143,7 @@
                         if ($form->answerid[$i]) {
                             // need to delete blanked out answer
                             if (!$DB->delete_records("lesson_answers", array("id" => clean_param($form->answerid[$i], PARAM_INT)))) {
-                                print_error("Update page: unable to delete answer record");
+                                print_error('cannotdeleteanswer', 'lesson');
                             }
                         }
                     } else {
@@ -160,13 +160,13 @@
                         $oldanswer->timemodified = $timenow;
                         $oldanswer->answer = NULL;
                         if (!$DB->update_record("lesson_answers", $oldanswer)) {
-                            print_error("Update page: answer $i not updated");
+                            print_error('cannotupdateanswer', 'lesson');
                         }
                     }                        
                 } elseif (!empty($form->answerid[$i])) {
                     // need to delete blanked out answer
                     if (!$DB->delete_records("lesson_answers", array("id" => clean_param($form->answerid[$i], PARAM_INT)))) {
-                        print_error("Update page: unable to delete answer record");
+                        print_error('cannotdeleteanswer', 'lesson');
                     }
                 }
             }

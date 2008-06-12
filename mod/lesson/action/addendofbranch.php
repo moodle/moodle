@@ -15,17 +15,17 @@
 
     // the new page is not the first page (end of branch always comes after an existing page)
     if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
-        print_error("Add end of branch: page record not found");
+        print_error('cannotfindpagerecord', 'lesson');
     }
     // chain back up to find the (nearest branch table)
     $btpageid = $pageid;
     if (!$btpage = $DB->get_record("lesson_pages", array("id" => $btpageid))) {
-        print_error("Add end of branch: btpage record not found");
+        print_error('cannotfindpagerecord', 'lesson');
     }
     while (($btpage->qtype != LESSON_BRANCHTABLE) AND ($btpage->prevpageid > 0)) {
         $btpageid = $btpage->prevpageid;
         if (!$btpage = $DB->get_record("lesson_pages", array("id" => $btpageid))) {
-            print_error("Add end of branch: btpage record not found");
+            print_error('cannotfindpagerecord', 'lesson');
         }
     }
     if ($btpage->qtype == LESSON_BRANCHTABLE) {
@@ -38,16 +38,16 @@
         $newpage->title = get_string("endofbranch", "lesson");
         $newpage->contents = get_string("endofbranch", "lesson");
         if (!$newpageid = $DB->insert_record("lesson_pages", $newpage)) {
-            print_error("Insert page: new page not inserted");
+            print_error('cannotinsertpage', 'lesson');
         }
         // update the linked list...
         if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
-            print_error("Add end of branch: unable to update link");
+            print_error('cannotupdatelink', 'lesson');
         }
         if ($page->nextpageid) {
             // the new page is not the last page
             if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->nextpageid))) {
-                print_error("Insert page: unable to update previous link");
+                print_error('cannotupdatelink', 'lesson');
             }
         }
         // ..and the single "answer"
@@ -57,7 +57,7 @@
         $newanswer->timecreated = $timenow;
         $newanswer->jumpto = $btpageid;
         if(!$newanswerid = $DB->insert_record("lesson_answers", $newanswer)) {
-            print_error("Add end of branch: answer record not inserted");
+            print_error('cannotinsertanswer', 'lesson');
         }
         
         lesson_set_message(get_string('addedanendofbranch', 'lesson'), 'notifysuccess');

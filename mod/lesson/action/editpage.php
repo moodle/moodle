@@ -12,7 +12,7 @@
     $redirect = optional_param('redirect', '', PARAM_ALPHA);
     
     if (!$page = $DB->get_record("lesson_pages", array("id" => $pageid))) {
-        print_error("Edit page: page record not found");
+        print_error('cannotfindpages', 'lesson');
     }
 
     $page->qtype = optional_param('qtype', $page->qtype, PARAM_INT);
@@ -34,12 +34,12 @@
     }
     $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
     if (!$apageid = $DB->get_field("lesson_pages", "id", array("lessonid" => $lesson->id, "prevpageid" => 0))) {
-        print_error("Edit page: first page not found");
+        print_error('cannotfindfirstpage', 'lesson');
     }
     while (true) {
         if ($apageid) {
             if (!$apage = $DB->get_record("lesson_pages", array("id" => $apageid))) {
-                print_error("Edit page: apage record not found");
+                print_error('cannotfindpages', 'lesson');
             }
             // removed != LESSON_ENDOFBRANCH...
             if (trim($page->title)) { // ...nor nuffin pages

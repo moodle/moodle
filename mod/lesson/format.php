@@ -94,11 +94,11 @@ class qformat_default {
                         $newpage->nextpageid = $page->nextpageid;
                         // insert the page and reset $pageid
                         if (!$newpageid = $DB->insert_record("lesson_pages", $newpage)) {
-                            print_error("Format: Could not insert new page!");
+                            print_error('cannotinsertpage', 'lesson');
                         }
                         // update the linked list
                         if (!$DB->set_field("lesson_pages", "nextpageid", $newpageid, array("id" => $pageid))) {
-                            print_error("Format: unable to update link");
+                            print_error('cannotupdateanswer', 'lesson');
                         }
 
                     } else {
@@ -111,7 +111,7 @@ class qformat_default {
                             $newpage->nextpageid = 0; // this is the only page
                             $newpageid = $DB->insert_record("lesson_pages", $newpage);
                             if (!$newpageid) {
-                                print_error("Insert page: new first page not inserted");
+                                print_error('cannotinsertpage', 'lesson');
                             }
                         } else {
                             // there are existing pages put this at the start
@@ -119,11 +119,11 @@ class qformat_default {
                             $newpage->nextpageid = $page->id;
                             $newpageid = $DB->insert_record("lesson_pages", $newpage);
                             if (!$newpageid) {
-                                print_error("Insert page: first page not inserted");
+                                print_error('cannotinsertpage', 'lesson');
                             }
                             // update the linked list
                             if (!$DB->set_field("lesson_pages", "prevpageid", $newpageid, array("id" => $page->id))) {
-                                print_error("Insert page: unable to update link");
+                                print_error('cannotupdatelink', 'lesson');
                             }
                         }
                     }

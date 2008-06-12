@@ -254,7 +254,7 @@
             // get the first page
             if (!$firstpageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id,
                         'prevpageid' => 0))) {
-                print_error('Navigation: first page not found');
+                print_error('cannotfindfirstpage', 'lesson');
             }
             lesson_print_header($cm, $course, $lesson);
             if ($lesson->timed) {
@@ -313,7 +313,7 @@
         }
         // start at the first page
         if (!$pageid = $DB->get_field('lesson_pages', 'id', array('lessonid' => $lesson->id, 'prevpageid' => 0))) {
-                print_error('Navigation: first page not found');
+                print_error('cannotfindfirstpage', 'lesson');
         }
         /// This is the code for starting a timed test
         if(!isset($USER->startlesson[$lesson->id]) && !has_capability('mod/lesson:manage', $context)) {
@@ -325,7 +325,7 @@
             $startlesson->lessontime = time();
             
             if (!$DB->insert_record('lesson_timer', $startlesson)) {
-                print_error('Error: could not insert row into lesson_timer table');
+                print_error('cannotinserttimer', 'lesson');
             }
             if ($lesson->timed) {
                 lesson_set_message(get_string('maxtimewarning', 'lesson', $lesson->maxtime), 'center');
@@ -344,10 +344,10 @@
                     $retries = 0;
                 }
                 if (!$DB->delete_records('lesson_attempts', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries))) {
-                    print_error('Error: could not delete old attempts');
+                    print_error('cannotdeleteattempt', 'lesson');
                 }
                 if (!$DB->delete_records('lesson_branch', array('userid' => $USER->id, 'lessonid' => $lesson->id, 'retry' => $retries))) {
-                    print_error('Error: could not delete old seen branches');
+                    print_error('cannotdeletebranch', 'lesson');
                 }
             }
         }
@@ -355,7 +355,7 @@
         add_to_log($course->id, 'lesson', 'view', 'view.php?id='. $cm->id, $pageid, $cm->id);
         
         if (!$page = $DB->get_record('lesson_pages', array('id' => $pageid))) {
-            print_error('Navigation: the page record not found');
+            print_error('cannotfindpages', 'lesson');
         }
 
         if ($page->qtype == LESSON_CLUSTER) {  //this only gets called when a user starts up a new lesson and the first page is a cluster page
@@ -364,14 +364,14 @@
                 $pageid = lesson_cluster_jump($lesson->id, $USER->id, $pageid);
                 // get new page info
                 if (!$page = $DB->get_record('lesson_pages', array('id' => $pageid))) {
-                    print_error('Navigation: the page record not found');
+                    print_error('cannotfindpages', 'lesson');
                 }
                 add_to_log($course->id, 'lesson', 'view', 'view.php?id='. $cm->id, $pageid, $cm->id);
             } else {
                 // get the next page
                 $pageid = $page->nextpageid;
                 if (!$page = $DB->get_record('lesson_pages', array('id' => $pageid))) {
-                    print_error('Navigation: the page record not found');
+                    print_error('cannotfindpages', 'lesson');
                 }
             }
         } elseif ($page->qtype == LESSON_ENDOFCLUSTER) { // Check for endofclusters
@@ -413,7 +413,7 @@
                     break;
                 } 
             } else {
-                print_error('Navigation: No answers on EOB');
+                print_error('cannotfindanswer', 'lesson');
             }
         }
         
@@ -431,7 +431,7 @@
         if(!has_capability('mod/lesson:manage', $context)) {
             $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
             if (!$timer = $DB->get_records_select('lesson_timer', "lessonid = :lessonid AND userid = :userid", $params, 'starttime')) {
-                print_error('Error: could not find records');
+                print_error('cannotfindtimer', 'lesson');
             } else {
                 $timer = array_pop($timer); // this will get the latest start time record
             }
@@ -470,7 +470,7 @@
         if (!has_capability('mod/lesson:manage', $context)) {
             $timer->lessontime = time();
             if (!$DB->update_record('lesson_timer', $timer)) {
-                print_error('Error: could not update lesson_timer table');
+                print_error('cannotupdatetimer', 'lesson');
             }
         }
 
@@ -553,7 +553,7 @@
             $retries--;
             $params = array ("lessonid" => $lesson->id, "userid" => $USER->id, "pageid" => $page->id, "retry" => $retries);
             if (! $attempts = $DB->get_records_select("lesson_attempts", "lessonid = :lessonid AND userid = :userid AND pageid = :pageid AND retry = :retry", $params, "timeseen")) {
-                print_error("Previous attempt record could not be found!");
+                print_error('cannotfindpreattempt', 'lesson');
             }
             $attempt = end($attempts);
         }
@@ -836,14 +836,14 @@
             unset($USER->startlesson[$lesson->id]);
             $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
             if (!$timer = $DB->get_records_select('lesson_timer', "lessonid = :lessonid AND userid = :userid", $params, 'starttime')) {
-                print_error('Error: could not find records');
+                print_error('cannotfindtimer', 'lesson');
             } else {
                 $timer = array_pop($timer); // this will get the latest start time record
             }
             $timer->lessontime = time();
             
             if (!$DB->update_record("lesson_timer", $timer)) {
-                print_error("Error: could not update lesson_timer table");
+                print_error('cannotupdatetimer', 'lesson');
             }
         }
         
@@ -897,21 +897,21 @@
                     if (isset($USER->modattempts[$lesson->id])) { // if reviewing, make sure update old grade record
                         $params = array ("lessonid" => $lesson->id, "userid" => $USER->id);
                         if (!$grades = $DB->get_records_select("lesson_grades", "lessonid = :lessonid and userid = :userid", $params, "completed")) {
-                            print_error("Could not find Grade Records");
+                            print_error('cannotfindgrade', 'lesson');
                         }
                         $oldgrade = end($grades);
                         $grade->id = $oldgrade->id;
                         if (!$update = $DB->update_record("lesson_grades", $grade)) {
-                            print_error("Navigation: grade not updated");
+                            print_error('cannotupdategrade', 'lesson');
                         }
                     } else {
                         if (!$newgradeid = $DB->insert_record("lesson_grades", $grade)) {
-                            print_error("Navigation: grade not inserted");
+                            print_error('cannotinsertgrade', 'lesson');
                         }
                     }
                 } else {
                     if (!$DB->delete_records("lesson_attempts", array("lessonid" => $lesson->id, "userid" => $USER->id, "retry" => $ntries))) {
-                        print_error("Could not delete lesson attempts");
+                        print_error('cannotdeleteattempt', 'lesson');
                     }
                 }
             } else {
@@ -924,7 +924,7 @@
                         $grade->completed = time();
                         if (!$lesson->practice) {
                             if (!$newgradeid = $DB->insert_record("lesson_grades", $grade)) {
-                                print_error("Navigation: grade not inserted");
+                                print_error('cannotinsertgrade', 'lesson');
                             }
                         }
                         echo get_string("eolstudentoutoftimenoanswers", "lesson");
