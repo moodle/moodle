@@ -39,15 +39,15 @@ class resource_base {
 
         if ($cmid) {
             if (! $this->cm = get_coursemodule_from_id('resource', $cmid)) {
-                print_error("Course Module ID was incorrect");
+                print_error('invalidcoursemodule');
             }
 
             if (! $this->course = $DB->get_record("course", array("id"=>$this->cm->course))) {
-                print_error("Course is misconfigured");
+                print_error('coursemisconf');
             }
 
             if (! $this->resource = $DB->get_record("resource", array("id"=>$this->cm->instance))) {
-                print_error("Resource ID was incorrect");
+                print_error('invalidid', 'resource');
             }
 
             $this->strresource  = get_string("modulename", "resource");
@@ -597,7 +597,7 @@ function resource_renamefiles($course, $wdir, $oldname, $name) {
                 $status .= "<li><a href=\"$CFG->wwwroot/mod/resource/view.php?id=$resource->cmid\" target=\"_blank\">$resource->name</a>: $resource->reference ==> $r->reference</li>";
                 if (!empty($CFG->resource_autofilerename)) {
                     if (!$DB->update_record('resource', $r)) {
-                        print_error("Error updating resource with ID $r->id.");
+                        print_error('cannotupdate', 'resource');
                     }
                 }
             }

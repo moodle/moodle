@@ -8,27 +8,27 @@
 
     if ($r) {  // Two ways to specify the resource
         if (! $resource = $DB->get_record('resource', array('id'=>$r))) {
-            print_error('Resource ID was incorrect');
+            print_error('invalidid', 'resource');
         }
 
         if (! $cm = get_coursemodule_from_instance('resource', $resource->id, $resource->course)) {
-            print_error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
 
     } else if ($id) {
         if (! $cm = get_coursemodule_from_id('resource', $id)) {
-            print_error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
 
         if (! $resource = $DB->get_record('resource', array('id'=>$cm->instance))) {
-            print_error('Resource ID was incorrect');
+            print_error('invalidid', 'resource');
         }
     } else {
-        print_error('No valid parameters!!');
+        print_error('invalidaccessparameter');
     }
 
     if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-        print_error('Incorrect course id');
+        print_error('invalidcourseid');
     }
 
     require_course_login($course, true, $cm);

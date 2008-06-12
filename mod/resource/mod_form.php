@@ -13,7 +13,7 @@ class mod_resource_mod_form extends moodleform_mod {
             if($res = $DB->get_record('resource', array('id'=>$this->_instance))) {
                 $type = $res->type;
             } else {
-                print_error('incorrect assignment');
+                print_error('invalidassignment', 'resource');
             }
         } else {
             $type = required_param('type', PARAM_ALPHA);
