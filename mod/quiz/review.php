@@ -74,7 +74,7 @@
     }
     $pagequestions = explode(',', $questionlist);
     $questions = question_load_questions($questionlist, 'qqi.grade AS maxgrade, qqi.id AS instance',
-            'quiz_question_instances qqi ON qqi.quiz = ' . $quiz->id . ' AND q.id = qqi.question');
+            '{quiz_question_instances} qqi ON qqi.quiz = ' . $quiz->id . ' AND q.id = qqi.question');
     if (is_string($questions)) {
         quiz_error($quiz, 'loadingquestionsfailed', $questions);
     }
