@@ -184,7 +184,7 @@ function forum_delete_instance($id) {
 
     forum_tp_delete_read_records(-1, -1, -1, $forum->id);
 
-    if (!$DF->delete_records('forum', array('id'=>$forum->id))) {
+    if (!$DB->delete_records('forum', array('id'=>$forum->id))) {
         $result = false;
     }
 

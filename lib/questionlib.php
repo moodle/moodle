@@ -2213,6 +2213,11 @@ class context_to_string_translator{
 function question_has_capability_on($question, $cap, $cachecat = -1){
     global $USER, $DB;
 
+    // nicolasconnault@gmail.com In some cases I get $question === false. Since no such object exists, it can't be deleted, we can safely return true
+    if ($question === false) {
+        return true;
+    }
+
     // these are capabilities on existing questions capabilties are
     //set per category. Each of these has a mine and all version. Append 'mine' and 'all'
     $question_questioncaps = array('edit', 'view', 'use', 'move');
