@@ -24,6 +24,8 @@ class ddllib_test extends UnitTestCase {
             $this->db = $DB;
         }
 
+        unset($CFG->xmldbreconstructprevnext); // remove this unhack ;-)
+
         $dbmanager = $this->db->get_manager();
 
         $table = new xmldb_table('test_table0');
@@ -118,8 +120,10 @@ class ddllib_test extends UnitTestCase {
         // first make sure it returns false if table does not exist
         $table = $this->tables['test_table0'];
         ob_start(); // hide debug warning
-        $this->assertFalse($DB->get_records('test_table0'));
+        $result = $DB->get_records('test_table0');
         ob_end_clean();
+        $this->assertFalse($result);
+
         $this->assertFalse($dbmanager->table_exists('test_table0'));
         $this->assertFalse($dbmanager->table_exists($table));
 
@@ -141,8 +145,9 @@ class ddllib_test extends UnitTestCase {
         // Give a wrong table param (expect a debugging message)
         $table = 'string';
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->create_table($table));
+        $result = $dbmanager->create_table($table);
         ob_end_clean();
+        $this->assertFalse($result);
 
         // create table and do basic column tests
         $table = $this->tables['test_table1'];
@@ -173,14 +178,16 @@ class ddllib_test extends UnitTestCase {
         // Try dropping non-existent table
         $table = new xmldb_table('nonexistenttable');
         ob_start(); // hide debug warning
-        $this->assertTrue($dbmanager->drop_table($table, true, false));
+        $result = $dbmanager->drop_table($table, true, false);
         ob_end_clean();
+        $this->assertTrue($result);
 
         // Give a wrong table param
         $table = 'string';
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->drop_table($table, true, false));
+        $result = $dbmanager->drop_table($table, true, false);
         ob_end_clean();
+        $this->assertFalse($result);
     }
 
 
@@ -192,7 +199,7 @@ class ddllib_test extends UnitTestCase {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $this->assertTrue($dbmanager->create_table($table, true, false));
+        $dbmanager->create_table($table, true, false);
 
         $enums = array('single', 'news', 'general');
 
@@ -220,8 +227,9 @@ class ddllib_test extends UnitTestCase {
         $record->type1 = 'xxxxxxxx';
         $record->type2 = 'news';
         ob_start(); // hide debug warning
-        $this->assertFalse($DB->insert_record('test_table_cust0', $record));
+        $result = $DB->insert_record('test_table_cust0', $record);
         ob_end_clean();
+        $this->assertFalse($result);
 
         /// try inserting a bad record
         $record = new object();
@@ -229,8 +237,9 @@ class ddllib_test extends UnitTestCase {
         $record->type1 = 'news';
         $record->type2 = 'xxxx';
         ob_start(); // hide debug warning
-        $this->assertFalse($DB->insert_record('test_table_cust0', $record));
+        $DB->insert_record('test_table_cust0', $record);
         ob_end_clean();
+        $this->assertFalse($result);
 
         $columns = $DB->get_columns('test_table_cust0');
         $this->assertEqual($columns['type1']->meta_type, 'C');
@@ -332,6 +341,8 @@ class ddllib_test extends UnitTestCase {
 
         $columns = $DB->get_columns('test_table_cust0');
         $this->assertEqual($columns['onenumber']->meta_type, 'N');
+
+        $dbmanager->drop_table($table, true, false);
     }
 
     public function testChangeFieldPrecision() {
@@ -354,6 +365,7 @@ class ddllib_test extends UnitTestCase {
         $field = new xmldb_field('course');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $this->assertTrue($dbmanager->change_field_precision($table, $field));
+
     }
 
     public function testChangeFieldSign() {
@@ -371,47 +383,107 @@ class ddllib_test extends UnitTestCase {
     }
 
     public function testChangeFieldNullability() {
+        $DB = $this->db; // do not use global $DB!
         $dbmanager = $this->db->get_manager();
-// TODO: verify the type is nullability in db
 
-        $table = $this->create_deftable('test_table1');
+        $table = new xmldb_table('test_table_cust0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbmanager->create_table($table, true, false);
+
+        $record = new object();
+        $record->name = NULL;
+
+        ob_start(); // hide debug warning
+        $result = $DB->insert_record('test_table_cust0', $record, false);
+        ob_end_clean();
+        $this->assertFalse($result);
+
         $field = new xmldb_field('name');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
         $this->assertTrue($dbmanager->change_field_notnull($table, $field));
 
+        $this->assertTrue($DB->insert_record('test_table_cust0', $record, false));
+
+    // TODO: add some tests with existing data in table
+        $DB->delete_records('test_table_cust0');
+
         $field = new xmldb_field('name');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, null);
         $this->assertTrue($dbmanager->change_field_notnull($table, $field));
+
+        ob_start(); // hide debug warning
+        $result = $DB->insert_record('test_table_cust0', $record, false);
+        ob_end_clean();
+        $this->assertFalse($result);
+
+        $dbmanager->drop_table($table, true, false);
     }
 
     public function testChangeFieldDefault() {
+        $DB = $this->db; // do not use global $DB!
         $dbmanager = $this->db->get_manager();
 
-        $table = $this->create_deftable('test_table1');
-        $field = new xmldb_field('name');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
-        $this->assertTrue($dbmanager->change_field_default($table, $field));
+        $table = new xmldb_table('test_table_cust0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('number', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbmanager->create_table($table, true, false);
 
         $field = new xmldb_field('name');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle2');
         $this->assertTrue($dbmanager->change_field_default($table, $field));
 
-        $field = new xmldb_field('secondname');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle2');
+        $record = new object();
+        $record->number = 666;
+        $id = $DB->insert_record('test_table_cust0', $record);
+
+        $record = $DB->get_record('test_table_cust0', array('id'=>$id));
+        $this->assertEqual($record->name, 'Moodle2');
+
+
+        $field = new xmldb_field('number');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 666);
         $this->assertTrue($dbmanager->change_field_default($table, $field));
 
-        $field = new xmldb_field('secondname');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
-        $this->assertTrue($dbmanager->change_field_default($table, $field));
+        $record = new object();
+        $record->name = 'something';
+        $id = $DB->insert_record('test_table_cust0', $record);
+
+        $record = $DB->get_record('test_table_cust0', array('id'=>$id));
+        $this->assertEqual($record->number, '666');
+
+        $dbmanager->drop_table($table, true, false);
     }
 
     public function testAddUniqueIndex() {
+        $DB = $this->db; // do not use global $DB!
         $dbmanager = $this->db->get_manager();
 
-        $table = $this->create_deftable('test_table1');
-        $index = new xmldb_index('secondname');
-        $index->set_attributes(XMLDB_INDEX_UNIQUE, array('name', 'secondname', 'grade'));
+        $table = new xmldb_table('test_table_cust0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('number', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbmanager->create_table($table, true, false);
+
+        $record = new object();
+        $record->number = 666;
+        $record->name = 'something';
+        $DB->insert_record('test_table_cust0', $record, false);
+
+        $index = new xmldb_index('number-name');
+        $index->set_attributes(XMLDB_INDEX_UNIQUE, array('number', 'name'));
         $this->assertTrue($dbmanager->add_index($table, $index));
+
+        ob_start(); // hide debug warning
+        $result = $DB->insert_record('test_table_cust0', $record, false);
+        ob_end_clean();
+        $this->assertFalse($result);
+
+        $dbmanager->drop_table($table, true, false);
     }
 
     public function testAddNonUniqueIndex() {
@@ -431,8 +503,9 @@ class ddllib_test extends UnitTestCase {
         $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
         $dbmanager->add_index($table, $index);
 
-        // TODO DBM Systems name their indices differently. Maybe just test for non-false (or simply true)
-        // $this->assertEqual($dbmanager->find_index_name($table, $index), 'mdl_anot_counam_ix');
+        //DBM Systems name their indices differently - do not test the actual index name
+        $result = $dbmanager->find_index_name($table, $index);
+        $this->assertTrue(!empty($result));
 
         $nonexistentindex = new xmldb_index('nonexistentindex');
         $nonexistentindex->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('name'));
@@ -509,23 +582,45 @@ class ddllib_test extends UnitTestCase {
     }
 
     public function testChangeFieldEnum() {
+        $DB = $this->db; // do not use global $DB!
         $dbmanager = $this->db->get_manager();
 
-        $table = $this->create_deftable('test_table0');
+        $table = new xmldb_table('test_table_cust0');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general'), 'general');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbmanager->create_table($table, true, false);
+
         // Removing an enum value
         $field = new xmldb_field('type');
         $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null);
-
         $this->assertTrue($dbmanager->change_field_enum($table, $field));
+
+        $record = new object();
+        $record->course = 666;
+        $record->type = 'qanda';
+        $this->assertTrue($DB->insert_record('test_table_cust0', $record, false));
 
         // Adding an enum value
         $field = new xmldb_field('type');
-        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM,
-                array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
+        $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
         $this->assertTrue($dbmanager->change_field_enum($table, $field));
+
+        $record = new object();
+        $record->course = 666;
+        $record->type = 'nothing';
+
+        ob_start(); // hide debug warning
+        $result = $DB->insert_record('test_table_cust0', $record, false);
+        ob_end_clean();
+        $this->assertFalse($result);
+
+        $dbmanager->drop_table($table, true, false);
     }
 
     public function testRenameField() {
+        $DB = $this->db; // do not use global $DB!
         $dbmanager = $this->db->get_manager();
 
         $table = $this->create_deftable('test_table0');
@@ -534,6 +629,11 @@ class ddllib_test extends UnitTestCase {
                 array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
 
         $this->assertTrue($dbmanager->rename_field($table, $field, 'newfieldname'));
+
+        $columns = $DB->get_columns('test_table0');
+
+        $this->assertFalse(array_key_exists('type', $columns));
+        $this->assertTrue(array_key_exists('newfieldname', $columns));
     }
 
     public function testRenameTable() {
@@ -543,6 +643,7 @@ class ddllib_test extends UnitTestCase {
 
         $this->assertFalse($dbmanager->table_exists('test_table_cust0'));
         $this->assertTrue($dbmanager->rename_table($table, 'test_table_cust0'));
+        $this->assertTrue($dbmanager->table_exists('test_table_cust0'));
 
         $table->setName('test_table_cust0');
         $dbmanager->drop_table($table);
@@ -578,8 +679,6 @@ class ddllib_test extends UnitTestCase {
     }
 
     public function testIndexExists() {
-        $dbmanager = $this->db->get_manager();
-
         // Skipping: this is just a test of find_index_name
     }
 
@@ -608,8 +707,9 @@ class ddllib_test extends UnitTestCase {
         $invalid_key = 'invalid_key';
 
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->find_key_name($table, $invalid_key));
+        $result = $dbmanager->find_key_name($table, $invalid_key);
         ob_end_clean();
+        $this->assertFalse($result);
 
         // With Mysql, the return value is actually "mdl_test_id_pk"
         $result = $dbmanager->find_key_name($table, $key);
@@ -622,14 +722,16 @@ class ddllib_test extends UnitTestCase {
         // give invalid table param
         $table = 'invalid_table';
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->find_sequence_name($table));
+        $result = $dbmanager->find_sequence_name($table);
         ob_end_clean();
+        $this->assertFalse($result);
 
         // give nonexistent table param
         $table = new xmldb_table("nonexistenttable");
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->find_sequence_name($table));
+        $result = $dbmanager->find_sequence_name($table);
         ob_end_clean();
+        $this->assertFalse($result);
 
         // Give existing and valid table param
         $table = $this->create_deftable('test_table0');
@@ -642,21 +744,21 @@ class ddllib_test extends UnitTestCase {
         global $CFG;
         $dbmanager = $this->db->get_manager();
 
-        unset($CFG->xmldbreconstructprevnext); // remove this unhack ;-)
-
         $this->create_deftable('test_table1');
 
         $this->assertTrue($dbmanager->table_exists('test_table1'));
 
         // feed nonexistent file
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->delete_tables_from_xmldb_file('fpsoiudfposui', false));
+        $result = $dbmanager->delete_tables_from_xmldb_file('fpsoiudfposui', false);
         ob_end_clean();
+        $this->assertFalse($result);
 
         // Real file but invalid xml file
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->delete_tables_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/invalid.xml', false));
+        $result = $dbmanager->delete_tables_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/invalid.xml', false);
         ob_end_clean();
+        $this->assertFalse($result);
 
         // Check that the table has not been deleted from DB
         $this->assertTrue($dbmanager->table_exists('test_table1'));
@@ -674,19 +776,21 @@ class ddllib_test extends UnitTestCase {
 
         // feed nonexistent file
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->install_from_xmldb_file('fpsoiudfposui', false));
+        $result = $dbmanager->install_from_xmldb_file('fpsoiudfposui', false);
         ob_end_clean();
+        $this->assertFalse($result);
 
         // Real but invalid xml file
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->install_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/invalid.xml', false));
+        $result = $dbmanager->install_from_xmldb_file($CFG->libdir.'/ddl/simpletest/fixtures/invalid.xml', false);
         ob_end_clean();
+        $this->assertFalse($result);
 
         // Check that the table has not yet been created in DB
         $this->assertFalse($dbmanager->table_exists('test_table1'));
 
         // Real and valid xml file
-        $this->assertTrue($dbmanager->install_from_xmldb_file($CFG->libdir . '/ddl/simpletest/fixtures/xmldb_table.xml', false));
+        $this->assertTrue($dbmanager->install_from_xmldb_file($CFG->libdir.'/ddl/simpletest/fixtures/xmldb_table.xml', false));
         $this->assertTrue($dbmanager->table_exists('test_table1'));
     }
 
@@ -695,8 +799,9 @@ class ddllib_test extends UnitTestCase {
 
         // Feed incorrect table param
         ob_start(); // hide debug warning
-        $this->assertFalse($dbmanager->create_temp_table('test_table1'));
+        $result = $dbmanager->create_temp_table('test_table1');
         ob_end_clean();
+        $this->assertFalse($result);
 
         $table = $this->tables['test_table1'];
 
