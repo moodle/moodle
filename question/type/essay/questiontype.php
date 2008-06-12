@@ -134,6 +134,26 @@ class question_essay_qtype extends default_questiontype {
         return question_backup_answers($bf, $preferences, $questionid, $level);
     }
 
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        global $DB;
+        list($form, $question) = parent::generate_test($name, $courseid);
+        $form->questiontext = "What is the purpose of life?";
+        $form->feedback = "feedback";
+        $form->generalfeedback = "General feedback";
+        $form->fraction = 0;
+        $form->penalty = 0;
+
+        if ($courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid));
+        }
+
+        return $this->save_question($question, $form, $course);
+    }
+
     // Restore method not needed.
 }
 //// END OF CLASS ////

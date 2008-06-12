@@ -707,6 +707,34 @@ class embedded_cloze_qtype extends default_questiontype {
         return $answer_field;
     }
 
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        global $DB;
+        list($form, $question) = parent::generate_test($name, $courseid);
+        $question->category = $form->category;
+        $form->questiontext = "This question consists of some text with an answer embedded right here {1:MULTICHOICE:Wrong answer#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and right after that you will have to deal with this short answer {1:SHORTANSWER:Wrong answer#Feedback for this wrong answer~=Correct answer#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} and finally we have a floating point number {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%23.8:2#Feedback for half credit answer in the nearby region of the correct answer}.
+
+Note that addresses like www.moodle.org and smileys :-) all work as normal:
+ a) How good is this? {:MULTICHOICE:=Yes#Correct~No#We have a different opinion}
+ b) What grade would you give it? {3:NUMERICAL:=3:2}
+
+Good luck!
+";
+        $form->feedback = "feedback";
+        $form->generalfeedback = "General feedback";
+        $form->fraction = 0;
+        $form->penalty = 0.1;
+        $form->versioning = 0;
+
+        if ($courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid));
+        }
+
+        return $this->save_question($question, $form, $course);
+    }
 
 }
 //// END OF CLASS ////

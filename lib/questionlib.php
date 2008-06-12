@@ -169,7 +169,7 @@ foreach($qtypenames as $qtypename) {
  * Long-time Moodle programmers will realise that this replaces the old $QTYPE_MENU array.
  * The array returned will only hold the names of all the question types that the user should
  * be able to create directly. Some internal question types like random questions are excluded.
- * 
+ *
  * @return array an array of question type names translated to the user's language.
  */
 function question_type_menu() {
@@ -571,7 +571,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         // Loop over question categories.
         if ($categories = $DB->get_records('question_categories', array('contextid'=>$context->id), 'parent', 'id, parent, name')) {
             foreach ($categories as $category) {
-    
+
                 // Deal with any questions in the category.
                 if ($questions = $DB->get_records('question', array('category'=>$category->id))) {
 
@@ -635,9 +635,9 @@ function question_delete_course_category($category, $newcategory, $feedback=true
  *
  * @param string $questionids list of questionids
  * @param object $newcontext the context to create the saved category in.
- * @param string $oldplace a textual description of the think being deleted, e.g. from get_context_name 
+ * @param string $oldplace a textual description of the think being deleted, e.g. from get_context_name
  * @param object $newcategory
- * @return mixed false on 
+ * @return mixed false on
  */
 function question_save_from_deletion($questionids, $newcontextid, $oldplace, $newcategory = null) {
     global $DB;
@@ -757,8 +757,8 @@ function questionbank_navigation_tabs(&$row, $contexts, $querystring) {
 
 /**
  * Load a set of questions, given a list of ids. The $join and $extrafields arguments can be used
- * together to pull in extra data. See, for example, the usage in mod/quiz/attempt.php, and 
- * read the code below to see how the SQL is assembled. 
+ * together to pull in extra data. See, for example, the usage in mod/quiz/attempt.php, and
+ * read the code below to see how the SQL is assembled.
  *
  * @param string $questionlist list of comma-separated question ids.
  * @param string $extrafields
@@ -769,7 +769,7 @@ function questionbank_navigation_tabs(&$row, $contexts, $querystring) {
 function question_load_questions($questionlist, $extrafields = '', $join = '') {
     global $CFG, $DB;
     if ($join) {
-        $join = ' JOIN {'.$join.'}';
+        $join = ' JOIN '.$join.'';
     }
     if ($extrafields) {
         $extrafields = ', ' . $extrafields;
@@ -1027,8 +1027,7 @@ function save_question_session(&$question, &$state) {
     }
 
     // create or update the session
-    if (!$session = $DB->get_record('question_sessions', 'attemptid',
-            $state->attempt, 'questionid', $question->id)) {
+    if (!$session = $DB->get_record('question_sessions', array('attemptid' => $state->attempt, 'questionid' => $question->id))) {
         $session->attemptid = $state->attempt;
         $session->questionid = $question->id;
         $session->newest = $state->id;
@@ -1264,7 +1263,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             }
 
             if ($action->event == QUESTION_EVENTMANUALGRADE) {
-                // Ensure that the grade is in range - in the past this was not checked, 
+                // Ensure that the grade is in range - in the past this was not checked,
                 // but now it is (MDL-14835) - so we need to ensure the data is valid before
                 // proceeding.
                 if ($states[$j]->grade < 0) {
@@ -1934,12 +1933,7 @@ function question_make_default_categories($contexts) {
     $toreturn = null;
     // If it already exists, just return it.
     foreach ($contexts as $key => $context) {
-        $exists = $DB->record_exists("question_categories", array('contextid'=>$context->id));
-        
-        if ($exists === false) {
-            print_error('cannotgetcats');
-        }
-        if (!$exists){
+        if (!$exists = $DB->record_exists("question_categories", array('contextid'=>$context->id))){
             // Otherwise, we need to make one
             $category = new stdClass;
             $contextname = print_context_name($context, false, true);
@@ -1952,7 +1946,10 @@ function question_make_default_categories($contexts) {
             if (!$category->id = $DB->insert_record('question_categories', $category)) {
                 print_error('cannotcreatedefaultcat', '', '', print_context_name($context));
             }
+        } else {
+            $category = $DB->get_record('question_categories', array('contextid' => $context->id));
         }
+
         if ($context->contextlevel == CONTEXT_COURSE){
             $toreturn = clone($category);
         }

@@ -488,6 +488,34 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         return $status;
     }
 
+    /**
+     * Runs all the code required to set up and save an essay question for testing purposes.
+     * Alternate DB table prefix may be used to facilitate data deletion.
+     */
+    function generate_test($name, $courseid = null) {
+        global $DB;
+        list($form, $question) = default_questiontype::generate_test($name, $courseid);
+        $question->category = $form->category;
+
+        $form->questiontext = "What is 674 * 36?";
+        $form->generalfeedback = "Thank you";
+        $form->penalty = 0.1;
+        $form->defaultgrade = 1;
+        $form->noanswers = 3;
+        $form->answer = array('24264', '24264', '1');
+        $form->tolerance = array(10, 100, 0);
+        $form->fraction = array(1, 0.5, 0);
+        $form->nounits = 2;
+        $form->unit = array(0 => null, 1 => null);
+        $form->multiplier = array(1, 0);
+        $form->feedback = array('Very good', 'Close, but not quite there', 'Well at least you tried....');
+
+        if ($courseid) {
+            $course = $DB->get_record('course', array('id' => $courseid));
+        }
+
+        return $this->save_question($question, $form, $course);
+    }
 }
 
 // INITIATION - Without this line the question type is not in use.
