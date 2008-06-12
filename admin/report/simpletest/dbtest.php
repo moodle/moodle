@@ -1,11 +1,6 @@
-<?php
+<?php  // $Id$
 /**
  * Run database functional tests.
- *
- * @copyright &copy; 2006 The Open University
- * @author N.D.Freear@open.ac.uk, T.J.Hunt@open.ac.uk
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @version $Id$
  * @package SimpleTestEx
  */
 
@@ -19,26 +14,35 @@ require_once('ex_reporter.php');
 require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-// CGI arguments
 $showpasses = optional_param('showpasses', 0, PARAM_BOOL);
-$dbinstance = optional_param('dbinstance', -1, PARAM_INT);
+$selected   = optional_param('selected', array(), PARAM_INT);
 
-$langfile = 'simpletest';
+if (!data_submitted()) {
+    $selected = array();
+    for ($i=0; $i<=10; $i++) {
+        $selected[$i] = 1;
+    }
+}
 
 // Print the header.
 admin_externalpage_setup('reportdbtest');
-$strtitle = get_string('unittests', $langfile);
 admin_externalpage_print_header();
 
-$dbinstances = array();
-$dbinstances[0] = $DB;
+$dbinfos     = array();
+$tests       = array();
+
+$dbinfos[0]     = array('name'=>"Current database", 'installed'=>true, 'configured'=>true); // TODO: localise
+if (data_submitted() and !empty($selected[0])) {
+    $tests[0] = $DB;
+}
 
 for ($i=1; $i<=10; $i++) {
-    $name = 'ext_test_db_'.$i;
+    $name = 'func_test_db_'.$i;
     if (!isset($CFG->$name)) {
         continue;
     }
     list($library, $driver, $dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions) = $CFG->$name;
+    $dbinfos[$i] = array('name'=>"External database $library/$driver/$dbhost/$dbname", 'installed'=>false, 'configured'=>false);
 
     $classname = "{$driver}_{$library}_moodle_database";
     require_once("$CFG->libdir/dml/$classname.php");
@@ -46,53 +50,72 @@ for ($i=1; $i<=10; $i++) {
     if (!$d->driver_installed()) {
         continue;
     }
+    $dbinfos[$i]['installed'] = true;
 
     if ($d->connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions)) {
-        $dbinstances[$i] = $d;
+        $dbinfos[$i]['configured'] = true;
+        if (data_submitted() and !empty($selected[$i])) {
+            $tests[$i] = $d;
+        } else {
+            $d->dispose();
+        }
     }
 }
 
-if (!isset($dbinstances[$dbinstance])) {
-    $dbinstance = -1;
-} else {
-    global $EXT_TEST_DB;
-    $EXT_TEST_DB = $dbinstances[$dbinstance];
-}
-
-if ($dbinstance >= 0) {
-
-    // Create the group of tests.
-    $test =& new AutoGroupTest(false, true);
-
-    // Make the reporter, which is what displays the results.
-    $reporter = new ExHtmlReporter($showpasses);
-
-    $test->addTestFile($CFG->libdir . '/dml/simpletest/testdmllib.php');
-    $test->addTestFile($CFG->libdir . '/ddl/simpletest/testddllib.php');
-
-    // If we have something to test, do it.
-    print_heading(get_string('moodleunittests', $langfile, get_string('all', $langfile)));
-
+if (!empty($tests)) {
     /* The UNITTEST constant can be checked elsewhere if you need to know
      * when your code is being run as part of a unit test. */
     define('UNITTEST', true);
-    $test->run($reporter);
 
-    $formheader = get_string('retest', $langfile);
+    @ob_implicit_flush(true);
+    while(@ob_end_flush());
 
-} else {
-    $formheader = get_string('rununittests', $langfile);
+    global $FUNCT_TEST_DB; // hack - we pass the connected db to functional database tests through this global
+
+    foreach ($tests as $i=>$database) {
+        $dbinfo = $dbinfos[$i];
+        $FUNCT_TEST_DB = $database;
+
+        print_heading('Running tests on: '.$dbinfo['name'], '', 3); // TODO: localise
+
+        // Create the group of tests.
+        $test = new AutoGroupTest(false, true);
+
+        $test->addTestFile($CFG->libdir . '/dml/simpletest/testdmllib.php');
+        $test->addTestFile($CFG->libdir . '/ddl/simpletest/testddllib.php');
+
+        // Make the reporter, which is what displays the results.
+        $reporter = new ExHtmlReporter($showpasses);
+
+        $test->run($reporter);
+
+        echo '<hr />';
+    }
+
 }
 
 // Print the form for adjusting options.
 print_simple_box_start('center', '70%');
-echo '<form method="get" action="dbtest.php">';
-echo '<fieldset class="invisiblefieldset">';
-print_heading($formheader);
-echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', $langfile)); echo '</p>';
-echo '<input type="hidden" value="0" name="dbinstance" />';
-echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
-echo '</fieldset>';
+echo '<form method="post" action="dbtest.php">';
+echo '<div>';
+print_heading("Run functional database tests"); // TODO: localise
+echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', 'simpletest')); echo '</p>';
+echo '<p><strong>'."Databases:".'</strong>';
+echo '<ul>';
+foreach ($dbinfos as $i=>$dbinfo) {
+    $name = $dbinfo['name'];
+    if ($dbinfo['installed']) {
+        if (!$dbinfo['configured']) {
+            $name = "$name (misconfigured)"; // TODO: localise
+        }
+        echo '<li>'; print_checkbox('selected['.$i.']', 1, intval(!empty($selected[$i])), $name); echo '</li>';
+    } else {
+        echo '<li>'."$name: driver not installed".'</li'; // TODO: localise
+    }
+}
+echo '</ul></p>';
+echo '<input type="submit" value="' . get_string('runtests', 'simpletest') . '" />';
+echo '</div>';
 echo '</form>';
 print_simple_box_end();
 

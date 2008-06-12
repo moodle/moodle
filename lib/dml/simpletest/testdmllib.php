@@ -13,10 +13,10 @@ class dmllib_test extends UnitTestCase {
     private $db;
 
     function setUp() {
-        global $CFG, $DB, $EXT_TEST_DB;
+        global $CFG, $DB, $FUNCT_TEST_DB;
 
-        if (isset($EXT_TEST_DB)) {
-            $this->db = $EXT_TEST_DB;
+        if (isset($FUNCT_TEST_DB)) {
+            $this->db = $FUNCT_TEST_DB;
         } else {
             $this->db = $DB;
         }

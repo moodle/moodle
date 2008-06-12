@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <XMLDB PATH="lib/ddl/simpletest/fixtures" VERSION="20080521" COMMENT="This is an invalid xml file used for testing.">
   <TABLES>
-    <TABLE NAME="anothertest" COMMENT="Just a test table">
+    <TABLE NAME="test_table1" COMMENT="Just a test table">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="incorrect_next_field"/> <!-- invalid because of NEXT value -->
         <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="name"/> 

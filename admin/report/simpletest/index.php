@@ -35,7 +35,7 @@ admin_externalpage_print_header();
 
 if (!is_null($path)) {
     // Create the group of tests.
-    $test =& new AutoGroupTest($showsearch, $thorough);
+    $test = new AutoGroupTest($showsearch, $thorough);
 
     // OU specific. We use the _nonproject folder for stuff we want to
     // keep in CVS, but which is not really relevant. It does no harm
