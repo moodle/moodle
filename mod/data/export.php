@@ -30,7 +30,7 @@ if (! $context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
 }
 
 require_login($course->id, false, $cm);
-require_capability('mod/data:managetemplates', $context);
+require_capability(DATA_CAP_EXPORT, $context);
 
 // get fields for this database
 $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$data->id), 'id');
@@ -67,7 +67,6 @@ if($mform->is_cancelled()) {
     $groupmode = groups_get_activity_groupmode($cm);
     $currenttab = 'export';
     include('tabs.php');
-
     $mform->display();
     print_footer();
     die;
@@ -80,7 +79,7 @@ foreach($fields as $key => $field) {
     if(empty($formdata['field_'.$field->field->id])) {
         // ignore values we aren't exporting
         unset($fields[$key]);
-    } else{
+    } else {
         $exportdata[0][] = $field->field->name;
     }
 }
