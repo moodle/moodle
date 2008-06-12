@@ -3015,6 +3015,13 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101513);
     }
 
+    if ($result && $oldversion < 2007101514) {
+        $table = new XMLDBTable('mnet_enrol_course');
+        $field = new XMLDBField('sortorder');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', true, true, null, false, false, 0);
+        $result = change_field_precision($table, $field);
+    }
+
     return $result;
 }
 
