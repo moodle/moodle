@@ -437,14 +437,14 @@ function get_current_group($courseid, $full = false) {
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  */
 function error($message, $link='') {
+    global $CFG, $SESSION, $THEME, $UNITTEST;
 
-    global $CFG, $SESSION, $THEME;
     $message = clean_text($message);   // In case nasties are in here
 
     /**
      * TODO VERY DIRTY HACK USED FOR UNIT TESTING UNTIL PROPER EXCEPTION HANDLING IS IMPLEMENTED
      */
-    if (defined('UNITTEST')) {
+    if (!empty($UNITTEST->running)) {
         // Errors in unit test become exceptions, so you can unit test
         // code that might call error().
         throw new Exception('error() call: '.  $message.($link!=='' ? ' ['.$link.']' : ''));

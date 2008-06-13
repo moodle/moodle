@@ -28,6 +28,9 @@ $showsearch = optional_param('showsearch', false, PARAM_BOOL);
 $rundbtests = optional_param('rundbtests', false, PARAM_BOOL);
 $thorough = optional_param('thorough', false, PARAM_BOOL);
 
+global $UNITTEST;
+$UNITTEST = new object();
+
 // Print the header.
 admin_externalpage_setup('reportsimpletest');
 $strtitle = get_string('unittests', $langfile);

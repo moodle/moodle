@@ -13,10 +13,10 @@ class dmllib_test extends UnitTestCase {
     private $db;
 
     function setUp() {
-        global $CFG, $DB, $FUNCT_TEST_DB;
+        global $CFG, $DB, $UNITTEST;
 
-        if (isset($FUNCT_TEST_DB)) {
-            $this->db = $FUNCT_TEST_DB;
+        if (isset($UNITTEST->func_test_db)) {
+            $this->db = $UNITTEST->func_test_db;
         } else {
             $this->db = $DB;
         }
@@ -71,6 +71,7 @@ class dmllib_test extends UnitTestCase {
 
     function test_fix_sql_params() {
         $DB = $this->db; // do not use global $DB!
+        $dbmanager = $this->db->get_manager();
 
         // Malformed table placeholder
         $sql = "SELECT * FROM [testtable]";
@@ -183,14 +184,17 @@ class dmllib_test extends UnitTestCase {
     }
 
     public function testGetTables() {
-        global $DB;
+        $DB = $this->db; // do not use global $DB!
+        $dbmanager = $this->db->get_manager();
+
         // Need to test with multiple DBs
         $this->assertTrue($DB->get_tables() > 2);
     }
 
     public function testGetIndexes() {
-        global $DB;
-        // Need to test with multiple DBs
+        $DB = $this->db; // do not use global $DB!
+        $dbmanager = $this->db->get_manager();
+
         $this->assertTrue($indices = $DB->get_indexes('testtable'));
         $this->assertTrue(count($indices) == 1);
 
@@ -211,7 +215,8 @@ class dmllib_test extends UnitTestCase {
     }
 
     public function testGetColumns() {
-        global $DB;
+        $DB = $this->db; // do not use global $DB!
+        $dbmanager = $this->db->get_manager();
 
         $this->assertTrue($columns = $DB->get_columns('testtable'));
         $fields = $this->tables['testtable']->getFields();
@@ -231,7 +236,9 @@ class dmllib_test extends UnitTestCase {
     }
 
     public function testExecute() {
-        global $DB;
+        $DB = $this->db; // do not use global $DB!
+        $dbmanager = $this->db->get_manager();
+
         $sql = "SELECT * FROM {testtable}";
         $this->assertTrue($DB->execute($sql));
 

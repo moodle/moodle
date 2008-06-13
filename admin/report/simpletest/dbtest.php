@@ -17,6 +17,9 @@ require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 $showpasses = optional_param('showpasses', 0, PARAM_BOOL);
 $selected   = optional_param('selected', array(), PARAM_INT);
 
+global $UNITTEST;
+$UNITTEST = new object();
+
 if (!data_submitted()) {
     $selected = array();
     for ($i=0; $i<=10; $i++) {
@@ -63,31 +66,27 @@ for ($i=1; $i<=10; $i++) {
 }
 
 if (!empty($tests)) {
-    /* The UNITTEST constant can be checked elsewhere if you need to know
-     * when your code is being run as part of a unit test. */
-    define('UNITTEST', true);
-
     @ob_implicit_flush(true);
     while(@ob_end_flush());
 
-    global $FUNCT_TEST_DB; // hack - we pass the connected db to functional database tests through this global
-
     foreach ($tests as $i=>$database) {
         $dbinfo = $dbinfos[$i];
-        $FUNCT_TEST_DB = $database;
+        $UNITTEST->func_test_db = $database; // pass the db to the tests through global
 
         print_heading('Running tests on: '.$dbinfo['name'], '', 3); // TODO: localise
 
         // Create the group of tests.
         $test = new AutoGroupTest(false, true);
 
-        $test->addTestFile($CFG->libdir . '/dml/simpletest/testdmllib.php');
-        $test->addTestFile($CFG->libdir . '/ddl/simpletest/testddllib.php');
+        $test->addTestFile($CFG->libdir.'/dml/simpletest/testdmllib.php');
+        $test->addTestFile($CFG->libdir.'/ddl/simpletest/testddllib.php');
 
         // Make the reporter, which is what displays the results.
         $reporter = new ExHtmlReporter($showpasses);
 
         $test->run($reporter);
+
+        unset($UNITTEST->func_test_db);
 
         echo '<hr />';
     }

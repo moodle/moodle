@@ -33,6 +33,15 @@ class AutoGroupTest extends GroupTest {
         $this->thorough = $thorough;
     }
 
+    function run(&$reporter) {
+        global $UNITTEST;
+
+        $UNITTEST->running = true;
+        $return = parent::run($reporter);
+        unset($UNITTEST->running);
+        return $return;
+    }
+
     function setLabel($test_name) {
         //:HACK: there is no GroupTest::setLabel, so access parent::_label.
         $this->_label = $test_name;

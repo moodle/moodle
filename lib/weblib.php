@@ -5601,8 +5601,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @return terminates script, does not return!
  */
 function print_error ($errorcode, $module='', $link='', $a=NULL) {
-
-    global $CFG, $SESSION, $THEME;
+    global $CFG, $SESSION, $THEME, $UNITTEST;
 
     if (empty($module) || $module == 'moodle' || $module == 'core') {
         $module = 'error';
@@ -5617,7 +5616,7 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
     /**
      * TODO VERY DIRTY HACK USED FOR UNIT TESTING UNTIL PROPER EXCEPTION HANDLING IS IMPLEMENTED
      */
-    if (defined('UNITTEST')) {
+    if (!empty($UNITTEST->running)) {
         // Errors in unit test become exceptions, so you can unit test
         // code that might call error().
         throw new Exception('error() call: '.  $message.($link!=='' ? ' ['.$link.']' : ''));

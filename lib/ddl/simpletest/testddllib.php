@@ -16,10 +16,10 @@ class ddllib_test extends UnitTestCase {
     private $db;
 
     public function setUp() {
-        global $CFG, $DB, $FUNCT_TEST_DB;
+        global $CFG, $DB, $UNITTEST;
 
-        if (isset($FUNCT_TEST_DB)) {
-            $this->db = $FUNCT_TEST_DB;
+        if (isset($UNITTEST->func_test_db)) {
+            $this->db = $UNITTEST->func_test_db;
         } else {
             $this->db = $DB;
         }
