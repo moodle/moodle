@@ -45,7 +45,7 @@ for ($i=1; $i<=10; $i++) {
         continue;
     }
     list($library, $driver, $dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions) = $CFG->$name;
-    $dbinfos[$i] = array('name'=>"External database $i ($library/$driver/$dbhost/$dbname)", 'installed'=>false, 'configured'=>false);
+    $dbinfos[$i] = array('name'=>"External database $i ($library/$driver/$dbhost/$dbname/$prefix)", 'installed'=>false, 'configured'=>false);
 
     $classname = "{$driver}_{$library}_moodle_database";
     require_once("$CFG->libdir/dml/$classname.php");
@@ -84,6 +84,7 @@ if (!empty($tests)) {
         // Make the reporter, which is what displays the results.
         $reporter = new ExHtmlReporter($showpasses);
 
+        set_time_limit(300);
         $test->run($reporter);
 
         unset($UNITTEST->func_test_db);
