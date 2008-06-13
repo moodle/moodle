@@ -181,6 +181,33 @@
             $position++;
             //check the typ
             $typ = $item['@']['TYPE'];
+            
+            //check oldtypes first
+            switch($typ) {
+                case 'radio':
+                    $typ = 'multichoice';
+                    $oldtyp = 'radio';
+                    break;
+                case 'dropdown':
+                    $typ = 'multichoice';
+                    $oldtyp = 'dropdown';
+                    break;
+                case 'check':
+                    $typ = 'multichoice';
+                    $oldtyp = 'check';
+                    break;
+                case 'radiorated':
+                    $typ = 'multichoicerated';
+                    $oldtyp = 'radiorated';
+                    break;
+                case 'dropdownrated':
+                    $typ = 'multichoicerated';
+                    $oldtyp = 'dropdownrated';
+                    break;
+                default:
+                    $oldtyp = $typ;
+            }
+
             $itemclass = 'feedback_item_'.$typ;
             if($typ != 'pagebreak' AND !class_exists($itemclass)) {
                 $error->stat = false;
@@ -195,6 +222,25 @@
             $newitem->typ = $typ;
             $newitem->name = trim($item['#']['ITEMTEXT'][0]['#']);
             $newitem->presentation = trim($item['#']['PRESENTATION'][0]['#']);
+            //check old types of radio, check, and so on
+            switch($oldtyp) {
+                case 'radio':
+                    $newitem->presentation = 'r>>>>>'.$newitem->presentation;
+                    break;
+                case 'dropdown':
+                    $newitem->presentation = 'd>>>>>'.$newitem->presentation;
+                    break;
+                case 'check':
+                    $newitem->presentation = 'c>>>>>'.$newitem->presentation;
+                    break;
+                case 'radiorated':
+                    $newitem->presentation = 'r>>>>>'.$newitem->presentation;
+                    break;
+                case 'dropdownrated':
+                    $newitem->presentation = 'd>>>>>'.$newitem->presentation;
+                    break;
+            }
+            
             if($typ != 'pagebreak') {
                 $newitem->hasvalue = $itemobj->get_hasvalue();
             }else {
