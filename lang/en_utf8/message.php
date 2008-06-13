@@ -17,6 +17,7 @@ $string['blocknoncontacts'] = 'Block all new messages from people who are not on
 $string['contactlistempty'] = 'Your contact list is currently empty';
 $string['contacts'] = 'Contacts';
 $string['context'] = 'context';
+$string['disabled'] = 'Messaging is disabled on this site';
 $string['deletemessagesdays'] = 'Number of days before old messages are automatically deleted';
 $string['discussion'] = 'Discussion';
 $string['emailmessages'] = 'Email messages when I am offline';

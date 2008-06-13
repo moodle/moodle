@@ -10,7 +10,7 @@ if (isguest()) {
 }
 
 if (empty($CFG->messaging)) {
-    print_error("Messaging is disabled on this site");
+    print_error('disabled', 'message');
 }
 
 if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM))) {
@@ -51,7 +51,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
 
 /// Check the user we are talking to is valid
     if (! $user = $DB->get_record('user', array('id'=>$userid))) {
-        print_error("User ID was incorrect");
+        print_error('invaliduserid');
     }
 
 /// Check that the user is not blocking us!!

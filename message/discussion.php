@@ -10,7 +10,7 @@
     }
 
     if (empty($CFG->messaging)) {
-        print_error("Messaging is disabled on this site");
+        print_error('disabled', 'message');
     }
 
 /// Script parameters

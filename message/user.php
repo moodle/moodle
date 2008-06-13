@@ -10,7 +10,7 @@
     }
 
     if (empty($CFG->messaging)) {
-        print_error("Messaging is disabled on this site");
+        print_error('disabled', 'message');
     }
 
 /// Script parameters
@@ -23,7 +23,7 @@
 
 /// Check the user we are talking to is valid
     if (! $user = $DB->get_record('user', array('id'=>$userid))) {
-        print_error("User ID was incorrect");
+        print_error('invaliduserid');
     }
 
 /// Possibly change some contacts if requested
