@@ -182,6 +182,101 @@ class dmllib_test extends UnitTestCase {
 
     }
 
-}
+    public function testGetTables() {
+        global $DB;
+        // Need to test with multiple DBs
+        $this->assertTrue($DB->get_tables() > 2);
+    }
 
-?>
+    public function testGetIndexes() {
+        global $DB;
+        // Need to test with multiple DBs
+        $this->assertTrue($indices = $DB->get_indexes('testtable'));
+        $this->assertTrue(count($indices) == 1);
+
+        $xmldb_indexes = $this->tables['testtable']->getIndexes();
+        $this->assertEqual(count($indices), count($xmldb_indexes));
+
+        for ($i = 0; $i < count($indices); $i++) {
+            if ($i == 0) {
+                $next_index = reset($indices);
+                $next_xmldb_index  = reset($xmldb_indexes);
+            } else {
+                $next_index = next($indices);
+                $next_xmldb_index  = next($xmldb_indexes);
+            }
+
+            $this->assertEqual($next_index['columns'][0], $next_xmldb_index->name);
+        }
+    }
+
+    public function testGetColumns() {
+        global $DB;
+
+        $this->assertTrue($columns = $DB->get_columns('testtable'));
+        $fields = $this->tables['testtable']->getFields();
+        $this->assertEqual(count($columns), count($fields));
+
+        for ($i = 0; $i < count($columns); $i++) {
+            if ($i == 0) {
+                $next_column = reset($columns);
+                $next_field  = reset($fields);
+            } else {
+                $next_column = next($columns);
+                $next_field  = next($fields);
+            }
+
+            $this->assertEqual($next_column->name, $next_field->name);
+        }
+    }
+
+    public function testExecute() {
+        global $DB;
+        $sql = "SELECT * FROM {testtable}";
+        $this->assertTrue($DB->execute($sql));
+
+        $sql = "INSERT INTO {testtable}
+                        SET course = :course,
+                            type = :type,
+                            name = :name,
+                            intro = :intro,
+                            assessed = :assessed,
+                            assesstimestart = :assesstimestart,
+                            assesstimefinish = :assesstimefinish,
+                            scale = :scale,
+                            maxbytes = :maxbytes,
+                            forcesubscribe = :forcesubscribe,
+                            trackingtype = :trackingtype,
+                            rsstype = :rsstype,
+                            rssarticles = :rssarticles,
+                            timemodified = :timemodified,
+                            warnafter = :warnafter,
+                            blockafter = :blockafter,
+                            blockperiod = :blockperiod";
+        $values = array('course' => 1,
+                        'type' => 'news',
+                        'name' => 'test',
+                        'intro' => 'Simple news forum',
+                        'assessed' => time(),
+                        'assesstimestart' => time(),
+                        'assesstimefinish' => time() + 579343,
+                        'scale' => 1,
+                        'maxbytes' => 512,
+                        'forcesubscribe' => 1,
+                        'trackingtype' => 1,
+                        'rssarticles' => 1,
+                        'rsstype' => 1,
+                        'timemodified' => time(),
+                        'warnafter' => time() + 579343,
+                        'blockafter' => time() + 600000,
+                        'blockperiod' => 5533);
+        $this->assertTrue($DB->execute($sql, $values));
+
+        $record = $DB->get_record('testtable', array('blockperiod' => 5533));
+
+        foreach ($values as $field => $value) {
+            $this->assertEqual($value, $record->$field, "Field $field in DB ({$record->$field}) is not equal to field $field in sql ($value)");
+        }
+    }
+
+}
