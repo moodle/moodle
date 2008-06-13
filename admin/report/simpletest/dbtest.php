@@ -34,7 +34,7 @@ admin_externalpage_print_header();
 $dbinfos     = array();
 $tests       = array();
 
-$dbinfos[0]     = array('name'=>"Current database", 'installed'=>true, 'configured'=>true); // TODO: localise
+$dbinfos[0]     = array('name'=>"Current database ($CFG->dblibrary/$CFG->dbtype)", 'installed'=>true, 'configured'=>true); // TODO: localise
 if (data_submitted() and !empty($selected[0])) {
     $tests[0] = $DB;
 }
@@ -45,7 +45,7 @@ for ($i=1; $i<=10; $i++) {
         continue;
     }
     list($library, $driver, $dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions) = $CFG->$name;
-    $dbinfos[$i] = array('name'=>"External database $library/$driver/$dbhost/$dbname", 'installed'=>false, 'configured'=>false);
+    $dbinfos[$i] = array('name'=>"External database $i ($library/$driver/$dbhost/$dbname)", 'installed'=>false, 'configured'=>false);
 
     $classname = "{$driver}_{$library}_moodle_database";
     require_once("$CFG->libdir/dml/$classname.php");
@@ -113,7 +113,14 @@ foreach ($dbinfos as $i=>$dbinfo) {
     }
 }
 echo '</ul></p>';
-echo '<input type="submit" value="' . get_string('runtests', 'simpletest') . '" />';
+echo '<p>External databases are configured in config.php, add lines:
+<pre>
+$CFG->func_test_db_1 = array("adodb", "postgres7", "localhost", "moodleuser", "password", "moodle", false, "test", null);
+$CFG->func_test_db_2 = array("adodb", "mssql", "localhost", "moodleuser", "password", "moodle", false, "test", null);
+</pre>
+where order of parameters is: $library, $driver, $dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions
+</p>';
+echo '<p><input type="submit" value="' . get_string('runtests', 'simpletest') . '" /></p>';
 echo '</div>';
 echo '</form>';
 print_simple_box_end();
