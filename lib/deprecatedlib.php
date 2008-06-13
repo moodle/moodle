@@ -424,81 +424,33 @@ function get_current_group($courseid, $full = false) {
 }
 
 
-
-
 /**
  * Print an error page displaying an error message.
  * Old method, don't call directly in new code - use print_error instead.
  *
- *
- * @uses $SESSION
- * @uses $CFG
  * @param string $message The message to display to the user about the error.
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+ * @return terminates script, does not return!
  */
 function error($message, $link='') {
-    global $CFG, $SESSION, $THEME, $UNITTEST;
+    global $UNITTEST;
 
-    $message = clean_text($message);   // In case nasties are in here
-
-    /**
-     * TODO VERY DIRTY HACK USED FOR UNIT TESTING UNTIL PROPER EXCEPTION HANDLING IS IMPLEMENTED
-     */
+    // If unittest running, throw exception instead
     if (!empty($UNITTEST->running)) {
         // Errors in unit test become exceptions, so you can unit test
         // code that might call error().
-        throw new Exception('error() call: '.  $message.($link!=='' ? ' ['.$link.']' : ''));
+        throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message);
     }
 
-    debugging('error() is a deprecated function, please call print_error() instead of error()', DEBUG_DEVELOPER);
-
-    if (defined('FULLME') && FULLME == 'cron') {
-        // Errors in cron should be mtrace'd.
-        mtrace($message);
-        die;
-    }
-
-    if (! defined('HEADER_PRINTED')) {
-        //header not yet printed
-        @header('HTTP/1.0 404 Not Found');
-        print_header(get_string('error'));
-    } else {
-        print_container_end_all(false, $THEME->open_header_containers);
-    }
-
-    echo '<br />';
-    print_simple_box($message, '', '', '', '', 'errorbox');
-
-    debugging('Stack trace:', DEBUG_DEVELOPER);
-
-    // in case we are logging upgrade in admin/index.php stop it
-    if (function_exists('upgrade_log_finish')) {
-        upgrade_log_finish();
-    }
-
-    if (empty($link) and !defined('ADMIN_EXT_HEADER_PRINTED')) {
-        if ( !empty($SESSION->fromurl) ) {
-            $link = $SESSION->fromurl;
-            unset($SESSION->fromurl);
-        } else {
-            $link = $CFG->wwwroot .'/';
-        }
-    }
-
-    if (!empty($link)) {
-        print_continue($link);
-    }
-
-    print_footer();
-
-    for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
-        echo ' ';
-    }
-
-    die;
+    _print_normal_error('notlocalisederrormessage', 'error', $message, $link, debug_backtrace(), true); // show debug warning
 }
 
-/// removed functions
+
+
+//////////////////////////
+/// removed functions ////
+//////////////////////////
+
 function addslashes_object($dataobject) {
     error('addslashes() not available anymore');
 }

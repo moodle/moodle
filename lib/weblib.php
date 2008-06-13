@@ -5593,18 +5593,41 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
 /**
  * Print an error page displaying an error message.  New method - use this for new code.
  *
- * @uses $SESSION
- * @uses $CFG
  * @param string $errorcode The name of the string from error.php to print
+ * @param string $module name of module  
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
  * @return terminates script, does not return!
  */
-function print_error ($errorcode, $module='', $link='', $a=NULL) {
-    global $CFG, $SESSION, $THEME, $UNITTEST;
+function print_error($errorcode, $module='', $link='', $a=NULL) {
+    global $CFG, $UNITTEST;
+
+    // If unittest running, throw exception instead
+    if (!empty($UNITTEST->running)) {
+        // Errors in unit test become exceptions, so you can unit test
+        // code that might call error().
+        throw new moodle_exception($errorcode, $module, $link, $a);
+    }
 
     if (empty($module) || $module == 'moodle' || $module == 'core') {
         $module = 'error';
+    }
+
+    if (!isset($CFG->theme)) {
+        // error found before setup.php finished
+        _print_early_error($errorcode, $module, $a);
+    } else {
+        _print_normal_error($errorcode, $module, $a, $link, debug_backtrace());
+    }
+}
+
+/**
+ * Internal function - do not use directly!!
+ */
+function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $showerrordebugwarning=false) {
+    global $CFG, $SESSION, $THEME;
+
+    if ($module == 'error') {
         $modulelink = 'moodle';
     } else {
         $modulelink = $module;
@@ -5612,19 +5635,10 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
 
     $message = get_string($errorcode, $module, $a);
 
-
-    /**
-     * TODO VERY DIRTY HACK USED FOR UNIT TESTING UNTIL PROPER EXCEPTION HANDLING IS IMPLEMENTED
-     */
-    if (!empty($UNITTEST->running)) {
-        // Errors in unit test become exceptions, so you can unit test
-        // code that might call error().
-        throw new Exception('error() call: '.  $message.($link!=='' ? ' ['.$link.']' : ''));
-    }
-
-    if (!isset($CFG->theme)) {
-        // error found before setup.php finished
-        print_early_error($message);
+    if (defined('FULLME') && FULLME == 'cron') {
+        // Errors in cron should be mtrace'd.
+        mtrace($message);
+        die;
     }
 
     if (empty($link) and !defined('ADMIN_EXT_HEADER_PRINTED')) {
@@ -5644,17 +5658,6 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
         $errordocroot = 'http://docs.moodle.org';
     }
 
-    if (defined('FULLME') && FULLME == 'cron') {
-        // Errors in cron should be mtrace'd.
-        mtrace($message);
-        die;
-    }
-
-    $message = clean_text('<p class="errormessage">'.$message.'</p>'.
-               '<p class="errorcode">'.
-               '<a href="'.$errordocroot.'/en/error/'.$modulelink.'/'.$errorcode.'">'.
-                 get_string('moreinformation').'</a></p>');
-
     if (! defined('HEADER_PRINTED')) {
         //header not yet printed
         @header('HTTP/1.0 404 Not Found');
@@ -5665,9 +5668,21 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
 
     echo '<br />';
 
+    $message = clean_text('<p class="errormessage">'.$message.'</p>'.
+               '<p class="errorcode">'.
+               '<a href="'.$errordocroot.'/en/error/'.$modulelink.'/'.$errorcode.'">'.
+                 get_string('moreinformation').'</a></p>');
+
     print_simple_box($message, '', '', '', '', 'errorbox');
 
-    debugging('Stack trace:', DEBUG_DEVELOPER);
+    if ($showerrordebugwarning) {
+        debugging('error() is a deprecated function, please call print_error() instead of error()', DEBUG_DEVELOPER);
+
+    } else {
+        if (debugging('', DEBUG_DEVELOPER)) {
+            notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
+        }
+    }
 
     // in case we are logging upgrade in admin/index.php stop it
     if (function_exists('upgrade_log_finish')) {
@@ -5687,14 +5702,12 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
 }
 
 /**
- * Internal function - do not use directly
+ * Internal function - do not use directly!!
  * This function is used if fatal error occures before the themes are fully initialised (eg. in lib/setup.php)
- * @param string $errorcode The name of the string from error.php to print
- * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
- * @param object $a Extra words and phrases that might be required in the error string
- * @return terminates script, does not return!
  */
-function print_early_error($message) {
+function _print_early_error($errorcode, $module, $a) {
+    $message = clean_text(get_string($errorcode, $module, $a));
+
     // In the name of protocol correctness, monitoring and performance
     // profiling, set the appropriate error headers for machine comsumption
     if (isset($_SERVER['SERVER_PROTOCOL'])) {
@@ -5719,7 +5732,7 @@ function print_early_error($message) {
 <div style="margin-top: 6em; margin-left:auto; margin-right:auto; color:#990000; text-align:center; font-size:large; border-width:1px;
     border-color:black; background-color:#ffffee; border-style:solid; border-radius: 20px; border-collapse: collapse;
     width: 80%; -moz-border-radius: 20px; padding: 15px">
-'.clean_text($message, FORMAT_HTML).'
+'.$message.'
 </div>
 </body></html>';
     die;
@@ -6853,25 +6866,7 @@ function debugging($message='', $level=DEBUG_NORMAL) {
     if ($CFG->debug >= $level) {
         if ($message) {
             $callers = debug_backtrace();
-            $from = '<ul style="text-align: left">';
-            foreach ($callers as $caller) {
-                if (!isset($caller['line'])) {
-                    $caller['line'] = '?'; // probably call_user_func()
-                }
-                if (!isset($caller['file'])) {
-                    $caller['file'] = $CFG->dirroot.'/unknownfile'; // probably call_user_func()
-                }
-                $from .= '<li>line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
-                if (isset($caller['function'])) {
-                    $from .= ': call to ';
-                    if (isset($caller['class'])) {
-                        $from .= $caller['class'] . $caller['type'];
-                    }
-                    $from .= $caller['function'] . '()';
-                }
-                $from .= '</li>';
-            }
-            $from .= '</ul>';
+            $from = print_backtrace($callers, true);
             if (!isset($CFG->debugdisplay)) {
                 $CFG->debugdisplay = ini_get('display_errors');
             }
@@ -6887,6 +6882,44 @@ function debugging($message='', $level=DEBUG_NORMAL) {
         return true;
     }
     return false;
+}
+
+/**
+ * Prints formatted backtrace
+ * @param backtrace array
+ * @param return return as string or print
+ * @return mixed
+ */
+function print_backtrace($callers, $return=false) {
+    global $CFG;
+
+    $from = '<ul style="text-align: left">';
+    foreach ($callers as $caller) {
+        if (!isset($caller['line'])) {
+            $caller['line'] = '?'; // probably call_user_func()
+        }
+        if (!isset($caller['file'])) {
+            $caller['file'] = $CFG->dirroot.'/unknownfile'; // probably call_user_func()
+        }
+        $from .= '<li>line ' . $caller['line'] . ' of ' . substr($caller['file'], strlen($CFG->dirroot) + 1);
+        if (isset($caller['function'])) {
+            $from .= ': call to ';
+            if (isset($caller['class'])) {
+                $from .= $caller['class'] . $caller['type'];
+            }
+            $from .= $caller['function'] . '()';
+        } else if (isset($caller['exception'])) {
+            $from .= ': '.$caller['exception'].' thrown';
+        }
+        $from .= '</li>';
+    }
+    $from .= '</ul>';
+
+    if ($return) {
+        return $from;
+    } else {
+        echo $from;
+    }
 }
 
 /**

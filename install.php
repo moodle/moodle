@@ -145,12 +145,12 @@ $COURSE->id = 0;
 
 /// Include some moodle libraries
 
-require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/setuplib.php');
-require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->libdir.'/weblib.php');
-require_once($CFG->libdir.'/deprecatedlib.php');
 require_once($CFG->libdir.'/dmllib.php');
+require_once($CFG->libdir.'/deprecatedlib.php');
+require_once($CFG->libdir.'/moodlelib.php');
+require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/environmentlib.php');
 require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/componentlib.class.php');

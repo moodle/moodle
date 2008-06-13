@@ -1,6 +1,6 @@
-<?php // $Id$ 
-      // These functions are required very early in the Moodle 
-      // setup process, before any of the main libraries are 
+<?php // $Id$
+      // These functions are required very early in the Moodle
+      // setup process, before any of the main libraries are
       // loaded.
 
 
@@ -9,22 +9,68 @@
  */
 class object {};
 
+/**
+ * Base Moodle Exception class
+ */
+class moodle_exception extends Exception {
+    public $errorcode;
+    public $module;
+    public $a;
+    public $link;
+
+    /**
+     * Constructor
+     * @param string $errorcode The name of the string from error.php to print
+     * @param string $module name of module
+     * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+     * @param object $a Extra words and phrases that might be required in the error string
+     */
+    function __construct($errorcode, $module='', $link='', $a=NULL) {
+        if (empty($module) || $module == 'moodle' || $module == 'core') {
+            $module = 'error';
+        }
+
+        $this->errorcode = $errorcode;
+        $this->module    = $module;
+        $this->link      = $link;
+        $this->a         = $a;
+
+        $message = get_string($errorcode, $module, $a);
+
+        parent::__construct($message, 0);
+    }
+}
+
+/**
+ * Default exception handler, uncought exceptions are equivalent to using print_error()
+ */
+function default_exception_handler($ex) {
+    $backtrace = $ex->getTrace();
+    $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
+    array_unshift($backtrace, $place);
+
+    if ($ex instanceof moodle_exception) {
+        _print_normal_error($ex->errorcode, $ex->module, $ex->a, $ex->link, $backtrace);
+    } else {
+        _print_normal_error('generalexceptionmessage', 'error', $ex->getMessage(), '', $backtrace);
+    }
+}
 
 /**
  * Initializes our performance info early.
  *
  * Pairs up with get_performance_info() which is actually
- * in moodlelib.php. This function is here so that we can 
- * call it before all the libs are pulled in. 
+ * in moodlelib.php. This function is here so that we can
+ * call it before all the libs are pulled in.
  *
  * @uses $PERF
  */
 function init_performance_info() {
 
     global $PERF, $CFG, $USER;
-  
+
     $PERF = new Object;
-    $PERF->dbqueries = 0;   
+    $PERF->dbqueries = 0;
     $PERF->logwrites = 0;
     if (function_exists('microtime')) {
         $PERF->starttime = microtime();
@@ -33,12 +79,12 @@ function init_performance_info() {
         $PERF->startmemory = memory_get_usage();
     }
     if (function_exists('posix_times')) {
-        $PERF->startposixtimes = posix_times();  
+        $PERF->startposixtimes = posix_times();
     }
     if (function_exists('apd_set_pprof_trace')) {
         // APD profiling
         if ($USER->id > 0 && $CFG->perfdebug >= 15) {
-            $tempdir = $CFG->dataroot . '/temp/profile/' . $USER->id; 
+            $tempdir = $CFG->dataroot . '/temp/profile/' . $USER->id;
             mkdir($tempdir);
             apd_set_pprof_trace($tempdir);
             $PERF->profiling = true;
@@ -130,7 +176,7 @@ function make_upload_directory($directory, $shownotices=true) {
     if (!file_exists($currdir)) {
         if (! mkdir($currdir, $CFG->directorypermissions)) {
             if ($shownotices) {
-                echo '<div class="notifyproblem" align="center">ERROR: You need to create the directory '. 
+                echo '<div class="notifyproblem" align="center">ERROR: You need to create the directory '.
                      $currdir .' with web server write access</div>'."<br />\n";
             }
             return false;
@@ -152,7 +198,7 @@ function make_upload_directory($directory, $shownotices=true) {
         if (! file_exists($currdir)) {
             if (! mkdir($currdir, $CFG->directorypermissions)) {
                 if ($shownotices) {
-                    echo '<div class="notifyproblem" align="center">ERROR: Could not find or create a directory ('. 
+                    echo '<div class="notifyproblem" align="center">ERROR: Could not find or create a directory ('.
                          $currdir .')</div>'."<br />\n";
                 }
                 return false;
@@ -171,9 +217,9 @@ function init_memcached() {
     $MCACHE = new memcached;
     if ($MCACHE->status()) {
         return true;
-    } 
+    }
     unset($MCACHE);
-    return false;                                           
+    return false;
 }
 
 function init_eaccelerator() {
@@ -183,7 +229,7 @@ function init_eaccelerator() {
     $MCACHE = new eaccelerator;
     if ($MCACHE->status()) {
         return true;
-    } 
+    }
     unset($MCACHE);
     return false;
 }

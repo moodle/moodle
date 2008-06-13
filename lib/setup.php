@@ -139,6 +139,9 @@ global $HTTPSPAGEREQUIRED;
     //the problem is that we need specific version of quickforms and hacked excel files :-(
     ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
 
+/// set handler for uncought exceptions - equivalent to print_error() call
+    set_exception_handler('default_exception_handler');
+
 /// Connect to the database
     setup_DB();
 

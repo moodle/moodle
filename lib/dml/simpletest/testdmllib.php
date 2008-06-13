@@ -10,18 +10,18 @@ if (!defined('MOODLE_INTERNAL')) {
 
 class dmllib_test extends UnitTestCase {
     private $tables = array();
-    private $db;
+    private $tdb;
 
     function setUp() {
         global $CFG, $DB, $UNITTEST;
 
         if (isset($UNITTEST->func_test_db)) {
-            $this->db = $UNITTEST->func_test_db;
+            $this->tdb = $UNITTEST->func_test_db;
         } else {
-            $this->db = $DB;
+            $this->tdb = $DB;
         }
 
-        $dbmanager = $this->db->get_manager();
+        $dbman = $this->tdb->get_manager();
 
         $table = new xmldb_table("testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
@@ -50,28 +50,28 @@ class dmllib_test extends UnitTestCase {
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->setComment("This is a test'n drop table. You can drop it safely");
 
-        if ($dbmanager->table_exists($table)) {
-            $dbmanager->drop_table($table, true, false);
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table, true, false);
         }
-        $dbmanager->create_table($table);
+        $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
 
     }
 
     function tearDown() {
-        $dbmanager = $this->db->get_manager();
+        $dbman = $this->tdb->get_manager();
 
         foreach ($this->tables as $table) {
-            if ($dbmanager->table_exists($table)) {
-                $dbmanager->drop_table($table, true, false);
+            if ($dbman->table_exists($table)) {
+                $dbman->drop_table($table, true, false);
             }
         }
         $this->tables = array();
     }
 
     function test_fix_sql_params() {
-        $DB = $this->db; // do not use global $DB!
-        $dbmanager = $this->db->get_manager();
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
 
         // Malformed table placeholder
         $sql = "SELECT * FROM [testtable]";
@@ -94,78 +94,73 @@ class dmllib_test extends UnitTestCase {
         $params = array('param1' => 'first record', 'param2' => 1);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
+            $this->assertTrue(false);
         } catch (Exception $e) {
-            $this->assertEqual('error() call: ERROR: Mixed types of sql query parameters!!', $e->getMessage());
+            $this->assertTrue($e instanceof moodle_exception);
         }
 
         // Mixed param types (question and dollar)
         $sql = "SELECT * FROM {testtable} WHERE name = ?, rsstype = \$1";
         $params = array('param1' => 'first record', 'param2' => 1);
-        $exception_caught = false;
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
+            $this->assertTrue(false);
         } catch (Exception $e) {
-            $exception_caught = true;
+            $this->assertTrue($e instanceof moodle_exception);
         }
-        $this->assertTrue($exception_caught);
 
         // Too many params in sql
         $sql = "SELECT * FROM {testtable} WHERE name = ?, rsstype = ?, course = ?";
         $params = array('first record', 1);
-        $exception_caught = false;
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
+            $this->assertTrue(false);
         } catch (Exception $e) {
-            $exception_caught = true;
+            $this->assertTrue($e instanceof moodle_exception);
         }
-        $this->assertTrue($exception_caught);
 
         // Too many params in array: no error
         $params[] = 1;
         $params[] = time();
-        $exception_caught = false;
         $sqlarray = null;
 
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
+            $this->assertTrue(true);
         } catch (Exception $e) {
-            $exception_caught = true;
+            $this->assertTrue(false);
         }
-        $this->assertFalse($exception_caught);
         $this->assertTrue($sqlarray[0]);
 
         // Named params missing from array
         $sql = "SELECT * FROM {testtable} WHERE name = :name, rsstype = :rsstype";
         $params = array('wrongname' => 'first record', 'rsstype' => 1);
-        $exception_caught = false;
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
+            $this->assertTrue(false);
         } catch (Exception $e) {
-            $exception_caught = true;
+            $this->assertTrue($e instanceof moodle_exception);
         }
-        $this->assertTrue($exception_caught);
 
         // Duplicate named param in query
         $sql = "SELECT * FROM {testtable} WHERE name = :name, rsstype = :name";
         $params = array('name' => 'first record', 'rsstype' => 1);
-        $exception_caught = false;
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
+            $this->assertTrue(false);
         } catch (Exception $e) {
-            $exception_caught = true;
+            $this->assertTrue($e instanceof moodle_exception);
         }
-        $this->assertTrue($exception_caught);
 
         // Unsupported Bound params
         $sql = "SELECT * FROM {testtable} WHERE name = $1, rsstype = $2";
         $params = array('first record', 1);
-        $exception_caught = false;
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
+            $this->assertTrue(false);
         } catch (Exception $e) {
-            $exception_caught = true;
+            $this->assertTrue($e instanceof moodle_exception);
         }
-        $this->assertTrue($exception_caught);
 
         // Correct named param placeholders
         $sql = "SELECT * FROM {testtable} WHERE name = :name, rsstype = :rsstype";
@@ -184,16 +179,16 @@ class dmllib_test extends UnitTestCase {
     }
 
     public function testGetTables() {
-        $DB = $this->db; // do not use global $DB!
-        $dbmanager = $this->db->get_manager();
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
 
         // Need to test with multiple DBs
         $this->assertTrue($DB->get_tables() > 2);
     }
 
     public function testGetIndexes() {
-        $DB = $this->db; // do not use global $DB!
-        $dbmanager = $this->db->get_manager();
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
 
         $this->assertTrue($indices = $DB->get_indexes('testtable'));
         $this->assertTrue(count($indices) == 1);
@@ -215,8 +210,8 @@ class dmllib_test extends UnitTestCase {
     }
 
     public function testGetColumns() {
-        $DB = $this->db; // do not use global $DB!
-        $dbmanager = $this->db->get_manager();
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
 
         $this->assertTrue($columns = $DB->get_columns('testtable'));
         $fields = $this->tables['testtable']->getFields();
@@ -236,8 +231,8 @@ class dmllib_test extends UnitTestCase {
     }
 
     public function testExecute() {
-        $DB = $this->db; // do not use global $DB!
-        $dbmanager = $this->db->get_manager();
+        $DB = $this->tdb; // do not use global $DB!
+        $dbman = $this->tdb->get_manager();
 
         $sql = "SELECT * FROM {testtable}";
         $this->assertTrue($DB->execute($sql));
