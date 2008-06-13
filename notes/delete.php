@@ -8,17 +8,17 @@ $noteid       = required_param('note', PARAM_INT);
 
 // locate note information
 if (!$note = note_load($noteid)) {
-    print_error('Incorrect note id specified');
+    print_error('invalidid');
 }
 
 // locate course information
 if (!$course = $DB->get_record('course', array('id'=>$note->courseid))) {
-    print_error('Incorrect course id found');
+    print_error('invalidcourseid');
 }
 
 // locate user information
     if (!$user = $DB->get_record('user', array('id'=>$note->userid))) {
-        print_error('Incorrect user id found');
+        print_error('invaliduserid');
     }
 
 // require login to access notes
@@ -29,7 +29,7 @@ $context = get_context_instance(CONTEXT_COURSE, $course->id);
 
 // check capability
 if (!has_capability('moodle/notes:manage', $context)) {
-    print_error('You may not delete this note');
+    print_error('nopermissiontodelete', 'notes');
 }
 
 if (data_submitted() && confirm_sesskey()) {
@@ -38,7 +38,7 @@ if (data_submitted() && confirm_sesskey()) {
     if (note_delete($noteid)) {
         add_to_log($note->courseid, 'notes', 'delete', 'index.php?course='.$note->courseid.'&amp;user='.$note->userid . '#note-' . $note->id , 'delete note');
     } else {
-        print_error('Error occured while deleting post', '', $returnurl);
+        print_error('cannotdeletepost', 'notes', $returnurl);
     }
     redirect($returnurl);
 } else {

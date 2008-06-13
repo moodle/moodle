@@ -8,17 +8,17 @@
 
 /// locate note information
     if (!$note = note_load($noteid)) {
-        print_error('Incorrect note id specified');
+        print_error('invalidid', 'notes');
     }
 
 /// locate course information
     if (!$course = $DB->get_record('course', array('id'=>$note->courseid))) {
-        print_error('Incorrect course id found');
+        print_error('invalidcourseid');
     }
 
 /// locate user information
     if (!$user = $DB->get_record('user', array('id'=>$note->userid))) {
-        print_error('Incorrect user id found');
+        print_error('invaliduserid');
     }
 
 /// require login to access notes
