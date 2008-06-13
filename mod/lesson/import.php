@@ -16,15 +16,15 @@
     $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
 
     if (! $cm = get_coursemodule_from_id('lesson', $id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
-        print_error("Course is misconfigured");
+        print_error('coursemisconf');
     }
 
     if (! $lesson = $DB->get_record("lesson", array("id" => $cm->instance))) {
-        print_error("Course module is incorrect");
+        print_error('invalidcoursemodule');
     }
 
 
@@ -52,7 +52,7 @@
         } else {  // Valid file is found
 
             if (! is_readable("$CFG->dirroot/question/format/$form->format/format.php")) {
-                print_error("Format not known ($form->format)");
+                print_error('unknowformat','', '', $form->format);
             }
 
             require("format.php");  // Parent class
@@ -62,15 +62,15 @@
             $format = new $classname();
 
             if (! $format->importpreprocess()) {             // Do anything before that we need to
-                print_error("Error occurred during pre-processing!");
+                print_error('preprocesserror', 'lesson');
             }
 
             if (! $format->importprocess($_FILES['newfile']['tmp_name'], $lesson, $pageid)) {    // Process the uploaded file
-                print_error("Error occurred during processing!");
+                print_error('processerror', 'lesson');
             }
 
             if (! $format->importpostprocess()) {                     // In case anything needs to be done after
-                print_error("Error occurred during post-processing!");
+                print_error('postprocesserror', 'lesson');
             }
 
             echo "<hr>";

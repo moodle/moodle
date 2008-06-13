@@ -68,16 +68,16 @@
             $attemptid = required_param('attemptid', PARAM_INT);
 
             if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid))) {
-                print_error('Error: could not find attempt');
+                print_error('cannotfindattempt', 'lesson');
             }
             if (!$page = $DB->get_record('lesson_pages', array('id' => $attempt->pageid))) {
-                print_error('Error: could not find lesson page');
+                print_error('cannotfindpages', 'lesson');
             }
             if (!$user = $DB->get_record('user', array('id' => $attempt->userid))) {
-                print_error('Error: could not find users');
+                print_error('cannotfinduser', 'lesson');
             }
             if (!$answer = $DB->get_record('lesson_answers', array('lessonid' => $lesson->id, 'pageid' => $page->id))) {
-                print_error('Error: could not find answer');
+                print_error('cannotfindanswer', 'lesson');
             }
             break;
         case 'update':
@@ -89,11 +89,11 @@
                 $attemptid = required_param('attemptid', PARAM_INT);
                 
                 if (!$attempt = $DB->get_record('lesson_attempts', array('id' => $attemptid))) {
-                    print_error('Error: could not find essay');
+                    print_error('cannotfindattempt', 'lesson');
                 }
                 $params = array ("lessonid" => $lesson->id, "userid" => $attempt->userid);
                 if (!$grades = $DB->get_records_select('lesson_grades', "lessonid = :lessonid and userid = :userid", $params, 'completed', '*', $attempt->retry, 1)) {
-                    print_error('Error: could not find grades');
+                    print_error('cannotfindgrade', 'lesson');
                 }
 
                 $essayinfo = new stdClass;
@@ -112,7 +112,7 @@
                 $attempt->useranswer = serialize($essayinfo);
 
                 if (!$DB->update_record('lesson_attempts', $attempt)) {
-                    print_error('Could not update essay score');
+                    print_error('cannotupdateessayscore', 'lesson');
                 }
                 
                 // Get grade information
@@ -136,7 +136,7 @@
 
                 redirect("$CFG->wwwroot/mod/lesson/essay.php?id=$cm->id");
             } else {
-                print_error('Something is wrong with the form data');
+                print_error('invalidformdata');
             }
             break;
         case 'email': // Sending an email(s) to a single user or all
@@ -146,7 +146,7 @@
             if ($userid = optional_param('userid', 0, PARAM_INT)) {
                 $queryadd = " AND userid = :userid";
                 if (! $users = $DB->get_records('user', array('id' => $userid))) {
-                    print_error('Error: could not find users');
+                    print_error('cannotfinduser', 'lesson');
                 }
             } else {
                 $queryadd = '';
@@ -157,14 +157,14 @@
                                          WHERE a.lessonid = :lessonid and
                                                u.id = a.userid
                                          ORDER BY u.lastname", $params)) {
-                    print_error('Error: could not find users');
+                    print_error('cannotfinduser', 'lesson');
                 }
             }
 
             // Get lesson pages that are essay
             $params = array ("lessonid" => $lesson->id, "qtype" => LESSON_ESSAY);
             if (!$pages = $DB->get_records_select('lesson_pages', "lessonid = :lessonid AND qtype = :qtype", $params)) {
-                print_error('Error: could not find lesson pages');
+                print_error('cannotfindpages', 'lesson');
             }
 
             // Get only the attempts that are in response to essay questions
@@ -226,7 +226,7 @@
                         // Log it
                         add_to_log($course->id, 'lesson', 'update email essay grade', "essay.php?id=$cm->id", format_string($pages[$attempt->pageid]->title,true).': '.fullname($users[$attempt->userid]), $cm->id);
                     } else {
-                        print_error('Emailing Failed');
+                        print_error('emailfail');
                     }
                 }
             }
