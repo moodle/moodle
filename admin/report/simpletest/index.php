@@ -92,9 +92,6 @@ if (!is_null($path)) {
             $title = get_string('moodleunittests', $langfile, $displaypath);
         }
         print_heading($title);
-        /* The UNITTEST constant can be checked elsewhere if you need to know
-         * when your code is being run as part of a unit test. */
-        define('UNITTEST', true);
         $test->run($reporter);
     }
 

@@ -7,4 +7,4 @@ if ($reportname[1] == '[') {
 $ADMIN->add('reports', new admin_externalpage('reportsimpletest', $reportname, "$CFG->wwwroot/$CFG->admin/report/simpletest/index.php",'moodle/site:config'));
 
 //TODO: localise
-$ADMIN->add('reports', new admin_externalpage('reportdbtest', 'Functional DB tests', "$CFG->wwwroot/$CFG->admin/report/simpletest/dbtest.php",'moodle/site:config', true));
+$ADMIN->add('reports', new admin_externalpage('reportdbtest', 'Functional DB tests', "$CFG->wwwroot/$CFG->admin/report/simpletest/dbtest.php",'moodle/site:config'));

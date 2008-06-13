@@ -118,7 +118,7 @@ echo '<p>External databases are configured in config.php, add lines:
 $CFG->func_test_db_1 = array("adodb", "postgres7", "localhost", "moodleuser", "password", "moodle", false, "test", null);
 $CFG->func_test_db_2 = array("adodb", "mssql", "localhost", "moodleuser", "password", "moodle", false, "test", null);
 </pre>
-where order of parameters is: $library, $driver, $dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions
+where order of parameters is: dblibrary, dbtype, dbhost, dbuser, dbpass, dbname, dbpersist, prefix, dboptions
 </p>';
 echo '<p><input type="submit" value="' . get_string('runtests', 'simpletest') . '" /></p>';
 echo '</div>';
