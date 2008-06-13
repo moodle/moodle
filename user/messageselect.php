@@ -13,7 +13,7 @@
     $deluser = optional_param('deluser',0,PARAM_INT);
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
-        print_error("Invalid course id");
+        print_error('invalidcourseid');
     }
 
     require_login();

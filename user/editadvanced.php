@@ -13,7 +13,7 @@
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
     if (!$course = $DB->get_record('course', array('id'=>$course))) {
-        print_error('Course ID was incorrect');
+        print_error('invalidcourseid');
     }
     require_login($course->id);
 
@@ -35,7 +35,7 @@
         // editing existing user
         require_capability('moodle/user:update', $systemcontext);
         if (!$user = $DB->get_record('user', array('id'=>$id))) {
-            print_error('User ID was incorrect');
+            print_error('invaliduserid');
         }
     }
 
@@ -89,26 +89,24 @@
             $usernew->confirmed  = 1;
             $usernew->password = hash_internal_user_password($usernew->newpassword);
             if (!$usernew->id = $DB->insert_record('user', $usernew)) {
-                print_error('Error creating user record');
+                print_error('cannotcreateuser');
             }
         } else {
             if (!$DB->update_record('user', $usernew)) {
-                print_error('Error updating user record');
+                print_error('cannotupdateuser');
             }
             // pass a true $userold here
             if (! $authplugin->user_update($user, $userform->get_data())) {
                 // auth update failed, rollback for moodle
                 $DB->update_record('user', $user);
-                print_error('Failed to update user data on external auth: '.$user->auth.
-                        '. See the server logs for more details.');
+                print_error('cannotupdateuseronexauth', '', '', $user->auth);
             }
 
             //set new password if specified
             if (!empty($usernew->newpassword)) {
                 if ($authplugin->can_change_password()) {
                     if (!$authplugin->user_update_password($usernew, $usernew->newpassword)){
-                        print_error('Failed to update password on external auth: ' . $usernew->auth .
-                                '. See the server logs for more details.');
+                        print_error('cannotupdatepasswordonextauth', '', '', $usernew->auth);
                     }
                 }
             }

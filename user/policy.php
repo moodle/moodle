@@ -14,7 +14,7 @@
     if ($agree and confirm_sesskey()) {    // User has agreed
         if (!isguestuser()) {              // Don't remember guests
             if (!$DB->set_field('user', 'policyagreed', 1, array('id'=>$USER->id))) {
-                print_error('Could not save your agreement');
+                print_error('cannotsaveagreement');
             }
         }
         $USER->policyagreed = 1;

@@ -5,7 +5,7 @@ $id    = required_param('id', PARAM_INT);              // course id
 $users = optional_param('userid', array(), PARAM_INT); // array of user id
 
 if (! $course = $DB->get_record('course', array('id'=>$id))) {
-    print_error("Course ID is incorrect");
+    print_error('invalidcourseid');
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);

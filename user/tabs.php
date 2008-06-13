@@ -14,7 +14,7 @@
     $filterselect = clean_param($filterselect, PARAM_INT);
 
     if (empty($currenttab) or empty($user) or empty($course)) {
-        //print_error('You cannot call this script in that way');
+        //print_error('cannotcallscript');
     }
 
     if (($filtertype == 'site' && $filterselect) || ($filtertype=='user' && $filterselect)) {

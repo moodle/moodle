@@ -17,11 +17,11 @@
     }
 
     if (! $user = $DB->get_record("user", array("id"=>$id))) {
-        print_error("No such user in this course");
+        print_error('invaliduserid');
     }
 
     if (! $course = $DB->get_record("course", array("id"=>$course))) {
-        print_error("No such course id");
+        print_error('invalidcourseid');
     }
 
 /// Make sure the current user is allowed to see this user

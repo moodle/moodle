@@ -5,7 +5,7 @@ $id    = required_param('id', PARAM_INT);              // course id
 $users = optional_param('userid', array(), PARAM_INT); // array of user id
 
 if (! $course = $DB->get_record('course', array('id'=>$id))) {
-    print_error("Course ID is incorrect");
+    print_error('invalidcourseid');
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $id);
@@ -17,7 +17,7 @@ $today = time();
 $today = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
 if ((count($users) > 0) and ($form = data_submitted()) and confirm_sesskey()) {
     if (count($form->userid) != count($form->extendperiod) || count($form->userid) != count($form->extendbase)) {
-        print_error('Parameters malformation', '', $CFG->wwwroot.'/user/index.php?id='.$id);
+        print_error('invalidformdata', '', $CFG->wwwroot.'/user/index.php?id='.$id);
     }
 
     foreach ($form->userid as $k => $v) {
