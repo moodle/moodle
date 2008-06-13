@@ -332,6 +332,7 @@ $string['socksnotsupported'] = 'SOCKS5 proxy is not supported in PHP4';
 $string['spellcheckernotconf'] = 'Spellchecker not configured';
 $string['statscatchupmode'] = 'Statistics is currently in catchup mode. So far $a->daysdone day(s) have been processed and $a->dayspending are pending. Check back soon!';
 $string['tagnotfound'] = 'The specified tag was not found in the database';
+$string['tagdisabled'] = 'Tags are disabled!';
 $string['transactionvoid'] = 'Transaction can not be voided because of already been voided.';
 $string['unicodeupgradeerror'] = 'Sorry, but your database is not already in Unicode, and this version of Moodle is not able to migrate your database to Unicode.  Please upgrade to Moodle 1.7.x first and perform the Unicode migration from the Admin page.  After that is done you should be able to migrate to Moodle $a';
 $string['unspecifycourseid'] = 'Must specify course id, short name or idnumber';

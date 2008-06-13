@@ -10,7 +10,7 @@ $tag = optional_param('tag', '', PARAM_TAG);
 require_login();
 
 if (empty($CFG->usetags)) {
-    print_error('Tags are disabled!');
+    print_error('tagdisabled');
 }
 
 if (isguestuser()) {
@@ -51,7 +51,7 @@ switch ($action) {
         break;
 
     default:
-        print_error('No action was specified');
+        print_error('unknowaction');
         break;
 }
 
