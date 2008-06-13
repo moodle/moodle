@@ -256,6 +256,7 @@ $string['postsuccess'] = 'Post successful';
 $string['practice'] = 'Practice lesson';
 $string['preprocesserror'] = 'Error occurred during pre-processing!';
 $string['processerror'] = 'Error occurred during processing!';
+$string['postprocesserror'] = 'Error occurred during post-processing!';
 $string['preview'] = 'Preview';
 $string['previewlesson'] = 'Preview $a';
 $string['previouspage'] = 'Previous page';

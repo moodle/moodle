@@ -158,6 +158,7 @@ $string['downloadedfilecheckfailed'] = 'Downloaded file check failed.';
 $string['duplicateusername'] = 'Duplicate username - skiping record';
 $string['duplicaterolename'] = 'there is already a role with this name!';
 $string['duplicateroleshortname'] = 'there is already a role with this shortname!';
+$string['emailfail'] = 'Emailing Failed';
 $string['errorcleaningdirectory'] = 'Error cleaning directory \"$a\"';
 $string['errorcopyingfiles'] = 'Error copying files';
 $string['errorcreatingdirectory'] = 'Error creating directory \"$a\"';
