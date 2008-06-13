@@ -43,6 +43,13 @@ class flexible_table {
      */
     var $showdownloadbuttonsat= array(TABLE_P_TOP);
 
+
+    /**
+     * @var string Key of field returned by db query that is the id field of the
+     * user table or equivalent.
+     */
+    public $useridfield = 'id';
+
     /**
      * @var string which download plugin to use. Default '' means none - print
      * html table with paging. Property set by is_downloading which typically
@@ -642,6 +649,57 @@ class flexible_table {
     function wrap_html_finish(){
     }
 
+
+    /**
+     *
+     * @param array $row row of data from db used to make one row of the table.
+     * @return array one row for the table, added using add_data_keyed method.
+     */
+    function format_row($row){
+        $formattedrow = array();
+        foreach (array_keys($this->columns) as $column){
+            $colmethodname = 'col_'.$column;
+            if (method_exists($this, $colmethodname)){
+                $formattedcolumn = $this->$colmethodname($row);
+            } else {
+                $formattedcolumn = $this->other_cols($column, $row);
+                if ($formattedcolumn===NULL){
+                    $formattedcolumn = $row->$column;
+                }
+            }
+            $formattedrow[$column] = $formattedcolumn;
+        }
+        return $formattedrow;
+    }
+
+    /**
+     * Fullname is treated as a special columname in tablelib and should always
+     * be treated the same as the fullname of a user.
+     * @uses $this->useridfield if the userid field is not expected to be id
+     * then you need to override $this->useridfield to point at the correct
+     * field for the user id.
+     *
+     */
+    function col_fullname($row){
+        global $COURSE, $CFG;
+        if (!$this->download){
+
+            return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$row->{$this->useridfield}.
+                    '&amp;course='.$COURSE->id.'">'.fullname($row).'</a>';
+        } else {
+            return fullname($row);
+        }
+    }
+
+    /**
+     * You can override this method in a child class. See the description of
+     * build_table which calls this method.
+     */
+    function other_cols($column, $row){
+        return NULL;
+    }
+
+
     /**
      * This method is deprecated although the old api is still supported.
      * @deprecated 1.9.2 - Jun 2, 2008
@@ -1051,12 +1109,6 @@ class table_sql extends flexible_table{
      */
     public $is_collapsible = true;
 
-    /**
-     * @var string Key of field returned by db query that is the id field of the
-     * user table or equivalent.
-     */
-    public $useridfield = 'id';
-
 
     /**
      * @param string $uniqueid a string identifying this table.Used as a key in
@@ -1067,55 +1119,6 @@ class table_sql extends flexible_table{
         // some sensible defaults
         $this->set_attribute('cellspacing', '0');
         $this->set_attribute('class', 'generaltable generalbox');
-    }
-
-    /**
-     *
-     * @param array $row row of data from db used to make one row of the table.
-     * @return array one row for the table, added using add_data_keyed method.
-     */
-    function format_row($row){
-        $formattedrow = array();
-        foreach (array_keys($this->columns) as $column){
-            $colmethodname = 'col_'.$column;
-            if (method_exists($this, $colmethodname)){
-                $formattedcolumn = $this->$colmethodname($row);
-            } else {
-                $formattedcolumn = $this->other_cols($column, $row);
-                if ($formattedcolumn===NULL){
-                    $formattedcolumn = $row->$column;
-                }
-            }
-            $formattedrow[$column] = $formattedcolumn;
-        }
-        return $formattedrow;
-    }
-
-    /**
-     * Fullname is treated as a special columname in tablelib and should always
-     * be treated the same as the fullname of a user.
-     * @uses $this->useridfield if the userid field is not expected to be id
-     * then you need to override $this->useridfield to point at the correct
-     * field for the user id.
-     *
-     */
-    function col_fullname($row){
-        global $COURSE, $CFG;
-        if (!$this->download){
-
-            return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$row->{$this->useridfield}.
-                    '&amp;course='.$COURSE->id.'">'.fullname($row).'</a>';
-        } else {
-            return fullname($row);
-        }
-    }
-
-    /**
-     * You can override this method in a child class. See the description of
-     * build_table which calls this method.
-     */
-    function other_cols($column, $row){
-        return NULL;
     }
 
     /**
