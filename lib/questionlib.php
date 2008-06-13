@@ -1947,7 +1947,7 @@ function question_make_default_categories($contexts) {
                 print_error('cannotcreatedefaultcat', '', '', print_context_name($context));
             }
         } else {
-            $category = $DB->get_record('question_categories', array('contextid' => $context->id));
+            $category = $DB->get_record('question_categories', array('contextid' => $context->id),'*',true);
         }
 
         if ($context->contextlevel == CONTEXT_COURSE){
