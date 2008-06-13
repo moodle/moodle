@@ -643,7 +643,7 @@ if ($nextstage == SAVE) {
 //==========================================================================//
 
 function form_table($nextstage, $formaction, $databases) {
-    global $INSTALL;
+    global $INSTALL, $DB;
 
     /// Print the standard form if we aren't in the DOWNLOADLANG page
     /// because it has its own form.
@@ -794,7 +794,7 @@ function form_table($nextstage, $formaction, $databases) {
                 <td colspan="2">
                 <?php
                     error_reporting(0);  // Hide errors
-                    $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
+                    $dbconnected = $DB->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'], false, $INSTALL['prefix']);
                     error_reporting(38911);  // Show errors
                     if ($dbconnected) {
                     /// Execute environment check, printing results
