@@ -31,7 +31,7 @@ class quiz_report extends quiz_default_report {
                 AND i.question = q.id";
 
         if (! $questions = $DB->get_records_sql($sql, array($quiz->id))) {
-            print_error("Failed to get questions for regrading!");
+            print_error('cannotfindquestionregard', 'quiz');
         }
         get_question_options($questions);
 

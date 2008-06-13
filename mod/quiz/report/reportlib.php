@@ -120,7 +120,7 @@ function quiz_report_load_questions($quiz){
             WHERE q.id $usql AND
             qqi.question = q.id AND
             qqi.quiz = ?", $params)) {
-        print_error('No questions found');
+        print_error('noquestionsfound', 'quiz');
     }
     //Now we have an array of questions from a quiz we work out there question nos and remove
     //questions with zero length ie. description questions etc.
