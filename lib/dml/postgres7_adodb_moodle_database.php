@@ -418,7 +418,7 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
     }
 
     public function sql_bitxor($int1, $int2) {
-        return '(' . sql_bitor($int1, $int2) . ' - ' . sql_bitand($int1, $int2) . ')';
+        return '(' . $this->sql_bitor($int1, $int2) . ' - ' . $this->sql_bitand($int1, $int2) . ')';
     }
 
     public function sql_cast_char2int($fieldname, $text=false) {

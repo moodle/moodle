@@ -115,7 +115,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         if (!$text) {
             return ' CAST(' . $fieldname . ' AS INT) ';
         } else {
-            return ' CAST(' . sql_compare_text($fieldname) . ' AS INT) ';
+            return ' CAST(' . $this->sql_compare_text($fieldname) . ' AS INT) ';
         }
     }
 
@@ -125,7 +125,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
     public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
         if ($textfield) {
-            return sql_compare_text($fieldname)." = '' ";
+            return $this->sql_compare_text($fieldname)." = '' ";
         } else {
             return " $fieldname = '' ";
         }

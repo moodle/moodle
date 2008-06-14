@@ -516,7 +516,7 @@ abstract class moodle_database {
             }
         }
         $select = implode(" AND ", $select);
-        return get_recordset_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
+        return $this->get_recordset_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 
     /**
