@@ -800,6 +800,7 @@ class flexible_table {
         if (is_object($rowwithkeys)){
             $rowwithkeys = (array)$rowwithkeys;
         }
+        $row = array();
         foreach (array_keys($this->columns) as $column){
             if (isset($rowwithkeys[$column])){
                 $row [] = $rowwithkeys[$column];
