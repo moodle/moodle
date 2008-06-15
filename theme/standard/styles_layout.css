@@ -3989,7 +3989,7 @@ table.quizreviewsummary td.cell {
 #mod-quiz-report table#itemanalysis .header {
   text-align: left;
 }
-#mod-quiz-report table#itemanalysis .numcol {
+#mod-quiz-report table .numcol {
   text-align: center;
   vertical-align : middle !important;
 }

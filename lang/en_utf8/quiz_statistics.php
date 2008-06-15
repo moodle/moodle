@@ -28,4 +28,8 @@ $string['kurtosis'] = 'Score distribution kurtosis';
 $string['cic'] = 'Coefficient of internal consistency';
 $string['errorratio'] = 'Error ratio';
 $string['standarderror'] = 'Standard error';
+$string['questionnumber'] = 'Q#';
+$string['quizstructureanalysis'] = 'Quiz structure analysis';
+$string['questiontype'] = 'Q type';
+$string['intended_weight'] = 'Intended question weight';
 ?>

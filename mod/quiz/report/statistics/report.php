@@ -55,9 +55,9 @@ class quiz_report extends quiz_default_report {
             $allowedlist = $groupstudentslist;
         }
 
-        $questions = quiz_report_load_questions($quiz);
+        $questions = question_load_questions(quiz_questions_in_quiz($quiz->questions));
 
-        $table = new quiz_report_statistics_table($quiz , $questions, $reporturl);
+        $table = new quiz_report_statistics_table();
         $table->is_downloading($download, get_string('reportstatistics','quiz_statistics'),
                     "$course->shortname ".format_string($quiz->name,true));
         if (!$table->is_downloading()) {
@@ -261,8 +261,16 @@ class quiz_report extends quiz_default_report {
             $quizattsstatistics->data[] = array(get_string('standarderror', 'quiz_statistics'), 
                 quiz_report_scale_sumgrades_as_percentage($standarderror, $quiz));
             print_table($quizattsstatistics);
-
+            
         }
+        if (!$table->is_downloading()){
+            print_heading(get_string('quizstructureanalysis', 'quiz_statistics'));
+        }
+        $table->setup($quiz, $cm->id, $reporturl);
+        foreach ($questions as $question){
+            $table->add_data_keyed($table->format_row($question));
+        }
+        $table->finish_output();
         return true;
     }
 
