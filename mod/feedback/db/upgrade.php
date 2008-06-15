@@ -160,7 +160,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
             
             $result = $result && $DB->execute($update_sql1);
             $result = $result && $DB->execute($update_sql2);
-            $result = $result && $BB->execute($update_sql3);
+            $result = $result && $DB->execute($update_sql3);
         }
         if ($result) {
             $update_sql1 = "UPDATE {feedback_item} SET typ = 'multichoice' WHERE typ IN('radio','check','dropdown')";
