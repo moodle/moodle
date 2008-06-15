@@ -3,6 +3,7 @@
 
 
 $string['adminprimarynoedit'] = 'The primary admin cannot be edited by others';
+$string['authorizeerror'] = 'Authorize Error';
 $string['blockdoesnotexist'] = 'This block does not exist';
 $string['blockcannotinistantiate'] = 'Problem in instantiating block object';
 $string['blockcannotread'] = 'Could not read data for blockid= $a ';
@@ -174,7 +175,7 @@ $string['csvfewcolumns'] = 'Not enough columns, please verify the delimiter sett
 $string['csvinvalidcolsnum'] = 'INVALID CSV FILE; Each line must include 49 or 70 fields';
 $string['csvinvalidcols'] = '<b>INVALID CSV FILE:</b> First line must include "Header Fields" and the file must be type of <br />"Expanded Fields/Comma Separated"<br />or<br /> "Expanded Fields with CAVV Result Code/Comma Separated"';
 $string['csvweirdcolumns'] = 'Invalid CSV file format - number of columns is not constant!';
-$string['csvloaderror'] = 'Error occur during loading vcs file!';
+$string['csvloaderror'] = 'Error occur during loading CSV file!';
 $string['dbconnectionfailed'] = '<p>Error: Database connection failed.</p>
 <p>It is possible that the database is overloaded or otherwise not running properly.</p>
 <p>The site administrator should also check that the database details have been correctly specified in config.php</p>$a';
