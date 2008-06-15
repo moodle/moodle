@@ -42,12 +42,12 @@ function moodle_binary_get_path($id, $meta, $course, $wiki, $userid, $groupid) {
     global $CFG;
     $entry=wiki_get_entry($wiki, $course, $userid, $groupid);
     if(!$entry) {
-      print_error("Cannot get entry."); 
+      print_error('cannotgetentry', 'wiki'); 
     }
     
     $dir=make_upload_directory("$course->id/$CFG->moddata/wiki/$wiki->id/$entry->id/".$meta["section"]);
     if(substr($id, 0, strlen(EWIKI_IDF_INTERNAL))!=EWIKI_IDF_INTERNAL) {
-      print_error("Binary entry does not start with ".EWIKI_IDF_INTERNAL.substr($id, 0, strlen(EWIKI_IDF_INTERNAL)));
+      print_error('cannotstartwith', 'wiki', '', EWIKI_IDF_INTERNAL.substr($id, 0, strlen(EWIKI_IDF_INTERNAL)));
     }
     $id = substr($id,strlen(EWIKI_IDF_INTERNAL));
     $id = clean_filename($id);
@@ -61,14 +61,14 @@ function moodle_binary_store_file(&$filename, &$id, &$meta, $ext=".bin") {
     # READ-Only
     global $_FILES, $CFG, $course, $wiki, $groupid, $userid, $ewiki_title, $cm;
     if(!$wiki->ewikiacceptbinary) {
-      print_error("This wiki does not accept binaries");
+      print_error('cannotacceptbin', 'wiki');
       return 0;
     }
     
     
     $entry=wiki_get_entry($wiki, $course, $userid, $groupid);
     if(!$entry->id) {
-      print_error("Cannot get entry.");
+      print_error('cannotgetentry', 'wiki');
     }
     
     require_once($CFG->dirroot.'/lib/uploadlib.php');
@@ -81,7 +81,7 @@ function moodle_binary_store_file(&$filename, &$id, &$meta, $ext=".bin") {
         }
         return true;
     }
-    print_error($um->print_upload_log(true));
+    print_error('uploaderror', 'wiki', '', $um->print_upload_log(true));
     return false;
    
 }
@@ -94,7 +94,7 @@ function moodle_binary_store_get_file($id, &$meta) {
 
     #-- check for file
     if(!$wiki->ewikiacceptbinary) {
-      print_error("This wiki does not accept binaries");
+      print_error('cannotacceptbin', 'wiki');
       return 0;
     }
     

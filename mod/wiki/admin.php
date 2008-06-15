@@ -14,26 +14,26 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('wiki', $id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
 
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
 
         if (! $wiki = $DB->get_record("wiki", array("id"=>$cm->instance))) {
-            print_error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
 
     } else {
         if (! $wiki = $DB->get_record("wiki", array("id"=>$a))) {
-            print_error("Course module is incorrect");
+            print_error('coursemisconf');
         }
         if (! $course = $DB->get_record("course", array("id"=>$wiki->course))) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
     }
 
@@ -58,18 +58,18 @@
 
     /// Is an Action given ?
     if(!$action) {
-      print_error("noadministrationaction","wiki");
+      print_error('noadministrationaction','wiki');
     }
 
     /// Correct Action ?
     if(!in_array($action, array("setpageflags", "removepages", "strippages", "checklinks", "revertpages"))) {
-      print_error("Unknown action '$action'","wiki");
+      print_error('unknowaction');
     }
 
 
     /// May the User administrate it ?
     if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false || wiki_can_edit_entry($wiki_entry, $wiki, $USER, $course) === false) {
-      print_error("notadministratewiki","wiki");
+      print_error('notadministratewiki', 'wiki');
     }
 
     $canedit = wiki_can_edit_entry($wiki_entry, $wiki, $USER, $course);
@@ -77,7 +77,7 @@
     if(in_array($action,array("removepages","strippages","revertpages"))) {
       if(!($wiki->wtype=="student" || ($wiki->wtype=="group" and $canedit) || wiki_is_teacher($wiki))) {
         add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to trick admin.php with action=$action.");
-        print_error("Hack attack detected !");
+        print_error('hackdetected');
       }
     }
 
@@ -214,7 +214,7 @@
                 }
               }
             break;
-        default: print_error("No such Wiki-Admin action: $action");
+        default: print_error('unknowaction');
           break;
       }
     }
@@ -228,7 +228,7 @@
            if(!$ret) {
              redirect($redirect, get_string("pagesremoved","wiki"), 1);
            } else {
-             print_error($ret);
+             print_error('invalidaction');
            }
            exit;
         case "strippages":
@@ -240,7 +240,7 @@
            if(!$ret) {
              redirect($redirect, get_string("pagesstripped","wiki"), 1);
            } else {
-             print_error($ret);
+             print_error('invalidaction');
            }
            exit;
         case "checklinks":
@@ -254,7 +254,7 @@
         case "setpageflags":
            # No confirmation needed
            break;
-        default: print_error("No such action '$action' with confirmation");
+        default: print_error('unknowaction');
       }
     }
 

@@ -299,9 +299,9 @@
            // Binary Handling starts here
            #### MOODLE CHANGE TO BE COMPATIBLE WITH PHP 4.1
            #if(headers_sent($file,$line)) {
-           #  print_error("Headers already sent: $file:$line");
+           #  print_error('headersent');
            if(headers_sent()) {
-             print_error("Headers already sent.");
+             print_error('headersent');
            }
            $pf($GLOBALS);
         }

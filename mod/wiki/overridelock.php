@@ -16,36 +16,36 @@ $id=required_param('id',PARAM_INT);
 $page=required_param('page',PARAM_RAW);
 
 if (! $cm = get_coursemodule_from_id('wiki', $id)) {
-    print_error("Course Module ID was incorrect");
+    print_error('invalidcoursemodule');
 }
 if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-    print_error("Course is misconfigured");
+    print_error('coursemisconf');
 }
 if (! $wiki = $DB->get_record("wiki", array("id"=>$cm->instance))) {
-    print_error("Course module is incorrect");
+    print_error('invalidcoursemodule');
 }
 
 if(!confirm_sesskey()) {
-    print_error("Session key not set");
+    print_error('confirmsesskeybad');
 }
 if(!data_submitted()) {
-    print_error("Only POST requests accepted");
+    print_error('invalidformdata');
 }
 
 require_course_login($course, true, $cm);
 
 $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 if(!has_capability('mod/wiki:overridelock', $modcontext)) {
-    print_error("You do not have the capability to override editing locks");
+    print_error('nopermissiontooverride', 'wiki');
 }
 
 $actions = explode('/', $page,2);
 if(count($actions)!=2) {
-    print_error("Unsupported page value");
+    print_error('invalidpageval', 'wiki');
 }
 $pagename=$actions[1];
 if(!$DB->delete_records('wiki_locks', array('pagename'=>$pagename, 'wikiid'=>$wiki->id))) {
-    print_error('Unable to delete lock record');
+    print_error('cannotdeletelockrecored', 'wiki');
 }
 
 redirect("view.php?id=$id&page=".urlencode($page));

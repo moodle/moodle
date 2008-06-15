@@ -38,26 +38,26 @@
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('wiki', $id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
 
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
 
         if (! $wiki = $DB->get_record("wiki", array("id"=>$cm->instance))) {
-            print_error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
 
     } else {
         if (! $wiki = $DB->get_record("wiki", array("id"=>$wid))) {
-            print_error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
         if (! $course = $DB->get_record("course", array("id"=>$wiki->course))) {
-            print_error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance("wiki", $wiki->id, $course->id)) {
-            print_error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
     }
 
@@ -96,8 +96,7 @@
             // We must have the edit lock in order to be permitted to save    
             list($ok,$lock)=wiki_obtain_lock($wiki_entry->id,$pagename);
             if(!$ok) {
-                $strsavenolock=get_string('savenolock','wiki');
-                print_error($strsavenolock, '', $CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
+                print_error('savenolock', 'wiki', $CFG->wwwroot.'/mod/wiki/view.php?id='.$cm->id.'&page=view/'.urlencode($pagename));
             }
         }
         

@@ -29,7 +29,7 @@ function wiki_context($wiki) {
         $wiki = $wiki->id;
     }
     if (! $cm = get_coursemodule_from_instance('wiki', $wiki)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
 
     return get_context_instance(CONTEXT_MODULE, $cm->id);
@@ -412,7 +412,7 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
             // Whatever groups are in the course, pick one
             $coursegroups = groups_get_all_groups($course->id);
             if(!$coursegroups || count($coursegroups)==0) {
-                print_error("Can't access wiki in group mode when no groups are configured for the course");
+                print_error('groupmodeerror', 'wiki');
             }
             $unkeyed=array_values($coursegroups); // Make sure first item is index 0
             $groupid=$unkeyed[0]->id;
@@ -424,7 +424,7 @@ function wiki_get_default_entry(&$wiki, &$course, $userid=0, $groupid=0) {
         if (wiki_can_add_entry($wiki, $USER, $course, $userid, $groupid)) {
             wiki_add_entry($wiki, $course, $userid, $groupid);
             if (($wiki_entry = wiki_get_entry($wiki, $course, $userid, $groupid)) === false) {
-                print_error("Could not add wiki entry.");
+                print_error('cannotaddentry', 'wiki');
             }
         }
     }
@@ -468,7 +468,7 @@ function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
                     // Whatever groups are in the course, pick one
                     $coursegroups = groups_get_all_groups($course->id);
                     if(!$coursegroups || count($coursegroups)==0) {
-                        print_error("Can't access wiki in group mode when no groups are configured for the course");
+                        print_error('groupmodeerror', 'wiki');
                     }
                     $unkeyed=array_values($coursegroups); // Make sure first item is index 0
                     $groupid=$unkeyed[0]->id;
@@ -480,7 +480,7 @@ function wiki_get_entry(&$wiki, &$course, $userid=0, $groupid=0) {
             if ($groupid and wiki_user_can_access_group_wiki($wiki, $groupid, $course)) {
                 $wentry = wiki_get_group_entry($wiki, $groupid);
             } else {
-                print_error("Cannot access any groups for this wiki");
+                print_error('cannotaccessgroup', 'wiki');
             }
         }
         /// If mode is 'nogroups', then groupid is zero.
@@ -1700,7 +1700,7 @@ function wiki_obtain_lock($wikiid,$pagename) {
         } else {
             // Not locked any more. Get rid of the old lock record.
             if(!$DB->delete_records('wiki_locks', array('pagename'=>$pagename,'wikiid'=>$wikiid))) {
-                print_error('Unable to delete lock record');
+                print_error('cannotdeletelockrecored', 'wiki');
             }
         }
     }
@@ -1715,7 +1715,7 @@ function wiki_obtain_lock($wikiid,$pagename) {
         $newlock->wikiid=$wikiid;
         $newlock->pagename=$pagename;
         if(!$lockid=$DB->insert_record('wiki_locks',$newlock)) {
-            print_error('Unable to insert lock record');
+            print_error('cannotinsertlockrecored', 'wiki');
         }
     }
 
@@ -1752,7 +1752,7 @@ function wiki_release_lock($wikiid,$pagename) {
         $lockid=$_SESSION[SESSION_WIKI_LOCKS][$key];
         unset($_SESSION[SESSION_WIKI_LOCKS][$key]);
         if (!$DB->delete_records('wiki_locks', array('id'=>$lockid))) {
-            print_error("Unable to delete lock record.");
+            print_error('cannotdeletelockrecored', 'wiki');
         }
     }
 }
