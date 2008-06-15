@@ -1700,13 +1700,13 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
         $select = array();
 
         if (!$forum->viewhiddentimedposts) {
-            $select[] = "(d.userid = ? OR (d.timestart < ? AND (d.timeend = 0 OR d.timeend > ?)))";
-            $params = array($USER->id, $now, $now);
+            $select[] = "(d.userid = :userid OR (d.timestart < : AND (d.timeend = 0 OR d.timeend > :timeend)))";
+            $params = array('userid'=>$USER->id, 'timestart'=>$now, 'timeend'=>$now);
         }
 
         if ($forum->type == 'qanda') {
             if (!empty($forum->onlydiscussions)) {
-                list($discussionid_sql, $discussionid_params) = $DB->get_in_or_equal($forum->onlydiscussions);
+                list($discussionid_sql, $discussionid_params) = $DB->get_in_or_equal($forum->onlydiscussions, SQL_PARAMS_NAMED, 'qanda0');
                 $params = array_merge($params, $discussionid_params);
                 $select[] = "(d.id $discussionid_sql OR p.parent = 0)";
             } else {
@@ -1715,38 +1715,27 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
         }
 
         if (!empty($forum->onlygroups)) {
-            list($groupid_sql, $groupid_params) = $DB->get_in_or_equal($forum->onlygroups);
+            list($groupid_sql, $groupid_params) = $DB->get_in_or_equal($forum->onlygroups, SQL_PARAMS_NAMED, 'grps0');
             $params = array_merge($params, $groupid_params);
             $select[] = "d.groupid $groupid_sql";
         }
 
         if ($select) {
             $selects = implode(" AND ", $select);
-            $where[] = "(d.forum = ? AND $selects)";
-            $params[] = $forumid;
+            $where[] = "(d.forum = :forum AND $selects)";
+            $params['forum'] = $forumid;
         } else {
             $fullaccess[] = $forumid;
         }
     }
 
     if ($fullaccess) {
-        list($fullid_sql, $fullid_params) = $DB->get_in_or_equal($fullaccess);
+        list($fullid_sql, $fullid_params) = $DB->get_in_or_equal($fullaccess, SQL_PARAMS_NAMED, 'fula0');
         $params = array_merge($params, $fullid_params);
         $where[] = "(d.forum $fullid_sql)";
     }
 
     $selectdiscussion = "(".implode(" OR ", $where).")";
-
-    // Some differences SQL
-    $LIKE = $DB->sql_ilike();
-    $NOTLIKE = 'NOT ' . $LIKE;
-    if ($CFG->dbfamily == 'postgres') {
-        $REGEXP = '~*';
-        $NOTREGEXP = '!~*';
-    } else {
-        $REGEXP = 'REGEXP';
-        $NOTREGEXP = 'NOT REGEXP';
-    }
 
     $messagesearch = '';
     $searchstring = '';
@@ -1774,14 +1763,15 @@ function forum_search_posts($searchterms, $courseid=0, $limitfrom=0, $limitnum=5
     // CREATE FULLTEXT INDEX foru_post_tix ON [prefix]forum_posts (subject, message)
     // Experimental feature under 1.8! MDL-8830
         if (!empty($CFG->forum_usetextsearches)) {
-            $messagesearch = search_generate_text_SQL($parsearray, 'p.message', 'p.subject',
+            list($messagesearch, $msparams) = search_generate_text_SQL($parsearray, 'p.message', 'p.subject',
                                                  'p.userid', 'u.id', 'u.firstname',
                                                  'u.lastname', 'p.modified', 'd.forum');
         } else {
-            $messagesearch = search_generate_SQL($parsearray, 'p.message', 'p.subject',
+            list($messagesearch, $msparams) = search_generate_SQL($parsearray, 'p.message', 'p.subject',
                                                  'p.userid', 'u.id', 'u.firstname',
                                                  'u.lastname', 'p.modified', 'd.forum');
         }
+        $params = array_merge($params, $msparams);
     }
 
     $fromsql = "{forum_posts} p,
