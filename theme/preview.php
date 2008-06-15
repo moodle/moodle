@@ -9,7 +9,7 @@
     }
 
     if (! $site = get_site()) {
-        print_error("Site doesn't exist!");
+        print_error('siteisnotdefined', 'debug');
     }
 
     require_login();

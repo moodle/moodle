@@ -10,7 +10,7 @@ if (empty($THEME->chameleonenabled)) {
 
 $id = optional_param('id', SITEID, PARAM_INT);
 if (!$course = $DB->get_record('course', array('id'=>$id))) {
-    print_error('Incorrect course id');
+    print_error('invalidcourseid');
 }
 
 course_setup($course); // we should not require login here

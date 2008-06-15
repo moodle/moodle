@@ -23,7 +23,7 @@
 
     if ($choose and confirm_sesskey()) {
         if (!is_dir($CFG->themedir .'/'. $choose)) {
-            print_error("This theme is not installed!");
+            print_error('themenotinstall');
         }
         if (set_config("theme", $choose)) {
             theme_setup($choose);
@@ -47,7 +47,7 @@
             admin_externalpage_print_footer();
             exit;
         } else {
-            print_error("Could not set the theme!");
+            print_error('cannotsettheme');
         }
     }
 

@@ -19,7 +19,7 @@
 
 /// Check the user we are talking to is valid
     if (! $user = $DB->get_record('user', array('id'=>$userid))) {
-        print_error("User ID was incorrect");
+        print_error('invaliduserid');
     }
 
 /// Check if frame&jsless mode selected
