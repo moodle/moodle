@@ -187,19 +187,20 @@ switch ($action) {
         if (!data_submitted() or !confirm_sesskey()) {
             print_error('invalidrequest');
         }
+        $exportfile = data_presets_export($course, $cm, $data);
+        $downloadsubdir = "$course->id/moddata/data/$data->id";
+        $filename = clean_filename($data->name . '-preset-' . gmdate("Ymd_Hi") . '.zip');
+        $downloadfile = "$CFG->dataroot/$downloadsubdir/$filename";
+        @unlink($downloadfile);
 
-        echo '<div style="text-align:center">';
-        $file = data_presets_export($course, $cm, $data);
-        echo get_string('exportedtozip', 'data')."<br />";
-        $perminantfile = $CFG->dataroot."/$course->id/moddata/data/$data->id/preset.zip";
-        @unlink($perminantfile);
-        /* is this created elsewhere? sometimes its not present... */
-        make_upload_directory("$course->id/moddata/data/$data->id");
-
-        /* now just move the zip into this folder to allow a nice download */
-        if (!rename($file, $perminantfile)) 
+        // Move the exported zip to the download folder
+        make_upload_directory($downloadsubdir);
+        if (! rename($exportfile, $downloadfile)) {
             print_error('cannotmovezip');
-        echo "<a href='$CFG->wwwroot/file.php/$course->id/moddata/data/$data->id/preset.zip'>".get_string('download', 'data')."</a>";
+        }
+        echo '<div style="text-align:center">';
+        echo get_string('exportedtozip', 'data') . '<br />';
+        echo "<a href='$CFG->wwwroot/file.php/$downloadsubdir/$filename'>" . get_string('download', 'data') . '</a>';
         echo '</div>';
         break;
 
