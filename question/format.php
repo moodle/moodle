@@ -385,7 +385,7 @@ class qformat_default {
                 $category->sortorder = 999;
                 $category->stamp = make_unique_id_code();
                 if (!($id = $DB->insert_record('question_categories', $category))) {
-                    print_error( "cannot create new category - $catname" );
+                    print_error("cannotcreatecategory");
                 }
                 $category->id = $id;
                 $parent = $id;
