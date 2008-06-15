@@ -78,8 +78,8 @@ if (!empty($tests)) {
         // Create the group of tests.
         $test = new AutoGroupTest(false, true);
 
-        $test->addTestFile($CFG->libdir.'/dml/simpletest/testdmllib.php');
-        $test->addTestFile($CFG->libdir.'/ddl/simpletest/testddllib.php');
+        $test->addTestFile($CFG->libdir.'/dml/simpletest/testdml.php');
+        $test->addTestFile($CFG->libdir.'/ddl/simpletest/testddl.php');
 
         // Make the reporter, which is what displays the results.
         $reporter = new ExHtmlReporter($showpasses);

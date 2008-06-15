@@ -5,7 +5,7 @@ require_once($CFG->libdir.'/dml/pdo_moodle_recordset.php');
 
 /**
  * Experimental pdo database class
- * @package dmlib
+ * @package dml
  */
 abstract class pdo_moodle_database extends moodle_database {
 

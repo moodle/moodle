@@ -4,7 +4,7 @@ require_once($CFG->libdir.'/dml/moodle_recordset.php');
 
 /**
  * Adodb basic moodle recordset class
- * @package dmlib
+ * @package dml
  */
 class adodb_moodle_recordset extends moodle_recordset {
 

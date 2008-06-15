@@ -6,7 +6,7 @@ require_once($CFG->libdir.'/dml/oci8po_adodb_moodle_recordset.php');
 
 /**
  * Oracle database class using adodb backend
- * @package dmlib
+ * @package dml
  */
 class oci8po_adodb_moodle_database extends adodb_moodle_database {
 

@@ -77,10 +77,10 @@ if (!is_null($path)) {
     // Add ddl and dml tests if requested
     if ($rundbtests) {
         if (!strstr($path, $CFG->libdir . '/ddl')) {
-            $test->addTestFile($CFG->libdir . '/ddl/simpletest/testddllib.php');
+            $test->addTestFile($CFG->libdir . '/ddl/simpletest/testddl.php');
         }
         if (!strstr($path, $CFG->libdir . '/dml')) {
-            $test->addTestFile($CFG->libdir . '/dml/simpletest/testdmllib.php');
+            $test->addTestFile($CFG->libdir . '/dml/simpletest/testdml.php');
         }
     }
 

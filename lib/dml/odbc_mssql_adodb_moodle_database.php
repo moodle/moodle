@@ -6,7 +6,7 @@ require_once($CFG->libdir.'/dml/mssql_adodb_moodle_database.php');
 
 /**
  * Experimenta mssql odbc database class using adodb backend
- * @package dmlib
+ * @package dml
  */
 class odbc_mssql_adodb_moodle_database extends mssql_adodb_moodle_database {
 

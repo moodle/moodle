@@ -2,9 +2,26 @@
 
 require_once($CFG->libdir.'/dml/database_column_info.php');
 
+/// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
+
+/**
+ * Bitmask, indicates only :name type parameters are supported by db backend.
+ */
+define('SQL_PARAMS_NAMED', 1);
+
+/**
+ * Bitmask, indicates only ? type parameters are supported by db backend.
+ */
+define('SQL_PARAMS_QM', 2);
+
+/**
+ * Bitmask, indicates only $1, $2.. type parameters are supported by db backend.
+ */
+define('SQL_PARAMS_DOLLAR', 4);
+
 /**
  * Abstract class representing moodle database interface.
- * @package dmlib
+ * @package dml
  */
 abstract class moodle_database {
 

@@ -1,14 +1,14 @@
 <?php
 /**
- * Unit tests for dmllib
- * @package dmllib
+ * Unit tests for dml
+ * @package dml
  */
 
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-class dmllib_test extends UnitTestCase {
+class dml_test extends UnitTestCase {
     private $tables = array();
     private $tdb;
 

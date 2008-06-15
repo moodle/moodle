@@ -6,7 +6,7 @@ require_once($CFG->libdir.'/dml/mysqli_adodb_moodle_database.php');
 
 /**
  * Legacy MySQL database class using adodb backend
- * @package dmlib
+ * @package dml
  */
 class mysql_adodb_moodle_database extends mysqli_adodb_moodle_database {
 

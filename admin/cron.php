@@ -195,7 +195,7 @@
     mtrace('Removing expired enrolments ...', '');     // See MDL-8785
     $timenow = time();
     $somefound = false;
-    // The preferred way saves memory, dmllib.php
+    // The preferred way saves memory, datablib
     // find courses where limited enrolment is enabled
     $sql = "SELECT ra.roleid, ra.userid, ra.contextid
               FROM {course} c

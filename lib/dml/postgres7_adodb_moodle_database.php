@@ -5,7 +5,7 @@ require_once($CFG->libdir.'/dml/adodb_moodle_database.php');
 
 /**
  * Postgresql database class using adodb backend
- * @package dmlib
+ * @package dml
  */
 class postgres7_adodb_moodle_database extends adodb_moodle_database {
 

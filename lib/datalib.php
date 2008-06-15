@@ -11,6 +11,89 @@
  * @package moodlecore
  */
 
+/**
+ * Sets up global $DB moodle_database instance
+ * @return void
+ */
+function setup_DB() {
+    global $CFG, $DB;
+
+    if (isset($DB)) {
+        return;
+    }
+
+    if (!isset($CFG->dbuser)) {
+        $CFG->dbuser = '';
+    }
+
+    if (!isset($CFG->dbpass)) {
+        $CFG->dbpass = '';
+    }
+
+    if (!isset($CFG->dbname)) {
+        $CFG->dbname = '';
+    }
+
+    if (!isset($CFG->dbpersist)) {
+        $CFG->dbpersist = false;
+    }
+
+    if (!isset($CFG->dblibrary)) {
+        $CFG->dblibrary = 'adodb';
+    }
+
+    if (!isset($CFG->dboptions)) {
+        $CFG->dboptions = array();
+    }
+
+    if ($CFG->dblibrary == 'adodb') {
+        $classname = $CFG->dbtype.'_adodb_moodle_database';
+        require_once($CFG->libdir.'/dml/'.$classname.'.php');
+        $DB = new $classname();
+
+    } else {
+        error('Not implemented db library yet: '.$CFG->dblibrary);
+    }
+
+    $CFG->dbfamily = $DB->get_dbfamily(); // TODO: BC only for now
+
+    $driverstatus = $DB->driver_installed();
+
+    if ($driverstatus !== true) {
+        print_error('dbdriverproblem', 'error', '', $driverstatus);
+    }
+
+    if (debugging('', DEBUG_ALL)) {
+        // catch errors
+        ob_start();
+    } else {
+        $prevdebug = error_reporting(0);
+    }
+    if (!$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix, $CFG->dboptions)) {
+        if (debugging('', DEBUG_ALL)) {
+            if ($dberr = ob_get_contents()) {
+                $dberr = '<p><em>'.$dberr.'</em></p>';
+            }
+            ob_end_clean();
+        } else {
+            $dberr = '';
+        }
+        if (empty($CFG->noemailever) and !empty($CFG->emailconnectionerrorsto)) {
+            @mail($CFG->emailconnectionerrorsto,
+                  'WARNING: Database connection error: '.$CFG->wwwroot,
+                  'Connection error: '.$CFG->wwwroot);
+        }
+        print_error('dbconnectionfailed', 'error', '', $dberr);
+    }
+    if (debugging('', DEBUG_ALL)) {
+        ob_end_clean();
+    } else {
+        error_reporting($prevdebug);
+    }
+
+    return true;
+}
+
  /// Some constants
  define('LASTACCESS_UPDATE_SECS', 60); /// Number of seconds to wait before
                                        /// updating lastaccess information in DB.
@@ -1866,10 +1949,6 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
 /**
  * Store user last access times - called when use enters a course or site
- *
- * Note: we use ADOdb code directly in this function to save some CPU
- * cycles here and there. They are simple operations not needing any
- * of the postprocessing performed by dmllib.php
  *
  * @param int $courseid, empty means site
  * @return void

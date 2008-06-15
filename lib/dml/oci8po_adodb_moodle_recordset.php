@@ -4,7 +4,7 @@ require_once($CFG->libdir.'/dml/adodb_moodle_recordset.php');
 
 /**
  * Oracle moodle recordest with special hacks
- * @package dmlib
+ * @package dml
  */
 class oci8po_adodb_moodle_recordset extends adodb_moodle_recordset {
 
