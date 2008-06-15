@@ -40,14 +40,14 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
     }
 
     protected function configure_dbconnection() {
-        $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
+        $this->adodb->SetFetchMode(ADODB_FETCH_ASSOC);
 
         /// No need to set charset. It must be specified in the driver conf
         /// Allow quoted identifiers
-            $this->db->Execute('SET QUOTED_IDENTIFIER ON');
+            $this->adodb->Execute('SET QUOTED_IDENTIFIER ON');
         /// Force ANSI nulls so the NULL check was done by IS NULL and NOT IS NULL
         /// instead of equal(=) and distinct(<>) simbols
-            $this->db->Execute('SET ANSI_NULLS ON');
+            $this->adodb->Execute('SET ANSI_NULLS ON');
 
         return true;
     }
@@ -192,7 +192,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         }
 
         foreach ($blobs as $key=>$value) {
-            if (!$this->db->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
+            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
                 return false;
             }
         }
@@ -223,7 +223,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         if ($column->meta_type == 'B') { /// If the column is a BLOB (IMAGE)
         /// Update BLOB column and return
             $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
-            return $this->db->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
+            return $this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
         }
 
     /// Arrived here, normal update (without BLOBs)
@@ -243,7 +243,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield WHERE $select";
 
-        if (!$rs = $this->db->Execute($sql, $params)) {
+        if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
             return false;
         }
@@ -309,7 +309,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
 
         foreach ($blobs as $key=>$value) {
-            if (!$this->db->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
+            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
                 return false;
             }
         }

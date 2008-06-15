@@ -19,10 +19,10 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * @return bool success
      */
     public function create_database($dbhost, $dbuser, $dbpass, $dbname) {
-        $this->db->database = ''; // reset database name cached by ADODB. Trick from MDL-9609
-        if ($this->db->Connect($dbhost, $dbuser, $dbpass)) { /// Try to connect without DB
-            if ($this->db->Execute("CREATE DATABASE $dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci")) {
-                $this->db->Disconnect();
+        $this->adodb->database = ''; // reset database name cached by ADODB. Trick from MDL-9609
+        if ($this->adodb->Connect($dbhost, $dbuser, $dbpass)) { /// Try to connect without DB
+            if ($this->adodb->Execute("CREATE DATABASE $dbname DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci")) {
+                $this->adodb->Disconnect();
                 return true;
             } else {
                 return false;
@@ -49,8 +49,8 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
     }
 
     protected function configure_dbconnection() {
-        $this->db->SetFetchMode(ADODB_FETCH_ASSOC);
-        $this->db->Execute("SET NAMES 'utf8'");
+        $this->adodb->SetFetchMode(ADODB_FETCH_ASSOC);
+        $this->adodb->Execute("SET NAMES 'utf8'");
         return true;
     }
 
@@ -94,7 +94,7 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * @return bool true if db in unicode mode
      */
     function setup_is_unicodedb() {
-        $rs = $this->db->Execute("SHOW LOCAL VARIABLES LIKE 'character_set_database'");
+        $rs = $this->adodb->Execute("SHOW LOCAL VARIABLES LIKE 'character_set_database'");
         if ($rs && !$rs->EOF) {
             $records = $rs->GetAssoc(true);
             $encoding = $records['character_set_database']['Value'];
@@ -111,9 +111,9 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      */
     public function change_db_encoding() {
         // try forcing utf8 collation, if mysql db and no tables present
-        if (!$this->db->Metatables()) {
+        if (!$this->adodb->Metatables()) {
             $SQL = 'ALTER DATABASE '.$this->dbname.' CHARACTER SET utf8';
-            $this->db->Execute($SQL);
+            $this->adodb->Execute($SQL);
             if ($this->setup_is_unicodedb()) {
                 $this->configure_dbconnection();
                 return true;
@@ -242,7 +242,7 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
 
-        if (!$rs = $this->db->Execute($sql, $params)) {
+        if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
             return false;
         }

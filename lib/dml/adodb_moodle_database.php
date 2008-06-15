@@ -9,7 +9,7 @@ require_once($CFG->libdir.'/dml/adodb_moodle_recordset.php');
  */
 abstract class adodb_moodle_database extends moodle_database {
 
-    protected $db;
+    protected $adodb;
 
     /**
      * Returns localised database type name
@@ -59,18 +59,18 @@ abstract class adodb_moodle_database extends moodle_database {
 
         require_once($CFG->libdir.'/adodb/adodb.inc.php');
 
-        $this->db = ADONewConnection($this->get_dbtype());
+        $this->adodb = ADONewConnection($this->get_dbtype());
 
         // See MDL-6760 for why this is necessary. In Moodle 1.8, once we start using NULLs properly,
         // we probably want to change this value to ''.
-        $this->db->null2null = 'A long random string that will never, ever match something we want to insert into the database, I hope. \'';
+        $this->adodb->null2null = 'A long random string that will never, ever match something we want to insert into the database, I hope. \'';
 
         if (!isset($this->dbpersist) or !empty($this->dbpersist)) {    // Use persistent connection (default)
-            if (!$this->db->PConnect($this->dbhost, $this->dbuser, $this->dbpass, $this->dbname)) {
+            if (!$this->adodb->PConnect($this->dbhost, $this->dbuser, $this->dbpass, $this->dbname)) {
                 return false;
             }
         } else {                                                     // Use single connection
-            if (!$this->db->Connect($this->dbhost, $this->dbuser, $this->dbpass, $this->dbname)) {
+            if (!$this->adodb->Connect($this->dbhost, $this->dbuser, $this->dbpass, $this->dbname)) {
                 return false;
             }
         }
@@ -89,8 +89,8 @@ abstract class adodb_moodle_database extends moodle_database {
      * Do NOT use connect() again, create a new instance if needed.
      */
     public function dispose() {
-        if ($this->db) {
-            $this->db->Close();
+        if ($this->adodb) {
+            $this->adodb->Close();
         }
         parent::dispose();
     }
@@ -101,7 +101,7 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return array
      */
     public function get_server_info() {
-        return $this->db->ServerInfo();
+        return $this->adodb->ServerInfo();
     }
 
     /**
@@ -109,7 +109,7 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return array of table names in lowercase and without prefix
      */
     public function get_tables() {
-        $metatables = $this->db->MetaTables();
+        $metatables = $this->adodb->MetaTables();
         $tables = array();
         foreach ($metatables as $table) {
             $table = strtolower($table);
@@ -126,7 +126,7 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return array of arrays
      */
     public function get_indexes($table) {
-        if (!$indexes = $this->db->MetaIndexes($this->prefix.$table)) {
+        if (!$indexes = $this->adodb->MetaIndexes($this->prefix.$table)) {
             return array();
         }
         $indexes = array_change_key_case($indexes, CASE_LOWER);
@@ -145,7 +145,7 @@ abstract class adodb_moodle_database extends moodle_database {
             return $this->columns[$table];
         }
 
-        if (!$columns = $this->db->MetaColumns($this->prefix.$table)) {
+        if (!$columns = $this->adodb->MetaColumns($this->prefix.$table)) {
             return array();
         }
 
@@ -153,7 +153,7 @@ abstract class adodb_moodle_database extends moodle_database {
 
         foreach ($columns as $column) {
             // colum names must be lowercase
-            $column->meta_type = substr($this->db->MetaType($column), 0 ,1); // only 1 character
+            $column->meta_type = substr($this->adodb->MetaType($column), 0 ,1); // only 1 character
             if (!empty($column->enums)) {
                 // hack: fix the 'quotes' surrounding the values itroduced by adodb
                 foreach ($column->enums as $key=>$value) {
@@ -169,7 +169,7 @@ abstract class adodb_moodle_database extends moodle_database {
     }
 
     public function get_last_error() {
-        return $this->db->ErrorMsg();
+        return $this->adodb->ErrorMsg();
     }
 
     /**
@@ -177,7 +177,7 @@ abstract class adodb_moodle_database extends moodle_database {
      * @param bool $state
      */
     public function set_debug($state) {
-        $this->db->debug = $state;
+        $this->adodb->debug = $state;
     }
 
     /**
@@ -185,7 +185,7 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return bool $state
      */
     public function get_debug() {
-        return $this->db->debug;
+        return $this->adodb->debug;
     }
 
     /**
@@ -203,7 +203,7 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return bool success
      */
     public function change_database_structure($sql) {
-        if ($rs = $this->db->Execute($sql)) {
+        if ($rs = $this->adodb->Execute($sql)) {
             $result = true;
         } else {
             $result = false;
@@ -230,7 +230,7 @@ abstract class adodb_moodle_database extends moodle_database {
             return false;
         }
 
-        if ($rs = $this->db->Execute($sql, $params)) {
+        if ($rs = $this->adodb->Execute($sql, $params)) {
             $result = true;
             $rs->Close();
         } else {
@@ -265,14 +265,14 @@ abstract class adodb_moodle_database extends moodle_database {
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
 
-        if (!$rs = $this->db->Execute($sql, $params)) {
+        if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
             return false;
         }
         if (!$returnid) {
             return true;
         }
-        if ($id = $this->db->Insert_ID()) {
+        if ($id = $this->adodb->Insert_ID()) {
             return (int)$id;
         }
         return false;
@@ -309,7 +309,7 @@ abstract class adodb_moodle_database extends moodle_database {
         $sets = implode(',', $sets);
         $sql = "UPDATE {$this->prefix}$table SET $sets WHERE id=?";
 
-        if (!$rs = $this->db->Execute($sql, $params)) {
+        if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
             return false;
         }
@@ -333,7 +333,7 @@ abstract class adodb_moodle_database extends moodle_database {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         $result = false;
-        if ($rs = $this->db->Execute($sql, $params)) {
+        if ($rs = $this->adodb->Execute($sql, $params)) {
             $result = true;
             $rs->Close();
         } else {
@@ -363,9 +363,9 @@ abstract class adodb_moodle_database extends moodle_database {
             ///Special case, 0 must be -1 for ADOdb
             $limitfrom = empty($limitfrom) ? -1 : $limitfrom;
             $limitnum  = empty($limitnum) ? -1 : $limitnum;
-            $rs = $this->db->SelectLimit($sql, $limitnum, $limitfrom, $params);
+            $rs = $this->adodb->SelectLimit($sql, $limitnum, $limitfrom, $params);
         } else {
-            $rs = $this->db->Execute($sql, $params);
+            $rs = $this->adodb->Execute($sql, $params);
         }
         if (!$rs) {
             $this->report_error($sql, $params);
@@ -398,9 +398,9 @@ abstract class adodb_moodle_database extends moodle_database {
             ///Special case, 0 must be -1 for ADOdb
             $limitfrom = empty($limitfrom) ? -1 : $limitfrom;
             $limitnum  = empty($limitnum) ? -1 : $limitnum;
-            $rs = $this->db->SelectLimit($sql, $limitnum, $limitfrom, $params);
+            $rs = $this->adodb->SelectLimit($sql, $limitnum, $limitfrom, $params);
         } else {
-            $rs = $this->db->Execute($sql, $params);
+            $rs = $this->adodb->Execute($sql, $params);
         }
         if (!$rs) {
             $this->report_error($sql, $params);
@@ -420,7 +420,7 @@ abstract class adodb_moodle_database extends moodle_database {
      */
     public function get_fieldset_sql($sql, array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
-        if (!$rs = $this->db->Execute($sql, $params)) {
+        if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
             return false;
         }
@@ -473,12 +473,12 @@ abstract class adodb_moodle_database extends moodle_database {
     }
 
     public function sql_substr() {
-        return $this->db->substr;
+        return $this->adodb->substr;
     }
 
     public function sql_concat() {
         $args = func_get_args();
-        return call_user_func_array(array($this->db, 'Concat'), $args);
+        return call_user_func_array(array($this->adodb, 'Concat'), $args);
     }
 
     public function sql_concat_join($separator="' '", $elements=array()) {
@@ -489,21 +489,21 @@ abstract class adodb_moodle_database extends moodle_database {
         for ($n=count($elements)-1; $n > 0 ; $n--) {
             array_splice($elements, $n, 0, $separator);
         }
-        return call_user_func_array(array($this->db, 'Concat'), $elements);
+        return call_user_func_array(array($this->adodb, 'Concat'), $elements);
     }
 
 
 
     public function begin_sql() {
-        $this->db->BeginTrans();
+        $this->adodb->BeginTrans();
         return true;
     }
     public function commit_sql() {
-        $this->db->CommitTrans();
+        $this->adodb->CommitTrans();
         return true;
     }
     public function rollback_sql() {
-        $this->db->RollbackTrans();
+        $this->adodb->RollbackTrans();
         return true;
     }
 
@@ -525,7 +525,7 @@ abstract class adodb_moodle_database extends moodle_database {
             } else if (is_numeric($param)) {
                 $return .= $param;
             } else {
-                $param = $this->db->qstr($param);
+                $param = $this->adodb->qstr($param);
                 $return .= "$param";
             }
             $return .= strtok('?');
