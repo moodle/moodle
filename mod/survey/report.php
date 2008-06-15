@@ -16,11 +16,11 @@
     $qid = implode (',', $qids);
 
     if (! $cm = get_coursemodule_from_id('survey', $id)) {
-        print_error("Course Module ID was incorrect");
+        print_error('invalidcoursemodule');
     }
 
     if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-        print_error("Course is misconfigured");
+        print_error('coursemisconf');
     }
 
     require_login($course->id, false, $cm);
@@ -30,11 +30,11 @@
     require_capability('mod/survey:readresponses', $context);
 
     if (! $survey = $DB->get_record("survey", array("id"=>$cm->instance))) {
-        print_error("Survey ID was incorrect");
+        print_error('invalidsurveyid', 'survey');
     }
 
     if (! $template = $DB->get_record("survey", array("id"=>$survey->template))) {
-        print_error("Template ID was incorrect");
+        print_error('invalidtmptid', 'survey');
     }
 
     $showscales = ($template->name != 'ciqname');
@@ -261,7 +261,7 @@
 
       case "question":
         if (!$question = $DB->get_record("survey_questions", array("id"=>$qid))) {
-            print_error("Question doesn't exist");
+            print_error('cannotfindquestion', 'survey');
         }
         $question->text = get_string($question->text, "survey");
 
@@ -321,7 +321,7 @@
 
       case "student":
          if (!$user = $DB->get_record("user", array("id"=>$student))) {
-             print_error("Student doesn't exist");
+             print_error('invaliduserid');
          }
 
          print_heading(get_string("analysisof", "survey", fullname($user)));
