@@ -70,7 +70,7 @@ class page_lesson extends page_generic_activity {
         $activityname = format_string($this->activityrecord->name);
 
         if ($this->lessonpageid === NULL) {
-            print_error('Programmer error: must set the lesson page ID');
+            print_error('invalidpageid', 'lesson');
         }
         if (empty($title)) {
             $title = "{$this->courserecord->shortname}: $activityname";
