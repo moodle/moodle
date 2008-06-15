@@ -167,12 +167,7 @@
             }
         }
 
-        $status = false;
-        if (file_exists("$CFG->libdir/db/install.xml")) {
-            $status = $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
-        } else {
-            print_error('dbnotsupport', 'debug', '', $CFG->dbtype);
-        }
+        $status = $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
 
         // all new installs are in unicode - keep for backwards compatibility and 1.8 upgrade checks
         set_config('unicodedb', 1);
