@@ -276,7 +276,7 @@ function get_cm($id, $error='cmunknown') {
     if (!$modname = $DB->get_field_sql("SELECT md.name
                                           FROM {course_modules} cm, {modules} md
                                          WHERE cm.id = ? AND md.id = cm.module", array($id))){
-        print_error($error);
+        print_error('cmunknown');
     }
 
     $cm = get_coursemodule_from_id($modname, $id);

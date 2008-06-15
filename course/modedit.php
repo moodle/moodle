@@ -248,7 +248,8 @@
                 print_error('cannotupdatemod', '', 'view.php?id=$course->id', $fromform->modulename);
             }
             if (is_string($returnfromfunc)) {
-                print_error($returnfromfunc, '', "view.php?id=$course->id");
+                //TODO: need more detailed error info
+                print_error('invalidfunction', '', 'view.php?id=$course->id');
             }
 
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
@@ -283,7 +284,8 @@
                 print_error("cannotaddnewmodule", '', "view.php?id=$course->id", $fromform->modulename);
             }
             if (is_string($returnfromfunc)) {
-                print_error($returnfromfunc, '', "view.php?id=$course->id");
+                //TODO: need more detailed error info
+                print_error('invalidfunction', '', 'view.php?id=$course->id');
             }
 
             $fromform->instance = $returnfromfunc;
