@@ -1245,7 +1245,7 @@ abstract class moodle_database {
 
     /**
      * Returns the proper substr() function for each DB
-     * Relies on ADOdb $db->substr property
+     * Relies on ADOdb $adodb->substr property
      */
     public abstract function sql_substr();
 
