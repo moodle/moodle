@@ -13,7 +13,7 @@
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
-        print_error('No such course!');
+        print_error('invalidcourseid');
     }
 
     // require proper login; guest user can not change password
@@ -31,7 +31,7 @@
 
     // do not allow "Logged in as" users to change any passwords
     if (!empty($USER->realuser)) {
-        print_error('Can not use this script when "Logged in as"!');
+        print_error('cannotcallscript');
     }
 
     if (is_mnet_remote_user($USER)) {
@@ -39,7 +39,7 @@
         if ($idprovider = $DB->get_record('mnet_host', array('id'=>$USER->mnethostid))) {
             $message .= get_string('userchangepasswordlink', 'mnet', $idprovider);
         }
-        print_error($message);
+        print_error('userchangepasswordlink', 'mnet', '', $message);
     }
 
     // load the appropriate auth plugin

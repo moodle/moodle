@@ -48,7 +48,7 @@ if ($p_secret !== false) {
 
         // check this isn't guest user
         if (isguestuser($user)) {
-            print_error('You cannot reset the guest password');
+            print_error('cannotresetguestpwd');
         }
 
         // make sure user is allowed to change password
@@ -57,13 +57,13 @@ if ($p_secret !== false) {
         // override email stop and mail new password
         $user->emailstop = 0;
         if (!reset_password_and_mail($user)) {
-            print_error('Error resetting password and mailing you');
+            print_error('cannotresetmail');
         }
 
         // Clear secret so that it can not be used again
         $user->secret = '';
         if (!$DB->set_field('user', 'secret', $user->secret, array('id'=>$user->id))) {
-            print_error('Error resetting user secret string');
+            print_error('cannotupdatesecret');
         }
 
         reset_login_count();
@@ -115,16 +115,16 @@ if ($mform->is_cancelled()) {
             // set 'secret' string
             $user->secret = random_string(15);
             if (!$DB->set_field('user', 'secret', $user->secret, array('id'=>$user->id))) {
-                print_error('error setting user secret string');
+                print_error('cannotupdatesecret');
             }
 
             if (!send_password_change_confirmation_email($user)) {
-                print_error('error sending password change confirmation email');
+                print_error('cannotmailconfirm');
             }
 
         } else {
             if (!send_password_change_info($user)) {
-                print_error('error sending password change confirmation email');
+                print_error('cannotmailconfirm');
             }
         }
     }
