@@ -154,11 +154,11 @@ class profile_define_base {
         if (empty($data->id)) {
             unset($data->id);
             if (!$data->id = $DB->insert_record('user_info_field', $data)) {
-                print_error('Error creating new field');
+                print_error('cannotcreatefield');
             }
         } else {
             if (!$DB->update_record('user_info_field', $data)) {
-                print_error('Error updating field');
+                print_error('cannotupdatefield');
             }
         }
     }
@@ -229,11 +229,11 @@ function profile_delete_category($id) {
 
     /// Retrieve the category
     if (!$category = $DB->get_record('user_info_category', array('id'=>$id))) {
-        print_error('Incorrect category id');
+        print_error('invalidcategoryid');
     }
 
     if (!$categories = $DB->get_records('user_info_category', null, 'sortorder ASC')) {
-        print_error('Error no categories!?!?');
+        print_error('nocate', 'debug');
     }
 
     unset($categories[$category->id]);
@@ -268,7 +268,7 @@ function profile_delete_category($id) {
 
     /// Finally we get to delete the category
     if (!$DB->delete_records('user_info_category', array('id'=>$category->id))) {
-        print_error('Error while deliting category');
+        print_error('cannotdeletecate');
     }
     profile_reorder_categories();
     return true;
@@ -280,7 +280,7 @@ function profile_delete_field($id) {
 
     /// Remove any user data associated with this field
     if (!$DB->delete_records('user_info_data', array('fieldid'=>$id))) {
-        print_error('Error deleting custom field data');
+        print_error('cannotdeletecustomfield');
     }
 
     /// Try to remove the record from the database
@@ -425,11 +425,11 @@ function profile_edit_category($id, $redirect) {
                 unset($data->id);
                 $data->sortorder = $DB->count_records('user_info_category') + 1;
                 if (!$DB->insert_record('user_info_category', $data, false)) {
-                    print_error('There was a problem adding the record to the database');
+                    print_error('cannotinsertcategory');
                 }
             } else {
                 if (!$DB->update_record('user_info_category', $data)) {
-                    print_error('There was a problem updating the record in the database');
+                    print_error('cannotupdatecategory');
                 }
             }
             profile_reorder_categories();

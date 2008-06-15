@@ -43,7 +43,7 @@ class profile_field_base {
      * @param  form  instance of the moodleform class
      */
     function edit_field_add(&$mform) {
-        print_error('mustbeoveride', 'debug');
+        print_error('mustbeoveride', 'debug', '', 'edit_field_add');
     }
 
     
