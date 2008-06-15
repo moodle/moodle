@@ -3,7 +3,6 @@
 
 
 $string['adminprimarynoedit'] = 'The primary admin cannot be edited by others';
-$string['authorizeerror'] = 'Authorize Error';
 $string['blockdoesnotexist'] = 'This block does not exist';
 $string['blockcannotinistantiate'] = 'Problem in instantiating block object';
 $string['blockcannotread'] = 'Could not read data for blockid= $a ';
