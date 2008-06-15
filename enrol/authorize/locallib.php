@@ -164,7 +164,7 @@ function authorize_print_orders($courseid, $userid)
         }
 
         if (SITEID != $courseid) {
-            $where .= "AND (e.courseid = :courseid') ";
+            $where .= "AND (e.courseid = :courseid) ";
             $params['courseid'] = $courseid;
         }
     }
