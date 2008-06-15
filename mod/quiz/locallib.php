@@ -710,6 +710,39 @@ function quiz_upgrade_states($attempt) {
         }
     }
 }
+/**
+ * Function that can be used in various parts of the quiz code.
+ * @param object $quiz
+ * @param integer $cmid
+ * @param object $question
+ * @param string $returnurl url to return to after action is done.
+ * @return string html for a number of icons linked to action pages for a
+ * question - preview and edit / view icons depending on user capabilities.
+ */
+function quiz_question_action_icons($quiz, $cmid, $question, $returnurl){
+    global $CFG;
+    static $stredit = null;
+    static $strview = null;
+    if ($stredit === null){
+        $stredit = get_string('edit');
+        $strview = get_string('view');
+    }
+    $html =''; 
+    if (($question->qtype != 'random')){
+        $html .= quiz_question_preview_button($quiz, $question);
+    }
+    $questionparams = array('returnurl' => $returnurl, 'cmid'=>$cmid, 'id' => $question->id);
+    $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
+    if (question_has_capability_on($question, 'edit', $question->category) || question_has_capability_on($question, 'move', $question->category)) {
+        $html .= "<a title=\"$stredit\" href=\"".$questionurl->out()."\">
+                <img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a>";
+    } elseif (question_has_capability_on($question, 'view', $question->category)){
+        $html .= "<a title=\"$strview\" href=\"".$questionurl->out(false, array('id'=>$question->id))."\"><img
+                src=\"$CFG->pixpath/i/info.gif\" alt=\"$strview\" /></a>&nbsp;";
+    }
+    return $html;
+}
+
 
 /**
  * @param object $quiz the quiz

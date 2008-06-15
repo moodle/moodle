@@ -142,8 +142,6 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
     $strquestionname = get_string("questionname", "quiz");
     $strgrade = get_string("grade");
     $strremove = get_string('remove', 'quiz');
-    $stredit = get_string("edit");
-    $strview = get_string("view");
     $straction = get_string("action");
     $strmoveup = get_string("moveup");
     $strmovedown = get_string("movedown");
@@ -286,20 +284,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
              '" tabindex="'.($lastindex+$qno).'" />';
         }
         echo '</td><td align="center">';
-
-        if (($question->qtype != 'random')){
-            echo quiz_question_preview_button($quiz, $question);
-        }
-        $returnurl = $pageurl->out();
-        $questionparams = array('returnurl' => $returnurl, 'cmid'=>$quiz->cmid, 'id' => $question->id);
-        $questionurl = new moodle_url("$CFG->wwwroot/question/question.php", $questionparams);
-        if (question_has_capability_on($question, 'edit', $question->category) || question_has_capability_on($question, 'move', $question->category)) {
-            echo "<a title=\"$stredit\" href=\"".$questionurl->out()."\">
-                    <img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"$stredit\" /></a>";
-        } elseif (question_has_capability_on($question, 'view', $question->category)){
-            echo "<a title=\"$strview\" href=\"".$questionurl->out(false, array('id'=>$question->id))."\"><img
-                    src=\"$CFG->pixpath/i/info.gif\" alt=\"$strview\" /></a>&nbsp;";
-        }
+        echo quiz_question_action_icons($quiz, $quiz->cmid, $question, $pageurl->out());
         if ($allowdelete && question_has_capability_on($question, 'use', $question->category)) { // remove from quiz, not question delete.
             echo "<a title=\"$strremove\" href=\"".$pageurl->out_action(array('delete'=>$count))."\">
                     <img src=\"$CFG->pixpath/t/$movearrow\" class=\"iconsmall\" alt=\"$strremove\" /></a>";
