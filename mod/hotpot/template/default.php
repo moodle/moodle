@@ -5,8 +5,7 @@ class hotpot_xml_template_default {
         $filepath = $this->parent->template_dirpath.DIRECTORY_SEPARATOR.$filename;
         // try and open the template file
         if (!file_exists($filepath) || !is_readable($filepath)) {
-            $msg = 'Could not open the '.$this->parent->template_dir.' template file &quot;'.$filepath.'&quot;';
-            print_error($msg, '', $this->parent->course_homeurl);
+            print_error('cannotopentemplate', '', $this->parent->course_homeurl, $filepath);
         }
         // read in the template and close the file
         $this->$tag = file_get_contents($filepath);
@@ -39,8 +38,7 @@ class hotpot_xml_template_default {
                     $this->$tag = str_replace($blocks[0][$ii], $replace, $this->$tag);
                 }
             } else {
-                $msg = 'Template block expand method not found: &quot;'.$method.'&quot;';
-                print_error($msg, '', $this->parent->course_homeurl);
+                print_error('cannotfindmethod', 'hotpot', $this->parent->course_homeurl, $method);
             }
         }
     }

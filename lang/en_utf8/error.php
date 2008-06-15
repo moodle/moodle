@@ -90,6 +90,7 @@ $string['cannotoverridebaserole'] = 'Can not override base role capabilities';
 $string['cannotopencsv'] = 'Cannot open csv file';
 $string['cannotopenforwrit'] = 'Cannot open for writing: $a';
 $string['cannotopenfile'] = 'Cannot open file ($a)';
+$string['cannotopentemplate'] = 'Cannot open template file ($a)';
 $string['cannotreadtmpfile'] = 'Error reading temporary file';
 $string['cannotreaduploadfile'] = 'Could not read uploaded file';
 $string['cannotreadfile'] = 'Can not read file ($a)';
