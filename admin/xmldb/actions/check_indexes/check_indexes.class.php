@@ -78,9 +78,6 @@ class check_indexes extends XMLDBAction {
 
         $dbman = $DB->get_manager();
 
-    /// And we nedd some ddl suff
-        require_once ($CFG->libdir . '/ddllib.php');
-
     /// Here we'll acummulate all the missing indexes found
         $missing_indexes = array();
 

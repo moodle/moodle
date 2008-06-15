@@ -220,7 +220,7 @@ class mssql_sql_generator extends sql_generator {
 
         $results = array();  //Array where all the sentences will be stored
 
-    /// Although this is checked in ddllib - rename_field() - double check
+    /// Although this is checked in database_manager::rename_field() - double check
     /// that we aren't trying to rename one "id" field. Although it could be
     /// implemented (if adding the necessary code to rename sequences, defaults,
     /// triggers... and so on under each getRenameFieldExtraSQL() function, it's

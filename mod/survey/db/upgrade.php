@@ -15,7 +15,7 @@
 // will tell you what you need to do.
 //
 // The commands in here will all be database-neutral,
-// using the functions defined in lib/ddllib.php
+// using the methods of database_manager class
 
 function xmldb_survey_upgrade($oldversion=0) {
 
@@ -29,7 +29,7 @@ function xmldb_survey_upgrade($oldversion=0) {
 /// upgrade code.
 
 /// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of "/lib/ddllib.php" function calls
+///     $result = result of database_manager methods
 /// }
 
 //===== 1.9.0 upgrade line ======//

@@ -79,7 +79,6 @@ class check_defaults extends XMLDBAction {
         global $CFG, $XMLDB, $DB;
 
     /// And we nedd some ddl suff
-        require_once ($CFG->libdir . '/ddllib.php');
         $dbman = $DB->get_manager();
 
     /// Here we'll acummulate all the wrong fields found

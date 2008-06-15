@@ -446,6 +446,176 @@ function error($message, $link='') {
 }
 
 
+/// Deprecated DDL functions, to be removed soon ///
+
+function table_exists($table) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->table_exists($table);
+}
+
+function field_exists($table, $field) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->field_exists($table, $field);
+}
+
+function find_index_name($table, $index) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->find_index_name($table, $index);
+}
+
+function index_exists($table, $index) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->index_exists($table, $index);
+}
+
+function find_check_constraint_name($table, $field) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->find_check_constraint_name($table, $field);
+}
+
+function check_constraint_exists($table, $field) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->check_constraint_exists($table, $field);
+}
+
+function find_key_name($table, $xmldb_key) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->find_key_name($table, $xmldb_key);
+}
+
+function find_sequence_name($table) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->find_sequence_name($table);
+}
+
+function drop_table($table, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->drop_table($table, $continue, $feedback);
+}
+
+function install_from_xmldb_file($file) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->install_from_xmldb_file($file);
+}
+
+function create_table($table, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->create_table($table, $continue, $feedback);
+}
+
+function create_temp_table($table, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->create_temp_table($table, $continue, $feedback);
+}
+
+function rename_table($table, $newname, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->rename_table($table, $newname, $continue, $feedback);
+}
+
+function add_field($table, $field, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->add_field($table, $field, $continue, $feedback);
+}
+
+function drop_field($table, $field, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->drop_field($table, $field, $continue, $feedback);
+}
+
+function change_field_type($table, $field, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->change_field_type($table, $field, $continue, $feedback);
+}
+
+function change_field_precision($table, $field, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->change_field_precision($table, $field, $continue, $feedback);
+}
+
+function change_field_unsigned($table, $field, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->change_field_unsigned($table, $field, $continue, $feedback);
+}
+
+function change_field_notnull($table, $field, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->change_field_notnull($table, $field, $continue, $feedback);
+}
+
+function change_field_enum($table, $field, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->change_field_enum($table, $field, $continue, $feedback);
+}
+
+function change_field_default($table, $field, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->change_field_default($table, $field, $continue, $feedback);
+}
+
+function rename_field($table, $field, $newname, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->rename_field($table, $field, $continue, $feedback);
+}
+
+function add_key($table, $key, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->add_key($table, $key, $continue, $feedback);
+}
+
+function drop_key($table, $key, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->drop_key($table, $key, $continue, $feedback);
+}
+
+function rename_key($table, $key, $newname, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->rename_key($table, $key, $newname, $continue, $feedback);
+}
+
+function add_index($table, $index, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->add_index($table, $index, $continue, $feedback);
+}
+
+function drop_index($table, $index, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->drop_index($table, $index, $continue, $feedback);
+}
+
+function rename_index($table, $index, $newname, $continue=true, $feedback=true) {
+    global $DB;
+    debugging('Deprecated ddllib function used!');
+    return $DB->get_manager()->rename_index($table, $index, $newname, $continue, $feedback);
+}
+
 
 //////////////////////////
 /// removed functions ////
@@ -724,4 +894,4 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
                       $signed='unsigned', $default='0', $null='not null', $after='') {
     error('table_column() was removed, please use new ddl functions');
 }
-    
+

@@ -60,7 +60,6 @@ class database_manager {
     /**
      * This function will execute an array of SQL commands, returning
      * true/false if any error is found and stopping/continue as desired.
-     * It's widely used by all the ddllib.php functions
      *
      * @param array $sqlarr array of sql statements to execute
      * @param boolean $continue to specify if must continue on error (true) or stop (false)

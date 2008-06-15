@@ -81,9 +81,6 @@ class check_bigints extends XMLDBAction {
         $dbman = $DB->get_manager();
         $dbfamily = $DB->get_dbfamily();
 
-    /// And we nedd some ddl suff
-        require_once ($CFG->libdir . '/ddllib.php');
-
     /// Here we'll acummulate all the wrong fields found
         $wrong_fields = array();
 

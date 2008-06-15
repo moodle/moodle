@@ -6,7 +6,6 @@
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/blocklib.php');
     require_once($CFG->libdir.'/tablelib.php');
-    require_once($CFG->libdir.'/ddllib.php');
 
     admin_externalpage_setup('manageblocks');
 

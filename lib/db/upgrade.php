@@ -14,7 +14,7 @@
 // will tell you what you need to do.
 //
 // The commands in here will all be database-neutral,
-// using the functions defined in lib/ddllib.php
+// using the methods of database_manager class
 
 
 function xmldb_main_upgrade($oldversion=0) {

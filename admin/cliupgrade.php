@@ -717,7 +717,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     require_once(dirname(dirname(__FILE__)) . '/config.php');
     require_once($CFG->libdir.'/adminlib.php');  // Contains various admin-only functions
-    require_once($CFG->libdir.'/ddllib.php'); // Install/upgrade related db functions
 
     /**
      * @todo check upgrade status, if upgrader is running already, notify user and exit. 

@@ -5125,7 +5125,6 @@ function component_level_changed($cap, $comp, $contextlevel) {
  */
 function build_context_path($force=false) {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/ddllib.php');
 
     // System context
     $sitectx = get_system_context(!$force);

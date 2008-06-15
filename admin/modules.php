@@ -5,7 +5,6 @@
     require_once('../course/lib.php');
     require_once($CFG->libdir.'/adminlib.php');
     require_once($CFG->libdir.'/tablelib.php');
-    require_once($CFG->libdir.'/ddllib.php');
 
     // defines
     define('MODULE_TABLE','module_administration_table');

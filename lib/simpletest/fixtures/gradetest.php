@@ -34,9 +34,8 @@ if (!defined('MOODLE_INTERNAL')) {
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
+require_once($CFG->libdir . '/adminlib.php');
 require_once($CFG->libdir . '/gradelib.php');
-require_once($CFG->libdir . '/dmllib.php');
-require_once($CFG->libdir . '/ddllib.php');
 
 Mock::generate('grade_item', 'mock_grade_item');
 Mock::generate('grade_scale', 'mock_grade_scale');

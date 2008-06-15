@@ -50,7 +50,6 @@
 /// getting "incomplete" objects
     require_once('../../config.php');
     require_once($CFG->libdir.'/adminlib.php');
-    require_once($CFG->libdir.'/ddllib.php'); // Install/upgrade related db functions
 
     admin_externalpage_setup('xmldbeditor');
 
