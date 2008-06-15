@@ -10,7 +10,7 @@
     require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
     if (!$users = $DB->get_records("user", array("picture"=>"1"), "lastaccess DESC", "id,firstname,lastname")) {
-        print_error("no users!");
+        print_error('nousers');
     }
 
     $title = get_string("users");
