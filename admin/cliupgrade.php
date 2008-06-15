@@ -462,55 +462,19 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     }
 
     if (empty($errormsg)) {
+        error_reporting(0);  // Hide errors
 
-        /// Have the $db object ready because we are going to use it often
-        // fnarg
-        if (empty($CFG->dbtype)) {
-            $CFG->dbtype = $INSTALL['dbtype'];
-            $resetcfgdb = true;
-        }
-        preconfigure_dbconnection();
-        if (!empty($resetcfgdb)) {
-            $CFG->dbtype = false;
-        }
-        $db = &ADONewConnection($INSTALL['dbtype']);
-
-        $db->SetFetchMode(ADODB_FETCH_ASSOC);
-
-        if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
-            $errormsg= get_string('cannotconnecttodb','install') . "\n";
-        } else {
-            /// We have been able to connect properly, just test the database encoding now.
-            /// It must be Unicode for 1.8 installations.
-            $encoding = '';
-            switch ($INSTALL['dbtype']) {
-                case 'mysql':
-                /// Get MySQL character_set_database value
-                $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");
-                if ($rs && $rs->RecordCount() > 0) {
-                    $records = $rs->GetAssoc(true);
-                    $encoding = $records['character_set_database']['Value'];
-                    if (strtoupper($encoding) != 'UTF8') {
-                        /// Try to set the encoding now!
-                        if (! $db->Metatables()) {  // We have no tables so go ahead
-                            $db->Execute("ALTER DATABASE `".$INSTALL['dbname']."` DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci");
-                            $rs = $db->Execute("SHOW VARIABLES LIKE 'character_set_database'");  // this works
-
-                        }
-                    }
-                    /// If conversion fails, skip, let environment testing do the job
-                }
-                break;
-                case 'postgres7':
-                /// Skip, let environment testing do the job
-                break;
-                case 'oci8po':
-                /// Skip, let environment testing do the job
-                break;
+        if (! $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix'])) {
+            if (!$DB->create_database($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'])) {
+                 $errormsg = get_string('dbcreationerror', 'install');
+                 $nextstage = DATABASE;
+            } else {
+                $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
             }
+        } else {
+// TODO: db encoding checks ??
         }
     }
-
 
     // check for errors in db section
     if (isset($errormsg)) {
@@ -523,7 +487,6 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     //check connection to database
 
-    $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
     if ($dbconnected) {
         /// Execute environment check, printing results
         if (!check_moodle_environment($INSTALL['release'], $environment_results, false)) {
@@ -632,23 +595,32 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     $str .= "\r\n";
 
     $str .= 'unset($CFG);'."\r\n";
+    $str .= '$CFG = new stdClass();'."\r\n"; // prevent PHP5 strict warnings
     $str .= "\r\n";
 
-    $str .= '$CFG->dbtype    = \''.$CONFFILE['dbtype']."';\r\n";
-    $str .= '$CFG->dbhost    = \''.addslashes($CONFFILE['dbhost'])."';\r\n";
-    if (!empty($CONFFILE['dbname'])) {
-        $str .= '$CFG->dbname    = \''.$CONFFILE['dbname']."';\r\n";
-        $str .= '$CFG->dbuser    = \''.$CONFFILE['dbuser']."';\r\n";
-        $str .= '$CFG->dbpass    = \''.$CONFFILE['dbpass']."';\r\n";
+    $database = $databases[$CONFFILE['dbtype']];
+    $database->connect($CONFFILE['dbhost'], $CONFFILE['dbuser'], $CONFFILE['dbpass'], $CONFFILE['dbname'], false, $CONFFILE['prefix']);
+    $dbconfig = $database->export_dbconfig();
+    $dbconfig->persistent = false;
+
+    foreach ($dbconfig as $key=>$value) {
+        $key = str_pad($key, 9);
+        if (is_bool($value)) {
+            if ($value) {
+                $str .= '$CFG->'.$key.' = true;'."\r\n";
+            } else {
+                $str .= '$CFG->'.$key.' = false;'."\r\n";
+            }
+        } else {
+            $str .= '$CFG->'.$key.' = \''.addsingleslashes($value)."';\r\n";
+        }
     }
-    $str .= '$CFG->dbpersist =  false;'."\r\n";
-    $str .= '$CFG->prefix    = \''.$CONFFILE['prefix']."';\r\n";
     $str .= "\r\n";
 
-    $str .= '$CFG->wwwroot   = \''.s($CONFFILE['wwwroot'],true)."';\r\n";
-    $str .= '$CFG->dirroot   = \''.s($CONFFILE['dirroot'],true)."';\r\n";
-    $str .= '$CFG->dataroot  = \''.s($CONFFILE['dataroot'],true)."';\r\n";
-    $str .= '$CFG->admin     = \''.s($CONFFILE['admindirname'],true)."';\r\n";
+    $str .= '$CFG->wwwroot   = \''.addsingleslashes($CONFFILE['wwwrootform'])."';\r\n";
+    $str .= '$CFG->dirroot   = \''.addsingleslashes($CONFFILE['dirrootform'])."';\r\n";
+    $str .= '$CFG->dataroot  = \''.addsingleslashes($CONFFILE['dataroot'])."';\r\n";
+    $str .= '$CFG->admin     = \''.addsingleslashes($CONFFILE['admindirname'])."';\r\n";
     $str .= "\r\n";
 
     $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
@@ -772,14 +744,14 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
 
     if ( $verbose == CLI_NO ) {
-        $db->debug = false;
+        $DB->set_debug(false);
     } else if ( $verbose == CLI_FULL ) {
-        $db->debug = true;
+        $DB->set_debug (true);
     }
 
     /// Check if the main tables have been installed yet or not.
 
-    if (! $tables = $db->Metatables() ) {    // No tables yet at all.
+    if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
         $maintables = false;
 
     } else {                                 // Check for missing main tables
@@ -788,7 +760,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         "course_sections", "log", "log_display", "modules",
         "user");
         foreach ($mtables as $mtable) {
-            if (!in_array($CFG->prefix.$mtable, $tables)) {
+            if (!in_array($mtable, $tables)) {
                 $maintables = false;
                 break;
             }
@@ -855,12 +827,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             }
         }
 
-        $status = false;
-        if (file_exists("$CFG->libdir/db/install.xml")) {
-            $status = $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
-        } else {
-            console_write(STDERR,"Error: Your database ($CFG->dbtype) is not yet fully supported by Moodle or install.xml is not present.  See the lib/db directory.",'',false);
-        }
+        $status = $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
 
         // all new installs are in unicode - keep for backwards compatibility and 1.8 upgrade checks
         set_config('unicodedb', 1);
