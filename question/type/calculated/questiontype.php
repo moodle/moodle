@@ -293,38 +293,26 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     function validate_form($form) {
         switch($form->wizardpage) {
             case 'question':
-                $calculatedmessages = array();
                 if (empty($form->name)) {
-                    $calculatedmessages[] = get_string('missingname', 'quiz');
+                    print_error('missingname', 'quiz');
                 }
                 if (empty($form->questiontext)) {
-                    $calculatedmessages[] = get_string('missingquestiontext', 'quiz');
+                    print_error('missingquestiontext', 'quiz');
                 }
                 // Verify formulas
                 foreach ($form->answers as $key => $answer) {
                     if ('' === trim($answer)) {
-                        $calculatedmessages[] =
-                            get_string('missingformula', 'quiz');
+                        print_error('missingformula', 'quiz');
                     }
-                    if ($formulaerrors =
-                     qtype_calculated_find_formula_errors($answer)) {
-                        $calculatedmessages[] = $formulaerrors;
+                    if ($formulaerrors = qtype_calculated_find_formula_errors($answer)) {
+                        print_error('formulaerror', 'quiz');
                     }
                     if (! isset($form->tolerance[$key])) {
                         $form->tolerance[$key] = 0.0;
                     }
                     if (! is_numeric($form->tolerance[$key])) {
-                        $calculatedmessages[] =
-                            get_string('tolerancemustbenumeric', 'quiz');
+                        print_error('tolerancemustbenumeric', 'quiz');
                     }
-                }
-
-                if (!empty($calculatedmessages)) {
-                    $errorstring = "The following errors were found:<br />";
-                    foreach ($calculatedmessages as $msg) {
-                        $errorstring .= $msg . '<br />';
-                    }
-                    print_error($errorstring);
                 }
 
                 break;

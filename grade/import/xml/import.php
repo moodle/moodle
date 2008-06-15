@@ -85,7 +85,7 @@ if ($importcode !== false) {
     }
 
 } else {
-    print_error($error);
+    print_error('error', 'gradeimport_xml');
 }
 
 ?>

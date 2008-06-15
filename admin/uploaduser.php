@@ -96,7 +96,8 @@ if (empty($iid)) {
         unset($content);
 
         if ($readcount === false) {
-            print_error($cir->get_error(), '', $returnurl);
+            //TODO: need more detailed error info
+            print_error('csvloaderror', '', $returnurl);
         } else if ($readcount == 0) {
             print_error('csvemptyfile', 'error', $returnurl);
         }

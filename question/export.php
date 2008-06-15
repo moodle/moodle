@@ -104,15 +104,15 @@
         $qformat->setContexttofile(!empty($from_form->contexttofile));
 
         if (! $qformat->exportpreprocess()) {   // Do anything before that we need to
-            print_error($txt->exporterror, '', $thispageurl->out());
+            print_error('exporterror', 'question', $thispageurl->out());
         }
 
         if (! $qformat->exportprocess()) {         // Process the export data
-            print_error($txt->exporterror, '', $thispageurl->out());
+            print_error('exporterror', 'question', $thispageurl->out());
         }
 
         if (! $qformat->exportpostprocess()) {                    // In case anything needs to be done after
-            print_error($txt->exporterror, '', $thispageurl->out());
+            print_error('exporterror', 'question', $thispageurl->out());
         }
         echo "<hr />";
 

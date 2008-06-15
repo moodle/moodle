@@ -143,7 +143,8 @@
 
             // In case anything needs to be done after
             if (! $qformat->importpostprocess()) {
-                print_error($txt->importerror, '', $thispageurl->out());
+                //TODO: need more detailed error info
+                print_error('cannotimport', '', $thispageurl->out());
             }
 
             echo "<hr />";

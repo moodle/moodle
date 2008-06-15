@@ -1,5 +1,6 @@
 <?PHP // $Id$
 
+$string['error'] = 'Errors occur';
 $string['errbadxmlformat'] = 'Error - bad XML format';
 $string['errduplicateidnumber'] = 'Error - duplicate idnumber';
 $string['errincorrectidnumber'] = 'Error - incorrect idnumber';

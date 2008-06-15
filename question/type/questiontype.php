@@ -316,7 +316,7 @@ class default_questiontype {
         $result = $this->save_question_options($form);
 
         if (!empty($result->error)) {
-            print_error($result->error);
+            print_error('questionsaveerror', 'question', '', $result->error);
         }
 
         if (!empty($result->notice)) {
