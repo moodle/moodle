@@ -211,10 +211,7 @@
 
 /// Check version of Moodle code on disk compared with database
 /// and upgrade if possible.
-
-    if (file_exists("$CFG->dirroot/lib/db/upgrade.php")) {
-        include_once("$CFG->dirroot/lib/db/upgrade.php");  # defines new upgrades
-    }
+    require_once("$CFG->dirroot/lib/db/upgrade.php");  # defines new upgrades
 
     $stradministration = get_string("administration");
 
