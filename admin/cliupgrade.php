@@ -120,20 +120,17 @@ $COURSE->id                 = 0;
 
 // include standard Moodle libraries
 
-require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/installlib.php');
+require_once($CFG->libdir.'/clilib.php');           //cli-library
 require_once($CFG->libdir.'/setuplib.php');
+require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->libdir.'/weblib.php');
-require_once($CFG->libdir.'/adodb/adodb.inc.php');
 require_once($CFG->libdir.'/environmentlib.php');
-require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir.'/componentlib.class.php');
-require_once($CFG->libdir.'/installlib.php');			//cli-library
 require_once($CFG->dirroot.'/version.php');
 
-//include PEAR Console libraries
-set_include_path($CFG->libdir . PATH_SEPARATOR . $CFG->libdir . '/pear/');
-require_once('Console/Getopt.php');
+error('TODO fix CLI installer'); //TODO: fix cli installer
 
 
 /// Set default values - things that require the libraries
@@ -464,7 +461,6 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         $errormsg = get_string('dbwronghostserver', 'install');
     }
 
-error('fix cml installer'); //TODO: fix cli installer
     if (empty($errormsg)) {
 
         /// Have the $db object ready because we are going to use it often
