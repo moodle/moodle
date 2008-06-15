@@ -33,7 +33,7 @@
      if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
         if ($groupid = groups_get_activity_group($cm)) {
             if (!$group = groups_get_group($groupid, false)) {
-                print_error("That group (id $groupid) doesn't exist!");
+                print_error('invalidgroupid');
             }
             $groupname = ': '.$group->name;
         } else {
@@ -47,7 +47,7 @@
     $strchat = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
 
     if (!$chat_sid = chat_login_user($chat->id, 'header_js', $groupid, $course)) {
-        print_error('Could not log in to chat room!!');
+        print_error('cantlogin', 'chat');
     }
 
     $params = "chat_sid=$chat_sid";

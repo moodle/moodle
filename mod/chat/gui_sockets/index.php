@@ -7,21 +7,21 @@
     $groupid = optional_param('groupid', 0, PARAM_INT); //only for teachers
 
     if (!$chat = $DB->get_record('chat', array('id'=>$id))) {
-        print_error('Could not find that chat room!');
+        print_error('invalidid', 'chat');
     }
 
     if (!$course = $DB->get_record('course', array('id'=>$chat->course))) {
-        print_error('Could not find the course this belongs to!');
+        print_error('invalidcourseid');
     }
 
     if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
-        print_error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
 
     require_login($course->id, false, $cm);
 
     if (isguest()) {
-        print_error('Guest does not have access to chat rooms');
+        print_error('noguests', 'chat');
     }
 
     if (!$cm->visible and !has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_MODULE, $cm->id))) {
@@ -33,7 +33,7 @@
      if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
         if ($groupid = groups_get_activity_group($cm)) {
             if (!$group = groups_get_group($groupid, false)) {
-                print_error("That group (id $groupid) doesn't exist!");
+                print_error('invalidgroupid');
             }
             $groupname = ': '.$group->name;
         } else {
@@ -47,7 +47,7 @@
     $strchat = get_string('modulename', 'chat'); // must be before current_language() in chat_login_user() to force course language!!!
 
     if (!$chat_sid = chat_login_user($chat->id, 'sockets', $groupid, $course)) {
-        print_error('Could not log in to chat room!!');
+        print_error('cantlogin');
     }
 
     $params = "chat_sid=$chat_sid";

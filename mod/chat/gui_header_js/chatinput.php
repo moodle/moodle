@@ -8,7 +8,7 @@
     $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
 
     if (!$chatuser = $DB->get_record('chat_users', array('sid'=>$chat_sid))) {
-        print_error('Not logged in!');
+        print_error('notlogged', 'chat');
     }
 
     //Get the user theme

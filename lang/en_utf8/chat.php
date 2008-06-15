@@ -47,6 +47,7 @@ $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chats';
 $string['neverdeletemessages'] = 'Never delete messages';
 $string['nextsession'] = 'Next scheduled session';
+$string['nochat'] = 'No chat found';
 $string['noguests'] = 'The chat is not open to guests';
 $string['nomessages'] = 'No messages yet';
 $string['normalkeepalive'] = 'KeepAlive';
