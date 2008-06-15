@@ -11,6 +11,7 @@ $string['cannotupgradecapabilities'] = 'Had trouble upgrading the core capabilit
 $string['cannotupdateversion'] = 'Upgrade failed!  (Could not update version in config table)';
 $string['cannotupdaterelease'] = 'ERROR: Could not update release version in database!!';
 $string['cannotsetupsite'] = 'Serious Error! Could not set up the site!';
+$string['cannotsetuptable'] = '$a tables could NOT be set up successfully!';
 $string['cannotfindadmin'] = 'Could not find an admin user!';
 $string['cannotupgradedbcustom'] = 'Upgrade of local database customisations failed! (Could not update version in config table)';
 $string['configmoodle'] = 'Moodle has not been configured yet. You need to edit config.php first.';

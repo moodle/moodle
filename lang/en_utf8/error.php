@@ -18,6 +18,7 @@ $string['cannotaddcoursemodule'] = 'Could not add a new course module';
 $string['cannotaddcoursemoduletosection'] = 'Could not add the new course module to that section';
 $string['cannotaddcmtosection'] = 'Could not add the new course module to that section';
 $string['cannotaddrss'] = 'You do not have permission to add rss feeds';
+$string['cannotaddmodule'] = '$a module could not be added to the module list!';
 $string['cannotaddnewmodule'] = 'Could not add a new module of $a';
 $string['cannotaddnewinstance'] = 'Could not add a new instance of $a';
 $string['cannotsaveconfig'] = 'Problem saving config \"$a[0]\" as \"$a[1]\" for plugin \"$a[2]\"'; 

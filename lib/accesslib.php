@@ -880,7 +880,7 @@ function require_capability($capability, $context, $userid=NULL, $doanything=tru
 
     if (!has_capability($capability, $context, $userid, $doanything)) {
         $capabilityname = get_capability_string($capability);
-        print_error($errormessage, $stringfile, $errorlink, $capabilityname);
+        print_error('nopermissions', '', $errorlink, $capabilityname);
     }
 }
 

@@ -558,10 +558,10 @@ function upgrade_activity_modules($return) {
                     echo '<hr />';
                     }
                 } else {
-                    print_error($module->name .' module could not be added to the module list!');
+                    print_error('cannotaddmodule', '', '', $module->name);
                 }
             } else {
-                print_error($module->name .' tables could NOT be set up successfully!');
+                print_error('cannotsetuptable', 'debug', '', $module->name);
             }
         }
 
