@@ -24,7 +24,7 @@ $CHAT_DUMMY_DATA = produce_data(200);
 
 function produce_data($n){
     $str = '';
-    for($i; $i<$n; $i++){
+    for($i=0; $i<$n; $i++){
         $str.='<!-- nix -->\n';
     }
     return $str;
