@@ -13,30 +13,30 @@
 
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
-            print_error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
         if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-            print_error('Course is misconfigured');
+            print_error('coursemisconf');
         }
         if (! $scorm = $DB->get_record('scorm', array('id'=>$cm->instance))) {
-            print_error('Course module is incorrect');
+            print_error('invalidcoursemodule');
         }
     } else {
         if (!empty($b)) {
             if (! $sco = $DB->get_record('scorm_scoes', array('id'=>$b))) {
-                print_error('Scorm activity is incorrect');
+                print_error('invalidactivity', 'scorm');
             }
             $a = $sco->scorm;
         }
         if (!empty($a)) {
             if (! $scorm = $DB->get_record('scorm', array('id'=>$a))) {
-                print_error('Course module is incorrect');
+                print_error('invalidcoursemodule');
             }
             if (! $course = $DB->get_record('course', array('id'=>$scorm->course))) {
-                print_error('Course is misconfigured');
+                print_error('coursemisconf');
             }
             if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
-                print_error('Course Module ID was incorrect');
+                print_error('invalidcoursemodule');
             }
         }
     }
@@ -44,7 +44,7 @@
     require_login($course->id, false, $cm);
 
     if (!has_capability('mod/scorm:viewreport', get_context_instance(CONTEXT_MODULE,$cm->id))) {
-        print_error('You are not allowed to use this script');
+        print_error('cannotcallscript');
     }
 
     add_to_log($course->id, 'scorm', 'report', 'report.php?id='.$cm->id, $scorm->id);
@@ -406,7 +406,7 @@
             }                
             print_simple_box_end();
         } else {
-            print_error('Missing script parameter');
+            print_error('missingparameter');
         }
     }
 

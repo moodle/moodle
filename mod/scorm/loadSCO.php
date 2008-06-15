@@ -10,26 +10,26 @@
 
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
-            print_error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
         if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-            print_error('Course is misconfigured');
+            print_error('coursemisconf');
         }
         if (! $scorm = $DB->get_record('scorm', array('id'=>$cm->instance))) {
-            print_error('Course module is incorrect');
+            print_error('invalidcoursemodule');
         }
     } else if (!empty($a)) {
         if (! $scorm = $DB->get_record('scorm', array('id'=>$a))) {
-            print_error('Course module is incorrect');
+            print_error('coursemisconf');
         }
         if (! $course = $DB->get_record('course', array('id'=>$scorm->course))) {
-            print_error('Course is misconfigured');
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
-            print_error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
     } else {
-        print_error('A required parameter is missing');
+        print_error('missingparameter');
     }
 
     require_login($course->id, false, $cm);
