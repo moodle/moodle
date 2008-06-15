@@ -71,6 +71,7 @@ $string['cannotfindlang'] = 'Cannot find \"$a\" language pack!';
 $string['cannotfindsite'] = 'Cannot find site-level course';
 $string['cannotfindteacher'] = 'Cannot find teacher.';
 $string['cannotfinduser'] = 'Cannot find user named \"$a\"';
+$string['cannotimport'] = 'Import error';
 $string['cannotimportgrade'] = 'Grade import error';
 $string['cannotimportformat'] = 'Sorry, importing this format is not yet implemented!';
 $string['cannotnetgeo'] = 'Can not connect to NetGeo server at http://netgeo.caida.org, please check proxy settings or better install MaxMind GeoLite City data file.';

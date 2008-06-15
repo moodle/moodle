@@ -131,12 +131,14 @@
 
             // Do anything before that we need to
             if (! $qformat->importpreprocess()) {
-                print_error($txt->importerror, '', $thispageurl->out());
+                //TODO: need more detailed error info
+                print_error('cannotimport', '', $thispageurl->out());
             }
 
             // Process the uploaded file
             if (! $qformat->importprocess()) {
-                print_error($txt->importerror, '', $thispageurl->out());
+                //TODO: need more detailed error info
+                print_error('cannotimport', '', $thispageurl->out());
             }
 
             // In case anything needs to be done after
