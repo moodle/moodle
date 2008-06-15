@@ -1616,9 +1616,8 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
         // can't continue if there is no course or reference
         if (empty($this->course) || empty($this->reference)) {
-            $this->error = get_string('error_nocourseorfilename', 'hotpot');
             if ($this->report_errors) {
-                print_error($this->error);
+                print_error('error_nocourseorfilename', 'hotpot');
             }
             return;
         }
@@ -1652,9 +1651,8 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         if ($this->read_file) {
 
             if (!file_exists($this->filepath) || !is_readable($this->filepath)) {
-                $this->error = get_string('error_couldnotopensourcefile', 'hotpot', $this->filepath);
                 if ($this->report_errors) {
-                    print_error($this->error, '', $this->course_homeurl);
+                    print_error('error_couldnotopensourcefile', 'hotpot');
                 }
                 return;
             }
@@ -1759,9 +1757,8 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 
                     // check template class exists
                     if (!file_exists($this->template_filepath) || !is_readable($this->template_filepath)) {
-                        $this->error = get_string('error_couldnotopentemplate', 'hotpot', $this->template_dir);
                         if ($this->report_errors) {
-                            print_error($this->error, '', $this->course_homeurl);
+                            print_error('error_couldnotopentemplate', 'hotpot', $this->course_homeurl);
                         }
                         return;
                     }

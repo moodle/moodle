@@ -417,5 +417,6 @@ $string['wrongdestpath'] = 'Wrong destination path.';
 $string['wrongroleid'] = 'Incorrect role ID!';
 $string['wrongsourcebase'] = 'Wrong source URL base.';
 $string['wrongzipfilename'] = 'Wrong ZIP filename.';
+$string['xmldberror'] = 'XMLDB Error!';
 
 ?>

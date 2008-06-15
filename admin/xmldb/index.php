@@ -107,7 +107,8 @@
                         break;
                 }
             } else {
-                print_error($xmldb_action->getError());
+                //TODO: need more detailed error info
+                print_error('xmldberror');
             }
         } else {
             error ("Error: cannot instantiate class (actions/$action/$actionclass)");

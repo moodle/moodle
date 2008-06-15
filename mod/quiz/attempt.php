@@ -122,8 +122,8 @@
         $messages = $accessmanager->prevent_access() +
                 $accessmanager->prevent_new_attempt($attemptnumber - 1, $lastattempt);
         if (!$canpreview && $messages) {
-            print_error($accessmanager->print_messages($messages, true), '',
-                    $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id);
+            //TODO: need more detailed error info
+            print_error('attempterror', 'quiz', $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id);
         }
         $accessmanager->do_password_check($canpreview);
 
@@ -286,8 +286,8 @@
     if (!$newattempt) {
         $messages = $accessmanager->prevent_access();
         if (!$canpreview && $messages) {
-            print_error($accessmanager->print_messages($messages, true), '',
-                    $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id);
+            //TODO: need more detailed error info
+            print_error('attempterror', 'quiz', $CFG->wwwroot . '/mod/quiz/view.php?q=' . $quiz->id);
         }
         $accessmanager->do_password_check($canpreview);
     }
