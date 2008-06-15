@@ -30,7 +30,7 @@ class dml_test extends UnitTestCase {
                 array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null);
         $table->add_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('logo', XMLDB_TYPE_BINARY, 'big', null, XMLDB_NOTNULL, null, null, null);
+        $table->add_field('logo', XMLDB_TYPE_BINARY, 'big', null, null, null, null, null);
         $table->add_field('assessed', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('assesstimestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('assesstimefinish', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
@@ -237,25 +237,7 @@ class dml_test extends UnitTestCase {
         $sql = "SELECT * FROM {testtable}";
         $this->assertTrue($DB->execute($sql));
 
-        $sql = "INSERT INTO {testtable}
-                        SET course = :course,
-                            type = :type,
-                            name = :name,
-                            intro = :intro,
-                            assessed = :assessed,
-                            assesstimestart = :assesstimestart,
-                            assesstimefinish = :assesstimefinish,
-                            scale = :scale,
-                            maxbytes = :maxbytes,
-                            forcesubscribe = :forcesubscribe,
-                            trackingtype = :trackingtype,
-                            rsstype = :rsstype,
-                            rssarticles = :rssarticles,
-                            timemodified = :timemodified,
-                            warnafter = :warnafter,
-                            blockafter = :blockafter,
-                            blockperiod = :blockperiod";
-        $values = array('course' => 1,
+        $params = array('course' => 1,
                         'type' => 'news',
                         'name' => 'test',
                         'intro' => 'Simple news forum',
@@ -272,11 +254,16 @@ class dml_test extends UnitTestCase {
                         'warnafter' => time() + 579343,
                         'blockafter' => time() + 600000,
                         'blockperiod' => 5533);
-        $this->assertTrue($DB->execute($sql, $values));
+
+        $sql = "INSERT INTO {testtable} (".implode(',', array_keys($params)).")
+                       VALUES (".implode(',', array_fill(0, count($params), '?')).")";
+
+
+        $this->assertTrue($DB->execute($sql, $params));
 
         $record = $DB->get_record('testtable', array('blockperiod' => 5533));
 
-        foreach ($values as $field => $value) {
+        foreach ($params as $field => $value) {
             $this->assertEqual($value, $record->$field, "Field $field in DB ({$record->$field}) is not equal to field $field in sql ($value)");
         }
     }
