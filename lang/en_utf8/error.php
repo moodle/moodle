@@ -359,6 +359,7 @@ $string['reportnotavailable'] = 'This type of report is only available for the s
 $string['rpcerror'] = 'RPC enrol/mnet/available_courses: ($a)';
 $string['scheduledbackupsdisabled'] = 'Scheduled backups have been disabled by the server admin';
 $string['sectionnotexist'] = 'This section does not exist';
+$string['secretalreadyused'] = 'Change password confirmation link was already used, password was not changed.';
 $string['sendmessage'] = 'Send Message';
 $string['sessioncookiesdisable'] = 'Incorrect use of require_key_login() - session cookies must be disabled!';
 $string['sessionerroruser'] = 'Your session has timed out.  Please login again.';
