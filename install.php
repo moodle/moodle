@@ -794,7 +794,7 @@ function form_table($nextstage, $formaction, $databases) {
                 <td colspan="2">
                 <?php
                     error_reporting(0);  // Hide errors
-                    $dbconnected = $DB->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'], false, $INSTALL['prefix']);
+                    $dbconnected = $DB->connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'], false, $INSTALL['prefix']);
                     error_reporting(38911);  // Show errors
                     if ($dbconnected) {
                     /// Execute environment check, printing results
