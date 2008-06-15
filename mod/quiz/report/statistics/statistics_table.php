@@ -15,7 +15,8 @@ class quiz_report_statistics_table extends table_sql {
         $this->reporturl = $reporturl;
     }
     function build_table(){
-        global $CFG;
+        global $CFG, $DB;
+
         if ($this->rawdata) {
             // Define some things we need later to process raw data from db.
             $this->strtimeformat = get_string('strftimedatetime');
@@ -23,7 +24,7 @@ class quiz_report_statistics_table extends table_sql {
             //end of adding data from attempts data to table / download
             //now add averages at bottom of table :
             $averagesql = "SELECT AVG(qg.grade) AS grade " .
-                    "FROM {$CFG->prefix}quiz_grades qg " .
+                    "FROM {quiz_grades} qg " .
                     "WHERE quiz=".$this->quiz->id;
                     
             $this->add_separator();
@@ -34,7 +35,7 @@ class quiz_report_statistics_table extends table_sql {
             }
             if ($this->groupstudents){
                 $groupaveragesql = $averagesql." AND qg.userid IN ($this->groupstudents)";
-                $groupaverage = get_record_sql($groupaveragesql);
+                $groupaverage = $DB->get_record_sql($groupaveragesql);
                 $groupaveragerow = array($namekey => get_string('groupavg', 'grades'),
                         'sumgrades' => round($groupaverage->grade, $this->quiz->decimalpoints),
                         'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($groupaverage->grade, $this->quiz->id)));
@@ -44,7 +45,7 @@ class quiz_report_statistics_table extends table_sql {
                 }
                 $this->add_data_keyed($groupaveragerow);
             }
-            $overallaverage = get_record_sql($averagesql." AND qg.userid IN ($this->students)");
+            $overallaverage = $DB->get_record_sql($averagesql." AND qg.userid IN ($this->students)");
             $overallaveragerow = array($namekey => get_string('overallaverage', 'grades'),
                         'sumgrades' => round($overallaverage->grade, $this->quiz->decimalpoints),
                         'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($overallaverage->grade, $this->quiz->id)));
