@@ -3871,6 +3871,7 @@ function print_continue($link, $return=false) {
 function print_box($message, $classes='generalbox', $ids='', $return=false) {
 
     $output  = print_box_start($classes, $ids, true);
+    $output .= $message;
     $output .= print_box_end(true);
 
     if ($return) {
