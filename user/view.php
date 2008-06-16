@@ -221,19 +221,13 @@
 
     echo '<table class="list">';
 
-    if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
-        $location = '';
-        if ($user->city && !isset($hiddenfields['city'])) {
-            $location .= $user->city;
-        }
+    if (! isset($hiddenfields['country']) && $user->country) {
         $countries = get_list_of_countries();
-        if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
-            if ($user->city && !isset($hiddenfields['city']) && !isset($hiddenfields['country'])) {
-                $location .= ', ';
-            }
-            $location .= $countries[$user->country];
-        }
-        print_row(get_string("city").":", $location);
+        print_row(get_string('country') . ':', $countries[$user->country]);
+    }
+
+    if (! isset($hiddenfields['city']) && $user->city) {
+        print_row(get_string('city') . ':', $user->city);
     }
 
     if (has_capability('moodle/user:viewhiddendetails', $coursecontext)) {
@@ -534,3 +528,4 @@ function print_row($left, $right) {
 }
 
 ?>
+
