@@ -17,6 +17,7 @@
         <Lang displayName="Español" fileName="es"></Lang>
         <Lang displayName="français" fileName="fr"></Lang>
         <Lang displayName="Nederlands" fileName="nl"></Lang>
+        <Lang displayName="Norsk" fileName="no"></Lang>
         <Lang displayName="polski" fileName="pl"></Lang>
         <Lang displayName="Pyccĸий" fileName="ru"></Lang>
         <Lang displayName="svenska" fileName="sv"></Lang>
@@ -28,5 +29,7 @@
         <Format displayName="Maple" fileName="Maple"></Format>
         <Format displayName="MathML" fileName="MathML"></Format>
         <Format displayName="Maxima" fileName="Maxima"></Format>
+        <Format displayName="MoodleTex" fileName="MoodleTex"></Format>
+        <Format displayName="ASCIIMathML" fileName="ASCIIMathML"></Format>
     </Formats>
 </Config>
