@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>DragMath Documentation - Changing applet parameters</title>
+</head>
+<body>
+
+<font size="2"; style="font-family: Arial;">
+
+<h2><span style=" color: #000099;"><strong>Changing Applet parameters</strong></span></h2>
+
+<p>
+There are various parameters that can be set inside the &lt;APPLET> tag, to change particular options of the applet.
+</p>
+ 
+<font size=3>
+<b>Language</b>
+</font>
+<p>
+<strong>
+<font color=#800080>&lt;param</font>
+name=
+</strong>
+<font color=#0000ff>language</font>
+<strong>
+value=
+</strong>
+<font color=#0000ff>"en"</font>
+<strong>
+<font color=#800080>&gt;</font>
+</strong>
+<br>
+The value is the name of the XML file, so this example refers to language file en.xml in the \lang folder. If the parameter is not used the default value is "en".
+ </p>
+
+<font size=3>
+<b>Output Format</b>
+</font>
+<p>
+<strong>
+<font color=#800080>&lt;param</font>
+name=
+</strong>
+<font color=#0000ff>outputFormat</font>
+<strong>
+value=
+</strong>
+<font color=#0000ff>"MathML"</font>
+<strong>
+<font color=#800080>&gt;</font>
+</strong>
+<br>
+The value is the name of the XML file, so this example refers to output format file MathML.xml in the \formats folder. The purpose of setting this is to have the default format to use automatically set when the software loads.
+</p>
+
+<font size=3>
+<b>Open applet with an expression</b>
+</font>
+<p>
+<strong>
+<font color=#800080>&lt;param</font>
+name=
+</strong>
+<font color=#0000ff>openWithExpression</font>
+<strong>
+value=
+</strong>
+<font color=#0000ff>"sin(1+x)"</font>
+<strong>
+<font color=#800080>&gt;</font>
+</strong>
+<br>
+The value can be any expression you would like the applet to be opened with. The Maxima example on the DragMath website gives an example of this being used.
+</p>
+
+</font>
+</body>
+</html>
