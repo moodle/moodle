@@ -641,7 +641,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         // else we try to get it from the xml file
         //Now calculate the category
-        if (!$category) {
+        if (empty($category)) {
             $category = get_record("course_categories","id",$course_header->category->id,
                                    "name",addslashes($course_header->category->name));
         }
