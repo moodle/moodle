@@ -18,7 +18,7 @@ class HTMLPurifier_AttrValidator
      * @param $config Instance of HTMLPurifier_Config
      * @param $context Instance of HTMLPurifier_Context
      */
-    function validateToken(&$token, &$config, &$context) {
+    public function validateToken(&$token, &$config, $context) {
             
         $definition = $config->getHTMLDefinition();
         $e =& $context->get('ErrorCollector', true);
@@ -34,7 +34,10 @@ class HTMLPurifier_AttrValidator
         $current_token =& $context->get('CurrentToken', true);
         if (!$current_token) $context->register('CurrentToken', $token);
         
-        if ($token->type !== 'start' && $token->type !== 'empty') return $token;
+        if (
+          !$token instanceof HTMLPurifier_Token_Start &&
+          !$token instanceof HTMLPurifier_Token_Empty
+        ) return $token;
         
         // create alias to global definition array, see also $defs
         // DEFINITION CALL

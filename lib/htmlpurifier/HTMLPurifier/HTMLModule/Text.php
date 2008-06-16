@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/HTMLModule.php';
-
 /**
  * XHTML 1.1 Text Module, defines basic text containers. Core Module.
  * @note In the normative XML Schema specification, this module
@@ -17,53 +15,53 @@ require_once 'HTMLPurifier/HTMLModule.php';
 class HTMLPurifier_HTMLModule_Text extends HTMLPurifier_HTMLModule
 {
     
-    var $name = 'Text';
-    var $content_sets = array(
+    public $name = 'Text';
+    public $content_sets = array(
         'Flow' => 'Heading | Block | Inline'
     );
     
-    function HTMLPurifier_HTMLModule_Text() {
+    public function __construct() {
         
         // Inline Phrasal -------------------------------------------------
-        $this->addElement('abbr',    true, 'Inline', 'Inline', 'Common');
-        $this->addElement('acronym', true, 'Inline', 'Inline', 'Common');
-        $this->addElement('cite',    true, 'Inline', 'Inline', 'Common');
-        $this->addElement('code',    true, 'Inline', 'Inline', 'Common');
-        $this->addElement('dfn',     true, 'Inline', 'Inline', 'Common');
-        $this->addElement('em',      true, 'Inline', 'Inline', 'Common');
-        $this->addElement('kbd',     true, 'Inline', 'Inline', 'Common');
-        $this->addElement('q',       true, 'Inline', 'Inline', 'Common', array('cite' => 'URI'));
-        $this->addElement('samp',    true, 'Inline', 'Inline', 'Common');
-        $this->addElement('strong',  true, 'Inline', 'Inline', 'Common');
-        $this->addElement('var',     true, 'Inline', 'Inline', 'Common');
+        $this->addElement('abbr',    'Inline', 'Inline', 'Common');
+        $this->addElement('acronym', 'Inline', 'Inline', 'Common');
+        $this->addElement('cite',    'Inline', 'Inline', 'Common');
+        $this->addElement('code',    'Inline', 'Inline', 'Common');
+        $this->addElement('dfn',     'Inline', 'Inline', 'Common');
+        $this->addElement('em',      'Inline', 'Inline', 'Common');
+        $this->addElement('kbd',     'Inline', 'Inline', 'Common');
+        $this->addElement('q',       'Inline', 'Inline', 'Common', array('cite' => 'URI'));
+        $this->addElement('samp',    'Inline', 'Inline', 'Common');
+        $this->addElement('strong',  'Inline', 'Inline', 'Common');
+        $this->addElement('var',     'Inline', 'Inline', 'Common');
         
         // Inline Structural ----------------------------------------------
-        $this->addElement('span', true, 'Inline', 'Inline', 'Common');
-        $this->addElement('br',   true, 'Inline', 'Empty',  'Core');
+        $this->addElement('span', 'Inline', 'Inline', 'Common');
+        $this->addElement('br',   'Inline', 'Empty',  'Core');
 
         // Moodle specific elements - start
-        $this->addElement('nolink',  true, 'Inline', 'Flow');
-        $this->addElement('tex',     true, 'Inline', 'Flow');
-        $this->addElement('algebra', true, 'Inline', 'Flow');
-        $this->addElement('lang',    true, 'Inline', 'Flow', 'I18N');
+        $this->addElement('nolink',  'Inline', 'Flow');
+        $this->addElement('tex',     'Inline', 'Flow');
+        $this->addElement('algebra', 'Inline', 'Flow');
+        $this->addElement('lang',    'Inline', 'Flow', 'I18N');
         // Moodle specific elements - end
         
         // Block Phrasal --------------------------------------------------
-        $this->addElement('address',     true, 'Block', 'Inline', 'Common');
-        $this->addElement('blockquote',  true, 'Block', 'Optional: Heading | Block | List', 'Common', array('cite' => 'URI') );
-        $pre =& $this->addElement('pre', true, 'Block', 'Inline', 'Common');
+        $this->addElement('address',     'Block', 'Inline', 'Common');
+        $this->addElement('blockquote',  'Block', 'Optional: Heading | Block | List', 'Common', array('cite' => 'URI') );
+        $pre = $this->addElement('pre', 'Block', 'Inline', 'Common');
         $pre->excludes = $this->makeLookup(
             'img', 'big', 'small', 'object', 'applet', 'font', 'basefont' );
-        $this->addElement('h1', true, 'Heading', 'Inline', 'Common');
-        $this->addElement('h2', true, 'Heading', 'Inline', 'Common');
-        $this->addElement('h3', true, 'Heading', 'Inline', 'Common');
-        $this->addElement('h4', true, 'Heading', 'Inline', 'Common');
-        $this->addElement('h5', true, 'Heading', 'Inline', 'Common');
-        $this->addElement('h6', true, 'Heading', 'Inline', 'Common');
+        $this->addElement('h1', 'Heading', 'Inline', 'Common');
+        $this->addElement('h2', 'Heading', 'Inline', 'Common');
+        $this->addElement('h3', 'Heading', 'Inline', 'Common');
+        $this->addElement('h4', 'Heading', 'Inline', 'Common');
+        $this->addElement('h5', 'Heading', 'Inline', 'Common');
+        $this->addElement('h6', 'Heading', 'Inline', 'Common');
         
         // Block Structural -----------------------------------------------
-        $this->addElement('p', true, 'Block', 'Inline', 'Common');
-        $this->addElement('div', true, 'Block', 'Flow', 'Common');
+        $this->addElement('p', 'Block', 'Inline', 'Common');
+        $this->addElement('div', 'Block', 'Flow', 'Common');
         
     }
     

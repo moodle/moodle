@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/URI.php';
-
 /**
  * Parses a URI into the components and fragment identifier as specified
  * by RFC 3986.
@@ -12,9 +10,9 @@ class HTMLPurifier_URIParser
     /**
      * Instance of HTMLPurifier_PercentEncoder to do normalization with.
      */
-    var $percentEncoder;
+    protected $percentEncoder;
     
-    function HTMLPurifier_URIParser() {
+    public function __construct() {
         $this->percentEncoder = new HTMLPurifier_PercentEncoder();
     }
     
@@ -24,7 +22,7 @@ class HTMLPurifier_URIParser
      * @return HTMLPurifier_URI representation of URI. This representation has
      *         not been validated yet and may not conform to RFC.
      */
-    function parse($uri) {
+    public function parse($uri) {
         
         $uri = $this->percentEncoder->normalize($uri);
         

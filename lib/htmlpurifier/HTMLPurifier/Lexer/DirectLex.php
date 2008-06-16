@@ -1,21 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/Lexer.php';
-
-HTMLPurifier_ConfigSchema::define(
-    'Core', 'DirectLexLineNumberSyncInterval', 0, 'int', '
-<p>
-  Specifies the number of tokens the DirectLex line number tracking
-  implementations should process before attempting to resyncronize the
-  current line count by manually counting all previous new-lines. When
-  at 0, this functionality is disabled. Lower values will decrease
-  performance, and this is only strictly necessary if the counting
-  algorithm is buggy (in which case you should report it as a bug).
-  This has no effect when %Core.MaintainLineNumbers is disabled or DirectLex is
-  not being used. This directive has been available since 2.0.0.
-</p>
-');
-
 /**
  * Our in-house implementation of a parser.
  * 
@@ -31,27 +15,25 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
     
     /**
      * Whitespace characters for str(c)spn.
-     * @protected
      */
-    var $_whitespace = "\x20\x09\x0D\x0A";
+    protected $_whitespace = "\x20\x09\x0D\x0A";
     
     /**
      * Callback function for script CDATA fudge
      * @param $matches, in form of array(opening tag, contents, closing tag)
-     * @static
      */
-    function scriptCallback($matches) {
+    protected function scriptCallback($matches) {
         return $matches[1] . htmlspecialchars($matches[2], ENT_COMPAT, 'UTF-8') . $matches[3];
     }
     
-    function tokenizeHTML($html, $config, &$context) {
+    public function tokenizeHTML($html, $config, $context) {
         
         // special normalization for script tags without any armor
         // our "armor" heurstic is a < sign any number of whitespaces after
         // the first script tag
         if ($config->get('HTML', 'Trusted')) {
             $html = preg_replace_callback('#(<script[^>]*>)(\s*[^<].+?)(</script>)#si',
-                array('HTMLPurifier_Lexer_DirectLex', 'scriptCallback'), $html);
+                array($this, 'scriptCallback'), $html);
         }
         
         $html = $this->normalize($html, $config, $context);
@@ -81,16 +63,10 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
             $e =& $context->get('ErrorCollector');
         }
         
-        // infinite loop protection
-        // has to be pretty big, since html docs can be big
-        // we're allow two hundred thousand tags... more than enough?
-        // NOTE: this is also used for synchronization, so watch out
+        // for testing synchronization
         $loops = 0;
         
-        while(true) {
-            
-            // infinite loop protection
-            if (++$loops > 200000) return array();
+        while(++$loops) {
             
             // recalculate lines
             if (
@@ -168,7 +144,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                 
                 // Check if it's a comment
                 if (
-                    strncmp('!--', $segment, 3) === 0
+                    substr($segment, 0, 3) === '!--'
                 ) {
                     // re-determine segment length, looking for -->
                     $position_comment_end = strpos($html, '-->', $cursor);
@@ -184,7 +160,12 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
                     }
                     $strlen_segment = $position_comment_end - $cursor;
                     $segment = substr($html, $cursor, $strlen_segment);
-                    $token = new HTMLPurifier_Token_Comment(substr($segment, 3));
+                    $token = new
+                        HTMLPurifier_Token_Comment(
+                            substr(
+                                $segment, 3, $strlen_segment - 3
+                            )
+                        );
                     if ($maintain_line_numbers) {
                         $token->line = $current_line;
                         $current_line += $this->substrCount($html, $nl, $cursor, $strlen_segment);
@@ -316,9 +297,9 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
     }
     
     /**
-     * PHP 4 compatible substr_count that implements offset and length
+     * PHP 5.0.x compatible substr_count that implements offset and length
      */
-    function substrCount($haystack, $needle, $offset, $length) {
+    protected function substrCount($haystack, $needle, $offset, $length) {
         static $oldVersion;
         if ($oldVersion === null) {
             $oldVersion = version_compare(PHP_VERSION, '5.1', '<');
@@ -337,7 +318,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
      * @param $string Inside of tag excluding name.
      * @returns Assoc array of attributes.
      */
-    function parseAttributeString($string, $config, &$context) {
+    public function parseAttributeString($string, $config, $context) {
         $string = (string) $string; // quick typecast
         
         if ($string == '') return array(); // no attributes
@@ -394,15 +375,7 @@ class HTMLPurifier_Lexer_DirectLex extends HTMLPurifier_Lexer
         // space, so let's guarantee that there's always a terminating space.
         $string .= ' ';
         
-        // infinite loop protection
-        $loops = 0;
         while(true) {
-            
-            // infinite loop protection
-            if (++$loops > 1000) {
-                trigger_error('Infinite loop detected in attribute parsing', E_USER_WARNING);
-                return array();
-            }
             
             if ($cursor >= $size) {
                 break;

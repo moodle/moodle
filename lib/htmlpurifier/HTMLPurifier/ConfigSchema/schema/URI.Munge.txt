@@ -1,0 +1,31 @@
+URI.Munge
+TYPE: string/null
+VERSION: 1.3.0
+DEFAULT: NULL
+--DESCRIPTION--
+
+<p>
+    Munges all browsable (usually http, https and ftp)
+    absolute URI's into another URI, usually a URI redirection service.
+    This directive accepts a URI, formatted with a <code>%s</code> where 
+    the url-encoded original URI should be inserted (sample: 
+    <code>http://www.google.com/url?q=%s</code>).
+</p>
+<p>
+    Uses for this directive:
+</p>
+<ul>
+    <li>
+        Prevent PageRank leaks, while being fairly transparent 
+        to users (you may also want to add some client side JavaScript to 
+        override the text in the statusbar). <strong>Notice</strong>:
+        Many security experts believe that this form of protection does
+not deter spam-bots. 
+    </li>
+    <li>
+        Redirect users to a splash page telling them they are leaving your
+        website. While this is poor usability practice, it is often
+mandated
+        in corporate environments.
+    </li>
+</ul>

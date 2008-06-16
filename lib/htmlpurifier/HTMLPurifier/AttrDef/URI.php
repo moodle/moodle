@@ -1,66 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-require_once 'HTMLPurifier/URIParser.php';
-require_once 'HTMLPurifier/URIScheme.php';
-require_once 'HTMLPurifier/URISchemeRegistry.php';
-require_once 'HTMLPurifier/AttrDef/URI/Host.php';
-require_once 'HTMLPurifier/PercentEncoder.php';
-require_once 'HTMLPurifier/AttrDef/URI/Email.php';
-
-// special case filtering directives 
-
-HTMLPurifier_ConfigSchema::define(
-    'URI', 'Munge', null, 'string/null', '
-<p>
-    Munges all browsable (usually http, https and ftp)
-    absolute URI\'s into another URI, usually a URI redirection service.
-    This directive accepts a URI, formatted with a <code>%s</code> where 
-    the url-encoded original URI should be inserted (sample: 
-    <code>http://www.google.com/url?q=%s</code>).
-</p>
-<p>
-    Uses for this directive:
-</p>
-<ul>
-    <li>
-        Prevent PageRank leaks, while being fairly transparent 
-        to users (you may also want to add some client side JavaScript to 
-        override the text in the statusbar). <strong>Notice</strong>:
-        Many security experts believe that this form of protection does not deter spam-bots. 
-    </li>
-    <li>
-        Redirect users to a splash page telling them they are leaving your
-        website. While this is poor usability practice, it is often mandated
-        in corporate environments.
-    </li>
-</ul>
-<p>
-    This directive has been available since 1.3.0.
-</p>
-');
-
-// disabling directives
-
-HTMLPurifier_ConfigSchema::define(
-    'URI', 'Disable', false, 'bool', '
-<p>
-    Disables all URIs in all forms. Not sure why you\'d want to do that 
-    (after all, the Internet\'s founded on the notion of a hyperlink). 
-    This directive has been available since 1.3.0.
-</p>
-');
-HTMLPurifier_ConfigSchema::defineAlias('Attr', 'DisableURI', 'URI', 'Disable');
-
-HTMLPurifier_ConfigSchema::define(
-    'URI', 'DisableResources', false, 'bool', '
-<p>
-    Disables embedding resources, essentially meaning no pictures. You can 
-    still link to them though. See %URI.DisableExternalResources for why 
-    this might be a good idea. This directive has been available since 1.3.0.
-</p>
-');
-
 /**
  * Validates a URI as defined by RFC 3986.
  * @note Scheme-specific mechanics deferred to HTMLPurifier_URIScheme
@@ -68,18 +7,18 @@ HTMLPurifier_ConfigSchema::define(
 class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
 {
     
-    var $parser;
-    var $embedsResource;
+    protected $parser;
+    protected $embedsResource;
     
     /**
      * @param $embeds_resource_resource Does the URI here result in an extra HTTP request?
      */
-    function HTMLPurifier_AttrDef_URI($embeds_resource = false) {
+    public function __construct($embeds_resource = false) {
         $this->parser = new HTMLPurifier_URIParser();
         $this->embedsResource = (bool) $embeds_resource;
     }
     
-    function validate($uri, $config, &$context) {
+    public function validate($uri, $config, $context) {
         
         if ($config->get('URI', 'Disable')) return false;
         
@@ -100,7 +39,7 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
             if (!$result) break;
             
             // chained filtering
-            $uri_def =& $config->getDefinition('URI');
+            $uri_def = $config->getDefinition('URI');
             $result = $uri_def->filter($uri, $config, $context);
             if (!$result) break;
             

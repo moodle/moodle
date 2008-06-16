@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/ChildDef.php';
-
 /**
  * Custom validation class, accepts DTD child definitions
  * 
@@ -12,28 +10,28 @@ require_once 'HTMLPurifier/ChildDef.php';
  */
 class HTMLPurifier_ChildDef_Custom extends HTMLPurifier_ChildDef
 {
-    var $type = 'custom';
-    var $allow_empty = false;
+    public $type = 'custom';
+    public $allow_empty = false;
     /**
      * Allowed child pattern as defined by the DTD
      */
-    var $dtd_regex;
+    public $dtd_regex;
     /**
      * PCRE regex derived from $dtd_regex
      * @private
      */
-    var $_pcre_regex;
+    private $_pcre_regex;
     /**
      * @param $dtd_regex Allowed child pattern from the DTD
      */
-    function HTMLPurifier_ChildDef_Custom($dtd_regex) {
+    public function __construct($dtd_regex) {
         $this->dtd_regex = $dtd_regex;
         $this->_compileRegex();
     }
     /**
      * Compiles the PCRE regex from a DTD regex ($dtd_regex to $_pcre_regex)
      */
-    function _compileRegex() {
+    protected function _compileRegex() {
         $raw = str_replace(' ', '', $this->dtd_regex);
         if ($raw{0} != '(') {
             $raw = "($raw)";
@@ -61,7 +59,7 @@ class HTMLPurifier_ChildDef_Custom extends HTMLPurifier_ChildDef
         
         $this->_pcre_regex = $reg;
     }
-    function validateChildren($tokens_of_children, $config, &$context) {
+    public function validateChildren($tokens_of_children, $config, $context) {
         $list_of_children = '';
         $nesting = 0; // depth into the nest
         foreach ($tokens_of_children as $token) {
@@ -69,9 +67,9 @@ class HTMLPurifier_ChildDef_Custom extends HTMLPurifier_ChildDef
             
             $is_child = ($nesting == 0); // direct
             
-            if ($token->type == 'start') {
+            if ($token instanceof HTMLPurifier_Token_Start) {
                 $nesting++;
-            } elseif ($token->type == 'end') {
+            } elseif ($token instanceof HTMLPurifier_Token_End) {
                 $nesting--;
             }
             

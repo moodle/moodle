@@ -1,15 +1,12 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Color.php'; // for %Core.ColorKeywords
-
 /**
  * Validates a color according to the HTML spec.
  */
 class HTMLPurifier_AttrDef_HTML_Color extends HTMLPurifier_AttrDef
 {
     
-    function validate($string, $config, &$context) {
+    public function validate($string, $config, $context) {
         
         static $colors = null;
         if ($colors === null) $colors = $config->get('Core', 'ColorKeywords');

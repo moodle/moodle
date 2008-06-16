@@ -1,25 +1,9 @@
 <?php
 
-require_once 'HTMLPurifier/HTMLModule/Tidy.php';
-
-require_once 'HTMLPurifier/TagTransform/Simple.php';
-require_once 'HTMLPurifier/TagTransform/Font.php';
-
-require_once 'HTMLPurifier/AttrTransform/BgColor.php';
-require_once 'HTMLPurifier/AttrTransform/BoolToCSS.php';
-require_once 'HTMLPurifier/AttrTransform/Border.php';
-require_once 'HTMLPurifier/AttrTransform/Name.php';
-require_once 'HTMLPurifier/AttrTransform/Length.php';
-require_once 'HTMLPurifier/AttrTransform/ImgSpace.php';
-require_once 'HTMLPurifier/AttrTransform/EnumToCSS.php';
-
-require_once 'HTMLPurifier/ChildDef/StrictBlockquote.php';
-
-class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
-      HTMLPurifier_HTMLModule_Tidy
+class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends HTMLPurifier_HTMLModule_Tidy
 {
     
-    function makeFixes() {
+    public function makeFixes() {
         
         $r = array();
         
@@ -176,31 +160,5 @@ class HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4 extends
         
     }
     
-}
-
-class HTMLPurifier_HTMLModule_Tidy_Transitional extends
-      HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4
-{
-    var $name = 'Tidy_Transitional';
-    var $defaultLevel = 'heavy';
-}
-
-class HTMLPurifier_HTMLModule_Tidy_Strict extends
-      HTMLPurifier_HTMLModule_Tidy_XHTMLAndHTML4
-{
-    var $name = 'Tidy_Strict';
-    var $defaultLevel = 'light';
-    
-    function makeFixes() {
-        $r = parent::makeFixes();
-        $r['blockquote#content_model_type'] = 'strictblockquote';
-        return $r;
-    }
-    
-    var $defines_child_def = true;
-    function getChildDef($def) {
-        if ($def->content_model_type != 'strictblockquote') return parent::getChildDef($def);
-        return new HTMLPurifier_ChildDef_StrictBlockquote($def->content_model);
-    }
 }
 

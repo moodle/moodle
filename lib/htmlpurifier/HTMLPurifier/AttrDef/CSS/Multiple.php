@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-
 /**
  * Framework class for strings that involve multiple values.
  * 
@@ -18,24 +16,26 @@ class HTMLPurifier_AttrDef_CSS_Multiple extends HTMLPurifier_AttrDef
     
     /**
      * Instance of component definition to defer validation to.
+     * @todo Make protected
      */
-    var $single;
+    public $single;
     
     /**
      * Max number of values allowed.
+     * @todo Make protected
      */
-    var $max;
+    public $max;
     
     /**
      * @param $single HTMLPurifier_AttrDef to multiply
      * @param $max Max number of values allowed (usually four)
      */
-    function HTMLPurifier_AttrDef_CSS_Multiple($single, $max = 4) {
+    public function __construct($single, $max = 4) {
         $this->single = $single;
         $this->max = $max;
     }
     
-    function validate($string, $config, &$context) {
+    public function validate($string, $config, $context) {
         $string = $this->parseCDATA($string);
         if ($string === '') return false;
         $parts = explode(' ', $string); // parseCDATA replaced \r, \t and \n

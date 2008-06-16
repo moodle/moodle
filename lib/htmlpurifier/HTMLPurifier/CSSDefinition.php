@@ -1,32 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/Definition.php';
-
-require_once 'HTMLPurifier/AttrDef/CSS/Background.php';
-require_once 'HTMLPurifier/AttrDef/CSS/BackgroundPosition.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Border.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Color.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Composite.php';
-require_once 'HTMLPurifier/AttrDef/CSS/DenyElementDecorator.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Font.php';
-require_once 'HTMLPurifier/AttrDef/CSS/FontFamily.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Length.php';
-require_once 'HTMLPurifier/AttrDef/CSS/ListStyle.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Multiple.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Percentage.php';
-require_once 'HTMLPurifier/AttrDef/CSS/TextDecoration.php';
-require_once 'HTMLPurifier/AttrDef/CSS/URI.php';
-require_once 'HTMLPurifier/AttrDef/Enum.php';
-
-HTMLPurifier_ConfigSchema::define(
-    'CSS', 'DefinitionRev', 1, 'int', '
-<p>
-    Revision identifier for your custom definition. See
-    %HTML.DefinitionRev for details. This directive has been available
-    since 2.0.0.
-</p>
-');
-
 /**
  * Defines allowed CSS attributes and what their values are.
  * @see HTMLPurifier_HTMLDefinition
@@ -34,17 +7,17 @@ HTMLPurifier_ConfigSchema::define(
 class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
 {
     
-    var $type = 'CSS';
+    public $type = 'CSS';
     
     /**
      * Assoc array of attribute name to definition object.
      */
-    var $info = array();
+    public $info = array();
     
     /**
      * Constructs the info array.  The meat of this class.
      */
-    function doSetup($config) {
+    protected function doSetup($config) {
         
         $this->info['text-align'] = new HTMLPurifier_AttrDef_Enum(
             array('left', 'right', 'center', 'justify'), false);
@@ -226,7 +199,80 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         // partial support
         $this->info['white-space'] = new HTMLPurifier_AttrDef_Enum(array('nowrap'));
         
+        if ($config->get('CSS', 'Proprietary')) {
+            $this->doSetupProprietary($config);
+        }
+        
+        if ($config->get('CSS', 'AllowTricky')) {
+            $this->doSetupTricky($config);
+        }
+        
+        $allow_important = $config->get('CSS', 'AllowImportant');
+        // wrap all attr-defs with decorator that handles !important
+        foreach ($this->info as $k => $v) {
+            $this->info[$k] = new HTMLPurifier_AttrDef_CSS_ImportantDecorator($v, $allow_important);
+        }
+        
+        $this->setupConfigStuff($config);
     }
     
+    protected function doSetupProprietary($config) {
+        // Internet Explorer only scrollbar colors
+        $this->info['scrollbar-arrow-color']        = new HTMLPurifier_AttrDef_CSS_Color();
+        $this->info['scrollbar-base-color']         = new HTMLPurifier_AttrDef_CSS_Color();
+        $this->info['scrollbar-darkshadow-color']   = new HTMLPurifier_AttrDef_CSS_Color();
+        $this->info['scrollbar-face-color']         = new HTMLPurifier_AttrDef_CSS_Color();
+        $this->info['scrollbar-highlight-color']    = new HTMLPurifier_AttrDef_CSS_Color();
+        $this->info['scrollbar-shadow-color']       = new HTMLPurifier_AttrDef_CSS_Color();
+        
+        // technically not proprietary, but CSS3, and no one supports it
+        $this->info['opacity']          = new HTMLPurifier_AttrDef_CSS_AlphaValue();
+        $this->info['-moz-opacity']     = new HTMLPurifier_AttrDef_CSS_AlphaValue();
+        $this->info['-khtml-opacity']   = new HTMLPurifier_AttrDef_CSS_AlphaValue();
+        
+        // only opacity, for now
+        $this->info['filter'] = new HTMLPurifier_AttrDef_CSS_Filter();
+        
+    }
+    
+    protected function doSetupTricky($config) {
+        $this->info['display'] = new HTMLPurifier_AttrDef_Enum(array(
+            'inline', 'block', 'list-item', 'run-in', 'compact',
+            'marker', 'table', 'inline-table', 'table-row-group',
+            'table-header-group', 'table-footer-group', 'table-row',
+            'table-column-group', 'table-column', 'table-cell', 'table-caption', 'none'
+        ));
+        $this->info['visibility'] = new HTMLPurifier_AttrDef_Enum(array(
+            'visible', 'hidden', 'collapse'
+        ));
+    }
+    
+    
+    /**
+     * Performs extra config-based processing. Based off of
+     * HTMLPurifier_HTMLDefinition.
+     * @todo Refactor duplicate elements into common class (probably using
+     *       composition, not inheritance).
+     */
+    protected function setupConfigStuff($config) {
+        
+        // setup allowed elements
+        $support = "(for information on implementing this, see the ".
+                   "support forums) ";
+        $allowed_attributes = $config->get('CSS', 'AllowedProperties');
+        if ($allowed_attributes !== null) {
+            foreach ($this->info as $name => $d) {
+                if(!isset($allowed_attributes[$name])) unset($this->info[$name]);
+                unset($allowed_attributes[$name]);
+            }
+            // emit errors
+            foreach ($allowed_attributes as $name => $d) {
+                // :TODO: Is this htmlspecialchars() call really necessary?
+                $name = htmlspecialchars($name);
+                trigger_error("Style attribute '$name' is not supported $support", E_USER_WARNING);
+            }
+        }
+        
+    }
 }
 

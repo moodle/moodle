@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-
 /**
  * Validates shorthand CSS property font.
  */
@@ -16,9 +14,9 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
      *       CSSDefinition, this wouldn't be necessary.  We'd instantiate
      *       our own copies.
      */
-    var $info = array();
+    protected $info = array();
     
-    function HTMLPurifier_AttrDef_CSS_Font($config) {
+    public function __construct($config) {
         $def = $config->getCSSDefinition();
         $this->info['font-style']   = $def->info['font-style'];
         $this->info['font-variant'] = $def->info['font-variant'];
@@ -28,7 +26,7 @@ class HTMLPurifier_AttrDef_CSS_Font extends HTMLPurifier_AttrDef
         $this->info['font-family']  = $def->info['font-family'];
     }
     
-    function validate($string, $config, &$context) {
+    public function validate($string, $config, $context) {
         
         static $system_fonts = array(
             'caption' => true,

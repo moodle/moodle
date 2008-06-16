@@ -12,6 +12,7 @@
  *       correspond to the variables in HTMLPurifier_HTMLDefinition.
  *       However, the prefix info carries no special meaning in these
  *       objects (include it anyway if that's the correspondence though).
+ * @todo Consider making some member functions protected
  */
 
 class HTMLPurifier_HTMLModule
@@ -22,31 +23,28 @@ class HTMLPurifier_HTMLModule
     /**
      * Short unique string identifier of the module
      */
-    var $name;
+    public $name;
     
     /**
      * Informally, a list of elements this module changes. Not used in
      * any significant way.
-     * @protected
      */
-    var $elements = array();
+    public $elements = array();
     
     /**
      * Associative array of element names to element definitions.
      * Some definitions may be incomplete, to be merged in later
      * with the full definition.
-     * @public
      */
-    var $info = array();
+    public $info = array();
     
     /**
      * Associative array of content set names to content set additions.
      * This is commonly used to, say, add an A element to the Inline
      * content set. This corresponds to an internal variable $content_sets
      * and NOT info_content_sets member variable of HTMLDefinition.
-     * @public
      */
-    var $content_sets = array();
+    public $content_sets = array();
     
     /**
      * Associative array of attribute collection names to attribute
@@ -55,36 +53,45 @@ class HTMLPurifier_HTMLModule
      * the style attribute to the Core. Corresponds to HTMLDefinition's
      * attr_collections->info, since the object's data is only info,
      * with extra behavior associated with it.
-     * @public
      */
-    var $attr_collections = array();
+    public $attr_collections = array();
     
     /**
      * Associative array of deprecated tag name to HTMLPurifier_TagTransform
-     * @public
      */
-    var $info_tag_transform = array();
+    public $info_tag_transform = array();
     
     /**
      * List of HTMLPurifier_AttrTransform to be performed before validation.
-     * @public
      */
-    var $info_attr_transform_pre = array();
+    public $info_attr_transform_pre = array();
     
     /**
      * List of HTMLPurifier_AttrTransform to be performed after validation.
-     * @public
      */
-    var $info_attr_transform_post = array();
+    public $info_attr_transform_post = array();
     
     /**
      * Boolean flag that indicates whether or not getChildDef is implemented.
      * For optimization reasons: may save a call to a function. Be sure
      * to set it if you do implement getChildDef(), otherwise it will have
      * no effect!
-     * @public
      */
-    var $defines_child_def = false;
+    public $defines_child_def = false;
+    
+    /**
+     * Boolean flag whether or not this module is safe. If it is not safe, all
+     * of its members are unsafe. Modules are safe by default (this might be
+     * slightly dangerous, but it doesn't make much sense to force HTML Purifier,
+     * which is based off of safe HTML, to explicitly say, "This is safe," even
+     * though there are modules which are "unsafe")
+     * 
+     * @note Previously, safety could be applied at an element level granularity.
+     *       We've removed this ability, so in order to add "unsafe" elements
+     *       or attributes, a dedicated module with this property set to false
+     *       must be used.
+     */
+    public $safe = true;
     
     /**
      * Retrieves a proper HTMLPurifier_ChildDef subclass based on 
@@ -93,16 +100,14 @@ class HTMLPurifier_HTMLModule
      * in HTMLPurifier_HTMLDefinition.
      * @param $def HTMLPurifier_ElementDef instance
      * @return HTMLPurifier_ChildDef subclass
-     * @public
      */
-    function getChildDef($def) {return false;}
+    public function getChildDef($def) {return false;}
     
     // -- Convenience -----------------------------------------------------
     
     /**
      * Convenience function that sets up a new element
      * @param $element Name of element to add
-     * @param $safe Is element safe for untrusted users to use?
      * @param $type What content set should element be registered to?
      *              Set as false to skip this step.
      * @param $contents Allowed children in form of:
@@ -111,11 +116,10 @@ class HTMLPurifier_HTMLModule
      *              element?
      * @param $attr What unique attributes does the element define?
      * @note See ElementDef for in-depth descriptions of these parameters.
-     * @return Reference to created element definition object, so you 
+     * @return Created element definition object, so you 
      *         can set advanced parameters
-     * @protected
      */
-    function &addElement($element, $safe, $type, $contents, $attr_includes = array(), $attr = array()) {
+    public function addElement($element, $type, $contents, $attr_includes = array(), $attr = array()) {
         $this->elements[] = $element;
         // parse content_model
         list($content_model_type, $content_model) = $this->parseContents($contents);
@@ -125,7 +129,7 @@ class HTMLPurifier_HTMLModule
         if ($type) $this->addElementToContentSet($element, $type);
         // create element
         $this->info[$element] = HTMLPurifier_ElementDef::create(
-            $safe, $content_model, $content_model_type, $attr
+            $content_model, $content_model_type, $attr
         );
         // literal object $contents means direct child manipulation
         if (!is_string($contents)) $this->info[$element]->child = $contents;
@@ -136,9 +140,9 @@ class HTMLPurifier_HTMLModule
      * Convenience function that creates a totally blank, non-standalone
      * element.
      * @param $element Name of element to create
-     * @return Reference to created element
+     * @return Created element
      */
-    function &addBlankElement($element) {
+    public function addBlankElement($element) {
         if (!isset($this->info[$element])) {
             $this->elements[] = $element;
             $this->info[$element] = new HTMLPurifier_ElementDef();
@@ -154,9 +158,8 @@ class HTMLPurifier_HTMLModule
      * @param Element to register
      * @param Name content set (warning: case sensitive, usually upper-case
      *        first letter)
-     * @protected
      */
-    function addElementToContentSet($element, $type) {
+    public function addElementToContentSet($element, $type) {
         if (!isset($this->content_sets[$type])) $this->content_sets[$type] = '';
         else $this->content_sets[$type] .= ' | ';
         $this->content_sets[$type] .= $element;
@@ -171,7 +174,7 @@ class HTMLPurifier_HTMLModule
      *       returned, and the callee needs to take the original $contents
      *       and use it directly.
      */
-    function parseContents($contents) {
+    public function parseContents($contents) {
         if (!is_string($contents)) return array(null, null); // defer
         switch ($contents) {
             // check for shorthand content model forms
@@ -194,7 +197,7 @@ class HTMLPurifier_HTMLModule
      * @param $attr Reference to attr array to modify
      * @param $attr_includes Array of includes / string include to merge in
      */
-    function mergeInAttrIncludes(&$attr, $attr_includes) {
+    public function mergeInAttrIncludes(&$attr, $attr_includes) {
         if (!is_array($attr_includes)) {
             if (empty($attr_includes)) $attr_includes = array();
             else $attr_includes = array($attr_includes);
@@ -210,7 +213,7 @@ class HTMLPurifier_HTMLModule
      *       place of the regular argument
      * @return Lookup array equivalent of list
      */
-    function makeLookup($list) {
+    public function makeLookup($list) {
         if (is_string($list)) $list = func_get_args();
         $ret = array();
         foreach ($list as $value) {

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-
 /**
  * Validates the HTML attribute lang, effectively a language code.
  * @note Built according to RFC 3066, which obsoleted RFC 1766
@@ -9,7 +7,7 @@ require_once 'HTMLPurifier/AttrDef.php';
 class HTMLPurifier_AttrDef_Lang extends HTMLPurifier_AttrDef
 {
     
-    function validate($string, $config, &$context) {
+    public function validate($string, $config, $context) {
 
 // moodle change - we use special lang strings unfortunatelly
         return ereg_replace('[^0-9a-zA-Z_-]', '', $string);

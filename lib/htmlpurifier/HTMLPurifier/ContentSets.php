@@ -1,45 +1,37 @@
 <?php
 
-// common defs that we'll support by default
-require_once 'HTMLPurifier/ChildDef.php';
-require_once 'HTMLPurifier/ChildDef/Empty.php';
-require_once 'HTMLPurifier/ChildDef/Required.php';
-require_once 'HTMLPurifier/ChildDef/Optional.php';
-require_once 'HTMLPurifier/ChildDef/Custom.php';
-
-// NOT UNIT TESTED!!!
-
+/**
+ * @todo Unit test
+ */
 class HTMLPurifier_ContentSets
 {
     
     /**
      * List of content set strings (pipe seperators) indexed by name.
-     * @public
      */
-    var $info = array();
+    public $info = array();
     
     /**
      * List of content set lookups (element => true) indexed by name.
      * @note This is in HTMLPurifier_HTMLDefinition->info_content_sets
-     * @public
      */
-    var $lookup = array();
+    public $lookup = array();
     
     /**
      * Synchronized list of defined content sets (keys of info)
      */
-    var $keys = array();
+    protected $keys = array();
     /**
      * Synchronized list of defined content values (values of info)
      */
-    var $values = array();
+    protected $values = array();
     
     /**
      * Merges in module's content sets, expands identifiers in the content
      * sets and populates the keys, values and lookup member variables.
      * @param $modules List of HTMLPurifier_HTMLModule
      */
-    function HTMLPurifier_ContentSets($modules) {
+    public function __construct($modules) {
         if (!is_array($modules)) $modules = array($modules);
         // populate content_sets based on module hints
         // sorry, no way of overloading
@@ -79,7 +71,7 @@ class HTMLPurifier_ContentSets
      * @param $def HTMLPurifier_ElementDef reference
      * @param $module Module that defined the ElementDef
      */
-    function generateChildDef(&$def, $module) {
+    public function generateChildDef(&$def, $module) {
         if (!empty($def->child)) return; // already done!
         $content_model = $def->content_model;
         if (is_string($content_model)) {
@@ -97,7 +89,7 @@ class HTMLPurifier_ContentSets
      * @param $def HTMLPurifier_ElementDef to have ChildDef extracted
      * @return HTMLPurifier_ChildDef corresponding to ElementDef
      */
-    function getChildDef($def, $module) {
+    public function getChildDef($def, $module) {
         $value = $def->content_model;
         if (is_object($value)) {
             trigger_error(
@@ -137,7 +129,7 @@ class HTMLPurifier_ContentSets
      * @param $string List of elements
      * @return Lookup array of elements
      */
-    function convertToLookup($string) {
+    protected function convertToLookup($string) {
         $array = explode('|', str_replace(' ', '', $string));
         $ret = array();
         foreach ($array as $i => $k) {

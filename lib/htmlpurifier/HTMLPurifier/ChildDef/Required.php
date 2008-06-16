@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/ChildDef.php';
-
 /**
  * Definition that allows a set of elements, but disallows empty children.
  */
@@ -11,11 +9,11 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
      * Lookup table of allowed elements.
      * @public
      */
-    var $elements = array();
+    public $elements = array();
     /**
      * @param $elements List of allowed element names (lowercase).
      */
-    function HTMLPurifier_ChildDef_Required($elements) {
+    public function __construct($elements) {
         if (is_string($elements)) {
             $elements = str_replace(' ', '', $elements);
             $elements = explode('|', $elements);
@@ -30,9 +28,9 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
         }
         $this->elements = $elements;
     }
-    var $allow_empty = false;
-    var $type = 'required';
-    function validateChildren($tokens_of_children, $config, &$context) {
+    public $allow_empty = false;
+    public $type = 'required';
+    public function validateChildren($tokens_of_children, $config, $context) {
         // if there are no tokens, delete parent node
         if (empty($tokens_of_children)) return false;
         
@@ -59,7 +57,7 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
         // generator
         static $gen = null;
         if ($gen === null) {
-            $gen = new HTMLPurifier_Generator();
+            $gen = new HTMLPurifier_Generator($config, $context);
         }
         
         foreach ($tokens_of_children as $token) {
@@ -71,9 +69,9 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
             
             $is_child = ($nesting == 0);
             
-            if ($token->type == 'start') {
+            if ($token instanceof HTMLPurifier_Token_Start) {
                 $nesting++;
-            } elseif ($token->type == 'end') {
+            } elseif ($token instanceof HTMLPurifier_Token_End) {
                 $nesting--;
             }
             
@@ -81,7 +79,7 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
                 $is_deleting = false;
                 if (!isset($this->elements[$token->name])) {
                     $is_deleting = true;
-                    if ($pcdata_allowed && $token->type == 'text') {
+                    if ($pcdata_allowed && $token instanceof HTMLPurifier_Token_Text) {
                         $result[] = $token;
                     } elseif ($pcdata_allowed && $escape_invalid_children) {
                         $result[] = new HTMLPurifier_Token_Text(
@@ -91,7 +89,7 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
                     continue;
                 }
             }
-            if (!$is_deleting || ($pcdata_allowed && $token->type == 'text')) {
+            if (!$is_deleting || ($pcdata_allowed && $token instanceof HTMLPurifier_Token_Text)) {
                 $result[] = $token;
             } elseif ($pcdata_allowed && $escape_invalid_children) {
                 $result[] =

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrTransform.php';
-
 /**
  * Post-transform that copies lang's value to xml:lang (and vice-versa)
  * @note Theoretically speaking, this could be a pre-transform, but putting
@@ -10,7 +8,7 @@ require_once 'HTMLPurifier/AttrTransform.php';
 class HTMLPurifier_AttrTransform_Lang extends HTMLPurifier_AttrTransform
 {
     
-    function transform($attr, $config, &$context) {
+    public function transform($attr, $config, $context) {
         
         $lang     = isset($attr['lang']) ? $attr['lang'] : false;
         $xml_lang = isset($attr['xml:lang']) ? $attr['xml:lang'] : false;

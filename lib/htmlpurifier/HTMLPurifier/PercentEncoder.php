@@ -14,12 +14,12 @@ class HTMLPurifier_PercentEncoder
     /**
      * Reserved characters to preserve when using encode().
      */
-    var $preserve = array();
+    protected $preserve = array();
     
     /**
      * String of characters that should be preserved while using encode().
      */
-    function HTMLPurifier_PercentEncoder($preserve = false) {
+    public function __construct($preserve = false) {
         // unreserved letters, ought to const-ify
         for ($i = 48; $i <= 57;  $i++) $this->preserve[$i] = true; // digits
         for ($i = 65; $i <= 90;  $i++) $this->preserve[$i] = true; // upper-case
@@ -47,7 +47,7 @@ class HTMLPurifier_PercentEncoder
      * @param $string String to be encoded
      * @return Encoded string.
      */
-    function encode($string) {
+    public function encode($string) {
         $ret = '';
         for ($i = 0, $c = strlen($string); $i < $c; $i++) {
             if ($string[$i] !== '%' && !isset($this->preserve[$int = ord($string[$i])]) ) {
@@ -66,7 +66,7 @@ class HTMLPurifier_PercentEncoder
      *          characters. Be careful when reusing instances of PercentEncoder!
      * @param $string String to normalize
      */
-    function normalize($string) {
+    public function normalize($string) {
         if ($string == '') return '';
         $parts = explode('%', $string);
         $ret = array_shift($parts);

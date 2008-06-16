@@ -8,51 +8,51 @@
  * @todo Allow injectors to request a re-run on their output. This 
  *       would help if an operation is recursive.
  */
-class HTMLPurifier_Injector
+abstract class HTMLPurifier_Injector
 {
     
     /**
      * Advisory name of injector, this is for friendly error messages
      */
-    var $name;
+    public $name;
     
     /**
      * Amount of tokens the injector needs to skip + 1. Because
      * the decrement is the first thing that happens, this needs to
      * be one greater than the "real" skip count.
      */
-    var $skip = 1;
+    public $skip = 1;
     
     /**
      * Instance of HTMLPurifier_HTMLDefinition
      */
-    var $htmlDefinition;
+    protected $htmlDefinition;
     
     /**
      * Reference to CurrentNesting variable in Context. This is an array
      * list of tokens that we are currently "inside"
      */
-    var $currentNesting;
+    protected $currentNesting;
     
     /**
      * Reference to InputTokens variable in Context. This is an array
      * list of the input tokens that are being processed.
      */
-    var $inputTokens;
+    protected $inputTokens;
     
     /**
      * Reference to InputIndex variable in Context. This is an integer
      * array index for $this->inputTokens that indicates what token
      * is currently being processed.
      */
-    var $inputIndex;
+    protected $inputIndex;
     
     /**
      * Array of elements and attributes this injector creates and therefore
      * need to be allowed by the definition. Takes form of
      * array('element' => array('attr', 'attr2'), 'element2')
      */
-    var $needed = array();
+    public $needed = array();
     
     /**
      * Prepares the injector by giving it the config and context objects:
@@ -64,7 +64,7 @@ class HTMLPurifier_Injector
      * @param $context Instance of HTMLPurifier_Context
      * @return Boolean false if success, string of missing needed element/attribute if failure
      */
-    function prepare($config, &$context) {
+    public function prepare($config, $context) {
         $this->htmlDefinition = $config->getHTMLDefinition();
         // perform $needed checks
         foreach ($this->needed as $element => $attributes) {
@@ -86,7 +86,7 @@ class HTMLPurifier_Injector
      * @param $name Name of element to test for
      * @return True if element is allowed, false if it is not
      */
-    function allowsElement($name) {
+    public function allowsElement($name) {
         if (!empty($this->currentNesting)) {
             $parent_token = array_pop($this->currentNesting);
             $this->currentNesting[] = $parent_token;
@@ -103,18 +103,18 @@ class HTMLPurifier_Injector
     /**
      * Handler that is called when a text token is processed
      */
-    function handleText(&$token) {}
+    public function handleText(&$token) {}
     
     /**
      * Handler that is called when a start or empty token is processed
      */
-    function handleElement(&$token) {}
+    public function handleElement(&$token) {}
     
     /**
      * Notifier that is called when an end token is processed
      * @note This differs from handlers in that the token is read-only
      */
-    function notifyEnd($token) {}
+    public function notifyEnd($token) {}
     
     
 }

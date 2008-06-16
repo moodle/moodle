@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef/URI.php';
-
 /**
  * Validates a URI in CSS syntax, which uses url('http://example.com')
  * @note While theoretically speaking a URI in a CSS document could
@@ -14,11 +12,11 @@ require_once 'HTMLPurifier/AttrDef/URI.php';
 class HTMLPurifier_AttrDef_CSS_URI extends HTMLPurifier_AttrDef_URI
 {
     
-    function HTMLPurifier_AttrDef_CSS_URI() {
-        parent::HTMLPurifier_AttrDef_URI(true); // always embedded
+    public function __construct() {
+        parent::__construct(true); // always embedded
     }
     
-    function validate($uri_string, $config, &$context) {
+    public function validate($uri_string, $config, $context) {
         // parse the URI out of the string and then pass it onto
         // the parent object
         

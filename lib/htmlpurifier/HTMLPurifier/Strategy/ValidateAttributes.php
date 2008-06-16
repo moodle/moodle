@@ -1,11 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/Strategy.php';
-require_once 'HTMLPurifier/HTMLDefinition.php';
-require_once 'HTMLPurifier/IDAccumulator.php';
-
-require_once 'HTMLPurifier/AttrValidator.php';
-
 /**
  * Validate all attributes in the tokens.
  */
@@ -13,7 +7,7 @@ require_once 'HTMLPurifier/AttrValidator.php';
 class HTMLPurifier_Strategy_ValidateAttributes extends HTMLPurifier_Strategy
 {
     
-    function execute($tokens, $config, &$context) {
+    public function execute($tokens, $config, $context) {
         
         // setup validator
         $validator = new HTMLPurifier_AttrValidator();
@@ -25,7 +19,7 @@ class HTMLPurifier_Strategy_ValidateAttributes extends HTMLPurifier_Strategy
             
             // only process tokens that have attributes,
             //   namely start and empty tags
-            if ($token->type !== 'start' && $token->type !== 'empty') continue;
+            if (!$token instanceof HTMLPurifier_Token_Start && !$token instanceof HTMLPurifier_Token_Empty) continue;
             
             // skip tokens that are armored
             if (!empty($token->armor['ValidateAttributes'])) continue;

@@ -1,19 +1,16 @@
 <?php
 
-require_once 'HTMLPurifier/ChildDef/Required.php';
-
 /**
  * Takes the contents of blockquote when in strict and reformats for validation.
  */
-class   HTMLPurifier_ChildDef_StrictBlockquote
-extends HTMLPurifier_ChildDef_Required
+class HTMLPurifier_ChildDef_StrictBlockquote extends HTMLPurifier_ChildDef_Required
 {
-    var $real_elements;
-    var $fake_elements;
-    var $allow_empty = true;
-    var $type = 'strictblockquote';
-    var $init = false;
-    function validateChildren($tokens_of_children, $config, &$context) {
+    protected $real_elements;
+    protected $fake_elements;
+    public $allow_empty = true;
+    public $type = 'strictblockquote';
+    protected $init = false;
+    public function validateChildren($tokens_of_children, $config, $context) {
         
         $def = $config->getHTMLDefinition();
         if (!$this->init) {
@@ -45,8 +42,8 @@ extends HTMLPurifier_ChildDef_Required
             if (!$is_inline) {
                 if (!$depth) {
                      if (
-                        ($token->type == 'text' && !$token->is_whitespace) ||
-                        ($token->type != 'text' && !isset($this->elements[$token->name]))
+                        ($token instanceof HTMLPurifier_Token_Text && !$token->is_whitespace) ||
+                        (!$token instanceof HTMLPurifier_Token_Text && !isset($this->elements[$token->name]))
                      ) {
                         $is_inline = true;
                         $ret[] = $block_wrap_start;
@@ -55,7 +52,7 @@ extends HTMLPurifier_ChildDef_Required
             } else {
                 if (!$depth) {
                     // starting tokens have been inline text / empty
-                    if ($token->type == 'start' || $token->type == 'empty') {
+                    if ($token instanceof HTMLPurifier_Token_Start || $token instanceof HTMLPurifier_Token_Empty) {
                         if (isset($this->elements[$token->name])) {
                             // ended
                             $ret[] = $block_wrap_end;
@@ -65,8 +62,8 @@ extends HTMLPurifier_ChildDef_Required
                 }
             }
             $ret[] = $token;
-            if ($token->type == 'start') $depth++;
-            if ($token->type == 'end')   $depth--;
+            if ($token instanceof HTMLPurifier_Token_Start) $depth++;
+            if ($token instanceof HTMLPurifier_Token_End)   $depth--;
         }
         if ($is_inline) $ret[] = $block_wrap_end;
         return $ret;

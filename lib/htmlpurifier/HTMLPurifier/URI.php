@@ -1,8 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/URIParser.php';
-require_once 'HTMLPurifier/URIFilter.php';
-
 /**
  * HTML Purifier's internal representation of a URI.
  * @note
@@ -14,12 +11,12 @@ require_once 'HTMLPurifier/URIFilter.php';
 class HTMLPurifier_URI
 {
     
-    var $scheme, $userinfo, $host, $port, $path, $query, $fragment;
+    public $scheme, $userinfo, $host, $port, $path, $query, $fragment;
     
     /**
      * @note Automatically normalizes scheme and port
      */
-    function HTMLPurifier_URI($scheme, $userinfo, $host, $port, $path, $query, $fragment) {
+    public function __construct($scheme, $userinfo, $host, $port, $path, $query, $fragment) {
         $this->scheme = is_null($scheme) || ctype_lower($scheme) ? $scheme : strtolower($scheme);
         $this->userinfo = $userinfo;
         $this->host = $host;
@@ -35,8 +32,8 @@ class HTMLPurifier_URI
      * @param $context Instance of HTMLPurifier_Context
      * @return Scheme object appropriate for validating this URI
      */
-    function getSchemeObj($config, &$context) {
-        $registry =& HTMLPurifier_URISchemeRegistry::instance();
+    public function getSchemeObj($config, $context) {
+        $registry = HTMLPurifier_URISchemeRegistry::instance();
         if ($this->scheme !== null) {
             $scheme_obj = $registry->getScheme($this->scheme, $config, $context);
             if (!$scheme_obj) return false; // invalid scheme, clean it out
@@ -63,7 +60,7 @@ class HTMLPurifier_URI
      * @param $context Instance of HTMLPurifier_Context
      * @return True if validation/filtering succeeds, false if failure
      */
-    function validate($config, &$context) {
+    public function validate($config, $context) {
         
         // ABNF definitions from RFC 3986
         $chars_sub_delims = '!$&\'()*+,;=';
@@ -139,7 +136,7 @@ class HTMLPurifier_URI
      * Convert URI back to string
      * @return String URI appropriate for output
      */
-    function toString() {
+    public function toString() {
         // reconstruct authority
         $authority = null;
         if (!is_null($this->host)) {
@@ -158,13 +155,6 @@ class HTMLPurifier_URI
         if (!is_null($this->fragment))  $result .= '#' . $this->fragment;
         
         return $result;
-    }
-    
-    /**
-     * Returns a copy of the URI object
-     */
-    function copy() {
-        return unserialize(serialize($this));
     }
     
 }

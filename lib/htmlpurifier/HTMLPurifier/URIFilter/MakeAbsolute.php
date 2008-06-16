@@ -2,25 +2,12 @@
 
 // does not support network paths
 
-require_once 'HTMLPurifier/URIFilter.php';
-
-HTMLPurifier_ConfigSchema::define(
-    'URI', 'MakeAbsolute', false, 'bool', '
-<p>
-    Converts all URIs into absolute forms. This is useful when the HTML
-    being filtered assumes a specific base path, but will actually be
-    viewed in a different context (and setting an alternate base URI is
-    not possible). %URI.Base must be set for this directive to work.
-    This directive has been available since 2.1.0.
-</p>
-');
-
 class HTMLPurifier_URIFilter_MakeAbsolute extends HTMLPurifier_URIFilter
 {
-    var $name = 'MakeAbsolute';
-    var $base;
-    var $basePathStack = array();
-    function prepare($config) {
+    public $name = 'MakeAbsolute';
+    protected $base;
+    protected $basePathStack = array();
+    public function prepare($config) {
         $def = $config->getDefinition('URI');
         $this->base = $def->base;
         if (is_null($this->base)) {
@@ -33,14 +20,14 @@ class HTMLPurifier_URIFilter_MakeAbsolute extends HTMLPurifier_URIFilter
         $stack = $this->_collapseStack($stack); // do pre-parsing
         $this->basePathStack = $stack;
     }
-    function filter(&$uri, $config, &$context) {
+    public function filter(&$uri, $config, $context) {
         if (is_null($this->base)) return true; // abort early
         if (
             $uri->path === '' && is_null($uri->scheme) &&
             is_null($uri->host) && is_null($uri->query) && is_null($uri->fragment)
         ) {
             // reference to current document
-            $uri = $this->base->copy();
+            $uri = clone $this->base;
             return true;
         }
         if (!is_null($uri->scheme)) {
@@ -80,9 +67,8 @@ class HTMLPurifier_URIFilter_MakeAbsolute extends HTMLPurifier_URIFilter
     
     /**
      * Resolve dots and double-dots in a path stack
-     * @private
      */
-    function _collapseStack($stack) {
+    private function _collapseStack($stack) {
         $result = array();
         for ($i = 0; isset($stack[$i]); $i++) {
             $is_folder = false;

@@ -1,0 +1,13 @@
+Core.AggressivelyFixLt
+TYPE: bool
+VERSION: 2.1.0
+DEFAULT: false
+--DESCRIPTION--
+
+This directive enables aggressive pre-filter fixes HTML Purifier can
+perform in order to ensure that open angled-brackets do not get killed
+during parsing stage. Enabling this will result in two preg_replace_callback
+calls and one preg_replace call for every bit of HTML passed through here.
+It is not necessary and will have no effect for PHP 4.
+
+

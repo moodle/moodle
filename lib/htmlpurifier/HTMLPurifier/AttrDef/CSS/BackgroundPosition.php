@@ -1,9 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Length.php';
-require_once 'HTMLPurifier/AttrDef/CSS/Percentage.php';
-
 /* W3C says:
     [ // adjective and number must be in correct order, even if
       // you could switch them without introducing ambiguity.
@@ -48,15 +44,15 @@ require_once 'HTMLPurifier/AttrDef/CSS/Percentage.php';
 class HTMLPurifier_AttrDef_CSS_BackgroundPosition extends HTMLPurifier_AttrDef
 {
     
-    var $length;
-    var $percentage;
+    protected $length;
+    protected $percentage;
     
-    function HTMLPurifier_AttrDef_CSS_BackgroundPosition() {
+    public function __construct() {
         $this->length     = new HTMLPurifier_AttrDef_CSS_Length();
         $this->percentage = new HTMLPurifier_AttrDef_CSS_Percentage();
     }
     
-    function validate($string, $config, &$context) {
+    public function validate($string, $config, $context) {
         $string = $this->parseCDATA($string);
         $bits = explode(' ', $string);
         

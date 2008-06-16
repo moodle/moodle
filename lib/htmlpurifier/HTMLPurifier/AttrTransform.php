@@ -14,7 +14,7 @@
  * more details.
  */
 
-class HTMLPurifier_AttrTransform
+abstract class HTMLPurifier_AttrTransform
 {
     
     /**
@@ -26,9 +26,7 @@ class HTMLPurifier_AttrTransform
      * @param $context Mandatory HTMLPurifier_Context object
      * @returns Processed attribute array.
      */
-    function transform($attr, $config, &$context) {
-        trigger_error('Cannot call abstract function', E_USER_ERROR);
-    }
+    abstract public function transform($attr, $config, $context);
     
     /**
      * Prepends CSS properties to the style attribute, creating the
@@ -36,7 +34,7 @@ class HTMLPurifier_AttrTransform
      * @param $attr Attribute array to process (passed by reference)
      * @param $css CSS to prepend
      */
-    function prependCSS(&$attr, $css) {
+    public function prependCSS(&$attr, $css) {
         $attr['style'] = isset($attr['style']) ? $attr['style'] : '';
         $attr['style'] = $css . $attr['style'];
     }
@@ -46,7 +44,7 @@ class HTMLPurifier_AttrTransform
      * @param $attr Attribute array to process (passed by reference)
      * @param $key Key of attribute to confiscate
      */
-    function confiscateAttr(&$attr, $key) {
+    public function confiscateAttr(&$attr, $key) {
         if (!isset($attr[$key])) return null;
         $value = $attr[$key];
         unset($attr[$key]);

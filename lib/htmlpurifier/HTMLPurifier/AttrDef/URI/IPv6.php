@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef/URI/IPv4.php';
-
 /**
  * Validates an IPv6 address.
  * @author Feyd @ forums.devnetwork.net (public domain)
@@ -11,7 +9,7 @@ require_once 'HTMLPurifier/AttrDef/URI/IPv4.php';
 class HTMLPurifier_AttrDef_URI_IPv6 extends HTMLPurifier_AttrDef_URI_IPv4
 {
     
-    function validate($aIP, $config, &$context) {
+    public function validate($aIP, $config, $context) {
         
         if (!$this->ip4) $this->_loadRegex();
         

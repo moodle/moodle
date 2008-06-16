@@ -4,22 +4,23 @@
  * Registry object that contains information about the current context.
  * @warning Is a bit buggy when variables are set to null: it thinks
  *          they don't exist! So use false instead, please.
+ * @note Since the variables Context deals with may not be objects,
+ *       references are very important here! Do not remove!
  */
 class HTMLPurifier_Context
 {
     
     /**
      * Private array that stores the references.
-     * @private
      */
-    var $_storage = array();
+    private $_storage = array();
     
     /**
      * Registers a variable into the context.
      * @param $name String name
-     * @param $ref Variable to be registered
+     * @param $ref Reference to variable to be registered
      */
-    function register($name, &$ref) {
+    public function register($name, &$ref) {
         if (isset($this->_storage[$name])) {
             trigger_error("Name $name produces collision, cannot re-register",
                           E_USER_ERROR);
@@ -33,7 +34,7 @@ class HTMLPurifier_Context
      * @param $name String name
      * @param $ignore_error Boolean whether or not to ignore error
      */
-    function &get($name, $ignore_error = false) {
+    public function &get($name, $ignore_error = false) {
         if (!isset($this->_storage[$name])) {
             if (!$ignore_error) {
                 trigger_error("Attempted to retrieve non-existent variable $name",
@@ -49,7 +50,7 @@ class HTMLPurifier_Context
      * Destorys a variable in the context.
      * @param $name String name
      */
-    function destroy($name) {
+    public function destroy($name) {
         if (!isset($this->_storage[$name])) {
             trigger_error("Attempted to destroy non-existent variable $name",
                           E_USER_ERROR);
@@ -62,7 +63,7 @@ class HTMLPurifier_Context
      * Checks whether or not the variable exists.
      * @param $name String name
      */
-    function exists($name) {
+    public function exists($name) {
         return isset($this->_storage[$name]);
     }
     
@@ -70,7 +71,7 @@ class HTMLPurifier_Context
      * Loads a series of variables from an associative array
      * @param $context_array Assoc array of variables to load
      */
-    function loadArray(&$context_array) {
+    public function loadArray($context_array) {
         foreach ($context_array as $key => $discard) {
             $this->register($key, $context_array[$key]);
         }

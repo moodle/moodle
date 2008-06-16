@@ -1,8 +1,6 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-
-class HTMLPurifier_AttrDef_URI_Email extends HTMLPurifier_AttrDef
+abstract class HTMLPurifier_AttrDef_URI_Email extends HTMLPurifier_AttrDef
 {
     
     /**
@@ -15,4 +13,3 @@ class HTMLPurifier_AttrDef_URI_Email extends HTMLPurifier_AttrDef
 }
 
 // sub-implementations
-//moodlefix require_once 'HTMLPurifier/AttrDef/URI/Email/SimpleCheck.php';

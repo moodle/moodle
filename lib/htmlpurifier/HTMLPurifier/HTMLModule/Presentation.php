@@ -1,7 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/HTMLModule.php';
-
 /**
  * XHTML 1.1 Presentation Module, defines simple presentation-related
  * markup. Text Extension Module.
@@ -15,17 +13,17 @@ require_once 'HTMLPurifier/HTMLModule.php';
 class HTMLPurifier_HTMLModule_Presentation extends HTMLPurifier_HTMLModule
 {
     
-    var $name = 'Presentation';
+    public $name = 'Presentation';
     
-    function HTMLPurifier_HTMLModule_Presentation() {
-        $this->addElement('b',      true, 'Inline', 'Inline', 'Common');
-        $this->addElement('big',    true, 'Inline', 'Inline', 'Common');
-        $this->addElement('hr',     true, 'Block',  'Empty',  'Common');
-        $this->addElement('i',      true, 'Inline', 'Inline', 'Common');
-        $this->addElement('small',  true, 'Inline', 'Inline', 'Common');
-        $this->addElement('sub',    true, 'Inline', 'Inline', 'Common');
-        $this->addElement('sup',    true, 'Inline', 'Inline', 'Common');
-        $this->addElement('tt',     true, 'Inline', 'Inline', 'Common');
+    public function __construct() {
+        $this->addElement('b',      'Inline', 'Inline', 'Common');
+        $this->addElement('big',    'Inline', 'Inline', 'Common');
+        $this->addElement('hr',     'Block',  'Empty',  'Common');
+        $this->addElement('i',      'Inline', 'Inline', 'Common');
+        $this->addElement('small',  'Inline', 'Inline', 'Common');
+        $this->addElement('sub',    'Inline', 'Inline', 'Common');
+        $this->addElement('sup',    'Inline', 'Inline', 'Common');
+        $this->addElement('tt',     'Inline', 'Inline', 'Common');
     }
     
 }

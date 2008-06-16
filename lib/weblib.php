@@ -1890,14 +1890,15 @@ function purify_html($text) {
     global $CFG;
 
     // this can not be done only once because we sometimes need to reset the cache
-    $cachedir = $CFG->dataroot.'/cache/htmlpurifier/';
+    $cachedir = $CFG->dataroot.'/cache/htmlpurifier';
     $status = check_dir_exists($cachedir, true, true);
 
     static $purifier = false;
+    static $config;
     if ($purifier === false) {
-        require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.auto.php';
+        require_once $CFG->libdir.'/htmlpurifier/HTMLPurifier.safe-includes.php';
         $config = HTMLPurifier_Config::createDefault();
-        $config->set('Core', 'AcceptFullDocuments', false);
+        $config->set('Core', 'ConvertDocumentToFragment', true);
         $config->set('Core', 'Encoding', 'UTF-8');
         $config->set('HTML', 'Doctype', 'XHTML 1.0 Transitional');
         $config->set('Cache', 'SerializerPath', $cachedir);

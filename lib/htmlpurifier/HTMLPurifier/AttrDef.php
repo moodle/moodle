@@ -10,32 +10,29 @@
  * subclasses are also responsible for cleaning the code if possible.
  */
 
-class HTMLPurifier_AttrDef
+abstract class HTMLPurifier_AttrDef
 {
     
     /**
      * Tells us whether or not an HTML attribute is minimized. Has no
      * meaning in other contexts.
      */
-    var $minimized = false;
+    public $minimized = false;
     
     /**
      * Tells us whether or not an HTML attribute is required. Has no
      * meaning in other contexts
      */
-    var $required = false;
+    public $required = false;
     
     /**
      * Validates and cleans passed string according to a definition.
      * 
-     * @public
      * @param $string String to be validated and cleaned.
      * @param $config Mandatory HTMLPurifier_Config object.
      * @param $context Mandatory HTMLPurifier_AttrContext object.
      */
-    function validate($string, $config, &$context) {
-        trigger_error('Cannot call abstract function', E_USER_ERROR);
-    }
+    abstract public function validate($string, $config, $context);
     
     /**
      * Convenience method that parses a string as if it were CDATA.
@@ -59,10 +56,8 @@ class HTMLPurifier_AttrDef
      *          function.  Trim and whitespace collapsing are supposed to only
      *          occur in NMTOKENs.  However, note that we are NOT necessarily
      *          parsing XML, thus, this behavior may still be correct.
-     * 
-     * @public
      */
-    function parseCDATA($string) {
+    public function parseCDATA($string) {
         $string = trim($string);
         $string = str_replace("\n", '', $string);
         $string = str_replace(array("\r", "\t"), ' ', $string);
@@ -73,12 +68,12 @@ class HTMLPurifier_AttrDef
      * Factory method for creating this class from a string.
      * @param $string String construction info
      * @return Created AttrDef object corresponding to $string
-     * @public
      */
-    function make($string) {
-        // default implementation, return flyweight of this object
-        // if overloaded, it is *necessary* for you to clone the
-        // object (usually by instantiating a new copy) and return that
+    public function make($string) {
+        // default implementation, return a flyweight of this object.
+        // If $string has an effect on the returned object (i.e. you
+        // need to overload this method), it is best
+        // to clone or instantiate new copies. (Instantiation is safer.)
         return $this;
     }
     
@@ -86,7 +81,7 @@ class HTMLPurifier_AttrDef
      * Removes spaces from rgb(0, 0, 0) so that shorthand CSS properties work
      * properly. THIS IS A HACK!
      */
-    function mungeRgb($string) {
+    protected function mungeRgb($string) {
         return preg_replace('/rgb\((\d+)\s*,\s*(\d+)\s*,\s*(\d+)\)/', 'rgb(\1,\2,\3)', $string);
     }
     

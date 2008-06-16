@@ -1,9 +1,5 @@
 <?php
 
-require_once 'HTMLPurifier/AttrDef.php';
-require_once 'HTMLPurifier/AttrDef/URI/IPv4.php';
-require_once 'HTMLPurifier/AttrDef/URI/IPv6.php';
-
 /**
  * Validates a host according to the IPv4, IPv6 and DNS (future) specifications.
  */
@@ -13,19 +9,19 @@ class HTMLPurifier_AttrDef_URI_Host extends HTMLPurifier_AttrDef
     /**
      * Instance of HTMLPurifier_AttrDef_URI_IPv4 sub-validator
      */
-    var $ipv4;
+    protected $ipv4;
     
     /**
      * Instance of HTMLPurifier_AttrDef_URI_IPv6 sub-validator
      */
-    var $ipv6;
+    protected $ipv6;
     
-    function HTMLPurifier_AttrDef_URI_Host() {
+    public function __construct() {
         $this->ipv4 = new HTMLPurifier_AttrDef_URI_IPv4();
         $this->ipv6 = new HTMLPurifier_AttrDef_URI_IPv6();
     }
     
-    function validate($string, $config, &$context) {
+    public function validate($string, $config, $context) {
         $length = strlen($string);
         if ($string === '') return '';
         if ($length > 1 && $string[0] === '[' && $string[$length-1] === ']') {

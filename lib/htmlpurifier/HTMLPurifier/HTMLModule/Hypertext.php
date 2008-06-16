@@ -1,19 +1,16 @@
 <?php
 
-require_once 'HTMLPurifier/HTMLModule.php';
-require_once 'HTMLPurifier/AttrDef/HTML/LinkTypes.php';
-
 /**
  * XHTML 1.1 Hypertext Module, defines hypertext links. Core Module.
  */
 class HTMLPurifier_HTMLModule_Hypertext extends HTMLPurifier_HTMLModule
 {
     
-    var $name = 'Hypertext';
+    public $name = 'Hypertext';
     
-    function HTMLPurifier_HTMLModule_Hypertext() {
-        $a =& $this->addElement(
-            'a', true, 'Inline', 'Inline', 'Common',
+    public function __construct() {
+        $a = $this->addElement(
+            'a', 'Inline', 'Inline', 'Common',
             array(
                 // 'accesskey' => 'Character',
                 // 'charset' => 'Charset',

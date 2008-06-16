@@ -1,44 +1,9 @@
 <?php
 
-require_once 'HTMLPurifier/HTMLModule.php';
-
-HTMLPurifier_ConfigSchema::define(
-    'HTML', 'TidyLevel', 'medium', 'string', '
-<p>General level of cleanliness the Tidy module should enforce.
-There are four allowed values:</p>
-<dl>
-    <dt>none</dt>
-    <dd>No extra tidying should be done</dd>
-    <dt>light</dt>
-    <dd>Only fix elements that would be discarded otherwise due to
-    lack of support in doctype</dd>
-    <dt>medium</dt>
-    <dd>Enforce best practices</dd>
-    <dt>heavy</dt>
-    <dd>Transform all deprecated elements and attributes to standards
-    compliant equivalents</dd>
-</dl>
-<p>This directive has been available since 2.0.0</p>
-' );
-HTMLPurifier_ConfigSchema::defineAllowedValues(
-    'HTML', 'TidyLevel', array('none', 'light', 'medium', 'heavy')
-);
-
-HTMLPurifier_ConfigSchema::define(
-    'HTML', 'TidyAdd', array(), 'lookup', '
-Fixes to add to the default set of Tidy fixes as per your level. This
-directive has been available since 2.0.0.
-' );
-
-HTMLPurifier_ConfigSchema::define(
-    'HTML', 'TidyRemove', array(), 'lookup', '
-Fixes to remove from the default set of Tidy fixes as per your level. This
-directive has been available since 2.0.0.
-' );
-
 /**
  * Abstract class for a set of proprietary modules that clean up (tidy)
  * poorly written HTML.
+ * @todo Figure out how to protect some of these methods/properties
  */
 class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
 {
@@ -47,18 +12,18 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
      * List of supported levels. Index zero is a special case "no fixes"
      * level.
      */
-    var $levels = array(0 => 'none', 'light', 'medium', 'heavy');
+    public $levels = array(0 => 'none', 'light', 'medium', 'heavy');
     
     /**
      * Default level to place all fixes in. Disabled by default
      */
-    var $defaultLevel = null;
+    public $defaultLevel = null;
     
     /**
      * Lists of fixes used by getFixesForLevel(). Format is:
      *      HTMLModule_Tidy->fixesForLevel[$level] = array('fix-1', 'fix-2');
      */
-    var $fixesForLevel = array(
+    public $fixesForLevel = array(
         'light'  => array(),
         'medium' => array(),
         'heavy'  => array()
@@ -70,7 +35,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
      * @todo Wildcard matching and error reporting when an added or
      *       subtracted fix has no effect.
      */
-    function construct($config) {
+    public function construct($config) {
         
         // create fixes, initialize fixesForLevel
         $fixes = $this->makeFixes();
@@ -105,7 +70,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
      * @param $level String level identifier, see $levels for valid values
      * @return Lookup up table of fixes
      */
-    function getFixesForLevel($level) {
+    public function getFixesForLevel($level) {
         if ($level == $this->levels[0]) {
             return array();
         }
@@ -135,7 +100,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
      * the fixes array. It may be custom overloaded, used in conjunction
      * with $defaultLevel, or not used at all.
      */
-    function makeFixesForLevel($fixes) {
+    public function makeFixesForLevel($fixes) {
         if (!isset($this->defaultLevel)) return;
         if (!isset($this->fixesForLevel[$this->defaultLevel])) {
             trigger_error(
@@ -152,7 +117,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
      * based on a list of fixes passed to it
      * @param $lookup Lookup table of fixes to activate
      */
-    function populate($fixes) {
+    public function populate($fixes) {
         foreach ($fixes as $name => $fix) {
             // determine what the fix is for
             list($type, $params) = $this->getFixType($name);
@@ -163,14 +128,16 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
                     if (isset($params['element'])) {
                         $element = $params['element'];
                         if (empty($this->info[$element])) {
-                            $e =& $this->addBlankElement($element);
+                            $e = $this->addBlankElement($element);
                         } else {
-                            $e =& $this->info[$element];
+                            $e = $this->info[$element];
                         }
                     } else {
                         $type = "info_$type";
-                        $e =& $this;
+                        $e = $this;
                     }
+                    // PHP does some weird parsing when I do
+                    // $e->$type[$attr], so I have to assign a ref.
                     $f =& $e->$type;
                     $f[$attr] = $fix;
                     break;
@@ -181,9 +148,9 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
                 case 'content_model_type':
                     $element = $params['element'];
                     if (empty($this->info[$element])) {
-                        $e =& $this->addBlankElement($element);
+                        $e = $this->addBlankElement($element);
                     } else {
-                        $e =& $this->info[$element];
+                        $e = $this->info[$element];
                     }
                     $e->$type = $fix;
                     break;
@@ -202,7 +169,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
      * @note $fix_parameters is type dependant, see populate() for usage
      *       of these parameters
      */
-    function getFixType($name) {
+    public function getFixType($name) {
         // parse it
         $property = $attr = null;
         if (strpos($name, '#') !== false) list($name, $property) = explode('#', $name);
@@ -232,9 +199,8 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
     /**
      * Defines all fixes the module will perform in a compact
      * associative array of fix name to fix implementation.
-     * @abstract
      */
-    function makeFixes() {}
+    public function makeFixes() {}
     
 }
 
