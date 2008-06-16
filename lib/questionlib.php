@@ -169,7 +169,7 @@ foreach($qtypenames as $qtypename) {
  * Long-time Moodle programmers will realise that this replaces the old $QTYPE_MENU array.
  * The array returned will only hold the names of all the question types that the user should
  * be able to create directly. Some internal question types like random questions are excluded.
- * 
+ *
  * @return array an array of question type names translated to the user's language.
  */
 function question_type_menu() {
@@ -565,7 +565,7 @@ function question_delete_course_category($category, $newcategory, $feedback=true
         // Loop over question categories.
         if ($categories = get_records('question_categories', 'contextid', $context->id, 'parent', 'id, parent, name')) {
             foreach ($categories as $category) {
-    
+
                 // Deal with any questions in the category.
                 if ($questions = get_records('question', 'category', $category->id)) {
 
@@ -629,9 +629,9 @@ function question_delete_course_category($category, $newcategory, $feedback=true
  *
  * @param string $questionids list of questionids
  * @param object $newcontext the context to create the saved category in.
- * @param string $oldplace a textual description of the think being deleted, e.g. from get_context_name 
+ * @param string $oldplace a textual description of the think being deleted, e.g. from get_context_name
  * @param object $newcategory
- * @return mixed false on 
+ * @return mixed false on
  */
 function question_save_from_deletion($questionids, $newcontextid, $oldplace, $newcategory = null) {
     // Make a category in the parent context to move the questions to.
@@ -1219,7 +1219,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             }
 
             if ($action->event == QUESTION_EVENTMANUALGRADE) {
-                // Ensure that the grade is in range - in the past this was not checked, 
+                // Ensure that the grade is in range - in the past this was not checked,
                 // but now it is (MDL-14835) - so we need to ensure the data is valid before
                 // proceeding.
                 if ($states[$j]->grade < 0) {
@@ -2161,6 +2161,11 @@ class context_to_string_translator{
  */
 function question_has_capability_on($question, $cap, $cachecat = -1){
     global $USER;
+    // nicolasconnault@gmail.com In some cases I get $question === false. Since no such object exists, it can't be deleted, we can safely return true
+    if ($question === false) {
+        return true;
+    }
+
     // these are capabilities on existing questions capabilties are
     //set per category. Each of these has a mine and all version. Append 'mine' and 'all'
     $question_questioncaps = array('edit', 'view', 'use', 'move');
