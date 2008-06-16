@@ -425,6 +425,16 @@ class question_match_qtype extends default_questiontype {
         // This should almost certainly be overridden
         return substr(implode(', ', $this->get_actual_response($question, $state)), 0, $length);
     }
+    
+        
+    /**
+     * @param object $question
+     * @return integer a score out of 1 that the average random guess by a
+     * student might give.
+     */
+    function get_random_guess_score($question) {
+        return 1 / count($question->options->subquestions);
+    }
 
 /// BACKUP FUNCTIONS ////////////////////////////
 

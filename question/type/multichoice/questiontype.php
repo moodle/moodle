@@ -396,7 +396,18 @@ class question_multichoice_qtype extends default_questiontype {
     function response_summary($question, $state, $length = 80) {
         return implode(',', $this->get_actual_response($question, $state));
     }
-
+    /**
+     * @param object $question
+     * @return integer a score out of 1 that the average random guess by a
+     * student might give.
+     */
+    function get_random_guess_score($question) {
+        $totalfraction = 0;
+        foreach ($question->options->answers as $answer){
+            $totalfraction += $answer->fraction;
+        }
+        return $totalfraction / count($question->options->answers);
+    }
 /// BACKUP FUNCTIONS ////////////////////////////
 
     /*

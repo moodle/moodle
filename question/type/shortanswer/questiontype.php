@@ -239,7 +239,20 @@ class question_shortanswer_qtype extends default_questiontype {
         }
         return $response;
     }
-
+    /**
+     * @param object $question
+     * @return integer a score out of 1 that the average random guess by a
+     * student might give.
+     */
+    function get_random_guess_score($question) {
+        $answers = &$question->options->answers;
+        foreach($answers as $aid => $answer) {
+            if ('*' == trim($answer->answer)){
+                return $answer->fraction;
+            }
+        }
+        return 0;
+    }
     /// BACKUP FUNCTIONS ////////////////////////////
 
     /*

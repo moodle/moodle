@@ -245,6 +245,14 @@ class question_truefalse_qtype extends default_questiontype {
         }
         return $responses;
     }
+    /**
+     * @param object $question
+     * @return integer a score out of 1 that the average random guess by a
+     * student might give.
+     */
+    function get_random_guess_score($question) {
+        return 0.5;
+    }
 
 /// BACKUP FUNCTIONS ////////////////////////////
 

@@ -674,7 +674,15 @@ class default_questiontype {
             return null;
         }
     }
-
+    
+    /**
+     * @param object $question
+     * @return integer a score out of 1 that the average random guess by a
+     * student might give.
+     */
+    function get_random_guess_score($question) {
+        return 0;
+    }
     /**
     * Return the actual response to the question in a given state
     * for the question

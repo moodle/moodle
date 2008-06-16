@@ -514,6 +514,19 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         return $responses;
     }
+    
+    /**
+     * @param object $question
+     * @return integer a score out of 1 that the average random guess by a
+     * student might give.
+     */
+    function get_random_guess_score($question) {
+        $totalfraction = 0;
+        foreach (array_keys($question->options->questions) as $key){
+            $totalfraction += get_random_guess_score($question->options->questions[$key]);
+        }
+        return $totalfraction / count($question->options->questions);
+    }
 
 /// BACKUP FUNCTIONS ////////////////////////////
 

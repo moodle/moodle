@@ -8,7 +8,6 @@
  * @package quiz
  *//** */
 
-require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->dirroot.'/mod/quiz/report/statistics/statistics_form.php');
 require_once($CFG->dirroot.'/mod/quiz/report/statistics/statistics_table.php');
 
@@ -55,8 +54,12 @@ class quiz_report extends quiz_default_report {
             $allowedlist = $groupstudentslist;
         }
 
-        $questions = question_load_questions(quiz_questions_in_quiz($quiz->questions));
-
+        $questions = quiz_report_load_questions($quiz);
+        // Load the question type specific information
+        if (!get_question_options($questions)) {
+            print_error('cannotloadquestion', 'question');
+        }
+        
         $table = new quiz_report_statistics_table();
         $table->is_downloading($download, get_string('reportstatistics','quiz_statistics'),
                     "$course->shortname ".format_string($quiz->name,true));
@@ -170,97 +173,105 @@ class quiz_report extends quiz_default_report {
                 $median += array_shift($mediangrades);
                 $median = $median /2;
             }
-            //fetch sum of squared, cubed and power 4d 
-            //differences between grades and mean grade
-            $mean = $usingattempts->total / $usingattempts->countrecs;
-            $sql = "SELECT " .
-                "SUM(POWER((qa.sumgrades - ?),2)) AS power2, " .
-                "SUM(POWER((qa.sumgrades - ?),3)) AS power3, ".
-                "SUM(POWER((qa.sumgrades - ?),4)) AS power4 ".
-                'FROM ' .$fromqa.
-                'WHERE ' .$whereqa.
-                $usingattempts->sql;
-            $params = array($mean, $mean, $mean, $quiz->id);
-            if (!$powers = $DB->get_record_sql($sql, $params)){
-                print_error('errorpowers', 'quiz_statistics');
-            }
             
             $s = $usingattempts->countrecs;
-            
-            //Standard_Deviation
-            //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Standard_Deviation
-            
-            $sd = sqrt($powers->power2 / ($s -1));
-            
-            //Skewness_and_Kurtosis
-            //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
-            $m2= $powers->power2 / $s;
-            $m3= $powers->power3 / $s;
-            $m4= $powers->power4 / $s;
-            
-            $k2= $s*$m2/($s-1);
-            $k3= $s*$s*$m3/(($s-1)*($s-2));
-            $k4= (($s*$s*$s)/(($s-1)*($s-2)*($s-3)))*((($s+1)*$m4)-(3*($s-1)*$m2*$m2));
-            
-            $skewness = $k3 / (pow($k2, 2/3));
-            $kurtosis = $k4 / ($k2*$k2);
-            
-            $quizattsstatistics = new object();
-            $quizattsstatistics->align = array('center', 'center');
-            $quizattsstatistics->width = '60%';
-            $quizattsstatistics->class = 'generaltable titlesleft';
-            $quizattsstatistics->data = array();
-            
-            $quizattsstatistics->data[] = array(get_string('median', 'quiz_statistics'), quiz_report_scale_sumgrades_as_percentage($median, $quiz));
-            $quizattsstatistics->data[] = array(get_string('standarddeviation', 'quiz_statistics'), quiz_report_scale_sumgrades_as_percentage($sd, $quiz));
-            $quizattsstatistics->data[] = array(get_string('skewness', 'quiz_statistics'), $skewness);
-            $quizattsstatistics->data[] = array(get_string('kurtosis', 'quiz_statistics'), $kurtosis);
-
-            //CIC, ER and SE.
-            //http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#CIC.2C_ER_and_SE
-            $qgradeavgsql = "SELECT qs.question, AVG(qs.grade) FROM " .
-                    "{question_sessions} qns, " .
-                    "{question_states} qs, " .
-                    "{question} q, " .
-                    $fromqa.' '.
+            if ($s>1){
+                $quizattsstatistics = new object();
+                $quizattsstatistics->align = array('center', 'center');
+                $quizattsstatistics->width = '60%';
+                $quizattsstatistics->class = 'generaltable titlesleft';
+                $quizattsstatistics->data = array();
+                $quizattsstatistics->data[] = array(get_string('median', 'quiz_statistics'), quiz_report_scale_sumgrades_as_percentage($median, $quiz));
+                //fetch sum of squared, cubed and power 4d 
+                //differences between grades and mean grade
+                $mean = $usingattempts->total / $usingattempts->countrecs;
+                $sql = "SELECT " .
+                    "SUM(POWER((qa.sumgrades - ?),2)) AS power2, " .
+                    "SUM(POWER((qa.sumgrades - ?),3)) AS power3, ".
+                    "SUM(POWER((qa.sumgrades - ?),4)) AS power4 ".
+                    'FROM ' .$fromqa.
                     'WHERE ' .$whereqa.
-                    'AND qns.attemptid = qa.uniqueid '.
-                    'AND qs.question = q.id ' .
-                    'AND q.length > 0 '.
-                    $usingattempts->sql.
-                    'AND qns.newgraded = qs.id GROUP BY qs.question';
-            $qgradeavgs = $DB->get_records_sql_menu($qgradeavgsql, array($quiz->id));
-            $sum = 0;
-            $sql = 'SELECT ' .
-                    'SUM(POWER((qs.grade - ?),2)) AS power2 ' .
-                    'FROM ' .
-                    '{question_sessions} qns, ' .
-                    '{question_states} qs, ' .
-                    '{question} q, ' .
-                    $fromqa.' '.
-                    'WHERE ' .$whereqa.
-                    'AND qns.attemptid = qa.uniqueid '.
-                    'AND qs.question = ? ' .
-                    $usingattempts->sql.
-                    'AND qns.newgraded = qs.id';
-            foreach ($qgradeavgs as $qid => $qgradeavg){
-                $params = array($qgradeavg, $quiz->id, $qid);
-                $power = $DB->get_field_sql($sql, $params);
-                if ($power === false){
-                    print_error('errorpowerquestions', 'quiz_statistics');
+                    $usingattempts->sql;
+                $params = array($mean, $mean, $mean, $quiz->id);
+                if (!$powers = $DB->get_record_sql($sql, $params)){
+                    print_error('errorpowers', 'quiz_statistics');
                 }
-                $sum += $power;
+                
+                //Standard_Deviation
+                //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Standard_Deviation
+                
+                $sd = sqrt($powers->power2 / ($s -1));
+                $quizattsstatistics->data[] = array(get_string('standarddeviation', 'quiz_statistics'), quiz_report_scale_sumgrades_as_percentage($sd, $quiz));
+
+                
+                //Skewness_and_Kurtosis
+                if ($s>2){
+                    //see http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#Skewness_and_Kurtosis
+                    $m2= $powers->power2 / $s;
+                    $m3= $powers->power3 / $s;
+                    $m4= $powers->power4 / $s;
+                    
+                    $k2= $s*$m2/($s-1);
+                    $k3= $s*$s*$m3/(($s-1)*($s-2));
+                    
+                    $skewness = $k3 / (pow($k2, 2/3));
+                    $quizattsstatistics->data[] = array(get_string('skewness', 'quiz_statistics'), $skewness);
+                }
+    
+    
+                if ($s>3){
+                    $k4= (($s*$s*$s)/(($s-1)*($s-2)*($s-3)))*((($s+1)*$m4)-(3*($s-1)*$m2*$m2));
+                    
+                    $kurtosis = $k4 / ($k2*$k2);
+                    
+                    $quizattsstatistics->data[] = array(get_string('kurtosis', 'quiz_statistics'), $kurtosis);
+                }
+                //CIC, ER and SE.
+                //http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#CIC.2C_ER_and_SE
+                $qgradeavgsql = "SELECT qs.question, AVG(qs.grade) FROM " .
+                        "{question_sessions} qns, " .
+                        "{question_states} qs, " .
+                        "{question} q, " .
+                        $fromqa.' '.
+                        'WHERE ' .$whereqa.
+                        'AND qns.attemptid = qa.uniqueid '.
+                        'AND qs.question = q.id ' .
+                        'AND q.length > 0 '.
+                        $usingattempts->sql.
+                        'AND qns.newgraded = qs.id GROUP BY qs.question';
+                $qgradeavgs = $DB->get_records_sql_menu($qgradeavgsql, array($quiz->id));
+                $sum = 0;
+                $sql = 'SELECT ' .
+                        'SUM(POWER((qs.grade - ?),2)) AS power2 ' .
+                        'FROM ' .
+                        '{question_sessions} qns, ' .
+                        '{question_states} qs, ' .
+                        '{question} q, ' .
+                        $fromqa.' '.
+                        'WHERE ' .$whereqa.
+                        'AND qns.attemptid = qa.uniqueid '.
+                        'AND qs.question = ? ' .
+                        $usingattempts->sql.
+                        'AND qns.newgraded = qs.id';
+                foreach ($qgradeavgs as $qid => $qgradeavg){
+                    $params = array($qgradeavg, $quiz->id, $qid);
+                    $power = $DB->get_field_sql($sql, $params);
+                    if ($power === false){
+                        print_error('errorpowerquestions', 'quiz_statistics');
+                    }
+                    $sum += $power;
+                }
+                $sumofvarianceforallpositions = $sum / ($usingattempts->countrecs -1);
+                $p = count($qgradeavgs);//no of positions
+                $cic = (100 * $p / ($p -1)) * (1 - ($sumofvarianceforallpositions/$k2));
+                $quizattsstatistics->data[] = array(get_string('cic', 'quiz_statistics'), number_format($cic, $quiz->decimalpoints).' %');
+                $errorratio = 100 * sqrt(1-($cic/100));
+                $quizattsstatistics->data[] = array(get_string('errorratio', 'quiz_statistics'), number_format($errorratio, $quiz->decimalpoints).' %');
+                $standarderror = ($errorratio * $sd / 100);
+                $quizattsstatistics->data[] = array(get_string('standarderror', 'quiz_statistics'), 
+                    quiz_report_scale_sumgrades_as_percentage($standarderror, $quiz));
+                print_table($quizattsstatistics);
             }
-            $sumofvarianceforallpositions = $sum / ($usingattempts->countrecs -1);
-            $p = count($qgradeavgs);//no of positions
-            $cic = (100 * $p / ($p -1)) * (1 - ($sumofvarianceforallpositions/$k2));
-            $quizattsstatistics->data[] = array(get_string('cic', 'quiz_statistics'), number_format($cic, $quiz->decimalpoints).' %');
-            $errorratio = 100 * sqrt(1-($cic/100));
-            $quizattsstatistics->data[] = array(get_string('errorratio', 'quiz_statistics'), number_format($errorratio, $quiz->decimalpoints).' %');
-            $standarderror = ($errorratio * $sd / 100);
-            $quizattsstatistics->data[] = array(get_string('standarderror', 'quiz_statistics'), 
-                quiz_report_scale_sumgrades_as_percentage($standarderror, $quiz));
-            print_table($quizattsstatistics);
             
         }
         if (!$table->is_downloading()){

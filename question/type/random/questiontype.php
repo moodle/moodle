@@ -101,7 +101,7 @@ class random_qtype extends default_questiontype {
                          AND parent = '0'
                          AND hidden = '0'
                          AND id NOT IN ($cmoptions->questionsinuse)
-                         AND qtype NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)", '', 'id')) {
+                         AND qtype NOT IN ($QTYPE_EXCLUDE_FROM_RANDOM)", array(), '', 'id')) {
                 $this->catrandoms[$question->category][$question->questiontext] =
                         draw_rand_array($catrandoms, count($catrandoms));
             } else {

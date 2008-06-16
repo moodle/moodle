@@ -1,4 +1,5 @@
 <?php  // $Id$
+require_once($CFG->libdir.'/tablelib.php');
 
 class quiz_report_statistics_table extends flexible_table {
     
@@ -37,6 +38,9 @@ class quiz_report_statistics_table extends flexible_table {
         $columns[]= 'intended_weight';
         $headers[]= get_string('intended_weight', 'quiz_statistics');
         
+        $columns[]= 'random_guess_score';
+        $headers[]= get_string('random_guess_score', 'quiz_statistics');
+        
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->sortable(false);
@@ -59,6 +63,7 @@ class quiz_report_statistics_table extends flexible_table {
         $this->column_class('sumgrades', 'bold');*/
         
         $this->column_class('intended_weight', 'numcol');
+        $this->column_class('random_guess_score', 'numcol');
 
         $this->set_attribute('id', 'questionstatistics');
         $this->set_attribute('class', 'generaltable generalbox boxaligncenter');
@@ -87,6 +92,10 @@ class quiz_report_statistics_table extends flexible_table {
     }
     function col_intended_weight($question){
         return quiz_report_scale_sumgrades_as_percentage($question->grade, $this->quiz);
+    }
+            
+    function col_random_guess_score($question){
+        return number_format(get_random_guess_score($question) * 100, 2).' %';
     }
             
 

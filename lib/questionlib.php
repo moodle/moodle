@@ -1794,8 +1794,16 @@ function get_question_fraction_grade($question, $state) {
     $r = $QTYPES[$question->qtype]->get_fractional_grade($question, $state);
     return $r;
 }
-
-
+/**
+* @return integer grade out of 1 that a random guess by a student might score.
+*/
+// ULPGc ecastro
+function get_random_guess_score($question) {
+    global $QTYPES;
+    
+    $r = $QTYPES[$question->qtype]->get_random_guess_score($question);
+    return $r;
+}
 /// CATEGORY FUNCTIONS /////////////////////////////////////////////////////////////////
 
 /**
