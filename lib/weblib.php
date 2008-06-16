@@ -2128,7 +2128,13 @@ function html_to_text($html) {
 
     require_once($CFG->libdir .'/html2text.php');
 
-    return html2text($html);
+    $result = html2text($html);
+    
+    // html2text does not fix numerical entities so handle those here.
+    $tl=textlib_get_instance();
+    $result = $tl->entities_to_utf8($result,false);
+    
+    return $result;
 }
 
 /**
