@@ -17,19 +17,10 @@
     if (!empty($approve) and confirm_sesskey()) {
         if ($course = $DB->get_record("course_request", array("id"=>$approve))) {
 
-            // place at beginning of category
-            fix_course_sortorder();
-
-            if (empty($CFG->defaultrequestcategory) or !$DB->record_exists('course_categories', array('id'=>$CFG->defaultrequestcategory))) {
-                // default to first top level directory, hacky but means things don't break
-                $CFG->defaultrequestcategory = $DB->get_field('course_categories', 'id', array('parent'=>'0'));
-            }
+            $category = get_course_category($CFG->defaultrequestcategory);
 
             $course->category = $CFG->defaultrequestcategory;
-            $course->sortorder = $DB->get_field_sql("SELECT min(sortorder)-1 FROM {course} WHERE category=?", array($course->category));
-            if (empty($course->sortorder)) {
-                $course->sortorder = 1000;
-            }
+            $course->sortorder = $category->sortorder; // place as the first in category 
             $course->requested = 1;
             unset($course->reason);
             unset($course->id);
@@ -54,6 +45,7 @@
                 }
                 $DB->delete_records('course_request', array('id'=>$approve));
                 $success = 1;
+                fix_course_sortorder();
             }
             if (!empty($success)) {
                 $user = $DB->get_record('user', array('id'=>$teacherid));

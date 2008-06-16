@@ -651,34 +651,13 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
             $category = $DB->get_record("course_categories", array("name"=>$course_header->category->name));
         }
 
-        //If no exists, get category id 1
+        //If no exists, get default category
         if (!$category) {
-            $category = $DB->get_record("course_categories", array("id"=>"1"));
+            $category = get_course_category();
         }
 
-        //If category 1 doesn'exists, lets create the course category (get it from backup file)
-        if (!$category) {
-            $ins_category = new object();
-            $ins_category->name = $course_header->category->name;
-            $ins_category->parent = 0;
-            $ins_category->sortorder = 0;
-            $ins_category->coursecount = 0;
-            $ins_category->visible = 0;            //To avoid interferences with the rest of the site
-            $ins_category->timemodified = time();
-            $newid = $DB->insert_record("course_categories",$ins_category);
-            $category->id = $newid;
-            $category->name = $course_header->category->name;
-        }
-        //If exists, put new category id
-        if ($category) {
-            $course_header->category->id = $category->id;
-            $course_header->category->name = $category->name;
-        //Error, cannot locate category
-        } else {
-            $course_header->category->id = 0;
-            $course_header->category->name = get_string("unknowncategory");
-            $status = false;
-        }
+        $course_header->category->id = $category->id;
+        $course_header->category->name = $category->name;
 
         //Create the course_object
         if ($status) {
@@ -737,16 +716,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $course->enrolenddate  += $restore->course_startdateoffset;
             }
             $course->enrolperiod = $course_header->course_enrolperiod;
-            //Calculate sortorder field
-            $sortmax = $DB->get_record_sql('SELECT MAX(sortorder) AS max
-                                              FROM {course}
-                                             WHERE category=?', array($course->category));
-            if (!empty($sortmax->max)) {
-                $course->sortorder = $sortmax->max + 1;
-                unset($sortmax);
-            } else {
-                $course->sortorder = 100;
-            }
+            //Put as last course in category
+            $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - 1;
 
             //Now, recode some languages (Moodle 1.5)
             if ($course->lang == 'ma_nt') {

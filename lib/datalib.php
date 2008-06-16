@@ -11,6 +11,9 @@
  * @package moodlecore
  */
 
+define('MAX_COURSES_IN_CATEGORY', 10000); // MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!  
+define('MAX_COURSE_CATEGORIES', 10000);
+
 /**
  * Sets up global $DB moodle_database instance
  * @return void
@@ -1272,185 +1275,243 @@ function get_all_subcategories($catid) {
     return $subcats;
 }
 
-
 /**
-* This recursive function makes sure that the courseorder is consecutive
-*
-* @param    type description
-*
-* $n is the starting point, offered only for compatilibity -- will be ignored!
-* $safe (bool) prevents it from assuming category-sortorder is unique, used to upgrade
-*       safely from 1.4 to 1.5
-*/
-function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') {
-    global $CFG, $DB;
+ * Return specified category, default if given does not exist
+ * @param int $catid course category id
+ * @return object caregory
+ */
+function get_course_category($catid=0) {
+    global $DB;
 
-    $count = 0;
+    $category = false;
 
-    $catgap    = 1000; // "standard" category gap
-    $tolerance = 200;  // how "close" categories can get
-
-    if ($categoryid > 0){
-        // update depth and path
-        $cat   = $DB->get_record('course_categories', array('id'=>$categoryid));
-        if ($cat->parent == 0) {
-            $depth = 0;
-            $path  = '';
-        } else if ($depth == 0 ) { // doesn't make sense; get from DB
-            // this is only called if the $depth parameter looks dodgy
-            $parent = $DB->get_record('course_categories', array('id'=>$cat->parent));
-            $path  = $parent->path;
-            $depth = $parent->depth;
-        }
-        $path  = $path . '/' . $categoryid;
-        $depth = $depth + 1;
-
-        if ($cat->path !== $path) {
-            $DB->set_field('course_categories', 'path',  $path,  array('id'=>$categoryid));
-        }
-        if ($cat->depth != $depth) {
-            $DB->set_field('course_categories', 'depth', $depth, array('id'=>$categoryid));
-        }
+    if (!empty($catid)) {
+        $category = $DB->get_record('course_categories', array('id'=>$catid));
     }
 
-    // get some basic info about courses in the category
-    $info = $DB->get_record_sql("SELECT MIN(sortorder) AS min,
-                                        MAX(sortorder) AS max,
-                                        COUNT(sortorder) AS count
-                                   FROM {course}
-                                  WHERE category=?", array($categoryid));
-    if ($info) { // no courses?
-        $max   = $info->max;
-        $count = $info->count;
-        $min   = $info->min;
-        unset($info);
-    }
+    if (!$category) {
+        // the first category is considered default for now
+        if ($category = $DB->get_records('course_categories', null, 'sortorder', '*', 0, 1)) {
+            $category = reset($category);
 
-    if ($categoryid > 0 && $n==0) { // only passed category so don't shift it
-        $n = $min;
-    }
-
-    // $hasgap flag indicates whether there's a gap in the sequence
-    $hasgap    = false;
-    if ($max-$min+1 != $count) {
-        $hasgap = true;
-    }
-
-    // $mustshift indicates whether the sequence must be shifted to
-    // meet its range
-    $mustshift = false;
-    if ($min < $n+$tolerance || $min > $n+$tolerance+$catgap ) {
-        $mustshift = true;
-    }
-
-    // actually sort only if there are courses,
-    // and we meet one ofthe triggers:
-    //  - safe flag
-    //  - they are not in a continuos block
-    //  - they are too close to the 'bottom'
-    if ($count && ( $safe || $hasgap || $mustshift ) ) {
-        // special, optimized case where all we need is to shift
-        if ( $mustshift && !$safe && !$hasgap) {
-            $shift = $n + $catgap - $min;
-            if ($shift < $count) {
-                $shift = $count + $catgap;
+        } else {
+            $cat = new object();
+            $cat->name         = get_string('miscellaneous');
+            $cat->depth        = 1;
+            $cat->sortorder    = MAX_COURSES_IN_CATEGORY;
+            $cat->timemodified = time();
+            if (!$catid = $DB->insert_record('course_categories', $cat)) {
+                print_error('cannotsetupcategory', 'error');
             }
-            // UPDATE course SET sortorder=sortorder+$shift
-            $DB->execute("UPDATE {course}
-                             SET sortorder=sortorder+?
-                           WHERE category=?", array($shift, $categoryid));
-            $n = $n + $catgap + $count;
-
-        } else { // do it slowly
-            $n = $n + $catgap;
-            // if the new sequence overlaps the current sequence, lack of transactions
-            // will stop us -- shift things aside for a moment...
-            if ($safe || ($n >= $min && $n+$count+1 < $min && $CFG->dbfamily==='mysql')) {
-                $shift = $max + $n + 1000;
-                $DB->execute("UPDATE {course}
-                                 SET sortorder=sortorder+?
-                               WHERE category=?", array($shift, $categoryid));
-            }
-
-            $courses = get_courses($categoryid, 'c.sortorder ASC', 'c.id,c.sortorder');
-            $DB->begin_sql();
-            $tx = true; // transaction sanity
-            foreach ($courses as $course) {
-                if ($tx && $course->sortorder != $n ) { // save db traffic
-                    $tx = $tx && $DB->set_field('course', 'sortorder', $n, array('id'=>$course->id));
-                }
-                $n++;
-            }
-            if ($tx) {
-                $DB->commit_sql();
-            } else {
-                $DB->rollback_sql();
-                if (!$safe) {
-                    // if we failed when called with !safe, try
-                    // to recover calling self with safe=true
-                    return fix_course_sortorder($categoryid, $n, true, $depth, $path);
-                }
-            }
-        }
-    }
-    $DB->set_field('course_categories', 'coursecount', $count, array('id'=>$categoryid));
-
-    // $n could need updating
-    $max = $DB->get_field_sql("SELECT MAX(sortorder) FROM {course} WHERE category=?", array($categoryid));
-    if ($max > $n) {
-        $n = $max;
-    }
-
-    if ($categories = get_categories($categoryid)) {
-        foreach ($categories as $category) {
-            $n = fix_course_sortorder($category->id, $n, $safe, $depth, $path);
+            // make sure category context exists
+            get_context_instance(CONTEXT_COURSECAT, $catid);
+            mark_context_dirty('/'.SYSCONTEXTID);
+            $category = $DB->get_record('course_categories', array('id'=>$catid));
         }
     }
 
-    return $n+1;
+    return $category;
 }
 
 /**
- * Ensure all courses have a valid course category
- * useful if a category has been removed manually
- **/
-function fix_coursecategory_orphans() {
+ * Fixes course category and course sortorder, also verifies category and course parents and paths.
+ * (circular references are not fixed) 
+ */
+function fix_course_sortorder() {
+    global $DB, $SITE;
+
+    //WARNING: this is PHP5 only code!
+
+    if ($unsorted = $DB->get_records('course_categories', array('sortorder'=>0))) {
+        //move all categories that are not sorted yet to the end
+        $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES, array('sortorder'=>0));
+    }
+
+    $allcats = $DB->get_records('course_categories', null, 'sortorder, id', 'id, sortorder, parent, depth, path');
+    $topcats    = array();
+    $brokencats = array();
+    foreach ($allcats as $cat) {
+        $sortorder = (int)$cat->sortorder;
+        if (!$cat->parent) {
+            while(isset($topcats[$sortorder])) {
+                $sortorder++;
+            }
+            $topcats[$sortorder] = $cat;
+            continue;
+        }
+        if (!isset($allcats[$cat->parent])) {
+            $brokencats[] = $cat;
+            continue;
+        }
+        if (!isset($allcats[$cat->parent]->children)) {
+            $allcats[$cat->parent]->children = array();
+        }
+        while(isset($allcats[$cat->parent]->children[$sortorder])) {
+            $sortorder++;
+        }
+        $allcats[$cat->parent]->children[$sortorder] = $cat;
+    }
+    unset($allcats);
+
+    // add broken cats to category tree
+    if ($brokencats) {
+        $defaultcat = reset($topcats);
+        foreach ($brokencats as $cat) {
+            $topcats[] = $cat;
+        } 
+    }
+
+    // now walk recursively the tree and fix any problems found
+    $sortorder = 0;
+    $fixcontexts = array();
+    _fix_course_cats($topcats, $sortorder, 0, 0, '', $fixcontexts);
+
+    // detect if there are "multiple" frontpage courses and fix them if needed
+    $frontcourses = $DB->get_records('course', array('category'=>0), 'id');
+    if (count($frontcourses) > 1) {
+        if (isset($frontcourses[SITEID])) {
+            $frontcourse = $frontcourses[SITEID];
+            unset($frontcourses[SITEID]);
+        } else {
+            $frontcourse = array_shift($frontcourses);
+        }
+        $defaultcat = reset($topcats);
+        foreach ($frontcourses as $course) {
+            $DB->set_field('course', 'category', $defaultcat->id, array('id'=>$course->id));
+            $context = get_context_instance(CONTEXT_COURSE, $course->id);
+            $fixcontexts[$context->id] = $context;
+        }
+        unset($frontcourses);
+    } else {
+        $frontcourse = reset($frontcourses);
+    }
+
+    // now fix the paths and depths in context table if needed
+    if ($fixcontexts) {
+        rebuild_contexts($fixcontexts);
+    }
+
+    // release memory
+    unset($topcats);
+    unset($brokencats);
+    unset($fixcontexts);
+
+    // fix frontpage course sortorder
+    if ($frontcourse->sortorder != 1) {
+        $DB->set_field('course', 'sortorder', 1, array('id'=>$frontcourse->id));
+    }
+
+    // now fix the course counts in category records if needed
+    $sql = "SELECT cc.id, cc.coursecount, COUNT(c.id) AS newcount
+              FROM {course_categories} cc
+              LEFT JOIN {course} c ON c.category = cc.id
+          GROUP BY cc.id, cc.coursecount
+            HAVING cc.coursecount <> COUNT(c.id)";
+
+    if ($updatecounts = $DB->get_records_sql($sql)) {
+        foreach ($updatecounts as $cat) {
+            $cat->coursecount = $cat->newcount;
+            unset($cat->newcount);
+            $DB->update_record_raw('course_categories', $cat, true);
+        } 
+    }
+
+    // now make sure that sortorders in course table are withing the category sortorder ranges
+    $sql = "SELECT cc.id, cc.sortorder
+              FROM {course_categories} cc
+              JOIN {course} c ON c.category = cc.id
+             WHERE c.sortorder < cc.sortorder OR c.sortorder > cc.sortorder + ".MAX_COURSES_IN_CATEGORY;
+
+    if ($fixcategories = $DB->get_records_sql($sql)) {
+        //fix the course sortorder ranges
+        foreach ($fixcategories as $cat) {
+            $sql = "UPDATE {course}
+                       SET sortorder = (sortorder % ".MAX_COURSES_IN_CATEGORY.") + ?
+                     WHERE category = ?";
+            $DB->execute($sql, array($cat->sortorder, $cat->id));
+        }
+    }
+    unset($fixcategories);
+
+    // categories having courses with sortorder duplicates or having gaps in sortorder
+    $sql = "SELECT DISTINCT c1.category AS id , cc.sortorder
+              FROM {course} c1
+              JOIN {course} c2 ON c1.sortorder = c2.sortorder
+              JOIN {course_categories} cc ON (c1.category = cc.id)
+             WHERE c1.id <> c2.id";
+    $fixcategories = $DB->get_records_sql($sql);
+
+    $sql = "SELECT cc.id, cc.sortorder, cc.coursecount, MAX(c.sortorder) AS maxsort, MIN(c.sortorder) AS minsort
+              FROM {course_categories} cc
+              JOIN {course} c ON c.category = cc.id
+          GROUP BY cc.id, cc.sortorder, cc.coursecount
+            HAVING (MAX(c.sortorder) <>  cc.sortorder + cc.coursecount) OR (MIN(c.sortorder) <>  cc.sortorder + 1)";
+    $gapcategories = $DB->get_records_sql($sql);
+
+    foreach ($gapcategories as $cat) {
+        if (isset($fixcategories[$cat->id])) {
+            // duplicates detected already
+
+        } else if ($cat->minsort == $cat->sortorder and $cat->maxsort == $cat->sortorder + $cat->coursecount - 1) {
+            // easy - new course inserted with sortorder 0, the rest is ok
+            $sql = "UPDATE {course}
+                       SET sortorder = sortorder + 1
+                     WHERE category = ?";
+            $DB->execute($sql, array($cat->id));
+
+        } else {
+            // it needs full resorting
+            $fixcategories[$cat->id] = $cat;
+        }
+    }
+    unset($gapcategories);
+
+    // fix course sortorders in problematic categories only
+    foreach ($fixcategories as $cat) {
+        $i = 1;
+        $courses = $DB->get_records('course', array('category'=>$cat->id), 'sortorder ASC, id DESC', 'id, sortorder');
+        foreach ($courses as $course) {
+            if ($course->sortorder != $cat->sortorder + $i) {
+                $course->sortorder = $cat->sortorder + $i;
+                $DB->update_record_raw('course', $course, true); 
+            }
+            $i++;
+        }
+    }
+}
+
+/**
+ * Internal recursive category verification function, do not use directly!
+ */
+function _fix_course_cats($children, &$sortorder, $parent, $depth, $path, &$fixcontexts) {
     global $DB;
 
-    // Note: the handling of sortorder here is arguably
-    // open to race conditions. Hard to fix here, unlikely
-    // to hit anyone in production.
+    $depth++;
 
-    $sql = "SELECT c.id, c.category, c.shortname
-              FROM {course} c
-              LEFT OUTER JOIN {course_categories} cc ON c.category=cc.id
-             WHERE cc.id IS NULL AND c.id <> " . SITEID;
+    foreach ($children as $cat) {
+        $sortorder = $sortorder + MAX_COURSES_IN_CATEGORY;
+        $update = false;
+        if ($parent != $cat->parent or $depth != $cat->depth or $path.'/'.$cat->id != $cat->path) {
+            $cat->parent = $parent;
+            $cat->depth  = $depth;
+            $cat->path   = $path.'/'.$cat->id;
+            $update = true;
 
-    if (!$rs = $DB->get_recordset_sql($sql)) {
-        return;
-    }
-
-    if ($rs->valid()) { // we have some orphans
-
-        // the "default" category is the lowest numbered...
-        $default   = $DB->get_field_sql("SELECT MIN(id)
-                                           FROM {course_categories}");
-        $sortorder = $DB->get_field_sql("SELECT MAX(sortorder)
-                                           FROM {course}
-                                          WHERE category=?", array($default));
-
-
-        $DB->begin_sql();
-        foreach ($rs as $course) {
-            if (!$DB->set_field('course', 'category',  $default, array('id'=>$course->id))
-              or !$DB->set_field('course', 'sortorder', ++$sortorder, array('id'=>$course->id))) {
-                $DB->rollback_sql();
-                return;
-            }
+            // make sure context caches are rebuild and dirty contexts marked
+            $context = get_context_instance(CONTEXT_COURSECAT, $cat->id);
+            $fixcontexts[$context->id] = $context;
         }
-        $DB->commit_sql();
+        if ($cat->sortorder != $sortorder) {
+            $cat->sortorder = $sortorder;
+            $update = true;
+        }
+        if ($update) {
+            $DB->update_record('course_categories', $cat, true);
+        }
+        if (isset($cat->children)) {
+            _fix_course_cats($cat->children, $sortorder, $cat->id, $cat->depth, $cat->path, $fixcontexts);
+        }
     }
-    $rs->close();
 }
 
 /**

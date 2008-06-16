@@ -79,16 +79,12 @@
 
         if ($resort and confirm_sesskey()) {
             if ($courses = get_courses($category->id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
-                // move it off the range
-                $count = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM {course} WHERE category= ?', array($category->id));
-                $count = $count->max + 100;
-                $DB->begin_sql();
+                $i = 1;
                 foreach ($courses as $course) {
-                    $DB->set_field('course', 'sortorder', $count, array('id'=>$course->id));
-                    $count++;
+                    $DB->set_field('course', 'sortorder', $category->sortorder+$i, array('id'=>$course->id));
+                    $i++;
                 }
-                $DB->commit_sql();
-                fix_course_sortorder($category->id);
+                fix_course_sortorder(); // should not be needed
             }
         }
     }
@@ -205,36 +201,24 @@
 
         if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
             require_capability('moodle/category:update', $context);
-            $movecourse = NULL;
+
+            // ensure the course order has continuous ordering
+            fix_course_sortorder();
             $swapcourse = NULL;
 
-            // ensure the course order has no gaps
-            // and isn't at 0
-            fix_course_sortorder($category->id);
-
-            // we are going to need to know the range
-            $max = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM {course} WHERE category=?', array($category->id));
-            $max = $max->max + 100;
-
             if (!empty($moveup)) {
-                $movecourse = $DB->get_record('course', array('id'=>$moveup));
-                $swapcourse = $DB->get_record('course', array('category'=>$category->id, 'sortorder'=>($movecourse->sortorder-1)));
-            } else {
-                $movecourse = $DB->get_record('course', array('id'=>$movedown));
-                $swapcourse = $DB->get_record('course', array('category'=>$category->id, 'sortorder'=>($movecourse->sortorder+1)));
-            }
-
-            if ($swapcourse and $movecourse) {        // Renumber everything for robustness
-                $DB->begin_sql();
-                if (!(    $DB->set_field("course", "sortorder", $max, array("id"=>$swapcourse->id))
-                       && $DB->set_field("course", "sortorder", $swapcourse->sortorder, array("id"=>$movecourse->id))
-                       && $DB->set_field("course", "sortorder", $movecourse->sortorder, array("id"=>$swapcourse->id))
-                    )) {
-                    notify("Could not update that course!");
+                if ($movecourse = $DB->get_record('course', array('id'=>$moveup))) {
+                    $swapcourse = $DB->get_record('course', array('sortorder'=>$movecourse->sortorder-1));
                 }
-                $DB->commit_sql();
+            } else {
+                if ($movecourse = $DB->get_record('course', array('id'=>$movedown))) {
+                    $swapcourse = $DB->get_record('course', array('sortorder'=>$movecourse->sortorder+1));
+                }
             }
-
+            if ($swapcourse and $movecourse) {
+                $DB->set_field('course', 'sortorder', $swapcourse->sortorder, array('id'=>$movecourse->id));
+                $DB->set_field('course', 'sortorder', $movecourse->sortorder, array('id'=>$swapcourse->id));
+            }
         }
 
     } // End of editing stuff

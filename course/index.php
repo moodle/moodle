@@ -199,61 +199,33 @@
 
     if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
 
+        fix_course_sortorder();
         $swapcategory = NULL;
-        $movecategory = NULL;
 
         if (!empty($moveup)) {
             if ($movecategory = $DB->get_record('course_categories', array('id'=>$moveup))) {
-                $categories = get_categories($movecategory->parent);
-
-                foreach ($categories as $category) {
-                    if ($category->id == $movecategory->id) {
-                        break;
-                    }
-                    $swapcategory = $category;
+                if ($swapcategory = $DB->get_records_select('course_categories', "sortorder<? AND parent=?", array($movecategory->sortorder, $movecategory->parent), 'sortorder ASC', '*', 0, 1)) {
+                    $swapcategory = reset($swapcategory);
                 }
-                unset($category);
             }
-        }
-        if (!empty($movedown)) {
+        } else {
             if ($movecategory = $DB->get_record('course_categories', array('id'=>$movedown))) {
-                $categories = get_categories($movecategory->parent);
+                if ($swapcategory = $DB->get_records_select('course_categories', "sortorder>? AND parent=?", array($movecategory->sortorder, $movecategory->parent), 'sortorder ASC', '*', 0, 1)) {
+                    $swapcategory = reset($swapcategory);
+                }
+            }
+        }
+        if ($swapcategory and $movecategory) {
+            $DB->set_field('course_categories', 'sortorder', $swapcategory->sortorder, array('id'=>$movecategory->id));
+            $DB->set_field('course_categories', 'sortorder', $movecategory->sortorder, array('id'=>$swapcategory->id));
+        }
 
-                $choosenext = false;
-                foreach ($categories as $category) {
-                    if ($choosenext) {
-                        $swapcategory = $category;
-                        break;
-                    }
-                    if ($category->id == $movecategory->id) {
-                        $choosenext = true;
-                    }
-                }
-                unset($category);
-            }
-        }
-        if ($swapcategory and $movecategory) {        // Renumber everything for robustness
-            $count=0;
-            foreach ($categories as $category) {
-                $count++;
-                if ($category->id == $swapcategory->id) {
-                    $category = $movecategory;
-                } else if ($category->id == $movecategory->id) {
-                    $category = $swapcategory;
-                }
-                if (!$DB->set_field('course_categories', 'sortorder', $count, array('id'=>$category->id))) {
-                    notify('Could not update that category!');
-                }
-            }
-            unset($category);
-        }
+        // finally reorder courses
+        fix_course_sortorder();
     }
 
-/// Find any orphan courses that don't yet have a valid category and set to default
-    fix_coursecategory_orphans();
-
-/// Should be a no-op 99% of the cases
-    fix_course_sortorder();
+/// This should not be needed anymore
+    //fix_course_sortorder();
 
 /// Print out the categories with all the knobs
 

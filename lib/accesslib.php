@@ -5119,6 +5119,23 @@ function component_level_changed($cap, $comp, $contextlevel) {
 }
 
 /**
+ * Rebuild all related context depth and path caches
+ * @param array $fixcontexts array of contexts
+ */
+function rebuild_contexts(array $fixcontexts) {
+    global $DB;
+
+    foreach ($fixcontexts as $context) {
+        if ($context->path) {
+            mark_context_dirty($context->path);
+        }
+        $DB->set_field_select('context', 'depth', 0, "path LIKE '%/$context->id/%'");
+        $DB->set_field('context', 'depth', 0, array('id'=>$context->id));
+    }
+    build_context_path(false);
+}
+
+/**
  * Populate context.path and context.depth where missing.
  * @param bool $force force a complete rebuild of the path and depth fields.
  * @return void

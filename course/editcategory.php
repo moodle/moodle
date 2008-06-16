@@ -58,7 +58,6 @@ if ($mform->is_cancelled()){
     $newcategory = new stdClass();
     $newcategory->name        = $data->name;
     $newcategory->description = $data->description;
-    $newcategory->sortorder   = 999;
     $newcategory->parent      = $data->parent; // if $id = 0, the new category will be a top-level category
 
     if (!empty($data->theme) && !empty($CFG->allowcategorythemes)) {
@@ -66,12 +65,14 @@ if ($mform->is_cancelled()){
         theme_setup();
     }
 
-    if (empty($category) && has_capability('moodle/category:create', $context)) { // Create a new category 
+    if (empty($category) && has_capability('moodle/category:create', $context)) { // Create a new category
+        $newcategory->sortorder   = MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES; // put as last category in any parent cat 
         if (!$newcategory->id = $DB->insert_record('course_categories', $newcategory)) {
             notify( "Could not insert the new category '$newcategory->name' ");
         } else {
             $newcategory->context = get_context_instance(CONTEXT_COURSECAT, $newcategory->id);
             mark_context_dirty($newcategory->context->path);
+            fix_course_sortorder();
             redirect('index.php?categoryedit=on');
         }
     } elseif (has_capability('moodle/category:update', $context)) {
@@ -79,7 +80,7 @@ if ($mform->is_cancelled()){
 
         if ($newcategory->parent != $category->parent) {
             $parent_cat = $DB->get_record('course_categories', array('id'=>$newcategory->parent));
-            move_category($newcategory, $parent_cat);
+            move_category($newcategory, $parent_cat); // includes sortorder fix
         }
 
         if (!$DB->update_record('course_categories', $newcategory)) {
@@ -90,7 +91,6 @@ if ($mform->is_cancelled()){
             } else {
                 $redirect_link = 'category.php?id='.$newcategory->id.'&categoryedit=on'; 
             }
-            fix_course_sortorder();
             redirect($redirect_link);
         }
     } 

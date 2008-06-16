@@ -466,15 +466,8 @@
         $page = page_create_object(PAGE_COURSE_VIEW, $newid);
         blocks_repopulate_page($page); // Return value not checked because you can always edit later
 
-        $cat = new object();
-        $cat->name = get_string('miscellaneous');
-        $cat->depth = 1;
-        if (!$catid = $DB->insert_record('course_categories', $cat)) {
-            print_error('cannotsetupcategory', 'error');
-        }
-        // make sure category context exists
-        get_context_instance(CONTEXT_COURSECAT, $catid);
-        mark_context_dirty('/'.SYSCONTEXTID);
+        // create default course category
+        $cat = get_course_category();
 
         redirect('index.php');
     }

@@ -536,15 +536,8 @@ function process_group_tag($tagcontents){
                 $course->startdate = time();
                 $course->numsections = 1;
                 // Choose a sort order that puts us at the start of the list!
-                $sortinfo = $DB->get_record_sql('SELECT MIN(sortorder) AS min, MAX(sortorder) AS max FROM {course} WHERE category<>0');
-                if (is_object($sortinfo)) { // no courses?
-                    $max   = $sortinfo->max;
-                    $min   = $sortinfo->min;
-                    unset($sortinfo);
-                    $course->sortorder = $min - 1;
-                }else{
-                    $course->sortorder = 1000;
-                }
+                $course->sortorder = 0;
+
                 if($course->id = $DB->insert_record('course', $course)){
 
                     // Setup the blocks

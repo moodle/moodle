@@ -2854,49 +2854,28 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
 function move_courses($courseids, $categoryid) {
     global $CFG, $DB;
 
-    if (!empty($courseids)) {
+    if (!empty($courseids) and $category = $DB->get_record('course_categories', array('id'=>$categoryid))) {
+        $courseids = array_reverse($courseids);
+        $i = 1;
 
-            $courseids = array_reverse($courseids);
+        foreach ($courseids as $courseid) {
+            if (!$course  = $DB->get_record("course", array("id"=>$courseid))) {
+                notify("Error finding course $courseid");
+            } else {
+                $course->category  = $categoryid;
+                $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - $i++;
 
-            foreach ($courseids as $courseid) {
-
-                if (! $course  = $DB->get_record("course", array("id"=>$courseid))) {
-                    notify("Error finding course $courseid");
-                } else {
-                    // figure out a sortorder that we can use in the destination category
-                    $sortorder = $DB->get_field_sql('SELECT MIN(sortorder)-1 AS min
-                                                       FROM {course} WHERE category=?', array($categoryid));
-                    if (is_null($sortorder) || $sortorder === false) {
-                        // the category is empty
-                        // rather than let the db default to 0
-                        // set it to > 100 and avoid extra work in fix_coursesortorder()
-                        $sortorder = 200;
-                    } else if ($sortorder < 10) {
-                        fix_course_sortorder($categoryid);
-                    }
-
-                    $course->category  = $categoryid;
-                    $course->sortorder = $sortorder;
-                    $course->fullname  = $course->fullname;
-                    $course->shortname = $course->shortname;
-                    $course->summary   = $course->summary;
-                    $course->password  = $course->password;
-                    $course->teacher   = $course->teacher;
-                    $course->teachers  = $course->teachers;
-                    $course->student   = $course->student;
-                    $course->students  = $course->students;
-
-                    if (!$DB->update_record('course', $course)) {
-                        notify("An error occurred - course not moved!");
-                    }
-
-                    $context   = get_context_instance(CONTEXT_COURSE, $course->id);
-                    $newparent = get_context_instance(CONTEXT_COURSECAT, $course->category);
-                    context_moved($context, $newparent);
+                if (!$DB->update_record('course', $course)) {
+                    notify("An error occurred - course not moved!");
                 }
+
+                $context   = get_context_instance(CONTEXT_COURSE, $course->id);
+                $newparent = get_context_instance(CONTEXT_COURSECAT, $course->category);
+                context_moved($context, $newparent);
             }
-            fix_course_sortorder();
         }
+        fix_course_sortorder();
+    }
     return true;
 }
 
@@ -2913,7 +2892,9 @@ function move_category ($category, $newparentcat) {
         if (!$DB->set_field('course_categories', 'parent', 0, array('id'=>$category->id))) {
             return false;
         }
+
         $newparent = get_context_instance(CONTEXT_SYSTEM);
+
     } else {
         if (!$DB->set_field('course_categories', 'parent', $newparentcat->id, array('id'=>$category->id))) {
             return false;
@@ -2923,8 +2904,10 @@ function move_category ($category, $newparentcat) {
 
     context_moved($context, $newparent);
 
-    // The most effective thing would be to find the common parent,
-    // until then, do it sitewide...
+    // now make it last in new category 
+    $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES, array('id'=>$category->id));
+
+    // and fix the sortorders
     fix_course_sortorder();
 
     return true;
@@ -2990,12 +2973,8 @@ function create_course($data) {
 
     $data->timecreated = time();
 
-    // place at beginning of category
-    fix_course_sortorder();
-    $data->sortorder = $DB->get_field_sql("SELECT MIN(sortorder)-1 FROM {course} WHERE category=?", array($data->category));
-    if (empty($data->sortorder)) {
-        $data->sortorder = 100;
-    }
+    // place at beginning of any category
+    $data->sortorder = 0;
 
     if ($newcourseid = $DB->insert_record('course', $data)) {  // Set up new course
 

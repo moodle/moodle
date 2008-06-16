@@ -550,7 +550,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     global $CFG, $DB;
 
     // override defaults with template course
-    if(!empty($CFG->enrol_ldap_template)){
+    if (!empty($CFG->enrol_ldap_template)){
         $course = $DB->get_record("course", array('shortname'=>$CFG->enrol_ldap_template));
         unset($course->id); // so we are clear to reinsert the record
         unset($course->sortorder);
@@ -580,19 +580,11 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     $course->summary = empty($CFG->enrol_ldap_course_summary) || empty($course_ext[$CFG->enrol_ldap_course_summary][0])
         ? ''
         : $course_ext[$CFG->enrol_ldap_course_summary][0];
-    
-    if(!empty($CFG->enrol_ldap_category)){ // optional ... but ensure it is set!
-        $course->category = $CFG->enrol_ldap_category;
-    } 
-    if ($course->category == 0){ // must be avoided as it'll break moodle
-        $course->category = 1; // the misc 'catch-all' category
-    }
 
-    // define the sortorder (yuck)
-    $sort = $DB->get_record_sql('SELECT MAX(sortorder) AS max, 1 FROM {course} WHERE category=?', array($course->category));
-    $sort = $sort->max;
-    $sort++;
-    $course->sortorder = $sort; 
+    $category = get_course_category($CFG->enrol_db_category);
+
+    // put at the end of category
+    $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - 1;
 
     // override with local data
     $course->startdate = time();
@@ -602,14 +594,13 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     // store it and log
     if ($newcourseid = $DB->insert_record("course", $course)) {  // Set up new course
         $section = new object();
-        $section->course = $newcourseid;   // Create a default section.
+        $section->course  = $newcourseid;   // Create a default section.
         $section->section = 0;
         $section->id = $DB->insert_record("course_sections", $section);
         $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
         blocks_repopulate_page($page); // Return value no
 
-
-        if(!$skip_fix_course_sortorder){ 
+        if (!$skip_fix_course_sortorder){ 
             fix_course_sortorder(); 
         }
         add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "enrol/ldap auto-creation");

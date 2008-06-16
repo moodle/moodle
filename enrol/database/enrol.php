@@ -554,7 +554,7 @@ function create_course ($course,$skip_fix_course_sortorder=0){
     global $CFG, $DB;
 
     // define a template
-    if(!empty($CFG->enrol_db_template)){
+    if (!empty($CFG->enrol_db_template)){
         $template = $DB->get_record("course", array('shortname'=>$CFG->enrol_db_template));
         $template = (array)$template;
     } else {
@@ -585,14 +585,10 @@ function create_course ($course,$skip_fix_course_sortorder=0){
         }
     }
 
-    $course->category = 1;     // the misc 'catch-all' category
-    if (!empty($CFG->enrol_db_category)){ //category = 0 or undef will break moodle
-        $course->category = $CFG->enrol_db_category;
-    }
+    $category = get_course_category($CFG->enrol_db_category);
 
-    // define the sortorder
-    $sort = $DB->get_field_sql('SELECT COALESCE(MAX(sortorder)+1, 100) AS max FROM {course} WHERE category= ?', array($course->category));
-    $course->sortorder = $sort;
+    // put at the end of category
+    $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - 1;
 
     // override with local data
     $course->startdate   = time() + 3600 * 24;
@@ -608,15 +604,14 @@ function create_course ($course,$skip_fix_course_sortorder=0){
 
     // store it and log
     if ($newcourseid = $DB->insert_record("course", $course)) {  // Set up new course
-        $section = NULL;
-        $section->course = $newcourseid;   // Create a default section.
+        $section = new object();
+        $section->course  = $newcourseid;   // Create a default section.
         $section->section = 0;
         $section->id = $DB->insert_record("course_sections", $section);
         $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
         blocks_repopulate_page($page); // Return value no
 
-
-        if(!$skip_fix_course_sortorder){
+        if (!$skip_fix_course_sortorder){
             fix_course_sortorder();
         }
         add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "enrol/database auto-creation");
