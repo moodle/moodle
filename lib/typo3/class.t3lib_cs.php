@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2003-2006 Kasper Skaarhoj (kasperYYYY@typo3.com)
+*  (c) 2003-2008 Kasper Skaarhoj (kasperYYYY@typo3.com)
 *  All rights reserved
 *
 *  This script is part of the Typo3 project. The Typo3 project is
@@ -24,7 +24,7 @@
 /**
  * Class for conversion between charsets.
  *
- *    Typo Id: class.t3lib_cs.php,v 1.56 2006/05/03 08:47:30 masi Exp $
+ * Typo    Id: class.t3lib_cs.php 3439 2008-03-16 19:16:51Z flyguide $
  * Moodle $Id$
  *
  * @author	Kasper Skaarhoj <kasperYYYY@typo3.com>
@@ -265,6 +265,8 @@ class t3lib_cs {
 		'fi' => 'west_european',	// Finish
 		'fo' => 'west_european',	// Faroese
 		'fr' => 'west_european',	// French
+		'ga' => 'west_european',	// Galician
+		'ge' => 'unicode',			// Georgian
 		'gr' => 'greek',
 		'he' => 'hebrew',		// Hebrew (since 1998)
 		'hi' => 'unicode',		// Hindi
@@ -288,6 +290,7 @@ class t3lib_cs {
 		'sl' => 'east_european',	// Slovenian
 		'sr' => 'cyrillic',		// Serbian
 		'sv' => 'west_european',	// Swedish
+		'sq' => 'albanian',		// Albanian
 		'th' => 'thai',
 		'uk' => 'cyrillic',		// Ukranian
 		'vi' => 'vietnamese',
@@ -317,6 +320,8 @@ class t3lib_cs {
 		'frb' => 'west_european',	// French (Belgian)
 		'frc' => 'west_european',	// French (Canadian)
 		'frs' => 'west_european',	// French (Swiss)
+		'geo' => 'unicode',			// Georgian
+		'glg' => 'west_european',	// Galician
 		'ell' => 'greek',
 		'heb' => 'hebrew',
 		'hin' => 'unicode',	// Hindi
@@ -346,10 +351,12 @@ class t3lib_cs {
 		'esm' => 'west_european',	// Spanish (Mexican)
 		'esn' => 'west_european',	// Spanish (internat. sort)
 		'sve' => 'west_european',	// Swedish
+		'sqi' => 'albanian',		// Albanian
 		'tha' => 'thai',
 		'trk' => 'turkish',
 		'ukr' => 'cyrillic',	// Ukrainian
 			// English language names
+		'albanian' => 'albanian',
 		'arabic' => 'arabic',
 		'basque' => 'west_european',
 		'bosnian' => 'east_european',
@@ -367,6 +374,7 @@ class t3lib_cs {
 		'finnish' => 'west_european',
 		'french' => 'west_european',
 		'galician' => 'west_european',
+		'georgian' => 'unicode',
 		'german' => 'west_european',
 		'greek' => 'greek',
 		'greenlandic' => 'west_european',
@@ -415,6 +423,7 @@ class t3lib_cs {
 		'trad_chinese' => 'big5',
 		'vietnamese' => '',
 		'unicode' => 'utf-8',
+		'albanian' => 'utf-8'
 	);
 
 		// mapping of language (family) names to charsets on Windows
@@ -436,6 +445,8 @@ class t3lib_cs {
 		'japanese' => 'shift_jis',
 		'simpl_chinese' => 'gb2312',
 		'trad_chinese' => 'big5',
+		'albanian' => 'windows-1250',
+		'unicode' => 'utf-8'
 	);
 
 		// mapping of locale names to charsets
@@ -496,7 +507,10 @@ class t3lib_cs {
 		'hi' => 'utf-8',
 		'fo' => 'utf-8',
 		'fa' => 'utf-8',
-		'sr' => 'utf-8'
+		'sr' => 'utf-8',
+		'sq' => 'utf-8',
+		'ge' => 'utf-8',
+		'ga' => '',
 	);
 
 		// TYPO3 specific: Array with the iso names used for each system language in TYPO3:
@@ -526,7 +540,7 @@ class t3lib_cs {
 	 * @author	Martin Kutschker <martin.t.kutschker@blackbox.net>
 	 */
 	function parse_charset($charset)	{
-		$charset = strtolower($charset);
+		$charset = trim(strtolower($charset));
 		if (isset($this->synonyms[$charset]))	$charset = $this->synonyms[$charset];
 
 		return $charset;
@@ -565,7 +579,7 @@ class t3lib_cs {
 		if (isset($this->lang_to_script[$language]))	$script = $this->lang_to_script[$language];
 
 		if (TYPO3_OS == 'WIN')	{
-			$cs = $this->script_to_charset_windows[$script] ? $this->script_to_charset_windows[$script] : 'window-1252';
+			$cs = $this->script_to_charset_windows[$script] ? $this->script_to_charset_windows[$script] : 'windows-1252';
 		} else {
 			$cs = $this->script_to_charset_unix[$script] ? $this->script_to_charset_unix[$script] : 'iso-8859-1';
 		}
@@ -609,7 +623,7 @@ class t3lib_cs {
 				break;
 
 			case 'iconv':
-				$conv_str = iconv($fromCS,$toCS.'//IGNORE',$str);
+				$conv_str = iconv($fromCS,$toCS.'//TRANSLIT',$str);
 				if (false !== $conv_str)	return $conv_str;
 				break;
 
@@ -1539,7 +1553,7 @@ class t3lib_cs {
 	 * @see strtolower(), strtoupper()
 	 */
 	function conv_case($charset,$string,$case)	{
-		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'mbstring' && (float)phpversion() >= 4.3)	{
+		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['t3lib_cs_utils'] == 'mbstring')	{
 			if ($case == 'toLower')	{
 				$string = mb_strtolower($string,$charset);
 			} else {

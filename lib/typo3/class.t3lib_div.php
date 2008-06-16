@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 1999-2005 Kasper Skaarhoj (kasperYYYY@typo3.com)
+*  (c) 1999-2008 Kasper Skaarhoj (kasperYYYY@typo3.com)
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -27,7 +27,8 @@
 /**
  * Contains the reknown class "t3lib_div" with general purpose functions
  *
- * $Id$
+ * Typo    Id: class.t3lib_div.php 3797 2008-06-11 06:39:13Z stucki $
+ * Moodle $Id$
  * Revised for TYPO3 3.6 July/2003 by Kasper Skaarhoj
  * XHTML compliant
  * Usage counts are based on search 22/2 2003 through whole source including tslib/
@@ -39,144 +40,165 @@
  *
  *
  *
- *  211: class t3lib_div
+ *  232: class t3lib_div
  *
  *              SECTION: GET/POST Variables
- *  241:     function _GP($var)
- *  259:     function _GET($var=NULL)
- *  276:     function _POST($var=NULL)
- *  292:     function _GETset($inputGet,$key='')
- *  315:     function GPvar($var,$strip=0)
- *  332:     function GParrayMerged($var)
+ *  262:     function _GP($var)
+ *  280:     function _GET($var=NULL)
+ *  297:     function _POST($var=NULL)
+ *  313:     function _GETset($inputGet,$key='')
+ *  336:     function GPvar($var,$strip=0)
+ *  353:     function GParrayMerged($var)
  *
  *              SECTION: IMAGE FUNCTIONS
- *  376:     function gif_compress($theFile, $type)
- *  402:     function png_to_gif_by_imagemagick($theFile)
- *  426:     function read_png_gif($theFile,$output_png=0)
+ *  397:     function gif_compress($theFile, $type)
+ *  425:     function png_to_gif_by_imagemagick($theFile)
+ *  450:     function read_png_gif($theFile,$output_png=0)
  *
  *              SECTION: STRING FUNCTIONS
- *  475:     function fixed_lgd($string,$origChars,$preStr='...')
- *  500:     function fixed_lgd_pre($string,$chars)
- *  514:     function fixed_lgd_cs($string,$chars)
- *  531:     function breakTextForEmail($str,$implChar="\n",$charWidth=76)
- *  550:     function breakLinesForEmail($str,$implChar="\n",$charWidth=76)
- *  585:     function cmpIP($baseIP, $list)
- *  627:     function cmpFQDN($baseIP, $list)
- *  657:     function inList($list,$item)
- *  669:     function rmFromList($element,$list)
- *  687:     function intInRange($theInt,$min,$max=2000000000,$zeroValue=0)
- *  703:     function intval_positive($theInt)
- *  716:     function int_from_ver($verNumberStr)
- *  728:     function md5int($str)
- *  741:     function shortMD5($input, $len=10)
- *  754:     function uniqueList($in_list, $secondParameter=NULL)
- *  768:     function split_fileref($fileref)
- *  805:     function dirname($path)
- *  821:     function modifyHTMLColor($color,$R,$G,$B)
- *  841:     function modifyHTMLColorAll($color,$all)
- *  852:     function rm_endcomma($string)
- *  865:     function danish_strtoupper($string)
- *  880:     function convUmlauts($str)
- *  893:     function testInt($var)
- *  905:     function isFirstPartOfStr($str,$partStr)
- *  921:     function formatSize($sizeInBytes,$labels='')
- *  956:     function convertMicrotime($microtime)
- *  970:     function splitCalc($string,$operators)
- *  992:     function calcPriority($string)
- * 1032:     function calcParenthesis($string)
- * 1058:     function htmlspecialchars_decode($value)
- * 1073:     function deHSCentities($str)
- * 1086:     function slashJS($string,$extended=0,$char="'")
- * 1099:     function rawUrlEncodeJS($str)
- * 1111:     function rawUrlEncodeFP($str)
- * 1122:     function validEmail($email)
- * 1137:     function formatForTextarea($content)
+ *  499:     function fixed_lgd($string,$origChars,$preStr='...')
+ *  524:     function fixed_lgd_pre($string,$chars)
+ *  538:     function fixed_lgd_cs($string,$chars)
+ *  555:     function breakTextForEmail($str,$implChar="\n",$charWidth=76)
+ *  574:     function breakLinesForEmail($str,$implChar="\n",$charWidth=76)
+ *  610:     function cmpIP($baseIP, $list)
+ *  626:     function cmpIPv4($baseIP, $list)
+ *  668:     function cmpIPv6($baseIP, $list)
+ *  711:     function IPv6Hex2Bin ($hex)
+ *  726:     function normalizeIPv6($address)
+ *  782:     function validIPv6($ip)
+ *  805:     function cmpFQDN($baseIP, $list)
+ *  835:     function inList($list,$item)
+ *  847:     function rmFromList($element,$list)
+ *  863:     function expandList($list)
+ *  894:     function intInRange($theInt,$min,$max=2000000000,$zeroValue=0)
+ *  910:     function intval_positive($theInt)
+ *  923:     function int_from_ver($verNumberStr)
+ *  934:     function compat_version($verNumberStr)
+ *  952:     function md5int($str)
+ *  965:     function shortMD5($input, $len=10)
+ *  978:     function uniqueList($in_list, $secondParameter=NULL)
+ *  992:     function split_fileref($fileref)
+ * 1030:     function dirname($path)
+ * 1046:     function modifyHTMLColor($color,$R,$G,$B)
+ * 1066:     function modifyHTMLColorAll($color,$all)
+ * 1077:     function rm_endcomma($string)
+ * 1090:     function danish_strtoupper($string)
+ * 1105:     function convUmlauts($str)
+ * 1118:     function testInt($var)
+ * 1130:     function isFirstPartOfStr($str,$partStr)
+ * 1146:     function formatSize($sizeInBytes,$labels='')
+ * 1181:     function convertMicrotime($microtime)
+ * 1195:     function splitCalc($string,$operators)
+ * 1217:     function calcPriority($string)
+ * 1258:     function calcParenthesis($string)
+ * 1284:     function htmlspecialchars_decode($value)
+ * 1299:     function deHSCentities($str)
+ * 1312:     function slashJS($string,$extended=0,$char="'")
+ * 1325:     function rawUrlEncodeJS($str)
+ * 1337:     function rawUrlEncodeFP($str)
+ * 1348:     function validEmail($email)
+ * 1363:     function formatForTextarea($content)
  *
  *              SECTION: ARRAY FUNCTIONS
- * 1168:     function inArray($in_array,$item)
- * 1185:     function intExplode($delim, $string)
- * 1204:     function revExplode($delim, $string, $count=0)
- * 1224:     function trimExplode($delim, $string, $onlyNonEmptyValues=0)
- * 1246:     function uniqueArray($valueArray)
- * 1258:     function removeArrayEntryByValue($array,$cmpValue)
- * 1286:     function implodeArrayForUrl($name,$theArray,$str='',$skipBlank=0,$rawurlencodeParamName=0)
- * 1313:     function compileSelectedGetVarsFromArray($varList,$getArray,$GPvarAlt=1)
- * 1336:     function addSlashesOnArray(&$theArray)
- * 1360:     function stripSlashesOnArray(&$theArray)
- * 1382:     function slashArray($arr,$cmd)
- * 1399:     function array_merge_recursive_overrule($arr0,$arr1,$notAddKeys=0,$includeEmtpyValues=true)
- * 1432:     function array_merge($arr1,$arr2)
- * 1445:     function csvValues($row,$delim=',',$quote='"')
+ * 1394:     function inArray($in_array,$item)
+ * 1411:     function intExplode($delim, $string)
+ * 1430:     function revExplode($delim, $string, $count=0)
+ * 1450:     function trimExplode($delim, $string, $onlyNonEmptyValues=0)
+ * 1472:     function uniqueArray($valueArray)
+ * 1484:     function removeArrayEntryByValue($array,$cmpValue)
+ * 1513:     function implodeArrayForUrl($name,$theArray,$str='',$skipBlank=0,$rawurlencodeParamName=0)
+ * 1538:     function explodeUrl2Array($string,$multidim=FALSE)
+ * 1564:     function compileSelectedGetVarsFromArray($varList,$getArray,$GPvarAlt=1)
+ * 1587:     function addSlashesOnArray(&$theArray)
+ * 1611:     function stripSlashesOnArray(&$theArray)
+ * 1633:     function slashArray($arr,$cmd)
+ * 1650:     function array_merge_recursive_overrule($arr0,$arr1,$notAddKeys=0,$includeEmtpyValues=true)
+ * 1683:     function array_merge($arr1,$arr2)
+ * 1696:     function csvValues($row,$delim=',',$quote='"')
  *
  *              SECTION: HTML/XML PROCESSING
- * 1487:     function get_tag_attributes($tag)
- * 1524:     function split_tag_attributes($tag)
- * 1558:     function implodeAttributes($arr,$xhtmlSafe=FALSE,$dontOmitBlankAttribs=FALSE)
- * 1585:     function implodeParams($arr,$xhtmlSafe=FALSE,$dontOmitBlankAttribs=FALSE)
- * 1600:     function wrapJS($string, $linebreak=TRUE)
- * 1630:     function xml2tree($string,$depth=999)
- * 1716:     function array2xml($array,$NSprefix='',$level=0,$docTag='phparray',$spaceInd=0, $options=array(),$stackData=array())
- * 1830:     function xml2array($string,$NSprefix='',$reportDocTag=FALSE)
- * 1940:     function xmlRecompileFromStructValArray($vals)
- * 1984:     function xmlGetHeaderAttribs($xmlData)
+ * 1738:     function get_tag_attributes($tag)
+ * 1775:     function split_tag_attributes($tag)
+ * 1809:     function implodeAttributes($arr,$xhtmlSafe=FALSE,$dontOmitBlankAttribs=FALSE)
+ * 1836:     function implodeParams($arr,$xhtmlSafe=FALSE,$dontOmitBlankAttribs=FALSE)
+ * 1851:     function wrapJS($string, $linebreak=TRUE)
+ * 1882:     function xml2tree($string,$depth=999)
+ * 1969:     function array2xml($array,$NSprefix='',$level=0,$docTag='phparray',$spaceInd=0, $options=array(),$stackData=array())
+ * 2088:     function xml2array($string,$NSprefix='',$reportDocTag=FALSE)
+ * 2198:     function xmlRecompileFromStructValArray($vals)
+ * 2242:     function xmlGetHeaderAttribs($xmlData)
  *
  *              SECTION: FILES FUNCTIONS
- * 2016:     function getURL($url)
- * 2058:     function writeFile($file,$content)
- * 2075:     function fixPermissions($file)
- * 2092:     function writeFileToTypo3tempDir($filepath,$content)
- * 2135:     function mkdir($theNewFolder)
- * 2155:     function get_dirs($path)
- * 2180:     function getFilesInDir($path,$extensionList='',$prependPath=0,$order='')
- * 2234:     function getAllFilesAndFoldersInPath($fileArr,$path,$extList='',$regDirs=0,$recursivityLevels=99)
- * 2257:     function removePrefixPathFromList($fileArr,$prefixToRemove)
- * 2273:     function fixWindowsFilePath($theFile)
- * 2285:     function resolveBackPath($pathStr)
- * 2312:     function locationHeaderUrl($path)
+ * 2275:     function getURL($url, $includeHeader=0)
+ * 2342:     function writeFile($file,$content)
+ * 2367:     function fixPermissions($file)
+ * 2384:     function writeFileToTypo3tempDir($filepath,$content)
+ * 2427:     function mkdir($theNewFolder)
+ * 2446:     function mkdir_deep($destination,$deepDir)
+ * 2468:     function get_dirs($path)
+ * 2493:     function getFilesInDir($path,$extensionList='',$prependPath=0,$order='')
+ * 2547:     function getAllFilesAndFoldersInPath($fileArr,$path,$extList='',$regDirs=0,$recursivityLevels=99)
+ * 2570:     function removePrefixPathFromList($fileArr,$prefixToRemove)
+ * 2586:     function fixWindowsFilePath($theFile)
+ * 2598:     function resolveBackPath($pathStr)
+ * 2626:     function locationHeaderUrl($path)
  *
  *              SECTION: DEBUG helper FUNCTIONS
- * 2352:     function debug_ordvalue($string,$characters=100)
- * 2369:     function view_array($array_in)
- * 2397:     function print_array($array_in)
- * 2412:     function debug($var="",$brOrHeader=0)
+ * 2666:     function debug_ordvalue($string,$characters=100)
+ * 2683:     function view_array($array_in)
+ * 2711:     function print_array($array_in)
+ * 2726:     function debug($var="",$brOrHeader=0)
+ * 2757:     function debug_trail()
+ * 2779:     function debugRows($rows,$header='')
  *
  *              SECTION: SYSTEM INFORMATION
- * 2481:     function getThisUrl()
- * 2497:     function linkThisScript($getParams=array())
- * 2521:     function linkThisUrl($url,$getParams=array())
- * 2546:     function getIndpEnv($getEnvName)
- * 2735:     function milliseconds()
- * 2747:     function clientInfo($useragent='')
+ * 2857:     function getThisUrl()
+ * 2873:     function linkThisScript($getParams=array())
+ * 2897:     function linkThisUrl($url,$getParams=array())
+ * 2920:     function getIndpEnv($getEnvName)
+ * 3113:     function milliseconds()
+ * 3125:     function clientInfo($useragent='')
  *
  *              SECTION: TYPO3 SPECIFIC FUNCTIONS
- * 2834:     function getFileAbsFileName($filename,$onlyRelative=1,$relToTYPO3_mainDir=0)
- * 2870:     function validPathStr($theFile)
- * 2881:     function isAbsPath($path)
- * 2892:     function isAllowedAbsPath($path)
- * 2909:     function verifyFilenameAgainstDenyPattern($filename)
- * 2927:     function upload_copy_move($source,$destination)
- * 2953:     function upload_to_tempfile($uploadedFileName)
- * 2971:     function unlink_tempfile($uploadedTempFileName)
- * 2987:     function tempnam($filePrefix)
- * 3000:     function stdAuthCode($uid_or_record,$fields='')
- * 3030:     function cHashParams($addQueryParams)
- * 3059:     function loadTCA($table)
- * 3079:     function resolveSheetDefInDS($dataStructArray,$sheet='sDEF')
- * 3109:     function resolveAllSheetsInDS($dataStructArray)
- * 3138:     function callUserFunction($funcName,&$params,&$ref,$checkPrefix='user_',$silent=0)
- * 3237:     function &getUserObj($classRef,$checkPrefix='user_',$silent=0)
- * 3295:     function &makeInstance($className)
- * 3307:     function makeInstanceClassName($className)
- * 3321:     function &makeInstanceService($serviceType, $serviceSubType='', $excludeServiceKeys=array())
- * 3382:     function plainMailEncoded($email,$subject,$message,$headers='',$enc='',$charset='ISO-8859-1',$dontEncodeSubject=0)
- * 3427:     function quoted_printable($string,$maxlen=76)
- * 3471:     function substUrlsInPlainText($message,$urlmode='76',$index_script_url='')
- * 3505:     function makeRedirectUrl($inUrl,$l=0,$index_script_url='')
- * 3532:     function freetypeDpiComp($font_size)
- * 3551:     function devLog($msg, $extKey, $severity=0, $dataVar=FALSE)
- * 3572:     function arrayToLogString($arr, $valueList=array(), $valueLength=20)
+ * 3212:     function getFileAbsFileName($filename,$onlyRelative=1,$relToTYPO3_mainDir=0)
+ * 3248:     function validPathStr($theFile)
+ * 3259:     function isAbsPath($path)
+ * 3270:     function isAllowedAbsPath($path)
+ * 3287:     function verifyFilenameAgainstDenyPattern($filename)
+ * 3305:     function upload_copy_move($source,$destination)
+ * 3331:     function upload_to_tempfile($uploadedFileName)
+ * 3349:     function unlink_tempfile($uploadedTempFileName)
+ * 3365:     function tempnam($filePrefix)
+ * 3379:     function stdAuthCode($uid_or_record,$fields='',$codeLength=8)
+ * 3410:     function cHashParams($addQueryParams)
+ * 3433:     function hideIfNotTranslated($l18n_cfg_fieldValue)
+ * 3448:     function readLLfile($fileRef,$langKey)
+ * 3472:     function readLLXMLfile($fileRef,$langKey)
+ * 3589:     function llXmlAutoFileName($fileRef,$language)
+ * 3633:     function loadTCA($table)
+ * 3653:     function resolveSheetDefInDS($dataStructArray,$sheet='sDEF')
+ * 3686:     function resolveAllSheetsInDS($dataStructArray)
+ * 3715:     function callUserFunction($funcName,&$params,&$ref,$checkPrefix='user_',$silent=0)
+ * 3813:     function &getUserObj($classRef,$checkPrefix='user_',$silent=0)
+ * 3871:     function &makeInstance($className)
+ * 3883:     function makeInstanceClassName($className)
+ * 3897:     function &makeInstanceService($serviceType, $serviceSubType='', $excludeServiceKeys=array())
+ * 3961:     function plainMailEncoded($email,$subject,$message,$headers='',$enc='',$charset='',$dontEncodeHeader=false)
+ * 4031:     function quoted_printable($string,$maxlen=76)
+ * 4078:     function encodeHeader($line,$enc='',$charset='ISO-8859-1')
+ * 4121:     function substUrlsInPlainText($message,$urlmode='76',$index_script_url='')
+ * 4155:     function makeRedirectUrl($inUrl,$l=0,$index_script_url='')
+ * 4182:     function freetypeDpiComp($font_size)
+ * 4194:     function initSysLog()
+ * 4251:     function sysLog($msg, $extKey, $severity=0)
+ * 4334:     function devLog($msg, $extKey, $severity=0, $dataVar=FALSE)
+ * 4355:     function arrayToLogString($arr, $valueList=array(), $valueLength=20)
+ * 4378:     function imageMagickCommand($command, $parameters, $path='')
+ * 4425:     function unQuoteFilenames($parameters,$unQuote=FALSE)
+ * 4459:     function quoteJSvalue($value, $inScriptTags = false)
  *
- * TOTAL FUNCTIONS: 117
+ * TOTAL FUNCTIONS: 138
  * (This index is automatically created/updated by the extension "extdeveval")
  *
  */
@@ -208,7 +230,14 @@
  * @package TYPO3
  * @subpackage t3lib
  */
-class t3lib_div {
+final class t3lib_div {
+
+		// Severity constants used by t3lib_div::sysLog()
+	const SYSLOG_SEVERITY_INFO = 0;
+	const SYSLOG_SEVERITY_NOTICE = 1;
+	const SYSLOG_SEVERITY_WARNING = 2;
+	const SYSLOG_SEVERITY_ERROR = 3;
+	const SYSLOG_SEVERITY_FATAL = 4;
 
 
 
@@ -238,7 +267,7 @@ class t3lib_div {
 	 * @return	mixed		POST var named $var and if not set, the GET var of the same name.
 	 * @see GPvar()
 	 */
-	function _GP($var)	{
+	public static function _GP($var)	{
 		if(empty($var)) return;
 		$value = isset($_POST[$var]) ? $_POST[$var] : $_GET[$var];
 		if (isset($value))	{
@@ -256,7 +285,7 @@ class t3lib_div {
 	 * @return	mixed		If $var is set it returns the value of $_GET[$var]. If $var is NULL (default), returns $_GET itself. In any case *slashes are stipped from the output!*
 	 * @see _POST(), _GP(), _GETset()
 	 */
-	function _GET($var=NULL)	{
+	public static function _GET($var=NULL)	{
 		$value = ($var === NULL) ? $_GET : (empty($var) ? NULL : $_GET[$var]);
 		if (isset($value))	{	// Removes slashes since TYPO3 has added them regardless of magic_quotes setting.
 			if (is_array($value))	{ t3lib_div::stripSlashesOnArray($value); } else { $value = stripslashes($value); }
@@ -273,7 +302,7 @@ class t3lib_div {
 	 * @return	mixed		If $var is set it returns the value of $_POST[$var]. If $var is NULL (default), returns $_POST itself. In any case *slashes are stipped from the output!*
 	 * @see _GET(), _GP()
 	 */
-	function _POST($var=NULL)	{
+	public static function _POST($var=NULL)	{
 		$value = ($var === NULL) ? $_POST : (empty($var) ? NULL : $_POST[$var]);
 		if (isset($value))	{	// Removes slashes since TYPO3 has added them regardless of magic_quotes setting.
 			if (is_array($value))	{ t3lib_div::stripSlashesOnArray($value); } else { $value = stripslashes($value); }
@@ -285,16 +314,20 @@ class t3lib_div {
 	 * Writes input value to $_GET
 	 * Usage: 2
 	 *
-	 * @param	array		Array to write to $_GET. Values should NOT be escaped at input time (but will be escaped before writing according to TYPO3 standards).
+	 * @param	mixed		Array to write to $_GET. Values should NOT be escaped at input time (but will be escaped before writing according to TYPO3 standards).
 	 * @param	string		Alternative key; If set, this will not set the WHOLE GET array, but only the key in it specified by this value!
 	 * @return	void
 	 */
-	function _GETset($inputGet,$key='')	{
+	public static function _GETset($inputGet,$key='')	{
 			// ADDS slashes since TYPO3 standard currently is that slashes MUST be applied (regardless of magic_quotes setting).
 		if (strcmp($key,''))	{
-			if (is_array($inputGet))	{ t3lib_div::addSlashesOnArray($inputGet); } else { $inputGet = addslashes($inputGet); }
+			if (is_array($inputGet)) {
+				t3lib_div::addSlashesOnArray($inputGet);
+			} else {
+				$inputGet = addslashes($inputGet);
+			}
 			$GLOBALS['HTTP_GET_VARS'][$key] = $_GET[$key] = $inputGet;
-		} elseif (is_array($inputGet)){
+		} elseif (is_array($inputGet)) {
 			t3lib_div::addSlashesOnArray($inputGet);
 			$GLOBALS['HTTP_GET_VARS'] = $_GET = $inputGet;
 		}
@@ -312,7 +345,7 @@ class t3lib_div {
 	 * @deprecated		Use t3lib_div::_GP instead (ALWAYS delivers a value with un-escaped values!)
 	 * @see _GP()
 	 */
-	function GPvar($var,$strip=0)	{
+	public static function GPvar($var,$strip=0)	{
 		if(empty($var)) return;
 		$value = isset($_POST[$var]) ? $_POST[$var] : $_GET[$var];
 		if (isset($value) && is_string($value))	{ $value = stripslashes($value); }	// Originally check '&& get_magic_quotes_gpc() ' but the values of $_GET are always slashed regardless of get_magic_quotes_gpc() because HTTP_POST/GET_VARS are run through addSlashesOnArray in the very beginning of index_ts.php eg.
@@ -329,12 +362,27 @@ class t3lib_div {
 	 * @ignore
 	 * @deprecated
 	 */
-	function GParrayMerged($var)	{
+	public static function GParrayMerged($var)	{
 		$postA = is_array($_POST[$var]) ? $_POST[$var] : array();
 		$getA = is_array($_GET[$var]) ? $_GET[$var] : array();
 		$mergedA = t3lib_div::array_merge_recursive_overrule($getA,$postA);
 		t3lib_div::stripSlashesOnArray($mergedA);
 		return $mergedA;
+	}
+
+	/**
+	 * Wrapper for the RemoveXSS function.
+	 * Removes potential XSS code from an input string.
+	 *
+	 * Using an external class by Travis Puderbaugh <kallahar@quickwired.com>
+	 *
+	 * @param	string		Input string
+	 * @return	string		Input string with potential XSS code removed
+	 */
+	public function removeXSS($string)	{
+		require_once(PATH_typo3.'contrib/RemoveXSS/RemoveXSS.php');
+		$string = RemoveXSS::RemoveXSS($string);
+		return $string;
 	}
 
 
@@ -373,7 +421,7 @@ class t3lib_div {
 	 * @return	string		Returns "GD" if GD was used, otherwise "IM" if ImageMagick was used. If nothing done at all, it returns empty string.
 	 * @internal
 	 */
-	function gif_compress($theFile, $type)	{
+	public static function gif_compress($theFile, $type)	{
 		$gfxConf = $GLOBALS['TYPO3_CONF_VARS']['GFX'];
 		$returnCode='';
 		if ($gfxConf['gif_compress'] && strtolower(substr($theFile,-4,4))=='.gif')	{	// GIF...
@@ -401,14 +449,14 @@ class t3lib_div {
 	 * @return	string		new filename
 	 * @internal
 	 */
-	function png_to_gif_by_imagemagick($theFile)	{
+	public static function png_to_gif_by_imagemagick($theFile)	{
 		if ($GLOBALS['TYPO3_CONF_VARS']['FE']['png_to_gif']
 			&& $GLOBALS['TYPO3_CONF_VARS']['GFX']['im']
 			&& $GLOBALS['TYPO3_CONF_VARS']['GFX']['im_path_lzw']
 			&& strtolower(substr($theFile,-4,4))=='.png'
 			&& @is_file($theFile))	{	// IM
 				$newFile = substr($theFile,0,-4).'.gif';
-				$cmd = t3lib_div::imageMagickCommand('convert', '"'.$theFile.'" "'.$newFile.'"', $gfxConf['im_path_lzw']);
+				$cmd = t3lib_div::imageMagickCommand('convert', '"'.$theFile.'" "'.$newFile.'"', $GLOBALS['TYPO3_CONF_VARS']['GFX']['im_path_lzw']);
 				exec($cmd);
 				$theFile = $newFile;
 					// unlink old file?? May be bad idea bacause TYPO3 would then recreate the file every time as TYPO3 thinks the file is not generated because it's missing!! So do not unlink $theFile here!!
@@ -426,7 +474,7 @@ class t3lib_div {
 	 * @return	string		If the new image file exists, it's filepath is returned
 	 * @internal
 	 */
-	function read_png_gif($theFile,$output_png=0)	{
+	public static function read_png_gif($theFile,$output_png=0)	{
 		if ($GLOBALS['TYPO3_CONF_VARS']['GFX']['im'] && @is_file($theFile))	{
 			$ext = strtolower(substr($theFile,-4,4));
 			if (
@@ -436,7 +484,8 @@ class t3lib_div {
 				return $theFile;
 			} else {
 				$newFile = PATH_site.'typo3temp/readPG_'.md5($theFile.'|'.filemtime($theFile)).($output_png?'.png':'.gif');
-				exec($GLOBALS['TYPO3_CONF_VARS']['GFX']['im_path'].'convert "'.$theFile.'" "'.$newFile.'"');
+				$cmd = t3lib_div::imageMagickCommand('convert', '"'.$theFile.'" "'.$newFile.'"', $GLOBALS['TYPO3_CONF_VARS']['GFX']['im_path']);
+				exec($cmd);
 				if (@is_file($newFile))	return $newFile;
 			}
 		}
@@ -466,16 +515,16 @@ class t3lib_div {
 	 * Truncate string
 	 * Returns a new string of max. $chars length.
 	 * If the string is longer, it will be truncated and appended with '...'.
-	 * DEPRECIATED. Works ONLY for single-byte charsets! USE t3lib_div::fixed_lgd_cs() instead
 	 * Usage: 39
 	 *
-	 * @param	string		$string 	string to truncate
-	 * @param	integer		$chars 	must be an integer with an absolute value of at least 4. if negative the string is cropped from the right end.
+	 * @param	string		string to truncate
+	 * @param	integer		must be an integer with an absolute value of at least 4. if negative the string is cropped from the right end.
 	 * @param	string		String to append to the output if it is truncated, default is '...'
 	 * @return	string		new string
+	 * @deprecated		Works ONLY for single-byte charsets! USE t3lib_div::fixed_lgd_cs() instead
 	 * @see fixed_lgd_pre()
 	 */
-	function fixed_lgd($string,$origChars,$preStr='...')	{
+	public static function fixed_lgd($string,$origChars,$preStr='...')	{
 		$chars = abs($origChars);
 		if ($chars >= 4)	{
 			if(strlen($string)>$chars)  {
@@ -492,15 +541,15 @@ class t3lib_div {
 	 * Returns a new string of max. $chars length.
 	 * If the string is longer, it will be truncated and prepended with '...'.
 	 * This works like fixed_lgd, but is truncated in the start of the string instead of the end
-	 * DEPRECIATED. Use either fixed_lgd() or fixed_lgd_cs() (with negative input value for $chars)
 	 * Usage: 6
 	 *
-	 * @param	string		$string 	string to truncate
-	 * @param	integer		$chars 	must be an integer of at least 4
+	 * @param	string		string to truncate
+	 * @param	integer		must be an integer of at least 4
 	 * @return	string		new string
+	 * @deprecated		Use either fixed_lgd() or fixed_lgd_cs() (with negative input value for $chars)
 	 * @see fixed_lgd()
 	 */
-	function fixed_lgd_pre($string,$chars)	{
+	public static function fixed_lgd_pre($string,$chars)	{
 		return strrev(t3lib_div::fixed_lgd(strrev($string),$chars));
 	}
 
@@ -509,12 +558,12 @@ class t3lib_div {
 	 * Use only from backend!
 	 * Usage: 75
 	 *
-	 * @param	string		$string 	string to truncate
-	 * @param	integer		$chars 	must be an integer with an absolute value of at least 4. if negative the string is cropped from the right end.
+	 * @param	string		string to truncate
+	 * @param	integer		must be an integer with an absolute value of at least 4. if negative the string is cropped from the right end.
 	 * @return	string		New string
 	 * @see fixed_lgd()
 	 */
-	function fixed_lgd_cs($string,$chars)	{
+	public static function fixed_lgd_cs($string,$chars)	{
 		if (is_object($GLOBALS['LANG']))	{
 			return $GLOBALS['LANG']->csConvObj->crop($GLOBALS['LANG']->charSet,$string,$chars,'...');
 		} else {
@@ -529,13 +578,14 @@ class t3lib_div {
 	 * @param	string		The string to break up
 	 * @param	string		The string to implode the broken lines with (default/typically \n)
 	 * @param	integer		The line length
+	 * @deprecated		Use PHP function wordwrap()
 	 * @return	string
 	 */
-	function breakTextForEmail($str,$implChar="\n",$charWidth=76)	{
+	public static function breakTextForEmail($str,$implChar="\n",$charWidth=76)	{
 		$lines = explode(chr(10),$str);
 		$outArr=array();
-		while(list(,$lStr)=each($lines))	{
-			$outArr = array_merge($outArr,t3lib_div::breakLinesForEmail($lStr,$implChar,$charWidth));
+		foreach ($lines as $lStr) {
+			$outArr[] = t3lib_div::breakLinesForEmail($lStr,$implChar,$charWidth);
 		}
 		return implode(chr(10),$outArr);
 	}
@@ -550,7 +600,7 @@ class t3lib_div {
 	 * @return	string
 	 * @see breakTextForEmail()
 	 */
-	function breakLinesForEmail($str,$implChar="\n",$charWidth=76)	{
+	public static function breakLinesForEmail($str,$implChar="\n",$charWidth=76)	{
 		$lines=array();
 		$l=$charWidth;
 		$p=0;
@@ -579,13 +629,35 @@ class t3lib_div {
 
 	/**
 	 * Match IP number with list of numbers with wildcard
+	 * Dispatcher method for switching into specialised IPv4 and IPv6 methods.
 	 * Usage: 10
+	 *
+	 * @param	string		$baseIP is the current remote IP address for instance, typ. REMOTE_ADDR
+	 * @param	string		$list is a comma-list of IP-addresses to match with. *-wildcard allowed instead of number, plus leaving out parts in the IP number is accepted as wildcard (eg. 192.168.*.* equals 192.168). If list is "*" no check is done and the function returns TRUE immediately. An empty list always returns FALSE.
+	 * @return	boolean		True if an IP-mask from $list matches $baseIP
+	 */
+	public static function cmpIP($baseIP, $list)	{
+		$list = trim($list);
+		if ($list === '')	{
+			return false;
+		} elseif ($list === '*')	{
+			return true;
+		}
+		if (strpos($baseIP, ':') !== false && t3lib_div::validIPv6($baseIP))	{
+			return t3lib_div::cmpIPv6($baseIP, $list);
+		} else {
+			return t3lib_div::cmpIPv4($baseIP, $list);
+		}
+	}
+
+	/**
+	 * Match IPv4 number with list of numbers with wildcard
 	 *
 	 * @param	string		$baseIP is the current remote IP address for instance, typ. REMOTE_ADDR
 	 * @param	string		$list is a comma-list of IP-addresses to match with. *-wildcard allowed instead of number, plus leaving out parts in the IP number is accepted as wildcard (eg. 192.168.*.* equals 192.168)
 	 * @return	boolean		True if an IP-mask from $list matches $baseIP
 	 */
-	function cmpIP($baseIP, $list)	{
+	public static function cmpIPv4($baseIP, $list)	{
 		$IPpartsReq = explode('.',$baseIP);
 		if (count($IPpartsReq)==4)	{
 			$values = t3lib_div::trimExplode(',',$list,1);
@@ -606,8 +678,7 @@ class t3lib_div {
 						// "192.168.*.*"
 					$IPparts = explode('.',$test);
 					$yes = 1;
-					reset($IPparts);
-					while(list($index,$val)=each($IPparts))	{
+					foreach ($IPparts as $index => $val) {
 						$val = trim($val);
 						if (strcmp($val,'*') && strcmp($IPpartsReq[$index],$val))	{
 							$yes=0;
@@ -621,13 +692,187 @@ class t3lib_div {
 	}
 
 	/**
+	 * Match IPv6 address with a list of IPv6 prefixes
+	 *
+	 * @param	string		$baseIP is the current remote IP address for instance
+	 * @param	string		$list is a comma-list of IPv6 prefixes, could also contain IPv4 addresses
+	 * @return	boolean		True if an baseIP matches any prefix
+	 */
+	public static function cmpIPv6($baseIP, $list)	{
+		$success = false;	// Policy default: Deny connection
+		$baseIP = t3lib_div::normalizeIPv6($baseIP);
+
+		$values = t3lib_div::trimExplode(',',$list,1);
+		foreach ($values as $test)	{
+			list($test,$mask) = explode('/',$test);
+			if (t3lib_div::validIPv6($test))	{
+				$test = t3lib_div::normalizeIPv6($test);
+				if (intval($mask))	{
+					switch ($mask) {	// test on /48 /64
+						case '48':
+							$testBin = substr(t3lib_div::IPv6Hex2Bin($test), 0, 48);
+							$baseIPBin = substr(t3lib_div::IPv6Hex2Bin($baseIP), 0, 48);
+							$success = strcmp($testBin, $baseIPBin)==0 ? true : false;
+						break;
+						case '64':
+							$testBin = substr(t3lib_div::IPv6Hex2Bin($test), 0, 64);
+							$baseIPBin = substr(t3lib_div::IPv6Hex2Bin($baseIP), 0, 64);
+							$success = strcmp($testBin, $baseIPBin)==0 ? true : false;
+						break;
+						default:
+							$success = false;
+					}
+				} else {
+					if (t3lib_div::validIPv6($test))	{	// test on full ip address 128 bits
+						$testBin = t3lib_div::IPv6Hex2Bin($test);
+						$baseIPBin = t3lib_div::IPv6Hex2Bin($baseIP);
+						$success = strcmp($testBin, $baseIPBin)==0 ? true : false;
+					}
+				}
+			}
+			if ($success) return true;
+		}
+		return false;
+	}
+
+	/**
+	 * [Describe function...]
+	 *
+	 * @param	[type]		$hex: ...
+	 * @return	[type]		...
+	 */
+	public static function IPv6Hex2Bin ($hex)	{
+		$bin = '';
+		$hex = str_replace(':', '', $hex);	// Replace colon to nothing
+		for ($i=0; $i<strlen($hex); $i=$i+2)	{
+			$bin.= chr(hexdec(substr($hex, $i, 2)));
+		}
+		return $bin;
+	}
+
+	/**
+	 * Normalize an IPv6 address to full length
+	 *
+	 * @param	string		Given IPv6 address
+	 * @return	string		Normalized address
+	 */
+	public static function normalizeIPv6($address)	{
+		$normalizedAddress = '';
+		$stageOneAddress = '';
+
+		$chunks = explode('::', $address);	// Count 2 if if address has hidden zero blocks
+		if (count($chunks)==2)	{
+			$chunksLeft = explode(':', $chunks[0]);
+			$chunksRight = explode(':', $chunks[1]);
+			$left = count($chunksLeft);
+			$right = count($chunksRight);
+
+				// Special case: leading zero-only blocks count to 1, should be 0
+			if ($left==1 && strlen($chunksLeft[0])==0)	$left=0;
+
+			$hiddenBlocks = 8 - ($left + $right);
+			$hiddenPart = '';
+			while ($h<$hiddenBlocks)	{
+				$hiddenPart .= '0000:';
+				$h++;
+			}
+
+			if ($left == 0) {
+				$stageOneAddress = $hiddenPart . $chunks[1];
+			} else {
+				$stageOneAddress = $chunks[0] . ':' . $hiddenPart . $chunks[1];
+			}
+		} else $stageOneAddress = $address;
+
+			// normalize the blocks:
+		$blocks = explode(':', $stageOneAddress);
+		$divCounter = 0;
+		foreach ($blocks as $block)	{
+			$tmpBlock = '';
+			$i = 0;
+			$hiddenZeros = 4 - strlen($block);
+			while ($i < $hiddenZeros)	{
+				$tmpBlock .= '0';
+				$i++;
+			}
+			$normalizedAddress .= $tmpBlock . $block;
+			if ($divCounter < 7)	{
+				$normalizedAddress .= ':';
+				$divCounter++;
+			}
+		}
+		return $normalizedAddress;
+	}
+
+	/**
+	 * Validate a given IP address.
+	 *
+	 * Possible format are IPv4 and IPv6.
+	 *
+	 * @param	string		IP address to be tested
+	 * @return	boolean		True if $ip is either of IPv4 or IPv6 format.
+	 */
+	public static function validIP($ip) {
+		if (strpos($ip, ':') === false)	{
+			return t3lib_div::validIPv4($ip);
+		} else {
+			return t3lib_div::validIPv6($ip);
+		}
+	}
+
+	/**
+	 * Validate a given IP address to the IPv4 address format.
+	 *
+	 * Example for possible format:  10.0.45.99
+	 *
+	 * @param	string		IP address to be tested
+	 * @return	boolean		True if $ip is of IPv4 format.
+	 */
+	public static function validIPv4($ip) {
+		$parts = explode('.', $ip);
+		if (count($parts)==4 &&
+			t3lib_div::testInt($parts[0]) && $parts[0]>=1 && $parts[0]<256 &&
+			t3lib_div::testInt($parts[1]) && $parts[0]>=0 && $parts[0]<256 &&
+			t3lib_div::testInt($parts[2]) && $parts[0]>=0 && $parts[0]<256 &&
+			t3lib_div::testInt($parts[3]) && $parts[0]>=0 && $parts[0]<256)	{
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Validate a given IP address to the IPv6 address format.
+	 *
+	 * Example for possible format:  43FB::BB3F:A0A0:0 | ::1
+	 *
+	 * @param	string		IP address to be tested
+	 * @return	boolean		True if $ip is of IPv6 format.
+	 */
+	public static function validIPv6($ip)	{
+		$uppercaseIP = strtoupper($ip);
+
+		$regex = '/^(';
+		$regex.= '(([\dA-F]{1,4}:){7}[\dA-F]{1,4})|';
+		$regex.= '(([\dA-F]{1,4}){1}::([\dA-F]{1,4}:){1,5}[\dA-F]{1,4})|';
+		$regex.= '(([\dA-F]{1,4}:){2}:([\dA-F]{1,4}:){1,4}[\dA-F]{1,4})|';
+		$regex.= '(([\dA-F]{1,4}:){3}:([\dA-F]{1,4}:){1,3}[\dA-F]{1,4})|';
+		$regex.= '(([\dA-F]{1,4}:){4}:([\dA-F]{1,4}:){1,2}[\dA-F]{1,4})|';
+		$regex.= '(([\dA-F]{1,4}:){5}:([\dA-F]{1,4}:){0,1}[\dA-F]{1,4})|';
+		$regex.= '(::([\dA-F]{1,4}:){0,6}[\dA-F]{1,4})';
+		$regex.= ')$/';
+
+		return preg_match($regex, $uppercaseIP) ? true : false;
+	}
+
+	/**
 	 * Match fully qualified domain name with list of strings with wildcard
 	 *
-	 * @param	string		$baseIP is the current remote IP address for instance, typ. REMOTE_ADDR
-	 * @param	string		$list is a comma-list of domain names to match with. *-wildcard allowed but cannot be part of a string, so it must match the full host name (eg. myhost.*.com => correct, myhost.*domain.com => wrong)
+	 * @param	string		The current remote IP address for instance, typ. REMOTE_ADDR
+	 * @param	string		A comma-list of domain names to match with. *-wildcard allowed but cannot be part of a string, so it must match the full host name (eg. myhost.*.com => correct, myhost.*domain.com => wrong)
 	 * @return	boolean		True if a domain name mask from $list matches $baseIP
 	 */
-	function cmpFQDN($baseIP, $list)        {
+	public static function cmpFQDN($baseIP, $list)        {
 		if (count(explode('.',$baseIP))==4)     {
 			$resolvedHostName = explode('.', gethostbyaddr($baseIP));
 			$values = t3lib_div::trimExplode(',',$list,1);
@@ -657,22 +902,24 @@ class t3lib_div {
 	 * @param	string		item to check for
 	 * @return	boolean		true if $item is in $list
 	 */
-	function inList($list,$item)	{
-		return strstr(','.$list.',', ','.$item.',') ? true : false;
+	public static function inList($list, $item)	{
+		return (strpos(','.$list.',', ','.$item.',')!==false ? true : false);
 	}
 
 	/**
 	 * Removes an item from a comma-separated list of items.
 	 * Usage: 1
 	 *
-	 * @param	string		$element  	element to remove
-	 * @param	string		$list 	comma-separated list of items (string)
+	 * @param	string		element to remove
+	 * @param	string		comma-separated list of items (string)
 	 * @return	string		new comma-separated list of items
 	 */
-	function rmFromList($element,$list)	{
+	public static function rmFromList($element,$list)	{
 		$items = explode(',',$list);
-		while(list($k,$v)=each($items))	{
-			if ($v==$element)	{unset($items[$k]);}
+		foreach ($items as $k => $v) {
+			if ($v==$element) {
+				unset($items[$k]);
+			}
 		}
 		return implode(',',$items);
 	}
@@ -681,14 +928,14 @@ class t3lib_div {
 	 * Expand a comma-separated list of integers with ranges (eg 1,3-5,7 becomes 1,3,4,5,7).
 	 * Ranges are limited to 1000 values per range.
 	 *
-	 * @param	string		$list 	comma-separated list of integers with ranges (string)
+	 * @param	string		comma-separated list of integers with ranges (string)
 	 * @return	string		new comma-separated list of items
 	 * @author	Martin Kutschker <martin.kutschker@activesolution.at>
 	 */
-	function expandList($list)      {
+	public static function expandList($list)      {
 		$items = explode(',',$list);
 		$list = array();
-		while(list(,$item)=each($items))	{
+		foreach ($items as $item) {
 			$range = explode('-',$item);
 			if (isset($range[1]))	{
 				$runAwayBrake = 1000;
@@ -702,7 +949,6 @@ class t3lib_div {
 				$list[] = $item;
 			}
 		}
-
 		return implode(',',$list);
 	}
 
@@ -716,7 +962,7 @@ class t3lib_div {
 	 * @param	integer		Default value if input is false.
 	 * @return	integer		The input value forced into the boundaries of $min and $max
 	 */
-	function intInRange($theInt,$min,$max=2000000000,$zeroValue=0)	{
+	public static function intInRange($theInt,$min,$max=2000000000,$zeroValue=0)	{
 		// Returns $theInt as an integer in the integerspace from $min to $max
 		$theInt = intval($theInt);
 		if ($zeroValue && !$theInt)	{$theInt=$zeroValue;}	// If the input value is zero after being converted to integer, zeroValue may set another default value for it.
@@ -732,7 +978,7 @@ class t3lib_div {
 	 * @param	integer		Integer string to process
 	 * @return	integer
 	 */
-	function intval_positive($theInt)	{
+	public static function intval_positive($theInt)	{
 		$theInt = intval($theInt);
 		if ($theInt<0){$theInt=0;}
 		return $theInt;
@@ -745,9 +991,28 @@ class t3lib_div {
 	 * @param	string		Version number on format x.x.x
 	 * @return	integer		Integer version of version number (where each part can count to 999)
 	 */
-	function int_from_ver($verNumberStr)	{
+	public static function int_from_ver($verNumberStr)	{
 		$verParts = explode('.',$verNumberStr);
 		return intval((int)$verParts[0].str_pad((int)$verParts[1],3,'0',STR_PAD_LEFT).str_pad((int)$verParts[2],3,'0',STR_PAD_LEFT));
+	}
+
+	/**
+	 * Returns true if the current TYPO3 version (or compatibility version) is compatible to the input version
+	 * Notice that this function compares branches, not versions (4.0.1 would be > 4.0.0 although they use the same compat_version)
+	 *
+	 * @param	string		Minimum branch number required (format x.y / e.g. "4.0" NOT "4.0.0"!)
+	 * @return	boolean		Returns true if this setup is compatible with the provided version number
+	 * @todo	Still needs a function to convert versions to branches
+	 */
+	public static function compat_version($verNumberStr)	{
+		global $TYPO3_CONF_VARS;
+		$currVersionStr = $TYPO3_CONF_VARS['SYS']['compat_version'] ? $TYPO3_CONF_VARS['SYS']['compat_version'] : TYPO3_branch;
+
+		if (t3lib_div::int_from_ver($currVersionStr) < t3lib_div::int_from_ver($verNumberStr))	{
+			return FALSE;
+		} else {
+			return TRUE;
+		}
 	}
 
 	/**
@@ -757,7 +1022,7 @@ class t3lib_div {
 	 * @param	string		String to md5-hash
 	 * @return	integer		Returns 28bit integer-hash
 	 */
-	function md5int($str)	{
+	public static function md5int($str)	{
 		return hexdec(substr(md5($str),0,7));
 	}
 
@@ -770,7 +1035,7 @@ class t3lib_div {
 	 * @param	integer		The string-length of the output
 	 * @return	string		Substring of the resulting md5-hash, being $len chars long (from beginning)
 	 */
-	function shortMD5($input, $len=10)	{
+	public static function shortMD5($input, $len=10)	{
 		return substr(md5($input),0,$len);
 	}
 
@@ -780,10 +1045,10 @@ class t3lib_div {
 	 * Usage: 16
 	 *
 	 * @param	string		Accept multiple parameters wich can be comma-separated lists of values and arrays.
-	 * @param	mixed		$secondParameter: Dummy field, which is set will show a warning!
+	 * @param	mixed		$secondParameter: Dummy field, which if set will show a warning!
 	 * @return	string		Returns the list without any duplicates of values, space around values are trimmed
 	 */
-	function uniqueList($in_list, $secondParameter=NULL)	{
+	public static function uniqueList($in_list, $secondParameter=NULL)	{
 		if (is_array($in_list))	die('t3lib_div::uniqueList() does NOT support array arguments anymore! Only string comma lists!');
 		if (isset($secondParameter))	die('t3lib_div::uniqueList() does NOT support more than a single argument value anymore. You have specified more than one.');
 
@@ -797,7 +1062,8 @@ class t3lib_div {
 	 * @param	string		Filename/filepath to be analysed
 	 * @return	array		Contains keys [path], [file], [filebody], [fileext], [realFileext]
 	 */
-	function split_fileref($fileref)	{
+	public static function split_fileref($fileref)	{
+		$reg = array();
 		if (	ereg('(.*/)(.*)$',$fileref,$reg)	)	{
 			$info['path'] = $reg[1];
 			$info['file'] = $reg[2];
@@ -834,9 +1100,9 @@ class t3lib_div {
 	 * @param	string		Directory name / path
 	 * @return	string		Processed input value. See function description.
 	 */
-	function dirname($path)	{
-		$p=t3lib_div::revExplode('/',$path,2);
-		return count($p)==2?$p[0]:'';
+	public static function dirname($path)	{
+		$p = t3lib_div::revExplode('/',$path,2);
+		return count($p)==2 ? $p[0] : '';
 	}
 
 	/**
@@ -850,7 +1116,7 @@ class t3lib_div {
 	 * @return	string		A hexadecimal color code, #xxxxxx, modified according to input vars
 	 * @see modifyHTMLColorAll()
 	 */
-	function modifyHTMLColor($color,$R,$G,$B)	{
+	public static function modifyHTMLColor($color,$R,$G,$B)	{
 		// This takes a hex-color (# included!) and adds $R, $G and $B to the HTML-color (format: #xxxxxx) and returns the new color
 		$nR = t3lib_div::intInRange(hexdec(substr($color,1,2))+$R,0,255);
 		$nG = t3lib_div::intInRange(hexdec(substr($color,3,2))+$G,0,255);
@@ -870,7 +1136,7 @@ class t3lib_div {
 	 * @return	string		A hexadecimal color code, #xxxxxx, modified according to input vars
 	 * @see modifyHTMLColor()
 	 */
-	function modifyHTMLColorAll($color,$all)	{
+	public static function modifyHTMLColorAll($color,$all)	{
 		return t3lib_div::modifyHTMLColor($color,$all,$all,$all);
 	}
 
@@ -881,36 +1147,36 @@ class t3lib_div {
 	 * @param	string		String from which the comma in the end (if any) will be removed.
 	 * @return	string
 	 */
-	function rm_endcomma($string)	{
+	public static function rm_endcomma($string)	{
 		return ereg_replace(',$','',$string);
 	}
 
 	/**
 	 * strtoupper which converts danish (and other characters) characters as well
-	 * (DEPRECIATED, use t3lib_cs::conv_case() instead or for HTML output, wrap your content in <span class="uppercase">...</span>)
 	 * Usage: 0
 	 *
 	 * @param	string		String to process
 	 * @return	string
+	 * @deprecated		Use t3lib_cs::conv_case() instead or for HTML output, wrap your content in <span class="uppercase">...</span>)
 	 * @ignore
 	 */
-	function danish_strtoupper($string)	{
+	public static function danish_strtoupper($string)	{
 		$value = strtoupper($string);
-		return strtr($value, 'áéúíâêûôîæøåäöü', 'ÁÉÚÍÄËÜÖÏÆØÅÄÖÜ');
+		return strtr($value, 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½', 'ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½');
 	}
 
 	/**
 	 * Change umlaut characters to plain ASCII with normally two character target
 	 * Only known characters will be converted, so don't expect a result for any character.
-	 * (DEPRECIATED: Works only for western europe single-byte charsets! Use t3lib_cs::specCharsToASCII() instead!)
 	 *
-	 * ä => ae, Ö => Oe
+	 * ï¿½ => ae, ï¿½ => Oe
 	 *
 	 * @param	string		String to convert.
+	 * @deprecated		Works only for western europe single-byte charsets! Use t3lib_cs::specCharsToASCII() instead!
 	 * @return	string
 	 */
-	function convUmlauts($str)	{
-		$pat  = array (	'/ä/',	'/Ä/',	'/ö/',	'/Ö/',	'/ü/',	'/Ü/',	'/ß/',	'/å/',	'/Å/',	'/ø/',	'/Ø/',	'/æ/',	'/Æ/'	);
+	public static function convUmlauts($str)	{
+		$pat  = array (	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/',	'/ï¿½/'	);
 		$repl = array (	'ae',	'Ae',	'oe',	'Oe',	'ue',	'Ue',	'ss',	'aa',	'AA',	'oe',	'OE',	'ae',	'AE'	);
 		return preg_replace($pat,$repl,$str);
 	}
@@ -922,7 +1188,7 @@ class t3lib_div {
 	 * @param	mixed		Any input variable to test.
 	 * @return	boolean		Returns true if string is an integer
 	 */
-	function testInt($var)	{
+	public static function testInt($var)	{
 		return !strcmp($var,intval($var));
 	}
 
@@ -934,7 +1200,7 @@ class t3lib_div {
 	 * @param	string		Reference string which must be found as the "first part" of the full string
 	 * @return	boolean		True if $partStr was found to be equal to the first part of $str
 	 */
-	function isFirstPartOfStr($str,$partStr)	{
+	public static function isFirstPartOfStr($str,$partStr)	{
 		// Returns true, if the first part of a $str equals $partStr and $partStr is not ''
 		$psLen = strlen($partStr);
 		if ($psLen)	{
@@ -950,13 +1216,13 @@ class t3lib_div {
 	 * @param	string		Labels for bytes, kilo, mega and giga separated by vertical bar (|) and possibly encapsulated in "". Eg: " | K| M| G" (which is the default value)
 	 * @return	string		Formatted representation of the byte number, for output.
 	 */
-	function formatSize($sizeInBytes,$labels='')	{
+	public static function formatSize($sizeInBytes,$labels='')	{
 
 			// Set labels:
 		if (strlen($labels) == 0) {
-		    $labels = ' | K| M| G';
+			$labels = ' | K| M| G';
 		} else {
-		    $labels = str_replace('"','',$labels);
+			$labels = str_replace('"','',$labels);
 		}
 		$labelArr = explode('|',$labels);
 
@@ -985,7 +1251,7 @@ class t3lib_div {
 	 * @param	string		Microtime
 	 * @return	integer		Microtime input string converted to an integer (milliseconds)
 	 */
-	function convertMicrotime($microtime)	{
+	public static function convertMicrotime($microtime)	{
 		$parts = explode(' ',$microtime);
 		return round(($parts[0]+$parts[1])*1000);
 	}
@@ -999,7 +1265,7 @@ class t3lib_div {
 	 * @return	array		Array with operators and operands separated.
 	 * @see tslib_cObj::calc(), tslib_gifBuilder::calcOffset()
 	 */
-	function splitCalc($string,$operators)	{
+	public static function splitCalc($string,$operators)	{
 		$res = Array();
 		$sign='+';
 		while($string)	{
@@ -1021,12 +1287,13 @@ class t3lib_div {
 	 * @return	integer		Calculated value. Or error string.
 	 * @see calcParenthesis()
 	 */
-	function calcPriority($string)	{
+	public static function calcPriority($string)	{
 		$string=ereg_replace('[[:space:]]*','',$string);	// removing all whitespace
 		$string='+'.$string;	// Ensuring an operator for the first entrance
 		$qm='\*\/\+-^%';
 		$regex = '(['.$qm.'])(['.$qm.']?[0-9\.]*)';
 			// split the expression here:
+		$reg = array();
 		preg_match_all('/'.$regex.'/',$string,$reg);
 
 		reset($reg[2]);
@@ -1034,8 +1301,9 @@ class t3lib_div {
 		$Msign='+';
 		$err='';
 		$buffer=doubleval(current($reg[2]));
-		next($reg[2]);	// Advance pointer
-		while(list($k,$v)=each($reg[2]))	{
+		next($reg[2]);  // Advance pointer
+
+		while(list($k,$v)=each($reg[2])) {
 			$v=doubleval($v);
 			$sign = $reg[1][$k];
 			if ($sign=='+' || $sign=='-')	{
@@ -1061,7 +1329,7 @@ class t3lib_div {
 	 * @return	integer		Calculated value. Or error string.
 	 * @see calcPriority(), tslib_cObj::stdWrap()
 	 */
-	function calcParenthesis($string)	{
+	public static function calcParenthesis($string)	{
 		$securC=100;
 		do {
 			$valueLenO=strcspn($string,'(');
@@ -1087,7 +1355,7 @@ class t3lib_div {
 	 * @param	string		Value where &gt;, &lt;, &quot; and &amp; should be converted to regular chars.
 	 * @return	string		Converted result.
 	 */
-	function htmlspecialchars_decode($value)	{
+	public static function htmlspecialchars_decode($value)	{
 		$value = str_replace('&gt;','>',$value);
 		$value = str_replace('&lt;','<',$value);
 		$value = str_replace('&quot;','"',$value);
@@ -1102,7 +1370,7 @@ class t3lib_div {
 	 * @param	string		String which contains eg. "&amp;amp;" which should stay "&amp;". Or "&amp;#1234;" to "&#1234;". Or "&amp;#x1b;" to "&#x1b;"
 	 * @return	string		Converted result.
 	 */
-	function deHSCentities($str)	{
+	public static function deHSCentities($str)	{
 		return ereg_replace('&amp;([#[:alnum:]]*;)','&\1',$str);
 	}
 
@@ -1115,7 +1383,7 @@ class t3lib_div {
 	 * @param	string		The character to escape, default is ' (single-quote)
 	 * @return	string		Processed input string
 	 */
-	function slashJS($string,$extended=0,$char="'")	{
+	public static function slashJS($string,$extended=0,$char="'")	{
 		if ($extended)	{$string = str_replace ("\\", "\\\\", $string);}
 		return str_replace ($char, "\\".$char, $string);
 	}
@@ -1128,7 +1396,7 @@ class t3lib_div {
 	 * @param	string		String to raw-url-encode with spaces preserved
 	 * @return	string		Rawurlencoded result of input string, but with all %20 (space chars) converted to real spaces.
 	 */
-	function rawUrlEncodeJS($str)	{
+	public static function rawUrlEncodeJS($str)	{
 		return str_replace('%20',' ',rawurlencode($str));
 	}
 
@@ -1140,7 +1408,7 @@ class t3lib_div {
 	 * @param	string		Input string
 	 * @return	string		Output string
 	 */
-	function rawUrlEncodeFP($str)	{
+	public static function rawUrlEncodeFP($str)	{
 		return str_replace('%2F','/',rawurlencode($str));
 	}
 
@@ -1151,9 +1419,11 @@ class t3lib_div {
 	 * @param	string		Input string to evaluate
 	 * @return	boolean		Returns true if the $email address (input string) is valid; Has a "@", domain name with at least one period and only allowed a-z characters.
 	 */
-	function validEmail($email)	{
+	public static function validEmail($email)	{
 		$email = trim ($email);
-		if (strstr($email,' '))	 return FALSE;
+		if (strpos($email,' ') !== false) {
+			return false;
+		}
 		return ereg('^[A-Za-z0-9\._-]+[@][A-Za-z0-9\._-]+[\.].[A-Za-z0-9]+$',$email) ? TRUE : FALSE;
 	}
 
@@ -1166,8 +1436,34 @@ class t3lib_div {
 	 * @param	string		Input string to be formatted.
 	 * @return	string		Formatted for <textarea>-tags
 	 */
-	function formatForTextarea($content)	{
+	public static function formatForTextarea($content)	{
 		return chr(10).htmlspecialchars($content);
+	}
+
+	/**
+	 * Converts string to uppercase
+	 * The function converts all Latin characters (a-z, but no accents, etc) to
+	 * uppercase. It is safe for all supported character sets (incl. utf-8).
+	 * Unlike strtoupper() it does not honour the locale.
+	 *
+	 * @param   string      Input string
+	 * @return  string      Uppercase String
+	 */
+	public static function strtoupper($str) {
+		return strtr((string)$str, 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+	}
+
+	/**
+	 * Converts string to lowercase
+	 * The function converts all Latin characters (A-Z, but no accents, etc) to
+	 * lowercase. It is safe for all supported character sets (incl. utf-8).
+	 * Unlike strtolower() it does not honour the locale.
+	 *
+	 * @param	string		Input string
+	 * @return	string		Lowercase String
+	 */
+	public static function strtolower($str)	{
+		return strtr((string)$str, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz');
 	}
 
 
@@ -1188,21 +1484,36 @@ class t3lib_div {
 	 *************************/
 
 	/**
-	 * Check if an item exists in an array
-	 * Please note that the order of parameters is reverse compared to the php4-function in_array()!!!
+	 * Check if an string item exists in an array.
+	 * Please note that the order of function parameters is reverse compared to the PHP function in_array()!!!
+	 *
+	 * Comparison to PHP in_array():
+	 * -> $array = array(0, 1, 2, 3);
+	 * -> variant_a := t3lib_div::inArray($array, $needle)
+	 * -> variant_b := in_array($needle, $array)
+	 * -> variant_c := in_array($needle, $array, true)
+	 * +---------+-----------+-----------+-----------+
+	 * | $needle | variant_a | variant_b | variant_c |
+	 * +---------+-----------+-----------+-----------+
+	 * | '1a'    | false     | true      | false     |
+	 * | ''      | false     | true      | false     |
+	 * | '0'     | true      | true      | false     |
+	 * | 0       | true      | true      | true      |
+	 * +---------+-----------+-----------+-----------+
 	 * Usage: 3
 	 *
-	 * @param	array		$in_array		one-dimensional array of items
-	 * @param	string		$item 	item to check for
+	 * @param	array		one-dimensional array of items
+	 * @param	string		item to check for
 	 * @return	boolean		true if $item is in the one-dimensional array $in_array
 	 * @internal
 	 */
-	function inArray($in_array,$item)	{
-		if (is_array($in_array))	{
-			while (list(,$val)=each($in_array))	{
-				if (!is_array($val) && !strcmp($val,$item)) return true;
+	public static function inArray(array $in_array, $item) {
+		foreach ($in_array as $val) {
+			if (!is_array($val) && !strcmp($val, $item)) {
+				return true;
 			}
 		}
+		return false;
 	}
 
 	/**
@@ -1214,10 +1525,10 @@ class t3lib_div {
 	 * @param	string		The string to explode
 	 * @return	array		Exploded values, all converted to integers
 	 */
-	function intExplode($delim, $string)	{
+	public static function intExplode($delim, $string)	{
 		$temp = explode($delim,$string);
-		while(list($key,$val)=each($temp))	{
-			$temp[$key]=intval($val);
+		foreach ($temp as &$val) {
+			$val = intval($val);
 		}
 		reset($temp);
 		return $temp;
@@ -1233,12 +1544,12 @@ class t3lib_div {
 	 * @param	integer		Number of array entries
 	 * @return	array		Exploded values
 	 */
-	function revExplode($delim, $string, $count=0)	{
+	public static function revExplode($delim, $string, $count=0)	{
 		$temp = explode($delim,strrev($string),$count);
-		while(list($key,$val)=each($temp))	{
-			$temp[$key]=strrev($val);
+		foreach ($temp as &$val) {
+			$val = strrev($val);
 		}
-		$temp=array_reverse($temp);
+		$temp = array_reverse($temp);
 		reset($temp);
 		return $temp;
 	}
@@ -1253,29 +1564,40 @@ class t3lib_div {
 	 * @param	boolean		If set, all empty values (='') will NOT be set in output
 	 * @return	array		Exploded values
 	 */
-	function trimExplode($delim, $string, $onlyNonEmptyValues=0)	{
-		$temp = explode($delim,$string);
-		$newtemp=array();
-		while(list($key,$val)=each($temp))	{
-			if (!$onlyNonEmptyValues || strcmp('',trim($val)))	{
-				$newtemp[]=trim($val);
+	public static function trimExplode($delim, $string, $onlyNonEmptyValues=0)	{
+		$array = explode($delim, $string);
+			// for two perfomance reasons the loop is duplicated
+			//  a) avoid check for $onlyNonEmptyValues in foreach loop
+			//  b) avoid unnecessary code when $onlyNonEmptyValues is not set
+		if ($onlyNonEmptyValues) {
+			$new_array = array();
+			foreach($array as $value) {
+				$value = trim($value);
+				if ($value != '') {
+					$new_array[] = $value;
+				}
 			}
+				// direct return for perfomance reasons
+			return $new_array;
 		}
-		reset($newtemp);
-		return $newtemp;
+
+		foreach($array as &$value) {
+			$value = trim($value);
+		}
+
+		return $array;
 	}
 
 	/**
 	 * Remove duplicate values from an array
-	 * This function is deprecated, use the PHP function array_unique instead
 	 * Usage: 0
 	 *
 	 * @param	array		Array of values to make unique
 	 * @return	array
 	 * @ignore
-	 * @deprecated
+	 * @deprecated		Use the PHP function array_unique instead
 	 */
-	function uniqueArray($valueArray)	{
+	public static function uniqueArray(array $valueArray)	{
 		return array_unique($valueArray);
 	}
 
@@ -1287,17 +1609,12 @@ class t3lib_div {
 	 * @param	string		Value to search for and if found remove array entry where found.
 	 * @return	array		Output array with entries removed if search string is found
 	 */
-	function removeArrayEntryByValue($array,$cmpValue)	{
-		if (is_array($array))	{
-			reset($array);
-			while(list($k,$v)=each($array))	{
-				if (is_array($v))	{
-					$array[$k] = t3lib_div::removeArrayEntryByValue($v,$cmpValue);
-				} else {
-					if (!strcmp($v,$cmpValue))	{
-						unset($array[$k]);
-					}
-				}
+	public static function removeArrayEntryByValue(array $array, $cmpValue)	{
+		foreach ($array as $k => $v) {
+			if (is_array($v)) {
+				$array[$k] = t3lib_div::removeArrayEntryByValue($v, $cmpValue);
+			} elseif (!strcmp($v, $cmpValue)) {
+				unset($array[$k]);
 			}
 		}
 		reset($array);
@@ -1316,17 +1633,15 @@ class t3lib_div {
 	 * @return	string		Imploded result, fx. &param[key][key2]=value2&param[key][key3]=value3
 	 * @see explodeUrl2Array()
 	 */
-	function implodeArrayForUrl($name,$theArray,$str='',$skipBlank=0,$rawurlencodeParamName=0)	{
-		if (is_array($theArray))	{
-			foreach($theArray as $Akey => $AVal)	{
-				$thisKeyName = $name ? $name.'['.$Akey.']' : $Akey;
-				if (is_array($AVal))	{
-					$str = t3lib_div::implodeArrayForUrl($thisKeyName,$AVal,$str,$skipBlank,$rawurlencodeParamName);
-				} else {
-					if (!$skipBlank || strcmp($AVal,''))	{
-						$str.='&'.($rawurlencodeParamName ? rawurlencode($thisKeyName) : $thisKeyName).
-							'='.rawurlencode($AVal);
-					}
+	public static function implodeArrayForUrl($name,array $theArray,$str='',$skipBlank=0,$rawurlencodeParamName=0)	{
+		foreach($theArray as $Akey => $AVal)	{
+			$thisKeyName = $name ? $name.'['.$Akey.']' : $Akey;
+			if (is_array($AVal))	{
+				$str = t3lib_div::implodeArrayForUrl($thisKeyName,$AVal,$str,$skipBlank,$rawurlencodeParamName);
+			} else {
+				if (!$skipBlank || strcmp($AVal,''))	{
+					$str.='&'.($rawurlencodeParamName ? rawurlencode($thisKeyName) : $thisKeyName).
+						'='.rawurlencode($AVal);
 				}
 			}
 		}
@@ -1341,12 +1656,11 @@ class t3lib_div {
 	 * @return	array		Array of values. All values AND keys are rawurldecoded() as they properly should be. But this means that any implosion of the array again must rawurlencode it!
 	 * @see implodeArrayForUrl()
 	 */
-	function explodeUrl2Array($string,$multidim=FALSE)	{
+	public static function explodeUrl2Array($string,$multidim=FALSE)	{
+		$output = array();
 		if ($multidim)	{
-			parse_str($string,$tempGetVars);
-			return $tempGetVars;
+			parse_str($string,$output);
 		} else {
-			$output = array();
 			$p = explode('&',$string);
 			foreach($p as $v)	{
 				if (strlen($v))	{
@@ -1354,8 +1668,8 @@ class t3lib_div {
 					$output[rawurldecode($pK)] = rawurldecode($pV);
 				}
 			}
-			return $output;
 		}
+		return $output;
 	}
 
 	/**
@@ -1368,14 +1682,14 @@ class t3lib_div {
 	 * @param	boolean		If set, then t3lib_div::_GP() is used to fetch the value if not found (isset) in the $getArray
 	 * @return	array		Output array with selected variables.
 	 */
-	function compileSelectedGetVarsFromArray($varList,$getArray,$GPvarAlt=1)	{
+	public static function compileSelectedGetVarsFromArray($varList,array $getArray,$GPvarAlt=1)	{
 		$keys = t3lib_div::trimExplode(',',$varList,1);
-		$outArr=array();
+		$outArr = array();
 		foreach($keys as $v)	{
 			if (isset($getArray[$v]))	{
-				$outArr[$v]=$getArray[$v];
+				$outArr[$v] = $getArray[$v];
 			} elseif ($GPvarAlt) {
-				$outArr[$v]=t3lib_div::_GP($v);
+				$outArr[$v] = t3lib_div::_GP($v);
 			}
 		}
 		return $outArr;
@@ -1391,18 +1705,15 @@ class t3lib_div {
 	 * @param	array		Multidimensional input array, (REFERENCE!)
 	 * @return	array
 	 */
-	function addSlashesOnArray(&$theArray)	{
-		if (is_array($theArray))	{
-			reset($theArray);
-			while(list($Akey,$AVal)=each($theArray))	{
-				if (is_array($AVal))	{
-					t3lib_div::addSlashesOnArray($theArray[$Akey]);
-				} else {
-					$theArray[$Akey] = addslashes($AVal);
-				}
+	public static function addSlashesOnArray(array &$theArray)	{
+		foreach ($theArray as &$value) {
+			if (is_array($value)) {
+				t3lib_div::addSlashesOnArray($value);
+			} else {
+				$value = addslashes($value);
 			}
-			reset($theArray);
 		}
+		reset($theArray);
 	}
 
 	/**
@@ -1415,18 +1726,15 @@ class t3lib_div {
 	 * @param	array		Multidimensional input array, (REFERENCE!)
 	 * @return	array
 	 */
-	function stripSlashesOnArray(&$theArray)	{
-		if (is_array($theArray))	{
-			reset($theArray);
-			while(list($Akey,$AVal)=each($theArray))	{
-				if (is_array($AVal))	{
-					t3lib_div::stripSlashesOnArray($theArray[$Akey]);
-				} else {
-					$theArray[$Akey] = stripslashes($AVal);
-				}
+	public static function stripSlashesOnArray(array &$theArray)	{
+		foreach ($theArray as &$value) {
+			if (is_array($value)) {
+				t3lib_div::stripSlashesOnArray($value);
+			} else {
+				$value = stripslashes($value);
 			}
-			reset($theArray);
 		}
+		reset($theArray);
 	}
 
 	/**
@@ -1437,7 +1745,7 @@ class t3lib_div {
 	 * @param	string		"add" or "strip", depending on usage you wish.
 	 * @return	array
 	 */
-	function slashArray($arr,$cmd)	{
+	public static function slashArray(array $arr,$cmd)	{
 		if ($cmd=='strip')	t3lib_div::stripSlashesOnArray($arr);
 		if ($cmd=='add')	t3lib_div::addSlashesOnArray($arr);
 		return $arr;
@@ -1451,25 +1759,24 @@ class t3lib_div {
 	 * @param	array		First array
 	 * @param	array		Second array, overruling the first array
 	 * @param	boolean		If set, keys that are NOT found in $arr0 (first array) will not be set. Thus only existing value can/will be overruled from second array.
-	 * @param	boolean		If set, values from $arr1 will overrule if they are empty. Default: true
+	 * @param	boolean		If set, values from $arr1 will overrule if they are empty or zero. Default: true
 	 * @return	array		Resulting array where $arr1 values has overruled $arr0 values
 	 */
-	function array_merge_recursive_overrule($arr0,$arr1,$notAddKeys=0,$includeEmtpyValues=true) {
-		reset($arr1);
-		while(list($key,$val) = each($arr1)) {
+	public static function array_merge_recursive_overrule(array $arr0,array $arr1,$notAddKeys=0,$includeEmtpyValues=true) {
+		foreach ($arr1 as $key => $val) {
 			if(is_array($arr0[$key])) {
 				if (is_array($arr1[$key]))	{
-					$arr0[$key] = t3lib_div::array_merge_recursive_overrule($arr0[$key],$arr1[$key],$notAddKeys);
+					$arr0[$key] = t3lib_div::array_merge_recursive_overrule($arr0[$key],$arr1[$key],$notAddKeys,$includeEmtpyValues);
 				}
 			} else {
 				if ($notAddKeys) {
 					if (isset($arr0[$key])) {
-						if ($includeEmtpyValues OR $val) {
+						if ($includeEmtpyValues || $val) {
 							$arr0[$key] = $val;
 						}
 					}
 				} else {
-					if ($includeEmtpyValues OR $val) {
+					if ($includeEmtpyValues || $val) {
 						$arr0[$key] = $val;
 					}
 				}
@@ -1487,7 +1794,7 @@ class t3lib_div {
 	 * @param	array		Second array
 	 * @return	array		Merged result.
 	 */
-	function array_merge($arr1,$arr2)	{
+	public static function array_merge(array $arr1,array $arr2)	{
 		return $arr2+$arr1;
 	}
 
@@ -1500,16 +1807,49 @@ class t3lib_div {
 	 * @param	string		Quote-character to wrap around the values.
 	 * @return	string		A single line of CSV
 	 */
-	function csvValues($row,$delim=',',$quote='"')	{
+	public static function csvValues(array $row,$delim=',',$quote='"')	{
 		reset($row);
 		$out=array();
-		while(list(,$value)=each($row))	{
-			list($valPart) = explode(chr(10),$value);
-			$valPart = trim($valPart);
-			$out[]=str_replace($quote,$quote.$quote,$valPart);
+		foreach ($row as $value) {
+			$out[] = str_replace($quote, $quote.$quote, $value);
 		}
 		$str = $quote.implode($quote.$delim.$quote,$out).$quote;
 		return $str;
+	}
+
+ 	/**
+	 * Creates recursively a JSON literal from a mulidimensional associative array.
+	 * Uses Services_JSON (http://mike.teczno.com/JSON/doc/)
+	 *
+	 * @param	array		$jsonArray: The array to be transformed to JSON
+	 * @return	string		JSON string
+	 */
+	public static function array2json(array $jsonArray) {
+		if (!$GLOBALS['JSON']) {
+			require_once(PATH_typo3.'contrib/json/json.php');
+			$GLOBALS['JSON'] = t3lib_div::makeInstance('Services_JSON');
+		}
+		return $GLOBALS['JSON']->encode($jsonArray);
+	}
+
+	/**
+	 * Removes dots "." from end of a key identifier of TypoScript styled array.
+	 * array('key.' => array('property.' => 'value')) --> array('key' => array('property' => 'value'))
+	 *
+	 * @param	array	$ts: TypoScript configuration array
+	 * @return	array	TypoScript configuration array without dots at the end of all keys
+	 */
+	public static function removeDotsFromTS(array $ts) {
+		$out = array();
+		foreach ($ts as $key => $value) {
+			if (is_array($value)) {
+				$key = rtrim($key, '.');
+				$out[$key] = t3lib_div::removeDotsFromTS($value);
+			} else {
+				$out[$key] = $value;
+			}
+		}
+		return $out;
 	}
 
 
@@ -1536,38 +1876,36 @@ class t3lib_div {
 	/**
 	 * Returns an array with all attributes of the input HTML tag as key/value pairs. Attributes are only lowercase a-z
 	 * $tag is either a whole tag (eg '<TAG OPTION ATTRIB=VALUE>') or the parameterlist (ex ' OPTION ATTRIB=VALUE>')
-	 * If a attribute is empty (I call it 'an option'), then the value for the key is empty. You can check if it existed with isset()
+	 * If an attribute is empty, then the value for the key is empty. You can check if it existed with isset()
 	 * Usage: 8
 	 *
 	 * @param	string		HTML-tag string (or attributes only)
 	 * @return	array		Array with the attribute values.
 	 */
-	function get_tag_attributes($tag)	{
+	public static function get_tag_attributes($tag)	{
 		$components = t3lib_div::split_tag_attributes($tag);
 		$name = '';	 // attribute name is stored here
-		$valuemode = '';
-		if (is_array($components))	{
-			while (list($key,$val) = each ($components))	{
-				if ($val != '=')	{	// Only if $name is set (if there is an attribute, that waits for a value), that valuemode is enabled. This ensures that the attribute is assigned it's value
-					if ($valuemode)	{
-						if ($name)	{
-							$attributes[$name] = $val;
-							$name = '';
-						}
-					} else {
-						if ($key = strtolower(ereg_replace('[^a-zA-Z0-9]','',$val)))	{
-							$attributes[$key] = '';
-							$name = $key;
-						}
+		$valuemode = false;
+		$attributes = array();
+		foreach ($components as $key => $val)	{
+			if ($val != '=')	{	// Only if $name is set (if there is an attribute, that waits for a value), that valuemode is enabled. This ensures that the attribute is assigned it's value
+				if ($valuemode)	{
+					if ($name)	{
+						$attributes[$name] = $val;
+						$name = '';
 					}
-					$valuemode = '';
 				} else {
-					$valuemode = 'on';
+					if ($key = strtolower(ereg_replace('[^a-zA-Z0-9]','',$val)))	{
+						$attributes[$key] = '';
+						$name = $key;
+					}
 				}
+				$valuemode = false;
+			} else {
+				$valuemode = true;
 			}
-			if (is_array($attributes))	reset($attributes);
-			return $attributes;
 		}
+		return $attributes;
 	}
 
 	/**
@@ -1579,11 +1917,12 @@ class t3lib_div {
 	 * @return	array		Array with the attribute values.
 	 * @internal
 	 */
-	function split_tag_attributes($tag)	{
+	public static function split_tag_attributes($tag)	{
 		$tag_tmp = trim(eregi_replace ('^<[^[:space:]]*','',trim($tag)));
 			// Removes any > in the end of the string
 		$tag_tmp = trim(eregi_replace ('>$','',$tag_tmp));
 
+		$value = array();
 		while (strcmp($tag_tmp,''))	{	// Compared with empty string instead , 030102
 			$firstChar=substr($tag_tmp,0,1);
 			if (!strcmp($firstChar,'"') || !strcmp($firstChar,"'"))	{
@@ -1600,7 +1939,7 @@ class t3lib_div {
 				$tag_tmp = trim(substr($tag_tmp,strlen($reg[0]),1).$reg[1]);
 			}
 		}
-		if (is_array($value))	reset($value);
+		reset($value);
 		return $value;
 	}
 
@@ -1613,21 +1952,19 @@ class t3lib_div {
 	 * @param	boolean		If true, don't check if values are blank. Default is to omit attributes with blank values.
 	 * @return	string		Imploded attributes, eg. 'bgcolor="red" border="0"'
 	 */
-	function implodeAttributes($arr,$xhtmlSafe=FALSE,$dontOmitBlankAttribs=FALSE)	{
-		if (is_array($arr))	{
-			if ($xhtmlSafe)	{
-				$newArr=array();
-				foreach($arr as $p => $v)	{
-					if (!isset($newArr[strtolower($p)])) $newArr[strtolower($p)] = htmlspecialchars($v);
-				}
-				$arr = $newArr;
-			}
-			$list = array();
+	public static function implodeAttributes(array $arr,$xhtmlSafe=FALSE,$dontOmitBlankAttribs=FALSE)	{
+		if ($xhtmlSafe)	{
+			$newArr=array();
 			foreach($arr as $p => $v)	{
-				if (strcmp($v,'') || $dontOmitBlankAttribs)	{$list[]=$p.'="'.$v.'"';}
+				if (!isset($newArr[strtolower($p)])) $newArr[strtolower($p)] = htmlspecialchars($v);
 			}
-			return implode(' ',$list);
+			$arr = $newArr;
 		}
+		$list = array();
+		foreach($arr as $p => $v)	{
+			if (strcmp($v,'') || $dontOmitBlankAttribs)	{$list[]=$p.'="'.$v.'"';}
+		}
+		return implode(' ',$list);
 	}
 
 	/**
@@ -1640,7 +1977,7 @@ class t3lib_div {
 	 * @deprecated	Name was changed into implodeAttributes
 	 * @see implodeAttributes()
 	 */
-	function implodeParams($arr,$xhtmlSafe=FALSE,$dontOmitBlankAttribs=FALSE)	{
+	public static function implodeParams(array $arr,$xhtmlSafe=FALSE,$dontOmitBlankAttribs=FALSE)	{
 		return t3lib_div::implodeAttributes($arr,$xhtmlSafe,$dontOmitBlankAttribs);
 	}
 
@@ -1653,9 +1990,9 @@ class t3lib_div {
 	 * @param	boolean		Wrap script element in linebreaks? Default is TRUE.
 	 * @return	string		The wrapped JS code, ready to put into a XHTML page
 	 * @author	Ingmar Schlecht <ingmars@web.de>
-	 * @author	René Fritz <r.fritz@colorcube.de>
+	 * @author	Renï¿½ Fritz <r.fritz@colorcube.de>
 	 */
-	function wrapJS($string, $linebreak=TRUE) {
+	public static function wrapJS($string, $linebreak=TRUE) {
 		if(trim($string)) {
 				// <script wrapped in nl?
 			$cr = $linebreak? "\n" : '';
@@ -1663,6 +2000,7 @@ class t3lib_div {
 				// remove nl from the beginning
 			$string = preg_replace ('/^\n+/', '', $string);
 				// re-ident to one tab using the first line as reference
+			$match = array();
 			if(preg_match('/^(\t+)/',$string,$match)) {
 				$string = str_replace($match[1],"\t", $string);
 			}
@@ -1685,7 +2023,7 @@ class t3lib_div {
 	 * @return	mixed		The array with the parsed structure unless the XML parser returns with an error in which case the error message string is returned.
 	 * @author bisqwit at iki dot fi dot not dot for dot ads dot invalid / http://dk.php.net/xml_parse_into_struct + kasperYYYY@typo3.com
 	 */
-	function xml2tree($string,$depth=999) {
+	public static function xml2tree($string,$depth=999) {
 		$parser = xml_parser_create();
 		$vals = array();
 		$index = array();
@@ -1701,6 +2039,7 @@ class t3lib_div {
 		$stacktop = 0;
 		$startPoint=0;
 
+// FIXME don't use unset() - what does that mean? Use NULL or similar.
 		unset($tagi);
 		foreach($vals as $key => $val) {
 			$type = $val['type'];
@@ -1751,13 +2090,43 @@ class t3lib_div {
 	}
 
 	/**
+	 * Turns PHP array into XML. See array2xml()
+	 *
+	 * @param	array		The input PHP array with any kind of data; text, binary, integers. Not objects though.
+	 * @param	string		Alternative document tag. Default is "phparray".
+	 * @param	array		Options for the compilation. See array2xml() for description.
+	 * @param	string		Forced charset to prologue
+	 * @return	string		An XML string made from the input content in the array.
+	 * @see xml2array(),array2xml()
+	 */
+	public static function array2xml_cs(array $array,$docTag='phparray',array $options=array(),$charset='')	{
+
+			// Figure out charset if not given explicitly:
+		if (!$charset)	{
+			if ($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'])	{	// First priority: forceCharset! If set, this will be authoritative!
+				$charset = $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'];
+			} elseif (is_object($GLOBALS['LANG']))	{
+				$charset = $GLOBALS['LANG']->charSet;	// If "LANG" is around, that will hold the current charset
+			} else {
+				$charset = 'iso-8859-1';	// THIS is just a hopeful guess!
+			}
+		}
+
+			// Return XML:
+		return '<?xml version="1.0" encoding="'.htmlspecialchars($charset).'" standalone="yes" ?>'.chr(10).
+				t3lib_div::array2xml($array,'',0,$docTag,0, $options);
+	}
+
+	/**
+	 * Deprecated to call directly (unless you are aware of using XML prologues)! Use "array2xml_cs" instead (which adds an XML-prologue)
+	 *
 	 * Converts a PHP array into an XML string.
 	 * The XML output is optimized for readability since associative keys are used as tagnames.
 	 * This also means that only alphanumeric characters are allowed in the tag names AND only keys NOT starting with numbers (so watch your usage of keys!). However there are options you can set to avoid this problem.
 	 * Numeric keys are stored with the default tagname "numIndex" but can be overridden to other formats)
 	 * The function handles input values from the PHP array in a binary-safe way; All characters below 32 (except 9,10,13) will trigger the content to be converted to a base64-string
 	 * The PHP variable type of the data IS preserved as long as the types are strings, arrays, integers and booleans. Strings are the default type unless the "type" attribute is set.
-	 * The output XML has been tested with the PHP XML-parser and parses OK under all tested circumstances.
+	 * The output XML has been tested with the PHP XML-parser and parses OK under all tested circumstances with 4.x versions. However, with PHP5 there seems to be the need to add an XML prologue a la <?xml version="1.0" encoding="[charset]" standalone="yes" ?> - otherwise UTF-8 is assumed! Unfortunately, many times the output from this function is used without adding that prologue meaning that non-ASCII characters will break the parsing!! This suchs of course! Effectively it means that the prologue should always be prepended setting the right characterset, alternatively the system should always run as utf-8!
 	 * However using MSIE to read the XML output didn't always go well: One reason could be that the character encoding is not observed in the PHP data. The other reason may be if the tag-names are invalid in the eyes of MSIE. Also using the namespace feature will make MSIE break parsing. There might be more reasons...
 	 * Usage: 5
 	 *
@@ -1765,13 +2134,13 @@ class t3lib_div {
 	 * @param	string		tag-prefix, eg. a namespace prefix like "T3:"
 	 * @param	integer		Current recursion level. Don't change, stay at zero!
 	 * @param	string		Alternative document tag. Default is "phparray".
-	 * @param	integer		If set, the number of spaces corresponding to this number is used for indenting, otherwise a single chr(9) (TAB) is used
+	 * @param	integer		If greater than zero, then the number of spaces corresponding to this number is used for indenting, if less than zero - no indentation, if zero - a single chr(9) (TAB) is used
 	 * @param	array		Options for the compilation. Key "useNindex" => 0/1 (boolean: whether to use "n0, n1, n2" for num. indexes); Key "useIndexTagForNum" => "[tag for numerical indexes]"; Key "useIndexTagForAssoc" => "[tag for associative indexes"; Key "parentTagMap" => array('parentTag' => 'thisLevelTag')
 	 * @param	string		Stack data. Don't touch.
 	 * @return	string		An XML string made from the input content in the array.
 	 * @see xml2array()
 	 */
-	function array2xml($array,$NSprefix='',$level=0,$docTag='phparray',$spaceInd=0, $options=array(),$stackData=array())	{
+	public static function array2xml(array $array,$NSprefix='',$level=0,$docTag='phparray',$spaceInd=0,array $options=array(),array $stackData=array())	{
 			// The list of byte values which will trigger binary-safe storage. If any value has one of these char values in it, it will be encoded in base64
 		$binaryChars = chr(0).chr(1).chr(2).chr(3).chr(4).chr(5).chr(6).chr(7).chr(8).
 						chr(11).chr(12).chr(14).chr(15).chr(16).chr(17).chr(18).chr(19).
@@ -1780,93 +2149,104 @@ class t3lib_div {
 			// Set indenting mode:
 		$indentChar = $spaceInd ? ' ' : chr(9);
 		$indentN = $spaceInd>0 ? $spaceInd : 1;
+		$nl = ($spaceInd >= 0 ? chr(10) : '');
 
 			// Init output variable:
 		$output='';
 
 			// Traverse the input array
-		if (is_array($array))	{
-			foreach($array as $k=>$v)	{
-				$attr = '';
-				$tagName = $k;
+		foreach($array as $k=>$v)	{
+			$attr = '';
+			$tagName = $k;
 
-					// Construct the tag name.
-				if(isset($options['grandParentTagMap'][$stackData['grandParentTagName'].'/'.$stackData['parentTagName']])) {		// Use tag based on grand-parent + parent tag name
-					$attr.=' index="'.htmlspecialchars($tagName).'"';
-					$tagName = (string)$options['grandParentTagMap'][$stackData['grandParentTagName'].'/'.$stackData['parentTagName']];
-				}elseif(isset($options['parentTagMap'][$stackData['parentTagName'].':'.$tagName])) {		// Use tag based on parent tag name + current tag
-					$attr.=' index="'.htmlspecialchars($tagName).'"';
-					$tagName = (string)$options['parentTagMap'][$stackData['parentTagName'].':'.$tagName];
-				} elseif(isset($options['parentTagMap'][$stackData['parentTagName']])) {		// Use tag based on parent tag name:
-					$attr.=' index="'.htmlspecialchars($tagName).'"';
-					$tagName = (string)$options['parentTagMap'][$stackData['parentTagName']];
-				} elseif (!strcmp(intval($tagName),$tagName))	{	// If integer...;
-					if ($options['useNindex']) {	// If numeric key, prefix "n"
-						$tagName = 'n'.$tagName;
-					} else {	// Use special tag for num. keys:
-						$attr.=' index="'.$tagName.'"';
-						$tagName = $options['useIndexTagForNum'] ? $options['useIndexTagForNum'] : 'numIndex';
-					}
-				} elseif($options['useIndexTagForAssoc']) {		// Use tag for all associative keys:
-					$attr.=' index="'.htmlspecialchars($tagName).'"';
-					$tagName = $options['useIndexTagForAssoc'];
+				// Construct the tag name.
+			if(isset($options['grandParentTagMap'][$stackData['grandParentTagName'].'/'.$stackData['parentTagName']])) {		// Use tag based on grand-parent + parent tag name
+				$attr.=' index="'.htmlspecialchars($tagName).'"';
+				$tagName = (string)$options['grandParentTagMap'][$stackData['grandParentTagName'].'/'.$stackData['parentTagName']];
+			}elseif(isset($options['parentTagMap'][$stackData['parentTagName'].':_IS_NUM']) && t3lib_div::testInt($tagName)) {		// Use tag based on parent tag name + if current tag is numeric
+				$attr.=' index="'.htmlspecialchars($tagName).'"';
+				$tagName = (string)$options['parentTagMap'][$stackData['parentTagName'].':_IS_NUM'];
+			}elseif(isset($options['parentTagMap'][$stackData['parentTagName'].':'.$tagName])) {		// Use tag based on parent tag name + current tag
+				$attr.=' index="'.htmlspecialchars($tagName).'"';
+				$tagName = (string)$options['parentTagMap'][$stackData['parentTagName'].':'.$tagName];
+			} elseif(isset($options['parentTagMap'][$stackData['parentTagName']])) {		// Use tag based on parent tag name:
+				$attr.=' index="'.htmlspecialchars($tagName).'"';
+				$tagName = (string)$options['parentTagMap'][$stackData['parentTagName']];
+			} elseif (!strcmp(intval($tagName),$tagName))	{	// If integer...;
+				if ($options['useNindex']) {	// If numeric key, prefix "n"
+					$tagName = 'n'.$tagName;
+				} else {	// Use special tag for num. keys:
+					$attr.=' index="'.$tagName.'"';
+					$tagName = $options['useIndexTagForNum'] ? $options['useIndexTagForNum'] : 'numIndex';
 				}
-
-					// The tag name is cleaned up so only alphanumeric chars (plus - and _) are in there and not longer than 100 chars either.
-				$tagName = substr(ereg_replace('[^[:alnum:]_-]','',$tagName),0,100);
-
-					// If the value is an array then we will call this function recursively:
-				if (is_array($v))	{
-
-						// Sub elements:
-					if ($options['alt_options'][$stackData['path'].'/'.$tagName])	{
-						$subOptions = $options['alt_options'][$stackData['path'].'/'.$tagName];
-						$clearStackPath = $subOptions['clearStackPath'];
-					} else {
-						$subOptions = $options;
-						$clearStackPath = FALSE;
-					}
-
-					$content = chr(10).
-								t3lib_div::array2xml(
-									$v,
-									$NSprefix,
-									$level+1,
-									'',
-									$spaceInd,
-									$subOptions,
-									array(
-										'parentTagName' => $tagName,
-										'grandParentTagName' => $stackData['parentTagName'],
-										'path' => $clearStackPath ? '' : $stackData['path'].'/'.$tagName,
-									)
-								).
-								str_pad('',($level+1)*$indentN,$indentChar);
-					$attr.=' type="array"';
-				} else {	// Just a value:
-
-						// Look for binary chars:
-					if (strcspn($v,$binaryChars) != strlen($v))	{	// Go for base64 encoding if the initial segment NOT matching any binary char has the same length as the whole string!
-							// If the value contained binary chars then we base64-encode it an set an attribute to notify this situation:
-						$content = chr(10).chunk_split(base64_encode($v));
-						$attr.=' base64="1"';
-					} else {
-							// Otherwise, just htmlspecialchar the stuff:
-						$content = htmlspecialchars($v);
-						$dType = gettype($v);
-						if ($dType!='string' && !$options['disableTypeAttrib'])	{ $attr.=' type="'.$dType.'"'; }
-					}
-				}
-
-					// Add the element to the output string:
-				$output.=str_pad('',($level+1)*$indentN,$indentChar).'<'.$NSprefix.$tagName.$attr.'>'.$content.'</'.$NSprefix.$tagName.'>'.chr(10);
+			} elseif($options['useIndexTagForAssoc']) {		// Use tag for all associative keys:
+				$attr.=' index="'.htmlspecialchars($tagName).'"';
+				$tagName = $options['useIndexTagForAssoc'];
 			}
+
+				// The tag name is cleaned up so only alphanumeric chars (plus - and _) are in there and not longer than 100 chars either.
+			$tagName = substr(ereg_replace('[^[:alnum:]_-]','',$tagName),0,100);
+
+				// If the value is an array then we will call this function recursively:
+			if (is_array($v))	{
+
+					// Sub elements:
+				if ($options['alt_options'][$stackData['path'].'/'.$tagName])	{
+					$subOptions = $options['alt_options'][$stackData['path'].'/'.$tagName];
+					$clearStackPath = $subOptions['clearStackPath'];
+				} else {
+					$subOptions = $options;
+					$clearStackPath = FALSE;
+				}
+
+				$content = $nl .
+							t3lib_div::array2xml(
+								$v,
+								$NSprefix,
+								$level+1,
+								'',
+								$spaceInd,
+								$subOptions,
+								array(
+									'parentTagName' => $tagName,
+									'grandParentTagName' => $stackData['parentTagName'],
+									'path' => $clearStackPath ? '' : $stackData['path'].'/'.$tagName,
+								)
+							).
+							($spaceInd >= 0 ? str_pad('',($level+1)*$indentN,$indentChar) : '');
+				if ((int)$options['disableTypeAttrib']!=2)	{	// Do not set "type = array". Makes prettier XML but means that empty arrays are not restored with xml2array
+					$attr.=' type="array"';
+				}
+			} else {	// Just a value:
+
+					// Look for binary chars:
+				$vLen = strlen($v);	// check for length, because PHP 5.2.0 may crash when first argument of strcspn is empty
+				if ($vLen && strcspn($v,$binaryChars) != $vLen)	{	// Go for base64 encoding if the initial segment NOT matching any binary char has the same length as the whole string!
+						// If the value contained binary chars then we base64-encode it an set an attribute to notify this situation:
+					$content = $nl.chunk_split(base64_encode($v));
+					$attr.=' base64="1"';
+				} else {
+						// Otherwise, just htmlspecialchar the stuff:
+					$content = htmlspecialchars($v);
+					$dType = gettype($v);
+					if ($dType == 'string') {
+						if ($options['useCDATA'] && $content != $v) {
+							$content = '<![CDATA[' . $v . ']]>';
+						}
+					} elseif (!$options['disableTypeAttrib']) {
+						$attr.= ' type="'.$dType.'"';
+					}
+				}
+			}
+
+				// Add the element to the output string:
+			$output.=($spaceInd >= 0 ? str_pad('',($level+1)*$indentN,$indentChar) : '').'<'.$NSprefix.$tagName.$attr.'>'.$content.'</'.$NSprefix.$tagName.'>'.$nl;
 		}
 
-			// If we are at the outer-most level, then we finally wrap it all in the document tags and return that as the value:
+		// If we are at the outer-most level, then we finally wrap it all in the document tags and return that as the value:
 		if (!$level)	{
 			$output =
-				'<'.$docTag.'>'.chr(10).
+				'<'.$docTag.'>'.$nl.
 				$output.
 				'</'.$docTag.'>';
 		}
@@ -1885,7 +2265,7 @@ class t3lib_div {
 	 * @return	mixed		If the parsing had errors, a string with the error message is returned. Otherwise an array with the content.
 	 * @see array2xml()
 	 */
-	function xml2array($string,$NSprefix='',$reportDocTag=FALSE) {
+	public static function xml2array($string,$NSprefix='',$reportDocTag=FALSE) {
 		global $TYPO3_CONF_VARS;
 
 			// Create parser:
@@ -1896,16 +2276,11 @@ class t3lib_div {
 		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
 		xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 0);
 
-			// PHP5 fix of charset awareness:
-			// Problem is: PHP5 apparently detects the charset of the XML file (or defaults to utf-8) and will AUTOMATICALLY convert the content to either utf-8, iso-8859-1 or us-ascii. PHP4 just passed the content through without taking action regarding the charset.
-			// In TYPO3 we expect that the charset of XML content is NOT handled in the parser but internally in TYPO3 instead. Therefore it would be very nice if PHP5 could be configured to NOT process the charset of the files. But this is not possible for now.
-			// What we do here fixes the problem but ONLY if the charset is utf-8, iso-8859-1 or us-ascii. That should work for most TYPO3 installations, in particular if people use utf-8 which we highly recommend.
-		if ((double)phpversion()>=5)	{
-			unset($ereg_result);
-			ereg('^[[:space:]]*<\?xml[^>]*encoding[[:space:]]*=[[:space:]]*"([^"]*)"',substr($string,0,200),$ereg_result);
-			$theCharset = $ereg_result[1] ? $ereg_result[1] : ($TYPO3_CONF_VARS['BE']['forceCharset'] ? $TYPO3_CONF_VARS['BE']['forceCharset'] : 'iso-8859-1');
-			xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, $theCharset);  // us-ascii / utf-8 / iso-8859-1
-		}
+			// default output charset is UTF-8, only ASCII, ISO-8859-1 and UTF-8 are supported!!!
+		$match = array();
+		preg_match('/^[[:space:]]*<\?xml[^>]*encoding[[:space:]]*=[[:space:]]*"([^"]*)"/',substr($string,0,200),$match);
+		$theCharset = $match[1] ? $match[1] : ($TYPO3_CONF_VARS['BE']['forceCharset'] ? $TYPO3_CONF_VARS['BE']['forceCharset'] : 'iso-8859-1');
+		xml_parser_set_option($parser, XML_OPTION_TARGET_ENCODING, $theCharset);  // us-ascii / utf-8 / iso-8859-1
 
 			// Parse content:
 		xml_parse_into_struct($parser, $string, $vals, $index);
@@ -1919,7 +2294,7 @@ class t3lib_div {
 			// Init vars:
 		$stack = array(array());
 		$stacktop = 0;
-		$current=array();
+		$current = array();
 		$tagName = '';
 		$documentTag = '';
 
@@ -1995,7 +2370,7 @@ class t3lib_div {
 	 * @param	array		A array of XML parts, see xml2tree
 	 * @return	string		Re-compiled XML data.
 	 */
-	function xmlRecompileFromStructValArray($vals)	{
+	public static function xmlRecompileFromStructValArray(array $vals)	{
 		$XMLcontent='';
 
 		foreach($vals as $val) {
@@ -2033,22 +2408,39 @@ class t3lib_div {
 	}
 
 	/**
-	 * Extract the encoding scheme as found in the first line of an XML document (typically)
+	 * Extracts the attributes (typically encoding and version) of an XML prologue (header).
 	 * Usage: 1
 	 *
 	 * @param	string		XML data
-	 * @return	string		Encoding scheme (lowercase), if found.
+	 * @return	array		Attributes of the xml prologue (header)
 	 */
-	function xmlGetHeaderAttribs($xmlData)	{
-		$xmlHeader = substr(trim($xmlData),0,200);
-		$reg=array();
-		if (eregi('^<\?xml([^>]*)\?\>',$xmlHeader,$reg))	{
-			return t3lib_div::get_tag_attributes($reg[1]);
+	public static function xmlGetHeaderAttribs($xmlData)	{
+		$match = array();
+		if (preg_match('/^\s*<\?xml([^>]*)\?\>/', $xmlData, $match))	{
+			return t3lib_div::get_tag_attributes($match[1]);
 		}
 	}
 
-
-
+	/**
+	 * Minifies JavaScript
+	 *
+	 * @param	string	$script	Script to minify
+	 * @param	string	$error	Error message (if any)
+	 * @return	string	Minified script or source string if error happened
+	 */
+	public static function minifyJavaScript($script, &$error = '') {
+		require_once(PATH_typo3 . 'contrib/jsmin/jsmin.php');
+		try {
+			$error = '';
+			$script = trim(JSMin::minify(str_replace(chr(13), '', $script)));
+		}
+		catch(JSMinException $e) {
+			$error = 'Error while minifying JavaScript: ' . $e->getMessage();
+			t3lib_div::devLog($error, 't3lib_div', 2,
+				array('JavaScript' => $script, 'Stack trace' => $e->getTrace()));
+		}
+		return $script;
+	}
 
 
 
@@ -2068,41 +2460,192 @@ class t3lib_div {
 	 * If you are having trouble with proxys when reading URLs you can configure your way out of that with settings like $TYPO3_CONF_VARS['SYS']['curlUse'] etc.
 	 * Usage: 83
 	 *
-	 * @param	string		Filepath/URL to read
-	 * @return	string		The content from the resource given as input.
+	 * @param	string		File/URL to read
+	 * @param	integer		Whether the HTTP header should be fetched or not. 0=disable, 1=fetch header+content, 2=fetch header only
+	 * @param	array			HTTP headers to be used in the request
+	 * @param	array			Error code/message and, if $includeHeader is 1, response meta data (HTTP status and content type)
+	 * @return	string	The content from the resource given as input. FALSE if an error has occured.
 	 */
-	function getURL($url)	{
-		$content = '';
+	public static function getURL($url, $includeHeader = 0, $requestHeaders = false, &$report = NULL)	{
+		$content = false;
 
-			// (Proxy support implemented by Arco <arco@appeltaart.mine.nu>)
-		if((substr($url,0,7)=='http://') && ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlUse']=='1'))	{
-			//external URL without error checking.
-			$ch = curl_init();
-			curl_setopt ($ch,CURLOPT_URL, $url);
-			curl_setopt ($ch,CURLOPT_HEADER, 0);
-			curl_setopt ($ch,CURLOPT_RETURNTRANSFER, 1);
-
-			if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer']) {
-				curl_setopt ($ch, CURLOPT_PROXY, $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer']);
-
-				// I don't know if it will be needed
-				if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyTunnel']) {
-					curl_setopt ($ch, CURLOPT_HTTPPROXYTUNNEL, $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyTunnel'] );
-				}
-				if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyUserPass']) {
-					curl_setopt ($ch, CURLOPT_PROXYUSERPWD, $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyUserPass'] );
-				}
-			}
-			$content=curl_exec ($ch);
-			curl_close ($ch);
-			return $content;
-		} elseif($fd = fopen($url,'rb'))    {
-			while (!feof($fd))	{
-				$content.=fread($fd, 5000);
-			}
-			fclose($fd);
-			return $content;
+		if (isset($report))	{
+			$report['error'] = 0;
+			$report['message'] = '';
 		}
+
+			// use cURL for: http, https, ftp, ftps, sftp and scp
+		if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlUse'] == '1' && preg_match('/^(?:http|ftp)s?|s(?:ftp|cp):/', $url))	{
+			if (isset($report))	{
+				$report['lib'] = 'cURL';
+			}
+
+				// External URL without error checking.
+			$ch = curl_init();
+			if (!$ch)	{
+				if (isset($report))	{
+					$report['error'] = -1;
+					$report['message'] = 'Couldn\'t initialize cURL.';
+				}
+				return false;
+			}
+
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_HEADER, $includeHeader ? 1 : 0);
+			curl_setopt($ch, CURLOPT_NOBODY, $includeHeader == 2 ? 1 : 0);
+			curl_setopt($ch, CURLOPT_HTTPGET, $includeHeader == 2 ? 'HEAD' : 'GET');
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+
+				// may fail (PHP 5.2.0+ and 5.1.5+) when open_basedir or safe_mode are enabled
+			$followLocation = @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+
+			if (is_array($requestHeaders))	{
+				curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
+			}
+
+				// (Proxy support implemented by Arco <arco@appeltaart.mine.nu>)
+			if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer'])	{
+				curl_setopt($ch, CURLOPT_PROXY, $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyServer']);
+
+				if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyTunnel'])	{
+					curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyTunnel']);
+				}
+				if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyUserPass'])	{
+					curl_setopt($ch, CURLOPT_PROXYUSERPWD, $GLOBALS['TYPO3_CONF_VARS']['SYS']['curlProxyUserPass']);
+				}
+			}
+			$content = curl_exec($ch);
+			if (isset($report))	{
+				if ($content===FALSE)	{
+					$report['error'] = curl_errno($ch);
+					$report['message'] = curl_error($ch);
+				} else {
+					$curlInfo = curl_getinfo($ch);
+						// We hit a redirection but we couldn't follow it
+					if (!$followLocation && $curlInfo['status'] >= 300 && $curlInfo['status'] < 400)	 {
+						$report['error'] = -1;
+						$report['message'] = 'Couldn\'t follow location redirect (either PHP configuration option safe_mode or open_basedir is in effect).';
+					} elseif($includeHeader) {
+							// Set only for $includeHeader to work exactly like PHP variant
+						$report['http_code'] = $curlInfo['http_code'];
+						$report['content_type'] = $curlInfo['content_type'];
+					}
+				}
+			}
+			curl_close($ch);
+
+		} elseif ($includeHeader)	{
+			if (isset($report))	{
+				$report['lib'] = 'socket';
+			}
+			$parsedURL = parse_url($url);
+			if (!preg_match('/^https?/', $parsedURL['scheme']))	{
+				if (isset($report))	{
+					$report['error'] = -1;
+					$report['message'] = 'Reading headers is not allowed for this protocol.';
+				}
+				return false;
+			}
+			$port = intval($parsedURL['port']);
+			if ($port < 1)	{
+				if ($parsedURL['scheme'] == 'http')	{
+					$port = ($port>0 ? $port : 80);
+					$scheme = '';
+				} else {
+					$port = ($port>0 ? $port : 443);
+					$scheme = 'ssl://';
+				}
+			}
+			$errno = 0;
+			// $errstr = '';
+			$fp = @fsockopen($scheme.$parsedURL['host'], $port, $errno, $errstr, 2.0);
+			if (!$fp || $errno > 0)	{
+				if (isset($report))	{
+					$report['error'] = $errno ? $errno : -1;
+					$report['message'] = $errno ? ($errstr ? $errstr : 'Socket error.') : 'Socket initialization error.';
+				}
+				return false;
+			}
+			$method = ($includeHeader == 2) ? 'HEAD' : 'GET';
+			$msg = $method . ' ' . $parsedURL['path'] .
+					($parsedURL['query'] ? '?' . $parsedURL['query'] : '') .
+					' HTTP/1.0' . "\r\n" . 'Host: ' .
+					$parsedURL['host'] . "\r\nConnection: close\r\n";
+			if (is_array($requestHeaders))	{
+				$msg .= implode("\r\n", $requestHeaders) . "\r\n";
+			}
+			$msg .= "\r\n";
+
+			fputs($fp, $msg);
+			while (!feof($fp))	{
+				$line = fgets($fp, 2048);
+				if (isset($report))	{
+					if (preg_match('|^HTTP/\d\.\d +(\d+)|', $line, $status))	{
+						$report['http_code'] = $status[1];
+					}
+					elseif (preg_match('/^Content-Type: *(.*)/i', $line, $type))	{
+						$report['content_type'] = $type[1];
+					}
+				}
+				$content .= $line;
+				if (!strlen(trim($line)))	{
+					break;	// Stop at the first empty line (= end of header)
+				}
+			}
+			if ($includeHeader != 2)	{
+				$content .= stream_get_contents($fp);
+			}
+			fclose($fp);
+
+		} elseif (is_array($requestHeaders))	{
+			if (isset($report))	{
+				$report['lib'] = 'file/context';
+			}
+			$parsedURL = parse_url($url);
+			if (!preg_match('/^https?/', $parsedURL['scheme']))	{
+				if (isset($report))	{
+					$report['error'] = -1;
+					$report['message'] = 'Sending request headers is not allowed for this protocol.';
+				}
+				return false;
+			}
+			$ctx = stream_context_create(array(
+						'http' => array(
+							'header' => implode("\r\n", $requestHeaders)
+						)
+					)
+				);
+			$content = @file_get_contents($url, false, $ctx);
+			if ($content === false && isset($report))	{
+					// TODO: Remove this once PHP 5.1 support is dropped completely
+				if (function_exists('error_get_last')) {
+					$phpError = error_get_last();
+					$report['error'] = $phpError['type'];
+					$report['message'] = $phpError['message'];
+				} else {
+					$report['error'] = -1;
+					$report['message'] = 'Couldn\'t get URL.';
+				}
+			}
+		} else	{
+			if (isset($report))	{
+				$report['lib'] = 'file';
+			}
+			$content = @file_get_contents($url);
+			if ($content === false && isset($report))	{
+				if (function_exists('error_get_last')) {
+					$phpError = error_get_last();
+					$report['error'] = $phpError['type'];
+					$report['message'] = $phpError['message'];
+				} else {
+					$report['error'] = -1;
+					$report['message'] = 'Couldn\'t get URL.';
+				}
+			}
+		}
+
+		return $content;
 	}
 
 	/**
@@ -2113,15 +2656,23 @@ class t3lib_div {
 	 * @param	string		Content to write
 	 * @return	boolean		True if the file was successfully opened and written to.
 	 */
-	function writeFile($file,$content)	{
-		if($fd = fopen($file,'wb'))	{
-			fwrite( $fd, $content);
-			fclose( $fd );
+	public static function writeFile($file,$content)	{
+		if (!@is_file($file))	$changePermissions = true;
 
-			t3lib_div::fixPermissions($file);	// Change the permissions of the file
+		if ($fd = fopen($file,'wb'))	{
+			$res = fwrite($fd,$content);
+			fclose($fd);
+
+			if ($res===false)	return false;
+
+			if ($changePermissions)	{	// Change the permissions only if the file has just been created
+				t3lib_div::fixPermissions($file);
+			}
 
 			return true;
 		}
+
+		return false;
 	}
 
 	/**
@@ -2130,7 +2681,7 @@ class t3lib_div {
 	 * @param	string		Filepath of newly created file
 	 * @return	void
 	 */
-	function fixPermissions($file)	{
+	public static function fixPermissions($file)	{
 		if (@is_file($file) && TYPO3_OS!='WIN')	{
 			@chmod($file, octdec($GLOBALS['TYPO3_CONF_VARS']['BE']['fileCreateMask']));		// "@" is there because file is not necessarily OWNED by the user
 			if($GLOBALS['TYPO3_CONF_VARS']['BE']['createGroup'])	{	// skip this if createGroup is empty
@@ -2140,14 +2691,14 @@ class t3lib_div {
 	}
 
 	/**
-	 * Writes $content to a filename in the typo3temp/ folder (and possibly a subfolder...)
+	 * Writes $content to a filename in the typo3temp/ folder (and possibly one or two subfolders...)
 	 * Accepts an additional subdirectory in the file path!
 	 *
 	 * @param	string		Absolute filepath to write to inside "typo3temp/". First part of this string must match PATH_site."typo3temp/"
 	 * @param	string		Content string to write
 	 * @return	string		Returns false on success, otherwise an error string telling about the problem.
 	 */
-	function writeFileToTypo3tempDir($filepath,$content)	{
+	public static function writeFileToTypo3tempDir($filepath,$content)	{
 
 			// Parse filepath into directory and basename:
 		$fI = pathinfo($filepath);
@@ -2163,12 +2714,12 @@ class t3lib_div {
 							// Checking if the "subdir" is found:
 						$subdir = substr($fI['dirname'],strlen($dirName));
 						if ($subdir)	{
-							if (ereg('^[[:alnum:]_]+\/$',$subdir))	{
+							if (ereg('^[[:alnum:]_]+\/$',$subdir) || ereg('^[[:alnum:]_]+\/[[:alnum:]_]+\/$',$subdir))	{
 								$dirName.= $subdir;
 								if (!@is_dir($dirName))	{
-									t3lib_div::mkdir($dirName);
+									t3lib_div::mkdir_deep(PATH_site.'typo3temp/', $subdir);
 								}
-							} else return 'Subdir, "'.$subdir.'", was NOT on the form "[a-z]/"';
+							} else return 'Subdir, "'.$subdir.'", was NOT on the form "[[:alnum:]_]/" or  "[[:alnum:]_]/[[:alnum:]_]/"';
 						}
 							// Checking dir-name again (sub-dir might have been created):
 						if (@is_dir($dirName))	{
@@ -2190,16 +2741,73 @@ class t3lib_div {
 	 * @param	string		Absolute path to folder, see PHP mkdir() function. Removes trailing slash internally.
 	 * @return	boolean		TRUE if @mkdir went well!
 	 */
-	function mkdir($theNewFolder)	{
-		$theNewFolder = ereg_replace('\/$','',$theNewFolder);
-		if (mkdir($theNewFolder, octdec($GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask']))){
+	public static function mkdir($theNewFolder)	{
+		$theNewFolder = preg_replace('|/$|','',$theNewFolder);
+		if (@mkdir($theNewFolder, octdec($GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask']))){
 			chmod($theNewFolder, octdec($GLOBALS['TYPO3_CONF_VARS']['BE']['folderCreateMask'])); //added this line, because the mode at 'mkdir' has a strange behaviour sometimes
 
 			if($GLOBALS['TYPO3_CONF_VARS']['BE']['createGroup'])	{	// skip this if createGroup is empty
-				chgrp($theNewFolder, $GLOBALS['TYPO3_CONF_VARS']['BE']['createGroup']);
+				@chgrp($theNewFolder, $GLOBALS['TYPO3_CONF_VARS']['BE']['createGroup']);
 			}
-			return TRUE;
+			return true;
+		} else {
+			return false;
 		}
+	}
+
+	/**
+	 * Creates a directory - including parent directories if necessary - in the file system
+	 *
+	 * @param	string		Base folder. This must exist! Must have trailing slash! Example "/root/typo3site/"
+	 * @param	string		Deep directory to create, eg. "xx/yy/" which creates "/root/typo3site/xx/yy/" if $destination is "/root/typo3site/"
+	 * @return	string		If error, returns error string.
+	 */
+	public static function mkdir_deep($destination,$deepDir)	{
+		$allParts = t3lib_div::trimExplode('/',$deepDir,1);
+		$root = '';
+		foreach($allParts as $part)	{
+			$root.= $part.'/';
+			if (!is_dir($destination.$root))	{
+				t3lib_div::mkdir($destination.$root);
+				if (!@is_dir($destination.$root))	{
+					return 'Error: The directory "'.$destination.$root.'" could not be created...';
+				}
+			}
+		}
+	}
+
+	/**
+	 * Wrapper function for rmdir, allowing recursive deletion of folders and files
+	 *
+	 * @param	string		Absolute path to folder, see PHP rmdir() function. Removes trailing slash internally.
+	 * @param	boolean		Allow deletion of non-empty directories
+	 * @return	boolean		true if @rmdir went well!
+	 */
+	public static function rmdir($path,$removeNonEmpty=false)	{
+		$OK = false;
+		$path = preg_replace('|/$|','',$path);	// Remove trailing slash
+
+		if (file_exists($path))	{
+			$OK = true;
+
+			if (is_dir($path))	{
+				if ($removeNonEmpty==true && $handle = opendir($path))	{
+					while ($OK && false !== ($file = readdir($handle)))	{
+						if ($file=='.' || $file=='..') continue;
+						$OK = t3lib_div::rmdir($path.'/'.$file,$removeNonEmpty);
+					}
+					closedir($handle);
+				}
+				if ($OK)	{ $OK = rmdir($path); }
+
+			} else {	// If $dirname is a file, simply remove it
+				$OK = unlink($path);
+			}
+
+			clearstatcache();
+		}
+
+		return $OK;
 	}
 
 	/**
@@ -2210,13 +2818,13 @@ class t3lib_div {
 	 * @param	string		Path to list directories from
 	 * @return	array		Returns an array with the directory entries as values. If no path, the return value is nothing.
 	 */
-	function get_dirs($path)	{
+	public static function get_dirs($path)	{
 		if ($path)	{
 			$d = @dir($path);
 			if (is_object($d))	{
 				while($entry=$d->read()) {
 					if (@is_dir($path.'/'.$entry) && $entry!= '..' && $entry!= '.')	{
-					    $filearray[]=$entry;
+						$filearray[]=$entry;
 					}
 				}
 				$d->close();
@@ -2233,9 +2841,10 @@ class t3lib_div {
 	 * @param	string		$extensionList is the comma list of extensions to read only (blank = all)
 	 * @param	boolean		If set, then the path is prepended the filenames. Otherwise only the filenames are returned in the array
 	 * @param	string		$order is sorting: 1= sort alphabetically, 'mtime' = sort by modification time.
+	 * @param	string		A comma seperated list of filenames to exclude, no wildcards
 	 * @return	array		Array of the files found
 	 */
-	function getFilesInDir($path,$extensionList='',$prependPath=0,$order='')	{
+	public static function getFilesInDir($path,$extensionList='',$prependPath=0,$order='',$excludePattern='')	{
 
 			// Initialize variabels:
 		$filearray = array();
@@ -2251,9 +2860,9 @@ class t3lib_div {
 					if (@is_file($path.'/'.$entry))	{
 						$fI = pathinfo($entry);
 						$key = md5($path.'/'.$entry);	// Don't change this ever - extensions may depend on the fact that the hash is an md5 of the path! (import/export extension)
-						if (!$extensionList || t3lib_div::inList($extensionList,strtolower($fI['extension'])))	{
-						    $filearray[$key]=($prependPath?$path.'/':'').$entry;
-							if ($order=='mtime') {$sortarray[$key]=filemtime($path.'/'.$entry);}
+						if ((!strlen($extensionList) || t3lib_div::inList($extensionList,strtolower($fI['extension']))) && (!strlen($excludePattern) || !preg_match('/^'.$excludePattern.'$/',$entry)))	{
+							$filearray[$key]=($prependPath?$path.'/':'').$entry;
+								if ($order=='mtime') {$sortarray[$key]=filemtime($path.'/'.$entry);}
 								elseif ($order)	{$sortarray[$key]=$entry;}
 						}
 					}
@@ -2265,9 +2874,8 @@ class t3lib_div {
 			// Sort them:
 		if ($order) {
 			asort($sortarray);
-			reset($sortarray);
 			$newArr=array();
-			while(list($k,$v)=each($sortarray))	{
+			foreach ($sortarray as $k => $v) {
 				$newArr[$k]=$filearray[$k];
 			}
 			$filearray=$newArr;
@@ -2287,17 +2895,18 @@ class t3lib_div {
 	 * @param	string		$extList: Comma list of file extensions: Only files with extensions in this list (if applicable) will be selected.
 	 * @param	boolean		$regDirs: If set, directories are also included in output.
 	 * @param	integer		$recursivityLevels: The number of levels to dig down...
+	 * @param string		$excludePattern: regex pattern of files/directories to exclude
 	 * @return	array		An array with the found files/directories.
 	 */
-	function getAllFilesAndFoldersInPath($fileArr,$path,$extList='',$regDirs=0,$recursivityLevels=99)	{
+	public static function getAllFilesAndFoldersInPath(array $fileArr,$path,$extList='',$regDirs=0,$recursivityLevels=99,$excludePattern='')	{
 		if ($regDirs)	$fileArr[] = $path;
-		$fileArr = array_merge($fileArr, t3lib_div::getFilesInDir($path,$extList,1,1));
+		$fileArr = array_merge($fileArr, t3lib_div::getFilesInDir($path,$extList,1,1,$excludePattern));
 
 		$dirs = t3lib_div::get_dirs($path);
 		if (is_array($dirs) && $recursivityLevels>0)	{
 			foreach ($dirs as $subdirs)	{
-				if ((string)$subdirs!='')	{
-					$fileArr = t3lib_div::getAllFilesAndFoldersInPath($fileArr,$path.$subdirs.'/',$extList,$regDirs,$recursivityLevels-1);
+				if ((string)$subdirs!='' && (!strlen($excludePattern) || !preg_match('/^'.$excludePattern.'$/',$subdirs)))	{
+					$fileArr = t3lib_div::getAllFilesAndFoldersInPath($fileArr,$path.$subdirs.'/',$extList,$regDirs,$recursivityLevels-1,$excludePattern);
 				}
 			}
 		}
@@ -2312,11 +2921,13 @@ class t3lib_div {
 	 * @param	string		$prefixToRemove: The prefix path to remove (if found as first part of string!)
 	 * @return	array		The input $fileArr processed.
 	 */
-	function removePrefixPathFromList($fileArr,$prefixToRemove)	{
-		foreach($fileArr as $k => $absFileRef)	{
-			if(t3lib_div::isFirstPartOfStr($absFileRef,$prefixToRemove))	{
-				$fileArr[$k] = substr($absFileRef,strlen($prefixToRemove));
-			} else return 'ERROR: One or more of the files was NOT prefixed with the prefix-path!';
+	public static function removePrefixPathFromList(array $fileArr,$prefixToRemove)	{
+		foreach ($fileArr as $k => &$absFileRef) {
+			if (t3lib_div::isFirstPartOfStr($absFileRef, $prefixToRemove)) {
+				$absFileRef = substr($absFileRef, strlen($prefixToRemove));
+			} else {
+				return 'ERROR: One or more of the files was NOT prefixed with the prefix-path!';
+			}
 		}
 		return $fileArr;
 	}
@@ -2328,7 +2939,7 @@ class t3lib_div {
 	 * @param	string		File path to process
 	 * @return	string
 	 */
-	function fixWindowsFilePath($theFile)	{
+	public static function fixWindowsFilePath($theFile)	{
 		return str_replace('//','/', str_replace('\\','/', $theFile));
 	}
 
@@ -2340,9 +2951,10 @@ class t3lib_div {
 	 * @param	string		File path in which "/../" is resolved
 	 * @return	string
 	 */
-	function resolveBackPath($pathStr)	{
+	public static function resolveBackPath($pathStr)	{
 		$parts = explode('/',$pathStr);
 		$output=array();
+		$c = 0;
 		foreach($parts as $pV)	{
 			if ($pV=='..')	{
 				if ($c)	{
@@ -2367,7 +2979,7 @@ class t3lib_div {
 	 * @param	string		URL / path to prepend full URL addressing to.
 	 * @return	string
 	 */
-	function locationHeaderUrl($path)	{
+	public static function locationHeaderUrl($path)	{
 		$uI = parse_url($path);
 		if (substr($path,0,1)=='/')	{ // relative to HOST
 			$path = t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST').$path;
@@ -2407,7 +3019,7 @@ class t3lib_div {
 	 * @return	string		The string with ASCII values in separated by a space char.
 	 * @internal
 	 */
-	function debug_ordvalue($string,$characters=100)	{
+	public static function debug_ordvalue($string,$characters=100)	{
 		if(strlen($string) < $characters)	$characters = strlen($string);
 		for ($i=0; $i<$characters; $i++)	{
 			$valuestring.=' '.ord(substr($string,$i,1));
@@ -2421,24 +3033,47 @@ class t3lib_div {
 	 * Returns false if $array_in is not an array
 	 * Usage: 31
 	 *
-	 * @param	array		Array to view
+	 * @param	mixed		Array to view
 	 * @return	string		HTML output
 	 */
-	function view_array($array_in)	{
+	public static function view_array($array_in)	{
 		if (is_array($array_in))	{
-			$result='<table border="1" cellpadding="1" cellspacing="0" bgcolor="white">';
-			if (!count($array_in))	{$result.= '<tr><td><font face="Verdana,Arial" size="1"><b>'.htmlspecialchars("EMPTY!").'</b></font></td></tr>';}
-			while (list($key,$val)=each($array_in))	{
-				$result.= '<tr><td><font face="Verdana,Arial" size="1">'.htmlspecialchars((string)$key).'</font></td><td>';
-				if (is_array($array_in[$key]))	{
-					$result.=t3lib_div::view_array($array_in[$key]);
-				} else
-					$result.= '<font face="Verdana,Arial" size="1" color="red">'.nl2br(htmlspecialchars((string)$val)).'<br /></font>';
-				$result.= '</td></tr>';
+			$result='
+			<table border="1" cellpadding="1" cellspacing="0" bgcolor="white">';
+			if (count($array_in) == 0)	{
+				$result.= '<tr><td><font face="Verdana,Arial" size="1"><b>EMPTY!</b></font></td></tr>';
+			} else	{
+				foreach ($array_in as $key => $val)	{
+					$result.= '<tr>
+						<td valign="top"><font face="Verdana,Arial" size="1">'.htmlspecialchars((string)$key).'</font></td>
+						<td>';
+					if (is_array($val))	{
+						$result.=t3lib_div::view_array($val);
+					} elseif (is_object($val))	{
+						$string = get_class($val);
+						if (method_exists($val, '__toString'))	{
+							$string .= ': '.(string)$val;
+						}
+						$result .= '<font face="Verdana,Arial" size="1" color="red">'.nl2br(htmlspecialchars($string)).'<br /></font>';
+					} else	{
+						if (gettype($val) == 'object')	{
+							$string = 'Unknown object';
+						} else	{
+							$string = (string)$val;
+						}
+						$result.= '<font face="Verdana,Arial" size="1" color="red">'.nl2br(htmlspecialchars($string)).'<br /></font>';
+					}
+					$result.= '</td>
+					</tr>';
+				}
 			}
 			$result.= '</table>';
 		} else	{
-			$result  = false;
+			$result  = '<table border="1" cellpadding="1" cellspacing="0" bgcolor="white">
+				<tr>
+					<td><font face="Verdana,Arial" size="1" color="red">'.nl2br(htmlspecialchars((string)$array_in)).'<br /></font></td>
+				</tr>
+			</table>';	// Output it as a string.
 		}
 		return $result;
 	}
@@ -2447,12 +3082,12 @@ class t3lib_div {
 	 * Prints an array
 	 * Usage: 6
 	 *
-	 * @param	array		Array to print visually (in a table).
+	 * @param	mixed		Array to print visually (in a table).
 	 * @return	void
 	 * @internal
 	 * @see view_array()
 	 */
-	function print_array($array_in)	{
+	public static function print_array($array_in)	{
 		echo t3lib_div::view_array($array_in);
 	}
 
@@ -2467,10 +3102,15 @@ class t3lib_div {
 	 * @param	mixed		If the parameter is a string it will be used as header. Otherwise number of break tags to apply after (positive integer) or before (negative integer) the output.
 	 * @return	void
 	 */
-	function debug($var="",$brOrHeader=0)	{
-		if ($brOrHeader && !t3lib_div::testInt($brOrHeader)) {
-			echo '<table border="0" cellpadding="0" cellspacing="0" bgcolor="white" style="border:0px; margin-top:3px; margin-bottom:3px;"><tr><td style="background-color:#bbbbbb; font-family: verdana,arial; font-weight: bold; font-size: 10px;">'.htmlspecialchars((string)$brOrHeader).'</td></tr><td>';
-		} elseif ($brOrHeader<0) {
+	public static function debug($var='',$brOrHeader=0)	{
+			// buffer the output of debug if no buffering started before
+		if (ob_get_level()==0) {
+			ob_start();
+		}
+
+		if ($brOrHeader && !t3lib_div::testInt($brOrHeader))	{
+			echo '<table class="typo3-debug" border="0" cellpadding="0" cellspacing="0" bgcolor="white" style="border:0px; margin-top:3px; margin-bottom:3px;"><tr><td style="background-color:#bbbbbb; font-family: verdana,arial; font-weight: bold; font-size: 10px;">'.htmlspecialchars((string)$brOrHeader).'</td></tr><tr><td>';
+		} elseif ($brOrHeader<0)	{
 			for($a=0;$a<abs(intval($brOrHeader));$a++){echo '<br />';}
 		}
 
@@ -2480,22 +3120,85 @@ class t3lib_div {
 			echo '<b>|Object:<pre>';
 			print_r($var);
 			echo '</pre>|</b>';
-		} elseif ((string)$var!='') {
+		} elseif ((string)$var!='')	{
 			echo '<b>|'.htmlspecialchars((string)$var).'|</b>';
 		} else {
 			echo '<b>| debug |</b>';
 		}
 
-		if ($brOrHeader && !t3lib_div::testInt($brOrHeader)) {
+		if ($brOrHeader && !t3lib_div::testInt($brOrHeader))	{
 			echo '</td></tr></table>';
-		} elseif ($brOrHeader>0) {
+		} elseif ($brOrHeader>0)	{
 			for($a=0;$a<intval($brOrHeader);$a++){echo '<br />';}
 		}
 	}
 
+	/**
+	 * Displays the "path" of the function call stack in a string, using debug_backtrace
+	 *
+	 * @return	string
+	 */
+	public static function debug_trail()	{
+		$trail = debug_backtrace();
+		$trail = array_reverse($trail);
+		array_pop($trail);
 
+		$path = array();
+		foreach($trail as $dat)	{
+			$path[] = $dat['class'].$dat['type'].$dat['function'].'#'.$dat['line'];
+		}
 
+		return implode(' // ',$path);
+	}
 
+	/**
+	 * Displays an array as rows in a table. Useful to debug output like an array of database records.
+	 *
+	 * @param	mixed		Array of arrays with similar keys
+	 * @param	string		Table header
+	 * @param	boolean		If TRUE, will return content instead of echo'ing out.
+	 * @return	void		Outputs to browser.
+	 */
+	public static function debugRows($rows,$header='',$returnHTML=FALSE)	{
+		if (is_array($rows))	{
+			reset($rows);
+			$firstEl = current($rows);
+			if (is_array($firstEl))	{
+				$headerColumns = array_keys($firstEl);
+				$tRows = array();
+
+					// Header:
+				$tRows[] = '<tr><td colspan="'.count($headerColumns).'" style="background-color:#bbbbbb; font-family: verdana,arial; font-weight: bold; font-size: 10px;"><strong>'.htmlspecialchars($header).'</strong></td></tr>';
+				$tCells = array();
+				foreach($headerColumns as $key)	{
+					$tCells[] = '
+							<td><font face="Verdana,Arial" size="1"><strong>'.htmlspecialchars($key).'</strong></font></td>';
+				}
+				$tRows[] = '
+						<tr>'.implode('',$tCells).'
+						</tr>';
+
+					// Rows:
+				foreach($rows as $singleRow)	{
+					$tCells = array();
+					foreach($headerColumns as $key)	{
+						$tCells[] = '
+							<td><font face="Verdana,Arial" size="1">'.(is_array($singleRow[$key]) ? t3lib_div::debugRows($singleRow[$key],'',TRUE) : htmlspecialchars($singleRow[$key])).'</font></td>';
+					}
+					$tRows[] = '
+						<tr>'.implode('',$tCells).'
+						</tr>';
+				}
+
+				$table = '
+					<table border="1" cellpadding="1" cellspacing="0" bgcolor="white">'.implode('',$tRows).'
+					</table>';
+				if ($returnHTML)	return $table; else echo $table;
+			} else debug('Empty array of rows',$header);
+		} else {
+			debug('No array of rows',$header);
+		}
+	}
 
 
 
@@ -2536,7 +3239,7 @@ class t3lib_div {
 	 *
 	 * @return	string
 	 */
-	function getThisUrl()	{
+	public static function getThisUrl()	{
 		$p=parse_url(t3lib_div::getIndpEnv('TYPO3_REQUEST_SCRIPT'));		// Url of this script
 		$dir=t3lib_div::dirname($p['path']).'/';	// Strip file
 		$url = str_replace('//','/',$p['host'].($p['port']?':'.$p['port']:'').$dir);
@@ -2552,7 +3255,7 @@ class t3lib_div {
 	 * @param	array		Array of GET parameters to include
 	 * @return	string
 	 */
-	function linkThisScript($getParams=array())	{
+	public static function linkThisScript(array $getParams=array())	{
 		$parts = t3lib_div::getIndpEnv('SCRIPT_NAME');
 		$params = t3lib_div::_GET();
 
@@ -2576,14 +3279,12 @@ class t3lib_div {
 	 * @param	array		Array of key/value pairs for get parameters to add/overrule with. Can be multidimensional.
 	 * @return	string		Output URL with added getParams.
 	 */
-	function linkThisUrl($url,$getParams=array())	{
+	public static function linkThisUrl($url,array $getParams=array())	{
 		$parts = parse_url($url);
+		$getP = array();
 		if ($parts['query'])	{
 			parse_str($parts['query'],$getP);
-		} else {
-			$getP = array();
 		}
-
 		$getP = t3lib_div::array_merge_recursive_overrule($getP,$getParams);
 		$uP = explode('?',$url);
 
@@ -2601,19 +3302,19 @@ class t3lib_div {
 	 * @param	string		Name of the "environment variable"/"server variable" you wish to use. Valid values are SCRIPT_NAME, SCRIPT_FILENAME, REQUEST_URI, PATH_INFO, REMOTE_ADDR, REMOTE_HOST, HTTP_REFERER, HTTP_HOST, HTTP_USER_AGENT, HTTP_ACCEPT_LANGUAGE, QUERY_STRING, TYPO3_DOCUMENT_ROOT, TYPO3_HOST_ONLY, TYPO3_HOST_ONLY, TYPO3_REQUEST_HOST, TYPO3_REQUEST_URL, TYPO3_REQUEST_SCRIPT, TYPO3_REQUEST_DIR, TYPO3_SITE_URL, _ARRAY
 	 * @return	string		Value based on the input key, independent of server/os environment.
 	 */
-	function getIndpEnv($getEnvName)	{
+	public static function getIndpEnv($getEnvName)	{
 		/*
 			Conventions:
 			output from parse_url():
 			URL:	http://username:password@192.168.1.4:8080/typo3/32/temp/phpcheck/index.php/arg1/arg2/arg3/?arg1,arg2,arg3&p1=parameter1&p2[key]=value#link1
-			    [scheme] => 'http'
-			    [user] => 'username'
-			    [pass] => 'password'
-			    [host] => '192.168.1.4'
+				[scheme] => 'http'
+				[user] => 'username'
+				[pass] => 'password'
+				[host] => '192.168.1.4'
 				[port] => '8080'
-			    [path] => '/typo3/32/temp/phpcheck/index.php/arg1/arg2/arg3/'
-			    [query] => 'arg1,arg2,arg3&p1=parameter1&p2[key]=value'
-			    [fragment] => 'link1'
+				[path] => '/typo3/32/temp/phpcheck/index.php/arg1/arg2/arg3/'
+				[query] => 'arg1,arg2,arg3&p1=parameter1&p2[key]=value'
+				[fragment] => 'link1'
 
 				Further definition: [path_script] = '/typo3/32/temp/phpcheck/index.php'
 									[path_dir] = '/typo3/32/temp/phpcheck/'
@@ -2642,15 +3343,17 @@ class t3lib_div {
 				SCRIPT_FILENAME	=	Absolute filename of script		(Differs between windows/unix). On windows 'C:\\blabla\\blabl\\' will be converted to 'C:/blabla/blabl/'
 
 			Special extras:
-				TYPO3_HOST_ONLY	=		[host]			= 192.168.1.4
-				TYPO3_PORT		=		[port]			= 8080 (blank if 80, taken from host value)
-				TYPO3_REQUEST_HOST = 	[scheme]://[host][:[port]]
-				TYPO3_REQUEST_URL =		[scheme]://[host][:[port]][path]?[query]	(sheme will by default be 'http' until we can detect if it's https -
-				TYPO3_REQUEST_SCRIPT =  [scheme]://[host][:[port]][path_script]
+				TYPO3_HOST_ONLY =		[host] = 192.168.1.4
+				TYPO3_PORT =			[port] = 8080 (blank if 80, taken from host value)
+				TYPO3_REQUEST_HOST = 		[scheme]://[host][:[port]]
+				TYPO3_REQUEST_URL =		[scheme]://[host][:[port]][path]?[query] (scheme will by default be "http" until we can detect something different)
+				TYPO3_REQUEST_SCRIPT =  	[scheme]://[host][:[port]][path_script]
 				TYPO3_REQUEST_DIR =		[scheme]://[host][:[port]][path_dir]
 				TYPO3_SITE_URL = 		[scheme]://[host][:[port]][path_dir] of the TYPO3 website frontend
-				TYPO3_SITE_SCRIPT = 	[script / Speaking URL] of the TYPO3 website
-				TYPO3_DOCUMENT_ROOT	=	Absolute path of root of documents:	TYPO3_DOCUMENT_ROOT.SCRIPT_NAME = SCRIPT_FILENAME (typically)
+				TYPO3_SITE_SCRIPT = 		[script / Speaking URL] of the TYPO3 website
+				TYPO3_DOCUMENT_ROOT =		Absolute path of root of documents: TYPO3_DOCUMENT_ROOT.SCRIPT_NAME = SCRIPT_FILENAME (typically)
+				TYPO3_SSL = 			Returns TRUE if this session uses SSL/TLS (https)
+				TYPO3_PROXY = 			Returns TRUE if this session runs over a well known proxy
 
 			Notice: [fragment] is apparently NEVER available to the script!
 
@@ -2663,38 +3366,112 @@ class t3lib_div {
 		*/
 
 #		if ($getEnvName=='HTTP_REFERER')	return '';
-		switch((string)$getEnvName)	{
+
+		$retVal = '';
+
+		switch ((string)$getEnvName)	{
 			case 'SCRIPT_NAME':
-				return (php_sapi_name()=='cgi'||php_sapi_name()=='cgi-fcgi')&&($_SERVER['ORIG_PATH_INFO']?$_SERVER['ORIG_PATH_INFO']:$_SERVER['PATH_INFO']) ? ($_SERVER['ORIG_PATH_INFO']?$_SERVER['ORIG_PATH_INFO']:$_SERVER['PATH_INFO']) : ($_SERVER['ORIG_SCRIPT_NAME']?$_SERVER['ORIG_SCRIPT_NAME']:$_SERVER['SCRIPT_NAME']);
+				$retVal = (php_sapi_name()=='cgi'||php_sapi_name()=='cgi-fcgi')&&($_SERVER['ORIG_PATH_INFO']?$_SERVER['ORIG_PATH_INFO']:$_SERVER['PATH_INFO']) ? ($_SERVER['ORIG_PATH_INFO']?$_SERVER['ORIG_PATH_INFO']:$_SERVER['PATH_INFO']) : ($_SERVER['ORIG_SCRIPT_NAME']?$_SERVER['ORIG_SCRIPT_NAME']:$_SERVER['SCRIPT_NAME']);
+					// add a prefix if TYPO3 is behind a proxy: ext-domain.com => int-server.com/prefix
+				if (t3lib_div::cmpIP($_SERVER['REMOTE_ADDR'], $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'])) {
+					if (t3lib_div::getIndpEnv('TYPO3_SSL') && $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyPrefixSSL']) {
+						$retVal = $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyPrefixSSL'].$retVal;
+					} elseif ($GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyPrefix']) {
+						$retVal = $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyPrefix'].$retVal;
+					}
+				}
 			break;
 			case 'SCRIPT_FILENAME':
-				return str_replace('//','/', str_replace('\\','/', (php_sapi_name()=='cgi'||php_sapi_name()=='isapi' ||php_sapi_name()=='cgi-fcgi')&&($_SERVER['ORIG_PATH_TRANSLATED']?$_SERVER['ORIG_PATH_TRANSLATED']:$_SERVER['PATH_TRANSLATED'])? ($_SERVER['ORIG_PATH_TRANSLATED']?$_SERVER['ORIG_PATH_TRANSLATED']:$_SERVER['PATH_TRANSLATED']):($_SERVER['ORIG_SCRIPT_FILENAME']?$_SERVER['ORIG_SCRIPT_FILENAME']:$_SERVER['SCRIPT_FILENAME'])));
+				$retVal = str_replace('//','/', str_replace('\\','/', (php_sapi_name()=='cgi'||php_sapi_name()=='isapi' ||php_sapi_name()=='cgi-fcgi')&&($_SERVER['ORIG_PATH_TRANSLATED']?$_SERVER['ORIG_PATH_TRANSLATED']:$_SERVER['PATH_TRANSLATED'])? ($_SERVER['ORIG_PATH_TRANSLATED']?$_SERVER['ORIG_PATH_TRANSLATED']:$_SERVER['PATH_TRANSLATED']):($_SERVER['ORIG_SCRIPT_FILENAME']?$_SERVER['ORIG_SCRIPT_FILENAME']:$_SERVER['SCRIPT_FILENAME'])));
 			break;
 			case 'REQUEST_URI':
 					// Typical application of REQUEST_URI is return urls, forms submitting to itself etc. Example: returnUrl='.rawurlencode(t3lib_div::getIndpEnv('REQUEST_URI'))
-				if (!$_SERVER['REQUEST_URI'])	{	// This is for ISS/CGI which does not have the REQUEST_URI available.
-					return '/'.ereg_replace('^/','',t3lib_div::getIndpEnv('SCRIPT_NAME')).
+				if ($GLOBALS['TYPO3_CONF_VARS']['SYS']['requestURIvar'])	{	// This is for URL rewriters that store the original URI in a server variable (eg ISAPI_Rewriter for IIS: HTTP_X_REWRITE_URL)
+					list($v,$n) = explode('|',$GLOBALS['TYPO3_CONF_VARS']['SYS']['requestURIvar']);
+					$retVal = $GLOBALS[$v][$n];
+				} elseif (!$_SERVER['REQUEST_URI'])	{	// This is for ISS/CGI which does not have the REQUEST_URI available.
+					$retVal = '/'.ereg_replace('^/','',t3lib_div::getIndpEnv('SCRIPT_NAME')).
 						($_SERVER['QUERY_STRING']?'?'.$_SERVER['QUERY_STRING']:'');
-				} else return $_SERVER['REQUEST_URI'];
+				} else {
+					$retVal = $_SERVER['REQUEST_URI'];
+				}
+					// add a prefix if TYPO3 is behind a proxy: ext-domain.com => int-server.com/prefix
+				if (t3lib_div::cmpIP($_SERVER['REMOTE_ADDR'], $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'])) {
+					if (t3lib_div::getIndpEnv('TYPO3_SSL') && $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyPrefixSSL']) {
+						$retVal = $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyPrefixSSL'].$retVal;
+					} elseif ($GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyPrefix']) {
+						$retVal = $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyPrefix'].$retVal;
+					}
+				}
 			break;
 			case 'PATH_INFO':
 					// $_SERVER['PATH_INFO']!=$_SERVER['SCRIPT_NAME'] is necessary because some servers (Windows/CGI) are seen to set PATH_INFO equal to script_name
 					// Further, there must be at least one '/' in the path - else the PATH_INFO value does not make sense.
 					// IF 'PATH_INFO' never works for our purpose in TYPO3 with CGI-servers, then 'php_sapi_name()=='cgi'' might be a better check. Right now strcmp($_SERVER['PATH_INFO'],t3lib_div::getIndpEnv('SCRIPT_NAME')) will always return false for CGI-versions, but that is only as long as SCRIPT_NAME is set equal to PATH_INFO because of php_sapi_name()=='cgi' (see above)
 //				if (strcmp($_SERVER['PATH_INFO'],t3lib_div::getIndpEnv('SCRIPT_NAME')) && count(explode('/',$_SERVER['PATH_INFO']))>1)	{
-				if (php_sapi_name()!='cgi'&&php_sapi_name()!='cgi-fcgi')	{
-					return $_SERVER['PATH_INFO'];
-				} else return '';
+				if (php_sapi_name()!='cgi' && php_sapi_name()!='cgi-fcgi')	{
+					$retVal = $_SERVER['PATH_INFO'];
+				}
+			break;
+			case 'TYPO3_REV_PROXY':
+				$retVal = t3lib_div::cmpIP($_SERVER['REMOTE_ADDR'], $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP']);
+			break;
+			case 'REMOTE_ADDR':
+				$retVal = $_SERVER['REMOTE_ADDR'];
+				if (t3lib_div::cmpIP($_SERVER['REMOTE_ADDR'], $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'])) {
+					$ip = t3lib_div::trimExplode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+						// choose which IP in list to use
+					if (count($ip)) {
+						switch ($GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyHeaderMultiValue']) {
+							case 'last':
+								$ip = array_pop($ip);
+							break;
+							case 'first':
+								$ip = array_shift($ip);
+							break;
+							case 'none':
+							default:
+								$ip = '';
+							break;
+						}
+					}
+					if (t3lib_div::validIP($ip)) {
+						$retVal = $ip;
+					}
+				}
+			break;
+			case 'HTTP_HOST':
+				$retVal = $_SERVER['HTTP_HOST'];
+				if (t3lib_div::cmpIP($_SERVER['REMOTE_ADDR'], $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'])) {
+					$host = t3lib_div::trimExplode(',', $_SERVER['HTTP_X_FORWARDED_HOST']);
+						// choose which host in list to use
+					if (count($host)) {
+						switch ($GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyHeaderMultiValue']) {
+							case 'last':
+								$host = array_pop($host);
+							break;
+							case 'first':
+								$host = array_shift($host);
+							break;
+							case 'none':
+							default:
+								$host = '';
+							break;
+						}
+					}
+					if ($host)	{
+						$retVal = $host;
+					}
+				}
 			break;
 				// These are let through without modification
-			case 'REMOTE_ADDR':
-			case 'REMOTE_HOST':
 			case 'HTTP_REFERER':
-			case 'HTTP_HOST':
 			case 'HTTP_USER_AGENT':
+			case 'HTTP_ACCEPT_ENCODING':
 			case 'HTTP_ACCEPT_LANGUAGE':
+			case 'REMOTE_HOST':
 			case 'QUERY_STRING':
-				return $_SERVER[$getEnvName];
+				$retVal = $_SERVER[$getEnvName];
 			break;
 			case 'TYPO3_DOCUMENT_ROOT':
 				// Some CGI-versions (LA13CGI) and mod-rewrite rules on MODULE versions will deliver a 'wrong' DOCUMENT_ROOT (according to our description). Further various aliases/mod_rewrite rules can disturb this as well.
@@ -2703,35 +3480,35 @@ class t3lib_div {
 				$SN_A = explode('/',strrev(t3lib_div::getIndpEnv('SCRIPT_NAME')));
 				$SFN_A = explode('/',strrev($SFN));
 				$acc = array();
-				while(list($kk,$vv)=each($SN_A))	{
+				foreach ($SN_A as $kk => $vv) {
 					if (!strcmp($SFN_A[$kk],$vv))	{
 						$acc[] = $vv;
 					} else break;
 				}
 				$commonEnd=strrev(implode('/',$acc));
 				if (strcmp($commonEnd,''))	{ $DR = substr($SFN,0,-(strlen($commonEnd)+1)); }
-				return $DR;
+				$retVal = $DR;
 			break;
 			case 'TYPO3_HOST_ONLY':
-				$p = explode(':',$_SERVER['HTTP_HOST']);
-				return $p[0];
+				$p = explode(':',t3lib_div::getIndpEnv('HTTP_HOST'));
+				$retVal = $p[0];
 			break;
 			case 'TYPO3_PORT':
-				$p = explode(':',$_SERVER['HTTP_HOST']);
-				return $p[1];
+				$p = explode(':',t3lib_div::getIndpEnv('HTTP_HOST'));
+				$retVal = $p[1];
 			break;
 			case 'TYPO3_REQUEST_HOST':
-				return (t3lib_div::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://').
-					$_SERVER['HTTP_HOST'];
+				$retVal = (t3lib_div::getIndpEnv('TYPO3_SSL') ? 'https://' : 'http://').
+					t3lib_div::getIndpEnv('HTTP_HOST');
 			break;
 			case 'TYPO3_REQUEST_URL':
-				return t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST').t3lib_div::getIndpEnv('REQUEST_URI');
+				$retVal = t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST').t3lib_div::getIndpEnv('REQUEST_URI');
 			break;
 			case 'TYPO3_REQUEST_SCRIPT':
-				return t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST').t3lib_div::getIndpEnv('SCRIPT_NAME');
+				$retVal = t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST').t3lib_div::getIndpEnv('SCRIPT_NAME');
 			break;
 			case 'TYPO3_REQUEST_DIR':
-				return t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST').t3lib_div::dirname(t3lib_div::getIndpEnv('SCRIPT_NAME')).'/';
+				$retVal = t3lib_div::getIndpEnv('TYPO3_REQUEST_HOST').t3lib_div::dirname(t3lib_div::getIndpEnv('SCRIPT_NAME')).'/';
 			break;
 			case 'TYPO3_SITE_URL':
 				if (defined('PATH_thisScript') && defined('PATH_site'))	{
@@ -2739,14 +3516,22 @@ class t3lib_div {
 					$url = t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR');
 					$siteUrl = substr($url,0,-strlen($lPath));
 					if (substr($siteUrl,-1)!='/')	$siteUrl.='/';
-					return $siteUrl;
-				} else return '';
+					$retVal = $siteUrl;
+				}
 			break;
 			case 'TYPO3_SITE_SCRIPT':
-				return substr(t3lib_div::getIndpEnv('TYPO3_REQUEST_URL'),strlen(t3lib_div::getIndpEnv('TYPO3_SITE_URL')));
+				$retVal = substr(t3lib_div::getIndpEnv('TYPO3_REQUEST_URL'),strlen(t3lib_div::getIndpEnv('TYPO3_SITE_URL')));
 			break;
 			case 'TYPO3_SSL':
-				return $_SERVER['SSL_SESSION_ID'] || !strcmp($_SERVER['HTTPS'],'on') ? TRUE : FALSE;
+				$proxySSL = trim($GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxySSL']);
+				if ($proxySSL == '*') {
+					$proxySSL = $GLOBALS['TYPO3_CONF_VARS']['SYS']['reverseProxyIP'];
+				}
+				if (t3lib_div::cmpIP($_SERVER['REMOTE_ADDR'], $proxySSL))	{
+					$retVal = true;
+				} else {
+					$retVal = $_SERVER['SSL_SESSION_ID'] || !strcmp($_SERVER['HTTPS'],'on') || !strcmp($_SERVER['HTTPS'],'1') ? true : false;	// see http://bugs.typo3.org/view.php?id=3909
+				}
 			break;
 			case '_ARRAY':
 				$out = array();
@@ -2766,6 +3551,7 @@ class t3lib_div {
 					TYPO3_SITE_URL,
 					TYPO3_SITE_SCRIPT,
 					TYPO3_SSL,
+					TYPO3_REV_PROXY,
 					SCRIPT_NAME,
 					TYPO3_DOCUMENT_ROOT,
 					SCRIPT_FILENAME,
@@ -2773,14 +3559,14 @@ class t3lib_div {
 					REMOTE_HOST,
 					HTTP_USER_AGENT,
 					HTTP_ACCEPT_LANGUAGE',1);
-				reset($envTestVars);
-				while(list(,$v)=each($envTestVars))	{
+				foreach ($envTestVars as $v) {
 					$out[$v]=t3lib_div::getIndpEnv($v);
 				}
 				reset($out);
-				return $out;
+				$retVal = $out;
 			break;
 		}
+		return $retVal;
 	}
 
 	/**
@@ -2790,7 +3576,7 @@ class t3lib_div {
 	 *
 	 * @return	integer
 	 */
-	function milliseconds()	{
+	public static function milliseconds()	{
 		$p=explode(' ',microtime());
 		return round(($p[0]+$p[1])*1000);
 	}
@@ -2802,18 +3588,18 @@ class t3lib_div {
 	 * @param	string		Alternative User Agent string (if empty, t3lib_div::getIndpEnv('HTTP_USER_AGENT') is used)
 	 * @return	array		Parsed information about the HTTP_USER_AGENT in categories BROWSER, VERSION, SYSTEM and FORMSTYLE
 	 */
-	function clientInfo($useragent='')	{
+	public static function clientInfo($useragent='')	{
 		if (!$useragent) $useragent=t3lib_div::getIndpEnv('HTTP_USER_AGENT');
 
 		$bInfo=array();
 			// Which browser?
-		if (strstr($useragent,'Konqueror'))	{
+		if (strpos($useragent,'Konqueror') !== false)	{
 			$bInfo['BROWSER']= 'konqu';
-		} elseif (strstr($useragent,'Opera'))	{
+		} elseif (strpos($useragent,'Opera') !== false)	{
 			$bInfo['BROWSER']= 'opera';
-		} elseif (strstr($useragent,'MSIE 4') || strstr($useragent,'MSIE 5') || strstr($useragent,'MSIE 6'))	{
+		} elseif (preg_match('/MSIE [4567]/', $useragent))	{
 			$bInfo['BROWSER']= 'msie';
-		} elseif (strstr($useragent,'Mozilla/4') || strstr($useragent,'Mozilla/5'))	{
+		} elseif (strpos($useragent,'Mozilla/4') !== false || strpos($useragent,'Mozilla/5') !== false)	{
 			$bInfo['BROWSER']='net';
 		}
 		if ($bInfo['BROWSER'])	{
@@ -2821,8 +3607,9 @@ class t3lib_div {
 			switch($bInfo['BROWSER'])	{
 				case 'net':
 					$bInfo['VERSION']= doubleval(substr($useragent,8));
-					if (strstr($useragent,'Netscape6/')) {$bInfo['VERSION']=doubleval(substr(strstr($useragent,'Netscape6/'),10));}
-					if (strstr($useragent,'Netscape/7')) {$bInfo['VERSION']=doubleval(substr(strstr($useragent,'Netscape/7'),9));}
+					if (strpos($useragent,'Netscape6/') !== false) { $bInfo['VERSION'] = doubleval(substr(strstr($useragent,'Netscape6/'),10)); }	// Will we ever know if this was a typo or intention...?! :-(
+					if (strpos($useragent,'Netscape/6') !== false) { $bInfo['VERSION'] = doubleval(substr(strstr($useragent,'Netscape/6'),10)); }
+					if (strpos($useragent,'Netscape/7') !== false) { $bInfo['VERSION'] = doubleval(substr(strstr($useragent,'Netscape/7'),9)); }
 				break;
 				case 'msie':
 					$tmp = strstr($useragent,'MSIE');
@@ -2838,20 +3625,51 @@ class t3lib_div {
 				break;
 			}
 				// Client system
-			if (strstr($useragent,'Win'))	{
+			if (strpos($useragent,'Win') !== false)	{
 				$bInfo['SYSTEM'] = 'win';
-			} elseif (strstr($useragent,'Mac'))	{
+			} elseif (strpos($useragent,'Mac') !== false)	{
 				$bInfo['SYSTEM'] = 'mac';
-			} elseif (strstr($useragent,'Linux') || strstr($useragent,'X11') || strstr($useragent,'SGI') || strstr($useragent,' SunOS ') || strstr($useragent,' HP-UX '))	{
+			} elseif (strpos($useragent,'Linux') !== false || strpos($useragent,'X11') !== false || strpos($useragent,'SGI') !== false || strpos($useragent,' SunOS ') !== false || strpos($useragent,' HP-UX ') !== false)	{
 				$bInfo['SYSTEM'] = 'unix';
 			}
 		}
 			// Is true if the browser supports css to format forms, especially the width
-		$bInfo['FORMSTYLE']=($bInfo['BROWSER']=='msie' || ($bInfo['BROWSER']=='net'&&$bInfo['VERSION']>=5) || $bInfo['BROWSER']=='opera' || $bInfo['BROWSER']=='konqu');
+		$bInfo['FORMSTYLE']=($bInfo['BROWSER']=='msie' || ($bInfo['BROWSER']=='net' && $bInfo['VERSION']>=5) || $bInfo['BROWSER']=='opera' || $bInfo['BROWSER']=='konqu');
 
 		return $bInfo;
 	}
 
+	/**
+	 * Get the fully-qualified domain name of the host.
+	 * Usage: 2
+	 *
+	 * @param	boolean		Use request host (when not in CLI mode).
+	 * @return	string		The fully-qualified host name.
+	 */
+	public static function getHostname($requestHost=TRUE)	{
+		$host = '';
+		if ($requestHost && (!defined('TYPO3_cliMode') || !TYPO3_cliMode))	{
+			$host = t3lib_div::getIndpEnv('HTTP_HOST');
+		}
+		if (!$host)	{
+				// will fail for PHP 4.1 and 4.2
+			$host = @php_uname('n');
+				// 'n' is ignored in broken installations
+			if (strpos($host, ' '))	$host = '';
+		}
+			// we have not found a FQDN yet
+		if ($host && strpos('.',$host) === FALSE)	{
+			$ip = gethostbyname($host);
+				// we got an IP address
+			if ($ip != $host)	{
+				$fqdn = gethostbyaddr($ip);
+				if ($ip != $fqdn)	$host = $fqdn;
+			}
+		}
+		if (!$host)	$host = 'localhost.localdomain';
+
+		return $host;
+	}
 
 
 
@@ -2889,7 +3707,7 @@ class t3lib_div {
 	 * @param	boolean		If $relToTYPO3_mainDir is set, then relative paths are relative to PATH_typo3 constant - otherwise (default) they are relative to PATH_site
 	 * @return	string		Returns the absolute filename of $filename IF valid, otherwise blank string.
 	 */
-	function getFileAbsFileName($filename,$onlyRelative=1,$relToTYPO3_mainDir=0)	{
+	public static function getFileAbsFileName($filename,$onlyRelative=TRUE,$relToTYPO3_mainDir=FALSE)	{
 		if (!strcmp($filename,''))		return '';
 
 		if ($relToTYPO3_mainDir)	{
@@ -2922,11 +3740,13 @@ class t3lib_div {
 	 * Usage: 14
 	 *
 	 * @param	string		Filepath to evaluate
-	 * @return	boolean		True, if no '//', '..' or '\' is in the $theFile
+	 * @return	boolean		True, if no '//', '\', '/../' is in the $theFile and $theFile doesn't begin with '../'
 	 * @todo	Possible improvement: Should it rawurldecode the string first to check if any of these characters is encoded ?
 	 */
-	function validPathStr($theFile)	{
-		if (!strstr($theFile,'//') && !strstr($theFile,'..') && !strstr($theFile,'\\'))	return true;
+	public static function validPathStr($theFile)	{
+		if (strpos($theFile, '//')===false && strpos($theFile, '\\')===false && !preg_match('#(?:^\.\.|/\.\./)#', $theFile)) {
+			return true;
+		}
 	}
 
 	/**
@@ -2936,7 +3756,7 @@ class t3lib_div {
 	 * @param	string		Filepath to evaluate
 	 * @return	boolean
 	 */
-	function isAbsPath($path)	{
+	public static function isAbsPath($path)	{
 		return TYPO3_OS=='WIN' ? substr($path,1,2)==':/' :  substr($path,0,1)=='/';
 	}
 
@@ -2947,7 +3767,7 @@ class t3lib_div {
 	 * @param	string		Filepath to evaluate
 	 * @return	boolean
 	 */
-	function isAllowedAbsPath($path)	{
+	public static function isAllowedAbsPath($path)	{
 		if (t3lib_div::isAbsPath($path) &&
 			t3lib_div::validPathStr($path) &&
 				(	t3lib_div::isFirstPartOfStr($path,PATH_site)
@@ -2964,7 +3784,7 @@ class t3lib_div {
 	 * @param	string		Filepath to evaluate
 	 * @return	boolean
 	 */
-	function verifyFilenameAgainstDenyPattern($filename)	{
+	public static function verifyFilenameAgainstDenyPattern($filename)	{
 		if (strcmp($filename,'') && strcmp($GLOBALS['TYPO3_CONF_VARS']['BE']['fileDenyPattern'],''))	{
 			$result = eregi($GLOBALS['TYPO3_CONF_VARS']['BE']['fileDenyPattern'],$filename);
 			if ($result)	return false;	// so if a matching filename is found, return false;
@@ -2982,7 +3802,7 @@ class t3lib_div {
 	 * @coauthor	Dennis Petersen <fessor@software.dk>
 	 * @see upload_to_tempfile()
 	 */
-	function upload_copy_move($source,$destination)	{
+	public static function upload_copy_move($source,$destination)	{
 		if (is_uploaded_file($source))	{
 			$uploaded = TRUE;
 			// Return the value of move_uploaded_file, and if false the temporary $source is still around so the user can use unlink to delete it:
@@ -3008,7 +3828,7 @@ class t3lib_div {
 	 * @return	string		If a new file was successfully created, return its filename, otherwise blank string.
 	 * @see unlink_tempfile(), upload_copy_move()
 	 */
-	function upload_to_tempfile($uploadedFileName)	{
+	public static function upload_to_tempfile($uploadedFileName)	{
 		if (is_uploaded_file($uploadedFileName))	{
 			$tempFile = t3lib_div::tempnam('upload_temp_');
 			move_uploaded_file($uploadedFileName, $tempFile);
@@ -3026,7 +3846,7 @@ class t3lib_div {
 	 * @return	boolean		Returns true if the file was unlink()'ed
 	 * @see upload_to_tempfile(), tempnam()
 	 */
-	function unlink_tempfile($uploadedTempFileName)	{
+	public static function unlink_tempfile($uploadedTempFileName)	{
 		if ($uploadedTempFileName && t3lib_div::validPathStr($uploadedTempFileName) && t3lib_div::isFirstPartOfStr($uploadedTempFileName,PATH_site.'typo3temp/') && @is_file($uploadedTempFileName))	{
 			if (unlink($uploadedTempFileName))	return TRUE;
 		}
@@ -3042,30 +3862,31 @@ class t3lib_div {
 	 * @return	string		result from PHP function tempnam() with PATH_site.'typo3temp/' set for temp path.
 	 * @see unlink_tempfile(), upload_to_tempfile()
 	 */
-	function tempnam($filePrefix)	{
+	public static function tempnam($filePrefix)	{
 		return tempnam(PATH_site.'typo3temp/',$filePrefix);
 	}
 
 	/**
-	 * standard authentication code - can't remember what it's used for.
+	 * Standard authentication code (used in Direct Mail, checkJumpUrl and setfixed links computations)
 	 * Usage: 2
 	 *
 	 * @param	mixed		Uid (integer) or record (array)
 	 * @param	string		List of fields from the record if that is given.
+	 * @param	integer		Length of returned authentication code.
 	 * @return	string		MD5 hash of 8 chars.
 	 * @internal
 	 */
-	function stdAuthCode($uid_or_record,$fields='')	{
+	public static function stdAuthCode($uid_or_record,$fields='',$codeLength=8)	{
+
 		if (is_array($uid_or_record))	{
 			$recCopy_temp=array();
 			if ($fields)	{
 				$fieldArr = t3lib_div::trimExplode(',',$fields,1);
-				reset($fieldArr);
-				while(list($k,$v)=each($fieldArr))	{
-					$recCopy_temp[$k]=$recCopy[$v];
+				foreach ($fieldArr as $k => $v) {
+					$recCopy_temp[$k]=$uid_or_record[$v];
 				}
 			} else {
-				$recCopy_temp=$recCopy;
+				$recCopy_temp=$uid_or_record;
 			}
 			$preKey = implode('|',$recCopy_temp);
 		} else {
@@ -3073,7 +3894,7 @@ class t3lib_div {
 		}
 
 		$authCode = $preKey.'||'.$GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'];
-		$authCode = substr(md5($authCode),0,8);
+		$authCode = substr(md5($authCode),0,$codeLength);
 		return $authCode;
 	}
 
@@ -3082,20 +3903,36 @@ class t3lib_div {
 	 * Used to create the cHash value
 	 *
 	 * @param	string		Query-parameters: "&xxx=yyy&zzz=uuu"
-	 * @return	array		Array with key/value pairs of query-parameters WITHOUT a certain list of variable names (like id, type, no_cache etc) and WITH a variable, encryptionKey, specific for this server/installation
+	 * @return	array		Array with key/value pairs of query-parameters WITHOUT a certain list of variable names (like id, type, no_cache etc.) and WITH a variable, encryptionKey, specific for this server/installation
 	 * @see tslib_fe::makeCacheHash(), tslib_cObj::typoLink()
 	 */
-	function cHashParams($addQueryParams) {
+	public static function cHashParams($addQueryParams) {
 		$params = explode('&',substr($addQueryParams,1));	// Splitting parameters up
 
 			// Make array:
 		$pA = array();
 		foreach($params as $theP)	{
 			$pKV = explode('=', $theP);	// Splitting single param by '=' sign
-			if (!t3lib_div::inList('id,type,no_cache,cHash,MP,ftu',$pKV[0]))	{
-				$pA[$pKV[0]] = (string)rawurldecode($pKV[1]);
+			if (!t3lib_div::inList('id,type,no_cache,cHash,MP,ftu',$pKV[0]) && !preg_match('/TSFE_ADMIN_PANEL\[.*?\]/',$pKV[0]))	{
+				$pA[rawurldecode($pKV[0])] = (string)rawurldecode($pKV[1]);
 			}
 		}
+			// Hook: Allows to manipulate the parameters which are taken to build the chash:
+		if (isset($GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_div.php']['cHashParamsHook']))	{
+			$cHashParamsHook =& $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_div.php']['cHashParamsHook'];
+			if (is_array($cHashParamsHook)) {
+				$hookParameters = array(
+					'addQueryParams' => &$addQueryParams,
+					'params' => &$params,
+					'pA' => &$pA,
+				);
+				$hookReference = null;
+				foreach ($cHashParamsHook as $hookFunction)	{
+					t3lib_div::callUserFunction($hookFunction, $hookParameters, $hookReference);
+				}
+			}
+		}
+			// Finish and sort parameters array by keys:
 		$pA['encryptionKey'] = $GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'];
 		ksort($pA);
 
@@ -3108,7 +3945,7 @@ class t3lib_div {
 	 * @param	integer		Value from "l18n_cfg" field of a page record
 	 * @return	boolean		True if the page should be hidden
 	 */
-	function hideIfNotTranslated($l18n_cfg_fieldValue)	{
+	public static function hideIfNotTranslated($l18n_cfg_fieldValue)	{
 		if ($GLOBALS['TYPO3_CONF_VARS']['FE']['hidePagesIfNotTranslatedByDefault'])	{
 			return $l18n_cfg_fieldValue&2 ? FALSE : TRUE;
 		} else {
@@ -3119,23 +3956,107 @@ class t3lib_div {
 	/**
 	 * Includes a locallang file and returns the $LOCAL_LANG array found inside.
 	 *
-	 * @param	string		Input is a file-reference (see t3lib_div::getFileAbsFileName) which, if exists, is included. That file is expected to be a 'local_lang' file containing a $LOCAL_LANG array.
+	 * @param	string		Input is a file-reference (see t3lib_div::getFileAbsFileName). That file is expected to be a 'locallang.php' file containing a $LOCAL_LANG array (will be included!) or a 'locallang.xml' file conataining a valid XML TYPO3 language structure.
 	 * @param	string		Language key
+	 * @param	string		Character set (option); if not set, determined by the language key
 	 * @return	array		Value of $LOCAL_LANG found in the included file. If that array is found it's returned. Otherwise an empty array
 	 */
-	function readLLfile($fileRef,$langKey)	{
+	public static function readLLfile($fileRef, $langKey, $charset='')	{
+
 		$file = t3lib_div::getFileAbsFileName($fileRef);
 		if ($file)	{
-			$baseFile = ereg_replace('\.(php|xml)$', '', $file);
+			$baseFile = preg_replace('/\.(php|xml)$/', '', $file);
 
-			if (@is_file($baseFile.'.xml'))	{
-				$LOCAL_LANG = t3lib_div::readLLXMLfile($baseFile.'.xml', $langKey);
-			} elseif (@is_file($baseFile.'.php'))	{
-				include($baseFile.'.php');
-			} else die('Filereference, "'.$file.'", not found!');
+			if (@is_file($baseFile.'.xml')) {
+				$LOCAL_LANG = t3lib_div::readLLXMLfile($baseFile.'.xml', $langKey, $charset);
+			} elseif (@is_file($baseFile.'.php'))   {
+				if ($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] || $charset)  {
+					$LOCAL_LANG = t3lib_div::readLLPHPfile($baseFile.'.php', $langKey, $charset);
+				} else {
+					include($baseFile.'.php');
+					if (is_array($LOCAL_LANG))      {
+						$LOCAL_LANG = array('default'=>$LOCAL_LANG['default'], $langKey=>$LOCAL_LANG[$langKey]); }
+				}
+			} else {
+				die('File "'.$file.'" not found!');
+			}
 		}
 
-		return is_array($LOCAL_LANG)?$LOCAL_LANG:array();
+		return is_array($LOCAL_LANG) ? $LOCAL_LANG : array();
+	}
+
+	/**
+	 * Includes a locallang-php file and returns the $LOCAL_LANG array
+	 * Works only when the frontend or backend has been initialized with a charset conversion object. See first code lines.
+	 *
+	 * @param	string		Absolute reference to locallang-PHP file
+	 * @param	string		TYPO3 language key, eg. "dk" or "de" or "default"
+	 * @param	string		Character set (optional)
+	 * @return	array		LOCAL_LANG array in return.
+	 */
+	function readLLPHPfile($fileRef, $langKey, $charset='')	{
+
+		if (is_object($GLOBALS['LANG']))	{
+			$csConvObj = &$GLOBALS['LANG']->csConvObj;
+		} elseif (is_object($GLOBALS['TSFE']))	{
+			$csConvObj = &$GLOBALS['TSFE']->csConvObj;
+		} else {
+			$csConvObj = t3lib_div::makeInstance('t3lib_cs');
+		}
+
+		if (@is_file($fileRef) && $langKey)	{
+
+				// Set charsets:
+			$sourceCharset = $csConvObj->parse_charset($csConvObj->charSetArray[$langKey] ? $csConvObj->charSetArray[$langKey] : 'iso-8859-1');
+			if ($charset)	{
+				$targetCharset = $csConvObj->parse_charset($charset);
+			} elseif ($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'])  {
+					// when forceCharset is set, we store ALL labels in this charset!!!
+				$targetCharset = $csConvObj->parse_charset($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset']);
+			} else {
+				$targetCharset = $csConvObj->parse_charset($csConvObj->charSetArray[$langKey] ? $csConvObj->charSetArray[$langKey] : 'iso-8859-1');
+			}
+
+				// Cache file name:
+			$hashSource = substr($fileRef,strlen(PATH_site)).'|'.date('d-m-Y H:i:s',filemtime($fileRef)).'|version=2.3';
+			$cacheFileName = PATH_site.'typo3temp/llxml/'.
+							substr(basename($fileRef),10,15).
+							'_'.t3lib_div::shortMD5($hashSource).'.'.$langKey.'.'.$targetCharset.'.cache';
+				// Check if cache file exists...
+			if (!@is_file($cacheFileName))	{	// ... if it doesn't, create content and write it:
+
+					// Get PHP data
+				include($fileRef);
+				if (!is_array($LOCAL_LANG))	{
+					die('\''.$fileRef.'\' is no TYPO3 language file)!');
+				}
+
+					// converting the default language (English)
+					// this needs to be done for a few accented loan words and extension names
+				if (is_array($LOCAL_LANG['default']) && $targetCharset != 'iso-8859-1') {
+					foreach ($LOCAL_LANG['default'] as &$labelValue)	{
+						$labelValue = $csConvObj->conv($labelValue, 'iso-8859-1', $targetCharset);
+					}
+				}
+
+				if ($langKey!='default' && is_array($LOCAL_LANG[$langKey]) && $sourceCharset!=$targetCharset)	{
+					foreach ($LOCAL_LANG[$langKey] as &$labelValue)	{
+						$labelValue = $csConvObj->conv($labelValue, $sourceCharset, $targetCharset);
+					}
+				}
+
+					// Cache the content now:
+				$serContent = array('origFile'=>$hashSource, 'LOCAL_LANG'=>array('default'=>$LOCAL_LANG['default'], $langKey=>$LOCAL_LANG[$langKey]));
+				$res = t3lib_div::writeFileToTypo3tempDir($cacheFileName, serialize($serContent));
+				if ($res)	die('ERROR: '.$res);
+			} else {
+					// Get content from cache:
+				$serContent = unserialize(t3lib_div::getUrl($cacheFileName));
+				$LOCAL_LANG = $serContent['LOCAL_LANG'];
+			}
+
+			return $LOCAL_LANG;
+		}
 	}
 
 	/**
@@ -3144,28 +4065,37 @@ class t3lib_div {
 	 *
 	 * @param	string		Absolute reference to locallang-XML file
 	 * @param	string		TYPO3 language key, eg. "dk" or "de" or "default"
+	 * @param	string		Character set (optional)
 	 * @return	array		LOCAL_LANG array in return.
 	 */
-	function readLLXMLfile($fileRef,$langKey)	{
+	public static function readLLXMLfile($fileRef, $langKey, $charset='')	{
 
 		if (is_object($GLOBALS['LANG']))	{
 			$csConvObj = &$GLOBALS['LANG']->csConvObj;
 		} elseif (is_object($GLOBALS['TSFE']))	{
 			$csConvObj = &$GLOBALS['TSFE']->csConvObj;
-		} else $csConvObj = NULL;
+		} else {
+			$csConvObj = t3lib_div::makeInstance('t3lib_cs');
+		}
 
-		if (@is_file($fileRef) && $langKey && is_object($csConvObj))	{
+		$LOCAL_LANG = NULL;
+		if (@is_file($fileRef) && $langKey)	{
 
 				// Set charset:
-			$origCharset = $csConvObj->parse_charset($csConvObj->charSetArray[$langKey] ? $csConvObj->charSetArray[$langKey] : 'iso-8859-1');
+			if ($charset)	{
+				$targetCharset = $csConvObj->parse_charset($charset);
+			} elseif ($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'])  {
+					// when forceCharset is set, we store ALL labels in this charset!!!
+				$targetCharset = $csConvObj->parse_charset($GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset']);
+			} else {
+				$targetCharset = $csConvObj->parse_charset($csConvObj->charSetArray[$langKey] ? $csConvObj->charSetArray[$langKey] : 'iso-8859-1');
+			}
 
 				// Cache file name:
-			$hashSource = substr($fileRef,strlen(PATH_site)).'|'.date('d-m-Y H:i:s',filemtime($fileRef));
+			$hashSource = substr($fileRef,strlen(PATH_site)).'|'.date('d-m-Y H:i:s',filemtime($fileRef)).'|version=2.3';
 			$cacheFileName = PATH_site.'typo3temp/llxml/'.
-							#str_replace('_','',ereg_replace('^.*\/','',dirname($fileRef))).
-							#'_'.basename($fileRef).
-							substr(basename($fileRef),10,15).
-							'_'.t3lib_div::shortMD5($hashSource).'.'.$langKey.'.'.$origCharset.'.cache';
+						substr(basename($fileRef),10,15).
+						'_'.t3lib_div::shortMD5($hashSource).'.'.$langKey.'.'.$targetCharset.'.cache';
 
 				// Check if cache file exists...
 			if (!@is_file($cacheFileName))	{	// ... if it doesn't, create content and write it:
@@ -3173,26 +4103,44 @@ class t3lib_div {
 					// Read XML, parse it.
 				$xmlString = t3lib_div::getUrl($fileRef);
 				$xmlContent = t3lib_div::xml2array($xmlString);
+				if (!is_array($xmlContent)) {
+					die('The file "'.$fileRef.'" is no TYPO3 language file!');
+				}
 
 					// Set default LOCAL_LANG array content:
 				$LOCAL_LANG = array();
 				$LOCAL_LANG['default'] = $xmlContent['data']['default'];
 
-					// Specific language, convert from utf-8 to backend language charset:
-					// NOTICE: Converting from utf-8 back to "native" language may be a temporary solution until we can totally discard "locallang.php" files altogether (and use utf-8 for everything). But doing this conversion is the quickest way to migrate now and the source is in utf-8 anyway which is the main point.
+					// converting the default language (English)
+					// this needs to be done for a few accented loan words and extension names
+					// NOTE: no conversion is done when in UTF-8 mode!
+				if (is_array($LOCAL_LANG['default']) && $targetCharset != 'utf-8') {
+					foreach ($LOCAL_LANG['default'] as &$labelValue)	{
+						$labelValue = $csConvObj->utf8_decode($labelValue, $targetCharset);
+					}
+				}
+
+					// converting other languages to their "native" charsets
+					// NOTE: no conversion is done when in UTF-8 mode!
 				if ($langKey!='default')	{
-					$LOCAL_LANG[$langKey] = $xmlContent['data'][$langKey];
+
+						// If no entry is found for the language key, then force a value depending on meta-data setting. By default an automated filename will be used:
+					$LOCAL_LANG[$langKey] = t3lib_div::llXmlAutoFileName($fileRef, $langKey);
+					$localized_file = t3lib_div::getFileAbsFileName($LOCAL_LANG[$langKey]);
+					if (!@is_file($localized_file) && isset($xmlContent['data'][$langKey]))	{
+						$LOCAL_LANG[$langKey] = $xmlContent['data'][$langKey];
+					}
 
 						// Checking if charset should be converted.
-					if (is_array($LOCAL_LANG[$langKey]) && $origCharset!='utf-8')	{
+					if (is_array($LOCAL_LANG[$langKey]) && $targetCharset!='utf-8')	{
 						foreach($LOCAL_LANG[$langKey] as $labelKey => $labelValue)	{
-							$LOCAL_LANG[$langKey][$labelKey] = $csConvObj->utf8_decode($labelValue,$origCharset);
+							$LOCAL_LANG[$langKey][$labelKey] = $csConvObj->utf8_decode($labelValue,$targetCharset);
 						}
 					}
 				}
 
 					// Cache the content now:
-				$serContent = array('origFile'=>$hashSource, 'LOCAL_LANG'=>$LOCAL_LANG);
+				$serContent = array('origFile'=>$hashSource, 'LOCAL_LANG'=>array('default'=>$LOCAL_LANG['default'], $langKey=>$LOCAL_LANG[$langKey]));
 				$res = t3lib_div::writeFileToTypo3tempDir($cacheFileName, serialize($serContent));
 				if ($res)	die('ERROR: '.$res);
 			} else {
@@ -3209,10 +4157,10 @@ class t3lib_div {
 				if ($localized_file && @is_file($localized_file))	{
 
 						// Cache file name:
-					$hashSource = substr($localized_file,strlen(PATH_site)).'|'.date('d-m-Y H:i:s',filemtime($localized_file));
-					$cacheFileName = PATH_site.'typo3temp/llxml/ext_'.
+					$hashSource = substr($localized_file,strlen(PATH_site)).'|'.date('d-m-Y H:i:s',filemtime($localized_file)).'|version=2.3';
+					$cacheFileName = PATH_site.'typo3temp/llxml/EXT_'.
 									substr(basename($localized_file),10,15).
-									'_'.t3lib_div::shortMD5($hashSource).'.'.$langKey.'.'.$origCharset.'.cache';
+									'_'.t3lib_div::shortMD5($hashSource).'.'.$langKey.'.'.$targetCharset.'.cache';
 
 						// Check if cache file exists...
 					if (!@is_file($cacheFileName))	{	// ... if it doesn't, create content and write it:
@@ -3220,17 +4168,20 @@ class t3lib_div {
 							// Read and parse XML content:
 						$local_xmlString = t3lib_div::getUrl($localized_file);
 						$local_xmlContent = t3lib_div::xml2array($local_xmlString);
+						if (!is_array($local_xmlContent)) {
+							die('The file "'.$localized_file.'" is no TYPO3 language file!');
+						}
 						$LOCAL_LANG[$langKey] = is_array($local_xmlContent['data'][$langKey]) ? $local_xmlContent['data'][$langKey] : array();
 
 							// Checking if charset should be converted.
-						if (is_array($LOCAL_LANG[$langKey]) && $origCharset!='utf-8')	{
+						if (is_array($LOCAL_LANG[$langKey]) && $targetCharset!='utf-8')	{
 							foreach($LOCAL_LANG[$langKey] as $labelKey => $labelValue)	{
-								$LOCAL_LANG[$langKey][$labelKey] = $csConvObj->utf8_decode($labelValue,$origCharset);
+								$LOCAL_LANG[$langKey][$labelKey] = $csConvObj->utf8_decode($labelValue,$targetCharset);
 							}
 						}
 
 							// Cache the content now:
-						$serContent = array('extlang'=>$langKey, 'origFile'=>$LOCAL_LANG[$langKey], 'EXT_DATA'=>$LOCAL_LANG[$langKey]);
+						$serContent = array('extlang'=>$langKey, 'origFile'=>$hashSource, 'EXT_DATA'=>$LOCAL_LANG[$langKey]);
 						$res = t3lib_div::writeFileToTypo3tempDir($cacheFileName, serialize($serContent));
 						if ($res)	die('ERROR: '.$res);
 					} else {
@@ -3248,25 +4199,76 @@ class t3lib_div {
 	}
 
 	/**
+	 * Returns auto-filename for locallang-XML localizations.
+	 *
+	 * @param	string		Absolute file reference to locallang-XML file. Must be inside system/global/local extension
+	 * @param	string		Language key
+	 * @return	string		Returns the filename reference for the language unless error occured (or local mode is used) in which case it will be NULL
+	 */
+	public static function llXmlAutoFileName($fileRef,$language)	{
+			// Analyse file reference:
+		$location = 'typo3conf/l10n/'.$language.'/';	// Default location of translations
+		if (t3lib_div::isFirstPartOfStr($fileRef,PATH_typo3.'sysext/'))	{	// Is system:
+			$validatedPrefix = PATH_typo3.'sysext/';
+			#$location = 'EXT:csh_'.$language.'/';	// For system extensions translations are found in "csh_*" extensions (language packs)
+		} elseif (t3lib_div::isFirstPartOfStr($fileRef,PATH_typo3.'ext/'))	{	// Is global:
+			$validatedPrefix = PATH_typo3.'ext/';
+		} elseif (t3lib_div::isFirstPartOfStr($fileRef,PATH_typo3conf.'ext/'))	{	// Is local:
+			$validatedPrefix = PATH_typo3conf.'ext/';
+		} else {
+			$validatedPrefix = '';
+		}
+
+		if ($validatedPrefix)	{
+
+				// Divide file reference into extension key, directory (if any) and base name:
+			list($file_extKey,$file_extPath) = explode('/',substr($fileRef,strlen($validatedPrefix)),2);
+			$temp = t3lib_div::revExplode('/',$file_extPath,2);
+			if (count($temp)==1)	array_unshift($temp,'');	// Add empty first-entry if not there.
+			list($file_extPath,$file_fileName) = $temp;
+
+				// The filename is prefixed with "[language key]." because it prevents the llxmltranslate tool from detecting it.
+			return $location.
+				$file_extKey.'/'.
+				($file_extPath?$file_extPath.'/':'').
+				$language.'.'.$file_fileName;
+		} else {
+			return NULL;
+		}
+	}
+
+
+	/**
 	 * Loads the $TCA (Table Configuration Array) for the $table
 	 *
 	 * Requirements:
 	 * 1) must be configured table (the ctrl-section configured),
 	 * 2) columns must not be an array (which it is always if whole table loaded), and
 	 * 3) there is a value for dynamicConfigFile (filename in typo3conf)
+	 *
+	 * Note: For the frontend this loads only 'ctrl' and 'feInterface' parts.
+	 * For complete TCA use $GLOBALS['TSFE']->includeTCA() instead.
+	 *
 	 * Usage: 84
 	 *
 	 * @param	string		Table name for which to load the full TCA array part into the global $TCA
 	 * @return	void
 	 */
-	function loadTCA($table)	{
-		global $TCA,$LANG_GENERAL_LABELS;
-		if (isset($TCA[$table]) && !is_array($TCA[$table]['columns']) && $TCA[$table]['ctrl']['dynamicConfigFile'])	{
-			if (!strcmp(substr($TCA[$table]['ctrl']['dynamicConfigFile'],0,6),'T3LIB:'))	{
-				include(PATH_t3lib.'stddb/'.substr($TCA[$table]['ctrl']['dynamicConfigFile'],6));
-			} elseif (t3lib_div::isAbsPath($TCA[$table]['ctrl']['dynamicConfigFile']) && @is_file($TCA[$table]['ctrl']['dynamicConfigFile']))	{	// Absolute path...
-				include($TCA[$table]['ctrl']['dynamicConfigFile']);
-			} else include(PATH_typo3conf.$TCA[$table]['ctrl']['dynamicConfigFile']);
+	public static function loadTCA($table)	{
+		global $TCA;
+
+		if (isset($TCA[$table])) {
+			$tca = &$TCA[$table];
+			if (!$tca['columns']) {
+				$dcf = $tca['ctrl']['dynamicConfigFile'];
+				if ($dcf) {
+					if (!strcmp(substr($dcf,0,6),'T3LIB:'))	{
+						include(PATH_t3lib.'stddb/'.substr($dcf,6));
+					} elseif (t3lib_div::isAbsPath($dcf) && @is_file($dcf))	{	// Absolute path...
+						include($dcf);
+					} else include(PATH_typo3conf.$dcf);
+				}
+			}
 		}
 	}
 
@@ -3279,7 +4281,9 @@ class t3lib_div {
 	 * @param	string		The sheet to return, preferably.
 	 * @return	array		An array with two num. keys: key0: The data structure is returned in this key (array) UNLESS an error happend in which case an error string is returned (string). key1: The used sheet key value!
 	 */
-	function resolveSheetDefInDS($dataStructArray,$sheet='sDEF')	{
+	public static function resolveSheetDefInDS($dataStructArray,$sheet='sDEF')	{
+		if (!is_array ($dataStructArray)) return 'Data structure must be an array';
+
 		if (is_array($dataStructArray['sheets']))	{
 			$singleSheet = FALSE;
 			if (!isset($dataStructArray['sheets'][$sheet]))	{
@@ -3297,7 +4301,7 @@ class t3lib_div {
 		} else {
 			$singleSheet = TRUE;
 			$dataStruct = $dataStructArray;
-			unset($dataStruct['meta']);	// Meta data should not appear there.
+			if (isset($dataStruct['meta'])) unset($dataStruct['meta']);	// Meta data should not appear there.
 			$sheet = 'sDEF';	// Default sheet
 		}
 		return array($dataStruct,$sheet,$singleSheet);
@@ -3310,7 +4314,7 @@ class t3lib_div {
 	 * @param	array		Input data structure, possibly with a sheet-definition and references to external data source files.
 	 * @return	array		Output data structure with all sheets resolved as arrays.
 	 */
-	function resolveAllSheetsInDS($dataStructArray)	{
+	public static function resolveAllSheetsInDS(array $dataStructArray)	{
 		if (is_array($dataStructArray['sheets']))	{
 			$out=array('sheets'=>array());
 			foreach($dataStructArray['sheets'] as $sheetId => $sDat)	{
@@ -3335,28 +4339,28 @@ class t3lib_div {
 	 * @param	mixed		Parameters to be pass along (typically an array) (REFERENCE!)
 	 * @param	mixed		Reference to be passed along (typically "$this" - being a reference to the calling object) (REFERENCE!)
 	 * @param	string		Required prefix of class or function name
-	 * @param	boolean		If set, no debug() error message is shown if class/function is not present.
-	 * @return	mixed		Content from method/function call
+	 * @param	integer		Error mode (when class/function could not be found): 0 - call debug(), 1 - do nothing, 2 - raise an exception (allows to call a user function that may return FALSE)
+	 * @return	mixed		Content from method/function call or false if the class/method/function was not found
 	 * @see getUserObj()
 	 */
-	function callUserFunction($funcName,&$params,&$ref,$checkPrefix='user_',$silent=0)	{
+	public static function callUserFunction($funcName,&$params,&$ref,$checkPrefix='user_',$errorMode=0)	{
 		global $TYPO3_CONF_VARS;
+		$content = false;
 
 			// Check persistent object and if found, call directly and exit.
 		if (is_array($GLOBALS['T3_VAR']['callUserFunction'][$funcName]))	{
-			return call_user_method(
-						$GLOBALS['T3_VAR']['callUserFunction'][$funcName]['method'],
-						$GLOBALS['T3_VAR']['callUserFunction'][$funcName]['obj'],
-						$params,
-						$ref
+			return call_user_func_array(
+						array(&$GLOBALS['T3_VAR']['callUserFunction'][$funcName]['obj'],
+							$GLOBALS['T3_VAR']['callUserFunction'][$funcName]['method']),
+						array(&$params, &$ref)
 					);
 		}
 
 			// Check file-reference prefix; if found, require_once() the file (should be library of code)
-		if (strstr($funcName,':'))	{
+		if (strpos($funcName,':') !== false)	{
 			list($file,$funcRef) = t3lib_div::revExplode(':',$funcName,2);
 			$requireFile = t3lib_div::getFileAbsFileName($file);
-			if ($requireFile) require_once($requireFile);
+			if ($requireFile) t3lib_div::requireOnce($requireFile);
 		} else {
 			$funcRef = $funcName;
 		}
@@ -3364,9 +4368,9 @@ class t3lib_div {
 			// Check for persistent object token, "&"
 		if (substr($funcRef,0,1)=='&')	{
 			$funcRef = substr($funcRef,1);
-			$storePersistentObject = TRUE;
+			$storePersistentObject = true;
 		} else {
-			$storePersistentObject = FALSE;
+			$storePersistentObject = false;
 		}
 
 			// Check prefix is valid:
@@ -3374,8 +4378,13 @@ class t3lib_div {
 			!t3lib_div::isFirstPartOfStr(trim($funcRef),$checkPrefix) &&
 			!t3lib_div::isFirstPartOfStr(trim($funcRef),'tx_')
 			)	{
-			if (!$silent)	debug("Function/Class '".$funcRef."' was not prepended with '".$checkPrefix."'",1);
-			return FALSE;
+			$errorMsg = "Function/class '$funcRef' was not prepended with '$checkPrefix'";
+			if ($errorMode == 2) {
+				throw new Exception($errorMsg);
+			} elseif(!$errorMode)	{
+				debug($errorMsg, 1);
+			}
+			return false;
 		}
 
 			// Call function or method:
@@ -3405,23 +4414,36 @@ class t3lib_div {
 						);
 					}
 						// Call method:
-					$content = call_user_method(
-						$parts[1],
-						$classObj,
-						$params,
-						$ref
+					$content = call_user_func_array(
+						array(&$classObj, $parts[1]),
+						array(&$params, &$ref)
 					);
 				} else {
-					if (!$silent)	debug("<strong>ERROR:</strong> No method name '".$parts[1]."' in class ".$parts[0],1);
+					$errorMsg = "<strong>ERROR:</strong> No method name '".$parts[1]."' in class ".$parts[0];
+					if ($errorMode == 2) {
+						throw new Exception($errorMsg);
+					} elseif(!$errorMode)   {
+						debug($errorMsg, 1);
+					}
 				}
 			} else {
-				if (!$silent)	debug("<strong>ERROR:</strong> No class named: ".$parts[0],1);
+				$errorMsg = "<strong>ERROR:</strong> No class named: ".$parts[0];
+				if ($errorMode == 2) {
+					throw new Exception($errorMsg);
+				} elseif(!$errorMode)   {
+					debug($errorMsg, 1);
+				}
 			}
 		} else {	// Function
 			if (function_exists($funcRef))	{
-			 	$content = call_user_func($funcRef, $params, $ref);
+			 	$content = call_user_func_array($funcRef, array(&$params, &$ref));
 			} else {
-				if (!$silent)	debug("<strong>ERROR:</strong> No function named: ".$funcRef,1);
+				$errorMsg = "<strong>ERROR:</strong> No function named: ".$funcRef;
+				if ($errorMode == 2) {
+					throw new Exception($errorMsg);
+				} elseif(!$errorMode)   {
+					debug($errorMsg, 1);
+				}
 			}
 		}
 		return $content;
@@ -3438,7 +4460,7 @@ class t3lib_div {
 	 * @return	object		The instance of the class asked for. Instance is created with t3lib_div::makeInstance
 	 * @see callUserFunction()
 	 */
-	function &getUserObj($classRef,$checkPrefix='user_',$silent=0)	{
+	public static function &getUserObj($classRef,$checkPrefix='user_',$silent=0)	{
 		global $TYPO3_CONF_VARS;
 			// Check persistent object and if found, call directly and exit.
 		if (is_object($GLOBALS['T3_VAR']['getUserObj'][$classRef]))	{
@@ -3446,10 +4468,10 @@ class t3lib_div {
 		} else {
 
 				// Check file-reference prefix; if found, require_once() the file (should be library of code)
-			if (strstr($classRef,':'))	{
+			if (strpos($classRef,':') !== false)	{
 				list($file,$class) = t3lib_div::revExplode(':',$classRef,2);
 				$requireFile = t3lib_div::getFileAbsFileName($file);
-				if ($requireFile)	require_once($requireFile);
+				if ($requireFile)	t3lib_div::requireOnce($requireFile);
 			} else {
 				$class = $classRef;
 			}
@@ -3494,10 +4516,22 @@ class t3lib_div {
 	 * Usage: 447
 	 *
 	 * @param	string		Class name to instantiate
-	 * @return	object		The object
+	 * @return	object		A reference to the object
 	 */
-	function &makeInstance($className)	{
-		return class_exists('ux_'.$className) ? t3lib_div::makeInstance('ux_'.$className) : new $className;
+	public static function &makeInstance($className)	{
+
+			// Load class file if not found:
+		if (!class_exists($className))	{
+			if (substr($className,0,6)=='t3lib_')	{
+				t3lib_div::requireOnce(PATH_t3lib.'class.'.strtolower($className).'.php');
+			}
+		}
+
+			// Get final classname
+		$className =  t3lib_div::makeInstanceClassName($className);
+
+			// Return object.
+		return new $className;
 	}
 
 	/**
@@ -3508,7 +4542,7 @@ class t3lib_div {
 	 * @param	string		Base Class name to evaluate
 	 * @return	string		Final class name to instantiate with "new [classname]"
 	 */
-	function makeInstanceClassName($className)	{
+	public static function makeInstanceClassName($className)	{
 		return class_exists('ux_'.$className) ? t3lib_div::makeInstanceClassName('ux_'.$className) : $className;
 	}
 
@@ -3520,9 +4554,9 @@ class t3lib_div {
 	 * @param	string		Sub type like file extensions or similar. Defined by the service.
 	 * @param	mixed		List of service keys which should be exluded in the search for a service. Array or comma list.
 	 * @return	object		The service object or an array with error info's.
-	 * @author	René Fritz <r.fritz@colorcube.de>
+	 * @author	Renï¿½ Fritz <r.fritz@colorcube.de>
 	 */
-	function &makeInstanceService($serviceType, $serviceSubType='', $excludeServiceKeys=array())	{
+	public static function &makeInstanceService($serviceType, $serviceSubType='', $excludeServiceKeys=array())	{
 		global $T3_SERVICES, $T3_VAR, $TYPO3_CONF_VARS;
 
 		$error = FALSE;
@@ -3542,7 +4576,7 @@ class t3lib_div {
 			} else {
 				$requireFile = t3lib_div::getFileAbsFileName($info['classFile']);
 				if (@is_file($requireFile)) {
-					require_once ($requireFile);
+					t3lib_div::requireOnce ($requireFile);
 					$obj = t3lib_div::makeInstance($info['className']);
 					if (is_object($obj)) {
 						if(!@is_callable(array($obj,'init')))	{
@@ -3572,8 +4606,18 @@ class t3lib_div {
 	}
 
 	/**
+	 * Require a class for TYPO3
+	 * Useful to require classes from inside other classes (not global scope). A limited set of global variables are available (see function)
+	 */
+	public static function requireOnce($requireFile)	{
+		global $T3_SERVICES, $T3_VAR, $TYPO3_CONF_VARS;
+
+		require_once ($requireFile);
+	}
+
+	/**
 	 * Simple substitute for the PHP function mail() which allows you to specify encoding and character set
-	 * The fifth parameter, $enc, will allow you to specify 'base64' encryption for the output (set $enc=base64)
+	 * The fifth parameter ($encoding) will allow you to specify 'base64' encryption for the output (set $encoding=base64)
 	 * Further the output has the charset set to ISO-8859-1 by default.
 	 * Usage: 4
 	 *
@@ -3581,13 +4625,36 @@ class t3lib_div {
 	 * @param	string		Subject line, non-encoded. (see PHP function mail())
 	 * @param	string		Message content, non-encoded. (see PHP function mail())
 	 * @param	string		Headers, separated by chr(10)
-	 * @param	string		Encoding type: "base64", "quoted-printable", "8bit". If blank, no encoding will be used, no encoding headers set.
-	 * @param	string		Charset used in encoding-headers (only if $enc is set to a valid value which produces such a header)
-	 * @param	boolean		If set, the content of $subject will not be encoded.
-	 * @return	void
+	 * @param	string		Encoding type: "base64", "quoted-printable", "8bit". Default value is "quoted-printable".
+	 * @param	string		Charset used in encoding-headers (only if $encoding is set to a valid value which produces such a header)
+	 * @param	boolean		If set, the header content will not be encoded.
+	 * @return	boolean		True if mail was accepted for delivery, false otherwise
 	 */
-	function plainMailEncoded($email,$subject,$message,$headers='',$enc='',$charset='ISO-8859-1',$dontEncodeSubject=0)	{
-		switch((string)$enc)	{
+	public static function plainMailEncoded($email,$subject,$message,$headers='',$encoding='quoted-printable',$charset='',$dontEncodeHeader=false)	{
+		if (!$charset)	{
+			$charset = $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] ? $GLOBALS['TYPO3_CONF_VARS']['BE']['forceCharset'] : 'ISO-8859-1';
+		}
+
+		if (!$dontEncodeHeader)	{
+				// Mail headers must be ASCII, therefore we convert the whole header to either base64 or quoted_printable
+			$newHeaders=array();
+			foreach (explode(chr(10),$headers) as $line)	{	// Split the header in lines and convert each line separately
+				$parts = explode(': ',$line,2);	// Field tags must not be encoded
+				if (count($parts)==2)	{
+					$parts[1] = t3lib_div::encodeHeader($parts[1],$encoding,$charset);
+					$newHeaders[] = implode(': ',$parts);
+				} else {
+					$newHeaders[] = $line;	// Should never happen - is such a mail header valid? Anyway, just add the unchanged line...
+				}
+			}
+			$headers = implode(chr(10),$newHeaders);
+			unset($newHeaders);
+
+			$email = t3lib_div::encodeHeader($email,$encoding,$charset);		// Email address must not be encoded, but it could be appended by a name which should be so (e.g. "Kasper Skï¿½rhï¿½j <kasperYYYY@typo3.com>")
+			$subject = t3lib_div::encodeHeader($subject,$encoding,$charset);
+		}
+
+		switch ((string)$encoding)	{
 			case 'base64':
 				$headers=trim($headers).chr(10).
 				'Mime-Version: 1.0'.chr(10).
@@ -3595,35 +4662,41 @@ class t3lib_div {
 				'Content-Transfer-Encoding: base64';
 
 				$message=trim(chunk_split(base64_encode($message.chr(10)))).chr(10);	// Adding chr(10) because I think MS outlook 2002 wants it... may be removed later again.
-
-				if (!$dontEncodeSubject)	$subject='=?'.$charset.'?B?'.base64_encode($subject).'?=';
-			break;
-			case 'quoted-printable':
-				$headers=trim($headers).chr(10).
-				'Mime-Version: 1.0'.chr(10).
-				'Content-Type: text/plain; charset="'.$charset.'"'.chr(10).
-				'Content-Transfer-Encoding: quoted-printable';
-
-				$message=t3lib_div::quoted_printable($message);
-
-				if (!$dontEncodeSubject)	$subject='=?'.$charset.'?Q?'.trim(t3lib_div::quoted_printable(ereg_replace('[[:space:]]','_',$subject),1000)).'?=';
 			break;
 			case '8bit':
 				$headers=trim($headers).chr(10).
 				'Mime-Version: 1.0'.chr(10).
-				'Content-Type: text/plain; charset="'.$charset.'"'.chr(10).
+				'Content-Type: text/plain; charset='.$charset.chr(10).
 				'Content-Transfer-Encoding: 8bit';
 			break;
-		}
-		$headers=trim(implode(chr(10),t3lib_div::trimExplode(chr(10),$headers,1)));	// make sure no empty lines are there.
+			case 'quoted-printable':
+			default:
+				$headers=trim($headers).chr(10).
+				'Mime-Version: 1.0'.chr(10).
+				'Content-Type: text/plain; charset='.$charset.chr(10).
+				'Content-Transfer-Encoding: quoted-printable';
 
-		mail($email,$subject,$message,$headers);
+				$message=t3lib_div::quoted_printable($message);
+			break;
+		}
+
+		$linebreak = chr(10);			// Default line break for Unix systems.
+		if (TYPO3_OS=='WIN')	{
+			$linebreak = chr(13).chr(10);	// Line break for Windows. This is needed because PHP on Windows systems send mails via SMTP instead of using sendmail, and thus the linebreak needs to be \r\n.
+		}
+
+		$headers=trim(implode($linebreak,t3lib_div::trimExplode(chr(10),$headers,1)));	// Make sure no empty lines are there.
+
+		$ret = @mail($email,$subject,$message,$headers);
+		if (!$ret)	{
+			t3lib_div::sysLog('Mail to "'.$email.'" could not be sent (Subject: "'.$subject.'").', 'Core', 3);
+		}
+		return $ret;
 	}
 
 	/**
 	 * Implementation of quoted-printable encode.
 	 * This functions is buggy. It seems that in the part where the lines are breaked every 76th character, that it fails if the break happens right in a quoted_printable encode character!
-	 * Important: For the ease of use, this function internally uses Unix linebreaks ("\n") for breaking lines, but the output must use "\r\n" instead!
 	 * See RFC 1521, section 5.1 Quoted-Printable Content-Transfer-Encoding
 	 * Usage: 2
 	 *
@@ -3631,22 +4704,27 @@ class t3lib_div {
 	 * @param	integer		Length of the lines, default is 76
 	 * @return	string		The QP encoded string
 	 */
-	function quoted_printable($string,$maxlen=76)	{
+	public static function quoted_printable($string,$maxlen=76)	{
 			// Make sure the string contains only Unix linebreaks
 		$string = str_replace(chr(13).chr(10), chr(10), $string);	// Replace Windows breaks (\r\n)
 		$string = str_replace(chr(13), chr(10), $string);		// Replace Mac breaks (\r)
 
+		$linebreak = chr(10);			// Default line break for Unix systems.
+		if (TYPO3_OS=='WIN')	{
+			$linebreak = chr(13).chr(10);	// Line break for Windows. This is needed because PHP on Windows systems send mails via SMTP instead of using sendmail, and thus the linebreak needs to be \r\n.
+		}
+
 		$newString = '';
 		$theLines = explode(chr(10),$string);	// Split lines
-		foreach($theLines as $val)	{
+		foreach ($theLines as $val)	{
 			$newVal = '';
 			$theValLen = strlen($val);
 			$len = 0;
 			for ($index=0; $index < $theValLen; $index++)	{	// Walk through each character of this line
 				$char = substr($val,$index,1);
 				$ordVal = ord($char);
-				if ($len>($maxlen-4) || ($len>(($maxlen-10)-4)&&$ordVal==32))	{
-					$newVal.='='.chr(13).chr(10);	// Add a line break
+				if ($len>($maxlen-4) || ($len>($maxlen-14) && $ordVal==32))	{
+					$newVal.='='.$linebreak;	// Add a line break
 					$len=0;			// Reset the length counter
 				}
 				if (($ordVal>=33 && $ordVal<=60) || ($ordVal>=62 && $ordVal<=126) || $ordVal==9 || $ordVal==32)	{
@@ -3657,11 +4735,55 @@ class t3lib_div {
 					$len+=3;
 				}
 			}
-			$newVal = ereg_replace(chr(32).'$','=20',$newVal);		// Replaces a possible SPACE-character at the end of a line
-			$newVal = ereg_replace(chr(9).'$','=09',$newVal);		// Replaces a possible TAB-character at the end of a line
-			$newString.=$newVal.chr(13).chr(10);
+			$newVal = preg_replace('/'.chr(32).'$/','=20',$newVal);		// Replaces a possible SPACE-character at the end of a line
+			$newVal = preg_replace('/'.chr(9).'$/','=09',$newVal);		// Replaces a possible TAB-character at the end of a line
+			$newString.=$newVal.$linebreak;
 		}
-		return ereg_replace(chr(13).chr(10).'$','',$newString);
+		return preg_replace('/'.$linebreak.'$/','',$newString);		// Remove last newline
+	}
+
+	/**
+	 * Encode header lines
+	 * Email headers must be ASCII, therefore they will be encoded to quoted_printable (default) or base64.
+	 *
+	 * @param	string		Content to encode
+	 * @param	string		Encoding type: "base64" or "quoted-printable". Default value is "quoted-printable".
+	 * @param	string		Charset used for encoding
+	 * @return	string		The encoded string
+	 */
+	public static function encodeHeader($line,$enc='quoted-printable',$charset='iso-8859-1')	{
+			// Avoid problems if "###" is found in $line (would conflict with the placeholder which is used below)
+		if (strpos($line,'###') !== false) {
+			return $line;
+		}
+			// Check if any non-ASCII characters are found - otherwise encoding is not needed
+		if (!preg_match('/[^'.chr(32).'-'.chr(127).']/',$line))	{
+			return $line;
+		}
+			// Wrap email addresses in a special marker
+		$line = preg_replace('/([^ ]+@[^ ]+)/', '###$1###', $line);
+
+		$matches = preg_split('/(.?###.+###.?|\(|\))/', $line, -1, PREG_SPLIT_NO_EMPTY);
+		foreach ($matches as $part)	{
+			$oldPart = $part;
+			switch ((string)$enc)	{
+				case 'base64':
+					$part = '=?'.$charset.'?B?'.base64_encode($part).'?=';
+				break;
+				case 'quoted-printable':
+				default:
+					$qpValue = t3lib_div::quoted_printable($part,1000);
+					if ($part!=$qpValue)	{
+						$qpValue = str_replace(' ','_',$qpValue);	// Encoded words in the header should not contain non-encoded spaces. "_" is a shortcut for "=20". See RFC 2047 for details.
+						$part = '=?'.$charset.'?Q?'.$qpValue.'?=';
+					}
+				break;
+			}
+			$line = str_replace($oldPart, $part, $line);
+		}
+		$line = preg_replace('/###(.+?)###/', '$1', $line);	// Remove the wrappers
+
+		return $line;
 	}
 
 	/**
@@ -3675,27 +4797,29 @@ class t3lib_div {
 	 * @return	string		Processed message content
 	 * @see makeRedirectUrl()
 	 */
-	function substUrlsInPlainText($message,$urlmode='76',$index_script_url='')	{
+	public static function substUrlsInPlainText($message,$urlmode='76',$index_script_url='')	{
 			// Substitute URLs with shorter links:
-		$urlSplit=explode('http://',$message);
-		reset($urlSplit);
-		while(list($c,$v)=each($urlSplit))	{
-			if ($c)	{
-				$newParts = split('[[:space:]]|\)|\(',$v,2);
-				$newURL='http://'.$newParts[0];
-					switch((string)$urlmode)	{
+		foreach (array('http','https') as $protocol)	{
+			$urlSplit = explode($protocol.'://',$message);
+			foreach ($urlSplit as $c => &$v) {
+				if ($c)	{
+					$newParts = preg_split('/\s|[<>"{}|\\\^`()\']/', $v, 2);
+					$newURL = $protocol.'://'.$newParts[0];
+
+					switch ((string)$urlmode)	{
 						case 'all':
-							$newURL=t3lib_div::makeRedirectUrl($newURL,0,$index_script_url);
+							$newURL = t3lib_div::makeRedirectUrl($newURL,0,$index_script_url);
 						break;
 						case '76':
-							$newURL=t3lib_div::makeRedirectUrl($newURL,76,$index_script_url);
+							$newURL = t3lib_div::makeRedirectUrl($newURL,76,$index_script_url);
 						break;
 					}
-				$urlSplit[$c]=$newURL.substr($v,strlen($newParts[0]));
+					$v = $newURL . substr($v,strlen($newParts[0]));
+				}
 			}
+			$message = implode('',$urlSplit);
 		}
 
-		$message=implode('',$urlSplit);
 		return $message;
 	}
 
@@ -3705,11 +4829,11 @@ class t3lib_div {
 	 *
 	 * @param	string		Input URL
 	 * @param	integer		URL string length limit
-	 * @param	string		URL of "index script" - the prefix of the "?RDCT=..." parameter. If not supplyed it will default to t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR')
+	 * @param	string		URL of "index script" - the prefix of the "?RDCT=..." parameter. If not supplyed it will default to t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR').'index.php'
 	 * @return	string		Processed URL
 	 * @internal
 	 */
-	function makeRedirectUrl($inUrl,$l=0,$index_script_url='')	{
+	public static function makeRedirectUrl($inUrl,$l=0,$index_script_url='')	{
 		if (strlen($inUrl)>$l)	{
 			$md5 = substr(md5($inUrl),0,20);
 			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('md5hash', 'cache_md5params', 'md5hash='.$GLOBALS['TYPO3_DB']->fullQuoteStr($md5, 'cache_md5params'));
@@ -3723,9 +4847,10 @@ class t3lib_div {
 
 				$GLOBALS['TYPO3_DB']->exec_INSERTquery('cache_md5params', $insertFields);
 			}
-			$inUrl=($index_script_url ? $index_script_url : t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR')).
+			$inUrl=($index_script_url ? $index_script_url : t3lib_div::getIndpEnv('TYPO3_REQUEST_DIR').'index.php').
 				'?RDCT='.$md5;
 		}
+
 		return $inUrl;
 	}
 
@@ -3736,10 +4861,136 @@ class t3lib_div {
 	 * @param	integer		Fontsize for freetype function call
 	 * @return	integer		Compensated fontsize based on $GLOBALS['TYPO3_CONF_VARS']['GFX']['TTFdpi']
 	 */
-	function freetypeDpiComp($font_size)	{
+	public static function freetypeDpiComp($font_size)	{
 		$dpi = intval($GLOBALS['TYPO3_CONF_VARS']['GFX']['TTFdpi']);
 		if ($dpi!=72)	$font_size = $font_size/$dpi*72;
 		return $font_size;
+	}
+
+	/**
+	 * Init system error log.
+	 *
+	 * @return	void
+	 * @see sysLog()
+	 */
+	public static function initSysLog()	{
+		global $TYPO3_CONF_VARS;
+
+			// for CLI logging name is <fqdn-hostname>:<TYPO3-path>
+		if (defined('TYPO3_cliMode') && TYPO3_cliMode)	{
+			$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLogHost'] = t3lib_div::getHostname($requestHost=FALSE).':'.PATH_site;
+		}
+			// for Web logging name is <protocol>://<request-hostame>/<site-path>
+		else {
+			$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLogHost'] = t3lib_div::getIndpEnv('TYPO3_SITE_URL');
+		}
+
+			// init custom logging
+		if (is_array($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLog']))	{
+			$params = array('initLog'=>TRUE);
+			$fakeThis = FALSE;
+			foreach ($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLog'] as $hookMethod)	{
+				t3lib_div::callUserFunction($hookMethod,$params,$fakeThis);
+			}
+		}
+
+			// init TYPO3 logging
+		foreach (explode(';',$TYPO3_CONF_VARS['SYS']['systemLog'],2) as $log)	{
+			list($type,$destination) = explode(',',$log,3);
+
+			if ($type == 'syslog')	{
+				define_syslog_variables();
+				if (TYPO3_OS == 'WIN')	{
+					$facility = LOG_USER;
+				} else {
+					$facility = constant('LOG_'.strtoupper($destination));
+				}
+				openlog($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLogHost'], LOG_ODELAY, $facility);
+			}
+		}
+
+		$TYPO3_CONF_VARS['SYS']['systemLogLevel'] = t3lib_div::intInRange($TYPO3_CONF_VARS['SYS']['systemLogLevel'],0,4);
+		$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLogInit'] = TRUE;
+	}
+
+	/**
+	 * System error log; This should be implemented around the source code, including the Core and both frontend and backend, logging serious errors.
+	 * If you want to implement the sysLog in your applications, simply add lines like:
+	 * 		t3lib_div::sysLog('[write message in English here]', 'extension key');
+	 *
+	 * @param	string		Message (in English).
+	 * @param	string		Extension key (from which extension you are calling the log) or "Core"
+	 * @param	integer		Severity: 0 is info, 1 is notice, 2 is warning, 3 is error, 4 is fatal error
+	 * @return	void
+	 */
+	public static function sysLog($msg, $extKey, $severity=0) {
+		global $TYPO3_CONF_VARS;
+
+		$severity = t3lib_div::intInRange($severity,0,4);
+
+			// is message worth logging?
+		if (intval($TYPO3_CONF_VARS['SYS']['systemLogLevel']) > $severity)	return;
+
+			// initialize logging
+		if (!$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLogInit'])	{
+			t3lib_div::initSysLog();
+		}
+
+			// do custom logging
+		if (is_array($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLog']))	{
+			$params = array('msg'=>$msg, 'extKey'=>$extKey, 'backTrace'=>debug_backtrace());
+			$fakeThis = FALSE;
+			foreach ($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLog'] as $hookMethod)	{
+				t3lib_div::callUserFunction($hookMethod,$params,$fakeThis);
+			}
+		}
+
+			// TYPO3 logging enabled?
+		if (!$TYPO3_CONF_VARS['SYS']['systemLog'])	return;
+
+		$dateFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['ddmmyy'];
+		$timeFormat = $GLOBALS['TYPO3_CONF_VARS']['SYS']['hhmm'];
+
+			// use all configured logging options
+		foreach (explode(';',$TYPO3_CONF_VARS['SYS']['systemLog'],2) as $log)	{
+			list($type,$destination,$level) = explode(',',$log,4);
+
+				// is message worth logging for this log type?
+			if (intval($level) > $severity)	continue;
+
+			$msgLine = ' - '.$extKey.': '.$msg;
+
+				// write message to a file
+			if ($type == 'file')	{
+				$file = fopen($destination, 'a');
+				if ($file)     {
+					flock($file, LOCK_EX);  // try locking, but ignore if not available (eg. on NFS and FAT)
+					fwrite($file, date($dateFormat.' '.$timeFormat).$msgLine.chr(10));
+					flock($file, LOCK_UN);    // release the lock
+					fclose($file);
+				}
+			}
+				// send message per mail
+			elseif ($type == 'mail')	{
+				list($to,$from) = explode('/',$destination);
+				mail($to, 'Warning - error in TYPO3 installation',
+					'Host: '.$TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLogHost']."\n".
+					'Extension: '.$extKey."\n".
+					'Severity: '.$severity."\n".
+					"\n".$msg,
+					($from ? 'From: '.$from : '')
+				);
+			}
+				// use the PHP error log
+			elseif ($type == 'error_log')	{
+				error_log($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['systemLogHost'].$msgLine, 0);
+			}
+				// use the system log
+			elseif ($type == 'syslog')	{
+				$priority = array(LOG_INFO,LOG_NOTICE,LOG_WARNING,LOG_ERR,LOG_CRIT);
+				syslog($priority[(int)$severity], $msgLine);
+			}
+		}
 	}
 
 	/**
@@ -3755,7 +5006,7 @@ class t3lib_div {
 	 * @param	array		Additional data you want to pass to the logger.
 	 * @return	void
 	 */
-	function devLog($msg, $extKey, $severity=0, $dataVar=FALSE)	{
+	public static function devLog($msg, $extKey, $severity=0, $dataVar=FALSE)	{
 		global $TYPO3_CONF_VARS;
 
 		if (is_array($TYPO3_CONF_VARS['SC_OPTIONS']['t3lib/class.t3lib_div.php']['devLog']))	{
@@ -3776,16 +5027,15 @@ class t3lib_div {
 	 * @param	integer		Long string values are shortened to this length. Default: 20
 	 * @return	string		Output string with key names and their value as string
 	 */
-	function arrayToLogString($arr, $valueList=array(), $valueLength=20) {
+	public static function arrayToLogString(array $arr, $valueList=array(), $valueLength=20) {
 		$str = '';
-		if(is_array($arr)) {
-			if (!is_array($valueList)) {
-				$valueList = explode(',', $valueList);
-			}
-			foreach($arr as $key => $value) {
-				if (!count($valueList) OR (count($valueList) AND in_array($key, $valueList))) {
-					$str .= (string)$key.trim(': '.t3lib_div::fixed_lgd(str_replace("\n",'|',(string)$value), $valueLength)).'; ';
-				}
+		if (!is_array($valueList))	{
+			$valueList = t3lib_div::trimExplode(',', $valueList, 1);
+		}
+		$valListCnt = count($valueList);
+		foreach ($arr as $key => $value)	{
+			if (!$valListCnt || in_array($key, $valueList))	{
+				$str .= (string)$key.trim(': '.t3lib_div::fixed_lgd(str_replace("\n",'|',(string)$value), $valueLength)).'; ';
 			}
 		}
 		return $str;
@@ -3794,12 +5044,12 @@ class t3lib_div {
 	/**
 	 * Compile the command for running ImageMagick/GraphicsMagick.
 	 *
-	 * @param	string		Command to be run
+	 * @param	string		Command to be run: identify, convert or combine/composite
 	 * @param	string		The parameters string
 	 * @param	string		Override the default path
 	 * @return	string		Compiled command that deals with IM6 & GraphicsMagick
 	 */
-	function imageMagickCommand($command, $parameters, $path='')	{
+	public static function imageMagickCommand($command, $parameters, $path='')	{
 		$gfxConf = $GLOBALS['TYPO3_CONF_VARS']['GFX'];
 		$isExt = (TYPO3_OS=='WIN' ? '.exe' : '');
 		$switchCompositeParameters=false;
@@ -3811,7 +5061,7 @@ class t3lib_div {
 
 		if($command==='combine')	{	// This is only used internally, has no effect outside
 			$command = 'composite';
-}
+		}
 
 			// Compile the path & command
 		if($im_version==='gm')	{
@@ -3827,10 +5077,10 @@ class t3lib_div {
 		if($command=='composite' && $switchCompositeParameters)	{	// Because of some weird incompatibilities between ImageMagick 4 and 6 (plus GraphicsMagick), it is needed to change the parameters order under some preconditions
 			$paramsArr = t3lib_div::unQuoteFilenames($parameters);
 
-			if(count($paramsArr)==6)	{	// The mask image has been specified => swap the parameters
-				$tmp = $paramsArr[3];
-				$paramsArr[3] = $paramsArr[2];
-				$paramsArr[2] = $tmp;
+			if(count($paramsArr)>5)	{	// The mask image has been specified => swap the parameters
+				$tmp = $paramsArr[count($paramsArr)-3];
+				$paramsArr[count($paramsArr)-3] = $paramsArr[count($paramsArr)-4];
+				$paramsArr[count($paramsArr)-4] = $tmp;
 			}
 
 			$cmdLine = $path.' '.implode(' ', $paramsArr);
@@ -3843,13 +5093,14 @@ class t3lib_div {
 	 * Explode a string (normally a list of filenames) with whitespaces by considering quotes in that string. This is mostly needed by the imageMagickCommand function above.
 	 *
 	 * @param	string		The whole parameters string
+	 * @param	boolean		If set, the elements of the resulting array are unquoted.
 	 * @return	array		Exploded parameters
 	 */
-	function unQuoteFilenames($parameters)	{
+	public static function unQuoteFilenames($parameters,$unQuote=FALSE)	{
 		$paramsArr = explode(' ', trim($parameters));
 
 		$quoteActive = -1;	// Whenever a quote character (") is found, $quoteActive is set to the element number inside of $params. A value of -1 means that there are not open quotes at the current position.
-		foreach($paramsArr as $k=>$v)	{
+		foreach ($paramsArr as $k => $v) {
 			if($quoteActive > -1)	{
 				$paramsArr[$quoteActive] .= ' '.$v;
 				unset($paramsArr[$k]);
@@ -3863,7 +5114,28 @@ class t3lib_div {
 			}
 		}
 
+		if($unQuote) {
+			foreach ($paramsArr as $key => &$val) {
+				$val = preg_replace('/(^"|"$)/','',$val);
+			}
+		}
 		return $paramsArr;
+	}
+
+
+	/**
+	 * Quotes a string for usage as JS parameter. Depends wheter the value is used in script tags (it doesn't need/must not get htmlspecialchar'ed in this case)
+	 *
+	 * @param	string		The string to encode.
+	 * @param	boolean		If the values get's used in <script> tags.
+	 * @return	string		The encoded value already quoted
+	 */
+	public static function quoteJSvalue($value, $inScriptTags = false)	{
+		$value = addcslashes($value, '\''.'"'.chr(10).chr(13));
+		if (!$inScriptTags)	{
+			$value = htmlspecialchars($value);
+		}
+		return '\''.$value.'\'';
 	}
 }
 
