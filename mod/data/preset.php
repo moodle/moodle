@@ -374,5 +374,118 @@ echo '</table>';
 echo '</div>';
 
 print_footer($course);
+exit(0);
+
+################################################################################
+
+
+function data_presets_export($course, $cm, $data) {
+    global $CFG;
+    /* Info Collected. Now need to make files in moodledata/temp */
+    $tempfolder = $CFG->dataroot.'/temp';
+    $singletemplate     = fopen($tempfolder.'/singletemplate.html', 'w');
+    $listtemplate       = fopen($tempfolder.'/listtemplate.html', 'w');
+    $listtemplateheader = fopen($tempfolder.'/listtemplateheader.html', 'w');
+    $listtemplatefooter = fopen($tempfolder.'/listtemplatefooter.html', 'w');
+    $addtemplate        = fopen($tempfolder.'/addtemplate.html', 'w');
+    $rsstemplate        = fopen($tempfolder.'/rsstemplate.html', 'w');
+    $rsstitletemplate   = fopen($tempfolder.'/rsstitletemplate.html', 'w');
+    $csstemplate        = fopen($tempfolder.'/csstemplate.css', 'w');
+    $jstemplate         = fopen($tempfolder.'/jstemplate.js', 'w');
+    $asearchtemplate    = fopen($tempfolder.'/asearchtemplate.html', 'w');
+
+    fwrite($singletemplate, $data->singletemplate);
+    fwrite($listtemplate, $data->listtemplate);
+    fwrite($listtemplateheader, $data->listtemplateheader);
+    fwrite($listtemplatefooter, $data->listtemplatefooter);
+    fwrite($addtemplate, $data->addtemplate);
+    fwrite($rsstemplate, $data->rsstemplate);
+    fwrite($rsstitletemplate, $data->rsstitletemplate);
+    fwrite($csstemplate, $data->csstemplate);
+    fwrite($jstemplate, $data->jstemplate);
+    fwrite($asearchtemplate, $data->asearchtemplate);
+
+    fclose($singletemplate);
+    fclose($listtemplate);
+    fclose($listtemplateheader);
+    fclose($listtemplatefooter);
+    fclose($addtemplate);
+    fclose($rsstemplate);
+    fclose($rsstitletemplate);
+    fclose($csstemplate);
+    fclose($jstemplate);
+    fclose($asearchtemplate);
+
+    /* All the display data is now done. Now assemble preset.xml */
+    $presetfile = fopen($tempfolder.'/preset.xml', 'w');
+    $presetxml = "<preset>\n\n";
+
+    // raw settings are not preprocessed during saving of presets
+    $raw_settings = array('intro', 'comments', 'requiredentries', 'requiredentriestoview',
+                          'maxentries', 'rssarticles', 'approval', 'defaultsortdir');
+
+    $presetxml .= "<settings>\n";
+    // first settings that do not require any conversion
+    foreach ($raw_settings as $setting) {
+        $presetxml .= "<$setting>".htmlspecialchars($data->$setting)."</$setting>\n";
+    }
+
+    // now specific settings
+    if ($data->defaultsort > 0 and $sortfield = data_get_field_from_id($data->defaultsort, $data)) {
+        $presetxml .= "<defaultsort>".htmlspecialchars($sortfield->field->name)."</defaultsort>\n";
+    } else {
+        $presetxml .= "<defaultsort>0</defaultsort>\n";
+    }
+    // note: grading settings are not exported intentionally
+    $presetxml .= "</settings>\n\n";
+
+    // Now for the fields. Grab all that are non-empty
+    $fields = get_records('data_fields', 'dataid', $data->id);
+    ksort($fields);
+    if (!empty($fields)) {
+        foreach ($fields as $field) {
+            $presetxml .= "<field>\n";
+            foreach ($field as $key => $value) {
+                if ($value != '' && $key != 'id' && $key != 'dataid') {
+                    $presetxml .= "<$key>".htmlspecialchars($value)."</$key>\n";
+                }
+            }
+            $presetxml .= "</field>\n\n";
+        }
+    }
+
+    $presetxml .= "</preset>";
+    fwrite($presetfile, $presetxml);
+    fclose($presetfile);
+
+    /* Check all is well */
+    if (!is_directory_a_preset($tempfolder)) {
+        error("Not all files generated!");
+    }
+
+    $filelist = array(
+        'singletemplate.html',
+        'listtemplate.html',
+        'listtemplateheader.html',
+        'listtemplatefooter.html',
+        'addtemplate.html',
+        'rsstemplate.html',
+        'rsstitletemplate.html',
+        'csstemplate.css',
+        'jstemplate.js',
+        'preset.xml',
+        'asearchtemplate.html'
+    );
+
+    foreach ($filelist as $key => $file) {
+        $filelist[$key] = $tempfolder.'/'.$filelist[$key];
+    }
+
+    @unlink($tempfolder.'/export.zip');
+    $status = zip_files($filelist, $tempfolder.'/export.zip');
+
+    /* made the zip... now return the filename for storage.*/
+    return $tempfolder.'/export.zip';
+}
 
 ?>
