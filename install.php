@@ -459,9 +459,9 @@ if ($nextstage == SAVE) {
     $str .= '$CFG = new stdClass();'."\r\n"; // prevent PHP5 strict warnings
     $str .= "\r\n";
 
-    $database = $databases[$INSTALL['dbtype']];
-    $database->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
-    $dbconfig = $database->export_dbconfig();
+    $DB = $databases[$INSTALL['dbtype']];
+    $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
+    $dbconfig = $DB->export_dbconfig();
     $dbconfig->persistent = false;
 
     foreach ($dbconfig as $key=>$value) {
