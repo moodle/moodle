@@ -55,6 +55,12 @@ class quiz_report_statistics_table extends flexible_table {
         $this->define_headers($headers);
         $this->sortable(false);
 
+        $this->column_class('s', 'numcol');
+        $this->column_class('random_guess_score', 'numcol');
+        $this->column_class('intended_weight', 'numcol');
+        $this->column_class('sd', 'numcol');
+        $this->column_class('facility', 'numcol');
+
         // Set up the table
         $this->define_baseurl($reporturl->out());
 
@@ -72,8 +78,6 @@ class quiz_report_statistics_table extends flexible_table {
         $this->column_class('fullname', 'bold');
         $this->column_class('sumgrades', 'bold');*/
         
-        $this->column_class('intended_weight', 'numcol');
-        $this->column_class('random_guess_score', 'numcol');
 
         $this->set_attribute('id', 'questionstatistics');
         $this->set_attribute('class', 'generaltable generalbox boxaligncenter');
