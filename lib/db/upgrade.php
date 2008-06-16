@@ -128,6 +128,13 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008051202);
     }
 
+    if ($result && $oldversion < 2008051203) {
+        $table = new xmldb_table('mnet_enrol_course');
+        $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '10', true, true, null, false, false, 0);
+        $result = $dbman->change_field_precision($table, $field);
+        upgrade_main_savepoint($result, 2008051203);
+    }
+
 /*
  * TODO:
  *   drop adodb_logsql table and create a new general sql log table
