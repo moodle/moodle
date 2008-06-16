@@ -152,12 +152,12 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
                     if (! $DB->update_record("question_answers", $answer)) {
-                        $result->error = "Could not update question answer! (id=$answer->id)";
+                        $result->error = get_string('errorupdatinganswer','question',$answer->id);
                         return $result;
                     }
                 } else { // This is a completely new answer
                     if (! $answer->id = $DB->insert_record("question_answers", $answer)) {
-                        $result->error = "Could not insert question answer!";
+                        $result->error = get_string('errorinsertinganswer','question');
                         return $result;
                     }
                 }
@@ -176,7 +176,10 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 // Save options
                 if (isset($options->id)) { // reusing existing record
                     if (! $DB->update_record('question_calculated', $options)) {
-                        $result->error = "Could not update question calculated options! (id=$options->id)";
+                        $mess->name = $this->name();
+                        $mess->id = $options->id ;
+                        $result->error = get_string('errorupdatingoptions','question',$mess);
+                    //    $result->error = "Could not update question calculated options! (id=$options->id)";
                         return $result;
                     }
                 } else { // new options
@@ -293,26 +296,38 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     function validate_form($form) {
         switch($form->wizardpage) {
             case 'question':
+                $calculatedmessages = array();
                 if (empty($form->name)) {
-                    print_error('missingname', 'quiz');
+                    $calculatedmessages[] = get_string('missingname', 'quiz');
                 }
                 if (empty($form->questiontext)) {
-                    print_error('missingquestiontext', 'quiz');
+                    $calculatedmessages[] = get_string('missingquestiontext', 'quiz');
                 }
                 // Verify formulas
                 foreach ($form->answers as $key => $answer) {
                     if ('' === trim($answer)) {
-                        print_error('missingformula', 'quiz');
+                        $calculatedmessages[] =
+                            get_string('missingformula', 'quiz');
                     }
-                    if ($formulaerrors = qtype_calculated_find_formula_errors($answer)) {
-                        print_error('formulaerror', 'quiz');
+                    if ($formulaerrors =
+                     qtype_calculated_find_formula_errors($answer)) {
+                        $calculatedmessages[] = $formulaerrors;
                     }
                     if (! isset($form->tolerance[$key])) {
                         $form->tolerance[$key] = 0.0;
                     }
                     if (! is_numeric($form->tolerance[$key])) {
-                        print_error('tolerancemustbenumeric', 'quiz');
+                        $calculatedmessages[] =
+                            get_string('tolerancemustbenumeric', 'quiz');
                     }
+                }
+
+                if (!empty($calculatedmessages)) {
+                    $errorstring = "The following errors were found:<br />";
+                    foreach ($calculatedmessages as $msg) {
+                        $errorstring .= $msg . '<br />';
+                    }
+                    print_error($errorstring);
                 }
 
                 break;
@@ -356,11 +371,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $numericalquestion = fullclone($question);
         foreach ($numericalquestion->options->answers as $key => $answer) {
           $answer = fullclone($numericalquestion->options->answers[$key]);
-            $correctanswer = qtype_calculated_calculate_answer(
-                 $answer->answer, $state->options->dataset, $answer->tolerance,
-                 $answer->tolerancetype, $answer->correctanswerlength,
-                 $answer->correctanswerformat, $unit);
-           $numericalquestion->options->answers[$key]->answer = $correctanswer->answer;
+            $numericalquestion->options->answers[$key]->answer = $this->substitute_variables($answer->answer,
+             $state->options->dataset);
         }
         $numericalquestion->questiontext = parent::substitute_variables(
         $numericalquestion->questiontext, $state->options->dataset);
@@ -743,7 +755,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $unit = '';
         }
 
-        $answers = $question->options->answers;
+        $answers = fullclone($question->options->answers);
         $stranswers = '';
         $strmin = get_string('min', 'quiz');
         $strmax = get_string('max', 'quiz');
@@ -755,22 +767,27 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             foreach ($data as $name => $value) {
                 $formula = str_replace('{'.$name.'}', $value, $formula);
             }
-            $calculated = qtype_calculated_calculate_answer(
+            $formattedanswer = qtype_calculated_calculate_answer(
                     $answer->answer, $data, $answer->tolerance,
                     $answer->tolerancetype, $answer->correctanswerlength,
                     $answer->correctanswerformat, $unit);
-            $calculated->tolerance = $answer->tolerance;
-            $calculated->tolerancetype = $answer->tolerancetype;
-            $calculated->correctanswerlength = $answer->correctanswerlength;
-            $calculated->correctanswerformat = $answer->correctanswerformat;
-            $virtualqtype->get_tolerance_interval($calculated);
-            if ($calculated->min === '') {
+              eval('$answer->answer = '.$formula.';') ;                   
+            $virtualqtype->get_tolerance_interval($answer);
+            if ($answer->min === '') {
                 // This should mean that something is wrong
-                $stranswers .= " -$calculated->answer".'<br/><br/>';
+                $stranswers .= " -$formattedanswer->answer".'<br/><br/>';                
             } else {
-                $stranswers .= $formula.' = '.$calculated->answer.'<br/>' ;
-                $stranswers .= $strmin. $delimiter.$calculated->min.'---';
-                $stranswers .= $strmax.$delimiter.$calculated->max;
+                $stranswers .= $formula.' = '.$formattedanswer->answer.'<br/>' ;
+                $stranswers .= $strmin. $delimiter.$answer->min.'---';
+                $stranswers .= $strmax.$delimiter.$answer->max;
+                $stranswers .='<br/>';
+                $correcttrue->correct = $formattedanswer->answer ;
+                $correcttrue->true = $answer->answer ;
+                if ($formattedanswer->answer < $answer->min || $formattedanswer->answer > $answer->max){ 
+                    $stranswers .=get_string('trueansweroutsidelimits','qtype_calculated',$correcttrue);//<span class="error">ERROR True answer '..' outside limits</span>';
+                }else {
+                    $stranswers .=get_string('trueanswerinsidelimits','qtype_calculated',$correcttrue);//' True answer :'.$calculated->trueanswer.' inside limits';
+                }                
                 $stranswers .='<br/>';
             }
         }
@@ -1082,8 +1099,12 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
     $answer = $QTYPES['calculated']->substitute_variables($formula, $individualdata);
     if ('1' == $answerformat) { /* Answer is to have $answerlength decimals */
         /*** Adjust to the correct number of decimals ***/
-
-        $calculated->answer = round($answer, $answerlength);
+        if (stripos($answer,'e')>0 ){
+            $answerlengthadd = strlen($answer)-stripos($answer,'e');
+        }else {
+            $answerlengthadd = 0 ;
+        }
+        $calculated->answer = round(floatval($answer), $answerlength+$answerlengthadd);
 
         if ($answerlength) {
             /* Try to include missing zeros at the end */
