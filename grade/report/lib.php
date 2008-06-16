@@ -292,7 +292,7 @@ abstract class grade_report {
     /**
      * Sets up this object's group variables, mainly to restrict the selection of users to display.
      */
-    private function setup_groups() {
+    protected function setup_groups() {
         global $CFG;
 
         /// find out current groups mode
