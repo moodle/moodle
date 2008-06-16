@@ -216,11 +216,11 @@
         if ($user->city && !isset($hiddenfields['city'])) {
             $location .= $user->city;
         }
+        $countries = get_list_of_countries();
         if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
             if ($user->city && !isset($hiddenfields['country'])) {
                 $location .= ', ';
             }
-            $countries = get_list_of_countries();
             $location .= $countries[$user->country];
         }
         print_row(get_string("city").":", $location);
