@@ -28,8 +28,9 @@ class embedded_cloze_qtype extends default_questiontype {
 
         // Get relevant data indexed by positionkey from the multianswers table
         if (!$sequence = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
-            notify('Error: Cloze question '.$question->id.' is missing question options!');
-            return false;
+            notify(get_string('noquestions','qtype_multianswer',$question->name));
+            $question->options->questions['1']= '';
+            return true ;
         }
 
         $wrappedquestions = get_records_list('question', 'id', $sequence, 'id ASC');
@@ -37,7 +38,12 @@ class embedded_cloze_qtype extends default_questiontype {
         // We want an array with question ids as index and the positions as values
         $sequence = array_flip(explode(',', $sequence));
         array_walk($sequence, create_function('&$val', '$val++;'));
-        //si une question est manquante l,indice est nul
+        //If a question is lost, the corresponding index is null
+        // so this null convention is used to test $question->options->questions 
+        // before using the values.
+        // first all possible questions from sequence are nulled 
+        // then filled with the data if available in  $wrappedquestions
+        $nbvaliquestion = 0 ;
         foreach($sequence as $seq){
             $question->options->questions[$seq]= '';
         }
@@ -49,9 +55,12 @@ class embedded_cloze_qtype extends default_questiontype {
             // for wrapped questions the maxgrade is always equal to the defaultgrade,
             // there is no entry in the question_instances table for them
             $wrapped->maxgrade = $wrapped->defaultgrade;
-
+                        $nbvaliquestion++ ;
             $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped); // ??? Why do we need a clone here?
         }
+        }
+        if ($nbvaliquestion == 0 ) {
+            notify(get_string('noquestions','qtype_multianswer',$question->name));
         }
 
         return true;
@@ -70,7 +79,7 @@ class embedded_cloze_qtype extends default_questiontype {
 
         // First we get all the existing wrapped questions
         if (!$oldwrappedids = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
-            $oldwrappedids = array();
+            $oldwrappedquestions = array();
         } else {
             $oldwrappedids = get_records_list('question', 'id', $oldwrappedids, 'id ASC','id');
         }
@@ -78,29 +87,24 @@ class embedded_cloze_qtype extends default_questiontype {
         foreach($question->options->questions as $wrapped) {
             if ($wrapped != ''){
             // if we still have some old wrapped question ids, reuse the next of them
-                if (is_array($oldwrappedids) && $oldwrappedid = array_shift($oldwrappedids)) {
 
-                    if( $oldqtype = get_field('question', 'qtype', 'id',$oldwrappedid->id)){
-                        $wrapped->id = $oldwrappedid->id;
-                if($oldqtype != $wrapped->qtype ) {
-                    switch ($oldqtype) {
+                if (is_array($oldwrappedquestions) && $oldwrappedquestion = array_shift($oldwrappedquestions)) {
+                    $wrapped->id = $oldwrappedquestion->id;
+                    if($oldwrappedquestion->qtype != $wrapped->qtype ) {
+                        switch ($oldwrappedquestion->qtype) {
                         case 'multichoice':
-                             delete_records('question_multichoice', 'question', $oldwrappedid);
-                                         $wrapped->id = $oldwrappedid;
+                                 delete_records('question_multichoice', 'question' , $oldwrappedquestion->id );
                             break;
                         case 'shortanswer':
-                             delete_records('question_shortanswer', 'question', $oldwrappedid);
-                                         $wrapped->id = $oldwrappedid;
+                                 delete_records('question_shortanswer', 'question' , $oldwrappedquestion->id );
                             break;
                         case 'numerical':
-                             delete_records('question_numerical', 'question', $oldwrappedid);
-                                         $wrapped->id = $oldwrappedid;
+                                 delete_records('question_numerical', 'question' , $oldwrappedquestion->id );
                             break;
                         default:
-                            error("questiontype $wrapped->qtype not recognized");
+                                print_error('qtypenotrecognized', 'qtype_multianswer','',$oldwrappedquestion->qtype);
                                         $wrapped->id = 0 ;
                             }
-                    }
                     }
                 }else {
                     $wrapped->id = 0 ;
@@ -439,7 +443,10 @@ class embedded_cloze_qtype extends default_questiontype {
                     echo $feedbackimg;
                     break;
                 default:
-                    print_error('unknownquestiontype', 'question');
+                    $a = new stdClass;
+                    $a->type = $wrapped->qtype ; 
+                    $a->sub = $positionkey;
+                    print_error('unknownquestiontypeofsubquestion', 'qtype_multianswer','',$a);
                     break;
            }
            echo "</label>"; // MDL-7497
