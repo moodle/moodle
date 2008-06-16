@@ -370,7 +370,7 @@ function hotpot_restore_record(&$restore, $status, &$xml, $table, $foreign_keys,
                 if (isset($column->default_value)) {
                     $default = $column->default_value;
                 } else {
-                    if (preg_match('/int|decimal|double|float|time|year/i', $column->type)) {
+                    if (preg_match('/[INTD]/', $column->meta_type)) {
                         $default = 0;
                     } else {
                         $default = '';
