@@ -3020,6 +3020,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $field = new XMLDBField('sortorder');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '10', true, true, null, false, false, 0);
         $result = change_field_precision($table, $field);
+        upgrade_main_savepoint($result, 2007101514);
     }
 
     return $result;
