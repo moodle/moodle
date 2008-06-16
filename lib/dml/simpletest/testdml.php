@@ -70,7 +70,7 @@ class dml_test extends UnitTestCase {
     }
 
     function test_fix_sql_params() {
-        $DB = $this->tdb; // do not use global $DB!
+        $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
         // Malformed table placeholder
@@ -179,7 +179,7 @@ class dml_test extends UnitTestCase {
     }
 
     public function testGetTables() {
-        $DB = $this->tdb; // do not use global $DB!
+        $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
         // Need to test with multiple DBs
@@ -187,7 +187,7 @@ class dml_test extends UnitTestCase {
     }
 
     public function testGetIndexes() {
-        $DB = $this->tdb; // do not use global $DB!
+        $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
         $this->assertTrue($indices = $DB->get_indexes('testtable'));
@@ -210,7 +210,7 @@ class dml_test extends UnitTestCase {
     }
 
     public function testGetColumns() {
-        $DB = $this->tdb; // do not use global $DB!
+        $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
         $this->assertTrue($columns = $DB->get_columns('testtable'));
@@ -231,7 +231,7 @@ class dml_test extends UnitTestCase {
     }
 
     public function testExecute() {
-        $DB = $this->tdb; // do not use global $DB!
+        $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
         $sql = "SELECT * FROM {testtable}";
@@ -268,4 +268,171 @@ class dml_test extends UnitTestCase {
         }
     }
 
+    public function test_get_in_or_equal() {
+        $DB = $this->tdb;
+
+        // SQL_PARAMS_QM - IN or =
+
+        // Correct usage of multiple values
+        $in_values = array('value1', 'value2', 'value3', 'value4');
+        list($usql, $params) = $DB->get_in_or_equal($in_values);
+        $this->assertEqual("IN (?,?,?,?)", $usql);
+        $this->assertEqual(4, count($params));
+        foreach ($params as $key => $value) {
+            $this->assertEqual($in_values[$key], $value);
+        }
+
+        // Correct usage of single value (in an array)
+        $in_values = array('value1');
+        list($usql, $params) = $DB->get_in_or_equal($in_values);
+        $this->assertEqual("= ?", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_values[0], $params[0]);
+
+        // Correct usage of single value
+        $in_value = 'value1';
+        list($usql, $params) = $DB->get_in_or_equal($in_values);
+        $this->assertEqual("= ?", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_value, $params[0]);
+
+        // SQL_PARAMS_QM - NOT IN or <>
+
+        // Correct usage of multiple values
+        $in_values = array('value1', 'value2', 'value3', 'value4');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_QM, null, false);
+        $this->assertEqual("NOT IN (?,?,?,?)", $usql);
+        $this->assertEqual(4, count($params));
+        foreach ($params as $key => $value) {
+            $this->assertEqual($in_values[$key], $value);
+        }
+
+        // Correct usage of single value (in array()
+        $in_values = array('value1');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_QM, null, false);
+        $this->assertEqual("<> ?", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_values[0], $params[0]);
+
+        // Correct usage of single value
+        $in_value = 'value1';
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_QM, null, false);
+        $this->assertEqual("<> ?", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_value, $params[0]);
+
+        // SQL_PARAMS_NAMED - IN or =
+
+        // Correct usage of multiple values
+        $in_values = array('value1', 'value2', 'value3', 'value4');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
+        $this->assertEqual("IN (:param01,:param02,:param03,:param04)", $usql);
+        $this->assertEqual(4, count($params));
+        reset($in_values);
+        foreach ($params as $key => $value) {
+            $this->assertEqual(current($in_values), $value);
+            next($in_values);
+        }
+
+        // Correct usage of single values (in array)
+        $in_values = array('value1');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
+        $this->assertEqual("= :param01", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_values[0], $params['param01']);
+
+        // Correct usage of single value
+        $in_value = 'value1';
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', true);
+        $this->assertEqual("= :param01", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_value, $params['param01']);
+
+        // SQL_PARAMS_NAMED - NOT IN or <>
+
+        // Correct usage of multiple values
+        $in_values = array('value1', 'value2', 'value3', 'value4');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
+        $this->assertEqual("NOT IN (:param01,:param02,:param03,:param04)", $usql);
+        $this->assertEqual(4, count($params));
+        reset($in_values);
+        foreach ($params as $key => $value) {
+            $this->assertEqual(current($in_values), $value);
+            next($in_values);
+        }
+
+        // Correct usage of single values (in array)
+        $in_values = array('value1');
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
+        $this->assertEqual("<> :param01", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_values[0], $params['param01']);
+
+        // Correct usage of single value
+        $in_value = 'value1';
+        list($usql, $params) = $DB->get_in_or_equal($in_values, SQL_PARAMS_NAMED, 'param01', false);
+        $this->assertEqual("<> :param01", $usql);
+        $this->assertEqual(1, count($params));
+        $this->assertEqual($in_value, $params['param01']);
+
+    }
+
+    public function test_fix_table_names() {
+        $DB = new moodle_database_for_testing();
+        $prefix = $DB->get_prefix();
+
+        // Simple placeholder
+        $placeholder = "{user}";
+        $this->assertEqual($prefix . "user", $DB->public_fix_table_names($placeholder));
+
+        // Full SQL
+        $sql = "SELECT * FROM {user}, {funny_table_name}, {mdl_stupid_table} WHERE {user}.id = {funny_table_name}.userid";
+        $expected = "SELECT * FROM {$prefix}user, {$prefix}funny_table_name, {$prefix}mdl_stupid_table WHERE {$prefix}user.id = {$prefix}funny_table_name.userid";
+        $this->assertEqual($expected, $DB->public_fix_table_names($sql));
+
+    }
+}
+
+/**
+ * This class is not a proper subclass of moodle_database. It is
+ * intended to be used only in unit tests, in order to gain access to the
+ * protected methods of moodle_database, and unit test them.
+ */
+class moodle_database_for_testing extends moodle_database {
+    protected $prefix = 'mdl_';
+
+    public function public_fix_table_names($sql) {
+        return $this->fix_table_names($sql);
+    }
+
+    public function driver_installed(){}
+    public function get_dbfamily(){}
+    protected function get_dbtype(){}
+    public function get_name(){}
+    public function get_configuration_hints(){}
+    public function export_dbconfig(){}
+    public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null){}
+    public function get_server_info(){}
+    protected function allowed_param_types(){}
+    public function get_last_error(){}
+    public function get_tables(){}
+    public function get_indexes($table){}
+    public function get_columns($table, $usecache=true){}
+    public function set_debug($state){}
+    public function get_debug(){}
+    public function set_logging($state){}
+    public function change_database_structure($sql){}
+    public function execute($sql, array $params=null){}
+    public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0){}
+    public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0){}
+    public function get_fieldset_sql($sql, array $params=null){}
+    public function insert_record_raw($table, $params, $returnid=true, $bulk=false){}
+    public function insert_record($table, $dataobject, $returnid=true, $bulk=false){}
+    public function update_record_raw($table, $params, $bulk=false){}
+    public function update_record($table, $dataobject, $bulk=false){}
+    public function set_field_select($table, $newfield, $newvalue, $select, array $params=null){}
+    public function delete_records_select($table, $select, array $params=null){}
+    public function sql_concat(){}
+    public function sql_concat_join($separator="' '", $elements=array()){}
+    public function sql_substr(){}
 }
