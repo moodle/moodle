@@ -243,7 +243,7 @@ define ('DEBUG_MINIMAL', 5);
 define ('DEBUG_NORMAL', 15);
 /** E_ALL without E_STRICT for now, do show recoverable fatal errors */
 define ('DEBUG_ALL', 6143);
-/** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
+/** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
 define ('DEBUG_DEVELOPER', 38911);
 
 /**
