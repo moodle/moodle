@@ -4755,8 +4755,8 @@ function print_plugin_tables() {
                                         'tidy');
 
     $plugins_installed = array();
-    $installed_mods = $DB->get_records_list('modules', '', null, '', 'name');
-    $installed_blocks = $DB->get_records_list('block', '', null, '', 'name');
+    $installed_mods = $DB->get_records('modules', null, 'name');
+    $installed_blocks = $DB->get_records('block', null, 'name');
 
     foreach($installed_mods as $mod) {
         $plugins_installed['mod'][] = $mod->name;
