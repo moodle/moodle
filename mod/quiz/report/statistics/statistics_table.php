@@ -13,7 +13,7 @@ class quiz_report_statistics_table extends flexible_table {
      * Setup the columns and headers and other properties of the table and then
      * call flexible_table::setup() method.
      */
-    function setup($quiz, $cmid, $reporturl){
+    function setup($quiz, $cmid, $reporturl, $s){
         $this->quiz = $quiz;
         $this->cmid = $cmid;
         // Define table columns
@@ -35,11 +35,21 @@ class quiz_report_statistics_table extends flexible_table {
         $columns[]= 'name';
         $headers[]= get_string('questionname', 'quiz');
         
-        $columns[]= 'intended_weight';
-        $headers[]= get_string('intended_weight', 'quiz_statistics');
-        
+        $columns[]= 's';
+        $headers[]= get_string('attempts', 'quiz_statistics');
+
+        if ($s>1){
+            $columns[]= 'facility';
+            $headers[]= get_string('facility', 'quiz_statistics');
+            
+            $columns[]= 'sd';
+            $headers[]= get_string('standarddeviation', 'quiz_statistics');
+        }
         $columns[]= 'random_guess_score';
         $headers[]= get_string('random_guess_score', 'quiz_statistics');
+        
+        $columns[]= 'intended_weight';
+        $headers[]= get_string('intended_weight', 'quiz_statistics');
         
         $this->define_columns($columns);
         $this->define_headers($headers);
@@ -96,11 +106,21 @@ class quiz_report_statistics_table extends flexible_table {
 
     function col_random_guess_score($question){
         $randomguessscore = question_get_random_guess_score($question);
-        if (is_number($randomguessscore)){
+        if (is_numeric($randomguessscore)){
             return number_format($randomguessscore * 100, 2).' %';
         } else {
             return $randomguessscore; // empty string returned by random question.
         }
+    }
+    
+    function col_sd($question){
+        return number_format($question->sd*100 / $question->grade, 2).' %';
+    }
+    function col_s($question){
+        return $question->s;
+    }
+    function col_facility($question){
+        return number_format($question->facility*100, 2).' %';
     }
 }
 ?>

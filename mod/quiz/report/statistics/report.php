@@ -142,13 +142,14 @@ class quiz_report extends quiz_default_report {
         if (!$table->is_downloading()) {
             if ($useallattempts){
                 $usingattempts = $allattempts;
-                $usingattempts->heading = get_string('statsforallattempts', 'quiz_statistics');
+                $usingattempts->attempts = get_string('allattempts', 'quiz_statistics');
                 $usingattempts->sql = '';
             } else {
                 $usingattempts = $firstattempt;
-                $usingattempts->heading = get_string('statsforfirstattempts', 'quiz_statistics');
+                $usingattempts->attempts = get_string('firstattempts', 'quiz_statistics');
                 $usingattempts->sql = 'AND qa.attempt=1 ';
             }
+            $usingattempts->heading = get_string('statsfor', 'quiz_statistics', $usingattempts->attempts);
             print_heading($usingattempts->heading);
             if (($usingattempts->countrecs/2)==floor($usingattempts->countrecs/2)){
                 //even number of attempts
@@ -228,25 +229,25 @@ class quiz_report extends quiz_default_report {
                 }
                 //CIC, ER and SE.
                 //http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#CIC.2C_ER_and_SE
+                list($qsql, $sqlparams) = $DB->get_in_or_equal(array_keys($questions), SQL_PARAMS_QM);
+                array_unshift($sqlparams, $quiz->id);//put quiz id in at beginning of array
                 $qgradeavgsql = "SELECT qs.question, AVG(qs.grade) FROM " .
                         "{question_sessions} qns, " .
                         "{question_states} qs, " .
-                        "{question} q, " .
                         $fromqa.' '.
                         'WHERE ' .$whereqa.
                         'AND qns.attemptid = qa.uniqueid '.
-                        'AND qs.question = q.id ' .
-                        'AND q.length > 0 '.
+                        'AND qs.question '.$qsql.' ' .
                         $usingattempts->sql.
                         'AND qns.newgraded = qs.id GROUP BY qs.question';
-                $qgradeavgs = $DB->get_records_sql_menu($qgradeavgsql, array($quiz->id));
+                $qgradeavgs = $DB->get_records_sql_menu($qgradeavgsql, $sqlparams);
+                
                 $sum = 0;
-                $sql = 'SELECT ' .
+                $sql = 'SELECT COUNT(1) as s,' .
                         'SUM(POWER((qs.grade - ?),2)) AS power2 ' .
                         'FROM ' .
                         '{question_sessions} qns, ' .
-                        '{question_states} qs, ' .
-                        '{question} q, ' .
+                        '{question_states} qs, '.
                         $fromqa.' '.
                         'WHERE ' .$whereqa.
                         'AND qns.attemptid = qa.uniqueid '.
@@ -255,11 +256,15 @@ class quiz_report extends quiz_default_report {
                         'AND qns.newgraded = qs.id';
                 foreach ($qgradeavgs as $qid => $qgradeavg){
                     $params = array($qgradeavg, $quiz->id, $qid);
-                    $power = $DB->get_field_sql($sql, $params);
-                    if ($power === false){
+                    $fromdb = $DB->get_record_sql($sql, $params);
+                    if ($fromdb === false){
                         print_error('errorpowerquestions', 'quiz_statistics');
                     }
-                    $sum += $power;
+                    $questions[$qid]->facility = $qgradeavg / $questions[$qid]->grade;
+                    $questions[$qid]->power = $fromdb->power2;
+                    $questions[$qid]->s = $fromdb->s;
+                    $questions[$qid]->sd = sqrt($questions[$qid]->power / ($questions[$qid]->s -1));
+                    $sum += $questions[$qid]->power;
                 }
                 $sumofvarianceforallpositions = $sum / ($usingattempts->countrecs -1);
                 $p = count($qgradeavgs);//no of positions
@@ -277,7 +282,7 @@ class quiz_report extends quiz_default_report {
         if (!$table->is_downloading()){
             print_heading(get_string('quizstructureanalysis', 'quiz_statistics'));
         }
-        $table->setup($quiz, $cm->id, $reporturl);
+        $table->setup($quiz, $cm->id, $reporturl, $s);
         foreach ($questions as $question){
             $table->add_data_keyed($table->format_row($question));
         }
