@@ -94,6 +94,7 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      * @return bool true if db in unicode mode
      */
     function setup_is_unicodedb() {
+        $this->reads++;
         $rs = $this->adodb->Execute("SHOW LOCAL VARIABLES LIKE 'character_set_database'");
         if ($rs && !$rs->EOF) {
             $records = $rs->GetAssoc(true);
@@ -111,8 +112,10 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
      */
     public function change_db_encoding() {
         // try forcing utf8 collation, if mysql db and no tables present
+        $this->reads++;
         if (!$this->adodb->Metatables()) {
             $SQL = 'ALTER DATABASE '.$this->dbname.' CHARACTER SET utf8';
+            $this->writes++;
             $this->adodb->Execute($SQL);
             if ($this->setup_is_unicodedb()) {
                 $this->configure_dbconnection();
@@ -241,6 +244,8 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
             array_unshift($params, $newvalue);
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
+
+        $this->writes++;
 
         if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);

@@ -48,7 +48,16 @@ abstract class moodle_database {
      */
     protected $dboptions;
 
-    // TODO: perf stuff goes here
+    /**
+     * The database reads (performance counter).
+     */
+    protected $reads = 0;
+
+    /**
+     * The database writes (performance counter).
+     */
+    protected $writes = 0;
+
     // TODO: do we really need record caching??
 
     /**
@@ -1392,5 +1401,13 @@ abstract class moodle_database {
      */
     public function rollback_sql() {
         return true;
+    }
+
+    public function perf_get_reads() {
+        return $this->reads;
+    }
+
+    public function perf_get_writes() {
+        return $this->writes;
     }
 }

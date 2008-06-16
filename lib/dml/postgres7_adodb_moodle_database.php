@@ -105,6 +105,7 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
             return $this->columns[$table];
         }
 
+        $this->reads++;
         if (!$columns = $this->adodb->MetaColumns($this->prefix.$table)) {
             return array();
         }
@@ -139,6 +140,7 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      */
     function setup_is_unicodedb() {
     /// Get PostgreSQL server_encoding value
+        $this->reads++;
         $rs = $this->adodb->Execute("SHOW server_encoding");
         if ($rs && !$rs->EOF) {
             $encoding = $rs->fields['server_encoding'];
@@ -170,6 +172,7 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         }
         unset($params['id']);
         if ($returnid) {
+            $this->reads++;
             $seqname = "{$this->prefix}{$table}_id_seq";
             if ($nextval = $this->adodb->GenID($seqname)) {
                 $params['id'] = (int)$nextval;
@@ -186,6 +189,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
 
+        $this->writes++;
+
         if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
             return false;
@@ -198,6 +203,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         }
 
         $oid = $this->adodb->Insert_ID();
+
+        $this->reads++;
 
         // try to get the primary key based on id
         $sql = "SELECT id FROM {$this->prefix}$table WHERE oid = $oid";
@@ -271,6 +278,7 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         }
 
         foreach ($blobs as $key=>$value) {
+            $this->writes++;
             if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id", 'BLOB')) { // adodb does not use bound parameters for blob updates :-(
                 return false;
             }
@@ -340,6 +348,7 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         }
 
         foreach ($blobs as $key=>$value) {
+            $this->writes++;
             if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id", 'BLOB')) { // adodb does not use bound parameters for blob updates :-(
                 return false;
             }
@@ -368,6 +377,7 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         if ($column->meta_type == 'B') {
             /// update blobs and return
             $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
+            $this->writes++;
             if (!$this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select, 'BLOB')) {
                 return false;
             }
@@ -394,6 +404,8 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
             array_unshift($params, $newvalue); // add as first param
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield $select";
+
+        $this->writes++;
 
         if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);

@@ -95,12 +95,12 @@ abstract class adodb_moodle_database extends moodle_database {
         parent::dispose();
     }
 
-    //TODO: make all dblibraries return this info in a structured way (new server_info class or so, like database_column_info class)
     /**
      * Returns database server info array
      * @return array
      */
     public function get_server_info() {
+        //TODO: make all dblibraries return this info in a structured way (new server_info class or so, like database_column_info class)
         return $this->adodb->ServerInfo();
     }
 
@@ -126,6 +126,7 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return array of arrays
      */
     public function get_indexes($table) {
+        $this->reads++;
         if (!$indexes = $this->adodb->MetaIndexes($this->prefix.$table)) {
             return array();
         }
@@ -145,6 +146,7 @@ abstract class adodb_moodle_database extends moodle_database {
             return $this->columns[$table];
         }
 
+        $this->reads++;
         if (!$columns = $this->adodb->MetaColumns($this->prefix.$table)) {
             return array();
         }
@@ -203,6 +205,8 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return bool success
      */
     public function change_database_structure($sql) {
+        $this->writes++;
+
         if ($rs = $this->adodb->Execute($sql)) {
             $result = true;
         } else {
@@ -222,13 +226,14 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return bool success
      */
     public function execute($sql, array $params=null) {
-
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
         if (strpos($sql, ';') !== false) {
             debugging('Error: Multiple sql statements found or bound parameters not used properly in query!');
             return false;
         }
+
+        $this->writes++;
 
         if ($rs = $this->adodb->Execute($sql, $params)) {
             $result = true;
@@ -240,7 +245,6 @@ abstract class adodb_moodle_database extends moodle_database {
         return $result;
     }
 
-    //TODO: do we want the *_raw() functions being public? I see the benefits but... won't that cause problems. To decide.
     /**
      * Insert new record into database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
@@ -250,6 +254,8 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return mixed success or new id
      */
     public function insert_record_raw($table, $params, $returnid=true, $bulk=false) {
+        //TODO: do we want the *_raw() functions being public? I see the benefits but... won't that cause problems. To decide.
+
         if (!is_array($params)) {
             $params = (array)$params;
         }
@@ -258,6 +264,8 @@ abstract class adodb_moodle_database extends moodle_database {
         if (empty($params)) {
             return false;
         }
+
+        $this->writes++;
 
         $fields = implode(',', array_keys($params));
         $qms    = array_fill(0, count($params), '?');
@@ -299,6 +307,8 @@ abstract class adodb_moodle_database extends moodle_database {
             return false;
         }
 
+        $this->writes++;
+
         $sets = array();
         foreach ($params as $field=>$value) {
             $sets[] = "$field = ?";
@@ -332,6 +342,8 @@ abstract class adodb_moodle_database extends moodle_database {
 
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
+        $this->writes++;
+
         $result = false;
         if ($rs = $this->adodb->Execute($sql, $params)) {
             $result = true;
@@ -358,6 +370,8 @@ abstract class adodb_moodle_database extends moodle_database {
      */
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+
+        $this->reads++;
 
         if ($limitfrom || $limitnum) {
             ///Special case, 0 must be -1 for ADOdb
@@ -394,6 +408,9 @@ abstract class adodb_moodle_database extends moodle_database {
      */
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+
+        $this->reads++;
+
         if ($limitfrom || $limitnum) {
             ///Special case, 0 must be -1 for ADOdb
             $limitfrom = empty($limitfrom) ? -1 : $limitfrom;
@@ -420,6 +437,9 @@ abstract class adodb_moodle_database extends moodle_database {
      */
     public function get_fieldset_sql($sql, array $params=null) {
         list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
+
+        $this->reads++;
+
         if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
             return false;

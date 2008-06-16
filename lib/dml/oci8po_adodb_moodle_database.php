@@ -107,6 +107,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * @return bool true if db in unicode mode
      */
     function setup_is_unicodedb() {
+        $this->reads++;
         $rs = $this->adodb->Execute("SELECT parameter, value FROM nls_database_parameters where parameter = 'NLS_CHARACTERSET'");
         if ($rs && !$rs->EOF) {
             $encoding = $rs->fields['value'];
@@ -182,7 +183,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
             return " $fieldname IS NULL ";                    /// empties in nullable fields are stored as
         } else {                                              /// NULLs
             if ($textfield) {
-                return " ".sql_compare_text($fieldname)." = ' ' "; /// oracle_dirty_hack inserts 1-whitespace
+                return " ".$this->sql_compare_text($fieldname)." = ' ' "; /// oracle_dirty_hack inserts 1-whitespace
             } else {                                          /// in NOT NULL varchar and text columns so
                 return " $fieldname = ' ' ";                  /// we need to look for that in any situation
             }
@@ -267,12 +268,14 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         }
 
         foreach ($blobs as $key=>$value) {
+            $this->writes++;
             if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
                 return false;
             }
         }
 
         foreach ($clobs as $key=>$value) {
+            $this->writes++;
             if (!$this->adodb->UpdateClob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
                 return false;
             }
@@ -350,12 +353,14 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         }
 
         foreach ($blobs as $key=>$value) {
+            $this->writes++;
             if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
                 return false;
             }
         }
 
         foreach ($clobs as $key=>$value) {
+            $this->writes++;
             if (!$this->adodb->UpdateClob($this->prefix.$table, $key, $value, "id = $id")) {
                 return false;
             }
@@ -391,12 +396,14 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         if ($column->meta_type == 'B') { /// If the column is a BLOB
         /// Update BLOB column and return
             $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
+            $this->writes++;
             return $this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
         }
 
         if ($column->meta_type == 'X' && strlen($newvalue) > 4000) { /// If the column is a CLOB with lenght > 4000
         /// Update BLOB column and return
             $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
+            $this->writes++;
             return $this->adodb->UpdateClob($this->prefix.$table, $newfield, $newvalue, $select);
         }
 
@@ -417,6 +424,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield WHERE $select";
 
+        $this->writes++;
         if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
             return false;
@@ -442,6 +450,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         if ($returnid) {
             $dbman = $this->get_manager();
             $xmldb_table = new xmldb_table($table);
+            $this->reads++;
             $seqname = $dbman->find_sequence_name($xmldb_table);
             if (!$seqname) {
             /// Fallback, seqname not found, something is wrong. Inform and use the alternative getNameForObject() method
@@ -449,6 +458,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
                 $generator->setPrefix($this->getPrefix());
                 $seqname = $generator->getNameForObject($table, 'id', 'seq');
             }
+            $this->reads++;
             if ($nextval = $this->adodb->GenID($seqname)) {
                 $params['id'] = (int)$nextval;
             }
@@ -478,6 +488,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
 
         $sql = "INSERT INTO {$this->prefix}$table ($fields) VALUES($qms)";
 
+        $this->writes++;
         if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
             return false;

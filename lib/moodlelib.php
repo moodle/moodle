@@ -7539,7 +7539,7 @@ function array_is_nested($array) {
  ***
  **/
 function get_performance_info() {
-    global $CFG, $PERF;
+    global $CFG, $PERF, $DB;
 
     $info = array();
     $info['html'] = '';         // holds userfriendly HTML representation
@@ -7569,17 +7569,15 @@ function get_performance_info() {
     $info['html'] .= '<span class="included">Included '.$info['includecount'].' files</span> ';
     $info['txt']  .= 'includecount: '.$info['includecount'].' ';
 
-    if (!empty($PERF->dbqueries)) {
-        $info['dbqueries'] = $PERF->dbqueries;
-        $info['html'] .= '<span class="dbqueries">DB queries '.$info['dbqueries'].'</span> ';
-        $info['txt'] .= 'dbqueries: '.$info['dbqueries'].' ';
-    }
-
     if (!empty($PERF->logwrites)) {
         $info['logwrites'] = $PERF->logwrites;
-        $info['html'] .= '<span class="logwrites">Log writes '.$info['logwrites'].'</span> ';
+        $info['html'] .= '<span class="logwrites">Log DB writes '.$info['logwrites'].'</span> ';
         $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
     }
+
+    $info['dbqueries'] = $DB->perf_get_reads().'/'.($DB->perf_get_writes() - $PERF->logwrites);
+    $info['html'] .= '<span class="dbqueries">DB reads/writes: '.$info['dbqueries'].'</span> ';
+    $info['txt'] .= 'db reads/writes: '.$info['dbqueries'].' ';
 
     if (!empty($PERF->profiling) && $PERF->profiling) {
         require_once($CFG->dirroot .'/lib/profilerlib.php');

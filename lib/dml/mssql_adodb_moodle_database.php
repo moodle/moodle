@@ -44,10 +44,10 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
         /// No need to set charset. It must be specified in the driver conf
         /// Allow quoted identifiers
-            $this->adodb->Execute('SET QUOTED_IDENTIFIER ON');
+        $this->adodb->Execute('SET QUOTED_IDENTIFIER ON');
         /// Force ANSI nulls so the NULL check was done by IS NULL and NOT IS NULL
         /// instead of equal(=) and distinct(<>) simbols
-            $this->adodb->Execute('SET ANSI_NULLS ON');
+        $this->adodb->Execute('SET ANSI_NULLS ON');
 
         return true;
     }
@@ -192,6 +192,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         }
 
         foreach ($blobs as $key=>$value) {
+            $this->writes++;
             if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = {$dataobject->id}")) {
                 return false;
             }
@@ -223,6 +224,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         if ($column->meta_type == 'B') { /// If the column is a BLOB (IMAGE)
         /// Update BLOB column and return
             $select = $this->emulate_bound_params($select, $params); // adodb does not use bound parameters for blob updates :-(
+            $this->writes++;
             return $this->adodb->UpdateBlob($this->prefix.$table, $newfield, $newvalue, $select);
         }
 
@@ -242,6 +244,8 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
             array_unshift($params, $newvalue); // add as first param
         }
         $sql = "UPDATE {$this->prefix}$table SET $newfield WHERE $select";
+
+        $this->writes++;
 
         if (!$rs = $this->adodb->Execute($sql, $params)) {
             $this->report_error($sql, $params);
@@ -309,6 +313,7 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
 
         foreach ($blobs as $key=>$value) {
+            $this->writes++;
             if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
                 return false;
             }

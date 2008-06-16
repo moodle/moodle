@@ -69,8 +69,7 @@ function init_performance_info() {
 
     global $PERF, $CFG, $USER;
 
-    $PERF = new Object;
-    $PERF->dbqueries = 0;
+    $PERF = new object();
     $PERF->logwrites = 0;
     if (function_exists('microtime')) {
         $PERF->starttime = microtime();
