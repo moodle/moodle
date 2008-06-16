@@ -214,7 +214,7 @@ $string['password'] = 'Wachtwoord';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP is niet juist geïnstalleerd met de PGSQL-extentie en kan niet communiceren met PostgreSQL. Controleer je php.ini-bestand of hercompileer PHP.';
 $string['php50restricted'] = 'PHP 5.0.x heeft een heel aantal bekende problemen. Upgrade naar 5.1.x of downgrade naar 4.3.x of 4.4.x';
 $string['phpversion'] = 'PHP-versie';
-$string['phpversionerror'] = 'PHP-versie moet minstens 4.1.0 zijn';
+$string['phpversionerror'] = 'PHP-versie moet minstens 4.1.0 zijn'; // ORPHANED
 $string['phpversionhelp'] = '<p>Moodle heeft minstens PHP-versie 4.1.0 nodig.</p> <p>De huidige versie op je server is $a</p>
 <p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere versie van PHP!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres 7)';
