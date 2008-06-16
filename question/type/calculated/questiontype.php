@@ -741,7 +741,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             } else {
                 $strheader .= $delimiter.$answer->answer;
             }
-            $delimiter = '<br/><br/>';
+            $delimiter = '<br/><br/><br/>';
         }
         return $strheader;
     }
