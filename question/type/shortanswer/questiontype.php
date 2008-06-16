@@ -241,8 +241,9 @@ class question_shortanswer_qtype extends default_questiontype {
     }
     /**
      * @param object $question
-     * @return integer a score out of 1 that the average random guess by a
-     * student might give.
+     * @return mixed either a integer score out of 1 that the average random
+     * guess by a student might give or an empty string which means will not
+     * calculate.
      */
     function get_random_guess_score($question) {
         $answers = &$question->options->answers;

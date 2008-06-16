@@ -274,8 +274,9 @@ class question_randomsamatch_qtype extends question_match_qtype {
     }
     /**
      * @param object $question
-     * @return integer a score out of 1 that the average random guess by a
-     * student might give.
+     * @return mixed either a integer score out of 1 that the average random
+     * guess by a student might give or an empty string which means will not
+     * calculate.
      */
     function get_random_guess_score($question) {
         //Effectively $subquestions multi choice questions with equal weighting

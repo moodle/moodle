@@ -93,11 +93,14 @@ class quiz_report_statistics_table extends flexible_table {
     function col_intended_weight($question){
         return quiz_report_scale_sumgrades_as_percentage($question->grade, $this->quiz);
     }
-            
-    function col_random_guess_score($question){
-        return number_format(get_random_guess_score($question) * 100, 2).' %';
-    }
-            
 
+    function col_random_guess_score($question){
+        $randomguessscore = question_get_random_guess_score($question);
+        if (is_number($randomguessscore)){
+            return number_format($randomguessscore * 100, 2).' %';
+        } else {
+            return $randomguessscore; // empty string returned by random question.
+        }
+    }
 }
 ?>

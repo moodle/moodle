@@ -327,6 +327,17 @@ class random_qtype extends default_questiontype {
 
         return $answer_field;
     }
+    
+    /**
+     * For random question type return empty string which means won't calculate.
+     * @param object $question
+     * @return mixed either a integer score out of 1 that the average random
+     * guess by a student might give or an empty string which means will not
+     * calculate.
+     */
+    function get_random_guess_score($question) {
+        return '';
+    }
 
 }
 //// END OF CLASS ////
