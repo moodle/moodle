@@ -218,7 +218,7 @@
         }
         $countries = get_list_of_countries();
         if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
-            if ($user->city && !isset($hiddenfields['country'])) {
+            if ($user->city && !isset($hiddenfields['city'] && !isset($hiddenfields['country'])) {
                 $location .= ', ';
             }
             $location .= $countries[$user->country];
