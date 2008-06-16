@@ -381,112 +381,132 @@ exit(0);
 
 function data_presets_export($course, $cm, $data) {
     global $CFG, $DB;
+    $tempfolder = $CFG->dataroot . '/temp';
+    // ToDo: Don't write directly into moodledata/temp
 
-    /* Info Collected. Now need to make files in moodledata/temp */
-    $tempfolder = $CFG->dataroot.'/temp';
-    $singletemplate     = fopen($tempfolder.'/singletemplate.html', 'w');
-    $listtemplate       = fopen($tempfolder.'/listtemplate.html', 'w');
-    $listtemplateheader = fopen($tempfolder.'/listtemplateheader.html', 'w');
-    $listtemplatefooter = fopen($tempfolder.'/listtemplatefooter.html', 'w');
-    $addtemplate        = fopen($tempfolder.'/addtemplate.html', 'w');
-    $rsstemplate        = fopen($tempfolder.'/rsstemplate.html', 'w');
-    $rsstitletemplate   = fopen($tempfolder.'/rsstitletemplate.html', 'w');
-    $csstemplate        = fopen($tempfolder.'/csstemplate.css', 'w');
-    $jstemplate         = fopen($tempfolder.'/jstemplate.js', 'w');
-    $asearchtemplate    = fopen($tempfolder.'/asearchtemplate.html', 'w');
+    // Assemble "preset.xml":
+    $presetxmldata = "<preset>\n\n";
 
-    fwrite($singletemplate, $data->singletemplate);
-    fwrite($listtemplate, $data->listtemplate);
-    fwrite($listtemplateheader, $data->listtemplateheader);
-    fwrite($listtemplatefooter, $data->listtemplatefooter);
-    fwrite($addtemplate, $data->addtemplate);
-    fwrite($rsstemplate, $data->rsstemplate);
-    fwrite($rsstitletemplate, $data->rsstitletemplate);
-    fwrite($csstemplate, $data->csstemplate);
-    fwrite($jstemplate, $data->jstemplate);
-    fwrite($asearchtemplate, $data->asearchtemplate);
+    // Raw settings are not preprocessed during saving of presets
+    $raw_settings = array(
+        'intro',
+        'comments',
+        'requiredentries',
+        'requiredentriestoview',
+        'maxentries',
+        'rssarticles',
+        'approval',
+        'defaultsortdir'
+    );
 
-    fclose($singletemplate);
-    fclose($listtemplate);
-    fclose($listtemplateheader);
-    fclose($listtemplatefooter);
-    fclose($addtemplate);
-    fclose($rsstemplate);
-    fclose($rsstitletemplate);
-    fclose($csstemplate);
-    fclose($jstemplate);
-    fclose($asearchtemplate);
-
-    /* All the display data is now done. Now assemble preset.xml */
-    $presetfile = fopen($tempfolder.'/preset.xml', 'w');
-    $presetxml = "<preset>\n\n";
-
-    // raw settings are not preprocessed during saving of presets
-    $raw_settings = array('intro', 'comments', 'requiredentries', 'requiredentriestoview',
-                          'maxentries', 'rssarticles', 'approval', 'defaultsortdir');
-
-    $presetxml .= "<settings>\n";
-    // first settings that do not require any conversion
+    $presetxmldata .= "<settings>\n";
+    // First, settings that do not require any conversion
     foreach ($raw_settings as $setting) {
-        $presetxml .= "<$setting>".htmlspecialchars($data->$setting)."</$setting>\n";
+        $presetxmldata .= "<$setting>" . htmlspecialchars($data->$setting) . "</$setting>\n";
     }
 
-    // now specific settings
-    if ($data->defaultsort > 0 and $sortfield = data_get_field_from_id($data->defaultsort, $data)) {
-        $presetxml .= "<defaultsort>".htmlspecialchars($sortfield->field->name)."</defaultsort>\n";
+    // Now specific settings
+    if ($data->defaultsort > 0 && $sortfield = data_get_field_from_id($data->defaultsort, $data)) {
+        $presetxmldata .= '<defaultsort>' . htmlspecialchars($sortfield->field->name) . "</defaultsort>\n";
     } else {
-        $presetxml .= "<defaultsort>0</defaultsort>\n";
+        $presetxmldata .= "<defaultsort>0</defaultsort>\n";
     }
-    // note: grading settings are not exported intentionally
-    $presetxml .= "</settings>\n\n";
+    $presetxmldata .= "</settings>\n\n";
 
     // Now for the fields. Grab all that are non-empty
     $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
     ksort($fields);
     if (!empty($fields)) {
         foreach ($fields as $field) {
-            $presetxml .= "<field>\n";
+            $presetxmldata .= "<field>\n";
             foreach ($field as $key => $value) {
                 if ($value != '' && $key != 'id' && $key != 'dataid') {
-                    $presetxml .= "<$key>".htmlspecialchars($value)."</$key>\n";
+                    $presetxmldata .= "<$key>" . htmlspecialchars($value) . "</$key>\n";
                 }
             }
-            $presetxml .= "</field>\n\n";
+            $presetxmldata .= "</field>\n\n";
         }
     }
+    $presetxmldata .= '</preset>';
 
-    $presetxml .= "</preset>";
-    fwrite($presetfile, $presetxml);
-    fclose($presetfile);
+    // After opening a file in write mode, close it asap
+    $presetxmlfile = fopen($tempfolder . '/preset.xml', 'w');
+    fwrite($presetxmlfile, $presetxmldata);
+    fclose($presetxmlfile);
 
-    /* Check all is well */
-    if (!is_directory_a_preset($tempfolder)) {
-        error("Not all files generated!");
+    // Now write the template files
+    $singletemplate = fopen($tempfolder . '/singletemplate.html', 'w');
+    fwrite($singletemplate, $data->singletemplate);
+    fclose($singletemplate);
+
+    $listtemplateheader = fopen($tempfolder . '/listtemplateheader.html', 'w');
+    fwrite($listtemplateheader, $data->listtemplateheader);
+    fclose($listtemplateheader);
+
+    $listtemplate = fopen($tempfolder . '/listtemplate.html', 'w');
+    fwrite($listtemplate, $data->listtemplate);
+    fclose($listtemplate);
+
+    $listtemplatefooter = fopen($tempfolder . '/listtemplatefooter.html', 'w');
+    fwrite($listtemplatefooter, $data->listtemplatefooter);
+    fclose($listtemplatefooter);
+
+    $addtemplate = fopen($tempfolder . '/addtemplate.html', 'w');
+    fwrite($addtemplate, $data->addtemplate);
+    fclose($addtemplate);
+
+    $rsstemplate = fopen($tempfolder . '/rsstemplate.html', 'w');
+    fwrite($rsstemplate, $data->rsstemplate);
+    fclose($rsstemplate);
+
+    $rsstitletemplate = fopen($tempfolder . '/rsstitletemplate.html', 'w');
+    fwrite($rsstitletemplate, $data->rsstitletemplate);
+    fclose($rsstitletemplate);
+
+    $csstemplate = fopen($tempfolder . '/csstemplate.css', 'w');
+    fwrite($csstemplate, $data->csstemplate);
+    fclose($csstemplate);
+
+    $jstemplate = fopen($tempfolder . '/jstemplate.js', 'w');
+    fwrite($jstemplate, $data->jstemplate);
+    fclose($jstemplate);
+
+    $asearchtemplate = fopen($tempfolder . '/asearchtemplate.html', 'w');
+    fwrite($asearchtemplate, $data->asearchtemplate);
+    fclose($asearchtemplate);
+
+    // Check if all files have been generated
+    if (! is_directory_a_preset($tempfolder)) {
+        error('Not all files generated!');
+        // should be migrated to print_error()
     }
 
     $filelist = array(
+        'preset.xml',
         'singletemplate.html',
-        'listtemplate.html',
         'listtemplateheader.html',
+        'listtemplate.html',
         'listtemplatefooter.html',
         'addtemplate.html',
         'rsstemplate.html',
         'rsstitletemplate.html',
         'csstemplate.css',
         'jstemplate.js',
-        'preset.xml',
         'asearchtemplate.html'
     );
 
     foreach ($filelist as $key => $file) {
-        $filelist[$key] = $tempfolder.'/'.$filelist[$key];
+        $filelist[$key] = $tempfolder . '/' . $filelist[$key];
     }
 
-    @unlink($tempfolder.'/export.zip');
-    $status = zip_files($filelist, $tempfolder.'/export.zip');
+    $exportfile = $tempfolder . '/export.zip';
+    @unlink($exportfile);
+    $status = zip_files($filelist, $exportfile);
+    // ToDo: status check
+    // ToDo: remove temporary files
 
-    /* made the zip... now return the filename for storage.*/
-    return $tempfolder.'/export.zip';
+    // Return the full path to the ZIP file to be exported:
+    return $exportfile;
 }
 
 ?>
