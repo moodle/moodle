@@ -1282,7 +1282,7 @@ function grade_cron() {
                 SELECT 'x' FROM {grade_items} c WHERE c.itemtype='course' AND c.needsupdate=0 AND c.courseid=i.courseid)";
 
     // go through all courses that have proper final grades and lock them if needed
-    if ($rs = $DB->get_recordset_sql($sql, params($now))) {
+    if ($rs = $DB->get_recordset_sql($sql, array($now))) {
         foreach ($rs as $item) {
             $grade_item = new grade_item($item, false);
             $grade_item->locked = $now;
