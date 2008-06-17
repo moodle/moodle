@@ -180,18 +180,27 @@ function include_help_for_each_resource($file, $langs, $helpdir) {
 
     require_once($CFG->dirroot .'/mod/resource/lib.php');
     $typelist = resource_get_types();
-    $typelist['label'] = get_string('resourcetypelabel', 'resource');
+    
+    //add label type
+    $labelType = new object();
+    $labelType->modclass = MOD_CLASS_RESOURCE;
+    $resourcetype = 'label';
+    $labelType->name = $resourcetype;
+    $labelType->type = "resource&amp;type=$resourcetype";
+    $labelType->typestr = get_string("resourcetype$resourcetype", 'resource');
+    $typelist[] = $labelType;
 
-    foreach ($typelist as $type => $name) {
+    foreach ($typelist as $type) {
+   
         foreach ($langs as $lang) {
             if (empty($lang)) {
                 continue;
             }
 
-            $filepath = "$helpdir/resource/type/$type.html";
+            $filepath = "$helpdir/resource/type/".$type->name.".html";
 
             if (file_exists_and_readable($filepath)) {
-                echo '<hr size="1" />';
+                echo '<hr />';
                 @include($filepath); // The actual helpfile
                 break; // Out of loop over languages.
             }
