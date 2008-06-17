@@ -533,6 +533,7 @@ function resource_get_types() {
     foreach ($standardresources as $resourcetype) {
         $type = new object();
         $type->modclass = MOD_CLASS_RESOURCE;
+        $type->name = $resourcetype;
         $type->type = "resource&amp;type=$resourcetype";
         $type->typestr = get_string("resourcetype$resourcetype", 'resource');
         $types[] = $type;
@@ -547,6 +548,7 @@ function resource_get_types() {
         if (!in_array($resourcetype, $standardresources)) {
             $type = new object();
             $type->modclass = MOD_CLASS_RESOURCE;
+            $type->name = $resourcetype;
             $type->type = "resource&amp;type=$resourcetype";
             $type->typestr = get_string("resourcetype$resourcetype", 'resource');
             $types[] = $type;
