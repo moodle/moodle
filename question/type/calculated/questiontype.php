@@ -771,11 +771,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                     $answer->answer, $data, $answer->tolerance,
                     $answer->tolerancetype, $answer->correctanswerlength,
                     $answer->correctanswerformat, $unit);
-              eval('$answer->answer = '.$formula.';') ;                   
+              eval('$answer->answer = '.$formula.';') ;
             $virtualqtype->get_tolerance_interval($answer);
             if ($answer->min === '') {
                 // This should mean that something is wrong
-                $stranswers .= " -$formattedanswer->answer".'<br/><br/>';                
+                $stranswers .= " -$formattedanswer->answer".'<br/><br/>';
             } else {
                 $stranswers .= $formula.' = '.$formattedanswer->answer.'<br/>' ;
                 $stranswers .= $strmin. $delimiter.$answer->min.'---';
@@ -783,11 +783,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                 $stranswers .='<br/>';
                 $correcttrue->correct = $formattedanswer->answer ;
                 $correcttrue->true = $answer->answer ;
-                if ($formattedanswer->answer < $answer->min || $formattedanswer->answer > $answer->max){ 
+                if ($formattedanswer->answer < $answer->min || $formattedanswer->answer > $answer->max){
                     $stranswers .=get_string('trueansweroutsidelimits','qtype_calculated',$correcttrue);//<span class="error">ERROR True answer '..' outside limits</span>';
                 }else {
                     $stranswers .=get_string('trueanswerinsidelimits','qtype_calculated',$correcttrue);//' True answer :'.$calculated->trueanswer.' inside limits';
-                }                
+                }
                 $stranswers .='<br/>';
             }
         }
@@ -1079,6 +1079,53 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
 
         return $status;
     }
+
+/**
+   * Runs all the code required to set up and save an essay question for testing purposes.
+   * Alternate DB table prefix may be used to facilitate data deletion.
+   */
+  function generate_test($name, $courseid = null) {
+      list($form, $question) = parent::generate_test($name, $courseid);
+      $form->feedback = 1;
+      $form->multiplier = array(1, 1);
+      $form->shuffleanswers = 1;
+      $form->noanswers = 1;
+      $form->qtype ='calculated';
+      $question->qtype ='calculated';
+      $form->answers = array('{a} + {b}');
+      $form->fraction = array(1);
+      $form->tolerance = array(0.01);
+      $form->tolerancetype = array(1);
+      $form->correctanswerlength = array(2);
+      $form->correctanswerformat = array(1);
+      $form->questiontext = "What is {a} + {b}?";
+
+      if ($courseid) {
+          $course = get_record('course', 'id', $courseid);
+      }
+
+      $new_question = $this->save_question($question, $form, $course);
+
+      $dataset_form = new stdClass();
+      $dataset_form->nextpageparam["forceregeneration"]= 1;
+      $dataset_form->calcmin = array(1 => 1.0, 2 => 1.0);
+      $dataset_form->calcmax = array(1 => 10.0, 2 => 10.0);
+      $dataset_form->calclength = array(1 => 1, 2 => 1);
+      $dataset_form->number = array(1 => 5.4 , 2 => 4.9);
+      $dataset_form->itemid = array(1 => '' , 2 => '');
+      $dataset_form->calcdistribution = array(1 => 'uniform', 2 => 'uniform');
+      $dataset_form->definition = array(1 => "1-0-a",
+                                        2 => "1-0-b");
+      $dataset_form->nextpageparam = array('forceregeneration' => false);
+      $dataset_form->addbutton = 1;
+      $dataset_form->selectadd = 1;
+      $dataset_form->courseid = $courseid;
+      $dataset_form->cmid = 0;
+      $dataset_form->id = $new_question->id;
+      $this->save_dataset_items($new_question, $dataset_form);
+
+      return $new_question;
+  }
 }
 //// END OF CLASS ////
 
