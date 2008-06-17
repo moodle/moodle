@@ -48,21 +48,21 @@ class embedded_cloze_qtype extends default_questiontype {
             $question->options->questions[$seq]= '';
         }
         if (isset($wrappedquestions) && is_array($wrappedquestions)){
-        foreach ($wrappedquestions as $wrapped) {
-            if (!$QTYPES[$wrapped->qtype]->get_question_options($wrapped)) {
-                notify("Unable to get options for questiontype {$wrapped->qtype} (id={$wrapped->id})");
+            foreach ($wrappedquestions as $wrapped) {
+                if (!$QTYPES[$wrapped->qtype]->get_question_options($wrapped)) {
+                    notify("Unable to get options for questiontype {$wrapped->qtype} (id={$wrapped->id})");                
+                }else {
+                    // for wrapped questions the maxgrade is always equal to the defaultgrade,
+                    // there is no entry in the question_instances table for them
+                    $wrapped->maxgrade = $wrapped->defaultgrade;
+                    $nbvaliquestion++ ;
+                    $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped); // ??? Why do we need a clone here?
+                }
             }
-            // for wrapped questions the maxgrade is always equal to the defaultgrade,
-            // there is no entry in the question_instances table for them
-            $wrapped->maxgrade = $wrapped->defaultgrade;
-                        $nbvaliquestion++ ;
-            $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped); // ??? Why do we need a clone here?
-        }
         }
         if ($nbvaliquestion == 0 ) {
             notify(get_string('noquestions','qtype_multianswer',$question->name));
         }
-
         return true;
     }
 
@@ -81,7 +81,7 @@ class embedded_cloze_qtype extends default_questiontype {
         if (!$oldwrappedids = get_field('question_multianswer', 'sequence', 'question', $question->id)) {
             $oldwrappedquestions = array();
         } else {
-            $oldwrappedids = get_records_list('question', 'id', $oldwrappedids, 'id ASC','id');
+            $oldwrappedquestions = get_records_list('question', 'id', $oldwrappedids, 'id ASC');
         }
         $sequence = array();
         foreach($question->options->questions as $wrapped) {
