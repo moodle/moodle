@@ -268,13 +268,15 @@ class quiz_report extends quiz_default_report {
                 }
                 $sumofvarianceforallpositions = $sum / ($usingattempts->countrecs -1);
                 $p = count($qgradeavgs);//no of positions
-                $cic = (100 * $p / ($p -1)) * (1 - ($sumofvarianceforallpositions/$k2));
-                $quizattsstatistics->data[] = array(get_string('cic', 'quiz_statistics'), number_format($cic, $quiz->decimalpoints).' %');
-                $errorratio = 100 * sqrt(1-($cic/100));
-                $quizattsstatistics->data[] = array(get_string('errorratio', 'quiz_statistics'), number_format($errorratio, $quiz->decimalpoints).' %');
-                $standarderror = ($errorratio * $sd / 100);
-                $quizattsstatistics->data[] = array(get_string('standarderror', 'quiz_statistics'), 
-                    quiz_report_scale_sumgrades_as_percentage($standarderror, $quiz));
+                if ($p > 1){
+                    $cic = (100 * $p / ($p -1)) * (1 - ($sumofvarianceforallpositions/$k2));
+                    $quizattsstatistics->data[] = array(get_string('cic', 'quiz_statistics'), number_format($cic, $quiz->decimalpoints).' %');
+                    $errorratio = 100 * sqrt(1-($cic/100));
+                    $quizattsstatistics->data[] = array(get_string('errorratio', 'quiz_statistics'), number_format($errorratio, $quiz->decimalpoints).' %');
+                    $standarderror = ($errorratio * $sd / 100);
+                    $quizattsstatistics->data[] = array(get_string('standarderror', 'quiz_statistics'), 
+                        quiz_report_scale_sumgrades_as_percentage($standarderror, $quiz));
+                }
                 print_table($quizattsstatistics);
             }
             
