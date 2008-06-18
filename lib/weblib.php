@@ -1178,7 +1178,9 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
 
     //IE and Opera fire the onchange when ever you move into a dropdwown list with the keyboard. 
     //onfocus will call a function inside dropdown.js. It fixes this IE/Opera behavior.
-    if (check_browser_version('MSIE') || check_browser_version('Opera')) {
+    //Note: There is a bug on Opera+Linux with the javascript code (first mouse selection is inactive), 
+    //so we do not fix the Opera behavior on Linux
+    if (check_browser_version('MSIE') || (check_browser_version('Opera') && !check_browser_operating_system("Linux"))) {
         $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" onfocus="initSelect(\''.$formid.'\','.$targetwindow.')" name="jump">'."\n";
     }
     //Other browser
