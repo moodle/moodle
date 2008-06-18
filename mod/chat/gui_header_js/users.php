@@ -114,7 +114,7 @@
     $strbeep    = get_string('beep', 'chat');
 
 
-    echo '<div style="display: none"><a href="'.$refreshurl.'" name="refreshLink">Refresh link</a></div>';
+    echo '<div style="display: none"><a href="'.$refreshurl.'" id="refreshLink">Refresh link</a></div>';
     echo '<table width="100%">';
     foreach ($chatusers as $chatuser) {
         $lastping = $timenow - $chatuser->lastmessageping;
