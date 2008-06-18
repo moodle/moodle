@@ -513,8 +513,7 @@ abstract class moodle_database {
      * Get a number of records a moodle_recordset.
      *
      * Only records where $field takes one of the values $values are returned.
-     * $values should be a comma-separated list of values, for example "4,5,6,10"
-     * or "'foo','bar','baz'".
+     * $values must be an array of values.
      *
      * Other arguments and the return type as for @see function get_recordset.
      *
@@ -541,7 +540,7 @@ abstract class moodle_database {
                 $params[] = $value;
             }
         }
-        $select = implode(" AND ", $select);
+        $select = implode(" OR ", $select);
         return $this->get_recordset_select($table, $select, $params, $sort, $fields, $limitfrom, $limitnum);
     }
 

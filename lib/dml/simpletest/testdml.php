@@ -37,24 +37,6 @@ class dml_test extends UnitTestCase {
 
     function test_fix_sql_params() {
         $DB = $this->tdb;
-        $dbman = $this->tdb->get_manager();
-
-        $table = new xmldb_table("testtable");
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
-        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->setComment("This is a test'n drop table. You can drop it safely");
-        $dbman->create_table($table);
-        $this->tables[$table->getName()] = $table;
-
-        $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1'),
-                      array('id' => 2, 'course' => 3, 'name' => 'record2'),
-                      array('id' => 3, 'course' => 5, 'name' => 'record3'));
-        foreach ($data as $record) {
-            $DB->insert_record('testtable', $record);
-        }
 
         // Malformed table placeholder
         $sql = "SELECT * FROM [testtable]";
@@ -170,9 +152,6 @@ class dml_test extends UnitTestCase {
         // Need to test with multiple DBs
         $table = new xmldb_table("testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
-        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
@@ -186,7 +165,6 @@ class dml_test extends UnitTestCase {
         $table = new xmldb_table("testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
@@ -195,7 +173,7 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($indices = $DB->get_indexes('testtable'));
         $this->assertTrue(count($indices) == 1);
 
-        $xmldb_indexes = $this->tables['testtable']->getIndexes();
+        $xmldb_indexes = $table->getIndexes();
         $this->assertEqual(count($indices), count($xmldb_indexes));
 
         for ($i = 0; $i < count($indices); $i++) {
@@ -219,7 +197,6 @@ class dml_test extends UnitTestCase {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
-        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
@@ -431,6 +408,268 @@ class dml_test extends UnitTestCase {
         }
         $rs->close();
     }
+
+    public function test_get_recordset_list() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('course' => 3));
+        $DB->insert_record('testtable', array('course' => 3));
+        $DB->insert_record('testtable', array('course' => 5));
+        $DB->insert_record('testtable', array('course' => 2));
+
+        $rs = $DB->get_recordset_list('testtable', 'course', array(3, 2));
+
+        $this->assertTrue($rs);
+
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEqual(3, $counter);
+    }
+
+    public function test_get_recordset_select() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('course' => 3));
+        $DB->insert_record('testtable', array('course' => 3));
+        $DB->insert_record('testtable', array('course' => 5));
+        $DB->insert_record('testtable', array('course' => 2));
+
+        $this->assertTrue($rs = $DB->get_recordset_select('testtable', ''));
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEqual(4, $counter);
+
+        $this->assertTrue($rs = $DB->get_recordset_select('testtable', 'course = 3'));
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEqual(2, $counter);
+    }
+
+    public function test_get_recordset_sql() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('course' => 3));
+        $DB->insert_record('testtable', array('course' => 3));
+        $DB->insert_record('testtable', array('course' => 5));
+        $DB->insert_record('testtable', array('course' => 2));
+
+        $this->assertTrue($rs = $DB->get_recordset_sql('SELECT * FROM {testtable} WHERE course = ?', array(3)));
+        $counter = 0;
+        foreach ($rs as $record) {
+            $counter++;
+        }
+        $this->assertEqual(2, $counter);
+    }
+
+    public function test_get_records() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $DB->insert_record('testtable', array('course' => 3));
+        $DB->insert_record('testtable', array('course' => 3));
+        $DB->insert_record('testtable', array('course' => 5));
+        $DB->insert_record('testtable', array('course' => 2));
+
+        // All records
+        $records = $DB->get_records('testtable');
+        $this->assertEqual(4, count($records));
+        $this->assertEqual(3, $records[1]->course);
+        $this->assertEqual(3, $records[2]->course);
+        $this->assertEqual(5, $records[3]->course);
+        $this->assertEqual(2, $records[4]->course);
+
+        // Records matching certain conditions
+        $records = $DB->get_records('testtable', array('course' => 3));
+        $this->assertEqual(2, count($records));
+        $this->assertEqual(3, $records[1]->course);
+        $this->assertEqual(3, $records[2]->course);
+
+        // All records sorted by course
+        $records = $DB->get_records('testtable', null, 'course');
+        $this->assertEqual(4, count($records));
+        $current_record = reset($records);
+        $this->assertEqual(4, $current_record->id);
+        $current_record = next($records);
+        $this->assertEqual(1, $current_record->id);
+        $current_record = next($records);
+        $this->assertEqual(2, $current_record->id);
+        $current_record = next($records);
+        $this->assertEqual(3, $current_record->id);
+
+        // All records, but get only one field
+        $records = $DB->get_records('testtable', null, '', 'id');
+        $this->assertTrue(empty($records[1]->course));
+        $this->assertFalse(empty($records[1]->id));
+        $this->assertEqual(4, count($records));
+    }
+
+    public function test_get_records_list() {
+
+    }
+
+    public function test_get_records_sql() {
+
+    }
+
+    public function test_get_records_menu() {
+
+    }
+
+    public function test_get_records_select_menu() {
+
+    }
+
+    public function test_get_records_sql_menu() {
+
+    }
+
+    public function test_get_record() {
+
+    }
+
+    public function test_get_record_select() {
+
+    }
+
+    public function test_get_record_sql() {
+
+    }
+
+    public function test_get_field() {
+
+    }
+
+    public function test_get_field_select() {
+
+    }
+
+    public function test_get_field_sql() {
+
+    }
+
+    public function test_get_field_select() {
+
+    }
+
+    public function test_get_fieldset_sql() {
+
+    }
+
+    public function test_insert_record_raw() {
+
+    }
+
+    public function test_insert_record() {
+
+    }
+
+    public function test_update_record_raw() {
+
+    }
+
+    public function test_update_record() {
+
+    }
+
+    public function test_set_field() {
+
+    }
+
+    public function test_set_field_select() {
+
+    }
+
+    public function test_count_records() {
+        $DB = $this->tdb;
+
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $this->assertEqual(0, $DB->count_records('testtable'));
+
+        $DB->insert_record('testtable', array('course' => 3));
+        $DB->insert_record('testtable', array('course' => 4));
+        $DB->insert_record('testtable', array('course' => 5));
+
+        $this->assertEqual(3, $DB->count_records('testtable'));
+    }
+
+    public function test_count_records_select() {
+
+    }
+
+    public function test_count_records_sql() {
+
+    }
+
+    public function test_record_exists() {
+
+    }
+
+    public function test_record_exists_select() {
+
+    }
+
+    public function test_record_exists_sql() {
+
+    }
+
+    public function test_delete_records() {
+
+    }
+
+    public function test_delete_records_select() {
+
+    }
+
+    public function test_where_clause() {
+
+    }
+
 }
 
 /**
