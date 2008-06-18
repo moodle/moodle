@@ -69,10 +69,11 @@ $sesskey = sesskey();
 
 /********************************************************************/
 /* Output */
-data_print_header($course, $cm, $data, 'presets');
+if ($action !== 'export') {
+    data_print_header($course, $cm, $data, 'presets');
+}
 
 switch ($action) {
-
         /***************** Deleting *****************/
     case 'confirmdelete' :
         if (!confirm_sesskey()) { // GET request ok here
@@ -100,7 +101,7 @@ switch ($action) {
         $optionsno->d = $data->id;
         notice_yesno($strwarning, 'preset.php', 'preset.php', $options, $optionsno, 'post', 'get');
         print_footer($course);
-        exit;
+        exit(0);
         break;
 
     case 'delete' :
@@ -123,9 +124,7 @@ switch ($action) {
 
         $strdeleted = get_string('deleted', 'data');
         notify("$shortname $strdeleted", 'notifysuccess');
-
         break;
-
 
         /***************** Importing *****************/
     case 'importpreset' :
@@ -137,7 +136,7 @@ switch ($action) {
         $pimporter->import_options();
 
         print_footer($course);
-        exit;
+        exit(0);
         break;
 
         /* Imports a zip file. */
@@ -161,7 +160,7 @@ switch ($action) {
         $pimporter->import_options();
 
         print_footer($course);
-        exit;
+        exit(0);
         break;
 
     case 'finishimport':
@@ -188,12 +187,17 @@ switch ($action) {
             print_error('invalidrequest');
         }
         $exportfile = data_presets_export($course, $cm, $data);
-        $dataroot = preg_quote($CFG->dataroot, '/');
-        $downloadurl = preg_replace("/$dataroot/", $CFG->wwwroot . '/file.php', $exportfile, 1);
-        echo '<div style="text-align:center">';
-        echo get_string('exportedtozip', 'data') . '<br />';
-        echo "<a href=\"$downloadurl\">" . get_string('download', 'data') . '</a>';
-        echo '</div>';
+        $exportfilename = basename($exportfile);
+        header("Content-Type: application/download\n");
+        header("Content-Disposition: attachment; filename=$exportfilename");
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
+        header('Pragma: public');
+        $exportfilehandler = fopen($exportfile, 'rb');
+        print fread($exportfilehandler, filesize($exportfile));
+        fclose($exportfilehandler);
+        unlink($exportfile);
+        exit(0);
         break;
 
         /***************** Exporting *****************/
@@ -216,7 +220,7 @@ switch ($action) {
         echo '<input type="hidden" name="sesskey" value="'.$sesskey.'" />';
         echo '<input type="submit" value="'.$strcontinue.'" /></fieldset></form></div>';
         print_footer($course);
-        exit;
+        exit(0);
         break;
 
     case 'save2':
@@ -251,7 +255,7 @@ switch ($action) {
             echo '<input type="submit" value="'.$stroverwrite.'" /></div></form>';
             echo '</div>';
             print_footer($course);
-            exit;
+            exit(0);
             break;
         }
 
