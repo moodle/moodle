@@ -5,17 +5,29 @@
 
 define("LABEL_MAX_NAME_LENGTH", 50);
 
+function get_label_name($label) {
+    $textlib = textlib_get_instance();
+
+    $name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
+    if ($textlib->strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
+        $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
+    }
+
+    if (empty($name)) {
+        // arbitrary name
+        $name = "label{$label->instance}";
+    }
+
+    return $name;
+}
+
 function label_add_instance($label) {
 /// Given an object containing all the necessary data, 
 /// (defined by the form in mod.html) this function 
 /// will create a new instance and return the id number 
 /// of the new instance.
-    $textlib = textlib_get_instance();
 
-    $label->name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
-    if ($textlib->strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
-        $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
-    }
+    $label->name = get_label_name($label);
     $label->timemodified = time();
 
     return insert_record("label", $label);
@@ -26,12 +38,8 @@ function label_update_instance($label) {
 /// Given an object containing all the necessary data, 
 /// (defined by the form in mod.html) this function 
 /// will update an existing instance with new data.
-    $textlib = textlib_get_instance();
 
-    $label->name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
-    if ($textlib->strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
-        $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
-    }
+    $label->name = get_label_name($label);
     $label->timemodified = time();
     $label->id = $label->instance;
 
