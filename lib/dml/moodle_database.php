@@ -1403,11 +1403,27 @@ abstract class moodle_database {
         return true;
     }
 
+    /**
+     * Returns number of reads done by this database
+     * @return int
+     */
     public function perf_get_reads() {
         return $this->reads;
     }
 
+    /**
+     * Returns number of writes done by this database
+     * @return int
+     */
     public function perf_get_writes() {
         return $this->writes;
+    }
+
+    /**
+     * Returns number of queries done by this database
+     * @return int
+     */
+    public function perf_get_queries() {
+        return $this->writes + $this->reads;
     }
 }
