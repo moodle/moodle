@@ -11,6 +11,7 @@ if (!defined('MOODLE_INTERNAL')) {
 class dml_test extends UnitTestCase {
     private $tables = array();
     private $tdb;
+    private $data;
 
     function setUp() {
         global $CFG, $DB, $UNITTEST;
@@ -20,41 +21,6 @@ class dml_test extends UnitTestCase {
         } else {
             $this->tdb = $DB;
         }
-
-        $dbman = $this->tdb->get_manager();
-
-        $table = new xmldb_table("testtable");
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM,
-                array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general');
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null);
-        $table->add_field('intro', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('logo', XMLDB_TYPE_BINARY, 'big', null, null, null, null, null);
-        $table->add_field('assessed', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('assesstimestart', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('assesstimefinish', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('scale', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('maxbytes', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('forcesubscribe', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('trackingtype', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1');
-        $table->add_field('rsstype', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('rssarticles', XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('grade', XMLDB_TYPE_NUMBER, '20,0', XMLDB_UNSIGNED, null, null, null, null, null);
-        $table->add_field('percent', XMLDB_TYPE_NUMBER, '5,2', null, null, null, null, null, null);
-        $table->add_field('warnafter', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('blockafter', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('blockperiod', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
-        $table->setComment("This is a test'n drop table. You can drop it safely");
-
-        if ($dbman->table_exists($table)) {
-            $dbman->drop_table($table, true, false);
-        }
-        $dbman->create_table($table);
-        $this->tables[$table->getName()] = $table;
 
     }
 
@@ -73,6 +39,23 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
+        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->setComment("This is a test'n drop table. You can drop it safely");
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1'),
+                      array('id' => 2, 'course' => 3, 'name' => 'record2'),
+                      array('id' => 3, 'course' => 5, 'name' => 'record3'));
+        foreach ($data as $record) {
+            $DB->insert_record('testtable', $record);
+        }
+
         // Malformed table placeholder
         $sql = "SELECT * FROM [testtable]";
         $sqlarray = $DB->fix_sql_params($sql);
@@ -85,36 +68,36 @@ class dml_test extends UnitTestCase {
 
         // Malformed param placeholders
         $sql = "SELECT * FROM {testtable} WHERE name = ?param1";
-        $params = array('param1' => 'first record');
+        $params = array('param1' => 'record2');
         $sqlarray = $DB->fix_sql_params($sql, $params);
         $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?param1", $sqlarray[0]);
 
         // Mixed param types (colon and dollar)
-        $sql = "SELECT * FROM {testtable} WHERE name = :param1, rsstype = \$1";
-        $params = array('param1' => 'first record', 'param2' => 1);
+        $sql = "SELECT * FROM {testtable} WHERE name = :param1, course = \$1";
+        $params = array('param1' => 'record1', 'param2' => 3);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
-            $this->assertTrue(false);
+            $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
             $this->assertTrue($e instanceof moodle_exception);
         }
 
         // Mixed param types (question and dollar)
-        $sql = "SELECT * FROM {testtable} WHERE name = ?, rsstype = \$1";
-        $params = array('param1' => 'first record', 'param2' => 1);
+        $sql = "SELECT * FROM {testtable} WHERE name = ?, course = \$1";
+        $params = array('param1' => 'record2', 'param2' => 5);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
-            $this->assertTrue(false);
+            $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
             $this->assertTrue($e instanceof moodle_exception);
         }
 
         // Too many params in sql
-        $sql = "SELECT * FROM {testtable} WHERE name = ?, rsstype = ?, course = ?";
-        $params = array('first record', 1);
+        $sql = "SELECT * FROM {testtable} WHERE name = ?, course = ?, id = ?";
+        $params = array('record2', 3);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
-            $this->assertTrue(false);
+            $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
             $this->assertTrue($e instanceof moodle_exception);
         }
@@ -126,54 +109,54 @@ class dml_test extends UnitTestCase {
 
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
-            $this->assertTrue(true);
+            $this->pass();
         } catch (Exception $e) {
-            $this->assertTrue(false);
+            $this->fail("Unexpected " . get_class($e) . " exception");
         }
         $this->assertTrue($sqlarray[0]);
 
         // Named params missing from array
-        $sql = "SELECT * FROM {testtable} WHERE name = :name, rsstype = :rsstype";
-        $params = array('wrongname' => 'first record', 'rsstype' => 1);
+        $sql = "SELECT * FROM {testtable} WHERE name = :name, course = :course";
+        $params = array('wrongname' => 'record1', 'course' => 1);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
-            $this->assertTrue(false);
+            $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
             $this->assertTrue($e instanceof moodle_exception);
         }
 
         // Duplicate named param in query
-        $sql = "SELECT * FROM {testtable} WHERE name = :name, rsstype = :name";
-        $params = array('name' => 'first record', 'rsstype' => 1);
+        $sql = "SELECT * FROM {testtable} WHERE name = :name, course = :name";
+        $params = array('name' => 'record2', 'course' => 3);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
-            $this->assertTrue(false);
+            $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
             $this->assertTrue($e instanceof moodle_exception);
         }
 
         // Unsupported Bound params
-        $sql = "SELECT * FROM {testtable} WHERE name = $1, rsstype = $2";
+        $sql = "SELECT * FROM {testtable} WHERE name = $1, course = $2";
         $params = array('first record', 1);
         try {
             $sqlarray = $DB->fix_sql_params($sql, $params);
-            $this->assertTrue(false);
+            $this->fail("Expecting an exception, none occurred");
         } catch (Exception $e) {
             $this->assertTrue($e instanceof moodle_exception);
         }
 
         // Correct named param placeholders
-        $sql = "SELECT * FROM {testtable} WHERE name = :name, rsstype = :rsstype";
-        $params = array('name' => 'first record', 'rsstype' => 1);
+        $sql = "SELECT * FROM {testtable} WHERE name = :name, course = :course";
+        $params = array('name' => 'first record', 'course' => 1);
         $sqlarray = $DB->fix_sql_params($sql, $params);
-        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?, rsstype = ?", $sqlarray[0]);
+        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?, course = ?", $sqlarray[0]);
         $this->assertEqual(2, count($sqlarray[1]));
 
         // Correct ? params
-        $sql = "SELECT * FROM {testtable} WHERE name = ?, rsstype = ?";
+        $sql = "SELECT * FROM {testtable} WHERE name = ?, course = ?";
         $params = array('first record', 1);
         $sqlarray = $DB->fix_sql_params($sql, $params);
-        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?, rsstype = ?", $sqlarray[0]);
+        $this->assertEqual("SELECT * FROM {$DB->get_prefix()}testtable WHERE name = ?, course = ?", $sqlarray[0]);
         $this->assertEqual(2, count($sqlarray[1]));
 
     }
@@ -182,13 +165,32 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
+        $original_count = count($DB->get_tables());
+
         // Need to test with multiple DBs
-        $this->assertTrue($DB->get_tables() > 2);
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
+        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+        $this->assertTrue(count($DB->get_tables()) == $original_count + 1);
     }
 
     public function testGetIndexes() {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
+        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
 
         $this->assertTrue($indices = $DB->get_indexes('testtable'));
         $this->assertTrue(count($indices) == 1);
@@ -213,6 +215,15 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
+        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
         $this->assertTrue($columns = $DB->get_columns('testtable'));
         $fields = $this->tables['testtable']->getFields();
         $this->assertEqual(count($columns), count($fields));
@@ -234,26 +245,20 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
+        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
         $sql = "SELECT * FROM {testtable}";
+
         $this->assertTrue($DB->execute($sql));
 
-        $params = array('course' => 1,
-                        'type' => 'news',
-                        'name' => 'test',
-                        'intro' => 'Simple news forum',
-                        'assessed' => time(),
-                        'assesstimestart' => time(),
-                        'assesstimefinish' => time() + 579343,
-                        'scale' => 1,
-                        'maxbytes' => 512,
-                        'forcesubscribe' => 1,
-                        'trackingtype' => 1,
-                        'rssarticles' => 1,
-                        'rsstype' => 1,
-                        'timemodified' => time(),
-                        'warnafter' => time() + 579343,
-                        'blockafter' => time() + 600000,
-                        'blockperiod' => 5533);
+        $params = array('course' => 1, 'name' => 'test');
 
         $sql = "INSERT INTO {testtable} (".implode(',', array_keys($params)).")
                        VALUES (".implode(',', array_fill(0, count($params), '?')).")";
@@ -261,7 +266,7 @@ class dml_test extends UnitTestCase {
 
         $this->assertTrue($DB->execute($sql, $params));
 
-        $record = $DB->get_record('testtable', array('blockperiod' => 5533));
+        $record = $DB->get_record('testtable', array('id' => 1));
 
         foreach ($params as $field => $value) {
             $this->assertEqual($value, $record->$field, "Field $field in DB ({$record->$field}) is not equal to field $field in sql ($value)");
@@ -390,6 +395,41 @@ class dml_test extends UnitTestCase {
         $expected = "SELECT * FROM {$prefix}user, {$prefix}funny_table_name, {$prefix}mdl_stupid_table WHERE {$prefix}user.id = {$prefix}funny_table_name.userid";
         $this->assertEqual($expected, $DB->public_fix_table_names($sql));
 
+
+    }
+
+    public function test_get_recordset() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
+        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1'),
+                      array('id' => 2, 'course' => 3, 'name' => 'record2'),
+                      array('id' => 3, 'course' => 5, 'name' => 'record3'));
+        foreach ($data as $record) {
+            $DB->insert_record('testtable', $record);
+        }
+
+        $rs = $DB->get_recordset('testtable');
+        $this->assertTrue($rs);
+
+        reset($data);
+        foreach($rs as $record) {
+            $data_record = current($data);
+            foreach ($record as $k => $v) {
+                $this->assertEqual($data_record[$k], $v);
+            }
+            next($data);
+        }
+        $rs->close();
     }
 }
 
