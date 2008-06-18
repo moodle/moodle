@@ -1,7 +1,8 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // chat.php - created with Moodle 1.7 beta + (2006101003)
 
-
+$string['ajax'] = 'Version using Ajax';
+$string['autoscroll'] = 'Auto Scroll';
 $string['beep'] = 'beep';
 $string['cantlogin'] = 'Could not log in to chat room!!';
 $string['cantinsert'] = 'Could not insert a chat message!';
@@ -69,10 +70,13 @@ $string['servermax'] = 'Max users';
 $string['serverport'] = 'Server port';
 $string['savemessages'] = 'Save past sessions';
 $string['seesession'] = 'See this session';
+$string['send'] = 'Send';
+$string['sending'] = 'Sending';
 $string['sessions'] = 'Chat sessions';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'Everyone can view past sessions';
 $string['updatemethod'] = 'Update method';
+$string['updaterate'] = 'Update Rate: ';
 $string['viewreport'] = 'View past chat sessions';
 
 ?>

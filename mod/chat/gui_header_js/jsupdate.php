@@ -143,8 +143,9 @@
             }
         }
         ?>
-        if(parent.msg)
+        if(parent.msg && parent.input.document.getElementById('auto').checked){
             parent.msg.scroll(1,5000000);
+        }
         //]]>
         </script>
     </head>
