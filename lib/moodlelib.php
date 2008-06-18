@@ -6001,6 +6001,27 @@ function check_php_version($version='5.2.0') {
     return (version_compare(phpversion(), $version) >= 0);
 }
 
+/**
+ * Checks to see if is the browser operating system matches the specified 
+ * brand.
+ * 
+ * Known brand: 'Windows','Linux','Macintosh','SGI','SunOS','HP-UX'
+ *
+ * @uses $_SERVER
+ * @param string $brand The operating system identifier being tested 
+ * @return bool true if the given brand below to the detected operating system
+ */
+ function check_browser_operating_system($brand) {
+    if (empty($_SERVER['HTTP_USER_AGENT'])) {
+        return false;
+    }
+
+    if (preg_match("/$brand/i", $_SERVER['HTTP_USER_AGENT'])) {
+        return true;
+    }
+     
+    return false;  
+ }
 
 /**
  * Checks to see if is a browser matches the specified
