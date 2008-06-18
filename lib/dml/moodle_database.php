@@ -1403,6 +1403,7 @@ abstract class moodle_database {
         return true;
     }
 
+/// performance and logging
     /**
      * Returns number of reads done by this database
      * @return int

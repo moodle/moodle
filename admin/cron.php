@@ -110,7 +110,7 @@
                 if (function_exists($cron_function)) {
                     mtrace("Processing module function $cron_function ...", '');
                     $pre_dbqueries = null;
-                    $pre_dbqueries = $DB->perf_get_reads();
+                    $pre_dbqueries = $DB->perf_get_queries();
                     $pre_time      = microtime(1);
                     if ($cron_function()) {
                         if (!$DB->set_field("modules", "lastcron", $timenow, array("id"=>$mod->id))) {
@@ -118,7 +118,7 @@
                         }
                     }
                     if (isset($pre_dbqueries)) {
-                        mtrace("... used " . ($DB->perf_get_reads() - $pre_dbqueries) . " dbqueries");
+                        mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");
                         mtrace("... used " . (microtime(1) - $pre_time) . " seconds");
                     }
                 /// Reset possible changes by modules to time_limit. MDL-11597
@@ -171,11 +171,11 @@
             $cronfunction = 'report_'.$report.'_cron';
             mtrace('Processing cron function for '.$report.'...', '');
             $pre_dbqueries = null;
-            $pre_dbqueries = $DB->perf_get_reads();
+            $pre_dbqueries = $DB->perf_get_queries();
             $pre_time      = microtime(true);
             $cronfunction();
             if (isset($pre_dbqueries)) {
-                mtrace("... used " . ($DB->perf_get_reads() - $pre_dbqueries) . " dbqueries");
+                mtrace("... used " . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries");
                 mtrace("... used " . round(microtime(true) - $pre_time, 2) . " seconds");
             }
             mtrace('done.');
