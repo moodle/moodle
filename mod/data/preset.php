@@ -188,19 +188,11 @@ switch ($action) {
             print_error('invalidrequest');
         }
         $exportfile = data_presets_export($course, $cm, $data);
-        $downloadsubdir = "$course->id/moddata/data/$data->id";
-        $filename = clean_filename($data->name . '-preset-' . gmdate("Ymd_Hi") . '.zip');
-        $downloadfile = "$CFG->dataroot/$downloadsubdir/$filename";
-        @unlink($downloadfile);
-
-        // Move the exported zip to the download folder
-        make_upload_directory($downloadsubdir);
-        if (! rename($exportfile, $downloadfile)) {
-            print_error('cannotmovezip');
-        }
+        $dataroot = preg_quote($CFG->dataroot, '/');
+        $downloadurl = preg_replace("/$dataroot/", $CFG->wwwroot . '/file.php', $exportfile, 1);
         echo '<div style="text-align:center">';
         echo get_string('exportedtozip', 'data') . '<br />';
-        echo "<a href='$CFG->wwwroot/file.php/$downloadsubdir/$filename'>" . get_string('download', 'data') . '</a>';
+        echo "<a href=\"$downloadurl\">" . get_string('download', 'data') . '</a>';
         echo '</div>';
         break;
 
@@ -381,8 +373,10 @@ exit(0);
 
 function data_presets_export($course, $cm, $data) {
     global $CFG, $DB;
-    $tempfolder = $CFG->dataroot . '/temp';
-    // ToDo: Don't write directly into moodledata/temp
+    $presetname = clean_filename($data->name) . '-preset-' . gmdate("Ymd_Hi");
+    $exportsubdir = "$course->id/moddata/data/$data->id/$presetname";
+    make_upload_directory($exportsubdir);
+    $exportdir = "$CFG->dataroot/$exportsubdir";
 
     // Assemble "preset.xml":
     $presetxmldata = "<preset>\n\n";
@@ -430,53 +424,53 @@ function data_presets_export($course, $cm, $data) {
     $presetxmldata .= '</preset>';
 
     // After opening a file in write mode, close it asap
-    $presetxmlfile = fopen($tempfolder . '/preset.xml', 'w');
+    $presetxmlfile = fopen($exportdir . '/preset.xml', 'w');
     fwrite($presetxmlfile, $presetxmldata);
     fclose($presetxmlfile);
 
     // Now write the template files
-    $singletemplate = fopen($tempfolder . '/singletemplate.html', 'w');
+    $singletemplate = fopen($exportdir . '/singletemplate.html', 'w');
     fwrite($singletemplate, $data->singletemplate);
     fclose($singletemplate);
 
-    $listtemplateheader = fopen($tempfolder . '/listtemplateheader.html', 'w');
+    $listtemplateheader = fopen($exportdir . '/listtemplateheader.html', 'w');
     fwrite($listtemplateheader, $data->listtemplateheader);
     fclose($listtemplateheader);
 
-    $listtemplate = fopen($tempfolder . '/listtemplate.html', 'w');
+    $listtemplate = fopen($exportdir . '/listtemplate.html', 'w');
     fwrite($listtemplate, $data->listtemplate);
     fclose($listtemplate);
 
-    $listtemplatefooter = fopen($tempfolder . '/listtemplatefooter.html', 'w');
+    $listtemplatefooter = fopen($exportdir . '/listtemplatefooter.html', 'w');
     fwrite($listtemplatefooter, $data->listtemplatefooter);
     fclose($listtemplatefooter);
 
-    $addtemplate = fopen($tempfolder . '/addtemplate.html', 'w');
+    $addtemplate = fopen($exportdir . '/addtemplate.html', 'w');
     fwrite($addtemplate, $data->addtemplate);
     fclose($addtemplate);
 
-    $rsstemplate = fopen($tempfolder . '/rsstemplate.html', 'w');
+    $rsstemplate = fopen($exportdir . '/rsstemplate.html', 'w');
     fwrite($rsstemplate, $data->rsstemplate);
     fclose($rsstemplate);
 
-    $rsstitletemplate = fopen($tempfolder . '/rsstitletemplate.html', 'w');
+    $rsstitletemplate = fopen($exportdir . '/rsstitletemplate.html', 'w');
     fwrite($rsstitletemplate, $data->rsstitletemplate);
     fclose($rsstitletemplate);
 
-    $csstemplate = fopen($tempfolder . '/csstemplate.css', 'w');
+    $csstemplate = fopen($exportdir . '/csstemplate.css', 'w');
     fwrite($csstemplate, $data->csstemplate);
     fclose($csstemplate);
 
-    $jstemplate = fopen($tempfolder . '/jstemplate.js', 'w');
+    $jstemplate = fopen($exportdir . '/jstemplate.js', 'w');
     fwrite($jstemplate, $data->jstemplate);
     fclose($jstemplate);
 
-    $asearchtemplate = fopen($tempfolder . '/asearchtemplate.html', 'w');
+    $asearchtemplate = fopen($exportdir . '/asearchtemplate.html', 'w');
     fwrite($asearchtemplate, $data->asearchtemplate);
     fclose($asearchtemplate);
 
     // Check if all files have been generated
-    if (! is_directory_a_preset($tempfolder)) {
+    if (! is_directory_a_preset($exportdir)) {
         error('Not all files generated!');
         // should be migrated to print_error()
     }
@@ -496,10 +490,10 @@ function data_presets_export($course, $cm, $data) {
     );
 
     foreach ($filelist as $key => $file) {
-        $filelist[$key] = $tempfolder . '/' . $filelist[$key];
+        $filelist[$key] = $exportdir . '/' . $filelist[$key];
     }
 
-    $exportfile = $tempfolder . '/export.zip';
+    $exportfile = "$CFG->dataroot/$course->id/moddata/data/$data->id/$presetname.zip";
     @unlink($exportfile);
     $status = zip_files($filelist, $exportfile);
     // ToDo: status check

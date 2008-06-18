@@ -85,7 +85,6 @@ $string['cannotmailconfirm'] = 'error sending password change confirmation email
 $string['cannotmapfield'] = 'mapping collision detected, 2 fields maps to the same grade item $a';
 $string['cannotmarktopic'] = 'Could not mark that topic for this course';
 $string['cannotmoverolewithid'] = 'Cannot move role with ID $a';
-$string['cannotmovezip'] = 'Cannot move zip';
 $string['cannotmodulename'] = 'Cannot get the module name in build navigation.';
 $string['cannotmoduletype'] = 'Cannot get the module type in build navigation.';
 $string['cannotmetacourse'] = 'Cannot not add the selected course to this meta course!';
