@@ -176,6 +176,12 @@
             $counter = 0;
             //Iterate over each question
             foreach ($questions as $question) {
+                // Deal with missing question types - they need to be included becuase
+                // user data or quizzes may refer to them.
+                if (!array_key_exists($question->qtype, $QTYPES)) {
+                    $question->qtype = 'missingtype';
+                    $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
+                }
                 //Start question
                 $status = $status && fwrite ($bf,start_tag("QUESTION",$level + 1,true));
                 //Print question contents
