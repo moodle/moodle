@@ -60,8 +60,8 @@
     $chat_newrow = ($chat_lastrow + $num) % 2;
 
     // no &amp; in url, does not work in header!
-    $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&chat_lasttime=$chat_newlasttime&chat_lastrow=$chat_newrow"; 
-    $refreshurlamp = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&amp;chat_lasttime=$chat_newlasttime&amp;chat_lastrow=$chat_newrow"; 
+    $refreshurl = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&chat_lasttime=$chat_newlasttime&chat_lastrow=$chat_newrow";
+    $refreshurlamp = "{$CFG->wwwroot}/mod/chat/gui_header_js/jsupdate.php?chat_sid=$chat_sid&amp;chat_lasttime=$chat_newlasttime&amp;chat_lastrow=$chat_newrow";
 
     header('Expires: Sun, 28 Dec 1997 09:32:45 GMT');
     header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
@@ -88,7 +88,7 @@
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <script type="text/javascript">
         //<![CDATA[
-        if (parent.msg.document.getElementById("msgStarted") == null) {
+        if (parent.msg && parent.msg.document.getElementById("msgStarted") == null) {
             parent.msg.document.close();
             parent.msg.document.open("text/html","replace");
             parent.msg.document.write("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
@@ -114,6 +114,7 @@
                      $refreshusers = true;
                 }
                 $us[$message->userid] = $timenow - $message->timestamp;
+                echo "if(parent.msg)";
                 echo "parent.msg.document.write('".addslashes_js($formatmessage->html)."\\n');\n";
              }
         }
@@ -122,8 +123,12 @@
         set_field('chat_users', 'lastping', $chatuser->lastping, 'id', $chatuser->id  );
 
         if ($refreshusers) {
-            echo "if (parent.users.document.anchors[1] != null) {" .
-                    "parent.users.location.href = parent.users.document.anchors[1].href;}\n";
+        ?>
+        var link = parent.users.document.getElementById('refreshLink');
+        if (link != null) {
+            parent.users.location.href = link.href;
+        }
+        <?php
         } else {
             foreach($us as $uid=>$lastping) {
                 $min = (int) ($lastping/60);
@@ -131,12 +136,13 @@
                 $min = $min < 10 ? '0'.$min : $min;
                 $sec = $sec < 10 ? '0'.$sec : $sec;
                 $idle = $min.':'.$sec;
-                echo "if (parent.users.document.getElementById('uidle{$uid}') != null) {".
+                echo "if (parent.users && parent.users.document.getElementById('uidle{$uid}') != null) {".
                         "parent.users.document.getElementById('uidle{$uid}').innerHTML = '$idle';}\n";
             }
         }
         ?>
-        parent.msg.scroll(1,5000000);
+        if(parent.msg)
+            parent.msg.scroll(1,5000000);
         //]]>
         </script>
     </head>
@@ -153,7 +159,7 @@
 
 // support HTTP Keep-Alive
 header("Content-Length: " . ob_get_length() );
-ob_end_flush(); 
+ob_end_flush();
 exit;
 
 
