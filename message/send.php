@@ -123,14 +123,11 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     }
     echo '<div class="noframesjslink"><a target="_parent" href="discussion.php?id='.$userid.'&amp;noframesjs=1">'.get_string('noframesjs', 'message').'</a></div>';
 
-    echo <<<EOF
-<script type="text/javascript">
-//<![CDATA[
-document.getElementById("edit-message").focus();
-//]]>
-</script>
-
-EOF;
+    echo "<script type=\"text/javascript\">".
+      "\n//<![CDATA[".
+      "\ndocument.getElementById(\"edit-message\").focus();".
+      "\n//]]>".
+      "\n</script>";
 
     echo '</body></html>';
 }
