@@ -121,7 +121,11 @@ class quiz_report_statistics_table extends flexible_table {
         return number_format($question->sd*100 / $question->grade, 2).' %';
     }
     function col_s($question){
-        return $question->s;
+        if (isset($question->s)){
+            return $question->s;
+        } else {
+            return 0;
+        }
     }
     function col_facility($question){
         return number_format($question->facility*100, 2).' %';

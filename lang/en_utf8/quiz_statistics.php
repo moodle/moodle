@@ -36,4 +36,5 @@ $string['questiontype'] = 'Q type';
 $string['intended_weight'] = 'Intended question weight';
 $string['random_guess_score'] = 'Random guess score';
 $string['facility'] = 'Facility index';
+$string['nostudentsingroup'] = 'There are no students in this group yet';
 ?>
