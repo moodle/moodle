@@ -24,7 +24,7 @@
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     require_login($course->id, false, $cm);
 
-    require_capability('mod/chat:readlog', $context); 
+    require_capability('mod/chat:readlog', $context);
 
     add_to_log($course->id, 'chat', 'report', "report.php?id=$cm->id", $chat->id, $cm->id);
 
@@ -35,7 +35,7 @@
     $strdeletesession = get_string('deletesession', 'chat');
 
     $navlinks = array();
-    
+
 /// Print a session if one has been specified
 
     if ($start and $end and !$confirmdelete) {   // Show a full transcript
@@ -62,9 +62,7 @@
                          "report.php?id=$cm->id");
         }
 
-        if (!$messages = $DB->get_records_select('chat_messages', "chatid = :chatid AND
-                                                                   timestamp >= :start AND
-                                                                   timestamp <= :end $groupselect", "timestamp ASC", $params)) {
+        if (!$messages = $DB->get_records_select('chat_messages', "chatid = :chatid AND timestamp >= :start AND timestamp <= :end $groupselect", $params, "timestamp ASC")) {
             print_heading(get_string('nomessages', 'chat'));
 
         } else {
