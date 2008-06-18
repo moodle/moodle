@@ -494,12 +494,15 @@ function data_presets_export($course, $cm, $data) {
     }
 
     $exportfile = "$CFG->dataroot/$course->id/moddata/data/$data->id/$presetname.zip";
-    @unlink($exportfile);
+    unlink($exportfile);
     $status = zip_files($filelist, $exportfile);
     // ToDo: status check
-    // ToDo: remove temporary files
+    foreach ($filelist as $file) {
+        unlink($file);
+    }
+    rmdir($exportdir);
 
-    // Return the full path to the ZIP file to be exported:
+    // Return the full path to the exported preset file:
     return $exportfile;
 }
 
