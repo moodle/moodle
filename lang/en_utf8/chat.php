@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
       // chat.php - created with Moodle 1.7 beta + (2006101003)
 
-
+$string['autoscroll'] = 'Auto Scroll';
 $string['beep'] = 'beep';
 $string['chat:chat'] = 'Talk in a chat';
 $string['chat:deletelog'] = 'Delete chat logs';
