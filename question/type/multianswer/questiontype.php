@@ -456,9 +456,9 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         else {
             if(!  isset($question->options->questions[$positionkey])){
-                echo $regs[0];
+                echo $regs[0]."</label>";
             }else {
-                echo '<div class="error" >'.get_string('questionnotfound','qtype_multianswer',$positionkey).'</div>';
+                echo '</label><div class="error" >'.get_string('questionnotfound','qtype_multianswer',$positionkey).'</div>';
             }
        }
     }
