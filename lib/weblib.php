@@ -4745,6 +4745,7 @@ function print_table($table, $return=false) {
     if (!empty($table->head)) {
         $countcols = count($table->head);
         $output .= '<tr>';
+        $lastkey = end(array_keys($table->head));
         foreach ($table->head as $key => $heading) {
 
             if (!isset($size[$key])) {
@@ -4753,23 +4754,33 @@ function print_table($table, $return=false) {
             if (!isset($align[$key])) {
                 $align[$key] = '';
             }
+            if ($key == $lastkey) {
+                $extraclass = ' lastcol';
+            } else {
+                $extraclass = '';
+            }
 
-            $output .= '<th style="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.'" scope="col">'. $heading .'</th>';
+            $output .= '<th style="vertical-align:top;'. $align[$key].$size[$key] .';white-space:nowrap;" class="header c'.$key.$extraclass.'" scope="col">'. $heading .'</th>';
         }
         $output .= '</tr>'."\n";
     }
 
     if (!empty($table->data)) {
         $oddeven = 1;
+        $lastrowkey = end(array_keys($table->data));
         foreach ($table->data as $key => $row) {
             $oddeven = $oddeven ? 0 : 1;
             if (!isset($table->rowclass[$key])) {
                 $table->rowclass[$key] = '';
             }
+            if ($key == $lastrowkey) {
+                $table->rowclass[$key] .= ' lastrow';
+            }
             $output .= '<tr class="r'.$oddeven.' '.$table->rowclass[$key].'">'."\n";
             if ($row == 'hr' and $countcols) {
                 $output .= '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
             } else {  /// it's a normal row of data
+            	$lastkey = end(array_keys($row));
                 foreach ($row as $key => $item) {
                     if (!isset($size[$key])) {
                         $size[$key] = '';
@@ -4780,7 +4791,12 @@ function print_table($table, $return=false) {
                     if (!isset($wrap[$key])) {
                         $wrap[$key] = '';
                     }
-                    $output .= '<td style="'. $align[$key].$size[$key].$wrap[$key] .'" class="cell c'.$key.'">'. $item .'</td>';
+                    if ($key == $lastkey) {
+                    	$extraclass = ' lastcol';
+                    } else {
+                    	$extraclass = '';
+                    }
+                    $output .= '<td style="'. $align[$key].$size[$key].$wrap[$key] .'" class="cell c'.$key.$extraclass.'">'. $item .'</td>';
                 }
             }
             $output .= '</tr>'."\n";
