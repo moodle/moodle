@@ -1,5 +1,7 @@
 <?php // $Id$
 
+require_once('lib.php');
+
 /**
  * locallib.php - moodle tag local library - output functions
  *

@@ -47,9 +47,6 @@ define('TAG_RELATED_ALL', 0);
 define('TAG_RELATED_MANUAL', 1);
 define('TAG_RELATED_CORRELATED', 2);
 
-
-require_once($CFG->dirroot .'/tag/locallib.php');
-
 ///////////////////////////////////////////////////////
 /////////////////// PUBLIC TAG API ////////////////////
 
@@ -627,8 +624,6 @@ function tag_find_records($tag, $type, $limitfrom='', $limitnum='') {
 function tag_add($tags, $type="default") {
     global $USER, $DB;
 
-    require_capability('moodle/tag:create', get_context_instance(CONTEXT_SYSTEM));
-
     if (!is_array($tags)) {
         $tags = array($tags);
     }
@@ -671,8 +666,6 @@ function tag_add($tags, $type="default") {
  */
 function tag_assign($record_type, $record_id, $tagid, $ordering) {
     global $DB;
-
-    require_capability('moodle/tag:create', get_context_instance(CONTEXT_SYSTEM));
 
     if ( $tag_instance_object = $DB->get_record('tag_instance', array('tagid'=>$tagid, 'itemtype'=>$record_type, 'itemid'=>$record_id), 'id')) {
         $tag_instance_object->ordering     = $ordering;
@@ -1010,8 +1003,6 @@ function tag_set_flag($tagids) {
  */
 function tag_unset_flag($tagids) {
     global $DB;
-
-    require_capability('moodle/tag:manage', get_context_instance(CONTEXT_SYSTEM));
 
     if ( is_array($tagids) ) {
         $tagids = implode(',', $tagids);

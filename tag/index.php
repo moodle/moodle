@@ -2,6 +2,7 @@
 
 require_once('../config.php');
 require_once('lib.php');
+require_once('locallib.php');
 require_once('pagelib.php');
 require_once($CFG->dirroot.'/lib/weblib.php');
 require_once($CFG->dirroot.'/blog/lib.php');
@@ -9,7 +10,7 @@ require_once($CFG->dirroot.'/blog/lib.php');
 require_login();
 
 if (empty($CFG->usetags)) {
-    error(get_string('tagsaredisabled', 'tag'));
+    print_error('tagsaredisabled', 'tag');
 }
 
 $tagid       = optional_param('id', 0, PARAM_INT); // tag id

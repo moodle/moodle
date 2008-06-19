@@ -19,7 +19,6 @@ if (empty($CFG->usetags)) {
     print_error('tagsaredisabled', 'tag');
 }
 
-//managing tags requires moodle/tag:manage capability
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/tag:manage', $systemcontext);
 
@@ -119,6 +118,7 @@ switch($action) {
                 // tag exists, change the type
                 tag_set_type($new_otag_id, 'official');
             } else {
+                require_capability('moodle/tag:create', get_context_instance(CONTEXT_SYSTEM));
                 tag_add($new_otag, 'official');
             }
             $notice .= get_string('addedotag', 'tag', $new_otag) .' ';
