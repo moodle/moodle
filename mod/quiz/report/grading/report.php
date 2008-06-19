@@ -350,11 +350,10 @@ class quiz_report extends quiz_default_report {
         $sort = 'ORDER BY u.firstname, u.lastname, qa.attempt ASC';
         
         if ($gradenextungraded){
-            $limit = ' LIMIT '.QUIZ_REPORT_DEFAULT_GRADING_PAGE_SIZE;
+            $attempts = get_records_sql($select.$from.$where.$sort, 0, QUIZ_REPORT_DEFAULT_GRADING_PAGE_SIZE);
         } else {
-            $limit = '';
+            $attempts = get_records_sql($select.$from.$where.$sort);
         }
-        $attempts = get_records_sql($select.$from.$where.$sort.$limit);
         if ($attempts){
             $firstattempt = current($attempts);
             $fullname = fullname($firstattempt);
@@ -433,7 +432,7 @@ class quiz_report extends quiz_default_report {
         // this sql joins the attempts table and the user table
         $select = 'SELECT qa.id AS attemptid, qa.uniqueid, qa.attempt, qa.timefinish, qa.preview,
                     u.id AS userid, u.firstname, u.lastname, u.picture ';
-        if ($wantstateevent){
+        if ($wantstateevent && $questionid){
             $select .= ', qs.event ';
         }
         $from   = 'FROM '.$CFG->prefix.'user u, ' .
