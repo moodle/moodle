@@ -30,12 +30,19 @@ $allowed_time = array('weeknow', 'weeknext', 'monthnow', 'monthnext', 'recentupc
 if(!empty($what) && !empty($time)) {
     if(in_array($what, $allowed_what) && in_array($time, $allowed_time)) {
         $courses = get_my_courses($user->id, NULL, 'id, visible, shortname');
-        
-        $include_user = ($what == 'all');
-        if ($include_user) {
-            //Also include site (global) events
+
+        if ($what == 'all') {
+            $users = $user->id;
+            $groups = array();
+            foreach ($courses as $course) {
+                $course_groups = groups_get_all_groups($course->id, $user->id);
+                $groups = $groups + array_keys($course_groups);
+            }
             $courses[SITEID] = new stdClass;
             $courses[SITEID]->shortname = get_string('globalevents', 'calendar');
+        } else {
+            $users = false;
+            $groups = false;
         }
 
         switch($time) {
@@ -99,7 +106,7 @@ if(!empty($what) && !empty($time)) {
         die();
     }
 }
-$whereclause = calendar_sql_where($timestart, $timeend, $include_user ? array($user->id) : false, false, array_keys($courses), false);
+$whereclause = calendar_sql_where($timestart, $timeend, $users, $groups, array_keys($courses), false);
 if($whereclause === false) {
     $events = array();
 }
