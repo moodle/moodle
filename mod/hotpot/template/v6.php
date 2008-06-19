@@ -737,24 +737,6 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         }
         return $str;
     }
-
-    function get_jmatch_items_old(&$l_items, &$r_items) {
-        $tags = 'data,matching-exercise,pair';
-        $i = 0;
-        while($item = $this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']")) {
-            if (!empty($item['text'][0]['#'])) {
-                $l_items[] = $item;
-            }
-            $i++;
-        }
-        $i = 0;
-        while($item = $this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']")) {
-            if (!empty($item['text'][0]['#'])) {
-                $r_items[] = $item;
-            }
-            $i++;
-        }
-    }
     function get_jmatch_items(&$l_items, &$r_items) {
         $tags = 'data,matching-exercise,pair';
         $i = 0;
