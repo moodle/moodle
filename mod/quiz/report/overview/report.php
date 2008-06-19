@@ -643,7 +643,8 @@ class quiz_report extends quiz_default_report {
             // Print display options
             $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
             $mform->display();
-            if ($attempts){
+            //should be quicker than a COUNT to test if there is at least one record :
+            if (get_records('quiz_grades', 'quiz', $quiz->id, '', '*', 0, 1)){
                 $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
                 print_heading(get_string('overviewreportgraph', 'quiz_overview'));
                 echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('overviewreportgraph', 'quiz_overview').'" /></div>';

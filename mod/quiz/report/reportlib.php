@@ -163,7 +163,7 @@ function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
     return $qmsubselect;
 }
 
-function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist){
+function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist=''){
     global $CFG;
     $sql = "SELECT
         FLOOR(qg.grade/$bandwidth) AS band,
@@ -171,10 +171,13 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist){
     FROM
         {$CFG->prefix}quiz_grades qg, 
         {$CFG->prefix}quiz q
-    WHERE qg.quiz = q.id AND qg.quiz = $quizid AND qg.userid IN ($useridlist)
+    WHERE qg.quiz = q.id AND qg.quiz = $quizid 
+            ".($useridlist?"AND qg.userid IN ($useridlist) ":'')."
     GROUP BY band
     ORDER BY band";
-    $data = get_records_sql_menu($sql);
+    if (!$data = get_records_sql_menu($sql)){
+        $data= array();
+    }
     //need to create array elements with values 0 at indexes where there is no element
     $data =  $data + array_fill(0, $bands+1, 0);
     ksort($data);
@@ -184,6 +187,7 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist){
     $data[$bands-1] += $data[$bands];
     unset($data[$bands]);
     return $data;
+
 }
 function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter){
     if ($quiz->attempts == 1) {//only one attempt allowed on this quiz
