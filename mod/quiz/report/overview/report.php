@@ -290,7 +290,8 @@ class quiz_report extends quiz_default_report {
         $table->out($pagesize, true);
 
         if (!$table->is_downloading()) {
-            if (count($table->totalrows)){
+            //should be quicker than a COUNT to test if there is at least one record :
+            if ($DB->get_records('quiz_grades', array('quiz'=> $quiz->id), '', '*', 0, 1)){
                  $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
                  print_heading(get_string('overviewreportgraph', 'quiz_overview'));
                  echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('overviewreportgraph', 'quiz_overview').'" /></div>';

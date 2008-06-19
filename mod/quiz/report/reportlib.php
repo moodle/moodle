@@ -176,15 +176,22 @@ function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id', $quizidsql 
     return $qmsubselect;
 }
 
-function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids){
+function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids=array()){
     global $CFG, $DB;
-    list($usql, $params) = $DB->get_in_or_equal($userids);
+    if ($userids){
+        list($usql, $params) = $DB->get_in_or_equal($userids);
+    } else {
+        $usql ='';
+        $params = array();
+    }
     $sql = "SELECT
         FLOOR(qg.grade/$bandwidth) AS band,
         COUNT(1) AS num
     FROM
         {quiz_grades} qg,  {quiz} q
-    WHERE qg.quiz = q.id AND qg.userid $usql AND qg.quiz = ?
+    WHERE qg.quiz = q.id " .
+            ($usql?"AND qg.userid $usql ":'') .
+            "AND qg.quiz = ?
     GROUP BY band
     ORDER BY band";
     $params[] = $quizid;
