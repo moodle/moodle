@@ -427,19 +427,19 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 
         $options = '<option value="x">'.$this->parent->xml_value('data,matching-exercise,default-right-item').'</option>';
         foreach ($r_keys as $key) {
-            if (empty($r_items[$key]['fixed'][0]['#'])) {
-                $options .= '<option value="'.$key.'">'.$r_items[$key]['text'][0]['#'].'</option>'."\n";
+            if (empty($r_items[$key]['fixed'])) {
+                $options .= '<option value="'.$key.'">'.$r_items[$key]['text'].'</option>'."\n";
             }
         }
 
         $str = '';
         foreach ($l_keys as $key) {
-            $str .= '<tr><td class="LeftItem">'.$l_items[$key]['text'][0]['#'].'</td>';
+            $str .= '<tr><td class="LeftItem">'.$l_items[$key]['text'].'</td>';
             $str .= '<td class="RightItem">';
-            if (empty($r_items[$key]['fixed'][0]['#'])) {
+            if (empty($r_items[$key]['fixed'])) {
                 $str .= '<select id="s'.$key.'_'.$key.'">'.$options.'</select>';
             }  else {
-                $str .= $r_items[$key]['text'][0]['#'];
+                $str .= $r_items[$key]['text'];
             }
             $str .= '</td><td></td></tr>';
         }
@@ -716,7 +716,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         $str = '';
         foreach ($l_items as $i=>$item) {
             $str .= "F[$i] = new Array();\n";
-            $str .= "F[$i][0] = '".$this->js_safe($item['text'][0]['#'], true)."';\n";
+            $str .= "F[$i][0] = '".$this->js_safe($item['text'], true)."';\n";
             $str .= "F[$i][1] = ".($i+1).";\n";
         }
         return $str;
@@ -729,9 +729,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         $str = '';
         foreach ($r_items as $i=>$item) {
             $str .= "D[$i] = new Array();\n";
-            $str .= "D[$i][0] = '".$this->js_safe($item['text'][0]['#'], true)."';\n";
+            $str .= "D[$i][0] = '".$this->js_safe($item['text'], true)."';\n";
             $str .= "D[$i][1] = ".($i+1).";\n";
-            $str .= "D[$i][2] = '".(empty($item['fixed'][0]['#']) ? 0 : 1)."';\n";
+            $str .= "D[$i][2] = '".(empty($item['fixed']) ? 0 : 1)."';\n";
         }
         return $str;
     }
@@ -739,16 +739,18 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
     function get_jmatch_items(&$l_items, &$r_items) {
         $tags = 'data,matching-exercise,pair';
         $i = 0;
-        while($item = $this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']")) {
-            if (!empty($item['text'][0]['#'])) {
-                $l_items[] = $item;
+        while($this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']")) {
+            if ($text = $this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']['text'][0]['#']")) {
+                $fixed = $this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']['fixed'][0]['#']");
+                $l_items[] = array('text'=>$text, 'fixed'=>$fixed);
             }
             $i++;
         }
         $i = 0;
-        while($item = $this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']")) {
-            if (!empty($item['text'][0]['#'])) {
-                $r_items[] = $item;
+        while($this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']")) {
+            if ($text = $this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']['text'][0]['#']")) {
+                $fixed = $this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']['fixed'][0]['#']");
+                $r_items[] = array('text'=>$text, 'fixed'=>$fixed);
             }
             $i++;
         }
@@ -757,7 +759,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         // get moveable items
         $moveable_keys = array();
         for($i=0; $i<count($items); $i++) {
-            if(empty($items[$i]['fixed'][0]['#'])) {
+            if(empty($items[$i]['fixed'])) {
                 $moveable_keys[] = $i;
             }
         }
@@ -767,7 +769,7 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
 
         $keys = array();
         for($i=0, $ii=0; $i<count($items); $i++) {
-            if(empty($items[$i]['fixed'][0]['#'])) {
+            if(empty($items[$i]['fixed'])) {
                 //  moveable items are inserted in a shuffled order
                 $keys[] = $moveable_keys[$ii++];
             } else {
