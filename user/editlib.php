@@ -221,7 +221,7 @@ function useredit_shared_definition(&$mform) {
 
     }
 
-    if( !empty($CFG->usetags)) {
+    if ( !empty($CFG->usetags) && has_capability('moodle/tag:create', get_context_instance(CONTEXT_SYSTEM)) ) {
         $mform->addElement('header', 'moodle_interests', get_string('interests'));
         $mform->addElement('textarea', 'interests', get_string('interestslist'), 'cols="45" rows="3"');
         $mform->setHelpButton('interests', array(false, get_string('helpinterestslist'),
