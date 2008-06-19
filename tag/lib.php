@@ -247,15 +247,15 @@ function tag_get_tags($record_type, $record_id, $type=null) {
     $params = array();
 
     if ($type) {
-        $type = "AND tg.tagtype = :type";
+        $sql_type = "AND tg.tagtype = :type";
         $params['type'] = $type;
     } else {
-        $type = '';
+        $sql_type = '';
     }
 
     $sql = "SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
               FROM {tag_instance} ti JOIN {tag} tg ON tg.id = ti.tagid
-              WHERE ti.itemtype = :recordtype AND ti.itemid = :recordid $type
+              WHERE ti.itemtype = :recordtype AND ti.itemid = :recordid $sql_type
            ORDER BY ti.ordering ASC";
     $params['recordtype'] = $record_type;
     $params['recordid']   = $record_id;
