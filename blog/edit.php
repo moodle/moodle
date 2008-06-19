@@ -156,7 +156,6 @@ function do_delete($post) {
     global $returnurl, $DB;
 
     $status = $DB->delete_records('post', array('id'=>$post->id));
-    //$status = $DB->delete_records('blog_tag_instance', array('entryid'=>$post->id)) and $status;
     tag_set('post', $post->id, array());
     
     blog_delete_old_attachments($post);

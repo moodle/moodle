@@ -37,15 +37,6 @@ class blog_edit_form extends moodleform {
             $mform->addElement('header', 'tagshdr', get_string('tags', 'tag'));
             $mform->createElement('select', 'otags', get_string('otags','tag'));
 
-            $js_escape = array(
-                "\r"    => '\r',
-                "\n"    => '\n',
-                "\t"    => '\t',
-                "'"     => "\\'",
-                '"'     => '\"',
-                '\\'    => '\\\\'
-            );
-
             $otagsselEl =& $mform->addElement('select', 'otags', get_string('otags', 'tag'), array(), 'size="5"');
             $otagsselEl->setMultiple(true);
             $this->otags_select_setup();
@@ -75,16 +66,17 @@ class blog_edit_form extends moodleform {
      *
      */
     function otags_select_setup(){
-        global $CFG, $DB;
+        global $DB;
 
         $mform =& $this->_form;
         if ($otagsselect =& $mform->getElement('otags')) {
             $otagsselect->removeOptions();
         }
         $namefield = empty($CFG->keeptagnamecase) ? 'name' : 'rawname';
-        if ($otags = $DB->get_records_sql_menu("SELECT id, $namefield FROM {tag} WHERE tagtype='official' ORDER by name ASC")){
+        if ($otags = $DB->get_records_sql_menu("SELECT id, $namefield FROM {tag} WHERE tagtype='official' ORDER by $namefield ASC")) {
             $otagsselect->loadArray($otags);
         }
+
     }
 
 }
