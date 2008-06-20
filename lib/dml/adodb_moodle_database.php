@@ -28,13 +28,13 @@ abstract class adodb_moodle_database extends moodle_database {
      */
     public function export_dbconfig() {
         $cfg = new stdClass();
-        $cfg->dbtype  = $this->get_dbtype();
-        $cfg->library = 'adodb';
-        $cfg->dbhost  = $this->dbhost;
-        $cfg->dbname  = $this->dbname;
-        $cfg->dbuser  = $this->dbuser;
-        $cfg->dbpass  = $this->dbpass;
-        $cfg->prefix  = $this->prefix;
+        $cfg->dbtype    = $this->get_dbtype();
+        $cfg->dblibrary = 'adodb';
+        $cfg->dbhost    = $this->dbhost;
+        $cfg->dbname    = $this->dbname;
+        $cfg->dbuser    = $this->dbuser;
+        $cfg->dbpass    = $this->dbpass;
+        $cfg->prefix    = $this->prefix;
 
         return $cfg;
     }

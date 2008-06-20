@@ -74,20 +74,20 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      */
     public function export_dbconfig() {
         $cfg = new stdClass();
-        $cfg->dbtype  = $this->get_dbtype();
-        $cfg->library = 'adodb';
+        $cfg->dbtype     = $this->get_dbtype();
+        $cfg->dblibrary  = 'adodb';
         if ($this->dbhost == 'localhost' or $this->dbhost == '127.0.0.1') {
-            $cfg->dbhost  = "user='{$this->dbuser}' password='{$this->dbpass}' dbname='{$this->dbname}'";
-            $cfg->dbname  = '';
-            $cfg->dbuser  = '';
-            $cfg->dbpass  = '';
+            $cfg->dbhost = "user='{$this->dbuser}' password='{$this->dbpass}' dbname='{$this->dbname}'";
+            $cfg->dbname = '';
+            $cfg->dbuser = '';
+            $cfg->dbpass = '';
         } else {
-            $cfg->dbhost  = $this->dbhost;
-            $cfg->dbname  = $this->dbname;
-            $cfg->dbuser  = $this->dbuser;
-            $cfg->dbpass  = $this->dbpass;
+            $cfg->dbhost = $this->dbhost;
+            $cfg->dbname = $this->dbname;
+            $cfg->dbuser = $this->dbuser;
+            $cfg->dbpass = $this->dbpass;
         }
-        $cfg->prefix  = $this->prefix;
+        $cfg->prefix     = $this->prefix;
 
         return $cfg;
     }
