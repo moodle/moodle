@@ -1,6 +1,9 @@
 <?PHP 
 
 class hotpot_xml_quiz_template extends hotpot_xml_template_default {
+    // left and right items for JMatch
+    var $l_items = array();
+    var $r_items = array();
 
     // constructor function for this class
     function hotpot_xml_quiz_template(&$parent) {
@@ -418,28 +421,26 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $i;
     }
     function v6_expand_MatchDivItems() {
-        $l_items = array();
-        $r_items = array();
-        $this->get_jmatch_items($l_items, $r_items);
+        $this->set_jmatch_items();
 
-        $l_keys = $this->shuffle_jmatch_items($l_items);
-        $r_keys = $this->shuffle_jmatch_items($r_items);
+        $l_keys = $this->shuffle_jmatch_items($this->l_items);
+        $r_keys = $this->shuffle_jmatch_items($this->r_items);
 
         $options = '<option value="x">'.$this->parent->xml_value('data,matching-exercise,default-right-item').'</option>';
         foreach ($r_keys as $key) {
-            if (empty($r_items[$key]['fixed'])) {
-                $options .= '<option value="'.$key.'">'.$r_items[$key]['text'].'</option>'."\n";
+            if (! $this->r_items[$key]['fixed']) {
+                $options .= '<option value="'.$key.'">'.$this->r_items[$key]['text'].'</option>'."\n";
             }
         }
 
         $str = '';
         foreach ($l_keys as $key) {
-            $str .= '<tr><td class="LeftItem">'.$l_items[$key]['text'].'</td>';
+            $str .= '<tr><td class="LeftItem">'.$this->l_items[$key]['text'].'</td>';
             $str .= '<td class="RightItem">';
-            if (empty($r_items[$key]['fixed'])) {
-                $str .= '<select id="s'.$key.'_'.$key.'">'.$options.'</select>';
+            if ($this->r_items[$key]['fixed']) {
+                $str .= $this->r_items[$key]['text'];
             }  else {
-                $str .= $r_items[$key]['text'];
+                $str .= '<select id="s'.$key.'_'.$key.'">'.$options.'</select>';
             }
             $str .= '</td><td></td></tr>';
         }
@@ -709,12 +710,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
     // specials (JMatch)
 
     function v6_expand_FixedArray() {
-        $l_items = array();
-        $r_items = array();
-        $this->get_jmatch_items($l_items, $r_items);
-
+        $this->set_jmatch_items();
         $str = '';
-        foreach ($l_items as $i=>$item) {
+        foreach ($this->l_items as $i=>$item) {
             $str .= "F[$i] = new Array();\n";
             $str .= "F[$i][0] = '".$this->js_safe($item['text'], true)."';\n";
             $str .= "F[$i][1] = ".($i+1).";\n";
@@ -722,37 +720,36 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         return $str;
     }
     function v6_expand_DragArray() {
-        $l_items = array();
-        $r_items = array();
-        $this->get_jmatch_items($l_items, $r_items);
-
+        $this->set_jmatch_items();
         $str = '';
-        foreach ($r_items as $i=>$item) {
+        foreach ($this->r_items as $i=>$item) {
             $str .= "D[$i] = new Array();\n";
             $str .= "D[$i][0] = '".$this->js_safe($item['text'], true)."';\n";
             $str .= "D[$i][1] = ".($i+1).";\n";
-            $str .= "D[$i][2] = '".(empty($item['fixed']) ? 0 : 1)."';\n";
+            $str .= "D[$i][2] = '".$item['fixed']."';\n";
         }
         return $str;
     }
 
-    function get_jmatch_items(&$l_items, &$r_items) {
-        $tags = 'data,matching-exercise,pair';
-        $i = 0;
-        while($this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']")) {
-            if ($text = $this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']['text'][0]['#']")) {
-                $fixed = $this->parent->xml_value($tags,"[$i]['#']['left-item'][0]['#']['fixed'][0]['#']");
-                $l_items[] = array('text'=>$text, 'fixed'=>$fixed);
+    function set_jmatch_items() {
+        if (empty($this->l_items)) {
+            $tags = 'data,matching-exercise,pair';
+            $i = 0;
+            while (($leftitem = "[$i]['#']['left-item'][0]['#']") && $this->parent->xml_value($tags, $leftitem)) {
+                $lefttext = $this->parent->xml_value($tags, $leftitem."['text'][0]['#']");
+                if (strlen($lefttext)) {
+                    $this->l_items[] = array(
+                        'text' => $lefttext,
+                        'fixed' => $this->int_value($tags, $leftitem."['fixed'][0]['#']")
+                    );
+                    $rightitem = "[$i]['#']['right-item'][0]['#']";
+                    $this->r_items[] = array(
+                        'text' => $this->parent->xml_value($tags, $rightitem."['text'][0]['#']"),
+                        'fixed' => $this->int_value($tags, $rightitem."['fixed'][0]['#']")
+                    );
+                }
+                $i++;
             }
-            $i++;
-        }
-        $i = 0;
-        while($this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']")) {
-            if ($text = $this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']['text'][0]['#']")) {
-                $fixed = $this->parent->xml_value($tags,"[$i]['#']['right-item'][0]['#']['fixed'][0]['#']");
-                $r_items[] = array('text'=>$text, 'fixed'=>$fixed);
-            }
-            $i++;
         }
     }
     function shuffle_jmatch_items(&$items) {
