@@ -110,7 +110,7 @@ function createHTMLArea(id) {
         elements : id,
         theme    : "advanced",
 
-        plugins : "safari,spellchecker,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,pagebreak,imagemanager,filemanager",
+        plugins : "safari,spellchecker,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,pagebreak,",
         spellchecker_languages : "+English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr,German=de,Italian=it,Polish=pl,Portuguese=pt,Spanish=es,Swedish=sv",
 
         plugin_insertdate_dateFormat : "%Y-%m-%d",
@@ -180,6 +180,7 @@ echo <<<EOF
         theme_advanced_resizing: true,
         theme_advanced_toolbar_location : "top",
         theme_advanced_statusbar_location : "bottom",
+        file_browser_callback : "moodlefilemanager",
 
 EOF;
 // the xhtml ruleset must be the last one - no comma at the end of the file
@@ -192,6 +193,20 @@ echo <<<EOF
 		    tinyMCE.execCommand('mceAddControl', false, id);
 	    else
 		    tinyMCE.execCommand('mceRemoveControl', false, id);
+    }
+    function moodlefilemanager(field_name, url, type, win) {
+        tinyMCE.activeEditor.windowManager.open({
+            file: "{$CFG->httpswwwroot}/lib/editor/tinymce/jscripts/tiny_mce/plugins/moodlelink/link.php?id={$COURSE->id}",
+            width: 480,  
+            height: 380,
+            resizable: "yes",
+            inline: "yes",  
+            close_previous: "no"
+        }, {
+            window: win,
+            input: field_name
+        });
+        return false;
     }
 EOF;
 ?>

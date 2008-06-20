@@ -19,6 +19,10 @@ class htmlEditor {
         global $CFG;
         static $configured = Array();
 
+        if (!$CFG->htmleditor) {
+            return;
+        }
+
         if ($editor == '') {
             $editor = (isset($CFG->defaulthtmleditor) ? $CFG->defaulthtmleditor : '');
         }
