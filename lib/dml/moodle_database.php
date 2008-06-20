@@ -865,7 +865,7 @@ abstract class moodle_database {
         if ($select) {
             $select = "WHERE $select";
         }
-        return $this->get_field_sql("SELECT $return FROM {$this->prefix}$table $select", $params);
+        return $this->get_field_sql("SELECT $return FROM {" . $table . "} $select", $params);
     }
 
     /**
