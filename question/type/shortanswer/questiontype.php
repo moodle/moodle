@@ -186,13 +186,8 @@ class question_shortanswer_qtype extends default_questiontype {
 
     function compare_responses($question, $state, $teststate) {
         if (isset($state->responses['']) && isset($teststate->responses[''])) {
-            if ($question->options->usecase) {
-                return strcmp($state->responses[''], $teststate->responses['']) == 0;
-            } else {
-                $textlib = textlib_get_instance();
-                return strcmp($textlib->strtolower($state->responses['']),
-                        $textlib->strtolower($teststate->responses[''])) == 0;
-            }
+            return $this->compare_string_with_wildcard(stripslashes_safe($state->responses['']),
+                $teststate->responses[''], !$question->options->usecase);
         }
         return false;
     }
