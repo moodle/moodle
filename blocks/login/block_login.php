@@ -11,7 +11,7 @@ class block_login extends block_base {
     }
 
     function get_content () {
-        global $USER, $CFG;
+        global $USER, $CFG, $SESSION;
         $wwwroot = '';
         $signup = '';
 
@@ -36,7 +36,7 @@ class block_login extends block_base {
         // TODO: now that we have multiauth it is hard to find out if there is a way to change password
         $forgot = $wwwroot . '/login/forgot_password.php';
 
-        $username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
+        $username = $SESSION->get_moodle_cookie() === 'nobody' ? '' : $SESSION->get_moodle_cookie();
 
         $this->content->footer = '';
         $this->content->text = '';
