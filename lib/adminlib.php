@@ -186,6 +186,13 @@ function get_db_directories() {
             $dbdirs[] = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$plugin.'/db';
         }
     }
+    
+/// Now quiz report plugins (mod/quiz/report/xxx/db)
+    if ($plugins = get_list_of_plugins('mod/quiz/report', 'db')) {
+        foreach ($plugins as $plugin) {
+            $dbdirs[] = $CFG->dirroot.'/mod/quiz/report/'.$plugin.'/db';
+        }
+    }
 
 /// Local database changes, if the local folder exists.
     if (file_exists($CFG->dirroot . '/local')) {
@@ -707,9 +714,9 @@ function print_progress_redraw($thisbarid, $done, $total, $width, $donetext='') 
 }
 
 function upgrade_get_javascript() {
-    global $CFG;
+    global $CFG, $SESSION;
 
-    if (!empty($_SESSION['installautopilot'])) {
+    if (!empty($SESSION->installautopilot)) {
         $linktoscrolltoerrors = '<script type="text/javascript">var installautopilot = true;</script>'."\n";
     } else {
         $linktoscrolltoerrors = '<script type="text/javascript">var installautopilot = false;</script>'."\n";
@@ -792,7 +799,9 @@ global $upgradeloghandle, $upgradelogbuffer;
  * @param int page reload timeout
  */
 function upgrade_check_running($message, $timeout) {
-    if (!empty($_SESSION['upgraderunning'])) {
+    global $SESSION;
+
+    if (!empty($SESSION->upgraderunning)) {
         print_header();
         redirect(me(), $message, $timeout);
     }
@@ -807,14 +816,14 @@ function upgrade_check_running($message, $timeout) {
  * This function may be called repeatedly.
  */
 function upgrade_log_start() {
-    global $CFG, $upgradeloghandle;
+    global $CFG, $upgradeloghandle, $SESSION;
 
-    if (!empty($_SESSION['upgraderunning'])) {
+    if (!empty($SESSION->upgraderunning)) {
         return; // logging already started
     }
 
     @ignore_user_abort(true);            // ignore if user stops or otherwise aborts page loading
-    $_SESSION['upgraderunning'] = 1;     // set upgrade indicator
+    $SESSION->upgraderunning = 1;     // set upgrade indicator
     if (empty($CFG->dbsessions)) {       // workaround for bug in adodb, db session can not be restarted
         session_write_close();           // from now on user can reload page - will be displayed warning
     }
@@ -833,9 +842,9 @@ function upgrade_log_start() {
  * This function may be called repeatedly.
  */
 function upgrade_log_finish() {
-    global $CFG, $upgradeloghandle, $upgradelogbuffer;
+    global $CFG, $upgradeloghandle, $upgradelogbuffer, $SESSION;
 
-    if (empty($_SESSION['upgraderunning'])) {
+    if (empty($SESSION->upgraderunning)) {
         return; // logging already terminated
     }
 
@@ -848,10 +857,10 @@ function upgrade_log_finish() {
         @fclose($upgradeloghandle);
         $upgradeloghandle = false;
     }
-    if (empty($CFG->dbsessions)) {
-        @session_start();                // ignore header errors, we only need to reopen session
-    }
-    $_SESSION['upgraderunning'] = 0; // clear upgrade indicator
+    @session_start();                // ignore header errors, we only need to reopen session
+
+    $SESSION->upgraderunning = 0; // clear upgrade indicator
+
     if (connection_aborted()) {
         die;
     }

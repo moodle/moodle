@@ -34,14 +34,14 @@
     $confirmplugincheck = optional_param('confirmplugincheck', 0, PARAM_BOOL);
 
 /// check upgrade status first
-    if ($ignoreupgradewarning and !empty($_SESSION['upgraderunning'])) {
-        $_SESSION['upgraderunning'] = 0;
+    if ($ignoreupgradewarning) {
+        $SESSION->upgraderunning = 0;
     }
     upgrade_check_running("Upgrade already running in this session, please wait!<br />Click on the exclamation marks to ignore this warning (<a href=\"index.php?ignoreupgradewarning=1\">!!!</a>).", 10);
 
 /// set install/upgrade autocontinue session flag
     if ($autopilot) {
-        $_SESSION['installautopilot'] = $autopilot;
+        $SESSION->installautopilot = $autopilot;
     }
 
 /// Check some PHP server settings
@@ -431,11 +431,14 @@
 /// Check all admin report plugins and upgrade if necessary
     upgrade_plugins('report', $CFG->admin.'/report', "$CFG->wwwroot/$CFG->admin/index.php");
 
+/// Check all quiz report plugins and upgrade if necessary
+    upgrade_plugins('quiz_report', 'mod/quiz/report', "$CFG->wwwroot/$CFG->admin/index.php");
+
 
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
 
-    unset($_SESSION['installautopilot']);
+    unset($SESSION->installautopilot);
 
 /// Set up the blank site - to be customized later at the end of install.
     if (! $site = get_site()) {
