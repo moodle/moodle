@@ -49,14 +49,9 @@ function setup_DB() {
         $CFG->dboptions = array();
     }
 
-    if ($CFG->dblibrary == 'adodb') {
-        $classname = $CFG->dbtype.'_adodb_moodle_database';
-        require_once($CFG->libdir.'/dml/'.$classname.'.php');
-        $DB = new $classname();
-
-    } else {
-        error('Not implemented db library yet: '.$CFG->dblibrary);
-    }
+    $classname = $CFG->dbtype.'_'.$CFG->dblibrary.'_moodle_database';
+    require_once($CFG->libdir.'/dml/'.$classname.'.php');
+    $DB = new $classname();
 
     $CFG->dbfamily = $DB->get_dbfamily(); // TODO: BC only for now
 
