@@ -22,6 +22,11 @@ define('FEEDBACK_MAX_PIX_LENGTH', '400'); //max. Breite des grafischen Balkens i
 
 $feedback_names = feedback_load_feedback_items('mod/feedback/item');
 
+//initialize the feedback-Session
+if(!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
+    $SESSION->feedback = new object();
+}
+
 /**
 * this will create a new instance and return the id number
 * of the new instance.
