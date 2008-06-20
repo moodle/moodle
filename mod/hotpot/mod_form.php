@@ -115,6 +115,7 @@ class mod_hotpot_mod_form extends moodleform_mod {
             $mform->setAdvanced('summary_elements');
         } else {
             // existing HotPot
+            $mform->addElement('hidden', 'summarysource', HOTPOT_TEXTSOURCE_SPECIFIC);
             $mform->addElement('htmleditor', 'summary', get_string('summary'));
             $mform->setType('summary', PARAM_RAW);
             $mform->setHelpButton('summary', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
