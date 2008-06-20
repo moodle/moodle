@@ -92,7 +92,7 @@ class enrolment_plugin_authorize
                         break;
                 }
                 if (!empty($authorizeerror)) {
-                    print_error('authorizeerror');
+                    print_error('authorizeerror', 'enrol_authorize', '', $authorizeerror);
                 }
             }
             $frmenrol->display();

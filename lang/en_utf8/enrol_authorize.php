@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // enrol_authorize.php - created with Moodle 2.0 dev (2007101508)
 
 
@@ -56,6 +56,7 @@ $string['authcode'] = 'Authorization Code';
 $string['authorize:managepayments'] = 'Manage payments';
 $string['authorize:uploadcsv'] = 'Upload CSV file';
 $string['authorizedpendingcapture'] = 'Authorized / Pending Capture';
+$string['authorizeerror'] = 'Authorize.net Error: $a';
 $string['avsa'] = 'Address (street) matches, postal code does not';
 $string['avsb'] = 'Address information not provided';
 $string['avse'] = 'Address Verification System Error';
