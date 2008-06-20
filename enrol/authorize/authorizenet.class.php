@@ -252,7 +252,7 @@ class AuthorizeNet
         }
 
         $host = $test ? 'certification.authorize.net' : 'secure.authorize.net';
-        $data = download_file_content("https://$host:443/gateway/transact.dll", $headers, $pd, false, 60);
+        $data = download_file_content("https://$host:443/gateway/transact.dll", $headers, $pd, false, 300, 60, true);
         if (!$data) {
             $message = "No connection to https://$host:443";
             return AN_RETURNZERO;
