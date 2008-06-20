@@ -55,6 +55,12 @@
     $fstring->course = get_string('course');
     $fstring->anonymous_user = get_string('anonymous_user','feedback');
     ob_end_clean();
+    
+    //get the questions (item-names)
+    if(!$items = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1), 'position')) {
+        error(get_string('no_items_available_yet', 'feedback'), $CFG->wwwroot.'/mod/feedback/view.php?id='.$id);
+        exit;
+    }
 
     $filename = "feedback.xls";
     
@@ -105,8 +111,6 @@
         $worksheet1->write_string($rowOffset1, 0, $fstring->modulenameplural.': '.strval($completedscount));
     }
 
-    //get the questions (item-names)
-    $items = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1, 'position'));
     if(is_array($items)){
         $rowOffset1++;
         $worksheet1->write_string($rowOffset1, 0, $fstring->questions.': '. strval(sizeof($items)));
