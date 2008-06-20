@@ -313,7 +313,11 @@ class quiz_report extends quiz_default_report {
             $q = $questions[$qnum];
             $qid = $q['id'];
             $question = get_record('question', 'id', $qid);
-            $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid,'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
+            if (question_has_capability_on($question, 'edit') || question_has_capability_on($question, 'view')) {
+                $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid,'&amp;cmid='.$cm->id.'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
+            } else {
+                $qnumber = $qid;
+            }
             $qname = '<div class="qname">'.format_text($question->name." :  ", $question->questiontextformat, $format_options, $quiz->course).'</div>';
             $qicon = print_question_icon($question, true);
             $qreview = quiz_question_preview_button($quiz, $question);
