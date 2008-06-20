@@ -20,15 +20,59 @@
 function xmldb_quiz_upgrade($oldversion=0) {
 
     global $CFG, $THEME, $DB;
+    
+    $dbman = $DB->get_manager();
 
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one
-/// block of code similar to the next one. Please, delete
-/// this comment lines once this file start handling proper
-/// upgrade code.
-
 //===== 1.9.0 upgrade line ======//
+
+    if ($result && $oldversion < 2008062000) {
+
+    /// Define table quiz_report to be created
+        $table = new xmldb_table('quiz_report');
+
+    /// Adding fields to table quiz_report
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_field('displayorder', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table quiz_report
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for quiz_report
+        if (!$dbman->table_exists($table)) {
+            $result = $result && $dbman->create_table($table);
+        }
+
+    }
+    if ($result && $oldversion < 2008062001) {
+        $reporttoinsert = new object();
+        $reporttoinsert->name = 'overview';
+        $reporttoinsert->displayorder = 10000;
+        $result = $result && $DB->insert_record('quiz_report', $reporttoinsert);
+
+        $reporttoinsert = new object();
+        $reporttoinsert->name = 'responses';
+        $reporttoinsert->displayorder = 9000;
+        $result = $result && $DB->insert_record('quiz_report', $reporttoinsert);
+
+        $reporttoinsert = new object();
+        $reporttoinsert->name = 'statistics';
+        $reporttoinsert->displayorder = 8000;
+        $result = $result && $DB->insert_record('quiz_report', $reporttoinsert);
+
+        $reporttoinsert = new object();
+        $reporttoinsert->name = 'regrade';
+        $reporttoinsert->displayorder = 7000;
+        $result = $result && $DB->insert_record('quiz_report', $reporttoinsert);
+
+        $reporttoinsert = new object();
+        $reporttoinsert->name = 'grading';
+        $reporttoinsert->displayorder = 6000;
+        $result = $result && $DB->insert_record('quiz_report', $reporttoinsert);
+    }
+
 
     return $result;
 }

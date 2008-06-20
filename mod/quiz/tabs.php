@@ -6,7 +6,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
  */
-
+global $DB;
 if (empty($quiz)) {
     print_error('cannotcallscript');
 }
@@ -51,17 +51,26 @@ if ($currenttab == 'reports' and isset($mode)) {
     $activated[] = 'reports';
 
     // Standard reports we want to show first.
-    $reportlist = array ('overview', 'regrade', 'grading', 'analysis');
+    
+    $reportrs = $DB->get_recordset('quiz_report', null, 'displayorder DESC', 'id, name');
     // Reports that are restricted by capability.
     $reportrestrictions = array(
         'regrade' => 'mod/quiz:grade',
         'grading' => 'mod/quiz:grade'
     );
+    $reportdirs = get_list_of_plugins("mod/quiz/report");
+    //order the reports tab in descending order of displayorder
+    $reportlist = array();
+    foreach ($reportrs as $key => $rs) {
+        if (in_array($rs->name, $reportdirs)) {
+            $reportlist[]=$rs->name;
+        }
+    }
 
-    $allreports = get_list_of_plugins("mod/quiz/report");
-    foreach ($allreports as $report) {
+    //add any other reports on the end
+    foreach ($reportdirs as $report) {
         if (!in_array($report, $reportlist)) {
-            $reportlist[] = $report;
+            $reportlist[]=$report;
         }
     }
 

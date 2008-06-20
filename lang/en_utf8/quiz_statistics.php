@@ -2,7 +2,7 @@
       // quiz_analysis.php - created with Moodle 1.7 beta + (2006101003)
 
 
-$string['statistics'] = 'Quiz statistics';
+$string['statistics'] = 'Statistics';
 $string['calculatefrom'] = 'Calculate statistics from';
 
 

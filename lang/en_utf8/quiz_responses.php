@@ -3,8 +3,8 @@
 
 
 $string['pagesize'] = 'Attempts per page:';
-$string['reportresponses'] = 'Detailed responses';
-$string['responses'] = 'Detailed responses';
+$string['reportresponses'] = 'Responses';
+$string['responses'] = 'Responses';
 $string['responsesoptions'] = 'Responses options';
 $string['responsestitle'] = 'Detailed responses';
 
