@@ -1101,7 +1101,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
       $form->questiontext = "What is {a} + {b}?";
 
       if ($courseid) {
-          $course = get_record('course', 'id', $courseid);
+          $course = $DB->get_record('course', array('id'=> $courseid));
       }
 
       $new_question = $this->save_question($question, $form, $course);
