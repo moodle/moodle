@@ -1085,6 +1085,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
    * Alternate DB table prefix may be used to facilitate data deletion.
    */
   function generate_test($name, $courseid = null) {
+      global $DB;
       list($form, $question) = parent::generate_test($name, $courseid);
       $form->feedback = 1;
       $form->multiplier = array(1, 1);
