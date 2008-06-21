@@ -36,6 +36,8 @@ $string['configfilewritten'] = 'S\'ha creat correctament el fitxer config.php';
 $string['configurationcompletehead'] = 'S\'ha completat la configuració';
 $string['configurationcompletesub'] = 'Moodle ha intentat desar la configuració en un fitxer en l\'arrel de la vostra instal·lació de Moodle.';
 $string['continue'] = 'Continua';
+$string['ctyperecommended'] = 'Es recomana instal·lar l\'extensió de PHP ctype a fi de millorar el rendiment del lloc, especialment si teniu usuaris que treballen amb idiomes no occidentals.';
+$string['ctyperequired'] = 'A hores d\'ara Moodle requereix l\'extensió de PHP ctype, a fi de millorar el rendiment del lloc i oferir compatibilitat amb diferents idiomes.';
 $string['curlrecommended'] = 'Es recomana instal·lar la biblioteca opcional Curl a fi d\'habilitar la funcionalitat de Moodle en Xarxa.';
 $string['customcheck'] = 'Altres comprovacions';
 $string['database'] = 'Base de dades';
@@ -46,7 +48,7 @@ $string['databasecreationsettingssub'] = '<b>Tipus:</b> fixat a \"mysql\" per l\
 <b>Usuari:</b> fixat a \"root\" per l\'instal·lador<br />
 <b>Contrasenya:</b> la contrasenya de l\'usuari \"root\" de la base de dades<br />
 <b>Prefix de les taules:</b> prefix opcional per utilitzar en els noms de totes les taules';
-$string['databasesettingshead'] = 'Ara cal configurar la base de dades on s\'emmagatzemaran la majoria de dades de Moodle. Aquesta base de dades s\'ha d\'haver crear abans i cal tenir un nom d\'usuari i una contrasenya per accedir-hi.';
+$string['databasesettingshead'] = 'Ara cal configurar la base de dades on s\'emmagatzemaran la majoria de dades de Moodle. Aquesta base de dades s\'ha d\'haver creat abans i cal tenir un nom d\'usuari i una contrasenya per accedir-hi.';
 $string['databasesettingssub'] = '<b>Tipus:</b> mysql o postgres7<br />
 <b>Servidor:</b> p. ex. localhost o db.isp.com<br />
 <b>Nom:</b> nom de la base de dades, p. ex. moodle<br />
