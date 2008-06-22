@@ -1074,7 +1074,7 @@ function quiz_reset_userdata($data) {
 function quiz_check_file_access($attemptuniqueid, $questionid) {
     global $USER, $DB;
 
-    $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $attemptid));
+    $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $attemptuniqueid));
     $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz));
     $context = get_context_instance(CONTEXT_COURSE, $quiz->course);
 
