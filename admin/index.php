@@ -432,7 +432,7 @@
     upgrade_plugins('report', $CFG->admin.'/report', "$CFG->wwwroot/$CFG->admin/index.php");
 
 /// Check all quiz report plugins and upgrade if necessary
-    upgrade_plugins('quiz_report', 'mod/quiz/report', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('mod/quiz/report', 'mod/quiz/report', "$CFG->wwwroot/$CFG->admin/index.php");
 
 
 /// just make sure upgrade logging is properly terminated
