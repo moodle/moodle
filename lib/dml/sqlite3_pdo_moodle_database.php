@@ -74,7 +74,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      * Must be called after connect (or after $dbname, $dbhost, etc. members have been set).
      * @return string driver-dependent DSN
      */
-    public function get_dsn() {
+    protected function get_dsn() {
         return 'sqlite:' . $this->get_dbfilepath();
     }
 
