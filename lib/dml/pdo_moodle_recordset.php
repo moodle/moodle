@@ -8,30 +8,43 @@ require_once($CFG->libdir.'/dml/moodle_recordset.php');
  */
 class pdo_moodle_recordset extends moodle_recordset {
 
-    private $sht;
+    private $sth;
+    protected $fields;
+    protected $rowCount = -1;
 
     public function __construct($sth) {
         $this->sth = $sth;
+        $this->sth->setFetchMode(PDO::FETCH_ASSOC);
     }
 
     public function current() {
-        error('TODO');
+        return (object)$this->fields;
     }
 
     public function key() {
-        error('TODO');
+        return $this->rowCount;
     }
 
     public function next() {
-        error('TODO');
+        $this->fields = $this->sth->fetch();
+        if ($this->fields) {
+            ++$this->rowCount;
+        }
+        return $this->fields !== false;
     }
 
     public function rewind() {
-        error('TODO');
+        $this->fields = $this->sth->fetch();
+        if ($this->fields) {
+            $this->rowCount = 0;
+        }
     }
 
     public function valid() {
-        error('TODO');
+        if($this->rowCount < 0) {
+            $this->rewind();
+        }
+        return $this->fields !== FALSE;
     }
 
     public function close() {

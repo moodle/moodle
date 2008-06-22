@@ -129,6 +129,13 @@ $string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> prefix to use for all table names (mandatory)';
+$string['databasesettingssub_sqlite3_pdo'] = '<b>Type:</b> SQLite 3 (PDO) <b><strong  class=\"errormsg\">Experimental! (not for use in production)</strong></b><br />
+       <b>Host:</b> path to the directory where the database file will be saved (use a full path); use localhost or leave blank to use Moodle data directory<br />
+       <b>Name:</b> database name, eg moodle (optional)<br />
+       <b>User:</b> your database username (optional)<br />
+       <b>Password:</b> your database password (optional)<br />
+       <b>Tables Prefix:</b> optional prefix to use for all table names<br />
+	   The name of the database file will be determined by the username, database name and password you entered above.';
 $string['databasesettingswillbecreated'] = '<b>Note:</b> The installer will try to create the database automatically if not exists.';
 $string['databasetype']='Database type :';
 $string['databaseuser']='Database user :';
@@ -325,6 +332,8 @@ $string['sitenewsitems'] = 'News Items :';
 $string['siteshortname'] = 'Site short name :';
 $string['sitesummary'] ='Site summary :';
 $string['skipdbencodingtest'] = 'Skip DB Encoding Test';
+$string['sqlite3_pdo'] = 'SQLite 3 (PDO) <b><strong  class=\"errormsg\">Experimental! (not for use in production)</strong></b>';
+$string['sqliteextensionisnotpresentinphp'] = 'PHP has not been properly configured with the SQLite extension.  Please check your php.ini file or recompile PHP.';
 $string['tableprefix']='Table prefix :';
 $string['upgradingactivitymodule']= 'Upgrading Activity Module';
 $string['upgradingbackupdb'] = 'Upgrading Backup Database';

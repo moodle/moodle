@@ -67,6 +67,7 @@ databasesettingssub_mysqli
 databasesettingssub_oci8po
 databasesettingssub_odbc_mssql
 databasesettingssub_postgres7
+databasesettingssub_sqlite3_pdo
 databasesettingswillbecreated
 databasetype
 databaseuser
@@ -207,6 +208,8 @@ sitenewsitems
 siteshortname
 sitesummary
 skipdbencodingtest
+sqlite3_pdo
+sqliteextensionisnotpresentinphp
 status
 this_direction
 tableprefix

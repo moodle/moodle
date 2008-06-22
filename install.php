@@ -168,7 +168,8 @@ $supported = array (
     'mssql_n_adodb',
     'mssql_adodb',
     'odbc_mssql_adodb',
-    'oci8po_adodb'
+    'oci8po_adodb',
+    'sqlite3_pdo',
 );
 $databases = array ();
 foreach($supported as $driver) {
@@ -320,7 +321,7 @@ if ($INSTALL['stage'] == DATABASE) {
         error_reporting(0);  // Hide errors
 
         if (! $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix'])) {
-            if (!$DB->create_database($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'])) {
+            if (!$DB->create_database($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'])) {
                  $errormsg = get_string('dbcreationerror', 'install');
                  $nextstage = DATABASE;
             } else {
@@ -472,6 +473,13 @@ if ($nextstage == SAVE) {
             } else {
                 $str .= '$CFG->'.$key.' = false;'."\r\n";
             }
+        } else if (is_array($value)) {
+            if (empty($value)) {
+                $value = 'array()';
+            } else {
+                $value = 'unserialize(\'' . addsingleslashes(serialize($value)) . '\')';
+            }
+            $str .= '$CFG->'.$key.' = '. $value . ";\r\n";
         } else {
             $str .= '$CFG->'.$key.' = \''.addsingleslashes($value)."';\r\n";
         }
