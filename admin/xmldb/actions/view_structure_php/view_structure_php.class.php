@@ -213,7 +213,7 @@ class view_structure_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Conditionally launch create table for ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        if (!$dbman->table_exists($table)) {' . XMLDB_LINEFEED;
-        $result .= '            $result = $result && $dbman->create_table($table);' . XMLDB_LINEFEED;
+        $result .= '            $dbman->create_table($table);' . XMLDB_LINEFEED;
         $result .= '        }' . XMLDB_LINEFEED;
 
     /// Add the proper upgrade_xxxx_savepoint call
@@ -256,7 +256,7 @@ class view_structure_php extends XMLDBAction {
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Conditionally launch drop table for ' . $table->getName() . XMLDB_LINEFEED;
         $result .= '        if ($dbman->table_exists($table)) {' . XMLDB_LINEFEED;
-        $result .= '            $result = $result && $dbman->drop_table($table);' . XMLDB_LINEFEED;
+        $result .= '            $dbman->drop_table($table);' . XMLDB_LINEFEED;
         $result .= '        }' . XMLDB_LINEFEED;
 
     /// Add the proper upgrade_xxxx_savepoint call
@@ -298,7 +298,7 @@ class view_structure_php extends XMLDBAction {
     /// Launch the proper DDL
         $result .= XMLDB_LINEFEED;
         $result .= '    /// Launch rename table for ' . $table->getName() . XMLDB_LINEFEED;
-        $result .= '        $result = $result && $dbman->rename_table($table, ' . "'NEWNAMEGOESHERE'" . ');' . XMLDB_LINEFEED;
+        $result .= '        $dbman->rename_table($table, ' . "'NEWNAMEGOESHERE'" . ');' . XMLDB_LINEFEED;
 
     /// Add the proper upgrade_xxxx_savepoint call
         $result .= $this->upgrade_savepoint_php ($structure);
