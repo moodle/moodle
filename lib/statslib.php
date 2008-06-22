@@ -152,12 +152,14 @@ function stats_cron_daily($maxdays=1) {
     /// process login info first
         $sql = "INSERT INTO {$CFG->prefix}stats_user_daily (stattype, timeend, courseid, userid, statsreads)
 
-                SELECT 'logins' AS stattype, $nextmidnight AS timeend, ".SITEID." AS courseid,
-                       l.userid, count(l.id) AS statsreads
-                  FROM {$CFG->prefix}log l
-                 WHERE action = 'login' AND $timesql
-              GROUP BY stattype, timeend, courseid, userid
-                HAVING count(l.id) > 0";
+                SELECT 'logins', timeend, courseid, userid, count(statsreads)
+                  FROM (
+                           SELECT $nextmidnight AS timeend, ".SITEID." AS courseid, l.userid, l.id AS statsreads
+                             FROM {$CFG->prefix}log l
+                            WHERE action = 'login' AND $timesql
+                       ) inline_view
+              GROUP BY timeend, courseid, userid
+                HAVING count(statsreads) > 0";
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -173,7 +175,8 @@ function stats_cron_daily($maxdays=1) {
                                       WHERE s1.stattype = 'logins' AND timeend = $nextmidnight), 0) AS stat1,
                        (SELECT COUNT('x')
                           FROM {$CFG->prefix}stats_user_daily s2
-                         WHERE s2.stattype = 'logins' AND timeend = $nextmidnight) AS stat2";
+                         WHERE s2.stattype = 'logins' AND timeend = $nextmidnight) AS stat2" .
+                sql_null_from_clause();
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -197,13 +200,16 @@ function stats_cron_daily($maxdays=1) {
 
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'enrolments' AS stattype, $nextmidnight AS timeend,
-                        pl.courseid, pl.roleid, COUNT(DISTINCT pl.userid) AS stat1, 0 AS stat2
-                  FROM (SELECT DISTINCT ra.roleid, ra.userid, c.id as courseid
-                          FROM {$CFG->prefix}role_assignments ra $enroljoin_na
-                         WHERE $enrolwhere_na
-                       ) pl
-              GROUP BY stattype, timeend, pl.courseid, pl.roleid, stat2";
+                SELECT 'enrolments', timeend, courseid, roleid, COUNT(DISTINCT userid), 0
+                  FROM (
+                           SELECT $nextmidnight AS timeend, pl.courseid, pl.roleid, pl.userid
+                             FROM (
+                                      SELECT DISTINCT ra.roleid, ra.userid, c.id as courseid
+                                        FROM {$CFG->prefix}role_assignments ra $enroljoin_na
+                                       WHERE $enrolwhere_na
+                                   ) pl
+                       ) inline_view
+              GROUP BY timeend, courseid, roleid";
 
         if (!execute_sql($sql, false)) {
             $failed = true;
@@ -238,12 +244,14 @@ function stats_cron_daily($maxdays=1) {
     /// now get course total enrolments (roleid==0) - except frontpage
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'enrolments' AS stattype, $nextmidnight AS timeend,
-                       c.id, 0 AS nroleid, COUNT(DISTINCT ra.userid) AS stat1, 0 AS stat2
-                  FROM {$CFG->prefix}role_assignments ra $enroljoin_na
-                 WHERE c.id <> ".SITEID." AND $enrolwhere_na
-              GROUP BY stattype, timeend, c.id, nroleid, stat2
-                HAVING COUNT(DISTINCT ra.userid) > 0";
+                SELECT 'enrolments', timeend, id, nroleid, COUNT(DISTINCT userid), 0
+                  FROM (
+                           SELECT $nextmidnight AS timeend, c.id, 0 AS nroleid, ra.userid
+                             FROM {$CFG->prefix}role_assignments ra $enroljoin_na
+                            WHERE c.id <> ".SITEID." AND $enrolwhere_na
+                       ) inline_view
+              GROUP BY timeend, id, nroleid
+              HAVING COUNT(DISTINCT userid) > 0";
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -284,7 +292,8 @@ function stats_cron_daily($maxdays=1) {
                        (SELECT COUNT(DISTINCT u.id)
                           FROM {$CFG->prefix}user u
                                JOIN {$CFG->prefix}log l ON l.userid = u.id
-                         WHERE u.deleted = 0 AND $timesql) AS stat2";
+                         WHERE u.deleted = 0 AND $timesql) AS stat2" .
+                sql_null_from_clause();
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -320,7 +329,8 @@ function stats_cron_daily($maxdays=1) {
                            (SELECT COUNT(DISTINCT u.id)
                               FROM {$CFG->prefix}user u
                                    JOIN {$CFG->prefix}log l ON l.userid = u.id
-                             WHERE u.deleted = 0 AND $timesql) AS stat2";
+                             WHERE u.deleted = 0 AND $timesql) AS stat2" .
+                    sql_null_from_clause();
 
             if ($logspresent and !execute_sql($sql, false)) {
                 $failed = true;
@@ -353,7 +363,7 @@ function stats_cron_daily($maxdays=1) {
                           FROM {$CFG->prefix}user u, {$CFG->prefix}log l
                          WHERE u.id = l.userid AND $timesql
                        UNION
-                        SELECT 0 AS userid, ".SITEID." AS courseid) d";
+                        SELECT 0 AS userid, ".SITEID." AS courseid" . sql_null_from_clause() . ") d";
                         // can not use group by here because pg can not handle it :-(
 
         if ($logspresent and !execute_sql($sql, false)) {
@@ -391,19 +401,24 @@ function stats_cron_daily($maxdays=1) {
 
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'activity' AS stattype, $nextmidnight AS timeend, pl.courseid, pl.roleid,
-                       SUM(sud.statsreads) AS stat1, SUM(sud.statswrites) AS stat2
-                  FROM {$CFG->prefix}stats_user_daily sud,
-                       (SELECT DISTINCT ra.userid, ra.roleid, c.id AS courseid
-                          FROM {$CFG->prefix}role_assignments ra $enroljoin
-                         WHERE c.id <> ".SITEID." AND
-                               ra.roleid <> $guestrole->id AND ra.userid <> $guest->id AND
-                               $enrolwhere
-                        ) pl
-                 WHERE sud.userid = pl.userid AND sud.courseid = pl.courseid AND
-                       sud.timeend = $nextmidnight AND sud.stattype='activity'  
-              GROUP BY stattype, timeend, pl.courseid, pl.roleid
-                HAVING SUM(sud.statsreads) > 0 OR SUM(sud.statswrites) > 0";
+                SELECT 'activity', timeend, courseid, roleid, SUM(statsreads), SUM(statswrites)
+                FROM (
+                         SELECT $nextmidnight AS timeend, pl.courseid, pl.roleid, sud.statsreads, sud.statswrites
+                         FROM {$CFG->prefix}stats_user_daily sud,
+                                  (SELECT DISTINCT ra.userid, ra.roleid, c.id AS courseid
+                                     FROM {$CFG->prefix}role_assignments ra $enroljoin
+                                    WHERE c.id <> ".SITEID." AND
+                                          ra.roleid <> $guestrole->id AND
+                                          ra.userid <> $guest->id AND
+                                          $enrolwhere
+                                  ) pl
+                         WHERE sud.userid = pl.userid AND
+                               sud.courseid = pl.courseid AND
+                               sud.timeend = $nextmidnight AND
+                               sud.stattype='activity'
+                     ) inline_view
+            GROUP BY timeend, courseid, roleid
+              HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -417,18 +432,20 @@ function stats_cron_daily($maxdays=1) {
 
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'activity' AS stattype, $nextmidnight AS timeend, sud.courseid, $guestrole->id AS nroleid,
-                       SUM(sud.statsreads) AS stat1, SUM(sud.statswrites) AS stat2
-                  FROM {$CFG->prefix}stats_user_daily sud
-                 WHERE sud.timeend = $nextmidnight AND sud.courseid <> ".SITEID." AND
-                       sud.stattype='activity' AND
-                       (sud.userid = $guest->id OR sud.userid
-                         NOT IN (SELECT ra.userid
-                                   FROM {$CFG->prefix}role_assignments ra $enroljoin
-                                  WHERE c.id <> ".SITEID." AND  ra.roleid <> $guestrole->id AND
-                                        $enrolwhere))
-              GROUP BY stattype, timeend, sud.courseid, nroleid
-                HAVING SUM(sud.statsreads) > 0 OR SUM(sud.statswrites) > 0";
+                SELECT 'activity', timeend, courseid, nroleid, SUM(statsreads), SUM(statswrites)
+                  FROM (
+                           SELECT $nextmidnight AS timeend, sud.courseid, $guestrole->id AS nroleid, sud.statsreads, sud.statswrites
+                             FROM {$CFG->prefix}stats_user_daily sud
+                            WHERE sud.timeend = $nextmidnight AND sud.courseid <> ".SITEID." AND
+                                  sud.stattype='activity' AND
+                                  (sud.userid = $guest->id OR sud.userid
+                                    NOT IN (SELECT ra.userid
+                                              FROM {$CFG->prefix}role_assignments ra $enroljoin
+                                             WHERE c.id <> ".SITEID." AND  ra.roleid <> $guestrole->id AND
+                                                   $enrolwhere))
+                       ) inline_view
+              GROUP BY timeend, courseid, nroleid
+                HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -440,20 +457,25 @@ function stats_cron_daily($maxdays=1) {
     /// how many view actions for each role on frontpage - excluding guests, not-logged-in and default frontpage role
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'activity' AS stattype, $nextmidnight AS timeend, pl.courseid, pl.roleid,
-                       SUM(sud.statsreads) AS stat1, SUM(sud.statswrites) AS stat2
-                  FROM {$CFG->prefix}stats_user_daily sud,
-                       (SELECT DISTINCT ra.userid, ra.roleid, c.id AS courseid
-                          FROM {$CFG->prefix}role_assignments ra $enroljoin
-                         WHERE c.id = ".SITEID." AND
-                               ra.roleid <> $defaultfproleid AND
-                               ra.roleid <> $guestrole->id AND ra.userid <> $guest->id AND
-                               $enrolwhere
-                        ) pl
-                 WHERE sud.userid = pl.userid AND sud.courseid = pl.courseid AND
-                       sud.timeend = $nextmidnight AND sud.stattype='activity'  
-              GROUP BY stattype, timeend, pl.courseid, pl.roleid
-                HAVING SUM(sud.statsreads) > 0 OR SUM(sud.statswrites) > 0";
+                SELECT 'activity', timeend, courseid, roleid, SUM(statsreads), SUM(statswrites)
+                  FROM (
+                           SELECT $nextmidnight AS timeend, pl.courseid, pl.roleid, sud.statsreads, sud.statswrites
+                             FROM {$CFG->prefix}stats_user_daily sud,
+                                      (SELECT DISTINCT ra.userid, ra.roleid, c.id AS courseid
+                                         FROM {$CFG->prefix}role_assignments ra $enroljoin
+                                        WHERE c.id = ".SITEID." AND
+                                              ra.roleid <> $defaultfproleid AND
+                                              ra.roleid <> $guestrole->id AND
+                                              ra.userid <> $guest->id AND
+                                              $enrolwhere
+                                      ) pl
+                            WHERE sud.userid = pl.userid AND
+                                  sud.courseid = pl.courseid AND
+                                  sud.timeend = $nextmidnight AND
+                                  sud.stattype='activity'
+                       ) inline_view
+              GROUP BY timeend, courseid, roleid
+                HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -465,18 +487,20 @@ function stats_cron_daily($maxdays=1) {
     /// how many view actions for default frontpage role on frontpage only
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'activity' AS stattype, $nextmidnight AS timeend, sud.courseid, $defaultfproleid AS nroleid,
-                       SUM(sud.statsreads) AS stat1, SUM(sud.statswrites) AS stat2
-                  FROM {$CFG->prefix}stats_user_daily sud
-                 WHERE sud.timeend = $nextmidnight AND sud.courseid = ".SITEID." AND
-                       sud.stattype='activity' AND
-                       sud.userid <> $guest->id AND sud.userid <> 0 AND sud.userid
-                         NOT IN (SELECT ra.userid
-                                   FROM {$CFG->prefix}role_assignments ra $fpjoin
-                                  WHERE c.id = ".SITEID." AND  ra.roleid <> $guestrole->id AND
-                                        ra.roleid <> $defaultfproleid AND $fpwhere)
-              GROUP BY stattype, timeend, sud.courseid, nroleid
-                HAVING SUM(sud.statsreads) > 0 OR SUM(sud.statswrites) > 0";
+                SELECT 'activity', timeend, courseid, nroleid, SUM(statsreads), SUM(statswrites)
+                  FROM (
+                           SELECT $nextmidnight AS timeend, sud.courseid, $defaultfproleid AS nroleid, sud.statsreads, sud.statswrites
+                             FROM {$CFG->prefix}stats_user_daily sud
+                             WHERE sud.timeend = $nextmidnight AND sud.courseid = ".SITEID." AND
+                                   sud.stattype='activity' AND
+                                   sud.userid <> $guest->id AND sud.userid <> 0 AND sud.userid
+                                   NOT IN (SELECT ra.userid
+                                             FROM {$CFG->prefix}role_assignments ra $fpjoin
+                                            WHERE c.id = ".SITEID." AND  ra.roleid <> $guestrole->id AND
+                                                  ra.roleid <> $defaultfproleid AND $fpwhere)
+                       ) inline_view
+              GROUP BY timeend, courseid, nroleid
+                HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -487,16 +511,19 @@ function stats_cron_daily($maxdays=1) {
     /// how many view actions for guests or not-logged-in on frontpage
         $sql = "INSERT INTO {$CFG->prefix}stats_daily (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'activity' AS stattype, $nextmidnight AS timeend, ".SITEID." AS courseid, $guestrole->id AS nroleid,
-                       SUM(pl.statsreads) AS stat1, SUM(pl.statswrites) AS stat2
-                  FROM (SELECT sud.statsreads, sud.statswrites
-                          FROM {$CFG->prefix}stats_user_daily sud
-                         WHERE (sud.userid = $guest->id OR sud.userid = 0) AND
-                               sud.timeend = $nextmidnight AND sud.courseid = ".SITEID." AND
-                               sud.stattype='activity'
-                        ) pl
-              GROUP BY stattype, timeend, courseid, nroleid
-                HAVING SUM(pl.statsreads) > 0 OR SUM(pl.statswrites) > 0";
+                SELECT 'activity', timeend, courseid, nroleid, SUM(statsreads), SUM(statswrites)
+                  FROM (
+                           SELECT $nextmidnight AS timeend, ".SITEID." AS courseid, $guestrole->id AS nroleid, pl.statsreads, pl.statswrites
+                             FROM (
+                                      SELECT sud.statsreads, sud.statswrites
+                                        FROM {$CFG->prefix}stats_user_daily sud
+                                      WHERE (sud.userid = $guest->id OR sud.userid = 0) AND
+                                            sud.timeend = $nextmidnight AND sud.courseid = ".SITEID." AND
+                                            sud.stattype='activity'
+                                  ) pl
+                       ) inline_view
+              GROUP BY timeend, courseid, nroleid
+                HAVING SUM(statsreads) > 0 OR SUM(statswrites) > 0";
 
         if ($logspresent and !execute_sql($sql, false)) {
             $failed = true;
@@ -576,14 +603,17 @@ function stats_cron_weekly() {
     /// process login info first
         $sql = "INSERT INTO {$CFG->prefix}stats_user_weekly (stattype, timeend, courseid, userid, statsreads)
 
-                SELECT 'logins' AS stattype, $nextstartweek AS timeend, ".SITEID." as courseid,
-                       l.userid, count(l.id) AS statsreads
-                  FROM {$CFG->prefix}log l
-                 WHERE action = 'login' AND $logtimesql
-              GROUP BY stattype, timeend, courseid, userid
-                HAVING count(l.id) > 0";
+                SELECT 'logins', timeend, courseid, userid, COUNT(statsreads)
+                  FROM (
+                           SELECT $nextstartweek AS timeend, ".SITEID." as courseid, l.userid, l.id AS statsreads
+                             FROM {$CFG->prefix}log l
+                            WHERE action = 'login' AND $logtimesql
+                       ) inline_view
+              GROUP BY timeend, courseid, userid
+                HAVING COUNT(statsreads) > 0";
 
         execute_sql($sql, false);
+
 
         $sql = "INSERT INTO {$CFG->prefix}stats_weekly (stattype, timeend, courseid, roleid, stat1, stat2)
 
@@ -593,7 +623,8 @@ function stats_cron_weekly() {
                                   WHERE s1.stattype = 'logins' AND timeend = $nextstartweek), 0) AS nstat1,
                        (SELECT COUNT('x')
                           FROM {$CFG->prefix}stats_user_weekly s2
-                         WHERE s2.stattype = 'logins' AND timeend = $nextstartweek) AS nstat2";
+                         WHERE s2.stattype = 'logins' AND timeend = $nextstartweek) AS nstat2" .
+                sql_null_from_clause();
 
         execute_sql($sql, false);
 
@@ -601,11 +632,13 @@ function stats_cron_weekly() {
     /// now enrolments averages
         $sql = "INSERT INTO {$CFG->prefix}stats_weekly (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'enrolments' AS nstattype, $nextstartweek AS ntimeend, courseid, roleid,
-                       CEIL(AVG(stat1)) AS nstat1, CEIL(AVG(stat2)) AS nstat2
-                  FROM {$CFG->prefix}stats_daily sd
-                 WHERE stattype = 'enrolments' AND $stattimesql
-              GROUP BY nstattype, ntimeend, courseid, roleid";
+                SELECT 'enrolments', ntimeend, courseid, roleid, CEIL(AVG(stat1)), CEIL(AVG(stat2))
+                  FROM (
+                           SELECT $nextstartweek AS ntimeend, courseid, roleid, stat1, stat2
+                             FROM {$CFG->prefix}stats_daily sd
+                            WHERE stattype = 'enrolments' AND $stattimesql
+                       ) inline_view
+              GROUP BY ntimeend, courseid, roleid";
 
         execute_sql($sql, false);
 
@@ -613,11 +646,13 @@ function stats_cron_weekly() {
     /// activity read/write averages
         $sql = "INSERT INTO {$CFG->prefix}stats_weekly (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'activity' AS nstattype, $nextstartweek AS ntimeend, courseid, roleid,
-                       SUM(stat1) AS nstat1, SUM(stat2) AS nstat2
-                  FROM {$CFG->prefix}stats_daily
-                 WHERE stattype = 'activity' AND $stattimesql
-              GROUP BY nstattype, ntimeend, courseid, roleid";
+                SELECT 'activity', ntimeend, courseid, roleid, SUM(stat1), SUM(stat2)
+                  FROM (
+                           SELECT $nextstartweek AS ntimeend, courseid, roleid, stat1, stat2
+                             FROM {$CFG->prefix}stats_daily
+                            WHERE stattype = 'activity' AND $stattimesql
+                       ) inline_view
+              GROUP BY ntimeend, courseid, roleid";
 
         execute_sql($sql, false);
 
@@ -625,11 +660,13 @@ function stats_cron_weekly() {
     /// user read/write averages
         $sql = "INSERT INTO {$CFG->prefix}stats_user_weekly (stattype, timeend, courseid, userid, statsreads, statswrites)
 
-                SELECT 'activity' AS nstattype, $nextstartweek AS ntimeend, courseid, userid,
-                       SUM(statsreads) AS nstatsreads, SUM(statswrites) AS nstatswrites
-                  FROM {$CFG->prefix}stats_user_daily
-                 WHERE stattype = 'activity' AND $stattimesql
-              GROUP BY nstattype, ntimeend, courseid, userid";
+                SELECT 'activity', ntimeend, courseid, userid, SUM(statsreads), SUM(statswrites)
+                  FROM (
+                           SELECT $nextstartweek AS ntimeend, courseid, userid, statsreads, statswrites
+                             FROM {$CFG->prefix}stats_user_daily
+                            WHERE stattype = 'activity' AND $stattimesql
+                       ) inline_view
+              GROUP BY ntimeend, courseid, userid";
 
         execute_sql($sql, false);
 
@@ -698,13 +735,16 @@ function stats_cron_monthly() {
     /// process login info first
         $sql = "INSERT INTO {$CFG->prefix}stats_user_monthly (stattype, timeend, courseid, userid, statsreads)
 
-                SELECT 'logins' AS stattype, $nextstartmonth AS timeend, ".SITEID." as courseid,
-                       l.userid, count(l.id) AS statsreads
-                  FROM {$CFG->prefix}log l
-                 WHERE action = 'login' AND $logtimesql
-              GROUP BY stattype, timeend, courseid, userid";
+                SELECT 'logins', timeend, courseid, userid, COUNT(statsreads)
+                  FROM (
+                           SELECT $nextstartmonth AS timeend, ".SITEID." as courseid, l.userid, l.id AS statsreads
+                             FROM {$CFG->prefix}log l
+                            WHERE action = 'login' AND $logtimesql
+                       ) inline_view
+              GROUP BY timeend, courseid, userid";
 
         execute_sql($sql, false);
+
 
         $sql = "INSERT INTO {$CFG->prefix}stats_monthly (stattype, timeend, courseid, roleid, stat1, stat2)
 
@@ -714,7 +754,8 @@ function stats_cron_monthly() {
                                   WHERE s1.stattype = 'logins' AND timeend = $nextstartmonth), 0) AS nstat1,
                        (SELECT COUNT('x')
                           FROM {$CFG->prefix}stats_user_monthly s2
-                         WHERE s2.stattype = 'logins' AND timeend = $nextstartmonth) AS nstat2";
+                         WHERE s2.stattype = 'logins' AND timeend = $nextstartmonth) AS nstat2" .
+                 sql_null_from_clause();
 
         execute_sql($sql, false);
 
@@ -722,11 +763,13 @@ function stats_cron_monthly() {
     /// now enrolments averages
         $sql = "INSERT INTO {$CFG->prefix}stats_monthly (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'enrolments' AS nstattype, $nextstartmonth AS ntimeend, courseid, roleid,
-                       CEIL(AVG(stat1)) AS nstat1, CEIL(AVG(stat2)) AS nstat2
-                  FROM {$CFG->prefix}stats_daily sd
-                 WHERE stattype = 'enrolments' AND $stattimesql
-              GROUP BY nstattype, ntimeend, courseid, roleid";
+                SELECT 'enrolments', ntimeend, courseid, roleid, CEIL(AVG(stat1)), CEIL(AVG(stat2))
+                  FROM (
+                           SELECT $nextstartmonth AS ntimeend, courseid, roleid, stat1, stat2
+                             FROM {$CFG->prefix}stats_daily sd
+                            WHERE stattype = 'enrolments' AND $stattimesql
+                       ) inline_view
+              GROUP BY ntimeend, courseid, roleid";
 
         execute_sql($sql, false);
 
@@ -734,11 +777,13 @@ function stats_cron_monthly() {
     /// activity read/write averages
         $sql = "INSERT INTO {$CFG->prefix}stats_monthly (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'activity' AS nstattype, $nextstartmonth AS ntimeend, courseid, roleid,
-                       SUM(stat1) AS nstat1, SUM(stat2) AS nstat2
-                  FROM {$CFG->prefix}stats_daily
-                 WHERE stattype = 'activity' AND $stattimesql
-              GROUP BY nstattype, ntimeend, courseid, roleid";
+                SELECT 'activity', ntimeend, courseid, roleid, SUM(stat1), SUM(stat2)
+                  FROM (
+                           SELECT $nextstartmonth AS ntimeend, courseid, roleid, stat1, stat2
+                             FROM {$CFG->prefix}stats_daily
+                            WHERE stattype = 'activity' AND $stattimesql
+                       ) inline_view
+              GROUP BY ntimeend, courseid, roleid";
 
         execute_sql($sql, false);
 
@@ -746,11 +791,13 @@ function stats_cron_monthly() {
     /// user read/write averages
         $sql = "INSERT INTO {$CFG->prefix}stats_user_monthly (stattype, timeend, courseid, userid, statsreads, statswrites)
 
-                SELECT 'activity' AS nstattype, $nextstartmonth AS ntimeend, courseid, userid,
-                       SUM(statsreads) AS nstatsreads, SUM(statswrites) AS nstatswrites
-                  FROM {$CFG->prefix}stats_user_daily
-                 WHERE stattype = 'activity' AND $stattimesql
-              GROUP BY nstattype, ntimeend, courseid, userid";
+                SELECT 'activity', ntimeend, courseid, userid, SUM(statsreads), SUM(statswrites)
+                  FROM (
+                           SELECT $nextstartmonth AS ntimeend, courseid, userid, statsreads, statswrites
+                             FROM {$CFG->prefix}stats_user_daily
+                            WHERE stattype = 'activity' AND $stattimesql
+                       ) inline_view
+              GROUP BY ntimeend, courseid, userid";
 
         execute_sql($sql, false);
 

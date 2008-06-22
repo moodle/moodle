@@ -2145,6 +2145,22 @@ function sql_bitnot($int1) {
 }
 
 /**
+ * Returns the FROM clause required by some DBs in all SELECT statements
+ * To be used in queries not having FROM clause to provide cross_db
+ */
+function sql_null_from_clause() {
+    global $CFG;
+
+    switch ($CFG->dbfamily) {
+        case 'oracle':
+            return ' FROM dual';
+            break;
+        default:
+            return '';
+    }
+}
+
+/**
  * Prepare a SQL WHERE clause to select records where the given fields match the given values.
  *
  * Prepares a where clause of the form
