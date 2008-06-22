@@ -5168,6 +5168,8 @@ function build_context_path($force=false) {
      *  - using two tables after UPDATE works in mysql, but might give unexpected
      *    results in pg 8 (depends on configuration)
      *  - using table alias in UPDATE does not work in pg < 8.2
+     *
+     * Different code for each database - mostly for performance reasons
      */
     if ($CFG->dbfamily == 'mysql') {
         $updatesql = "UPDATE {context} ct, {context_temp} temp
@@ -5183,12 +5185,18 @@ function build_context_path($force=false) {
                        WHERE EXISTS (SELECT 'x'
                                        FROM {context_temp} temp
                                        WHERE temp.id = ct.id)";
-    } else {
+    } else if ($CFG->dbfamily == 'postgres' or $CFG->dbfamily == 'mssql') {
         $updatesql = "UPDATE {context}
                          SET path  = temp.path,
                              depth = temp.depth
                         FROM {context_temp} temp
                        WHERE temp.id={context}.id";
+    } else {
+        // sqlite and others
+        $updatesql = "UPDATE {context}
+                         SET path  = (SELECT path FROM {context_temp} WHERE id = {context}.id),
+                             depth = (SELECT depth FROM {context_temp} WHERE id = {context}.id)
+                         WHERE id IN (SELECT id FROM mdl_context_temp)";    
     }
 
     // Top level categories
