@@ -163,7 +163,7 @@ abstract class adodb_moodle_database extends moodle_database {
                         $column->enums[$key] = substr($value, 1, strlen($value)-2);
                     }
                 }
-            } 
+            }
             $this->columns[$table][$column->name] = new database_column_info($column);
         }
 
@@ -179,7 +179,9 @@ abstract class adodb_moodle_database extends moodle_database {
      * @param bool $state
      */
     public function set_debug($state) {
-        $this->adodb->debug = $state;
+        if ($this->adodb) {
+            $this->adodb->debug = $state;
+        }
     }
 
     /**

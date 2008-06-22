@@ -34,7 +34,7 @@ function xmldb_data_upgrade($oldversion=0) {
         $field = new xmldb_field('asearchtemplate', XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, 'jstemplate');
 
         if (!$dbman->field_exists($table, $field)) {
-            $result = $result && $dbman->add_field($table, $field);
+            $dbman->add_field($table, $field);
         }
     }
 
@@ -47,9 +47,9 @@ function xmldb_data_upgrade($oldversion=0) {
         $table = new xmldb_table('data');
         $field = new xmldb_field('notification', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'editany');
         // First step, Set NOT NULL
-        $result = $result && $dbman->change_field_notnull($table, $field);
+        $dbman->change_field_notnull($table, $field);
         // Second step, Set default to 0
-        $result = $result && $dbman->change_field_default($table, $field);
+        $dbman->change_field_default($table, $field);
     }
 
     return $result;

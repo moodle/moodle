@@ -18,7 +18,6 @@
 
 
 function xmldb_main_upgrade($oldversion=0) {
-
     global $CFG, $THEME, $USER, $DB;
 
     $result = true;
@@ -36,14 +35,14 @@ function xmldb_main_upgrade($oldversion=0) {
         $index = new xmldb_index('contextid-lowerboundary', XMLDB_INDEX_NOTUNIQUE, array('contextid', 'lowerboundary'));
 
     /// Launch drop index contextid-lowerboundary
-        $result = $result && $dbman->drop_index($table, $index);
+        $dbman->drop_index($table, $index);
 
     /// Define index contextid-lowerboundary-letter (unique) to be added to grade_letters
         $table = new xmldb_table('grade_letters');
         $index = new xmldb_index('contextid-lowerboundary-letter', XMLDB_INDEX_UNIQUE, array('contextid', 'lowerboundary', 'letter'));
 
     /// Launch add index contextid-lowerboundary-letter
-        $result = $result && $dbman->add_index($table, $index);
+        $dbman->add_index($table, $index);
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008030700);
@@ -89,7 +88,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Under MySQL and Postgres... detect old NULL contents and change them by correct empty string. MDL-14859
         if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
-            $DB->execute("UPDATE {user} SET idnumber = '' WHERE idnumber IS NULL", true);
+            $DB->execute("UPDATE {user} SET idnumber = '' WHERE idnumber IS NULL");
         }
 
     /// Define index idnumber (not unique) to be dropped form user
@@ -98,7 +97,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Launch drop index idnumber
         if ($dbman->index_exists($table, $index)) {
-            $result = $result && $dbman->drop_index($table, $index);
+            $dbman->drop_index($table, $index);
         }
 
     /// Changing precision of field idnumber on table user to (255)
@@ -106,11 +105,11 @@ function xmldb_main_upgrade($oldversion=0) {
         $field = new xmldb_field('idnumber', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null, 'password');
 
     /// Launch change of precision for field idnumber
-        $result = $result && $dbman->change_field_precision($table, $field);
+        $dbman->change_field_precision($table, $field);
 
     /// Launch add index idnumber again
         $index = new xmldb_index('idnumber', XMLDB_INDEX_NOTUNIQUE, array('idnumber'));
-        $result = $result && $dbman->add_index($table, $index);
+        $dbman->add_index($table, $index);
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008051201);
@@ -131,7 +130,7 @@ function xmldb_main_upgrade($oldversion=0) {
     if ($result && $oldversion < 2008051203) {
         $table = new xmldb_table('mnet_enrol_course');
         $field = new xmldb_field('sortorder', XMLDB_TYPE_INTEGER, '10', true, true, null, false, false, 0);
-        $result = $dbman->change_field_precision($table, $field);
+        $dbman->change_field_precision($table, $field);
         upgrade_main_savepoint($result, 2008051203);
     }
 

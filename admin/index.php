@@ -109,7 +109,7 @@
             }
         }
     }
-    
+
     if (! $maintables) {
     /// hide errors from headers in case debug enabled in config.php
         $origdebug = $CFG->debug;
@@ -166,43 +166,40 @@
             }
         }
 
-        $status = $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
+        $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
 
         // all new installs are in unicode - keep for backwards compatibility and 1.8 upgrade checks
         set_config('unicodedb', 1);
 
     /// Continue with the instalation
         $DB->set_debug(false);
-        if ($status) {
 
-            /// Groups install is now in core above.
+        /// Groups install is now in core above.
 
-            // Install the roles system.
-            moodle_install_roles();
+        // Install the roles system.
+        moodle_install_roles();
 
-            // install core event handlers
-            events_update_definition();
+        // install core event handlers
+        events_update_definition();
 
-            /// This is used to handle any settings that must exist in $CFG but which do not exist in
-            /// admin_get_root()/$ADMIN as admin_setting objects (there are some exceptions).
-            apply_default_exception_settings(array('auth' => 'email',
-                                                   'auth_pop3mailbox' => 'INBOX',
-                                                   'enrol' => 'manual',
-                                                   'enrol_plugins_enabled' => 'manual',
-                                                   'style' => 'default',
-                                                   'template' => 'default',
-                                                   'theme' => 'standardwhite',
-                                                   'filter_multilang_converted' => 1));
+        /// This is used to handle any settings that must exist in $CFG but which do not exist in
+        /// admin_get_root()/$ADMIN as admin_setting objects (there are some exceptions).
+        apply_default_exception_settings(array('auth' => 'email',
+                                               'auth_pop3mailbox' => 'INBOX',
+                                               'enrol' => 'manual',
+                                               'enrol_plugins_enabled' => 'manual',
+                                               'style' => 'default',
+                                               'template' => 'default',
+                                               'theme' => 'standardwhite',
+                                               'filter_multilang_converted' => 1));
 
-            // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
-            // (this should only have any effect during initial install).
-            admin_apply_default_settings(NULL, true);
+        // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
+        // (this should only have any effect during initial install).
+        admin_apply_default_settings(NULL, true);
 
-            notify($strdatabasesuccess, "green");
-            require_once $CFG->dirroot.'/mnet/lib.php';
-        } else {
-            print_error('dbnotsetup', 'debug');
-        }
+        notify($strdatabasesuccess, "green");
+        require_once $CFG->dirroot.'/mnet/lib.php';
+
         print_continue('index.php');
         print_footer('none');
         die;
@@ -279,7 +276,7 @@
 
                 print_footer('none');
                 die;
-            } elseif (empty($confirmplugincheck)) { 
+            } elseif (empty($confirmplugincheck)) {
                 $strplugincheck = get_string('plugincheck');
                 $navigation = build_navigation(array(array('name'=>$strplugincheck, 'link'=>null, 'type'=>'misc')));
                 print_header($strplugincheck, $strplugincheck, $navigation, "", "", false, "&nbsp;", "&nbsp;");
@@ -302,7 +299,7 @@
                 echo '</form>';
                 print_footer('none');
                 die();
-    
+
             } else {
                 $strdatabasesuccess  = get_string("databasesuccess");
                 $navigation = build_navigation(array(array('name'=>$strdatabasesuccess, 'link'=>null, 'type'=>'misc')));

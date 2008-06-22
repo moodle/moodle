@@ -1,9 +1,9 @@
 <?php
 /**
- * cliupgrade.php 
+ * cliupgrade.php
  * Command Line Installer and Upgrader for Moodle
  * @author Dilan Anuruddha
- * 
+ *
  */
 
 
@@ -16,19 +16,19 @@ if (!empty($_SERVER['GATEWAY_INTERFACE'])){
 
 
 /**
- * BEFORE YOU ADD/EDIT/DELETE ANYTHING IN THIS DOCUMENT PLEASE READ 
- * 
+ * BEFORE YOU ADD/EDIT/DELETE ANYTHING IN THIS DOCUMENT PLEASE READ
+ *
  * When you add some code that print something on to standard out always wrap it around if clause with $verbose
- * argument check. If the $verbose is CLI_NO, you shouldn't print anything. If $verboser is CLI_SEMI it's ok to print a 
- * summarized version. If $verbose is CLI_FULL you can print anything you want. 
- * 
- * When you add a code that read input from the standard input you should wrap  it with appropriate if clause, allowing 
+ * argument check. If the $verbose is CLI_NO, you shouldn't print anything. If $verboser is CLI_SEMI it's ok to print a
+ * summarized version. If $verbose is CLI_FULL you can print anything you want.
+ *
+ * When you add a code that read input from the standard input you should wrap  it with appropriate if clause, allowing
  * required level of interaction. Also remember to add the same option as a command line argument list.
  * In CLI_FULL interaction mode, whether you have set the argument in commandline or not you
- * should prompt for user input. In CLI_SEMI interaction only the arguments which are not set are prompted for user input. 
- * No interaction mode doesn't prompt user for anyinput. If any argument is not specified then the default value should be assumed. 
+ * should prompt for user input. In CLI_SEMI interaction only the arguments which are not set are prompted for user input.
+ * No interaction mode doesn't prompt user for anyinput. If any argument is not specified then the default value should be assumed.
  * So do the appropriate thing considering this when you edit or delete this code
- * 
+ *
  */
 //=============================================================================//
 // Set values for initial structures
@@ -558,20 +558,20 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             }
         }
     }
-    
+
     if ( $verbose > CLI_NO && !empty($downloadsuccess)) {
         //print success message if language pack download is successful
         console_write(STDOUT,'downloadsuccess');
         print_newline();
     }
-    
+
     $CONFFILE = array();
     //==================================================================================//
     //set INSTALL array values to CONFFILE array
     foreach ($INSTALL as $key => $value) {
         $CONFFILE[$key] = $value;
     }
-    
+
     //==================================================================================//
     //if any value is not set, set default values
 
@@ -687,9 +687,9 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     require_once($CFG->libdir.'/adminlib.php');  // Contains various admin-only functions
 
     /**
-     * @todo check upgrade status, if upgrader is running already, notify user and exit. 
+     * @todo check upgrade status, if upgrader is running already, notify user and exit.
      * existing thing might work for this with some modifications
-     * 
+     *
      */
 
     ///check PHP Settings
@@ -827,14 +827,13 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
             }
         }
 
-        $status = $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
+        $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
 
         // all new installs are in unicode - keep for backwards compatibility and 1.8 upgrade checks
         set_config('unicodedb', 1);
 
         /// Continue with the instalation
 
-        if ($status) {
             // Install the roles system.
             moodle_install_roles();
 
@@ -861,9 +860,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
             notify($strdatabasesuccess, "green");
             require_once $CFG->dirroot.'/mnet/lib.php';
-        } else {
-            console_write(STDERR,"Error: Main databases NOT set up successfully",'');
-        }
 
     }
 
@@ -1096,7 +1092,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
 
-    unset($_SESSION['installautopilot']);
+    unset($SESSION->installautopilot);
 
     /// Set up the site
     if (! $site = get_site()) {
@@ -1160,7 +1156,7 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         $newsite->student = get_string("defaultcoursestudent");
         $newsite->students = get_string("defaultcoursestudents");
         $newsite->timemodified = time();
-        
+
         if ($newid = $DB->insert_record('course', $newsite)) {
             // Site created, add blocks for it
             $page = page_create_object(PAGE_COURSE_VIEW, $newid);

@@ -341,10 +341,8 @@
 
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
-            $status = false;
-            if (file_exists($CFG->dirroot . '/backup/db/install.xml')) {
-                $status = $DB->get_manager()->install_from_xmldb_file($CFG->dirroot . '/backup/db/install.xml'); //New method
-            }
+            $DB->get_manager()->install_from_xmldb_file($CFG->dirroot . '/backup/db/install.xml'); //New method
+            $status = true;
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
             $DB->set_debug(false);
         }

@@ -151,9 +151,9 @@ class grade_test extends UnitTestCase {
             $table->add_index('idnumber-course', XMLDB_INDEX_NOTUNIQUE, array('idnumber', 'course'));
 
             /// Launch create table for course_modules
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
         /// Define table modules to be created
@@ -177,9 +177,9 @@ class grade_test extends UnitTestCase {
             $table->add_index('name', XMLDB_INDEX_NOTUNIQUE, array('name'));
 
             /// Launch create table for modules
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
         /// Define table grade_items to be created
@@ -223,10 +223,10 @@ class grade_test extends UnitTestCase {
             $table->add_key('outcomeid', XMLDB_KEY_FOREIGN, array('outcomeid'), 'grade_outcomes', array('id'));
 
             /// Launch create table for grade_items
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
 
@@ -255,10 +255,10 @@ class grade_test extends UnitTestCase {
             $table->add_key('parent', XMLDB_KEY_FOREIGN, array('parent'), 'grade_categories', array('id'));
 
             /// Launch create table for grade_categories
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
 
@@ -296,10 +296,10 @@ class grade_test extends UnitTestCase {
             $table->add_key('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
 
             /// Launch create table for grade_grades
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
 
@@ -325,10 +325,10 @@ class grade_test extends UnitTestCase {
             $table->add_key('usermodified', XMLDB_KEY_FOREIGN, array('usermodified'), 'user', array('id'));
 
             /// Launch create table for grade_outcomes
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
 
@@ -348,10 +348,10 @@ class grade_test extends UnitTestCase {
             $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, array('courseid'));
 
             /// Launch create table for scale
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
         /// Define table quiz to be created
@@ -394,9 +394,9 @@ class grade_test extends UnitTestCase {
             $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
 
             /// Launch create table for quiz
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
         return $result;
@@ -457,10 +457,10 @@ class grade_test extends UnitTestCase {
             $table->add_index('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
 
         /// Launch create table for grade_items_history
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
         /// Define table grade_categories to be created
@@ -498,10 +498,10 @@ class grade_test extends UnitTestCase {
             $table->add_index('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
 
         /// Launch create table for grade_categories_history
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
 
@@ -549,10 +549,10 @@ class grade_test extends UnitTestCase {
             $table->add_index('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
 
         /// Launch create table for grade_grades_history
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
 
@@ -584,10 +584,10 @@ class grade_test extends UnitTestCase {
             $table->add_index('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
 
         /// Launch create table for grade_outcomes_history
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
         /// Define table scale to be created
@@ -618,10 +618,10 @@ class grade_test extends UnitTestCase {
             $table->add_index('action', XMLDB_INDEX_NOTUNIQUE, array('action'));
 
         /// Launch create table for scale_history
-            $result = $result && $this->dbmanager->create_table($table, true, false);
+            $this->dbmanager->create_table($table);
 
         } else {
-            $DB->delete_records($table->name, array());
+            $DB->delete_records($table->name, null);
         }
 
         return $result;

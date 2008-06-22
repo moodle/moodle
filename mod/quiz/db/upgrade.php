@@ -42,7 +42,7 @@ function xmldb_quiz_upgrade($oldversion=0) {
 
     /// Conditionally launch create table for quiz_report
         if (!$dbman->table_exists($table)) {
-            $result = $result && $dbman->create_table($table);
+            $dbman->create_table($table);
         }
 
     }

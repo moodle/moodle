@@ -75,15 +75,15 @@ class test extends XMLDBAction {
     /// Silenty drop any previous test tables
         $table = new xmldb_table('testtable');
         if ($dbman->table_exists($table)) {
-            $status = $dbman->drop_table($table, true, false);
+            $dbman->drop_table($table);
         }
         $table = new xmldb_table ('anothertest');
         if ($dbman->table_exists($table)) {
-            $status = $dbman->drop_table($table, true, false);
+            $dbman->drop_table($table);
         }
         $table = new xmldb_table ('newnameforthetable');
         if ($dbman->table_exists($table)) {
-            $status = $dbman->drop_table($table, true, false);
+            $dbman->drop_table($table);
         }
 
     /// 1st test. Complete table creation.
@@ -119,8 +119,11 @@ class test extends XMLDBAction {
     /// Get SQL code and execute it
         $test = new stdClass;
         $test->sql = $gen->getCreateTableSQL($table);
-        $test->status = $dbman->create_table($table, false, false);
-        if (!$test->status) {
+        try {
+            $dbman->create_table($table);
+            $test->status = true;
+        } catch (moodle_exception $e) {
+            $test->status = false;
             $test->error = $DB->get_last_error();
         }
         $tests['create table'] = $test;
@@ -130,8 +133,11 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $gen->getDropTableSQL($table);
-            $test->status = $dbman->drop_table($table, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->drop_table($table);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['drop table'] = $test;
@@ -151,14 +157,18 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $gen->getCreateTableSQL($table);
-            $test->status = $dbman->create_table($table, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->create_table($table);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['create table - 2'] = $test;
         }
 
     /// Insert two records to do the work with real data
+        $rec = new stdClass;
         $rec->course = 1;
         $rec->name = 'Martin';
         $rec->secondname = 'Dougiamas';
@@ -179,8 +189,11 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $gen->getAddFieldSQL($table, $field);
-            $test->status = $dbman->add_field($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->add_field($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add enum field'] = $test;
@@ -191,8 +204,11 @@ class test extends XMLDBAction {
         /// Create a new field with complex specs (enums are good candidates)
             $test = new stdClass;
             $test->sql = $gen->getDropFieldSQL($table, $field);
-            $test->status = $dbman->drop_field($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->drop_field($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['drop enum field'] = $test;
@@ -205,8 +221,11 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $gen->getAddFieldSQL($table, $field);
-            $test->status = $dbman->add_field($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->add_field($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add enum field again'] = $test;
@@ -219,8 +238,11 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $gen->getAddFieldSQL($table, $field);
-            $test->status = $dbman->add_field($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->add_field($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add numeric field'] = $test;
@@ -232,8 +254,11 @@ class test extends XMLDBAction {
             $field = new xmldb_field('type');
             $test = new stdClass;
             $test->sql = $gen->getDropFieldSQL($table, $field);
-            $test->status = $dbman->drop_field($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->drop_field($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['drop enum field again'] = $test;
@@ -246,8 +271,11 @@ class test extends XMLDBAction {
             $field = new xmldb_field('course', XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, '0');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_type($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_type($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field type (int2char)'] = $test;
@@ -260,8 +288,11 @@ class test extends XMLDBAction {
             $field = new xmldb_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_type($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_type($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field type (char2int)'] = $test;
@@ -274,8 +305,11 @@ class test extends XMLDBAction {
             $field = new xmldb_field('grade', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, "test'n drop");
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_type($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_type($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field type (number2char)'] = $test;
@@ -288,8 +322,11 @@ class test extends XMLDBAction {
             $field = new xmldb_field('grade', XMLDB_TYPE_FLOAT, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_type($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_type($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field type (char2float)'] = $test;
@@ -302,8 +339,11 @@ class test extends XMLDBAction {
             $field = new xmldb_field('grade', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'test');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_type($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_type($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field type (float2char)'] = $test;
@@ -316,8 +356,11 @@ class test extends XMLDBAction {
             $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '20,10', XMLDB_UNSIGNED, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_type($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_type($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field type (char2number)'] = $test;
@@ -332,8 +375,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_TEXT, 'big', null, XMLDB_NOTNULL, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_precision($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_precision($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field precision (text)'] = $test;
@@ -347,8 +393,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_precision($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_precision($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field precision (char)'] = $test;
@@ -362,8 +411,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_precision($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_precision($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field precision (number)'] = $test;
@@ -377,8 +429,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_precision($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_precision($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field precision (integer) to smaller one'] = $test;
@@ -392,8 +447,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', XMLDB_UNSIGNED, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_unsigned($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_unsigned($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field sign (unsigned)'] = $test;
@@ -407,8 +465,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_NUMBER, '10,2', null, null, null, null, null, null);
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_unsigned($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_unsigned($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field sign (signed)'] = $test;
@@ -422,8 +483,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, XMLDB_NOTNULL, null, null, null, 'Moodle');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_notnull($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_notnull($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field nullability (not null)'] = $test;
@@ -437,8 +501,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
 
             $test->sql = $gen->getAlterFieldSQL($table, $field);
-            $test->status = $dbman->change_field_notnull($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_notnull($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['change field nullability (null)'] = $test;
@@ -452,8 +519,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, null);
 
             $test->sql = $gen->getModifyDefaultSQL($table, $field);
-            $test->status = $dbman->change_field_default($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_default($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['drop field default of NULL field'] = $test;
@@ -467,8 +537,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_CHAR, '30', null, null, null, null, null, 'Moodle');
 
             $test->sql = $gen->getModifyDefaultSQL($table, $field);
-            $test->status = $dbman->change_field_default($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_default($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add field default of NULL field'] = $test;
@@ -482,8 +555,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, 'Moodle2');
 
             $test->sql = $gen->getModifyDefaultSQL($table, $field);
-            $test->status = $dbman->change_field_default($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_default($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add field default of NOT NULL field'] = $test;
@@ -498,8 +574,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_CHAR, '10', null, XMLDB_NOTNULL, null, null, null, null);
 
             $test->sql = $gen->getModifyDefaultSQL($table, $field);
-            $test->status = $dbman->change_field_default($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_default($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['drop field default of NOT NULL field'] = $test;
@@ -513,8 +592,11 @@ class test extends XMLDBAction {
             $index->set_attributes(XMLDB_INDEX_UNIQUE, array('name', 'secondname', 'grade'));
 
             $test->sql = $gen->getAddIndexSQL($table, $index);
-            $test->status = $dbman->add_index($table, $index, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->add_index($table, $index, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add unique index'] = $test;
@@ -528,8 +610,11 @@ class test extends XMLDBAction {
             $index->set_attributes(XMLDB_INDEX_NOTUNIQUE, array('course', 'name'));
 
             $test->sql = $gen->getAddIndexSQL($table, $index);
-            $test->status = $dbman->add_index($table, $index, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->add_index($table, $index, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add not unique index'] = $test;
@@ -562,8 +647,11 @@ class test extends XMLDBAction {
             $index->set_attributes(XMLDB_INDEX_UNIQUE, array('name', 'grade', 'secondname'));
 
             $test->sql = $gen->getDropIndexSQL($table, $index);
-            $test->status = $dbman->drop_index($table, $index, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->drop_index($table, $index, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['drop index'] = $test;
@@ -577,8 +665,11 @@ class test extends XMLDBAction {
             $key->set_attributes(XMLDB_KEY_UNIQUE, array('id', 'course', 'grade'));
 
             $test->sql = $gen->getAddKeySQL($table, $key);
-            $test->status = $dbman->add_key($table, $key, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->add_key($table, $key, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add unique key'] = $test;
@@ -592,8 +683,11 @@ class test extends XMLDBAction {
             $key->set_attributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'anothertest', array('id'));
 
             $test->sql = $gen->getAddKeySQL($table, $key);
-            $test->status = $dbman->add_key($table, $key, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->add_key($table, $key, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add foreign+unique key'] = $test;
@@ -607,8 +701,11 @@ class test extends XMLDBAction {
             $key->set_attributes(XMLDB_KEY_FOREIGN_UNIQUE, array('course'), 'anothertest', array('id'));
 
             $test->sql = $gen->getDropKeySQL($table, $key);
-            $test->status = $dbman->drop_key($table, $key, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->drop_key($table, $key, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['drop foreign+unique key'] = $test;
@@ -622,8 +719,11 @@ class test extends XMLDBAction {
             $key->set_attributes(XMLDB_KEY_FOREIGN, array('course'), 'anothertest', array('id'));
 
             $test->sql = $gen->getAddKeySQL($table, $key);
-            $test->status = $dbman->add_key($table, $key, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->add_key($table, $key, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add foreign key'] = $test;
@@ -637,8 +737,11 @@ class test extends XMLDBAction {
             $key->set_attributes(XMLDB_KEY_FOREIGN, array('course'), 'anothertest', array('id'));
 
             $test->sql = $gen->getDropKeySQL($table, $key);
-            $test->status = $dbman->drop_key($table, $key, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->drop_key($table, $key, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['drop foreign key'] = $test;
@@ -652,11 +755,13 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $gen->getAddFieldSQL($table, $field);
-            $test->status = $dbman->add_field($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->add_field($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
-
             $tests['add field with enum'] = $test;
         }
 
@@ -667,8 +772,11 @@ class test extends XMLDBAction {
             $field = new xmldb_field('type');
             $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, 'general', 'course');
             $test->sql = $gen->getModifyEnumSQL($table, $field);
-            $test->status = $dbman->change_field_enum($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_enum($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['delete enumlist from one field'] = $test;
@@ -681,8 +789,11 @@ class test extends XMLDBAction {
             $field = new xmldb_field('type');
             $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
             $test->sql = $gen->getModifyEnumSQL($table, $field);
-            $test->status = $dbman->change_field_enum($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_enum($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['add enumlist to one field'] = $test;
@@ -695,8 +806,11 @@ class test extends XMLDBAction {
             $index = new xmldb_index('anyname');
             $index->set_attributes(XMLDB_INDEX_UNIQUE, array('name', 'course'));
             $test->sql = $gen->getRenameIndexSQL($table, $index, 'newnamefortheindex');
-            $test->status = $dbman->rename_index($table, $index, 'newnamefortheindex', false, false);
-            if (!$test->status) {
+            try {
+                $dbman->rename_index($table, $index, 'newnamefortheindex', false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['rename index (experimental. DO NOT USE IT)'] = $test;
@@ -716,11 +830,14 @@ class test extends XMLDBAction {
             if ($olddebug > DEBUG_ALL) {
                 $CFG->debug = DEBUG_ALL; // do not show experimental debug warning
             }
-            $test->status = $dbman->rename_key($table, $key, 'newnameforthekey', false, false);
-            $CFG->debug = $olddebug;
-            if (!$test->status) {
+            try {
+                $dbman->rename_key($table, $key, 'newnameforthekey', false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
+            $CFG->debug = $olddebug;
             $tests['rename key (experimental. DO NOT USE IT)'] = $test;
             $test = new stdClass;
             $test->status = true; // ignore errors here
@@ -734,8 +851,11 @@ class test extends XMLDBAction {
             $field->set_attributes(XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, XMLDB_ENUM, array('single', 'news', 'general', 'social', 'eachuser', 'teacher', 'qanda'), 'general', 'course');
 
             $test->sql = $gen->getRenameFieldSQL($table, $field, 'newnameforthefield', true);
-            $test->status = $dbman->rename_field($table, $field, 'newnameforthefield', false, false);
-            if (!$test->status) {
+            try {
+                $dbman->rename_field($table, $field, 'newnameforthefield', false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['rename field'] = $test;
@@ -747,8 +867,11 @@ class test extends XMLDBAction {
             $test = new stdClass;
 
             $test->sql = $gen->getRenameTableSQL($table, 'newnameforthetable', true);
-            $test->status = $dbman->rename_table($table, 'newnameforthetable', false, false);
-            if (!$test->status) {
+            try {
+                $dbman->rename_table($table, 'newnameforthetable');
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['rename table'] = $test;
@@ -763,14 +886,16 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $gen->getModifyEnumSQL($table, $field);
-            $test->status = $dbman->change_field_enum($table, $field, false, false);
-        /// Let's see if the constraint exists to alter results
-            if ($dbman->check_constraint_exists($table, $field)) {
-                $test->sql = array('Nothing executed. Enum already exists. Correct.');
-            } else {
+            try {
+                $dbman->change_field_enum($table, $field, false, false);
+                if ($dbman->check_constraint_exists($table, $field)) {
+                    $test->sql = array('Nothing executed. Enum already exists. Correct.');
+                    $test->status = true;
+                } else {
+                    $test->status = false;
+                }
+            } catch (moodle_exception $e) {
                 $test->status = false;
-            }
-            if (!$test->status) {
                 $test->error = $DB->get_last_error();
             }
             $tests['add enum to field containing enum'] = $test;
@@ -785,8 +910,11 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $gen->getModifyEnumSQL($table, $field);
-            $test->status = $dbman->change_field_enum($table, $field, false, false);
-            if (!$test->status) {
+            try {
+                $dbman->change_field_enum($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
+                $test->status = false;
                 $test->error = $DB->get_last_error();
             }
             $tests['drop enum from field containing enum'] = $test;
@@ -801,14 +929,11 @@ class test extends XMLDBAction {
         /// Get SQL code and execute it
             $test = new stdClass;
             $test->sql = $gen->getModifyEnumSQL($table, $field);
-            $test->status = $dbman->change_field_enum($table, $field, false, false);
-        /// Let's see if the constraint exists to alter results
-            if (!$dbman->check_constraint_exists($table, $field)) {
-                $test->sql = array('Nothing executed. Enum does not exists. Correct.');
-            } else {
+            try {
+                $dbman->change_field_enum($table, $field, false, false);
+                $test->status = true;
+            } catch (moodle_exception $e) {
                 $test->status = false;
-            }
-            if (!$test->status) {
                 $test->error = $DB->get_last_error();
             }
             $tests['drop enum from field not containing enum'] = $test;

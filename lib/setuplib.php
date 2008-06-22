@@ -17,6 +17,7 @@ class moodle_exception extends Exception {
     public $module;
     public $a;
     public $link;
+    public $debuginfo;
 
     /**
      * Constructor
@@ -24,8 +25,9 @@ class moodle_exception extends Exception {
      * @param string $module name of module
      * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
      * @param object $a Extra words and phrases that might be required in the error string
+     * @param string $debuginfo optional debugging information
      */
-    function __construct($errorcode, $module='', $link='', $a=NULL) {
+    function __construct($errorcode, $module='', $link='', $a=NULL, $debuginfo=null) {
         if (empty($module) || $module == 'moodle' || $module == 'core') {
             $module = 'error';
         }
@@ -34,6 +36,7 @@ class moodle_exception extends Exception {
         $this->module    = $module;
         $this->link      = $link;
         $this->a         = $a;
+        $this->debuginfo = $debuginfo;
 
         $message = get_string($errorcode, $module, $a);
 
@@ -45,12 +48,19 @@ class moodle_exception extends Exception {
  * Default exception handler, uncought exceptions are equivalent to using print_error()
  */
 function default_exception_handler($ex) {
+    global $DB;
+
+    if ($DB) {
+        //if you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
+        $DB->set_debug(0);
+    }
+
     $backtrace = $ex->getTrace();
     $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
     array_unshift($backtrace, $place);
 
     if ($ex instanceof moodle_exception) {
-        _print_normal_error($ex->errorcode, $ex->module, $ex->a, $ex->link, $backtrace);
+        _print_normal_error($ex->errorcode, $ex->module, $ex->a, $ex->link, $backtrace, $ex->debuginfo);
     } else {
         _print_normal_error('generalexceptionmessage', 'error', $ex->getMessage(), '', $backtrace);
     }

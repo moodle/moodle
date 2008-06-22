@@ -29,7 +29,7 @@ class dml_test extends UnitTestCase {
 
         foreach ($this->tables as $table) {
             if ($dbman->table_exists($table)) {
-                $dbman->drop_table($table, true, false);
+                $dbman->drop_table($table);
             }
         }
         $this->tables = array();

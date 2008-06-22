@@ -54,47 +54,35 @@ class database_manager {
             $this->generator->dispose();
             $this->generator = null;
         }
-        $this->mdb       = null;
+        $this->mdb = null;
     }
 
     /**
-     * This function will execute an array of SQL commands, returning
-     * true/false if any error is found and stopping/continue as desired.
+     * This function will execute an array of SQL commands.
+     *
+     * @exception ddl_exception if error found
      *
      * @param array $sqlarr array of sql statements to execute
-     * @param boolean $continue to specify if must continue on error (true) or stop (false)
-     * @param boolean $feedback to specify to show status info (true) or not (false)
-     * @return boolean true if everything was ok, false if some error was found
+     * @return void
      */
-    protected function execute_sql_arr(array $sqlarr, $continue, $feedback=true) {
-        $result = true;
+    protected function execute_sql_arr(array $sqlarr) {
         foreach ($sqlarr as $sql) {
-            $result = $this->execute_sql($sql, $feedback) && $result;
-            if (!$continue and !$result) {
-                break;
-            }
+            $this->execute_sql($sql);
         }
-
-        return $result;
     }
 
     /**
-     * Execute a given sql command string - used in upgrades
+     * Execute a given sql command string
      *
-     * Completely general function - it just runs some SQL and reports success.
+     * @exception ddl_exception if error found
      *
      * @param string $command The sql string you wish to be executed.
-     * @param bool $feedback Set this argument to true if the results generated should be printed. Default is true.
-     * @return bool success
+     * @return vaoid
      */
-    protected function execute_sql($sql, $feedback=true) {
-        $result = $this->mdb->change_database_structure($sql);
-
-        if ($feedback and !$result) {
-            notify('<strong>' . get_string('error') . '</strong>');
+    protected function execute_sql($sql) {
+        if (!$this->mdb->change_database_structure($sql)) {
+            throw new ddl_exception('ddlexecuteerror', NULL, $this->mdb->get_last_error());
         }
-
-        return $result;
     }
 
     /**
@@ -105,6 +93,9 @@ class database_manager {
      * @return boolean true/false
      */
     public function table_exists($table, $temptable=false) {
+        if (!is_string($table) and !($table instanceof xmldb_table)) {
+            throw new ddl_exception('ddlunknownerror', NULL, 'incorrect table parameter!');
+        }
         return $this->generator->table_exists($table, $temptable);
     }
 
@@ -116,23 +107,21 @@ class database_manager {
      * @return boolean true/false
      */
     public function field_exists($table, $field) {
-        $exists = true;
+    /// Calculate the name of the table
+        if (is_string($table)) {
+            $tablename = $table;
+        } else {
+            $tablename = $table->getName();
+        }
 
     /// Check the table exists
         if (!$this->table_exists($table)) {
-            return false;
+            throw new ddl_table_missing_exception($tablename);
         }
 
     /// Do this function silenty (to avoid output in install/upgrade process)
         $olddbdebug = $this->mdb->get_debug();
         $this->mdb->set_debug(false);
-
-        if (is_string($table)) {
-            $tablename = $table;
-        } else {
-        /// Calculate the name of the table
-            $tablename = $table->getName();
-        }
 
         if (is_string($field)) {
             $fieldname = $field;
@@ -153,17 +142,20 @@ class database_manager {
     }
 
     /**
-     * Given one xmldb_index, the function returns the name of the index in DB (if exists)
+     * Given one xmldb_index, the function returns the name of the index in DB
      * of false if it doesn't exist
      *
-     * @param mixed the table to be searched (string name or xmldb_table instance)
-     * @param xmldb_index the index to be searched
+     * @param object $xmldb_table table to be searched
+     * @param object $xmldb_index the index to be searched
      * @return string index name of false
      */
-    public function find_index_name($table, $xmldb_index) {
+    public function find_index_name(xmldb_table $xmldb_table, xmldb_index $xmldb_index) {
+    /// Calculate the name of the table
+        $tablename = $xmldb_table->getName();
+
     /// Check the table exists
-        if (!$this->table_exists($table)) {
-            return false;
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($tablename);
         }
 
     /// Do this function silenty (to avoid output in install/upgrade process)
@@ -172,13 +164,6 @@ class database_manager {
 
     /// Extract index columns
         $indcolumns = $xmldb_index->getFields();
-
-        if (is_string($table)) {
-            $tablename = $table;
-        } else {
-        /// Calculate the name of the table
-            $tablename = $table->getName();
-        }
 
     /// Get list of indexes in table
         $indexes = $this->mdb->get_indexes($tablename);
@@ -203,12 +188,15 @@ class database_manager {
     /**
      * Given one xmldb_index, check if it exists in DB (true/false)
      *
-     * @param mixed the table to be searched (string name or xmldb_table instance)
-     * @param xmldb_index the index to be searched for
+     * @param object $xmldb_table the table to be searched
+     * @param object $xmldb_index the index to be searched for
      * @return boolean true/false
      */
-    public function index_exists($table, $xmldb_index) {
-        return ($this->find_index_name($table, $xmldb_index) !== false);
+    public function index_exists(xmldb_table $xmldb_table, xmldb_index $xmldb_index) {
+        if (!$this->table_exists($xmldb_table)) {
+            return false;
+        }
+        return ($this->find_index_name($xmldb_table, $xmldb_index) !== false);
     }
 
     /**
@@ -221,16 +209,16 @@ class database_manager {
      * @param xmldb_field the field to be searched
      * @return string check constraint name or false
      */
-    public function find_check_constraint_name($xmldb_table, $xmldb_field) {
+    public function find_check_constraint_name(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
 
     /// Check the table exists
         if (!$this->table_exists($xmldb_table)) {
-            return false;
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
     /// Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            return false;
+            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
     /// Do this function silenty (to avoid output in install/upgrade process)
@@ -259,7 +247,7 @@ class database_manager {
      * @param xmldb_field the field to be searched for any existing constraint
      * @return boolean true/false
      */
-    public function check_constraint_exists($xmldb_table, $xmldb_field) {
+    public function check_constraint_exists(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
         return ($this->find_check_constraint_name($xmldb_table, $xmldb_field) !== false);
     }
 
@@ -274,14 +262,12 @@ class database_manager {
      * @param xmldb_key the key to be searched
      * @return string key name of false
      */
-    public function find_key_name($xmldb_table, $xmldb_key) {
+    public function find_key_name(xmldb_table $xmldb_table, xmldb_key $xmldb_key) {
 
-    /// Extract key columns
-        if (!($xmldb_key instanceof xmldb_key)) {
-            debugging("Wrong type for second parameter to database_manager::find_key_name. Should be xmldb_key, got " . gettype($xmldb_key));
-            return false;
-        }
-
+if (!is_object($xmldb_key)) {
+    var_dump($xmldb_table);
+    debugging('grrr');
+}
         $keycolumns = $xmldb_key->getFields();
 
     /// Get list of keys in table
@@ -320,23 +306,14 @@ class database_manager {
 
 
     /**
-     * Given one xmldb_table, the function returns the name of its sequence in DB (if exists)
-     * of false if it doesn't exist
+     * Given one xmldb_table, the function returns the name of its sequence in DB
      *
      * @param xmldb_table the table to be searched
      * @return string sequence name of false
      */
-    public function find_sequence_name($xmldb_table) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect find_sequence_name() $xmldb_table parameter');
-            return false;
-        }
-
+    public function find_sequence_name(xmldb_table $xmldb_table) {
         if (!$this->table_exists($xmldb_table)) {
-            debugging('Table ' . $xmldb_table->getName() .
-                      ' does not exist. Sequence not found', DEBUG_DEVELOPER);
-            return false; //Table doesn't exist, nothing to do
-
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
         $sequencename = false;
@@ -355,15 +332,14 @@ class database_manager {
      * This function will delete all tables found in XMLDB file from db
      *
      * @param $file full path to the XML file to be used
-     * @param $feedback
-     * @return boolean (true on success, false on error)
+     * @return void
      */
-    public function delete_tables_from_xmldb_file($file, $feedback=true ) {
+    public function delete_tables_from_xmldb_file($file) {
 
         $xmldb_file = new xmldb_file($file);
 
         if (!$xmldb_file->fileExists()) {
-            return false;
+            throw new ddl_exception('ddlxmlfileerror', null, 'File does not exist');
         }
 
         $loaded    = $xmldb_file->loadXMLStructure();
@@ -371,23 +347,21 @@ class database_manager {
 
         if (!$loaded || !$xmldb_file->isLoaded()) {
         /// Show info about the error if we can find it
-            if ($feedback and $structure) {
+            if ($structure) {
                 if ($errors = $structure->getAllErrors()) {
-                    notify('Errors found in XMLDB file: '. implode (', ', $errors));
+                    throw new ddl_exception('ddlxmlfileerror', null, 'Errors found in XMLDB file: '. implode (', ', $errors));
                 }
             }
-            return false;
+            throw new ddl_exception('ddlxmlfileerror', null, 'not loaded??');
         }
 
         if ($xmldb_tables = $structure->getTables()) {
             foreach($xmldb_tables as $table) {
                 if ($this->table_exists($table)) {
-                    $this->drop_table($table, true, $feedback);
+                    $this->drop_table($table);
                 }
             }
         }
-
-        return true;
     }
 
     /**
@@ -396,32 +370,19 @@ class database_manager {
      * will be dropped too.
      *
      * @param xmldb_table table object (just the name is mandatory)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
-     * @TODO I don't think returning TRUE when trying to drop a non-existing table is a good idea.
-     *       the point is, the method name is drop_table, and if it doesn't drop a table,
-     *       it should be obvious to the code calling this method, and not rely on the visual
-     *       feedback of debugging(). Exception handling may solve this.
+     * @return void
      */
-    public function drop_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect drop_table() $xmldb_table parameter');
-            return false;
-        }
-
+    public function drop_table(xmldb_table $xmldb_table) {
     /// Check table exists
         if (!$this->table_exists($xmldb_table)) {
-            debugging('Table ' . $xmldb_table->getName() .
-                      ' does not exist. Delete skipped', DEBUG_DEVELOPER);
-            return true; //Table don't exist, nothing to do
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
         if (!$sqlarr = $this->generator->getDropTableSQL($xmldb_table)) {
-            return true; //Empty array = nothing to do = no error
+            throw new ddl_exception('ddlunknownerror', null, 'table drop sql not generated');
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -430,13 +391,13 @@ class database_manager {
      * will execute all those statements against the DB.
      *
      * @param $file full path to the XML file to be used
-     * @return boolean (true on success, false on error)
+     * @return void
      */
-    public function install_from_xmldb_file($file, $continue=true, $feedback=true) {
+    public function install_from_xmldb_file($file) {
         $xmldb_file = new xmldb_file($file);
 
         if (!$xmldb_file->fileExists()) {
-            return false;
+            throw new ddl_exception('ddlxmlfileerror', null, 'File does not exist');
         }
 
         $loaded = $xmldb_file->loadXMLStructure();
@@ -444,10 +405,10 @@ class database_manager {
         /// Show info about the error if we can find it
             if ($structure =& $xmldb_file->getStructure()) {
                 if ($errors = $structure->getAllErrors()) {
-                    notify('Errors found in XMLDB file: '. implode (', ', $errors));
+                    throw new ddl_exception('ddlxmlfileerror', null, 'Errors found in XMLDB file: '. implode (', ', $errors));
                 }
             }
-            return false;
+            throw new ddl_exception('ddlxmlfileerror', null, 'not loaded??');
         }
 
         $xmldb_structure = $xmldb_file->getStructure();
@@ -457,14 +418,12 @@ class database_manager {
         $this->mdb->set_debug(false);
 
         if (!$sqlarr = $this->generator->getCreateStructureSQL($xmldb_structure)) {
-            return true; //Empty array = nothing to do = no error
+            return; // nothing to do
         }
 
         $this->mdb->set_debug($olddbdebug);
 
-        $result = $this->execute_sql_arr($sqlarr, $continue, $feedback);
-
-        return $result;
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -472,31 +431,18 @@ class database_manager {
      * fields/keys/indexes/sequences, everything based in the XMLDB object
      *
      * @param xmldb_table table object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
-     * @TODO I don't think returning TRUE when trying to create an existing table is a good idea.
-     *       the point is, the method name is create_table, and if it doesn't create a table,
-     *       it should be obvious to the code calling this method, and not rely on the visual
-     *       feedback of debugging(). Exception handling may solve this.
+     * @return void
      */
-    public function create_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect create_table() $xmldb_table parameter');
-            return false;
-        }
-
+    public function create_table(xmldb_table $xmldb_table) {
     /// Check table doesn't exist
         if ($this->table_exists($xmldb_table)) {
-            debugging('Table ' . $xmldb_table->getName() .
-                      ' already exists. Create skipped', DEBUG_DEVELOPER);
-            return true; //Table exists, nothing to do
+            throw new ddl_exception('ddltablealreadyexists', $xmldb_table->getName());
         }
 
         if (!$sqlarr = $this->generator->getCreateTableSQL($xmldb_table)) {
-            return true; //Empty array = nothing to do = no error
+            throw new ddl_exception('ddlunknownerror', null, 'table create sql not generated');
         }
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -507,37 +453,22 @@ class database_manager {
      * the table name does not collide with existing normal table!
      *
      * @param xmldb_table table object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return string tablename on success, false on error
+     * @return void
      */
-    public function create_temp_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect create_table() $xmldb_table parameter');
-            return false;
-        }
-
+    public function create_temp_table(xmldb_table $xmldb_table) {
     /// hack for mssql - it requires names to start with #
         $xmldb_table = $this->generator->tweakTempTable($xmldb_table);
 
     /// Check table doesn't exist
         if ($this->table_exists($xmldb_table, true)) {
-            debugging('Temporary table ' . $xmldb_table->getName() .
-                      ' already exists, dropping and recreating it.', DEBUG_DEVELOPER);
-            if (!$this->drop_temp_table($xmldb_table, $continue, $feedback)) {
-                return false;
-            }
+            $this->drop_temp_table($xmldb_table);
         }
 
         if (!$sqlarr = $this->generator->getCreateTempTableSQL($xmldb_table)) {
-            return $xmldb_table->getName(); //Empty array = nothing to do = no error
+            throw new ddl_exception('ddlunknownerror', null, 'temp table create sql not generated');
         }
 
-        if ($this->execute_sql_arr($sqlarr, $continue, $feedback)) {
-            return $xmldb_table->getName();
-        } else {
-            return false;
-        }
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -547,29 +478,22 @@ class database_manager {
      * It is recommended to drop temp table when not used anymore.
      *
      * @param xmldb_table table object
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return string tablename on success, false on error
+     * @return void
      */
-    public function drop_temp_table($xmldb_table, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect create_table() $xmldb_table parameter');
-            return false;
-        }
-
+    public function drop_temp_table(xmldb_table $xmldb_table) {
     /// mssql requires names to start with #
         $xmldb_table = $this->generator->tweakTempTable($xmldb_table);
 
     /// Check table doesn't exist
         if (!$this->table_exists($xmldb_table, true)) {
-            return true;
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
         if (!$sqlarr = $this->generator->getDropTempTableSQL($xmldb_table)) {
-            return false; // error
+            throw new ddl_exception('ddlunknownerror', null, 'temp table drop sql not generated');
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -578,51 +502,35 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param string new name of the index
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function rename_table($xmldb_table, $newname, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect rename_table() $xmldb_table parameter');
-            return false;
-        }
-
+    public function rename_table(xmldb_table $xmldb_table, $newname) {
     /// Check newname isn't empty
         if (!$newname) {
-            debugging('Error: new name for table ' . $xmldb_table->getName() .
-                      ' is empty!');
-            return false; //error!
+            throw new ddl_exception('ddlunknownerror', null, 'newname can not be empty');
         }
 
         $check = new xmldb_table($newname);
 
     /// Check table already renamed
-        if (!$this->table_exists($xmldb_table) and $this->table_exists($check)) {
-            debugging('Table ' . $xmldb_table->getName() .
-                      ' already renamed. Rename skipped', DEBUG_DEVELOPER);
-            return true; //ok fine
-        }
-
-    /// Check table exists
         if (!$this->table_exists($xmldb_table)) {
-            debugging('Table ' . $xmldb_table->getName() .
-                      ' does not exist. Rename skipped');
-            return false; //error!
+            if ($this->table_exists($check)) {
+                throw new ddl_exception('ddlunknownerror', null, 'table probably already renamed');
+            } else {
+                throw new ddl_table_missing_exception($xmldb_table->getName());
+            }
         }
 
     /// Check new table doesn't exist
         if ($this->table_exists($check)) {
-            debugging('Table ' . $check->getName() .
-                      ' already exists. Rename skipped');
-            return false; //error!
+            throw new ddl_exception('ddltablealreadyexists', $xmldb_table->getName(), 'can not rename table');
         }
 
         if (!$sqlarr = $this->generator->getRenameTableSQL($xmldb_table, $newname)) {
-            return true; //Empty array = nothing to do = no error (this is weird!)
+            throw new ddl_exception('ddlunknownerror', null, 'table rename sql not generated');
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
 
@@ -631,40 +539,25 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function add_field($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect add_field() $xmldb_table parameter');
-            return false;
-        }
-
-        if (!($xmldb_field instanceof xmldb_field)) {
-            debugging('Incorrect add_field() $xmldb_field parameter');
-            return false;
-        }
+    public function add_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
      /// Check the field doesn't exist
         if ($this->field_exists($xmldb_table, $xmldb_field)) {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' already exists. Create skipped', DEBUG_DEVELOPER);
-            return true;
+            throw new ddl_exception('ddlfieldalreadyexists', $xmldb_field->getName());
         }
 
     /// If NOT NULL and no default given (we ask the generator about the
     /// *real* default that will be used) check the table is empty
         if ($xmldb_field->getNotNull() && $this->generator->getDefaultValue($xmldb_field) === NULL && $this->mdb->count_records($xmldb_table->getName())) {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' cannot be added. Not null fields added to non empty tables require default value. Create skipped', DEBUG_DEVELOPER);
-             return false; //error!!
+            throw new ddl_exception('ddlunknownerror', null, 'Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
+                      ' cannot be added. Not null fields added to non empty tables require default value. Create skipped');
         }
 
         if (!$sqlarr = $this->generator->getAddFieldSQL($xmldb_table, $xmldb_field)) {
-            debugging('Error: No sql code for field adding found');
-            return false;
+            throw new ddl_exception('ddlunknownerror', null, 'addfield sql not generated');
         }
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -672,33 +565,22 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (just the name is mandatory)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function drop_field($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect drop_field() $xmldb_table parameter');
-            return false;
+    public function drop_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
-
-        if (!($xmldb_field instanceof xmldb_field)) {
-            debugging('Incorrect drop_field() $xmldb_field parameter');
-            return false;
-        }
-
     /// Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' does not exist. Delete skipped', DEBUG_DEVELOPER);
-            return true;
+            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
         if (!$sqlarr = $this->generator->getDropFieldSQL($xmldb_table, $xmldb_field)) {
-            return true; //Empty array = nothing to do = no error
+            throw new ddl_exception('ddlunknownerror', null, 'drop_field sql not generated');
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -706,33 +588,22 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function change_field_type($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect change_field_type() $xmldb_table parameter');
-            return false;
+    public function change_field_type(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
-
-        if (!($xmldb_field instanceof xmldb_field)) {
-            debugging('Incorrect change_field_type() $xmldb_field parameter');
-            return false;
-        }
-
     /// Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' does not exist. Change type skipped');
-            return false;
+            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
         if (!$sqlarr = $this->generator->getAlterFieldSQL($xmldb_table, $xmldb_field)) {
-            return true; //Empty array = nothing to do = no error
+            return; // probably nothing to do
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -740,14 +611,11 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function change_field_precision($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-
+    public function change_field_precision(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
     /// Just a wrapper over change_field_type. Does exactly the same processing
-        return $this->change_field_type($xmldb_table, $xmldb_field, $continue, $feedback);
+        $this->change_field_type($xmldb_table, $xmldb_field);
     }
 
     /**
@@ -755,14 +623,11 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function change_field_unsigned($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-
+    public function change_field_unsigned(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
     /// Just a wrapper over change_field_type. Does exactly the same processing
-        return $this->change_field_type($xmldb_table, $xmldb_field, $continue, $feedback);
+        $this->change_field_type($xmldb_table, $xmldb_field);
     }
 
     /**
@@ -770,14 +635,11 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function change_field_notnull($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-
+    public function change_field_notnull(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
     /// Just a wrapper over change_field_type. Does exactly the same processing
-        return $this->change_field_type($xmldb_table, $xmldb_field, $continue, $feedback);
+        $this->change_field_type($xmldb_table, $xmldb_field);
     }
 
     /**
@@ -785,26 +647,15 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function change_field_enum($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect change_field_enum() $xmldb_table parameter');
-            return false;
+    public function change_field_enum(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
-
-        if (!($xmldb_field instanceof xmldb_field)) {
-            debugging('Incorrect change_field_enum() $xmldb_field parameter');
-            return false;
-        }
-
     /// Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' does not exist. Change type skipped');
-            return false;
+            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
     /// If enum is defined, we're going to create it, check it doesn't exist.
@@ -812,21 +663,21 @@ class database_manager {
             if ($this->check_constraint_exists($xmldb_table, $xmldb_field)) {
                 debugging('Enum for ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
                           ' already exists. Create skipped', DEBUG_DEVELOPER);
-                return true; //Enum exists, nothing to do
+                return; //Enum exists, nothing to do
             }
         } else { /// Else, we're going to drop it, check it exists
             if (!$this->check_constraint_exists($xmldb_table, $xmldb_field)) {
                 debugging('Enum for ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
                           ' does not exist. Delete skipped', DEBUG_DEVELOPER);
-                return true; //Enum does not exist, nothing to delete
+                return; //Enum does not exist, nothing to delete
             }
         }
 
         if (!$sqlarr = $this->generator->getModifyEnumSQL($xmldb_table, $xmldb_field)) {
-            return true; //Empty array = nothing to do = no error
+            return; //Empty array = nothing to do = no error
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -835,33 +686,22 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field field object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function change_field_default($xmldb_table, $xmldb_field, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect change_field_default() $xmldb_table parameter');
-            return false;
+    public function change_field_default(xmldb_table $xmldb_table, xmldb_field $xmldb_field) {
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
-
-        if (!($xmldb_field instanceof xmldb_field)) {
-            debugging('Incorrect change_field_default() $xmldb_field parameter');
-            return false;
-        }
-
     /// Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' does not exist. Change type skipped');
-            return false;
+            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
         if (!$sqlarr = $this->generator->getModifyDefaultSQL($xmldb_table, $xmldb_field)) {
-            return true; //Empty array = nothing to do = no error
+            return; //Empty array = nothing to do = no error
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -871,66 +711,41 @@ class database_manager {
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_field index object (full specs are required)
      * @param string new name of the field
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function rename_field($xmldb_table, $xmldb_field, $newname, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect rename_field() $xmldb_table parameter');
-            return false;
-        }
-
-        if (!($xmldb_field instanceof xmldb_field)) {
-            debugging('Incorrect rename_field() $xmldb_field parameter');
-            return false;
-        }
-
+    public function rename_field(xmldb_table $xmldb_table, xmldb_field $xmldb_field, $newname) {
         if (empty($newname)) {
-            debugging('New name for field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' is empty! Rename skipped', DEBUG_DEVELOPER);
-            return false; //error
+            throw new ddl_exception('ddlunknownerror', null, 'newname can not be empty');
+        }
+
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
     /// Check the field exists
         if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' does not exist. Change type skipped');
-            return false;
+            throw new ddl_field_missing_exception($xmldb_field->getName(), $xmldb_table->getName());
         }
 
     /// Check we have included full field specs
         if (!$xmldb_field->getType()) {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' must contain full specs. Rename skipped', DEBUG_DEVELOPER);
-            return false;
+            throw new ddl_exception('ddlunknownerror', null,
+                      'Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
+                      ' must contain full specs. Rename skipped');
         }
 
     /// Check field isn't id. Renaming over that field is not allowed
         if ($xmldb_field->getName() == 'id') {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' cannot be renamed. Rename skipped', DEBUG_DEVELOPER);
-            return false; //Field is "id", nothing to do
-        }
-
-    /// Check field exists
-        if (!$this->field_exists($xmldb_table, $xmldb_field)) {
-            debugging('Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
-                      ' does not exist. Rename skipped', DEBUG_DEVELOPER);
-            $newfield = clone($xmldb_field);
-            $newfield->setName($newname);
-            if ($this->field_exists($xmldb_table, $newfield)) {
-                return true; //ok
-            } else {
-                return false; //error
-            }
+            throw new ddl_exception('ddlunknownerror', null,
+                      'Field ' . $xmldb_table->getName() . '->' . $xmldb_field->getName() .
+                      ' cannot be renamed. Rename skipped');
         }
 
         if (!$sqlarr = $this->generator->getRenameFieldSQL($xmldb_table, $xmldb_field, $newname)) {
-            return true; //Empty array = nothing to do = no error
+            return; //Empty array = nothing to do = no error
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -938,31 +753,19 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_key index object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function add_key($xmldb_table, $xmldb_key, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect add_key() $xmldb_table parameter');
-            return false;
-        }
-
-        if (!($xmldb_key instanceof xmldb_key)) {
-            debugging('Incorrect add_key() $xmldb_key parameter');
-            return false;
-        }
+    public function add_key(xmldb_table $xmldb_table, xmldb_key $xmldb_key) {
 
         if ($xmldb_key->getType() == XMLDB_KEY_PRIMARY) { // Prevent PRIMARY to be added (only in create table, being serious  :-P)
-            debugging('Primary Keys can be added at table create time only', DEBUG_DEVELOPER);
-            return true;
+            throw new ddl_exception('ddlunknownerror', null, 'Primary Keys can be added at table create time only');
         }
 
         if (!$sqlarr = $this->generator->getAddKeySQL($xmldb_table, $xmldb_key)) {
-            return true; //Empty array = nothing to do = no error
+            return; //Empty array = nothing to do = no error
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -970,31 +773,18 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_key key object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function drop_key($xmldb_table, $xmldb_key, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect drop_key() $xmldb_table parameter');
-            return false;
-        }
-
-        if (!($xmldb_key instanceof xmldb_key)) {
-            debugging('Incorrect drop_key() $xmldb_key parameter');
-            return false;
-        }
-
+    public function drop_key(xmldb_table $xmldb_table, xmldb_key $xmldb_key) {
         if ($xmldb_key->getType() == XMLDB_KEY_PRIMARY) { // Prevent PRIMARY to be dropped (only in drop table, being serious  :-P)
-            debugging('Primary Keys can be deleted at table drop time only', DEBUG_DEVELOPER);
-            return true;
+            throw new ddl_exception('ddlunknownerror', null, 'Primary Keys can be deleted at table drop time only');
         }
 
-        if(!$sqlarr = $this->generator->getDropKeySQL($xmldb_table, $xmldb_key)) {
-            return true; //Empty array = nothing to do = no error
+        if (!$sqlarr = $this->generator->getDropKeySQL($xmldb_table, $xmldb_key)) {
+            return; //Empty array = nothing to do = no error
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -1004,36 +794,21 @@ class database_manager {
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_key key object (full specs are required)
      * @param string new name of the key
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function rename_key($xmldb_table, $xmldb_key, $newname, $continue=true, $feedback=true) {
+    public function rename_key(xmldb_table $xmldb_table, xmldb_key $xmldb_key, $newname) {
         debugging('rename_key() is one experimental feature. You must not use it in production!', DEBUG_DEVELOPER);
-
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect rename_key() $xmldb_table parameter');
-            return false;
-        }
-
-        if (!($xmldb_key instanceof xmldb_key)) {
-            debugging('Incorrect rename_key() $xmldb_key parameter');
-            return false;
-        }
 
     /// Check newname isn't empty
         if (!$newname) {
-            debugging('New name for key ' . $xmldb_table->getName() . '->' . $xmldb_key->getName() .
-                      ' is empty! Rename skipped', DEBUG_DEVELOPER);
-            return true; //Key doesn't exist, nothing to do
+            throw new ddl_exception('ddlunknownerror', null, 'newname can not be empty');
         }
 
         if (!$sqlarr = $this->generator->getRenameKeySQL($xmldb_table, $xmldb_key, $newname)) {
-            debugging('Some DBs do not support key renaming (MySQL, PostgreSQL, MsSQL). Rename skipped', DEBUG_DEVELOPER);
-            return true; //Empty array = nothing to do = no error
+            throw new ddl_exception('ddlunknownerror', null, 'Some DBs do not support key renaming (MySQL, PostgreSQL, MsSQL). Rename skipped');
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -1042,33 +817,25 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_index index object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function add_index($xmldb_table, $xmldb_intex, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect add_index() $xmldb_table parameter');
-            return false;
-        }
-
-        if (!($xmldb_intex instanceof xmldb_index)) {
-            debugging('Incorrect add_index() $xmldb_index parameter');
-            return false;
+    public function add_index($xmldb_table, $xmldb_intex) {
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
     /// Check index doesn't exist
         if ($this->index_exists($xmldb_table, $xmldb_intex)) {
-            debugging('Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
-                      ' already exists. Create skipped', DEBUG_DEVELOPER);
-            return true; //Index exists, nothing to do
+            throw new ddl_exception('ddlunknownerror', null,
+                      'Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
+                      ' already exists. Create skipped');
         }
 
         if (!$sqlarr = $this->generator->getAddIndexSQL($xmldb_table, $xmldb_intex)) {
-            return true; //Empty array = nothing to do = no error
+            throw new ddl_exception('ddlunknownerror', null, 'add_index sql not generated');
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -1077,33 +844,25 @@ class database_manager {
      *
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_index index object (full specs are required)
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function drop_index($xmldb_table, $xmldb_intex, $continue=true, $feedback=true) {
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect add_index() $xmldb_table parameter');
-            return false;
-        }
-
-        if (!($xmldb_intex instanceof xmldb_index)) {
-            debugging('Incorrect add_index() $xmldb_index parameter');
-            return false;
+    public function drop_index($xmldb_table, $xmldb_intex) {
+        if (!$this->table_exists($xmldb_table)) {
+            throw new ddl_table_missing_exception($xmldb_table->getName());
         }
 
     /// Check index exists
         if (!$this->index_exists($xmldb_table, $xmldb_intex)) {
-            debugging('Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
-                      ' does not exist. Delete skipped', DEBUG_DEVELOPER);
-            return true; //Index doesn't exist, nothing to do
+            throw new ddl_exception('ddlunknownerror', null,
+                      'Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
+                      ' does not exist. Delete skipped');
         }
 
         if (!$sqlarr = $this->generator->getDropIndexSQL($xmldb_table, $xmldb_intex)) {
-            return true; //Empty array = nothing to do = no error
+            throw new ddl_exception('ddlunknownerror', null, 'drop_index sql not generated');
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
     }
 
     /**
@@ -1114,43 +873,59 @@ class database_manager {
      * @param xmldb_table table object (just the name is mandatory)
      * @param xmldb_index index object (full specs are required)
      * @param string new name of the index
-     * @param boolean continue to specify if must continue on error (true) or stop (false)
-     * @param boolean feedback to specify to show status info (true) or not (false)
-     * @return boolean true on success, false on error
+     * @return void
      */
-    public function rename_index($xmldb_table, $xmldb_intex, $newname, $continue=true, $feedback=true) {
+    public function rename_index($xmldb_table, $xmldb_intex, $newname) {
         debugging('rename_index() is one experimental feature. You must not use it in production!', DEBUG_DEVELOPER);
-
-        if (!($xmldb_table instanceof xmldb_table)) {
-            debugging('Incorrect add_index() $xmldb_table parameter');
-            return false;
-        }
-
-        if (!($xmldb_intex instanceof xmldb_index)) {
-            debugging('Incorrect add_index() $xmldb_index parameter');
-            return false;
-        }
 
     /// Check newname isn't empty
         if (!$newname) {
-            debugging('New name for index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
-                      ' is empty! Rename skipped', DEBUG_DEVELOPER);
-            return true; //Index doesn't exist, nothing to do
+            throw new ddl_exception('ddlunknownerror', null, 'newname can not be empty');
         }
 
     /// Check index exists
         if (!$this->index_exists($xmldb_table, $xmldb_intex)) {
-            debugging('Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
-                      ' does not exist. Rename skipped', DEBUG_DEVELOPER);
-            return true; //Index doesn't exist, nothing to do
+            throw new ddl_exception('ddlunknownerror', null,
+                      'Index ' . $xmldb_table->getName() . '->' . $xmldb_intex->getName() .
+                      ' does not exist. Rename skipped');
         }
 
         if (!$sqlarr = $this->generator->getRenameIndexSQL($xmldb_table, $xmldb_intex, $newname)) {
-            debugging('Some DBs do not support index renaming (MySQL). Rename skipped', DEBUG_DEVELOPER);
-            return false; // Error - index not renamed
+            throw new ddl_exception('ddlunknownerror', null, 'Some DBs do not support index renaming (MySQL). Rename skipped');
         }
 
-        return $this->execute_sql_arr($sqlarr, $continue, $feedback);
+        $this->execute_sql_arr($sqlarr);
+    }
+}
+
+
+/**
+ * DDL exception class, use instead of error() and "return false;" in ddl code.
+ */
+class ddl_exception extends moodle_exception {
+    function __construct($errorcode, $a=NULL, $debuginfo=null) {
+        parent::__construct($errorcode, '', '', $a, $debuginfo);
+    }
+}
+
+/**
+ * Table does not exist problem exception
+ */
+class ddl_table_missing_exception extends ddl_exception {
+    function __construct($tablename, $debuginfo=null) {
+        parent::__construct('ddltablenotexist', $tablename, $debuginfo);
+    }
+}
+
+/**
+ * Table does not exist problem exception
+ */
+class ddl_field_missing_exception extends ddl_exception {
+    function __construct($fieldname, $tablename, $debuginfo=null) {
+        $a = new object();
+        $a->fieldname = $fieldname;
+        $a->tablename = $tablename;
+        parent::__construct('ddlfieldnotexist', $a, $debuginfo);
     }
 }
 

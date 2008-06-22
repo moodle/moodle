@@ -38,7 +38,7 @@ function xmldb_lesson_upgrade($oldversion=0) {
         /// Set field specs
             $field->set_attributes(XMLDB_TYPE_INTEGER, '3', null, XMLDB_NOTNULL, null, null, null, '0', 'ongoing');
         /// Launch rename field usegrademax to usemaxgrade
-            $result = $result && $dbman->rename_field($table, $field, 'usemaxgrade');
+            $dbman->rename_field($table, $field, 'usemaxgrade');
         }
     }
 

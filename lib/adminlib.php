@@ -65,7 +65,7 @@ function drop_plugin_tables($name, $file, $feedback=true) {
     global $CFG, $DB;
 
     // first try normal delete
-    if ($DB->get_manager()->delete_tables_from_xmldb_file($file, $feedback)) {
+    if ($DB->get_manager()->delete_tables_from_xmldb_file($file)) {
         return true;
     }
 
@@ -83,7 +83,7 @@ function drop_plugin_tables($name, $file, $feedback=true) {
         // found orphan table --> delete it
         if ($DB->get_manager()->table_exists($table)) {
             $xmldb_table = new xmldb_table($table);
-            $DB->get_manager()->drop_table($xmldb_table, true, $feedback);
+            $DB->get_manager()->drop_table($xmldb_table);
         }
     }
 
@@ -288,12 +288,10 @@ function upgrade_plugins($type, $dir, $return) {
             if ($CFG->$pluginversion == 0) {    // It's a new install of this plugin
             /// Both old .sql files and new install.xml are supported
             /// but we priorize install.xml (XMLDB) if present
-                $status = false;
                 if (file_exists($fullplug . '/db/install.xml')) {
-                    $status = $DB->get_manager()->install_from_xmldb_file($fullplug . '/db/install.xml'); //New method
-                } else {
-                    $status = true;
+                    $DB->get_manager()->install_from_xmldb_file($fullplug . '/db/install.xml'); //New method
                 }
+                $status = true;
                 if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                     $DB->set_debug(false);
                 }
@@ -534,7 +532,8 @@ function upgrade_activity_modules($return) {
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
             if (file_exists($fullmod . '/db/install.xml')) {
-                $status = $DB->get_manager()->install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
+                $DB->get_manager()->install_from_xmldb_file($fullmod . '/db/install.xml'); //New method
+                $status = true;
             }
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 $DB->set_debug(false);

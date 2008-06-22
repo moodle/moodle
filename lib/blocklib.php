@@ -1069,10 +1069,8 @@ function upgrade_blocks_db($continueto) {
         }
     /// Both old .sql files and new install.xml are supported
     /// but we priorize install.xml (XMLDB) if present
-        $status = false;
-        if (file_exists($CFG->dirroot . '/blocks/db/install.xml')) {
-            $status = $DB->get_manager()->install_from_xmldb_file($CFG->dirroot . '/blocks/db/install.xml'); //New method
-        }
+        $DB->get_manager()->install_from_xmldb_file($CFG->dirroot . '/blocks/db/install.xml'); //New method
+        $status = true;
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
         $DB->set_debug(false);
         }
@@ -1363,12 +1361,10 @@ function upgrade_blocks_plugins($continueto) {
 
         /// Both old .sql files and new install.xml are supported
         /// but we priorize install.xml (XMLDB) if present
-            $status = false;
             if (file_exists($fullblock . '/db/install.xml')) {
-                $status = $DB->get_manager()->install_from_xmldb_file($fullblock . '/db/install.xml'); //New method
-            } else {
-                $status = true;
+                $DB->get_manager()->install_from_xmldb_file($fullblock . '/db/install.xml'); //New method
             }
+            $status = true;
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                 $DB->set_debug(false);
             }

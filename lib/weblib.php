@@ -1042,7 +1042,7 @@ function print_textfield ($name, $value, $alt = '',$size=50,$maxlength=0, $retur
 function popup_form($common, $options, $formid, $selected='', $nothing='choose', $help='', $helptext='', $return=false,
 $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
 
-    global $CFG;
+    global $CFG, $SESSION;
     static $go, $choose;   /// Locally cached, in case there's lots on a page
 
     if (empty($options)) {
@@ -1127,7 +1127,7 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
         } else {
            if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()]))
             {
-                $url=sid_process_url( $common . $value );
+                $url = $SESSION->sid_process_url( $common . $value );
             } else
             {
                 $url=$common . $value;
@@ -5650,7 +5650,7 @@ function print_error($errorcode, $module='', $link='', $a=NULL) {
 /**
  * Internal function - do not use directly!!
  */
-function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $showerrordebugwarning=false) {
+function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debuginfo=null, $showerrordebugwarning=false) {
     global $CFG, $SESSION, $THEME;
 
     if ($module == 'error') {
@@ -5706,7 +5706,11 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $shower
 
     } else {
         if (debugging('', DEBUG_DEVELOPER)) {
-            notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
+            if ($debuginfo) {
+                debugging($debuginfo, DEBUG_DEVELOPER, $backtrace);
+            } else {
+                notify('Stack trace:'.print_backtrace($backtrace, true), 'notifytiny');
+            }
         }
     }
 
@@ -6040,11 +6044,10 @@ function notice_yesno ($message, $linkyes, $linkno, $optionsyes=NULL, $optionsno
  *      echo "<script type='text/javascript'>alert('Redirect $url');</script>";
  */
 function redirect($url, $message='', $delay=-1) {
-
-    global $CFG, $THEME;
+    global $CFG, $THEME, $SESSION;
 
     if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
-       $url = sid_process_url($url);
+       $url = $SESSION->sid_process_url($url);
     }
 
     $message = clean_text($message);
@@ -6879,9 +6882,10 @@ function doc_link($path='', $text='', $iconpath='') {
  *
  * @param string $message a message to print
  * @param int $level the level at which this debugging statement should show
+ * @param array $backtrace use different backtrace
  * @return bool
  */
-function debugging($message='', $level=DEBUG_NORMAL) {
+function debugging($message='', $level=DEBUG_NORMAL, $backtrace=null) {
 
     global $CFG;
 
@@ -6891,8 +6895,10 @@ function debugging($message='', $level=DEBUG_NORMAL) {
 
     if ($CFG->debug >= $level) {
         if ($message) {
-            $callers = debug_backtrace();
-            $from = print_backtrace($callers, true);
+            if (!$backtrace) {
+                $backtrace = debug_backtrace();
+            }
+            $from = print_backtrace($backtrace, true);
             if (!isset($CFG->debugdisplay)) {
                 $CFG->debugdisplay = ini_get('display_errors');
             }
