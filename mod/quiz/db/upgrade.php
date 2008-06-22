@@ -45,7 +45,9 @@ function xmldb_quiz_upgrade($oldversion=0) {
             $dbman->create_table($table);
         }
 
+        upgrade_mod_savepoint($result, 2008062000, 'quiz');
     }
+
     if ($result && $oldversion < 2008062001) {
         $reporttoinsert = new object();
         $reporttoinsert->name = 'overview';
@@ -71,6 +73,8 @@ function xmldb_quiz_upgrade($oldversion=0) {
         $reporttoinsert->name = 'grading';
         $reporttoinsert->displayorder = 6000;
         $result = $result && $DB->insert_record('quiz_report', $reporttoinsert);
+
+        upgrade_mod_savepoint($result, 2008062001, 'quiz');
     }
 
 

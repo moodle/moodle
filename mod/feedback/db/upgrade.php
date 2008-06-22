@@ -98,6 +98,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
 
         $dbman->create_table($table);
         ////////////////////////////////////////////////////////////
+        upgrade_mod_savepoint($result, 2007012310, 'feedback');
     }
 
     if ($result && $oldversion < 2007050504) {
@@ -127,6 +128,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $dbman->add_field($table, $field);
 
         ////////////////////////////////////////////////////////////
+        upgrade_mod_savepoint($result, 2007050504, 'feedback');
     }
 
     if ($result && $oldversion < 2007102600) {
@@ -137,6 +139,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        upgrade_mod_savepoint($result, 2007102600, 'feedback');
     }
 
     if ($result && $oldversion < 2008042400) { //New version in version.php
@@ -146,6 +149,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
                 $result = $result && $DB->execute($update_sql.$fb->id);
             }
         }
+        upgrade_mod_savepoint($result, 2008042400, 'feedback');
     }
 
     if ($result && $oldversion < 2008042401) { //New version in version.php
@@ -168,6 +172,7 @@ function xmldb_feedback_upgrade($oldversion=0) {
             $result = $result && $DB->execute($update_sql1);            
             $result = $result && $DB->execute($update_sql2);            
         }
+        upgrade_mod_savepoint($result, 2008042401, 'feedback');
     }
 
     if ($result && $oldversion < 2008042801) {
@@ -195,6 +200,8 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $new_log_display->mtable = 'course';
         $new_log_display->field = 'shortname';
         $result = $result && $DB->insert_record('log_display', $new_log_display);
+
+        upgrade_mod_savepoint($result, 2008042801, 'feedback');
     }
 
     if ($result && $oldversion < 2008042900) {
@@ -203,6 +210,8 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $field = new xmldb_field('autonumbering', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1', 'multiple_submit');
         /// Launch add field2
         $dbman->add_field($table, $field);
+
+        upgrade_mod_savepoint($result, 2008042900, 'feedback');
     }
 
     if ($result && $oldversion < 2008050104) {
@@ -211,6 +220,8 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $field = new xmldb_field('site_after_submit', XMLDB_TYPE_CHAR, '255', null, null, false, null, null, '', 'autonumbering');
         /// Launch add field2
         $dbman->add_field($table, $field);
+
+        upgrade_mod_savepoint($result, 2008050104, 'feedback');
     }
     
     if ($result && $oldversion < 2008050105) {
@@ -218,7 +229,10 @@ function xmldb_feedback_upgrade($oldversion=0) {
         $table = new xmldb_table('feedback_tracking');
         $field = new xmldb_field('count');
         $dbman->drop_field($table, $field);
+
+        upgrade_mod_savepoint($result, 2008050105, 'feedback');
     }
+
     return $result;
 }
 

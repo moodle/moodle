@@ -33,6 +33,7 @@ function xmldb_assignment_upgrade($oldversion=0) {
         $DB->set_debug(false);
         assignment_update_grades();
         $DB->set_debug(true);
+        upgrade_mod_savepoint($result, 2007101511, 'assignment');
     }
 
     return $result;

@@ -5651,7 +5651,12 @@ function print_error($errorcode, $module='', $link='', $a=NULL) {
  * Internal function - do not use directly!!
  */
 function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debuginfo=null, $showerrordebugwarning=false) {
-    global $CFG, $SESSION, $THEME;
+    global $CFG, $SESSION, $THEME, $DB;
+
+    if ($DB) {
+        //if you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
+        $DB->set_debug(0);
+    }
 
     if ($module == 'error') {
         $modulelink = 'moodle';

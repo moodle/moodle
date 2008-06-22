@@ -39,8 +39,23 @@ function upgrade_main_savepoint($result, $version) {
     }
 }
 
-function upgrade_mod_savepoint($result, $version, $type) {
-    //TODO
+function upgrade_mod_savepoint($result, $version, $modname) {
+    global $DB;
+
+    if (!$module = $DB->get_record('modules', array('name'=>$modname))) {
+        print_error('modulenotexist', 'debug', '', $modname);
+    }
+
+    if ($result) {
+        if ($module->version >= $version) {
+            // something really wrong is going on in upgrade script
+            print_error('cannotdowngrade', 'debug', '', array($module->version, $version));
+        }
+        $module->verions = $version;
+        $DB->update_record('modules', $module);
+    } else {
+        notify ("Upgrade savepoint: Error during mod upgrade to version $version");
+    }
 }
 
 function upgrade_plugin_savepoint($result, $version, $type, $dir) {

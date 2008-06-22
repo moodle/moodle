@@ -40,6 +40,8 @@ function xmldb_lesson_upgrade($oldversion=0) {
         /// Launch rename field usegrademax to usemaxgrade
             $dbman->rename_field($table, $field, 'usemaxgrade');
         }
+
+        upgrade_mod_savepoint($result, 2007072201, 'lesson');
     }
 
     return $result;

@@ -36,6 +36,7 @@ function xmldb_data_upgrade($oldversion=0) {
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
+        upgrade_mod_savepoint($result, 2007101512, 'data');
     }
 
     if ($result && $oldversion <  2007101513) {
@@ -50,6 +51,7 @@ function xmldb_data_upgrade($oldversion=0) {
         $dbman->change_field_notnull($table, $field);
         // Second step, Set default to 0
         $dbman->change_field_default($table, $field);
+        upgrade_mod_savepoint($result, 2007101513, 'data');
     }
 
     return $result;

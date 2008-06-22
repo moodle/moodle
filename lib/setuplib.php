@@ -48,13 +48,6 @@ class moodle_exception extends Exception {
  * Default exception handler, uncought exceptions are equivalent to using print_error()
  */
 function default_exception_handler($ex) {
-    global $DB;
-
-    if ($DB) {
-        //if you enable db debugging and exception is thrown, the print footer prints a lot of rubbish
-        $DB->set_debug(0);
-    }
-
     $backtrace = $ex->getTrace();
     $place = array('file'=>$ex->getFile(), 'line'=>$ex->getLine(), 'exception'=>get_class($ex));
     array_unshift($backtrace, $place);

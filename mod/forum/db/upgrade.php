@@ -42,6 +42,8 @@ function xmldb_forum_upgrade($oldversion=0) {
         $DB->set_debug(false);
         forum_update_grades();
         $DB->set_debug(true);
+
+        upgrade_mod_savepoint($result, 2007101511, 'forum');
     }
 
     if ($result && $oldversion < 2007101512) {
@@ -70,6 +72,8 @@ function xmldb_forum_upgrade($oldversion=0) {
             $DB->set_debug(true);
             $rs-close();
         }
+
+        upgrade_mod_savepoint($result, 2007101512, 'forum');
     }
 
 
