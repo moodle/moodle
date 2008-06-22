@@ -1121,9 +1121,9 @@ class moodle_database_for_testing extends moodle_database {
     public function driver_installed(){}
     public function get_dbfamily(){}
     protected function get_dbtype(){}
+    protected function get_dblibrary(){}
     public function get_name(){}
     public function get_configuration_hints(){}
-    public function export_dbconfig(){}
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null){}
     public function get_server_info(){}
     protected function allowed_param_types(){}

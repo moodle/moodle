@@ -12,6 +12,15 @@ abstract class adodb_moodle_database extends moodle_database {
     protected $adodb;
 
     /**
+     * Returns general database library name
+     * Note: can be used before connect()
+     * @return string db type adodb, pdo, native
+     */
+    protected function get_dblibrary() {
+        return 'adodb';
+    }
+
+    /**
      * Returns localised database type name
      * Note: can be used before connect()
      * @return string
@@ -22,38 +31,14 @@ abstract class adodb_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns db related part of config.php
-     * Note: can be used before connect()
-     * @return string
-     */
-    public function export_dbconfig() {
-        $cfg = new stdClass();
-        $cfg->dbtype    = $this->get_dbtype();
-        $cfg->dblibrary = 'adodb';
-        $cfg->dbhost    = $this->dbhost;
-        $cfg->dbname    = $this->dbname;
-        $cfg->dbuser    = $this->dbuser;
-        $cfg->dbpass    = $this->dbpass;
-        $cfg->prefix    = $this->prefix;
-
-        return $cfg;
-    }
-
-    /**
      * Adodb preconnection routines, ususally sets up needed defines;
      */
     protected abstract function preconfigure_dbconnection();
 
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
-        $this->dbhost    = $dbhost;
-        $this->dbuser    = $dbuser;
-        $this->dbpass    = $dbpass;
-        $this->dbname    = $dbname;
-        $this->dbpersist = $dbpersist;
-        $this->prefix    = $prefix;
-        $this->dboptions = (array)$dboptions;
-
         global $CFG;
+
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
 
         $this->preconfigure_dbconnection();
 

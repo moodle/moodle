@@ -72,10 +72,12 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      * Note: can be used before connect()
      * @return string
      */
-    public function export_dbconfig() {
+    public function export_dbconfig($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
+
         $cfg = new stdClass();
         $cfg->dbtype     = $this->get_dbtype();
-        $cfg->dblibrary  = 'adodb';
+        $cfg->dblibrary  = $this->get_dblibrary();
         if ($this->dbhost == 'localhost' or $this->dbhost == '127.0.0.1') {
             $cfg->dbhost = "user='{$this->dbuser}' password='{$this->dbpass}' dbname='{$this->dbname}'";
             $cfg->dbname = '';
@@ -88,6 +90,9 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
             $cfg->dbpass = $this->dbpass;
         }
         $cfg->prefix     = $this->prefix;
+        if ($this->dboptions) {
+            $cfg->dboptions = $this->dboptions;
+        }
 
         return $cfg;
     }

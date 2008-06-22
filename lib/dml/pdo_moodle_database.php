@@ -35,13 +35,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return bool success
      */
     public function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
-        $this->dbhost    = $dbhost;
-        $this->dbuser    = $dbuser;
-        $this->dbpass    = $dbpass;
-        $this->dbname    = $dbname;
-        $this->dbpersist = $dbpersist;
-        $this->prefix    = $prefix;
-        $this->dboptions = (array)$dboptions;
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
 
         try {
             $this->pdb = new PDO($this->get_dsn(), $this->dbuser, $this->dbpass, $this->get_pdooptions());
@@ -78,6 +72,15 @@ abstract class pdo_moodle_database extends moodle_database {
     }
 
     /**
+     * Returns general database library name
+     * Note: can be used before connect()
+     * @return string db type adodb, pdo, native
+     */
+    protected function get_dblibrary() {
+        return 'pdo';
+    }
+
+    /**
      * Returns localised database type name
      * Note: can be used before connect()
      * @return string
@@ -93,24 +96,6 @@ abstract class pdo_moodle_database extends moodle_database {
      */
     public function get_configuration_hints() {
         return get_string('databasesettingssub_' . $this->get_dbtype() . '_pdo', 'install');
-    }
-
-    /**
-     * Returns db related part of config.php
-     * Note: can be used before connect()
-     * @return string
-     */
-    public function export_dbconfig() {
-        $cfg = new stdClass();
-        $cfg->dbtype    = $this->get_dbtype();
-        $cfg->dblibrary = 'pdo';
-        $cfg->dbhost    = $this->dbhost;
-        $cfg->dbname    = $this->dbname;
-        $cfg->dbuser    = $this->dbuser;
-        $cfg->dbpass    = $this->dbpass;
-        $cfg->prefix    = $this->prefix;
-        $cfg->dboptions = $this->dboptions;
-        return $cfg;
     }
 
     /**

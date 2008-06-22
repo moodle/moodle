@@ -461,35 +461,18 @@ if ($nextstage == SAVE) {
     $str .= "\r\n";
 
     $DB = $databases[$INSTALL['dbtype']];
-    $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
-    $dbconfig = $DB->export_dbconfig();
-    $dbconfig->persistent = false;
+    $dbconfig = $DB->export_dbconfig($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix']);
 
     foreach ($dbconfig as $key=>$value) {
         $key = str_pad($key, 9);
-        if (is_bool($value)) {
-            if ($value) {
-                $str .= '$CFG->'.$key.' = true;'."\r\n";
-            } else {
-                $str .= '$CFG->'.$key.' = false;'."\r\n";
-            }
-        } else if (is_array($value)) {
-            if (empty($value)) {
-                $value = 'array()';
-            } else {
-                $value = 'unserialize(\'' . addsingleslashes(serialize($value)) . '\')';
-            }
-            $str .= '$CFG->'.$key.' = '. $value . ";\r\n";
-        } else {
-            $str .= '$CFG->'.$key.' = \''.addsingleslashes($value)."';\r\n";
-        }
+        $str .= '$CFG->'.$key.' = '.var_export($value, true).";\r\n";
     }
     $str .= "\r\n";
 
-    $str .= '$CFG->wwwroot   = \''.addsingleslashes($INSTALL['wwwrootform'])."';\r\n";
-    $str .= '$CFG->dirroot   = \''.addsingleslashes($INSTALL['dirrootform'])."';\r\n";
-    $str .= '$CFG->dataroot  = \''.addsingleslashes($INSTALL['dataroot'])."';\r\n";
-    $str .= '$CFG->admin     = \''.addsingleslashes($INSTALL['admindirname'])."';\r\n";
+    $str .= '$CFG->wwwroot   = '.var_export($INSTALL['wwwrootform'], true).";\r\n";
+    $str .= '$CFG->dirroot   = '.var_export($INSTALL['dirrootform'], true).";\r\n";
+    $str .= '$CFG->dataroot  = '.var_export($INSTALL['dataroot'], true).";\r\n";
+    $str .= '$CFG->admin     = '.var_export($INSTALL['admindirname'], true).";\r\n";
     $str .= "\r\n";
 
     $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";

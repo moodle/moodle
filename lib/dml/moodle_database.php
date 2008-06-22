@@ -100,6 +100,13 @@ abstract class moodle_database {
     protected abstract function get_dbtype();
 
     /**
+     * Returns general database library name
+     * Note: can be used before connect()
+     * @return string db type adodb, pdo, native
+     */
+    protected abstract function get_dblibrary();
+
+    /**
      * Returns localised database type name
      * Note: can be used before connect()
      * @return string
@@ -118,7 +125,23 @@ abstract class moodle_database {
      * Note: can be used before connect()
      * @return string
      */
-    public abstract function export_dbconfig();
+    public function export_dbconfig($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+        $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, $dboptions);
+
+        $cfg = new stdClass();
+        $cfg->dbtype    = $this->get_dbtype();
+        $cfg->dblibrary = $this->get_dblibrary();
+        $cfg->dbhost    = $this->dbhost;
+        $cfg->dbname    = $this->dbname;
+        $cfg->dbuser    = $this->dbuser;
+        $cfg->dbpass    = $this->dbpass;
+        $cfg->prefix    = $this->prefix;
+        if ($this->dboptions) {
+            $cfg->dboptions = $this->dboptions;
+        }
+
+        return $cfg;
+    }
 
     /**
      * Connect to db
@@ -133,6 +156,27 @@ abstract class moodle_database {
      * @return bool success
      */
     public abstract function connect($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null);
+
+    /**
+     * Store various database settings
+     * @param string $dbhost
+     * @param string $dbuser
+     * @param string $dbpass
+     * @param string $dbname
+     * @param bool $dbpersist
+     * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
+     * @param array $dboptions driver specific options
+     * @return void
+     */
+    protected function store_settings($dbhost, $dbuser, $dbpass, $dbname, $dbpersist, $prefix, array $dboptions=null) {
+        $this->dbhost    = $dbhost;
+        $this->dbuser    = $dbuser;
+        $this->dbpass    = $dbpass;
+        $this->dbname    = $dbname;
+        $this->dbpersist = $dbpersist;
+        $this->prefix    = $prefix;
+        $this->dboptions = (array)$dboptions;
+    }
 
     /**
      * Attempt to create the database

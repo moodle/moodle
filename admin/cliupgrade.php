@@ -465,7 +465,7 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
         error_reporting(0);  // Hide errors
 
         if (! $dbconnected = $DB->connect($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'], false, $INSTALL['prefix'])) {
-            if (!$DB->create_database($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'])) {
+            if (!$DB->create_database($INSTALL['dbhost'], $INSTALL['dbuser'], $INSTALL['dbpass'], $INSTALL['dbname'])) {
                  $errormsg = get_string('dbcreationerror', 'install');
                  $nextstage = DATABASE;
             } else {
@@ -599,28 +599,18 @@ if (!file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
     $str .= "\r\n";
 
     $database = $databases[$CONFFILE['dbtype']];
-    $database->connect($CONFFILE['dbhost'], $CONFFILE['dbuser'], $CONFFILE['dbpass'], $CONFFILE['dbname'], false, $CONFFILE['prefix']);
-    $dbconfig = $database->export_dbconfig();
-    $dbconfig->persistent = false;
+    $dbconfig = $database->export_dbconfig($CONFFILE['dbhost'], $CONFFILE['dbuser'], $CONFFILE['dbpass'], $CONFFILE['dbname'], false, $CONFFILE['prefix']);
 
     foreach ($dbconfig as $key=>$value) {
         $key = str_pad($key, 9);
-        if (is_bool($value)) {
-            if ($value) {
-                $str .= '$CFG->'.$key.' = true;'."\r\n";
-            } else {
-                $str .= '$CFG->'.$key.' = false;'."\r\n";
-            }
-        } else {
-            $str .= '$CFG->'.$key.' = \''.addsingleslashes($value)."';\r\n";
-        }
+        $str .= '$CFG->'.$key.' = '.var_export($value, true).";\r\n";
     }
     $str .= "\r\n";
 
-    $str .= '$CFG->wwwroot   = \''.addsingleslashes($CONFFILE['wwwrootform'])."';\r\n";
-    $str .= '$CFG->dirroot   = \''.addsingleslashes($CONFFILE['dirrootform'])."';\r\n";
-    $str .= '$CFG->dataroot  = \''.addsingleslashes($CONFFILE['dataroot'])."';\r\n";
-    $str .= '$CFG->admin     = \''.addsingleslashes($CONFFILE['admindirname'])."';\r\n";
+    $str .= '$CFG->wwwroot   = '.var_export($CONFFILE['wwwrootform'], true).";\r\n";
+    $str .= '$CFG->dirroot   = '.var_export($CONFFILE['dirrootform'], true).";\r\n";
+    $str .= '$CFG->dataroot  = '.var_export($CONFFILE['dataroot'], true).";\r\n";
+    $str .= '$CFG->admin     = '.var_export($CONFFILE['admindirname'], true).";\r\n";
     $str .= "\r\n";
 
     $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";

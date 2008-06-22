@@ -79,12 +79,3 @@ function check_memory_limit() {
 function inst_check_php_version() {
     return check_php_version("5.2.0");
 }
-
-/**
- * Add slashes for single quotes and backslashes
- * so they can be included in single quoted string
- * (for config.php)
- */
-function addsingleslashes($input){
-    return preg_replace("/(['\\\])/", "\\\\$1", $input);
-}
