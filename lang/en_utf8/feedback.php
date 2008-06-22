@@ -67,6 +67,7 @@ $string['feedback:edititems'] = 'Edit items';
 $string['feedback:mapcourse'] = 'Map courses to global feedbacks';
 $string['feedback:receivemail'] = 'Receive email notification';
 $string['feedback:view'] = 'View a feedback';
+$string['feedback:viewanalysepage'] = 'View the analysepage after submit';
 $string['feedback:viewreports'] = 'View reports';
 $string['feedback_is_not_open'] = 'The feedback is not open';
 $string['feedback_options'] = 'Feedback options';
