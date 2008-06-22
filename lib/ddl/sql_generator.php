@@ -240,7 +240,7 @@ abstract class sql_generator {
      * @param boolean to specify if the name must be quoted (if reserved word, only!)
      * @return string the correct name of the table
      */
-    public function getTableName($xmldb_table, $quoted=true) {
+    public function getTableName(xmldb_table $xmldb_table, $quoted=true) {
     /// Get the name
         $tablename = $this->prefix.$xmldb_table->getName();
 
@@ -314,11 +314,9 @@ abstract class sql_generator {
     /// Add the indexes (each one, one statement)
         if ($xmldb_indexes = $xmldb_table->getIndexes()) {
             foreach ($xmldb_indexes as $xmldb_index) {
-            ///Only process all this if the index doesn't exist in DB
-                if (!$this->mdb->get_manager()->index_exists($xmldb_table, $xmldb_index)) {
-                    if ($indextext = $this->getCreateIndexSQL($xmldb_table, $xmldb_index)) {
-                        $results = array_merge($results, $indextext);
-                    }
+            ///tables do not exist yet, which means indexed can not exist yet
+                if ($indextext = $this->getCreateIndexSQL($xmldb_table, $xmldb_index)) {
+                    $results = array_merge($results, $indextext);
                 }
             }
         }
@@ -332,25 +330,23 @@ abstract class sql_generator {
                 /// Create the interim index
                     $index = new xmldb_index('anyname');
                     $index->setFields($xmldb_key->getFields());
-                ///Only process all this if the index doesn't exist in DB
-                    if (!$this->mdb->get_manager()->index_exists($xmldb_table, $index)) {
-                        $createindex = false; //By default
-                        switch ($xmldb_key->getType()) {
-                            case XMLDB_KEY_UNIQUE:
-                            case XMLDB_KEY_FOREIGN_UNIQUE:
-                                $index->setUnique(true);
-                                $createindex = true;
-                                break;
-                            case XMLDB_KEY_FOREIGN:
-                                $index->setUnique(false);
-                                $createindex = true;
-                                break;
-                        }
-                        if ($createindex) {
-                            if ($indextext = $this->getCreateIndexSQL($xmldb_table, $index)) {
-                            /// Add the INDEX to the array
-                                $results = array_merge($results, $indextext);
-                            }
+                ///tables do not exist yet, which means indexed can not exist yet
+                    $createindex = false; //By default
+                    switch ($xmldb_key->getType()) {
+                        case XMLDB_KEY_UNIQUE:
+                        case XMLDB_KEY_FOREIGN_UNIQUE:
+                            $index->setUnique(true);
+                            $createindex = true;
+                            break;
+                        case XMLDB_KEY_FOREIGN:
+                            $index->setUnique(false);
+                            $createindex = true;
+                            break;
+                    }
+                    if ($createindex) {
+                        if ($indextext = $this->getCreateIndexSQL($xmldb_table, $index)) {
+                        /// Add the INDEX to the array
+                            $results = array_merge($results, $indextext);
                         }
                     }
                 }
