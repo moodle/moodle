@@ -70,7 +70,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return array A key=>value array of PDO driver-specific connection options
      */
     protected function get_pdooptions() {
-        return array(PDO::ATTR_PERSISTENT => $this->dbpresist);
+        return array(PDO::ATTR_PERSISTENT => $this->dbpersist);
     }
     
     protected function configure_dbconnection() {
