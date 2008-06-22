@@ -1480,7 +1480,7 @@ function feedback_get_current_completed($feedbackid, $tmp = false, $courseid = f
     $params['courseid']   = intval($courseid);
     $params['feedbackid'] = $feedbackid;
 
-    if (!$sqlresult = $DB->get_records_sql($sql)) {
+    if (!$sqlresult = $DB->get_records_sql($sql, $params)) {
         return false;
     }
     foreach($sqlresult as $r) {
