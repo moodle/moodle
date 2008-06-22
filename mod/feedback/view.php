@@ -95,7 +95,7 @@
         print_box_end();
     }
     
-    if( (intval($feedback->publish_stats) == 1) AND !( $capabilities->viewreports) ) {
+    if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
         if($multiple_count = $DB->count_records('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
             echo '<div align="center"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
             echo get_string('completed_feedbacks', 'feedback').'</a>';

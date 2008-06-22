@@ -404,6 +404,7 @@ function feedback_load_capabilities($cmid) {
     $cb = new object;
     $cb->view = has_capability('mod/feedback:view', $context, NULL, false);
     $cb->complete = has_capability('mod/feedback:complete', $context, NULL, false);
+    $cb->viewanalysepage = has_capability('mod/feedback:viewanalysepage', $context, NULL, false);
     $cb->deletesubmissions = has_capability('mod/feedback:deletesubmissions', $context, NULL, false);
     $cb->mapcourse = has_capability('mod/feedback:mapcourse', $context, NULL, false);
     $cb->edititems = has_capability('mod/feedback:edititems', $context, NULL, false);
@@ -437,6 +438,7 @@ function feedback_load_course_capabilities($courseid) {
     $ccb = new object;
     $ccb->view = has_capability('mod/feedback:view', $context, NULL, false);
     $ccb->complete = has_capability('mod/feedback:complete', $context, NULL, false);
+    $ccb->viewanalysepage = has_capability('mod/feedback:viewanalysepage', $context, NULL, false);
     $ccb->deletesubmissions = has_capability('mod/feedback:deletesubmissions', $context, NULL, false);
     $ccb->mapcourse = has_capability('mod/feedback:mapcourse', $context, NULL, false);
     $ccb->edititems = has_capability('mod/feedback:edititems', $context, NULL, false);

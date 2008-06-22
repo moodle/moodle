@@ -79,11 +79,15 @@
         $courseid = SITEID;
     }
         
-    if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
+    // if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
         require_login($course->id, true, $cm);
-    } else {
-        require_course_login($course, true, $cm);
-    }
+        if(isguestuser()) {
+            error(get_string('guestsno'), $CFG->wwwroot);
+            exit;
+        }
+    // } else {
+        // require_course_login($course, true, $cm);
+    // }
     
     if($courseid AND $courseid != SITEID) {
         $course2 = $DB->get_record('course', array('id'=>$courseid));
@@ -250,6 +254,14 @@
         ///////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
         print_heading(format_text($feedback->name));
+    
+        if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
+            if($multiple_count = $DB->count_records('feedback_tracking', array('userid'=>$USER->id, 'feedback'=>$feedback->id))) {
+                echo '<div align="center"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
+                echo get_string('completed_feedbacks', 'feedback').'</a>';
+                echo '</div>';
+            }
+        }
         
         if(isset($savereturn) && $savereturn == 'saved') {
             if($feedback->page_after_submit) {
@@ -267,7 +279,6 @@
                 }
             }
             if($feedback->site_after_submit) {
-var_dump($feedback->site_after_submit);
                 print_continue(feedback_encode_target_url($feedback->site_after_submit));
             }else {
                 if($courseid) {

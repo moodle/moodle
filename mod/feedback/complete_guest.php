@@ -226,6 +226,12 @@
         ///////////////////////////////////////////////////////////////////////////
         print_heading(format_text($feedback->name));
         
+        if( (intval($feedback->publish_stats) == 1) AND ( $capabilities->viewanalysepage) AND !( $capabilities->viewreports) ) {
+            echo '<div align="center"><a href="'.htmlspecialchars('analysis.php?id=' . $id . '&courseid='.$courseid).'">';
+            echo get_string('completed_feedbacks', 'feedback').'</a>';
+            echo '</div>';
+        }
+        
         if(isset($savereturn) && $savereturn == 'saved') {
             if($feedback->page_after_submit) {
                 // print_simple_box_start('center', '75%');

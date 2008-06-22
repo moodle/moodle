@@ -61,6 +61,20 @@ $mod_feedback_capabilities = array(
         )
     ),
     
+    'mod/feedback:viewanalysepage' => array(
+
+        'riskbitmask' => RISK_PERSONAL,
+
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'legacy' => array(
+            'user' => CAP_ALLOW,
+            'student' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
+    
     'mod/feedback:deletesubmissions' => array(
 
         'captype' => 'write',
