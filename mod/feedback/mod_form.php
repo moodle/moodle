@@ -53,7 +53,7 @@ class mod_feedback_mod_form extends moodleform_mod {
         $options[2]  = get_string('non_anonymous', 'feedback');
         $mform->addElement('select', 'anonymous', get_string('anonymous_edit', 'feedback'), $options);
         
-        $mform->addElement('selectyesno', 'publish_stats', get_string('publish_stats_on_students', 'feedback'));
+        $mform->addElement('selectyesno', 'publish_stats', get_string('show_analysepage_after_submit', 'feedback'));
         $mform->addElement('selectyesno', 'email_notification', get_string('email_notification', 'feedback'));
         $mform->setHelpButton('email_notification', array('emailnotification', get_string('email_notification', 'feedback'), 'feedback'));
         
