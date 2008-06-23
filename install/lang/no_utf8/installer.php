@@ -158,7 +158,7 @@ Du trenger et sted hvor moodle kan lagre opplastede filer. Denne katalogen bør 
 $string['dirroot'] = 'Moodlemappe';
 $string['dirrooterror'] = '\'Moodlemappe\' innstillingen ser ut til å være feil - vi kan ikke finne noen Moodle installasjon der. Verdien under har blitt nullstillt.';
 $string['download'] = 'Last ned';
-$string['downloadedfilecheckfailed'] = 'Sjekk av nedlastet fil feilet.';
+$string['downloadedfilecheckfailed'] = 'Sjekk av nedlastet fil mislykkes.';
 $string['downloadlanguagebutton'] = 'Last ned &quot;$a&quot; språkpakken';
 $string['downloadlanguagehead'] = 'Last ned språkpakke';
 $string['downloadlanguagenotneeded'] = 'Du kan fortsette installasjonsprosessen med gjeldende språkpakke, \"$a\".';
@@ -209,6 +209,7 @@ $string['info'] = 'Informasjon';
 $string['installation'] = 'Installasjon';
 $string['invalidemail'] = 'Feil e-postadresse';
 $string['invalidmd5'] = 'Ugyldig md5';
+$string['invalidurl'] = 'Ugyldig URL';
 $string['langdownloaderror'] = 'Beklageligvis ble ikke språkpakken \"$a\" installert. Installasjonsprosessen vil fortsette på Engelsk.';
 $string['langdownloadok'] = 'Installasjonen av språket \"$a\" var vellykket. Installasjonen vil nå fortsette på dette språket.';
 $string['language'] = 'Språk';
@@ -271,6 +272,7 @@ $string['previous'] = 'Forrige';
 $string['qtyperqpwillberemoved'] = 'I oppgraderingen vil RQP spørsmålstypen bli fjernet. Du har ikke brukt denne spørsmålstypen, så du skulle ikke ha noe problem med dette.';
 $string['qtyperqpwillberemovedanyway'] = 'Under oppgraderingen vil RQP spørsmålstypen bli fjernet. Du har noen RQP spørsmål i databasen din, og disse vil slutte å virke om du ikke reinstallerer programmet fra http://moodle.org/mod/data/view.php?d=13&amp;rid=797 før du fortsetter oppgraderingen';
 $string['releasenoteslink'] = 'For mer informasjon om denne versjonen av Moodle, sjekk online via  <a target=\"_new\" href=\"$a\">Release Notes</a>';
+$string['remotedownloaderror'] = 'Mislykkes i å laste ned komponenten til din server, vennligst sjekk proxy-innstillingene. PHP cURL tillegget er sterkt anbefalt. <br /><br />Du må laste ned <a href=\"$a->url\">$a->url</a> filen manuelt, kopiere den til \"$a->dest\" på serveren din og pakke den ut der.';
 $string['remotedownloadnotallowed'] = 'Nedlasting av komponenter til din tjenermaskin er ikke tillatt (allow_url_fopen er satt til ulovlig). <br /> <br />Du må laste ned
 <a href=\"$a->url\">$a->url</a>-filen manuelt, kopiere den til \"$a->dest\" på tjeneren og pakke den ut der.';
 $string['report'] = 'Rapport';
