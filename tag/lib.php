@@ -786,7 +786,7 @@ function tag_compute_correlations($min_correlation=2) {
                    WHERE ta.tagid = ? AND tb.tagid <> ?
                 GROUP BY tb.tagid
                   HAVING nr > ?
-                ORDER BY nr DESC";
+                ORDER BY COUNT(*) DESC";
         $params = array($tag->id, $tag->id, $min_correlation);
 
         $correlated = array();
