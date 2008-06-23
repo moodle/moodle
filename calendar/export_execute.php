@@ -36,7 +36,9 @@ if(!empty($what) && !empty($time)) {
             $groups = array();
             foreach ($courses as $course) {
                 $course_groups = groups_get_all_groups($course->id, $user->id);
-                $groups = $groups + array_keys($course_groups);
+                if ($course_groups) {
+                    $groups = $groups + array_keys($course_groups);
+                }
             }
             $courses[SITEID] = new stdClass;
             $courses[SITEID]->shortname = get_string('globalevents', 'calendar');
