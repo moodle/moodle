@@ -40,6 +40,9 @@ if(!empty($what) && !empty($time)) {
                     $groups = $groups + array_keys($course_groups);
                 }
             }
+            if (empty($groups)) {
+                $groups = false;
+            }
             $courses[SITEID] = new stdClass;
             $courses[SITEID]->shortname = get_string('globalevents', 'calendar');
         } else {
