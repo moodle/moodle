@@ -71,6 +71,42 @@
             echo "<ul>";
         }
 
+        // Recode links in the course summary.
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '<li>' . get_string('from') . ' ' . get_string('course');
+        }
+        $course = get_record('course', 'id', $restore->course_id, '', '', '', '', 'id,summary');
+        $coursesummary = restore_decode_content_links_worker($course->summary, $restore);
+        if ($coursesummary != $course->summary) {
+            $course->summary = addslashes($coursesummary);
+            if (!update_record('course', $course)) {
+                $status = false;
+            }
+        }
+        if (!defined('RESTORE_SILENTLY')) {
+            echo '</li>';
+        }
+
+        // Recode links in section summaries.
+        $sections = get_records('course_sections', 'course', $restore->course_id, 'id', 'id,summary');
+        if ($sections) {
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '<li>' . get_string('from') . ' ' . get_string('sections');
+            }
+            foreach ($sections as $section) {
+                $sectionsummary = restore_decode_content_links_worker($section->summary, $restore);
+                if ($sectionsummary != $section->summary) {
+                    $section->summary = addslashes($sectionsummary);
+                    if (!update_record('course_sections', $section)) {
+                        $status = false;
+                    }
+                }
+            }
+            if (!defined('RESTORE_SILENTLY')) {
+                echo '</li>';
+            }
+        }
+
         // Restore links in modules.
         foreach ($restore->mods as $name => $info) {
             //If the module is being restored
