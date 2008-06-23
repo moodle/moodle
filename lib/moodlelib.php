@@ -270,11 +270,6 @@ define ('PASSWORD_UPPER', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 define ('PASSWORD_DIGITS', '0123456789');
 define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
 
-if (!defined('SORT_LOCALE_STRING')) { // PHP < 4.4.0 - TODO: remove in 2.0
-    define('SORT_LOCALE_STRING', SORT_STRING);
-}
-
-
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**
@@ -2064,7 +2059,6 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
  * @uses $USER
  */
 function require_logout() {
-
     global $USER, $CFG, $SESSION;
 
     if (isloggedin()) {
@@ -2077,21 +2071,7 @@ function require_logout() {
         }
     }
 
-    // Initialize variable to pass-by-reference to headers_sent(&$file, &$line)
-    $file = $line = null;
-    if (headers_sent($file, $line)) {
-        error_log('MoodleSessionTest cookie could not be set in moodlelib.php:'.__LINE__);
-        error_log('Headers were already sent in file: '.$file.' on line '.$line);
-    } else {
-        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-    }
-
-    unset($_SESSION['USER']);
-    unset($_SESSION['SESSION']);
-
-    unset($SESSION);
-    unset($USER);
-
+    $SESSION->terminate();
 }
 
 /**
@@ -2135,9 +2115,9 @@ function require_course_login($courseorid, $autologinguest=true, $cm=null, $setw
  * @param int $instance optional instance id
  */
 function require_user_key_login($script, $instance=null) {
-    global $nomoodlecookie, $USER, $SESSION, $CFG, $DB;
+    global $USER, $SESSION, $CFG, $DB;
 
-    if (empty($nomoodlecookie)) {
+    if (!NO_MOODLE_COOKIES) {
         print_error('sessioncookiesdisable');
     }
 
@@ -2166,7 +2146,6 @@ function require_user_key_login($script, $instance=null) {
     }
 
 /// emulate normal session
-    $SESSION = new object();
     $USER    = $user;
 
 /// note we are not using normal login
@@ -2608,50 +2587,6 @@ function fullname($user, $override=false) {
     }
 
     return get_string('fullnamedisplay', '', $user);
-}
-
-/**
- * Sets a moodle cookie with an encrypted string
- *
- * @uses $CFG
- * @uses DAYSECS
- * @uses HOURSECS
- * @param string $thing The string to encrypt and place in a cookie
- */
-function set_moodle_cookie($thing) {
-    global $CFG;
-
-    if ($thing == 'guest') {  // Ignore guest account
-        return;
-    }
-
-    $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
-
-    $days = 60;
-    $seconds = DAYSECS*$days;
-
-    // no need to set secure or http cookie only here - it is not secret
-    setCookie($cookiename, '', time() - HOURSECS, $CFG->sessioncookiepath);
-    setCookie($cookiename, rc4encrypt($thing), time()+$seconds, $CFG->sessioncookiepath);
-}
-
-/**
- * Gets a moodle cookie with an encrypted string
- *
- * @uses $CFG
- * @return string
- */
-function get_moodle_cookie() {
-    global $CFG;
-
-    $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
-
-    if (empty($_COOKIE[$cookiename])) {
-        return '';
-    } else {
-        $thing = rc4decrypt($_COOKIE[$cookiename]);
-        return ($thing == 'guest') ? '': $thing;  // Ignore guest account
-    }
 }
 
 /**
@@ -3122,7 +3057,7 @@ function authenticate_user_login($username, $password) {
  * @return user|flase A {@link $USER} object or false if error
  */
 function complete_user_login($user) {
-    global $CFG, $USER;
+    global $CFG, $USER, $SESSION;
 
     $USER = $user; // this is required because we need to access preferences here!
 
@@ -3130,12 +3065,12 @@ function complete_user_login($user) {
 
     update_user_login_times();
     if (empty($CFG->nolastloggedin)) {
-        set_moodle_cookie($USER->username);
+        $SESSION->set_moodle_cookie($USER->username);
     } else {
         // do not store last logged in user in cookie
         // auth plugins can temporarily override this from loginpage_hook()
         // do not save $CFG->nolastloggedin in database!
-        set_moodle_cookie('nobody');
+        $SESSION->set_moodle_cookie('nobody');
     }
     set_login_session_preferences();
 
@@ -7731,30 +7666,6 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
     }
     return $status;
 }
-
-function report_session_error() {
-    global $CFG, $FULLME;
-
-    if (empty($CFG->lang)) {
-        $CFG->lang = "en";
-    }
-    // Set up default theme and locale
-    theme_setup();
-    moodle_setlocale();
-
-    //clear session cookies
-    setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-
-    //increment database error counters
-    if (isset($CFG->session_error_counter)) {
-        set_config('session_error_counter', 1 + $CFG->session_error_counter);
-    } else {
-        set_config('session_error_counter', 1);
-    }
-    redirect($FULLME, get_string('sessionerroruser2', 'error'), 5);
-}
-
 
 /**
  * Detect if an object or a class contains a given property
