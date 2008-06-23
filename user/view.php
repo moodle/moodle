@@ -528,4 +528,3 @@ function print_row($left, $right) {
 }
 
 ?>
-
