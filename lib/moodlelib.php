@@ -287,14 +287,6 @@ define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
  * @return mixed
  */
 function required_param($parname, $type=PARAM_CLEAN) {
-
-    // detect_unchecked_vars addition
-    global $CFG;
-    if (!empty($CFG->detect_unchecked_vars)) {
-        global $UNCHECKED_VARS;
-        unset ($UNCHECKED_VARS->vars[$parname]);
-    }
-
     if (isset($_POST[$parname])) {       // POST has precedence
         $param = $_POST[$parname];
     } else if (isset($_GET[$parname])) {
@@ -321,14 +313,6 @@ function required_param($parname, $type=PARAM_CLEAN) {
  * @return mixed
  */
 function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
-
-    // detect_unchecked_vars addition
-    global $CFG;
-    if (!empty($CFG->detect_unchecked_vars)) {
-        global $UNCHECKED_VARS;
-        unset ($UNCHECKED_VARS->vars[$parname]);
-    }
-
     if (isset($_POST[$parname])) {       // POST has precedence
         $param = $_POST[$parname];
     } else if (isset($_GET[$parname])) {
