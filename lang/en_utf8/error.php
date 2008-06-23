@@ -57,6 +57,7 @@ $string['nonmeaningfulcontent'] = 'Non meaningful content';
 $string['noparticipatorycms'] = 'Sorry, but you have no participatory course modules to report on.';
 $string['nopermissions'] = 'Sorry, but you do not currently have permissions to do that ($a)';
 $string['notavailable'] = 'That is not currently available';
+$string['nostatstodisplay'] = 'There is no available data to display, sorry.';
 $string['onlyadmins'] = 'Only administrators can do that.';
 $string['onlyeditingteachers'] = 'Only editing teachers can do that.';
 $string['onlyeditown'] = 'You can only edit your own information';
