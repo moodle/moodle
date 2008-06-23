@@ -32,7 +32,7 @@
  * @licence http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  * @subpackage tag
- * @see http://www.php.net/manual/en/function.urlencode.php
+ * @see http://www.php.net/manual/en/function.rawurlencode.php
  */
 
 define('TAG_RETURN_ARRAY', 0);
@@ -766,7 +766,7 @@ function tag_compute_correlations($min_correlation=2) {
             "WHERE ta.tagid = {$tag->id} AND tb.tagid != {$tag->id} ".
             "GROUP BY tb.tagid ".
             "HAVING nr > $min_correlation ".
-            "ORDER BY nr DESC";  
+            "ORDER BY COUNT(*) DESC";  
 
         $correlated = array();
 
