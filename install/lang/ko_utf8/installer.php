@@ -41,7 +41,7 @@ $string['check'] = '점검';
 $string['checkingphpsettings'] = '/n/n PHP설정 점검 /n/n';
 $string['chooselanguage'] = '언어를 선택하시오';
 $string['chooselanguagehead'] = '언어를 선택하시오';
-$string['chooselanguagesub'] = '설치를 위한 언어를 선택하시오. 설치를 마치고 난 후에도 사이트와 사용자들을 위한 언어팩을 가져와서 다시 바꿀 수 있습니다.';
+$string['chooselanguagesub'] = '설치할 때 쓸 언어를 선택하십시오. 이 후 화면에서는 사이트와 사용자들을 위한 여타의 언어팩들을 선택할 수 있습니다.';
 $string['closewindow'] = '창 닫기';
 $string['compatibilitysettings'] = 'PHP 설정을 검사하는 중 ..';
 $string['compatibilitysettingshead'] = 'PHP 설정을 검사하는 중 ..';
@@ -138,6 +138,12 @@ $string['databasesettingssub_postgres7'] = '<b>종류:</b>  PostgreSQL<br />
 <b>사용자:</b> 데이터베이스 사용자명<br />
 <b>암호:</b> 데이터베이스 암호<br />
 <b>테이블 접두어:</b> 모든 테이블에 사용할 접두어 (필수)';
+$string['databasesettingssub_sqlite3_pdo'] = '<b>종류:</b>  SQLite 3 (PDO) <b><strong class=\"errormsg\">시험적임! (실제 상용으로는 사용하지 말 것)</strong></b><br />
+<b>호스트:</b>데이터 베이스 파일이 저장될 경로(전체 경로명을 사용할 것); 무들의 데이터 디렉토리를 사용하려면 localhost 를 적거나 공백으로 둘 것<br />
+<b>이름:</b> 데이터베이스 이름, 예:moodle (선택사항)<br />
+<b>사용자:</b> 데이터베이스 사용자명 (선택사항)<br />
+<b>암호:</b> 데이터베이스 암호 (선택사항)<br />
+<b>테이블 접두어:</b> 모든 테이블에 사용할 접두어<br />데이터베이스 파일의 명칭은 앞에서 입력한 사용자명, 데이터베이스명 및 암호에 의해 결정될 것임.';
 $string['databasesettingswillbecreated'] = '<b>노트:</b>만일 데이터베이스가 존재하지 않으면 인스톨러가 데이터베이스를 자동으로 생성할 것입니다.';
 $string['databasetype'] = '데이터베이스 유형 :';
 $string['databaseuser'] = '데이터베이스 사용자명 :';
@@ -333,6 +339,8 @@ $string['sitenewsitems'] = '새소식 항목 :';
 $string['siteshortname'] = '사이트 단축명 :';
 $string['sitesummary'] = '사이트 개요 :';
 $string['skipdbencodingtest'] = 'DB 엔코딩 테스트 생략';
+$string['sqlite3_pdo'] = 'SQLite 3 (PDO) <b><strong class=\"errormsg\">시험적임! (실제 상용으로는 사용하지 말 것)</strong></b>';
+$string['sqliteextensionisnotpresentinphp'] = 'PHP가 SQLite 확장에 걸맞게 설정되지 않았습니다. php.ini 파일을 점검해 보거나 PHP를 다시 컴파일 하시기 바랍니다.';
 $string['status'] = '상태';
 $string['tableprefix'] = '테이블 접두어 :';
 $string['thischarset'] = 'UTF-8';
