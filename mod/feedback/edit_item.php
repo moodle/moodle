@@ -224,9 +224,14 @@
     // print_box_end();
   
     if ($typ!='label') {
-        echo '<script language="javascript">';
-        echo 'document.getElementById("itemname").focus()';
-        echo '</script>';
+        echo <<<EOD
+        <script language="javascript">
+        var item = document.getElementById("id_itemname");
+        if(item){
+            item.focus();
+        }
+        </script>
+EOD;
     } 
 
     /// Finish the page
