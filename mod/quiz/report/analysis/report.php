@@ -316,7 +316,7 @@ class quiz_report extends quiz_default_report {
             $q = $questions[$qnum];
             $qid = $q['id'];
             $question = get_record('question', 'id', $qid);
-            if (question_has_capability_on($question, 'edit') || question_has_capability_on($question, 'view')) {
+            if (has_capability('moodle/question:manage', get_context_instance(CONTEXT_COURSE, $course->id))) {
                 $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid,'&amp;cmid='.$cm->id.'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
             } else {
                 $qnumber = $qid;
