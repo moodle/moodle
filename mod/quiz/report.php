@@ -59,8 +59,6 @@
 
 /// Open the selected quiz report and display it
 
-    $mode = clean_param($mode, PARAM_SAFEDIR);
-
     if (! is_readable("report/$mode/report.php")) {
         print_error('reportnotfound', 'quiz', '', $mode);
     }
@@ -68,7 +66,8 @@
     include("report/default.php");  // Parent class
     include("report/$mode/report.php");
 
-    $report = new quiz_report();
+    $reportclassname = "quiz_{$mode}_report";
+    $report = new $reportclassname();
 
     if (! $report->display($quiz, $cm, $course)) {             // Run the report!
         print_error("preprocesserror", 'quiz');

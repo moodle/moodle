@@ -3,7 +3,7 @@
     require_once($CFG->libdir.'/tablelib.php');
 
 /// Item analysis displays a table of quiz questions and their performance
-class quiz_report extends quiz_default_report {
+class quiz_analysis_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
         global $CFG, $SESSION, $QTYPES, $DB;

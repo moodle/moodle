@@ -11,7 +11,7 @@
 require_once($CFG->dirroot.'/mod/quiz/report/statistics/statistics_form.php');
 require_once($CFG->dirroot.'/mod/quiz/report/statistics/statistics_table.php');
 
-class quiz_report extends quiz_default_report {
+class quiz_statistics_report extends quiz_default_report {
 
     /**
      * Display the report.

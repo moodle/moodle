@@ -12,7 +12,7 @@ require_once($CFG->libdir.'/tablelib.php');
 require_once($CFG->dirroot.'/mod/quiz/report/overview/overviewsettings_form.php');
 require_once($CFG->dirroot.'/mod/quiz/report/overview/overview_table.php');
 
-class quiz_report extends quiz_default_report {
+class quiz_overview_report extends quiz_default_report {
 
     /**
      * Display the report.

@@ -23,7 +23,7 @@ require_once($CFG->libdir . '/tablelib.php');
  * @package quiz
  * @subpackage reports
  */
-class quiz_report extends quiz_default_report {
+class quiz_grading_report extends quiz_default_report {
     /**
      * Displays the report.
      */
