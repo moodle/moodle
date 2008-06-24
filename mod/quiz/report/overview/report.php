@@ -141,154 +141,160 @@ class quiz_overview_report extends quiz_default_report {
                 echo '<div class="quizattemptcounts">' . $strattemptnum . '</div>';
             }
         }
+        $nostudents = false;
+        if (!$students){
+            notify(get_string('nostudentsyet'));
+            $nostudents = true;
+        }else if ($currentgroup && !$groupstudents){
+            notify(get_string('nostudentsingroup'));
+            $nostudents = true;
+        }
         if (!$table->is_downloading()) {
             // Print display options
             $mform->set_data($displayoptions +compact('detailedmarks', 'pagesize'));
             $mform->display();
         }
-        if (!$students){
-            notify(get_string('nostudentsyet'));
-            return true;
-        }
-        // Print information on the grading method and whether we are displaying
-        //
-        if (!$table->is_downloading()) { //do not print notices when downloading
-            if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)) {
-                echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
+
+        if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)){
+            // Print information on the grading method and whether we are displaying
+            //
+            if (!$table->is_downloading()) { //do not print notices when downloading
+                if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)) {
+                    echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
+                }
             }
-        }
-
-
-        $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
-        $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
-
-
-        // Construct the SQL
-        $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS uniqueid, '.
-            ($qmsubselect?$qmsubselect.' AS gradedattempt, ':'').
-            'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, '.
-            'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
-
-        // This part is the same for all cases - join users and quiz_attempts tables
-        $from = '{user} u ';
-        $from .= 'LEFT JOIN {quiz_attempts} qa ON qa.userid = u.id AND qa.quiz = :quizid';
-        $params = array('quizid' => $quiz->id);
-
-        if ($qmsubselect && $qmfilter){
-            $from .= ' AND '.$qmsubselect;
-        }
-         switch ($attemptsmode){
-             case QUIZ_REPORT_ATTEMPTS_ALL:
-                 // Show all attempts, including students who are no longer in the course
-                $where = 'qa.id IS NOT NULL AND qa.preview = 0';
-                 break;
-             case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
-                 // Show only students with attempts
-                 list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
-                 $params += $allowed_params;
-                $where = "u.id $allowed_usql AND qa.preview = 0 AND qa.id IS NOT NULL";
-                 break;
-             case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
-                 // Show only students without attempts
-                 list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
-                 $params += $allowed_params;
-                $where = "u.id $allowed_usql AND qa.id IS NULL";
-                 break;
-             case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
-                 // Show all students with or without attempts
-                 list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
-                 $params += $allowed_params;
-                $where = "u.id $allowed_usql AND (qa.preview = 0 OR qa.preview IS NULL)";
-                 break;
-         }
-
-        $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
-
-
-        
-        $table->set_sql($fields, $from, $where, $params);
-        
-        // Define table columns
-        $columns = array();
-        $headers = array();
-
-
-        if (!$table->is_downloading() && $candelete) {
-            $columns[]= 'checkbox';
-            $headers[]= NULL;
-        }
-
-        if (!$table->is_downloading() && $CFG->grade_report_showuserimage) {
-            $columns[]= 'picture';
-            $headers[]= '';
-        }
-        if (!$table->is_downloading()){
-            $columns[]= 'fullname';
-            $headers[]= get_string('name');
-         } else {
-            $columns[]= 'lastname';
-            $headers[]= get_string('lastname');
-            $columns[]= 'firstname';
-            $headers[]= get_string('firstname');
-         }
-
-        if ($CFG->grade_report_showuseridnumber) {
-            $columns[]= 'idnumber';
-            $headers[]= get_string('idnumber');
-        }
-
-        $columns[]= 'timestart';
-        $headers[]= get_string('startedon', 'quiz');
-
-        $columns[]= 'timefinish';
-        $headers[]= get_string('timecompleted','quiz');
-
-        $columns[]= 'duration';
-        $headers[]= get_string('attemptduration', 'quiz');
-
-        if ($detailedmarks) {
-            foreach ($questions as $id => $question) {
-                // Ignore questions of zero length
-                $columns[] = 'qsgrade'.$id;
-                $headers[] = '#'.$question->number;
+    
+    
+            $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
+            $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
+    
+    
+            // Construct the SQL
+            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS uniqueid, '.
+                ($qmsubselect?$qmsubselect.' AS gradedattempt, ':'').
+                'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, '.
+                'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
+    
+            // This part is the same for all cases - join users and quiz_attempts tables
+            $from = '{user} u ';
+            $from .= 'LEFT JOIN {quiz_attempts} qa ON qa.userid = u.id AND qa.quiz = :quizid';
+            $params = array('quizid' => $quiz->id);
+    
+            if ($qmsubselect && $qmfilter){
+                $from .= ' AND '.$qmsubselect;
+            }
+             switch ($attemptsmode){
+                 case QUIZ_REPORT_ATTEMPTS_ALL:
+                     // Show all attempts, including students who are no longer in the course
+                    $where = 'qa.id IS NOT NULL AND qa.preview = 0';
+                     break;
+                 case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
+                     // Show only students with attempts
+                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
+                     $params += $allowed_params;
+                    $where = "u.id $allowed_usql AND qa.preview = 0 AND qa.id IS NOT NULL";
+                     break;
+                 case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
+                     // Show only students without attempts
+                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
+                     $params += $allowed_params;
+                    $where = "u.id $allowed_usql AND qa.id IS NULL";
+                     break;
+                 case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
+                     // Show all students with or without attempts
+                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
+                     $params += $allowed_params;
+                    $where = "u.id $allowed_usql AND (qa.preview = 0 OR qa.preview IS NULL)";
+                     break;
              }
+    
+            $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
+    
+    
+            
+            $table->set_sql($fields, $from, $where, $params);
+            
+            // Define table columns
+            $columns = array();
+            $headers = array();
+    
+    
+            if (!$table->is_downloading() && $candelete) {
+                $columns[]= 'checkbox';
+                $headers[]= NULL;
+            }
+    
+            if (!$table->is_downloading() && $CFG->grade_report_showuserimage) {
+                $columns[]= 'picture';
+                $headers[]= '';
+            }
+            if (!$table->is_downloading()){
+                $columns[]= 'fullname';
+                $headers[]= get_string('name');
+             } else {
+                $columns[]= 'lastname';
+                $headers[]= get_string('lastname');
+                $columns[]= 'firstname';
+                $headers[]= get_string('firstname');
+             }
+    
+            if ($CFG->grade_report_showuseridnumber) {
+                $columns[]= 'idnumber';
+                $headers[]= get_string('idnumber');
+            }
+    
+            $columns[]= 'timestart';
+            $headers[]= get_string('startedon', 'quiz');
+    
+            $columns[]= 'timefinish';
+            $headers[]= get_string('timecompleted','quiz');
+    
+            $columns[]= 'duration';
+            $headers[]= get_string('attemptduration', 'quiz');
+    
+            if ($detailedmarks) {
+                foreach ($questions as $id => $question) {
+                    // Ignore questions of zero length
+                    $columns[] = 'qsgrade'.$id;
+                    $headers[] = '#'.$question->number;
+                 }
+            }
+    
+            if ($showgrades) {
+                $columns[] = 'sumgrades';
+                $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
+             }
+    
+            if ($hasfeedback) {
+                $columns[] = 'feedbacktext';
+                $headers[] = get_string('feedback', 'quiz');
+             }
+    
+            $table->define_columns($columns);
+            $table->define_headers($headers);
+            $table->sortable(true, 'uniqueid');
+    
+            // Set up the table
+            $table->define_baseurl($reporturl->out(false, $displayoptions));
+    
+            $table->collapsible(true);
+    
+            $table->column_suppress('picture');
+            $table->column_suppress('fullname');
+            $table->column_suppress('idnumber');
+    
+            $table->no_sorting('feedbacktext');
+    
+            $table->column_class('picture', 'picture');
+            $table->column_class('lastname', 'bold');
+            $table->column_class('firstname', 'bold');
+            $table->column_class('fullname', 'bold');
+            $table->column_class('sumgrades', 'bold');
+    
+            $table->set_attribute('id', 'attempts');
+    
+            $table->out($pagesize, true);
         }
-
-        if ($showgrades) {
-            $columns[] = 'sumgrades';
-            $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
-         }
-
-        if ($hasfeedback) {
-            $columns[] = 'feedbacktext';
-            $headers[] = get_string('feedback', 'quiz');
-         }
-
-        $table->define_columns($columns);
-        $table->define_headers($headers);
-        $table->sortable(true, 'uniqueid');
-
-        // Set up the table
-        $table->define_baseurl($reporturl->out(false, $displayoptions));
-
-        $table->collapsible(true);
-
-        $table->column_suppress('picture');
-        $table->column_suppress('fullname');
-        $table->column_suppress('idnumber');
-
-        $table->no_sorting('feedbacktext');
-
-        $table->column_class('picture', 'picture');
-        $table->column_class('lastname', 'bold');
-        $table->column_class('firstname', 'bold');
-        $table->column_class('fullname', 'bold');
-        $table->column_class('sumgrades', 'bold');
-
-        $table->set_attribute('id', 'attempts');
-
-        $table->out($pagesize, true);
-
         if (!$table->is_downloading()) {
             //should be quicker than a COUNT to test if there is at least one record :
             if ($DB->get_records('quiz_grades', array('quiz'=> $quiz->id), '', '*', 0, 1)){
