@@ -76,7 +76,7 @@ class quiz_report extends quiz_default_report {
             $pagesize = $fromform->pagesize;
         } else {
             $qmfilter = optional_param('qmfilter', 0, PARAM_INT);
-            $attemptsmode = optional_param('attemptsmode', QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH, PARAM_INT);
+            $attemptsmode = optional_param('attemptsmode', QUIZ_REPORT_ATTEMPTS_ALL, PARAM_INT);
             $detailedmarks = get_user_preferences('quiz_report_overview_detailedmarks', 1);
             $pagesize = get_user_preferences('quiz_report_pagesize', 0);
         }
