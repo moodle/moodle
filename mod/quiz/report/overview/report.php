@@ -55,7 +55,10 @@ class quiz_overview_report extends quiz_default_report {
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
         $qmsubselect = quiz_report_qm_filter_subselect($quiz); // careful: these are named params in $params!!
 
-        $mform = new mod_quiz_report_overview_settings($reporturl, array('qmsubselect'=> $qmsubselect, 'quiz'=>$quiz));
+        /// find out current groups mode
+        $currentgroup = groups_get_activity_group($cm, true);
+
+        $mform = new mod_quiz_report_overview_settings($reporturl, array('qmsubselect'=> $qmsubselect, 'quiz'=>$quiz, 'currentgroup'=>$currentgroup));
         if ($fromform = $mform->get_data()){
             $attemptsmode = $fromform->attemptsmode;
             if ($qmsubselect){
@@ -72,7 +75,19 @@ class quiz_overview_report extends quiz_default_report {
             $pagesize = $fromform->pagesize;
         } else {
             $qmfilter = optional_param('qmfilter', 0, PARAM_INT);
-            $attemptsmode = optional_param('attemptsmode', QUIZ_REPORT_ATTEMPTS_ALL, PARAM_INT);
+            $attemptsmode = optional_param('attemptsmode', null, PARAM_INT);
+            if ($attemptsmode === null){
+                //default
+                $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
+            } else if ($currentgroup){
+                //default for when a group is selected
+                if ($attemptsmode === null  || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL){
+                    $attemptsmode = QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH;
+                }
+            } else if (!$currentgroup && $course->id == SITEID) {
+                //force report on front page to show all, unless a group is selected.
+                $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
+            }
             $detailedmarks = get_user_preferences('quiz_report_overview_detailedmarks', 1);
             $pagesize = get_user_preferences('quiz_report_pagesize', 0);
         }
@@ -91,9 +106,6 @@ class quiz_overview_report extends quiz_default_report {
         $displayoptions = array();
         $displayoptions['attemptsmode'] = $attemptsmode;
         $displayoptions['qmfilter'] = $qmfilter;
-
-        /// find out current groups mode
-        $currentgroup = groups_get_activity_group($cm, true);
 
         //work out the sql for this table.
         if (!$students = get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)){
