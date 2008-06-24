@@ -8,7 +8,7 @@ define("LABEL_MAX_NAME_LENGTH", 50);
 function get_label_name($label) {
     $textlib = textlib_get_instance();
 
-    $name = addslashes(strip_tags(format_string(stripslashes($label->content),true)));
+    $name = strip_tags(format_string($label->content,true));
     if ($textlib->strlen($label->name) > LABEL_MAX_NAME_LENGTH) {
         $label->name = $textlib->substr($label->name, 0, LABEL_MAX_NAME_LENGTH)."...";
     }
