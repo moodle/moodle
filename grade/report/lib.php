@@ -48,6 +48,8 @@ class grade_report {
     var $course;
 
     /** Grade plugin return tracking object.
+     * @var object $gpr
+     */
     var $gpr;
 
     /**
