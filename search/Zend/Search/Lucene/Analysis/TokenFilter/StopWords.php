@@ -15,14 +15,14 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Analysis_TokenFilter */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/TokenFilter.php';
-require_once $CFG->dirroot.'/search/Zend/Search/Exception.php';
+require_once 'Zend/Search/Lucene/Analysis/TokenFilter.php';
+require_once 'Zend/Search/Exception.php';
 
 
 /**
@@ -34,14 +34,14 @@ require_once $CFG->dirroot.'/search/Zend/Search/Exception.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 class Zend_Search_Lucene_Analysis_TokenFilter_StopWords extends Zend_Search_Lucene_Analysis_TokenFilter
 {
     /**
-     * Minimum allowed term length
+     * Stop Words
      * @var array
      */
     private $_stopSet;
@@ -63,7 +63,6 @@ class Zend_Search_Lucene_Analysis_TokenFilter_StopWords extends Zend_Search_Luce
      */
     public function normalize(Zend_Search_Lucene_Analysis_Token $srcToken) {
         if (array_key_exists($srcToken->getTermText(), $this->_stopSet)) {
-            $t = $srcToken->getTermText();
             return null;
         } else {
             return $srcToken;

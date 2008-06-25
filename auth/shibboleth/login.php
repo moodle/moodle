@@ -38,8 +38,8 @@ httpsrequired();
     $loginurl = (!empty($CFG->alternateloginurl)) ? $CFG->alternateloginurl : '';
 
 
-    if (get_moodle_cookie() == '') {   
-        set_moodle_cookie('nobody');   // To help search for cookies
+    if ($SESSION->get_moodle_cookie() == '') {   
+        $SESSION->set_moodle_cookie('nobody');   // To help search for cookies
     }
 
     if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_instructions)) {

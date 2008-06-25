@@ -44,7 +44,7 @@ global $CFG;
  * @global object(session) $SESSION
  */
 global $SESSION;
-/** 
+/**
  * Definition of shared memory cache
  */
 global $MCACHE;
@@ -70,8 +70,8 @@ global $DB;
 global $THEME;
 
 /**
- * HTTPSPAGEREQUIRED is a global to define if the page being displayed must run under HTTPS. 
- * 
+ * HTTPSPAGEREQUIRED is a global to define if the page being displayed must run under HTTPS.
+ *
  * It's primary goal is to allow 100% HTTPS pages when $CFG->loginhttps is enabled. Default to false.
  * It's enabled only by the httpsrequired() function and used in some pages to update some URLs
 */
@@ -100,9 +100,9 @@ global $HTTPSPAGEREQUIRED;
 
     require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 
-/// Time to start counting    
-    init_performance_info();        
-    
+/// Time to start counting
+    init_performance_info();
+
 
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
@@ -110,7 +110,7 @@ global $HTTPSPAGEREQUIRED;
 /// Just say no to link prefetching (Moz prefetching, Google Web Accelerator, others)
 /// http://www.google.com/webmasters/faq.html#prefetchblock
     if (!empty($_SERVER['HTTP_X_moz']) && $_SERVER['HTTP_X_moz'] === 'prefetch'){
-        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Prefetch Forbidden');        
+        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Prefetch Forbidden');
         trigger_error('Prefetch request forbidden.');
         exit;
     }
@@ -133,6 +133,7 @@ global $HTTPSPAGEREQUIRED;
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
     require_once($CFG->libdir .'/eventslib.php');       // Events functions
     require_once($CFG->libdir .'/grouplib.php');        // Groups functions
+    require_once($CFG->libdir .'/sessionlib.php');      // All session and cookie related stuff
 
     //point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
     //the problem is that we need specific version of quickforms and hacked excel files :-(
@@ -207,7 +208,7 @@ global $HTTPSPAGEREQUIRED;
         $CFG->debug = $originaldatabasedebug;
     }
     if ($originalconfigdebug !== -1) {
-        $CFG->debug = $originalconfigdebug; 
+        $CFG->debug = $originalconfigdebug;
     }
     unset($originalconfigdebug);
     unset($originaldatabasedebug);
@@ -265,7 +266,7 @@ global $HTTPSPAGEREQUIRED;
             if (!init_eaccelerator()) {
                 debugging("Error initialising eaccelerator cache");
                 $CFG->cachetype = '';
-                $CFG->rcache = false;                
+                $CFG->rcache = false;
             }
         }
 
@@ -309,69 +310,13 @@ global $HTTPSPAGEREQUIRED;
         make_upload_directory('cache');
     }
 
-/// Set up smarty template system
-    //require_once($CFG->libdir .'/smarty/Smarty.class.php');
-    //$smarty = new Smarty;
-    //$smarty->template_dir = $CFG->dirroot .'/templates/'. $CFG->template;
-    //if (!file_exists($CFG->dataroot .'/cache/smarty')) {
-    //    make_upload_directory('cache/smarty');
-    //}
-    //$smarty->compile_dir = $CFG->dataroot .'/cache/smarty';
-
-/// Set up session handling
-    if(empty($CFG->respectsessionsettings)) {
-        if (empty($CFG->dbsessions)) {   /// File-based sessions
-
-            // Some distros disable GC by setting probability to 0
-            // overriding the PHP default of 1
-            // (gc_probability is divided by gc_divisor, which defaults to 1000)
-            if (ini_get('session.gc_probability') == 0) {
-                ini_set('session.gc_probability', 1);
-            }
-
-            if (!empty($CFG->sessiontimeout)) {
-                ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
-            }
-
-            if (!file_exists($CFG->dataroot .'/sessions')) {
-                make_upload_directory('sessions');
-            }
-            ini_set('session.save_path', $CFG->dataroot .'/sessions');
-
-        } else {                         /// Database sessions
-            ini_set('session.save_handler', 'user');
-
-            $ADODB_SESSION_DRIVER  = $CFG->dbtype;
-            $ADODB_SESSION_CONNECT = $CFG->dbhost;
-            $ADODB_SESSION_USER    = $CFG->dbuser;
-            $ADODB_SESSION_PWD     = $CFG->dbpass;
-            $ADODB_SESSION_DB      = $CFG->dbname;
-            $ADODB_SESSION_TBL     = $CFG->prefix.'sessions2';
-            if (!empty($CFG->sessiontimeout)) {
-                $ADODB_SESS_LIFE   = $CFG->sessiontimeout;
-            }
-
-            require_once($CFG->libdir. '/adodb/session/adodb-session2.php');
-        }
-    }
-/// Set sessioncookie and sessioncookiepath variable if it isn't already
-    if (!isset($CFG->sessioncookie)) {
-        $CFG->sessioncookie = '';
-    }
-    if (!isset($CFG->sessioncookiepath)) {
-        $CFG->sessioncookiepath = '/';
-    }
-
 /// Configure ampersands in URLs
-
     @ini_set('arg_separator.output', '&amp;');
 
 /// Work around for a PHP bug   see MDL-11237
-  
-    @ini_set('pcre.backtrack_limit', 20971520);  // 20 MB 
+    @ini_set('pcre.backtrack_limit', 20971520);  // 20 MB
 
 /// Location of standard files
-
     $CFG->wordlist    = $CFG->libdir .'/wordlist.txt';
     $CFG->javascript  = $CFG->libdir .'/javascript.php';
     $CFG->moddata     = 'moddata';
@@ -415,60 +360,13 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 
-/// Load up global environment variables
+/// start session and prepare global $SESSION
+    $SESSION = new moodle_session();
 
-    if (!isset($CFG->cookiesecure) or strpos($CFG->wwwroot, 'https://') !== 0) {
-        $CFG->cookiesecure = false;
-    }
-
-    if (!isset($CFG->cookiehttponly)) {
-        $CFG->cookiehttponly = false;
-    }
-
-    //discard session ID from POST, GET and globals to tighten security,
-    //this session fixation prevention can not be used in cookieless mode
-    if (empty($CFG->usesid) && !defined('MOODLE_SANE_INPUT')) {
-        unset(${'MoodleSession'.$CFG->sessioncookie});
-        unset($_GET['MoodleSession'.$CFG->sessioncookie]);
-        unset($_POST['MoodleSession'.$CFG->sessioncookie]);
-    }
-    //compatibility hack for Moodle Cron, cookies not deleted, but set to "deleted" - should not be needed with $nomoodlecookie in cron.php now 
-    if (!empty($_COOKIE['MoodleSession'.$CFG->sessioncookie]) && $_COOKIE['MoodleSession'.$CFG->sessioncookie] == "deleted") {
-        unset($_COOKIE['MoodleSession'.$CFG->sessioncookie]);
-    }
-    if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] == "deleted") {
-        unset($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]);
-    }
-    if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
-        require_once("$CFG->dirroot/lib/cookieless.php");
-        sid_start_ob();
-    }
-
-    if (empty($nomoodlecookie)) {
-        session_name('MoodleSession'.$CFG->sessioncookie);
-        session_set_cookie_params(0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-        @session_start();
-        if (! isset($_SESSION['SESSION'])) {
-            $_SESSION['SESSION'] = new object;
-            $_SESSION['SESSION']->session_test = random_string(10);
-            if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
-                $_SESSION['SESSION']->has_timed_out = true;
-            }
-            setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, $CFG->sessioncookiepath, '', $CFG->cookiesecure, $CFG->cookiehttponly);
-            $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;
-        }
-        if (! isset($_SESSION['USER']))    {
-            $_SESSION['USER']    = new object;
-        }
-
-        $SESSION = &$_SESSION['SESSION'];   // Makes them easier to reference
-        $USER    = &$_SESSION['USER'];
-        if (!isset($USER->id)) {
-            $USER->id = 0; // to enable proper function of $CFG->notloggedinroleid hack
-        }
-    }
-    else {
-        $SESSION  = NULL;
+/// set up global $USER
+    if (!NO_MOODLE_COOKIES) {
+        $USER = &$_SESSION['USER'];
+    } else {
         $USER     = new object();
         $USER->id = 0; // user not logged in when session disabled
         if (isset($CFG->mnet_localhost_id)) {
@@ -490,7 +388,7 @@ global $HTTPSPAGEREQUIRED;
         $CFG->themedir = $CFG->dirroot.'/theme';
         $CFG->themewww = $CFG->wwwroot.'/theme';
     }
-    $CFG->httpsthemewww = $CFG->themewww; 
+    $CFG->httpsthemewww = $CFG->themewww;
 
     if (isset($_GET['theme'])) {
         if ($CFG->allowthemechangeonurl || confirm_sesskey()) {
@@ -507,27 +405,17 @@ global $HTTPSPAGEREQUIRED;
     }
 
 /// now do a session test to prevent random user switching - observed on some PHP/Apache combinations,
-/// disable checks when working in cookieless mode
-    if (empty($CFG->usesid) || !empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
-        if ($SESSION != NULL) {
-            if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
-                report_session_error();
-            } else if (isset($SESSION->session_test) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] != $SESSION->session_test) {
-                report_session_error();
-            }
-        }
-    }
-
+    $SESSION->session_verify();
 
 /// Set language/locale of printed times.  If user has chosen a language that
 /// that is different from the site language, then use the locale specified
 /// in the language file.  Otherwise, if the admin hasn't specified a locale
 /// then use the one from the default language.  Otherwise (and this is the
 /// majority of cases), use the stored locale specified by admin.
-    if ($SESSION !== NULL && isset($_GET['lang']) && ($lang = clean_param($_GET['lang'], PARAM_SAFEDIR))) {
+    if (isset($_GET['lang']) && ($lang = clean_param($_GET['lang'], PARAM_SAFEDIR))) {
         if (file_exists($CFG->dataroot .'/lang/'. $lang) or file_exists($CFG->dirroot .'/lang/'. $lang)) {
             $SESSION->lang = $lang;
-        } else if (file_exists($CFG->dataroot.'/lang/'.$lang.'_utf8') or 
+        } else if (file_exists($CFG->dataroot.'/lang/'.$lang.'_utf8') or
                    file_exists($CFG->dirroot .'/lang/'.$lang.'_utf8')) {
             $SESSION->lang = $lang.'_utf8';
         }
@@ -544,12 +432,12 @@ global $HTTPSPAGEREQUIRED;
             $CFG->lang = $SESSION->lang;
         }
     }
-    
+
     // set default locale and themes - might be changed again later from require_login()
     course_setup();
 
     if (!empty($CFG->opentogoogle)) {
-        if (empty($USER->id)) {  // Ignore anyone logged in
+        if (!NO_MOODLE_COOKIES and empty($USER->id)) {  // Ignore anyone logged in, or scripts without cookies
             if (!empty($_SERVER['HTTP_USER_AGENT'])) {
                 if (strpos($_SERVER['HTTP_USER_AGENT'], 'Googlebot') !== false ) {
                     $USER = guest_user();
@@ -570,14 +458,14 @@ global $HTTPSPAGEREQUIRED;
                     $USER = guest_user();
                 }
             }
-            if (!empty($USER)) {
+            if (!empty($USER->id)) {
                 load_all_capabilities();
             }
         }
     }
 
     if ($CFG->theme == 'standard' or $CFG->theme == 'standardwhite') {    // Temporary measure to help with XHTML validation
-        if (isset($_SERVER['HTTP_USER_AGENT']) and empty($_SESSION['USER']->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
+        if (isset($_SERVER['HTTP_USER_AGENT']) and empty($USER->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
             if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
                 (strpos($_SERVER['HTTP_USER_AGENT'], 'Cynthia') !== false )) {
                 if ($USER = get_complete_user_data("username", "w3cvalidator")) {

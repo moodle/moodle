@@ -16,10 +16,10 @@
 /**
 * @param object $resource
 */
-function get_text_for_indexing_html(&$resource){
+function get_text_for_indexing_html(&$resource, $directfile = ''){
     
     // wraps to htm handler
     include_once 'physical_htm.php';
-    return get_text_for_indexing_htm($resource);
+    return get_text_for_indexing_htm($resource, $directfile);
 }
 ?>

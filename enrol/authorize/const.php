@@ -20,7 +20,7 @@ define('AN_METHOD_ECHECK', 'echeck');
  * CREDIT: Refunded.
  * VOID: Cancelled.
  * EXPIRE: Expired. Orders be expired unless be accepted within 30 days.
- * 
+ *
  * These are valid only for ECHECK:
  * UNDERREVIEW: Hold for review.
  * APPROVEDREVIEW: Approved review.
@@ -41,7 +41,7 @@ define('AN_STATUS_TEST',            0xff); // dummy status
 /**#@-*/
 
 /**#@+
- * Actions used in authorize_action() function.
+ * Actions used in AuthorizeNet::process() method.
  *
  * NONE: No action. Function always returns false.
  * AUTH_ONLY: Used to authorize only, don't capture.
@@ -75,7 +75,7 @@ define('AN_ACTION_VOID',                6);
 /**#@-*/
 
 /**#@+
- * Return codes for authorize_action() function.
+ * Return codes for AuthorizeNet::process() method.
  *
  * AN_RETURNZERO: No connection was made on authorize.net.
  * AN_APPROVED: The transaction was accepted.

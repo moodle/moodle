@@ -4,7 +4,7 @@
 // as we will be executing under the OS security
 // context of the user we are trying to login, rather than
 // of the webserver.
-$nomoodlecookie=true;
+define('NO_MOODLE_COOKIES', true);
 
 require_once(dirname(dirname(dirname(__FILE__)))."/config.php");
 

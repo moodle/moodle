@@ -2,59 +2,56 @@ Cette distribution partielle contient une refonte du moteur de
 recherche globale de Moodle.
 
 Le moteur de recherche est capable d'indexer et de rechercher 
-des informations dans un grand nombre de contenus stockÃ©s
-dans la plate-forme Ã  travers la manipulation des activitÃ©s et
+des informations dans un grand nombre de contenus stockés
+dans la plate-forme à travers la manipulation des activités et
 des blocs.
 
-Le moteur de recherche procÃ¨de Ã  une premiÃ¨re indexation des
+Le moteur de recherche procède à une première indexation des
 ressources disponibles par action de l'administrateur. Une fois
-cette indexation effectuÃ©e, le moteur maintient rÃ©guliÃ¨rement les
-indexes, en ajoutant les nouvelles entrÃ©es et en nettoyant les 
-entrÃ©es obsolÃ¨tes.
+cette indexation effectuée, le moteur maintient régulièrement les
+indexes, en ajoutant les nouvelles entrées et en nettoyant les 
+entrées obsolètes.
 
-La recherche permet d'obtenir des rÃ©fÃ©rences d'accÃ¨s au contexte
+La recherche permet d'obtenir des références d'accès au contexte
 qui diffuse cette information, au nom de l'utilisateur courant.
-Le filtrage des rÃ©sultats enlÃ¨ve de la liste des rÃ©ponses toute
-ressource que la situation de l'utilisateur empÃªcherait de voir
-s'il y accÃ©dait dans son contexte habituel.
+Le filtrage des résultats enlève de la liste des réponses toute
+ressource que la situation de l'utilisateur empêcherait de voir
+s'il y accédait dans son contexte habituel.
 
 Mise en oeuvre
 ##############
 
-Pour dÃ©ployer le moteur : 
+La distribution fait désormais partie du noyau de Moodle.
 
+Il sera probablement nécessaire d'ajouter un certain nombre de librairies additionnelles
+pour la conversion de documents physiques en vue de leur indexation. Ces librairies sont
+actuellement fournies dans le CVS dans la rubrique contrib/patches/global_search_libraries 
+(antiword et xpdf). La prise en charge des fichiers "shockwave" est assurée, sous réserve 
+de l'obtention des libairies de conversion auprès de Adobe (http://www.adobe.com/licensing/developer/)
 
-* Copie de fichiers
+1. Allez sur le bloc d'administration et réglez les paramètres du bloc Recherche Globale. 
+Ceci initialisera un certain nombre de fonctions dans le moteur.
 
-1. Ajouter les deux librairies fournies aux librairies de Moodle
-2. Ecraser le rÃ©pertoire "search" par le rÃ©pertoire fourni
-3. Ecraser le bloc "blocs/search" par le bloc fourni.
+2. Insérer un nouveau bloc de recherche globale dans la plate-forme
 
-* Installation logique
+3. Effectuer une recherche vide (en administrateur)
 
-4. Aller dans les notifications administratives et dÃ©rouler la procÃ©dure d'installation/mise Ã  jour du bloc. L'installation crÃ©e la table image
-des documents indexÃ©s et utilisÃ©s dans le module search.
+4. Aller sur la page des statistiques
 
-5. InsÃ©rer un nouveau bloc de recherche globale dans la plate-forme
+5. Activer l'indexation (indexsplash.php). Attention, si la plate-form contient beaucoup de contenus cette indexation peut être TRES LONGUE.
 
-6. Effectuer une recherche vide (en administrateur)
+Pour effectuer des recherches, une fois la première indexation terminée, retourner au bloc de recherche et tenter une recherche.
 
-7. Aller sur la page des statistiques
-
-8. Activer l'indexation (indexsplash.php). Attention, si la plate-form contient beaucoup de contenus cette indexation peut Ãªtre TRES LONGUE.
-
-Pour effectuer des recherches, une fois la premiÃ¨re indexation terminÃ©e, retourner au bloc de recherche et tenter une recherche.
-
-ElÃ©ments pris en charge
+Eléments pris en charge
 #######################
 
-Dans l'Ã©tat actuel, les Ã©lÃ©ments indexÃ©s par le moteur sont :
+Dans l'état actuel, les éléments indexés par le moteur sont :
 
-- les entrÃ©es de forum
-- les fiches de base de donnÃ©es
-- les commentaires sur fiches de donnÃ©es
-- les entrÃ©es de glossaire
-- les commentaires sur entrÃ©es de glossaire
+- les entrées de forum
+- les fiches de base de données
+- les commentaires sur fiches de données
+- les entrées de glossaire
+- les commentaires sur entrées de glossaire
 - les ressources natives Moodle
 - les ressources physiques de type MSWord
 - les ressources physiques de type PDF
@@ -63,27 +60,30 @@ Dans l'Ã©tat actuel, les Ã©lÃ©ments indexÃ©s par le moteur sont :
 - les ressources physiques de type XML (.xml)
 - les ressources physiques de type (Microsoft) Powerpoint (.ppt)
 - les pages de wiki
-- les entitÃ©s de projet technique
 - les sessions de chat
+
+Des modules tiers ont été rendus indexables 
+
+- Techproject
 
 Extensions
 ##########
 
-L'API du moteur de recherche permet dÃ©sormais : 
+L'API du moteur de recherche permet désormais : 
 
 - l'indexation de contenus de blocs.
 - l'indexation de modules contenant une information complexe ou de plusieurs types distincts
-- la sÃ©curisation des informations indexÃ©es lors des extractions de rÃ©sultats
-- l'indexation de tout module tiers par ajout d'un fichier php calibrÃ©
-- l'indexation de toute nouvelle resource physique par ajout d'un fichier php calibrÃ©
+- la sécurisation des informations indexées lors des extractions de résultats
+- l'indexation de tout module tiers par ajout d'un fichier php calibré
+- l'indexation de toute nouvelle resource physique par ajout d'un fichier php calibré
 
 Extensions futures
 ##################
 
 - De nouvelles prises en charge de contenus tels que les attachements des forums, les attachement des glossaires, ainsi que d'autres modules non encore
-implÃ©mentÃ©s.
+implémentés.
 
-- l'extension mnet de la recherche dans un rÃ©seau de moodle interconnectÃ©s.
+- l'extension mnet de la recherche dans un réseau de moodle interconnectés.
 
  
 

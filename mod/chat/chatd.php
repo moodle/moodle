@@ -27,7 +27,7 @@ $_SERVER['PHP_SELF']        = 'dummy';
 $_SERVER['SERVER_NAME']     = 'dummy';
 $_SERVER['HTTP_USER_AGENT'] = 'dummy';
 
-$nomoodlecookie = true;
+define('NO_MOODLE_COOKIES', true); // session not used here
 
 include('../../config.php');
 include('lib.php');

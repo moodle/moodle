@@ -672,12 +672,13 @@ class securewindow_access_rule extends quiz_access_rule_base {
      * before the button submits.
      */
     public function print_start_attempt_button($buttontext, $strconfirmstartattempt) {
-        global $CFG;
+        global $CFG, $SESSION;
+
         $attempturl = $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $this->_quiz->id;
         $window = 'quizpopup';
 
         if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
-            $attempturl = sid_process_url($attempturl);
+            $attempturl = $SESSION->sid_process_url($attempturl);
         }
 
         echo '<input type="button" value="' . s($buttontext) . '" onclick="javascript:';

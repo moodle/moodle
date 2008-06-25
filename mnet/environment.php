@@ -93,11 +93,11 @@ class mnet_environment {
     }
 
     function get_keypair() {
-        global $DB;
+        global $DB, $SESSION;
 
         // We don't generate keys on install/upgrade because we want the USER
         // record to have an email address, city and country already.
-        if (!empty($_SESSION['upgraderunning'])) return true;
+        if (!empty($SESSION->upgraderunning)) return true;
         if (!extension_loaded("openssl")) return true;
         if (!empty($this->keypair)) return true;
 

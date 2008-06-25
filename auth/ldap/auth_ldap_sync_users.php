@@ -26,7 +26,7 @@ if (isset($_SERVER['REMOTE_ADDR'])) {
     exit;
 }
 
-$nomoodlecookie = true; // cookie not needed
+define('NO_MOODLE_COOKIES', true);
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php'); // global moodle config file.
 

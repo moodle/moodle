@@ -48,7 +48,7 @@
             }
         } elseif (!empty($form->submit) && $form->submit == get_string('delete')) {
             $MNET->get_private_key();
-            $_SESSION['mnet_confirm_delete_key'] = md5(sha1($MNET->keypair['keypair_PEM'])).':'.time();
+            $SESSION->mnet_confirm_delete_key = md5(sha1($MNET->keypair['keypair_PEM'])).':'.time();
             notice_yesno(get_string("deletekeycheck", "mnet"),
                                     "index.php?sesskey=$USER->sesskey&amp;confirm=".md5($MNET->public_key),
                                     "index.php",
@@ -61,13 +61,13 @@
             // We're deleting
             
             
-            if (!isset($_SESSION['mnet_confirm_delete_key'])) {
+            if (!isset($SESSION->mnet_confirm_delete_key)) {
                 // fail - you're being attacked?
             }
 
             $key = '';
             $time = '';
-            @list($key, $time) = explode(':',$_SESSION['mnet_confirm_delete_key']);
+            @list($key, $time) = explode(':',$SESSION->mnet_confirm_delete_key);
             $MNET->get_private_key();
 
             if($time < time() - 60) {

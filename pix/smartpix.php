@@ -192,7 +192,7 @@ fclose($handle);
 //// Outputs pictures from theme or core pix folder. Only used if $CFG->smartpix is
 //// turned on.
 //
-//$nomoodlecookie = true; // Stops it making a session
+//define('NO_MOODLE_COOKIES', true); // session not used here
 //require_once('../config.php');
 //require_once('../lib/filelib.php');
 //global $CFG;

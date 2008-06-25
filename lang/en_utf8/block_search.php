@@ -12,4 +12,14 @@ $string['go'] = 'Go!';
 $string['bytes'] = ' bytes (0 stands for no limits)';
 $string['searchmoodle'] = 'Search Moodle';
 $string['usemoodleroot'] = 'Use moodle root for external converters';
+$string['wordhandling'] = 'Microsoft Word handling';
+$string['pdfhandling'] = 'Acrobat PDF handling';
+$string['handlingfor'] = 'Extra handling for';
+$string['searchdiscovery'] = 'Searchable items discovery';
+$string['configtypetotxtcmd'] = 'Converter\'s command line';
+$string['configtypetotxtenv'] = 'Environment define for converter';
+$string['modulessearchswitches'] = 'Indexer activation for modules';
+$string['blockssearchswitches'] = 'Indexer activation for blocks';
+$string['nosearchablemodules'] = 'No searchable modules';
+$string['nosearchableblocks'] = 'No searchable blocks';
 ?>

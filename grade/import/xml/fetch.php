@@ -23,7 +23,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-$nomoodlecookie = true; // session not used here
+define('NO_MOODLE_COOKIES', true); // session not used here
 require '../../../config.php';
 
 $id = required_param('id', PARAM_INT); // course id

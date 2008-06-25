@@ -15,20 +15,20 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Analysis_Analyzer_Common */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Analysis/Analyzer/Common.php';
+require_once 'Zend/Search/Lucene/Analysis/Analyzer/Common.php';
 
 
 /**
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Analysis
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -49,11 +49,18 @@ class Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num extends Zend_Search_Lu
     private $_bytePosition;
 
     /**
-     * Stream length
+     * Object constructor
      *
-     * @var integer
+     * @throws Zend_Search_Lucene_Exception
      */
-    private $_streamLength;
+    public function __construct()
+    {
+        if (@preg_match('/\pL/u', 'a') != 1) {
+            // PCRE unicode support is turned off
+            require_once 'Zend/Search/Lucene/Exception.php';
+            throw new Zend_Search_Lucene_Exception('Utf8Num analyzer needs PCRE unicode support to be enabled.');
+        }
+    }
 
     /**
      * Reset token stream
@@ -69,53 +76,6 @@ class Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num extends Zend_Search_Lu
                 $this->_input = iconv($this->_encoding, 'UTF-8', $this->_input);
                 $this->_encoding = 'UTF-8';
         }
-
-        // Get UTF-8 string length.
-        // It also checks if it's a correct utf-8 string
-        $this->_streamLength = iconv_strlen($this->_input, 'UTF-8');
-    }
-
-    /**
-     * Check, that character is a letter
-     *
-     * @param string $char
-     * @return boolean
-     */
-    private static function _isAlNum($char)
-    {
-        if (strlen($char) > 1) {
-            // It's an UTF-8 character
-            return true;
-        }
-
-        return ctype_alnum($char);
-    }
-
-    /**
-     * Get next UTF-8 char
-     *
-     * @param string $char
-     * @return boolean
-     */
-    private function _nextChar()
-    {
-        $char = $this->_input[$this->_bytePosition++];
-
-        if (( ord($char) & 0xC0 ) == 0xC0) {
-            $addBytes = 1;
-            if (ord($char) & 0x20 ) {
-                $addBytes++;
-                if (ord($char) & 0x10 ) {
-                    $addBytes++;
-                }
-            }
-            $char .= substr($this->_input, $this->_bytePosition, $addBytes);
-            $this->_bytePosition += $addBytes;
-        }
-
-        $this->_position++;
-
-        return $char;
     }
 
     /**
@@ -131,39 +91,35 @@ class Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num extends Zend_Search_Lu
             return null;
         }
 
-        while ($this->_position < $this->_streamLength) {
-            // skip white space
-            while ($this->_position < $this->_streamLength &&
-                   !self::_isAlNum($char = $this->_nextChar())) {
-                $char = '';
-            }
-
-            $termStartPosition = $this->_position - 1;
-            $termText = $char;
-
-            // read token
-            while ($this->_position < $this->_streamLength &&
-                   self::_isAlNum($char = $this->_nextChar())) {
-                $termText .= $char;
-            }
-
-            // Empty token, end of stream.
-            if ($termText == '') {
+        do {
+            if (! preg_match('/[\p{L}\p{N}]+/u', $this->_input, $match, PREG_OFFSET_CAPTURE, $this->_bytePosition)) {
+                // It covers both cases a) there are no matches (preg_match(...) === 0)
+                // b) error occured (preg_match(...) === FALSE)
                 return null;
             }
 
-            $token = new Zend_Search_Lucene_Analysis_Token(
-                                      $termText,
-                                      $termStartPosition,
-                                      $this->_position - 1);
-            $token = $this->normalize($token);
-            if ($token !== null) {
-                return $token;
-            }
-            // Continue if token is skipped
-        }
+            // matched string
+            $matchedWord = $match[0][0];
+            
+            // binary position of the matched word in the input stream
+            $binStartPos = $match[0][1];
+            
+            // character position of the matched word in the input stream
+            $startPos = $this->_position + 
+                        iconv_strlen(substr($this->_input,
+                                            $this->_bytePosition,
+                                            $binStartPos - $this->_bytePosition),
+                                     'UTF-8');
+            // character postion of the end of matched word in the input stream
+            $endPos = $startPos + iconv_strlen($matchedWord, 'UTF-8');
 
-        return null;
+            $this->_bytePosition = $binStartPos + strlen($matchedWord);
+            $this->_position     = $endPos;
+
+            $token = $this->normalize(new Zend_Search_Lucene_Analysis_Token($matchedWord, $startPos, $endPos));
+        } while ($token === null); // try again if token is skipped
+
+        return $token;
     }
 }
 

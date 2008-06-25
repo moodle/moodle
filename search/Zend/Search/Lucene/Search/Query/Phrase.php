@@ -15,7 +15,7 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
@@ -23,12 +23,12 @@
 /**
  * Zend_Search_Lucene_Search_Query
  */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Query.php';
+require_once 'Zend/Search/Lucene/Search/Query.php';
 
 /**
  * Zend_Search_Lucene_Search_Weight_MultiTerm
  */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Weight/Phrase.php';
+require_once 'Zend/Search/Lucene/Search/Weight/Phrase.php';
 
 
 /**
@@ -37,7 +37,7 @@ require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Search/Weight/Phrase.php'
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Search
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Query
@@ -416,23 +416,48 @@ class Zend_Search_Lucene_Search_Query_Phrase extends Zend_Search_Lucene_Search_Q
             $this->_resVector = array();
         }
 
-        foreach( $this->_terms as $termId=>$term ) {
+        $resVectors      = array();
+        $resVectorsSizes = array();
+        $resVectorsIds   = array(); // is used to prevent arrays comparison
+        foreach ($this->_terms as $termId => $term) {
+            $resVectors[]      = array_flip($reader->termDocs($term));
+            $resVectorsSizes[] = count(end($resVectors));
+            $resVectorsIds[]   = $termId;
+            
+            $this->_termsPositions[$termId] = $reader->termPositions($term);
+        }
+        // sort resvectors in order of subquery cardinality increasing
+        array_multisort($resVectorsSizes, SORT_ASC, SORT_NUMERIC,
+                        $resVectorsIds,   SORT_ASC, SORT_NUMERIC,
+                        $resVectors);
+        
+        foreach ($resVectors as $nextResVector) {
             if($this->_resVector === null) {
-                $this->_resVector = array_flip($reader->termDocs($term));
+                $this->_resVector = $nextResVector;
             } else {
-                $this->_resVector = array_intersect_key($this->_resVector, array_flip($reader->termDocs($term)));
+                //$this->_resVector = array_intersect_key($this->_resVector, $nextResVector);
+                
+                /**
+                 * This code is used as workaround for array_intersect_key() slowness problem.
+                 */
+                $updatedVector = array();
+                foreach ($this->_resVector as $id => $value) {
+                    if (isset($nextResVector[$id])) {
+                        $updatedVector[$id] = $value;
+                    }
+                }
+                $this->_resVector = $updatedVector;
             }
 
             if (count($this->_resVector) == 0) {
                 // Empty result set, we don't need to check other terms
                 break;
             }
-
-            $this->_termsPositions[$termId] = $reader->termPositions($term);
         }
 
-        ksort($this->_resVector, SORT_NUMERIC);
-
+        // ksort($this->_resVector, SORT_NUMERIC);
+        // Docs are returned ordered. Used algorithm doesn't change elements order.
+                        
         // Initialize weight if it's not done yet
         $this->_initWeight($reader);
     }

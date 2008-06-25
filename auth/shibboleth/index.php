@@ -43,7 +43,7 @@
             update_user_login_times();
             
             // Don't show username on login page
-            set_moodle_cookie('nobody');
+            $SESSION->set_moodle_cookie('nobody');
 
             set_login_session_preferences();
             

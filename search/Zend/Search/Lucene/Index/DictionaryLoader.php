@@ -15,13 +15,13 @@
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Index
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 
 /** Zend_Search_Lucene_Exception */
-require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Exception.php';
+require_once 'Zend/Search/Lucene/Exception.php';
 
 
 /**
@@ -35,7 +35,7 @@ require_once $CFG->dirroot.'/search/Zend/Search/Lucene/Exception.php';
  * @category   Zend
  * @package    Zend_Search_Lucene
  * @subpackage Index
- * @copyright  Copyright (c) 2005-2007 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2008 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Search_Lucene_Index_DictionaryLoader
@@ -61,11 +61,12 @@ class Zend_Search_Lucene_Index_DictionaryLoader
         // $tiVersion = $tiiFile->readInt();
         $tiVersion = ord($data[0]) << 24 | ord($data[1]) << 16 | ord($data[2]) << 8  | ord($data[3]);
         $pos += 4;
-        if ($tiVersion != (int)0xFFFFFFFE) {
+        if ($tiVersion != (int)0xFFFFFFFE /* pre-2.1 format */ &&
+            $tiVersion != (int)0xFFFFFFFD /* 2.1+ format    */) {
             throw new Zend_Search_Lucene_Exception('Wrong TermInfoIndexFile file format');
         }
 
-        // $indexTermCount = = $tiiFile->readLong();
+        // $indexTermCount = $tiiFile->readLong();
         if (PHP_INT_SIZE > 4) {
             $indexTermCount = ord($data[$pos]) << 56  |
                               ord($data[$pos+1]) << 48  |
@@ -99,6 +100,11 @@ class Zend_Search_Lucene_Index_DictionaryLoader
         $pos += 4;
         if ($indexTermCount < 1) {
             throw new Zend_Search_Lucene_Exception('Wrong number of terms in a term dictionary index');
+        }
+
+        if ($tiVersion == (int)0xFFFFFFFD /* 2.1+ format */) {
+            /* Skip MaxSkipLevels value */
+            $pos += 4;
         }
 
         $prevTerm     = '';

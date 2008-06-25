@@ -3,7 +3,7 @@
       // Syntax:   pix.php/groupid/f1.jpg or pix.php/groupid/f2.jpg
       //     OR:   ?file=groupid/f1.jpg or ?file=groupid/f2.jpg
 
-    $nomoodlecookie = true;     // Because it interferes with caching
+    define('NO_MOODLE_COOKIES', true);                  // session not used here
 
     require_once('../config.php');
     require_once($CFG->libdir.'/filelib.php');
@@ -28,6 +28,6 @@
         send_file($pathname, $image);
     } else {
         header('HTTP/1.0 404 not found');
-        error(get_string('filenotfound', 'error')); //this is not displayed on IIS??
+        print_error('filenotfound', 'error'); //this is not displayed on IIS??
     }
 ?>

@@ -13,7 +13,7 @@
     //to correct users. It isn't unbreakable,
     //obviously, but its the best I've thought!!
 
-    $nomoodlecookie = true;     // Because it interferes with caching
+    define('NO_MOODLE_COOKIES', true); // session not used here
 
     require_once('../config.php');
     require_once($CFG->libdir.'/filelib.php');
@@ -21,7 +21,7 @@
 
     $lifetime = 3600;  // Seconds for files to remain in caches - 1 hour
 
-    // hack for problems with concurrent use of $nomoodlecookie and capabilities MDL-7243
+    // hack for problems with concurrent use of NO_MOODLE_COOKIES and capabilities MDL-7243
     // it should be replaced once we get to codes in urls 
     $USER = new object();
     $USER->id = 0;

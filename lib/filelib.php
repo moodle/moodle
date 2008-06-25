@@ -555,7 +555,7 @@ function get_mimetype_description($mimetype,$capitalise=false) {
  * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
  */
 function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='') {
-    global $CFG, $COURSE;
+    global $CFG, $COURSE, $SESSION;
 
     // Use given MIME type if specified, otherwise guess it using mimeinfo.
     // IE, Konqueror and Opera open html file directly in browser from web even when directed to save it to disk :-O
@@ -670,7 +670,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             //cookieless mode - rewrite links
             @header('Content-Type: text/html');
             $path = $pathisstring ? $path : implode('', file($path));
-            $path = sid_ob_rewrite($path);
+            $path = $SESSION->sid_ob_rewrite($path);
             $filesize = strlen($path);
             $pathisstring = true;
         } else if ($mimetype == 'text/plain') {
@@ -696,7 +696,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
             if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
                 //cookieless mode - rewrite links
-                $output = sid_ob_rewrite($output);
+                $output = $SESSION->sid_ob_rewrite($output);
             }
 
             @header('Content-Length: '.strlen($output));
@@ -712,7 +712,7 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
             if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
                 //cookieless mode - rewrite links
-                $output = sid_ob_rewrite($output);
+                $output = $SESSION->sid_ob_rewrite($output);
             }
 
             @header('Content-Length: '.strlen($output));

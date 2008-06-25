@@ -22,12 +22,12 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-    $lifetime  = 600;                                   // Seconds to cache this stylesheet
-    $nomoodlecookie = true;                             // Cookies prevent caching, so don't use them
+    define('NO_MOODLE_COOKIES', true); // session not used here
 
     require_once('../../config.php');
 
     $d = optional_param('d', 0, PARAM_INT);   // database id
+    $lifetime  = 600;                                   // Seconds to cache this stylesheet
 
     if ($data = $DB->get_record('data', array('id'=>$d))) {
         header('Last-Modified: ' . gmdate('D, d M Y H:i:s', time()) . ' GMT');

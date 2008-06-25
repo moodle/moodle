@@ -17,7 +17,7 @@
 
 
     define('CHAT_MAX_CLIENT_UPDATES', 1000);
-    $nomoodlecookie = true;     // Session not needed!
+    define('NO_MOODLE_COOKIES', true); // session not used here
 
     require('../../../config.php');
     require('../lib.php');

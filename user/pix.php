@@ -3,7 +3,7 @@
       // Syntax:   pix.php/userid/f1.jpg or pix.php/userid/f2.jpg
       //     OR:   ?file=userid/f1.jpg or ?file=userid/f2.jpg
 
-    $nomoodlecookie = true;     // Because it interferes with caching
+    define('NO_MOODLE_COOKIES', true);                  // session not used here
 
     require_once('../config.php');
     require_once($CFG->libdir.'/filelib.php');

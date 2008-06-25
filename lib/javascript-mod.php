@@ -3,7 +3,7 @@
        /// Searches modules, filters and blocks for any Javascript files
        /// that should be called on every page
 
-    $nomoodlecookie = true;
+    define('NO_MOODLE_COOKIES', true);
 
     include('../config.php');
 

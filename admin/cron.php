@@ -20,7 +20,7 @@
 
 
 /// Do not set moodle cookie because we do not need it here, it is better to emulate session
-    $nomoodlecookie = true;
+    define('NO_MOODLE_COOKIES', true);
 
 /// The current directory in PHP version 4.3.0 and above isn't necessarily the
 /// directory of the script when run from the command line. The require_once()
@@ -66,7 +66,6 @@
 
 
 /// emulate normal session
-    $SESSION = new object();
     $USER = get_admin();      /// Temporarily, to provide environment for this script
 
 /// ignore admins timezone, language and locale - use site deafult instead!

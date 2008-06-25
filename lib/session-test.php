@@ -6,17 +6,10 @@
 /// set a new variable, and after that it will try to find it again.
 /// The random number is just to prevent browser caching.
 
-session_start();
+require '../config.php';
 
-if (!isset($_SESSION["test"])) {   // First time you call it.
-    echo "<p>No session found - starting a session now.";
-    $_SESSION["test"] = "welcome back!";
+error('session test not reimplemented yet');
 
-} else {                           // Subsequent times you call it
-    echo "<p>Session found - ".$_SESSION["test"];
-    echo "</p><p>Sessions are working correctly</p>";
-}
-
-echo "<p><a href=\"session-test.php?random=".rand(1,10000)."\">Reload this page</a></p>";
+//TODO: add code that actually tests moodle sessions, the old one only tested PHP sessions used from installer, not the real moodle sessions 
 
 ?>
