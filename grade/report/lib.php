@@ -48,7 +48,9 @@ abstract class grade_report {
     public $course;
 
     /** Grade plugin return tracking object.
-    var $gpr;
+     * @var object $gpr
+     */
+    public $gpr;
 
     /**
      * The context.
