@@ -1842,7 +1842,7 @@ class PresetImporter {
         global $CFG, $DB;
 
         if (!is_directory_a_preset($this->folder)) {
-            print_error('invildpreset', 'data', '', $this->userid.'/'.$this->shortname);
+            print_error('invalidpreset', 'data', '', $this->userid.'/'.$this->shortname);
         }
 
         /* Grab XML */
