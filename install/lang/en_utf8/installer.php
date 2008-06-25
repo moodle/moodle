@@ -19,14 +19,14 @@ $string['admindirsettingsub'] = 'A very few webhosts use /admin as a special URL
     new name here.  For example: <br /> <br /><b>moodleadmin</b><br /> <br />
     This will fix admin links in Moodle.';
 $string['bypassed'] = 'Bypassed';
-$string['cannotcreatelangdir'] = 'Cannot create lang dir.';
-$string['cannotcreatetempdir'] = 'Cannot create temp dir.';
-$string['cannotdownloadcomponents'] = 'Cannot download components.';
-$string['cannotdownloadzipfile'] = 'Cannot download ZIP file.';
-$string['cannotfindcomponent'] = 'Cannot find component.';
-$string['cannotsavemd5file'] = 'Cannot save md5 file.';
-$string['cannotsavezipfile'] = 'Cannot save ZIP file.';
-$string['cannotunzipfile'] = 'Cannot unzip file.';
+$string['cannotcreatelangdir'] = 'Cannot create lang directory';
+$string['cannotcreatetempdir'] = 'Cannot create temp directory';
+$string['cannotdownloadcomponents'] = 'Cannot download components';
+$string['cannotdownloadzipfile'] = 'Cannot download ZIP file';
+$string['cannotfindcomponent'] = 'Cannot find component';
+$string['cannotsavemd5file'] = 'Cannot save md5 file';
+$string['cannotsavezipfile'] = 'Cannot save ZIP file';
+$string['cannotunzipfile'] = 'Cannot unzip file';
 $string['caution'] = 'Caution';
 $string['check'] = 'Check';
 $string['chooselanguagehead'] = 'Choose a language';
@@ -34,7 +34,7 @@ $string['chooselanguagesub'] = 'Please choose a language for the installation ON
 $string['closewindow'] = 'Close this window';
 $string['compatibilitysettingshead'] = 'Checking your PHP settings ...';
 $string['compatibilitysettingssub'] = 'Your server should pass all these tests to make Moodle run properly';
-$string['componentisuptodate'] = 'Component is up to date.';
+$string['componentisuptodate'] = 'Component is up-to-date';
 $string['configfilenotwritten'] = 'The installer script was not able to automatically create a config.php file containing your chosen settings, probably because the Moodle directory is not writeable. You can manually copy the following code into a file named config.php within the root directory of Moodle.';
 $string['configfilewritten'] = 'config.php has been successfully created';
 $string['configurationcompletehead'] = 'Configuration completed';
@@ -138,7 +138,7 @@ directly via the web.';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there. The value below has been reset.';
 $string['download'] = 'Download';
-$string['downloadedfilecheckfailed'] = 'Downloaded file check failed.';
+$string['downloadedfilecheckfailed'] = 'Downloaded file check failed';
 $string['downloadlanguagebutton'] = 'Download the &quot;$a&quot; language pack';
 $string['downloadlanguagehead'] = 'Download language pack';
 $string['downloadlanguagenotneeded'] = 'You may continue the installation process using the default language pack, \"$a\".';
@@ -229,7 +229,7 @@ $string['memorylimithelp'] = '<p>The PHP memory limit for your server is current
     <p>However, on some servers this will prevent <b>all</b> PHP pages from working 
     (you will see errors when you look at pages) so you\'ll have to remove the .htaccess file.</p></li>
 </ol>';
-$string['missingrequiredfield'] = 'Some required field is missing';
+$string['missingrequiredfield'] = 'A required field is missing';
 $string['moodledocslink'] = 'Moodle Docs for this page';
 $string['mssql'] = 'SQL*Server (mssql)';
 $string['mssql_n'] = 'SQL*Server with UTF-8 support (mssql_n)';
@@ -303,9 +303,9 @@ $string['welcomep60'] = 'The following pages will lead you through some easy to 
     configure and set up <strong>Moodle</strong> on your computer. You may accept the default 
     settings or, optionally, amend them to suit your own needs.';
 $string['welcomep70'] = 'Click the \"Next\" button below to continue with the set up of <strong>Moodle</strong>.';
-$string['wrongdestpath'] = 'Wrong destination path.';
-$string['wrongsourcebase'] = 'Wrong source URL base.';
-$string['wrongzipfilename'] = 'Wrong ZIP filename.';
+$string['wrongdestpath'] = 'Wrong destination path';
+$string['wrongsourcebase'] = 'Wrong source URL base';
+$string['wrongzipfilename'] = 'Wrong ZIP file name';
 $string['wwwroot'] = 'Web address';
 $string['wwwrooterror'] = 'The \'Web Address\' does not appear to be valid - this Moodle installation doesn\'t appear to be there. The value below has been reset.';
 $string['xmlrpcrecommended'] = 'Installing the optional xmlrpc extension is useful for Moodle Networking functionality.';
