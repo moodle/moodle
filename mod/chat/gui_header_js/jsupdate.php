@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-    $nomoodlecookie = true;     // Session not needed!
+    define('NO_MOODLE_COOKIES', true); // session not used here
 
     require('../../../config.php');
     require('../lib.php');
@@ -143,8 +143,11 @@
             }
         }
         ?>
-        if(parent.msg && parent.input.document.getElementById('auto').checked){
-            parent.msg.scroll(1,5000000);
+        if(parent.input){
+            var autoscroll = parent.input.document.getElementById('auto');
+            if(parent.msg && autoscroll && autoscroll.checked){
+                parent.msg.scroll(1,5000000);
+            }
         }
         //]]>
         </script>
