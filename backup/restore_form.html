@@ -370,7 +370,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                                 echo '</td><td align="right">&nbsp;';
                                 $var = 'restore_user_info_'.$modname.'_instance_'.$instance->id;
                                 $$var = optional_param($var,1);
-                                if ($info->mods[$modname]->instances[$instance->id]->userinfo == 'true') {
+                                if (!empty($info->mods[$modname]->instances) && ($info->mods[$modname]->instances[$instance->id]->userinfo == 'true')) {
                                     print_checkbox($var,$$var,$$var,get_string('userdata'),'','this.form.elements[\'restore_user_info_'.$modname.'\'].checked=1;');
                                 } else {
                                     echo '<input type="hidden" name="'.$var.'" value="0" />';
