@@ -141,8 +141,11 @@
             }
         }
         ?>
-        if(parent.msg && parent.input.document.getElementById('auto').checked){
-            parent.msg.scroll(1,5000000);
+        if(parent.input){
+            var autoscroll = parent.input.document.getElementById('auto');
+            if(parent.msg && autoscroll && autoscroll.checked){
+                parent.msg.scroll(1,5000000);
+            }
         }
         //]]>
         </script>
