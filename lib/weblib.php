@@ -5860,6 +5860,13 @@ function helpbutton ($page, $title, $module='moodle', $image=true, $linktext=fal
                      $imagetext='') {
     global $CFG, $COURSE;
 
+     //warning if ever $text parameter is used
+    //$text option won't work properly because the text needs to be always cleaned and,
+    // when cleaned... html tags always break, so it's unusable.
+    if ( isset($text) && $text!='') {
+      debugging('Warning: it\'s not recommended to use $text parameter in helpbutton ($page=' . $page . ', $module=' . $module . ') function');
+    }
+    
     // fix for MDL-7734
     if (!empty($COURSE->lang)) {
         $forcelang = $COURSE->lang;

@@ -26,8 +26,7 @@
 <td align="right"><?php print_string("type","block_glossary_random") ?>:</td>
 <td><?php
      choose_from_menu($type, "type", $this->config->type, "");
-     helpbutton("",get_string("type","block_glossary_random"),"moodle",true,false,get_string("typehelp","block_glossary_random"));
-     // helpbutton("type_help", get_string("type_help", "block_glossary_random"), "block/glossary_random");
+     helpbutton('newentry', get_string("type","block_glossary_random"), 'glossary');
      ?></td>
 </tr> 
 
