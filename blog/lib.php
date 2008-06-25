@@ -155,9 +155,9 @@
         global $USER, $CFG, $course, $ME;
 
         $template['body'] = get_formatted_entry_body($blogEntry->summary, $blogEntry->format);
-        $template['title'] = '<a name="'. $blogEntry->subject .'"></a>';
+        $template['title'] = '<a name="'. s($blogEntry->subject, true) .'"></a>';
         //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
-        $template['title'] .= '<span class="nolink">'. $blogEntry->subject;
+        $template['title'] .= '<span class="nolink">'. strip_tags(format_string($blogEntry->subject, true));
         $template['title'] .= '</span>';
         $template['userid'] = $blogEntry->userid;
         $template['author'] = fullname(get_record('user','id',$blogEntry->userid));
