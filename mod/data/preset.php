@@ -498,7 +498,7 @@ function data_presets_export($course, $cm, $data) {
     }
 
     $exportfile = "$CFG->dataroot/$course->id/moddata/data/$data->id/$presetname.zip";
-    unlink($exportfile);
+    file_exists($exportfile) && unlink($exportfile);
     $status = zip_files($filelist, $exportfile);
     // ToDo: status check
     foreach ($filelist as $file) {
