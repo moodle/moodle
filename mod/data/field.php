@@ -42,24 +42,24 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
-            error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
         if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-            error('Course is misconfigured');
+            print_error('coursemisconf');
         }
         if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-            error('Course module is incorrect');
+            print_error('invalidcoursemodule');
         }
 
     } else {
         if (! $data = $DB->get_record('data', array('id'=>$d))) {
-            error('Data ID is incorrect');
+            print_error('invalidid', 'data');
         }
         if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-            error('Course is misconfigured');
+            print_error('invalidcoursemodule');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
     }
 
@@ -169,7 +169,7 @@
                             $rec->defaultsort = 0;
                             $rec->defaultsortdir = 0;
                             if (!$DB->update_record('data', $rec)) {
-                                error('There was an error updating the database');
+                                print_error('updatingerror', 'data');
                             }
                         }
 
@@ -206,7 +206,7 @@
                 if ($DB->update_record('data', $rec)) {
                     redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id, get_string('changessaved'), 2);
                 } else {
-                    error('There was an error updating the database');
+                    print_error('updatingerror', 'data');
                 }
                 exit;
             }

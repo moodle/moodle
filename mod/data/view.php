@@ -44,38 +44,38 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('data', $id)) {
-            error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
         if (! $course = $DB->get_record('course', array('id'=>$cm->course))) {
-            error('Course is misconfigured');
+            print_error('coursemisconf');
         }
         if (! $data = $DB->get_record('data', array('id'=>$cm->instance))) {
-            error('Course module is incorrect');
+            print_error('invalidcoursemodule');
         }
         $record = NULL;
 
     } else if ($rid) {
         if (! $record = $DB->get_record('data_records', array('id'=>$rid))) {
-            error('Record ID is incorrect');
+            print_error('invalidrecord', 'data');
         }
         if (! $data = $DB->get_record('data', array('id'=>$record->dataid))) {
-            error('Data ID is incorrect');
+            print_error('invalidid', 'data');
         }
         if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-            error('Course is misconfigured');
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
     } else {   // We must have $d
         if (! $data = $DB->get_record('data', array('id'=>$d))) {
-            error('Data ID is incorrect');
+            print_error('invalidid', 'data');
         }
         if (! $course = $DB->get_record('course', array('id'=>$data->course))) {
-            error('Course is misconfigured');
+            print_error('coursemisconf');
         }
         if (! $cm = get_coursemodule_from_instance('data', $data->id, $course->id)) {
-            error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
         $record = NULL;
     }

@@ -52,18 +52,18 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         global $DB;
 
         if (empty($field) && empty($data)) {
-            error('Programmer error: You must specify field and/or data when defining field class. ');
+            print_error('missingfield', 'data');
         }
 
         if (!empty($field)) {
             if (is_object($field)) {
                 $this->field = $field;  // Programmer knows what they are doing, we hope
             } else if (!$this->field = $DB->get_record('data_fields', array('id'=>$field))) {
-                error('Bad field ID encountered: '.$field);
+                print_error('invalidfieldid', 'data');
             }
             if (empty($data)) {
                 if (!$this->data = $DB->get_record('data', array('id'=>$this->field->dataid))) {
-                    error('Bad data ID encountered in field data');
+                    print_error('invalidid', 'data');
                 }
             }
         }
@@ -73,10 +73,10 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
                 if (is_object($data)) {
                     $this->data = $data;  // Programmer knows what they are doing, we hope
                 } else if (!$this->data = $DB->get_record('data', array('id'=>$data))) {
-                    error('Bad data ID encountered: '.$data);
+                    print_error('invalidid', 'data');
                 }
             } else {                      // No way to define it!
-                error('Data id or object must be provided to field class');
+                print_error('missingdata', 'data');
             }
         }
 
@@ -1766,7 +1766,7 @@ function data_user_can_add_entry($data, $currentgroup, $groupmode) {
     global $USER;
 
     if (!$cm = get_coursemodule_from_instance('data', $data->id)) {
-        error('Course Module ID was incorrect');
+        print_error('invalidcoursemodule');
     }
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
@@ -1842,7 +1842,7 @@ class PresetImporter {
         global $CFG, $DB;
 
         if (!is_directory_a_preset($this->folder)) {
-            error("$this->userid/$this->shortname Not a preset");
+            print_error('invildpreset', 'data', '', $this->userid.'/'.$this->shortname);
         }
 
         /* Grab XML */
@@ -1916,7 +1916,7 @@ class PresetImporter {
 
     function import_options() {
         if (!confirm_sesskey()) {
-            error("Sesskey Invalid");
+            print_error('invalidsesskey');
         }
 
         $strblank = get_string('blank', 'data');
@@ -1968,7 +1968,7 @@ class PresetImporter {
             echo "<p>$strwarning</p>";
 
         } else if (empty($newfields)) {
-            error("New preset has no defined fields!");
+            print_error('nodefinedfields', 'data');
         }
 
         echo '<div class="overwritesettings"><label for="overwritesettings">'.get_string('overwritesettings', 'data').'</label>';
@@ -1993,7 +1993,9 @@ class PresetImporter {
                 $cid = optional_param("field_$nid", -1, PARAM_INT);
                 if ($cid == -1) continue;
 
-                if (array_key_exists($cid, $preservedfields)) error("Not an injective map");
+                if (array_key_exists($cid, $preservedfields)){
+                    print_error('notinjectivemap', 'data');
+                } 
                 else $preservedfields[$cid] = true;
             }
 

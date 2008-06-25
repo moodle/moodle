@@ -475,8 +475,7 @@ function data_presets_export($course, $cm, $data) {
 
     // Check if all files have been generated
     if (! is_directory_a_preset($exportdir)) {
-        error('Not all files generated!');
-        // should be migrated to print_error()
+        print_error('generateerror', 'data');
     }
 
     $filelist = array(
