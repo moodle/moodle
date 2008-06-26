@@ -118,12 +118,12 @@ $string['databasesettingssub_mysqli'] = '<b>Type&nbsp;:</b> Improved MySQL<br />
 <b>Préfixe des tables&nbsp;:</b> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
 $string['databasesettingssub_oci8po'] = '<b>Type&nbsp;:</b> Oracle<br />
 <b>Serveur hôte&nbsp;:</b> n\'est pas utilisé, doit être laissé vide<br />
-<b>Nom&nbsp;:</b> given Nom of the tnsNoms.ora connection<br />
+<b>Nom&nbsp;:</b> nom de la connexion tnsnames.ora<br />
 <b>Utilisateur&nbsp;:</b> le nom d\'utilisateur de la base de données<br />
 <b>Mot de passe&nbsp;:</b> le mot de passe de la base de données<br />
 <b>Préfixe des tables&nbsp;:</b> le préfixe à utiliser pour les noms de toutes les tables (requis, max. 2cc.)';
 $string['databasesettingssub_odbc_mssql'] = '<b>Type&nbsp;:</b> SQL*Server (via ODBC) <b><strong class="errormsg">Expérimental&nbsp;! (ne pas utiliser en production)</strong></b><br />
-<b>Serveur hôte&nbsp;:</b> Nom du DSN dans le panneau de contrôle ODBC<br />
+<b>Serveur hôte&nbsp;:</b> nom du DSN dans le panneau de contrôle ODBC<br />
 <b>Nom&nbsp;:</b> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
 <b>Utilisateur&nbsp;:</b> le nom d\'utilisateur de la base de données<br />
 <b>Mot de passe&nbsp;:</b> le mot de passe de la base de données<br />
@@ -134,6 +134,13 @@ $string['databasesettingssub_postgres7'] = '<b>Type&nbsp;:</b> PostgreSQL<br />
 <b>Utilisateur&nbsp;:</b> le nom d\'utilisateur de la base de données<br />
 <b>Mot de passe&nbsp;:</b> le mot de passe de la base de données<br />
 <b>Préfixe des tables&nbsp;:</b> le préfixe à utiliser pour les noms de toutes les tables (requis)';
+$string['databasesettingssub_sqlite3_pdo'] = '<b>Type&nbsp;:</b> SQLite 3 (PDO) <b><strong  class=\"errormsg\">Expérimental&nbsp;! (ne pas utiliser en production)</strong></b><br />
+<b>Serveur hôte&nbsp;:</b> chemin d\'accès au dossier dans lequel le fichier de la base de données sera enregistré (utilisez le chemin complet). Pour utiliser le dossier de données de Moodle, indiquez «&nbsp;localhost&nbsp;» ou laissez le champ vide<br />
+<b>Nom&nbsp;:</b> Nom de la base de données, par exemple «&nbsp;moodle&nbsp;» (optionel)<br />
+<b>Utilisateur&nbsp;:</b> le nom d\'utilisateur de la base de données (optionel)<br />
+<b>Mot de passe&nbsp;:</b> le mot de passe de la base de données (optionel)<br />
+<b>Préfixe des tables&nbsp;:</b> le préfixe à utiliser pour les noms de toutes les tables (optionnel)<br />
+Le nom du fichier de la base de données sera déterminé par le nom d\'utilisateur, le nom de la base de données et le mot de passe renseignés ci-dessus.';
 $string['databasesettingswillbecreated'] = '<b>Remarque&nbsp;:</b> l\'installeur va essayer de créer automatiquement la base de données, si elle n\'existe pas encore.';
 $string['databasetype'] = 'Type de base de données :';
 $string['databaseuser'] = 'Utilisateur de la base de données :';
@@ -285,6 +292,8 @@ $string['sitenewsitems'] = 'Nouvelles :';
 $string['siteshortname'] = 'Nom abrégé du site :';
 $string['sitesummary'] = 'Résumé du site :';
 $string['skipdbencodingtest'] = 'Ne pas effectuer le test d\'encodage de la base de données';
+$string['sqlite3_pdo'] = 'SQLite 3 (PDO) <b><strong  class=\"errormsg\">Expérimental&nbsp;! (ne pas utiliser en production)</strong></b>';
+$string['sqliteextensionisnotpresentinphp'] = 'L\'extension SQLite de PHP n\'a pas été configurée correctement. Veuillez contrôler votre fichier php.ini ou recompiler PHP.';
 $string['status'] = 'Statut';
 $string['tableprefix'] = 'Préfixe des tables :';
 $string['thischarset'] = 'UTF-8';
