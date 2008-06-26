@@ -50,12 +50,11 @@ class question_edit_randomsamatch_form extends question_edit_form {
     function validation($data, $files) {
         global $QTYPES;
         $errors = parent::validation($data, $files);
-        if (isset($data['usecurrentcat'])){
-            $category = $data['category'];
-        }else{
-            $category = $data['categorymoveto'];
+        if (isset($data->categorymoveto)) {
+            list($category) = explode(',', $data['categorymoveto']);
+        } else {
+            list($category) = explode(',', $data['category']);
         }
-            
         $saquestions = $QTYPES['randomsamatch']->get_sa_candidates($category);
         $numberavailable = count($saquestions);
         if ($saquestions === false){
@@ -72,6 +71,5 @@ class question_edit_randomsamatch_form extends question_edit_form {
         return $errors;
 
     }
-
 }
 ?>
