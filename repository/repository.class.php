@@ -166,6 +166,8 @@ abstract class repository{
             if ($entry = $DB->get_record('repository', $repository)) {
                 $repository->id = $entry->id;
                 $DB->update_record('repository', $repository);
+                $repository->username = $username;
+                $repository->password = $password;
                 return $repository->id;
             } else {
                 $repository->username = $username;
