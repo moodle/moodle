@@ -166,6 +166,10 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         return '((' . $int1 . ') # (' . $int2 . '))';
     }
 
+    function sql_null_from_clause() {
+        return ' FROM dual';
+    }
+
     public function sql_cast_char2int($fieldname, $text=false) {
         if (!$text) {
             return ' CAST(' . $fieldname . ' AS INT) ';

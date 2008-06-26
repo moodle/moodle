@@ -1200,6 +1200,15 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns the FROM clause required by some DBs in all SELECT statements
+     * To be used in queries not having FROM clause to provide cross_db
+     * Most DBs don't need it, hence the default is ''
+     */
+    public function sql_null_from_clause() {
+        return '';
+    }
+
+    /**
      * Returns the SQL to be used in order to CAST one CHAR column to INTEGER.
      *
      * Be aware that the CHAR column you're trying to cast contains really
