@@ -103,14 +103,14 @@ class data_field_latlong extends data_field_base {
                 return '';
             }
             if($lat < 0) {
-                $compasslat = "" . sprintf('%01.4f', 0 - $lat) . '°S';
+                $compasslat = sprintf('%01.4f', -$lat) . '°S';
             } else {
-                $compasslat = "" . sprintf('%01.4f', $lat) . "°N";
+                $compasslat = sprintf('%01.4f', $lat) . '°N';
             }
             if($long < 0) {
-                $compasslong = "" . sprintf('%01.4f', 0 - $long) . '°W';
+                $compasslong = sprintf('%01.4f', -$long) . '°W';
             } else {
-                $compasslong = "" . sprintf('%01.4f', $long) . "°E";
+                $compasslong = sprintf('%01.4f', $long) . '°E';
             }
             $str = '<form style="display:inline;">';
 
@@ -194,7 +194,7 @@ class data_field_latlong extends data_field_base {
     }
 
     function export_text_value($record) {
-        return sprintf('%01.4f', $record->content) . " " . sprintf('%01.4f', $record->content1);
+        return sprintf('%01.4f', $record->content) . ' ' . sprintf('%01.4f', $record->content1);
     }
 
 }
