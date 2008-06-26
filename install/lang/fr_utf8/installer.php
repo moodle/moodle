@@ -80,12 +80,12 @@ $string['databasesettingssub_mysqli'] = '<b>Type&nbsp;:</b> Improved MySQL<br />
 <b>Préfixe des tables&nbsp;:</b> le préfixe à utiliser pour les noms de toutes les tables (facultatif)';
 $string['databasesettingssub_oci8po'] = '<b>Type&nbsp;:</b> Oracle<br />
 <b>Serveur hôte&nbsp;:</b> n\'est pas utilisé, doit être laissé vide<br />
-<b>Nom&nbsp;:</b> given Nom of the tnsNoms.ora connection<br />
+<b>Nom&nbsp;:</b> nom de la connexion tnsnames.ora<br />
 <b>Utilisateur&nbsp;:</b> le nom d\'utilisateur de la base de données<br />
 <b>Mot de passe&nbsp;:</b> le mot de passe de la base de données<br />
 <b>Préfixe des tables&nbsp;:</b> le préfixe à utiliser pour les noms de toutes les tables (requis, max. 2cc.)';
 $string['databasesettingssub_odbc_mssql'] = '<b>Type&nbsp;:</b> SQL*Server (via ODBC) <b><strong class="errormsg">Expérimental&nbsp;! (ne pas utiliser en production)</strong></b><br />
-<b>Serveur hôte&nbsp;:</b> Nom du DSN dans le panneau de contrôle ODBC<br />
+<b>Serveur hôte&nbsp;:</b> nom du DSN dans le panneau de contrôle ODBC<br />
 <b>Nom&nbsp;:</b> nom de la base de données, par exemple «&nbsp;moodle&nbsp;»<br />
 <b>Utilisateur&nbsp;:</b> le nom d\'utilisateur de la base de données<br />
 <b>Mot de passe&nbsp;:</b> le mot de passe de la base de données<br />
