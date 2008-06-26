@@ -113,7 +113,6 @@ class data_field_latlong extends data_field_base {
                 $compasslong = "" . sprintf('%01.4f', $long) . "°E";
             }
             $str = '<form style="display:inline;">';
-            $str.= "$compasslat, $compasslong";
 
             // Now let's create the jump-to-services link
             $servicesshown = explode(',', $this->field->param1);
@@ -133,9 +132,9 @@ class data_field_latlong extends data_field_base {
             if(sizeof($servicesshown)==1 && $servicesshown[0]) {
                 $str .= " <a href='"
                           . str_replace(array_keys($urlreplacements), array_values($urlreplacements), $this->linkoutservices[$servicesshown[0]])
-                          ."'>$servicesshown[0]</a> ";
+                          ."' title='$servicesshown[0]'>$compasslat, $compasslong</a>";
             } elseif (sizeof($servicesshown)>1) {
-                $str .= "\n<select name='jumpto'>";
+                $str .= "$compasslat, $compasslong\n<select name='jumpto'>";
                 foreach($servicesshown as $servicename){
                     // Add a link to a service
                     $str .= "\n  <option value='"
@@ -145,6 +144,8 @@ class data_field_latlong extends data_field_base {
                 // NB! If you are editing this, make sure you don't break the javascript reference "previousSibling"
                 //   which allows the "Go" button to refer to the drop-down selector.
                 $str .= "\n</select><input type='button' value='" . get_string('go') . "' onclick='if(previousSibling.value){self.location=previousSibling.value}'/>";
+            } else {
+                $str.= "$compasslat, $compasslong";
             }
             $str.= '</form>';
             return $str;
