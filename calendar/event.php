@@ -130,6 +130,10 @@
 
                 $form->name = clean_param(strip_tags($form->name,'<lang><span>'), PARAM_CLEAN);
 
+                // To avoid double slashes
+                $form->name = stripslashes($form->name);
+                $form->description = stripslashes($form->description);
+
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
                     $form->timeduration = make_timestamp($form->endyr, $form->endmon, $form->endday, $form->endhr, $form->endmin) - $form->timestart;
