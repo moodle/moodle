@@ -24,7 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * This is the base class of repository class
+ * This is the base class of the repository class
  *
  * To use repository plugin, you need to create a new folder under repository/, named as the remote 
  * repository, the subclass must be defined in  the name
@@ -51,7 +51,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-abstract class repository{
+abstract class repository {
     protected $options;
     public    $name;
     public    $context;
@@ -71,18 +71,18 @@ abstract class repository{
         $this->context      = $context;
         $this->repositoryid = $repositoryid;
         $this->options      = array();
-        if(is_array($options)){
-            foreach($options as $n=>$v) {
+        if (is_array($options)) {
+            foreach ($options as $n => $v) {
                 $this->options[$n] = $v;
             }
         }
     }
 
-    public function __set($name, $value){
+    public function __set($name, $value) {
         $this->options[$name] = $value;
     }
 
-    public function __get($name){
+    public function __get($name) {
         if (array_key_exists($name, $this->options)){
             return $this->options[$name];
         }
@@ -90,15 +90,15 @@ abstract class repository{
         return null;
     }
 
-    public function __isset($name){
+    public function __isset($name) {
         return isset($this->options[$name]);
     }
 
-    public function __toString(){
+    public function __toString() {
         return 'Repository class: '.__CLASS__;
     }
     // Given a URL, get a file from there.
-    public function get_file($url){
+    public function get_file($url) {
         return null;
     }
 
@@ -125,30 +125,29 @@ abstract class repository{
      * @param boolean $print if printing the listing directly
      *
      */
-    public function print_listing($listing = array(), $print=true){
-        if(empty($listing)){
-            return false;
+    public function print_listing($listing = array(), $print=true) {
+        if (empty($listing)) {
+            $str = '';
+        } else {
+            $count = 0;
+            $str = '<table>';
+            foreach ($listing as $v){
+                $str .= '<tr id="entry_'.$count.'">';
+                $str .= '<td><input type="checkbox" /></td>';
+                $str .= '<td>'.$v['name'].'</td>';
+                $str .= '<td>'.$v['size'].'</td>';
+                $str .= '<td>'.$v['date'].'</td>';
+                $str .= '</tr>';
+                $count++;
+            }
+            $str = '</table>';
         }
-        $count = 0;
-        $str = '';
-        $str = '<table>';
-        foreach ($listing as $v){
-            echo '<tr id="entry_'.$count.'">';
-            echo '<td><input type="checkbox" /></td>';
-            echo '<td>'.$v['name'].'</td>';
-            echo '<td>'.$v['size'].'</td>';
-            echo '<td>'.$v['date'].'</td>';
-            echo '</tr>';
-            $count++;
-        }
-        $str = '</table>';
-        if($print){
+        if ($print){
             echo $str;
             return null;
         } else {
             return $str;
         }
-        
     }
     
     /**
@@ -185,33 +184,31 @@ abstract class repository{
      * @param string $userid The id of specific user
      * @return array the list of files, including meta infomation
      */
-    public function store_login($username = '', $password = '', 
-        $userid = -1, $contextid = SITEID) {
-            global $DB;
-            $repostory = new stdclass;
-            $repostory->userid         = $userid;
-            $repostory->repositorytype = $this->name;
-            $repostory->contextid      = $contextid;
-            if ($entry = $DB->get_record('repository', $repository)) {
-                $repository->id = $entry->id;
-                $DB->update_record('repository', $repository);
-                $repository->username = $username;
-                $repository->password = $password;
-                return $repository->id;
-            } else {
-                $repository->username = $username;
-                $repository->password = $password;
-                $id = $DB->insert_record('repository', $repository);
-                return $id;
-            }
-            return false;
+    public function store_login($username = '', $password = '', $userid = -1, $contextid = SITEID) {
+        global $DB;
+
+        $repository = new stdclass;
+        $repository->userid         = $userid;
+        $repository->repositorytype = $this->name;
+        $repository->contextid      = $contextid;
+        if ($entry = $DB->get_record('repository', $repository)) {
+            $repository->id = $entry->id;
+            $repository->username = $username;
+            $repository->password = $password;
+            return $DB->update_record('repository', $repository);
+        } else {
+            $repository->username = $username;
+            $repository->password = $password;
+            return $DB->insert_record('repository', $repository);
+        }
+        return false;
     }
 
     /**
      * Defines operations that happen occasionally on cron
      *
      */
-    public function cron(){
+    public function cron() {
         return true;
     }
 }
