@@ -1,5 +1,9 @@
 <?php
 
+    if (!defined('MOODLE_INTERNAL')) {
+        die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+    }
+
     $courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname');
     $courseoptions = array();
 
