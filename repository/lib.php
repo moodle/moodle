@@ -140,7 +140,7 @@ abstract class repository {
                 $str .= '</tr>';
                 $count++;
             }
-            $str = '</table>';
+            $str .= '</table>';
         }
         if ($print){
             echo $str;
