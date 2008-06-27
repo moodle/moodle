@@ -125,7 +125,7 @@
     // print quiz name
     $table->data[] = array(get_string('modulename', 'quiz').':', format_string($quiz->name));
     if (has_capability('mod/quiz:viewreports', $context) and
-            count($attempts = $DB->get_records_select('quiz_attempts', "quiz = ? AND userid =?", 'attempt ASC', array($quiz->id, $attempt->userid))) > 1) {
+            count($attempts = $DB->get_records_select('quiz_attempts', "quiz = ? AND userid =?", array($quiz->id, $attempt->userid), 'attempt ASC')) > 1) {
         // print list of attempts
         $attemptlist = '';
         foreach ($attempts as $at) {
