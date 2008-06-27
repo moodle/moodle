@@ -208,12 +208,17 @@ collapseall();
 //]]>
 </script>';
 
-            $this->content->footer = '<div class="adminsearchform">'.
+            // only do search if you have moodle/site:config
+            if (has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) ) {
+                $this->content->footer = '<div class="adminsearchform">'.
                                      '<form action="'.$CFG->wwwroot.'/'.$CFG->admin.'/search.php" method="get"><div>'.
                                      '<label for="query" class="accesshide">'.get_string('searchinsettings', 'admin').'</label>'.
                                      '<input type="text" name="query" id="query" size="8" value="'.s($adminroot->search).'" />'.
                                      '<input type="submit" value="'.get_string('search').'" /></div>'.
                                      '</form></div>';
+            } else {
+                $this->content->footer = '';
+            }
         } else {
             $this->content = new object();
             $this->content->text = '';
