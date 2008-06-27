@@ -70,7 +70,7 @@ function xmldb_forum_upgrade($oldversion=0) {
                 echo '.';
             }
             $DB->set_debug(true);
-            $rs-close();
+            $rs->close();
         }
 
         upgrade_mod_savepoint($result, 2007101512, 'forum');
