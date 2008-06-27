@@ -8,7 +8,10 @@
  */
 global $DB;
 if (empty($quiz)) {
-    print_error('cannotcallscript');
+    if (empty($attemptobj)) {
+        print_error('cannotcallscript');
+    }
+    $quiz = $attemptobj->get_quiz();
 }
 if (!isset($currenttab)) {
     $currenttab = '';
