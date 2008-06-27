@@ -144,9 +144,9 @@
         global $USER, $CFG, $COURSE, $ME, $DB;
 
         $template['body'] = format_text($blogEntry->summary, $blogEntry->format);
-        //$template['title'] = '<a name="'. $blogEntry->subject .'"></a>';
+        $template['title'] = '<a id="'. s($blogEntry->subject) .'"></a>';
         //enclose the title in nolink tags so that moodle formatting doesn't autolink the text
-        $template['title'] = '<span class="nolink">'.$blogEntry->subject.'</span>';
+        $template['title'] .= '<span class="nolink">'. format_string($blogEntry->subject) .'</span>';
         $template['userid'] = $blogEntry->userid;
         $template['author'] = fullname($DB->get_record('user', array('id'=>$blogEntry->userid)));
         $template['lastmod'] = userdate($blogEntry->lastmodified);
