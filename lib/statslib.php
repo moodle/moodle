@@ -632,7 +632,7 @@ function stats_cron_weekly() {
     /// now enrolments averages
         $sql = "INSERT INTO {$CFG->prefix}stats_weekly (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'enrolments', ntimeend, courseid, roleid, CEIL(AVG(stat1)), CEIL(AVG(stat2))
+                SELECT 'enrolments', ntimeend, courseid, roleid, " . sql_ceil('AVG(stat1)') . ", " . sql_ceil('AVG(stat2)') . "
                   FROM (
                            SELECT $nextstartweek AS ntimeend, courseid, roleid, stat1, stat2
                              FROM {$CFG->prefix}stats_daily sd
@@ -763,7 +763,7 @@ function stats_cron_monthly() {
     /// now enrolments averages
         $sql = "INSERT INTO {$CFG->prefix}stats_monthly (stattype, timeend, courseid, roleid, stat1, stat2)
 
-                SELECT 'enrolments', ntimeend, courseid, roleid, CEIL(AVG(stat1)), CEIL(AVG(stat2))
+                SELECT 'enrolments', ntimeend, courseid, roleid, " . sql_ceil('AVG(stat1)') . ", " . sql_ceil('AVG(stat2)') . "
                   FROM (
                            SELECT $nextstartmonth AS ntimeend, courseid, roleid, stat1, stat2
                              FROM {$CFG->prefix}stats_daily sd
@@ -1183,8 +1183,8 @@ function stats_get_parameters($time,$report,$courseid,$mode,$roleid=0) {
             $threshold = $CFG->statsuserthreshold;
         }
         $param->fields = '';
-        $param->sql = 'SELECT courseid, ceil(avg(all_enrolments)) as line1,
-                         ceil(avg(active_enrolments)) as line2, avg(proportion_active) AS line3
+        $param->sql = 'SELECT courseid, ' . sql_ceil('avg(all_enrolments)') . ' as line1, ' .
+                         sql_ceil('avg(active_enrolments)') . ' as line2, avg(proportion_active) AS line3
                        FROM (
                            SELECT courseid, timeend, stat2 as active_enrolments,
                                   stat1 as all_enrolments, stat2'.$real.'/stat1'.$real.' as proportion_active
