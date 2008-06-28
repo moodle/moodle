@@ -47,11 +47,11 @@ function glossary_filter($courseid, $text) {
 
     /// Pull out all the raw data from the database for entries, categories and aliases
         $entries = $DB->get_records_select('glossary_entries',
-                                           'glossaryid IN ('.$glossarylist.') AND usedynalink != 0 AND approved != 0 ', '',
+                                           'glossaryid IN ('.$glossarylist.') AND usedynalink != 0 AND approved != 0 ', null, '',
                                            'id,glossaryid, concept, casesensitive, 0 AS category, fullmatch');
 
         $categories = $DB->get_records_select('glossary_categories',
-                                              'glossaryid IN ('.$glossarylist.') AND usedynalink != 0', '',
+                                              'glossaryid IN ('.$glossarylist.') AND usedynalink != 0', null, '',
                                               'id,glossaryid,name AS concept, 1 AS casesensitive, 1 AS category, 1 AS fullmatch');
 
         $aliases = $DB->get_records_sql('SELECT ga.id, ge.glossaryid, ga.alias as concept, ge.concept as originalconcept,
@@ -61,7 +61,7 @@ function glossary_filter($courseid, $text) {
                                           WHERE ga.entryid = ge.id
                                                 AND ge.glossaryid IN ('.$glossarylist.')
                                                 AND ge.usedynalink != 0
-                                                AND ge.approved != 0');
+                                                AND ge.approved != 0', null);
 
 
     /// Combine them into one big list
