@@ -171,6 +171,11 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
                     $value = null;           /// Set the default value to be inserted in first instance
                 }
 
+            } else if ($column->meta_type == 'X') { /// MSSQL doesn't cast from int to text, so if text column
+                if (is_numeric($value)) {           /// and is numeric value
+                    $value = (string)$value;        /// cast to string
+                }
+
             } else if (is_bool($value)) {
                 $value = (int)$value; // prevent "false" problems
 
@@ -236,8 +241,14 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         if (is_null($newvalue)) {
             $newfield = "$newfield = NULL";
         } else {
-            if (is_bool($newvalue)) {
+            if ($column->meta_type == 'X') {        /// MSSQL doesn't cast from int to text, so if text column
+                if (is_numeric($newvalue)) {        /// and is numeric value
+                    $newvalue = (string)$newvalue;  /// cast to string in PHP
+                }
+
+            } else if (is_bool($newvalue)) {
                 $newvalue = (int)$newvalue; // prevent "false" problems
+
             } else if ($newvalue === '') {
                 if ($column->meta_type == 'I' or $column->meta_type == 'F' or $column->meta_type == 'N') {
                     $newvalue = 0; // prevent '' problems in numeric fields
@@ -289,6 +300,11 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
                 if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
                     $blobs[$field] = $value;
                     $value = null;           /// Set the default value to be inserted in first instance
+                }
+
+            } else if ($column->meta_type == 'X') { /// MSSQL doesn't cast from int to text, so if text column
+                if (is_numeric($value)) {           /// and is numeric value
+                    $value = (string)$value;        /// cast to string
                 }
 
             } else if (is_bool($value)) {
