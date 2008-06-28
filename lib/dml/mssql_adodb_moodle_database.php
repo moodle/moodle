@@ -111,6 +111,10 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         return SQL_PARAMS_QM;
     }
 
+    public function sql_ceil($fieldname) {
+        return ' CEILING(' . $fieldname . ')';
+    }
+
     public function sql_cast_char2int($fieldname, $text=false) {
         if (!$text) {
             return ' CAST(' . $fieldname . ' AS INT) ';

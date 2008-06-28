@@ -1209,6 +1209,16 @@ abstract class moodle_database {
     }
 
     /**
+     * Returns the correct CEIL expression applied to fieldname
+     * @param string fieldname the field (or expression) we are going to ceil
+     * @return string the piece of SQL code to be used in your ceiling statement
+     * Most DB use CEIL(), hence it's the default.
+     */
+    public function sql_ceil($fieldname) {
+        return ' CEIL(' . $fieldname . ')';
+    }
+
+    /**
      * Returns the SQL to be used in order to CAST one CHAR column to INTEGER.
      *
      * Be aware that the CHAR column you're trying to cast contains really
