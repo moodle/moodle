@@ -405,28 +405,13 @@ class question_shortanswer_qtype extends default_questiontype {
                 $grade->raw = round($state->last_graded->raw_grade, $cmoptions->decimalpoints);
 
                 // let student know wether the answer was correct
-                echo '<div class="correctness ';
-                if ($state->last_graded->raw_grade >= $question->maxgrade/1.01) { // We divide by 1.01 so that rounding errors dont matter.
-                    echo ' correct">';
-                    print_string('correct', 'quiz');
-                } else if ($state->last_graded->raw_grade > 0) {
-                    echo ' partiallycorrect">';
-                    print_string('partiallycorrect', 'quiz');
-                    // MDL-7496
-                    if ($correctanswer) {
-                        echo ('<div class="correctness">');
-                        print_string('correctansweris', 'quiz', s($correctanswer, true));
-                        echo ('</div>');
-                    }
-                } else {
-                    echo ' incorrect">';
-                    // MDL-7496
-                    print_string('incorrect', 'quiz');
-                    if ($correctanswer) {
-                        echo ('<div class="correctness">');
-                        print_string('correctansweris', 'quiz', s($correctanswer, true));
-                        echo ('</div>');
-                    }
+                $class = question_get_feedback_class($state->last_graded->raw_grade / 
+                        $question->maxgrade);
+                echo '<div class="correctness ' . $class . '">' . get_string($class, 'quiz');
+                if ($correctanswer && ($class == 'partiallycorrect' || $class == 'incorrect')) {
+                    echo ('<div class="correctness">');
+                    print_string('correctansweris', 'quiz', s($correctanswer, true));
+                    echo ('</div>');
                 }
                 echo '</div>';
 

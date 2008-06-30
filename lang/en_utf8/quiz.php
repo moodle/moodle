@@ -215,6 +215,7 @@ $string['errorinquestion'] = 'Error in question';
 $string['errormissingquestion'] = 'Error: The system is missing the question with id $a';
 $string['errornotnumbers'] = 'Error - answers must be numeric';
 $string['errorsdetected'] = '$a error(s) detected';
+$string['errorunexpectedevent'] = 'Unexpected event code $a->event found for question $a->questionid in attempt $a->attemptid.';
 $string['essay'] = 'Essay';
 $string['essayquestions'] = 'Questions';
 $string['event1'] = 'Autosave';

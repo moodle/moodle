@@ -30,11 +30,11 @@ if ($attemptobj->is_finished()) {
 /// Check access.
 $accessmanager = $attemptobj->get_access_manager(time());
 $messages = $accessmanager->prevent_access();
-if (!$attemptobj->is_preview() && $messages) {
+if (!$attemptobj->is_preview_user() && $messages) {
     print_error('attempterror', 'quiz', $attemptobj->view_url(),
             $accessmanager->print_messages($messages, true));
 }
-$accessmanager->do_password_check($attemptobj->is_preview());
+$accessmanager->do_password_check($attemptobj->is_preview_user());
 
 /// Log this page view.
 add_to_log($attemptobj->get_courseid(), 'quiz', 'view summary', 'summary.php?attempt=' . $attemptobj->get_attemptid(),
@@ -47,7 +47,7 @@ $attemptobj->load_question_states();
 /// Print the page header
 require_js($CFG->wwwroot . '/mod/quiz/quiz.js');
 $title = get_string('summaryofattempt', 'quiz');
-if ($accessmanager->securewindow_required($attemptobj->is_preview())) {
+if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     $accessmanager->setup_secure_page($course->shortname.': '.format_string($quiz->name), $headtags);
 } else {
     print_header_simple(format_string($attemptobj->get_quiz_name()), '',
@@ -55,14 +55,14 @@ if ($accessmanager->securewindow_required($attemptobj->is_preview())) {
 }
 
 /// Print tabs if they should be there.
-if ($attemptobj->is_preview()) {
+if ($attemptobj->is_preview_user()) {
     $currenttab = 'preview';
     include('tabs.php');
 }
 
 /// Print heading.
 print_heading(format_string($attemptobj->get_quiz_name()));
-if ($attemptobj->is_preview()) {
+if ($attemptobj->is_preview_user()) {
     print_restart_preview_button($quiz);
 }
 print_heading($title);
@@ -107,7 +107,7 @@ echo "</div>\n";
 
 /// Finish the page
 $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());
-if ($accessmanager->securewindow_required($attemptobj->is_preview())) {
+if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     print_footer('empty');
 } else {
     print_footer($course);

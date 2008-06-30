@@ -1154,37 +1154,19 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
  * @return string
  */
 function question_get_feedback_image($fraction, $selected=true) {
-
     global $CFG;
+    static $icons = array('correct' => 'tick_green', 'partiallycorrect' => 'tick_amber',
+            'incorrect' => 'cross_red');
 
-    if ($fraction >= 1.0) {
-        if ($selected) {
-            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_big.gif" '.
-                            'alt="'.get_string('correct', 'quiz').'" class="icon" />';
-        } else {
-            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" '.
-                            'alt="'.get_string('correct', 'quiz').'" class="icon" />';
-        }
-    } else if ($fraction > 0.0 && $fraction < 1.0) {
-        if ($selected) {
-            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_big.gif" '.
-                            'alt="'.get_string('partiallycorrect', 'quiz').'" class="icon" />';
-        } else {
-            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/tick_amber_small.gif" '.
-                            'alt="'.get_string('partiallycorrect', 'quiz').'" class="icon" />';
-        }
+    if ($selected) {
+        $size = 'big';
     } else {
-        if ($selected) {
-            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_big.gif" '.
-                            'alt="'.get_string('incorrect', 'quiz').'" class="icon" />';
-        } else {
-            $feedbackimg = '<img src="'.$CFG->pixpath.'/i/cross_red_small.gif" '.
-                            'alt="'.get_string('incorrect', 'quiz').'" class="icon" />';
-        }
+        $size = 'small';
     }
-    return $feedbackimg;
+    $class = question_get_feedback_class($fraction);
+    return '<img src="' . $CFG->pixpath.'/i/' . $icons[$class] . '_' . $size . '.gif" '.
+            'alt="' . get_string($class, 'quiz') . '" class="icon" />';
 }
-
 
 /**
  * Returns the class name for question feedback.
@@ -1193,17 +1175,13 @@ function question_get_feedback_image($fraction, $selected=true) {
  * @return string
  */
 function question_get_feedback_class($fraction) {
-
-    global $CFG;
-
-    if ($fraction >= 1.0) {
-        $class = 'correct';
-    } else if ($fraction > 0.0 && $fraction < 1.0) {
-        $class = 'partiallycorrect';
+    if ($fraction >= 1/1.01) {
+        return 'correct';
+    } else if ($fraction > 0.0) {
+        return 'partiallycorrect';
     } else {
-        $class = 'incorrect';
+        return 'incorrect';
     }
-    return $class;
 }
 
 

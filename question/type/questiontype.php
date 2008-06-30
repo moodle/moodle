@@ -992,18 +992,9 @@ class default_questiontype {
                 $grade->raw = round($state->last_graded->raw_grade, $cmoptions->decimalpoints);
 
                 // let student know wether the answer was correct
-                echo '<div class="correctness ';
-                if ($state->last_graded->raw_grade >= $question->maxgrade/1.01) { // We divide by 1.01 so that rounding errors dont matter.
-                    echo ' correct">';
-                    print_string('correct', 'quiz');
-                } else if ($state->last_graded->raw_grade > 0) {
-                    echo ' partiallycorrect">';
-                    print_string('partiallycorrect', 'quiz');
-                } else {
-                    echo ' incorrect">';
-                    print_string('incorrect', 'quiz');
-                }
-                echo '</div>';
+                $class = question_get_feedback_class($state->last_graded->raw_grade / 
+                        $question->maxgrade);
+                echo '<div class="correctness ' . $class . '">' . get_string($class, 'quiz') . '</div>';
 
                 echo '<div class="gradingdetails">';
                 // print grade for this submission
