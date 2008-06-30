@@ -339,6 +339,12 @@ function mnet_get_keypair() {
  */
 function mnet_generate_keypair($dn = null, $days=28) {
     global $CFG, $USER, $DB;
+
+    // check if lifetime has been overriden
+    if (!empty($CFG->mnetkeylifetime)) {
+        $days = $CFG->mnetkeylifetime;
+    }
+
     $host = strtolower($CFG->wwwroot);
     $host = ereg_replace("^http(s)?://",'',$host);
     $break = strpos($host.'/' , '/');
