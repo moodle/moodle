@@ -8,9 +8,9 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 require_once($CFG->dirroot.'/repository/'.'lib.php');
-require_once($CFG->dirroot.'/repository/box/'.'boxlibphp5.php');
+require_once($CFG->dirroot.'/repository/boxnet/'.'boxlibphp5.php');
 
-class repository_box extends repository{
+class repository_boxnet extends repository{
 
     var $api_key    = 'dmls97d8j3i9tn7av8y71m9eb55vrtj4';
     var $box;
