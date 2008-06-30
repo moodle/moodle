@@ -53,7 +53,9 @@ class quiz_overview_report extends quiz_default_report {
         $pageoptions['mode'] = 'overview';
 
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
-        $qmsubselect = quiz_report_qm_filter_subselect($quiz); // careful: these are named params in $params!!
+        $qmsubselect = quiz_report_qm_filter_select($quiz);
+
+        
 
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
@@ -183,7 +185,7 @@ class quiz_overview_report extends quiz_default_report {
     
             // Construct the SQL
             $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS uniqueid, '.
-                ($qmsubselect?$qmsubselect.' AS gradedattempt, ':'').
+                ($qmsubselect?"($qmsubselect) AS gradedattempt, ":'').
                 'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, '.
                 'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
     

@@ -40,20 +40,18 @@ function quiz_get_newgraded_states($attemptids, $idxattemptq = true, $fields='qs
 
 function quiz_get_average_grade_for_questions($quiz, $userids){
     global $CFG, $DB;
-    $qmfilter = quiz_report_qm_filter_subselect($quiz, 'qa.userid');
-    $params['quizid'] = $quiz->id;
-    list($usql, $u_params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED, 'u0000');
-    $params += $u_params;
-    $questionavgssql = "SELECT qs.question, AVG(qs.grade) FROM
-                        {question_sessions} qns,
-                        {quiz_attempts} qa,
-                        {question_states} qs
-                        WHERE qns.attemptid = qa.uniqueid AND " .
-                        ($qmfilter?$qmfilter.' AND ':'') . "
-                        qa.quiz = :quizid AND
-                        qa.userid $usql AND
-                        qs.event IN (".QUESTION_EVENTS_GRADED.") AND
-                        qns.newgraded = qs.id GROUP BY qs.question";
+    $qmfilter = quiz_report_qm_filter_select($quiz);
+    list($usql, $params) = $DB->get_in_or_equal($userids);
+    $params[] = $quiz->id;
+    $questionavgssql = "SELECT qns.questionid, AVG(qs.grade) FROM
+                        {quiz_attempts} qa 
+                        LEFT JOIN {question_sessions} qns ON (qns.attemptid = qa.uniqueid)
+                        LEFT JOIN {question_states} qs ON (qns.newgraded = qs.id AND qs.event IN (".QUESTION_EVENTS_GRADED."))
+                        WHERE " .
+                        "($qmfilter) AND " .
+                        "qa.userid $usql AND " .
+                        "qa.quiz = ? ".
+                        "GROUP BY qs.question";
     return $DB->get_records_sql_menu($questionavgssql, $params);
 }
 
@@ -143,37 +141,47 @@ function quiz_report_load_questions($quiz){
  * one attempt that will be graded for each user. Or return
  * empty string if all attempts contribute to final grade.
  */
-function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id', $quizidsql = 'qa.quiz'){
-    global $CFG;
+function quiz_report_qm_filter_select($quiz){
     if ($quiz->attempts == 1) {//only one attempt allowed on this quiz
         return '';
     }
+    $useridsql = 'qa.userid';
+    $quizidsql = 'qa.quiz';
     $qmfilterattempts = true;
     switch ($quiz->grademethod) {
     case QUIZ_GRADEHIGHEST :
-        $qmorderby = 'sumgrades DESC, timestart ASC';
+        $field1 = 'sumgrades';
+        $field2 = 'timestart';
+        $aggregator1 = 'MAX';
+        $aggregator2 = 'MIN';
+        $qmselectpossible = true;
         break;
     case QUIZ_GRADEAVERAGE :
-        $qmfilterattempts = false;
+        $qmselectpossible = false;
         break;
     case QUIZ_ATTEMPTFIRST :
-        $qmorderby = 'timestart ASC';
+        $field1 = 'timestart';
+        $field2 = 'id';
+        $aggregator1 = 'MIN';
+        $aggregator2 = 'MIN';
+        $qmselectpossible = true;
         break;
     case QUIZ_ATTEMPTLAST :
-        $qmorderby = 'timestart DESC';
+        $field1 = 'timestart';
+        $field2 = 'id';
+        $aggregator1 = 'MAX';
+        $aggregator2 = 'MAX';
+        $qmselectpossible = true;
         break;
     }
-
-    //no new params in this query, it is assumed that quizid will be used somewhere else
-    //in the main query.
-    if ($qmfilterattempts){
-        $qmsubselect = "(SELECT id FROM {quiz_attempts} " .
-                "WHERE quiz = $quizidsql AND userid = $useridsql " .
-                "ORDER BY $qmorderby LIMIT 1)=qa.id";
+    if ($qmselectpossible){
+        $qmselect = "qa.$field1 = (SELECT $aggregator1(qa2.$field1) FROM {quiz_attempts} qa2 WHERE qa2.quiz = $quizidsql AND qa2.userid = $useridsql) AND " .
+                    "qa.$field2 = (SELECT $aggregator2(qa3.$field2) FROM {quiz_attempts} qa3 WHERE qa3.quiz = $quizidsql AND qa3.userid = $useridsql AND qa3.$field1 = qa.$field1)";
     } else {
-        $qmsubselect = '';
+        $qmselect = '';
     }
-    return $qmsubselect;
+
+    return $qmselect;
 }
 
 function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids=array()){
