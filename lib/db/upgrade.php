@@ -134,6 +134,28 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008051203);
     }
 
+    if ($result && $oldversion < 2008063001) {
+        // table to be modified
+        $table = new xmldb_table('tag_instance');
+        // add field
+        $field = new xmldb_field('tiuserid');
+        if (!$dbman->field_exists($table, $field)) {
+            $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, 0, 'itemid');
+            $dbman->add_field($table, $field);
+        }
+        // modify index
+        $index = new xmldb_index('itemtype-itemid-tagid');
+        $index->set_attributes(XMLDB_INDEX_UNIQUE, array('itemtype', 'itemid', 'tagid'));
+        $dbman->drop_index($table, $index);
+        $index = new xmldb_index('itemtype-itemid-tagid-tiuserid');
+        $index->set_attributes(XMLDB_INDEX_UNIQUE, array('itemtype', 'itemid', 'tagid', 'tiuserid'));
+        $dbman->add_index($table, $index);
+
+        /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008063001);
+    }
+
+
 /*
  * TODO:
  *   drop adodb_logsql table and create a new general sql log table

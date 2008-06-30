@@ -14,7 +14,7 @@ if (empty($CFG->usetags)) {
 }
 
 $tagid       = optional_param('id', 0, PARAM_INT); // tag id
-$tagname     = optional_param('tag', '', PARAM_TAG); // tag 
+$tagname     = optional_param('tag', '', PARAM_TAG); // tag
 
 $edit        = optional_param('edit', -1, PARAM_BOOL);
 $userpage    = optional_param('userpage', 0, PARAM_INT); // which page to show
@@ -78,8 +78,64 @@ print_heading($tagname, '', 2, 'headingblock header tag-heading');
 tag_print_management_box($tag);
 tag_print_description_box($tag);
 
-$usercount = tag_record_count('user', $tag->id);
+// Display courses tagged with the tag
+require_once($CFG->dirroot.'/tag/coursetagslib.php');
+if ($courses = coursetag_get_tagged_courses($tag->id)) {
 
+    $totalcount = count( $courses );
+    print_box_start('generalbox', 'tag-blogs'); //could use an id separate from tag-blogs, but would have to copy the css style to make it look the same
+
+    $heading = get_string('tagindex_coursetitle', 'tag', $tagname) .': '. $totalcount;
+    print_heading($heading, '', 3);
+
+    foreach ($courses as $course) {
+        print_course($course);
+	}
+
+    print_box_end();
+}
+
+// Print up to 10 previous blogs entries
+
+// I was not able to use get_items_tagged_with() because it automatically
+// tries to join on 'blog' table, since the itemtype is 'blog'. However blogs
+// uses the post table so this would not really work.    - Yu 29/8/07
+if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see blogs obviously
+
+    $count = 10;
+    if ($blogs = blog_fetch_entries('', $count, 0, 'site', '', $tag->id)) {
+
+        print_box_start('generalbox', 'tag-blogs');
+        $heading = get_string('relatedblogs', 'tag', $tagname);
+        print_heading($heading, '', 3);
+
+        echo '<ul id="tagblogentries">';
+        foreach ($blogs as $blog) {
+            if ($blog->publishstate == 'draft') {
+                $class = 'class="dimmed"';
+            } else {
+                $class = '';
+            }
+            echo '<li '.$class.'>';
+            echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?postid='.$blog->id.'">';
+            echo format_string($blog->subject);
+            echo '</a>';
+            echo ' - ';
+            echo '<a '.$class.' href="'.$CFG->wwwroot.'/user/view.php?id='.$blog->userid.'">';
+            echo fullname($blog);
+            echo '</a>';
+            echo ', '. userdate($blog->lastmodified);
+            echo '</li>';
+        }
+        echo '</ul>';
+
+        echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&filterselect=0&tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag', $tagname).'</a></p>';
+
+        print_box_end();
+    }
+}
+
+$usercount = tag_record_count('user', $tag->id);
 if ($usercount > 0) {
 
     //user table box
@@ -95,48 +151,7 @@ if ($usercount > 0) {
     print_box_end();
 }
 
-// Print last 10 blogs
-
-// I was not able to use get_items_tagged_with() because it automatically 
-// tries to join on 'blog' table, since the itemtype is 'blog'. However blogs
-// uses the post table so this would not really work.    - Yu 29/8/07
-if (has_capability('moodle/blog:view', $systemcontext)) {  // You have to see blogs obviously
-
-    if ($blogs = blog_fetch_entries('', 10, 0, 'site', '', $tag->id)) {
-
-        print_box_start('generalbox', 'tag-blogs');
-
-        print_heading(get_string('relatedblogs', 'tag'), '', 3);
-
-        echo '<ul id="tagblogentries">';
-        foreach ($blogs as $blog) {
-            if ($blog->publishstate == 'draft') {
-                $class = 'class="dimmed"';
-            } else {
-                $class = '';
-            }
-            echo '<li '.$class.'>';
-            echo '<a '.$class.' href="'.$CFG->wwwroot.'/blog/index.php?postid='.$blog->id.'">';
-            echo format_string($blog->subject);
-            echo '</a>';
-            echo ' - '; 
-            echo '<a '.$class.' href="'.$CFG->wwwroot.'/user/view.php?id='.$blog->userid.'">';
-            echo fullname($blog);
-            echo '</a>';
-            echo ', '. userdate($blog->lastmodified);
-            echo '</li>';
-        }
-        echo '</ul>';
-
-        echo '<p class="moreblogs"><a href="'.$CFG->wwwroot.'/blog/index.php?filtertype=site&filterselect=0&tagid='.$tag->id.'">'.get_string('seeallblogs', 'tag').'</a>...</p>';
-
-        print_box_end();
-    }
-}
-
-
 echo '</td>';
-
 
 //----------------- right column -----------------
 
@@ -151,9 +166,6 @@ if (blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing(
 /// Finish the page
 echo '</tr></table>';
 
-
-
 $PAGE->print_footer();
-
 
 ?>

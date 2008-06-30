@@ -40,6 +40,9 @@ function make_log_url($module, $url) {
         case 'upload':
             return $url;
             break;
+        case 'coursetags':
+            return '/'.$url;
+            break;
         case 'library':
         case '':
             return '/';

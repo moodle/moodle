@@ -90,7 +90,7 @@ if ($tagnew = $tagform->get_data()) {
         if (has_capability('moodle/tag:manage', $systemcontext)) {
             // rename tag
             if(!tag_rename($tag->id, $tagnew->rawname)) {
-                error('Error updating tag record');
+                print_error('errorupdatingrecord', 'tag');
             }
         }
     

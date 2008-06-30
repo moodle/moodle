@@ -63,9 +63,10 @@ define('TAG_RELATED_CORRELATED', 2);
  * @param int $record_id the id of the record to tag
  * @param array $tags the array of tags to set on the record. If
  *     given an empty array, all tags will be removed.
+ * @param int $userid optional only required for course tagging
  * @return void
  */
-function tag_set($record_type, $record_id, $tags) {
+function tag_set($record_type, $record_id, $tags, $userid = 0) {
 
     static $in_recursion_semaphore = false; // this is to prevent loops when tagging a tag
     if ( $record_type == 'tag' && !$in_recursion_semaphore) {
@@ -108,7 +109,7 @@ function tag_set($record_type, $record_id, $tags) {
             $tag_current_id = $new_tag[$clean_tag];
         }
 
-        tag_assign($record_type, $record_id, $tag_current_id, $ordering);
+        tag_assign($record_type, $record_id, $tag_current_id, $ordering, $userid);
 
         // if we are tagging a tag (adding a manually-assigned related tag), we
         // need to create the opposite relationship as well.
@@ -127,17 +128,18 @@ function tag_set($record_type, $record_id, $tags) {
  *     'user' for users, etc.
  * @param int $record_id the id of the record to tag
  * @param string $tag the tag to add
+ * @param int $userid optional only required for course tagging
  * @return void
  */
-function tag_set_add($record_type, $record_id, $tag) {
+function tag_set_add($record_type, $record_id, $tag, $userid = 0) {
 
     $new_tags = array();
-    foreach( tag_get_tags($record_type, $record_id) as $current_tag ) {
+    foreach( tag_get_tags($record_type, $record_id, NULL, $userid) as $current_tag ) {
         $new_tags[] = $current_tag->rawname;
     }
     $new_tags[] = $tag;
 
-    return tag_set($record_type, $record_id, $new_tags);
+    return tag_set($record_type, $record_id, $new_tags, $userid);
 }
 
 /**
@@ -236,9 +238,10 @@ function tag_get($field, $value, $returnfields='id, name, rawname') {
  * @param int $record_id the record id for which we want to get the tags
  * @param string $type the tag type (either 'default' or 'official'). By default,
  *     all tags are returned.
+ * @param int $userid optional only required for course tagging
  * @return array the array of tags
  */
-function tag_get_tags($record_type, $record_id, $type=null) {
+function tag_get_tags($record_type, $record_id, $type=null, $userid=0) {
     global $CFG, $DB;
 
     $params = array();
@@ -250,9 +253,15 @@ function tag_get_tags($record_type, $record_id, $type=null) {
         $sql_type = '';
     }
 
+   $u = null;
+    if ($userid) {
+        $u =  "AND ti.tiuserid = :userid ";
+        $params['userid'] = $userid;
+    }
+
     $sql = "SELECT tg.id, tg.tagtype, tg.name, tg.rawname, tg.flag, ti.ordering
               FROM {tag_instance} ti JOIN {tag} tg ON tg.id = ti.tagid
-              WHERE ti.itemtype = :recordtype AND ti.itemid = :recordid $sql_type
+              WHERE ti.itemtype = :recordtype AND ti.itemid = :recordid $u $sql_type
            ORDER BY ti.ordering ASC";
     $params['recordtype'] = $record_type;
     $params['recordid']   = $record_id;
@@ -662,12 +671,13 @@ function tag_add($tags, $type="default") {
  * @param int $record_id the id of the record that will be tagged
  * @param string $tagid the tag id to set on the record.
  * @param int $ordering the order of the instance for this record
+ * @param int $userid optional only required for course tagging
  * @return bool true on success, false otherwise
  */
-function tag_assign($record_type, $record_id, $tagid, $ordering) {
+function tag_assign($record_type, $record_id, $tagid, $ordering, $userid = 0) {
     global $DB;
 
-    if ( $tag_instance_object = $DB->get_record('tag_instance', array('tagid'=>$tagid, 'itemtype'=>$record_type, 'itemid'=>$record_id), 'id')) {
+    if ( $tag_instance_object = $DB->get_record('tag_instance', array('tagid'=>$tagid, 'itemtype'=>$record_type, 'itemid'=>$record_id, 'tiuserid'=>$userid), 'id')) {
         $tag_instance_object->ordering     = $ordering;
         $tag_instance_object->timemodified = time();
         return $DB->update_record('tag_instance', $tag_instance_object);
@@ -678,6 +688,7 @@ function tag_assign($record_type, $record_id, $tagid, $ordering) {
         $tag_instance_object->itemtype     = $record_type;
         $tag_instance_object->ordering     = $ordering;
         $tag_instance_object->timemodified = time();
+        $tag_instance_object->tiuserid     = $userid;
         return $DB->insert_record('tag_instance', $tag_instance_object);
     }
 }

@@ -154,8 +154,8 @@ define('PARAM_FILE',     0x0010);
 define('PARAM_TAG',   0x0011);
 
 /**
- * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.) 	
- */ 	
+ * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.)
+ */
 define('PARAM_TAGLIST',   0x0012);
 
 /**
@@ -2817,7 +2817,7 @@ function update_user_record($username, $authplugin) {
 }
 
 /**
- * will truncate userinfo as it comes from auth_get_userinfo (from external auth) 
+ * will truncate userinfo as it comes from auth_get_userinfo (from external auth)
  * which may have large fields
  */
 function truncate_userinfo($info) {
@@ -3542,6 +3542,10 @@ function remove_course_contents($courseid, $showfeedback=true) {
     $context = get_context_instance(CONTEXT_COURSE, $courseid);
     remove_course_grades($courseid, $showfeedback);
     remove_grade_letters($context, $showfeedback);
+
+/// Delete course tags
+    require_once($CFG->dirroot.'/tag/coursetagslib.php');
+    coursetag_delete_course_tags($course->id, $showfeedback);
 
     return $result;
 }

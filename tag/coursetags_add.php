@@ -1,0 +1,34 @@
+<?php
+/**
+ * coursetags_add.php
+ * @author j.beedell@open.ac.uk June07
+ */
+
+require_once('../config.php');
+
+$keyword = optional_param('coursetag_new_tag', '', PARAM_TEXT);
+$courseid = optional_param('entryid', 0, PARAM_INT);
+$userid = optional_param('userid', 0, PARAM_INT);
+
+$keyword = trim(strip_tags($keyword)); //better cleanup of user input is done later
+if ($keyword) {
+
+    require_once($CFG->dirroot.'/tag/coursetagslib.php');
+
+    if ($courseid > 0 and $userid > 0) {
+        $myurl = 'tag/search.php';
+        $keywords = explode(',', $keyword);
+        coursetag_store_keywords($keywords, $courseid, $userid, 'default', $myurl);
+    }
+}
+
+// send back to originating page, where the new tag will be visible in the block
+if ($courseid > 0) {
+    $myurl = $CFG->wwwroot.'/course/view.php?id='.$courseid;
+} else {
+    $myurl = $CFG->wwwroot.'/';
+}
+
+redirect($myurl);
+
+?>
