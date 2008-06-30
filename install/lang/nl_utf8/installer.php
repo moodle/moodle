@@ -137,6 +137,13 @@ $string['databasesettingssub_postgres7'] = '<b>Type:</b> PostgreSQL<br />
 <b>Gebruiker:</b> de gebruikersnaam voor jouw database<br />
 <b>Wachtwoord:</b> het wachtwoord voor je databank<br />
 <b>Tabelvoorvoegsel:</b>voorvoegsel voor alle tabelnamen (verplicht)';
+$string['databasesettingssub_sqlite3_pdo'] = '<b>Type:</b> SQLite 3 (PDO) <b><strong class=\"errormsg\">Experimenteel! (niet voor productieomgeving)</strong></b><br />
+<b>Host:</b> pad naar de map waar het databankbestand bewaard zal worden (gebruik volledig pad); gebruik localhost of laat leeg om de datamap van Moodle te gebruiken<br />
+<b>Naam:</b> databank naam, vb moodle (optioneel)<br />
+<b>Gebruiker:</b> de gebruikersnaam voor jouw databank (optioneel)<br />
+<b>Wachtwoord:</b> het wachtwoord voor jouw databank (optioneel)<br />
+<b>Tabelvoorvoegsel:</b> optioneel voorvoegsel voor alle tabelnamen<br />
+De naam van de databank zal bepaald worden door de gebruikersnaam, databanknaam en het wachtwoord dat je net ingegeven hebt.';
 $string['databasesettingswillbecreated'] = '<b>Opmerking:</b> het installatieprogramma zal proberen een databank te maken als die nog niet bestaat.';
 $string['databasetype'] = 'Databanktype:';
 $string['databaseuser'] = 'Databank gebruikersnaam:';
@@ -327,6 +334,8 @@ $string['sitenewsitems'] = 'Nieuwsitems:';
 $string['siteshortname'] = 'Verkorte naam voor de site:';
 $string['sitesummary'] = 'Site samenvatting:';
 $string['skipdbencodingtest'] = 'Negeer DB-encodingtest';
+$string['sqlite3_pdo'] = 'SQLite 3 (PDO) <b><strong class=\"errormsg\">Experimenteel! (niet gebruiken in productieomgeving)</strong></b>';
+$string['sqliteextensionisnotpresentinphp'] = 'PHP is niet juist geconfigureerd met de SQLite extentie. Controleer je php.ini-bestand of hercompileer PHP.';
 $string['status'] = 'Status';
 $string['tableprefix'] = 'Tabelvoorvoegsel:';
 $string['thischarset'] = 'UTF-8';
