@@ -58,7 +58,7 @@ class quiz_report extends quiz_default_report {
         $pageoptions['mode'] = 'overview';
 
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
-        $qmsubselect = quiz_report_qm_filter_subselect($quiz);
+        $qmsubselect = quiz_report_qm_filter_select($quiz);
         $mform = new mod_quiz_report_overview_settings($reporturl, compact('qmsubselect', 'quiz'));
         if ($fromform = $mform->get_data()){
             $attemptsmode = $fromform->attemptsmode;

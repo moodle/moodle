@@ -40,7 +40,7 @@ function quiz_get_newgraded_states($attemptids, $idxattemptq = true, $fields='qs
 
 function quiz_get_average_grade_for_questions($quiz, $userids){
     global $CFG;
-    $qmfilter = quiz_report_qm_filter_subselect($quiz, 'qa.userid');
+    $qmfilter = quiz_report_qm_filter_select($quiz);
     $questionavgssql = "SELECT qs.question, AVG(qs.grade) FROM " .
             "{$CFG->prefix}question_sessions qns, " .
             "{$CFG->prefix}quiz_attempts qa, " .
@@ -130,38 +130,53 @@ function quiz_report_load_questions($quiz){
 }
 /**
  * Given the quiz grading method return sub select sql to find the id of the
- * one attempt that will be graded for each user. Or return 
+ * one attempt that will be graded for each user. Or return
  * empty string if all attempts contribute to final grade.
  */
-function quiz_report_qm_filter_subselect($quiz, $useridsql = 'u.id'){
+function quiz_report_qm_filter_select($quiz){
     global $CFG;
     if ($quiz->attempts == 1) {//only one attempt allowed on this quiz
         return '';
     }
+    $useridsql = 'qa.userid';
+    $quizidsql = 'qa.quiz';
     $qmfilterattempts = true;
     switch ($quiz->grademethod) {
     case QUIZ_GRADEHIGHEST :
-        $qmorderby = 'sumgrades DESC, timestart ASC';
+        $field1 = 'sumgrades';
+        $field2 = 'timestart';
+        $aggregator1 = 'MAX';
+        $aggregator2 = 'MIN';
+        $qmselectpossible = true;
         break;
     case QUIZ_GRADEAVERAGE :
-        $qmfilterattempts = false;
+        $qmselectpossible = false;
         break;
     case QUIZ_ATTEMPTFIRST :
-        $qmorderby = 'timestart ASC';
+        $field1 = 'timestart';
+        $field2 = 'id';
+        $aggregator1 = 'MIN';
+        $aggregator2 = 'MIN';
+        $qmselectpossible = true;
         break;
     case QUIZ_ATTEMPTLAST :
-        $qmorderby = 'timestart DESC';
+        $field1 = 'timestart';
+        $field2 = 'id';
+        $aggregator1 = 'MAX';
+        $aggregator2 = 'MAX';
+        $qmselectpossible = true;
         break;
     }
-    if ($qmfilterattempts){
-        $qmsubselect = "(SELECT id FROM {$CFG->prefix}quiz_attempts " .
-                "WHERE quiz = {$quiz->id} AND $useridsql = userid " .
-                "ORDER BY $qmorderby LIMIT 1)=qa.id";
+    if ($qmselectpossible){
+        $qmselect = "qa.$field1 = (SELECT $aggregator1(qa2.$field1) FROM {$CFG->prefix}quiz_attempts qa2 WHERE qa2.quiz = $quizidsql AND qa2.userid = $useridsql) AND " .
+                    "qa.$field2 = (SELECT $aggregator2(qa3.$field2) FROM {$CFG->prefix}quiz_attempts qa3 WHERE qa3.quiz = $quizidsql AND qa3.userid = $useridsql AND qa3.$field1 = qa.$field1)";
     } else {
-        $qmsubselect = '';
+        $qmselect = '';
     }
-    return $qmsubselect;
+
+    return $qmselect;
 }
+
 
 function quiz_report_grade_bands($bandwidth, $bands, $quizid, $useridlist=''){
     global $CFG;
