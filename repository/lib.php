@@ -50,6 +50,7 @@
  * @package repository_api
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
+require_once('../config.php');
 
 abstract class repository {
     protected $options;
@@ -219,6 +220,30 @@ abstract class repository {
  */
 
 abstract class repository_listing {
+}
+
+function repository_set_option($id, $position, $config = array()){
+    global $DB;
+    $repository = new stdclass;
+    $position = (int)$position;
+    $config   = serialize($config);
+    if( $position < 1 || $position > 5){
+        print_error('invalidoption', 'repository', '', $position);
+    }
+    if ($entry = $DB->get_record('repository', array('id'=>$id))) {
+        $option = 'option'.$position;
+        $repository->id = $entry->id;
+        $repository->$option = $config;
+        return $DB->update_record('repository', $repository);
+    }
+    return false;
+}
+function repository_get_option($id, $position){
+    global $DB;
+    $entry = $DB->get_record('repository', array('id'=>$id));
+    $option = 'option'.$position;
+    $ret = (array)unserialize($entry->$option);
+    return $ret;
 }
 
 ?>

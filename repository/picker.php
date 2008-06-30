@@ -1,6 +1,28 @@
 <?php
 require_once('../config.php');
 require_once('lib.php');
+// Obtain parameters
+$id        = required_param('id', PARAM_INT);
+$options = repository_get_option($id, 1);
+if(!empty($options['required'])) {
+    foreach($options['required'] as $param){
+        $options[$param] = optional_param($param, 0, PARAM_RAW);
+    }
+}
+$courseid  = optional_param('course', 0, PARAM_INT);
+$contextid = SITEID;
+
+/*
+if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
+    print_error('invalidcourseid');
+}
+*/
+if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
+    print_error('invalidrepostoryid');
+}
+require_once($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository.class.php');
+$classname = 'repository_'.$repository->repositorytype;
+$repo = new $classname($id, SITEID, $options);
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -45,7 +67,14 @@ require_once('lib.php');
             </td>
         </tr>
         </table>
-        <iframe src="ibrowse.php" width="100%" height='250px' class="frame"></iframe>
+        <div>
+        <?php
+            $repo->print_login();
+        ?>
+        </div>
+        <!--
+            <iframe src="ibrowse.php" width="100%" height='250px' class="frame"></iframe>
+        -->
         <div class="right">
         <input type="submit" value="Select" name="select"  />
         &nbsp;&nbsp;
