@@ -123,7 +123,7 @@ Moodleにアクセスする完全なウェブアドレスを指定してくだ�
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['dirrooterror'] = '「Moodleディレクトリ」設定が間違っているようです - インストール済みMoodleが見つかりませんでした。下記の値がリセットされました。';
 $string['download'] = 'ダウンロード';
-$string['downloadedfilecheckfailed'] = 'ダウンロードファイルのチェックが失敗しました。';
+$string['downloadedfilecheckfailed'] = 'ダウンロードファイルのチェックに失敗しました。';
 $string['downloadlanguagebutton'] = '「 $a 」言語パックをダウンロードする';
 $string['downloadlanguagehead'] = '言語パックのダウンロード';
 $string['downloadlanguagenotneeded'] = 'デフォルトの言語パック「 $a 」でインストール処理を続けることができます。';
@@ -194,7 +194,7 @@ $string['memorylimithelp'] = '<p>現在、サーバのPHPメモリー制限が $
 <blockquote><div>php_value memory_limit 40M</div></blockquote>
 <p>しかし、この設定が<b>すべての</b>PHPページの動作を妨げる場合もあります。ページ閲覧中にエラーが表示される場合は、.htaccessファイルを削除してください。</p></li>
 </ol>';
-$string['missingrequiredfield'] = 'いくつかの必須入力フィールドに入力されていません。';
+$string['missingrequiredfield'] = 'いくつかの必須入力フィールドが入力されていません。';
 $string['moodledocslink'] = 'このページのMoodle Docs';
 $string['mssql'] = 'SQL*Server (mssql)';
 $string['mssql_n'] = 'SQL*Server UTF-8サポート (mssql_n)';
