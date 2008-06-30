@@ -12,12 +12,20 @@ require_once($CFG->dirroot.'/repository/boxnet/'.'boxlibphp5.php');
 
 class repository_boxnet extends repository{
 
-    var $api_key    = 'dmls97d8j3i9tn7av8y71m9eb55vrtj4';
     var $box;
     var $ticket;
 
     public function __construct($repositoryid, $context = SITEID, $options = array()){
-        $repositoryid = -1;
+        global $SESSION;
+        $op = repository_get_option($repositoryid, 1);
+        $options['api_key']    = $op['api_key'];
+        $options['auth_token'] = optional_param('auth_token', '', PARAM_RAW);
+        if(!empty($options['auth_token'])) {
+            $SESSION->box_token = $options['auth_token'];
+        } else {
+            $options['auth_token'] = $SESSION->box_token;
+        }
+        $options['api_key'] = 'dmls97d8j3i9tn7av8y71m9eb55vrtj4';
         parent::__construct($repositoryid, $context, $options);
         if(!empty($options['api_key'])){
             $this->api_key = $options['api_key'];
@@ -40,6 +48,7 @@ class repository_boxnet extends repository{
                     $ret[] = array('name'=>$v, 'size'=>0, 'date'=>'',
                             'url'=>'http://box.net/api/1.0/download/'.$this->options['auth_token'].'/'.$fileids[$n]);
                 }
+                $this->listing = $ret;
                 return $ret;
             } else {
                 return null;
@@ -48,7 +57,10 @@ class repository_boxnet extends repository{
     }
 
     public function print_login(){
-        if($this->box){
+        if(!empty($this->box) && !empty($this->options['auth_token'])) {
+            echo '<a href="picker.php?id='.$this->repositoryid.'&action=list">View File list</a>';
+            return true;
+        } else if(!empty($this->box)){
             // get a ticket from box.net
             $ticket_return = $this->box->getTicket();
             if($this->box->isError()) {
@@ -73,9 +85,6 @@ class repository_boxnet extends repository{
             if($this->ticket && ($this->options['auth_token'] == '')){
                 $this->box->getAuthToken($this->ticket);
                 return false;
-            } else {
-                echo 'Logged';
-                return true;
             }
         } else {
             return false;

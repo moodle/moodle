@@ -1,36 +1,28 @@
 <?php
 require_once('../config.php');
 require_once('lib.php');
-// Obtain parameters
 $id        = required_param('id', PARAM_INT);
-$options = repository_get_option($id, 1);
-if(!empty($options['required'])) {
-    foreach($options['required'] as $param){
-        $options[$param] = optional_param($param, 0, PARAM_RAW);
-    }
-}
-$courseid  = optional_param('course', 0, PARAM_INT);
-$contextid = SITEID;
-
-/*
-if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
-    print_error('invalidcourseid');
-}
-*/
+$action    = optional_param('action', 'check', PARAM_RAW);
 if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
     print_error('invalidrepostoryid');
 }
-require_once($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository.class.php');
-$classname = 'repository_'.$repository->repositorytype;
-$repo = new $classname($id, SITEID, $options);
+
+if(is_file($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository.class.php')) {
+    require_once($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository.class.php');
+    $classname = 'repository_' . $repository->repositorytype;
+    $repo = new $classname($id, SITEID);
+} else {
+    print_error('invalidplugin', 'repository');
+}
+
 
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
-<title>File Picker</title>
-<link href="style.css" rel="stylesheet" type="text/css"/>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type"/>
+    <title>File Picker</title>
+    <link href="style.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
     <table border="0" cellspacing="10" cellpadding="10">
@@ -69,7 +61,11 @@ $repo = new $classname($id, SITEID, $options);
         </table>
         <div>
         <?php
-            $repo->print_login();
+            if(!empty($action)) {
+                $repo->print_listing();
+            } else {
+                $repo->print_login();
+            }
         ?>
         </div>
         <!--

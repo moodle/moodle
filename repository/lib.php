@@ -57,6 +57,7 @@ abstract class repository {
     public    $name;
     public    $context;
     public    $repositoryid;
+    public    $listing;
 
     /**
      * Take an array as a parameter, which contains necessary information
@@ -127,6 +128,9 @@ abstract class repository {
      *
      */
     public function print_listing($listing = array(), $print=true) {
+        if(empty($listing)){
+            $listing = $this->get_listing();
+        }
         if (empty($listing)) {
             $str = '';
         } else {
