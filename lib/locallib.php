@@ -159,6 +159,12 @@ function upgrade_local_db($continueto) {
         upgrade_log_start();
         notify('WARNING!!!  The local version you are using is OLDER than the version that made these databases!');
     }
+
+    /// Capabilities
+    if (!update_capabilities('local')) {
+        error('Could not set up the capabilities for local!');
+    }
+
     upgrade_log_finish();
 }
 
