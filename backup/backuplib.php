@@ -261,7 +261,7 @@
                     $file->backup_code = $backup_unique_code;
                     $file->file_type   = 'course';
                     $file->path        = $dir;
-                    $status = $DB->insert("backup_files", $file);
+                    $status = $DB->insert_record("backup_files", $file);
                 }
             //Do some output
             backup_flush(30);
