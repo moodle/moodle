@@ -154,7 +154,38 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Main savepoint reached
         upgrade_main_savepoint($result, 2008063001);
     }
+    if ($result && $oldversion < 2008063002) {
 
+    /// Define table repository to be created
+        $table = new xmldb_table('repository');
+
+    /// Adding fields to table repository
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('repositoryname', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_field('repositorytype', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('username', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_field('password', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+        $table->add_field('data1', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('data2', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('data3', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('data4', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('data5', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+
+    /// Adding keys to table repository
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for repository
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008063002);
+    }
 
 /*
  * TODO:
