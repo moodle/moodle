@@ -229,9 +229,9 @@
           <ON_CHECK message="mbstringrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
-      <PHP_EXTENSION name="curl" level="optional">
+      <PHP_EXTENSION name="curl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="curlrecommended" />
+          <ON_CHECK message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="openssl" level="optional">
