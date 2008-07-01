@@ -70,6 +70,7 @@ $string['errorfilecannotbemoved'] = 'Error cannot move file $a.';
 $string['errorfileschanged'] = 'Error files linked to from questions have changed since form was displayed.';
 $string['errormanualgradeoutofrange'] = 'The grade $a->grade is not between 0 and $a->maxgrade for question $a->name. The score and comment have not been saved.';
 $string['errormovingquestions'] = 'Error while moving questions with ids $a.';
+$string['errorprocessingresponses'] = 'An error occurred while processing your responses.';
 $string['errorsavingcomment'] = 'Error saving the comment for question $a->name in the database.';
 $string['errorupdatingattempt'] = 'Error updating attempt $a->id in the database.';
 $string['emptyxml'] = 'Unkown error - empty imsmanifest.xml';

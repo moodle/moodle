@@ -1290,7 +1290,6 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 /**
 * Processes an array of student responses, grading and saving them as appropriate
 *
-* @return boolean         Indicates success/failure
 * @param object $question Full question object, passed by reference
 * @param object $state    Full state object, passed by reference
 * @param object $action   object with the fields ->responses which
@@ -1301,6 +1300,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 * @param object $cmoptions
 * @param object $attempt  The attempt is passed by reference so that
 *                         during grading its ->sumgrades field can be updated
+* @return boolean         Indicates success/failure
 */
 function question_process_responses(&$question, &$state, $action, $cmoptions, &$attempt) {
     global $QTYPES;
@@ -1361,7 +1361,9 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
 
     if (!question_isgradingevent($action->event)) {
         // Grade the response but don't update the overall grade
-        $QTYPES[$question->qtype]->grade_responses($question, $state, $cmoptions);
+        if (!$QTYPES[$question->qtype]->grade_responses($question, $state, $cmoptions)) {
+            return false;
+        }
 
         // Temporary hack because question types are not given enough control over what is going
         // on. Used by Opaque questions.
@@ -1397,8 +1399,10 @@ function question_process_responses(&$question, &$state, $action, $cmoptions, &$
         // If we did not find a duplicate or if the attempt is closing, perform grading
         if ((!$sameresponses and QUESTION_EVENTDUPLICATE != $state->event) or
                 QUESTION_EVENTCLOSE == $action->event) {
+            if (!$QTYPES[$question->qtype]->grade_responses($question, $state, $cmoptions)) {
+                return false;
+            }
 
-            $QTYPES[$question->qtype]->grade_responses($question, $state, $cmoptions);
             // Calculate overall grade using correct penalty method
             question_apply_penalty_and_timelimit($question, $state, $attempt, $cmoptions);
         }
