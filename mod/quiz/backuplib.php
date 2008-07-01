@@ -208,7 +208,7 @@
                                                 {quiz} q
                                            WHERE q.course = ? AND
                                                  g.quiz = q.id AND
-                                                 g.question = t.id",false, array($course));
+                                                 g.question = t.id", array($course));
         if ($categories) {
             foreach ($categories as $key => $category) {
                 $exist = $DB->get_record('question_categories', array('id' => $key));

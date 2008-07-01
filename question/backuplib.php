@@ -442,7 +442,7 @@
      * Insert code to identify categories to later insert all question ids later eg. course, quiz or other module name.
      */
     function question_insert_q_ids($backup_unique_code, $info){
-        global $CFG;
+        global $CFG,$DB;
             //put the ids of the questions from all these categories into the db.
         $status = $DB->execute("INSERT INTO {backup_ids} (backup_code, table_name, old_id, info)
                                 SELECT '$backup_unique_code', 'question', q.id, ''
