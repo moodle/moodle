@@ -1,5 +1,5 @@
 body {
-	font: normal 12px auto "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	font: normal 16px auto "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 	color: #4f6b72;
 	background: #E6EAE9;
 }
@@ -86,7 +86,7 @@ td.second {
     line-height: 1.5em;
 }
 #repolist li{
-    background: url(images/arrow.png) no-repeat 0 0;
+    background: url(images/arrow.png) no-repeat 0 6px;
     padding:0 0 0 16px;
 }
 #repolist .line{

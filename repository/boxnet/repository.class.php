@@ -92,6 +92,7 @@ class repository_boxnet extends repository{
     }
 
     public function print_search(){
+        echo '<input type="text" disabled="true" name="Search" value="search terms..." size="40" class="right"/>';
         return false;
     }
 }

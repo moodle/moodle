@@ -2,7 +2,7 @@
 require_once('../config.php');
 require_once('lib.php');
 $id        = required_param('id', PARAM_INT);
-$action    = optional_param('action', 'check', PARAM_RAW);
+$action    = optional_param('action', '', PARAM_RAW);
 if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
     print_error('invalidrepostoryid');
 }
@@ -14,8 +14,6 @@ if(is_file($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository
 } else {
     print_error('invalidplugin', 'repository');
 }
-
-
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
@@ -34,17 +32,17 @@ if(is_file($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository
                 <li><a href="###" class="link">Local Server</a></li>
                 <li><a href="###">Remote Moodle</a></li>
                 <li class='line'>------------------------------</li>
-                <li><a href="?repo=boxnet">Box.net</a></li>
-                <li><a href="###">Briefcase</a></li>
-                <li><a href="###">Door</a></li>
-                <li><a href="###">Flickr</a></li>
-                <li><a href="###">Google Docs</a></li>
-                <li><a href="###">Mahara</a></li>
-                <li><a href="###">Merlot</a></li>
-                <li><a href="###">Myspace</a></li>
-                <li><a href="###">Oki</a></li>
-                <li><a href="###">Skydrive</a></li>
-                <li><a href="###">Youtube</a></li>
+                <li><a href="?id=1">Box.net</a></li>
+                <li><a href="?id=2">Flickr</a></li>
+                <li><a href="###"><strike>Briefcase</strike></a></li>
+                <li><a href="###"><strike>Door</strike></a></li>
+                <li><a href="###"><strike>Google Docs</strike></a></li>
+                <li><a href="###"><strike>Mahara</strike></a></li>
+                <li><a href="###"><strike>Merlot</strike></a></li>
+                <li><a href="###"><strike>Myspace</strike></a></li>
+                <li><a href="###"><strike>Oki</strike></a></li>
+                <li><a href="###"><strike>Skydrive</strike></a></li>
+                <li><a href="###"><strike>Youtube</strike></a></li>
                 <li class='line'>------------------------------</li>
             </ul>
         </td>
@@ -55,13 +53,15 @@ if(is_file($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository
                 <img src="<?php echo $CFG->pixpath.'/moodlelogo.gif';?>" alt="Manage Google Docs" />
             </td>
             <td class="header">
-                <input type="text" name="Search" value="search terms..." size="40" class="right"/>
+                <?php
+                $repo->print_search();
+                ?>
             </td>
         </tr>
         </table>
         <div>
         <?php
-            if(!empty($action)) {
+            if($action == 'list') {
                 $repo->print_listing();
             } else {
                 $repo->print_login();
@@ -69,13 +69,13 @@ if(is_file($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository
         ?>
         </div>
         <!--
-            <iframe src="ibrowse.php" width="100%" height='250px' class="frame"></iframe>
-        -->
+        <iframe src="ibrowse.php" width="100%" height='250px' class="frame"></iframe>
         <div class="right">
         <input type="submit" value="Select" name="select"  />
         &nbsp;&nbsp;
         <input type="submit" value="Cancel" name="cancel"/>
         </div>
+        -->
         </td>
         </tr>
     </tbody>
