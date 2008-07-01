@@ -116,9 +116,11 @@ class quiz_report extends quiz_default_report {
         if (!$students = get_users_by_capability($context, 'mod/quiz:attempt','','','','','','',false)){
             notify(get_string('nostudentsyet'));
             $nostudents = true;
+            $studentslist = '';
+        } else {
+            $studentslist = join(',',array_keys($students));
         }
         
-        $studentslist = join(',',array_keys($students));
         if (empty($currentgroup)) {
             // all users who can attempt quizzes
             $groupstudentslist = '';
