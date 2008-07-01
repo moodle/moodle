@@ -68,6 +68,21 @@ class question_shortanswer_qtype_test extends UnitTestCase {
         $this->assertTrue($this->qtype->compare_string_with_wildcard('\{}/', '\{}/', true));
     }
 
+    function test_test_response() {
+        $answer = new stdClass;
+        $answer->id = 1;
+        $answer->answer = 'entrance';
+        $answer->fraction = 1;
+        $question = new stdClass;
+        $question->options->answers = array(
+            1 => $answer,
+        );
+        $question->options->usecase = 0;
+        $state = new stdClass;
+        $state->responses[''] = 'Entrance';
+        $this->assertTrue($this->qtype->test_response($question, $state, $answer));
+    }
+
     function test_get_correct_responses() {
         $answer1 = new stdClass;
         $answer1->id = 17;
