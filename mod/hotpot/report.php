@@ -380,10 +380,14 @@ function hotpot_delete_selected_attempts(&$hotpot, $del) {
             $select = "hotpot=:hotpotid AND status=".HOTPOT_STATUS_ABANDONED;
             break;
         case 'selection':
-            $ids = (array)data_submitted();
-            unset($ids['del']);
-            unset($ids['id']);
-            if (!empty($ids)) {
+            $ids = array();
+            $data = (array)data_submitted();
+            foreach ($data as $name => $value) {
+                if (preg_match('/^box\d+$/', $name)) {
+                    $ids[] = intval($value);
+                }
+            }
+            if (count($ids)) {
                 list($ids, $idparams) = $DB->get_in_or_equal($ids, SQL_PARAMS_NAMED, 'crid0');
                 $params = array_merge($params, $idparams); 
                 $select = "hotpot=:hotpotid AND clickreportid $ids";
