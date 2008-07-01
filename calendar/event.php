@@ -97,6 +97,8 @@
         }
     }
 
+    $form = null;
+
     switch($action) {
         case 'delete':
             $title = get_string('deleteevent', 'calendar');
@@ -124,10 +126,6 @@
             if($form = data_submitted()) {
 
                 $form->name = clean_param(strip_tags($form->name,'<lang><span>'), PARAM_CLEAN);
-
-                // To avoid double slashes
-                $form->name = stripslashes($form->name);
-                $form->description = stripslashes($form->description);
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -157,25 +155,23 @@
                         }
 
                         execute_sql('UPDATE '.$CFG->prefix.'event SET '.
-                            'name = '.$db->qstr($form->name).','.
-                            'description = '.$db->qstr($form->description).','.
+                            'name = \''.$form->name.'\','.
+                            'description = \''.$form->description.'\','.
                             'timestart = '.$timestartoffset.','.
                             'timeduration = '.$form->timeduration.','.
                             'timemodified = '.time().' WHERE repeatid = '.$event->repeatid);
 
                         /// Log the event update.
-                        $form->name = stripslashes($form->name);  //To avoid double-slashes
-                        add_to_log($form->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$form->id, $form->name);
+                        add_to_log($form->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$form->id, stripslashes($form->name));
                     }
 
                     else {
                         // Update this
                         $form->timemodified = time();
                         update_record('event', $form);
-    
+
                         /// Log the event update.
-                        $form->name = stripslashes($form->name);  //To avoid double-slashes
-                        add_to_log($form->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$form->id, $form->name);
+                        add_to_log($form->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$form->id, stripslashes($form->name));
                     }
 
                     // OK, now redirect to day view
@@ -259,6 +255,8 @@
             $title='';
         break;
     }
+
+    $form = stripslashes_recursive($form);
 
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
