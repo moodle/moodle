@@ -256,7 +256,7 @@ define ('BLOG_SITE_LEVEL', 4);
 define ('BLOG_GLOBAL_LEVEL', 5);
 
 /**
- * Tag constanst
+ * Tag constants
  */
 //To prevent problems with multibytes strings, this should not exceed the
 //length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
