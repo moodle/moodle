@@ -77,9 +77,23 @@ function setup_DB() {
             $dberr = '';
         }
         if (empty($CFG->noemailever) and !empty($CFG->emailconnectionerrorsto)) {
-            @mail($CFG->emailconnectionerrorsto,
-                  'WARNING: Database connection error: '.$CFG->wwwroot,
-                  'Connection error: '.$CFG->wwwroot);
+            if (file_exists($CFG->dataroot.'/emailcount')){
+                $fp = fopen($CFG->dataroot.'/emailcount', 'r');
+                $content = fread($fp, 24);
+                if((time() - (int)$content) > 600){
+                    @mail($CFG->emailconnectionerrorsto, 
+                        'WARNING: Database connection error: '.$CFG->wwwroot, 
+                        'Connection error: '.$CFG->wwwroot);
+                    $fp = fopen($CFG->dataroot.'/emailcount', 'w');
+                    fwrite($fp, time());
+                }
+            } else {
+               @mail($CFG->emailconnectionerrorsto, 
+                    'WARNING: Database connection error: '.$CFG->wwwroot, 
+                    'Connection error: '.$CFG->wwwroot);
+               $fp = fopen($CFG->dataroot.'/emailcount', 'w');
+               fwrite($fp, time());
+            }
         }
         print_error('dbconnectionfailed', 'error', '', $dberr);
     }
