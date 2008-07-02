@@ -1521,8 +1521,8 @@
                                                         AND itemtype = 'mod'", array($preferences->backup_course))) {
             foreach ($grade_items as $grade_item) {
                 // get module information
-                // if no user data selected, we do not backup categories
-                if (!backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
+                // if some activities not selected, we do not backup categories at all
+                if (!backup_mod_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
                     $backupall = false;
                     break;
                 }
