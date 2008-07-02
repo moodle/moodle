@@ -28,6 +28,7 @@ class block_mnet_hosts extends block_list {
 
         if (!is_enabled_auth('mnet')) {
             // no need to query anything remote related
+            debugging( 'mnet authentication plugin is not enabled', DEBUG_ALL );
             return '';
         }
 
