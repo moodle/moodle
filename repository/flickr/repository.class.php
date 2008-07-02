@@ -15,7 +15,7 @@ class repository_flickr extends repository{
     var $flickr;
     var $photos;
     public function __construct($repositoryid, $context = SITEID, $options = array()){
-        global $SESSION, $action;
+        global $SESSION, $action, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
         $options['api_key'] = 'bf85ae2b5b105a2c645f32a32cd6ad59';
         $options['secret']  = '7cb2f9d7cf70aebe';

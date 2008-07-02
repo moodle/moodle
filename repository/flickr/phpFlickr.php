@@ -14,32 +14,17 @@
  *		 http://sourceforge.net/forum/forum.php?forum_id=469652
  *
  */
-if (session_id() == "") {
-	@session_start();
-}
-
-// Decides which include path delimiter to use.  Windows should be using a semi-colon
-// and everything else should be using a colon.  If this isn't working on your system,
-// comment out this if statement and manually set the correct value into $path_delimiter.
-if (strpos(__FILE__, ':') !== false) {
-	$path_delimiter = ';';
-} else {
-	$path_delimiter = ':';
-}
-
-// This will add the packaged PEAR files into the include path for PHP, allowing you
-// to use them transparently.  This will prefer officially installed PEAR files if you
-// have them.  If you want to prefer the packaged files (there shouldn't be any reason
-// to), swap the two elements around the $path_delimiter variable.  If you don't have
-// the PEAR packages installed, you can leave this like it is and move on.
-
-ini_set('include_path', ini_get('include_path') . $path_delimiter . dirname(__FILE__) . '/PEAR');
-
-// If you have problems including the default PEAR install (like if your open_basedir
-// setting doesn't allow you to include files outside of your web root), comment out
-// the line above and uncomment the next line:
-
-// ini_set('include_path', dirname(__FILE__) . '/PEAR' . $path_delimiter . ini_get('include_path'));
+/**
+ * Modified by Dongsheng Cai <dongsheng@cvs.moodle.org>
+ * ChangeLog:
+ *   1. Remove PEAR HTTP LIB, use curl.class.php (created by myself)
+ *   2. Remove PEAR DB LIB
+ * TODO
+ *   1. Add cache code, including file cache mode and db cache mode
+ *   2. Clean up SESSION code
+ *
+ */
+require_once('../config.php');
 
 class phpFlickr {
 	var $api_key;
@@ -75,6 +60,7 @@ class phpFlickr {
 
 	function __construct ($api_key, $secret = NULL, $die_on_error = false)
 	{
+        global $CFG;
 		//The API Key must be set before any calls can be made.  You can
 		//get your own at http://www.flickr.com/services/api/misc.api_keys.html
 		$this->api_key = $api_key;
@@ -86,10 +72,8 @@ class phpFlickr {
 		$this->php_version = explode("-", phpversion());
 		$this->php_version = explode(".", $this->php_version[0]);
 
-		//All calls to the API are done via the POST method using the PEAR::HTTP_Request package.
-		require_once 'HTTP/Request.php';
-		$this->req =& new HTTP_Request();
-		$this->req->setMethod(HTTP_REQUEST_METHOD_POST);
+        require_once($CFG->dirroot.'/repository/curl.class.php');
+        $this->curl = new curl;
 	}
 
 	function enableCache($type, $connection, $cache_expire = 600, $table = 'flickr_cache')
@@ -101,46 +85,16 @@ class phpFlickr {
 		// When using file system, caching, the $connection is the folder that the web server has write
 		// access to. Use absolute paths for best results.  Relative paths may have unexpected behavior
 		// when you include this.  They'll usually work, you'll just want to test them.
-		if ($type == 'db') {
-			require_once 'DB.php';
-			$db =& DB::connect($connection);
-			if (PEAR::isError($db)) {
-				die($db->getMessage());
-			}
-
-			/*
-			 * If high performance is crucial, you can easily comment
-			 * out this query once you've created your database table.
-			 */
-
-			$db->query("
-				CREATE TABLE IF NOT EXISTS `$table` (
-					`request` CHAR( 35 ) NOT NULL ,
-					`response` MEDIUMTEXT NOT NULL ,
-					`expiration` DATETIME NOT NULL ,
-					INDEX ( `request` )
-				) TYPE = MYISAM");
-
-			if ($db->getOne("SELECT COUNT(*) FROM $table") > $this->max_cache_rows) {
-				$db->query("DELETE FROM $table WHERE expiration < DATE_SUB(NOW(), INTERVAL $cache_expire second)");
-				$db->query('OPTIMIZE TABLE ' . $this->cache_table);
-			}
-
-			$this->cache = 'db';
-			$this->cache_db = $db;
-			$this->cache_table = $table;
-		} elseif ($type == 'fs') {
-			$this->cache = 'fs';
-			$connection = realpath($connection);
-			$this->cache_dir = $connection;
-			if ($dir = opendir($this->cache_dir)) {
-				while ($file = readdir($dir)) {
-					if (substr($file, -6) == '.cache' && ((filemtime($this->cache_dir . '/' . $file) + $cache_expire) < time()) ) {
-						unlink($this->cache_dir . '/' . $file);
-					}
-				}
-			}
-		}
+        $this->cache = 'fs';
+        $connection = realpath($connection);
+        $this->cache_dir = $connection;
+        if ($dir = opendir($this->cache_dir)) {
+            while ($file = readdir($dir)) {
+                if (substr($file, -6) == '.cache' && ((filemtime($this->cache_dir . '/' . $file) + $cache_expire) < time()) ) {
+                    unlink($this->cache_dir . '/' . $file);
+                }
+            }
+        }
 		$this->cache_expire = $cache_expire;
 	}
 
@@ -150,21 +104,14 @@ class phpFlickr {
 		//If there is no cache result, it returns a value of false. If it finds one,
 		//it returns the unparsed XML.
 		$reqhash = md5(serialize($request));
-		if ($this->cache == 'db') {
-			$result = $this->cache_db->getOne("SELECT response FROM " . $this->cache_table . " WHERE request = ? AND DATE_SUB(NOW(), INTERVAL " . (int) $this->cache_expire . " SECOND) < expiration", $reqhash);
-			if (!empty($result)) {
-				return $result;
-			}
-		} elseif ($this->cache == 'fs') {
-			$file = $this->cache_dir . '/' . $reqhash . '.cache';
-			if (file_exists($file)) {
-				if ($this->php_version[0] > 4 || ($this->php_version[0] == 4 && $this->php_version[1] >= 3)) {
-					return file_get_contents($file);
-				} else {
-					return implode('', file($file));
-				}
-			}
-		}
+        $file = $this->cache_dir . '/' . $reqhash . '.cache';
+        if (file_exists($file)) {
+            if ($this->php_version[0] > 4 || ($this->php_version[0] == 4 && $this->php_version[1] >= 3)) {
+                return file_get_contents($file);
+            } else {
+                return implode('', file($file));
+            }
+        }
 		return false;
 	}
 
@@ -172,30 +119,17 @@ class phpFlickr {
 	{
 		//Caches the unparsed XML of a request.
 		$reqhash = md5(serialize($request));
-		if ($this->cache == 'db') {
-			//$this->cache_db->query("DELETE FROM $this->cache_table WHERE request = '$reqhash'");
-			if ($this->cache_db->getOne("SELECT COUNT(*) FROM {$this->cache_table} WHERE request = '$reqhash'")) {
-				$sql = "UPDATE " . $this->cache_table . " SET response = ?, expiration = ? WHERE request = ?";
-				$this->cache_db->query($sql, array($response, strftime("%Y-%m-%d %H:%M:%S"), $reqhash));
-			} else {
-				$sql = "INSERT INTO " . $this->cache_table . " (request, response, expiration) VALUES ('$reqhash', '" . str_replace("'", "''", $response) . "', '" . strftime("%Y-%m-%d %H:%M:%S") . "')";
-				$this->cache_db->query($sql);
-			}
-		} elseif ($this->cache == "fs") {
-			$file = $this->cache_dir . "/" . $reqhash . ".cache";
-			$fstream = fopen($file, "w");
-			$result = fwrite($fstream,$response);
-			fclose($fstream);
-			return $result;
-		}
-		return false;
+        $file = $this->cache_dir . "/" . $reqhash . ".cache";
+        $fstream = fopen($file, "w");
+        $result = fwrite($fstream,$response);
+        fclose($fstream);
+        return $result;
 	}
 
 	function request ($command, $args = array(), $nocache = false)
 	{
+        global $SESSION;
 		//Sends a request to Flickr's REST endpoint via POST.
-		$this->req->setURL($this->REST);
-		$this->req->clearPostData();
 		if (substr($command,0,7) != "flickr.") {
 			$command = "flickr." . $command;
 		}
@@ -204,30 +138,23 @@ class phpFlickr {
 		$args = array_merge(array("method" => $command, "format" => "php_serial", "api_key" => $this->api_key), $args);
 		if (!empty($this->token)) {
 			$args = array_merge($args, array("auth_token" => $this->token));
-		} elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
-			$args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
+		} elseif (!empty($SESSION->phpFlickr_auth_token)) {
+			$args = array_merge($args, array("auth_token" => $SESSION->phpFlickr_auth_token));
 		}
 		ksort($args);
 		$auth_sig = "";
 		if (!($this->response = $this->getCached($args)) || $nocache) {
 			foreach ($args as $key => $data) {
 				$auth_sig .= $key . $data;
-				$this->req->addPostData($key, $data);
+				//$this->req->addPostData($key, $data);
 			}
 			if (!empty($this->secret)) {
 				$api_sig = md5($this->secret . $auth_sig);
-				$this->req->addPostData("api_sig", $api_sig);
+				//$this->req->addPostData("api_sig", $api_sig);
 			}
 
-			$this->req->addHeader("Connection", "Keep-Alive");
-			
-			//Send Requests
-			if ($this->req->sendRequest()) {
-				$this->response = $this->req->getResponseBody();
-				$this->cache($args, $this->response);
-			} else {
-				die("There has been a problem sending your command to the server.");
-			}
+			//$this->req->addHeader("Connection", "Keep-Alive");
+            $ret = $this->curl->post($this->REST, $args);
 		}
 		/*
 		 * Uncomment this line (and comment out the next one) if you're doing large queries
@@ -235,7 +162,7 @@ class phpFlickr {
 		 * the result, so be sure that you look at the results.
 		 */
 		//$this->parsed_response = unserialize($this->response);
-		$this->parsed_response = $this->clean_text_nodes(unserialize($this->response));
+		$this->parsed_response = $this->clean_text_nodes(unserialize($ret));
 		if ($this->parsed_response['stat'] == 'fail') {
 			if ($this->die_on_error) die("The Flickr API returned the following error: #{$this->parsed_response['code']} - {$this->parsed_response['message']}");
 			else {
@@ -274,7 +201,7 @@ class phpFlickr {
 	function setProxy($server, $port)
 	{
 		// Sets the proxy for all phpFlickr calls.
-		$this->req->setProxy($server, $port);
+		//$this->req->setProxy($server, $port);
 	}
 
 	function getErrorCode()
@@ -328,223 +255,14 @@ class phpFlickr {
 		return unserialize(file_get_contents('http://phpflickr.com/geodata/?format=php&lat=' . $lat . '&lon=' . $lon));
 	}
 
-	function sync_upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) {
-		$upload_req =& new HTTP_Request();
-		$upload_req->setMethod(HTTP_REQUEST_METHOD_POST);
-
-
-		$upload_req->setURL($this->Upload);
-		$upload_req->clearPostData();
-
-		//Process arguments, including method and login data.
-		$args = array("api_key" => $this->api_key, "title" => $title, "description" => $description, "tags" => $tags, "is_public" => $is_public, "is_friend" => $is_friend, "is_family" => $is_family);
-		if (!empty($this->email)) {
-			$args = array_merge($args, array("email" => $this->email));
-		}
-		if (!empty($this->password)) {
-			$args = array_merge($args, array("password" => $this->password));
-		}
-		if (!empty($this->token)) {
-			$args = array_merge($args, array("auth_token" => $this->token));
-		} elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
-			$args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
-		}
-
-		ksort($args);
-		$auth_sig = "";
-		foreach ($args as $key => $data) {
-			if ($data !== null) {
-				$auth_sig .= $key . $data;
-				$upload_req->addPostData($key, $data);
-			}
-		}
-		if (!empty($this->secret)) {
-			$api_sig = md5($this->secret . $auth_sig);
-			$upload_req->addPostData("api_sig", $api_sig);
-		}
-
-		$photo = realpath($photo);
-
-		$result = $upload_req->addFile("photo", $photo);
-
-		if (PEAR::isError($result)) {
-			die($result->getMessage());
-		}
-
-		//Send Requests
-		if ($upload_req->sendRequest()) {
-			$this->response = $upload_req->getResponseBody();
-		} else {
-			die("There has been a problem sending your command to the server.");
-		}
-
-		$rsp = explode("\n", $this->response);
-		foreach ($rsp as $line) {
-			if (ereg('<err code="([0-9]+)" msg="(.*)"', $line, $match)) {
-				if ($this->die_on_error)
-					die("The Flickr API returned the following error: #{$match[1]} - {$match[2]}");
-				else {
-					$this->error_code = $match[1];
-					$this->error_msg = $match[2];
-					$this->parsed_response = false;
-					return false;
-				}
-			} elseif (ereg("<photoid>(.*)</photoid>", $line, $match)) {
-				$this->error_code = false;
-				$this->error_msg = false;
-				return $match[1];
-			}
-		}
-	}
-
-	function async_upload ($photo, $title = null, $description = null, $tags = null, $is_public = null, $is_friend = null, $is_family = null) {
-		$upload_req =& new HTTP_Request();
-		$upload_req->setMethod(HTTP_REQUEST_METHOD_POST);
-
-		$upload_req->setURL($this->Upload);
-		$upload_req->clearPostData();
-
-		//Process arguments, including method and login data.
-		$args = array("async" => 1, "api_key" => $this->api_key, "title" => $title, "description" => $description, "tags" => $tags, "is_public" => $is_public, "is_friend" => $is_friend, "is_family" => $is_family);
-		if (!empty($this->email)) {
-			$args = array_merge($args, array("email" => $this->email));
-		}
-		if (!empty($this->password)) {
-			$args = array_merge($args, array("password" => $this->password));
-		}
-		if (!empty($this->token)) {
-			$args = array_merge($args, array("auth_token" => $this->token));
-		} elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
-			$args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
-		}
-
-		ksort($args);
-		$auth_sig = "";
-		foreach ($args as $key => $data) {
-			if ($data !== null) {
-				$auth_sig .= $key . $data;
-				$upload_req->addPostData($key, $data);
-			}
-		}
-		if (!empty($this->secret)) {
-			$api_sig = md5($this->secret . $auth_sig);
-			$upload_req->addPostData("api_sig", $api_sig);
-		}
-
-		$photo = realpath($photo);
-
-		$result = $upload_req->addFile("photo", $photo);
-
-		if (PEAR::isError($result)) {
-			die($result->getMessage());
-		}
-
-		//Send Requests
-		if ($upload_req->sendRequest()) {
-			$this->response = $upload_req->getResponseBody();
-		} else {
-			die("There has been a problem sending your command to the server.");
-		}
-
-		$rsp = explode("\n", $this->response);
-		foreach ($rsp as $line) {
-			if (ereg('<err code="([0-9]+)" msg="(.*)"', $line, $match)) {
-				if ($this->die_on_error)
-					die("The Flickr API returned the following error: #{$match[1]} - {$match[2]}");
-				else {
-					$this->error_code = $match[1];
-					$this->error_msg = $match[2];
-					$this->parsed_response = false;
-					return false;
-				}
-			} elseif (ereg("<ticketid>(.*)</", $line, $match)) {
-				$this->error_code = false;
-				$this->error_msg = false;
-				return $match[1];
-			}
-		}
-	}
-
-	// Interface for new replace API method.
-	function replace ($photo, $photo_id, $async = null) {
-		$upload_req =& new HTTP_Request();
-		$upload_req->setMethod(HTTP_REQUEST_METHOD_POST);
-
-		$upload_req->setURL($this->Replace);
-		$upload_req->clearPostData();
-
-		//Process arguments, including method and login data.
-		$args = array("api_key" => $this->api_key, "photo_id" => $photo_id, "async" => $async);
-		if (!empty($this->email)) {
-			$args = array_merge($args, array("email" => $this->email));
-		}
-		if (!empty($this->password)) {
-			$args = array_merge($args, array("password" => $this->password));
-		}
-		if (!empty($this->token)) {
-			$args = array_merge($args, array("auth_token" => $this->token));
-		} elseif (!empty($_SESSION['phpFlickr_auth_token'])) {
-			$args = array_merge($args, array("auth_token" => $_SESSION['phpFlickr_auth_token']));
-		}
-
-		ksort($args);
-		$auth_sig = "";
-		foreach ($args as $key => $data) {
-			if ($data !== null) {
-				$auth_sig .= $key . $data;
-				$upload_req->addPostData($key, $data);
-			}
-		}
-		if (!empty($this->secret)) {
-			$api_sig = md5($this->secret . $auth_sig);
-			$upload_req->addPostData("api_sig", $api_sig);
-		}
-
-		$photo = realpath($photo);
-
-		$result = $upload_req->addFile("photo", $photo);
-
-		if (PEAR::isError($result)) {
-			die($result->getMessage());
-		}
-
-		//Send Requests
-		if ($upload_req->sendRequest()) {
-			$this->response = $upload_req->getResponseBody();
-		} else {
-			die("There has been a problem sending your command to the server.");
-		}
-		if ($async == 1)
-			$find = 'ticketid';
-		 else
-			$find = 'photoid';
-
-		$rsp = explode("\n", $this->response);
-		foreach ($rsp as $line) {
-			if (ereg('<err code="([0-9]+)" msg="(.*)"', $line, $match)) {
-				if ($this->die_on_error)
-					die("The Flickr API returned the following error: #{$match[1]} - {$match[2]}");
-				else {
-					$this->error_code = $match[1];
-					$this->error_msg = $match[2];
-					$this->parsed_response = false;
-					return false;
-				}
-			} elseif (ereg("<" . $find . ">(.*)</", $line, $match)) {
-				$this->error_code = false;
-				$this->error_msg = false;
-				return $match[1];
-			}
-		}
-	}
-
 	function auth ($perms = "read", $remember_uri = true)
 	{
+        global $SESSION;
 		// Redirects to Flickr's authentication piece if there is no valid token.
 		// If remember_uri is set to false, the callback script (included) will
 		// redirect to its default page.
 
-		if (empty($_SESSION['phpFlickr_auth_token']) && empty($this->token)) {
+		if (empty($SESSION->phpFlickr_auth_token) && empty($this->token)) {
 			if ($remember_uri) {
 				$redirect = $_SERVER['REQUEST_URI'];
 			}
@@ -563,7 +281,7 @@ class phpFlickr {
 			$this->die_on_error = false;
 			$rsp = $this->auth_checkToken();
 			if ($this->error_code !== false) {
-				unset($_SESSION['phpFlickr_auth_token']);
+				unset($SESSION->phpFlickr_auth_token);
 				$this->auth($perms, $remember_uri);
 			}
 			$this->die_on_error = $tmp;
@@ -632,10 +350,10 @@ class phpFlickr {
 
 	function auth_getToken ($frob)
 	{
+        global $SESSION;
 		/* http://www.flickr.com/services/api/flickr.auth.getToken.html */
 		$this->request('flickr.auth.getToken', array('frob'=>$frob));
-		session_register('phpFlickr_auth_token');
-		$_SESSION['phpFlickr_auth_token'] = $this->parsed_response['auth']['token'];
+		$SESSION->phpFlickr_auth_token = $this->parsed_response['auth']['token'];
 		return $this->parsed_response ? $this->parsed_response['auth'] : false;
 	}
 
