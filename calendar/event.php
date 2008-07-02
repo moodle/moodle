@@ -304,6 +304,7 @@
                     }
                 }
 
+                echo '</td></tr></table>';
                 redirect(CALENDAR_URL.'view.php?view=day&amp;course='.$urlcourse.'&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
 
             }
