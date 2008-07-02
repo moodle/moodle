@@ -729,9 +729,17 @@
     }
 
     //load data into form
-    $subscribe=(isset($post->forum)&&forum_is_subscribed($USER->id, $post->forum)) ||
-                    (!empty($USER->autosubscribe));
 
+    if (forum_is_subscribed($USER->id, $forum->id)) {
+        $subscribe = true;
+
+    } else if (forum_user_has_posted($forum->id, 0, $USER->id)) {
+        $subscribe = false;
+        
+    } else {
+        // user not posted yet - use subscription default specified in profile
+        $subscribe = !empty($USER->autosubscribe);
+    }
 
     // HACK ALERT: this is very wrong, the defaults should be always initialized before calling $mform->get_data() !!!
     $mform_post->set_data(array(    'general'=>$heading,

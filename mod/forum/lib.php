@@ -4275,7 +4275,17 @@ function forum_discussions_user_has_posted_in($forumid, $userid) {
  */
 function forum_user_has_posted($forumid, $did, $userid) {
     global $DB;
-    return $DB->record_exists('forum_posts', array('discussion'=>$did,'userid'=>$userid));
+
+    if (empty($did)) {
+        // posted in any forum discussion?
+        $sql = "SELECT 'x'
+                  FROM {forum_posts} p
+                  JOIN {forum_discussions} d ON d.id = p.discussion
+                 WHERE p.userid = :userid AND d.forum = :forumid";
+        return $DB->record_exists_sql($sql, array('forumid'=>$forumid,'userid'=>$userid));
+    } else {
+        return $DB->record_exists('forum_posts', array('discussion'=>$did,'userid'=>$userid));
+    }
 }
 
 /**
