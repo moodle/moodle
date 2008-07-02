@@ -14,7 +14,7 @@ require_once('../../config.php');
  * on a role basis, course basis, user basis, etc. if so desired.
  *
  */
-$editorhidebuttons = str_replace(' ', ',', $CFG->editorhidebuttons);
+$editorhidebuttons = str_replace(' ', ',', $CFG->tinymcehidebuttons);
 
 $editorhidebuttons1 = $editorhidebuttons . ',visualaid,styleselect';
 

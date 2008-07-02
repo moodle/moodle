@@ -19,7 +19,7 @@ class htmlEditor {
         global $CFG;
         static $configured = Array();
 
-        if (!$CFG->htmleditor) {
+        if (!isset($CFG->htmleditor) or (!$CFG->htmleditor)) {
             return;
         }
 
