@@ -103,12 +103,14 @@ class data_field_latlong extends data_field_base {
 
     function display_browse_field($recordid, $template) {
         global $CFG, $DB;
-
         if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            $lat = empty($content->content)? '':$content->content;
-            $long = empty($content->content1)? '':$content->content1;
-            if (empty($lat) or empty($long)) {
-                return '';
+            $lat = $content->content;
+            if (strlen($lat) < 1) {
+                return false;
+            }
+            $long = $content->content1;
+            if (strlen($long) < 1) {
+                return false;
             }
             if($lat < 0) {
                 $compasslat = sprintf('%01.4f', -$lat) . '°S';
@@ -167,15 +169,21 @@ class data_field_latlong extends data_field_base {
         $content = new object;
         $content->fieldid = $this->field->id;
         $content->recordid = $recordid;
+        $value = trim($value);
+        if (strlen($value) > 0) {
+            $value = floatval($value);
+        } else {
+            $value = null;
+        }
         $names = explode('_', $name);
         switch ($names[2]) {
             case 0:
                 // update lat
-                $content->content = (float)$value;
+                $content->content = $value;
                 break;
             case 1:
                 // update long
-                $content->content1 = (float)$value;
+                $content->content1 = $value;
                 break;
             default:
                 break;
