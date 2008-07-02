@@ -303,14 +303,27 @@
         // Process each question in turn
 
         $questionidarray = explode(',', $questionids);
+        $success = true;
         foreach($questionidarray as $i) {
             if (!isset($actions[$i])) {
                 $actions[$i]->responses = array('' => '');
                 $actions[$i]->event = QUESTION_EVENTOPEN;
             }
             $actions[$i]->timestamp = $timestamp;
-            question_process_responses($questions[$i], $states[$i], $actions[$i], $quiz, $attempt);
-            save_question_session($questions[$i], $states[$i]);
+            if (question_process_responses($questions[$i], $states[$i], $actions[$i], $quiz, $attempt)) {
+                save_question_session($questions[$i], $states[$i]);
+            } else {
+                $success = false;
+            }
+        }
+
+        if (!$success) {
+            $pagebit = '';
+            if ($page) {
+                $pagebit = '&amp;page=' . $page;
+            }
+            print_error('errorprocessingresponses', 'question',
+                    $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $quiz->id . $pagebit);
         }
 
         $attempt->timemodified = $timestamp;
@@ -345,12 +358,26 @@
             error('Could not restore question sessions');
         }
 
+        $success = true;
         foreach($closequestions as $key => $question) {
             $action->event = QUESTION_EVENTCLOSE;
             $action->responses = $closestates[$key]->responses;
             $action->timestamp = $closestates[$key]->timestamp;
-            question_process_responses($question, $closestates[$key], $action, $quiz, $attempt);
-            save_question_session($question, $closestates[$key]);
+            
+            if (question_process_responses($question, $closestates[$key], $action, $quiz, $attempt)) {
+                save_question_session($question, $closestates[$key]);
+            } else {
+                $success = false;
+            }
+        }
+
+        if (!$success) {
+            $pagebit = '';
+            if ($page) {
+                $pagebit = '&amp;page=' . $page;
+            }
+            print_error('errorprocessingresponses', 'question',
+                    $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $quiz->id . $pagebit);
         }
 
         add_to_log($course->id, 'quiz', 'close attempt',

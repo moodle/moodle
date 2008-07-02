@@ -163,7 +163,10 @@
         $event = $finishattempt ? QUESTION_EVENTCLOSE : QUESTION_EVENTSUBMIT;
         if ($actions = question_extract_responses($questions, $form, $event)) {
             $actions[$id]->timestamp = 0; // We do not care about timelimits here
-            question_process_responses($questions[$id], $curstate, $actions[$id], $quiz, $attempt);
+            if (!question_process_responses($questions[$id], $curstate, $actions[$id], $quiz, $attempt)) {
+                unset($SESSION->quizpreview);
+                print_error('errorprocessingresponses', 'question', $url->out());
+            }
             if (!$curstate->changed) {
                 // Update the current state rather than creating a new one
                 $historylength--;

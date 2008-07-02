@@ -87,6 +87,7 @@ class description_qtype extends default_questiontype {
     function grade_responses(&$question, &$state, $cmoptions) {
         $state->raw_grade = 0;
         $state->penalty = 0;
+        return true;
     }
 
 }
