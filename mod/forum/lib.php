@@ -4190,7 +4190,19 @@ function forum_discussions_user_has_posted_in($forumid, $userid) {
  *
  */
 function forum_user_has_posted($forumid, $did, $userid) {
-    return record_exists('forum_posts','discussion',$did,'userid',$userid);
+    global $CFG;
+
+    if (empty($did)) {
+        // posted in any forum discussion?
+        $sql = "SELECT 'x'
+                  FROM {$CFG->prefix}forum_posts p
+                  JOIN {$CFG->prefix}forum_discussions d ON d.id = p.discussion
+                 WHERE p.userid = $userid AND d.forum = $forumid";
+        return record_exists_sql($sql);
+    } else {
+        // started discussion?
+        return record_exists('forum_posts','discussion',$did,'userid',$userid);
+    }
 }
 
 /**
