@@ -620,7 +620,7 @@ function forum_cron() {
                 foreach ($CFG->stylesheets as $stylesheet) {
                     $posthtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
                 }
-                $posthtml .= "</head>\n<body>\n";
+                $posthtml .= "</head>\n<body id=\"email\">\n";
                 $posthtml .= '<p>'.get_string('digestmailheader', 'forum', $headerdata).'</p><br /><hr size="1" noshade="noshade" />';
 
                 foreach ($thesediscussions as $discussionid) {
