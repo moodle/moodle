@@ -154,7 +154,7 @@ echo <<<EOF
         remove_script_host: false,
         entity_encoding: "raw",
         language: "en",
-        plugins: "spellchecker,emoticons,paste,standardmenu,directionality"
+        plugins: "spellchecker,emoticons,paste,standardmenu,directionality,contextmenu"
     });
     tinyMCE.init({
         mode: "textareas",
@@ -167,7 +167,7 @@ echo <<<EOF
         remove_script_host: false,
         entity_encoding: "raw",
         language: "en",
-        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodleimage,moodlelink,dragmath,nonbreaking",
+        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodleimage,moodlelink,dragmath,nonbreaking,contextmenu",
         theme_advanced_layout_manager: "SimpleLayout",
         theme_advanced_toolbar_align : "left",
         theme_advanced_buttons1: "fontselect,fontsizeselect,formatselect,",
