@@ -358,7 +358,10 @@ class qformat_default {
         $catnames = explode($delimiter, $catpath);
         $parent = 0;
         $category = null;
-        if (FALSE !== preg_match('/^\$([a-z]+)\$$/', $catnames[0], $matches)){
+        
+        // check for context id in path, it might not be there in pre 1.9 exports
+        $matchcount = preg_match('/^\$([a-z]+)\$$/', $catnames[0], $matches);
+        if ($matchcount==1) {
             $contextid = $this->translator->string_to_context($matches[1]);
             array_shift($catnames);
         } else {
