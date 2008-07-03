@@ -3023,6 +3023,11 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101514);
     }
 
+    if ($result && $oldversion < 2007101515) {
+        $result = delete_records_select('role_names', sql_isempty('role_names', 'name', false, false));
+        upgrade_main_savepoint($result, 2007101515);
+    }
+
     return $result;
 }
 
