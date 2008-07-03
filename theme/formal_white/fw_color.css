@@ -408,6 +408,41 @@ table.minicalendar tr td.weekend {
 }
 
 /***
+ *** Modules: glossary
+ ***/
+
+.picture,
+.entryattachment,
+.entryapproval {
+  background-color: #E3DFD4;
+ } 
+
+.entrybox {
+  border-color: #C6BDA8;
+ }
+
+.glossarypost.dictionary,
+.glossarypost.fullwithauthor,
+.glossarypost.fullwithoutauthor,
+.glossarypost.continuous, 
+.glossarypost.encyclopedia,
+.glossarypost.faq {
+  border-color: #C6BDA8;
+  background-color: #FFFFFF;
+}
+
+.glossarycategoryheader th  {
+  background-color: #F7F6F1;
+}
+
+
+.glossarycategoryheader h2, 
+.glossarypost .concept h3 {
+  background-color: #FFFFFF
+}
+
+
+/***
  *** Error message
  ***/
 

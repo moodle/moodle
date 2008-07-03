@@ -330,6 +330,20 @@ table.calendarmonth tr td  {
 } 
 
 /***
+ *** Modules: glossary
+ ***/
+
+.entry .concept,
+.entryheader .concept {
+   margin-top: 5px;
+   margin-bottom: 10px;
+}
+
+.glossarypost.continuous {
+	padding: 5px;
+}
+
+/***
  *** Error message
  ***/
 
