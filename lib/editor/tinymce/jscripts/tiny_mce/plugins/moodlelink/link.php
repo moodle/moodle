@@ -44,11 +44,6 @@ tinyMCEPopup.onInit.add(FileBrowserDialogue.init, FileBrowserDialogue);
 
 //<![CDATA[
 
-function onCancel() {
-  window.close();
-  return false;
-}
-
 function checkvalue(elm,formname) {
     var el = document.getElementById(elm);
     if(!el.value) {
@@ -142,7 +137,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
     </table>
   </td>
   <td>
-    <button type="button" name="close" onclick="return onCancel();"><?php print_string("close","editor");?></button>
+    <button type="button" name="close" onclick="tinyMCEPopup.close();"><?php print_string("close","editor");?></button>
   </td>
   </tr>
   </table>
@@ -166,8 +161,6 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input type="file" name="userfile" id="userfile" size="35" />
           <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="<?php print_string("upload","editor");?>" />
-          
-          <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="Browse" />
           </form>
           <?php
           } else {

@@ -2,7 +2,7 @@
 
 require_once('../../config.php');
 
-$course = optional_param('course', 0, PARAM_INT);
+$courseid = optional_param('course', 0, PARAM_INT);
 
 /*
  *
@@ -177,7 +177,7 @@ echo <<<EOF
         theme_advanced_buttons3: "media,advhr,emoticons,dragmath,spellchecker,search,code,fullscreen,bullist,numlist,outdent,indent,forecolor,backcolor,link,unlink,anchor,image,charmap,insertlayer,table",
         theme_advanced_buttons3_add: "media,emoticons,charmap,dragmath,search,code,fullscreen",
         theme_advanced_fonts: "Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings", 
-        moodleimage_course_id: $course,
+        moodleimage_course_id: $courseid,
         theme_advanced_resize_horizontal: true,
         theme_advanced_resizing: true,
         theme_advanced_toolbar_location : "top",
@@ -198,7 +198,7 @@ echo <<<EOF
     }
     function moodlefilemanager(field_name, url, type, win) {
         tinyMCE.activeEditor.windowManager.open({
-            file: "{$CFG->httpswwwroot}/lib/editor/tinymce/jscripts/tiny_mce/plugins/moodlelink/link.php?id={$course}",
+            file: "{$CFG->httpswwwroot}/lib/editor/tinymce/jscripts/tiny_mce/plugins/moodlelink/link.php?id={$courseid}",
             width: 480,  
             height: 380,
             resizable: "yes",
