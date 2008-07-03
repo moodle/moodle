@@ -187,6 +187,11 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008063002);
     }
 
+    if ($result && $oldversion < 2008070300) {
+        $result = $DB->delete_records_select('role_names', $DB->sql_isempty('role_names', 'name', false, false));
+        upgrade_main_savepoint($result, 2008070300);
+    }
+
 /*
  * TODO:
  *   drop adodb_logsql table and create a new general sql log table
