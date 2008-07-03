@@ -8344,18 +8344,20 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         $DB->insert_record('role_capabilities', $roleinfo);
                     }
                 }
-            /// Now, restore role nameincourse
-                $newrole = backup_getid($restore->backup_unique_code, 'role', $oldroleid); /// Look for target role
-                $coursecontext = get_context_instance(CONTEXT_COURSE, $restore->course_id); /// Look for target context
-                if (!empty($newrole->new_id) && !empty($coursecontext) && !empty($roledata->nameincourse)) {
-                /// Check the role hasn't any custom name in context
-                    if (!$DB->record_exists('role_names', array('roleid'=>$newrole->new_id, 'contextid'=>$coursecontext->id))) {
-                        $rolename = new object();
-                        $rolename->roleid = $newrole->new_id;
-                        $rolename->contextid = $coursecontext->id;
-                        $rolename->name = $roledata->nameincourse;
+            /// Now, restore role nameincourse (only if the role had nameincourse in backup)
+                if (!empty($roledata->nameincourse)) {
+                    $newrole = backup_getid($restore->backup_unique_code, 'role', $oldroleid); /// Look for target role
+                    $coursecontext = get_context_instance(CONTEXT_COURSE, $restore->course_id); /// Look for target context
+                    if (!empty($newrole->new_id) && !empty($coursecontext) && !empty($roledata->nameincourse)) {
+                    /// Check the role hasn't any custom name in context
+                        if (!$DB->record_exists('role_names', array('roleid'=>$newrole->new_id, 'contextid'=>$coursecontext->id))) {
+                            $rolename = new object();
+                            $rolename->roleid = $newrole->new_id;
+                            $rolename->contextid = $coursecontext->id;
+                            $rolename->name = $roledata->nameincourse;
 
-                        $DB->insert_record('role_names', $rolename);
+                            $DB->insert_record('role_names', $rolename);
+                        }
                     }
                 }
             }
