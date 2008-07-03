@@ -753,7 +753,7 @@ function calendar_top_controls($type, $data) {
             $nextdate = make_timestamp($nextyear, $nextmonth, 1);
             $content .= "\n".'<div class="calendar-controls">';
             $content .= calendar_get_link_previous(userdate($prevdate, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', 1, $prevmonth, $prevyear);
-            $content .= '<span class="hide"> | </span><span class="current">'.userdate($time, get_string('strftimemonthyear'))."</span>\n";
+            $content .= '<span class="hide"> | </span><h1 class="current">'.userdate($time, get_string('strftimemonthyear'))."</h1>\n";
             $content .= '<span class="hide"> | </span>'.calendar_get_link_next(userdate($nextdate, get_string('strftimemonthyear')), 'view.php?view=month'.$courseid.'&amp;', 1, $nextmonth, $nextyear);
             $content .= "<span class=\"clearer\"><!-- --></span></div>\n";
         break;

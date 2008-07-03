@@ -451,6 +451,11 @@ a.skip-block {
 #calendar .maincalendar .day {
   font-weight: bold;
 }
+ 
+#calendar h1 {
+	font-size:1.0em;
+	margin:0;
+}
 
 table.minicalendar {
   font-size:0.85em;
