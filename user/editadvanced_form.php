@@ -35,14 +35,11 @@ class user_editadvanced_form extends moodleform {
         $mform->setAdvanced('auth');
 
         $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"');
-        $mform->setHelpButton('newpassword', array(false, get_string('leavetokeep'),
-                          false, true, false, get_string('leavetokeep')));
+        $mform->setHelpButton('newpassword',array('newpassword', get_string('leavetokeep')));
         $mform->setType('newpassword', PARAM_RAW);
 
         $mform->addElement('advcheckbox', 'preference_auth_forcepasswordchange', get_string('forcepasswordchange'));
-        $mform->setHelpButton('preference_auth_forcepasswordchange', array(false, get_string('forcepasswordchangehelp'),
-                          false, true, false, get_string('forcepasswordchangehelp')));
-
+        $mform->setHelpButton('preference_auth_forcepasswordchange',array('forcepasswordchange', get_string('forcepasswordchange')));
         /// shared fields
         useredit_shared_definition($mform);
 
