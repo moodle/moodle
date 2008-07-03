@@ -2524,14 +2524,9 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     require_once($CFG->libdir .'/editor/htmlEditor.class.php');
     global $htmlEditorObject;
     $htmlEditorObject = new htmlEditor();
-    $htmlEditor = $htmlEditorObject->configure();
+    $htmlEditor = $htmlEditorObject->configure(NULL, $COURSE->id);
 
-    ob_start();
     include($CFG->header);
-    $output = ob_get_contents();
-    ob_end_clean();
-
-    $output = str_replace('</head>', "\n\n$htmlEditor\n\n</head>", $output);
 
     // container debugging info
     $THEME->open_header_containers = open_containers();
