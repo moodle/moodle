@@ -95,8 +95,7 @@ if ($formdata = $mform->get_data()) {
                 @unlink($dstfile);
                 
                 $results = array ('errors' => 0,'updated' => 0);
-                var_dump($userfields);
-                var_dump($userfield);
+
                 process_directory($zipdir, $userfields[$userfield], $overwritepicture, $results);
             
                 // Finally remove the temporary directory with all the user images and print some stats.
