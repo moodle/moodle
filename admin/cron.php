@@ -285,8 +285,8 @@
 
         /// Delete users who haven't completed profile within required period
 
-        if (!empty($CFG->deleteunconfirmed)) {
-            $cuttime = $timenow - ($CFG->deleteunconfirmed * 3600);
+        if (!empty($CFG->deleteincompleteusers)) {
+            $cuttime = $timenow - ($CFG->deleteincompleteusers * 3600);
             $rs = $DB->get_recordset_sql ("SELECT id, username
                                              FROM {user}
                                             WHERE confirmed = 1 AND lastaccess > 0
@@ -294,7 +294,7 @@
                                                   AND (lastname = '' OR firstname = '' OR email = '')",
                                           array($cuttime));
             foreach ($rs as $user) {
-                if ($DB->delete_records('user', array('id'=>$user->id))) {
+                if (delete_user($user)) {
                     mtrace("Deleted not fully setup user $user->username ($user->id)");
                 }
             }
