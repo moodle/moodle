@@ -224,8 +224,8 @@
 
         /// Delete users who haven't completed profile within required period
 
-        if (!empty($CFG->deleteunconfirmed)) {
-            $oneweek = $timenow - ($CFG->deleteunconfirmed * 3600);
+        if (!empty($CFG->deleteincompleteusers)) {
+            $cuttime = $timenow - ($CFG->deleteincompleteusers * 3600);
             if ($users = get_users_not_fully_set_up($oneweek)) {
                 foreach ($users as $user) {
                     if (delete_records('user', 'id', $user->id)) {
