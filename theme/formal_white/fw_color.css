@@ -27,13 +27,9 @@ h1 {
   color: #333333;
 }
 
-h2,.heading-with-help {
+h2 {
   background-color: #E3DFD4;
   border-color:#C6BDA8;
-}
-.heading-with-help h2 {
-  background:none;
-  border:none;
 }
 
 h2.headingblock.header  {
@@ -410,6 +406,41 @@ table.minicalendar tr td.weekend {
 
 #mod-forum-index .unread {
 }
+
+/***
+ *** Modules: glossary
+ ***/
+
+.picture,
+.entryattachment,
+.entryapproval {
+  background-color: #E3DFD4;
+ } 
+
+.entrybox {
+  border-color: #C6BDA8;
+ }
+
+.glossarypost.dictionary,
+.glossarypost.fullwithauthor,
+.glossarypost.fullwithoutauthor,
+.glossarypost.continuous, 
+.glossarypost.encyclopedia,
+.glossarypost.faq {
+  border-color: #C6BDA8;
+  background-color: #FFFFFF;
+}
+
+.glossarycategoryheader th  {
+  background-color: #F7F6F1;
+}
+
+
+.glossarycategoryheader h2, 
+.glossarypost .concept h3 {
+  background-color: #FFFFFF
+}
+
 
 /***
  *** Error message

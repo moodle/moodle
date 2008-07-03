@@ -27,13 +27,6 @@ h2 {
   padding: 4px;
 
 }
-.heading-with-help {
-  text-align:left;
-  padding:4px 4px 4px 5px;
-}
-.heading-with-help h2.main {
-  padding:0;
-}
 
 h3 {
   padding: 3px;
@@ -55,7 +48,7 @@ border-bottom-width:1px;
 clear:both;
 }
   
-h1, h2, h3, th.header, .heading-with-help {
+h1, h2, h3, th.header {
   border-width: 1px;
   border-style: solid; 
 }
@@ -335,6 +328,20 @@ table.calendarmonth tr td  {
 .tabrow0 { 
    padding-top: 4px; 
 } 
+
+/***
+ *** Modules: glossary
+ ***/
+
+.entry .concept,
+.entryheader .concept {
+   margin-top: 5px;
+   margin-bottom: 10px;
+}
+
+.glossarypost.continuous {
+	padding: 5px;
+}
 
 /***
  *** Error message
