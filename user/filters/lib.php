@@ -120,17 +120,30 @@ class user_filtering {
                 return new user_filter_simpleselect('auth', get_string('authentication'), $advanced, 'auth', $choices);
 
             case 'mnethostid':
+                // include all hosts even those deleted or otherwise problematic
                 if (!$hosts = $DB->get_records('mnet_host', null, 'id', 'id, wwwroot, name')) {
-                    return null;
+                    $hosts = array();
                 }
                 $choices = array();
                 foreach ($hosts as $host) {
-                    if (empty($host->wwwroot)) {
-                        continue; // skip all hosts
+                    if ($host->id == $CFG->mnet_localhost_id) {
+                        $choices[$host->id] =  format_string($SITE->fullname).' ('.get_string('local').')';
+                    } else if (empty($host->wwwroot)) {
+                        // All hosts
+                        continue;
+                    } else {
+                        $choices[$host->id] = $host->name.' ('.$host->wwwroot.')';
                     }
                     $choices[$host->id] = $host->name.' ('.$host->wwwroot.')';
                 }
-                if (count($choices < 2)) {
+                if ($usedhosts = $DB->get_fieldset_sql("SELECT DISTINCT mnethostid FROM {user} WHERE deleted=0")) {
+                    foreach ($usedhosts as $hostid) {
+                        if (empty($hosts[$hostid])) {
+                            $choices[$hostid] = 'id: '.$hostid.' ('.get_string('error').')';
+                        }
+                    } 
+                }
+                if (count($choices) < 2) {
                     return null; // filter not needed
                 }
                 return new user_filter_simpleselect('mnethostid', 'mnethostid', $advanced, 'mnethostid', $choices);
