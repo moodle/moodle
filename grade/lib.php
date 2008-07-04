@@ -1594,6 +1594,7 @@ function grade_get_stats($category='all') {
 // returns a comma seperated list of the most common values in $items, $items is expected to be a comma sperated list of numbers
 function grade_mode($items) {
     $all_scores = explode(',',$items);
+    shuffle($all_scores); //MDL-7571 - shuffle scores
     foreach($all_scores as $value) {
         if (isset($frequency[$value])) {
             $frequency[$value]++;
