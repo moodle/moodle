@@ -1530,6 +1530,16 @@ function grade_get_stats($category='all') {
                         $stats['all']['all_scores'] = $grades_by_student[$student]['student_data']['points'];
                         $stats['all']['all_scores_weighted'] = $grades_by_student[$student]['student_data']['weighted'];
                     }
+                    if(isset($grades_by_student[$student][$category]['stats'])) {
+                        if (isset($stats[$category]['sum'])) {
+                            $stats[$category]['sum'] = $stats[$category]['sum'] + $grades_by_student[$student][$category]['stats']['points'];
+                        }
+                        else {
+                            $stats[$category]['sum'] = $grades_by_student[$student][$category]['stats']['points'];
+                        }
+                        $stats[$category]['items'] = $grades_by_student[$student][$category]['stats']['grade_items'];
+                        $stats[$category]['totalpoints'] = $grades_by_student[$student][$category]['stats']['totalpoints'];
+                    }
                 }
                 $stats['all']['avgsqddev']=$stats['all']['avgsqddev']/$stats['all']['students'];
                 $stats['all']['avgsqddev_weighted']=$stats['all']['avgsqddev_weighted']/$stats['all']['students'];
@@ -1551,18 +1561,7 @@ function grade_get_stats($category='all') {
             {
                 // get the stats for category
                 //populate the sum of student points, # items and totalpoints for each category
-                foreach($grades_by_student as $student=>$categories) {
-                        if(isset($grades_by_student[$student][$category]['stats'])) {
-                            if (isset($stats[$category]['sum'])) {
-                                $stats[$category]['sum'] = $stats[$category]['sum'] + $grades_by_student[$student][$category]['stats']['points'];
-                            }
-                            else {
-                                $stats[$category]['sum'] = $grades_by_student[$student][$category]['stats']['points'];
-                            }
-                            $stats[$category]['items'] = $grades_by_student[$student][$category]['stats']['grade_items'];
-                            $stats[$category]['totalpoints'] = $grades_by_student[$student][$category]['stats']['totalpoints'];
-                        }
-                }
+                
                 $stats[$category]['students'] = count($grades_by_student);
                 $stats[$category]['average'] = $stats[$category]['sum']/$stats[$category]['students'];
                 
@@ -1656,6 +1655,7 @@ function grade_get_stats($category='all') {
 // returns a comma seperated list of the most common values in $items, $items is expected to be a comma sperated list of numbers
 function grade_mode($items) {
     $all_scores = explode(',',$items);
+    shuffle($all_scores); //MDL-7571 - shuffle scores
     foreach($all_scores as $value) {
         if (isset($frequency[$value])) {
             $frequency[$value]++;
