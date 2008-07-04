@@ -506,6 +506,7 @@ $string['usergrade'] = 'User $a->fullname ($a->useridnumber) on item $a->gradeid
 $string['userkeyhelp'] = 'Select a saved key that will give users access to the data published by this export plugin, without having to log into Moodle. Select `create a new user key` to generate a new key when submitting this form.';
 $string['userpreferences'] = 'User preferences';
 $string['useweighted'] = 'Use weighted';
+$string['verbosescales'] = 'Verbose scales';
 $string['viewbygroup'] = 'Group';
 $string['viewgrades'] = 'View grades';
 $string['weight'] = 'weight';

@@ -28,7 +28,9 @@ require_once $CFG->dirroot.'/grade/lib.php';
 require_once '../grade_import_form.php';
 require_once '../lib.php';
 
-$id = required_param('id', PARAM_INT); // course id
+$id            = required_param('id', PARAM_INT); // course id
+$separator     = optional_param('separator', '', PARAM_ALPHA);
+$verbosescales = optional_param('verbosescales', 1, PARAM_BOOL);
 
 if (!$course = get_record('course', 'id', $id)) {
     print_error('nocourseid');
@@ -40,7 +42,6 @@ require_capability('moodle/grade:import', $context);
 require_capability('gradeimport/csv:view', $context);
 
 // sort out delimiter
-$csv_encode = '/\&\#44/';
 if (isset($CFG->CSV_DELIMITER)) {
     $csv_delimiter = '\\' . $CFG->CSV_DELIMITER;
     $csv_delimiter2 = $CFG->CSV_DELIMITER;
@@ -48,9 +49,14 @@ if (isset($CFG->CSV_DELIMITER)) {
     if (isset($CFG->CSV_ENCODE)) {
         $csv_encode = '/\&\#' . $CFG->CSV_ENCODE . '/';
     }
+} else if ($separator == 'tab') {
+    $csv_delimiter = "\t";
+    $csv_delimiter2 = "";
+    $csv_encode = "";
 } else {
     $csv_delimiter = "\,";
     $csv_delimiter2 = ",";
+    $csv_encode = '/\&\#44/';
 }
 
 $strgrades = get_string('grades', 'grades');
@@ -61,7 +67,7 @@ print_header($course->shortname.': '.get_string('grades'), $course->fullname, $n
 print_grade_plugin_selector($id, 'import', 'csv');
 
 // set up import form
-$mform = new grade_import_form();
+$mform = new grade_import_form(null, array('includeseparator'=>!isset($CFG->CSV_DELIMITER), 'verbosescales'=>true));
 
 // set up grade import mapping form
 $header = '';
@@ -148,7 +154,7 @@ if ($formdata = $mform->get_data()) {
 
     // display the mapping form with header info processed
     $mform2 = new grade_import_mapping_form(null, array('gradeitems'=>$gradeitems, 'header'=>$header));
-    $mform2->set_data(array('importcode'=>$importcode, 'id'=>$id));
+    $mform2->set_data(array('importcode'=>$importcode, 'id'=>$id, 'verbosescales'=>$verbosescales, 'separator'=>$separator));
     $mform2->display();
 
 //} else if (($formdata = data_submitted()) && !empty($formdata->map)) {
@@ -235,7 +241,10 @@ if ($formdata = $mform->get_data()) {
             foreach ($line as $key => $value) {
                 //decode encoded commas
                 $value = clean_param($value, PARAM_RAW);
-                $value = preg_replace($csv_encode,$csv_delimiter2,trim($value));
+                $value = trim($value);
+                if ($csv_encode != $csv_delimiter2) {
+                    $value = preg_replace($csv_encode, $csv_delimiter2, $value);
+                }
 
                 /*
                  * the options are
@@ -343,19 +352,6 @@ if ($formdata = $mform->get_data()) {
                     default:
                         // existing grade items
                         if (!empty($map[$key])) {
-                            if ($value === '' or $value == '-') {
-                                $value = null; // no grade
-
-                            } else if (!is_numeric($value)) {
-                            // non numeric grade value supplied, possibly mapped wrong column
-                                echo "<br/>t0 is $t0";
-                                echo "<br/>grade is $value";
-                                $status = false;
-                                import_cleanup($importcode);
-                                notify(get_string('badgrade', 'grades'));
-                                break 3;
-                            }
-
                             // case of an id, only maps id of a grade_item
                             // this was idnumber
                             if (!$gradeitem = new grade_item(array('id'=>$map[$key], 'courseid'=>$course->id))) {
@@ -377,7 +373,40 @@ if ($formdata = $mform->get_data()) {
 
                             $newgrade = new object();
                             $newgrade->itemid     = $gradeitem->id;
-                            $newgrade->finalgrade = $value;
+                            if ($gradeitem->gradetype == GRADE_TYPE_SCALE and $verbosescales) {
+                                if ($value === '' or $value == '-') {
+                                    $value = null; // no grade
+                                } else {
+                                    $scale = $gradeitem->load_scale();
+                                    $scales = explode(',', $scale->scale);
+                                    array_unshift($scales, '-'); // scales start at key 1
+                                    $key = array_search($value, $scales);
+                                    if ($key === false) {
+                                        echo "<br/>t0 is $t0";
+                                        echo "<br/>grade is $value";
+                                        $status = false;
+                                        import_cleanup($importcode);
+                                        notify(get_string('badgrade', 'grades'));
+                                        break 3;
+                                    }
+                                    $value = $key;
+                                }
+                                $newgrade->finalgrade = $value;
+                            } else {
+                                if ($value === '' or $value == '-') {
+                                    $value = null; // no grade
+    
+                                } else if (!is_numeric($value)) {
+                                // non numeric grade value supplied, possibly mapped wrong column
+                                    echo "<br/>t0 is $t0";
+                                    echo "<br/>grade is $value";
+                                    $status = false;
+                                    import_cleanup($importcode);
+                                    notify(get_string('badgrade', 'grades'));
+                                    break 3;
+                                }
+                                $newgrade->finalgrade = $value;
+                            }
                             $newgrades[] = $newgrade;
                         } // otherwise, we ignore this column altogether
                           // because user has chosen to ignore them (e.g. institution, address etc)

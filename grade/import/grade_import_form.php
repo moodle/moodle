@@ -29,6 +29,12 @@ class grade_import_form extends moodleform {
     function definition (){
         $mform =& $this->_form;
 
+        if (isset($this->_customdata)) {  // hardcoding plugin names here is hacky
+            $features = $this->_customdata;
+        } else {
+            $features = array();
+        }
+
         // course id needs to be passed for auth purposes
         $mform->addElement('hidden', 'id', optional_param('id'));
         $mform->setType('id', PARAM_INT);
@@ -40,6 +46,19 @@ class grade_import_form extends moodleform {
         $textlib = textlib_get_instance();
         $encodings = $textlib->get_encodings();
         $mform->addElement('select', 'encoding', get_string('encoding', 'grades'), $encodings);
+
+        if (!empty($features['includeseparator'])) {
+            $radio = array();
+            $radio[] = &MoodleQuickForm::createElement('radio', 'separator', null, get_string('septab', 'grades'), 'tab');
+            $radio[] = &MoodleQuickForm::createElement('radio', 'separator', null, get_string('sepcomma', 'grades'), 'comma');
+            $mform->addGroup($radio, 'separator', get_string('separator', 'grades'), ' ', false);
+            $mform->setDefault('separator', 'comma');
+        }
+
+        if (!empty($features['verbosescales'])) {
+            $options = array(1=>get_string('yes'), 0=>get_string('no'));
+            $mform->addElement('select', 'verbosescales', get_string('verbosescales', 'grades'), $options); 
+        }
 
         $options = array('10'=>10, '20'=>20, '100'=>100, '1000'=>1000, '100000'=>100000);
         $mform->addElement('select', 'previewrows', get_string('rowpreviewnum', 'grades'), $options); // TODO: localize
@@ -106,6 +125,10 @@ class grade_import_mapping_form extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'importcode');
         $mform->setType('importcode', PARAM_FILE);
+        $mform->addElement('hidden', 'verbosescales', 1);
+        $mform->setType('separator', PARAM_ALPHA);
+        $mform->addElement('hidden', 'separator', 'comma');
+        $mform->setType('verbosescales', PARAM_INT);
         $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
 
     }
