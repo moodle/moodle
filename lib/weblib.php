@@ -7100,7 +7100,177 @@ function is_in_popup() {
 
     return ($inpopup);
 }
+class progress_bar {
+    private $html_id;
+    private $percent;
+    private $width;
+    private $clr;
+    private $lastcall;
+    private $time_start;
+    private $minimum_time = 2; //min time between updates.
+    function __construct($html_id = 'pid', $width = 100, $autostart = false){
+        $this->html_id  = $html_id;
+        $this->clr      = new stdClass;
+        $this->clr->done    = 'green';
+        $this->clr->process = '#FFCC66';
+        $this->width = $width;
+        $this->restart();
+        if($autostart){
+            $this->create();
+        }
+    }
+    /**
+      * set progress bar color, call before $this->create
+      * Usage:
+      *     $clr->done = 'red';
+      *     $clr->process = 'blue';
+      *     $pb->setclr($clr);
+      *     $pb->create();
+      *     ......
+      * 
+      * @param $clr object 
+      */
+    function setclr($clr){
+        foreach($clr as $n=>$v) {
+            $this->clr->$n = $v;
+        }
+    }
+    /**
+      * Create a new progress bar, this function will output
+      * html.
+      * 
+      */
+    function create(){
+            flush();
+            $this->lastcall->pt = 0;
+            $this->lastcall->time = microtime(true);
+            $htmlcode = <<<EOT
+            <script type="text/javascript">
+            Number.prototype.fixed=function(n){  
+                with(Math)
+                    return round(Number(this)*pow(10,n))/pow(10,n);  
+            }  
+            function up_{$this->html_id} (id, width, pt, msg, es){
+                percent = pt*100;
+                document.getElementById("status_"+id).innerHTML = msg;
+                document.getElementById("pt_"+id).innerHTML =
+                    percent.fixed(2) + '%';
+                if(percent == 100) {
+                    document.getElementById("progress_"+id).style.background
+                        = "{$this->clr->done}";
+                    document.getElementById("time_"+id).style.display
+                            = "none";
+                } else {
+                    document.getElementById("progress_"+id).style.background
+                        = "{$this->clr->process}";
+                    if (es == Infinity){
+                        document.getElementById("time_"+id).innerHTML =
+                            "Initializing...";
+                    }else {
+                        document.getElementById("time_"+id).innerHTML =
+                            es.fixed(2)+" sec";
+                        document.getElementById("time_"+id).style.display
+                            = "block";
+                    }
+                }
+                document.getElementById("progress_"+id).style.width
+                    = width + "px";
 
+            }
+
+            </script>
+            <div style="text-align:center;width:{$this->width}px;clear:both;padding:0;margin:0 auto;">
+                <h2 id="status_{$this->html_id}" style="text-align: center;margin:0 auto"></h2>
+                <p id="time_{$this->html_id}"></p>
+                <div id="bar_{$this->html_id}" style="border-style:solid;border-width:1px;width:500px;height:50px;">
+                    <div id="progress_{$this->html_id}"
+                    style="text-align:center;background:{$this->clr->process};width:4px;border:1px
+                    solid gray;height:38px; padding-top:10px;">&nbsp;<span id="pt_{$this->html_id}"></span>
+                    </div>
+                </div>
+            </div>
+EOT;
+            echo $htmlcode;
+            flush();
+    }
+    function _update($percent, $msg, $es){
+        if(empty($this->time_start)){
+            $this->time_start = microtime(true);
+        }
+        $this->percent = $percent;
+        $this->lastcall->time = microtime(true);
+        $this->lastcall->pt   = $percent;
+        $w = $this->percent * $this->width;
+        if ($es === null){
+            $es = "Infinity";
+        }
+        echo "<script type=\"text/javascript\">up_".$this->html_id."('$this->html_id', '$w', '$this->percent', '$msg', $es);</script>";
+        flush();
+    }
+    /**
+      * estimate time
+      * 
+      * @param $curtime int the time call this function
+      * @param $percent int
+      */
+    function estimate($curtime, $pt){
+        $consume = $curtime - $this->time_start;
+        $one = $curtime - $this->lastcall->time;
+        $this->percent = $pt;
+        $percent = $pt - $this->lastcall->pt;      
+        if($percent != 0)
+            $left = ($one / $percent) - $consume;
+        else
+            return null;
+        if($left < 0)
+            return 0;
+        else
+            return $left;
+    }
+    /**
+      * Update progress bar according percent
+      * 
+      * @param $percent int from 1-100
+      * @param $msg     string the message needed to be shown
+      */
+    function update_full($percent, $msg){
+        $percent = max(min($percent, 100), 0);
+        if ($percent != 100 && ($this->lastcall->time + $this->minimum_time) > microtime(true)){
+            return;
+        }
+        $this->_update($percent/100, $msg);
+    }
+    /**
+      * Update progress bar according the nubmer of tasks
+      * 
+      * @param $cur   int       current task number 
+      * @param $total int       total task number 
+      * @param $msg   string    message
+      */
+    function update($cur, $total, $msg){
+        $cur = max($cur, 0);
+        if ($cur >= $total){
+            $percent = 1; 
+        } else {
+            $percent = $cur / $total;
+        }
+        if ($percent != 1 && ($this->lastcall->time + $this->minimum_time) > microtime(true)){
+            return;
+        }
+        $es = $this->estimate(microtime(true), $percent);
+        $this->_update($percent, $msg, $es);
+    }
+    /**
+     * Restart the progress bar.
+     */
+    function restart(){
+        $this->percent  = 0;
+        $this->lastcall = new stdClass;
+        $this->lastcall->pt = 0;
+        $this->lastcall->time = microtime(true);
+        $this->time_start  = 0;
+    }
+}
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
