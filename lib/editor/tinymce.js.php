@@ -3,11 +3,10 @@
 require_once('../../config.php');
 
 $courseid = optional_param('course', 0, PARAM_INT);
+$editorlanguage = substr(current_language(), 0, 2);
+$directionality = get_string('thisdirection');
 
 /*
- *
- * ********************************************************************************************************
- *
  * This section configures the TinyMCE toolbar buttons on and off
  * depending on the Moodle settings
  *
@@ -16,6 +15,10 @@ $courseid = optional_param('course', 0, PARAM_INT);
  * on a role basis, course basis, user basis, etc. if so desired.
  *
  */
+if (empty($CFG->tinymcehidebuttons)) {
+    $CFG->tinymcehidebuttons = '';
+}
+
 $editorhidebuttons = str_replace(' ', ',', $CFG->tinymcehidebuttons);
 
 $editorhidebuttons1 = $editorhidebuttons . ',visualaid,styleselect';
@@ -142,9 +145,10 @@ function createHTMLArea(id) {
 
 EOF;
 
+
 echo <<<EOF
     tinyMCE.init({
-        mode: "textareas",
+        mode: "none",
         relative_urls: false,
         editor_selector: "form-textarea-simple",
         document_base_url: "$CFG->httpswwwroot",
@@ -153,11 +157,12 @@ echo <<<EOF
         apply_source_formatting: true, 
         remove_script_host: false,
         entity_encoding: "raw",
-        language: "en",
+        language: "$editorlanguage",
+        directionality: "$directionality",
         plugins: "spellchecker,emoticons,paste,standardmenu,directionality,contextmenu"
     });
     tinyMCE.init({
-        mode: "textareas",
+        mode: "none",
         relative_urls: false,
         editor_selector: "form-textarea-advanced",
         document_base_url: "$CFG->httpswwwroot",
@@ -166,7 +171,8 @@ echo <<<EOF
         apply_source_formatting: true, 
         remove_script_host: false,
         entity_encoding: "raw",
-        language: "en",
+        language: "$editorlanguage",
+        directionality: "$directionality",
         plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodleimage,moodlelink,dragmath,nonbreaking,contextmenu",
         theme_advanced_layout_manager: "SimpleLayout",
         theme_advanced_toolbar_align : "left",
