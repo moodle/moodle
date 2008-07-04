@@ -57,9 +57,12 @@ class quiz_report extends quiz_default_report {
         $pageoptions['q'] = $quiz->id;
         $pageoptions['mode'] = 'overview';
 
+        /// find out current groups mode
+        $currentgroup = groups_get_activity_group($cm, true);
+
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
-        $mform = new mod_quiz_report_overview_settings($reporturl, compact('qmsubselect', 'quiz'));
+        $mform = new mod_quiz_report_overview_settings($reporturl, compact('qmsubselect', 'quiz', 'currentgroup'));
         if ($fromform = $mform->get_data()){
             $attemptsmode = $fromform->attemptsmode;
             if ($qmsubselect){
@@ -80,6 +83,11 @@ class quiz_report extends quiz_default_report {
             $detailedmarks = get_user_preferences('quiz_report_overview_detailedmarks', 1);
             $pagesize = get_user_preferences('quiz_report_pagesize', 0);
         }
+        
+        if ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL && $currentgroup){
+            $attemptsmode = QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH;
+        }
+        
         if (!$reviewoptions->scores) {
             $detailedmarks = 0;
         }
@@ -97,8 +105,6 @@ class quiz_report extends quiz_default_report {
         $displayoptions['qmfilter'] = $qmfilter;
         $reporturlwithdisplayoptions = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions + $displayoptions);
 
-        /// find out current groups mode
-        $currentgroup = groups_get_activity_group($cm, true);
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
             if (!$download) {
