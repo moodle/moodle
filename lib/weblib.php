@@ -2526,7 +2526,10 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $htmlEditorObject = new htmlEditor();
     $htmlEditor = $htmlEditorObject->configure(NULL, $COURSE->id);
 
+    ob_start();
     include($CFG->header);
+    $output = ob_get_contents();
+    ob_end_clean();
 
     // container debugging info
     $THEME->open_header_containers = open_containers();
