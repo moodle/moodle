@@ -235,7 +235,7 @@ abstract class moodle_database {
     /**
      * Constructs IN() or = sql fragment
      * @param mixed $items single or array of values
-     * @param int $type bound param type
+     * @param int $type bound param type SQL_PARAMS_QM or SQL_PARAMS_NAMED
      * @param string named param placeholder start
      * @param bool true means equal, false not equal
      * @return array - $sql and $params
