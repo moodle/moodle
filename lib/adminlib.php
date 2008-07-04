@@ -3621,7 +3621,7 @@ class admin_setting_grade_profilereport extends admin_setting_configselect {
  */
 class admin_setting_special_registerauth extends admin_setting_configselect {
     function admin_setting_special_registerauth() {
-        parent::admin_setting_configselect('registerauth', get_string('selfregistration', 'auth'), get_string('selfregistration_help', 'auth'), 'email', null);
+        parent::admin_setting_configselect('registerauth', get_string('selfregistration', 'auth'), get_string('selfregistration_help', 'auth'), '', null);
     }
 
     function get_defaultsettings() {
@@ -4493,15 +4493,15 @@ function admin_search_settings_html($query) {
 }
 
 /**
- * Internal function - prints list of uninitialised settings
+ * Internal function - returns arrays of html pages with uninitialised settings
  */
 function admin_output_new_settings_by_page($node) {
-    $return = '';
+    $return = array();
 
     if (is_a($node, 'admin_category')) {
         $entries = array_keys($node->children);
         foreach ($entries as $entry) {
-            $return .= admin_output_new_settings_by_page($node->children[$entry]);
+            $return += admin_output_new_settings_by_page($node->children[$entry]);
         }
 
     } else if (is_a($node, 'admin_settingpage')) {
@@ -4513,8 +4513,8 @@ function admin_output_new_settings_by_page($node) {
         }
         if (count($newsettings) > 0) {
             $adminroot =& admin_get_root();
-            $return .= print_heading(get_string('upgradesettings','admin').' - '.$node->visiblename, '', 2, 'main', true);
-            $return .= '<fieldset class="adminsettings">'."\n";
+            $page = print_heading(get_string('upgradesettings','admin').' - '.$node->visiblename, '', 2, 'main', true);
+            $page .= '<fieldset class="adminsettings">'."\n";
             foreach ($newsettings as $setting) {
                 $fullname = $setting->get_full_name();
                 if (array_key_exists($fullname, $adminroot->errors)) {
@@ -4525,10 +4525,11 @@ function admin_output_new_settings_by_page($node) {
                         $data = $setting->get_defaultsetting();
                     }
                 }
-                $return .= '<div class="clearer"><!-- --></div>'."\n";
-                $return .= $setting->output_html($data);
+                $page .= '<div class="clearer"><!-- --></div>'."\n";
+                $page .= $setting->output_html($data);
             }
-            $return .= '</fieldset>';
+            $page .= '</fieldset>';
+            $return[$node->name] = $page;
         }
     }
 
