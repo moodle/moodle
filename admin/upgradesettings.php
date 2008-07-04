@@ -20,7 +20,15 @@ if ($data = data_submitted() and confirm_sesskey()) {
     $adminroot =& admin_get_root(true); //reload tree
 }
 
-$newsettingshtml = admin_output_new_settings_by_page($adminroot);
+$newsettings = admin_output_new_settings_by_page($adminroot);
+if (isset($newsettings['frontpagesettings'])) {
+    $frontpage = $newsettings['frontpagesettings'];
+    unset($newsettings['frontpagesettings']);
+    array_unshift($newsettings, $frontpage);
+}
+$newsettingshtml = implode($newsettings);
+unset($newsettings);
+
 $focus = '';
 
 if (empty($adminroot->errors) and $newsettingshtml === '') {

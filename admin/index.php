@@ -569,6 +569,8 @@
 /// check that site is properly customized
     if (empty($site->shortname)) {
         // probably new installation - lets return to frontpage after this step
+        // remove settings that we want uninitialised
+        unset_config('registerauth');
         redirect('upgradesettings.php?return=site');
     }
 
