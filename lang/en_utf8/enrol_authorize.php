@@ -89,6 +89,7 @@ $string['choosemethod'] = 'If you know the enrolment key of the cource, please e
 $string['chooseone'] = 'Fill one or both of the following two fields. The password isn\'t shown.';
 $string['costdefaultdesc'] = '<strong>In course settings, enter -1</strong> to use this default cost to course cost field.';
 $string['cutofftime'] = 'Transaction Cut-Off Time. When the last transaction is picked up for settlement?';
+$string['dataentered'] = 'Data entered';
 $string['delete'] = 'Destroy';
 $string['description'] = 'The Authorize.net module allows you to set up paid courses via payment providers. If the cost for any course is zero, then students are not asked to pay for entry. Two ways to set the course cost (1) a site-wide cost as a default for the whole site or (2) a course setting that you can set for each course individually. The course cost overrides the site cost.<br /><br /><b>Note:</b> If you enter an enrolment key in the course settings, then students will also have the option to enrol using a key. This is useful if you have a mixture of paying and non-paying students.';
 $string['echeckabacode'] = 'Bank ABA Number';

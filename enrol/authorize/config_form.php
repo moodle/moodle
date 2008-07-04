@@ -80,17 +80,17 @@ if (!isset($frm->acceptechecktypes)) {
 </tr>
 
 <tr valign="top">
-    <td align="right">an_login:<br /><?php echo (isset($mconfig->an_login)) ? '<span style="color:green">'.get_string('ok').'</span>' : ''; ?></td>
+    <td align="right">an_login:<br /><?php echo (isset($mconfig->an_login)) ? '<span style="color:green">'.get_string('dataentered', 'enrol_authorize').'</span>' : ''; ?></td>
     <td><?php print_string("anlogin", "enrol_authorize") ?><br /><input type="text" name="an_login" size="26" value="" /><sup>*</sup></td>
 </tr>
 
 <tr valign="top">
-    <td align="right">an_tran_key:<br /><?php echo (isset($mconfig->an_tran_key)) ? '<span style="color:green">'.get_string('ok').'</span>' : ''; ?></td>
+    <td align="right">an_tran_key:<br /><?php echo (isset($mconfig->an_tran_key)) ? '<span style="color:green">'.get_string('dataentered', 'enrol_authorize').'</span>' : ''; ?></td>
     <td><?php print_string("antrankey", "enrol_authorize") ?><br /><input type="text" name="an_tran_key" size="26" value="" /><sup>#1</sup></td>
 </tr>
 
 <tr valign="top">
-    <td align="right">an_password:<br /><?php echo (isset($mconfig->an_password)) ? '<span style="color:green">'.get_string('ok').'</span>' : ''; ?></td>
+    <td align="right">an_password:<br /><?php echo (isset($mconfig->an_password)) ? '<span style="color:green">'.get_string('dataentered', 'enrol_authorize').'</span>' : ''; ?></td>
     <td><?php print_string("anpassword", "enrol_authorize") ?><br /><input type="text" name="an_password" size="26" value="" /><sup>#2</sup></td>
 </tr>
 
