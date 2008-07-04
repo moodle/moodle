@@ -92,7 +92,7 @@ class htmlEditor {
 
         }
 
-        if (is_array($CFG->editorsrc)) {
+        if (isset($CFG->editorsrc) && is_array($CFG->editorsrc)) {
             $CFG->editorsrc = $configuration + $CFG->editorsrc;
         } else {
             $CFG->editorsrc = $configuration;
