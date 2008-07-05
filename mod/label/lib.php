@@ -85,6 +85,11 @@ function label_get_coursemodule_info($coursemodule) {
     global $DB;
 
     if ($label = $DB->get_record('label', array('id'=>$coursemodule->instance), 'id, content, name')) {
+        if (empty($label->name)) {
+            // label name missing, fix it
+            $label->name = "label{$label->id}";
+            $DB->set_field('label', 'name', $label->name, array('id'=>$label->id));
+        }
         $info = new object();
         $info->extra = urlencode($label->content);
         $info->name = urlencode($label->name);
