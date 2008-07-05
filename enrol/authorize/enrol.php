@@ -732,7 +732,7 @@ class enrolment_plugin_authorize
 
         $select = "(status=?) AND (timecreated<?)";
         $params = array(AN_STATUS_EXPIRE, AN_STATUS_AUTH, $timediff30);
-        if ($DB->execute("UPDATE {enrol_authorize SET status=? WHERE $select", $params)) {
+        if ($DB->execute("UPDATE {enrol_authorize} SET status=? WHERE $select", $params)) {
             mtrace("        pending orders to expire have updated");
         }
 
