@@ -144,6 +144,8 @@
 
     if ($user->deleted) {
         print_heading(get_string('userdeleted'));
+        print_footer($course);
+        die;
     }
 
 /// OK, security out the way, now we are showing the user
