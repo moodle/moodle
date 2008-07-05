@@ -33,15 +33,6 @@
         error('User ID was incorrect');
     }
 
-    // Process email change cancellation
-    if ($cancelemailchange) {
-        useredit_load_preferences($user);
-        $user->preference_newemail = null;
-        $user->preference_newemailkey = null;
-        $user->preference_newemailattemptsleft = null;
-        useredit_update_user_preference($user);
-    }
-
     // Guest can not be edited
     if (isguestuser($user)) {
         print_error('guestnoeditprofile');
@@ -82,6 +73,11 @@
         print_heading(get_string('userdeleted'));
         print_footer($course);
         die;
+    }
+
+    // Process email change cancellation
+    if ($cancelemailchange) {
+        cancel_email_update($user->id);
     }
 
     //load user preferences

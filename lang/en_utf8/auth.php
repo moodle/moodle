@@ -126,7 +126,7 @@ You have requested a change of your email address for your user account at $a->s
 $a->url';
 $string['auth_emailupdatetitle'] = 'Confirmation of email update at $a->site';
 $string['auth_invalidnewemailkey'] = 'Error: if you are trying to confirm a change of email address, you may have made a mistake in copying the URL we sent you by email. Please copy the address and try again.';
-$string['auth_emailupdatesuccess'] = 'Your email address was successfully updated to $a->email.';
+$string['auth_emailupdatesuccess'] = 'Email address of user <em>$a->fullname</em> was successfully updated to <em>$a->email</em>.';
 $string['auth_outofnewemailupdateattempts'] = 'You have run out of allowed attempts to update your email address. Your update request has been cancelled.';
 $string['auth_emailupdate'] = 'Email address update';
 $string['auth_changingemailaddress'] = 'You have requested a change of email address, from $a->oldemail to $a->newemail. For security reasons, we are sending you an email message at the new address to confirm that it belongs to you. Your email address will be updated as soon as you open the URL sent to you in that message.';
