@@ -24,6 +24,15 @@
         error("User ID is incorrect");
     }
 
+    require_login();
+
+    if ($user->deleted) {
+        print_header();
+        print_heading(get_string('userdeleted'));
+        print_footer();
+        die;
+    }
+
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
     $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
