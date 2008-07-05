@@ -109,6 +109,8 @@
 
     if ($user->deleted) {
         print_heading(get_string("userdeleted"));
+        print_footer($course);
+        die;
     }
 
 /// Get the hidden field list
