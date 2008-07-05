@@ -80,6 +80,11 @@ function label_get_participants($labelid) {
  */
 function label_get_coursemodule_info($coursemodule) {
     if ($label = get_record('label', 'id', $coursemodule->instance, '', '', '', '', 'id, content, name')) {
+        if (empty($label->name)) {
+            // label name missing, fix it
+            $label->name = "label{$label->id}";
+            set_field('label', 'name', $label->name, 'id', $label->id);
+        }
         $info = new object();
         $info->extra = urlencode($label->content);
         $info->name = urlencode($label->name);
