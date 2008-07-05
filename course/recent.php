@@ -171,7 +171,7 @@
         case 'datedesc' : usort($activities, 'compare_activities_by_time_desc'); break;
         case 'dateasc'  : usort($activities, 'compare_activities_by_time_asc'); break;
         case 'default'  :
-        default         : $detail = false; $sortby = 'default';
+        default         : $detail = false; $param->sortby = 'default';
 
     }
 
@@ -190,17 +190,18 @@
 
         foreach ($activities as $key => $activity) {
 
-            // peak at next activity.  If it's another section, don't print this one!
-            // this means there are no activities in the current section
-            if (($activity->type == 'section') &&
-                (($activity_count == ($key + 1)) ||
-                ($activities[$key+1]->type == 'section'))) {
-
-                continue;
-
+            if ($activity->type == 'section') {
+                if ($param->sortby != 'default') {
+                    continue; // no section if ordering by date
+                }
+                if ($activity_count == ($key + 1) or $activities[$key+1]->type == 'section') {
+                // peak at next activity.  If it's another section, don't print this one!
+                // this means there are no activities in the current section
+                    continue;
+                }
             }
 
-            if (($activity->type == 'section') && ($sortby == 'default')) {
+            if (($activity->type == 'section') && ($param->sortby == 'default')) {
                 if ($inbox) {
                     print_simple_box_end();
                     print_spacer(30);
@@ -211,7 +212,7 @@
 
             } else if ($activity->type == 'activity') {
 
-                if ($sortby == 'default') {
+                if ($param->sortby == 'default') {
                     $cm = $modinfo->cms[$activity->cmid];
 
                     if ($cm->visible) {
