@@ -20,8 +20,8 @@ $string['cannotcreatetempdir'] = 'Temp direktorioa ezin da sortu.';
 $string['cannotdownloadcomponents'] = 'Ezin dira osagaiak jaitsi.';
 $string['cannotdownloadzipfile'] = 'ZIP fitxategia ezin da jaitsi.';
 $string['cannotfindcomponent'] = 'Osagaia ezin da aurkitu.';
-$string['cannotsavemd5file'] = 'Md5 fitxategia ezin da gorde.';
-$string['cannotsavezipfile'] = 'ZIP fitxategia ezin da gorde.';
+$string['cannotsavemd5file'] = 'Ezin da Md5 fitxategia gorde.';
+$string['cannotsavezipfile'] = 'ezin da ZIP fitxategia gorde.';
 $string['cannotunzipfile'] = 'Ezin da fitxategia deskonprimatu.';
 $string['caution'] = 'Kontuz';
 $string['check'] = 'Egiaztatu';
@@ -170,7 +170,7 @@ $string['pass'] = 'Zuzena';
 $string['password'] = 'Pasahitza';
 $string['php50restricted'] = 'PHP 5.0.x-k hainbat arazo ezagun ditu; mesedez, eguneratu 5.1.x bertsiora edo erabili 4.3.x edo 4.4.x bertsioak.';
 $string['phpversion'] = 'PHP bertsioa';
-$string['phpversionerror'] = 'PHP bertsioak 4.1.0 edo geroagokoa izan behar du';
+$string['phpversionerror'] = 'PHP bertsioak 4.1.0 edo geroagokoa izan behar du'; // ORPHANED
 $string['phpversionhelp'] = '<p>Moodle-k PHP 4.1.0 edo geroagoko bertsioa behar du.</p>
 <p>Zure bertsioa: $a</p>
 <p>PHP eguneratu edo PHP bertsio berriagoa duen zerbitzari batera jo</p>';
