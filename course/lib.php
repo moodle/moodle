@@ -913,7 +913,7 @@ function print_recent_activity($course) {
                 }
                 $cm = $modinfo->instances[$modname][$instanceid];
                 if (!$cm->uservisible) {
-                    //continue;
+                    continue;
                 }
 
                 if ($log->action == 'add mod') {
