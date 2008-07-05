@@ -301,7 +301,9 @@ function grade_get_formatted_grades() {
                         else {
                             // make sure the current assignment is not extra credit and then add it to the totalpoints
                             if ($all_categories["$category"][$assignment]['extra_credit'] != 1) {
-                                $all_categories["$category"]['stats']['totalpoints'] = $all_categories["$category"]['stats']['totalpoints'] + $assignments["$assignment"]['grade_against'];
+                                if (is_numeric($assignments["$assignment"]['maxgrade'])) {
+                                    $all_categories["$category"]['stats']['totalpoints'] = $all_categories["$category"]['stats']['totalpoints'] + $assignments["$assignment"]['grade_against'];
+                                }
                                 $all_categories["$category"]['stats']['grade_items'] = $all_categories["$category"]['stats']['grade_items'] + 1;
                             }
                         }
