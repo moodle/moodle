@@ -43,7 +43,13 @@ foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
     if ($reportname[1] == '[') {
         $reportname = get_string($plugin, 'admin');
     }
-    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php",'moodle/site:viewreports'));
+    // ugly hack for special access control in reports
+    switch($plugin) {
+        case 'backups': $cap = 'moodle/site:backup'; break;
+        case 'simpletest': $cap = 'moodle/site:config'; break;
+        default: $cap = 'moodle/site:viewreports';
+    }
+    $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php",$cap));
 }
 
 $ADMIN->add('root', new admin_category('misc', get_string('miscellaneous')));
