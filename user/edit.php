@@ -168,6 +168,7 @@
             $a = new stdClass();
             $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $usernew->preference_newemailkey . '&id=' . $user->id;
             $a->site = $SITE->fullname;
+            $a->fullname = fullname($user, true);
 
             $emailupdatemessage = get_string('auth_emailupdatemessage', 'auth', $a);
             $emailupdatetitle = get_string('auth_emailupdatetitle', 'auth', $a);
