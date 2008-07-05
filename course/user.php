@@ -21,8 +21,15 @@
         print_error('invaliduserid', 'error');
     }
 
-    //require_login($course);
+    require_login();
     $COURSE = clone($course);
+
+    if ($user->deleted) {
+        print_header();
+        print_heading(get_string('userdeleted'));
+        print_footer();
+        die;
+    }
 
     $coursecontext = get_context_instance(CONTEXT_COURSE, $id);
     $personalcontext = get_context_instance(CONTEXT_USER, $user->id);

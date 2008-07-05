@@ -37,6 +37,14 @@
         }
         $filtertype = 'user';
         $filterselect = $user->id;
+
+        if ($user->deleted) {
+            print_header();
+            print_heading(get_string('userdeleted'));
+            print_footer();
+            die;
+        }
+
     } else {
         $filtertype = 'course';
         $filterselect = $course->id;

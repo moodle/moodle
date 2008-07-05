@@ -142,6 +142,10 @@
 
     if ($user->deleted) {
         print_heading(get_string('userdeleted'));
+        if (!has_capability('moodle/user:update', $coursecontext)) {
+            print_footer($course);
+            die;
+        }
     }
 
 /// OK, security out the way, now we are showing the user
@@ -171,7 +175,9 @@
 
     $currenttab = 'profile';
     $showroles = 1;
-    include('tabs.php');
+    if (!$user->deleted) {
+        include('tabs.php');
+    }
 
     if (is_mnet_remote_user($user)) {
         $sql = "
@@ -458,7 +464,7 @@
         }
     }
 
-    if ($USER->id != $user->id  && empty($USER->realuser) && has_capability('moodle/user:loginas', $coursecontext) &&
+    if (!$user->deleted and $USER->id != $user->id  && empty($USER->realuser) && has_capability('moodle/user:loginas', $coursecontext) &&
                                  ! has_capability('moodle/site:doanything', $coursecontext, $user->id, false)) {
         echo '<form action="'.$CFG->wwwroot.'/course/loginas.php" method="get">';
         echo '<div>';
@@ -470,7 +476,7 @@
         echo '</form>';
     }
 
-    if (!empty($CFG->messaging) and !isguest() and has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM))) {
+    if (!$user->deleted and !empty($CFG->messaging) and !isguest() and has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM))) {
         if (!empty($USER->id) and ($USER->id == $user->id)) {
             if ($countmessages = $DB->count_records('message', array('useridto'=>$user->id))) {
                 $messagebuttonname = get_string("messages", "message")."($countmessages)";

@@ -122,6 +122,13 @@ switch ($filtertype) {
         if (!$user = $DB->get_record('user', array('id'=>$filterselect))) {
             print_error('invaliduserid');
         }
+        if ($user->deleted) {
+            print_header();
+            print_heading(get_string('userdeleted'));
+            print_footer();
+            die;
+        }
+
         if ($USER->id == $filterselect) {
             if (!has_capability('moodle/blog:create', $sitecontext)
               and !has_capability('moodle/blog:view', $sitecontext)) {

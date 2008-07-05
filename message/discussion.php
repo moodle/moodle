@@ -22,6 +22,13 @@
         print_error('invaliduserid');
     }
 
+    if ($user->deleted) {
+        print_header();
+        print_heading(get_string('userdeleted'));
+        print_footer();
+        die;
+    }
+
 /// Check if frame&jsless mode selected
     if (!get_user_preferences('message_noframesjs', 0) and !$noframesjs) {
 

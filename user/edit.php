@@ -89,6 +89,13 @@
         }
     }
 
+    if ($user->deleted) {
+        print_header();
+        print_heading(get_string('userdeleted'));
+        print_footer($course);
+        die;
+    }
+
     //load user preferences
     useredit_load_preferences($user);
 
