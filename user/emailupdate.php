@@ -56,3 +56,10 @@ if (empty($preferences['newemailattemptsleft'])) {
     print_box($strinvalidkey, 'center');
 }
 
+if ($cancel_email_update) {
+    require_once($CFG->dirroot . '/user/editlib.php');
+    $user->preference_newemail = null;
+    $user->preference_newemailkey = null;
+    $user->preference_newemailattemptsleft = null;
+    useredit_update_user_preference($user);
+}
