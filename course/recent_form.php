@@ -27,7 +27,14 @@ class recent_form extends moodleform {
                 $options[$guest->id] = fullname($guest);
             }
 
-            if ($courseusers = get_users_by_capability($context, 'moodle/course:view', 'u.id, u.firstname, u.lastname', 'lastname ASC, firstname DESC')) {
+            if (groups_get_course_groupmode($COURSE) == SEPARATEGROUPS) {
+                $groups = groups_get_user_groups($COURSE->id);
+                $groups = $groups[0];
+            } else {
+                $groups = '';
+            }
+            
+            if ($courseusers = get_users_by_capability($context, 'moodle/course:view', 'u.id, u.firstname, u.lastname', 'lastname ASC, firstname DESC', '', '', $groups)) {
                 foreach ($courseusers as $courseuser) {
                     $options[$courseuser->id] = fullname($courseuser, $viewfullnames);
                 }
