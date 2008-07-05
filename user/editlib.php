@@ -59,7 +59,10 @@ function useredit_update_interests($user, $csv_tag_names) {
 }
 
 function useredit_shared_definition(&$mform) {
-    global $CFG;
+    global $CFG, $USER, $DB;
+
+    $user = $DB->get_record('user', array('id' => $USER->id));
+    useredit_load_preferences($user);
 
     $strrequired = get_string('required');
 
@@ -80,8 +83,16 @@ function useredit_shared_definition(&$mform) {
     $mform->addRule('lastname', $strrequired, 'required', null, 'client');
     $mform->setType('lastname', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
-    $mform->addRule('email', $strrequired, 'required', null, 'client');
+    // Do not show email field if change confirmation is pending
+    if ($CFG->emailchangeconfirmation && !empty($user->preference_newemail)) {
+        $notice = get_string('auth_emailchangepending', 'auth', $user);
+        $notice .= '<br /><a href="edit.php?cancelemailchange=1&amp;id='.$user->id.'">'
+                . get_string('auth_emailchangecancel', 'auth') . '</a>';
+        $mform->addElement('static', 'emailpending', get_string('email'), $notice);
+    } else {
+        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
+        $mform->addRule('email', $strrequired, 'required', null, 'client');
+    }
 
     $choices = array();
     $choices['0'] = get_string('emaildisplayno');
@@ -225,9 +236,9 @@ function useredit_shared_definition(&$mform) {
         $mform->addElement('header', 'moodle_interests', get_string('interests'));
         $mform->addElement('textarea', 'interests', get_string('interestslist'), 'cols="45" rows="3"');
         $mform->setHelpButton('interests', array('interestslist', get_string('helpinterestslist'),
-                          false, true, false)); 
+                          false, true, false));
     }
-    
+
     /// Moodle optional fields
     $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));
     $mform->setAdvanced('moodle_optional');
@@ -267,8 +278,8 @@ function useredit_shared_definition(&$mform) {
 
     $mform->addElement('text', 'address', get_string('address'), 'maxlength="70" size="25"');
     $mform->setType('address', PARAM_MULTILANG);
-    
-    
+
+
 }
 
 ?>

@@ -10,6 +10,7 @@
 
     $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
     $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
+    $cancelemailchange = optional_param('cancelemailchange', false, PARAM_INT);   // course id (defaults to Site)
 
     if (!$course = $DB->get_record('course', array('id'=>$course))) {
         print_error('invalidcourseid');
@@ -34,8 +35,18 @@
         print_error('invaliduserid');
     }
 
+    // Process email change cancellation
+    if ($cancelemailchange) {
+        useredit_load_preferences($user);
+        $user->preference_newemail = null;
+        $user->preference_newemailkey = null;
+        $user->preference_newemailattemptsleft = null;
+        useredit_update_user_preference($user);
+    }
+
+
     // Guest can not be edited
-    if (isguestuser($user)) {  
+    if (isguestuser($user)) {
         print_error('guestnoeditprofile');
     }
 
@@ -89,9 +100,28 @@
     $userform = new user_edit_form();
     $userform->set_data($user);
 
+    $email_changed = false;
+
     if ($usernew = $userform->get_data()) {
 
         add_to_log($course->id, 'user', 'update', "view.php?id=$user->id&course=$course->id", '');
+
+        $email_changed_html = '';
+
+        if ($CFG->emailchangeconfirmation) {
+            // Handle change of email carefully for non-trusted users
+            if ($user->email != $usernew->email && !has_capability('moodle/user:update', $systemcontext)) {
+                $a = new stdClass();
+                $a->newemail = $usernew->preference_newemail = $usernew->email;
+                $usernew->preference_newemailkey = random_string(20);
+                $usernew->preference_newemailattemptsleft = 3;
+                $a->oldemail = $usernew->email = $user->email;
+
+                $email_changed_html = print_box(get_string('auth_changingemailaddress', 'auth', $a), 'generalbox', 'notice', true);
+                $email_changed_html .= print_continue("$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id", true);
+                $email_changed = true;
+            }
+        }
 
         $authplugin = get_auth_plugin($user->auth);
 
@@ -130,6 +160,24 @@
         // save custom profile fields data
         profile_save_data($usernew);
 
+        // If email was changed, send confirmation email now
+        if ($email_changed && $CFG->emailchangeconfirmation) {
+            $temp_user = fullclone($user);
+            $temp_user->email = $usernew->preference_newemail;
+
+            $a = new stdClass();
+            $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $usernew->preference_newemailkey . '&id=' . $user->id;
+            $a->site = $SITE->fullname;
+            $a->fullname = fullname($user, true);
+
+            $emailupdatemessage = get_string('auth_emailupdatemessage', 'auth', $a);
+            $emailupdatetitle = get_string('auth_emailupdatetitle', 'auth', $a);
+
+            if(!$mail_results = email_to_user($temp_user, get_admin(), $emailupdatetitle, $emailupdatemessage)) {
+                die("could not send email!");
+            }
+        }
+
         if ($USER->id == $user->id) {
             // Override old $USER session variable if needed
             $usernew = $DB->get_record('user', array('id'=>$user->id)); // reload from db
@@ -138,7 +186,10 @@
             }
         }
         events_trigger('user_updated', $usernew);
-        redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
+
+        if (!$email_changed || !$CFG->emailchangeconfirmation) {
+            redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
+        }
     }
 
 
@@ -163,8 +214,12 @@
     $currenttab = 'editprofile';
     require('tabs.php');
 
-/// Finally display THE form
-    $userform->display();
+    if ($email_changed) {
+        echo $email_changed_html;
+    } else {
+    /// Finally display THE form
+        $userform->display();
+    }
 
 /// and proper footer
     print_footer($course);
