@@ -1,10 +1,24 @@
 <?php  //$Id$
 
+function cancel_email_update($userid) {
+    unset_user_preference('newemail', $userid);
+    unset_user_preference('newemailkey', $userid);
+    unset_user_preference('newemailattemptsleft', $userid);
+}
 
-function useredit_load_preferences(&$user) {
-    if (!empty($user->id) and $preferences = get_user_preferences(null, null, $user->id)) {
-        foreach($preferences as $name=>$value) {
-            $user->{'preference_'.$name} = $value;
+function useredit_load_preferences(&$user, $reload=true) {
+    global $USER;
+
+    if (!empty($user->id)) {
+        if ($reload and $USER->id == $user->id) {
+            // reload preferences in case it was changed in other session
+            unset($USER->preference);
+        }
+        
+        if ($preferences = get_user_preferences(null, null, $user->id)) {
+            foreach($preferences as $name=>$value) {
+                $user->{'preference_'.$name} = $value;
+            }
         }
     }
 }
@@ -62,7 +76,7 @@ function useredit_shared_definition(&$mform) {
     global $CFG, $USER;
 
     $user = get_record('user', 'id', $USER->id);
-    useredit_load_preferences($user);
+    useredit_load_preferences($user, false);
 
     $strrequired = get_string('required');
 
