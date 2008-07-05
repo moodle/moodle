@@ -539,6 +539,72 @@ function get_mimetype_description($mimetype,$capitalise=false) {
 }
 
 /**
+ * Handles the sending of temporary file to user, download is forced.
+ * File is deleted after abort or succesful sending.
+ * @param string $path path to file, preferably from moodledata/temp/something; or content of file itself
+ * @param string $filename proposed file name when saving file
+ * @param bool $path is content of file
+ */
+function send_temp_file($path, $filename, $pathisstring=false) {
+    global $CFG;
+
+    // close session - not needed anymore
+    @session_write_close();
+
+    if (!$pathisstring) {
+        if (!file_exists($path)) {
+            header('HTTP/1.0 404 not found');
+            error(get_string('filenotfound', 'error'), $CFG->wwwroot.'/');
+        }
+        // executed after normal finish or abort
+        @register_shutdown_function('send_temp_file_finished', $path);
+    }
+
+    //IE compatibiltiy HACK!
+    if (ini_get('zlib.output_compression')) {
+        ini_set('zlib.output_compression', 'Off');
+    }
+
+    // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
+    if (check_browser_version('MSIE')) {
+        $filename = urlencode($filename);
+    }
+
+    $filesize = $pathisstring ? strlen($path) : filesize($path);
+
+    @header('Content-Disposition: attachment; filename='.$filename);
+    @header('Content-Length: '.$filesize);
+    if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+        @header('Cache-Control: max-age=10');
+        @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
+        @header('Pragma: ');
+    } else { //normal http - prevent caching at all cost
+        @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
+        @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
+        @header('Pragma: no-cache');
+    }
+    @header('Accept-Ranges: none'); // Do not allow byteserving
+
+    while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+    if ($pathisstring) {
+        echo $path;
+    } else {
+        readfile_chunked($path);
+    }
+
+    die; //no more chars to output
+}
+
+/**
+ * Internal callnack function used by send_temp_file()
+ */
+function send_temp_file_finished($path) {
+    if (file_exists($path)) {
+        @unlink($path);
+    }
+}
+
+/**
  * Handles the sending of file data to the user's browser, including support for
  * byteranges etc.
  * @param string $path Path of file on disk (including real filename), or actual content of file as string
