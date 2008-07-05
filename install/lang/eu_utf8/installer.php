@@ -16,6 +16,13 @@ Horrela Moodle-ko admin loturak berrezarriko dira.</p>';
 $string['admindirsettinghead'] = 'Admin direktorioa aukeratu...';
 $string['admindirsettingsub'] = '<p>Oso web zerbitzari gutxik erabiltzen dute /admin kontrol-panel edo antzekora era sartzeko URL berezi gisa. Zoritxorrez, hau ez dator bat Moodlen lehenetsitako administrazio-orrien kokapenarekin. Nahi izanez gero, zure instalazioko admin direktorioaren izena alda dezakezu, hemen izen berria idatziz. Adibidez: <blockquote> moodleadmin</blockquote>.
 Horrela Moodle-ko admin loturak berrezarriko dira.</p>';
+$string['adminemail'] = 'E-posta';
+$string['adminfirstname'] = 'Izena:';
+$string['admininfo'] = 'Kudeatzailearen xehetasunak';
+$string['adminlastname'] = 'Deitura:';
+$string['adminpassword'] = 'Pasahitza:';
+$string['adminusername'] = 'Erabiltzaile-izena:';
+$string['askcontinue'] = 'Jarraitu (bai/ez):';
 $string['availablelangs'] = 'Hizkuntza eskuragarriak';
 $string['bypassed'] = 'Saihestua';
 $string['cannotcreatelangdir'] = 'Lang direktorioa ezin da sortu.';
@@ -23,8 +30,8 @@ $string['cannotcreatetempdir'] = 'Temp direktorioa ezin da sortu.';
 $string['cannotdownloadcomponents'] = 'Ezin dira osagaiak jaitsi.';
 $string['cannotdownloadzipfile'] = 'ZIP fitxategia ezin da jaitsi.';
 $string['cannotfindcomponent'] = 'Osagaia ezin da aurkitu.';
-$string['cannotsavemd5file'] = 'Md5 fitxategia ezin da gorde.';
-$string['cannotsavezipfile'] = 'ZIP fitxategia ezin da gorde.';
+$string['cannotsavemd5file'] = 'Ezin da Md5 fitxategia gorde.';
+$string['cannotsavezipfile'] = 'ezin da ZIP fitxategia gorde.';
 $string['cannotunzipfile'] = 'Ezin da fitxategia deskonprimatu.';
 $string['caution'] = 'Kontuz';
 $string['check'] = 'Egiaztatu';
@@ -59,6 +66,9 @@ $string['databasecreationsettingssub'] = '<b>Mota:</b> lehenetsitako balorea \"m
 <b>Erabiltzailea:</b> lehenetsitako balorea  \"root\" da<br />
 <b>Pasahitza:</b> datu-basearen pasahitza<br />
 <b>Taulen aurrizkia:</b> taula guztietarako aukerazko aurrizkia';
+$string['databasehost'] = 'datu-basearen ostalaria:';
+$string['databasename'] = 'Datu-basearen izena:';
+$string['databasepass'] = 'Datu-basearen pasahitza:';
 $string['databasesettings'] = 'Orain Moodle-ren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Datu-base hori aldez aurretik sortu behar zen eta erabiltzaile-izena eta sarbide-pasahitza izan beharko lituzke.<br />
 <br /> <br />
 <b>Mota:</b> mysql edo postgres7<br />
@@ -67,12 +77,15 @@ $string['databasesettings'] = 'Orain Moodle-ren datu gehienak bilduko dituen dat
 <b>Erabiltzailea:</b> datu-basearen erabiltzaile-izena<br />
 <b>Pasahitza:</b> datu-basearen pasahitza<br />
 <b>Taulen aurrizkia:</b> taula-izen guztietan erabiliko den aurrizkia';
+$string['databasesettingsformoodle'] = 'Datu-basearen ezarpenak Moodle-rako';
 $string['databasesettingshead'] = 'Orain Moodle-ren datu gehienak bilduko dituen datu-basearen ezarpenak zehaztu behar dituzu. Datu-base hori aldez aurretik sortu behar zen eta erabiltzaile-izena eta sarbide-pasahitza izan beharko lituzke.';
 $string['databasesettingssub'] = '<b>Mota:</b> mysql edo postgres7<br />
 <b>Zerbitzaria:</b> p.ej.: localhost edo db.zuredomeinua.com<br />
 <b>Erabiltzailea:</b> datu-basearen erabiltzaile-jabea<br />
 <b>Pasahitza:</b> datu-basearen erabiltzailearen pasahitza<br />
 <b>Taulen aurrizkia:</b> taula guztietan erabiltzeko aukerazko aurrizkia';
+$string['databasetype'] = 'Datu-base mota:';
+$string['databaseuser'] = 'Datu-basearen erabiltzailea:';
 $string['dataroot'] = 'Datu-direktorioa';
 $string['datarooterror'] = '\'Datu-direktorioa\' ezin izan da sortu edo aurkitu. Bidea zuzendu edo direktorioa eskuz sortu.';
 $string['dbconnectionerror'] = 'Datu-basearekiko konexio-errorea. Mesedez, datu-basearen ezarpenak aztertu.';
@@ -153,10 +166,14 @@ $string['globalsquoteshelp'] = '<p>Ez da aholkatzen Magic Quotes GPC indargabetz
 $string['help'] = 'Laguntza';
 $string['iconvrecommended'] = 'ICONV aukerako liburutegia instalatzea gomendagarria da  oso gunearen errendimendua hobetzeko, batez ere zure guneak latindarrak ez diren hizkuntzak erabiltzen baditu.';
 $string['info'] = 'Informazioa';
+$string['inputdatadirectory'] = 'Datuen Direktorioa;';
+$string['inputwebadress'] = 'Web helbidea :';
+$string['inputwebdirectory'] = 'Moodle Direktorioa:';
 $string['installation'] = 'Instalazioa';
-$string['invalidemail'] = 'E-posta helbide baliogabea';
+$string['invalidemail'] = 'E-posta ez da baliozkoa';
+$string['invalidhost'] = 'Ostalaria ez da baliozkoa';
 $string['invalidmd5'] = 'md5 ez da baliagarria';
-$string['invalidurl'] = 'URL honek ez du balio';
+$string['invalidurl'] = 'URLa ez da baliozkoa';
 $string['langdownloaderror'] = '\"$a\" hizkuntza ezin izan da instalatu. Instalazio-prozesuak ingelesez jarraituko du.';
 $string['langdownloadok'] = '\"$a\" hizkuntza zuzen instalatu da. Instalazio-prozesuak hizkuntza horretan jarraituko du.';
 $string['language'] = 'Hizkuntza';
@@ -203,7 +220,7 @@ $string['pass'] = 'Zuzena';
 $string['password'] = 'Pasahitza';
 $string['php50restricted'] = 'PHP 5.0.x-k hainbat arazo ezagun ditu; mesedez, eguneratu 5.1.x bertsiora edo erabili 4.3.x edo 4.4.x bertsioak.';
 $string['phpversion'] = 'PHP bertsioa';
-$string['phpversionerror'] = 'PHP bertsioak 4.1.0 edo geroagokoa izan behar du';
+$string['phpversionerror'] = 'PHP bertsioak 4.1.0 edo geroagokoa izan behar du'; // ORPHANED
 $string['phpversionhelp'] = '<p>Moodle-k PHP 4.1.0 edo geroagoko bertsioa behar du.</p>
 <p>Zure bertsioa: $a</p>
 <p>PHP eguneratu edo PHP bertsio berriagoa duen zerbitzari batera jo</p>';
@@ -253,4 +270,5 @@ $string['wrongsourcebase'] = 'URL iturriaren oinarri akastuna.';
 $string['wrongzipfilename'] = 'ZIP fitxategiko izen desegokia.';
 $string['wwwroot'] = 'Web helbidea';
 $string['wwwrooterror'] = '\'Web helbidea\' zuzena ez dela dirudi. Ezin izan da Moodle-ren instalazioa aurkitu. Jatorrizko balorea berrezarri da.';
+$string['yourchoice'] = 'Zure aukera:';
 ?>
