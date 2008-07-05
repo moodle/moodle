@@ -177,13 +177,17 @@ class quiz_report_overview_table extends table_sql {
         if ($gradedstatesbyattempt === null){
             //get all the attempt ids we want to display on this page
             //or to export for download.
-            $attemptids = array();
-            foreach ($this->rawdata as $attempt){
-                if ($attempt->attemptuniqueid > 0){
-                    $attemptids[] = $attempt->attemptuniqueid;
+            if (!$this->is_downloading()) {
+                $attemptids = array();
+                foreach ($this->rawdata as $attempt){
+                    if ($attempt->attemptuniqueid > 0){
+                        $attemptids[] = $attempt->attemptuniqueid;
+                    }
                 }
+                $gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
+            } else {
+                $gradedstatesbyattempt = quiz_get_newgraded_states($this->sql, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
             }
-            $gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
         }
         if (preg_match('/^qsgrade([0-9]+)$/', $colname, $matches)){
             $questionid = $matches[1];

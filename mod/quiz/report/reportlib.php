@@ -10,31 +10,45 @@ define('QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS', 3);
  * Get newest graded state or newest state for a number of attempts. Pass in the
  * uniqueid field from quiz_attempt table not the id. Use question_state_is_graded
  * function to check that the question is actually graded.
+ * @param array attemptidssql either an array of attemptids with numerical keys
+ * or an object with properties from, where and params.
+ * @param boolean idxattemptq true if a multidimensional array should be
+ * constructed with keys indexing array first by attempt and then by question
+ * id.
  */
-function quiz_get_newgraded_states($attemptids, $idxattemptq = true, $fields='qs.*'){
+function quiz_get_newgraded_states($attemptidssql, $idxattemptq = true, $fields='qs.*'){
     global $CFG, $DB;
-    if ($attemptids){
-        list($usql, $params) = $DB->get_in_or_equal($attemptids);
+    if ($attemptidssql && is_array($attemptidssql)){
+        list($usql, $params) = $DB->get_in_or_equal($attemptidssql);
         $gradedstatesql = "SELECT $fields FROM " .
                 "{question_sessions} qns, " .
                 "{question_states} qs " .
                 "WHERE qns.attemptid $usql AND " .
                 "qns.newgraded = qs.id";
         $gradedstates = $DB->get_records_sql($gradedstatesql, $params);
-        if ($idxattemptq){
-            $gradedstatesbyattempt = array();
-            foreach ($gradedstates as $gradedstate){
-                if (!isset($gradedstatesbyattempt[$gradedstate->attempt])){
-                    $gradedstatesbyattempt[$gradedstate->attempt] = array();
-                }
-                $gradedstatesbyattempt[$gradedstate->attempt][$gradedstate->question] = $gradedstate;
-            }
-            return $gradedstatesbyattempt;
-        } else {
-            return $gradedstates;
-        }
+    } else if ($attemptidssql && is_object($attemptidssql)){
+        $gradedstatesql = "SELECT $fields FROM " .
+                $attemptidssql->from.",".
+                "{question_sessions} qns, " .
+                "{question_states} qs " .
+                "WHERE qns.attemptid = qa.uniqueid AND " .
+                $attemptidssql->where." AND ".
+                "qns.newgraded = qs.id";
+        $gradedstates = $DB->get_records_sql($gradedstatesql, $attemptidssql->params);
     } else {
         return array();
+    }
+    if ($idxattemptq){
+        $gradedstatesbyattempt = array();
+        foreach ($gradedstates as $gradedstate){
+            if (!isset($gradedstatesbyattempt[$gradedstate->attempt])){
+                $gradedstatesbyattempt[$gradedstate->attempt] = array();
+            }
+            $gradedstatesbyattempt[$gradedstate->attempt][$gradedstate->question] = $gradedstate;
+        }
+        return $gradedstatesbyattempt;
+    } else {
+        return $gradedstates;
     }
 }
 
