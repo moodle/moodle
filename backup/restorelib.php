@@ -3352,7 +3352,8 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
             //We have to recode the userid field
             if (!$user = backup_getid($restore->backup_unique_code,"user",$group_member->userid)) {
-                $status = false;
+                debugging("group membership can not be restored, user id $group_member->userid not presetn in backup");
+                // do not not block the restore 
                 continue;
             }
 
