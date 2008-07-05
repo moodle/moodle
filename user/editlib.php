@@ -55,7 +55,10 @@ function useredit_update_trackforums($user, $usernew) {
 }
 
 function useredit_shared_definition(&$mform) {
-    global $CFG;
+    global $CFG, $USER;
+
+    $user = get_record('user', 'id', $USER->id);
+    useredit_load_preferences($user);
 
     $strrequired = get_string('required');
 
@@ -67,8 +70,17 @@ function useredit_shared_definition(&$mform) {
     $mform->addRule('lastname', $strrequired, 'required', null, 'client');
     $mform->setType('lastname', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
-    $mform->addRule('email', $strrequired, 'required', null, 'client');
+    // Do not show email field if change confirmation is pending
+    if ($CFG->emailchangeconfirmation && !empty($user->preference_newemail)) {
+        $notice = get_string('auth_emailchangepending', 'auth', $user);
+        $notice .= '<br /><a href="edit.php?cancelemailchange=1&amp;id='.$user->id.'">'
+                . get_string('auth_emailchangecancel', 'auth') . '</a>';
+        $mform->addElement('static', 'emailpending', get_string('email'), $notice);
+    } else {
+        $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
+        $mform->addRule('email', $strrequired, 'required', null, 'client');
+    }
+
 
     $choices = array();
     $choices['0'] = get_string('emaildisplayno');
