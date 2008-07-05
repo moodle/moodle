@@ -31,6 +31,7 @@
         $user->id = -1;
         $user->auth = 'manual';
         $user->confirmed = 1;
+        $user->deleted = 0;
     } else {
         // editing existing user
         require_capability('moodle/user:update', $systemcontext);
