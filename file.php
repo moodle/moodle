@@ -106,10 +106,17 @@
         and (strtolower($args[2]) == 'assignment')) {
 
         $lifetime = 0;  // do not cache assignments, students may reupload them
-        if (!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_COURSE, $course->id))
-          and $args[4] != $USER->id) {
-           print_error('nopermissions');
-        }
+        if ($args[4] == $USER->id) {
+            //can view own assignemnt submissions
+        } else {
+            $instance = (int)$args[3];
+            if (!$cm = get_coursemodule_from_instance('assignment', $instance, $course->id)) {
+                not_found($course->id);
+            }
+            if (!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
+                print_error('nopermissions');
+            }
+        } 
     }
 
     // security: force download of all attachments submitted by students
