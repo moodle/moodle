@@ -33,6 +33,13 @@
         require_course_login($course);
     }
 
+    if ($user->deleted) {
+        print_header();
+        print_heading(get_string('userdeleted'));
+        print_footer($course);
+        die;
+    }
+
     add_to_log($course->id, "forum", "user report",
             "user.php?course=$course->id&amp;id=$user->id&amp;mode=$mode", "$user->id"); 
 
