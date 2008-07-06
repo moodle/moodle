@@ -99,6 +99,7 @@
             if (!$usernew->id = insert_record('user', $usernew)) {
                 error('Error creating user record');
             }
+            $usercreated = true;
         } else {
             if (!update_record('user', $usernew)) {
                 error('Error updating user record');
@@ -120,9 +121,7 @@
                     }
                 }
             }
-
-            // MDL-9983
-            events_trigger('user_updated', $usernew);
+            $usercreated = false;
         }
 
         //update preferences
@@ -147,10 +146,19 @@
         // save custom profile fields data
         profile_save_data($usernew);
 
+        // reload from db
+        $usernew = get_record('user', 'id', $usernew->id);
+
+        // trigger events
+        if ($usercreated) {
+            events_trigger('user_created', $usernew);
+        } else {
+            events_trigger('user_updated', $usernew);
+        }
+
         if ($user->id == $USER->id) {
             // Override old $USER session variable
-            $usernew = (array)get_record('user', 'id', $usernew->id); // reload from db
-            foreach ($usernew as $variable => $value) {
+            foreach ((array)$usernew as $variable => $value) {
                 $USER->$variable = $value;
             }
             if (!empty($USER->newadminuser)) {

@@ -366,7 +366,7 @@ function events_cron($eventname='') {
 /**
  * Function to call all eventhandlers when triggering an event
  * @param eventname - name of the event
- * @param eventdata - event data object
+ * @param eventdata - event data object (without magic quotes)
  * @return number of failed events
  *
  * PUBLIC
@@ -423,7 +423,7 @@ function events_trigger($eventname, $eventdata) {
             if ($event === false) {
                 $event = new object();
                 $event->userid      = $USER->id;
-                $event->eventdata   = serialize($eventdata);
+                $event->eventdata   = addslashes(serialize($eventdata));
                 $event->timecreated = time();
                 if (debugging()) {
                     $dump = '';

@@ -3010,6 +3010,8 @@ function delete_user($user) {
         // notify auth plugin - do not block the delete even when plugin fails
         $authplugin = get_auth_plugin($user->auth);
         $authplugin->user_delete($user);
+
+        events_trigger('user_deleted', $user);
         return true;
 
     } else {
@@ -3437,15 +3439,25 @@ function set_login_session_preferences() {
  * Delete a course, including all related data from the database,
  * and any associated files from the moodledata folder.
  *
- * @param int $courseid The id of the course to delete.
+ * @param mixed $courseorid The id of the course or course object to delete.
  * @param bool $showfeedback Whether to display notifications of each action the function performs.
  * @return bool true if all the removals succeeded. false if there were any failures. If this
  *             method returns false, some of the removals will probably have succeeded, and others
  *             failed, but you have no way of knowing which.
  */
-function delete_course($courseid, $showfeedback = true) {
+function delete_course($courseorid, $showfeedback = true) {
     global $CFG;
     $result = true;
+
+    if (is_object($courseorid)) {
+        $courseid = $courseorid->id;
+        $course   = $courseorid;
+    } else {
+        $courseid = $courseorid;
+        if (!$course = get_record('course', 'id', $courseid)) {
+            return false;
+        } 
+    }
 
     // frontpage course can not be deleted!!
     if ($courseid == SITEID) {
@@ -3479,6 +3491,11 @@ function delete_course($courseid, $showfeedback = true) {
             notify("An error occurred while deleting the course files.");
         }
         $result = false;
+    }
+
+    if ($result) {
+        //trigger events
+        events_trigger('course_deleted', $course);
     }
 
     return $result;
