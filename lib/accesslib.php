@@ -2867,8 +2867,8 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
  * @return boolean - success or failure
  */
 function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NULL) {
-
     global $USER, $CFG;
+    require_once($CFG->dirroot.'/group/lib.php');
 
     $success = true;
 
@@ -2931,11 +2931,7 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
                     // this may be slow, but this is the proper way of doing it
                     if (!has_capability('moodle/course:view', $context, $ra->userid)) {
                         // remove from groups
-                        if ($groups = groups_get_all_groups($context->instanceid)) {
-                            foreach ($groups as $group) {
-                                delete_records('groups_members', 'groupid', $group->id, 'userid', $ra->userid);
-                            }
-                        }
+                        groups_delete_group_members($context->instanceid, $ra->userid);
 
                         // delete lastaccess records
                         delete_records('user_lastaccess', 'userid', $ra->userid, 'courseid', $context->instanceid);

@@ -64,7 +64,7 @@ groups_grouping_created - object groups_grouping table record
 groups_grouping_updated - object groups_grouping table record
 groups_grouping_deleted - object groups_grouping table record
 
-groups_members_removed          - int course id - removed all members from all groups in course
+groups_members_removed          - object courseid+userid - removed all users (or one user) from all groups in course
 groups_groupings_groups_removed - int course id - removed all groups from all groupings in course
 groups_groups_deleted           - int course id - deleted all course groups
 groups_groupings_deleted        - int course id - deleted all course groupings
