@@ -69,6 +69,11 @@ groups_groupings_groups_removed - int course id - removed all groups from all gr
 groups_groups_deleted           - int course id - deleted all course groups
 groups_groupings_deleted        - int course id - deleted all course groupings
 
+==== role related evetns ====
+
+role_assigned         - object role_assignments table record
+role_unassigned       - object role_assignments table record
+
 
 */
 
