@@ -325,7 +325,27 @@ function events_dequeue($qhandler) {
     }
 }
 
+/**
+ * Returns hanflers for given event. Uses caching for better perf.
+ * @param string $eventanme name of even or 'reset'
+ * @return mixed array of handlers or false otherwise
+ *
+ * INTERNAL - to be used from eventslib only
+ */
+function events_get_handlers($eventname) {
+    static $handlers = array();
 
+    if ($eventname == 'reset') {
+        $handlers = array();
+        return false;
+    }
+
+    if (!array_key_exists($eventname, $handlers)) {
+        $handlers[$eventname] = $DB->get_records('events_handlers', array('eventname'=>$eventname));
+    }
+
+    return $handlers[$eventname];
+}
 
 /****** Public events API starts here, do not use functions above in 3rd party code ******/
 
@@ -390,7 +410,7 @@ function events_trigger($eventname, $eventdata) {
     $event = false;
 
     // pull out all registered event handlers
-    if ($handlers = $DB->get_records('events_handlers', array('eventname'=>$eventname))) {
+    if ($handlers = events_get_handlers($eventname)) {
         foreach ($handlers as $handler) {
 
            $errormessage = '';
