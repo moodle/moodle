@@ -259,19 +259,37 @@ function groups_delete_grouping($groupingorid) {
 }
 
 /**
- * Remove all users from all groups in course
+ * Remove all users (or one user) from all groups in course
  * @param int $courseid
+ * @param int $userid 0 means all users
  * @param bool $showfeedback
  * @return bool success
  */
-function groups_delete_group_members($courseid, $showfeedback=false) {
+function groups_delete_group_members($courseid, $userid=0, $showfeedback=false) {
     global $DB;
 
-    $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
-    $DB->delete_records_select('groups_members', "groupid IN ($groupssql)", array($courseid));
+    if (is_bool($userid)) {
+        debugging('Incorrect userid function parameter');
+        return false;
+    }
+
+    $params = array('courseid'=>$courseid);
+
+    if ($userid) {
+        $usersql = "AND userid = :userid";
+        $params['userid'] = $userid;
+    } else {
+        $usersql = "";
+    }
+
+    $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = :courseid";
+    $DB->delete_records_select('groups_members', "groupid IN ($groupssql) $usersql", $params);
 
     //trigger groups events
-    events_trigger('groups_members_removed', $courseid);
+    $eventdata = new object();
+    $eventdata->courseid = $courseid;
+    $eventdata->userid   = $userid;
+    events_trigger('groups_members_removed', $eventdata);
 
     if ($showfeedback) {
         notify(get_string('deleted').' groups_members');
@@ -314,7 +332,7 @@ function groups_delete_groups($courseid, $showfeedback=false) {
 
     // delete any uses of groups
     groups_delete_groupings_groups($courseid, $showfeedback);
-    groups_delete_group_members($courseid, $showfeedback);
+    groups_delete_group_members($courseid, 0, $showfeedback);
 
     // delete group pictures
     if ($groups = $DB->get_records('groups', array('courseid'=>$courseid))) {
