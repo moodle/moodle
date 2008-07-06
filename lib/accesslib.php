@@ -2788,64 +2788,62 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         $ra = get_record('role_assignments', 'roleid', $roleid, 'contextid', $context->id, 'groupid', $groupid);
     }
 
-
-    $newra = new object;
-
     if (empty($ra)) {             // Create a new entry
-        $newra->roleid = $roleid;
-        $newra->contextid = $context->id;
-        $newra->userid = $userid;
-        $newra->hidden = $hidden;
-        $newra->enrol = $enrol;
+        $ra = new object();
+        $ra->roleid = $roleid;
+        $ra->contextid = $context->id;
+        $ra->userid = $userid;
+        $ra->hidden = $hidden;
+        $ra->enrol = $enrol;
     /// Always round timestart downto 100 secs to help DBs to use their own caching algorithms
     /// by repeating queries with the same exact parameters in a 100 secs time window
-        $newra->timestart = round($timestart, -2);
-        $newra->timeend = $timeend;
-        $newra->timemodified = $timemodified;
-        $newra->modifierid = empty($USER->id) ? 0 : $USER->id;
+        $ra->timestart = round($timestart, -2);
+        $ra->timeend = $timeend;
+        $ra->timemodified = $timemodified;
+        $ra->modifierid = empty($USER->id) ? 0 : $USER->id;
 
-        $success = insert_record('role_assignments', $newra);
-
-    } else {                      // We already have one, just update it
-
-        $newra->id = $ra->id;
-        $newra->hidden = $hidden;
-        $newra->enrol = $enrol;
-    /// Always round timestart downto 100 secs to help DBs to use their own caching algorithms
-    /// by repeating queries with the same exact parameters in a 100 secs time window
-        $newra->timestart = round($timestart, -2);
-        $newra->timeend = $timeend;
-        $newra->timemodified = $timemodified;
-        $newra->modifierid = empty($USER->id) ? 0 : $USER->id;
-
-        $success = update_record('role_assignments', $newra);
-    }
-
-    if ($success) {   /// Role was assigned, so do some other things
-
-    /// mark context as dirty - modules might use has_capability() in xxx_role_assing()
-    /// again expensive, but needed
-        mark_context_dirty($context->path);
-
-        if (!empty($USER->id) && $USER->id == $userid) {
-    /// If the user is the current user, then do full reload of capabilities too.
-            load_all_capabilities();
+        if (!$ra->id = insert_record('role_assignments', $ra)) {
+            return false;
         }
 
-    /// Ask all the modules if anything needs to be done for this user
-        if ($mods = get_list_of_plugins('mod')) {
-            foreach ($mods as $mod) {
-                include_once($CFG->dirroot.'/mod/'.$mod.'/lib.php');
-                $functionname = $mod.'_role_assign';
-                if (function_exists($functionname)) {
-                    $functionname($userid, $context, $roleid);
-                }
+    } else {                      // We already have one, just update it
+        $ra->id = $ra->id;
+        $ra->hidden = $hidden;
+        $ra->enrol = $enrol;
+    /// Always round timestart downto 100 secs to help DBs to use their own caching algorithms
+    /// by repeating queries with the same exact parameters in a 100 secs time window
+        $ra->timestart = round($timestart, -2);
+        $ra->timeend = $timeend;
+        $ra->timemodified = $timemodified;
+        $ra->modifierid = empty($USER->id) ? 0 : $USER->id;
+
+        if (!update_record('role_assignments', $ra)) {
+            return false;
+        }
+    }
+
+/// mark context as dirty - modules might use has_capability() in xxx_role_assing()
+/// again expensive, but needed
+    mark_context_dirty($context->path);
+
+    if (!empty($USER->id) && $USER->id == $userid) {
+/// If the user is the current user, then do full reload of capabilities too.
+        load_all_capabilities();
+    }
+
+/// Ask all the modules if anything needs to be done for this user
+    if ($mods = get_list_of_plugins('mod')) {
+        foreach ($mods as $mod) {
+            include_once($CFG->dirroot.'/mod/'.$mod.'/lib.php');
+            $functionname = $mod.'_role_assign';
+            if (function_exists($functionname)) {
+                $functionname($userid, $context, $roleid);
             }
         }
     }
 
     /// now handle metacourse role assignments if in course context
-    if ($success and $context->contextlevel == CONTEXT_COURSE) {
+    if ($context->contextlevel == CONTEXT_COURSE) {
         if ($parents = get_records('course_meta', 'child_course', $context->instanceid)) {
             foreach ($parents as $parent) {
                 sync_metacourse($parent->parent_course);
@@ -2853,7 +2851,9 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
         }
     }
 
-    return $success;
+    events_trigger('role_assigned', $ra);
+
+    return true;
 }
 
 
@@ -2887,11 +2887,16 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
         if ($ras = get_records_select('role_assignments', implode(' AND ', $select))) {
             $mods = get_list_of_plugins('mod');
             foreach($ras as $ra) {
+                $fireevent = false;
                 /// infinite loop protection when deleting recursively
                 if (!$ra = get_record('role_assignments', 'id', $ra->id)) {
                     continue;
                 }
-                $success = delete_records('role_assignments', 'id', $ra->id) and $success;
+                if (delete_records('role_assignments', 'id', $ra->id)) {
+                    $fireevent = true;
+                } else {
+                    $success = false;
+                }
 
                 if (!$context = get_context_instance_by_id($ra->contextid)) {
                     // strange error, not much to do
@@ -2942,6 +2947,10 @@ function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NU
                             sync_metacourse($parent->parent_course);
                         }
                     }
+                }
+
+                if ($fireevent) {
+                    events_trigger('role_unassigned', $ra);
                 }
             }
         }
