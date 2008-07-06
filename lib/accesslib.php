@@ -205,14 +205,16 @@ function load_defaultuser_role($return=false) {
     }
 
     if (empty($CFG->defaultuserroleid)) {    // Let's set the default to the guest role
-        if ($role = get_guest_role()) {
-            set_config('defaultuserroleid', $role->id);
+        if (!$role = get_guest_role()) {
+            $defaultuserroleid = $role->id;
         } else {
             return false;
         }
+    } else {
+        $defaultuserroleid = $CFG->defaultuserroleid;
     }
 
-    $capabilities = get_role_caps($CFG->defaultuserroleid);
+    $capabilities = get_role_caps($defaultuserroleid);
 
     // fix the guest user heritage:
     // If the default role is a guest role, then don't copy legacy:guest,
