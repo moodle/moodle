@@ -192,6 +192,14 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008070300);
     }
 
+    if ($result && $oldversion < 2008070700) {
+        if (isset($CFG->defaultuserroleid) and isset($CFG->guestroleid) and $CFG->defaultuserroleid == $CFG->guestroleid) {
+            // guest can not be selected in defaultuserroleid!
+            unset_config('defaultuserroleid');
+        }
+        upgrade_main_savepoint($result, 2008070700);
+    }
+
 /*
  * TODO:
  *   drop adodb_logsql table and create a new general sql log table
