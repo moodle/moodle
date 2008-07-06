@@ -72,11 +72,8 @@
 
     print_heading($strdeletingcourse);
 
-    delete_course($course->id);
+    delete_course($course);
     fix_course_sortorder(); //update course count in catagories
-
-    // MDL-9983
-    events_trigger('course_deleted', $course);
 
     print_heading( get_string("deletedcourse", "", format_string($course->shortname)) );
 

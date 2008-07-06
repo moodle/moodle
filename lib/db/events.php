@@ -26,6 +26,50 @@
 ///////////////////////////////////////////////////////////////////////////
 
 
+
+/* List of handlers */
+
 $handlers = array (); // no handlers for now in core
+
+
+
+/* List of events thrown from Moodle core
+
+==== user related events ====
+
+user_created - object user table record
+user_updated - object user table record
+user_deleted - object user table record
+
+==== course related events ====
+
+course_category_updated - object course_categories table record
+course_category_created - object course_categories table record
+course_category_deleted - object course_categories table record
+
+course_created - object course table record
+course_updated - object course table record
+course_deleted - object course table record
+
+==== group related events ====
+
+groups_group_created - object groups_group table record
+groups_group_updated - object groups_group table record
+groups_group_deleted - object groups_group table record
+
+groups_member_added   - object userid, groupid properties
+groups_member_removed - object userid, groupid properties
+
+groups_grouping_created - object groups_grouping table record
+groups_grouping_updated - object groups_grouping table record
+groups_grouping_deleted - object groups_grouping table record
+
+groups_members_removed          - int course id - removed all members from all groups in course
+groups_groupings_groups_removed - int course id - removed all groups from all groupings in course
+groups_groups_deleted           - int course id - deleted all course groups
+groups_groupings_deleted        - int course id - deleted all course groupings
+
+
+*/
 
 ?>

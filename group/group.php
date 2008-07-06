@@ -60,11 +60,6 @@ if ($id and $delete) {
 
     } else if (confirm_sesskey()){
         if (groups_delete_group($id)) {
-            // MDL-9983
-            $eventdata = new object();
-            $eventdata->group  = $id;
-            $eventdata->course = $courseid;
-            events_trigger('group_deleted', $eventdata);
             redirect('index.php?id='.$course->id);
         } else {
             print_error('erroreditgroup', 'group', $returnurl);

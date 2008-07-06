@@ -403,6 +403,9 @@ class auth_plugin_ldap extends auth_plugin_base {
         $this->update_user_record($user->username);
         update_internal_user_password($user, $plainslashedpassword);
 
+        $user = get_record('user', 'id', $user->id);
+        events_trigger('user_created', $user);
+
         if (! send_confirmation_email($user)) {
             print_error('auth_emailnoemail', 'auth');
         }

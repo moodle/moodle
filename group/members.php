@@ -64,12 +64,6 @@ if ($frm = data_submitted() and confirm_sesskey()) {
             if (!groups_remove_member($groupid, $userid)) {
                 print_error('erroraddremoveuser', 'group', $returnurl);
             }
-
-            // MDL-9983
-            $eventdata = new object();
-            $eventdata -> groupid = $groupid;
-            $eventdata -> userid = $userid;
-            events_trigger('group_user_removed', $eventdata);
         }
     }
 }

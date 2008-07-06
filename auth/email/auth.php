@@ -86,6 +86,9 @@ class auth_plugin_email extends auth_plugin_base {
         /// Save any custom profile field information
         profile_save_data($user);
 
+        $user = get_record('user', 'id', $user->id);
+        events_trigger('user_created', $user);
+
         if (! send_confirmation_email($user)) {
             print_error('auth_emailnoemail','auth');
         }

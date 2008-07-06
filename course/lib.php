@@ -2772,7 +2772,7 @@ function category_delete_full($category, $showfeedback=true) {
 
     if ($courses = $DB->get_records('course', array('category'=>$category->id), 'sortorder ASC')) {
         foreach ($courses as $course) {
-            if (!delete_course($course->id, false)) {
+            if (!delete_course($course, false)) {
                 notify("Error deleting course $course->shortname");
                 return false;
             }
@@ -2791,7 +2791,7 @@ function category_delete_full($category, $showfeedback=true) {
     $DB->delete_records('course_categories', array('id'=>$category->id));
     delete_context(CONTEXT_COURSECAT, $category->id);
 
-    events_trigger('category_deleted', $category);
+    events_trigger('course_category_deleted', $category);
 
     notify(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess');
 
@@ -2841,7 +2841,7 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
     $DB->delete_records('course_categories', array('id'=>$category->id));
     delete_context(CONTEXT_COURSECAT, $category->id);
 
-    events_trigger('category_deleted', $category);
+    events_trigger('course_category_deleted', $category);
 
     notify(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess');
 
@@ -2998,6 +2998,9 @@ function create_course($data) {
 
         add_to_log(SITEID, 'course', 'new', 'view.php?id='.$course->id, $data->fullname.' (ID '.$course->id.')');
 
+        //trigger events
+        events_trigger('course_created', $course);
+
         return $course;
     }
 
@@ -3091,6 +3094,8 @@ function update_course($data) {
             }
 
         }
+        //trigger events
+        events_trigger('course_updated', $course);
 
         return true;
 

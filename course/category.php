@@ -17,7 +17,7 @@
     $moveto       = optional_param('moveto', 0, PARAM_INT);
     $rename       = optional_param('rename', '', PARAM_TEXT);
     $resort       = optional_param('resort', 0, PARAM_BOOL);
-    $categorytheme= optional_param('categorytheme', false, PARAM_CLEAN);
+    $categorytheme= optional_param('categorytheme', false, PARAM_SAFEDIR);
 
     if ($CFG->forcelogin) {
         require_login();
@@ -59,12 +59,12 @@
     if (has_capability('moodle/category:update', $context)) {
         /// Rename the category if requested
         if (!empty($rename) and confirm_sesskey()) {
-            $category->name = $rename;
-            if (!$DB->set_field("course_categories", "name", $category->name, array("id"=>$category->id))) {
+            if (!$DB->set_field("course_categories", "name", $rename, array("id"=>$category->id))) {
                 notify("An error occurred while renaming the category");
             }
-            // MDL-9983
-            events_trigger('category_updated', $category);
+            $category->name = $rename;
+            //trigger events
+            events_trigger('course_category_updated', $category);
         }
 
         /// Set the category theme if requested

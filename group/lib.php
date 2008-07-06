@@ -3,7 +3,7 @@
  * Extra library for groups and groupings.
  *
  * @copyright &copy; 2006 The Open University
- * @author J.White AT open.ac.uk
+ * @author J.White AT open.ac.uk, Petr Skoda (skodak)
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
@@ -43,11 +43,11 @@ function groups_add_member($groupid, $userid) {
     //update group info
     $DB->set_field('groups', 'timemodified', $member->timeadded, array('id'=>$groupid));
 
-    // MDL-9983
+    //trigger groups events
     $eventdata = new object();
     $eventdata->groupid = $groupid;
-    $eventdata->userid = $userid;
-    events_trigger('group_user_added', $eventdata);
+    $eventdata->userid  = $userid;
+    events_trigger('groups_member_added', $eventdata);
 
     return true;
 }
@@ -75,6 +75,12 @@ function groups_remove_member($groupid, $userid) {
     //update group info
     $DB->set_field('groups', 'timemodified', time(), array('id'=>$groupid));
 
+    //trigger groups events
+    $eventdata = new object();
+    $eventdata->groupid = $groupid;
+    $eventdata->userid  = $userid;
+    events_trigger('groups_member_removed', $eventdata);
+
     return true;
 }
 
@@ -93,11 +99,18 @@ function groups_create_group($data, $um=false) {
     $data->name         = trim($data->name);
     $id = $DB->insert_record('groups', $data);
 
-    if ($id and $um) {
-        //update image
-        if (save_profile_image($id, $um, 'groups')) {
-            $DB->set_field('groups', 'picture', 1, array('id'=>$id));
+    if ($id) {
+        $data->id = $id;
+        if ($um) {
+            //update image
+            if (save_profile_image($id, $um, 'groups')) {
+                $DB->set_field('groups', 'picture', 1, array('id'=>$id));
+            }
+            $data->picture = 1;
         }
+
+        //trigger groups events
+        events_trigger('groups_group_created', $data);
     }
 
     return $id;
@@ -114,7 +127,15 @@ function groups_create_grouping($data) {
     $data->timecreated  = time();
     $data->timemodified = $data->timecreated;
     $data->name         = trim($data->name);
-    return $DB->insert_record('groupings', $data);
+    $id = $DB->insert_record('groupings', $data);
+
+    if ($id) {
+        //trigger groups events
+        $data->id = $id;
+        events_trigger('groups_grouping_created', $data);
+    }
+
+    return $id;
 }
 
 /**
@@ -131,11 +152,17 @@ function groups_update_group($data, $um=false) {
     $data->name         = trim($data->name);
     $result = $DB->update_record('groups', $data);
 
-    if ($result and $um) {
-        //update image
-        if (save_profile_image($data->id, $um, 'groups')) {
+    if ($result) {
+        if ($um) {
+            //update image
+            if (save_profile_image($data->id, $um, 'groups')) {
             $DB->set_field('groups', 'picture', 1, array('id'=>$data->id));
+                $data->picture = 1;
+            }
         }
+
+        //trigger groups events
+        events_trigger('groups_group_updated', $data);
     }
 
     return $result;
@@ -150,21 +177,32 @@ function groups_update_grouping($data) {
     global $DB;
     $data->timemodified = time();
     $data->name         = trim($data->name);
-    return $DB->update_record('groupings', $data);
+    $result = $DB->update_record('groupings', $data);
+    if ($result) {
+        //trigger groups events
+        events_trigger('groups_grouping_updated', $data);
+    }
+    return $result;
 }
 
 /**
  * Delete a group best effort, first removing members and links with courses and groupings.
  * Removes group avatar too.
- * @param int $groupid The group to delete
+ * @param mixed $grouporid The id of group to delete or full group object
  * @return boolean True if deletion was successful, false otherwise
  */
-function groups_delete_group($groupid) {
+function groups_delete_group($grouporid) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gdlib.php');
 
-    if (empty($groupid)) {
-        return false;
+    if (is_object($grouporid)) {
+        $groupid = $grouporid->id;
+        $group   = $grouporid;
+    } else {
+        $groupid = $grouporid;
+        if (!$group = $DB->get_record('groups', array('id'=>$groupid))) {
+            return false;
+        }
     }
 
     // delete group calendar events
@@ -176,7 +214,13 @@ function groups_delete_group($groupid) {
     //then imge
     delete_profile_image($groupid, 'groups');
     //group itself last
-    return $DB->delete_records('groups', array('id'=>$groupid));
+    $result = $DB->delete_records('groups', array('id'=>$groupid));
+    if ($result) {
+        //trigger groups events
+        events_trigger('groups_group_deleted', $group);
+    }
+
+    return $result;
 }
 
 /**
@@ -184,12 +228,17 @@ function groups_delete_group($groupid) {
  * @param int $groupingid
  * @return bool success
  */
-function groups_delete_grouping($groupingid) {
+function groups_delete_grouping($groupingorid) {
     global $DB;
 
-    if (empty($groupingid)) {
-        return false;
-
+    if (is_object($groupingorid)) {
+        $groupingid = $groupingorid->id;
+        $grouping   = $groupingorid;
+    } else {
+        $groupingid = $groupingorid;
+        if (!$grouping = $DB->get_record('groupings', array('id'=>$groupingorid))) {
+            return false;
+        }
     }
 
     //first delete usage in groupings_groups
@@ -199,7 +248,14 @@ function groups_delete_grouping($groupingid) {
     // remove the groupingid from all course modules
     $DB->set_field('course_modules', 'groupingid', 0, array('groupingid'=>$groupingid));
     //group itself last
-    return $DB->delete_records('groupings', array('id'=>$groupingid));
+    $result = $DB->delete_records('groupings', array('id'=>$groupingid));
+
+    if ($result) {
+        //trigger groups events
+        events_trigger('groups_grouping_deleted', $grouping);
+    }
+
+    return $result;
 }
 
 /**
@@ -213,6 +269,9 @@ function groups_delete_group_members($courseid, $showfeedback=false) {
 
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
     $DB->delete_records_select('groups_members', "groupid IN ($groupssql)", array($courseid));
+
+    //trigger groups events
+    events_trigger('groups_members_removed', $courseid);
 
     if ($showfeedback) {
         notify(get_string('deleted').' groups_members');
@@ -232,6 +291,9 @@ function groups_delete_groupings_groups($courseid, $showfeedback=false) {
 
     $groupssql = "SELECT id FROM {groups} g WHERE g.courseid = ?";
     $DB->delete_records_select('groupings_groups', "groupid IN ($groupssql)", array($courseid));
+
+    //trigger groups events
+    events_trigger('groups_groupings_groups_removed', $courseid);
 
     if ($showfeedback) {
         notify(get_string('deleted').' groupings_groups');
@@ -266,6 +328,10 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     $DB->delete_records_select('event', "groupid IN ($groupssql)", array($courseid));
 
     $DB->delete_records('groups', array('courseid'=>$courseid));
+
+    //trigger groups events
+    events_trigger('groups_groups_deleted', $courseid);
+
     if ($showfeedback) {
         notify(get_string('deleted').' groups');
     }
@@ -293,6 +359,10 @@ function groups_delete_groupings($courseid, $showfeedback=false) {
     $DB->set_field('course_modules', 'groupingid', 0, array('course'=>$courseid));
 
     $DB->delete_records('groupings', array('courseid'=>$courseid));
+
+    //trigger groups events
+    events_trigger('groups_groupings_deleted', $courseid);
+
     if ($showfeedback) {
         notify(get_string('deleted').' groupings');
     }

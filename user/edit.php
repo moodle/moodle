@@ -180,14 +180,16 @@
             }
         }
 
+        // reload from db
+        $usernew = $DB->get_record('user', array('id'=>$user->id));
+        events_trigger('user_updated', $usernew);
+
         if ($USER->id == $user->id) {
             // Override old $USER session variable if needed
-            $usernew = $DB->get_record('user', array('id'=>$user->id)); // reload from db
-            foreach ($usernew as $variable => $value) {
+            foreach ((array)$usernew as $variable => $value) {
                 $USER->$variable = $value;
             }
         }
-        events_trigger('user_updated', $usernew);
 
         if (!$email_changed || !$CFG->emailchangeconfirmation) {
             redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id");
