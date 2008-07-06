@@ -3028,6 +3028,14 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007101515);
     }
 
+    if ($result && $oldversion < 2007101517) {
+        if (isset($CFG->defaultuserroleid) and isset($CFG->guestroleid) and $CFG->defaultuserroleid == $CFG->guestroleid) {
+            // guest can not be selected in defaultuserroleid!
+            unset_config('defaultuserroleid');
+        }
+        upgrade_main_savepoint($result, 2007101517);
+    }
+
     return $result;
 }
 
