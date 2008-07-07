@@ -102,7 +102,7 @@ $ADMIN->add('server', $temp);
 // "debugging" settingpage
 $temp = new admin_settingpage('debugging', get_string('debugging', 'admin'));
 $temp->add(new admin_setting_special_debug());
-$temp->add(new admin_setting_configcheckbox('debugdisplay', get_string('debugdisplay', 'admin'), get_string('configdebugdisplay', 'admin'), ini_get('display_errors')));
+$temp->add(new admin_setting_configcheckbox('debugdisplay', get_string('debugdisplay', 'admin'), get_string('configdebugdisplay', 'admin'), ini_get_bool('display_errors')));
 $temp->add(new admin_setting_configcheckbox('xmlstrictheaders', get_string('xmlstrictheaders', 'admin'), get_string('configxmlstrictheaders', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('debugsmtp', get_string('debugsmtp', 'admin'), get_string('configdebugsmtp', 'admin'), 0));
 $temp->add(new admin_setting_configcheckbox('perfdebug', get_string('perfdebug', 'admin'), get_string('configperfdebug', 'admin'), '7', '15', '7'));
