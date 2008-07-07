@@ -82,17 +82,16 @@ class block_tag_youtube extends block_base {
         $tag = optional_param('tag', '', PARAM_TAG); // tag 
 
         if ($tag) {
-            $tag_object = tag_get('name', $tag);
+            $tagobject = tag_get('name', $tag);
         } else if ($tagid) {
-            $tag_object = tag_get('id', $tagid);
+            $tagobject = tag_get('id', $tagid);
         }
 
-        if (empty($tag_object)) {
+        if (empty($tagobject)) {
             print_error('tagnotfound');
         }
 
-        $query_tag = html_entity_decode(tag_display_name($tag_object));
-        $query_tag = urlencode($query_tag);
+        $querytag = urlencode($tagobject->name);
 
         $numberofvideos = DEFAULT_NUMBER_OF_VIDEOS;
         if ( !empty($this->config->numberofvideos) ) {
@@ -101,7 +100,7 @@ class block_tag_youtube extends block_base {
 
         $request = 'http://www.youtube.com/api2_rest?method=youtube.videos.list_by_tag';
         $request .= '&dev_id='. YOUTUBE_DEV_KEY;
-        $request .= "&tag={$query_tag}";
+        $request .= "&tag={$querytag}";
         $request .= "&page=1";
         $request .= "&per_page={$numberofvideos}";
 
@@ -114,17 +113,16 @@ class block_tag_youtube extends block_base {
         $tag = optional_param('tag', '', PARAM_TAG); // tag 
 
         if ($tag) {
-            $tag_object = tag_get('name', $tag);
+            $tagobject = tag_get('name', $tag);
         } else if ($tagid) {
-            $tag_object = tag_get('id', $tagid);
+            $tagobject = tag_get('id', $tagid);
         }
 
-        if (empty($tag_object)) {
+        if (empty($tagobject)) {
             print_error('tagnotfound');
         }
 
-        $query_tag = html_entity_decode(tag_display_name($tag_object));
-        $query_tag = urlencode($query_tag);
+        $querytag = urlencode($tagobject->name);
 
         $numberofvideos = DEFAULT_NUMBER_OF_VIDEOS;
         if( !empty($this->config->numberofvideos)) {
@@ -134,7 +132,7 @@ class block_tag_youtube extends block_base {
         $request = 'http://www.youtube.com/api2_rest?method=youtube.videos.list_by_category_and_tag';
         $request .= '&category_id='.$this->config->category;
         $request .= '&dev_id=' . YOUTUBE_DEV_KEY;
-        $request .= "&tag={$query_tag}";
+        $request .= "&tag={$querytag}";
         $request .= "&page=1";
         $request .= "&per_page={$numberofvideos}";
 

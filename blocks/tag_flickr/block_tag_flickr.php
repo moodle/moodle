@@ -43,21 +43,21 @@ class block_tag_flickr extends block_base {
         $tag = optional_param('tag', '', PARAM_TAG); // tag 
 
         if ($tag) {
-            $tag_object = tag_get('name', $tag);
+            $tagobject = tag_get('name', $tag);
         } else if ($tagid) {
-            $tag_object = tag_get('id', $tagid);
+            $tagobject = tag_get('id', $tagid);
         }
 
-        if (empty($tag_object)) {
+        if (empty($tagobject)) {
             print_error('tagnotfound');
         }
 
         //include related tags in the photo query ?
-        $tags_csv = html_entity_decode(tag_display_name($tag_object));
+        $tagscsv = $tagobject->name;
         if (!empty($this->config->includerelatedtags)) {
-            $tags_csv .= ',' . tag_get_related_tags_csv(tag_get_related_tags($tag_object->id), TAG_RETURN_TEXT);
+            $tagscsv .= ',' . tag_get_related_tags_csv(tag_get_related_tags($tagobject->id), TAG_RETURN_TEXT);
         }
-        $tags_csv = urlencode($tags_csv);
+        $tagscsv = urlencode($tagscsv);
 
         //number of photos to display
         $numberofphotos = DEFAULT_NUMBER_OF_PHOTOS;
@@ -91,12 +91,12 @@ class block_tag_flickr extends block_base {
             $photos = array_values($search['photoset']['photo']);
 
         }
-        //search for photos tagged with $tags_csv
+        //search for photos tagged with $tagscsv
         else{
 
             $request = 'http://api.flickr.com/services/rest/?method=flickr.photos.search';
             $request .= '&api_key='.FLICKR_DEV_KEY;
-            $request .= '&tags='.$tags_csv;
+            $request .= '&tags='.$tagscsv;
             $request .= '&per_page='.$numberofphotos;
             $request .= '&sort='.$sortby;
             $request .= '&format=php_serial';
