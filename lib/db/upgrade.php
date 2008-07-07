@@ -200,6 +200,69 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008070700);
     }
 
+    if ($result && $oldversion < 2008070701) {
+
+    /// Define table portfolio_instance to be created
+        $table = new xmldb_table('portfolio_instance');
+
+    /// Adding fields to table portfolio_instance
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('plugin', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('visible', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1');
+
+    /// Adding keys to table portfolio_instance
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for portfolio_instance
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+  /// Define table portfolio_instance_config to be created
+        $table = new xmldb_table('portfolio_instance_config');
+
+    /// Adding fields to table portfolio_instance_config
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+
+    /// Adding keys to table portfolio_instance_config
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('instance', XMLDB_KEY_FOREIGN, array('instance'), 'portfolio_instance', array('id'));
+
+    /// Adding indexes to table portfolio_instance_config
+        $table->add_index('name', XMLDB_INDEX_NOTUNIQUE, array('name'));
+
+    /// Conditionally launch create table for portfolio_instance_config
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+   /// Define table portfolio_instance_user to be created
+        $table = new xmldb_table('portfolio_instance_user');
+
+    /// Adding fields to table portfolio_instance_user
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('instance', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('value', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+
+    /// Adding keys to table portfolio_instance_user
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('instancefk', XMLDB_KEY_FOREIGN, array('instance'), 'portfolio_instance', array('id'));
+        $table->add_key('userfk', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Conditionally launch create table for portfolio_instance_user
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008070701);
+    }
+
 /*
  * TODO:
  *   drop adodb_logsql table and create a new general sql log table
