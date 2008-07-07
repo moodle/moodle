@@ -333,6 +333,7 @@ function events_dequeue($qhandler) {
  * INTERNAL - to be used from eventslib only
  */
 function events_get_handlers($eventname) {
+    global $DB;
     static $handlers = array();
 
     if ($eventname == 'reset') {
