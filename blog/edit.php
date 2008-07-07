@@ -115,7 +115,7 @@ switch ($action) {
         $post->action       = $action;
         $strformheading = get_string('updateentrywithid', 'blog');
 
-        if ($itemptags = html_entity_decode(tag_get_tags_csv('post', $post->id, TAG_RETURN_TEXT, 'default'))) {
+        if ($itemptags = tag_get_tags_csv('post', $post->id, TAG_RETURN_TEXT, 'default')) {
             $post->ptags = $itemptags;
         }
         

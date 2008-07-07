@@ -313,7 +313,7 @@ function tag_get_tags_csv($record_type, $record_id, $html=TAG_RETURN_HTML, $type
     $tags_names = array();
     foreach(tag_get_tags($record_type, $record_id, $type) as $tag) {
         if ($html == TAG_RETURN_TEXT) {
-            $tags_names[] = tag_display_name($tag);
+            $tags_names[] = tag_display_name($tag, TAG_RETURN_TEXT);
         } else { // TAG_RETURN_HTML
             $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
         }
@@ -460,7 +460,7 @@ function tag_get_related_tags_csv($related_tags, $html=TAG_RETURN_HTML) {
     $tags_names = array();
     foreach($related_tags as $tag) {
         if ( $html == TAG_RETURN_TEXT) {
-            $tags_names[] = tag_display_name($tag);
+            $tags_names[] = tag_display_name($tag, TAG_RETURN_TEXT);
         } else {
             // TAG_RETURN_HTML
             $tags_names[] = '<a href="'. $CFG->wwwroot .'/tag/index.php?tag='. rawurlencode($tag->name) .'">'. tag_display_name($tag) .'</a>';
@@ -568,24 +568,31 @@ function tag_delete_instance($record_type, $record_id, $tagid) {
  * Function that returns the name that should be displayed for a specific tag
  *
  * @param object $tag_object a line out of tag table, as returned by the adobd functions
+ * @param int $html TAG_RETURN_HTML (default) will return htmlspecialchars encoded string, TAG_RETURN_TEXT will not encode.
  * @return string
  */
-function tag_display_name($tag_object) {
+function tag_display_name($tagobject, $html=TAG_RETURN_HTML) {
 
     global $CFG;
 
-    if(!isset($tag_object->name)) {
+    if(!isset($tagobject->name)) {
         return '';
     }
 
     if (empty($CFG->keeptagnamecase)) {
         //this is the normalized tag name
         $textlib = textlib_get_instance();
-        return htmlspecialchars($textlib->strtotitle($tag_object->name));
+        $tagname = $textlib->strtotitle($tagobject->name);
     } else {
         //original casing of the tag name
-        return htmlspecialchars($tag_object->rawname);
+        $tagname = $tagobject->rawname;
     }
+
+    if ($html == TAG_RETURN_TEXT) {
+        return $tagname;
+    } else { // TAG_RETURN_HTML
+        return htmlspecialchars($tagname);
+    } 
 }
 
 /**
