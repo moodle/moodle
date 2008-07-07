@@ -6899,7 +6899,7 @@ function debugging($message='', $level=DEBUG_NORMAL) {
             }
             $from .= '</ul>';
             if (!isset($CFG->debugdisplay)) {
-                $CFG->debugdisplay = ini_get('display_errors');
+                $CFG->debugdisplay = ini_get_bool('display_errors');
             }
             if ($CFG->debugdisplay) {
                 if (!defined('DEBUGGING_PRINTED')) {

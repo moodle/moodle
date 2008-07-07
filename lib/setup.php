@@ -289,6 +289,10 @@ global $HTTPSPAGEREQUIRED;
     error_reporting($CFG->debug);
 
 
+/// find out if PHP cofigured to display warnings
+    if (ini_get_bool('display_errors')) {
+        define('WARN_DISPLAY_ERRORS_ENABLED', true);
+    }
 /// If we want to display Moodle errors, then try and set PHP errors to match
     if (!isset($CFG->debugdisplay)) {
         //keep it as is during installation
