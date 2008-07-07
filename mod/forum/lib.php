@@ -1012,7 +1012,7 @@ function forum_print_overview($courses,&$htmlarray) {
  */
 function forum_print_recent_activity($course, $isteacher, $timestart) {
 
-    global $CFG;
+    global $CFG, $USER;
     $LIKE = sql_ilike();
 
     $heading = false;
@@ -1027,7 +1027,8 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
 
     $strftimerecent = get_string('strftimerecent');
 
-    $mygroupid = mygroupid($course->id);
+    $mygroupids = groups_get_groups_for_user($USER->id, $course->id)
+        or $mygroupids = array();
     $groupmode = array();   // To cache group modes
 
     $count = 0;
@@ -1057,11 +1058,12 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             if (!has_capability('moodle/site:accessallgroups', $modcontext)
                     && $post->groupid != -1) {   // Open discussions have groupid -1
 
-                $groupmode[$post->forum] = groupmode($course, $cm[$post->forum]);
+                if (!isset($groupmode[$post->forum])) {
+                    $groupmode[$post->forum] = groupmode($course, $cm[$post->forum]);
+                }
 
                 if ($groupmode[$post->forum]) {
-                    //hope i didn't break anything
-                    if (!@in_array($mygroupid, $post->groupid))/*$mygroupid != $post->groupid*/{
+                    if (!in_array($post->groupid, $mygroupids)) {
                         continue;
                     }
                 }
@@ -1092,7 +1094,9 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
             echo "</a>\"</div></li>\n";
         }
     }
-    echo "</ul>\n";
+    if ($count > 0) { // MDL-12472
+        echo "</ul>\n";
+    }
     return $content;
 }
 
@@ -3942,13 +3946,22 @@ function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_r
 }
 
 /**
- * TODO document
+ * Prepares array of recent activity in course forums
+ *
+ * Returns all forum posts since a given time. If forum and/or user is specified then
+ * this restricts the results.
+ *
+ * @param array &$activities An array of objects representing recent activites
+ * @param int &$index ???
+ * @param int $sincetime Searches only for a activitity since this timestamp
+ * @param int $courseid Searches only for a activitity in a given course module (default 0 means all)
+ * @param string $user Searches only for a user's activity (given by username)
+ * @param array $groupid Searches only for an activity in particular groups
+ * @return No return value but modifies &$activities and &$index
  */
 function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $cmid="0", $user="", $groupid="") {
-// Returns all forum posts since a given time.  If forum is specified then
-// this restricts the results
 
-    global $CFG;
+    global $CFG, $USER, $COURSE;
 
     if ($cmid) {
         $forumselect = " AND cm.id = '$cmid'";
@@ -3960,6 +3973,11 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
         $userselect = " AND u.id = '$user'";
     } else {
         $userselect = "";
+    }
+
+    if (is_numeric($groupid)) {
+        // the behaviour of mygroupid() has been changed so we are getting array now
+        $groupid = array($groupid);
     }
 
     $posts = get_records_sql("SELECT p.*, d.name, u.firstname, u.lastname,
@@ -3984,14 +4002,39 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
         return;
     }
 
+    $groupmode = array();   // To cache group modes of particular forums
+    $cm = array();          // To cache course modules
+    $mygroupids = groups_get_groups_for_user($USER->id, $COURSE->id)
+        or $mygroupids = array();
+
     foreach ($posts as $post) {
 
         $modcontext = get_context_instance(CONTEXT_MODULE, $post->cmid);
-        $canviewallgroups = has_capability('moodle/site:accessallgroups', $modcontext);
 
-        if ($groupid and ($post->groupid != -1 and $groupid != $post->groupid and !$canviewallgroups)) {
-            continue;
+        // Check whether this post belongs to a discussion in a group that
+        // should NOT be accessible to the current user
+        // Open discussions have groupid -1
+        if (!has_capability('moodle/site:accessallgroups', $modcontext) && $post->groupid != -1) {
+
+            if (!isset($cm[$post->cmid])) {
+               $cm[$post->cmid] = get_coursemodule_from_instance('forum', $post->cmid, $courseid);
+            }
+
+            if (!isset($groupmode[$post->cmid])) {
+                $groupmode[$post->cmid] = groupmode($COURSE, $cm[$post->cmid]);
+            }
+
+            if ($groupmode[$post->cmid] == SEPARATEGROUPS) {
+                if (!in_array($post->groupid, $mygroupids)) {
+                    continue;
+                }
+            }
         }
+
+        // the user wants to restrict results on selected group only
+        if (is_array($groupid) && (!in_array($post->groupid, $groupid))) {
+            continue;
+        } 
 
         $tmpactivity = new Object;
 
