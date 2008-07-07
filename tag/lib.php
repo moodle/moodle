@@ -536,7 +536,7 @@ function tag_delete($tagids) {
 
 /**
  * Delete one instance of a tag.  If the last instance was deleted, it will
- * also delete the tag, unless it's type is 'official'.
+ * also delete the tag, unless its type is 'official'.
  *
  * @param string $record_type the type of the record for which to remove the instance
  * @param int $record_id the id of the record for which to remove the instance
@@ -547,11 +547,13 @@ function tag_delete_instance($record_type, $record_id, $tagid) {
     global $CFG, $DB;
 
     if ($DB->delete_records('tag_instance', array('tagid'=>$tagid, 'itemtype'=>$record_type, 'itemid'=>$record_id))) {
-        if (!$DB->record_exists_sql("SELECT *
-                                       FROM {tag} tg, {tag_instance} ti
-                                      WHERE (tg.id = ti.tagid AND ti.tagid = ? )
-                                            OR (tg.id = ? AND tg.tagtype = 'official')",
-                                     array($tagid, $tagid)) ) {
+        if (!$DB->record_exists_sql("SELECT * ".
+                                      "FROM {tag} tg ".
+                                     "WHERE tg.id = ? AND ( tg.tagtype = 'official' OR ".
+                                        "EXISTS (SELECT 1 
+                                                   FROM {tag_instance} ti 
+                                                  WHERE ti.tagid = ?) )", 
+                                     array($tagid, $tagid))) { 
             return tag_delete($tagid);
         }
     } else {
