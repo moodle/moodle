@@ -81,8 +81,8 @@
 
         $morelink = '<br />&nbsp;&nbsp;';
 
-        $totalentries = get_viewable_entry_count($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC');
-        $blogEntries = blog_fetch_entries($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='lastmodified DESC', true);
+        $totalentries = get_viewable_entry_count($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='created DESC');
+        $blogEntries = blog_fetch_entries($postid, $bloglimit, $start, $filtertype, $filterselect, $tagid, $tag, $sort='created DESC', true);
 
         print_paging_bar($totalentries, $blogpage, $bloglimit, get_baseurl($filtertype, $filterselect), 'blogpage');
 
@@ -149,8 +149,12 @@
         $template['title'] .= '<span class="nolink">'. format_string($blogEntry->subject) .'</span>';
         $template['userid'] = $blogEntry->userid;
         $template['author'] = fullname(get_record('user','id',$blogEntry->userid));
-        $template['lastmod'] = userdate($blogEntry->lastmodified);
         $template['created'] = userdate($blogEntry->created);
+
+        if($blogEntry->created != $blogEntry->lastmodified){
+            $template['lastmod'] = userdate($blogEntry->lastmodified);
+        }
+        
         $template['publishstate'] = $blogEntry->publishstate;
 
         /// preventing user to browse blogs that they aren't supposed to see
@@ -179,7 +183,7 @@
         $by = new object();
         $by->name =  '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
                     $user->id.'&amp;course='.$COURSE->id.'">'.$fullname.'</a>';
-        $by->date = $template['lastmod'];
+        $by->date = $template['created'];
         print_string('bynameondate', 'forum', $by);
         echo '</div></td></tr>';
 
@@ -242,6 +246,12 @@
         echo '<a href="'.$CFG->wwwroot.'/blog/index.php?postid='.$blogEntry->id.'">'.get_string('permalink', 'blog').'</a>';
 
         echo '</div>';
+
+        if( isset($template['lastmod']) ){
+            echo '<div style="font-size: 55%;">';
+            echo ' [ '.get_string('modified').': '.$template['lastmod'].' ]';
+            echo '</div>';
+        }
 
         echo '</td></tr></table>'."\n\n";
 
