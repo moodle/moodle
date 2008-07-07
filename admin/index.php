@@ -555,6 +555,10 @@
         print_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');
     }
 
+    if (defined('WARN_DISPLAY_ERRORS_ENABLED')) {
+        print_box(get_string('displayerrorswarning', 'admin'), 'generalbox adminwarning');
+    }
+
     if (substr($CFG->wwwroot, -1) == '/') {
         print_box(get_string('cfgwwwrootslashwarning', 'admin'), 'generalbox adminwarning');
     }

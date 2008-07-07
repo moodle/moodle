@@ -249,6 +249,7 @@ $string['deleteuser'] = 'Delete user';
 $string['density'] = 'Density';
 $string['denyemailaddresses'] = 'Denied email domains';
 $string['digestmailtime'] = 'Hour to send digest emails';
+$string['displayerrorswarning'] = 'Enabling the PHP setting <em>display_errors</em> is not recommended on production sites because some error messages may reveal sensitive information about your server.';
 $string['displayloginfailures'] = 'Display login failures to';
 $string['docroot'] = 'Moodle Docs document root';
 $string['doctonewwindow'] = 'Open in new window';
