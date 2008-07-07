@@ -50,63 +50,77 @@ class repository_flickr extends repository{
             }
         }
     }
-    public function print_login(){
+    public function print_login($ajax = true){
         global $SESSION;
         if(empty($SESSION->flickrmail)) {
-        echo <<<EOD
-            <form action="picker.php">
-            <label for="account">Flickr Account (Email)</lable>
+        $str =<<<EOD
+            <form id="moodle-repo-login">
+            <label for="account">Flickr Account (Email)</label>
             <input type='text' name='flickrmail' id='account' />
-            <input type='hidden' name='id' value='$this->repositoryid' />
+            <input type='hidden' name='id' value='$this->repositoryid' /><br/>
             <input type='checkbox' name='remember' value='true' /> Remember <br/>
-            <input type='submit' value='Go' />
+            <a href="###" onclick="dologin()">Go</a>
             </form>
 EOD;
+            if($ajax){
+                $ret = array();
+                $ret['l'] = $str;
+                return $ret;
+            }else{
+                echo $str;
+            }
         } else {
-            $this->print_listing();
+            return $this->get_listing();
         }
-        //echo '<a href="?id='.$this->repositoryid.'&action=list">See flickr photos list</a>';
-        return true;
     }
     public function get_listing($path = '0', $search = ''){
         global $SESSION;
         $people = $this->flickr->people_findByEmail($SESSION->flickrmail);
         $photos_url = $this->flickr->urls_getUserPhotos($people['nsid']);
         $photos = $this->flickr->people_getPublicPhotos($people['nsid'], null, 36, $this->page);
-        $this->photos = array('a'=>$SESSION->flickrmail, 'u'=>$photos_url, 'p'=>$photos);
-        return $this->photos;
+        $ret = new stdclass;
+        $ret->url   = $photos_url;
+        $ret->list  = array();
+        $ret->page  = $photos['page'];
+        $ret->pages = $photos['pages'];
+        foreach ($photos['photo'] as $p) {
+            $ret->list[] = array('title'=>$p['title'],'thumbnail'=>$this->flickr->buildPhotoURL($p, "Square"));
+        }
+        return $ret;
     }
     public function print_listing(){
         if(empty($this->photos)){
             $this->get_listing();
         }
-        echo '<h2>Account: <span>'.$this->photos['a'].'</span></h2>';
-        echo '<a href="picker.php?id='.$this->repositoryid.'&reset=1">Change user</a>';
-        echo '<hr/>';
-        foreach ((array)$this->photos['p']['photo'] as $photo) {
-            echo "<a href='".$this->photos['u'].$photo[id]."'>";
-            echo "<img border='0' alt='$photo[title]' ".
-                "src=" . $this->flickr->buildPhotoURL($photo, "Square") . ">";
-            echo "</a>";
+        $str = '';
+        $str .= '<h2>Account: <span>'.$this->photos['a'].'</span></h2>';
+        $str .= '<a href="###" onclick="callrepo('.$this->repositoryid.', 1, 1)">Change user</a>';
+        $str .= '<hr/>';
+        foreach ((array)$this->photos['photo'] as $photo) {
+            $str .= "<a href='".$this->photos['url'].$photo[id]."'>";
+            $str .= "<img border='0' alt='$photo[title]' ".
+                "src=" . $photo['thumbnail'] . ">";
+            $str .= "</a>";
             $i++;
-            // If it reaches the sixth photo, insert a line break
-            if ($i % 6 == 0) {
-                echo "<br/>";
+            
+            if ($i % 4 == 0) {
+                $str .= "<br/>";
             }
         }
-        echo <<<EOD
+        $str .= <<<EOD
 <style type='text/css'>
 #paging{margin-top: 10px; clear:both}
 #paging a{padding: 4px; border: 1px solid gray}
 </style>
 EOD;
-        echo '<div id="paging">';
-        for($i=1; $i <= $this->photos['p']['pages']; $i++) {
-            echo '<a href="picker.php?id='.$this->repositoryid.'&action=list&p='.$i.'">';
-            echo $i;
-            echo '</a> ';
+        $str .= '<div id="paging">';
+        for($i=1; $i <= $this->photos['pages']; $i++) {
+            $str .= '<a href="###" onclick="cr('.$this->repositoryid.', '.$i.', 0)">';
+            $str .= $i;
+            $str .= '</a> ';
         }
-        echo '</div>';
+        $str .= '</div>';
+        echo $str;
     }
     public function print_search(){
         echo '<input type="text" name="Search" value="search terms..." size="40" class="right"/>';

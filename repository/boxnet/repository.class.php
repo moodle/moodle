@@ -8,6 +8,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 require_once($CFG->dirroot.'/repository/'.'lib.php');
+require_once($CFG->dirroot.'/repository/'.'curl.class.php');
 require_once($CFG->dirroot.'/repository/boxnet/'.'boxlibphp5.php');
 
 class repository_boxnet extends repository{
@@ -16,39 +17,66 @@ class repository_boxnet extends repository{
     var $ticket;
 
     public function __construct($repositoryid, $context = SITEID, $options = array()){
-        global $SESSION;
-        $op = repository_get_option($repositoryid, 1);
-        $options['api_key']    = $op['api_key'];
-        $options['auth_token'] = optional_param('auth_token', '', PARAM_RAW);
-        if(!empty($options['auth_token'])) {
-            $SESSION->box_token = $options['auth_token'];
-        } else {
-            $options['auth_token'] = $SESSION->box_token;
+        global $SESSION, $action;
+        $options['username']   = optional_param('username', '', PARAM_RAW);
+        $options['password']   = optional_param('password', '', PARAM_RAW);
+        $options['ticket']     = optional_param('ticket', '', PARAM_RAW);
+        $options['api_key']    = 'dmls97d8j3i9tn7av8y71m9eb55vrtj4';
+        // reset session
+        $reset = optional_param('reset', 0, PARAM_INT);
+        if(!empty($reset)) {
+            unset($SESSION->box_token);
         }
-        $options['api_key'] = 'dmls97d8j3i9tn7av8y71m9eb55vrtj4';
+        // do login 
+        if(!empty($options['username'])
+                    && !empty($options['password']) 
+                    && !empty($options['ticket']) ) 
+        {
+            $c = new curl;
+            $str = '';
+            $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>0));
+            $param =  array(
+                'login_form1'=>'',
+                'login'=>$options['username'],
+                'password'=>$options['password'],
+                'dologin'=>1,
+                '__login'=>1
+                );
+            $ret = $c->post('http://www.box.net/api/1.0/auth/'.$options['ticket'], $param);
+            $header = $c->getResponse();
+            $location = $header['location'];
+            preg_match('#auth_token=(.*)$#i', $location, $matches);
+            $auth_token = $matches[1];
+            $SESSION->box_token = $auth_token;
+        }
+        // already logged
+        if(!empty($SESSION->box_token)) {
+            $this->box = new boxclient($options['api_key'], $SESSION->box_token);
+            $this->options['auth_token'] = $SESSION->box_token;
+            $action = 'list';
+        } else {
+            $this->box = new boxclient($options['api_key'], '');
+            $action = '';
+        }
         parent::__construct($repositoryid, $context, $options);
-        if(!empty($options['api_key'])){
-            $this->api_key = $options['api_key'];
-        }
-        if(empty($this->options['auth_token'])) {
-            $this->box = new boxclient($this->api_key, '');
-        } else {
-            $this->box = new boxclient($this->api_key, $this->options['auth_token']);
-        }
     }
 
     public function get_listing($path = '0', $search = ''){
-        $ret = array();
+        global $CFG;
+        $list = array();
+        $ret  = array();
         if($this->box){
-            $tree  = $this->box->getAccountTree();
+            $tree = $this->box->getAccountTree();
             if($tree) {
                 $filenames = $tree['file_name'];
                 $fileids   = $tree['file_id'];
                 foreach ($filenames as $n=>$v){
-                    $ret[] = array('name'=>$v, 'size'=>0, 'date'=>'',
-                            'url'=>'http://box.net/api/1.0/download/'.$this->options['auth_token'].'/'.$fileids[$n]);
+                    $list[] = array('title'=>$v, 'size'=>0, 'date'=>'',
+                            'url'=>'http://box.net/api/1.0/download/'.$this->options['auth_token'].'/'.$fileids[$n],
+                            'thumbnail'=>$CFG->pixpath.'/i/files.gif');
                 }
-                $this->listing = $ret;
+                $this->listing = $list;
+                $ret['list']   = $list;
                 return $ret;
             } else {
                 return null;
@@ -58,13 +86,18 @@ class repository_boxnet extends repository{
 
     public function print_login(){
         if(!empty($this->box) && !empty($this->options['auth_token'])) {
-            echo '<a href="picker.php?id='.$this->repositoryid.'&action=list">View File list</a>';
-            return true;
+            if($this->options['ajax']){
+                return $this->get_listing();
+            } else {
+                echo $this->get_listing();
+            }
         } else if(!empty($this->box)){
             // get a ticket from box.net
             $ticket_return = $this->box->getTicket();
             if($this->box->isError()) {
-                echo $this->box->getErrorMsg();
+                if(!$this->options['ajax']){
+                    echo $this->box->getErrorMsg();
+                }
             } else {
                 $this->ticket = $ticket_return['ticket'];
             }
@@ -83,11 +116,27 @@ class repository_boxnet extends repository{
             // function instead a login screen.
 
             if($this->ticket && ($this->options['auth_token'] == '')){
-                $this->box->getAuthToken($this->ticket);
-                return false;
+                $str = '';
+                $str .= '<form id="moodle-repo-login">';
+                $str .= '<input type="hidden" name="ticket" value="'.$this->ticket.'" />';
+                $str .= '<input type="hidden" name="id" value="'.$this->repositoryid.'" />';
+                $str .= '<label for="box_username">Username: <label>';
+                $str .= '<input type="text" id="box_username" name="username" />';
+                $str .= '<br/>';
+                $str .= '<label for="box_password">Password: <label>';
+                $str .= '<input type="password" id="box_password" name="password" />';
+                $str .= '<input type="button" onclick="dologin()" value="Go" />';
+                $str .= '</form>';
+                if($this->options['ajax']){
+                    $ret = array();
+                    $ret['l'] = $str;
+                    return $ret;
+                } else {
+                    echo $str;
+                }
+                //$this->box->getAuthToken($this->ticket);
             }
         } else {
-            return false;
         }
     }
 

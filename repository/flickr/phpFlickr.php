@@ -78,13 +78,6 @@ class phpFlickr {
 
 	function enableCache($type, $connection, $cache_expire = 600, $table = 'flickr_cache')
 	{
-		// Turns on caching.  $type must be either "db" (for database caching) or "fs" (for filesystem).
-		// When using db, $connection must be a PEAR::DB connection string. Example:
-		//	  "mysql://user:password@server/database"
-		// If the $table, doesn't exist, it will attempt to create it.
-		// When using file system, caching, the $connection is the folder that the web server has write
-		// access to. Use absolute paths for best results.  Relative paths may have unexpected behavior
-		// when you include this.  They'll usually work, you'll just want to test them.
         $this->cache = 'fs';
         $connection = realpath($connection);
         $this->cache_dir = $connection;

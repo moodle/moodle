@@ -17,7 +17,7 @@
  *
  */
 
-require_once 'class.curl.php';
+require_once($CFG->dirroot.'/repository/'.'curl.class.php');
 
 class boxclient {
 
@@ -58,18 +58,21 @@ class boxclient {
                 $query_str = implode('&', $args);
             }
             $request = $this->_box_api_url .'?'. $method . '&' . $query_str;
-            if ($this->_debug){ echo "Request: ".$request; }
+            if ($this->_debug){
+                echo "Request: ".$request;
+            }
         }
         if ($useCURL) {
-            $c = &new curl($request );
-            $c->setopt(CURLOPT_FOLLOWLOCATION, true);
-            $xml = $c->exec();
+            $c = new curl($request);
+            $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>true));
+            $xml = $c->get($request);
+            /*
             $error = $c->hasError();
             if ($error) {
                 $this->_error_msg = $error;
                 return false;
             }
-            $c->close() ;
+            */
         } else {
             $url_parsed = parse_url($request);
             $host       = $url_parsed["host"];
@@ -155,9 +158,10 @@ class boxclient {
         if ($ret_array['status'] == 'get_auth_token_ok'){
             $this->auth_token = $ret_array['auth_token'];
             $auth_token = $ret_array['auth_token'];
-            global $auth_token;
+            return $auth_token;
         }else{
             echo '<a href="http://www.box.net/api/1.0/auth/'.$ticket.'">Login</a>';
+            return false;
             //header ('location: http://www.box.net/api/1.0/auth/'.$ticket) ; 
         }   
     }
