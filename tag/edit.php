@@ -32,8 +32,7 @@ $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/tag:edit', $systemcontext);
 
 // set the relatedtags field of the $tag object that will be passed to the form
-// need to use html_entity_decode because formslib does it for us later on.
-$tag->relatedtags = html_entity_decode(tag_get_related_tags_csv(tag_get_related_tags($tag->id, TAG_RELATED_MANUAL), TAG_RETURN_TEXT));
+$tag->relatedtags = tag_get_related_tags_csv(tag_get_related_tags($tag->id, TAG_RELATED_MANUAL), TAG_RETURN_TEXT);
 
 if (can_use_html_editor()) {
     $options = new object();

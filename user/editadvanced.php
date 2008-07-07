@@ -69,7 +69,7 @@
     //user interests separated by commas
     if (!empty($CFG->usetags)) {
         require_once($CFG->dirroot.'/tag/lib.php');
-        $user->interests = html_entity_decode(tag_get_tags_csv('user', $id, TAG_RETURN_TEXT)); // formslib uses htmlentities itself
+        $user->interests = tag_get_tags_csv('user', $id, TAG_RETURN_TEXT); // formslib uses htmlentities itself
     }
 
     //create form
