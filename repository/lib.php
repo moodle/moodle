@@ -249,5 +249,23 @@ function repository_get_option($id, $position){
     $ret = (array)unserialize($entry->$option);
     return $ret;
 }
+function repository_get_plugins(){
+    global $CFG;
+    $repo = $CFG->dirroot.'/repository/';
+    $ret = array();
+    if($dir = opendir($repo)){
+        while (false !== ($file = readdir($dir))) {
+            if(is_dir($file) && $file != '.' && $file != '..' 
+                && file_exists($repo.$file.'/repository.class.php')){
+                require_once($repo.$file.'/version.php');
+                $ret[] = array('name'=>$plugin->name, 
+                        'version'=>$plugin->version, 
+                        'path'=>$repo.$file,
+                        'settings'=>file_exists($repo.$file.'/settings.php')); 
+            }
+        }
+    }
+    return $ret;
+}
 
 ?>
