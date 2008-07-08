@@ -42,6 +42,7 @@ $string['alwaysavailable'] = 'Always available';
 $string['analysisoptions'] = 'Analysis options';
 $string['analysistitle'] = 'Item Analysis Table';
 $string['answer'] = 'Answer';
+$string['answered'] = 'Answered';
 $string['answerhowmany'] = 'One or multiple answers?';
 $string['answers'] = 'Answers';
 $string['answersingleno'] = 'Multiple answers allowed';

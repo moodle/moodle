@@ -1040,7 +1040,7 @@ function restore_question_state(&$question, &$state) {
 *                         most recent responses are in ->responses. The object
 *                         is updated to hold the new ->id.
 */
-function save_question_session(&$question, &$state) {
+function save_question_session($question, $state) {
     global $QTYPES, $DB;
     // Check if the state has changed
     if (!$state->changed && isset($state->id)) {
@@ -1336,7 +1336,7 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
 *                         during grading its ->sumgrades field can be updated
 * @return boolean         Indicates success/failure
 */
-function question_process_responses(&$question, &$state, $action, $cmoptions, &$attempt) {
+function question_process_responses($question, &$state, $action, $cmoptions, &$attempt) {
     global $QTYPES;
 
     // if no responses are set initialise to empty response

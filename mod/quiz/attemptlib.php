@@ -7,7 +7,9 @@
  * are loaded.
  *//** */
 
-require_once("../../config.php");
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page.
+}
 
 /**
  * Class for quiz exceptions. Just saves a couple of arguments on the
@@ -410,7 +412,7 @@ class quiz_attempt extends quiz {
         if (!$newstates = get_question_states($questionstoprocess, $this->quiz, $this->attempt)) {
             throw new moodle_quiz_exception($this, 'cannotrestore');
         }
-        $this->states = $this->states + $newstates;
+        $this->states = $newstates + $this->states;
     }
 
     // Simple getters ======================================================================
@@ -499,7 +501,7 @@ class quiz_attempt extends quiz {
 
             case QUESTION_EVENTSAVE:
             case QUESTION_EVENTGRADE:
-                return 'saved';
+                return 'answered';
 
             case QUESTION_EVENTCLOSEANDGRADE:
             case QUESTION_EVENTCLOSE:

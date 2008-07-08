@@ -47,9 +47,6 @@
                 $attemptobj->get_quizid(), $attemptobj->get_cmid());
     }
 
-/// Work out which questions we need.
-    $attemptobj->preload_questions();
-
 /// Get the list of questions needed by this page.
     if ($finishattempt) {
         $questionids = $attemptobj->get_question_ids();
@@ -107,17 +104,17 @@
 
     /// Process each question in turn
         $success = true;
+        $attempt = $attemptobj->get_attempt();
         foreach($submittedquestionids as $id) {
             if (!isset($actions[$id])) {
                 $actions[$id]->responses = array('' => '');
                 $actions[$id]->event = QUESTION_EVENTOPEN;
             }
             $actions[$id]->timestamp = $timenow;
+            $state = $attemptobj->get_question_state($id);
             if (question_process_responses($attemptobj->get_question($id),
-                    $attemptobj->get_question_state($id), $actions[$id],
-                    $attemptobj->get_quiz(), $attemptobj->get_attempt())) {
-                save_question_session($attemptobj->get_question($id),
-                        $attemptobj->get_question_state($id));
+                    $state, $actions[$id], $attemptobj->get_quiz(), $attempt)) {
+                save_question_session($attemptobj->get_question($id), $state);
             } else {
                 $success = false;
             }
@@ -127,11 +124,13 @@
             print_error('errorprocessingresponses', 'question', $attemptobj->attempt_url(0, $page));
         }
 
-        $attempt = $attemptobj->get_attempt();
         $attempt->timemodified = $timenow;
         if (!$DB->update_record('quiz_attempts', $attempt)) {
             quiz_error($quiz, 'saveattemptfailed');
         }
+
+        // For now, reload the states to pick up the changes:
+        $attemptobj->load_question_states($questionids);
     }
 
 /// Finish attempt if requested
@@ -139,16 +138,16 @@
 
     /// Move each question to the closed state.
         $success = true;
+        $attempt = $attemptobj->get_attempt();
         foreach ($attemptobj->get_questions() as $id => $question) {
             $action = new stdClass;
             $action->event = QUESTION_EVENTCLOSE;
             $action->responses = $attemptobj->get_question_state($id)->responses;
             $action->timestamp = $attemptobj->get_question_state($id)->timestamp;
+            $state = $attemptobj->get_question_state($id);
             if (question_process_responses($attemptobj->get_question($id),
-                    $attemptobj->get_question_state($id), $action,
-                    $attemptobj->get_quiz(), $attemptobj->get_attempt())) {
-                save_question_session($attemptobj->get_question($id),
-                        $attemptobj->get_question_state($id));
+                    $state, $action, $attemptobj->get_quiz(), $attempt)) {
+                save_question_session($attemptobj->get_question($id), $state);
             } else {
                 $success = false;
             }
@@ -164,7 +163,6 @@
                 $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
     /// Update the quiz attempt record.
-        $attempt = $attemptobj->get_attempt();
         $attempt->timemodified = $timenow;
         $attempt->timefinish = $timenow;
         if (!$DB->update_record('quiz_attempts', $attempt)) {

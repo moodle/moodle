@@ -16,6 +16,10 @@
  * @package quiz
  */
 
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.'); /// It must be included from a Moodle page.
+}
+
 /**
  * Include those library functions that are also used by core Moodle or other modules
  */
