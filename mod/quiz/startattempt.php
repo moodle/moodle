@@ -45,7 +45,7 @@ if ($quizobj->is_preview_user() && $forcenew) {
 // This page should only respond to post requests, if not, redirect to the view page.
 // However, becuase 'secure' mode opens in a new window, we cannot do enforce this rule for them.
 if (!data_submitted() && !$accessmanager->securewindow_required($quizobj->is_preview_user())) {
-    redirect($quizobj->view_url());
+    $accessmanager->back_to_view_page($quizobj->is_preview_user());
 }
 if (!confirm_sesskey()) {
     throw new moodle_exception('confirmsesskeybad', 'error', $quizobj->view_url());
