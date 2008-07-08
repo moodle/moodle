@@ -17,20 +17,7 @@
 
 
     // get display strings
-    $txt = new object;
-    $txt->category = get_string('category', 'quiz');
-    $txt->download = get_string('download', 'quiz');
-    $txt->downloadextra = get_string('downloadextra', 'quiz');
-    $txt->exporterror = get_string('exporterror', 'quiz');
-    $txt->exportname = get_string('exportname', 'quiz');
-    $txt->exportquestions = get_string('exportquestions', 'quiz');
-    $txt->fileformat = get_string('fileformat', 'quiz');
-    $txt->exportcategory = get_string('exportcategory', 'quiz');
-    $txt->modulename = get_string('modulename', 'quiz');
-    $txt->modulenameplural = get_string('modulenameplural', 'quiz');
-    $txt->tofile = get_string('tofile', 'quiz');
-
-
+    $strexportquestions = get_string('exportquestions', 'quiz');
 
     // make sure we are using the user's most recent category choice
     if (empty($categoryid)) {
@@ -52,9 +39,9 @@
         $navlinks = array();
         $navlinks[] = array('name' => get_string('modulenameplural', $cm->modname), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/index.php?id=$COURSE->id", 'type' => 'activity');
         $navlinks[] = array('name' => format_string($module->name), 'link' => "$CFG->wwwroot/mod/{$cm->modname}/view.php?id={$cm->id}", 'type' => 'title');
-        $navlinks[] = array('name' => $txt->exportquestions, 'link' => '', 'type' => 'title');
+        $navlinks[] = array('name' => $strexportquestions, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
-        print_header_simple($txt->exportquestions, '', $navigation, "", "", true, $strupdatemodule);
+        print_header_simple($strexportquestions, '', $navigation, "", "", true, $strupdatemodule);
 
         $currenttab = 'edit';
         $mode = 'export';
@@ -63,10 +50,10 @@
     } else {
         // Print basic page layout.
         $navlinks = array();
-        $navlinks[] = array('name' => $txt->exportquestions, 'link' => '', 'type' => 'title');
+        $navlinks[] = array('name' => $strexportquestions, 'link' => '', 'type' => 'title');
         $navigation = build_navigation($navlinks);
 
-        print_header_simple($txt->exportquestions, '', $navigation);
+        print_header_simple($strexportquestions, '', $navigation);
         // print tabs
         $currenttab = 'export';
         include('tabs.php');
@@ -100,6 +87,8 @@
             $from_form->exportfilename = default_export_filename($COURSE, $category);
         }
         $qformat->setFilename($from_form->exportfilename);
+        $canaccessbackupdata = has_capability('moodle/site:backup', $contexts->lowest());
+        $qformat->set_can_access_backupdata($canaccessbackupdata);
         $qformat->setCattofile(!empty($from_form->cattofile));
         $qformat->setContexttofile(!empty($from_form->contexttofile));
 
@@ -118,24 +107,42 @@
 
         // link to download the finished file
         $file_ext = $qformat->export_file_extension();
-        if ($CFG->slasharguments) {
-          $efile = "{$CFG->wwwroot}/file.php/".$qformat->question_get_export_dir()."/$from_form->exportfilename".$file_ext."?forcedownload=1";
-        }
-        else {
-          $efile = "{$CFG->wwwroot}/file.php?file=/".$qformat->question_get_export_dir()."/$from_form->exportfilename".$file_ext."&forcedownload=1";
-        }
-        echo "<p><div class=\"boxaligncenter\"><a href=\"$efile\">$txt->download</a></div></p>";
-        echo "<p><div class=\"boxaligncenter\"><font size=\"-1\">$txt->downloadextra</font></div></p>";
+        $filename = $from_form->exportfilename . $file_ext;
+        if ($canaccessbackupdata) {
+            $efile = get_file_url($qformat->question_get_export_dir() . '/' . $filename,
+                    array('forcedownload' => 1));
+            echo '<p><div class="boxaligncenter"><a href="' . $efile . '">' .
+                    get_string('download', 'quiz') . '</a></div></p>';
+            echo '<p><div class="boxaligncenter"><font size="-1">' .
+                    get_string('downloadextra', 'quiz') . '</font></div></p>';
+        } else {
+            if ($CFG->slasharguments) {
+                $efile = $CFG->wwwroot . '/question/exportfile.php/' . rawurlencode($filename);
+            } else {
+                $efile = $CFG->wwwroot . '/question/exportfile.php/?file=' . rawurlencode($filename);
+            }
+            
+            echo '<p><div class="boxaligncenter">' .
+                    get_string('yourfileshoulddownload', 'question', $efile) . '</a></div></p>';
+            echo '
+<script type="text/javascript">
+//<![CDATA[
 
-        print_continue("edit.php?".$thispageurl->get_query_string());
+  function redirect() {
+      document.location.replace("' .  addslashes_js($efile) . '");
+  }
+  setTimeout("redirect()", 1000);
+//]]>
+</script>';
+        }
+
+        print_continue('edit.php?' . $thispageurl->get_query_string());
         print_footer($COURSE);
         exit;
     }
 
     /// Display export form
-
-
-    print_heading_with_help($txt->exportquestions, 'export', 'quiz');
+    print_heading_with_help($strexportquestions, 'export', 'quiz');
 
     $export_form->display();
 
