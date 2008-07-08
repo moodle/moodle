@@ -35,6 +35,7 @@ $temp->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', '
 
 $temp->add(new admin_setting_configcheckbox('cronclionly', get_string('cronclionly', 'admin'), get_string('configcronclionly', 'admin'), 0));
 $temp->add(new admin_setting_configtext('cronremotepassword', get_string('cronremotepassword', 'admin'), get_string('configcronremotepassword', 'admin'), '', PARAM_RAW));
+$temp->add(new admin_setting_configcheckbox('emailchangeconfirmation', get_string('emailchangeconfirmation', 'admin'), get_string('configemailchangeconfirmation', 'admin'), 0));
 
 $ADMIN->add('security', $temp);
 
@@ -61,7 +62,6 @@ foreach ($options as $option) {
     $options2[$option->id] = $option->name;
 }
 $temp->add(new admin_setting_configmultiselect('defaultallowedmodules', get_string('defaultallowedmodules', 'admin'), get_string('configdefaultallowedmodules', 'admin'), array(), $options2));
-$temp->add(new admin_setting_configcheckbox('emailchangeconfirmation', get_string('emailchangeconfirmation', 'admin'), get_string('configemailchangeconfirmation', 'admin'), 0));
 $ADMIN->add('security', $temp);
 
 
