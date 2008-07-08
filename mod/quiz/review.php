@@ -2,55 +2,38 @@
 /**
  * This page prints a review of a particular quiz attempt
  *
- * @author Martin Dougiamas and many others. This has recently been completely
- *         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
- *         the Serving Mathematics project
- *         {@link http://maths.york.ac.uk/serving_maths}
+ * @author Martin Dougiamas and many others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
  */
 
-    require_once('../../config.php');
+    require_once(dirname(__FILE__) . '/../../config.php');
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-    $attemptid = required_param('attempt', PARAM_INT);    // A particular attempt ID for review
-    $page = optional_param('page', 0, PARAM_INT); // The required page
+    $attemptid = required_param('attempt', PARAM_INT);
+    $page = optional_param('page', 0, PARAM_INT);
     $showall = optional_param('showall', 0, PARAM_BOOL);
 
-    if (!$attempt = quiz_load_attempt($attemptid)) {
-        print_error('invalidattemptid', 'quiz');
-    }
-    if (! $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
-        print_error('invalidquizid', 'quiz');
-    }
-    if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
-        print_error("invalidcoursemodule");
-    }
-    if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        print_error("invalidcoursemodule");
-    }
+    $attemptobj = new quiz_attempt($attemptid);
 
-/// Check login and get contexts.
-    require_login($course->id, false, $cm);
-    $coursecontext = get_context_instance(CONTEXT_COURSE, $cm->course);
-    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    $canpreview = has_capability('mod/quiz:preview', get_context_instance(CONTEXT_MODULE, $cm->id));
+/// Check login.
+    require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
+
 
 /// Create an object to manage all the other (non-roles) access rules.
-    $timenow = time();
-    $accessmanager = new quiz_access_manager(new quiz($quiz, $cm, $course), $timenow,
-            has_capability('mod/quiz:ignoretimelimits', $context, NULL, false));
-    $options = quiz_get_reviewoptions($quiz, $attempt, $context);
+    $accessmanager = $attemptobj->get_access_manager(time());
+    $options = $attemptobj->get_review_options();
 
 /// Work out if this is a student viewing their own attempt/teacher previewing,
 /// or someone with 'mod/quiz:viewreports' reviewing someone elses attempt.
-    $reviewofownattempt = $attempt->userid == $USER->id && (!$canpreview || $attempt->preview);
+    $reviewofownattempt = $attemptobj->get_userid() == $USER->id &&
+            (!$attemptobj->is_preview_user() || $attemptobj->is_preview());
 
 /// Permissions checks for normal users who do not have quiz:viewreports capability.
-    if (!has_capability('mod/quiz:viewreports', $context)) {
+    if (!$attemptobj->has_capability('mod/quiz:viewreports')) {
     /// Can't review during the attempt - send them back to the attempt page.
-        if (!$attempt->timefinish) {
-            redirect($CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $quiz->id);
+        if (!$attemptobj->is_finished()) {
+            redirect($attemptobj->attempt_url(0, $page));
         }
     /// Can't review other users' attempts.
         if (!$reviewofownattempt) {
@@ -58,55 +41,43 @@
         }
     /// Can't review unless Students may review -> Responses option is turned on.
         if (!$options->responses) {
-            $accessmanager->back_to_view_page($canpreview,
+            $accessmanager->back_to_view_page($attemptobj->is_preview_user(),
                     $accessmanager->cannot_review_message($options));
         }
     }
 
 /// Log this review.
-    add_to_log($course->id, "quiz", "review", "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", "$cm->id");
+    add_to_log($attemptobj->get_courseid(), 'quiz', 'review', 'review.php?attempt=' .
+            $attemptobj->get_attemptid(), $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
-/// load the questions needed by page
+/// load the questions and states needed by this page.
     if ($showall) {
-        $questionlist = quiz_questions_in_quiz($attempt->layout);
+        $questionids = $attemptobj->get_question_ids();
     } else {
-        $questionlist = quiz_questions_on_page($attempt->layout, $page);
-    }
-    $pagequestions = explode(',', $questionlist);
-    $questions = question_load_questions($questionlist, 'qqi.grade AS maxgrade, qqi.id AS instance',
-            '{quiz_question_instances} qqi ON qqi.quiz = ' . $quiz->id . ' AND q.id = qqi.question');
-    if (is_string($questions)) {
-        quiz_error($quiz, 'loadingquestionsfailed', $questions);
-    }
-
-/// Restore the question sessions to their most recent states creating new sessions where required.
-    if (!$states = get_question_states($questions, $quiz, $attempt)) {
-        print_error('cannotrestore', 'quiz');
-    }
+        $questionids = $attemptobj->get_question_ids($page);
+    } 
+    $attemptobj->load_questions($questionids);
+    $attemptobj->load_question_states($questionids);
 
 /// Work out appropriate title.
-    if ($canpreview && $reviewofownattempt) {
+    if ($attemptobj->is_preview_user() && $reviewofownattempt) {
         $strreviewtitle = get_string('reviewofpreview', 'quiz');
     } else {
         $strreviewtitle = get_string('reviewofattempt', 'quiz', $attempt->attempt);
     }
 
 /// Print the page header
-    $headtags = get_html_head_contributions($pagequestions, $questions, $states);
-    if ($accessmanager->securewindow_required($canpreview)) {
+    $headtags = $attemptobj->get_html_head_contributions($page);
+    if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         $accessmanager->setup_secure_page($course->shortname.': '.format_string($quiz->name), $headtags);
     } else {
-        $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)
-                    ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
-                    : "";
-        get_string('reviewofattempt', 'quiz', $attempt->attempt);
-        $navigation = build_navigation($strreviewtitle, $cm);
-        print_header_simple(format_string($quiz->name), "", $navigation, "", $headtags, true, $strupdatemodule);
+        print_header_simple(format_string($attemptobj->get_quiz_name()), '', $attemptobj->navigation($strreviewtitle),
+                '', $headtags, true, $attemptobj->update_module_button());
     }
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
 /// Print tabs if they should be there.
-    if ($canpreview) {
+    if ($attemptobj->is_preview_user()) {
         if ($reviewofownattempt) {
             $currenttab = 'preview';
         } else {
@@ -118,19 +89,22 @@
 
 /// Print heading.
     print_heading(format_string($quiz->name));
-    if ($canpreview && $reviewofownattempt) {
-        $attemptobj = new quiz_attempt($attemptid);
+    if ($attemptobj->is_preview_user() && $reviewofownattempt) {
         $attemptobj->print_restart_preview_button();
     }
     print_heading($strreviewtitle);
 
 /// Finish review link.
     if ($reviewofownattempt) {
-        $accessmanager->print_finish_review_link($canpreview);
+        $accessmanager->print_finish_review_link($attemptobj->is_preview_user());
     }
 
+/// Summary table start ============================================================================
+
 /// Work out some time-related things.
-    $timelimit = (int)$quiz->timelimit * 60;
+    $attempt = $attemptobj->get_attempt();
+    $quiz = $attemptobj->get_quiz();
+    $timelimit = $quiz->timelimit * 60;
     $overtime = 0;
 
     if ($attempt->timefinish) {
@@ -161,18 +135,13 @@
     if (has_capability('mod/quiz:viewreports', $context) &&
             count($attempts = $DB->get_records_select('quiz_attempts', "quiz = ? AND userid = ?", array($quiz->id, $attempt->userid), 'attempt ASC')) > 1) {
     /// List of all this user's attempts for people who can see reports.
-        $urloptions = '';
-        if ($showall) {
-            $urloptions .= '&amp;showall=true';
-        } else if ($page > 0) {
-            $urloptions .= '&amp;page=' . $page;
-        }
         $attemptlist = array();
         foreach ($attempts as $at) {
             if ($at->id == $attempt->id) {
                 $attemptlist[] = '<strong>' . $at->attempt . '</strong>';
             } else {
-                $attemptlist[] = '<a href="review.php?attempt=' . $at->id . $urloptions . ' ">' . $at->attempt . '</a>';
+                $attemptlist[] = '<a href="' . $attemptobj->review_url(0, $page, $showall, $at->id) .
+                        '">' . $at->attempt . '</a>';
             }
         }
         $rows[] = '<tr><th scope="row" class="cell">' . get_string('attempts', 'quiz') .
@@ -234,44 +203,29 @@
         echo "\n</tbody></table>\n";
     }
 
+/// Summary table end ==============================================================================
+
 /// Print the navigation panel if required
-    $numpages = quiz_number_of_pages($attempt->layout);
-    if ($numpages > 1 and !$showall) {
-        print_paging_bar($numpages, $page, 1, 'review.php?attempt='.$attempt->id.'&amp;');
-        echo '<div class="controls"><a href="review.php?attempt='.$attempt->id.'&amp;showall=true">';
-        print_string('showall', 'quiz');
-        echo '</a></div>';
-    }
+    // TODO!!!
+    print_paging_bar($attemptobj->get_num_pages(), $page, 1, 'review.php?attempt='.$attempt->id.'&amp;');
+    echo '<div class="controls"><a href="review.php?attempt='.$attempt->id.'&amp;showall=true">';
+    print_string('showall', 'quiz');
+    echo '</a></div>';
 
 /// Print all the questions
-    $number = quiz_first_questionnumber($attempt->layout, $questionlist);
-    foreach ($pagequestions as $i) {
-        if (!isset($questions[$i])) {
-            print_simple_box_start('center', '90%');
-            echo '<strong><font size="+1">' . $number . '</font></strong><br />';
-            notify(get_string('errormissingquestion', 'quiz', $i));
-            print_simple_box_end();
-            $number++; // Just guessing that the missing question would have lenght 1
-            continue;
-        }
-        $options->validation = QUESTION_EVENTVALIDATE === $states[$i]->event;
-        $options->history = ($canpreview and !$attempt->preview) ? 'all' : 'graded';
-        // Print the question
-        print_question($questions[$i], $states[$i], $number, $quiz, $options);
-        $number += $questions[$i]->length;
+    if ($showall) {
+        $page = 'all';
     }
-
-    // Print the navigation panel if required
-    if ($numpages > 1 and !$showall) {
-        print_paging_bar($numpages, $page, 1, 'review.php?attempt='.$attempt->id.'&amp;');
+    foreach ($attemptobj->get_question_ids($page) as $id) {
+        $attemptobj->print_question($id);
     }
 
     // print javascript button to close the window, if necessary
     if ($reviewofownattempt) {
-        $accessmanager->print_finish_review_link($canpreview);
+        $accessmanager->print_finish_review_link($attemptobj->is_preview_user());
     }
 
-    if ($accessmanager->securewindow_required($canpreview)) {
+    if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         print_footer('empty');
     } else {
         print_footer($course);

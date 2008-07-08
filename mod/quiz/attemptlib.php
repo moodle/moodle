@@ -38,7 +38,6 @@ class quiz {
     // Fields set later if that data is needed.
     protected $questions = null;
     protected $accessmanager = null;
-    protected $reviewoptions = null;
     protected $ispreviewuser = null;
 
     // Constructor =========================================================================
@@ -366,6 +365,7 @@ class quiz_attempt extends quiz {
 
     // Fields set later if that data is needed.
     protected $states = array();
+    protected $reviewoptions = null;
 
     // Constructor =========================================================================
     /**
@@ -439,6 +439,11 @@ class quiz_attempt extends quiz {
         return $this->attempt->timefinish != 0;
     }
 
+    /** @return boolean whether this attemp is a preview attempt. */
+    public function is_preview() {
+        return $this->attempt->preview;
+    }
+
     public function get_question_state($questionid) {
         $this->ensure_state_loaded($questionid);
         return $this->states[$questionid];
@@ -447,13 +452,22 @@ class quiz_attempt extends quiz {
     /**
      * Wrapper that calls quiz_get_reviewoptions with the appropriate arguments.
      *
-     * @return object the review optoins for this user on this attempt.
+     * @return object the review options for this user on this attempt.
      */
     public function get_review_options() {
         if (is_null($this->reviewoptions)) {
             $this->reviewoptions = quiz_get_reviewoptions($this->quiz, $this->attempt, $this->context);
         }
         return $this->reviewoptions;
+    }
+
+    /**
+     * Wrapper that calls get_render_options with the appropriate arguments.
+     *
+     * @return object the render options for this user on this attempt.
+     */
+    public function get_render_options($state) {
+        return quiz_get_renderoptions($this->quiz->review, $state);
     }
 
     /**
@@ -555,9 +569,12 @@ class quiz_attempt extends quiz {
      * and $page will be ignored.
      * @return string the URL to review this attempt.
      */
-    public function review_url($questionid = 0, $page = -1, $showall = false) {
+    public function review_url($questionid = 0, $page = -1, $showall = false, $otherattemptid = null) {
         global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $this->attempt->id . '&' .
+        if (is_null($otherattemptid)) {
+            $otherattemptid = $this->attempt->id;
+        }
+        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $otherattemptid . '&' .
                 $this->page_and_question_fragment($questionid, $page, $showall);
     }
 
@@ -576,7 +593,11 @@ class quiz_attempt extends quiz {
     }
 
     public function print_question($id) {
-        $options = quiz_get_renderoptions($this->quiz->review, $this->states[$id]);
+        if ($this->is_finished()) {
+            $options = $this->get_review_options();
+        } else {
+            $options = $this->get_render_options($this->states[$id]);
+        }
         print_question($this->questions[$id], $this->states[$id], $this->questions[$id]->_number,
                 $this->quiz, $options);
     }
