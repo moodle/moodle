@@ -31,7 +31,7 @@
         $finishattempt = 1;
     }
 
-/// Check login and get contexts.
+/// Check login.
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
 
 /// Check capabilites.
