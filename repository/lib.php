@@ -225,6 +225,60 @@ abstract class repository {
 
 abstract class repository_listing {
 }
+/**
+ * This class is used by cURL class, use case:
+ *
+ * $CFG->repository_cache_expire = 120;
+ * $c = new curl(array('cache'=>true));
+ * $ret = $c->get('http://www.google.com');
+ *
+ */
+class repository_cache {
+    public $dir = '';
+    function __construct(){
+        global $CFG;
+        if (!file_exists($CFG->dataroot.'/repository/cache')) {
+            mkdir($CFG->dataroot.'/repository/cache/', 0777, true);
+        }
+        if(is_dir($CFG->dataroot.'/repository/cache')) {
+            $this->dir = $CFG->dataroot.'/repository/cache/';
+        }
+    }
+    public function get($param){
+        global $CFG;
+        $filename = md5(serialize($param));
+        if(file_exists($this->dir.$filename)) {
+            $lasttime = filemtime($this->dir.$filename);
+            if(time()-$lasttime > $CFG->repository_cache_expire) {
+                return false;
+            } else {
+                $fp = fopen($this->dir.$filename, 'r');
+                $size = filesize($this->dir.$filename);
+                $content = fread($fp, $size);
+                return unserialize($content);
+            }
+        }
+        return false;
+    }
+    public function set($param, $val){
+        $filename = md5(serialize($param));
+        $fp = fopen($this->dir.$filename, 'w');
+        fwrite($fp, serialize($val));
+        fclose($fp);
+    }
+    public function cleanup($expire){
+        if($dir = opendir($this->dir)){
+            while (false !== ($file = readdir($dir))) {
+                if(!is_dir($file) && $file != '.' && $file != '..') {
+                    $lasttime = @filemtime($this->dir.$file);
+                    if(time() - $lasttime > $expire){
+                        @unlink($this->dir.$file);
+                    }
+                }
+            }
+        }
+    }
+}
 
 function repository_set_option($id, $position, $config = array()){
     global $DB;
@@ -267,5 +321,3 @@ function repository_get_plugins(){
     }
     return $ret;
 }
-
-?>
