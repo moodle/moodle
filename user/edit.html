@@ -411,4 +411,5 @@ if (has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM, SI
 </table>
 <input type="hidden" name="course" value="<?php p($course->id) ?>" />
 <input type="hidden" name="id" value="<?php p($user->id) ?>" />
+<input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
 </form>

@@ -71,7 +71,7 @@
     
 /// If data submitted, then process and store.
 
-    if ($usernew = data_submitted()) {
+    if ($usernew = data_submitted() and confirm_sesskey()) {
         
         $context = get_context_instance(CONTEXT_SYSTEM, SITEID);
         // if userid = x and name = changeme then we are adding 1
