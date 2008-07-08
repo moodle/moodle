@@ -73,7 +73,7 @@ class phpFlickr {
 		$this->php_version = explode(".", $this->php_version[0]);
 
         require_once($CFG->dirroot.'/repository/curl.class.php');
-        $this->curl = new curl;
+        $this->curl = new curl(array('cache'=>true));
 	}
 
 	function enableCache($type, $connection, $cache_expire = 600, $table = 'flickr_cache')

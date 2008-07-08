@@ -63,7 +63,7 @@ class boxclient {
             }
         }
         if ($useCURL) {
-            $c = new curl($request);
+            $c = new curl(array('cache'=>true));
             $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>true));
             $xml = $c->get($request);
             /*

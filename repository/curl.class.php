@@ -37,9 +37,12 @@ class curl {
         }
         $this->debug = false;
         if(!empty($options['cookie'])) {
-            if(is_file($options['cookie'])) {
+            if(file_exists($options['cookie'])) {
                 $this->cookie = $options['cookie'];
             }
+        }
+        if(!empty($options['cache'])) {
+            $this->cache = new repository_cache;
         }
         $this->resetopt();
     }
@@ -175,6 +178,7 @@ class curl {
         $this->cleanopt();
         // create curl instance
         $curl = curl_init($url);
+        $this->setopt(array('url'=>$url));
         // reset before set options
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, array(&$this,'formatHeader'));
 
@@ -212,8 +216,15 @@ class curl {
             var_dump($this->header);
         }
 
+        if($this->cache && $ret = $this->cache->get($this->options)) {
+            return $ret;
+        } else {
+            $ret  = curl_exec($curl);
+            if($this->cache) {
+                $this->cache->set($this->options, $ret);
+            }
+        }
 
-        $ret  = curl_exec($curl);
         $this->info  = curl_getinfo($curl);
         $this->error = curl_error($curl);
 

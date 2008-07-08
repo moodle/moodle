@@ -1,6 +1,7 @@
 <?php
 require_once('../config.php');
 require_once('lib.php');
+$CFG->repository_cache_expire = 120;
 $id        = optional_param('id', PARAM_INT);
 $action    = optional_param('action', '', PARAM_RAW);
 if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
