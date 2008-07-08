@@ -15,7 +15,7 @@ function get_label_name($label) {
 
     if (empty($name)) {
         // arbitrary name
-        $name = "label";
+        $name = get_string('modulename','label');
     }
 
     return $name;
