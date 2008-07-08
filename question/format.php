@@ -24,6 +24,7 @@ class qformat_default {
     var $importerrors = 0;
     var $stoponerror = true;
     var $translator = null;
+    var $canaccessbackupdata = true;
 
 
 // functions to indicate import/export functionality
@@ -132,6 +133,14 @@ class qformat_default {
      */
     function setStoponerror( $stoponerror ) {
         $this->stoponerror = $stoponerror;
+    }
+
+    /**
+     * @param boolean $canaccess Whether the current use can access the backup data folder. Determines
+     * where export files are saved.
+     */
+    function set_can_access_backupdata($canaccess) {
+        $this->canaccessbackupdata = $canaccess;
     }
 
 /***********************
@@ -767,8 +776,13 @@ class qformat_default {
      * @return string file path
      */
     function question_get_export_dir() {
-        $dirname = get_string("exportfilename","quiz");
-        $path = $this->course->id.'/backupdata/'.$dirname; // backupdata is protected directory
+        global $USER;
+        if ($this->canaccessbackupdata) {
+            $dirname = get_string("exportfilename","quiz");
+            $path = $this->course->id.'/backupdata/'.$dirname; // backupdata is protected directory
+        } else {
+            $path = 'temp/questionexport/' . $USER->id;
+        }
         return $path;
     }
 

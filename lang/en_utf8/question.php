@@ -91,4 +91,5 @@ $string['tofilecontext'] = 'Write context to file';
 $string['unknown'] = 'Unknown';
 $string['unknownquestiontype'] = 'Unknown question type: $a.';
 $string['unpublished'] = 'unshared';
+$string['yourfileshoulddownload'] = 'Your export file should start to download shortly. If not, please <a href=\"$a\">click here</a>.';
 ?>
