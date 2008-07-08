@@ -5009,6 +5009,7 @@ function places_to_search_for_lang_strings() {
         'format_' => array('course/format'),
         'qtype_' => array('question/type'),
         'report_' => array($CFG->admin.'/report', 'course/report', 'mod/quiz/report'),
+        'repository'=>array('repository'),
         'resource_' => array('mod/resource/type'),
         'gradereport_' => array('grade/report'),
         'gradeimport_' => array('grade/import'),
