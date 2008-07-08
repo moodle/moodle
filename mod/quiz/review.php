@@ -38,7 +38,7 @@
 
 /// Create an object to manage all the other (non-roles) access rules.
     $timenow = time();
-    $accessmanager = new quiz_access_manager($quiz, $timenow,
+    $accessmanager = new quiz_access_manager(new quiz($quiz, $cm, $course), $timenow,
             has_capability('mod/quiz:ignoretimelimits', $context, NULL, false));
     $options = quiz_get_reviewoptions($quiz, $attempt, $context);
 
@@ -119,7 +119,8 @@
 /// Print heading.
     print_heading(format_string($quiz->name));
     if ($canpreview && $reviewofownattempt) {
-        print_restart_preview_button($quiz);
+        $attemptobj = new quiz_attempt($attemptid);
+        $attemptobj->print_restart_preview_button();
     }
     print_heading($strreviewtitle);
 

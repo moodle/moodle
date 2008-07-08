@@ -22,6 +22,7 @@
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->dirroot . '/mod/quiz/accessrules.php');
 require_once($CFG->dirroot . '/question/editlib.php');
+require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
 
 /// Constants ///////////////////////////////////////////////////////////////////
 
@@ -889,14 +890,6 @@ function quiz_get_combined_reviewoptions($quiz, $attempts, $context=null) {
         }
     }
     return array($someoptions, $alloptions);
-}
-
-function print_restart_preview_button($quiz) {
-    global $CFG;
-    echo '<div class="controls">';
-    print_single_button($CFG->wwwroot . '/mod/quiz/attempt.php',
-            array('q' => $quiz->id, 'forcenew' => true), get_string('startagain', 'quiz'));
-    echo '</div>';
 }
 
 /// FUNCTIONS FOR SENDING NOTIFICATION EMAILS ///////////////////////////////

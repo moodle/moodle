@@ -32,13 +32,14 @@ class quiz {
     protected $cm;
     protected $quiz;
     protected $context;
+    protected $questionids; // All question ids in order that they appear in the quiz.
+    protected $pagequestionids; // array page no => array of questionids on the page in order.
     
     // Fields set later if that data is needed.
+    protected $questions = null;
     protected $accessmanager = null;
     protected $reviewoptions = null;
     protected $ispreviewuser = null;
-    protected $questions = array();
-    protected $questionsnumbered = false;
 
     // Constructor =========================================================================
     /**
@@ -53,35 +54,52 @@ class quiz {
         $this->cm = $cm;
         $this->course = $course;
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $this->determine_layout();
     }
 
     // Functions for loading more data =====================================================
     public function load_questions_on_page($page) {
-        $this->load_questions(quiz_questions_on_page($this->quiz->layout, $page));
+        $this->load_questions($this->pagequestionids[$page]);
+    }
+
+    public function preload_questions() {
+        if (empty($this->questionids)) {
+            throw new moodle_quiz_exception($this, 'noquestions', $this->edit_url());
+        }
+        $this->questions = question_preload_questions($this->questionids,
+                'qqi.grade AS maxgrade, qqi.id AS instance',
+                '{quiz_question_instances} qqi ON qqi.quiz = :quizid AND q.id = qqi.question',
+                array('quizid' => $this->quiz->id));
+        $this->number_questions();
     }
 
     /**
      * Load some or all of the queestions for this quiz.
      *
-     * @param string $questionlist comma-separate list of question ids. Blank for all.
+     * @param array $questionids question ids of the questions to load. null for all.
      */
-    public function load_questions($questionlist = '') {
-        if (!$questionlist) {
-            $questionlist = quiz_questions_in_quiz($this->quiz->layout);
+    public function load_questions($questionids = null) {
+        if (is_null($questionids)) {
+            $questionids = $this->questionids;
         }
-        $newquestions = question_load_questions($questionlist, 'qqi.grade AS maxgrade, qqi.id AS instance',
-                '{quiz_question_instances} qqi ON qqi.quiz = ' . $this->quiz->id . ' AND q.id = qqi.question');
-        if (is_string($newquestions)) {
-            throw new moodle_quiz_exception($this, 'loadingquestionsfailed', $newquestions);
+        $questionstoprocess = array();
+        foreach ($questionids as $id) {
+            $questionstoprocess[$id] = $this->questions[$id];
         }
-        $this->questions = $this->questions + $newquestions;
-        $this->questionsnumbered = false;
+        if (!get_question_options($questionstoprocess)) {
+            throw new moodle_quiz_exception($this, 'loadingquestionsfailed', implode(', ', $questionids));
+        }
     }
 
     // Simple getters ======================================================================
     /** @return integer the course id. */
     public function get_courseid() {
         return $this->course->id;
+    }
+
+    /** @return object the row of the course table. */
+    public function get_course() {
+        return $this->course;
     }
 
     /** @return integer the quiz id. */
@@ -121,6 +139,22 @@ class quiz {
     }
 
     /**
+     * @return integer number fo pages in this quiz.
+     */
+    public function get_num_pages() {
+        return count($this->pagequestionids);
+    }
+    
+
+    /**
+     * @param int $page page number
+     * @return boolean true if this is the last page of the quiz.
+     */
+    public function is_last_page($page) {
+        return $page == count($this->pagequestionids) - 1;
+    }
+
+    /**
      * @param integer $id the question id.
      * @return object the question object with that id.
      */
@@ -130,15 +164,65 @@ class quiz {
     }
 
     /**
+     * @param array $questionids question ids of the questions to load. null for all.
+     */
+    public function get_questions($questionids = null) {
+        if (is_null($questionids)) {
+            $questionids = $this->questionids;
+        }
+        $questions = array();
+        foreach ($questionids as $id) {
+            $questions[$id] = $this->questions[$id];
+            $this->ensure_question_loaded($id);
+        }
+        return $questions;
+    }
+
+    /**
+     * Return the list of question ids for either a given page of the quiz, or for the 
+     * whole quiz.
+     *
+     * @param mixed $page string 'all' or integer page number.
+     * @return array the reqested list of question ids.
+     */
+    public function get_question_ids($page = 'all') {
+        if ($page == 'all') {
+            $list = $this->questionids;
+        } else {
+            $list = $this->pagequestionids[$page];
+        }
+        // Clone the array, so our private arrays cannot be modified.
+        $result = array();
+        foreach ($list as $id) {
+            $result[] = $id;
+        }
+        return $result;
+    }
+
+    /**
      * @param integer $timenow the current time as a unix timestamp.
      * @return object and instance of the quiz_access_manager class for this quiz at this time.
      */
     public function get_access_manager($timenow) {
         if (is_null($this->accessmanager)) {
-            $this->accessmanager = new quiz_access_manager($this->quiz, $timenow,
+            $this->accessmanager = new quiz_access_manager($this, $timenow,
                     has_capability('mod/quiz:ignoretimelimits', $this->context, NULL, false));
         }
         return $this->accessmanager;
+    }
+
+    /**
+     * Wrapper round the has_capability funciton that automatically passes in the quiz context.
+     */
+    public function has_capability($capability, $userid = NULL, $doanything = true) {
+        return has_capability($capability, $this->context, $userid, $doanything);
+    }
+
+    /**
+     * Wrapper round the require_capability funciton that automatically passes in the quiz context.
+     */
+    public function require_capability($capability, $userid = NULL, $doanything = true) {
+        return require_capability($capability, $this->context, $userid, $doanything);
     }
 
     // URLs related to this attempt ========================================================
@@ -148,6 +232,40 @@ class quiz {
     public function view_url() {
         global $CFG;
         return $CFG->wwwroot . '/mod/quiz/view.php?id=' . $this->cm->id;
+    }
+
+    /**
+     * @return string the URL of this quiz's edit page.
+     */
+    public function edit_url() {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/quiz/edit.php?cmid=' . $this->cm->id;
+    }
+
+    /**
+     * @param integer $attemptid the id of an attempt.
+     * @return string the URL of that attempt.
+     */
+    public function attempt_url($attemptid) {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $attemptid . '&amp;page=0';
+    }
+
+    /**
+     * @return string the URL of this quiz's edit page. Needs to be POSTed to with a cmid parameter.
+     */
+    public function start_attempt_url() {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/quiz/startattempt.php';
+    }
+
+    /**
+     * @param integer $attemptid the id of an attempt.
+     * @return string the URL of the review of that attempt.
+     */
+    public function review_url($attemptid) {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $attemptid;
     }
 
     // Bits of content =====================================================================
@@ -175,10 +293,66 @@ class quiz {
 
     // Private methods =====================================================================
     // Check that the definition of a particular question is loaded, and if not throw an exception.
-    private function ensure_question_loaded($id) {
-        if (!array_key_exists($id, $this->questions)) {
+    protected function ensure_question_loaded($id) {
+        if (isset($this->questions[$id]->_partiallyloaded)) {
             throw new moodle_quiz_exception($this, 'questionnotloaded', $id);
         }
+    }
+
+    private function determine_layout() {
+        $this->questionids = array();
+        $this->pagequestionids = array();
+
+        // Get the appropriate layout string (from quiz or attempt).
+        $layout = $this->get_layout_string();
+        if (empty($layout)) {
+            // Nothing to do.
+            return;
+        }
+
+        // Break up the layout string into pages.
+        $pagelayouts = explode(',0', $layout);
+
+        // Strip off any empty last page (normally there is one).
+        if (end($pagelayouts) == '') {
+            array_pop($pagelayouts);
+        }
+
+        // File the ids into the arrays.
+        $this->questionids = array();
+        $this->pagequestionids = array();
+        foreach ($pagelayouts as $page => $pagelayout) {
+            $pagelayout = trim($pagelayout, ',');
+            if ($pagelayout == '') continue;
+            $this->pagequestionids[$page] = explode(',', $pagelayout);
+            foreach ($this->pagequestionids[$page] as $id) {
+                $this->questionids[] = $id;
+            }
+        }
+    }
+
+    // Number the questions.
+    private function number_questions() {
+        $number = 1;
+        foreach ($this->pagequestionids as $page => $questionids) {
+            foreach ($questionids as $id) {
+                if ($this->questions[$id]->length > 0) {
+                    $this->questions[$id]->_number = $number;
+                    $number += $this->questions[$id]->length;
+                } else {
+                    $this->questions[$id]->_number = get_string('infoshort', 'quiz');
+                }
+                $this->questions[$id]->_page = $page;
+            }
+        }
+    }
+
+    /**
+     * @return string the layout of this quiz. Used by number_questions to
+     * work out which questions are on which pages. 
+     */
+    protected function get_layout_string() {
+        return $this->quiz->questions;
     }
 }
 
@@ -215,57 +389,28 @@ class quiz_attempt extends quiz {
             throw new moodle_exception('invalidcoursemodule');
         }
         parent::__construct($quiz, $cm, $course);
+        $this->preload_questions();
     }
 
     // Functions for loading more data =====================================================
-    public function load_questions_on_page($page) {
-        $this->load_questions(quiz_questions_on_page($this->attempt->layout, $page));
-    }
-
     /**
-     * Load some or all of the queestions for this quiz.
+     * Load the state of a number of questions that have already been loaded.
      *
-     * @param string $questionlist comma-separate list of question ids. Blank for all.
+     * @param array $questionids question ids to process. Blank = all.
      */
-    public function load_questions($questionlist = '') {
-        if (!$questionlist) {
-            $questionlist = quiz_questions_in_quiz($this->attempt->layout);
+    public function load_question_states($questionids = null) {
+        if (is_null($questionids)) {
+            $questionids = $this->questionids;
         }
-        parent::load_questions($questionlist);
-    }
-
-    public function load_question_states() {
-        $questionstodo = array_diff_key($this->questions, $this->states);
-        if (!$newstates = get_question_states($questionstodo, $this->quiz, $this->attempt)) {
+        $questionstoprocess = array();
+        foreach ($questionids as $id) {
+            $this->ensure_question_loaded($id);
+            $questionstoprocess[$id] = $this->questions[$id];
+        }
+        if (!$newstates = get_question_states($questionstoprocess, $this->quiz, $this->attempt)) {
             throw new moodle_quiz_exception($this, 'cannotrestore');
         }
         $this->states = $this->states + $newstates;
-    }
-
-    /**
-     * Number the loaded questions.
-     * 
-     * At the moment, this assumes for simplicity that the loaded questions are contiguous.
-     */
-    public function number_questions($page = 'all') {
-        if ($this->questionsnumbered) {
-            return;
-        }
-        if ($page != 'all') {
-            $pagelist = quiz_questions_in_page($this->attempt->layout, $page);
-            $number = quiz_first_questionnumber($this->attempt->layout, $pagelist);
-        } else {
-            $number = 1;
-        }
-        $questionids = $this->get_question_ids($page);
-        foreach ($questionids as $id) {
-            if ($this->questions[$id]->length > 0) {
-                $this->questions[$id]->number = $number;
-                $number += $this->questions[$id]->length;
-            } else {
-                $this->questions[$id]->number = get_string('infoshort', 'quiz');
-            }
-        }
     }
 
     // Simple getters ======================================================================
@@ -279,6 +424,11 @@ class quiz_attempt extends quiz {
         return $this->attempt;
     }
 
+    /** @return integer the number of this attemp (is it this user's first, second, ... attempt). */
+    public function get_attempt_number() {
+        return $this->attempt->attempt;
+    }
+
     /** @return integer the id of the user this attempt belongs to. */
     public function get_userid() {
         return $this->attempt->userid;
@@ -287,6 +437,11 @@ class quiz_attempt extends quiz {
     /** @return boolean whether this attemp has been finished (true) or is still in progress (false). */
     public function is_finished() {
         return $this->attempt->timefinish != 0;
+    }
+
+    public function get_question_state($questionid) {
+        $this->ensure_state_loaded($questionid);
+        return $this->states[$questionid];
     }
 
     /**
@@ -299,22 +454,6 @@ class quiz_attempt extends quiz {
             $this->reviewoptions = quiz_get_reviewoptions($this->quiz, $this->attempt, $this->context);
         }
         return $this->reviewoptions;
-    }
-
-    /**
-     * Return the list of question ids for either a given page of the quiz, or for the 
-     * whole quiz.
-     *
-     * @param mixed $page string 'all' or integer page number.
-     * @return array the reqested list of question ids.
-     */
-    public function get_question_ids($page = 'all') {
-        if ($page == 'all') {
-            $questionlist = quiz_questions_in_quiz($this->attempt->layout);
-        } else {
-            $questionlist = quiz_questions_in_page($this->attempt->layout, $page);
-        }
-        return explode(',', $questionlist);
     }
 
     /**
@@ -389,18 +528,14 @@ class quiz_attempt extends quiz {
     /**
      * @param integer $page if specified, the URL of this particular page of the attempt, otherwise
      * the URL will go to the first page.
-     * @param integer $question a question id. If set, will add a fragment to the URL
+     * @param integer $questionid a question id. If set, will add a fragment to the URL
      * to jump to a particuar question on the page.
      * @return string the URL to continue this attempt.
      */
-    public function attempt_url($page = 0, $question = false) {
+    public function attempt_url($questionid = 0, $page = -1) {
         global $CFG;
-        $fragment = '';
-        if ($question) {
-            $fragment = '#q' . $question;
-        }
-        return $CFG->wwwroot . '/mod/quiz/attempt.php?id=' .
-                $this->cm->id . '$amp;page=' . $page . $fragment;
+        return $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $this->attempt->id . '&' .
+                $this->page_and_question_fragment($questionid, $page);
     }
 
     /**
@@ -414,28 +549,43 @@ class quiz_attempt extends quiz {
     /**
      * @param integer $page if specified, the URL of this particular page of the attempt, otherwise
      * the URL will go to the first page.
-     * @param integer $question a question id. If set, will add a fragment to the URL
+     * @param integer $questionid a question id. If set, will add a fragment to the URL
      * to jump to a particuar question on the page.
      * @param boolean $showall if true, the URL will be to review the entire attempt on one page,
      * and $page will be ignored.
      * @return string the URL to review this attempt.
      */
-    public function review_url($page = 0, $question = false, $showall = false) {
+    public function review_url($questionid = 0, $page = -1, $showall = false) {
         global $CFG;
-        $fragment = '';
-        if ($question) {
-            $fragment = '#q' . $question;
-        }
-        $param = '';
-        if ($showall) {
-            $param = '$amp;showall=1';
-        } else if ($page) {
-            $param = '$amp;page=' . $page;
-        }
-        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' .
-                $this->attempt->id . $param . $fragment;
+        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $this->attempt->id . '&' .
+                $this->page_and_question_fragment($questionid, $page, $showall);
     }
 
+    // Bits of content =====================================================================
+    public function get_html_head_contributions($page = 'all') {
+        return get_html_head_contributions($this->get_question_ids($page),
+                $this->questions, $this->states);
+    }
+
+    public function print_restart_preview_button() {
+        global $CFG;
+        echo '<div class="controls">';
+        print_single_button($this->start_attempt_url(), array('cmid' => $this->cm->id,
+                'forcenew' => true, 'sesskey' => sesskey()), get_string('startagain', 'quiz'), 'post');
+        echo '</div>';
+    }
+
+    public function print_question($id) {
+        $options = quiz_get_renderoptions($this->quiz->review, $this->states[$id]);
+        print_question($this->questions[$id], $this->states[$id], $this->questions[$id]->_number,
+                $this->quiz, $options);
+    }
+
+    public function quiz_send_notification_emails() {
+        quiz_send_notification_emails($this->course, $this->quiz, $this->attempt,
+                $this->context, $this->cm);
+    }
+    
 
     // Private methods =====================================================================
     // Check that the state of a particular question is loaded, and if not throw an exception.
@@ -443,6 +593,47 @@ class quiz_attempt extends quiz {
         if (!array_key_exists($id, $this->states)) {
             throw new moodle_quiz_exception($this, 'statenotloaded', $id);
         }
+    }
+
+    /**
+     * @return string the layout of this quiz. Used by number_questions to
+     * work out which questions are on which pages. 
+     */
+    protected function get_layout_string() {
+        return $this->attempt->layout;
+    }
+
+    /**
+     * Enter description here...
+     *
+     * @param unknown_type $questionid the id of a particular question on the page to jump to.
+     * @param integer $page -1 to look up the page number from the questionid, otherwise the page number to use.
+     * @param boolean $showall
+     * @return string bit to add to the end of a URL.
+     */
+    private function page_and_question_fragment($questionid, $page, $showall = false) {
+        if ($page = -1) {
+            if ($questionid) {
+                $page = $this->questions[$questionid]->_page;
+            } else {
+                $page = 0;
+            }
+        }
+        if ($showall) {
+            $page = 0;
+        }
+        $fragment = '';
+        if ($questionid && $questionid != reset($this->pagequestionids[$page])) {
+            $fragment = '#q' . $questionid;
+        }
+        $param = '';
+        if ($showall) {
+            $param = 'showall=1';
+        } else if (/*$page > 1*/ true) {
+            // TODO currently needed by the navigate JS, but clean this up later.
+            $param = 'page=' . $page;
+        }
+        return $param . $fragment;
     }
 }
 
@@ -463,7 +654,6 @@ class quiz_attempt_question_iterator implements Iterator {
      */
     public function __construct(quiz_attempt $attemptobj, $page = 'all') {
         $this->attemptobj = $attemptobj;
-        $attemptobj->number_questions($page);
         $this->questionids = $attemptobj->get_question_ids($page);
     }
 
@@ -484,11 +674,10 @@ class quiz_attempt_question_iterator implements Iterator {
     public function key() {
         $id = current($this->questionids);
         if ($id) {
-            return $this->attemptobj->get_question($id)->number;
+            return $this->attemptobj->get_question($id)->_number;
         } else {
             return false;
         }
-        return $this->attemptobj->get_question(current($this->questionids))->number;
     }
 
     public function next() {

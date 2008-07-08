@@ -398,6 +398,7 @@ $string['numberabbr'] = '#';
 $string['numerical'] = 'Numerical';
 $string['onlyteachersexport'] = 'Only teachers can export questions';
 $string['onlyteachersimport'] = 'Only teachers with editing rights can import questions';
+$string['open'] = 'Started';
 $string['openclosedatesupdated'] = 'Quiz open and close dates updated';
 $string['optional'] = 'optional';
 $string['outof'] = '$a->grade out of a maximum of $a->maxgrade';

@@ -44,7 +44,7 @@
 
 /// Create an object to manage all the other (non-roles) access rules.
     $timenow = time();
-    $accessmanager = new quiz_access_manager($quiz, $timenow,
+    $accessmanager = new quiz_access_manager(new quiz($quiz, $cm, $course), $timenow,
             has_capability('mod/quiz:ignoretimelimits', $context, NULL, false));
 
 /// If no questions have been set up yet redirect to edit.php

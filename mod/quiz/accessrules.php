@@ -4,7 +4,7 @@
  * quiz, with convinient methods for seeing whether access is allowed.
  */
 class quiz_access_manager {
-    private $_quiz;
+    private $_quizobj;
     private $_timenow;
     private $_passwordrule = null;
     private $_securewindowrule = null;
@@ -17,32 +17,33 @@ class quiz_access_manager {
      * @param boolean $canpreview whether the current user has the
      * @param boolean $ignoretimelimits
      */
-    public function __construct($quiz, $timenow, $canignoretimelimits) {
-        $this->_quiz = $quiz;
+    public function __construct($quizobj, $timenow, $canignoretimelimits) {
+        $this->_quizobj = $quizobj;
         $this->_timenow = $timenow;
         $this->create_standard_rules($canignoretimelimits);
     }
 
     private function create_standard_rules($canignoretimelimits) {
-        if ($this->_quiz->attempts > 0) {
-            $this->_rules[] = new num_attempts_access_rule($this->_quiz, $this->_timenow);
+        $quiz = $this->_quizobj->get_quiz();
+        if ($quiz->attempts > 0) {
+            $this->_rules[] = new num_attempts_access_rule($this->_quizobj, $this->_timenow);
         }
-        $this->_rules[] = new open_close_date_access_rule($this->_quiz, $this->_timenow);
-        if ($this->_quiz->timelimit && !$canignoretimelimits) {
-            $this->_rules[] = new time_limit_access_rule($this->_quiz, $this->_timenow);
+        $this->_rules[] = new open_close_date_access_rule($this->_quizobj, $this->_timenow);
+        if ($quiz->timelimit && !$canignoretimelimits) {
+            $this->_rules[] = new time_limit_access_rule($this->_quizobj, $this->_timenow);
         }
-        if ($this->_quiz->delay1 || $this->_quiz->delay2) {
-            $this->_rules[] = new inter_attempt_delay_access_rule($this->_quiz, $this->_timenow);
+        if ($quiz->delay1 || $quiz->delay2) {
+            $this->_rules[] = new inter_attempt_delay_access_rule($this->_quizobj, $this->_timenow);
         }
-        if ($this->_quiz->subnet) {
-            $this->_rules[] = new ipaddress_access_rule($this->_quiz, $this->_timenow);
+        if ($quiz->subnet) {
+            $this->_rules[] = new ipaddress_access_rule($this->_quizobj, $this->_timenow);
         }
-        if ($this->_quiz->password) {
-            $this->_passwordrule = new password_access_rule($this->_quiz, $this->_timenow);
+        if ($quiz->password) {
+            $this->_passwordrule = new password_access_rule($this->_quizobj, $this->_timenow);
             $this->_rules[] = $this->_passwordrule;
         }
-        if ($this->_quiz->popup) {
-            $this->_securewindowrule = new securewindow_access_rule($this->_quiz, $this->_timenow);
+        if ($quiz->popup) {
+            $this->_securewindowrule = new securewindow_access_rule($this->_quizobj, $this->_timenow);
             $this->_rules[] = $this->_securewindowrule;
         }
     }
@@ -211,8 +212,9 @@ class quiz_access_manager {
         if ($this->securewindow_required($canpreview)) {
             $this->_securewindowrule->print_start_attempt_button($buttontext, $strconfirmstartattempt);
         } else {
-            print_single_button("attempt.php", array('q' => $this->_quiz->id), $buttontext,
-                    'get', '', false, '', false, $strconfirmstartattempt);
+            print_single_button($this->_quizobj->start_attempt_url(),
+                    array('cmid' => $this->_quizobj->get_cmid(), 'sesskey' => sesskey()),
+                    $buttontext, 'post', '', false, '', false, $strconfirmstartattempt);
         }
         echo "</div>\n";
 
@@ -238,7 +240,7 @@ class quiz_access_manager {
      */
     public function back_to_view_page($canpreview, $message = '') {
         global $CFG;
-        $url = $CFG->wwwroot . '/mod/quiz/view.php?q=' . $this->_quiz->id;
+        $url = $this->_quizobj->view_url();
         if (securewindow_required($canpreview)) {
             print_header();
             print_box_start();
@@ -268,7 +270,7 @@ class quiz_access_manager {
      */
     public function print_finish_review_link($canpreview) {
         global $CFG;
-        $url = $CFG->wwwroot . '/mod/quiz/view.php?q=' . $this->_quiz->id;
+        $url = $this->_quizobj->view_url();
         echo '<div class="finishreview">';
         if ($this->securewindow_required($canpreview)) {
             $url = addslashes_js(htmlspecialchars($url));
@@ -313,12 +315,13 @@ class quiz_access_manager {
      * in a javascript alert on the start attempt button.
      */
     public function confirm_start_attempt_message() {
-        if ($this->_quiz->timelimit && $this->_quiz->attempts) {
-            return get_string('confirmstartattempttimelimit','quiz', $this->_quiz->attempts);
-        } else if ($this->_quiz->timelimit) {
+        $quiz = $this->_quizobj->get_quiz();
+        if ($quiz->timelimit && $quiz->attempts) {
+            return get_string('confirmstartattempttimelimit','quiz', $quiz->attempts);
+        } else if ($quiz->timelimit) {
             return get_string('confirmstarttimelimit','quiz');
-        } else if ($this->_quiz->attempts) {
-            return get_string('confirmstartattemptlimit','quiz', $this->_quiz->attempts);
+        } else if ($quiz->attempts) {
+            return get_string('confirmstartattemptlimit','quiz', $quiz->attempts);
         }
         return '';
     }
@@ -342,8 +345,7 @@ class quiz_access_manager {
         if ($this->securewindow_required($canpreview)) {
             return $this->_securewindowrule->make_review_link($linktext, $attempt->id);
         } else {
-            return '<a href="' . $CFG->wwwroot . '/mod/quiz/review.php?q=' . $this->_quiz->id .
-                    '&amp;attempt=' . $attempt->id . '">' . $linktext . '</a>';
+            return '<a href="' . $this->_quizobj->review_url($attempt->id) . '">' . $linktext . '</a>';
         }
     }
     /**
@@ -354,11 +356,12 @@ class quiz_access_manager {
      * @return string an appropraite message.
      */
     public function cannot_review_message($reviewoptions) {
+        $quiz = $this->_quizobj->get_quiz();
         if ($reviewoptions->quizstate == QUIZ_STATE_IMMEDIATELY) {
             return '';
-        } else if ($reviewoptions->quizstate == QUIZ_STATE_OPEN && $this->_quiz->timeclose &&
-                    ($this->_quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES)) {
-            return get_string('noreviewuntil', 'quiz', userdate($this->_quiz->timeclose));
+        } else if ($reviewoptions->quizstate == QUIZ_STATE_OPEN && $quiz->timeclose &&
+                    ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES)) {
+            return get_string('noreviewuntil', 'quiz', userdate($quiz->timeclose));
         } else {
             return get_string('noreview', 'quiz');
         }
@@ -376,13 +379,15 @@ class quiz_access_manager {
  */
 abstract class quiz_access_rule_base {
     protected $_quiz;
+    protected $_quizobj;
     protected $_timenow;
     /**
      * Create an instance of this rule for a particular quiz.
      * @param object $quiz the quiz we will be controlling access to.
      */
-    public function __construct($quiz, $timenow) {
-        $this->_quiz = $quiz;
+    public function __construct($quizobj, $timenow) {
+        $this->_quizobj = $quizobj;
+        $this->_quiz = $quizobj->get_quiz();
         $this->_timenow = $timenow;
     }
     /**
@@ -620,7 +625,7 @@ class password_access_rule extends quiz_access_rule_base {
     /// Print the password entry form.
         $output .= '<p>' . get_string('requirepasswordmessage', 'quiz') . "</p>\n";
         $output .= '<form id="passwordform" method="post" action="' . $CFG->wwwroot .
-                '/mod/quiz/attempt.php?q=' . $this->_quiz->id .
+                '/mod/quiz/startattempt.php?q=' . $this->_quiz->id .
                 '" onclick="this.autocomplete=\'off\'">' . "\n";
         $output .= "<div>\n";
         $output .= '<label for="quizpassword">' . get_string('password') . "</label>\n";
@@ -674,7 +679,8 @@ class securewindow_access_rule extends quiz_access_rule_base {
     public function print_start_attempt_button($buttontext, $strconfirmstartattempt) {
         global $CFG, $SESSION;
 
-        $attempturl = $CFG->wwwroot . '/mod/quiz/attempt.php?q=' . $this->_quiz->id;
+        $attempturl = $this->_quizobj->start_attempt_url() . '?cmid=' . $this->_quizobj->get_cmid() .
+                '&sesskey=' . sesskey();
         $window = 'quizpopup';
 
         if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
@@ -696,9 +702,8 @@ class securewindow_access_rule extends quiz_access_rule_base {
      * @return string HTML for the link.
      */
     public function make_review_link($linktext, $attemptid) {
-        global $CFG;
-        return link_to_popup_window($CFG->wwwroot . '/mod/quiz/review.php?q=' . $this->_quiz->id .
-                 '&amp;attempt=' . $attemptid, 'quizpopup', $linktext, '', '', '', $this->windowoptions, true);
+        return link_to_popup_window($this->_quizobj->review_url($attemptid),
+                'quizpopup', $linktext, '', '', '', $this->windowoptions, true);
     }
 
     /**

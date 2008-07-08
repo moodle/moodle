@@ -756,31 +756,60 @@ function questionbank_navigation_tabs(&$row, $contexts, $querystring) {
 }
 
 /**
- * Load a set of questions, given a list of ids. The $join and $extrafields arguments can be used
- * together to pull in extra data. See, for example, the usage in mod/quiz/attempt.php, and
- * read the code below to see how the SQL is assembled.
+ * Given a list of ids, load the basic information about a set of questions from the questions table.
+ * The $join and $extrafields arguments can be used together to pull in extra data.
+ * See, for example, the usage in mod/quiz/attemptlib.php, and
+ * read the code below to see how the SQL is assembled. Throws exceptions on error.
  *
- * @param string $questionlist list of comma-separated question ids.
- * @param string $extrafields
- * @param string $join
+ * @param array $questionids array of question ids.
+ * @param string $extrafields extra SQL code to be added to the query.
+ * @param string $join extra SQL code to be added to the query.
+ * @param array $extraparams values for any placeholders in $join.
+ * You are strongly recommended to use named placeholder.
  *
- * @return mixed array of question objects on success, a string error message on failure.
+ * @return array partially complete question objects. You need to call get_question_options
+ * on them before they can be properly used.
  */
-function question_load_questions($questionlist, $extrafields = '', $join = '') {
+function question_preload_questions($questionids, $extrafields = '', $join = '', $extraparams = array()) {
     global $CFG, $DB;
     if ($join) {
-        $join = ' JOIN '.$join.'';
+        $join = ' JOIN '.$join;
     }
     if ($extrafields) {
         $extrafields = ', ' . $extrafields;
     }
+    list($questionidcondition, $params) = $DB->get_in_or_equal(
+            $questionids, SQL_PARAMS_NAMED, 'qid0000');
     $sql = 'SELECT q.*' . $extrafields . ' FROM {question} q' . $join .
-            ' WHERE q.id IN (' . $questionlist . ')';
+            ' WHERE q.id ' . $questionidcondition;
 
     // Load the questions
-    if (!$questions = $DB->get_records_sql($sql)) {
+    if (!$questions = $DB->get_records_sql($sql, $extraparams + $params)) {
         return 'Could not load questions.';
     }
+
+    foreach ($questions as $question) {
+        $question->_partiallyloaded = true;
+    }
+
+    return $questions;
+}
+
+/**
+ * Load a set of questions, given a list of ids. The $join and $extrafields arguments can be used
+ * together to pull in extra data. See, for example, the usage in mod/quiz/attempt.php, and
+ * read the code below to see how the SQL is assembled. Throws exceptions on error.
+ *
+ * @param array $questionids array of question ids.
+ * @param string $extrafields extra SQL code to be added to the query.
+ * @param string $join extra SQL code to be added to the query.
+ * @param array $extraparams values for any placeholders in $join.
+ * You are strongly recommended to use named placeholder.
+ *
+ * @return array question objects.
+ */
+function question_load_questions($questionids, $extrafields = '', $join = '') {
+    $questions = question_preload_questions($questionids, $extrafields, $join);
 
     // Load the question type specific information
     if (!get_question_options($questions)) {
@@ -803,7 +832,12 @@ function _tidy_question(&$question) {
         $question->questiontext = '<p>' . get_string('warningmissingtype', 'quiz') . '</p>' . $question->questiontext;
     }
     $question->name_prefix = question_make_name_prefix($question->id);
-    return $QTYPES[$question->qtype]->get_question_options($question);
+    if ($success = $QTYPES[$question->qtype]->get_question_options($question)) {
+        if (isset($question->_partiallyloaded)) {
+            unset($question->_partiallyloaded);
+        }
+    }
+    return $success;
 }
 
 /**

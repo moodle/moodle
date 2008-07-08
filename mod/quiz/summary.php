@@ -7,14 +7,13 @@
  * @package quiz
  */
 
-require_once("../../config.php");
-require_once("locallib.php");
-require_once("attemptlib.php");
+require_once(dirname(__FILE__) . '/../../config.php');
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 $attemptid = required_param('attempt', PARAM_INT); // The attempt to summarise.
 $attemptobj = new quiz_attempt($attemptid);
 
-/// Check login and get contexts.
+/// Check login.
 require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
 
 /// If this is not our own attempt, display an error.
@@ -22,7 +21,7 @@ if ($attemptobj->get_userid() != $USER->id) {
     print_error('notyourattempt', 'quiz', $attemptobj->view_url());
 }
 
-/// If the attempt is already closed, redirect them to the review page.
+/// If the attempt is alreadyuj closed, redirect them to the review page.
 if ($attemptobj->is_finished()) {
     redirect($attemptobj->review_url());
 }
@@ -48,7 +47,8 @@ $attemptobj->load_question_states();
 require_js($CFG->wwwroot . '/mod/quiz/quiz.js');
 $title = get_string('summaryofattempt', 'quiz');
 if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
-    $accessmanager->setup_secure_page($course->shortname.': '.format_string($quiz->name), $headtags);
+    $accessmanager->setup_secure_page($attemptobj->get_course()->shortname . ': ' .
+            format_string($attemptobj->get_quiz_name()), '');
 } else {
     print_header_simple(format_string($attemptobj->get_quiz_name()), '',
             $attemptobj->navigation($title), '', '', true, $attemptobj->update_module_button());
@@ -63,7 +63,7 @@ if ($attemptobj->is_preview_user()) {
 /// Print heading.
 print_heading(format_string($attemptobj->get_quiz_name()));
 if ($attemptobj->is_preview_user()) {
-    print_restart_preview_button($quiz);
+    $attemptobj->print_restart_preview_button();
 }
 print_heading($title);
 
@@ -83,7 +83,8 @@ $table->data = array();
 /// Get the summary info for each question.
 $questionids = $attemptobj->get_question_ids();
 foreach ($attemptobj->get_question_iterator() as $number => $question) {
-    $row = array($number, $attemptobj->get_question_status($question->id));
+    $row = array('<a href="' . $attemptobj->attempt_url($question->id) . '">' . $number . '</a>',
+            get_string($attemptobj->get_question_status($question->id), 'quiz'));
     if ($scorescolumn) {
         $row[] = $attemptobj->get_question_score($question->id);
     }
@@ -110,7 +111,7 @@ $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time())
 if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
     print_footer('empty');
 } else {
-    print_footer($course);
+    print_footer($attemptobj->get_course());
 }
 
 ?>
