@@ -69,7 +69,7 @@
     
 /// If data submitted, then process and store.
 
-    if ($usernew = data_submitted()) {
+    if ($usernew = data_submitted() and confirm_sesskey()) {
 
         if (($USER->id <> $usernew->id) && !isadmin()) {
             print_error('onlyeditown');
