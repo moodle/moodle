@@ -778,9 +778,6 @@ function quiz_get_renderoptions($reviewoptions, $state) {
     // Show feedback once the question has been graded (if allowed by the quiz)
     $options->feedback = question_state_is_graded($state) && ($reviewoptions & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
 
-    // Show validation only after a validation event
-    $options->validation = QUESTION_EVENTVALIDATE === $state->event;
-
     // Show correct responses in readonly mode if the quiz allows it
     $options->correct_responses = $options->readonly && ($reviewoptions & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
 
@@ -794,6 +791,7 @@ function quiz_get_renderoptions($reviewoptions, $state) {
     $options->responses = true;
     $options->scores = true;
     $options->quizstate = QUIZ_STATE_DURING;
+    $options->history = false;
 
     return $options;
 }
@@ -821,8 +819,11 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
         $options->questioncommentlink = '/mod/quiz/comment.php';
     }
 
-    if (!is_null($context) && has_capability('mod/quiz:viewreports', $context) &&
-            has_capability('moodle/grade:viewhidden', $context) && !$attempt->preview) {
+    // Whether to display a response history.
+    $canviewreports = !is_null($context) && has_capability('mod/quiz:viewreports', $context);
+    $options->history = ($canviewreports && !$attempt->preview) ? 'all' : 'graded';
+
+    if ($canviewreports && has_capability('moodle/grade:viewhidden', $context) && !$attempt->preview) {
         // People who can see reports and hidden grades should be shown everything,
         // except during preview when teachers want to see what students see.
         $options->responses = true;
