@@ -52,7 +52,7 @@ class repository_boxnet extends repository{
         // already logged
         if(!empty($SESSION->box_token)) {
             $this->box = new boxclient($options['api_key'], $SESSION->box_token);
-            $this->options['auth_token'] = $SESSION->box_token;
+            $options['auth_token'] = $SESSION->box_token;
             $action = 'list';
         } else {
             $this->box = new boxclient($options['api_key'], '');
@@ -61,7 +61,7 @@ class repository_boxnet extends repository{
         parent::__construct($repositoryid, $context, $options);
     }
 
-    public function get_listing($path = '0', $search = ''){
+    public function get_listing($path = '/', $search = ''){
         global $CFG;
         $list = array();
         $ret  = array();
