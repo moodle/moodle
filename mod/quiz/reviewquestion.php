@@ -58,7 +58,7 @@
 
     if (!has_capability('mod/quiz:viewreports', $context)) {
         if (!$attempt->timefinish) {
-            redirect('attempt.php?q='.$quiz->id);
+            redirect('attempt.php?attempt='.$attempt->id);
         }
         // If not even responses are to be shown in review then we
         // don't allow any review

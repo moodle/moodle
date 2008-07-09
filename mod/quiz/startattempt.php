@@ -28,8 +28,11 @@ if (!$quiz = $DB->get_record('quiz', array('id' => $cm->instance))) {
 
 $quizobj = new quiz($quiz, $cm, $course);
 
-/// Check login and get contexts.
+/// Check login and sesskey.
 require_login($quizobj->get_courseid(), false, $quizobj->get_cm());
+if (!confirm_sesskey()) {
+    throw new moodle_exception('confirmsesskeybad', 'error', $quizobj->view_url());
+}
 
 /// if no questions have been set up yet redirect to edit.php
 if (!$quizobj->get_question_ids() && $quizobj->has_capability('mod/quiz:manage')) {
@@ -42,14 +45,6 @@ if ($quizobj->is_preview_user() && $forcenew) {
     $accessmanager->clear_password_access();
 }
 
-// This page should only respond to post requests, if not, redirect to the view page.
-// However, becuase 'secure' mode opens in a new window, we cannot do enforce this rule for them.
-if (!data_submitted() && !$accessmanager->securewindow_required($quizobj->is_preview_user())) {
-    $accessmanager->back_to_view_page($quizobj->is_preview_user());
-}
-if (!confirm_sesskey()) {
-    throw new moodle_exception('confirmsesskeybad', 'error', $quizobj->view_url());
-}
 
 /// Check capabilites.
 if (!$quizobj->is_preview_user()) {
@@ -109,11 +104,11 @@ if (!$attempt->id = $DB->insert_record('quiz_attempts', $attempt)) {
 
 /// Log the new attempt.
 if ($attempt->preview) {
-    add_to_log($course->id, 'quiz', 'preview', "attempt.php?id=$cm->id",
-            "$quiz->id", $cm->id);
+    add_to_log($course->id, 'quiz', 'preview', 'view.php?id=' . $quizobj->get_cmid(),
+            $quizobj->get_quizid(), $quizobj->get_cmid());
 } else {
-    add_to_log($course->id, 'quiz', 'attempt', "review.php?attempt=$attempt->id",
-            "$quiz->id", $cm->id);
+    add_to_log($course->id, 'quiz', 'attempt', 'review.php?attempt=' . $attempt->id,
+            $quizobj->get_quizid(), $quizobj->get_cmid());
 }
 
 /// Fully load all the questions in this quiz.

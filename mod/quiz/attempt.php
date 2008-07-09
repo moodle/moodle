@@ -13,7 +13,17 @@
     require_once(dirname(__FILE__) . '/../../config.php');
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
-/// remember the current time as the time any responses were submitted
+/// Look for old-style URLs, such as may be in the logs, and redirect them to startattemtp.php 
+    if ($id = optional_param('id', 0, PARAM_INTEGER)) {
+        redirect($CFG->wwwroot . '/mod/quiz/startattempt.php?cmid=' . $id . '&sesskey=' . sesskey());
+    } else if ($qid = optional_param('q', 0, PARAM_INTEGER)) {
+        if (!$cm = get_coursemodule_from_instance('quiz', $qid)) {
+            print_error('invalidquizid', 'quiz');
+        }
+        redirect($CFG->wwwroot . '/mod/quiz/startattempt.php?cmid=' . $cm->id . '&sesskey=' . sesskey());
+    }
+
+/// Remember the current time as the time any responses were submitted
 /// (so as to make sure students don't get penalized for slow processing on this page)
     $timenow = time();
 
