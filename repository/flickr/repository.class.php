@@ -28,7 +28,7 @@ class repository_flickr extends repository{
             set_user_preference('flickrmail', '');
         }
 
-        if(!empty($SESSION->filckrmail)){
+        if(!empty($SESSION->flickrmail)) {
             $action = 'list';
         } else {
             $options['flickrmail'] = optional_param('flickrmail', '', PARAM_RAW);
@@ -73,18 +73,23 @@ EOD;
             return $this->get_listing();
         }
     }
-    public function get_listing($path = '0', $search = ''){
+    public function get_listing($path = '1', $search = ''){
         global $SESSION;
         $people = $this->flickr->people_findByEmail($SESSION->flickrmail);
         $photos_url = $this->flickr->urls_getUserPhotos($people['nsid']);
-        $photos = $this->flickr->people_getPublicPhotos($people['nsid'], null, 36, $this->page);
+        $photos = $this->flickr->people_getPublicPhotos($people['nsid'], null, 36, $path);
         $ret = new stdclass;
         $ret->url   = $photos_url;
         $ret->list  = array();
-        $ret->page  = $photos['page'];
+        //$ret->page  = $photos['page'];
+        $ret->page  = $path;
         $ret->pages = $photos['pages'];
         foreach ($photos['photo'] as $p) {
-            $ret->list[] = array('title'=>$p['title'],'thumbnail'=>$this->flickr->buildPhotoURL($p, "Square"));
+            if(empty($p['title'])) {
+                $p['title'] = get_string('notitle', 'repository_flickr');
+            }
+            $ret->list[] =
+                array('title'=>$p['title'],'source'=>'http://farm2.static.flickr.com/'.$p['server'].'/'.$p['id'].'_'.$p['secret'].'_b.jpg','id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, "Square"));
         }
         return $ret;
     }
@@ -94,8 +99,6 @@ EOD;
         }
         $str = '';
         $str .= '<h2>Account: <span>'.$this->photos['a'].'</span></h2>';
-        $str .= '<a href="###" onclick="callrepo('.$this->repositoryid.', 1, 1)">Change user</a>';
-        $str .= '<hr/>';
         foreach ((array)$this->photos['photo'] as $photo) {
             $str .= "<a href='".$this->photos['url'].$photo[id]."'>";
             $str .= "<img border='0' alt='$photo[title]' ".
