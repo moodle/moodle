@@ -15,10 +15,11 @@ class question_export_form extends moodleform {
         $fileformatnames = get_import_export_formats('export');
         $radioarray = array();
         foreach ($fileformatnames as $id => $fileformatname) {
-            $radioarray[] = &MoodleQuickForm::createElement('radio','format','',$fileformatname,$id);
+            $radioelement = &MoodleQuickForm::createElement('radio','format','',$fileformatname,$id);
+            $radioelement->setHelpButton(array("format{$id}",$fileformatname,'quiz'));
+            $radioarray[] = $radioelement;
         }
         $mform->addGroup($radioarray,'format','',array('<br />'),false);
-        $mform->setHelpButton('format', array('export', get_string('exportquestions', 'quiz'), 'quiz'));
         $mform->addRule('format',null,'required',null,'client'); 
 
 //--------------------------------------------------------------------------------
@@ -46,6 +47,10 @@ class question_export_form extends moodleform {
         $mform->setDefault('exportfilename', $defaultfilename);
         $mform->setType('exportfilename', PARAM_CLEANFILE);
 
+        // set a template for the format select elements   
+        $renderer =& $mform->defaultRenderer();
+        $template = "{help} {element}\n";
+        $renderer->setGroupElementTemplate($template, 'format');
 
 //--------------------------------------------------------------------------------
         $this->add_action_buttons(false, get_string('exportquestions', 'quiz'));

@@ -11,54 +11,9 @@
    You are advised to check exported data before using
    it in a production environment.</p>
 
-<p>The format(s) currently supported are:</p>
-
-<h2>GIFT format</h2>
-
-<p>GIFT is the most comprehensive import/export format available for exporting 
-   Moodle quiz questions to a text file.  It was designed to be an easy 
-   method for teachers writing questions as a text file. It supports Multiple-Choice, 
-   True-False, Short Answer, Matching and Numerical questions, as well as insertion 
-   of a _____ for the "missing word" format.  Note that Cloze questions are not
-   currently supported. Various question-types can be 
-   mixed in a single text file, and the format also supports line comments, question names, 
-   feedback and percentage-weight grades.  Below are some examples:</p>
-<pre>
-Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
-
-Grant is {~buried =entombed ~living} in Grant's tomb.
-
-Grant is buried in Grant's tomb.{FALSE}
-
-Who's buried in Grant's tomb?{=no one =nobody}
-
-When was Ulysses S. Grant born?{#1822}
-</pre>
-
-<p class="moreinfo"><a href="help.php?file=formatgift.html&amp;module=quiz">More info about the "GIFT" format</a></p>
-
-
-<h2>Moodle XML format</h2>
-
-<p>This Moodle specific format exports quiz questions in a simple XML format. They
-can then be imported into another quiz category or used in some other process such as
-an XSLT transformation. The XML format will export images attached to questions (encoded
-base64).</p>
-
-
-<h2>IMS QTI 2.0</h2>
-
-<p>Exports in the standard IMS QTI (version 2.0) format. Note that this generates a group of files within
-  a single 'zip' file.</p>
-<p class="moreinfo"><a href="http://www.imsglobal.org/question/" target="_qti">More information on the IMS QTI site</a>
- (external site in new window)</p>
-
-
-<h2>XHTML</h2>
-
-<p>Exports the category as a single page of 'strict' XHTML. Each question is clearly placed in its own
-&lt;div&gt; tag. If you want to use this page as-is, you will need to at least edit the &lt;form&gt; tag at the
-start of the &lt;body&gt; section to provide a suitable action (eg, a 'mailto').</p>
+<p>A number of file formats are supported. See in the individual help files
+and the <a href="http://docs.moodle.org/en/question/import">Moodle Docs</a>
+for details.</p>
 
 
 <p>Import and Export formats are a pluggable resource. Other optional formats may be available in the

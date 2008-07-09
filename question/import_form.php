@@ -16,12 +16,12 @@ class question_import_form extends moodleform {
         $fileformatnames = get_import_export_formats('import');
         $radioarray = array();
         foreach ($fileformatnames as $id => $fileformatname) {
-            $radioarray[] = &MoodleQuickForm::createElement('radio','format','',$fileformatname,$id );
+            $radioelement = &MoodleQuickForm::createElement('radio','format','',$fileformatname,$id );
+            $radioelement->setHelpButton(array("format{$id}",$fileformatname,'quiz'));
+            $radioarray[] = $radioelement;
         }
-        $mform->addGroup($radioarray,'format', '', array('<br />'), false);
+        $mform->addGroup($radioarray,'format', '', array('<br />'), false);     
         $mform->addRule('format', null, 'required', null, 'client' );
-        $mform->setHelpButton('format', array('import', get_string('importquestions', 'quiz'), 'quiz'));
-
 //--------------------------------------------------------------------------------
         $mform->addElement('header','general', get_string('general', 'form'));
 
@@ -68,6 +68,11 @@ class question_import_form extends moodleform {
 //--------------------------------------------------------------------------------
         $mform->addElement('static', 'dummy', '');
         $mform->closeHeaderBefore('dummy');
+     
+        // set a template for the format select elements   
+        $renderer =& $mform->defaultRenderer();
+        $template = "{help} {element}\n";
+        $renderer->setGroupElementTemplate($template, 'format');
     }
     function get_importfile_name(){
         if ($this->is_submitted() and $this->is_validated()) {
