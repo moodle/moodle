@@ -241,7 +241,7 @@ class quiz_access_manager {
     public function back_to_view_page($canpreview, $message = '') {
         global $CFG;
         $url = $this->_quizobj->view_url();
-        if (securewindow_required($canpreview)) {
+        if ($this->securewindow_required($canpreview)) {
             print_header();
             print_box_start();
             if ($message) {
