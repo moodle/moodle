@@ -1702,7 +1702,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     }
 
     function renderElement(&$element, $required, $error){
-        //manipulate id of all elements before rendering
+        //manipulate id of all elements before rendering       
         if (!is_null($element->getAttribute('id'))) {
             $id = $element->getAttribute('id');
         } else {
@@ -1715,7 +1715,12 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
 
         //adding stuff to place holders in template
-        if (method_exists($element, 'getElementTemplateType')){
+        //check if this is a group element first 
+        if (($this->_inGroup) and !empty($this->_groupElementTemplate)) {
+        	// so it gets substitutions for *each* element
+            $html = $this->_groupTemplates[$element->getName()];	
+        }
+        elseif (method_exists($element, 'getElementTemplateType')){
             $html = $this->_elementTemplates[$element->getElementTemplateType()];
         }else{
             $html = $this->_elementTemplates['default'];
@@ -1743,10 +1748,13 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $html = str_replace('{help}', '', $html);
 
         }
-        if (!isset($this->_templates[$element->getName()])) {
-            $this->_templates[$element->getName()] = $html;
+        if (($this->_inGroup) and !empty($this->_groupElementTemplate)) {
+            $this->_groupElementTemplate = $html;
         }
-
+        elseif (!isset($this->_templates[$element->getName()])) {
+            $this->_templates[$element->getName()] = $html;
+        }  
+        
         parent::renderElement($element, $required, $error);
     }
 
