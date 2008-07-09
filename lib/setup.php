@@ -159,6 +159,7 @@ global $HTTPSPAGEREQUIRED;
             if (file_exists($CFG->dataroot.'/emailcount')){
                 $fp = fopen($CFG->dataroot.'/emailcount', 'r');
                 $content = fread($fp, 24);
+                fclose($fp);
                 if((time() - (int)$content) > 600){
                     mail($CFG->emailconnectionerrorsto, 
                         'WARNING: Database connection error: '.$CFG->wwwroot, 
