@@ -4,8 +4,6 @@
     require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
     require_once($CFG->libdir.'/adminlib.php');
     include_once($CFG->dirroot.'/mnet/lib.php');
-error_reporting(E_ALL);
-ini_set('display_errors', true);
     require_login();
     admin_externalpage_setup('mnetpeers');
 
@@ -75,5 +73,6 @@ ini_set('display_errors', true);
         }
     }
 
-    include('./mnet_themes.html');
+    $adminroot = admin_get_root();
+    require_once('./mnet_themes.html');
 ?>
