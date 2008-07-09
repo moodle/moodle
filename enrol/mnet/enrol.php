@@ -299,6 +299,9 @@ class enrolment_plugin_mnet {
         $userrecord = $DB->get_record('user',array('username'=>$user['username'], 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
 
         if ($userrecord == false) {
+            // We should at least be checking that we allow the remote
+            // site to create users
+            // TODO: more rigour here thanks!
             $userrecord = new stdClass();
             $userrecord->username   = $user['username'];
             $userrecord->email      = $user['email'];
@@ -336,20 +339,23 @@ class enrolment_plugin_mnet {
     * @param int    $courseid   The id of the local course
     * @return bool              Whether the user can login from the remote host
     */
-    function unenrol_user($user, $courseid) {
-        global $MNET_REMOTE_CLIENT, $DB;
+    function unenrol_user($username, $courseid) {
+        global $MNET_REMOTE_CLIENT;
 
-        $userrecord = $DB->get_record('user', array('username'=>$user['username'], 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
+        $userrecord = $DB->get_record('user', array('username'=>$username, 'mnethostid'=>$MNET_REMOTE_CLIENT->id));
 
         if ($userrecord == false) {
+            return false;
             // TODO: Error out
         }
 
         if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
+            return false;
             // TODO: Error out
         }
 
         if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+            return false;
             // TODO: Error out (Invalid context)
         }
 
@@ -552,8 +558,7 @@ class enrolment_plugin_mnet {
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // in case the remote host doesn't have it
-        $user = $DB->get_record('user', array('id'=>$userid), 'username, email');
-        $user = $user->username;
+        $username = $DB->get_field('user', 'username', array('id'=>$userid));
 
         $course = $DB->get_record('mnet_enrol_course', array('id'=>$courseid));
 
@@ -564,7 +569,7 @@ class enrolment_plugin_mnet {
         // set up the RPC request
         $mnetrequest = new mnet_xmlrpc_client();
         $mnetrequest->set_method('enrol/mnet/enrol.php/unenrol_user');
-        $mnetrequest->add_param($user);
+        $mnetrequest->add_param($username);
         $mnetrequest->add_param($course->remoteid);
 
         // TODO - prevent removal of enrolments that are not of
