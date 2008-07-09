@@ -19,6 +19,7 @@
 
 class curl {
     private $options;
+    public  $cache    = false;
     private $debug    = false;
     private $cookie   = false;
     public  $version  = '0.2 dev';
@@ -35,14 +36,15 @@ class curl {
         if(!empty($options['debug'])) {
             $this->debug = true;
         }
-        $this->debug = false;
         if(!empty($options['cookie'])) {
             if(file_exists($options['cookie'])) {
                 $this->cookie = $options['cookie'];
             }
         }
         if(!empty($options['cache'])) {
-            $this->cache = new repository_cache;
+            if(class_exists('repository_cache')) {
+                $this->cache = new repository_cache;
+            }
         }
         $this->resetopt();
     }
@@ -314,7 +316,7 @@ class curl {
     /**
      * HTTP TRACE method
      */
-    public function trace($url){
+    public function trace($url, $options = array()){
         $options['CURLOPT_CUSTOMREQUEST'] = 'TRACE';
         $ret = $this->request($url, $options);
         return $ret;
@@ -322,7 +324,7 @@ class curl {
     /**
      * HTTP OPTIONS method
      */
-    public function options($url){
+    public function options($url, $options = array()){
         $options['CURLOPT_CUSTOMREQUEST'] = 'OPTIONS';
         $ret = $this->request($url, $options);
         return $ret;
