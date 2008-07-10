@@ -202,6 +202,7 @@
 
         $mainadmin = get_admin();
 
+        $override = new object();
         $override->firstname = 'firstname';
         $override->lastname = 'lastname';
         $fullnamelanguage = get_string('fullnamedisplay', '', $override);
