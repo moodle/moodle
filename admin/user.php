@@ -202,7 +202,17 @@
 
         $mainadmin = get_admin();
 
-        $table->head = array ("$firstname / $lastname", $email, $city, $country, $lastaccess, "", "", "");
+        $override->firstname = 'firstname';
+        $override->lastname = 'lastname';
+        $fullnamelanguage = get_string('fullnamedisplay', '', $override);
+        if (($CFG->fullnamedisplay == 'firstname lastname') or
+            ($CFG->fullnamedisplay == 'firstname') or
+            ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'firstname lastname' )) {
+            $fullnamedisplay = "$firstname / $lastname";
+        } else { // ($CFG->fullnamedisplay == 'language' and $fullnamelanguage == 'lastname firstname') 
+            $fullnamedisplay = "$lastname / $firstname";
+        }
+        $table->head = array ($fullnamedisplay, $email, $city, $country, $lastaccess, "", "", "");
         $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
         $table->width = "95%";
         foreach ($users as $user) {
