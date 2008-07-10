@@ -195,7 +195,7 @@ class quiz {
         if ($page === 'all') {
             $list = $this->questionids;
         } else {
-            $list = $this->pagequestionids[0];
+            $list = $this->pagequestionids[$page];
         }
         // Clone the array, so our private arrays cannot be modified.
         $result = array();
