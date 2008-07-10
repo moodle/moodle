@@ -3453,7 +3453,11 @@ function check_theme_arrows() {
         // Also OK in Win 9x/2K/IE 5.x
         $THEME->rarrow = '&#x25BA;';
         $THEME->larrow = '&#x25C4;';
-        $uagent = $_SERVER['HTTP_USER_AGENT'];
+        if (empty($_SERVER['HTTP_USER_AGENT'])) {
+            $uagent = '';
+        } else {
+            $uagent = $_SERVER['HTTP_USER_AGENT'];
+        }
         if (false !== strpos($uagent, 'Opera')
             || false !== strpos($uagent, 'Mac')) {
             // Looks good in Win XP/Mac/Opera 8/9, Mac/Firefox 2, Camino, Safari.

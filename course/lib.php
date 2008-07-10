@@ -1341,7 +1341,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 print_spacer(12, 20 * $mod->indent, false);
             }
 
-            $extra = $modinfo->cms[$modnumber]->extra;
+            $extra = '';
+            if (!empty($modinfo->cms[$modnumber]->extra)) {
+                $extra = $modinfo->cms[$modnumber]->extra;
+            }
 
             if ($mod->modname == "label") {
                 if (!$mod->visible) {
