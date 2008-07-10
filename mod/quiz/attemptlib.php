@@ -192,10 +192,10 @@ class quiz {
      * @return array the reqested list of question ids.
      */
     public function get_question_ids($page = 'all') {
-        if ($page == 'all') {
+        if ($page === 'all') {
             $list = $this->questionids;
         } else {
-            $list = $this->pagequestionids[$page];
+            $list = $this->pagequestionids[0];
         }
         // Clone the array, so our private arrays cannot be modified.
         $result = array();
