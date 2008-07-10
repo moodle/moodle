@@ -118,6 +118,11 @@ class quiz {
         return $this->quiz->name;
     }
 
+    /** @return integer the number of attempts allowed at this quiz (0 = infinite). */
+    public function get_num_attempts_allowed() {
+        return $this->quiz->attempts;
+    }
+
     /** @return integer the course_module id. */
     public function get_cmid() {
         return $this->cm->id;
@@ -569,6 +574,7 @@ class quiz_attempt extends quiz {
      * to jump to a particuar question on the page.
      * @param boolean $showall if true, the URL will be to review the entire attempt on one page,
      * and $page will be ignored.
+     * @param $otherattemptid if given, link to another attempt, instead of the one we represent.
      * @return string the URL to review this attempt.
      */
     public function review_url($questionid = 0, $page = -1, $showall = false, $otherattemptid = null) {

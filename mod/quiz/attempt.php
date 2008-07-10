@@ -44,9 +44,15 @@
 /// Check login.
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
 
+/// Check that this attempt belongs to this user.
+    if ($attemptobj->get_userid() != $USER->id) {
+        redirect($attemptobj->review_url(0, $page));
+    }
+
 /// Check capabilites.
-    if (!$attemptobj->is_preview_user()) {
-        require_capability('mod/quiz:attempt', $context);
+    if ($attemptobj->is_preview_user()) {
+    } else {
+        $attemptobj->require_capability('mod/quiz:attempt');
     }
 
 /// Log continuation of the attempt, but only if some time has passed.
@@ -242,10 +248,10 @@ if ($page == -1) {
         }
     } else {
     /// Just a heading.
-        if ($quiz->attempts != 1) {
-            print_heading(format_string($quiz->name).' - '.$title);
+        if ($attemptobj->get_num_attempts_allowed() != 1) {
+            print_heading(format_string($attemptobj->get_quiz_name()).' - '.$title);
         } else {
-            print_heading(format_string($quiz->name));
+            print_heading(format_string($attemptobj->get_quiz_name()));
         }
     }
 

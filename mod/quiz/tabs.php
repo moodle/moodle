@@ -12,6 +12,7 @@ if (empty($quiz)) {
         print_error('cannotcallscript');
     }
     $quiz = $attemptobj->get_quiz();
+    $cm = $attemptobj->get_cm();
 }
 if (!isset($currenttab)) {
     $currenttab = '';
@@ -32,13 +33,13 @@ $inactive = array();
 $activated = array();
 
 if (has_capability('mod/quiz:view', $context)) {
-    $row[] = new tabobject('info', "$CFG->wwwroot/mod/quiz/view.php?q=$quiz->id", get_string('info', 'quiz'));
+    $row[] = new tabobject('info', "$CFG->wwwroot/mod/quiz/view.php?id=$cm->id", get_string('info', 'quiz'));
 }
 if (has_capability('mod/quiz:viewreports', $context)) {
     $row[] = new tabobject('reports', "$CFG->wwwroot/mod/quiz/report.php?q=$quiz->id", get_string('results', 'quiz'));
 }
 if (has_capability('mod/quiz:preview', $context)) {
-    $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/startattempt.php?q=$quiz->id", get_string('preview', 'quiz'));
+    $row[] = new tabobject('preview', "$CFG->wwwroot/mod/quiz/startattempt.php?cmid=$cm->id&sesskey=" . sesskey(), get_string('preview', 'quiz'));
 }
 if (has_capability('mod/quiz:manage', $context)) {
     $row[] = new tabobject('edit', "$CFG->wwwroot/mod/quiz/edit.php?cmid=$cm->id", get_string('edit'));

@@ -83,6 +83,9 @@ $table->data = array();
 /// Get the summary info for each question.
 $questionids = $attemptobj->get_question_ids();
 foreach ($attemptobj->get_question_iterator() as $number => $question) {
+    if ($question->length == 0) {
+        continue;
+    }
     $row = array('<a href="' . $attemptobj->attempt_url($question->id) . '">' . $number . '</a>',
             get_string($attemptobj->get_question_status($question->id), 'quiz'));
     if ($scorescolumn) {

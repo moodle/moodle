@@ -63,7 +63,7 @@
     if ($attemptobj->is_preview_user() && $reviewofownattempt) {
         $strreviewtitle = get_string('reviewofpreview', 'quiz');
     } else {
-        $strreviewtitle = get_string('reviewofattempt', 'quiz', $attempt->attempt);
+        $strreviewtitle = get_string('reviewofattempt', 'quiz', $attemptobj->get_attempt_number());
     }
 
 /// Print the page header
@@ -125,11 +125,11 @@
 /// First we assemble all the rows that are appopriate to the current situation in
 /// an array, then later we only output the table if there are any rows to show.
     $rows = array();
-    if ($attempt->userid <> $USER->id) {
-        $student = $DB->get_record('user', array('id' => $attempt->userid));
-        $picture = print_user_picture($student, $course->id, $student->picture, false, true);
+    if ($attemptobj->get_userid() <> $USER->id) {
+        $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
+        $picture = print_user_picture($student, $attemptobj->get_courseid(), $student->picture, false, true);
         $rows[] = '<tr><th scope="row" class="cell">' . $picture . '</th><td class="cell"><a href="' .
-                $CFG->wwwroot . '/user/view.php?id=' . $student->id . '&amp;course=' . $course->id . '">' .
+                $CFG->wwwroot . '/user/view.php?id=' . $student->id . '&amp;course=' . $attemptobj->get_courseid() . '">' .
                 fullname($student, true) . '</a></td></tr>';
     }
     if (has_capability('mod/quiz:viewreports', $context) &&
