@@ -508,11 +508,8 @@ class resource_ims extends resource_base {
 
     /// Calculate the file.php correct url
         if (!$this->isrepository) {
-            if ($CFG->slasharguments) {
-                $fileurl = "{$CFG->wwwroot}/file.php/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
-            } else {
-                $fileurl = "{$CFG->wwwroot}/file.php?file=/{$course->id}/{$CFG->moddata}/resource/{$resource->id}";
-            }
+            require_once($CFG->libdir.'/filelib.php');
+            $fileurl = get_file_url($course->id.'/'.$CFG->moddata.'/resource/'.$resource->id);
         }
         else {
             $fileurl = $CFG->repositorywebroot . $resource->reference;

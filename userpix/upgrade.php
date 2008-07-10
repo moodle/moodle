@@ -22,13 +22,10 @@
         $fullname = fullname($user);
         echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=1\"".
              "title=\"$fullname\">";
-        if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            echo '<img src="'. $CFG->wwwroot .'/user/pix.php/'.$user->id.'/f1.jpg"'.
-                 ' style="border:0px; width:100px; height:100px" alt="'.$fullname.'" />';
-        } else {
-            echo '<img src="'. $CFG->wwwroot .'/user/pix.php?file=/'. $user->id .'/f1.jpg"'.
-                 ' style="border:0px; width:100px; height:100px" alt="'.$fullname.'" />';
-        }
+        require_once($CFG->libdir.'/filelib.php');
+        $userpictureurl = get_file_url($user->id.'/f1.jpg', null, 'user');
+        echo '<img src="'. $userpictureurl .'"'.
+            ' style="border:0px; width:100px; height:100px" alt="'.$fullname.'" />';
         echo "</a> \n";
     }
 

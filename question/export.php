@@ -116,12 +116,7 @@
             echo '<p><div class="boxaligncenter"><font size="-1">' .
                     get_string('downloadextra', 'quiz') . '</font></div></p>';
         } else {
-            if ($CFG->slasharguments) {
-                $efile = $CFG->wwwroot . '/question/exportfile.php/' . rawurlencode($filename);
-            } else {
-                $efile = $CFG->wwwroot . '/question/exportfile.php/?file=' . rawurlencode($filename);
-            }
-            
+            $efile = get_file_url($filename, null, 'questionfile');
             echo '<p><div class="boxaligncenter">' .
                     get_string('yourfileshoulddownload', 'question', $efile) . '</a></div></p>';
             echo '

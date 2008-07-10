@@ -108,11 +108,8 @@
             } else {
                 $basedir = $CFG->moddata.'/scorm/'.$scorm->id;
             }
-            if ($CFG->slasharguments) {
-                $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/'.$basedir.'/'.$launcher;
-            } else {
-                $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/'.$basedir.'/'.$launcher;
-            }
+            require_once($CFG->libdir.'/filelib.php');
+            $result = get_file_url($scorm->course .'/'. $basedir .'/'. $launcher);
         }
     }
 ?>

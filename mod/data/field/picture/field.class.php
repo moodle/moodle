@@ -46,11 +46,8 @@ class data_field_picture extends data_field_file {
                 $description = $content->content1;
             }
             $path = $this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
-            if ($CFG->slasharguments) {
-                $filepath = $CFG->wwwroot.'/file.php/'.$path.'/'.$filename;
-            } else {
-                $filepath = $CFG->wwwroot.'/file.php?file=/'.$path.'/'.$filename;
-            }
+            require_once($CFG->libdir.'/filelib.php');
+            $filepath = get_file_url("$path/$filename");
         }
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
@@ -102,14 +99,11 @@ class data_field_picture extends data_field_file {
             $title = empty($contents[1])? '':$contents[1];
             $src = $contents[0];
             $path = $this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
-            $thumbnaillocation = $CFG->dataroot .'/'.$this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid.'/thumb/'.$src;
-            if ($CFG->slasharguments) {
-                $source = $CFG->wwwroot.'/file.php/'.$path.'/'.$src;
-                $thumbnailsource = file_exists($thumbnaillocation) ? $CFG->wwwroot.'/file.php/'.$path.'/thumb/'.$src : $source;
-            } else {
-                $source = $CFG->wwwroot.'/file.php?file=/'.$path.'/'.$src;
-                $thumbnailsource = file_exists($thumbnaillocation) ? $CFG->wwwroot.'/file.php?file=/'.$path.'/thumb/'.$src : $source;
-            }
+
+            $thumbnaillocation = $CFG->dataroot .'/'. $path .'/thumb/'.$src;
+            require_once($CFG->libdir.'/filelib.php');
+            $source = get_file_url("$path/$src");
+            $thumbnailsource = file_exists($thumbnaillocation) ? get_file_url("$path/thumb/$src") : $source;
 
             if ($template == 'listtemplate') {
                 $width = $this->field->param4 ? ' width="'.s($this->field->param4).'" ' : ' ';

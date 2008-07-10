@@ -29,12 +29,8 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
  */
 function rss_get_url($courseid, $userid, $modulename, $id) {
     global $CFG;
-    if ($CFG->slasharguments) {
-        $rsspath = "$CFG->wwwroot/rss/file.php/$courseid/$userid/$modulename/$id/rss.xml";
-    } else {
-        $rsspath = "$CFG->wwwroot/rss/file.php?file=/$courseid/$userid/$modulename/$id/rss.xml";
-    }
-    return $rsspath;
+    require_once($CFG->libdir.'/filelib.php');
+    return get_file_url($courseid.'/'.$userid.'/'.$modulename.'/'.$id.'/rss.xml', null, 'rssfile');
 }
 
 /**

@@ -237,6 +237,8 @@
             $formatoptions = new object;
             $formatoptions->trusttext = true;
 
+            require_once($CFG->libdir.'/filelib.php');
+
             foreach ($recs as $rec) {
                 unset($item);
                 unset($user);
@@ -257,11 +259,7 @@
                     $item->attachments = array();
                     foreach ($post_files as $file) {
                         $attachment = new stdClass;
-                        if ($CFG->slasharguments) {
-                            $attachment->url = "{$CFG->wwwroot}/file.php/$post_file_area_name/$file";
-                        } else {
-                            $attachment->url = "{$CFG->wwwroot}/file.php?file=/$post_file_area_name/$file";
-                        }
+                        $attachment->url = get_file_url($post_file_area_name.'/'.$file);
                         $attachment->length = filesize("$CFG->dataroot/$post_file_area_name/$file");
                         $item->attachments[] = $attachment;
                     }

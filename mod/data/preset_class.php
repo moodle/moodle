@@ -711,7 +711,8 @@ class Data_Preset
             print_error('movezipfailed', 'data'); 
         }
         
-        $html .= '<a href="' . $CFG->wwwroot . '/file.php/' . $course->id . '/moddata/data/' . $this->data->id . '/preset.zip">'.get_string('download', 'data')."</a>";
+        require_once($CFG->libdir.'/filelib.php');
+        $html .= '<a href="'. get_file_url($course->id .'/moddata/data/'. $this->data->id .'/preset.zip') .'">'. get_string('download', 'data') .'</a>';
         $html .= '</div>'; 
         return $html;
     }

@@ -43,11 +43,8 @@ class qformat_hotpot extends qformat_default {
                 // shouldn't happen !!
                 $courseid = 0; 
         }
-        if ($CFG->slasharguments) {
-            $baseurl = "$CFG->wwwroot/file.php/$courseid/";
-        } else {
-            $baseurl = "$CFG->wwwroot/file.php?file=/$courseid/";
-        }
+        require_once($CFG->libdir.'/filelib.php');
+        $baseurl = get_file_url($courseid).'/';
 
         // get import file name
         global $params;

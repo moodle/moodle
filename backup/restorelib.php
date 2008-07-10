@@ -3636,6 +3636,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
     //finished to know all the oldid, newid equivaleces
     function restore_decode_absolute_links($content) {
         global $CFG, $restore;
+        require_once($CFG->libdir.'/filelib.php');
 
     /// MDL-14072: Prevent NULLs, empties and numbers to be processed by the
     /// heavy interlinking. Just a few cpu cycles saved.
@@ -3649,17 +3650,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         //Now decode wwwroot and file.php calls
         $search = array ("$@FILEPHP@$");
-
-        //Check for the status of the slasharguments config variable
-        $slash = $CFG->slasharguments;
-
-        //Build the replace string as needed
-        if ($slash == 1) {
-            $replace = array ($CFG->wwwroot."/file.php/".$restore->course_id);
-        } else {
-            $replace = array ($CFG->wwwroot."/file.php?file=/".$restore->course_id);
-        }
-
+        $replace = array(get_file_url($restore->course_id));
         $result = str_replace($search,$replace,$content);
 
         if ($result != $content && debugging()) {                                  //Debug

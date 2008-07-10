@@ -102,10 +102,9 @@ function get_media_tag($file, $courseid = 0, $alt = 'media file', $width = 0, $h
     // if it's a moodle library file, it will be served through file.php
     if (substr(strtolower($file), 0, 7) == 'http://') {
         $media = $file;
-    } else if ($CFG->slasharguments) {        // Use this method if possible for better caching
-        $media = "{$CFG->wwwroot}/file.php/$courseid/$file";
     } else {
-        $media = "{$CFG->wwwroot}/file.php?file=/$courseid/$file";
+        require_once($CFG->libdir.'/filelib.php');
+        $media = get_file_url("$courseid/$file");
     }
 
     $ismultimedia = false;

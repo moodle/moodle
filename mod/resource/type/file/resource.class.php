@@ -262,8 +262,8 @@ class resource_file extends resource_base {
         $isteamspeak = (stripos($resource->reference, 'teamspeak://') === 0);
 
     /// Form the parse string
+        $querys = array();
         if (!empty($resource->alltext)) {
-            $querys = array();
             $parray = explode(',', $resource->alltext);
             foreach ($parray as $fieldstring) {
                 $field = explode('=', $fieldstring);
@@ -307,22 +307,10 @@ class resource_file extends resource_base {
 
         } else {   // Normal uploaded file
             $forcedownloadsep = '?';
-            if ($CFG->slasharguments) {
-                $relativeurl = "/file.php/{$course->id}/{$resource->reference}";
-                if ($querystring) {
-                    $relativeurl .= '?'.$querystring;
-                    $forcedownloadsep = '&amp';
-                }
-            } else {
-                $relativeurl = "/file.php?file=/{$course->id}/{$resource->reference}";
-                if ($querystring) {
-                    $relativeurl .= '&amp;'.$querystring;
-                }
-            }
-            $fullurl = "$CFG->wwwroot$relativeurl";
             if ($resource->options == 'forcedownload') {
-                $fullurl .=  $forcedownloadsep . 'forcedownload=1';
+                $querys[] = 'forcedownload=1';
             }
+            $fullurl = get_file_url($course->id.'/'.$resource->reference, $querys);
         }
 
         /// Print a notice and redirect if we are trying to access a file on a local file system

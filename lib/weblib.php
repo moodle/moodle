@@ -4226,11 +4226,8 @@ function print_file_picture($path, $courseid=0, $height='', $width='', $link='',
 
     } else if ($courseid) {
         $output .= '<img style="height:'.$height.'px;width:'.$width.'px;" src="';
-        if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= $CFG->wwwroot .'/file.php/'. $courseid .'/'. $path;
-        } else {
-            $output .= $CFG->wwwroot .'/file.php?file=/'. $courseid .'/'. $path;
-        }
+        require_once($CFG->libdir.'/filelib.php');
+        $output .= get_file_url("$courseid/$path");
         $output .= '" />';
     } else {
         $output .= 'Error: must pass URL or course';
@@ -4330,11 +4327,8 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
     }
 
     if ($picture) {  // Print custom user picture
-        if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $src =  $wwwroot .'/user/pix.php/'. $user->id .'/'. $file .'.jpg';
-        } else {
-            $src =  $wwwroot .'/user/pix.php?file=/'. $user->id .'/'. $file .'.jpg';
-        }
+        require_once($CFG->libdir.'/filelib.php');
+        $src = get_file_url($user->id.'/'.$file.'.jpg', null, 'user');
     } else {         // Print default user pictures (use theme version if available)
         $class .= " defaultuserpic";
         $src =  "$CFG->pixpath/u/$file.png";
@@ -4536,13 +4530,10 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
         $size = 35;
     }
     if ($group->picture) {  // Print custom group picture
-        if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $output .= '<img class="grouppicture" src="'.$CFG->wwwroot.'/user/pixgroup.php/'.$group->id.'/'.$file.'.jpg"'.
-                       ' style="width:'.$size.'px;height:'.$size.'px;" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
-        } else {
-            $output .= '<img class="grouppicture" src="'.$CFG->wwwroot.'/user/pixgroup.php?file=/'.$group->id.'/'.$file.'.jpg"'.
-                       ' style="width:'.$size.'px;height:'.$size.'px;" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
-        }
+        require_once($CFG->libdir.'/filelib.php');
+        $grouppictureurl = get_file_url($group->id.'/'.$file.'.jpg', null, 'usergroup');
+        $output .= '<img class="grouppicture" src="'.$grouppictureurl.'"'.
+            ' style="width:'.$size.'px;height:'.$size.'px;" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
     }
     if ($link or has_capability('moodle/site:accessallgroups', $context)) {
         $output .= '</a>';
