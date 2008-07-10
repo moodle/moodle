@@ -37,7 +37,7 @@ class block_admin_tree extends block_base {
         global $CFG;
         $strfolderopened = s(get_string('folderopened'));
 
-        $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a href="#" onclick="toggle(\''.$this->divcounter.'\');return false">';
+        $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a href="#" onclick="menu_toggle(\''.$this->divcounter.'\');return false">';
         $this->tempcontent .= '<span id="vh_div'.$this->divcounter.'indicator"><img src="'.$CFG->pixpath.'/i/open.gif" alt="'.$strfolderopened.'" /></span> ';
         $this->tempcontent .= $visiblename.'</a></div><div id="vh_div'.$this->divcounter.'">'."\n";
         $this->currentdepth++;
@@ -145,7 +145,7 @@ for (var i=1; i<=vh_numdivs; i++) {
     parkplatz[i] = null;
 }
 
-function toggle(i) {
+function menu_toggle(i) {
     i = parseInt(i);
     if (parkplatz[i] === null) {
         collapse(i);
