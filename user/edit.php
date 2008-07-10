@@ -166,6 +166,7 @@
         if ($email_changed && $CFG->emailchangeconfirmation) {
             $temp_user = fullclone($user);
             $temp_user->email = $usernew->preference_newemail;
+            $temp_user->emailstop = NULL;
 
             $a = new stdClass();
             $a->url = $CFG->wwwroot . '/user/emailupdate.php?key=' . $usernew->preference_newemailkey . '&id=' . $user->id;
@@ -175,7 +176,7 @@
             $emailupdatemessage = get_string('auth_emailupdatemessage', 'auth', $a);
             $emailupdatetitle = get_string('auth_emailupdatetitle', 'auth', $a);
 
-            if(!$mail_results = email_to_user($temp_user, get_admin(), $emailupdatetitle, $emailupdatemessage)) {
+            if (!$mail_results = email_to_user($temp_user, get_admin(), $emailupdatetitle, $emailupdatemessage)) {
                 die("could not send email!");
             }
         }
