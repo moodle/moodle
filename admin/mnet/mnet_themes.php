@@ -73,5 +73,5 @@
         }
     }
     $adminroot = admin_get_root();
-    require_once('./mnet_themes.html');
+    require('./mnet_themes.html');
 ?>
