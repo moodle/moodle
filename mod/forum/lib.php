@@ -5551,7 +5551,7 @@ function forum_remove_user_tracking($userid, $context) {
              break;
 
         case CONTEXT_COURSE:   // For a whole course
-             if ($course = $DB->get_record('course', array('id' => $context->instanceid), '', '', '', '', 'id')) {
+             if ($course = $DB->get_record('course', array('id' => $context->instanceid), 'id')) {
                 // find all forums in which this user has reading tracked
                 if ($forums = $DB->get_records_sql("SELECT f.id, cm.id as coursemodule
                                                  FROM {forum} f,

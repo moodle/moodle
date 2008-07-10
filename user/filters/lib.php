@@ -94,7 +94,7 @@ class user_filtering {
      * @return object filter
      */
     function get_field($fieldname, $advanced) {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $SITE;
 
         switch ($fieldname) {
             case 'username':    return new user_filter_text('username', get_string('username'), $advanced, 'username');

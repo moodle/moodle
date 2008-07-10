@@ -334,6 +334,7 @@ $string['enablerssfeeds'] = 'Enable RSS feeds';
 $string['enablestats'] = 'Enable statistics';
 $string['enabletrusttext'] = 'Enable Trusted Content';
 $string['encoding'] = 'Encoding';
+$string['enrolmultipleusers'] = 'Enrol the users';
 $string['environment'] = 'Environment';
 $string['environmenterrortodo'] = 'You must solve all the environmental problems (errors) found above before proceeding to install this Moodle version!';
 $string['environmenterrorupgrade'] = 'Warning: you should solve all the environmental problems (errors) found above before proceeding to upgrade this Moodle version!  Upgrading without fixing these requirements could cause problems such as data loss.  Are you sure you want to continue with the upgrade?';
