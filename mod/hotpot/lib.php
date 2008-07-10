@@ -1798,11 +1798,8 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
         // set the url base (first time only)
         if (!isset($this->baseurl)) {
             global $CFG;
-            if ($CFG->slasharguments) {
-                $this->baseurl = "$CFG->wwwroot/file.php/$this->filedir/";
-            } else {
-                $this->baseurl = "$CFG->wwwroot/file.php?file=/$this->filedir/";
-            }
+            require_once($CFG->libdir.'/filelib.php');
+            $this->baseurl = get_file_url($this->filedir .'/');
         }
         return $this->baseurl;
     }

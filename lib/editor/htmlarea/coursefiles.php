@@ -755,17 +755,13 @@ function displaydir ($wdir) {
                 print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\";return set_rename('$file');\" />");
             }
             echo "<td align=\"left\" nowrap=\"nowrap\">";
-            if ($CFG->slasharguments) {
-                $ffurl = "/file.php/$id$fileurl";
-            } else {
-                $ffurl = "/file.php?file=/$id$fileurl";
-            }
+            $ffurl = get_file_url($id$fileurl);
             link_to_popup_window ($ffurl, "display",
                                   "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfile\" />",
                                   480, 640);
             $file_size = filesize($filename);
 
-            echo "<a onclick=\"return set_value(info = {url: '".$CFG->wwwroot.$ffurl."',";
+            echo "<a onclick=\"return set_value(info = {url: '".$ffurl."',";
             echo " isize: '".$file_size."', itype: '".$imgtype."', iwidth: '".$imgwidth."',";
             echo " iheight: '".$imgheight."', imodified: '".$filedate."' })\" href=\"#\">$file</a>";
             echo "</td>\n";

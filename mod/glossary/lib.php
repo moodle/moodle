@@ -1252,11 +1252,7 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
             $strattachment = get_string("attachment", "glossary");
             foreach ($files as $file) {
                 $icon = mimeinfo("icon", $file);
-                if ($CFG->slasharguments) {
-                    $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
-                } else {
-                    $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
-                }
+                $ffurl = get_file_url("$filearea/$file");
                 $image = "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"\" />";
 
                 if ($return == "html") {

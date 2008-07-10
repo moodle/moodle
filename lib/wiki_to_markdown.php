@@ -264,24 +264,16 @@ class WikiToMarkdown {
     $line = eregi_replace( " ([a-zA-Z]+):([0-9]+)\(([^)]+)\)",
        " [\\3](".$CFG->wwwroot."/mod/\\1/view.php?id=\\2) ", $line );
 
+    require_once($CFG->libdir.'/filelib.php');
+    $coursefileurl = get_file_url($this->courseid);
+
     // Replace picture resource link 
-    if ($CFG->slasharguments) {
-      $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
-        "![\\3]($CFG->wwwroot/file.php/$this->courseid/\\1\\2)", $line );
-    } else {
-      $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
-        "![\\3]($CFG->wwwroot/file.php?file=/$this->courseid/\\1\\2)", $line );
-    }
+    $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
+            "![\\3](".$coursefileurl."/\\1\\2)", $line );
 
     // Replace file resource link
-    if ($CFG->slasharguments) {
-      $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
-        "[\\2]($CFG->wwwroot/file.php/$this->courseid/\\1)", $line );
-    } else {
-      $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
-        "[\\2]($CFG->wwwroot/file.php?file=/$this->courseid/\\1)", $line );
-    }
- 
+    $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
+            "[\\2](".$coursefileurl."/\\1)", $line );
 
     return $line;
   }

@@ -264,18 +264,15 @@
                         "workshop")."\" onclick=\"getElementById('editform').action.value='removeattachments';
                         getElementById('editform').submit();\"/></div></td></tr>\n";
                     $n = 1;
+                    require_once($CFG->libdir .'/filelib.php');
                     foreach ($files as $file) {
                         $icon = mimeinfo("icon", $file);
-                        if ($CFG->slasharguments) {
-                            $ffurl = "file.php/$filearea/$file";
-                        } else {
-                            $ffurl = "file.php?file=/$filearea/$file";
-                        }
+                        $ffurl = get_file_url("$filearea/$file");
                         // removed target=\"uploadedfile\" 
                         // as it does not validate MDL_7861
                         echo "<tr><td>".get_string("attachment", "workshop")." $n: <img src=\"$CFG->pixpath/f/$icon\"
                             class=\"icon\" alt=\"".get_string('file')."\" />".
-                            "&nbsp;<a href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>\n";
+                            "&nbsp;<a href=\"$ffurl\">$file</a></td></tr>\n";
                     }
                 } else {
                     echo "<tr><td><b>".get_string("noattachments", "workshop")."</b></td></tr>\n";

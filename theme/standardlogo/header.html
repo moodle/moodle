@@ -23,17 +23,11 @@
       } else if (file_exists($CFG->dirroot.'/logo.gif')) {
           $standardlogo = $CFG->httpswwwroot.'/logo.gif';
       } else if (file_exists($CFG->dataroot.'/1/logo.jpg')) {
-          if (empty($CFG->slasharguments)) {
-              $standardlogo = $CFG->httpswwwroot.'/file.php?file=/1/logo.jpg';
-          } else {
-              $standardlogo = $CFG->httpswwwroot.'/file.php/1/logo.jpg';
-          }
+          require_once($CFG->libdir.'/filelib.php');
+          $standardlogo = get_file_url('1/logo.jpg', null, 'httpscoursefile');
       } else if (file_exists($CFG->dataroot.'/1/logo.gif')) {
-          if (empty($CFG->slasharguments)) {
-              $standardlogo = $CFG->httpswwwroot.'/file.php?file=/1/logo.gif';
-          } else {
-              $standardlogo = $CFG->httpswwwroot.'/file.php/1/logo.gif';
-          }
+          require_once($CFG->libdir.'/filelib.php');
+          $standardlogo = get_file_url('1/logo.gif', null, 'httpscoursefile');
       } else {
           $standardlogo = $CFG->httpsthemewww .'/'. current_theme().'/logo.gif';
       }

@@ -57,13 +57,7 @@
     if (is_url($lesson->mediafile)) {
         $fullurl = $lesson->mediafile;        
     } else {
-        // get the full url to the file while taking into consideration $CFG->slasharguments    
-        if ($CFG->slasharguments) {
-            $relativeurl = "/file.php/{$course->id}/{$lesson->mediafile}";
-        } else {
-            $relativeurl = "/file.php?file=/{$course->id}/{$lesson->mediafile}";
-        }
-        $fullurl = "$CFG->wwwroot$relativeurl";
+        $fullurl = get_file_url($course->id .'/'. $lesson->mediafile);
     }
 
     // find the correct type and print it out

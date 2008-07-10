@@ -1,5 +1,9 @@
 <?php // $Id$
       // This script fetches files from the dataroot directory
+      //
+      // You should use the get_file_url() function, available in lib/filelib.php, to link to file.php.
+      // This ensures proper formatting and offers useful options.
+      //
       // Syntax:      file.php/courseid/dir/dir/dir/filename.ext
       //              file.php/courseid/dir/dir/dir/filename.ext?forcedownload=1 (download instead of inline)
       //              file.php/courseid/dir (returns index.html from dir)

@@ -2858,18 +2858,15 @@ function workshop_print_submission($workshop, $submission) {
         $filearea = workshop_file_area_name($workshop, $submission);
         if ($basedir = workshop_file_area($workshop, $submission)) {
             if ($files = get_directory_list($basedir)) {
+                require_once($CFG->libdir .'/filelib.php');
                 foreach ($files as $file) {
                     $icon = mimeinfo("icon", $file);
-                    if ($CFG->slasharguments) {
-                        $ffurl = "file.php/$filearea/$file";
-                    } else {
-                        $ffurl = "file.php?file=/$filearea/$file";
-                    }
+                    $ffurl = get_file_url("$filearea/$file");
                     echo "<tr><td><b>".get_string("attachment", "workshop")." $n:</b> \n";
                     // removed target=\"uploadedfile\" as it does not validate
                     // MDL-7861
                     echo "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"".get_string('file')."\" />".
-                        "&nbsp;<a href=\"$CFG->wwwroot/$ffurl\">$file</a></td></tr>";
+                        "&nbsp;<a href=\"$ffurl\">$file</a></td></tr>";
                     $n++;
                 }
             }

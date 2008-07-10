@@ -730,13 +730,10 @@ function exercise_print_submission_title($exercise, $submission) {
     if ($basedir = exercise_file_area($exercise, $submission)) {
         if (list($file) = get_directory_list($basedir)) {
             $icon = mimeinfo("icon", $file);
-            if ($CFG->slasharguments) {
-                $ffurl = "file.php/$filearea/$file";
-            } else {
-                $ffurl = "file.php?file=/$filearea/$file";
-            }
+            require_once($CFG->libdir .'/filelib.php');
+            $ffurl = get_file_url("$filearea/$file");
             return "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"".get_string('file')."\" />".
-                "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$submission->title</a>";
+                "&nbsp;<a target=\"uploadedfile\" href=\"$ffurl\">$submission->title</a>";
         }
     }
 }

@@ -1503,12 +1503,10 @@ function get_question_image($question) {
         if (substr(strtolower($question->image), 0, 7) == 'http://') {
             $img .= $question->image;
 
-        } else if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $img .= "$CFG->wwwroot/file.php/$coursefilesdir/$question->image";
-
         } else {
-            $img .= "$CFG->wwwroot/file.php?file=/$coursefilesdir/$question->image";
-        }
+            require_once($CFG->libdir .'/filelib.php');
+            $img = get_file_url("$courseid/{$question->image}");
+        }      
     }
     return $img;
 }
@@ -2290,12 +2288,8 @@ function question_url_check($url){
  */
 function question_replace_file_links_in_html($html, $fromcourseid, $tocourseid, $url, $destination, &$changed){
     global $CFG;
-    if ($CFG->slasharguments) {        // Use this method if possible for better caching
-        $tourl = "$CFG->wwwroot/file.php/$tocourseid/$destination";
-
-    } else {
-        $tourl = "$CFG->wwwroot/file.php?file=/$tocourseid/$destination";
-    }
+    require_once($CFG->libdir .'/filelib.php');
+    $tourl = get_file_url("$tocourseid/$destination");
     $fromurl = question_file_links_base_url($fromcourseid).preg_quote($url, '!');
     $searchfor = array('!(<\s*(a|img)\s[^>]*(href|src)\s*=\s*")'.$fromurl.'(")!i',
                    '!(<\s*(a|img)\s[^>]*(href|src)\s*=\s*\')'.$fromurl.'(\')!i');

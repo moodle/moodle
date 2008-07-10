@@ -42,12 +42,8 @@ class data_field_file extends data_field_base {
             $src         = empty($contents[0]) ? '' : $contents[0];
             $name        = empty($contents[1]) ? $src : $contents[1];
             $displayname = empty($contents[1]) ? '' : $contents[1];
-            $path = $this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
-            if ($CFG->slasharguments) {
-                $source = $CFG->wwwroot.'/file.php/'.$path;
-            } else {
-                $source = $CFG->wwwroot.'/file.php?file=/'.$path;
-            }
+            require_once($CFG->libdir.'/filelib.php');
+            $source = get_file_url($this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid);
         } else {
             $src = '';
             $name = '';

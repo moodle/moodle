@@ -405,6 +405,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
     function quiz_export_prepare_questions($questions, $quizid, $courseid, $shuffleanswers = null) {
         global $CFG;
         // add the answers to the questions and format the image property
+        require_once($CFG->libdir.'/filelib.php');
         foreach ($questions as $key=>$question) {
             $questions[$key] = get_question_data($question);
             $questions[$key]->courseid = $courseid;
@@ -420,11 +421,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
 
                 if ($localfile) {
                     // create the http url that the player will need to access the file
-                    if ($CFG->slasharguments) {        // Use this method if possible for better caching
-                        $questions[$key]->mediaurl = "$CFG->wwwroot/file.php/$question->image";
-                    } else {
-                        $questions[$key]->mediaurl = "$CFG->wwwroot/file.php?file=$question->image";
-                    } 
+                    $questions[$key]->mediaurl = get_file_url($question->image);
                 } else {
                     $questions[$key]->mediaurl = $question->image;
                 }
@@ -908,10 +905,9 @@ function xml_entitize(&$collection) {
         global $CFG;
         if (substr(strtolower($file), 0, 7) == 'http://') {
             $url = $file;
-        } else if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $url = "{$CFG->wwwroot}/file.php/$courseid/{$file}";
         } else {
-            $url = "{$CFG->wwwroot}/file.php?file=/$courseid/{$file}";
+            require_once($CFG->libdir.'/filelib.php');
+            $url = get_file_url("$courseid/$file");
         }
         return $url;
     }

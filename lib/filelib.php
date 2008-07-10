@@ -9,20 +9,35 @@ function get_file_url($path, $options=null, $type='coursefile') {
 
     // type of file
     switch ($type) {
-        case 'coursefile':
+       case 'questionfile':
+            $url = $CFG->wwwroot."/question/exportfile.php";
+            break;
+       case 'rssfile':
+            $url = $CFG->wwwroot."/rss/file.php";
+            break;
+        case 'user':
+            $url = $CFG->wwwroot."/user/pix.php";
+            break;
+        case 'usergroup':
+            $url = $CFG->wwwroot."/user/pixgroup.php";
+            break;
+        case 'httpscoursefile':
+            $url = $CFG->httpswwwroot."/file.php";
+            break;
+         case 'coursefile':
         default:
-            $url = "$CFG->wwwroot/file.php";
+            $url = $CFG->wwwroot."/file.php";
     }
 
     if ($CFG->slasharguments) {
         $parts = explode('/', $path);
         $parts = array_map('rawurlencode', $parts);
         $path  = implode('/', $parts);
-        $ffurl = "$CFG->wwwroot/file.php/$path";
+        $ffurl = $url.'/'.$path;
         $separator = '?';
     } else {
-        $path = rawurlencode("/$path");
-        $ffurl = "$CFG->wwwroot/file.php?file=$path";
+        $path = rawurlencode('/'.$path);
+        $ffurl = $url.'?file='.$path;
         $separator = '&amp;';
     }
 

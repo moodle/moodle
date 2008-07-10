@@ -195,11 +195,8 @@ function extract_data($pages, $courseid, $lessonname, $modname) {
     
     $imagedir = $CFG->dataroot.'/'.$courseid.'/moddata/'.$modname;
     
-    if ($CFG->slasharguments) {
-        $imagelink = $CFG->wwwroot.'/file.php/'.$courseid.'/moddata/'.$modname;
-    } else {
-        $imagelink = $CFG->wwwroot.'/file.php?file=/'.$courseid.'/moddata/'.$modname;
-    }
+    require_once($CFG->libdir .'/filelib.php');
+    $imagelink = get_file_url($courseid.'/moddata/'.$modname);
     
     // try to make a unique subfolder to store the images
     $lessonname = str_replace(' ', '_', $lessonname); // get rid of spaces
