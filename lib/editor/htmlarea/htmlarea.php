@@ -116,6 +116,12 @@ HTMLArea.RE_tagName = /(<\/|<)\s*([^ \t\n>]+)/ig;
 HTMLArea.RE_doctype = /(<!doctype((.|\n)*?)>)\n?/i;
 HTMLArea.RE_head    = /<head>((.|\n)*?)<\/head>/i;
 HTMLArea.RE_body    = /<body>((.|\n)*?)<\/body>/i;
+HTMLArea.RE_blocktag = /^(h1|h2|h3|h4|h5|h6|p|address|pre)$/i;
+HTMLArea.RE_junktag = /^\/($|\/)/;
+// Hopefully a complete list of tags that MSIEs parser will consider
+// as possible content tags. Retrieved from
+// http://www.echoecho.com/htmlreference.htm
+HTMLArea.RE_msietag  = /^\/?(a|abbr|acronym|address|applet|area|b|base|basefont|bdo|bgsound|big|blink|blockquote|body|br|button|caption|center|cite|code|col|colgroup|comment|dd|del|dfn|dir|div|dl|dt|em|embed|fieldset|font|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|hr|html|i|iframe|ilayer|img|input|ins|isindex|kbd|keygen|label|layer|legend|li|link|map|marquee|menu|meta|multicol|nobr|noembed|noframes|nolayer|noscript|object|ol|optgroup|option|p|param|plaintext|pre|q|s|samp|script|select|server|small|spacer|span|strike|strong|style|sub|sup|table|tbody|td|textarea|tfoot|th|thead|title|tr|tt|u|ul|var)$/i
 
 HTMLArea.Config = function () {
     this.version = "3.0";
@@ -998,8 +1004,10 @@ HTMLArea.loadStyle("htmlarea.css");
 // The following function is a slight variation of the word cleaner code posted
 // by Weeezl (user @ InteractiveTools forums).
 HTMLArea.prototype._wordClean = function() {
+    this._unnestBlocks();
+
     var D = this.getInnerHTML();
-    if (D.indexOf("class=Mso") >= 0 || D.indexOf("mso") >= 0 || D.indexOf("Mso") >= 0) {
+    if (/[Mm]so/.test(D)) {
 
         // make one line
         D = D.replace(/\r\n/g, '\[br\]').
@@ -1031,6 +1039,7 @@ HTMLArea.prototype._wordClean = function() {
         D = D.replace(/<\?xml:[^>]*>/g, '').       // Word xml
             replace(/<\/?st1:[^>]*>/g,'').     // Word SmartTags
             replace(/<\/?[a-z]\:[^>]*>/g,'').  // All other funny Word non-HTML stuff
+            replace(/<\/?personname[^>]*>/gi,'').
             replace(/<\/?font[^>]*>/gi,'').    // Disable if you want to keep font formatting
             replace(/<\/?span[^>]*>/gi,' ').
             replace(/<\/?div[^>]*>/gi,' ').
@@ -1087,6 +1096,36 @@ HTMLArea.prototype._wordClean = function() {
         this.updateToolbar();
     }
 };
+
+HTMLArea.prototype._unnestBlockWalk = function(node, unnestingParent) {
+    if (HTMLArea.RE_blocktag.test(node.nodeName)) {
+	if (unnestingParent) {
+	    if (node.nextSibling) {
+		var splitNode = this._doc.createElement(unnestingParent.nodeName.toLowerCase());
+		while (node.nextSibling) {
+		    splitNode.appendChild(node.nextSibling);
+		}
+		unnestingParent.parentNode.insertBefore(splitNode, unnestingParent.nextSibling);
+	    }
+	    unnestingParent.parentNode.insertBefore(node, unnestingParent.nextSibling);
+	    return;
+	}
+	else if (node.firstChild) {
+	    this._unnestBlockWalk(node.firstChild, node);
+	}
+    } else {
+	if (node.firstChild) {
+	    this._unnestBlockWalk(node.firstChild, null);
+	}
+    }
+    if (node.nextSibling) {
+	this._unnestBlockWalk(node.nextSibling, unnestingParent);
+    }
+}
+
+HTMLArea.prototype._unnestBlocks = function() {
+    this._unnestBlockWalk(this._doc.documentElement, null);
+}
 
 HTMLArea.prototype.forceRedraw = function() {
     this._doc.body.style.visibility = "hidden";
@@ -2506,28 +2545,9 @@ HTMLArea.htmlEncode = function(str) {
     // JS compressors (well, at least mine fails.. ;)
     return str;
 };
-// Moodle hack for special tags. Note that in IE you cannot start
-// content with special tag ( innerHTML issue ).
-HTMLArea.isSpecialTag = function (el) {
-    var tags = new Array();
-    tags[0] = /^\/?(nolink|lang|tex|algebra|math|mi|mn|mo|mtext|mspace)$/i;
-    tags[1] = /^\/?(ms|mrow|mfrac|msqrt|mroot|mstyle|merror|mpadded|mphantom)$/i;
-    tags[2] = /^\/?(mfenced|msub|msup|msubsup|munder|mover|munderover|mmultiscripts)$/i;
-    tags[3] = /^\/?(mtable|mtr|mtd|maligngroup|malignmark|maction|cn|ci|apply|reln)$/i;
-    tags[4] = /^\/?(fn|interval|inverse|sep|condition|declare|lambda|compose|ident)$/i;
-    tags[5] = /^\/?(quotient|exp|factorial|divide|max|min|minus|plus|power|rem|times)$/i;
-    tags[6] = /^\/?(root|gcd|and|or|xor|not|implies|forall|exists|abs|conjugate|eq|neq)$/i;
-    tags[7] = /^\/?(gt|lt|geq|leq|ln|log|int|diff|partialdiff|lowlimit|uplimit|bvar)$/i;
-    tags[8] = /^\/?(degree|set|list|union|intersect|in|notin|subset|prsubset|notsubset)$/i;
-    tags[9] = /^\/?(notprsubset|setdiff|sum|product|limit|tendsto|mean|sdev|variance|median)$/i;
-    tags[10] = /^\/?(mode|moment|vector|matrix|matrixrow|determinant|transpose|selector)$/i;
-    tags[11] = /^\/?(annotation|semantics|annotation-xml)$/i;
-    for ( var i = 0; i < tags.length; i++ ) {
-        if ( tags[i].test(el.tagName.toLowerCase()) ) {
-            return true;
-        }
-    }
-    return false;
+
+HTMLArea.isStandardTag = function (el) {
+    return HTMLArea.RE_msietag.test(el.tagName);
 };
 HTMLArea.isSingleTag = function (el) {
     var re = /^(br|hr|img|input|link|meta|param|embed|area)$/i;
@@ -2543,6 +2563,9 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
         var closed;
         var i;
         var root_tag = (root.nodeType == 1) ? root.tagName.toLowerCase() : '';
+	if (HTMLArea.RE_junktag.test(root_tag)) {
+	    return '';
+	}
         if (HTMLArea.is_ie && root_tag == "head") {
             if (outputRoot)
                 html += "<head>";
@@ -2607,7 +2630,7 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
             html += HTMLArea.getHTML(i, true, editor);
         }
         if (outputRoot && !closed) {
-            if ( HTMLArea.is_ie && HTMLArea.isSpecialTag(root) ) {
+            if ( HTMLArea.is_ie && !HTMLArea.isStandardTag(root) ) {
                 html += '';
             } else {
                 html += "</" + root.tagName.toLowerCase() + ">";
