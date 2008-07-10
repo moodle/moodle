@@ -15,7 +15,7 @@
  */
 require_once ("$CFG->libdir/xmlize.php");
 
-class qformat_blackboard_6 extends qformat_default {
+class qformat_blackboard_six extends qformat_default {
     function provide_import() {
         return true;
     }

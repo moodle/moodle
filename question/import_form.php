@@ -15,9 +15,9 @@ class question_import_form extends moodleform {
         $mform->addElement('header','fileformat', get_string('fileformat','quiz'));
         $fileformatnames = get_import_export_formats('import');
         $radioarray = array();
-        foreach ($fileformatnames as $id => $fileformatname) {
-            $radioelement = &MoodleQuickForm::createElement('radio','format','',$fileformatname,$id );
-            $radioelement->setHelpButton(array("format{$id}",$fileformatname,'quiz'));
+        foreach ($fileformatnames as $shortname => $fileformatname) {
+            $radioelement = &MoodleQuickForm::createElement('radio','format','',$fileformatname,$shortname );
+            $radioelement->setHelpButton(array("$shortname",$fileformatname,"qformat_$shortname"));
             $radioarray[] = $radioelement;
         }
         $mform->addGroup($radioarray,'format', '', array('<br />'), false);     
