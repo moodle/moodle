@@ -60,7 +60,7 @@ class description_qtype extends default_questiontype {
             $stredit = get_string('edit');
             $linktext = '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="'.$stredit.'" />';
             $editlink = link_to_popup_window('/question/question.php?id='.$question->id.$cmorcourseid,
-                                             $stredit, $linktext, 450, 550, $stredit, '', true);
+                                             'editquestion', $linktext, 450, 550, $stredit, '', true);
         }
 
         $questiontext = $this->format_text($question->questiontext, $question->questiontextformat, $cmoptions);
