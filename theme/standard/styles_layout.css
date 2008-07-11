@@ -16,6 +16,7 @@
   blog
   calendar
   course
+  group
   doc
   grades
   login
@@ -393,7 +394,6 @@ form.popupform label {
 }
 
 .arrow_button input {
-  width:2.4em;
   padding:0.3em;
   overflow:hidden;
 }
@@ -1084,6 +1084,10 @@ body#admin-modules table.generaltable td.c0
 
 #admin-report-courseoverview-index .invisiblefieldset {
   display: block;
+}
+
+#add, #remove{
+    text-align:center;
 }
 
 /***
@@ -3469,14 +3473,4 @@ wikiadminactions {
 .workshopuploadform,
 .workshopkey {
   text-align:center;
-}
-#add, #remove{
-    width:100px; 
-    height:35px 
-}
-#add{
-    text-align:left;
-}
-#remove{
-    text-align:right;
 }
