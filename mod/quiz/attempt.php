@@ -75,7 +75,7 @@
 /// Add all questions that are on the submitted form
     if ($submittedquestionids) {
         $submittedquestionids = explode(',', $submittedquestionids);
-        $questionids = $questionids + $submittedquestionids;
+        $questionids = array_unique(array_merge($questionids, $submittedquestionids));
     } else {
         $submittedquestionids = array();
     }
@@ -116,7 +116,8 @@
         unset($responses->forcenewattempt);
 
     /// Extract the responses. $actions will be an array indexed by the questions ids.
-        $actions = question_extract_responses($attemptobj->get_questions(), $responses, $event);
+        $actions = question_extract_responses($attemptobj->get_questions($questionids),
+                $responses, $event);
 
     /// Process each question in turn
         $success = true;
