@@ -673,6 +673,9 @@ body#admin-roles-manage table.generalbox {
   float: none;
 }
 
+#add, #remove{
+    text-align:center;
+}
 
 /***
  *** Blocks
