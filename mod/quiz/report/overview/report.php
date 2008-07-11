@@ -214,19 +214,20 @@ class quiz_overview_report extends quiz_default_report {
             $regradealllabel = get_string('regradeall', 'quiz_overview');
         }
         
-        
-        echo '<div class="mdl-align">';
-        echo '<form action="'.$reporturl->out(true).'">';
-        echo '<div>';
-        echo $reporturl->hidden_params_out(array(), 0, $displayoptions);
-        echo '<input type="submit" name="regradeall" value="'.$regradealllabel.'"/>';
-        echo '<input type="submit" name="regradealldry" value="'.$regradealldrylabel.'"/>';
-        if ($countregradeneeded){
-            echo '<input type="submit" name="regradealldrydo" value="'.$regradealldrydolabel.'"/>';
+        if (has_capability('mod/quiz:grade', $this->context)){
+            echo '<div class="mdl-align">';
+            echo '<form action="'.$reporturl->out(true).'">';
+            echo '<div>';
+            echo $reporturl->hidden_params_out(array(), 0, $displayoptions);
+            echo '<input type="submit" name="regradeall" value="'.$regradealllabel.'"/>';
+            echo '<input type="submit" name="regradealldry" value="'.$regradealldrylabel.'"/>';
+            if ($countregradeneeded){
+                echo '<input type="submit" name="regradealldrydo" value="'.$regradealldrydolabel.'"/>';
+            }
+            echo '</div>';
+            echo '</form>';
+            echo '</div>';
         }
-        echo '</div>';
-        echo '</form>';
-        echo '</div>';
 
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)){
             // Print information on the grading method and whether we are displaying

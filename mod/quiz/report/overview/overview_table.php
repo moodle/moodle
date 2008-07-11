@@ -92,7 +92,9 @@ class quiz_report_overview_table extends table_sql {
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
                         get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
-                echo '<input type="submit" name="regrade" value="'.get_string('regradeselected', 'quiz_overview').'"/>';
+                if (has_capability('mod/quiz:grade', $this->context)){
+                    echo '<input type="submit" name="regrade" value="'.get_string('regradeselected', 'quiz_overview').'"/>';
+                }
                 echo '<input type="submit" onclick="return confirm(\''.$strreallydel.'\');" name="delete" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
                 echo '</div>';
                 // Close form
