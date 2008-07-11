@@ -23,8 +23,8 @@
   <STATEMENTS>
     <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display">
       <SENTENCES>
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('label', 'add', 'quiz', 'name')" />
-        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('label', 'update', 'quiz', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('label', 'add', 'label', 'name')" />
+        <SENTENCE TEXT="(module, action, mtable, field) VALUES ('label', 'update', 'label', 'name')" />
       </SENTENCES>
     </STATEMENT>
   </STATEMENTS>
