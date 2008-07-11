@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/report/overview/db" VERSION="20080706" COMMENT="XMLDB file for Moodle mod/quiz/report/overview"
+<XMLDB PATH="mod/quiz/report/overview/db" VERSION="20080711" COMMENT="XMLDB file for Moodle mod/quiz/report/overview"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -8,9 +8,10 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="questionid"/>
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="attemptid"/>
-        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="questionid" NEXT="grade"/>
-        <FIELD NAME="grade" TYPE="number" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" PREVIOUS="attemptid" NEXT="regraded"/>
-        <FIELD NAME="regraded" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="set to 0 if element has just been regraded. Set to 1 if element has been marked as needing regrading." PREVIOUS="grade" NEXT="timemodified"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="questionid" NEXT="newgrade"/>
+        <FIELD NAME="newgrade" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" PREVIOUS="attemptid" NEXT="oldgrade"/>
+        <FIELD NAME="oldgrade" TYPE="number" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" PREVIOUS="newgrade" NEXT="regraded"/>
+        <FIELD NAME="regraded" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="set to 0 if element has just been regraded. Set to 1 if element has been marked as needing regrading." PREVIOUS="oldgrade" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="regraded"/>
       </FIELDS>
       <KEYS>
