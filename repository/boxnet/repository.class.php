@@ -72,7 +72,7 @@ class repository_boxnet extends repository{
                 $fileids   = $tree['file_id'];
                 foreach ($filenames as $n=>$v){
                     $list[] = array('title'=>$v, 'size'=>0, 'date'=>'',
-                            'url'=>'http://box.net/api/1.0/download/'.$this->options['auth_token'].'/'.$fileids[$n],
+                            'source'=>'http://box.net/api/1.0/download/'.$this->options['auth_token'].'/'.$fileids[$n],
                             'thumbnail'=>$CFG->pixpath.'/i/files.gif');
                 }
                 $this->listing = $list;
@@ -115,7 +115,7 @@ class repository_boxnet extends repository{
             // in box.net, so we need print a login link in this
             // function instead a login screen.
 
-            if($this->ticket && ($this->options['auth_token'] == '')){
+            if($this->ticket && empty($this->options['auth_token'])) {
                 $str = '';
                 $str .= '<form id="moodle-repo-login">';
                 $str .= '<input type="hidden" name="ticket" value="'.$this->ticket.'" />';

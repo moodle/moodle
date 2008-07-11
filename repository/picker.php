@@ -1,4 +1,10 @@
 <?php
+/*******************************************************\
+
+  This is page is deprecated, we are developing ajax
+  File Picker in the future. This page won't work.
+
+\*******************************************************/
 require_once('../config.php');
 require_once('lib.php');
 $id        = required_param('id', PARAM_INT);
@@ -23,6 +29,7 @@ if(is_file($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository
     <link href="style.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
+<h1>This page is deprecated, please access ajax.php.</h1>
     <table border="0" cellspacing="10" cellpadding="10">
     <tbody>
         <tr>
