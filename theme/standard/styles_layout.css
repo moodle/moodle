@@ -429,7 +429,6 @@ form.popupform label {
 }
 
 .arrow_button input {
-  width:2.4em;
   padding:0.3em;
   overflow:hidden;
 }
@@ -2154,14 +2153,7 @@ body#group-index #groupeditform {
 }
 
 #add, #remove{
-    width:100px; 
-    height:35px 
-}
-#add{
-    text-align:left;
-}
-#remove{
-    text-align:right;
+    text-align:center;
 }
 
 /***
