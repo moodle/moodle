@@ -36,6 +36,23 @@
 
     $attemptobj = new quiz_attempt($attemptid);
 
+/// Because IE is buggy (see http://www.peterbe.com/plog/button-tag-in-IE) we cannot
+/// do the quiz navigation buttons as <button type="submit" name="page" value="N">Caption</button>.
+/// Instead we have to do them as <input type="submit" name="gotopageN" value="Caption"/> -
+/// at lest that seemed like the least horrible work-around to me. Therefore, we need to
+/// intercept gotopageN parameters here, and adjust $pgae accordingly.
+    if (optional_param('gotosummary', false, PARAM_BOOL)) {
+        $page = -1;
+    } else {
+        $numpagesinquiz = $attemptobj->get_num_pages();
+        for ($i = 0; $i < $numpagesinquiz; $i++) {
+            if (optional_param('gotopage' . $i, false, PARAM_BOOL)) {
+                $page = $i;
+                break;
+            }
+        }
+    }
+
 /// We treat automatically closed attempts just like normally closed attempts
     if ($timeup) {
         $finishattempt = 1;
@@ -275,9 +292,17 @@ if ($page == -1) {
     }
     echo '<div>';
 
-/// Print the navigation panel if required
-    // TODO!!!
-    quiz_print_navigation_panel($page, $attemptobj->get_num_pages());
+/// Print the navigation panel in a left column.
+    print_container_start();
+    echo '<div id="left-column">';
+    $attemptobj->print_navigation_panel('quiz_attempt_nav_panel', $page);
+    echo '</div>';
+    print_container_end();
+
+/// Start the main column.
+    echo '<div id="middle-column">';
+    print_container_start();
+    echo skip_main_destination();
 
 /// Print all the questions
     foreach ($attemptobj->get_question_ids($page) as $id) {
@@ -285,13 +310,13 @@ if ($page == -1) {
     }
 
 /// Print a link to the next page.
-    echo "<div class=\"submitbtns mdl-align\">\n";
+    echo '<div class="submitbtns">';
     if ($attemptobj->is_last_page($page)) {
-        $nextpage = -1;
+        $nextpage = 'gotosummary';
     } else {
-        $nextpage = $page + 1;
+        $nextpage = 'gotopage' . ($page + 1);
     }
-    echo link_arrow_right(get_string('next'), 'javascript:navigate(' . $nextpage . ')');
+    echo '<input type="submit" name="' . $nextpage . '" value="' . get_string('next') . '" />';
     echo "</div>";
 
     // Finish the form
@@ -305,6 +330,13 @@ if ($page == -1) {
             implode(',', $attemptobj->get_question_ids($page)) . "\" />\n";
 
     echo "</form>\n";
+
+    // End middle column.
+    print_container_end();
+    echo '</div>';
+
+    echo '</div>';
+    echo '<div class="clearer"></div>';
 
     // Finish the page
     $accessmanager->show_attempt_timer_if_needed($attemptobj->get_attempt(), time());

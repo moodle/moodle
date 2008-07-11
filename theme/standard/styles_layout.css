@@ -2562,7 +2562,6 @@ body.notes .notesgroup {
   text-align: left;
   margin: 0 auto 1.8em auto;
   border: 1px solid;
-  clear: both;
 }
 .que .info {
   float: left;
@@ -3818,14 +3817,21 @@ body#mod-forum-search .introcontent {
 #passwordform {
   margin: 1em 0;
 }
-#mod-quiz-attempt #page {
+#mod-quiz-attempt #middle-column {
   text-align: center;
 }
 #mod-quiz-attempt .pagingbar {
   margin: 1.5em auto;
 }
-#mod-quiz-attempt #page {
-    text-align: center;
+#mod-quiz-attempt #middle-column {
+  margin: 0 0 0 12.5em;
+}
+#mod-quiz-attempt #left-column {
+  width: 11.5em;
+  float: left;
+}
+#mod-quiz-attempt .submitbtns {
+  text-align: left;
 }
 
 #mod-quiz-attempt #quiz-timer-outer {
@@ -4048,6 +4054,26 @@ table.quizreviewsummary td.cell {
   text-align: center;
   margin: 6px 0;
 }
+
+#quiznavigation input.qnbutton {
+  border: 1px solid grey;
+  background: white;
+  font-weight: bold;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 0.3em;
+  text-align: middle;
+}
+#quiznavigation input.qnbutton:hover {
+  background: silver;
+}
+#quiznavigation .qn_buttons {
+  margin: 0.2em;
+}
+#quiznavigation input.qnbutton.thispage {
+  background: #eee;
+}
+
 /***
  *** Modules: Resource
  ***/

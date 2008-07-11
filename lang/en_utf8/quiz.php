@@ -212,6 +212,7 @@ in course \'$a->coursename\'
 
 You can review this attempt at $a->quizreviewurl.';
 $string['emailnotifysubject'] = '$a->studentname has completed quiz $a->quizname';
+$string['endtest'] = 'End test ...';
 $string['errorinquestion'] = 'Error in question';
 $string['errormissingquestion'] = 'Error: The system is missing the question with id $a';
 $string['errornotnumbers'] = 'Error - answers must be numeric';
@@ -467,6 +468,7 @@ $string['quiznotavailable'] = 'The quiz will not be available until $a';
 $string['quizopen'] = 'Open the quiz';
 $string['quizopens'] = 'Quiz opens';
 $string['quizopenedon'] = 'This quiz opened at $a';
+$string['quiznavigation'] = 'Quiz navigation';
 $string['quizsettings'] = 'Quiz settings';
 $string['quiztimelimit'] = 'Time limit: $a';
 $string['quiztimer'] = 'Quiz Timer';

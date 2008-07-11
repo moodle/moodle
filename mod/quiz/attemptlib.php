@@ -165,7 +165,6 @@ class quiz {
      * @return object the question object with that id.
      */
     public function get_question($id) {
-        $this->ensure_question_loaded($id);
         return $this->questions[$id];
     }
 
@@ -254,7 +253,7 @@ class quiz {
      */
     public function attempt_url($attemptid) {
         global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $attemptid . '&amp;page=0';
+        return $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $attemptid;
     }
 
     /**
@@ -555,7 +554,7 @@ class quiz_attempt extends quiz {
      */
     public function attempt_url($questionid = 0, $page = -1) {
         global $CFG;
-        return $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $this->attempt->id . '&' .
+        return $CFG->wwwroot . '/mod/quiz/attempt.php?attempt=' . $this->attempt->id .
                 $this->page_and_question_fragment($questionid, $page);
     }
 
@@ -582,7 +581,7 @@ class quiz_attempt extends quiz {
         if (is_null($otherattemptid)) {
             $otherattemptid = $this->attempt->id;
         }
-        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $otherattemptid . '&' .
+        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $otherattemptid .
                 $this->page_and_question_fragment($questionid, $page, $showall);
     }
 
@@ -614,7 +613,11 @@ class quiz_attempt extends quiz {
         quiz_send_notification_emails($this->course, $this->quiz, $this->attempt,
                 $this->context, $this->cm);
     }
-    
+
+    public function print_navigation_panel($panelclass, $page) {
+        $panel = new quiz_attempt_nav_panel($this, $this->get_review_options(), $page);
+        $panel->display();
+    }
 
     // Private methods =====================================================================
     // Check that the state of a particular question is loaded, and if not throw an exception.
@@ -641,7 +644,7 @@ class quiz_attempt extends quiz {
      * @return string bit to add to the end of a URL.
      */
     private function page_and_question_fragment($questionid, $page, $showall = false) {
-        if ($page = -1) {
+        if ($page == -1) {
             if ($questionid) {
                 $page = $this->questions[$questionid]->_page;
             } else {
@@ -657,10 +660,9 @@ class quiz_attempt extends quiz {
         }
         $param = '';
         if ($showall) {
-            $param = 'showall=1';
-        } else if (/*$page > 1*/ true) {
-            // TODO currently needed by the navigate JS, but clean this up later.
-            $param = 'page=' . $page;
+            $param = '&showall=1';
+        } else if ($page > 0) {
+            $param = '&page=' . $page;
         }
         return $param . $fragment;
     }
@@ -720,6 +722,88 @@ class quiz_attempt_question_iterator implements Iterator {
 
     public function valid() {
         return $this->current() !== false;
+    }
+}
+
+abstract class quiz_nav_panel_base {
+    protected $attemptobj;
+    protected $options;
+    protected $page;
+
+    protected function __construct(quiz_attempt $attemptobj, $options, $page) {
+          $this->attemptobj = $attemptobj;
+          $this->options = $options;
+          $this->page = $page;
+    }
+
+    protected function get_question_buttons() {
+        $html = '<div class="qn_buttons">';
+        foreach ($this->attemptobj->get_question_iterator() as $number => $question) {
+            $html .= $this->get_question_button($number, $question);
+        }
+        $html .= '</div>';
+        return $html;
+    }
+
+    abstract protected function get_question_button($number, $question);
+
+    abstract protected function get_end_bits();
+
+    protected function get_question_state($question) {
+        $state = 'todo'; // TODO
+        if ($question->_page == $this->page) {
+            $state .= ' thispage';
+        }
+        return $state;
+    }
+
+    public function display() {
+        $strquiznavigation = get_string('quiznavigation', 'quiz');
+        $content = $this->get_question_buttons() . $this->get_end_bits();
+        print_side_block($strquiznavigation, $content, NULL, NULL, '', array('id' => 'quiznavigation'), $strquiznavigation);
+    }
+}
+
+class quiz_attempt_nav_panel extends quiz_nav_panel_base {
+    public function __construct(quiz_attempt $attemptobj, $options, $page) {
+        parent::__construct($attemptobj, $options, $page);
+    }
+
+    protected function get_question_button($number, $question) {
+        $questionsonpage = $this->attemptobj->get_question_ids($question->_page);
+        $onclick = '';
+        if ($question->id != reset($questionsonpage)) {
+            $onclick = ' onclick="form.action = form.action + \'#q' . $question->id .
+                '\'; return true;"';
+        }
+        return '<input type="submit" name="gotopage' . $question->_page .
+                '" value="' . $number . '" class="qnbutton ' .
+                $this->get_question_state($question) . '"' . $onclick . '/>';
+    }
+
+    protected function get_end_bits() {
+        return '<input type="submit" name="gotosummary" value="' .
+                get_string('endtest', 'quiz') . '" class="endtestlink" />';
+    }
+}
+
+class quiz_review_nav_panel extends quiz_nav_panel_base {
+    public function __construct(quiz_attempt $attemptobj, $options, $page) {
+        parent::__construct($attemptobj, $options, $page);
+    }
+
+    protected function get_question_button($number, $question) {
+        return '<a href="' . $this->attemptobj->review_url($question->id) .
+                '" class="qnbutton ' . $this->get_question_state($question) .
+                '">' . $number . '</a>';
+    }
+
+    protected function get_end_bits() {
+        $html = '<a href="' . $this->attemptobj->review_url(0, 0, true) . '">' .
+                get_string('showall', 'quiz') . '</a>';
+        $html .= '<a href="' . $this->attemptobj->view_url() . '">' .
+                get_string('finishreview', 'quiz') . '</a>';
+        return $html;
     }
 }
 ?>

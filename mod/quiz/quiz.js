@@ -6,16 +6,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-/* Used by quiz navigation links to force a form submit, and hence save the user's data. */
-function navigate(page) {
-    var ourForm = document.getElementById('responseform');
-    ourForm.action = ourForm.action.replace(/page=.*/, 'page=' + page);
-    if (ourForm.onsubmit) {
-        ourForm.onsubmit();
-    }
-    ourForm.submit();
-}
-
 /* Use this in an onkeypress handler, to stop enter submitting the forum unless you
 are actually on the submit button. Don't stop the user typing things in text areas. */
 function check_enter(e) {
