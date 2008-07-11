@@ -5,6 +5,7 @@ define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
 function get_file_url($path, $options=null, $type='coursefile') {
     global $CFG;
 
+    $path = str_replace('//', '/', $path);  
     $path = trim($path, '/'); // no leading and trailing slashes
 
     // type of file
