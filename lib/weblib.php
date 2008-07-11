@@ -6365,12 +6365,14 @@ function rebuildnolinktag($text) {
  * @param string $heading HTML for the heading. Can include full HTML or just
  *   plain text - plain text will automatically be enclosed in the appropriate
  *   heading tags.
- * @param  string $content HTML for the content
- * @param  array $list ?
- * @param  array $icons ?
- * @param  string $footer ?
- * @param  array $attributes ?
- * @param  string $title Plain text title, as embedded in the $heading.
+ * @param string $content HTML for the content
+ * @param array $list an alternative to $content, it you want a list of things with optional icons.
+ * @param array $icons optional icons for the things in $list.
+ * @param string $footer Extra HTML content that gets output at the end, inside a &lt;div class="footer">
+ * @param array $attributes an array of attribute => value pairs that are put on the
+ * outer div of this block. If there is a class attribute ' sideblock' gets appended to it. If there isn't
+ * already a class, class='sideblock' is used.
+ * @param string $title Plain text title, as embedded in the $heading.
  * @todo Finish documenting this function. Show example of various attributes, etc.
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array(), $title='') {
@@ -6394,11 +6396,9 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 
     print_side_block_start($heading, $attributes);
 
+    // The content.
     if ($content) {
         echo $content;
-        if ($footer) {
-            echo '<div class="footer">'. $footer .'</div>';
-        }
     } else {
         if ($list) {
             $row = 0;
@@ -6415,10 +6415,11 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
             }
             echo "</ul>\n";
         }
-        if ($footer) {
-            echo '<div class="footer">'. $footer .'</div>';
-        }
+    }
 
+    // Footer, if any.
+    if ($footer) {
+        echo '<div class="footer">'. $footer .'</div>';
     }
 
     print_side_block_end($attributes, $title);
