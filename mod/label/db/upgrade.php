@@ -32,6 +32,9 @@ function xmldb_label_upgrade($oldversion=0) {
 /// }
 
 //===== 1.9.0 upgrade line ======//
+    if ($oldversion < 2007101510) {
+        execute_sql("UPDATE {$CFG->prefix}log_display SET mtable = 'label' WHERE module = 'label'", 'false');
+    }
 
     return $result;
 }
