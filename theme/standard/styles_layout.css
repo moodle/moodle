@@ -3918,7 +3918,7 @@ table.quizreviewsummary td.cell {
 }
 
 #mod-quiz-report table#attempts,
-#mod-quiz-report table#commands,
+#mod-quiz-report div#commands,
 #mod-quiz-report table#itemanalysis
 {
   width: 80%;

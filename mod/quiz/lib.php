@@ -242,7 +242,7 @@ function quiz_cron () {
  * @param string $status 'all', 'finished' or 'unfinished' to control
  * @return an array of all the user's attempts at this quiz. Returns an empty array if there are none.
  */
-function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $includepreviews = false) {
+function quiz_get_user_attempts($quizid, $userid=0, $status = 'finished', $includepreviews = false) {
     global $DB;
     $status_condition = array(
         'all' => '',
@@ -253,8 +253,15 @@ function quiz_get_user_attempts($quizid, $userid, $status = 'finished', $include
     if (!$includepreviews) {
         $previewclause = ' AND preview = 0';
     }
+    $params=array($quizid);
+    if ($userid){
+        $userclause = ' AND userid = ?';
+        $params[]=$userid;
+    } else {
+        $userclause = '';
+    }
     if ($attempts = $DB->get_records_select('quiz_attempts',
-            "quiz = ? AND userid = ?" . $previewclause . $status_condition[$status], array($quizid, $userid),
+            "quiz = ?" .$userclause. $previewclause . $status_condition[$status], $params,
             'attempt ASC')) {
         return $attempts;
     } else {

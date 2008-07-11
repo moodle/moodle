@@ -39,19 +39,52 @@ function quiz_get_newgraded_states($attemptidssql, $idxattemptq = true, $fields=
         return array();
     }
     if ($idxattemptq){
-        $gradedstatesbyattempt = array();
-        foreach ($gradedstates as $gradedstate){
-            if (!isset($gradedstatesbyattempt[$gradedstate->attempt])){
-                $gradedstatesbyattempt[$gradedstate->attempt] = array();
-            }
-            $gradedstatesbyattempt[$gradedstate->attempt][$gradedstate->question] = $gradedstate;
-        }
-        return $gradedstatesbyattempt;
+        return quiz_report_index_by_keys($gradedstates, array('attempt', 'question'));
     } else {
         return $gradedstates;
     }
 }
+function quiz_report_index_by_keys($datum, $keys){
+    if (!$datum){
+        return $datum;
+    }
+    $key = array_shift($keys);
+    $datumkeyed = array();
+    foreach ($datum as $data){
+        if ($keys){
+            $datumkeyed[$data->{$key}][]= $data;
+        } else {
+            $datumkeyed[$data->{$key}]= $data;
+        }
+    }
+    if ($keys){
+        foreach ($datumkeyed as $datakey => $datakeyed){
+            $datumkeyed[$datakey] = quiz_report_index_by_keys($datakeyed, $keys);
+        }
+    }
+    return $datumkeyed;
+}
 
+function quiz_get_regraded_qs($attemptidssql, $limitfrom=0, $limitnum=0){
+    global $CFG, $DB;
+    if ($attemptidssql && is_array($attemptidssql)){
+        list($asql, $params) = $DB->get_in_or_equal($attemptidssql);
+        $regradedqsql = "SELECT qqr.* FROM " .
+                "{quiz_question_regrade} qqr " .
+                "WHERE qqr.attemptid $asql";
+        $regradedqs = $DB->get_records_sql($regradedqsql, $params, $limitfrom, $limitnum);
+    } else if ($attemptidssql && is_object($attemptidssql)){
+        $regradedqsql = "SELECT qqr.* FROM " .
+                $attemptidssql->from.", ".
+                "{quiz_question_regrade} qqr " .
+                "WHERE qqr.attemptid = qa.uniqueid AND " .
+                $attemptidssql->where;
+        $regradedqs = $DB->get_records_sql($regradedqsql, $attemptidssql->params, $limitfrom, $limitnum);
+    } else {
+        return array();
+    }
+    return quiz_report_index_by_keys($regradedqs, array('attemptid', 'questionid'));
+}
 function quiz_get_average_grade_for_questions($quiz, $userids){
     global $CFG, $DB;
     $qmfilter = quiz_report_qm_filter_select($quiz);

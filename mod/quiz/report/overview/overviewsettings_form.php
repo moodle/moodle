@@ -27,10 +27,15 @@ class mod_quiz_report_overview_settings extends moodleform {
             $options[QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO] = get_string('optnoattemptsonly', 'quiz_overview', $studentsstring);
         }
         $mform->addElement('select', 'attemptsmode', get_string('show', 'quiz_overview'), $options);
+
+        $showattemptsgrp = array();
         if ($this->_customdata['qmsubselect']){
             $gm = '<span class="highlight">'.quiz_get_grading_option_name($this->_customdata['quiz']->grademethod).'</span>';
-            $mform->addElement('advcheckbox', 'qmfilter', get_string('show', 'quiz_overview'), get_string('optonlygradedattempts', 'quiz_overview', $gm), null, array(0,1));
+            $showattemptsgrp[] =& $mform->createElement('advcheckbox', 'qmfilter', get_string('showattempts', 'quiz_overview'), get_string('optonlygradedattempts', 'quiz_overview', $gm), null, array(0,1));
         }
+
+        $showattemptsgrp[] =& $mform->createElement('advcheckbox', 'regradefilter', get_string('showattempts', 'quiz_overview'), get_string('optonlyregradedattempts', 'quiz_overview'), null, array(0,1));
+        $mform->addGroup($showattemptsgrp, null, get_string('showattempts', 'quiz_overview'), '<br />', false); 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'preferencesuser', get_string('preferencesuser', 'quiz_overview'));
 

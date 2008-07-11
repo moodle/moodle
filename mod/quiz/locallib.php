@@ -516,9 +516,12 @@ function quiz_set_grade($newgrade, &$quiz) {
  *
  * @param object $quiz The quiz for which the best grade is to be calculated and then saved.
  * @param integer $userid The userid to calculate the grade for. Defaults to the current user.
+ * @param array $attempts The attempts of this user. Useful if you are
+ * looping through many users. Attempts can be fetched in one master query to
+ * avoid repeated querying.
  * @return boolean Indicates success or failure.
  */
-function quiz_save_best_grade($quiz, $userid = null) {
+function quiz_save_best_grade($quiz, $userid = null, $attempts = array()) {
     global $DB;
     global $USER;
 
@@ -526,10 +529,12 @@ function quiz_save_best_grade($quiz, $userid = null) {
         $userid = $USER->id;
     }
 
-    // Get all the attempts made by the user
-    if (!$attempts = quiz_get_user_attempts($quiz->id, $userid)) {
-        notify('Could not find any user attempts');
-        return false;
+    if (!$attempts){
+        // Get all the attempts made by the user
+        if (!$attempts = quiz_get_user_attempts($quiz->id, $userid)) {
+            notify('Could not find any user attempts');
+            return false;
+        }
     }
 
     // Calculate the best grade

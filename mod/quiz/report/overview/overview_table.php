@@ -72,10 +72,8 @@ class quiz_report_overview_table extends table_sql {
         if (!$this->is_downloading()) {
             if ($this->candelete) {
                 // Start form
-                $strreallydel  = addslashes_js(get_string('deleteattemptcheck','quiz'));
                 echo '<div id="tablecontainer">';
-                echo '<form id="attemptsform" method="post" action="' . $this->reporturl->out(true) .
-                        '" onsubmit="confirm(\''.$strreallydel.'\');">';
+                echo '<form id="attemptsform" method="post" action="' . $this->reporturl->out(true) .'">';
                 echo '<div style="display: none;">';
                 echo $this->reporturl->hidden_params_out(array(), 0, $this->displayoptions);
                 echo '</div>';
@@ -87,15 +85,16 @@ class quiz_report_overview_table extends table_sql {
         if (!$this->is_downloading()) {
             // Print "Select all" etc.
             if ($this->candelete) {
-                echo '<table id="commands">';
-                echo '<tr><td>';
+                $strreallydel  = addslashes_js(get_string('deleteattemptcheck','quiz'));
+                echo '<div id="commands">';
                 echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.
                         get_string('selectall', 'quiz').'</a> / ';
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
                         get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
-                echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
-                echo '</td></tr></table>';
+                echo '<input type="submit" name="regrade" value="'.get_string('regradeselected', 'quiz_overview').'"/>';
+                echo '<input type="submit" onclick="return confirm(\''.$strreallydel.'\');" name="delete" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
+                echo '</div>';
                 // Close form
                 echo '</div>';
                 echo '</form></div>';
@@ -160,6 +159,22 @@ class quiz_report_overview_table extends table_sql {
         if ($attempt->timefinish) {
             $grade = quiz_rescale_grade($attempt->sumgrades, $this->quiz);
             if (!$this->is_downloading()) {
+                if (isset($this->regradedqs[$attempt->attemptuniqueid])){
+                    $newsumgrade = 0;
+                    $oldsumgrade = 0;
+                    foreach ($this->questions as $question){
+                        if (isset($this->regradedqs[$attempt->attemptuniqueid][$question->id])){
+                            $newsumgrade += $this->regradedqs[$attempt->attemptuniqueid][$question->id]->newgrade;
+                            $oldsumgrade += $this->regradedqs[$attempt->attemptuniqueid][$question->id]->oldgrade;
+                        } else {
+                            $newsumgrade += $this->gradedstatesbyattempt[$attempt->attemptuniqueid][$question->id]->grade;
+                            $oldsumgrade += $this->gradedstatesbyattempt[$attempt->attemptuniqueid][$question->id]->grade;
+                        }
+                    }
+                    $newsumgrade = quiz_rescale_grade($newsumgrade, $this->quiz);
+                    $oldsumgrade = quiz_rescale_grade($oldsumgrade, $this->quiz);
+                    $grade = "<del>$oldsumgrade</del><br />$newsumgrade";
+                }
                 $gradehtml = '<a href="review.php?q='.$this->quiz->id.'&amp;attempt='.$attempt->attempt.'">'.$grade.'</a>';
                 if ($this->qmsubselect && $attempt->gradedattempt){
                     $gradehtml = '<div class="highlight">'.$gradehtml.'</div>';
@@ -173,39 +188,35 @@ class quiz_report_overview_table extends table_sql {
         }
     }
     function other_cols($colname, $attempt){
-        static $gradedstatesbyattempt = null;
-        if ($gradedstatesbyattempt === null){
-            //get all the attempt ids we want to display on this page
-            //or to export for download.
-            if (!$this->is_downloading()) {
-                $attemptids = array();
-                foreach ($this->rawdata as $attempt){
-                    if ($attempt->attemptuniqueid > 0){
-                        $attemptids[] = $attempt->attemptuniqueid;
-                    }
-                }
-                $gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
-            } else {
-                $gradedstatesbyattempt = quiz_get_newgraded_states($this->sql, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
-            }
-        }
+
         if (preg_match('/^qsgrade([0-9]+)$/', $colname, $matches)){
             $questionid = $matches[1];
             $question = $this->questions[$questionid];
-            $stateforqinattempt = $gradedstatesbyattempt[$attempt->attemptuniqueid][$questionid];
-            if (question_state_is_graded($stateforqinattempt)) {
-                $grade = quiz_rescale_grade($stateforqinattempt->grade, $this->quiz);
+            if (isset($this->gradedstatesbyattempt[$attempt->attemptuniqueid][$questionid])){
+                $stateforqinattempt = $this->gradedstatesbyattempt[$attempt->attemptuniqueid][$questionid];
             } else {
-                $grade = '--';
+                $stateforqinattempt = false;
             }
-            if (!$this->is_downloading()) {
-                $grade = $grade.'/'.quiz_rescale_grade($question->grade, $this->quiz);
-                return link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
-                        $stateforqinattempt->id.'&amp;number='.$question->number,
-                        'reviewquestion', $grade, 450, 650, get_string('reviewresponse', 'quiz'),
-                        'none', true);
+            if ($stateforqinattempt && question_state_is_graded($stateforqinattempt)) {
+                $grade = quiz_rescale_grade($stateforqinattempt->grade, $this->quiz);
+                if (!$this->is_downloading()) {
+                    if (isset($this->regradedqs[$attempt->attemptuniqueid][$questionid])){
+                        $gradefromdb = $grade;
+                        $newgrade = quiz_rescale_grade($this->regradedqs[$attempt->attemptuniqueid][$questionid]->newgrade, $this->quiz);
+                        $oldgrade = quiz_rescale_grade($this->regradedqs[$attempt->attemptuniqueid][$questionid]->oldgrade, $this->quiz);
+
+                        $grade = '<del>'.$oldgrade.'</del><br />'.
+                                $newgrade;
+                    }
+                    return link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
+                            $stateforqinattempt->id.'&amp;number='.$question->number,
+                            'reviewquestion', $grade, 450, 650, get_string('reviewresponse', 'quiz'),
+                            'none', true);
+                } else {
+                    return $grade;
+                }
             } else {
-                return $grade;
+                return '--';
             }
         } else {
             return NULL;
@@ -224,7 +235,15 @@ class quiz_report_overview_table extends table_sql {
         }
 
     }
-    
+    function col_regraded($attempt){
+        if ($attempt->regraded == '') {
+            return '';
+        } else if ($attempt->regraded == 0) {
+            return get_string('needed', 'quiz_overview');
+        } else if ($attempt->regraded == 1) {
+            return get_string('done', 'quiz_overview');
+        }
+    }
     function query_db($pagesize, $useinitialsbar=true){
         // Add table joins so we can sort by question grade
         // unfortunately can't join all tables necessary to fetch all grades
@@ -250,6 +269,23 @@ class quiz_report_overview_table extends table_sql {
             }
         }
         parent::query_db($pagesize, $useinitialsbar);
+        if ($this->detailedmarks){
+            //get all the attempt ids we want to display on this page
+            //or to export for download.
+            if (!$this->is_downloading()) {
+                $attemptids = array();
+                foreach ($this->rawdata as $attempt){
+                    if ($attempt->attemptuniqueid > 0){
+                        $attemptids[] = $attempt->attemptuniqueid;
+                    }
+                }
+                $this->gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
+                $this->regradedqs = quiz_get_regraded_qs($attemptids);
+            } else {
+                $this->gradedstatesbyattempt = quiz_get_newgraded_states($this->sql, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
+                $this->regradedqs = quiz_get_regraded_qs($this->sql);
+            }
+        }
     }
 }
 ?>

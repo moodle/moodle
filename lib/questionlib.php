@@ -1233,8 +1233,10 @@ function question_get_feedback_class($fraction) {
 * @param object  $attempt    The attempt, in which the question needs to be regraded.
 * @param object  $cmoptions
 * @param boolean $verbose    Optional. Whether to print progress information or not.
+* @param boolean $dryrun     Optional. Whether to make changes to grades records
+* or record that changes need to be made for a later regrade.
 */
-function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=false) {
+function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=false, $dryrun=false) {
     global $DB;
 
     // load all states for this question in this attempt, ordered in sequence
@@ -1280,43 +1282,67 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
                 // proceeding.
                 if ($states[$j]->grade < 0) {
                     $states[$j]->grade = 0;
+                    $changed = true;
                 } else if ($states[$j]->grade > $question->maxgrade) {
                     $states[$j]->grade = $question->maxgrade;
+                    $changed = true;
+                    
                 }
-                $error = question_process_comment($question, $replaystate, $attempt,
-                        $replaystate->manualcomment, $states[$j]->grade);
-                if (is_string($error)) {
-                     notify($error);
+                if (!$dryrun){
+                    $error = question_process_comment($question, $replaystate, $attempt,
+                            $replaystate->manualcomment, $states[$j]->grade);
+                    if (is_string($error)) {
+                         notify($error);
+                    }
+                } else {
+                    $replaystate->grade = $states[$j]->grade;
                 }
             } else {
-
                 // Reprocess (regrade) responses
                 if (!question_process_responses($question, $replaystate,
                         $action, $cmoptions, $attempt)) {
                     $verbose && notify("Couldn't regrade state #{$state->id}!");
                 }
+                // We need rounding here because grades in the DB get truncated
+                // e.g. 0.33333 != 0.3333333, but we want them to be equal here
+                if ((round((float)$replaystate->raw_grade, 5) != round((float)$states[$j]->raw_grade, 5))
+                        or (round((float)$replaystate->penalty, 5) != round((float)$states[$j]->penalty, 5))
+                        or (round((float)$replaystate->grade, 5) != round((float)$states[$j]->grade, 5))) {
+                    $changed = true;
+                }
             }
+                
 
-            // We need rounding here because grades in the DB get truncated
-            // e.g. 0.33333 != 0.3333333, but we want them to be equal here
-            if ((round((float)$replaystate->raw_grade, 5) != round((float)$states[$j]->raw_grade, 5))
-                    or (round((float)$replaystate->penalty, 5) != round((float)$states[$j]->penalty, 5))
-                    or (round((float)$replaystate->grade, 5) != round((float)$states[$j]->grade, 5))) {
-                $changed = true;
-            }
 
             $replaystate->id = $states[$j]->id;
             $replaystate->changed = true;
             $replaystate->update = true; // This will ensure that the existing database entry is updated rather than a new one created
-            save_question_session($question, $replaystate);
+            if (!$dryrun){
+                save_question_session($question, $replaystate);
+            }
         }
         if ($changed) {
-            // TODO, call a method in quiz to do this, where 'quiz' comes from
-            // the question_attempts table.
-            $DB->update_record('quiz_attempts', $attempt);
+            if (!$dryrun){
+                // TODO, call a method in quiz to do this, where 'quiz' comes from
+                // the question_attempts table.
+                $DB->update_record('quiz_attempts', $attempt);
+            }
         }
-
-        return $changed;
+        if ($changed){
+            $toinsert = new object();
+            $toinsert->oldgrade = round((float)$states[count($states)-1]->grade, 5);
+            $toinsert->newgrade = round((float)$replaystate->grade, 5);
+            $toinsert->attemptid = $attempt->uniqueid;
+            $toinsert->questionid = $question->id;
+            //the grade saved is the old grade if the new grade is saved
+            //it is the new grade if this is a dry run.
+            $toinsert->regraded = $dryrun?0:1;
+            $toinsert->timemodified = time();
+            $DB->insert_record('quiz_question_regrade', $toinsert);
+            return true;
+        } else {
+            return false;
+        }
     }
     return false;
 }
