@@ -813,7 +813,7 @@ function displaydir ($wdir) {
             print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />", 'checkbox');
             echo "<td align=\"left\" style=\"white-space:nowrap\" class=\"name\">";
 
-            $ffurl = str_replace('//', '/', get_file_url("$id/$fileurl"));
+            $ffurl = get_file_url($id.'/'.$fileurl);
             link_to_popup_window ($ffurl, "display",
                                   "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"$strfile\" />&nbsp;".htmlspecialchars($file),
                                   480, 640);
