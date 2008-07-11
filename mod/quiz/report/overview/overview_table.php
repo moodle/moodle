@@ -9,7 +9,7 @@ class quiz_report_overview_table extends table_sql {
     var $displayoptions;
 
     function quiz_report_overview_table($quiz , $qmsubselect, $groupstudents,
-                $students, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions){
+                $students, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions, $context){
         parent::table_sql('mod-quiz-report-overview-report');
         $this->quiz = $quiz;
         $this->qmsubselect = $qmsubselect;
@@ -20,6 +20,7 @@ class quiz_report_overview_table extends table_sql {
         $this->candelete = $candelete;
         $this->reporturl = $reporturl;
         $this->displayoptions = $displayoptions;
+        $this->context = $context;
     }
     function build_table(){
         global $CFG, $DB;

@@ -152,7 +152,8 @@ class quiz_overview_report extends quiz_default_report {
             $questions = array();
         }
         $table = new quiz_report_overview_table($quiz , $qmsubselect, $groupstudents,
-                $students, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions);
+                $students, $detailedmarks, $questions, $candelete, $reporturl,
+                $displayoptions, $this->context);
         $table->is_downloading($download, get_string('reportoverview','quiz'),
                     "$COURSE->shortname ".format_string($quiz->name,true));
         if (!$table->is_downloading()) {
