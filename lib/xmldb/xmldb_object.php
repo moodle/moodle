@@ -414,7 +414,7 @@ class xmldb_object {
 
     /// Extract all the quoted elements from the string (skipping 
     /// backslashed quotes that are part of the content.
-        preg_match_all("/('.*?[^\\\]')/is", $string, $matches);
+        preg_match_all("/(''|'.*?[^\\\\]')/is", $string, $matches);
         foreach (array_unique($matches[0]) as $key=>$value) {
             $foundquotes['<%'.$key.'%>'] = $value;
         }
