@@ -119,9 +119,11 @@ class database_column_info {
                 $this->has_default    = false;
                 $this->default_value  = null;
                 $this->unique         = true;
+                break;
             case 'C':
                 $this->auto_increment = false;
                 $this->binary         = false;
+                break;
         }
     }
 }
