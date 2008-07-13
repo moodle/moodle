@@ -177,7 +177,18 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return bool success
      */
     public function change_database_structure($sql) {
-        return $this->execute($sql);
+        try {
+            $this->lastError = null;
+            if($this->debug) {
+                $this->debug_query($sql);
+            }
+            $this->pdb->exec($sql);
+            return true;
+        } catch (PDOException $ex) {
+            $this->lastError = $ex->getMessage();
+            $this->report_error($sql, null, $ex);
+            return false;
+        }
     }
 
     public function delete_records_select($table, $select, array $params=null) {
