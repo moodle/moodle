@@ -386,9 +386,7 @@ if (!is_object($xmldb_key)) {
     }
 
     /**
-     * This function will load one entire XMLDB file, generating all the needed
-     * SQL statements, specific for each RDBMS ($CFG->dbtype) and, finally, it
-     * will execute all those statements against the DB.
+     * This function will load one entire XMLDB file and call install_from_xmldb_structure.
      *
      * @param $file full path to the XML file to be used
      * @return void
@@ -412,6 +410,18 @@ if (!is_object($xmldb_key)) {
         }
 
         $xmldb_structure = $xmldb_file->getStructure();
+
+        $this->install_from_xmldb_structure($xmldb_file->getStructure());
+    }
+
+    /**
+     * This function will generate all the needed SQL statements, specific for each 
+     * RDBMS type and, finally, it will execute all those statements against the DB.
+     *
+     * @param object $structure xmldb_structure object
+     * @return void
+     */
+    public function install_from_xmldb_structure($xmldb_structure) {
 
         /// Do this function silenty (to avoid output in install/upgrade process)
         $olddbdebug = $this->mdb->get_debug();
