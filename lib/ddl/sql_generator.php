@@ -1267,41 +1267,21 @@ abstract class sql_generator {
 
     /**
      * Returns all reserved works in supported databases.
+     * Reserved words should be lowercase.
      * @return array ('word'=>array(databases))
      */
     public static function getAllReservedWords() {
         global $CFG;
 
+        $generators = array('mysql', 'postgres', 'oracle', 'mssql', 'sqlite');
         $reserved_words = array();
 
-        require("$CFG->libdir/ddl/mysql_sql_generator.php");
-        require("$CFG->libdir/ddl/postgres_sql_generator.php");
-        require("$CFG->libdir/ddl/oracle_sql_generator.php");
-        require("$CFG->libdir/ddl/mssql_sql_generator.php");
-
-        foreach (mysql_sql_generator::getReservedWords() as $word) {
-            if (!isset($reserved_words[$word])) {
-                $reserved_words[$word] = array();
+        foreach($generators as $generator) {
+            $class = $generator . '_sql_generator';
+            require_once("$CFG->libdir/ddl/$class.php");
+            foreach (call_user_func(array($class, 'getReservedWords')) as $word) {
+                $reserved_words[$word][] = $generator;
             }
-            $reserved_words[$word][] = 'mysql';
-        }
-        foreach (postgres_sql_generator::getReservedWords() as $word) {
-            if (!isset($reserved_words[$word])) {
-                $reserved_words[$word] = array();
-            }
-            $reserved_words[$word][] = 'postgres';
-        }
-        foreach (oracle_sql_generator::getReservedWords() as $word) {
-            if (!isset($reserved_words[$word])) {
-                $reserved_words[$word] = array();
-            }
-            $reserved_words[$word][] = 'oracle';
-        }
-        foreach (mssql_sql_generator::getReservedWords() as $word) {
-            if (!isset($reserved_words[$word])) {
-                $reserved_words[$word] = array();
-            }
-            $reserved_words[$word][] = 'mssql';
         }
         ksort($reserved_words);
         return $reserved_words;
