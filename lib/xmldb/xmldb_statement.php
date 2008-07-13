@@ -153,13 +153,11 @@ class xmldb_statement extends xmldb_object {
                     $fields = $this->getFieldsFromInsertSentence($sentence);
                     $values = $this->getValuesFromInsertSentence($sentence);
                 /// Check that we aren't inserting the id field
-/* //ids should be the same when moving database
                     if (in_array('id', $fields)) {
                         $this->errormsg = 'Cannot insert the "id" field. It is an autonumeric column';
                         $this->debug($this->errormsg);
                         $result = false;
                     }
-*/
                     if ($result && count($fields) == 0) {
                         $this->errormsg = 'Missing fields in sentence "' . $sentence . '"';
                         $this->debug($this->errormsg);
