@@ -711,9 +711,14 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         $this->set_jmatch_items();
         $str = '';
         foreach ($this->l_items as $i=>$item) {
+            for ($ii=0; $ii<$i; $ii++) {
+                if ($this->r_items[$ii]['text']==$this->r_items[$i]['text']) {
+                    break;
+                }
+            }
             $str .= "F[$i] = new Array();\n";
             $str .= "F[$i][0] = '".$this->js_safe($item['text'], true)."';\n";
-            $str .= "F[$i][1] = ".($i+1).";\n";
+            $str .= "F[$i][1] = ".($ii+1).";\n";
         }
         return $str;
     }
@@ -721,33 +726,51 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
         $this->set_jmatch_items();
         $str = '';
         foreach ($this->r_items as $i=>$item) {
+            for ($ii=0; $ii<$i; $ii++) {
+                if ($this->r_items[$ii]['text']==$this->r_items[$i]['text']) {
+                    break;
+                }
+            }
             $str .= "D[$i] = new Array();\n";
             $str .= "D[$i][0] = '".$this->js_safe($item['text'], true)."';\n";
-            $str .= "D[$i][1] = ".($i+1).";\n";
-            $str .= "D[$i][2] = '".$item['fixed']."';\n";
+            $str .= "D[$i][1] = ".($ii+1).";\n";
+            $str .= "D[$i][2] = ".$item['fixed'].";\n";
         }
         return $str;
     }
 
     function set_jmatch_items() {
-        if (empty($this->l_items)) {
-            $tags = 'data,matching-exercise,pair';
-            $i = 0;
-            while (($leftitem = "[$i]['#']['left-item'][0]['#']") && $this->parent->xml_value($tags, $leftitem)) {
-                $lefttext = $this->parent->xml_value($tags, $leftitem."['text'][0]['#']");
-                if (strlen($lefttext)) {
-                    $this->l_items[] = array(
-                        'text' => $lefttext,
-                        'fixed' => $this->int_value($tags, $leftitem."['fixed'][0]['#']")
-                    );
-                    $rightitem = "[$i]['#']['right-item'][0]['#']";
-                    $this->r_items[] = array(
-                        'text' => $this->parent->xml_value($tags, $rightitem."['text'][0]['#']"),
-                        'fixed' => $this->int_value($tags, $rightitem."['fixed'][0]['#']")
-                    );
-                }
-                $i++;
+        if (count($this->l_items)) {
+            return;
+        }
+        $tags = 'data,matching-exercise,pair';
+        $i = 0;
+        while (($item = "[$i]['#']") && $this->parent->xml_value($tags, $item)) {
+            $leftitem = $item."['left-item'][0]['#']";
+            $lefttext = $this->parent->xml_value($tags, $leftitem."['text'][0]['#']");
+
+            $rightitem = $item."['right-item'][0]['#']";
+            $righttext = $this->parent->xml_value($tags, $rightitem."['text'][0]['#']");
+
+            if (strlen($righttext)) {
+                $addright = true;
+            } else {
+                $addright = false;
             }
+            if (strlen($lefttext)) {
+                $this->l_items[] = array(
+                    'text' => $lefttext,
+                    'fixed' => $this->int_value($tags, $leftitem."['fixed'][0]['#']")
+                );
+                $addright = true; // force right item to be added
+            }
+            if ($addright) {
+                $this->r_items[] = array(
+                    'text' => $righttext,
+                    'fixed' => $this->int_value($tags, $rightitem."['fixed'][0]['#']")
+                );
+            }
+            $i++;
         }
     }
     function shuffle_jmatch_items(&$items) {
@@ -897,7 +920,9 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                     $gap .= '<select id="Gap'.$q.'"><option value=""></option>'.$dropdownlist.'</select>';
                 } else {
                     // minimum gap size
-                    $gapsize = 6;
+                     if (! $gapsize = $this->int_value('hotpot-config-file,'.$this->parent->quiztype.',minimum-gap-size')) {
+                        $gapsize = 6;
+                    }
 
                     // increase gap size to length of longest answer for this gap
                     $a = 0;
@@ -1258,8 +1283,23 @@ class hotpot_xml_quiz_template extends hotpot_xml_template_default {
                     $question_type==HOTPOT_JQUIZ_SHORTANSWER || 
                     $question_type==HOTPOT_JQUIZ_HYBRID
                 ) {
+                    $size = 9; // default size
+                    $a = 0;
+                    $answers = $question."['answers'][0]['#']";
+                    while (($answer = $answers."['answer'][$a]['#']") && $this->parent->xml_value($tags, $answer)) {
+                        $text = $this->parent->xml_value($tags, $answer."['text'][0]['#']");
+                        $text = preg_replace('/&[#a-zA-Z0-9]+;/', 'x', $text);
+                        $size = max($size, strlen($text));
+                        $a++;
+                    }
+
                     $str .= '<div class="ShortAnswer" id="Q_'.$q.'_SA"><form method="post" action="" onsubmit="return false;"><div>';
-                    $str .= '<input type="text" id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" size="9"></input><br /><br />';
+                    if ($size<=25) { // text box
+                        $str .= '<input type="text" id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" size="'.$size.'"></input>';
+                    } else { // textarea (29 cols wide)
+                        $str .= '<textarea id="Q_'.$q.'_Guess" onfocus="TrackFocus('."'".'Q_'.$q.'_Guess'."'".')" onblur="LeaveGap()" class="ShortAnswerBox" cols="29" rows="'.ceil($size/25).'"></textarea>';
+                    }
+                    $str .= '<br /><br />';
 
                     $caption = $this->v6_expand_CheckCaption();
                     $str .= $this->v6_expand_jquiz_button($caption, "CheckShortAnswer($q)");
