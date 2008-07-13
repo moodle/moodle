@@ -49,7 +49,7 @@ class sqlite_sql_generator extends sql_generator {
 
     public $sequence_only = true; //To avoid to output the rest of the field specs, leaving only the name and the sequence_name publiciable
     public $sequence_extra_code = false; //Does the generator need to add extra code to generate the sequence fields
-    public $sequence_name = 'INTEGER PRIMARY KEY AUTOINCREMENT'; //Particular name for inline sequences in this generator
+    public $sequence_name = 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL'; //Particular name for inline sequences in this generator
     public $unsigned_allowed = false;    // To define in the generator must handle unsigned information
 
     public $enum_extra_code = false; //Does the generator need to add extra code to generate code for the enums in the table

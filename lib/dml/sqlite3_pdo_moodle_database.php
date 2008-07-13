@@ -110,7 +110,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      */
     public function get_tables() {
         $tables = array();
-        $sql = 'SELECT name FROM sqlite_master WHERE type="table"';
+        $sql = 'SELECT name FROM sqlite_master WHERE type="table" ORDER BY name';
         if($this->debug) {
             $this->debug_query($sql);
         }
@@ -132,13 +132,14 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      */
     public function get_indexes($table) {
         $indexes = array();
-        $sql = 'SELECT * FROM sqlite_master WHERE type="index" AND tbl_name="'. $this->prefix . $table . '"';
+        $sql = 'PRAGMA index_list('. $this->prefix . $table . ')';
         if($this->debug) {
             $this->debug_query($sql);
         }
         $rsindexes = $this->pdb->query($sql);
         foreach($rsindexes as $index) {
-            $index = strtolower($index['name']);
+            $unique = (boolean)$index['unique'];
+            $index = $index['name'];
             $sql = 'PRAGMA index_info("' . $index . '")';
             if($this->debug) {
                 $this->debug_query($sql);
@@ -149,6 +150,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
                 $columns[] = strtolower($row['name']);
             }
             $index = strtolower($index);
+            $indexes[$index]['unique'] = $unique;
             $indexes[$index]['columns'] = $columns;
         }
         return $indexes;
@@ -188,6 +190,9 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
                 'primary_key' => (boolean)$row['pk'],
                 'has_default' => !is_null($row['dflt_value']),
                 'default_value' => $row['dflt_value'],
+                'auto_increment' => false,
+                'binary' => false,
+                //'unsigned' => false,
             );
             $type = explode('(', $row['type']);
             $columninfo['type'] = strtolower($type[0]);
@@ -204,6 +209,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
                 case 'int': // int integer
                     if($columninfo['primary_key'] && preg_match('/' . $columninfo['name'] . '\W*integer\W*primary\W*key\W*autoincrement/im', $createsql)) {
                         $columninfo['meta_type'] = 'R';
+                        $columninfo['auto_increment'] = true;
                     } else {
                         $columninfo['meta_type'] = 'I';
                     }
@@ -225,11 +231,13 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
                 case 'blo': // blob
                 case 'non': // none
                     $columninfo['meta_type'] = 'B';
+                    $columninfo['binary'] = true;
                     break;
                 case 'boo': // boolean
                 case 'bit': // bit
                 case 'log': // logical
                     $columninfo['meta_type'] = 'L';
+                    $columninfo['max_length'] = 1;
                     break;
                 case 'tim': // timestamp
                     $columninfo['meta_type'] = 'T';
@@ -238,7 +246,6 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
                     $columninfo['meta_type'] = 'D';
                     break;
             }
-
             $columns[$columninfo['name']] = new database_column_info($columninfo);
         }
 
