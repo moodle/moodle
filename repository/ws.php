@@ -2,10 +2,14 @@
 require_once('../config.php');
 require_once('lib.php');
 $CFG->repository_cache_expire = 12000;
+// repository id
 $id        = optional_param('id', PARAM_INT);
+// action of client
 $action    = optional_param('action', '', PARAM_RAW);
+// path 
 $p         = optional_param('p', '', PARAM_RAW);
-$search    = optional_param('search', '', PARAM_RAW);
+// Search text
+$search    = optional_param('s', '', PARAM_RAW);
 
 if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
     echo json_encode('wrong');
@@ -30,7 +34,7 @@ if($action == 'list') {
     } else {
         echo json_encode($repo->get_listing());
     }
-    
+
 } else {
     echo json_encode($repo->print_login());
 }

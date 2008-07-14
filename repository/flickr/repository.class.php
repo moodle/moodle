@@ -77,13 +77,23 @@ EOD;
         global $SESSION;
         $people = $this->flickr->people_findByEmail($SESSION->flickrmail);
         $photos_url = $this->flickr->urls_getUserPhotos($people['nsid']);
-        $photos = $this->flickr->people_getPublicPhotos($people['nsid'], null, 36, $path);
+
+        if(!empty($search)) {
+            // do searching, if $path is not empty, ignore it.
+            $photos = $this->flickr->photos_search(array('user_id'=>$people['nsid'], 'text'=>$search));
+        } elseif(!empty($path) && empty($search)) {
+            $photos = $this->flickr->people_getPublicPhotos($people['nsid'], null, 36, $path);
+        }
+
         $ret = new stdclass;
         $ret->url   = $photos_url;
         $ret->list  = array();
-        //$ret->page  = $photos['page'];
-        $ret->page  = $path;
         $ret->pages = $photos['pages'];
+        if(is_int($path) && $path <= $ret->pages) {
+            $ret->page = $path;
+        } else {
+            $ret->page = 1;
+        }
         foreach ($photos['photo'] as $p) {
             if(empty($p['title'])) {
                 $p['title'] = get_string('notitle', 'repository_flickr');
@@ -105,7 +115,7 @@ EOD;
                 "src=" . $photo['thumbnail'] . ">";
             $str .= "</a>";
             $i++;
-            
+
             if ($i % 4 == 0) {
                 $str .= "<br/>";
             }

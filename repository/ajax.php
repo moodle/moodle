@@ -1,7 +1,7 @@
 <?php
 /*******************************************************\
 
-  This file is a demo page for ajax repository file 
+  This file is a demo page for ajax repository file
   picker.
 
 \*******************************************************/
@@ -10,8 +10,8 @@ $itempic = $CFG->pixpath.'/i/item.gif';
 $meta = <<<EOD
 <style type="text/css">
 body {
-	margin:0;
-	padding:0;
+  margin:0;
+  padding:0;
 }
 #demo .yui-resize-handle-br {
     height: 11px;
@@ -105,13 +105,13 @@ function openpicker(){
                 units: [
                     {position: 'top', height: 32, resize: false, body:'<div class="yui-buttongroup" id="viewbar"></div>', gutter: '2'},
                     { position: 'left', width: 150, resize: true, body: '<ul id="list"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
-                    { position: 'bottom', 
-                    height: 30, 
+                    { position: 'bottom',
+                    height: 30,
                     body: '<div id="toolbar">'+
                     '<input type="button" id="select" value="Select" />'+
                     '<input type="button" id="search" value="Search" />'+
                     '<input type="button" id="logout" value="Logout" />'+
-                    '</div>', 
+                    '</div>',
                     gutter: '2'},
                     { position: 'center', body: '<div id="panel"></div>', scroll: true, gutter: '0 2 0 0' }
                 ]
@@ -141,7 +141,7 @@ function openpicker(){
         layout.set('height', bodyContentHeight);
         layout.set('width', (args.width - PANEL_BODY_PADDING));
         layout.resize();
-        
+
     }, panel, true);
     var list = new YAHOO.util.Element('list');
     list.on('contentReady', function(e){
@@ -179,7 +179,7 @@ function openpicker(){
     viewbar.addButtons([btn_list, btn_thumb]);
     var select = new YAHOO.util.Element('select');
     select.on('click', function(e){
-        var nodes = YAHOO.util.Selector.query('input:checked'); 
+        var nodes = YAHOO.util.Selector.query('input:checked');
         var str = '';
         for(k in nodes){
             str += (nodes[k].value+'\n');
@@ -190,9 +190,11 @@ function openpicker(){
             })
     var search = new YAHOO.util.Element('search');
     search.on('click', function(e){
-        // TODO
-        // Call get_listing to search
-            })
+            var data=window.prompt("What are you searching for?");
+            if(data != null || data != '') {
+                dosearch(data);
+            }
+        })
 };
 
 function postdata(obj) {
@@ -219,7 +221,7 @@ function makepage(){
             str += '</a> ';
         }
         str += '</div>';
-    }  
+    }
     return str;
 }
 
@@ -271,7 +273,7 @@ function viewlist(){
     return str;
 }
 
-// produce login html 
+// produce login html
 function print_login(){
     var panel = new YAHOO.util.Element('panel');
     var data = datasource.l;
@@ -280,7 +282,11 @@ function print_login(){
 
 var callback = {
 success: function(o) {
-    var ret = YAHOO.lang.JSON.parse(o.responseText);
+    try {
+        var ret = YAHOO.lang.JSON.parse(o.responseText);
+    } catch(e) {
+        alert(e);
+    }
     datasource = ret;
     if(datasource.l){
         print_login();
@@ -301,6 +307,11 @@ function cr(id, path, reset){
     }
     loading();
     var trans = YAHOO.util.Connect.asyncRequest('GET', 'ws.php?id='+id+'&p='+path+'&reset='+reset, callback);
+}
+function dosearch(text){
+    viewbar.set('disabled', false);
+    loading();
+    var trans = YAHOO.util.Connect.asyncRequest('GET', 'ws.php?id='+repositoryid+'&s='+text, callback);
 }
 
 function dologin(){
