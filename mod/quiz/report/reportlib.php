@@ -98,7 +98,7 @@ function quiz_get_average_grade_for_questions($quiz, $userids){
                         "($qmfilter) AND " .
                         "qa.userid $usql AND " .
                         "qa.quiz = ? ".
-                        "GROUP BY qs.question";
+                        "GROUP BY qns.questionid";
     return $DB->get_records_sql_menu($questionavgssql, $params);
 }
 
