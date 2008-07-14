@@ -3345,7 +3345,7 @@ function delete_course($courseorid, $showfeedback = true) {
         $courseid = $courseorid;
         if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
             return false;
-        } 
+        }
     }
 
     // frontpage course can not be deleted!!
@@ -5010,7 +5010,7 @@ function places_to_search_for_lang_strings() {
         'qtype_' => array('question/type'),
         'qformat_' => array('question/format'),
         'report_' => array($CFG->admin.'/report', 'course/report', 'mod/quiz/report'),
-        'repository'=>array('repository'),
+        'repository_'=>array('repository'),
         'resource_' => array('mod/resource/type'),
         'gradereport_' => array('grade/report'),
         'gradeimport_' => array('grade/import'),
@@ -5944,13 +5944,13 @@ function check_php_version($version='5.2.0') {
 }
 
 /**
- * Checks to see if is the browser operating system matches the specified 
+ * Checks to see if is the browser operating system matches the specified
  * brand.
- * 
+ *
  * Known brand: 'Windows','Linux','Macintosh','SGI','SunOS','HP-UX'
  *
  * @uses $_SERVER
- * @param string $brand The operating system identifier being tested 
+ * @param string $brand The operating system identifier being tested
  * @return bool true if the given brand below to the detected operating system
  */
  function check_browser_operating_system($brand) {
@@ -5961,8 +5961,8 @@ function check_php_version($version='5.2.0') {
     if (preg_match("/$brand/i", $_SERVER['HTTP_USER_AGENT'])) {
         return true;
     }
-     
-    return false;  
+
+    return false;
  }
 
 /**
@@ -6567,7 +6567,7 @@ function shorten_text($text, $ideal=30, $exact = false) {
     // if the words shouldn't be cut in the middle...
     if (!$exact) {
         // ...search the last occurance of a space...
-		for ($k=strlen($truncate);$k>0;$k--) {
+    for ($k=strlen($truncate);$k>0;$k--) {
             if (!empty($truncate[$k]) && ($char = $truncate[$k])) {
                 if ($char == '.' or $char == ' ') {
                     $breakpos = $k+1;
@@ -6577,23 +6577,23 @@ function shorten_text($text, $ideal=30, $exact = false) {
                     break;                        // character boundary.
                 }
             }
-		}
+    }
 
-		if (isset($breakpos)) {
+    if (isset($breakpos)) {
             // ...and cut the text in this position
             $truncate = substr($truncate, 0, $breakpos);
-		}
-	}
+    }
+  }
 
     // add the defined ending to the text
-	$truncate .= $ending;
+  $truncate .= $ending;
 
     // close all unclosed html-tags
     foreach ($open_tags as $tag) {
         $truncate .= '</' . $tag . '>';
     }
 
-	return $truncate;
+  return $truncate;
 }
 
 
