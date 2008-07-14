@@ -135,7 +135,7 @@ class qformat_xml extends qformat_default {
         $qo->image = $this->getpath( $question, array('#','image',0,'#'), $qo->image );
         $image_base64 = $this->getpath( $question, array('#','image_base64','0','#'),'' );
         if (!empty($image_base64)) {
-            $qo->image = $this->importimagefile( $qo->image, stripslashes($image_base64) );
+            $qo->image = $this->importimagefile( $qo->image, $image_base64);
         }
         $qo->generalfeedback = $this->getpath( $question, array('#','generalfeedback',0,'#','text',0,'#'), $qo->generalfeedback, true );
         $qo->defaultgrade = $this->getpath( $question, array('#','defaultgrade',0,'#'), $qo->defaultgrade );

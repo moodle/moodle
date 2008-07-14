@@ -664,13 +664,7 @@ function hotpot_convert_relative_urls($str, $baseurl, $filename) {
     return $str;
 }
 
-function hotpot_convert_relative_url($baseurl, $filename, $opentag, $url, $closetag, $stripslashes=true) {
-    if ($stripslashes) {
-        $opentag = stripslashes($opentag);
-        $url = stripslashes($url);
-        $closetag = stripslashes($closetag);
-    }
-
+function hotpot_convert_relative_url($baseurl, $filename, $opentag, $url, $closetag, $depricated=true) {
     // catch <PARAM name="FlashVars" value="TheSound=soundfile.mp3">
     //    ampersands can appear as "&", "&amp;" or "&amp;#x0026;amp;"
     if (preg_match('|^'.'\w+=[^&]+'.'('.'&((amp;#x0026;)?amp;)?'.'\w+=[^&]+)*'.'$|', $url)) {
@@ -708,13 +702,9 @@ function hotpot_convert_relative_url($baseurl, $filename, $opentag, $url, $close
     return $url;
 }
 
-function hotpot_convert_url($baseurl, $filename, $url, $stripslashes=true) {
+function hotpot_convert_url($baseurl, $filename, $url, $depricated=true) {
     // maintain a cache of converted urls
     static $HOTPOT_RELATIVE_URLS = array();
-
-    if ($stripslashes) {
-        $url = stripslashes($url);
-    }
 
     // is this an absolute url? (or javascript pseudo url)
     if (preg_match('%^(http://|/|javascript:)%i', $url)) {

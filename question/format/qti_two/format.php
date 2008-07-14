@@ -289,7 +289,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
             
             // results are first written into string (and then to a file)
             $count++;
-            echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+            echo "<hr /><p><b>$count</b>. ".$question->questiontext."</p>";
             $expout = $this->writequestion( $question , null, true, $path) . "\n";
             $expout = $this->presave_process( $expout );
             

@@ -314,7 +314,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     }
                     if ($correctanswer) {
                         $feedback = '<div class="correctness">';
-                        $feedback .= get_string('correctansweris', 'quiz', s($correctanswer, true));
+                        $feedback .= get_string('correctansweris', 'quiz', s($correctanswer));
                         $feedback .= '</div>';
                        // $strfeedbackwrapped = get_string('correctanswer and', 'quiz').get_string('feedback', 'quiz');
                     }
@@ -413,7 +413,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     */
 
                     echo "<input $style $readonly $popup name=\"$inputname\"";
-                    echo "  type=\"text\" value=\"".s($response, true)."\" ".$styleinfo." /> ";
+                    echo "  type=\"text\" value=\"".s($response)."\" ".$styleinfo." /> ";
                     if (!empty($feedback) && !empty($USER->screenreader)) {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
@@ -427,7 +427,7 @@ class embedded_cloze_qtype extends default_questiontype {
                             $selected = ' selected="selected"';
                         }
                         $outputoptions .= "<option value=\"$mcanswer->id\"$selected>" .
-                                s($mcanswer->answer, true) . '</option>';
+                                s($mcanswer->answer) . '</option>';
                     }
                     // In the next line, $readonly is invalid HTML, but it works in
                     // all browsers. $disabled would be valid, but then the JS for
