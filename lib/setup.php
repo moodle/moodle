@@ -527,6 +527,18 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 
+    $iplist = unserialize(get_config(null, 'blockedip'));
+    if(!empty($iplist)) {
+        foreach($iplist as $ip) {
+            if(address_in_subnet(getremoteaddr(), $ip)){
+                // Telling the banned user the site is not
+                // available currently.
+                echo get_string('sitemaintenance', 'admin');
+                die;
+            }
+        }
+    }
+
 /// note: we can not block non utf-8 installatrions here, because empty mysql database
 /// might be converted to utf-8 in admin/index.php during installation
 ?>

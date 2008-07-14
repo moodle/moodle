@@ -27,6 +27,7 @@ $string['backups'] = 'Backups';
 $string['badwordsconfig'] = 'Enter your list of bad words separated by commas.';
 $string['badwordsdefault'] = 'If the custom list is empty, a default list from the language pack will be used.';
 $string['badwordslist'] = 'Custom bad words list';
+$string['blockediplist'] = 'Blocked IP Address List';
 $string['blockinstances'] = 'Instances';
 $string['blockmultiple'] = 'Multiple';
 $string['blocksettings'] = 'Manage blocks';
@@ -413,6 +414,7 @@ $string['installedlangs'] = 'Installed language packs';
 $string['intcachemax'] = 'Int. cache max';
 $string['invalidsection'] = 'Invalid section.';
 $string['invaliduserchangeme'] = 'Username \"changeme\" is reserved -- you cannot create an account with it.';
+$string['ipblocker'] = 'IP Blocker';
 $string['iplookup'] = 'IP address lookup';
 $string['iplookupinfo'] = '
 By default Moodle uses the free online NetGeo (The Internet Geographic Database) server to lookup location of IP addresses, unfortunately this database is not maintained anymore and may return <em>wildly incorrect</em> data.
