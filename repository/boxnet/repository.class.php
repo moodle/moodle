@@ -27,10 +27,10 @@ class repository_boxnet extends repository{
         if(!empty($reset)) {
             unset($SESSION->box_token);
         }
-        // do login 
+        // do login
         if(!empty($options['username'])
-                    && !empty($options['password']) 
-                    && !empty($options['ticket']) ) 
+                    && !empty($options['password'])
+                    && !empty($options['ticket']) )
         {
             $c = new curl;
             $str = '';
@@ -71,9 +71,23 @@ class repository_boxnet extends repository{
                 $filenames = $tree['file_name'];
                 $fileids   = $tree['file_id'];
                 foreach ($filenames as $n=>$v){
-                    $list[] = array('title'=>$v, 'size'=>0, 'date'=>'',
-                            'source'=>'http://box.net/api/1.0/download/'.$this->options['auth_token'].'/'.$fileids[$n],
-                            'thumbnail'=>$CFG->pixpath.'/i/files.gif');
+                    if(!empty($search)) {
+                        if(strstr($v, $search) !== false) {
+                            $list[] = array('title'=>$v, 
+                                    'size'=>0,
+                                    'date'=>'',
+                                    'source'=>'http://box.net/api/1.0/download/'
+                                        .$this->options['auth_token'].'/'.$fileids[$n],
+                                    'thumbnail'=>$CFG->pixpath.'/f/text.gif');
+                        }
+                    } else {
+                        $list[] = array('title'=>$v, 
+                                'size'=>0,
+                                'date'=>'',
+                                'source'=>'http://box.net/api/1.0/download/'
+                                    .$this->options['auth_token'].'/'.$fileids[$n],
+                                'thumbnail'=>$CFG->pixpath.'/f/text.gif');
+                    }
                 }
                 $this->listing = $list;
                 $ret['list']   = $list;

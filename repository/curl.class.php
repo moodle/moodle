@@ -51,19 +51,19 @@ class curl {
     public function resetopt(){
         $this->options = array();
         $this->options['CURLOPT_USERAGENT']         = 'MoodleBot/1.0';
-        // True to include the header in the output 
+        // True to include the header in the output
         $this->options['CURLOPT_HEADER']            = 0;
-        // True to Exclude the body from the output 
+        // True to Exclude the body from the output
         $this->options['CURLOPT_NOBODY']            = 0;
-        // TRUE to follow any "Location: " header that the server 
-        // sends as part of the HTTP header (note this is recursive, 
-        // PHP will follow as many "Location: " headers that it is sent, 
-        // unless CURLOPT_MAXREDIRS is set).  
+        // TRUE to follow any "Location: " header that the server
+        // sends as part of the HTTP header (note this is recursive,
+        // PHP will follow as many "Location: " headers that it is sent,
+        // unless CURLOPT_MAXREDIRS is set).
         $this->options['CURLOPT_FOLLOWLOCATION']    = 1;
         $this->options['CURLOPT_MAXREDIRS']         = 10;
         $this->options['CURLOPT_ENCODING']          = '';
-        // TRUE to return the transfer as a string of the return 
-        // value of curl_exec() instead of outputting it out directly.  
+        // TRUE to return the transfer as a string of the return
+        // value of curl_exec() instead of outputting it out directly.
         $this->options['CURLOPT_RETURNTRANSFER']    = 1;
         $this->options['CURLOPT_BINARYTRANSFER']    = 0;
         $this->options['CURLOPT_SSL_VERIFYPEER']    = 0;
@@ -73,7 +73,7 @@ class curl {
 
     /**
      * Reset Cookie
-     * 
+     *
      * @param array $options If array is null, this function will
      * reset the options to default value.
      *
@@ -92,7 +92,7 @@ class curl {
 
     /**
      * Set curl options
-     * 
+     *
      * @param array $options If array is null, this function will
      * reset the options to default value.
      *
@@ -104,7 +104,7 @@ class curl {
                     $name = strtoupper('CURLOPT_'.$name);
                 }
                 $this->options[$name] = $val;
-            } 
+            }
         }
     }
     /**
@@ -123,8 +123,8 @@ class curl {
 
     /**
      * Set HTTP Request Header
-     * 
-     * @param array $headers 
+     *
+     * @param array $headers
      *
      */
     public function setHeader($header) {
@@ -138,7 +138,7 @@ class curl {
     }
     /**
      * Set HTTP Response Header
-     * 
+     *
      */
     public function getResponse(){
         return $this->response;
@@ -146,9 +146,9 @@ class curl {
     /**
      * private callback function
      * Formatting HTTP Response Header
-     * 
+     *
      */
-    private function formatHeader($ch, $header) 
+    private function formatHeader($ch, $header)
     {
         $this->count++;
         if (strlen($header) > 2) {
@@ -173,7 +173,7 @@ class curl {
 
     /**
      * Formatting HTTP Response Header
-     * 
+     *
      */
     protected function request($url, $options = array()){
         // Clean up

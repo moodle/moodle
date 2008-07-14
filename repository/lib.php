@@ -26,7 +26,7 @@
 /**
  * This is the base class of the repository class
  *
- * To use repository plugin, you need to create a new folder under repository/, named as the remote 
+ * To use repository plugin, you need to create a new folder under repository/, named as the remote
  * repository, the subclass must be defined in  the name
 
  *
@@ -35,8 +35,8 @@
  * See an example of use of this library in repository/box/repository.class.php
  *
  * A few notes :
- *   // options are stored as serialized format in database 
- *   $options = array('api_key'=>'dmls97d8j3i9tn7av8y71m9eb55vrtj4', 
+ *   // options are stored as serialized format in database
+ *   $options = array('api_key'=>'dmls97d8j3i9tn7av8y71m9eb55vrtj4',
  *                  'auth_token'=>'', 'path_root'=>'/');
  *   $repo    = new repository_xxx($options);
  *   // print login page or a link to redirect to another page
@@ -154,7 +154,7 @@ abstract class repository {
             return $str;
         }
     }
-    
+
     /**
      * Show the login screen, if required
      * This is an abstract function, it must be overriden.
@@ -166,7 +166,7 @@ abstract class repository {
      * 3. Redirect to authentication page, in this case, the repository
      * will callback moodle with following common parameters:
      *    (1) boolean callback To tell moodle this is a callback
-     *    (2) int     id       Specify repository ID 
+     *    (2) int     id       Specify repository ID
      * The callback page need to use these parameters to init
      * the repository plug-ins correctly. Also, auth_token or ticket may
      * attach in the callback url, these must be taken into account too.
@@ -309,13 +309,13 @@ function repository_get_plugins(){
     $ret = array();
     if($dir = opendir($repo)){
         while (false !== ($file = readdir($dir))) {
-            if(is_dir($file) && $file != '.' && $file != '..' 
+            if(is_dir($file) && $file != '.' && $file != '..'
                 && file_exists($repo.$file.'/repository.class.php')){
                 require_once($repo.$file.'/version.php');
-                $ret[] = array('name'=>$plugin->name, 
-                        'version'=>$plugin->version, 
+                $ret[] = array('name'=>$plugin->name,
+                        'version'=>$plugin->version,
                         'path'=>$repo.$file,
-                        'settings'=>file_exists($repo.$file.'/settings.php')); 
+                        'settings'=>file_exists($repo.$file.'/settings.php'));
             }
         }
     }

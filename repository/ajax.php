@@ -91,6 +91,7 @@ function openpicker(){
     // 10px top/bottom padding applied to Panel body element. The top/bottom border width is 0
     var panel = new YAHOO.widget.Panel('file-picker', {
         draggable: true,
+        close: false,
         underlay: 'none',
         width: '510px',
         xy: [100, 100]
@@ -190,8 +191,12 @@ function openpicker(){
             })
     var search = new YAHOO.util.Element('search');
     search.on('click', function(e){
+            if(repositoryid==0){
+                alert('Select a repository first.');
+                return;
+            }
             var data=window.prompt("What are you searching for?");
-            if(data != null || data != '') {
+            if(data != null && data != '') {
                 dosearch(data);
             }
         })
@@ -285,7 +290,7 @@ success: function(o) {
     try {
         var ret = YAHOO.lang.JSON.parse(o.responseText);
     } catch(e) {
-        alert(e);
+        alert('Invalid JSON String\n'+o.responseText);
     }
     datasource = ret;
     if(datasource.l){
