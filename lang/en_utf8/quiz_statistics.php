@@ -6,6 +6,7 @@ $string['statistics'] = 'Statistics';
 $string['calculatefrom'] = 'Calculate statistics from';
 
 
+$string['duration'] = 'Open for';
 $string['quizinformation'] = 'Quiz information';
 $string['quizoverallstatistics'] = 'Quiz overall statistics';
 $string['quizname'] = 'Quiz name';
@@ -14,8 +15,8 @@ $string['nooffirstattempts'] = 'Number of first attempts';
 $string['noofallattempts'] = 'Total number of attempts';
 $string['statsfor'] = 'Statistics (for $a)';
 $string['attempts'] = 'Attempts';
-$string['firstattempts'] = 'for first attempts';
-$string['allattempts'] = 'for all attempts';
+$string['firstattempts'] = 'first attempts';
+$string['allattempts'] = 'all attempts';
 $string['firstattemptsavg'] = 'Average grade of first attempts';
 $string['allattemptsavg'] = 'Average grade of all attempts';
 $string['attemptsall'] = 'all attempts';

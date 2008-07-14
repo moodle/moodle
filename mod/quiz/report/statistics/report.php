@@ -1,9 +1,9 @@
 <?php
 /**
- * This script lists student attempts
+ * This script calculates various statistics about student attempts
  *
  * @version $Id$
- * @author Martin Dougiamas, Tim Hunt and others.
+ * @author Martin Dougiamas, Jamie Pratt, Tim Hunt and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
  *//** */
@@ -98,7 +98,7 @@ class quiz_statistics_report extends quiz_default_report {
                 $quizinformationtable->data[] = array(get_string('quizclose', 'quiz'), userdate($quiz->timeclose));
             }
             if ($quiz->timeopen && $quiz->timeclose){
-                $quizinformationtable->data[] = array(get_string('duration'), format_time($quiz->timeclose - $quiz->timeopen));
+                $quizinformationtable->data[] = array(get_string('duration', 'quiz_statistics'), format_time($quiz->timeclose - $quiz->timeopen));
             }
             print_table($quizinformationtable);
         }
