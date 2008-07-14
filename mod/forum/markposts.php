@@ -60,7 +60,14 @@
                 add_to_log($course->id, "discussion", "mark read", "view.php?f=$forum->id", $d, $cm->id);
             }
         } else {
-            if (forum_tp_mark_forum_read($user, $forum->id)) {
+            // Mark all messages read in current group
+            $currentgroup = groups_get_activity_group($cm);
+            if(!$currentgroup) {
+                // mark_forum_read requires ===false, while get_activity_group
+                // may return 0
+                $currentgroup=false;
+            }
+            if (forum_tp_mark_forum_read($user->id, $forum->id,$currentgroup)) {
                 add_to_log($course->id, "forum", "mark read", "view.php?f=$forum->id", $forum->id, $cm->id);
             }
         }
