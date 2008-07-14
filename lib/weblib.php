@@ -1079,7 +1079,7 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
 
     //IE and Opera fire the onchange when ever you move into a dropdwown list with the keyboard.
     //onfocus will call a function inside dropdown.js. It fixes this IE/Opera behavior.
-    //Note: There is a bug on Opera+Linux with the javascript code (first mouse selection is inactive), 
+    //Note: There is a bug on Opera+Linux with the javascript code (first mouse selection is inactive),
     //so we do not fix the Opera behavior on Linux
     if (check_browser_version('MSIE') || (check_browser_version('Opera') && !check_browser_operating_system("Linux"))) {
         $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" onfocus="initSelect(\''.$formid.'\','.$targetwindow.')" name="jump">'."\n";
@@ -2132,11 +2132,11 @@ function html_to_text($html) {
     require_once($CFG->libdir .'/html2text.php');
 
     $result = html2text($html);
-    
+
     // html2text does not fix numerical entities so handle those here.
     $tl=textlib_get_instance();
     $result = $tl->entities_to_utf8($result,false);
-    
+
     return $result;
 }
 
@@ -2496,6 +2496,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $title = format_string($title);    // fix for MDL-8582
     $title = str_replace('"', '&quot;', $title);
+
+    if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
+        $button = '<a href="'.$CFG->wwwroot.'/admin/maintenance.php">'.get_string('maintenancemode', 'admin').'</a> '.$button;
+        if(!empty($title)) {
+            $title .= ' - ';
+        }
+        $title .= get_string('maintenancemode', 'admin');
+    }
 
     // Create class and id for this page
 
@@ -4703,7 +4711,7 @@ function print_table($table, $return=false) {
             if ($row == 'hr' and $countcols) {
                 $output .= '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
             } else {  /// it's a normal row of data
-            	$lastkey = end(array_keys($row));
+              $lastkey = end(array_keys($row));
                 foreach ($row as $key => $item) {
                     if (!isset($size[$key])) {
                         $size[$key] = '';
@@ -4715,9 +4723,9 @@ function print_table($table, $return=false) {
                         $wrap[$key] = '';
                     }
                     if ($key == $lastkey) {
-                    	$extraclass = ' lastcol';
+                      $extraclass = ' lastcol';
                     } else {
-                    	$extraclass = '';
+                      $extraclass = '';
                     }
                     $output .= '<td style="'. $align[$key].$size[$key].$wrap[$key] .'" class="cell c'.$key.$extraclass.'">'. $item .'</td>';
                 }
@@ -4765,7 +4773,7 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
 /**
  * Prints a basic textarea field.
  *
- * When using this function, you should 
+ * When using this function, you should
  *
  * @uses $CFG
  * @param bool $usehtmleditor Enables the use of the htmleditor for this field.
@@ -5613,7 +5621,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * Print an error page displaying an error message.  New method - use this for new code.
  *
  * @param string $errorcode The name of the string from error.php to print
- * @param string $module name of module  
+ * @param string $module name of module
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
  * @return terminates script, does not return!
@@ -5872,7 +5880,7 @@ function helpbutton ($page, $title, $module='moodle', $image=true, $linktext=fal
     if ( isset($text) && $text!='') {
       debugging('Warning: it\'s not recommended to use $text parameter in helpbutton ($page=' . $page . ', $module=' . $module . ') function', DEBUG_DEVELOPER);
     }
-    
+
     // fix for MDL-7734
     if (!empty($COURSE->lang)) {
         $forcelang = $COURSE->lang;
@@ -5956,7 +5964,7 @@ function emoticonhelpbutton($form, $field, $return = false) {
  * Print a button to toggle the html editor.
  */
 function editortogglebutton($id) {
-    
+
 }
 
 /**
@@ -7123,8 +7131,8 @@ class progress_bar {
       *     $pb->setclr($clr);
       *     $pb->create();
       *     ......
-      * 
-      * @param $clr object 
+      *
+      * @param $clr object
       */
     function setclr($clr){
         foreach($clr as $n=>$v) {
@@ -7134,7 +7142,7 @@ class progress_bar {
     /**
       * Create a new progress bar, this function will output
       * html.
-      * 
+      *
       */
     function create(){
             flush();
@@ -7142,10 +7150,10 @@ class progress_bar {
             $this->lastcall->time = microtime(true);
             $htmlcode = <<<EOT
             <script type="text/javascript">
-            Number.prototype.fixed=function(n){  
+            Number.prototype.fixed=function(n){
                 with(Math)
-                    return round(Number(this)*pow(10,n))/pow(10,n);  
-            }  
+                    return round(Number(this)*pow(10,n))/pow(10,n);
+            }
             function up_{$this->html_id} (id, width, pt, msg, es){
                 percent = pt*100;
                 document.getElementById("status_"+id).innerHTML = msg;
@@ -7205,7 +7213,7 @@ EOT;
     }
     /**
       * estimate time
-      * 
+      *
       * @param $curtime int the time call this function
       * @param $percent int
       */
@@ -7213,7 +7221,7 @@ EOT;
         $consume = $curtime - $this->time_start;
         $one = $curtime - $this->lastcall->time;
         $this->percent = $pt;
-        $percent = $pt - $this->lastcall->pt;      
+        $percent = $pt - $this->lastcall->pt;
         if($percent != 0)
             $left = ($one / $percent) - $consume;
         else
@@ -7225,7 +7233,7 @@ EOT;
     }
     /**
       * Update progress bar according percent
-      * 
+      *
       * @param $percent int from 1-100
       * @param $msg     string the message needed to be shown
       */
@@ -7238,15 +7246,15 @@ EOT;
     }
     /**
       * Update progress bar according the nubmer of tasks
-      * 
-      * @param $cur   int       current task number 
-      * @param $total int       total task number 
+      *
+      * @param $cur   int       current task number
+      * @param $total int       total task number
       * @param $msg   string    message
       */
     function update($cur, $total, $msg){
         $cur = max($cur, 0);
         if ($cur >= $total){
-            $percent = 1; 
+            $percent = 1;
         } else {
             $percent = $cur / $total;
         }

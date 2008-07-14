@@ -460,6 +460,7 @@ $string['mailnewline'] = 'Newline characters in mail';
 $string['maintfileopenerror'] = 'Error opening maintenance files!';
 $string['maintinprogress'] = 'Maintenance is in progress...';
 $string['managelang'] = 'Manage';
+$string['maintenancemode'] = 'In Maintenance Mode';
 $string['maxbytes'] = 'Maximum uploaded file size';
 $string['maxeditingtime'] = 'Maximum time to edit posts';
 $string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
