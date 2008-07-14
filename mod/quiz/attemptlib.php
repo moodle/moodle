@@ -615,7 +615,7 @@ class quiz_attempt extends quiz {
     }
 
     public function print_navigation_panel($panelclass, $page) {
-        $panel = new quiz_attempt_nav_panel($this, $this->get_review_options(), $page);
+        $panel = new $panelclass($this, $this->get_review_options(), $page);
         $panel->display();
     }
 
@@ -759,7 +759,8 @@ abstract class quiz_nav_panel_base {
 
     public function display() {
         $strquiznavigation = get_string('quiznavigation', 'quiz');
-        $content = $this->get_question_buttons() . $this->get_end_bits();
+        $content = $this->get_question_buttons() . '<div class="othernav">' .
+                $this->get_end_bits() . '</div>';
         print_side_block($strquiznavigation, $content, NULL, NULL, '', array('id' => 'quiznavigation'), $strquiznavigation);
     }
 }
@@ -799,10 +800,10 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
     }
 
     protected function get_end_bits() {
+        $accessmanager = $this->attemptobj->get_access_manager(time());
         $html = '<a href="' . $this->attemptobj->review_url(0, 0, true) . '">' .
                 get_string('showall', 'quiz') . '</a>';
-        $html .= '<a href="' . $this->attemptobj->view_url() . '">' .
-                get_string('finishreview', 'quiz') . '</a>';
+        $html .= $accessmanager->print_finish_review_link($this->attemptobj->is_preview_user(), true);
         return $html;
     }
 }

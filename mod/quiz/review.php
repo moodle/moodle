@@ -94,10 +94,17 @@
     }
     print_heading($strreviewtitle);
 
-/// Finish review link.
-    if ($reviewofownattempt) {
-        $accessmanager->print_finish_review_link($attemptobj->is_preview_user());
-    }
+/// Print the navigation panel in a left column.
+    print_container_start();
+    echo '<div id="left-column">';
+    $attemptobj->print_navigation_panel('quiz_review_nav_panel', $page);
+    echo '</div>';
+    print_container_end();
+
+/// Start the main column.
+    echo '<div id="middle-column">';
+    print_container_start();
+    echo skip_main_destination();
 
 /// Summary table start ============================================================================
 
@@ -205,26 +212,35 @@
 
 /// Summary table end ==============================================================================
 
-/// Print the navigation panel if required
-    // TODO!!!
-    print_paging_bar($attemptobj->get_num_pages(), $page, 1, 'review.php?attempt='.$attempt->id.'&amp;');
-    echo '<div class="controls"><a href="review.php?attempt='.$attempt->id.'&amp;showall=true">';
-    print_string('showall', 'quiz');
-    echo '</a></div>';
-
 /// Print all the questions
     if ($showall) {
-        $page = 'all';
+        $thispage = 'all';
+        $lastpage = true;
+    } else {
+        $thispage = $page;
+        $lastpage = $attemptobj->is_last_page($page);
     }
-    foreach ($attemptobj->get_question_ids($page) as $id) {
+    foreach ($attemptobj->get_question_ids($thispage) as $id) {
         $attemptobj->print_question($id);
     }
 
-    // print javascript button to close the window, if necessary
-    if ($reviewofownattempt) {
+/// Print a link to the next page.
+    echo '<div class="submitbtns">';
+    if ($lastpage) {
         $accessmanager->print_finish_review_link($attemptobj->is_preview_user());
+    } else {
+        link_arrow_right(get_string('next'), $attemptobj->review_url(0, $page + 1));
     }
+    echo "</div>";
 
+    // End middle column.
+    print_container_end();
+    echo '</div>';
+
+    echo '</div>';
+    echo '<div class="clearer"></div>';
+
+    // Finish the page
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         print_footer('empty');
     } else {

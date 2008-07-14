@@ -268,18 +268,24 @@ class quiz_access_manager {
      *
      * @param boolean $canpreview This affects whether we have to worry about secure window stuff.
      */
-    public function print_finish_review_link($canpreview) {
+    public function print_finish_review_link($canpreview, $return = false) {
         global $CFG;
+        $output = '';
         $url = $this->_quizobj->view_url();
-        echo '<div class="finishreview">';
+        $output .= '<div class="finishreview">';
         if ($this->securewindow_required($canpreview)) {
             $url = addslashes_js(htmlspecialchars($url));
-            echo '<input type="button" value="' . get_string('finishreview', 'quiz') . '" ' .
+            $output .= '<input type="button" value="' . get_string('finishreview', 'quiz') . '" ' .
                     "onclick=\"quiz_secure_window.close('$url', 0)\" />\n";
         } else {
-            echo '<a href="' . $url . '">' . get_string('finishreview', 'quiz') . "</a>\n";
+            $output .= '<a href="' . $url . '">' . get_string('finishreview', 'quiz') . "</a>\n";
         }
-        echo "</div>\n";
+        $output .= "</div>\n";
+        if ($return) {
+            return $output;
+        } else {
+            echo $output;
+        }
     }
 
     /**

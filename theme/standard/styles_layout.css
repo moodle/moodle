@@ -3817,21 +3817,22 @@ body#mod-forum-search .introcontent {
 #passwordform {
   margin: 1em 0;
 }
-#mod-quiz-attempt #middle-column {
+#mod-quiz-attempt #middle-column,
+#mod-quiz-review #middle-column {
   text-align: center;
-}
-#mod-quiz-attempt .pagingbar {
-  margin: 1.5em auto;
-}
-#mod-quiz-attempt #middle-column {
   margin: 0 0 0 12.5em;
 }
-#mod-quiz-attempt #left-column {
+#mod-quiz-attempt #left-column,
+#mod-quiz-review #left-column {
   width: 11.5em;
   float: left;
 }
-#mod-quiz-attempt .submitbtns {
+#mod-quiz-attempt .submitbtns,
+#mod-quiz-review .submitbtns {
   text-align: left;
+}
+#mod-quiz-summary .submitbtns {
+  margin-top: 1.5em;
 }
 
 #mod-quiz-attempt #quiz-timer-outer {
@@ -3858,8 +3859,8 @@ body#question-preview .quemodname, body#question-preview .controls {
 }
 
 #mod-quiz-attempt #page .controls,
-#mod-quiz-review #page .controls,
-#mod-quiz-review #page .finishreview {
+#mod-quiz-summary #page .controls,
+#mod-quiz-review #page .controls {
   text-align: center;
   margin: 8px auto;
 }
@@ -3870,7 +3871,6 @@ body#question-preview .quemodname, body#question-preview .controls {
   margin: 1.5em auto;
 }
 table.quizreviewsummary {
-  margin-bottom: 1.8em;
   width: 100%;
 }
 table.quizreviewsummary tr {
@@ -3883,6 +3883,7 @@ table.quizreviewsummary th.cell {
 }
 table.quizreviewsummary td.cell {
   padding: 1px 1em 1px 0.5em;
+  text-align: left;
 }
 
 #mod-quiz-mod #reviewoptionshdr .fitem {
@@ -4055,23 +4056,31 @@ table.quizreviewsummary td.cell {
   margin: 6px 0;
 }
 
-#quiznavigation input.qnbutton {
+#quiznavigation .qnbutton {
+  float: left;
+  width: 1.5em;
+  height: 1.5em;
+  margin: 0.3em 0.3em 0.3em 0;
   border: 1px solid grey;
   background: white;
   font-weight: bold;
-  width: 1.5em;
-  height: 1.5em;
-  margin-right: 0.3em;
-  text-align: middle;
+  text-align: center;
+  vertical-align: middle;
 }
-#quiznavigation input.qnbutton:hover {
+#quiznavigation .qnbutton:hover {
   background: silver;
+  text-decoration: underline;
 }
-#quiznavigation .qn_buttons {
-  margin: 0.2em;
-}
-#quiznavigation input.qnbutton.thispage {
+#quiznavigation .qnbutton.thispage {
   background: #eee;
+}
+#quiznavigation .othernav {
+  clear: both;
+}
+#quiznavigation .othernav a,
+#quiznavigation .othernav input {
+  display: block;
+  margin: 0.5em 0;
 }
 
 /***
