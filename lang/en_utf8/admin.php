@@ -460,6 +460,7 @@ $string['maxeditingtime'] = 'Maximum time to edit posts';
 $string['mbstringrecommended'] = 'Installing the optional MBSTRING library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
 $string['mediapluginavi'] = 'Enable .avi filter';
 $string['mediapluginflv'] = 'Enable .flv filter';
+$string['maintenancemode'] = 'In Maintenance Mode';
 $string['mediapluginmov'] = 'Enable .mov filter';
 $string['mediapluginmp3'] = 'Enable .mp3 filter';
 $string['mediapluginmpg'] = 'Enable .mpg filter';

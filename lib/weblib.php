@@ -688,7 +688,7 @@ if (!function_exists('stripos')) {    /// Only exists in PHP 5
  *
  * $url must be relative to home page  eg /mod/survey/stuff.php
  * @param string $url Web link relative to home page
- * @param string $name Name to be assigned to the popup window (this is used by 
+ * @param string $name Name to be assigned to the popup window (this is used by
  *   client-side scripts to "talk" to the popup window)
  * @param string $linkname Text to be displayed as web link
  * @param int $height Height to assign to popup window
@@ -739,7 +739,7 @@ function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=n
     } else {
         $name = 'popup';
     }
-    
+
     // get some default string, using the localized version of legacy defaults
     if (is_null($linkname) || $linkname === '') {
         $linkname = get_string('clickhere');
@@ -925,7 +925,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
  * Choose value 0 or 1 from a menu with options 'No' and 'Yes'.
  * Other options like choose_from_menu.
  * @param string $name
- * @param string $selected 
+ * @param string $selected
  * @param string $string (defaults to '')
  * @param boolean $return whether this function should return a string or output it (defaults to false)
  * @param boolean $disabled (defaults to false)
@@ -1176,18 +1176,18 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
         $selectlabel = '<label for="'.$formid.'_jump">'.$selectlabel.'</label>';
     }
 
-    //IE and Opera fire the onchange when ever you move into a dropdwown list with the keyboard. 
+    //IE and Opera fire the onchange when ever you move into a dropdwown list with the keyboard.
     //onfocus will call a function inside dropdown.js. It fixes this IE/Opera behavior.
-    //Note: There is a bug on Opera+Linux with the javascript code (first mouse selection is inactive), 
+    //Note: There is a bug on Opera+Linux with the javascript code (first mouse selection is inactive),
     //so we do not fix the Opera behavior on Linux
     if (check_browser_version('MSIE') || (check_browser_version('Opera') && !check_browser_operating_system("Linux"))) {
         $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" onfocus="initSelect(\''.$formid.'\','.$targetwindow.')" name="jump">'."\n";
     }
     //Other browser
     else {
-        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";  
+        $output .= '<div>'.$selectlabel.$button.'<select id="'.$formid.'_jump" name="jump" onchange="'.$targetwindow.'.location=document.getElementById(\''.$formid.'\').jump.options[document.getElementById(\''.$formid.'\').jump.selectedIndex].value;">'."\n";
     }
-    
+
     if ($nothing != '') {
         $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
     }
@@ -2234,11 +2234,11 @@ function html_to_text($html) {
     require_once($CFG->libdir .'/html2text.php');
 
     $result = html2text($html);
-    
+
     // html2text does not fix numerical entities so handle those here.
     $tl=textlib_get_instance();
     $result = $tl->entities_to_utf8($result,false);
-    
+
     return $result;
 }
 
@@ -2497,6 +2497,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         if (empty($CFG->loginhttps)) {
             $wwwroot = $CFG->wwwroot;
         } else {
+    if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
+        $button = '<a href="'.$CFG->wwwroot.'/admin/maintenance.php">'.get_string('maintenancemode', 'admin').'</a> '.$button;
+        if(!empty($title)) {
+            $title .= ' - ';
+        }
+        $title .= get_string('maintenancemode', 'admin');
+    }
+
             $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
         }
         $menu = user_login_string($COURSE);
@@ -4775,7 +4783,7 @@ function print_table($table, $return=false) {
             if ($row == 'hr' and $countcols) {
                 $output .= '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
             } else {  /// it's a normal row of data
-            	$lastkey = end(array_keys($row));
+              $lastkey = end(array_keys($row));
                 foreach ($row as $key => $item) {
                     if (!isset($size[$key])) {
                         $size[$key] = '';
@@ -4787,9 +4795,9 @@ function print_table($table, $return=false) {
                         $wrap[$key] = '';
                     }
                     if ($key == $lastkey) {
-                    	$extraclass = ' lastcol';
+                      $extraclass = ' lastcol';
                     } else {
-                    	$extraclass = '';
+                      $extraclass = '';
                     }
                     $output .= '<td style="'. $align[$key].$size[$key].$wrap[$key] .'" class="cell c'.$key.$extraclass.'">'. $item .'</td>';
                 }
@@ -5760,11 +5768,11 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
  * Default errorcode is 1.
  *
  * Very useful for perl-like error-handling:
- * 
+ *
  * do_somethting() or mdie("Something went wrong");
  *
  * @param string  $msg       Error message
- * @param integer $errorcode Error code to emit 
+ * @param integer $errorcode Error code to emit
  */
 function mdie($msg='', $errorcode=1) {
     trigger_error($msg);
@@ -5861,7 +5869,7 @@ function helpbutton ($page, $title, $module='moodle', $image=true, $linktext=fal
     if ( isset($text) && $text!='') {
       debugging('Warning: it\'s not recommended to use $text parameter in helpbutton ($page=' . $page . ', $module=' . $module . ') function', DEBUG_DEVELOPER);
     }
-    
+
     // fix for MDL-7734
     if (!empty($COURSE->lang)) {
         $forcelang = $COURSE->lang;
@@ -6817,7 +6825,7 @@ function page_doc_link($text='', $iconpath='') {
  */
 function doc_link($path='', $text='', $iconpath='') {
     global $CFG;
-    
+
     if (empty($CFG->docroot)) {
         return '';
     }
@@ -6831,7 +6839,7 @@ function doc_link($path='', $text='', $iconpath='') {
 
     $str = '<a href="' .$CFG->docroot. '/' .$lang. '/' .$path. '"' .$target. '>';
 
-    if (empty($iconpath)) { 
+    if (empty($iconpath)) {
         $iconpath = $CFG->httpswwwroot . '/pix/docs.gif';
     }
 
