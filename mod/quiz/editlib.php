@@ -46,7 +46,7 @@ function quiz_delete_quiz_question($id, &$quiz) {
     if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
         print_error('cannotsavequestion', 'quiz');
     }
-    $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->instance, 'question', $question));
+    $DB->delete_records('quiz_question_instances', array('quiz' => $quiz->instance, 'question'=> $question));
     return true;
 }
 
