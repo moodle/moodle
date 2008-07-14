@@ -381,6 +381,20 @@ class upload_manager {
             $errmessage = get_string('uploadnofilefound');
             break;
             
+        // Note: there is no error with a value of 5
+
+        case 6: // UPLOAD_ERR_NO_TMP_DIR
+            $errmessage = get_string('uploadnotempdir');
+            break;
+
+        case 7: // UPLOAD_ERR_CANT_WRITE
+            $errmessage = get_string('uploadcantwrite');
+            break;
+
+        case 8: // UPLOAD_ERR_EXTENSION
+            $errmessage = get_string('uploadextension');
+            break;
+
         default:
             $errmessage = get_string('uploadproblem', $file['name']);
         }
