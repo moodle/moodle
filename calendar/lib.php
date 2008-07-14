@@ -744,7 +744,7 @@ function calendar_top_controls($type, $data) {
             $content .= '<div style="text-align: center;"><a href="'.CALENDAR_URL.'view.php?view=upcoming"'.$courseid.'>'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
         break;
         case 'display':
-            $content .= '<div style="text-align: center;"><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear'))."</a></div>\n";
+            $content .= '<h2><a href="'.calendar_get_link_href(CALENDAR_URL.'view.php?view=month'.$courseid.'&amp;', 1, $data['m'], $data['y']).'">'.userdate($time, get_string('strftimemonthyear'))."</a></h2>\n";
         break;
         case 'month':
             list($prevmonth, $prevyear) = calendar_sub_month($data['m'], $data['y']);

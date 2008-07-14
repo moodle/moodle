@@ -453,8 +453,15 @@ a.skip-block {
 }
  
 #calendar h1 {
-	font-size:1.0em;
-	margin:0;
+  font-size:1.0em;
+  margin:0;
+}
+
+#calendar .minicalendarblock h2 {
+  font-size:1.0em;
+  margin:0;
+  font-weight:normal;
+  text-align:center;
 }
 
 table.minicalendar {
