@@ -19,15 +19,9 @@
 /// Check login.
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
 
-
 /// Create an object to manage all the other (non-roles) access rules.
     $accessmanager = $attemptobj->get_access_manager(time());
     $options = $attemptobj->get_review_options();
-
-/// Work out if this is a student viewing their own attempt/teacher previewing,
-/// or someone with 'mod/quiz:viewreports' reviewing someone elses attempt.
-    $reviewofownattempt = $attemptobj->get_userid() == $USER->id &&
-            (!$attemptobj->is_preview_user() || $attemptobj->is_preview());
 
 /// Permissions checks for normal users who do not have quiz:viewreports capability.
     if (!$attemptobj->has_capability('mod/quiz:viewreports')) {
@@ -36,8 +30,8 @@
             redirect($attemptobj->attempt_url(0, $page));
         }
     /// Can't review other users' attempts.
-        if (!$reviewofownattempt) {
-            quiz_error($quiz, 'reviewnotallowed');
+        if (!$attemptobj->is_own_attempt()) {
+            quiz_error($quiz, 'notyourattempt');
         }
     /// Can't review unless Students may review -> Responses option is turned on.
         if (!$options->responses) {
@@ -45,10 +39,6 @@
                     $accessmanager->cannot_review_message($options));
         }
     }
-
-/// Log this review.
-    add_to_log($attemptobj->get_courseid(), 'quiz', 'review', 'review.php?attempt=' .
-            $attemptobj->get_attemptid(), $attemptobj->get_quizid(), $attemptobj->get_cmid());
 
 /// load the questions and states needed by this page.
     if ($showall) {
@@ -59,8 +49,12 @@
     $attemptobj->load_questions($questionids);
     $attemptobj->load_question_states($questionids);
 
+/// Log this review.
+    add_to_log($attemptobj->get_courseid(), 'quiz', 'review', 'review.php?attempt=' .
+            $attemptobj->get_attemptid(), $attemptobj->get_quizid(), $attemptobj->get_cmid());
+
 /// Work out appropriate title.
-    if ($attemptobj->is_preview_user() && $reviewofownattempt) {
+    if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
         $strreviewtitle = get_string('reviewofpreview', 'quiz');
     } else {
         $strreviewtitle = get_string('reviewofattempt', 'quiz', $attemptobj->get_attempt_number());
@@ -78,7 +72,7 @@
 
 /// Print tabs if they should be there.
     if ($attemptobj->is_preview_user()) {
-        if ($reviewofownattempt) {
+        if ($attemptobj->is_own_attempt()) {
             $currenttab = 'preview';
         } else {
             $currenttab = 'reports';
@@ -88,8 +82,8 @@
     }
 
 /// Print heading.
-    print_heading(format_string($quiz->name));
-    if ($attemptobj->is_preview_user() && $reviewofownattempt) {
+    print_heading(format_string($attemptobj->get_quiz_name()));
+    if ($attemptobj->is_preview_user() && $attemptobj->is_own_attempt()) {
         $attemptobj->print_restart_preview_button();
     }
     print_heading($strreviewtitle);
@@ -139,20 +133,12 @@
                 $CFG->wwwroot . '/user/view.php?id=' . $student->id . '&amp;course=' . $attemptobj->get_courseid() . '">' .
                 fullname($student, true) . '</a></td></tr>';
     }
-    if (has_capability('mod/quiz:viewreports', $context) &&
-            count($attempts = $DB->get_records_select('quiz_attempts', "quiz = ? AND userid = ?", array($quiz->id, $attempt->userid), 'attempt ASC')) > 1) {
-    /// List of all this user's attempts for people who can see reports.
-        $attemptlist = array();
-        foreach ($attempts as $at) {
-            if ($at->id == $attempt->id) {
-                $attemptlist[] = '<strong>' . $at->attempt . '</strong>';
-            } else {
-                $attemptlist[] = '<a href="' . $attemptobj->review_url(0, $page, $showall, $at->id) .
-                        '">' . $at->attempt . '</a>';
-            }
+    if ($attemptobj->has_capability('mod/quiz:viewreports')) {
+        $attemptlist = $attemptobj->links_to_other_attempts($attemptobj->review_url(0, $page, $showall));
+        if ($attemptlist) {
+            $rows[] = '<tr><th scope="row" class="cell">' . get_string('attempts', 'quiz') .
+                    '</th><td class="cell">' . $attemptlist . '</td></tr>';
         }
-        $rows[] = '<tr><th scope="row" class="cell">' . get_string('attempts', 'quiz') .
-                '</th><td class="cell">' . implode(', ', $attemptlist) . '</td></tr>';
     }
 
 /// Timing information.

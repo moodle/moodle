@@ -923,8 +923,10 @@ class default_questiontype {
                         $link = '<b>'.$st->seq_number.'</b>';
                     } else {
                         if(isset($options->questionreviewlink)) {
-                            $link = link_to_popup_window ($options->questionreviewlink.'?state='.$st->id.'&amp;number='.$number,
-                             'reviewquestion', $st->seq_number, 450, 650, $strreviewquestion, 'none', true);
+                            $link = link_to_popup_window($options->questionreviewlink .
+                                    '&amp;question=' . $question->id . '&amp;state=' . $st->id,
+                                    'reviewquestion', $st->seq_number, 450, 650, $strreviewquestion,
+                                    'none', true);
                         } else {
                             $link = $st->seq_number;
                         }

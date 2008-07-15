@@ -190,6 +190,14 @@ class quiz_report_overview_table extends table_sql {
             return '-';
         }
     }
+
+    /**
+     * @param string $colname the name of the column.
+     * @param object $attempt the row of data - see the SQL in display() in
+     * mod/quiz/report/overview/report.php to see what fields are present,
+     * and what they are called.
+     * @return string the contents of the cell.
+     */
     function other_cols($colname, $attempt){
 
         if (preg_match('/^qsgrade([0-9]+)$/', $colname, $matches)){
@@ -211,8 +219,8 @@ class quiz_report_overview_table extends table_sql {
                         $grade = '<del>'.$oldgrade.'</del><br />'.
                                 $newgrade;
                     }
-                    return link_to_popup_window('/mod/quiz/reviewquestion.php?state='.
-                            $stateforqinattempt->id.'&amp;number='.$question->number,
+                    return link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
+                            $attempt->attempt . '&amp;question=' . $question->id,
                             'reviewquestion', $grade, 450, 650, get_string('reviewresponse', 'quiz'),
                             'none', true);
                 } else {

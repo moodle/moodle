@@ -419,6 +419,16 @@ class quiz_attempt extends quiz {
         $this->states = $newstates + $this->states;
     }
 
+    public function load_specific_question_state($questionid, $stateid) {
+        global $DB;
+        $state = question_load_specific_state($this->questions[$questionid],
+                $this->quiz, $this->attempt, $stateid);
+        if ($state === false) {
+            throw new moodle_quiz_exception($this, 'invalidstateid');
+        }
+        $this->states[$questionid] = $state;
+    }
+
     // Simple getters ======================================================================
     /** @return integer the attempt id. */
     public function get_attemptid() {
@@ -448,6 +458,20 @@ class quiz_attempt extends quiz {
     /** @return boolean whether this attemp is a preview attempt. */
     public function is_preview() {
         return $this->attempt->preview;
+    }
+
+    /**
+     * Is this a student dealing with their own attempt/teacher previewing,
+     * or someone with 'mod/quiz:viewreports' reviewing someone elses attempt.
+     * 
+     * @return boolean whether this situation should be treated as someone looking at their own
+     * attempt. The distinction normally only matters when an attempt is being reviewed.
+     */
+    public function is_own_attempt() {
+        global $USER;
+        return $this->attempt->userid == $USER->id &&
+                (!$this->is_preview_user() || $this->attempt->preview);
+        
     }
 
     public function get_question_state($questionid) {
@@ -576,12 +600,9 @@ class quiz_attempt extends quiz {
      * @param $otherattemptid if given, link to another attempt, instead of the one we represent.
      * @return string the URL to review this attempt.
      */
-    public function review_url($questionid = 0, $page = -1, $showall = false, $otherattemptid = null) {
+    public function review_url($questionid = 0, $page = -1, $showall = false) {
         global $CFG;
-        if (is_null($otherattemptid)) {
-            $otherattemptid = $this->attempt->id;
-        }
-        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $otherattemptid .
+        return $CFG->wwwroot . '/mod/quiz/review.php?attempt=' . $this->attempt->id .
                 $this->page_and_question_fragment($questionid, $page, $showall);
     }
 
@@ -617,6 +638,22 @@ class quiz_attempt extends quiz {
     public function print_navigation_panel($panelclass, $page) {
         $panel = new $panelclass($this, $this->get_review_options(), $page);
         $panel->display();
+    }
+
+        /// List of all this user's attempts for people who can see reports.
+    public function links_to_other_attempts($url) {
+        $search = '/\battempt=' . $this->attempt->id . '\b/';
+        $attempts = quiz_get_user_attempts($this->quiz->id, $this->attempt->userid, 'all');
+        $attemptlist = array();
+        foreach ($attempts as $at) {
+            if ($at->id == $this->attempt->id) {
+                $attemptlist[] = '<strong>' . $at->attempt . '</strong>';
+            } else {
+                $changedurl = preg_replace($search, 'attempt=' . $at->id, $url);
+                $attemptlist[] = '<a href="' . $changedurl . '">' . $at->attempt . '</a>';
+            }
+        }
+        return implode(', ', $attemptlist);
     }
 
     // Private methods =====================================================================
@@ -750,7 +787,7 @@ abstract class quiz_nav_panel_base {
     abstract protected function get_end_bits();
 
     protected function get_question_state($question) {
-        $state = 'todo'; // TODO
+        $state = 'todo'; // TODO MDL-15653
         if ($question->_page == $this->page) {
             $state .= ' thispage';
         }

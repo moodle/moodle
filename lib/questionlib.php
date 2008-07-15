@@ -37,6 +37,10 @@ define('QUESTION_EVENTMANUALGRADE', '9');   // Grade was entered by teacher
 define('QUESTION_EVENTS_GRADED', QUESTION_EVENTGRADE.','.
                     QUESTION_EVENTCLOSEANDGRADE.','.
                     QUESTION_EVENTMANUALGRADE);
+global $QUESTION_EVENTS_GRADED;
+$QUESTION_EVENTS_GRADED = array(QUESTION_EVENTGRADE, QUESTION_EVENTCLOSEANDGRADE,
+        QUESTION_EVENTMANUALGRADE);
+
 /**#@-*/
 
 /**#@+
@@ -792,6 +796,12 @@ function question_preload_questions($questionids, $extrafields = '', $join = '',
         $question->_partiallyloaded = true;
     }
 
+    // Note, a possible optimisation here would be to not load the TEXT fields
+    // (that is, questiontext and generalfeedback) here, and instead load them in
+    // question_load_questions. That would add one DB query, but reduce the amount
+    // of data transferred most of the time. I am not going to do this optimisation
+    // until it is shown to be worthwhile.
+
     return $questions;
 }
 
@@ -995,6 +1005,53 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
     return $states;
 }
 
+/**
+ * Load a particular previous state of a question.
+ *
+ * @param array $question The question to load the state for.
+ * @param object $cmoptions Options from the specifica activity module, e.g. $quiz.
+ * @param object $attempt The attempt for which the question sessions are to be loaded.
+ * @param integer $stateid The id of a specific state of this question.
+ * @return object the requested state. False on error.
+ */
+function question_load_specific_state($question, $cmoptions, $attempt, $stateid) {
+    global $DB, $QUESTION_EVENTS_GRADED;
+    // Load specified states for the question.
+    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment
+              FROM {question_states} st, {question_sessions} sess
+             WHERE st.id = ?
+               AND st.attempt = ?
+               AND sess.attemptid = st.attempt
+               AND st.question = ?
+               AND sess.questionid = st.question';
+    $state = $DB->get_record_sql($sql, array($stateid, $attempt->id, $question->id));
+    if (!$state) {
+        return false;
+    }
+    restore_question_state($question, $state);
+
+    // Load the most recent graded states for the questions before the specified one.
+    list($eventinsql, $params) = $DB->get_in_or_equal($QUESTION_EVENTS_GRADED);
+    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment
+              FROM {question_states} st, {question_sessions} sess
+             WHERE st.seq_number <= ?
+               AND st.attempt = ?
+               AND sess.attemptid = st.attempt
+               AND st.question = ?
+               AND sess.questionid = st.question
+               AND st.event ' . $eventinsql .
+           'ORDER BY st.seq_number DESC';
+    $gradedstates = $DB->get_records_sql($sql, array_merge(
+            array($state->seq_number, $attempt->id, $question->id), $params), 0, 1);
+    if (empty($gradedstates)) {
+        $state->last_graded = clone($state);
+    } else {
+        $gradedstate = reset($gradedstates);
+        restore_question_state($question, $gradedstate);
+        $state->last_graded = $gradedstate;
+    }
+    return $state;
+}
 
 /**
 * Creates the run-time fields for the states

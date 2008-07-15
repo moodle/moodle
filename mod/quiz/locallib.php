@@ -821,7 +821,9 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
     $options->readonly = true;
 
     // Provide the links to the question review and comment script
-    $options->questionreviewlink = '/mod/quiz/reviewquestion.php';
+    if (!empty($attempt->id)) {
+        $options->questionreviewlink = '/mod/quiz/reviewquestion.php?attempt=' . $attempt->id;
+    }
 
     // Show a link to the comment box only for closed attempts
     if ($attempt->timefinish && !is_null($context) && has_capability('mod/quiz:grade', $context)) {
