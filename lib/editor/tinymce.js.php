@@ -197,10 +197,7 @@ echo <<<EOF
     });
     function toggleEditor(id) {
         var elm = document.getElementById(id);
-        if (tinyMCE.getInstanceById(id) == null)
-		    tinyMCE.execCommand('mceAddControl', false, id);
-	    else
-		    tinyMCE.execCommand('mceRemoveControl', false, id);
+        tinyMCE.execCommand('mceToggleEditor',false,elm);
     }
     function moodlefilemanager(field_name, url, type, win) {
         tinyMCE.activeEditor.windowManager.open({

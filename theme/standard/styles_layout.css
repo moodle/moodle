@@ -489,6 +489,13 @@ img.iconkbhelp {
   border:0px;
 }
 
+img.icontoggle {
+  width:50px;
+  height:17px;
+  border:0px;
+  vertical-align:middle;
+}
+
 /*Accessibility: text 'seen' by screen readers but not visual users. Fixed for RTL languages, example Farsi. */
 .accesshide {
   position:absolute;
