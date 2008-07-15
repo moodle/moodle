@@ -4,6 +4,8 @@
  *
  * Normally, it will end up redirecting to attempt.php - unless a password form is displayed.
  *
+ * This code used to be at the top of attempt.php, if you are looking for CVS history.
+ *
  * @author Tim Hunt.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
