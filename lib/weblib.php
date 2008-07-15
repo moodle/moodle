@@ -4027,6 +4027,16 @@ function print_container_end($return=false) {
         $output = '</div>';
     }
 
+    if ($idbase == 'footer' and !empty($THEME->htmleditors)) {
+        $output .= "\n".'<script type="text/javascript">'."\n";
+        $output .= "\n//<![CDATA[\n";
+        foreach ($THEME->htmleditors as $editorid) {
+            $output .= 'tinyMCE.execCommand("mceToggleEditor", false, document.getElementById(\''. $editorid .'\'))'."\n";
+        }
+        $output .= "//]]>\n";
+        $output .= '</script>'."\n";
+    }
+
     if ($return) {
         return $output;
     } else {
@@ -4792,7 +4802,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 /// $width and height are legacy fields and no longer used as pixels like they used to be.
 /// However, you can set them to zero to override the mincols and minrows values below.
 
-    global $CFG, $COURSE, $HTTPSPAGEREQUIRED;
+    global $CFG, $COURSE, $HTTPSPAGEREQUIRED, $THEME;
     //static $scriptcount = 0; // For loading the htmlarea script only once.
 
     $mincols = 65;
@@ -4837,6 +4847,11 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
             }
         }
     }
+
+    if ($usehtmleditor) {
+        $THEME->htmleditors[] = $id;
+    }
+
     $str .= "\n".'<textarea class="form-textarea '. $class .'" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
     if ($usehtmleditor) {
         $str .= htmlspecialchars($value); // needed for editing of cleaned text!
