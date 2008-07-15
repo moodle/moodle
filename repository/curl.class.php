@@ -20,6 +20,10 @@
 class curl {
     private $options;
     public  $cache    = false;
+    public  $proxy    = false;
+    private $proxy_host = '';
+    private $proxy_auth = '';
+    private $proxy_type = '';
     private $debug    = false;
     private $cookie   = false;
     public  $version  = '0.2 dev';
@@ -28,11 +32,14 @@ class curl {
     public  $info;
     public  $error;
     public function __construct($options = array()){
+        global $CFG;
         if(!function_exists('curl_init')) {
             $this->error = 'cURL module must be enabled!';
             trigger_error($this->error, E_USER_ERROR);
             return false;
         }
+        // the options of curl should be init here.
+        $this->resetopt();
         if(!empty($options['debug'])) {
             $this->debug = true;
         }
@@ -46,7 +53,33 @@ class curl {
                 $this->cache = new repository_cache;
             }
         }
-        $this->resetopt();
+        if(!empty($options['proxy'])) {
+            if(!empty($CFG->proxyhost)) {
+                if (empty($CFG->proxyport)) {
+                    $this->proxy_host = $CFG->proxyhost;
+                } else {
+                    $this->proxy_host = $CFG->proxyhost.':'.$CFG->proxyport;
+                }
+                if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+                    $this->proxy_auth = $CFG->proxyuser.':'.$CFG->proxypassword;
+                    $this->setopt(array(
+                                'proxyauth'=> CURLAUTH_BASIC | CURLAUTH_NTLM,
+                                'proxyuserpwd'=>$this->proxy_auth));
+                }
+                if (!empty($CFG->proxytype)) {
+                    if($CFG->proxytype == 'SOCKS5') {
+                        $this->proxy_type = CURLPROXY_SOCKS5;
+                    } else {
+                        $this->proxy_type = CURLPROXY_HTTP;
+                        $this->setopt(array('httpproxytunnel'=>true));
+                    }
+                    $this->setopt(array('proxytype'=>$this->proxy_type));
+                }
+            }
+            if (!empty($this->proxy_host)) {
+                $this->proxy = array('proxy'=>$this->proxy_host);
+            }
+        }
     }
     public function resetopt(){
         $this->options = array();
@@ -176,6 +209,10 @@ class curl {
      *
      */
     protected function request($url, $options = array()){
+        if (!preg_match('#^https?://#i', $url)) {
+            $this->error = 'Invalid protocol specified in url';
+            return false;
+        }
         // Clean up
         $this->cleanopt();
         // create curl instance
@@ -201,6 +238,11 @@ class curl {
             $this->setopt(array('cookiejar'=>$this->cookie,
                             'cookiefile'=>$this->cookie
                              ));
+        }
+
+        // set proxy
+        if(!empty($this->proxy)) {
+            $this->setopt($this->proxy);
         }
 
         // set options
