@@ -1087,14 +1087,11 @@ class default_questiontype {
     * @param object $options  An object describing the rendering options.
     */
     function print_question_submit_buttons(&$question, &$state, $cmoptions, $options) {
-        /* The default implementation should be suitable for most question
-        types. It prints a mark button in the case where individual marking is
-        allowed. */
-
+        // The default implementation should be suitable for most question types.
+        // It prints a mark button in the case where individual marking is allowed.
         if (($cmoptions->optionflags & QUESTION_ADAPTIVE) and !$options->readonly) {
             echo '<input type="submit" name="', $question->name_prefix, 'submit" value="',
-                    get_string('mark', 'quiz'), '" class="submit btn" onclick="',
-                    "form.action = form.action + '#q", $question->id, "'; return true;", '" />';
+                    get_string('mark', 'quiz'), '" class="submit btn" />';
         }
     }
 

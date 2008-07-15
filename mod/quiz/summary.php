@@ -100,12 +100,13 @@ print_table($table);
 /// Finish attempt button.
 echo "<div class=\"submitbtns mdl-align\">\n";
 $options = array(
+    'attempt' => $attemptobj->get_attemptid(),
     'finishattempt' => 1,
     'timeup' => 0,
     'questionids' => '',
-    'sesskey' => sesskey()
+    'sesskey' => sesskey(),
 );
-print_single_button($attemptobj->attempt_url(), $options, get_string('finishattempt', 'quiz'),
+print_single_button($attemptobj->processattempt_url(), $options, get_string('finishattempt', 'quiz'),
         'post', '', false, '', false, get_string('confirmclose', 'quiz'));
 echo "</div>\n";
 

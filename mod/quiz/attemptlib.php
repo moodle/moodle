@@ -591,6 +591,14 @@ class quiz_attempt extends quiz {
     }
 
     /**
+     * @return string the URL of this quiz's summary page.
+     */
+    public function processattempt_url() {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/quiz/processattempt.php';
+    }
+
+    /**
      * @param integer $page if specified, the URL of this particular page of the attempt, otherwise
      * the URL will go to the first page.
      * @param integer $questionid a question id. If set, will add a fragment to the URL
