@@ -37,7 +37,7 @@ function get_course_media_files($courseid)
  * @param string $file the filename
  * @return boolean
  */
-function is_image_by_extentsion($file) {
+function is_image_by_extension($file) {
     $extensionsregex = '/\.(gif|jpg|jpeg|jpe|png|tif|tiff|bmp|xbm|rgb|svf)$/';
     if (preg_match($extensionsregex, $file)) {
         return true;
