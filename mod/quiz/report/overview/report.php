@@ -199,37 +199,39 @@ class quiz_overview_report extends quiz_default_report {
             $mform->display();
         }
         
-        $countregradeneeded = $this->count_regrade_all_needed($quiz, $groupstudents);
-        //regrade buttons
-        if ($currentgroup){
-            $a= new object();
-            $a->groupname = groups_get_group_name($currentgroup);
-            $a->coursestudents = $COURSE->students;
-            $a->countregradeneeded = $countregradeneeded;
-            $regradealldrydolabel = get_string('regradealldrydogroup', 'quiz_overview', $a);
-            $regradealldrylabel = get_string('regradealldrygroup', 'quiz_overview', $a);
-            $regradealllabel = get_string('regradeallgroup', 'quiz_overview', $a);
-        } else {
-            $regradealldrydolabel = get_string('regradealldrydo', 'quiz_overview', $countregradeneeded);
-            $regradealldrylabel = get_string('regradealldry', 'quiz_overview');
-            $regradealllabel = get_string('regradeall', 'quiz_overview');
-        }
-        
-        if (has_capability('mod/quiz:grade', $this->context)){
-            echo '<div class="mdl-align">';
-            echo '<form action="'.$reporturl->out(true).'">';
-            echo '<div>';
-            echo $reporturl->hidden_params_out(array(), 0, $displayoptions);
-            echo '<input type="submit" name="regradeall" value="'.$regradealllabel.'"/>';
-            echo '<input type="submit" name="regradealldry" value="'.$regradealldrylabel.'"/>';
-            if ($countregradeneeded){
-                echo '<input type="submit" name="regradealldrydo" value="'.$regradealldrydolabel.'"/>';
-            }
-            echo '</div>';
-            echo '</form>';
-            echo '</div>';
-        }
 
+        
+        if (!$table->is_downloading()) { //do not print notices when downloading
+            $countregradeneeded = $this->count_regrade_all_needed($quiz, $groupstudents);
+            //regrade buttons
+            if ($currentgroup){
+                $a= new object();
+                $a->groupname = groups_get_group_name($currentgroup);
+                $a->coursestudents = $COURSE->students;
+                $a->countregradeneeded = $countregradeneeded;
+                $regradealldrydolabel = get_string('regradealldrydogroup', 'quiz_overview', $a);
+                $regradealldrylabel = get_string('regradealldrygroup', 'quiz_overview', $a);
+                $regradealllabel = get_string('regradeallgroup', 'quiz_overview', $a);
+            } else {
+                $regradealldrydolabel = get_string('regradealldrydo', 'quiz_overview', $countregradeneeded);
+                $regradealldrylabel = get_string('regradealldry', 'quiz_overview');
+                $regradealllabel = get_string('regradeall', 'quiz_overview');
+            }
+            if (has_capability('mod/quiz:grade', $this->context)){
+                echo '<div class="mdl-align">';
+                echo '<form action="'.$reporturl->out(true).'">';
+                echo '<div>';
+                echo $reporturl->hidden_params_out(array(), 0, $displayoptions);
+                echo '<input type="submit" name="regradeall" value="'.$regradealllabel.'"/>';
+                echo '<input type="submit" name="regradealldry" value="'.$regradealldrylabel.'"/>';
+                if ($countregradeneeded){
+                    echo '<input type="submit" name="regradealldrydo" value="'.$regradealldrydolabel.'"/>';
+                }
+                echo '</div>';
+                echo '</form>';
+                echo '</div>';
+            }
+        }
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)){
             // Print information on the grading method and whether we are displaying
             //
