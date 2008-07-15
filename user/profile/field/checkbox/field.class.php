@@ -1,4 +1,4 @@
-<?php //$Id:
+<?php // $Id$
 
 class profile_field_checkbox extends profile_field_base {
 
