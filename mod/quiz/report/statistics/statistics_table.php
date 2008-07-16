@@ -51,6 +51,15 @@ class quiz_report_statistics_table extends flexible_table {
         $columns[]= 'intended_weight';
         $headers[]= get_string('intended_weight', 'quiz_statistics');
         
+        $columns[]= 'effective_weight';
+        $headers[]= get_string('effective_weight', 'quiz_statistics');
+        
+        $columns[]= 'discrimination_index';
+        $headers[]= get_string('discrimination_index', 'quiz_statistics');
+        
+        $columns[]= 'discriminative_efficiency';
+        $headers[]= get_string('discriminative_efficiency', 'quiz_statistics');
+        
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->sortable(false);
@@ -58,8 +67,11 @@ class quiz_report_statistics_table extends flexible_table {
         $this->column_class('s', 'numcol');
         $this->column_class('random_guess_score', 'numcol');
         $this->column_class('intended_weight', 'numcol');
+        $this->column_class('effective_weight', 'numcol');
         $this->column_class('sd', 'numcol');
         $this->column_class('facility', 'numcol');
+        $this->column_class('discrimination_index', 'numcol');
+        $this->column_class('discriminative_efficiency', 'numcol');
 
         // Set up the table
         $this->define_baseurl($reporturl->out());
@@ -107,7 +119,19 @@ class quiz_report_statistics_table extends flexible_table {
     function col_intended_weight($question){
         return quiz_report_scale_sumgrades_as_percentage($question->grade, $this->quiz);
     }
-
+    function col_effective_weight($question){
+        return number_format($question->effectiveweight, 2).' %';
+    }
+    function col_discrimination_index($question){
+        if (is_numeric($question->discriminationindex)){
+            return number_format($question->discriminationindex, 2).' %';
+        } else {
+            return $question->discriminationindex;
+        }
+    }
+    function col_discriminative_efficiency($question){
+        return number_format($question->discriminativeefficiency, 2).' %';
+    }
     function col_random_guess_score($question){
         $randomguessscore = question_get_random_guess_score($question);
         if (is_numeric($randomguessscore)){

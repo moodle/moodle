@@ -144,6 +144,7 @@ class quiz_statistics_report extends quiz_default_report {
                 }
                 $usingattempts->heading = get_string('statsfor', 'quiz_statistics', $usingattempts->attempts);
                 $s = $usingattempts->countrecs;
+                $sumgradesavg = $usingattempts->total / $usingattempts->countrecs;
             }
         } else {
             $s = 0;
@@ -243,11 +244,14 @@ class quiz_statistics_report extends quiz_default_report {
             }
         }
         if ($s){
-            //CIC, ER and SE.
+/*            //CIC, ER and SE.
             //http://docs.moodle.org/en/Development:Quiz_item_analysis_calculations_in_practise#CIC.2C_ER_and_SE
             list($qsql, $sqlparams) = $DB->get_in_or_equal(array_keys($questions), SQL_PARAMS_NAMED);
             $sqlparams += $qaparams;//put quiz id in at beginning of array
-            $qgradeavgsql = "SELECT qs.question, AVG(qs.grade) FROM " .
+            $qgradeavgsql = "SELECT qs.question, " .
+                    "AVG(qs.grade) AS gradeaverage " .
+                    "AVG(qa.sumgrades - qs.grade) AS sumgradeaverage " .
+                    "FROM " .
                     "{question_sessions} qns, " .
                     "{question_states} qs, " .
                     $fromqa.' '.
@@ -256,7 +260,7 @@ class quiz_statistics_report extends quiz_default_report {
                     'AND qs.question '.$qsql.' ' .
                     $usingattempts->sql.
                     'AND qns.newgraded = qs.id GROUP BY qs.question';
-            $qgradeavgs = $DB->get_records_sql_menu($qgradeavgsql, $sqlparams);
+            $qgradeavgs = $DB->get_records_sql($qgradeavgsql, $sqlparams);
             
             $sum = 0;
             $sql = 'SELECT COUNT(1) as s,' .
@@ -283,13 +287,112 @@ class quiz_statistics_report extends quiz_default_report {
                 }
                 $sum += $fromdb->power2;
             }
+            //Discrimination index
+            $sql = 'SELECT qs.id, ' .
+                    'qs.question, ' .
+                    'qa.sumgrades - qs.grade AS sum, ' .
+                    'qs.grade ' .
+                    'FROM ' .
+                    '{question_sessions} qns, ' .
+                    '{question_states} qs, '.
+                    $fromqa.' '.
+                    'WHERE ' .$whereqa.
+                    'AND qns.attemptid = qa.uniqueid '.
+                    $usingattempts->sql.
+                    'AND qns.newgraded = qs.id';
+            $fromdbrs = $DB->get_recordset_sql($sql, $qaparams);
+            if ($fromdbrs === false){
+                print_error('errorpowerquestions', 'quiz_statistics');
+            }
+            foreach ($fromdbrs as $record){
+                
+            }*/
+            $sql = 'SELECT qs.id, ' .
+                    'qs.question, ' .
+                    'qa.sumgrades, ' .
+                    'qs.grade ' .
+                    'FROM ' .
+                    '{question_sessions} qns, ' .
+                    '{question_states} qs, '.
+                    $fromqa.' '.
+                    'WHERE ' .$whereqa.
+                    'AND qns.attemptid = qa.uniqueid '.
+                    $usingattempts->sql.
+                    'AND qns.newgraded = qs.id';
+            $fromdbrs = $DB->get_recordset_sql($sql, $qaparams);
+            if ($fromdbrs === false){
+                print_error('errorstatisticsquestions', 'quiz_statistics');
+            }
+            foreach (array_keys($questions) as $qid){
+                $questions[$qid]->s = 0;
+                $questions[$qid]->totalgrades = 0;
+                $questions[$qid]->totalothergrades = 0;
+                $questions[$qid]->gradevariancesum = 0;
+                $questions[$qid]->othergradevariancesum = 0;
+                $questions[$qid]->covariancesum = 0;
+                $questions[$qid]->covariancemaxsum = 0;
+                $questions[$qid]->covariancewithoverallgradesum = 0;
+                $questions[$qid]->gradearray = array();
+                $questions[$qid]->othergradesarray = array();
+            }
+            
+            foreach ($fromdbrs as $record){
+                $questions[$record->question]->s++;
+                $questions[$record->question]->totalgrades += $record->grade;
+                $questions[$record->question]->totalothergrades += $record->sumgrades - $record->grade;
+                //need to sort these to calculate max covariance :
+                $questions[$record->question]->gradearray[] = $record->grade;
+                $questions[$record->question]->othergradesarray[] = $record->sumgrades - $record->grade;
+            }
+            foreach (array_keys($questions) as $qid){
+                $questions[$qid]->gradeaverage = $questions[$qid]->totalgrades / $s;
+                $questions[$qid]->facility = $questions[$qid]->gradeaverage / $questions[$qid]->grade;
+                $questions[$qid]->othergradeaverage = $questions[$qid]->totalothergrades / $s;
+                sort($questions[$qid]->gradearray, SORT_NUMERIC);
+                sort($questions[$qid]->othergradesarray, SORT_NUMERIC);
+            }
+            //go through the records one more time
+            foreach ($fromdbrs as $record){
+                $gradedifference = ($record->grade - $questions[$record->question]->gradeaverage);
+                $othergradedifference = (($record->sumgrades - $record->grade) - $questions[$record->question]->othergradeaverage);
+                $overallgradedifference = $record->sumgrades - $sumgradesavg;
+                $sortedgradedifference = (array_shift($questions[$qid]->gradearray) - $questions[$record->question]->gradeaverage);
+                $sortedothergradedifference = (array_shift($questions[$qid]->othergradesarray) - $questions[$record->question]->othergradeaverage);
+                $questions[$record->question]->gradevariancesum += pow($gradedifference,2);
+                $questions[$record->question]->othergradevariancesum += pow($othergradedifference,2);
+                $questions[$record->question]->covariancesum += $gradedifference * $othergradedifference;
+                $questions[$record->question]->covariancemaxsum += $sortedgradedifference * $sortedothergradedifference;
+                $questions[$record->question]->covariancewithoverallgradesum += $gradedifference * $overallgradedifference;
+            }
+            $sumofcovariancewithoverallgrade = 0;
+            $sumofgradevariance =0;
+            foreach (array_keys($questions) as $qid){
+                $questions[$qid]->gradevariance = $questions[$qid]->gradevariancesum / ($s -1);
+                $questions[$qid]->othergradevariance = $questions[$qid]->othergradevariancesum / ($s -1);
+                $questions[$qid]->covariance = $questions[$qid]->covariancesum / ($s -1);
+                $questions[$qid]->covariancemax = $questions[$qid]->covariancemaxsum / ($s -1);
+                $sumofgradevariance += $questions[$qid]->gradevariance;
+                $questions[$qid]->covariancewithoverallgrade = $questions[$qid]->covariancewithoverallgradesum / ($s-1);
+                $sumofcovariancewithoverallgrade += sqrt($questions[$qid]->covariancewithoverallgrade);
+                $questions[$qid]->sd = sqrt($questions[$qid]->gradevariancesum / ($s -1));
+                //avoid divide by zero
+                if (sqrt($questions[$qid]->gradevariance * $questions[$qid]->othergradevariance)){
+                    $questions[$qid]->discriminationindex = 100*$questions[$qid]->covariance 
+                                / sqrt($questions[$qid]->gradevariance * $questions[$qid]->othergradevariance);
+                } else {
+                    $questions[$qid]->discriminationindex = '';
+                }
+                $questions[$qid]->discriminativeefficiency = 100*$questions[$qid]->covariance / $questions[$qid]->covariancemax;
+            }
+            foreach (array_keys($questions) as $qid){
+                $questions[$qid]->effectiveweight = 100 * sqrt($questions[$qid]->covariancewithoverallgrade)/$sumofcovariancewithoverallgrade;
+            }
         }
         if (!$table->is_downloading()){
             if ($s>1){
-                $sumofvarianceforallpositions = $sum / ($s -1);
-                $p = count($qgradeavgs);//no of positions
+                $p = count($questions);//no of positions
                 if ($p > 1){
-                    $cic = (100 * $p / ($p -1)) * (1 - ($sumofvarianceforallpositions/$k2));
+                    $cic = (100 * $p / ($p -1)) * (1 - ($sumofgradevariance)/$k2);
                     $quizattsstatistics->data[] = array(get_string('cic', 'quiz_statistics'), number_format($cic, $quiz->decimalpoints).' %');
                     $errorratio = 100 * sqrt(1-($cic/100));
                     $quizattsstatistics->data[] = array(get_string('errorratio', 'quiz_statistics'), number_format($errorratio, $quiz->decimalpoints).' %');
