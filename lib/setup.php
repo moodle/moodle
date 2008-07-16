@@ -527,15 +527,33 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 
-    $iplist = unserialize(get_config(null, 'blockedip'));
-    if(!empty($iplist)) {
-        foreach($iplist as $ip) {
+    $allowediponly = get_config(null, 'enableallowedip');
+    if(!empty($allowediponly)){
+        $allowediplist = get_config(null, 'allowedip');
+        $blockediplist = get_config(null, 'blockedip');
+    } else {
+        $blockediplist = get_config(null, 'blockedip');
+    }
+    if(!empty($blockediplist)) {
+        $blockediplist = explode("\n", $blockediplist);
+        foreach($blockediplist as $ip) {
+            $ip = trim($ip);
             if(address_in_subnet(getremoteaddr(), $ip)){
                 // Telling the banned user the site is not
                 // available currently.
-                echo get_string('sitemaintenance', 'admin');
-                die;
-            }
+                die(get_string('ipinblockedlist', 'admin'));
+            } 
+        }
+    }
+    if(!empty($allowediplist)) {
+        $allowediplist = explode("\n", $allowediplist);
+        foreach($allowediplist as $ip) {
+            $ip = trim($ip);
+            if(!address_in_subnet(getremoteaddr(), $ip)){
+                // Telling users only specfied users are 
+                // allowed accessing this site.
+                die(get_string('ipoutallowedlist', 'admin'));
+            } 
         }
     }
 

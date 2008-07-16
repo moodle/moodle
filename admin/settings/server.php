@@ -161,8 +161,13 @@ $ADMIN->add('server', $temp);
 
 $ADMIN->add('server', new admin_externalpage('maintenancemode', get_string('sitemaintenancemode', 'admin'), "$CFG->wwwroot/$CFG->admin/maintenance.php"));
 
-$ADMIN->add('server', new admin_externalpage('ipblocker', get_string('ipblocker', 'admin'), "$CFG->wwwroot/$CFG->admin/ipblocker.php"));
-
+$temp = new admin_settingpage('ipblocker', get_string('ipblocker', 'admin'));
+$temp->add(new admin_setting_configcheckbox('enableallowedip', get_string('enableallowedip', 'admin'), get_string('enableallowedipdesc', 'admin'), 0));
+$temp->add(new admin_setting_configiplist('allowedip', get_string('allowediplist', 'admin'),
+                                            '', ''));
+$temp->add(new admin_setting_configiplist('blockedip', get_string('blockediplist', 'admin'),
+                                            '', ''));
+$ADMIN->add('server', $temp);
 
 $temp = new admin_settingpage('cleanup', get_string('cleanup', 'admin'));
 $temp->add(new admin_setting_configselect('longtimenosee', get_string('longtimenosee', 'admin'), get_string('configlongtimenosee', 'admin'), 120, array(0 => get_string('never'),

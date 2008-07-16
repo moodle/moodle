@@ -201,7 +201,7 @@ function get_db_directories() {
             $dbdirs[] = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$plugin.'/db';
         }
     }
-    
+
 /// Now quiz report plugins (mod/quiz/report/xxx/db)
     if ($plugins = get_list_of_plugins('mod/quiz/report', 'db')) {
         foreach ($plugins as $plugin) {
@@ -1883,7 +1883,7 @@ class admin_setting_configtext extends admin_setting {
             $data = 0;
         }
         // $data is a string
-        $validated = $this->validate($data); 
+        $validated = $this->validate($data);
         if ($validated !== true) {
             return $validated;
         }
@@ -1944,7 +1944,7 @@ class admin_setting_configtextarea extends admin_setting_configtext {
         $defaultinfo = $default;
         if (!is_null($default) and $default !== '') {
             $defaultinfo = "\n".$default;
-        } 
+        }
 
         return format_admin_setting($this, $this->visiblename,
                 '<div class="form-textarea form-textarea-advanced" ><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
@@ -2258,7 +2258,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
         $return .= '</div>';
 
         return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', $defaultinfo, $query);
-        
+
     }
 }
 
@@ -2353,7 +2353,7 @@ class admin_setting_configselect extends admin_setting {
             if (strpos($textlib->strtolower($value), $query) !== false) {
                 return true;
             }
-        }         
+        }
         return false;
     }
 
@@ -2585,6 +2585,33 @@ class admin_setting_configtime extends admin_setting {
 
 }
 
+class admin_setting_configiplist extends admin_setting_configtextarea {
+    function validate($data) {
+        if(!empty($data)) {
+            $ips = explode("\n", $data); 
+        } else {
+            return true;
+        }
+        $result = true;
+        foreach($ips as $ip) {
+            $ip = trim($ip);
+            if(preg_match('#^(\d{1,3})(\.\d{1,3}){0,3}$#', $ip, $match) ||
+                   preg_match('#^(\d{1,3})(\.\d{1,3}){0,3}(\/\d{1,2})$#', $ip, $match) ||
+                   preg_match('#^(\d{1,3})(\.\d{1,3}){3}(-\d{1,3})$#', $ip, $match)) {
+                $result = true;
+            } else {
+                $result = false;
+                break;
+            }
+        }
+        if($result){
+            return true;
+        } else {
+            return get_string('validateerror', 'admin');
+        }
+    }
+}
+
 /**
  * Special checkbox for calendar - resets SESSION vars.
  */
@@ -2773,7 +2800,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     function write_setting($data) {
         global $DB;
         $data = trim($data);
-        $validated = $this->validate($data); 
+        $validated = $this->validate($data);
         if ($validated !== true) {
             return $validated;
         }
@@ -3417,7 +3444,7 @@ class admin_setting_regradingcheckbox extends admin_setting_configcheckbox {
         }
 
         return $return;
-    }    
+    }
 }
 
 /**
@@ -3562,7 +3589,7 @@ class admin_setting_gradecat_combo extends admin_setting {
                 $defaultinfo[] = get_string('advanced');
             }
             $defaultinfo = implode(', ', $defaultinfo);
-            
+
         } else {
             $defaultinfo = NULL;
         }
@@ -4714,7 +4741,7 @@ function db_replace($search, $replace) {
 
 /**
  * Prints tables of detected plugins, one table per plugin type,
- * and prints whether they are part of the standard Moodle 
+ * and prints whether they are part of the standard Moodle
  * distribution or not.
  */
 function print_plugin_tables() {
@@ -4735,7 +4762,7 @@ function print_plugin_tables() {
                                      'scorm',
                                      'survey',
                                      'wiki');
-    
+
     $plugins_standard['blocks'] = array('activity_modules',
                                         'admin',
                                         'admin_bookmarks',
@@ -4767,7 +4794,7 @@ function print_plugin_tables() {
                                         'tag_flickr',
                                         'tag_youtube',
                                         'tags');
-    
+
     $plugins_standard['filter'] = array('activitynames',
                                         'algebra',
                                         'censor',
@@ -4794,14 +4821,14 @@ function print_plugin_tables() {
     $plugins_ondisk['mod'] = get_list_of_plugins('mod', 'db');
     $plugins_ondisk['blocks'] = get_list_of_plugins('blocks', 'db');
     $plugins_ondisk['filter'] = get_list_of_plugins('filter', 'db');
-    
+
     $strstandard    = get_string('standard');
     $strnonstandard = get_string('nonstandard');
     $strmissingfromdisk = '(' . get_string('missingfromdisk') . ')';
     $strabouttobeinstalled = '(' . get_string('abouttobeinstalled') . ')';
 
     $html = '';
-    
+
     $html .= '<table class="generaltable plugincheckwrapper" cellspacing="4" cellpadding="1"><tr valign="top">';
 
     foreach ($plugins_ondisk as $cat => $list_ondisk) {
@@ -4817,8 +4844,8 @@ function print_plugin_tables() {
         $html .= '<tr class="r0"><th class="header c0">' . get_string('directory') . "</th>\n"
                . '<th class="header c1">' . get_string('name') . "</th>\n"
                . '<th class="header c2">' . get_string('status') . "</th>\n</tr>\n";
-        
-        $row = 1;      
+
+        $row = 1;
 
         foreach ($list_ondisk as $k => $plugin) {
             $status = 'ok';
@@ -4828,15 +4855,15 @@ function print_plugin_tables() {
             if (!in_array($plugin, $plugins_standard[$cat])) {
                 $standard = 'nonstandard';
                 $status = 'warning';
-            }    
-            
+            }
+
             // Get real name and full path of plugin
             $plugin_name = "[[$plugin]]";
-            
+
             $plugin_path = "$cat/$plugin";
-            
+
             $plugin_name = get_plugin_name($plugin, $cat);
-            
+
             // Determine if the plugin is about to be installed
             if ($cat != 'filter' && !in_array($plugin, $plugins_installed[$cat])) {
                 $note = $strabouttobeinstalled;
@@ -4852,11 +4879,11 @@ function print_plugin_tables() {
             // If the plugin was both on disk and in the db, unset the value from the installed plugins list
             if ($key = array_search($plugin, $plugins_installed[$cat])) {
                 unset($plugins_installed[$cat][$key]);
-            } 
-        } 
+            }
+        }
 
         // If there are plugins left in the plugins_installed list, it means they are missing from disk
-        foreach ($plugins_installed[$cat] as $k => $missing_plugin) { 
+        foreach ($plugins_installed[$cat] as $k => $missing_plugin) {
             // Make sure the plugin really is missing from disk
             if (!in_array($missing_plugin, $plugins_ondisk[$cat])) {
                 $standard = 'standard';
@@ -4871,15 +4898,15 @@ function print_plugin_tables() {
                       .  "<td class=\"cell c0\">?</td>\n"
                       .  "<td class=\"cell c1\">$plugin_name</td>\n"
                       .  "<td class=\"$standard $status cell c2\">" . ${'str' . $standard} . " $strmissingfromdisk</td>\n</tr>\n";
-                $row++; 
+                $row++;
             }
         }
 
         $html .= '</table></td>';
     }
-    
+
     $html .= '</tr></table><br />';
-    
+
     echo $html;
 }
 
