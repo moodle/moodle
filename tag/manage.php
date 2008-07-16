@@ -116,7 +116,7 @@ switch($action) {
         foreach ( $new_otags as $new_otag ) {
             if ( $new_otag_id = tag_get_id($new_otag) ) {
                 // tag exists, change the type
-                tag_set_type($new_otag_id, 'official');
+                tag_type_set($new_otag_id, 'official');
             } else {
                 require_capability('moodle/tag:create', get_context_instance(CONTEXT_SYSTEM));
                 tag_add($new_otag, 'official');
