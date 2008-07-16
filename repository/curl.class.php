@@ -1,10 +1,10 @@
-<?php
+<?php // $id$
 /**
  * RESTful cURL class
  *
  * This is a wrapper class for curl, it is quite easy to use:
  *
- * $c = new curl();
+ * $c = new curl;
  * // enable cache
  * $c = new curl(array('cache'=>true));
  * // enable cookie
