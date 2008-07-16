@@ -5,6 +5,13 @@
  * This is a wrapper class for curl, it is quite easy to use:
  *
  * $c = new curl();
+ * // enable cache
+ * $c = new curl(array('cache'=>true));
+ * // enable cookie
+ * $c = new curl(array('cookie'=>true));
+ * // enable proxy
+ * $c = new curl(array('proxy'=>true));
+ *
  * // HTTP GET Method
  * $html = $c->get('http://example.com');
  * // HTTP POST Method
@@ -13,7 +20,7 @@
  * $html = $c->put('http://example.com/', array('file'=>'/var/www/test.txt');
  *
  * @author Dongsheng Cai <dongsheng@cvs.moodle.org>
- * @version 0.2 dev
+ * @version 0.4 dev
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
@@ -26,7 +33,7 @@ class curl {
     private $proxy_type = '';
     private $debug    = false;
     private $cookie   = false;
-    public  $version  = '0.2 dev';
+    public  $version  = '0.4 dev';
     public  $response = array();
     public  $header   = array();
     public  $info;
@@ -205,24 +212,25 @@ class curl {
     }
 
     /**
-     * Formatting HTTP Response Header
-     *
+     * Set options for individual curl instance
      */
-    protected function request($url, $options = array()){
-        if (!preg_match('#^https?://#i', $url)) {
-            $this->error = 'Invalid protocol specified in url';
-            return false;
-        }
+    private function apply_opt($curl, $options) {
         // Clean up
         $this->cleanopt();
-        // create curl instance
-        $curl = curl_init($url);
-        $this->setopt(array('url'=>$url));
+        // set cookie
+        if(!empty($this->cookie) || !empty($options['cookie'])) {
+            $this->setopt(array('cookiejar'=>$this->cookie,
+                            'cookiefile'=>$this->cookie
+                             ));
+        }
+
+        // set proxy
+        if(!empty($this->proxy) || !empty($options['proxy'])) {
+            $this->setopt($this->proxy);
+        }
+        $this->setopt($options);
         // reset before set options
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, array(&$this,'formatHeader'));
-
-        $this->setopt($options);
-
         // set headers
         if(empty($this->header)){
             $this->setHeader(array(
@@ -233,16 +241,11 @@ class curl {
         }
         curl_setopt($curl, CURLOPT_HTTPHEADER, $this->header);
 
-        // set cookie
-        if(!empty($this->cookie)) {
-            $this->setopt(array('cookiejar'=>$this->cookie,
-                            'cookiefile'=>$this->cookie
-                             ));
-        }
-
-        // set proxy
-        if(!empty($this->proxy)) {
-            $this->setopt($this->proxy);
+        if($this->debug){
+            echo '<h1>Options</h1>';
+            var_dump($this->options);
+            echo '<h1>Header</h1>';
+            var_dump($this->header);
         }
 
         // set options
@@ -252,14 +255,58 @@ class curl {
             }
             curl_setopt($curl, $name, $val);
         }
-
-        if($this->debug){
-            echo '<h1>Options</h1>';
-            var_dump($this->options);
-            echo '<h1>Header</h1>';
-            var_dump($this->header);
+        return $curl;
+    }
+    /*
+     * Download mulit files in parallel
+     * $c = new curl;
+     * $c->download(array(
+     *              array('url'=>'http://localhost/', 'file'=>fopen('a', 'wb')), 
+     *              array('url'=>'http://localhost/20/', 'file'=>fopen('b', 'wb'))
+     *              ));
+     */
+    public function download($requests, $options = array()) {
+        $options['returntransfer'] = false;
+        return $this->mulit_request($requests, $options);
+    }
+    /*
+     * Mulit HTTP Requests
+     * This function could run mulit-request in parallel.
+     */
+    protected function mulit_request($requests, $options = array()) {
+        $count   = count($requests);
+        $handles = array();
+        $results = array();
+        $main    = curl_multi_init();
+        for($i = 0; $i < $count; $i++) {
+            $url = $requests[$i];
+            foreach($url as $n=>$v){
+                $options[$n] = $url[$n];
+            }
+            $handles[$i] = curl_init($url['url']);
+            $this->apply_opt($handles[$i], $options);
+            curl_multi_add_handle($main, $handles[$i]);
         }
-
+        $running = 0;
+        do {
+            curl_multi_exec($main, $running);
+        } while($running > 0);
+        for($i = 0; $i < $count; $i++)
+        {
+            $results[] = curl_multi_getcontent($handles[$i]);
+            curl_multi_remove_handle($main, $handles[$i]);
+        }
+        curl_multi_close($main);
+        return $results;
+    }
+    /**
+     * Single HTTP Request
+     */
+    protected function request($url, $options = array()){
+        // create curl instance
+        $curl = curl_init($url);
+        $options['url'] = $url;
+        $this->apply_opt($curl, $options);
         if($this->cache && $ret = $this->cache->get($this->options)) {
             return $ret;
         } else {
