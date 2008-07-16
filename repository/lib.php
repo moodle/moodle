@@ -115,7 +115,7 @@ abstract class repository {
             require_once($CFG->dirroot.'/repository/curl.class.php');
             $c = new curl;
             $c->download(array(
-                array('url'=>$url, 'file'=>$file);
+                array('url'=>$url, 'file'=>$file)
             ));
             return true;
         } else {
