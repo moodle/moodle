@@ -117,7 +117,7 @@ switch($action) {
         foreach ( $new_otags as $new_otag ) {
             if ( $new_otag_id = tag_get_id($new_otag) ) {
                 // tag exists, change the type
-                tag_set_type($new_otag_id, 'official');
+                tag_type_set($new_otag_id, 'official');
             } else {
                 tag_add($new_otag, 'official');
             }
