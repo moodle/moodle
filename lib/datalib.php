@@ -1255,7 +1255,7 @@ function get_categories($parent='none', $sort=NULL, $shallow=true) {
     if( $rs = $DB->get_recordset_sql($sql, $params) ){
         foreach($rs as $cat) {
             $cat = make_context_subobj($cat);
-            if ($cat->visible || has_capability('moodle/course:create', $cat->context)) {
+            if ($cat->visible || has_capability('moodle/category:visibility',$cat->context)) {
                 $categories[$cat->id] = $cat;
             }
         }
