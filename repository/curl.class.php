@@ -1,4 +1,4 @@
-<?php // $id$
+<?php // $Id$
 /**
  * RESTful cURL class
  *
@@ -266,7 +266,7 @@ class curl {
      *              ));
      */
     public function download($requests, $options = array()) {
-        $options['returntransfer'] = false;
+        $options['RETURNTRANSFER'] = false;
         return $this->mulit_request($requests, $options);
     }
     /*
@@ -293,7 +293,11 @@ class curl {
         } while($running > 0);
         for($i = 0; $i < $count; $i++)
         {
-            $results[] = curl_multi_getcontent($handles[$i]);
+            if(!empty($optins['CURLOPT_RETURNTRANSFER'])) {
+                $results[] = true;
+            } else {
+                $results[] = curl_multi_getcontent($handles[$i]);
+            }
             curl_multi_remove_handle($main, $handles[$i]);
         }
         curl_multi_close($main);

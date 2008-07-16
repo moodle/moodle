@@ -47,7 +47,7 @@
  *   $repo->print_search();
  *
  * @version 1.0 dev
- * @package repository_api
+ * @package repository
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 require_once('../config.php');
@@ -99,9 +99,28 @@ abstract class repository {
     public function __toString() {
         return 'Repository class: '.__CLASS__;
     }
-    // Given a URL, get a file from there.
-    public function get_file($url) {
-        return null;
+    /**
+     * Given a URL, get a file from there.
+     * @param string $url the url of file
+     * @param string $file save location
+     */
+    public function get_file($url, $file) {
+        global $CFG;
+        if(file_exists($CFG->dirroot.'/repository/curl.class.php')) {
+            if(!file_exists($file)){
+                return null;
+            } else {
+                $file = fopen($file, 'w');
+            }
+            require_once($CFG->dirroot.'/repository/curl.class.php');
+            $c = new curl;
+            $c->download(array(
+                array('url'=>$url, 'file'=>$file);
+            ));
+            return true;
+        } else {
+            return null;
+        }
     }
 
     /**
