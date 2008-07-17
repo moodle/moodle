@@ -78,6 +78,7 @@ class block_blog_tags extends block_base {
         $sql .= "FROM {$CFG->prefix}tag t, {$CFG->prefix}tag_instance ti, {$CFG->prefix}post p ";
         $sql .= 'WHERE t.id = ti.tagid ';
         $sql .= 'AND p.id = ti.itemid ';
+        $sql .= 'AND ti.itemtype = \'post\' ';
 
         // admins should be able to read all tags      
         if (!has_capability('moodle/user:readuserblogs', get_context_instance(CONTEXT_SYSTEM))) {
