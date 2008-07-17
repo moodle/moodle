@@ -29,7 +29,9 @@ class repository_flickr extends repository{
         }
 
         if(!empty($SESSION->flickrmail)) {
-            $action = 'list';
+            if(empty($action)) {
+                $action = 'list';
+            }
         } else {
             $options['flickrmail'] = optional_param('flickrmail', '', PARAM_RAW);
             if(!empty($options['flickrmail'])) {
@@ -40,12 +42,16 @@ class repository_flickr extends repository{
                         set_user_preference('flickrmail', $options['flickrmail']);
                     }
                     $SESSION->flickrmail = $options['flickrmail'];
-                    $action = 'list';
+                    if(empty($action)) {
+                        $action = 'list';
+                    }
                 }
             } else {
                 if($account = get_user_preferences('flickrmail', '')){
                     $SESSION->flickrmail = $account;
-                    $action = 'list';
+                    if(empty($action)) {
+                        $action = 'list';
+                    }
                 }
             }
         }
@@ -99,7 +105,7 @@ EOD;
                 $p['title'] = get_string('notitle', 'repository_flickr');
             }
             $ret->list[] =
-                array('title'=>$p['title'],'source'=>'http://farm2.static.flickr.com/'.$p['server'].'/'.$p['id'].'_'.$p['secret'].'_b.jpg','id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, "Square"));
+                array('title'=>$p['title'],'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'));
         }
         return $ret;
     }
@@ -138,6 +144,37 @@ EOD;
     public function print_search(){
         echo '<input type="text" name="Search" value="search terms..." size="40" class="right"/>';
         return true;
+    }
+    public function get_file($photo_id){
+        global $CFG;
+        $result = $this->flickr->photos_getSizes($photo_id);
+        $url = '';
+        if(!empty($result[4])) {
+            $url = $result[4]['source'];
+        } elseif(!empty($result[3])) {
+            $url = $result[3]['source'];
+        } elseif(!empty($result[2])) {
+            $url = $result[2]['source'];
+        }
+        if (!file_exists($CFG->dataroot.'/repository/download')) {
+            mkdir($CFG->dataroot.'/repository/download/', 0777, true);
+        }
+        if(is_dir($CFG->dataroot.'/repository/download')) {
+            $dir = $CFG->dataroot.'/repository/download/';
+        }
+        if(file_exists($CFG->dirroot.'/repository/curl.class.php')) {
+            $file = $photo_id.'_'.time().'.jpg';
+            $fp = fopen($dir.$file, 'w');
+            require_once($CFG->dirroot.'/repository/curl.class.php');
+            $c = new curl;
+            $c->download(array(
+                array('url'=>$url, 'file'=>$fp)
+            ));
+            return $dir.$file;
+        } else {
+            return '!!!fail!!!';
+        }
+        return $result;
     }
 }
 ?>

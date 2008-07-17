@@ -1,15 +1,18 @@
 <?php
+set_time_limit(0);
 require_once('../config.php');
 require_once('lib.php');
 $CFG->repository_cache_expire = 12000;
 // repository id
-$id        = optional_param('id', PARAM_INT);
+$id     = optional_param('id', PARAM_INT);
 // action of client
-$action    = optional_param('action', '', PARAM_RAW);
+$action = optional_param('action', '', PARAM_RAW);
 // path 
-$p         = optional_param('p', '', PARAM_RAW);
+$p      = optional_param('p', '', PARAM_RAW);
 // Search text
-$search    = optional_param('s', '', PARAM_RAW);
+$search = optional_param('s', '', PARAM_RAW);
+// files to be downloaded
+$files  = optional_param('files', '', PARAM_RAW);
 
 if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
     echo json_encode('wrong');
@@ -35,6 +38,15 @@ if($action == 'list') {
         echo json_encode($repo->get_listing());
     }
 
+} elseif($action == 'download') {
+    $ret = array();
+    foreach($files as $url) {
+        $ret[] = $repo->get_file($url);
+        // TODO
+        // Need to communicate with FILE API
+        // Copy the tmp file to final location
+    }
+    echo json_encode($ret);
 } else {
     echo json_encode($repo->print_login());
 }

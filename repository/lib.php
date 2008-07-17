@@ -104,20 +104,23 @@ abstract class repository {
      * @param string $url the url of file
      * @param string $file save location
      */
-    public function get_file($url, $file) {
+    public function get_file($url) {
         global $CFG;
+        if (!file_exists($CFG->dataroot.'/repository/download')) {
+            mkdir($CFG->dataroot.'/repository/download/', 0777, true);
+        }
+        if(is_dir($CFG->dataroot.'/repository/download')) {
+            $dir = $CFG->dataroot.'/repository/download/';
+        }
         if(file_exists($CFG->dirroot.'/repository/curl.class.php')) {
-            if(!file_exists($file)){
-                return null;
-            } else {
-                $file = fopen($file, 'w');
-            }
+            $file = uniqid('repo').'_'.time().'.tmp';
+            $fp = fopen($dir.$file, 'w');
             require_once($CFG->dirroot.'/repository/curl.class.php');
             $c = new curl;
             $c->download(array(
-                array('url'=>$url, 'file'=>$file)
+                array('url'=>$url, 'file'=>$fp)
             ));
-            return true;
+            return $dir.$file;
         } else {
             return null;
         }

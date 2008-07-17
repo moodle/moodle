@@ -1,6 +1,6 @@
 <?php
 /**
- * repository_box class
+ * repository_boxnet class
  * This is a subclass of repository class
  *
  * @author Dongsheng Cai
@@ -53,10 +53,14 @@ class repository_boxnet extends repository{
         if(!empty($SESSION->box_token)) {
             $this->box = new boxclient($options['api_key'], $SESSION->box_token);
             $options['auth_token'] = $SESSION->box_token;
-            $action = 'list';
+            if(!empty($actio)) {
+                $action = 'list';
+            }
         } else {
             $this->box = new boxclient($options['api_key'], '');
-            $action = '';
+            if(!empty($action)) {
+                $action = '';
+            }
         }
         parent::__construct($repositoryid, $context, $options);
     }

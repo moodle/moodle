@@ -182,20 +182,20 @@ function openpicker(){
     select.on('click', function(e){
         var nodes = YAHOO.util.Selector.query('input:checked');
         var str = '';
+        var files = [];
         for(k in nodes){
-            str += (nodes[k].value+'\n');
+            files.push(nodes[k].value);
         }
-        // TODO
-        // Call ws.php to download these files
-        alert(str);
+        loading();
+        var trans = YAHOO.util.Connect.asyncRequest('POST', 'ws.php?id='+repositoryid+'&action=download', loadfile, postdata({'files':files}));
             })
     var search = new YAHOO.util.Element('search');
-    search.on('click', function(e){
+    search.on('click', function(e) {
             if(repositoryid==0){
                 alert('Select a repository first.');
                 return;
             }
-            var data=window.prompt("What are you searching for?");
+            var data = window.prompt("What are you searching for?");
             if(data != null && data != '') {
                 dosearch(data);
             }
@@ -205,12 +205,15 @@ function openpicker(){
 function postdata(obj) {
     var str = '';
     for(k in obj) {
-        if(str == ''){
-            str += '?';
+        if(obj[k] instanceof Array) {
+            for(i in obj[k]) {
+                str += (encodeURIComponent(k) +'[]='+encodeURIComponent(obj[k][i]));
+                str += '&';
+            }
         } else {
+            str += encodeURIComponent(k) +'='+encodeURIComponent(obj[k]);
             str += '&';
         }
-        str += encodeURIComponent(k) +'='+encodeURIComponent(obj[k]);
     }
     return str;
 }
@@ -303,6 +306,17 @@ success: function(o) {
         }
     }
   }
+}
+var loadfile = {
+    success: function(o) {
+        try {
+            var ret = YAHOO.lang.JSON.parse(o.responseText);
+        } catch(e) {
+            alert('Invalid JSON String\n'+o.responseText);
+        }
+        var panel = new YAHOO.util.Element('panel');
+        panel.get('element').innerHTML = '<h1>Download Successfully!</h1>';
+    }
 }
 
 function cr(id, path, reset){

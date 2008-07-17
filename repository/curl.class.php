@@ -51,9 +51,7 @@ class curl {
             $this->debug = true;
         }
         if(!empty($options['cookie'])) {
-            if(file_exists($options['cookie'])) {
-                $this->cookie = $options['cookie'];
-            }
+            $this->cookie = $options['cookie'];
         }
         if(!empty($options['cache'])) {
             if(class_exists('repository_cache')) {
@@ -266,6 +264,7 @@ class curl {
      *              ));
      */
     public function download($requests, $options = array()) {
+        $options['CURLOPT_BINARYTRANSFER'] = 1;
         $options['RETURNTRANSFER'] = false;
         return $this->mulit_request($requests, $options);
     }

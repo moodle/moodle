@@ -23,7 +23,6 @@
  *   4. Clean up session code
  *
  */
-require_once('../config.php');
 
 class phpFlickr {
     var $api_key;
@@ -199,13 +198,12 @@ class phpFlickr {
                 $redirect = $_SERVER['REQUEST_URI'];
             }
             //$api_sig = md5($this->secret . "api_key" . $this->api_key . "extra" . $redirect . "perms" . $perms);
-            echo $this->secret . "api_key" . $this->api_key . "perms" . $perms;
             $api_sig = md5($this->secret . "api_key" . $this->api_key . "perms" . $perms);
             if ($this->service == "23") {
                 header("Location: http://www.23hq.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" . $perms . "&api_sig=". $api_sig);
             } else {
-                //header("Location: http://www.flickr.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" . $perms . "&api_sig=". $api_sig);
-                echo '<a href="'."http://www.flickr.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" .  $perms . "&api_sig=". $api_sig . '">Login</a>';
+                $url = 'http://www.flickr.com/services/auth/?api_key=' . $this->api_key . "&perms=" .  $perms . '&api_sig='. $api_sig;
+                echo '<a href="'.$url.'">Authentication</a>';
             }
             //exit;
         } else {
