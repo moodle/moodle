@@ -231,26 +231,26 @@ function quiz_repaginate($layout, $perpage, $shuffle=false) {
 function quiz_print_navigation_panel($page, $pages) {
     //$page++;
     echo '<div class="paging pagingbar">';
-    echo '<span class="title">' . get_string('page') . ':</span>';
+    echo '<span class="title">' . get_string('page') . ':</span>&nbsp;';
     if ($page > 0) {
         // Print previous link
         $strprev = get_string('previous');
-        echo '<a href="javascript:navigate(' . ($page - 1) . ');" title="'
-         . $strprev . '">(' . $strprev . ')</a>';
+        echo '&nbsp;<a href="javascript:navigate(' . ($page - 1) . ');" title="'
+         . $strprev . '">(' . $strprev . ')</a>&nbsp;';
     }
     for ($i = 0; $i < $pages; $i++) {
         if ($i == $page) {
-            echo '<span class="thispage">'.($i+1).'</span>';
+            echo '&nbsp;<span class="thispage">'.($i+1).'</span>&nbsp;';
         } else {
-            echo '<a href="javascript:navigate(' . ($i) . ');">'.($i+1).'</a>';
+            echo '&nbsp;<a href="javascript:navigate(' . ($i) . ');">'.($i+1).'</a>&nbsp;';
         }
     }
 
     if ($page < $pages - 1) {
         // Print next link
         $strnext = get_string('next');
-        echo '<a href="javascript:navigate(' . ($page + 1) . ');" title="'
-         . $strnext . '">(' . $strnext . ')</a>';
+        echo '&nbsp;<a href="javascript:navigate(' . ($page + 1) . ');" title="'
+         . $strnext . '">(' . $strnext . ')</a>&nbsp;';
     }
     echo '</div>';
 }
