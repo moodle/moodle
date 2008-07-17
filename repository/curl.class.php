@@ -25,41 +25,43 @@
  */
 
 class curl {
-    private $options;
     public  $cache    = false;
     public  $proxy    = false;
-    private $proxy_host = '';
-    private $proxy_auth = '';
-    private $proxy_type = '';
-    private $debug    = false;
-    private $cookie   = false;
     public  $version  = '0.4 dev';
     public  $response = array();
     public  $header   = array();
     public  $info;
     public  $error;
+
+    private $options;
+    private $proxy_host = '';
+    private $proxy_auth = '';
+    private $proxy_type = '';
+    private $debug    = false;
+    private $cookie   = false;
+
     public function __construct($options = array()){
         global $CFG;
-        if(!function_exists('curl_init')) {
+        if (!function_exists('curl_init')) {
             $this->error = 'cURL module must be enabled!';
             trigger_error($this->error, E_USER_ERROR);
             return false;
         }
         // the options of curl should be init here.
         $this->resetopt();
-        if(!empty($options['debug'])) {
+        if (!empty($options['debug'])) {
             $this->debug = true;
         }
-        if(!empty($options['cookie'])) {
+        if (!empty($options['cookie'])) {
             $this->cookie = $options['cookie'];
         }
-        if(!empty($options['cache'])) {
-            if(class_exists('repository_cache')) {
+        if (!empty($options['cache'])) {
+            if (class_exists('repository_cache')) {
                 $this->cache = new repository_cache;
             }
         }
-        if(!empty($options['proxy'])) {
-            if(!empty($CFG->proxyhost)) {
+        if (!empty($options['proxy'])) {
+            if (!empty($CFG->proxyhost)) {
                 if (empty($CFG->proxyport)) {
                     $this->proxy_host = $CFG->proxyhost;
                 } else {
@@ -72,7 +74,7 @@ class curl {
                                 'proxyuserpwd'=>$this->proxy_auth));
                 }
                 if (!empty($CFG->proxytype)) {
-                    if($CFG->proxytype == 'SOCKS5') {
+                    if ($CFG->proxytype == 'SOCKS5') {
                         $this->proxy_type = CURLPROXY_SOCKS5;
                     } else {
                         $this->proxy_type = CURLPROXY_HTTP;
@@ -117,10 +119,10 @@ class curl {
      *
      */
     public function resetcookie() {
-        if(!empty($this->cookie)) {
-            if(is_file($this->cookie)) {
+        if (!empty($this->cookie)) {
+            if (is_file($this->cookie)) {
                 $fp = fopen($this->cookie, 'w');
-                if(!empty($fp)) {
+                if (!empty($fp)) {
                     fwrite($fp, '');
                     fclose($fp);
                 }
@@ -138,7 +140,7 @@ class curl {
     public function setopt($options = array()) {
         if (is_array($options)) {
             foreach($options as $name => $val){
-                if(stripos($name, 'CURLOPT_') === false) {
+                if (stripos($name, 'CURLOPT_') === false) {
                     $name = strtoupper('CURLOPT_'.$name);
                 }
                 $this->options[$name] = $val;
@@ -192,8 +194,8 @@ class curl {
         if (strlen($header) > 2) {
             list($key, $value) = explode(" ", rtrim($header, "\r\n"), 2);
             $key = rtrim($key, ':');
-            if(!empty($this->response[$key])) {
-                if(is_array($this->response[$key])){
+            if (!empty($this->response[$key])) {
+                if (is_array($this->response[$key])){
                     $this->response[$key][] = $value;
                 } else {
                     $tmp = $this->response[$key];
@@ -216,21 +218,21 @@ class curl {
         // Clean up
         $this->cleanopt();
         // set cookie
-        if(!empty($this->cookie) || !empty($options['cookie'])) {
+        if (!empty($this->cookie) || !empty($options['cookie'])) {
             $this->setopt(array('cookiejar'=>$this->cookie,
                             'cookiefile'=>$this->cookie
                              ));
         }
 
         // set proxy
-        if(!empty($this->proxy) || !empty($options['proxy'])) {
+        if (!empty($this->proxy) || !empty($options['proxy'])) {
             $this->setopt($this->proxy);
         }
         $this->setopt($options);
         // reset before set options
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, array(&$this,'formatHeader'));
         // set headers
-        if(empty($this->header)){
+        if (empty($this->header)){
             $this->setHeader(array(
                 'User-Agent: MoodleBot/1.0',
                 'Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7',
@@ -239,7 +241,7 @@ class curl {
         }
         curl_setopt($curl, CURLOPT_HTTPHEADER, $this->header);
 
-        if($this->debug){
+        if ($this->debug){
             echo '<h1>Options</h1>';
             var_dump($this->options);
             echo '<h1>Header</h1>';
@@ -256,7 +258,7 @@ class curl {
         return $curl;
     }
     /*
-     * Download mulit files in parallel
+     * Download multiple files in parallel
      * $c = new curl;
      * $c->download(array(
      *              array('url'=>'http://localhost/', 'file'=>fopen('a', 'wb')), 
@@ -266,18 +268,18 @@ class curl {
     public function download($requests, $options = array()) {
         $options['CURLOPT_BINARYTRANSFER'] = 1;
         $options['RETURNTRANSFER'] = false;
-        return $this->mulit_request($requests, $options);
+        return $this->multi($requests, $options);
     }
     /*
      * Mulit HTTP Requests
-     * This function could run mulit-request in parallel.
+     * This function could run multi-requests in parallel.
      */
-    protected function mulit_request($requests, $options = array()) {
+    protected function multi($requests, $options = array()) {
         $count   = count($requests);
         $handles = array();
         $results = array();
         $main    = curl_multi_init();
-        for($i = 0; $i < $count; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             $url = $requests[$i];
             foreach($url as $n=>$v){
                 $options[$n] = $url[$n];
@@ -290,9 +292,8 @@ class curl {
         do {
             curl_multi_exec($main, $running);
         } while($running > 0);
-        for($i = 0; $i < $count; $i++)
-        {
-            if(!empty($optins['CURLOPT_RETURNTRANSFER'])) {
+        for ($i = 0; $i < $count; $i++) {
+            if (!empty($optins['CURLOPT_RETURNTRANSFER'])) {
                 $results[] = true;
             } else {
                 $results[] = curl_multi_getcontent($handles[$i]);
@@ -310,11 +311,11 @@ class curl {
         $curl = curl_init($url);
         $options['url'] = $url;
         $this->apply_opt($curl, $options);
-        if($this->cache && $ret = $this->cache->get($this->options)) {
+        if ($this->cache && $ret = $this->cache->get($this->options)) {
             return $ret;
         } else {
             $ret  = curl_exec($curl);
-            if($this->cache) {
+            if ($this->cache) {
                 $this->cache->set($this->options, $ret);
             }
         }
@@ -322,7 +323,7 @@ class curl {
         $this->info  = curl_getinfo($curl);
         $this->error = curl_error($curl);
 
-        if($this->debug){
+        if ($this->debug){
             echo '<h1>Return Data</h1>';
             var_dump($ret);
             echo '<h1>Info</h1>';
@@ -333,7 +334,7 @@ class curl {
 
         curl_close($curl);
 
-        if(!empty($ret)){
+        if (!empty($ret)){
             return $ret;
         } else {
             return false;
@@ -365,7 +366,7 @@ class curl {
     public function get($url, $params = array(), $options = array()){
         $options['CURLOPT_HTTPGET'] = 1;
 
-        if(!empty($params)){
+        if (!empty($params)){
             $url .= (stripos($url, '?') !== false) ? '&' : '?';
             $url .= http_build_query($params);
         }
@@ -378,7 +379,7 @@ class curl {
      */
     public function put($url, $params = array(), $options = array()){
         $file = $params['file'];
-        if(!is_file($file)){
+        if (!is_file($file)){
             return null;
         }
         $fp   = fopen($file, 'r');
