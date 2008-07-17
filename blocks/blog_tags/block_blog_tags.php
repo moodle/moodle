@@ -83,6 +83,7 @@ class block_blog_tags extends block_base {
                    FROM {tag} t, {tag_instance} ti, {post} p
                   WHERE t.id = ti.tagid AND p.id = ti.itemid
                         $type
+                        AND ti.itemtype = 'post'
                         AND ti.timemodified > $timewithin
                GROUP BY t.id, t.tagtype, t.name, t.rawname
                ORDER BY ct DESC, t.name ASC";
