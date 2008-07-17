@@ -1292,7 +1292,11 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
 function print_question_icon($question, $return = false) {
     global $QTYPES, $CFG;
 
-    $namestr = $QTYPES[$question->qtype]->menu_name();
+    if (array_key_exists($question->qtype, $QTYPES)) {
+        $namestr = $QTYPES[$question->qtype]->menu_name();
+    } else {
+        $namestr = 'missingtype';
+    }
     $html = '<img src="' . $CFG->wwwroot . '/question/type/' .
             $question->qtype . '/icon.gif" alt="' .
             $namestr . '" title="' . $namestr . '" />';
