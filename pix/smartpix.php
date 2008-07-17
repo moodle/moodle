@@ -36,7 +36,7 @@ function makesafe($param) {
  * @param string $url the url which may have a query string attached
  * @return string
  */
- function strip_querystring($url) {
+function strip_querystring($url) {
 
     if ($commapos = strpos($url, '?')) {
         return substr($url, 0, $commapos);
@@ -45,6 +45,16 @@ function makesafe($param) {
     }
 }
  
+// get query string
+function get_query($name) {
+    if (!empty($_SERVER['REQUEST_URI'])) {
+        return explode($name, $_SERVER['REQUEST_URI']);
+    } else if (!empty($_SERVER['QUERY_STRING'])) {
+        return array('', '?'. $_SERVER['QUERY_STRING']);
+    } else {
+        return false;
+    }
+}
 // Nicked from weblib then cutdown
 /**
  * Extracts file argument either from file parameter or PATH_INFO. 
@@ -70,7 +80,7 @@ function get_file_argument_limited($scriptname) {
 
     // now if both fail try the old way
     // (for compatibility with misconfigured or older buggy php implementations)
-    $arr = explode($scriptname, me());
+    $arr = get_query($scriptname);
     if (!empty($arr[1])) {
         return makesafe(rawurldecode(strip_querystring($arr[1])));
     }
