@@ -372,9 +372,8 @@ class curl {
 
         if (!empty($params)){
             $url .= (stripos($url, '?') !== false) ? '&' : '?';
-            $url .= http_build_query($params);
+            $url .= http_build_query($params, '', '&');
         }
-
         return $this->request($url, $options);
     }
 

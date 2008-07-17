@@ -112,27 +112,7 @@ class repository_boxnet extends repository{
         } else if(!empty($this->box)){
             // get a ticket from box.net
             $ticket_return = $this->box->getTicket();
-            if($this->box->isError()) {
-                if(!$this->options['ajax']){
-                    echo $this->box->getErrorMsg();
-                }
-            } else {
-                $this->ticket = $ticket_return['ticket'];
-            }
-            // use the ticket to get a auth_token
-            // auth_token is the key to access the resources
-            // of box.net
-            // WARNING: this function won't return a auth_token
-            // if auth_token is not existed, this function will
-            // direct user to authentication page of box.net
-            // If the user has been authenticated, box.net will
-            // direct to a callback page (can be set in box.net)
-            // the call back page will obtain the auth_token
-            // ===============================================
-            // Because the authentication process will be done
-            // in box.net, so we need print a login link in this
-            // function instead a login screen.
-
+            $this->ticket = $ticket_return['ticket'];
             if($this->ticket && empty($this->options['auth_token'])) {
                 $str = '';
                 $str .= '<form id="moodle-repo-login">';
