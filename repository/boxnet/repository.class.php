@@ -33,7 +33,6 @@ class repository_boxnet extends repository{
                     && !empty($options['ticket']) )
         {
             $c = new curl;
-            $str = '';
             $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>0));
             $param =  array(
                 'login_form1'=>'',
@@ -53,7 +52,7 @@ class repository_boxnet extends repository{
         if(!empty($SESSION->box_token)) {
             $this->box = new boxclient($options['api_key'], $SESSION->box_token);
             $options['auth_token'] = $SESSION->box_token;
-            if(!empty($actio)) {
+            if(empty($action)) {
                 $action = 'list';
             }
         } else {
@@ -69,22 +68,14 @@ class repository_boxnet extends repository{
         global $CFG;
         $list = array();
         $ret  = array();
-        if($this->box){
-            $tree = $this->box->getAccountTree();
-            if($tree) {
-                $filenames = $tree['file_name'];
-                $fileids   = $tree['file_id'];
-                foreach ($filenames as $n=>$v){
-                    if(!empty($search)) {
-                        if(strstr($v, $search) !== false) {
-                            $list[] = array('title'=>$v, 
-                                    'size'=>0,
-                                    'date'=>'',
-                                    'source'=>'http://box.net/api/1.0/download/'
-                                        .$this->options['auth_token'].'/'.$fileids[$n],
-                                    'thumbnail'=>$CFG->pixpath.'/f/text.gif');
-                        }
-                    } else {
+        $tree = $this->box->getAccountTree();
+        if(!empty($tree)) {
+            $filenames = $tree['file_name'];
+            $fileids   = $tree['file_id'];
+            foreach ($filenames as $n=>$v){
+                // do search
+                if(!empty($search)) {
+                    if(strstr($v, $search) !== false) {
                         $list[] = array('title'=>$v, 
                                 'size'=>0,
                                 'date'=>'',
@@ -92,28 +83,36 @@ class repository_boxnet extends repository{
                                     .$this->options['auth_token'].'/'.$fileids[$n],
                                 'thumbnail'=>$CFG->pixpath.'/f/text.gif');
                     }
+                } else {
+                    $list[] = array('title'=>$v, 
+                            'size'=>0,
+                            'date'=>'',
+                            'source'=>'http://box.net/api/1.0/download/'
+                                .$this->options['auth_token'].'/'.$fileids[$n],
+                            'thumbnail'=>$CFG->pixpath.'/f/text.gif');
                 }
-                $this->listing = $list;
-                $ret['list']   = $list;
-                return $ret;
-            } else {
-                return null;
             }
+            $this->listing = $list;
+            $ret['list']   = $list;
+            return $ret;
+        } else {
+            return null;
         }
     }
 
     public function print_login(){
-        if(!empty($this->box) && !empty($this->options['auth_token'])) {
+        if(!empty($this->options['auth_token'])) {
             if($this->options['ajax']){
                 return $this->get_listing();
             } else {
-                echo $this->get_listing();
+                // format file list and 
+                // print list
             }
-        } else if(!empty($this->box)){
+        } else {
             // get a ticket from box.net
             $ticket_return = $this->box->getTicket();
             $this->ticket = $ticket_return['ticket'];
-            if($this->ticket && empty($this->options['auth_token'])) {
+            if(empty($this->options['auth_token'])) {
                 $str = '';
                 $str .= '<form id="moodle-repo-login">';
                 $str .= '<input type="hidden" name="ticket" value="'.$this->ticket.'" />';
@@ -132,9 +131,7 @@ class repository_boxnet extends repository{
                 } else {
                     echo $str;
                 }
-                //$this->box->getAuthToken($this->ticket);
             }
-        } else {
         }
     }
 
