@@ -325,6 +325,26 @@ function repository_get_option($id, $position){
     $ret = (array)unserialize($entry->$option);
     return $ret;
 }
+function repository_get_repositories(){
+    global $DB, $CFG, $USER;
+    $contextid = 0;
+    $params = array();
+    $sql = 'SELECT * FROM {repository} r WHERE ';
+    $sql .= ' (r.userid = 0 or r.userid = ?) ';
+    $params[] = $USER->id;
+    if($contextid == SITEID) {
+        $sql .= 'AND (r.contextid = ?)';
+        $params[] = SITEID;
+    } else {
+        $sql .= 'AND (r.contextid = ? or r.contextid = ?)';
+        $params[] = SITEID;
+        $params[] = $contextid;
+    }
+    if(!$repos = $DB->get_records_sql($sql, $params)) {
+        $repos = array();
+    }
+    return $repos;
+}
 function repository_get_plugins(){
     global $CFG;
     $repo = $CFG->dirroot.'/repository/';

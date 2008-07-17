@@ -6,6 +6,7 @@
 
 \*******************************************************/
 require_once('../config.php');
+require_once('lib.php');
 $itempic = $CFG->pixpath.'/i/item.gif';
 $meta = <<<EOD
 <style type="text/css">
@@ -34,6 +35,7 @@ color:white;
 }
 .t{width:80px; float:left;text-align:center;}
 .t div{width: 80px; height: 36px; overflow: hidden}
+.repo-logout{font-size: 10px;}
 img{margin:0;padding:0;border:0}
 #paging{margin:10px 5px; clear:both}
 #paging a{padding: 4px; border: 1px solid gray}
@@ -76,6 +78,14 @@ var repositoryid = 0;
 var datasource, Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, layout = null, resize = null;
 var viewbar  = null;
 var viewmode = 0;
+var repos = [];
+<?php
+$repos = repository_get_repositories();
+foreach($repos as $repo) {
+    echo 'repos.push('.json_encode($repo).')';
+    echo "\n";
+}
+?>
 
 /**
  * this function will create a file picker dialog, and resigister all the event
@@ -111,7 +121,6 @@ function openpicker(){
                     body: '<div id="toolbar">'+
                     '<input type="button" id="select" value="Select" />'+
                     '<input type="button" id="search" value="Search" />'+
-                    '<input type="button" id="logout" value="Logout" />'+
                     '</div>',
                     gutter: '2'},
                     { position: 'center', body: '<div id="panel"></div>', scroll: true, gutter: '0 2 0 0' }
@@ -146,29 +155,29 @@ function openpicker(){
     }, panel, true);
     var list = new YAHOO.util.Element('list');
     list.on('contentReady', function(e){
-            // TODO
-            // Should call a function to generate
-            // repository list
-            var li = document.createElement('li');
-            li.innerHTML = '<a href="###">Box.net</a>';
-            li.id = 'repo-1';
-            this.appendChild(li);
-            var i = new YAHOO.util.Element('repo-1');
-            i.on('click', function(e){
-                cr(1, 1, 0);
-                });
-            li = document.createElement('li');
-            li.innerHTML = '<a href="###">Flickr</a>';
-            li.id = 'repo-2';
-            this.appendChild(li);
-            i = new YAHOO.util.Element('repo-2');
-            i.on('click', function(e){
-                cr(2, 1, 0);
-                });
+            for(var i=0; i<repos.length; i++) {
+                var repo = repos[i];
+                var li = document.createElement('li');
+                li.innerHTML = '<a href="###" id="repo-call-'+repo.id+'">'+
+                    repo.repositoryname+'</a> ';
+                li.innerHTML += '<a href="###" class="repo-logout" id="repo-logout-'+repo.id+'">Logout</a>';
+                li.id = 'repo-'+repo.id;
+                this.appendChild(li);
+                var e = new YAHOO.util.Element('repo-call-'+repo.id);
+                e.on('click', function(e){
+                    var re = /repo-call-(\d+)/i;
+                    var id = this.get('id').match(re);
+                    cr(id[1], 1, 0);
+                    });
+                e = new YAHOO.util.Element('repo-logout-'+repo.id);
+                e.on('click', function(e){
+                    var re = /repo-logout-(\d+)/i;
+                    var id = this.get('id').match(re);
+                    cr(id[1], 1, 1);
+                    });
+                repo = null;
+            }
         });
-    YAHOO.util.Event.addListener('logout', 'click', function(e){
-            cr(repositoryid, 1, 1);
-            });
     viewbar = new YAHOO.widget.ButtonGroup({
             id: 'btngroup',
             name: 'buttons',
@@ -252,7 +261,7 @@ function viewthumb(){
     for(k in obj){
         str += '<div class="t">';
         str += '<img title="'+obj[k].title+'" src="'+obj[k].thumbnail+'" />';
-        str += '<div style="text-align:center"><input type="checkbox" name="selected-files" value="'+obj[k].source+'"/><br/>'
+        str += '<div style="text-align:center"><input type="radio" name="selected-files" value="'+obj[k].source+'"/><br/>'
         str += obj[k].title+'</div>';
         str += '</div>';
     }
@@ -272,7 +281,7 @@ function viewlist(){
     var panel = new YAHOO.util.Element('panel');
     str += makepage();
     for(k in obj){
-        str += '<input type="checkbox" name="selected-files" value="'+obj[k].source+'" />';
+        str += '<input type="radio" name="selected-files" value="'+obj[k].source+'" />';
         str += obj[k].title;
         str += '<br/>';
     }

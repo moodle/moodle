@@ -52,8 +52,12 @@ class curl {
         if (!empty($options['debug'])) {
             $this->debug = true;
         }
-        if (!empty($options['cookie'])) {
-            $this->cookie = $options['cookie'];
+        if(!empty($options['cookie'])) {
+            if($options['cookie'] === true) {
+                $this->cookie = $CFG->dataroot.'/curl_cookie.txt';
+            } else {
+                $this->cookie = $options['cookie'];
+            }
         }
         if (!empty($options['cache'])) {
             if (class_exists('repository_cache')) {
