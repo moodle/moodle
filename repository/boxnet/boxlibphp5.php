@@ -36,7 +36,7 @@ class boxclient {
         if ($method == 'upload'){
             $request = $this->_box_api_upload_url.'/'.
                 $this->auth_token.'/'.$params['folder_id'];
-            $xml = $c->post($request, params);
+            $xml = $c->post($request, $params);
         }else{
             $args = array();
             $xml = $c->get($this->_box_api_url, $params);
@@ -90,6 +90,9 @@ class boxclient {
             );
         $ret = $c->post('http://www.box.net/api/1.0/auth/'.$ticket, $param);
         $header = $c->getResponse();
+        if(empty($header['location'])) {
+            return false;
+        }
         $location = $header['location'];
         preg_match('#auth_token=(.*)$#i', $location, $matches);
         $auth_token = $matches[1];
@@ -188,6 +191,7 @@ class boxclient {
         $params['folder_id']  = 0; //Set to '0' by default. Change to create within sub-folder.
         $params['share']      = 1; //Set to '1' by default. Set to '0' to make folder private.
         $ret_array = array();
+        $entry_count = 0;
         $data = $this->makeRequest('upload', $params);
         if ($this->_checkForError($data)) {
             return false;
@@ -201,11 +205,11 @@ class boxclient {
 
             case 'FILE':
                 if (is_array($a['attributes'])) {
-                    $ret_array['file_name'][$i] = $a['attributes']['FILE_NAME'];
-                    $ret_array['id'][$i] = $a['attributes']['ID'];
-                    $ret_array['folder_name'][$i] = $a['attributes']['FOLDER_NAME'];
-                    $ret_array['error'][$i] = $a['attributes']['ERROR'];
-                    $ret_array['public_name'][$i] = $a['attributes']['PUBLIC_NAME'];
+                    @$ret_array['file_name'][$i] = $a['attributes']['FILE_NAME'];
+                    @$ret_array['id'][$i] = $a['attributes']['ID'];
+                    @$ret_array['folder_name'][$i] = $a['attributes']['FOLDER_NAME'];
+                    @$ret_array['error'][$i] = $a['attributes']['ERROR'];
+                    @$ret_array['public_name'][$i] = $a['attributes']['PUBLIC_NAME'];
                     $entry_count++;
                 }
                 break;
