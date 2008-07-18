@@ -148,7 +148,7 @@ EOF;
 
 echo <<<EOF
     tinyMCE.init({
-        mode: "none",
+        mode: "textareas",
         relative_urls: false,
         editor_selector: "form-textarea-simple",
         document_base_url: "$CFG->httpswwwroot",
@@ -162,7 +162,7 @@ echo <<<EOF
         plugins: "spellchecker,emoticons,paste,standardmenu,directionality,contextmenu"
     });
     tinyMCE.init({
-        mode: "none",
+        mode: "textareas",
         relative_urls: false,
         editor_selector: "form-textarea-advanced",
         document_base_url: "$CFG->httpswwwroot",
@@ -195,9 +195,9 @@ EOF;
 readfile('tinymce/xhtml_ruleset.txt');
 echo <<<EOF
     });
+
     function toggleEditor(id) {
-        var elm = document.getElementById(id);
-        tinyMCE.execCommand('mceToggleEditor',false,elm);
+        tinyMCE.execCommand('mceToggleEditor',false,id);
     }
     function moodlefilemanager(field_name, url, type, win) {
         tinyMCE.activeEditor.windowManager.open({

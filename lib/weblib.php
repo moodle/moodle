@@ -4027,16 +4027,6 @@ function print_container_end($return=false) {
         $output = '</div>';
     }
 
-    if ($idbase == 'footer' and !empty($THEME->htmleditors)) {
-        $output .= "\n".'<script type="text/javascript">'."\n";
-        $output .= "\n//<![CDATA[\n";
-        foreach ($THEME->htmleditors as $editorid) {
-            $output .= 'tinyMCE.execCommand("mceToggleEditor", false, document.getElementById(\''. $editorid .'\'))'."\n";
-        }
-        $output .= "//]]>\n";
-        $output .= '</script>'."\n";
-    }
-
     if ($return) {
         return $output;
     } else {
@@ -4796,9 +4786,9 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
  * @param int $courseid Course ID to pass to the file manager (defaults to global $COURSE->id).
  * @param bool $return If false, will output string. If true, will return string value.
  * @param string $id CSS ID to add to the textarea element.
- * @param string $class CSS classes to add to the textarea element. Use 'form-textarea-simple' to get a basic editor. Defaults to 'form-textarea-advanced' (complete editor).
+ * @param string $editorclass CSS classes to add to the textarea element when using the htmleditor. Use 'form-textarea-simple' to get a basic editor. Defaults to 'form-textarea-advanced' (complete editor). If this is null or invalid, the htmleditor will not show for this field.
  */
-function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0, $return=false, $id='', $class='form-textarea-advanced') {
+function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $value='', $courseid=0, $return=false, $id='', $editorclass='form-textarea-advanced') {
 /// $width and height are legacy fields and no longer used as pixels like they used to be.
 /// However, you can set them to zero to override the mincols and minrows values below.
 
@@ -4850,9 +4840,11 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 
     if ($usehtmleditor) {
         $THEME->htmleditors[] = $id;
+    } else {
+        $editorclass = '';
     }
 
-    $str .= "\n".'<textarea class="form-textarea '. $class .'" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
+    $str .= "\n".'<textarea class="form-textarea '. $editorclass .'" id="'. $id .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">'."\n";
     if ($usehtmleditor) {
         $str .= htmlspecialchars($value); // needed for editing of cleaned text!
     } else {
