@@ -351,9 +351,10 @@
                         width = <?php p($scorm->width) ?>;
                         height = <?php p($scorm->height) ?>;
                         var main = openpopup(url, "<?php p($scorm->name) ?>", "<?php p($scorm->options) ?>", width, height);
+                   //]]>
                     </script>
                     <noscript>
-                        <iframe id="main" class="scoframe" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
+                    <iframe id="main" class="scoframe" src="loadSCO.php?id=<?php echo $cm->id.$scoidstr.$modestr ?>">
                     </iframe>
                     </noscript>
 <?php            
