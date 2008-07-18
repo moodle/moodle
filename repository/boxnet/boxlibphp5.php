@@ -137,6 +137,8 @@ class boxclient {
                     $ret_array['file_id'][$i] = $a['attributes']['ID'];
                     @$ret_array['file_name'][$i] = $a['attributes']['FILE_NAME'];
                     @$ret_array['file_keyword'][$i] = $a['attributes']['KEYWORD'];
+                    @$ret_array['file_size'][$i] = display_size($a['attributes']['SIZE']);
+                    @$ret_array['file_date'][$i] = userdate($a['attributes']['UPDATED']);
                     $entry_count++;
                 }
                 break;
