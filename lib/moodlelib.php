@@ -4803,7 +4803,7 @@ function get_directory_size($rootdir, $excludefile='') {
 
     // do it this way if we can, it's much faster
     if (!empty($CFG->pathtodu) && is_executable(trim($CFG->pathtodu))) {
-        $command = trim($CFG->pathtodu).' -sk --apparent-size '.escapeshellarg($rootdir);
+        $command = trim($CFG->pathtodu).' -sk '.escapeshellarg($rootdir);
         $output = null;
         $return = null;
         exec($command,$output,$return);
