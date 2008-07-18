@@ -514,7 +514,7 @@
                         continue;
                     }
                     $tables .= ', {data_content} c'.$key.' ';
-                    $where .= ' AND c'.$key.'.recordid = r.id';
+                    $where .= ' AND c'.$key.'.recordid = r.id AND c'.$key.'.fieldid = '.$key;
                     $searchselect .= ' AND ('.$val->sql.') ';
                     $params = array_merge($params, $val->params);
                 }
