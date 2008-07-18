@@ -63,11 +63,11 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
     // and so the next 86400 seconds worth of logs are printed.
 
     /// Setup for group handling.
-    
-    // TODO: I don't understand group/context/etc. enough to be able to do 
+
+    // TODO: I don't understand group/context/etc. enough to be able to do
     // something interesting with it here
     // What is the context of a remote course?
-    
+
     /// If the group mode is separate, and this user does not have editing privileges,
     /// then only the user's group can be viewed.
     //if ($course->groupmode == SEPARATEGROUPS and !has_capability('moodle/course:managegroups', get_context_instance(CONTEXT_COURSE, $course->id))) {
@@ -84,14 +84,14 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
     $qry = "
             SELECT
                 l.*,
-                u.firstname, 
-                u.lastname, 
+                u.firstname,
+                u.lastname,
                 u.picture
             FROM
                 {$CFG->prefix}mnet_log l
-            LEFT JOIN  
+            LEFT JOIN
                 {$CFG->prefix}user u
-            ON 
+            ON
                 l.userid = u.id
             WHERE
                 ";
@@ -110,7 +110,7 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
     if ('site_errors' === $modid) {
         $where .= " AND\n                ( l.action='error' OR l.action='infected' )";
     } else if ($modid) {
-        //TODO: This assumes that modids are the same across sites... probably 
+        //TODO: This assumes that modids are the same across sites... probably
         //not true
         $where .= " AND\n                l.cmid = '$modid'";
     }
@@ -187,7 +187,7 @@ function build_logs_array($course, $user=0, $date=0, $order="l.time ASC", $limit
         }
     }
 
-    
+
     /// Getting all members of a group.
     if ($groupid and !$user) {
         if ($gusers = groups_get_members($groupid)) {
@@ -272,7 +272,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     if (empty($logs['logs'])) {
         $logs['logs'] = array();
     }
-    
+
     $row = 1;
     foreach ($logs['logs'] as $log) {
 
@@ -343,16 +343,16 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
 function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
                    $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
-    
+
     global $CFG;
-    
+
     if (!$logs = build_mnet_logs_array($hostid, $course, $user, $date, $order, $page*$perpage, $perpage,
                        $modname, $modid, $modaction, $groupid)) {
         notify("No logs found!");
         print_footer($course);
         exit;
     }
-    
+
     if ($course->id == SITEID) {
         $courses[0] = '';
         if ($ccc = get_courses('all', 'c.id ASC', 'c.id,c.shortname,c.visible')) {
@@ -361,7 +361,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
             }
         }
     }
-    
+
     $totalcount = $logs['totalcount'];
     $count=0;
     $ldcache = array();
@@ -395,7 +395,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
 
     $row = 1;
     foreach ($logs['logs'] as $log) {
-        
+
         $log->info = $log->coursename;
         $row = ($row + 1) % 2;
 
@@ -414,7 +414,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
             }
         }
 
-        //Filter log->info 
+        //Filter log->info
         $log->info = format_string($log->info);
 
         $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
@@ -942,7 +942,7 @@ function print_recent_activity($course) {
                 $content = $print_recent_activity($course, $viewfullnames, $timestart) || $content;
             }
         } else {
-            debugging("Missing lib.php in lib/{$modname} - please reinstall files or uninstall the module");  
+            debugging("Missing lib.php in lib/{$modname} - please reinstall files or uninstall the module");
         }
     }
 
@@ -1291,7 +1291,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
 /// Casting $course->modinfo to string prevents one notice when the field is null
     $modinfo = get_fast_modinfo($course);
-    
+
 
     //Acccessibility: replace table with list <ul>, but don't output empty list.
     if (!empty($section->sequence)) {
@@ -1464,7 +1464,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     static $resources = false;
     static $activities = false;
 
-    if ($resources === false) { 
+    if ($resources === false) {
         $resources = array();
         $activities = array();
 
@@ -1545,7 +1545,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
         set_field_select('course', 'modinfo', null, $courseselect);
         // update cached global COURSE too ;-)
         if ($courseid == $COURSE->id) {
-            $COURSE->modinfo = null; 
+            $COURSE->modinfo = null;
         }
         // reset the fast modinfo cache
         $reset = 'reset';
@@ -1568,7 +1568,7 @@ function rebuild_course_cache($courseid=0, $clearonly=false) {
             }
             // update cached global COURSE too ;-)
             if ($course->id == $COURSE->id) {
-                $COURSE->modinfo = $modinfo; 
+                $COURSE->modinfo = $modinfo;
             }
         }
         rs_close($rs);
@@ -1809,18 +1809,18 @@ function print_courses($category) {
         $categories = get_child_categories(0);  // Parent = 0   ie top-level categories only
         if (is_array($categories) && count($categories) == 1) {
             $category   = array_shift($categories);
-            $courses    = get_courses_wmanagers($category->id, 
-                                                'c.sortorder ASC', 
+            $courses    = get_courses_wmanagers($category->id,
+                                                'c.sortorder ASC',
                                                 array('password','summary','currency'));
         } else {
-            $courses    = get_courses_wmanagers('all', 
-                                                'c.sortorder ASC', 
+            $courses    = get_courses_wmanagers('all',
+                                                'c.sortorder ASC',
                                                 array('password','summary','currency'));
         }
         unset($categories);
     } else {
-        $courses    = get_courses_wmanagers($category->id, 
-                                            'c.sortorder ASC', 
+        $courses    = get_courses_wmanagers($category->id,
+                                            'c.sortorder ASC',
                                             array('password','summary','currency'));
     }
 
@@ -1868,10 +1868,10 @@ function print_course($course) {
     echo '<div class="info">';
     echo '<div class="name"><a title="'.get_string('entercourse').'"'.
          $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
-         format_string($course->fullname).'</a></div>';   
-    
+         format_string($course->fullname).'</a></div>';
+
     /// first find all roles that are supposed to be displayed
-    
+
     if (!empty($CFG->coursemanager)) {
         $managerroles = split(',', $CFG->coursemanager);
         $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
@@ -1880,7 +1880,7 @@ function print_course($course) {
             if (count($course->managers)) {
                 $rusers = $course->managers;
                 $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
-                
+
                  /// Rename some of the role names if needed
                 if (isset($context)) {
                     $aliasnames = get_records('role_names', 'contextid', $context->id,'','roleid,contextid,name');
@@ -1897,7 +1897,7 @@ function print_course($course) {
                     $usersshown[] = $ra->user->id;
 
                     if ($ra->hidden == 0 || $canseehidden) {
-                        $fullname = fullname($ra->user, $canviewfullnames); 
+                        $fullname = fullname($ra->user, $canviewfullnames);
                         if ($ra->hidden == 1) {
                             $status = " <img src=\"{$CFG->pixpath}/t/show.gif\" title=\"".get_string('userhashiddenassignments', 'role')."\" alt=\"".get_string('hiddenassign')."\" class=\"hide-show-image\"/>";
                         } else {
@@ -1908,22 +1908,22 @@ function print_course($course) {
                             $ra->rolename = $aliasnames[$ra->roleid]->name;
                         }
 
-                        $namesarray[] = format_string($ra->rolename) 
+                        $namesarray[] = format_string($ra->rolename)
                             . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$ra->user->id.'&amp;course='.SITEID.'">'
-                            . $fullname . '</a>' . $status; 
+                            . $fullname . '</a>' . $status;
                     }
                 }
             }
         } else {
-            $rusers = get_role_users($managerroles, $context, 
+            $rusers = get_role_users($managerroles, $context,
                                      true, '', 'r.sortorder ASC, u.lastname ASC', $canseehidden);
             if (is_array($rusers) && count($rusers)) {
                 $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
                 foreach ($rusers as $teacher) {
-                    $fullname = fullname($teacher, $canviewfullnames); 
-                    $namesarray[] = format_string($teacher->rolename) 
+                    $fullname = fullname($teacher, $canviewfullnames);
+                    $namesarray[] = format_string($teacher->rolename)
                         . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.SITEID.'">'
-                        . $fullname . '</a>'; 
+                        . $fullname . '</a>';
                 }
             }
         }
@@ -1934,7 +1934,7 @@ function print_course($course) {
             echo "</li></ul>";
         }
     }
-    
+
     require_once("$CFG->dirroot/enrol/enrol.class.php");
     $enrol = enrolment_factory::factory($course->enrol);
     echo $enrol->get_access_icons($course);
@@ -1983,7 +1983,7 @@ function print_my_moodle() {
         }
 
         // MNET
-        if (!empty($rcourses)) { 
+        if (!empty($rcourses)) {
             // at the IDP, we know of all the remote courses
             foreach ($rcourses as $course) {
                 print_remote_course($course, "100%");
@@ -2075,8 +2075,8 @@ function print_remote_course($course, $width="100%") {
          $linkcss.' href="'.$url.'">'
         .  format_string($course->fullname) .'</a><br />'
         . format_string($course->hostname) . ' : '
-        . format_string($course->cat_name) . ' : ' 
-        . format_string($course->shortname). '</div>';   
+        . format_string($course->cat_name) . ' : '
+        . format_string($course->shortname). '</div>';
     echo '</div><div class="summary">';
     $options = NULL;
     $options->noclean = true;
@@ -2193,7 +2193,7 @@ function set_coursemodule_groupmembersonly($id, $groupmembersonly) {
 }
 
 function set_coursemodule_idnumber($id, $idnumber) {
-    return set_field("course_modules", "idnumber", $idnumber, "id", $id);  
+    return set_field("course_modules", "idnumber", $idnumber, "id", $id);
 }
 /**
 * $prevstateoverrides = true will set the visibility of the course module
@@ -2256,7 +2256,7 @@ function delete_course_module($id) {
         foreach ($grade_items as $grade_item) {
             $grade_item->delete('moddelete');
         }
-        
+
     }
     return delete_records('course_modules', 'id', $cm->id);
 }
@@ -2279,6 +2279,13 @@ function delete_mod_from_section($mod, $section) {
     return false;
 }
 
+/**
+ * Moves a section up or down by 1. CANNOT BE USED DIRECTLY BY AJAX!
+ *
+ * @param object $course
+ * @param int $section
+ * @param int $move (-1 or 1)
+ */
 function move_section($course, $section, $move) {
 /// Moves a whole course section up and down within the course
     global $USER;
@@ -2301,12 +2308,20 @@ function move_section($course, $section, $move) {
         return false;
     }
 
+
+    $count = abs($sectiondest - $section);
+    $direction = ($sectiondest - $section) / $count;
+
+    for ($i = 0, $ref = $section + $direction; $i < $count; ++$i, $ref += $direction) {
+        if (!set_field("course_sections", "section", $ref - $direction, 'course', $course->id, 'section', $ref)) {
+            return false;
+        }
+    }
+
     if (!set_field("course_sections", "section", $sectiondest, "id", $sectionrecord->id)) {
         return false;
     }
-    if (!set_field("course_sections", "section", $section, "id", $sectiondestrecord->id)) {
-        return false;
-    }
+
     // if the focus is on the section that is being moved, then move the focus along
     if (isset($USER->display[$course->id]) and ($USER->display[$course->id] == $section)) {
         course_set_display($course->id, $sectiondest);
@@ -2327,6 +2342,113 @@ function move_section($course, $section, $move) {
     return true;
 }
 
+/**
+ * Moves a section within a course, from a position to another.
+ * Be very careful: $section and $destination refer to section number,
+ * not id!.
+ *
+ * @param object $course
+ * @param int $section Section number (not id!!!)
+ * @param int $destination
+ * @return boolean Result
+ */
+function move_section_to($course, $section, $destination) {
+/// Moves a whole course section up and down within the course
+    global $USER;
+
+    if (!$destination) {
+        return true;
+    }
+
+    if ($destination > $course->numsections or $destination < 1) {
+        return false;
+    }
+
+    // Get all sections for this course and re-order them (2 of them should now share the same section number)
+    if (!$sections = get_records_menu('course_sections', 'course',$course->id, 'section ASC, id ASC', 'id, section')) {
+        return false;
+    }
+
+    $sections = reorder_sections($sections, $section, $destination);
+
+    // Update all sections
+    foreach ($sections as $id => $position) {
+        set_field('course_sections', 'section', $position, 'id', $id);
+    }
+
+    // if the focus is on the section that is being moved, then move the focus along
+    if (isset($USER->display[$course->id]) and ($USER->display[$course->id] == $section)) {
+        course_set_display($course->id, $destination);
+    }
+    return true;
+}
+
+/**
+ * Reordering algorithm for course sections. Given an array of section->section indexed by section->id,
+ * an original position number and a target position number, rebuilds the array so that the
+ * move is made without any duplication of section positions.
+ * Note: The target_position is the position AFTER WHICH the moved section will be inserted. If you want to
+ * insert a section before the first one, you must give 0 as the target (section 0 can never be moved).
+ *
+ * @param array $sections
+ * @param int $origin_position
+ * @param int $target_position
+ * @return array
+ */
+function reorder_sections($sections, $origin_position, $target_position) {
+    if (!is_array($sections)) {
+        return false;
+    }
+
+    // We can't move section position 0
+    if ($origin_position < 1) {
+        echo "We can't move section position 0";
+        return false;
+    }
+
+    // Locate origin section in sections array
+    if (!$origin_key = array_search($origin_position, $sections)) {
+        echo "searched position not in sections array";
+        return false; // searched position not in sections array
+    }
+
+    // Extract origin section
+    $origin_section = $sections[$origin_key];
+    unset($sections[$origin_key]);
+
+    // Find offset of target position (stupid PHP's array_splice requires offset instead of key index!)
+    $found = false;
+    $append_array = array();
+    foreach ($sections as $id => $position) {
+        if ($found) {
+            $append_array[$id] = $position;
+            unset($sections[$id]);
+        }
+        if ($position == $target_position) {
+            $found = true;
+        }
+    }
+
+    // Append moved section
+    $sections[$origin_key] = $origin_section;
+
+    // Append rest of array (if applicable)
+    if (!empty($append_array)) {
+        foreach ($append_array as $id => $position) {
+            $sections[$id] = $position;
+        }
+    }
+
+    // Renumber positions
+    $position = 0;
+    foreach ($sections as $id => $p) {
+        $sections[$id] = $position;
+        $position++;
+    }
+
+    return $sections;
+
+}
 
 function moveto_module($mod, $section, $beforemod=NULL) {
 /// All parameters are objects
@@ -2473,7 +2595,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
                         ' alt="'.$str->movedown.'" /></a>'."\n";
         }
     } else {
-        $move = '';  
+        $move = '';
     }
 
     $leftright = '';
@@ -2486,7 +2608,7 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
 	        $rightarrow = 'right.gif';
 	        $leftarrow  = 'left.gif';
         }
-    
+
         if ($indent > 0) {
             $leftright .= '<a class="editing_moveleft" title="'.$str->moveleft.'" href="'.$path.'/mod.php?id='.$mod->id.
                         '&amp;indent=-1&amp;sesskey='.$sesskey.$section.'"><img'.
@@ -2605,13 +2727,13 @@ function print_grouping_settings($form, $course=NULL) {
         echo '<tr valign="top">';
         echo '<td align="right"><b>'.get_string('grouping', 'group').':</b></td>';
         echo '<td align="left">';
-        
+
         $groupings;
         $groupingid = isset($cm->groupingid) ? $cm->groupingid : 0;
-        
+
         choose_from_menu($groupings, 'groupingid', $groupingid, get_string('none'), '', 0, false);
         echo '</td></tr>';
-        
+
         $checked = empty($cm->groupmembersonly) ? '':'checked="checked"';
         echo '<tr valign="top">';
         echo '<td align="right"><b>'.get_string('groupmembersonly', 'group').':</b></td>';
@@ -2683,7 +2805,7 @@ function update_restricted_mods($course,$mods) {
  */
 
 function course_allowed_module($course,$mod) {
-    
+
     if (empty($course->restrictmodules)) {
         return true;
     }
@@ -2702,7 +2824,7 @@ function course_allowed_module($course,$mod) {
     if (empty($modid)) {
         return false;
     }
-    
+
     return (record_exists('course_allowed_modules','course',$course->id,'module',$modid));
 }
 
@@ -2719,7 +2841,7 @@ function category_delete_full($category, $showfeedback=true) {
     if ($children = get_records('course_categories', 'parent', $category->id, 'sortorder ASC')) {
         foreach ($children as $childcat) {
             if (!category_delete_full($childcat, $showfeedback)) {
-                notify("Error deleting category $childcat->name"); 
+                notify("Error deleting category $childcat->name");
                 return false;
             }
         }
@@ -2727,18 +2849,18 @@ function category_delete_full($category, $showfeedback=true) {
 
     if ($courses = get_records('course', 'category', $category->id, 'sortorder ASC')) {
         foreach ($courses as $course) {
-            if (!delete_course($course, false)) {
-                notify("Error deleting course $course->shortname"); 
+            if (!delete_course($course->id, false)) {
+                notify("Error deleting course $course->shortname");
                 return false;
             }
-            notify(get_string('coursedeleted', '', $course->shortname), 'notifysuccess'); 
+            notify(get_string('coursedeleted', '', $course->shortname), 'notifysuccess');
         }
     }
 
     // now delete anything that may depend on course category context
     grade_course_category_delete($category->id, 0, $showfeedback);
     if (!question_delete_course_category($category, 0, $showfeedback)) {
-        notify(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess'); 
+        notify(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess');
         return false;
     }
 
@@ -2748,7 +2870,7 @@ function category_delete_full($category, $showfeedback=true) {
 
     events_trigger('course_category_deleted', $category);
 
-    notify(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess'); 
+    notify(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess');
 
     return true;
 }
@@ -2771,7 +2893,7 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
     if ($children = get_records('course_categories', 'parent', $category->id, 'sortorder ASC')) {
         foreach ($children as $childcat) {
             if (!move_category($childcat, $newparentcat)) {
-                notify("Error moving category $childcat->name"); 
+                notify("Error moving category $childcat->name");
                 return false;
             }
         }
@@ -2779,16 +2901,16 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
 
     if ($courses = get_records('course', 'category', $category->id, 'sortorder ASC', 'id')) {
         if (!move_courses(array_keys($courses), $newparentid)) {
-            notify("Error moving courses"); 
+            notify("Error moving courses");
             return false;
         }
-        notify(get_string('coursesmovedout', '', format_string($category->name)), 'notifysuccess'); 
+        notify(get_string('coursesmovedout', '', format_string($category->name)), 'notifysuccess');
     }
 
     // now delete anything that may depend on course category context
     grade_course_category_delete($category->id, $newparentid, $showfeedback);
     if (!question_delete_course_category($category, $newparentcat, $showfeedback)) {
-        notify(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess'); 
+        notify(get_string('errordeletingquestionsfromcategory', 'question', $category), 'notifysuccess');
         return false;
     }
 
@@ -2798,7 +2920,7 @@ function category_delete_move($category, $newparentid, $showfeedback=true) {
 
     events_trigger('course_category_deleted', $category);
 
-    notify(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess'); 
+    notify(get_string('coursecategorydeleted', '', format_string($category->name)), 'notifysuccess');
 
     return true;
 }
@@ -2887,10 +3009,10 @@ function move_category ($category, $newparentcat) {
 
     context_moved($context, $newparent);
 
-    // The most effective thing would be to find the common parent, 
+    // The most effective thing would be to find the common parent,
     // until then, do it sitewide...
     fix_course_sortorder();
-    
+
 
     return true;
 }
@@ -2936,7 +3058,7 @@ function can_delete_course($courseid) {
 }
 
 
-/* 
+/*
  * Create a course and either return a $course object or false
  *
  * @param object $data  - all the data needed for an entry in the 'course' table
@@ -2985,7 +3107,7 @@ function create_course($data) {
         events_trigger('course_created', $course);
 
         return $course;
-    } 
+    }
 
     return false;   // error
 }
@@ -3044,37 +3166,37 @@ function update_course($data) {
 
         // put custom role names into db
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
-        
+
         foreach ($data as $dname => $dvalue) {
-          
+
             // is this the right param?
             $dvalue = clean_param($dvalue, PARAM_NOTAGS);
 
             if (!strstr($dname, 'role_')) {
                 continue;
-            }  
-            
+            }
+
             $dt = explode('_', $dname);
             $roleid = $dt[1];
             // make up our mind whether we want to delete, update or insert
-            
+
             if (empty($dvalue)) {
-                
+
                 delete_records('role_names', 'contextid', $context->id, 'roleid', $roleid);
-            
+
             } else if ($t = get_record('role_names', 'contextid', $context->id, 'roleid', $roleid)) {
-                
+
                 $t->name = $dvalue;
-                update_record('role_names', $t);    
-                       
+                update_record('role_names', $t);
+
             } else {
-                
+
                 $t->contextid = $context->id;
                 $t->roleid = $roleid;
                 $t->name = $dvalue;
-                insert_record('role_names', $t);  
+                insert_record('role_names', $t);
             }
-            
+
         }
         //trigger events
         events_trigger('course_updated', $course);
