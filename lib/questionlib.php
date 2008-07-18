@@ -2479,4 +2479,19 @@ function get_filesdir_from_context($context){
     }
     return $courseid;
 }
+/**
+ * Get the real question id for a random question.
+ * @param object $state with property answer.
+ * @return mixed return integer real question id or false if there was an
+ * error..
+ */
+function question_get_real_questionid($state){
+    $matches = array();
+    if (!preg_match('|^random([0-9]+)-|', $state->answer, $matches)){
+        notify(get_string('errorrandom', 'quiz_statistics'));
+        return false;
+    } else {
+        return $matches[1];
+    }
+}
 ?>

@@ -42,4 +42,6 @@ $string['nostudentsingroup'] = 'There are no students in this group yet';
 $string['discrimination_index'] = 'Discrimination Index';
 $string['discriminative_efficiency'] = 'Discriminative Efficiency';
 $string['effective_weight'] = 'Effective weight';
+$string['errorrandom'] = 'Error getting sub item data';
+$string['erroritemappearsmorethanoncewithdifferentweight'] = 'Question ($a) appears more than once with different weights in different positions of the test. This is not currently supported by the statistics report and may make the statistics for this question unreliable.';
 ?>

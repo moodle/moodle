@@ -108,7 +108,11 @@ class quiz_report_statistics_table extends flexible_table {
     }
     
     function col_number($question){
-        return $question->number;
+        if (!$question->subquestion){
+            return $question->number;
+        } else {
+            return '';
+        }
     }
     function col_actions($question){
         return quiz_question_action_icons($this->quiz, $this->cmid, $question, $this->baseurl);
@@ -120,17 +124,25 @@ class quiz_report_statistics_table extends flexible_table {
         return quiz_report_scale_sumgrades_as_percentage($question->grade, $this->quiz);
     }
     function col_effective_weight($question){
-        return number_format($question->effectiveweight, 2).' %';
+        if (!$question->subquestion){
+            return number_format($question->_stats->effectiveweight, 2).' %';
+        } else {
+            return '';
+        }
     }
     function col_discrimination_index($question){
-        if (is_numeric($question->discriminationindex)){
-            return number_format($question->discriminationindex, 2).' %';
+        if (is_numeric($question->_stats->discriminationindex)){
+            return number_format($question->_stats->discriminationindex, 2).' %';
         } else {
-            return $question->discriminationindex;
+            return $question->_stats->discriminationindex;
         }
     }
     function col_discriminative_efficiency($question){
-        return number_format($question->discriminativeefficiency, 2).' %';
+        if (is_numeric($question->_stats->discriminativeefficiency)){
+            return number_format($question->_stats->discriminativeefficiency, 2).' %';
+        } else {
+            return '';
+        }
     }
     function col_random_guess_score($question){
         $randomguessscore = question_get_random_guess_score($question);
@@ -142,17 +154,17 @@ class quiz_report_statistics_table extends flexible_table {
     }
     
     function col_sd($question){
-        return number_format($question->sd*100 / $question->grade, 2).' %';
+        return number_format($question->_stats->sd*100 / $question->grade, 2).' %';
     }
     function col_s($question){
-        if (isset($question->s)){
-            return $question->s;
+        if (isset($question->_stats->s)){
+            return $question->_stats->s;
         } else {
             return 0;
         }
     }
     function col_facility($question){
-        return number_format($question->facility*100, 2).' %';
+        return number_format($question->_stats->facility*100, 2).' %';
     }
 }
 ?>
