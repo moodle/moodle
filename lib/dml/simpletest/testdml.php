@@ -155,7 +155,51 @@ class dml_test extends UnitTestCase {
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
+
         $this->assertTrue(count($DB->get_tables()) == $original_count + 1);
+    }
+
+    public function testEnums() {
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, null, null, XMLDB_ENUM, array('test','test2','test3'),null);
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $columns = $DB->get_columns('testtable');
+
+        $enumfield = $columns['enumfield'];
+        $this->assertEqual('enumfield', $enumfield->name);
+        $this->assertEqual('enum', $enumfield->type);
+        $this->assertEqual(3, count($enumfield->enums));
+        $this->assertEqual('test', $enumfield->enums[0]);
+        $this->assertEqual('test2', $enumfield->enums[1]);
+        $this->assertEqual('test3', $enumfield->enums[2]);
+
+    }
+
+    public function testDefaults() {
+        $DB = $this->tdb;
+        $dbman = $this->tdb->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $enumvalues = array('test','test2','test3');
+        $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, XMLDB_ENUM, $enumvalues, 'test2');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $columns = $DB->get_columns('testtable');
+
+        $enumfield = $columns['enumfield'];
+        $this->assertEqual('test2', $enumfield->default_value);
+        $this->assertEqual('C', $enumfield->meta_type);
+
     }
 
     public function testGetIndexes() {
@@ -166,27 +210,22 @@ class dml_test extends UnitTestCase {
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table->add_index('course-id', XMLDB_INDEX_UNIQUE, array('course', 'id'));
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
         $this->tables[$table->getName()] = $table;
 
         $this->assertTrue($indices = $DB->get_indexes('testtable'));
-        $this->assertTrue(count($indices) == 1);
+        $this->assertTrue(count($indices) == 2);
+        sort($indices);
 
-        $xmldb_indexes = $table->getIndexes();
-        $this->assertEqual(count($indices), count($xmldb_indexes));
-
-        for ($i = 0; $i < count($indices); $i++) {
-            if ($i == 0) {
-                $next_index = reset($indices);
-                $next_xmldb_index  = reset($xmldb_indexes);
-            } else {
-                $next_index = next($indices);
-                $next_xmldb_index  = next($xmldb_indexes);
-            }
-
-            $this->assertEqual($next_index['columns'][0], $next_xmldb_index->name);
-        }
+        $this->assertFalse($indices[0]['unique']);
+        $this->assertTrue($indices[1]['unique']);
+        $this->assertEqual(1, count($indices[0]['columns']));
+        $this->assertEqual(2, count($indices[1]['columns']));
+        $this->assertEqual('course', $indices[0]['columns'][0]);
+        $this->assertEqual('course', $indices[1]['columns'][0]);
+        $this->assertEqual('id', $indices[1]['columns'][1]);
     }
 
     public function testGetColumns() {
