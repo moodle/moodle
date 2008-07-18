@@ -8,7 +8,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-require_once($CFG->dirroot.'/repository/lib.php');
 require_once($CFG->dirroot.'/repository/flickr/'.'phpFlickr.php');
 
 class repository_flickr extends repository{
@@ -24,6 +23,7 @@ class repository_flickr extends repository{
 
         $reset = optional_param('reset', 0, PARAM_INT);
         if(!empty($reset)) {
+            // logout from flickr
             unset($SESSION->flickrmail);
             set_user_preference('flickrmail', '');
         }
@@ -33,6 +33,7 @@ class repository_flickr extends repository{
                 $action = 'list';
             }
         } else {
+            // get flickr account
             $options['flickrmail'] = optional_param('flickrmail', '', PARAM_RAW);
             if(!empty($options['flickrmail'])) {
                 $people = $this->flickr->people_findByEmail($options['flickrmail']);
@@ -60,13 +61,13 @@ class repository_flickr extends repository{
         global $SESSION;
         if(empty($SESSION->flickrmail)) {
         $str =<<<EOD
-            <form id="moodle-repo-login">
-            <label for="account">Flickr Account (Email)</label>
-            <input type='text' name='flickrmail' id='account' />
-            <input type='hidden' name='id' value='$this->repositoryid' /><br/>
-            <input type='checkbox' name='remember' value='true' /> Remember <br/>
-            <a href="###" onclick="dologin()">Go</a>
-            </form>
+<form id="moodle-repo-login">
+<label for="account">Account (Email)</label><br/>
+<input type='text' name='flickrmail' id='account' />
+<input type='hidden' name='id' value='$this->repositoryid' /><br/>
+<input type='checkbox' name='remember' id="keepid" value='true' /> <label for="keepid">Remember? </label>
+<p><input type='button' onclick="dologin()" value="Go" /></p>
+</form>
 EOD;
             if($ajax){
                 $ret = array();
@@ -145,7 +146,7 @@ EOD;
         echo '<input type="text" name="Search" value="search terms..." size="40" class="right"/>';
         return true;
     }
-    public function get_file($photo_id){
+    public function get_file($photo_id, $file = ''){
         global $CFG;
         $result = $this->flickr->photos_getSizes($photo_id);
         $url = '';
@@ -162,19 +163,19 @@ EOD;
         if(is_dir($CFG->dataroot.'/repository/download')) {
             $dir = $CFG->dataroot.'/repository/download/';
         }
-        if(file_exists($CFG->dirroot.'/repository/curl.class.php')) {
+
+        if(empty($file)) {
             $file = $photo_id.'_'.time().'.jpg';
-            $fp = fopen($dir.$file, 'w');
-            require_once($CFG->dirroot.'/repository/curl.class.php');
-            $c = new curl;
-            $c->download(array(
-                array('url'=>$url, 'file'=>$fp)
-            ));
-            return $dir.$file;
-        } else {
-            return '!!!fail!!!';
         }
-        return $result;
+        if(file_exists($dir.$file)) {
+            $file = uniqid('m').$file;
+        }
+        $fp = fopen($dir.$file, 'w');
+        $c = new curl;
+        $c->download(array(
+            array('url'=>$url, 'file'=>$fp)
+        ));
+        return $dir.$file;
     }
 }
 ?>

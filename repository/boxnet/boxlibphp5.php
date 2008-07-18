@@ -17,8 +17,6 @@
  *
  */
 
-require_once($CFG->dirroot.'/repository/'.'curl.class.php');
-
 class boxclient {
     public $auth_token = '';
 
@@ -80,13 +78,13 @@ class boxclient {
     //              'username'=>'dongsheng@moodle.com',
     //              'password'=>'xxx'));
     //
-    function getAuthToken($ticket, $options = array()) {
+    function getAuthToken($ticket, $username, $password) {
         $c = new curl;
         $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>0));
         $param =  array(
             'login_form1'=>'',
-            'login'=>$options['username'],
-            'password'=>$options['password'],
+            'login'=>$username,
+            'password'=>$password,
             'dologin'=>1,
             '__login'=>1
             );

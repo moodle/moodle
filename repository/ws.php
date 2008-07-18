@@ -7,12 +7,12 @@ $CFG->repository_cache_expire = 12000;
 $id     = optional_param('id', PARAM_INT);
 // action of client
 $action = optional_param('action', '', PARAM_RAW);
-// path 
-$p      = optional_param('p', '', PARAM_RAW);
 // Search text
 $search = optional_param('s', '', PARAM_RAW);
 // files to be downloaded
-$files  = optional_param('files', '', PARAM_RAW);
+$file  = optional_param('file', '', PARAM_RAW);
+$title = optional_param('title', '', PARAM_RAW);
+$p     = optional_param('p', '', PARAM_RAW);
 
 if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
     echo json_encode('wrong');
@@ -39,13 +39,10 @@ if($action == 'list') {
     }
 
 } elseif($action == 'download') {
-    $ret = array();
-    foreach($files as $url) {
-        $ret[] = $repo->get_file($url);
-        // TODO
-        // Need to communicate with FILE API
-        // Copy the tmp file to final location
-    }
+    $ret = $repo->get_file($file, $title);
+    // TODO
+    // Need to communicate with FILE API
+    // Copy the tmp file to final location
     echo json_encode($ret);
 } else {
     echo json_encode($repo->print_login());

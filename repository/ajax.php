@@ -1,3 +1,6 @@
+<html>
+<head>
+<title> Ajax picker demo page </title>
 <?php
 /*******************************************************\
 
@@ -9,10 +12,18 @@ require_once('../config.php');
 require_once('lib.php');
 $itempic = $CFG->pixpath.'/i/item.gif';
 $meta = <<<EOD
+<link rel="stylesheet" type="text/css" href="../lib/yui/reset-fonts-grids/reset-fonts-grids.css" />
+<link rel="stylesheet" type="text/css" href="../lib/yui/reset/reset-min.css" />
+<link rel="stylesheet" type="text/css" href="../lib/yui/resize/assets/skins/sam/resize.css" />
+<link rel="stylesheet" type="text/css" href="../lib/yui/container/assets/skins/sam/container.css" />
+<link rel="stylesheet" type="text/css" href="../lib/yui/layout/assets/skins/sam/layout.css" />
+<link rel="stylesheet" type="text/css" href="../lib/yui/button/assets/skins/sam/button.css" />
+<link rel="stylesheet" type="text/css" href="../lib/yui/menu/assets/skins/sam/menu.css" />
 <style type="text/css">
 body {
   margin:0;
   padding:0;
+  background: #FFF7C6;
 }
 #demo .yui-resize-handle-br {
     height: 11px;
@@ -24,7 +35,7 @@ body {
 #list{line-height: 1.5em}
 #list li{
 background: url($itempic) no-repeat 0 2px;
-padding-left: 24px
+padding-left: 16px
 }
 #list a{
 padding: 3px
@@ -35,18 +46,11 @@ color:white;
 }
 .t{width:80px; float:left;text-align:center;}
 .t div{width: 80px; height: 36px; overflow: hidden}
-.repo-logout{font-size: 10px;}
+.repo-opt{font-size: 10px;color:red}
 img{margin:0;padding:0;border:0}
 #paging{margin:10px 5px; clear:both}
 #paging a{padding: 4px; border: 1px solid gray}
 </style>
-<link rel="stylesheet" type="text/css" href="../lib/yui/reset-fonts-grids/reset-fonts-grids.css" />
-<link rel="stylesheet" type="text/css" href="../lib/yui/reset/reset-min.css" />
-<link rel="stylesheet" type="text/css" href="../lib/yui/resize/assets/skins/sam/resize.css" />
-<link rel="stylesheet" type="text/css" href="../lib/yui/container/assets/skins/sam/container.css" />
-<link rel="stylesheet" type="text/css" href="../lib/yui/layout/assets/skins/sam/layout.css" />
-<link rel="stylesheet" type="text/css" href="../lib/yui/button/assets/skins/sam/button.css" />
-<link rel="stylesheet" type="text/css" href="../lib/yui/menu/assets/skins/sam/menu.css" />
 <script type="text/javascript" src="../lib/yui/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../lib/yui/event/event-min.js"></script>
 <script type="text/javascript" src="../lib/yui/dom/dom-min.js"></script>
@@ -62,14 +66,16 @@ img{margin:0;padding:0;border:0}
 <script type="text/javascript" src="../lib/yui/button/button-min.js"></script>
 <script type="text/javascript" src="../lib/yui/selector/selector-beta-min.js"></script>
 EOD;
-print_header('', '', '', '', $meta, false);
+echo $meta;
 ?>
-<div id='control' style="margin: 5em">
+</head>
+<body class=" yui-skin-sam">
+<div id='control'>
     <input type="button" id="con1" onclick='openpicker()' value="Open File Picker" /> <br/>
     <textarea rows=12 cols=50 id="result">
     </textarea>
 </div>
-<div class=" yui-skin-sam">
+<div>
     <div id="file-picker"></div>
 </div>
 
@@ -116,13 +122,6 @@ function openpicker(){
                 units: [
                     {position: 'top', height: 32, resize: false, body:'<div class="yui-buttongroup" id="viewbar"></div>', gutter: '2'},
                     { position: 'left', width: 150, resize: true, body: '<ul id="list"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
-                    { position: 'bottom',
-                    height: 30,
-                    body: '<div id="toolbar">'+
-                    '<input type="button" id="select" value="Select" />'+
-                    '<input type="button" id="search" value="Search" />'+
-                    '</div>',
-                    gutter: '2'},
                     { position: 'center', body: '<div id="panel"></div>', scroll: true, gutter: '0 2 0 0' }
                 ]
             });
@@ -157,10 +156,11 @@ function openpicker(){
     list.on('contentReady', function(e){
             for(var i=0; i<repos.length; i++) {
                 var repo = repos[i];
-                var li = document.createElement('li');
+                li = document.createElement('li');
                 li.innerHTML = '<a href="###" id="repo-call-'+repo.id+'">'+
-                    repo.repositoryname+'</a> ';
-                li.innerHTML += '<a href="###" class="repo-logout" id="repo-logout-'+repo.id+'">Logout</a>';
+                    repo.repositoryname+'</a><br/>';
+                li.innerHTML += '<a href="###" class="repo-opt" onclick=\'dosearch('+repo.id+')\'>search</a>';
+                li.innerHTML += '<a href="###" class="repo-opt" id="repo-logout-'+repo.id+'">Logout </a>';
                 li.id = 'repo-'+repo.id;
                 this.appendChild(li);
                 var e = new YAHOO.util.Element('repo-call-'+repo.id);
@@ -188,27 +188,6 @@ function openpicker(){
     var btn_thumb = {label: 'Thumbnail', value: 't', onclick: {fn: viewthumb}};
     viewbar.addButtons([btn_list, btn_thumb]);
     var select = new YAHOO.util.Element('select');
-    select.on('click', function(e){
-        var nodes = YAHOO.util.Selector.query('input:checked');
-        var str = '';
-        var files = [];
-        for(k in nodes){
-            files.push(nodes[k].value);
-        }
-        loading();
-        var trans = YAHOO.util.Connect.asyncRequest('POST', 'ws.php?id='+repositoryid+'&action=download', loadfile, postdata({'files':files}));
-            })
-    var search = new YAHOO.util.Element('search');
-    search.on('click', function(e) {
-            if(repositoryid==0){
-                alert('Select a repository first.');
-                return;
-            }
-            var data = window.prompt("What are you searching for?");
-            if(data != null && data != '') {
-                dosearch(data);
-            }
-        })
 };
 
 function postdata(obj) {
@@ -248,6 +227,24 @@ function loading(){
     panel.get('element').innerHTML = '<img src="<?php echo $CFG->pixpath.'/i/loading.gif'?>" alt="loading..." />';
 }
 
+// name the file
+function rename(oldname, url){
+    var panel = new YAHOO.util.Element('panel');
+    var html = '<div>';
+    html += '<label for="newname">Name:</label>';
+    html += '<input type="text" id="newname" value="'+oldname+'" /><br/>';
+    html += '<input type="hidden" id="fileurl" value="'+url+'" />';
+    html += '<input type="button" onclick="download()" value="Download" />';
+    html += '<a href="###" onclick="viewfiles()">Back</a>';
+    html += '</div>';
+    panel.get('element').innerHTML = html;
+}
+function download(){
+    var title = document.getElementById('newname').value;
+    var file = document.getElementById('fileurl').value;
+    loading();
+    var trans = YAHOO.util.Connect.asyncRequest('POST', 'ws.php?id='+repositoryid+'&action=download', loadfile, postdata({'file':file, 'title':title}));
+}
 // produce thumbnail view
 function viewthumb(){
     viewbar.check(1);
@@ -261,7 +258,8 @@ function viewthumb(){
     for(k in obj){
         str += '<div class="t">';
         str += '<img title="'+obj[k].title+'" src="'+obj[k].thumbnail+'" />';
-        str += '<div style="text-align:center"><input type="radio" name="selected-files" value="'+obj[k].source+'"/><br/>'
+        str += '<div style="text-align:center">';
+        str += ('<input type="radio" title="'+obj[k].title+'" name="selected-files" value="'+obj[k].source+'" onclick=\'rename("'+obj[k].title+'", "'+obj[k].source+'")\' />');
         str += obj[k].title+'</div>';
         str += '</div>';
     }
@@ -270,6 +268,13 @@ function viewthumb(){
     return str;
 }
 
+function viewfiles(){
+    if(viewmode) {
+        viewthumb();
+    } else {
+        viewlist();
+    }
+}
 // produce list view
 function viewlist(){
     var str = '';
@@ -281,7 +286,7 @@ function viewlist(){
     var panel = new YAHOO.util.Element('panel');
     str += makepage();
     for(k in obj){
-        str += '<input type="radio" name="selected-files" value="'+obj[k].source+'" />';
+        str += ('<input type="radio" title="'+obj[k].title+'" name="selected-files" value="'+obj[k].source+'" onclick=\'rename("'+obj[k].title+'", "'+obj[k].source+'")\' />');
         str += obj[k].title;
         str += '<br/>';
     }
@@ -324,7 +329,9 @@ var loadfile = {
             alert('Invalid JSON String\n'+o.responseText);
         }
         var panel = new YAHOO.util.Element('panel');
-        panel.get('element').innerHTML = '<h1>Download Successfully!</h1>';
+        var html = '<h1>Download Successfully!</h1>';
+        html += '<a href="###" onclick="viewfiles()">Back</a>';
+        panel.get('element').innerHTML = html;
     }
 }
 
@@ -336,10 +343,15 @@ function cr(id, path, reset){
     loading();
     var trans = YAHOO.util.Connect.asyncRequest('GET', 'ws.php?id='+id+'&p='+path+'&reset='+reset, callback);
 }
-function dosearch(text){
+function dosearch(id){
+    var data = window.prompt("What are you searching for?");
+    if(data == null && data == '') {
+        alert('nothing entered');
+        return;
+    }
     viewbar.set('disabled', false);
     loading();
-    var trans = YAHOO.util.Connect.asyncRequest('GET', 'ws.php?id='+repositoryid+'&s='+text, callback);
+    var trans = YAHOO.util.Connect.asyncRequest('GET', 'ws.php?id='+id+'&s='+data, callback);
 }
 
 function dologin(){
@@ -348,5 +360,5 @@ function dologin(){
     var trans = YAHOO.util.Connect.asyncRequest('POST', 'ws.php', callback);
 }
 </script>
-<?php
-print_footer('empty');
+</body>
+</html>
