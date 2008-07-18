@@ -28,11 +28,12 @@
 <script type="text/javascript" src="<?php echo $CFG->httpswwwroot ?>/lib/dropdown.js"></script>  
 
 <script type="text/javascript" defer="defer">
-
 //<![CDATA[
-
 setTimeout('fix_column_widths()', 20);
-
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
 function openpopup(url,name,options,fullscreen) {
   fullurl = "<?php echo $CFG->httpswwwroot ?>" + url;
   windowobj = window.open(fullurl,name,options);
