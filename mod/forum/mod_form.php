@@ -14,6 +14,7 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addElement('text', 'name', get_string('forumname', 'forum'), array('size'=>'64'));
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
         $forum_types = forum_get_forum_types();
 
