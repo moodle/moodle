@@ -1,3 +1,7 @@
+<?php
+require_once('../config.php');
+require_once('lib.php');
+?>
 <html>
 <head>
 <title> Ajax picker demo page </title>
@@ -8,8 +12,6 @@
   picker.
 
 \*******************************************************/
-require_once('../config.php');
-require_once('lib.php');
 $itempic = $CFG->pixpath.'/i/item.gif';
 $meta = <<<EOD
 <link rel="stylesheet" type="text/css" href="../lib/yui/reset-fonts-grids/reset-fonts-grids.css" />
@@ -50,6 +52,9 @@ color:white;
 img{margin:0;padding:0;border:0}
 #paging{margin:10px 5px; clear:both}
 #paging a{padding: 4px; border: 1px solid gray}
+.file_name{color:green;}
+.file_date{color:blue}
+.file_size{color:gray}
 </style>
 <script type="text/javascript" src="../lib/yui/yahoo/yahoo-min.js"></script>
 <script type="text/javascript" src="../lib/yui/event/event-min.js"></script>
@@ -286,8 +291,17 @@ function viewlist(){
     var panel = new YAHOO.util.Element('panel');
     str += makepage();
     for(k in obj){
-        str += ('<input type="radio" title="'+obj[k].title+'" name="selected-files" value="'+obj[k].source+'" onclick=\'rename("'+obj[k].title+'", "'+obj[k].source+'")\' />');
-        str += obj[k].title;
+        var re = new RegExp();
+        re.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\?\/.=]+$");
+        str += ('<input type="radio" title="'+obj[k].title+'" name="selected-files" value="'+obj[k].source+'" onclick=\'rename("'+obj[k].title+'", "'+obj[k].source+'")\' /> ');
+        if(re.test(obj[k].source)) {
+            str += '<a class="file_name" href="'+obj[k].source+'">'+obj[k].title+'</a>';
+        } else {
+            str += '<span class="file_name" >'+obj[k].title+'</span>';
+        }
+        str += '<br/>';
+        str += '<label>Date: </label><span class="file_date">'+obj[k].date+'</span><br/>';
+        str += '<label>Size: </label><span class="file_size">'+obj[k].size+'</span>';
         str += '<br/>';
     }
     panel.get('element').innerHTML = str;

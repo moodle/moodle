@@ -106,7 +106,7 @@ EOD;
                 $p['title'] = get_string('notitle', 'repository_flickr');
             }
             $ret->list[] =
-                array('title'=>$p['title'],'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'));
+                array('title'=>$p['title'],'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown');
         }
         return $ret;
     }

@@ -59,21 +59,23 @@ class repository_boxnet extends repository{
         if(!empty($tree)) {
             $filenames = $tree['file_name'];
             $fileids   = $tree['file_id'];
+            $filesizes = $tree['file_size'];
+            $filedates = $tree['file_date'];
             foreach ($filenames as $n=>$v){
                 // do search
                 if(!empty($search)) {
                     if(strstr($v, $search) !== false) {
                         $list[] = array('title'=>$v, 
-                                'size'=>0,
-                                'date'=>'',
+                                'size'=>$filesizes[$n],
+                                'date'=>$filedates[$n],
                                 'source'=>'http://box.net/api/1.0/download/'
                                     .$this->options['auth_token'].'/'.$fileids[$n],
                                 'thumbnail'=>$CFG->pixpath.'/f/text.gif');
                     }
                 } else {
                     $list[] = array('title'=>$v, 
-                            'size'=>0,
-                            'date'=>'',
+                            'size'=>$filesizes[$n],
+                            'date'=>$filedates[$n],
                             'source'=>'http://box.net/api/1.0/download/'
                                 .$this->options['auth_token'].'/'.$fileids[$n],
                             'thumbnail'=>$CFG->pixpath.'/f/text.gif');
