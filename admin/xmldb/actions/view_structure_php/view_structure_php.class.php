@@ -323,11 +323,19 @@ class view_structure_php extends XMLDBAction {
 
         $result = '';
 
-        switch ($path) {
-            case 'lib/db':
+    /// Split path into components
+        $patharr = explode('/', $path);
+
+        switch ($patharr[0]) {
+            case 'lib':
                 $result = XMLDB_LINEFEED .
                          '    /// Main savepoint reached' . XMLDB_LINEFEED .
                          '        upgrade_main_savepoint($result, XXXXXXXXXX);' . XMLDB_LINEFEED;
+                break;
+            case 'mod':
+                $result = XMLDB_LINEFEED .
+                         '    /// ' . $patharr[1] . ' savepoint reached' . XMLDB_LINEFEED .
+                         '        upgrade_mod_savepoint($result, XXXXXXXXXX, ' . "'$patharr[1]'" . ');' . XMLDB_LINEFEED;
                 break;
         }
         return $result;
