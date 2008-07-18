@@ -6648,11 +6648,12 @@ function page_id_and_class(&$getid, &$getclass) {
 function print_maintenance_message () {
     global $CFG, $SITE;
 
+    $CFG->pagepath = "index.php";
     print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home');
-    print_simple_box_start('center');
+    print_box_start();
     print_heading(get_string('sitemaintenance', 'admin'));
     @include($CFG->dataroot.'/1/maintenance.html');
-    print_simple_box_end();
+    print_box_end();
     print_footer();
 }
 
