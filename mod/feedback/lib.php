@@ -1496,7 +1496,7 @@ function feedback_get_current_completed($feedbackid, $tmp = false, $courseid = f
  *  @param int $groupid
  *  @return mixed array of found completeds otherwise false
  */
-function feedback_get_completeds_group($feedback, $groupid = false) {
+function feedback_get_completeds_group($feedback, $groupid = false, $courseid = false) {
     global $CFG, $DB;
 
     if (intval($groupid) > 0){
@@ -1511,10 +1511,24 @@ function feedback_get_completeds_group($feedback, $groupid = false) {
             return false;
         }
     } else {
-        if ($values = $DB->get_records('feedback_completed', array('feedback'=>$feedback->id))) {
-            return $values;
-        } else {
-            return false;
+        if($courseid) {
+            $query = "SELECT DISTINCT fbc.*
+                        FROM {feedback_completed} AS fbc, {feedback_value} AS fbv
+                        WHERE fbc.id = fbv.completed
+                            AND fbc.feedback = ?
+                            AND fbv.course_id = ?
+                        ORDER BY random_response";
+            if ($values = $DB->get_records_sql($query, array($feedback->id, $courseid))) {
+                return $values;
+            } else {
+                return false;
+            }
+        }else {
+            if ($values = $DB->get_records('feedback_completed', array('feedback'=>$feedback->id))) {
+                return $values;
+            } else {
+                return false;
+            }
         }
     }
 }

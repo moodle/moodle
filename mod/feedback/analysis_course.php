@@ -72,7 +72,7 @@
         //button "export to excel"
         echo '<div align="center">';
         $export_button_link = 'analysis_to_excel.php';
-        $export_button_options = array('sesskey'=>$USER->sesskey, 'id'=>$id);
+        $export_button_options = array('sesskey'=>$USER->sesskey, 'id'=>$id, 'coursefilter'=>$coursefilter);
         $export_button_label = get_string('export_to_excel', 'feedback');
         print_single_button($export_button_link, $export_button_options, $export_button_label, 'post');
         echo '</div>';

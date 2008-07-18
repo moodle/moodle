@@ -13,6 +13,7 @@
     require_once('easy_excel.php');
  
     $id = required_param('id', PARAM_INT);  //the POST dominated the GET
+    $coursefilter = optional_param('coursefilter', '0', PARAM_INT);    
     
     $formdata = data_submitted();
     
@@ -104,7 +105,7 @@
     //print the analysed sheet
     ////////////////////////////////////////////////////////////////////////
     //get the completeds
-    $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid);
+    $completedscount = feedback_get_completeds_group_count($feedback, $mygroupid, $coursefilter);
     if($completedscount > 0){
         //write the count of completeds
         $rowOffset1++;
@@ -129,7 +130,7 @@
         $itemclass = 'feedback_item_'.$item->typ;
         //get the instance of the item-class
         $itemobj = new $itemclass();
-        $rowOffset1 = $itemobj->excelprint_item($worksheet1, $rowOffset1, $item, $mygroupid);
+        $rowOffset1 = $itemobj->excelprint_item($worksheet1, $rowOffset1, $item, $mygroupid, $coursefilter);
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -137,7 +138,7 @@
     ////////////////////////////////////////////////////////////////////////
     //get the completeds
     
-    $completeds = feedback_get_completeds_group($feedback, $mygroupid);
+    $completeds = feedback_get_completeds_group($feedback, $mygroupid, $coursefilter);
     //important: for each completed you have to print each item, even if it is not filled out!!!
     //therefor for each completed we have to iterate over all items of the feedback
     //this is done by feedback_excelprint_detailed_items
