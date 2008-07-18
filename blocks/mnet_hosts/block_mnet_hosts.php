@@ -60,6 +60,7 @@ class block_mnet_hosts extends block_list {
              WHERE
                  h.id <> ? AND
                  h.id = h2s_IDP.hostid AND
+                 h.deleted = 0 AND
                  h.applicationid = a.id AND
                  h2s_IDP.serviceid = s_IDP.id AND
                  s_IDP.name = 'sso_idp' AND
