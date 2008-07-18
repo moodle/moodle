@@ -113,23 +113,18 @@ abstract class repository {
         if(is_dir($CFG->dataroot.'/repository/download')) {
             $dir = $CFG->dataroot.'/repository/download/';
         }
-        if(file_exists($CFG->dirroot.'/repository/curl.class.php')) {
-            if(empty($file)) {
-                $file = uniqid('repo').'_'.time().'.tmp';
-            }
-            if(file_exists($dir.$file)){
-                $file = uniqid('m').$file;
-            }
-            $fp = fopen($dir.$file, 'w');
-            require_once($CFG->dirroot.'/repository/curl.class.php');
-            $c = new curl;
-            $c->download(array(
-                array('url'=>$url, 'file'=>$fp)
-            ));
-            return $dir.$file;
-        } else {
-            return null;
+        if(empty($file)) {
+            $file = uniqid('repo').'_'.time().'.tmp';
         }
+        if(file_exists($dir.$file)){
+            $file = uniqid('m').$file;
+        }
+        $fp = fopen($dir.$file, 'w');
+        $c = new curl;
+        $c->download(array(
+            array('url'=>$url, 'file'=>$fp)
+        ));
+        return $dir.$file;
     }
 
     /**
