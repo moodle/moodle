@@ -24,6 +24,7 @@ class mod_forum_post_form extends moodleform {
 		$mform->addElement('text', 'subject', get_string('subject', 'forum'), 'size="48"');
 		$mform->setType('subject', PARAM_TEXT);
 		$mform->addRule('subject', get_string('required'), 'required', null, 'client');
+        $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
 		$mform->addElement('htmleditor', 'message', get_string('message', 'forum'), array('cols'=>50, 'rows'=>30));
 		$mform->setType('message', PARAM_RAW);
