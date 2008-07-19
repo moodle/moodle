@@ -544,7 +544,7 @@ function groups_get_course_group($course, $update=false) {
     }
 
     // init activegroup array
-    if (!array_key_exists('activegroup', $SESSION)) {
+    if (!isset($SESSION->activegroup)) {
         $SESSION->activegroup = array();
     }
     if (!array_key_exists($course->id, $SESSION->activegroup)) {
@@ -620,7 +620,7 @@ function groups_get_activity_group($cm, $update=false) {
     }
 
     // init activegroup array
-    if (!array_key_exists('activegroup', $SESSION)) {
+    if (!isset($SESSION->activegroup)) {
         $SESSION->activegroup = array();
     }
     if (!array_key_exists($cm->course, $SESSION->activegroup)) {
