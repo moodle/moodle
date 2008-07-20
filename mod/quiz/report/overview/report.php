@@ -328,9 +328,16 @@ class quiz_report extends quiz_default_report {
     
     
             // Construct the SQL
-            $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, '.
-                ($qmsubselect?$qmsubselect.' AS gradedattempt, ':'').
-                'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, '.
+            $select = 'SELECT '.sql_concat('u.id', '\'#\'', $db->IfNull('qa.attempt', '0')).' AS uniqueid, ';
+            if ($qmsubselect) {
+                $select .=
+                    "(CASE " .
+                    "   WHEN $qmsubselect THEN 1" .
+                    "   ELSE 0 " .
+                    "END) AS gradedattempt, ";
+            }
+            
+            $select .='qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname, u.lastname, u.picture, '.
                 'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
     
             // This part is the same for all cases - join users and quiz_attempts tables
