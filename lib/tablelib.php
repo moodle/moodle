@@ -1187,8 +1187,10 @@ class table_sql extends flexible_table{
             if ($this->get_sql_where()) {
                 $this->countsql .= ' AND '.$this->get_sql_where();
                 $this->sql->where .= ' AND '.$this->get_sql_where();
+                $total  = $DB->count_records_sql($this->countsql, $this->countparams);
+            } else {
+                $total = $totalinitials;
             }
-            $total  = $DB->count_records_sql($this->countsql, $this->countparams);
 
 
             $this->pagesize($pagesize, $total);
