@@ -1,0 +1,29 @@
+
+<?php    
+    print_container_end(); // content container
+
+    print_container_start(true, '', 'footer');
+
+    echo '<p class="helplink">';
+    echo page_doc_link(get_string('moodledocslink'));
+    echo '</p>';
+
+    echo $loggedinas;
+    echo $homelink;
+
+    $useridarray = array(2, 3 // MD
+                          );
+    
+    if (!empty($performanceinfo) && isloggedin() && in_array($USER->id, $useridarray)) {
+        echo $performanceinfo;
+    }
+    
+    print_container_end();
+?>
+</div>
+<?php
+    include($CFG->themedir.'/lines/js/js.php');
+?>
+<?php // include('lib/clickheat_lib.php'); ?>
+</body>
+</html>
