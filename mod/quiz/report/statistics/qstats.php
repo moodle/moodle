@@ -127,8 +127,8 @@ class qstats{
                         $subquestionstats[$itemid]->differentweights = true;
                     }
                     $this->_initial_states_walker($state, $subquestionstats[$itemid], false);
-                    $subquestionstats[$itemid]->usedin[] = $state->question;
-                    $this->questions[$state->question]->_stats->subitems[] = $itemid;
+                    $subquestionstats[$itemid]->usedin[$state->question] = $state->question;
+                    $this->questions[$state->question]->_stats->subitems[$itemid] = $itemid;
                 }
             }
         }

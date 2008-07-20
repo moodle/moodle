@@ -274,6 +274,7 @@ class quiz_statistics_report extends quiz_default_report {
         if (isset($qstats)){
             foreach ($qstats->questions as $question){
                 $table->add_data_keyed($table->format_row($question));
+                ksort($question->_stats->subitems);
                 foreach ($question->_stats->subitems as $itemid){
                     $table->add_data_keyed($table->format_row($qstats->subquestions[$itemid]));
                 }
