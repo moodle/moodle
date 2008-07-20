@@ -116,7 +116,13 @@ class quiz_report_overview_table extends table_sql {
 
     function col_picture($attempt){
         global $COURSE;
-        return print_user_picture($attempt->userid, $COURSE->id, $attempt->picture, false, true);
+        $user = new object();
+        $user->id = $attempt->userid;
+        $user->lastname = $attempt->lastname;
+        $user->firstname = $attempt->firstname;
+        $user->imagealt = $attempt->imagealt;
+        $user->picture = $attempt->picture;
+        return print_user_picture($user, $COURSE->id, $attempt->picture, false, true);
     }
 
 
