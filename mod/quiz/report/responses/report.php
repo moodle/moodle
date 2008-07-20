@@ -177,9 +177,16 @@ class quiz_responses_report extends quiz_default_report {
     
     
             // Construct the SQL
-            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS uniqueid, '.
-                ($qmsubselect?"($qmsubselect) AS gradedattempt, ":'').
-                'qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname,'.
+            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS uniqueid, ';
+            if ($qmsubselect) {
+                $fields .=
+                    "(CASE " .
+                    "   WHEN $qmsubselect THEN 1" .
+                    "   ELSE 0 " .
+                    "END) AS gradedattempt, ";
+            }
+            
+            $fields .='qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname,'.
                 ' u.lastname, u.institution, u.department, u.email, u.picture, '.
                 'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
     
