@@ -50,6 +50,11 @@
         $form->add              = $add;
         $form->return           = 0; //must be false if this is an add, go back to course view on cancel
 
+        // Turn off default grouping for modules that don't provide group mode
+        if($add=='resource' || $add=='glossary' || $add=='label') {
+            $form->groupingid=0;
+        }
+        
         if (!empty($type)) {
             $form->type = $type;
         }
