@@ -20,21 +20,10 @@ class quiz_report_responses_table extends table_sql {
         $this->displayoptions = $displayoptions;
     }
     function build_table(){
-        global $CFG, $DB;
         if ($this->rawdata) {
             // Define some things we need later to process raw data from db.
             $this->strtimeformat = get_string('strftimedatetime');
             parent::build_table();
-            //end of adding data from attempts data to table / download
-            //now add averages at bottom of table :
-            $params = array($this->quiz->id);
-
-            $this->add_separator();
-            if ($this->is_downloading()){
-                $namekey = 'lastname';
-            } else {
-                $namekey = 'fullname';
-            }
         }
     }
 
@@ -149,26 +138,17 @@ class quiz_report_responses_table extends table_sql {
         }
     }
     function other_cols($colname, $attempt){
-        static $gradedstatesbyattempt = null, $states =array();
-        if ($gradedstatesbyattempt === null){
-            //get all the attempt ids we want to display on this page
-            //or to export for download.
-            $attemptids = array();
-            foreach ($this->rawdata as $attempt){
-                if ($attempt->attemptuniqueid > 0){  
-                    $attemptids[] = $attempt->attemptuniqueid;
-                    $states[$attempt->attemptuniqueid] = get_question_states($this->questions, $this->quiz, $attempt);
-                }
-            }
-            $gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
-        }
+        static $states =array();
         if (preg_match('/^qsanswer([0-9]+)$/', $colname, $matches)){
+            if ($attempt->uniqueid > 0 && !isset($states[$attempt->uniqueid])){
+                $states[$attempt->uniqueid] = get_question_states($this->questions, $this->quiz, $attempt);
+            }
+            $statesforattempt = $states[$attempt->uniqueid];
             $questionid = $matches[1];
             $question = $this->questions[$questionid];
-            $stateforqinattempt = $gradedstatesbyattempt[$attempt->attemptuniqueid][$questionid];
-            $responses =  get_question_actual_response($question, $states[$attempt->attemptuniqueid][$questionid]);
+            $responses =  get_question_actual_response($question, $statesforattempt[$questionid]);
             $response = (!empty($responses)? implode(', ',$responses) : '-');
-            $grade = $stateforqinattempt->grade;
+            $grade = $statesforattempt[$questionid]->last_graded->grade;
             if (!$this->is_downloading()) {
                 $format_options = new stdClass;
                 $format_options->para = false;
@@ -183,7 +163,7 @@ class quiz_report_responses_table extends table_sql {
                 }          
                 return '<span class="'.$qclass.'">'.format_text($response, FORMAT_MOODLE, $format_options).'</span>';
             } else {
-                return format_text($response, FORMAT_MOODLE, $format_options);
+                return $response;
             }
         } else {
             return NULL;

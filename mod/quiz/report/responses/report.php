@@ -177,7 +177,7 @@ class quiz_responses_report extends quiz_default_report {
     
     
             // Construct the SQL
-            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS uniqueid, ';
+            $fields = $DB->sql_concat('u.id', '\'#\'', 'COALESCE(qa.attempt, \'0\')').' AS concattedid, ';
             if ($qmsubselect) {
                 $fields .=
                     "(CASE " .
@@ -186,7 +186,7 @@ class quiz_responses_report extends quiz_default_report {
                     "END) AS gradedattempt, ";
             }
             
-            $fields .='qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname,'.
+            $fields .='qa.uniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname,'.
                 ' u.lastname, u.institution, u.department, u.email, u.picture, u.imagealt, '.
                 'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration, ' .
                 'qa.layout ';
@@ -303,7 +303,7 @@ class quiz_responses_report extends quiz_default_report {
     
             $table->define_columns($columns);
             $table->define_headers($headers);
-            $table->sortable(true, 'uniqueid');
+            $table->sortable(true, 'concattedid');
         
             // Set up the table
             $table->define_baseurl($reporturl->out(false, $displayoptions));
