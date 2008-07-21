@@ -198,30 +198,30 @@ class quiz_responses_report extends quiz_default_report {
             if ($qmsubselect && $qmfilter){
                 $from .= ' AND '.$qmsubselect;
             }
-             switch ($attemptsmode){
-                 case QUIZ_REPORT_ATTEMPTS_ALL:
-                     // Show all attempts, including students who are no longer in the course
+            switch ($attemptsmode){
+                case QUIZ_REPORT_ATTEMPTS_ALL:
+                    // Show all attempts, including students who are no longer in the course
                     $where = 'qa.id IS NOT NULL AND qa.preview = 0';
-                     break;
-                 case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
-                     // Show only students with attempts
-                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
-                     $params += $allowed_params;
+                    break;
+                case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH:
+                    // Show only students with attempts
+                    list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
+                    $params += $allowed_params;
                     $where = "u.id $allowed_usql AND qa.preview = 0 AND qa.id IS NOT NULL";
-                     break;
-                 case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
-                     // Show only students without attempts
-                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
-                     $params += $allowed_params;
+                    break;
+                case QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
+                    // Show only students without attempts
+                    list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
+                    $params += $allowed_params;
                     $where = "u.id $allowed_usql AND qa.id IS NULL";
-                     break;
+                    break;
                  case QUIZ_REPORT_ATTEMPTS_ALL_STUDENTS:
-                     // Show all students with or without attempts
-                     list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
-                     $params += $allowed_params;
+                    // Show all students with or without attempts
+                    list($allowed_usql, $allowed_params) = $DB->get_in_or_equal($allowed, SQL_PARAMS_NAMED, 'u0000');
+                    $params += $allowed_params;
                     $where = "u.id $allowed_usql AND (qa.preview = 0 OR qa.preview IS NULL)";
-                     break;
-             }
+                    break;
+            }
     
             $table->set_count_sql("SELECT COUNT(1) FROM $from WHERE $where", $params);
     
@@ -277,53 +277,53 @@ class quiz_responses_report extends quiz_default_report {
                 $headers[]= get_string('attemptduration', 'quiz');
             }
             
-        if ($showgrades) {
-            $columns[] = 'sumgrades';
-            $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
+            if ($showgrades) {
+                $columns[] = 'sumgrades';
+                $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
+            }
+        
+            // we want to display responses for all questions
+            foreach ($questions as $id => $question) {
+                // Ignore questions of zero length
+                $columns[] = 'qsanswer'.$id;
+                $headers[] = '#'.$question->number;
+            }
+    
+            if ($hasfeedback) {
+                $columns[] = 'feedbacktext';
+                $headers[] = get_string('feedback', 'quiz');
+            }
+    
+            // Load the question type specific information
+            if (!get_question_options($questions)) {
+                print_error('Could not load question options');
+            }
+    
+            $table->define_columns($columns);
+            $table->define_headers($headers);
+            $table->sortable(true, 'uniqueid');
+        
+            // Set up the table
+            $table->define_baseurl($reporturl->out(false, $displayoptions));
+        
+            $table->collapsible(true);
+        
+            $table->column_suppress('picture');
+            $table->column_suppress('fullname');
+            $table->column_suppress('idnumber');
+        
+            $table->no_sorting('feedbacktext');
+        
+            $table->column_class('picture', 'picture');
+            $table->column_class('lastname', 'bold');
+            $table->column_class('firstname', 'bold');
+            $table->column_class('fullname', 'bold');
+            $table->column_class('sumgrades', 'bold');
+        
+            $table->set_attribute('id', 'attempts');
+        
+            $table->out($pagesize, true);
         }
-    
-        // we want to display responses for all questions
-        foreach ($questions as $id => $question) {
-            // Ignore questions of zero length
-            $columns[] = 'qsanswer'.$id;
-            $headers[] = '#'.$question->number;
-        }
-
-        if ($hasfeedback) {
-            $columns[] = 'feedbacktext';
-            $headers[] = get_string('feedback', 'quiz');
-        }
-
-        // Load the question type specific information
-        if (!get_question_options($questions)) {
-            print_error('Could not load question options');
-        }
-
-        $table->define_columns($columns);
-        $table->define_headers($headers);
-        $table->sortable(true, 'uniqueid');
-    
-        // Set up the table
-        $table->define_baseurl($reporturl->out(false, $displayoptions));
-    
-        $table->collapsible(true);
-    
-        $table->column_suppress('picture');
-        $table->column_suppress('fullname');
-        $table->column_suppress('idnumber');
-    
-        $table->no_sorting('feedbacktext');
-    
-        $table->column_class('picture', 'picture');
-        $table->column_class('lastname', 'bold');
-        $table->column_class('firstname', 'bold');
-        $table->column_class('fullname', 'bold');
-        $table->column_class('sumgrades', 'bold');
-    
-        $table->set_attribute('id', 'attempts');
-    
-        $table->out($pagesize, true);
-    }
         return true;
     }
 
