@@ -1,4 +1,4 @@
-/* @override http://ubuntu.userver.lan/moodle_19_test/theme/colors/colors.css */
+/* @override http://ubuntu.userver.lan/moodle_20/theme/colors/colors.css */
 /* @group core */
 body {
   background-color: #b9baa3;
@@ -458,9 +458,6 @@ link
 #theme-index.course-1 div#content {
   margin: 0;
 }
-.admin #layout-table #middle-column {
-  /*padding-top: 10px;*/
-}
 .admin h2.main {
   margin: 0 0 10px;
   height: 20px;
@@ -598,7 +595,7 @@ link
   margin-bottom: 0;
   padding-bottom: 0;
   border-style: none;
-  width: 220px;
+  /*width: 220px;*/
 }
 .sideblock .header,
 .sideblock .header h2 {
@@ -683,45 +680,50 @@ div.loginbox.twocolumns div.loginpanel {
 }
 /* @end */
 /* @group content */
-div#content {
+#content {
   clear: both;
 }
-#site-index div#content,
-#course-view div#content,
-.haslayouttable div#content {
+#site-index #content,
+#course-view #content,
+.haslayouttable #content {
   margin: 0;
 }
 #site-index .subscribelink,
 #course-view .subscribelink {
   padding: 0 5px;
 }
-#layout-table {
+.weeks-format #left-column, 
+.weeks-format #right-column, 
+.topics-format #left-column, 
+.topics-format #right-column {
+	width: 15.5em;
+}
+.weeks-format,
+.topics-format {
   width: 960px;
-  border-collapse: collapse;
   margin: 0;
 }
-#layout-table #left-column {
-  width: 220px !important;
+.topics-format #left-column {
   background-color: #f68933;
 }
-#layout-table #middle-column {
+.topics-format #middle-column {
   padding: 0;
   background-color: #fff;
+  margin: 0 16.5em;
 }
-#layout-table #right-column {
-  width: 220px !important;
+.topics-format #right-column {
   background-color: #1d6fcf;
 }
-div.headingblock {
+.headingblock {
   border-style: none;
 }
-div#content div.section {
+#content .section {
   border-style: none;
 }
-div.section {
+.section {
   border-style: none;
 }
-.onlymiddlecolumn div#content {
+.onlymiddlecolumn #content {
   margin: 10px;
 }
 /* @end */
@@ -750,6 +752,28 @@ div.categorybox {
   padding-top: 180px;
   margin-top: 10px;
 }*/
+/* @group My Group */
+.admin #layout-table #middle-column {
+  /*padding-top: 10px;*/
+}
+#layout-table {
+  width: 960px;
+  border-collapse: collapse;
+  margin: 0;
+}
+#layout-table #left-column {
+  width: 220px !important;
+  background-color: #f68933;
+}
+#layout-table #middle-column {
+  padding: 0;
+  background-color: #fff;
+}
+#layout-table #right-column {
+  width: 220px !important;
+  background-color: #1d6fcf;
+}
+/* @end */
 /* @end */
 /* @group course */
 #course-view .section td.side {

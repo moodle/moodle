@@ -1,4 +1,4 @@
-/* @override http://ubuntu.userver.lan/moodle_19_test/theme/lines/lines.css */
+/* @override http://ubuntu.userver.lan/moodle_20/theme/lines/lines.css */
 /* @group core */
 body {
   background-color: #eaebd3;
@@ -646,16 +646,24 @@ link
 .haslayouttable div#content {
   margin: 0;
 }
-#layout-table {
-  border-collapse: collapse;
-  margin-top: 0;
+.weeks-format #left-column, 
+.weeks-format #right-column, 
+.topics-format #left-column, 
+.topics-format #right-column {
+	width: 15.5em;
 }
-#layout-table #left-column,
-#layout-table #right-column {
+.weeks-format,
+.topics-format {
+  width: 960px;
+  margin: 0;
+}
+.topics-format #left-column,
+.topics-format #right-column {
   padding: 10px 0 0;
   background: #f8f9ef url(pix/sideblock_grad.png) repeat-x left top;
 }
-#layout-table #middle-column {
+.topics-format #middle-column {
+  margin: 0 16.5em;
   padding: 0 14px;
   background: url(pix/content_bottom_right.png) no-repeat right bottom;
 }
@@ -697,9 +705,35 @@ link
   padding-top: 180px;
   margin-top: 10px;
 }*/
+/* @group 2.0 layout-table hacks */
+#layout-table {
+  border-collapse: collapse;
+  margin-top: 0;
+}
+#layout-table #left-column,
+#layout-table #right-column {
+  padding: 10px 0 0;
+  background: #f8f9ef url(pix/sideblock_grad.png) repeat-x left top;
+}
+#layout-table #middle-column {
+  padding: 0 14px;
+  background: url(pix/content_bottom_right.png) no-repeat right bottom;
+}
+/* @end */
 /* @end */
 /* @group course */
-#course-view .section td.side {
+#course-view .weeks .section,
+#course-view .topics .section {
+  border-style: none;
+  margin-bottom: 2em;
+}
+#course-view .weeks .content ,
+#course-view .topics .content, 
+#course-view .weeks .section,
+#course-view .topics .section {
+  background-color: #FFF;
+}
+#course-view .section .side {
   border-top: 5px #EEE;
   border-style: solid none dotted;
 }
@@ -712,13 +746,12 @@ link
 #course-view .current .right {
   background-color: #FFC;
 }
-#course-view .section td.content {
+#course-view .weeks .section .content,
+#course-view .topics .section .content {
   padding-top: 0;
-  border-top: 5px #EEE;
-  border-style: solid none dotted;
-}
-#course-view .section .spacer {
-  height: 3em;
+  border-style: none;
+  border-top: 5px #EEE solid;
+  border-bottom: 1px #EEE solid;
 }
 .section .summary {
   color: #444;
