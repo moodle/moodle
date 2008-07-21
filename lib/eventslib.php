@@ -289,7 +289,7 @@ function events_process_queued_handler($qhandler) {
 
     // call the function specified by the handler
     $errormessage = 'Unknown error';
-    if (events_dispatch($handler, unserialize($event->eventdata), $errormessage)) {
+    if (events_dispatch($handler, unserialize(base64_decode($event->eventdata)), $errormessage)) {
         //everything ok
         events_dequeue($qhandler);
         return true;
@@ -456,7 +456,7 @@ function events_trigger($eventname, $eventdata) {
             if ($event === false) {
                 $event = new object();
                 $event->userid      = $USER->id;
-                $event->eventdata   = serialize($eventdata);
+                $event->eventdata   = base64_encode(serialize($eventdata));
                 $event->timecreated = time();
                 if (debugging()) {
                     $dump = '';
