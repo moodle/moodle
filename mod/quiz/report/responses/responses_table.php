@@ -46,15 +46,14 @@ class quiz_report_responses_table extends table_sql {
         if (!$this->is_downloading()) {
             // Print "Select all" etc.
             if ($this->candelete) {
-                echo '<table id="commands">';
-                echo '<tr><td>';
+                echo '<div id="commands">';
                 echo '<a href="javascript:select_all_in(\'DIV\',null,\'tablecontainer\');">'.
                         get_string('selectall', 'quiz').'</a> / ';
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
                         get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
                 echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
-                echo '</td></tr></table>';
+                echo '</div>';
                 // Close form
                 echo '</div>';
                 echo '</form></div>';
