@@ -17,7 +17,6 @@
 function AICCapi() {
     // Standard Data Type Definition
     CMIString256 = '^.{0,255}$';
-    //CMIString4096 = '^[.|\\n|\\r]{0,4095}$';
     CMIString4096 = '^.{0,4096}$';
     CMITime = '^([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\.[0-9]{1,2})?$';
     CMITimespan = '^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
@@ -27,6 +26,7 @@ function AICCapi() {
     CMIIdentifier = '^\\w{1,255}$';
     CMIFeedback = CMIString256; // This must be redefined
     CMIIndex = '[._](\\d+).';
+
     // Vocabulary Data Type Definition
     CMIStatus = '^passed$|^completed$|^failed$|^incomplete$|^browsed$';
     CMIStatus2 = '^passed$|^completed$|^failed$|^incomplete$|^browsed$|^not attempted$';
@@ -34,6 +34,7 @@ function AICCapi() {
     CMIType = '^true-false$|^choice$|^fill-in$|^matching$|^performance$|^sequencing$|^likert$|^numeric$';
     CMIResult = '^correct$|^wrong$|^unanticipated$|^neutral$|^([0-9]{0,3})?(\.[0-9]{1,2})?$';
     NAVEvent = '^previous$|^continue$';
+
     // Children lists
     cmi_children = 'core, suspend_data, launch_data, comments, objectives, student_data, student_preference, interactions';
     core_children = 'student_id, student_name, lesson_location, credit, lesson_status, entry, score, total_time, lesson_mode, exit, session_time';
@@ -43,12 +44,14 @@ function AICCapi() {
     student_data_children = 'attempt_number, tries, mastery_score, max_time_allowed, time_limit_action';
     student_preference_children = 'audio, language, speed, text';
     interactions_children = 'id, objectives, time, type, correct_responses, weighting, student_response, result, latency';
+
     // Data ranges
     score_range = '0#100';
     audio_range = '-1#100';
     speed_range = '-100#100';
     weighting_range = '-100#100';
     text_range = '-1#1';
+
     // The AICC data model
     var datamodel =  {
         'cmi._children':{'defaultvalue':cmi_children, 'mod':'r', 'writeerror':'402'},
@@ -57,7 +60,7 @@ function AICCapi() {
         'cmi.core.student_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.student_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
-        'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},  
+        'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.lesson_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_status'})?$userdata->{'cmi.core.lesson_status'}:'' ?>', 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
         'cmi.core.exit':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.exit'})?$userdata->{'cmi.core.exit'}:'' ?>', 'format':CMIExit, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
         'cmi.core.entry':{'defaultvalue':'<?php echo $userdata->entry ?>', 'mod':'r', 'writeerror':'403'},
@@ -92,9 +95,9 @@ function AICCapi() {
         'cmi.student_data.tries.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
         'cmi.student_data.tries.n.status':{'pattern':CMIIndex, 'format':CMIStatus2, 'mod':'rw', 'writeerror':'405'},
         'cmi.student_data.tries.n.time':{'pattern':CMIIndex, 'format':CMITime, 'mod':'rw', 'writeerror':'405'},
-        'cmi.student_data.mastery_score':{'defaultvalue':'<?php echo isset($userdata->masteryscore)?$userdata->masteryscore:'' ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.student_data.max_time_allowed':{'defaultvalue':'<?php echo isset($userdata->maxtimeallowed)?$userdata->maxtimeallowed:'' ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.student_data.time_limit_action':{'defaultvalue':'<?php echo isset($userdata->timelimitaction)?$userdata->timelimitaction:'' ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.student_data.mastery_score':{'defaultvalue':'<?php echo isset($userdata->mastery_score)?$userdata->mastery_score:'' ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.student_data.max_time_allowed':{'defaultvalue':'<?php echo isset($userdata->max_time_allowed)?$userdata->max_time_allowed:'' ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.student_data.time_limit_action':{'defaultvalue':'<?php echo isset($userdata->time_limit_action)?$userdata->time_limit_action:'' ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.student_data.tries_during_lesson':{'defaultvalue':'<?php echo isset($userdata->{'cmi.student_data.tries_during_lesson'})?$userdata->{'cmi.student_data.tries_during_lesson'}:'' ?>', 'mod':'r', 'writeerror':'402'},
         'cmi.student_preference._children':{'defaultvalue':student_preference_children, 'mod':'r', 'writeerror':'402'},
         'cmi.student_preference.audio':{'defaultvalue':'0', 'format':CMISInteger, 'range':audio_range, 'mod':'rw', 'writeerror':'405'},
@@ -116,6 +119,7 @@ function AICCapi() {
         'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
         'nav.event':{'defaultvalue':'', 'format':NAVEvent, 'mod':'w', 'readerror':'404', 'writeerror':'405'}
     };
+
     //
     // Datamodel inizialization
     //
@@ -126,6 +130,8 @@ function AICCapi() {
         cmi.student_data = new Object();
         cmi.student_preference = new Object();
         cmi.interactions = new Object();
+        cmi.evaluation = new Object();
+        cmi.evaluation.comments = new Object();
 
     // Navigation Object
     var nav = new Object();
@@ -168,8 +174,8 @@ function AICCapi() {
 
     if (cmi.core.lesson_status == '') {
         cmi.core.lesson_status = 'not attempted';
-    } 
-    
+    }
+
     //
     // API Methods definition
     //
@@ -190,7 +196,7 @@ function AICCapi() {
         }
         return "false";
     }
-    
+
     function LMSFinish (param) {
         errorCode = "0";
         if (param == "") {
@@ -207,7 +213,7 @@ function AICCapi() {
                     if (<?php echo $scorm->auto ?> == 1) {
                         setTimeout('top.nextSCO();',500);
                     }
-                }    
+                }
                 return "true";
             } else {
                 errorCode = "301";
@@ -217,7 +223,7 @@ function AICCapi() {
         }
         return "false";
     }
-    
+
     function LMSGetValue (element) {
         errorCode = "0";
         if (Initialized) {
@@ -233,7 +239,7 @@ function AICCapi() {
                         while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
                             subelement += '.'+elementIndexes[i++];
                         }
-                            if (subelement == element) {
+                        if (subelement == element) {
                             errorCode = "0";
                             return eval(element);
                         } else {
@@ -271,7 +277,7 @@ function AICCapi() {
         }
         return "";
     }
-    
+
     function LMSSetValue (element,value) {
         errorCode = "0";
         if (Initialized) {
@@ -297,7 +303,7 @@ function AICCapi() {
                                         }
                                         if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')) {
                                             eval(subelement+'.'+elementIndex+'._count++;');
-                                        } 
+                                        }
                                         if (elementIndexes[i+1] > eval(subelement+'.'+elementIndex+'._count')) {
                                             errorCode = "201";
                                         }
@@ -365,7 +371,7 @@ function AICCapi() {
         }
         return "false";
     }
-    
+
     function LMSCommit (param) {
         errorCode = "0";
         if (param == "") {
@@ -380,11 +386,11 @@ function AICCapi() {
         }
         return "false";
     }
-    
+
     function LMSGetLastError () {
         return errorCode;
     }
-    
+
     function LMSGetErrorString (param) {
         if (param != "") {
             var errorString = new Array();
@@ -404,7 +410,7 @@ function AICCapi() {
            return "";
         }
     }
-    
+
     function LMSGetDiagnostic (param) {
         if (param == "") {
             param = errorCode;
