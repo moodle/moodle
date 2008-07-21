@@ -440,7 +440,7 @@ class quiz_overview_report extends quiz_default_report {
         $this->clear_regrade_table($quiz, $groupstudents);
 
         // Fetch all questions
-        $questions = question_load_questions(quiz_questions_in_quiz($quiz->questions), 'qqi.grade AS maxgrade, qqi.id AS instance',
+        $questions = question_load_questions(explode(',',quiz_questions_in_quiz($quiz->questions)), 'qqi.grade AS maxgrade, qqi.id AS instance',
             '{quiz_question_instances} qqi ON qqi.quiz = ' . $quiz->id . ' AND q.id = qqi.question');
 
         // Print heading
@@ -521,7 +521,7 @@ class quiz_overview_report extends quiz_default_report {
         }
         $this->clear_regrade_table($quiz, $groupstudents);
         // Fetch all questions
-        $questions = question_load_questions(quiz_questions_in_quiz($quiz->questions), 'qqi.grade AS maxgrade, qqi.id AS instance',
+        $questions = question_load_questions(explode(',',quiz_questions_in_quiz($quiz->questions)), 'qqi.grade AS maxgrade, qqi.id AS instance',
             '{quiz_question_instances} qqi ON qqi.quiz = ' . $quiz->id . ' AND q.id = qqi.question');
 
         // Print heading
@@ -650,7 +650,7 @@ class quiz_overview_report extends quiz_default_report {
         }
 
         // Fetch all questions
-        $questions = question_load_questions(quiz_questions_in_quiz($quiz->questions), 'qqi.grade AS maxgrade, qqi.id AS instance',
+        $questions = question_load_questions(explode(',',quiz_questions_in_quiz($quiz->questions)), 'qqi.grade AS maxgrade, qqi.id AS instance',
             '{quiz_question_instances} qqi ON qqi.quiz = ' . $quiz->id . ' AND q.id = qqi.question');
         $updateoverallgrades = array();
         foreach($attempts as $attempt) {
