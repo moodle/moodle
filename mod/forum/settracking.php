@@ -9,15 +9,15 @@
     $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
 
     if (! $forum = $DB->get_record("forum", array("id" => $id))) {
-        error("Forum ID was incorrect");
+        print_error('invalidforumid', 'forum');
     }
 
     if (! $course = $DB->get_record("course", array("id" => $forum->course))) {
-        error("Forum doesn't belong to a course!");
+        print_error('invalidcoursemodule');
     }
 
     if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-        error("Incorrect cm");
+        print_error('invalidcoursemodule');
     }
 
     require_course_login($course, false, $cm);
@@ -36,7 +36,7 @@
             add_to_log($course->id, "forum", "stop tracking", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nownottracking", "forum", $info), 1);
         } else {
-            error("Could not stop tracking that forum", $_SERVER["HTTP_REFERER"]);
+            print_error('cannottrack', '', $_SERVER["HTTP_REFERER"]);
         }
 
     } else { // subscribe
@@ -44,7 +44,7 @@
             add_to_log($course->id, "forum", "start tracking", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nowtracking", "forum", $info), 1);
         } else {
-            error("Could not start tracking that forum", $_SERVER["HTTP_REFERER"]);
+            print_error('cannottrack', '', $_SERVER["HTTP_REFERER"]);
         }
     }
 

@@ -85,7 +85,7 @@
     }
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
-        error("Course id is incorrect.");
+        print_error('invalidcourseid');
     }
 
     require_course_login($course);
@@ -182,14 +182,14 @@
         // Replace the simple subject with the three items forum name -> thread name -> subject
         // (if all three are appropriate) each as a link.
         if (! $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
-            error('Discussion ID was incorrect');
+            print_error('invaliddiscussionid', 'forum');
         }
         if (! $forum = $DB->get_record('forum', array('id' => "$discussion->forum"))) {
-            error("Could not find forum $discussion->forum");
+            print_error('invalidforumid', 'forum');
         }
 
         if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
-            error('Course Module ID was incorrect');
+            print_error('invalidcoursemodule');
         }
 
         $post->subject = highlight($strippedsearch, $post->subject);
