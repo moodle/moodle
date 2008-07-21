@@ -14,7 +14,7 @@
     * Major chages in this review is passing the xxxx_db_names return to
     * multiple arity to handle multiple document types modules
     */
-    
+
     /**
     * includes and requires
     */
@@ -22,22 +22,22 @@
     require_once("$CFG->dirroot/search/lib.php");
     require_once("$CFG->dirroot/search/indexlib.php");
 
-/// makes inclusions of the Zend Engine more reliable                               
-    $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;                   
+/// makes inclusions of the Zend Engine more reliable
+    $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
     ini_set('include_path', $CFG->dirroot.'/search'.$separator.ini_get('include_path'));require_login();
 
 /// checks global search activation
 
     require_login();
-    
+
     if (empty($CFG->enableglobalsearch)) {
-        error(get_string('globalsearchdisabled', 'search'));
+        print_error('globalsearchdisabled', 'search');
     }
-    
+
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
-        error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
-    } 
-    
+        print_error('beadmin', 'search', "$CFG->wwwroot/login/index.php");
+    }
+
     try {
         $index = new Zend_Search_Lucene(SEARCH_INDEX_PATH);
     } catch(LuceneException $e) {
@@ -50,39 +50,39 @@
     $startupdatedate = time();
 
 /// indexing changed resources
-    
+
     mtrace("Starting index update (updates)...\n");
-    
+
     if ($mods = get_records_select('modules')) {
         $mods = array_merge($mods, search_get_additional_modules());
-        
+
         foreach ($mods as $mod) {
             $class_file = $CFG->dirroot.'/search/documents/'.$mod->name.'_document.php';
             $get_document_function = $mod->name.'_single_document';
             $delete_function = $mod->name.'_delete';
             $db_names_function = $mod->name.'_db_names';
             $updates = array();
-            
+
             if (file_exists($class_file)) {
                 require_once($class_file);
-                
+
                 //if both required functions exist
                 if (function_exists($delete_function) and function_exists($db_names_function) and function_exists($get_document_function)) {
                     mtrace("Checking $mod->name module for updates.");
                     $valuesArray = $db_names_function();
                     if ($valuesArray){
                         foreach($valuesArray as $values){
-                        
+
                             $where = (isset($values[5])) ? 'AND ('.$values[5].')' : '';
                             $itemtypes = ($values[4] != '*' && $values[4] != 'any') ? " AND itemtype = '{$values[4]}' " : '' ;
-    
+
                             //TODO: check 'in' syntax with other RDBMS' (add and update.php as well)
                             $table = SEARCH_DATABASE_TABLE;
                             $query = "
-                                SELECT 
+                                SELECT
                                     docid,
                                     itemtype
-                                FROM 
+                                FROM
                                     {$CFG->prefix}{$table}
                                 WHERE
                                     doctype = ?
@@ -90,15 +90,15 @@
                             ";
                             $docIds = $DB->get_records_sql_menu($query, array($mod->name));
                             $docIdList = ($docIds) ? implode("','", array_keys($docIds)) : '' ;
-                            
+
                             $query = "
-                                SELECT 
-                                    id, 
+                                SELECT
+                                    id,
                                     {$values[0]} as docid
-                                FROM 
-                                    {$CFG->prefix}{$values[1]} 
-                                WHERE 
-                                    {$values[3]} > {$indexdate} AND 
+                                FROM
+                                    {$CFG->prefix}{$values[1]}
+                                WHERE
+                                    {$values[3]} > {$indexdate} AND
                                     id IN ('{$docIdList}')
                                     $where
                             ";
@@ -106,50 +106,50 @@
                             if (is_array($records)) {
                                 foreach($records as $record) {
                                     $updates[] = $delete_function($record->docid, $docIds[$record->docid]);
-                                } 
-                            } 
+                                }
+                            }
                         }
-                        
+
                         foreach ($updates as $update) {
                             ++$update_count;
-                            
+
                             //delete old document
                             $doc = $index->find("+docid:{$update->id} +doctype:{$mod->name} +itemtype:{$update->itemtype}");
-                            
+
                             //get the record, should only be one
                             foreach ($doc as $thisdoc) {
                                 mtrace("  Delete: $thisdoc->title (database id = $thisdoc->dbid, index id = $thisdoc->id, moodle instance id = $thisdoc->docid)");
                                 $dbcontrol->delDocument($thisdoc);
                                 $index->delete($thisdoc->id);
-                            } 
-                            
+                            }
+
                             //add new modified document back into index
                             $add = $get_document_function($update->id, $update->itemtype);
-                            
+
                             //object to insert into db
                             $dbid = $dbcontrol->addDocument($add);
-                            
+
                             //synchronise db with index
                             $add->addField(Zend_Search_Lucene_Field::Keyword('dbid', $dbid));
                             mtrace("  Add: $add->title (database id = $add->dbid, moodle instance id = $add->docid)");
                             $index->addDocument($add);
-                        } 
+                        }
                     }
                     else{
                         mtrace("No types to update.\n");
                     }
                     mtrace("Finished $mod->name.\n");
-                } 
-            } 
-        } 
-    } 
-    
+                }
+            }
+        }
+    }
+
     //commit changes
     $index->commit();
-    
+
     //update index date
     set_config("search_indexer_update_date", $startupdatedate);
-    
+
     mtrace("Finished $update_count updates");
 
 ?>

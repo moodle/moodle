@@ -1,5 +1,5 @@
 <?php  // $Id$
-  
+
 $string['advancedsearch'] = 'Advanced search';
 $string['all'] = 'All';
 $string['author'] = 'Author';

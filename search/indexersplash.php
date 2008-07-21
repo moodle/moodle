@@ -24,25 +24,25 @@ require_once("{$CFG->dirroot}/search/lib.php");
 $separator = (array_key_exists('WINDIR', $_SERVER)) ? ';' : ':' ;
 ini_set('include_path', $CFG->dirroot.'\search'.$separator.ini_get('include_path'));
 
-/// check global search is enabled 
+/// check global search is enabled
 
     require_login();
-    
+
     if (empty($CFG->enableglobalsearch)) {
-        error(get_string('globalsearchdisabled', 'search'));
+        print_error('globalsearchdisabled', 'search');
     }
-    
+
     if (!has_capability('moodle/site:doanything', get_context_instance(CONTEXT_SYSTEM))) {
-        error(get_string('beadmin', 'search'), "$CFG->wwwroot/login/index.php");
-    } 
-    
+        print_error('beadmin', 'search', "$CFG->wwwroot/login/index.php");
+    }
+
     require_once("$CFG->dirroot/search/indexlib.php");
     $indexinfo = new IndexInfo();
-    
+
     if ($indexinfo->valid()) {
         $strsearch = get_string('search', 'search');
         $strquery  = get_string('stats');
-        
+
         $navlinks[] = array('name' => $strsearch, 'link' => "index.php", 'type' => 'misc');
         $navlinks[] = array('name' => $strquery, 'link' => "stats.php", 'type' => 'misc');
         $navlinks[] = array('name' => get_string('runindexer','search'), 'link' => null, 'type' => 'misc');
@@ -54,7 +54,7 @@ ini_set('include_path', $CFG->dirroot.'\search'.$separator.ini_get('include_path
         }
         $site = get_site();
         print_header("$strsearch", "$site->fullname" , $navigation, "", "", true, "&nbsp;", navmenu($site));
-     
+
         mtrace("<pre>The data directory ($indexinfo->path) contains $indexinfo->filecount files, and\n"
               ."there are ".$indexinfo->dbcount." records in the <em>block_search_documents</em> table.\n"
               ."\n"
@@ -70,7 +70,7 @@ ini_set('include_path', $CFG->dirroot.'\search'.$separator.ini_get('include_path
               ."<a href='indexer.php?areyousure=yes'>Continue indexing</a> or <a href='index.php'>Back to query page</a>."
               ."</pre>");
         print_footer();
-    } 
+    }
     else {
         header('Location: indexer.php?areyousure=yes');
     }
