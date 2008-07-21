@@ -121,7 +121,7 @@ class quiz_report_statistics_table extends flexible_table {
         return $question->qtype;
     }
     function col_intended_weight($question){
-        return quiz_report_scale_sumgrades_as_percentage($question->grade, $this->quiz);
+        return quiz_report_scale_sumgrades_as_percentage($question->maxgrade, $this->quiz);
     }
     function col_effective_weight($question){
         if (!$question->subquestion){
@@ -154,7 +154,7 @@ class quiz_report_statistics_table extends flexible_table {
     }
     
     function col_sd($question){
-        return number_format($question->_stats->sd*100 / $question->grade, 2).' %';
+        return number_format($question->_stats->sd*100 / $question->maxgrade, 2).' %';
     }
     function col_s($question){
         if (isset($question->_stats->s)){

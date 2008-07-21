@@ -122,8 +122,8 @@ class qstats{
                         $subquestionstats[$itemid] = $this->stats_init_object();
                         $subquestionstats[$itemid]->usedin = array();
                         $subquestionstats[$itemid]->differentweights = false;
-                        $subquestionstats[$itemid]->grade = $this->questions[$state->question]->grade;
-                    } else if ($subquestionstats[$itemid]->grade != $this->questions[$state->question]->grade){
+                        $subquestionstats[$itemid]->maxgrade = $this->questions[$state->question]->maxgrade;
+                    } else if ($subquestionstats[$itemid]->maxgrade != $this->questions[$state->question]->maxgrade){
                         $subquestionstats[$itemid]->differentweights = true;
                     }
                     $this->_initial_states_walker($state, $subquestionstats[$itemid], false);
@@ -135,15 +135,15 @@ class qstats{
         $this->subquestions = question_load_questions(array_keys($subquestionstats));
         foreach (array_keys($this->subquestions) as $qid){
             $this->subquestions[$qid]->_stats = $subquestionstats[$qid];
-            $this->subquestions[$qid]->grade = $this->subquestions[$qid]->_stats->grade;
+            $this->subquestions[$qid]->maxgrade = $this->subquestions[$qid]->_stats->maxgrade;
             $this->subquestions[$qid]->subquestion = true;
-            $this->_initial_question_walker($this->subquestions[$qid]->_stats, $this->subquestions[$qid]->_stats->grade);
+            $this->_initial_question_walker($this->subquestions[$qid]->_stats, $this->subquestions[$qid]->_stats->maxgrade);
             if ($subquestionstats[$qid]->differentweights){
                 notify(get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $this->subquestions[$qid]->name));
             }
         }
         foreach (array_keys($this->questions) as $qid){
-            $this->_initial_question_walker($this->questions[$qid]->_stats, $this->questions[$qid]->grade);
+            $this->_initial_question_walker($this->questions[$qid]->_stats, $this->questions[$qid]->maxgrade);
             $this->questions[$qid]->subquestion = false;
         }
         //go through the records one more time
