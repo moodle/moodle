@@ -290,9 +290,9 @@ function viewlist(){
     }
     var panel = new YAHOO.util.Element('panel');
     str += makepage();
+    var re = new RegExp();
+    re.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\?\/.=]+$");
     for(k in obj){
-        var re = new RegExp();
-        re.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\?\/.=]+$");
         str += ('<input type="radio" title="'+obj[k].title+'" name="selected-files" value="'+obj[k].source+'" onclick=\'rename("'+obj[k].title+'", "'+obj[k].source+'")\' /> ');
         if(re.test(obj[k].source)) {
             str += '<a class="file_name" href="'+obj[k].source+'">'+obj[k].title+'</a>';
@@ -359,7 +359,7 @@ function cr(id, path, reset){
 }
 function dosearch(id){
     var data = window.prompt("What are you searching for?");
-    if(data == null && data == '') {
+    if(data == null || data == '') {
         alert('nothing entered');
         return;
     }

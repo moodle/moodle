@@ -70,7 +70,7 @@ class repository_boxnet extends repository{
                                 'date'=>$filedates[$n],
                                 'source'=>'http://box.net/api/1.0/download/'
                                     .$this->options['auth_token'].'/'.$fileids[$n],
-                                'thumbnail'=>$CFG->pixpath.'/f/text.gif');
+                                'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon', $v));
                     }
                 } else {
                     $list[] = array('title'=>$v, 
@@ -78,7 +78,7 @@ class repository_boxnet extends repository{
                             'date'=>$filedates[$n],
                             'source'=>'http://box.net/api/1.0/download/'
                                 .$this->options['auth_token'].'/'.$fileids[$n],
-                            'thumbnail'=>$CFG->pixpath.'/f/text.gif');
+                            'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon', $v));
                 }
             }
             $this->listing = $list;
