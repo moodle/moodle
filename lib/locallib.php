@@ -178,7 +178,7 @@ function upgrade_local_db($continueto) {
 
     /// Capabilities
     if (!update_capabilities('local')) {
-        error('Could not set up the capabilities for local!');
+        print_error('cannotsetupcapformod', 'error', '', 'local');
     }
 
     upgrade_log_finish();

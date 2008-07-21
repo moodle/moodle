@@ -332,7 +332,7 @@ function groups_get_activity_groupmode($cm, $course=null) {
         $course = $COURSE;
     } else {
         if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
-            error('Incorrect course id in cm');
+            print_error('invalidcourseid');
         }
     }
 

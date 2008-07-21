@@ -8,7 +8,7 @@ $key = required_param('key', PARAM_ALPHANUM);
 $id  = required_param('id', PARAM_INT);
 
 if (!$user = $DB->get_record('user', array('id' => $id))) {
-    error("Unknown user ID");
+    print_error('invaliduserid');
 }
 
 $preferences = get_user_preferences(null, null, $user->id);
@@ -37,8 +37,7 @@ if (empty($preferences['newemailattemptsleft'])) {
     } else {
         // update user email
         if (!$DB->set_field('user', 'email', $user->email, array('id' => $user->id))) {
-            error('Error updating user record');
-
+            print_error('cannotupdateuser');
         } else {
             events_trigger('user_updated', $user);
             $a->email = $user->email;

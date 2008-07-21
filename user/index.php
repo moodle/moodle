@@ -25,17 +25,17 @@
 
     if ($contextid) {
         if (! $context = get_context_instance_by_id($contextid)) {
-            error("Context ID is incorrect");
+            print_error('invalidcontext');
         }
         if (! $course = $DB->get_record('course', array('id'=>$context->instanceid))) {
-            error("Course ID is incorrect");
+            print_error('invalidcourseid');
         }
     } else {
         if (! $course = $DB->get_record('course', array('id'=>$courseid))) {
-            error("Course ID is incorrect");
+            print_error('invalidcourseid');
         }
         if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-            error("Context ID is incorrect");
+            print_error('invalidcontext');
         }
     }
     // not needed anymore
@@ -102,7 +102,7 @@
         if (has_capability('moodle/role:assign', $context)) {
             redirect($CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id);
         } else {
-            error ('No participants found for this course');
+            print_error('noparticipants');
         }
     }
 
@@ -278,7 +278,7 @@
     // (at or below DEFAULT_PAGE_SIZE) and $USER can enrol/unenrol
     // (will take 1 extra DB query - 2 on Oracle)
     //
-    if ($course->id != SITEID && $perpage <= DEFAULT_PAGE_SIZE 
+    if ($course->id != SITEID && $perpage <= DEFAULT_PAGE_SIZE
         && has_capability('moodle/role:assign',$context)) {
         $allowenroldetails=true;
     } else {
@@ -580,7 +580,7 @@
 
     if ($roleid > 0) {
         if (!$currentrole = $DB->get_record('role', array('id'=>$roleid))) {
-            error('That role does not exist');
+            print_error('invalidroleid');
         }
         $a->number = $totalcount;
         // MDL-12217, use course specific rolename
@@ -829,7 +829,7 @@
                             $rastring .= ' ('. $ra['enrolplugin'] .')<br />';
                         }
                     }
-                    $data[] = $rastring; 
+                    $data[] = $rastring;
                     if ($groupmode != 0) {
                         // htmlescape with s() and implode the array
                         $data[] = implode(', ', array_map('s',$userlist_extra[$user->id]['group']));
@@ -960,10 +960,10 @@ function get_participants_extra ($userids, $avoidroles, $course, $context) {
     // Note: this returns strange redundant rows, perhaps
     // due to the multiple OUTER JOINs. If we can tweak the
     // JOINs to avoid it ot
-    $sql = "SELECT DISTINCT ra.userid, 
-                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth AS ctxdepth, 
+    $sql = "SELECT DISTINCT ra.userid,
+                   ctx.id AS ctxid, ctx.path AS ctxpath, ctx.depth AS ctxdepth,
                    ctx.contextlevel AS ctxlevel, ctx.instanceid AS ctxinstanceid,
-                   cc.name  AS ccname, 
+                   cc.name  AS ccname,
                    ra.roleid AS roleid,
                    ra.enrol AS enrolplugin,
                    g.id     AS gid, g.name AS gname
@@ -982,8 +982,8 @@ function get_participants_extra ($userids, $avoidroles, $course, $context) {
             /* and if groupings is enabled... */
             $gpjoin
 
-             WHERE ra.userid IN ( $userids ) 
-                   AND ra.contextid in ( $contextids ) 
+             WHERE ra.userid IN ( $userids )
+                   AND ra.contextid in ( $contextids )
                    $avoidrolescond
 
           ORDER BY ra.userid, ctx.depth DESC";
@@ -995,10 +995,10 @@ function get_participants_extra ($userids, $avoidroles, $course, $context) {
     // $extra [ $userid ] [ 'group' ] [ $groupid => 'group name']
     //                    [ 'gping' ] [ $gpingid => 'gping name']
     //                    [ 'ra' ] [  [ "$ctxid:$roleid" => [ctxid => $ctxid
-    //                                                       ctxdepth =>  $ctxdepth, 
+    //                                                       ctxdepth =>  $ctxdepth,
     //                                                       ctxpath => $ctxpath,
     //                                                       ctxname => 'name' (categories only)
-    //                                                       ctxinstid => 
+    //                                                       ctxinstid =>
     //                                                       roleid => $roleid
     //                                                       enrol => $pluginname
     //
