@@ -26,6 +26,7 @@
     define('LANG_MISSING_TEXT_MAX_LEN', 60);    // maximum length of the missing text to display
     define('LANG_KEEP_ORPHANS', 1);             // keep orphaned strings (i.e. strings w/o English reference)
     define('LANG_SEARCH_EXTRA', 1);             // search lang files in extra locations
+    define('LANG_ALWAYS_TEXTAREA', 1);          // always use <textarea> even for short strings MDL-15738
 
     $mode = optional_param('mode', '', PARAM_ALPHA);
     if ($mode == 'helpfiles') {
@@ -651,7 +652,11 @@
                         if ($valuelen) {
                             $cols = $valuelen + 5;
                         }
-                        $o .= '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" '.$tabindex.' />';
+                        if (LANG_ALWAYS_TEXTAREA) {
+                            $o .= '<textarea name="stringXXX'.lang_form_string_key($key).'" cols="'.$cols.'" rows="1" '.$tabindex.'>'.$value.'</textarea>'."\n";
+                        } else {
+                            $o .= '<input type="text" name="stringXXX'.lang_form_string_key($key).'" value="'.$value.'" size="'.$cols.'" '.$tabindex.' />';
+                        }
                     }
                     if ($value2 <> '' && $value <> $value2) {
                         $o .= '<br /><span style="font-size:small">'.$value2.'</span>';
