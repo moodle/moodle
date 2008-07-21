@@ -64,7 +64,7 @@ class quiz_report_responses_table extends table_sql {
                 echo '<a href="javascript:deselect_all_in(\'DIV\',null,\'tablecontainer\');">'.
                         get_string('selectnone', 'quiz').'</a> ';
                 echo '&nbsp;&nbsp;';
-                echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_responses').'"/>';
+                echo '<input type="submit" value="'.get_string('deleteselected', 'quiz_overview').'"/>';
                 echo '</td></tr></table>';
                 // Close form
                 echo '</div>';

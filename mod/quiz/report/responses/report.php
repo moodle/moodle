@@ -188,7 +188,8 @@ class quiz_responses_report extends quiz_default_report {
             
             $fields .='qa.uniqueid AS attemptuniqueid, qa.id AS attempt, u.id AS userid, u.idnumber, u.firstname,'.
                 ' u.lastname, u.institution, u.department, u.email, u.picture, u.imagealt, '.
-                'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration ';
+                'qa.sumgrades, qa.timefinish, qa.timestart, qa.timefinish - qa.timestart AS duration, ' .
+                'qa.layout ';
     
             // This part is the same for all cases - join users and quiz_attempts tables
             $from = '{user} u ';
@@ -281,6 +282,11 @@ class quiz_responses_report extends quiz_default_report {
                 $columns[] = 'sumgrades';
                 $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
             }
+
+            if ($hasfeedback) {
+                $columns[] = 'feedbacktext';
+                $headers[] = get_string('feedback', 'quiz');
+            }
         
             // we want to display responses for all questions
             foreach ($questions as $id => $question) {
@@ -289,10 +295,6 @@ class quiz_responses_report extends quiz_default_report {
                 $headers[] = '#'.$question->number;
             }
     
-            if ($hasfeedback) {
-                $columns[] = 'feedbacktext';
-                $headers[] = get_string('feedback', 'quiz');
-            }
     
             // Load the question type specific information
             if (!get_question_options($questions)) {

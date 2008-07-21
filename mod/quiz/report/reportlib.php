@@ -137,9 +137,6 @@ function quiz_format_average_grade_for_questions($avggradebyq, $questions, $quiz
         } else {
             $grade = '--';
         }
-        if (!$download) {
-            $grade = $grade.'/'.quiz_rescale_grade($questions[$questionid]->grade, $quiz);
-        }
         $row['qsgrade'.$questionid]= $grade;
     }
     return $row;
@@ -159,7 +156,7 @@ function quiz_report_load_questions($quiz){
     //since this double check will probably do no harm.
     list($usql, $params) = $DB->get_in_or_equal(explode(',', $questionlist));
     $params[] = $quiz->id;
-    if (!$questions = $DB->get_records_sql("SELECT q.*, qqi.grade
+    if (!$questions = $DB->get_records_sql("SELECT q.*, qqi.grade AS maxgrade
             FROM {question} q,
             {quiz_question_instances} qqi
             WHERE q.id $usql AND

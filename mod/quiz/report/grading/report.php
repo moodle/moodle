@@ -91,7 +91,6 @@ class quiz_grading_report extends quiz_default_report {
             } else {
                 $question =& $gradeableqs[$questionid];
             }
-            $question->maxgrade = $DB->get_field('quiz_question_instances', 'grade', array('quiz' => $quiz->id, 'question' => $question->id));
 
             // Some of the questions code is optimised to work with several questions
             // at once so it wants the question to be in an array. The array key
