@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.4 2008/07/22 14:56:49 skodak Exp $
+$Id: README.txt,v 1.5 2008/07/22 14:59:13 skodak Exp $
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -30,7 +30,7 @@ $Id: README.txt,v 1.4 2008/07/22 14:56:49 skodak Exp $
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-Book module for Moodle - version 1.1 (stable release)
+Book module for Moodle - version 1.2 (stable release)
 ===============================================================================
 Created by:
       Petr Skoda (skodak) - most of the coding & design
@@ -38,6 +38,9 @@ Created by:
 
 Developed for Technical University of Liberec (Czech Republic).
 Many ideas and code were taken from other Moodle modules and Moodle itself;-)
+
+Installation:
+    * see http://docs.moodle.org/en/Installing_contributed_modules_or_plugins
 
 List of features - version 1.2:
 
