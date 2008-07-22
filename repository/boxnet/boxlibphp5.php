@@ -190,8 +190,15 @@ class boxclient {
         $params['auth_token'] = $this->auth_token;
         // this param should be the full path of the file
         $params['new_file1']  = '@'.$params['file'];
-        $params['folder_id']  = 0; //Set to '0' by default. Change to create within sub-folder.
-        $params['share']      = 1; //Set to '1' by default. Set to '0' to make folder private.
+        $defaults = array(
+            'folder_id' => 0, //Set to '0' by default. Change to create within sub-folder.
+            'share'     => 1, //Set to '1' by default. Set to '0' to make folder private.
+        );
+        foreach ($defaults as $key => $value) {
+            if (!array_key_exists($key, $params)) {
+                $params[$key] = $value;
+            }
+        }
         $ret_array = array();
         $entry_count = 0;
         $data = $this->makeRequest('upload', $params);
