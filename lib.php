@@ -1,4 +1,4 @@
-<?PHP // $Id: lib.php,v 1.2 2007/05/20 06:00:30 skodak Exp $
+<?PHP // $Id: lib.php,v 1.3 2008/07/22 14:40:38 skodak Exp $
 
 define('NUM_NONE',     '0');
 define('NUM_NUMBERS',  '1');
@@ -146,23 +146,29 @@ function book_get_participants($bookid) {
     return false;
 }
 
+/**
+ * This function returns if a scale is being used by one book
+ * it it has support for grading and scales. Commented code should be
+ * modified if necessary. See forum, glossary or journal modules
+ * as reference.
+ * @param $bookid int
+ * @param $scaleid int
+ * @return boolean True if the scale is used by any journal
+ */
 function book_scale_used ($bookid,$scaleid) {
-//This function returns if a scale is being used by one book
-//it it has support for grading and scales. Commented code should be
-//modified if necessary. See forum, glossary or journal modules
-//as reference.
-
-    $return = false;
-
-    //$rec = get_record('book','id',$bookid,'scale',"-$scaleid");
-    //
-    //if (!empty($rec)  && !empty($scaleid)) {
-    //    $return = true;
-    //}
-
-    return $return;
+    return false;
 }
 
+/**
+ * Checks if scale is being used by any instance of journal
+ *
+ * This is used to find out if scale used anywhere
+ * @param $scaleid int
+ * @return boolean True if the scale is used by any journal
+ */
+function journal_scale_used_anywhere($scaleid) {
+    return false;
+}
 //////////////////////////////////////////////////////////////////////////////////////
 /// Any other book functions go here.  Each of them must have a name that
 /// starts with book_
