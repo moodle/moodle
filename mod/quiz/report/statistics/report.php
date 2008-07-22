@@ -272,11 +272,22 @@ class quiz_statistics_report extends quiz_default_report {
         }
         $table->setup($quiz, $cm->id, $reporturl, $s);
         if (isset($qstats)){
-            foreach ($qstats->questions as $question){
+            while ($question = array_shift($qstats->questions)){
                 $table->add_data_keyed($table->format_row($question));
-                ksort($question->_stats->subitems);
-                foreach ($question->_stats->subitems as $itemid){
-                    $table->add_data_keyed($table->format_row($qstats->subquestions[$itemid]));
+                if ($question->qtype == 'random'){
+                    $randomselectorstring = $question->category.'/'.$question->questiontext;
+                    if ($qstats->questions){
+                        $nextquestion = current($qstats->questions);
+                        $nextrandomselectorstring = $nextquestion->category.'/'.$nextquestion->questiontext;
+                        if ($nextquestion->qtype == 'random' && $randomselectorstring == $nextrandomselectorstring){
+                            continue;//next loop iteration
+                        }
+                    }
+                    if (isset($qstats->randomselectors[$randomselectorstring])){
+                        foreach ($qstats->randomselectors[$randomselectorstring] as $itemid){
+                            $table->add_data_keyed($table->format_row($qstats->subquestions[$itemid]));
+                        }
+                    }
                 }
             }
         }

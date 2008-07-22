@@ -8,6 +8,7 @@ class qstats{
     var $sumofgradevariance = 0;
     var $questions;
     var $subquestions = array();
+    var $randomselectors = array();
     
     function qstats($questions, $s, $sumgradesavg){
         $this->s = $s;
@@ -29,7 +30,6 @@ class qstats{
         $statsinit->covariancewithoverallgradesum = 0;
         $statsinit->gradearray = array();
         $statsinit->othergradesarray = array();
-        $statsinit->subitems = array();
         return $statsinit;
     }
     function get_records($fromqa, $whereqa, $usingattempts, $qaparams){
@@ -128,7 +128,11 @@ class qstats{
                     }
                     $this->_initial_states_walker($state, $subquestionstats[$itemid], false);
                     $subquestionstats[$itemid]->usedin[$state->question] = $state->question;
-                    $this->questions[$state->question]->_stats->subitems[$itemid] = $itemid;
+                    $randomselectorstring = $this->questions[$state->question]->category.'/'.$this->questions[$state->question]->questiontext;
+                    if (!isset($this->randomselectors[$randomselectorstring])){
+                        $this->randomselectors[$randomselectorstring] = array();
+                    }
+                    $this->randomselectors[$randomselectorstring][] = $itemid;
                 }
             }
         }
