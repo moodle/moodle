@@ -4744,11 +4744,12 @@ function print_table($table, $return=false) {
     $output .= " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"$table->class boxalign$table->tablealign\" $tableid>\n";
 
     $countcols = 0;
-
+    
     if (!empty($table->head)) {
         $countcols = count($table->head);
         $output .= '<tr>';
-        $lastkey = end(array_keys($table->head));
+        $keys=array_keys($table->head);
+        $lastkey = end($keys);
         foreach ($table->head as $key => $heading) {
 
             if (!isset($size[$key])) {
@@ -4770,7 +4771,8 @@ function print_table($table, $return=false) {
 
     if (!empty($table->data)) {
         $oddeven = 1;
-        $lastrowkey = end(array_keys($table->data));
+        $keys=array_keys($table->data);
+        $lastrowkey = end($keys);
         foreach ($table->data as $key => $row) {
             $oddeven = $oddeven ? 0 : 1;
             if (!isset($table->rowclass[$key])) {
@@ -4783,7 +4785,8 @@ function print_table($table, $return=false) {
             if ($row == 'hr' and $countcols) {
                 $output .= '<td colspan="'. $countcols .'"><div class="tabledivider"></div></td>';
             } else {  /// it's a normal row of data
-              $lastkey = end(array_keys($row));
+                $keys2=array_keys($row);
+                $lastkey = end($keys2);
                 foreach ($row as $key => $item) {
                     if (!isset($size[$key])) {
                         $size[$key] = '';
