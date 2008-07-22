@@ -136,6 +136,9 @@ class qstats{
                 }
             }
         }
+        foreach ($this->randomselectors as $key => $randomselector){
+            ksort($this->randomselectors[$key]);
+        }
         $this->subquestions = question_load_questions(array_keys($subquestionstats));
         foreach (array_keys($this->subquestions) as $qid){
             $this->subquestions[$qid]->_stats = $subquestionstats[$qid];
