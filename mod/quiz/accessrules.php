@@ -631,11 +631,13 @@ class password_access_rule extends quiz_access_rule_base {
     /// Print the password entry form.
         $output .= '<p>' . get_string('requirepasswordmessage', 'quiz') . "</p>\n";
         $output .= '<form id="passwordform" method="post" action="' . $CFG->wwwroot .
-                '/mod/quiz/startattempt.php?q=' . $this->_quiz->id .
-                '" onclick="this.autocomplete=\'off\'">' . "\n";
+                '/mod/quiz/startattempt.php" onclick="this.autocomplete=\'off\'">' . "\n";
         $output .= "<div>\n";
         $output .= '<label for="quizpassword">' . get_string('password') . "</label>\n";
         $output .= '<input name="quizpassword" id="quizpassword" type="password" value=""/>' . "\n";
+        $output .= '<input name="cmid" type="hidden" value="' .
+                $this->_quizobj->get_cmid() . '"/>' . "\n";
+        $output .= '<input name="sesskey" type="hidden" value="' . sesskey() . '"/>' . "\n";
         $output .= '<input type="submit" value="' . get_string('ok') . '" />';
         $output .= '<input type="submit" name="cancelpassword" value="' .
                 get_string('cancel') . '" />' . "\n";

@@ -51,7 +51,7 @@ if (optional_param('gotosummary', false, PARAM_BOOL)) {
 if ($nextpage == -1) {
     $nexturl = $attemptobj->summary_url();
 } else {
-    $nexturl = $attemptobj->attempt_url($nextpage);
+    $nexturl = $attemptobj->attempt_url(0, $nextpage);
 }
 
 /// We treat automatically closed attempts just like normally closed attempts
