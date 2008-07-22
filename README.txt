@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.3 2007/05/20 06:00:29 skodak Exp $
+$Id: README.txt,v 1.4 2008/07/22 14:56:49 skodak Exp $
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -38,13 +38,6 @@ Created by:
 
 Developed for Technical University of Liberec (Czech Republic).
 Many ideas and code were taken from other Moodle modules and Moodle itself;-)
-
-Installation:
-    1/ upgrade your Moodle installation to version 1.5.1 or later
-       (you are advised to install latest official stable 1.5.2+ branch)
-    2/ download book.zip to your moodle/mod directory and unzip it there
-    3/ go to http://yoursite.com/admin - all necessary tables will be created
-
 
 List of features - version 1.2:
 
