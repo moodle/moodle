@@ -18,11 +18,11 @@ $string['admindirsettingsub'] = 'Na některých serverech je URL adresa /admin v
 Všechny generované odkazy na stránky správy Moodlu budou používat tento nový název.';
 $string['availablelangs'] = 'Dostupné jazykové balíčky';
 $string['bypassed'] = 'Přeskočeno';
-$string['cannotcreatelangdir'] = 'Nelze vytvořit adresář pro jazykové soubory.';
+$string['cannotcreatelangdir'] = 'Nelze vytvořit adresář pro jazykové soubory';
 $string['cannotcreatetempdir'] = 'Nelze vytvořit dočasný adresář.';
-$string['cannotdownloadcomponents'] = 'Nelze stáhnout komponenty.';
-$string['cannotdownloadzipfile'] = 'Nelze stáhnout soubor ZIP.';
-$string['cannotfindcomponent'] = 'Komponenta nenalezena.';
+$string['cannotdownloadcomponents'] = 'Nelze stáhnout komponenty';
+$string['cannotdownloadzipfile'] = 'Nelze stáhnout soubor ZIP';
+$string['cannotfindcomponent'] = 'Komponenta nenalezena';
 $string['cannotsavemd5file'] = 'Nelze uložit soubor MD5.';
 $string['cannotsavezipfile'] = 'Nelze uložit soubor ZIP.';
 $string['cannotunzipfile'] = 'Nelze dekomprimovat soubor.';
@@ -95,6 +95,12 @@ $string['databasesettingssub_mysql'] = '<b>Typ:</b> MySQL<br />
 <b>Uživatel (User):</b> uživatel oprávněný pro práci s databází<br />
 <b>Heslo (Password):</b> heslo pro uživatele<br />
 <b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek, např. mdl_ (volitelné)';
+$string['databasesettingssub_mysqli'] = '<b>Typ:</b> vylepšené MySQL<br />
+<b>Hostitel:</b> např. localhost nebo db.naseskola.cz<br />
+<b>Název:</b> název databáze, např. moodle<br />
+<b>Uživatel:</b> uživatel dané databáze<br />
+<b>Heslo:</b> heslo uživatele k databázi<br />
+<b>Předpona:</b> jednotná předpona názvů všech tabulek (volitelné)';
 $string['databasesettingssub_oci8po'] = '<b>Typ:</b> Oracle<br />
 <b>Hostitel (Host):</b> nepoužito, musí být prázdné<br />
 <b>Název (Name):</b> daný název připojení tnsnames.ora<br />
@@ -113,6 +119,7 @@ $string['databasesettingssub_postgres7'] = '<b>Typ:</b> PostgreSQL<br />
 <b>Uživatel (User):</b> uživatel oprávněný pro práci s databází<br />
 <b>Heslo (Password):</b> heslo pro uživatele<br />
 <b>Předpona (Tables Prefix):</b> jednotná předpona názvů všech tabulek, např. mdl_ (povinné)';
+$string['databasesettingswillbecreated'] = '<b>Poznámka:</b> instalátor se pokusí vytvořit databázi automaticky, pokud ještě neexistuje';
 $string['dataroot'] = 'Datový adresář';
 $string['datarooterror'] = 'Zadaný datový adresář se nepodařilo nalézt nebo vytvořit. Buď opravte zadanou cestu, nebo vytvořte adresář ručně.';
 $string['dbconnectionerror'] = 'Nepodařilo se připojit k databázi, kterou jste zadali. Zkontrolujte prosím nastavení databáze.';
@@ -201,6 +208,7 @@ $string['info'] = 'Informace';
 $string['installation'] = 'Instalace';
 $string['invalidemail'] = 'Neplatná e-mailová adresa';
 $string['invalidmd5'] = 'Neplatný MD5 hash';
+$string['invalidurl'] = 'Neplatná URL';
 $string['langdownloaderror'] = 'Bohužel, jazyk \"$a\" se nepodařilo nainstalovat. Instalace bude pokračovat v angličtine.';
 $string['langdownloadok'] = 'Podařilo se úspěšně nainstalovat jazykový balíček \"$a\". Instalace bude pokračovat v tomto jazyce.';
 $string['language'] = 'Jazyk';
@@ -239,6 +247,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Pokud ovšem ve vaší instalaci Moodlu používáte POUZE jazyky založené na latince (iso-8859-1), můžete nadále používat momentálně nainstalovanou verzi MySQL 4.1.12 (nebo vyšší).';
 $string['mysql416required'] = 'Minimální verzí požadovanou pro Moodle 1.6 -- a pro pozdější bezpečný převod všech dat do UTF-8 -- je MySQL 4.1.16.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nebylo korektně nakonfigurováno pro komunikaci s MySQL. Zkontrolujte váš php.ini nebo překompilujte PHP.';
+$string['mysqli'] = 'Vylepšené MySQL (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP není korektně nakonfigurováno, aby mohlo s MySQL serverem komunikovat s podporou rozšíření MySQLi. Zkontrolujte nastavení v souboru php.ini nebo překompilujte PHP. Rozšíření MySQLi není k dispozici ve verzi PHP 4.';
 $string['name'] = 'Název';
 $string['next'] = 'Další';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -263,6 +273,7 @@ $string['previous'] = 'Předchozí';
 $string['qtyperqpwillberemoved'] = 'Během upgrade bude odstraněn typ testové úlohy RQP. Tento typ jste nepoužívali, takže byste neměli zaznamenta žádné problémy.';
 $string['qtyperqpwillberemovedanyway'] = 'Během upgrade bude odstraněn typ testové úlohy RQP. Ve vaší databázi existuje několik takových úloh a ty nebudou fungovat, dokud nepřeinstalujete kód z http://moodle.org/mod/data/view.php?d=13&amp;rid=797 před pokračováním upgrade.';
 $string['releasenoteslink'] = 'Informace o této verzi Moodlu najdete v <a target=\"_new\" href=\"$a\">Poznámkách k verzi</a>';
+$string['remotedownloaderror'] = 'Stahování komponenty na váš server selhalo. Prověřte nastavení proxy. Vřele doporučujeme PHP rozšíření cURL.<br /><br />Nyní musíte stáhnout soubor <a href=\"$a->url\">$a->url</a> ručně, překopírovat jej do \"$a->dest\" na vašem serveru a tam jej rozbalit.';
 $string['remotedownloadnotallowed'] = 'Stahování komponent na server není povoleno (direktiva allow_url_fopen je ve stavu \'vypnuto\').<br /><br />Musíte soubor stáhnout <a href=\"$a->url\">$a->url</a> ručně, zkopírovat jej na serveru do umístění \"$a->dest\" a tam jej dekomprimovat.';
 $string['report'] = 'Sestava';
 $string['restricted'] = 'Nedostupné';
