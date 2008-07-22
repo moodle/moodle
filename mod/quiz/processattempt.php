@@ -81,7 +81,11 @@ if ($attemptobj->is_finished()) {
 /// Don't log - we will end with a redirect to a page that is logged.
 
 /// Get the list of questions needed by this page.
-$submittedquestionids = explode(',', $submittedquestionids);
+if (!empty($submittedquestionids)) {
+    $submittedquestionids = explode(',', $submittedquestionids);
+} else {
+    $submittedquestionids = array();
+}
 if ($finishattempt) {
     $questionids = $attemptobj->get_question_ids();
 } else {
@@ -90,7 +94,9 @@ if ($finishattempt) {
 
 /// Load those questions we need, and just the submitted states for now.
 $attemptobj->load_questions($questionids);
-$attemptobj->load_question_states($submittedquestionids);
+if (!empty($submittedquestionids)) {
+    $attemptobj->load_question_states($submittedquestionids);
+}
 
 /// Process the responses /////////////////////////////////////////////////
 if (!$responses = data_submitted()) {
