@@ -2,7 +2,14 @@
 
 if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
-
+    // "ip blocker" settingpage
+    $temp = new admin_settingpage('ipblocker', get_string('ipblocker', 'admin'));
+    $temp->add(new admin_setting_configcheckbox('allowbeforeblock', get_string('allowbeforeblock', 'admin'), get_string('allowbeforeblockdesc', 'admin'), 0));
+    $temp->add(new admin_setting_configiplist('allowedip', get_string('allowediplist', 'admin'),
+                                                '', ''));
+    $temp->add(new admin_setting_configiplist('blockedip', get_string('blockediplist', 'admin'),
+                                                '', ''));
+    $ADMIN->add('security', $temp);
     // "sitepolicies" settingpage
     $temp = new admin_settingpage('sitepolicies', get_string('sitepolicies', 'admin'));
     $temp->add(new admin_setting_configcheckbox('protectusernames', get_string('protectusernames', 'admin'), get_string('configprotectusernames', 'admin'), 1));
