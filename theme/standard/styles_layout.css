@@ -3842,18 +3842,11 @@ body#mod-forum-search .introcontent {
   margin-top: 1.5em;
 }
 
-#mod-quiz-attempt #quiz-timer-outer {
-    position: absolute;
-    width: 150px;
-    top: 100px;
-    left: 10px;
-    padding: 0.25em 0;
-    border-width: 1px;
-    border-style: solid;
+#mod-quiz-attempt #quiz-timer {
+  display: none;
 }
-#mod-quiz-attempt #quiz-timer-outer h3,
-#mod-quiz-attempt #quiz-timer-outer p {
-    margin: 0;
+#mod-quiz-attempt #quiz-time-left {
+  font-weight: bold;
 }
 
 body#question-preview .quemodname,

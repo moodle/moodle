@@ -828,8 +828,12 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
     }
 
     protected function get_end_bits() {
-        return '<input type="submit" name="gotosummary" value="' .
+        $output = '';
+        $output .= '<input type="submit" name="gotosummary" value="' .
                 get_string('endtest', 'quiz') . '" class="endtestlink" />';
+        $output .= '<div id="quiz-timer">' . get_string('timeleft', 'quiz') .
+                ' <span id="quiz-time-left"></span></div>';
+        return $output;
     }
 }
 

@@ -42,15 +42,6 @@ quiz_timer = {
     // Once time has run out.
     timeoutid: null,
 
-    // Desired position of the top of timer_outer: 100px from the top of the window.
-    targettop: 100,
-
-    // How often we check to positing and adjust it. Delay in milliseconds.
-    movedelay: 100,
-
-    // Last known postion of timer_outer.
-    oldtop: this.target_top,
-
     // Colours used to change the timer bacground colour when time had nearly run out.
     // This array is indexed by number of seconds left.
     finalcolours: [
@@ -79,12 +70,14 @@ quiz_timer = {
         quiz_timer.endtime = new Date().getTime() + timeleft*1000;
 
         // Get references to some bits of the DOM we need.
-        quiz_timer.timerouter = document.getElementById('quiz-timer-outer'),
-        quiz_timer.timerdisplay = document.getElementById('quiz-timer-display'),
+        quiz_timer.timerouter = document.getElementById('quiz-timer'),
+        quiz_timer.timerdisplay = document.getElementById('quiz-time-left'),
         quiz_timer.quizform = document.getElementById('responseform'),
 
-        // Get things starte.
-        quiz_timer.move();
+        // Make the timer visible.
+        quiz_timer.timerouter.style.display = 'block';
+
+        // Get things started.
         quiz_timer.update_time();
     },
 
@@ -148,35 +141,6 @@ quiz_timer = {
 
         // Arrange for this method to be called again soon.
         quiz_timer.timeoutid = setTimeout(quiz_timer.update_time, quiz_timer.updatedelay);
-    },
-
-    // Function to keep the clock in the same place on the screen.
-    move: function() {
-        // Work out where the top of the window is.
-        var pos;
-        if (window.innerHeight) {
-            pos = window.pageYOffset
-        } else if (document.documentElement && document.documentElement.scrollTop) {
-            pos = document.documentElement.scrollTop
-        } else if (document.body) {
-            pos = document.body.scrollTop
-        }
-
-        // We want the timer target_top pixels from the top of the window,
-        // or the top of the document, whichever is lower.
-        pos += quiz_timer.targettop;
-        if (pos < quiz_timer.targettop) {
-            pos = quiz_timer.targettop;
-        }
-
-        // Only move the timer if the window has stopped moving, and the position has stabilised.
-        if (pos == quiz_timer.oldtop) {
-            quiz_timer.timerouter.style.top = pos + 'px';
-        }
-        quiz_timer.oldtop = pos;
-
-        // Arrange for this method to be called again soon.
-        setTimeout(quiz_timer.move, quiz_timer.movedelay);
     }
 };
 
