@@ -1,6 +1,6 @@
 <?php
 require_once($CFG->dirroot.'/mod/book/lib.php');
-require_once('moodleform_mod.php');
+require_once ($CFG->dirroot.'/course/moodleform_mod.php'); 
 
 class mod_book_mod_form extends moodleform_mod {
 
