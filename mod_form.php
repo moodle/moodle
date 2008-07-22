@@ -32,7 +32,7 @@ class mod_book_mod_form extends moodleform_mod {
         $mform->setHelpButton('customtitles', array('customtitles', get_string('customtitles', 'book'), 'book'));
         $mform->setDefault('customtitles', 0);
 
-        $this->standard_coursemodule_elements();
+        $this->standard_coursemodule_elements(array('groups'=>false, 'groupmembersonly'=>true, 'gradecat'=>false));
 
 //-------------------------------------------------------------------------------
         // buttons
