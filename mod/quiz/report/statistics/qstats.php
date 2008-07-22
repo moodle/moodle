@@ -132,7 +132,7 @@ class qstats{
                     if (!isset($this->randomselectors[$randomselectorstring])){
                         $this->randomselectors[$randomselectorstring] = array();
                     }
-                    $this->randomselectors[$randomselectorstring][] = $itemid;
+                    $this->randomselectors[$randomselectorstring][$itemid] = $itemid;
                 }
             }
         }
