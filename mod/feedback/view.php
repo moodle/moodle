@@ -36,6 +36,15 @@
         $capabilities->complete = true;
     }
     
+    //check whether the feedback is mapped to the given courseid
+    if($course->id == SITEID AND !$capabilities->edititems) {
+        if($DB->get_records('feedback_sitecourse_map', array('feedbackid'=>$feedback->id))) {
+            if(!$DB->get_record('feedback_sitecourse_map', array('feedbackid'=>$feedback->id, 'courseid'=>$courseid))){
+                error("this feedback is not available");
+            }
+        }
+    }
+    
     //check whether the feedback is located and! started from the mainsite
     if($course->id == SITEID AND !$courseid) {
         $courseid = SITEID;
@@ -44,7 +53,21 @@
     if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
         require_login($course->id, true, $cm);
     } else {
-        require_course_login($course, true, $cm);
+        if($course->id == SITEID) {
+            require_course_login($course, true);
+        }else {
+            require_course_login($course, true, $cm);
+        }
+    }
+    
+    //check whether the given courseid exists
+    if($courseid AND $courseid != SITEID) {
+        if($course2 = $DB->get_record('course', array('id'=>$courseid))){
+            require_course_login($course2); //this overwrites the object $course :-(
+            $course = $DB->get_record("course", array("id"=>$cm->course)); // the workaround
+        }else {
+            error("courseid is not correct");
+        }
     }
 
     if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
@@ -66,7 +89,14 @@
                  $navigation, "", "", true, $buttontext, navmenu($course, $cm));
 
     //ishidden check.
+    //feedback in courses
     if ((empty($cm->visible) and !$capabilities->viewhiddenactivities) AND $course->id != SITEID) {
+        notice(get_string("activityiscurrentlyhidden"));
+    }
+
+    //ishidden check.
+    //feedback on mainsite
+    if ((empty($cm->visible) and !$capabilities->viewhiddenactivities) AND $courseid == SITEID) {
         notice(get_string("activityiscurrentlyhidden"));
     }
 

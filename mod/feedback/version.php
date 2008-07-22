@@ -10,7 +10,7 @@
 */
 
    
-    $module->version = 2008052208; // The current module version (Date: YYYYMMDDXX)
+    $module->version = 2008052209; // The current module version (Date: YYYYMMDDXX)
     $module->requires = 2007101503;  // Requires this Moodle version
     $feedback_version_intern = 1; //this version is used for restore older backups
     $module->cron = 0; // Period for cron to check this module (secs)
