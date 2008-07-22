@@ -115,7 +115,7 @@ class quiz_statistics_report extends quiz_default_report {
             $whereqa .= ' AND qa.userid '.$grpsql.' ';
             $qaparams += $grpparams;
         }
-        $sql = 'SELECT (attempt=1) AS isfirst, COUNT(1) AS countrecs, SUM(sumgrades) AS total ' .
+        $sql = 'SELECT (CASE WHEN attempt=1 THEN 1 ELSE 0 END) AS isfirst, COUNT(1) AS countrecs, SUM(sumgrades) AS total ' .
                 'FROM '.$fromqa.
                 'WHERE ' .$whereqa.
                 'GROUP BY (attempt=1)';
