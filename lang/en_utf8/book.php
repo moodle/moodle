@@ -1,4 +1,4 @@
-<?PHP // $Id: book.php,v 1.3 2008/03/25 20:19:49 poltawski Exp $
+<?PHP // $Id: book.php,v 1.4 2008/07/22 15:13:29 skodak Exp $
 
 $string['modulename'] = 'Book';
 $string['modulenameplural'] = 'Books';
@@ -28,6 +28,7 @@ $string['addafter'] = 'Add new chapter';
 $string['confchapterdelete'] = 'Do you really want to delete this chapter?';
 $string['confchapterdeleteall'] = 'Do you really want to delete this chapter and all its subchapters?';
 
+$string['generateimscp'] = 'Generate IMS content package';
 $string['printbook'] = 'Print Complete Book';
 $string['printchapter'] = 'Print This Chapter';
 $string['printdate'] = 'Date';
