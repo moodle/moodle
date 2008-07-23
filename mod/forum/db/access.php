@@ -241,6 +241,8 @@ $mod_forum_capabilities = array(
 
     'mod/forum:managesubscriptions' => array(
 
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(

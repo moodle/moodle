@@ -66,7 +66,6 @@
     $overridableroles = get_overridable_roles($context, 'name', ROLENAME_BOTH);
     $assignableroles  = get_assignable_roles($context, 'name', ROLENAME_BOTH);
 
-
 /// Get some language strings
 
     $strpotentialusers = get_string('potentialusers', 'role');
@@ -108,7 +107,7 @@
 /// Make sure this user can assign that role
 
     if ($roleid) {
-        if (!user_can_assign($context, $roleid)) {
+        if (!isset($assignableroles[$roleid])) {
             error ('you can not override this role in this context');
         }
     }

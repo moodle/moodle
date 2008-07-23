@@ -123,7 +123,7 @@ $moodle_capabilities = array(
     
     'moodle/site:sendmessage' => array(
 
-        'riskbitmask' => RISK_PERSONAL,
+        'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -286,7 +286,7 @@ $moodle_capabilities = array(
 
     'moodle/user:delete' => array(
 
-        'riskbitmask' => RISK_PERSONAL,
+        'riskbitmask' => RISK_PERSONAL, RISK_DATALOSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -345,6 +345,8 @@ $moodle_capabilities = array(
 
     'moodle/role:assign' => array(
 
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -361,6 +363,17 @@ $moodle_capabilities = array(
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
             'admin' => CAP_ALLOW
+        )
+    ),
+
+    'moodle/role:safeoverride' => array(
+
+        'riskbitmask' => RISK_SPAM,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW
         )
     ),
 
@@ -401,7 +414,7 @@ $moodle_capabilities = array(
 
     'moodle/role:switchroles' => array(
 
-        'riskbitmask' => RISK_XSS,
+        'riskbitmask' => RISK_XSS | RISK_PERSONAL,
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -423,6 +436,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/category:delete' => array(
+
+        'riskbitmask' => RISK_DATALOSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSECAT,
@@ -464,6 +479,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/course:delete' => array(
+
+        'riskbitmask' => RISK_DATALOSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -569,6 +586,8 @@ $moodle_capabilities = array(
 
     'moodle/course:managemetacourse' => array(
 
+        'riskbitmask' => RISK_XSS | RISK_PERSONAL,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -652,6 +671,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/course:reset' => array(
+
+        'riskbitmask' => RISK_DATALOSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
@@ -740,7 +761,7 @@ $moodle_capabilities = array(
 
     'moodle/user:editprofile' => array(
 
-        'riskbitmask' => RISK_SPAM,
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_USER,
@@ -750,6 +771,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/user:editownprofile' => array(
+
+        'riskbitmask' => RISK_SPAM,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
@@ -1010,7 +1033,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/grade:import' => array(
-        'riskbitmask' => RISK_PERSONAL,
+        'riskbitmask' => RISK_PERSONAL | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -1033,7 +1056,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/grade:manage' => array(
-        'riskbitmask' => RISK_PERSONAL,
+        'riskbitmask' => RISK_PERSONAL | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -1120,6 +1143,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/notes:manage' => array(
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -1130,6 +1155,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/tag:manage' => array(
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -1140,6 +1167,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/tag:create' => array(
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
@@ -1149,6 +1178,8 @@ $moodle_capabilities = array(
     ),
 
     'moodle/tag:edit' => array(
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(

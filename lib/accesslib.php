@@ -149,6 +149,7 @@ define('RISK_CONFIG',      0x0002);
 define('RISK_XSS',         0x0004);
 define('RISK_PERSONAL',    0x0008);
 define('RISK_SPAM',        0x0010);
+define('RISK_DATALOSS',    0x0020);
 
 // rolename displays
 define('ROLENAME_ORIGINAL', 0);// the name as defined in the role definition
@@ -1756,7 +1757,7 @@ function moodle_install_roles() {
     allow_assign($editteacherrole, $studentrole);
     allow_assign($editteacherrole, $guestrole);
 
-/// Set up default permissions for overrides
+/// Set up default allow override matrix
     allow_override($adminrole, $adminrole);
     allow_override($adminrole, $coursecreatorrole);
     allow_override($adminrole, $noneditteacherrole);
@@ -1764,6 +1765,11 @@ function moodle_install_roles() {
     allow_override($adminrole, $studentrole);
     allow_override($adminrole, $guestrole);
     allow_override($adminrole, $userrole);
+
+    allow_override($editteacherrole, $noneditteacherrole);
+    allow_override($editteacherrole, $studentrole);
+    allow_override($editteacherrole, $guestrole);
+
 }
 
 /**
@@ -3815,6 +3821,9 @@ function get_user_roles_in_context($userid, $context, $view=true){
  * @return boolean
  */
 function user_can_override($context, $targetroleid) {
+
+// TODO: not needed anymore, remove in 2.0
+
     global $DB;
     // first check if user has override capability
     // if not return false;
@@ -3954,45 +3963,33 @@ function allow_assign($sroleid, $troleid) {
  * Gets a list of roles that this user can assign in this context
  * @param object $context
  * @param string $field
+ * @param int $rolenamedisplay
  * @return array
  */
 function get_assignable_roles($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
-    global $DB;
+    global $USER, $DB;
 
-    // this users RAs
-    $ras = get_user_roles($context);
-    $roleids = array();
-    foreach ($ras as $ra) {
-        $roleids[] = $ra->roleid;
-    }
-    unset($ra);
+    if (!has_capability('moodle/role:assign', $context)) {
+        return array();
+    } 
 
-    if (count($roleids)===0) {
+    $parents = get_parent_contexts($context);
+    $parents[] = $context->id;
+    $contexts = implode(',' , $parents);
+
+    if (!$roles = $DB->get_records_sql("SELECT DISTINCT r.*
+                                          FROM {role} r,
+                                               {role_assignments} ra,
+                                               {role_allow_assign} raa
+                                         WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                                               AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+                                      ORDER BY r.sortorder ASC", array('userid'=>$USER->id))) {
         return array();
     }
 
-    list($roleids, $params) = $DB->get_in_or_equal($roleids, SQL_PARAMS_QM);
-
-    // The subselect scopes the DISTINCT down to
-    // the role ids - a DISTINCT over the whole of
-    // the role table is much more expensive on some DBs
-    $sql = "SELECT r.id, r.$field
-              FROM {role} r
-                   JOIN ( SELECT DISTINCT allowassign as allowedrole
-                            FROM {role_allow_assign} raa
-                           WHERE raa.roleid $roleids ) ar
-                   ON r.id=ar.allowedrole
-          ORDER BY sortorder ASC";
-
-    if (!$rs = $DB->get_recordset_sql($sql, $params)) {
-        return array();
+    foreach ($roles as $role) {
+        $roles[$role->id] = $role->$field;
     }
-
-    $roles = array();
-    foreach ($rs as $r) {
-        $roles[$r->id] = $r->{$field};
-    }
-    $rs->close();
 
     return role_fix_names($roles, $context, $rolenamedisplay);
 }
@@ -4000,53 +3997,37 @@ function get_assignable_roles($context, $field='name', $rolenamedisplay=ROLENAME
 /**
  * Gets a list of roles that this user can assign in this context, for the switchrole menu
  *
- * This is a quick-fix for MDL-13459 until MDL-8312 is sorted out...
  * @param object $context
  * @param string $field
+ * @param int $rolenamedisplay
  * @return array
  */
 function get_assignable_roles_for_switchrole($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
-    global $DB;
+    global $USER, $DB;
 
-    // this users RAs
-    $ras = get_user_roles($context);
-    $roleids = array();
-    foreach ($ras as $ra) {
-        $roleids[] = $ra->roleid;
-    }
-    unset($ra);
+    if (!has_capability('moodle/role:assign', $context)) {
+        return array();
+    } 
 
-    if (count($roleids)===0) {
+    $parents = get_parent_contexts($context);
+    $parents[] = $context->id;
+    $contexts = implode(',' , $parents);
+
+    if (!$roles = $DB->get_records_sql("SELECT DISTINCT r.*
+                                          FROM {role} r,
+                                               {role_assignments} ra,
+                                               {role_allow_assign} raa,
+                                               {role_capabilities} rc
+                                         WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                                               AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+                                               AND r.id = rc.roleid AND rc.capability = :viewcap AND rc.capability <> :anythingcap
+                                      ORDER BY r.sortorder ASC", array('userid'=>$USER->id, 'viewcap'=>'moodle/course:view', 'anythingcap'=>'moodle/site:doanything'))) {
         return array();
     }
 
-    list($roleids, $params) = $DB->get_in_or_equal($roleids, SQL_PARAMS_QM);
-
-    // The subselect scopes the DISTINCT down to
-    // the role ids - a DISTINCT over the whole of
-    // the role table is much more expensive on some DBs
-    $sql = "SELECT r.id, r.$field
-              FROM {role} r
-                   JOIN ( SELECT DISTINCT allowassign as allowedrole
-                            FROM {role_allow_assign} raa
-                           WHERE raa.roleid $roleids ) ar
-                   ON r.id=ar.allowedrole
-                   JOIN {role_capabilities} rc
-                   ON (r.id = rc.roleid AND rc.capability = ?
-                       AND rc.capability != ?)
-         ORDER BY sortorder ASC";
-    $params[] = 'moodle/course:view';
-    $params[] = 'moodle/site:doanything';
-
-    if (!$rs = $DB->get_recordset_sql($sql, $params)) {
-        return array();
+    foreach ($roles as $role) {
+        $roles[$role->id] = $role->$field;
     }
-
-    $roles = array();
-    foreach ($rs as $r) {
-        $roles[$r->id] = $r->{$field};
-    }
-    $rs->close();
 
     return role_fix_names($roles, $context, $rolenamedisplay);
 }
@@ -4054,21 +4035,36 @@ function get_assignable_roles_for_switchrole($context, $field='name', $rolenamed
 /**
  * Gets a list of roles that this user can override in this context
  * @param object $context
+ * @param string $field
+ * @param int $rolenamedisplay
  * @return array
  */
 function get_overridable_roles($context, $field='name', $rolenamedisplay=ROLENAME_ALIAS) {
+    global $USER, $DB;
 
-    $options = array();
+    if (!has_capability('moodle/role:override', $context) and !has_capability('moodle/role:safeoverride', $context)) {
+        return array();
+    } 
 
-    if ($roles = get_all_roles()) {
-        foreach ($roles as $role) {
-            if (user_can_override($context, $role->id)) {
-                $options[$role->id] = $role->$field;
-            }
-        }
+    $parents = get_parent_contexts($context);
+    $parents[] = $context->id;
+    $contexts = implode(',' , $parents);
+
+    if (!$roles = $DB->get_records_sql("SELECT DISTINCT r.*
+                                          FROM {role} r,
+                                               {role_assignments} ra,
+                                               {role_allow_override} rao 
+                                         WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                                               AND rao.roleid = ra.roleid AND r.id = rao.allowoverride
+                                      ORDER BY r.sortorder ASC", array('userid'=>$USER->id))) {
+        return array();
     }
 
-    return role_fix_names($options, $context, $rolenamedisplay);
+    foreach ($roles as $role) {
+        $roles[$role->id] = $role->$field;
+    }
+
+    return role_fix_names($roles, $context, $rolenamedisplay);
 }
 
 /**
@@ -4917,7 +4913,7 @@ function get_roles_on_exact_context($context) {
  * The caller *must* check
  * - that this op is allowed
  * - that the requested role can be assigned in this ctx
- *   (hint, use get_assignable_roles())
+ *   (hint, use get_assignable_roles_for_switchrole())
  * - that the requested role is NOT $CFG->defaultuserroleid
  *
  * To "unswitch" pass 0 as the roleid.

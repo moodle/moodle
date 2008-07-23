@@ -63,10 +63,14 @@ class block_admin extends block_list {
 
     /// Assign roles to the course
 
-        if ($course->id !== SITEID and has_capability('moodle/role:assign', $context)) {
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">'.get_string('assignroles', 'role').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" class="icon" alt="" />';
-
+        if ($course->id != SITEID) {
+            if (has_capability('moodle/role:assign', $context)) {
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/assign.php?contextid='.$context->id.'">'.get_string('assignroles', 'role').'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" class="icon" alt="" />';
+            } else if (get_overridable_roles($context, 'name', ROLENAME_ORIGINAL)) {
+                $this->content->items[]='<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/roles/override.php?contextid='.$context->id.'">'.get_string('overridepermissions', 'role').'</a>';
+                $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/roles.gif" class="icon" alt="" />';
+            }
         }
 
     /// View course grades (or just your own grades, same link)

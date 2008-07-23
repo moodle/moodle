@@ -74,7 +74,7 @@
         $table->data[] = array_merge(array(format_string($role->name)), $beta);
     }
 
-    print_simple_box(get_string('configallowoverride', 'admin'), 'center');
+    print_simple_box(get_string('configallowoverride2', 'admin'), 'center');
 
     echo '<form action="allowoverride.php" method="post">';
     print_table($table);

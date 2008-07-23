@@ -56,6 +56,7 @@ $mod_assignment_capabilities = array(
     ),
 
     'mod/assignment:grade' => array(
+        'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
