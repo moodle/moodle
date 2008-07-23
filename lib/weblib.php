@@ -2401,6 +2401,14 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $button = '&nbsp;';
     }
 
+    if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
+        $button = '<a href="'.$CFG->wwwroot.'/admin/maintenance.php">'.get_string('maintenancemode', 'admin').'</a> '.$button;
+        if(!empty($title)) {
+            $title .= ' - ';
+        }
+        $title .= get_string('maintenancemode', 'admin');
+    }
+
     if (!$menu and $navigation) {
         if (empty($CFG->loginhttps)) {
             $wwwroot = $CFG->wwwroot;
@@ -2496,14 +2504,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $title = format_string($title);    // fix for MDL-8582
     $title = str_replace('"', '&quot;', $title);
-
-    if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
-        $button = '<a href="'.$CFG->wwwroot.'/admin/maintenance.php">'.get_string('maintenancemode', 'admin').'</a> '.$button;
-        if(!empty($title)) {
-            $title .= ' - ';
-        }
-        $title .= get_string('maintenancemode', 'admin');
-    }
 
     // Create class and id for this page
 
