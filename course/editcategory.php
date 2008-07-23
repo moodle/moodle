@@ -20,15 +20,20 @@ $categoryedit   = optional_param('categoryedit', -1, PARAM_BOOL);    // Enables 
 $categoryadd    = optional_param('categoryadd', 0, PARAM_BOOL);  // Enables the Add Category form
 $categoryupdate = optional_param('categoryupdate', 0, PARAM_BOOL); // Enables the Edit Category form
 $resort         = optional_param('resort', 0, PARAM_BOOL);
+$parent         = optional_param('parent', 0, PARAM_INT );
 
 if (!$site = get_site()) {
     error("Site isn't defined!");
 }
 
-if ($categoryadd) { // Show Add category form: if $id is given, it is used as the parent category 
+if ($categoryadd and !$parent) { // Show Add category form: if $id is given, it is used as the parent category 
     $strtitle = get_string("addnewcategory");
     $context = get_context_instance(CONTEXT_SYSTEM);
     $category = null;
+} elseif ($categoryadd and $parent) {
+	$strtitle = get_string("addnewcategory");
+	$context = get_context_instance(CONTEXT_COURSECAT,$parent);
+	$category = null;
 } elseif (!is_null($id) && !$categoryadd) { // Show Edit category form: $id is given as the identifier of the category being edited
     $strtitle = get_string("editcategorysettings");
     $context = get_context_instance(CONTEXT_COURSECAT, $id); 
