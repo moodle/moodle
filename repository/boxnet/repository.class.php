@@ -114,7 +114,7 @@ class repository_boxnet extends repository{
                 $str .= '<br/>';
                 $str .= '<label for="box_password">Password: <label><br/>';
                 $str .= '<input type="password" id="box_password" name="password" /><br/>';
-                $str .= '<input type="button" onclick="dologin()" value="Go" />';
+                $str .= '<input type="button" onclick="repository_client.login()" value="Go" />';
                 $str .= '</form>';
                 if($this->options['ajax']){
                     $ret = array();

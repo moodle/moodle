@@ -68,7 +68,7 @@ class repository_flickr extends repository{
 <input type='text' name='flickrmail' id='account' />
 <input type='hidden' name='id' value='$this->repositoryid' /><br/>
 <input type='checkbox' name='remember' id="keepid" value='true' /> <label for="keepid">Remember? </label>
-<p><input type='button' onclick="dologin()" value="Go" /></p>
+<p><input type='button' onclick="repository_client.login()" value="Go" /></p>
 </form>
 EOD;
             if($ajax){
