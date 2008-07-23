@@ -46,6 +46,8 @@ class repository_flickr extends repository{
                     if(empty($action)) {
                         $action = 'list';
                     }
+                } else {
+                    throw new repository_exception('invalidemail', 'repository');
                 }
             } else {
                 if($account = get_user_preferences('flickrmail', '')){
@@ -108,7 +110,11 @@ EOD;
             $ret->list[] =
                 array('title'=>$p['title'],'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown');
         }
-        return $ret;
+        if(empty($ret)) {
+            throw new repository_exception('nullphotolist', 'repository');
+        } else {
+            return $ret;
+        }
     }
     public function print_listing(){
         if(empty($this->photos)){

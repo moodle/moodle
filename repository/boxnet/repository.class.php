@@ -30,8 +30,12 @@ class repository_boxnet extends repository{
                     && !empty($options['ticket']) )
         {
             $this->box = new boxclient($options['api_key']);
-            $SESSION->box_token = $this->box->getAuthToken($options['ticket'], 
-                $options['username'], $options['password']);
+            try{
+                $SESSION->box_token = $this->box->getAuthToken($options['ticket'], 
+                    $options['username'], $options['password']);
+            } catch (repository_exception $e) {
+                throw $e;
+            }
         }
         // already logged
         if(!empty($SESSION->box_token)) {
@@ -85,7 +89,7 @@ class repository_boxnet extends repository{
             $ret['list']   = $list;
             return $ret;
         } else {
-            return null;
+            throw new repository_exception('nullfilelist', 'repository');
         }
     }
 

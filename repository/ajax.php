@@ -91,7 +91,7 @@ var viewbar  = null;
 var viewmode = 0;
 var repos = [];
 <?php
-$repos = repository_get_repositories();
+$repos = repository_instances();
 foreach($repos as $repo) {
     echo 'repos.push('.json_encode($repo).')';
     echo "\n";
@@ -248,7 +248,9 @@ function download(){
     var title = document.getElementById('newname').value;
     var file = document.getElementById('fileurl').value;
     loading();
-    var trans = YAHOO.util.Connect.asyncRequest('POST', 'ws.php?id='+repositoryid+'&action=download', loadfile, postdata({'file':file, 'title':title}));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', 
+        'ws.php?id='+repositoryid+'&action=download', loadfile, 
+        postdata({'file':file, 'title':title}));
 }
 // produce thumbnail view
 function viewthumb(){
@@ -264,7 +266,10 @@ function viewthumb(){
         str += '<div class="t">';
         str += '<img title="'+obj[k].title+'" src="'+obj[k].thumbnail+'" />';
         str += '<div style="text-align:center">';
-        str += ('<input type="radio" title="'+obj[k].title+'" name="selected-files" value="'+obj[k].source+'" onclick=\'rename("'+obj[k].title+'", "'+obj[k].source+'")\' />');
+        str += ('<input type="radio" title="'+obj[k].title
+                +'" name="selected-files" value="'+obj[k].source
+                +'" onclick=\'rename("'+obj[k].title+'", "'
+                +obj[k].source+'")\' />');
         str += obj[k].title+'</div>';
         str += '</div>';
     }
@@ -318,10 +323,15 @@ function print_login(){
 
 var callback = {
 success: function(o) {
+    var panel = new YAHOO.util.Element('panel');
     try {
         var ret = YAHOO.lang.JSON.parse(o.responseText);
     } catch(e) {
         alert('Invalid JSON String\n'+o.responseText);
+    }
+    if(ret.e){
+        panel.get('element').innerHTML = ret.e;
+        return;
     }
     datasource = ret;
     if(datasource.l){
@@ -336,16 +346,21 @@ success: function(o) {
   }
 }
 var loadfile = {
-    success: function(o) {
-        try {
-            var ret = YAHOO.lang.JSON.parse(o.responseText);
-        } catch(e) {
-            alert('Invalid JSON String\n'+o.responseText);
-        }
-        var panel = new YAHOO.util.Element('panel');
-        var html = '<h1>Download Successfully!</h1>';
-        html += '<a href="###" onclick="viewfiles()">Back</a>';
-        panel.get('element').innerHTML = html;
+success: function(o) {
+    var panel = new YAHOO.util.Element('panel');
+    try {
+        var ret = YAHOO.lang.JSON.parse(o.responseText);
+    } catch(e) {
+        alert('Invalid JSON String\n'+o.responseText);
+    }
+    if(ret.e){
+        panel.get('element').innerHTML = ret.e;
+        return;
+    }
+    var panel = new YAHOO.util.Element('panel');
+    var html = '<h1>Download Successfully!</h1>';
+    html += '<a href="###" onclick="viewfiles()">Back</a>';
+    panel.get('element').innerHTML = html;
     }
 }
 

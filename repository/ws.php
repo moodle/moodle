@@ -2,9 +2,10 @@
 set_time_limit(0);
 require_once('../config.php');
 require_once('lib.php');
-$CFG->repository_cache_expire = 12000;
+// set one hour here
+$CFG->repository_cache_expire = 60*60;
 // repository id
-$id     = optional_param('id', PARAM_INT);
+$id     = optional_param('id', 1, PARAM_INT);
 // action of client
 $action = optional_param('action', '', PARAM_RAW);
 // Search text
@@ -15,27 +16,43 @@ $title = optional_param('title', '', PARAM_RAW);
 $p     = optional_param('p', '', PARAM_RAW);
 
 if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
-    echo json_encode('wrong');
-    die;
+    $err = new stdclass;
+    $err->e = get_string('invalidrepositoryid', 'repository');
+    die(json_encode($err));
 }
 
-if(is_file($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository.class.php')) {
-    require_once($CFG->dirroot.'/repository/'.$repository->repositorytype.'/repository.class.php');
+if(file_exists($CFG->dirroot.'/repository/'.
+    $repository->repositorytype.'/repository.class.php'))
+{
+    require_once($CFG->dirroot.'/repository/'.
+        $repository->repositorytype.'/repository.class.php');
     $classname = 'repository_' . $repository->repositorytype;
-    $repo = new $classname($id, SITEID, array('ajax'=>true));
+    try{
+        $repo = new $classname($id, SITEID, array('ajax'=>true));
+    } catch (repository_exception $e){
+        $err = new stdclass;
+        $err->e = $e->getMessage();
+        die(json_encode($err));
+    }
 } else {
-    print_error('invalidplugin', 'repository');
-    echo json_encode('invalidplugin');
-    die;
+    $err = new stdclass;
+    $err->e = get_string('invalidplugin', 'repository');
+    die(json_encode($err));
 }
 
 if($action == 'list') {
-    if(!empty($p)) {
-        echo json_encode($repo->get_listing($p));
-    } else if(!empty($search)) {
-        echo json_encode($repo->get_listing('', $search));
-    } else {
-        echo json_encode($repo->get_listing());
+    try {
+        if(!empty($p)) {
+            echo json_encode($repo->get_listing($p));
+        } else if(!empty($search)) {
+            echo json_encode($repo->get_listing('', $search));
+        } else {
+            echo json_encode($repo->get_listing());
+        }
+    } catch (repository_exception $e) {
+        $err = new stdclass;
+        $err->e = $e->getMessage();
+        die(json_encode($err));
     }
 
 } elseif($action == 'download') {
@@ -43,9 +60,21 @@ if($action == 'list') {
     // TODO
     // Need to communicate with FILE API
     // Copy the tmp file to final location
-    echo json_encode($ret);
+    try {
+        echo json_encode($ret);
+    } catch (repository_exception $e){
+        $err = new stdclass;
+        $err->e = $e->getMessage();
+        die(json_encode($err));
+    }
 } else {
-    echo json_encode($repo->print_login());
+    try {
+        echo json_encode($repo->print_login());
+    } catch (repository_exception $e){
+        $err = new stdclass;
+        $err->e = $e->getMessage();
+        die(json_encode($err));
+    }
 }
 
 ?>

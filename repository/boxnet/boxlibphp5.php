@@ -91,7 +91,7 @@ class boxclient {
         $ret = $c->post('http://www.box.net/api/1.0/auth/'.$ticket, $param);
         $header = $c->getResponse();
         if(empty($header['location'])) {
-            return false;
+            throw new repository_exception('invalidpassword', 'repository');
         }
         $location = $header['location'];
         preg_match('#auth_token=(.*)$#i', $location, $matches);
@@ -100,7 +100,7 @@ class boxclient {
             $this->auth_token = $auth_token;
             return $auth_token;
         } else {
-            return false;
+            throw new repository_exception('invalidtoken', 'repository');
         }
     }
 

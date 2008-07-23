@@ -241,6 +241,13 @@ abstract class repository {
     }
 }
 
+/**
+ * exception class for repository api
+ *
+ */
+
+class repository_exception extends moodle_exception {
+}
 
 /**
  * Listing object describing a listing of files and directories
@@ -272,7 +279,7 @@ function repository_get_option($id, $position){
     $ret = (array)unserialize($entry->$option);
     return $ret;
 }
-function repository_get_repositories(){
+function repository_instances(){
     global $DB, $CFG, $USER;
     $contextid = 0;
     $params = array();
