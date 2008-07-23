@@ -2493,10 +2493,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         $button = '&nbsp;';
     }
 
-    if (!$menu and $navigation) {
-        if (empty($CFG->loginhttps)) {
-            $wwwroot = $CFG->wwwroot;
-        } else {
     if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
         $button = '<a href="'.$CFG->wwwroot.'/admin/maintenance.php">'.get_string('maintenancemode', 'admin').'</a> '.$button;
         if(!empty($title)) {
@@ -2504,6 +2500,11 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
         }
         $title .= get_string('maintenancemode', 'admin');
     }
+
+    if (!$menu and $navigation) {
+        if (empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
+        } else {
 
             $wwwroot = str_replace('http:','https:',$CFG->wwwroot);
         }
