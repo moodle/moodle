@@ -391,7 +391,7 @@ function print_enrolmentkeyfrom($course) {
     $contactslisted = false;
     $canseehidden = has_capability('moodle/role:viewhiddenassigns', $context);
     if (!empty($CFG->enrol_manual_keyholderrole)) {
-        if ($contacts = get_role_users($CFG->enrol_manual_keyholderrole, get_context_instance(CONTEXT_COURSE, $course->id),$canseehidden  )) {
+        if ($contacts = get_role_users($CFG->enrol_manual_keyholderrole, get_context_instance(CONTEXT_COURSE, $course->id),true,'','u.lastname ASC',$canseehidden  )) {
             // guest user has a slightly different message
             if ($guest) {
                 print_string('enrolmentkeyfromguest', '', ':<br />' );
