@@ -140,6 +140,13 @@ $string['databasesettingssub_postgres7'] = '<b>Typ:</b> PostgreSQL<br />
 <b>User:</b> Ihr Anmeldename für die Datenbank<br />
 <b>Password:</b> Ihr Passwort für die Datenbank<br />
 <b>Tabellen-Prefix:</b> Prefix für alle Tabellen (notwendig)';
+$string['databasesettingssub_sqlite3_pdo'] = '<b>Typ:</b> SQLite 3 (PDO) <b><strong class=\"errormsg\">Experimentell! (nicht für produktive Server benutzen!!)</strong></b><br />
+<b>Host:</b> Pfad zum Verzeichnis, in dem die Datenbankdatei gespeichert werden soll (vollständiger Pfad); mit localhost oder einem leeren Feld wird dasdas Moodle Datenverzeichnis verwendet<br />
+<b>Name:</b> Datenbankname, z.B. moodle (optional)<br />
+<b>User:</b> Ihr Anmeldename für die Datenbank (optional)<br />
+<b>Password:</b> Ihr Passwort für die Datenbank (optional)<br />
+<b>Tabellen-Prefix:</b> optionaler Prefix für alle Tabellen<br />
+Der Name der Datenbankdatei wird über den Nutzernamen erkannt, der Datenbankname und das Passwort sind oben angegeben.';
 $string['databasesettingswillbecreated'] = '<b>Hinweis: </b> Das Installationsprogramm wird versuchen, automatisch eine Datenbank anzulegen, sofern diese noch nicht besteht.';
 $string['databasetype'] = 'Datenbank-Typ :';
 $string['databaseuser'] = 'Datenbank-Nutzer :';
@@ -329,6 +336,8 @@ $string['sitenewsitems'] = 'Anzahl neuer Nachrichten :';
 $string['siteshortname'] = 'Kurzname der Website :';
 $string['sitesummary'] = 'Beschreibung der Website :';
 $string['skipdbencodingtest'] = 'Prüfung der Datenbank-Verschlüsselung überspringen';
+$string['sqlite3_pdo'] = 'SQLite 3 (PDO) <b><strong class=\"errormsg\">Experimentell! (nicht für produktive Server benutzen!!)</strong></b>';
+$string['sqliteextensionisnotpresentinphp'] = 'PHP ist für die Erweiterung SQLite nicht richtig konfiguriert. Bitte prüfen Sie Ihre php.ini oder übersetzen Sie PHP neu.';
 $string['status'] = 'Status';
 $string['tableprefix'] = 'Tabellen-Prefix :';
 $string['thischarset'] = 'UTF-8';
