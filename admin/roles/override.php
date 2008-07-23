@@ -20,7 +20,9 @@
         error('Can not override base role capabilities');
     }
 
-    if (!has_capability('moodle/role:override', $context)) {
+    $canoverride = has_capability('moodle/role:override', $context);
+
+    if (!$canoverride and !has_capability('moodle/role:safeoverride', $context)) {
         error('You do not have permission to change overrides in this context!');
     }
 
@@ -61,7 +63,7 @@
 /// Make sure this user can override that role
 
     if ($roleid) {
-        if (!user_can_override($context, $roleid)) {
+        if (!isset($overridableroles[$roleid])) {
             error ('you can not override this role in this context');
         }
     }
@@ -72,7 +74,30 @@
     }
 
 /// get all cababilities
-    $capabilities = fetch_context_capabilities($context);
+    $safeoverridenotice = false;
+    if ($roleid) {
+        if ($capabilities = fetch_context_capabilities($context)) {
+            // find out if we need to lock some capabilities
+            foreach ($capabilities as $capname=>$capability) {
+                $capabilities[$capname]->locked = false;
+                if ($canoverride) {
+                    //ok no locking at all
+                    continue;
+                }
+                //only limited safe overrides - spam only allowed
+                if ((RISK_DATALOSS & (int)$capability->riskbitmask)
+                 or (RISK_MANAGETRUST & (int)$capability->riskbitmask)
+                 or (RISK_CONFIG & (int)$capability->riskbitmask)
+                 or (RISK_XSS & (int)$capability->riskbitmask)
+                 or (RISK_PERSONAL & (int)$capability->riskbitmask)) {
+                    $capabilities[$capname]->locked = true;
+                    $safeoverridenotice = true;
+                }
+            }
+        }
+    } else {
+        $capabilities = null;
+    }
 
 /// Process incoming role override
     if ($data = data_submitted() and $roleid and confirm_sesskey()) {
@@ -82,6 +107,10 @@
                                              '', 'capability, permission, id');
 
         foreach ($capabilities as $cap) {
+            if ($cap->locked) {
+                //user not allowed to change this cap
+                continue;
+            }
 
             if (!isset($data->{$cap->name})) {
                 //cap not specified in form
@@ -179,7 +208,7 @@
         if (!empty($capabilities)) {
             // Print the capabilities overrideable in this context
             print_simple_box_start('center');
-            include_once('override.html');
+            include('override.html');
             print_simple_box_end();
 
         } else {

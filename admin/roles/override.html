@@ -3,6 +3,7 @@
     $strallow = get_string('allow','role');
     $strprevent = get_string('prevent','role');
     $strprohibit = get_string('prohibit','role');
+    $strsafewarning = get_string('safeoverridenotice', 'role');
 ?>
 
 <form id="overrideform" action="override.php" method="post">
@@ -67,7 +68,7 @@
                 $isprohibit = 0;
             }
 
-            $isdisabled = $isprohibit;
+            $isdisabled = $isprohibit || $capability->locked;
 
             $riskinfo = '<td class="risk managetrust">';
             $rowclasses = '';
@@ -138,10 +139,17 @@
             <?php echo $riskinfo; ?>
         </tr>
 
-        <?php } ?>
+        <?php }  ?>
     </table>
     <div class="submit buttons">
         <input type="submit" value="<?php print_string('savechanges') ?>" />
         <input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
     </div>
+
+    <?php
+    if ($safeoverridenotice) {
+        echo '<div class="sefeoverridenotice">'.$strsafewarning.'</div>';
+    }
+    ?> 
+
 </form>
