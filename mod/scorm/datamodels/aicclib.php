@@ -282,6 +282,11 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                                 $scodata->value = $element->mastery_score;
                                 $dataid = $DB->insert_record('scorm_scoes_data',$scodata);
                             }
+                            if (isset($element->core_vendor)) {
+                                $scodata->name = 'datafromlms';
+                                $scodata->value = eregi_replace('<cr>', "\r\n", $element->core_vendor);
+                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                            }
                         }
                         if ($launch==0) {
                             $launch = $id;
