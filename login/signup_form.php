@@ -62,10 +62,10 @@ class login_signup_form extends moodleform {
         }else{
             $mform->setDefault('country', '');
         }
-        
+
         if (signup_captcha_enabled()) {
             $mform->addElement('recaptcha', 'recaptcha_element', get_string('recaptcha', 'auth'), array('https' => $CFG->loginhttps));
-            $mform->setHelpButton('recaptcha_element', array('recaptcha', get_string('recaptcha', 'auth'))); 
+            $mform->setHelpButton('recaptcha_element', array('recaptcha', get_string('recaptcha', 'auth')));
         }
 
         profile_signup_fields($mform);
@@ -136,13 +136,17 @@ class login_signup_form extends moodleform {
         if (!check_password_policy($data['password'], $errmsg)) {
             $errors['password'] = $errmsg;
         }
-        
+
         if (signup_captcha_enabled()) {
-            $recaptcha_element = $this->_form->getElement('recaptcha_element'); 
-            $challenge_field = $this->_form->_submitValues['recaptcha_challenge_field'];
-            $response_field = $this->_form->_submitValues['recaptcha_response_field'];
-            if (true !== ($result = $recaptcha_element->verify($challenge_field, $response_field))) {
-                $errors['recaptcha'] = $result;
+            $recaptcha_element = $this->_form->getElement('recaptcha_element');
+            if (!empty($this->_form->_submitValues['recaptcha_challenge_field'])) {
+                $challenge_field = $this->_form->_submitValues['recaptcha_challenge_field'];
+                $response_field = $this->_form->_submitValues['recaptcha_response_field'];
+                if (true !== ($result = $recaptcha_element->verify($challenge_field, $response_field))) {
+                    $errors['recaptcha'] = $result;
+                }
+            } else {
+                $errors['recaptcha'] = get_string('missingrecaptchachallengefield');
             }
         }
 

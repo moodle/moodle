@@ -942,6 +942,7 @@ $string['missinglastname'] = 'Missing surname';
 $string['missingname'] = 'Missing name';
 $string['missingnewpassword'] = 'Missing new password';
 $string['missingpassword'] = 'Missing password';
+$string['missingrecaptchachallengefield'] = 'Missing reCAPTCHA challenge field';
 $string['missingreqreason'] = 'Missing reason';
 $string['missingshortname'] = 'Missing short name';
 $string['missingshortsitename'] = 'Missing short site name';
@@ -1175,8 +1176,8 @@ $string['phone2'] = 'Mobile Phone';
 $string['phpinfo'] = 'PHP info';
 $string['pleaseclose'] = 'Please close this window now.';
 $string['plugincheck'] = 'Plugins check';
-$string['pluginchecknotice'] = 'The following tables show the modules, blocks and filters that have been detected in your current Moodle installation; 
-They indicate which plugins are standard, and which are not. All non-standard plugins should be checked and upgraded to their most recent versions 
+$string['pluginchecknotice'] = 'The following tables show the modules, blocks and filters that have been detected in your current Moodle installation;
+They indicate which plugins are standard, and which are not. All non-standard plugins should be checked and upgraded to their most recent versions
 before continuing with this Moodle upgrade.';
 $string['pluginsetup'] = 'Setting up plugin tables';
 $string['policyaccept'] = 'I understand and agree';
