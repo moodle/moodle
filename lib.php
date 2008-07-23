@@ -1,4 +1,4 @@
-<?PHP // $Id: lib.php,v 1.3 2008/07/22 14:40:38 skodak Exp $
+<?PHP // $Id: lib.php,v 1.4 2008/07/23 14:03:49 skodak Exp $
 
 define('NUM_NONE',     '0');
 define('NUM_NUMBERS',  '1');
@@ -160,13 +160,13 @@ function book_scale_used ($bookid,$scaleid) {
 }
 
 /**
- * Checks if scale is being used by any instance of journal
+ * Checks if scale is being used by any instance of book
  *
  * This is used to find out if scale used anywhere
  * @param $scaleid int
  * @return boolean True if the scale is used by any journal
  */
-function journal_scale_used_anywhere($scaleid) {
+function book_scale_used_anywhere($scaleid) {
     return false;
 }
 //////////////////////////////////////////////////////////////////////////////////////
