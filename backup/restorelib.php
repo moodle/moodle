@@ -801,7 +801,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
                 $newpage = page_create_object(PAGE_COURSE_VIEW, $restore->course_id);
                 blocks_repopulate_page($newpage);
-            } else if (!empty($CFG->showblocksonmodpages)) {
+            } else {
                 // We just have a blockinfo field, this is a legacy 1.4 or 1.3 backup
                 $blockrecords = $DB->get_records('block', null, '', 'name, id');
                 $temp_blocks_l = array();
