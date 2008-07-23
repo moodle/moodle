@@ -946,6 +946,7 @@ $string['missinglastname'] = 'Missing surname';
 $string['missingname'] = 'Missing name';
 $string['missingnewpassword'] = 'Missing new password';
 $string['missingpassword'] = 'Missing password';
+$string['missingrecaptchachallengefield'] = 'Missing reCAPTCHA challenge field';
 $string['missingreqreason'] = 'Missing reason';
 $string['missingshortname'] = 'Missing short name';
 $string['missingshortsitename'] = 'Missing short site name';
