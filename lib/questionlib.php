@@ -1509,7 +1509,7 @@ function get_question_image($question) {
 
         } else {
             require_once($CFG->libdir .'/filelib.php');
-            $img = get_file_url("$courseid/{$question->image}");
+            $img = get_file_url("$coursefilesdir/{$question->image}");
         }      
     }
     return $img;
