@@ -67,6 +67,7 @@ if (!$user = $DB->get_record('user', array('id' => $userid))) {
 
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
 $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+$coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
 
 
 // check access control
@@ -195,16 +196,22 @@ if ($messageconf = $userform->get_data()) {
 $streditmymessage = get_string('editmymessage', 'message');
 $strparticipants  = get_string('participants');
 $userfullname     = fullname($user, true);
+
+$navlinks = array();
+if (has_capability('moodle/course:viewparticipants', $coursecontext) || 
+    has_capability('moodle/site:viewparticipants', $systemcontext)) {
+    $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+}
+$navlinks[] = array('name' => $userfullname,
+                    'link' => "view.php?id=$user->id&amp;course=$course->id",
+                    'type' => 'misc');
+$navlinks[] = array('name' => $streditmymessage, 'link' => null, 'type' => 'misc');
+$navigation = build_navigation($navlinks);
+
 if ($course->id != SITEID) {
-    print_header("$course->shortname: $streditmymessage", "$course->fullname: $streditmessage",
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
-                  -> <a href=\"index.php?id=$course->id\">$strparticipants</a>
-                  -> <a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
-                  -> $streditmymessage", "");
+    print_header("$course->shortname: $streditmymessage", "$course->fullname: $streditmessage", $navigation);
 } else {
-    print_header("$course->shortname: $streditmymessage", $course->fullname,
-                 "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
-                  -> $streditmymessage", "");
+    print_header("$course->shortname: $streditmymessage", $course->fullname, $navigation);
 }
 /// Print tabs at the top
 $showroles = 1;
