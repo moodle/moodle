@@ -13,6 +13,7 @@ class qstats{
     function qstats($questions, $s, $sumgradesavg){
         $this->s = $s;
         $this->sumgradesavg = $sumgradesavg;
+        
         foreach (array_keys($questions) as $qid){
             $questions[$qid]->_stats = $this->stats_init_object();
         }
@@ -27,13 +28,16 @@ class qstats{
         $statsinit->othergradevariancesum = 0;
         $statsinit->covariancesum = 0;
         $statsinit->covariancemaxsum = 0;
+        $statsinit->subquestion = false;
+        $statsinit->subquestions = '';
         $statsinit->covariancewithoverallgradesum = 0;
         $statsinit->gradearray = array();
         $statsinit->othergradesarray = array();
         return $statsinit;
     }
-    function get_records($fromqa, $whereqa, $usingattempts, $qaparams){
+    function get_records($quizid, $currentgroup, $groupstudents, $allattempts){
         global $DB;
+        list($fromqa, $whereqa, $qaparams) = quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $allattempts);
         $sql = 'SELECT qs.id, ' .
             'qs.question, ' .
             'qa.sumgrades, ' .
@@ -45,7 +49,6 @@ class qstats{
             $fromqa.' '.
             'WHERE ' .$whereqa.
             'AND qns.attemptid = qa.uniqueid '.
-            $usingattempts.
             'AND qns.newgraded = qs.id';
         $this->states = $DB->get_records_sql($sql, $qaparams);
         if ($this->states === false){
@@ -103,12 +106,12 @@ class qstats{
             $stats->discriminationindex = 100*$stats->covariance 
                         / sqrt($stats->gradevariance * $stats->othergradevariance);
         } else {
-            $stats->discriminationindex = '';
+            $stats->discriminationindex = null;
         }
         if ($stats->covariancemax){
             $stats->discriminativeefficiency = 100*$stats->covariance / $stats->covariancemax;
         } else {
-            $stats->discriminativeefficiency = '';
+            $stats->discriminativeefficiency = null;
         }
     }
     
@@ -121,6 +124,7 @@ class qstats{
                     if (!isset($subquestionstats[$itemid])){
                         $subquestionstats[$itemid] = $this->stats_init_object();
                         $subquestionstats[$itemid]->usedin = array();
+                        $subquestionstats[$itemid]->subquestion = true;
                         $subquestionstats[$itemid]->differentweights = false;
                         $subquestionstats[$itemid]->maxgrade = $this->questions[$state->question]->maxgrade;
                     } else if ($subquestionstats[$itemid]->maxgrade != $this->questions[$state->question]->maxgrade){
@@ -142,17 +146,32 @@ class qstats{
         $this->subquestions = question_load_questions(array_keys($subquestionstats));
         foreach (array_keys($this->subquestions) as $qid){
             $this->subquestions[$qid]->_stats = $subquestionstats[$qid];
+            $this->subquestions[$qid]->_stats->questionid = $qid;
             $this->subquestions[$qid]->maxgrade = $this->subquestions[$qid]->_stats->maxgrade;
-            $this->subquestions[$qid]->subquestion = true;
             $this->_initial_question_walker($this->subquestions[$qid]->_stats, $this->subquestions[$qid]->_stats->maxgrade);
             if ($subquestionstats[$qid]->differentweights){
                 notify(get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $this->subquestions[$qid]->name));
             }
         }
-        foreach (array_keys($this->questions) as $qid){
+        reset($this->questions);
+        do{
+            list($qid, $question) = each($this->questions);
+            $nextquestion = current($this->questions);
+            $this->questions[$qid]->_stats->questionid = $qid;
             $this->_initial_question_walker($this->questions[$qid]->_stats, $this->questions[$qid]->maxgrade);
-            $this->questions[$qid]->subquestion = false;
-        }
+            if ($question->qtype == 'random'){
+                $randomselectorstring = $question->category.'/'.$question->questiontext;
+                if ($nextquestion){
+                    $nextrandomselectorstring = $nextquestion->category.'/'.$nextquestion->questiontext;
+                    if ($nextquestion->qtype == 'random' && $randomselectorstring == $nextrandomselectorstring){
+                        continue;//next loop iteration
+                    }
+                }
+                if (isset($this->randomselectors[$randomselectorstring])){
+                    $question->_stats->subquestions = join($this->randomselectors[$randomselectorstring], ',');
+                }
+            }
+        } while ($nextquestion);
         //go through the records one more time
         foreach ($this->states as $state){
             $this->_secondary_states_walker($state, $this->questions[$state->question]->_stats);

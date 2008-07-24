@@ -43,7 +43,7 @@ class quiz_report_statistics_table extends flexible_table {
             $headers[]= get_string('facility', 'quiz_statistics');
             
             $columns[]= 'sd';
-            $headers[]= get_string('standarddeviation', 'quiz_statistics');
+            $headers[]= get_string('standarddeviationq', 'quiz_statistics');
         }
         $columns[]= 'random_guess_score';
         $headers[]= get_string('random_guess_score', 'quiz_statistics');
@@ -108,7 +108,7 @@ class quiz_report_statistics_table extends flexible_table {
     }
     
     function col_number($question){
-        if (!$question->subquestion){
+        if (!$question->_stats->subquestion){
             return $question->number;
         } else {
             return '';
@@ -124,7 +124,7 @@ class quiz_report_statistics_table extends flexible_table {
         return quiz_report_scale_sumgrades_as_percentage($question->maxgrade, $this->quiz);
     }
     function col_effective_weight($question){
-        if (!$question->subquestion){
+        if (!$question->_stats->subquestion){
             return number_format($question->_stats->effectiveweight, 2).' %';
         } else {
             return '';
