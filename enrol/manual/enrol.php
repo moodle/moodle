@@ -23,6 +23,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once($CFG->dirroot.'/group/lib.php');
+require_once($CFG->libdir.'/eventslib.php');
 
 /**
 * enrolment_plugin_manual is the default enrolment plugin
@@ -313,8 +314,20 @@ function cron() {
                             $strexpirynotifystudentsemail = get_string('expirynotifystudentsemail', '', $a);
                             $strexpirynotify              = get_string('expirynotify');
 
+                            $eventdata = new object();
+                            $eventdata->modulename        = 'moodle';
+                            $eventdata->userfrom          = $teacher;
+                            $eventdata->userto            = $user;
+                            $eventdata->subject           = format_string($SITE->fullname) .' '. $strexpirynotify;
+                            $eventdata->fullmessage       = $strexpirynotifystudentsemail;
+                            $eventdata->fullmessageformat = FORMAT_PLAIN;
+                            $eventdata->fullmessagehtml   = '';
+                            $eventdata->smallmessage      = '';			    
+                            events_trigger('message_send', $eventdata);
+                            /*
                             email_to_user($user, $teacher, format_string($SITE->fullname) .' '. $strexpirynotify,
                                           $strexpirynotifystudentsemail);
+                            */
                         }
                     }
                 }
@@ -331,7 +344,20 @@ function cron() {
                         $strexpirynotifyemail = get_string('expirynotifyemail', '', $a);
                         $strexpirynotify      = get_string('expirynotify');
 
+                        $eventdata = new object();
+                        $eventdata->modulename        = 'moodle';
+                        $eventdata->userfrom          = $admin;
+                        $eventdata->userto            = $teacher;
+                        $eventdata->subject           = $a->coursename .' '. $strexpirynotify;
+                        $eventdata->fullmessage       = $strexpirynotifyemail;
+                        $eventdata->fullmessageformat = FORMAT_PLAIN;
+                        $eventdata->fullmessagehtml   = '';
+                        $eventdata->smallmessage      = '';			    
+                        events_trigger('message_send', $eventdata);
+
+                        /*
                         email_to_user($teacher, $admin, $a->coursename .' '. $strexpirynotify, $strexpirynotifyemail);
+                        */
                     }
                 }
             }

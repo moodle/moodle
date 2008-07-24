@@ -6,6 +6,7 @@
 */
 require_once("$CFG->libdir/blocklib.php");
 require_once($CFG->dirroot.'/group/lib.php');
+require_once($CFG->libdir.'/eventslib.php');
 
 // The following flags are set in the configuration
 // $CFG->enrol_imsfilelocation:        where is the file we are looking for?
@@ -380,8 +381,21 @@ function cron() {
         }else{
             $msg .= "Logging is currently not active.";
         }
+        
+        $eventdata = new object();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->userfrom          = get_admin();
+        $eventdata->userto            = get_admin();
+        $eventdata->subject           = "Moodle IMS Enterprise enrolment notification";
+        $eventdata->fullmessage       = $msg;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';			    
+        events_trigger('message_send', $eventdata);
 
+        /*
         email_to_user(get_admin(), get_admin(), "Moodle IMS Enterprise enrolment notification", $msg);
+        */
         $this->log_line('Notification email sent to administrator.');
 
     }

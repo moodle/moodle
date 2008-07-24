@@ -1,6 +1,7 @@
 <?PHP // $Id$
 
     require('../config.php');
+    require_once($CFG->libdir.'/eventslib.php');
 
     if ($form = data_submitted()) { // form submitted, do not check referer (original page unknown)!
 
@@ -20,8 +21,21 @@
         $supportuser->lastname = $CFG->supportname ? '' : $admin->lastname;
         $supportuser->maildisplay = true;
 
-    /// Send the email and redirect
+    /// Send the message and redirect
+        $eventdata = new object();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->userfrom          = $USER;
+        $eventdata->userto            = $supportuser;
+        $eventdata->subject           = 'Error: '. $form->referer .' -> '. $form->requested;
+        $eventdata->fullmessage       = $form->text;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';			    
+        events_trigger('message_send', $eventdata);
+
+    /*
         email_to_user($supportuser, $USER, 'Error: '. $form->referer .' -> '. $form->requested, $form->text);
+    */
 
         redirect($CFG->wwwroot .'/course/', 'Message sent, thanks', 3);
         exit;

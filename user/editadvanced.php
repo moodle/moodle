@@ -100,6 +100,7 @@
                 print_error('cannotcreateuser');
             }
             $usercreated = true;
+            
         } else {
             if (!$DB->update_record('user', $usernew)) {
                 print_error('cannotupdateuser');
@@ -146,9 +147,20 @@
 
         // reload from db
         $usernew = $DB->get_record('user', array('id'=>$usernew->id));
-
+        
         // trigger events
         if ($usercreated) {
+            //add default preferences for the messageprocessors (by default all users get email)
+            $providers = $DB->get_records('message_providers');
+            $preferences = array();
+            foreach ( $providers as $providerid => $provider){
+                $preferences[ 'message_provider_'.$provider->modulename.'_loggedin'  ] = 'popup';
+                $preferences[ 'message_provider_'.$provider->modulename.'_loggedoff'  ] = 'email';
+            }    
+            if (!set_user_preferences( $preferences, $usernew->id ) ){
+                print_error('Error updating user message preferences');
+            }
+        
             events_trigger('user_created', $usernew);
         } else {
             events_trigger('user_updated', $usernew);
@@ -167,7 +179,7 @@
                 redirect("$CFG->wwwroot/$CFG->admin/");
             } else {
                 redirect("$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id");
-            }
+            }            
         } else {
             redirect("$CFG->wwwroot/$CFG->admin/user.php");
         }

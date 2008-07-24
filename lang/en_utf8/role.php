@@ -189,4 +189,9 @@ $string['course:viewcoursegrades'] = 'View course grades';
 $string['user:viewusergrades'] = 'View user grades';
 $string['course:managegrades'] = 'Manage grades';
 
+//LUIS: new message system
+$string['user:editmessageprofile'] = 'Edit user messaging profile';
+$string['user:editownmessageprofile'] = 'Edit own user messaging profile';
+
+
 ?>

@@ -6,6 +6,8 @@
  * php -d error_log=/path/to/log thisfile.php will override the default error log for php cli, which is stderr, so if you want this script to just print stuff out, use php thisfile.php instead.
  */
 
+require_once($CFG->libdir.'/eventslib.php');
+
 
 $fd = fopen('php://stdin','r');
 if (!$fd) {
@@ -59,7 +61,22 @@ function notify_user($user,$subject,$a) {
         return false;
     }
     $body = get_string('virusfoundlater','moodle',$a);
+
+    $eventdata = new object();
+    $eventdata->modulename        = 'moodle';
+    $eventdata->userfrom          = get_admin();
+    $eventdata->userto            = $user;
+    $eventdata->subject           = $subject;
+    $eventdata->fullmessage       = $body;
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml   = '';
+    $eventdata->smallmessage      = '';
+    events_trigger('message_send', $eventdata);
+
+
+    /*
     email_to_user($user,get_admin(),$subject,$body);
+    */
 }
 
 
@@ -69,7 +86,20 @@ function notify_admins($user,$subject,$a) {
 
     $body = get_string('virusfoundlateradmin','moodle',$a);
     foreach ($admins as $admin) {
+        $eventdata = new object();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->userfrom          = $admin;
+        $eventdata->userto            = $admin;
+        $eventdata->subject           = $subject;
+        $eventdata->fullmessage       = $body;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';			    
+        events_trigger('message_send', $eventdata);
+
+        /*
         email_to_user($admin,$admin,$subject,$body);
+        */
     }
 }
 
@@ -81,7 +111,20 @@ function notify_admins_unknown($file,$a) {
     $subject = get_string('virusfoundsubject','moodle',format_string($site->fullname));
     $body = get_string('virusfoundlateradminnolog','moodle',$a);
     foreach ($admins as $admin) {
+        $eventdata = new object();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->userfrom          = $admin;
+        $eventdata->userto            = $admin;
+        $eventdata->subject           = $subject;
+        $eventdata->fullmessage       = $body;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';
+        events_trigger('message_send', $eventdata);
+    
+        /*
         email_to_user($admin,$admin,$subject,$body);
+        */
     }
 }
 

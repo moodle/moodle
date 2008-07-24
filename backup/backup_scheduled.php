@@ -1,5 +1,7 @@
 <?php //$Id$
     //This file contains all the code needed to execute scheduled backups
+    
+require_once($CFG->libdir.'/eventslib.php');    
 
 //This function is executed via moodle cron
 //It prepares all the info and execute backups as necessary
@@ -195,7 +197,20 @@ function schedule_backup_cron() {
         $subject = $prefix.get_string("scheduledbackupstatus");
 
         //Send the message
+        $eventdata = new object();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->userfrom          = $admin;
+        $eventdata->userto            = $admin;
+        $eventdata->subject           = $subject;
+        $eventdata->fullmessage       = $message;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';
+        events_trigger('message_send', $eventdata);
+
+        /*
         email_to_user($admin,$admin,$subject,$message);
+        */
     }
 
 

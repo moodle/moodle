@@ -1,6 +1,7 @@
 <?php  // $Id$
 
 require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->libdir.'/eventslib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
@@ -27,6 +28,20 @@ define ('FORUM_AGGREGATE_MIN', 4);
 define ('FORUM_AGGREGATE_SUM', 5);
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
+
+/** 
+ * Code to be executed when a module is installed
+ * now is just used to register the module as message provider
+ */ 
+function forum_install() {
+    $eventdata = new object();
+    $eventdata->modulename = 'forum';
+    $eventdata->modulefile = 'mod/forum/index.php';
+    events_trigger('message_provider_register', $eventdata); 
+
+    return true; 
+}
+
 
 /**
  * Given an object containing all the necessary data,
@@ -446,9 +461,21 @@ function forum_cron() {
                 // Send the post now!
 
                 mtrace('Sending ', '');
-
+                /*
                 if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
                                                  $posthtml, '', '', $CFG->forum_replytouser)) {
+                */
+                $eventdata = new object();
+                $eventdata->modulename       = 'forum';
+                $eventdata->userfrom         = $userfrom;
+                $eventdata->userto           = $userto;
+                $eventdata->subject          = $postsubject;
+                $eventdata->fullmessage      = $posttext;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml  = $posthtml;
+                $eventdata->smallmessage     = '';
+                if ( events_trigger('message_send', $eventdata) > 0){
+
                     mtrace("Error: mod/forum/cron.php: Could not send out mail for id $post->id to user $userto->id".
                          " ($userto->email) .. not trying again.");
                     add_to_log($course->id, 'forum', 'mail error', "discuss.php?d=$discussion->id#p$post->id",
@@ -734,8 +761,20 @@ function forum_cron() {
                     $posthtml = '';
                 }
 
+                /*
                 if (!$mailresult =  email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml,
                                                   '', '', $CFG->forum_replytouser)) {
+                */
+                $eventdata = new object();
+                $eventdata->modulename       = 'forum';
+                $eventdata->userfrom         = $site->shortname;
+                $eventdata->userto           = $userto;
+                $eventdata->subject          = $postsubject;
+                $eventdata->fullmessage      = $posttext;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml  = $posthtml;
+                $eventdata->smallmessage     = '';
+                if ( events_trigger('message_send', $eventdata) > 0){
                     mtrace("ERROR!");
                     echo "Error: mod/forum/cron.php: Could not send out digest mail to user $userto->id ($userto->email)... not trying again.\n";
                     add_to_log($course->id, 'forum', 'mail digest error', '', '', $cm->id, $userto->id);

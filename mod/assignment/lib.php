@@ -5,6 +5,8 @@
  * This class provides all the functionality for an assignment
  */
 
+require_once($CFG->libdir.'/eventslib.php');
+
 DEFINE ('ASSIGNMENT_COUNT_WORDS', 1);
 DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
 
@@ -1579,7 +1581,21 @@ class assignment_base {
                 $posttext = $this->email_teachers_text($info);
                 $posthtml = ($teacher->mailformat == 1) ? $this->email_teachers_html($info) : '';
 
+                $eventdata = new object();
+                $eventdata->modulename       = 'assignment';
+                $eventdata->userfrom         = $user;
+                $eventdata->userto           = $teacher;
+                $eventdata->subject          = $postsubject;
+                $eventdata->fullmessage      = $posttext;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml  = $posthtml;
+                $eventdata->smallmessage     = '';
+                if ( events_trigger('message_send', $eventdata) > 0 ){
+                }
+
+                /*
                 @email_to_user($teacher, $user, $postsubject, $posttext, $posthtml);  // If it fails, oh well, too bad.
+                */
             }
         }
     }
@@ -1932,6 +1948,19 @@ class assignment_base {
 
 /// OTHER STANDARD FUNCTIONS ////////////////////////////////////////////////////////
 
+/** 
+ * Code to be executed when a module is installed
+ * now is just used to register the module as message provider
+ */ 
+function assignment_install() {
+    $eventdata = new object();
+    $eventdata->modulename = 'assignment';
+    $eventdata->modulefile = 'mod/assignment/index.php';
+    events_trigger('message_provider_register', $eventdata); 
+   
+    return true; 
+}
+
 /**
  * Deletes an assignment instance
  *
@@ -2125,9 +2154,24 @@ function assignment_cron () {
                 $posthtml = "";
             }
 
+            $eventdata = new object();
+            $eventdata->modulename       = 'assignment';
+            $eventdata->userfrom         = $teacher;
+            $eventdata->userto           = $user;
+            $eventdata->subject          = $postsubject;
+            $eventdata->fullmessage      = $posttext;
+            $eventdata->fullmessageformat = FORMAT_PLAIN;
+            $eventdata->fullmessagehtml  = $posthtml;
+            $eventdata->smallmessage     = '';
+            if ( events_trigger('message_send', $eventdata) > 0 ){
+                echo "Error: assignment cron: Could not send out mail for id $submission->id to user $user->id ($user->email)\n";
+            }
+
+            /*
             if (! email_to_user($user, $teacher, $postsubject, $posttext, $posthtml)) {
                 echo "Error: assignment cron: Could not send out mail for id $submission->id to user $user->id ($user->email)\n";
             }
+            */
         }
 
         $USER = $realuser;

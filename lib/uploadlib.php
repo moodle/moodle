@@ -9,6 +9,8 @@
  * @package moodlecore
  */
 
+require_once($CFG->libdir.'/eventslib.php');
+
 //error_reporting(E_ALL ^ E_NOTICE);
 /**
  * This class handles all aspects of fileuploading
@@ -642,7 +644,7 @@ function clam_scan_moodle_file(&$file, $course) {
             $notice .= "\n". clam_handle_infected_file($fullpath);
             $newreturn = false; 
         }
-        clam_mail_admins($notice);
+        clam_message_admins($notice);
         if ($appendlog) {
             $file['uploadlog'] .= "\n". get_string('clambroken');
             $file['clam'] = 1;
@@ -673,7 +675,7 @@ function clam_scan_moodle_file(&$file, $course) {
         $notice = get_string('virusfound', 'moodle', $info);
         $notice .= "\n\n". implode("\n", $output);
         $notice .= "\n\n". clam_handle_infected_file($fullpath); 
-        clam_mail_admins($notice);
+        clam_message_admins($notice);
         if ($appendlog) {
             $info->filename = $file['originalname'];
             $file['uploadlog'] .= "\n". get_string('virusfounduser', 'moodle', $info);
@@ -689,7 +691,7 @@ function clam_scan_moodle_file(&$file, $course) {
             $notice .= "\n". clam_handle_infected_file($fullpath);
             $newreturn = false;
         }
-        clam_mail_admins($notice);
+        clam_message_admins($notice);
         if ($appendlog) {
             $file['uploadlog'] .= "\n". get_string('clambroken');
             $file['clam'] = 1;
@@ -703,14 +705,27 @@ function clam_scan_moodle_file(&$file, $course) {
  *
  * @param string $notice The body of the email to be sent.
  */
-function clam_mail_admins($notice) {
+function clam_message_admins($notice) {
     
     $site = get_site();
         
     $subject = get_string('clamemailsubject', 'moodle', format_string($site->fullname));
     $admins = get_admins();
     foreach ($admins as $admin) {
+        $eventdata = new object();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->userfrom          = get_admin();
+        $eventdata->userto            = $admin;
+        $eventdata->subject           = $subject;
+        $eventdata->fullmessage       = $notice;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';
+        events_trigger('message_send', $eventdata);
+
+        /*
         email_to_user($admin, get_admin(), $subject, $notice);
+        */
     }
 }
 

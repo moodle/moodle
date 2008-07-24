@@ -238,6 +238,12 @@
             }
         }
     }
+    
+///added a new messaging tab
+    if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
+        $toprow[] = new tabobject('editmessage', $wwwroot.'/message/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmymessage', 'message'));
+    }
+
 /// Add second row to display if there is one
 
     if (!empty($secondrow)) {

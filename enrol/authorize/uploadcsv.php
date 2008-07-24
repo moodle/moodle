@@ -5,6 +5,7 @@
     require_once($CFG->libdir.'/uploadlib.php');
     require_once($CFG->dirroot.'/enrol/authorize/const.php');
     require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
+    require_once($CFG->libdir.'/eventslib.php');
 
 /// Require capabilites
     require_login();
@@ -224,7 +225,21 @@ function authorize_process_csv($filename)
 /// Send email to admin
     if (!empty($ignoredlines)) {
         $admin = get_admin();
+        
+        $eventdata = new object();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->userfrom          = $admin;
+        $eventdata->userto            = $admin;
+        $eventdata->subject           = "$SITE->fullname: Authorize.net CSV ERROR LOG";
+        $eventdata->fullmessage       = $ignoredlines;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';			    
+        events_trigger('message_send', $eventdata);
+
+        /*
         email_to_user($admin, $admin, "$SITE->fullname: Authorize.net CSV ERROR LOG", $ignoredlines);
+        */
     }
 
 /// Send welcome messages to users

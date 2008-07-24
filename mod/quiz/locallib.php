@@ -27,6 +27,7 @@ require_once($CFG->dirroot . '/mod/quiz/lib.php');
 require_once($CFG->dirroot . '/mod/quiz/accessrules.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 require_once($CFG->dirroot . '/mod/quiz/attemptlib.php');
+require_once($CFG->libdir  . '/eventslib.php');
 
 /// Constants ///////////////////////////////////////////////////////////////////
 
@@ -927,7 +928,20 @@ function quiz_send_confirmation($a) {
     $body = get_string('emailconfirmbody', 'quiz', $a);
 
     // send email and analyse result
+    $eventdata = new object();
+    $eventdata->modulename        = 'quiz';
+    $eventdata->userfrom          = get_admin();
+    $eventdata->userto            = $USER;
+    $eventdata->subject           = $subject;
+    $eventdata->fullmessage       = $body;
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml   = '';
+    $eventdata->smallmessage      = '';
+    return (events_trigger('message_send', $eventdata) == 0);
+
+    /*
     return email_to_user($USER, get_admin(), $subject, $body);
+    */
 }
 
 /**
@@ -952,7 +966,20 @@ function quiz_send_notification($recipient, $a) {
     $body = get_string('emailnotifybody', 'quiz', $a);
 
     // send email and analyse result
+    $eventdata = new object();
+    $eventdata->modulename        = 'quiz';
+    $eventdata->userfrom          = $USER;
+    $eventdata->userto            = $recipient;
+    $eventdata->subject           = $subject;
+    $eventdata->fullmessage       = $body;
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml   = '';
+    $eventdata->smallmessage      = '';
+    return (events_trigger('message_send', $eventdata) == 0);
+
+    /*
     return email_to_user($recipient, $USER, $subject, $body);
+    */
 }
 
 /**

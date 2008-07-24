@@ -191,7 +191,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $DB->delete_records_select('role_names', $DB->sql_isempty('role_names', 'name', false, false));
         upgrade_main_savepoint($result, 2008070300);
     }
-
+        
     if ($result && $oldversion < 2008070700) {
         if (isset($CFG->defaultuserroleid) and isset($CFG->guestroleid) and $CFG->defaultuserroleid == $CFG->guestroleid) {
             // guest can not be selected in defaultuserroleid!
@@ -262,6 +262,91 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008070701);
     }
+    
+    if ($result && $oldversion < 2008072400) {
+        /// Create the database tables for message_processors and message_providers
+        $table = new XMLDBTable('message_providers');
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('modulename', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('modulefile', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+        $table = new XMLDBTable('message_processors');
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('name', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+
+        $provider = new object();
+        $provider->modulename  = 'moodle';
+        $provider->modulefile  = 'index.php';
+        $DB->insert_record('message_providers', $provider);
+
+    /// delete old and create new fields
+        $table = new XMLDBTable('message');
+        $field = new XMLDBField('messagetype');
+        $dbman->drop_field($table, $field);
+
+    /// fields to rename
+        $field = new XMLDBField('message');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $dbman->rename_field($table, $field, 'fullmessage');
+        $field = new XMLDBField('format');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, null, null, '0', null);
+        $dbman->rename_field($table, $field, 'fullmessageformat');
+
+    /// new message fields
+        $field = new XMLDBField('subject');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $dbman->add_field($table, $field);
+        $field = new XMLDBField('fullmessagehtml');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, null);
+        $dbman->add_field($table, $field);
+        $field = new XMLDBField('smallmessage');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $dbman->add_field($table, $field);
+
+
+        $table = new XMLDBTable('message_read');
+        $field = new XMLDBField('messagetype');
+        $dbman->drop_field($table, $field);
+        $field = new XMLDBField('mailed');
+        $dbman->drop_field($table, $field);
+
+    /// fields to rename
+        $field = new XMLDBField('message');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $dbman->rename_field($table, $field, 'fullmessage');
+        $field = new XMLDBField('format');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, null, null, '0', null);
+        $dbman->rename_field($table, $field, 'fullmessageformat');
+
+
+    /// new message fields
+        $field = new XMLDBField('subject');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $dbman->add_field($table, $field);
+        $field = new XMLDBField('fullmessagehtml');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, null);
+        $dbman->add_field($table, $field);
+        $field = new XMLDBField('smallmessage');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'small', null, null, null, null, null, null, null);
+        $dbman->add_field($table, $field);
+
+    /// new table
+        $table = new XMLDBTable('message_working');
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->addFieldInfo('unreadmessageid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addFieldInfo('processorid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
+
+        upgrade_main_savepoint($result, 2008072400);
+    }
+
 
 /*
  * TODO:

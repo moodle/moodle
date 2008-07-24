@@ -15,6 +15,7 @@
 
     require("../../config.php");
     require("enrol.php");
+    require_once($CFG->libdir.'/eventslib.php');
 
 /// Keep out casual intruders
     if (empty($_POST) or !empty($_GET)) {
@@ -46,17 +47,17 @@
 /// get the user and course records
 
     if (! $user = $DB->get_record("user", array("id"=>$data->userid))) {
-        email_paypal_error_to_admin("Not a valid user id", $data);
+        message_paypal_error_to_admin("Not a valid user id", $data);
         die;
     }
 
     if (! $course = $DB->get_record("course", array("id"=>$data->courseid))) {
-        email_paypal_error_to_admin("Not a valid course id", $data);
+        message_paypal_error_to_admin("Not a valid course id", $data);
         die;
     }
 
     if (! $context = get_context_instance(CONTEXT_COURSE, $course->id)) {
-        email_paypal_error_to_admin("Not a valid context id", $data);
+        message_paypal_error_to_admin("Not a valid context id", $data);
         die;
     }
 
@@ -71,7 +72,7 @@
 
     if (!$fp) {  /// Could not open a socket to PayPal - FAIL
         echo "<p>Error: could not access paypal.com</p>";
-        email_paypal_error_to_admin("Could not access paypal.com to verify payment", $data);
+        message_paypal_error_to_admin("Could not access paypal.com to verify payment", $data);
         die;
     }
 
@@ -93,7 +94,7 @@
 
             if ($data->payment_status != "Completed" and $data->payment_status != "Pending") {
                 role_unassign(0, $data->userid, 0, $context->id);
-                email_paypal_error_to_admin("Status not completed or pending. User unenrolled from course", $data);
+                message_paypal_error_to_admin("Status not completed or pending. User unenrolled from course", $data);
                 die;
             }
 
@@ -101,8 +102,21 @@
             // Email user to let them know. Email admin.
 
             if ($data->payment_status == "Pending" and $data->pending_reason != "echeck") {
+                $eventdata = new object();
+                $eventdata->modulename        = 'moodle';
+                $eventdata->userfrom          = get_admin();
+                $eventdata->userto            = $user;
+                $eventdata->subject           = "Moodle: PayPal payment";
+                $eventdata->fullmessage       = "Your PayPal payment is pending.";
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml   = '';
+                $eventdata->smallmessage      = '';
+                events_trigger('message_send', $eventdata);
+
+                /*
                 email_to_user($user, get_admin(), "Moodle: PayPal payment", "Your PayPal payment is pending.");
-                email_paypal_error_to_admin("Payment pending", $data);
+                */
+                message_paypal_error_to_admin("Payment pending", $data);
                 die;
             }
 
@@ -119,24 +133,24 @@
 
 
             if ($existing = $DB->get_record("enrol_paypal", array("txn_id"=>$data->txn_id))) {   // Make sure this transaction doesn't exist already
-                email_paypal_error_to_admin("Transaction $data->txn_id is being repeated!", $data);
+                message_paypal_error_to_admin("Transaction $data->txn_id is being repeated!", $data);
                 die;
 
             }
 
             if ($data->business != $CFG->enrol_paypalbusiness) {   // Check that the email is the one we want it to be
-                email_paypal_error_to_admin("Business email is $data->business (not $CFG->enrol_paypalbusiness)", $data);
+                message_paypal_error_to_admin("Business email is $data->business (not $CFG->enrol_paypalbusiness)", $data);
                 die;
 
             }
 
             if (!$user = $DB->get_record('user', array('id'=>$data->userid))) {   // Check that user exists
-                email_paypal_error_to_admin("User $data->userid doesn't exist", $data);
+                message_paypal_error_to_admin("User $data->userid doesn't exist", $data);
                 die;
             }
 
             if (!$course = $DB->get_record('course', array('id'=>$data->courseid))) { // Check that course exists
-                email_paypal_error_to_admin("Course $data->courseid doesn't exist", $data);;
+                message_paypal_error_to_admin("Course $data->courseid doesn't exist", $data);;
                 die;
             }
 
@@ -149,7 +163,7 @@
 
             if ($data->payment_gross < $cost) {
                 $cost = format_float($cost, 2);
-                email_paypal_error_to_admin("Amount paid is not enough ($data->payment_gross < $cost))", $data);
+                message_paypal_error_to_admin("Amount paid is not enough ($data->payment_gross < $cost))", $data);
                 die;
 
             }
@@ -157,11 +171,11 @@
             // ALL CLEAR !
 
             if (!$DB->insert_record("enrol_paypal", $data)) {       // Insert a transaction record
-                email_paypal_error_to_admin("Error while trying to insert valid transaction", $data);
+                message_paypal_error_to_admin("Error while trying to insert valid transaction", $data);
             }
 
             if (!enrol_into_course($course, $user, 'paypal')) {
-                email_paypal_error_to_admin("Error while trying to enrol ".fullname($user)." in '$course->fullname'", $data);
+                message_paypal_error_to_admin("Error while trying to enrol ".fullname($user)." in '$course->fullname'", $data);
                 die;
             } else {
                 $teacher = get_teacher($course->id);
@@ -169,24 +183,65 @@
                 if (!empty($CFG->enrol_mailstudents)) {
                     $a->coursename = $course->fullname;
                     $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id";
+                    
+                    $eventdata = new object();
+                    $eventdata->modulename        = 'moodle';
+                    $eventdata->userfrom          = $teacher;
+                    $eventdata->userto            = $user;
+                    $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+                    $eventdata->fullmessage       = get_string('welcometocoursetext', '', $a);
+                    $eventdata->fullmessageformat = FORMAT_PLAIN;
+                    $eventdata->fullmessagehtml   = '';
+                    $eventdata->smallmessage      = '';
+                    events_trigger('message_send', $eventdata);
+                    
+                    /*
                     email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname),
                                   get_string('welcometocoursetext', '', $a));
+                    */
                 }
 
                 if (!empty($CFG->enrol_mailteachers)) {
                     $a->course = $course->fullname;
                     $a->user = fullname($user);
+                    
+                    $eventdata = new object();
+                    $eventdata->modulename        = 'moodle';
+                    $eventdata->userfrom          = $user;
+                    $eventdata->userto            = $teacher;
+                    $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+                    $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
+                    $eventdata->fullmessageformat = FORMAT_PLAIN;
+                    $eventdata->fullmessagehtml   = '';
+                    $eventdata->smallmessage      = '';			    
+                    events_trigger('message_send', $eventdata); 
+
+                    /*
                     email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname),
                                   get_string('enrolmentnewuser', '', $a));
+                    */
                 }
 
                 if (!empty($CFG->enrol_mailadmins)) {
                     $a->course = $course->fullname;
                     $a->user = fullname($user);
                     $admins = get_admins();
-                    foreach ($admins as $admin) {
+                    foreach ($admins as $admin) {                        
+                        $eventdata = new object();
+                        $eventdata->modulename        = 'moodle';
+                        $eventdata->userfrom          = $user;
+                        $eventdata->userto            = $admin;
+                        $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+                        $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
+                        $eventdata->fullmessageformat = FORMAT_PLAIN;
+                        $eventdata->fullmessagehtml   = '';
+                        $eventdata->smallmessage      = '';
+                        events_trigger('message_send', $eventdata);
+
+                        /*
                         email_to_user($admin, $user, get_string("enrolmentnew", '', $course->shortname),
                                       get_string('enrolmentnewuser', '', $a));
+                        */
                     }
                 }
 
@@ -195,7 +250,7 @@
 
         } else if (strcmp ($result, "INVALID") == 0) { // ERROR
             $DB->insert_record("enrol_paypal", $data, false);
-            email_paypal_error_to_admin("Received an invalid payment notification!! (Fake payment?)", $data);
+            message_paypal_error_to_admin("Received an invalid payment notification!! (Fake payment?)", $data);
         }
     }
 
@@ -207,7 +262,7 @@
 /// FUNCTIONS //////////////////////////////////////////////////////////////////
 
 
-function email_paypal_error_to_admin($subject, $data) {
+function message_paypal_error_to_admin($subject, $data) {
     $admin = get_admin();
     $site = get_site();
 
@@ -217,8 +272,20 @@ function email_paypal_error_to_admin($subject, $data) {
         $message .= "$key => $value\n";
     }
 
-    email_to_user($admin, $admin, "PAYPAL ERROR: ".$subject, $message);
+    $eventdata = new object();
+    $eventdata->modulename        = 'moodle';
+    $eventdata->userfrom          = $admin;
+    $eventdata->userto            = $admin;
+    $eventdata->subject           = "PAYPAL ERROR: ".$subject;
+    $eventdata->fullmessage       = $message;
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml   = '';
+    $eventdata->smallmessage      = '';
+    events_trigger('message_send', $eventdata);
 
+/*
+    email_to_user($admin, $admin, "PAYPAL ERROR: ".$subject, $message);
+*/
 }
 
 ?>

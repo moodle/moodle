@@ -4,6 +4,7 @@ require_once($CFG->dirroot.'/enrol/enrol.class.php');
 require_once($CFG->dirroot.'/enrol/authorize/const.php');
 require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
 require_once($CFG->dirroot.'/enrol/authorize/authorizenet.class.php');
+require_once($CFG->libdir.'/eventslib.php');
 
 /**
  * Authorize.net Payment Gateway plugin
@@ -171,7 +172,7 @@ class enrolment_plugin_authorize
         $order->currency = $curcost['currency'];
         $order->id = $DB->insert_record("enrol_authorize", $order);
         if (!$order->id) {
-            email_to_admin("Error while trying to insert new data", $order);
+            message_to_admin("Error while trying to insert new data", $order);
             return "Insert record error. Admin has been notified!";
         }
 
@@ -242,7 +243,20 @@ class enrolment_plugin_authorize
                     $context = get_context_instance(CONTEXT_COURSE, $course->id);
                     if (($paymentmanagers = get_users_by_capability($context, 'enrol/authorize:managepayments'))) {
                         foreach ($paymentmanagers as $paymentmanager) {
+                            $eventdata = new object();
+                            $eventdata->modulename        = 'moodle';
+                            $eventdata->userfrom          = $USER;
+                            $eventdata->userto            = $paymentmanager;
+                            $eventdata->subject           = $emailsubject;
+                            $eventdata->fullmessage       = $emailmessage;
+                            $eventdata->fullmessageformat = FORMAT_PLAIN;
+                            $eventdata->fullmessagehtml   = '';
+                            $eventdata->smallmessage      = '';
+                            events_trigger('message_send', $eventdata);
+
+                            /*
                             email_to_user($paymentmanager, $USER, $emailsubject, $emailmessage);
+                            */
                         }
                     }
                     redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
@@ -265,12 +279,26 @@ class enrolment_plugin_authorize
                             $a = new stdClass;
                             $a->course = "$course->fullname";
                             $a->user = fullname($USER);
+                            
+                            $eventdata = new object();
+                            $eventdata->modulename        = 'moodle';
+                            $eventdata->userfrom          = $USER;
+                            $eventdata->userto            = $paymentmanager;
+                            $eventdata->subject           = get_string("enrolmentnew", '', format_string($course->shortname));
+                            $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
+                            $eventdata->fullmessageformat = FORMAT_PLAIN;
+                            $eventdata->fullmessagehtml   = '';
+                            $eventdata->smallmessage      = '';
+                            events_trigger('message_send', $eventdata);
+                            
+                            /*
                             email_to_user(
                                 $paymentmanager,
                                 $USER,
                                 get_string("enrolmentnew", '', format_string($course->shortname)),
                                 get_string('enrolmentnewuser', '', $a)
                             );
+                            */
                         }
                         if (!empty($CFG->enrol_mailadmins)) {
                             $a = new stdClass;
@@ -278,18 +306,31 @@ class enrolment_plugin_authorize
                             $a->user = fullname($USER);
                             $admins = get_admins();
                             foreach ($admins as $admin) {
+                                $eventdata = new object();
+                                $eventdata->modulename  = 'moodle';
+                                $eventdata->userfrom    = $USER;
+                                $eventdata->userto      = $paymentmanager;
+                                $eventdata->subject     = get_string("enrolmentnew", '', format_string($course->shortname));
+                                $eventdata->fullmessage = get_string('enrolmentnewuser', '', $a);
+                                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                                $eventdata->fullmessagehtml   = '';
+                                $eventdata->smallmessage      = '';
+                                events_trigger('message_send', $eventdata);
+
+                                /*
                                 email_to_user(
                                     $admin,
                                     $USER,
                                     get_string("enrolmentnew", '', format_string($course->shortname)),
                                     get_string('enrolmentnewuser', '', $a)
                                 );
+                                */
                             }
                         }
                     }
                     else
                     {
-                        email_to_admin("Error while trying to enrol " . fullname($USER) . " in '$course->fullname'", $order);
+                        message_to_admin("Error while trying to enrol " . fullname($USER) . " in '$course->fullname'", $order);
                     }
 
                     if ($SESSION->wantsurl) {
@@ -308,7 +349,7 @@ class enrolment_plugin_authorize
         }
         else
         {
-            email_to_admin($message, $order);
+            message_to_admin($message, $order);
             return $message;
         }
     }
@@ -348,7 +389,7 @@ class enrolment_plugin_authorize
         $order->currency = $curcost['currency'];
         $order->id = $DB->insert_record("enrol_authorize", $order);
         if (!$order->id) {
-            email_to_admin("Error while trying to insert new data", $order);
+            message_to_admin("Error while trying to insert new data", $order);
             return "Insert record error. Admin has been notified!";
         }
 
@@ -385,7 +426,7 @@ class enrolment_plugin_authorize
             return NULL;
         }
         else {
-            email_to_admin($message, $order);
+            message_to_admin($message, $order);
             return $message;
         }
     }
@@ -695,10 +736,35 @@ class enrolment_plugin_authorize
 
         $adminuser = get_admin();
         if (!empty($faults)) {
+            $eventdata = new object();
+            $eventdata->modulename        = 'moodle';
+            $eventdata->userfrom          = $adminuser;
+            $eventdata->userto            = $adminuser;
+            $eventdata->subject           = "AUTHORIZE.NET CRON FAULTS";
+            $eventdata->fullmessage       = $faults;
+            $eventdata->fullmessageformat = FORMAT_PLAIN;
+            $eventdata->fullmessagehtml   = '';
+            $eventdata->smallmessage      = '';
+            events_trigger('message_send', $eventdata);
+
+            /*
             email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON FAULTS", $faults);
+            */
         }
         if (!empty($CFG->enrol_mailadmins)) {
+            $eventdata = new object();
+            $eventdata->modulename        = 'moodle';
+            $eventdata->userfrom          = $adminuser;
+            $eventdata->userto            = $adminuser;
+            $eventdata->subject           = "AUTHORIZE.NET CRON LOG";
+            $eventdata->fullmessage       = $this->log;
+            $eventdata->fullmessageformat = FORMAT_PLAIN;
+            $eventdata->fullmessagehtml   = '';
+            $eventdata->smallmessage      = '';
+            events_trigger('message_send', $eventdata);
+            /*
             email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON LOG", $this->log);
+            */ 
         }
 
         // Send emails to students about which courses have enrolled.
@@ -757,7 +823,20 @@ class enrolment_plugin_authorize
             $a->url = $CFG->wwwroot.'/enrol/authorize/uploadcsv.php';
             $message = get_string('pendingecheckemail', 'enrol_authorize', $a);
             foreach($csvusers as $csvuser) {
+                $eventdata = new object();
+                $eventdata->modulename        = 'moodle';
+                $eventdata->userfrom          = $adminuser;
+                $eventdata->userto            = $csvuser;
+                $eventdata->subject           = $subject;
+                $eventdata->fullmessage       = $message;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml   = '';
+                $eventdata->smallmessage      = '';
+                events_trigger('message_send', $eventdata);
+
+                /*
                 @email_to_user($csvuser, $adminuser, $subject, $message);
+                */ 
             }
             mtrace("        users who have 'enrol/authorize:uploadcsv' were mailed");
         }
@@ -791,7 +870,21 @@ class enrolment_plugin_authorize
         $a->enrolurl = "$CFG->wwwroot/$CFG->admin/enrol_config.php?enrol=authorize";
         $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH;
         $message = get_string('pendingordersemail', 'enrol_authorize', $a);
+        
+        $eventdata = new object();
+        $eventdata->modulename        = 'moodle';
+        $eventdata->userfrom          = $adminuser;
+        $eventdata->userto            = $adminuser;
+        $eventdata->subject           = $subject;
+        $eventdata->fullmessage       = $message;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml   = '';
+        $eventdata->smallmessage      = '';	
+        events_trigger('message_send', $eventdata);
+
+        /*
         email_to_user($adminuser, $adminuser, $subject, $message);
+        */
 
         // Email to payment managers
         if (empty($CFG->an_emailexpiredteacher)) {
@@ -830,7 +923,20 @@ class enrolment_plugin_authorize
                 $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?course='.$lastcourse.'&amp;status='.AN_STATUS_AUTH;
                 $message = get_string('pendingordersemailteacher', 'enrol_authorize', $a);
                 foreach ($paymentmanagers as $paymentmanager) {
+                    $eventdata = new object();
+                    $eventdata->modulename        = 'moodle';
+                    $eventdata->userfrom          = $adminuser;
+                    $eventdata->userto            = $paymentmanager;
+                    $eventdata->subject           = $subject;
+                    $eventdata->fullmessage       = $message;
+                    $eventdata->fullmessageformat = FORMAT_PLAIN;
+                    $eventdata->fullmessagehtml   = '';
+                    $eventdata->smallmessage      = '';	
+                    events_trigger('message_send', $eventdata);
+
+                    /*
                     email_to_user($paymentmanager, $adminuser, $subject, $message);
+                    */
                 }
             }
         }

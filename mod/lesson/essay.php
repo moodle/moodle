@@ -10,6 +10,7 @@
     require_once('../../config.php');
     require_once('locallib.php');
     require_once('lib.php');
+    require_once($CFG->libdir.'/eventslib.php');
 
     $id   = required_param('id', PARAM_INT);             // Course Module ID
     $mode = optional_param('mode', 'display', PARAM_ALPHA);
@@ -219,7 +220,19 @@
                     // Subject
                     $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$attempt->pageid]->title,true));
 
+                    /*
                     if(email_to_user($users[$attempt->userid], $USER, $subject, $plaintxt, $message)) {
+                    */
+                    $eventdata = new object();
+                    $eventdata->modulename       = 'lesson';
+                    $eventdata->userfrom         = $USER;
+                    $eventdata->userto           = $users[$attempt->userid];
+                    $eventdata->subject          = $subject;
+                    $eventdata->fullmessage      = $plaintext;
+                    $eventdata->fullmessageformat = FORMAT_PLAIN;
+                    $eventdata->fullmessagehtml  = $message;
+                    $eventdata->smallmessage     = '';
+                    if ( events_trigger('message_send', $eventdata) == 0){
                         $essayinfo->sent = 1;
                         $attempt->useranswer = serialize($essayinfo);
                         $DB->update_record('lesson_attempts', $attempt);

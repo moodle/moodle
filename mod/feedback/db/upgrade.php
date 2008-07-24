@@ -232,6 +232,16 @@ function xmldb_feedback_upgrade($oldversion=0) {
 
         upgrade_mod_savepoint($result, 2008050105, 'feedback');
     }
+    
+    if ($result and $oldversion < 2008072401) {
+        $eventdata = new object();
+        $eventdata->modulename = 'forum';
+        $eventdata->modulefile = 'mod/forum/index.php';
+        events_trigger('message_provider_register', $eventdata);
+        
+        upgrade_mod_savepoint($result, 2008072401, 'feedback');
+    }
+
 
     return $result;
 }

@@ -5,6 +5,7 @@
     require_once($CFG->libdir.'/pagelib.php');
     require_once($CFG->libdir.'/blocklib.php');
     require_once('lib.php');
+    require_once($CFG->libdir.'/eventslib.php');
 
     require_login();
 
@@ -52,7 +53,21 @@
                 $a->name = $course->fullname;
                 $a->url = $CFG->wwwroot.'/course/view.php?id='.$courseid;
                 $a->teacher = $course->teacher;
+                
+                $eventdata = new object();
+                $eventdata->modulename        = 'moodle';
+                $eventdata->userfrom          = $USER;
+                $eventdata->userto            = $user;
+                $eventdata->subject           = get_string('courseapprovedsubject');
+                $eventdata->fullmessage       = get_string('courseapprovedemail','moodle',$a);
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml   = '';
+                $eventdata->smallmessage      = '';			    
+                events_trigger('message_send', $eventdata);
+
+                /*
                 email_to_user($user,$USER,get_string('courseapprovedsubject'),get_string('courseapprovedemail','moodle',$a));
+                */
                 redirect($CFG->wwwroot.'/course/edit.php?id='.$courseid);
                 exit;
             }
@@ -79,7 +94,20 @@
             }
             else {
                 $user = $DB->get_record("user", array("id"=>$reject->requester));
+                
+                $eventdata = new object();
+                $eventdata->modulename        = 'moodle';
+                $eventdata->userfrom          = $USER;
+                $eventdata->userto            = $user;
+                $eventdata->subject           = get_string('courserejectsubject');
+                $eventdata->fullmessage       = get_string('courserejectemail','moodle',$rejectnotice);
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml   = '';
+                $eventdata->smallmessage      = '';			    
+                events_trigger('message_send', $eventdata);
+                /*
                 email_to_user($user,$USER,get_string('courserejectsubject'),get_string('courserejectemail','moodle',$rejectnotice));
+                */
                 $DB->delete_records("course_request", array("id"=>$reject->id));
                 notice(get_string('courserejected'),'pending.php');
             }

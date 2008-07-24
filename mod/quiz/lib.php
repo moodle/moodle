@@ -11,6 +11,7 @@
 
 require_once($CFG->libdir.'/pagelib.php');
 require_once($CFG->libdir.'/questionlib.php');
+require_once($CFG->libdir.'/eventslib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
@@ -56,6 +57,19 @@ define('QUIZ_REVIEW_OVERALLFEEDBACK', 1*0x4440000); // Show quiz overall feedbac
 define("QUIZ_MAX_EVENT_LENGTH", 5*24*60*60);   // 5 days maximum
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
+
+/** 
+ * Code to be executed when a module is installed
+ * now is just used to register the module as message provider
+ */ 
+function quiz_install() {
+    $eventdata = new object();
+    $eventdata->modulename = 'quiz';
+    $eventdata->modulefile = 'mod/quiz/index.php';
+    events_trigger('message_provider_register', $eventdata); 
+   
+    return true; 
+}
 
 /**
  * Given an object containing all the necessary data,

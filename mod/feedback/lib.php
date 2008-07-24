@@ -8,6 +8,8 @@
 * @package feedback
 */
 
+require_once($CFG->libdir.'/eventslib.php');
+
 /// Library of functions and constants for module feedback
 
 define('FEEDBACK_INCLUDE_TEST', 1);
@@ -26,6 +28,20 @@ $feedback_names = feedback_load_feedback_items('mod/feedback/item');
 if(!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
     $SESSION->feedback = new object();
 }
+
+/** 
+ * Code to be executed when a module is installed
+ * now is just used to register the module as message provider
+ */ 
+function feedback_install() {
+    $eventdata = new object();
+    $eventdata->modulename = 'feedback';
+    $eventdata->modulefile = 'mod/feedback/index.php';
+    events_trigger('message_provider_register', $eventdata); 
+   
+    return true; 
+}
+
 
 /**
 * this will create a new instance and return the id number
@@ -1808,9 +1824,37 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
             $posthtml = ($teacher->mailformat == 1) ? feedback_send_email_html($info, $course, $cm) : '';
 
             if($feedback->anonymous == FEEDBACK_ANONYMOUS_NO) {
+                $eventdata = new object();
+                $eventdata->modulename       = 'feedback';
+                $eventdata->userfrom         = $user;
+                $eventdata->userto           = $teacher;
+                $eventdata->subject          = $postsubject;
+                $eventdata->fullmessage      = $posttext;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml  = $posthtml;
+                $eventdata->smallmessage     = '';
+                if ( events_trigger('message_send', $eventdata) > 0 ){
+                }
+
+                /*
                 @email_to_user($teacher, $user, $postsubject, $posttext, $posthtml);
+                */
             }else {
+                $eventdata = new object();
+                $eventdata->modulename       = 'feedback';
+                $eventdata->userfrom         = $teacher;
+                $eventdata->userto           = $teacher;
+                $eventdata->subject          = $postsubject;
+                $eventdata->fullmessage      = $posttext;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml  = $posthtml;
+                $eventdata->smallmessage     = '';
+                if ( events_trigger('message_send', $eventdata) > 0 ){
+                }
+
+                /*
                 @email_to_user($teacher, $teacher, $postsubject, $posttext, $posthtml);
+                */
             }
         }
     }
@@ -1849,7 +1893,21 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             $posttext = feedback_send_email_text($info, $course);
             $posthtml = ($teacher->mailformat == 1) ? feedback_send_email_html($info, $course, $cm) : '';
 
+            $eventdata = new object();
+            $eventdata->modulename       = 'feedback';
+            $eventdata->userfrom         = $teacher;
+            $eventdata->userto           = $teacher;
+            $eventdata->subject          = $postsubject;
+            $eventdata->fullmessage      = $posttext;
+            $eventdata->fullmessageformat = FORMAT_PLAIN;
+            $eventdata->fullmessagehtml  = $posthtml;
+            $eventdata->smallmessage     = '';
+            if ( events_trigger('message_send', $eventdata) > 0 ){
+            }
+
+            /*
             @email_to_user($teacher, $teacher, $postsubject, $posttext, $posthtml);
+            */
         }
     }
 }

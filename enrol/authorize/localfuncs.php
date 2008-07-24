@@ -1,5 +1,7 @@
 <?php // $Id$
 
+require_once($CFG->libdir.'/eventslib.php');
+
 function get_course_cost($course)
 {
     global $CFG;
@@ -111,7 +113,7 @@ function get_list_of_bank_account_types($getall = false)
     }
 }
 
-function email_to_admin($subject, $data)
+function message_to_admin($subject, $data)
 {
     global $SITE;
 
@@ -120,7 +122,19 @@ function email_to_admin($subject, $data)
 
     $message = "$SITE->fullname: Transaction failed.\n\n$subject\n\n";
     $message .= print_r($data, true);
+    $eventdata = new object();
+    $eventdata->modulename        = 'moodle';
+    $eventdata->userfrom          = $admin;
+    $eventdata->userto            = $admin;
+    $eventdata->subject           = "$SITE->fullname: Authorize.net ERROR";
+    $eventdata->fullmessage       = $emailmessage;
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml   = '';
+    $eventdata->smallmessage      = '';    
+    events_trigger('message_send', $eventdata);
+    /*
     email_to_user($admin, $admin, "$SITE->fullname: Authorize.net ERROR", $message);
+    */
 }
 
 function send_welcome_messages($orderdata)
@@ -177,7 +191,21 @@ function send_welcome_messages($orderdata)
                 $a->profileurl = "$CFG->wwwroot/user/view.php?id=$lastuserid";
                 $a->paymenturl = "$CFG->wwwroot/enrol/authorize/index.php?user=$lastuserid";
                 $emailmessage = get_string('welcometocoursesemail', 'enrol_authorize', $a);
+                
+                $eventdata = new object();
+                $eventdata->modulename        = 'moodle';
+                $eventdata->userfrom          = $sender;
+                $eventdata->userto            = $user;
+                $eventdata->subject           = get_string("enrolmentnew", '', $SITE->shortname);
+                $eventdata->fullmessage       = $emailmessage;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml   = '';
+                $eventdata->smallmessage      = '';    
+                events_trigger('message_send', $eventdata);
+
+                /*
                 @email_to_user($user, $sender, get_string("enrolmentnew", '', $SITE->shortname), $emailmessage);
+                */
             }
         }
         while ($ei);

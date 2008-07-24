@@ -830,6 +830,29 @@ $moodle_capabilities = array(
             'admin' => CAP_ALLOW
         )
     ),
+    
+    //capabilities designed for the new message system configuration
+    'moodle/user:editmessageprofile' => array(
+ 
+         'riskbitmask' => RISK_SPAM,
+ 
+         'captype' => 'write',
+         'contextlevel' => CONTEXT_USER,
+         'legacy' => array(
+             'admin' => CAP_ALLOW
+         )
+     ),
+ 
+     'moodle/user:editownmessageprofile' => array(      
+ 
+         'captype' => 'write',     
+         'contextlevel' => CONTEXT_SYSTEM,      
+         'legacy' => array(   
+             'guest' => CAP_PROHIBIT,
+             'user' => CAP_ALLOW,
+             'admin' => CAP_ALLOW
+         )    
+     ),
 
     'moodle/question:managecategory' => array(
 

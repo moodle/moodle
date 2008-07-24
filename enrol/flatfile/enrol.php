@@ -5,6 +5,7 @@
 // $CFG->enrol_emailteachers:          send email to teachers when they are enrolled in a course
 // $CFG->enrol_emailadmins:            email the log from the cron job to the admin
 
+require_once($CFG->libdir.'/eventslib.php');
 
 
 class enrolment_plugin_flatfile {
@@ -216,8 +217,22 @@ function get_access_icons($course) {
                         if (!empty($CFG->enrol_mailstudents)) {
                             $a->coursename = "$course->fullname";
                             $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
+                            
+                            $eventdata = new object();
+                            $eventdata->modulename        = 'moodle';
+                            $eventdata->userfrom          = $teacher;
+                            $eventdata->userto            = $user;
+                            $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+                            $eventdata->fullmessage       = get_string('welcometocoursetext', '', $a);
+                            $eventdata->fullmessageformat = FORMAT_PLAIN;
+                            $eventdata->fullmessagehtml   = '';
+                            $eventdata->smallmessage      = '';
+                            events_trigger('message_send', $eventdata);
+
+                            /*
                             email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname), 
                                           get_string('welcometocoursetext', '', $a));
+                            */ 
                         }
 
                         if (!empty($CFG->enrol_mailteachers) && $teachers) {
@@ -227,8 +242,22 @@ function get_access_icons($course) {
                                 if (!$u->hidden || has_capability('moodle/role:viewhiddenassigns', $context)) {
                                     $a->course = "$course->fullname";
                                     $a->user = fullname($user);
+                                    
+                                    $eventdata = new object();
+                                    $eventdata->modulename        = 'moodle';
+                                    $eventdata->userfrom          = $user;
+                                    $eventdata->userto            = $teacher;
+                                    $eventdata->subject           = get_string("enrolmentnew", '', $course->shortname);
+                                    $eventdata->fullmessage       = get_string('enrolmentnewuser', '', $a);
+                                    $eventdata->fullmessageformat = FORMAT_PLAIN;
+                                    $eventdata->fullmessagehtml   = '';
+                                    $eventdata->smallmessage      = '';			    
+                                    events_trigger('message_send', $eventdata);
+
+                                    /*
                                     email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname), 
                                                   get_string('enrolmentnewuser', '', $a));
+                                    */
                                 }
                             }
                         }
@@ -246,12 +275,38 @@ function get_access_icons($course) {
             } // end of if(file_open)
 
             if(! @unlink($filename)) {
+                $eventdata = new object();
+                $eventdata->modulename        = 'moodle';
+                $eventdata->userfrom          = get_admin();
+                $eventdata->userto            = get_admin();
+                $eventdata->subject           = get_string("filelockedmailsubject", "enrol_flatfile");
+                $eventdata->fullmessage       = get_string("filelockedmail", "enrol_flatfile", $filename);
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml   = '';
+                $eventdata->smallmessage      = '';
+                events_trigger('message_send', $eventdata);
+
+                /*
                 email_to_user(get_admin(), get_admin(), get_string("filelockedmailsubject", "enrol_flatfile"), get_string("filelockedmail", "enrol_flatfile", $filename));
+                */
                 $this->log .= "Error unlinking file $filename\n";
             }
 
             if (!empty($CFG->enrol_mailadmins)) {
+                $eventdata = new object();
+                $eventdata->modulename        = 'moodle';
+                $eventdata->userfrom          = get_admin();
+                $eventdata->userto            = get_admin();
+                $eventdata->subject           = "Flatfile Enrolment Log";
+                $eventdata->fullmessage       = $this->log;
+                $eventdata->fullmessageformat = FORMAT_PLAIN;
+                $eventdata->fullmessagehtml   = '';
+                $eventdata->smallmessage      = '';
+                events_trigger('message_send', $eventdata);
+
+                /*
                 email_to_user(get_admin(), get_admin(), "Flatfile Enrolment Log", $this->log);
+                */
             }
 
         } // end of if(file_exists)

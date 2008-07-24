@@ -1,6 +1,8 @@
 <?php
 /// library functions for messaging
 
+require_once($CFG->libdir.'/eventslib.php');
+
 
 define ('MESSAGE_SHORTLENGTH', 300);
 define ('MESSAGE_WINDOW', true);          // We are in a message window (so don't pop up a new one!)
@@ -951,6 +953,18 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     if (!empty($userto->lang)) {
         $USER->lang = $userto->lang;
     }
+    
+    $eventdata = new object();
+    $eventdata->modulename       = 'moodle';
+    $eventdata->userfrom         = $userfrom;
+    $eventdata->userto           = $userto;
+    $eventdata->subject          = "MESSAGE";
+    $eventdata->fullmessage      = $message;
+    $eventdata->fullmessageformat = FORMAT_PLAIN;
+    $eventdata->fullmessagehtml  = '';
+    $eventdata->smallmessage     = ''; 
+    events_trigger('message_send', $eventdata);
+
 
 /// Save the new message in the database
 
@@ -963,9 +977,9 @@ function message_post_message($userfrom, $userto, $message, $format, $messagetyp
     $savemessage->messagetype   = 'direct';
 
     if ($CFG->messaging) {
-        if (!$savemessage->id = $DB->insert_record('message', $savemessage)) {
-            return false;
-        }
+        //if (!$savemessage->id = $DB->insert_record('message', $savemessage)) {
+        //    return false;
+        //}
         $emailforced = false;
     } else { // $CFG->messaging is not on, we need to force sending of emails
         $emailforced = true;

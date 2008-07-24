@@ -311,12 +311,14 @@
     <TABLE NAME="message" COMMENT="Stores all unread messages" PREVIOUS="log_display" NEXT="message_read">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="useridfrom"/>
-        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
-        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="message"/>
-        <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="useridto" NEXT="format"/>
-        <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="message" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="format" NEXT="messagetype"/>
-        <FIELD NAME="messagetype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
+        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
+        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="subject"/>
+        <FIELD NAME="subject" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="The message subject" PREVIOUS="useridto" NEXT="fullmessage"/>
+        <FIELD NAME="fullmessage" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="subject" NEXT="fullmessageformat"/>
+        <FIELD NAME="fullmessageformat" TYPE="int" LENGTH="4" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The format of the full message" PREVIOUS="fullmessage" NEXT="fullmessagehtml"/>
+        <FIELD NAME="fullmessagehtml" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="html format of message" PREVIOUS="fullmessageformat" NEXT="smallmessage"/>
+        <FIELD NAME="smallmessage" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Smal version of message (eg sms)" PREVIOUS="fullmessagehtml" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="smallmessage"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -329,14 +331,15 @@
     <TABLE NAME="message_read" COMMENT="Stores all messages that have been read" PREVIOUS="message" NEXT="message_contacts">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="useridfrom"/>
-        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
-        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="message"/>
-        <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="useridto" NEXT="format"/>
-        <FIELD NAME="format" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="message" NEXT="timecreated"/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="format" NEXT="timeread"/>
-        <FIELD NAME="timeread" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated" NEXT="messagetype"/>
-        <FIELD NAME="messagetype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="timeread" NEXT="mailed"/>
-        <FIELD NAME="mailed" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="messagetype"/>
+        <FIELD NAME="useridfrom" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="useridto"/>
+        <FIELD NAME="useridto" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="useridfrom" NEXT="subject"/>
+        <FIELD NAME="subject" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="The message subject" PREVIOUS="useridto" NEXT="fullmessage"/>
+        <FIELD NAME="fullmessage" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="subject" NEXT="fullmessageformat"/>
+        <FIELD NAME="fullmessageformat" TYPE="int" LENGTH="4" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The format of the full message" PREVIOUS="fullmessage" NEXT="fullmessagehtml"/>
+        <FIELD NAME="fullmessagehtml" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="html format of message" PREVIOUS="fullmessageformat" NEXT="smallmessage"/>
+        <FIELD NAME="smallmessage" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Smal version of message (eg sms)" PREVIOUS="fullmessagehtml" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="smallmessage" NEXT="timeread"/>
+        <FIELD NAME="timeread" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -1708,7 +1711,7 @@
         <INDEX NAME="name" UNIQUE="false" FIELDS="name" COMMENT="name index"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="portfolio_instance_user" COMMENT="user data for portfolio instances." PREVIOUS="portfolio_instance_config">
+    <TABLE NAME="portfolio_instance_user" COMMENT="user data for portfolio instances." PREVIOUS="portfolio_instance_config" NEXT="message_providers">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="instance"/>
         <FIELD NAME="instance" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="fk to instance table" PREVIOUS="id" NEXT="userid"/>
@@ -1722,6 +1725,35 @@
         <KEY NAME="userfk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="fk to user table" PREVIOUS="instancefk"/>
       </KEYS>
     </TABLE>
+    <TABLE NAME="message_providers" COMMENT="This table stores the message providers (modules and core systems)" PREVIOUS="portfolio_instance_user" NEXT="message_processors">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="modulename"/>
+        <FIELD NAME="modulename" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Module Name" PREVIOUS="id" NEXT="modulefile"/>
+        <FIELD NAME="modulefile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The main module file" PREVIOUS="modulename"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="message_processors" COMMENT="List of message output plugins" PREVIOUS="message_providers" NEXT="message_working">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Default comment for the field, please edit me" PREVIOUS="id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="message_working" COMMENT="Lists all the messages and processors that need to be processed" PREVIOUS="message_processors">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="unreadmessageid"/>
+        <FIELD NAME="unreadmessageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="message that still needs some processing (on message table)" PREVIOUS="id" NEXT="processorid"/>
+        <FIELD NAME="processorid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The processor with processes the message" PREVIOUS="unreadmessageid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
+      </KEYS>
+    </TABLE>
   </TABLES>
   <STATEMENTS>
     <STATEMENT NAME="insert mnet_application" TYPE="insert" TABLE="mnet_application" COMMENT="Initial insert of records on table mnet_application" NEXT="insert log_display">
@@ -1730,7 +1762,7 @@
         <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url) VALUES ('mahara','Mahara','/api/xmlrpc/server.php',  '/auth/xmlrpc/land.php')" />
       </SENTENCES>
     </STATEMENT>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display" PREVIOUS="insert mnet_application">
+    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display" PREVIOUS="insert mnet_application" NEXT="insert message_providers">
       <SENTENCES>
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('user', 'view', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
@@ -1751,6 +1783,11 @@
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('group', 'view', 'groups', 'name')" />
       </SENTENCES>
+    </STATEMENT>
+    <STATEMENT NAME="insert message_providers" TYPE="insert" TABLE="message_providers" COMMENT="Initial insert of moodle record in message_providers" PREVIOUS="insert log_display">
+        <SENTENCES>
+            <SENTENCE TEXT="(modulename, modulefile) VALUES ('moodle', 'index.php')" />
+        </SENTENCES>
     </STATEMENT>
   </STATEMENTS>
 </XMLDB>
