@@ -91,11 +91,11 @@ h6.main {
 }
 
 #redirect #message {
-  
+
 }
 
 #redirect #continue {
-  
+
 }
 
 /* .clearfix {display: inline-table;} */
@@ -2237,7 +2237,7 @@ div.allcoursegrades {
 }
 
 #grade-aggregation-help dt {
-    margin-top: 15px; 
+    margin-top: 15px;
 }
 
 #grade-aggregation-help dd.example {
@@ -2734,7 +2734,7 @@ body.notes .notesgroup {
 }
 
 
-.tabrow0 .here a:link, 
+.tabrow0 .here a:link,
 .tabrow0 .here a:visited,
 .tabrow0 .here a.nolink {
   position:relative;
@@ -3742,7 +3742,7 @@ body#mod-forum-search .introcontent {
   margin-right: auto;
 }
 
-#mod-lesson-view .invisiblefieldset {
+#mod-lesson-view #content .invisiblefieldset {
   display: block;
   text-align: left;
 }
@@ -3982,17 +3982,17 @@ table.quizreviewsummary td.cell {
   padding: 4px;
 }
 
-#mod-quiz-grading table#grading .header .commands 
+#mod-quiz-grading table#grading .header .commands
 {
   display: inline;
 }
 
-#mod-quiz-grading table#grading .picture 
+#mod-quiz-grading table#grading .picture
 {
   width: 40px;
 }
 
-#mod-quiz-grading table#grading td 
+#mod-quiz-grading table#grading td
 {
   border-left-width: 1px;
   border-right-width: 1px;
