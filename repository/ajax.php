@@ -297,7 +297,7 @@ var repository_client = (function() {
             str += '<div style="text-align:center">';
             str += ('<input type="radio" title="'+obj[k].title
                     +'" name="selected-files" value="'+obj[k].source
-                    +'" onclick=\'rename("'+obj[k].title+'", "'
+                    +'" onclick=\'repository_client.rename("'+obj[k].title+'", "'
                     +obj[k].source+'")\' />');
             str += obj[k].title+'</div>';
             str += '</div>';
