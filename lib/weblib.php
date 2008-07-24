@@ -2920,7 +2920,7 @@ function current_theme() {
         $themeorder = $CFG->themeorder;
     }
 
-    if (isloggedin() and $USER->mnethostid != $CFG->mnet_localhost_id) {
+    if (isloggedin() and isset($CFG->mnet_localhost_id) and $USER->mnethostid != $CFG->mnet_localhost_id) {
         require_once($CFG->dirroot.'/mnet/peer.php');
         $mnet_peer = new mnet_peer();
         $mnet_peer->set_id($USER->mnethostid);
@@ -2971,7 +2971,7 @@ function current_theme() {
                 }
                 break;
             case 'site':
-                if (isloggedin() and $USER->mnethostid != $CFG->mnet_localhost_id && $mnet_peer->force_theme == 1 && $mnet_peer->theme != '') {
+                if (isloggedin() and isset($CFG->mnet_localhost_id) and $USER->mnethostid != $CFG->mnet_localhost_id && $mnet_peer->force_theme == 1 && $mnet_peer->theme != '') {
                     $theme = $mnet_peer->theme;
                 } else {
                     $theme = $CFG->theme;
