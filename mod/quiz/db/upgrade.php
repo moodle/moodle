@@ -86,6 +86,28 @@ function xmldb_quiz_upgrade($oldversion=0) {
         upgrade_mod_savepoint($result, 2008072401, 'quiz');
     }
 
+    if ($result && $oldversion < 2008072402) {
+
+    /// Define field lastcron to be added to quiz_report
+        $table = new xmldb_table('quiz_report');
+        $field = new xmldb_field('lastcron', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'displayorder');
+
+    /// Conditionally launch add field lastcron
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field cron to be added to quiz_report
+        $field = new xmldb_field('cron', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'lastcron');
+
+    /// Conditionally launch add field cron
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// quiz savepoint reached
+        upgrade_mod_savepoint($result, 2008072402, 'quiz');
+    }
 
 
     return $result;
