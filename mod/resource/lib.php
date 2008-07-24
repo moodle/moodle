@@ -674,4 +674,12 @@ function resource_delete_warning($course, $files) {
 function resource_reset_userdata($data) {
     return array();
 }
+
+/**
+ * Returns all other caps used in module
+ */
+function resource_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups');
+}
+
 ?>

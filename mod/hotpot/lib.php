@@ -2603,4 +2603,11 @@ END_OF_SCRIPT;
     }
 }
 
+/**
+ * Returns all other caps used in module
+ */
+function hotpot_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups');
+}
+
 ?>

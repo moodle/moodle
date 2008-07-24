@@ -746,4 +746,11 @@ function exercise_get_post_actions() {
     return array('assess','delete','grade','open','set up','submit');
 }
 
+/**
+ * Returns all other caps used in module
+ */
+function exercise_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups');
+}
+
 ?>

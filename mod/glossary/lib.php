@@ -2330,4 +2330,11 @@ function glossary_reset_userdata($data) {
     return $status;
 }
 
+/**
+ * Returns all other caps used in module
+ */
+function glossary_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames', 'moodle/site:trustcontent');
+}
+
 ?>

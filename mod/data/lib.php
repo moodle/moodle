@@ -2087,4 +2087,12 @@ function data_reset_userdata($data) {
     }
     return $status;
 }
+
+/**
+ * Returns all other caps used in module
+ */
+function data_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
+}
+
 ?>

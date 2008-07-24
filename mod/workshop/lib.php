@@ -1854,4 +1854,11 @@ function workshop_get_post_actions() {
     return array('agree','assess','comment','grade','newattachment','removeattachments','resubmit','submit');
 }
 
+/**
+ * Returns all other caps used in module
+ */
+function workshop_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
+}
+
 ?>
