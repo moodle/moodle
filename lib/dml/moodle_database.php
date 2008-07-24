@@ -86,6 +86,19 @@ abstract class moodle_database {
     }
 
     /**
+     * Loads and returns a driver instance with the specified type and library.
+     * @param string $type database type of the driver (mysql, postgres7, mssql, etc)
+     * @param string $library database library of the driver (adodb, pdo, etc)
+     * @return moodle_database driver object
+     */
+    public static function get_driver($type, $library = 'adodb') {
+        global $CFG;
+        $classname = $type . '_' . $library . '_moodle_database';
+        require_once ("$CFG->libdir/dml/$classname.php");
+        return new $classname ();
+    }
+
+    /**
      * Returns database family type - describes SQL dialect
      * Note: can be used before connect()
      * @return string db family name (mysql, postgres, mssql, oracle, etc.)
