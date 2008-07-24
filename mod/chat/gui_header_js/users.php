@@ -40,7 +40,8 @@
         $message->system    = 0;
         $message->timestamp = time();
 
-        if (!$DB->insert_record('chat_messages', $message)) {
+        if (!$DB->insert_record('chat_messages', $message) ||
+            !$DB->insert_record('chat_messages_current', $message)) {
             print_error('cantinsert', 'chat');
         }
 

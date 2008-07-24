@@ -49,7 +49,7 @@
 
     $groupselect = $chatuser->groupid ? " AND (groupid=:groupid OR groupid=0) " : "";
 
-    $messages = $DB->get_records_select("chat_messages",
+    $messages = $DB->get_records_select("chat_messages_current",
                         "chatid = :chatid AND timestamp > :lasttime $groupselect", $params,
                         "timestamp ASC");
 

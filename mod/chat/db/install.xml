@@ -23,7 +23,7 @@
         <INDEX NAME="course" UNIQUE="false" FIELDS="course"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="chat_messages" COMMENT="Stores all the actual chat messages" PREVIOUS="chat" NEXT="chat_users">
+    <TABLE NAME="chat_messages" COMMENT="Stores all the actual chat messages" PREVIOUS="chat" NEXT="chat_messages_current">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="chatid"/>
         <FIELD NAME="chatid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
@@ -43,7 +43,27 @@
         <INDEX NAME="timestamp-chatid" UNIQUE="false" FIELDS="timestamp, chatid" PREVIOUS="groupid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="chat_users" COMMENT="Keeps track of which users are in which chat rooms" PREVIOUS="chat_messages">
+    <TABLE NAME="chat_messages_current" COMMENT="Stores current session" PREVIOUS="chat_messages" NEXT="chat_users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="chatid"/>
+        <FIELD NAME="chatid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="chatid" NEXT="groupid"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="system"/>
+        <FIELD NAME="system" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupid" NEXT="message"/>
+        <FIELD NAME="message" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="system" NEXT="timestamp"/>
+        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="message"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="chatid"/>
+        <KEY NAME="chatid" TYPE="foreign" FIELDS="chatid" REFTABLE="chat" REFFIELDS="id" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" NEXT="groupid"/>
+        <INDEX NAME="groupid" UNIQUE="false" FIELDS="groupid" PREVIOUS="userid" NEXT="timestamp-chatid"/>
+        <INDEX NAME="timestamp-chatid" UNIQUE="false" FIELDS="timestamp, chatid" PREVIOUS="groupid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="chat_users" COMMENT="Keeps track of which users are in which chat rooms" PREVIOUS="chat_messages_current">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="chatid"/>
         <FIELD NAME="chatid" TYPE="int" LENGTH="11" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>

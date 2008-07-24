@@ -80,7 +80,7 @@
             $newmessage->systrem = 0;
             $newmessage->message = $message;
             $newmessage->timestamp = time();
-            if (!$DB->insert_record('chat_messages', $newmessage)) {
+            if (!$DB->insert_record('chat_messages', $newmessage) && !$DB->insert_record('chat_messages_current', $newmessage)) {
                 print_error('cantinsert', 'chat');
             }
 
@@ -141,7 +141,7 @@
     $options->para = false;
     $options->newlines = true;
 
-    $params = array('last'=>$last, 'groupid'=>$groupid, 'chatid'=>$chat->id, 'chatentered'=>$chatentered); 
+    $params = array('last'=>$last, 'groupid'=>$groupid, 'chatid'=>$chat->id, 'chatentered'=>$chatentered);
 
     if ($newonly) {
         $lastsql = "AND timestamp > :last";
@@ -151,7 +151,7 @@
 
     $groupselect = $groupid ? "AND (groupid=:groupid OR groupid=0)" : "";
 
-    $messages = $DB->get_records_select("chat_messages",
+    $messages = $DB->get_records_select("chat_messages_current",
                         "chatid = :chatid AND timestamp > :chatentered $lastsql $groupselect", $params,
                         "timestamp DESC");
 

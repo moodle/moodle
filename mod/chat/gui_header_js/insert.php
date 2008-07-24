@@ -21,7 +21,7 @@
     if (!$cm = get_coursemodule_from_instance('chat', $chat->id, $course->id)) {
         print_error('invalidcoursemodule');
     }
-    
+
     require_login($course->id, false, $cm);
 
     if (isguest()) {
@@ -49,8 +49,8 @@
         $message->message = $chat_message;
         $message->timestamp = time();
 
-        if (!$DB->insert_record('chat_messages', $message)) {
-            print_error('cantinsert', 'chat');
+        if (!$DB->insert_record('chat_messages', $message) || !$DB->insert_record('chat_messages_current', $message)) {
+            print_error('Could not insert a chat message!');
         }
 
         $chatuser->lastmessageping = time() - 2;

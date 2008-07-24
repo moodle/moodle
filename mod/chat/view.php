@@ -6,7 +6,7 @@
     require_once('lib.php');
     require_once($CFG->libdir.'/blocklib.php');
     require_once('pagelib.php');
-    
+
     $id   = optional_param('id', 0, PARAM_INT);
     $c    = optional_param('c', 0, PARAM_INT);
     $edit = optional_param('edit', -1, PARAM_BOOL);
@@ -42,9 +42,9 @@
 
 
     require_course_login($course, true, $cm);
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-    
+
     // show some info for guests
     if (isguestuser()) {
         $navigation = build_navigation('', $cm);
@@ -135,7 +135,7 @@
                 if (!empty($USER->screenreader)) {
                     $chattarget = "/mod/chat/gui_basic/index.php?id=$chat->id$groupparam";
                 } else {
-                    $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam"; 
+                    $chattarget = "/mod/chat/gui_$CFG->chat_method/index.php?id=$chat->id$groupparam";
                 }
 
                 echo '<p>';
@@ -194,7 +194,7 @@
                 break;
         }
     }
-    
+
     echo '</tr></table>';
 
     print_footer($course);

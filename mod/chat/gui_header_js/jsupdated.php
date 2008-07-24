@@ -133,7 +133,7 @@
             $newcriteria = "timestamp > :lasttime";
         }
         
-        $messages = $DB->get_records_select("chat_messages",
+        $messages = $DB->get_records_select("chat_messages_current",
                                        "chatid = :chatid AND $newcriteria $groupselect", $params,
                                        "timestamp ASC");
         
