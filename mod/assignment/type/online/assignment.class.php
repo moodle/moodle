@@ -96,10 +96,11 @@ class assignment_online extends assignment_base {
         }
 
         if (has_capability('mod/assignment:submit', $context)) {
-            print_simple_box_start('center', '70%', '', 0, 'generalbox', 'online');
             if ($editmode) {
+                print_box_start('generalbox', 'online');
                 $mform->display();
             } else {
+                print_box_start('generalbox boxwidthwide boxaligncenter', 'online');
                 if ($submission) {
                     echo format_text($submission->data1, $submission->data2);
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
@@ -108,7 +109,7 @@ class assignment_online extends assignment_base {
                     echo '<div style="text-align:center">'.get_string('emptysubmission', 'assignment').'</div>';
                 }
             }
-            print_simple_box_end();
+            print_box_end();
             if (!$editmode && $editable) {
                 echo "<div style='text-align:center'>";
                 print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'),
