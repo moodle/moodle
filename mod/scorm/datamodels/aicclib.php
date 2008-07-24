@@ -279,6 +279,11 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                                 $scodata->value = $element->mastery_score;
                                 $dataid = insert_record('scorm_scoes_data',$scodata);
                             }
+                            if (isset($element->core_vendor)) {
+                                $scodata->name = 'datafromlms';
+                                $scodata->value = eregi_replace('<cr>', "\r\n", $element->core_vendor);
+                                $dataid = insert_record('scorm_scoes_data',$scodata);
+                            }
                         }
                         if ($launch==0) {
                             $launch = $id;
@@ -363,8 +368,9 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     $isvisible = true;
                 }
             }
-            else
-				$isvisible = true;
+            else {
+                $isvisible = true;
+            }
             if ($parents[$level]!=$sco->parent) {
                 if ($newlevel = array_search($sco->parent,$parents)) {
                     for ($i=0; $i<($level-$newlevel); $i++) {
