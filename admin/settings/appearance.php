@@ -95,6 +95,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $temp = new admin_settingpage('ajax', get_string('ajaxuse'));
     $temp->add(new admin_setting_configcheckbox('enableajax', get_string('enableajax', 'admin'), get_string('configenableajax', 'admin'), 1));
+    $temp->add(new admin_setting_configcheckbox('useexternalyui', get_string('useexternalyui', 'admin'), get_string('configuseexternalyui', 'admin'), 1));
     $temp->add(new admin_setting_configcheckbox('disablecourseajax', get_string('disablecourseajax', 'admin'), get_string('configdisablecourseajax', 'admin'),
                                                 isset($CFG->disablecourseajax) ? 1 : empty($CFG->enableajax)));
     $ADMIN->add('appearance', $temp);

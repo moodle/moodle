@@ -12,6 +12,7 @@ function ajax_get_lib($libname) {
 
     global $CFG;
     $libpath = '';
+    $external_yui = false;
 
     $translatelist = array(
             'yui_yahoo' => '/lib/yui/yahoo/yahoo-min.js',
@@ -58,14 +59,26 @@ function ajax_get_lib($libname) {
             );
 
     if (array_key_exists($libname, $translatelist)) {
-        $libpath = $CFG->wwwroot . $translatelist[$libname];
+        // If this is a YUI file and we are using external libraries
+        if (substr($libname, 0, 3) == 'yui' && $CFG->useexternalyui) {
+            $external_yui = true;
+            // Get current version
+            include($CFG->libdir.'/yui/version.php');
+            $libpath = 'http://yui.yahooapis.com/'.$yuiversion.'/build/'.substr($translatelist[$libname], 9);
+        } else {
+            $libpath = $CFG->wwwroot . $translatelist[$libname];
+        }
+
     } else {
         $libpath = $libname;
     }
 
-    $testpath = str_replace($CFG->wwwroot, $CFG->dirroot, $libpath);
-    if (!file_exists($testpath)) {
-        print_error('require_js: '.$libpath.' - file not found.');
+    // Make sure the file exists if it is local.
+    if ($external_yui === false) {
+        $testpath = str_replace($CFG->wwwroot, $CFG->dirroot, $libpath);
+        if (!file_exists($testpath)) {
+            error('require_js: '.$libpath.' - file not found.');
+        }
     }
 
     return $libpath;
