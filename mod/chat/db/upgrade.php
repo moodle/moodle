@@ -25,54 +25,36 @@ function xmldb_chat_upgrade($oldversion=0) {
 
     $result = true;
 
-    if ($result && $oldversion < 2007101510) {
+    if ($result && $oldversion < 2008072400) {
 
-    /// Define field id to be added to chat_messages_current
+    /// Define table chat_messages_current to be created
         $table = new xmldb_table('chat_messages_current');
 
-        $field = new xmldb_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null, null);
-        $table->addField($field);
+    /// Adding fields to table chat_messages_current
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('chatid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('system', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('message', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('timestamp', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
 
-        $field = new xmldb_field('chatid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0', 'id');
-        $table->addField($field);
+    /// Adding keys to table chat_messages_current
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('chatid', XMLDB_KEY_FOREIGN, array('chatid'), 'chat', array('id'));
 
-        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0', 'chatid');
-        $table->addField($field);
+    /// Adding indexes to table chat_messages_current
+        $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+        $table->add_index('groupid', XMLDB_INDEX_NOTUNIQUE, array('groupid'));
+        $table->add_index('timestamp-chatid', XMLDB_INDEX_NOTUNIQUE, array('timestamp', 'chatid'));
 
-        $field = new xmldb_field('groupid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, null, '0', 'userid');
-        $table->addField($field);
-
-        $field = new xmldb_field('system', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'groupid');
-        $table->addField($field);
-
-        $field = new xmldb_field('message', XMLDB_TYPE_TEXT, 'small', null, XMLDB_NOTNULL, null, null, null, null, 'system');
-        $table->addField($field);
-
-        $field = new xmldb_field('timestamp', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'message');
-        $table->addField($field);
-
-        $key = new xmldb_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $table->addKey($key);
-
-        $key = new xmldb_key('chatid', XMLDB_KEY_FOREIGN, array('chatid'), 'chat', array('id'));
-        $table->addKey($key);
-
-        $result = $result && $dbman->create_table($table);
-
-        $index = new xmldb_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
-        if (!$dbman->index_exists($table, $index)) {
-            $result = $result && $dbman->add_index($table, $index);
+    /// Conditionally launch create table for chat_messages_current
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
         }
 
-        $index = new xmldb_index('groupid', XMLDB_INDEX_NOTUNIQUE, array('groupid'));
-        if (!$dbman->index_exists($table, $index)) {
-            $result = $result && $dbman->add_index($table, $index);
-        }
-
-        $index = new xmldb_index('timestamp-chatid', XMLDB_INDEX_NOTUNIQUE, array('timestamp', 'chatid'));
-        if (!$dbman->index_exists($table, $index)) {
-            $result = $result && $dbman->add_index($table, $index);
-        }
+    /// chat savepoint reached
+        upgrade_mod_savepoint($result, 2008072400, 'chat');
     }
 
     return $result;
