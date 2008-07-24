@@ -8,7 +8,7 @@
 
     $relativepath = get_file_argument('question/exportfile.php');
     if (!$relativepath) {
-        error('No valid arguments supplied or incorrect server configuration');
+        print_error('invalidarg', 'question');
     }
 
     $pathname = $CFG->dataroot . '/temp/questionexport/' . $USER->id . '/' .  $relativepath;

@@ -86,7 +86,7 @@ function question_can_delete_cat($todelete){
     $contextid = $record->contextid;
     $count = $record->count;
     if ($count < 2) {
-        error('You can\'t delete that category it is the default category for this context.');
+        print_error('cannotdeletecate', 'question');
     } else {
         require_capability('moodle/question:managecategory', get_context_instance_by_id($contextid));
     }
@@ -420,7 +420,7 @@ function question_showbank_actions($pageurl, $cm){
         $category = required_param('category', PARAM_SEQUENCE);
         list($tocategoryid, $contextid) = explode(',', $category);
         if (! $tocategory = $DB->get_record('question_categories', array('id' => $tocategoryid, 'contextid' => $contextid))) {
-            error('Could not find category record');
+            print_error('cannotfindcate', 'question');
         }
         $tocontext = get_context_instance_by_id($contextid);
         require_capability('moodle/question:add', $tocontext);
@@ -479,7 +479,7 @@ function question_showbank_actions($pageurl, $cm){
                         if ($DB->record_exists('quiz_question_instances', array('question' => $questionid))) {
                             if (!$DB->set_field('question', 'hidden', 1, array('id', $questionid))) {
                                 question_require_capability_on($questionid, 'edit');
-                                error('Was not able to hide question');
+                                print_error('cannothidequestion', 'question');
                             }
                         } else {
                             delete_question($questionid);
@@ -488,7 +488,7 @@ function question_showbank_actions($pageurl, $cm){
                 }
                 redirect($pageurl->out());
             } else {
-                error("Confirmation string was incorrect");
+                print_error('invalidconfirm', 'question');
             }
         }
     }
@@ -497,7 +497,7 @@ function question_showbank_actions($pageurl, $cm){
     if(($unhide = optional_param('unhide', '', PARAM_INT)) and confirm_sesskey()) {
         question_require_capability_on($unhide, 'edit');
         if(!$DB->set_field('question', 'hidden', 0, array('id', $unhide))) {
-            error("Failed to unhide the question.");
+            print_error('cannotunhidequestion', 'question');
         }
         redirect($pageurl->out());
     }

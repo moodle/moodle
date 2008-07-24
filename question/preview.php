@@ -60,7 +60,7 @@
     }
     // Load the question information
     if (!$questions = $DB->get_records('question', array('id' =>  $id))) {
-        error('Could not load question');
+        print_error('cannotloadquestion', 'question');
     }
     if (empty($quizid)) {
         $quiz = new cmoptions;
@@ -69,7 +69,7 @@
         require_login($courseid, false);
         $quiz->course = $courseid;
     } else if (!$quiz = $DB->get_record('quiz', array('id' => $quizid))) {
-        error("Quiz id $quizid does not exist");
+        print_error('invalidquizid', 'quiz', '', $quizid);
     } else {
         require_login($quiz->course, false, get_coursemodule_from_instance('quiz', $quizid, $quiz->course));
     }
@@ -86,11 +86,11 @@
     $quiz->questions = $id;
 
     if (!$category = $DB->get_record("question_categories", array("id" => $questions[$id]->category))) {
-        error("This question doesn't belong to a valid category!");
+        print_error('invalidquestionid', 'quiz');
     }
 
     if (!question_has_capability_on($questions[$id], 'use', $questions[$id]->category)){
-        error("You can't preview these questions!");
+        print_error('cannotpreview', 'question');
     }
     if (isset($COURSE)){
         $quiz->course = $COURSE->id;
