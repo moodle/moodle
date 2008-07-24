@@ -20,7 +20,6 @@
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <title>"DragMath Equation Editor</title>
-<link rel="stylesheet" href="dialog.css" type="text/css" />
 <script type="text/javascript" src="../../tiny_mce_popup.js"></script>
 <script type="text/javascript" src="js/dragmath.js"></script>
 </head>
