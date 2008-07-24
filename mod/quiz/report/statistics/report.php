@@ -23,7 +23,7 @@ class quiz_statistics_report extends quiz_default_report {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         $download = optional_param('download', '', PARAM_ALPHA);
-
+        $recalculate = optional_param('recalculate', 0, PARAM_BOOL);
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
         $pageoptions['q'] = $quiz->id;
@@ -113,7 +113,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         $timemodified = time() - QUIZ_REPORT_TIME_TO_CACHE_STATS;
         $params = array('quizid'=>$quiz->id, 'groupid'=>$currentgroup, 'allattempts'=>$useallattempts, 'timemodified'=>$timemodified);
-        if (!$quizstats = $DB->get_record_select('quiz_statistics', 'quizid = :quizid  AND groupid = :groupid AND allattempts = :allattempts AND timemodified > :timemodified', $params)){
+        if ($recalculate || !$quizstats = $DB->get_record_select('quiz_statistics', 'quizid = :quizid  AND groupid = :groupid AND allattempts = :allattempts AND timemodified > :timemodified', $params, '*', true)){
             list($s, $usingattemptsstring, $quizstats, $qstats) = $this->quiz_stats($nostudentsingroup, $quiz->id, $currentgroup, $groupstudents, $questions, $useallattempts);
             $toinsert = (object)((array)$quizstats + $params);
             $toinsert->timemodified = time();
@@ -188,6 +188,22 @@ class quiz_statistics_report extends quiz_default_report {
                         $formattedvalue = $value;
                 }
                 $quizinformationtable->data[] = array(get_string($property, 'quiz_statistics', $usingattemptsstring), $formattedvalue);
+            }
+            if (isset($quizstats->timemodified)){
+                list($fromqa, $whereqa, $qaparams) = quiz_report_attempts_sql($quiz->id, $currentgroup, $groupstudents, $useallattempts);
+                $sql = 'SELECT COUNT(1) ' .
+                    'FROM ' .$fromqa.' '.
+                    'WHERE ' .$whereqa.' AND qa.timefinish > :time';
+                $a = new object();
+                $a->lastcalculated = format_time(time() - $quizstats->timemodified);
+                if (!$a->count = $DB->count_records_sql($sql, array('time'=>$quizstats->timemodified)+$qaparams)){
+                    $a->count = 0;
+                } 
+                print_box_start('boxaligncenter generalbox boxwidthnormal mdl-align');
+                echo get_string('lastcalculated', 'quiz_statistics', $a);
+                print_single_button($reporturl->out(true), $reporturl->params()+array('recalculate'=>1),
+                                    get_string('recalculatenow', 'quiz_statistics'), 'post');
+                print_box_end();
             }
             print_table($quizinformationtable);
             
@@ -357,7 +373,7 @@ class quiz_statistics_report extends quiz_default_report {
 }
 function quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $allattempts = true){
     $fromqa = '{quiz_attempts} qa ';
-    $whereqa = 'quiz = :quizid AND preview=0 AND timefinish !=0 ';
+    $whereqa = 'qa.quiz = :quizid AND qa.preview=0 AND qa.timefinish !=0 ';
     $qaparams = array('quizid'=>$quizid);
     if (!empty($currentgroup) && $groupstudents) {
         list($grpsql, $grpparams) = $DB->get_in_or_equal(array_keys($groupstudents), SQL_PARAMS_NAMED, 'u0000');
