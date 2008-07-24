@@ -557,23 +557,20 @@ class quiz_overview_report extends quiz_default_report {
         // Fetch all attempts that need regrading
         if ($groupstudents){
             list($usql, $params) = $DB->get_in_or_equal($groupstudents);
-            $where = "qa.userid $usql AND ";
+            $where = "userid $usql AND ";
         } else {
             $usql = '';
             $where = '';
             $params = array();
         }
         $params[] = $quiz->id;
-        $delsql = 'DELETE FROM qqr USING {quiz_question_regrade} qqr, {quiz_attempts} qa WHERE qqr.attemptid = qa.uniqueid AND ';
-        if ($usql){
-            $delsql .= "qa.userid $usql AND ";
-        }
-        $delsql .='qa.quiz=?';
+        $delsql = 'DELETE FROM {quiz_question_regrade} WHERE attemptid IN
+                (SELECT uniqueid FROM {quiz_attempts} WHERE ' . $where . ' quiz = ?)';
         if (!$DB->execute($delsql, $params)){
             print_error('err_failedtodeleteregrades', 'quiz_overview');
         }
     }
-    
+
     function check_overall_grades($quiz, $userids=array(), $attemptids=array()){
         global $DB;
         //recalculate $attempt->sumgrade
