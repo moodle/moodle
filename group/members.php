@@ -100,6 +100,8 @@ if (!empty($potentialmembersbyrole)) {
     }
 }
 
+$usergroups = array();
+
 if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
     if ($potentialmemberscount > 0) {
         // Get other groups user already belongs to
@@ -110,7 +112,6 @@ if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
                   JOIN {groups} g ON gm.groupid = g.id
                  WHERE u.id $potentialmembersids AND g.courseid = :courseid ";
         $params['courseid'] = $course->id;
-        $usergroups = array();
         if ($rs = $DB->get_recordset_sql($sql, $params)) {
             foreach ($rs as $usergroup) {
                 $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
@@ -155,9 +156,9 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
 //<![CDATA[
 var userSummaries = Array(
 <?php
-$membercnt = count($nonmembers);
+$membercnt = count($potentialmembers);
 $i=1;
-foreach ($nonmembers as $userid => $potentalmember) {
+foreach ($potentialmembers as $userid => $potentalmember) {
 
     if (isset($usergroups[$userid])) {
         $usergrouplist = '<ul>';
