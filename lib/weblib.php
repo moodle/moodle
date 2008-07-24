@@ -342,10 +342,16 @@ class moodle_url {
      * Add an array of params to the params for this page. The added params override existing ones if they
      * have the same name.
      *
-     * @param array $params
+     * @param array $params  Defaults to null. If null then return value of
+     * param 'name'.
+     * @return array params for url.
      */
-    function params($params){
-        $this->params = $params + $this->params;
+    function params($params = null){
+        if (!is_null($params)){
+            return $this->params = $params + $this->params;
+        } else {
+            return $this->params;
+        }
     }
 
     /**
@@ -372,10 +378,15 @@ class moodle_url {
      * have the same name.
      *
      * @param string $paramname name
-     * @param string $param value
+     * @param string $param value. Defaults to null. If null then return value
+     * of param 'name'
      */
-    function param($paramname, $param){
-        $this->params = array($paramname => $param) + $this->params;
+    function param($paramname, $param = null){
+        if (!is_null($param)){
+            $this->params = array($paramname => $param) + $this->params;
+        } else {
+            $this->params[$paramname];
+        }
     }
 
 
