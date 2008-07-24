@@ -601,7 +601,7 @@ class quiz_overview_report extends quiz_default_report {
         if ($attemptids){
             //make sure we fetch all attempts for users to calculate grade.
             //not just those that have changed.
-            $sql = "SELECT qa2.* FROM {quiz_attempts} qa2 WHERE qa2.userid IN (SELECT DISTINCT userid FROM {quiz_attempts} qa WHERE $attemptsql)";
+            $sql = "SELECT qa2.* FROM {quiz_attempts} qa2 WHERE qa2.userid IN (SELECT DISTINCT userid FROM {quiz_attempts} WHERE $attemptsql)";
         } else {
             $sql = "SELECT * FROM {quiz_attempts} WHERE $attemptsql";
         }
