@@ -279,7 +279,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
                 $usertrack->timemodified = $track->timemodified;
             }       
         }
-        ksort($userdata);
+        ksort($usertrack);
         return $usertrack;
     } else {
         return false;
