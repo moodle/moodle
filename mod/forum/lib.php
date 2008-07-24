@@ -6864,4 +6864,11 @@ function forum_get_open_modes() {
                   '0' => get_string('openmode0', 'forum') );
 }
 
+/**
+ * Returns all other caps used in module
+ */
+function forum_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames', 'moodle/site:trustcontent');
+}
+
 ?>

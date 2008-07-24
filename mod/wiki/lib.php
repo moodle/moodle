@@ -1757,5 +1757,11 @@ function wiki_release_lock($wikiid,$pagename) {
     }
 }
 
+/**
+ * Returns all other caps used in module
+ */
+function wiki_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
+}
 
 ?>

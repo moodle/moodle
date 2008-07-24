@@ -626,4 +626,11 @@ function scorm_reset_userdata($data) {
     return $status;
 }
 
+/**
+ * Returns all other caps used in module
+ */
+function scorm_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups');
+}
+
 ?>

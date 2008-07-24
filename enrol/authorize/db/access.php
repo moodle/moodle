@@ -14,7 +14,7 @@ $enrol_authorize_capabilities = array(
     'enrol/authorize:uploadcsv' => array(
         'riskbitmask' => RISK_XSS,
         'captype' => 'write',
-        'contextlevel' => CONTEXT_USER,
+        'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
             'admin' => CAP_ALLOW
         )

@@ -3311,105 +3311,93 @@ function print_context_name($context, $withprefix = true, $short = false) {
  * `component` varchar(100) NOT NULL,
  */
 function fetch_context_capabilities($context) {
-    global $DB;
+    global $DB, $CFG;
 
-    $sort = 'ORDER BY contextlevel,component,id';   // To group them sensibly for display
-    $params = null;
+    $sort = 'ORDER BY contextlevel,component,name';   // To group them sensibly for display
+
+    $params = array();
 
     switch ($context->contextlevel) {
 
         case CONTEXT_SYSTEM: // all
-            $sql = "SELECT * FROM {capabilities}";
+            $SQL = "SELECT *
+                      FROM {capabilities}";
         break;
 
         case CONTEXT_USER:
-            $sql = "SELECT *
+            $extracaps = array('moodle/grade:viewall');
+            list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap0');
+            $SQL = "SELECT *
                       FROM {capabilities}
-                     WHERE contextlevel = ".CONTEXT_USER;
+                     WHERE contextlevel = ".CONTEXT_USER."
+                           OR name $extra";
         break;
 
-        case CONTEXT_COURSECAT: // all
-            $sql = "SELECT * FROM {capabilities}";
+        case CONTEXT_COURSECAT: // course category context and bellow
+            $SQL = "SELECT *
+                      FROM {capabilities}
+                     WHERE contextlevel IN (".CONTEXT_COURSECAT.",".CONTEXT_COURSE.",".CONTEXT_MODULE.",".CONTEXT_BLOCK.")";
         break;
 
-        case CONTEXT_COURSE: // all
-            $sql = "SELECT * FROM {capabilities}";
-        break;
-
-        case CONTEXT_GROUP: // group caps
+        case CONTEXT_COURSE: // course context and bellow
+            $SQL = "SELECT *
+                      FROM {capabilities}
+                     WHERE contextlevel IN (".CONTEXT_COURSE.",".CONTEXT_MODULE.",".CONTEXT_BLOCK.")";
         break;
 
         case CONTEXT_MODULE: // mod caps
-            $cm     = $DB->get_record('course_modules', array('id'=>$context->instanceid));
+            $cm = $DB->get_record('course_modules', array('id'=>$context->instanceid));
             $module = $DB->get_record('modules', array('id'=>$cm->module));
 
-            $sql = "SELECT *
+            $extra = "";
+            $modfile = "$CFG->dirroot/mod/$module->name/lib.php";
+            if (file_exists($modfile)) {
+                include_once($modfile);
+                $modfunction = $module->name.'_get_extra_capabilities';
+                if (function_exists($modfunction)) {
+                    if ($extracaps = $modfunction()) {
+                        list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap0');
+                        $extra = "OR name $extra";
+                    }
+                }
+            }
+
+            $SQL = "SELECT *
                       FROM {capabilities}
-                     WHERE contextlevel = ".CONTEXT_MODULE." AND component = ?";
-            $params = array("mod/$module->name");
+                     WHERE contextlevel = ".CONTEXT_MODULE."
+                           AND component = :component
+                           $extra";
+            $params['component'] = "mod/$module->name";
         break;
 
         case CONTEXT_BLOCK: // block caps
-            $cb    = $DB->get_record('block_instance', array('id'=>$context->instanceid));
+            $cb = $DB->get_record('block_instance', array('id'=>$context->instanceid));
             $block = $DB->get_record('block', array('id'=>$cb->blockid));
 
-            $sql = "SELECT *
+            $extra = "";
+            if ($blockinstance = block_instance($block->name)) {
+                if ($extracaps = $blockinstance->get_extra_capabilities()) {
+                    list($extra, $params) = $DB->get_in_or_equal($extracaps, SQL_PARAMS_NAMED, 'cap0');
+                    $extra = "OR name $extra";
+                }
+            }
+
+            $SQL = "SELECT *
                       FROM {capabilities}
-                     WHERE (contextlevel = ".CONTEXT_BLOCK." AND component = 'moodle') OR (component = ?)";
-            $params = array("block/$block->name");
+                     WHERE (contextlevel = ".CONTEXT_BLOCK."
+                           AND component = :component)
+                           $extra";
+            $params['component'] = "block/$block->name";
         break;
 
         default:
         return false;
     }
 
-    $records = $DB->get_records_sql($sql.' '.$sort, $params);
-
-/// the rest of code is a bit hacky, think twice before modifying it :-(
-
-    // special sorting of core system capabiltites and enrollments
-    if (in_array($context->contextlevel, array(CONTEXT_SYSTEM, CONTEXT_COURSECAT, CONTEXT_COURSE))) {
-        $first = array();
-        foreach ($records as $key=>$record) {
-            if (preg_match('|^moodle/|', $record->name) and $record->contextlevel == CONTEXT_SYSTEM) {
-                $first[$key] = $record;
-                unset($records[$key]);
-            } else if (count($first)){
-                break;
-            }
-        }
-        if (count($first)) {
-           $records = $first + $records; // merge the two arrays keeping the keys
-        }
-    } else {
-        $contextindependentcaps = fetch_context_independent_capabilities();
-        $records = array_merge($contextindependentcaps, $records);
+    if (!$records = $DB->get_records_sql($SQL.' '.$sort, $params)) {
+        $records = array();
     }
 
-    return $records;
-
-}
-
-
-/**
- * Gets the context-independent capabilities that should be overrridable in
- * any context.
- * @return array of capability records from the capabilities table.
- */
-function fetch_context_independent_capabilities() {
-    global $DB;
-
-    //only CONTEXT_SYSTEM capabilities here or it will break the hack in fetch_context_capabilities()
-    $contextindependentcaps = array(
-        'moodle/site:accessallgroups'
-        );
-
-    $records = array();
-
-    foreach ($contextindependentcaps as $capname) {
-        $record = $DB->get_record('capabilities', array('name'=>$capname));
-        array_push($records, $record);
-    }
     return $records;
 }
 

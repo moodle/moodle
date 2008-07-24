@@ -795,6 +795,9 @@ class block_base {
         return true;
     }
 
+    function get_extra_capabilities() {
+        return array();
+    }
 }
 
 /**

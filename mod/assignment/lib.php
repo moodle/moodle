@@ -3089,4 +3089,11 @@ function assignment_reset_course_form_defaults($course) {
     return array('reset_assignment_submissions'=>1);
 }
 
+/**
+ * Returns all other caps used in module
+ */
+function assignment_get_extra_capabilities() {
+    return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
+}
+
 ?>
