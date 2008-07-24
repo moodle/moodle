@@ -575,22 +575,22 @@ class quiz_overview_report extends quiz_default_report {
         global $DB;
         //recalculate $attempt->sumgrade
         //already updated in regrade_question_in_attempt
-        $sql = "UPDATE {quiz_attempts} qa SET qa.sumgrades= " .
+        $sql = "UPDATE {quiz_attempts} SET sumgrades= " .
                     "(SELECT SUM(qs.grade) FROM {question_sessions} qns, {question_states} qs " .
-                        "WHERE qns.newgraded = qs.id AND qns.attemptid = qa.uniqueid ) WHERE ";
+                        "WHERE qns.newgraded = qs.id AND qns.attemptid = {quiz_attempts}.uniqueid ) WHERE ";
         $attemptsql='';
         if (!$attemptids){
             if ($userids){
                 list($usql, $params) = $DB->get_in_or_equal($userids);
-                $attemptsql .= "qa.userid $usql AND ";
+                $attemptsql .= "{quiz_attempts}.userid $usql AND ";
             } else {
                 $params = array();
             }
-            $attemptsql .= "qa.quiz =? AND preview = 0";
+            $attemptsql .= "{quiz_attempts}.quiz =? AND preview = 0";
             $params[] = $quiz->id;
         } else {
             list($asql, $params) = $DB->get_in_or_equal($attemptids);
-            $attemptsql .= "qa.uniqueid $asql";
+            $attemptsql .= "{quiz_attempts}.uniqueid $asql";
         }
         $sql .= $attemptsql;
         if (!$DB->execute($sql, $params)){
@@ -601,9 +601,9 @@ class quiz_overview_report extends quiz_default_report {
         if ($attemptids){
             //make sure we fetch all attempts for users to calculate grade.
             //not just those that have changed.
-            $sql = "SELECT qa2.* FROM {quiz_attempts} qa2 WHERE qa2.userid IN (SELECT DISTINCT qa.userid FROM {quiz_attempts} qa WHERE $attemptsql)";
+            $sql = "SELECT qa2.* FROM {quiz_attempts} qa2 WHERE qa2.userid IN (SELECT DISTINCT userid FROM {quiz_attempts} qa WHERE $attemptsql)";
         } else {
-            $sql = "SELECT qa.* FROM {quiz_attempts} qa WHERE $attemptsql";
+            $sql = "SELECT * FROM {quiz_attempts} WHERE $attemptsql";
         }
         if ($attempts = $DB->get_records_sql($sql, $params)) {
             $attemptsbyuser = quiz_report_index_by_keys($attempts, array('userid', 'id'));
