@@ -121,11 +121,7 @@
                 foreach ($record as $name => $value) {
                     // check for required values
                     if (isset($required[$name]) and !$value) {
-                        error(get_string('missingfield', 'error', $name). " ".
-                              get_string('erroronline', 'error', $linenum) .". ".
-                              get_string('processingstops', 'error'),
-                              'uploaduser.php?sesskey='.$USER->sesskey);
-                        //print_error('missingfield', 'error', 'uploaduser.php?sesskey='.$USER->sesskey, $name);
+                        print_error('missingfield', 'error', 'uploaduser.php?sesskey='.$USER->sesskey, $name);
                     }
                     else if ($name == "groupname") {
                         $newgroup->name = $value;

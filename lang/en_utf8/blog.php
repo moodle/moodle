@@ -38,6 +38,7 @@ $string['groupblogs'] = 'Users can only see blogs for people who share a group';
 $string['intro'] = 'This RSS feed was automatically generated from one or more blogs.';
 $string['incorrectblogfilter'] = 'Incorrect blog filter type specified';
 $string['noentriesyet'] = 'No visible entries here';
+$string['nosuchentry'] = 'No such blog entry';
 $string['noguestpost'] = 'Guest can not post blogs!';
 $string['norighttodeletetag'] = 'You have no rights to delete this tag - $a';
 $string['notallowedtoedit'] = 'You are not allowed to edit this entry';

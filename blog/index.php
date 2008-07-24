@@ -43,7 +43,7 @@ if (empty($filtertype)) {
         if ($postid) {
             $filtertype = 'user';
             if (!$postobject = $DB->get_record('post', array('module'=>'blog', 'id'=>$postid))) {
-                error('No such blog entry');
+                print_error('nosuchentry', 'blog');
             }
             $filterselect = $postobject->userid;
         } else {
