@@ -100,6 +100,8 @@ if (!empty($potentialmembersbyrole)) {
     }
 }
 
+$usergroups = array();
+
 if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
 
     if ($potentialmemberscount != 0) {
@@ -109,8 +111,6 @@ if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
                     "INNER JOIN {$CFG->prefix}groups g ON gm.groupid = g.id " .
                "WHERE u.id IN (".implode(',',$potentialmembersids).") AND g.courseid = {$course->id} ";
         $rs = get_recordset_sql($sql);
-        $groups = array();
-        $usergroups = array();
         while ($usergroup =  rs_fetch_next_record($rs)) {
             $usergroups[$usergroup->userid][$usergroup->id] = $usergroup;
         }
@@ -123,6 +123,7 @@ if ($potentialmemberscount <=  MAX_USERS_PER_PAGE) {
                 $potentialmembersoptions .= '<option value="'.$member->id.
                     '" title="'.$name.'">'.$name.
                     ' ('.@count($usergroups[$member->id]).')</option>';
+                $potentialmembers[$member->id] = $member;
             }
             $potentialmembersoptions .= '</optgroup>';
         }
@@ -153,9 +154,9 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
 //<![CDATA[
 var userSummaries = Array(
 <?php
-$membercnt = count($nonmembers);
+$membercnt = count($potentialmembers);
 $i=1;
-foreach ($nonmembers as $userid => $potentalmember) {
+foreach ($potentialmembers as $userid => $potentalmember) {
 
     if (isset($usergroups[$userid])) {
         $usergrouplist = '<ul>';
