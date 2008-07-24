@@ -217,9 +217,11 @@ class block_admin extends block_list {
             }
         }
 
-    /// Link to the user own profile
-        $this->content->items[]='<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id.'">'.get_string('profile').'</a>';
-        $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
+    /// Link to the user own profile (except guests)
+        if (!isguestuser() and isloggedin()) {
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/user/view.php?id='.$USER->id.'&amp;course='.$course->id.'">'.get_string('profile').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/user.gif" alt="" />';
+        }
 
         return $this->content;
     }
