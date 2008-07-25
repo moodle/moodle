@@ -195,7 +195,7 @@
         $cronfile = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$report.'/cron.php';
         if (file_exists($cronfile)) {
             require_once($cronfile);
-            $cronfunction = 'quiz_report_'.$report.'_cron';
+            $cronfunction = 'report_'.$report.'_cron';
             mtrace('Processing cron function for '.$report.'...', '');
             $pre_dbqueries = null;
             $pre_dbqueries = $DB->perf_get_queries();
