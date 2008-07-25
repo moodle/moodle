@@ -242,7 +242,7 @@ $string['configthemelist'] = 'Leave this blank to allow any valid theme to be us
 For example:  standard,orangewhite.';
 $string['configtimezone'] = 'You can set the default timezone here.  This is the only the DEFAULT timezone for displaying dates - each user can override this by setting their own in their profile. \"Server time\" here will make Moodle default to the server\'s operating system setting, but \"Server time\" in the user profile will make the user default to this timezone setting.  Cronjobs that depend on a time of day to run will use this timezone.';
 $string['configunzip'] = 'Indicate the location of your unzip program (Unix only, optional).  If specified, this will be used to unpack zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
-$string['configuseexternalyui'] = 'Instead of using local files, use online files available on Yahoo&#145;s servers.';
+$string['configuseexternalyui'] = 'Instead of using local files, use online files available on Yahoo&#145;s servers. WARNING: This requires an internet connection, or no AJAX will work on your site.';
 $string['configusetags'] = 'Should tags functionality across the site be enabled?';
 $string['configvariables'] = 'Variables';
 $string['configwarning'] = 'Be careful modifying these settings - strange values could cause problems.';
