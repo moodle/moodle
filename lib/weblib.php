@@ -385,7 +385,7 @@ class moodle_url {
         if (!is_null($param)){
             $this->params = array($paramname => $param) + $this->params;
         } else {
-            $this->params[$paramname];
+            return $this->params[$paramname];
         }
     }
 
