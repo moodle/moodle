@@ -129,13 +129,15 @@ function SCORMapi1_2() {
     }
 
 <?php
+    $current_objective = '';
     $count = 0;
     $objectives = '';
     foreach($userdata as $element => $value){
         if (substr($element,0,14) == 'cmi.objectives') {
             $element = preg_replace('/\.(\d+)\./', "_\$1.", $element);
-            preg_match('/_(\d+)\./', $element, $matches);
-            if (isset($matches[1]) && $matches[1] == $count) {
+            preg_match('/\_(\d+)\./', $element, $matches);
+            if (count($matches) > 0 && $current_objective != $matches[1]) {
+                $current_objective = $matches[1];            
                 $count++;
                 $end = strpos($element,$matches[1])+strlen($matches[1]);
                 $subelement = substr($element,0,$end);
