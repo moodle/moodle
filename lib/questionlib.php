@@ -776,6 +776,9 @@ function questionbank_navigation_tabs(&$row, $contexts, $querystring) {
  */
 function question_preload_questions($questionids, $extrafields = '', $join = '', $extraparams = array()) {
     global $CFG, $DB;
+    if (empty($questionids)) {
+        return array();
+    }
     if ($join) {
         $join = ' JOIN '.$join;
     }
