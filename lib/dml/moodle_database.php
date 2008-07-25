@@ -1185,6 +1185,7 @@ abstract class moodle_database {
     /**
      * Returns the SQL text to be used in order to perform one bitwise NOT operation
      * with 1 integer.
+     *
      * @param integer int1 integer in the operation
      * @return string the piece of SQL code to be used in your statement.
      */
@@ -1195,6 +1196,7 @@ abstract class moodle_database {
     /**
      * Returns the SQL text to be used in order to perform one bitwise OR operation
      * between 2 integers.
+     *
      * @param integer int1 first integer in the operation
      * @param integer int2 second integer in the operation
      * @return string the piece of SQL code to be used in your statement.
@@ -1206,6 +1208,7 @@ abstract class moodle_database {
     /**
      * Returns the SQL text to be used in order to perform one bitwise XOR operation
      * between 2 integers.
+     *
      * @param integer int1 first integer in the operation
      * @param integer int2 second integer in the operation
      * @return string the piece of SQL code to be used in your statement.
@@ -1215,7 +1218,8 @@ abstract class moodle_database {
     }
 
     /**
-     * Returns the FROM clause required by some DBs in all SELECT statements
+     * Returns the FROM clause required by some DBs in all SELECT statements.
+     *
      * To be used in queries not having FROM clause to provide cross_db
      * Most DBs don't need it, hence the default is ''
      */
@@ -1224,7 +1228,8 @@ abstract class moodle_database {
     }
 
     /**
-     * Returns the correct CEIL expression applied to fieldname
+     * Returns the correct CEIL expression applied to fieldname.
+     *
      * @param string fieldname the field (or expression) we are going to ceil
      * @return string the piece of SQL code to be used in your ceiling statement
      * Most DB use CEIL(), hence it's the default.
@@ -1265,6 +1270,7 @@ abstract class moodle_database {
      * Returns the SQL text to be used to compare one TEXT (clob) column with
      * one varchar column, because some RDBMS doesn't support such direct
      * comparisons.
+     *
      * @param string fieldname the name of the TEXT field we need to order by
      * @param string number of chars to use for the ordering (defaults to 32)
      * @return string the piece of SQL code to be used in your statement.
@@ -1294,6 +1300,7 @@ abstract class moodle_database {
 
     /**
      * Returns the proper SQL (for the dbms in use) to concatenate $firstname and $lastname
+     * TODO: Does this really need to be here? Eloy 20070727.
      *
      * @param string $firstname User's first name
      * @param string $lastname User's last name
@@ -1304,7 +1311,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Returns the proper SQL to do LIKE in a case-insensitive way
+     * Returns the proper SQL to do LIKE in a case-insensitive way.
      *
      * Note the LIKE are case sensitive for Oracle. Oracle 10g is required to use
      * the caseinsensitive search using regexp_like() or NLS_COMP=LINGUISTIC :-(
@@ -1319,6 +1326,7 @@ abstract class moodle_database {
     /**
      * Returns the SQL text to be used to order by one TEXT (clob) column, because
      * some RDBMS doesn't support direct ordering of such fields.
+     *
      * Note that the use or queries being ordered by TEXT columns must be minimised,
      * because it's really slooooooow.
      * @param string fieldname the name of the TEXT field we need to order by
@@ -1330,13 +1338,15 @@ abstract class moodle_database {
     }
 
     /**
-     * Returns the proper substr() function for each DB
+     * Returns the proper substr() function for each DB.
+     *
      * Relies on ADOdb $adodb->substr property
      */
     public abstract function sql_substr();
 
     /**
-     * Returns SQL WHERE conditions
+     * Returns SQL WHERE conditions.
+     *
      * @param array conditions - must not contain numeric indexes
      * @return array sql part and params
      */
