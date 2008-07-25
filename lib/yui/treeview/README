@@ -1,15 +1,56 @@
 TreeView - Release Notes
 
+2.5.2
+  * Made CSS adjustments to work with base.css
+
+2.5.1
+  * No change
+
+2.5.0
+  * Added isLeaf property to Node that allows dynamically loaded trees to
+    have nodes that are not dynamically loaded (without configuring dynamic
+    load for each individual dynamic node, which was the requirement previously).  
+    If set to true, dynamic loading will be disabled for the node and it 
+    will always have the leaf node presentation (rather than the expand icon).
+  * Made CSS adjustments to work with base.css
+  * HTMLNode: removed unused property 'content', and documented the correct
+    property 'html'.
+
+2.4.0
+  * added TreeView getNodeByElement, which will return a YAHOO.widget.Node 
+    reference for any ancestor HTML element of a node in the tree.
+  * Added 'title' property to TextNode
+  * Added treeview/tooltip example
+  * Passing a null or invalid animation type to setExpandAnim/setCollapseAnim
+    will turn off animation for the tree.
+  * Spacer style set to 12px width to fix layout inside overflow containers.
+  * Fixed removeAll() when executed on the root node.
+  * TextNode's href property is now escaped.
+  * The 'expanded' property in a node's constructor now works for dynamically
+    loaded nodes.
+
+2.3.1
+
+  * The "expand" event no longer fires twice for dynamically loaded nodes.
+
+  * Added setHtml() to HTMLNode, which will synchronize the html and data
+    properties, as well as the content of the node if it has been rendered.
+
 2.3.0
+
   * The image preload feature was restored.
+
   * Added the new skin
+
   * Leaf nodes created with expanded=true have the child div hidden initially
     to work around an IE rendering issue.
 
 2.2.2
+
   * No change
 
 2.2.1
+
   * Fixed the default value in the documentation for the nowrap property in Node
     (the default value is false).
 

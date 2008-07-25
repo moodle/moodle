@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.3.0
+version: 2.5.2
 */
 .yui-calcontainer {
 	position:relative;
@@ -91,7 +91,7 @@ version: 2.3.0
 	top:2px;
 	bottom:0;
 	width:9px;
-	height:12px;   
+	height:12px;
 	left:2px;
 	z-index:1;
 	background: url("callt.gif") no-repeat;
@@ -198,6 +198,115 @@ version: 2.3.0
 
 .yui-calendar .calrowhead {
 	border-right-width:2px;
+}
+
+/* CalendarNavigator */
+.yui-calendar a.calnav {
+	_position:relative;
+	padding-left:2px;
+	padding-right:2px;
+	text-decoration:none;
+	color:#000;
+}
+
+.yui-calendar a.calnav:hover {
+	border:1px solid #003366;
+	background-color:#6699cc;
+	background: url(calgrad.png) repeat-x;
+	color:#fff;
+	cursor:pointer;
+}
+
+.yui-calcontainer .yui-cal-nav-mask {
+	position:absolute;
+	z-index:2;
+	display:none;
+
+	margin:0;
+	padding:0;
+
+	left:0;
+	top:0;
+	width:100%;
+	height:100%;
+	_width:0;    /* IE6, IE7 Quirks - width/height set programmatically to match container */
+	_height:0;
+
+	background-color:#000;
+	opacity:0.25;
+	*filter:alpha(opacity=25);
+}
+
+.yui-calcontainer .yui-cal-nav {
+	position:absolute;
+	z-index:3;
+	display:none;
+
+	padding:0;
+	top:1.5em;
+	left:50%;
+	width:12em;
+	margin-left:-6em;
+
+	border:1px solid #7B9EBD;
+	background-color:#F7F9FB;
+	font-size:93%;
+}
+
+.yui-calcontainer.withtitle .yui-cal-nav {
+	top:3.5em;
+}
+
+.yui-calcontainer .yui-cal-nav-y,
+.yui-calcontainer .yui-cal-nav-m,
+.yui-calcontainer .yui-cal-nav-b {
+	padding:2px 5px 2px 5px;
+}
+
+.yui-calcontainer .yui-cal-nav-b {
+	text-align:center;
+}
+
+.yui-calcontainer .yui-cal-nav-e {
+	margin-top:2px;
+	padding:2px;
+	background-color:#EDF5FF;
+	border-top:1px solid black;
+	display:none;
+}
+
+.yui-calcontainer .yui-cal-nav label {
+	display:block;
+	font-weight:bold;
+}
+
+.yui-calcontainer .yui-cal-nav-mc {
+	width:100%;
+	_width:auto; /* IE6 doesn't like width 100% */
+}
+
+.yui-calcontainer .yui-cal-nav-y input.yui-invalid {
+	background-color:#FFEE69;
+	border: 1px solid #000;
+}
+
+.yui-calcontainer .yui-cal-nav-yc {
+	width:3em;
+}
+
+.yui-calcontainer .yui-cal-nav-b button {
+	font-size:93%;
+	text-decoration:none;
+	cursor: pointer;
+	background-color: #79b2ea;
+	border: 1px solid #003366;
+	border-top-color:#FFF;
+	border-left-color:#FFF;
+	margin:1px;
+}
+
+.yui-calcontainer .yui-cal-nav-b .yui-default button {
+	/* not implemented */
 }
 
 /* Specific changes for calendar running under fonts/reset */

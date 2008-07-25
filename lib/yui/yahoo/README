@@ -1,5 +1,25 @@
 YAHOO Global - Release Notes
 
+2.5.2
+  * YAHOO.lang now overwrites existing methods when included a second time,
+    but preserves methods that are in the old version but not in the new.
+  * augmentObject overwrite flag works correctly with falsy values
+
+2.5.1
+  * Added Adobe AIR detection.
+
+2.5.0
+  * API doc updates
+
+2.4.0
+  * Added YAHOO.env.ua.mobile
+  * Removed the hasOwnProperty check in isArray to make it perform a bit better.
+  * YAHOO will be created/overwritten if YAHOO is undefined or the defined YAHOO is falsy
+  * YAHOO.lang is now preserved when YAHOO is included a second time.
+
+2.3.1
+  * YAHOO.lang.dump casts primitives to strings
+
 2.3.0
   * Added YAHOO.env.ua - browser detection
   * Added YAHOO.lang.merge - object merge

@@ -1,6 +1,57 @@
 
 YUI Library - Event - Release Notes
 
+2.5.2
+
+  * Custom Event fire() now throws caught exceptions if YAHOO.util.throwErrors =
+    true.  In either case, a message is written to the logger console.
+
+2.5.1
+  * Arrays are once again resized when a listener is removed.
+  * onAvailable/onContentReady stop polling when there is nothing to look for.
+
+2.5.0
+  * Added try/catch to getTarget to suppress errors when targeting
+    ActiveX controls.
+  * Increased the default poll interval to 20ms, and decreased poll
+    retries to 2000 to reduce IE CPU usage.
+  * onDOMReady now uses the native DOMContentLoaded event for the
+    latest releases of WebKit since it support for it was added.
+  * Restored the code that removes all listeners during the unload event to
+    address issues caused by the way FireFox persists listeners through 
+    page refreshes.
+
+2.4.1
+  * Reverted clearAttributes() change to fix IE memory leak on iframes/windows
+
+2.4.0
+  * getListeners/purgeElement accepts either an element reference or an element id
+  * onAvailable/onContentReady accepts a single id or an array of ids
+  * No longer removing listeners during the unload event for non-IE browsers
+  * IE unload strategy for cross page memory leaks changed from removing each listener
+    to calling clearAttributes()
+  * the DOMReady property is now public
+  * Changed IE onDOMReady approach from the defered script node hack to the doScroll('left') hack
+  * getCharChode now Remaps SHIFT-TAB key code (25) to TAB (9) in Safari
+  * getCharCode provides the proper key codes for page up and page down in Safari
+  * Restored object check to _isValidCollection.
+  * In KeyListener, added keycode constants for some of the special keys.
+  * Rolled back the change added for hacking around IE errors from bubbled 
+    events that originally targeted an ActiveX control.
+
+2.3.1
+  * CustomEvent fire() now catches exceptions thrown by the subscribers so
+    that the rest of the subscribers execute.  The exception is logged and
+    stored in the "lastError" property.
+  * Performance tweak: _isValidCollection fails strings first.
+  * onAvailable/onContentReady will work if an element ref rather than an
+    id is provided.
+  * getListeners: fixed the values for the obj and adjust properties.
+    Added scope property.
+  * Added IE hack for when the event target is something that can't be
+    inspected (like a VML canvas).  In this case the target is set to
+    the element the listener is bound to.
+
 2.3.0
   * addListener now produces a logger warning if the supplied callback is 
     undefined.

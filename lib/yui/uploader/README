@@ -1,0 +1,10 @@
+YUI Library - Uploader - Release Notes
+
+2.5.2
+  * No changes.
+
+2.5.1
+  * Fix to ensure UploadCancel fires when expected.
+  
+2.5.0
+  * Experimental release.

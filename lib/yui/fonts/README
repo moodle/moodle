@@ -1,5 +1,22 @@
 YUI Library - Fonts - Release Notes
 
+Version 2.5.2
+
+  * No changes.
+
+Version 2.5.1
+
+  * No changes.
+
+Version 2.5.0
+
+  * No changes.
+
+Version 2.4.0
+
+  * Rechanged core line-height from 1.22 to 1.231, sans units.
+  * Updated line-height value for monospcaed elements. 
+
 Version 2.3.0
 
   * Updated %-to-px conversion charted for increased accuracy

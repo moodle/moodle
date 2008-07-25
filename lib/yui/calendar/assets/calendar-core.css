@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.3.0
+version: 2.5.2
 */
 /**
  * CORE
@@ -81,6 +81,44 @@ version: 2.3.0
 	position:relative;
 	width:100%;
 	text-align:center;
+}
+
+/* CalendarNavigator */
+.yui-calcontainer .yui-cal-nav-mask {
+	position:absolute;
+	z-index:2;
+	margin:0;
+	padding:0;
+	width:100%;
+	height:100%;
+	_width:0;    /* IE6, IE7 quirks - width/height set programmatically to match container */
+	_height:0;
+	left:0;
+	top:0;
+	display:none;
+}
+
+/* NAVIGATOR BOUNDING BOX */
+.yui-calcontainer .yui-cal-nav {
+	position:absolute;
+	z-index:3;
+	top:0;
+	display:none;
+}
+
+/* NAVIGATOR BUTTONS (based on button-core.css) */
+.yui-calcontainer .yui-cal-nav .yui-cal-nav-btn  {
+	display: -moz-inline-box; /* Gecko */
+	display: inline-block; /* IE, Opera and Safari */
+}
+
+.yui-calcontainer .yui-cal-nav .yui-cal-nav-btn button {
+	display: block;
+	*display: inline-block; /* IE */
+	*overflow: visible; /* Remove superfluous padding for IE */
+	border: none;
+	background-color: transparent;
+	cursor: pointer;
 }
 
 /* Specific changes for calendar running under fonts/reset */

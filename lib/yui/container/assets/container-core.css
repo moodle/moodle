@@ -1,59 +1,38 @@
 /*
-Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.3.0
+version: 2.5.2
 */
 .yui-overlay,
 .yui-panel-container {
-
     visibility: hidden;
-	position: absolute;
-	z-index: 1;
-
+    position: absolute;
+    z-index: 2;
 }
 
-yui-panel-container form {
-
-	margin: 0;
-
-}
-
-.masked .yui-panel-container {
-
-    /*
-        Default to a z-index 1 higher than default if the Panel is modal
-        to make sure the panel is above its modality mask.
-    */
-
-   z-index: 2;
-
+.yui-panel-container form {
+    margin: 0;
 }
 
 .mask {
-
-    /*
-        Default to a z-index of 1 less than the default defined 
-        by ".masked .yui-panel-container"
-    */
-
-    z-index: 1; 
+    z-index: 1;
     display: none;
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-
-    /*
-        Application of "overflow:auto" prevents Mac scrollbars from bleeding
-        through the modality mask in Gecko.
-    */
-
-    overflow: auto;
-
 }
 
+.mask.block-scrollbars {
+    /*
+        Application of "overflow:auto" prevents Mac scrollbars from bleeding
+        through the modality mask in Gecko. The block-scollbars class is only 
+        added for Gecko on MacOS
+    */
+    overflow: auto;
+}
 
 /* 
     PLEASE NOTE:
@@ -62,27 +41,25 @@ yui-panel-container form {
        the modality mask in IE 6. 
 
     2) ".drag select" is used to hide <SELECT> elements when dragging a 
-       Panel in IE 6. 
+       Panel in IE 6.  This is necessary to prevent some redraw problems with 
+       the <SELECT> elements when a Panel instance is dragged.
     
-    3) "hide-select select" is appended to an Overlay instance's root HTML 
-       element when it is being annimated by YAHOO.widget.ContainerEffect 
+    3) ".hide-select select" is appended to an Overlay instance's root HTML 
+       element when it is being annimated by YAHOO.widget.ContainerEffect.  
+       This is necessary because <SELECT> elements don't inherit their parent
+       element's opacity in IE 6.
 
 */
 
-.masked select, 
-.drag select, 
+.masked select,
+.drag select,
 .hide-select select {
-
-	_visibility: hidden;   
-
+    _visibility: hidden;
 }
 
 .yui-panel-container select {
-
-	_visibility: inherit;
-
+    _visibility: inherit;
 }
-
 
 /*
 
@@ -129,27 +106,21 @@ PLEASE NOTE:
 .hide-scrollbars,
 .hide-scrollbars * {
 
-	overflow: hidden;
+    overflow: hidden;
 
 }
 
 .hide-scrollbars select {
-
-	display: none;
-
+    display: none;
 }
 
 .show-scrollbars {
-
     overflow: auto;
-
 }
 
 .yui-panel-container.show-scrollbars,
 .yui-tt.show-scrollbars {
-
     overflow: visible;
-
 }
 
 .yui-panel-container.show-scrollbars .underlay,
@@ -159,6 +130,19 @@ PLEASE NOTE:
 
 }
 
+/* 
+   Workaround for Safari 2.x - the yui-force-redraw class is applied, and then removed when
+   the Panel's content changes, to force Safari 2.x to redraw the underlay.
+   We attempt to choose a CSS property which has no visual impact when added,
+   removed.
+*/
+.yui-panel-container.shadow .underlay.yui-force-redraw {
+    padding-bottom: 1px;
+}
+
+.yui-effect-fade .underlay {
+    display:none;
+}
 
 /*
     PLEASE NOTE: The <DIV> element used for a Tooltip's shadow is appended 

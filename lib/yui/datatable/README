@@ -1,5 +1,130 @@
 DataTable Release Notes
 
+*** version 2.5.2 ***
+
+* Paginator now updates recordOffset to the starting index of the last page when
+totalRecords is set to a size smaller than the current recordOffset.
+
+* Assorted pagination and scrolling bugs.
+
+* Resizing a Column no longer inadvertantly sorts it in IE.
+ 
+* Header text no longer wraps by default.
+ 
+* Added UI to fill gap when a scrolling DataTable is narrower than its container.
+ 
+* Fixed wrong assignment of classnames for TDs and message cell.
+ 
+* Fixed bugs for width, minWidth, and hidden Column values in non-scrolling DataTables.
+ 
+* Added getBdContainerEl() method.
+
+
+
+*** version 2.5.1 ***
+
+* Only split THEAD from TBODY markup for scrollable tables.
+* columnResizeEvent sends new width value.
+* Improved performance for adding, deleting, and updating rows dynamically.
+
+
+
+*** version 2.5.0 ***
+
+* Introduced YAHOO.widget.Paginator to manage pagination.
+* Introduced YAHOO.util.Chain to allow for progressive rendering.
+
+Removed APIs
+
+    * CLASS_SCROLLBODY
+    * CLASS_TABLE
+    * getTableEl()
+
+Changed APIs
+
+    * doBeforeLoadData(sRequest, oResponse, oPayload) - oResponse is now the converted full response (typed JSON or XML as appropriate). oPayload is now an optional data payload implementer can pass in to DataSource.sendRequest via the callback object literal.
+    * formatCell() - The first argument, elCell, is now a reference to the cell liner element rather than the TD itself.
+    * onDataReturnAppendRows(sRequest, oResponse, oPayload) - oResponse is now the converted full response (typed JSON or XML as appropriate). oPayload is now an optional data payload implementer can pass in to DataSource.sendRequest via the callback object literal.
+    * onDataReturnInitializeTable(sRequest, oResponse, oPayload) - oResponse is now the converted full response (typed JSON or XML as appropriate). oPayload is now an optional data payload implementer can pass in to DataSource.sendRequest via the callback object literal.
+    * onDataReturnInsertRows(sRequest, oResponse, oPayload) - oResponse is now the converted full response (typed JSON or XML as appropriate). oPayload is now an optional data payload implementer can pass in to DataSource.sendRequest via the callback object literal.
+    * paginator - Should now be an instance of YAHOO.widget.Paginator.
+    * sortedBy.dir - Use CLASS_ASC or CLASS_DESC instead of "asc" and "desc" strings.
+    * Scrolling must be enabled via the configs "scrollable", "width", and "height". CSS should no longer be used to set width or height on scrollable tables.    
+
+Deprecated APIs
+
+    * formatPaginatorDropdown() - Use new Paginator class.
+    * formatPaginatorLinks() - Use new Paginator class.
+    * formatPaginators() - Use new Paginator class.
+    * refreshView() - Use render().
+    * showPage() - Use new Paginator class.
+    * updatePaginator() - Use new Paginator class.
+    * headerCellClickEvent - Use theadCellClickEvent.
+    * headerCellDblclickEvent - Use theadCellDblclickEvent.
+    * headerCellMousedownEvent - Use theadCellMousedownEvent.
+    * headerCellMouseoutEvent - Use theadCellMouseoutEvent.
+    * headerCellMouseoverEvent - Use theadCellMouseoverEvent.
+    * headerLabelClickEvent - Use theadLabelClickEvent.
+    * headerLabelDblclickEvent - Use theadLabelDblclickEvent.
+    * headerLabelMousedownEvent - Use theadLabelMousedownEvent.
+    * headerLabelMouseoutEvent - Use theadLabelMouseoutEvent.
+    * headerLabelMouseoverEvent - Use theadLabelMouseoverEvent.
+    * headerRowClickEvent - Use theadRowClickEvent.
+    * headerRowDblclickEvent - Use theadRowDblclickEvent.
+    * headerRowMousedownEvent - Use theadRowMousedownEvent.
+    * headerRowMouseoutEvent - Use theadRowMouseoutEvent.
+    * headerRowMouseoverEvent - Use theadRowMouseoverEvent.
+    * refreshEvent - Use renderEvent.
+    * paginated - No longer used, as long as "paginator" value is an instance of Paginator class.
+
+
+RecordSet
+
+    * updateKey() - Use updateRecordValue().
+    * keyUpdateEvent - Use recordValueUpdateEvent.
+
+Column
+
+    * width - Must now be a number. Strings will be ignored.
+    * sortOptions.defaultOrder - Use sortOptions.defaultDir, and use CLASS_ASC or CLASS_DESC instead of "asc" and "desc" strings.
+
+
+
+*** version 2.4.0 ***
+
+* No changes.
+
+
+
+*** version 2.3.1 ***
+
+* For better support of resizeable Columns, the following core CSS changes have been
+made:
+
+- applied "table-layout:fixed" to TABLE elements
+- removed "overflow:hidden" from TH and TD elements
+- removed "white-space:nowrap" from TD elements
+
+As a result, implementers may notice a change in the widths of their rendered
+DataTables, which should be resolved by setting widths explicitly via CSS or
+your Column definitions.
+
+* Selection model issues have been addressed by clearing up ambiguous ID and
+index usage. Record instances are now assigned globally unique and immutable ID
+strings (no longer numbers). Record indexes are numbers that are mutable in order
+to represent Record order within a RecordSet instance. TR elements are assigned
+DOM ID strings that are *unrelated* to Record instance IDs and Record indexes. Be
+aware that DOM element IDs will get reused when sorting and paginating. Furthermore,
+Column instances are assigned globally unique and immutable ID strings
+(no longer numbers). Column indexes are numbers that are mutable and represent
+Column order within a ColumnSet instance. Please refer to the API documentation
+for details on when to use Record/Column instance IDs, DOM element IDs, and
+Record/Column index numbers.
+
+* Enabling row or cell selection no longer breaks clicks on links and form elements.
+
+
+
 *** version 2.3.0 ***
 
 * DataSource requests over XHR no longer automatically insert a "?" in the URIs

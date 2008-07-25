@@ -1,4 +1,96 @@
-*** Version 2.3.0 ***
+*** Version 2.5.2 ***
+
+Fixed the following bugs:
+-------------------------
+
++ Button instances no longer flicker in Firefox 3 when their "label" attributed is updated.
+
++ Scrolled Menus of Buttons whose type attribute is set to "menu" or "split" no longer appear 
+  on top of their corresponding Button instance.
+
++ The keyboard shortcut responsible for triggering the display of the Menu for Button instances of
+  type "split" will no longer trigger the display of the browser's default context menu in Opera.
+
+
+
+*** Version 2.5.1 ***
+
++ No changes.
+
+
+
+*** Version 2.5.0 ***
+
++ Fixed issue where returning false inside the scope of a listener for attribute "before" 
+  events (i.e "beforeCheckedChange") would not cancel the attribute's default setter.
+
+
+
+*** Version 2.4.1 ***
+
++ No changes.
+
+
+
+*** Version 2.4.0 ***
+
+Added the following features:
+-----------------------------
+
++ Added a static method "YAHOO.widget.Button.getButton" that returns a Button 
+  instance with the specified HTML element id.
+
+
+Fixed the following bugs:
+-------------------------
+
++ Removed the ".yui-skin-sam" CSS class name from style rules in the core 
+  stylesheet so that it is now truly skin agnostic.
+
++ Updated the default text for tooltips for Buttons of type "radio" so that 
+  they offer the correct instructional text.
+
++ Menus with grouped YAHOO.widget.MenuItem instances will now highlight 
+  correctly when used with Button.
+
++ Buttons of type "link" now have the same default height as other Button
+  types in Internet Explorer.
+
++ Buttons of various types now line up correctly on the same line.
+
++ Menu is now truly an optional dependancy of Button.
+
++ Menus now render with the correct width when the "yui-skin-sam" CSS class 
+  name is applied to an element other than the <BODY>.
+
+
+
+*** Version 2.3.1 ***
+
+Fixed the following bugs:
+-------------------------
++ Purged the old 2.2.2 Button stylesheet and related image assets that was 
+  mistakenly included in the 2.3.0 build.
+
++ Fixed an issue in Gecko where changing a Button instance's "label" attribute
+  after the Button had been created would not result in the Button redrawing at
+  a width to fit its content.
+  
++ Fixed an issue where the singleton keypress event handler
+  (YAHOO.widget.Button.onFormKeyPress) registered for forms containing
+  Button instances of type "submit" was not removed from the form once all of 
+  its child Button instances are destroyed.
+
++ Submitting a form by clicking on a MenuItem of a SplitButton's or MenuButton's
+  Menu will no longer result in a JavaScript error.
+  
++ Modified how element tag names are compared to support XHTML applications.
+
++ Added code to remove the CSS class names representing the "hover," "focus," 
+  and "active" states when a Button instance is disabled.
+
+
+*** Version 2.3 ***
 
 Added the following features:
 -----------------------------

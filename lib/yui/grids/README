@@ -1,5 +1,33 @@
 YUI Library - Grids - Release Notes
 
+Version 2.5.2
+
+  * No changes.
+
+Version 2.5.1
+
+  * Added more specific selectors to allow nesting on "yui-gd" grids 
+    within "yui-ge" for Bugzilla #1779582, Sourceforge #1897741 
+  * Modified Page Width and Template Preset values for IE
+  * Reordered several rules; formatted file and added more comments
+  * Modified width and margin values for "thirds" nesting grid
+  * Combined and optimized several selectors and rules
+
+Version 2.5.0
+
+  * Tweaked em widths for "template presets" .yui-t1-6
+  * Pruned two redundant lines
+
+Version 2.4.0
+
+  * No changes.
+
+Version 2.3.1
+
+  * Fixed bug in 2.3.0 that transposed the columns in deeply-
+    nested grids. Sourceforge #1765553, Bugzilla #1419885    
+  * Improved precision and consistency of margins in nested grids.
+
 Version 2.3.0
 
   * Added more specific selectors to allow deeper nesting of both 

@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.3.0
+version: 2.5.2
 */
 /**
  * SAM
@@ -79,6 +79,7 @@ version: 2.3.0
 	border-collapse:collapse;
 	font:100% sans-serif;
 	text-align:center;
+	margin:0;
 }
 
 /* NAVBAR BOUNDING BOX */
@@ -86,6 +87,7 @@ version: 2.3.0
 	background:transparent;
 	border:none;
 	vertical-align:middle;
+	padding:0;
 }
 
 /* NAVBAR TEXT CONTAINER */
@@ -129,6 +131,11 @@ version: 2.3.0
 	height:2em;
 }
 
+.yui-skin-sam .yui-calendar .calweekdayrow th {
+	padding:0;
+	border:none;
+}
+
 /* WEEKDAY (Su, Mo, Tu...) HEADER CELLS */
 .yui-skin-sam .yui-calendar .calweekdaycell {
 	color:#000;
@@ -148,16 +155,17 @@ version: 2.3.0
 	font-size:85%;
 	font-style:normal;
 	font-weight:normal;
+	border:none;
 }
 
 .yui-skin-sam .yui-calendar .calrowhead {
 	text-align:right;
-	padding-right:2px;
+	padding:0 2px 0 0;
 }
 
 .yui-skin-sam .yui-calendar .calrowfoot {
 	text-align:left;
-	padding-left:2px;
+	padding:0 0 0 2px;
 }
 
 /* NORMAL CELLS */
@@ -229,3 +237,125 @@ version: 2.3.0
 .yui-skin-sam .yui-calendar td.calcell.highlight2 { background-color:#99ccff; }
 .yui-skin-sam .yui-calendar td.calcell.highlight3 { background-color:#ffcccc; }
 .yui-skin-sam .yui-calendar td.calcell.highlight4 { background-color:#ccff99; }
+
+/* CalendarNavigator */
+
+/* MONTH/YEAR LABEL */
+.yui-skin-sam .yui-calendar a.calnav { 
+	border: 1px solid #f2f2f2;
+	padding:0 4px;
+	text-decoration:none;
+	color:#000;
+	zoom:1;
+}
+
+.yui-skin-sam .yui-calendar a.calnav:hover { 
+	background: url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
+	border-color:#A0A0A0;
+	cursor:pointer;
+}
+
+/* NAVIGATOR MASK */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav-mask {
+	background-color:#000;
+	opacity:0.25;
+	*filter:alpha(opacity=25); /* IE */
+}
+
+/* NAVIGATOR BOUNDING BOX */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav {
+	font-family:arial,helvetica,clean,sans-serif;
+	font-size:93%;
+	border:1px solid #808080;
+	left:50%;
+	margin-left:-7em;
+	width:14em;
+	padding:0;
+	top:2.5em;
+	background-color:#f2f2f2;
+}
+
+.yui-skin-sam .yui-calcontainer.withtitle .yui-cal-nav {
+	top:4.5em;
+}
+
+/* NAVIGATOR BOUNDING BOX */
+.yui-skin-sam .yui-calcontainer.multi .yui-cal-nav {
+	width:16em;
+	margin-left:-8em;
+}
+
+/* NAVIGATOR YEAR/MONTH/BUTTON/ERROR BOUNDING BLOCKS */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav-y,
+.yui-skin-sam .yui-calcontainer .yui-cal-nav-m,
+.yui-skin-sam .yui-calcontainer .yui-cal-nav-b {
+	padding:5px 10px 5px 10px;
+}
+
+.yui-skin-sam .yui-calcontainer .yui-cal-nav-b {
+	text-align:center;
+}
+
+.yui-skin-sam .yui-calcontainer .yui-cal-nav-e {
+	margin-top:5px;
+	padding:5px;
+	background-color:#EDF5FF;
+	border-top:1px solid black;
+	display:none;
+}
+
+/* NAVIGATOR LABELS */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav label {
+	display:block;
+	font-weight:bold;
+}
+
+/* NAVIGATOR MONTH CONTROL */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav-mc {
+	width:100%;
+	_width:auto; /* IE6, IE7 Quirks don't handle 100% well */
+}
+
+/* NAVIGATOR MONTH CONTROL, VALIDATION ERROR */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav-y input.yui-invalid {
+	background-color:#FFEE69;
+	border: 1px solid #000;
+}
+
+/* NAVIGATOR YEAR CONTROL */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav-yc {
+	width:4em;
+}
+
+/* NAVIGATOR BUTTONS */
+
+/* BUTTON WRAPPER */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn {
+	border:1px solid #808080;
+	background: url(../../../../assets/skins/sam/sprite.png) repeat-x 0 0;
+	background-color:#ccc;
+	margin: auto .15em;
+}
+
+/* BUTTON (based on button-skin.css) */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn button {
+	padding:0 8px;
+	font-size:93%;
+	line-height: 2;  /* ~24px */
+	*line-height: 1.7; /* For IE */
+	min-height: 2em; /* For Gecko */
+	*min-height: auto; /* For IE */
+	color: #000;
+}
+
+/* DEFAULT BUTTONS */
+/* NOTE: IE6 will only pickup the yui-default specifier from the multiple class specifier */
+.yui-skin-sam .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn.yui-default {
+	border:1px solid #304369;
+	background-color: #426fd9;
+	background: url(../../../../assets/skins/sam/sprite.png) repeat-x 0 -1400px;
+}
+
+.yui-skin-sam .yui-calcontainer .yui-cal-nav .yui-cal-nav-btn.yui-default button {
+	color:#fff;
+}

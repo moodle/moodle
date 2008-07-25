@@ -1,5 +1,76 @@
 Connection Manager Release Notes
 
+*** version 2.5.2 ***
+
+* In file upload transactions, in Safari 3.x, fail to send the file data.  This
+is due to Safari evaluating the condition statement "if(formObject.encoding){}"
+as true.  This results in the incorrect attribute being set, the correct
+attribute being "enctype."  The conditional check now explicitly verifies for
+IE, before setting the appropriate attribute.
+
+* NOTE: File uploads using setForm() do not function as expected in Opera
+9.27.  The file and data upload phase works as expected, however the server
+response cannot be read.  Specifically, "onload" for an iframe is triggered when
+the iframe is appended into the DOM.  This results in the upload callback being
+fired immediately, before the transaction is complete, and before the response
+data are available.
+
+This condition is documented in Opera's bug tracking system: 295719 and appears
+to have been fixed as of Opera 9.50 b2.
+
+*** version 2.5.1 ***
+
+* no changes.
+
+*** version 2.5.0 ***
+
+* setForm() can now detects HTTPS in the URI for file upload transactions.  The
+third, boolean argument for HTTPS when using IE is no longer necessary.
+
+* [FIXED] SF1882101.  POST transactions without a message will now have a
+Content-Length value set to 0 for FF 2.x.  This is accomplished by passing a
+value of empty string instead of null to XHR's send().  All other A-Grade
+browsers remain unaffected and perform correctly.
+
+*** version 2.4.0 ***
+
+* [FIXED] SF1804153.  Transactions initialized with setForm() now properly clear
+the POST data field after each transaction.
+
+* The callback object can accept a new member, cache, defined with a boolean
+value.  If set to false (e.g., var callback = { cache:false };), a timestamp
+will be appended to the URI to override HTTP GET caching.  This timestamp value
+will appear as rnd=timestamp in the request querystring.
+
+* Custom Events startEvent, completeEvent, and abortEvent now receive
+callback.argument, if defined, in addition to the transaction ID.  Each Custom
+Event's function handler receives two arguments -- the event type as the first
+argument, and an array as the second argument.  The first element in the array
+is the transaction ID, and the second element are any arguments defined in the
+callback object.
+
+*** version 2.3.1 ***
+
+* setDefaultPostHeader() can now be overloaded with a boolean, string, or
+number.  By default, POST transactions send the following Content-Type header:
+'application/x-www-form-urlencoded; charset=UTF-8'.
+
+A custom Content-Type header can now be set by passing its value to
+setDefaultPostHeader().
+
+* HTML form submissions now send a Content-Type header of "application/x-www-
+form-urlencoded", omitting the charset=UTF-8 value.
+
+* setDefaultXhrHeader() can now be overloaded with a boolean, string, or number.
+By default, all transactions send a custom header of "X-Requested-
+With:XMLHttpRequest".
+
+This default header value can be overridden by passing the desired value as an
+argument to setDefaultPostHeader().
+
+* The file upload iframe's event listener is now explicitly removed before the
+iframe is destroyed.
+
 *** version 2.3.0 ***
 
 * Custom Events are introduced in Connection Manager.  These events -- for a
@@ -23,7 +94,7 @@ For transactions involving file upload with an HTML form, the events are:
 * abort() and isCallInProgress() are now functional for file upload
 transactions.
 
-* NOTE: The XHR implementation in Safari 2.0.4 has been confirmed to leak
+* NOTE: The native XHR implementation in Safari 2.0.4 has been confirmed to leak
 memory.
 
 * UPDATE: The XHR implementation in Safari 3.0 beta(and WebKit builds) now
@@ -213,28 +284,6 @@ and returns false if the connection object is no longer available.
 *** version 0.9.0 ***
 
 * Initial release
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -1,8 +1,8 @@
 /*
-Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.3.0
+version: 2.5.2
 */
 /* default space between tabs */
 .yui-navset .yui-nav li,
@@ -20,6 +20,7 @@ version: 2.3.0
 .yui-navset .yui-navset-right .yui-nav,
 .yui-navset-left .yui-nav,
 .yui-navset-right .yui-nav { width:6em; }
+
 .yui-navset-top .yui-nav,
 .yui-navset-bottom .yui-nav {
     width:auto;
@@ -63,10 +64,6 @@ version: 2.3.0
 .yui-navset-left .yui-nav li,
 .yui-navset-right .yui-nav li {
     display:block;
-}
-
-.yui-navset .yui-nav a {
-    Xoutline:0; /* gecko: keep from shifting */
 }
 
 .yui-navset .yui-nav a { position:relative; } /* IE: to allow overlap */

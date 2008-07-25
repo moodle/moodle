@@ -1,13 +1,11 @@
 /*
-Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.3.0
+version: 2.5.2
 */
 .yui-skin-sam .yui-button  {
 
-    display: -moz-inline-box; /* Gecko */
-    display: inline-block; /* IE, Opera and Safari */
     border-width: 1px 0;
     border-style: solid;
     border-color: #808080;
@@ -18,13 +16,11 @@ version: 2.3.0
 
 .yui-skin-sam .yui-button .first-child {
 
-    display: block;
-    *display: inline-block; /* IE */
     border-width: 0 1px;
     border-style: solid;
     border-color: #808080;
     margin: 0 -1px;
-    *position: relative;
+    *position: relative;    /* Necessary to get negative margins working in IE */
     *left: -1px;
 
 }
@@ -32,10 +28,7 @@ version: 2.3.0
 .yui-skin-sam .yui-button button,
 .yui-skin-sam .yui-button a {
 
-    display: block;
-    *display: inline-block; /* IE */
     padding: 0 10px;
-    border: none;
     font-size: 93%;  /* 12px */
     line-height: 2;  /* ~24px */
     *line-height: 1.7; /* For IE */
@@ -45,21 +38,15 @@ version: 2.3.0
 
 }
 
-.yui-skin-sam .yui-button button {
-
-    *overflow: visible; /* Remove superfluous padding for IE */
-    background-color: transparent;
-    cursor: pointer;
-    cursor: hand;
-
-}
-
 .yui-skin-sam .yui-button a {
 
-    text-decoration: none;
+    /*
+        Necessary to get Button's of type "link" to be the correct 
+        height in IE.
+    */
+    *line-height: 2;
 
 }
-
 
 .yui-skin-sam .yui-split-button button,
 .yui-skin-sam .yui-menu-button button {

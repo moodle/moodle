@@ -1,0 +1,14 @@
+YUI Library - Cookie Utility - Release Notes
+
+2.5.2
+
+  * No changes.
+
+2.5.1
+
+  * Fixed bug preventing cookies with numbers or non-alphanumeric
+    characters in the cookie name from working correctly.
+
+2.5.0
+
+  * Beta release.

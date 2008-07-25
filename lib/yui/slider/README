@@ -1,5 +1,34 @@
 Slider - Release Notes
 
+2.5.2
+   * No change
+
+2.5.1
+    * No change
+
+2.5.0
+    * Slider onDrag now calls fireEvents, so bg mousedown, drag, mouseup fires change events
+    * Slider uses new dragOnly=true property added in dragdrop
+    * Introduced DualSlider
+
+2.4.0
+    * No change
+
+2.3.1
+
+   * getValue will return the last value or 0 rather than NaN if the control 
+     is display:none.
+
+   * The slider will not fire slideStart/change/slideEnd events during its
+     initial setup unless setValue was called prior to initialization.
+
+   * slideStart/slideEnd now fire consistently among the various methods of
+     changing the slider value (setValue, bg click, thumb drag).  A bg click
+     and drag continuation will result in two start/end events.
+
+   * Added a silent flag to setValue and setRegionValue to silence all of the
+     events during that operation.
+
 2.3.0
    * Added valueChangeSource, which specifies whether the last value change
      was the result of user interaction with the control, or a result of a
