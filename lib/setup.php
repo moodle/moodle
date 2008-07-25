@@ -526,58 +526,54 @@ global $HTTPSPAGEREQUIRED;
         }
     }
 
-    // allowed list processed before blocked list?
-    $allowbeforeblock = get_config(null, 'allowbeforeblock');
-    $allowediplist = get_config(null, 'allowedip');
-    $blockediplist = get_config(null, 'blockedip');
-    $banned  = false;
-
-    function check_ip($list){
-        $inlist = false;
-        $client_ip = getremoteaddr();
-        $list = explode("\n", $list);
-        foreach($list as $subnet) {
-            $subnet = trim($subnet);
-            if (address_in_subnet($client_ip, $subnet)) {
-                $inlist = true;
-                break;
-            } 
-        }
-        return $inlist;
-    }
     // in the first case, ip in allowed list will be performed first
     // for example, client IP is 192.168.1.1
     // 192.168 subnet is an entry in allowed list
-    // 192.168.1.1 is banned in blocked list 
+    // 192.168.1.1 is banned in blocked list
     // This ip will be banned finally
-    if (!empty($allowbeforeblock)) {
-        if (!empty($allowediplist)) {
-            $banned = !check_ip($allowediplist);
+    if (!empty($CFG->allowbeforeblock)) { // allowed list processed before blocked list?
+        if (!empty($CFG->allowedip)) {
+            if (!remoteip_in_list($CFG->allowedip)) {
+                die(get_string('ipblocked', 'admin'));
+            }
         }
-        // need further check, client ip may a part of 
-        // allowed subnet, but a IP address are listed 
+        // need further check, client ip may a part of
+        // allowed subnet, but a IP address are listed
         // in blocked list.
-        if (!empty($blockediplist)) {
-            $banned = check_ip($allowediplist);
+        if (!empty($CFG->blockedip)) {
+            if (remoteip_in_list($CFG->blockedip)) {
+                die(get_string('ipblocked', 'admin'));
+            }
         }
+
     } else {
         // in this case, IPs in blocked list will be performed first
         // for example, client IP is 192.168.1.1
         // 192.168 subnet is an entry in blocked list
-        // 192.168.1.1 is allowed in allowed list 
+        // 192.168.1.1 is allowed in allowed list
         // This ip will be allowed finally
-        if (!empty($blockediplist)) {
-            $banned = check_ip($blockediplist);
+        if (!empty($CFG->blockedip)) {
+            if (remoteip_in_list($CFG->blockedip)) {
+                // if the allowed ip list is not empty
+                // IPs are not included in the allowed list will be
+                // blocked too
+                if (!empty($CFG->allowedip)) {
+                    if (!remoteip_in_list($CFG->allowedip)) {
+                        die(get_string('ipblocked', 'admin'));
+                    }
+                } else {
+                    die(get_string('ipblocked', 'admin'));
+                }
+            }
         }
-        // if the allowed ip list is not empty
-        // IPs are not included in the allowed list will be 
-        // blocked too
-        if (!empty($allowediplist)) {
-            $banned = !check_ip($allowediplist);
+        // if blocked list is null
+        // allowed list should be tested
+        if(!empty($CFG->allowedip)) {
+            if (!remoteip_in_list($CFG->allowedip)) {
+                die(get_string('ipblocked', 'admin'));
+            }
         }
-    }
-    if($banned) {
-        die(get_string('ipblocked', 'admin'));
+
     }
 
 /// note: we can not block non utf-8 installatrions here, because empty mysql database

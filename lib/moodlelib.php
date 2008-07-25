@@ -7310,6 +7310,25 @@ function unzip_show_status ($list,$removepath) {
 }
 
 /**
+ * Is current ip in give list?
+ * @param string $list
+ * @return bool
+ */
+function remoteip_in_list($list){
+    $inlist = false;
+    $client_ip = getremoteaddr();
+    $list = explode("\n", $list);
+    foreach($list as $subnet) {
+        $subnet = trim($subnet);
+        if (address_in_subnet($client_ip, $subnet)) {
+            $inlist = true;
+            break;
+        } 
+    }
+    return $inlist;
+}
+
+/**
  * Returns most reliable client address
  *
  * @return string The remote IP address
