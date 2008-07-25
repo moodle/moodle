@@ -135,12 +135,16 @@ define('PORTFOLIO_TIME_HIGH', 'high');
 *                                        back to the callback functions (passed by reference)
 *                                        these MUST be primatives to be added as hidden form fields.
 *                                        and the values get cleaned to PARAM_ALPHAEXT or PARAM_NUMBER or PARAM_PATH
+* @param string $callbackfile            this can be autodetected if it's in the same file as your caller,
+*                                        but more often, the caller is a script.php and the class in a lib.php
+*                                        so you can pass it here if necessary.
+*                                        this path should be relative (ie, not include) dirroot
 * @param boolean $fullform               either display the fullform with the dropmenu of available instances
 *                                        or just a small icon (which will trigger instance selection in a new screen)
 *                                        optional, defaults to true.
 * @param boolean $return                 whether to echo or return content (optional defaults to false (echo)
 */
-function portfolio_add_button($callbackclass, $callbackargs, $fullform=true, $return=false) {
+function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null, $fullform=true, $return=false) {
 
     global $SESSION, $CFG, $COURSE, $USER;
 
@@ -148,13 +152,20 @@ function portfolio_add_button($callbackclass, $callbackargs, $fullform=true, $re
         return;
     }
 
-    $backtrace = debug_backtrace();
-    if (!array_key_exists(0, $backtrace) || !array_key_exists('file', $backtrace[0]) || !is_readable($backtrace[0]['file'])) {
-        debugging(get_string('nocallbackfile', 'portfolio'));
-        return;
-    }
+    if (empty($callbackfile)) {
+        $backtrace = debug_backtrace();
+        if (!array_key_exists(0, $backtrace) || !array_key_exists('file', $backtrace[0]) || !is_readable($backtrace[0]['file'])) {
+            debugging(get_string('nocallbackfile', 'portfolio'));
+            return;
+        }
 
-    $callbackfile = substr($backtrace[0]['file'], strlen($CFG->dirroot));
+        $callbackfile = substr($backtrace[0]['file'], strlen($CFG->dirroot));
+    } else {
+        if (!is_readable($CFG->dirroot . $callbackfile)) {
+            debugging(get_string('nocallbackfile', 'portfolio'));
+            return;
+        }
+    }
 
     require_once($CFG->dirroot . $callbackfile);
 

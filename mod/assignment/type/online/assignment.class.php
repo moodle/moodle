@@ -101,13 +101,13 @@ class assignment_online extends assignment_base {
                 $mform->display();
             } else {
                 print_box_start('generalbox boxwidthwide boxaligncenter', 'online');
-                if ($submission) {
+                if ($submission && true) { // @todo penny replace with capability check later
                     echo format_text($submission->data1, $submission->data2);
                     $p = array(
                         'userid' => $USER->id,
                         'assignmentid' => $this->cm->id,
                     );
-                    portfolio_add_button('assignment_portfolio_caller', $p);
+                    portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php'));
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
                     echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
                 } else if ($this->isopen()){    //fix for #4206

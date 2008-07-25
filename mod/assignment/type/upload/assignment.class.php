@@ -377,15 +377,15 @@ class assignment_upload extends assignment_base {
                         $output .= '<a href="'.$delurl.'">&nbsp;'
                                   .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="" /></a> ';
                     }
-                    if (true) { // @todo replace with capability check
+                    if (true) { // @todo penny replace with capability check
                         $p['file'] = $file;
-                        $output .= portfolio_add_button('assignment_portfolio_caller', $p, false, true);
+                        $output .= portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', false, true);
                     }
                     $output .= '<br />';
                 }
-                if (true) { //@todo replace with check capability
+                if (true) { //@todo penny replace with check capability
                     unset($p['file']);// for all files
-                    $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, true, true);
+                    $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', true, true);
                 }
             }
         }

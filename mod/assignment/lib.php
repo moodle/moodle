@@ -1712,13 +1712,13 @@ class assignment_base {
                             '<a href="'.$ffurl.'" >'.$file.'</a>';
                     if ($this->portfolio_exportable() && true) { // @todo replace with capability check
                         $p['file'] = $file;
-                        $output .= portfolio_add_button('assignment_portfolio_caller', $p, false, true);
+                        $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, false, true);
                     }
                     $output .= '<br />';
                 }
                 if ($this->portfolio_exportable() && true) { //@todo replace with check capability
                     unset($p['file']);// for all files
-                    $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, true, true);
+                    $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, null, true, true);
                 }
             }
         }
@@ -3154,7 +3154,7 @@ class assignment_portfolio_caller extends portfolio_caller_base {
             return $status;
         }
         $filearea = $CFG->dataroot . '/' . $this->assignment->file_area_name($this->userid);
-        //@todo  this is a dreadful thing to have to call.
+        //@todo  penny this is a dreadful thing to have to call (replace with files api anyway)
         require_once($CFG->dirroot . '/backup/lib.php');
         if ($this->file) {
             return backup_copy_file($filearea . '/' . $this->file, $tempdir . '/' . $this->file);
