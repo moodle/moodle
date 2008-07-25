@@ -199,4 +199,8 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
         }
     //@TODO see if we can verify the api key without actually getting an authentication token
     }
+
+    public static function allows_multiple() {
+        return false;
+    }
 }
