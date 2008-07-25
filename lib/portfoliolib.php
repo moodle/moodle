@@ -458,6 +458,7 @@ function portfolio_report_insane($insane, $instances=false) {
             // @todo this isn't working
             // because it seems the new recordset object
             // doesn't implement the key correctly.
+            // see MDL-15798
             $instance = $instances[$plugin];
             $plugin   = $instance->get('plugin');
             $name     = $instance->get('name');
