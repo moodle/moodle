@@ -1699,13 +1699,26 @@ class assignment_base {
         if ($basedir = $this->file_area($userid)) {
             if ($files = get_directory_list($basedir)) {
                 require_once($CFG->libdir.'/filelib.php');
+                $p = array(
+                    'userid' => $userid,
+                    'assignmentid' => $this->cm->id,
+                );
                 foreach ($files as $key => $file) {
 
                     $icon = mimeinfo('icon', $file);
                     $ffurl = get_file_url("$filearea/$file", array('forcedownload'=>1));
 
                     $output .= '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
-                            '<a href="'.$ffurl.'" >'.$file.'</a><br />';
+                            '<a href="'.$ffurl.'" >'.$file.'</a>';
+                    if ($this->portfolio_exportable() && true) { // @todo replace with capability check
+                        $p['file'] = $file;
+                        $output .= portfolio_add_button('assignment_portfolio_caller', $p, false, true);
+                    }
+                    $output .= '<br />';
+                }
+                if ($this->portfolio_exportable() && true) { //@todo replace with check capability
+                    unset($p['file']);// for all files
+                    $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, true, true);
                 }
             }
         }
@@ -1941,6 +1954,11 @@ class assignment_base {
         }
 
         return $status;
+    }
+
+
+    function portfolio_exportable() {
+        return false;
     }
 } ////// End of the assignment_base class
 
@@ -3095,5 +3113,86 @@ function assignment_reset_course_form_defaults($course) {
 function assignment_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
 }
+
+require_once($CFG->libdir . '/portfoliolib.php');
+class assignment_portfolio_caller extends portfolio_caller_base {
+
+    private $assignment;
+    private $assignmentfile;
+    private $userid;
+    private $file;
+
+    public function __construct($callbackargs) {
+        global $DB, $CFG;
+
+        if (! $cm = get_coursemodule_from_id('assignment', $callbackargs['assignmentid'])) {
+            print_error('invalidcoursemodule');
+        }
+
+        if (! $assignment = $DB->get_record("assignment", array("id"=>$cm->instance))) {
+            print_error('invalidid', 'assignment');
+        }
+
+        $this->assignmentfile = $CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php';
+        require_once($this->assignmentfile);
+        $assignmentclass = "assignment_$assignment->assignmenttype";
+        $this->assignment= new $assignmentclass($cm->id, $assignment, $cm);
+        if (!$this->assignment->portfolio_exportable()) {
+            print_error('notexportable', 'portfolio', $this->get_return_url());
+        }
+        $this->userid = $callbackargs['userid'];
+        $this->file = (array_key_exists('file', $callbackargs)) ? $callbackargs['file'] : null;
+    }
+
+    public function prepare_package($tempdir) {
+        global $CFG;
+        if ($this->assignment->assignment->assignmenttype == 'online') {
+            $submission = $this->assignment->get_submission();
+            $handle = fopen($tempdir . '/assignment.html', 'w');
+            $status = $handle && fwrite($handle, format_text($submission->data1, $submission->data2));
+            $status = $status && fclose($handle);
+            return $status;
+        }
+        $filearea = $CFG->dataroot . '/' . $this->assignment->file_area_name($this->userid);
+        //@todo  this is a dreadful thing to have to call.
+        require_once($CFG->dirroot . '/backup/lib.php');
+        if ($this->file) {
+            return backup_copy_file($filearea . '/' . $this->file, $tempdir . '/' . $this->file);
+        }
+        return backup_copy_file($filearea, $tempdir);
+    }
+
+    public static function supported_formats() {
+        // try and cheat
+        if (isset($this) && $this->assignment->assignment->assignmenttype == 'online') {
+            return array(PORTFOLIO_FORMAT_HTML);
+        }
+        return array(PORTFOLIO_FORMAT_FILE);
+    }
+
+    public function get_return_url() {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/assignment/view.php?id=' . $this->assignment->cm->id;
+    }
+
+    public function get_navigation() {
+        $extranav = array('name' => $this->assignment->cm->name, 'link' => $this->get_return_url());
+        return array($extranav, $this->assignment->cm);
+    }
+
+    public function expected_time() {
+        return PORTFOLIO_TIME_MODERATE; // @TODO check uploaded file size
+    }
+
+    public function check_permissions() {
+        return has_capability('mod/assignment:export-upload-files', get_context_instance(CONTEXT_MODULE, $this->assignment->cm->id));
+    }
+
+    public function __wakeup() {
+        require_once($this->assignmentfile);
+        $this->assignment = unserialize(serialize($this->assignment));
+    }
+}
+
 
 ?>

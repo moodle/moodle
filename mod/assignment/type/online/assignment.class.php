@@ -1,6 +1,6 @@
 <?php // $Id$
 require_once($CFG->libdir.'/formslib.php');
-
+require_once($CFG->dirroot . '/mod/assignment/lib.php');
 /**
  * Extend the base assignment class for assignments where you upload a single file
  *
@@ -103,6 +103,11 @@ class assignment_online extends assignment_base {
                 print_box_start('generalbox boxwidthwide boxaligncenter', 'online');
                 if ($submission) {
                     echo format_text($submission->data1, $submission->data2);
+                    $p = array(
+                        'userid' => $USER->id,
+                        'assignmentid' => $this->cm->id,
+                    );
+                    portfolio_add_button('assignment_portfolio_caller', $p);
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
                     echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
                 } else if ($this->isopen()){    //fix for #4206
@@ -261,6 +266,9 @@ class assignment_online extends assignment_base {
 
     }
 
+    function portfolio_exportable() {
+        return true;
+    }
 }
 
 class mod_assignment_online_edit_form extends moodleform {

@@ -144,5 +144,31 @@ if ($hassiteconfig) {
             }
         }
     }
+
+    $catname =get_string('portfolios', 'portfolio');
+    $manage = get_string('manageportfolios', 'portfolio');
+    $url = "$CFG->wwwroot/$CFG->admin/portfolio.php";
+
+    $ADMIN->add('modules', new admin_category('portfoliosettings', $catname));
+
+    $ADMIN->add(
+        'portfoliosettings',
+        new admin_externalpage('portfoliosettingsall', $manage, $url),
+        $manage,
+        $url
+    );
+    require_once($CFG->libdir. '/portfoliolib.php');
+    foreach (portfolio_instances() as $portfolio) {
+        require_once($CFG->dirroot . '/portfolio/type/' . $portfolio->get('plugin') . '/lib.php');
+        $classname = 'portfolio_plugin_' . $portfolio->get('plugin');
+        if (call_user_func(array($classname, 'has_admin_config'))) {
+            $ADMIN->add(
+                'portfoliosettings',
+                new admin_externalpage('portfoliosettings' . $portfolio->get('id'), get_string('configure', 'portfolio') . ' ' . $portfolio->get('name'), $url . '?edit=' . $portfolio->get('id')),
+                $portfolio->get('name'),
+                $url . ' ?edit=' . $portfolio->get('id')
+            );
+        }
+    }
 }
 ?>

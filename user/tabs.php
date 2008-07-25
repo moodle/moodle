@@ -238,6 +238,13 @@
             }
         }
     }
+
+    if ($user->id == $USER->id) {
+        require_once($CFG->libdir . '/portfoliolib.php');
+        if (portfolio_instances(true, false)) {
+            // @todo permissions check?
+            $toprow[] = new tabobject('portfolios', $CFG->wwwroot .'/user/portfolio.php', get_string('portfolios', 'portfolio'));
+        }
     
 ///added a new messaging tab
     if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {

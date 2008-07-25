@@ -179,6 +179,10 @@ class assignment_uploadsingle extends assignment_base {
 
     }
 
+    function portfolio_exportable() {
+        return true;
+    }
+
 }
 
 ?>

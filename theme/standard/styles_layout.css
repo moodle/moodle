@@ -661,6 +661,9 @@ div.phpinfo .center th {
    margin:0px 20px 0px 20px;
 }
 
+#portfolio-add-button {
+   display:inline;
+}
 
 /***
  *** Header

@@ -1,5 +1,7 @@
 <?php // $Id$
 require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/portfoliolib.php');
+require_once($CFG->dirroot . '/mod/assignment/lib.php');
 
 define('ASSIGNMENT_STATUS_SUBMITTED', 'submitted'); // student thinks it is finished
 define('ASSIGNMENT_STATUS_CLOSED', 'closed');       // teacher prevents more submissions
@@ -358,6 +360,10 @@ class assignment_upload extends assignment_base {
         if ($basedir = $this->file_area($userid)) {
             if ($files = get_directory_list($basedir, 'responses')) {
                 require_once($CFG->libdir.'/filelib.php');
+                $p = array(
+                    'userid' => $userid,
+                    'assignmentid' => $this->cm->id,
+                );
                 foreach ($files as $key => $file) {
 
                     $icon = mimeinfo('icon', $file);
@@ -371,8 +377,15 @@ class assignment_upload extends assignment_base {
                         $output .= '<a href="'.$delurl.'">&nbsp;'
                                   .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="" /></a> ';
                     }
-
+                    if (true) { // @todo replace with capability check
+                        $p['file'] = $file;
+                        $output .= portfolio_add_button('assignment_portfolio_caller', $p, false, true);
+                    }
                     $output .= '<br />';
+                }
+                if (true) { //@todo replace with check capability
+                    unset($p['file']);// for all files
+                    $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, true, true);
                 }
             }
         }
@@ -1057,6 +1070,10 @@ class assignment_upload extends assignment_base {
 
     }
 
+    function portfolio_exportable() {
+        return true;
+    }
+
 }
 
 class mod_assignment_upload_notes_form extends moodleform {
@@ -1078,5 +1095,7 @@ class mod_assignment_upload_notes_form extends moodleform {
         $this->add_action_buttons();
     }
 }
+
+
 
 ?>

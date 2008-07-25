@@ -431,6 +431,8 @@
 /// Check all quiz report plugins and upgrade if necessary
     upgrade_plugins('quizreport', 'mod/quiz/report', "$CFG->wwwroot/$CFG->admin/index.php");
 
+/// Check all portfolio plugins and upgrade if necessary
+    upgrade_plugins('portfolio', 'portfolio/type', "$CFG->wwwroot/$CFG->admin/index.php");
 
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
