@@ -1697,9 +1697,12 @@ function format_string ($string, $striplinks=true, $courseid=NULL ) {
     if (!empty($CFG->formatstringstriptags)) {
         $string = strip_tags($string);
 
-    // Otherwise strip just links if that is required (default)
-    } else if ($striplinks) {  //strip links in string
-        $string = preg_replace('/(<a[^>]+?>)(.+?)(<\/a>)/is','$2',$string);
+    } else {
+        // Otherwise strip just links if that is required (default)
+        if ($striplinks) {  //strip links in string
+            $string = preg_replace('/(<a\s[^>]+?>)(.+?)(<\/a>)/is','$2',$string);
+        }
+        $string = clean_text($string);
     }
 
     //Store to cache
