@@ -3002,6 +3002,13 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?reply='.$post->id.'">'.$strreply.'</a>';
     }
 
+    if (true) { // @todo penny replace this later with a capability check
+        $p = array(
+            'postid' => $post->id,
+        );
+        $commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
+    }
+
     echo '<div class="commands">';
     echo implode(' | ', $commands);
     echo '</div>';
@@ -3760,7 +3767,16 @@ function forum_print_attachments($post, $return=NULL) {
 
                 if ($return == "html") {
                     $output .= "<a href=\"$ffurl\">$image</a> ";
-                    $output .= "<a href=\"$ffurl\">$file</a><br />";
+                    $output .= "<a href=\"$ffurl\">$file</a>";
+                    if (true) { // 'todo penny replace this with a capability check
+                        require_once($CFG->libdir . '/portfoliolib.php');
+                        $p = array(
+                            'postid' => $post->id,
+                            'attachment' => 1,
+                        );
+                        $output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
+                    }
+                    $output .= "<br />";
 
                 } else if ($return == "text") {
                     $output .= "$strattachment $file:\n$ffurl\n";
@@ -3770,7 +3786,16 @@ function forum_print_attachments($post, $return=NULL) {
                         $imagereturn .= "<br /><img src=\"$ffurl\" alt=\"\" />";
                     } else {
                         echo "<a href=\"$ffurl\">$image</a> ";
-                        echo filter_text("<a href=\"$ffurl\">$file</a><br />");
+                        echo filter_text("<a href=\"$ffurl\">$file</a>");
+                        if (true) { // 'todo penny replace this with a capability check
+                            require_once($CFG->libdir . '/portfoliolib.php');
+                            $p = array(
+                                'postid' => $post->id,
+                                'attachment' => 1,
+                            );
+                            portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false);
+                        }
+                        echo '<br />';
                     }
                 }
             }
@@ -6869,6 +6894,91 @@ function forum_get_open_modes() {
  */
 function forum_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames', 'moodle/site:trustcontent');
+}
+
+require_once($CFG->libdir . '/portfoliolib.php');
+class forum_portfolio_caller extends portfolio_caller_base {
+
+    private $cm;
+    private $post;
+    private $forum;
+    private $discussion;
+    private $attachment;
+
+    function __construct($callbackargs) {
+        global $DB;
+
+        if (array_key_exists('postid', $callbackargs)) {
+            if (!$this->post = $DB->get_record('forum_posts', array('id' => $callbackargs['postid']))) {
+                print_error('invalidpostid', 'forum');
+            }
+        }
+        $dparams = array();
+        if (array_key_exists('discussionid', $callbackargs)) {
+            $dbparams = array('id' => $callbackargs['discussionid']);
+        } else if ($this->post) {
+            $dbparams = array('id' => $this->post->discussion);
+        } else {
+            print_error('mustprovidediscussionorpost', 'forum');
+        }
+        if (!$this->discussion = $DB->get_record('forum_discussions', $dbparams)) {
+            print_error('invaliddiscussionid', 'forum');
+        }
+        if (!$this->forum = $DB->get_record('forum', array('id' => $this->discussion->forum))) {
+            print_error('invalidforumid', 'forum');
+        }
+        if (!$this->cm = get_coursemodule_from_instance('forum', $this->forum->id)) {
+            print_error('invalidcoursemodule');
+        }
+        if ($this->attachment = (array_key_exists('attachment', $callbackargs) ? $callbackargs['attachment'] : false)) {
+            if (!$this->post) {
+                print_error('attachmentsnopost', 'forum');
+            }
+            if (!get_directory_list(forum_file_area($this->post->id))) {
+                print_error('noattachments', 'forum');
+            }
+        }
+    }
+
+    function get_return_url() {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->cm->id;
+    }
+
+    function prepare_package($tempdir) {
+        global $CFG;
+        if ($this->attachment) {
+            if ($basedir = forum_file_area($this->post)) {
+                //@todo penny fix all this with files api
+                require_once($CFG->dirroot . '/backup/lib.php');
+                return backup_copy_file($basedir, $tempdir);
+            }
+            return true;
+        }
+        print_error('TODO');
+        // @todo see MDL-15758
+    }
+
+    static function supported_formats() {
+        // we always have to support the possibility here that we have attachments
+        // and HTML is a subset of FILE anyway.
+        return array(PORTFOLIO_FORMAT_FILE);
+    }
+
+    function expected_time() {
+        // @todo check for attachment size
+        return PORTFOLIO_TIME_LOW;
+    }
+
+    function check_permissions() {
+        //@todo
+        return true;
+    }
+
+    function get_navigation() {
+        $extranav = array('name' => $this->cm->name, 'link' => $this->get_return_url());
+        return array($extranav, $this->cm);
+    }
 }
 
 ?>

@@ -156,6 +156,13 @@
 
 /// Print the controls across the top
 
+    if (true) { // @todo penny replace with capability check later
+
+        $p = array(
+            'discussionid' => $discussion->id,
+        );
+        $portfolio = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', true, true);
+    }
     echo '<table width="100%" class="discussioncontrols"><tr><td>';
 
     // groups selector not needed here
@@ -163,6 +170,10 @@
     echo "</td><td>";
     forum_print_mode_form($discussion->id, $displaymode);
     echo "</td><td>";
+
+    if ($portfolio) {
+        echo $portfolio . '</td><td>';
+    }
 
     if ($forum->type != 'single'
                 && has_capability('mod/forum:movediscussions', $modcontext)) {
