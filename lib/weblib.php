@@ -1401,8 +1401,16 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
         $string = filter_text($string, $courseid);
     }
 
-    if ($striplinks) {  //strip links in string
-        $string = preg_replace('/(<a[^>]+?>)(.+?)(<\/a>)/is','$2',$string);
+    // If the site requires it, strip ALL tags from this string
+    if (!empty($CFG->formatstringstriptags)) {
+        $string = strip_tags($string);
+
+    } else {
+        // Otherwise strip just links if that is required (default)
+        if ($striplinks) {  //strip links in string
+            $string = preg_replace('/(<a\s[^>]+?>)(.+?)(<\/a>)/is','$2',$string);
+        }
+        $string = clean_text($string);
     }
 
     //Store to cache
