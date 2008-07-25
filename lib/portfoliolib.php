@@ -1819,10 +1819,10 @@ final class portfolio_exporter {
         $this->uniquekey = $unique;
         $this->tempdir = $tempdir;
         if (!$this->caller->prepare_package($tempdir)) {
-            return $this->raise_error('callercouldnotpackage', 'portfolio');
+            return $this->raise_error('callercouldnotpackage', 'portfolio', $this->caller->get_return_url());
         }
         if (!$package = $this->instance->prepare_package($tempdir)) {
-            return $this->raise_error('plugincouldnotpackage', 'portfolio');
+            return $this->raise_error('plugincouldnotpackage', 'portfolio', $this->caller->get_return_url());
         }
         return true;
     }
