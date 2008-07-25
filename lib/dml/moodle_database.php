@@ -529,7 +529,7 @@ abstract class moodle_database {
     public abstract function execute($sql, array $params=null);
 
     /**
-     * Get a number of records as a moodle_recordset.
+     * Get a number of records as a moodle_recordset where all the given conditions met.
      *
      * Selects records from the table $table.
      *
@@ -567,7 +567,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a number of records a moodle_recordset.
+     * Get a number of records as a moodle_recordset where one field match one list of values.
      *
      * Only records where $field takes one of the values $values are returned.
      * $values must be an array of values.
@@ -602,7 +602,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a number of records a moodle_recordset.
+     * Get a number of records as a moodle_recordset which match a particular WHERE clause.
      *
      * If given, $select is used as the SELECT parameter in the SQL query,
      * otherwise all records from the table are returned.
@@ -629,7 +629,8 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a number of records as an moodle_recordset.  $sql must be a complete SQL query.
+     * Get a number of records as a moodle_recordset using a SQL statement.
+     *
      * Since this method is a little less readable, use of it should be restricted to
      * code where it's possible there might be large datasets being returned.  For known
      * small datasets use get_records_sql - it leads to simpler code.
@@ -926,7 +927,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a single field value from a table using a SQL statement.
+     * Get a single field value (first field) using a SQL statement.
      *
      * @param string $table the table to query.
      * @param string $return the field to return the value of.
@@ -946,7 +947,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Selects rows and return values of chosen field as array.
+     * Selects records and return values of chosen field as an array which match a particular WHERE clause.
      *
      * @param string $table the table to query.
      * @param string $return the field we are intered in
@@ -962,7 +963,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Selects rows and return values of first column as array.
+     * Selects records and return values (first field) as an array using a SQL statement.
      *
      * @param string $sql The SQL query
      * @param array $params array of sql parameters
