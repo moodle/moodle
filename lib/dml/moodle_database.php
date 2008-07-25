@@ -645,7 +645,7 @@ abstract class moodle_database {
     public abstract function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0);
 
     /**
-     * Get a number of records as an array of objects.
+     * Get a number of records as an array of objects where all the given conditions met.
      *
      * If the query succeeds and returns at least one record, the
      * return value is an array of objects, one object for each
@@ -669,7 +669,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a number of records as an array of objects.
+     * Get a number of records as an array of objects where one field match one list of values.
      *
      * Return value as for @see function get_records.
      *
@@ -706,7 +706,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a number of records as an array of objects.
+     * Get a number of records as an array of objects which match a particular WHERE clause.
      *
      * Return value as for @see function get_records.
      *
@@ -732,7 +732,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a number of records as an array of objects.
+     * Get a number of records as an array of objects using a SQL statement.
      *
      * Return value as for @see function get_records.
      *
@@ -747,7 +747,7 @@ abstract class moodle_database {
     public abstract function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0);
 
     /**
-     * Get the first two columns from a number of records as an associative array.
+     * Get the first two columns from a number of records as an associative array where all the given conditions met.
      *
      * Arguments as for @see function get_recordset.
      *
@@ -778,7 +778,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get the first two columns from a number of records as an associative array.
+     * Get the first two columns from a number of records as an associative array which match a particular WHERE clause.
      *
      * Arguments as for @see function get_recordset_select.
      * Return value as for @see function get_records_menu.
@@ -806,7 +806,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get the first two columns from a number of records as an associative array.
+     * Get the first two columns from a number of records as an associative array using a SQL statement.
      *
      * Arguments as for @see function get_recordset_sql.
      * Return value as for @see function get_records_menu.
@@ -831,7 +831,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a single database record as an object
+     * Get a single database record as an object where all the given conditions met.
      *
      * @param string $table The table to select from.
      * @param array $conditions optional array $fieldname=>requestedvalue with AND in between
@@ -845,7 +845,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a single database record as an object
+     * Get a single database record as an object which match a particular WHERE clause.
      *
      * @param string $table The database table to be checked against.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
@@ -862,7 +862,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a single record as an object using an SQL statement
+     * Get a single database record as an object using a SQL statement.
      *
      * The SQL statement should normally only return one record. In debug mode
      * you will get a warning if more records are found. In non-debug mode,
@@ -897,7 +897,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a single value from a table row where all the given fields match the given values.
+     * Get a single field value from a table record where all the given conditions met.
      *
      * @param string $table the table to query.
      * @param string $return the field to return the value of.
@@ -910,7 +910,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a single value from a table row.
+     * Get a single field value from a table record which match a particular WHERE clause.
      *
      * @param string $table the table to query.
      * @param string $return the field to return the value of.
@@ -926,7 +926,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Get a single value from a table.
+     * Get a single field value from a table using a SQL statement.
      *
      * @param string $table the table to query.
      * @param string $return the field to return the value of.
@@ -981,7 +981,8 @@ abstract class moodle_database {
     public abstract function insert_record_raw($table, $params, $returnid=true, $bulk=false);
 
     /**
-     * Insert a record into a table and return the "id" field if required,
+     * Insert a record into a table and return the "id" field if required.
+     *
      * Some conversions and safety checks are carried out. Lobs are supported.
      * If the return ID isn't required, then this just reports success as true/false.
      * $data is an object containing needed data
@@ -1017,7 +1018,7 @@ abstract class moodle_database {
 
 
     /**
-     * Set a single field in every table row where all the given conditions met.
+     * Set a single field in every table record where all the given conditions met.
      *
      * @param string $table The database table to be checked against.
      * @param string $newfield the field to set.
@@ -1031,7 +1032,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Set a single field in every table row where the select statement evaluates to true.
+     * Set a single field in every table record which match a particular WHERE clause.
      *
      * @param string $table The database table to be checked against.
      * @param string $newfield the field to set.
@@ -1157,7 +1158,7 @@ abstract class moodle_database {
     }
 
     /**
-     * Delete one or more records from a table
+     * Delete one or more records from a table which match a particular WHERE clause.
      *
      * @param string $table The database table to be checked against.
      * @param string $select A fragment of SQL to be used in a where clause in the SQL call (used to define the selection criteria).
