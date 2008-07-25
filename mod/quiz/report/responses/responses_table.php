@@ -139,7 +139,10 @@ class quiz_report_responses_table extends table_sql {
     function other_cols($colname, $attempt){
         static $states =array();
         if (preg_match('/^qsanswer([0-9]+)$/', $colname, $matches)){
-            if ($attempt->uniqueid > 0 && !isset($states[$attempt->uniqueid])){
+            if ($attempt->uniqueid == 0) {
+                return '-';
+            }
+            if (!isset($states[$attempt->uniqueid])){
                 $states[$attempt->uniqueid] = get_question_states($this->questions, $this->quiz, $attempt);
             }
             $statesforattempt = $states[$attempt->uniqueid];
