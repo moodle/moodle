@@ -80,7 +80,7 @@
             $newmessage->systrem = 0;
             $newmessage->message = $message;
             $newmessage->timestamp = time();
-            if (!$DB->insert_record('chat_messages', $newmessage) && !$DB->insert_record('chat_messages_current', $newmessage)) {
+            if (!$DB->insert_record('chat_messages', $newmessage) || !$DB->insert_record('chat_messages_current', $newmessage)) {
                 print_error('cantinsert', 'chat');
             }
 
