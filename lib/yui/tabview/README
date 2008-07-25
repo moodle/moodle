@@ -1,5 +1,11 @@
 TabView Release Notes
 
+*** version 2.5.2 ***
+* no change
+
+*** version 2.5.1 ***
+* no change
+
 *** version 2.5.0 ***
 * moved Tab default "title" attribute to static Tab.TITLE 
 

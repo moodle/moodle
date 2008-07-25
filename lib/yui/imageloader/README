@@ -1,5 +1,11 @@
 ImageLoader - Release Notes
 
+2.5.2
+   * No Change
+
+2.5.1
+   * No Change
+
 2.5.0
    * Group object has an addCustomTrigger() function for adding custom event triggers
    * PNG background images now support custom properties for AlphaImageLoader

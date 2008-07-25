@@ -2,7 +2,7 @@
 Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.5.0
+version: 2.5.2
 */
 /* Place the border around the editor */
 .yui-skin-sam .yui-editor-container {
@@ -43,7 +43,7 @@ version: 2.5.0
     border: none;
     text-indent: 33px;
     overflow: hidden;
-    margin: .25em;
+    margin: 0 .25em;
 }
 
 /* Background color of the toolbar */
@@ -241,6 +241,11 @@ version: 2.5.0
 /* Setting the background position of the sprite */
 .yui-skin-sam .yui-toolbar-container .yui-toolbar-bold span.yui-toolbar-icon {
     background-position: 0 0;
+    left: 5px;
+}
+/* Setting the background position of the sprite */
+.yui-skin-sam .yui-toolbar-container .yui-toolbar-strikethrough span.yui-toolbar-icon {
+    background-position: 0 -108px;
     left: 5px;
 }
 /* Setting the background position of the sprite */
@@ -514,8 +519,8 @@ version: 2.5.0
     width: 75%;
 }
 /* Form styling */
-.yui-skin-sam .yui-editor-panel #createlink_target,
-.yui-skin-sam .yui-editor-panel #insertimage_target {
+.yui-skin-sam .yui-editor-panel .createlink_target,
+.yui-skin-sam .yui-editor-panel .insertimage_target {
     width: auto;
     margin-right: 5px;
 }

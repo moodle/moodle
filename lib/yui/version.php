@@ -1,3 +1,3 @@
 <?php
-$yuiversion = '2.5.0';
+$yuiversion = '2.5.2';
 ?>

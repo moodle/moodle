@@ -2,25 +2,33 @@
 Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.5.0
+version: 2.5.2
 */
 /* foundational CSS */
 .yui-dt {
-    border:1px solid transparent;
+    border-bottom:1px solid transparent;
 }
 
 .yui-dt-noop {
-    border:none;
-}
-
-.yui-dt-liner {
-    overflow:hidden;
+    border-bottom:none;
 }
 
 /* a11y headers */
-.yui-dt-bd thead tr, .yui-dt-bd thead th {
+.yui-dt-hd {
+    display: none;
+}
+
+.yui-dt-scrollable .yui-dt-hd {
+    display: block;
+}
+.yui-dt-scrollable .yui-dt-bd thead tr,
+.yui-dt-scrollable .yui-dt-bd thead th {
     position:absolute;
     left:-1500px;
+}
+
+.yui-dt-scrollable tbody {
+    -moz-outline:none;
 }
 
 /* draggable columns */
@@ -46,11 +54,13 @@ th.yui-dt-resizeable .yui-dt-liner {
     height:100%;
     cursor:e-resize;
     cursor:col-resize;
+    background:url(transparent.gif); /* bug 1816011 */
 }
 .yui-dt-resizerproxy {
     visibility:hidden;
     position:absolute;
     z-index:9000;
+    background:url(transparent.gif); /* bug 1816011 */
 }
 
 /* hidden columns */

@@ -1,0 +1,16 @@
+**** version 2.5.2 ***
+    Bug Fixes:
+        * Fixed scrolling on nested layouts
+
+**** version 2.5.1 ***
+    Bug Fixes:
+        * 1756637 - handling of scrollbar on panel resize is inconsistent
+        * 1767234 - [SF 1900012] LayoutUnit loses scrolled state on resize
+        * 1770567 - [SF 1901621] Left Unit Disappears on Expand
+        * 1778721 - [SF 1904062] Layout Manager documentation error
+        * 1781653 - Don't assume element with id "doc" is the body
+        
+
+**** version 2.5.0 ***
+
+Initial Release

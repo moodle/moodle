@@ -1,0 +1,12 @@
+**** version 2.5.2 ***
+    * Added an endResize event
+
+**** version 2.5.1 ***
+    
+    Bug Fixes
+        * 1766923 - [SF 1899888] Resize.destroy() not removing status
+        * 1784371 - Status div tracks on resize cancel
+
+**** version 2.5.0 ***
+
+Initial Release

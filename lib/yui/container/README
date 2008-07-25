@@ -1,5 +1,45 @@
 Container Release Notes
 
+*** version 2.5.2 *** 
+
++ No changes
+
+*** version 2.5.1 ***
+
+Fixed the following bugs:
+-------------------------
+
++ Module.setBody, setHeader and setFooter methods now accept
+  DocumentFragments. This feature was implicitly available
+  in versions prior to 2.5.0 and is now officially supported.
+
+Changes:
+--------
+
++ Optimized addition of Modality focus handlers on masked
+  elements (which are used to enforce modality) and added 
+  ability to disable feature, to avoid timeout script errors 
+  in IE if your page contains a very large number of focusable 
+  elements.
+
+  Additionally changes to Event in 2.5.1 should allow
+  for increased scalability, when using Modal panels containing
+  large numbers of focusable elements on the page.
+
+  Added a YAHOO.widget.Panel.FOCUSABLE property, defining 
+  the set of elements which should have focus handlers applied 
+  when covered by the Modal mask.
+
+  If you wish to disable the addition of focus handlers to all
+  focusable elements on the page when a Modal Panel is displayed,
+  the property can be set to an empty array:
+
+        YAHOO.widget.Panel.FOCUSABLE = [];
+
+  NOTE: This will mean that elements under mask may still be
+  accessible using the keyboard, however the mask will still 
+  prevent mouse access to elements.
+
 *** version 2.5.0 ***
 
 Fixed the following bugs:

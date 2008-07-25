@@ -1,5 +1,34 @@
 DataTable Release Notes
 
+*** version 2.5.2 ***
+
+* Paginator now updates recordOffset to the starting index of the last page when
+totalRecords is set to a size smaller than the current recordOffset.
+
+* Assorted pagination and scrolling bugs.
+
+* Resizing a Column no longer inadvertantly sorts it in IE.
+ 
+* Header text no longer wraps by default.
+ 
+* Added UI to fill gap when a scrolling DataTable is narrower than its container.
+ 
+* Fixed wrong assignment of classnames for TDs and message cell.
+ 
+* Fixed bugs for width, minWidth, and hidden Column values in non-scrolling DataTables.
+ 
+* Added getBdContainerEl() method.
+
+
+
+*** version 2.5.1 ***
+
+* Only split THEAD from TBODY markup for scrollable tables.
+* columnResizeEvent sends new width value.
+* Improved performance for adding, deleting, and updating rows dynamically.
+
+
+
 *** version 2.5.0 ***
 
 * Introduced YAHOO.widget.Paginator to manage pagination.

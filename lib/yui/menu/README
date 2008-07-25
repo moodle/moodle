@@ -1,0 +1,1042 @@
+*** version 2.5.2 ***
+
+Fixed the following bugs:
+-------------------------
+
++ Mousing over a Menu instance will no longer result in the JavaScript error "oItem has 
+  no properties"
+
++ When using a custom skin, a Menu instance's width will no longer continue to increase in IE each 
+  time it is displayed.
+
++ Menu no longer blocks the display of the browser's default context menu when right clicking on a 
+  MenuItem instance in Firefox 2 for Windows or Firefox 3.
+
++ Fixed the behavior of the "clicktohide" configuration property so that the property properly 
+  cascades to all submenus when a Menu instance's "position" configuration property is set to 
+  "dynamic".
+
++ Rolled back a change introduced in 2.5.0 that modified the behavior of submenus so that they are 
+  no longer hidden then re-shown when the mouse is moving from a visible submenu back to its parent 
+  MenuItem instance.  This change in 2.5.0 introduced a problem where multiple submenus of a menu
+  could end up being displayed at once.  Currently targeting to restore the behavior introduced in 
+  2.5.0 in 2.6.0.
+
+
+
+*** version 2.5.1 ***
+
+Fixed the following bugs:
+-------------------------
+
++ The "url" configuration property of YAHOO.widget.MenuItem now returns the exact value of the 
+  "href" attribute of its anchor element in Internet Explorer. 
+
++ Clicking on an item in a Menu will no longer cause Firefox to scroll to the top of the window.
+
++ Improved Menu's viewport boundary awareness.
+
+
+
+*** version 2.5.0 ***
+
+Fixed the following bugs:
+-------------------------
+
++ Corrected the paths to all images in the original Menu CSS file so that checked MenuItems now
+  render correctly.
+
++ Clicking on a disabled MenuItem instance will no longer cause the browser to navigate to 
+  the top of the current page.
+
++ Removed the use of the "yui-skin-sam" class name from the Menu core CSS file.
+
++ Scrolling Menus now render correctly in IE 6 and IE 7.
+
++ Submenus are no longer hidden then re-shown when the mouse is moving from a visible submenu back
+  to its parent MenuItem instance.
+
+
+
+*** version 2.4.1 ***
+
++ No changes
+
+
+
+*** version 2.4.0 ***
+
+
+Fixed the following bugs:
+-------------------------
+
++ The "context" property of YAHOO.widget.Menu works better in IE 6.
+
++ Immediate submenus of a YAHOO.widget.MenuBar instance will now re-align 
+  themselves to their parent YAHOO.widget.MenuBarItem instance to remain inside 
+  the boundaries of the browser viewport when the "constraintoviewport" 
+  property is set to "true."
+
++ A submenu will now appear in the correct position when its parent menu 
+  is scrolled.
+
++ YAHOO.widget.MenuItem instances will no longer increase in height when their
+  submenu is made visible.
+
++ Removed superfluous white space between YAHOO.widget.MenuItem instances in 
+  IE 6 (Strict Mode and Quirks Mode) and IE 7 (Quirks Mode).
+  
++ Statically positioned YAHOO.widget.MenuBar instances will no longer be 
+  rendered in the wrong position when the Container CSS file is included in 
+  the page.
+
++ Usage of the "maxheight" configuration property will no longer change the 
+  position of a YAHOO.widget.Menu instance's shadow element 
+  (<DIV class="yui-menu-shadow">).  The shadow element will alway be the last 
+  child node of a menu's root element.
+
++ YAHOO.widget.MenuBar instances with their "position" configuration property 
+  set to "dynamic" are no longer rendered with scrollbars in Firefox for 
+  Mac OS X.
+		
+
+
+Added the following features:
+-----------------------------
+
++ Added a new "minscrollheight" configuration property to YAHOO.widget.Menu
+  that defines the minimum threshold for the "maxheight" configuration property.
+
++ Added a new "scrollincrement" configuration property to YAHOO.widget.Menu 
+  which can be used to increase or decrease the scroll speed of scolled menu.
+
++ Hidden YAHOO.widget.Menu instances are now positioned off screen to 
+  prevent them from introducing scrollbars on the browser viewport.  The 
+  default off-screen position is -10000 for both the x and y coordinates and is
+  defined in a new constant: "YAHOO.widget.Menu.prototype.OFF_SCREEN_POSITION".
+  The method responsible for moving a menu off the screen is 
+  "YAHOO.widget.Menu.prototype.positionOffScreen" which is called in response
+  to the firing of the "hide" event.
+    
+
+Changes:
+--------
+
++ Setting "iframe" configuration property on a YAHOO.widget.MenuBar instance
+  will now result in the property cascading down to all submenus.
+
++ The "position" configuration property no longer automatically enables the 
+  iframe shim for YAHOO.widget.Menu instances.  Previously, setting the 
+  "position" configuration property to "static" would automatically 
+  set the "iframe" configuration property to "false," and setting "position" to
+  "dynamic" would set the "iframe" configuration property to "true" for IE 6.
+
++ YAHOO.widget.Menu instances no longer have their widths set automatically 
+  as they are rendered.
+
++ Modified the DOM structure for a YAHOO.widget.MenuItem instance so that the 
+  submenu indicator node (<EM class="submenuindicator" />) and checked 
+  indicator node (<EM class="checkedindicator" />) that were previously direct 
+  descendants of the <A/> node are no longer present.  The updated DOM
+  structure of a YAHOO.widget.MenuItem instance is now:
+
+    <LI class="yuimenuitem">
+    
+        <A class="yuimenuitemlabel">
+    
+            Text Label
+    
+            <EM class="helptext"> Help Text </EM>   (Optional)
+    
+        </A>
+    
+        <DIV class="yuimenu"> ... </DIV> (Optional submenu node)
+    
+    </LI>
+
+
+  With the removal of the submenu indicator and checked indicator nodes,
+  the following YAHOO.widget.MenuItem constants, used to define the inner 
+  text of these nodes, have been removed:
+
+    - YAHOO.widget.MenuItem.prototype.COLLAPSED_SUBMENU_INDICATOR_TEXT
+    - YAHOO.widget.MenuItem.prototype.EXPANDED_SUBMENU_INDICATOR_TEXT
+    - YAHOO.widget.MenuItem.prototype.DISABLED_SUBMENU_INDICATOR_TEXT
+    - YAHOO.widget.MenuItem.prototype.CHECKED_TEXT
+    - YAHOO.widget.MenuItem.prototype.DISABLED_CHECKED_TEXT
+    
+  The "submenuIndicator" property of YAHOO.widget.MenuItem has also 
+  been removed.
+
+
++ Modified the CSS class names used to represent the state of 
+  YAHOO.widget.MenuItem and YAHOO.widget.MenuBarItem instances.  Previous to 
+  2.4.0 the following CSS class names were applied only to the <A> element 
+  representing the text label for YAHOO.widget.MenuItem and 
+  YAHOO.widget.MenuBarItem instances:
+
+    + hashelptext
+    + checked
+    + hassubmenu
+    + selected
+    + disabled
+
+
+  To provide more flexibility and facilitate easier styling of state, a set of
+  new CSS class names have been created that are applied to both the root 
+  <LI> node and its child <A> node for YAHOO.widget.MenuItem and 
+  YAHOO.widget.MenuBarItem instances:
+  
+
+    New YAHOO.widget.MenuItem CSS classes:
+    --------------------------------------
+    
+    The following are applied to the <LI> element:
+    
+    .yuimenuitem-hassubmenu
+    .yuimenuitem-checked
+    .yuimenuitem-selected
+    .yuimenuitem-disabled
+    
+    .yuimenuitem-checked-selected
+    .yuimenuitem-checked-disabled
+    
+    .yuimenuitem-hassubmenu-selected
+    .yuimenuitem-hassubmenu-disabled
+    
+
+    The following are applied to the <A> element:
+
+    .yuimenuitemlabel-hassubmenu
+    .yuimenuitemlabel-checked
+    .yuimenuitemlabel-selected
+    .yuimenuitemlabel-disabled
+    
+    .yuimenuitemlabel-checked-selected
+    .yuimenuitemlabel-checked-disabled
+    
+    .yuimenuitemlabel-hassubmenu-selected
+    .yuimenuitemlabel-hassubmenu-disabled
+
+
+    New YAHOO.widget.MenuBarItem CSS classes:
+    -----------------------------------------
+    
+    The following are applied to the <LI> element:
+    
+    .yuimenubaritem-hassubmenu
+    .yuimenubaritem-selected
+    .yuimenubaritem-disabled
+    
+    .yuimenubaritem-hassubmenu-selected
+    .yuimenubaritem-hassubmenu-disabled
+    
+
+    The following are applied to the <A> element:
+    
+    .yuimenubaritemlabel-hassubmenu
+    .yuimenubaritemlabel-selected
+    .yuimenubaritemlabel-disabled
+    
+    .yuimenubaritemlabel-hassubmenu-selected
+    .yuimenubaritemlabel-hassubmenu-disabled
+
+
++ Deprecated the YAHOO.widget.ContextMenuItem class and replaced it 
+  with YAHOO.widget.MenuItem.
+
++ All submenus of a YAHOO.widget.ContextMenu instance are now of type
+  YAHOO.widget.Menu.
+
++ Updated the behavior of the "clicktohide" configuration property of 
+  YAHOO.widget.Menu so that it behaves as documented: controls whether or not 
+  clicking outside a menu results in the menu hiding.
+
+
+
+*** version 2.3.1 ***
+
+Fixed the following bugs:
+-------------------------
+
++ Including the Container CSS along with Menu CSS on a page will no longer 
+  result in statically positioned Menu instances rendering as hidden.
+
++ The focus outline for MenuItem instances no longer sticks in Opera.
+
++ Clicking MenuItem instances without a value for the "url" configuration 
+  property will no longer result in the MenuItem losing focus.
+  
++ Improved compatibility with Menu CSS and YUI Base CSS.
+
+
+*** version 2.3 ***
+
+Fixed the following bugs:
+-------------------------
+
++ Pressing the Esc key when an item in a MenuBar has focus will now result
+  in the item blurring in IE.
+
++ Clicking a YAHOO.widget.MenuItem instance with a "url" configuration property 
+  set will now result in the hiding of its parent YAHOO.widget.Menu instance.
+
++ Creating an empty YAHOO.widget.Menu instance from existing markup will no 
+  longer result in a JavaScript error.
+  
++ The "constraintoviewport" configuration property now correctly keeps a 
+  YAHOO.widget.Menu instance inside the boundaries of the browser viewport.
+
++ Tuned scrolling behavior so that when the user has scrolled to the bottom of 
+  a YAHOO.widget.Menu instance and starts pressing the up arrow key, the 
+  contents begin scrolling only when the next item to be selected is out of 
+  view of the scrollable area.
+
++ Modified "removeMenu" method of YAHOO.widget.MenuManager so that it removes
+  the specified YAHOO.widget.Menu instance from the collection of visible menus.
+ 
++ Calling the "destroy" method of a visible YAHOO.widget.Menu instance now
+  purges it from the YAHOO.widget.Manager's collection of visible Menus.
+ 
++ YAHOO.widget.Menu instances now blur before hiding.
+
++ The debug version of YAHOO.widget.Menu now correctly logs as "Menu" rather 
+  than "Overlay" in IE.
+  
++ Setting a YAHOO.widget.MenuItem instance's "checked" configuration property 
+  to "true" two or more times followed by "false" will no longer result in some 
+  of the DOM elements used to render the checkmark icon will no longer remain 
+  in the item's DOM.
+
++ It is now possible to click anywhere on a YAHOO.widget.MenuItem instance 
+  and have it navigate to the URL specified by its "url" configuration property 
+  - even if the MenuItem has a value specified for its "target"
+  configuation property.
+
++ The "toString" method of YAHOO.widget.MenuItem now returns the instance's id.
+
++ Setting the YAHOO.widget.MenuItem.prototype.COLLAPSED_SUBMENU_INDICATOR_TEXT 
+  constant to empty string no longer results in JavaScript error.
+
++ YAHOO.widget.MenuBar instances behave the same regardless of the value
+  of their "position" configuration property.
+
++ It is now possible to ctr or shift-click on YAHOO.widget.MenuItem instances 
+  without the browser automatically redirecting to the URL specified by the 
+  MenuItem's "url" configuration property.
+
+
+Added the following features:
+-----------------------------
+
++ Prototype of all classes (Menu, ContextMenu, MenuBar, MenuItem, 
+  ContextMenuItem, MenuBarItem) are augmented with YAHOO.util.EventProvider.
+
++ Added the following methods to YAHOO.widget.MenuManager:
+
+    - "getMenuItem"
+    - "getMenuItemGroup"
+
++ Added the following methods to YAHOO.widget.Menu:
+
+    - "subscribe" 
+    - "getSubmenus"
+    - "onRender"
+
++ Added a "disabled" configuration property to YAHOO.widget.Menu.
+
++ Added the constant "CSS_LABEL_CLASS_NAME" to YAHOO.widget.MenuItem that 
+  represents the name of the CSS class applied to the <A/> node that is the 
+  first child of its root <LI/> node.
+
++ Added the constant "CSS_LABEL_CLASS_NAME" to YAHOO.widget.MenuBarItem that 
+  represents the name of the CSS class applied to the <A/> node that is the 
+  first child of its root <LI/> node.
+
++ Added ability for YAHOO.widget.Menu instances to have shadow:
+
+    - The shadow for a Menu is implemented by appending a new element as the 
+      last child of its root <DIV/> element:
+
+        <DIV class="yuimenu">
+            <DIV class="bd">
+                <UL>
+                    <LI class="yuimenuitem"/>
+                    <LI class="yuimenuitem"/>
+                    <LI class="yuimenuitem"/>
+                </UL>
+            </DIV>
+            <DIV class="yui-menu-shadow"/>
+        </DIV>
+
+    - The code that creates the shadow element resides inside the Menu's 
+      public "onRender" prototype method.  To disable the creation of a Menu's 
+      shadow override the prototype of the "onRender" method:
+      
+      YAHOO.widget.Menu.prototype.onRender = function () { };
+      
+    - The actual creation of the shadow element is deferred until the Menu is 
+      made visible for the first time.
+      
+    - The shadow element is only created for Menu instances whose
+      "position" configuration property is set to "dynamic."
+
+    - A Menu's shadow element can be styled via two CSS classes:
+
+        + "yui-menu-shadow"  - Applied to the shadow element when it is created.
+        + "yui-menu-shadow-visible" - Applied to the shadow element when the 
+        Menu is visible; it is removed when hidden.
+
+    - The shadow element is only styled when using the new "Sam" skin, for
+      the previous default skin its "display" property is set to "none."
+
+
+Changes:
+--------
+
++ Deprecated "browser" property of YAHOO.widget.MenuItem in favor 
+  of the YAHOO.env.ua.
+
++ Modified the DOM structure for a YAHOO.widget.MenuItem instance so that its
+  root <LI/> node only has only two direct descendants: 
+  
+    - The <A/> node for its text label
+    - The <DIV/> node for its submenu
+  
+  The submenu indicator node (<EM class="submenuindicator" />), checked 
+  indicator node (<EM class="checkedindicator" />), and help text node
+  (<EM class="helptext" />) that were previously direct descendants of a
+  YAHOO.widget.MenuItem instance's root <LI/> are now direct descendants of 
+  its <A/> node:
+
+    <LI class="yuimenuitem || yuimenubaritem">
+
+        <A class="yuimenuitemlabel || yuimenubaritemlabel">
+
+            Text Label
+
+            <EM class="helptext"> Help Text </EM>   (Optional)
+            <EM class="checkedindicator"> ... </EM> (Optional)
+            <EM class="submenuindicator"> ... </EM> (Optional)
+
+        </A>
+
+        <DIV class="yuimenu"> ... </DIV> (Optional submenu node)
+
+    </LI>
+
++ As a result of the DOM structure changes for YAHOO.widget.MenuItem, the
+  following CSS class are now only applied to a YAHOO.widget.MenuItem 
+  instance's <A/> node:
+
+    - "selected"
+    - "disabled"
+    - "checked"
+    - "hashelptext"
+    - "hassubmenu"
+
++ The "text" configuration property of YAHOO.widget.MenuItem now accepts a 
+  string of HTML (previously only accepted plain text).
+
++ The "emphasis" and "strongemphasis" configuration properties of 
+  YAHOO.widget.MenuItem are no longer interpreted when building from 
+  existing markup.
+
++ All YAHOO.widget.MenuItem instances built from markup must have an <A> node 
+  as the first child of its root <LI> node.
+
++ When building YAHOO.widget.MenuItem instances from existing markup, the value 
+  of the "text" property is set to the innerHTML of the menu item's <A> node.
+
++ Deprecated the following YAHOO.widget.MenuItem configuration properties:
+
+    - "strongemphasis"
+    - "emphasis"
+    - "helptext"
+
+
+Known Issues
+------------
+
++ ContextMenu works differently in Opera
+  --------------------------------------
+  Opera doesn't support the "contextmenu" DOM event used to trigger the display
+  of YAHOO.widget.ContextMenu instances.  As a result, clicking the right mouse 
+  button in Opera will not result in the display of a ContextMenu instance 
+  as it would in IE, Gecko, and Safari.  To work around this shortcoming, users 
+  will need to do the following to trigger the display of 
+  YAHOO.widget.ContextMenu instances in Opera:
+
+    - Opera for Windows: Hold down the control key while clicking with the 
+      left mouse button.
+
+    - Opera for Mac OS X: Hold down the command/Apple key while clicking with  
+      the left mouse button.
+
++ Focus highlight sticks in Opera 
+  -------------------------------
+  In Opera focus is designated via the application of a background color 
+  to an element's text node.  When a Menu instance has focus in Opera, the 
+  focus highlight can remain on a MenuItem instance even after it has blurred.
+
++ ContextMenu instances cannot be invoked by clicking on Java Applets
+  -------------------------------------------------------------------
+  When a Java Applet is specified as the "trigger" element for a ContextMenu 
+  instance it will not display when the Applet is clicked.  This is not a 
+  bug in the ContextMenu class, but rather a result of DOM events not bubbling 
+  up from inside Java Applets.  For more information on this issue see:
+  http://tech.groups.yahoo.com/group/ydn-javascript/message/12128
+
++ Flash Movies appear on top of Menu instances
+  --------------------------------------------
+  Flash movies can appear on top of Menu instances in IE and Gecko-based
+  browsers.  To fix this problem, set the "wmode" of the Flash movie to either
+  "transparent" or "opaque" as indicated below: 
+
+  Via the <object> tag:
+
+    <object>
+        <param name="wmode" value="opaque">
+    </object>
+
+    <object>
+        <param name="wmode" value="transparent"> 
+    </object>
+
+  Via the <embed> tag:
+    
+    <embed wmode="transparent"> ... </embed>
+    <embed wmode="opaque"> ... </embed>
+
+    ** For more information see 
+       http://kb.adobe.com/selfservice/viewContent.do?externalId=tn_15523
+
++ Menu instances not rendered at correct z-index in IE
+  -------------------------------------------------------
+  In IE, when a Menu instance is rendered inside a relatively positioned 
+  element the z-index of the Menu instance is now relative to its 
+  relatively positioned parent element.  This is not a bug in the 
+  Menu class, but rather a bug in IE where relatively positioned elements 
+  establish a new stacking context for their child nodes.  To avoid this 
+  bug is recommend that all Menu instances that need to be able to float
+  above any other element in the document be made direct descendants of the 
+  <body> element.
+  
+  ** For more information see 
+   http://therealcrisp.xs4all.nl/meuk/IE-zindexbug.html
+
++ Elements with scrollbars poke through Menu instances floating above them
+  ------------------------------------------------------------------------
+  There is a bug in Gecko-based browsers for Mac OS X where an element's 
+  scrollbars will poke through absolutely positioned elements floating above
+  them.  To fix this problem the "overflow" property of a Menu instance's 
+  shadow element is toggled between "hidden" and "auto" (through the application 
+  and removal of the "hide-scrollbars" and "show-scrollbars" CSS classes) as its 
+  "visibility" configuration property is toggled between "false" and "true."
+  Therefore, the shadow element acts like a shim, blocking scrollbars from
+  poking through the Menu.
+
+  PLEASE NOTE:  
+
+  1) The "hide-scrollbars" and "show-scrollbars" CSS classes classes are 
+     applied only for Gecko on Mac OS X and are added/removed to/from the 
+     Menu's root HTML element (DIV) via the "hideMacGeckoScrollbars" and 
+     "showMacGeckoScrollbars" methods of YAHOO.widget.Overlay.  
+  
+  2) This fix is only applied when using the "Sam" skin; the CSS for the 
+     original Menu skin does not contain any rules for rendering the 
+     shadow element.  
+  
+  3) Once the fix is applied the bug will reappear if the window loses focus.  
+     This can be fixed via Javascript by hiding and showing the Menu instance 
+     when the window receives focus:
+
+        YAHOO.util.Event.on(window, "focus", function () {
+        
+            oMyMenu.hide();
+            oMyMenu.show();
+        
+        });
+
+    ** For more information see 
+       https://bugzilla.mozilla.org/show_bug.cgi?id=187435
+
+
+*** version 2.2.2 ***
+
+Fixed the following bugs:
+-------------------------
+
++ "toString" method of MenuItem, MenuBarItem and ContextMenuItem classes will
+  no longer throw a JavaScript error when using the debug version 
+  of the Event utility.
+
++ "toString" method of Menu, MenuBar and ContextMenu classes will
+  no longer attempt to output the instance's id if it is not available.
+
++ Logger statements output by debug version of MenuManager are now properly 
+  categorized as "MenuManager"
+
+
+
+*** version 2.2.1 ***
+
+Added the following features:
+-----------------------------
+
++ Added the following methods to YAHOO.widget.Menu:
+  - "focus"
+  - "blur"
+  - "hasFocus"
+
++ Added the following Custom Events to YAHOO.widget.Menu:
+    + "focusEvent"
+    + "blurEvent"
+
++ Added the following methods to YAHOO.widget.MenuManager:
+  - "getFocusedMenuItem"
+  - "getFocusedMenu"
+
++ Added "hasFocus" method to YAHOO.widget.MenuItem
+
+
+Fixed the following bugs:
+-------------------------
+
++ Menu instances no longer set focus to themselves by default when made 
+  visible.  Menus only receive focus in response to the following events: 
+    - The user mouses down on a MenuItem instance
+    - The user tabs into a MenuItem instance
+
++ Application of the "maxheight" configuration property is now correctly 
+  deferred until the "render" event fires when Menu instance is being 
+  lazy loaded.
+
++ The "maxheight" configuration property can now be set multiple times without 
+  a Menu instance restoring itself to its original default height.
+
++ The "maxheight" configuration property can now be set on hidden Menu 
+  instances that use lazy loading. 
+
++ Menu instances with a "width" configuration property set will now render 
+  at the specified width rather than shrink wrapping to their contents.
+
++ Menu item help text no longer wraps to the next line in Opera 9.
+
++ Immediate submenus of a Menubar instance will no longer shift their position 
+  to try and remain inside the confines of the browser's viewport.
+
++ Lazy loaded ContextMenu instances now appear in the correct position when 
+  they are made visible for the first time.
+
++ MenuBar instances no longer throw JavaScript errors when navigating items with
+  submenus containing no active items using the keyboard.
+
++ Replaced use of native "hasOwnProperty" method 
+  with YAHOO.lang.hasOwnProperty.
+
++ Rendered Menu instances will now update their width when items are added 
+  or removed.
+
++ Mousing over a Menu instance in an IE window that does not have focus will 
+  no longer cause the window to receive focus.
+
+
+Changes:
+--------
+
++ "activeItem" property of YAHOO.widget.Menu now returns a reference to the 
+  Menu's currently selected item.
+
++ Added a "visible" CSS class that is applied to visible Menu instances.
+
++ Refactored the Menu family to improve performance, especially when working 
+  with a large number of instances in IE6.
+
+
+
+*** version 2.2.0 ***
+
+Added the following features:
+-----------------------------
+
+* Added two new methods to YAHOO.widget.Menu:
+
+    * "getItems" - Returns a flat array of the items in a menu.
+
+    * "clearContent" - Removes all of the content from the menu, including the 
+      menu items, group titles, header and footer.
+
+
+* Added three new configuration attributes to YAHOO.widget.Menu:
+
+    * "submenuhidedelay" - Number indicating the time (in milliseconds) that 
+      should expire before a submenu is hidden when the user mouses out of a 
+      menu item heading in the direction of a submenu. The value must be 
+      greater than or equal to the value specified for the "showdelay" 
+      configuration property.
+
+    * "maxheight" - Defines the maximum height (in pixels) for a menu before 
+      the contents of the body are scrolled. 
+
+    * "classname" - CSS class to be applied to the menu's root <div> element. 
+      The specified class(es) are appended in addition to the default class as 
+      specified by the menu's CSS_CLASS_NAME constant.
+
+
+* Added new constants to YAHOO.widget.MenuItem:
+
+    * COLLAPSED_SUBMENU_INDICATOR_TEXT - String representing the text for the 
+      <em> element used for the submenu arrow indicator.
+
+    * EXPANDED_SUBMENU_INDICATOR_TEXT - String representing the text for the 
+      submenu arrow indicator element (<em>) when the submenu is visible.
+
+    * DISABLED_SUBMENU_INDICATOR_ALT_TEXT - String representing the text for 
+      the submenu arrow indicator element (<em>) when the menu item is disabled.
+
+    * CHECKED_TEXT - String representing the text to be used for the checked 
+      indicator element (<em>).
+
+    * DISABLED_CHECKED_TEXT - String representing the text to be used for the 
+      checked indicator element (<em>) when the menu item is disabled.
+
+
+* Added two new configuration attributes to YAHOO.widget.MenuItem:
+
+    * "onclick" - Object literal representing the code to be executed when the 
+      button is clicked. Format:
+
+        {
+            fn: Function, // The handler to call when the event fires.
+            obj: Object, // An object to pass back to the handler.
+            scope: Object // The object to use for the scope of the handler.
+        }
+    
+    * "classname" - CSS class to be applied to the menu item's root <li> 
+      element. The specified class(es) are appended in addition to the default 
+      class as specified by the menu item's CSS_CLASS_NAME constant.
+
+
+* Added an "id" property to YAHOO.widget.MenuItem that represents the id of
+  the menu item's root <li> node.  Although not a configuration attribute, this
+  property should be set via the object literal of configuration attributes 
+  passed as the second argument to the constructor.  If no value is 
+  specified, then one will be generated using the "generateId" method of the 
+  Dom utility (YAHOO.widget.Dom).
+
+* Added a "trigger context menu event" 
+  (YAHOO.widget.ContextMenu.triggerContextMenuEvent) that fires when the DOM 
+  "contextmenu" event ("mousedown" for Opera) is fired by one of the elemeents
+  defined as a YAHOO.widget.ContextMenu instance's trigger.
+
+* Added a "cancel" method to YAHOO.widget.ContextMenu that can be used to 
+  cancel the display of a YAHOO.widget.ContextMen instance.  This method 
+  should be called within the scope of a "context menu" event handler for 
+  one of the context menu's triggers 
+  (YAHOO.widget.ContextMenu.triggerContextMenuEvent).
+
+
+Fixed the following bugs:
+-------------------------
+
+* Users can now move diagonally from a menu item to its corresponding submenu 
+  without the submenu hiding immediately.
+
+* "destroy" method of YAHOO.widget.Menu now unsubscribes from the "text resize"  
+  event (YAHOO.widget.Module.textResizeEvent).
+
+* Browser progress bar no longer flashes when hovering over checked menu items 
+  or menu items with submenus.
+
+* Menu item submenu indicator image no longer jumps to the next line in 
+  quirks mode.
+
+* Mouse events no longer fire in Firefox if a YAHOO.widget.Menu instance is 
+  moved by script into a stationary mouse pointer.
+
+* Modified "toString" method of YAHOO.widget.ContextMenuItem to return the 
+  correct class name, as it was reporting as YAHOO.widget.MenuBarItem.
+
+
+Changes:
+--------
+
+* Default value for the "showdelay" configuration attribute is now 250
+
+* Modified code so that all Menu images are added via CSS background images.  
+  As a result, the following constants and properties have been deprecated:
+
+    * YAHOO.widget.MenuItem.SUBMENU_INDICATOR_IMAGE_PATH
+    * YAHOO.widget.MenuItem.SELECTED_SUBMENU_INDICATOR_IMAGE_PATH
+    * YAHOO.widget.MenuItem.DISABLED_SUBMENU_INDICATOR_IMAGE_PATH
+    * YAHOO.widget.MenuItem.COLLAPSED_SUBMENU_INDICATOR_ALT_TEXT
+    * YAHOO.widget.MenuItem.EXPANDED_SUBMENU_INDICATOR_ALT_TEXT
+    * YAHOO.widget.MenuItem.DISABLED_SUBMENU_INDICATOR_ALT_TEXT
+    * YAHOO.widget.MenuItem.CHECKED_IMAGE_PATH
+    * YAHOO.widget.MenuItem.SELECTED_CHECKED_IMAGE_PATH
+    * YAHOO.widget.MenuItem.DISABLED_CHECKED_IMAGE_PATH
+    * YAHOO.widget.MenuItem.CHECKED_IMAGE_ALT_TEXT
+    * YAHOO.widget.MenuItem.DISABLED_CHECKED_IMAGE_ALT_TEXT
+    * YAHOO.widget.MenuItem.IMG_ROOT
+    * YAHOO.widget.MenuItem.IMG_ROOT_SSL
+    * YAHOO.widget.MenuItem.imageRoot
+    * YAHOO.widget.MenuItem.isSecure
+
+
+
+*** version 0.12.2 ***
+
+* No changes
+
+
+
+*** version 0.12.1 ***
+
+Fixed the following bugs:
+-------------------------
+
+* Placed the call to the DOM "focus" method used by the MenuItem class inside 
+  a zero-second timeout to resolve a race condition between menu positioning 
+  and focusing of a menu item that resulted in the browser viewport 
+  scrolling unnecessarily.
+
+* Switched to JSMin for JavaScript compression to resolve issues with the 
+  minified version.  
+
+* Disabled menu item instances will no longer display a submenu if the item is 
+  clicked or moused over. 
+
+* Can no longer select more than one item in a menu if using the keyboard and 
+  mouse simultaneously.
+
+* Calling the "destory" method on a menu will now unregister all of the menu's 
+  submenus from the MenuManager.  
+
+
+
+*** version 0.12 ***
+
+Added the following features:
+-----------------------------
+
+* Added the YAHOO.widget.MenuManager singleton class.
+
+* Added two new methods to YAHOO.widget.Menu:
+
+    * "addItems" - Adds an array of items to a menu.
+
+    * "getRoot" - Returns the root menu in a menu hierarchy.
+
+* Added two new events to YAHOO.widget.Menu:
+
+    * "itemAddedEvent" - Fires when an item is added to a menu.
+
+    * "itemRemovedEvent" - Fires when an item is removed from a menu.
+
+* Added two new properties to YAHOO.widget.Menu:
+
+    * "itemData" - Array of items to be added to the menu.
+
+    * "lazyLoad" - Boolean indicating if the menu's "lazy load" feature 
+      is enabled.
+
+* Added new configuration properties to YAHOO.widget.Menu:
+
+    * "hidedelay" - Hides the menu after the specified number of milliseconds.  
+
+    * "showdelay" - Shows the menu after the specified number of milliseconds.  
+
+    * "container" - The containing element the menu should be rendered into.  
+
+    * "clicktohide" - Boolean indicating if the menu will automatically be 
+      hidden if the user clicks outside of it.
+
+    * "autosubmenudisplay" - Boolean indicating if submenus are automatically 
+      made visible when the user mouses over the menu's items.
+
+* Added a "toString" method to YAHOO.widget.MenuItem, YAHOO.widget.MenuBarItem 
+  and YAHOO.widget.ContextMenuItem that returns the class name followed by the 
+  value of the item's "text" configuration property.
+
+
+Fixed the following bugs:
+-------------------------
+
+* Setting a YAHOO.widget.ContextMenu instance's "trigger" configuration 
+  property will remove all previous triggers before setting up the new ones.
+
+* "destroy" method of YAHOO.widget.ContextMenu cleans up all DOM event handlers.
+
+* Clicking on a menu item with a submenu no longer hides/collapses the 
+  entire menu.
+
+* Clicking an item's submenu indicator image no longer collapses the 
+  entire menu.
+  
+  
+Changes:
+--------
+
+* Deprecated the YAHOO.widget.MenuModule and YAHOO.widget.MenuModuleItem 
+  classes.  The Base classes are now YAHOO.widget.Menu and 
+  YAHOO.widget.MenuItem.
+
+* "addItem" and "insertItem" methods of YAHOO.widget.Menu now accept an 
+  object literal representing YAHOO.widget.MenuItem configuration properties.
+
+* "clearActiveItem" now takes an argument: flag indicating if the Menu 
+  instance's active item should be blurred.
+
+* Switched the default value of the "visible" configuration property for 
+  YAHOO.widget.Menu to "false."
+
+* Switched the default value of the "constraintoviewport" configuration 
+  property for YAHOO.widget.Menu to "true."
+
+* Overloaded the "submenu" configuration property for YAHOO.widget.MenuItem
+  so that it now can accept any of the following:
+
+    * YAHOO.widget.Menu instance
+    * Object literal representation of a menu
+    * Element id
+    * Element reference
+
+* "hide" and "show" methods of statically positioned menus now toggle the their
+  element's "display" style property between "block" and "none."
+
+
+
+*** version 0.10.0 ***
+
+* Initial release
+
+* Known issues:
+
+      * Some Firefox extensions disable the ability for JavaScript to prevent  
+        the display of the browser's default context menu.  These extensions
+        can cause the YUI ContextMenu to stop working.  If you encounter this 
+        problem, you can reset the context menu preference in Firefox back to 
+        the default by making sure the "Disable or replace context menus" 
+        preference is checked:
+
+            Mac Firefox 1.0: 
+            -------------------
+            Preferences > Web Features > 
+                Advanced... > Disable or replace context menus
+
+            Mac Firefox 1.5
+            -------------------
+            Preferences > Context > 
+                Advanced... > Disable or replace context menus
+
+            Windows Firefox 1.0
+            -------------------
+            Tools > Options > Web Features > 
+                Advanced... > Disable or replace context menus
+
+            Windows Firefox 1.5
+            -------------------
+            Tools > Options > Context > 
+                Advanced... > Disable or replace context menus
+
+
+
+*** version 0.11.3 ***
+
+Added the following features:
+-----------------------------
+
+* Added a "target" configuration property to the MenuModuleItem object that
+  allows the user to specify the target of an item's anchor element.  Items 
+  that make use of the "target" configuration property will require the user 
+  to click exactly on the item's anchor element to navigate to the specified 
+  URL.
+
+* Items without a "url" property set will automatically hide their parent 
+  menu instance(s) when clicked.
+
+
+Fixed the following bugs:
+-------------------------
+
+* Items in a submenu should now navigate to their specified URL when clicked.
+
+* Removed MenuBar's use of "overflow:hidden."  This fixes an issue in Firefox
+  1.5 in which submenus of a Menubar instance cannot overlay other absolutely 
+  positioned elements on the page.
+
+* Submenus of a Menubar instance will now automatically have their iframe shim
+  enabled in IE<7.
+
+* Statically positioned Menubar and Menu instances will now render with the 
+  correct position and dimensions in Safari.
+
+* MenuModuleItem's "focus" method now checks to make sure that an item's 
+  "display" style property is not "none" before trying to set focus to its
+  anchor element.
+  
+* A ContextMenu instance will now hide all other ContextMenu instances before
+  displaying itself.
+
+* Removed the dead space in front of an item's submenu indicator image in IE.  
+  This space was causing an item's submenu to flicker when the user hovered 
+  over it.
+
+
+Changes:
+--------
+
+* Moved the DOM event handlers for every menu from the root DIV node of each 
+  instance to the document object.  This change reduces the number of DOM event 
+  handlers used by Menu to eight, improving the cleanup time required by the 
+  Event utility.
+
+                
+
+*** version 0.11.0 ***
+
+Added the following features:
+-----------------------------
+* Overloaded the "addItem" and "insertItem" methods of MenuModule to accept a 
+  string or a MenuModuleItem instance
+
+* Added the ability to define a MenuItem instance as being "checked"
+
+
+Fixed the following bugs:
+-------------------------
+* Changing the path for the submenu indicator image of one MenuModuleItem 
+  subclass will no longer affect other subclasses
+
+* MenuItem instances built from existing markup without anchor tags will no 
+  longer trigger a JavaScript error when clicked
+
+* Modified the implementation of the "imageRoot" property for the 
+  MenuModuleItem class so that it is set to a secure/non-secure path when the
+  object is instantiated
+
+* Menu instances now resize in response to changes to the browser's font size
+
+* Modified the propagation of the MenuModule class's "submenualignment" 
+  configuration property so that it only applies to instances of the same type
+
+* Adjusted the specificity of the style rule that controls the position of a 
+  MenuItem instance's submenu indicator image to prevent it from wrapping in IE
+
+* Specified a width and height for submenu indicator images in the Menu 
+  stylesheet to ensure that Menu instances are always rendered at the correct 
+  width
+
+* Clicking a MenuItem instance will no longer trigger two HTTP GET requests
+
+* Users can now control or shift-click on MenuItem links
+
+
+Changes:
+--------
+* In the Menu stylesheet (menu.css), switched from using "first" class to
+  "first-of-type" class
+
+* Changed case of MenuModuleItem class's "subMenuIndicator" property 
+  to "submenuIndicator"

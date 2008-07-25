@@ -1,5 +1,34 @@
 yuiloader - Release Notes
 
+2.5.2
+  * uploader requires element
+  * editer supersedes simpleditor
+  * optional dependencies are sorted correctly when present even when
+    loadOptional is not specified.
+
+2.5.1
+   * Updated metadata for 2.5.1.
+   * Added the get utility's support for 'insertBefore'.
+   * Added the get utility's support for 'charset'.
+   * Fixed profilerviewer's dependency list.
+   * Increased rollup threshold for reset-fonts-grids so reset-fonts will be 
+     selected when appropriate.
+   * yuiloader supersedes yahoo and get.
+   * Modules now can have an 'after' property that can be used to specify
+     a list of modules that are not dependencies, but need to be included
+     above the module if they are present.
+   * base will always be included after reset, fonts, and grids. Skin css
+     will be included after all of the above.
+   * Added a new rollup: yuiloader-dom-event (yuiloader includes yahoo and get as well).
+   * utilities.js now includes yuiloader and get.
+   * loaded modules which supersede other modules but don't allow automatic 
+     rollup work correctly (the superseded modules won't load).
+   * Addessed a source order issue when logger is included after a component
+     which tries to instantiate it at load time.
+   * The filter property can be set on the instance.
+   * Custom css modules are always sorted below YUI css.
+   * The loader will not attempt to rollup the skin css for custom skinnable modules.
+
 2.5.0
    * Updated metadata for 2.5.0
    * (from the get utility) fixed autopurge.

@@ -1,5 +1,15 @@
 DataSource Release Notes
 
+**** version 2.5.2 ****
+
+* No changes.
+
+**** version 2.5.1 ****
+
+* Replaced custom function parsing with parsed/walked value locators for
+    responseSchema.resultsList, .fields, etc
+* Added metaFields to responseSchema to capture arbitrary response data
+
 **** version 2.5.0 ****
 
 * doBeforeCallback() - The second argument is now oFullResponse rather than oRawResponse.

@@ -1,5 +1,11 @@
 TreeView - Release Notes
 
+2.5.2
+  * Made CSS adjustments to work with base.css
+
+2.5.1
+  * No change
+
 2.5.0
   * Added isLeaf property to Node that allows dynamically loaded trees to
     have nodes that are not dynamically loaded (without configuring dynamic

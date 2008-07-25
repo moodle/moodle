@@ -13,6 +13,8 @@ connection/README
 animation/README
 dragdrop/README
 element/README
+get/README
+yuiloader/README
 
 *************
 
@@ -26,6 +28,8 @@ file; it includes the following components:
 * Animation
 * Drag &amp; Drop
 * Element
+* Get
+* YUI Loader
 
 For implementations that use four or more  of these files, it may prove
 more efficient to include utilities.js as opposed to including separate files

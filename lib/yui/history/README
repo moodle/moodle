@@ -1,5 +1,23 @@
 YUI Library - History - Release Notes
 
+2.5.2
+
+  * No changes.
+
+2.5.1
+
+  * While BHM still does not work with current versions of Opera, we
+    are no longer throwing an exception in Opera -- which, if uncaught,
+    causes execution to stop.  Instead, we're messaging the unsupported
+    browser issue via YAHOO.log.  This will allow other aspects of a BHM-
+    managed script to continue executing in Opera.
+  * Fixed issue with case-sensitive tagName comparisons
+    (SourceForge bug 1868730).
+
+2.5.0
+
+  * No changes.
+
 2.4.0
 
   * Added onReady method (similar to the Event utility's DOMReady method)

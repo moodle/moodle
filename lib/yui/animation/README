@@ -1,5 +1,11 @@
 Animation Release Notes
 
+*** version 2.5.2 ***
+* no change
+
+*** version 2.5.1 ***
+* no change
+
 *** version 2.5.0 ***
 * replace toString overrides with static NAME property
 

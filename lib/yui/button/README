@@ -1,3 +1,24 @@
+*** Version 2.5.2 ***
+
+Fixed the following bugs:
+-------------------------
+
++ Button instances no longer flicker in Firefox 3 when their "label" attributed is updated.
+
++ Scrolled Menus of Buttons whose type attribute is set to "menu" or "split" no longer appear 
+  on top of their corresponding Button instance.
+
++ The keyboard shortcut responsible for triggering the display of the Menu for Button instances of
+  type "split" will no longer trigger the display of the browser's default context menu in Opera.
+
+
+
+*** Version 2.5.1 ***
+
++ No changes.
+
+
+
 *** Version 2.5.0 ***
 
 + Fixed issue where returning false inside the scope of a listener for attribute "before" 

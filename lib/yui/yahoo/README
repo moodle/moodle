@@ -1,5 +1,13 @@
 YAHOO Global - Release Notes
 
+2.5.2
+  * YAHOO.lang now overwrites existing methods when included a second time,
+    but preserves methods that are in the old version but not in the new.
+  * augmentObject overwrite flag works correctly with falsy values
+
+2.5.1
+  * Added Adobe AIR detection.
+
 2.5.0
   * API doc updates
 

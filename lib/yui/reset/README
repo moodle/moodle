@@ -1,0 +1,53 @@
+YUI Library - Reset - Release Notes
+
+Version 2.5.2
+
+  * No changes.
+
+Version 2.5.1
+
+  * No changes.
+
+Version 2.5.0
+
+  * Added input,textarea,select{*font-size:100%;} to enable resizing on IE
+
+Version 2.4.0
+
+  * Moved background and default font color to HTML from BODY
+  * Removed invalid sub/sup negative line-height values because they
+    were invalid and because they weren't have a big impact.
+  * Added legent element color to accomodate IE6 issues.
+
+Version 2.3.0
+
+  * Removed: ul,ol {list-style:none;}
+  * Added: li {list-style:none;} because it's less impactful (easier to rebuild) and shorter
+  * Added: acronym {font-variant:normal;} to reset the "small-caps" variant that Opera displays
+  * Added: body {color:#000;background:#FFF;}
+  * Added: sup,sub {line-height:-1px;vertical-align: text-top;}sub{vertical-align:text-bottom;}
+  * Added: input, textarea, select{font-family:inherit;font-size:inherit;font-weight:inherit;} (doesn't fix textareas in Opera/Win+Mac, IE6/7
+  * Added: padding:0;margin:0; for the legend element which wasn't fully reset before (has 2px lateral padding on some browsers)
+  
+  
+Version 2.2.0 - 2.2.2
+
+  * No changes.
+
+Version 0.12.1 - 0.12.2
+
+  * No changes.
+
+Version 0.12.0
+
+  * Added: h1,h2,h3,h4,h5,h6{font-weight:normal;}
+  * Added: abbr,acronym {border:0;}
+  * Added: textarea {padding:0;margin:0;}
+
+Version 0.11.0
+
+  * No changes.
+
+Version 0.10.0
+
+  * Initial release.

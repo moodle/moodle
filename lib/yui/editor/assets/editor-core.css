@@ -2,13 +2,20 @@
 Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.5.0
+version: 2.5.2
 */
 /* Set the cursor to busy when we are doing something */
 .yui-busy {
     cursor: wait !important;
 }
-
+.yui-toolbar-container fieldset {
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+.yui-toolbar-container legend {
+    display: none;
+}
 /* Setup the container with some padding and zoom it for IE's hasLayout */
 .yui-toolbar-container .yui-toolbar-subcont {
     padding: .25em 0;
@@ -51,6 +58,11 @@ version: 2.5.0
     color: #000;
     margin: 0;
     padding: .2em;
+}
+.yui-toolbar-container .yui-toolbar-titlebar h2 a {
+    text-decoration: none;
+    color: #000;
+    cursor: default;
 }
 /* If the toolbar is grouped the draghandle needs to be bigger */
 .yui-toolbar-container.yui-toolbar-grouped span.yui-toolbar-draghandle {
@@ -239,6 +251,10 @@ version: 2.5.0
     padding: .25em .1em;
     zoom: 1;
 }
+/* Get the caret back in Geckp */
+.yui-editor-panel .bd .gecko form {
+    overflow: auto;
+}
 
 /* Setup the :after so that compliant browsers don't loose the bounding box */
 .yui-editor-panel .bd div.yui-editor-body-cont:after { display: block; clear: both; visibility: hidden; content: '.'; height: 0;}
@@ -316,11 +332,12 @@ version: 2.5.0
     font-style: italic;
     display: block;
     float: left;
-    overflow:auto;
+    overflow: visible;
 }
 /* Image Height/Width original info container */
 .yui-editor-panel .height-width span.info {
     font-size: 70%;
+    margin-top: 3px;
 }
 
 /* Border Size/Type button widths */

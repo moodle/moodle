@@ -2,7 +2,7 @@
 Copyright (c) 2008, Yahoo! Inc. All rights reserved.
 Code licensed under the BSD License:
 http://developer.yahoo.net/yui/license.txt
-version: 2.5.0
+version: 2.5.2
 */
 .yui-layout-loading {
     visibility: hidden;
@@ -146,5 +146,5 @@ body.yui-layout {
     overflow: hidden;
 }
 .yui-layout .yui-layout-unit .yui-layout-scroll {
-    overflow: auto;
+    overflow: visible;
 }

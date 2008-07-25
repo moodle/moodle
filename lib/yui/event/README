@@ -1,6 +1,15 @@
 
 YUI Library - Event - Release Notes
 
+2.5.2
+
+  * Custom Event fire() now throws caught exceptions if YAHOO.util.throwErrors =
+    true.  In either case, a message is written to the logger console.
+
+2.5.1
+  * Arrays are once again resized when a listener is removed.
+  * onAvailable/onContentReady stop polling when there is nothing to look for.
+
 2.5.0
   * Added try/catch to getTarget to suppress errors when targeting
     ActiveX controls.
