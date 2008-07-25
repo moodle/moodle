@@ -76,13 +76,6 @@ define('PORTFOLIO_STAGE_FINISHED', 7);
 // in the portfolio module, called format_{$value}
 // ****                         **** //
 
-/**
-* html - this is the second most basic fallback
-* after {@link PORTFOLIO_FORMAT_FILE}
-* for export. This should always be supported
-* in remote systems
-*/
-define('PORTFOLIO_FORMAT_HTML', 'html');
 
 /**
 * file - the most basic fallback format.
@@ -305,8 +298,8 @@ function portfolio_instances($visibleonly=true, $useronly=true) {
 function portfolio_supported_formats() {
     return array(
         PORTFOLIO_FORMAT_FILE,
-        PORTFOLIO_FORMAT_HTML,
-        PORTFOLIO_FORMAT_MBKP,
+        /*PORTFOLIO_FORMAT_MBKP, */ // later
+        /*PORTFOLIO_FORMAT_PIOP, */ // also later
     );
 }
 
@@ -717,6 +710,21 @@ abstract class portfolio_caller_base {
     * in the caller (called during the export process
     */
     public abstract function check_permissions();
+}
+
+abstract class portfolio_module_caller_base extends portfolio_caller_base {
+
+    protected $cm;
+
+    public function get_navigation() {
+        $extranav = array('name' => $this->cm->name, 'link' => $this->get_return_url());
+        return array($extranav, $this->cm);
+    }
+
+    public function get_return_url() {
+        global $CFG;
+        return $CFG->wwwroot . '/mod/' . $this->cm->modname . '/view.php?id=' . $this->cm->id;
+    }
 }
 
 /**
@@ -1673,6 +1681,13 @@ final class portfolio_exporter {
             $callerobj = $this->caller;
         }
         $formats = array_intersect($this->instance->supported_formats(), $this->caller->supported_formats());
+        $allsupported = portfolio_supported_formats();
+        foreach ($formats as $key => $format) {
+            if (!in_array($format, $allsupported)) {
+                debugging(get_string('invalidformat', 'portfolio', $format));
+                unset($formats[$key]);
+            }
+        }
         $expectedtime = $this->instance->expected_time($this->caller->expected_time());
         if (count($formats) == 0) {
             // something went wrong, we should not have gotten this far.

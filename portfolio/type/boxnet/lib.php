@@ -11,7 +11,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
     private $folders;
 
     public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_HTML);
+        return array(PORTFOLIO_FORMAT_FILE);
     }
 
     public function prepare_package($tempdir) {

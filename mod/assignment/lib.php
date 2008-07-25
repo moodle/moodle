@@ -3115,7 +3115,7 @@ function assignment_get_extra_capabilities() {
 }
 
 require_once($CFG->libdir . '/portfoliolib.php');
-class assignment_portfolio_caller extends portfolio_caller_base {
+class assignment_portfolio_caller extends portfolio_module_caller_base {
 
     private $assignment;
     private $assignmentfile;
@@ -3125,7 +3125,7 @@ class assignment_portfolio_caller extends portfolio_caller_base {
     public function __construct($callbackargs) {
         global $DB, $CFG;
 
-        if (! $cm = get_coursemodule_from_id('assignment', $callbackargs['assignmentid'])) {
+        if (! $this->cm = get_coursemodule_from_id('assignment', $callbackargs['assignmentid'])) {
             print_error('invalidcoursemodule');
         }
 
@@ -3163,22 +3163,9 @@ class assignment_portfolio_caller extends portfolio_caller_base {
     }
 
     public static function supported_formats() {
-        // try and cheat
-        if (isset($this) && $this->assignment->assignment->assignmenttype == 'online') {
-            return array(PORTFOLIO_FORMAT_HTML);
-        }
         return array(PORTFOLIO_FORMAT_FILE);
     }
 
-    public function get_return_url() {
-        global $CFG;
-        return $CFG->wwwroot . '/mod/assignment/view.php?id=' . $this->assignment->cm->id;
-    }
-
-    public function get_navigation() {
-        $extranav = array('name' => $this->assignment->cm->name, 'link' => $this->get_return_url());
-        return array($extranav, $this->assignment->cm);
-    }
 
     public function expected_time() {
         return PORTFOLIO_TIME_MODERATE; // @TODO check uploaded file size

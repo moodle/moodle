@@ -107,7 +107,7 @@ class assignment_online extends assignment_base {
                         'userid' => $USER->id,
                         'assignmentid' => $this->cm->id,
                     );
-                    portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php'));
+                    portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php');
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
                     echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
                 } else if ($this->isopen()){    //fix for #4206

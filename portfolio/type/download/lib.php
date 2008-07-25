@@ -8,7 +8,7 @@ class portfolio_plugin_download extends portfolio_plugin_base {
     protected $exportconfig;
 
     public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_HTML);
+        return array(PORTFOLIO_FORMAT_FILE);
         // @todo more later, like moodle backup for example
     }
 

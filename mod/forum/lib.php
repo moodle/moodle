@@ -6897,9 +6897,8 @@ function forum_get_extra_capabilities() {
 }
 
 require_once($CFG->libdir . '/portfoliolib.php');
-class forum_portfolio_caller extends portfolio_caller_base {
+class forum_portfolio_caller extends portfolio_module_caller_base {
 
-    private $cm;
     private $post;
     private $forum;
     private $discussion;
@@ -6960,8 +6959,6 @@ class forum_portfolio_caller extends portfolio_caller_base {
     }
 
     static function supported_formats() {
-        // we always have to support the possibility here that we have attachments
-        // and HTML is a subset of FILE anyway.
         return array(PORTFOLIO_FORMAT_FILE);
     }
 
@@ -6975,10 +6972,6 @@ class forum_portfolio_caller extends portfolio_caller_base {
         return true;
     }
 
-    function get_navigation() {
-        $extranav = array('name' => $this->cm->name, 'link' => $this->get_return_url());
-        return array($extranav, $this->cm);
-    }
 }
 
 ?>
