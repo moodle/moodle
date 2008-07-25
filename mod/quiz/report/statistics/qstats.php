@@ -116,6 +116,7 @@ class qstats{
     }
     
     function process_states(){
+        $subquestionstats = array();
         foreach ($this->states as $state){
             $this->_initial_states_walker($state, $this->questions[$state->question]->_stats);
             //if this is a random question what is the real item being used?
