@@ -83,7 +83,7 @@ if ($display) {
     foreach ($instances as $i) {
         $visible = $i->get_user_config('visible', $USER->id);
         $table->data[] = array($i->get('name'), $i->get('plugin'),
-            ($i->has_user_config())
+            ($i->has_user_config()
                 ?  '<a href="' . $baseurl . '?config=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('configure') . '" /></a>' : '') .
                    ' <a href="' . $baseurl . '?hide=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/' . (($visible) ? 'hide' : 'show') . '.gif" alt="' . get_string($visible ? 'hide' : 'show') . '" /></a><br />'
         );
