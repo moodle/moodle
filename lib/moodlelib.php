@@ -4503,6 +4503,10 @@ function email_is_not_allowed($email) {
 function email_welcome_message_to_user($course, $user=NULL) {
     global $CFG, $USER;
 
+    if (isset($CFG->sendcoursewelcomemessage) and !$CFG->sendcoursewelcomemessage) {
+        return;
+    }
+
     if (empty($user)) {
         if (!isloggedin()) {
             return false;
