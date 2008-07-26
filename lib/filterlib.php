@@ -73,7 +73,7 @@ function filter_phrases ($text, &$link_array, $ignoretagsopen=NULL, $ignoretagsc
 /// Unless specified otherwise, we will not replace within <a></a> tags
     if ( $ignoretagsopen === NULL ) {
         //$ignoretagsopen  = array('<a(.+?)>');
-        $ignoretagsopen  = array('<a[^>]+?>');
+        $ignoretagsopen  = array('<a\s[^>]+?>');
         $ignoretagsclose = array('</a>');
     }
     
