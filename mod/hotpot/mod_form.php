@@ -58,7 +58,11 @@ class mod_hotpot_mod_form extends moodleform_mod {
             $mform->addElement('text', 'name', get_string('name'), array('size' => '40'));
         }
         $mform->setType('namesource', PARAM_INT);
-        $mform->setType('name', PARAM_TEXT);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEAN);
+        }
 
 // Location
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);

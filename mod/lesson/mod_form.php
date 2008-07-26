@@ -14,7 +14,7 @@ require_once('locallib.php');
 class mod_lesson_mod_form extends moodleform_mod {
 
     function definition() {
-        global $LESSON_NEXTPAGE_ACTION, $COURSE, $DB;
+        global $CFG, $LESSON_NEXTPAGE_ACTION, $COURSE, $DB;
 
         $mform    =& $this->_form;
 
@@ -22,7 +22,11 @@ class mod_lesson_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'64'));
-        $mform->setType('name', PARAM_TEXT);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEAN);
+        }
         $mform->addRule('name', null, 'required', null, 'client');
 
         // Create a text box that can be enabled/disabled for lesson time limit

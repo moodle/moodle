@@ -78,6 +78,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     // add tinymce configuration options here
     $ADMIN->add('htmleditor', $temp);
 
+    // "htmlsettings" settingpage
+    $temp = new admin_settingpage('htmlsettings', get_string('htmlsettings', 'admin'));
+    $temp->add(new admin_setting_configcheckbox('formatstringstriptags', get_string('stripalltitletags', 'admin'), get_string('configstripalltitletags', 'admin'), 1));
+    $ADMIN->add('appearance', $temp);
+
     // "documentation" settingpage
     $temp = new admin_settingpage('documentation', get_string('moodledocs'));
     $temp->add(new admin_setting_configtext('docroot', get_string('docroot', 'admin'), get_string('configdocroot', 'admin'), 'http://docs.moodle.org', PARAM_URL));
