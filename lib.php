@@ -1,4 +1,4 @@
-<?PHP // $Id: lib.php,v 1.4 2008/07/23 14:03:49 skodak Exp $
+<?PHP // $Id: lib.php,v 1.5 2008/07/26 22:58:27 stronk7 Exp $
 
 define('NUM_NONE',     '0');
 define('NUM_NUMBERS',  '1');
@@ -415,7 +415,7 @@ function book_relink($id, $bookid, $courseid) {
             }
         }
         //relative link conversion
-        if ($ch->importsrc && preg_match_all('/(<a[^>]+href=")([^"^#]*)(#[^"]*)?("[^>]*>)/i', $ch->content, $links)) {
+        if ($ch->importsrc && preg_match_all('/(<a\s[^>]*href=")([^"^#]*)(#[^"]*)?("[^>]*>)/i', $ch->content, $links)) {
             for($i = 0; $i<count($links[0]); $i++) {
                 if ($links[2][$i] != ''                         //check for inner anchor links
                 && !preg_match('/[a-z]+:/i', $links[2][$i])) { //not absolute link
