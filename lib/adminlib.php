@@ -3726,6 +3726,57 @@ class admin_page_managemods extends admin_externalpage {
 }
 
 /**
+ * Enrolment manage page
+ */
+class admin_enrolment_page extends admin_externalpage {
+    public function admin_enrolment_page() { 
+        global $CFG;
+        parent::admin_externalpage('enrolment', get_string('enrolments'), $CFG->wwwroot . '/'.$CFG->admin.'/enrol.php');
+    }
+
+    function search($query) {
+        if ($result = parent::search($query)) {
+            return $result;
+        }
+
+        $found = false;
+
+        if ($modules = get_list_of_plugins('enrol')) {
+            $textlib = textlib_get_instance();
+            foreach ($modules as $plugin) {
+                if (strpos($plugin, $query) !== false) {
+                    $found = true;
+                    break;
+                }
+                $strmodulename = get_string('enrolname', "enrol_$plugin");
+                if (strpos($textlib->strtolower($strmodulename), $query) !== false) {
+                    $found = true;
+                    break;
+                }
+            }
+        }
+        //ugly harcoded hacks
+        if (strpos('sendcoursewelcomemessage', $query) !== false) {
+             $found = true;
+        } else if (strpos($textlib->strtolower(get_string('sendcoursewelcomemessage', 'admin')), $query) !== false) {
+             $found = true;
+        } else if (strpos($textlib->strtolower(get_string('configsendcoursewelcomemessage', 'admin')), $query) !== false) {
+             $found = true;
+        } else if (strpos($textlib->strtolower(get_string('configenrolmentplugins', 'admin')), $query) !== false) {
+             $found = true;
+        }
+        if ($found) {
+            $result = new object();
+            $result->page     = $this;
+            $result->settings = array();
+            return array($this->name => $result);
+        } else {
+            return array();
+        }
+    }
+}
+
+/**
  * Blocks manage page
  */
 class admin_page_manageblocks extends admin_externalpage {
