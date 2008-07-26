@@ -725,7 +725,7 @@ function glossary_print_entry_definition($entry) {
 
 
     //Extract <a>..><a> tags from definition
-    preg_match_all('/<a[^>]+?>(.*?)<\/a>/is',$definition,$list_of_a);
+    preg_match_all('/<a\s[^>]+?>(.*?)<\/a>/is',$definition,$list_of_a);
 
     //Save them into links array to use them later
     foreach (array_unique($list_of_a[0]) as $key=>$value) {
