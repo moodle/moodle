@@ -5,14 +5,18 @@ class mod_journal_mod_form extends moodleform_mod {
 
     function definition() {
 
-        global $COURSE;
+        global $CFG, $COURSE;
         $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('journalname', 'journal'), array('size'=>'64'));
-        $mform->setType('name', PARAM_TEXT);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEAN);
+        }
         $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('htmleditor', 'intro', get_string('journalquestion', 'journal'));

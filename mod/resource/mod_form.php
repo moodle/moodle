@@ -31,7 +31,11 @@ class mod_resource_mod_form extends moodleform_mod {
 //        $mform->addElement('static', 'statictype', get_string('assignmenttype', 'assignment'), get_string('type'.$type,'assignment'));
 
         $mform->addElement('text', 'name', get_string('name'), array('size'=>'48'));
-        $mform->setType('name', PARAM_TEXT);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEAN);
+        }
         $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('htmleditor', 'summary', get_string('summary'));

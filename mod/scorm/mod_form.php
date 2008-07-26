@@ -14,7 +14,11 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 // Name
         $mform->addElement('text', 'name', get_string('name'));
-        $mform->setType('name', PARAM_TEXT);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEAN);
+        }
         $mform->addRule('name', null, 'required', null, 'client');
 
 // Summary

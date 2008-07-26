@@ -4,7 +4,7 @@ require_once ($CFG->dirroot.'/course/moodleform_mod.php');
 class mod_choice_mod_form extends moodleform_mod {
 
     function definition() {
-        global $CHOICE_SHOWRESULTS, $CHOICE_PUBLISH, $CHOICE_DISPLAY;
+        global $CFG, $CHOICE_SHOWRESULTS, $CHOICE_PUBLISH, $CHOICE_DISPLAY;
 
         $mform    =& $this->_form;
 
@@ -12,7 +12,11 @@ class mod_choice_mod_form extends moodleform_mod {
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         $mform->addElement('text', 'name', get_string('choicename', 'choice'), array('size'=>'64'));
-        $mform->setType('name', PARAM_TEXT);
+        if (!empty($CFG->formatstringstriptags)) {
+            $mform->setType('name', PARAM_TEXT);
+        } else {
+            $mform->setType('name', PARAM_CLEAN);
+        }
         $mform->addRule('name', null, 'required', null, 'client');
 
         $mform->addElement('htmleditor', 'text', get_string('choicetext', 'choice'));
