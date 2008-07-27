@@ -290,8 +290,10 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
             if (isset($track->timemodified) && ($track->timemodified > $usertrack->timemodified)) {
                 $usertrack->timemodified = $track->timemodified;
             }       
-        }       
-        ksort($usertrack);
+        }
+        if (is_array($usertrack)) {       
+            ksort($usertrack);
+        }
         return $usertrack;
     } else {
         return false;
