@@ -824,7 +824,7 @@ function scorm_check_package($data) {
         } else if ($reference[0] == '#') {
             require_once($repositoryconfigfile);
             if ($CFG->repositoryactivate) {
-                $referencefield = $reference.'/imsmanfest.xml';
+                $referencefield = $reference.'/imsmanifest.xml';
                 $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
             } else {
                 $validation = null;
