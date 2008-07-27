@@ -279,7 +279,9 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
                 $usertrack->timemodified = $track->timemodified;
             }       
         }
-        ksort($usertrack);
+        if (is_array($usertrack)) {       
+            ksort($usertrack);
+        }
         return $usertrack;
     } else {
         return false;
@@ -515,7 +517,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     if (empty($organization)) {
         $organization = $scorm->launch;
     }
-    if ($orgs = $DB->get_records_select_menu('scorm_scoes', array('scorm'=>$scorm->id, 'organization'=>'', 'launch'=>''), 'id', 'id,title')) {
+    if ($orgs = $DB->get_records_menu('scorm_scoes', array('scorm'=>$scorm->id, 'organization'=>'', 'launch'=>''), 'id', 'id,title')) {
         if (count($orgs) > 1) {
  ?>
             <div class='center'>
