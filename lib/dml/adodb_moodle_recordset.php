@@ -19,7 +19,8 @@ class adodb_moodle_recordset extends moodle_recordset {
     }
 
     public function key() {
-        return $this->rs->_currentRow;
+    /// return first column value as key
+        return reset($this->rs->fields);
     }
 
     public function next() {

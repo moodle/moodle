@@ -22,7 +22,8 @@ class pdo_moodle_recordset extends moodle_recordset {
     }
 
     public function key() {
-        return $this->rowCount;
+    /// return first column value as key
+        return reset($this->fields);
     }
 
     public function next() {
