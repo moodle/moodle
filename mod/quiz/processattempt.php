@@ -158,7 +158,7 @@ if (!$success) {
 if (!$finishattempt) {
     $attempt->timemodified = $timenow;
     if (!$DB->update_record('quiz_attempts', $attempt)) {
-        quiz_error($quiz, 'saveattemptfailed');
+        quiz_error($attemptobj->get_quiz(), 'saveattemptfailed');
     }
 
     redirect($nexturl);
@@ -200,12 +200,12 @@ add_to_log($attemptobj->get_courseid(), 'quiz', 'close attempt',
 $attempt->timemodified = $timenow;
 $attempt->timefinish = $timenow;
 if (!$DB->update_record('quiz_attempts', $attempt)) {
-    quiz_error($quiz, 'saveattemptfailed');
+    quiz_error($attemptobj->get_quiz(), 'saveattemptfailed');
 }
 
 if (!$attempt->preview) {
 /// Record this user's best grade (if this is not a preview).
-    quiz_save_best_grade($quiz);
+    quiz_save_best_grade($attemptobj->get_quiz());
 
 /// Send any notification emails (if this is not a preview).
     $attemptobj->quiz_send_notification_emails();
