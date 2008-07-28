@@ -3129,14 +3129,14 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
             print_error('invalidcoursemodule');
         }
 
-        if (! $assignment = $DB->get_record("assignment", array("id"=>$cm->instance))) {
+        if (! $assignment = $DB->get_record("assignment", array("id"=>$this->cm->instance))) {
             print_error('invalidid', 'assignment');
         }
 
         $this->assignmentfile = $CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php';
         require_once($this->assignmentfile);
         $assignmentclass = "assignment_$assignment->assignmenttype";
-        $this->assignment= new $assignmentclass($cm->id, $assignment, $cm);
+        $this->assignment= new $assignmentclass($this->cm->id, $assignment, $this->cm);
         if (!$this->assignment->portfolio_exportable()) {
             print_error('notexportable', 'portfolio', $this->get_return_url());
         }
