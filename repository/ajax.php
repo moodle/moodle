@@ -364,7 +364,7 @@ var repository_client = (function() {
         try {
             var ret = YAHOO.lang.JSON.parse(o.responseText);
         } catch(e) {
-            alert('Invalid JSON String\n'+o.responseText);
+            alert('Callback: Invalid JSON String\n'+o.responseText);
         }
         if(ret.e){
             panel.get('element').innerHTML = ret.e;

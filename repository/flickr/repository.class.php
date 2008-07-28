@@ -11,8 +11,10 @@
 require_once($CFG->dirroot.'/repository/flickr/'.'phpFlickr.php');
 
 class repository_flickr extends repository{
-    var $flickr;
-    var $photos;
+    private $flickr;
+    public $photos;
+    public $type = 'flickr';
+
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);

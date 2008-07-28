@@ -12,6 +12,7 @@ require_once($CFG->dirroot.'/repository/boxnet/'.'boxlibphp5.php');
 
 class repository_boxnet extends repository{
     private $box;
+    public $type = 'boxnet';
 
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action;
@@ -55,6 +56,16 @@ class repository_boxnet extends repository{
         parent::__construct($repositoryid, $context, $options);
     }
 
+    public function get_login(){
+        global $DB;
+        $repository = new stdclass;
+        $repository->id = $this->repositoryid;
+        if ($entry = $DB->get_record('repository', $repository)) {
+            $ret->username = $entry->username;
+            $ret->password = $entry->password;
+        }
+        return $ret;
+    }
     public function get_listing($path = '/', $search = ''){
         global $CFG;
         $list = array();
@@ -104,16 +115,17 @@ class repository_boxnet extends repository{
         } else {
             $t = $this->box->getTicket();
             if(empty($this->options['auth_token'])) {
+                $ret = $this->get_login();
                 $str = '';
                 $str .= '<form id="moodle-repo-login">';
                 $str .= '<input type="hidden" name="ticket" value="'.
                     $t['ticket'].'" />';
                 $str .= '<input type="hidden" name="id" value="'.$this->repositoryid.'" />';
                 $str .= '<label for="box_username">Username: <label><br/>';
-                $str .= '<input type="text" id="box_username" name="username" />';
+                $str .= '<input type="text" id="box_username" name="username" value="'.$ret->username.'" />';
                 $str .= '<br/>';
                 $str .= '<label for="box_password">Password: <label><br/>';
-                $str .= '<input type="password" id="box_password" name="password" /><br/>';
+                $str .= '<input type="password" value="'.$ret->password.'" id="box_password" name="password" /><br/>';
                 $str .= '<input type="button" onclick="repository_client.login()" value="Go" />';
                 $str .= '</form>';
                 if($this->options['ajax']){

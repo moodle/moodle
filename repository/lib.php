@@ -50,8 +50,8 @@
  * @package repository
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-require_once('../config.php');
-require_once('../lib/filelib.php');
+require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once($CFG->libdir.'/filelib.php');
 
 abstract class repository {
     protected $options;
@@ -70,7 +70,6 @@ abstract class repository {
      * @return array the list of files, including meta infomation
      */
     public function __construct($repositoryid, $context = SITEID, $options = array()){
-        $this->name         = 'repository_base';
         $this->context      = $context;
         $this->repositoryid = $repositoryid;
         $this->options      = array();
@@ -212,13 +211,17 @@ abstract class repository {
      * @param string $userid The id of specific user
      * @return array the list of files, including meta infomation
      */
-    public function store_login($username = '', $password = '', $userid = -1, $contextid = SITEID) {
+    public function store_login($username = '', $password = '', $userid = 1, $contextid = SITEID) {
         global $DB;
 
         $repository = new stdclass;
-        $repository->userid         = $userid;
-        $repository->repositorytype = $this->name;
-        $repository->contextid      = $contextid;
+        if (!empty($this->repositoryid)) {
+            $repository->id = $this->repositoryid;
+        } else {
+            $repository->userid         = $userid;
+            $repository->repositorytype = $this->type;
+            $repository->contextid      = $contextid;
+        }
         if ($entry = $DB->get_record('repository', $repository)) {
             $repository->id = $entry->id;
             $repository->username = $username;
@@ -298,6 +301,17 @@ function repository_instances(){
         $repos = array();
     }
     return $repos;
+}
+function repository_instance($id){
+    global $DB, $CFG;
+
+    if (!$instance = $DB->get_record('repository', array('id' => $id))) {
+        return false;
+    }
+    require_once($CFG->dirroot . '/repository/'. $instance->repositorytype 
+        . '/repository.class.php');
+    $classname = 'repository_' . $instance->repositorytype;
+    return new $classname($instance->id, $instance->contextid);
 }
 function repository_get_plugins(){
     global $CFG;

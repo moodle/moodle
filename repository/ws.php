@@ -32,7 +32,7 @@ if(file_exists($CFG->dirroot.'/repository/'.
     } catch (repository_exception $e){
         $err = new stdclass;
         $err->e = $e->getMessage();
-        die(json_encode($err));
+        die(json_encode($err.time()));
     }
 } else {
     $err = new stdclass;

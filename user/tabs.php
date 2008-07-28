@@ -247,11 +247,19 @@
             // @todo penny permissions check?
             $toprow[] = new tabobject('portfolios', $CFG->wwwroot .'/user/portfolio.php', get_string('portfolios', 'portfolio'));
         }
-    
-        /// Messaging tab
-        if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
-            $toprow[] = new tabobject('editmessage', $CFG->wwwroot.'/message/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmymessage', 'message'));
+    }
+
+    // Repository Tab
+    if ($user->id == $USER->id) {
+        require_once($CFG->dirroot . '/repository/lib.php');
+        if (repository_instances()) {
+            $toprow[] = new tabobject('repositories', $CFG->wwwroot .'/user/repository.php', get_string('repositories', 'repository'));
         }
+    }
+
+    /// Messaging tab
+    if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
+        $toprow[] = new tabobject('editmessage', $CFG->wwwroot.'/message/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmymessage', 'message'));
     }
 
 

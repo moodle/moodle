@@ -1,0 +1,57 @@
+<?php //$Id$
+
+require_once(dirname(dirname(__FILE__)) . '/config.php');
+require_once($CFG->dirroot . '/repository/lib.php');
+
+$config = optional_param('config', 0, PARAM_INT);
+
+$course  = optional_param('course', SITEID, PARAM_INT);
+
+if (! $course = $DB->get_record("course", array("id"=>$course))) {
+    print_error('invalidcourseid');
+}
+
+$user = $USER;
+$baseurl = $CFG->wwwroot . '/user/repository.php';
+$namestr = get_string('name');
+$fullname = fullname($user);
+$strrepos = get_string('repositories', 'repository');
+$configstr = get_string('manageuserrepository', 'repository');
+$pluginstr = get_string('plugin', 'repository');
+
+require_login($course, false);
+
+$navlinks[] = array('name' => $fullname, 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id, 'type' => 'misc');
+$navlinks[] = array('name' => $strrepos, 'link' => null, 'type' => 'misc');
+
+$navigation = build_navigation($navlinks);
+
+print_header("$course->fullname: $fullname: $strrepos", $course->fullname,
+             $navigation, "", "", true, "&nbsp;", navmenu($course));
+
+$currenttab = 'repositories';
+include('tabs.php');
+
+print_heading($configstr);
+print_simple_box_start();
+
+if (!$instances = repository_instances(true, false)) {
+    print_error('noinstances', 'repository', $CFG->wwwroot . '/user/view.php');
+}
+
+$table = new StdClass;
+$table->head = array($namestr, $pluginstr, '');
+$table->data = array();
+
+foreach ($instances as $i) {
+    $path = '/repository/'.$i->repositorytype.'/settings.php';
+    $settings = file_exists($CFG->dirroot.$path);
+    $table->data[] = array($i->repositoryname, $i->repositorytype, 
+        $settings ? '<a href="'.$CFG->wwwroot.$path.'">'
+            .get_string('settings', 'repository').'</a>' : '');
+}
+
+print_table($table);
+print_footer();
+
+?>
