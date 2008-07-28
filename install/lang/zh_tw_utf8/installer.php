@@ -63,10 +63,22 @@ $string['databasesettingssub'] = '<b>資料庫系統:</b> mysql 或 postgres7<br
 <b>資料表的前置字元:</b> 針對所有資料表名稱，選擇性的前置字元';
 $string['databasesettingssub_mssql'] = '<b>類型：</b> SQL*Server (非UTF-8) <b><font color=\"red\">實驗的！(不能用在產品中)</font></b><br /> <b>主機：</b> 例如，localhost 或者 db.isp.com<br /> <b>名稱：</b> 資料庫名稱：例如 moodle<br /> <b>帳號：</b> 您的資料庫帳號<br /> <b>密碼：</b> 您的資料庫密碼<br /> <b>資料表的前置字元：</b> 在所有的表格名稱前加上前置字元 (強制的)';
 $string['databasesettingssub_mssql_n'] = '<b>類型：</b> SQL*Server (UTF-8 可以)<br /> <b>主機：</b> 例如，localhost或者db.isp.com<br /> <b>名稱：</b>資料庫名稱，例如moodle<br /> <b>帳號：</b> 您的資料庫帳號<br /> <b>密碼：</b> 您的資料庫密碼<br /> <b>表格前置字元：</b> 在所有的表格名稱前加上字首 (強制的)';
-$string['databasesettingssub_mysql'] = '<b>類型：</b> MySQL<br /> <b>主機：</b> 例如，localhost或者db.isp.com<br /> <b>名稱：</b> 資料庫名稱，例如moodle<br /> <b>帳號：</b> 您的資料庫帳號<br /> <b>密碼：</b> 您的資料庫密碼<br /> <b>表格前置字元：</b> 在所有的表格名稱前加上字首（可選的）';
+$string['databasesettingssub_mysql'] = '<b>類型：</b> MySQL<br/> 
+<b>主機：</b> 例如，localhost或者db.dn.edu.tw<br/>
+<b>名稱：</b> 資料庫名稱，例如moodle<br/>
+<b>帳號：</b> 您的資料庫帳號<br/> 
+<b>密碼：</b> 您的資料庫密碼<br/> 
+<b>表格前置字元：</b>在所有的表格名稱前加上字首（可自選的）';
+$string['databasesettingssub_mysqli'] = '<b>類型：</b> 改良的MySQL<br/> 
+<b>主機：</b> 例如，localhost或者db.dn.edu.tw<br/>
+<b>名稱：</b> 資料庫名稱，例如moodle<br/>
+<b>帳號：</b> 您的資料庫帳號<br/> 
+<b>密碼：</b> 您的資料庫密碼<br/> 
+<b>表格前置字元：</b>在所有的表格名稱前加上字首（可自選的）';
 $string['databasesettingssub_oci8po'] = '<b>類型:</b> Oracle<br /> <b>主機:</b> 不需要，必須留空<br /> <b>名稱:</b> 給出tnsnames.ora連接的名稱<br /> <b>帳號:</b> 您的資料庫帳號<br /> <b>密碼:</b> 您的資料庫密碼<br /> <b>表格字首:</b> 在所有的表格名稱前加上字首(強制的, 最大2cc.)';
 $string['databasesettingssub_odbc_mssql'] = '<b>類型:</b> SQL*Server (超過 ODBC) <b><font color=\"red\">實驗的! (不可用在產品中)</font></b><br /> <b>主機:</b> 給出ODBC控制面板中DSN的名字<br /> <b>名稱：</b> 資料庫名稱，例如moodle<br /> <b>帳號:</b> 您的資料庫帳號<br /> <b>密碼:</b> 您的資料庫密碼<br /> <b>表格字首:</b> 在所有的表格名稱前加上字首(強制的)';
 $string['databasesettingssub_postgres7'] = '<b>類型:</b> PostgreSQL<br /> <b>主機:</b> 例如，localhost或者db.isp.com<br /> <b>名稱：</b> 資料庫名稱，例如moodle<br /> <b>帳號:</b> 您的資料庫帳號<br /> <b>密碼:</b> 您的資料庫密碼<br /> <b>表格字首:</b> 在所有的表格名稱前加上字首(強制的)';
+$string['databasesettingswillbecreated'] = '<b>註:</b>如果資料庫不存在，安裝程式將會自動建立';
 $string['dataroot'] = '資料目錄';
 $string['datarooterror'] = '您所指定的\'資料目錄\'找不到或無法建立。請更正路徑，或者手動建立該目錄。';
 $string['dbconnectionerror'] = '無法連到您指定的資料庫,請查檢您的資料庫設定';
@@ -97,7 +109,7 @@ $string['dirroot'] = 'Moodle目錄';
 $string['dirrooterror'] = '此\'Moodle目錄\'設定似乎不正確-我們無法在這兒找到Moodle安裝程式。下列數值已經重設。';
 $string['download'] = '下載';
 $string['downloadedfilecheckfailed'] = '下載檔案檢查錯誤。';
-$string['downloadlanguagebutton'] = '下載這 &quot;$a&quot; 語言包';
+$string['downloadlanguagebutton'] = '下載 \"{$a}\" 語言包';
 $string['downloadlanguagehead'] = '下載語言包';
 $string['downloadlanguagenotneeded'] = '您可以用預設的語言包 \"{$a}\" 繼續安裝過程。';
 $string['downloadlanguagesub'] = '您現在可以選擇下載一個語言包然後用指定的語言繼續安裝過程。<br /><br />如果您無法下載語言包，安裝過程會繼續以英文繼續進行。（只要安裝完成，您還是可以下載、安裝其他的語言包）';
@@ -141,12 +153,14 @@ $string['globalsquoteshelp'] = '<p>不建議您同時取消了Magic Quotes GPC �
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = '<p><strong>安全性警告</strong>: 為了正常運作，Moodle需要<br />您進行目前PHP設定的變更<p/><p>您 <em>務必</em>設定 <code>register_globals=off</code>.<p>此設定透過 <code>php.ini</code>, Apache/IIS <br />或<code>.htaccess</code> 檔案的編輯來設定。</p>';
 $string['help'] = '輔助說明';
 $string['iconvrecommended'] = '為了提昇網站效率，尤其您的網站支援非拉丁語系的情況下，建議您可以安裝額外的 ICONV 函式庫。';
 $string['info'] = '資訊';
 $string['installation'] = '安裝';
 $string['invalidemail'] = '錯誤的電子郵件';
 $string['invalidmd5'] = '無效的 md5';
+$string['invalidurl'] = '無效的URL網址';
 $string['langdownloaderror'] = '很不幸地，語言“{$a}”並未安裝。安裝過程將以英文繼續。';
 $string['langdownloadok'] = '語言“{$a}”已經成功安裝了。安裝過程將會以此語言繼續。';
 $string['language'] = '語言';
@@ -181,6 +195,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = '不過，若您的網站僅使用 iso-8859-1 (拉丁) 語言，您可以繼續使用目前安裝的 MySQL 4.1.12 (或以上的版本)。';
 $string['mysql416required'] = 'Moodle 1.6 需要 MySQL 4.1.16以上的版本來確保未來所有資料都能夠轉換為 UTF-8 編碼。';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP用MySQL延伸指令作無法正常架設，此延伸指令讓PHP可以跟MySQL做溝通。請檢查php.ini檔或者重新編譯PHP。';
+$string['mysqli'] = '改良的MySQL(mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP的MySQLi延伸套件沒有適當設置。為了可以和MySQL連線，請檢查您的php.ini檔案或重新編譯PHP。針對PHP4，MySQLi延伸套件不能使用。';
 $string['name'] = '名稱';
 $string['next'] = '往後';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -201,7 +217,10 @@ $string['phpversionhelp'] = '<p>Moodle 需要至少4.1.0.的PHP版本 </p>
 <p>您必須更新您的 PHP 或在有更新版本的主機進行安裝!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = '向前';
+$string['qtyperqpwillberemoved'] = '在更新時，也將RQP問題移除。您不使用此問題型態，你也不會經歷任何問題。';
+$string['qtyperqpwillberemovedanyway'] = '在更新時，也將RQP問題移除。您的資料庫中有一些RQP問題存在，除非您在繼續更新前，重新安裝程式碼 http://moodle.org/mod/data/view.php?d=13&amp;rid=797，否則它會停止運作。';
 $string['releasenoteslink'] = '關於這個版本的 Moodle資訊，請參考線上 <a target=\"_new\" href=\"$a\">版本摘要</a>';
+$string['remotedownloaderror'] = '下載元件至伺服器失敗，檢查代理伺服器的設定、高度建議安裝PHP cURL，您必須手動下載<a href=\"$a->url\">$a->url</a>，並且複製到伺服器\"$a->dest\" 解壓縮';
 $string['remotedownloadnotallowed'] = '您的伺服器不允許下載元件（停用了 allow_url_fopen ）。<br /><br />您必須手動下載 <a href=\"$a->url\">$a->url</a> ，然後複製到 \"$a->dest\" 並且解壓縮。';
 $string['report'] = '報表';
 $string['restricted'] = '限制';
@@ -237,4 +256,5 @@ $string['wrongsourcebase'] = '錯誤的來源網址基礎。';
 $string['wrongzipfilename'] = '錯誤的 ZIP 檔名。';
 $string['wwwroot'] = '網站位址';
 $string['wwwrooterror'] = '指定網路位址不存在-這個Moodle 系統並不在您指定的地方';
+$string['xmlrpcrecommended'] = '對於Moodle網路功能，安裝xmlrpc選擇性延伸套件是有用的。';
 ?>
