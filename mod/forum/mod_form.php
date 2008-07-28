@@ -235,8 +235,8 @@ class mod_forum_mod_form extends moodleform_mod {
             (!empty($data['completionpostsenabled']) && $data['completionposts']!=0);
     }
 
-    function get_data($slashed=true) {
-        $data=parent::get_data($slashed);
+    function get_data() {
+        $data=parent::get_data();
         if(!$data) {
             return false;
         }

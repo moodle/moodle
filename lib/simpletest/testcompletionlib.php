@@ -147,7 +147,7 @@ class completionlib_test extends UnitTestCase {
     
     function test_update_state() {
         $c=new completion_cutdown2();
-        $c->completion_info((object)array('id'=>42));
+        $c->__construct((object)array('id'=>42));
         $cm=(object)array('id'=>13,'course'=>42);
         
         // Not enabled, should do nothing
@@ -210,7 +210,7 @@ class completionlib_test extends UnitTestCase {
         global $DB;
          
         $c=new completion_cutdown3();
-        $c->completion_info((object)array('id'=>42));
+        $c->__construct((object)array('id'=>42));
         $cm=(object)array('id'=>13,'course'=>42,'completiongradeitemnumber'=>null);
         
         // If view is required, but they haven't viewed it yet
@@ -243,7 +243,7 @@ class completionlib_test extends UnitTestCase {
     
     function test_set_module_viewed() {
         $c=new completion_cutdown();
-        $c->completion_info((object)array('id'=>42));
+        $c->__construct((object)array('id'=>42));
         $cm=(object)array('id'=>13,'course'=>42);
         
         // Not tracking completion, should do nothing 
@@ -286,7 +286,7 @@ class completionlib_test extends UnitTestCase {
         $DB->expectOnce('get_field_sql',array(new IgnoreWhitespaceExpectation("SELECT
     COUNT(1)
 FROM
-    test_course_modules_completion
+    {course_modules_completion}
 WHERE
     coursemoduleid=? AND completionstate<>0"),array(42)));
         $c=new completion_info(null);
@@ -325,7 +325,7 @@ WHERE
     function test_reset_all_state() {
         global $DB;
         $c=new completion_cutdown();
-        $c->completion_info((object)array('id'=>42));
+        $c->__construct((object)array('id'=>42));
         
         $cm=(object)array('id'=>13,'course'=>42);
         
@@ -421,8 +421,8 @@ WHERE
 SELECT
     cmc.*
 FROM
-    test_course_modules cm
-    INNER JOIN test_course_modules_completion cmc ON cmc.coursemoduleid=cm.id
+    {course_modules} cm
+    INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.id
 WHERE 
     cm.course=? AND cmc.userid=?"),array(42,314159)));
 
@@ -501,7 +501,7 @@ WHERE
         global $DB;
         
         $c=new completion_cutdown();
-        $c->completion_info((object)array('id'=>42));
+        $c->__construct((object)array('id'=>42));
         
         // 1) Basic usage 
         $c->expectAt(0,'internal_get_tracked_users',array(false,0));
@@ -515,8 +515,8 @@ WHERE
 SELECT
     cmc.*
 FROM
-    test_course_modules cm
-    INNER JOIN test_course_modules_completion cmc ON cm.id=cmc.coursemoduleid
+    {course_modules} cm
+    INNER JOIN {course_modules_completion} cmc ON cm.id=cmc.coursemoduleid
 WHERE
     cm.course=? AND cmc.userid IN (100,201)"),array(42)));
         $progress1=(object)array('userid'=>100,'coursemoduleid'=>13);
@@ -552,8 +552,8 @@ WHERE
 SELECT
     cmc.*
 FROM
-    test_course_modules cm
-    INNER JOIN test_course_modules_completion cmc ON cm.id=cmc.coursemoduleid
+    {course_modules} cm
+    INNER JOIN {course_modules_completion} cmc ON cm.id=cmc.coursemoduleid
 WHERE
     cm.course=? AND cmc.userid IN whatever"),array(42)));
         $DB->setReturnValueAt(1,'get_recordset_sql',new fake_recordset(array_slice($progress,0,1000)));
@@ -563,8 +563,8 @@ WHERE
 SELECT
     cmc.*
 FROM
-    test_course_modules cm
-    INNER JOIN test_course_modules_completion cmc ON cm.id=cmc.coursemoduleid
+    {course_modules} cm
+    INNER JOIN {course_modules_completion} cmc ON cm.id=cmc.coursemoduleid
 WHERE
     cm.course=? AND cmc.userid IN whatever2"),array(42)));
         $DB->setReturnValueAt(2,'get_recordset_sql',new fake_recordset(array_slice($progress,1000)));
@@ -590,7 +590,7 @@ WHERE
     
     function test_inform_grade_changed() {
         $c=new completion_cutdown();
-        $c->completion_info((object)array('id'=>42));
+        $c->__construct((object)array('id'=>42));
         
         $cm=(object)array('course'=>42,'id'=>13,'completiongradeitemnumber'=>null);
         $item=(object)array('itemnumber'=>3);

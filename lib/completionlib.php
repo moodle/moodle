@@ -81,7 +81,7 @@ class completion_info {
      * @param object $course Moodle course object. Must have at least ->id, ->enablecompletion
      * @return completion_info
      */
-    public function completion_info($course) {
+    public function __construct($course) {
         $this->course=$course;
     }
 
@@ -314,7 +314,7 @@ class completion_info {
     SELECT
         COUNT(1)
     FROM
-        {$CFG->prefix}course_modules_completion
+        {course_modules_completion}
     WHERE
         coursemoduleid=? AND completionstate<>0",array($cm->id));
     }
@@ -402,9 +402,11 @@ class completion_info {
         $currentuser=$userid==$USER->id;
     
         if($currentuser) {
-            // Make sure cache is present
-            if(!isset($SESSION->completioncache)) {
+            // Make sure cache is present and is for current user (loginas 
+            // changes this)
+            if(!isset($SESSION->completioncache) || $SESSION->completioncacheuserid!=$USER->id) {
                 $SESSION->completioncache=array();
+                $SESSION->completioncacheuserid=$USER->id;
             }
             // Expire any old data from cache
             foreach($SESSION->completioncache as $courseid=>$activities) {
@@ -427,8 +429,8 @@ class completion_info {
     SELECT
         cmc.*
     FROM
-        {$CFG->prefix}course_modules cm
-        INNER JOIN {$CFG->prefix}course_modules_completion cmc ON cmc.coursemoduleid=cm.id
+        {course_modules} cm
+        INNER JOIN {course_modules_completion} cmc ON cmc.coursemoduleid=cm.id
     WHERE 
         cm.course=? AND cmc.userid=?",array($this->course->id,$userid));
     
@@ -614,8 +616,8 @@ class completion_info {
 SELECT
     cmc.*
 FROM
-    {$CFG->prefix}course_modules cm
-    INNER JOIN {$CFG->prefix}course_modules_completion cmc ON cm.id=cmc.coursemoduleid
+    {course_modules} cm
+    INNER JOIN {course_modules_completion} cmc ON cm.id=cmc.coursemoduleid
 WHERE
     cm.course=? AND cmc.userid $insql
     ",$params);

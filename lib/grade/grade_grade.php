@@ -743,42 +743,45 @@ class grade_grade extends grade_object {
      */
     function notify_changed($deleted) {
         // Ignore during restore
+        // TODO There should be a proper way to determine when we are in restore
+        // so that this hack looking for a $restore global is not needed.
         global $restore;
         if(!empty($restore->backup_unique_code)) {
             return;
         }
         global $CFG,$COURSE,$DB;
         require_once($CFG->libdir.'/completionlib.php');
-
+        
+        // Bail out immediately if completion is not enabled for site (saves loading
+        // grade item below)
+        if(!completion_info::is_enabled_for_site()) {
+            return;
+        }
+        
+        // Load information about grade item
+        $this->load_grade_item();
+        
+        // Only course-modules have completion data
+        if($this->grade_item->itemtype!='mod') {
+            return;
+        }
+        
         // Use $COURSE if available otherwise get it via item fields
-        if(!empty($COURSE)) {
+        if(!empty($COURSE) && $COURSE->id==$this->grade_item->courseid) {
             $course=$COURSE;
         } else {
-            $this->load_grade_item();
-            $course=get_record('course','id',$grade_item->courseid);
+            $course=$DB->get_record('course',array('id',$this->grade_item->courseid));
         }
 
-        // Bail out immediately if completion is not enabled for course
+        // Bail out if completion is not enabled for course
         $completion=new completion_info($course);
         if(!$completion->is_enabled()) {
             return;
         }
 
-        // Get the grade item and course-module which we will need
-        $this->load_grade_item();
-        if($this->grade_item->itemtype!='mod') {
-            return;
-        }
-        $cm=$DB->get_record_sql("
-SELECT 
-    cm.*,m.name AS modname 
-FROM
-    {$CFG->prefix}modules m
-    INNER JOIN {$CFG->prefix}course_modules cm ON m.id=cm.module
-WHERE
-    m.name=? AND cm.instance=? AND cm.course=?",
-            array($this->grade_item->itemmodule,$this->grade_item->iteminstance,
-                $this->grade_item->courseid));
+        // Get course-module
+        $cm=get_coursemodule_from_instance($this->grade_item->itemmodule,
+            $this->grade_item->iteminstance,$this->grade_item->courseid);
         if(!$cm) {
             debugging("Couldn't find course-module for module 
                 '{$this->grade_item->itemmodule}', instance '{$this->grade_item->iteminstance}',

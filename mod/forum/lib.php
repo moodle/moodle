@@ -219,7 +219,7 @@ function forum_supports($feature) {
     switch($feature) {
         case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
         case FEATURE_COMPLETION_HAS_RULES: return true;
-        default: return false;
+        default: return null;
     }
 }
 
@@ -250,8 +250,8 @@ function forum_get_completion_state($course,$cm,$userid,$type) {
 SELECT 
     COUNT(1) 
 FROM 
-    {$CFG->prefix}forum_posts fp 
-    INNER JOIN {$CFG->prefix}forum_discussions fd ON fp.discussion=fd.id
+    {forum_posts} fp 
+    INNER JOIN {forum_discussions} fd ON fp.discussion=fd.id
 WHERE
     fp.userid=:userid AND fd.forum=:forumid";
 

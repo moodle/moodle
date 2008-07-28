@@ -270,6 +270,18 @@ define ('PASSWORD_UPPER', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 define ('PASSWORD_DIGITS', '0123456789');
 define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
 
+// Feature constants. Used for plugin_supports() to report features that are,
+// or are not, supported by a module.
+
+/** True if module can provide a grade */
+define('FEATURE_GRADE_HAS_GRADE','grade_has_grade');
+/** True if module has code to track whether somebody viewed it */
+define('FEATURE_COMPLETION_TRACKS_VIEWS','completion_tracks_views');
+/** True if module has custom completion rules */
+define('FEATURE_COMPLETION_HAS_RULES','completion_has_rules');
+
+
+
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
 /**
@@ -5938,22 +5950,15 @@ function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
     return $plugins;
 }
 
-// Feature constants
-/** True if module can provide a grade */
-define('FEATURE_GRADE_HAS_GRADE','grade_has_grade');
-/** True if module has code to track whether somebody viewed it */
-define('FEATURE_COMPLETION_TRACKS_VIEWS','completion_tracks_views');
-/** True if module has custom completion rules */
-define('FEATURE_COMPLETION_HAS_RULES','completion_has_rules');
-
 /**
  * Checks whether a plugin supports a specified feature.
  *
  * @param string $type Plugin type e.g. 'mod'
  * @param string $name Plugin name
  * @param string $feature Feature code (FEATURE_xx constant)
- * @return Feature result (false if not supported, usually true but may have
- *   other feature-specific value otherwise)
+ * @return Feature result (false if not supported, null if feature is unknown 
+ *   [=not supported, usually]; otherwise usually true but may have
+ *   other feature-specific value)
  */
 function plugin_supports($type,$name,$feature) {
     global $CFG;
@@ -5975,7 +5980,7 @@ function plugin_supports($type,$name,$feature) {
         switch($feature) {
             // If some features can also be checked in other ways
             // for legacy support, this could be added here
-            default: return false;
+            default: return null;
         }
     }
 }
