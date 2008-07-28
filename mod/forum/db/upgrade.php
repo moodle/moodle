@@ -91,7 +91,7 @@ function xmldb_forum_upgrade($oldversion=0) {
     /// Define field completiondiscussions to be added to forum
         $table = new xmldb_table('forum');
         $field = new xmldb_field('completiondiscussions');
-        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'draft');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'blockperiod');
 
     /// Launch add field completiondiscussions
         if(!$dbman->field_exists($table,$field)) {
