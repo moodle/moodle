@@ -73,8 +73,19 @@ $handlers = array (
          'handlerfile'      => '/lib/messagelib.php',
          'handlerfunction'  => 'message_send_handler', 
          'schedule'         => 'instant'
-     )
+     ),
 
+/*
+ * portfolio queued event - for non interactive file transfers
+*/
+    'portfolio_send' => array (
+        'handlerfile'      => '/lib/portfolio.php',
+        'handlerfunction'  => 'portfolio_handle_event',    // argument to call_user_func(), could be an array
+        'schedule'         => 'cron'
+    ),
+
+
+/* more go here */
 );
 
 
@@ -121,17 +132,6 @@ groups_groupings_deleted        - int course id - deleted all course groupings
 role_assigned         - object role_assignments table record
 role_unassigned       - object role_assignments table record
 
-==== portfolio related events ====
-
-portfolio_send        - when a user wants to send some content to a portfolio
-
 */
-$handlers = array (
-    'portfolio_send' => array (
-        'handlerfile'      => '/lib/portfolio.php',
-        'handlerfunction'  => 'portfolio_handle_event',    // argument to call_user_func(), could be an array
-        'schedule'         => 'cron'
-    )
-);
 
 ?>
