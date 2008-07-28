@@ -44,13 +44,13 @@
 
     require_login($course);
 
-    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
     $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
 
     if ($context->id != $frontpagectx->id) {
         require_capability('moodle/course:viewparticipants', $context);
     } else {
-        require_capability('moodle/site:viewparticipants', $sitecontext);
+        require_capability('moodle/site:viewparticipants', $systemcontext);
         // override the default on frontpage
         $roleid = optional_param('roleid', -1, PARAM_INT);
     }
@@ -66,7 +66,7 @@
         // Otherwise they appear in every participant list
 
         $canviewroles    = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context);
-        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
+        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $systemcontext);
 
         if ($context->id == $frontpagectx->id) {
             //we want admins listed on frontpage too
@@ -181,6 +181,7 @@
     }
     $currenttab = 'participants';
     $user = $USER;
+    $userindexpage = true;
 
     require_once($CFG->dirroot .'/user/tabs.php');
 
@@ -204,7 +205,7 @@
         foreach ($mycourses as $mycourse) {
             $courselist[$mycourse->id] = format_string($mycourse->shortname);
         }
-        if (has_capability('moodle/site:viewparticipants', $sitecontext)) {
+        if (has_capability('moodle/site:viewparticipants', $systemcontext)) {
             unset($courselist[SITEID]);
             $courselist = array(SITEID => format_string($SITE->shortname)) + $courselist;
         }
@@ -388,7 +389,7 @@
     if ($usercontexts = get_parent_contexts($context)) {
         $listofcontexts = '('.implode(',', $usercontexts).')';
     } else {
-        $listofcontexts = '('.$sitecontext->id.')'; // must be site
+        $listofcontexts = '('.$systemcontext->id.')'; // must be site
     }
     if ($roleid > 0) {
         $selectrole = " AND r.roleid = :roleid ";

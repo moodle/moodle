@@ -239,18 +239,21 @@
         }
     }
 
-    if ($user->id == $USER->id) {
+    if (empty($userindexpage) && $user->id == $USER->id) {
+
+        /// Portfolio tab
         require_once($CFG->libdir . '/portfoliolib.php');
         if (portfolio_instances(true, false)) {
             // @todo permissions check?
             $toprow[] = new tabobject('portfolios', $CFG->wwwroot .'/user/portfolio.php', get_string('portfolios', 'portfolio'));
         }
-    }
     
-///added a new messaging tab
-    if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
-        $toprow[] = new tabobject('editmessage', $wwwroot.'/message/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmymessage', 'message'));
+        /// Messaging tab
+        if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
+            $toprow[] = new tabobject('editmessage', $CFG->wwwroot.'/message/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmymessage', 'message'));
+        }
     }
+
 
 /// Add second row to display if there is one
 
