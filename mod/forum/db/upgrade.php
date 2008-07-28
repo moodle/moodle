@@ -89,17 +89,17 @@ function xmldb_forum_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2008072800) {
     /// Define field completiondiscussions to be added to forum
-        $table = new XMLDBTable('forum');
-        $field = new XMLDBField('completiondiscussions');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'draft');
+        $table = new xmldb_table('forum');
+        $field = new xmldb_field('completiondiscussions');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'draft');
 
     /// Launch add field completiondiscussions
         if(!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
 
-        $field = new XMLDBField('completionreplies');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completiondiscussions');
+        $field = new xmldb_field('completionreplies');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completiondiscussions');
 
     /// Launch add field completionreplies
         if(!$dbman->field_exists($table,$field)) {
@@ -107,8 +107,8 @@ function xmldb_forum_upgrade($oldversion=0) {
         }
 
     /// Define field completionposts to be added to forum
-        $field = new XMLDBField('completionposts');
-        $field->setAttributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completionreplies');
+        $field = new xmldb_field('completionposts');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completionreplies');
 
     /// Launch add field completionposts
         if(!$dbman->field_exists($table,$field)) {
