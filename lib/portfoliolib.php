@@ -1755,7 +1755,7 @@ final class portfolio_exporter {
     */
     public function process_stage_confirm() {
         global $CFG;
-        if ($this->noexportconfig) {
+        if (isset($this->noexportconfig)) {
             return true;
         }
         $strconfirm = get_string('confirmexport', 'portfolio');

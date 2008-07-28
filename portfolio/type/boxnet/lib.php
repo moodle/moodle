@@ -158,6 +158,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
             portfolio_exporter::raise_error('noticket', 'portfolio_boxnet');
         }
         $this->ticket = $ticket_return['ticket'];
+        return $this->ticket;
     }
 
     private function get_folder_list() {
