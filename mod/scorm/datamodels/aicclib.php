@@ -420,7 +420,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 if (isset($_COOKIE['hide:SCORMitem'.$nextsco->id])) {
                     $icon = 'plus';
                 }
-                $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\',s'.$sublist.','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
+                $result->toc .= '<a href="javascript:expandCollide(\'img'.$sublist.'\',\'s'.$sublist.'\','.$nextsco->id.');"><img id="img'.$sublist.'" src="'.$scormpixdir.'/'.$icon.'.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
             } else if ($isvisible) {
                 $result->toc .= '<img src="'.$scormpixdir.'/spacer.gif" />';
             }
@@ -525,18 +525,16 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
           <script type="text/javascript">
           //<![CDATA[
               function expandCollide(which,list,item) {
-                  var nn=document.ids?true:false
-                  var w3c=document.getElementById?true:false
-                  var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
-                  var mid=w3c?").style":".style";
+                  var el = document.ids ? document.ids[list] : document.getElementById ? document.getElementById(list) : document.all[list];
                   which = which.substring(0,(which.length));
-                  if (eval(beg+list+mid+".display") != "none") {
-                      document.getElementById(which).src = "'.$scormpixdir.'/plus.gif";
-                      eval(beg+list+mid+".display=\'none\';");
+                  var el2 = document.ids ? document.ids[which] : document.getElementById ? document.getElementById(which) : document.all[which];
+                  if (el.style.display != "none") {
+                      el2.src = "'.$scormpixdir.'/plus.gif";
+                      el.style.display=\'none\';
                       new cookie("hide:SCORMitem" + item, 1, 356, "/").set();
                   } else {
-                      document.getElementById(which).src = "'.$scormpixdir.'/minus.gif";
-                      eval(beg+list+mid+".display=\'block\';");
+                      el2.src = "'.$scormpixdir.'/minus.gif";
+                      el.style.display=\'block\';
                       new cookie("hide:SCORMitem" + item, 1, -1, "/").set();
                   }
               }
