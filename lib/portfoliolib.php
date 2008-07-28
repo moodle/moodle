@@ -1928,4 +1928,3 @@ function portfolio_handle_event($eventdata) {
 }
 
 ?>
-
