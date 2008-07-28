@@ -161,7 +161,7 @@
         $p = array(
             'discussionid' => $discussion->id,
         );
-        $portfolio = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', true, true);
+        //$portfolio = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', true, true);
     }
     echo '<table width="100%" class="discussioncontrols"><tr><td>';
 

@@ -3006,7 +3006,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $p = array(
             'postid' => $post->id,
         );
-        $commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
+        //$commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
     }
 
     echo '<div class="commands">';
@@ -6933,7 +6933,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             if (!$this->post) {
                 print_error('attachmentsnopost', 'forum');
             }
-            if (!get_directory_list(forum_file_area($this->post->id))) {
+            if (!get_directory_list(forum_file_area($this->post))) {
                 print_error('noattachments', 'forum');
             }
         }
@@ -6942,6 +6942,12 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     function get_return_url() {
         global $CFG;
         return $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->cm->id;
+    }
+
+    function get_navigation() {
+        $navlinks = array();
+        $navlinks[] = array('name' => format_string($this->discussion->name), 'link' => 'discuss.php?d=' . $this->discussion->id, 'type' => 'title');
+        return array($navlinks, $this->cm);
     }
 
     function prepare_package($tempdir) {
@@ -6954,7 +6960,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             }
             return true;
         }
-        print_error('TODO');
+        portfolio_exporter::raise_error('TODO - see MDL-15758');
         // @todo see MDL-15758
     }
 
