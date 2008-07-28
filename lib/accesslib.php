@@ -1766,9 +1766,10 @@ function moodle_install_roles() {
     allow_override($adminrole, $guestrole);
     allow_override($adminrole, $userrole);
 
-    allow_override($editteacherrole, $noneditteacherrole);
-    allow_override($editteacherrole, $studentrole);
-    allow_override($editteacherrole, $guestrole);
+    //See MDL-15841   TODO FOR MOODLE 2.0  XXX
+    //allow_override($editteacherrole, $noneditteacherrole);
+    //allow_override($editteacherrole, $studentrole);
+    //allow_override($editteacherrole, $guestrole);
 
 }
 
