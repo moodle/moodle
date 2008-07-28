@@ -1460,7 +1460,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $completion=$hidecompletion
                 ? COMPLETION_TRACKING_NONE
                 : $completioninfo->is_enabled($mod);
-            if($completion!=COMPLETION_TRACKING_NONE) {
+            if($completion!=COMPLETION_TRACKING_NONE && isloggedin() && !isguestuser()) {
                $completiondata=$completioninfo->get_data($mod,true);
                 $completionicon='';
                 if($isediting) {
