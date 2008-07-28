@@ -195,6 +195,15 @@
 
 
     $PAGE->print_header(get_string('course').': %fullname%', NULL, '', $bodytags);
+    $completion=new completion_info($course);
+    if($completion->is_enabled() && ajaxenabled()) {
+        require_js(array('yui_yahoo','yui_event','yui_connection','yui_dom'));
+        // Need to do this after the header because it requires the YUI stuff
+        // to be loaded already
+        print '<script type="text/javascript" src="completion.js"></script>'.
+            '<script type="text/javascript">completion_strsaved="'.get_string('saved','completion').'"</script>';
+    }
+
     // Course wrapper start.
     echo '<div class="course-content">';
 

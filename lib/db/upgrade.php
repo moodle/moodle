@@ -191,7 +191,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $result = $DB->delete_records_select('role_names', $DB->sql_isempty('role_names', 'name', false, false));
         upgrade_main_savepoint($result, 2008070300);
     }
-        
+
     if ($result && $oldversion < 2008070700) {
         if (isset($CFG->defaultuserroleid) and isset($CFG->guestroleid) and $CFG->defaultuserroleid == $CFG->guestroleid) {
             // guest can not be selected in defaultuserroleid!
@@ -347,6 +347,82 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008072400);
     }
 
+    if ($result && $oldversion < 2008072800) {
+
+    /// Define field enablecompletion to be added to course
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('enablecompletion');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'defaultrole');
+
+    /// Launch add field enablecompletion
+        if(!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+    /// Define field completion to be added to course_modules
+        $table = new xmldb_table('course_modules');
+        $field = new xmldb_field('completion');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'groupmembersonly');
+
+    /// Launch add field completion
+        if(!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field completiongradeitemnumber to be added to course_modules
+        $field = new xmldb_field('completiongradeitemnumber');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'completion');
+
+    /// Launch add field completiongradeitemnumber
+        if(!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field completionview to be added to course_modules
+        $field = new xmldb_field('completionview');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completiongradeitemnumber');
+
+    /// Launch add field completionview
+        if(!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field completionexpected to be added to course_modules
+        $field = new xmldb_field('completionexpected');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completionview');
+
+    /// Launch add field completionexpected
+        if(!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+
+   /// Define table course_modules_completion to be created
+        $table = new xmldb_table('course_modules_completion');
+        if(!$dbman->table_exists($table)) {
+
+        /// Adding fields to table course_modules_completion
+            $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+            $table->addFieldInfo('coursemoduleid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('completionstate', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+            $table->addFieldInfo('viewed', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null);
+            $table->addFieldInfo('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+    
+        /// Adding keys to table course_modules_completion
+            $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+    
+        /// Adding indexes to table course_modules_completion
+            $table->addIndexInfo('coursemoduleid', XMLDB_INDEX_NOTUNIQUE, array('coursemoduleid'));
+            $table->addIndexInfo('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
+    
+        /// Launch create table for course_modules_completion
+            $dbman->create_table($table);
+        }
+
+        /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008072800);
+    }
+    
 
 /*
  * TODO:

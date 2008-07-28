@@ -173,6 +173,7 @@ abstract class grade_object {
 
         global $DB;
         if ($datas = $DB->get_records_select($table, $wheresql, $params)) {
+            
             $result = array();
             foreach($datas as $data) {
                 $instance = new $classname();
@@ -182,6 +183,7 @@ abstract class grade_object {
             return $result;
 
         } else {
+            
             return false;
         }
     }
@@ -215,6 +217,7 @@ abstract class grade_object {
             $DB->insert_record($this->table.'_history', $data);
         }
 
+        $this->notify_changed(false);
         return true;
     }
 
@@ -244,6 +247,7 @@ abstract class grade_object {
                 $data->userlogged   = $USER->id;
                 $DB->insert_record($this->table.'_history', $data);
             }
+            $this->notify_changed(true);
             return true;
 
         } else {
@@ -306,6 +310,7 @@ abstract class grade_object {
             $DB->insert_record($this->table.'_history', $data);
         }
 
+        $this->notify_changed(false);
         return $this->id;
     }
 
@@ -343,6 +348,16 @@ abstract class grade_object {
                 $instance->$var = $value;
             }
         }
+    }
+
+    /**
+     * Called immediately after the object data has been inserted, updated, or 
+     * deleted in the database. Default does nothing, can be overridden to 
+     * hook in special behaviour.
+     *
+     * @param bool $deleted
+     */
+    function notify_changed($deleted) {
     }
 }
 ?>

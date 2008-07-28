@@ -29,7 +29,7 @@ define ('FORUM_AGGREGATE_SUM', 5);
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
 
-/** 
+/**
  * Code to be executed when a module is installed
  * now is just used to register the module as message provider
  */ 
@@ -206,6 +206,83 @@ function forum_delete_instance($id) {
     forum_grade_item_delete($forum);
 
     return $result;
+}
+
+
+/**
+ * Indicates API features that the forum supports.
+ *
+ * @param string $feature
+ * @return mixed True if yes (some features may use other values)
+ */
+function forum_supports($feature) {
+    switch($feature) {
+        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        case FEATURE_COMPLETION_HAS_RULES: return true;
+        default: return false;
+    }
+}
+
+
+/**
+ * Obtains the automatic completion state for this forum based on any conditions
+ * in forum settings.
+ *
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param int $userid User ID
+ * @param bool $type Type of comparison (or/and; can be used as return value if no conditions)
+ * @return bool True if completed, false if not. (If no conditions, then return
+ *   value depends on comparison type)
+ */
+function forum_get_completion_state($course,$cm,$userid,$type) {
+    global $CFG,$DB;
+
+    // Get forum details
+    if(!($forum=$DB->get_record('forum',array('id'=>$cm->instance)))) {
+        throw new Exception("Can't find forum {$cm->instance}");
+    }
+
+    $result=$type; // Default return value
+
+    $postcountparams=array('userid'=>$userid,'forumid'=>$forum->id);
+    $postcountsql="
+SELECT 
+    COUNT(1) 
+FROM 
+    {$CFG->prefix}forum_posts fp 
+    INNER JOIN {$CFG->prefix}forum_discussions fd ON fp.discussion=fd.id
+WHERE
+    fp.userid=:userid AND fd.forum=:forumid";
+
+    if($forum->completiondiscussions) {
+        $value = $forum->completiondiscussions <=
+          $DB->count_records('forum_discussions',array('forum'=>$forum->id,'userid'=>$userid));
+          if($type==COMPLETION_AND) {
+            $result=$result && $value;
+        } else {
+            $result=$result || $value;
+        }
+    }
+    if($forum->completionreplies) {
+        $value = $forum->completionreplies <= 
+            $DB->get_field_sql( $postcountsql.' AND fp.parent<>0',$postcountparams);
+        if($type==COMPLETION_AND) {
+            $result=$result && $value;
+        } else {
+            $result=$result || $value;
+        }
+    }
+    if($forum->completionposts) {
+        $value = $forum->completionposts <= $DB->get_field_sql($postcountsql,$postcountparams);
+        if($type==COMPLETION_AND) {
+            $result=$result && $value;
+        } else {
+            $result=$result || $value;
+        }
+    }
+
+    return $result; 
 }
 
 
@@ -3981,10 +4058,14 @@ function forum_add_discussion($discussion,&$message) {
 
 
 /**
- *
+ * Deletes a discussion and handles all associated cleanup.
+ * @param object $discussion Discussion to delete
+ * @param bool $fulldelete True when deleting entire forum
+ * @param object $course Course (required if fulldelete is false)
+ * @param object $cm Course-module (required if fulldelete is false)
+ * @param object $forum Forum (required if fulldelete is false)
  */
-function forum_delete_discussion($discussion, $fulldelete=false) {
-// $discussion is a discussion record object
+function forum_delete_discussion($discussion, $fulldelete=false,$course=null,$cm=null,$forum=null) {
     global $DB;
     $result = true;
 
@@ -3992,10 +4073,7 @@ function forum_delete_discussion($discussion, $fulldelete=false) {
         foreach ($posts as $post) {
             $post->course = $discussion->course;
             $post->forum  = $discussion->forum;
-            if (! $DB->delete_records("forum_ratings", array("post" => "$post->id"))) {
-                $result = false;
-            }
-            if (! forum_delete_post($post, $fulldelete)) {
+            if (! forum_delete_post($post, 'ignore',$course, $cm, $forum,  $fulldelete)) {
                 $result = false;
             }
         }
@@ -4007,26 +4085,45 @@ function forum_delete_discussion($discussion, $fulldelete=false) {
         $result = false;
     }
 
+    // Update completion state if we are tracking completion based on number of posts
+    $completion=new completion_info($course);
+    if(!$fulldelete && // But don't bother when deleting whole thing 
+        $completion->is_enabled($cm)==COMPLETION_TRACKING_AUTOMATIC &&
+        ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
+        $completion->update_state($cm,COMPLETION_INCOMPLETE,$discussion->userid);
+    }
+
     return $result;
 }
 
 
 /**
- *
+ * Deletes a single forum post.
+ * @param object $post Forum post object
+ * @param mixed $children Whether to delete children. If false, returns false
+ *   if there are any children (without deleting the post). If true,
+ *   recursively deletes all children. If set to special value 'ignore', deletes
+ *   post regardless of children (this is for use only when deleting all posts
+ *   in a disussion).
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param object $forum Forum
+ * @param bool $skipcompletion True to skip updating completion state if it
+ *   would otherwise be updated, i.e. when deleting entire forum anyway.
  */
-function forum_delete_post($post, $children=false) {
+function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompletion=false) {
     global $DB;
-   if ($childposts = $DB->get_records('forum_posts', array('parent' => $post->id))) {
+    if ($children!='ignore' && ($childposts = $DB->get_records('forum_posts', array('parent'=>$post->id)))) {
        if ($children) {
            foreach ($childposts as $childpost) {
-               forum_delete_post($childpost, true);
+               forum_delete_post($childpost, true, $course, $cm, $forum, $skipcompletion);
            }
        } else {
            return false;
        }
    }
    if ($DB->delete_records("forum_posts", array("id" => $post->id))) {
-       $DB->delete_records("forum_ratings", array("post" => $post->id));  // Just in case
+       $DB->delete_records("forum_ratings", array("post" => $post->id));
 
        forum_tp_delete_read_records(-1, $post->id);
 
@@ -4039,6 +4136,14 @@ function forum_delete_post($post, $children=false) {
 
    // Just in case we are deleting the last post
        forum_discussion_update_last_post($post->discussion);
+
+       // Update completion state if we are tracking completion based on number of posts
+       $completion=new completion_info($course);
+       if(!$skipcompletion && // But don't bother when deleting whole thing 
+           $completion->is_enabled($cm)==COMPLETION_TRACKING_AUTOMATIC &&
+           ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
+           $completion->update_state($cm,COMPLETION_INCOMPLETE,$post->userid);
+       }
 
        return true;
    }
@@ -4345,8 +4450,8 @@ function forum_user_has_posted($forumid, $did, $userid) {
                  WHERE p.userid = :userid AND d.forum = :forumid";
         return $DB->record_exists_sql($sql, array('forumid'=>$forumid,'userid'=>$userid));
     } else {
-        return $DB->record_exists('forum_posts', array('discussion'=>$did,'userid'=>$userid));
-    }
+    return $DB->record_exists('forum_posts', array('discussion'=>$did,'userid'=>$userid));
+}
 }
 
 /**

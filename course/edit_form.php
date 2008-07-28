@@ -351,6 +351,18 @@ class course_edit_form extends moodleform {
         $mform->addElement('select', 'lang', get_string('forcelanguage'), $languages);
 
 //--------------------------------------------------------------------------------
+        require_once($CFG->libdir.'/completionlib.php');
+        if(completion_info::is_enabled_for_site()) {
+            $mform->addElement('header','', get_string('progress','completion'));
+            $mform->addElement('select', 'enablecompletion', get_string('completion','completion'), 
+                array(0=>get_string('completiondisabled','completion'), 1=>get_string('completionenabled','completion')));
+            $mform->setDefault('enablecompletion',1);
+        } else {
+            $mform->addElement('hidden', 'enablecompletion');
+            $mform->setDefault('enablecompletion',0);
+        }
+
+//--------------------------------------------------------------------------------
         if (has_capability('moodle/site:config', $systemcontext) && ((!empty($course->requested) && $CFG->restrictmodulesfor == 'requested') || $CFG->restrictmodulesfor == 'all')) {
             $mform->addElement('header', '', get_string('restrictmodules'));
 

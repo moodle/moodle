@@ -201,7 +201,7 @@ function get_db_directories() {
             $dbdirs[] = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$plugin.'/db';
         }
     }
-
+    
 /// Now quiz report plugins (mod/quiz/report/xxx/db)
     if ($plugins = get_list_of_plugins('mod/quiz/report', 'db')) {
         foreach ($plugins as $plugin) {
@@ -1883,7 +1883,7 @@ class admin_setting_configtext extends admin_setting {
             $data = 0;
         }
         // $data is a string
-        $validated = $this->validate($data);
+        $validated = $this->validate($data); 
         if ($validated !== true) {
             return $validated;
         }
@@ -1944,7 +1944,7 @@ class admin_setting_configtextarea extends admin_setting_configtext {
         $defaultinfo = $default;
         if (!is_null($default) and $default !== '') {
             $defaultinfo = "\n".$default;
-        }
+        } 
 
         return format_admin_setting($this, $this->visiblename,
                 '<div class="form-textarea form-textarea-advanced" ><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
@@ -2221,7 +2221,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
                 }
             }
         }
-
+        
         $options = array();
         $defaults = array();
         foreach($this->choices as $key=>$description) {
@@ -2258,7 +2258,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
         $return .= '</div>';
 
         return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', $defaultinfo, $query);
-
+        
     }
 }
 
@@ -2353,7 +2353,7 @@ class admin_setting_configselect extends admin_setting {
             if (strpos($textlib->strtolower($value), $query) !== false) {
                 return true;
             }
-        }
+        }         
         return false;
     }
 
@@ -2800,7 +2800,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     function write_setting($data) {
         global $DB;
         $data = trim($data);
-        $validated = $this->validate($data);
+        $validated = $this->validate($data); 
         if ($validated !== true) {
             return $validated;
         }
@@ -3388,12 +3388,22 @@ class admin_setting_special_calendar_weekend extends admin_setting {
 
 
 /**
- * Graded roles in gradebook
+ * Admin setting that allows a user to pick appropriate roles for something.
  */
-class admin_setting_special_gradebookroles extends admin_setting_configmulticheckbox {
-    function admin_setting_special_gradebookroles() {
-        parent::admin_setting_configmulticheckbox('gradebookroles', get_string('gradebookroles', 'admin'),
-                                                  get_string('configgradebookroles', 'admin'), NULL, NULL);
+class admin_setting_pickroles extends admin_setting_configmulticheckbox {
+    private $types;
+
+    /**
+     * @param string $name Name of config variable
+     * @param string $visiblename Display name
+     * @param string $description Description
+     * @param array $types Array of capabilities (usually moodle/legacy:something)
+     *   which identify roles that will be enabled by default. Default is the
+     *   student role
+     */
+    function admin_setting_pickroles($name, $visiblename, $description,$types=array('moodle/legacy:student')) {
+        parent::admin_setting_configmulticheckbox($name, $visiblename, $description, NULL, NULL);
+        $this->types=$types;
     }
 
     function load_choices() {
@@ -3418,17 +3428,32 @@ class admin_setting_special_gradebookroles extends admin_setting_configmultichec
     function get_defaultsetting() {
         global $CFG;
         if (empty($CFG->rolesactive)) {
-            return NULL;
+            return array(0);
         }
         $result = array();
-        if ($studentroles = get_roles_with_capability('moodle/legacy:student', CAP_ALLOW)) {
-            foreach ($studentroles as $studentrole) {
-                $result[$studentrole->id] = '1';
+        foreach($this->types as $capability) {
+            if ($caproles = get_roles_with_capability($capability, CAP_ALLOW)) {
+                foreach ($caproles as $caprole) {
+                    if(!in_array($caprole->id,$result)) {
+                        $result[] = $caprole->id;
+                    }
+                }
             }
         }
         return $result;
     }
 }
+
+/**
+ * Graded roles in gradebook
+ */
+class admin_setting_special_gradebookroles extends admin_setting_pickroles {
+    function admin_setting_special_gradebookroles() {
+        parent::admin_setting_pickroles('gradebookroles', get_string('gradebookroles', 'admin'),
+                                                  get_string('configgradebookroles', 'admin'));
+    }
+}
+
 
 class admin_setting_regradingcheckbox extends admin_setting_configcheckbox {
     function write_setting($data) {
@@ -3444,45 +3469,17 @@ class admin_setting_regradingcheckbox extends admin_setting_configcheckbox {
         }
 
         return $return;
-    }
+    }    
 }
 
 /**
  * Which roles to show on course decription page
  */
-class admin_setting_special_coursemanager extends admin_setting_configmulticheckbox {
+class admin_setting_special_coursemanager extends admin_setting_pickroles {
     function admin_setting_special_coursemanager() {
-        parent::admin_setting_configmulticheckbox('coursemanager', get_string('coursemanager', 'admin'),
-                                                  get_string('configcoursemanager', 'admin'), NULL, NULL);
-    }
-
-    function load_choices() {
-        global $DB;
-        if (is_array($this->choices)) {
-            return true;
-        }
-        if ($roles = $DB->get_records('role',null,'sortorder')) {
-            $this->choices = array();
-            foreach($roles as $role) {
-                $this->choices[$role->id] = format_string($role->name);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    function get_defaultsetting() {
-        global $CFG;
-        if (empty($CFG->rolesactive)) {
-            return NULL;
-        }
-        $result = array();
-        if ($teacherroles = get_roles_with_capability('moodle/legacy:editingteacher', CAP_ALLOW)) {
-            foreach ($teacherroles as $teacherrole) {
-                $result[$teacherrole->id] = '1';
-            }
-        }
-        return $result;
+        parent::admin_setting_pickroles('coursemanager', get_string('coursemanager', 'admin'),
+                                                  get_string('configcoursemanager', 'admin'),
+                                                  'moodle/legacy:editingteacher');
     }
 }
 
@@ -3589,7 +3586,7 @@ class admin_setting_gradecat_combo extends admin_setting {
                 $defaultinfo[] = get_string('advanced');
             }
             $defaultinfo = implode(', ', $defaultinfo);
-
+            
         } else {
             $defaultinfo = NULL;
         }
@@ -4792,7 +4789,7 @@ function db_replace($search, $replace) {
 
 /**
  * Prints tables of detected plugins, one table per plugin type,
- * and prints whether they are part of the standard Moodle
+ * and prints whether they are part of the standard Moodle 
  * distribution or not.
  */
 function print_plugin_tables() {
@@ -4813,7 +4810,7 @@ function print_plugin_tables() {
                                      'scorm',
                                      'survey',
                                      'wiki');
-
+    
     $plugins_standard['blocks'] = array('activity_modules',
                                         'admin',
                                         'admin_bookmarks',
@@ -4845,7 +4842,7 @@ function print_plugin_tables() {
                                         'tag_flickr',
                                         'tag_youtube',
                                         'tags');
-
+    
     $plugins_standard['filter'] = array('activitynames',
                                         'algebra',
                                         'censor',
@@ -4872,14 +4869,14 @@ function print_plugin_tables() {
     $plugins_ondisk['mod'] = get_list_of_plugins('mod', 'db');
     $plugins_ondisk['blocks'] = get_list_of_plugins('blocks', 'db');
     $plugins_ondisk['filter'] = get_list_of_plugins('filter', 'db');
-
+    
     $strstandard    = get_string('standard');
     $strnonstandard = get_string('nonstandard');
     $strmissingfromdisk = '(' . get_string('missingfromdisk') . ')';
     $strabouttobeinstalled = '(' . get_string('abouttobeinstalled') . ')';
 
     $html = '';
-
+    
     $html .= '<table class="generaltable plugincheckwrapper" cellspacing="4" cellpadding="1"><tr valign="top">';
 
     foreach ($plugins_ondisk as $cat => $list_ondisk) {
@@ -4895,8 +4892,8 @@ function print_plugin_tables() {
         $html .= '<tr class="r0"><th class="header c0">' . get_string('directory') . "</th>\n"
                . '<th class="header c1">' . get_string('name') . "</th>\n"
                . '<th class="header c2">' . get_string('status') . "</th>\n</tr>\n";
-
-        $row = 1;
+        
+        $row = 1;      
 
         foreach ($list_ondisk as $k => $plugin) {
             $status = 'ok';
@@ -4906,15 +4903,15 @@ function print_plugin_tables() {
             if (!in_array($plugin, $plugins_standard[$cat])) {
                 $standard = 'nonstandard';
                 $status = 'warning';
-            }
-
+            }    
+            
             // Get real name and full path of plugin
             $plugin_name = "[[$plugin]]";
-
+            
             $plugin_path = "$cat/$plugin";
-
+            
             $plugin_name = get_plugin_name($plugin, $cat);
-
+            
             // Determine if the plugin is about to be installed
             if ($cat != 'filter' && !in_array($plugin, $plugins_installed[$cat])) {
                 $note = $strabouttobeinstalled;
@@ -4930,11 +4927,11 @@ function print_plugin_tables() {
             // If the plugin was both on disk and in the db, unset the value from the installed plugins list
             if ($key = array_search($plugin, $plugins_installed[$cat])) {
                 unset($plugins_installed[$cat][$key]);
-            }
-        }
+            } 
+        } 
 
         // If there are plugins left in the plugins_installed list, it means they are missing from disk
-        foreach ($plugins_installed[$cat] as $k => $missing_plugin) {
+        foreach ($plugins_installed[$cat] as $k => $missing_plugin) { 
             // Make sure the plugin really is missing from disk
             if (!in_array($missing_plugin, $plugins_ondisk[$cat])) {
                 $standard = 'standard';
@@ -4949,15 +4946,15 @@ function print_plugin_tables() {
                       .  "<td class=\"cell c0\">?</td>\n"
                       .  "<td class=\"cell c1\">$plugin_name</td>\n"
                       .  "<td class=\"$standard $status cell c2\">" . ${'str' . $standard} . " $strmissingfromdisk</td>\n</tr>\n";
-                $row++;
+                $row++; 
             }
         }
 
         $html .= '</table></td>';
     }
-
+    
     $html .= '</tr></table><br />';
-
+    
     echo $html;
 }
 

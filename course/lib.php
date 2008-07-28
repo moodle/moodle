@@ -1,6 +1,7 @@
 <?php  // $Id$
    // Library of useful functions
 
+require_once($CFG->libdir.'/completionlib.php');
 
 define('COURSE_MAX_LOG_DISPLAY', 150);          // days
 define('COURSE_MAX_LOGS_PER_PAGE', 1000);       // records
@@ -1276,7 +1277,7 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
 /**
  * Prints a section full of activity modules
  */
-function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
+function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%", $hidecompletion=false) {
     global $CFG, $USER, $DB;
 
     static $initialised;
@@ -1365,7 +1366,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 
             $extra = '';
             if (!empty($modinfo->cms[$modnumber]->extra)) {
-                $extra = $modinfo->cms[$modnumber]->extra;
+            $extra = $modinfo->cms[$modnumber]->extra;
             }
 
             if ($mod->modname == "label") {
@@ -1453,6 +1454,66 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 echo '&nbsp;&nbsp;';
                 echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
             }
+
+            // Completion
+            $completioninfo=new completion_info($course);
+            $completion=$hidecompletion
+                ? COMPLETION_TRACKING_NONE
+                : $completioninfo->is_enabled($mod);
+            if($completion!=COMPLETION_TRACKING_NONE) {
+               $completiondata=$completioninfo->get_data($mod,true);
+                $completionicon='';
+                if($isediting) {
+                    switch($completion) {
+                        case COMPLETION_TRACKING_MANUAL : 
+                            $completionicon='manual-enabled'; break;
+                        case COMPLETION_TRACKING_AUTOMATIC : 
+                            $completionicon='auto-enabled'; break;
+                        default: // wtf
+                    }
+                } else if($completion==COMPLETION_TRACKING_MANUAL) {
+                    switch($completiondata->completionstate) {
+                        case COMPLETION_INCOMPLETE:
+                            $completionicon='manual-n'; break;
+                        case COMPLETION_COMPLETE:
+                            $completionicon='manual-y'; break;
+                    }
+                } else { // Automatic
+                    switch($completiondata->completionstate) {
+                        case COMPLETION_INCOMPLETE:
+                            $completionicon='auto-n'; break;
+                        case COMPLETION_COMPLETE:
+                            $completionicon='auto-y'; break;
+                        case COMPLETION_COMPLETE_PASS:
+                            $completionicon='auto-pass'; break;
+                        case COMPLETION_COMPLETE_FAIL:
+                            $completionicon='auto-fail'; break;
+                    }
+                }
+                if($completionicon) {
+                    $imgsrc=$CFG->pixpath.'/i/completion-'.$completionicon.'.gif';
+                    $imgalt=get_string('completion-alt-'.$completionicon,'completion');
+                    if($completion==COMPLETION_TRACKING_MANUAL && !$isediting) {
+                        $imgtitle=get_string('completion-title-'.$completionicon,'completion');
+                        $newstate=
+                            $completiondata->completionstate==COMPLETION_COMPLETE
+                            ? COMPLETION_INCOMPLETE 
+                            : COMPLETION_COMPLETE; 
+                        // In manual mode the icon is a toggle form.
+                        echo "
+<form class='togglecompletion' method='post' action='togglecompletion.php'><div>
+<input type='hidden' name='id' value='{$mod->id}' />
+<input type='hidden' name='completionstate' value='$newstate' />
+<input type='image' src='$imgsrc' alt='$imgalt' title='$imgtitle' />
+</div></form>";
+                    } else {
+                        // In auto mode, or when editing, the icon is just an image
+                        echo "
+<span class='autocompletion'><img src='$imgsrc' alt='$imgalt' title='$imgalt' /></span>";
+                    }
+                }
+            }
+
             echo "</li>\n";
         }
 
@@ -2228,6 +2289,27 @@ function set_coursemodule_idnumber($id, $idnumber) {
     global $DB;
     return $DB->set_field("course_modules", "idnumber", $idnumber, array("id"=>$id));
 }
+
+function set_coursemodule_completion($id, $completion) {
+    global $DB;
+    return $DB->set_field("course_modules", "completion", $completion, array('id'=>$id));
+}
+
+function set_coursemodule_completionview($id, $completionview) {
+    global $DB;
+    return $DB->set_field("course_modules", "completionview", $completionview, array('id'=>$id));
+}
+
+function set_coursemodule_completiongradeitemnumber($id, $completiongradeitemnumber) {
+    global $DB;
+    return $DB->set_field("course_modules", "completiongradeitemnumber", $completiongradeitemnumber, array('id'=>$id));
+}
+
+function set_coursemodule_completionexpected($id, $completionexpected) {
+    global $DB;
+    return $DB->set_field("course_modules", "completionexpected", $completionexpected, array('id'=>$id));
+}
+
 /**
 * $prevstateoverrides = true will set the visibility of the course module
 * to what is defined in visibleold. This enables us to remember the current

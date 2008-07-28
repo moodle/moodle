@@ -13,7 +13,7 @@ class mod_forum_mod_form extends moodleform_mod {
 
         $mform->addElement('text', 'name', get_string('forumname', 'forum'), array('size'=>'64'));
         if (!empty($CFG->formatstringstriptags)) {
-            $mform->setType('name', PARAM_TEXT);
+        $mform->setType('name', PARAM_TEXT);
         } else {
             $mform->setType('name', PARAM_CLEAN);
         }
@@ -178,7 +178,80 @@ class mod_forum_mod_form extends moodleform_mod {
             $default_values['ratingtime']=
                 ($default_values['assesstimestart'] && $default_values['assesstimefinish']) ? 1 : 0;
         }
+
+        // Set up the completion checkboxes which aren't part of standard data.
+        // We also make the default value (if you turn on the checkbox) for those
+        // numbers to be 1, this will not apply unless checkbox is ticked.
+        $default_values['completiondiscussionsenabled']=
+            !empty($default_values['completiondiscussions']) ? 1 : 0;
+        if(empty($default_values['completiondiscussions'])) {
+            $default_values['completiondiscussions']=1;
+        }
+        $default_values['completionrepliesenabled']=
+            !empty($default_values['completionreplies']) ? 1 : 0;
+        if(empty($default_values['completionreplies'])) {
+            $default_values['completionreplies']=1;
+        }
+        $default_values['completionpostsenabled']=
+            !empty($default_values['completionposts']) ? 1 : 0;
+        if(empty($default_values['completionposts'])) {
+            $default_values['completionposts']=1;
+        }
     }
 
+	  function add_completion_rules() {
+        $mform =& $this->_form;
+
+        $group=array();
+        $group[] =& $mform->createElement('checkbox', 'completionpostsenabled', '', get_string('completionposts','forum'));
+        $group[] =& $mform->createElement('text', 'completionposts', '', array('size'=>3));
+        $mform->setType('completionposts',PARAM_INT);
+        $mform->addGroup($group, 'completionpostsgroup', get_string('completionpostsgroup','forum'), array(' '), false);
+        $mform->setHelpButton('completionpostsgroup', array('completion', get_string('completionpostshelp', 'forum'), 'forum'));
+        $mform->disabledIf('completionposts','completionpostsenabled','notchecked');
+
+        $group=array();
+        $group[] =& $mform->createElement('checkbox', 'completiondiscussionsenabled', '', get_string('completiondiscussions','forum'));
+        $group[] =& $mform->createElement('text', 'completiondiscussions', '', array('size'=>3));
+        $mform->setType('completiondiscussions',PARAM_INT);
+        $mform->addGroup($group, 'completiondiscussionsgroup', get_string('completiondiscussionsgroup','forum'), array(' '), false);
+        $mform->setHelpButton('completiondiscussionsgroup', array('completion', get_string('completiondiscussionshelp', 'forum'), 'forum'));
+        $mform->disabledIf('completiondiscussions','completiondiscussionsenabled','notchecked');
+
+        $group=array();
+        $group[] =& $mform->createElement('checkbox', 'completionrepliesenabled', '', get_string('completionreplies','forum'));
+        $group[] =& $mform->createElement('text', 'completionreplies', '', array('size'=>3));
+        $mform->setType('completionreplies',PARAM_INT);
+        $mform->addGroup($group, 'completionrepliesgroup', get_string('completionrepliesgroup','forum'), array(' '), false);
+        $mform->setHelpButton('completionrepliesgroup', array('completion', get_string('completionreplieshelp', 'forum'), 'forum'));
+        $mform->disabledIf('completionreplies','completionrepliesenabled','notchecked');
+
+        return array('completiondiscussionsgroup','completionrepliesgroup','completionpostsgroup');
+    }
+
+    function completion_rule_enabled($data) {
+        return (!empty($data['completiondiscussionsenabled']) && $data['completiondiscussions']!=0) ||
+            (!empty($data['completionrepliesenabled']) && $data['completionreplies']!=0) ||
+            (!empty($data['completionpostsenabled']) && $data['completionposts']!=0);
+    }
+
+    function get_data($slashed=true) {
+        $data=parent::get_data($slashed);
+        if(!$data) {
+            return false;
+        }
+        // Turn off completion settings if the checkboxes aren't ticked
+        $autocompletion=!empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
+        if(empty($data->completiondiscussionsenabled) || !$autocompletion) {
+            $data->completiondiscussions=0;
+        }
+        if(empty($data->completionrepliesenabled) || !$autocompletion) {
+            $data->completionreplies=0;
+        }
+        if(empty($data->completionpostsenabled) || !$autocompletion) {
+            $data->completionposts=0;
+        }
+        return $data;
+    }
 }
 ?>

@@ -21,6 +21,8 @@ function xmldb_forum_upgrade($oldversion=0) {
 
     global $CFG, $THEME, $DB;
 
+    $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
+
     $result = true;
 
 /// And upgrade begins here. For each one, you'll need one
@@ -75,7 +77,7 @@ function xmldb_forum_upgrade($oldversion=0) {
 
         upgrade_mod_savepoint($result, 2007101512, 'forum');
     }
-    
+
     if ($result and $oldversion < 2008072401) {
         $eventdata = new object();
         $eventdata->modulename = 'forum';
@@ -85,6 +87,35 @@ function xmldb_forum_upgrade($oldversion=0) {
         upgrade_mod_savepoint($result, 2008072401, 'forum');
     }
 
+    if ($result && $oldversion < 2008072800) {
+    /// Define field completiondiscussions to be added to forum
+        $table = new XMLDBTable('forum');
+        $field = new XMLDBField('completiondiscussions');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'draft');
+
+    /// Launch add field completiondiscussions
+        if(!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $field = new XMLDBField('completionreplies');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completiondiscussions');
+
+    /// Launch add field completionreplies
+        if(!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Define field completionposts to be added to forum
+        $field = new XMLDBField('completionposts');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '9', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completionreplies');
+
+    /// Launch add field completionposts
+        if(!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        upgrade_mod_savepoint($result, 2008072800, 'forum');
+    }
 
 
     return $result;

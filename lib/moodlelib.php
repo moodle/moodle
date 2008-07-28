@@ -3345,7 +3345,7 @@ function delete_course($courseorid, $showfeedback = true) {
         $courseid = $courseorid;
         if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
             return false;
-        }
+        } 
     }
 
     // frontpage course can not be deleted!!
@@ -5938,6 +5938,48 @@ function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
     return $plugins;
 }
 
+// Feature constants
+/** True if module can provide a grade */
+define('FEATURE_GRADE_HAS_GRADE','grade_has_grade');
+/** True if module has code to track whether somebody viewed it */
+define('FEATURE_COMPLETION_TRACKS_VIEWS','completion_tracks_views');
+/** True if module has custom completion rules */
+define('FEATURE_COMPLETION_HAS_RULES','completion_has_rules');
+
+/**
+ * Checks whether a plugin supports a specified feature.
+ *
+ * @param string $type Plugin type e.g. 'mod'
+ * @param string $name Plugin name
+ * @param string $feature Feature code (FEATURE_xx constant)
+ * @return Feature result (false if not supported, usually true but may have
+ *   other feature-specific value otherwise)
+ */
+function plugin_supports($type,$name,$feature) {
+    global $CFG;
+    switch($type) {
+        case 'mod' :
+            $file=$CFG->dirroot.'/mod/'.$name.'/lib.php';
+            $function=$name.'_supports';
+            break;
+        default:
+            throw new Exception('Unsupported plugin type ('.$type.')');
+    }
+
+    // Load library and look for function
+    require_once($file);
+    if(function_exists($function)) {
+        // Function exists, so just return function result
+        return $function($feature);
+    } else {
+        switch($feature) {
+            // If some features can also be checked in other ways
+            // for legacy support, this could be added here
+            default: return false;
+        }
+    }
+}
+
 /**
  * Returns true if the current version of PHP is greater that the specified one.
  *
@@ -5949,13 +5991,13 @@ function check_php_version($version='5.2.0') {
 }
 
 /**
- * Checks to see if is the browser operating system matches the specified
+ * Checks to see if is the browser operating system matches the specified 
  * brand.
- *
+ * 
  * Known brand: 'Windows','Linux','Macintosh','SGI','SunOS','HP-UX'
  *
  * @uses $_SERVER
- * @param string $brand The operating system identifier being tested
+ * @param string $brand The operating system identifier being tested 
  * @return bool true if the given brand below to the detected operating system
  */
  function check_browser_operating_system($brand) {
@@ -5966,8 +6008,8 @@ function check_php_version($version='5.2.0') {
     if (preg_match("/$brand/i", $_SERVER['HTTP_USER_AGENT'])) {
         return true;
     }
-
-    return false;
+     
+    return false;  
  }
 
 /**
@@ -6572,7 +6614,7 @@ function shorten_text($text, $ideal=30, $exact = false) {
     // if the words shouldn't be cut in the middle...
     if (!$exact) {
         // ...search the last occurance of a space...
-    for ($k=strlen($truncate);$k>0;$k--) {
+		for ($k=strlen($truncate);$k>0;$k--) {
             if (!empty($truncate[$k]) && ($char = $truncate[$k])) {
                 if ($char == '.' or $char == ' ') {
                     $breakpos = $k+1;
@@ -6582,23 +6624,23 @@ function shorten_text($text, $ideal=30, $exact = false) {
                     break;                        // character boundary.
                 }
             }
-    }
+		}
 
-    if (isset($breakpos)) {
+		if (isset($breakpos)) {
             // ...and cut the text in this position
             $truncate = substr($truncate, 0, $breakpos);
-    }
-  }
+		}
+	}
 
     // add the defined ending to the text
-  $truncate .= $ending;
+	$truncate .= $ending;
 
     // close all unclosed html-tags
     foreach ($open_tags as $tag) {
         $truncate .= '</' . $tag . '>';
     }
 
-  return $truncate;
+	return $truncate;
 }
 
 

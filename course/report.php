@@ -11,7 +11,8 @@
 
     require_login($course->id);
 
-    require_capability('moodle/site:viewreports', get_context_instance(CONTEXT_COURSE, $course->id));
+    $context=get_context_instance(CONTEXT_COURSE, $course->id);
+    require_capability('moodle/site:viewreports', $context);
 
     $strreports = get_string('reports');
 

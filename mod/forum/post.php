@@ -280,14 +280,15 @@
                         notice("Sorry, but you are not allowed to delete that discussion!",
                                 forum_go_back_to("discuss.php?d=$post->discussion"));
                     }
-                    forum_delete_discussion($discussion);
+                    forum_delete_discussion($discussion,false,$course,$cm,$forum);
 
                     add_to_log($discussion->course, "forum", "delete discussion",
                                "view.php?id=$cm->id", "$forum->id", $cm->id);
-
+                    
                     redirect("view.php?f=$discussion->forum");
 
-                } else if (forum_delete_post($post, has_capability('mod/forum:deleteanypost', $modcontext))) {
+                } else if (forum_delete_post($post, has_capability('mod/forum:deleteanypost', $modcontext),
+                    $course, $cm, $forum)) {
 
                     if ($forum->type == 'single') {
                         // Single discussion forums are an exception. We show
@@ -402,7 +403,7 @@
 
             add_to_log($discussion->course, "forum", "prune post",
                            "discuss.php?d=$newid", "$post->id", $cm->id);
-
+            
             redirect(forum_go_back_to("discuss.php?d=$newid"));
 
         } else { // User just asked to prune something
@@ -554,6 +555,13 @@
                 }
                 add_to_log($course->id, "forum", "add post",
                           "$discussionurl&amp;parent=$fromform->id", "$fromform->id", $cm->id);
+                
+                // Update completion state
+                $completion=new completion_info($course);
+                if($completion->is_enabled($cm) && 
+                    ($forum->completionreplies || $forum->completionposts)) {
+                    $completion->update_state($cm,COMPLETION_COMPLETE);
+                }
 
                 redirect(forum_go_back_to("$discussionurl#p$fromform->id"), $message.$subscribemessage, $timemessage);
 
@@ -603,6 +611,13 @@
 
                 if ($subscribemessage = forum_post_subscription($discussion)) {
                     $timemessage = 4;
+                }
+
+                // Update completion status
+                $completion=new completion_info($course);
+                if($completion->is_enabled($cm) &&
+                    ($forum->completiondiscussions || $forum->completionposts)) {
+                    $completion->update_state($cm,COMPLETION_COMPLETE);
                 }
 
                 redirect(forum_go_back_to("view.php?f=$fromform->forum"), $message.$subscribemessage, $timemessage);

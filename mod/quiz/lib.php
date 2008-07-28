@@ -58,7 +58,7 @@ define("QUIZ_MAX_EVENT_LENGTH", 5*24*60*60);   // 5 days maximum
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
-/** 
+/**
  * Code to be executed when a module is installed
  * now is just used to register the module as message provider
  */ 
@@ -1208,6 +1208,18 @@ function quiz_num_attempt_summary($quiz, $cm, $returnzero = false, $currentgroup
         return get_string('attemptsnum', 'quiz', $numattempts);
     }
     return '';
+}
+
+/**
+ * @param string $feature FEATURE_xx constant for requested feature
+ * @return bool True if quiz supports feature
+ */
+function quiz_supports($feature) {
+    switch($feature) {
+        case FEATURE_GRADE_HAS_GRADE: return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        default: return false;
+    }
 }
 
 /**

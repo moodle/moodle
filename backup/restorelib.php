@@ -752,6 +752,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 $course->enrolenddate  += $restore->course_startdateoffset;
             }
             $course->enrolperiod = $course_header->course_enrolperiod;
+            $course->enablecompletion = isset($course_header->course_enablecompletion) ? $course_header->course_enablecompletion : 0;
             //Put as last course in category
             $course->sortorder = $category->sortorder + MAX_COURSES_IN_CATEGORY - 1;
 
@@ -1119,10 +1120,16 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                         //print_object($course_module);                    //Debug
                                         //Save it to db
                                         if ($mod->idnumber) {
+                                            $mod->idnumber=backup_todb($mod->idnumber);
                                             if (grade_verify_idnumber($mod->idnumber, $restore->course_id)) {
                                                 $course_module->idnumber = $mod->idnumber;
                                             }
                                         }
+
+                                        $course_module->completion=$mod->completion;
+                                        $course_module->completiongradeitemnumber=backup_todb($mod->completiongradeitemnumber);
+                                        $course_module->completionview=$mod->completionview;
+                                        $course_module->completionexpected=$mod->completionexpected;
 
                                         $newidmod = $DB->insert_record("course_modules", $course_module);
                                         if ($newidmod) {
@@ -1162,6 +1169,43 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     }
                 }
             }
+
+            // Now that we have IDs for everything, store any completion data
+            if($status && !empty($info->completiondata)) {
+                foreach($info->completiondata as $data) {
+                    // Convert cmid 
+                    $newcmid=backup_getid($restore->backup_unique_code, 'course_modules', $data->coursemoduleid);
+                    if($newcmid) {
+                        $data->coursemoduleid=$newcmid->new_id;
+                    } else {
+                        if (!defined('RESTORE_SILENTLY')) {
+                            echo "<p>Can't find new ID for cm $data->coursemoduleid.</p>";
+                        }
+                        $status=false;
+                        continue;
+                    }
+
+                    // Convert userid
+                    $newuserid=backup_getid($restore->backup_unique_code, 'user', $data->userid);
+                    if($newuserid) {
+                        $data->userid=$newuserid->new_id;
+                    } else {
+                        // Skip missing users
+                        debugging("Not restoring completion data for missing user {$data->userid}",DEBUG_DEVELOPER);
+                        continue;
+                    }
+
+                    // Add record
+                    if(!$DB->insert_record('course_modules_completion',$data)) {
+                        if (!defined('RESTORE_SILENTLY')) {
+                            echo "<p>Failed to insert completion data record.</p>";
+                        }
+                        $status=false;
+                        continue;
+                    }
+                }
+            }
+
         } else {
             $status = false;
         }
@@ -5164,6 +5208,9 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                         case "ENROLPERIOD":
                             $this->info->course_enrolperiod = $this->getContents();
                             break;
+                        case "ENABLECOMPLETION":
+                            $this->info->course_enablecompletion = $this->getContents();
+                            break;
                     }
                 }
                 if ($this->tree[4] == "CATEGORY") {
@@ -5539,7 +5586,15 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                                 $this->info->tempmod->groupmembersonly;
                             $this->info->tempsection->mods[$this->info->tempmod->id]->idnumber =
                                 $this->info->tempmod->idnumber;
-
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->completion =
+                                isset($this->info->tempmod->completion) ? $this->info->tempmod->completion : 0;
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->completiongradeitemnumber =
+                                isset($this->info->tempmod->completiongradeitemnumber) ? $this->info->tempmod->completiongradeitemnumber : null;
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->completionview =
+                                isset($this->info->tempmod->completionview) ? $this->info->tempmod->completionview : 0;
+                            $this->info->tempsection->mods[$this->info->tempmod->id]->completionexpected =
+                                isset($this->info->tempmod->completionexpected) ? $this->info->tempmod->completionexpected : 0;
+                                
                             unset($this->info->tempmod);
                     }
                 }
@@ -5576,6 +5631,18 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             $this->info->tempmod->groupmembersonly = $this->getContents();
                         case "IDNUMBER":
                             $this->info->tempmod->idnumber = $this->getContents();
+                            break;
+                        case "COMPLETION":
+                            $this->info->tempmod->completion = $this->getContents();
+                            break;
+                        case "COMPLETIONGRADEITEMNUMBER":
+                            $this->info->tempmod->completiongradeitemnumber = $this->getContents();
+                            break;
+                        case "COMPLETIONVIEW":
+                            $this->info->tempmod->completionview = $this->getContents();
+                            break;
+                        case "COMPLETIONEXPECTED":
+                            $this->info->tempmod->completionexpected = $this->getContents();
                             break;
                         default:
                             break;
@@ -5672,6 +5739,36 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     }
                 } /// ends role_overrides
 
+                if (isset($this->tree[7]) && $this->tree[7] == "COMPLETIONDATA") {
+                    if($this->level == 8) {
+                        switch($tagName) {
+                            case 'COMPLETION':
+                                // Got all data to make completion entry...
+                                $this->info->tempcompletion->coursemoduleid=$this->info->tempmod->id;                                
+                                $this->info->completiondata[]=$this->info->tempcompletion;
+                                unset($this->info->tempcompletion);
+                                $this->info->tempcompletion=new stdClass;
+                                break;
+                        }
+                    }
+
+                    if($this->level == 9) {
+                        switch($tagName) {
+                            case 'USERID' :
+                                $this->info->tempcompletion->userid=$this->getContents();
+                                break;
+                            case 'COMPLETIONSTATE' :
+                                $this->info->tempcompletion->completionstate=$this->getContents();
+                               break;
+                            case 'VIEWED' :
+                                $this->info->tempcompletion->viewed=$this->getContents();
+                                break;
+                            case 'TIMEMODIFIED' :
+                                $this->info->tempcompletion->timemodified=$this->getContents();
+                                break;
+                        }
+                    }
+                }
             }
 
             //Stop parsing if todo = SECTIONS and tagName = SECTIONS (en of the tag, of course)
@@ -8338,21 +8435,21 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 }
             /// Now, restore role nameincourse (only if the role had nameincourse in backup)
                 if (!empty($roledata->nameincourse)) {
-                    $newrole = backup_getid($restore->backup_unique_code, 'role', $oldroleid); /// Look for target role
-                    $coursecontext = get_context_instance(CONTEXT_COURSE, $restore->course_id); /// Look for target context
-                    if (!empty($newrole->new_id) && !empty($coursecontext) && !empty($roledata->nameincourse)) {
-                    /// Check the role hasn't any custom name in context
-                        if (!$DB->record_exists('role_names', array('roleid'=>$newrole->new_id, 'contextid'=>$coursecontext->id))) {
-                            $rolename = new object();
-                            $rolename->roleid = $newrole->new_id;
-                            $rolename->contextid = $coursecontext->id;
-                            $rolename->name = $roledata->nameincourse;
+                $newrole = backup_getid($restore->backup_unique_code, 'role', $oldroleid); /// Look for target role
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $restore->course_id); /// Look for target context
+                if (!empty($newrole->new_id) && !empty($coursecontext) && !empty($roledata->nameincourse)) {
+                /// Check the role hasn't any custom name in context
+                    if (!$DB->record_exists('role_names', array('roleid'=>$newrole->new_id, 'contextid'=>$coursecontext->id))) {
+                        $rolename = new object();
+                        $rolename->roleid = $newrole->new_id;
+                        $rolename->contextid = $coursecontext->id;
+                        $rolename->name = $roledata->nameincourse;
 
-                            $DB->insert_record('role_names', $rolename);
-                        }
+                        $DB->insert_record('role_names', $rolename);
                     }
                 }
             }
+        }
         }
         return true;
     }

@@ -118,6 +118,10 @@
         $form->instance         = $cm->instance;
         $form->return           = $return;
         $form->update           = $update;
+        $form->completion       = $cm->completion;
+        $form->completionview   = $cm->completionview;
+        $form->completionexpected = $cm->completionexpected;
+        $form->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
 
         if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$form->modulename,
                                            'iteminstance'=>$form->instance, 'courseid'=>$COURSE->id))) {
@@ -241,6 +245,19 @@
         if (!isset($fromform->name)) { //label
             $fromform->name = $fromform->modulename;
         }
+        
+        if (!isset($fromform->completion)) {
+            $fromform->completion=COMPLETION_DISABLED;
+        }
+        if (!isset($fromform->completionview)) {
+            $fromform->completionview=COMPLETION_VIEW_NOT_REQUIRED;
+        }
+
+        // Convert the 'use grade' checkbox into a grade-item number: 0 if
+        // checked, null if not
+        $fromform->completiongradeitemnumber =
+            isset($fromform->completionusegrade) && $fromform->completionusegrade
+            ? 0 : null;
 
         if (!empty($fromform->update)) {
 
@@ -261,6 +278,18 @@
             set_coursemodule_groupmode($fromform->coursemodule, $fromform->groupmode);
             set_coursemodule_groupingid($fromform->coursemodule, $fromform->groupingid);
             set_coursemodule_groupmembersonly($fromform->coursemodule, $fromform->groupmembersonly);
+
+            // Handle completion settings. If necessary, wipe existing completion
+            // data first.
+            if(!empty($fromform->completionunlocked)) {
+                $completion=new completion_info($course);
+                $completion->reset_all_state($cm);
+            }
+            set_coursemodule_completion($fromform->coursemodule, $fromform->completion);
+            set_coursemodule_completionview($fromform->coursemodule, $fromform->completionview);
+            set_coursemodule_completionexpected($fromform->coursemodule, $fromform->completionexpected);
+            set_coursemodule_completiongradeitemnumber(
+                    $fromform->coursemodule,$fromform->completiongradeitemnumber);
 
             if (isset($fromform->cmidnumber)) { //label
                 // set cm idnumber

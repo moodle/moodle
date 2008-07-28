@@ -91,11 +91,11 @@ h6.main {
 }
 
 #redirect #message {
-
+  
 }
 
 #redirect #continue {
-
+  
 }
 
 /* .clearfix {display: inline-table;} */
@@ -1803,6 +1803,29 @@ border-width:0px;
 #course-view .section .weekdates {
 }
 
+#course-view li.activity {
+  margin-right:20px; /* Space allowed for completion icons if enabled */
+  position:relative;
+}
+#course-view li.activity form.togglecompletion,
+#course-view li.activity span.autocompletion {
+  display:inline;
+  position:absolute;
+  right:-20px;
+  z-index:10;
+}
+#course-view li.activity form.togglecompletion div {
+  display:inline;
+}
+#course-view .completion-saved-display {
+  position:absolute;
+  top:0; left:0;
+  border:1px solid black;
+  padding: 1px 2px;
+  background:white;
+  font-size:0.85em; 
+}
+
 #course-view ul.section,
 #site-index ul.section {
   margin: 0;
@@ -1845,7 +1868,7 @@ border-width:0px;
   padding: 0;
 }
 .weeks-format .block_calendar_month .minicalendar th,
-.topics-format .block_calendar_month .minicalendar th,
+.topics-format .block_calendar_month .minicalendar th, 
 .weeks-format .block_calendar_month .minicalendar td,
 .topics-format .block_calendar_month .minicalendar td {
   padding: 0.1em 0 0.1em 1px;
@@ -1896,7 +1919,7 @@ border-width:0px;
 .weeks .right,
 .topics .right {
   float: right;
-}
+} 
 
 .section .activity img.activityicon {
   vertical-align:middle;
@@ -2277,7 +2300,7 @@ div.allcoursegrades {
 }
 
 #grade-aggregation-help dt {
-    margin-top: 15px;
+    margin-top: 15px; 
 }
 
 #grade-aggregation-help dd.example {
@@ -2685,6 +2708,36 @@ body.notes .notesgroup {
 }
 
 /***
+ *** Completion progress report
+ ***/
+
+#course-report-progress-index th,
+#course-report-progress-index td {
+  padding:2px 4px;
+  font-weight:normal;
+  border-right: 1px solid #EEE;
+}
+.completion-expired {
+  background:#fdd;
+}
+.completion-expected {
+  font-size:0.75em;
+}
+.completion-sortchoice {
+  font-size:0.75em;
+  vertical-align:bottom;
+}
+.completion-progresscell {
+  text-align:right;
+}
+.completion-expired .completion-expected {
+  font-weight:bold;
+}
+#course-report-progress-index .progress-actions {
+  text-align:center;
+}
+
+/***
  *** Logs
  ***/
 
@@ -2778,7 +2831,7 @@ body.notes .notesgroup {
 }
 
 
-.tabrow0 .here a:link,
+.tabrow0 .here a:link, 
 .tabrow0 .here a:visited,
 .tabrow0 .here a.nolink {
   position:relative;
@@ -4035,17 +4088,17 @@ table.quizreviewsummary td.cell {
   padding: 4px;
 }
 
-#mod-quiz-grading table#grading .header .commands
+#mod-quiz-grading table#grading .header .commands 
 {
   display: inline;
 }
 
-#mod-quiz-grading table#grading .picture
+#mod-quiz-grading table#grading .picture 
 {
   width: 40px;
 }
 
-#mod-quiz-grading table#grading td
+#mod-quiz-grading table#grading td 
 {
   border-left-width: 1px;
   border-right-width: 1px;

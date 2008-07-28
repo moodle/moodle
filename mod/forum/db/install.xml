@@ -23,7 +23,10 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="rssarticles" NEXT="warnafter"/>
         <FIELD NAME="warnafter" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="timemodified" NEXT="blockafter"/>
         <FIELD NAME="blockafter" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="warnafter" NEXT="blockperiod"/>
-        <FIELD NAME="blockperiod" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="blockafter"/>
+        <FIELD NAME="blockperiod" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="blockafter" NEXT="completiondiscussions"/>
+        <FIELD NAME="completiondiscussions" TYPE="int" LENGTH="9" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Nonzero if a certain number of posts are required to mark this forum completed for a user." PREVIOUS="blockperiod" NEXT="completionreplies"/>
+        <FIELD NAME="completionreplies" TYPE="int" LENGTH="9" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Nonzero if a certain number of replies are required to mark this forum complete for a user." PREVIOUS="completiondiscussions" NEXT="completionposts"/>
+        <FIELD NAME="completionposts" TYPE="int" LENGTH="9" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Nonzero if a certain number of posts or replies (total) are required to mark this forum complete for a user." PREVIOUS="completionreplies"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
