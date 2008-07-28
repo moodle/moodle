@@ -14,13 +14,18 @@ $sort=optional_param('sort','',PARAM_ALPHA);
 $firstnamesort=$sort=='firstname';
 
 // CSV format
-$csv=optional_param('format','',PARAM_ALPHA)==='csv';
+$format=optional_param('format','',PARAM_ALPHA);
+$excel=$format=='excelcsv';
+$csv=$format=='csv' || $excel;
 
 function csv_quote($value) {
-    $tl=textlib_get_instance();
-    
-    $value=$tl->specialtoascii($value);
-    return '"'.str_replace('"',"'",$value).'"';
+    global $excel;
+    if($excel) {
+        $tl=textlib_get_instance();
+        return $tl->convert('"'.str_replace('"',"'",$value).'"','UTF-8','UTF-16LE');
+    } else {
+        return '"'.str_replace('"',"'",$value).'"';
+    }
 }
 
 require_login($course->id);
@@ -45,10 +50,21 @@ if(count($activities)==0) {
 }
 $progress=$completion->get_progress_all($firstnamesort,$group);
 
+
 if($csv) {
-    header('Content-Type: text/csv; charset=ISO-8859-1');
     header('Content-Disposition: attachment; filename=progress.'.
         preg_replace('/[^a-z0-9-]/','_',strtolower($course->shortname)).'.csv');
+    // Unicode byte-order mark for Excel
+    if($excel) {
+        header('Content-Type: text/csv; charset=UTF-16LE');
+        print chr(0xFF).chr(0xFE);
+        $sep="\t".chr(0);
+        $line="\n".chr(0);        
+    } else {
+        header('Content-Type: text/csv; charset=UTF-8');
+        $sep=",";
+        $line="\n";
+    }
 } else {
     // Use SVG to draw sideways text if supported
     $svgcleverness=check_browser_version('Firefox',2.0) && !$USER->screenreader;
@@ -110,7 +126,7 @@ foreach($activities as $activity) {
     }
 
     if($csv) {
-        print ','.csv_quote($activity->name).','.csv_quote($datetext);
+        print $sep.csv_quote($activity->name).$sep.csv_quote($datetext);
     } else {
         print '<th scope="col" class="'.$activity->datepassedclass.'">'.
             '<a href="'.$CFG->wwwroot.'/mod/'.$activity->modname.
@@ -126,7 +142,7 @@ foreach($activities as $activity) {
 }
 
 if($csv) {
-    print "\n";
+    print $line;
 } else {
     print '</tr>';
 }
@@ -174,7 +190,7 @@ foreach($progress as $user) {
         $fulldescribe=get_string('progress-title','completion',$a);
 
         if($csv) {
-            print ','.csv_quote($describe).','.csv_quote($date);
+            print $sep.csv_quote($describe).$sep.csv_quote($date);
         } else {
             print '<td class="completion-progresscell '.$activity->datepassedclass.'">'.
                 '<img src="'.$CFG->pixpath.'/i/completion-'.$completiontype.
@@ -183,7 +199,7 @@ foreach($progress as $user) {
     }
 
     if($csv) {
-        print "\n";
+        print $line;
     } else {
         print '</tr>';
     }
@@ -195,7 +211,9 @@ if($csv) {
 print '</table>';
 
 print '<ul class="progress-actions"><li><a href="index.php?course='.$course->id.
-    '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li></ul>';
+    '&amp;format=csv">'.get_string('csvdownload','completion').'</a></li>
+    <li><a href="index.php?course='.$course->id.'&amp;format=excelcsv">'.
+    get_string('excelcsvdownload','completion').'</a></li></ul>';
 
 print_footer($course);
 ?>
