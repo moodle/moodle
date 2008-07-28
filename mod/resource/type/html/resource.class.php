@@ -65,6 +65,9 @@ function display() {
         parent::display_course_blocks_start();
 
         echo format_text($this->resource->alltext, FORMAT_HTML, $formatoptions, $this->course->id);
+        if (true) { //@todo penny replace later with capability check
+            resource_portfolio_caller::add_button($this);
+        }
 
         parent::display_course_blocks_end();
 
@@ -82,6 +85,9 @@ function display() {
                 print_header();
                 print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id),
                         "center clearfix", "", "", "20");
+                if (true) { //@todo penny replace later with capability check
+                    resource_portfolio_caller::add_button($this);
+                }
                 print_footer($course);
             } else {                           /// Make a page and a pop-up window
                 $navigation = build_navigation($this->navlinks, $cm);
@@ -118,6 +124,9 @@ function display() {
                     navmenu($course, $cm));
 
             print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), "center clearfix", "", "", "20");
+            if (true) { //@todo penny replace later with capability check
+                resource_portfolio_caller::add_button($this);
+            }
 
             $strlastmodified = get_string("lastmodified");
             echo "<div class=\"modified\">$strlastmodified: ".userdate($resource->timemodified)."</div>";
@@ -182,6 +191,10 @@ function setup_elements(&$mform) {
         }
         $mform->setAdvanced($option);
     }
+}
+
+function portfolio_prepare_package($tempdir) {
+    return parent::portfolio_prepare_package_online($tempdir);
 }
 
 

@@ -249,6 +249,23 @@ class resource_base {
         //override to add your own options
     }
 
+    function portfolio_prepare_package_uploaded($tempdir) {
+        // @todo penny implement later - see MDL-15758
+
+    }
+
+    function portfolio_prepare_package_online($tempdir, $text=false) {
+        //@todo penny use the files api here
+        $status = $handle = fopen($tempdir . '/' . clean_filename($this->cm->name . '.' . (($text) ? 'txt' : 'html')), 'w');
+        $formatoptions = new object();
+        $formatoptions->noclean = true;
+        $format = (($text) ? FORMAT_MOODLE : FORMAT_HTML);
+        $content = format_text($this->resource->alltext, $format, $formatoptions, $this->course->id);
+        $status = $status && fwrite($handle, $content);
+        $status = $status && fclose($handle);
+        return $status;
+    }
+
 } /// end of class definition
 
 
@@ -679,6 +696,60 @@ function resource_reset_userdata($data) {
  */
 function resource_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
+}
+
+require_once($CFG->libdir . '/portfoliolib.php');
+class resource_portfolio_caller extends portfolio_module_caller_base {
+
+    private $resource;
+    private $resourcefile;
+
+    public function __construct($callbackargs) {
+        global $CFG;
+        global $DB;
+        if (!array_key_exists('id', $callbackargs) || !$this->cm = get_coursemodule_from_instance('resource', $callbackargs['id'])) {
+            print_error('invalidid');
+        }
+        $this->cm->type = $DB->get_field('resource', 'type', array('id' => $this->cm->instance));
+        $resourceclass = 'resource_'. $this->cm->type;
+        $this->resourcefile = $CFG->dirroot.'/mod/resource/type/'.$this->cm->type.'/resource.class.php';
+        require_once($this->resourcefile);
+        $this->resource= new $resourceclass($this->cm->id);
+    }
+
+    public function __wakeup() {
+        require_once($this->resourcefile);
+        $this->resource = unserialize(serialize($this->resource));
+    }
+
+    public function expected_time() {
+        // @todo penny check filesize if the type is uploadey
+        return PORTFOLIO_TIME_LOW;
+    }
+
+    public function prepare_package($tempdir) {
+        if (!is_callable(array($this->resource, 'portfolio_prepare_package'))) {
+            portfolio_exporter::raise_error('portfolionotimplemented', 'resource');
+        }
+        return $this->resource->portfolio_prepare_package($tempdir);
+    }
+
+    public static function supported_formats() {
+        return array(PORTFOLIO_FORMAT_FILE);
+    }
+
+    public function check_permissions() {
+        return true;
+    }
+
+    public static function add_button($resource, $fullform=true, $return=false) {
+        // @todo penny can we put the capability check in here?
+        if (!is_callable(array($resource, 'portfolio_prepare_package'))) {
+            debugging(get_string('portfolionotimplemented', 'resource'));
+            return false;
+        }
+        return portfolio_add_button('resource_portfolio_caller', array('id' => $resource->cm->instance),  '/mod/resource/lib.php', $fullform, $return);
+    }
 }
 
 ?>
