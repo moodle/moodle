@@ -448,6 +448,76 @@ class dml_test extends UnitTestCase {
         $rs->close();
     }
 
+    public function test_get_recordset_iterator_keys() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
+        $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $data = array(array('id' => 1, 'course' => 3, 'name' => 'record1'),
+                      array('id' => 2, 'course' => 3, 'name' => 'record2'),
+                      array('id' => 3, 'course' => 5, 'name' => 'record3'));
+        foreach ($data as $record) {
+            $DB->insert_record('testtable', $record);
+        }
+
+    /// Test repeated numeric keys are returned ok
+        $rs = $DB->get_recordset('testtable', NULL, NULL, 'course, name, id');
+
+        reset($data);
+        $count = 0;
+        foreach($rs as $key => $record) {
+            $data_record = current($data);
+            $this->assertEqual($data_record['course'], $key);
+            next($data);
+            $count++;
+        }
+        $rs->close();
+
+    /// Test record returned are ok
+        $this->assertEqual($count, 3);
+
+    /// Test string keys are returned ok
+        $rs = $DB->get_recordset('testtable', NULL, NULL, 'name, course, id');
+
+        reset($data);
+        $count = 0;
+        foreach($rs as $key => $record) {
+            $data_record = current($data);
+            $this->assertEqual($data_record['name'], $key);
+            next($data);
+            $count++;
+        }
+        $rs->close();
+
+    /// Test record returned are ok
+        $this->assertEqual($count, 3);
+
+    /// Test numeric not starting in 1 keys are returned ok
+        $rs = $DB->get_recordset('testtable', NULL, 'id DESC', 'id, course, name');
+
+        $data = array_reverse($data);
+        reset($data);
+        $count = 0;
+        foreach($rs as $key => $record) {
+            $data_record = current($data);
+            $this->assertEqual($data_record['id'], $key);
+            next($data);
+            $count++;
+        }
+        $rs->close();
+
+    /// Test record returned are ok
+        $this->assertEqual($count, 3);
+    }
+
     public function test_get_recordset_list() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
