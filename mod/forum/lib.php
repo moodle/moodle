@@ -6941,7 +6941,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
 
     function get_return_url() {
         global $CFG;
-        return $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->cm->id;
+        return $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->discussion->id;
     }
 
     function get_navigation() {
