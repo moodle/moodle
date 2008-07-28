@@ -1203,7 +1203,7 @@ class curl {
         $this->options['CURLOPT_BINARYTRANSFER']    = 0;
         $this->options['CURLOPT_SSL_VERIFYPEER']    = 0;
         $this->options['CURLOPT_SSL_VERIFYHOST']    = 2;
-        $this->options['CURLOPT_TIMEOUT']           = 120;
+        $this->options['CURLOPT_CONNECTTIMEOUT']    = 30;
     }
 
     /**
@@ -1409,7 +1409,7 @@ class curl {
         if ($this->cache && $ret = $this->cache->get($this->options)) {
             return $ret;
         } else {
-            $ret  = curl_exec($curl);
+            $ret = curl_exec($curl);
             if ($this->cache) {
                 $this->cache->set($this->options, $ret);
             }
@@ -1429,10 +1429,10 @@ class curl {
 
         curl_close($curl);
 
-        if (!empty($ret)){
+        if (empty($this->error)){
             return $ret;
         } else {
-            return false;
+            throw new moodle_exception($this->error, 'curl');
         }
     }
 

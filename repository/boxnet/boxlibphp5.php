@@ -24,26 +24,38 @@ class boxclient {
     private $_box_api_upload_url = 'http://upload.box.net/api/1.0/upload';
     private $_error_code = '';
     private $_error_msg = '';
+    private $debug = false;
 
-    public function __construct($api_key, $auth_token = '') {
+    public function __construct($api_key, $auth_token = '', $debug = false) {
         $this->api_key    = $api_key;
         $this->auth_token = $auth_token;
+        $this->debug = $debug;
     }
     // Setup for Functions
     function makeRequest($method, $params = array()) {
         $this->_clearErrors();
-        $c = new curl(array('cache'=>true));
-        if ($method == 'upload'){
-            $request = $this->_box_api_upload_url.'/'.
-                $this->auth_token.'/'.$params['folder_id'];
-            $xml = $c->post($request, $params);
-        }else{
-            $args = array();
-            $xml = $c->get($this->_box_api_url, $params);
+        if($this->debug){
+            $c = new curl(array('debug'=>true, 'cache'=>true));
+        } else {
+            $c = new curl(array('debug'=>false, 'cache'=>true));
         }
-        $xml_parser = xml_parser_create();
-        xml_parse_into_struct($xml_parser, $xml, $data);
-        xml_parser_free($xml_parser);
+        try {
+            if ($method == 'upload'){
+                $request = $this->_box_api_upload_url.'/'.
+                    $this->auth_token.'/'.$params['folder_id'];
+                $xml = $c->post($request, $params);
+            }else{
+                $args = array();
+                $xml = $c->get($this->_box_api_url, $params);
+            }
+            $xml_parser = xml_parser_create();
+            // set $data here
+            xml_parse_into_struct($xml_parser, $xml, $data);
+            xml_parser_free($xml_parser);
+        } catch (moodle_exception $e) {
+            $this->setError(0, 'connection time-out or invalid url');
+            return false;
+        }
         return $data;
     }
     function getTicket($params = array()) {
@@ -79,7 +91,11 @@ class boxclient {
     //              'password'=>'xxx'));
     //
     function getAuthToken($ticket, $username, $password) {
-        $c = new curl;
+        if($this->debug){
+            $c = new curl(array('debug'=>true));
+        } else {
+            $c = new curl(array('debug'=>false));
+        }
         $c->setopt(array('CURLOPT_FOLLOWLOCATION'=>0));
         $param =  array(
             'login_form1'=>'',
@@ -88,7 +104,12 @@ class boxclient {
             'dologin'=>1,
             '__login'=>1
             );
-        $ret = $c->post('http://www.box.net/api/1.0/auth/'.$ticket, $param);
+        try {
+            $ret = $c->post('http://www.box.net/api/1.0/auth/'.$ticket, $param);
+        } catch (moodle_exception $e) {
+            $this->setError(0, 'connection time-out or invalid url');
+            return false;
+        }
         $header = $c->getResponse();
         if(empty($header['location'])) {
             throw new repository_exception('invalidpassword', 'repository');
@@ -118,9 +139,7 @@ class boxclient {
             return false;
         }
         $tree_count=count($data);
-        global $tree_count;
-        $entry_count = 0;
-        for ($i=0, $tree_count=count($data); $i<$tree_count; $i++) {
+        for ($i=0; $i<$tree_count; $i++) {
             $a = $data[$i];
             switch ($a['tag'])
             {
@@ -160,8 +179,6 @@ class boxclient {
 
         $ret_array = array();
         $data = $this->makeRequest('action=create_folder', $params);
-
-
         if ($this->_checkForError($data)) {
             return false;
         }
@@ -377,6 +394,9 @@ class boxclient {
         }
     }
     function _checkForError($data) {
+        if ($this->_error_msg != '') {
+            return true;
+        }
         if (@$data[0]['attributes']['STAT'] == 'fail') {
             $this->_error_code = $data[1]['attributes']['CODE'];
             $this->_error_msg = $data[1]['attributes']['MSG'];
@@ -390,6 +410,10 @@ class boxclient {
             return true;
         }
         return false;
+    }
+    public function setError($code = 0, $msg){
+        $this->_error_code = $code;
+        $this->_error_msg  = $msg;
     }
 
     function getErrorMsg() {
