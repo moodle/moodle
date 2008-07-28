@@ -718,6 +718,10 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function __wakeup() {
+        global $CFG;
+        if (empty($CFG)) {
+            return; // too early yet
+        }
         require_once($this->resourcefile);
         $this->resource = unserialize(serialize($this->resource));
     }

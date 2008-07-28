@@ -3176,6 +3176,10 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function __wakeup() {
+        global $CFG;
+        if (empty($CFG)) {
+            return true; // too early yet
+        }
         require_once($this->assignmentfile);
         $this->assignment = unserialize(serialize($this->assignment));
     }
