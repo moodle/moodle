@@ -1,4 +1,4 @@
-<?
+<?php
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/repository/boxnet/boxlibphp5.php');
 
