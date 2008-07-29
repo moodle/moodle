@@ -289,7 +289,7 @@ class quiz_statistics_report extends quiz_default_report {
                 $limitoffset = ($s/2) - 1;
                 $limit = 2;
             } else {
-                $limitoffset = (floor($s/2)) + 1;
+                $limitoffset = (floor($s/2));
                 $limit = 1;
             }
             $sql = 'SELECT id, sumgrades ' .
@@ -372,6 +372,7 @@ class quiz_statistics_report extends quiz_default_report {
 
 }
 function quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $allattempts = true){
+    global $DB;
     $fromqa = '{quiz_attempts} qa ';
     $whereqa = 'qa.quiz = :quizid AND qa.preview=0 AND qa.timefinish !=0 ';
     $qaparams = array('quizid'=>$quizid);
