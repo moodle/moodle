@@ -40,14 +40,14 @@
         }
 
         if ($sco = scorm_get_sco($scoid, SCO_ONLY)) {
-            if (!$scorm = get_record('scorm','id',$sco->scorm)) {
+            if (!$scorm = $DB->get_record('scorm','id',$sco->scorm)) {
                 print_error('cannotcallscript');
             }
         } else {
             print_error('cannotcallscript');
         }
 
-        if ($scorm = get_record('scorm','id',$sco->scorm)) {
+        if ($scorm = $DB->get_record('scorm','id',$sco->scorm)) {
             switch ($command) {
                 case 'getparam':
                     if ($status == 'Not Initialized') {
@@ -324,12 +324,12 @@
                 case 'exitau':
                     if ($status == 'Running') {
                         if (isset($SESSION->scorm_session_time) && ($SESSION->scorm_session_time != '')) {
-                            if ($track = get_record_select('scorm_scoes_track',"userid='$USER->id' AND scormid='$scorm->id' AND scoid='$sco->id' AND element='cmi.core.total_time'")) {
+                            if ($track = $DB->get_record_select('scorm_scoes_track',"userid='$USER->id' AND scormid='$scorm->id' AND scoid='$sco->id' AND element='cmi.core.total_time'")) {
                                // Add session_time to total_time
                                 $value = scorm_add_time($track->value, $SESSION->scorm_session_time);
                                 $track->value = $value;
                                 $track->timemodified = time();
-                                $id = update_record('scorm_scoes_track',$track);
+                                $id = $DB->update_record('scorm_scoes_track',$track);
                             } else {
                                 $track->userid = $USER->id;
                                 $track->scormid = $scorm->id;
@@ -337,7 +337,7 @@
                                 $track->element = 'cmi.core.total_time';
                                 $track->value = $SESSION->scorm_session_time;
                                 $track->timemodified = time();
-                                $id = insert_record('scorm_scoes_track',$track);
+                                $id = $DB->insert_record('scorm_scoes_track',$track);
                             }
                         }
                         $SESSION->scorm_status = 'Terminated';
