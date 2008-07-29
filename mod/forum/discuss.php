@@ -171,7 +171,7 @@
     forum_print_mode_form($discussion->id, $displaymode);
     echo "</td><td>";
 
-    if ($portfolio) {
+    if (isset($portfolio)) {
         echo $portfolio . '</td><td>';
     }
 
