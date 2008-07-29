@@ -341,12 +341,13 @@ function lesson_cron () {
 function lesson_get_user_grades($lesson, $userid=0) {
     global $CFG, $DB;
 
-    $params = array("lessonid" => $lesson->id);
+    $params = array("lessonid" => $lesson->id,"lessonid2" => $lesson->id);
     
     if (isset($userid)) {
         $params["userid"] = $userid;
+        $params["userid2"] = $userid;
         $user = "AND u.id = :userid";
-        $fuser = "AND uu.id = :userid";
+        $fuser = "AND uu.id = :userid2";
     }
     else {
         $user="";
@@ -372,7 +373,7 @@ function lesson_get_user_grades($lesson, $userid=0) {
         // use only first attempts (with lowest id in lesson_grades table)
         $firstonly = "SELECT uu.id AS userid, MIN(gg.id) AS firstcompleted
                         FROM {user} uu, {lesson_grades} gg
-                       WHERE uu.id = gg.userid AND gg.lessonid = :lessonid
+                       WHERE uu.id = gg.userid AND gg.lessonid = :lessonid2
                              $fuser
                        GROUP BY uu.id";
 
