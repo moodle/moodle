@@ -37,6 +37,10 @@
     $resourceclass = 'resource_'.$resource->type;
     $resourceinstance = new $resourceclass($cm->id);
 
-    $resourceinstance->display();
+    // Mark activity viewed before we display it because some resource types
+    // do not return from display()
+    $completion=new completion_info($course);
+    $completion->set_module_viewed($cm);
 
+    $resourceinstance->display();
 ?>
