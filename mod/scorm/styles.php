@@ -22,19 +22,19 @@
 
 }
 
-.mod-scorm .left {
+.mod-scorm .scorm-left {
 
   text-align: left;
 
 }
 
-.mod-scorm .center {
+.mod-scorm .scorm-center {
 
   text-align: center;
 
 }
 
-.mod-scorm .right {
+.mod-scorm .scorm-right {
 
   text-align: right;
 
