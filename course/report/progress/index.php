@@ -18,6 +18,9 @@ $format=optional_param('format','',PARAM_ALPHA);
 $excel=$format=='excelcsv';
 $csv=$format=='csv' || $excel;
 
+// Whether to show idnumber
+$idnumbers=$CFG->grade_report_showuseridnumber;
+
 function csv_quote($value) {
     global $excel;
     if($excel) {
@@ -112,6 +115,15 @@ if(!$csv) {
             get_string('lastname');
     }
     print '</th>';
+    
+    if($idnumbers) {
+        print '<th>'.get_string('idnumber').'</th>';        
+    }
+    
+} else {
+    if($idnumbers) {
+        print $sep;
+    }
 }
 
 // Activities
@@ -152,9 +164,15 @@ foreach($progress as $user) {
     // User name
     if($csv) {
         print csv_quote(fullname($user));
+        if($idnumbers) {
+            print $sep.csv_quote($user->idnumber);
+        }
     } else {
         print '<tr><th scope="row"><a href="'.$CFG->wwwroot.'/user/view.php?id='.
             $user->id.'&amp;course='.$course->id.'">'.fullname($user).'</a></th>';
+        if($idnumbers) {
+            print '<td>'.htmlspecialchars($user->idnumber).'</td>';
+        }
     }
 
     // Progress for each activity

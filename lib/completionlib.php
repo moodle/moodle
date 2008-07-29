@@ -569,7 +569,7 @@ class completion_info {
             $roles=array();
         }
         $users=get_role_users($roles,get_context_instance(CONTEXT_COURSE,$this->course->id),true,
-            'u.id,u.firstname,u.lastname',
+            'u.id,u.firstname,u.lastname,u.idnumber',
             $sortfirstname ? 'u.firstname ASC' : 'u.lastname ASC',true,$groupid);
         $users=$users ? $users : array(); // In case it returns false
         return $users;
@@ -588,7 +588,7 @@ class completion_info {
      * @param bool $sortfirstname If true, sort by first name, otherwise sort by
      *   last name
      * @param int $groupid Group ID or 0 (default)/false for all groups
-     * @return Array of user objects (like mdl_user id, firstname, lastname)
+     * @return Array of user objects (like mdl_user id, firstname, lastname, idnumber)
      *   containing an additional ->progress array of coursemoduleid => completionstate
      */
     public function get_progress_all($sortfirstname=false,$groupid=0) {
