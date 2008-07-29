@@ -520,7 +520,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     if ($orgs = $DB->get_records_menu('scorm_scoes', array('scorm'=>$scorm->id, 'organization'=>'', 'launch'=>''), 'id', 'id,title')) {
         if (count($orgs) > 1) {
  ?>
-            <div class='center'>
+            <div class='scorm-center'>
                 <?php print_string('organizations','scorm') ?>
                 <form id='changeorg' method='post' action='<?php echo $action ?>'>
                     <?php choose_from_menu($orgs, 'organization', "$organization", '','submit()') ?>
@@ -560,7 +560,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     print_simple_box_end();
 
 ?>
-            <div class="center">
+            <div class="scorm-center">
                <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php?scoid=<?php echo $sco->id ?>&amp;id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
               <?php
                   if ($scorm->hidebrowse == 0) {
