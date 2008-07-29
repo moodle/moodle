@@ -705,7 +705,9 @@ abstract class portfolio_caller_base {
     *
     * @return array list of formats
     */
-    public abstract static function supported_formats();
+    public static function supported_formats() {
+        return array(PORTFOLIO_FORMAT_FILE);
+    }
 
     /**
     * this is the "return to where you were" url
@@ -810,7 +812,9 @@ abstract class portfolio_plugin_base {
     *
     * @return array list of formats
     */
-    public abstract static function supported_formats();
+    public static function supported_formats() {
+        return array(PORTFOLIO_FORMAT_FILE);
+    }
 
 
     /**

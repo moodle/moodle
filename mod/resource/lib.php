@@ -738,10 +738,6 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         return $this->resource->portfolio_prepare_package($tempdir);
     }
 
-    public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE);
-    }
-
     public function check_permissions() {
         return true;
     }

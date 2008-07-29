@@ -3162,11 +3162,6 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         return backup_copy_file($filearea, $tempdir);
     }
 
-    public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE);
-    }
-
-
     public function expected_time() {
         return PORTFOLIO_TIME_MODERATE; // @TODO check uploaded file size
     }

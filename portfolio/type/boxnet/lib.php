@@ -10,10 +10,6 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
     private $workdir;
     private $folders;
 
-    public static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE);
-    }
-
     public function prepare_package($tempdir) {
         $this->workdir = $tempdir;
         return true; // don't do anything else for this plugin, we want to send all files as they are.

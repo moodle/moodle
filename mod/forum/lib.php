@@ -7069,10 +7069,6 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         // @todo see MDL-15758
     }
 
-    static function supported_formats() {
-        return array(PORTFOLIO_FORMAT_FILE);
-    }
-
     function expected_time() {
         // @todo check for attachment size
         return PORTFOLIO_TIME_LOW;
