@@ -141,6 +141,10 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
 
     global $SESSION, $CFG, $COURSE, $USER;
 
+    if (empty($CFG->portfolioenabled)) {
+        return;
+    }
+
     if (!$instances = portfolio_instances()) {
         return;
     }

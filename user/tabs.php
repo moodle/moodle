@@ -239,7 +239,7 @@
         }
     }
 
-    if (empty($userindexpage) && $user->id == $USER->id) {
+    if (empty($userindexpage) && $user->id == $USER->id && !empty($CFG->portfolioenabled)) {
 
         /// Portfolio tab
         require_once($CFG->libdir . '/portfoliolib.php');

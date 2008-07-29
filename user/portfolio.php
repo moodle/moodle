@@ -1,6 +1,11 @@
 <?php
 
 require_once(dirname(dirname(__FILE__)) . '/config.php');
+
+if (empty($CFG->portfolioenabled)) {
+    print_error('disabled', 'portfolio');
+}
+
 require_once($CFG->libdir . '/portfoliolib.php');
 
 $config = optional_param('config', 0, PARAM_INT);

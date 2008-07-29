@@ -13,6 +13,7 @@ $string['confirmsummary'] = 'Summary of your export';
 $string['configure'] = 'Configure';
 $string['continuetoportfolio'] = 'Continue to your portfolio';
 $string['deleteportfolio'] = 'Delete portfolio instance';
+$string['disabled'] = 'Sorry, but portfolio exports are not enabled in this site';
 $string['dontwait'] = 'Don\'t wait';
 $string['err_uniquename'] = 'Portfolio name must be unique (per plugin)';
 $string['enabled'] = 'Enable portfolios';
