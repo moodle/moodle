@@ -2215,9 +2215,9 @@ class admin_setting_configmulticheckbox extends admin_setting {
             $default = array();
         }
         if (is_null($data)) {
-            foreach ($default as $key=>$value) {
+            foreach ($default as $value) {
                 if ($value) {
-                    $current[] = $value;
+                    $data[] = $value;
                 }
             }
         }
@@ -2230,7 +2230,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
             } else {
                 $checked = '';
             }
-            if (!empty($default[$key])) {
+            if (in_array($key,$default)) {
                 $defaults[] = $description;
             }
 
