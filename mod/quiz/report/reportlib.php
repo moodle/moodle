@@ -110,7 +110,7 @@ function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
 
     $params = array_merge($params, $u_params, $q_params);
     $sql = "SELECT qs.question, COUNT(1) AS totalattempts,
-            SUM(qs.event IN (".QUESTION_EVENTS_GRADED.")) AS gradedattempts
+            SUM(CASE WHEN (qs.event IN (".QUESTION_EVENTS_GRADED.")) THEN 1 ELSE 0 END) AS gradedattempts
             FROM
             {quiz_attempts} qa,
             {question_sessions} qns,
