@@ -1,22 +1,22 @@
 <?php
 //============================================================+
-// File name   : eng.php                                       
-// Begin       : 2004-03-03                                    
-// Last Update : 2005-03-19                                    
-//                                                             
-// Description : Language module for TCPDF                     
-//               (contains translated texts)                   
-//                                                             
-//                                                             
-// Author: Nicola Asuni                                        
-//                                                             
-// (c) Copyright:                                              
-//               Tecnick.com S.r.l.                            
-//               Via Ugo Foscolo n.19                          
-//               09045 Quartu Sant'Elena (CA)                  
-//               ITALY                                         
-//               www.tecnick.com                               
-//               info@tecnick.com                              
+// File name   : eng.php 
+// Begin       : 2004-03-03 
+// Last Update : 2008-01-08 
+// 
+// Description : Language module for TCPDF 
+//               (contains translated texts) 
+// 
+// Author: Nicola Asuni
+// 
+// (c) Copyright:
+//               Nicola Asuni
+//               Tecnick.com s.r.l.
+//               Via Della Pace, 11
+//               09044 Quartucciu (CA)
+//               ITALY
+//               www.tecnick.com
+//               info@tecnick.com
 //============================================================+
 
 /**
@@ -24,7 +24,7 @@
  * @package com.tecnick.tcpdf
  * @abstract TCPDF language file.
  * @author Nicola Asuni
- * @copyright 2004 Tecnick.com S.r.l (www.tecnick.com) Via Ugo Foscolo n.19 - 09045 Quartu Sant'Elena (CA) - ITALY - www.tecnick.com - info@tecnick.com
+ * @copyright 2004-2008 Nicola Asuni - Tecnick.com S.r.l (www.tecnick.com) Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
  * @link http://tcpdf.sourceforge.net
  * @license http://www.gnu.org/copyleft/lesser.html LGPL
  * @since 2004-03-03

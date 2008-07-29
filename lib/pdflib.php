@@ -39,8 +39,8 @@
  * 
  * Example usage:
  *    $doc = new pdf;
- *    $doc->print_header = false;
- *    $doc->print_footer = false;
+ *    $doc->setPrintHeader(false);
+ *    $doc->setPrintFooter(false);
  *    $doc->AddPage();
  *    $doc->Write(5, 'Hello World!');
  *    $doc->Output();
@@ -53,13 +53,13 @@
 
 
 /// Includes
-require_once('tcpdf/tcpdf.php');
+require_once(dirname(__FILE__).'/tcpdf/tcpdf.php');
 
 
 
 /// Constants
 define('PDF_CUSTOM_FONT_PATH', $CFG->dataroot.'/fonts/');
-define('PDF_DEFAULT_FONT', 'FreeSerif');
+define('PDF_DEFAULT_FONT', 'DejaVuSerif');
 
 
 
@@ -70,11 +70,13 @@ define('PDF_DEFAULT_FONT', 'FreeSerif');
 class pdf extends TCPDF {
         
     /**
-     * Constructor
+     * Class constructor
+     * 
+     * See the parent class documentation for the parameters info.
      */
-    function pdf($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {
+    public function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {
         
-        parent::TCPDF($orientation, $unit, $format, $unicode, $encoding);
+        parent::__construct($orientation, $unit, $format, $unicode, $encoding);
         
         if (is_dir(PDF_CUSTOM_FONT_PATH)) {
             $fontfiles = $this->_getfontfiles(PDF_CUSTOM_FONT_PATH);
@@ -93,18 +95,10 @@ class pdf extends TCPDF {
     
     
     /**
-     * Fake constructor to keep PHP5 happy.
-     */
-    function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {
-        $this->pdf($orientation, $unit, $format, $unicode, $encoding);
-    }
-    
-    
-    /**
      * Return fonts path
      * Overriding TCPDF::_getfontpath()
      */
-    function _getfontpath() {
+    protected function _getfontpath() {
         global $CFG;
         
         if (is_dir(PDF_CUSTOM_FONT_PATH)
@@ -120,7 +114,7 @@ class pdf extends TCPDF {
     /**
      * Get the .php files for the fonts
      */
-    function _getfontfiles($fontdir) {
+    protected function _getfontfiles($fontdir) {
         $dirlist = get_directory_list($fontdir);
         $fontfiles = array();
         
