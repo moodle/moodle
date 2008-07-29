@@ -550,7 +550,7 @@ function SCORMapi1_3() {
                                                             }
                                                             if ((nodes.length > 0) && (nodes.length <= correct_responses[interactiontype].max)) {
                                                                 expression = new RegExp(correct_responses[interactiontype].format);
-                                                                for (var i=0; (i<nodes.length) && (errorCode=="0"); i++) {
+                                                                for (var i=0; (i < nodes.length) && (errorCode=="0"); i++) {
                                                                     if (typeof correct_responses[interactiontype].delimiter2 != 'undefined') {
                                                                         values = nodes[i].split(correct_responses[interactiontype].delimiter2);
                                                                         if (values.length == 2) {
@@ -654,7 +654,7 @@ function SCORMapi1_3() {
                                                     }
                                                     if ((nodes.length > 0) && (nodes.length <= learner_response[interactiontype].max)) {
                                                         expression = new RegExp(learner_response[interactiontype].format);
-                                                        for (var i=0; (i<nodes.length) && (errorCode=="0"); i++) {
+                                                        for (var i=0; (i < nodes.length) && (errorCode=="0"); i++) {
                                                             if (typeof learner_response[interactiontype].delimiter2 != 'undefined') {
                                                                 values = nodes[i].split(learner_response[interactiontype].delimiter2);
                                                                 if (values.length == 2) {
@@ -720,7 +720,7 @@ function SCORMapi1_3() {
 	
                                                     if ((nodes.length > 0) && (nodes.length <= correct_responses[interactiontype].max)) {
                                                         expression = new RegExp(correct_responses[interactiontype].format);
-                                                        for (var i=0; (i<nodes.length) && (errorCode=="0"); i++) {
+                                                        for (var i=0; (i < nodes.length) && (errorCode=="0"); i++) {
                                                             if (typeof correct_responses[interactiontype].delimiter2 != 'undefined') {
 		
 	
@@ -968,7 +968,7 @@ function SCORMapi1_3() {
     function duplicatedID (element, parent, value) {
         var found = false;
         var elements = eval(parent+'._count');
-        for (var n=0;(n<elements) && (!found);n++) {
+        for (var n=0;(n < elements) && (!found);n++) {
             if ((parent+'.N'+n+'.id' != element) && (eval(parent+'.N'+n+'.id') == value)) {
                 found = true;
             }
@@ -979,7 +979,7 @@ function SCORMapi1_3() {
     function duplicatedPA (element, parent, value) {
         var found = false;
         var elements = eval(parent+'._count');
-        for (var n=0;(n<elements) && (!found);n++) {
+        for (var n=0;(n < elements) && (!found);n++) {
             if ((parent+'.N'+n+'.pattern' != element) && (eval(parent+'.N'+n+'.pattern') == value)) {
                 found = true;
             }
@@ -1017,7 +1017,7 @@ function SCORMapi1_3() {
             var mins = parseInt(firstarray[11],10)+parseInt(secondarray[11],10)+change;   //Minutes
             change = Math.floor(mins / 60);
             mins = mins - (change * 60);
-            var hours = parseInt(firstarray[10],10)+parseInt(secondarray[10],10)+change;  //Hours
+            var hours = parseInt(firstarray[9],10)+parseInt(secondarray[9],10)+change;  //Hours
             change = Math.floor(hours / 24);
             hours = hours - (change * 24);
             var days = parseInt(firstarray[6],10)+parseInt(secondarray[6],10)+change; // Days
