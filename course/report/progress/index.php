@@ -19,6 +19,9 @@ $excel=$format=='excelcsv';
 $csv=$format=='csv' || $excel;
 
 // Whether to show idnumber
+// TODO: This should really not be using a config option 'intended' for 
+// gradebook, but that option is also used in quiz reports as well. There ought
+// to be a generic option somewhere.
 $idnumbers=$CFG->grade_report_showuseridnumber;
 
 function csv_quote($value) {
