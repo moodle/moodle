@@ -109,6 +109,13 @@ function xmldb_quiz_upgrade($oldversion=0) {
         upgrade_mod_savepoint($result, 2008072402, 'quiz');
     }
 
+    if ($result && $oldversion < 2008072900) {
+    /// Delete the regrade report - it is now part of the overview report.
+        $result = $result && $DB->delete_records('quiz_report', array('name' => 'regrade'));
+
+    /// quiz savepoint reached
+        upgrade_mod_savepoint($result, 2008072900, 'quiz');
+    }
 
     return $result;
 }

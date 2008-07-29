@@ -328,7 +328,6 @@
         <SENTENCE TEXT="(name, displayorder) VALUES ('overview', '10000')" />
         <SENTENCE TEXT="(name, displayorder) VALUES ('responses', '9000')" />
         <SENTENCE TEXT="(name, displayorder) VALUES ('statistics', '8000')" />
-        <SENTENCE TEXT="(name, displayorder) VALUES ('regrade', '7000')" />
         <SENTENCE TEXT="(name, displayorder) VALUES ('grading', '6000')" />
       </SENTENCES>
     </STATEMENT>
