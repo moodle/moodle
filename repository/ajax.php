@@ -104,6 +104,7 @@ var create_cb = {
         }
         if(ret == 200) {
             alert('Create Repository Instances successfully!');
+            location.reload();
             btn.value='Done';
         } else {
             alert('Failed to create repository instances.');
