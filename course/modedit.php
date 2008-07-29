@@ -279,17 +279,21 @@
             set_coursemodule_groupingid($fromform->coursemodule, $fromform->groupingid);
             set_coursemodule_groupmembersonly($fromform->coursemodule, $fromform->groupmembersonly);
 
-            // Handle completion settings. If necessary, wipe existing completion
-            // data first.
-            if(!empty($fromform->completionunlocked)) {
-                $completion=new completion_info($course);
-                $completion->reset_all_state($cm);
+            require_once($CFG->libdir.'/completionlib.php');
+            $completion=new completion_info($COURSE);
+            if($completion->is_enabled()) {
+                // Handle completion settings. If necessary, wipe existing completion
+                // data first.
+                if(!empty($fromform->completionunlocked)) {
+                    $completion=new completion_info($course);
+                    $completion->reset_all_state($cm);
+                }
+                set_coursemodule_completion($fromform->coursemodule, $fromform->completion);
+                set_coursemodule_completionview($fromform->coursemodule, $fromform->completionview);
+                set_coursemodule_completionexpected($fromform->coursemodule, $fromform->completionexpected);
+                set_coursemodule_completiongradeitemnumber(
+                        $fromform->coursemodule,$fromform->completiongradeitemnumber);
             }
-            set_coursemodule_completion($fromform->coursemodule, $fromform->completion);
-            set_coursemodule_completionview($fromform->coursemodule, $fromform->completionview);
-            set_coursemodule_completionexpected($fromform->coursemodule, $fromform->completionexpected);
-            set_coursemodule_completiongradeitemnumber(
-                    $fromform->coursemodule,$fromform->completiongradeitemnumber);
 
             if (isset($fromform->cmidnumber)) { //label
                 // set cm idnumber
