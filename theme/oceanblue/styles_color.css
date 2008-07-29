@@ -228,7 +228,7 @@ table.formtable tbody th {
   background: #FDD;
 }
 
-homelink a:link,
+.homelink a:link,
 .homelink a:visited {
   color: #000066;
   background: #FFFFFF;
