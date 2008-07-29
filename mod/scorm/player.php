@@ -258,12 +258,12 @@
        ) {
 ?>
             <div id="scormtop">
-        <?php echo $mode == 'browse' ? '<div id="scormmode" class="left">'.get_string('browsemode','scorm')."</div>\n" : ''; ?>
-        <?php echo $mode == 'review' ? '<div id="scormmode" class="left">'.get_string('reviewmode','scorm')."</div>\n" : ''; ?>
+        <?php echo $mode == 'browse' ? '<div id="scormmode" class="scorm-left">'.get_string('browsemode','scorm')."</div>\n" : ''; ?>
+        <?php echo $mode == 'review' ? '<div id="scormmode" class="scorm-left">'.get_string('reviewmode','scorm')."</div>\n" : ''; ?>
 <?php
        if (($scorm->hidenav == 0) || ($scorm->hidetoc == 2) || ($scorm->hidetoc == 1)) {
 ?>
-                <div id="scormnav" class="right">
+                <div id="scormnav" class="scorm-right">
         <?php
             $orgstr = '&amp;currentorg='.$currentorg;
             if (($scorm->hidenav == 0) && ($sco->previd != 0) && ($sco->previous == 0) && (($scorm->hidetoc == 2) || ($scorm->hidetoc == 1)) ) {
@@ -309,7 +309,7 @@
 <?php
     } // The end of the very big test
 ?>
-            <div id="scormobject" class="right">
+            <div id="scormobject" class="scorm-right">
                 <noscript>
                     <div id="noscript">
                         <?php print_string('noscriptnoscorm','scorm'); // No Martin(i), No Party ;-) ?>
