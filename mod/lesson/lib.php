@@ -368,7 +368,8 @@ function lesson_get_user_grades($lesson, $userid=0) {
                            $user
                   GROUP BY u.id";
         }
-
+        unset($params['lessonid2']);
+        unset($params['userid2']);
     } else {
         // use only first attempts (with lowest id in lesson_grades table)
         $firstonly = "SELECT uu.id AS userid, MIN(gg.id) AS firstcompleted
