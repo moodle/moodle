@@ -5612,6 +5612,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                             break;
                         case "GROUPMEMBERSONLY":
                             $this->info->tempmod->groupmembersonly = $this->getContents();
+                            break;
                         case "IDNUMBER":
                             $this->info->tempmod->idnumber = $this->getContents();
                             break;
