@@ -24,7 +24,7 @@
 
         $timenow = time();
 
-        if ($DB->set_field("course_sections", "summary", $form->summary, array("id"=>$section->id))) {
+        if (!$DB->set_field("course_sections", "summary", $form->summary, array("id"=>$section->id))) {
             print_error("cannotupdatesummary");
         }
 
