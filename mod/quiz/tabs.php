@@ -55,7 +55,6 @@ if ($currenttab == 'reports' and isset($mode)) {
     $activated[] = 'reports';
 
     // Standard reports we want to show first.
-    
     $reportrs = $DB->get_recordset('quiz_report', null, 'displayorder DESC', 'id, name');
     // Reports that are restricted by capability.
     $reportrestrictions = array(
