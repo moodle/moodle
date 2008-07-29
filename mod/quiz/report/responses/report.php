@@ -1,10 +1,8 @@
-<?php
+<?php  // $Id$
 /**
  * This script lists student attempts and responses
  *
- * @version $Id$
-
- * @author Jean-Michel V�drine, Gustav Delius and others.
+ * @author Jean-Michel Vedrine, Jamie Pratt and others.
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
  *//** */
