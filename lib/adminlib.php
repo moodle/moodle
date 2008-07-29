@@ -4163,6 +4163,118 @@ class admin_setting_managefilters extends admin_setting {
     }
 }
 
+class admin_setting_manageportfolio extends admin_setting {
+    private $baseurl;
+    function admin_setting_manageportfolio() {
+        global $CFG;
+        parent::admin_setting('manageportfolio', get_string('manageportfolio', 'portfolio'), '', '');
+        $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php?sesskey=' . sesskey();
+    }
+
+    function get_setting() {
+        return true;
+    }
+
+    function get_defaultsetting() {
+        return true;
+    }
+
+    function get_full_name() {
+        return 's_manageportfolio';
+    }
+
+    function write_setting($data) {
+        $url = $this->baseurl . '&amp;new=' . $data;
+        redirect($url);
+        exit;
+    }
+
+    function is_related($query) {
+        if (parent::is_related($query)) {
+            return true;
+        }
+
+        $textlib = textlib_get_instance();
+        $portfolios= get_list_of_plugins('portfolio');
+        foreach ($portfolios as $p) {
+            if (strpos($p, $query) !== false) {
+                return true;
+            }
+        }
+        foreach (portfolio_instances(false, false) as $instance) {
+            $title = $instance->get('name');
+            if (strpos($textlib->strtolower($title), $query) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function output_html($data, $query='') {
+        global $CFG;
+
+        $output = print_simple_box_start(true);
+
+        $namestr = get_string('name');
+        $pluginstr = get_string('plugin', 'portfolio');
+
+        $plugins = get_list_of_plugins('portfolio/type');
+        $instances = portfolio_instances(false, false);
+        $alreadyplugins = array();
+
+        $insane = portfolio_plugin_sanity_check($plugins);
+        $insaneinstances = portfolio_instance_sanity_check($instances);
+
+        $output .= portfolio_report_insane($insane, null, true);
+        $output .= portfolio_report_insane($insaneinstances, $instances, true);
+
+        $table = new StdClass;
+        $table->head = array($namestr, $pluginstr, '');
+        $table->data = array();
+
+        foreach ($instances as $i) {
+            $row = '';
+            $row .= '<a href="' . $this->baseurl . '&edit=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
+            $row .= '<a href="' . $this->baseurl . '&delete=' .  $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
+            if (array_key_exists($i->get('plugin'), $insane) || array_key_exists($i->get('id'), $insaneinstances)) {
+                $row .=  '<img src="' . $CFG->pixpath . '/t/show.gif" alt="' . get_string('hidden', 'portfolio') . '" />' . "\n";
+            } else {
+                $row .= ' <a href="' . $this->baseurl . '&hide=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/'
+                    . ($i->get('visible') ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get('visible') ? 'hide' : 'show') . '" /></a>' . "\n";
+            }
+            $table->data[] = array($i->get('name'), $i->get('plugin'), $row);
+            if (!in_array($i->get('plugin'), $alreadyplugins)) {
+                $alreadyplugins[] = $i->get('plugin');
+            }
+        }
+
+        $output .= print_table($table, true);
+
+        //$instancehtml = '<br /><form action="' . $this->baseurl . '" method="post">' 
+        $instancehtml = get_string('addnewportfolio', 'portfolio') . ': <select name="s_manageportfolio">';
+        $addable = 0;
+        foreach ($plugins as $p) {
+            if (!portfolio_static_function($p, 'allows_multiple') && in_array($p, $alreadyplugins)) {
+                continue;
+            }
+            if (array_key_exists($p, $insane)) {
+                continue;
+            }
+            $instancehtml .= '<option value="' . $p . '">' . $p .'</option>' ."\n";
+            $addable++;
+        }
+
+        if ($addable) {
+            $instancehtml .= '</select><input type="submit" value="' . get_string('add') . '" /></form>';
+            $output .= $instancehtml;
+        }
+        $output .= print_simple_box_end(true);
+
+        return highlight($query, $output);
+    }
+
+}
+
 /**
  * Initialise admin page - this function does require login and permission
  * checks specified in page definition.

@@ -283,7 +283,7 @@ function portfolio_instances($visibleonly=true, $useronly=true) {
 
     $instances = array();
     foreach ($DB->get_records_sql($sql, $values) as $instance) {
-        $instances[] = portfolio_instance($instance->id, $instance);
+        $instances[$instance->id] = portfolio_instance($instance->id, $instance);
     }
     // @todo check capabilities here - see MDL-15768
     return $instances;
@@ -438,7 +438,7 @@ function portfolio_instance_sanity_check($instances=null) {
 * @param array $instances if reporting instances rather than whole plugins, pass the array (key = id, value = object) here
 *
 */
-function portfolio_report_insane($insane, $instances=false) {
+function portfolio_report_insane($insane, $instances=false, $return=false) {
     if (empty($insane)) {
         return;
     }
@@ -453,7 +453,7 @@ function portfolio_report_insane($insane, $instances=false) {
         $headerstr = get_string('somepluginsdisabled', 'portfolio');
     }
 
-    notify($headerstr);
+    $output = notify($headerstr, 'notifyproblem', 'center', true);
     $table = new StdClass;
     $table->head = array($pluginstr, '');
     $table->data = array();
@@ -471,8 +471,13 @@ function portfolio_report_insane($insane, $instances=false) {
         }
         $table->data[] = array($name, get_string($reason, 'portfolio_' . $plugin));
     }
-    print_table($table);
-    echo '<br /><br /><br />';
+    $output .= print_table($table, true);
+    $output .= '<br /><br /><br />';
+
+    if ($return) {
+        return $output;
+    }
+    echo $output;
 }
 
 /**

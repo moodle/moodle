@@ -4,7 +4,6 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->libdir . '/adminlib.php');
 
-admin_externalpage_setup('portfoliosettingsall');
 
 $CFG->pagepath = 'admin/manageportfolio';
 
@@ -16,12 +15,24 @@ $sure    = optional_param('sure', '', PARAM_ALPHA);
 
 $display = true; // fall through to normal display
 
+$pagename = 'portfoliocontroller';
+
+if ($edit) {
+    $pagename = 'portfoliosettings' . $edit;
+} else if ($delete) {
+    $pagename = 'portfoliodelete';
+} else if ($new) {
+    $pagename = 'portfolionew';
+}
+admin_externalpage_setup($pagename);
 require_login(SITEID, false);
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
-$baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php';
+$baseurl = $CFG->wwwroot . '/admin/settings.php?section=manageportfolios';
 $sesskeyurl = $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php?sesskey=' . sesskey();
 $configstr = get_string('manageportfolios', 'portfolio');
+
+$return = true; // direct back to the main page
 
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
@@ -52,6 +63,7 @@ if (!empty($edit) || !empty($new)) {
         }
         if ($success) {
             $savedstr = get_string('instancesaved', 'portfolio');
+            admin_externalpage_print_header();
             print_heading($savedstr);
             redirect($baseurl, $savedstr, 3);
         } else {
@@ -64,7 +76,7 @@ if (!empty($edit) || !empty($new)) {
         print_simple_box_start();
         $mform->display();
         print_simple_box_end();
-        $display = false;
+        $return = false;
     }
 } else if (!empty($hide)) {
     if (!confirm_sesskey()) {
@@ -77,6 +89,7 @@ if (!empty($edit) || !empty($new)) {
     }
     $instance->set('visible', !$instance->get('visible'));
     $instance->save();
+    $return = true;
 } else if (!empty($delete)) {
     admin_externalpage_print_header();
     $instance = portfolio_instance($delete);
@@ -94,66 +107,13 @@ if (!empty($edit) || !empty($new)) {
         exit;
     }
     notice_yesno(get_string('sure', 'portfolio', $instance->get('name')), $sesskeyurl . '&delete=' . $delete . '&sure=yes', $baseurl);
-    $display = false;
+    $return = false;
 }
 
-// normal display. fall through to here (don't call exit) if you want this to run
-if ($display) {
-    admin_externalpage_print_header();
-    print_heading($configstr);
-    print_simple_box_start();
 
-    $namestr = get_string('name');
-    $pluginstr = get_string('plugin', 'portfolio');
-
-    $plugins = get_list_of_plugins('portfolio/type');
-    $instances = portfolio_instances(false, false);
-    $alreadyplugins = array();
-
-    $insane = portfolio_plugin_sanity_check($plugins);
-    $insaneinstances = portfolio_instance_sanity_check($instances);
-
-    portfolio_report_insane($insane);
-    portfolio_report_insane($insaneinstances, $instances);
-
-    $table = new StdClass;
-    $table->head = array($namestr, $pluginstr, '');
-    $table->data = array();
-
-    foreach ($instances as $i) {
-        $row = '<a href="' . $sesskeyurl . '&edit=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>
-             <a href="' . $sesskeyurl . '&delete=' .  $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>';
-        if (array_key_exists($i->get('plugin'), $insane) || array_key_exists($i->get('id'), $insaneinstances)) {
-            $row .=  '<img src="' . $CFG->pixpath . '/t/show.gif" alt="' . get_string('hidden', 'portfolio') . '" /><br />';
-        } else {
-            $row .= ' <a href="' . $sesskeyurl . '&hide=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/' . ($i->get('visible') ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get('visible') ? 'hide' : 'show') . '" /></a><br />';
-        }
-        $table->data[] = array($i->get('name'), $i->get('plugin'), $row);
-        if (!in_array($i->get('plugin'), $alreadyplugins)) {
-            $alreadyplugins[] = $i->get('plugin');
-        }
-    }
-
-    print_table($table);
-
-    $instancehtml = '<br /><form action="' . $baseurl . '" method="post">' . get_string('addnewportfolio', 'portfolio') . ': <select name="new">';
-    $addable = 0;
-    foreach ($plugins as $p) {
-        if (!portfolio_static_function($p, 'allows_multiple') && in_array($p, $alreadyplugins)) {
-            continue;
-        }
-        if (array_key_exists($p, $insane)) {
-            continue;
-        }
-        $instancehtml .= '<option value="' . $p . '">' . $p .'</option>' ."\n";
-        $addable++;
-    }
-
-    if ($addable) {
-        $instancehtml .= '</select><input type="submit" value="' . get_string('add') . '" /></form>';
-        echo $instancehtml;
-    }
-    print_simple_box_end();
+if (!empty($return)) {
+    // normal display. fall through to here (don't call exit) if you want this to run
+    redirect($baseurl);
 }
-print_footer();
+admin_externalpage_print_footer();
 ?>
