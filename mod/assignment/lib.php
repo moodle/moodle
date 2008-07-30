@@ -3146,13 +3146,10 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
 
     public function prepare_package($tempdir) {
         global $CFG;
-        if ($this->assignment->assignment->assignmenttype == 'online') {
-            $submission = $this->assignment->get_submission();
-            $handle = fopen($tempdir . '/assignment.html', 'w');
-            $status = $handle && fwrite($handle, format_text($submission->data1, $submission->data2));
-            $status = $status && fclose($handle);
-            return $status;
+        if (is_callable(array($this->assignment, 'portfolio_prepare_package'))) {
+            return $this->assignment->portfolio_prepare_package($tempdir);
         }
+        // default...
         $filearea = $CFG->dataroot . '/' . $this->assignment->file_area_name($this->userid);
         //@todo  penny this is a dreadful thing to have to call (replace with files api anyway)
         require_once($CFG->dirroot . '/backup/lib.php');
@@ -3160,6 +3157,25 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
             return backup_copy_file($filearea . '/' . $this->file, $tempdir . '/' . $this->file);
         }
         return backup_copy_file($filearea, $tempdir);
+    }
+
+    public function get_sha1() {
+        global $CFG;
+        if (is_callable(array($this->assignment, 'portfolio_get_sha1'))) {
+            return $this->assignment->portfolio_get_sha1();
+        }
+        // default ...
+        $filearea = $CFG->dataroot . '/' . $this->assignment->file_area_name($this->userid);
+        if ($this->file) {
+            return sha1_file($filearea . '/' . $this->file);
+        }
+        $sha1s = array();
+        foreach (get_directory_list($filearea) as $file) {
+            $sha1s[] = sha1_file($filearea . '/' . $file);
+        }
+        asort($sha1s);
+        return sha1(implode('', $sha1s));
+
     }
 
     public function expected_time() {
@@ -3177,6 +3193,10 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         }
         require_once($this->assignmentfile);
         $this->assignment = unserialize(serialize($this->assignment));
+    }
+
+    public static function display_name() {
+        return get_string('modulename', 'assignment');
     }
 }
 

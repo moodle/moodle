@@ -1,5 +1,4 @@
 <?php
-// @TODO think about making some more of the functions final.
 /**
 * this file contains:
 * {@link portfolio_add_button} -entry point for callers
@@ -585,6 +584,11 @@ abstract class portfolio_caller_base {
     */
     public abstract function get_navigation();
 
+    /**
+    *
+    */
+    public abstract function get_sha1();
+
     /*
     * generic getter for properties belonging to this instance
     * <b>outside</b> the subclasses
@@ -625,7 +629,7 @@ abstract class portfolio_caller_base {
     */
     public final function set_export_config($config) {
         $allowed = array_merge(
-            array('wait', 'hidewait', 'format'),
+            array('wait', 'hidewait', 'format', 'hideformat'),
             $this->get_allowed_export_config()
         );
         foreach ($config as $key => $value) {
@@ -645,7 +649,7 @@ abstract class portfolio_caller_base {
     */
     public final function get_export_config($key) {
         $allowed = array_merge(
-            array('wait', 'hidewait', 'format'),
+            array('wait', 'hidewait', 'format', 'hideformat'),
             $this->get_allowed_export_config()
         );
         if (!in_array($key, $allowed)) {
@@ -721,6 +725,11 @@ abstract class portfolio_caller_base {
     * in the caller (called during the export process
     */
     public abstract function check_permissions();
+
+    /**
+    * nice name to display to the user about this caller location
+    */
+    public abstract static function display_name();
 }
 
 abstract class portfolio_module_caller_base extends portfolio_caller_base {
@@ -916,7 +925,7 @@ abstract class portfolio_plugin_base {
     */
     public function set_export_config($config) {
         $allowed = array_merge(
-            array('wait', 'format'),
+            array('wait', 'hidewait', 'format', 'hideformat'),
             $this->get_allowed_export_config()
         );
         foreach ($config as $key => $value) {
@@ -939,7 +948,7 @@ abstract class portfolio_plugin_base {
     */
     public final function get_export_config($key) {
         $allowed = array_merge(
-            array('wait', 'format'),
+            array('hidewait', 'wait', 'format', 'hideformat'),
             $this->get_allowed_export_config()
         );
         if (!in_array($key, $allowed)) {
@@ -1740,6 +1749,7 @@ final class portfolio_exporter {
                     $pluginbits['wait'] = 1;
                     $pluginbits['hidewait'] = 1;
                 }
+                $callerbits['hideformat'] = $pluginbits['hideformat'] = (count($formats) == 1);
                 $this->caller->set_export_config($callerbits);
                 $this->instance->set_export_config($pluginbits);
                 return true;
@@ -1754,12 +1764,13 @@ final class portfolio_exporter {
             }
         } else {
             $this->noexportconfig = true;
-            $this->instance->set_export_config(array('wait' => 1));
+            $format = array_shift($formats);
+            $this->instance->set_export_config(array('hidewait' => 1, 'wait' => 1, 'format' => $format, 'hideformat' => 1));
+            $this->caller->set_export_config(array('format' => $format, 'hideformat' => 1));
             return true;
             // do not break - fall through to confirm
         }
     }
-
 
     /**
     * processes the 'confirm' stage of the export
@@ -1767,23 +1778,44 @@ final class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_confirm() {
-        global $CFG;
-        if (isset($this->noexportconfig)) {
+        global $CFG, $DB;
+
+        $previous = $DB->get_records(
+            'portfolio_log',
+            array(
+                'userid'      => $this->user->id,
+                'portfolio'   => $this->instance->get('id'),
+                'caller_sha1' => $this->caller->get_sha1(),
+            )
+        );
+        if (isset($this->noexportconfig) && empty($previous)) {
             return true;
         }
         $strconfirm = get_string('confirmexport', 'portfolio');
         $yesurl = $CFG->wwwroot . '/portfolio/add.php?stage=' . PORTFOLIO_STAGE_QUEUEORWAIT;
-        $nourl = $this->caller->get_return_url();
+        $nourl  = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
         $this->print_header();
         print_heading($strconfirm);
         print_simple_box_start();
         print_heading(get_string('confirmsummary', 'portfolio'), '', 4);
-        $mainsummary = array(
-        // @todo do something cleverer about wait
-            get_string('selectedformat', 'portfolio')  => get_string('format_' . $this->instance->get_export_config('format'), 'portfolio'),
-        );
+        $mainsummary = array();
+        if (!$this->instance->get_export_config('hideformat')) {
+            $mainsummary[get_string('selectedformat', 'portfolio')] = get_string('format_' . $this->instance->get_export_config('format'), 'portfolio');
+        }
         if (!$this->instance->get_export_config('hidewait')) {
-            $mainsummary[get_string('selectedwait', 'portfolio')] = get_string($this->instance->get_export_config('wait') ? 'yes' : 'no');
+            $mainsummary[get_string('selectedwait', 'portfolio')] = get_string(($this->instance->get_export_config('wait') ? 'yes' : 'no'));
+        }
+        if ($previous) {
+            $previousstr = '';
+            foreach ($previous as $row) {
+                $previousstr .= userdate($row->time);
+                if ($row->caller_class != get_class($this->caller)) {
+                    require_once($CFG->dirroot . '/' . $row->caller_file);
+                    $previousstr .= ' (' . call_user_func(array($row->caller_class, 'display_name')) . ')';
+                }
+                $previousstr .= '<br />';
+            }
+            $mainsummary[get_string('exportedpreviously', 'portfolio')] = $previousstr;
         }
         if (!$csummary = $this->caller->get_export_summary()) {
             $csummary = array();
@@ -1792,9 +1824,12 @@ final class portfolio_exporter {
             $isummary = array();
         }
         $mainsummary = array_merge($mainsummary, $csummary, $isummary);
+        $table = new StdClass;
+        $table->data = array();
         foreach ($mainsummary as $string => $value) {
-            echo '<b>' . $string . '</b>:' . $value . '<br />' . "\n";
+            $table->data[] = array($string, $value);
         }
+        print_table($table);
         notice_yesno($strconfirm, $yesurl, $nourl);
         print_simple_box_end();
         print_footer();
@@ -1864,6 +1899,17 @@ final class portfolio_exporter {
         if (!$this->instance->send_package()) {
             return $this->raise_error('failedtosendpackage', 'portfolio');
         }
+        // log the transfer
+        global $DB;
+        $l = array(
+            'userid'         => $this->user->id,
+            'portfolio'      => $this->instance->get('id'),
+            'caller_file'    => $this->callerfile,
+            'caller_sha1'    => $this->caller->get_sha1(),
+            'caller_class'   => get_class($this->caller),
+            'time'           => time(),
+        );
+        $DB->insert_record('portfolio_log', $l);
         return true;
     }
 

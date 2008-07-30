@@ -257,13 +257,23 @@ class resource_base {
     function portfolio_prepare_package_online($tempdir, $text=false) {
         //@todo penny use the files api here
         $status = $handle = fopen($tempdir . '/' . clean_filename($this->cm->name . '.' . (($text) ? 'txt' : 'html')), 'w');
-        $formatoptions = new object();
-        $formatoptions->noclean = true;
+        $formatoptions = (object)array('noclean' => true);
         $format = (($text) ? FORMAT_MOODLE : FORMAT_HTML);
         $content = format_text($this->resource->alltext, $format, $formatoptions, $this->course->id);
         $status = $status && fwrite($handle, $content);
         $status = $status && fclose($handle);
         return $status;
+    }
+
+    function portfolio_get_sha1_online($text=false) {
+        $formatoptions = (object)array('noclean' => true);
+        $format = (($text) ? FORMAT_MOODLE : FORMAT_HTML);
+        $content = format_text($this->resource->alltext, $format, $formatoptions, $this->course->id);
+        return sha1($content);
+    }
+
+    function portfolio_get_sha1_uploaded() {
+        // @todo penny implement later.
     }
 
 } /// end of class definition
@@ -732,9 +742,6 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function prepare_package($tempdir) {
-        if (!is_callable(array($this->resource, 'portfolio_prepare_package'))) {
-            portfolio_exporter::raise_error('portfolionotimplemented', 'resource');
-        }
         return $this->resource->portfolio_prepare_package($tempdir);
     }
 
@@ -744,11 +751,19 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
 
     public static function add_button($resource, $fullform=true, $return=false) {
         // @todo penny can we put the capability check in here?
-        if (!is_callable(array($resource, 'portfolio_prepare_package'))) {
+        if (!is_callable(array($resource, 'portfolio_prepare_package')) || !is_callable(array($resource, 'portfolio_get_sha1'))) {
             debugging(get_string('portfolionotimplemented', 'resource'));
             return false;
         }
         return portfolio_add_button('resource_portfolio_caller', array('id' => $resource->cm->instance),  '/mod/resource/lib.php', $fullform, $return);
+    }
+
+    public function get_sha1() {
+        return $this->resource->portfolio_get_sha1();
+    }
+
+    public static function display_name() {
+        return get_string('modulename', 'resource');
     }
 }
 

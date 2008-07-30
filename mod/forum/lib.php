@@ -7069,6 +7069,22 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         // @todo see MDL-15758
     }
 
+    function get_sha1() {
+        if ($this->attachment) {
+            if ($basedir = forum_file_area($this->post)) {
+                $sha1s = array();
+                foreach (get_directory_list($basedir) as $file) {
+                    $sha1s[] = sha1_file($basedir . '/' . $file);
+                }
+                asort($sha1s);
+                return sha1(implode('', $sha1s));
+            }
+            return false;
+        }
+        portfolio_exporter::raise_error('TODO - see MDL-15758');
+        // @todo see MDL-15758
+    }
+
     function expected_time() {
         // @todo check for attachment size
         return PORTFOLIO_TIME_LOW;
@@ -7079,6 +7095,9 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         return true;
     }
 
+    public static function display_name() {
+        return get_string('modulename', 'forum');
+    }
 }
 
 ?>

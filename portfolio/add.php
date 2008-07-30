@@ -16,14 +16,19 @@ if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
     require_once($CFG->dirroot . '/' . $exporter->callerfile);
     $exporter = unserialize(serialize($SESSION->portfolio->exporter));
     $SESSION->portfolio->exporter =& $exporter;
-    if ($instance = optional_param('instance', 0, PARAM_INT)) {
+    if (!$exporter->get('instance')) {
+        $instance = required_param('instance', PARAM_INT);
         $instance = portfolio_instance($instance);
         if ($broken = portfolio_instance_sanity_check($instance)) {
             print_error(get_string($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin')));
         }
         $instance->set('user', $USER);
         $exporter->set('instance', $instance);
-
+    }
+    if ($cancel = optional_param('cancel', 0, PARAM_INT)) {
+        $returnurl = $exporter->get('caller')->get_return_url();
+        unset($SESSION->portfolio);
+        redirect($returnurl);
     }
 } else {
     // we'e just posted here for the first time and have might the instance already

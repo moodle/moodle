@@ -197,6 +197,10 @@ function portfolio_prepare_package($tempdir) {
     return parent::portfolio_prepare_package_online($tempdir);
 }
 
+function portfolio_get_sha1() {
+    return parent::portfolio_get_sha1_online();
+}
+
 
 }
 
