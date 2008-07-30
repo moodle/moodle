@@ -2544,7 +2544,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
     require_once($CFG->libdir .'/editor/htmlEditor.class.php');
-    global $htmlEditorObject;
     $htmlEditorObject = new htmlEditor();
     $htmlEditor = $htmlEditorObject->configure(NULL, $COURSE->id);
 
@@ -4870,7 +4869,6 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     $str .= '</textarea>'."\n";
 
     if ($usehtmleditor) {
-        $str_save = "alert('fdsalkjfdsa')";
         $str_toggle = '<span class="helplink"><a href="javascript:mce_toggleEditor(\''. $id .'\');"><img width="50" height="17" src="'. $CFG->httpswwwroot .'/lib/editor/tinymce/images/toggle.gif" alt="'. get_string('editortoggle') .'" title="'. get_string('editortoggle') .'" class="icontoggle" /></a></span>';
         // Show shortcuts button if HTML editor is in use, but only if JavaScript is enabled (MDL-9556)
         $str .= '<div class="textareaicons">';
