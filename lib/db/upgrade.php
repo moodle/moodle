@@ -423,7 +423,34 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008072800);
     }
     
+    if ($result && $oldversion < 2008073000) {
 
+    /// Define table portfolio_log to be created
+        $table = new xmldb_table('portfolio_log');
+
+    /// Adding fields to table portfolio_log
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('time', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('portfolio', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('caller_class', XMLDB_TYPE_CHAR, '150', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('caller_file', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('caller_sha1', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table portfolio_log
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('userfk', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+        $table->add_key('portfoliofk', XMLDB_KEY_FOREIGN, array('portfolio'), 'portfolio_instance', array('id'));
+
+    /// Conditionally launch create table for portfolio_log
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008073000);
+    }
+ 
 /*
  * TODO:
  *   drop adodb_logsql table and create a new general sql log table
