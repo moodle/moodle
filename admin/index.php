@@ -501,13 +501,18 @@
         set_config('siteidentifier', random_string(32).$_SERVER['HTTP_HOST']);
     }
 
+/// ugly hack - if mnet is not initialised include the mnet lib, it adds needed mnet records and configures config options  
+///             we should not do such crazy stuff in lib functions!!!
+    if (empty($CFG->mnet_localhost_id)) {
+        require_once $CFG->dirroot.'/mnet/lib.php';
+    }
+
 /// Check if the guest user exists.  If not, create one.
     if (!$DB->record_exists('user', array('username'=>'guest'))) {
         if (! $guest = create_guest_record()) {
             notify("Could not create guest user record !!!");
         }
     }
-
 
 /// Set up the admin user
     if (empty($CFG->rolesactive)) {
