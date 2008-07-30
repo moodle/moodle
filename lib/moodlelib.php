@@ -5090,7 +5090,7 @@ or
  * @param array $extralocations An array of strings with other locations to look for string files
  * @return string The localized string.
  */
-function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
+function get_string($identifier, $module='moodle', $a=NULL, $extralocations=NULL) {
     global $CFG;
 
 /// originally these special strings were stored in moodle.php now we are only in langconfig.php
@@ -5108,10 +5108,6 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     }
 
     $lang = current_language();
-
-    if ($module == '') {
-        $module = 'moodle';
-    }
 
     // if $a happens to have % in it, double it so sprintf() doesn't break
     if ($a) {
