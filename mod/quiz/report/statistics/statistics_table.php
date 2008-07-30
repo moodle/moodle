@@ -59,7 +59,7 @@ class quiz_report_statistics_table extends flexible_table {
         
         $columns[]= 'discriminative_efficiency';
         $headers[]= get_string('discriminative_efficiency', 'quiz_statistics');
-        
+
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->sortable(false);
@@ -99,7 +99,13 @@ class quiz_report_statistics_table extends flexible_table {
 
 
     function col_name($question){
-        return $question->name;
+        if (!$this->is_downloading() && $question->qtype!='random'){
+            $tooltip = get_string('detailedanalysis', 'quiz_statistics');
+            $url = $this->baseurl .'&amp;qid='.$question->id;
+            return "<a title=\"$tooltip\" href=\"$url\">".$question->name."</a>";
+        } else {
+            return $question->name;
+        }
 
     }
     
@@ -121,25 +127,25 @@ class quiz_report_statistics_table extends flexible_table {
         return $question->qtype;
     }
     function col_intended_weight($question){
-        return quiz_report_scale_sumgrades_as_percentage($question->maxgrade, $this->quiz);
+        return quiz_report_scale_sumgrades_as_percentage($question->_stats->maxgrade, $this->quiz);
     }
     function col_effective_weight($question){
         if (!$question->_stats->subquestion){
-            return number_format($question->_stats->effectiveweight, 2).' %';
+            return number_format($question->_stats->effectiveweight, 2).'%';
         } else {
             return '';
         }
     }
     function col_discrimination_index($question){
         if (is_numeric($question->_stats->discriminationindex)){
-            return number_format($question->_stats->discriminationindex, 2).' %';
+            return number_format($question->_stats->discriminationindex, 2).'%';
         } else {
             return $question->_stats->discriminationindex;
         }
     }
     function col_discriminative_efficiency($question){
         if (is_numeric($question->_stats->discriminativeefficiency)){
-            return number_format($question->_stats->discriminativeefficiency, 2).' %';
+            return number_format($question->_stats->discriminativeefficiency, 2).'%';
         } else {
             return '';
         }
@@ -147,14 +153,14 @@ class quiz_report_statistics_table extends flexible_table {
     function col_random_guess_score($question){
         $randomguessscore = question_get_random_guess_score($question);
         if (is_numeric($randomguessscore)){
-            return number_format($randomguessscore * 100, 2).' %';
+            return number_format($randomguessscore * 100, 2).'%';
         } else {
             return $randomguessscore; // empty string returned by random question.
         }
     }
     
     function col_sd($question){
-        return number_format($question->_stats->sd*100 / $question->maxgrade, 2).' %';
+        return number_format($question->_stats->sd*100 / $question->_stats->maxgrade, 2).'%';
     }
     function col_s($question){
         if (isset($question->_stats->s)){
@@ -164,7 +170,8 @@ class quiz_report_statistics_table extends flexible_table {
         }
     }
     function col_facility($question){
-        return number_format($question->_stats->facility*100, 2).' %';
+        return number_format($question->_stats->facility*100, 2).'%';
     }
+    
 }
 ?>

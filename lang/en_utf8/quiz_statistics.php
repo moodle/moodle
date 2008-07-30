@@ -45,4 +45,16 @@ $string['discriminative_efficiency'] = 'Discriminative Efficiency';
 $string['effective_weight'] = 'Effective weight';
 $string['errorrandom'] = 'Error getting sub item data';
 $string['erroritemappearsmorethanoncewithdifferentweight'] = 'Question ($a) appears more than once with different weights in different positions of the test. This is not currently supported by the statistics report and may make the statistics for this question unreliable.';
+$string['lastcalculated'] = 'Last calculated $a->lastcalculated ago there have been $a->count attempts since then.';
+$string['recalculatenow'] = 'Recalculate now';
+$string['detailedanalysis'] = 'More detailed analysis of the responses to this question';
+$string['errordeletingquizstats'] = 'Error deleting old quiz_statistics records.';
+$string['errordeletingqstats'] = 'Error deleting old quiz_question_statistics records.';
+$string['questionname'] = 'Question Name';
+$string['questiontype'] = 'Question Type';
+$string['positions'] = 'Position(s)';
+$string['position'] = 'Position';
+$string['questioninformation'] = 'Question information';
+$string['questionstatistics'] = 'Question statistics';
+$string['analysisofresponses'] = 'Analysis of responses';
 ?>

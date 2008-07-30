@@ -312,6 +312,6 @@ function quiz_report_scale_sumgrades_as_percentage($rawgrade, $quiz, $round = tr
     } else {
         $grade = 0;
     }
-    return $grade.' %';
+    return $grade.'%';
 }
 ?>

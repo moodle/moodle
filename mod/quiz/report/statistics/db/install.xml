@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20080725" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
+<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20080728" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -39,7 +39,9 @@
         <FIELD NAME="discriminativeefficiency" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" ENUM="false" DECIMALS="5" PREVIOUS="discriminationindex" NEXT="sd"/>
         <FIELD NAME="sd" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" DECIMALS="10" PREVIOUS="discriminativeefficiency" NEXT="facility"/>
         <FIELD NAME="facility" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" DECIMALS="10" PREVIOUS="sd" NEXT="subquestions"/>
-        <FIELD NAME="subquestions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="facility"/>
+        <FIELD NAME="subquestions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="facility" NEXT="maxgrade"/>
+        <FIELD NAME="maxgrade" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="subquestions" NEXT="positions"/>
+        <FIELD NAME="positions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="positions in which this item appears. Only used for random questions." PREVIOUS="maxgrade"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

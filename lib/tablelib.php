@@ -108,17 +108,27 @@ class flexible_table {
      */
     function is_downloading($download = null, $filename='', $sheettitle=''){
         if ($download!==null){
-            $this->filename = clean_filename($filename);
             $this->sheettitle = $sheettitle;
             $this->is_downloadable(true);
             $this->download = $download;
-            if (!empty($download)){
-                $classname = 'table_'.$download.'_export_format';
-                $this->exportclass = new $classname($this);
-            }
+            $this->filename = clean_filename($filename);
+            $this->export_class_instance();
         }
         return $this->download;
     }
+    
+    function export_class_instance(){
+        if (is_null($this->exportclass) && !empty($this->download)){
+            $classname = 'table_'.$this->download.'_export_format';
+            $this->exportclass = new $classname($this);
+            if (!$this->exportclass->document_started()){
+                $this->exportclass->start_document($this->filename);
+            }
+        }
+        return $this->exportclass;
+    }
+    
+    
     /**
      * Probably don't need to call this directly. Calling is_downloading with a
      * param automatically sets table as downloadable.
@@ -625,9 +635,12 @@ class flexible_table {
      * data to the table with add_data or add_data_keyed.
      *
      */
-    function finish_output(){
+    function finish_output($closeexportclassdoc = true){
         if ($this->exportclass!==null){
-            $this->exportclass->finish_output();
+            $this->exportclass->finish_table();
+            if ($closeexportclassdoc){
+                $this->exportclass->finish_document();
+            }
         }else{
             $this->finish_html();
         }
@@ -853,7 +866,7 @@ class flexible_table {
     function start_output(){
         $this->started_output = true;
         if ($this->exportclass!==null){
-            $this->exportclass->start_output($this->filename, $this->sheettitle);
+            $this->exportclass->start_table($this->sheettitle);
             $this->exportclass->output_headers($this->headers);
         } else {
             $this->start_html();
@@ -1234,7 +1247,17 @@ class table_default_export_format_parent{
      * object from which to export data.
      */
     var $table;
+    
+    /**
+     * @var boolean output started. Keeps track of whether any output has been
+     * started yet.
+     */
+    var $documentstarted = false;
     function table_default_export_format_parent(&$table){
+        $this->table =& $table;
+    }
+    
+    function set_table(&$table){
         $this->table =& $table;
     }
 
@@ -1244,7 +1267,8 @@ class table_default_export_format_parent{
     function add_seperator() {
         return false;
     }
-    function finish_output(){
+    function document_started(){
+        return $this->documentstarted;
     }
 }
 
@@ -1271,22 +1295,21 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
      */
     function define_workbook(){
     }
-    function start_output($filename, $sheettitle){
-        $this->filename = $filename.'.'.$this->fileextension;
+    function start_document($filename){
+        $filename = $filename.'.'.$this->fileextension;
         $this->define_workbook();
-        // Creating the first worksheet
-        $this->worksheet =& $this->workbook->add_worksheet();
         // format types
         $this->formatnormal =& $this->workbook->add_format();
         $this->formatnormal->set_bold(0);
         $this->formatheaders =& $this->workbook->add_format();
         $this->formatheaders->set_bold(1);
         $this->formatheaders->set_align('center');
-
         // Sending HTTP headers
-        $this->workbook->send($this->filename);
-        // Creating the first worksheet
-
+        $this->workbook->send($filename);
+        $this->documentstarted = true;
+    }
+    function start_table($sheettitle){
+        $this->worksheet =& $this->workbook->add_worksheet($sheettitle);
         $this->rownum=0;
     }
     function output_headers($headers){
@@ -1310,7 +1333,10 @@ class table_spreadsheet_export_format_parent extends table_default_export_format
         $this->rownum++;
         return true;
     }
-    function finish_output(){
+
+    function finish_table(){
+    }
+    function finish_document(){
         $this->workbook->close();
         exit;
     }
@@ -1340,23 +1366,29 @@ class table_ods_export_format extends table_spreadsheet_export_format_parent{
 
 class table_text_export_format_parent extends table_default_export_format_parent{
     var $seperator = "\t";
-    function start_output($filename, $sheettitle){
+    function start_document($filename){
         $this->filename = $filename.".txt";
-
         header("Content-Type: application/download\n");
-        header("Content-Disposition: attachment; filename=\"$this->filename\"");
+        header("Content-Disposition: attachment; filename=\"{$filename}.txt\"");
         header("Expires: 0");
         header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
         header("Pragma: public");
+        $this->documentstarted = true;
+    }
+    function start_table($sheettitle){
+        //nothing to do here
     }
     function output_headers($headers){
-        echo implode($this->seperator, $headers)." \n";
+        echo implode($this->seperator, $headers)."\n";
     }
     function add_data($row){
-        echo implode($this->seperator, $row)." \n";
+        echo implode($this->seperator, $row)."\n";
         return true;
     }
-    function finish_output(){
+    function finish_table(){
+        echo "\n\n";
+    }
+    function finish_document(){
         exit;
     }
 }
@@ -1372,20 +1404,13 @@ class table_csv_export_format extends table_text_export_format_parent{
 }
 
 class table_xhtml_export_format extends table_default_export_format_parent{
-    var $seperator = "\t";
-    function start_output($filename, $sheettitle){
-        $this->table->sortable(false);
-        $this->table->collapsible(false);
-        $this->filename = $filename.".html";
-
+    function start_document($filename){
         header("Content-Type: application/download\n");
-        header("Content-Disposition: attachment; filename=\"$this->filename\"");
+        header("Content-Disposition: attachment; filename=\"$filename.html\"");
         header("Expires: 0");
         header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
         header("Pragma: public");
-
         //html headers
-
         echo <<<EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html
@@ -1431,7 +1456,7 @@ table {
     margin:auto;
 }
 
-h1{
+h1, h2{
     text-align:center;
 }
 .bold {
@@ -1441,14 +1466,18 @@ font-weight:bold;
 
 
 /*]]>*/</style>
-<head>
-  <title>$sheettitle</title>
-</head>
 <body>
-<h1>$sheettitle</h1>
 EOF;
+        $this->documentstarted = true;
+    }
+    function start_table($sheettitle){
+        $this->table->sortable(false);
+        $this->table->collapsible(false);
+        echo "<h2>{$sheettitle}</h2>";
         $this->table->start_html();
     }
+
+    
     function output_headers($headers){
         $this->table->print_headers();
     }
@@ -1460,8 +1489,10 @@ EOF;
         $this->table->print_row(NULL);
         return true;
     }
-    function finish_output(){
+    function finish_table(){
         $this->table->finish_html();
+    }
+    function finish_document(){
         echo '</body>';
         exit;
     }

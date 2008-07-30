@@ -13,6 +13,11 @@ require_once($CFG->dirroot.'/mod/quiz/report/statistics/statistics_form.php');
 require_once($CFG->dirroot.'/mod/quiz/report/statistics/statistics_table.php');
 
 class quiz_statistics_report extends quiz_default_report {
+    
+    /**
+     * @var object instance of table class used for main questions stats table.
+     */
+    var $table;
 
     /**
      * Display the report.
@@ -24,6 +29,8 @@ class quiz_statistics_report extends quiz_default_report {
 
         $download = optional_param('download', '', PARAM_ALPHA);
         $recalculate = optional_param('recalculate', 0, PARAM_BOOL);
+        //pass the question id for detailed analysis question
+        $qid = optional_param('qid', 0, PARAM_INT);
         $pageoptions = array();
         $pageoptions['id'] = $cm->id;
         $pageoptions['q'] = $quiz->id;
@@ -52,6 +59,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         /// find out current groups mode
         $currentgroup = groups_get_activity_group($cm, true);
+        
 
         $nostudentsingroup = false;//true if a group is selected and their is noeone in it.
         if (!empty($currentgroup)) {
@@ -63,132 +71,196 @@ class quiz_statistics_report extends quiz_default_report {
         } else {
             $groupstudents = array();
         }
-
         
-        $table = new quiz_report_statistics_table();
-        $table->is_downloading($download, get_string('reportstatistics','quiz_statistics'),
-                    "$course->shortname ".format_string($quiz->name,true));
-        if (!$table->is_downloading()) {
+        if ($recalculate){
+            if ($todelete = $DB->get_records_menu('quiz_statistics', array('quizid' => $quiz->id, 'groupid'=> (int)$currentgroup, 'allattempts'=>$useallattempts))){
+                list($todeletesql, $todeleteparams) = $DB->get_in_or_equal(array_keys($todelete));
+                if (!$DB->delete_records_select('quiz_statistics', "id $todeletesql", $todeleteparams)){
+                    print_error('errordeletingquizstats', 'quiz_statistics');
+                }
+                if (!$DB->delete_records_select('quiz_question_statistics', "quizstatisticsid $todeletesql", $todeleteparams)){
+                    print_error('errordeletingqstats', 'quiz_statistics');
+                }
+            }
+            redirect($reporturl->out());
+        }
+        
+        
+        $this->table = new quiz_report_statistics_table();
+        $filename = "$course->shortname-".format_string($quiz->name,true);
+        $this->table->is_downloading($download, $filename, get_string('quizstructureanalysis', 'quiz_statistics'));
+        if (!$this->table->is_downloading()) {
             // Only print headers if not asked to download data
             $this->print_header_and_tabs($cm, $course, $quiz, "statistics");
         }
 
         if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
-            if (!$table->is_downloading()) {
+            if (!$this->table->is_downloading()) {
                 groups_print_activity_menu($cm, $reporturl->out());
+                echo '<br />';
                 if ($currentgroup && !$groupstudents){
                     notify(get_string('nostudentsingroup', 'quiz_statistics'));
                 }
             }
         }
 
-        if (!$table->is_downloading()) {
+        if (!$this->table->is_downloading()) {
             // Print display options
             $mform->set_data(array('useallattempts' => $useallattempts));
             $mform->display();
         }
-        // Print information on the number of existing attempts
-        if (!$table->is_downloading()) { //do not print notices when downloading
-            print_heading(get_string('quizinformation', 'quiz_statistics'));
-            $quizinformationtable = new object();
-            $quizinformationtable->align = array('center', 'center');
-            $quizinformationtable->width = '60%';
-            $quizinformationtable->class = 'generaltable titlesleft';
-            $quizinformationtable->data = array();
-            $quizinformationtable->data[] = array(get_string('quizname', 'quiz_statistics'), $quiz->name);
-            $quizinformationtable->data[] = array(get_string('coursename', 'quiz_statistics'), $course->fullname);
-            if ($cm->idnumber){
-                $quizinformationtable->data[] = array(get_string('coursename', 'quiz_statistics'), $cm->idnumber);
-            }
-            if ($quiz->timeopen){
-                $quizinformationtable->data[] = array(get_string('quizopen', 'quiz'), userdate($quiz->timeopen));
-            }
-            if ($quiz->timeclose){
-                $quizinformationtable->data[] = array(get_string('quizclose', 'quiz'), userdate($quiz->timeclose));
-            }
-            if ($quiz->timeopen && $quiz->timeclose){
-                $quizinformationtable->data[] = array(get_string('duration', 'quiz_statistics'), format_time($quiz->timeclose - $quiz->timeopen));
-            }
-        }
 
-        $timemodified = time() - QUIZ_REPORT_TIME_TO_CACHE_STATS;
-        $params = array('quizid'=>$quiz->id, 'groupid'=>$currentgroup, 'allattempts'=>$useallattempts, 'timemodified'=>$timemodified);
-        if ($recalculate || !$quizstats = $DB->get_record_select('quiz_statistics', 'quizid = :quizid  AND groupid = :groupid AND allattempts = :allattempts AND timemodified > :timemodified', $params, '*', true)){
-            list($s, $usingattemptsstring, $quizstats, $qstats) = $this->quiz_stats($nostudentsingroup, $quiz->id, $currentgroup, $groupstudents, $questions, $useallattempts);
-            $toinsert = (object)((array)$quizstats + $params);
-            $toinsert->timemodified = time();
-            $quizstatisticsid = $DB->insert_record('quiz_statistics', $toinsert);
-            foreach ($qstats->questions as $question){
-                $question->_stats->quizstatisticsid = $quizstatisticsid;
-                $DB->insert_record('quiz_question_statistics', $question->_stats, false, true);
-            }
-            foreach ($qstats->subquestions as $subquestion){
-                $subquestion->_stats->quizstatisticsid = $quizstatisticsid;
-                $DB->insert_record('quiz_question_statistics', $subquestion->_stats, false, true);
-            }
-            if (isset($qstats)){
-                $questions = $qstats->questions;
-                $subquestions = $qstats->subquestions;
-            } else {
-                $questions = array();
-                $subquestions = array();
-            }
-        } else {
-            if ($useallattempts){
-                $usingattemptsstring = get_string('allattempts', 'quiz_statistics');
-                $s = $quizstats->allattemptscount;
-            } else {
-                $usingattemptsstring = get_string('firstattempts', 'quiz_statistics');
-                $s = $quizstats->firstattemptscount;
-            }
-            $questionstats = $DB->get_records('quiz_question_statistics', array('quizstatisticsid'=>$quizstats->id), 'subquestion ASC');
-            $questionstats = quiz_report_index_by_keys($questionstats, array('subquestion', 'questionid'));
-            if (1 < count($questionstats)){
-                list($mainquestionstats, $subquestionstats) = $questionstats;
-                $subqstofetch = array_keys($subquestionstats);
-                $subquestions = question_load_questions($subqstofetch);
-                foreach (array_keys($subquestions) as $subqid){
-                    $subquestions[$subqid]->_stats = $subquestionstats[$subqid];
-                }
-            } else {
-                $mainquestionstats = $questionstats[0];
-                $subquestions = array();
-            }
-            foreach (array_keys($questions) as $qid){
-                $questions[$qid]->_stats = $mainquestionstats[$qid];
-            }
-        }
-        if (!$table->is_downloading()){
+        list($quizstats, $questions, $subquestions, $s, $usingattemptsstring) 
+            = $this->quiz_questions_stats($quiz, $currentgroup, $nostudentsingroup,
+                                        $useallattempts, $groupstudents, $questions);
+
+        if (!$this->table->is_downloading()){
             if ($s==0){
                 print_heading(get_string('noattempts','quiz'));
             }
-            $format = array('firstattemptscount' => '',
-                        'allattemptscount' => '',
-                        'firstattemptsavg' => 'sumgrades_as_percentage',
-                        'allattemptsavg' => 'sumgrades_as_percentage',
-                        'median' => 'sumgrades_as_percentage',
-                        'standarddeviation' => 'sumgrades_as_percentage',
-                        'skewness' => '',
-                        'kurtosis' => '',
-                        'cic' => 'number_format',
-                        'errorratio' => 'number_format',
-                        'standarderror' => 'sumgrades_as_percentage');
-            foreach ($quizstats as $property => $value){
-                if (!isset($format[$property])){
-                    continue;
+        }
+        if ($s){
+            $this->table->setup($quiz, $cm->id, $reporturl, $s);
+        }
+        
+        if (!$qid){
+            $this->output_quiz_stats_table($course, $cm, $quiz, $quizstats, $usingattemptsstring, $currentgroup, $groupstudents, $useallattempts, $download, $reporturl);
+            $this->output_question_stats_table($s, $questions, $subquestions);
+        } else {
+            $thisquestion = false;
+            if (isset($questions[$qid])){
+                $thisquestion = $questions[$qid];
+            } else if (isset($subquestions[$qid])){
+                $thisquestion = $subquestions[$qid];
+            } else {
+                print_error('questiondoesnotexist', 'question');
+            }
+            $this->output_question_info_table($quiz, $thisquestion);
+        }
+        return true;
+    }
+    
+    function output_question_info_table($quiz, $question){
+        $datumfromtable = $this->table->format_row($question);
+
+        $questioninfotable = new object();
+        $questioninfotable->align = array('center', 'center');
+        $questioninfotable->width = '60%';
+        $questioninfotable->class = 'generaltable titlesleft';
+        
+        $questioninfotable->data = array();
+        $questioninfotable->data[] = array(get_string('modulename', 'quiz'), $quiz->name);
+        $questioninfotable->data[] = array(get_string('questionname', 'quiz_statistics'), $question->name.'&nbsp;'.$datumfromtable['actions']);
+        $questioninfotable->data[] = array(get_string('questiontype', 'quiz_statistics'), $question->qtype.'&nbsp;'.$datumfromtable['icon']);
+        $questioninfotable->data[] = array(get_string('positions', 'quiz_statistics'), $question->_stats->positions);
+
+        $questionstatstable = new object();
+        $questionstatstable->align = array('center', 'center');
+        $questionstatstable->width = '60%';
+        $questionstatstable->class = 'generaltable titlesleft';
+
+        unset($datumfromtable['number']);
+        unset($datumfromtable['icon']);
+        $actions = $datumfromtable['actions'];
+        unset($datumfromtable['actions']);
+        unset($datumfromtable['name']);
+        $labels = array('s' => get_string('attempts', 'quiz_statistics'),
+                        'facility' => get_string('facility', 'quiz_statistics'),
+                        'sd' => get_string('standarddeviationq', 'quiz_statistics'),
+                        'random_guess_score' => get_string('random_guess_score', 'quiz_statistics'),
+                        'intended_weight'=> get_string('intended_weight', 'quiz_statistics'),
+                        'effective_weight'=> get_string('effective_weight', 'quiz_statistics'),
+                        'discrimination_index'=> get_string('discrimination_index', 'quiz_statistics'),
+                        'discriminative_efficiency'=> get_string('discriminative_efficiency', 'quiz_statistics'));
+        foreach ($datumfromtable as $item => $value){
+            $questionstatstable->data[] = array($labels[$item], $value);
+        }
+
+        print_heading(get_string('questioninformation', 'quiz_statistics'));
+        print_table($questioninfotable);
+        
+        print_box(format_text($question->questiontext).$actions, 'boxaligncenter generalbox boxwidthnormal mdl-align');
+
+        print_heading(get_string('questionstatistics', 'quiz_statistics'));
+        print_table($questionstatstable);
+        
+        print_heading(get_string('analysisofresponses', 'quiz_statistics'));
+
+    }
+        
+    function output_question_stats_table($s, $questions, $subquestions){
+        if (!$this->table->is_downloading()){
+            print_heading(get_string('quizstructureanalysis', 'quiz_statistics'));
+        }
+        if ($s){
+            foreach ($questions as $question){
+                $this->table->add_data_keyed($this->table->format_row($question));
+                if (!empty($question->_stats->subquestions)){
+                    $subitemstodisplay = explode(',', $question->_stats->subquestions);
+                    foreach ($subitemstodisplay as $subitemid){
+                        $subquestions[$subitemid]->maxgrade = $question->maxgrade;
+                        $this->table->add_data_keyed($this->table->format_row($subquestions[$subitemid]));
+                    }
                 }
+            }
+
+            $this->table->finish_output();
+        }
+    }
+    
+    function output_quiz_stats_table($course, $cm, $quiz, $quizstats, $usingattemptsstring, $currentgroup, $groupstudents, $useallattempts, $download, $reporturl){
+        global $DB;
+        // Print information on the number of existing attempts
+        $quizinformationtablehtml = print_heading(get_string('quizinformation', 'quiz_statistics'), '', 2, 'main', true);
+        $quizinformationtable = new object();
+        $quizinformationtable->align = array('center', 'center');
+        $quizinformationtable->width = '60%';
+        $quizinformationtable->class = 'generaltable titlesleft';
+        $quizinformationtable->data = array();
+        $quizinformationtable->data[] = array(get_string('quizname', 'quiz_statistics'), $quiz->name);
+        $quizinformationtable->data[] = array(get_string('coursename', 'quiz_statistics'), $course->fullname);
+        if ($cm->idnumber){
+            $quizinformationtable->data[] = array(get_string('coursename', 'quiz_statistics'), $cm->idnumber);
+        }
+        if ($quiz->timeopen){
+            $quizinformationtable->data[] = array(get_string('quizopen', 'quiz'), userdate($quiz->timeopen));
+        }
+        if ($quiz->timeclose){
+            $quizinformationtable->data[] = array(get_string('quizclose', 'quiz'), userdate($quiz->timeclose));
+        }
+        if ($quiz->timeopen && $quiz->timeclose){
+            $quizinformationtable->data[] = array(get_string('duration', 'quiz_statistics'), format_time($quiz->timeclose - $quiz->timeopen));
+        }
+        $format = array('firstattemptscount' => '',
+                    'allattemptscount' => '',
+                    'firstattemptsavg' => 'sumgrades_as_percentage',
+                    'allattemptsavg' => 'sumgrades_as_percentage',
+                    'median' => 'sumgrades_as_percentage',
+                    'standarddeviation' => 'sumgrades_as_percentage',
+                    'skewness' => '',
+                    'kurtosis' => '',
+                    'cic' => 'number_format',
+                    'errorratio' => 'number_format',
+                    'standarderror' => 'sumgrades_as_percentage');
+        foreach ($quizstats as $property => $value){
+            if (!isset($format[$property])){
+                continue;
+            }
+            if (!is_null($value)){
                 switch ($format[$property]){
                     case 'sumgrades_as_percentage' :
                         $formattedvalue = quiz_report_scale_sumgrades_as_percentage($value, $quiz);
                         break;
                     case 'number_format' :
-                        $formattedvalue = number_format($value, $quiz->decimalpoints).' %';
+                        $formattedvalue = number_format($value, $quiz->decimalpoints).'%';
                         break;
                     default :
                         $formattedvalue = $value;
                 }
                 $quizinformationtable->data[] = array(get_string($property, 'quiz_statistics', $usingattemptsstring), $formattedvalue);
             }
+        }
+        if (!$this->table->is_downloading()){
             if (isset($quizstats->timemodified)){
                 list($fromqa, $whereqa, $qaparams) = quiz_report_attempts_sql($quiz->id, $currentgroup, $groupstudents, $useallattempts);
                 $sql = 'SELECT COUNT(1) ' .
@@ -198,39 +270,36 @@ class quiz_statistics_report extends quiz_default_report {
                 $a->lastcalculated = format_time(time() - $quizstats->timemodified);
                 if (!$a->count = $DB->count_records_sql($sql, array('time'=>$quizstats->timemodified)+$qaparams)){
                     $a->count = 0;
-                } 
-                print_box_start('boxaligncenter generalbox boxwidthnormal mdl-align');
-                echo get_string('lastcalculated', 'quiz_statistics', $a);
-                print_single_button($reporturl->out(true), $reporturl->params()+array('recalculate'=>1),
-                                    get_string('recalculatenow', 'quiz_statistics'), 'post');
-                print_box_end();
-            }
-            print_table($quizinformationtable);
-            
-        }
-        if (!$table->is_downloading()){
-            print_heading(get_string('quizstructureanalysis', 'quiz_statistics'));
-        }
-        if ($s){
-            $table->setup($quiz, $cm->id, $reporturl, $s);
-            
-            foreach ($questions as $question){
-                $table->add_data_keyed($table->format_row($question));
-                if (!empty($question->_stats->subquestions)){
-                    $subitemstodisplay = explode(',', $question->_stats->subquestions);
-                    foreach ($subitemstodisplay as $subitemid){
-                        $subquestions[$subitemid]->maxgrade = $question->maxgrade;
-                        $table->add_data_keyed($table->format_row($subquestions[$subitemid]));
-                    }
                 }
+                $quizinformationtablehtml .= print_box_start('boxaligncenter generalbox boxwidthnormal mdl-align', '', true);
+                $quizinformationtablehtml .= get_string('lastcalculated', 'quiz_statistics', $a);
+                $quizinformationtablehtml .= print_single_button($reporturl->out(true), $reporturl->params()+array('recalculate'=>1),
+                                    get_string('recalculatenow', 'quiz_statistics'), 'post', '', true);
+                $quizinformationtablehtml .= print_box_end(true);
             }
-
-            $table->finish_output();
         }
-        return true;
+        $quizinformationtablehtml .= print_table($quizinformationtable, true);
+        if (!$this->table->is_downloading()){
+            echo $quizinformationtablehtml;
+        } else {
+            $exportclass =& $this->table->export_class_instance();
+            if ($download == 'xhtml'){
+                echo $quizinformationtablehtml;
+            } else {
+                $exportclass->start_table(get_string('quizinformation', 'quiz_statistics'));
+                $headers = array();
+                $row = array();
+                foreach ($quizinformationtable->data as $data){
+                    $headers[]= $data[0];
+                    $row[] = $data[1];
+                }
+                $exportclass->output_headers($headers);
+                $exportclass->add_data($row);
+                $exportclass->finish_table();
+            }
+        }
     }
-    
-    
+
     function quiz_stats($nostudentsingroup, $quizid, $currentgroup, $groupstudents, $questions, $useallattempts){
         global $CFG, $DB;
         if (!$nostudentsingroup){
@@ -337,15 +406,17 @@ class quiz_statistics_report extends quiz_default_report {
                     
                     $k2= $s*$m2/($s-1);
                     $k3= $s*$s*$m3/(($s-1)*($s-2));
-                    
-                    $quizstats->skewness = $k3 / (pow($k2, 2/3));
+                    if ($k2){
+                        $quizstats->skewness = $k3 / (pow($k2, 2/3));
+                    }
                 }
     
     
                 if ($s>3){
                     $k4= (($s*$s*$s)/(($s-1)*($s-2)*($s-3)))*((($s+1)*$m4)-(3*($s-1)*$m2*$m2));
-                    
-                    $quizstats->kurtosis = $k4 / ($k2*$k2);
+                    if ($k2){
+                        $quizstats->kurtosis = $k4 / ($k2*$k2);
+                    }
                 }
             }
         }
@@ -353,7 +424,6 @@ class quiz_statistics_report extends quiz_default_report {
             require_once("$CFG->dirroot/mod/quiz/report/statistics/qstats.php");
             $qstats = new qstats($questions, $s, $sumgradesavg);
             $qstats->get_records($quizid, $currentgroup, $groupstudents, $useallattempts);
-            set_time_limit(0);
             $qstats->process_states();
         } else {
             $qstats = false;
@@ -361,15 +431,68 @@ class quiz_statistics_report extends quiz_default_report {
         if ($s>1){
             $p = count($qstats->questions);//no of positions
             if ($p > 1){
-                $quizstats->cic = (100 * $p / ($p -1)) * (1 - ($qstats->sum_of_grade_variance())/$k2);
-                $quizstats->errorratio = 100 * sqrt(1-($quizstats->cic/100));
-                $quizstats->standarderror = ($quizstats->errorratio * $quizstats->standarddeviation / 100);
-                
+                if ($k2){
+                    $quizstats->cic = (100 * $p / ($p -1)) * (1 - ($qstats->sum_of_grade_variance())/$k2);
+                    $quizstats->errorratio = 100 * sqrt(1-($quizstats->cic/100));
+                    $quizstats->standarderror = ($quizstats->errorratio * $quizstats->standarddeviation / 100);
+                }
             }
         }
         return array($s, $usingattemptsstring, $quizstats, $qstats);
     }
-
+    
+    function quiz_questions_stats($quiz, $currentgroup, $nostudentsingroup, $useallattempts, $groupstudents, $questions){
+        global $DB;
+        $timemodified = time() - QUIZ_REPORT_TIME_TO_CACHE_STATS;
+        $params = array('quizid'=>$quiz->id, 'groupid'=>(int)$currentgroup, 'allattempts'=>$useallattempts, 'timemodified'=>$timemodified);
+        if (!$quizstats = $DB->get_record_select('quiz_statistics', 'quizid = :quizid  AND groupid = :groupid AND allattempts = :allattempts AND timemodified > :timemodified', $params, '*', true)){
+            list($s, $usingattemptsstring, $quizstats, $qstats) = $this->quiz_stats($nostudentsingroup, $quiz->id, $currentgroup, $groupstudents, $questions, $useallattempts);
+            $toinsert = (object)((array)$quizstats + $params);
+            $toinsert->timemodified = time();
+            $quizstatisticsid = $DB->insert_record('quiz_statistics', $toinsert);
+            foreach ($qstats->questions as $question){
+                $question->_stats->quizstatisticsid = $quizstatisticsid;
+                $DB->insert_record('quiz_question_statistics', $question->_stats, false, true);
+            }
+            foreach ($qstats->subquestions as $subquestion){
+                $subquestion->_stats->quizstatisticsid = $quizstatisticsid;
+                $DB->insert_record('quiz_question_statistics', $subquestion->_stats, false, true);
+            }
+            if (isset($qstats)){
+                $questions = $qstats->questions;
+                $subquestions = $qstats->subquestions;
+            } else {
+                $questions = array();
+                $subquestions = array();
+            }
+        } else {
+            //use cached results
+            if ($useallattempts){
+                $usingattemptsstring = get_string('allattempts', 'quiz_statistics');
+                $s = $quizstats->allattemptscount;
+            } else {
+                $usingattemptsstring = get_string('firstattempts', 'quiz_statistics');
+                $s = $quizstats->firstattemptscount;
+            }
+            $questionstats = $DB->get_records('quiz_question_statistics', array('quizstatisticsid'=>$quizstats->id), 'subquestion ASC');
+            $questionstats = quiz_report_index_by_keys($questionstats, array('subquestion', 'questionid'));
+            if (1 < count($questionstats)){
+                list($mainquestionstats, $subquestionstats) = $questionstats;
+                $subqstofetch = array_keys($subquestionstats);
+                $subquestions = question_load_questions($subqstofetch);
+                foreach (array_keys($subquestions) as $subqid){
+                    $subquestions[$subqid]->_stats = $subquestionstats[$subqid];
+                }
+            } else {
+                $mainquestionstats = $questionstats[0];
+                $subquestions = array();
+            }
+            foreach (array_keys($questions) as $qid){
+                $questions[$qid]->_stats = $mainquestionstats[$qid];
+            }
+        }
+        return array($quizstats, $questions, $subquestions, $s, $usingattemptsstring);
+    }
 }
 function quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $allattempts = true){
     global $DB;
@@ -385,5 +508,11 @@ function quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $allat
         $whereqa .= 'AND qa.attempt=1 ';
     }
     return array($fromqa, $whereqa, $qaparams);
+}
+function quiz_report_safe_divider($dividend, $divisor){
+    if ($divisor == 0){
+        return null;
+    }
+    return $dividend / $divisor;
 }
 ?>

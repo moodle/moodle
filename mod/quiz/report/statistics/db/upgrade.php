@@ -26,6 +26,32 @@ function xmldb_quizreport_statistics_upgrade($oldversion=0) {
         }
 
     }
+    if ($result && $oldversion < 2008072800) {
+
+    /// Define field maxgrade to be added to quiz_question_statistics
+        $table = new xmldb_table('quiz_question_statistics');
+        $field = new xmldb_field('maxgrade', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'subquestions');
+
+    /// Conditionally launch add field maxgrade
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    }
+
+    if ($result && $oldversion < 2008072801) {
+
+    /// Define field positions to be added to quiz_question_statistics
+        $table = new xmldb_table('quiz_question_statistics');
+        $field = new xmldb_field('positions', XMLDB_TYPE_TEXT, 'medium', null, null, null, null, null, null, 'maxgrade');
+
+    /// Conditionally launch add field positions
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    }
+    
     return $result;
 }
 

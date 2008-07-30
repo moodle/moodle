@@ -71,9 +71,11 @@ class qstats{
         } else {
             $stats->othergradesarray[] = $state->sumgrades;
         }
+
     }
 
     function _secondary_states_walker($state, &$stats){
+        global $QTYPES;
         $gradedifference = ($state->grade - $stats->gradeaverage);
         $othergradedifference = (($state->sumgrades - $state->grade) - $stats->othergradeaverage);
         $overallgradedifference = $state->sumgrades - $this->sumgradesavg;
@@ -84,23 +86,34 @@ class qstats{
         $stats->covariancesum += $gradedifference * $othergradedifference;
         $stats->covariancemaxsum += $sortedgradedifference * $sortedothergradedifference;
         $stats->covariancewithoverallgradesum += $gradedifference * $overallgradedifference;
+
+
     }
 
 
-    function _initial_question_walker(&$stats, $grade){
+    function _initial_question_walker(&$stats){
         $stats->gradeaverage = $stats->totalgrades / $stats->s;
-        $stats->facility = $stats->gradeaverage / $grade;
+        $stats->facility = $stats->gradeaverage / $stats->maxgrade;
         $stats->othergradeaverage = $stats->totalothergrades / $stats->s;
         sort($stats->gradearray, SORT_NUMERIC);
         sort($stats->othergradesarray, SORT_NUMERIC);
     }
     function _secondary_question_walker(&$stats){
-        $stats->gradevariance = $stats->gradevariancesum / ($stats->s -1);
-        $stats->othergradevariance = $stats->othergradevariancesum / ($stats->s -1);
-        $stats->covariance = $stats->covariancesum / ($stats->s -1);
-        $stats->covariancemax = $stats->covariancemaxsum / ($stats->s -1);
-        $stats->covariancewithoverallgrade = $stats->covariancewithoverallgradesum / ($stats->s-1);
-        $stats->sd = sqrt($stats->gradevariancesum / ($stats->s -1));
+        if ($stats->s > 1){
+            $stats->gradevariance = $stats->gradevariancesum / ($stats->s -1);
+            $stats->othergradevariance = $stats->othergradevariancesum / ($stats->s -1);
+            $stats->covariance = $stats->covariancesum / ($stats->s -1);
+            $stats->covariancemax = $stats->covariancemaxsum / ($stats->s -1);
+            $stats->covariancewithoverallgrade = $stats->covariancewithoverallgradesum / ($stats->s-1);
+            $stats->sd = sqrt($stats->gradevariancesum / ($stats->s -1));
+        } else {
+            $stats->gradevariance = null;
+            $stats->othergradevariance = null;
+            $stats->covariance = null;
+            $stats->covariancemax = null;
+            $stats->covariancewithoverallgrade = null;
+            $stats->sd = null;
+        }
         //avoid divide by zero
         if ($stats->gradevariance * $stats->othergradevariance){
             $stats->discriminationindex = 100*$stats->covariance 
@@ -121,23 +134,24 @@ class qstats{
             $this->_initial_states_walker($state, $this->questions[$state->question]->_stats);
             //if this is a random question what is the real item being used?
             if ($this->questions[$state->question]->qtype == 'random'){
-                if ($itemid = question_get_real_questionid($state)){
-                    if (!isset($subquestionstats[$itemid])){
-                        $subquestionstats[$itemid] = $this->stats_init_object();
-                        $subquestionstats[$itemid]->usedin = array();
-                        $subquestionstats[$itemid]->subquestion = true;
-                        $subquestionstats[$itemid]->differentweights = false;
-                        $subquestionstats[$itemid]->maxgrade = $this->questions[$state->question]->maxgrade;
-                    } else if ($subquestionstats[$itemid]->maxgrade != $this->questions[$state->question]->maxgrade){
-                        $subquestionstats[$itemid]->differentweights = true;
+                if ($realstate = question_get_real_state($state)){
+                    if (!isset($subquestionstats[$realstate->question])){
+                        $subquestionstats[$realstate->question] = $this->stats_init_object();
+                        $subquestionstats[$realstate->question]->usedin = array();
+                        $subquestionstats[$realstate->question]->subquestion = true;
+                        $subquestionstats[$realstate->question]->differentweights = false;
+                        $subquestionstats[$realstate->question]->maxgrade = $this->questions[$state->question]->maxgrade;
+                    } else if ($subquestionstats[$realstate->question]->maxgrade != $this->questions[$state->question]->maxgrade){
+                        $subquestionstats[$realstate->question]->differentweights = true;
                     }
-                    $this->_initial_states_walker($state, $subquestionstats[$itemid], false);
-                    $subquestionstats[$itemid]->usedin[$state->question] = $state->question;
+                    $this->_initial_states_walker($realstate, $subquestionstats[$realstate->question], false);
+                    $number = $this->questions[$state->question]->number;
+                    $subquestionstats[$realstate->question]->usedin[$number] = $number;
                     $randomselectorstring = $this->questions[$state->question]->category.'/'.$this->questions[$state->question]->questiontext;
                     if (!isset($this->randomselectors[$randomselectorstring])){
                         $this->randomselectors[$randomselectorstring] = array();
                     }
-                    $this->randomselectors[$randomselectorstring][$itemid] = $itemid;
+                    $this->randomselectors[$randomselectorstring][$realstate->question] = $realstate->question;
                 }
             }
         }
@@ -148,10 +162,15 @@ class qstats{
         foreach (array_keys($this->subquestions) as $qid){
             $this->subquestions[$qid]->_stats = $subquestionstats[$qid];
             $this->subquestions[$qid]->_stats->questionid = $qid;
-            $this->subquestions[$qid]->maxgrade = $this->subquestions[$qid]->_stats->maxgrade;
-            $this->_initial_question_walker($this->subquestions[$qid]->_stats, $this->subquestions[$qid]->_stats->maxgrade);
+            $this->_initial_question_walker($this->subquestions[$qid]->_stats);
             if ($subquestionstats[$qid]->differentweights){
                 notify(get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $this->subquestions[$qid]->name));
+            }
+            if ($this->subquestions[$qid]->_stats->usedin){
+                sort($this->subquestions[$qid]->_stats->usedin, SORT_NUMERIC);
+                $this->subquestions[$qid]->_stats->positions = join($this->subquestions[$qid]->_stats->usedin, ',');
+            } else {
+                $this->subquestions[$qid]->_stats->positions = '';
             }
         }
         reset($this->questions);
@@ -159,7 +178,9 @@ class qstats{
             list($qid, $question) = each($this->questions);
             $nextquestion = current($this->questions);
             $this->questions[$qid]->_stats->questionid = $qid;
-            $this->_initial_question_walker($this->questions[$qid]->_stats, $this->questions[$qid]->maxgrade);
+            $this->questions[$qid]->_stats->positions = $this->questions[$qid]->number;
+            $this->questions[$qid]->_stats->maxgrade = $question->maxgrade;
+            $this->_initial_question_walker($this->questions[$qid]->_stats);
             if ($question->qtype == 'random'){
                 $randomselectorstring = $question->category.'/'.$question->questiontext;
                 if ($nextquestion){
@@ -177,8 +198,8 @@ class qstats{
         foreach ($this->states as $state){
             $this->_secondary_states_walker($state, $this->questions[$state->question]->_stats);
             if ($this->questions[$state->question]->qtype == 'random'){
-                if ($itemid = question_get_real_questionid($state)){
-                    $this->_secondary_states_walker($state, $this->subquestions[$itemid]->_stats);
+                if ($realstate = question_get_real_state($state)){
+                    $this->_secondary_states_walker($realstate, $this->subquestions[$realstate->question]->_stats);
                 }
             }
         }
@@ -192,8 +213,12 @@ class qstats{
             $this->_secondary_question_walker($this->subquestions[$qid]->_stats);
         }
         foreach (array_keys($this->questions) as $qid){
-            $this->questions[$qid]->_stats->effectiveweight = 100 * sqrt($this->questions[$qid]->_stats->covariancewithoverallgrade)
-                        /   $sumofcovariancewithoverallgrade;
+            if ($sumofcovariancewithoverallgrade){
+                $this->questions[$qid]->_stats->effectiveweight = 100 * sqrt($this->questions[$qid]->_stats->covariancewithoverallgrade)
+                            /   $sumofcovariancewithoverallgrade;
+            } else {
+                $this->questions[$qid]->_stats->effectiveweight = null;
+            }
         }
     }
     /**

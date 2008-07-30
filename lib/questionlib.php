@@ -2483,18 +2483,23 @@ function get_filesdir_from_context($context){
     return $courseid;
 }
 /**
- * Get the real question id for a random question.
+ * Get the real state - the correct question id and answer - for a random
+ * question.
  * @param object $state with property answer.
  * @return mixed return integer real question id or false if there was an
  * error..
  */
-function question_get_real_questionid($state){
+function question_get_real_state($state){
+    $realstate = clone($state);
     $matches = array();
-    if (!preg_match('|^random([0-9]+)-|', $state->answer, $matches)){
+    if (!preg_match('|^random([0-9]+)-(.+)|', $state->answer, $matches)){
         notify(get_string('errorrandom', 'quiz_statistics'));
         return false;
     } else {
-        return $matches[1];
+        $realstate->question = $matches[1];
+        $realstate->answer = $matches[2];
+        return $realstate;
     }
 }
+
 ?>
