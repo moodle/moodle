@@ -1371,8 +1371,6 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
                     $changed = true;
                 }
             }
-                
-
 
             $replaystate->id = $states[$j]->id;
             $replaystate->changed = true;
