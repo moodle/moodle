@@ -137,9 +137,12 @@ function createHTMLArea(id) {
 
     });
 
-    script = "document.getElementById("+id+").form."+editorsubmit+" = document.getElementById("+id+").form.onsubmit;";
-    script = script + "document.getElementById("+id+").form.onsubmit = function() { tinyMCE.triggerSave(); document.getElementById("+id+").form."+editorsubmit+"(); document.getElementById("+id+").form."+editorsubmit+" = null;}";
-    eval(script);
+document.getElementById('ed').form.editorsubmit_43 = document.getElementById('ed').form.onsubmit;
+document.getElementById('ed').form.onsubmit = function() { 
+    tinyMCE.triggerSave(); 
+    document.getElementById('ed').form.editorsubmit_43(); 
+    document.getElementById('ed').form.editorsubmit_43 = null;
+}
 
 }
 
@@ -183,14 +186,14 @@ echo <<<EOF
         theme_advanced_buttons2: "bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull",
         theme_advanced_buttons2_add: "|,selectall,cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl",
         theme_advanced_buttons3: "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,emoticons,image,media,dragmath,advhr,nonbreaking,charmap",
-        theme_advanced_buttons3_add: "|,code,fullscreen,|,table,insertlayer,styleprops",
+        theme_advanced_buttons3_add: "|,table,insertlayer,styleprops,|,code,fullscreen",
         theme_advanced_fonts: "Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings", 
         moodleimage_course_id: $courseid,
         theme_advanced_resize_horizontal: true,
         theme_advanced_resizing: true,
         theme_advanced_toolbar_location : "top",
         theme_advanced_statusbar_location : "bottom",
-        file_browser_callback : "moodlefilemanager",
+        file_browser_callback : "mce_moodlefilemanager",
 
 EOF;
 // the xhtml ruleset must be the last one - no comma at the end of the file
@@ -198,10 +201,10 @@ readfile('tinymce/xhtml_ruleset.txt');
 echo <<<EOF
     });
 
-    function toggleEditor(id) {
+    function mce_toggleEditor(id) {
         tinyMCE.execCommand('mceToggleEditor',false,id);
     }
-    function moodlefilemanager(field_name, url, type, win) {
+    function mce_moodlefilemanager(field_name, url, type, win) {
         tinyMCE.activeEditor.windowManager.open({
             file: "{$CFG->httpswwwroot}/lib/editor/tinymce/jscripts/tiny_mce/plugins/moodlelink/link.php?id={$courseid}",
             width: 480,  
@@ -214,6 +217,14 @@ echo <<<EOF
             input: field_name
         });
         return false;
+    }
+    function mce_saveOnSubmit(id) {
+        var prevOnSubmit = document.getElementById(id).form.onsubmit;
+        document.getElementById(id).form.onsubmit = function() { 
+            tinyMCE.triggerSave(); 
+            prevOnSubmit(); 
+            prevOnSubmit = null;
+        };
     }
 EOF;
 ?>
