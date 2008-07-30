@@ -123,10 +123,13 @@ class quiz_statistics_report extends quiz_default_report {
             $this->table->setup($quiz, $cm->id, $reporturl, $s);
         }
         
-        if (!$qid){
+        if (!$qid){//main page
             $this->output_quiz_stats_table($course, $cm, $quiz, $quizstats, $usingattemptsstring, $currentgroup, $groupstudents, $useallattempts, $download, $reporturl);
             $this->output_question_stats_table($s, $questions, $subquestions);
-        } else {
+            $imageurl = $CFG->wwwroot.'/mod/quiz/report/statistics/statistics_graph.php?id='.$quizstats->id;
+            print_heading(get_string('statisticsreportgraph', 'quiz_statistics'));
+            echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('statisticsreportgraph', 'quiz_statistics').'" /></div>';
+        } else {//individual question page
             $thisquestion = false;
             if (isset($questions[$qid])){
                 $thisquestion = $questions[$qid];
@@ -449,13 +452,13 @@ class quiz_statistics_report extends quiz_default_report {
             list($s, $usingattemptsstring, $quizstats, $qstats) = $this->quiz_stats($nostudentsingroup, $quiz->id, $currentgroup, $groupstudents, $questions, $useallattempts);
             $toinsert = (object)((array)$quizstats + $params);
             $toinsert->timemodified = time();
-            $quizstatisticsid = $DB->insert_record('quiz_statistics', $toinsert);
+            $quizstats->id = $DB->insert_record('quiz_statistics', $toinsert);
             foreach ($qstats->questions as $question){
-                $question->_stats->quizstatisticsid = $quizstatisticsid;
+                $question->_stats->quizstatisticsid = $quizstats->id;
                 $DB->insert_record('quiz_question_statistics', $question->_stats, false, true);
             }
             foreach ($qstats->subquestions as $subquestion){
-                $subquestion->_stats->quizstatisticsid = $quizstatisticsid;
+                $subquestion->_stats->quizstatisticsid = $quizstats->id;
                 $DB->insert_record('quiz_question_statistics', $subquestion->_stats, false, true);
             }
             if (isset($qstats)){

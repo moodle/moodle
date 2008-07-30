@@ -57,4 +57,5 @@ $string['position'] = 'Position';
 $string['questioninformation'] = 'Question information';
 $string['questionstatistics'] = 'Question statistics';
 $string['analysisofresponses'] = 'Analysis of responses';
+$string['statisticsreportgraph'] = 'Statistics for question positions';
 ?>
