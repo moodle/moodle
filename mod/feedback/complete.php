@@ -90,7 +90,11 @@
     }
         
     if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
-        require_login($course->id, true, $cm);
+        if($course->id == SITEID) {
+            require_login($course->id, true);
+        }else {
+            require_login($course->id, true, $cm);
+        }
     } else {
         if($course->id == SITEID) {
             require_course_login($course, true);
@@ -98,15 +102,6 @@
             require_course_login($course, true, $cm);
         }
     }
-    // if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
-        // require_login($course->id, true, $cm);
-        // if(isguestuser()) {
-            // error(get_string('guestsno'), $CFG->wwwroot);
-            // exit;
-        // }
-    // } else {
-        // require_course_login($course, true, $cm);
-    // }
     
     //check whether the given courseid exists
     if($courseid AND $courseid != SITEID) {

@@ -51,7 +51,11 @@
     }
     
     if($feedback->anonymous != FEEDBACK_ANONYMOUS_YES) {
-        require_login($course->id, true, $cm);
+        if($course->id == SITEID) {
+            require_login($course->id, true);
+        }else {
+            require_login($course->id, true, $cm);
+        }
     } else {
         if($course->id == SITEID) {
             require_course_login($course, true);
