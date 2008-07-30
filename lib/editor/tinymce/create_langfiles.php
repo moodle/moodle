@@ -71,7 +71,7 @@ function write_language_file($lang, $langdata) {
     fwrite($file, "/* this file was automatically imported from TinyMCE's translations */\n");
     foreach($langdata as $id => $line) {
         // the next two lines are there to make you enjoy how php deals with backslashes
-        $line = preg_replace_callback('/\\\\u([\dABCDEF]{4})/', 'unichr', $line); // we're matching something like \u00E9
+        $line = preg_replace_callback('/\\\\u([0-9A-F]{4})/', 'unichr', $line); // we're matching something like \u00E9
         // we're only escaping single quotes, but we gotta prevent escaping those that have already been escaped.
         fwrite($file, '$string[\''. $id ."']='". strtr($line, array('\\\'' => '\\\'', '\'' => '\\\'')) ."';\n"); 
     }
