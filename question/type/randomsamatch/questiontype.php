@@ -279,13 +279,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
      * calculate.
      */
     function get_random_guess_score($question) {
-        //Effectively $subquestions multi choice questions with equal weighting
-        //assuming a student has the intelligence to not select the same answer twice
-        //there is in each subquestion factorial($subquestions-1) chance of getting
-        //the answer right. There are factorial($subquestions) possible combinations of
-        //answers and it works out to an average grade of 1/$subquestions.
-        $subquestions = count($question->options->subquestions);
-        return 1/$subquestions;
+        return 1/$question->options->choose;
     }
 /// BACKUP FUNCTIONS ////////////////////////////
 
