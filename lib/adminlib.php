@@ -3514,7 +3514,7 @@ class admin_page_managemods extends admin_externalpage {
  * Enrolment manage page
  */
 class admin_enrolment_page extends admin_externalpage {
-    public function admin_enrolment_page() { 
+    function admin_enrolment_page() { 
         global $CFG;
         parent::admin_externalpage('enrolment', get_string('enrolments'), $CFG->wwwroot . '/'.$CFG->admin.'/enrol.php');
     }
