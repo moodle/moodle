@@ -328,7 +328,13 @@
 
             echo "                <iframe id=\"scoframe1\" class=\"scoframe\" name=\"scoframe1\" src=\"{$fullurl}\"></iframe>\n";   
         } else {
-?>
+            // Clean the name for the window as IE is fussy
+            $name = ereg_replace("[^A-Za-z0-9]", "", $scorm->name);
+            if (!$name) {
+                $name = 'DefaultPlayerWindow';
+            }
+            $name = 'scorm_'.$name;
+            ?>
                     <script type="text/javascript">
                     //<![CDATA[
                     scorm_resize();
@@ -353,7 +359,7 @@
                         url = "loadSCO.php?id=<?php echo $cm->id.$scoidpop ?>";
                         width = <?php p($scorm->width) ?>;
                         height = <?php p($scorm->height) ?>;
-                        var main = openpopup(url, "<?php p($scorm->name) ?>", "<?php p($scorm->options) ?>", width, height);
+                        var main = openpopup(url, "<?php p($name) ?>", "<?php p($scorm->options) ?>", width, height);
                     //]]>
                     </script>
                     <noscript>
