@@ -36,6 +36,16 @@ function feedback_install() {
     return true; 
 }
 
+/**
+ * @param string $feature FEATURE_xx constant for requested feature
+ * @return mixed True if module supports feature, null if doesn't know
+ */
+function feedback_supports($feature) {
+    switch($feature) {
+        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
+        default: return null;
+    }
+}
 
 /**
 * this will create a new instance and return the id number

@@ -303,6 +303,11 @@
                     echo '</p>';
                 }
             }
+            
+            // Mark activity viewed for completion-tracking
+            $completion=new completion_info($course);
+            $completion->set_module_viewed($cm);
+
             if($feedback->site_after_submit) {
                 print_continue(feedback_encode_target_url($feedback->site_after_submit));
             }else {
