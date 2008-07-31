@@ -42,8 +42,10 @@ class htmlEditor {
         switch ($editor) {
 
             case 'tinymce':
+                $editorlanguage = substr(current_language(), 0, 2);
+                $direction = get_string('thisdirection');
                 $configuration[] = $CFG->httpswwwroot ."/lib/editor/tinymce/jscripts/tiny_mce/tiny_mce.js";
-                $configuration[] = $CFG->httpswwwroot ."/lib/editor/tinymce.js.php?course=". $courseid;
+                $configuration[] = $CFG->httpswwwroot ."/lib/editor/tinymce.js.php?course=$courseid&amp;editorlanguage=$editorlanguage&amp;direction=$direction";
                 $configured['tinymce'] = true;
                 break;
 

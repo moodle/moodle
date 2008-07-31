@@ -1,10 +1,12 @@
 <?php
 
+define('NO_MOODLE_COOKIES', true);
+
 require_once('../../config.php');
 
 $courseid = optional_param('course', 0, PARAM_INT);
-$editorlanguage = substr(current_language(), 0, 2);
-$directionality = get_string('thisdirection');
+$editorlanguage = optional_param('editorlanguage', 'en', PARAM_ALPHA);
+$directionality = optional_param('direction', get_string('thisdirection'), PARAM_ALPHA);
 
 /*
  * This section configures the TinyMCE toolbar buttons on and off
