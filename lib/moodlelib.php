@@ -5208,8 +5208,37 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     if ($module == '') {
         $module = 'moodle';
     }
+    
+/// If the "module" is actually a pathname, then automatically derive the proper module name
+    if (strpos($module, '/') !== false) {
+        $modulepath = split('/', $module);
 
-    // if $a happens to have % in it, double it so sprintf() doesn't break
+        switch ($modulepath[0]) {
+
+            case 'mod':
+                $module = $modulepath[1];
+            break;
+    
+            case 'blocks':
+            case 'block':
+                $module = 'block_'.$modulepath[1];
+            break;
+    
+            case 'enrol':
+                $module = 'enrol_'.$modulepath[1];
+            break;
+    
+            case 'format':
+                $module = 'format_'.$modulepath[1];
+            break;
+    
+            case 'grade':
+                $module = 'grade'.$modulepath[1].'_'.$modulepath[2];
+            break; 
+        }
+    }
+
+/// if $a happens to have % in it, double it so sprintf() doesn't break
     if ($a) {
         $a = clean_getstring_data( $a );
     }
