@@ -205,18 +205,7 @@ echo <<<EOF
         tinyMCE.execCommand('mceToggleEditor',false,id);
     }
     function mce_moodlefilemanager(field_name, url, type, win) {
-        tinyMCE.activeEditor.windowManager.open({
-            file: "{$CFG->httpswwwroot}/lib/editor/tinymce/jscripts/tiny_mce/plugins/moodlelink/link.php?id={$courseid}",
-            width: 480,  
-            height: 380,
-            resizable: "yes",
-            inline: "yes",  
-            close_previous: "no"
-        }, {
-            window: win,
-            input: field_name
-        });
-        return false;
+         openpicker();
     }
     function mce_saveOnSubmit(id) {
         var prevOnSubmit = document.getElementById(id).form.onsubmit;

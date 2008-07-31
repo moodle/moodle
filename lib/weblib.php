@@ -43,6 +43,8 @@ require_once("$CFG->libdir/filterlib.php");
 
 require_once("$CFG->libdir/ajax/ajaxlib.php");
 
+require_once("$CFG->dirroot/repository/lib.php");
+
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
@@ -4871,6 +4873,8 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     if ($usehtmleditor) {
         $str_toggle = '<span class="helplink"><a href="javascript:mce_toggleEditor(\''. $id .'\');"><img width="50" height="17" src="'. $CFG->httpswwwroot .'/lib/editor/tinymce/images/toggle.gif" alt="'. get_string('editortoggle') .'" title="'. get_string('editortoggle') .'" class="icontoggle" /></a></span>';
         // Show shortcuts button if HTML editor is in use, but only if JavaScript is enabled (MDL-9556)
+        $ret = get_repository_client();
+        $str .= $ret['html'].$ret['js'];
         $str .= '<div class="textareaicons">';
         $str .= '<script type="text/javascript">
 //<![CDATA[

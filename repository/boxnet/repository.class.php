@@ -61,6 +61,9 @@ class repository_boxnet extends repository{
         if ($entry = $DB->get_record('repository', array('id'=>$this->repositoryid))) {
             $ret->username = $entry->username;
             $ret->password = $entry->password;
+        } else {
+            $ret->username = '';
+            $ret->password = '';
         }
         return $ret;
     }
@@ -126,9 +129,28 @@ class repository_boxnet extends repository{
                 $str .= '<input type="password" value="'.$ret->password.'" id="box_password" name="password" /><br/>';
                 $str .= '<input type="button" onclick="repository_client.login()" value="Go" />';
                 $str .= '</form>';
-                if($this->options['ajax']){
+                if ($this->options['ajax']) {
+                    $e1->type = 'hidden';
+                    $e1->name = 'ticket';
+                    $e1->value = $t['ticket'];
+
+                    $e2->type = 'hidden';
+                    $e2->name = 'id';
+                    $e2->value = $this->repositoryid;
+
+                    $e3->label = get_string('username', 'repository_boxnet');
+                    $e3->id    = 'box_username';
+                    $e3->type  = 'text';
+                    $e3->name  = 'username';
+                    $e3->value = $ret->username;
+                    
+                    $e4->label = get_string('password', 'repository_boxnet');
+                    $e4->id    = 'box_password';
+                    $e4->type  = 'password';
+                    $e4->name  = 'password';
+
                     $ret = array();
-                    $ret['l'] = $str;
+                    $ret['l'] = array($e1, $e2, $e3, $e4);
                     return $ret;
                 } else {
                     echo $str;
