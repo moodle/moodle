@@ -178,7 +178,7 @@ echo <<<EOF
         entity_encoding: "raw",
         language: "$editorlanguage",
         directionality: "$directionality",
-        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodleimage,moodlelink,moodlenolink,dragmath,nonbreaking,contextmenu",
+        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodlelink,moodlenolink,dragmath,nonbreaking,contextmenu",
         theme_advanced_layout_manager: "SimpleLayout",
         theme_advanced_toolbar_align : "left",
         theme_advanced_buttons1: "fontselect,fontsizeselect,formatselect,styleselect",
