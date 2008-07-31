@@ -14,6 +14,8 @@
     require("../../../config.php");
     require_once($CFG->libdir.'/filelib.php');
 
+error('Not reimplemented yet, sorry');
+
     $id      = required_param('id', PARAM_INT);
     $file    = optional_param('file', '', PARAM_PATH);
     $wdir    = optional_param('wdir', '', PARAM_PATH);

@@ -1780,7 +1780,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="portfolio_log" COMMENT="log of portfolio transfers (used to later check for duplicates)" PREVIOUS="message_working">
+    <TABLE NAME="portfolio_log" COMMENT="log of portfolio transfers (used to later check for duplicates)" PREVIOUS="message_working" NEXT="files">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="user who exported content" PREVIOUS="id" NEXT="time"/>
@@ -1795,6 +1795,46 @@
         <KEY NAME="userfk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="fk to user table" PREVIOUS="primary" NEXT="portfoliofk"/>
         <KEY NAME="portfoliofk" TYPE="foreign" FIELDS="portfolio" REFTABLE="portfolio_instance" REFFIELDS="id" COMMENT="fk to portfolio_instance" PREVIOUS="userfk"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="files" COMMENT="description of files, content stored in sha1 file pool" PREVIOUS="portfolio_log" NEXT="files_cleanup">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="contenthash"/>
+        <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="sha1 hash of file content" PREVIOUS="id" NEXT="pathnamehash"/>
+        <FIELD NAME="pathnamehash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="complete file path sha1 hash - unique for each file" PREVIOUS="contenthash" NEXT="contextid"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="The context id defined in context table - identifies the instance of plugin owning the file" PREVIOUS="pathnamehash" NEXT="filearea"/>
+        <FIELD NAME="filearea" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Like &quot;coursefiles&quot;. &quot;submission&quot;, &quot;intro&quot; and &quot;content&quot; (images and swf linked from summaries), etc." PREVIOUS="contextid" NEXT="itemid"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Optional - some plugin specific item id (eg. forum post, blog entry or assignment submission, user id for user files)" PREVIOUS="filearea" NEXT="filepath"/>
+        <FIELD NAME="filepath" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Optional - relative path to file from module content root, useful in Scorm and Resource mod - most of the mods do not need this" PREVIOUS="itemid" NEXT="filename"/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The full Unicode name of this file (case sensitive) - some chars are not allowed though" PREVIOUS="filepath" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Optional - general userid field - meaning depending on plugin" PREVIOUS="filename" NEXT="filesize"/>
+        <FIELD NAME="filesize" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="userid" NEXT="mimetype"/>
+        <FIELD NAME="mimetype" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="type of file - jpeg image, open document spreadsheet" PREVIOUS="filesize" NEXT="status"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="number greater than 0 means something is wrong with this file (virus, missing, etc.)" PREVIOUS="mimetype" NEXT="timecreated"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="status" NEXT="timemodified"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="timecreated"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="contextid"/>
+        <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id" PREVIOUS="primary" NEXT="userid"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" PREVIOUS="contextid"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="filearea-contextid-itemid" UNIQUE="false" FIELDS="filearea, contextid, itemid" NEXT="contenthash"/>
+        <INDEX NAME="contenthash" UNIQUE="false" FIELDS="contenthash" PREVIOUS="filearea-contextid-itemid" NEXT="pathnamehash"/>
+        <INDEX NAME="pathnamehash" UNIQUE="true" FIELDS="pathnamehash" PREVIOUS="contenthash"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="files_cleanup" COMMENT="File pool cleanup candidates" PREVIOUS="files">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="contenthash"/>
+        <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="contenthash" UNIQUE="true" FIELDS="contenthash"/>
+      </INDEXES>
     </TABLE>
   </TABLES>
   <STATEMENTS>

@@ -9,7 +9,6 @@ class user_edit_form extends moodleform {
         global $CFG, $COURSE;
 
         $mform =& $this->_form;
-        $this->set_upload_manager(new upload_manager('imagefile', false, false, null, false, 0, true, true, false));
         //Accessibility: "Required" is bad legend text.
         $strgeneral  = get_string('general');
         $strrequired = get_string('required');

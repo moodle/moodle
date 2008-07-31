@@ -6,6 +6,7 @@
  */
 
 require_once($CFG->libdir.'/eventslib.php');
+require_once($CFG->libdir.'/formslib.php');
 
 DEFINE ('ASSIGNMENT_COUNT_WORDS', 1);
 DEFINE ('ASSIGNMENT_COUNT_LETTERS', 2);
@@ -1600,6 +1601,11 @@ class assignment_base {
         }
     }
 
+    function send_file($filearea, $args) {
+        debugging('plugin does not implement file sending', DEBUG_DEVELOPER);
+        return false;
+    }
+
     /**
      * Returns a list of teachers that should be grading given submission
      */
@@ -1692,34 +1698,34 @@ class assignment_base {
             $userid = $USER->id;
         }
 
-        $filearea = $this->file_area_name($userid);
-
         $output = '';
 
-        if ($basedir = $this->file_area($userid)) {
-            if ($files = get_directory_list($basedir)) {
-                require_once($CFG->libdir.'/filelib.php');
-                $p = array(
-                    'userid' => $userid,
-                    'assignmentid' => $this->cm->id,
-                );
-                foreach ($files as $key => $file) {
+        $fs = get_file_storage();
+        $browser = get_file_browser();
 
-                    $icon = mimeinfo('icon', $file);
-                    $ffurl = get_file_url("$filearea/$file", array('forcedownload'=>1));
+        $found = false;
 
-                    $output .= '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
-                            '<a href="'.$ffurl.'" >'.$file.'</a>';
-                    if ($this->portfolio_exportable() && true) { // @todo replace with capability check
-                        $p['file'] = $file;
-                        $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, false, true);
-                    }
-                    $output .= '<br />';
+        if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
+            $p = array(
+                'userid' => $userid,
+                'assignmentid' => $this->cm->id,
+            );
+            foreach ($files as $file) {
+                $filename = $file->get_filename();
+                $found = true;
+                $mimetype = $file->get_mimetype();
+                $icon = mimeinfo_from_type('icon', $mimetype);
+                $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
+                $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
+                if ($this->portfolio_exportable() && true) { // @todo replace with capability check
+                    $p['file'] = $file;
+                    $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, false, true);
                 }
-                if ($this->portfolio_exportable() && true) { //@todo replace with check capability
-                    unset($p['file']);// for all files
-                    $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, null, true, true);
-                }
+                $output .= '<br />';
+            }
+            if ($this->portfolio_exportable() && true) { //@todo replace with check capability
+                unset($p['file']);// for all files
+                $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, null, true, true);
             }
         }
 
@@ -1738,38 +1744,9 @@ class assignment_base {
      * @return int
      */
     function count_user_files($userid) {
-        global $CFG;
-
-        $filearea = $this->file_area_name($userid);
-
-        if ( is_dir($CFG->dataroot.'/'.$filearea) && $basedir = $this->file_area($userid)) {
-            if ($files = get_directory_list($basedir)) {
-                return count($files);
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Creates a directory file name, suitable for make_upload_directory()
-     *
-     * @param $userid int The user id
-     * @return string path to file area
-     */
-    function file_area_name($userid) {
-        global $CFG;
-
-        return $this->course->id.'/'.$CFG->moddata.'/assignment/'.$this->assignment->id.'/'.$userid;
-    }
-
-    /**
-     * Makes an upload directory
-     *
-     * @param $userid int The user id
-     * @return string path to file area.
-     */
-    function file_area($userid) {
-        return make_upload_directory( $this->file_area_name($userid) );
+        $fs = get_file_storage();
+        $files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "id", false);
+        return count($files);
     }
 
     /**
@@ -1829,12 +1806,14 @@ class assignment_base {
      */
     function user_complete($user) {
         if ($submission = $this->get_submission($user->id)) {
-            if ($basedir = $this->file_area($user->id)) {
-                if ($files = get_directory_list($basedir)) {
-                    $countfiles = count($files)." ".get_string("uploadedfiles", "assignment");
-                    foreach ($files as $file) {
-                        $countfiles .= "; $file";
-                    }
+
+            $fs = get_file_storage();
+            $browser = get_file_browser();
+    
+            if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $user->id, "timemodified", false)) {
+                $countfiles = count($files)." ".get_string("uploadedfiles", "assignment");
+                foreach ($files as $file) {
+                    $countfiles .= "; ".$file->get_filename();
                 }
             }
 
@@ -1962,6 +1941,27 @@ class assignment_base {
     }
 } ////// End of the assignment_base class
 
+class mod_assignment_upload_file_form extends moodleform {
+    function definition() {
+        $mform = $this->_form;
+        $instance = $this->_customdata;
+
+        //TODO: improve upload size checking
+        $mform->setMaxFileSize($instance->assignment->maxbytes);
+
+        // visible elements
+        $mform->addElement('file', 'newfile', get_string('uploadafile'));
+
+        // hidden params
+        $mform->addElement('hidden', 'id', $instance->cm->id);
+        $mform->setType('id', PARAM_INT);
+        $mform->addElement('hidden', 'action', 'uploadfile');
+        $mform->setType('action', PARAM_ALPHA);
+
+        // buttons
+        $this->add_action_buttons(false, get_string('uploadthisfile'));
+    }
+}
 
 
 /// OTHER STANDARD FUNCTIONS ////////////////////////////////////////////////////////
@@ -2347,6 +2347,22 @@ function assignment_get_participants($assignmentid) {
     return ($students);
 }
 
+function assignment_pluginfile($course, $cminfo, $context, $filearea, $args) {
+    global $CFG, $DB;
+
+    if (!$assignment = $DB->get_record('assignment', array('id'=>$cminfo->instance))) {
+        return false;
+    }
+    if (!$cm = get_coursemodule_from_instance('assignment', $assignment->id, $course->id)) {
+        return false;
+    }
+
+    require_once($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
+    $assignmentclass = 'assignment_'.$assignment->assignmenttype;
+    $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
+
+    return $assignmentinstance->send_file($filearea, $args);
+}
 /**
  * Checks if a scale is being used by an assignment
  *
@@ -3143,6 +3159,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if (is_callable(array($this->assignment, 'portfolio_prepare_package'))) {
             return $this->assignment->portfolio_prepare_package($tempdir);
         }
+error('TODO: covert');
         // default...
         $filearea = $CFG->dataroot . '/' . $this->assignment->file_area_name($this->userid);
         //@todo  penny this is a dreadful thing to have to call (replace with files api anyway)
@@ -3158,6 +3175,8 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if (is_callable(array($this->assignment, 'portfolio_get_sha1'))) {
             return $this->assignment->portfolio_get_sha1();
         }
+
+error('TODO: covert');
         // default ...
         $filearea = $CFG->dataroot . '/' . $this->assignment->file_area_name($this->userid);
         if ($this->file) {

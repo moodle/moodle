@@ -33,15 +33,17 @@ function useredit_update_user_preference($usernew) {
     }
 }
 
-function useredit_update_picture(&$usernew, &$userform) {
+function useredit_update_picture(&$usernew, $userform) {
     global $CFG, $DB;
 
     if (isset($usernew->deletepicture) and $usernew->deletepicture) {
         $location = make_user_directory($usernew->id, true);
         @remove_dir($location);
         $DB->set_field('user', 'picture', 0, array('id'=>$usernew->id));
-    } else if ($usernew->picture = save_profile_image($usernew->id, $userform->get_um(), 'user')) {
-        $DB->set_field('user', 'picture', 1, array('id'=>$usernew->id));
+
+    } else if ($userform->get_new_filename('imagefile')) {
+        $usernew->picture = (int)save_profile_image($usernew->id, $userform, 'user', 'imagefile');
+        $DB->set_field('user', 'picture', $usernew->picture, array('id'=>$usernew->id));
     }
 }
 

@@ -4471,6 +4471,45 @@ function email_welcome_message_to_user($course, $user=NULL) {
 
 /// FILE HANDLING  /////////////////////////////////////////////
 
+/**
+ * Returns local file storage instance
+ * @return object file_storage
+ */
+function get_file_storage() {
+    global $CFG;
+
+    static $fs = null;
+
+    if ($fs) {
+        return $fs;
+    }
+
+    require_once("$CFG->libdir/filelib.php");
+
+    $fs = new file_storage();
+
+    return $fs;
+}
+
+/**
+ * Returns local file storage instance
+ * @return object file_storage
+ */
+function get_file_browser() {
+    global $CFG;
+
+    static $fb = null;
+
+    if ($fb) {
+        return $fb;
+    }
+
+    require_once("$CFG->libdir/filelib.php");
+
+    $fb = new file_browser();
+
+    return $fb;
+}
 
 /**
  * Makes an upload directory for a particular module.
@@ -7776,35 +7815,11 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
 
     $status = true;
 
-    if(!is_dir($dir)) {
+    if (!is_dir($dir)) {
         if (!$create) {
             $status = false;
         } else {
-            umask(0000);
-            if ($recursive) {
-            /// PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
-                $dir = str_replace('\\', '/', $dir); //windows compatibility
-            /// We are going to make it recursive under $CFG->dataroot only
-            /// (will help sites running open_basedir security and others)
-                $dir = str_replace($CFG->dataroot . '/', '', $dir);
-                $dirs = explode('/', $dir); /// Extract path parts
-            /// Iterate over each part with start point $CFG->dataroot
-                $dir = $CFG->dataroot . '/';
-                foreach ($dirs as $part) {
-                    if ($part == '') {
-                        continue;
-                    }
-                    $dir .= $part.'/';
-                    if (!is_dir($dir)) {
-                        if (!mkdir($dir, $CFG->directorypermissions)) {
-                            $status = false;
-                            break;
-                        }
-                    }
-                }
-            } else {
-                $status = mkdir($dir, $CFG->directorypermissions);
-            }
+            $status = mkdir($dir, $CFG->directorypermissions, $recursive);
         }
     }
     return $status;

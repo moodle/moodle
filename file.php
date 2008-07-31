@@ -13,7 +13,7 @@
 
       //TODO: Blog attachments do not have access control implemented - anybody can read them!
       //      It might be better to move the code to separate file because the access
-      //      control is quite complex - see bolg/index.php 
+      //      control is quite complex - see bolg/index.php
 
     require_once('config.php');
     require_once('lib/filelib.php');
@@ -29,7 +29,7 @@
 
     $relativepath = get_file_argument('file.php');
     $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
-    
+
     // relative path must start with '/', because of backup/restore!!!
     if (!$relativepath) {
         print_error('invalidargorconf');
@@ -37,38 +37,24 @@
         print_error('pathdoesnotstartslash');
     }
 
-    $pathname = $CFG->dataroot.$relativepath;
-
     // extract relative path components
-    $args = explode('/', trim($relativepath, '/'));
+    $args = explode('/', ltrim($relativepath, '/'));
+
     if (count($args) == 0) { // always at least courseid, may search for index.html in course root
         print_error('invalidarguments');
     }
-  
+
+    $courseid = (int)array_shift($args);
+    $relativepath = '/'.implode('/', $args);
+
     // security: limit access to existing course subdirectories
-    if (($args[0]!='blog') and (!$course = $DB->get_record_sql("SELECT * FROM {course} WHERE id=?", array((int)$args[0])))) {
+    if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
         print_error('invalidcourseid');
     }
 
-    // security: prevent access to "000" or "1 something" directories
-    // hack for blogs, needs proper security check too
-    if (($args[0] != 'blog') and ($args[0] != $course->id)) {
-        print_error('invalidcourseid');
-    }
-
-    // security: login to course if necessary
-    // Note: file.php always calls require_login() with $setwantsurltome=false
-    //       in order to avoid messing redirects. MDL-14495
-    if ($args[0] == 'blog') {
-        if (empty($CFG->bloglevel)) {
-            print_error('blogdisable', 'blog');
-        } else if ($CFG->bloglevel < BLOG_GLOBAL_LEVEL) {
-            require_login(0, true, null, false);
-        } else if ($CFG->forcelogin) {
-            require_login(0, true, null, false);
-        }
-    } else if ($course->id != SITEID) {
+    if ($course->id != SITEID) {
         require_login($course->id, true, null, false);
+
     } else if ($CFG->forcelogin) {
         if (!empty($CFG->sitepolicy)
             and ($CFG->sitepolicy == $CFG->wwwroot.'/file.php'.$relativepath
@@ -79,109 +65,40 @@
         }
     }
 
-    // security: only editing teachers can access backups
-    if ((count($args) >= 2) and (strtolower($args[1]) == 'backupdata')) {
-        if (!has_capability('moodle/site:backup', get_context_instance(CONTEXT_COURSE, $course->id))) {
-            print_error('nopermissions');
-        } else {
-            $lifetime = 0; //disable browser caching for backups 
+    $context = get_context_instance(CONTEXT_COURSE, $course->id);
+
+    $fs = get_file_storage();
+
+    $fullpath = $context->id.'course_content0'.$relativepath;
+
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath))) {
+        if (strrpos($fullpath, '/') !== strlen($fullpath) -1 ) {
+            $fullpath .= '/';
+        }
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath.'/.'))) {
+            not_found();
         }
     }
-
-    if (is_dir($pathname)) {
-        if (file_exists($pathname.'/index.html')) {
-            $pathname = rtrim($pathname, '/').'/index.html';
-            $args[] = 'index.html';
-        } else if (file_exists($pathname.'/index.htm')) {
-            $pathname = rtrim($pathname, '/').'/index.htm';
-            $args[] = 'index.htm';
-        } else if (file_exists($pathname.'/Default.htm')) {
-            $pathname = rtrim($pathname, '/').'/Default.htm';
-            $args[] = 'Default.htm';
-        } else {
-            // security: do not return directory node!
-            not_found($course->id);
-        }
-    }
-
-    // security: teachers can view all assignments, students only their own
-    if ((count($args) >= 3)
-        and (strtolower($args[1]) == 'moddata')
-        and (strtolower($args[2]) == 'assignment')) {
-
-        $lifetime = 0;  // do not cache assignments, students may reupload them
-        if ($args[4] == $USER->id) {
-            //can view own assignemnt submissions
-        } else {
-            $instance = (int)$args[3];
-            if (!$cm = get_coursemodule_from_instance('assignment', $instance, $course->id)) {
-                not_found($course->id);
+    // do not serve dirs
+    if ($file->get_filename() == '.') {
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath.'index.html'))) {
+            if (!$file = $fs->get_file_by_hash(sha1($fullpath.'index.htm'))) {
+                if (!$file = $fs->get_file_by_hash(sha1($fullpath.'Default.htm'))) {
+                    not_found();
+                }
             }
-            if (!has_capability('mod/assignment:grade', get_context_instance(CONTEXT_MODULE, $cm->id))) {
-                print_error('nopermissions');
-            }
-        } 
-    }
-
-    // security: force download of all attachments submitted by students
-    if ((count($args) >= 3)
-        and (strtolower($args[1]) == 'moddata')
-        and ((strtolower($args[2]) == 'forum')
-            or (strtolower($args[2]) == 'assignment')
-            or (strtolower($args[2]) == 'data')
-            or (strtolower($args[2]) == 'glossary')
-            or (strtolower($args[2]) == 'wiki')
-            or (strtolower($args[2]) == 'exercise')
-            or (strtolower($args[2]) == 'workshop')
-            )) {
-        $forcedownload  = 1; // force download of all attachments
-    }
-    if ($args[0] == 'blog') {
-        $forcedownload  = 1; // force download of all attachments
-    }    
-
-    // security: some protection of hidden resource files
-    // warning: it may break backwards compatibility
-    if ((!empty($CFG->preventaccesstohiddenfiles)) 
-        and (count($args) >= 2)
-        and (!(strtolower($args[1]) == 'moddata' and strtolower($args[2]) != 'resource')) // do not block files from other modules!
-        and (!has_capability('moodle/course:viewhiddenactivities', get_context_instance(CONTEXT_COURSE, $course->id)))) {
-
-        $rargs = $args;
-        array_shift($rargs);
-        $reference = implode('/', $rargs);
-
-        $sql = "SELECT COUNT(r.id)
-                  FROM {resource} r, {course_modules} cm, {modules} m
-                 WHERE r.course        = ?
-                       AND m.name      = 'resource'
-                       AND cm.module   = m.id
-                       AND cm.instance = r.id
-                       AND cm.visible  = 0
-                       AND r.type      = 'file'
-                       AND r.reference = ?";
-        $params = array($course->id, $reference);
-
-        if ($DB->count_records_sql($sql, $params)) {
-           print_error('nopermissions');
         }
-    }
-
-    // check that file exists
-    if (!file_exists($pathname)) {
-        not_found($course->id);
     }
 
     // ========================================
     // finally send the file
     // ========================================
     session_write_close(); // unlock session during fileserving
-    $filename = $args[count($args)-1];
-    send_file($pathname, $filename, $lifetime, $CFG->filteruploadedfiles, false, $forcedownload);
+    send_stored_file($file, $lifetime, $CFG->filteruploadedfiles, $forcedownload);
 
-    function not_found($courseid) {
-        global $CFG;
+    function not_found() {
+        global $CFG, $COURSE;
         header('HTTP/1.0 404 not found');
-        print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$courseid); //this is not displayed on IIS??
+        print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$COURSE->id); //this is not displayed on IIS??
     }
-?>
+

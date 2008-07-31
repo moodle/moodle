@@ -168,6 +168,34 @@ $moodle_capabilities = array(
         )
     ),
 
+    'moodle/site:backupdownload' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/site:backup'
+    ),
+
+    'moodle/site:backupupload' => array(
+
+        'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'editingteacher' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' =>  'moodle/site:restore'
+    ),
+
     'moodle/site:restore' => array(
 
         'riskbitmask' => RISK_SPAM | RISK_PERSONAL | RISK_XSS,

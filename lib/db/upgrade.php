@@ -264,12 +264,25 @@ function xmldb_main_upgrade($oldversion=0) {
     }
     
     if ($result && $oldversion < 2008072400) {
-        /// Create the database tables for message_processors 
+        /// Create the database tables for message_processors and message_providers
+        $table = new xmldb_table('message_providers');
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('modulename', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('modulefile', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+
         $table = new xmldb_table('message_processors');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
+
+
+        $provider = new object();
+        $provider->modulename  = 'moodle';
+        $provider->modulefile  = 'index.php';
+        $DB->insert_record('message_providers', $provider);
 
     /// delete old and create new fields
         $table = new xmldb_table('message');
@@ -465,12 +478,78 @@ function xmldb_main_upgrade($oldversion=0) {
 
         upgrade_main_savepoint($result, 2008073104);
     }
- 
-/*
- * TODO:
- *   drop adodb_logsql table and create a new general sql log table
- *
- */
+
+    if ($result && $oldversion < 2008073111) {
+    /// Define table files to be created
+        $table = new xmldb_table('files');
+
+    /// Adding fields to table files
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('contenthash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('pathnamehash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('filearea', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('filepath', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('filename', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->add_field('filesize', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('mimetype', XMLDB_TYPE_CHAR, '100', null, null, null, null, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table files
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $table->add_key('contextid', XMLDB_KEY_FOREIGN, array('contextid'), 'context', array('id'));
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Adding indexes to table files
+        $table->add_index('filearea-contextid-itemid', XMLDB_INDEX_NOTUNIQUE, array('filearea', 'contextid', 'itemid'));
+        $table->add_index('contenthash', XMLDB_INDEX_NOTUNIQUE, array('contenthash'));
+        $table->add_index('pathnamehash', XMLDB_INDEX_UNIQUE, array('pathnamehash'));
+
+    /// Conditionally launch create table for files
+        $dbman->create_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008073111);
+    }
+
+    if ($result && $oldversion < 2008073112) {
+    /// Define table files_cleanup to be created
+        $table = new xmldb_table('files_cleanup');
+
+    /// Adding fields to table files_cleanup
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('contenthash', XMLDB_TYPE_CHAR, '40', null, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table files_cleanup
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table files_cleanup
+        $table->add_index('contenthash', XMLDB_INDEX_UNIQUE, array('contenthash'));
+
+    /// Conditionally launch create table for files_cleanup
+        $dbman->create_table($table);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008073112);
+    }
+
+    if ($result && $oldversion < 2008073113) {
+    /// move all course, backup and other files to new filepool based storage
+        upgrade_migrate_files_courses();
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008073113);
+    }
+
+    if ($result && $oldversion < 2008073114) {
+    /// move all course, backup and other files to new filepool based storage
+        upgrade_migrate_files_blog();
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008073114);
+    }
 
     return $result;
 }

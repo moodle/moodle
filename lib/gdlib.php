@@ -128,26 +128,25 @@ function create_profile_image_destination($id, $dir='user') {
  * it and saves it in the right place to be a "user" or "group" image.
  *
  * @param int $id user or group id
- * @param object $uploadmanager object referencing the image
+ * @param object $userform with imagefile upload field
  * @param string $dir type of entity - groups, user, ...
  * @return boolean success
  */
-function save_profile_image($id, $uploadmanager, $dir='user') {
-
-    if (!$uploadmanager) {
-        return false;
-    }
+function save_profile_image($id, $userform, $dir='user') {
 
     $destination = create_profile_image_destination($id, $dir);
     if ($destination === false) {
         return false;
     }
 
-    if (!$uploadmanager->save_files($destination)) {
+    $filename = $userform->get_new_filename('imagefile');
+    $pathname = $destination.'/'.$filename;
+
+    if (!$userform->save_file('imagefile', $pathname, true)) {
         return false;
     }
 
-    return process_profile_image($uploadmanager->get_new_filepath(), $destination);
+    return process_profile_image($pathname, $destination);
 }
 
 /**

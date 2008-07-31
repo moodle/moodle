@@ -90,7 +90,7 @@ function groups_remove_member($groupid, $userid) {
  * @param object $um upload manager with group picture
  * @return id of group or false if error
  */
-function groups_create_group($data, $um=false) {
+function groups_create_group($data, $editform=false) {
     global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
 
@@ -101,9 +101,9 @@ function groups_create_group($data, $um=false) {
 
     if ($id) {
         $data->id = $id;
-        if ($um) {
+        if ($editform) {
             //update image
-            if (save_profile_image($id, $um, 'groups')) {
+            if (save_profile_image($id, $editform, 'groups')) {
                 $DB->set_field('groups', 'picture', 1, array('id'=>$id));
             }
             $data->picture = 1;
@@ -144,7 +144,7 @@ function groups_create_grouping($data) {
  * @param object $um upload manager with group picture
  * @return boolean success
  */
-function groups_update_group($data, $um=false) {
+function groups_update_group($data, $editform=false) {
     global $CFG, $DB;
     require_once("$CFG->libdir/gdlib.php");
 
@@ -153,9 +153,9 @@ function groups_update_group($data, $um=false) {
     $result = $DB->update_record('groups', $data);
 
     if ($result) {
-        if ($um) {
+        if ($editform) {
             //update image
-            if (save_profile_image($data->id, $um, 'groups')) {
+            if (save_profile_image($data->id, $editform, 'groups')) {
             $DB->set_field('groups', 'picture', 1, array('id'=>$data->id));
                 $data->picture = 1;
             }

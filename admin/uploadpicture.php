@@ -79,14 +79,14 @@ if ($formdata = $mform->get_data()) {
         
         // Create a unique temporary directory, to process the zip file
         // contents.
-        $zipdir = my_mktempdir($CFG->dataroot.'/temp/', 'usrpic');
+        $zipodir = my_mktempdir($CFG->dataroot.'/temp/', 'usrpic');
+        $dstfile = $zipodir.'/images.zip';
         
-        if (!$mform->save_files($zipdir)) {
+        if (!$mform->save_file('userfile', $dstfile, true)) {
             notify(get_string('uploadpicture_cannotmovezip','admin'));
             @remove_dir($zipdir);
         } else {
-            $dstfile = $zipdir.'/'.$mform->get_new_filename();
-            if(!unzip_file($dstfile, $zipdir, false)) {
+            if (!unzip_file($dstfile, $zipdir, false)) {
                 notify(get_string('uploadpicture_cannotunzip','admin'));
                 @remove_dir($zipdir);
             } else {

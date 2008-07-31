@@ -2,10 +2,14 @@
 
 define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
 
+require_once("$CFG->libdir/file/file_exceptions.php");
+require_once("$CFG->libdir/file/file_storage.php");
+require_once("$CFG->libdir/file/file_browser.php");
+
 function get_file_url($path, $options=null, $type='coursefile') {
     global $CFG;
 
-    $path = str_replace('//', '/', $path);  
+    $path = str_replace('//', '/', $path);
     $path = trim($path, '/'); // no leading and trailing slashes
 
     // type of file
@@ -309,7 +313,7 @@ function download_file_content($url, $headers=null, $postdata=null, $fullrespons
  *   Unknown types should use the 'xxx' entry which includes defaults.
  */
 function get_mimetypes_array() {
-    return array (
+    static $mimearray = array (
         'xxx'  => array ('type'=>'document/unknown', 'icon'=>'unknown.gif'),
         '3gp'  => array ('type'=>'video/quicktime', 'icon'=>'video.gif'),
         'ai'   => array ('type'=>'application/postscript', 'icon'=>'image.gif'),
@@ -464,6 +468,7 @@ function get_mimetypes_array() {
         'xsl'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
         'zip'  => array ('type'=>'application/zip', 'icon'=>'zip.gif')
     );
+    return $mimearray;
 }
 
 /**
@@ -476,10 +481,7 @@ function get_mimetypes_array() {
  * @return string Requested piece of information from array
  */
 function mimeinfo($element, $filename) {
-    static $mimeinfo = null;
-    if (is_null($mimeinfo)) {
-        $mimeinfo = get_mimetypes_array();
-    }
+    $mimeinfo = get_mimetypes_array();
 
     if (eregi('\.([a-z0-9]+)$', $filename, $match)) {
         if (isset($mimeinfo[strtolower($match[1])][$element])) {
@@ -500,8 +502,7 @@ function mimeinfo($element, $filename) {
  * @return string Requested piece of information from array
  */
 function mimeinfo_from_type($element, $mimetype) {
-    static $mimeinfo;
-    $mimeinfo=get_mimetypes_array();
+    $mimeinfo = get_mimetypes_array();
 
     foreach($mimeinfo as $values) {
         if($values['type']==$mimetype) {
@@ -521,8 +522,7 @@ function mimeinfo_from_type($element, $mimetype) {
  * @return string Requested piece of information from array
  */
 function mimeinfo_from_icon($element, $icon) {
-    static $mimeinfo;
-    $mimeinfo=get_mimetypes_array();
+    $mimeinfo = get_mimetypes_array();
 
     if (preg_match("/\/(.*)/", $icon, $matches)) {
         $icon = $matches[1];
@@ -639,6 +639,8 @@ function send_temp_file_finished($path) {
 function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='') {
     global $CFG, $COURSE, $SESSION;
 
+    session_write_close(); // unlock session during fileserving
+
     // Use given MIME type if specified, otherwise guess it using mimeinfo.
     // IE, Konqueror and Opera open html file directly in browser from web even when directed to save it to disk :-O
     // only Firefox saves all files locally before opening when content-disposition: attachment stated
@@ -727,7 +729,8 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
                     $ranges = false;
                 }
                 if ($ranges) {
-                    byteserving_send_file($path, $mimetype, $ranges);
+                    $handle = fopen($filename, 'rb');
+                    byteserving_send_file($handle, $mimetype, $ranges, $filesize);
                 }
             }
         } else {
@@ -810,6 +813,177 @@ function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=
             }else {
                 readfile_chunked($path);
             }
+        }
+    }
+    die; //no more chars to output!!!
+}
+
+/**
+ * Handles the sending of file data to the user's browser, including support for
+ * byteranges etc.
+ * @param object $stored_file local file object
+ * @param int $lifetime Number of seconds before the file should expire from caches (default 24 hours)
+ * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
+ * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
+ * @param string $filename Override filename
+ * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
+ */
+function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, $filename=null) {
+    global $CFG, $COURSE, $SESSION;
+
+    session_write_close(); // unlock session during fileserving
+
+    // Use given MIME type if specified, otherwise guess it using mimeinfo.
+    // IE, Konqueror and Opera open html file directly in browser from web even when directed to save it to disk :-O
+    // only Firefox saves all files locally before opening when content-disposition: attachment stated
+    $filename     = is_null($filename) ? $stored_file->get_filename() : $filename;
+    $isFF         = check_browser_version('Firefox', '1.5'); // only FF > 1.5 properly tested
+    $mimetype     = ($forcedownload and !$isFF) ? 'application/x-forcedownload' :
+                         ($stored_file->get_mimetype() ? $stored_file->get_mimetype() : mimeinfo('type', $filename));
+    $lastmodified = $stored_file->get_timemodified();
+    $filesize     = $stored_file->get_filesize();
+
+    //IE compatibiltiy HACK!
+    if (ini_get('zlib.output_compression')) {
+        ini_set('zlib.output_compression', 'Off');
+    }
+
+    //try to disable automatic sid rewrite in cookieless mode
+    @ini_set("session.use_trans_sid", "false");
+
+    //do not put '@' before the next header to detect incorrect moodle configurations,
+    //error should be better than "weird" empty lines for admins/users
+    //TODO: should we remove all those @ before the header()? Are all of the values supported on all servers?
+    header('Last-Modified: '. gmdate('D, d M Y H:i:s', $lastmodified) .' GMT');
+
+    // if user is using IE, urlencode the filename so that multibyte file name will show up correctly on popup
+    if (check_browser_version('MSIE')) {
+        $filename = rawurlencode($filename);
+    }
+
+    if ($forcedownload) {
+        @header('Content-Disposition: attachment; filename="'.$filename.'"');
+    } else {
+        @header('Content-Disposition: inline; filename="'.$filename.'"');
+    }
+
+    if ($lifetime > 0) {
+        @header('Cache-Control: max-age='.$lifetime);
+        @header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+        @header('Pragma: ');
+
+        if (empty($CFG->disablebyteserving) && $mimetype != 'text/plain' && $mimetype != 'text/html') {
+
+            @header('Accept-Ranges: bytes');
+
+            if (!empty($_SERVER['HTTP_RANGE']) && strpos($_SERVER['HTTP_RANGE'],'bytes=') !== FALSE) {
+                // byteserving stuff - for acrobat reader and download accelerators
+                // see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.35
+                // inspired by: http://www.coneural.org/florian/papers/04_byteserving.php
+                $ranges = false;
+                if (preg_match_all('/(\d*)-(\d*)/', $_SERVER['HTTP_RANGE'], $ranges, PREG_SET_ORDER)) {
+                    foreach ($ranges as $key=>$value) {
+                        if ($ranges[$key][1] == '') {
+                            //suffix case
+                            $ranges[$key][1] = $filesize - $ranges[$key][2];
+                            $ranges[$key][2] = $filesize - 1;
+                        } else if ($ranges[$key][2] == '' || $ranges[$key][2] > $filesize - 1) {
+                            //fix range length
+                            $ranges[$key][2] = $filesize - 1;
+                        }
+                        if ($ranges[$key][2] != '' && $ranges[$key][2] < $ranges[$key][1]) {
+                            //invalid byte-range ==> ignore header
+                            $ranges = false;
+                            break;
+                        }
+                        //prepare multipart header
+                        $ranges[$key][0] =  "\r\n--".BYTESERVING_BOUNDARY."\r\nContent-Type: $mimetype\r\n";
+                        $ranges[$key][0] .= "Content-Range: bytes {$ranges[$key][1]}-{$ranges[$key][2]}/$filesize\r\n\r\n";
+                    }
+                } else {
+                    $ranges = false;
+                }
+                if ($ranges) {
+                    byteserving_send_file($stored_file->get_content_file_handle(), $mimetype, $ranges, $filesize);
+                }
+            }
+        } else {
+            /// Do not byteserve (disabled, strings, text and html files).
+            @header('Accept-Ranges: none');
+        }
+    } else { // Do not cache files in proxies and browsers
+        if (strpos($CFG->wwwroot, 'https://') === 0) { //https sites - watch out for IE! KB812935 and KB316431
+            @header('Cache-Control: max-age=10');
+            @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
+            @header('Pragma: ');
+        } else { //normal http - prevent caching at all cost
+            @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
+            @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
+            @header('Pragma: no-cache');
+        }
+        @header('Accept-Ranges: none'); // Do not allow byteserving when caching disabled
+    }
+
+    if (empty($filter)) {
+        $filtered = false;
+        if ($mimetype == 'text/html' && !empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+            //cookieless mode - rewrite links
+            @header('Content-Type: text/html');
+            $text = $stored_file->get_content();
+            $text = $SESSION->sid_ob_rewrite($text);
+            $filesize = strlen($text);
+            $filtered = true;
+        } else if ($mimetype == 'text/plain') {
+            @header('Content-Type: Text/plain; charset=utf-8'); //add encoding
+        } else {
+            @header('Content-Type: '.$mimetype);
+        }
+        @header('Content-Length: '.$filesize);
+        while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+        if ($filtered) {
+            echo $text;
+        } else {
+            $stored_file->readfile();
+        }
+
+    } else {     // Try to put the file through filters
+        if ($mimetype == 'text/html') {
+            $options = new object();
+            $options->noclean = true;
+            $options->nocache = true; // temporary workaround for MDL-5136
+            $text = $stored_file->get_content();
+            $text = file_modify_html_header($text);
+            $output = format_text($text, FORMAT_HTML, $options, $COURSE->id);
+            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+                //cookieless mode - rewrite links
+                $output = $SESSION->sid_ob_rewrite($output);
+            }
+
+            @header('Content-Length: '.strlen($output));
+            @header('Content-Type: text/html');
+            while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+            echo $output;
+        // only filter text if filter all files is selected
+        } else if (($mimetype == 'text/plain') and ($filter == 1)) {
+            $options = new object();
+            $options->newlines = false;
+            $options->noclean = true;
+            $text = $stored_file->get_content();
+            $output = '<pre>'. format_text($text, FORMAT_MOODLE, $options, $COURSE->id) .'</pre>';
+            if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
+                //cookieless mode - rewrite links
+                $output = $SESSION->sid_ob_rewrite($output);
+            }
+
+            @header('Content-Length: '.strlen($output));
+            @header('Content-Type: text/html; charset=utf-8'); //add encoding
+            while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+            echo $output;
+        } else {    // Just send it out raw
+            @header('Content-Length: '.$filesize);
+            @header('Content-Type: '.$mimetype);
+            while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
+            $stored_file->readfile();
         }
     }
     die; //no more chars to output!!!
@@ -984,9 +1158,8 @@ function readfile_chunked($filename, $retbytes=true) {
 /**
  * Send requested byterange of file.
  */
-function byteserving_send_file($filename, $mimetype, $ranges) {
+function byteserving_send_file($handle, $mimetype, $ranges, $filesize) {
     $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
-    $handle = fopen($filename, 'rb');
     if ($handle === false) {
         die;
     }
@@ -994,7 +1167,7 @@ function byteserving_send_file($filename, $mimetype, $ranges) {
         $length = $ranges[0][2] - $ranges[0][1] + 1;
         @header('HTTP/1.1 206 Partial content');
         @header('Content-Length: '.$length);
-        @header('Content-Range: bytes '.$ranges[0][1].'-'.$ranges[0][2].'/'.filesize($filename));
+        @header('Content-Range: bytes '.$ranges[0][1].'-'.$ranges[0][2].'/'.$filesize);
         @header('Content-Type: '.$mimetype);
         while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
         $buffer = '';
@@ -1356,7 +1529,7 @@ class curl {
      * Download multiple files in parallel
      * $c = new curl;
      * $c->download(array(
-     *              array('url'=>'http://localhost/', 'file'=>fopen('a', 'wb')), 
+     *              array('url'=>'http://localhost/', 'file'=>fopen('a', 'wb')),
      *              array('url'=>'http://localhost/20/', 'file'=>fopen('b', 'wb'))
      *              ));
      */

@@ -155,11 +155,11 @@ die;
 function do_delete($post) {
     global $returnurl, $DB;
 
+    blog_delete_attachments($post);
+
     $status = $DB->delete_records('post', array('id'=>$post->id));
     tag_set('post', $post->id, array());
     
-    blog_delete_old_attachments($post);
-
     add_to_log(SITEID, 'blog', 'delete', 'index.php?userid='. $post->userid, 'deleted blog entry with entry id# '. $post->id);
 
     if (!$status) {
@@ -182,10 +182,12 @@ function do_add($post, $blogeditform) {
     if ($id = $DB->insert_record('post', $post)) {
         $post->id = $id;
         // add blog attachment
-        $dir = blog_file_area_name($post);
-        if ($blogeditform->save_files($dir) and $newfilename = $blogeditform->get_new_filename()) {
-            $DB->set_field("post", "attachment", $newfilename, array("id"=>$post->id));
+        if ($blogeditform->get_new_filename('attachment')) {
+            if ($blogeditform->save_stored_file('attachment', SYSCONTEXTID, 'blog', $post->id, '/', false, $USER->id)) {
+                $DB->set_field("post", "attachment", 1, array("id"=>$post->id));
+            }
         }
+
         add_tags_info($post->id);
         add_to_log(SITEID, 'blog', 'add', 'index.php?userid='.$post->userid.'&postid='.$post->id, $post->subject);
 
@@ -205,9 +207,13 @@ function do_edit($post, $blogeditform) {
 
     $post->lastmodified = time();
 
-    $dir = blog_file_area_name($post);
-    if ($blogeditform->save_files($dir) and $newfilename = $blogeditform->get_new_filename()) {
-        $post->attachment = $newfilename;
+    if ($blogeditform->get_new_filename('attachment')) {
+        blog_delete_attachments($post);
+        if ($blogeditform->save_stored_file('attachment', SYSCONTEXTID, 'blog', $post->id, '/', false, $USER->id)) {
+            $post->attachment = 1;
+        } else {
+            $post->attachment = 1;
+        }
     }
 
     // update record

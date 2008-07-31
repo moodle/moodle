@@ -26,7 +26,7 @@ require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';
 
-require_once $CFG->libdir.'/uploadlib.php';
+require_once $CFG->libdir.'/uploadlib.php'; // TODO: remove
 
 /**
  * Callback called when PEAR throws an error
@@ -52,30 +52,24 @@ if ($CFG->debug >= DEBUG_ALL){
  * You will write your own definition() method which performs the form set up.
  */
 class moodleform {
-    var $_formname;       // form name
+    protected $_formname;       // form name
     /**
      * quickform object definition
      *
      * @var MoodleQuickForm
      */
-    var $_form;
+    protected $_form;
     /**
      * globals workaround
      *
      * @var array
      */
-    var $_customdata;
-    /**
-     * file upload manager
-     *
-     * @var upload_manager
-     */
-    var $_upload_manager; //
+    protected $_customdata;
     /**
      * definition_after_data executed flag
      * @var definition_finalized
      */
-    var $_definition_finalized = false;
+    protected $_definition_finalized = false;
 
     /**
      * The constructor function calls the abstract function definition() and it will then
@@ -112,7 +106,6 @@ class moodleform {
         if (!$editable){
             $this->_form->hardFreeze();
         }
-        $this->set_upload_manager(new upload_manager());
 
         $this->definition();
 
@@ -197,6 +190,8 @@ class moodleform {
      * Internal method. Validates all uploaded files.
      */
     function _validate_files(&$files) {
+        global $CFG, $COURSE;
+
         $files = array();
 
         if (empty($_FILES)) {
@@ -204,33 +199,106 @@ class moodleform {
             // note: server side rules do not work for files - use custom verification in validate() instead
             return true;
         }
-        $errors = array();
-        $mform =& $this->_form;
 
-        // check the files
-        $status = $this->_upload_manager->preprocess_files();
+        $errors = array();
+        $filenames = array();
 
         // now check that we really want each file
         foreach ($_FILES as $elname=>$file) {
-            if ($mform->elementExists($elname) and $mform->getElementType($elname)=='file') {
-                $required = $mform->isElementRequired($elname);
-                if (!empty($this->_upload_manager->files[$elname]['uploadlog']) and empty($this->_upload_manager->files[$elname]['clear'])) {
-                    if (!$required and $file['error'] == UPLOAD_ERR_NO_FILE) {
-                        // file not uploaded and not required - ignore it
-                        continue;
-                    }
-                    $errors[$elname] = $this->_upload_manager->files[$elname]['uploadlog'];
+            $required = $this->_form->isElementRequired($elname);
 
-                } else if (!empty($this->_upload_manager->files[$elname]['clear'])) {
-                    $files[$elname] = $this->_upload_manager->files[$elname]['tmp_name'];
+            if ($file['error'] == 4 and $file['size'] == 0) {
+                if ($required) {
+                    $errors[$elname] = get_string('required');
                 }
-            } else {
-                print_error('cannotuploadfile');
+                unset($_FILES[$elname]);
+                continue;
             }
+
+            if ($file['error'] > 0) {
+                switch ($file['error']) {
+                case 1: // UPLOAD_ERR_INI_SIZE
+                    $errmessage = get_string('uploadserverlimit');
+                    break;
+
+                case 2: // UPLOAD_ERR_FORM_SIZE
+                    $errmessage = get_string('uploadformlimit');
+                    break;
+
+                case 3: // UPLOAD_ERR_PARTIAL
+                    $errmessage = get_string('uploadpartialfile');
+                    break;
+
+                case 4: // UPLOAD_ERR_NO_FILE
+                    $errmessage = get_string('uploadnofilefound');
+                    break;
+
+                // Note: there is no error with a value of 5
+
+                case 6: // UPLOAD_ERR_NO_TMP_DIR
+                    $errmessage = get_string('uploadnotempdir');
+                    break;
+
+                case 7: // UPLOAD_ERR_CANT_WRITE
+                    $errmessage = get_string('uploadcantwrite');
+                    break;
+
+                case 8: // UPLOAD_ERR_EXTENSION
+                    $errmessage = get_string('uploadextension');
+                    break;
+
+                default:
+                    $errmessage = get_string('uploadproblem', $file['name']);
+                }
+                $errors[$elname] = $errmessage;
+                unset($_FILES[$elname]);
+                continue;
+            }
+
+            if (!is_uploaded_file($file['tmp_name'])) {
+                // TODO: improve error message
+                $errors[$elname] = get_string('error');
+                unset($_FILES[$elname]);
+                continue;
+            }
+
+            if (!$this->_form->elementExists($elname) or !$this->_form->getElementType($elname)=='file') {
+                // hmm, this file was not requested
+                unset($_FILES[$elname]);
+                continue;
+            }
+
+/*
+  // TODO: rethink the file scanning
+            if ($CFG->runclamonupload) {
+                if (!clam_scan_moodle_file($_FILES[$elname], $COURSE)) {
+                    $errors[$elname] = $_FILES[$elname]['uploadlog'];
+                    unset($_FILES[$elname]);
+                    continue;
+                }
+            }
+*/
+            $filename = clean_param($_FILES[$elname]['name'], PARAM_FILE);
+            if ($filename === '') {
+                // TODO: improve error message - wrong chars
+                $errors[$elname] = get_string('error');
+                unset($_FILES[$elname]);
+                continue;
+            }
+            if (in_array($filename, $filenames)) {
+                // TODO: improve error message - duplicate name
+                $errors[$elname] = get_string('error');
+                unset($_FILES[$elname]);
+                continue;
+            }
+            $filenames[] = $filename;
+            $_FILES[$elname]['name'] = $filename;
+
+            $files[$elname] = $_FILES[$elname]['tmp_name'];
         }
 
         // return errors if found
-        if ($status and 0 == count($errors)){
+        if (count($errors) == 0){
             return true;
 
         } else {
@@ -256,19 +324,8 @@ class moodleform {
         $this->_form->setDefaults($default_values);
     }
 
-    /**
-     * Set custom upload manager.
-     * Must be used BEFORE creating of file element!
-     *
-     * @param object $um - custom upload manager
-     */
     function set_upload_manager($um=false) {
-        if ($um === false) {
-            $um = new upload_manager();
-        }
-        $this->_upload_manager = $um;
-
-        $this->_form->setMaxFileSize($um->config->maxbytes);
+        debugging('Not used anymore, please fix code!');
     }
 
     /**
@@ -370,7 +427,7 @@ class moodleform {
     /**
      * Return submitted data if properly submitted or returns NULL if validation fails or
      * if there is no submitted data.
-     * 
+     *
      * note: $slashed param removed
      *
      * @return object submitted data; NULL if not valid or not submitted
@@ -417,25 +474,120 @@ class moodleform {
 
     /**
      * Save verified uploaded files into directory. Upload process can be customised from definition()
-     * method by creating instance of upload manager and storing it in $this->_upload_form
-     *
-     * @param string $destination where to store uploaded files
-     * @return bool success
+     * NOTE: please use save_stored_file() or save_file()
      */
     function save_files($destination) {
-        if ($this->is_submitted() and $this->is_validated()) {
-            return $this->_upload_manager->save_files($destination);
-        }
+        debugging('Not used anymore, please fix code! Use save_stored_file() or save_file() instead');
         return false;
     }
 
     /**
-     * If we're only handling one file (if inputname was given in the constructor)
-     * this will return the (possibly changed) filename of the file.
+     * Returns name of uploaded file.
+     * @param string $elname, first element if null
      * @return mixed false in case of failure, string if ok
      */
-    function get_new_filename() {
-        return $this->_upload_manager->get_new_filename();
+    function get_new_filename($elname=null) {
+        if (!$this->is_submitted() or !$this->is_validated()) {
+            return false;
+        }
+
+        if (is_null($elname)) {
+            if (empty($_FILES)) {
+                return false;
+            }
+            reset($_FILES);
+            $elname = key($_FILES);
+        }
+        if (!isset($_FILES[$elname])) {
+            return false;
+        }
+
+        return $_FILES[$elname]['name'];
+    }
+
+    /**
+     * Save file to standard filesystem
+     * @param string $elname name of element
+     * @param string $pathname full path name of file
+     * @param bool $override override file if exists
+     * @return bool success
+     */
+    function save_file($elname, $pathname, $override=false) {
+        if (!$this->is_submitted() or !$this->is_validated()) {
+            return false;
+        }
+
+        if (!isset($_FILES[$elname])) {
+            return false;
+        }
+
+        if (file_exists($pathname)) {
+            if ($override) {
+                if (!@unlink($pathname)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        if (!$temp = @fopen($_FILES[$elname]['tmp_name'], "rb")) {
+            return false;
+        }
+        if (!$file = @fopen($pathname, "wb")) {
+            return false;
+        }
+
+        while (!feof($temp)) {
+            $data = fread($temp, 65536);
+            fwrite($file, $data);
+        }
+        fclose($file);
+        fclose($temp);
+
+        return true;
+    }
+
+    /**
+     * Save file to local filesystem pool
+     * @param string $elname name of element
+     * @param int $contextid
+     * @param string $filearea
+     * @param string $filepath
+     * @param string $filename - use specified filename, if not specified name of uploaded file used
+     * @param bool $override override file if exists
+     * @param int $userid
+     * @return mixed stored_file object or false if error; may throw exception if duplicate found
+     */
+    function save_stored_file($elname, $contextid, $filearea, $itemid, $filepath, $filename=null, $override=false, $userid=null) {
+        if (!$this->is_submitted() or !$this->is_validated()) {
+            return false;
+        }
+
+        if (!isset($_FILES[$elname])) {
+            return false;
+        }
+
+        $filename = is_null($filename) ? $_FILES[$elname]['name'] : $filename;
+
+        $fs = get_file_storage();
+
+        if ($file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
+            if ($override) {
+                $file->delete();
+            } else {
+                return false;
+            }
+        }
+
+        $file_record = new object();
+        $file_record->contextid = $contextid;
+        $file_record->filearea  = $filearea;
+        $file_record->itemid    = $itemid;
+        $file_record->filepath  = $filepath;
+        $file_record->filename  = $filename;
+        $file_record->userid    = $userid;
+
+        return $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
     }
 
     /**
@@ -448,29 +600,21 @@ class moodleform {
             return false;
         }
 
-        if (!$this->_form->elementExists($elname)) {
+        if (!isset($_FILES[$elname])) {
             return false;
         }
 
-        if (empty($this->_upload_manager->files[$elname]['clear'])) {
-            return false;
-        }        
-
-        if (empty($this->_upload_manager->files[$elname]['tmp_name'])) {
+        if (!$file = @fopen($_FILES[$elname]['tmp_name'], "rb")) {
             return false;
         }
 
-        $data = "";
-        $file = @fopen($this->_upload_manager->files[$elname]['tmp_name'], "rb");
-        if ($file) {
-            while (!feof($file)) {
-                $data .= fread($file, 1024); // TODO: do we really have to do this?
-            }
-            fclose($file);
-            return $data;
-        } else {
-            return false;
+        $data = '';
+        while (!feof($file)) {
+            $data .= fread($file, 4048);
         }
+        fclose($file);
+
+        return $data;
     }
 
     /**
@@ -625,7 +769,7 @@ class moodleform {
      * @param array  $attributes associative array of HTML attributes
      * @param int    $originalValue The original general state of the checkboxes before the user first clicks this element
      */
-    function add_checkbox_controller($groupid, $buttontext, $attributes, $originalValue = 0) { 
+    function add_checkbox_controller($groupid, $buttontext, $attributes, $originalValue = 0) {
         global $CFG;
         if (empty($text)) {
             $text = get_string('selectallornone', 'form');
@@ -642,7 +786,7 @@ class moodleform {
 
         $mform->addElement('hidden', "checkbox_controller$groupid");
         $mform->setConstants(array("checkbox_controller$groupid" => $new_select_value));
-        
+
         // Locate all checkboxes for this group and set their value, IF the optional param was given
         if (!is_null($select_value)) {
             foreach ($this->_form->_elements as $element) {
@@ -654,7 +798,7 @@ class moodleform {
 
         $checkbox_controller_name = 'nosubmit_checkbox_controller' . $groupid;
         $mform->registerNoSubmitButton($checkbox_controller_name);
-        
+
         // Prepare Javascript for submit element
         $js = "\n//<![CDATA[\n";
         if (!defined('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS')) {
@@ -664,29 +808,29 @@ function html_quickform_toggle_checkboxes(group) {
     var newvalue = false;
     var global = eval('html_quickform_checkboxgroup' + group + ';');
     if (global == 1) {
-        eval('html_quickform_checkboxgroup' + group + ' = 0;'); 
+        eval('html_quickform_checkboxgroup' + group + ' = 0;');
         newvalue = '';
     } else {
-        eval('html_quickform_checkboxgroup' + group + ' = 1;'); 
+        eval('html_quickform_checkboxgroup' + group + ' = 1;');
         newvalue = 'checked';
     }
 
     for (i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].checked = newvalue; 
+        checkboxes[i].checked = newvalue;
     }
 }
 EOS;
             define('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS', true);
         }
         $js .= "\nvar html_quickform_checkboxgroup$groupid=$originalValue;\n";
-        
+
         $js .= "//]]>\n";
-        
+
         require_once("$CFG->libdir/form/submitlink.php");
         $submitlink = new MoodleQuickForm_submitlink($checkbox_controller_name, $attributes);
         $submitlink->_js = $js;
         $submitlink->_onclick = "html_quickform_toggle_checkboxes($groupid); return false;";
-        $mform->addElement($submitlink); 
+        $mform->addElement($submitlink);
         $mform->setDefault($checkbox_controller_name, $text);
     }
 
@@ -1702,7 +1846,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     }
 
     function renderElement(&$element, $required, $error){
-        //manipulate id of all elements before rendering       
+        //manipulate id of all elements before rendering
         if (!is_null($element->getAttribute('id'))) {
             $id = $element->getAttribute('id');
         } else {
@@ -1715,7 +1859,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
 
         //adding stuff to place holders in template
-        //check if this is a group element first 
+        //check if this is a group element first
         if (($this->_inGroup) and !empty($this->_groupElementTemplate)) {
         	// so it gets substitutions for *each* element
             $html = $this->_groupTemplates[$element->getName()];	
@@ -1753,8 +1897,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
         elseif (!isset($this->_templates[$element->getName()])) {
             $this->_templates[$element->getName()] = $html;
-        }  
-        
+        }
+
         parent::renderElement($element, $required, $error);
     }
 
@@ -1814,7 +1958,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 document.write("'.addslashes_js($button_js).'")
 //]]>
 </script><noscript><div style="display:inline">'.$button_nojs.'</div></noscript>';  // the extra div should fix xhtml validation
-            
+
             $header_html = str_replace('{button}', $button, $header_html);
         } else {
             $header_html = str_replace('{button}', '', $header_html);

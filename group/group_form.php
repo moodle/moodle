@@ -28,7 +28,6 @@ class group_form extends moodleform {
             $options = array(get_string('no'), get_string('yes'));
             $mform->addElement('select', 'hidepicture', get_string('hidepicture'), $options);
 
-            $this->set_upload_manager(new upload_manager('imagefile', false, false, null, false, 0, true, true, false));
             $mform->addElement('file', 'imagefile', get_string('newpicture', 'group'));
             $mform->setHelpButton('imagefile', array ('picture', get_string('helppicture')), true);
         }

@@ -154,7 +154,7 @@
         if($blogEntry->created != $blogEntry->lastmodified){
             $template['lastmod'] = userdate($blogEntry->lastmodified);
         }
-        
+
         $template['publishstate'] = $blogEntry->publishstate;
 
         /// preventing user to browse blogs that they aren't supposed to see
@@ -232,7 +232,7 @@
                 print(get_string('tags', 'tag') .': '. $blogtags);
            }
             echo '</div>';
-        } 
+        }
 
     /// Commands
 
@@ -258,35 +258,11 @@
     }
 
     /**
-     * Creates a directory file name, suitable for make_upload_directory()
-     * $CFG->dataroot/blog/attachments/xxxx/file.jpg
-     */
-    function blog_file_area_name($blogentry) {
-        return "blog/attachments/$blogentry->id";
-    }
-
-    function blog_file_area($blogentry) {
-        return make_upload_directory( blog_file_area_name($blogentry) );
-    }
-
-    /**
      * Deletes all the user files in the attachments area for a post
-     * EXCEPT for any file named $exception
      */
-    function blog_delete_old_attachments($post, $exception="") {
-        if ($basedir = blog_file_area($post)) {
-            if ($files = get_directory_list($basedir)) {
-                foreach ($files as $file) {
-                    if ($file != $exception) {
-                        unlink("$basedir/$file");
-                        notify("Existing file '$file' has been deleted!");
-                    }
-                }
-            }
-            if (!$exception) {  // Delete directory as well, if empty
-                rmdir("$basedir");
-            }
-        }
+    function blog_delete_attachments($post) {
+        $fs = get_file_storage();
+        $fs->delete_area_files(SYSCONTEXTID, 'blog', $post->id);
     }
 
     /**
@@ -297,36 +273,44 @@
     function blog_print_attachments($blogentry, $return=NULL) {
         global $CFG;
 
-        $filearea = blog_file_area_name($blogentry);
+        require_once($CFG->libdir.'/filelib.php');
+
+        $fs = get_file_storage();
+        $browser = get_file_browser();
+
+        $files = $fs->get_area_files(SYSCONTEXTID, 'blog', $blogentry->id);
 
         $imagereturn = "";
         $output = "";
 
-        if ($basedir = blog_file_area($blogentry)) {
-            if ($files = get_directory_list($basedir)) {
-                $strattachment = get_string("attachment", "forum");
-                foreach ($files as $file) {
-                    include_once($CFG->libdir.'/filelib.php');
-                    $icon = mimeinfo("icon", $file);
-                    $type = mimeinfo("type", $file);
-                    $ffurl = get_file_url("$filearea/$file");
-                    $image = "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"\" />";
+        $strattachment = get_string("attachment", "forum");
 
-                    if ($return == "html") {
-                        $output .= "<a href=\"$ffurl\">$image</a> ";
-                        $output .= "<a href=\"$ffurl\">$file</a><br />";
+        foreach ($files as $file) {
+            if ($file->is_directory()) {
+                continue;
+            }
 
-                    } else if ($return == "text") {
-                        $output .= "$strattachment $file:\n$ffurl\n";
+            $filename = $file->get_filename();
+            $ffurl    = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.SYSCONTEXTID.'/blog/'.$blogentry->id.'/'.$filename);
+            $type     = $file->get_mimetype();
+            $icon     = mimeinfo_from_type("icon", $type);
+            $type     = mimeinfo_from_type("type", $type);
 
-                    } else {
-                        if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
-                            $imagereturn .= "<br /><img src=\"$ffurl\" alt=\"\" />";
-                        } else {
-                            echo "<a href=\"$ffurl\">$image</a> ";
-                            echo filter_text("<a href=\"$ffurl\">$file</a><br />");
-                        }
-                    }
+            $image = "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"\" />";
+
+            if ($return == "html") {
+                $output .= "<a href=\"$ffurl\">$image</a> ";
+                $output .= "<a href=\"$ffurl\">$filename</a><br />";
+
+            } else if ($return == "text") {
+                $output .= "$strattachment $filename:\n$ffurl\n";
+
+            } else {
+                if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
+                    $imagereturn .= "<br /><img src=\"$ffurl\" alt=\"\" />";
+                } else {
+                    echo "<a href=\"$ffurl\">$image</a> ";
+                    echo filter_text("<a href=\"$ffurl\">$filename</a><br />");
                 }
             }
         }
@@ -699,7 +683,7 @@
     function blog_get_participants() {
         global $CFG, $DB;
 
-        return $DB->get_records_sql("SELECT userid AS id 
+        return $DB->get_records_sql("SELECT userid AS id
                                        FROM {post}
                                       WHERE module = 'blog' AND courseid = 0");
     }

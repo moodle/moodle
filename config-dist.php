@@ -164,13 +164,6 @@ $CFG->admin = 'admin';
 //      $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
 //
 //
-// Allow unicode characters in uploaded files, generated reports, etc.
-// This setting is new and not much tested, there are known problems
-// with backup/restore that will not be solved, because native infozip
-// binaries are doing some weird conversions - use internal PHP zipping instead.
-// NOT RECOMMENDED FOR PRODUCTION SITES
-//     $CFG->unicodecleanfilename = true;
-//
 // Seconds for files to remain in caches. Decrease this if you are worried
 // about students being served outdated versions of uploaded files.
 //     $CFG->filelifetime = 86400;

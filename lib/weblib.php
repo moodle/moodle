@@ -7142,7 +7142,7 @@ class progress_bar {
     private $lastcall;
     private $time_start;
     private $minimum_time = 2; //min time between updates.
-    function __construct($html_id = 'pid', $width = 100, $autostart = false){
+    function __construct($html_id = 'pid', $width = 500, $autostart = false){
         $this->html_id  = $html_id;
         $this->clr      = new stdClass;
         $this->clr->done    = 'green';

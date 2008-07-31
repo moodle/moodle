@@ -77,11 +77,11 @@ if ($editform->is_cancelled()) {
 } elseif ($data = $editform->get_data()) {
 
     if ($data->id) {
-        if (!groups_update_group($data, $editform->_upload_manager)) {
+        if (!groups_update_group($data, $editform)) {
             print_error('cannotupdategroup');
         }
     } else {
-        if (!$id = groups_create_group($data, $editform->_upload_manager)) {
+        if (!$id = groups_create_group($data, $editform)) {
             print_error('cannotcreategroup');
         }
         $returnurl = $CFG->wwwroot.'/group/index.php?id='.$course->id.'&amp;group='.$id;
