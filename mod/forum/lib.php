@@ -839,7 +839,7 @@ function forum_cron() {
                 */
                 $eventdata = new object();
                 $eventdata->component        = 'mod/forum';
-                $eventdata->name             = 'posts';
+                $eventdata->name             = 'digests';
                 $eventdata->userfrom         = $site->shortname;
                 $eventdata->userto           = $userto;
                 $eventdata->subject          = $postsubject;
