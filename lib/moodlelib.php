@@ -134,19 +134,19 @@ define('PARAM_ALPHANUM', 0x0400);
 /**
  * PARAM_ALPHANUMEXT - expected numbers, letters only and _-.
  */
-define('PARAM_ALPHANUMEXT', 0x0401);
+define('PARAM_ALPHANUMEXT', 0x4000);
 
 /**
  * PARAM_ACTION - an alias for PARAM_ALPHANUMEXT, use for various actions in formas and urls
  * NOTE: originally alias for PARAM_APLHA
  */
-define('PARAM_ACTION',   0x0401);
+define('PARAM_ACTION',   0x4000);
 
 /**
  * PARAM_FORMAT - an alias for PARAM_ALPHANUMEXT, use for names of plugins, formats, etc.
  * NOTE: originally alias for PARAM_APLHA
  */
-define('PARAM_FORMAT',   0x0401);
+define('PARAM_FORMAT',   0x4000);
 
 /**
  * PARAM_NOTAGS - all html tags are stripped from the text. Do not abuse this type.
