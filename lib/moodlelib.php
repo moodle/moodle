@@ -5179,7 +5179,7 @@ or
  *
  * @uses $CFG
  * @param string $identifier The key identifier for the localized string
- * @param string $module The module where the key identifier is stored. If none is specified then moodle.php is used.
+ * @param string $module The module where the key identifier is stored, usually expressed as the filename in the language pack without the .php on the end but can also be written as mod/forum or grade/export/xls.  If none is specified then moodle.php is used. 
  * @param mixed $a An object, string or number that can be used
  * within translation strings
  * @param array $extralocations An array of strings with other locations to look for string files
