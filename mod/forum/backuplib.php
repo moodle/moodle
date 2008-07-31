@@ -85,7 +85,10 @@
         fwrite ($bf,full_tag("WARNAFTER",4,false,$forum->warnafter));
         fwrite ($bf,full_tag("BLOCKAFTER",4,false,$forum->blockafter));
         fwrite ($bf,full_tag("BLOCKPERIOD",4,false,$forum->blockperiod));
-
+        fwrite ($bf,full_tag("COMPLETIONDISCUSSIONS",4,false,$forum->completiondiscussions));
+        fwrite ($bf,full_tag("COMPLETIONREPLIES",4,false,$forum->completionreplies));
+        fwrite ($bf,full_tag("COMPLETIONPOSTS",4,false,$forum->completionposts));
+        
         //if we've selected to backup users info, then execute backup_forum_suscriptions and
         //backup_forum_discussions
         if (backup_userdata_selected($preferences,'forum',$forum->id)) {

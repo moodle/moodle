@@ -80,7 +80,9 @@
             $forum->warnafter = isset($info['MOD']['#']['WARNAFTER']['0']['#'])?backup_todb($info['MOD']['#']['WARNAFTER']['0']['#']):'';
             $forum->blockafter = isset($info['MOD']['#']['BLOCKAFTER']['0']['#'])?backup_todb($info['MOD']['#']['BLOCKAFTER']['0']['#']):'';
             $forum->blockperiod = isset($info['MOD']['#']['BLOCKPERIOD']['0']['#'])?backup_todb($info['MOD']['#']['BLOCKPERIOD']['0']['#']):'';
-
+            $forum->completiondiscussions = isset($info['MOD']['#']['COMPLETIONDISCUSSIONS']['0']['#'])?backup_todb($info['MOD']['#']['COMPLETIONDISCUSSIONS']['0']['#']):0;
+            $forum->completionreplies = isset($info['MOD']['#']['COMPLETIONREPLIES']['0']['#'])?backup_todb($info['MOD']['#']['COMPLETIONREPLIES']['0']['#']):0;
+            $forum->completionposts = isset($info['MOD']['#']['COMPLETIONPOSTS']['0']['#'])?backup_todb($info['MOD']['#']['COMPLETIONPOSTS']['0']['#']):0;
 
             //We have to recode the scale field if it's <0 (positive is a grade, not a scale)
             if ($forum->scale < 0) {
