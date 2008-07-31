@@ -201,7 +201,7 @@ function get_db_directories() {
             $dbdirs[] = $CFG->dirroot.'/'.$CFG->admin.'/report/'.$plugin.'/db';
         }
     }
-    
+
 /// Now quiz report plugins (mod/quiz/report/xxx/db)
     if ($plugins = get_list_of_plugins('mod/quiz/report', 'db')) {
         foreach ($plugins as $plugin) {
@@ -1883,7 +1883,7 @@ class admin_setting_configtext extends admin_setting {
             $data = 0;
         }
         // $data is a string
-        $validated = $this->validate($data); 
+        $validated = $this->validate($data);
         if ($validated !== true) {
             return $validated;
         }
@@ -1944,7 +1944,7 @@ class admin_setting_configtextarea extends admin_setting_configtext {
         $defaultinfo = $default;
         if (!is_null($default) and $default !== '') {
             $defaultinfo = "\n".$default;
-        } 
+        }
 
         return format_admin_setting($this, $this->visiblename,
                 '<div class="form-textarea form-textarea-advanced" ><textarea rows="'. $this->rows .'" cols="'. $this->cols .'" id="'. $this->get_id() .'" name="'. $this->get_full_name() .'">'. s($data) .'</textarea></div>',
@@ -2221,7 +2221,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
                 }
             }
         }
-        
+
         $options = array();
         $defaults = array();
         foreach($this->choices as $key=>$description) {
@@ -2258,7 +2258,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
         $return .= '</div>';
 
         return format_admin_setting($this, $this->visiblename, $return, $this->description, false, '', $defaultinfo, $query);
-        
+
     }
 }
 
@@ -2353,7 +2353,7 @@ class admin_setting_configselect extends admin_setting {
             if (strpos($textlib->strtolower($value), $query) !== false) {
                 return true;
             }
-        }         
+        }
         return false;
     }
 
@@ -2588,7 +2588,7 @@ class admin_setting_configtime extends admin_setting {
 class admin_setting_configiplist extends admin_setting_configtextarea {
     function validate($data) {
         if(!empty($data)) {
-            $ips = explode("\n", $data); 
+            $ips = explode("\n", $data);
         } else {
             return true;
         }
@@ -2800,7 +2800,7 @@ class admin_setting_sitesettext extends admin_setting_configtext {
     function write_setting($data) {
         global $DB;
         $data = trim($data);
-        $validated = $this->validate($data); 
+        $validated = $this->validate($data);
         if ($validated !== true) {
             return $validated;
         }
@@ -3469,7 +3469,7 @@ class admin_setting_regradingcheckbox extends admin_setting_configcheckbox {
         }
 
         return $return;
-    }    
+    }
 }
 
 /**
@@ -3586,7 +3586,7 @@ class admin_setting_gradecat_combo extends admin_setting {
                 $defaultinfo[] = get_string('advanced');
             }
             $defaultinfo = implode(', ', $defaultinfo);
-            
+
         } else {
             $defaultinfo = NULL;
         }
@@ -3726,7 +3726,7 @@ class admin_page_managemods extends admin_externalpage {
  * Enrolment manage page
  */
 class admin_enrolment_page extends admin_externalpage {
-    public function admin_enrolment_page() { 
+    public function admin_enrolment_page() {
         global $CFG;
         parent::admin_externalpage('enrolment', get_string('enrolments'), $CFG->wwwroot . '/'.$CFG->admin.'/enrol.php');
     }
@@ -4250,7 +4250,7 @@ class admin_setting_manageportfolio extends admin_setting {
 
         $output .= print_table($table, true);
 
-        //$instancehtml = '<br /><form action="' . $this->baseurl . '" method="post">' 
+        //$instancehtml = '<br /><form action="' . $this->baseurl . '" method="post">'
         $instancehtml = get_string('addnewportfolio', 'portfolio') . ': <select name="s_manageportfolio">';
         $addable = 0;
         foreach ($plugins as $p) {
@@ -4273,6 +4273,160 @@ class admin_setting_manageportfolio extends admin_setting {
         return highlight($query, $output);
     }
 
+}
+
+/**
+ * Special class for repositories administration.
+ */
+class admin_setting_managerepositories extends admin_setting {
+    function admin_setting_managerepositories() {
+        parent::admin_setting('repositoriessui', get_string('repsettings', 'admin'), '', '');
+    }
+
+    function get_setting() {
+        return true;
+    }
+
+    function get_defaultsetting() {
+        return true;
+    }
+
+    function write_setting($data) {
+        // do not write any setting
+        return '';
+    }
+
+    function output_html($data, $query='') {
+        global $CFG;
+
+        $strname     = get_string('name');
+        $strhide     = get_string('disable');
+        $strshow     = get_string('enable');
+        $strhideshow = "$strhide/$strshow";
+        $strsettings = get_string('settings');
+        $strup       = get_string('up');
+        $strdown     = get_string('down');
+        $strupdown   = "$strup/$strdown";
+
+        // get a list of possible repositories (and translate name if possible)
+        // note repositories are in the dedicated repositories area
+        $installedrepositories = array();
+        $repsettings = array();
+        $replocations = array('repository');
+        foreach ($replocations as $replocation) {
+            $plugins = get_list_of_plugins($replocation);
+            foreach ($plugins as $plugin) {
+                $pluginpath = "$CFG->dirroot/$replocation/$plugin/repository.class.php";
+                $settingspath_new = "$CFG->dirroot/$replocation/$plugin/pluginsettings.php";
+                if (is_readable($pluginpath)) {
+                    $name = trim(get_string("repositoryname", "repository_$plugin",null,"$CFG->dirroot/$replocation/$plugin/lang/"));
+                    if (empty($name) or ($name == '[[repositoryname]]')) {
+                        $textlib = textlib_get_instance();
+                        $name = $textlib->strtotitle($plugin);
+                    }
+                    $installedrepositories["$replocation/$plugin"] = $name;
+                    if (is_readable($settingspath_new)) {
+                        $repsettings[] = "$replocation/$plugin";
+                    }
+                }
+            }
+        }
+
+        // get all the currently selected repositories
+        if (!empty($CFG->textfilters)) {
+            $oldactiverepositories = explode(',', $CFG->textfilters);
+            $oldactiverepositories = array_unique($oldactiverepositories);
+        } else {
+            $oldactiverepositories = array();
+        }
+
+        // take this opportunity to clean up repositories
+        $activerepositories = array();
+        foreach ($oldactiverepositories as $oldactiverepository) {
+            if (!empty($oldactiverepository) and array_key_exists($oldactiverepository, $installedrepositories)) {
+                $activerepositories[] = $oldactiverepository;
+            }
+        }
+
+
+        // construct the display array with installed repositories
+        // at the top in the right order
+        $displayrepositories = array();
+        foreach ($activerepositories as $activerepository) {
+            $name = $installedrepositories[$activerepository];
+            $displayrepositories[$activerepository] = $name;
+        }
+        foreach ($installedrepositories as $key => $repository) {
+            if (!array_key_exists($key, $displayrepositories)) {
+                $displayrepositories[$key] = $repository;
+            }
+        }
+
+        $return = print_heading(get_string('activaterep', 'repositories'), '', 3, 'main', true);
+        $return .= print_box_start('generalbox repositoriesui', '', true);
+
+        $table = new object();
+        $table->head  = array($strname, $strhideshow, $strupdown, $strsettings);
+        $table->align = array('left', 'center', 'center', 'center');
+        $table->width = '90%';
+        $table->data  = array();
+
+        $repsurl = "$CFG->wwwroot/$CFG->admin/repositories.php?sesskey=".sesskey();
+        $imgurl     = "$CFG->pixpath/t";
+
+        // iterate through repositories adding to display table
+        $updowncount = 1;
+        $activerepositoriescount = count($activerepositories);
+        foreach ($displayrepositories as $path => $name) {
+            $upath = urlencode($path);
+            // get hide/show link
+            if (in_array($path, $activerepositories)) {
+                $hideshow = "<a href=\"$repsurl&amp;action=hide&amp;filterpath=$upath\">";
+                $hideshow .= "<img src=\"{$CFG->pixpath}/i/hide.gif\" class=\"icon\" alt=\"$strhide\" /></a>";
+                $hidden = false;
+                $displayname = "<span>$name</span>";
+            }
+            else {
+                $hideshow = "<a href=\"$repsurl&amp;action=show&amp;filterpath=$upath\">";
+                $hideshow .= "<img src=\"{$CFG->pixpath}/i/show.gif\" class=\"icon\" alt=\"$strshow\" /></a>";
+                $hidden = true;
+                $displayname = "<span class=\"dimmed_text\">$name</span>";
+            }
+
+            // get up/down link (only if not hidden)
+            $updown = '';
+            if (!$hidden) {
+                if ($updowncount>1) {
+                    $updown .= "<a href=\"$repsurl&amp;action=up&amp;filterpath=$upath\">";
+                    $updown .= "<img src=\"$imgurl/up.gif\" alt=\"$strup\" /></a>&nbsp;";
+                }
+                else {
+                    $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" class=\"icon\" alt=\"\" />&nbsp;";
+                }
+                if ($updowncount<$activerepositoriescount) {
+                    $updown .= "<a href=\"$repsurl&amp;action=down&amp;filterpath=$upath\">";
+                    $updown .= "<img src=\"$imgurl/down.gif\" alt=\"$strdown\" /></a>";
+                }
+                else {
+                    $updown .= "<img src=\"$CFG->pixpath/spacer.gif\" class=\"icon\" alt=\"\" />";
+                }
+                ++$updowncount;
+            }
+
+            // settings link (if defined)
+            $settings = '';
+            if (in_array($path, $repsettings)) {
+                $settings = "<a href=\"settings.php?section=version".str_replace('/', '',$path)."\">$strsettings</a>";
+            }
+
+            // write data into the table object
+            $table->data[] = array($displayname, $hideshow, $updown, $settings);
+        }
+        $return .= print_table($table, true);
+        $return .= get_string('tablenosave', 'filters');
+        $return .= print_box_end(true);
+        return highlight($query, $return);
+    }
 }
 
 /**
@@ -4901,7 +5055,7 @@ function db_replace($search, $replace) {
 
 /**
  * Prints tables of detected plugins, one table per plugin type,
- * and prints whether they are part of the standard Moodle 
+ * and prints whether they are part of the standard Moodle
  * distribution or not.
  */
 function print_plugin_tables() {
@@ -4922,7 +5076,7 @@ function print_plugin_tables() {
                                      'scorm',
                                      'survey',
                                      'wiki');
-    
+
     $plugins_standard['blocks'] = array('activity_modules',
                                         'admin',
                                         'admin_bookmarks',
@@ -4954,7 +5108,7 @@ function print_plugin_tables() {
                                         'tag_flickr',
                                         'tag_youtube',
                                         'tags');
-    
+
     $plugins_standard['filter'] = array('activitynames',
                                         'algebra',
                                         'censor',
@@ -4981,14 +5135,14 @@ function print_plugin_tables() {
     $plugins_ondisk['mod'] = get_list_of_plugins('mod', 'db');
     $plugins_ondisk['blocks'] = get_list_of_plugins('blocks', 'db');
     $plugins_ondisk['filter'] = get_list_of_plugins('filter', 'db');
-    
+
     $strstandard    = get_string('standard');
     $strnonstandard = get_string('nonstandard');
     $strmissingfromdisk = '(' . get_string('missingfromdisk') . ')';
     $strabouttobeinstalled = '(' . get_string('abouttobeinstalled') . ')';
 
     $html = '';
-    
+
     $html .= '<table class="generaltable plugincheckwrapper" cellspacing="4" cellpadding="1"><tr valign="top">';
 
     foreach ($plugins_ondisk as $cat => $list_ondisk) {
@@ -5004,8 +5158,8 @@ function print_plugin_tables() {
         $html .= '<tr class="r0"><th class="header c0">' . get_string('directory') . "</th>\n"
                . '<th class="header c1">' . get_string('name') . "</th>\n"
                . '<th class="header c2">' . get_string('status') . "</th>\n</tr>\n";
-        
-        $row = 1;      
+
+        $row = 1;
 
         foreach ($list_ondisk as $k => $plugin) {
             $status = 'ok';
@@ -5015,15 +5169,15 @@ function print_plugin_tables() {
             if (!in_array($plugin, $plugins_standard[$cat])) {
                 $standard = 'nonstandard';
                 $status = 'warning';
-            }    
-            
+            }
+
             // Get real name and full path of plugin
             $plugin_name = "[[$plugin]]";
-            
+
             $plugin_path = "$cat/$plugin";
-            
+
             $plugin_name = get_plugin_name($plugin, $cat);
-            
+
             // Determine if the plugin is about to be installed
             if ($cat != 'filter' && !in_array($plugin, $plugins_installed[$cat])) {
                 $note = $strabouttobeinstalled;
@@ -5039,11 +5193,11 @@ function print_plugin_tables() {
             // If the plugin was both on disk and in the db, unset the value from the installed plugins list
             if ($key = array_search($plugin, $plugins_installed[$cat])) {
                 unset($plugins_installed[$cat][$key]);
-            } 
-        } 
+            }
+        }
 
         // If there are plugins left in the plugins_installed list, it means they are missing from disk
-        foreach ($plugins_installed[$cat] as $k => $missing_plugin) { 
+        foreach ($plugins_installed[$cat] as $k => $missing_plugin) {
             // Make sure the plugin really is missing from disk
             if (!in_array($missing_plugin, $plugins_ondisk[$cat])) {
                 $standard = 'standard';
@@ -5058,15 +5212,15 @@ function print_plugin_tables() {
                       .  "<td class=\"cell c0\">?</td>\n"
                       .  "<td class=\"cell c1\">$plugin_name</td>\n"
                       .  "<td class=\"$standard $status cell c2\">" . ${'str' . $standard} . " $strmissingfromdisk</td>\n</tr>\n";
-                $row++; 
+                $row++;
             }
         }
 
         $html .= '</table></td>';
     }
-    
+
     $html .= '</tr></table><br />';
-    
+
     echo $html;
 }
 

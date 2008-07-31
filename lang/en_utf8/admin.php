@@ -621,6 +621,8 @@ $string['recaptchaprivatekey'] = 'ReCAPTCHA private key';
 $string['releasenoteslink'] = 'For information about this version of Moodle, please see the online <a target=\"_blank\" href=\"$a\">Release Notes</a>';
 $string['remotelangnotavailable'] = 'Because Moodle can not connect to download.moodle.org, we are unable to do language pack installation automatically. Please download the appropriate zip file(s) from the list below, copy them to your $a directory and unzip them manually.';
 $string['renameerrors'] = 'Rename errors';
+$string['repsettings'] = 'Manage Repositories';
+$string['repsettingsgeneral'] = 'General repositories settings';
 $string['requiredtemplate'] = 'Required. You may use template syntax here (%%l = lastname, %%f = firstname, %%u = username). See help for details and examples.';
 $string['restrictbydefault'] = 'Restrict modules by default';
 $string['restrictmodulesfor'] = 'Restrict modules for';

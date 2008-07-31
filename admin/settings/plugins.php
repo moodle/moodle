@@ -68,6 +68,59 @@ if ($hassiteconfig) {
         }
     }
 
+    //"Repositories" menu (inside "Site Administration block" > "Modules menu")
+    $ADMIN->add('modules', new admin_category('repsettings', get_string('repositories')));
+    
+    $temp = new admin_settingpage('managereps', get_string('repsettings', 'admin'));
+
+    if ($ADMIN->fulltree) {
+        $items = array();
+        $items[] = new admin_setting_managerepositories();
+        foreach ($items as $item) {
+            $temp->add($item);
+        }
+    }
+
+    $ADMIN->add('repsettings', $temp);
+    
+    if (empty($CFG->textfilters)) {
+        $activerepositories = array();
+    } else {
+        $activerepositories = explode(',', $CFG->textfilters);
+    }
+
+    $replocations = array('repository');
+    foreach ($replocations as $replocation) {
+        $repositories = get_list_of_plugins($replocation);
+
+        $repbyname = array();
+
+        foreach ($repositories as $repository) {
+            $strrepname = get_string('repositoryname', "repository_$repository",null,"$CFG->dirroot/$replocation/$plugin/lang/");
+
+            if ($strrepname == '[[repositoryname]]') {
+                $textlib = textlib_get_instance();
+                $strrepname = $textlib->strtotitle($repository);
+            }
+            $repbyname[$strrepname] = "$replocation/$repository";
+        }
+        ksort($repbyname);
+
+        foreach ($repbyname as $strrepname=>$repositoryfull) {
+            if (file_exists("$CFG->dirroot/$repositoryfull/pluginsettings.php")) {
+
+                $settings = new admin_settingpage('version'.str_replace('/', '', $repositoryfull), $strrepname, 'moodle/site:config', !in_array($repositoryfull, $activerepositories));
+
+                    if ($ADMIN->fulltree) {
+                    include("$CFG->dirroot/$repositoryfull/pluginsettings.php");
+                }
+                $ADMIN->add('repsettings', $settings);
+
+            }
+        }
+    }
+    //end of admin repositories menu
+
     $ADMIN->add('modules', new admin_category('filtersettings', get_string('managefilters')));
     // "filtersettings" settingpage
     $temp = new admin_settingpage('managefilters', get_string('filtersettings', 'admin'));
