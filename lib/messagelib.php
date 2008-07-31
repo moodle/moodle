@@ -76,7 +76,7 @@ function message_send_handler($eventdata){
     // to be able to distinguish between a user who has no settings and one who doesn't want contact
     // ... perhaps a "none" setting
 
-    $processor = get_user_preferences('message_provider_'.$eventdata->component.$eventdata->name.'_'.$userstate, 'email', $eventdata->userto->id);
+    $processor = get_user_preferences('message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate, 'email', $eventdata->userto->id);
 
 /// Now process the message
 

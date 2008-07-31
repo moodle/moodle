@@ -106,14 +106,14 @@ $providers = message_get_my_providers();
 
 foreach ( $providers as $providerid => $provider){
     foreach (array('loggedin', 'loggedoff') as $state){
-        $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$state, '', $user->id);
+        $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$provider->name.'_'.$state, '', $user->id);
         if ($linepref == ''){ 
             continue;
         }
         $lineprefarray = explode(',', $linepref);
-        $preferences->{$provider->component.'_'.$state} = array();
+        $preferences->{$provider->component.'_'.$provider->name.'_'.$state} = array();
         foreach ($lineprefarray as $pref){
-            $preferences->{$provider->component.'_'.$state}[$provider->component.'_'.$state.'_'.$pref] = 1;
+            $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$provider->component.'_'.$provider->name.'_'.$state.'_'.$pref] = 1;
         }
     }
 }
@@ -145,17 +145,17 @@ if ($messageconf = $userform->get_data()) {
 
     $preferences = array();
 
-    //get the list of normal preferences
+/// Set the overall preferences
     $preferences['message_showmessagewindow'] = $messageconf->showmessagewindow?1:0;
     $preferences['message_blocknoncontacts']  = $messageconf->blocknoncontacts?1:0;
     $preferences['message_beepnewmessage']    = $messageconf->beepnewmessage?1:0;
     $preferences['message_noframesjs']        = $messageconf->noframesjs?1:0;
 
-    //get a listing of all the message providers and process the form
+/// Set all the preferences for all the message providers
     foreach ( $providers as $providerid => $provider){
         foreach (array('loggedin', 'loggedoff') as $state){
             $linepref = '';
-            foreach ($messageconf->{$provider->component.'_'.$state} as $process=>$one){
+            foreach ($messageconf->{$provider->component.'_'.$provider->name.'_'.$state} as $process=>$one){
                 $parray = explode( '_', $process);
                 if ($linepref == ''){ 
                     $linepref = $parray[2];
@@ -163,11 +163,11 @@ if ($messageconf = $userform->get_data()) {
                     $linepref .= ','.$parray[2];
                 }
             }
-            $preferences[ 'message_provider_'.$provider->component.'_'.$state  ] = $linepref;
+            $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
         }
     }
 
-    //list all the processors options (need to get funcion from processor's lib.php)
+/// Set all the processor options as well
     $processors = $DB->get_records('message_processors');
     foreach ( $processors as $processorid => $processor){
         $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/lib.php';
@@ -184,7 +184,7 @@ if ($messageconf = $userform->get_data()) {
         }
     }
 
-    //set the user preferences
+/// Save all the new preferences to the database
     if (!set_user_preferences( $preferences, $user->id ) ){
         error('Error updating user message preferences');
     }
