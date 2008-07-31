@@ -135,7 +135,7 @@ AbsolutePage	lib/adodb/adodb.inc.php	/^	function AbsolutePage($page=-1)$/;"	f
 AbsolutePosition	lib/adodb/adodb.inc.php	/^	function AbsolutePosition() {return $this->_currentRow;}$/;"	f
 AcceptPageBreak	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function AcceptPageBreak() {$/;"	f
 AcceptPageBreak	lib/fpdf/fpdf.php	/^function AcceptPageBreak()$/;"	f
-AcceptPageBreak	lib/tcpdf/tcpdf.php	/^        function AcceptPageBreak() {$/;"	f
+AcceptPageBreak	lib/tcpdf/tcpdf.php	/^		public function AcceptPageBreak() {$/;"	f
 ActualType	lib/adodb/adodb-datadict.inc.php	/^	function ActualType($meta)$/;"	f
 ActualType	lib/adodb/datadict/datadict-access.inc.php	/^ 	function ActualType($meta)$/;"	f
 ActualType	lib/adodb/datadict/datadict-db2.inc.php	/^ 	function ActualType($meta)$/;"	f
@@ -164,13 +164,13 @@ AddCustomHeader	lib/phpmailer/class.phpmailer.php	/^    function AddCustomHeader
 AddEmbeddedImage	lib/phpmailer/class.phpmailer.php	/^    function AddEmbeddedImage($path, $cid, $name = "", $encoding = "base64", $/;"	f
 AddFont	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function AddFont($family, $style='', $file='') {$/;"	f
 AddFont	lib/fpdf/fpdf.php	/^function AddFont($family,$style='',$file='')$/;"	f
-AddFont	lib/tcpdf/tcpdf.php	/^        function AddFont($family, $style='', $file='') {$/;"	f
+AddFont	lib/tcpdf/tcpdf.php	/^		public function AddFont($family, $style='', $file='') {$/;"	f
 AddLink	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function AddLink() {$/;"	f
 AddLink	lib/fpdf/fpdf.php	/^function AddLink()$/;"	f
-AddLink	lib/tcpdf/tcpdf.php	/^        function AddLink() {$/;"	f
+AddLink	lib/tcpdf/tcpdf.php	/^		public function AddLink() {$/;"	f
 AddPage	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function AddPage($orientation='') {$/;"	f
 AddPage	lib/fpdf/fpdf.php	/^function AddPage($orientation='')$/;"	f
-AddPage	lib/tcpdf/tcpdf.php	/^        function AddPage($orientation='') {$/;"	f
+AddPage	lib/tcpdf/tcpdf.php	/^		public function AddPage($orientation='', $format='') {$/;"	f
 AddReplyTo	lib/phpmailer/class.phpmailer.php	/^    function AddReplyTo($address, $name = "") {$/;"	f
 AddStringAttachment	lib/phpmailer/class.phpmailer.php	/^    function AddStringAttachment($string, $filename, $encoding = "base64", $/;"	f
 AddTag	repository/boxnet/boxlibphp5.php	/^    function AddTag($tag, $id, $target_type, $params = array()) {$/;"	f
@@ -183,7 +183,7 @@ Affected_Rows	lib/adodb/adodb.inc.php	/^	function Affected_Rows()$/;"	f
 Affected_Rows	lib/adodb/drivers/adodb-pdo.inc.php	/^	function Affected_Rows()$/;"	f
 AliasNbPages	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function AliasNbPages($alias='{nb}') {$/;"	f
 AliasNbPages	lib/fpdf/fpdf.php	/^function AliasNbPages($alias='{nb}')$/;"	f
-AliasNbPages	lib/tcpdf/tcpdf.php	/^        function AliasNbPages($alias='{nb}') {$/;"	f
+AliasNbPages	lib/tcpdf/tcpdf.php	/^		public function AliasNbPages($alias='{nb}') {$/;"	f
 AlterColumnSQL	lib/adodb/adodb-datadict.inc.php	/^	function AlterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')$/;"	f
 AlterColumnSQL	lib/adodb/datadict/datadict-access.inc.php	/^	function AlterColumnSQL($tabname, $flds)$/;"	f
 AlterColumnSQL	lib/adodb/datadict/datadict-db2.inc.php	/^	function AlterColumnSQL($tabname, $flds)$/;"	f
@@ -249,6 +249,8 @@ BlobEncode	lib/adodb/adodb.inc.php	/^	function BlobEncode($blob)$/;"	f
 BlobEncode	lib/adodb/drivers/adodb-ibase.inc.php	/^	function BlobEncode( $blob ) $/;"	f
 BlobEncode	lib/adodb/drivers/adodb-postgres64.inc.php	/^	function BlobEncode($blob)$/;"	f
 Bookmark	admin/mysql/pdf_schema.php	/^    function Bookmark($txt, $level = 0, $y = 0)$/;"	f
+Bookmark	lib/tcpdf/tcpdf.php	/^		public function Bookmark($txt, $level=0, $y=-1) {$/;"	f
+Button	lib/tcpdf/tcpdf.php	/^		public function Button($name, $w, $h, $caption, $action, $prop=array()) {$/;"	f
 CASClient	auth/cas/CAS/client.php	/^  function CASClient($/;"	f
 CDATACallback	lib/htmlpurifier/HTMLPurifier/Lexer.php	/^    protected static function CDATACallback($matches) {$/;"	f
 COPY	lib/pear/HTTP/WebDAV/Server.php	/^     function COPY() $/;"	f
@@ -266,7 +268,7 @@ CacheSelectLimit	lib/adodb/adodb.inc.php	/^	function CacheSelectLimit($secs2cach
 CallCountExpectation	lib/simpletestlib/mock_objects.php	/^    function CallCountExpectation($method, $count, $message = '%s') {$/;"	f
 Cell	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='') {$/;"	f
 Cell	lib/fpdf/fpdf.php	/^function Cell($w,$h=0,$txt='',$border=0,$ln=0,$align='',$fill=0,$link='')$/;"	f
-Cell	lib/tcpdf/tcpdf.php	/^        function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='') {$/;"	f
+Cell	lib/tcpdf/tcpdf.php	/^		public function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='', $stretch=0) {$/;"	f
 ChameleonCSS	theme/chameleon/ui/ChameleonCSS.class.php	/^    function ChameleonCSS($base, $perm, $temp) { $/;"	f
 ChameleonFileBrowser	theme/chameleon/ui/ChameleonFileBrowser.class.php	/^    function ChameleonFileBrowser() {$/;"	f
 ChangeTableSQL	lib/adodb/adodb-datadict.inc.php	/^	function ChangeTableSQL($tablename, $flds, $tableoptions = false)$/;"	f
@@ -277,12 +279,15 @@ CharMax	lib/adodb/drivers/adodb-oci8.inc.php	/^	function CharMax()$/;"	f
 CharMax	lib/adodb/drivers/adodb-postgres64.inc.php	/^	function CharMax()$/;"	f
 ChatConnection	mod/chat/chatd.php	/^    function ChatConnection($resource) {$/;"	f
 ChatDaemon	mod/chat/chatd.php	/^    function ChatDaemon() {$/;"	f
+CheckBox	lib/tcpdf/tcpdf.php	/^		public function CheckBox($name, $w, $checked=false, $prop=array()) {$/;"	f
 CheckMemory	lib/adodb/adodb-perf.inc.php	/^	function CheckMemory()$/;"	f
 CheckMemory	lib/adodb/perf/perf-oci8.inc.php	/^	function CheckMemory()$/;"	f
 CheckPageBreak	admin/mysql/pdf_schema.php	/^    function CheckPageBreak($h)$/;"	f
 CheckSpecifiedFieldsExpectation	lib/simpletestlib.php	/^    function CheckSpecifiedFieldsExpectation($expected, $message = '%s') {$/;"	f
 CheckTTF	lib/fpdf/font/makefont/makefont.php	/^function CheckTTF($file)$/;"	f
+CheckTTF	lib/tcpdf/fonts/utils/makefont.php	/^function CheckTTF($file) {$/;"	f
 Cipher_blowfish	admin/mysql/libraries/blowfish.php	/^    function Cipher_blowfish($params = null)$/;"	f
+Circle	lib/tcpdf/tcpdf.php	/^		public function Circle($x0, $y0, $r, $astart=0, $afinish=360, $style="", $line_style=array(), $fill_color=array(), $nc=8) {$/;"	f
 ClearAddresses	lib/phpmailer/class.phpmailer.php	/^    function ClearAddresses() {$/;"	f
 ClearAllRecipients	lib/phpmailer/class.phpmailer.php	/^    function ClearAllRecipients() {$/;"	f
 ClearAttachments	lib/phpmailer/class.phpmailer.php	/^    function ClearAttachments() {$/;"	f
@@ -290,18 +295,19 @@ ClearBCCs	lib/phpmailer/class.phpmailer.php	/^    function ClearBCCs() {$/;"	f
 ClearCCs	lib/phpmailer/class.phpmailer.php	/^    function ClearCCs() {$/;"	f
 ClearCustomHeaders	lib/phpmailer/class.phpmailer.php	/^    function ClearCustomHeaders() {$/;"	f
 ClearReplyTos	lib/phpmailer/class.phpmailer.php	/^    function ClearReplyTos() {$/;"	f
+Clip	lib/tcpdf/tcpdf.php	/^		protected function Clip($x, $y, $w, $h){$/;"	f
 Close	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Close() {$/;"	f
 Close	lib/adodb/adodb.inc.php	/^		function Close(){return true;}$/;"	f
 Close	lib/adodb/adodb.inc.php	/^	function Close() $/;"	f
 Close	lib/adodb/adodb.inc.php	/^	function Close()$/;"	f
 Close	lib/fpdf/fpdf.php	/^function Close()$/;"	f
 Close	lib/phpmailer/class.smtp.php	/^    function Close() {$/;"	f
-Close	lib/tcpdf/tcpdf.php	/^        function Close() {$/;"	f
-CloseTag	lib/tcpdf/html2pdf.php	/^function CloseTag($tag)$/;"	f
+Close	lib/tcpdf/tcpdf.php	/^		public function Close() {$/;"	f
 CollectData	mod/scorm/datamodels/aicc.js.php	/^    function CollectData(data,parent) {$/;"	f
 CollectData	mod/scorm/datamodels/scorm_12.js.php	/^    function CollectData(data,parent) {$/;"	f
 CollectData	mod/scorm/datamodels/scorm_13.js.php	/^    function CollectData(data,parent) {$/;"	f
 ColorTextReporter	lib/simpletestlib/ui/colortext_reporter.php	/^    function ColorTextReporter() {$/;"	f
+ComboBox	lib/tcpdf/tcpdf.php	/^		public function ComboBox($name, $w, $h, $values, $prop=array()) {$/;"	f
 Commit	mod/scorm/datamodels/scorm_13.js.php	/^    function Commit (param) {$/;"	f
 CommitLock	lib/adodb/adodb.inc.php	/^	function CommitLock($table)$/;"	f
 CommitTrans	lib/adodb/adodb.inc.php	/^	function CommitTrans($ok=true) $/;"	f
@@ -339,6 +345,7 @@ ConvertSchemaFile	lib/adodb/adodb-xmlschema.inc.php	/^	function ConvertSchemaFil
 ConvertSchemaFile	lib/adodb/adodb-xmlschema03.inc.php	/^	function ConvertSchemaFile( $filename, $newVersion = NULL, $newFile = NULL ) {$/;"	f
 ConvertSchemaString	lib/adodb/adodb-xmlschema.inc.php	/^	function ConvertSchemaString( $schema, $newVersion = NULL, $newFile = NULL ) {$/;"	f
 ConvertSchemaString	lib/adodb/adodb-xmlschema03.inc.php	/^	function ConvertSchemaString( $schema, $newVersion = NULL, $newFile = NULL ) {$/;"	f
+CoonsPatchMesh	lib/tcpdf/tcpdf.php	/^		public function CoonsPatchMesh($x, $y, $w, $h, $col1=array(), $col2=array(), $col3=array(), $col4=array(), $coords=array(0.00,0.0,0.33,0.00,0.67,0.00,1.00,0.00,1.00,0.33,1.00,0.67,1.00,1.00,0.67,1.00,0.33,1.00,0.00,1.00,0.00,0.67,0.00,0.33), $coords_min=0, $coords_max=1) {$/;"	f
 Count	admin/mysql/libraries/unzip.lib.php	/^        function Count()$/;"	f
 CreateBody	lib/phpmailer/class.phpmailer.php	/^    function CreateBody() {$/;"	f
 CreateDatabase	lib/adodb/adodb-datadict.inc.php	/^	function CreateDatabase($dbname,$options=false)$/;"	f
@@ -361,6 +368,7 @@ CreateSequence	lib/adodb/drivers/adodb-odbtp.inc.php	/^	function CreateSequence(
 CreateSequence	lib/adodb/drivers/adodb-sqlite.inc.php	/^	function CreateSequence($seqname='adodbseq',$start=1)$/;"	f
 CreateTableSQL	lib/adodb/adodb-datadict.inc.php	/^	function CreateTableSQL($tabname, $flds, $tableoptions=array())$/;"	f
 CurrentRow	lib/adodb/adodb.inc.php	/^	function CurrentRow() {return $this->_currentRow;}$/;"	f
+Curve	lib/tcpdf/tcpdf.php	/^		public function Curve($x0, $y0, $x1, $y1, $x2, $y2, $x3, $y3, $style="", $line_style=array(), $fill_color=array()) {$/;"	f
 DB	lib/adodb/adodb-active-record.inc.php	/^	function DB()$/;"	f
 DB2Types	lib/adodb/drivers/adodb-db2.inc.php	/^	function DB2Types($t)$/;"	f
 DBDate	lib/adodb/adodb.inc.php	/^	function DBDate($d)$/;"	f
@@ -407,6 +415,7 @@ DropTableSQL	lib/adodb/datadict/datadict-postgres.inc.php	/^	function DropTableS
 EOF	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function EOF() {$/;"	f
 EclipseInvoker	lib/simpletestlib/eclipse.php	/^    function EclipseInvoker(&$invoker, &$listener) {$/;"	f
 EclipseReporter	lib/simpletestlib/eclipse.php	/^    function EclipseReporter(&$listener, $cc=false){$/;"	f
+Ellipse	lib/tcpdf/tcpdf.php	/^		public function Ellipse($x0, $y0, $rx, $ry=0, $angle=0, $astart=0, $afinish=360, $style="", $line_style=array(), $fill_color=array(), $nc=8) {$/;"	f
 EncodeFile	lib/phpmailer/class.phpmailer.php	/^    function EncodeFile ($path, $encoding = "base64") {$/;"	f
 EncodeHeader	lib/phpmailer/class.phpmailer.php	/^    function EncodeHeader ($str, $position = 'text') {$/;"	f
 EncodeQ	lib/phpmailer/class.phpmailer.php	/^    function EncodeQ ($str, $position = "text") {$/;"	f
@@ -420,7 +429,7 @@ Error	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Error($msg) {$/;"	f
 Error	admin/mysql/pdf_schema.php	/^    function Error($error_message = '')$/;"	f
 Error	lib/adodb/adodb-active-record.inc.php	/^	function Error($err,$fn)$/;"	f
 Error	lib/fpdf/fpdf.php	/^function Error($msg)$/;"	f
-Error	lib/tcpdf/tcpdf.php	/^        function Error($msg) {$/;"	f
+Error	lib/tcpdf/tcpdf.php	/^		public function Error($msg) {$/;"	f
 ErrorMsg	lib/adodb/adodb-active-record.inc.php	/^	function ErrorMsg()$/;"	f
 ErrorMsg	lib/adodb/adodb.inc.php	/^	function ErrorMsg()$/;"	f
 ErrorMsg	lib/adodb/drivers/adodb-ado.inc.php	/^	function ErrorMsg() $/;"	f
@@ -550,7 +559,7 @@ Footer	admin/mysql/libraries/export/pdf.php	/^    function Footer()$/;"	f
 Footer	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Footer() {$/;"	f
 Footer	admin/mysql/pdf_schema.php	/^    function Footer()$/;"	f
 Footer	lib/fpdf/fpdf.php	/^function Footer()$/;"	f
-Footer	lib/tcpdf/tcpdf.php	/^        function Footer() {$/;"	f
+Footer	lib/tcpdf/tcpdf.php	/^		public function Footer() {				$/;"	f
 Format	lib/excel/Format.php	/^    function Format($index = 0,$properties =  array())$/;"	f
 Free	lib/adodb/adodb.inc.php	/^	function Free()$/;"	f
 GET	lib/pear/HTTP/WebDAV/Server.php	/^     function GET(&$params) $/;"	f
@@ -567,10 +576,12 @@ GenID	lib/adodb/drivers/adodb-odbc.inc.php	/^	function GenID($seq='adodbseq',$st
 GenID	lib/adodb/drivers/adodb-odbtp.inc.php	/^	function GenID($seq='adodbseq',$start=1)$/;"	f
 GenID	lib/adodb/drivers/adodb-sqlite.inc.php	/^	function GenID($seq='adodbseq',$start=1)$/;"	f
 GenWhere	lib/adodb/adodb-active-record.inc.php	/^	function GenWhere(&$db, &$table)$/;"	f
+GetAbsX	lib/tcpdf/tcpdf.php	/^		public function GetAbsX() {$/;"	f
 GetActiveRecords	lib/adodb/adodb.inc.php	/^	function GetActiveRecords($table,$where=false,$bindarr=false,$primkeyArr=false)$/;"	f
 GetActiveRecordsClass	lib/adodb/adodb.inc.php	/^	function GetActiveRecordsClass($class, $table,$whereOrderBy=false,$bindarr=false, $primkeyArr=false)$/;"	f
 GetAll	lib/adodb/adodb.inc.php	/^	function GetAll($nRows = -1)$/;"	f
 GetAll	lib/adodb/adodb.inc.php	/^	function GetAll($sql, $inputarr=false)$/;"	f
+GetArrStringWidth	lib/tcpdf/tcpdf.php	/^		public function GetArrStringWidth($sa, $fontname='', $fontstyle='', $fontsize=0) {$/;"	f
 GetArray	lib/adodb/adodb.inc.php	/^		function GetArray($nRows=-1)$/;"	f
 GetArray	lib/adodb/adodb.inc.php	/^	function GetArray($nRows = -1) $/;"	f
 GetArray	lib/adodb/adodb.inc.php	/^	function GetArray($sql,$inputarr=false)$/;"	f
@@ -589,6 +600,7 @@ GetBoundary	lib/phpmailer/class.phpmailer.php	/^    function GetBoundary($bounda
 GetCharSet	lib/adodb/adodb.inc.php	/^	function GetCharSet()$/;"	f
 GetCharSet	lib/adodb/drivers/adodb-mysqli.inc.php	/^  function GetCharSet()$/;"	f
 GetCharSet	lib/adodb/drivers/adodb-postgres7.inc.php	/^	function GetCharSet()$/;"	f
+GetCharWidth	lib/tcpdf/tcpdf.php	/^		public function GetCharWidth($char) {$/;"	f
 GetCol	lib/adodb/adodb.inc.php	/^	function GetCol($sql, $inputarr = false, $trim = false)$/;"	f
 GetCommentSQL	lib/adodb/adodb-datadict.inc.php	/^	function GetCommentSQL($table,$col)$/;"	f
 GetCommentSQL	lib/adodb/datadict/datadict-oci8.inc.php	/^	function GetCommentSQL($table,$col)$/;"	f
@@ -603,10 +615,12 @@ GetInnoDBHitRatio	lib/adodb/perf/perf-mysql.inc.php	/^	function GetInnoDBHitRati
 GetInsertSQL	lib/adodb/adodb.inc.php	/^	function GetInsertSQL(&$rs, $arrFields,$magicq=false,$force=null)$/;"	f
 GetKeyHitRatio	lib/adodb/perf/perf-mysql.inc.php	/^	function GetKeyHitRatio()$/;"	f
 GetLastError	mod/scorm/datamodels/scorm_13.js.php	/^    function GetLastError () {$/;"	f
+GetLineWidth	lib/tcpdf/tcpdf.php	/^		public function GetLineWidth() {$/;"	f
 GetMenu	lib/adodb/adodb.inc.php	/^	function GetMenu($name,$defstr='',$blank1stItem=true,$multiple=false,$/;"	f
 GetMenu2	lib/adodb/adodb.inc.php	/^	function GetMenu2($name,$defstr='',$blank1stItem=true,$multiple=false,$size=0, $selectAttr='')	$/;"	f
 GetMenu3	lib/adodb/adodb.inc.php	/^	function GetMenu3($name,$defstr='',$blank1stItem=true,$multiple=false,$/;"	f
 GetName	admin/mysql/libraries/unzip.lib.php	/^        function GetName($in_Index)$/;"	f
+GetNumChars	lib/tcpdf/tcpdf.php	/^		public function GetNumChars($s) {$/;"	f
 GetOne	lib/adodb/adodb.inc.php	/^	function GetOne($sql,$inputarr=false)$/;"	f
 GetOne	lib/adodb/drivers/adodb-mysql.inc.php	/^	function GetOne($sql,$inputarr=false)$/;"	f
 GetOne	lib/adodb/drivers/adodb-mysqli.inc.php	/^	function GetOne($sql,$inputarr=false)$/;"	f
@@ -626,17 +640,18 @@ GetRowNums	lib/adodb/drivers/adodb-ldap.inc.php	/^    function GetRowNums()$/;"	
 GetRows	lib/adodb/adodb.inc.php	/^	function GetRows($nRows = -1) $/;"	f
 GetStringWidth	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function GetStringWidth($s) {$/;"	f
 GetStringWidth	lib/fpdf/fpdf.php	/^function GetStringWidth($s)$/;"	f
-GetStringWidth	lib/tcpdf/tcpdf.php	/^        function GetStringWidth($s) {$/;"	f
+GetStringWidth	lib/tcpdf/tcpdf.php	/^		public function GetStringWidth($s, $fontname='', $fontstyle='', $fontsize=0) {$/;"	f
 GetTime	admin/mysql/libraries/unzip.lib.php	/^        function GetTime($in_Index)$/;"	f
 GetUpdateSQL	lib/adodb/adodb.inc.php	/^	function GetUpdateSQL(&$rs, $arrFields,$forceUpdate=false,$magicq=false,$force=null)$/;"	f
 GetValue	mod/scorm/datamodels/scorm_13.js.php	/^    function GetValue (element) {$/;"	f
 GetWrites	lib/adodb/perf/perf-mysql.inc.php	/^	function GetWrites()$/;"	f
 GetX	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function GetX() {$/;"	f
 GetX	lib/fpdf/fpdf.php	/^function GetX()$/;"	f
-GetX	lib/tcpdf/tcpdf.php	/^        function GetX() {$/;"	f
+GetX	lib/tcpdf/tcpdf.php	/^		public function GetX() {$/;"	f
 GetY	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function GetY() {$/;"	f
 GetY	lib/fpdf/fpdf.php	/^function GetY()$/;"	f
-GetY	lib/tcpdf/tcpdf.php	/^        function GetY() {$/;"	f
+GetY	lib/tcpdf/tcpdf.php	/^		public function GetY() {$/;"	f
+Gradient	lib/tcpdf/tcpdf.php	/^		protected function Gradient($type, $col1, $col2, $coords){$/;"	f
 GuessOID	lib/adodb/drivers/adodb-postgres64.inc.php	/^	function GuessOID($oid)$/;"	f
 HTMLArea	lib/editor/htmlarea/htmlarea.php	/^function HTMLArea(textarea, config) {$/;"	f
 HTMLArea	lib/editor/htmlarea/htmlarea_bak.php	/^function HTMLArea(textarea, config) {$/;"	f
@@ -692,7 +707,7 @@ Header	admin/mysql/libraries/export/pdf.php	/^    function Header()$/;"	f
 Header	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Header() {$/;"	f
 Header	admin/mysql/pdf_schema.php	/^    function Header()$/;"	f
 Header	lib/fpdf/fpdf.php	/^function Header()$/;"	f
-Header	lib/tcpdf/tcpdf.php	/^        function Header() {$/;"	f
+Header	lib/tcpdf/tcpdf.php	/^		public function Header() {$/;"	f
 HeaderLine	lib/phpmailer/class.phpmailer.php	/^    function HeaderLine($name, $value) {$/;"	f
 HeaderingExcel	lib/excel/test.php	/^  function HeaderingExcel($filename) {$/;"	f
 HealthCheck	lib/adodb/adodb-perf.inc.php	/^	function HealthCheck($cli=false)$/;"	f
@@ -719,11 +734,13 @@ IgnoreErrors	lib/adodb/adodb.inc.php	/^	function IgnoreErrors($saveErrs=false)$/
 IgnoreWhitespaceExpectation	lib/simpletestlib.php	/^    function IgnoreWhitespaceExpectation($content, $message = '%s') {$/;"	f
 Image	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Image($file, $x, $y, $w=0, $h=0, $type='', $link='') {$/;"	f
 Image	lib/fpdf/fpdf.php	/^function Image($file,$x,$y,$w=0,$h=0,$type='',$link='')$/;"	f
-Image	lib/tcpdf/tcpdf.php	/^        function Image($file, $x, $y, $w=0, $h=0, $type='', $link='') {$/;"	f
+Image	lib/tcpdf/tcpdf.php	/^		public function Image($file, $x, $y, $w=0, $h=0, $type='', $link='', $align='', $resize=false, $dpi=300, $palign='') {$/;"	f
 ImageCopyBicubic	lib/gdlib.php	/^function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {$/;"	f
+ImageEps	lib/tcpdf/tcpdf.php	/^		public function ImageEps($file, $x, $y, $w=0, $h=0, $link='', $useBoundingBox=true, $align='') {$/;"	f
 InParameter	lib/adodb/adodb.inc.php	/^	function InParameter(&$stmt,&$var,$name,$maxLen=4000,$type=false)$/;"	f
 InParameter	lib/adodb/drivers/adodb-pdo.inc.php	/^	function InParameter(&$stmt,&$var,$name,$maxLen=4000,$type=false)$/;"	f
 InParameter	lib/adodb/drivers/adodb-pdo.inc.php	/^	function InParameter(&$var,$name,$maxLen=4000,$type=false)$/;"	f
+IncludeJS	lib/tcpdf/tcpdf.php	/^		public function IncludeJS($script) {$/;"	f
 Init	lib/adodb/adodb.inc.php	/^		function Init() {}$/;"	f
 Init	lib/adodb/adodb.inc.php	/^	function Init()$/;"	f
 Init	lib/adodb/drivers/adodb-oci8.inc.php	/^	function Init()$/;"	f
@@ -781,13 +798,15 @@ Lexer	lib/lexer.php	/^        function Lexer(&$parser, $start = "accept", $case 
 LimitQuery	lib/adodb/adodb.inc.php	/^	function LimitQuery($sql, $offset, $count, $params=false)$/;"	f
 Line	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Line($x1, $y1, $x2, $y2) {$/;"	f
 Line	lib/fpdf/fpdf.php	/^function Line($x1,$y1,$x2,$y2)$/;"	f
-Line	lib/tcpdf/tcpdf.php	/^        function Line($x1, $y1, $x2, $y2) {$/;"	f
+Line	lib/tcpdf/tcpdf.php	/^		public function Line($x1, $y1, $x2, $y2, $style=array()) {$/;"	f
+LinearGradient	lib/tcpdf/tcpdf.php	/^		public function LinearGradient($x, $y, $w, $h, $col1=array(), $col2=array(), $coords=array(0,0,1,0)) {$/;"	f
 Link	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Link($x, $y, $w, $h, $link) {$/;"	f
 Link	lib/fpdf/fpdf.php	/^function Link($x,$y,$w,$h,$link)$/;"	f
-Link	lib/tcpdf/tcpdf.php	/^        function Link($x, $y, $w, $h, $link) {$/;"	f
+Link	lib/tcpdf/tcpdf.php	/^		public function Link($x, $y, $w, $h, $link) {$/;"	f
+ListBox	lib/tcpdf/tcpdf.php	/^		public function ListBox($name, $w, $h, $values, $prop=array()) {$/;"	f
 Ln	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Ln($h='') {$/;"	f
 Ln	lib/fpdf/fpdf.php	/^function Ln($h='')$/;"	f
-Ln	lib/tcpdf/tcpdf.php	/^        function Ln($h='') {$/;"	f
+Ln	lib/tcpdf/tcpdf.php	/^		public function Ln($h='', $cell=false) {$/;"	f
 Load	lib/adodb/adodb-active-record.inc.php	/^	function Load($where,$bindarr=false)$/;"	f
 LocalDate2OLE	lib/pear/OLE.php	/^    function LocalDate2OLE($date = null)$/;"	f
 Lock	lib/adodb/session/adodb-session.php	/^	function Lock($lock=null)$/;"	f
@@ -798,9 +817,13 @@ MOVE	lib/pear/HTTP/WebDAV/Server.php	/^     function MOVE() $/;"	f
 Mail	lib/phpmailer/class.smtp.php	/^    function Mail($from) {$/;"	f
 MailSend	lib/phpmailer/class.phpmailer.php	/^    function MailSend($header, $body) {$/;"	f
 MakeFont	lib/fpdf/font/makefont/makefont.php	/^function MakeFont($fontfile,$afmfile,$enc='cp1252',$patch=array(),$type='TrueType')$/;"	f
+MakeFont	lib/tcpdf/fonts/utils/makefont.php	/^function MakeFont($fontfile, $fmfile, $embedded=true, $enc="cp1252", $patch=array()) {$/;"	f
 MakeFontDescriptor	lib/fpdf/font/makefont/makefont.php	/^function MakeFontDescriptor($fm,$symbolic)$/;"	f
+MakeFontDescriptor	lib/tcpdf/fonts/utils/makefont.php	/^function MakeFontDescriptor($fm, $symbolic = false) {$/;"	f
 MakeFontEncoding	lib/fpdf/font/makefont/makefont.php	/^function MakeFontEncoding($map)$/;"	f
+MakeFontEncoding	lib/tcpdf/fonts/utils/makefont.php	/^function MakeFontEncoding($map) {$/;"	f
 MakeWidthArray	lib/fpdf/font/makefont/makefont.php	/^function MakeWidthArray($fm)$/;"	f
+MakeWidthArray	lib/tcpdf/fonts/utils/makefont.php	/^function MakeWidthArray($fm) {$/;"	f
 Markdown	lib/markdown.php	/^function Markdown($text) {$/;"	f
 MarkdownExtra_Parser	lib/markdown.php	/^	function MarkdownExtra_Parser() {$/;"	f
 Markdown_Parser	lib/markdown.php	/^	function Markdown_Parser() {$/;"	f
@@ -925,6 +948,10 @@ MetaType	lib/adodb/drivers/adodb-vfp.inc.php	/^	function MetaType($t,$len=-1)$/;
 MethodExistsExpectation	lib/simpletestlib/expectation.php	/^    function MethodExistsExpectation($method, $message = '%s') {$/;"	f
 MethodTable	admin/mnet/MethodTable.php	/^    function MethodTable(){$/;"	f
 MinimumCallCountExpectation	lib/simpletestlib/mock_objects.php	/^    function MinimumCallCountExpectation($method, $count, $message = '%s') {$/;"	f
+MirrorH	lib/tcpdf/tcpdf.php	/^		public function MirrorH($x=''){$/;"	f
+MirrorL	lib/tcpdf/tcpdf.php	/^		public function MirrorL($angle=0, $x='',$y=''){$/;"	f
+MirrorP	lib/tcpdf/tcpdf.php	/^		public function MirrorP($x='',$y=''){$/;"	f
+MirrorV	lib/tcpdf/tcpdf.php	/^		public function MirrorV($y=''){$/;"	f
 Mock	lib/simpletestlib/mock_objects.php	/^    function Mock() {$/;"	f
 MockGenerator	lib/simpletestlib/mock_objects.php	/^    function MockGenerator($class, $mock_class) {$/;"	f
 MoodleExcelFormat	lib/excellib.class.php	/^    function MoodleExcelFormat(&$workbook, $properties = array()) {$/;"	f
@@ -976,7 +1003,7 @@ Moxiecode_JSONReader	lib/editor/tinymce/jscripts/tiny_mce/plugins/spellchecker/c
 Moxiecode_Logger	lib/editor/tinymce/jscripts/tiny_mce/plugins/spellchecker/classes/utils/Logger.php	/^	function Moxiecode_Logger() {$/;"	f
 MultiCell	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0) {$/;"	f
 MultiCell	lib/fpdf/fpdf.php	/^function MultiCell($w,$h,$txt,$border=0,$align='J',$fill=0)$/;"	f
-MultiCell	lib/tcpdf/tcpdf.php	/^        function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0) {$/;"	f
+MultiCell	lib/tcpdf/tcpdf.php	/^		public function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false) {	$/;"	f
 MultipleSelectionTag	lib/simpletestlib/tag.php	/^    function MultipleSelectionTag($attributes) {$/;"	f
 NConnect	lib/adodb/adodb.inc.php	/^	function NConnect($argHostname = "", $argUsername = "", $argPassword = "", $argDatabaseName = "") $/;"	f
 Name	auth/cas/CAS/domxml-php4-php5.php	/^ function Name() {return $this->myDOMNode->name;}$/;"	f
@@ -1024,17 +1051,15 @@ OffsetDate	lib/adodb/drivers/adodb-postgres64.inc.php	/^	function OffsetDate($da
 OldUpdateBlob	lib/adodb/drivers/adodb-ibase.inc.php	/^	function OldUpdateBlob($table,$column,$val,$where,$blobtype='BLOB')$/;"	f
 Open	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Open() {$/;"	f
 Open	lib/fpdf/fpdf.php	/^function Open()$/;"	f
-Open	lib/tcpdf/tcpdf.php	/^        function Open() {$/;"	f
-OpenTag	lib/tcpdf/html2pdf.php	/^function OpenTag($tag,$attr)$/;"	f
+Open	lib/tcpdf/tcpdf.php	/^		public function Open() {$/;"	f
 OptimizeTable	lib/adodb/adodb-perf.inc.php	/^    function OptimizeTable( $table, $mode = ADODB_OPT_LOW) $/;"	f
 OptimizeTables	lib/adodb/adodb-perf.inc.php	/^    function OptimizeTables()$/;"	f
 OutParameter	lib/adodb/adodb.inc.php	/^	function OutParameter(&$stmt,&$var,$name,$maxLen=4000,$type=false)$/;"	f
 Output	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Output($name='',$dest='') {$/;"	f
 Output	lib/fpdf/fpdf.php	/^function Output($name='',$dest='')$/;"	f
-Output	lib/tcpdf/tcpdf.php	/^        function Output($name='',$dest='') {$/;"	f
+Output	lib/tcpdf/tcpdf.php	/^		public function Output($name='doc.pdf', $dest='I') {$/;"	f
 OutsideMarginExpectation	lib/simpletestlib/expectation.php	/^    function OutsideMarginExpectation($value, $margin, $message = '%s') {$/;"	f
 PConnect	lib/adodb/adodb.inc.php	/^	function PConnect($argHostname = "", $argUsername = "", $argPassword = "", $argDatabaseName = "")$/;"	f
-PDF	lib/tcpdf/html2pdf.php	/^function PDF($orientation='P',$unit='mm',$format='A4')$/;"	f
 PEAR	lib/pear/PEAR.php	/^    function PEAR($error_class = null)$/;"	f
 PEAR_Error	lib/pear/PEAR.php	/^    function PEAR_Error($message = 'unknown error', $code = null,$/;"	f
 PGA	lib/adodb/perf/perf-oci8.inc.php	/^	function PGA()$/;"	f
@@ -1492,7 +1517,7 @@ PUT	lib/pear/HTTP/WebDAV/Server.php	/^     function PUT() $/;"	f
 PageExecute	lib/adodb/adodb.inc.php	/^	function PageExecute($sql, $nrows, $page, $inputarr=false, $secs2cache=0) $/;"	f
 PageNo	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function PageNo() {$/;"	f
 PageNo	lib/fpdf/fpdf.php	/^function PageNo()$/;"	f
-PageNo	lib/tcpdf/tcpdf.php	/^        function PageNo() {$/;"	f
+PageNo	lib/tcpdf/tcpdf.php	/^		public function PageNo() {$/;"	f
 ParallelRegex	lib/lexer.php	/^        function ParallelRegex($case) {$/;"	f
 ParallelRegex	lib/simpletestlib/parser.php	/^    function ParallelRegex($case) {$/;"	f
 Param	lib/adodb/adodb.inc.php	/^	function Param($name,$type='C')$/;"	f
@@ -1518,9 +1543,12 @@ PclZipUtilPathInclusion	lib/pclzip/pclzip.lib.php	/^  function PclZipUtilPathInc
 PclZipUtilPathReduction	lib/pclzip/pclzip.lib.php	/^  function PclZipUtilPathReduction($p_dir)$/;"	f
 PclZipUtilRename	lib/pclzip/pclzip.lib.php	/^  function PclZipUtilRename($p_src, $p_dest)$/;"	f
 PclZipUtilTranslateWinPath	lib/pclzip/pclzip.lib.php	/^  function PclZipUtilTranslateWinPath($p_path, $p_remove_disk_letter=true)$/;"	f
+PieSector	lib/tcpdf/tcpdf.php	/^		public function PieSector($xc, $yc, $r, $a, $b, $style='FD', $cw=true, $o=90) {$/;"	f
 PivotTableSQL	lib/adodb/pivottable.inc.php	/^ function PivotTableSQL(&$db,$tables,$rowfields,$colfield, $where=false,$/;"	f
 Poll	lib/adodb/adodb-perf.inc.php	/^	function Poll($secs=5)$/;"	f
 PollParameters	lib/adodb/adodb-perf.inc.php	/^	function PollParameters()$/;"	f
+Polycurve	lib/tcpdf/tcpdf.php	/^		public function Polycurve($x0, $y0, $segments, $style="", $line_style=array(), $fill_color=array()) {$/;"	f
+Polygon	lib/tcpdf/tcpdf.php	/^		public function Polygon($p, $style="", $line_style=array(), $fill_color=array()) {$/;"	f
 Prepare	lib/adodb/adodb.inc.php	/^	function Prepare($sql)$/;"	f
 Prepare	lib/adodb/drivers/adodb-db2.inc.php	/^	function Prepare($sql)$/;"	f
 Prepare	lib/adodb/drivers/adodb-ibase.inc.php	/^	function Prepare($sql)$/;"	f
@@ -1542,28 +1570,35 @@ PresetImporter	mod/data/lib.php	/^    function PresetImporter($course, $cm, $dat
 PrintSQL	lib/adodb/adodb-xmlschema.inc.php	/^	function PrintSQL( $format = 'NONE' ) {$/;"	f
 PrintSQL	lib/adodb/adodb-xmlschema03.inc.php	/^	function PrintSQL( $format = 'NONE' ) {$/;"	f
 PublicShare	repository/boxnet/boxlibphp5.php	/^    function PublicShare($message, $emails, $id, $target_type, $password, $params = array()) {$/;"	f
-PutLink	lib/tcpdf/html2pdf.php	/^function PutLink($URL,$txt)$/;"	f
 QMagic	lib/adodb/adodb.inc.php	/^	function QMagic($s)$/;"	f
 Query	lib/adodb/adodb.inc.php	/^	function Query($sql, $inputarr=false)$/;"	f
 Quit	lib/phpmailer/class.smtp.php	/^    function Quit($close_on_error=true) {$/;"	f
 Quote	lib/adodb/adodb.inc.php	/^	function Quote($s)$/;"	f
 RFCDate	lib/phpmailer/class.phpmailer.php	/^    function RFCDate() {$/;"	f
 RSFilter	lib/adodb/rsfilter.inc.php	/^function RSFilter($rs,$fn)$/;"	f
+RadialGradient	lib/tcpdf/tcpdf.php	/^		public function RadialGradient($x, $y, $w, $h, $col1=array(), $col2=array(), $coords=array(0.5,0.5,0.5,0.5,1)) {$/;"	f
+RadioButton	lib/tcpdf/tcpdf.php	/^		public function RadioButton($name, $w, $prop=array()) {$/;"	f
 RandPass	lib/adodb/session/crypt.inc.php	/^		function RandPass()$/;"	f
 RandPass	lib/adodb/session/old/crypt.inc.php	/^		function RandPass()$/;"	f
 ReadAFM	lib/fpdf/font/makefont/makefont.php	/^function ReadAFM($file,&$map)$/;"	f
+ReadAFM	lib/tcpdf/fonts/utils/makefont.php	/^function ReadAFM($file,&$map) {$/;"	f
 ReadFile	admin/mysql/libraries/unzip.lib.php	/^        function ReadFile($in_FileName)$/;"	f
 ReadLong	lib/fpdf/font/makefont/makefont.php	/^function ReadLong($f)$/;"	f
+ReadLong	lib/tcpdf/fonts/utils/makefont.php	/^function ReadLong($f) {$/;"	f
 ReadMap	lib/fpdf/font/makefont/makefont.php	/^function ReadMap($enc)$/;"	f
+ReadMap	lib/tcpdf/fonts/utils/makefont.php	/^function ReadMap($enc) {$/;"	f
 ReadShort	lib/fpdf/font/makefont/makefont.php	/^function ReadShort($f)$/;"	f
+ReadShort	lib/tcpdf/fonts/utils/makefont.php	/^function ReadShort($f) {$/;"	f
+ReadUFM	lib/tcpdf/fonts/utils/makefont.php	/^function ReadUFM($file, &$cidtogidmap) {$/;"	f
 Recipient	lib/phpmailer/class.smtp.php	/^    function Recipient($to) {$/;"	f
 RecordCount	lib/adodb/adodb.inc.php	/^		function RecordCount() {return 0;}$/;"	f
 RecordCount	lib/adodb/adodb.inc.php	/^	function RecordCount() {return $this->_numOfRows;}$/;"	f
 Rect	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Rect($x, $y, $w, $h, $style='') {$/;"	f
 Rect	lib/fpdf/fpdf.php	/^function Rect($x,$y,$w,$h,$style='')$/;"	f
-Rect	lib/tcpdf/tcpdf.php	/^        function Rect($x, $y, $w, $h, $style='') {$/;"	f
+Rect	lib/tcpdf/tcpdf.php	/^		public function Rect($x, $y, $w, $h, $style='', $border_style=array(), $fill_color=array()) {$/;"	f
 ReferenceExpectation	lib/simpletestlib/expectation.php	/^    function ReferenceExpectation(&$value, $message = '%s') {$/;"	f
 RegisterUser	repository/boxnet/boxlibphp5.php	/^    function RegisterUser($params = array()) {$/;"	f
+RegularPolygon	lib/tcpdf/tcpdf.php	/^		public function RegularPolygon($x0, $y0, $r, $ns, $angle=0, $draw_circle=false, $style="", $line_style=array(), $fill_color=array(), $circle_style="", $circle_outLine_style=array(), $circle_fill_color=array()) {$/;"	f
 RemoteTestCase	lib/simpletestlib/remote.php	/^    function RemoteTestCase($url, $dry_url = false) {$/;"	f
 RemoveSchema	lib/adodb/adodb-xmlschema.inc.php	/^	function RemoveSchema( $filename, $returnSchema = FALSE ) {$/;"	f
 RemoveSchema	lib/adodb/adodb-xmlschema03.inc.php	/^	function RemoveSchema( $filename, $returnSchema = FALSE ) {$/;"	f
@@ -1601,6 +1636,8 @@ RollbackTrans	lib/adodb/drivers/adodb-pdo.inc.php	/^	function RollbackTrans()$/;
 RollbackTrans	lib/adodb/drivers/adodb-postgres64.inc.php	/^	function RollbackTrans()$/;"	f
 RollbackTrans	lib/adodb/drivers/adodb-sqlite.inc.php	/^	function RollbackTrans()$/;"	f
 RollbackTrans	lib/adodb/drivers/adodb-sybase.inc.php	/^	function RollbackTrans()$/;"	f
+Rotate	lib/tcpdf/tcpdf.php	/^		public function Rotate($angle, $x='', $y=''){$/;"	f
+RoundedRect	lib/tcpdf/tcpdf.php	/^		public function RoundedRect($x, $y, $w, $h, $r, $round_corner="1111", $style="", $border_style=array(), $fill_color=array()) {$/;"	f
 Row	admin/mysql/pdf_schema.php	/^    function Row($data, $links)$/;"	f
 RowCount	lib/adodb/adodb.inc.php	/^		function RowCount() {return 0;}$/;"	f
 RowCount	lib/adodb/adodb.inc.php	/^	function RowCount() {return $this->_numOfRows;} $/;"	f
@@ -1634,6 +1671,11 @@ Save	lib/adodb/adodb-active-record.inc.php	/^	function Save()$/;"	f
 SaveSQL	lib/adodb/adodb-xmlschema.inc.php	/^	function SaveSQL( $filename = '.\/schema.sql' ) {$/;"	f
 SaveSQL	lib/adodb/adodb-xmlschema03.inc.php	/^	function SaveSQL( $filename = '.\/schema.sql' ) {$/;"	f
 SaveToFile	lib/fpdf/font/makefont/makefont.php	/^function SaveToFile($file,$s,$mode='t')$/;"	f
+SaveToFile	lib/tcpdf/fonts/utils/makefont.php	/^function SaveToFile($file, $s, $mode='t') {$/;"	f
+Scale	lib/tcpdf/tcpdf.php	/^		public function Scale($s_x, $s_y, $x='', $y=''){$/;"	f
+ScaleX	lib/tcpdf/tcpdf.php	/^		public function ScaleX($s_x, $x='', $y=''){$/;"	f
+ScaleXY	lib/tcpdf/tcpdf.php	/^		public function ScaleXY($s, $x='', $y=''){$/;"	f
+ScaleY	lib/tcpdf/tcpdf.php	/^		public function ScaleY($s_y, $x='', $y=''){$/;"	f
 SchemaFileVersion	lib/adodb/adodb-xmlschema.inc.php	/^	function SchemaFileVersion( $filename ) {$/;"	f
 SchemaFileVersion	lib/adodb/adodb-xmlschema03.inc.php	/^	function SchemaFileVersion( $filename ) {$/;"	f
 SchemaStringVersion	lib/adodb/adodb-xmlschema.inc.php	/^	function SchemaStringVersion( $xmlstring ) {$/;"	f
@@ -1713,10 +1755,11 @@ Set	lib/editor/htmlarea/popups/select_color.php	/^function Set(string) {$/;"	f
 SetAlias	admin/mysql/pdf_schema.php	/^    function SetAlias($name, $value)$/;"	f
 SetAuthor	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetAuthor($author) {$/;"	f
 SetAuthor	lib/fpdf/fpdf.php	/^function SetAuthor($author)$/;"	f
-SetAuthor	lib/tcpdf/tcpdf.php	/^        function SetAuthor($author) {$/;"	f
+SetAuthor	lib/tcpdf/tcpdf.php	/^		public function SetAuthor($author) {$/;"	f
 SetAutoPageBreak	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetAutoPageBreak($auto, $margin=0) {$/;"	f
 SetAutoPageBreak	lib/fpdf/fpdf.php	/^function SetAutoPageBreak($auto,$margin=0)$/;"	f
-SetAutoPageBreak	lib/tcpdf/tcpdf.php	/^        function SetAutoPageBreak($auto, $margin=0) {$/;"	f
+SetAutoPageBreak	lib/tcpdf/tcpdf.php	/^		public function SetAutoPageBreak($auto, $margin=0) {$/;"	f
+SetCellPadding	lib/tcpdf/tcpdf.php	/^		public function SetCellPadding($pad) {$/;"	f
 SetCharSet	lib/adodb/adodb.inc.php	/^	function SetCharSet($charset)$/;"	f
 SetCharSet	lib/adodb/drivers/adodb-mysqli.inc.php	/^  function SetCharSet($charset_name)$/;"	f
 SetCharSet	lib/adodb/drivers/adodb-postgres7.inc.php	/^	function SetCharSet($charset_name)$/;"	f
@@ -1724,68 +1767,71 @@ SetCommentSQL	lib/adodb/adodb-datadict.inc.php	/^	function SetCommentSQL($table,
 SetCommentSQL	lib/adodb/datadict/datadict-oci8.inc.php	/^	function SetCommentSQL($table,$col,$cmt)$/;"	f
 SetCompression	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetCompression($compress) {$/;"	f
 SetCompression	lib/fpdf/fpdf.php	/^function SetCompression($compress)$/;"	f
-SetCompression	lib/tcpdf/tcpdf.php	/^        function SetCompression($compress) {$/;"	f
+SetCompression	lib/tcpdf/tcpdf.php	/^		public function SetCompression($compress) {$/;"	f
 SetCreator	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetCreator($creator) {$/;"	f
 SetCreator	lib/fpdf/fpdf.php	/^function SetCreator($creator)$/;"	f
-SetCreator	lib/tcpdf/tcpdf.php	/^        function SetCreator($creator) {$/;"	f
+SetCreator	lib/tcpdf/tcpdf.php	/^		public function SetCreator($creator) {$/;"	f
 SetDatabaseAdapter	lib/adodb/adodb-active-record.inc.php	/^	static function SetDatabaseAdapter(&$db) $/;"	f
 SetDateLocale	lib/adodb/adodb.inc.php	/^	function SetDateLocale($locale = 'En')$/;"	f
 SetDisplayMode	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetDisplayMode($zoom, $layout='continuous') {$/;"	f
 SetDisplayMode	lib/fpdf/fpdf.php	/^function SetDisplayMode($zoom,$layout='continuous')$/;"	f
-SetDisplayMode	lib/tcpdf/tcpdf.php	/^        function SetDisplayMode($zoom, $layout='continuous') {$/;"	f
+SetDisplayMode	lib/tcpdf/tcpdf.php	/^		public function SetDisplayMode($zoom, $layout='SinglePage', $mode="UseNone") {$/;"	f
 SetDrawColor	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetDrawColor($r, $g=-1, $b=-1) {$/;"	f
 SetDrawColor	lib/fpdf/fpdf.php	/^function SetDrawColor($r,$g=-1,$b=-1)$/;"	f
-SetDrawColor	lib/tcpdf/tcpdf.php	/^        function SetDrawColor($r, $g=-1, $b=-1) {$/;"	f
+SetDrawColor	lib/tcpdf/tcpdf.php	/^		public function SetDrawColor($col1=0, $col2=-1, $col3=-1, $col4=-1) {$/;"	f
+SetDrawColorArray	lib/tcpdf/tcpdf.php	/^		public function SetDrawColorArray($color) {$/;"	f
 SetError	lib/phpmailer/class.phpmailer.php	/^    function SetError($msg) {$/;"	f
 SetFetchMode	lib/adodb/adodb.inc.php	/^	function SetFetchMode($mode)$/;"	f
 SetFillColor	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetFillColor($r, $g=-1, $b=-1, $storeprev=false) {$/;"	f
 SetFillColor	lib/fpdf/fpdf.php	/^function SetFillColor($r,$g=-1,$b=-1)$/;"	f
-SetFillColor	lib/tcpdf/tcpdf.php	/^        function SetFillColor($r, $g=-1, $b=-1, $storeprev=false) {$/;"	f
+SetFillColor	lib/tcpdf/tcpdf.php	/^		public function SetFillColor($col1=0, $col2=-1, $col3=-1, $col4=-1) {$/;"	f
+SetFillColorArray	lib/tcpdf/tcpdf.php	/^		public function SetFillColorArray($color) {$/;"	f
 SetFont	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetFont($family, $style='', $size=0) {$/;"	f
 SetFont	lib/fpdf/fpdf.php	/^function SetFont($family,$style='',$size=0)$/;"	f
-SetFont	lib/tcpdf/tcpdf.php	/^        function SetFont($family, $style='', $size=0) {$/;"	f
+SetFont	lib/tcpdf/tcpdf.php	/^		public function SetFont($family, $style='', $size=0) {$/;"	f
 SetFontSize	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetFontSize($size) {$/;"	f
 SetFontSize	lib/fpdf/fpdf.php	/^function SetFontSize($size)$/;"	f
-SetFontSize	lib/tcpdf/tcpdf.php	/^        function SetFontSize($size) {$/;"	f
+SetFontSize	lib/tcpdf/tcpdf.php	/^		public function SetFontSize($size) {$/;"	f
 SetKeywords	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetKeywords($keywords) {$/;"	f
 SetKeywords	lib/fpdf/fpdf.php	/^function SetKeywords($keywords)$/;"	f
-SetKeywords	lib/tcpdf/tcpdf.php	/^        function SetKeywords($keywords) {$/;"	f
+SetKeywords	lib/tcpdf/tcpdf.php	/^		public function SetKeywords($keywords) {$/;"	f
 SetLanguage	lib/phpmailer/class.phpmailer.php	/^    function SetLanguage($lang_type, $lang_path = "language\/") {$/;"	f
 SetLeftMargin	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetLeftMargin($margin) {$/;"	f
 SetLeftMargin	lib/fpdf/fpdf.php	/^function SetLeftMargin($margin)$/;"	f
-SetLeftMargin	lib/tcpdf/tcpdf.php	/^        function SetLeftMargin($margin) {$/;"	f
+SetLeftMargin	lib/tcpdf/tcpdf.php	/^		public function SetLeftMargin($margin) {$/;"	f
+SetLineStyle	lib/tcpdf/tcpdf.php	/^		public function SetLineStyle($style) {$/;"	f
 SetLineWidth	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetLineWidth($width) {$/;"	f
 SetLineWidth	lib/fpdf/fpdf.php	/^function SetLineWidth($width)$/;"	f
-SetLineWidth	lib/tcpdf/tcpdf.php	/^        function SetLineWidth($width) {$/;"	f
+SetLineWidth	lib/tcpdf/tcpdf.php	/^		public function SetLineWidth($width) {$/;"	f
 SetLink	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetLink($link, $y=0, $page=-1) {$/;"	f
 SetLink	lib/fpdf/fpdf.php	/^function SetLink($link,$y=0,$page=-1)$/;"	f
-SetLink	lib/tcpdf/tcpdf.php	/^        function SetLink($link, $y=0, $page=-1) {$/;"	f
+SetLink	lib/tcpdf/tcpdf.php	/^		public function SetLink($link, $y=0, $page=-1) {$/;"	f
 SetMargins	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetMargins($left, $top, $right=-1) {$/;"	f
 SetMargins	lib/fpdf/fpdf.php	/^function SetMargins($left,$top,$right=-1)$/;"	f
-SetMargins	lib/tcpdf/tcpdf.php	/^        function SetMargins($left, $top, $right=-1) {$/;"	f
+SetMargins	lib/tcpdf/tcpdf.php	/^		public function SetMargins($left, $top, $right=-1) {$/;"	f
 SetMessageType	lib/phpmailer/class.phpmailer.php	/^    function SetMessageType() {$/;"	f
 SetPrefix	lib/adodb/adodb-xmlschema.inc.php	/^	function SetPrefix( $prefix = '', $underscore = TRUE ) {$/;"	f
 SetPrefix	lib/adodb/adodb-xmlschema03.inc.php	/^	function SetPrefix( $prefix = '', $underscore = TRUE ) {$/;"	f
 SetProtection	lib/fpdf/fpdfprotection.php	/^    function SetProtection($permissions=array(),$user_pass='',$owner_pass=null) {$/;"	f
-SetProtection	lib/tcpdf/tcpdfprotection.php	/^    function SetProtection($permissions=array(),$user_pass='',$owner_pass=null) {$/;"	f
+SetProtection	lib/tcpdf/tcpdf.php	/^		public function SetProtection($permissions=array(), $user_pass='', $owner_pass=null) {$/;"	f
 SetRightMargin	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetRightMargin($margin) {$/;"	f
 SetRightMargin	lib/fpdf/fpdf.php	/^function SetRightMargin($margin)$/;"	f
-SetRightMargin	lib/tcpdf/tcpdf.php	/^        function SetRightMargin($margin) {$/;"	f
+SetRightMargin	lib/tcpdf/tcpdf.php	/^		public function SetRightMargin($margin) {$/;"	f
 SetSchema	lib/adodb/adodb-datadict.inc.php	/^	function SetSchema($schema)$/;"	f
 SetSchema	lib/adodb/datadict/datadict-access.inc.php	/^	function SetSchema($schema)$/;"	f
-SetStyle	lib/tcpdf/html2pdf.php	/^function SetStyle($tag,$enable)$/;"	f
 SetSubject	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetSubject($subject) {$/;"	f
 SetSubject	lib/fpdf/fpdf.php	/^function SetSubject($subject)$/;"	f
-SetSubject	lib/tcpdf/tcpdf.php	/^        function SetSubject($subject) {$/;"	f
+SetSubject	lib/tcpdf/tcpdf.php	/^		public function SetSubject($subject) {$/;"	f
 SetTextColor	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetTextColor($r, $g=-1, $b=-1, $storeprev=false) {$/;"	f
 SetTextColor	lib/fpdf/fpdf.php	/^function SetTextColor($r,$g=-1,$b=-1)$/;"	f
-SetTextColor	lib/tcpdf/tcpdf.php	/^        function SetTextColor($r, $g=-1, $b=-1, $storeprev=false) {$/;"	f
+SetTextColor	lib/tcpdf/tcpdf.php	/^		public function SetTextColor($col1=0, $col2=-1, $col3=-1, $col4=-1) {$/;"	f
+SetTextColorArray	lib/tcpdf/tcpdf.php	/^		public function SetTextColorArray($color) {$/;"	f
 SetTitle	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetTitle($title) {$/;"	f
 SetTitle	lib/fpdf/fpdf.php	/^function SetTitle($title)$/;"	f
-SetTitle	lib/tcpdf/tcpdf.php	/^        function SetTitle($title) {$/;"	f
+SetTitle	lib/tcpdf/tcpdf.php	/^		public function SetTitle($title) {$/;"	f
 SetTopMargin	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetTopMargin($margin) {$/;"	f
 SetTopMargin	lib/fpdf/fpdf.php	/^function SetTopMargin($margin)$/;"	f
-SetTopMargin	lib/tcpdf/tcpdf.php	/^        function SetTopMargin($margin) {$/;"	f
+SetTopMargin	lib/tcpdf/tcpdf.php	/^		public function SetTopMargin($margin) {$/;"	f
 SetTransactionMode	lib/adodb/adodb.inc.php	/^	function SetTransactionMode( $transaction_mode ) $/;"	f
 SetTransactionMode	lib/adodb/drivers/adodb-ado_mssql.inc.php	/^	function SetTransactionMode( $transaction_mode ) $/;"	f
 SetTransactionMode	lib/adodb/drivers/adodb-mssql.inc.php	/^	function SetTransactionMode( $transaction_mode ) $/;"	f
@@ -1801,13 +1847,13 @@ SetWidths	admin/mysql/pdf_schema.php	/^    function SetWidths($w)$/;"	f
 SetWordWrap	lib/phpmailer/class.phpmailer.php	/^    function SetWordWrap() {$/;"	f
 SetX	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetX($x) {$/;"	f
 SetX	lib/fpdf/fpdf.php	/^function SetX($x)$/;"	f
-SetX	lib/tcpdf/tcpdf.php	/^        function SetX($x) {$/;"	f
+SetX	lib/tcpdf/tcpdf.php	/^		public function SetX($x) {$/;"	f
 SetXY	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetXY($x, $y) {$/;"	f
 SetXY	lib/fpdf/fpdf.php	/^function SetXY($x,$y)$/;"	f
-SetXY	lib/tcpdf/tcpdf.php	/^        function SetXY($x, $y) {$/;"	f
+SetXY	lib/tcpdf/tcpdf.php	/^		public function SetXY($x, $y) {$/;"	f
 SetY	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function SetY($y) {$/;"	f
 SetY	lib/fpdf/fpdf.php	/^function SetY($y)$/;"	f
-SetY	lib/tcpdf/tcpdf.php	/^        function SetY($y) {$/;"	f
+SetY	lib/tcpdf/tcpdf.php	/^		public function SetY($y) {$/;"	f
 ShellTestCase	lib/simpletestlib/shell_tester.php	/^    function ShellTestCase($label = false) {$/;"	f
 SimpleAnchorTag	lib/simpletestlib/tag.php	/^    function SimpleAnchorTag($attributes) {$/;"	f
 SimpleAttachment	lib/simpletestlib/encoding.php	/^    function SimpleAttachment($key, $content, $filename) {$/;"	f
@@ -1890,6 +1936,9 @@ SimpleUploadTag	lib/simpletestlib/tag.php	/^    function SimpleUploadTag($attrib
 SimpleUrl	lib/simpletestlib/url.php	/^    function SimpleUrl($url = '') {$/;"	f
 SimpleUserAgent	lib/simpletestlib/user_agent.php	/^    function SimpleUserAgent() {$/;"	f
 SimpleWidget	lib/simpletestlib/tag.php	/^    function SimpleWidget($name, $attributes) {$/;"	f
+Skew	lib/tcpdf/tcpdf.php	/^		public function Skew($angle_x, $angle_y, $x='', $y=''){$/;"	f
+SkewX	lib/tcpdf/tcpdf.php	/^		public function SkewX($angle_x, $x='', $y=''){$/;"	f
+SkewY	lib/tcpdf/tcpdf.php	/^		public function SkewY($angle_y, $x='', $y=''){$/;"	f
 Smarty	lib/smarty/Smarty.class.php	/^    function Smarty()$/;"	f
 Smarty_Compiler	lib/smarty/Smarty_Compiler.class.php	/^    function Smarty_Compiler()$/;"	f
 SmtpClose	lib/phpmailer/class.phpmailer.php	/^    function SmtpClose() {$/;"	f
@@ -1906,16 +1955,17 @@ Spreadsheet_Excel_Writer_Validation_list	lib/pear/Spreadsheet/Excel/Writer/Valid
 Spreadsheet_Excel_Writer_Validator	lib/pear/Spreadsheet/Excel/Writer/Validator.php	/^    function Spreadsheet_Excel_Writer_Validator(&$parser)$/;"	f
 Spreadsheet_Excel_Writer_Workbook	lib/pear/Spreadsheet/Excel/Writer/Workbook.php	/^    function Spreadsheet_Excel_Writer_Workbook($filename)$/;"	f
 Spreadsheet_Excel_Writer_Worksheet	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function Spreadsheet_Excel_Writer_Worksheet($BIFF_version, $name,$/;"	f
+StarPolygon	lib/tcpdf/tcpdf.php	/^		public function StarPolygon($x0, $y0, $r, $nv, $ng, $angle=0, $draw_circle=false, $style="", $line_style=array(), $fill_color=array(), $circle_style="", $circle_outLine_style=array(), $circle_fill_color=array()) {$/;"	f
 StartTrans	lib/adodb/adodb.inc.php	/^	function StartTrans($errfn = 'ADODB_TransMonitor')$/;"	f
+StartTransform	lib/tcpdf/tcpdf.php	/^		public function StartTransform() {$/;"	f
 StateStack	lib/lexer.php	/^        function StateStack($start) {$/;"	f
+StopTransform	lib/tcpdf/tcpdf.php	/^		public function StopTransform() {$/;"	f
 StoreData	mod/scorm/datamodels/aicc.js.php	/^    function StoreData(data,storetotaltime) {$/;"	f
 StoreData	mod/scorm/datamodels/scorm_12.js.php	/^    function StoreData(data,storetotaltime) {$/;"	f
 StoreData	mod/scorm/datamodels/scorm_13.js.php	/^    function StoreData(data,storetotaltime) {$/;"	f
 SuspiciousSQL	lib/adodb/adodb-perf.inc.php	/^	function SuspiciousSQL($numsql=10)$/;"	f
 SuspiciousSQL	lib/adodb/perf/perf-oci8.inc.php	/^	function SuspiciousSQL($numsql=10)$/;"	f
 TCPDF	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function TCPDF($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding="UTF-8") {$/;"	f
-TCPDF	lib/tcpdf/tcpdf.php	/^        function TCPDF($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding="UTF-8") {$/;"	f
-TCPDF_Protection	lib/tcpdf/tcpdfprotection.php	/^    function TCPDF_Protection($orientation='P',$unit='mm',$format='A4') {$/;"	f
 TableInfo	lib/adodb/adodb-active-record.inc.php	/^	function TableInfo()$/;"	f
 TableName	lib/adodb/adodb-datadict.inc.php	/^	function TableName($name)$/;"	f
 Tables	lib/adodb/adodb-perf.inc.php	/^	function Tables($orderby='1')$/;"	f
@@ -1931,9 +1981,10 @@ TestSuite	lib/simpletestlib/test_case.php	/^    function TestSuite($label = fals
 TexOutput	filter/tex/texdebug.php	/^    function TexOutput($expression, $graphic=false) {$/;"	f
 Text	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Text($x, $y, $txt) {$/;"	f
 Text	lib/fpdf/fpdf.php	/^function Text($x,$y,$txt)$/;"	f
-Text	lib/tcpdf/tcpdf.php	/^        function Text($x, $y, $txt) {$/;"	f
+Text	lib/tcpdf/tcpdf.php	/^		public function Text($x, $y, $txt, $stroke=0, $clip=false) {$/;"	f
 Text	search/Zend/Search/Lucene/Field.php	/^    public static function Text($name, $value, $encoding = '')$/;"	f
 TextExpectation	lib/simpletestlib/web_tester.php	/^    function TextExpectation($substring, $message = '%s') {$/;"	f
+TextField	lib/tcpdf/tcpdf.php	/^		public function TextField($name, $w, $h, $prop=array()) {$/;"	f
 TextLine	lib/phpmailer/class.phpmailer.php	/^    function TextLine($value) {$/;"	f
 TextMax	lib/adodb/drivers/adodb-mysql.inc.php	/^	function TextMax()$/;"	f
 TextMax	lib/adodb/drivers/adodb-mysqli.inc.php	/^	function TextMax()$/;"	f
@@ -1952,17 +2003,23 @@ TotalTime	mod/scorm/datamodels/aicc.js.php	/^    function TotalTime() {$/;"	f
 TotalTime	mod/scorm/datamodels/scorm_12.js.php	/^    function TotalTime() {$/;"	f
 TotalTime	mod/scorm/datamodels/scorm_13.js.php	/^    function TotalTime() {$/;"	f
 Tracer	lib/adodb/adodb-perf.inc.php	/^	function Tracer($sql)$/;"	f
+Transform	lib/tcpdf/tcpdf.php	/^		protected function Transform($tm){$/;"	f
 TransformSchema	lib/adodb/adodb-xmlschema.inc.php	/^	function TransformSchema( $schema, $xsl, $schematype='string' )$/;"	f
 TransformSchema	lib/adodb/adodb-xmlschema03.inc.php	/^	function TransformSchema( $schema, $xsl, $schematype='string' )$/;"	f
+Translate	lib/tcpdf/tcpdf.php	/^		public function Translate($t_x, $t_y){$/;"	f
+TranslateX	lib/tcpdf/tcpdf.php	/^		public function TranslateX($t_x){$/;"	f
+TranslateY	lib/tcpdf/tcpdf.php	/^		public function TranslateY($t_y){$/;"	f
 Transpose	lib/adodb/adodb.inc.php	/^	function Transpose(&$rs,$addfieldnames=true)$/;"	f
 TraverseXMLize	message/output/jabber/jabberclass/class_XMLParser.php	/^	function TraverseXMLize($array, $arrName = "array", $level = 0) {$/;"	f
 Turn	lib/phpmailer/class.smtp.php	/^    function Turn() {$/;"	f
 UI	lib/adodb/adodb-perf.inc.php	/^	function UI($pollsecs=5)$/;"	f
 UNLOCK	lib/pear/HTTP/WebDAV/Server.php	/^     function UNLOCK() $/;"	f
+UTF8ArrSubString	lib/tcpdf/tcpdf.php	/^		public function UTF8ArrSubString($strarr, $start='', $end='') {$/;"	f
 UTF8StringToArray	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function UTF8StringToArray($str) {$/;"	f
-UTF8StringToArray	lib/tcpdf/tcpdf.php	/^        function UTF8StringToArray($str) {$/;"	f
+UTF8StringToArray	lib/tcpdf/tcpdf.php	/^		protected function UTF8StringToArray($str) {$/;"	f
+UTF8ToLatin1	lib/tcpdf/tcpdf.php	/^		protected function UTF8ToLatin1($str) {$/;"	f
 UTF8ToUTF16BE	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function UTF8ToUTF16BE($str, $setbom=true) {$/;"	f
-UTF8ToUTF16BE	lib/tcpdf/tcpdf.php	/^        function UTF8ToUTF16BE($str, $setbom=true) {$/;"	f
+UTF8ToUTF16BE	lib/tcpdf/tcpdf.php	/^		protected function UTF8ToUTF16BE($str, $setbom=true) {$/;"	f
 UnIndexed	search/Zend/Search/Lucene/Field.php	/^    public static function UnIndexed($name, $value, $encoding = '')$/;"	f
 UnStored	search/Zend/Search/Lucene/Field.php	/^    public static function UnStored($name, $value, $encoding = '')$/;"	f
 UnitTestCase	lib/simpletestlib/unit_tester.php	/^    function UnitTestCase($label = false) {$/;"	f
@@ -2013,8 +2070,7 @@ Worksheet	lib/excel/Worksheet.php	/^    function Worksheet($name,$index,&$active
 WrapText	lib/phpmailer/class.phpmailer.php	/^    function WrapText($message, $length, $qp_mode = false) {$/;"	f
 Write	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function Write($h, $txt, $link='', $fill=0) {$/;"	f
 Write	lib/fpdf/fpdf.php	/^function Write($h,$txt,$link='')$/;"	f
-Write	lib/tcpdf/tcpdf.php	/^        function Write($h, $txt, $link='', $fill=0) {$/;"	f
-WriteHTML	lib/tcpdf/html2pdf.php	/^function WriteHTML($html)$/;"	f
+Write	lib/tcpdf/tcpdf.php	/^		public function Write($h, $txt, $link='', $fill=0, $align='', $ln=false, $stretch=0, $firstline=false) {$/;"	f
 XML	lib/phpxml/xml.php	/^	function XML(){$/;"	f
 XMLDBAction	admin/xmldb/actions/XMLDBAction.class.php	/^    function XMLDBAction() {$/;"	f
 XMLParser	message/output/jabber/jabberclass/class_XMLParser.php	/^	function XMLParser() {$/;"	f
@@ -2076,16 +2132,17 @@ _IndexSQL	lib/adodb/datadict/datadict-mysql.inc.php	/^	function _IndexSQL($idxna
 _IndexSQL	lib/adodb/datadict/datadict-oci8.inc.php	/^	function _IndexSQL($idxname, $tabname, $flds,$idxoptions)$/;"	f
 _IndexSQL	lib/adodb/datadict/datadict-postgres.inc.php	/^	function _IndexSQL($idxname, $tabname, $flds, $idxoptions)$/;"	f
 _IndexSQL	lib/adodb/datadict/datadict-sybase.inc.php	/^	function _IndexSQL($idxname, $tabname, $flds, $idxoptions)$/;"	f
+_JScolor	lib/tcpdf/tcpdf.php	/^		protected function _JScolor($color) {$/;"	f
 _MoveNext	lib/adodb/drivers/adodb-oci8.inc.php	/^	function _MoveNext() $/;"	f
 _OLE	lib/pear/OLE.php	/^    function _OLE()$/;"	f
 _Options	lib/adodb/adodb-datadict.inc.php	/^	function _Options($opts)$/;"	f
 _Ovalue	lib/fpdf/fpdfprotection.php	/^    function _Ovalue($user_pass, $owner_pass) {$/;"	f
-_Ovalue	lib/tcpdf/tcpdfprotection.php	/^    function _Ovalue($user_pass, $owner_pass) {$/;"	f
+_Ovalue	lib/tcpdf/tcpdf.php	/^		protected function _Ovalue($user_pass, $owner_pass) {$/;"	f
 _PEAR	lib/pear/PEAR.php	/^    function _PEAR() {$/;"	f
 _PEAR_call_destructors	lib/pear/PEAR.php	/^function _PEAR_call_destructors()$/;"	f
 _POST	lib/typo3/class.t3lib_div.php	/^	public static function _POST($var=NULL)	{$/;"	f
 _RC4	lib/fpdf/fpdfprotection.php	/^    function _RC4($key, $text) {$/;"	f
-_RC4	lib/tcpdf/tcpdfprotection.php	/^    function _RC4($key, $text) {$/;"	f
+_RC4	lib/tcpdf/tcpdf.php	/^		protected function _RC4($key, $text) {$/;"	f
 _SuspiciousSQL	lib/adodb/adodb-perf.inc.php	/^	function _SuspiciousSQL($numsql = 10)$/;"	f
 _TableSQL	lib/adodb/adodb-datadict.inc.php	/^	function _TableSQL($tabname,$lines,$pkey,$tableoptions)$/;"	f
 _Triggers	lib/adodb/adodb-datadict.inc.php	/^	function _Triggers($tabname,$taboptions)$/;"	f
@@ -2093,7 +2150,7 @@ _Triggers	lib/adodb/datadict/datadict-firebird.inc.php	/^	function _Triggers($ta
 _Triggers	lib/adodb/datadict/datadict-oci8.inc.php	/^	function _Triggers($tabname,$tableoptions)$/;"	f
 _UpdatePDO	lib/adodb/drivers/adodb-pdo.inc.php	/^	function _UpdatePDO()$/;"	f
 _Uvalue	lib/fpdf/fpdfprotection.php	/^    function _Uvalue() {$/;"	f
-_Uvalue	lib/tcpdf/tcpdfprotection.php	/^    function _Uvalue() {$/;"	f
+_Uvalue	lib/tcpdf/tcpdf.php	/^		protected function _Uvalue() {$/;"	f
 _XF	lib/excel/Worksheet.php	/^    function _XF(&$format)$/;"	f
 _XF	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function _XF(&$format)$/;"	f
 __call	lib/adodb/adodb.inc.php	/^		function __call($func, $params)$/;"	f
@@ -2224,13 +2281,15 @@ __construct	lib/htmlpurifier/HTMLPurifier/URI.php	/^    public function __constr
 __construct	lib/htmlpurifier/HTMLPurifier/URIDefinition.php	/^    public function __construct() {$/;"	f
 __construct	lib/htmlpurifier/HTMLPurifier/URIParser.php	/^    public function __construct() {$/;"	f
 __construct	lib/pagelib.php	/^    function __construct() {$/;"	f
-__construct	lib/pdflib.php	/^    function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {$/;"	f
+__construct	lib/pdflib.php	/^    public function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {$/;"	f
 __construct	lib/portfoliolib.php	/^    public function __construct($instanceid, $record=null) {$/;"	f
 __construct	lib/portfoliolib.php	/^    public function __construct(&$instance, &$caller, $callerfile, $navigation) {$/;"	f
 __construct	lib/sessionlib.php	/^    function __construct() {$/;"	f
 __construct	lib/setuplib.php	/^    function __construct($errorcode, $module='', $link='', $a=NULL, $debuginfo=null) {$/;"	f
 __construct	lib/simpletestlib/exceptions.php	/^    function __construct($expected, $message = '%s') {$/;"	f
 __construct	lib/simpletestlib/exceptions.php	/^    function __construct() {$/;"	f
+__construct	lib/tcpdf/barcodes.php	/^	public function __construct($code, $type) {$/;"	f
+__construct	lib/tcpdf/tcpdf.php	/^		public function __construct($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding="UTF-8") {$/;"	f
 __construct	lib/weblib.php	/^    function __construct($html_id = 'pid', $width = 100, $autostart = false){$/;"	f
 __construct	lib/xmldb/xmldb_field.php	/^    function __construct($name) {$/;"	f
 __construct	lib/xmldb/xmldb_field.php	/^    function __construct($name, $type=null, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {$/;"	f
@@ -2326,6 +2385,7 @@ __construct	search/indexlib.php	/^    public function __construct($path = SEARCH
 __construct	search/querylib.php	/^    public function __construct($mode = 'session') {$/;"	f
 __construct	search/querylib.php	/^    public function __construct($term = '', $page = 1, $results_per_page = 10, $cache = false) {$/;"	f
 __destruct	admin/mysql/libraries/File.class.php	/^    function __destruct()$/;"	f
+__destruct	lib/tcpdf/tcpdf.php	/^		public function __destruct() {$/;"	f
 __destruct	search/Zend/Search/Lucene.php	/^    public function __destruct()$/;"	f
 __destruct	search/Zend/Search/Lucene/Proxy.php	/^    public function __destruct()$/;"	f
 __dialogs	lib/editor/tinymce/tinymce.class.php	/^    function __dialogs() {$/;"	f
@@ -2384,6 +2444,7 @@ _addTag	lib/simpletestlib/parser.php	/^    function _addTag($tag) {$/;"	f
 _add_continue	lib/excel/BIFFwriter.php	/^    function _add_continue($data)$/;"	f
 _add_edit_controls	blocks/moodleblock.class.php	/^    function _add_edit_controls($options) {$/;"	f
 _add_plugin	lib/smarty/Smarty_Compiler.class.php	/^    function _add_plugin($type, $name, $delayed_loading = null)$/;"	f
+_addfield	lib/tcpdf/tcpdf.php	/^		protected function _addfield($type, $name, $x, $y, $w, $h, $prop) {$/;"	f
 _adjust2	lib/pear/OLE/PPS/Root.php	/^    function _adjust2($i2)$/;"	f
 _adodb_backtrace	lib/adodb/adodb-lib.inc.php	/^function _adodb_backtrace($printOrArr=true,$levels=9999,$skippy=0)$/;"	f
 _adodb_column_sql	lib/adodb/adodb-lib.inc.php	/^function _adodb_column_sql(&$zthis, $action, $type, $fname, $fnameq, $arrFields, $magicq, $recurse=true) $/;"	f
@@ -2435,11 +2496,10 @@ _atEnd	lib/simpletestlib/browser.php	/^    function _atEnd() {$/;"	f
 _bailOutIfNotMocked	lib/simpletestlib/mock_objects.php	/^    function _bailOutIfNotMocked($alias) {$/;"	f
 _bare_jid	message/output/jabber/jabberclass/class_Jabber.php	/^	function _bare_jid($jid) {$/;"	f
 _begindoc	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _begindoc() {$/;"	f
-_begindoc	lib/tcpdf/tcpdf.php	/^        function _begindoc() {$/;"	f
 _beginpage	admin/mysql/libraries/export/pdf.php	/^    function _beginpage($orientation)$/;"	f
 _beginpage	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _beginpage($orientation) {$/;"	f
 _beginpage	lib/fpdf/fpdf.php	/^function _beginpage($orientation)$/;"	f
-_beginpage	lib/tcpdf/tcpdf.php	/^        function _beginpage($orientation) {$/;"	f
+_beginpage	lib/tcpdf/tcpdf.php	/^		protected function _beginpage($orientation='', $format='') {$/;"	f
 _booleanExpressionQuery	search/Zend/Search/Lucene/Search/QueryParserContext.php	/^    private function _booleanExpressionQuery()$/;"	f
 _buildPage	lib/simpletestlib/browser.php	/^    function &_buildPage($response) {$/;"	f
 _calcSheetOffsets	lib/pear/Spreadsheet/Excel/Writer/Workbook.php	/^    function _calcSheetOffsets()$/;"	f
@@ -2488,7 +2548,7 @@ _cleanUpTermInfoCache	search/Zend/Search/Lucene/Index/SegmentInfo.php	/^    priv
 _clearError	lib/simpletestlib/socket.php	/^    function _clearError() {$/;"	f
 _clearErrors	repository/boxnet/boxlibphp5.php	/^    function _clearErrors() {$/;"	f
 _clearNestedFramesFocus	lib/simpletestlib/frames.php	/^    function _clearNestedFramesFocus() {$/;"	f
-_client	repository/ajax.php	/^    function _client(){$/;"	f
+_client	repository/lib.php	/^        function _client(){$/;"	f
 _close	lib/adodb/adodb.inc.php	/^		function _close() $/;"	f
 _close	lib/adodb/adodb.inc.php	/^	function _close() {}$/;"	f
 _close	lib/adodb/drivers/adodb-ado.inc.php	/^	function _close() {$/;"	f
@@ -2631,6 +2691,7 @@ _createUserAgent	lib/simpletestlib/browser.php	/^    function &_createUserAgent(
 _create_tree	lib/excel/Parser.php	/^  function _create_tree($value, $left, $right)$/;"	f
 _data	lib/pear/HTTP/WebDAV/Tools/_parse_lockinfo.php	/^    function _data($parser, $data) $/;"	f
 _data	lib/pear/HTTP/WebDAV/Tools/_parse_proppatch.php	/^    function _data($parser, $data) $/;"	f
+_datestring	lib/tcpdf/tcpdf.php	/^		protected function _datestring($s) {$/;"	f
 _decode	lib/adodb/drivers/adodb-postgres64.inc.php	/^	function _decode($blob)$/;"	f
 _decodeSpecial	lib/simpletestlib/parser.php	/^    function _decodeSpecial($mode) {$/;"	f
 _deduceMimeType	lib/simpletestlib/encoding.php	/^    function _deduceMimeType() {$/;"	f
@@ -2678,10 +2739,11 @@ _doTable_callback	lib/markdown.php	/^	function _doTable_callback($matches) {$/;"
 _doTable_leadingPipe_callback	lib/markdown.php	/^	function _doTable_leadingPipe_callback($matches) {$/;"	f
 _dochecks	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _dochecks() {$/;"	f
 _dochecks	lib/fpdf/fpdf.php	/^function _dochecks()$/;"	f
-_dochecks	lib/tcpdf/tcpdf.php	/^        function _dochecks() {$/;"	f
+_dochecks	lib/tcpdf/tcpdf.php	/^		protected function _dochecks() {$/;"	f
+_dolinethrough	lib/tcpdf/tcpdf.php	/^		protected function _dolinethrough($x, $y, $txt) {$/;"	f
 _dounderline	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _dounderline($x,$y,$txt) {$/;"	f
 _dounderline	lib/fpdf/fpdf.php	/^function _dounderline($x,$y,$txt)$/;"	f
-_dounderline	lib/tcpdf/tcpdf.php	/^        function _dounderline($x,$y,$txt) {$/;"	f
+_dounderline	lib/tcpdf/tcpdf.php	/^		protected function _dounderline($x, $y, $txt) {$/;"	f
 _dropFuture	lib/simpletestlib/browser.php	/^    function _dropFuture() {$/;"	f
 _dumpDictionary	search/Zend/Search/Lucene/Index/SegmentWriter/DocumentWriter.php	/^    protected function _dumpDictionary()$/;"	f
 _dumpFNM	search/Zend/Search/Lucene/Index/SegmentWriter.php	/^    protected function _dumpFNM()$/;"	f
@@ -2703,19 +2765,18 @@ _endElement	lib/pear/HTTP/WebDAV/Tools/_parse_proppatch.php	/^    function _endE
 _endElement	lib/simpletestlib/xml.php	/^    function _endElement($expat, $tag) {$/;"	f
 _enddoc	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _enddoc() {$/;"	f
 _enddoc	lib/fpdf/fpdf.php	/^function _enddoc()$/;"	f
-_enddoc	lib/tcpdf/tcpdf.php	/^        function _enddoc() {$/;"	f
+_enddoc	lib/tcpdf/tcpdf.php	/^		protected function _enddoc() {$/;"	f
 _endpage	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _endpage() {$/;"	f
 _endpage	lib/fpdf/fpdf.php	/^function _endpage()$/;"	f
-_endpage	lib/tcpdf/tcpdf.php	/^        function _endpage() {$/;"	f
+_endpage	lib/tcpdf/tcpdf.php	/^		protected function _endpage() {$/;"	f
 _errconnect	lib/adodb/drivers/adodb-postgres64.inc.php	/^	function _errconnect()$/;"	f
 _escape	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _escape($s) {$/;"	f
 _escape	lib/fpdf/fpdf.php	/^function _escape($s)$/;"	f
 _escape	lib/fpdf/fpdfprotection.php	/^    function _escape($s) {$/;"	f
-_escape	lib/tcpdf/tcpdf.php	/^        function _escape($s) {$/;"	f
-_escape	lib/tcpdf/tcpdfprotection.php	/^    function _escape($s) {$/;"	f
+_escape	lib/tcpdf/tcpdf.php	/^		protected function _escape($s) {$/;"	f
 _escapeString	lib/pear/HTML/QuickForm/hierselect.php	/^    function _escapeString($str)$/;"	f
 _escapetext	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _escapetext($s) {$/;"	f
-_escapetext	lib/tcpdf/tcpdf.php	/^        function _escapetext($s) {$/;"	f
+_escapetext	lib/tcpdf/tcpdf.php	/^		protected function _escapetext($s) {$/;"	f
 _eval	lib/smarty/Smarty.class.php	/^    function _eval($code, $params=null)$/;"	f
 _exactPhraseFreq	search/Zend/Search/Lucene/Search/Query/Phrase.php	/^    public function _exactPhraseFreq($docId)$/;"	f
 _expand_quoted_text	lib/smarty/Smarty_Compiler.class.php	/^    function _expand_quoted_text($var_expr)$/;"	f
@@ -2784,7 +2845,7 @@ _fread	search/Zend/Search/Lucene/Storage/File/Filesystem.php	/^    protected fun
 _fread	search/Zend/Search/Lucene/Storage/File/Memory.php	/^    protected function _fread($length = 1)$/;"	f
 _freadint	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _freadint($f) {$/;"	f
 _freadint	lib/fpdf/fpdf.php	/^function _freadint($f)$/;"	f
-_freadint	lib/tcpdf/tcpdf.php	/^        function _freadint($f) {$/;"	f
+_freadint	lib/tcpdf/tcpdf.php	/^		protected function _freadint($f) {$/;"	f
 _func	lib/excel/Parser.php	/^  function _func()$/;"	f
 _func	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function _func()$/;"	f
 _fwrite	search/Zend/Search/Lucene/Storage/File.php	/^    abstract protected function _fwrite($data, $length=null);$/;"	f
@@ -2800,7 +2861,7 @@ _generateId	lib/form/selectgroups.php	/^    function _generateId()$/;"	f
 _generateId	lib/form/text.php	/^    function _generateId()$/;"	f
 _generateId	lib/pear/HTML/QuickForm/element.php	/^    function _generateId()$/;"	f
 _generateencryptionkey	lib/fpdf/fpdfprotection.php	/^    function _generateencryptionkey($user_pass, $owner_pass, $protection) {$/;"	f
-_generateencryptionkey	lib/tcpdf/tcpdfprotection.php	/^    function _generateencryptionkey($user_pass, $owner_pass, $protection) {$/;"	f
+_generateencryptionkey	lib/tcpdf/tcpdf.php	/^		protected function _generateencryptionkey($user_pass, $owner_pass, $protection) {$/;"	f
 _getAttrKey	lib/pear/HTML/Common.php	/^    function _getAttrKey($attr, $attributes)$/;"	f
 _getAttrString	lib/pear/HTML/Common.php	/^    function _getAttrString($attributes)$/;"	f
 _getAttributes	lib/simpletestlib/xml.php	/^    function _getAttributes() {$/;"	f
@@ -2861,11 +2922,11 @@ _get_next_packet	message/output/jabber/jabberclass/class_Jabber.php	/^	function 
 _get_plugin_filepath	lib/smarty/Smarty.class.php	/^    function _get_plugin_filepath($type, $name)$/;"	f
 _get_pprofp	lib/profilerlib.php	/^    function _get_pprofp($cleanup = true)$/;"	f
 _get_ranges	lib/pear/HTTP/WebDAV/Server.php	/^    function _get_ranges(&$options) $/;"	f
-_getfontfiles	lib/pdflib.php	/^    function _getfontfiles($fontdir) {$/;"	f
+_getfontfiles	lib/pdflib.php	/^    protected function _getfontfiles($fontdir) {$/;"	f
 _getfontpath	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _getfontpath() {$/;"	f
 _getfontpath	lib/fpdf/fpdf.php	/^function _getfontpath()$/;"	f
-_getfontpath	lib/pdflib.php	/^    function _getfontpath() {$/;"	f
-_getfontpath	lib/tcpdf/tcpdf.php	/^        function _getfontpath() {$/;"	f
+_getfontpath	lib/pdflib.php	/^    protected function _getfontpath() {$/;"	f
+_getfontpath	lib/tcpdf/tcpdf.php	/^		protected function _getfontpath() {$/;"	f
 _handle	lib/simpletestlib/collector.php	/^    function _handle(&$test, $file) {$/;"	f
 _handle	lib/simpletestlib/collector.php	/^    function _handle(&$test, $filename) {$/;"	f
 _handle_error	message/output/jabber/jabberclass/class_Jabber.php	/^	function _handle_error(&$packet,$error_handler="error") {$/;"	f
@@ -2909,7 +2970,7 @@ _init	lib/adodb/session/adodb-session.php	/^	function _init() {$/;"	f
 _init	lib/adodb/session/adodb-session2.php	/^	static function _init() {$/;"	f
 _initDetab	lib/markdown.php	/^	function _initDetab() {$/;"	f
 _initWeight	search/Zend/Search/Lucene/Search/Query.php	/^    protected function _initWeight(Zend_Search_Lucene_Interface $reader)$/;"	f
-_initial_question_walker	mod/quiz/report/statistics/qstats.php	/^    function _initial_question_walker(&$stats, $grade){$/;"	f
+_initial_question_walker	mod/quiz/report/statistics/qstats.php	/^    function _initial_question_walker(&$stats){$/;"	f
 _initial_states_walker	mod/quiz/report/statistics/qstats.php	/^    function _initial_states_walker($state, &$stats, $positionstat = true){$/;"	f
 _initialize	lib/excel/OLEwriter.php	/^    function _initialize()$/;"	f
 _initialize	lib/excel/Worksheet.php	/^    function _initialize()$/;"	f
@@ -3017,7 +3078,7 @@ _match	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function _match($token
 _matchesTestCase	lib/simpletestlib/reporter.php	/^    function _matchesTestCase($test_case) {$/;"	f
 _maybeMergeSegments	search/Zend/Search/Lucene/Index/Writer.php	/^    private function _maybeMergeSegments()$/;"	f
 _md5_16	lib/fpdf/fpdfprotection.php	/^    function _md5_16($string) {$/;"	f
-_md5_16	lib/tcpdf/tcpdfprotection.php	/^    function _md5_16($string) {$/;"	f
+_md5_16	lib/tcpdf/tcpdf.php	/^		protected function _md5_16($str) {$/;"	f
 _merge	theme/chameleon/ui/ChameleonCSS.class.php	/^    function _merge($permcss, $tempcss) {$/;"	f
 _mergeAssocArray	lib/htmlpurifier/HTMLPurifier/ElementDef.php	/^    private function _mergeAssocArray(&$a1, $a2) {$/;"	f
 _mergeFields	search/Zend/Search/Lucene/Index/SegmentMerger.php	/^    private function _mergeFields()$/;"	f
@@ -3037,7 +3098,7 @@ _new_locktoken	lib/pear/HTTP/WebDAV/Server.php	/^    function _new_locktoken() $
 _new_uuid	lib/pear/HTTP/WebDAV/Server.php	/^    function _new_uuid() $/;"	f
 _newobj	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _newobj() {$/;"	f
 _newobj	lib/fpdf/fpdf.php	/^function _newobj()$/;"	f
-_newobj	lib/tcpdf/tcpdf.php	/^        function _newobj() {$/;"	f
+_newobj	lib/tcpdf/tcpdf.php	/^		protected function _newobj() {$/;"	f
 _noResponse	lib/simpletestlib/page.php	/^    function _noResponse() {$/;"	f
 _node	message/output/jabber/jabberclass/class_Jabber.php	/^	function _node($packet,$path,$checkset = false) {$/;"	f
 _nodeset	message/output/jabber/jabberclass/class_Jabber.php	/^	function _nodeset($packet,$path) {$/;"	f
@@ -3045,7 +3106,7 @@ _nonConjunctionScore	search/Zend/Search/Lucene/Search/Query/Boolean.php	/^    pu
 _nonConjunctionScore	search/Zend/Search/Lucene/Search/Query/MultiTerm.php	/^    public function _nonConjunctionScore($docId, $reader)$/;"	f
 _normaliseHeader	lib/simpletestlib/web_tester.php	/^    function _normaliseHeader($header) {$/;"	f
 _objectkey	lib/fpdf/fpdfprotection.php	/^    function _objectkey($n) {$/;"	f
-_objectkey	lib/tcpdf/tcpdfprotection.php	/^    function _objectkey($n) {$/;"	f
+_objectkey	lib/tcpdf/tcpdf.php	/^		protected function _objectkey($n) {$/;"	f
 _off	lib/simpletestlib/reporter.php	/^    function _off() {$/;"	f
 _on	lib/simpletestlib/reporter.php	/^    function _on() {$/;"	f
 _on_authentication_methods	message/output/jabber/jabberclass/class_Jabber.php	/^	function _on_authentication_methods(&$packet) {$/;"	f
@@ -3071,7 +3132,12 @@ _openSocket	lib/simpletestlib/socket.php	/^    function _openSocket($host, $port
 _openTag	lib/simpletestlib/page.php	/^    function _openTag(&$tag) {$/;"	f
 _out	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _out($s) {$/;"	f
 _out	lib/fpdf/fpdf.php	/^function _out($s)$/;"	f
-_out	lib/tcpdf/tcpdf.php	/^        function _out($s) {$/;"	f
+_out	lib/tcpdf/tcpdf.php	/^		protected function _out($s) {$/;"	f
+_outCurve	lib/tcpdf/tcpdf.php	/^		protected function _outCurve($x1, $y1, $x2, $y2, $x3, $y3) {$/;"	f
+_outLine	lib/tcpdf/tcpdf.php	/^		protected function _outLine($x, $y) {$/;"	f
+_outPoint	lib/tcpdf/tcpdf.php	/^		protected function _outPoint($x, $y) {$/;"	f
+_outRect	lib/tcpdf/tcpdf.php	/^		protected function _outRect($x, $y, $w, $h, $op) {$/;"	f
+_outarc	lib/tcpdf/tcpdf.php	/^		protected function _outarc($x1, $y1, $x2, $y2, $x3, $y3 ) {$/;"	f
 _outsideMessage	lib/simpletestlib/expectation.php	/^    function _outsideMessage($compare) {$/;"	f
 _overrideMethods	lib/simpletestlib/mock_objects.php	/^    function _overrideMethods($methods) {$/;"	f
 _pStart	lib/htmlpurifier/HTMLPurifier/Injector/AutoParagraph.php	/^    private function _pStart() {$/;"	f
@@ -3102,12 +3168,12 @@ _parse_section_prop	lib/smarty/Smarty_Compiler.class.php	/^    function _parse_s
 _parse_var	lib/smarty/Smarty_Compiler.class.php	/^    function _parse_var($var_expr)$/;"	f
 _parse_var_props	lib/smarty/Smarty_Compiler.class.php	/^    function _parse_var_props($val)$/;"	f
 _parse_vars_props	lib/smarty/Smarty_Compiler.class.php	/^    function _parse_vars_props(&$tokens)$/;"	f
+_parsejpeg	lib/tcpdf/tcpdf.php	/^		protected function _parsejpeg($file) {$/;"	f
 _parsejpg	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _parsejpg($file) {$/;"	f
 _parsejpg	lib/fpdf/fpdf.php	/^function _parsejpg($file)$/;"	f
-_parsejpg	lib/tcpdf/tcpdf.php	/^        function _parsejpg($file) {$/;"	f
 _parsepng	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _parsepng($file) {$/;"	f
 _parsepng	lib/fpdf/fpdf.php	/^function _parsepng($file)$/;"	f
-_parsepng	lib/tcpdf/tcpdf.php	/^        function _parsepng($file) {$/;"	f
+_parsepng	lib/tcpdf/tcpdf.php	/^		protected function _parsepng($file) {$/;"	f
 _pconnect	lib/adodb/drivers/adodb-ado.inc.php	/^	function _pconnect($argHostname, $argUsername, $argPassword, $argProvider='MSDASQL')$/;"	f
 _pconnect	lib/adodb/drivers/adodb-ado5.inc.php	/^	function _pconnect($argHostname, $argUsername, $argPassword, $argProvider='MSDASQL')$/;"	f
 _pconnect	lib/adodb/drivers/adodb-csv.inc.php	/^	function _pconnect($argHostname, $argUsername, $argPassword, $argDatabasename)$/;"	f
@@ -3166,52 +3232,57 @@ _pushNestingTag	lib/simpletestlib/xml.php	/^    function _pushNestingTag($nested
 _push_cacheable_state	lib/smarty/Smarty_Compiler.class.php	/^    function _push_cacheable_state($type, $name) {$/;"	f
 _push_tag	lib/smarty/Smarty_Compiler.class.php	/^    function _push_tag($open_tag)$/;"	f
 _putbookmarks	admin/mysql/pdf_schema.php	/^    function _putbookmarks()$/;"	f
+_putbookmarks	lib/tcpdf/tcpdf.php	/^		protected function _putbookmarks() {$/;"	f
 _putcatalog	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putcatalog() {$/;"	f
 _putcatalog	admin/mysql/pdf_schema.php	/^    function _putcatalog()$/;"	f
 _putcatalog	lib/fpdf/fpdf.php	/^function _putcatalog()$/;"	f
-_putcatalog	lib/tcpdf/tcpdf.php	/^        function _putcatalog() {$/;"	f
+_putcatalog	lib/tcpdf/tcpdf.php	/^		protected function _putcatalog() {$/;"	f
+_putcidfont0	lib/tcpdf/tcpdf.php	/^		protected function _putcidfont0($font) {$/;"	f
 _putencryption	lib/fpdf/fpdfprotection.php	/^    function _putencryption() {$/;"	f
-_putencryption	lib/tcpdf/tcpdfprotection.php	/^    function _putencryption() {$/;"	f
+_putencryption	lib/tcpdf/tcpdf.php	/^		protected function _putencryption() {$/;"	f
+_putextgstates	lib/tcpdf/tcpdf.php	/^		protected function _putextgstates() {$/;"	f
 _putfonts	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putfonts() {$/;"	f
 _putfonts	lib/fpdf/fpdf.php	/^function _putfonts()$/;"	f
-_putfonts	lib/tcpdf/tcpdf.php	/^        function _putfonts() {$/;"	f
+_putfonts	lib/tcpdf/tcpdf.php	/^		protected function _putfonts() {$/;"	f
 _putheader	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putheader() {$/;"	f
 _putheader	lib/fpdf/fpdf.php	/^function _putheader()$/;"	f
-_putheader	lib/tcpdf/tcpdf.php	/^        function _putheader() {$/;"	f
+_putheader	lib/tcpdf/tcpdf.php	/^		protected function _putheader() {$/;"	f
 _putimages	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putimages() {$/;"	f
 _putimages	lib/fpdf/fpdf.php	/^function _putimages()$/;"	f
-_putimages	lib/tcpdf/tcpdf.php	/^        function _putimages() {$/;"	f
+_putimages	lib/tcpdf/tcpdf.php	/^		protected function _putimages() {$/;"	f
 _putinfo	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putinfo() {$/;"	f
 _putinfo	lib/fpdf/fpdf.php	/^function _putinfo()$/;"	f
-_putinfo	lib/tcpdf/tcpdf.php	/^        function _putinfo() {$/;"	f
+_putinfo	lib/tcpdf/tcpdf.php	/^		protected function _putinfo() {$/;"	f
+_putjavascript	lib/tcpdf/tcpdf.php	/^		protected function _putjavascript() {$/;"	f
+_putocg	lib/tcpdf/tcpdf.php	/^		protected function _putocg() {$/;"	f
 _putpages	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putpages() {$/;"	f
 _putpages	admin/mysql/pdf_schema.php	/^    function _putpages()$/;"	f
 _putpages	lib/fpdf/fpdf.php	/^function _putpages()$/;"	f
-_putpages	lib/tcpdf/tcpdf.php	/^        function _putpages() {$/;"	f
+_putpages	lib/tcpdf/tcpdf.php	/^		protected function _putpages() {$/;"	f
 _putresourcedict	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putresourcedict(){$/;"	f
 _putresourcedict	lib/fpdf/fpdf.php	/^function _putresourcedict()$/;"	f
-_putresourcedict	lib/tcpdf/tcpdf.php	/^        function _putresourcedict(){$/;"	f
+_putresourcedict	lib/tcpdf/tcpdf.php	/^		protected function _putresourcedict(){$/;"	f
 _putresources	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putresources() {$/;"	f
 _putresources	admin/mysql/pdf_schema.php	/^    function _putresources()$/;"	f
 _putresources	lib/fpdf/fpdf.php	/^function _putresources()$/;"	f
 _putresources	lib/fpdf/fpdfprotection.php	/^    function _putresources() {$/;"	f
-_putresources	lib/tcpdf/tcpdf.php	/^        function _putresources() {$/;"	f
-_putresources	lib/tcpdf/tcpdfprotection.php	/^    function _putresources() {$/;"	f
+_putresources	lib/tcpdf/tcpdf.php	/^		protected function _putresources() {$/;"	f
+_putshaders	lib/tcpdf/tcpdf.php	/^		function _putshaders() {$/;"	f
 _putstream	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putstream($s) {$/;"	f
 _putstream	lib/fpdf/fpdf.php	/^function _putstream($s)$/;"	f
 _putstream	lib/fpdf/fpdfprotection.php	/^    function _putstream($s) {$/;"	f
-_putstream	lib/tcpdf/tcpdf.php	/^        function _putstream($s) {$/;"	f
-_putstream	lib/tcpdf/tcpdfprotection.php	/^    function _putstream($s) {$/;"	f
+_putstream	lib/tcpdf/tcpdf.php	/^		protected function _putstream($s) {$/;"	f
 _puttrailer	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _puttrailer() {$/;"	f
 _puttrailer	lib/fpdf/fpdf.php	/^function _puttrailer()$/;"	f
 _puttrailer	lib/fpdf/fpdfprotection.php	/^    function _puttrailer() {$/;"	f
-_puttrailer	lib/tcpdf/tcpdf.php	/^        function _puttrailer() {$/;"	f
-_puttrailer	lib/tcpdf/tcpdfprotection.php	/^    function _puttrailer() {$/;"	f
+_puttrailer	lib/tcpdf/tcpdf.php	/^		protected function _puttrailer() {$/;"	f
 _puttruetypeunicode	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _puttruetypeunicode($font) {$/;"	f
-_puttruetypeunicode	lib/tcpdf/tcpdf.php	/^        function _puttruetypeunicode($font) {$/;"	f
+_puttruetypeunicode	lib/tcpdf/tcpdf.php	/^		protected function _puttruetypeunicode($font) {$/;"	f
+_putuserrights	lib/tcpdf/tcpdf.php	/^		protected function _putuserrights() {$/;"	f
+_putviewerpreferences	lib/tcpdf/tcpdf.php	/^		protected function _putviewerpreferences() {$/;"	f
 _putxobjectdict	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _putxobjectdict() {$/;"	f
 _putxobjectdict	lib/fpdf/fpdf.php	/^function _putxobjectdict()$/;"	f
-_putxobjectdict	lib/tcpdf/tcpdf.php	/^        function _putxobjectdict() {$/;"	f
+_putxobjectdict	lib/tcpdf/tcpdf.php	/^		protected function _putxobjectdict() {$/;"	f
 _query	lib/adodb/drivers/adodb-ado.inc.php	/^	function _query($sql,$inputarr=false) $/;"	f
 _query	lib/adodb/drivers/adodb-ado5.inc.php	/^	function _query($sql,$inputarr=false) $/;"	f
 _query	lib/adodb/drivers/adodb-db2.inc.php	/^	function _query($sql,$inputarr=false) $/;"	f
@@ -3465,11 +3536,11 @@ _testSingle	lib/simpletestlib/web_tester.php	/^    function _testSingle($compare
 _textstring	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function _textstring($s) {$/;"	f
 _textstring	lib/fpdf/fpdf.php	/^function _textstring($s)$/;"	f
 _textstring	lib/fpdf/fpdfprotection.php	/^    function _textstring($s) {$/;"	f
-_textstring	lib/tcpdf/tcpdf.php	/^        function _textstring($s) {$/;"	f
-_textstring	lib/tcpdf/tcpdfprotection.php	/^    function _textstring($s) {$/;"	f
+_textstring	lib/tcpdf/tcpdf.php	/^		protected function _textstring($s) {$/;"	f
 _throwError	admin/mysql/libraries/Sql.class.php	/^    function _throwError($message)$/;"	f
 _tidy_question	lib/questionlib.php	/^function _tidy_question(&$question) {$/;"	f
 _title_html	blocks/moodleblock.class.php	/^    function _title_html() {$/;"	f
+_toJPEG	lib/tcpdf/tcpdf.php	/^		protected function _toJPEG($image) {$/;"	f
 _toobj	theme/chameleon/ui/ChameleonCSS.class.php	/^    function _toobj($cssstr) {$/;"	f
 _tostr	theme/chameleon/ui/ChameleonCSS.class.php	/^    function _tostr($cssobj) {$/;"	f
 _translateInput	search/Zend/Search/Lucene/Search/QueryLexer.php	/^    private function _translateInput($char)$/;"	f
@@ -3488,6 +3559,7 @@ _updateDocCount	search/Zend/Search/Lucene.php	/^    private function _updateDocC
 _updateSegments	search/Zend/Search/Lucene/Index/Writer.php	/^    private function _updateSegments()$/;"	f
 _updatefields	lib/adodb/drivers/adodb-oci8po.inc.php	/^	function _updatefields()$/;"	f
 _updatefields	lib/adodb/drivers/adodb-postgres7.inc.php	/^	function _updatefields()$/;"	f
+_uristring	lib/tcpdf/tcpdf.php	/^		protected function _uristring($s) {$/;"	f
 _urldecode	lib/pear/HTTP/WebDAV/Server.php	/^    function _urldecode($path) $/;"	f
 _urlencode	lib/pear/HTTP/WebDAV/Server.php	/^    function _urlencode($url) $/;"	f
 _utf82utf16	lib/editor/tinymce/jscripts/tiny_mce/plugins/spellchecker/classes/utils/JSON.php	/^	function _utf82utf16($utf8) {$/;"	f
@@ -3617,6 +3689,7 @@ addEntryPattern	lib/simpletestlib/parser.php	/^    function addEntryPattern($pat
 addExitAction	search/Zend/Search/Lucene/FSM.php	/^    public function addExitAction($state, Zend_Search_Lucene_FSMAction $action)$/;"	f
 addExitPattern	lib/lexer.php	/^        function addExitPattern($pattern, $mode) {$/;"	f
 addExitPattern	lib/simpletestlib/parser.php	/^    function addExitPattern($pattern, $mode) {$/;"	f
+addExtGState	lib/tcpdf/tcpdf.php	/^		protected function addExtGState($parms) {$/;"	f
 addField	admin/mysql/libraries/tbl_properties.inc.php	/^function addField() {$/;"	f
 addField	lib/adodb/adodb-xmlschema.inc.php	/^	function addField( $attributes ) {$/;"	f
 addField	lib/adodb/adodb-xmlschema.inc.php	/^	function addField( $name ) {$/;"	f
@@ -3648,7 +3721,7 @@ addHeader	lib/simpletestlib/web_tester.php	/^    function addHeader($header) {$/
 addHeaderLine	lib/simpletestlib/http.php	/^    function addHeaderLine($header_line) {$/;"	f
 addHeaders	lib/simpletestlib/authentication.php	/^    function addHeaders(&$request, $url) {$/;"	f
 addHtmlLink	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function addHtmlLink($url, $name, $fill=0) {$/;"	f
-addHtmlLink	lib/tcpdf/tcpdf.php	/^        function addHtmlLink($url, $name, $fill=0) {$/;"	f
+addHtmlLink	lib/tcpdf/tcpdf.php	/^		public function addHtmlLink($url, $name, $fill=0, $firstline=false) {$/;"	f
 addIgnoreFolder	admin/report/simpletest/ex_simple_test.php	/^    function addIgnoreFolder($ignorefolder) {$/;"	f
 addIndex	lib/adodb/adodb-xmlschema.inc.php	/^	function addIndex( $attributes ) {$/;"	f
 addIndex	lib/adodb/adodb-xmlschema03.inc.php	/^	function addIndex( $attributes ) {$/;"	f
@@ -3807,7 +3880,7 @@ admin_category	lib/adminlib.php	/^    function admin_category($name, $visiblenam
 admin_config_form	lib/portfoliolib.php	/^    public function admin_config_form(&$mform) {}$/;"	f
 admin_config_form	portfolio/type/boxnet/lib.php	/^    public function admin_config_form(&$mform) {$/;"	f
 admin_config_validation	lib/portfoliolib.php	/^    public static function admin_config_validation($data) {}$/;"	f
-admin_enrolment_page	lib/adminlib.php	/^    public function admin_enrolment_page() { $/;"	f
+admin_enrolment_page	lib/adminlib.php	/^    public function admin_enrolment_page() {$/;"	f
 admin_externalpage	lib/adminlib.php	/^    function admin_externalpage($name, $visiblename, $url, $req_capability='moodle\/site:config', $hidden=false, $context=NULL) {$/;"	f
 admin_externalpage_print_footer	lib/adminlib.php	/^function admin_externalpage_print_footer() {$/;"	f
 admin_externalpage_print_header	lib/adminlib.php	/^function admin_externalpage_print_header($focus='') {$/;"	f
@@ -3837,6 +3910,8 @@ admin_setting_heading	lib/adminlib.php	/^    function admin_setting_heading($nam
 admin_setting_langlist	lib/adminlib.php	/^    function admin_setting_langlist() {$/;"	f
 admin_setting_manageauths	lib/adminlib.php	/^    function admin_setting_manageauths() {$/;"	f
 admin_setting_managefilters	lib/adminlib.php	/^    function admin_setting_managefilters() {$/;"	f
+admin_setting_manageportfolio	lib/adminlib.php	/^    function admin_setting_manageportfolio() {$/;"	f
+admin_setting_managerepositories	lib/adminlib.php	/^    function admin_setting_managerepositories() {$/;"	f
 admin_setting_pickroles	lib/adminlib.php	/^    function admin_setting_pickroles($name, $visiblename, $description,$types=array('moodle\/legacy:student')) {$/;"	f
 admin_setting_special_adminseesall	lib/adminlib.php	/^    function admin_setting_special_adminseesall() {$/;"	f
 admin_setting_special_backupdays	lib/adminlib.php	/^    function admin_setting_special_backupdays() {$/;"	f
@@ -3953,7 +4028,7 @@ aggregate_roles_from_accessdata	lib/accesslib.php	/^function aggregate_roles_fro
 aggregate_values	lib/grade/grade_category.php	/^    private function aggregate_values($grade_values, $items) {$/;"	f
 ajax_get_lib	lib/ajax/ajaxlib.php	/^function ajax_get_lib($libname) {$/;"	f
 ajaxenabled	lib/ajax/ajaxlib.php	/^function ajaxenabled($browsers = array()) {$/;"	f
-alert_version	repository/ajax.php	/^    function alert_version(){$/;"	f
+alert_version	repository/lib.php	/^        function alert_version(){$/;"	f
 algebra2tex	filter/algebra/algebradebug.php	/^function algebra2tex($algebra) {$/;"	f
 algebra_filter	filter/algebra/filter.php	/^function algebra_filter ($courseid, $text) {$/;"	f
 all	question/editlib.php	/^    function all(){$/;"	f
@@ -4036,6 +4111,7 @@ arr2xmldb_statement	lib/xmldb/xmldb_statement.php	/^    function arr2xmldb_state
 arr2xmldb_structure	lib/xmldb/xmldb_file.php	/^    function arr2xmldb_structure ($xmlarr) {$/;"	f
 arr2xmldb_structure	lib/xmldb/xmldb_structure.php	/^    function arr2xmldb_structure($xmlarr) {$/;"	f
 arr2xmldb_table	lib/xmldb/xmldb_table.php	/^    function arr2xmldb_table($xmlarr) {$/;"	f
+arrUTF8ToUTF16BE	lib/tcpdf/tcpdf.php	/^		protected function arrUTF8ToUTF16BE($unicode, $setbom=true) {$/;"	f
 array2json	lib/typo3/class.t3lib_div.php	/^	public static function array2json(array $jsonArray) {$/;"	f
 array2xml	lib/typo3/class.t3lib_div.php	/^	public static function array2xml(array $array,$NSprefix='',$level=0,$docTag='phparray',$spaceInd=0,array $options=array(),array $stackData=array())	{$/;"	f
 array2xml_cs	lib/typo3/class.t3lib_div.php	/^	public static function array2xml_cs(array $array,$docTag='phparray',array $options=array(),$charset='')	{$/;"	f
@@ -4201,6 +4277,7 @@ assignment_single_document	search/documents/assignment_document.php	/^function a
 assignment_submission_ids_by_course	mod/assignment/backuplib.php	/^    function assignment_submission_ids_by_course ($course) {$/;"	f
 assignment_submission_ids_by_instance	mod/assignment/backuplib.php	/^    function assignment_submission_ids_by_instance ($instanceid) {$/;"	f
 assignment_submissions_restore_mods	mod/assignment/restorelib.php	/^    function assignment_submissions_restore_mods($old_assignment_id, $new_assignment_id,$info,$restore) {$/;"	f
+assignment_supports	mod/assignment/lib.php	/^function assignment_supports($feature) {$/;"	f
 assignment_types	mod/assignment/lib.php	/^function assignment_types() {$/;"	f
 assignment_update_grades	mod/assignment/lib.php	/^function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true) {$/;"	f
 assignment_update_instance	mod/assignment/lib.php	/^function assignment_update_instance($assignment){$/;"	f
@@ -4413,6 +4490,12 @@ backup_wiki_pages	mod/wiki/backuplib.php	/^    function backup_wiki_pages ($bf,$
 backup_zip	backup/backuplib.php	/^    function backup_zip ($preferences) {$/;"	f
 backuprestore_instancedata_used	blocks/moodleblock.class.php	/^    function backuprestore_instancedata_used() {$/;"	f
 bar	lib/graphlib.php	/^    function bar($x, $y, $type, $size, $colour, $offset, $index, $yoffset) {$/;"	f
+barcode_c128	lib/tcpdf/barcodes.php	/^	protected function barcode_c128($code, $type="B") {$/;"	f
+barcode_codabar	lib/tcpdf/barcodes.php	/^	protected function barcode_codabar($code) {$/;"	f
+barcode_code39	lib/tcpdf/barcodes.php	/^	protected function barcode_code39($code, $extended=false, $checksum=false) {$/;"	f
+barcode_ean13	lib/tcpdf/barcodes.php	/^	protected function barcode_ean13($code, $len=13) {$/;"	f
+barcode_i25	lib/tcpdf/barcodes.php	/^	protected function barcode_i25($code) {$/;"	f
+barcode_postnet	lib/tcpdf/barcodes.php	/^	protected function barcode_postnet($code) {$/;"	f
 base32_encode	lib/base32.php	/^function base32_encode ($inString) $/;"	f
 before	lib/simpletestlib/eclipse.php	/^    function before($method){$/;"	f
 before	lib/simpletestlib/invoker.php	/^    function before($method) {$/;"	f
@@ -4780,6 +4863,7 @@ checkIsHttps	admin/mysql/libraries/Config.class.php	/^    function checkIsHttps(
 checkName	lib/xmldb/xmldb_object.php	/^    function checkName () {$/;"	f
 checkNameValues	lib/xmldb/xmldb_object.php	/^    function checkNameValues(&$arr) {$/;"	f
 checkOutputCompression	admin/mysql/libraries/Config.class.php	/^    function checkOutputCompression()$/;"	f
+checkPageBreak	lib/tcpdf/tcpdf.php	/^		protected function checkPageBreak($h) {$/;"	f
 checkPhpVersion	admin/mysql/libraries/Config.class.php	/^    function checkPhpVersion()$/;"	f
 checkPmaAbsoluteUri	admin/mysql/libraries/Config.class.php	/^    function checkPmaAbsoluteUri()$/;"	f
 checkPreviousNextValues	lib/xmldb/xmldb_object.php	/^    function checkPreviousNextValues(&$arr) {$/;"	f
@@ -4868,10 +4952,9 @@ checknos	course/report/participation/index.php	/^function checknos() {$/;"	f
 checkpackagehash	mod/resource/type/ims/resource.class.php	/^    function checkpackagehash($file, $course, $resource) {$/;"	f
 checksubmit	course/report/participation/index.php	/^function checksubmit(form) {$/;"	f
 checksubmit	user/index.php	/^        function checksubmit(form) {$/;"	f
+checksum_code39	lib/tcpdf/barcodes.php	/^	protected function checksum_code39($code) {$/;"	f
 checkvalue	lib/editor/htmlarea/popups/insert_image.php	/^function checkvalue(elm,formname) {$/;"	f
 checkvalue	lib/editor/htmlarea/popups/link.php	/^function checkvalue(elm,formname) {$/;"	f
-checkvalue	lib/editor/tinymce/jscripts/tiny_mce/plugins/moodleimage/insert_image.php	/^function checkvalue(elm,formname) {$/;"	f
-checkvalue	lib/editor/tinymce/jscripts/tiny_mce/plugins/moodlelink/link.php	/^function checkvalue(elm,formname) {$/;"	f
 chice_get_extra_capabilities	mod/choice/lib.php	/^function chice_get_extra_capabilities() {$/;"	f
 child_nodes	auth/cas/CAS/domxml-php4-php5.php	/^ function child_nodes()$/;"	f
 children	auth/cas/CAS/domxml-php4-php5.php	/^ function children() {return $this->child_nodes();}$/;"	f
@@ -4905,6 +4988,7 @@ choice_restore_wiki2markdown	mod/choice/restorelib.php	/^    function choice_res
 choice_show_form	mod/choice/lib.php	/^function choice_show_form($choice, $user, $cm, $allresponses) {$/;"	f
 choice_show_reportlink	mod/choice/lib.php	/^function choice_show_reportlink($user, $cm) {$/;"	f
 choice_show_results	mod/choice/lib.php	/^function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish='') {$/;"	f
+choice_supports	mod/choice/lib.php	/^function choice_supports($feature) {$/;"	f
 choice_update_instance	mod/choice/lib.php	/^function choice_update_instance($choice) {$/;"	f
 choice_user_complete	mod/choice/lib.php	/^function choice_user_complete($course, $user, $mod, $choice) {$/;"	f
 choice_user_outline	mod/choice/lib.php	/^function choice_user_outline($course, $user, $mod, $choice) {$/;"	f
@@ -5048,6 +5132,7 @@ close	search/Zend/Search/Lucene/Storage/Directory/Filesystem.php	/^    public fu
 close	search/Zend/Search/Lucene/Storage/File/Filesystem.php	/^    public function close()$/;"	f
 closeCell	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function closeCell() {$/;"	f
 closeDictionaryFiles	search/Zend/Search/Lucene/Index/SegmentWriter.php	/^    public function closeDictionaryFiles()$/;"	f
+closeHTMLTagHandler	lib/tcpdf/tcpdf.php	/^		protected function closeHTMLTagHandler(&$dom, $key, $cell=false) {$/;"	f
 closeHandler	lib/htmlpurifier/HTMLPurifier/Lexer/PEARSax3.php	/^    public function closeHandler(&$parser, $name) {$/;"	f
 closeHeaderBefore	lib/formslib.php	/^    function closeHeaderBefore($elementName){$/;"	f
 closeTagOpenState	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function closeTagOpenState() {$/;"	f
@@ -5061,7 +5146,6 @@ close_this_window	lib/weblib.php	/^    function close_this_window() {$/;"	f
 close_window	lib/weblib.php	/^function close_window($delay=0) {$/;"	f
 close_window_button	lib/weblib.php	/^function close_window_button($name='closewindow', $return=false) {$/;"	f
 closedHTMLTagHandler	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function closedHTMLTagHandler($tag) {$/;"	f
-closedHTMLTagHandler	lib/tcpdf/tcpdf.php	/^        function closedHTMLTagHandler($tag) {$/;"	f
 closedRQFirstTerm	search/Zend/Search/Lucene/Search/QueryParser.php	/^    public function closedRQFirstTerm()$/;"	f
 closedRQLastTerm	search/Zend/Search/Lucene/Search/QueryParser.php	/^    public function closedRQLastTerm()$/;"	f
 cmpFQDN	lib/typo3/class.t3lib_div.php	/^	public static function cmpFQDN($baseIP, $list)        {$/;"	f
@@ -5071,7 +5155,6 @@ cmpIPv6	lib/typo3/class.t3lib_div.php	/^	public static function cmpIPv6($baseIP,
 code	admin/mysql/libraries/common.inc.php	/^         * SQL Validator interface code$/;"	c
 code2utf8	lib/textlib.class.php	/^    function code2utf8($num) {$/;"	f
 code_to_utf8	admin/mysql/libraries/tcpdf/html_entity_decode_php4.php	/^function code_to_utf8($num) {$/;"	f
-code_to_utf8	lib/tcpdf/html_entity_decode_php4.php	/^function code_to_utf8($num) {$/;"	f
 col_actions	mod/quiz/report/statistics/statistics_table.php	/^    function col_actions($question){$/;"	f
 col_checkbox	mod/quiz/report/overview/overview_table.php	/^    function col_checkbox($attempt){$/;"	f
 col_checkbox	mod/quiz/report/responses/responses_table.php	/^    function col_checkbox($attempt){$/;"	f
@@ -5233,8 +5316,8 @@ conv_case	lib/typo3/class.t3lib_cs.php	/^	function conv_case($charset,$string,$c
 convert	lib/textlib.class.php	/^    function convert($text, $fromCS, $toCS='utf-8') {$/;"	f
 convert	lib/wiki_to_markdown.php	/^  function convert( $content,$courseid ) {$/;"	f
 convertColorHexToDec	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function convertColorHexToDec($color = "#000000"){$/;"	f
-convertColorHexToDec	lib/tcpdf/tcpdf.php	/^        function convertColorHexToDec($color = "#000000"){$/;"	f
 convertFromUTF8	lib/htmlpurifier/HTMLPurifier/Encoder.php	/^    public static function convertFromUTF8($str, $config, $context) {$/;"	f
+convertHTMLColorToDec	lib/tcpdf/tcpdf.php	/^		protected function convertHTMLColorToDec($color="#000000") {$/;"	f
 convertMicrotime	lib/typo3/class.t3lib_div.php	/^	public static function convertMicrotime($microtime)	{$/;"	f
 convertToASCIIDumbLossless	lib/htmlpurifier/HTMLPurifier/Encoder.php	/^    public static function convertToASCIIDumbLossless($str) {$/;"	f
 convertToLookup	lib/htmlpurifier/HTMLPurifier/ContentSets.php	/^    protected function convertToLookup($string) {$/;"	f
@@ -5575,6 +5658,7 @@ data_restore_mods	mod/data/restorelib.php	/^function data_restore_mods($mod,$res
 data_rss_feeds	mod/data/rsslib.php	/^    function data_rss_feeds() {$/;"	f
 data_single_document	search/documents/data_document.php	/^function data_single_document($id, $itemtype) {$/;"	f
 data_submitted	lib/weblib.php	/^function data_submitted() {$/;"	f
+data_supports	mod/data/lib.php	/^function data_supports($feature) {$/;"	f
 data_tags_check	mod/data/lib.php	/^function data_tags_check($dataid, $template) {$/;"	f
 data_update_grades	mod/data/lib.php	/^function data_update_grades($data=null, $userid=0, $nullifnone=true) {$/;"	f
 data_update_instance	mod/data/lib.php	/^function data_update_instance($data) {$/;"	f
@@ -5969,6 +6053,10 @@ display_grade	mod/assignment/lib.php	/^    function display_grade($grade) {$/;"	
 display_lateness	mod/assignment/lib.php	/^    function display_lateness($timesubmitted) {$/;"	f
 display_lateness	mod/assignment/type/offline/assignment.class.php	/^    function display_lateness($timesubmitted) {$/;"	f
 display_move_form	question/category_class.php	/^    public function display_move_form($questionsincategory, $category){$/;"	f
+display_name	lib/portfoliolib.php	/^    public abstract static function display_name();$/;"	f
+display_name	mod/assignment/lib.php	/^    public static function display_name() {$/;"	f
+display_name	mod/forum/lib.php	/^    public static function display_name() {$/;"	f
+display_name	mod/resource/lib.php	/^    public static function display_name() {$/;"	f
 display_page_numbers	lib/listlib.php	/^    function display_page_numbers() {$/;"	f
 display_preview	grade/export/lib.php	/^    public function display_preview() {$/;"	f
 display_question_editing_page	question/type/datasetdependent/abstractqtype.php	/^    function display_question_editing_page(&$mform, $question, $wizardnow){$/;"	f
@@ -6039,6 +6127,7 @@ doc_link	lib/weblib.php	/^function doc_link($path='', $text='', $iconpath='') {$
 doctypeNameState	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function doctypeNameState() {$/;"	f
 doctypeState	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function doctypeState() {$/;"	f
 document_element	auth/cas/CAS/domxml-php4-php5.php	/^ function document_element() {return new php4DOMElement($this->myDOMNode->documentElement,$this);}$/;"	f
+document_started	lib/tablelib.php	/^    function document_started(){$/;"	f
 does	lang/en_utf8/admin.php	/^$string['configshowblocksonmodpages'] = 'Some activity modules support blocks on their pages.  If you turn this on, then teachers will be able to add side blocks on those pages, otherwise the interface does not show this feature.';$/;"	c
 domxml_new_doc	auth/cas/CAS/domxml-php4-php5.php	/^function domxml_new_doc($version) {return new php4DOMDocument('');}$/;"	f
 domxml_open_file	auth/cas/CAS/domxml-php4-php5.php	/^function domxml_open_file($filename) {return new php4DOMDocument($filename);}$/;"	f
@@ -6142,6 +6231,7 @@ elementExists	lib/pear/HTML/QuickForm.php	/^    function elementExists($element=
 elementInScope	lib/htmlpurifier/HTMLPurifier/Lexer/PH5P.php	/^    private function elementInScope($el, $table = false) {$/;"	f
 element_deletable	grade/edit/tree/index.php	/^function element_deletable($element) {$/;"	f
 element_to_popup_window	lib/weblib.php	/^function element_to_popup_window ($type=null, $url=null, $name=null, $linkname=null,$/;"	f
+elements	lib/tcpdf/tcpdf.php	/^		* <li>HideWindowUI boolean (Optional) A flag specifying whether to hide user interface elements in the document's window (such as scroll bars and navigation controls), leaving only the document's contents displayed. Default value: false.<\/li>$/;"	c
 email_install	message/output/email/lib.php	/^function email_install(){$/;"	f
 email_is_not_allowed	lib/moodlelib.php	/^function email_is_not_allowed($email) {$/;"	f
 email_teachers	mod/assignment/lib.php	/^    function email_teachers($submission) {$/;"	f
@@ -6170,6 +6260,7 @@ encodeNorm	search/Zend/Search/Lucene/Search/Similarity.php	/^    static function
 encodeString	lib/editor/tinymce/jscripts/tiny_mce/plugins/spellchecker/classes/utils/JSON.php	/^	function encodeString($input) {$/;"	f
 encode_cdata	mod/hotpot/lib.php	/^    function encode_cdata(&$str, $tag) {$/;"	f
 encode_cdata	question/format/hotpot/format.php	/^    function encode_cdata(&$str, $tag) {$/;"	f
+encode_code39_ext	lib/tcpdf/barcodes.php	/^	protected function encode_code39_ext($code) {$/;"	f
 encode_content_links	blocks/moodleblock.class.php	/^    function encode_content_links($content, $restore) {$/;"	f
 encode_mimeheader	lib/textlib.class.php	/^    function encode_mimeheader($text, $charset='utf-8') {$/;"	f
 encryptBlock	admin/mysql/libraries/blowfish.php	/^    function encryptBlock($block, $key = null)$/;"	f
@@ -6494,6 +6585,7 @@ exportValue	lib/pear/HTML/QuickForm/submit.php	/^    function exportValue(&$subm
 exportValue	lib/pear/HTML/QuickForm/xbutton.php	/^    function exportValue(&$submitValues, $assoc = false)$/;"	f
 exportValues	lib/formslib.php	/^    function exportValues($elementList = null){$/;"	f
 exportValues	lib/pear/HTML/QuickForm.php	/^    function exportValues($elementList = null)$/;"	f
+export_class_instance	lib/tablelib.php	/^    function export_class_instance(){$/;"	f
 export_config_form	lib/portfoliolib.php	/^    public function export_config_form(&$mform) {}$/;"	f
 export_config_form	lib/portfoliolib.php	/^    public function export_config_form(&$mform, $instance) {}$/;"	f
 export_config_form	portfolio/type/boxnet/lib.php	/^    public function export_config_form(&$mform) {$/;"	f
@@ -6752,9 +6844,11 @@ finishGroup	lib/pear/HTML/QuickForm/Renderer.php	/^    function finishGroup(&$gr
 finishGroup	lib/pear/HTML/QuickForm/Renderer/Array.php	/^    function finishGroup(&$group)$/;"	f
 finishGroup	lib/pear/HTML/QuickForm/Renderer/Default.php	/^    function finishGroup(&$group)$/;"	f
 finishGroup	lib/pear/HTML/QuickForm/Renderer/Object.php	/^    function finishGroup(&$group) $/;"	f
+finish_document	lib/tablelib.php	/^    function finish_document(){$/;"	f
 finish_html	lib/tablelib.php	/^    function finish_html(){$/;"	f
-finish_output	lib/tablelib.php	/^    function finish_output(){$/;"	f
+finish_output	lib/tablelib.php	/^    function finish_output($closeexportclassdoc = true){$/;"	f
 finish_page	mod/quiz/view.php	/^function finish_page($course) {$/;"	f
+finish_table	lib/tablelib.php	/^    function finish_table(){$/;"	f
 finished_edit_wizard	question/type/datasetdependent/abstractqtype.php	/^    function finished_edit_wizard(&$form) {$/;"	f
 finished_edit_wizard	question/type/questiontype.php	/^    function finished_edit_wizard(&$form) {$/;"	f
 first_child	auth/cas/CAS/domxml-php4-php5.php	/^ function first_child() {return new php4DOMElement($this->myDOMNode->firstChild,$this->myOwnerDocument);}$/;"	f
@@ -7166,6 +7260,8 @@ getAuthentication	lib/simpletestlib/frames.php	/^    function getAuthentication(
 getAuthentication	lib/simpletestlib/http.php	/^    function getAuthentication() {$/;"	f
 getAuthentication	lib/simpletestlib/page.php	/^    function getAuthentication() {$/;"	f
 getBacktrace	lib/pear/PEAR.php	/^    function getBacktrace($frame = null)$/;"	f
+getBarcode	lib/tcpdf/tcpdf.php	/^		public function getBarcode() {$/;"	f
+getBarcodeArray	lib/tcpdf/barcodes.php	/^	public function getBarcodeArray() {$/;"	f
 getBaseCookieValue	lib/simpletestlib/user_agent.php	/^    function getBaseCookieValue($name, $base) {$/;"	f
 getBasePath	lib/simpletestlib/url.php	/^    function getBasePath() {$/;"	f
 getBaseTestCase	lib/simpletestlib/test_case.php	/^    function getBaseTestCase($class) {$/;"	f
@@ -7179,7 +7275,7 @@ getBlockSize	admin/mysql/libraries/blowfish.php	/^    function getBlockSize()$/;
 getBlockSize	lib/adodb/session/adodb-compress-bzip2.php	/^	function getBlockSize() {$/;"	f
 getBoost	search/Zend/Search/Lucene/Search/Query.php	/^    public function getBoost()$/;"	f
 getBreakMargin	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function getBreakMargin() {$/;"	f
-getBreakMargin	lib/tcpdf/tcpdf.php	/^        function getBreakMargin() {$/;"	f
+getBreakMargin	lib/tcpdf/tcpdf.php	/^		public function getBreakMargin() {$/;"	f
 getBrowser	lib/simpletestlib/web_tester.php	/^    function &getBrowser() {$/;"	f
 getBypassStr	lib/environmentlib.php	/^    function getBypassStr() {$/;"	f
 getCSS	lib/htmlpurifier/HTMLPurifier/Printer/ConfigForm.php	/^    public static function getCSS() {$/;"	f
@@ -7187,6 +7283,8 @@ getCSSDefinition	lib/htmlpurifier/HTMLPurifier/Config.php	/^    public function 
 getCallCount	lib/simpletestlib/mock_objects.php	/^    function getCallCount($method) {$/;"	f
 getCallback	lib/pear/PEAR.php	/^    function getCallback() {$/;"	f
 getCallbackURL	auth/cas/CAS/client.php	/^  function getCallbackURL()$/;"	f
+getCellCode	lib/tcpdf/tcpdf.php	/^		protected function getCellCode($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='', $stretch=0) {$/;"	f
+getCellHeightRatio	lib/tcpdf/tcpdf.php	/^		public function getCellHeightRatio() { $/;"	f
 getCharset	admin/mysql/libraries/File.class.php	/^    function getCharset()$/;"	f
 getCheckConstraintsFromDB	lib/ddl/mssql_sql_generator.php	/^    public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {$/;"	f
 getCheckConstraintsFromDB	lib/ddl/mysql_sql_generator.php	/^    public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {$/;"	f
@@ -7335,6 +7433,7 @@ getElementModel	mod/scorm/datamodels/scorm_13.js.php	/^    function getElementMo
 getElementName	lib/pear/HTML/QuickForm/group.php	/^    function getElementName($index)$/;"	f
 getElementTemplateType	lib/form/button.php	/^    function getElementTemplateType(){$/;"	f
 getElementTemplateType	lib/form/file.php	/^    function getElementTemplateType(){$/;"	f
+getElementTemplateType	lib/form/filepicker.php	/^    function getElementTemplateType(){$/;"	f
 getElementTemplateType	lib/form/group.php	/^    function getElementTemplateType(){$/;"	f
 getElementTemplateType	lib/form/radio.php	/^    function getElementTemplateType(){$/;"	f
 getElementTemplateType	lib/form/select.php	/^    function getElementTemplateType(){$/;"	f
@@ -7422,9 +7521,14 @@ getFixType	lib/htmlpurifier/HTMLPurifier/HTMLModule/Tidy.php	/^    public functi
 getFixesForLevel	lib/htmlpurifier/HTMLPurifier/HTMLModule/Tidy.php	/^    public function getFixesForLevel($level) {$/;"	f
 getFont	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function getFont()$/;"	f
 getFontKey	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function getFontKey()$/;"	f
+getFontSize	lib/tcpdf/tcpdf.php	/^		public function getFontSize() {$/;"	f
+getFontSizePt	lib/tcpdf/tcpdf.php	/^		public function getFontSizePt() {$/;"	f
+getFontsList	lib/tcpdf/tcpdf.php	/^		protected function getFontsList() {$/;"	f
 getFontsizeForm	admin/mysql/libraries/Config.class.php	/^    function getFontsizeForm()$/;"	f
 getFontsizeOptions	admin/mysql/libraries/Config.class.php	/^    function getFontsizeOptions($current_size = '82%')$/;"	f
 getFontsizeSelection	admin/mysql/libraries/Config.class.php	/^    function getFontsizeSelection()$/;"	f
+getFooterFont	lib/tcpdf/tcpdf.php	/^		public function getFooterFont() {$/;"	f
+getFooterMargin	lib/tcpdf/tcpdf.php	/^		public function getFooterMargin() {$/;"	f
 getFor	lib/simpletestlib/tag.php	/^    function getFor() {$/;"	f
 getFormById	lib/simpletestlib/frames.php	/^    function &getFormById($id) {$/;"	f
 getFormById	lib/simpletestlib/page.php	/^    function &getFormById($id) {$/;"	f
@@ -7471,6 +7575,7 @@ getFrozenHtml	lib/pear/HTML/QuickForm/xbutton.php	/^    function getFrozenHtml()
 getFullName	admin/mysql/libraries/Table.class.php	/^    function getFullName($quoted = false)$/;"	f
 getGlobalDebugLevel	lib/soap/nusoap.php	/^	function getGlobalDebugLevel() {$/;"	f
 getGroupByClause	admin/mysql/libraries/Sql.class.php	/^    function getGroupByClause($subquery = 0)$/;"	f
+getGroupPageNo	lib/tcpdf/tcpdf.php	/^		public function getGroupPageNo() {$/;"	f
 getGroupType	lib/pear/HTML/QuickForm/group.php	/^    function getGroupType()$/;"	f
 getGroupedDetails	admin/mysql/libraries/List_Database.class.php	/^    function getGroupedDetails($offset, $count)$/;"	f
 getGroups	auth/fc/fcFPP.php	/^    function getGroups($userid) {$/;"	f
@@ -7483,7 +7588,10 @@ getHTTPContentTypeCharset	lib/soap/nusoap.php	/^	function getHTTPContentTypeChar
 getHandle	admin/mysql/libraries/File.class.php	/^    function getHandle()$/;"	f
 getHash	lib/xmldb/xmldb_object.php	/^    function getHash() {$/;"	f
 getHavingClause	admin/mysql/libraries/Sql.class.php	/^    function getHavingClause($subquery = 0)$/;"	f
+getHeaderData	lib/tcpdf/tcpdf.php	/^		public function getHeaderData() {$/;"	f
+getHeaderFont	lib/tcpdf/tcpdf.php	/^		public function getHeaderFont() {$/;"	f
 getHeaderLinks	search/Zend/Search/Lucene/Document/Html.php	/^    public function getHeaderLinks()$/;"	f
+getHeaderMargin	lib/tcpdf/tcpdf.php	/^		public function getHeaderMargin() {$/;"	f
 getHeaders	lib/simpletestlib/browser.php	/^    function getHeaders() {$/;"	f
 getHeaders	lib/simpletestlib/frames.php	/^    function getHeaders() {$/;"	f
 getHeaders	lib/simpletestlib/http.php	/^    function getHeaders() {$/;"	f
@@ -7493,6 +7601,7 @@ getHelpButton	lib/form/advcheckbox.php	/^    function getHelpButton(){$/;"	f
 getHelpButton	lib/form/button.php	/^    function getHelpButton(){$/;"	f
 getHelpButton	lib/form/checkbox.php	/^    function getHelpButton(){$/;"	f
 getHelpButton	lib/form/file.php	/^    function getHelpButton(){$/;"	f
+getHelpButton	lib/form/filepicker.php	/^    function getHelpButton(){$/;"	f
 getHelpButton	lib/form/group.php	/^    function getHelpButton(){$/;"	f
 getHelpButton	lib/form/header.php	/^    function getHelpButton(){$/;"	f
 getHelpButton	lib/form/hidden.php	/^    function getHelpButton(){$/;"	f
@@ -7508,6 +7617,7 @@ getHost	lib/simpletestlib/cookies.php	/^    function getHost() {$/;"	f
 getHost	lib/simpletestlib/url.php	/^    function getHost($default = false) {$/;"	f
 getHostname	lib/typo3/class.t3lib_div.php	/^	public static function getHostname($requestHost=TRUE)	{$/;"	f
 getHref	lib/simpletestlib/tag.php	/^    function getHref() {$/;"	f
+getHtmlDomArray	lib/tcpdf/tcpdf.php	/^		protected function getHtmlDomArray($html) {$/;"	f
 getHtmlListGrouped	admin/mysql/libraries/List_Database.class.php	/^    function getHtmlListGrouped($selected = '', $offset, $count)$/;"	f
 getHtmlOptions	admin/mysql/libraries/List.class.php	/^    function getHtmlOptions($selected = '', $include_information_schema = true)$/;"	f
 getHtmlSelect	admin/mysql/libraries/StorageEngine.class.php	/^    function getHtmlSelect($name = 'engine', $id = null,$/;"	f
@@ -7518,8 +7628,10 @@ getHttpVersion	lib/simpletestlib/http.php	/^    function getHttpVersion() {$/;"	
 getId	admin/mysql/libraries/Theme.class.php	/^    function getId()$/;"	f
 getId	lib/simpletestlib/form.php	/^    function getId() {$/;"	f
 getIdentity	lib/simpletestlib/url.php	/^    function getIdentity() {$/;"	f
+getImageRBX	lib/tcpdf/tcpdf.php	/^		public function getImageRBX() {$/;"	f
+getImageRBY	lib/tcpdf/tcpdf.php	/^		public function getImageRBY() {$/;"	f
 getImageScale	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function getImageScale() {$/;"	f
-getImageScale	lib/tcpdf/tcpdf.php	/^        function getImageScale() {$/;"	f
+getImageScale	lib/tcpdf/tcpdf.php	/^		public function getImageScale() {$/;"	f
 getImgPath	admin/mysql/libraries/Theme.class.php	/^    function getImgPath()$/;"	f
 getIndex	lib/xmldb/xmldb_table.php	/^    function &getIndex($indexname) {$/;"	f
 getIndex	search/Zend/Search/Lucene/Search/QueryHit.php	/^    public function getIndex()$/;"	f
@@ -7570,6 +7682,7 @@ getLocation	lib/simpletestlib/http.php	/^    function getLocation() {$/;"	f
 getLockOptionEndScript	lib/formslib.php	/^    function getLockOptionEndScript(){$/;"	f
 getLogger	lib/editor/tinymce/jscripts/tiny_mce/plugins/spellchecker/includes/general.php	/^function &getLogger() {$/;"	f
 getLowerTerm	search/Zend/Search/Lucene/Search/Query/Range.php	/^    public function getLowerTerm()$/;"	f
+getMargins	lib/tcpdf/tcpdf.php	/^		public function getMargins() {$/;"	f
 getMaxBufferedDocs	search/Zend/Search/Lucene.php	/^    public function getMaxBufferedDocs()$/;"	f
 getMaxBufferedDocs	search/Zend/Search/Lucene/Interface.php	/^    public function getMaxBufferedDocs();$/;"	f
 getMaxBufferedDocs	search/Zend/Search/Lucene/Proxy.php	/^    public function getMaxBufferedDocs()$/;"	f
@@ -7648,6 +7761,7 @@ getNewCookies	lib/simpletestlib/http.php	/^    function getNewCookies() {$/;"	f
 getNext	lib/xmldb/xmldb_object.php	/^    function getNext() {$/;"	f
 getNextChunk	admin/mysql/libraries/File.class.php	/^    function getNextChunk($max_size = null)$/;"	f
 getNotNull	lib/xmldb/xmldb_field.php	/^    function getNotNull() {$/;"	f
+getNumPages	lib/tcpdf/tcpdf.php	/^		public function getNumPages() {$/;"	f
 getObjValue	mod/hotpot/lib.php	/^    function getObjValue(obj) {$/;"	f
 getOffset	admin/mysql/libraries/File.class.php	/^    function getOffset()$/;"	f
 getOnclickJs	lib/pear/HTML/QuickForm/advcheckbox.php	/^    function getOnclickJs($elementName)$/;"	f
@@ -7656,12 +7770,13 @@ getOperationData	lib/soap/nusoap.php	/^	function getOperationData($operation, $b
 getOperationDataForSoapAction	lib/soap/nusoap.php	/^	function getOperationDataForSoapAction($soapAction, $bindingType = 'soap') {$/;"	f
 getOperations	lib/soap/nusoap.php	/^	function getOperations($bindingType = 'soap')$/;"	f
 getOperators	user/filters/text.php	/^    function getOperators() {$/;"	f
+getOriginalMargins	lib/tcpdf/tcpdf.php	/^		public function getOriginalMargins() {$/;"	f
 getOutput	admin/xmldb/actions/XMLDBAction.class.php	/^    function getOutput() {$/;"	f
 getOutput	lib/simpletestlib/shell_tester.php	/^    function getOutput() {$/;"	f
 getOutputAsList	lib/simpletestlib/shell_tester.php	/^    function getOutputAsList() {$/;"	f
 getOutstanding	lib/simpletestlib/exceptions.php	/^    function getOutstanding() {$/;"	f
 getPDFData	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function getPDFData() {$/;"	f
-getPDFData	lib/tcpdf/tcpdf.php	/^        function getPDFData() {$/;"	f
+getPDFData	lib/tcpdf/tcpdf.php	/^		public function getPDFData() {$/;"	f
 getPGT	auth/cas/CAS/client.php	/^  function getPGT()$/;"	f
 getPGTIouFilename	auth/cas/CAS/PGTStorage/pgt-file.php	/^  function getPGTIouFilename($pgt_iou)$/;"	f
 getPHP	lib/xmldb/xmldb_field.php	/^    function getPHP($includeprevious=true) {$/;"	f
@@ -7672,12 +7787,14 @@ getPT	auth/cas/CAS/client.php	/^  function getPT()$/;"	f
 getPage	admin/mysql/libraries/StorageEngine.class.php	/^    function getPage($id)$/;"	f
 getPage	admin/mysql/libraries/engines/innodb.lib.php	/^    function getPage($id)$/;"	f
 getPage	lib/simpletestlib/url.php	/^    function getPage() {$/;"	f
+getPage	lib/tcpdf/tcpdf.php	/^		public function getPage() {$/;"	f
 getPageBufferpool	admin/mysql/libraries/engines/innodb.lib.php	/^    function getPageBufferpool()$/;"	f
+getPageGroupAlias	lib/tcpdf/tcpdf.php	/^		public function getPageGroupAlias() {$/;"	f
 getPageHeight	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function getPageHeight() {$/;"	f
-getPageHeight	lib/tcpdf/tcpdf.php	/^        function getPageHeight() {$/;"	f
+getPageHeight	lib/tcpdf/tcpdf.php	/^		public function getPageHeight() {$/;"	f
 getPageStatus	admin/mysql/libraries/engines/innodb.lib.php	/^    function getPageStatus()$/;"	f
 getPageWidth	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function getPageWidth() {$/;"	f
-getPageWidth	lib/tcpdf/tcpdf.php	/^        function getPageWidth() {$/;"	f
+getPageWidth	lib/tcpdf/tcpdf.php	/^		public function getPageWidth() {$/;"	f
 getParameters	lib/simpletestlib/browser.php	/^    function getParameters() {$/;"	f
 getParent	lib/simpletestlib/reflection_php4.php	/^    function getParent() {$/;"	f
 getParent	lib/simpletestlib/reflection_php5.php	/^    function getParent() {$/;"	f
@@ -7723,6 +7840,7 @@ getQueryTerms	search/Zend/Search/Lucene/Search/Query/Phrase.php	/^    public fun
 getQueryTerms	search/Zend/Search/Lucene/Search/Query/Range.php	/^    public function getQueryTerms()$/;"	f
 getQueryTerms	search/Zend/Search/Lucene/Search/Query/Term.php	/^    public function getQueryTerms()$/;"	f
 getQueryTerms	search/Zend/Search/Lucene/Search/Query/Wildcard.php	/^    public function getQueryTerms()$/;"	f
+getRTL	lib/tcpdf/tcpdf.php	/^		public function getRTL() {$/;"	f
 getRaw	admin/mysql/libraries/Sql.class.php	/^    function getRaw()$/;"	f
 getRaw	lib/htmlpurifier/HTMLPurifier/ErrorCollector.php	/^    public function getRaw() {$/;"	f
 getRaw	lib/simpletestlib/frames.php	/^    function getRaw() {$/;"	f
@@ -7736,6 +7854,7 @@ getRefFields	lib/xmldb/xmldb_key.php	/^    function &getRefFields() {$/;"	f
 getRefTable	lib/xmldb/xmldb_key.php	/^    function &getRefTable() {$/;"	f
 getRegisteredRules	lib/pear/HTML/QuickForm.php	/^    function getRegisteredRules()$/;"	f
 getRegisteredTypes	lib/pear/HTML/QuickForm.php	/^    function getRegisteredTypes()$/;"	f
+getRemainingWidth	lib/tcpdf/tcpdf.php	/^		protected function getRemainingWidth() {$/;"	f
 getRenameFieldExtraSQL	lib/ddl/mssql_sql_generator.php	/^    public function getRenameFieldExtraSQL($xmldb_table, $xmldb_field, $newname) {$/;"	f
 getRenameFieldExtraSQL	lib/ddl/oracle_sql_generator.php	/^    public function getRenameFieldExtraSQL($xmldb_table, $xmldb_field, $newname) {$/;"	f
 getRenameFieldExtraSQL	lib/ddl/postgres_sql_generator.php	/^    public function getRenameFieldExtraSQL($xmldb_table, $xmldb_field, $newname) {$/;"	f
@@ -7783,7 +7902,7 @@ getSQL	lib/adodb/adodb-xmlschema.inc.php	/^	function getSQL( $format = NULL, $sq
 getSQL	lib/adodb/adodb-xmlschema03.inc.php	/^	function getSQL( $format = NULL, $sqlArray = NULL ) {$/;"	f
 getST	auth/cas/CAS/client.php	/^  function getST()$/;"	f
 getScaleFactor	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function getScaleFactor() {$/;"	f
-getScaleFactor	lib/tcpdf/tcpdf.php	/^        function getScaleFactor() {$/;"	f
+getScaleFactor	lib/tcpdf/tcpdf.php	/^		public function getScaleFactor() {$/;"	f
 getScheme	lib/htmlpurifier/HTMLPurifier/URISchemeRegistry.php	/^    public function getScheme($scheme, $config, $context) {$/;"	f
 getScheme	lib/simpletestlib/url.php	/^    function getScheme($default = false) {$/;"	f
 getSchemeObj	lib/htmlpurifier/HTMLPurifier/URI.php	/^    public function getSchemeObj($config, $context) {$/;"	f
@@ -8625,6 +8744,7 @@ get_related_contexts_string	lib/accesslib.php	/^function get_related_contexts_st
 get_remote_courses	blocks/course_list/block_course_list.php	/^    function get_remote_courses() {$/;"	f
 get_remote_list_of_languages	admin/langimport.php	/^    function get_remote_list_of_languages() {$/;"	f
 get_render_options	mod/quiz/attemptlib.php	/^    public function get_render_options($state) {$/;"	f
+get_repository_client	repository/lib.php	/^function get_repository_client(){$/;"	f
 get_require_js_code	lib/weblib.php	/^function get_require_js_code($loadlibs) {$/;"	f
 get_response	lib/soap/nusoap.php	/^	function get_response(){$/;"	f
 get_results	search/querylib.php	/^    private function get_results() {$/;"	f
@@ -8664,6 +8784,10 @@ get_server_info	lib/dml/pdo_moodle_database.php	/^    public function get_server
 get_server_info	lib/dml/simpletest/testdml.php	/^    public function get_server_info(){}$/;"	f
 get_setting	lib/adminlib.php	/^    function get_setting() {$/;"	f
 get_settings	mod/data/lib.php	/^    function get_settings() {$/;"	f
+get_sha1	lib/portfoliolib.php	/^    public abstract function get_sha1();$/;"	f
+get_sha1	mod/assignment/lib.php	/^    public function get_sha1() {$/;"	f
+get_sha1	mod/forum/lib.php	/^    function get_sha1() {$/;"	f
+get_sha1	mod/resource/lib.php	/^    public function get_sha1() {$/;"	f
 get_short_codes	lib/clilib.php	/^function get_short_codes ($lang = array()) {$/;"	f
 get_shortname	lib/grade/grade_outcome.php	/^    public function get_shortname() {$/;"	f
 get_single	question/format/xml/format.php	/^    function get_single( $id ) {$/;"	f
@@ -8925,6 +9049,7 @@ glossary_single_document	search/documents/glossary_document.php	/^function gloss
 glossary_sort_entries	mod/glossary/lib.php	/^function glossary_sort_entries ( $entry0, $entry1 ) {$/;"	f
 glossary_sort_entries_by_length	mod/glossary/filter.php	/^function glossary_sort_entries_by_length ($entry0, $entry1) {$/;"	f
 glossary_start_tag	mod/glossary/lib.php	/^function glossary_start_tag($tag,$level=0,$endline=false) {$/;"	f
+glossary_supports	mod/glossary/lib.php	/^function glossary_supports($feature) {$/;"	f
 glossary_update_grades	mod/glossary/lib.php	/^function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {$/;"	f
 glossary_update_instance	mod/glossary/lib.php	/^function glossary_update_instance($glossary) {$/;"	f
 glossary_user_complete	mod/glossary/lib.php	/^function glossary_user_complete($course, $user, $mod, $glossary) {$/;"	f
@@ -8984,6 +9109,7 @@ grade_verify_idnumber	lib/gradelib.php	/^function grade_verify_idnumber($idnumbe
 graded_users_iterator	grade/lib.php	/^    public function graded_users_iterator($course, $grade_items=null, $groupid=0, $sortfield1='lastname', $sortorder1='ASC', $sortfield2='firstname', $sortorder2='ASC') {$/;"	f
 graph	lib/graphlib.php	/^    function graph() {$/;"	f
 graph_get_new_colour	mod/quiz/report/overview/overviewgraph.php	/^function graph_get_new_colour(){$/;"	f
+graph_get_new_colour	mod/quiz/report/statistics/statistics_graph.php	/^function graph_get_new_colour(){$/;"	f
 groupmode	lib/deprecatedlib.php	/^function groupmode($course, $cm=null) {$/;"	f
 groups_add_member	group/lib.php	/^function groups_add_member($groupid, $userid) {$/;"	f
 groups_assign_grouping	group/lib.php	/^function groups_assign_grouping($groupingid, $groupid) {$/;"	f
@@ -9135,7 +9261,6 @@ helpbutton	lib/weblib.php	/^function helpbutton ($page, $title, $module='moodle'
 helplink	lib/form/editorhelp.php	/^function helplink($page, $linktext='', $module='moodle'){$/;"	f
 hex	lib/editor/htmlarea/htmlarea.php	/^    function hex(d) {$/;"	f
 hex	lib/editor/htmlarea/htmlarea_bak.php	/^    function hex(d) {$/;"	f
-hex2dec	lib/tcpdf/html2pdf.php	/^function hex2dec($couleur = "#000000"){$/;"	f
 hex_hmac_sha1	message/output/jabber/jabberclass/class_SHA1Library.php	/^	function hex_hmac_sha1($key, $data){ return $this->binb2hex($this->core_hmac_sha1($key, $data));}$/;"	f
 hex_sha1	message/output/jabber/jabberclass/class_SHA1Library.php	/^	function hex_sha1($s){return $this->binb2hex($this->core_sha1($this->str2binb($s),strlen($s) * $this->chrsz));}$/;"	f
 hidden_params_out	lib/weblib.php	/^    function hidden_params_out($exclude = array(), $indent = 0, $overrideparams=array()){$/;"	f
@@ -9280,7 +9405,6 @@ html2text	lib/html2text.php	/^function html2text( $badStr ) {$/;"	f
 html_attributes	blocks/moodleblock.class.php	/^    function html_attributes() {$/;"	f
 html_dump_mem	auth/cas/CAS/domxml-php4-php5.php	/^ function html_dump_mem() {return $this->myDOMNode->saveHTML();}$/;"	f
 html_entity_decode_php4	admin/mysql/libraries/tcpdf/html_entity_decode_php4.php	/^function html_entity_decode_php4($text_to_convert) {$/;"	f
-html_entity_decode_php4	lib/tcpdf/html_entity_decode_php4.php	/^function html_entity_decode_php4($text_to_convert) {$/;"	f
 html_footer	files/index.php	/^    function html_footer() {$/;"	f
 html_footer	lib/editor/htmlarea/coursefiles.php	/^    function html_footer() {$/;"	f
 html_footer	lib/editor/tinymce/coursefiles.php	/^    function html_footer() {$/;"	f
@@ -9349,6 +9473,7 @@ import_numerical	question/format/xml/format.php	/^    function import_numerical(
 import_options	mod/data/lib.php	/^    function import_options() {$/;"	f
 import_shortanswer	question/format/xml/format.php	/^    function import_shortanswer( $question ) {$/;"	f
 import_text	question/format/xml/format.php	/^    function import_text( $text ) {$/;"	f
+import_to_moodle	lib/editor/tinymce/create_langfiles.php	/^function import_to_moodle() {$/;"	f
 import_truefalse	question/format/xml/format.php	/^    function import_truefalse( $question ) {$/;"	f
 import_xml_grades	grade/import/xml/lib.php	/^function import_xml_grades($text, $course, &$error) {$/;"	f
 importimagefile	question/format.php	/^    function importimagefile( $path, $base64 ) {$/;"	f
@@ -10032,6 +10157,7 @@ lang_standard_locations	admin/lang.php	/^function lang_standard_locations() {$/;
 lang_xhtml_save_substr	admin/lang.php	/^function lang_xhtml_save_substr($str, $start, $length = NULL) {$/;"	f
 language	admin/mysql/libraries/select_lang.lib.php	/^ * @global string  interface language$/;"	c
 last	lib/evalmath/evalmath.class.php	/^    function last($n=1) {$/;"	f
+lastPage	lib/tcpdf/tcpdf.php	/^		public function lastPage() {$/;"	f
 last_child	auth/cas/CAS/domxml-php4-php5.php	/^ function last_child() {return new php4DOMElement($this->myDOMNode->lastChild,$this->myOwnerDocument);}$/;"	f
 latex	filter/tex/latex.php	/^        function latex() {$/;"	f
 launch	admin/xmldb/actions/XMLDBAction.class.php	/^    function launch($action) {$/;"	f
@@ -10141,6 +10267,7 @@ lesson_save_objects	mod/lesson/importppt.php	/^function lesson_save_objects($bra
 lesson_save_question_options	mod/lesson/locallib.php	/^function lesson_save_question_options($question) {$/;"	f
 lesson_set_message	mod/lesson/locallib.php	/^function lesson_set_message($message, $class="notifyproblem", $align='center') {$/;"	f
 lesson_single_document	search/documents/lesson_document.php	/^function lesson_single_document($id, $itemtype) {$/;"	f
+lesson_supports	mod/lesson/lib.php	/^function lesson_supports($feature) {$/;"	f
 lesson_timer_restore_mods	mod/lesson/restorelib.php	/^    function lesson_timer_restore_mods($lessonid, $info, $restore) {$/;"	f
 lesson_unseen_branch_jump	mod/lesson/locallib.php	/^function lesson_unseen_branch_jump($lessonid, $userid) {$/;"	f
 lesson_unseen_question_jump	mod/lesson/locallib.php	/^function lesson_unseen_question_jump($lesson, $user, $pageid) {$/;"	f
@@ -10345,6 +10472,9 @@ maxDoc	search/Zend/Search/Lucene.php	/^    public function maxDoc()$/;"	f
 maxDoc	search/Zend/Search/Lucene/Interface.php	/^    public function maxDoc();$/;"	f
 maxDoc	search/Zend/Search/Lucene/Proxy.php	/^    public function maxDoc()$/;"	f
 mb_substr	lib/editor/tinymce/jscripts/tiny_mce/plugins/spellchecker/classes/GoogleSpell.php	/^	function mb_substr($str, $start, $len = '', $encoding="UTF-8"){$/;"	f
+mce_moodlefilemanager	lib/editor/tinymce.js.php	/^    function mce_moodlefilemanager(field_name, url, type, win) {$/;"	f
+mce_saveOnSubmit	lib/editor/tinymce.js.php	/^    function mce_saveOnSubmit(id) {$/;"	f
+mce_toggleEditor	lib/editor/tinymce.js.php	/^    function mce_toggleEditor(id) {$/;"	f
 md5int	lib/typo3/class.t3lib_div.php	/^	public static function md5int($str)	{$/;"	f
 mdie	admin/mailout-debugger.php	/^function mdie($msg='', $errorcode=1) {$/;"	f
 mdie	lib/weblib.php	/^function mdie($msg='', $errorcode=1) {$/;"	f
@@ -10385,7 +10515,10 @@ message_format_message	message/lib.php	/^function message_format_message(&$messa
 message_get_contact	message/lib.php	/^function message_get_contact($contactid) {$/;"	f
 message_get_fragment	message/lib.php	/^function message_get_fragment($message, $keywords) {$/;"	f
 message_get_history	message/lib.php	/^function message_get_history($user1, $user2) {$/;"	f
+message_get_my_providers	lib/messagelib.php	/^function message_get_my_providers() {$/;"	f
 message_get_participants	message/lib.php	/^function message_get_participants() {$/;"	f
+message_get_providers_from_db	lib/messagelib.php	/^function message_get_providers_from_db($component) {$/;"	f
+message_get_providers_from_file	lib/messagelib.php	/^function message_get_providers_from_file($component) {$/;"	f
 message_history_link	message/lib.php	/^function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords='', $position='', $linktext='') {$/;"	f
 message_output	message/output/lib.php	/^abstract class message_output {        $/;"	c
 message_paypal_error_to_admin	enrol/paypal/ipn.php	/^function message_paypal_error_to_admin($subject, $data) {$/;"	f
@@ -10397,8 +10530,6 @@ message_print_search	message/lib.php	/^function message_print_search() {$/;"	f
 message_print_search_results	message/lib.php	/^function message_print_search_results($frm) {$/;"	f
 message_print_settings	message/lib.php	/^function message_print_settings() {$/;"	f
 message_print_user	message/lib.php	/^function message_print_user ($user=false, $iscontact=false, $isblocked=false) {$/;"	f
-message_provider_register_handler	lib/messagelib.php	/^function message_provider_register_handler($eventdata) {$/;"	f
-message_provider_unregister_handler	lib/messagelib.php	/^function message_provider_unregister_handler($eventdata) {$/;"	f
 message_remove_contact	message/lib.php	/^function message_remove_contact($contactid) {$/;"	f
 message_search	message/lib.php	/^function message_search($searchterms, $fromme=true, $tome=true, $courseid='none', $userid=0) {$/;"	f
 message_search_users	message/lib.php	/^function message_search_users($courseid, $searchtext, $sort='', $exceptions='') {$/;"	f
@@ -10406,6 +10537,8 @@ message_send_handler	lib/messagelib.php	/^function message_send_handler($eventda
 message_shorten_message	message/lib.php	/^function message_shorten_message($message, $minlength=0) {$/;"	f
 message_to_admin	enrol/authorize/localfuncs.php	/^function message_to_admin($subject, $data)$/;"	f
 message_unblock_contact	message/lib.php	/^function message_unblock_contact($contactid) {$/;"	f
+message_uninstall	lib/messagelib.php	/^function message_uninstall($component) {$/;"	f
+message_update_providers	lib/messagelib.php	/^function message_update_providers($component='moodle') {$/;"	f
 method	lib/pear/HTML/QuickForm/element.php	/^        \/\/ interface method$/;"	c
 methods	auth/cas/CAS/CAS.php	/^   * This method is used by interface methods to print an error and where the function$/;"	c
 microtime_diff	lib/moodlelib.php	/^function microtime_diff($a, $b) {$/;"	f
@@ -10473,7 +10606,6 @@ moodle_request_shutdown	lib/moodlelib.php	/^function moodle_request_shutdown() {
 moodle_setlocale	lib/moodlelib.php	/^function moodle_setlocale($locale='') {$/;"	f
 moodle_strtolower	lib/moodlelib.php	/^function moodle_strtolower ($string, $encoding='') {$/;"	f
 moodle_url	lib/weblib.php	/^    function moodle_url($url = null, $params = array()){$/;"	f
-moodlefilemanager	lib/editor/tinymce.js.php	/^    function moodlefilemanager(field_name, url, type, win) {$/;"	f
 moodlefilemanager	lib/editor/tinymce/adminscr.php	/^    function moodlefilemanager(field_name, url, type, win) {$/;"	f
 moodlefilemanager	lib/editor/tinymce/adminscr.php	/^function moodlefilemanager(field_name, url, type, win) {$/;"	f
 moodlefilemanager	lib/editor/tinymce/messages.php	/^    function moodlefilemanager(field_name, url, type, win) {$/;"	f
@@ -10674,7 +10806,6 @@ onOK	lib/editor/htmlarea/popups/insert_table.php	/^function onOK() {$/;"	f
 onOK	lib/editor/htmlarea/popups/link_std.php	/^function onOK() {$/;"	f
 onPreview	lib/editor/htmlarea/popups/insert_image.php	/^function onPreview() {$/;"	f
 onPreview	lib/editor/htmlarea/popups/insert_image_std.php	/^function onPreview() {$/;"	f
-onPreview	lib/editor/tinymce/jscripts/tiny_mce/plugins/moodleimage/insert_image.php	/^function onPreview() {$/;"	f
 onQuickFormEvent	lib/form/cancel.php	/^    function onQuickFormEvent($event, $arg, &$caller)$/;"	f
 onQuickFormEvent	lib/form/checkbox.php	/^    function onQuickFormEvent($event, $arg, &$caller)$/;"	f
 onQuickFormEvent	lib/form/choosecoursefile.php	/^    function onQuickFormEvent($event, $arg, &$caller)$/;"	f
@@ -10713,13 +10844,13 @@ open	lib/phpxml/xml.php	/^	function open(&$parser, $tag, $attributes){$/;"	f
 open	search/Zend/Search/Lucene.php	/^    public static function open($directory)$/;"	f
 openCompoundFile	search/Zend/Search/Lucene/Index/SegmentInfo.php	/^    public function openCompoundFile($extension, $shareHandler = true)$/;"	f
 openHTMLTagHandler	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function openHTMLTagHandler($tag, $attr, $fill=0) {$/;"	f
-openHTMLTagHandler	lib/tcpdf/tcpdf.php	/^        function openHTMLTagHandler($tag, $attr, $fill=0) {$/;"	f
+openHTMLTagHandler	lib/tcpdf/tcpdf.php	/^		protected function openHTMLTagHandler(&$dom, $key, $cell=false) {$/;"	f
 openHandler	lib/htmlpurifier/HTMLPurifier/Lexer/PEARSax3.php	/^    public function openHandler(&$parser, $name, $attrs, $closed) {$/;"	f
 open_containers	lib/weblib.php	/^function open_containers() {$/;"	f
 open_folder	blocks/admin_tree/block_admin_tree.php	/^    function open_folder($visiblename) {$/;"	f
 openedRQFirstTerm	search/Zend/Search/Lucene/Search/QueryParser.php	/^    public function openedRQFirstTerm()$/;"	f
 openedRQLastTerm	search/Zend/Search/Lucene/Search/QueryParser.php	/^    public function openedRQLastTerm()$/;"	f
-openpicker	repository/ajax.php	/^function openpicker(){$/;"	f
+openpicker	repository/lib.php	/^    function openpicker() {$/;"	f
 openpopup	lib/filterlib.php	/^        function openpopup(url,name,options,fullscreen) {$/;"	f
 openpopup	lib/javascript.php	/^function openpopup(url,name,options,fullscreen) {$/;"	f
 openpopup	mod/scorm/player.php	/^                        function openpopup(url,name,options,width,height) {$/;"	f
@@ -10776,6 +10907,9 @@ output_headers	lib/tablelib.php	/^    function output_headers($headers){$/;"	f
 output_html	lib/adminlib.php	/^    function output_html($data, $query='') {$/;"	f
 output_html	lib/adminlib.php	/^    function output_html() {$/;"	f
 output_new_table	question/category_class.php	/^    public function output_new_table() {$/;"	f
+output_question_info_table	mod/quiz/report/statistics/report.php	/^    function output_question_info_table($quiz, $question){$/;"	f
+output_question_stats_table	mod/quiz/report/statistics/report.php	/^    function output_question_stats_table($s, $questions, $subquestions){$/;"	f
+output_quiz_stats_table	mod/quiz/report/statistics/report.php	/^    function output_quiz_stats_table($course, $cm, $quiz, $quizstats, $usingattemptsstring, $currentgroup, $groupstudents, $useallattempts, $download, $reporturl){$/;"	f
 over_bounce_threshold	lib/moodlelib.php	/^function over_bounce_threshold($user) {$/;"	f
 overlayMessage	lib/simpletestlib/expectation.php	/^    function overlayMessage($compare, $dumper) {$/;"	f
 owner_document	auth/cas/CAS/domxml-php4-php5.php	/^ function owner_document() {return $this->myOwnerDocument;}$/;"	f
@@ -10946,7 +11080,6 @@ password_expire	auth/ldap/auth.php	/^    function password_expire($username) {$/
 password_expire	lib/authlib.php	/^    function password_expire($username) {$/;"	f
 password_required	mod/quiz/accessrules.php	/^    public function password_required() {$/;"	f
 path_inaccessdata	lib/accesslib.php	/^function path_inaccessdata($path, $accessdata) {$/;"	f
-pdf	lib/pdflib.php	/^    function pdf($orientation='P', $unit='mm', $format='A4', $unicode=true, $encoding='UTF-8') {$/;"	f
 pdo_moodle_database	lib/dml/pdo_moodle_database.php	/^abstract class pdo_moodle_database extends moodle_database {$/;"	c
 pear_handle_error	lib/formslib.php	/^function pear_handle_error($error){$/;"	f
 peek	lib/editor/tinymce/jscripts/tiny_mce/plugins/spellchecker/classes/utils/JSON.php	/^	function peek() {$/;"	f
@@ -11037,7 +11170,7 @@ php_check_register_globals	lib/customcheckslib.php	/^function php_check_register
 pi	lib/evalmath/evalmath.class.php	/^    function pi($args) {$/;"	f
 pick_question_dataset	question/type/datasetdependent/abstractqtype.php	/^    function pick_question_dataset($question, $datasetitem) {$/;"	f
 pixelsToMillimeters	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function pixelsToMillimeters($px){$/;"	f
-pixelsToMillimeters	lib/tcpdf/tcpdf.php	/^        function pixelsToMillimeters($px){$/;"	f
+pixelsToUnits	lib/tcpdf/tcpdf.php	/^		public function pixelsToUnits($px){$/;"	f
 places_resolvePlaceId	repository/flickr/phpFlickr.php	/^    function places_resolvePlaceId ($place_id) {$/;"	f
 places_resolvePlaceURL	repository/flickr/phpFlickr.php	/^    function places_resolvePlaceURL ($url) {$/;"	f
 places_to_search_for_lang_strings	lib/moodlelib.php	/^function places_to_search_for_lang_strings() {$/;"	f
@@ -11067,6 +11200,11 @@ portfolio_exportable	mod/assignment/lib.php	/^    function portfolio_exportable(
 portfolio_exportable	mod/assignment/type/online/assignment.class.php	/^    function portfolio_exportable() {$/;"	f
 portfolio_exportable	mod/assignment/type/upload/assignment.class.php	/^    function portfolio_exportable() {$/;"	f
 portfolio_exportable	mod/assignment/type/uploadsingle/assignment.class.php	/^    function portfolio_exportable() {$/;"	f
+portfolio_get_sha1	mod/assignment/type/online/assignment.class.php	/^    function portfolio_get_sha1() {$/;"	f
+portfolio_get_sha1	mod/resource/type/html/resource.class.php	/^function portfolio_get_sha1() {$/;"	f
+portfolio_get_sha1	mod/resource/type/text/resource.class.php	/^function portfolio_get_sha1() {$/;"	f
+portfolio_get_sha1_online	mod/resource/lib.php	/^    function portfolio_get_sha1_online($text=false) {$/;"	f
+portfolio_get_sha1_uploaded	mod/resource/lib.php	/^    function portfolio_get_sha1_uploaded() {$/;"	f
 portfolio_handle_event	lib/portfoliolib.php	/^function portfolio_handle_event($eventdata) {$/;"	f
 portfolio_instance	lib/portfoliolib.php	/^function portfolio_instance($instanceid, $record=null) {$/;"	f
 portfolio_instance_sanity_check	lib/portfoliolib.php	/^function portfolio_instance_sanity_check($instances=null) {$/;"	f
@@ -11075,11 +11213,12 @@ portfolio_instances	lib/portfoliolib.php	/^function portfolio_instances($visible
 portfolio_module_caller_base	lib/portfoliolib.php	/^abstract class portfolio_module_caller_base extends portfolio_caller_base {$/;"	c
 portfolio_plugin_base	lib/portfoliolib.php	/^abstract class portfolio_plugin_base {$/;"	c
 portfolio_plugin_sanity_check	lib/portfoliolib.php	/^function portfolio_plugin_sanity_check($plugins=null) {$/;"	f
+portfolio_prepare_package	mod/assignment/type/online/assignment.class.php	/^    function portfolio_prepare_package($tempdir) {$/;"	f
 portfolio_prepare_package	mod/resource/type/html/resource.class.php	/^function portfolio_prepare_package($tempdir) {$/;"	f
 portfolio_prepare_package	mod/resource/type/text/resource.class.php	/^function portfolio_prepare_package($tempdir) {$/;"	f
 portfolio_prepare_package_online	mod/resource/lib.php	/^    function portfolio_prepare_package_online($tempdir, $text=false) {$/;"	f
 portfolio_prepare_package_uploaded	mod/resource/lib.php	/^    function portfolio_prepare_package_uploaded($tempdir) {$/;"	f
-portfolio_report_insane	lib/portfoliolib.php	/^function portfolio_report_insane($insane, $instances=false) {$/;"	f
+portfolio_report_insane	lib/portfoliolib.php	/^function portfolio_report_insane($insane, $instances=false, $return=false) {$/;"	f
 portfolio_static_function	lib/portfoliolib.php	/^function portfolio_static_function($plugin, $function) {$/;"	f
 portfolio_supported_formats	lib/portfoliolib.php	/^function portfolio_supported_formats() {$/;"	f
 posix_sleep	message/output/jabber/jabberclass/class_Jabber.php	/^	function posix_sleep() {$/;"	f
@@ -11631,7 +11770,6 @@ put	lib/filelib.php	/^    public function put($url, $params = array(), $options 
 put	search/Zend/Search/Lucene/PriorityQueue.php	/^    public function put($element)$/;"	f
 put_records_csv	lib/filelib.php	/^function put_records_csv($file, $records, $table = NULL) {$/;"	f
 putmemcache	lib/adodb/adodb-memcache.lib.inc.php	/^	function putmemcache($key, $rs, $host, $port, $compress, $debug=false)$/;"	f
-px2mm	lib/tcpdf/html2pdf.php	/^function px2mm($px){$/;"	f
 q	lib/adodb/adodb.inc.php	/^	function q(&$s)$/;"	f
 qf_errorHandler	lib/formslib.php	/^function qf_errorHandler(element, _qfMsg) {$/;"	f
 qf_errorHandler	lib/pear/HTML/QuickForm/DHTMLRulesTableless.php	/^function qf_errorHandler(element, _qfMsg) {$/;"	f
@@ -11709,7 +11847,7 @@ question_get_feedback_class	lib/questionlib.php	/^function question_get_feedback
 question_get_feedback_image	lib/questionlib.php	/^function question_get_feedback_image($fraction, $selected=true) {$/;"	f
 question_get_id_from_name_prefix	lib/questionlib.php	/^function question_get_id_from_name_prefix($name) {$/;"	f
 question_get_random_guess_score	lib/questionlib.php	/^function question_get_random_guess_score($question) {$/;"	f
-question_get_real_questionid	lib/questionlib.php	/^function question_get_real_questionid($state){$/;"	f
+question_get_real_state	lib/questionlib.php	/^function question_get_real_state($state){$/;"	f
 question_has_capability_on	lib/questionlib.php	/^function question_has_capability_on($question, $cap, $cachecat = -1){$/;"	f
 question_hash	lib/questionlib.php	/^function question_hash($question) {$/;"	f
 question_ids_by_backup	question/backuplib.php	/^    function question_ids_by_backup ($backup_unique_code) {$/;"	f
@@ -11830,6 +11968,7 @@ quiz_question_versions_restore_mods	mod/quiz/restorelib.php	/^    function quiz_
 quiz_question_versions_restore_pre15_mods	mod/quiz/restorelibpre15.php	/^    function quiz_question_versions_restore_pre15_mods($quiz_id,$info,$restore) {$/;"	f
 quiz_questions_in_quiz	mod/quiz/locallib.php	/^function quiz_questions_in_quiz($layout) {$/;"	f
 quiz_questions_on_page	mod/quiz/locallib.php	/^function quiz_questions_on_page($layout, $page) {$/;"	f
+quiz_questions_stats	mod/quiz/report/statistics/report.php	/^    function quiz_questions_stats($quiz, $currentgroup, $nostudentsingroup, $useallattempts, $groupstudents, $questions){$/;"	f
 quiz_recode_layout	mod/quiz/restorelib.php	/^    function quiz_recode_layout($layout, $restore) {$/;"	f
 quiz_refresh_events	mod/quiz/lib.php	/^function quiz_refresh_events($courseid = 0) {$/;"	f
 quiz_repaginate	mod/quiz/locallib.php	/^function quiz_repaginate($layout, $perpage, $shuffle=false) {$/;"	f
@@ -11842,6 +11981,7 @@ quiz_report_load_questions	mod/quiz/report/reportlib.php	/^function quiz_report_
 quiz_report_overview_table	mod/quiz/report/overview/overview_table.php	/^    function quiz_report_overview_table($quiz , $qmsubselect, $groupstudents,$/;"	f
 quiz_report_qm_filter_select	mod/quiz/report/reportlib.php	/^function quiz_report_qm_filter_select($quiz){$/;"	f
 quiz_report_responses_table	mod/quiz/report/responses/responses_table.php	/^    function quiz_report_responses_table($quiz , $qmsubselect, $groupstudents,$/;"	f
+quiz_report_safe_divider	mod/quiz/report/statistics/report.php	/^function quiz_report_safe_divider($dividend, $divisor){$/;"	f
 quiz_report_scale_sumgrades_as_percentage	mod/quiz/report/reportlib.php	/^function quiz_report_scale_sumgrades_as_percentage($rawgrade, $quiz, $round = true) {$/;"	f
 quiz_report_statistics_cron	mod/quiz/report/statistics/cron.php	/^function quiz_report_statistics_cron(){$/;"	f
 quiz_report_statistics_table	mod/quiz/report/statistics/statistics_table.php	/^    function quiz_report_statistics_table(){$/;"	f
@@ -11943,6 +12083,7 @@ read_dir	lib/clilib.php	/^function read_dir() {$/;"	f
 read_element	lib/clilib.php	/^function read_element($set=array()) {$/;"	f
 read_int	lib/clilib.php	/^function read_int() {$/;"	f
 read_int_range	lib/clilib.php	/^function read_int_range($start,$end) {$/;"	f
+read_language_file	lib/editor/tinymce/create_langfiles.php	/^function read_language_file($lang) {$/;"	f
 read_png_gif	lib/typo3/class.t3lib_div.php	/^	public static function read_png_gif($theFile,$output_png=0)	{$/;"	f
 read_template	mod/hotpot/template/default.php	/^    function read_template($filename, $tag='temporary') {$/;"	f
 read_url	lib/clilib.php	/^function read_url() {$/;"	f
@@ -12258,6 +12399,7 @@ resource_restore_logs	mod/resource/restorelib.php	/^    function resource_restor
 resource_restore_mods	mod/resource/restorelib.php	/^    function resource_restore_mods($mod,$restore) {$/;"	f
 resource_restore_wiki2markdown	mod/resource/restorelib.php	/^    function resource_restore_wiki2markdown ($restore) {$/;"	f
 resource_single_document	search/documents/resource_document.php	/^function resource_single_document($id, $itemtype) {$/;"	f
+resource_supports	mod/resource/lib.php	/^function resource_supports($feature) {$/;"	f
 resource_text	mod/resource/type/text/resource.class.php	/^function resource_text($cmid=0) {$/;"	f
 resource_update_instance	mod/resource/lib.php	/^function resource_update_instance($resource) {$/;"	f
 resource_user_complete	mod/resource/lib.php	/^function resource_user_complete($course, $user, $mod, $resource) {$/;"	f
@@ -12767,12 +12909,14 @@ setAdvanced	lib/formslib.php	/^    function setAdvanced($elementName, $advanced=
 setAdvancedElements	lib/formslib.php	/^    function setAdvancedElements($elements){$/;"	f
 setAlign	lib/pear/HTML/QuickForm/image.php	/^    function setAlign($align)$/;"	f
 setAlign	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setAlign($location)$/;"	f
+setAlpha	lib/tcpdf/tcpdf.php	/^		public function setAlpha($alpha, $bm='Normal') {$/;"	f
 setAttributes	lib/pear/HTML/Common.php	/^    function setAttributes($attributes)$/;"	f
 setAttributes	lib/xmldb/xmldb_field.php	/^    function setAttributes($type, $precision=null, $unsigned=null, $notnull=null, $sequence=null, $enum=null, $enumvalues=null, $default=null, $previous=null) {$/;"	f
 setAttributes	lib/xmldb/xmldb_index.php	/^    function setAttributes($type, $fields) {$/;"	f
 setAttributes	lib/xmldb/xmldb_key.php	/^    function setAttributes($type, $fields, $reftable=null, $reffields=null) {$/;"	f
 setBarcode	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function setBarcode($bc="") {$/;"	f
-setBarcode	lib/tcpdf/tcpdf.php	/^        function setBarcode($bc="") {$/;"	f
+setBarcode	lib/tcpdf/barcodes.php	/^	public function setBarcode($code, $type) {$/;"	f
+setBarcode	lib/tcpdf/tcpdf.php	/^		public function setBarcode($bc="") {$/;"	f
 setBgColor	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setBgColor($color)$/;"	f
 setBlockSize	lib/adodb/session/adodb-compress-bzip2.php	/^	function setBlockSize($block_size) {$/;"	f
 setBold	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setBold($weight = 1)$/;"	f
@@ -12795,6 +12939,7 @@ setCaretToPosition	lib/pear/HTML/QuickForm/autocomplete.php	/^function setCaretT
 setCategory	question/format.php	/^    function setCategory( $category ) {$/;"	f
 setCatfromfile	question/format.php	/^    function setCatfromfile( $catfromfile ) {$/;"	f
 setCattofile	question/format.php	/^    function setCattofile( $cattofile ) {$/;"	f
+setCellHeightRatio	lib/tcpdf/tcpdf.php	/^		public function setCellHeightRatio($h) { $/;"	f
 setChanged	lib/xmldb/xmldb_object.php	/^    function setChanged($changed = true) {$/;"	f
 setCharset	admin/mysql/libraries/File.class.php	/^    function setCharset($charset)$/;"	f
 setChecked	lib/pear/HTML/QuickForm/checkbox.php	/^    function setChecked($checked)$/;"	f
@@ -12849,6 +12994,7 @@ setDefaultRpcParams	lib/soap/nusoap.php	/^	function setDefaultRpcParams($rpcPara
 setDefaultSearchField	search/Zend/Search/Lucene.php	/^    public static function setDefaultSearchField($fieldName)$/;"	f
 setDefaultSearchField	search/Zend/Search/Lucene/Interface.php	/^    public static function setDefaultSearchField($fieldName);$/;"	f
 setDefaultSearchField	search/Zend/Search/Lucene/Proxy.php	/^    public static function setDefaultSearchField($fieldName)$/;"	f
+setDefaultTableColumns	lib/tcpdf/tcpdf.php	/^		public function setDefaultTableColumns($cols=4) { $/;"	f
 setDefaultTarget	lib/simpletestlib/form.php	/^    function setDefaultTarget($frame) {$/;"	f
 setDefaults	lib/pear/HTML/QuickForm.php	/^    function setDefaults($defaultValues = null, $filter = null)$/;"	f
 setElementError	lib/pear/HTML/QuickForm.php	/^    function setElementError($element, $message = null)$/;"	f
@@ -12868,6 +13014,7 @@ setError	repository/boxnet/boxlibphp5.php	/^    public function setError($code =
 setErrorCode	lib/environmentlib.php	/^    function setErrorCode($error_code) {$/;"	f
 setErrorHandling	lib/pear/PEAR.php	/^    function setErrorHandling($mode = null, $options = null)$/;"	f
 setErrorMessage	auth/cas/CAS/PGTStorage/pgt-main.php	/^  function setErrorMessage($error_message)$/;"	f
+setExtGState	lib/tcpdf/tcpdf.php	/^		protected function setExtGState($gs) {$/;"	f
 setExtSheet	lib/pear/Spreadsheet/Excel/Writer/Parser.php	/^    function setExtSheet($name, $index)$/;"	f
 setFeedbackStr	lib/environmentlib.php	/^    function setFeedbackStr($str) {$/;"	f
 setFgColor	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setFgColor($color)$/;"	f
@@ -12891,10 +13038,11 @@ setFixedCallbackURL	auth/cas/CAS/CAS.php	/^  function setFixedCallbackURL($url='
 setFixedServiceURL	auth/cas/CAS/CAS.php	/^   function setFixedServiceURL($url)$/;"	f
 setFontFamily	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setFontFamily($font_family)$/;"	f
 setFooter	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setFooter($string,$margin = 0.50)$/;"	f
+setFooter	lib/tcpdf/tcpdf.php	/^		protected function setFooter() {$/;"	f
 setFooterFont	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function setFooterFont($font) {$/;"	f
-setFooterFont	lib/tcpdf/tcpdf.php	/^        function setFooterFont($font) {$/;"	f
+setFooterFont	lib/tcpdf/tcpdf.php	/^		public function setFooterFont($font) {$/;"	f
 setFooterMargin	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function setFooterMargin($fm=10) {$/;"	f
-setFooterMargin	lib/tcpdf/tcpdf.php	/^        function setFooterMargin($fm=10) {$/;"	f
+setFooterMargin	lib/tcpdf/tcpdf.php	/^		public function setFooterMargin($fm=10) {$/;"	f
 setFormTemplate	lib/pear/HTML/QuickForm/Renderer/Default.php	/^    function setFormTemplate($html)$/;"	f
 setFormat	lib/editor/tinymce/jscripts/tiny_mce/plugins/spellchecker/classes/utils/Logger.php	/^	function setFormat($format) {$/;"	f
 setFormat	mod/feedback/easy_excel.php	/^    function setFormat($formatString,$size = 10,$textWrap = true)$/;"	f
@@ -12928,18 +13076,20 @@ setHandle	admin/mysql/libraries/File.class.php	/^    function setHandle($handle)
 setHash	lib/xmldb/xmldb_object.php	/^    function setHash($hash) {$/;"	f
 setHeader	lib/filelib.php	/^    public function setHeader($header) {$/;"	f
 setHeader	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setHeader($string,$margin = 0.50)$/;"	f
+setHeader	lib/tcpdf/tcpdf.php	/^		protected function setHeader() {$/;"	f
 setHeaderData	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function setHeaderData($ln="", $lw=0, $ht="", $hs="") {$/;"	f
-setHeaderData	lib/tcpdf/tcpdf.php	/^        function setHeaderData($ln="", $lw=0, $ht="", $hs="") {$/;"	f
+setHeaderData	lib/tcpdf/tcpdf.php	/^		public function setHeaderData($ln="", $lw=0, $ht="", $hs="") {$/;"	f
 setHeaderFont	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function setHeaderFont($font) {$/;"	f
-setHeaderFont	lib/tcpdf/tcpdf.php	/^        function setHeaderFont($font) {$/;"	f
+setHeaderFont	lib/tcpdf/tcpdf.php	/^		public function setHeaderFont($font) {$/;"	f
 setHeaderMargin	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function setHeaderMargin($hm=10) {$/;"	f
-setHeaderMargin	lib/tcpdf/tcpdf.php	/^        function setHeaderMargin($hm=10) {$/;"	f
+setHeaderMargin	lib/tcpdf/tcpdf.php	/^		public function setHeaderMargin($hm=10) {$/;"	f
 setHeaderTemplate	lib/pear/HTML/QuickForm/Renderer/Default.php	/^    function setHeaderTemplate($html)$/;"	f
 setHeaders	lib/soap/nusoap.php	/^	function setHeaders($headers){$/;"	f
 setHelpButton	lib/form/advcheckbox.php	/^    function setHelpButton($helpbuttonargs, $function='helpbutton'){$/;"	f
 setHelpButton	lib/form/button.php	/^    function setHelpButton($helpbuttonargs, $function='helpbutton'){$/;"	f
 setHelpButton	lib/form/checkbox.php	/^    function setHelpButton($helpbuttonargs, $function='helpbutton'){$/;"	f
 setHelpButton	lib/form/file.php	/^    function setHelpButton($helpbuttonargs, $function='helpbutton'){$/;"	f
+setHelpButton	lib/form/filepicker.php	/^    function setHelpButton($helpbuttonargs, $function='helpbutton'){$/;"	f
 setHelpButton	lib/form/group.php	/^    function setHelpButton($helpbuttonargs, $function='helpbutton'){$/;"	f
 setHelpButton	lib/form/header.php	/^    function setHelpButton($helpbuttonargs, $function='helpbutton'){$/;"	f
 setHelpButton	lib/form/hidden.php	/^    function setHelpButton($helpbuttonargs, $function='helpbutton'){$/;"	f
@@ -12964,7 +13114,7 @@ setIdentity	lib/simpletestlib/authentication.php	/^    function setIdentity($use
 setIdentity	lib/simpletestlib/user_agent.php	/^    function setIdentity($host, $realm, $username, $password) {$/;"	f
 setIdentityForRealm	lib/simpletestlib/authentication.php	/^    function setIdentityForRealm($host, $realm, $username, $password) {$/;"	f
 setImageScale	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function setImageScale($scale) {$/;"	f
-setImageScale	lib/tcpdf/tcpdf.php	/^        function setImageScale($scale) {$/;"	f
+setImageScale	lib/tcpdf/tcpdf.php	/^		public function setImageScale($scale) {$/;"	f
 setImgPath	admin/mysql/libraries/Theme.class.php	/^    function setImgPath($path)$/;"	f
 setIndexes	lib/xmldb/xmldb_table.php	/^    function setIndexes($indexes) {$/;"	f
 setInfo	lib/environmentlib.php	/^    function setInfo($info) {$/;"	f
@@ -12972,6 +13122,7 @@ setInput	search/Zend/Search/Lucene/Analysis/Analyzer.php	/^    public function s
 setInputEncoding	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setInputEncoding($encoding)$/;"	f
 setInteractive	admin/mysql/libraries/sqlvalidator.class.php	/^        function setInteractive($interactive)$/;"	f
 setItalic	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setItalic()$/;"	f
+setJPEGQuality	lib/tcpdf/tcpdf.php	/^		public function setJPEGQuality($quality) {$/;"	f
 setJsWarnings	lib/pear/HTML/QuickForm.php	/^    function setJsWarnings($pref, $post)$/;"	f
 setKey	admin/mysql/libraries/blowfish.php	/^    function setKey($key)$/;"	f
 setKeys	lib/xmldb/xmldb_table.php	/^    function setKeys($keys) {$/;"	f
@@ -12982,7 +13133,8 @@ setLandscape	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setL
 setLang	auth/cas/CAS/CAS.php	/^  function setLang($lang)$/;"	f
 setLang	auth/cas/CAS/client.php	/^  function setLang($lang)$/;"	f
 setLanguageArray	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function setLanguageArray($language) {$/;"	f
-setLanguageArray	lib/tcpdf/tcpdf.php	/^        function setLanguageArray($language) {$/;"	f
+setLanguageArray	lib/tcpdf/tcpdf.php	/^		public function setLanguageArray($language) {$/;"	f
+setLastH	lib/tcpdf/tcpdf.php	/^		public function setLastH($h) {$/;"	f
 setLeft	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setLeft($style)$/;"	f
 setLeftColor	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setLeftColor($color)$/;"	f
 setLength	lib/xmldb/xmldb_field.php	/^    function setLength($length) {$/;"	f
@@ -13061,12 +13213,17 @@ setOptions	lib/pear/HTML/QuickForm/hierselect.php	/^    function setOptions($opt
 setOutLine	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setOutLine()$/;"	f
 setOutline	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setOutline($visible = true, $symbols_below = true, $symbols_right = true, $auto_style = false)$/;"	f
 setOutputType	admin/mysql/libraries/sqlvalidator.class.php	/^        function setOutputType($output_type)$/;"	f
+setPDFVersion	lib/tcpdf/tcpdf.php	/^		public function setPDFVersion($version="1.7") { $/;"	f
 setPGT	auth/cas/CAS/client.php	/^  function setPGT($pgt)$/;"	f
 setPGTStorageDB	auth/cas/CAS/CAS.php	/^  function setPGTStorageDB($user,$/;"	f
 setPGTStorageDB	auth/cas/CAS/client.php	/^  function setPGTStorageDB($user,$/;"	f
 setPGTStorageFile	auth/cas/CAS/CAS.php	/^  function setPGTStorageFile($format='',$/;"	f
 setPGTStorageFile	auth/cas/CAS/client.php	/^  function setPGTStorageFile($format='',$/;"	f
 setPT	auth/cas/CAS/client.php	/^  function setPT($pt)$/;"	f
+setPage	lib/tcpdf/tcpdf.php	/^		public function setPage($pnum, $resetmargins=false) {$/;"	f
+setPageFormat	lib/tcpdf/tcpdf.php	/^		public function setPageFormat($format, $orientation="P") {$/;"	f
+setPageOrientation	lib/tcpdf/tcpdf.php	/^		public function setPageOrientation($orientation, $autopagebreak='', $bottommargin='') {$/;"	f
+setPageUnit	lib/tcpdf/tcpdf.php	/^		public function setPageUnit($unit) {$/;"	f
 setPaper	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setPaper($size = 0)$/;"	f
 setPath	admin/mysql/libraries/Theme.class.php	/^    function setPath($path)$/;"	f
 setPath	lib/editor/tinymce/jscripts/tiny_mce/plugins/spellchecker/classes/utils/Logger.php	/^	function setPath($path) {$/;"	f
@@ -13076,11 +13233,14 @@ setPersistantFreeze	lib/pear/HTML/QuickForm/group.php	/^    function setPersista
 setPortrait	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setPortrait()$/;"	f
 setPositionIncrement	search/Zend/Search/Lucene/Analysis/Token.php	/^    public function setPositionIncrement($positionIncrement)$/;"	f
 setPrevious	lib/xmldb/xmldb_object.php	/^    function setPrevious($previous) {$/;"	f
+setPrintFooter	lib/tcpdf/tcpdf.php	/^		public function setPrintFooter($val=true) {$/;"	f
+setPrintHeader	lib/tcpdf/tcpdf.php	/^		public function setPrintHeader($val=true) {$/;"	f
 setPrintScale	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setPrintScale($scale = 100)$/;"	f
 setPrompt	lib/pear/Spreadsheet/Excel/Writer/Validator.php	/^   function setPrompt($promptTitle = "\\x00", $promptDescription = "\\x00", $showPrompt = true)$/;"	f
 setProxy	lib/soap/nusoap.php	/^	function setProxy($proxyhost, $proxyport, $proxyusername = '', $proxypassword = '') {$/;"	f
 setProxy	repository/flickr/phpFlickr.php	/^    function setProxy($server, $port)$/;"	f
 setQuestions	question/format.php	/^    function setQuestions( $questions ) {$/;"	f
+setRTL	lib/tcpdf/tcpdf.php	/^		public function setRTL($enable) {$/;"	f
 setRefFields	lib/xmldb/xmldb_key.php	/^    function setRefFields($reffields) {$/;"	f
 setRefTable	lib/xmldb/xmldb_key.php	/^    function setRefTable($reftable) {$/;"	f
 setReporter	lib/simpletestlib/simpletest.php	/^    function setReporter(&$reporter) {$/;"	f
@@ -13133,7 +13293,7 @@ setStatus	lib/environmentlib.php	/^    function setStatus($status) {$/;"	f
 setStoponerror	question/format.php	/^    function setStoponerror( $stoponerror ) {$/;"	f
 setStrikeOut	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setStrikeOut()$/;"	f
 setStyle	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function setStyle($tag, $enable) {$/;"	f
-setStyle	lib/tcpdf/tcpdf.php	/^        function setStyle($tag, $enable) {$/;"	f
+setStyle	lib/tcpdf/tcpdf.php	/^		protected function setStyle($tag, $enable) {$/;"	f
 setTab	lib/pear/HTML/Common.php	/^    function setTab($string)$/;"	f
 setTabOffset	lib/pear/HTML/Common.php	/^    function setTabOffset($offset)$/;"	f
 setTable	lib/xmldb/xmldb_statement.php	/^    function setTable($table) {$/;"	f
@@ -13143,6 +13303,7 @@ setTargetDbms	admin/mysql/libraries/sqlvalidator.class.php	/^        function se
 setTempDir	lib/pear/OLE/PPS/File.php	/^    function setTempDir($dir)$/;"	f
 setTempDir	lib/pear/OLE/PPS/Root.php	/^    function setTempDir($dir)$/;"	f
 setTempDir	lib/pear/Spreadsheet/Excel/Writer/Workbook.php	/^    function setTempDir($dir)$/;"	f
+setTempRTL	lib/tcpdf/tcpdf.php	/^		public function setTempRTL($mode) {$/;"	f
 setTest	lib/simpletestlib/simpletest.php	/^    function setTest(&$test) {$/;"	f
 setTestCase	lib/simpletestlib/errors.php	/^    function setTestCase(&$test) {$/;"	f
 setText	lib/pear/HTML/QuickForm/checkbox.php	/^    function setText($text)$/;"	f
@@ -13188,6 +13349,7 @@ setUp	question/type/shortanswer/simpletest/testquestiontype.php	/^    function s
 setUploadedFile	admin/mysql/libraries/File.class.php	/^    function setUploadedFile($name)$/;"	f
 setUploadedFromTblChangeRequest	admin/mysql/libraries/File.class.php	/^    function setUploadedFromTblChangeRequest($key, $primary = null)$/;"	f
 setUser	auth/cas/CAS/client.php	/^  function setUser($user)$/;"	f
+setUserRights	lib/tcpdf/tcpdf.php	/^		public function setUserRights($/;"	f
 setVAlign	lib/pear/Spreadsheet/Excel/Writer/Format.php	/^    function setVAlign($location)$/;"	f
 setVPagebreaks	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setVPagebreaks($breaks)$/;"	f
 setValidation	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function setValidation($row1, $col1, $row2, $col2, &$validator)$/;"	f
@@ -13212,6 +13374,8 @@ setValues	lib/pear/HTML/QuickForm/advcheckbox.php	/^    function setValues($valu
 setVersion	admin/mysql/libraries/Theme.class.php	/^    function setVersion($version)$/;"	f
 setVersion	lib/pear/Spreadsheet/Excel/Writer/Workbook.php	/^    function setVersion($version)$/;"	f
 setVersion	lib/xmldb/xmldb_structure.php	/^    function setVersion($version) {$/;"	f
+setViewerPreferences	lib/tcpdf/tcpdf.php	/^		public function setViewerPreferences($preferences) { $/;"	f
+setVisibility	lib/tcpdf/tcpdf.php	/^		public function setVisibility($v) {$/;"	f
 setWeight	search/Zend/Search/Lucene/Search/Query/MultiTerm.php	/^    public function setWeight($num, $weight)$/;"	f
 setWeight	search/Zend/Search/Lucene/Search/Query/Phrase.php	/^    public function setWeight($num, $weight)$/;"	f
 setWorkLevel	lib/adodb/session/adodb-compress-bzip2.php	/^	function setWorkLevel($work_level) {$/;"	f
@@ -13420,6 +13584,7 @@ set_sortorder	lib/grade/grade_item.php	/^    public function set_sortorder($sort
 set_sql	lib/tablelib.php	/^    function set_sql($fields, $from, $where, $params=array()){$/;"	f
 set_strikeout	lib/excellib.class.php	/^    function set_strikeout() {$/;"	f
 set_strikeout	lib/odslib.class.php	/^    function set_strikeout() {$/;"	f
+set_table	lib/tablelib.php	/^    function set_table(&$table){$/;"	f
 set_text_wrap	lib/excel/Format.php	/^    function set_text_wrap($text_wrap = 1)$/;"	f
 set_text_wrap	lib/excellib.class.php	/^    function set_text_wrap() {$/;"	f
 set_text_wrap	lib/odslib.class.php	/^    function set_text_wrap() {$/;"	f
@@ -13820,16 +13985,18 @@ startGroup	lib/pear/HTML/QuickForm/Renderer.php	/^    function startGroup(&$grou
 startGroup	lib/pear/HTML/QuickForm/Renderer/Array.php	/^    function startGroup(&$group, $required, $error)$/;"	f
 startGroup	lib/pear/HTML/QuickForm/Renderer/Default.php	/^    function startGroup(&$group, $required, $error)$/;"	f
 startGroup	lib/pear/HTML/QuickForm/Renderer/Object.php	/^    function startGroup(&$group, $required, $error) $/;"	f
+startPageGroup	lib/tcpdf/tcpdf.php	/^		public function startPageGroup() {$/;"	f
 startService	admin/mysql/libraries/sqlvalidator.class.php	/^        function startService()$/;"	f
 startSession	admin/mysql/libraries/sqlvalidator.class.php	/^        function startSession()$/;"	f
 start_attempt_url	mod/quiz/attemptlib.php	/^    public function start_attempt_url() {$/;"	f
+start_document	lib/tablelib.php	/^    function start_document($filename){$/;"	f
 start_element	lib/soap/nusoap.php	/^	function start_element($parser, $name, $attrs) {$/;"	f
 start_element	lib/soap/nusoap.php	/^    function start_element($parser, $name, $attrs)$/;"	f
 start_element	mnet/xmlrpc/xmlparser.php	/^    function start_element($parser, $name, $attrs) {$/;"	f
 start_html	lib/tablelib.php	/^    function start_html(){$/;"	f
 start_jump_session	auth/mnet/auth.php	/^    function start_jump_session($mnethostid, $wantsurl) {$/;"	f
-start_output	lib/tablelib.php	/^    function start_output($filename, $sheettitle){$/;"	f
 start_output	lib/tablelib.php	/^    function start_output(){$/;"	f
+start_table	lib/tablelib.php	/^    function start_table($sheettitle){$/;"	f
 start_tag	backup/backuplib.php	/^    function start_tag($tag,$level=0,$endline=false,$attributes=null) {$/;"	f
 starteditor	lib/editor/htmlarea/htmlarea.class.php	/^    function starteditor($configtype='') {$/;"	f
 starteditor	lib/editor/tinymce/tinymce.class.php	/^    function starteditor($conftype='default') {$/;"	f
@@ -13922,8 +14089,6 @@ submitFormById	lib/simpletestlib/web_tester.php	/^    function submitFormById($i
 submitImage	lib/simpletestlib/form.php	/^    function submitImage($selector, $x, $y, $additional = false) {$/;"	f
 submit_form	lib/editor/htmlarea/popups/insert_image.php	/^function submit_form(dothis) {$/;"	f
 submit_form	lib/editor/htmlarea/popups/link.php	/^function submit_form(dothis) {$/;"	f
-submit_form	lib/editor/tinymce/jscripts/tiny_mce/plugins/moodleimage/insert_image.php	/^function submit_form(dothis) {$/;"	f
-submit_form	lib/editor/tinymce/jscripts/tiny_mce/plugins/moodlelink/link.php	/^function submit_form(dothis) {$/;"	f
 submittedlink	mod/assignment/lib.php	/^    function submittedlink($allgroups=false) {$/;"	f
 subqueryEnd	search/Zend/Search/Lucene/Search/QueryParser.php	/^    public function subqueryEnd()$/;"	f
 subqueryStart	search/Zend/Search/Lucene/Search/QueryParser.php	/^    public function subqueryStart()$/;"	f
@@ -13961,12 +14126,7 @@ summary_url	mod/quiz/attemptlib.php	/^    public function summary_url() {$/;"	f
 supported	filter/tex/latex.php	/^        function supported() {$/;"	f
 supportedPlatform	lib/adodb/adodb-xmlschema.inc.php	/^	function supportedPlatform( $platform = NULL ) {$/;"	f
 supportedPlatform	lib/adodb/adodb-xmlschema03.inc.php	/^	function supportedPlatform( $platform = NULL ) {$/;"	f
-supported_formats	lib/portfoliolib.php	/^    public abstract static function supported_formats();$/;"	f
-supported_formats	mod/assignment/lib.php	/^    public static function supported_formats() {$/;"	f
-supported_formats	mod/forum/lib.php	/^    static function supported_formats() {$/;"	f
-supported_formats	mod/resource/lib.php	/^    public static function supported_formats() {$/;"	f
-supported_formats	portfolio/type/boxnet/lib.php	/^    public static function supported_formats() {$/;"	f
-supported_formats	portfolio/type/download/lib.php	/^    public static function supported_formats() {$/;"	f
+supported_formats	lib/portfoliolib.php	/^    public static function supported_formats() {$/;"	f
 supports_dataset_item_generation	question/type/calculated/questiontype.php	/^    function supports_dataset_item_generation() {$/;"	f
 supports_dataset_item_generation	question/type/datasetdependent/abstractqtype.php	/^    function supports_dataset_item_generation() {$/;"	f
 suppressQueryParsingExceptions	search/Zend/Search/Lucene/Search/QueryParser.php	/^    public static function suppressQueryParsingExceptions()$/;"	f
@@ -14453,6 +14613,7 @@ toHtml	lib/form/advcheckbox.php	/^    function toHtml()$/;"	f
 toHtml	lib/form/checkbox.php	/^    function toHtml()$/;"	f
 toHtml	lib/form/dateselector.php	/^    function toHtml()$/;"	f
 toHtml	lib/form/datetimeselector.php	/^    function toHtml()$/;"	f
+toHtml	lib/form/filepicker.php	/^    function toHtml() {$/;"	f
 toHtml	lib/form/htmleditor.php	/^    function toHtml(){$/;"	f
 toHtml	lib/form/passwordunmask.php	/^    function toHtml() {$/;"	f
 toHtml	lib/form/radio.php	/^    function toHtml()$/;"	f
@@ -14489,7 +14650,6 @@ toString	lib/pear/PEAR.php	/^    function toString() {$/;"	f
 to_html	lib/listlib.php	/^    function to_html($indent=0, $extraargs = array()){$/;"	f
 to_html	lib/listlib.php	/^    function to_html($indent=0, $extraargs=array()){$/;"	f
 to_reverse_polish	lib/excel/Parser.php	/^  function to_reverse_polish($tree = array())$/;"	f
-toggleEditor	lib/editor/tinymce.js.php	/^    function toggleEditor(id) {$/;"	f
 toggleEditor	lib/editor/tinymce/adminscr.php	/^function toggleEditor(id) {$/;"	f
 toggleEditor	lib/editor/tinymce/messages.php	/^function toggleEditor(id) {$/;"	f
 toggleEditor	lib/editor/tinymce/staff.php	/^    function toggleEditor(id) {$/;"	f
@@ -14563,7 +14723,6 @@ tsetup	lib/editor/tinymce/adminscr.php	/^function tsetup() { $/;"	f
 tsetup	lib/editor/tinymce/messages.php	/^function tsetup() { $/;"	f
 tweakTempTable	lib/ddl/mssql_sql_generator.php	/^    public function tweakTempTable($xmldb_table) {$/;"	f
 tweakTempTable	lib/ddl/sql_generator.php	/^    public function tweakTempTable($xmldb_table) {$/;"	f
-txtentities	lib/tcpdf/html2pdf.php	/^function txtentities($html){$/;"	f
 typeToForm	lib/soap/nusoap.php	/^	function typeToForm($name,$type){$/;"	f
 unQuoteFilenames	lib/typo3/class.t3lib_div.php	/^	public static function unQuoteFilenames($parameters,$unQuote=FALSE)	{$/;"	f
 unassign_capability	lib/accesslib.php	/^function unassign_capability($capability, $roleid, $contextid=NULL) {$/;"	f
@@ -14581,10 +14740,12 @@ unfreeze	lib/pear/HTML/QuickForm/element.php	/^    function unfreeze()$/;"	f
 unfreeze	lib/pear/HTML/QuickForm/group.php	/^    function unfreeze()$/;"	f
 unhash	lib/markdown.php	/^	function unhash($text) {$/;"	f
 unhtmlentities	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function unhtmlentities($text_to_convert) {$/;"	f
-unhtmlentities	lib/tcpdf/tcpdf.php	/^        function unhtmlentities($text_to_convert) {$/;"	f
+unhtmlentities	lib/tcpdf/tcpdf.php	/^		public function unhtmlentities($text_to_convert) {$/;"	f
 unhtmlentities	question/format/learnwise/format.php	/^    function unhtmlentities($string) {$/;"	f
 unhtmlentities	question/format/webct/format.php	/^function unhtmlentities($string){$/;"	f
+unichr	lib/editor/tinymce/create_langfiles.php	/^function unichr($c) {$/;"	f
 unichr	lib/htmlpurifier/HTMLPurifier/Encoder.php	/^    public static function unichr($code) {$/;"	f
+unichr	lib/tcpdf/tcpdf.php	/^		public function unichr($c) {$/;"	f
 uniqueArray	lib/typo3/class.t3lib_div.php	/^	public static function uniqueArray(array $valueArray)	{$/;"	f
 uniqueList	lib/typo3/class.t3lib_div.php	/^	public static function uniqueList($in_list, $secondParameter=NULL)	{$/;"	f
 unix2DosTime	admin/mysql/libraries/zip.lib.php	/^    function unix2DosTime($unixtime = 0) {$/;"	f
@@ -14871,7 +15032,9 @@ uses_quizfile	question/type/datasetdependent/abstractqtype.php	/^    function us
 usleepWindows	lib/soap/nusoap.php	/^function usleepWindows($usec)$/;"	f
 utf162utf8	lib/json/JSON.php	/^    function utf162utf8($utf16)$/;"	f
 utf82utf16	lib/json/JSON.php	/^    function utf82utf16($utf8)$/;"	f
+utf8Bidi	lib/tcpdf/tcpdf.php	/^		protected function utf8Bidi($ta, $forcertl=false) {$/;"	f
 utf8CharToUnumber	lib/typo3/class.t3lib_cs.php	/^	function utf8CharToUnumber($str,$hex=0)	{$/;"	f
+utf8StrRev	lib/tcpdf/tcpdf.php	/^		protected function utf8StrRev($str, $setbom=false, $forcertl=false) {$/;"	f
 utf8_byte2char_pos	lib/typo3/class.t3lib_cs.php	/^	function utf8_byte2char_pos($str,$pos)	{$/;"	f
 utf8_char2byte_pos	lib/typo3/class.t3lib_cs.php	/^	function utf8_char2byte_pos($str,$pos)	{$/;"	f
 utf8_char_mapping	lib/typo3/class.t3lib_cs.php	/^	function utf8_char_mapping($str,$mode,$opt='')	{$/;"	f
@@ -15352,8 +15515,9 @@ write	lib/simpletestlib/socket.php	/^    function write($message) {$/;"	f
 write	lib/simpletestlib/tag.php	/^    function write(&$encoding) {$/;"	f
 write	lib/simpletestlib/tag.php	/^    function write(&$encoding, $x, $y) {$/;"	f
 write	mod/feedback/easy_excel.php	/^    function write($row, $col, $token)$/;"	f
+write1DBarcode	lib/tcpdf/tcpdf.php	/^		public function write1DBarcode($code, $type, $x='', $y='', $w='', $h='', $xres=0.4, $style='', $align='') {$/;"	f
 writeBarcode	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function writeBarcode($x, $y, $w, $h, $type, $style, $font, $xres, $code) {$/;"	f
-writeBarcode	lib/tcpdf/tcpdf.php	/^        function writeBarcode($x, $y, $w, $h, $type, $style, $font, $xres, $code) {$/;"	f
+writeBarcode	lib/tcpdf/tcpdf.php	/^		public function writeBarcode($x, $y, $w, $h, $type, $style, $font, $xres, $code) {$/;"	f
 writeBlank	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function writeBlank($row, $col, $format)$/;"	f
 writeByte	search/Zend/Search/Lucene/Storage/File.php	/^    public function writeByte($byte)$/;"	f
 writeByte	search/Zend/Search/Lucene/Storage/File/Memory.php	/^    public function writeByte($byte)$/;"	f
@@ -15366,9 +15530,9 @@ writeFile	lib/typo3/class.t3lib_div.php	/^	public static function writeFile($fil
 writeFileToTypo3tempDir	lib/typo3/class.t3lib_div.php	/^	public static function writeFileToTypo3tempDir($filepath,$content)	{$/;"	f
 writeFormula	lib/pear/Spreadsheet/Excel/Writer/Worksheet.php	/^    function writeFormula($row, $col, $formula, $format = null)$/;"	f
 writeHTML	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function writeHTML($html, $ln=true, $fill=0) {$/;"	f
-writeHTML	lib/tcpdf/tcpdf.php	/^        function writeHTML($html, $ln=true, $fill=0) {$/;"	f
+writeHTML	lib/tcpdf/tcpdf.php	/^		public function writeHTML($html, $ln=true, $fill=false, $reseth=false, $cell=false, $align='') {$/;"	f
 writeHTMLCell	admin/mysql/libraries/tcpdf/tcpdf.php	/^		function writeHTMLCell($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=0) {$/;"	f
-writeHTMLCell	lib/tcpdf/tcpdf.php	/^        function writeHTMLCell($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=0) {$/;"	f
+writeHTMLCell	lib/tcpdf/tcpdf.php	/^		public function writeHTMLCell($w, $h, $x, $y, $html='', $border=0, $ln=0, $fill=0, $reseth=true, $align='') {$/;"	f
 writeHTMLDiv	lib/htmlpurifier/HTMLPurifier/ConfigSchema/Builder/Xml.php	/^    protected function writeHTMLDiv($html) {$/;"	f
 writeHeadersTo	lib/simpletestlib/encoding.php	/^    function writeHeadersTo(&$socket) {$/;"	f
 writeInt	search/Zend/Search/Lucene/Storage/File.php	/^    public function writeInt($value)$/;"	f
@@ -15396,6 +15560,7 @@ write_formula	lib/excellib.class.php	/^    function write_formula($row, $col, $f
 write_formula	lib/odslib.class.php	/^    function write_formula($row, $col, $formula, $format=null) {$/;"	f
 write_formula	mod/feedback/easy_excel.php	/^    function write_formula($row, $col, $formula)$/;"	f
 write_header	lib/excel/OLEwriter.php	/^    function write_header()$/;"	f
+write_language_file	lib/editor/tinymce/create_langfiles.php	/^function write_language_file($lang, $langdata) {$/;"	f
 write_note	lib/excel/Worksheet.php	/^    function write_note($row, $col, $note)$/;"	f
 write_number	lib/excel/Worksheet.php	/^    function write_number($row, $col, $num, $format = 0)$/;"	f
 write_number	lib/excellib.class.php	/^    function write_number($row, $col, $num, $format=null) {$/;"	f
