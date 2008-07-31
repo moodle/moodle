@@ -169,6 +169,12 @@ define('PARAM_TEXT',  0x0009);
 define('PARAM_FILE',     0x0010);
 
 /**
+ * PARAM_CLEANFILE - alias of PARAM_FILE; originally was removing regional chars too
+ * NOTE: obsoleted do not use anymore
+ */
+define('PARAM_CLEANFILE',0x0010);
+
+/**
  * PARAM_TAG - one tag (interests, blogs, etc.) - mostly international characters and space, <> not supported
  */
 define('PARAM_TAG',   0x0011);
@@ -198,14 +204,6 @@ define('PARAM_URL',      0x0080);
  * PARAM_LOCALURL - expected properly formatted URL as well as one that refers to the local server itself. (NOT orthogonal to the others! Implies PARAM_URL!)
  */
 define('PARAM_LOCALURL', 0x0180);
-
-/**
- * PARAM_CLEANFILE - safe file name, all dangerous and regional chars are removed,
- * use when you want to store a new file submitted by students
- *
- * NOTE: obsoleted do not use anymore
- */
-define('PARAM_CLEANFILE',0x0200);
 
 /**
  * PARAM_BOOL - converts input into 0 or 1, use for switches in forms and urls.
@@ -376,7 +374,6 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * @uses PARAM_TEXT
  * @uses PARAM_SAFEDIR
  * @uses PARAM_SAFEPATH
- * @uses PARAM_CLEANFILE
  * @uses PARAM_FILE
  * @uses PARAM_PATH
  * @uses PARAM_HOST
@@ -460,10 +457,6 @@ function clean_param($param, $type) {
 
         case PARAM_SAFEPATH:     // Remove everything not a-zA-Z0-9/_-
             return eregi_replace('[^a-zA-Z0-9/_-]', '', $param);
-
-        case PARAM_CLEANFILE:    // allow only safe characters
-            //TODO: remove?
-            return clean_filename($param);
 
         case PARAM_FILE:         // Strip all suspicious characters from filename
             $param = ereg_replace('[[:cntrl:]]|[&<>"`\|\':\\/]', '', $param);
@@ -4966,29 +4959,12 @@ function display_size($size) {
 
 /**
  * Cleans a given filename by removing suspicious or troublesome characters
- * Only these are allowed: alphanumeric _ - .
- * Unicode characters can be enabled by setting $CFG->unicodecleanfilename = true in config.php
- *
- * WARNING: unicode characters may not be compatible with zip compression in backup/restore,
- *          because native zip binaries do weird character conversions. Use PHP zipping instead.
  *
  * @param string $string  file name
  * @return string cleaned file name
  */
 function clean_filename($string) {
-    global $CFG;
-
-    if (empty($CFG->unicodecleanfilename)) {
-        $textlib = textlib_get_instance();
-        $string = $textlib->specialtoascii($string);
-        $string = preg_replace('/[^\.a-zA-Z\d\_-]/','_', $string ); // only allowed chars
-    } else {
-        //clean only ascii range
-        $string = preg_replace("/[\\000-\\x2c\\x2f\\x3a-\\x40\\x5b-\\x5e\\x60\\x7b-\\177]/s", '_', $string);
-    }
-    $string = preg_replace("/_+/", '_', $string);
-    $string = preg_replace("/\.\.+/", '.', $string);
-    return $string;
+    return clean_param($string, PARAM_FILE);
 }
 
 

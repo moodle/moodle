@@ -45,7 +45,7 @@ class question_export_form extends moodleform {
 
         $mform->addElement('text', 'exportfilename', get_string('exportname', 'quiz'), array('size'=>40));
         $mform->setDefault('exportfilename', $defaultfilename);
-        $mform->setType('exportfilename', PARAM_CLEANFILE);
+        $mform->setType('exportfilename', PARAM_FILE);
 
         // set a template for the format select elements   
         $renderer =& $mform->defaultRenderer();

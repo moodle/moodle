@@ -155,7 +155,6 @@ class moodlelib_test extends UnitTestCase {
      * @uses PARAM_ALPHAEXT
      * @uses PARAM_BOOL
      * @uses PARAM_SAFEDIR
-     * @uses PARAM_CLEANFILE
      * @uses PARAM_FILE
      * @uses PARAM_PATH
      * @uses PARAM_HOST

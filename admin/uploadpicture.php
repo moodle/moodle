@@ -200,7 +200,7 @@ function process_file ($file, $userfield, $overwrite) {
     $path_parts = pathinfo(cleardoubleslashes($file));
     $basename  = $path_parts['basename'];
     $extension = $path_parts['extension'];
-    if ($basename != clean_param($basename, PARAM_CLEANFILE)) {
+    if ($basename != clean_param($basename, PARAM_FILE)) {
         // The original picture file name has invalid characters
         notify(get_string('uploadpicture_invalidfilename', 'admin',
                           clean_param($basename, PARAM_CLEANHTML)));

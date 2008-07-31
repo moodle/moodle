@@ -55,7 +55,9 @@
         case 'add':
             if ($data = data_submitted() and confirm_sesskey()) {
 
-                $shortname = moodle_strtolower(clean_filename($shortname)); // only lowercase safe ASCII characters
+                $shortname = textlib_get_instance()->specialtoascii($shortname);
+                
+                $shortname = moodle_strtolower(clean_param($shortname, PARAM_ALPHANUMEXT)); // only lowercase safe ASCII characters
                 $legacytype = required_param('legacytype', PARAM_RAW);
 
                 $legacyroles = get_legacy_roles();
