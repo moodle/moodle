@@ -47,7 +47,6 @@ define('MOODLE_INTERNAL', true);
 /**
  * Time constant - the number of seconds in a year
  */
-
 define('YEARSECS', 31536000);
 
 /**
@@ -107,38 +106,59 @@ define('PARAM_INT',      0x0002);
 define('PARAM_INTEGER',  0x0002);
 
 /**
- * PARAM_NUMBER - a real/floating point number.
+ * PARAM_FLOAT - a real/floating point number.
+ */
+define('PARAM_FLOAT',  0x000a);
+
+/**
+ * PARAM_NUMBER - alias of PARAM_FLOAT, deprecated - do not use
  */
 define('PARAM_NUMBER',  0x000a);
 
 /**
- * PARAM_ALPHA - contains only english letters.
+ * PARAM_ALPHA - contains only english ascii letters a-zA-Z.
  */
 define('PARAM_ALPHA',    0x0004);
 
 /**
- * PARAM_ACTION - an alias for PARAM_ALPHA, use for various actions in formas and urls
- * @TODO: should we alias it to PARAM_ALPHANUM ?
+ * PARAM_ALPHAEXT the same contents as PARAM_ALPHA plus the chars in quotes: "/-" allowed
+ * NOTE: originally this allowed "/" too, please use PARAM_SAFEPATH if "/" needed
  */
-define('PARAM_ACTION',   0x0004);
+define('PARAM_ALPHAEXT', 0x2000);
 
 /**
- * PARAM_FORMAT - an alias for PARAM_ALPHA, use for names of plugins, formats, etc.
- * @TODO: should we alias it to PARAM_ALPHANUM ?
+ * PARAM_ALPHANUM - expected numbers and letters only.
  */
-define('PARAM_FORMAT',   0x0004);
+define('PARAM_ALPHANUM', 0x0400);
+
+/**
+ * PARAM_ALPHANUMEXT - expected numbers, letters only and _-.
+ */
+define('PARAM_ALPHANUMEXT', 0x0401);
+
+/**
+ * PARAM_ACTION - an alias for PARAM_ALPHANUMEXT, use for various actions in formas and urls
+ * NOTE: originally alias for PARAM_APLHA
+ */
+define('PARAM_ACTION',   0x0401);
+
+/**
+ * PARAM_FORMAT - an alias for PARAM_ALPHANUMEXT, use for names of plugins, formats, etc.
+ * NOTE: originally alias for PARAM_APLHA
+ */
+define('PARAM_FORMAT',   0x0401);
 
 /**
  * PARAM_NOTAGS - all html tags are stripped from the text. Do not abuse this type.
  */
 define('PARAM_NOTAGS',   0x0008);
 
- /**
+/**
  * PARAM_MULTILANG - alias of PARAM_TEXT.
  */
 define('PARAM_MULTILANG',  0x0009);
 
- /**
+/**
  * PARAM_TEXT - general plain text compatible with multilang filter, no other html tags.
  */
 define('PARAM_TEXT',  0x0009);
@@ -149,7 +169,7 @@ define('PARAM_TEXT',  0x0009);
 define('PARAM_FILE',     0x0010);
 
 /**
- * PARAM_TAG - one tag (interests, blogs, etc.) - mostly international alphanumeric with spaces
+ * PARAM_TAG - one tag (interests, blogs, etc.) - mostly international characters and space, <> not supported
  */
 define('PARAM_TAG',   0x0011);
 
@@ -182,13 +202,10 @@ define('PARAM_LOCALURL', 0x0180);
 /**
  * PARAM_CLEANFILE - safe file name, all dangerous and regional chars are removed,
  * use when you want to store a new file submitted by students
+ *
+ * NOTE: obsoleted do not use anymore
  */
 define('PARAM_CLEANFILE',0x0200);
-
-/**
- * PARAM_ALPHANUM - expected numbers and letters only.
- */
-define('PARAM_ALPHANUM', 0x0400);
 
 /**
  * PARAM_BOOL - converts input into 0 or 1, use for switches in forms and urls.
@@ -201,16 +218,14 @@ define('PARAM_BOOL',     0x0800);
 define('PARAM_CLEANHTML',0x1000);
 
 /**
- * PARAM_ALPHAEXT the same contents as PARAM_ALPHA plus the chars in quotes: "/-_" allowed,
- * suitable for include() and require()
- * @TODO: should we rename this function to PARAM_SAFEDIRS??
- */
-define('PARAM_ALPHAEXT', 0x2000);
-
-/**
  * PARAM_SAFEDIR - safe directory name, suitable for include() and require()
  */
 define('PARAM_SAFEDIR',  0x4000);
+
+/**
+ * PARAM_SAFEPATH - several PARAM_SAFEDIR joined by "/", suitable for include() and require(), plugin paths, etc.
+ */
+define('PARAM_SAFEPATH',  0x4001);
 
 /**
  * PARAM_SEQUENCE - expects a sequence of numbers like 8 to 1,5,6,4,6,8,9.  Numbers and comma only.
@@ -246,32 +261,31 @@ define ('DEBUG_ALL', 6143);
 /** DEBUG_ALL with extra Moodle debug messages - (DEBUG_ALL | 32768) */
 define ('DEBUG_DEVELOPER', 38911);
 
-/**
- * Blog access level constant declaration
- */
+
+/// Blog access level constant declaration ///
 define ('BLOG_USER_LEVEL', 1);
 define ('BLOG_GROUP_LEVEL', 2);
 define ('BLOG_COURSE_LEVEL', 3);
 define ('BLOG_SITE_LEVEL', 4);
 define ('BLOG_GLOBAL_LEVEL', 5);
 
+
+///Tag constants///
 /**
- * Tag constants
+ * To prevent problems with multibytes strings, this should not exceed the
+ * length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
+ * TODO: this is not correct, varchar(255) are 255 unicode chars ;-)
  */
-//To prevent problems with multibytes strings, this should not exceed the
-//length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
 define('TAG_MAX_LENGTH', 50);
 
-/**
- * Password policy constants
- */
+/// Password policy constants ///
 define ('PASSWORD_LOWER', 'abcdefghijklmnopqrstuvwxyz');
 define ('PASSWORD_UPPER', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 define ('PASSWORD_DIGITS', '0123456789');
 define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
 
-// Feature constants. Used for plugin_supports() to report features that are,
-// or are not, supported by a module.
+/// Feature constants ///
+// Used for plugin_supports() to report features that are, or are not, supported by a module.
 
 /** True if module can provide a grade */
 define('FEATURE_GRADE_HAS_GRADE','grade_has_grade');
@@ -350,15 +364,18 @@ function optional_param($parname, $default=NULL, $type=PARAM_CLEAN) {
  * @uses PARAM_CLEAN
  * @uses PARAM_CLEANHTML
  * @uses PARAM_INT
+ * @uses PARAM_FLOAT
  * @uses PARAM_NUMBER
  * @uses PARAM_ALPHA
- * @uses PARAM_ALPHANUM
  * @uses PARAM_ALPHAEXT
+ * @uses PARAM_ALPHANUM
+ * @uses PARAM_ALPHANUMEXT
  * @uses PARAM_SEQUENCE
  * @uses PARAM_BOOL
  * @uses PARAM_NOTAGS
  * @uses PARAM_TEXT
  * @uses PARAM_SAFEDIR
+ * @uses PARAM_SAFEPATH
  * @uses PARAM_CLEANFILE
  * @uses PARAM_FILE
  * @uses PARAM_PATH
@@ -402,26 +419,30 @@ function clean_param($param, $type) {
         case PARAM_INT:
             return (int)$param;  // Convert to integer
 
+        case PARAM_FLOAT:
         case PARAM_NUMBER:
-            return (float)$param;  // Convert to integer
+            return (float)$param;  // Convert to float
 
         case PARAM_ALPHA:        // Remove everything not a-z
             return eregi_replace('[^a-zA-Z]', '', $param);
 
+        case PARAM_ALPHAEXT:     // Remove everything not a-zA-Z_- (originally allowed "/" too)
+            return eregi_replace('[^a-zA-Z_-]', '', $param);
+
         case PARAM_ALPHANUM:     // Remove everything not a-zA-Z0-9
             return eregi_replace('[^A-Za-z0-9]', '', $param);
 
-        case PARAM_ALPHAEXT:     // Remove everything not a-zA-Z/_-
-            return eregi_replace('[^a-zA-Z/_-]', '', $param);
+        case PARAM_ALPHANUMEXT:     // Remove everything not a-zA-Z0-9_-
+            return eregi_replace('[^A-Za-z0-9_-]', '', $param);
 
         case PARAM_SEQUENCE:     // Remove everything not 0-9,
             return eregi_replace('[^0-9,]', '', $param);
 
         case PARAM_BOOL:         // Convert to 1 or 0
             $tempstr = strtolower($param);
-            if ($tempstr == 'on' or $tempstr == 'yes' ) {
+            if ($tempstr === 'on' or $tempstr === 'yes' or $tempstr === 'true') {
                 $param = 1;
-            } else if ($tempstr == 'off' or $tempstr == 'no') {
+            } else if ($tempstr === 'off' or $tempstr === 'no'  or $tempstr === 'false') {
                 $param = 0;
             } else {
                 $param = empty($param) ? 0 : 1;
@@ -437,22 +458,24 @@ function clean_param($param, $type) {
         case PARAM_SAFEDIR:      // Remove everything not a-zA-Z0-9_-
             return eregi_replace('[^a-zA-Z0-9_-]', '', $param);
 
+        case PARAM_SAFEPATH:     // Remove everything not a-zA-Z0-9/_-
+            return eregi_replace('[^a-zA-Z0-9/_-]', '', $param);
+
         case PARAM_CLEANFILE:    // allow only safe characters
+            //TODO: remove?
             return clean_filename($param);
 
         case PARAM_FILE:         // Strip all suspicious characters from filename
-            $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':\\/]', '', $param);
+            $param = ereg_replace('[[:cntrl:]]|[&<>"`\|\':\\/]', '', $param);
             $param = ereg_replace('\.\.+', '', $param);
-            if($param == '.') {
+            if ($param === '.') {
                 $param = '';
             }
             return $param;
 
         case PARAM_PATH:         // Strip all suspicious characters from file path
-            $param = str_replace('\\\'', '\'', $param);
-            $param = str_replace('\\"', '"', $param);
             $param = str_replace('\\', '/', $param);
-            $param = ereg_replace('[[:cntrl:]]|[<>"`\|\':]', '', $param);
+            $param = ereg_replace('[[:cntrl:]]|[&<>"`\|\':]', '', $param);
             $param = ereg_replace('\.\.+', '', $param);
             $param = ereg_replace('//+', '/', $param);
             return ereg_replace('/(\./)+', '/', $param);
@@ -559,7 +582,9 @@ function clean_param($param, $type) {
         case PARAM_TAG:
             //as long as magic_quotes_gpc is used, a backslash will be a
             //problem, so remove *all* backslash.
-            $param = str_replace('\\', '', $param);
+            //$param = str_replace('\\', '', $param);
+            //remove some nasties
+            $param = ereg_replace('[[:cntrl:]]|[<>`]', '', $param);
             //convert many whitespace chars into one
             $param = preg_replace('/\s+/', ' ', $param);
             $textlib = textlib_get_instance();
@@ -572,7 +597,7 @@ function clean_param($param, $type) {
             $result = array();
             foreach ($tags as $tag) {
                 $res = clean_param($tag, PARAM_TAG);
-                if ($res != '') {
+                if ($res !== '') {
                     $result[] = $res;
                 }
             }
@@ -587,7 +612,18 @@ function clean_param($param, $type) {
     }
 }
 
-
+/**
+ * Return true if given value is integer or string with integer value
+ */
+function is_number($value) {
+    if (is_int($value)) {
+        return true;
+    } else if (is_string($value)) {
+        return ((string)(int)$value) === $value;
+    } else {
+        return false;
+    }
+}
 
 /**
  * Set a key in global configuration
