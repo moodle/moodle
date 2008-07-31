@@ -2281,4 +2281,78 @@ function data_supports($feature) {
         default: return null;
     }
 }
+function data_export_csv($export, $delimiter_name, $dataname, $count) {
+    $delimiter = csv_import_reader::get_delimiter($delimiter_name);
+    $filename = clean_filename("${dataname}-${count}_record");
+    if ($count > 1) {
+        $filename .= 's';
+    }
+    $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
+    $filename .= clean_filename("-${delimiter_name}_separated");
+    $filename .= '.csv';
+    header("Content-Type: application/download\n");
+    header("Content-Disposition: attachment; filename=$filename");
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
+    header('Pragma: public');
+    $encdelim = '&#' . ord($delimiter) . ';';
+    foreach($export as $row) {
+        foreach($row as $key => $column) {
+            $row[$key] = str_replace($delimiter, $encdelim, $column);
+        }
+        echo implode($delimiter, $row) . "\n";
+    }
+}
+
+
+function data_export_xls($export, $dataname, $count) {
+    global $CFG;
+    require_once("$CFG->libdir/excellib.class.php");
+    $filename = clean_filename("${dataname}-${count}_record");
+    if ($count > 1) {
+        $filename .= 's';
+    }
+    $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
+    $filename .= '.xls';
+    $workbook = new MoodleExcelWorkbook('-');
+    $workbook->send($filename);
+    $worksheet = array();
+    $worksheet[0] =& $workbook->add_worksheet('');
+    $rowno = 0;
+    foreach ($export as $row) {
+        $colno = 0;
+        foreach($row as $col) {
+            $worksheet[0]->write($rowno, $colno, $col);
+            $colno++;
+        }
+        $rowno++;
+    }
+    $workbook->close();
+}
+
+
+function data_export_ods($export, $dataname, $count) {
+    global $CFG;
+    require_once("$CFG->libdir/odslib.class.php");
+    $filename = clean_filename("${dataname}-${count}_record");
+    if ($count > 1) {
+        $filename .= 's';
+    }
+    $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
+    $filename .= '.ods';
+    $workbook = new MoodleODSWorkbook('-');
+    $workbook->send($filename);
+    $worksheet = array();
+    $worksheet[0] =& $workbook->add_worksheet('');
+    $rowno = 0;
+    foreach ($export as $row) {
+        $colno = 0;
+        foreach($row as $col) {
+            $worksheet[0]->write($rowno, $colno, $col);
+            $colno++;
+        }
+        $rowno++;
+    }
+    $workbook->close();
+}
 ?>
