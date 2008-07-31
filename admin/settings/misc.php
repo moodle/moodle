@@ -15,7 +15,7 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     // Completion system
     require_once($CFG->libdir.'/completionlib.php');
-    $temp->add(new admin_setting_configcheckbox('enablecompletion',get_string('enablecompletion','completion'),get_string('configenablecompletion','completion'),COMPLETION_ENABLED));
+    $temp->add(new admin_setting_configcheckbox('enablecompletion',get_string('enablecompletion','completion'),get_string('configenablecompletion','completion'),COMPLETION_DISABLED));
     $temp->add(new admin_setting_pickroles('progresstrackedroles',get_string('progresstrackedroles','completion'),get_string('configprogresstrackedroles','completion')));
 
     $ADMIN->add('misc', $temp);
