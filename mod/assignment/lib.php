@@ -1968,14 +1968,8 @@ class assignment_base {
 
 /** 
  * Code to be executed when a module is installed
- * now is just used to register the module as message provider
  */ 
 function assignment_install() {
-    $eventdata = new object();
-    $eventdata->modulename = 'assignment';
-    $eventdata->modulefile = 'mod/assignment/index.php';
-    events_trigger('message_provider_register', $eventdata); 
-   
     return true; 
 }
 

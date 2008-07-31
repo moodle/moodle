@@ -36,15 +36,6 @@ function xmldb_assignment_upgrade($oldversion=0) {
         upgrade_mod_savepoint($result, 2007101511, 'assignment');
     }
     
-    if ($result && $oldversion < 2008072401) {
-        $eventdata = new object();
-        $eventdata->modulename = 'assignment';
-        $eventdata->modulefile = 'mod/assignment/index.php';
-        events_trigger('message_provider_register', $eventdata); 
-        
-        upgrade_mod_savepoint($result, 2008072401, 'assignment');
-    }
-
     return $result;
 }
 

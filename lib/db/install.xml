@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20080630" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20080731" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -74,8 +74,7 @@
         <FIELD NAME="enrolenddate" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="enrolstartdate" NEXT="enrol"/>
         <FIELD NAME="enrol" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="enrolenddate" NEXT="defaultrole"/>
         <FIELD NAME="defaultrole" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="The default role given to participants who self-enrol" PREVIOUS="enrol" NEXT="enablecompletion"/>
-        <FIELD NAME="enablecompletion" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 = allow use of 'completion' progress-tracking on this course.
-0 = disable completion tracking on this course." PREVIOUS="defaultrole"/>
+        <FIELD NAME="enablecompletion" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="1 = allow use of 'completion' progress-tracking on this course. 0 = disable completion tracking on this course." PREVIOUS="defaultrole"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -149,10 +148,7 @@
         <FIELD NAME="groupmode" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="visibleold" NEXT="groupingid"/>
         <FIELD NAME="groupingid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="groupmode" NEXT="groupmembersonly"/>
         <FIELD NAME="groupmembersonly" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="only members of any group are allowed to access the activity" PREVIOUS="groupingid" NEXT="completion"/>
-        <FIELD NAME="completion" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Whether the completion-tracking facilities are enabled for this activity.
-0 = not enabled (database default)
-1 = manual tracking, user can tick this activity off (UI default for most activity types)
-2 = automatic tracking, system should mark completion according to rules specified in course_moduleS_completion" PREVIOUS="groupmembersonly" NEXT="completiongradeitemnumber"/>
+        <FIELD NAME="completion" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Whether the completion-tracking facilities are enabled for this activity. 0 = not enabled (database default) 1 = manual tracking, user can tick this activity off (UI default for most activity types) 2 = automatic tracking, system should mark completion according to rules specified in course_moduleS_completion" PREVIOUS="groupmembersonly" NEXT="completiongradeitemnumber"/>
         <FIELD NAME="completiongradeitemnumber" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Grade-item number used to track automatic completion, if applicable." PREVIOUS="completion" NEXT="completionview"/>
         <FIELD NAME="completionview" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Controls whether a page view is part of the automatic completion requirements for this activity. 0 = view not required 1 = view required" PREVIOUS="completiongradeitemnumber" NEXT="completionexpected"/>
         <FIELD NAME="completionexpected" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" COMMENT="Date at which students are expected to complete this activity. This field is used when displaying student progress." PREVIOUS="completionview"/>
@@ -174,16 +170,8 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="coursemoduleid"/>
         <FIELD NAME="coursemoduleid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Activity that has been completed (or not)." PREVIOUS="id" NEXT="userid"/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="ID of user who has (or hasn't) completed the activity." PREVIOUS="coursemoduleid" NEXT="completionstate"/>
-        <FIELD NAME="completionstate" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Whether or not the user has completed the activity. Available states:
-0 = not completed [if there's no row in this table, that also counts as 0]
-1 = completed
-2 = completed, show passed
-3 = completed, show failed" PREVIOUS="userid" NEXT="viewed"/>
-
-        <FIELD NAME="viewed" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Tracks whether or not this activity has been viewed.
-NULL = we are not tracking viewed for this activity
-0 = not viewed
-1 = viewed" PREVIOUS="completionstate" NEXT="timemodified"/>
+        <FIELD NAME="completionstate" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Whether or not the user has completed the activity. Available states: 0 = not completed [if there's no row in this table, that also counts as 0] 1 = completed 2 = completed, show passed 3 = completed, show failed" PREVIOUS="userid" NEXT="viewed"/>
+        <FIELD NAME="viewed" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Tracks whether or not this activity has been viewed. NULL = we are not tracking viewed for this activity 0 = not viewed 1 = viewed" PREVIOUS="completionstate" NEXT="timemodified"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="Time at which the completion state last changed." PREVIOUS="viewed"/>
       </FIELDS>
       <KEYS>
@@ -192,7 +180,6 @@ NULL = we are not tracking viewed for this activity
       <INDEXES>
         <INDEX NAME="coursemoduleid" UNIQUE="false" FIELDS="coursemoduleid" COMMENT="For quick access via course-module (e.g. when displaying course module settings page and we need to determine whether anyone has completed it)." NEXT="userid"/>
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid" COMMENT="Index on user ID. Used when obtaining completion information for normal course page view." PREVIOUS="coursemoduleid"/>
-
       </INDEXES>
     </TABLE>
     <TABLE NAME="course_sections" COMMENT="to define the sections for each course" PREVIOUS="course_modules_completion" NEXT="course_request">
@@ -1762,13 +1749,17 @@ NULL = we are not tracking viewed for this activity
     </TABLE>
     <TABLE NAME="message_providers" COMMENT="This table stores the message providers (modules and core systems)" PREVIOUS="portfolio_instance_user" NEXT="message_processors">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="modulename"/>
-        <FIELD NAME="modulename" TYPE="char" LENGTH="166" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="Module Name" PREVIOUS="id" NEXT="modulefile"/>
-        <FIELD NAME="modulefile" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The main module file" PREVIOUS="modulename"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="name"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The full name of the message provider in standard form" PREVIOUS="id" NEXT="component"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="200" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The name of the component that produces these messages" PREVIOUS="name" NEXT="capability"/>
+        <FIELD NAME="capability" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="Optional: permission that is required on the user's setting screen to see this message provider." PREVIOUS="component"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="componentname" UNIQUE="true" FIELDS="component, name" COMMENT="Unique index"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="message_processors" COMMENT="List of message output plugins" PREVIOUS="message_providers" NEXT="message_working">
       <FIELDS>
@@ -1813,7 +1804,7 @@ NULL = we are not tracking viewed for this activity
         <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url) VALUES ('mahara','Mahara','/api/xmlrpc/server.php',  '/auth/xmlrpc/land.php')" />
       </SENTENCES>
     </STATEMENT>
-    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display" PREVIOUS="insert mnet_application" NEXT="insert message_providers">
+    <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display" PREVIOUS="insert mnet_application">
       <SENTENCES>
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('user', 'view', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('course', 'user report', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
@@ -1834,11 +1825,6 @@ NULL = we are not tracking viewed for this activity
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('message', 'unblock contact', 'user', 'CONCAT(firstname,&quot; &quot;,lastname)')" />
         <SENTENCE TEXT="(module, action, mtable, field) VALUES ('group', 'view', 'groups', 'name')" />
       </SENTENCES>
-    </STATEMENT>
-    <STATEMENT NAME="insert message_providers" TYPE="insert" TABLE="message_providers" COMMENT="Initial insert of moodle record in message_providers" PREVIOUS="insert log_display">
-        <SENTENCES>
-            <SENTENCE TEXT="(modulename, modulefile) VALUES ('moodle', 'index.php')" />
-        </SENTENCES>
     </STATEMENT>
   </STATEMENTS>
 </XMLDB>

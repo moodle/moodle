@@ -31,14 +31,8 @@ if(!isset($SESSION->feedback) OR !is_object($SESSION->feedback)) {
 
 /** 
  * Code to be executed when a module is installed
- * now is just used to register the module as message provider
  */ 
 function feedback_install() {
-    $eventdata = new object();
-    $eventdata->modulename = 'feedback';
-    $eventdata->modulefile = 'mod/feedback/index.php';
-    events_trigger('message_provider_register', $eventdata); 
-   
     return true; 
 }
 

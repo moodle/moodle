@@ -60,14 +60,8 @@ define("QUIZ_MAX_EVENT_LENGTH", 5*24*60*60);   // 5 days maximum
 
 /**
  * Code to be executed when a module is installed
- * now is just used to register the module as message provider
  */ 
 function quiz_install() {
-    $eventdata = new object();
-    $eventdata->modulename = 'quiz';
-    $eventdata->modulefile = 'mod/quiz/index.php';
-    events_trigger('message_provider_register', $eventdata); 
-   
     return true; 
 }
 

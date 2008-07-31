@@ -35,6 +35,7 @@
 require_once('../config.php');
 
 require_once($CFG->dirroot.'/message/edit_form.php');
+require_once($CFG->libdir.'/messagelib.php');
 
 
 httpsrequired();
@@ -100,18 +101,19 @@ $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontac
 $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
 $preferences->noframesjs        =  get_user_preferences( 'message_noframesjs', '', $user->id);
 
-//for every message provider get preferences for the form
-$providers = $DB->get_records('message_providers');
+// Get all the known providers
+$providers = message_get_my_providers();
+
 foreach ( $providers as $providerid => $provider){
     foreach (array('loggedin', 'loggedoff') as $state){
-        $linepref = get_user_preferences('message_provider_'.$provider->modulename.'_'.$state, '', $user->id);
+        $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$state, '', $user->id);
         if ($linepref == ''){ 
             continue;
         }
         $lineprefarray = explode(',', $linepref);
-        $preferences->{$provider->modulename.'_'.$state} = array();
+        $preferences->{$provider->component.'_'.$state} = array();
         foreach ($lineprefarray as $pref){
-            $preferences->{$provider->modulename.'_'.$state}[$provider->modulename.'_'.$state.'_'.$pref] = 1;
+            $preferences->{$provider->component.'_'.$state}[$provider->component.'_'.$state.'_'.$pref] = 1;
         }
     }
 }
@@ -149,12 +151,11 @@ if ($messageconf = $userform->get_data()) {
     $preferences['message_beepnewmessage']    = $messageconf->beepnewmessage?1:0;
     $preferences['message_noframesjs']        = $messageconf->noframesjs?1:0;
 
-    //get a listing of all the message processors and process the form
-    $providers = $DB->get_records('message_providers');
+    //get a listing of all the message providers and process the form
     foreach ( $providers as $providerid => $provider){
         foreach (array('loggedin', 'loggedoff') as $state){
             $linepref = '';
-            foreach ($messageconf->{$provider->modulename.'_'.$state} as $process=>$one){
+            foreach ($messageconf->{$provider->component.'_'.$state} as $process=>$one){
                 $parray = explode( '_', $process);
                 if ($linepref == ''){ 
                     $linepref = $parray[2];
@@ -162,7 +163,7 @@ if ($messageconf = $userform->get_data()) {
                     $linepref .= ','.$parray[2];
                 }
             }
-            $preferences[ 'message_provider_'.$provider->modulename.'_'.$state  ] = $linepref;
+            $preferences[ 'message_provider_'.$provider->component.'_'.$state  ] = $linepref;
         }
     }
 
@@ -209,7 +210,7 @@ $navlinks[] = array('name' => $streditmymessage, 'link' => null, 'type' => 'misc
 $navigation = build_navigation($navlinks);
 
 if ($course->id != SITEID) {
-    print_header("$course->shortname: $streditmymessage", "$course->fullname: $streditmessage", $navigation);
+    print_header("$course->shortname: $streditmymessage", "$course->fullname: $streditmymessage", $navigation);
 } else {
     print_header("$course->shortname: $streditmymessage", $course->fullname, $navigation);
 }

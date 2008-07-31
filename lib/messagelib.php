@@ -24,9 +24,9 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
- * messagelib.php - Contains the events handlers for the message system
+ * messagelib.php - Contains generic messaging functions for the message system
  *
- * @author Luis Rodrigues
+ * @author Luis Rodrigues and Martin Dougiamas
  * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package 
@@ -36,41 +36,10 @@
 define('TIMETOSHOWUSERS', 300);
  
 /**
- * Is trigged by an events_trigger in the MODULE_install function when
- * a module wants to be a message provider provider.
- * @param object $eventdata the information about the message provider (name and file)
- * @return boolean success
- */
-function message_provider_register_handler($eventdata) {
-    global $DB;
-    $return = true;
-
-    $provider = new object();
-    $provider->modulename  = $eventdata->modulename;
-    $provider->modulefile  = $eventdata->modulefile;
-    if (!$DB->insert_record('message_providers', $provider)) {
-        $return = false;
-    }
-
-    // everything ok :-)
-    return $return;
-}
-
-/**
- * To be used to ungegister a message provider (curently not used)
- * @param object $eventdata the information about the message provider (name and file)
- * @return boolean success
- */
-function message_provider_unregister_handler($eventdata) {
-    // everything ok :-)
-    return true;
-}
-
-/**
  * Triggered when a message provider wants to send a message.
  * This functions checks the user's processor configuration to send the given type of message,
  * then tries to send it.
- * @param object $eventdata information about he message (origin, destination, type, content)
+ * @param object $eventdata information about the message (origin, destination, type, content)
  * @return boolean success
  */
 function message_send_handler($eventdata){
@@ -107,7 +76,7 @@ function message_send_handler($eventdata){
     // to be able to distinguish between a user who has no settings and one who doesn't want contact
     // ... perhaps a "none" setting
 
-    $processor = get_user_preferences('message_provider_'.$eventdata->modulename.'_'.$userstate, 'email', $eventdata->userto->id);
+    $processor = get_user_preferences('message_provider_'.$eventdata->component.$eventdata->name.'_'.$userstate, 'email', $eventdata->userto->id);
 
 /// Now process the message
 
@@ -149,5 +118,165 @@ function message_send_handler($eventdata){
 
     return true;
 }
+
+
+/**
+ * This code updates the message_providers table with the current set of providers
+ * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @return boolean
+ */
+function message_update_providers($component='moodle') {
+    global $DB;
+
+    // load message providers from files
+    $fileproviders = message_get_providers_from_file($component);
+
+    // load message providers from the database
+    $dbproviders = message_get_providers_from_db($component);
+
+    foreach ($fileproviders as $messagename => $fileprovider) {
+
+        if (!empty($dbproviders[$messagename])) {   // Already exists in the database
+            
+            if ($dbproviders[$messagename]->capability == $fileprovider['capability']) {  // Same, so ignore
+                // exact same message provider already present in db, ignore this entry
+                unset($dbproviders[$messagename]);
+                continue;
+
+            } else {                                // Update existing one
+                $provider = new object();
+                $provider->id             = $dbproviders[$messagename]->id;
+                $provider->capability     = $fileprovider['capability'];
+                $DB->update_record('message_providers', $provider);
+                unset($dbproviders[$messagename]);
+                continue;
+            }
+
+        } else {             // New message provider, add it
+
+            $provider = new object();
+            $provider->name       = $messagename;
+            $provider->component  = $component;
+            $provider->capability = $fileprovider['capability'];
+
+            $DB->insert_record('message_providers', $provider);
+        }
+    }
+
+    foreach ($dbproviders as $dbprovider) {  // Delete old ones
+        $DB->delete_records('message_providers', array('id' => $dbprovider->id));
+    }
+
+    return true;
+}
+
+/**
+ * Returns the active providers for the current user, based on capability
+ * @return array of message providers
+ */
+function message_get_my_providers() {
+    global $DB;
+
+    $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+
+    $providers = $DB->get_records('message_providers');
+
+    // Remove all the providers we aren't allowed to see now
+    foreach ($providers as $providerid => $provider) {
+        if (!empty($provider->capability)) {
+            if (!has_capability($provider->capability, $systemcontext)) {
+                unset($providers[$providerid]);   // Not allowed to see this
+            }
+        }
+    }
+
+    return $providers;
+}
+
+/**
+ * Gets the message providers that are in the database for this component.
+ * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @return array of message providers
+ *
+ * INTERNAL - to be used from messagelib only
+ */
+function message_get_providers_from_db($component) {
+    global $DB;
+
+    if ($dbproviders = $DB->get_records('message_providers', array('component'=>$component), '', 
+                                        'name, id, component, capability')) {  // Name is unique per component
+        return $dbproviders;
+    }
+
+    return array();
+}
+
+/**
+ * Loads the messages definitions for the component (from file). If no
+ * messages are defined for the component, we simply return an empty array.
+ * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ * @return array of message providerss or empty array if not exists
+ *
+ * INTERNAL - to be used from messagelib only
+ */
+function message_get_providers_from_file($component) {
+    global $CFG;
+
+    if ($component == 'moodle') {
+        $defpath = $CFG->libdir.'/db/messages.php';
+
+    } else if ($component == 'unittest') {
+        $defpath = $CFG->libdir.'/simpletest/fixtures/messages.php';
+
+    } else {
+        $compparts = explode('/', $component);
+
+        if ($compparts[0] == 'block') {
+            // Blocks are an exception. Blocks directory is 'blocks', and not
+            // 'block'. So we need to jump through hoops.
+            $defpath = $CFG->dirroot.'/blocks/'.$compparts[1].'/db/messages.php';
+
+        } else if ($compparts[0] == 'format') {
+            // Similar to the above, course formats are 'format' while they
+            // are stored in 'course/format'.
+            $defpath = $CFG->dirroot.'/course/format/'.$compparts[1].'/db/messages.php';
+
+        } else if ($compparts[0] == 'gradeimport') {
+            $defpath = $CFG->dirroot.'/grade/import/'.$compparts[1].'/db/messages.php';  
+        
+        } else if ($compparts[0] == 'gradeexport') {
+            $defpath = $CFG->dirroot.'/grade/export/'.$compparts[1].'/db/messages.php'; 
+        
+        } else if ($compparts[0] == 'gradereport') {
+            $defpath = $CFG->dirroot.'/grade/report/'.$compparts[1].'/db/messages.php'; 
+        
+        } else {
+            $defpath = $CFG->dirroot.'/'.$component.'/db/messages.php';
+        }
+    }
+
+    $messageproviders = array();
+
+    if (file_exists($defpath)) {
+        require($defpath);
+    }
+
+    foreach ($messageproviders as $name => $messageprovider) {   // Fix up missing values if required
+        if (empty($messageprovider['capability'])) {
+            $messageproviders[$name]['capability'] = NULL;
+        }
+    }
+
+    return $messageproviders;
+}
+
+/**
+ * Remove all message providers 
+ * @param $component - examples: 'moodle', 'mod/forum', 'block/quiz_results'
+ */
+function message_uninstall($component) {
+    return $DB->delete_records('message_providers', array('component' => $component));
+}
+
 
 ?>

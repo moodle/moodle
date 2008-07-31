@@ -31,14 +31,8 @@ define ('FORUM_AGGREGATE_SUM', 5);
 
 /**
  * Code to be executed when a module is installed
- * now is just used to register the module as message provider
  */ 
 function forum_install() {
-    $eventdata = new object();
-    $eventdata->modulename = 'forum';
-    $eventdata->modulefile = 'mod/forum/index.php';
-    events_trigger('message_provider_register', $eventdata); 
-
     return true; 
 }
 
@@ -543,7 +537,8 @@ function forum_cron() {
                                                  $posthtml, '', '', $CFG->forum_replytouser)) {
                 */
                 $eventdata = new object();
-                $eventdata->modulename       = 'forum';
+                $eventdata->component        = 'mod/forum';
+                $eventdata->name             = 'posts';
                 $eventdata->userfrom         = $userfrom;
                 $eventdata->userto           = $userto;
                 $eventdata->subject          = $postsubject;
@@ -843,7 +838,8 @@ function forum_cron() {
                                                   '', '', $CFG->forum_replytouser)) {
                 */
                 $eventdata = new object();
-                $eventdata->modulename       = 'forum';
+                $eventdata->component        = 'mod/forum';
+                $eventdata->name             = 'posts';
                 $eventdata->userfrom         = $site->shortname;
                 $eventdata->userto           = $userto;
                 $eventdata->subject          = $postsubject;

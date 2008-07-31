@@ -31,34 +31,7 @@
 
 $handlers = array (
 
- /*
-  * Messaging Events
-  */
-/*
- * required parameters (object):
- *  modulename     - 
- *  modulefile     - 
- *
- */
-    'message_provider_register' => array (
-         'handlerfile'      => '/lib/messagelib.php',
-         'handlerfunction'  => 'message_provider_register_handler', 
-         'schedule'         => 'instant'
-    ),
-
-/*
- * required parameters (object):
- *  modulename     - 
- *
- */
-
-    'message_provider_unregister' => array (
-         'handlerfile'      => '/lib/messagelib.php',
-         'handlerfunction'  => 'message_provider_unregister_handler', 
-         'schedule'         => 'instant'
-     ),
-
-/* required parameters (object):
+/* Messaging required parameters (object):
  *  modulename     - 
  *  userfrom
  *  userto

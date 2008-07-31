@@ -77,15 +77,6 @@ function xmldb_quiz_upgrade($oldversion=0) {
         upgrade_mod_savepoint($result, 2008062001, 'quiz');
     }
     
-    if ($result and $oldversion < 2008072401) {
-        $eventdata = new object();
-        $eventdata->modulename = 'quiz';
-        $eventdata->modulefile = 'mod/quiz/index.php';
-        events_trigger('message_provider_register', $eventdata);
-        
-        upgrade_mod_savepoint($result, 2008072401, 'quiz');
-    }
-
     if ($result && $oldversion < 2008072402) {
 
     /// Define field lastcron to be added to quiz_report

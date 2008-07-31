@@ -60,26 +60,24 @@ class user_edit_form extends moodleform {
 
         //create the providers config section
         $mform->addElement('header', 'providers_config',  get_string('providers_config', 'message') );
-        $providers = $DB->get_records('message_providers');
+        $providers = message_get_my_providers();
         foreach ( $providers as $providerid => $provider){
-            if ( $provider->modulename == 'moodle'){
-                $p = 'Moodle';
-            } else {
-                $p = get_string('modulename', $provider->modulename);
-            }
-            $mform->addElement('static', 'label'.$provider->modulename, get_string('providerstag', 'message').$p, '');
+
+            $providername = get_string('messageprovider:'.$provider->name, $provider->component);
+
+            $mform->addElement('static', 'label'.$provider->component, $providername, '');
 
             $test = array();
             foreach ( $processors as $processorid => $processor){
-                $test[] = &$mform->createElement('checkbox', $provider->modulename.'_loggedin_'.$processor->name, $processor->name, $processor->name);
+                $test[] = &$mform->createElement('checkbox', $provider->component.'_loggedin_'.$processor->name, $processor->name, $processor->name);
             }
-            $mform->addGroup($test, $provider->modulename.'_loggedin', get_string('loggedin', 'message'));
+            $mform->addGroup($test, $provider->component.'_loggedin', get_string('loggedin', 'message'));
 
             $test = array();
             foreach ( $processors as $processorid => $processor){
-                $test[] = &$mform->createElement('checkbox', $provider->modulename.'_loggedoff_'.$processor->name, $processor->name, $processor->name);
+                $test[] = &$mform->createElement('checkbox', $provider->component.'_loggedoff_'.$processor->name, $processor->name, $processor->name);
             }
-            $mform->addGroup($test, $provider->modulename.'_loggedoff', get_string('loggedoff', 'message'));
+            $mform->addGroup($test, $provider->component.'_loggedoff', get_string('loggedoff', 'message'));
         }
 
         //create the processors config section (need to get config items from processor's lib.php

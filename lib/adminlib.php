@@ -24,6 +24,7 @@ require_once($CFG->libdir.'/xmldb/xmldb_statement.php');
 
 /// Add other libraries
 require_once($CFG->libdir.'/xmlize.php');
+require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
 
 function upgrade_main_savepoint($result, $version) {
     global $CFG;
@@ -322,6 +323,9 @@ function upgrade_plugins($type, $dir, $return) {
                 /// Install events
                     events_update_definition($type.'/'.$plug);
 
+                /// Install message providers
+                    message_update_providers($type.'/'.$plug);
+
                 /// Run local install function if there is one
                     if (is_readable($fullplug .'/lib.php')) {
                         include_once($fullplug .'/lib.php');
@@ -357,12 +361,17 @@ function upgrade_plugins($type, $dir, $return) {
                 }
             /// Now analyze upgrade results
                 if ($newupgrade_status) {    // No upgrading failed
-                    // OK so far, now update the plugins record
+                /// OK so far, now update the plugins record
                     set_config($pluginversion, $plugin->version);
                     if (!update_capabilities($type.'/'.$plug)) {
                         print_error('cannotupdateplugincap', '', '', $plugin->name);
                     }
+                /// Update events
                     events_update_definition($type.'/'.$plug);
+
+                /// Update message providers
+                    message_update_providers($type.'/'.$plug);
+
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                 } else {
                     notify('Upgrading '. $plugin->name .' from '. $CFG->$pluginversion .' to '. $plugin->version .' FAILED!');
@@ -518,7 +527,12 @@ function upgrade_activity_modules($return) {
                 if (!update_capabilities('mod/'.$module->name)) {
                     print_error('cannotupdatemodcap', '', '', $module->name);
                 }
+
+            /// Update events
                 events_update_definition('mod/'.$module->name);
+
+            /// Update message providers
+                message_update_providers('mod/'.$module->name);
 
                 $updated_modules = true;
 
@@ -565,6 +579,9 @@ function upgrade_activity_modules($return) {
 
                 /// Events
                     events_update_definition('mod/'.$module->name);
+
+                /// Message providers
+                    message_update_providers('mod/'.$module->name);
 
                 /// Run local install function if there is one
                     $installfunction = $module->name.'_install';

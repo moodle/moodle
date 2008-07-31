@@ -179,8 +179,12 @@
         // Install the roles system.
         moodle_install_roles();
 
-        // install core event handlers
+        // Install core event handlers
         events_update_definition();
+
+        // Install core message providers
+        require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
+        message_update_providers();
 
         /// This is used to handle any settings that must exist in $CFG but which do not exist in
         /// admin_get_root()/$ADMIN as admin_setting objects (there are some exceptions).
@@ -332,8 +336,12 @@
                         print_error('cannotupgradecapabilities', 'debug');
                     }
 
-                    // update core events
+                    // Update core events
                     events_update_definition();
+
+                    // Update core message providers
+                    require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
+                    message_update_providers();
 
                     if (set_config("version", $version)) {
                         remove_dir($CFG->dataroot . '/cache', true); // flush cache

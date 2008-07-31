@@ -264,25 +264,12 @@ function xmldb_main_upgrade($oldversion=0) {
     }
     
     if ($result && $oldversion < 2008072400) {
-        /// Create the database tables for message_processors and message_providers
-        $table = new xmldb_table('message_providers');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('modulename', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('modulefile', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-
+        /// Create the database tables for message_processors 
         $table = new xmldb_table('message_processors');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-
-
-        $provider = new object();
-        $provider->modulename  = 'moodle';
-        $provider->modulefile  = 'index.php';
-        $DB->insert_record('message_providers', $provider);
 
     /// delete old and create new fields
         $table = new xmldb_table('message');
@@ -449,6 +436,34 @@ function xmldb_main_upgrade($oldversion=0) {
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008073000);
+    }
+
+    if ($result && $oldversion < 2008073104) {
+    /// Drop old table that might exist for some people
+        $table = new xmldb_table('message_providers');
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+    /// Define table message_providers to be created
+        $table = new xmldb_table('message_providers');
+
+    /// Adding fields to table message_providers
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '200', null, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('capability', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
+
+    /// Adding keys to table message_providers
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Adding indexes to table message_providers
+        $table->add_index('componentname', XMLDB_INDEX_UNIQUE, array('component', 'name'));
+
+    /// Create table for message_providers
+        $dbman->create_table($table);
+
+        upgrade_main_savepoint($result, 2008073104);
     }
  
 /*

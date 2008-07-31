@@ -44,15 +44,6 @@ function xmldb_lesson_upgrade($oldversion=0) {
         upgrade_mod_savepoint($result, 2007072201, 'lesson');
     }
     
-    if ($result and $oldversion < 2008072401) {
-        $eventdata = new object();
-        $eventdata->modulename = 'lesson';
-        $eventdata->modulefile = 'mod/lesson/index.php';
-        events_trigger('message_provider_register', $eventdata);
-        
-        upgrade_mod_savepoint($result, 2008072401, 'lesson');
-    }
-
     return $result;
 }
 

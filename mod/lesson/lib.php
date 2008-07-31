@@ -13,14 +13,8 @@ define("LESSON_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
 
 /** 
  * Code to be executed when a module is installed
- * now is just used to register the module as message provider
  */ 
 function lesson_install() {
-    $eventdata = new object();
-    $eventdata->modulename = 'lesson';
-    $eventdata->modulefile = 'mod/lesson/index.php';
-    events_trigger('message_provider_register', $eventdata); 
-   
     return true; 
 }
 

@@ -1310,7 +1310,13 @@ function upgrade_blocks_plugins($continueto) {
                         print_error('nopermissiontoupdateblock', '', '', $block->name);
                     }
 
+                    // Update events
                     events_update_definition($component);
+
+                    // Update message providers
+                    require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
+                    message_update_providers($component);
+
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                 } else {
                     notify('Upgrading block '. $block->name .' from '. $currblock->version .' to '. $block->version .' FAILED!');
@@ -1378,7 +1384,13 @@ function upgrade_blocks_plugins($continueto) {
                         notify('Could not set up '.$block->name.' capabilities!');
                     }
 
+                    // Update events
                     events_update_definition($component);
+
+                    // Update message providers
+                    require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
+                    message_update_providers($component);
+
                     notify(get_string('blocksuccess', '', $blocktitle), 'notifysuccess');
                     if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE) {
                     echo '<hr />';
