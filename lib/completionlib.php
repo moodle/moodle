@@ -347,10 +347,16 @@ class completion_info {
      * as it may cause some things to become incomplete when they were previously
      * complete, with the effect - for example - of hiding a later activity that
      * was previously available.)
-     *
+     * <p>
+     * Resetting state of manual tickbox has same result as deleting state for 
+     * it.
      * @param object $cm Activity
      */
     public function reset_all_state($cm) {
+        if($cm->completion==COMPLETION_TRACKING_MANUAL) {
+            $this->delete_all_state($cm);
+            return;
+        }
         global $DB;
         // Get current list of users with completion state
         $rs=$DB->get_recordset('course_modules_completion',array('coursemoduleid'=>$cm->id),'','userid');
