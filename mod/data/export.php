@@ -2,7 +2,6 @@
 
 require_once('../../config.php');
 require_once('lib.php');
-require_once($CFG->libdir . '/csvlib.class.php');
 require_once('export_form.php');
 
 $d = required_param('d', PARAM_INT);
@@ -72,45 +71,30 @@ if($mform->is_cancelled()) {
     die;
 }
 
-$exportdata = array();
-
-// populate the header in first row of export
-foreach($fields as $key => $field) {
-    if(empty($formdata['field_'.$field->field->id])) {
-        // ignore values we aren't exporting
-        unset($fields[$key]);
-    } else {
-        $exportdata[0][] = $field->field->name;
-    }
+if (array_key_exists('portfolio', $formdata) && !empty($formdata['portfolio'])) {
+    // fake  portfolio callback stuff and redirect
+    $formdata['id'] = $cm->id;
+    $url = portfolio_fake_add_url($formdata['portfolio'], 'data_portfolio_caller', '/mod/data/lib.php', $formdata);
+    redirect($url);
 }
 
-$datarecords = $DB->get_records('data_records', array('dataid'=>$data->id));
-ksort($datarecords);
-$line = 1;
-foreach($datarecords as $record) {
-    // get content indexed by fieldid
-    if( $content = $DB->get_records('data_content', array('recordid'=>$record->id), 'fieldid', 'fieldid, content, content1, content2, content3, content4') ) {
-        foreach($fields as $field) {
-            $contents = '';
-            if(isset($content[$field->field->id])) {
-                $contents = $field->export_text_value($content[$field->field->id]);
-            }
-            $exportdata[$line][] = $contents;
-        }
+$selectedfields = array();
+foreach ($formdata as $key => $value) {
+    if (strpos($key, 'field_') === 0) {
+        $selectedfields[] = substr($key, 6);
     }
-    $line++;
 }
-$line--;
-
+$exportdata = data_get_exportdata($data->id, $fields, $selectedfields);
+$count = count($exportdata);
 switch ($formdata['exporttype']) {
     case 'csv':
-        data_export_csv($exportdata, $formdata['delimiter_name'], $data->name, $line);
+        data_export_csv($exportdata, $formdata['delimiter_name'], $data->name, $count);
         break;
     case 'xls':
-        data_export_xls($exportdata, $data->name, $line);
+        data_export_xls($exportdata, $data->name, $count);
         break;
     case 'ods':
-        data_export_ods($exportdata, $data->name, $line);
+        data_export_ods($exportdata, $data->name, $count);
         break;
 }
 

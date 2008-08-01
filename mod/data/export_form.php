@@ -4,6 +4,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden!');
 }
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir . '/csvlib.class.php');
 
 class mod_data_export_form extends moodleform {
     var $_datafields = array();
@@ -15,6 +16,7 @@ class mod_data_export_form extends moodleform {
     }
 
     function definition() {
+        global $CFG;
         $mform =& $this->_form;
         $mform->addElement('header', 'notice', get_string('chooseexportformat', 'data'));
         $choices = csv_import_reader::get_delimiter_list();
@@ -50,6 +52,13 @@ class mod_data_export_form extends moodleform {
             }
         }
         $this->add_checkbox_controller(1, null, null, 1);
+        require_once($CFG->libdir . '/portfoliolib.php');
+        if ($portfoliooptions = portfolio_instance_select(portfolio_instances(), call_user_func(array('data_portfolio_caller', 'supported_formats')), 'data_portfolio_caller', '', true, true)) {
+            $mform->addElement('header', 'notice', get_string('portfolionotfile', 'portfolio') . ':');
+            $portfoliooptions[0] = get_string('none');
+            ksort($portfoliooptions);
+            $mform->addElement('select', 'portfolio', get_string('portfolio', 'portfolio'), $portfoliooptions);
+        }
         $this->add_action_buttons(true, get_string('exportdatabaserecords', 'data'));
     }
 

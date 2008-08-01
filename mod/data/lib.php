@@ -2281,7 +2281,9 @@ function data_supports($feature) {
         default: return null;
     }
 }
-function data_export_csv($export, $delimiter_name, $dataname, $count) {
+function data_export_csv($export, $delimiter_name, $dataname, $count, $todir=false) {
+    global $CFG;
+    require_once($CFG->libdir . '/csvlib.class.php');
     $delimiter = csv_import_reader::get_delimiter($delimiter_name);
     $filename = clean_filename("${dataname}-${count}_record");
     if ($count > 1) {
@@ -2290,22 +2292,36 @@ function data_export_csv($export, $delimiter_name, $dataname, $count) {
     $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
     $filename .= clean_filename("-${delimiter_name}_separated");
     $filename .= '.csv';
-    header("Content-Type: application/download\n");
-    header("Content-Disposition: attachment; filename=$filename");
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
-    header('Pragma: public');
+    if (!$todir) {
+        header("Content-Type: application/download\n");
+        header("Content-Disposition: attachment; filename=$filename");
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate,post-check=0,pre-check=0');
+        header('Pragma: public');
+    }
     $encdelim = '&#' . ord($delimiter) . ';';
+    $returnstr = '';
     foreach($export as $row) {
         foreach($row as $key => $column) {
             $row[$key] = str_replace($delimiter, $encdelim, $column);
         }
-        echo implode($delimiter, $row) . "\n";
+        $returnstr .= implode($delimiter, $row) . "\n";
     }
+    if (empty($todir)) {
+        echo $returnstr;
+        return;
+    }
+    $status = ($handle = fopen($todir . '/' . $filename, 'w'));
+    $status = $status && fwrite($handle, $returnstr);
+    $status = $status && fclose($handle);
+    if ($status) {
+        return $filename;
+    }
+    return false;
 }
 
 
-function data_export_xls($export, $dataname, $count) {
+function data_export_xls($export, $dataname, $count, $todir=false) {
     global $CFG;
     require_once("$CFG->libdir/excellib.class.php");
     $filename = clean_filename("${dataname}-${count}_record");
@@ -2314,8 +2330,15 @@ function data_export_xls($export, $dataname, $count) {
     }
     $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
     $filename .= '.xls';
-    $workbook = new MoodleExcelWorkbook('-');
-    $workbook->send($filename);
+
+    $filearg = '-';
+    if ($todir) {
+        $filearg = $todir . '/' . $filename;
+    }
+    $workbook = new MoodleExcelWorkbook($filearg);
+    if (!$todir) {
+        $workbook->send($filename);
+    }
     $worksheet = array();
     $worksheet[0] =& $workbook->add_worksheet('');
     $rowno = 0;
@@ -2328,10 +2351,11 @@ function data_export_xls($export, $dataname, $count) {
         $rowno++;
     }
     $workbook->close();
+    return $filename;
 }
 
 
-function data_export_ods($export, $dataname, $count) {
+function data_export_ods($export, $dataname, $count, $todir=false) {
     global $CFG;
     require_once("$CFG->libdir/odslib.class.php");
     $filename = clean_filename("${dataname}-${count}_record");
@@ -2340,8 +2364,14 @@ function data_export_ods($export, $dataname, $count) {
     }
     $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
     $filename .= '.ods';
-    $workbook = new MoodleODSWorkbook('-');
-    $workbook->send($filename);
+    $filearg = '-';
+    if ($todir) {
+        $filearg = $todir . '/' . $filename;
+    }
+    $workbook = new MoodleODSWorkbook($filearg, (empty($todir)));
+    if (!$todir) {
+        $workbook->send($filename);
+    }
     $worksheet = array();
     $worksheet[0] =& $workbook->add_worksheet('');
     $rowno = 0;
@@ -2354,5 +2384,129 @@ function data_export_ods($export, $dataname, $count) {
         $rowno++;
     }
     $workbook->close();
+    return $filename;
+}
+
+function data_get_exportdata($dataid, $fields, $selectedfields) {
+    global $DB;
+
+    $exportdata = array();
+
+    // populate the header in first row of export
+    foreach($fields as $key => $field) {
+        if (!in_array($field->field->id, $selectedfields)) {
+            // ignore values we aren't exporting
+            unset($fields[$key]);
+        } else {
+            $exportdata[0][] = $field->field->name;
+        }
+    }
+
+    $datarecords = $DB->get_records('data_records', array('dataid'=>$dataid));
+    ksort($datarecords);
+    $line = 1;
+    foreach($datarecords as $record) {
+        // get content indexed by fieldid
+        if( $content = $DB->get_records('data_content', array('recordid'=>$record->id), 'fieldid', 'fieldid, content, content1, content2, content3, content4') ) {
+            foreach($fields as $field) {
+                $contents = '';
+                if(isset($content[$field->field->id])) {
+                    $contents = $field->export_text_value($content[$field->field->id]);
+                }
+                $exportdata[$line][] = $contents;
+            }
+        }
+        $line++;
+    }
+    $line--;
+    return $exportdata;
+}
+
+require_once($CFG->libdir . '/portfoliolib.php');
+class data_portfolio_caller extends portfolio_module_caller_base {
+
+    private $data;
+    private $selectedfields;
+    private $exporttype;
+    private $fields;
+    private $fieldtypes;
+    private $delimiter;
+    private $exportdata;
+
+    public function __construct($callbackargs) {
+        global $DB;
+        if (!$this->cm = get_coursemodule_from_id('data', $callbackargs['id'])) {
+            portfolio_exporter::raise_error('invalidid', 'data');
+        }
+        $this->data = $DB->get_record('data', array('id' => $this->cm->instance));
+        $this->selectedfields = array();
+        foreach ($callbackargs as $key => $value) {
+            if (strpos($key, 'field_') === 0) {
+                $this->selectedfields[] = substr($key, 6);
+            }
+        }
+        $this->delimiter = array_key_exists('delimiter_name', $callbackargs) ? $callbackargs['delimiter_name'] : null;
+        $this->exporttype = $callbackargs['exporttype'];
+        $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$this->cm->instance), 'id');
+        // populate objets for this databases fields
+        $this->fields = array();
+        foreach ($fieldrecords as $fieldrecord) {
+            $tmp = data_get_field($fieldrecord, $this->data);
+            $this->fields[] = $tmp;
+            $this->fieldtypes[]  = $tmp->type;
+        }
+        $this->exportdata = data_get_exportdata($this->cm->instance, $this->fields, $this->selectedfields);
+    }
+
+    public function expected_time() {
+        //@todo check number of records maybe
+        return PORTFOLIO_TIME_MODERATE;
+    }
+
+    public function get_sha1() {
+        $str = '';
+        foreach ($this->exportdata as $data) {
+            $str .= implode(',', $data);
+        }
+        return sha1($str . ',' . $this->exporttype);
+    }
+
+    public function prepare_package($tempdir) {
+        global $DB;
+        $count = count($this->exportdata);
+        switch ($this->exporttype) {
+            case 'csv':
+                $return = data_export_csv($this->exportdata, $this->delimiter, $this->cm->name, $count, $tempdir);
+                break;
+            case 'xls':
+                $return = data_export_xls($this->exportdata, $this->cm->name, $count, $tempdir);
+                break;
+            case 'ods':
+                $return = data_export_ods($this->exportdata, $this->cm->name, $count, $tempdir);
+                break;
+        }
+        return $return;
+
+    }
+
+    public function check_permissions() {
+        // @todo
+        return true;
+    }
+
+    public static function display_name() {
+        return get_string('modulename', 'data');
+    }
+
+    public function __wakeup() {
+        global $CFG;
+        if (empty($CFG)) {
+            return true; // too early yet
+        }
+        foreach ($this->fieldtypes as $key => $field) {
+            require_once($CFG->dirroot . '/mod/data/field/' . $field .'/field.class.php');
+            $this->fields[$key] = unserialize(serialize($this->fields[$key]));
+        }
+    }
 }
 ?>
