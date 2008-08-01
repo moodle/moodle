@@ -158,7 +158,7 @@
       <VENDOR name="mssql_n" version="9.0" />
       <VENDOR name="oracle" version="9.0" />
     </DATABASE>
-    <PHP version="5.2.0" level="required">
+    <PHP version="5.2.4" level="required">
     </PHP>
     <PHP_EXTENSIONS>
       <PHP_EXTENSION name="iconv" level="optional">
