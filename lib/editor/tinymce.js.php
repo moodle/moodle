@@ -8,7 +8,6 @@ $courseid = optional_param('course', 0, PARAM_INT);
 $editorlanguage = optional_param('editorlanguage', 'en_utf8', PARAM_ALPHANUMEXT);
 
 $SESSION->lang = $editorlanguage;
-//$editorlanguage = substr($editorlanguage, 0, strrpos($editorlanguage, '_'));;
 $directionality = get_string('thisdirection');
 
 /*
@@ -139,7 +138,7 @@ EOF;
 $strtime = get_string('strftimetime');
 $strdate = get_string('strftimedaydate');
 
-echo <<<EOF
+$output = <<<EOF
     tinyMCE.init({
         mode: "textareas",
         relative_urls: false,
@@ -190,8 +189,8 @@ echo <<<EOF
 
 EOF;
 // the xhtml ruleset must be the last one - no comma at the end of the file
-readfile('tinymce/xhtml_ruleset.txt');
-echo <<<EOF
+$output .= file_get_contents('tinymce/xhtml_ruleset.txt');
+$output .= <<<EOF
     });
 
     function mce_toggleEditor(id) {
@@ -209,4 +208,15 @@ echo <<<EOF
         };
     }
 EOF;
+
+$lifetime = '86400';
+@header('Content-type: text/javascript; charset=utf-8');
+@header('Content-length: '.strlen($output));
+@header('Last-Modified: '. gmdate('D, d M Y H:i:s', time()) .' GMT');
+@header('Cache-control: max-age='.$lifetime);
+@header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .'GMT');
+@header('Pragma: ');
+
+echo $output;
+
 ?>
