@@ -368,23 +368,17 @@ function get_repository_client(){
     @import "$CFG->wwwroot/lib/yui/container/assets/skins/sam/container.css";
     @import "$CFG->wwwroot/lib/yui/layout/assets/skins/sam/layout.css";
     @import "$CFG->wwwroot/lib/yui/button/assets/skins/sam/button.css";
-    @import "$CFG->wwwroot/lib/yui/menu/assets/skins/sam/menu.css";
     </style>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/yahoo/yahoo.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/event/event.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/dom/dom.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/element/element-beta.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/dragdrop/dragdrop.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/container/container.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/resize/resize-beta.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/animation/animation.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/layout/layout-beta.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/connection/connection.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/json/json.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/menu/menu.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/button/button-debug.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/selector/selector-beta.js"></script>
-    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/logger/logger.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/element/element-beta-min.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/dragdrop/dragdrop-min.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/container/container-min.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/resize/resize-beta-min.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/layout/layout-beta-min.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/connection/connection-min.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/json/json-min.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/button/button-min.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/selector/selector-beta-min.js"></script>
     <script>
     var repository_client = (function() {
         // private static field
