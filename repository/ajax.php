@@ -41,7 +41,7 @@ $ret = get_repository_client();
 <body class=" yui-skin-sam">
 <div id='control'>
     <h1>Open the picker</h1>
-    <input type="button" id="con1" onclick='openpicker()' value="Open File Picker" style="font-size: 24px;padding: 1em" /> <br/>
+    <input type="button" id="con1" onclick='openpicker({"env":"form"})' value="Open File Picker" style="font-size: 24px;padding: 1em" /> <br/>
     <input type='hidden' id="result">
 </div>
 <div>

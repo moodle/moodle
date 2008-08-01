@@ -5,16 +5,18 @@ require_once('../lib/filelib.php');
 require_once('lib.php');
 // set one hour here
 $CFG->repository_cache_expire = 60*60;
-// repository id
-$id     = optional_param('id', 1, PARAM_INT);
-// action of client
-$action = optional_param('action', '', PARAM_RAW);
-// Search text
-$search = optional_param('s', '', PARAM_RAW);
-// files to be downloaded
-$file  = optional_param('file', '', PARAM_RAW);
-$title = optional_param('title', '', PARAM_RAW);
+// page
 $p     = optional_param('p', '', PARAM_RAW);
+// id of repository
+$id     = optional_param('id', 1, PARAM_INT);
+// opened in editor or moodleform
+$env   = optional_param('env', 'form', PARAM_RAW);
+// file to download
+$file  = optional_param('file', '', PARAM_RAW);
+// rename the file name
+$title = optional_param('title', '', PARAM_RAW);
+$action = optional_param('action', '', PARAM_RAW);
+$search = optional_param('s', '', PARAM_RAW);
 
 if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
     $err = new stdclass;
@@ -74,8 +76,14 @@ if($action == 'list') {
         $entry->userid       = $USER->id;
         $fs = get_file_storage();
         if ($file = $fs->create_file_from_pathname($entry, $pathname)) {
-            //echo json_encode($file->get_content_file_location());
-            echo json_encode($file->get_itemid());
+            if($env == 'form'){
+                // return reference id
+                echo json_encode($file->get_itemid());
+            } elseif($env == 'editor') {
+                // return url
+                // echo json_encode($file->get_content_file_location());
+            } else {
+            }
         }
     } catch (repository_exception $e){
         $err = new stdclass;

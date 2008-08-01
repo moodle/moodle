@@ -45,7 +45,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
             return $this->getFrozenHtml();
         } else {
             $ret = get_repository_client();
-            return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' onclick=\'openpicker()\' />'.$ret['html'].$ret['js'];
+            return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' onclick=\'openpicker({"env":"form"})\' />'.$ret['html'].$ret['js'];
         }
     }
 }

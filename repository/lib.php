@@ -639,7 +639,7 @@ function get_repository_client(){
             _client.loading();
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
                 '$CFG->wwwroot/repository/ws.php?id='+_client.repositoryid+'&action=download', 
-                _client.dlfile, _client.postdata({'file':file, 'title':title}));
+                _client.dlfile, _client.postdata({'env':_client.env, 'file':file, 'title':title}));
         }
         _client.login = function(){
             var obj = {};
@@ -653,6 +653,7 @@ function get_repository_client(){
                     obj[data[k].name] = el.value;
                 }
             }
+            obj['env'] = _client.env;
             _client.loading();
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
                 '$CFG->wwwroot/repository/ws.php', _client.callback,
@@ -704,7 +705,7 @@ function get_repository_client(){
             _client.viewbar.set('disabled', false);
             _client.loading();
             _client.repositoryid = id;
-            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?id='+id+'&p='+path+'&reset='+reset, _client.callback);
+            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
         }
         _client.search = function(id){
             var data = window.prompt("What are you searching for?");
@@ -714,7 +715,7 @@ function get_repository_client(){
             }
             _client.viewbar.set('disabled', false);
             _client.loading();
-            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?id='+id+'&s='+data, _client.callback);
+            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?id='+id+'&s='+data+'&env='+_client.env, _client.callback);
         }
         return _client;
     })();
@@ -727,8 +728,9 @@ EOD;
     }
 
     $js .= <<<EOD
-    function openpicker() {
+    function openpicker(obj) {
         if(!repository_client.instance) {
+            repository_client.env = obj.env;
             repository_client.instance = new repository_client();
             repository_client.instance.create_picker();
         } else {

@@ -207,7 +207,7 @@ echo <<<EOF
         tinyMCE.execCommand('mceToggleEditor',false,id);
     }
     function mce_moodlefilemanager(field_name, url, type, win) {
-         openpicker();
+         openpicker({'env':'editor'});
     }
     function mce_saveOnSubmit(id) {
         var prevOnSubmit = document.getElementById(id).form.onsubmit;
