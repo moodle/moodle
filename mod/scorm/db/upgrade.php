@@ -283,6 +283,18 @@ function xmldb_scorm_upgrade($oldversion=0) {
         $result = $result && add_field($table, $field);
     }
 
+   // Adding missing 'whatgrade' field to table scorm
+    if ($result && $oldversion < 2007070302) {
+        $table = new XMLDBTable('scorm');
+        $field = new XMLDBField('whatgrade');
+        
+        /// Launch add field whatgrade
+        if (!field_exists($table, $field)) {
+            $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'grademethod');
+            $result = $result && add_field($table, $field);
+        }
+    }
+    
     return $result;
 }
 
