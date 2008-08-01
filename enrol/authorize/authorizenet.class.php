@@ -298,7 +298,7 @@ class AuthorizeNet
                         }
 
                         if (!$DB->update_record('enrol_authorize', $order)) {
-                            email_to_admin("Error while trying to update data in table enrol_authorize. Please edit manually this record: ID=$order->id.", $order);
+                            message_to_admin("Error while trying to update data in table enrol_authorize. Please edit manually this record: ID=$order->id.", $order);
                         }
                     }
                     break;
@@ -312,7 +312,7 @@ class AuthorizeNet
                         $extra->settletime = self::getsettletime(time());
                         if (! $extra->id = $DB->insert_record('enrol_authorize_refunds', $extra)) {
                             unset($extra->id);
-                            email_to_admin("Error while trying to insert data into table enrol_authorize_refunds. Please add manually this record:", $extra);
+                            message_to_admin("Error while trying to insert data into table enrol_authorize_refunds. Please add manually this record:", $extra);
                         }
                     }
                     break;
@@ -326,7 +326,7 @@ class AuthorizeNet
                         }
                         $order->status = AN_STATUS_VOID;
                         if (! $DB->update_record($tableupdate, $order)) {
-                            email_to_admin("Error while trying to update data in table $tableupdate. Please edit manually this record: ID=$order->id.", $order);
+                            message_to_admin("Error while trying to update data in table $tableupdate. Please edit manually this record: ID=$order->id.", $order);
                         }
                     }
                     break;
@@ -355,7 +355,7 @@ class AuthorizeNet
                                 $ccaccepts = get_list_of_creditcards();
                                 unset($ccaccepts[$cctype]);
                                 set_config('an_acceptccs', implode(',', array_keys($ccaccepts)));
-                                email_to_admin("$message ($cctype) This is new config(an_acceptccs):", $ccaccepts);
+                                message_to_admin("$message ($cctype) This is new config(an_acceptccs):", $ccaccepts);
                             }
                             break;
                         }
@@ -363,14 +363,14 @@ class AuthorizeNet
                     case self::AN_REASON_ACHONLY:
                         {
                             set_config('an_acceptmethods', AN_METHOD_ECHECK);
-                            email_to_admin("$message This is new config(an_acceptmethods):", array(AN_METHOD_ECHECK));
+                            message_to_admin("$message This is new config(an_acceptmethods):", array(AN_METHOD_ECHECK));
                             break;
                         }
                     // Echecks aren't accepted
                     case self::AN_REASON_NOACH:
                         {
                             set_config('an_acceptmethods', AN_METHOD_CC);
-                            email_to_admin("$message This is new config(an_acceptmethods):", array(AN_METHOD_CC));
+                            message_to_admin("$message This is new config(an_acceptmethods):", array(AN_METHOD_CC));
                             break;
                         }
                     // This echeck type isn't accepted
@@ -383,14 +383,14 @@ class AuthorizeNet
                                     case 'CCD':
                                         {
                                             set_config('an_acceptechecktypes', 'CHECKING,SAVINGS');
-                                            email_to_admin("$message This is new config(an_acceptechecktypes):", array('CHECKING','SAVINGS'));
+                                            message_to_admin("$message This is new config(an_acceptechecktypes):", array('CHECKING','SAVINGS'));
                                         }
                                         break;
                                     // WEB=CHECKING or SAVINGS
                                     case 'WEB':
                                         {
                                             set_config('an_acceptechecktypes', 'BUSINESSCHECKING');
-                                            email_to_admin("$message This is new config(an_acceptechecktypes):", array('BUSINESSCHECKING'));
+                                            message_to_admin("$message This is new config(an_acceptechecktypes):", array('BUSINESSCHECKING'));
                                         }
                                         break;
                                 }
