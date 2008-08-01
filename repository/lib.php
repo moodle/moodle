@@ -411,7 +411,7 @@ function get_repository_client(){
                 close: true,
                 underlay: 'none',
                 width: '510px',
-                zindex: 300006,
+                zindex: 666666,
                 xy: [100, 100]
             });
             // construct code section
