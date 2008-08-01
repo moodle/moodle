@@ -659,9 +659,9 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     /// Check that PHP is of a sufficient version
     /// Moved here because older versions do not allow while(@ob_end_clean());
-    if (version_compare(phpversion(), "5.2.0") < 0) {
+    if (version_compare(phpversion(), "5.2.4") < 0) {
         $phpversion = phpversion();
-        console_write(STDERR,"Sorry, Moodle requires PHP 5.2.0 or later (currently using version $phpversion)",'',false);
+        console_write(STDERR,"Sorry, Moodle requires PHP 5.2.4 or later (currently using version $phpversion)",'',false);
     }
     /// Turn off time limits and try to flush everything all the time, sometimes upgrades can be slow.
 

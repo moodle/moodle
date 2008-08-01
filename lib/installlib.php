@@ -77,5 +77,5 @@ function check_memory_limit() {
  * @return boolean
  */
 function inst_check_php_version() {
-    return check_php_version("5.2.0");
+    return check_php_version("5.2.4");
 }

@@ -300,8 +300,8 @@ $string['odbc_mssql'] = 'SQL*Server over ODBC (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'PHP has not been properly configured with the ODBC extension so that it can communicate with SQL*Server.  Please check your php.ini file or recompile PHP.';
 $string['pass'] = 'Pass';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP has not been properly configured with the PGSQL extension so that it can communicate with PostgreSQL.  Please check your php.ini file or recompile PHP.';
-$string['php52versionerror'] = 'PHP version must be at least 5.2.0.';
-$string['php52versionhelp'] = '<p>Moodle requires a PHP version of at least 5.2.0.</p>
+$string['php52versionerror'] = 'PHP version must be at least 5.2.4.';
+$string['php52versionhelp'] = '<p>Moodle requires a PHP version of at least 5.2.4.</p>
 <p>You are currently running version $a</p>
 <p>You must upgrade PHP or move to a host with a newer version of PHP!</p>';
 $string['phpversion'] = 'PHP version';

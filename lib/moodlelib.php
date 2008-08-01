@@ -6071,7 +6071,7 @@ function plugin_supports($type,$name,$feature) {
  * @param string $version The version of php being tested.
  * @return bool
  */
-function check_php_version($version='5.2.0') {
+function check_php_version($version='5.2.4') {
     return (version_compare(phpversion(), $version) >= 0);
 }
 
