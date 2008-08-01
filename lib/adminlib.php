@@ -4379,7 +4379,7 @@ class admin_setting_managerepositories extends admin_setting {
             }
         }
 
-        $return = print_heading(get_string('activaterep', 'repositories'), '', 3, 'main', true);
+        $return = print_heading(get_string('activaterep', 'repository'), '', 3, 'main', true);
         $return .= print_box_start('generalbox repositoriesui', '', true);
 
         $table = new object();
