@@ -1,13 +1,13 @@
 <?php
+define('NO_MOODLE_COOKIES', true);
 
 require_once('../../../config.php');
 
 $contexturl = optional_param('context', null, PARAM_URL);
 $isdialog = optional_param('dlg', false, PARAM_BOOL);
+$lang = optional_param('lang', 'en_utf8', PARAM_ALPHANUMEXT);
+$SESSION->lang = $lang;
 
-error_log($contexturl, 0);
-
-$lang = substr(current_language(), 0, 2);
 $output = '';
 
 // get the keys from the reference english translations
@@ -57,7 +57,6 @@ if (!is_null($contexturl)) {
     } 
     $output .= "}}});";
 }
-
 $lifetime = '86400';
 @header('Content-type: text/javascript; charset=utf-8');
 @header('Content-length: '.strlen($output));

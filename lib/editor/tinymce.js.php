@@ -5,8 +5,11 @@ define('NO_MOODLE_COOKIES', true);
 require_once('../../config.php');
 
 $courseid = optional_param('course', 0, PARAM_INT);
-$editorlanguage = optional_param('editorlanguage', 'en', PARAM_ALPHA);
-$directionality = optional_param('direction', get_string('thisdirection'), PARAM_ALPHA);
+$editorlanguage = optional_param('editorlanguage', 'en_utf8', PARAM_ALPHANUMEXT);
+
+$SESSION->lang = $editorlanguage;
+//$editorlanguage = substr($editorlanguage, 0, strrpos($editorlanguage, '_'));;
+$directionality = get_string('thisdirection');
 
 /*
  * This section configures the TinyMCE toolbar buttons on and off
@@ -105,51 +108,36 @@ $temp = explode('/', $temp);
 $root = $temp[1];
 
 $configuration = <<<EOF
+tinyMCE.init({
+    mode     : "exact",
+    elements : id,
+    theme    : "advanced",
 
-function createHTMLArea(id) {
+    plugins : "safari,spellchecker,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,pagebreak,",
+    spellchecker_languages : "+English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr,German=de,Italian=it,Polish=pl,Portuguese=pt,Spanish=es,Swedish=sv",
 
-    random       = Math.ceil(1000*Math.random());
-    editor       = 'editor'+random;
-    editorsubmit = 'editorsubmit'+random;
+    plugin_insertdate_dateFormat : "%Y-%m-%d",
+    plugin_insertdate_timeFormat : "%H:%M:%S",
 
-    tinyMCE.init({
-        mode     : "exact",
-        elements : id,
-        theme    : "advanced",
+    content_css : "/$root/lib/editor/tinymce/examples/css/content.css",
 
-        plugins : "safari,spellchecker,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,pagebreak,",
-        spellchecker_languages : "+English=en,Danish=da,Dutch=nl,Finnish=fi,French=fr,German=de,Italian=it,Polish=pl,Portuguese=pt,Spanish=es,Swedish=sv",
+    theme_advanced_toolbar_location : "top",
+    theme_advanced_toolbar_align : "top",
+    theme_advanced_statusbar_location : "bottom",
 
-        plugin_insertdate_dateFormat : "%Y-%m-%d",
-        plugin_insertdate_timeFormat : "%H:%M:%S",
+    theme_advanced_resize_horizontal : true,
+    theme_advanced_resizing : true,
+    apply_source_formatting : true,
 
-        content_css : "/$root/lib/editor/tinymce/examples/css/content.css",
+    $editorhidebuttons
+    $editoraddbuttons3
+    $editoraddbuttons4
 
-        theme_advanced_toolbar_location : "top",
-        theme_advanced_toolbar_align : "top",
-        theme_advanced_statusbar_location : "bottom",
-
-        theme_advanced_resize_horizontal : true,
-        theme_advanced_resizing : true,
-        apply_source_formatting : true,
-
-        $editorhidebuttons
-        $editoraddbuttons3
-        $editoraddbuttons4
-
-    });
-
-document.getElementById('ed').form.editorsubmit_43 = document.getElementById('ed').form.onsubmit;
-document.getElementById('ed').form.onsubmit = function() { 
-    tinyMCE.triggerSave(); 
-    document.getElementById('ed').form.editorsubmit_43(); 
-    document.getElementById('ed').form.editorsubmit_43 = null;
-}
-
-}
-
+});
 EOF;
 
+$strtime = get_string('strftimetime');
+$strdate = get_string('strftimedaydate');
 
 echo <<<EOF
     tinyMCE.init({
@@ -157,6 +145,7 @@ echo <<<EOF
         relative_urls: false,
         editor_selector: "form-textarea-simple",
         document_base_url: "$CFG->httpswwwroot",
+        content_css: "$CFG->httpswwwroot/lib/editor/tinymce/examples/css/content.css",
         theme: "simple",
         skin: "o2k7",
         skin_variant: "silver",
@@ -180,15 +169,17 @@ echo <<<EOF
         entity_encoding: "raw",
         language: "$editorlanguage",
         directionality: "$directionality",
-        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodlelink,moodlenolink,dragmath,nonbreaking,contextmenu",
+        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodlenolink,dragmath,nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
+        plugin_insertdate_dateFormat : "$strdate",
+        plugin_insertdate_timeFormat : "$strtime",
         theme_advanced_layout_manager: "SimpleLayout",
         theme_advanced_toolbar_align : "left",
         theme_advanced_buttons1: "fontselect,fontsizeselect,formatselect,styleselect",
-        theme_advanced_buttons1_add: "|,undo,redo,|,search,spellchecker",
-        theme_advanced_buttons2: "bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull",
+        theme_advanced_buttons1_add: "|,undo,redo,|,search,replace,spellchecker,|,fullscreen",
+        theme_advanced_buttons2: "bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull,|,cite,abbr,acronym",
         theme_advanced_buttons2_add: "|,selectall,cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl",
-        theme_advanced_buttons3: "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,emoticons,image,media,dragmath,advhr,nonbreaking,charmap",
-        theme_advanced_buttons3_add: "|,table,insertlayer,styleprops,|,code,fullscreen",
+        theme_advanced_buttons3: "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,insertdate,inserttime,|,emoticons,image,media,dragmath,advhr,nonbreaking,charmap",
+        theme_advanced_buttons3_add: "|,table,insertlayer,styleprops,visualchars,|,code,preview",
         theme_advanced_fonts: "Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings", 
         moodleimage_course_id: $courseid,
         theme_advanced_resize_horizontal: true,
