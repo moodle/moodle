@@ -18,7 +18,9 @@ if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
     $SESSION->portfolio->exporter =& $exporter;
     if (!$exporter->get('instance')) {
         $instance = required_param('instance', PARAM_INT);
-        $instance = portfolio_instance($instance);
+        if (!$instance = portfolio_instance($instance)) {
+            $exporter->raise_error('invalidinstance', 'portfolio');
+        }
         if ($broken = portfolio_instance_sanity_check($instance)) {
             print_error(get_string($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin')));
         }
@@ -33,7 +35,9 @@ if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
 } else {
     // we'e just posted here for the first time and have might the instance already
     if ($instance = optional_param('instance', 0, PARAM_INT)) {
-        $instance = portfolio_instance($instance);
+        if (!$instance = portfolio_instance($instance)) {
+            portfolio_exporter::raise_error('invalidinstance', 'portfolio');
+        }
         if ($broken = portfolio_instance_sanity_check($instance)) {
             print_error(get_string($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin')));
         }
@@ -46,7 +50,7 @@ if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
     $callbackclass = required_param('callbackclass', PARAM_ALPHAEXT);
 
     $callbackargs = array();
-    foreach (array_keys($_POST) as $key) {
+    foreach (array_keys(array_merge($_GET, $_POST)) as $key) {
         if (strpos($key, 'ca_') === 0) {
             if (!$value =  optional_param($key, false, PARAM_ALPHAEXT)) {
                 if (!$value = optional_param($key, false, PARAM_NUMBER)) {
@@ -65,13 +69,17 @@ if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
 
     // for build navigation
     if (!$course = $caller->get('course')) {
+        echo 1;
         $course = optional_param('course', 0, PARAM_INT);
     }
 
-    if (!empty($course)) {
-        $COURSE = $DB->get_record('course', array('id' => $course), 'id,shortname,fullname');
+    if (!empty($course) && is_numeric($course)) {
+        echo 2;
+        $course = $DB->get_record('course', array('id' => $course), 'id,shortname,fullname');
         // this is yuk but used in build_navigation
     }
+
+    $COURSE = $course;
 
     list($extranav, $cm) = $caller->get_navigation();
     $extranav[] = array('type' => 'title', 'name' => get_string('exporting', 'portfolio'));
@@ -102,7 +110,7 @@ if (!$exporter->get('instance')) {
     // for the next block to catch
     $form = '<form action="' . $CFG->wwwroot . '/portfolio/add.php" method="post">' . "\n";
 
-    if (!$select = portfolio_instance_select(portfolio_instances(), $exporter->get('caller')->supported_formats(), get_class($exporter->get('caller')))) {
+    if (!$select = portfolio_instance_select(portfolio_instances(), $exporter->get('caller')->supported_formats(), get_class($exporter->get('caller')), true)) {
         print_error('noavailableplugins', 'portfolio');
     }
     $form .= $select;

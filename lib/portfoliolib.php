@@ -200,7 +200,7 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
         $output .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
     }
     else {
-        $selectoutput = portfolio_instance_select($instances, $callersupports, $callbackclass);
+        $selectoutput = portfolio_instance_select($instances, $callersupports, $callbackclass, true);
     }
 
     if ($fullform) {
@@ -231,10 +231,16 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
 *
 * @return string the html, from <select> to </select> inclusive.
 */
-function portfolio_instance_select($instances, $callerformats, $callbackclass) {
+function portfolio_instance_select($instances, $callerformats, $callbackclass, $selectname='instance', $return=false, $returnarray=false) {
+    global $CFG;
+
+    if (empty($CFG->portfolioenabled)) {
+        return;
+    }
+
     $insane = portfolio_instance_sanity_check();
     $count = 0;
-    $selectoutput = "\n" . '<select name="instance">' . "\n";
+    $selectoutput = "\n" . '<select name="' . $selectname . '">' . "\n";
     foreach ($instances as $instance) {
         if (count(array_intersect($callerformats,  $instance->supported_formats())) == 0) {
             // bail. no common formats.
@@ -246,7 +252,8 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass) {
             continue;
         }
         $count++;
-        $selectoutput .= "\n" . '<option value="' . $instance->get('id') . '">' . $instance->get('name') . '</a>' . "\n";
+        $selectoutput .= "\n" . '<option value="' . $instance->get('id') . '">' . $instance->get('name') . '</option>' . "\n";
+        $options[$instance->get('id')] = $instance->get('name');
     }
     if (empty($count)) {
         // bail. no common formats.
@@ -254,7 +261,13 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass) {
         return;
     }
     $selectoutput .= "\n" . "</select>\n";
-    return $selectoutput;
+    if (!empty($returnarray)) {
+        return $options;
+    }
+    if (!empty($return)) {
+        return $selectoutput;
+    }
+    echo $selectoutput;
 }
 
 /**
@@ -503,6 +516,30 @@ function temp_portfolio_cleanup($unique) {
     return remove_dir($workdir);
 }
 
+/**
+* fake the url to portfolio/add.php from data from somewhere else
+* you should use portfolio_add_button instead 99% of the time
+*
+* @param int $instanceid instanceid (optional, will force a new screen if not specified)
+* @param string $classname callback classname
+* @param string $classfile file containing the callback class definition
+* @param array $callbackargs arguments to pass to the callback class
+*/
+function portfolio_fake_add_url($instanceid, $classname, $classfile, $callbackargs) {
+    global $CFG;
+    $url = $CFG->wwwroot . '/portfolio/add.php?instance=' . $instanceid . '&amp;callbackclass=' . $classname . '&amp;callbackfile=' . $classfile;
+
+    if (is_object($callbackargs)) {
+        $callbackargs = (array)$callbackargs;
+    }
+    if (!is_array($callbackargs) || empty($callbackargs)) {
+        return $url;
+    }
+    foreach ($callbackargs as $key => $value) {
+        $url .= '&amp;ca_' . $key . '=' . urlencode($value);
+    }
+    return $url;
+}
 
 /**
 * base class for the caller
@@ -596,7 +633,7 @@ abstract class portfolio_caller_base {
     *
     * @todo  determine what to return in the error case
     */
-    public final function get($field) {
+    public function get($field) {
         if (property_exists($this, $field)) {
             return $this->{$field};
         }
@@ -735,6 +772,7 @@ abstract class portfolio_caller_base {
 abstract class portfolio_module_caller_base extends portfolio_caller_base {
 
     protected $cm;
+    protected $course;
 
     public function get_navigation() {
         $extranav = array('name' => $this->cm->name, 'link' => $this->get_return_url());
@@ -744,6 +782,17 @@ abstract class portfolio_module_caller_base extends portfolio_caller_base {
     public function get_return_url() {
         global $CFG;
         return $CFG->wwwroot . '/mod/' . $this->cm->modname . '/view.php?id=' . $this->cm->id;
+    }
+
+    public function get($key) {
+        if ($key != 'course') {
+            return parent::get($key);
+        }
+        global $DB;
+        if (empty($this->course)) {
+            $this->course = $DB->get_record('course', array('id' => $this->cm->course));
+        }
+        return $this->course;
     }
 }
 
