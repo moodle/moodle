@@ -21,10 +21,26 @@ function xmldb_scorm_upgrade($oldversion=0) {
 
     global $CFG, $THEME, $DB;
 
+    $dbman = $DB->get_manager();
+
     $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
+    // Adding missing 'whatgrade' field to table scorm
+    if ($result && $oldversion < 2008073000) {
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('whatgrade');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'grademethod');
+        
+        /// Launch add field whatgrade
+        if(!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+        upgrade_mod_savepoint($result, 2008073000, 'scorm');
+    }
+    
     return $result;
 }
 
