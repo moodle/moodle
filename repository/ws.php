@@ -1,6 +1,7 @@
 <?php
 set_time_limit(0);
 require_once('../config.php');
+require_once('../lib/filelib.php');
 require_once('lib.php');
 // set one hour here
 $CFG->repository_cache_expire = 60*60;
@@ -58,10 +59,24 @@ if($action == 'list') {
 } elseif($action == 'download') {
     $ret = $repo->get_file($file, $title);
     // TODO
-    // Need to communicate with FILE API
-    // Copy the tmp file to final location
+    // Ask Petr how to use FILE_API here
     try {
-        echo json_encode($ret);
+        $pathname = $ret;
+        $entry = new object();
+        $entry->contextid = SITEID;
+        $entry->filearea  = 'repository';
+        $entry->filepath  = '/';
+        $entry->filename  = $title;
+        $entry->timecreated  = time();
+        $entry->timemodified = time();
+        $entry->itemid       = $USER->id;
+        $entry->mimetype     = mimeinfo('type', $pathname);
+        $entry->userid       = $USER->id;
+        $fs = get_file_storage();
+        if ($file = $fs->create_file_from_pathname($entry, $pathname)) {
+            //echo json_encode($file->get_content_file_location());
+            echo json_encode($file->get_itemid());
+        }
     } catch (repository_exception $e){
         $err = new stdclass;
         $err->e = $e->getMessage();
