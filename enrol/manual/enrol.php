@@ -324,10 +324,6 @@ function cron() {
                             $eventdata->fullmessagehtml   = '';
                             $eventdata->smallmessage      = '';			    
                             events_trigger('message_send', $eventdata);
-                            /*
-                            email_to_user($user, $teacher, format_string($SITE->fullname) .' '. $strexpirynotify,
-                                          $strexpirynotifystudentsemail);
-                            */
                         }
                     }
                 }
@@ -354,10 +350,6 @@ function cron() {
                         $eventdata->fullmessagehtml   = '';
                         $eventdata->smallmessage      = '';			    
                         events_trigger('message_send', $eventdata);
-
-                        /*
-                        email_to_user($teacher, $admin, $a->coursename .' '. $strexpirynotify, $strexpirynotifyemail);
-                        */
                     }
                 }
             }

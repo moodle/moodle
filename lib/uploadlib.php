@@ -722,10 +722,6 @@ function clam_message_admins($notice) {
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
         events_trigger('message_send', $eventdata);
-
-        /*
-        email_to_user($admin, get_admin(), $subject, $notice);
-        */
     }
 }
 

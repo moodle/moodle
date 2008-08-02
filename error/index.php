@@ -30,13 +30,9 @@
         $eventdata->fullmessage       = $form->text;
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
-        $eventdata->smallmessage      = '';			    
+        $eventdata->smallmessage      = '';
         events_trigger('message_send', $eventdata);
-
-    /*
-        email_to_user($supportuser, $USER, 'Error: '. $form->referer .' -> '. $form->requested, $form->text);
-    */
-
+        
         redirect($CFG->wwwroot .'/course/', 'Message sent, thanks', 3);
         exit;
     }

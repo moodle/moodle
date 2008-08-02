@@ -207,12 +207,7 @@ function schedule_backup_cron() {
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
         events_trigger('message_send', $eventdata);
-
-        /*
-        email_to_user($admin,$admin,$subject,$message);
-        */
     }
-
 
     //Everything is finished stop backup_sche_running
     backup_set_config("backup_sche_running","0");

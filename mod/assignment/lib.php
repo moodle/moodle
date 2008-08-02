@@ -1593,10 +1593,6 @@ class assignment_base {
                 $eventdata->smallmessage     = '';
                 if ( events_trigger('message_send', $eventdata) > 0 ){
                 }
-
-                /*
-                @email_to_user($teacher, $user, $postsubject, $posttext, $posthtml);  // If it fails, oh well, too bad.
-                */
             }
         }
     }
@@ -2178,12 +2174,6 @@ function assignment_cron () {
             if ( events_trigger('message_send', $eventdata) > 0 ){
                 echo "Error: assignment cron: Could not send out mail for id $submission->id to user $user->id ($user->email)\n";
             }
-
-            /*
-            if (! email_to_user($user, $teacher, $postsubject, $posttext, $posthtml)) {
-                echo "Error: assignment cron: Could not send out mail for id $submission->id to user $user->id ($user->email)\n";
-            }
-            */
         }
 
         $USER = $realuser;

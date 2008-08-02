@@ -113,9 +113,6 @@
                 $eventdata->smallmessage      = '';
                 events_trigger('message_send', $eventdata);
 
-                /*
-                email_to_user($user, get_admin(), "Moodle: PayPal payment", "Your PayPal payment is pending.");
-                */
                 message_paypal_error_to_admin("Payment pending", $data);
                 die;
             }
@@ -195,10 +192,6 @@
                     $eventdata->smallmessage      = '';
                     events_trigger('message_send', $eventdata);
                     
-                    /*
-                    email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname),
-                                  get_string('welcometocoursetext', '', $a));
-                    */
                 }
 
                 if (!empty($CFG->enrol_mailteachers)) {
@@ -215,11 +208,6 @@
                     $eventdata->fullmessagehtml   = '';
                     $eventdata->smallmessage      = '';			    
                     events_trigger('message_send', $eventdata); 
-
-                    /*
-                    email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname),
-                                  get_string('enrolmentnewuser', '', $a));
-                    */
                 }
 
                 if (!empty($CFG->enrol_mailadmins)) {
@@ -237,11 +225,6 @@
                         $eventdata->fullmessagehtml   = '';
                         $eventdata->smallmessage      = '';
                         events_trigger('message_send', $eventdata);
-
-                        /*
-                        email_to_user($admin, $user, get_string("enrolmentnew", '', $course->shortname),
-                                      get_string('enrolmentnewuser', '', $a));
-                        */
                     }
                 }
 
@@ -282,10 +265,6 @@ function message_paypal_error_to_admin($subject, $data) {
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';
     events_trigger('message_send', $eventdata);
-
-/*
-    email_to_user($admin, $admin, "PAYPAL ERROR: ".$subject, $message);
-*/
 }
 
 ?>

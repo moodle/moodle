@@ -1839,10 +1839,6 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
                 $eventdata->smallmessage     = '';
                 if ( events_trigger('message_send', $eventdata) > 0 ){
                 }
-
-                /*
-                @email_to_user($teacher, $user, $postsubject, $posttext, $posthtml);
-                */
             }else {
                 $eventdata = new object();
                 $eventdata->modulename       = 'feedback';
@@ -1855,10 +1851,6 @@ function feedback_send_email($cm, $feedback, $course, $userid) {
                 $eventdata->smallmessage     = '';
                 if ( events_trigger('message_send', $eventdata) > 0 ){
                 }
-
-                /*
-                @email_to_user($teacher, $teacher, $postsubject, $posttext, $posthtml);
-                */
             }
         }
     }
@@ -1908,10 +1900,6 @@ function feedback_send_email_anonym($cm, $feedback, $course) {
             $eventdata->smallmessage     = '';
             if ( events_trigger('message_send', $eventdata) > 0 ){
             }
-
-            /*
-            @email_to_user($teacher, $teacher, $postsubject, $posttext, $posthtml);
-            */
         }
     }
 }

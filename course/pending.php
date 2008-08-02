@@ -65,9 +65,6 @@
                 $eventdata->smallmessage      = '';			    
                 events_trigger('message_send', $eventdata);
 
-                /*
-                email_to_user($user,$USER,get_string('courseapprovedsubject'),get_string('courseapprovedemail','moodle',$a));
-                */
                 redirect($CFG->wwwroot.'/course/edit.php?id='.$courseid);
                 exit;
             }
@@ -105,9 +102,7 @@
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';			    
                 events_trigger('message_send', $eventdata);
-                /*
-                email_to_user($user,$USER,get_string('courserejectsubject'),get_string('courserejectemail','moodle',$rejectnotice));
-                */
+            
                 $DB->delete_records("course_request", array("id"=>$reject->id));
                 notice(get_string('courserejected'),'pending.php');
             }

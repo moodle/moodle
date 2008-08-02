@@ -393,9 +393,6 @@ function cron() {
         $eventdata->smallmessage      = '';			    
         events_trigger('message_send', $eventdata);
 
-        /*
-        email_to_user(get_admin(), get_admin(), "Moodle IMS Enterprise enrolment notification", $msg);
-        */
         $this->log_line('Notification email sent to administrator.');
 
     }

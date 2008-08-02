@@ -6,6 +6,7 @@
     require_once($CFG->dirroot.'/user/editadvanced_form.php');
     require_once($CFG->dirroot.'/user/editlib.php');
     require_once($CFG->dirroot.'/user/profile/lib.php');
+    require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
 
     httpsrequired();
 
@@ -150,17 +151,10 @@
         
         // trigger events
         if ($usercreated) {
-            //add default preferences for the messageprocessors (by default all users get email)
-            $providers = $DB->get_records('message_providers');
-            $preferences = array();
-            foreach ( $providers as $providerid => $provider){
-                $preferences[ 'message_provider_'.$provider->modulename.'_loggedin'  ] = 'popup';
-                $preferences[ 'message_provider_'.$provider->modulename.'_loggedoff'  ] = 'email';
-            }    
-            if (!set_user_preferences( $preferences, $usernew->id ) ){
-                print_error('Error updating user message preferences');
+            //set default message preferences
+            if (!message_set_default_message_preferences( $usernew )){
+                print_error('cannotsavemessageprefs');
             }
-        
             events_trigger('user_created', $usernew);
         } else {
             events_trigger('user_updated', $usernew);

@@ -794,6 +794,11 @@ function create_admin_user($user_input=NULL) {
         foreach ($adminroles as $adminrole) {
             role_assign($adminrole->id, $user->id, 0, $sitecontext->id);
         }
+        
+        //set default message preferences
+        if (!message_set_default_message_preferences( $user )){
+            print_error('cannotsavemessageprefs', 'debug');
+        }
 
         set_config('rolesactive', 1);
 

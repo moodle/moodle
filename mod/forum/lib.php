@@ -532,10 +532,7 @@ function forum_cron() {
                 // Send the post now!
 
                 mtrace('Sending ', '');
-                /*
-                if (!$mailresult = email_to_user($userto, $userfrom, $postsubject, $posttext,
-                                                 $posthtml, '', '', $CFG->forum_replytouser)) {
-                */
+                
                 $eventdata = new object();
                 $eventdata->component        = 'mod/forum';
                 $eventdata->name             = 'posts';
@@ -832,11 +829,7 @@ function forum_cron() {
                     // This user DOESN'T want to receive HTML
                     $posthtml = '';
                 }
-
-                /*
-                if (!$mailresult =  email_to_user($userto, $site->shortname, $postsubject, $posttext, $posthtml,
-                                                  '', '', $CFG->forum_replytouser)) {
-                */
+            
                 $eventdata = new object();
                 $eventdata->component        = 'mod/forum';
                 $eventdata->name             = 'digests';

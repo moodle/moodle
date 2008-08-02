@@ -72,11 +72,6 @@ function notify_user($user,$subject,$a) {
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';
     events_trigger('message_send', $eventdata);
-
-
-    /*
-    email_to_user($user,get_admin(),$subject,$body);
-    */
 }
 
 
@@ -96,10 +91,6 @@ function notify_admins($user,$subject,$a) {
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';			    
         events_trigger('message_send', $eventdata);
-
-        /*
-        email_to_user($admin,$admin,$subject,$body);
-        */
     }
 }
 
@@ -121,10 +112,6 @@ function notify_admins_unknown($file,$a) {
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';
         events_trigger('message_send', $eventdata);
-    
-        /*
-        email_to_user($admin,$admin,$subject,$body);
-        */
     }
 }
 

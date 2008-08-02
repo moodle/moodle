@@ -132,9 +132,6 @@ function message_to_admin($subject, $data)
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';    
     events_trigger('message_send', $eventdata);
-    /*
-    email_to_user($admin, $admin, "$SITE->fullname: Authorize.net ERROR", $message);
-    */
 }
 
 function send_welcome_messages($orderdata)
@@ -202,10 +199,6 @@ function send_welcome_messages($orderdata)
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';    
                 events_trigger('message_send', $eventdata);
-
-                /*
-                @email_to_user($user, $sender, get_string("enrolmentnew", '', $SITE->shortname), $emailmessage);
-                */
             }
         }
         while ($ei);

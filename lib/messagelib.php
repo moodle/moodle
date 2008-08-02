@@ -70,24 +70,30 @@ function message_send_handler($eventdata){
     $savemessage->timecreated       = time();
 
 /// Find out what processors are defined currently
+/// When a user doesn't have settings none gets return, if he doesn't want contact "" gets returned    
+    $processor = get_user_preferences('message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate, NULL, $eventdata->userto->id);
+    
+    if ($processor == NULL){ //this user never had a preference, save default        
+        if (!message_set_default_message_preferences( $eventdata->userto )){
+            print_error('cannotsavemessageprefs', 'debug');
+        }
+        if ( $userstate == 'loggedin'){
+            $processor='popup';
+        }
+        if ( $userstate == 'loggedoff'){
+            $processor='email';
+        }
+    }
 
-    // XXX TODO
-    // Note this currently defaults to email all the time.  We need a better solution 
-    // to be able to distinguish between a user who has no settings and one who doesn't want contact
-    // ... perhaps a "none" setting
-
-    $processor = get_user_preferences('message_provider_'.$eventdata->component.'_'.$eventdata->name.'_'.$userstate, 'email', $eventdata->userto->id);
-
-/// Now process the message
-
-    if (empty($processor)) {        // There is no processor so just mark it as read
+    //if we are suposed to do something with this message
+    // No processor for this message, mark it as read
+    if ($processor == "") {  //this user cleared all the preferences
         $savemessage->timeread = time();        
         $messageid = $message->id;
         unset($message->id);
         $DB->insert_record('message_read', $savemessage);
 
     } else {                        // Process the message
-
     /// Store unread message just in case we can not send it
         $savemessage->id = $DB->insert_record('message', $savemessage);
 
@@ -278,5 +284,20 @@ function message_uninstall($component) {
     return $DB->delete_records('message_providers', array('component' => $component));
 }
 
+/**
+ * Set default message preferences.
+ * @param $user - User to set message preferences
+ */
+function message_set_default_message_preferences( $user ) {
+    global $DB;
+    
+    $providers = $DB->get_records('message_providers');
+    $preferences = array();
+    foreach ( $providers as $providerid => $provider){
+        $preferences[ 'message_provider_'.$provider->component.'_'.$provider->name.'_loggedin'  ] = 'popup';
+        $preferences[ 'message_provider_'.$provider->component.'_'.$provider->name.'_loggedoff'  ] = 'email';
+    }    
+    return set_user_preferences( $preferences, $user->id );
+}
 
 ?>

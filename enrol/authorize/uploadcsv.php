@@ -236,10 +236,6 @@ function authorize_process_csv($filename)
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';			    
         events_trigger('message_send', $eventdata);
-
-        /*
-        email_to_user($admin, $admin, "$SITE->fullname: Authorize.net CSV ERROR LOG", $ignoredlines);
-        */
     }
 
 /// Send welcome messages to users

@@ -912,7 +912,7 @@ function quiz_get_combined_reviewoptions($quiz, $attempts, $context=null) {
  *
  * @param stdClass $a associative array of replaceable fields for the templates
  *
- * @return bool|string result of email_to_user()
+ * @return bool|string result of events_triger
  */
 function quiz_send_confirmation($a) {
 
@@ -938,10 +938,6 @@ function quiz_send_confirmation($a) {
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';
     return (events_trigger('message_send', $eventdata) == 0);
-
-    /*
-    return email_to_user($USER, get_admin(), $subject, $body);
-    */
 }
 
 /**
@@ -950,7 +946,7 @@ function quiz_send_confirmation($a) {
  * @param object $recipient user object of the intended recipient
  * @param stdClass $a associative array of replaceable fields for the templates
  *
- * @return bool|string result of email_to_user()
+ * @return bool|string result of events_triger()
  */
 function quiz_send_notification($recipient, $a) {
 
@@ -976,10 +972,6 @@ function quiz_send_notification($recipient, $a) {
     $eventdata->fullmessagehtml   = '';
     $eventdata->smallmessage      = '';
     return (events_trigger('message_send', $eventdata) == 0);
-
-    /*
-    return email_to_user($recipient, $USER, $subject, $body);
-    */
 }
 
 /**

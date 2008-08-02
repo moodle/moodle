@@ -219,10 +219,7 @@
 
                     // Subject
                     $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$attempt->pageid]->title,true));
-
-                    /*
-                    if(email_to_user($users[$attempt->userid], $USER, $subject, $plaintxt, $message)) {
-                    */
+                    
                     $eventdata = new object();
                     $eventdata->modulename       = 'lesson';
                     $eventdata->userfrom         = $USER;

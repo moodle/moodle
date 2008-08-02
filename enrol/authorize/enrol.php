@@ -253,10 +253,6 @@ class enrolment_plugin_authorize
                             $eventdata->fullmessagehtml   = '';
                             $eventdata->smallmessage      = '';
                             events_trigger('message_send', $eventdata);
-
-                            /*
-                            email_to_user($paymentmanager, $USER, $emailsubject, $emailmessage);
-                            */
                         }
                     }
                     redirect($CFG->wwwroot, get_string("reviewnotify", "enrol_authorize"), '30');
@@ -290,15 +286,6 @@ class enrolment_plugin_authorize
                             $eventdata->fullmessagehtml   = '';
                             $eventdata->smallmessage      = '';
                             events_trigger('message_send', $eventdata);
-                            
-                            /*
-                            email_to_user(
-                                $paymentmanager,
-                                $USER,
-                                get_string("enrolmentnew", '', format_string($course->shortname)),
-                                get_string('enrolmentnewuser', '', $a)
-                            );
-                            */
                         }
                         if (!empty($CFG->enrol_mailadmins)) {
                             $a = new stdClass;
@@ -316,15 +303,6 @@ class enrolment_plugin_authorize
                                 $eventdata->fullmessagehtml   = '';
                                 $eventdata->smallmessage      = '';
                                 events_trigger('message_send', $eventdata);
-
-                                /*
-                                email_to_user(
-                                    $admin,
-                                    $USER,
-                                    get_string("enrolmentnew", '', format_string($course->shortname)),
-                                    get_string('enrolmentnewuser', '', $a)
-                                );
-                                */
                             }
                         }
                     }
@@ -746,10 +724,6 @@ class enrolment_plugin_authorize
             $eventdata->fullmessagehtml   = '';
             $eventdata->smallmessage      = '';
             events_trigger('message_send', $eventdata);
-
-            /*
-            email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON FAULTS", $faults);
-            */
         }
         if (!empty($CFG->enrol_mailadmins)) {
             $eventdata = new object();
@@ -762,9 +736,6 @@ class enrolment_plugin_authorize
             $eventdata->fullmessagehtml   = '';
             $eventdata->smallmessage      = '';
             events_trigger('message_send', $eventdata);
-            /*
-            email_to_user($adminuser, $adminuser, "AUTHORIZE.NET CRON LOG", $this->log);
-            */ 
         }
 
         // Send emails to students about which courses have enrolled.
@@ -833,10 +804,6 @@ class enrolment_plugin_authorize
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
                 events_trigger('message_send', $eventdata);
-
-                /*
-                @email_to_user($csvuser, $adminuser, $subject, $message);
-                */ 
             }
             mtrace("        users who have 'enrol/authorize:uploadcsv' were mailed");
         }
@@ -881,10 +848,6 @@ class enrolment_plugin_authorize
         $eventdata->fullmessagehtml   = '';
         $eventdata->smallmessage      = '';	
         events_trigger('message_send', $eventdata);
-
-        /*
-        email_to_user($adminuser, $adminuser, $subject, $message);
-        */
 
         // Email to payment managers
         if (empty($CFG->an_emailexpiredteacher)) {
@@ -933,10 +896,6 @@ class enrolment_plugin_authorize
                     $eventdata->fullmessagehtml   = '';
                     $eventdata->smallmessage      = '';	
                     events_trigger('message_send', $eventdata);
-
-                    /*
-                    email_to_user($paymentmanager, $adminuser, $subject, $message);
-                    */
                 }
             }
         }

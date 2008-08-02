@@ -228,11 +228,6 @@ function get_access_icons($course) {
                             $eventdata->fullmessagehtml   = '';
                             $eventdata->smallmessage      = '';
                             events_trigger('message_send', $eventdata);
-
-                            /*
-                            email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname), 
-                                          get_string('welcometocoursetext', '', $a));
-                            */ 
                         }
 
                         if (!empty($CFG->enrol_mailteachers) && $teachers) {
@@ -253,11 +248,6 @@ function get_access_icons($course) {
                                     $eventdata->fullmessagehtml   = '';
                                     $eventdata->smallmessage      = '';			    
                                     events_trigger('message_send', $eventdata);
-
-                                    /*
-                                    email_to_user($teacher, $user, get_string("enrolmentnew", '', $course->shortname), 
-                                                  get_string('enrolmentnewuser', '', $a));
-                                    */
                                 }
                             }
                         }
@@ -285,10 +275,6 @@ function get_access_icons($course) {
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
                 events_trigger('message_send', $eventdata);
-
-                /*
-                email_to_user(get_admin(), get_admin(), get_string("filelockedmailsubject", "enrol_flatfile"), get_string("filelockedmail", "enrol_flatfile", $filename));
-                */
                 $this->log .= "Error unlinking file $filename\n";
             }
 
@@ -303,10 +289,6 @@ function get_access_icons($course) {
                 $eventdata->fullmessagehtml   = '';
                 $eventdata->smallmessage      = '';
                 events_trigger('message_send', $eventdata);
-
-                /*
-                email_to_user(get_admin(), get_admin(), "Flatfile Enrolment Log", $this->log);
-                */
             }
 
         } // end of if(file_exists)
