@@ -300,8 +300,8 @@ $string['pass'] = '통과';
 $string['password'] = '비밀번호';
 $string['pgsqlextensionisnotpresentinphp'] = 'PGSQL 익스텐션으로 PHP가 PostgreSQL 서버와 통신하도록 적절히 설정되지 않았습니다. php.ini 파일을 점검하거나 PHP를 다시 컴파일 하십시오.';
 $string['php50restricted'] = 'PHP 5.0.x 는 약간의 버그가 보고되었습니다. 5.1.x로 판올림 하던가, 아니면 4.3.x 혹은 4.4.x로 바꿔주기 바랍니다.';
-$string['php52versionerror'] = 'PHP는 최소한 5.2.0 이상이어야 합니다.';
-$string['php52versionhelp'] = '<p>무들은 최소한 PHP 5.2.0 이상을 요구합니다..</p>
+$string['php52versionerror'] = 'PHP는 최소한 5.2.4 이상이어야 합니다.';
+$string['php52versionhelp'] = '<p>무들은 최소한 PHP 5.2.4 이상을 요구합니다..</p>
 <p>현재 구동되고 있는 판은 $a 입니다.</p>
 <p>PHP를 판올림하던가 새 판을 지원하는 호스트로 이전해야 합니다!</p>';
 $string['phpversion'] = 'php버젼';
