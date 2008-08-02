@@ -209,7 +209,7 @@ class file_packer {
 
             } else {
                 // large file, would not fit into memory :-(
-                $tmpfile = tempnam($CFG->dataroot.'/temp/unzip');
+                $tmpfile = tempnam($CFG->dataroot.'/temp/unzip', 'largefile');
                 if (!$fp = fopen($tmpfile, 'wb')) {
                     $processed[$name] = 'Can not write temp file'; // TODO: localise
                     continue;
@@ -224,7 +224,7 @@ class file_packer {
                 }
                 fclose($fz);
                 fclose($fp);
-                if (strlen($tmpfile) !== $size) {
+                if (filesize($tmpfile) !== $size) {
                     $processed[$name] = 'Unknown error during zip extraction'; // TODO: localise
                     // something went wrong :-(
                     @unlink($tmpfile);
