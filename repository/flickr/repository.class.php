@@ -86,7 +86,7 @@ EOD;
                 $e2->name = 'remember';
 
                 $e3->type = 'hidden';
-                $e3->name = 'id';
+                $e3->name = 'repo_id';
                 $e3->value = $this->repositoryid;
                 $ret['l'] = array($e1, $e2, $e3);
                 return $ret;

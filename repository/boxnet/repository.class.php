@@ -16,8 +16,8 @@ class repository_boxnet extends repository{
 
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action;
-        $options['username']   = optional_param('username', '', PARAM_RAW);
-        $options['password']   = optional_param('password', '', PARAM_RAW);
+        $options['username']   = optional_param('boxusername', '', PARAM_RAW);
+        $options['password']   = optional_param('boxpassword', '', PARAM_RAW);
         $options['ticket']     = optional_param('ticket', '', PARAM_RAW);
         $options['api_key']    = 'dmls97d8j3i9tn7av8y71m9eb55vrtj4';
         // reset session
@@ -135,19 +135,19 @@ class repository_boxnet extends repository{
                     $e1->value = $t['ticket'];
 
                     $e2->type = 'hidden';
-                    $e2->name = 'id';
+                    $e2->name = 'repo_id';
                     $e2->value = $this->repositoryid;
 
                     $e3->label = get_string('username', 'repository_boxnet');
                     $e3->id    = 'box_username';
                     $e3->type  = 'text';
-                    $e3->name  = 'username';
+                    $e3->name  = 'boxusername';
                     $e3->value = $ret->username;
                     
                     $e4->label = get_string('password', 'repository_boxnet');
                     $e4->id    = 'box_password';
                     $e4->type  = 'password';
-                    $e4->name  = 'password';
+                    $e4->name  = 'boxpassword';
 
                     $ret = array();
                     $ret['l'] = array($e1, $e2, $e3, $e4);

@@ -139,6 +139,7 @@ class boxclient {
             return false;
         }
         $tree_count=count($data);
+        $entry_count = 0;
         for ($i=0; $i<$tree_count; $i++) {
             $a = $data[$i];
             switch ($a['tag'])

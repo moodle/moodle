@@ -7,8 +7,6 @@ require_once('lib.php');
 $CFG->repository_cache_expire = 60*60;
 // page
 $p     = optional_param('p', '', PARAM_RAW);
-// id of repository
-$id     = optional_param('id', 1, PARAM_INT);
 // opened in editor or moodleform
 $env   = optional_param('env', 'form', PARAM_RAW);
 // file to download
@@ -17,8 +15,10 @@ $file  = optional_param('file', '', PARAM_RAW);
 $title = optional_param('title', '', PARAM_RAW);
 $action = optional_param('action', '', PARAM_RAW);
 $search = optional_param('s', '', PARAM_RAW);
+// id of repository
+$repo_id = optional_param('repo_id', 1, PARAM_INT);
 
-if(!$repository = $DB->get_record('repository', array('id'=>$id))) {
+if(!$repository = $DB->get_record('repository', array('id'=>$repo_id))) {
     $err = new stdclass;
     $err->e = get_string('invalidrepositoryid', 'repository');
     die(json_encode($err));
@@ -31,11 +31,11 @@ if(file_exists($CFG->dirroot.'/repository/'.
         $repository->repositorytype.'/repository.class.php');
     $classname = 'repository_' . $repository->repositorytype;
     try{
-        $repo = new $classname($id, SITEID, array('ajax'=>true));
+        $repo = new $classname($repo_id, SITEID, array('ajax'=>true));
     } catch (repository_exception $e){
         $err = new stdclass;
         $err->e = $e->getMessage();
-        die(json_encode($err.time()));
+        die(json_encode($err));
     }
 } else {
     $err = new stdclass;
