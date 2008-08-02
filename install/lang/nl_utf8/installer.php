@@ -296,8 +296,8 @@ $string['pass'] = 'OK';
 $string['password'] = 'Wachtwoord';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP is niet juist geïnstalleerd met de PGSQL-extentie en kan niet communiceren met PostgreSQL. Controleer je php.ini-bestand of hercompileer PHP.';
 $string['php50restricted'] = 'PHP 5.0.x heeft een heel aantal bekende problemen. Upgrade naar 5.1.x of downgrade naar 4.3.x of 4.4.x';
-$string['php52versionerror'] = 'PHP versie moet minstens 5.2.0 zijn';
-$string['php52versionhelp'] = '<p>Moodle vereist minstens PHP versie 5.2.0.</p>
+$string['php52versionerror'] = 'PHP versie moet minstens 5.2.4 zijn';
+$string['php52versionhelp'] = '<p>Moodle vereist minstens PHP versie 5.2.4.</p>
 <p>Op dit moment heb je versie $a geïnstalleerd</p>
 <p>Je moet PHP upgraden of verhuizen naar een host met een nieuwere PHP-versie!</p>';
 $string['phpversion'] = 'PHP-versie';
