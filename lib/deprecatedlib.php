@@ -328,6 +328,67 @@ function detect_munged_arguments($string, $allowdots=1) {
 }
 
 
+/**
+ * Unzip one zip file to a destination dir
+ * Both parameters must be FULL paths
+ * If destination isn't specified, it will be the
+ * SAME directory where the zip file resides.
+ */
+function unzip_file($zipfile, $destination = '', $showstatus_ignored = true) {
+    global $CFG;
+
+    //Extract everything from zipfile
+    $path_parts = pathinfo(cleardoubleslashes($zipfile));
+    $zippath = $path_parts["dirname"];       //The path of the zip file
+    $zipfilename = $path_parts["basename"];  //The name of the zip file
+    $extension = $path_parts["extension"];    //The extension of the file
+
+    //If no file, error
+    if (empty($zipfilename)) {
+        return false;
+    }
+
+    //If no extension, error
+    if (empty($extension)) {
+        return false;
+    }
+
+    //Clear $zipfile
+    $zipfile = cleardoubleslashes($zipfile);
+
+    //Check zipfile exists
+    if (!file_exists($zipfile)) {
+        return false;
+    }
+
+    //If no destination, passed let's go with the same directory
+    if (empty($destination)) {
+        $destination = $zippath;
+    }
+
+    //Clear $destination
+    $destpath = rtrim(cleardoubleslashes($destination), "/");
+
+    //Check destination path exists
+    if (!is_dir($destpath)) {
+        return false;
+    }
+
+    $result = get_file_packer()->unzip_files_to_pathname($zipfile, $destpath);
+
+    if ($result === false) {
+        return false;
+    }
+
+    foreach ($result as $status) {
+        if ($status !== true) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 /////////////////////////////////////////////////////////////
 /// Old functions not used anymore - candidates for removal
 /////////////////////////////////////////////////////////////
