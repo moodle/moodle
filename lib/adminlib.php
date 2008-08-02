@@ -788,7 +788,7 @@ function create_admin_user($user_input=NULL) {
 
         // Assign the default admin roles to the new user.
         if (!$adminroles = get_roles_with_capability('moodle/legacy:admin', CAP_ALLOW)) {
-            print_error('noadminrole', 'debug');
+            print_error('noadminrole', 'message');
         }
         $sitecontext = get_context_instance(CONTEXT_SYSTEM);
         foreach ($adminroles as $adminrole) {
@@ -797,7 +797,7 @@ function create_admin_user($user_input=NULL) {
         
         //set default message preferences
         if (!message_set_default_message_preferences( $user )){
-            print_error('cannotsavemessageprefs', 'debug');
+            print_error('cannotsavemessageprefs', 'message');
         }
 
         set_config('rolesactive', 1);

@@ -104,7 +104,7 @@
             
         } else {
             if (!$DB->update_record('user', $usernew)) {
-                print_error('cannotupdateuser');
+                print_error('cannotupdateuser', 'message');
             }
             // pass a true $userold here
             if (! $authplugin->user_update($user, $userform->get_data())) {
@@ -153,7 +153,7 @@
         if ($usercreated) {
             //set default message preferences
             if (!message_set_default_message_preferences( $usernew )){
-                print_error('cannotsavemessageprefs');
+                print_error('cannotsavemessageprefs', 'message');
             }
             events_trigger('user_created', $usernew);
         } else {

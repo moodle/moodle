@@ -82,5 +82,7 @@ $string['beepnewmessage'] = 'Beep on new message';
 $string['noframesjs'] = 'No frames and JavaScript';
 $string['providerstag'] = 'Source: ';
 $string['processortag'] = 'Destination: ';
+$string['cannotsavemessageprefs'] = 'Could not save user messaging preferences';
+
 
 ?>

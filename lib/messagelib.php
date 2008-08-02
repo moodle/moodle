@@ -75,7 +75,7 @@ function message_send_handler($eventdata){
     
     if ($processor == NULL){ //this user never had a preference, save default        
         if (!message_set_default_message_preferences( $eventdata->userto )){
-            print_error('cannotsavemessageprefs', 'debug');
+            print_error('cannotsavemessageprefs', 'message');
         }
         if ( $userstate == 'loggedin'){
             $processor='popup';
