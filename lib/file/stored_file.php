@@ -36,7 +36,7 @@ class stored_file {
     }
 
     /**
-     * Protected - devs must not gain direct access to this function
+     * Protected - developers must not gain direct access to this function
      **/
     protected function get_content_file_location() {
         // NOTE: do not make this public, we must not modify or delete the pool files directly! ;-)
@@ -80,6 +80,19 @@ class stored_file {
         return file_get_contents($this->get_content_file_location());
     }
 
+    /**
+     * Copy content of file to give npathname
+     * @param string $pathnema rela path to new file 
+     * @return bool success
+     */
+    public function copy_content_to($pathname) {
+        $path = $this->get_content_file_location();
+        if (!is_readable($path)) {
+            throw new file_exception('localfilecannotread');
+        }
+        return copy($path, $pathname);
+    }
+
     public function get_contextid() {
         return $this->file_record->contextid;
     }
@@ -118,5 +131,9 @@ class stored_file {
 
     public function get_timemodified() {
         return $this->file_record->timemodified;
+    }
+
+    public function get_status() {
+        return $this->file_record->status;
     }
 }

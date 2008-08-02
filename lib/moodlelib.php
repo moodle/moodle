@@ -4505,6 +4505,26 @@ function get_file_browser() {
 }
 
 /**
+ * Returns local file storage instance
+ * @return object file_storage
+ */
+function get_file_packer() {
+    global $CFG;
+
+    static $fp = null;
+
+    if ($fp) {
+        return $fp;
+    }
+
+    require_once("$CFG->libdir/filelib.php");
+
+    $fp = new file_packer();
+
+    return $fp;
+}
+
+/**
  * Makes an upload directory for a particular module.
  *
  * @uses $CFG

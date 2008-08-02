@@ -530,19 +530,9 @@ class moodleform {
                 return false;
             }
         }
-        if (!$temp = @fopen($_FILES[$elname]['tmp_name'], "rb")) {
+        if (!copy($_FILES[$elname]['tmp_name'], $pathname)) {
             return false;
         }
-        if (!$file = @fopen($pathname, "wb")) {
-            return false;
-        }
-
-        while (!feof($temp)) {
-            $data = fread($temp, 65536);
-            fwrite($file, $data);
-        }
-        fclose($file);
-        fclose($temp);
 
         return true;
     }
@@ -604,17 +594,7 @@ class moodleform {
             return false;
         }
 
-        if (!$file = @fopen($_FILES[$elname]['tmp_name'], "rb")) {
-            return false;
-        }
-
-        $data = '';
-        while (!feof($file)) {
-            $data .= fread($file, 4048);
-        }
-        fclose($file);
-
-        return $data;
+        return file_get_contents($_FILES[$elname]['tmp_name']);
     }
 
     /**

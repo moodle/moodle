@@ -23,10 +23,8 @@ class file_storage {
                 throw new file_exception('localfilecannotcreatefiledirs'); // permission trouble
             }
             // place warning file in file pool root
-            $fp = fopen($this->filedir.'/warning.txt', 'w');
-            fwrite($fp, 'This directory contains the content of uploaded files and is controlled by Moodle code. Do not manually move, change or rename any of the files and subdirectories here.');
-            fclose($fp);
-            unset($fp);
+            file_put_contents($this->filedir.'/warning.txt', 
+                              'This directory contains the content of uploaded files and is controlled by Moodle code. Do not manually move, change or rename any of the files and subdirectories here.');
         }
     }
 
@@ -199,7 +197,7 @@ class file_storage {
             throw new file_exception('localfileproblem', 'Invalid contextid');
         }
 
-        $filearea = clean_param($filearea, PARAM_SAFEDIR);
+        $filearea = clean_param($filearea, PARAM_ALPHAEXT);
         if ($filearea === '') {
             throw new file_exception('localfileproblem', 'Invalid filearea');
         }
@@ -289,7 +287,7 @@ class file_storage {
             }
 
             if ($key == 'filearea') {
-                $value = clean_param($value, PARAM_SAFEDIR);
+                $value = clean_param($value, PARAM_ALPHAEXT);
                 if ($value === '') {
                     throw new file_exception('localfileproblem', 'Invalid filearea');
                 }
@@ -353,7 +351,7 @@ class file_storage {
             throw new file_exception('localfileproblem', 'Invalid contextid');
         }
 
-        $file_record->filearea = clean_param($file_record->filearea, PARAM_SAFEDIR);
+        $file_record->filearea = clean_param($file_record->filearea, PARAM_ALPHAEXT);
         if ($file_record->filearea === '') {
             throw new file_exception('localfileproblem', 'Invalid filearea');
         }
@@ -428,7 +426,7 @@ class file_storage {
             throw new file_exception('localfileproblem', 'Invalid contextid');
         }
 
-        $file_record->filearea = clean_param($file_record->filearea, PARAM_SAFEDIR);
+        $file_record->filearea = clean_param($file_record->filearea, PARAM_ALPHAEXT);
         if ($file_record->filearea === '') {
             throw new file_exception('localfileproblem', 'Invalid filearea');
         }
@@ -519,17 +517,9 @@ class file_storage {
             }
             $newfile = true;
 
-            $fs = fopen($pathname, 'rb');
-            $fp = fopen($hashfile, 'wb');
-            while(!feof($fs)) {
-                $buf = fread($fs, 65536);
-                if ($buf === false) {
-                    throw new file_exception('localfilecannotread');
-                }
-                fwrite($fp, $buf);
+            if (!copy($pathname, $hashfile)) {
+                throw new file_exception('localfilecannotread');
             }
-            fclose($fp);
-            fclose($fs);
 
             if (filesize($hashfile) !== $filesize) {
                 @unlink($hashfile);
@@ -566,10 +556,7 @@ class file_storage {
             }
             $newfile = true;
 
-            $fp = fopen($hashfile, 'wb');
-
-            fwrite($fp, $content);
-            fclose($fp);
+            file_put_contents($hashfile, $content);
 
             if (filesize($hashfile) !== $filesize) {
                 @unlink($hashfile);

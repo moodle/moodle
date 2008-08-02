@@ -7,7 +7,7 @@
     $courseid   = optional_param('id', 0, PARAM_INT);
 
     $contextid  = optional_param('contextid', SYSCONTEXTID, PARAM_INT);
-    $filearea   = optional_param('filearea', '', PARAM_SAFEDIR);
+    $filearea   = optional_param('filearea', '', PARAM_ALPHAEXT);
     $itemid     = optional_param('itemid', -1, PARAM_INT);
     $filepath   = optional_param('filepath', '', PARAM_PATH);
     $filename   = optional_param('filename', '', PARAM_FILE);
