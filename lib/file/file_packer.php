@@ -211,10 +211,12 @@ class file_packer {
                 // large file, would not fit into memory :-(
                 $tmpfile = tempnam($CFG->dataroot.'/temp/unzip', 'largefile');
                 if (!$fp = fopen($tmpfile, 'wb')) {
+                    @unlink($tmpfile);
                     $processed[$name] = 'Can not write temp file'; // TODO: localise
                     continue;
                 }
                 if (!$fz = $zip->getStream($index['name'])) {
+                    @unlink($tmpfile);
                     $processed[$name] = 'Can not read file from zip archive'; // TODO: localise
                     continue;
                 }
@@ -233,6 +235,7 @@ class file_packer {
 
                 if ($file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
                     if (!$file->delete()) {
+                        @unlink($tmpfile);
                         $processed[$name] = 'Can not delete existing file'; // TODO: localise
                         continue;
                     }
