@@ -321,8 +321,8 @@ $string['pass'] = 'Geçti';
 $string['password'] = 'Şifre';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP, PostgreSQL ile iletişim kurabilmek için pgsql uzantısı düzgün bir şekilde yapılandırılmamış. Lütfen php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';
 $string['php50restricted'] = 'PHP 5.0.x sürümünde çok fazla hata var. Lütfen sürümü, 5.1.x\'e yükseltin ya da 4.3.x veya 4.4.x sürümüne düşürün.';
-$string['php52versionerror'] = 'En düşük PHP 5.2.0 sürümü gerekli';
-$string['php52versionhelp'] = '<p>Moodle en düşük PHP 5.2.0 sürümü ile çalışır.</p>
+$string['php52versionerror'] = 'En düşük PHP 5.2.4 sürümü gerekli';
+$string['php52versionhelp'] = '<p>Moodle en düşük PHP 5.2.4 sürümü ile çalışır.</p>
 <p>Şu anda çalışan sürüm $a</p>
 <p>PHP güncellemesi yapmalı veya en yeni PHP sürümü kullanan bir hostinge taşınmalısınız!</p>';
 $string['phpversion'] = 'PHP sürümü';
@@ -355,6 +355,8 @@ $string['sitenewsitems'] = 'Haber Öğeleri';
 $string['siteshortname'] = 'Site kısa adı:';
 $string['sitesummary'] = 'Site özeti:';
 $string['skipdbencodingtest'] = 'Veritabanı Dil Kodlama Testini Atla';
+$string['sqlite3_pdo'] = 'SQLite 3 (PDO) <b><strong class=\"errormsg\">Deneysel! (gerçek kullanım için değil)</strong></b>';
+$string['sqliteextensionisnotpresentinphp'] = 'PHP SQLite uzantısı düzgün bir şekilde yapılandırılmamış. Lütfen php.ini dosyasını kontrol edin veya PHP\'yi tekrar derleyin.';
 $string['status'] = 'Durum';
 $string['tableprefix'] = 'Tablo öneki:';
 $string['thischarset'] = 'UTF-8';
