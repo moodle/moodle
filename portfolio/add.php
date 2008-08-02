@@ -110,7 +110,7 @@ if (!$exporter->get('instance')) {
     // for the next block to catch
     $form = '<form action="' . $CFG->wwwroot . '/portfolio/add.php" method="post">' . "\n";
 
-    if (!$select = portfolio_instance_select(portfolio_instances(), $exporter->get('caller')->supported_formats(), get_class($exporter->get('caller')), true)) {
+    if (!$select = portfolio_instance_select(portfolio_instances(), $exporter->get('caller')->supported_formats(), get_class($exporter->get('caller')), 'instance', true)) {
         print_error('noavailableplugins', 'portfolio');
     }
     $form .= $select;

@@ -200,7 +200,7 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
         $output .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
     }
     else {
-        $selectoutput = portfolio_instance_select($instances, $callersupports, $callbackclass, true);
+        $selectoutput = portfolio_instance_select($instances, $callersupports, $callbackclass, 'instance', true);
     }
 
     if ($fullform) {
