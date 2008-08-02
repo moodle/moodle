@@ -23,7 +23,7 @@ class file_storage {
                 throw new file_exception('localfilecannotcreatefiledirs'); // permission trouble
             }
             // place warning file in file pool root
-            file_put_contents($this->filedir.'/warning.txt', 
+            file_put_contents($this->filedir.'/warning.txt',
                               'This directory contains the content of uploaded files and is controlled by Moodle code. Do not manually move, change or rename any of the files and subdirectories here.');
         }
     }
@@ -570,12 +570,12 @@ class file_storage {
     /**
      * Return path to file with given hash
      *
-     * DO NOT USE - should be protected, but protected is dumb in PHP
+     * NOTE: must not be public, files in pool must not be modified
      *
      * @param string $contenthash
      * @return string expected file location
      */
-    public function path_from_hash($contenthash) {
+    protected function path_from_hash($contenthash) {
         $l1 = $contenthash[0].$contenthash[1];
         $l2 = $contenthash[2].$contenthash[3];
         $l3 = $contenthash[4].$contenthash[5];

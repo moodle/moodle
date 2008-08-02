@@ -37,11 +37,21 @@ class stored_file {
 
     /**
      * Protected - developers must not gain direct access to this function
+     * NOTE: do not make this public, we must not modify or delete the pool files directly! ;-)
+     * @return ful path to pool file with file content
      **/
     protected function get_content_file_location() {
-        // NOTE: do not make this public, we must not modify or delete the pool files directly! ;-)
-        $hashpath = $this->fs->path_from_hash($this->file_record->contenthash);
-        return $hashpath.'/'.$this->file_record->contenthash;
+        global $CFG;
+        if (isset($CFG->filedir)) {
+            $filedir = $CFG->filedir;
+        } else {
+            $filedir = $CFG->dataroot.'/filedir';
+        }
+        $contenthash = $this->file_record->contenthash;
+        $l1 = $contenthash[0].$contenthash[1];
+        $l2 = $contenthash[2].$contenthash[3];
+        $l3 = $contenthash[4].$contenthash[5];
+        return "$filedir/$l1/$l2/$l3/$contenthash";
     }
 
     /**
@@ -82,7 +92,7 @@ class stored_file {
 
     /**
      * Copy content of file to give npathname
-     * @param string $pathnema rela path to new file 
+     * @param string $pathnema rela path to new file
      * @return bool success
      */
     public function copy_content_to($pathname) {
@@ -91,6 +101,32 @@ class stored_file {
             throw new file_exception('localfilecannotread');
         }
         return copy($path, $pathname);
+    }
+
+    /**
+     * Unzip file to given file path (real OS filesystem), existing files are overwrited
+     * @param string $path target directory
+     * @return mixed list of processed files; false if error
+     */
+    public function unzip_files_to_pathname($path) {
+        $packer = get_file_packer();
+        $zipfile = $this->get_content_file_location();
+        return $packer->unzip_files_to_pathname($path, $path);
+    }
+
+    /**
+     * Unzip file to given file path (real OS filesystem), existing files are overwrited
+     * @param int $contextid
+     * @param string $filearea
+     * @param int $itemid
+     * @param string $pathbase
+     * @param int $userid
+     * @return mixed list of processed files; false if error
+     */
+    public function unzip_files_to_storage($contextid, $filearea, $itemid, $pathbase, $userid=null) {
+        $packer = get_file_packer();
+        $zipfile = $this->get_content_file_location();
+        return $packer->unzip_files_to_storage($zipfile, $contextid, $filearea, $itemid, $pathbase);
     }
 
     public function get_contextid() {
