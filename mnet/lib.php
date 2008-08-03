@@ -533,4 +533,49 @@ function mnet_update_sso_access_control($username, $mnet_host_id, $accessctrl) {
     }
     return true;
 }
+
+function mnet_get_peer_host ($mnethostid) {
+    static $hosts;
+    if (!isset($hosts[$mnethostid])) {
+        $host = get_record('mnet_host', 'id', $mnethostid);
+        $hosts[$mnethostid] = $host;
+    }
+    return $hosts[$mnethostid];
+}
+
+/**
+ * Inline function to modify a url string so that mnet users are requested to
+ * log in at their mnet identity provider (if they are not already logged in)
+ * before ultimately being directed to the original url.
+ *
+ * uses global IDPJUMPURL - the url which user should initially be directed to
+ * @param array $url array with 2 elements
+ *     0 - context the url was taken from, possibly just the url, possibly href="url"
+ *     1 - the destination url
+ * @return string the url the remote user should be supplied with.
+ */
+function mnet_sso_apply_indirection ($url) {
+    global $IDPJUMPURL;
+
+    $localpart='';
+    $urlparts = parse_url($url[1]);
+    if($urlparts) {
+        if (isset($urlparts['path'])) {
+            $localpart .= $urlparts['path'];
+        }
+        if (isset($urlparts['query'])) {
+            $localpart .= '?'.$urlparts['query'];
+        }
+        if (isset($urlparts['fragment'])) {
+            $localpart .= '#'.$urlparts['fragment'];
+        }
+    }
+    $indirecturl = $IDPJUMPURL . urlencode($localpart);
+    //If we matched on more than just a url (ie an html link), return the url to an href format
+    if ($url[0] != $url[1]) {
+        $indirecturl = 'href="'.$indirecturl.'"';
+    }
+    return $indirecturl;
+}
+
 ?>

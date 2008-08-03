@@ -4058,7 +4058,8 @@ function &get_mailer($action='get') {
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='', $wordwrapwidth=79) {
 
-    global $CFG, $FULLME;
+    global $CFG, $FULLME, $IDPJUMPURL;
+    static $mnetjumps = array();
 
     if (empty($user)) {
         return false;
@@ -4083,6 +4084,28 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         return false;
     }
 
+    // If the user is a remote mnet user, parse the email text for URL to the
+    // wwwroot and modify the url to direct the user's browser to login at their
+    // home site (identity provider - idp) before hitting the link itself
+    if ($user->mnethostid > 1) {
+        require_once($CFG->dirroot.'/mnet/lib.php');
+        // Form the request url to hit the idp's jump.php
+        if (isset($mnetjumps[$user->mnethostid])) {
+            $IDPJUMPURL = $mnetjumps[$user->mnethostid];
+        } else {
+            $idp = mnet_get_peer_host($user->mnethostid);
+            $idpjumppath = '/auth/mnet/jump.php';
+            $IDPJUMPURL = $idp->wwwroot . $idpjumppath . '?hostwwwroot=' . $CFG->wwwroot . '&wantsurl=';
+            $mnetjumps[$user->mnethostid] = $IDPJUMPURL;
+        }
+
+        $messagetext = preg_replace_callback("%($CFG->wwwroot[^[:space:]]*)%",
+                'mnet_sso_apply_indirection',
+                $messagetext);
+        $messagehtml = preg_replace_callback("%href=[\"'`]($CFG->wwwroot[\w_:\?=#&@/;.~-]*)[\"'`]%",
+                'mnet_sso_apply_indirection',
+                $messagehtml);
+    }
     $mail =& get_mailer();
 
     if (!empty($mail->SMTPDebug)) {
