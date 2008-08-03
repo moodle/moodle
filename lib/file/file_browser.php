@@ -208,60 +208,30 @@ class file_browser {
      * Returns content of local directory
      */
     public function build_stored_file_children($context, $filearea, $itemid, $filepath, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess) {
-        global $DB;
-
-        $dirs = array();
-        $files = array();
+        $result = array();
         $fs = get_file_storage();
-        $level = substr_count($filepath, '/');
 
-        // TODO: this should be improved ;-)
-        $localfiles = $fs->get_area_files($context->id, $filearea, $itemid, "filepath, filename");
+        $localfiles = $fs->get_directory_files($context->id, $filearea, $itemid, $filepath, false, true, "filepath, filename");
         foreach ($localfiles as $file) {
-            $name = $file->get_filename();
-            $path = $file->get_filepath();
-            $l = substr_count($path, '/');
-
-            if ($filepath === $path) {
-                if ($name !== '.') {
-                    $files[] = new file_info_stored($this, $context, $file, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess);
-                }
-            } else if ($level == $l-1 and $name === '.' and strpos($path, $filepath) === 0) {
-                $dirs[] = new file_info_stored($this, $context, $file, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess);
-            }
+            $result[] = new file_info_stored($this, $context, $file, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess);
         }
 
-        return array_merge($dirs, $files);
+        return $result;
     }
 
     /**
      * Returns content of coursefiles directory
      */
     public function build_coursefile_children($context, $filepath) {
-        global $DB;
-
-        $dirs = array();
-        $files = array();
+        $result = array();
         $fs = get_file_storage();
-        $level = substr_count($filepath, '/');
 
-        // TODO: this should be improved ;-)
-        $localfiles = $fs->get_area_files($context->id, 'course_content', 0, "filepath, filename");
+        $localfiles = $fs->get_directory_files($context->id, 'course_content', 0, $filepath, false, true, "filepath, filename");
         foreach ($localfiles as $file) {
-            $name = $file->get_filename();
-            $path = $file->get_filepath();
-            $l = substr_count($path, '/');
-
-            if ($filepath === $path) {
-                if ($name !== '.') {
-                    $files[] = new file_info_coursefile($this, $context, $file);
-                }
-            } else if ($level == $l-1 and $name === '.' and strpos($path, $filepath) === 0) {
-                $dirs[] = new file_info_coursefile($this, $context, $file);
-            }
+            $result[] = new file_info_coursefile($this, $context, $file);
         }
 
-        return array_merge($dirs, $files);
+        return $result;
     }
 
     public function encodepath($urlbase, $path, $forcedownload=false, $https=false) {

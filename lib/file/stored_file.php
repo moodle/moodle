@@ -172,4 +172,8 @@ class stored_file {
     public function get_status() {
         return $this->file_record->status;
     }
+
+    public function get_id() {
+        return $this->file_record->id;
+    }
 }

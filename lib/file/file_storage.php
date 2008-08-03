@@ -155,6 +155,89 @@ class file_storage {
     }
 
     /**
+     * Returns all files and otionally directories
+     * @param int $contextid
+     * @param string $filearea
+     * @param int $itemid
+     * @param int $filepath directory path
+     * @param bool $recursive include all subdirectories
+     * @param bool $includedirs inlcude files and directories
+     * @param string $sort
+     * @return array of stored_files
+     */
+    public function get_directory_files($contextid, $filearea, $itemid, $filepath, $recursive=false, $inludedirs=true, $sort="filepath, filename") {
+        global $DB;
+
+        if (!$directory = $this->get_file($contextid, $filearea, $itemid, $filepath, '.')) {
+            return array();
+        }
+
+        if ($recursive) {
+
+            $dirs = $inludedirs ? "" : "AND filename <> '.'";
+            $length = textlib_get_instance()->strlen($filepath);
+
+            $sql = "SELECT *
+                      FROM {files}
+                     WHERE contextid = :contextid AND filearea = :filearea AND itemid = :itemid
+                           AND ".$DB->sql_substr()."(filepath, 1, $length) = :filepath
+                           AND id <> :dirid
+                           $dirs
+                  ORDER BY $sort";
+            $params = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
+
+            $files = array();
+            $dirs  = array();
+            $file_records = $DB->get_records_sql($sql, $params);
+            foreach ($file_records as $file_record) {
+                if ($file_record->filename == '.') {
+                    $dirs[] = new stored_file($this, $file_record);
+                } else {
+                    $files[] = new stored_file($this, $file_record);
+                }
+            }
+            $result = array_merge($dirs, $files);
+
+        } else {
+            $result = array();
+            $params = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid, 'filepath'=>$filepath, 'dirid'=>$directory->get_id());
+
+            $length = textlib_get_instance()->strlen($filepath);
+
+            if ($inludedirs) {
+                $sql = "SELECT *
+                          FROM {files}
+                         WHERE contextid = :contextid AND filearea = :filearea
+                               AND itemid = :itemid AND filename = '.'
+                               AND ".$DB->sql_substr()."(filepath, 1, $length) = :filepath
+                               AND id <> :dirid
+                      ORDER BY $sort";
+                $reqlevel = substr_count($filepath, '/') + 1;
+                $file_records = $DB->get_records_sql($sql, $params);
+                foreach ($file_records as $file_record) {
+                    if (substr_count($file_record->filepath, '/') !== $reqlevel) {
+                        continue;
+                    }
+                    $result[] = new stored_file($this, $file_record);
+                }
+            }
+
+            $sql = "SELECT *
+                      FROM {files}
+                     WHERE contextid = :contextid AND filearea = :filearea AND itemid = :itemid
+                           AND filepath = :filepath AND filename <> '.'
+                  ORDER BY $sort";
+
+            $file_records = $DB->get_records_sql($sql, $params);
+            foreach ($file_records as $file_record) {
+                $result[] = new stored_file($this, $file_record);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Delete all area files (optionally limited by itemid)
      * @param int $contextid
      * @param string $filearea
