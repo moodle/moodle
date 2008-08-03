@@ -20,6 +20,10 @@ class file_info_coursecat extends file_info {
         return format_string($this->category->name);
     }
 
+    public function is_writable() {
+        return false;
+    }
+
     public function is_directory() {
         return true;
     }
