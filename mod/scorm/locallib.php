@@ -564,7 +564,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 
 ?>
             <div class="scorm-center">
-               <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php?scoid=<?php echo $sco->id ?>&id=<?php echo $cm->id ?>"<?php echo $scorm->popup == 1?' target="newwin"':'' ?>>
+               <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php?scoid=<?php echo $sco->id ?>&id=<?php echo $cm->id ?>">
               <?php
                   if ($scorm->hidebrowse == 0) {
                       print_string('mode','scorm');
