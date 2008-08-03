@@ -22,7 +22,7 @@
         if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
             print_error('invalidcontext');
         }
-        redirect('index.php?contextid='.$context->id.'&amp;filearea=coursefiles');
+        redirect('index.php?contextid='.$context->id.'&amp;itemid=0&amp;filearea=course_content');
     }
 
     if (!$context = get_context_instance_by_id($contextid)) {
