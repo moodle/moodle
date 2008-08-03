@@ -129,6 +129,24 @@ class stored_file {
         return $packer->unzip_files_to_storage($zipfile, $contextid, $filearea, $itemid, $pathbase);
     }
 
+    /**
+     * Add file/directory into zip archive
+     * @param object $ziparchive
+     * @param string $archivepath pathname in zip archive
+     * @return bool success
+     */
+    public function add_to_ziparchive(zip_archive $ziparch, $archivepath) {
+        if ($this->is_directory()) {
+            return $ziparch->addEmptyDir($archivepath);
+        } else {
+            $path = $this->get_content_file_location();
+            if (!is_readable($path)) {
+                return false;
+            }
+            return $ziparch->addFile($path, $archivepath);
+        }
+    }
+
     public function get_contextid() {
         return $this->file_record->contextid;
     }
