@@ -995,7 +995,8 @@
         <FIELD NAME="name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="display_name"/>
         <FIELD NAME="display_name" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="name" NEXT="xmlrpc_server_url"/>
         <FIELD NAME="xmlrpc_server_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="display_name" NEXT="sso_land_url"/>
-        <FIELD NAME="sso_land_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="xmlrpc_server_url"/>
+        <FIELD NAME="sso_land_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="xmlrpc_server_url" NEXT="sso_jump_url"/>
+        <FIELD NAME="sso_jump_url" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="sso_land_url"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -1840,8 +1841,8 @@
   <STATEMENTS>
     <STATEMENT NAME="insert mnet_application" TYPE="insert" TABLE="mnet_application" COMMENT="Initial insert of records on table mnet_application" NEXT="insert log_display">
       <SENTENCES>
-        <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url) VALUES ('moodle','Moodle','/mnet/xmlrpc/server.php', '/auth/mnet/land.php')" />
-        <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url) VALUES ('mahara','Mahara','/api/xmlrpc/server.php',  '/auth/xmlrpc/land.php')" />
+        <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url, sso_jump_url) VALUES ('moodle','Moodle','/mnet/xmlrpc/server.php', '/auth/mnet/land.php', '/auth/mnet/jump.php')" />
+        <SENTENCE TEXT="(name, display_name, xmlrpc_server_url, sso_land_url, sso_jump_url) VALUES ('mahara','Mahara','/api/xmlrpc/server.php',  '/auth/xmlrpc/land.php', '/auth/xmlrpc/jump.php')" />
       </SENTENCES>
     </STATEMENT>
     <STATEMENT NAME="insert log_display" TYPE="insert" TABLE="log_display" COMMENT="Initial insert of records on table log_display" PREVIOUS="insert mnet_application">

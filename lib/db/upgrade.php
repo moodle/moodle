@@ -551,6 +551,21 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008073114);
     }
 
+    if ($result && $oldversion < 2008080400) {
+        // Add field ssl_jump_url to mnet application, and populate existing default applications
+        $table = new xmldb_table('mnet_application');
+        $field = new xmldb_field('sso_jump_url');
+        if (!$dbman->field_exists($table, $field)) {
+            $field->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
+            $result = $result && $dbman->add_field($table, $field);
+            $result = $result && $DB->set_field('mnet_application', 'sso_jump_url', '/auth/mnet/jump.php', array('name' => 'moodle'));
+            $result = $result && $DB->set_field('mnet_application', 'sso_jump_url', '/auth/xmlrpc/jump.php', array('name' => 'mahara'));
+        }
+
+        /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008080400);
+    }
+
     return $result;
 }
 
