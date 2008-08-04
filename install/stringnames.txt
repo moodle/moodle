@@ -48,6 +48,7 @@ creatingconfigfile
 ctyperecommended
 ctyperequired
 curlrecommended
+curlrequired
 customcheck
 database
 databasecreationsettings
