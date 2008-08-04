@@ -163,3 +163,4 @@ wrongzipfilename
 wwwroot
 wwwrooterror
 xmlrpcrecommended
+ziprequired
