@@ -59,31 +59,14 @@ if($action == 'list') {
     }
 
 } elseif($action == 'download') {
-    $ret = $repo->get_file($file, $title);
-    // TODO
-    // Ask Petr how to use FILE_API here
+    $path = $repo->get_file($file, $title);
     try {
-        $pathname = $ret;
-        $entry = new object();
-        $entry->contextid = SITEID;
-        $entry->filearea  = 'repository';
-        $entry->filepath  = '/';
-        $entry->filename  = $title;
-        $entry->timecreated  = time();
-        $entry->timemodified = time();
-        $entry->itemid       = $USER->id;
-        $entry->mimetype     = mimeinfo('type', $pathname);
-        $entry->userid       = $USER->id;
-        $fs = get_file_storage();
-        if ($file = $fs->create_file_from_pathname($entry, $pathname)) {
-            if($env == 'form'){
-                // return reference id
-                echo json_encode($file->get_itemid());
-            } elseif($env == 'editor') {
-                // return url
-                // echo json_encode($file->get_content_file_location());
-            } else {
-            }
+        $info = move_to_filepool($path, $title);
+        if($env == 'form'){
+            echo json_encode($info['id']);
+        } elseif($env == 'editor') {
+            echo json_encode($info['url']);
+        } else {
         }
     } catch (repository_exception $e){
         $err = new stdclass;

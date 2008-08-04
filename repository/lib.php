@@ -331,6 +331,36 @@ function repository_get_plugins(){
     }
     return $ret;
 }
+
+function move_to_filepool($path, $name) {
+    global $DB, $CFG, $USER;
+    $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $entry = new object();
+    $entry->filearea  = 'user_draft';
+    $entry->contextid = $context->id;
+    $entry->filename  = $name;
+    $entry->filepath  = '/';
+    $entry->timecreated  = time();
+    $entry->timemodified = time();
+    $entry->itemid       = $USER->id;
+    $entry->mimetype     = mimeinfo('type', $path);
+    $entry->userid       = $USER->id;
+    $fs = get_file_storage();
+    $browser = get_file_browser();
+    if ($file = $fs->create_file_from_pathname($entry, $path)) {
+        $id = json_encode($file->get_itemid());
+        $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+        // TODO
+        // get_params should include id value, talk to Petr.
+        $params = $ret->get_params();
+        $params['id'] = 88;
+        return array('url'=>$ret->get_url(),'id'=>$params['id']);
+    } else {
+        return null;
+    }
+}
+
+
 function get_repository_client(){
     global $CFG;
     $strsubmit    = get_string('submit', 'repository');
@@ -632,7 +662,7 @@ function get_repository_client(){
             var file = document.getElementById('fileurl').value;
             _client.loading();
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
-                '$CFG->wwwroot/repository/ws.php?id='+_client.repositoryid+'&action=download', 
+                '$CFG->wwwroot/repository/ws.php?repo_id='+_client.repositoryid+'&action=download', 
                 _client.dlfile, _client.postdata({'env':_client.env, 'file':file, 'title':title}));
         }
         _client.login = function(){
@@ -652,6 +682,10 @@ function get_repository_client(){
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
                 '$CFG->wwwroot/repository/ws.php', _client.callback,
                 _client.postdata(obj));
+        }
+        _client.end = function(str){
+            _client.target.value = str;
+            _client.viewfiles();
         }
         _client.callback = {
             success: function(o) {
@@ -690,7 +724,8 @@ function get_repository_client(){
                     return;
                 }
                 var html = '<h1>Download Successfully!</h1>';
-                html += '<a href="###" onclick="repository_client.viewfiles()">Back</a>';
+                //html += '<a href="###" onclick="repository_client.viewfiles()">Back</a>';
+                html += '<a href="###" onclick="repository_client.end(\''+ret+'\')">Add!</a>';
                 panel.get('element').innerHTML = html;
             }
         }
@@ -699,7 +734,7 @@ function get_repository_client(){
             _client.viewbar.set('disabled', false);
             _client.loading();
             _client.repositoryid = id;
-            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
+            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?repo_id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
         }
         _client.search = function(id){
             var data = window.prompt("What are you searching for?");
@@ -709,7 +744,7 @@ function get_repository_client(){
             }
             _client.viewbar.set('disabled', false);
             _client.loading();
-            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?id='+id+'&s='+data+'&env='+_client.env, _client.callback);
+            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?repo_id='+id+'&s='+data+'&env='+_client.env, _client.callback);
         }
         return _client;
     })();
@@ -725,6 +760,7 @@ EOD;
     function openpicker(obj) {
         if(!repository_client.instance) {
             repository_client.env = obj.env;
+            repository_client.target = obj.target;
             repository_client.instance = new repository_client();
             repository_client.instance.create_picker();
         } else {

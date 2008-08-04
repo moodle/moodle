@@ -45,7 +45,18 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
             return $this->getFrozenHtml();
         } else {
             $ret = get_repository_client();
-            return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' onclick=\'openpicker({"env":"form"})\' />'.$ret['html'].$ret['js'];
+            $str = $this->_getTabs();
+            $str .= '<input type="hidden" value="" name="repo_attachment" id="repo_value" />';
+            $str .= <<<EOD
+<script type="text/javascript">
+function callpicker(){
+    var el=document.getElementById('repo_value');
+    openpicker({"env":"form", 'target':el})
+}
+</script>
+EOD;
+            $str .= '<input' . $this->_getAttrString($this->_attributes) . ' onclick=\'callpicker()\' />'.$ret['html'].$ret['js'];
+            return $str;
         }
     }
 }
