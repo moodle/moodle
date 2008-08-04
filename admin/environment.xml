@@ -189,6 +189,17 @@
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <CUSTOM_CHECKS>
+      <CUSTOM_CHECK file="question/upgrade.php" function="question_check_no_rqp_questions" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="qtyperqpwillberemovedanyway" />
+          <ON_OK message="qtyperqpwillberemoved" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="question/upgrade.php" function="question_random_check" level="optional">
+        <FEEDBACK>
+          <ON_OK message="questioncwqpfsok" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="optional">
         <FEEDBACK>
           <ON_CHECK message="globalswarning" />
