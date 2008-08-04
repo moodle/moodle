@@ -140,6 +140,6 @@
         </noscript> 
     </head>
     <body onload="doredirect();">
-        <p><?php echo get_string('activityloading', 'scorm');?> <span id="countdown"><?php echo $delayseconds ?></span> <?php echo get_string('seconds', 'scorm');?>(s). &nbsp; <img src='<?php echo $scormpixdir;?>/wait.gif'><p>
+        <p><?php echo get_string('activityloading', 'scorm');?> <span id="countdown"><?php echo $delayseconds ?></span> <?php echo get_string('numseconds');?>. &nbsp; <img src='<?php echo $scormpixdir;?>/wait.gif'><p>
     </body> 
 </html>
