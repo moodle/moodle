@@ -3072,7 +3072,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $p = array(
             'postid' => $post->id,
         );
-        //$commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
+        $commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
     }
 
     echo '<div class="commands">';
@@ -7045,32 +7045,111 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     }
 
     function prepare_package($tempdir) {
-        global $CFG;
-        if ($this->attachment) {
+        global $CFG, $SESSION;
+        // either a whole discussion
+        // a single post, with or without attachment
+        // or just an attachment with no post
+        if (!$this->post) { // whole discussion
+            portfolio_exporter::raise_error('exoprting whole discussion not implemented - see MDL-15758');
+        // @todo see MDL-15758
+        } else {
             if ($basedir = forum_file_area($this->post)) {
                 //@todo penny fix all this with files api
                 require_once($CFG->dirroot . '/backup/lib.php');
-                return backup_copy_file($basedir, $tempdir);
+                $status =  backup_copy_file($basedir, $tempdir);
+                if ($this->attachment) {
+                    return $status; // all we need to do
+                }
             }
-            return true;
+            $post = $this->prepare_post($this->post);
+            // @todo penny convert to files api
+            $status = $status && ($handle = fopen($tempdir . '/post.html', 'w'));
+            $status = $status && fwrite($handle, $post);
+            $status = $status && fclose($handle);
+            return $status;
         }
-        portfolio_exporter::raise_error('TODO - see MDL-15758');
-        // @todo see MDL-15758
+    }
+
+    /**
+    * this is a very cut down version of what is in forum_make_mail_post
+    */
+    private function prepare_post($post) {
+        global $DB;
+        static $users;
+        if (empty($users)) {
+            $users = array($this->user->id => $this->user);
+        }
+        if (!array_key_exists($post->userid, $users)) {
+            $users[$post->userid] = $DB->get_record('user', array('id' => $post->userid));
+        }
+        $viewfullnames = true;
+        // format the post body
+        $options = new object();
+        $options->para = true;
+        $formattedtext = format_text(trusttext_strip($post->message), $post->format, $options, $this->get('course')->id);
+
+        $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
+
+        $output .= '<tr class="header"><td>';// can't print picture.
+        $output .= '</td>';
+
+        if ($post->parent) {
+            $output .= '<td class="topic">';
+        } else {
+            $output .= '<td class="topic starter">';
+        }
+        $output .= '<div class="subject">'.format_string($post->subject).'</div>';
+
+        $fullname = fullname($users[$post->userid], $viewfullnames);
+        $by = new object();
+        $by->name = $fullname;
+        $by->date = userdate($post->modified, '', $this->user->timezone);
+        $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
+
+        $output .= '</td></tr>';
+
+        $output .= '<tr><td class="left side" valign="top">';
+
+        $output .= '</td><td class="content">';
+
+        $output .= $formattedtext;
+
+        if ($post->attachment) {
+            $post->course = $this->get('course')->id;
+            $output .= '<div class="attachments">';
+            if ($basedir = forum_file_area($this->post)) {
+                if ($files = get_directory_list($basedir)) {
+                    $output .= '<br /><b>' .  get_string('attachments', 'forum') . '</b>:<br /><br />';
+                    foreach ($files as $file) {
+                        $output .= clean_filename($file) . '<br />';
+                    }
+                }
+            }
+            $output .= "</div>";
+        }
+
+        $output .= '</td></tr></table>'."\n\n";
+
+        return $output;
     }
 
     function get_sha1() {
-        if ($this->attachment) {
+        if ($this->post) {
+            $attachsha1 = '';
             if ($basedir = forum_file_area($this->post)) {
                 $sha1s = array();
                 foreach (get_directory_list($basedir) as $file) {
                     $sha1s[] = sha1_file($basedir . '/' . $file);
                 }
                 asort($sha1s);
-                return sha1(implode('', $sha1s));
+                $attachsha1 =  sha1(implode('', $sha1s));
+                if ($this->attachment) {
+                    return $attachsha1; // all we have to do
+                }
             }
-            return false;
+            return sha1($attachsha1 . ',' . $this->post->subject . ',' . $this->post->message);
         }
-        portfolio_exporter::raise_error('TODO - see MDL-15758');
+        portfolio_exporter::raise_error('exporting whole discussion not implemented - see MDL-15758');
         // @todo see MDL-15758
     }
 

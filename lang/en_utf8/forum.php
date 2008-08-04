@@ -22,6 +22,7 @@ $string['allsubscribe'] = 'Subscribe to all forums';
 $string['allunsubscribe'] = 'Unsubscribe from all forums';
 $string['anyfile'] = 'Any file';
 $string['attachment'] = 'Attachment';
+$string['attachments'] = 'Attachments';
 $string['attachmentnopost'] = 'You cannot export attachments without a post id';
 $string['blockafter'] = 'Post threshold for blocking';
 $string['blockperiod'] = 'Time period for blocking';
