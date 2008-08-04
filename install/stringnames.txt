@@ -27,6 +27,7 @@ continue
 ctyperecommended
 ctyperequired
 curlrecommended
+curlrequired
 customcheck
 database
 databasecreationsettingshead
