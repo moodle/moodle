@@ -28,11 +28,18 @@ if (!is_null($contexturl)) {
 
     $selectedkeys = preg_grep('/^'. $moduletype .'\/'. $modulename . $dialogpostfix .':/', $keys);
    
-    $output = "tinyMCE.addI18n('$lang". ($modulename ? '.'.$modulename:'') ."$dialogpostfix',{\n";
+    $output = "tinyMCE.addI18n('$lang". ($modulename ? '.'.$modulename:'') ."$dialogpostfix',{\r\n";
+    $i = count($selectedkeys);
     foreach($selectedkeys as $key) {
-        $output .= substr($key, strpos($key, ':')+1) .':"'. addslashes_js(get_string($key, 'tinymce')) ."\",\n";
+        $i--;
+        $output .= substr($key, strpos($key, ':')+1) .':"'. addslashes_js(get_string($key, 'tinymce')) .'"';
+        if ($i > 0) {
+            $output .= ","; // must not add commas at the last element - breaks in IE 6 and 7.
+        }
+        $output .= "\r\n";
     }
     $output .= "});";
+    
 
 } else {
     $output = "tinyMCE.addI18n({". $lang .":{";
@@ -44,19 +51,24 @@ if (!is_null($contexturl)) {
         $section = $subkey[0];
         $string = $subkey[1];
         if ($section != $currentsection) {
+            $output .= "\r\n";
             if ($firstiteration) {
                 $firstiteration = false;
-                $output .= "\n";
             } else {
-                $output .= "},\n"; 
+                $output .= "},\r\n"; 
             }
             $currentsection = $section;
-            $output .= $currentsection .":{\n";
+            $output .= $currentsection .":{\r\n";
+        } else {
+            $output .= ",\r\n"; 
         }
-        $output .= $string .':"'. addslashes_js(get_string($key, 'tinymce')) ."\",\n";
+
+        $output .= $string .':"'. addslashes_js(get_string($key, 'tinymce')) .'"';
     } 
-    $output .= "}}});";
+    $output .= "\r\n}}});";
+    
 }
+
 $lifetime = '86400';
 @header('Content-type: text/javascript; charset=utf-8');
 @header('Content-length: '.strlen($output));
