@@ -2311,6 +2311,7 @@ function data_export_csv($export, $delimiter_name, $dataname, $count, $todir=fal
         echo $returnstr;
         return;
     }
+    // @todo  - convert to files api.
     $status = ($handle = fopen($todir . '/' . $filename, 'w'));
     $status = $status && fwrite($handle, $returnstr);
     $status = $status && fclose($handle);
