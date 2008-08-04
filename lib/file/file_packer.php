@@ -1,7 +1,5 @@
 <?php  //$Id$
 
-require_once("$CFG->libdir/file/zip_archive.php");
-
 /**
  * Utility class - handles all zipping and unzipping operations.
  */
@@ -52,6 +50,9 @@ class file_packer {
      * @return bool success
      */
     public function zip_files_to_pathname($files, $zipfile) {
+        global $CFG;
+        require_once("$CFG->libdir/file/zip_archive.php");
+
         if (!is_array($files)) {
             return false;
         }
@@ -139,6 +140,7 @@ class file_packer {
      */
     public function unzip_files_to_pathname($zipfile, $pathname) {
         global $CFG;
+        require_once("$CFG->libdir/file/zip_archive.php");
 
         if (!is_string($zipfile)) {
             return $zipfile->unzip_files_to_pathname($pathname);
