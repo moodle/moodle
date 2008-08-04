@@ -5,6 +5,7 @@
     require_once("lib.php");
 
     $id   = required_param('id', PARAM_INT);               // course id
+    $scaleid  = optional_param('scaleid', 0, PARAM_INT);   // scale id (show only this one)
 
     if (!$course = $DB->get_record('course', array('id'=>$id))) {
         print_error("invalidcourseid");
@@ -25,8 +26,26 @@
     $strhelptext = get_string("helptext");
     $stractivities = get_string("activities");
 
-
     print_header($strscales);
+
+    if ($scaleid) {
+        if ($scale = get_record("scale", 'id', $scaleid)) {
+            if ($scale->courseid == 0 || $scale->courseid == $course->id) {
+
+                $scalemenu = make_menu_from_list($scale->scale);
+
+                print_simple_box_start("center");
+                print_heading($scale->name);
+                echo "<center>";
+                choose_from_menu($scalemenu, "", "", "");
+                echo "</center>";
+                echo text_to_html($scale->description);
+                print_simple_box_end();
+                close_window_button();
+                exit;
+            }
+        }
+    }
 
     if ($scales = $DB->get_records("scale", array("courseid"=>$course->id), "name ASC")) {
         print_heading($strcustomscales);
