@@ -330,12 +330,12 @@ function SCORMapi1_3() {
         if ((Initialized) && (!Terminated)) {
             if (element !="") {
                 var expression = new RegExp(CMIIndex,'g');
-                var elementmodel = element.replace(expression,'.n.');
+                var elementmodel = String(element).replace(expression,'.n.');
 
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
 
-                        element = element.replace(/\.(\d+)\./, ".N$1.");
+                        element = String(element).replace(/\.(\d+)\./, ".N$1.");
                         element = element.replace(/\.(\d+)\./, ".N$1.");
 
                         var elementIndexes = element.split('.');
@@ -429,7 +429,7 @@ function SCORMapi1_3() {
         if ((Initialized) && (!Terminated)) {
             if (element != "") {
                 var expression = new RegExp(CMIIndex,'g');
-                var elementmodel = element.replace(expression,'.n.');
+                var elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
                         if (eval('datamodel["'+elementmodel+'"].format') != 'CMIFeedback') {
@@ -533,7 +533,7 @@ function SCORMapi1_3() {
 
                                                     // Use cmi.interactions.n.type value to check the right dataelement format
                                                     if (elementIndexes[elementIndexes.length-2] == eval(parentelement+'._count')) {
-                                                        var interactiontype = eval(parentelement.replace('correct_responses','type'));
+                                                        var interactiontype = eval(String(parentelement).replace('correct_responses','type'));
                                                         if ((typeof correct_responses[interactiontype].limit == 'undefined') ||
                                                             (eval(parentelement+'._count') < correct_responses[interactiontype].limit)) {
                                                             if (correct_responses[interactiontype].pre != '') {
@@ -992,7 +992,7 @@ function SCORMapi1_3() {
             return element;
         } else {
             var expression = new RegExp(CMIIndex,'g');
-            var elementmodel = element.replace(expression,'.n.');
+            var elementmodel = String(element).replace(expression,'.n.');
             if (typeof datamodel[elementmodel] != "undefined") {
                 return elementmodel;
             }
@@ -1061,7 +1061,7 @@ function SCORMapi1_3() {
             } else {
                 var element = parent+'.'+property;
                 var expression = new RegExp(CMIIndexStore,'g');
-                var elementmodel = element.replace(expression,'.n.');
+                var elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
                         var elementstring = '&'+underscore(element)+'='+encodeURIComponent(data[property]);

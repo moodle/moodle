@@ -74,6 +74,6 @@
 
 var errorCode = "0";
 function underscore(str) {
-    str = str.replace(/.N/g,".");
+    str = String(str).replace(/.N/g,".");
     return str.replace(/\./g,"__");
 }
