@@ -148,6 +148,12 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
         return;
     }
 
+    if (!empty($SESSION->portfoliointernal)) {
+        // something somewhere has detected a risk of this being called during inside the preparation
+        // eg forum_print_attachments
+        return;
+    }
+
     if (empty($callbackfile)) {
         $backtrace = debug_backtrace();
         if (!array_key_exists(0, $backtrace) || !array_key_exists('file', $backtrace[0]) || !is_readable($backtrace[0]['file'])) {
@@ -2010,7 +2016,7 @@ final class portfolio_exporter {
     * error handler - decides whether we're running interactively or not
     * and behaves accordingly
     */
-    public static function raise_error($string, $module, $continue=null) {
+    public static function raise_error($string, $module='moodle', $continue=null) {
         if (defined('FULLME') && FULLME == 'cron') {
             debugging(get_string($string, $module));
             return false;
@@ -2018,6 +2024,29 @@ final class portfolio_exporter {
         global $SESSION;
         unset($SESSION->portfolio);
         print_error($string, $module, $continue);
+    }
+}
+
+class portfolio_instance_select extends moodleform {
+
+    private $caller;
+
+    function definition() {
+        $this->caller = $this->_customdata['caller'];
+        $options = portfolio_instance_select(
+            portfolio_instances(),
+            $this->caller->supported_formats(),
+            get_class($this->caller),
+            'instance',
+            true,
+            true
+        );
+        if (empty($options)) {
+            portfolio_exporter::raise_error('noavailableplugins', 'portfolio');
+        }
+        $mform =& $this->_form;
+        $mform->addElement('select', 'instance', get_string('selectplugin', 'portfolio'), $options);
+        $this->add_action_buttons(true, get_string('next'));
     }
 }
 

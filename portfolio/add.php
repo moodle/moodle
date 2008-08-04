@@ -6,7 +6,7 @@ if (empty($CFG->portfolioenabled)) {
 }
 
 require_once($CFG->libdir . '/portfoliolib.php');
-
+require_once($CFG->libdir . '/formslib.php');
 $exporter = null;
 if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
     $exporter = unserialize(serialize($SESSION->portfolio->exporter));
@@ -16,21 +16,22 @@ if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
     require_once($CFG->dirroot . '/' . $exporter->callerfile);
     $exporter = unserialize(serialize($SESSION->portfolio->exporter));
     $SESSION->portfolio->exporter =& $exporter;
-    if (!$exporter->get('instance')) {
-        $instance = required_param('instance', PARAM_INT);
-        if (!$instance = portfolio_instance($instance)) {
-            $exporter->raise_error('invalidinstance', 'portfolio');
-        }
-        if ($broken = portfolio_instance_sanity_check($instance)) {
-            print_error(get_string($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin')));
-        }
-        $instance->set('user', $USER);
-        $exporter->set('instance', $instance);
-    }
-    if ($cancel = optional_param('cancel', 0, PARAM_INT)) {
+    if ($cancel = optional_param('cancel', 0, PARAM_RAW)) {
         $returnurl = $exporter->get('caller')->get_return_url();
         unset($SESSION->portfolio);
         redirect($returnurl);
+    }
+    if (!$exporter->get('instance')) {
+        if ($instance = optional_param('instance', '', PARAM_INT)) {
+            if (!$instance = portfolio_instance($instance)) {
+                $exporter->raise_error('invalidinstance', 'portfolio');
+            }
+            if ($broken = portfolio_instance_sanity_check($instance)) {
+                print_error(get_string($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin')));
+            }
+            $instance->set('user', $USER);
+            $exporter->set('instance', $instance);
+        }
     }
 } else {
     // we'e just posted here for the first time and have might the instance already
@@ -108,21 +109,25 @@ if (!$exporter->get('instance')) {
     // add them as hidden fields in a new form
     // to select the instance and post back here again
     // for the next block to catch
-    $form = '<form action="' . $CFG->wwwroot . '/portfolio/add.php" method="post">' . "\n";
-
-    if (!$select = portfolio_instance_select(portfolio_instances(), $exporter->get('caller')->supported_formats(), get_class($exporter->get('caller')), 'instance', true)) {
-        print_error('noavailableplugins', 'portfolio');
+    $mform = new portfolio_instance_select('', array('caller' => $exporter->get('caller')));
+    if ($mform->is_cancelled()) {
+        $returnurl = $caller->get_return_url();
+        unset($SESSION->portfolio);
+        redirect($returnurl);
+        exit;
+    } else if ($fromform = $mform->get_data()){
+        redirect($CFG->wwwroot . '/portfolio/add.php?instance=' . $fromform->instance);
+        exit;
     }
-    $form .= $select;
-    $form .= '<input type="submit" value="' . get_string('select') . '" />';
-    $form .= '</form>' . "\n";
-    $exporter->print_header();
-    print_heading(get_string('selectplugin', 'portfolio'));
-    print_simple_box_start();
-    echo $form;
-    print_simple_box_end();
-    print_footer();
-    exit;
+    else {
+        $exporter->print_header();
+        print_heading(get_string('selectplugin', 'portfolio'));
+        print_simple_box_start();
+        $mform->display();
+        print_simple_box_end();
+        print_footer();
+        exit;
+    }
 }
 
 $exporter->process_stage($stage, $alreadystolen);
