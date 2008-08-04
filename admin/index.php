@@ -442,6 +442,11 @@
 /// Check all portfolio plugins and upgrade if necessary
     upgrade_plugins('portfolio', 'portfolio/type', "$CFG->wwwroot/$CFG->admin/index.php");
 
+/// Check all progress tracker plugins and upgrade if necessary
+    upgrade_plugins('trackerexport', 'tracker/export', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('trackerimport', 'tracker/import', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('trackerreport', 'tracker/report', "$CFG->wwwroot/$CFG->admin/index.php");
+
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
 
