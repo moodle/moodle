@@ -200,6 +200,11 @@
           <ON_OK message="questioncwqpfsok" />
         </FEEDBACK>
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="optional">
+        <FEEDBACK>
+          <ON_CHECK message="globalswarning" />
+        </FEEDBACK>
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="2.0" requires="1.9">
@@ -220,6 +225,7 @@
       <VENDOR name="odbc_mssql" version="9.0" />
       <VENDOR name="mssql_n" version="9.0" />
       <VENDOR name="oracle" version="9.0" />
+      <VENDOR name="sqlite" version="2.0" />
     </DATABASE>
     <PHP version="5.2.4" level="required">
     </PHP>
@@ -234,9 +240,9 @@
           <ON_CHECK message="mbstringrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
-      <PHP_EXTENSION name="curl" level="optional">
+      <PHP_EXTENSION name="curl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="curlrecommended" />
+          <ON_CHECK message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="openssl" level="optional">
@@ -259,12 +265,16 @@
           <ON_ERROR message="ctyperequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
+      <PHP_EXTENSION name="zip" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="ziprequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
     </PHP_EXTENSIONS>
     <CUSTOM_CHECKS>
-      <CUSTOM_CHECK file="question/upgrade.php" function="question_check_no_rqp_questions" level="optional">
+      <CUSTOM_CHECK file="lib/customcheckslib.php" function="php_check_register_globals" level="optional">
         <FEEDBACK>
-          <ON_CHECK message="qtyperqpwillberemovedanyway" />
-          <ON_OK message="qtyperqpwillberemoved" />
+          <ON_CHECK message="globalswarning" />
         </FEEDBACK>
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
