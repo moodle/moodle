@@ -473,12 +473,6 @@
         fwrite ($bf,full_tag("DATE",2,false,$preferences->backup_unique_code));
         //The original site wwwroot
         fwrite ($bf,full_tag("ORIGINAL_WWWROOT",2,false,$CFG->wwwroot));
-        //The zip method used
-        if (!empty($CFG->zip)) {
-            $zipmethod = 'external';
-        } else {
-            $zipmethod = 'internal';
-        }
         //Indicate if it includes external MNET users
         $sql = "SELECT b.old_id
                   FROM {backup_ids} b
@@ -488,7 +482,6 @@
         if ($DB->record_exists_sql($sql, array($preferences->backup_unique_code, $CFG->mnet_localhost_id))) {
             fwrite ($bf,full_tag("MNET_REMOTEUSERS",2,false,'true'));
         }
-        fwrite ($bf,full_tag("ZIP_METHOD",2,false,$zipmethod));
         //Te includes tag
         fwrite ($bf,start_tag("DETAILS",2,true));
         //Now, go to mod element of preferences to print its status

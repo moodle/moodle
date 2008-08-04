@@ -249,9 +249,14 @@
           <ON_CHECK message="xmlrpcrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
-     <PHP_EXTENSION name="ctype" level="required">
+      <PHP_EXTENSION name="ctype" level="required">
         <FEEDBACK>
           <ON_ERROR message="ctyperequired" />
+        </FEEDBACK>
+      </PHP_EXTENSION>
+      <PHP_EXTENSION name="zip" level="required">
+        <FEEDBACK>
+          <ON_ERROR message="ziprequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
     </PHP_EXTENSIONS>

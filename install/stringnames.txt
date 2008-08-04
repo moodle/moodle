@@ -251,3 +251,4 @@ wwwroot
 wwwrooterror
 yourchoice
 xmlrpcrecommended
+ziprequired

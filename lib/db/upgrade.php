@@ -566,6 +566,13 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008080400);
     }
 
+    if ($result && $oldversion < 2008080401) {
+        // zip binaries not used anymore
+        unset_config('zip');
+        unset_config('unzip');
+        /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008080401);
+    }
     return $result;
 }
 

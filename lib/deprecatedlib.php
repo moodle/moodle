@@ -389,6 +389,74 @@ function unzip_file($zipfile, $destination = '', $showstatus_ignored = true) {
     return true;
 }
 
+/**
+ * Zip an array of files/dirs to a destination zip file
+ * Both parameters must be FULL paths to the files/dirs
+ */
+function zip_files ($originalfiles, $destination) {
+    global $CFG;
+
+    //Extract everything from destination
+    $path_parts = pathinfo(cleardoubleslashes($destination));
+    $destpath = $path_parts["dirname"];       //The path of the zip file
+    $destfilename = $path_parts["basename"];  //The name of the zip file
+    $extension = $path_parts["extension"];    //The extension of the file
+
+    //If no file, error
+    if (empty($destfilename)) {
+        return false;
+    }
+
+    //If no extension, add it
+    if (empty($extension)) {
+        $extension = 'zip';
+        $destfilename = $destfilename.'.'.$extension;
+    }
+
+    //Check destination path exists
+    if (!is_dir($destpath)) {
+        return false;
+    }
+
+    //Check destination path is writable. TODO!!
+
+    //Clean destination filename
+    $destfilename = clean_filename($destfilename);
+
+    //Now check and prepare every file
+    $files = array();
+    $origpath = NULL;
+
+    foreach ($originalfiles as $file) {  //Iterate over each file
+        //Check for every file
+        $tempfile = cleardoubleslashes($file); // no doubleslashes!
+        //Calculate the base path for all files if it isn't set
+        if ($origpath === NULL) {
+            $origpath = rtrim(cleardoubleslashes(dirname($tempfile)), "/");
+        }
+        //See if the file is readable
+        if (!is_readable($tempfile)) {  //Is readable
+            continue;
+        }
+        //See if the file/dir is in the same directory than the rest
+        if (rtrim(cleardoubleslashes(dirname($tempfile)), "/") != $origpath) {
+            continue;
+        }
+        //Add the file to the array
+        $files[] = $tempfile;
+    }
+
+    $zipfiles = array();
+    $start = strlen($origpath)+1;
+    foreach($files as $file) {
+        $zipfiles[substr($file, $start)] = $file;
+    }
+
+    $packer = get_file_packer();
+
+    return $packer->zip_files_to_pathname($zipfiles, $destfilename);
+}
+
 /////////////////////////////////////////////////////////////
 /// Old functions not used anymore - candidates for removal
 /////////////////////////////////////////////////////////////
