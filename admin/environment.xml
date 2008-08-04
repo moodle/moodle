@@ -225,6 +225,7 @@
       <VENDOR name="odbc_mssql" version="9.0" />
       <VENDOR name="mssql_n" version="9.0" />
       <VENDOR name="oracle" version="9.0" />
+      <VENDOR name="sqlite" version="2.0" />
     </DATABASE>
     <PHP version="5.2.4" level="required">
     </PHP>
@@ -239,9 +240,9 @@
           <ON_CHECK message="mbstringrecommended" />
         </FEEDBACK>
       </PHP_EXTENSION>
-      <PHP_EXTENSION name="curl" level="optional">
+      <PHP_EXTENSION name="curl" level="required">
         <FEEDBACK>
-          <ON_CHECK message="curlrecommended" />
+          <ON_CHECK message="curlrequired" />
         </FEEDBACK>
       </PHP_EXTENSION>
       <PHP_EXTENSION name="openssl" level="optional">
