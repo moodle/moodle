@@ -557,8 +557,8 @@ function xmldb_main_upgrade($oldversion=0) {
         $field = new xmldb_field('sso_jump_url');
         if (!$dbman->field_exists($table, $field)) {
             $field->set_attributes(XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-            $result = $result && $dbman->add_field($table, $field);
-            $result = $result && $DB->set_field('mnet_application', 'sso_jump_url', '/auth/mnet/jump.php', array('name' => 'moodle'));
+            $dbman->add_field($table, $field);
+            $result = $DB->set_field('mnet_application', 'sso_jump_url', '/auth/mnet/jump.php', array('name' => 'moodle'));
             $result = $result && $DB->set_field('mnet_application', 'sso_jump_url', '/auth/xmlrpc/jump.php', array('name' => 'mahara'));
         }
 
