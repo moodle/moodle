@@ -9,13 +9,8 @@ class file_storage {
      * Contructor
      * @param string $filedir full path to pool directory
      */
-    public function __construct() {
-        global $CFG;
-        if (isset($CFG->filedir)) {
-            $this->filedir = $CFG->filedir;
-        } else {
-            $this->filedir = $CFG->dataroot.'/filedir';
-        }
+    public function __construct($filedir) {
+        $this->filedir = $filedir;
 
         // make sure the file pool directory exists
         if (!is_dir($this->filedir)) {
@@ -26,6 +21,14 @@ class file_storage {
             file_put_contents($this->filedir.'/warning.txt',
                               'This directory contains the content of uploaded files and is controlled by Moodle code. Do not manually move, change or rename any of the files and subdirectories here.');
         }
+    }
+
+    /**
+     * Returns location of filedir (file pool)
+     * @return string pathname 
+     */
+    public function get_filedir() {
+        return $this->filedir;
     }
 
     /**

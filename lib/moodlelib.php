@@ -4502,7 +4502,13 @@ function get_file_storage() {
 
     require_once("$CFG->libdir/filelib.php");
 
-    $fs = new file_storage();
+    if (isset($CFG->filedir)) {
+        $filedir = $CFG->filedir;
+    } else {
+        $filedir = $CFG->dataroot.'/filedir';
+    }
+
+    $fs = new file_storage($filedir);
 
     return $fs;
 }

@@ -41,12 +41,7 @@ class stored_file {
      * @return ful path to pool file with file content
      **/
     protected function get_content_file_location() {
-        global $CFG;
-        if (isset($CFG->filedir)) {
-            $filedir = $CFG->filedir;
-        } else {
-            $filedir = $CFG->dataroot.'/filedir';
-        }
+        $filedir = $this->fs->get_filedir();
         $contenthash = $this->file_record->contenthash;
         $l1 = $contenthash[0].$contenthash[1];
         $l2 = $contenthash[2].$contenthash[3];
