@@ -58,6 +58,7 @@ $string['creatingconfigfile'] = 'Aanmaken configuratiebestand ...';
 $string['ctyperecommended'] = 'Het installeren van de optionele ctype PHP extentie is aanbevolen om de performantie van de site te verhogen, vooral als op je site niet-latijnse talen gebruikt worden.';
 $string['ctyperequired'] = 'De ctype PHP-extentie is nu vereist in Moodle om de performantie te verhogen en om multi-talencompatibiliteit mogelijk te maken.';
 $string['curlrecommended'] = 'Het installeren van de optionele Curl bibliotheek wordt ten zeerste aangeraden om de netwerkmogelijkheden van Moodle in te schakelen';
+$string['curlrequired'] = 'De cURL PHP-extentie is nu vereist in Moodle om te kunnen communiceren met Moodle bewaarplaats';
 $string['customcheck'] = 'Andere controles';
 $string['database'] = 'Databank';
 $string['databasecreationsettings'] = 'Nu moet je de databank configureren waar de meeste gegevens van Moodle bewaard zullen worden. Deze databank zal automatisch gecreëerd worden door de Moodle4Windows installatietechnologie met de onderstaande instellingen.<br />

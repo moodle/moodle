@@ -58,6 +58,7 @@ $string['creatingconfigfile'] = 'Création du fichier de configuration...';
 $string['ctyperecommended'] = 'L\'installation de l\'extension PHP optionnelle ctype est vivement recommandée afin d\'améliorer les performances du site, en particulier si votre site utilise des caractères non-latins.';
 $string['ctyperequired'] = 'L\'extension PHP ctype est maintenant requise par Moodle, afin d\'améliorer les performances du site et d\'offrir compatibilité multilingue.';
 $string['curlrecommended'] = 'L\'installation de la bibliothèque optionnelle cURL est vivement recommandée, afin de pouvoir utiliser la fonctionnalité Réseau Moodle.';
+$string['curlrequired'] = 'L\'installation de l\'extension PHP cURL est maintenant requise par Moodle, afin de pouvoir communiquer avec les dépôts de documents de Moodle.';
 $string['customcheck'] = 'Autres contrôles';
 $string['database'] = 'Base de données';
 $string['databasecreationsettings'] = 'La base de données dans laquelle sont enregistrées la plupart des données utilisées par Moodle doit maintenant être configurée. Cette base de données sera créée automatiquement par l\'installeur Moodle4Windows avec les options spécifiées ci-dessous.<br /><br /><br />

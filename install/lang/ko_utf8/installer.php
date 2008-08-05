@@ -60,6 +60,7 @@ $string['creatingconfigfile'] = '설정파일 작성 중.. /n';
 $string['ctyperecommended'] = '사이트가 비 라틴계열의 언어를 사용한다면 사이트의 성능 향상을 위해 추가적인 ctype PHP 확장자 설치를 강력히 권고합니다.';
 $string['ctyperequired'] = '다국어 호환 기능 및 사이트의 성능 향상을 위해 이제부터 무들은 ctype의 PHP 확장자를 요구합니다.';
 $string['curlrecommended'] = '무들 네트웍 기능을 활성화하기 위해서는 추가적인 cURL 라이브러리를 설치할 것을 강력히 권고한다.';
+$string['curlrequired'] = '무들 저장소와 교신하기 위해서는 cURL 확장이 필요합니다.';
 $string['customcheck'] = '다른 점검들';
 $string['database'] = '데이타 베이스';
 $string['databasecreationsettings'] = '지금 당신은 모든 무들 데이터가 저장될 데이터베이스를 설정할 필요가 있습니다. 이 데이터베이스는  아래에 있는 특별한 설정의 윈도우 설치 프로그램으로써 무들 프로그램에 의해 자동설치 될 것입니다.<br />

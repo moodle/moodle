@@ -58,6 +58,7 @@ $string['creatingconfigfile'] = 'A konfigurációs állomány létrehozása...';
 $string['ctyperecommended'] = 'Ajánlatos telepíteni az opcionális ctype PHP-bővítést a portál teljesítményének növelése érdekében, különösen abban az esetben, ha a portál támogatja nem latin nyelvek használatát.';
 $string['ctyperequired'] = 'A ctype PHP-bővítést a Moodle előírja a portál teljesítményének növelése és a több nyelvű kompatibilitás érdekében.';
 $string['curlrecommended'] = 'Ajánlatos a választható Curl-könyvtár telepítése a Moodle Networking bekapcsolásához.';
+$string['curlrequired'] = 'A Moodle most már előírja a cURL PHP-bővítést a Moodle-adattárakkal való kommunikációhoz.';
 $string['customcheck'] = 'Egyéb ellenőrzések';
 $string['database'] = 'Adatbázis';
 $string['databasecreationsettings'] = 'Most a Moodle adatait tároló adatbázis beállításait kell elvégeznie. Ezt az adatbázist a telepítő automatikusan beállítja az alábbiak szerint. <br /><br /><br /><b>Típus: </b>a telepítő \"mysql\"-re állítja be<br /><b>Gazdagép</b>: a telepítő \"localhost\"-ra állítja<br /><b>Név</b>: az adatbázis neve, pl. moodle<br /><b>Felhasználó</b>: a telepítő \"root\"-ra állítja<br /><b>Jelszó</b>: az Ön jelszava az adatbázishoz<br /><b>Táblázat előtagja</b>: opcionális előtag az összes táblázatnévhez';
