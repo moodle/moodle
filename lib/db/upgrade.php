@@ -573,6 +573,29 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Main savepoint reached
         upgrade_main_savepoint($result, 2008080401);
     }
+
+    if ($result && $oldversion < 2008080500) {
+
+   /// Define table portfolio_tempdata to be created
+        $table = new xmldb_table('portfolio_tempdata');
+
+    /// Adding fields to table portfolio_tempdata
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('data', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+
+    /// Adding keys to table portfolio_tempdata
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for portfolio_tempdata
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008080500);
+    }
+
+
     return $result;
 }
 

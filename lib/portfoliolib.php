@@ -573,6 +573,11 @@ abstract class portfolio_caller_base {
     protected $user;
 
     /**
+    * id if any of tempdata
+    */
+    private $tempdataid;
+
+    /**
     * if this caller wants any additional config items
     * they should be defined here.
     *
@@ -702,6 +707,25 @@ abstract class portfolio_caller_base {
             return null; // @todo what to return|
         }
         return $this->exportconfig[$key];
+    }
+
+
+    protected function set_export_data($data) {
+        global $DB;
+        if ($this->tempdataid) {
+            $DB->set_field('portfolio_tempdata', 'data', serialize($data), array('id' => $this->tempdataid));
+        }
+        $this->tempdataid = $DB->insert_record('portfolio_tempdata', (object)array('data' => serialize($data)));
+    }
+
+    protected function get_export_data() {
+        global $DB;
+        if ($this->tempdataid) {
+            if ($data = $DB->get_field('portfolio_tempdata', 'data', array('id' => $this->tempdataid))) {
+                return unserialize($data);
+            }
+        }
+        return false;
     }
 
     /**
@@ -1936,11 +1960,13 @@ final class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_cleanup() {
-        global $CFG;
+        global $CFG, $DB;
         // @todo this is unpleasant. fix it.
         require_once($CFG->dirroot . '/backup/lib.php');
         delete_dir_contents($this->tempdir);
         // @todo maybe add a hook in the plugin(s)
+        $DB->delete_records('portfolio_tempdata', array('id' => $this->tempdataid));
+
         return true;
     }
 

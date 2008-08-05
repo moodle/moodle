@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20080731" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20080805" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -1734,7 +1734,7 @@
         <INDEX NAME="name" UNIQUE="false" FIELDS="name" COMMENT="name index"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="portfolio_instance_user" COMMENT="user data for portfolio instances." PREVIOUS="portfolio_instance_config" NEXT="message_providers">
+    <TABLE NAME="portfolio_instance_user" COMMENT="user data for portfolio instances." PREVIOUS="portfolio_instance_config" NEXT="portfolio_log">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="instance"/>
         <FIELD NAME="instance" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="fk to instance table" PREVIOUS="id" NEXT="userid"/>
@@ -1748,7 +1748,32 @@
         <KEY NAME="userfk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="fk to user table" PREVIOUS="instancefk"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="message_providers" COMMENT="This table stores the message providers (modules and core systems)" PREVIOUS="portfolio_instance_user" NEXT="message_processors">
+    <TABLE NAME="portfolio_log" COMMENT="log of portfolio transfers (used to later check for duplicates)" PREVIOUS="portfolio_instance_user" NEXT="portfolio_tempdata">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="user who exported content" PREVIOUS="id" NEXT="time"/>
+        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="time of transfer (in the case of a queued transfer this is the time the actual transfer ran, not when the user started)" PREVIOUS="userid" NEXT="portfolio"/>
+        <FIELD NAME="portfolio" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="fk to portfolio_instance" PREVIOUS="time" NEXT="caller_class"/>
+        <FIELD NAME="caller_class" TYPE="char" LENGTH="150" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="the name of the class used to create the transfer" PREVIOUS="portfolio" NEXT="caller_file"/>
+        <FIELD NAME="caller_file" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="path to file to include where the class definition lives. (relative to dirroot)" PREVIOUS="caller_class" NEXT="caller_sha1"/>
+        <FIELD NAME="caller_sha1" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="sha1 of exported content as far as the caller is concerned (before the portfolio plugin gets a hold of it)" PREVIOUS="caller_file"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userfk"/>
+        <KEY NAME="userfk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="fk to user table" PREVIOUS="primary" NEXT="portfoliofk"/>
+        <KEY NAME="portfoliofk" TYPE="foreign" FIELDS="portfolio" REFTABLE="portfolio_instance" REFFIELDS="id" COMMENT="fk to portfolio_instance" PREVIOUS="userfk"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="portfolio_tempdata" COMMENT="stores temporary data for portfolio exports" PREVIOUS="portfolio_log" NEXT="message_providers">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="data"/>
+        <FIELD NAME="data" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="dumping ground for portfolio callers to store their data in." PREVIOUS="id"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="message_providers" COMMENT="This table stores the message providers (modules and core systems)" PREVIOUS="portfolio_tempdata" NEXT="message_processors">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="name"/>
         <FIELD NAME="name" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="The full name of the message provider in standard form" PREVIOUS="id" NEXT="component"/>
@@ -1771,7 +1796,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="message_working" COMMENT="Lists all the messages and processors that need to be processed" PREVIOUS="message_processors" NEXT="portfolio_log">
+    <TABLE NAME="message_working" COMMENT="Lists all the messages and processors that need to be processed" PREVIOUS="message_processors" NEXT="files">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" ENUM="false" COMMENT="id of the table, please edit me" NEXT="unreadmessageid"/>
         <FIELD NAME="unreadmessageid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="message that still needs some processing (on message table)" PREVIOUS="id" NEXT="processorid"/>
@@ -1781,23 +1806,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="primary key of the table, please edit me"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="portfolio_log" COMMENT="log of portfolio transfers (used to later check for duplicates)" PREVIOUS="message_working" NEXT="files">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="user who exported content" PREVIOUS="id" NEXT="time"/>
-        <FIELD NAME="time" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="time of transfer (in the case of a queued transfer this is the time the actual transfer ran, not when the user started)" PREVIOUS="userid" NEXT="portfolio"/>
-        <FIELD NAME="portfolio" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="fk to portfolio_instance" PREVIOUS="time" NEXT="caller_class"/>
-        <FIELD NAME="caller_class" TYPE="char" LENGTH="150" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="the name of the class used to create the transfer" PREVIOUS="portfolio" NEXT="caller_file"/>
-        <FIELD NAME="caller_file" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="path to file to include where the class definition lives. (relative to dirroot)" PREVIOUS="caller_class" NEXT="caller_sha1"/>
-        <FIELD NAME="caller_sha1" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="sha1 of exported content as far as the caller is concerned (before the portfolio plugin gets a hold of it)" PREVIOUS="caller_file"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="userfk"/>
-        <KEY NAME="userfk" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="fk to user table" PREVIOUS="primary" NEXT="portfoliofk"/>
-        <KEY NAME="portfoliofk" TYPE="foreign" FIELDS="portfolio" REFTABLE="portfolio_instance" REFFIELDS="id" COMMENT="fk to portfolio_instance" PREVIOUS="userfk"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="files" COMMENT="description of files, content stored in sha1 file pool" PREVIOUS="portfolio_log" NEXT="files_cleanup">
+    <TABLE NAME="files" COMMENT="description of files, content stored in sha1 file pool" PREVIOUS="message_working" NEXT="files_cleanup">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="contenthash"/>
         <FIELD NAME="contenthash" TYPE="char" LENGTH="40" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="sha1 hash of file content" PREVIOUS="id" NEXT="pathnamehash"/>
