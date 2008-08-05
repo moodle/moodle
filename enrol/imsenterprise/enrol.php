@@ -101,7 +101,7 @@ function determine_default_rolemapping($imscode) {
 function config_form($frm) {
     global $CFG, $imsroles;
 
-    $vars = array('enrol_imsfilelocation', 'enrol_createnewusers', 'enrol_fixcaseusernames', 'enrol_fixcasepersonalnames', 'enrol_truncatecoursecodes',
+    $vars = array('enrol_imsfilelocation', 'enrol_logtolocation', 'enrol_createnewusers', 'enrol_fixcaseusernames', 'enrol_fixcasepersonalnames', 'enrol_truncatecoursecodes',
             'enrol_createnewcourses', 'enrol_createnewcategories', 'enrol_createnewusers', 'enrol_mailadmins',
             'enrol_imsunenrol', 'enrol_imssourcedidfallback', 'enrol_imscapitafix', 'enrol_imsrestricttarget', 'enrol_imsdeleteusers',
             'enrol_imse_imsrolemap01','enrol_imse_imsrolemap02','enrol_imse_imsrolemap03','enrol_imse_imsrolemap04',
