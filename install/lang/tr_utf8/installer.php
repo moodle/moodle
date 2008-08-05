@@ -56,6 +56,7 @@ $string['configurationfileexist'] = 'Yapılandırma dosyası zaten var!';
 $string['continue'] = 'Devam';
 $string['creatingconfigfile'] = 'Yapılandırma dosyası oluşturuluyor...';
 $string['curlrecommended'] = 'Moodle Ağının işlevsel bir şekilde çalışması için isteğe bağlı Curl kütüphanesinin kurulması şiddetle tavsiye edilir.';
+$string['curlrequired'] = 'cURL PHP eklentisi, Moodle kaynakları ile iletişim kurulabilmesi için gereklidir.';
 $string['customcheck'] = 'Diğer Kontroller';
 $string['database'] = 'Veritabanı';
 $string['databasecreationsettings'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
