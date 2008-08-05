@@ -1824,7 +1824,7 @@ final class portfolio_exporter {
                 }
                 $callerbits['format'] = $pluginbits['format'] = $fromform->format;
                 $pluginbits['wait'] = $fromform->wait;
-                if ($expectedtime = PORTFOLIO_TIME_LOW) {
+                if ($expectedtime == PORTFOLIO_TIME_LOW) {
                     $pluginbits['wait'] = 1;
                     $pluginbits['hidewait'] = 1;
                 }
