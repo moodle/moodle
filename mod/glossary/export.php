@@ -57,6 +57,11 @@
     </div>
     </form>
 <?php
+    require_once($CFG->libdir . '/portfoliolib.php');
+    $p = array(
+        'id' => $cm->id,
+    );
+    portfolio_add_button('glossary_csv_portfolio_caller', $p, '/mod/glossary/lib.php');
     print_box_end();
     print_footer($course);
 ?>

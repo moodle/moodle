@@ -1657,6 +1657,60 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
     echo '</tr></table></div>';
 }
 
+function glossary_generate_export_csv($entries, $aliases, $categories) {
+    global $CFG;
+    $csv = '';
+    $delimiter = '';
+    require_once($CFG->libdir . '/csvlib.class.php');
+    $delimiter = csv_import_reader::get_delimiter('comma');
+    $csventries = array(0 => array(get_string('concept', 'glossary'), get_string('definition', 'glossary')));
+    $csvaliases = array(0 => array());
+    $csvcategories = array(0 => array());
+    $aliascount = 0;
+    $categorycount = 0;
+
+    foreach ($entries as $entry) {
+        $thisaliasesentry = array();
+        $thiscategoriesentry = array();
+        $thiscsventry = array($entry->concept, nl2br(trusttext_strip($entry->definition)));
+
+        if (array_key_exists($entry->id, $aliases) && is_array($aliases[$entry->id])) {
+            $thiscount = count($aliases[$entry->id]);
+            if ($thiscount > $aliascount) {
+                $aliascount = $thiscount;
+            }
+            foreach ($aliases[$entry->id] as $alias) {
+                $thisaliasesentry[] = trim($alias);
+            }
+        }
+        if (array_key_exists($entry->id, $categories) && is_array($categories[$entry->id])) {
+            $thiscount = count($categories[$entry->id]);
+            if ($thiscount > $categorycount) {
+                $categorycount = $thiscount;
+            }
+            foreach ($categories[$entry->id] as $catentry) {
+                $thiscategoriesentry[] = trim($catentry);
+            }
+        }
+        $csventries[$entry->id] = $thiscsventry;
+        $csvaliases[$entry->id] = $thisaliasesentry;
+        $csvcategories[$entry->id] = $thiscategoriesentry;
+
+    }
+    $returnstr = '';
+    foreach ($csventries as $id => $row) {
+        $aliasstr = '';
+        $categorystr = '';
+        if ($id == 0) {
+            $aliasstr = get_string('alias', 'glossary');
+            $categorystr = get_string('category', 'glossary');
+        }
+        $row = array_merge($row, array_pad($csvaliases[$id], $aliascount, $aliasstr), array_pad($csvcategories[$id], $categorycount, $categorystr));
+        $returnstr .= '"' . implode('"' . $delimiter . '"', $row) . '"' . "\n";
+    }
+    return $returnstr;
+}
+
 function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
     global $CFG, $DB;
 
@@ -2318,4 +2372,76 @@ function glossary_supports($feature) {
     }
 }
 
+require_once($CFG->libdir . '/portfoliolib.php');
+class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
+
+    private $glossary;
+
+    public function __construct($callbackargs) {
+        global $DB;
+        if (!$this->cm = get_coursemodule_from_id('glossary', $callbackargs['id'])) {
+            portfolio_exporter::raise_error('invalidid', 'glossary');
+        }
+        if (!$this->glossary = $DB->get_record('glossary', array('id' => $this->cm->instance))) {
+            portfolio_exporter::raise_error('invalidid', 'glossary');
+        }
+        $entries = $DB->get_records('glossary_entries', array('glossaryid' => $this->glossary->id));
+        list($where, $params) = $DB->get_in_or_equal(array_keys($entries));
+
+        $aliases = $DB->get_records_select('glossary_alias', 'entryid' . $where, $params);
+        $categoryentries = $DB->get_records_sql('SELECT ec.entryid, c.name FROM {glossary_entries_categories} ec
+            JOIN {glossary_categories} c
+            ON c.id = ec.categoryid
+            WHERE ec.entryid ' . $where, $params);
+
+        $this->set_export_data(array('entries' => $entries, 'aliases' => $aliases, 'categoryentries' => $categoryentries));
+    }
+
+    public function expected_time() {
+        //@todo check number of records maybe
+        return PORTFOLIO_TIME_MODERATE;
+    }
+
+    public function get_sha1() {
+        return sha1(serialize($this->get_export_data()));
+    }
+
+    public function prepare_package($tempdir) {
+        $data = $this->get_export_data();
+        $entries = $data['entries'];
+        $aliases = array();
+        $categories = array();
+        if (is_array($data['aliases'])) {
+            foreach ($data['aliases'] as $alias) {
+                if (!array_key_exists($alias->entryid, $aliases)) {
+                    $aliases[$alias->entryid] = array();
+                }
+                $aliases[$alias->entryid][] = $alias->alias;
+            }
+        }
+        if (is_array($data['categoryentries'])) {
+            foreach ($data['categoryentries'] as $cat) {
+                if (!array_key_exists($cat->entryid, $categories)) {
+                    $categories[$cat->entryid] = array();
+                }
+                $categories[$cat->entryid][] = $cat->name;
+            }
+        }
+        $csv = glossary_generate_export_csv($entries, $aliases, $categories);
+        // @todo  - convert to files api.
+        $status = ($handle  = fopen($tempdir . '/' . clean_filename($this->cm->name) . '.csv', 'w'));
+        $status = $status && fwrite($handle, $csv);
+        $status = $status && fclose($handle);
+        return $status;
+    }
+
+    public function check_permissions() {
+        // @todo
+        return true;
+    }
+
+    public static function display_name() {
+        return get_string('modulename', 'glossary');
+    }
+}
 ?>

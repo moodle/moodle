@@ -5,6 +5,7 @@
 $string['addcomment'] = 'Add comment';
 $string['addentry'] = 'Add a new entry';
 $string['addingcomment'] = 'Add a comment';
+$string['alias'] = 'Keyword';
 $string['aliases'] = 'Keyword(s)';
 $string['allcategories'] = 'All Categories';
 $string['allentries'] = 'ALL';
