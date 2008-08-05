@@ -36,6 +36,7 @@ $string['configurationcompletehead'] = 'Yapılandırma tamamlandı';
 $string['configurationcompletesub'] = 'Ana moodle dizine yapılandırma dosyasının kaydedilmesi için girişimde bulunuldu.';
 $string['continue'] = 'Devam';
 $string['curlrecommended'] = 'Moodle Ağının işlevsel bir şekilde çalışması için isteğe bağlı Curl kütüphanesinin kurulması şiddetle tavsiye edilir.';
+$string['curlrequired'] = 'cURL PHP eklentisi, Moodle kaynakları ile iletişim kurulabilmesi için gereklidir.';
 $string['customcheck'] = 'Diğer Kontroller';
 $string['database'] = 'Veritabanı';
 $string['databasecreationsettingshead'] = 'Şimdi, Moodle verilerinin saklanacağı veritabanını
