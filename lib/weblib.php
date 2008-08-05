@@ -4878,7 +4878,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         $str .= '<div class="textareaicons">';
         $str .= '<script type="text/javascript">
 //<![CDATA[
-function mce_moodlefilemanager(field_name, url, type, win) {
+function moodlefilemanager(field_name, url, type, win) {
     var el = win.document.getElementById(field_name);
     openpicker_'.$suffix.'({"env":"editor","target":el});
 }

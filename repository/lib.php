@@ -381,12 +381,12 @@ function get_repository_client(){
 
     $js = <<<EOD
     <style type="text/css">
-    #list{line-height: 1.5em}
-    #list a{ padding: 3px }
-    #list li a:hover{ background: gray; color:white; }
-    #paging{margin:10px 5px; clear:both}
-    #paging a{padding: 4px; border: 1px solid gray}
-    #panel{padding:0;margin:0; text-align:left;}
+    #list-$suffix{line-height: 1.5em}
+    #list-$suffix a{ padding: 3px }
+    #list-$suffix li a:hover{ background: gray; color:white; }
+    #paging-$suffix{margin:10px 5px; clear:both}
+    #paging-$suffix a{padding: 4px; border: 1px solid gray}
+    #panel-$suffix{padding:0;margin:0; text-align:left;}
     .file_name{color:green;}
     .file_date{color:blue}
     .file_size{color:gray}
@@ -444,17 +444,17 @@ function get_repository_client(){
             // construct code section
             {
                 panel.setHeader('$strtitle');
-                panel.setBody('<div id="layout"></div>');
+                panel.setBody('<div id="layout-$suffix"></div>');
                 panel.beforeRenderEvent.subscribe(function() {
-                    Event.onAvailable('layout', function() {
-                        layout = new YAHOO.widget.Layout('layout', {
+                    Event.onAvailable('layout-$suffix', function() {
+                        layout = new YAHOO.widget.Layout('layout-$suffix', {
                             height: 400, width: 490,
                             units: [
                                 {position: 'top', height: 32, resize: false, 
-                                body:'<div class="yui-buttongroup" id="repo-viewbar"></div>', gutter: '2'},
+                                body:'<div class="yui-buttongroup" id="repo-viewbar-$suffix"></div>', gutter: '2'},
                                 {position: 'left', width: 150, resize: true, 
-                                body:'<ul id="repo-list"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
-                                {position: 'center', body: '<div id="panel"></div>', 
+                                body:'<ul id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
+                                {position: 'center', body: '<div id="panel-$suffix"></div>', 
                                 scroll: true, gutter: '0 2 0 0' }
                             ]
                         });
@@ -484,10 +484,10 @@ function get_repository_client(){
 
                 }, panel, true);
                 _client.viewbar = new YAHOO.widget.ButtonGroup({
-                    id: 'btngroup',
+                    id: 'btngroup-$suffix',
                     name: 'buttons',
                     disabled: true,
-                    container: 'repo-viewbar'
+                    container: 'repo-viewbar-$suffix'
                     });
             }
             // public method
@@ -499,26 +499,26 @@ function get_repository_client(){
                 panel.render();
                 _client.viewbar.addButtons([btn_list, btn_thumb]);
                 // init repository list
-                list = new YAHOO.util.Element('repo-list');
+                list = new YAHOO.util.Element('repo-list-$suffix');
                 list.on('contentReady', function(e){
                     for(var i=0; i<_client.repos.length; i++) {
                         var repo = _client.repos[i];
                         li = document.createElement('ul');
-                        li.innerHTML = '<a href="###" id="repo-call-'+repo.id+'">'+
+                        li.innerHTML = '<a href="###" id="repo-call-$suffix-'+repo.id+'">'+
                             repo.repositoryname+'</a><br/>';
                         li.innerHTML += '<a href="###" class="repo-opt" onclick="repository_client_$suffix.search('+repo.id+')">$strsearch</a>';
-                        li.innerHTML += '<a href="###" class="repo-opt" id="repo-logout-'+repo.id+'">$strlogout</a>';
-                        li.id = 'repo-'+repo.id;
+                        li.innerHTML += '<a href="###" class="repo-opt" id="repo-logout-$suffix-'+repo.id+'">$strlogout</a>';
+                        li.id = 'repo-$suffix-'+repo.id;
                         this.appendChild(li);
-                        var e = new YAHOO.util.Element('repo-call-'+repo.id);
+                        var e = new YAHOO.util.Element('repo-call-$suffix-'+repo.id);
                         e.on('click', function(e){
-                            var re = /repo-call-(\d+)/i;
+                            var re = /repo-call-$suffix-(\d+)/i;
                             var id = this.get('id').match(re);
                             repository_client_$suffix.req(id[1], 1, 0);
                             });
-                        e = new YAHOO.util.Element('repo-logout-'+repo.id);
+                        e = new YAHOO.util.Element('repo-logout-$suffix-'+repo.id);
                         e.on('click', function(e){
-                            var re = /repo-logout-(\d+)/i;
+                            var re = /repo-logout-$suffix-(\d+)/i;
                             var id = this.get('id').match(re);
                             repository_client_$suffix.req(id[1], 1, 1);
                             });
@@ -550,24 +550,24 @@ function get_repository_client(){
             return str;
         }
         _client.loading = function(){
-            var panel = new YAHOO.util.Element('panel');
+            var panel = new YAHOO.util.Element('panel-$suffix');
             panel.get('element').innerHTML = '<span>$strloading</span>';
         }
         _client.rename = function(oldname, url){
-            var panel = new YAHOO.util.Element('panel');
+            var panel = new YAHOO.util.Element('panel-$suffix');
             var html = '<div>';
             html += '<label for="newname">$filename</label>';
-            html += '<input type="text" id="newname" value="'+oldname+'" /><br/>';
+            html += '<input type="text" id="newname-$suffix" value="'+oldname+'" /><br/>';
             html += '<label for="syncfile">$strsync</label>';
-            html += '<input type="checkbox" id="syncfile" /><br/>';
-            html += '<input type="hidden" id="fileurl" value="'+url+'" />';
+            html += '<input type="checkbox" id="syncfile-$suffix" /><br/>';
+            html += '<input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
             html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownload" />';
             html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a>';
             html += '</div>';
             panel.get('element').innerHTML = html;
         }
         _client.print_login = function(){
-            var panel = new YAHOO.util.Element('panel');
+            var panel = new YAHOO.util.Element('panel-$suffix');
             var data = _client.datasource.l;
             var str = '';
             for(var k in data){
@@ -601,7 +601,7 @@ function get_repository_client(){
         }
 
         _client.viewthumb = function(){
-            var panel = new YAHOO.util.Element('panel');
+            var panel = new YAHOO.util.Element('panel-$suffix');
             _client.viewbar.check(1);
             obj = _client.datasource.list;
             var str = '';
@@ -623,7 +623,7 @@ function get_repository_client(){
         }
 
         _client.viewlist = function(){
-            var panel = new YAHOO.util.Element('panel');
+            var panel = new YAHOO.util.Element('panel-$suffix');
             var str = '';
             _client.viewbar.check(0);
             obj = _client.datasource.list;
@@ -650,7 +650,7 @@ function get_repository_client(){
         _client.makepage = function(){
             var str = '';
             if(_client.datasource.pages){
-                str += '<div id="paging">';
+                str += '<div id="paging-$suffix">';
                 for(var i = 1; i <= _client.datasource.pages; i++) {
                     str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
                     str += String(i);
@@ -661,8 +661,8 @@ function get_repository_client(){
             return str;
         }
         _client.download = function(){
-            var title = document.getElementById('newname').value;
-            var file = document.getElementById('fileurl').value;
+            var title = document.getElementById('newname-$suffix').value;
+            var file = document.getElementById('fileurl-$suffix').value;
             var itemid = 0;
             if(_client.itemid){
                 itemid = _client.itemid;
@@ -698,7 +698,7 @@ function get_repository_client(){
         }
         _client.callback = {
             success: function(o) {
-                var panel = new YAHOO.util.Element('panel');
+                var panel = new YAHOO.util.Element('panel-$suffix');
                 try {
                     var ret = YAHOO.lang.JSON.parse(o.responseText);
                 } catch(e) {
@@ -722,7 +722,7 @@ function get_repository_client(){
         }
         _client.dlfile = {
             success: function(o) {
-                var panel = new YAHOO.util.Element('panel');
+                var panel = new YAHOO.util.Element('panel-$suffix');
                 try {
                     var ret = YAHOO.lang.JSON.parse(o.responseText);
                 } catch(e) {
@@ -760,9 +760,10 @@ EOD;
 
     $repos = repository_instances();
     foreach($repos as $repo) {
+        $js .= "\r\n";
         $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo).');'."\n";
-        $js .= "\n";
     }
+    $js .= "\r\n";
 
     $js .= <<<EOD
     function openpicker_$suffix(obj) {

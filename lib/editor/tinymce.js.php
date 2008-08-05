@@ -185,7 +185,7 @@ $output = <<<EOF
         theme_advanced_resizing: true,
         theme_advanced_toolbar_location : "top",
         theme_advanced_statusbar_location : "bottom",
-        file_browser_callback : "mce_moodlefilemanager",
+        file_browser_callback : "moodlefilemanager",
 
 EOF;
 // the xhtml ruleset must be the last one - no comma at the end of the file
@@ -196,6 +196,7 @@ $output .= <<<EOF
     function mce_toggleEditor(id) {
         tinyMCE.execCommand('mceToggleEditor',false,id);
     }
+
     function mce_saveOnSubmit(id) {
         var prevOnSubmit = document.getElementById(id).form.onsubmit;
         document.getElementById(id).form.onsubmit = function() { 
