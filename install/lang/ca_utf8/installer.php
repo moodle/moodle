@@ -60,6 +60,7 @@ $string['creatingconfigfile'] = 'S\'està  creant el fitxer de configuració...'
 $string['ctyperecommended'] = 'Es recomana instal·lar l\'extensió de PHP ctype a fi de millorar el rendiment del lloc, especialment si teniu usuaris que treballen amb idiomes no occidentals.';
 $string['ctyperequired'] = 'A hores d\'ara Moodle requereix l\'extensió de PHP ctype, a fi de millorar el rendiment del lloc i oferir compatibilitat amb diferents idiomes.';
 $string['curlrecommended'] = 'Es recomana instal·lar la biblioteca opcional Curl a fi d\'habilitar la funcionalitat de Moodle en Xarxa.';
+$string['curlrequired'] = 'L\'extensió de PHP cURL és ara necessària per a comunicar-se amb repositoris Moodle.';
 $string['customcheck'] = 'Altres comprovacions';
 $string['database'] = 'Base de dades';
 $string['databasecreationsettings'] = 'Ara cal configurar els paràmetres de la base de dades on s\'emmagatzemara la majoria de dades de Moodle. L\'instal·lador Moodle4Windows crearà automàticament aquesta base de dades amb els paràmetres que especifiqueu aquí.<br /><br /><br />
