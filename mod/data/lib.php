@@ -2432,7 +2432,6 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     private $fields;
     private $fieldtypes;
     private $delimiter;
-    private $exportdata;
 
     public function __construct($callbackargs) {
         global $DB;
@@ -2456,7 +2455,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             $this->fields[] = $tmp;
             $this->fieldtypes[]  = $tmp->type;
         }
-        $this->exportdata = data_get_exportdata($this->cm->instance, $this->fields, $this->selectedfields);
+        $this->set_export_data(data_get_exportdata($this->cm->instance, $this->fields, $this->selectedfields));
     }
 
     public function expected_time() {
@@ -2466,7 +2465,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
 
     public function get_sha1() {
         $str = '';
-        foreach ($this->exportdata as $data) {
+        foreach ($this->get_export_data() as $data) {
             $str .= implode(',', $data);
         }
         return sha1($str . ',' . $this->exporttype);
@@ -2474,16 +2473,17 @@ class data_portfolio_caller extends portfolio_module_caller_base {
 
     public function prepare_package($tempdir) {
         global $DB;
-        $count = count($this->exportdata);
+        $exportdata = $this->get_export_data();
+        $count = count($exportdata);
         switch ($this->exporttype) {
             case 'csv':
-                $return = data_export_csv($this->exportdata, $this->delimiter, $this->cm->name, $count, $tempdir);
+                $return = data_export_csv($exportdata, $this->delimiter, $this->cm->name, $count, $tempdir);
                 break;
             case 'xls':
-                $return = data_export_xls($this->exportdata, $this->cm->name, $count, $tempdir);
+                $return = data_export_xls($exportdata, $this->cm->name, $count, $tempdir);
                 break;
             case 'ods':
-                $return = data_export_ods($this->exportdata, $this->cm->name, $count, $tempdir);
+                $return = data_export_ods($exportdata, $this->cm->name, $count, $tempdir);
                 break;
         }
         return $return;
