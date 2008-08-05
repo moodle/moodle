@@ -20,6 +20,7 @@ $string['enabled'] = 'Enable portfolios';
 $string['enableddesc'] = 'This will allow administrators to configure remote systems for users to export content to';
 $string['exporting'] = 'Exporting to portfolio';
 $string['exportcomplete'] = 'Portfolio export complete!';
+$string['exportqueued'] = 'Portfolio export has been successfully queued for transfer';
 $string['exportedpreviously'] = 'Previous exports';
 $string['failedtosendpackage'] = 'Failed to send your data to the selected portfolio system!';
 $string['format_file'] = 'File';

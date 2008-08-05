@@ -1924,10 +1924,9 @@ final class portfolio_exporter {
         global $SESSION;
         $wait = $this->instance->get_export_config('wait');
         if (empty($wait)) {
-            error_log(print_r(serialize($this), true));
             events_trigger('portfolio_send', $this);
             unset($SESSION->portfolio);
-            return $this->process_stage_finished();
+            return $this->process_stage_finished(true);
         }
         return true;
     }
@@ -2001,15 +2000,18 @@ final class portfolio_exporter {
     *
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
-    public function process_stage_finished() {
+    public function process_stage_finished($queued=false) {
         global $SESSION;
         $returnurl = $this->caller->get_return_url();
         $continueurl = $this->instance->get_continue_url();
         $extras = $this->instance->get_extra_finish_options();
 
         $this->print_header();
-        //@todo do something different here if we're queueing.
-        print_heading(get_string('exportcomplete', 'portfolio'));
+        if ($queued) {
+            print_heading(get_string('exportqueued', 'portfolio'));
+        } else {
+            print_heading(get_string('exportcomplete', 'portfolio'));
+        }
         if ($returnurl) {
             echo '<a href="' . $returnurl . '">' . get_string('returntowhereyouwere', 'portfolio') . '</a><br />';
         }
