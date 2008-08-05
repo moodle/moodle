@@ -1965,7 +1965,9 @@ final class portfolio_exporter {
         require_once($CFG->dirroot . '/backup/lib.php');
         delete_dir_contents($this->tempdir);
         // @todo maybe add a hook in the plugin(s)
-        $DB->delete_records('portfolio_tempdata', array('id' => $this->tempdataid));
+        if ($this->caller->get('tempdataid')) {
+            $DB->delete_records('portfolio_tempdata', array('id' => $this->caller->get('tempdataid')));
+        }
 
         return true;
     }
