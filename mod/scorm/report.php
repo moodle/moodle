@@ -47,7 +47,7 @@
         print_error('cannotcallscript');
     }
 
-    add_to_log($course->id, 'scorm', 'report', 'report.php?id='.$cm->id, $scorm->id);
+    add_to_log($course->id, 'scorm', 'report', 'report.php?id='.$cm->id, $scorm->id, $cm->id);
 
     if (!empty($user)) {
         $userdata = scorm_get_user_data($user);

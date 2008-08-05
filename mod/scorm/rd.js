@@ -73,5 +73,12 @@ function scorm_resize () {
         document.getElementById('scormobject').style.height = (winheight - totalheight) + 'px';
     }
 
+    // resize the content container too to move the footer below the SCORM content
+    var contenti3 = document.getElementById('content-i3');
+    if (contenti3) {
+        contenti3.style.height = (winheight - totalheight + 30) + 'px';
+    } else {
+       document.getElementById('content').style.height = (winheight - totalheight + 30) + 'px';
+    }
 }
 -->

@@ -99,7 +99,8 @@
         }
     }
 
-    add_to_log($course->id, 'scorm', 'view', "player.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
+    add_to_log($course->id, 'scorm', 'view', "player.php?id=$cm->id&scoid=$sco->id", "$scorm->id", $cm->id);
+    
 
     $scoidstr = '&amp;scoid='.$sco->id;
     $scoidpop = '&scoid='.$sco->id;
@@ -371,11 +372,5 @@
 ?>
             </div> <!-- SCORM object -->
         </div> <!-- SCORM box  -->
-    </div> <!-- SCORM content -->
-    <?php if (!empty($THEME->customcorners)) {
-        print_container_end();
-    } ?>
-    </div> <!-- Content -->
-    </div> <!-- Page -->
-</body>
-</html>
+    </div> <!-- SCORM page -->
+<?php print_footer('none'); ?> 
