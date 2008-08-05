@@ -123,5 +123,6 @@ function getElementsByClassName(oElm, strTagName, oClassNames){
 	}
 	return (arrReturnElements)
 }
+var id2suffix = {};
 //]]>
 </script>

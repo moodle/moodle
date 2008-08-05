@@ -663,7 +663,7 @@ function get_repository_client(){
         _client.download = function(){
             var title = document.getElementById('newname-$suffix').value;
             var file = document.getElementById('fileurl-$suffix').value;
-            var itemid = 0;
+            var itemid = 1;
             if(_client.itemid){
                 itemid = _client.itemid;
             }

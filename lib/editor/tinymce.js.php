@@ -205,6 +205,12 @@ $output .= <<<EOF
             prevOnSubmit = null;
         };
     }
+    function moodlefilemanager(field_name, url, type, win) {
+        //alert(id2suffix[tinyMCE.selectedInstance.editorId]);
+        var suffix = id2suffix[tinyMCE.selectedInstance.editorId];
+        var el = win.document.getElementById(field_name);
+        eval('openpicker_'+suffix+'({"env":"editor","target":el})');
+    }
 EOF;
 
 $lifetime = '86400';
