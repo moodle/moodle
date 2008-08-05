@@ -196,10 +196,6 @@ $output .= <<<EOF
     function mce_toggleEditor(id) {
         tinyMCE.execCommand('mceToggleEditor',false,id);
     }
-    function mce_moodlefilemanager(field_name, url, type, win) {
-        var el = win.document.getElementById(field_name);
-        openpicker({'env':'editor','target':el});
-    }
     function mce_saveOnSubmit(id) {
         var prevOnSubmit = document.getElementById(id).form.onsubmit;
         document.getElementById(id).form.onsubmit = function() { 

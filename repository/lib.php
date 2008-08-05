@@ -332,7 +332,7 @@ function repository_get_plugins(){
     return $ret;
 }
 
-function move_to_filepool($path, $name) {
+function move_to_filepool($path, $name, $itemid) {
     global $DB, $CFG, $USER;
     $context = get_context_instance(CONTEXT_USER, $USER->id);
     $entry = new object();
@@ -342,7 +342,11 @@ function move_to_filepool($path, $name) {
     $entry->filepath  = '/';
     $entry->timecreated  = time();
     $entry->timemodified = time();
-    $entry->itemid       = $USER->id;
+    if(is_numeric($itemid)) {
+        $entry->itemid = $itemid;
+    } else {
+        $entry->itemid = 0;
+    }
     $entry->mimetype     = mimeinfo('type', $path);
     $entry->userid       = $USER->id;
     $fs = get_file_storage();
@@ -352,9 +356,7 @@ function move_to_filepool($path, $name) {
         $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         // TODO
         // get_params should include id value, talk to Petr.
-        $params = $ret->get_params();
-        $params['id'] = 88;
-        return array('url'=>$ret->get_url(),'id'=>$params['id']);
+        return array('url'=>$ret->get_url(),'id'=>$file->get_itemid());
     } else {
         return null;
     }
@@ -363,6 +365,7 @@ function move_to_filepool($path, $name) {
 
 function get_repository_client(){
     global $CFG;
+    $suffix = uniqid();
     $strsubmit    = get_string('submit', 'repository');
     $strlistview  = get_string('listview', 'repository');
     $strthumbview = get_string('thumbview', 'repository');
@@ -410,7 +413,7 @@ function get_repository_client(){
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/button/button-min.js"></script>
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/selector/selector-beta-min.js"></script>
     <script>
-    var repository_client = (function() {
+    var repository_client_$suffix = (function() {
         // private static field
         var dver = '1.0';
         // private static methods
@@ -419,7 +422,7 @@ function get_repository_client(){
         }
         function _client(){
             // public varible
-            this.name = 'repository_client';
+            this.name = 'repository_client_$suffix';
             // private varible
             var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, layout = null, resize = null;
             var IE_QUIRKS = (YAHOO.env.ua.ie && document.compatMode == "BackCompat");
@@ -430,7 +433,7 @@ function get_repository_client(){
             var select = new YAHOO.util.Element('select');
             var list = null;
             var resize = null;
-            var panel = new YAHOO.widget.Panel('file-picker', {
+            var panel = new YAHOO.widget.Panel('file-picker-$suffix', {
                 draggable: true,
                 close: true,
                 underlay: 'none',
@@ -458,7 +461,7 @@ function get_repository_client(){
                         layout.render();
                     });
                 });
-                resize = new YAHOO.util.Resize('file-picker', {
+                resize = new YAHOO.util.Resize('file-picker-$suffix', {
                     handles: ['br'],
                     autoRatio: true,
                     status: true,
@@ -503,7 +506,7 @@ function get_repository_client(){
                         li = document.createElement('ul');
                         li.innerHTML = '<a href="###" id="repo-call-'+repo.id+'">'+
                             repo.repositoryname+'</a><br/>';
-                        li.innerHTML += '<a href="###" class="repo-opt" onclick="repository_client.search('+repo.id+')">$strsearch</a>';
+                        li.innerHTML += '<a href="###" class="repo-opt" onclick="repository_client_$suffix.search('+repo.id+')">$strsearch</a>';
                         li.innerHTML += '<a href="###" class="repo-opt" id="repo-logout-'+repo.id+'">$strlogout</a>';
                         li.id = 'repo-'+repo.id;
                         this.appendChild(li);
@@ -511,13 +514,13 @@ function get_repository_client(){
                         e.on('click', function(e){
                             var re = /repo-call-(\d+)/i;
                             var id = this.get('id').match(re);
-                            repository_client.req(id[1], 1, 0);
+                            repository_client_$suffix.req(id[1], 1, 0);
                             });
                         e = new YAHOO.util.Element('repo-logout-'+repo.id);
                         e.on('click', function(e){
                             var re = /repo-logout-(\d+)/i;
                             var id = this.get('id').match(re);
-                            repository_client.req(id[1], 1, 1);
+                            repository_client_$suffix.req(id[1], 1, 1);
                             });
                         repo = null;
                     }
@@ -558,8 +561,8 @@ function get_repository_client(){
             html += '<label for="syncfile">$strsync</label>';
             html += '<input type="checkbox" id="syncfile" /><br/>';
             html += '<input type="hidden" id="fileurl" value="'+url+'" />';
-            html += '<input type="button" onclick="repository_client.download()" value="$strdownload" />';
-            html += '<a href="###" onclick="repository_client.viewfiles()">$strback</a>';
+            html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownload" />';
+            html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a>';
             html += '</div>';
             panel.get('element').innerHTML = html;
         }
@@ -585,7 +588,7 @@ function get_repository_client(){
                 str += '<input type="'+data[k].type+'"'+' name="'+data[k].name+'"'+field_id+field_value+' />';
                 str += '</p>';
             }
-            str += '<p><input type="button" onclick="repository_client.login()" value="$strsubmit" /></p>';
+            str += '<p><input type="button" onclick="repository_client_$suffix.login()" value="$strsubmit" /></p>';
             panel.get('element').innerHTML = str;
         }
 
@@ -609,7 +612,7 @@ function get_repository_client(){
                 str += '<div style="text-align:center">';
                 str += ('<input type="radio" title="'+obj[k].title
                         +'" name="selected-files" value="'+obj[k].source
-                        +'" onclick=\'repository_client.rename("'+obj[k].title+'", "'
+                        +'" onclick=\'repository_client_$suffix.rename("'+obj[k].title+'", "'
                         +obj[k].source+'")\' />');
                 str += obj[k].title+'</div>';
                 str += '</div>';
@@ -628,7 +631,7 @@ function get_repository_client(){
             var re = new RegExp();
             re.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\?\/.=]+$");
             for(k in obj){
-                str += ('<input type="radio" title="'+obj[k].title+'" name="selected-files" value="'+obj[k].source+'" onclick=\'repository_client.rename("'+obj[k].title+'", "'+obj[k].source+'")\' /> ');
+                str += ('<input type="radio" title="'+obj[k].title+'" name="selected-files" value="'+obj[k].source+'" onclick=\'repository_client_$suffix.rename("'+obj[k].title+'", "'+obj[k].source+'")\' /> ');
                 if(re.test(obj[k].source)) {
                     str += '<a class="file_name" href="'+obj[k].source+'">'+obj[k].title+'</a>';
                 } else {
@@ -649,7 +652,7 @@ function get_repository_client(){
             if(_client.datasource.pages){
                 str += '<div id="paging">';
                 for(var i = 1; i <= _client.datasource.pages; i++) {
-                    str += '<a onclick="repository_client.req('+_client.repositoryid+', '+i+', 0)" href="###">';
+                    str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
                     str += String(i);
                     str += '</a> ';
                 }
@@ -660,10 +663,15 @@ function get_repository_client(){
         _client.download = function(){
             var title = document.getElementById('newname').value;
             var file = document.getElementById('fileurl').value;
+            var itemid = 0;
+            if(_client.itemid){
+                itemid = _client.itemid;
+            }
             _client.loading();
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
-                '$CFG->wwwroot/repository/ws.php?repo_id='+_client.repositoryid+'&action=download', 
-                _client.dlfile, _client.postdata({'env':_client.env, 'file':file, 'title':title}));
+                '$CFG->wwwroot/repository/ws.php?repo_id='+_client.repositoryid+
+                    '&action=download', 
+                _client.dlfile, _client.postdata({'itemid': itemid, 'env':_client.env, 'file':file, 'title':title}));
         }
         _client.login = function(){
             var obj = {};
@@ -685,6 +693,7 @@ function get_repository_client(){
         }
         _client.end = function(str){
             _client.target.value = str;
+            _client.formcallback();
             _client.viewfiles();
         }
         _client.callback = {
@@ -724,8 +733,7 @@ function get_repository_client(){
                     return;
                 }
                 var html = '<h1>Download Successfully!</h1>';
-                //html += '<a href="###" onclick="repository_client.viewfiles()">Back</a>';
-                html += '<a href="###" onclick="repository_client.end(\''+ret+'\')">Add!</a>';
+                html += '<button onclick="repository_client_$suffix.end(\''+ret+'\')">Add!</button>';
                 panel.get('element').innerHTML = html;
             }
         }
@@ -752,27 +760,35 @@ EOD;
 
     $repos = repository_instances();
     foreach($repos as $repo) {
-        $js .= 'repository_client.repos.push('.json_encode($repo).');'."\n";
+        $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo).');'."\n";
         $js .= "\n";
     }
 
     $js .= <<<EOD
-    function openpicker(obj) {
-        if(!repository_client.instance) {
-            repository_client.env = obj.env;
-            repository_client.target = obj.target;
-            repository_client.instance = new repository_client();
-            repository_client.instance.create_picker();
+    function openpicker_$suffix(obj) {
+        if(!repository_client_$suffix.instance) {
+            repository_client_$suffix.env = obj.env;
+            repository_client_$suffix.target = obj.target;
+            repository_client_$suffix.instance = new repository_client_$suffix();
+            repository_client_$suffix.instance.create_picker();
+            if(obj.itemid){
+                repository_client_$suffix.itemid = obj.itemid;
+            }
+            if(obj.callback){
+                repository_client_$suffix.formcallback = obj.callback;
+            } else {
+                repository_client_$suffix.formcallback = function(){};
+            }
         } else {
-            repository_client.instance.show();
+            repository_client_$suffix.instance.show();
         }
     }
     </script>
 EOD;
     $html = <<<EOD
     <div class='yui-skin-sam'>
-        <div id="file-picker"></div>
+        <div id="file-picker-$suffix"></div>
     </div>
 EOD;
-    return array('html'=>$html, 'js'=>$js);
+    return array('html'=>$html, 'js'=>$js, 'suffix'=>$suffix);
 }

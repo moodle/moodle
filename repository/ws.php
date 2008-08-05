@@ -17,6 +17,7 @@ $action = optional_param('action', '', PARAM_RAW);
 $search = optional_param('s', '', PARAM_RAW);
 // id of repository
 $repo_id = optional_param('repo_id', 1, PARAM_INT);
+$itemid  = optional_param('itemid',  0, PARAM_INT);
 
 if(!$repository = $DB->get_record('repository', array('id'=>$repo_id))) {
     $err = new stdclass;
@@ -61,7 +62,7 @@ if($action == 'list') {
 } elseif($action == 'download') {
     $path = $repo->get_file($file, $title);
     try {
-        $info = move_to_filepool($path, $title);
+        $info = move_to_filepool($path, $title, $itemid);
         if($env == 'form'){
             echo json_encode($info['id']);
         } elseif($env == 'editor') {
@@ -69,6 +70,10 @@ if($action == 'list') {
         } else {
         }
     } catch (repository_exception $e){
+        $err = new stdclass;
+        $err->e = $e->getMessage();
+        die(json_encode($err));
+    } catch (Exception $e) {
         $err = new stdclass;
         $err->e = $e->getMessage();
         die(json_encode($err));

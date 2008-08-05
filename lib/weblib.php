@@ -4874,9 +4874,14 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         // Show shortcuts button if HTML editor is in use, but only if JavaScript is enabled (MDL-9556)
         $ret = get_repository_client();
         $str .= $ret['html'].$ret['js'];
+        $suffix = $ret['suffix'];
         $str .= '<div class="textareaicons">';
         $str .= '<script type="text/javascript">
 //<![CDATA[
+function mce_moodlefilemanager(field_name, url, type, win) {
+    var el = win.document.getElementById(field_name);
+    openpicker_'.$suffix.'({"env":"editor","target":el});
+}
 mce_saveOnSubmit(\''.addslashes_js($id).'\');
 document.write(\''.addslashes_js($str_toggle).'\');
 document.write(\''.addslashes_js(editorshortcutshelpbutton()).'\');

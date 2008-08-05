@@ -101,7 +101,7 @@ class repository_boxnet extends repository{
             $ret['list']   = $list;
             return $ret;
         } else {
-            throw new repository_exception('nullfilelist', 'repository');
+            throw new repository_exception('nullfilelist', 'repository_boxnet');
         }
     }
 
