@@ -524,6 +524,9 @@ function environment_custom_checks($version) {
 
     $results = array();
 
+/// Get current Moodle version (release) for later compare
+    $current_version = normalize_version($CFG->release);
+
 /// Get the enviroment version we need
     if (!$data = get_environment_for_version($version)) {
     /// Error. No version data found - but this will already have been reported.
@@ -554,12 +557,30 @@ function environment_custom_checks($version) {
                     $result->setInfo($function);
                     $result = $function($result);
                 } else {
-                    $result->setStatus(false);
-                    $result->setErrorCode(CUSTOM_CHECK_FUNCTION_MISSING);
+                /// Only show error for current version (where function MUST exist)
+                /// else, we are performing custom checks against future versiosn
+                /// and function MAY not exist, so it doesn't cause error, just skip
+                /// custom check by returning null. MDL-15939
+                    if (version_compare($current_version, $version, '>=')) {
+                        $result->setStatus(false);
+                        $result->setInfo($function);
+                        $result->setErrorCode(CUSTOM_CHECK_FUNCTION_MISSING);
+                    } else {
+                        $result = null;
+                    }
                 }
             } else {
-                $result->setStatus(false);
-                $result->setErrorCode(CUSTOM_CHECK_FILE_MISSING);
+            /// Only show error for current version (where function MUST exist)
+            /// else, we are performing custom checks against future versiosn
+            /// and function MAY not exist, so it doesn't cause error, just skip
+            /// custom check by returning null. MDL-15939
+                if (version_compare($current_version, $version, '>=')) {
+                    $result->setStatus(false);
+                    $result->setInfo($function);
+                    $result->setErrorCode(CUSTOM_CHECK_FILE_MISSING);
+                } else {
+                    $result = null;
+                }
             }
         } else {
             $result->setStatus(false);
