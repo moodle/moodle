@@ -314,7 +314,7 @@ class quiz_report extends quiz_default_report {
             $qid = $q['id'];
             $question = get_record('question', 'id', $qid);
             if (question_has_capability_on($question, 'edit') || question_has_capability_on($question, 'view')) {
-                $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid,'&amp;cmid='.$cm->id.'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
+                $qnumber = " (".link_to_popup_window('/question/question.php?id='.$qid.'&amp;cmid='.$cm->id, 'editquestion', $qid, 450, 550, get_string('edit'), 'none', true ).") ";
             } else {
                 $qnumber = $qid;
             }
