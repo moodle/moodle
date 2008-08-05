@@ -860,6 +860,14 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $return .= " <font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }
     }
+    if (true) { // @todo penny add capability check
+        require_once($CFG->libdir . '/portfoliolib.php');
+        $p = array(
+            'id' => $cm->id,
+            'entryid' => $entry->id,
+        );
+        $return .= portfolio_add_button('glossary_entry_portfolio_caller', $p, false, false, true);
+    }
     $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
 
     $return .= '</span>';
@@ -2444,4 +2452,66 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
         return get_string('modulename', 'glossary');
     }
 }
+
+class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
+
+    private $glossary;
+    private $entry;
+
+    public function __construct($callbackargs) {
+        global $DB;
+        if (!$this->cm = get_coursemodule_from_id('glossary', $callbackargs['id'])) {
+            portfolio_exporter::raise_error('invalidid', 'glossary');
+        }
+        if (!$this->glossary = $DB->get_record('glossary', array('id' => $this->cm->instance))) {
+            portfolio_exporter::raise_error('invalidid', 'glossary');
+        }
+        if (!array_key_exists('entryid', $callbackargs)
+            || !$this->entry = $DB->get_record('glossary_entries', array('id' => $callbackargs['entryid']))) {
+            portfolio_exporter::raise_error('noentry', 'glossary');
+        }
+        $aliases = $DB->get_records('glossary_alias', array('entryid' => $this->entry->id));
+        $categories = $DB->get_records_sql('SELECT ec.entryid, c.name
+            FROM {glossary_entries_categories} ec
+            JOIN {glossary_categories} c
+            ON c.id = ec.categoryid
+            WHERE ec.entryid = ?', array($this->entry->id));
+        $this->set_export_data(array('entry' => $this->entry, 'aliases' => $aliases, 'categories' => $categories));
+    }
+
+    public function expected_time() {
+        return PORTFOLIO_TIME_LOW;
+    }
+
+    public function check_permissions() {
+        //@ penny todo
+        return true;
+    }
+
+    public static function display_name() {
+        return get_string('modname', 'glossary');
+    }
+
+    public function prepare_package($tempdir) {
+        global $SESSION;
+        $data = $this->get_export_data();
+        $data['entry']->approved = true; // in case we don't have $USER which this function checks
+        $SESSION->portfoliointernal = true;
+        ob_start();
+        glossary_print_entry($this->get('course'), $this->cm, $this->glossary, $data['entry'], null, null, false);
+        $content = ob_get_clean();
+        $SESSION->portfoliointernal = false;
+        // @todo  - convert to files api.
+        $status = ($handle  = fopen($tempdir . '/' . clean_filename($this->entry->concept) . '.html', 'w'));
+        $status = $status && fwrite($handle, $content);
+        $status = $status && fclose($handle);
+        return $status;
+    }
+
+    public function get_sha1() {
+        $data = $this->get_export_data();
+        return sha1(serialize($data['entry']) . serialize($data['aliases']) . serialize($data['categories']));
+    }
+}
+
 ?>
