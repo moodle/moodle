@@ -101,7 +101,7 @@
         }
     }
 
-    add_to_log($course->id, 'scorm', 'view', "player.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
+    add_to_log($course->id, 'scorm', 'view', "player.php?id=$cm->id&scoid=$sco->id", "$scorm->id", $cm->id);
 
     $scoidstr = '&amp;scoid='.$sco->id;
     $scoidpop = '&scoid='.$sco->id;
@@ -183,8 +183,8 @@
 
             $orgstr = '&amp;currentorg='.$currentorg;
 
-            if (($scorm->hidenav == 0) && ($sco->previd != 0) && ($sco->previous == 0)) {
-
+            if (($scorm->hidenav == 0) && ($sco->previd != 0) && (!isset($sco->previous) || $sco->previous == 0)) {
+ 
                 // Print the prev LO button
 
                 $scostr = '&amp;scoid='.$sco->previd;
@@ -201,8 +201,8 @@
 
             
 
-            if (($scorm->hidenav == 0) && ($sco->nextid != 0) && ($sco->next == 0)) {
-
+            if (($scorm->hidenav == 0) && ($sco->nextid != 0) && (!isset($sco->next) || $sco->next == 0)) {
+ 
                 // Print the next LO button
 
                 $scostr = '&amp;scoid='.$sco->nextid;
@@ -269,8 +269,8 @@
                 <div id="scormnav" class="scorm-right">
         <?php
             $orgstr = '&amp;currentorg='.$currentorg;
-            if (($scorm->hidenav == 0) && ($sco->previd != 0) && ($sco->previous == 0) && (($scorm->hidetoc == 2) || ($scorm->hidetoc == 1)) ) {
-
+            if (($scorm->hidenav == 0) && ($sco->previd != 0) && (!isset($sco->previous) || $sco->previous == 0) && (($scorm->hidetoc == 2) || ($scorm->hidetoc == 1)) ) {
+ 
                 // Print the prev LO button
                 $scostr = '&amp;scoid='.$sco->previd;
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
@@ -287,8 +287,8 @@
             if ($scorm->hidetoc == 2) {
                 echo $result->tocmenu;
             }
-            if (($scorm->hidenav == 0) && ($sco->nextid != 0) && ($sco->next == 0) && (($scorm->hidetoc == 2) || ($scorm->hidetoc == 1))) {
-
+            if (($scorm->hidenav == 0) && ($sco->nextid != 0) && (!isset($sco->next) || $sco->next == 0) && (($scorm->hidetoc == 2) || ($scorm->hidetoc == 1))) {
+ 
                 // Print the next LO button
                 $scostr = '&amp;scoid='.$sco->nextid;
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
@@ -374,11 +374,5 @@
 ?>
             </div> <!-- SCORM object -->
         </div> <!-- SCORM box  -->
-    </div> <!-- SCORM content -->
-    <?php if (!empty($THEME->customcorners)) {
-        print_container_end();
-    } ?>
-    </div> <!-- Content -->
-    </div> <!-- Page -->
-</body>
-</html>
+    </div> <!-- SCORM page -->
+<?php print_footer('none'); ?> 
