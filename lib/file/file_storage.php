@@ -306,7 +306,7 @@ class file_storage {
 
         static $contenthash = null;
         if (!$contenthash) {
-            $this->add_to_pool_string('');
+            $this->add_string_to_pool('');
             $contenthash = sha1('');
         }
 
@@ -473,7 +473,7 @@ class file_storage {
         $newrecord->mimetype     = empty($file_record->mimetype) ? mimeinfo('type', $file_record->filename) : $file_record->mimetype;
         $newrecord->userid       = empty($file_record->userid) ? null : $file_record->userid;
 
-        list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_to_pool_pathname($pathname);
+        list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_file_to_pool($pathname);
 
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
@@ -548,7 +548,7 @@ class file_storage {
         $newrecord->mimetype     = empty($file_record->mimetype) ? mimeinfo('type', $file_record->filename) : $file_record->mimetype;
         $newrecord->userid       = empty($file_record->userid) ? null : $file_record->userid;
 
-        list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_to_pool_string($content);
+        list($newrecord->contenthash, $newrecord->filesize, $newfile) = $this->add_string_to_pool($content);
 
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
@@ -577,7 +577,7 @@ class file_storage {
      * @param string sha1 hash of content if known (performance only)
      * @return array(contenthash, filesize, newfile)
      */
-    public function add_to_pool_pathname($pathname, $contenthash=null) {
+    public function add_file_to_pool($pathname, $contenthash=null) {
         if (!is_readable($pathname)) {
             throw new file_exception('localfilecannotread');
         }
@@ -622,7 +622,7 @@ class file_storage {
      * @param string $content file content - binary string
      * @return array(contenthash, filesize, newfile)
      */
-    public function add_to_pool_string($content) {
+    public function add_string_to_pool($content) {
         $contenthash = sha1($content);
         $filesize = strlen($content); // binary length
 
