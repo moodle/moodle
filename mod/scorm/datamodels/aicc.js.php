@@ -16,9 +16,8 @@
 //
 function AICCapi() {
     // Standard Data Type Definition
-    CMIString256 = '^.{0,255}$';
-    //CMIString4096 = '^[.|\\n|\\r]{0,4095}$';
-    CMIString4096 = '^.{0,4096}$';
+    CMIString256 = '^[\\u0000-\\uffff]{0,255}$';
+    CMIString4096 = '^[\\u0000-\\uffff]{0,4096}$';
     CMITime = '^([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\.[0-9]{1,2})?$';
     CMITimespan = '^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
     CMIInteger = '^\\d+$';
@@ -224,10 +223,10 @@ function AICCapi() {
         if (Initialized) {
             if (element !="") {
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');
+                elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
-                            element = element.replace(expression, "_$1.");
+                            element = String(element).replace(expression, "_$1.");
                             elementIndexes = element.split('.');
                         subelement = 'cmi';
                         i = 1;
@@ -278,7 +277,7 @@ function AICCapi() {
         if (Initialized) {
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');
+                elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
                         expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
@@ -474,7 +473,7 @@ function AICCapi() {
             } else {
                 element = parent+'.'+property;
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');
+                elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
                         elementstring = '&'+underscore(element)+'='+escape(data[property]);

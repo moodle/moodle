@@ -94,7 +94,7 @@ function SCORMapi1_3() {
         'cmi.interactions.n.description':{'pattern':CMIIndex, 'format':CMILangString250, 'mod':'rw'},
         'cmi.launch_data':{'defaultvalue':<?php echo isset($userdata->datafromlms)?'\''.$userdata->datafromlms.'\'':'null' ?>, 'mod':'r'},
         'cmi.learner_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r'},
-        'cmi.learner_name':{'defaultvalue':'<?php echo addslashes($userdata->student_name) ?>', 'mod':'r'},
+        'cmi.learner_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r'},
         'cmi.learner_preference._children':{'defaultvalue':student_preference_children, 'mod':'r'},
         'cmi.learner_preference.audio_level':{'defaultvalue':'1', 'format':CMIDecimal, 'range':audio_range, 'mod':'rw'},
         'cmi.learner_preference.language':{'defaultvalue':'', 'format':CMILang, 'mod':'rw'},
@@ -286,12 +286,12 @@ function SCORMapi1_3() {
         if ((Initialized) && (!Terminated)) {
             if (element !="") {
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');
+                elementmodel = String(element).replace(expression,'.n.');
 
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
 
-                        element = element.replace(/\.(\d+)\./, ".N$1.");
+                        element = String(element).replace(/\.(\d+)\./, ".N$1.");
                         element = element.replace(/\.(\d+)\./, ".N$1.");
 
                         elementIndexes = element.split('.');
@@ -385,7 +385,7 @@ function SCORMapi1_3() {
         if ((Initialized) && (!Terminated)) {
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');
+                elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
                         expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
@@ -751,7 +751,7 @@ function SCORMapi1_3() {
     function duplicatedID (element, value) {
         var found = false;
         var elements = eval(element+'._count');
-        for (n=0;(n<elements) && (!found);n++) {
+        for (n=0;(n < elements) && (!found);n++) {
             if (eval(element+'.N'+n+'.id') == value) {
                 found = true;
             }
@@ -764,7 +764,7 @@ function SCORMapi1_3() {
             return element;
         } else {
             expression = new RegExp(CMIIndex,'g');
-            elementmodel = element.replace(expression,'.n.');
+            elementmodel = String(element).replace(expression,'.n.');
             if (typeof datamodel[elementmodel] != "undefined") {
                 return elementmodel;
             }
@@ -788,7 +788,7 @@ function SCORMapi1_3() {
             mins = parseInt(firstarray[11],10)+parseInt(secondarray[11],10)+change;   //Minutes
             change = Math.floor(mins / 60);
             mins = mins - (change * 60);
-            hours = parseInt(firstarray[10],10)+parseInt(secondarray[10],10)+change;  //Hours
+            hours = parseInt(firstarray[9],10)+parseInt(secondarray[9],10)+change;  //Hours
             change = Math.floor(hours / 24);
             hours = hours - (change * 24);
             days = parseInt(firstarray[6],10)+parseInt(secondarray[6],10)+change; // Days
@@ -832,7 +832,7 @@ function SCORMapi1_3() {
             } else {
                 element = parent+'.'+property;
                 expression = new RegExp(CMIIndexStore,'g');
-                elementmodel = element.replace(expression,'.n.');
+                elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
                         elementstring = '&'+underscore(element)+'='+escape(data[property]);
