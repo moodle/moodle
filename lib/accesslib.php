@@ -3455,8 +3455,8 @@ function fetch_context_capabilities($context) {
 
             $SQL = "SELECT *
                       FROM {$CFG->prefix}capabilities
-                     WHERE contextlevel = ".CONTEXT_MODULE."
-                           AND component = 'mod/$module->name'
+                     WHERE (contextlevel = ".CONTEXT_MODULE."
+                           AND component = 'mod/$module->name')
                            $extra";
         break;
 
@@ -3467,6 +3467,9 @@ function fetch_context_capabilities($context) {
             $extra = "";
             if ($blockinstance = block_instance($block->name)) {
                 if ($extracaps = $blockinstance->get_extra_capabilities()) {
+                    foreach ($extracaps as $key=>$value) {
+                        $extracaps[$key]= "'$value'";
+                    }
                     $extra = implode(',', $extracaps);
                     $extra = "OR name IN ($extra)";
                 }
