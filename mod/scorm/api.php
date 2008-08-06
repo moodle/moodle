@@ -35,9 +35,11 @@
 
     require_login($course->id, false, $cm);
     
-    if ($usertrack=scorm_get_tracks($scoid,$USER->id,$attempt)) {
+    if ($usertrack = scorm_get_tracks($scoid,$USER->id,$attempt)) {
         if ((isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} != 'time-out')) || ($scorm->version != "SCORM_1.3")) {
-            $userdata = $usertrack;
+            foreach ($usertrack as $key => $value) {
+                $userdata->$key = addslashes_js($value);
+            }
         } else {
             $userdata->status = '';
             $userdata->score_raw = '';
@@ -46,8 +48,8 @@
         $userdata->status = '';
         $userdata->score_raw = '';
     }
-    $userdata->student_id = addslashes($USER->username);
-    $userdata->student_name = addslashes($USER->lastname .', '. $USER->firstname);
+    $userdata->student_id = addslashes_js($USER->username);
+    $userdata->student_name = addslashes_js($USER->lastname .', '. $USER->firstname);
     $userdata->mode = 'normal';
     if (isset($mode)) {
         $userdata->mode = $mode;
@@ -59,7 +61,7 @@
     }    
     if ($scodatas = scorm_get_sco($scoid, SCO_DATA)) {
         foreach ($scodatas as $key => $value) {
-            $userdata->$key = $value;
+            $userdata->$key = addslashes_js($value);
         }
     } else {
         error('Sco not found');
@@ -74,6 +76,6 @@
 
 var errorCode = "0";
 function underscore(str) {
-    str = str.replace(/.N/g,".");
+    str = String(str).replace(/.N/g,".");
     return str.replace(/\./g,"__");
 }

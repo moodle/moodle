@@ -16,10 +16,8 @@
 //
 function SCORMapi1_2() {
     // Standard Data Type Definition
-    CMIString256 = '^.{0,255}$';
-    CMIString4096 = '^.{0,4096}$';
-    //CMIString256 = '^[\.|\\n|\\r]{0,255}$';
-    //CMIString4096 = '^[\.|\\n|\\r]{0,4095}$';
+    CMIString256 = '^[\\u0000-\\uffff]{0,255}$';
+    CMIString4096 = '^[\\u0000-\\uffff]{0,4096}$';
     CMITime = '^([0-2]{1}[0-9]{1}):([0-5]{1}[0-9]{1}):([0-5]{1}[0-9]{1})(\.[0-9]{1,2})?$';
     CMITimespan = '^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
     CMIInteger = '^\\d+$';
@@ -55,7 +53,7 @@ function SCORMapi1_2() {
         'cmi._version':{'defaultvalue':'3.4', 'mod':'r', 'writeerror':'402'},
         'cmi.core._children':{'defaultvalue':core_children, 'mod':'r', 'writeerror':'402'},
         'cmi.core.student_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r', 'writeerror':'403'},
-        'cmi.core.student_name':{'defaultvalue':'<?php echo addslashes($userdata->student_name) ?>', 'mod':'r', 'writeerror':'403'},
+        'cmi.core.student_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
         'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.lesson_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_status'})?$userdata->{'cmi.core.lesson_status'}:'' ?>', 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
@@ -104,6 +102,7 @@ function SCORMapi1_2() {
         'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
         'nav.event':{'defaultvalue':'', 'format':NAVEvent, 'mod':'w', 'readerror':'404', 'writeerror':'405'}
     };
+    
     //
     // Datamodel inizialization
     //
@@ -223,10 +222,10 @@ function SCORMapi1_2() {
         if (Initialized) {
             if (element !="") {
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');
+                elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
-                            element = element.replace(expression, "_$1.");
+                            element = String(element).replace(expression, "_$1.");
                             elementIndexes = element.split('.');
                         subelement = 'cmi';
                         i = 1;
@@ -282,7 +281,7 @@ function SCORMapi1_2() {
         if (Initialized) {
             if (element != "") {
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');
+                elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
                         expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
@@ -493,7 +492,7 @@ function SCORMapi1_2() {
             } else {
                 element = parent+'.'+property;
                 expression = new RegExp(CMIIndex,'g');
-                elementmodel = element.replace(expression,'.n.');
+                elementmodel = String(element).replace(expression,'.n.');
                 if (elementmodel != "cmi.core.session_time") {
                     if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                         if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
