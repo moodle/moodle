@@ -2384,6 +2384,7 @@ require_once($CFG->libdir . '/portfoliolib.php');
 class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
 
     private $glossary;
+    private $exportdata;
 
     public function __construct($callbackargs) {
         global $DB;
@@ -2402,7 +2403,7 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
             ON c.id = ec.categoryid
             WHERE ec.entryid ' . $where, $params);
 
-        $this->set_export_data(array('entries' => $entries, 'aliases' => $aliases, 'categoryentries' => $categoryentries));
+        $this->exportdata = array('entries' => $entries, 'aliases' => $aliases, 'categoryentries' => $categoryentries);
     }
 
     public function expected_time() {
@@ -2411,24 +2412,23 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function get_sha1() {
-        return sha1(serialize($this->get_export_data()));
+        return sha1(serialize($this->exportdata));
     }
 
     public function prepare_package($tempdir) {
-        $data = $this->get_export_data();
-        $entries = $data['entries'];
+        $entries = $this->exportdata['entries'];
         $aliases = array();
         $categories = array();
-        if (is_array($data['aliases'])) {
-            foreach ($data['aliases'] as $alias) {
+        if (is_array($this->exportdata['aliases'])) {
+            foreach ($this->exportdata['aliases'] as $alias) {
                 if (!array_key_exists($alias->entryid, $aliases)) {
                     $aliases[$alias->entryid] = array();
                 }
                 $aliases[$alias->entryid][] = $alias->alias;
             }
         }
-        if (is_array($data['categoryentries'])) {
-            foreach ($data['categoryentries'] as $cat) {
+        if (is_array($this->exportdata['categoryentries'])) {
+            foreach ($this->exportdata['categoryentries'] as $cat) {
                 if (!array_key_exists($cat->entryid, $categories)) {
                     $categories[$cat->entryid] = array();
                 }
@@ -2470,13 +2470,14 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             || !$this->entry = $DB->get_record('glossary_entries', array('id' => $callbackargs['entryid']))) {
             portfolio_exporter::raise_error('noentry', 'glossary');
         }
+        /*
         $aliases = $DB->get_records('glossary_alias', array('entryid' => $this->entry->id));
         $categories = $DB->get_records_sql('SELECT ec.entryid, c.name
             FROM {glossary_entries_categories} ec
             JOIN {glossary_categories} c
             ON c.id = ec.categoryid
             WHERE ec.entryid = ?', array($this->entry->id));
-        $this->set_export_data(array('entry' => $this->entry, 'aliases' => $aliases, 'categories' => $categories));
+        */
     }
 
     public function expected_time() {
@@ -2493,14 +2494,11 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function prepare_package($tempdir) {
-        global $SESSION;
-        $data = $this->get_export_data();
-        $data['entry']->approved = true; // in case we don't have $USER which this function checks
-        $SESSION->portfoliointernal = true;
+        $this->entry->approved = true; // in case we don't have $USER which this function checks
+        define('PORTFOLIO_INTERNAL', true);
         ob_start();
-        glossary_print_entry($this->get('course'), $this->cm, $this->glossary, $data['entry'], null, null, false);
+        glossary_print_entry($this->get('course'), $this->cm, $this->glossary, $this->entry, null, null, false);
         $content = ob_get_clean();
-        $SESSION->portfoliointernal = false;
         // @todo  - convert to files api.
         $status = ($handle  = fopen($tempdir . '/' . clean_filename($this->entry->concept) . '.html', 'w'));
         $status = $status && fwrite($handle, $content);
@@ -2509,8 +2507,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function get_sha1() {
-        $data = $this->get_export_data();
-        return sha1(serialize($data['entry']) . serialize($data['aliases']) . serialize($data['categories']));
+        return sha1(serialize($this->entry));
     }
 }
 

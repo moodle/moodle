@@ -31,6 +31,7 @@ $string['instanceismisconfigured'] = 'Portfolio instance is misconfigured, skipp
 $string['instancenotsaved'] = 'Failed to save portfolio';
 $string['instancenotdelete'] = 'Failed to delete portfolio';
 $string['instancesaved'] = 'Portfolio saved successfully';
+$string['invalidtempid'] = 'Invalid temporary id';
 $string['invalidformat'] = 'Something is exporting an invalid format, $a';
 $string['invalidinstance'] = 'Could not find that portfolio instance';
 $string['manageportfolios'] = 'Manage portfolios';

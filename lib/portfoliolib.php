@@ -148,10 +148,14 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
         return;
     }
 
-    if (!empty($SESSION->portfoliointernal)) {
+    if (defined('PORTFOLIO_INTERNAL')) {
         // something somewhere has detected a risk of this being called during inside the preparation
         // eg forum_print_attachments
         return;
+    }
+
+    if (isset($SESSION->portfolioexport)) {
+        print_error('alreadyexporting', 'portfolio');
     }
 
     if (empty($callbackfile)) {
@@ -172,10 +176,6 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
     require_once($CFG->dirroot . $callbackfile);
 
     $callersupports = call_user_func(array($callbackclass, 'supported_formats'));
-
-    if (isset($SESSION->portfolio)) {
-        return portfolio_exporter::raise_error('alreadyexporting', 'portfolio');
-    }
 
     $output = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
     foreach ($callbackargs as $key => $value) {
@@ -572,10 +572,11 @@ abstract class portfolio_caller_base {
     */
     protected $user;
 
+
     /**
-    * id if any of tempdata
+    *
     */
-    private $tempdataid;
+    private $stage;
 
     /**
     * if this caller wants any additional config items
@@ -710,23 +711,6 @@ abstract class portfolio_caller_base {
     }
 
 
-    protected function set_export_data($data) {
-        global $DB;
-        if ($this->tempdataid) {
-            $DB->set_field('portfolio_tempdata', 'data', serialize($data), array('id' => $this->tempdataid));
-        }
-        $this->tempdataid = $DB->insert_record('portfolio_tempdata', (object)array('data' => serialize($data)));
-    }
-
-    protected function get_export_data() {
-        global $DB;
-        if ($this->tempdataid) {
-            if ($data = $DB->get_field('portfolio_tempdata', 'data', array('id' => $this->tempdataid))) {
-                return unserialize($data);
-            }
-        }
-        return false;
-    }
 
     /**
     * Similar to the other allowed_config functions
@@ -1655,6 +1639,11 @@ final class portfolio_exporter {
     public $callerfile;
 
     /**
+    * id of this export - matches record in portfolio_tempdata
+    */
+    private $id;
+
+    /**
     * construct a new exporter for use
     *
     * @param portfolio_plugin_base subclass $instance portfolio instance (passed by reference)
@@ -1715,9 +1704,10 @@ final class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the function is called recursively.
     */
     public function process_stage($stage, $alreadystolen=false) {
-        global $SESSION;
         if (!$alreadystolen && $url = $this->instance->steal_control($stage)) {
-            $SESSION->portfolio->stagepresteal = $stage;
+            $this->set('stage', $stage);
+            $this->save();
+            //$SESSION->portfolio->stagepresteal = $stage;
             redirect($url);
             break;
         }
@@ -1744,6 +1734,7 @@ final class portfolio_exporter {
             $stage++;
             return $this->process_stage($stage);
         }
+        $this->save();
         return false;
     }
 
@@ -1772,7 +1763,7 @@ final class portfolio_exporter {
     */
     public function process_stage_config() {
 
-        global $SESSION;
+        //global $SESSION;
 
         $pluginobj = $callerobj = null;
         if ($this->instance->has_export_config()) {
@@ -1806,9 +1797,12 @@ final class portfolio_exporter {
             );
             $mform = new portfolio_export_form('', $customdata);
             if ($mform->is_cancelled()){
+                $this->cancel_request();
+                /*
                 unset($SESSION->portfolio);
                 redirect($this->caller->get_return_url());
                 exit;
+                */
             } else if ($fromform = $mform->get_data()){
                 if (!confirm_sesskey()) {
                     return $this->raise_error('confirmsesskeybad', '', $caller->get_return_url());
@@ -1924,8 +1918,8 @@ final class portfolio_exporter {
         global $SESSION;
         $wait = $this->instance->get_export_config('wait');
         if (empty($wait)) {
-            events_trigger('portfolio_send', $this);
-            unset($SESSION->portfolio);
+            events_trigger('portfolio_send', $this->id);
+            unset($SESSION->portfolioexport);
             return $this->process_stage_finished(true);
         }
         return true;
@@ -1959,15 +1953,13 @@ final class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_cleanup() {
-        global $CFG, $DB;
+        global $CFG, $DB, $SESSION;
         // @todo this is unpleasant. fix it.
         require_once($CFG->dirroot . '/backup/lib.php');
         delete_dir_contents($this->tempdir);
         // @todo maybe add a hook in the plugin(s)
-        if ($this->caller->get('tempdataid')) {
-            $DB->delete_records('portfolio_tempdata', array('id' => $this->caller->get('tempdataid')));
-        }
-
+        $DB->delete_records('portfolio_tempdata', array('id' => $this->id));
+        unset($SESSION->portfolioexport);
         return true;
     }
 
@@ -2001,7 +1993,7 @@ final class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_finished($queued=false) {
-        global $SESSION;
+        //global $SESSION;
         $returnurl = $this->caller->get_return_url();
         $continueurl = $this->instance->get_continue_url();
         $extras = $this->instance->get_extra_finish_options();
@@ -2024,7 +2016,7 @@ final class portfolio_exporter {
             }
         }
         print_footer();
-        unset($SESSION->portfolio);
+        //unset($SESSION->portfolio);
         return false;
     }
 
@@ -2051,9 +2043,51 @@ final class portfolio_exporter {
             debugging(get_string($string, $module));
             return false;
         }
-        global $SESSION;
-        unset($SESSION->portfolio);
+        if (isset($this)) {
+            $this->process_stage_cleanup();
+        }
+        //global $SESSION;
+        //unset($SESSION->portfolio);
         print_error($string, $module, $continue);
+    }
+
+    public function cancel_request() {
+        if (!isset($this)) {
+            return;
+        }
+        $this->process_stage_cleanup();
+        redirect($this->caller->get_return_url());
+        exit;
+    }
+
+    /**
+    * writes out the contents of this object and all its data to the portfolio_tempdata table and sets the 'id' field.
+    */
+    public function save() {
+        global $DB;
+        if (empty($this->id)) {
+            $r = (object)array(
+                'data' => base64_encode(serialize($this)),
+                'expirytime' => time() + (60*60*24),
+            );
+            $this->id = $DB->insert_record('portfolio_tempdata', $r);
+        } else {
+            $DB->set_field('portfolio_tempdata', 'data', base64_encode(serialize($this)), array('id' => $this->id));
+        }
+    }
+
+    public static function rewaken_object($id) {
+        global $DB, $CFG;
+        if (!$data = $DB->get_record('portfolio_tempdata', array('id' => $id))) {
+            portfolio_exporer::raise_error('invalidtempid', 'portfolio');
+        }
+        $exporter = unserialize(base64_decode($data->data));
+        if ($exporter->instancefile) {
+            require_once($CFG->dirroot . '/' . $exporter->instancefile);
+        }
+        require_once($CFG->dirroot . '/' . $exporter->callerfile);
+        $exporter = unserialize(serialize($exporter));
+        return $exporter;
     }
 }
 
@@ -2085,9 +2119,7 @@ class portfolio_instance_select extends moodleform {
 */
 function portfolio_handle_event($eventdata) {
     global $CFG;
-    require_once($CFG->dirroot . '/' . $eventdata->instancefile);
-    require_once($CFG->dirroot . '/' . $eventdata->callerfile);
-    $exporter = unserialize(serialize($eventdata));
+    $exporter = portfolio_exporter::rewaken_object($eventdata);
     $exporter->process_stage_package();
     $exporter->process_stage_send();
     $exporter->process_stage_cleanup();

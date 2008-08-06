@@ -8,18 +8,22 @@ if (empty($CFG->portfolioenabled)) {
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->libdir . '/formslib.php');
 $exporter = null;
-if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
-    $exporter = unserialize(serialize($SESSION->portfolio->exporter));
-    if ($exporter->instancefile) {
-        require_once($CFG->dirroot . '/' . $exporter->instancefile);
+$dataid = 0;
+
+if (!$dataid = optional_param('id') ) {
+    if (isset($SESSION->portfolioexport)) {
+        $dataid = $SESSION->portfolioexport;
     }
-    require_once($CFG->dirroot . '/' . $exporter->callerfile);
-    $exporter = unserialize(serialize($SESSION->portfolio->exporter));
-    $SESSION->portfolio->exporter =& $exporter;
+}
+if ($dataid) {
+    $exporter = portfolio_exporter::rewaken_object($dataid);
     if ($cancel = optional_param('cancel', 0, PARAM_RAW)) {
+        $exporter->cancel_request();
+        /*
         $returnurl = $exporter->get('caller')->get_return_url();
         unset($SESSION->portfolio);
         redirect($returnurl);
+        */
     }
     if (!$exporter->get('instance')) {
         if ($instance = optional_param('instance', '', PARAM_INT)) {
@@ -70,12 +74,10 @@ if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
 
     // for build navigation
     if (!$course = $caller->get('course')) {
-        echo 1;
         $course = optional_param('course', 0, PARAM_INT);
     }
 
     if (!empty($course) && is_numeric($course)) {
-        echo 2;
         $course = $DB->get_record('course', array('id' => $course), 'id,shortname,fullname');
         // this is yuk but used in build_navigation
     }
@@ -88,8 +90,8 @@ if (isset($SESSION->portfolio) && isset($SESSION->portfolio->exporter)) {
 
     $exporter = new portfolio_exporter($instance, $caller, $callbackfile, $navigation);
     $exporter->set('user', $USER);
-    $SESSION->portfolio = new StdClass;
-    $SESSION->portfolio->exporter =& $exporter;
+    $exporter->save();
+    $SESSION->portfolioexport = $exporter->get('id');
 }
 
 
@@ -98,7 +100,7 @@ $alreadystolen = false;
 // for places returning control to pass (rather than PORTFOLIO_STAGE_PACKAGE
 // which is unstable if they can't get to the constant (eg external system)
 if ($postcontrol = optional_param('postcontrol', 0, PARAM_INT)) {
-    $stage = $SESSION->portfolio->stagepresteal;
+    $stage = $exporter->get('stage');
     $exporter->instance()->post_control($stage, array_merge($_GET, $_POST));
     $alreadystolen = true;
 }
@@ -111,12 +113,15 @@ if (!$exporter->get('instance')) {
     // for the next block to catch
     $mform = new portfolio_instance_select('', array('caller' => $exporter->get('caller')));
     if ($mform->is_cancelled()) {
+        $exporter->cancel_request();
+        /*
         $returnurl = $caller->get_return_url();
         unset($SESSION->portfolio);
         redirect($returnurl);
         exit;
+    */
     } else if ($fromform = $mform->get_data()){
-        redirect($CFG->wwwroot . '/portfolio/add.php?instance=' . $fromform->instance);
+        redirect($CFG->wwwroot . '/portfolio/add.php?instance=' . $fromform->instance . '&amp;id=' . $exporter->get('id'));
         exit;
     }
     else {
