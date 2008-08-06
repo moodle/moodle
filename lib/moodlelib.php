@@ -4534,7 +4534,7 @@ function get_file_browser() {
 }
 
 /**
- * Returns local file storage instance
+ * Returns file packer
  * @return object file_storage
  */
 function get_file_packer() {
