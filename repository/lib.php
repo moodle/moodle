@@ -282,9 +282,8 @@ function repository_get_option($id, $position){
     $ret = (array)unserialize($entry->$option);
     return $ret;
 }
-function repository_instances(){
+function repository_instances($contextid = SITEID){
     global $DB, $CFG, $USER;
-    $contextid = 0;
     $params = array();
     $sql = 'SELECT * FROM {repository} r WHERE ';
     $sql .= ' (r.userid = 0 or r.userid = ?) ';
@@ -354,17 +353,16 @@ function move_to_filepool($path, $name, $itemid) {
     if ($file = $fs->create_file_from_pathname($entry, $path)) {
         $id = json_encode($file->get_itemid());
         $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-        // TODO
-        // get_params should include id value, talk to Petr.
         return array('url'=>$ret->get_url(),'id'=>$file->get_itemid());
     } else {
         return null;
     }
 }
 
-
+// TODO
+// Need to pass contextid and contextlevel here
 function get_repository_client(){
-    global $CFG;
+    global $CFG, $USER;
     $suffix = uniqid();
     $strsubmit    = get_string('submit', 'repository');
     $strlistview  = get_string('listview', 'repository');

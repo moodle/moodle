@@ -45,10 +45,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
             return $this->getFrozenHtml();
         } else {
             $strsaved = get_string('filesaved', 'repository');
-            // TODO
-            // Use a better itemid value to identify a repository
-            // file
-            $itemid = time();
+            $itemid = substr(hexdec(uniqid()), 0, 9)+rand(1,100);
             $ret = get_repository_client();
             $suffix = $ret['suffix'];
             $str = $this->_getTabs();

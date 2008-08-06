@@ -17,9 +17,13 @@ $action = optional_param('action', '', PARAM_RAW);
 $search = optional_param('s', '', PARAM_RAW);
 // id of repository
 $repo_id = optional_param('repo_id', 1, PARAM_INT);
-$itemid  = optional_param('itemid',  0, PARAM_INT);
+// context id
+$ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);
+$itemid  = optional_param('itemid', 0, PARAM_INT);
+$userid  = $USER->id;
 
-if(!$repository = $DB->get_record('repository', array('id'=>$repo_id))) {
+if(!$repository = $DB->get_record('repository', array('id'=>$repo_id)))
+{
     $err = new stdclass;
     $err->e = get_string('invalidrepositoryid', 'repository');
     die(json_encode($err));
@@ -87,5 +91,3 @@ if($action == 'list') {
         die(json_encode($err));
     }
 }
-
-?>
