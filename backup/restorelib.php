@@ -7387,7 +7387,7 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
 
         //We compare Moodle's versions
         if ($CFG->version < $info->backup_moodle_version && $status) {
-            $message = new message();
+            $message = new object();
             $message->serverversion = $CFG->version;
             $message->serverrelease = $CFG->release;
             $message->backupversion = $info->backup_moodle_version;
