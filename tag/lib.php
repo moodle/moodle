@@ -801,11 +801,11 @@ function tag_compute_correlations($min_correlation=2) {
 
         // query that counts how many times any tag appears together in items
         // with the tag passed as argument ($tag_id)
-        $query = "SELECT tb.tagid , COUNT(*) AS nr
+        $query = "SELECT tb.tagid 
                     FROM {tag_instance} ta JOIN {tag_instance} tb ON ta.itemid = tb.itemid
                    WHERE ta.tagid = ? AND tb.tagid <> ?
                 GROUP BY tb.tagid
-                  HAVING nr > ?
+                  HAVING COUNT(*) > ?
                 ORDER BY COUNT(*) DESC";
         $params = array($tag->id, $tag->id, $min_correlation);
 
