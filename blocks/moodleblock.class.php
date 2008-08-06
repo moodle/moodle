@@ -796,7 +796,7 @@ class block_base {
     }
 
     function get_extra_capabilities() {
-        return array();
+        return array('moodle/block:view');
     }
 }
 

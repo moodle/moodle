@@ -3365,8 +3365,8 @@ function fetch_context_capabilities($context) {
 
             $SQL = "SELECT *
                       FROM {capabilities}
-                     WHERE contextlevel = ".CONTEXT_MODULE."
-                           AND component = :component
+                     WHERE (contextlevel = ".CONTEXT_MODULE."
+                           AND component = :component)
                            $extra";
             $params['component'] = "mod/$module->name";
         break;
