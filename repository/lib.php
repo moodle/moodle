@@ -494,6 +494,9 @@ function get_repository_client(){
             this.show = function(){
                 panel.show();
             }
+            this.hide = function(){
+                panel.hide();
+            }
             this.create_picker = function(){
                 // display UI
                 panel.render();
@@ -694,6 +697,7 @@ function get_repository_client(){
         _client.end = function(str){
             _client.target.value = str;
             _client.formcallback();
+            _client.instance.hide();
             _client.viewfiles();
         }
         _client.callback = {

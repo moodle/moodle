@@ -4,6 +4,7 @@ $string['back'] = '&lt; Back';
 $string['download'] = 'Download';
 $string['close'] = 'Close';
 $string['filename'] = 'Filename';
+$string['filesaved'] = 'File Saved!';
 $string['invalidrepositoryid'] = 'Invalid Repository ID';
 $string['invalidplugin'] = 'Invalid Repository Plug-in';
 $string['manageuserrepository'] = 'Manage individual repository';

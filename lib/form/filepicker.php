@@ -45,11 +45,15 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
             return $this->getFrozenHtml();
         } else {
             $strsaved = get_string('filesaved', 'repository');
+            // TODO
+            // Use a better itemid value to identify a repository
+            // file
             $itemid = time();
             $ret = get_repository_client();
             $suffix = $ret['suffix'];
             $str = $this->_getTabs();
-            $str .= '<input type="hidden" value="'.$itemid.'" name="repo_attachment" id="repo_value_'.$suffix.'" />';
+            $str .= '<input type="hidden" value="'.$itemid.'" name="'.$this->_attributes['name'].'" id="'.$this->_attributes['id'].'_'.$suffix.'" />';
+            $id = $this->_attributes['id'];
             $str .= <<<EOD
 <script type="text/javascript">
 function updatefile(){
@@ -57,12 +61,13 @@ function updatefile(){
     document.getElementById('repo_info_$suffix').innerHTML = '$strsaved';
 }
 function callpicker_$suffix(){
-    var el=document.getElementById('repo_value_$suffix');
+    var el=document.getElementById('${id}_${suffix}');
     openpicker_$suffix({"env":"form", 'itemid': $itemid, 'target':el, 'callback':updatefile})
 }
 </script>
 EOD;
-            $str .= '<input' . $this->_getAttrString($this->_attributes) . ' onclick=\'callpicker_'.$suffix.'()\' />'.'<span id="repo_info_'.$suffix.'" style="color:green"></span>'.$ret['html'].$ret['js'];
+            // $this->_getAttrString($this->_attributes);
+            $str .= '<input value ="'.get_string('openpicker', 'repository').'" type="button" onclick=\'callpicker_'.$suffix.'()\' />'.'<span id="repo_info_'.$suffix.'" style="color:green"></span>'.$ret['html'].$ret['js'];
             return $str;
         }
     }
