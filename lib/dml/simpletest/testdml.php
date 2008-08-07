@@ -974,6 +974,53 @@ class dml_test extends UnitTestCase {
 
     }
 
+    public function test_insert_record_clob() {
+        global $CFG;
+
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/clob.txt');
+
+        $this->assertTrue($id = $DB->insert_record('testtable', array('description' => $clob)));
+        $this->assertTrue($record = $DB->get_record('testtable', array('id' => $id)));
+        $this->assertEqual($clob, $record->description);
+
+    }
+
+    public function test_insert_record_multiple_clobs() {
+        global $CFG;
+
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('image', XMLDB_TYPE_BINARY, 'big', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/clob.txt', FILE_TEXT);
+        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/randombinary', FILE_BINARY);
+
+        $this->assertTrue($id = $DB->insert_record('testtable', array('description' => $clob, 'image' => $blob)));
+        $this->assertTrue($record = $DB->get_record('testtable', array('id' => $id)));
+        $this->assertEqual($clob, $record->description);
+        $this->assertEqual($blob, $record->image);
+        $this->assertEqual($clob, $DB->get_field('testtable', 'description', 'id', $id));
+        $this->assertEqual($blob, $DB->get_field('testtable', 'image', 'id', $id));
+    }
+
+
     public function test_update_record_raw() {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
@@ -1010,6 +1057,61 @@ class dml_test extends UnitTestCase {
         $this->assertTrue($DB->update_record('testtable', $record));
         $this->assertFalse($record = $DB->get_record('testtable', array('course' => 1)));
         $this->assertTrue($record = $DB->get_record('testtable', array('course' => 2)));
+    }
+
+    public function test_update_record_clob() {
+        global $CFG;
+
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/clob.txt');
+
+        $id = $DB->insert_record('testtable', array('description' => $clob));
+        $record = $DB->get_record('testtable', array('id' => $id));
+        $record->description = substr($clob, 0, 500);
+        $this->assertTrue($DB->update_record('testtable', $record));
+
+        $record = $DB->get_record('testtable', array('id' => $id));
+        $this->assertEqual(substr($clob, 0, 500), $record->description);
+    }
+
+    public function test_update_record_multiple_clobs() {
+        global $CFG;
+
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = new xmldb_table("testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('image', XMLDB_TYPE_BINARY, 'big', null, null, null, null, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $clob = file_get_contents($CFG->libdir.'/dml/simpletest/clob.txt');
+        $blob = file_get_contents($CFG->libdir.'/dml/simpletest/randombinary');
+
+        $id = $DB->insert_record('testtable', array('description' => $clob, 'image' => $blob));
+        $record = $DB->get_record('testtable', array('id' => $id));
+        $record->description = substr($clob, 0, 500);
+        $record->image = substr($blob, 0, 250);
+        $this->assertTrue($DB->update_record('testtable', $record));
+
+        $record = $DB->get_record('testtable', array('id' => $id));
+        $this->assertEqual(substr($clob, 0, 500), $record->description);
+        $this->assertEqual(substr($blob, 0, 250), $record->image);
+        $this->assertEqual(substr($clob, 0, 500), $DB->get_field('testtable', 'description', 'id', $id));
+        $this->assertEqual(substr($blob, 0, 250), $DB->get_field('testtable', 'image', 'id', $id));
+
     }
 
     public function test_set_field() {
