@@ -274,4 +274,5 @@ $string['wrongzipfilename'] = 'Chybné jméno souboru ZIP';
 $string['wwwroot'] = 'Webová adresa';
 $string['wwwrooterror'] = 'Parametr \'Webová adresa\' je zřejmě nastaven nesprávně -- v zadaném umístění se nepodařilo najít instalaci Moodlu. Ve formuláři níže byla automaticky nastavena výchozí hodnota.';
 $string['xmlrpcrecommended'] = 'Instalace rozšíření pro podporu XML-RPC je velmi užitečná pro síťové funkce Moodlu.';
+$string['ziprequired'] = 'PHP rozšíření ZIP je povinné. Nelze již používat binárky info-ZIP nebo knihovnu PclZip.';
 ?>
