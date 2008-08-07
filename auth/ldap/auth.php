@@ -1918,7 +1918,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         if (!isset($config->forcechangepassword))
             {$config->forcechangepassword = 0; }
         if (!isset($config->stdchangepassword))
-            {$config->forcechangepassword = 0; }
+            {$config->stdchangepassword = 0; }
         if (!isset($config->passtype))
             {$config->passtype = 'plaintext'; }
         if (!isset($config->changepasswordurl))
