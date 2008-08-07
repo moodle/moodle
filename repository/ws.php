@@ -6,18 +6,20 @@ require_once('lib.php');
 // set one hour here
 $CFG->repository_cache_expire = 60*60;
 // page
-$p     = optional_param('p', '', PARAM_RAW);
+$p     = optional_param('p', '', PARAM_INT);
 // opened in editor or moodleform
-$env   = optional_param('env', 'form', PARAM_RAW);
+$env   = optional_param('env', 'form', PARAM_ALPHA);
 // file to download
-$file  = optional_param('file', '', PARAM_RAW);
+$file  = optional_param('file', '', PARAM_URL);
 // rename the file name
-$title = optional_param('title', '', PARAM_RAW);
-$action = optional_param('action', '', PARAM_RAW);
-$search = optional_param('s', '', PARAM_RAW);
+$title = optional_param('title', '', PARAM_FILE);
+$action = optional_param('action', '', PARAM_ALPHA);
+$search = optional_param('s', '', PARAM_CLEANHTML);
 // id of repository
 $repo_id = optional_param('repo_id', 1, PARAM_INT);
-// context id
+// TODO
+// what will happen if user use a fake ctx_id?
+// Think about using $SESSION save it
 $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);
 $itemid  = optional_param('itemid', 0, PARAM_INT);
 $userid  = $USER->id;
@@ -36,7 +38,7 @@ if(file_exists($CFG->dirroot.'/repository/'.
         $repository->repositorytype.'/repository.class.php');
     $classname = 'repository_' . $repository->repositorytype;
     try{
-        $repo = new $classname($repo_id, SITEID, array('ajax'=>true));
+        $repo = new $classname($repo_id, $ctx_id, array('ajax'=>true));
     } catch (repository_exception $e){
         $err = new stdclass;
         $err->e = $e->getMessage();

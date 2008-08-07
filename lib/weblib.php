@@ -4811,6 +4811,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     global $CFG, $COURSE, $HTTPSPAGEREQUIRED, $THEME;
     //static $scriptcount = 0; // For loading the htmlarea script only once.
 
+    //var_dump(unserialize($COURSE->modinfo));
     $mincols = 65;
     $minrows = 10;
     $str = '';
@@ -4872,7 +4873,12 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         require_once("$CFG->dirroot/repository/lib.php");
         $str_toggle = '<span class="helplink"><a href="javascript:mce_toggleEditor(\''. $id .'\');"><img width="50" height="17" src="'. $CFG->httpswwwroot .'/lib/editor/tinymce/images/toggle.gif" alt="'. get_string('editortoggle') .'" title="'. get_string('editortoggle') .'" class="icontoggle" /></a></span>';
         // Show shortcuts button if HTML editor is in use, but only if JavaScript is enabled (MDL-9556)
-        $ret = get_repository_client();
+        if(empty($COURSE->context)) {
+            $ctx = get_context_instance(CONTEXT_SYSTEM);
+        } else {
+            $ctx = $COURSE->context;
+        }
+        $ret = get_repository_client($ctx);
         $str .= $ret['html'].$ret['js'];
         $suffix = $ret['suffix'];
         $str .= '<div class="textareaicons">';

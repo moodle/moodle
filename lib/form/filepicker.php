@@ -40,13 +40,18 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
         }
     }
     function toHtml() {
-        global $CFG;
+        global $CFG, $COURSE;
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         } else {
             $strsaved = get_string('filesaved', 'repository');
             $itemid = substr(hexdec(uniqid()), 0, 9)+rand(1,100);
-            $ret = get_repository_client();
+            if(empty($COURSE->context)) {
+                $ctx = get_context_instance(CONTEXT_SYSTEM);
+            } else {
+                $ctx = $COURSE->context;
+            }
+            $ret = get_repository_client($ctx);
             $suffix = $ret['suffix'];
             $str = $this->_getTabs();
             $str .= '<input type="hidden" value="'.$itemid.'" name="'.$this->_attributes['name'].'" id="'.$this->_attributes['id'].'_'.$suffix.'" />';

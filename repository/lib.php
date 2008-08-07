@@ -69,9 +69,9 @@ abstract class repository {
      * @param string $search The text will be searched.
      * @return array the list of files, including meta infomation
      */
-    public function __construct($repositoryid, $context = SITEID, $options = array()){
-        $this->context      = $context;
+    public function __construct($repositoryid, $contextid = SITEID, $options = array()){
         $this->repositoryid = $repositoryid;
+        $this->context      = get_context_instance_by_id($contextid);
         $this->options      = array();
         if (is_array($options)) {
             foreach ($options as $n => $v) {
@@ -211,7 +211,7 @@ abstract class repository {
      * @param string $userid The id of specific user
      * @return array the list of files, including meta infomation
      */
-    public function store_login($username = '', $password = '', $userid = 1, $contextid = SITEID) {
+    public function store_login($username = '', $password = '', $userid = 1) {
         global $DB;
 
         $repository = new stdclass;
@@ -220,7 +220,7 @@ abstract class repository {
         } else {
             $repository->userid         = $userid;
             $repository->repositorytype = $this->type;
-            $repository->contextid      = $contextid;
+            $repository->contextid      = $this->context->id;
         }
         if ($entry = $DB->get_record('repository', $repository)) {
             $repository->id = $entry->id;
@@ -282,19 +282,19 @@ function repository_get_option($id, $position){
     $ret = (array)unserialize($entry->$option);
     return $ret;
 }
-function repository_instances($contextid = SITEID){
+function repository_instances($context){
     global $DB, $CFG, $USER;
     $params = array();
     $sql = 'SELECT * FROM {repository} r WHERE ';
     $sql .= ' (r.userid = 0 or r.userid = ?) ';
     $params[] = $USER->id;
-    if($contextid == SITEID) {
+    if($context->id == SITEID) {
         $sql .= 'AND (r.contextid = ?)';
         $params[] = SITEID;
     } else {
         $sql .= 'AND (r.contextid = ? or r.contextid = ?)';
         $params[] = SITEID;
-        $params[] = $contextid;
+        $params[] = $context->id;
     }
     if(!$repos = $DB->get_records_sql($sql, $params)) {
         $repos = array();
@@ -361,7 +361,7 @@ function move_to_filepool($path, $name, $itemid) {
 
 // TODO
 // Need to pass contextid and contextlevel here
-function get_repository_client(){
+function get_repository_client($context){
     global $CFG, $USER;
     $suffix = uniqid();
     $strsubmit    = get_string('submit', 'repository');
@@ -670,7 +670,7 @@ function get_repository_client(){
             }
             _client.loading();
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
-                '$CFG->wwwroot/repository/ws.php?repo_id='+_client.repositoryid+
+                '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='+_client.repositoryid+
                     '&action=download', 
                 _client.dlfile, _client.postdata({'itemid': itemid, 'env':_client.env, 'file':file, 'title':title}));
         }
@@ -687,6 +687,7 @@ function get_repository_client(){
                 }
             }
             obj['env'] = _client.env;
+            obj['ctx_id'] = $context->id;
             _client.loading();
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
                 '$CFG->wwwroot/repository/ws.php', _client.callback,
@@ -744,7 +745,7 @@ function get_repository_client(){
             _client.viewbar.set('disabled', false);
             _client.loading();
             _client.repositoryid = id;
-            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?repo_id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
+            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
         }
         _client.search = function(id){
             var data = window.prompt("What are you searching for?");
@@ -754,13 +755,13 @@ function get_repository_client(){
             }
             _client.viewbar.set('disabled', false);
             _client.loading();
-            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?repo_id='+id+'&s='+data+'&env='+_client.env, _client.callback);
+            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='+id+'&s='+data+'&env='+_client.env, _client.callback);
         }
         return _client;
     })();
 EOD;
 
-    $repos = repository_instances();
+    $repos = repository_instances($context);
     foreach($repos as $repo) {
         $js .= "\r\n";
         $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo).');'."\n";
