@@ -71,6 +71,7 @@ if (!empty($tests)) {
 
     foreach ($tests as $i=>$database) {
         $dbinfo = $dbinfos[$i];
+
         $UNITTEST->func_test_db = $database; // pass the db to the tests through global
 
         print_heading('Running tests on: '.$dbinfo['name'], '', 3); // TODO: localise
@@ -80,6 +81,12 @@ if (!empty($tests)) {
 
         $test->addTestFile($CFG->libdir.'/dml/simpletest/testdml.php');
         $test->addTestFile($CFG->libdir.'/ddl/simpletest/testddl.php');
+
+        // Look for DB-specific tests (testing sql_ helper functions)
+        $dbfilename = $CFG->libdir.'/dml/simpletest/test_'.get_class($database).'.php';
+        if (file_exists($dbfilename)) {
+            $test->addTestFile($dbfilename);
+        }
 
         // Make the reporter, which is what displays the results.
         $reporter = new ExHtmlReporter($showpasses);
