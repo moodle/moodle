@@ -325,13 +325,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     //
     // Get the current organization infos
     //
-    $conditions = array();
     if (!empty($currentorg)) {
         if (($organizationtitle = $DB->get_field('scorm_scoes','title', array('scorm'=>$scorm->id,'identifier'=>$currentorg))) != '') {
             $result->toc .= "\t<li>$organizationtitle</li>\n";
             $tocmenus[] = $organizationtitle;
         }
-        $conditions['organization'] = $currentorg;
     }
     //
     // If not specified retrieve the last attempt number
@@ -340,17 +338,14 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
     $result->attemptleft = $scorm->maxattempt - $attempt;
-    $conditions['scorm'] = $scorm->id;
-    if ($scoes = $DB->get_records('scorm_scoes', $conditions, "id ASC")){
-        // drop keys so that we can access array sequentially
-        $scoes = array_values($scoes); 
+    if ($scoes = scorm_get_scoes($scorm->id, $currentorg)){
         //
         // Retrieve user tracking data for each learning object
         // 
         $usertracks = array();
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
-                if ($usertrack=scorm_get_tracks($sco->id,$user->id,$attempt)) {
+                if ($usertrack = scorm_get_tracks($sco->id,$user->id,$attempt)) {
                     if ($usertrack->status == '') {
                         $usertrack->status = 'notattempted';
                     }
@@ -366,16 +361,12 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $findnext = false;
         $parents[$level]='/';
         
-        foreach ($scoes as $pos=>$sco) {
+        foreach ($scoes as $pos => $sco) {
             $isvisible = false;
             $sco->title = $sco->title;
-            if ($optionaldatas = scorm_get_sco($sco->id, SCO_DATA)) {
-                if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
-                    $isvisible = true;
-                }
+            if (!isset($sco->isvisible) || (isset($sco->isvisible) && ($sco->isvisible == 'true'))) {
+                $isvisible = true;
             }
-            else
-				$isvisible = true;
             if ($parents[$level]!=$sco->parent) {
                 if ($newlevel = array_search($sco->parent,$parents)) {
                     for ($i=0; $i<($level-$newlevel); $i++) {
@@ -412,10 +403,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 $nextsco = false;
             }
             $nextisvisible = false;
-            if (($nextsco !== false) && ($optionaldatas = scorm_get_sco($nextsco->id, SCO_DATA))) {
-                if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
-                    $nextisvisible = true;
-                }
+            if (!isset($nextsco->isvisible) || (isset($nextsco->isvisible) && ($nextsco->isvisible == 'true'))) {
+                $nextisvisible = true;
             }
             if ($nextisvisible && ($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                 $sublist++;
@@ -472,12 +461,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         }
                     }
                     if ($sco->id == $scoid) {
-                        $scodata = scorm_get_sco($sco->id, SCO_DATA);
                         $startbold = '<b>';
                         $endbold = '</b>';
                         $findnext = true;
-                        $shownext = isset($scodata->next) ? $scodata->next : 0;
-                        $showprev = isset($scodata->previous) ? $scodata->previous : 0;
+                        $shownext = isset($sco->next) ? $sco->next : 0;
+                        $showprev = isset($sco->previous) ? $sco->previous : 0;
                     }
                 
                     if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
