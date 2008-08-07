@@ -137,7 +137,7 @@
 ?>
     <script type="text/javascript" src="request.js"></script>
     <script type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
-    <script type="text/javascript" src="<?=$CFG->wwwroot?>/mod/scorm/rd.js"></script>
+    <script type="text/javascript" src="<?php echo $CFG->wwwroot; ?>/mod/scorm/rd.js"></script>
     <script type="text/javascript">
     <!--    
         window.onresize = function() {
@@ -375,4 +375,4 @@
             </div> <!-- SCORM object -->
         </div> <!-- SCORM box  -->
     </div> <!-- SCORM page -->
-<?php print_footer('none'); ?> 
+<?php print_footer('none'); ?>
