@@ -610,6 +610,20 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008080600);
     }
+    if ($result && $oldversion < 2008080701) {
+
+    /// Define field visible to be added to repository
+        $table = new xmldb_table('repository');
+        $field = new xmldb_field('visible', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, '1', 'timemodified');
+
+    /// Conditionally launch add field visible
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008080701);
+    }
 
     return $result;
 }
