@@ -275,7 +275,7 @@ class enrolment_plugin_authorize
                             $a = new stdClass;
                             $a->course = "$course->fullname";
                             $a->user = fullname($USER);
-                            
+
                             $eventdata = new object();
                             $eventdata->modulename        = 'moodle';
                             $eventdata->userfrom          = $USER;
@@ -296,7 +296,7 @@ class enrolment_plugin_authorize
                                 $eventdata = new object();
                                 $eventdata->modulename  = 'moodle';
                                 $eventdata->userfrom    = $USER;
-                                $eventdata->userto      = $paymentmanager;
+                                $eventdata->userto      = $admin;
                                 $eventdata->subject     = get_string("enrolmentnew", '', format_string($course->shortname));
                                 $eventdata->fullmessage = get_string('enrolmentnewuser', '', $a);
                                 $eventdata->fullmessageformat = FORMAT_PLAIN;
@@ -837,7 +837,7 @@ class enrolment_plugin_authorize
         $a->enrolurl = "$CFG->wwwroot/$CFG->admin/enrol_config.php?enrol=authorize";
         $a->url = $CFG->wwwroot.'/enrol/authorize/index.php?status='.AN_STATUS_AUTH;
         $message = get_string('pendingordersemail', 'enrol_authorize', $a);
-        
+
         $eventdata = new object();
         $eventdata->modulename        = 'moodle';
         $eventdata->userfrom          = $adminuser;
@@ -846,7 +846,7 @@ class enrolment_plugin_authorize
         $eventdata->fullmessage       = $message;
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml   = '';
-        $eventdata->smallmessage      = '';	
+        $eventdata->smallmessage      = '';
         events_trigger('message_send', $eventdata);
 
         // Email to payment managers
@@ -894,7 +894,7 @@ class enrolment_plugin_authorize
                     $eventdata->fullmessage       = $message;
                     $eventdata->fullmessageformat = FORMAT_PLAIN;
                     $eventdata->fullmessagehtml   = '';
-                    $eventdata->smallmessage      = '';	
+                    $eventdata->smallmessage      = '';
                     events_trigger('message_send', $eventdata);
                 }
             }
