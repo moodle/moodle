@@ -282,7 +282,8 @@ function repository_get_option($id, $position){
     $ret = (array)unserialize($entry->$option);
     return $ret;
 }
-function repository_instances($context){
+
+function repository_user_instances($context){
     global $DB, $CFG, $USER;
     $params = array();
     $sql = 'SELECT * FROM {repository} r WHERE ';
@@ -301,6 +302,7 @@ function repository_instances($context){
     }
     return $repos;
 }
+
 function repository_instance($id){
     global $DB, $CFG;
 
@@ -761,7 +763,7 @@ function get_repository_client($context){
     })();
 EOD;
 
-    $repos = repository_instances($context);
+    $repos = repository_user_instances($context);
     foreach($repos as $repo) {
         $js .= "\r\n";
         $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo).');'."\n";
