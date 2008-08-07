@@ -631,8 +631,17 @@ function send_temp_file_finished($path) {
  * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
  * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
  */
-function send_file($path, $filename, $lifetime=86400 , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='') {
+function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='') {
     global $CFG, $COURSE;
+
+    // MDL-11789, apply $CFG->filelifetime here
+    if ($lifetime === 'default') {
+        if (!empty($CFG->filelifetime)) {
+            $filetime = $CFG->filelifetime;
+        } else {
+            $filetime = 86400;
+        }
+    }
 
     // Use given MIME type if specified, otherwise guess it using mimeinfo.
     // IE, Konqueror and Opera open html file directly in browser from web even when directed to save it to disk :-O
