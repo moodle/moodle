@@ -13,24 +13,15 @@ class postgres7_adodb_moodle_database_test extends dbspecific_test {
     function test_ilike() {
         $DB = $this->tdb;
 
-        $dbman = $DB->get_manager();
-
-        $table = new xmldb_table("testtable");
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
-        $this->tables[$table->getName()] = $table;
-
         $id = $DB->insert_record('testtable', array('name' => 'SuperDuperREcord'));
 
-        $wheresql = "name " . $DB->sql_ilike() . " '%per%'";
-        $record = $DB->get_record_select('testtable', $wheresql);
-        $this->assertEqual('SuperDuperREcord', $record->name);
+        $sql = "SELECT 'SuperDuperRecord' " . $DB->sql_ilike() . " '%per%' AS result";
+        $record = $DB->get_record_sql($sql);
+        $this->assertEqual('t', $record->result);
 
-        $wheresql = "name " . $DB->sql_ilike() . " 'per'";
-        $record = $DB->get_record_select('testtable', $wheresql);
-        $this->assertFalse($record);
+        $sql = "SELECT 'SuperDuperRecord' " . $DB->sql_ilike() . " 'per' AS result";
+        $record = $DB->get_record_sql($sql);
+        $this->assertEqual('f',$record->result);
     }
 
     function test_concat() {
@@ -47,12 +38,27 @@ class postgres7_adodb_moodle_database_test extends dbspecific_test {
 
     function test_cast_char2int() {
         $DB = $this->tdb;
-        $field = $DB->get_field_sql("SELECT " . $DB->sql_cast_char2int("'two'"));
-        $this->assertFalse($field);
-        $field = $DB->get_field_sql("SELECT " . $DB->sql_cast_char2int("'74971.4901'"));
-        $this->assertFalse($field);
         $field = $DB->get_field_sql("SELECT " . $DB->sql_cast_char2int("'74971'"));
         $this->assertEqual(74971, $field);
+    }
+
+    function test_cast_char2real() {
+        $DB = $this->tdb;
+        $field = $DB->get_field_sql("SELECT " . $DB->sql_cast_char2real("'74971.55'"));
+        $this->assertEqual(74971.5, $field);
+        $field = $DB->get_field_sql("SELECT " . $DB->sql_cast_char2real("'74971.59'"));
+        $this->assertEqual(74971.6, $field);
+    }
+
+    function test_regex() {
+        $DB = $this->tdb;
+        $name = 'something or another';
+
+        $sql = "SELECT '$name' ".$DB->sql_regex()." 'th'";
+        $this->assertEqual('t', $DB->get_field_sql($sql));
+
+        $sql = "SELECT '$name' ".$DB->sql_regex(false)." 'th'";
+        $this->assertEqual('f', $DB->get_field_sql($sql));
     }
 }
 ?>
