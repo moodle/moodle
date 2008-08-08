@@ -74,6 +74,7 @@ abstract class repository {
         $this->context      = get_context_instance_by_id($contextid);
         $this->options      = array();
         if (is_array($options)) {
+            $options = array_merge(repository_get_option($repositoryid), $options);
             foreach ($options as $n => $v) {
                 $this->options[$n] = $v;
             }
@@ -264,7 +265,7 @@ function repository_set_option($id, $position, $config = array()){
         print_error('invalidoption', 'repository', '', $position);
     }
     if ($entry = $DB->get_record('repository', array('id'=>$id))) {
-        $option = 'option'.$position;
+        $option = 'data'.$position;
         $repository->id = $entry->id;
         $repository->$option = $config;
         return $DB->update_record('repository', $repository);
@@ -276,14 +277,25 @@ function repository_set_option($id, $position, $config = array()){
  * Get settings for repository instance
  *
  * @param int repository Id
- * @param int from 1 to 5
  * @return array Settings
  */
-function repository_get_option($id, $position){
+function repository_get_option($id){
     global $DB;
     $entry = $DB->get_record('repository', array('id'=>$id));
-    $option = 'option'.$position;
-    $ret = (array)unserialize($entry->$option);
+    if (!empty($entry->visible)) {
+        $ret['visible'] = 1;
+    } else {
+        $ret['visible'] = 0;
+    }
+    for ($i=1;$i<6;$i++) {
+        $field = 'data'.$i;
+        $data = unserialize($entry->$field);
+        if (!empty($data)) {
+            if (is_array($data)) {
+                $ret = array_merge($ret, $data);
+            }
+        }
+    }
     return $ret;
 }
 
@@ -641,25 +653,35 @@ function get_repository_client($context){
         // If _client.datasource.upload == true
         // then create a iframe to upload file
         // We may need a new page named repository/upload.php to process this.
+        // TODO
+        // Improve CSS
 
         _client.viewthumb = function(){
             var panel = new YAHOO.util.Element('panel-$suffix');
             _client.viewbar.check(1);
             obj = _client.datasource.list;
-            var str = '';
-            str += _client.makepage();
+            panel.get('element').innerHTML = _client.makepage();
             for(k in obj){
-                str += '<div class="grid">';
-                str += '<img title="'+obj[k].title+'" src="'+obj[k].thumbnail+'" />';
-                str += '<div style="text-align:center">';
-                str += ('<input type="radio" title="'+obj[k].title
-                        +'" name="selected-files" value="'+obj[k].source
-                        +'" onclick=\'repository_client_$suffix.rename("'+obj[k].title+'", "'
-                        +obj[k].source+'")\' />');
-                str += obj[k].title+'</div>';
-                str += '</div>';
+                var el = document.createElement('div');
+                el.className='grid';
+                var img = document.createElement('img');
+                img.src = obj[k].thumbnail;
+                var input = document.createElement('input');
+                input.type='radio';
+                input.title = obj[k].title;
+                input.name = 'selected-files';
+                input.value = obj[k].source;
+                input.title = obj[k].title;
+                input.onclick = function(){
+                    repository_client_$suffix.rename(this.title, this.value);
+                }
+                var title = document.createElement('span');
+                title.innerHTML = obj[k].title;
+                el.appendChild(img);
+                el.appendChild(input);
+                el.appendChild(title);
+                panel.get('element').appendChild(el);
             }
-            panel.get('element').innerHTML = str;
             _client.viewmode = 1;
             return str;
         }
@@ -672,19 +694,35 @@ function get_repository_client($context){
             str += _client.makepage();
             var re = new RegExp();
             re.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\?\/.=]+$");
+            panel.get('element').innerHTML = '';
             for(k in obj){
-                str += ('<input type="radio" title="'+obj[k].title+'" name="selected-files" value="'+obj[k].source+'" onclick=\'repository_client_$suffix.rename("'+obj[k].title+'", "'+obj[k].source+'")\' /> ');
+                var el = document.createElement('div');
+                var input = document.createElement('input');
+                input.title = obj[k].title;
+                input.name  = 'selected-files';
+                input.value  = obj[k].source;
+                input.type='radio';
+                input.onclick=function(){
+                    repository_client_$suffix.rename(this.title, this.value);
+                };
+                var desc = document.createElement('span');
                 if(re.test(obj[k].source)) {
-                    str += '<a class="file_name" href="'+obj[k].source+'">'+obj[k].title+'</a>';
+                    desc.innerHTML = '<a class="file_name" href="'+obj[k].source+'">'+obj[k].title+'</a>';
                 } else {
-                    str += '<span class="file_name" >'+obj[k].title+'</span>';
+                    desc.innerHTML = '<span class="file_name" >'+obj[k].title+'</span>';
                 }
-                str += '<br/>';
-                str += '<label>Date: </label><span class="file_date">'+obj[k].date+'</span><br/>';
-                str += '<label>Size: </label><span class="file_size">'+obj[k].size+'</span>';
-                str += '<br/>';
+                var date = document.createElement('div');
+                date.className = 'file_date';
+                date.innerHTML = 'Date: '+obj[k].date;
+                var size = document.createElement('div');
+                size.className = 'file_size';
+                size.innerHTML = 'Size: '+obj[k].size;
+                el.appendChild(input);
+                el.appendChild(desc);
+                el.appendChild(date);
+                el.appendChild(size);
+                panel.get('element').appendChild(el);
             }
-            panel.get('element').innerHTML = str;
             _client.viewmode = 0;
             return str;
         }
