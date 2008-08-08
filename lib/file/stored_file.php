@@ -56,7 +56,7 @@ class stored_file {
     public function get_content_file_handle() {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
-            throw new file_exception('localfilecannotread');
+            throw new file_exception('storedfilecannotread');
         }
         return fopen($path, 'rb'); //binary reading only!!
     }
@@ -68,7 +68,7 @@ class stored_file {
     public function readfile() {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
-            throw new file_exception('localfilecannotread');
+            throw new file_exception('storedfilecannotread');
         }
         readfile($path);
     }
@@ -80,7 +80,7 @@ class stored_file {
     public function get_content() {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
-            throw new file_exception('localfilecannotread');
+            throw new file_exception('storedfilecannotread');
         }
         return file_get_contents($this->get_content_file_location());
     }
@@ -93,7 +93,7 @@ class stored_file {
     public function copy_content_to($pathname) {
         $path = $this->get_content_file_location();
         if (!is_readable($path)) {
-            throw new file_exception('localfilecannotread');
+            throw new file_exception('storedfilecannotread');
         }
         return copy($path, $pathname);
     }

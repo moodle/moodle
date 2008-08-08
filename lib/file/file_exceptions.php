@@ -20,7 +20,7 @@ class stored_file_creation_exception extends file_exception {
         $a->itemid    = $itemid;
         $a->filepath  = $filepath;
         $a->filename  = $filename;
-        parent::__construct('localfilenotcreated', $a, $debuginfo);
+        parent::__construct('storedfilenotcreated', $a, $debuginfo);
     }
 }
 

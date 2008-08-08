@@ -8,10 +8,10 @@ class file_info_stored extends file_info {
     protected $readaccess;
     protected $writeaccess;
 
-    public function __construct($browser, $context, $localfile, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess) {
+    public function __construct($browser, $context, $storedfile, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess) {
         parent::__construct($browser, $context);
 
-        $this->lf              = $localfile;
+        $this->lf              = $storedfile;
         $this->urlbase         = $urlbase;
         $this->areavisiblename = $areavisiblename;
         $this->itemidused      = $itemidused;
@@ -265,8 +265,8 @@ class file_info_stored extends file_info {
         if ($this->is_directory()) {
             $filepath = $this->lf->get_filepath();
             $fs = get_file_storage();
-            $localfiles = $fs->get_area_files($this->context->id, $this->lf->get_filearea(), $this->lf->get_itemid(), "");
-            foreach ($localfiles as $file) {
+            $storedfiles = $fs->get_area_files($this->context->id, $this->lf->get_filearea(), $this->lf->get_itemid(), "");
+            foreach ($storedfiles as $file) {
                 if (strpos($file->get_filepath(), $filepath) === 0) {
                     $file->delete();
                 }

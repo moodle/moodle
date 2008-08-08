@@ -15,7 +15,7 @@ class file_storage {
         // make sure the file pool directory exists
         if (!is_dir($this->filedir)) {
             if (!check_dir_exists($this->filedir, true, true)) {
-                throw new file_exception('localfilecannotcreatefiledirs'); // permission trouble
+                throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
             }
             // place warning file in file pool root
             file_put_contents($this->filedir.'/warning.txt',
@@ -280,22 +280,22 @@ class file_storage {
 
         // validate all parameters, we do not want any rubbish stored in database, right?
         if (!is_number($contextid) or $contextid < 1) {
-            throw new file_exception('localfileproblem', 'Invalid contextid');
+            throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
         $filearea = clean_param($filearea, PARAM_ALPHAEXT);
         if ($filearea === '') {
-            throw new file_exception('localfileproblem', 'Invalid filearea');
+            throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
         if (!is_number($itemid) or $itemid < 0) {
-            throw new file_exception('localfileproblem', 'Invalid itemid');
+            throw new file_exception('storedfileproblem', 'Invalid itemid');
         }
 
         $filepath = clean_param($filepath, PARAM_PATH);
         if (strpos($filepath, '/') !== 0 or strrpos($filepath, '/') !== strlen($filepath)-1) {
             // path must start and end with '/'
-            throw new file_exception('localfileproblem', 'Invalid file path');
+            throw new file_exception('storedfileproblem', 'Invalid file path');
         }
 
         $pathnamehash = $this->get_pathname_hash($contextid, $filearea, $itemid, $filepath, '.');
@@ -361,7 +361,7 @@ class file_storage {
         $now = time();
 
         if ($newrecord = $DB->get_record('files', array('id'=>$fid))) {
-            throw new file_exception('localfileproblem', 'File does not exist');
+            throw new file_exception('storedfileproblem', 'File does not exist');
         }
 
         unset($newrecord->id);
@@ -369,18 +369,18 @@ class file_storage {
         foreach ($file_record as $key=>$value) {
             // validate all parameters, we do not want any rubbish stored in database, right?
             if ($key == 'contextid' and (!is_number($value) or $value < 1)) {
-                throw new file_exception('localfileproblem', 'Invalid contextid');
+                throw new file_exception('storedfileproblem', 'Invalid contextid');
             }
 
             if ($key == 'filearea') {
                 $value = clean_param($value, PARAM_ALPHAEXT);
                 if ($value === '') {
-                    throw new file_exception('localfileproblem', 'Invalid filearea');
+                    throw new file_exception('storedfileproblem', 'Invalid filearea');
                 }
             }
 
             if ($key == 'itemid' and (!is_number($value) or $value < 0)) {
-                throw new file_exception('localfileproblem', 'Invalid itemid');
+                throw new file_exception('storedfileproblem', 'Invalid itemid');
             }
 
 
@@ -388,7 +388,7 @@ class file_storage {
                 $value = clean_param($value, PARAM_PATH);
                 if (strpos($value, '/') !== 0 or strpos($value, '/') !== strlen($value)-1) {
                     // path must start and end with '/'
-                    throw new file_exception('localfileproblem', 'Invalid file path');
+                    throw new file_exception('storedfileproblem', 'Invalid file path');
                 }
             }
 
@@ -396,7 +396,7 @@ class file_storage {
                 $value = clean_param($value, PARAM_FILE);
                 if ($value === '') {
                     // path must start and end with '/'
-                    throw new file_exception('localfileproblem', 'Invalid file name');
+                    throw new file_exception('storedfileproblem', 'Invalid file name');
                 }
             }
 
@@ -434,28 +434,28 @@ class file_storage {
 
         // validate all parameters, we do not want any rubbish stored in database, right?
         if (!is_number($file_record->contextid) or $file_record->contextid < 1) {
-            throw new file_exception('localfileproblem', 'Invalid contextid');
+            throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
         $file_record->filearea = clean_param($file_record->filearea, PARAM_ALPHAEXT);
         if ($file_record->filearea === '') {
-            throw new file_exception('localfileproblem', 'Invalid filearea');
+            throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
         if (!is_number($file_record->itemid) or $file_record->itemid < 0) {
-            throw new file_exception('localfileproblem', 'Invalid itemid');
+            throw new file_exception('storedfileproblem', 'Invalid itemid');
         }
 
         $file_record->filepath = clean_param($file_record->filepath, PARAM_PATH);
         if (strpos($file_record->filepath, '/') !== 0 or strrpos($file_record->filepath, '/') !== strlen($file_record->filepath)-1) {
             // path must start and end with '/'
-            throw new file_exception('localfileproblem', 'Invalid file path');
+            throw new file_exception('storedfileproblem', 'Invalid file path');
         }
 
         $file_record->filename = clean_param($file_record->filename, PARAM_FILE);
         if ($file_record->filename === '') {
             // path must start and end with '/'
-            throw new file_exception('localfileproblem', 'Invalid file name');
+            throw new file_exception('storedfileproblem', 'Invalid file name');
         }
 
         $now = time();
@@ -509,28 +509,28 @@ class file_storage {
 
         // validate all parameters, we do not want any rubbish stored in database, right?
         if (!is_number($file_record->contextid) or $file_record->contextid < 1) {
-            throw new file_exception('localfileproblem', 'Invalid contextid');
+            throw new file_exception('storedfileproblem', 'Invalid contextid');
         }
 
         $file_record->filearea = clean_param($file_record->filearea, PARAM_ALPHAEXT);
         if ($file_record->filearea === '') {
-            throw new file_exception('localfileproblem', 'Invalid filearea');
+            throw new file_exception('storedfileproblem', 'Invalid filearea');
         }
 
         if (!is_number($file_record->itemid) or $file_record->itemid < 0) {
-            throw new file_exception('localfileproblem', 'Invalid itemid');
+            throw new file_exception('storedfileproblem', 'Invalid itemid');
         }
 
         $file_record->filepath = clean_param($file_record->filepath, PARAM_PATH);
         if (strpos($file_record->filepath, '/') !== 0 or strrpos($file_record->filepath, '/') !== strlen($file_record->filepath)-1) {
             // path must start and end with '/'
-            throw new file_exception('localfileproblem', 'Invalid file path');
+            throw new file_exception('storedfileproblem', 'Invalid file path');
         }
 
         $file_record->filename = clean_param($file_record->filename, PARAM_FILE);
         if ($file_record->filename === '') {
             // path must start and end with '/'
-            throw new file_exception('localfileproblem', 'Invalid file name');
+            throw new file_exception('storedfileproblem', 'Invalid file name');
         }
 
         $now = time();
@@ -579,7 +579,7 @@ class file_storage {
      */
     public function add_file_to_pool($pathname, $contenthash=null) {
         if (!is_readable($pathname)) {
-            throw new file_exception('localfilecannotread');
+            throw new file_exception('storedfilecannotread');
         }
 
         if (is_null($contenthash)) {
@@ -599,12 +599,12 @@ class file_storage {
 
         } else {
             if (!check_dir_exists($hashpath, true, true)) {
-                throw new file_exception('localfilecannotcreatefiledirs'); // permission trouble
+                throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
             }
             $newfile = true;
 
             if (!copy($pathname, $hashfile)) {
-                throw new file_exception('localfilecannotread');
+                throw new file_exception('storedfilecannotread');
             }
 
             if (filesize($hashfile) !== $filesize) {
@@ -638,7 +638,7 @@ class file_storage {
 
         } else {
             if (!check_dir_exists($hashpath, true, true)) {
-                throw new file_exception('localfilecannotcreatefiledirs'); // permission trouble
+                throw new file_exception('storedfilecannotcreatefiledirs'); // permission trouble
             }
             $newfile = true;
 

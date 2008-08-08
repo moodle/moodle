@@ -54,9 +54,9 @@ class file_browser {
                     $filepath = is_null($filepath) ? '/' : $filepath;
                     $filename = is_null($filename) ? '.' : $filename;
 
-                    if (!$localfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+                    if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $localfile = $fs->create_directory($context->id, $filearea, 0, $filepath, $USER->id);
+                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath, $USER->id);
                         } else {
                             // not found
                             return null;
@@ -64,19 +64,19 @@ class file_browser {
                     }
                     $urlbase = $CFG->wwwroot.'/userfile.php';
                     // TODO: localise
-                    return new file_info_stored($this, $context, $localfile, $urlbase, 'Personal files', false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Personal files', false, true, true);
 
                 } else if ($filearea == 'user_draft') {
                     if (empty($itemid)) {
                         return new file_info_user($this, $context);
                     }
                     $urlbase = $CFG->wwwroot.'/draftfile.php';
-                    if (!$localfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+                    if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
                         return null;
                     }
                     //something must create the top most directory
                     // TODO: localise
-                    return new file_info_stored($this, $context, $localfile, $urlbase, 'Draft file area', true, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Draft file area', true, true, true);
                 }
             }
 
@@ -107,16 +107,16 @@ class file_browser {
                     $filename = is_null($filename) ? '.' : $filename;
 
                     $urlbase = $CFG->wwwroot.'/pluginfile.php';
-                    if (!$localfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+                    if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $localfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
                         } else {
                             // not found
                             return null;
                         }
                     }
                     // TODO: localise
-                    return new file_info_stored($this, $context, $localfile, $urlbase, 'Category introduction files', false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Category introduction files', false, true, true);
 
                 }
             }
@@ -148,16 +148,16 @@ class file_browser {
                     }
 
                     $urlbase = $CFG->wwwroot.'/pluginfile.php';
-                    if (!$localfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+                    if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $localfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
                         } else {
                             // not found
                             return null;
                         }
                     }
                     // TODO: localise
-                    return new file_info_stored($this, $context, $localfile, $urlbase, 'Course introduction files', false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Course introduction files', false, true, true);
 
                 } else if ($filearea == 'course_backup') {
                     if (!has_capability('moodle/site:backup', $context) and !has_capability('moodle/site:restore', $context)) {
@@ -165,9 +165,9 @@ class file_browser {
                     }
 
                     $urlbase = $CFG->wwwroot.'/pluginfile.php';
-                    if (!$localfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+                    if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $localfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
                         } else {
                             // not found
                             return null;
@@ -177,23 +177,23 @@ class file_browser {
                     $downloadable = has_capability('moodle/site:backupdownload', $context);
                     $uploadable   = has_capability('moodle/site:backupupload', $context);
                     // TODO: localise
-                    return new file_info_stored($this, $context, $localfile, $urlbase, 'Backup files', false, $downloadable, $uploadable);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Backup files', false, $downloadable, $uploadable);
 
                 } else if ($filearea == 'course_content') {
                     if (!has_capability('moodle/course:managefiles', $context)) {
                         return null;
                     }
 
-                    if (!$localfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+                    if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $localfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
                         } else {
                             // not found
                             return null;
                         }
                     }
 
-                    return new file_info_coursefile($this, $context, $localfile);
+                    return new file_info_coursefile($this, $context, $storedfile);
                 }
             }
 
@@ -211,8 +211,8 @@ class file_browser {
         $result = array();
         $fs = get_file_storage();
 
-        $localfiles = $fs->get_directory_files($context->id, $filearea, $itemid, $filepath, false, true, "filepath, filename");
-        foreach ($localfiles as $file) {
+        $storedfiles = $fs->get_directory_files($context->id, $filearea, $itemid, $filepath, false, true, "filepath, filename");
+        foreach ($storedfiles as $file) {
             $result[] = new file_info_stored($this, $context, $file, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess);
         }
 
@@ -226,8 +226,8 @@ class file_browser {
         $result = array();
         $fs = get_file_storage();
 
-        $localfiles = $fs->get_directory_files($context->id, 'course_content', 0, $filepath, false, true, "filepath, filename");
-        foreach ($localfiles as $file) {
+        $storedfiles = $fs->get_directory_files($context->id, 'course_content', 0, $filepath, false, true, "filepath, filename");
+        foreach ($storedfiles as $file) {
             $result[] = new file_info_coursefile($this, $context, $file);
         }
 
