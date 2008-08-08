@@ -189,4 +189,8 @@ class stored_file {
     public function get_id() {
         return $this->file_record->id;
     }
+
+    public function get_contenthash() {
+        return $this->file_record->contenthash;
+    }
 }
