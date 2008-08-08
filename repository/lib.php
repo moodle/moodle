@@ -141,9 +141,9 @@ abstract class repository {
      *
      * @param string $list
      * $list = array(
-     *            array('name'=>'moodle.txt', 'size'=>12, 'path'=>'', 'date'=>''),
-     *            array('name'=>'repository.txt', 'size'=>32, 'path'=>'', 'date'=>''),
-     *            array('name'=>'forum.txt', 'size'=>82, 'path'=>'', 'date'=>''),
+     *            array('title'=>'moodle.txt', 'size'=>12, 'source'=>'url', 'date'=>''),
+     *            array('title'=>'repository.txt', 'size'=>32, 'source'=>'', 'date'=>''),
+     *            array('title'=>'forum.txt', 'size'=>82, 'source'=>'', 'date'=>''),
      *         );
      *
      * @param boolean $print if printing the listing directly
@@ -180,18 +180,6 @@ abstract class repository {
     /**
      * Show the login screen, if required
      * This is an abstract function, it must be overriden.
-     * The specific plug-in need to specify authentication types in database
-     * options field
-     * Imagine following cases:
-     * 1. no need of authentication
-     * 2. Use username and password to authenticate
-     * 3. Redirect to authentication page, in this case, the repository
-     * will callback moodle with following common parameters:
-     *    (1) boolean callback To tell moodle this is a callback
-     *    (2) int     id       Specify repository ID
-     * The callback page need to use these parameters to init
-     * the repository plug-ins correctly. Also, auth_token or ticket may
-     * attach in the callback url, these must be taken into account too.
      *
      */
     abstract public function print_login();
@@ -209,7 +197,7 @@ abstract class repository {
      * @param string $username
      * @param string $password
      * @param string $userid The id of specific user
-     * @return array the list of files, including meta infomation
+     * @return int Id of the record
      */
     public function store_login($username = '', $password = '', $userid = 1) {
         global $DB;
@@ -259,6 +247,14 @@ class repository_exception extends moodle_exception {
 abstract class repository_listing {
 }
 
+/**
+ * Save settings for repository instance
+ *
+ * @param int repository Id
+ * @param int from 1 to 5
+ * @param array settings
+ * @return int Id of the record
+ */
 function repository_set_option($id, $position, $config = array()){
     global $DB;
     $repository = new stdclass;
@@ -275,6 +271,14 @@ function repository_set_option($id, $position, $config = array()){
     }
     return false;
 }
+
+/**
+ * Get settings for repository instance
+ *
+ * @param int repository Id
+ * @param int from 1 to 5
+ * @return array Settings
+ */
 function repository_get_option($id, $position){
     global $DB;
     $entry = $DB->get_record('repository', array('id'=>$id));
@@ -283,6 +287,12 @@ function repository_get_option($id, $position){
     return $ret;
 }
 
+/**
+ * Get user's repositories
+ *
+ * @param object context object
+ * @return array repository list
+ */
 function repository_user_instances($context){
     global $DB, $CFG, $USER;
     $params = array();
@@ -303,6 +313,12 @@ function repository_user_instances($context){
     return $repos;
 }
 
+/**
+ * Get single repository instance
+ *
+ * @param int repository id
+ * @return object repository instance
+ */
 function repository_instance($id){
     global $DB, $CFG;
 
@@ -314,6 +330,12 @@ function repository_instance($id){
     $classname = 'repository_' . $instance->repositorytype;
     return new $classname($instance->id, $instance->contextid);
 }
+
+/**
+ * Get list of repository plugin
+ *
+ * @return array repository plugin list
+ */
 function repository_get_plugins(){
     global $CFG;
     $repo = $CFG->dirroot.'/repository/';
@@ -333,6 +355,14 @@ function repository_get_plugins(){
     return $ret;
 }
 
+/**
+ * Move file from download folder to file pool using FILE API
+ *
+ * @param string file path in download folder
+ * @param string file name
+ * @param int itemid to identify a file in filepool
+ * @return array information of file in file pool
+ */
 function move_to_filepool($path, $name, $itemid) {
     global $DB, $CFG, $USER;
     $context = get_context_instance(CONTEXT_USER, $USER->id);
@@ -361,8 +391,12 @@ function move_to_filepool($path, $name, $itemid) {
     }
 }
 
-// TODO
-// Need to pass contextid and contextlevel here
+/**
+ * Return javascript to create file picker to browse repositories
+ *
+ * @param object context 
+ * @return array 
+ */
 function get_repository_client($context){
     global $CFG, $USER;
     $suffix = uniqid();
@@ -602,6 +636,11 @@ function get_repository_client($context){
                 _client.viewlist();
             }
         }
+
+        // TODO
+        // If _client.datasource.upload == true
+        // then create a iframe to upload file
+        // We may need a new page named repository/upload.php to process this.
 
         _client.viewthumb = function(){
             var panel = new YAHOO.util.Element('panel-$suffix');
