@@ -5,7 +5,8 @@ define('BYTESERVING_BOUNDARY', 's1k2o3d4a5k6s7'); //unique string constant
 require_once("$CFG->libdir/file/file_exceptions.php");
 require_once("$CFG->libdir/file/file_storage.php");
 require_once("$CFG->libdir/file/file_browser.php");
-require_once("$CFG->libdir/file/file_packer.php");
+
+require_once("$CFG->libdir/packer/zip_packer.php");
 
 function get_file_url($path, $options=null, $type='coursefile') {
     global $CFG;

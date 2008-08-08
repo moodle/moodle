@@ -1,9 +1,12 @@
 <?php  //$Id$
 
+require_once("$CFG->libdir/packer/file_packer.php");
+require_once("$CFG->libdir/packer/zip_archive.php");
+
 /**
  * Utility class - handles all zipping and unzipping operations.
  */
-class file_packer {
+class zip_packer extends file_packer {
 
     /**
      * Zip files and store the result in file storage
@@ -15,7 +18,7 @@ class file_packer {
      * @param string $filename
      * @return mixed false if error stored file instance if ok
      */
-    public function zip_files_to_storage($files, $contextid, $filearea, $itemid, $filepath, $filename, $userid=null) {
+    public function archive_to_storage($files, $contextid, $filearea, $itemid, $filepath, $filename, $userid=null) {
         global $CFG;
 
         $fs = get_file_storage();
@@ -23,7 +26,7 @@ class file_packer {
         check_dir_exists($CFG->dataroot.'/temp/zip', true, true);
         $tmpfile = tempnam($CFG->dataroot.'/temp/zip', 'zipstor');
 
-        if ($result = $this->zip_files_to_pathname($files, $tmpfile)) {
+        if ($result = $this->archive_to_pathname($files, $tmpfile)) {
             if ($file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
                 if (!$file->delete()) {
                     @unlink($tmpfile);
@@ -37,6 +40,7 @@ class file_packer {
             $file_record->filepath  = $filepath;
             $file_record->filename  = $filename;
             $file_record->userid    = $userid;
+
             $result = $fs->create_file_from_pathname($file_record, $tmpfile);
         }
         @unlink($tmpfile);
@@ -46,19 +50,18 @@ class file_packer {
     /**
      * Zip files and store the result in os file
      * @param array $archivepath=>$pathanme or stored file instance
-     * @param string $zipfile
+     * @param string $archivefile
      * @return bool success
      */
-    public function zip_files_to_pathname($files, $zipfile) {
+    public function archive_to_pathname($files, $archivefile) {
         global $CFG;
-        require_once("$CFG->libdir/file/zip_archive.php");
 
         if (!is_array($files)) {
             return false;
         }
 
         $ziparch = new zip_archive();
-        if (!$ziparch->open($zipfile, ZIPARCHIVE::OVERWRITE)) {
+        if (!$ziparch->open($archivefile, file_archive::OVERWRITE)) {
             return false;
         }
 
@@ -67,21 +70,21 @@ class file_packer {
 
             if (is_null($file)) {
                 // empty directories have null as content
-                $ziparch->addEmptyDir($archivepath.'/');
+                $ziparch->add_directory($archivepath.'/');
 
             } else if (is_string($file)) {
-                $this->add_os_file_to_zip($ziparch, $archivepath, $file);
+                $this->archive_pathname($ziparch, $archivepath, $file);
 
             } else {
-                $this->add_stored_file_to_zip($ziparch, $archivepath, $file);
+                $this->archive_stored($ziparch, $archivepath, $file);
             }
         }
 
         return $ziparch->close();
     }
 
-    protected function add_stored_file_to_zip($ziparch, $archivepath, $file) {
-        $file->add_to_ziparchive($ziparch, $archivepath);
+    private function archive_stored($ziparch, $archivepath, $file) {
+        $file->archive_file($ziparch, $archivepath);
 
         if (!$file->is_directory()) {
             return;
@@ -98,11 +101,11 @@ class file_packer {
             if (!$file->is_directory()) {
                 $path = $path.$file->get_filename();
             }
-            $file->add_to_ziparchive($ziparch, $path);
+            $file->archive_file($ziparch, $path);
         }
     }
 
-    protected function add_os_file_to_zip( $ziparch, $archivepath, $file) {
+    private function archive_pathname($ziparch, $archivepath, $file) {
         if (!file_exists($file)) {
             return;
         }
@@ -111,13 +114,12 @@ class file_packer {
             if (!is_readable($file)) {
                 return;
             }
-            $ziparch->addFile($file, $archivepath);
+            $ziparch->add_file_from_pathname($archivepath, $file);
             return;
         }
         if (is_dir($file)) {
             if ($archivepath !== '') {
-                $archivepath = $archivepath.'/';
-                $ziparch->addEmptyDir($archivepath);
+                $ziparch->add_directory($archivepath);
             }
             $files = new DirectoryIterator($file);
             foreach ($files as $file) {
@@ -125,7 +127,7 @@ class file_packer {
                     continue;
                 }
                 $newpath = $archivepath.$file->getFilename();
-                $this->add_os_file_to_zip($ziparch, $newpath, $file->getPathname());
+                $this->archive_pathname($ziparch, $newpath, $file->getPathname());
             }
             unset($files); //release file handles
             return;
@@ -134,42 +136,38 @@ class file_packer {
 
     /**
      * Unzip file to given file path (real OS filesystem), existing files are overwrited
-     * @param mixed $zipfile full pathname of zip file or stored_file instance
+     * @param mixed $archivefile full pathname of zip file or stored_file instance
      * @param string $pathname target directory
      * @return mixed list of processed files; false if error
      */
-    public function unzip_files_to_pathname($zipfile, $pathname) {
+    public function extract_to_pathname($archivefile, $pathname) {
         global $CFG;
-        require_once("$CFG->libdir/file/zip_archive.php");
 
-        if (!is_string($zipfile)) {
-            return $zipfile->unzip_files_to_pathname($pathname);
+        if (!is_string($archivefile)) {
+            return $archivefile->extract_to_pathname($this, $pathname);
         }
 
         $processed = array();
 
         $pathname = rtrim($pathname, '/');
-        if (!is_readable($zipfile)) {
+        if (!is_readable($archivefile)) {
             return false;
         }
-        $ziparch = new zip_archive();
-        if (!$ziparch->open($zipfile, ZIPARCHIVE::FL_NOCASE)) {
+       $ziparch = new zip_archive();
+        if (!$ziparch->open($archivefile, file_archive::OPEN)) {
             return false;
         }
 
-        for ($i=0; $i<$ziparch->numFiles; $i++) {
-            $index = $ziparch->statIndex($i);
-
-            $size = clean_param($index['size'], PARAM_INT);
-            $name = clean_param($index['name'], PARAM_PATH);
-            $name = ltrim($name, '/');
+        foreach ($ziparch as $info) {
+            $size = $info->size;
+            $name = $info->pathname;
 
             if ($name === '' or array_key_exists($name, $processed)) {
                 //probably filename collisions caused by filename cleaning/conversion
                 continue;
             }
 
-            if ($size === 0 and $name[strlen($name)-1] === '/') {
+            if ($info->is_directory) {
                 $newdir = "$pathname/$name";
                 // directory
                 if (is_file($newdir) and !unlink($newdir)) {
@@ -205,7 +203,7 @@ class file_packer {
                 $processed[$name] = 'Can not write target file'; // TODO: localise
                 continue;
             }
-            if (!$fz = $ziparch->getStream($index['name'])) {
+            if (!$fz = $ziparch->get_stream($info->index)) {
                 $processed[$name] = 'Can not read file from zip archive'; // TODO: localise
                 fclose($fp);
                 continue;
@@ -231,18 +229,18 @@ class file_packer {
 
     /**
      * Unzip file to given file path (real OS filesystem), existing files are overwrited
-     * @param mixed $zipfile full pathname of zip file or stored_file instance
+     * @param mixed $archivefile full pathname of zip file or stored_file instance
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
      * @param string $filepath
      * @return mixed list of processed files; false if error
      */
-    public function unzip_files_to_storage($zipfile, $contextid, $filearea, $itemid, $pathbase, $userid=null) {
+    public function extract_to_storage($archivefile, $contextid, $filearea, $itemid, $pathbase, $userid=null) {
         global $CFG;
 
-        if (!is_string($zipfile)) {
-            return $zipfile->unzip_files_to_pathname($contextid, $filearea, $itemid, $pathbase, $userid);
+        if (!is_string($archivefile)) {
+            return $archivefile->extract_to_pathname($this, $contextid, $filearea, $itemid, $pathbase, $userid);
         }
 
         check_dir_exists($CFG->dataroot.'/temp/zip', true, true);
@@ -254,24 +252,20 @@ class file_packer {
         $processed = array();
 
         $ziparch = new zip_archive();
-        if (!$ziparch->open($zipfile, ZIPARCHIVE::FL_NOCASE)) {
+        if (!$ziparch->open($archivefile, file_archive::OPEN)) {
             return false;
         }
 
-        for ($i=0; $i<$ziparch->numFiles; $i++) {
-            $index = $ziparch->statIndex($i);
-
-            $size = clean_param($index['size'], PARAM_INT);
-            $name = clean_param($index['name'], PARAM_PATH);
-            $name = ltrim($name, '/');
-
+        foreach ($ziparch as $info) {
+            $size = $info->size;
+            $name = $info->pathname;
 
             if ($name === '' or array_key_exists($name, $processed)) {
                 //probably filename collisions caused by filename cleaning/conversion
                 continue;
             }
 
-            if ($size === 0 and $name[strlen($name)-1] === '/') {
+            if ($info->is_directory) {
                 $newfilepath = $pathbase.$name.'/';
                 $fs->create_directory($contextid, $filearea, $itemid, $newfilepath, $userid);
                 $processed[$name] = true;
@@ -287,7 +281,7 @@ class file_packer {
 
             if ($size < 2097151) {
                 // small file
-                if (!$fz = $ziparch->getStream($index['name'])) {
+                if (!$fz = $ziparch->get_stream($info->index)) {
                     $processed[$name] = 'Can not read file from zip archive'; // TODO: localise
                     continue;
                 }
@@ -332,7 +326,7 @@ class file_packer {
                     $processed[$name] = 'Can not write temp file'; // TODO: localise
                     continue;
                 }
-                if (!$fz = $ziparch->getStream($index['name'])) {
+                if (!$fz = $ziparch->get_stream($info->index)) {
                     @unlink($tmpfile);
                     $processed[$name] = 'Can not read file from zip archive'; // TODO: localise
                     continue;

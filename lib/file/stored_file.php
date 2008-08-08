@@ -100,17 +100,18 @@ class stored_file {
 
     /**
      * Unzip file to given file path (real OS filesystem), existing files are overwrited
-     * @param string $path target directory
+     * @param object $file_packer
+     * @param string $pathname target directory
      * @return mixed list of processed files; false if error
      */
-    public function unzip_files_to_pathname($path) {
-        $packer = get_file_packer();
-        $zipfile = $this->get_content_file_location();
-        return $packer->unzip_files_to_pathname($path, $path);
+    public function extract_to_pathname(file_packer $packer, $pathname) {
+        $archivefile = $this->get_content_file_location();
+        return $packer->extract_to_pathname($archivefile, $pathname);
     }
 
     /**
      * Unzip file to given file path (real OS filesystem), existing files are overwrited
+     * @param object $file_packer
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
@@ -118,10 +119,9 @@ class stored_file {
      * @param int $userid
      * @return mixed list of processed files; false if error
      */
-    public function unzip_files_to_storage($contextid, $filearea, $itemid, $pathbase, $userid=null) {
-        $packer = get_file_packer();
-        $zipfile = $this->get_content_file_location();
-        return $packer->unzip_files_to_storage($zipfile, $contextid, $filearea, $itemid, $pathbase);
+    public function extract_to_storage(file_packer $packer, $contextid, $filearea, $itemid, $pathbase, $userid=null) {
+        $archivefile = $this->get_content_file_location();
+        return $packer->extract_to_storage($archivefile, $contextid, $filearea, $itemid, $pathbase);
     }
 
     /**
@@ -130,15 +130,15 @@ class stored_file {
      * @param string $archivepath pathname in zip archive
      * @return bool success
      */
-    public function add_to_ziparchive(zip_archive $ziparch, $archivepath) {
+    public function archive_file(file_archive $filearch, $archivepath) {
         if ($this->is_directory()) {
-            return $ziparch->addEmptyDir($archivepath);
+            return $filearch->add_directory($archivepath);
         } else {
             $path = $this->get_content_file_location();
             if (!is_readable($path)) {
                 return false;
             }
-            return $ziparch->addFile($path, $archivepath);
+            return $filearch->add_file_from_pathname($archivepath, $path);
         }
     }
 

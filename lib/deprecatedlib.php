@@ -374,7 +374,9 @@ function unzip_file($zipfile, $destination = '', $showstatus_ignored = true) {
         return false;
     }
 
-    $result = get_file_packer()->unzip_files_to_pathname($zipfile, $destpath);
+    $packer = get_file_packer('application/zip');
+
+    $result = $packer->extract_to_pathname($zipfile, $destpath);
 
     if ($result === false) {
         return false;
@@ -452,9 +454,9 @@ function zip_files ($originalfiles, $destination) {
         $zipfiles[substr($file, $start)] = $file;
     }
 
-    $packer = get_file_packer();
+    $packer = get_file_packer('application/zip');
 
-    return $packer->zip_files_to_pathname($zipfiles, $destfilename);
+    return $packer->archive_to_pathname($zipfiles, $destfilename);
 }
 
 /////////////////////////////////////////////////////////////

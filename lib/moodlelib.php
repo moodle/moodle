@@ -4535,22 +4535,33 @@ function get_file_browser() {
 
 /**
  * Returns file packer
+ * @param string $mimetype
  * @return object file_storage
  */
-function get_file_packer() {
+function get_file_packer($mimetype='application/zip') {
     global $CFG;
 
-    static $fp = null;
+    static $fp = array();;
 
-    if ($fp) {
-        return $fp;
+    if (isset($fp[$mimetype])) {
+        return $fp[$mimetype];
     }
 
-    require_once("$CFG->libdir/filelib.php");
+    switch ($mimetype) {
+        case 'application/zip':
+            $classname = 'zip_packer';
+            break;
+        case 'application/x-tar':
+//            $classname = 'tar_packer';
+//            break;
+        default:
+            return false;
+    }
 
-    $fp = new file_packer();
+    require_once("$CFG->libdir/packer/$classname.php");
+    $fp[$mimetype] = new $classname();
 
-    return $fp;
+    return $fp[$mimetype];
 }
 
 /**
