@@ -225,7 +225,7 @@ class file_info_stored extends file_info {
         return null;
     }
 
-    public function create_file_from_localfile($newfilename, $fid, $userid=null) {
+    public function create_file_from_storedfile($newfilename, $fid, $userid=null) {
         if (!$this->is_writable() or $this->lf->get_filename() !== '.') {
             return null;
         }
@@ -251,7 +251,7 @@ class file_info_stored extends file_info {
 
         $fs = get_file_storage();
 
-        if ($file = $fs->create_file_from_localfile($newrecord, $fid)) {
+        if ($file = $fs->create_file_from_storedfile($newrecord, $fid)) {
             return $this->browser->get_file_info($this->context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         }
         return null;

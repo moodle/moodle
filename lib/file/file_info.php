@@ -71,7 +71,7 @@ abstract class file_info {
         return null;
     }
 
-    public function create_file_from_localfile($newfilename, $fid, $userid=null) {
+    public function create_file_from_storedfile($newfilename, $fid, $userid=null) {
         return null;
     }
 

@@ -350,7 +350,7 @@ class file_storage {
      * @param int $fid id of existing local file
      * @return object stored_file instance
      */
-    public function create_file_from_localfile($file_record, $fid) {
+    public function create_file_from_storedfile($file_record, $fid) {
         global $DB;
 
         $file_record = (array)$file_record; // we support arrays too
