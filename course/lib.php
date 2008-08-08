@@ -2396,6 +2396,13 @@ function delete_mod_from_section($mod, $section) {
     return false;
 }
 
+/**
+ * Moves a section up or down by 1. CANNOT BE USED DIRECTLY BY AJAX!
+ *
+ * @param object $course
+ * @param int $section
+ * @param int $move (-1 or 1)
+ */
 function move_section($course, $section, $move) {
 /// Moves a whole course section up and down within the course
     global $USER, $DB;
@@ -2442,6 +2449,115 @@ function move_section($course, $section, $move) {
         $n++;
     }
     return true;
+}
+
+/**
+ * Moves a section within a course, from a position to another.
+ * Be very careful: $section and $destination refer to section number,
+ * not id!.
+ *
+ * @param object $course
+ * @param int $section Section number (not id!!!)
+ * @param int $destination
+ * @return boolean Result
+ */
+function move_section_to($course, $section, $destination) {
+/// Moves a whole course section up and down within the course
+    global $USER, $DB;
+
+    if (!$destination) {
+        return true;
+    }
+
+    if ($destination > $course->numsections or $destination < 1) {
+        return false;
+    }
+
+    // Get all sections for this course and re-order them (2 of them should now share the same section number)
+    if (!$sections = $DB->get_records_menu('course_sections', array('course' => $course->id),
+            'section ASC, id ASC', 'id, section')) {
+        return false;
+    }
+
+    $sections = reorder_sections($sections, $section, $destination);
+
+    // Update all sections
+    foreach ($sections as $id => $position) {
+        $DB->set_field('course_sections', 'section', $position, array('id' => $id));
+    }
+
+    // if the focus is on the section that is being moved, then move the focus along
+    if (isset($USER->display[$course->id]) and ($USER->display[$course->id] == $section)) {
+        course_set_display($course->id, $destination);
+    }
+    return true;
+}
+
+/**
+ * Reordering algorithm for course sections. Given an array of section->section indexed by section->id,
+ * an original position number and a target position number, rebuilds the array so that the
+ * move is made without any duplication of section positions.
+ * Note: The target_position is the position AFTER WHICH the moved section will be inserted. If you want to
+ * insert a section before the first one, you must give 0 as the target (section 0 can never be moved).
+ *
+ * @param array $sections
+ * @param int $origin_position
+ * @param int $target_position
+ * @return array
+ */
+function reorder_sections($sections, $origin_position, $target_position) {
+    if (!is_array($sections)) {
+        return false;
+    }
+
+    // We can't move section position 0
+    if ($origin_position < 1) {
+        echo "We can't move section position 0";
+        return false;
+    }
+
+    // Locate origin section in sections array
+    if (!$origin_key = array_search($origin_position, $sections)) {
+        echo "searched position not in sections array";
+        return false; // searched position not in sections array
+    }
+
+    // Extract origin section
+    $origin_section = $sections[$origin_key];
+    unset($sections[$origin_key]);
+
+    // Find offset of target position (stupid PHP's array_splice requires offset instead of key index!)
+    $found = false;
+    $append_array = array();
+    foreach ($sections as $id => $position) {
+        if ($found) {
+            $append_array[$id] = $position;
+            unset($sections[$id]);
+        }
+        if ($position == $target_position) {
+            $found = true;
+        }
+    }
+
+    // Append moved section
+    $sections[$origin_key] = $origin_section;
+
+    // Append rest of array (if applicable)
+    if (!empty($append_array)) {
+        foreach ($append_array as $id => $position) {
+            $sections[$id] = $position;
+        }
+    }
+
+    // Renumber positions
+    $position = 0;
+    foreach ($sections as $id => $p) {
+        $sections[$id] = $position;
+        $position++;
+    }
+
+    return $sections;
+
 }
 
 /**
@@ -2992,7 +3108,7 @@ function move_category ($category, $newparentcat) {
 
     context_moved($context, $newparent);
 
-    // now make it last in new category 
+    // now make it last in new category
     $DB->set_field('course_categories', 'sortorder', MAX_COURSES_IN_CATEGORY*MAX_COURSE_CATEGORIES, array('id'=>$category->id));
 
     // and fix the sortorders
