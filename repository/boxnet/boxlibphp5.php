@@ -203,11 +203,15 @@ class boxclient {
         }
         return $ret_array;
     }
-    // Upload File
+
+    /** Upload a File
+    * @param array $params the file MUST be present in key 'file' and be a moodle stored_file object.
+    */
     function UploadFile ($params = array()) {
         $params['auth_token'] = $this->auth_token;
         // this param should be the full path of the file
-        $params['new_file1']  = '@'.$params['file'];
+        $params['new_file1']  = $params['file'];
+        unset($params['file']);
         $defaults = array(
             'folder_id' => 0, //Set to '0' by default. Change to create within sub-folder.
             'share'     => 1, //Set to '1' by default. Set to '0' to make folder private.
@@ -244,6 +248,30 @@ class boxclient {
         }
 
         return $ret_array;
+    }
+
+    function RenameFile($fileid, $newname) {
+        $params = array(
+            'api_key'    => $this->api_key,
+            'auth_token' => $this->auth_token,
+            'action'     => 'rename',
+            'target'     => 'file',
+            'target_id'  => $fileid,
+            'new_name'   => $newname,
+        );
+        $data = $this->makeRequest('action=rename', $params);
+        if ($this->_checkForError($data)) {
+            return false;
+        }
+        foreach ($data as $a) {
+            switch ($a['tag']) {
+                case 'STATUS':
+                    if ($a['value'] == 'e_rename_node') {
+                        return true;
+                    }
+            }
+        }
+        return false;
     }
 
     // Register New User
