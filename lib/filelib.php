@@ -1635,7 +1635,16 @@ class curl {
      */
     public function post($url, $params = array(), $options = array()){
         $options['CURLOPT_POST']       = 1;
-        $options['CURLOPT_POSTFIELDS'] = $params;
+        $this->_tmp_file_post_params = array();
+        foreach ($params as $key => $value) {
+            if ($value instanceof stored_file) {
+                $value->add_to_curl_request($this, $key);
+            } else {
+                $this->_tmp_file_post_params[$key] = $value;
+            }
+        }
+        $options['CURLOPT_POSTFIELDS'] = $this->_tmp_file_post_params;
+        unset($this->_tmp_file_post_params);
         return $this->request($url, $options);
     }
 

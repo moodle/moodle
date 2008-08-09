@@ -50,6 +50,16 @@ class stored_file {
     }
 
     /**
+    * adds this file path to a curl request (POST only)
+    *
+    * @param curl $curlrequest the curl request object
+    * @param string $key what key to use in the POST request
+    */
+    public function add_to_curl_request(&$curlrequest, $key) {
+        $curlrequest->_tmp_file_post_params[$key] = '@' . $this->get_content_file_location();
+    }
+
+    /**
      * Returns file handle - read only mode, no writing allowed into pool files!
      * @return file handle
      */
