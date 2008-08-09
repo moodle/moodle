@@ -2415,7 +2415,7 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
         return sha1(serialize($this->exportdata));
     }
 
-    public function prepare_package($tempdir) {
+    public function prepare_package() {
         $entries = $this->exportdata['entries'];
         $aliases = array();
         $categories = array();
@@ -2436,11 +2436,7 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
             }
         }
         $csv = glossary_generate_export_csv($entries, $aliases, $categories);
-        // @todo  - convert to files api.
-        $status = ($handle  = fopen($tempdir . '/' . clean_filename($this->cm->name) . '.csv', 'w'));
-        $status = $status && fwrite($handle, $csv);
-        $status = $status && fclose($handle);
-        return $status;
+        return $this->exporter->write_new_file($csv, clean_filename($this->cm->name) . '.csv');
     }
 
     public function check_permissions() {
@@ -2493,17 +2489,14 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
         return get_string('modname', 'glossary');
     }
 
-    public function prepare_package($tempdir) {
-        $this->entry->approved = true; // in case we don't have $USER which this function checks
+    public function prepare_package() {
+        // in case we don't have USER this will make the entry be printed
+        $this->entry->approved = true;
         define('PORTFOLIO_INTERNAL', true);
         ob_start();
         glossary_print_entry($this->get('course'), $this->cm, $this->glossary, $this->entry, null, null, false);
         $content = ob_get_clean();
-        // @todo  - convert to files api.
-        $status = ($handle  = fopen($tempdir . '/' . clean_filename($this->entry->concept) . '.html', 'w'));
-        $status = $status && fwrite($handle, $content);
-        $status = $status && fclose($handle);
-        return $status;
+        return $this->exporter->write_new_file($content, clean_filename($this->entry->concept) . '.html');
     }
 
     public function get_sha1() {

@@ -2472,7 +2472,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         return sha1($str . ',' . $this->exporttype);
     }
 
-    public function prepare_package($tempdir) {
+    public function prepare_package() {
         global $DB;
         $count = count($this->exportdata);
         switch ($this->exporttype) {

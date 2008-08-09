@@ -35,6 +35,7 @@ if ($dataid) {
             }
             $instance->set('user', $USER);
             $exporter->set('instance', $instance);
+            $exporter->save();
         }
     }
 } else {
@@ -94,18 +95,8 @@ if ($dataid) {
     $SESSION->portfolioexport = $exporter->get('id');
 }
 
-
-$stage = optional_param('stage', PORTFOLIO_STAGE_CONFIG);
-$alreadystolen = false;
-// for places returning control to pass (rather than PORTFOLIO_STAGE_PACKAGE
-// which is unstable if they can't get to the constant (eg external system)
-if ($postcontrol = optional_param('postcontrol', 0, PARAM_INT)) {
-    $stage = $exporter->get('stage');
-    $exporter->instance()->post_control($stage, array_merge($_GET, $_POST));
-    $alreadystolen = true;
-}
-
 if (!$exporter->get('instance')) {
+    print_object($exporter);
     // we've just arrived but have no instance
     // so retrieve everything from the request,
     // add them as hidden fields in a new form
@@ -135,6 +126,15 @@ if (!$exporter->get('instance')) {
     }
 }
 
+$stage = optional_param('stage', PORTFOLIO_STAGE_CONFIG);
+$alreadystolen = false;
+// for places returning control to pass (rather than PORTFOLIO_STAGE_PACKAGE
+// which is unstable if they can't get to the constant (eg external system)
+if ($postcontrol = optional_param('postcontrol', 0, PARAM_INT)) {
+    $stage = $exporter->get('stage');
+    $exporter->instance()->post_control($stage, array_merge($_GET, $_POST));
+    $alreadystolen = true;
+}
 $exporter->process_stage($stage, $alreadystolen);
 
 ?>

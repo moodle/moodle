@@ -503,26 +503,6 @@ function portfolio_report_insane($insane, $instances=false, $return=false) {
 }
 
 /**
-* temporary functions until the File API settles
-* to do  with moving files around
-*/
-function temp_portfolio_working_directory($unique) {
-    return make_upload_directory('temp/portfolio/export/' . $unique);
-}
-
-function temp_portfolio_usertemp_directory($userid) {
-    return make_upload_directory('userdata/' . $userid . '/temp');
-}
-
-/**
-*cleans up the working directory
-*/
-function temp_portfolio_cleanup($unique) {
-    $workdir = temp_portfolio_working_directory($unique);
-    return remove_dir($workdir);
-}
-
-/**
 * fake the url to portfolio/add.php from data from somewhere else
 * you should use portfolio_add_button instead 99% of the time
 *
@@ -572,6 +552,10 @@ abstract class portfolio_caller_base {
     */
     protected $user;
 
+    /**
+    * a reference to the exporter object
+    */
+    protected $exporter;
 
     /**
     *
@@ -659,9 +643,9 @@ abstract class portfolio_caller_base {
     *
     * @todo  determine what to return in the error case
     */
-    public final function set($field, $value) {
+    public final function set($field, &$value) {
         if (property_exists($this, $field)) {
-            $this->{$field} = $value;
+            $this->{$field} =& $value;
             $this->dirty = true;
             return true;
         }
@@ -745,11 +729,10 @@ abstract class portfolio_caller_base {
     /**
     * called before the portfolio plugin gets control
     * this function should copy all the files it wants to
-    * the temporary directory.
-    *
-    * @param string $tempdir path to tempdir to put files in
+    * the temporary directory, using {@see copy_existing_file}
+    * or {@see write_new_file}
     */
-    public abstract function prepare_package($tempdir);
+    public abstract function prepare_package();
 
     /**
     * array of formats this caller supports
@@ -875,6 +858,10 @@ abstract class portfolio_plugin_base {
     */
     protected $user;
 
+    /**
+    * a reference to the exporter object
+    */
+    protected $exporter;
 
     /**
     * array of formats this portfolio supports
@@ -1039,13 +1026,14 @@ abstract class portfolio_plugin_base {
     }
 
     /**
-    * called before the portfolio plugin gets control
-    * this function should copy all the files it wants to
-    * the temporary directory.
+    * called after the caller has finished having control
+    * of its prepare_package function.
+    * this function should read all the files from the portfolio
+    * working file area and zip them and send them or whatever it wants.
+    * {@see get_tempfiles} to get the list of files.
     *
-    * @param string $tempdir path to temporary directory
     */
-    public abstract function prepare_package($tempdir);
+    public abstract function prepare_package();
 
     /**
     * this is the function that is responsible for sending
@@ -1111,7 +1099,7 @@ abstract class portfolio_plugin_base {
     * @param array $data data from form.
     * @return array keyvalue pairs - form element => error string
     */
-    public static function admin_config_validation($data) {}
+    public function admin_config_validation($data) {}
     /**
     * mform to display to the user exporting data using this plugin.
     * if your plugin doesn't need user input at this time,
@@ -1396,7 +1384,7 @@ abstract class portfolio_plugin_base {
     */
     public final function set($field, $value) {
         if (property_exists($this, $field)) {
-            $this->{$field} = $value;
+            $this->{$field} =& $value;
             $this->dirty = true;
             return true;
         }
@@ -1631,15 +1619,15 @@ final class portfolio_exporter {
     private $instance;
     private $noconfig;
     private $navigation;
-    private $uniquekey;
-    private $tempdir;
     private $user;
 
     public $instancefile;
     public $callerfile;
 
     /**
-    * id of this export - matches record in portfolio_tempdata
+    * id of this export
+    * matches record in portfolio_tempdata table
+    * and used for itemid for file storage.
     */
     private $id;
 
@@ -1655,10 +1643,12 @@ final class portfolio_exporter {
         $this->caller =& $caller;
         if ($instance) {
             $this->instancefile = 'portfolio/type/' . $instance->get('plugin') . '/lib.php';
+            $this->instance->set('exporter', $this);
         }
         $this->callerfile = $callerfile;
         $this->stage = PORTFOLIO_STAGE_CONFIG;
         $this->navigation = $navigation;
+        $this->caller->set('exporter', $this);
     }
 
     /*
@@ -1683,11 +1673,12 @@ final class portfolio_exporter {
     * @todo  determine what to return in the error case
     */
 
-    public function set($field, $value) {
+    public function set($field, &$value) {
         if (property_exists($this, $field)) {
-            $this->{$field} = $value;
+            $this->{$field} =& $value;
             if ($field == 'instance') {
                 $this->instancefile = 'portfolio/type/' . $this->instance->get('plugin') . '/lib.php';
+                $this->instance->set('exporter', $this);
             }
             $this->dirty = true;
             return true;
@@ -1934,14 +1925,10 @@ final class portfolio_exporter {
         // now we've agreed on a format,
         // the caller is given control to package it up however it wants
         // and then the portfolio plugin is given control to do whatever it wants.
-        $unique = $this->user->id . '-' . time();
-        $tempdir = temp_portfolio_working_directory($unique);
-        $this->uniquekey = $unique;
-        $this->tempdir = $tempdir;
-        if (!$this->caller->prepare_package($tempdir)) {
+        if (!$this->caller->prepare_package()) {
             return $this->raise_error('callercouldnotpackage', 'portfolio', $this->caller->get_return_url());
         }
-        if (!$package = $this->instance->prepare_package($tempdir)) {
+        if (!$package = $this->instance->prepare_package()) {
             return $this->raise_error('plugincouldnotpackage', 'portfolio', $this->caller->get_return_url());
         }
         return true;
@@ -1954,11 +1941,10 @@ final class portfolio_exporter {
     */
     public function process_stage_cleanup() {
         global $CFG, $DB, $SESSION;
-        // @todo this is unpleasant. fix it.
-        require_once($CFG->dirroot . '/backup/lib.php');
-        delete_dir_contents($this->tempdir);
         // @todo maybe add a hook in the plugin(s)
         $DB->delete_records('portfolio_tempdata', array('id' => $this->id));
+        $fs = get_file_storage();
+        $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->id);
         unset($SESSION->portfolioexport);
         return true;
     }
@@ -2038,7 +2024,7 @@ final class portfolio_exporter {
     * error handler - decides whether we're running interactively or not
     * and behaves accordingly
     */
-    public static function raise_error($string, $module='moodle', $continue=null) {
+    public function raise_error($string, $module='moodle', $continue=null) {
         if (defined('FULLME') && FULLME == 'cron') {
             debugging(get_string($string, $module));
             return false;
@@ -2071,6 +2057,7 @@ final class portfolio_exporter {
                 'expirytime' => time() + (60*60*24),
             );
             $this->id = $DB->insert_record('portfolio_tempdata', $r);
+            $this->save(); // call again so that id gets added to the save data.
         } else {
             $DB->set_field('portfolio_tempdata', 'data', base64_encode(serialize($this)), array('id' => $this->id));
         }
@@ -2089,6 +2076,71 @@ final class portfolio_exporter {
         $exporter = unserialize(serialize($exporter));
         return $exporter;
     }
+
+    /**
+    * copies a file from somewhere else in moodle
+    * to the portfolio temporary working directory
+    * associated with this export
+    *
+    * @param $oldfile stored_file object
+    */
+    public function copy_existing_file($oldfile) {
+        $fs = get_file_storage();
+        $file_record = $this->new_file_record_base($oldfile->get_filename());
+        try {
+            return $fs->create_file_from_storedfile($file_record, $oldfile->get_id());
+        } catch (file_exception $e) {
+            return false;
+        }
+    }
+
+    /**
+    * writes out some content to a file in the
+    * portfolio temporary working directory
+    * associated with this export
+    *
+    * @param string $content content to write
+    * @param string $name filename to use
+    */
+    public function write_new_file($content, $name) {
+        $fs = get_file_storage();
+        $file_record = $this->new_file_record_base($name);
+        return $fs->create_file_from_string($file_record, $content);
+    }
+
+    /**
+    * returns an arary of files in the temporary working directory
+    * for this export
+    * always use this instead of the files api directly
+    *
+    * @return arary
+    */
+    public function get_tempfiles() {
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->id, '', false);
+        if (empty($files)) {
+            return array();
+        }
+        return $files;
+    }
+
+    /**
+    * helper function to create the beginnings of a file_record object
+    * to create a new file in the portfolio_temporary working directory
+    * use {@see write_new_file} or {@see copy_existing_file} externally
+    *
+    * @param string $name filename of new record
+    */
+    private function new_file_record_base($name) {
+        return (object)array(
+            'contextid' => SYSCONTEXTID,
+            'filearea' => 'portfolio_exporter',
+            'itemid'   => $this->id,
+            'filepath' => '/',
+            'filename' => $name,
+        );
+    }
+
 }
 
 class portfolio_instance_select extends moodleform {

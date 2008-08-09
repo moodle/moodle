@@ -249,20 +249,17 @@ class resource_base {
         //override to add your own options
     }
 
-    function portfolio_prepare_package_uploaded($tempdir) {
+    function portfolio_prepare_package_uploaded($exporter) {
         // @todo penny implement later - see MDL-15758
 
     }
 
-    function portfolio_prepare_package_online($tempdir, $text=false) {
-        //@todo penny use the files api here
-        $status = $handle = fopen($tempdir . '/' . clean_filename($this->cm->name . '.' . (($text) ? 'txt' : 'html')), 'w');
+    function portfolio_prepare_package_online($exporter, $text=false) {
+        $filename = clean_filename($this->cm->name . '.' . (($text) ? 'txt' : 'html'));
         $formatoptions = (object)array('noclean' => true);
         $format = (($text) ? FORMAT_MOODLE : FORMAT_HTML);
         $content = format_text($this->resource->alltext, $format, $formatoptions, $this->course->id);
-        $status = $status && fwrite($handle, $content);
-        $status = $status && fclose($handle);
-        return $status;
+        return $exporter->write_new_file($content, $filename);
     }
 
     function portfolio_get_sha1_online($text=false) {
@@ -741,8 +738,8 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         return PORTFOLIO_TIME_LOW;
     }
 
-    public function prepare_package($tempdir) {
-        return $this->resource->portfolio_prepare_package($tempdir);
+    public function prepare_package() {
+        return $this->resource->portfolio_prepare_package($this->exporter);
     }
 
     public function check_permissions() {

@@ -275,12 +275,9 @@ class assignment_online extends assignment_base {
         return sha1(format_text($submission->data1, $submission->data2));
     }
 
-    function portfolio_prepare_package($tempdir) {
+    function portfolio_prepare_package($exporter) {
         $submission = $this->get_submission();
-        $handle = fopen($tempdir . '/assignment.html', 'w');
-        $status = $handle && fwrite($handle, format_text($submission->data1, $submission->data2));
-        $status = $status && fclose($handle);
-        return $status;
+        return $exporter->write_new_file(format_text($submission->data1, $submission->data2), 'assignment.html');
     }
 }
 

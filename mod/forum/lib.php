@@ -3072,7 +3072,7 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $p = array(
             'postid' => $post->id,
         );
-        $commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
+        //$commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
     }
 
     echo '<div class="commands">';
@@ -3840,7 +3840,7 @@ function forum_print_attachments($post, $return=NULL) {
                             'postid' => $post->id,
                             'attachment' => 1,
                         );
-                        $output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
+                        //$output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
                     }
                     $output .= "<br />";
 
@@ -3859,7 +3859,7 @@ function forum_print_attachments($post, $return=NULL) {
                                 'postid' => $post->id,
                                 'attachment' => 1,
                             );
-                            portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false);
+                            //portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false);
                         }
                         echo '<br />';
                     }
@@ -7044,15 +7044,16 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         return array($navlinks, $this->cm);
     }
 
-    function prepare_package($tempdir) {
+    function prepare_package() {
         global $CFG, $SESSION;
         // either a whole discussion
         // a single post, with or without attachment
         // or just an attachment with no post
         if (!$this->post) { // whole discussion
             portfolio_exporter::raise_error('exoprting whole discussion not implemented - see MDL-15758');
-        // @todo see MDL-15758
+            // @todo see MDL-15758
         } else {
+            
             if ($basedir = forum_file_area($this->post)) {
                 //@todo penny fix all this with files api
                 require_once($CFG->dirroot . '/backup/lib.php');

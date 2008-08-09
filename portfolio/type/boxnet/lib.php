@@ -7,24 +7,26 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
     private $boxclient;
     private $ticket;
     private $authtoken;
-    private $workdir;
     private $folders;
 
-    public function prepare_package($tempdir) {
-        $this->workdir = $tempdir;
+    public function prepare_package() {
         return true; // don't do anything else for this plugin, we want to send all files as they are.
     }
 
     public function send_package() {
         $ret = array();
-        foreach (get_directory_list($this->workdir) as $file) {
-            $file = $this->workdir . '/' . $file;
-            $ret[] = $this->boxclient->uploadFile(
+        foreach ($this->exporter->get_tempfiles() as $file) {
+            $return = $this->boxclient->uploadFile(
                 array(
                     'file'      => $file,
                     'folder_id' => $this->get_export_config('folder')
                 )
             );
+            if (array_key_exists('status', $return) && $return['status'] == 'upload_ok'
+                && array_key_exists('id', $return) && count($return['id']) == 1) {
+                $return['rename'] = $this->boxclient->renameFile($return['id'][array_pop(array_keys($return['id']))], $file->get_filename());
+                $ret[] = $return;
+            }
         }
         if ($this->boxclient->isError()) {
             return false;

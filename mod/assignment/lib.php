@@ -1714,7 +1714,7 @@ class assignment_base {
                 $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
                 if ($this->portfolio_exportable() && true) { // @todo replace with capability check
-                    $p['file'] = $file;
+                    $p['file'] = $file->get_id();
                     $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, false, true);
                 }
                 $output .= '<br />';
@@ -3144,20 +3144,19 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         $this->file = (array_key_exists('file', $callbackargs)) ? $callbackargs['file'] : null;
     }
 
-    public function prepare_package($tempdir) {
+    public function prepare_package() {
         global $CFG;
         if (is_callable(array($this->assignment, 'portfolio_prepare_package'))) {
-            return $this->assignment->portfolio_prepare_package($tempdir);
+            return $this->assignment->portfolio_prepare_package($this->exporter);
         }
-error('TODO: covert');
-        // default...
-        $filearea = $CFG->dataroot . '/' . $this->assignment->file_area_name($this->userid);
-        //@todo  penny this is a dreadful thing to have to call (replace with files api anyway)
-        require_once($CFG->dirroot . '/backup/lib.php');
-        if ($this->file) {
-            return backup_copy_file($filearea . '/' . $this->file, $tempdir . '/' . $this->file);
+        $fs = get_file_storage();
+        $status = true;
+        if ($files = $fs->get_area_files($this->assignment->context->id, 'assignment_submission', $this->user->id, '', false)) {
+            foreach ($files as $file) {
+                $status = $status && $this->exporter->copy_existing_file($file);
+            }
         }
-        return backup_copy_file($filearea, $tempdir);
+        return $status;
     }
 
     public function get_sha1() {
@@ -3166,17 +3165,19 @@ error('TODO: covert');
             return $this->assignment->portfolio_get_sha1();
         }
 
-error('TODO: covert');
         // default ...
-        $filearea = $CFG->dataroot . '/' . $this->assignment->file_area_name($this->userid);
+        $fs = get_file_storage();
+        $status = true;
         if ($this->file) {
-            return sha1_file($filearea . '/' . $this->file);
+            return $fs->get_file($this->file)->get_contenthash();
         }
-        $sha1s = array();
-        foreach (get_directory_list($filearea) as $file) {
-            $sha1s[] = sha1_file($filearea . '/' . $file);
+        if ($files = $fs->get_area_files($this->assignment->context->id, 'assignment_submission', $this->user->id, '', false)) {
+            $sha1s = array();
+            foreach ($files as $file) {
+                $sha1s[] = $file->get_contenthash();
+            }
+            asort($sha1s);
         }
-        asort($sha1s);
         return sha1(implode('', $sha1s));
 
     }

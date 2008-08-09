@@ -15,7 +15,7 @@ class portfolio_plugin_download extends portfolio_plugin_base {
         return PORTFOLIO_TIME_LOW;
     }
 
-    public function prepare_package($tempdir) {
+    public function prepare_package() {
         // just zip up whatever files the caller has created for us
         // and move them to the user's temporary area.
         $userdir = temp_portfolio_usertemp_directory($this->get('user')->id);
@@ -46,6 +46,10 @@ class portfolio_plugin_download extends portfolio_plugin_base {
 
     public function get_continue_url() {
         return false;
+    }
+
+    public static function plugin_sanity_check() {
+        return 'notupgradedtousefilesapi';
     }
 }
 

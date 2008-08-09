@@ -193,8 +193,8 @@ function setup_elements(&$mform) {
     }
 }
 
-function portfolio_prepare_package($tempdir) {
-    return parent::portfolio_prepare_package_online($tempdir);
+function portfolio_prepare_package($exporter) {
+    return parent::portfolio_prepare_package_online($exporter);
 }
 
 function portfolio_get_sha1() {
