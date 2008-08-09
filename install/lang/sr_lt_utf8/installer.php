@@ -36,6 +36,8 @@ $string['configfilewritten'] = 'config.php je uspešno kreiran';
 $string['configurationcompletehead'] = 'Konfiguracija je završena';
 $string['configurationcompletesub'] = 'Moodle je pokušao da sačuva Vašu konfiguraciju u datoteci smeštenoj u korenskom direktorijumu Moodle instalacije.';
 $string['continue'] = 'Nastavak';
+$string['ctyperecommended'] = 'Instaliranje opcione PHP ekstenzije ctype se strogo preporučuje da bi se unapredilo funkcionisanje sajta, pogotovo ako Vaš sajt podržava ne-latinične jezike.';
+$string['ctyperequired'] = 'PHP ekstenzije ctype je sada obavezna za Moodle, da bi se unapredilo funkcionisanje sajta i da bi se nudila višejezična kompatibilnost.';
 $string['curlrecommended'] = 'Instaliranje opcione Curl biblioteke je vrlo preporučljivo, jer je ona neophodna za uspešno korišćenje funkcija za umrežavanje.';
 $string['customcheck'] = 'Druge provere';
 $string['database'] = 'Baza podataka';
@@ -95,6 +97,7 @@ $string['databasesettingssub_postgres7'] = '<b>Tip:</b> PostgreSQL<br />
 <b>Korisnik:</b> Vaše korisničko ime za pristup bazi podataka<br />
 <b>Lozinka:</b> Vaša lozinka za pristup bazi podataka<br />
 <b>Prefiksi tabela:</b> prefiks koji će se koristiti u nazivima svih tabela (obavezno)';
+$string['databasesettingswillbecreated'] = '<b>Napomena:</b> Program ѕa instalaciju će automatski pokušati da kreira bazu podataka ukoliko ona ne postoji.';
 $string['dataroot'] = 'Direktorijum podataka';
 $string['datarooterror'] = '\'Direktorijum podataka\' koji ste naveli ne može biti pronađen ili kreiran. Unesite tačnu putanju ili napravite taj direktorijum ručno.';
 $string['dbconnectionerror'] = 'Nemoguće je uspostaviti vezu sa bazom podataka koju ste naveli. Molimo proverite podešavanja baze podataka.';
@@ -165,12 +168,13 @@ $string['globalsquoteshelp'] = '<p>Kombinacija istovremeno onemogućenog podeša
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = 'p><strong>Bezbednosno upozerenje</strong>: da bi funkcionisao ispravno, Moodle zahteva <br />da napravite neke izmene u vašim PHP podešavanjima.<p/><p><em>Morate</em> da postavite <code>register_globals=off</code>.<p>Ovo podešavanje je pod kontrolom vaše <code>php.ini</code>, Apache/IIS <br />konfiguracije ili <code>.htaccess</code> datoteke.</p>';
 $string['help'] = 'Pomoć';
 $string['iconvrecommended'] = 'Instaliranje opcione ICONV biblioteke je vrlo preporučljivo u cilju unapređivanja performansi sajta, pogotovo ako Vaš sajt podržava jezike koji ne koriste latinično pismo.';
 $string['info'] = 'Informacija';
 $string['installation'] = 'Instalacija';
-$string['invalidmd5'] = 'Nevalidna md5 datoteka';
-$string['langdownloaderror'] = 'Nažalost jezik \"$a\" nije instaliran. Instalacioni proces će biti nastavljen na engleskom jeziku.';
+$string['invalidmd5'] = 'Neispravna md5 datoteka';
+$string['langdownloaderror'] = 'Nažalost jezik \"$a\" nije instaliran. Proces instalacije biće nastavljen na engleskom jeziku.';
 $string['langdownloadok'] = 'Jezik \"$a\" je uspešno instaliran. Instalacioni proces će biti nastavljen na ovom jeziku.';
 $string['language'] = 'Jezik';
 $string['magicquotesruntime'] = 'Magic Quotes vreme izvršavanja';
@@ -218,9 +222,9 @@ $string['parentlanguage'] = '<< PREVODIOCI: Ako Vaš jezik ima nadređeni jezik 
 $string['pass'] = 'Prošlo';
 $string['password'] = 'Lozinka';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHP nije bio propisno konfigurisan sa  PGSQL ekstenzijom tako da može komunicirati sa PostgreSQLom. Molimo Vas da proverite svoju php.ini datoteku ili opet kompajlirate PHP.';
-$string['php50restricted'] = 'PHP 5.0.x ima više poznatih problema, molimo unapredite ga do verzije 5.1.x ili snizite do 4.3.x ili 4.4.x';
+$string['php50restricted'] = 'PHP 5.0.x ima više poznatih problema, molimo unapredite PHP na verzije 5.1.x ili instalirajte verziju 4.3.x odnosno 4.4.x';
 $string['phpversion'] = 'PHP verzija';
-$string['phpversionerror'] = 'PHP verzija mora biti bar 4.3.0 ili 5.1.0 (5.0.x funkcioniše uz brojne uočene probleme)';
+$string['phpversionerror'] = 'PHP verzija mora biti bar 4.3.0 ili 5.1.0 (5.0.x funkcioniše uz brojne uočene probleme)'; // ORPHANED
 $string['phpversionhelp'] = '<p>Moodle zahteva najmanje PHP verziju 4.3.0 ili 5.1.0 (5.0.x funkcioniše uz brojne uočene probleme).</p>
 <p>Trenutno imate verziju $a</p>
 <p>Morate nadograditi PHP ili premestiti Moodle instalaciju na web server sa novijom verzijom PHP-a!</br>
@@ -229,6 +233,7 @@ $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Prethodni';
 $string['qtyperqpwillberemoved'] = 'Tokom nadogradnje, RQP tipovi pitanja biće uklonjeni. Nećete koristiti ovaj tip pitanja, tako da ne očekujte probleme u vezi s tim.';
 $string['qtyperqpwillberemovedanyway'] = 'Tokom nadogradnje biće uklonjen RQP tip pitanja. Kako imate neka RQP pitanja u svojoj bazi, preporučuje se da ponovo instalirate dodatak sa http://moodle.org/mod/data/view.php?d=13&amp;rid=797 pre nastavka nadogradnje da bi ona mogla i dalje nesmetano da se koriste.';
+$string['remotedownloaderror'] = 'Preuzimanje komponente na Vaš server nije uspelo. Proverite podešavanja proksi serevera. PHP cURL ekstenzija se preporučuje.<br /><br />Morate da preuzmete <a href=\"$a->url\">$a->url</a> datoteku ručno, kopirate je u direktorijum \"$a->dest\" na svom sereveru tamo je raspakujete.';
 $string['remotedownloadnotallowed'] = 'Nije dozvoljeno preuzimanje komponenti na Vaš server (opcija allow_url_fopen je onemogućena).<br /><br />Morate ručno preuzeti datoteku <a href=\"$a->url\">$a->url</a>, kopirati je u \"$a->dest\" na svom serveru i tamo je raspakovati.';
 $string['report'] = 'Izveštaj';
 $string['restricted'] = 'Ograničeno';
@@ -240,7 +245,7 @@ $string['safemodehelp'] = '<p>Moodle može imati različite probleme sa uključe
    
 <p>Možete pokušati nastaviti sa instalacijom ako želite, ali očekujte nekoliko problema kasnije.</p>';
 $string['serverchecks'] = 'Provere servera';
-$string['sessionautostart'] = 'Automatski početak akcije';
+$string['sessionautostart'] = 'Automatski početak sesije';
 $string['sessionautostarterror'] = 'Ova opcija bi trebala biti isključena';
 $string['sessionautostarthelp'] = '<p>Moodle zahteva podršku za sesije i neće funcionisati bez nje.</p>
 
@@ -265,4 +270,5 @@ $string['wrongsourcebase'] = 'Pogrešan izvorni URL baze.';
 $string['wrongzipfilename'] = 'Pogrešan naziv arhive.';
 $string['wwwroot'] = 'Web adresa';
 $string['wwwrooterror'] = 'Navedena \'Web adresa\' se čini nevalidnom - ova Moodle instalacija izgleda nije na njoj. Vrednost navedena ispod je resetovana.';
+$string['xmlrpcrecommended'] = 'Instaliranje opcionog xmlrpc proširenja je korisno za funkcionalnost Moodle umrežavanje.';
 ?>
