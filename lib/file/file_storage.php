@@ -360,7 +360,7 @@ class file_storage {
 
         $now = time();
 
-        if ($newrecord = $DB->get_record('files', array('id'=>$fid))) {
+        if (!$newrecord = $DB->get_record('files', array('id'=>$fid))) {
             throw new file_exception('storedfileproblem', 'File does not exist');
         }
 
