@@ -112,20 +112,34 @@
             $result = get_file_url($scorm->course .'/'. $basedir .'/'. $launcher);
         }
     }
+    
+    $scormpixdir = $CFG->modpixpath.'/scorm/pix';
 ?>
 <html>
     <head>
         <title>LoadSCO</title>
         <script type="text/javascript">
         //<![CDATA[
-            setTimeout('document.location = "<?php echo $result ?>";',<?php echo $delayseconds ?>000);
-        //]]>
+        function doredirect() {
+            var e = document.getElementById("countdown");
+            var cSeconds = parseInt(e.innerHTML);
+            var timer = setInterval(function() {
+                                            if( cSeconds ) {
+                                                e.innerHTML = --cSeconds;
+                                            } else {
+                                                clearInterval(timer);
+                                                document.body.innerHTML = "Activity loading, please wait ....";
+                                                location = "<?php echo $result ?>";
+                                            }
+                                        }, 1000);
+        }
+        //]]>         
         </script>
         <noscript>
             <meta http-equiv="refresh" content="<?php echo $delayseconds ?>;url=<?php echo $result ?>" />
         </noscript> 
     </head>
-    <body>
-        &nbsp;
-    </body>
+    <body onload="doredirect();">
+        <p><?php echo get_string('activityloading', 'scorm');?> <span id="countdown"><?php echo $delayseconds ?></span> <?php echo get_string('numseconds');?>. &nbsp; <img src='<?php echo $scormpixdir;?>/wait.gif'><p>
+    </body> 
 </html>

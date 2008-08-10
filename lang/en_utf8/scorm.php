@@ -156,5 +156,5 @@ $string['unziperror'] = 'An error occurs during package unzip';
 $string['othersettings'] = 'Additional settings';
 $string['updatefreq'] = 'Auto-update frequency';
 $string['options'] = 'Options';
-
+$string['activityloading'] = "You will be automatically redirected to the activity in";  // used in conjunction with numseconds
 ?>
