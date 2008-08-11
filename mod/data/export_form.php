@@ -53,12 +53,12 @@ class mod_data_export_form extends moodleform {
         }
         $this->add_checkbox_controller(1, null, null, 1);
         require_once($CFG->libdir . '/portfoliolib.php');
-        if (false) { // @todo penny replace with permissions check
+        if (true) { // @todo penny replace with permissions check
             if ($portfoliooptions = portfolio_instance_select(
                 portfolio_instances(),
                 call_user_func(array('data_portfolio_caller', 'supported_formats')),
                 'data_portfolio_caller', '', true, true)) {
-                $mform->addElement('header', 'notice', get_string('portfolionotfile', 'portfolio') . ':');
+                $mform->addElement('header', 'notice', get_string('portfolionotfile', 'data') . ':');
                 $portfoliooptions[0] = get_string('none');
                 ksort($portfoliooptions);
                 $mform->addElement('select', 'portfolio', get_string('portfolio', 'portfolio'), $portfoliooptions);

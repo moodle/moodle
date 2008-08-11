@@ -44,7 +44,6 @@ $string['nonprimative'] = 'A non primative value was passed as a callback argume
 $string['notexportable'] = 'Sorry, but the type of content you are trying to export is not exportable';
 $string['nouploaddirectory'] = 'Could not create a temporary directory to package your data into';
 $string['portfolio'] = 'Portfolio';
-$string['portfolionotfile'] = 'Export to a portfolio rather than a file';
 $string['portfolios'] = 'Portfolios';
 $string['plugin'] = 'Portfolio Plugin';
 $string['plugincouldnotpackage'] = 'Failed to package up your data for export';

@@ -2281,7 +2281,7 @@ function data_supports($feature) {
         default: return null;
     }
 }
-function data_export_csv($export, $delimiter_name, $dataname, $count, $todir=false) {
+function data_export_csv($export, $delimiter_name, $dataname, $count, $return=false) {
     global $CFG;
     require_once($CFG->libdir . '/csvlib.class.php');
     $delimiter = csv_import_reader::get_delimiter($delimiter_name);
@@ -2292,7 +2292,7 @@ function data_export_csv($export, $delimiter_name, $dataname, $count, $todir=fal
     $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
     $filename .= clean_filename("-${delimiter_name}_separated");
     $filename .= '.csv';
-    if (!$todir) {
+    if (empty($return)) {
         header("Content-Type: application/download\n");
         header("Content-Disposition: attachment; filename=$filename");
         header('Expires: 0');
@@ -2307,22 +2307,15 @@ function data_export_csv($export, $delimiter_name, $dataname, $count, $todir=fal
         }
         $returnstr .= implode($delimiter, $row) . "\n";
     }
-    if (empty($todir)) {
+    if (empty($return)) {
         echo $returnstr;
         return;
     }
-    // @todo  - convert to files api.
-    $status = ($handle = fopen($todir . '/' . $filename, 'w'));
-    $status = $status && fwrite($handle, $returnstr);
-    $status = $status && fclose($handle);
-    if ($status) {
-        return $filename;
-    }
-    return false;
+    return $returnstr;
 }
 
 
-function data_export_xls($export, $dataname, $count, $todir=false) {
+function data_export_xls($export, $dataname, $count) {
     global $CFG;
     require_once("$CFG->libdir/excellib.class.php");
     $filename = clean_filename("${dataname}-${count}_record");
@@ -2333,13 +2326,8 @@ function data_export_xls($export, $dataname, $count, $todir=false) {
     $filename .= '.xls';
 
     $filearg = '-';
-    if ($todir) {
-        $filearg = $todir . '/' . $filename;
-    }
     $workbook = new MoodleExcelWorkbook($filearg);
-    if (!$todir) {
-        $workbook->send($filename);
-    }
+    $workbook->send($filename);
     $worksheet = array();
     $worksheet[0] =& $workbook->add_worksheet('');
     $rowno = 0;
@@ -2356,7 +2344,7 @@ function data_export_xls($export, $dataname, $count, $todir=false) {
 }
 
 
-function data_export_ods($export, $dataname, $count, $todir=false) {
+function data_export_ods($export, $dataname, $count) {
     global $CFG;
     require_once("$CFG->libdir/odslib.class.php");
     $filename = clean_filename("${dataname}-${count}_record");
@@ -2366,13 +2354,8 @@ function data_export_ods($export, $dataname, $count, $todir=false) {
     $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
     $filename .= '.ods';
     $filearg = '-';
-    if ($todir) {
-        $filearg = $todir . '/' . $filename;
-    }
-    $workbook = new MoodleODSWorkbook($filearg, (empty($todir)));
-    if (!$todir) {
-        $workbook->send($filename);
-    }
+    $workbook = new MoodleODSWorkbook($filearg);
+    $workbook->send($filename);
     $worksheet = array();
     $worksheet[0] =& $workbook->add_worksheet('');
     $rowno = 0;
@@ -2475,19 +2458,23 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     public function prepare_package() {
         global $DB;
         $count = count($this->exportdata);
+        $content = '';
+        $filename = '';
         switch ($this->exporttype) {
             case 'csv':
-                $return = data_export_csv($this->exportdata, $this->delimiter, $this->cm->name, $count, $tempdir);
+                $content = data_export_csv($this->exportdata, $this->delimiter, $this->cm->name, $count, true);
+                $filename = clean_filename($this->cm->name . '.csv');
                 break;
             case 'xls':
-                $return = data_export_xls($this->exportdata, $this->cm->name, $count, $tempdir);
+                portfolio_exporter::raise_error('notimplemented', 'portfolio');
+                $content = data_export_xls($this->exportdata, $this->cm->name, $count, true);
                 break;
             case 'ods':
-                $return = data_export_ods($this->exportdata, $this->cm->name, $count, $tempdir);
+                portfolio_exporter::raise_error('notimplemented', 'portfolio');
+                $content = data_export_ods($this->exportdata, $this->cm->name, $count, true);
                 break;
         }
-        return $return;
-
+        return $this->exporter->write_new_file($content, $filename);
     }
 
     public function check_permissions() {
