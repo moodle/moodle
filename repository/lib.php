@@ -433,6 +433,8 @@ function get_repository_client($context){
     #list-$suffix{line-height: 1.5em}
     #list-$suffix a{ padding: 3px }
     #list-$suffix li a:hover{ background: gray; color:white; }
+    #repo-list-$suffix .repo-name{}
+    #repo-list-$suffix li{margin-bottom: 1em}
     #paging-$suffix{margin:10px 5px; clear:both}
     #paging-$suffix a{padding: 4px; border: 1px solid gray}
     #panel-$suffix{padding:0;margin:0; text-align:left;}
@@ -440,8 +442,9 @@ function get_repository_client($context){
     .file_date{color:blue}
     .file_size{color:gray}
     .grid{width:80px; float:left;text-align:center;}
+    .grid img{display:block}
     .grid div{width: 80px; height: 36px; overflow: hidden}
-    .repo-opt{font-size: 10px;color:red}
+    .repo-opt{font-size: 10px;}
     </style>
     <style type="text/css">
     @import "$CFG->wwwroot/lib/yui/reset-fonts-grids/reset-fonts-grids.css";
@@ -555,25 +558,47 @@ function get_repository_client($context){
                 list.on('contentReady', function(e){
                     for(var i=0; i<_client.repos.length; i++) {
                         var repo = _client.repos[i];
-                        li = document.createElement('ul');
-                        li.innerHTML = '<a href="###" id="repo-call-$suffix-'+repo.id+'">'+
-                            repo.repositoryname+'</a><br/>';
-                        li.innerHTML += '<a href="###" class="repo-opt" onclick="repository_client_$suffix.search('+repo.id+')">$strsearch</a>';
-                        li.innerHTML += '<a href="###" class="repo-opt" id="repo-logout-$suffix-'+repo.id+'">$strlogout</a>';
+                        li = document.createElement('li');
                         li.id = 'repo-$suffix-'+repo.id;
-                        this.appendChild(li);
-                        var e = new YAHOO.util.Element('repo-call-$suffix-'+repo.id);
-                        e.on('click', function(e){
+                        var icon = document.createElement('img');
+                        icon.src = repo.icon;
+                        icon.width = '16';
+                        icon.height = '16';
+                        li.appendChild(icon);
+                        var link = document.createElement('a');
+                        link.href = '###';
+                        link.id = 'repo-call-$suffix-'+repo.id;
+                        link.innerHTML = ' '+repo.repositoryname;
+                        link.className = 'repo-name';
+                        link.onclick = function(){
                             var re = /repo-call-$suffix-(\d+)/i;
-                            var id = this.get('id').match(re);
+                            var id = this.id.match(re);
                             repository_client_$suffix.req(id[1], 1, 0);
-                            });
-                        e = new YAHOO.util.Element('repo-logout-$suffix-'+repo.id);
-                        e.on('click', function(e){
+                        }
+                        li.appendChild(link);
+                        var opt = document.createElement('div');
+                        var search = document.createElement('a');
+                        search.href = '###';
+                        search.innerHTML = '$strsearch';
+                        search.id = 'repo-search-$suffix-'+repo.id;
+                        search.onclick = function() {
+                            var re = /repo-search-$suffix-(\d+)/i;
+                            var id = this.id.match(re);
+                            repository_client_$suffix.search(id[1]);
+                        }
+                        var logout = document.createElement('a');
+                        logout.href = '###';
+                        logout.innerHTML = '$strlogout';
+                        logout.id = 'repo-logout-$suffix-'+repo.id;
+                        logout.onclick = function() {
                             var re = /repo-logout-$suffix-(\d+)/i;
-                            var id = this.get('id').match(re);
+                            var id = this.id.match(re);
                             repository_client_$suffix.req(id[1], 1, 1);
-                            });
+                        }
+                        opt.appendChild(search);
+                        opt.appendChild(logout);
+                        li.appendChild(opt);
+                        this.appendChild(li);
                         repo = null;
                     }
                     });
@@ -681,7 +706,7 @@ function get_repository_client($context){
                 input.onclick = function(){
                     repository_client_$suffix.rename(this.title, this.value);
                 }
-                var title = document.createElement('span');
+                var title = document.createElement('div');
                 title.innerHTML = obj[k].title;
                 el.appendChild(img);
                 el.appendChild(input);
@@ -851,6 +876,7 @@ EOD;
 
     $repos = repository_user_instances($context);
     foreach($repos as $repo) {
+        $repo->icon = $CFG->wwwroot.'/repository/'.$repo->repositorytype.'/icon.png';
         $js .= "\r\n";
         $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo).');'."\n";
     }
