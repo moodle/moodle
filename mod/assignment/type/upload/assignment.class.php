@@ -360,13 +360,13 @@ class assignment_upload extends assignment_base {
                               .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="" /></a> ';
                 }
     
-                if (true) { // @todo penny replace with capability check
+                if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $p['file'] = $filename;
                     $output .= portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', false, true);
                 }
                 $output .= '<br />';
             }
-            if (true) { //@todo penny replace with check capability
+            if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
                 unset($p['file']);// for all files
                 $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', true, true);
             }

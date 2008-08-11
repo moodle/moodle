@@ -1713,13 +1713,13 @@ class assignment_base {
                 $icon = mimeinfo_from_type('icon', $mimetype);
                 $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
-                if ($this->portfolio_exportable() && true) { // @todo replace with capability check
+                if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $p['file'] = $file->get_id();
                     $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, false, true);
                 }
                 $output .= '<br />';
             }
-            if ($this->portfolio_exportable() && true) { //@todo replace with check capability
+            if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                 unset($p['file']);// for all files
                 $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, null, true, true);
             }
@@ -3187,7 +3187,8 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function check_permissions() {
-        return has_capability('mod/assignment:export-upload-files', get_context_instance(CONTEXT_MODULE, $this->assignment->cm->id));
+        $context = get_context_instance(CONTEXT_MODULE, $this->assignment->cm->id);
+        return has_capability('mod/assignment:exportownsubmission', $context);
     }
 
     public function __wakeup() {

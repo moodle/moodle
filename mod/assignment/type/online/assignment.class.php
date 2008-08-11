@@ -101,7 +101,7 @@ class assignment_online extends assignment_base {
                 $mform->display();
             } else {
                 print_box_start('generalbox boxwidthwide boxaligncenter', 'online');
-                if ($submission && true) { // @todo penny replace with capability check later
+                if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     echo format_text($submission->data1, $submission->data2);
                     $p = array(
                         'userid' => $USER->id,
