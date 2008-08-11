@@ -2178,4 +2178,23 @@ function portfolio_handle_event($eventdata) {
     return true;
 }
 
+/**
+* main portfolio cronjob
+*
+*/
+function portfolio_cron() {
+    global $DB;
+
+    if ($expired = $DB->get_records_select('portfolio_tempdata', 'expirytime < ?', array(time()))) {
+        foreach ($expired as $d) {
+            $DB->delete_records('portfolio_tempdata', array('id' => $d->id));
+            $fs = get_file_storage();
+            $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $d->id);
+        }
+    }
+
+    // @todo add hooks in the plugins
+}
+
+
 ?>

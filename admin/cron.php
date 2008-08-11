@@ -252,6 +252,13 @@
     events_cron();
     mtrace('done.');
 
+    if ($CFG->portfolioenabled) {
+        // Portfolio cron
+        mtrace('Starting the portfolio cron...');
+        require_once($CFG->libdir . '/portfoliolib.php');
+        portfolio_cron();
+        mtrace('done');
+    }
 
 /// Run all core cron jobs, but not every time since they aren't too important.
 /// These don't have a timer to reduce load, so we'll use a random number 
