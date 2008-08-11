@@ -65,7 +65,7 @@ function display() {
         parent::display_course_blocks_start();
 
         echo format_text($this->resource->alltext, FORMAT_HTML, $formatoptions, $this->course->id);
-        if (true) { //@todo penny replace later with capability check
+        if (has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
             resource_portfolio_caller::add_button($this);
         }
 
@@ -85,7 +85,7 @@ function display() {
                 print_header();
                 print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id),
                         "center clearfix", "", "", "20");
-                if (true) { //@todo penny replace later with capability check
+                if (has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
                     resource_portfolio_caller::add_button($this);
                 }
                 print_footer($course);
@@ -124,7 +124,7 @@ function display() {
                     navmenu($course, $cm));
 
             print_simple_box(format_text($resource->alltext, FORMAT_HTML, $formatoptions, $course->id), "center clearfix", "", "", "20");
-            if (true) { //@todo penny replace later with capability check
+            if (has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
                 resource_portfolio_caller::add_button($this);
             }
 

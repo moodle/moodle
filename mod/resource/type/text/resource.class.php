@@ -56,7 +56,7 @@ function display() {
 
         if (trim(strip_tags($this->resource->alltext))) {
             echo format_text($this->resource->alltext, FORMAT_MOODLE, $formatoptions, $this->course->id);
-            if (true) { //@todo penny replace later with capability check
+            if (has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
                 resource_portfolio_caller::add_button($this);
             }
         }
@@ -84,7 +84,7 @@ function display() {
                 print_simple_box(format_text($resource->alltext, $resource->reference, $formatoptions, $course->id),
                         "center", "", "", "20");
                 print_footer($course);
-                if (true) { //@todo penny replace later with capability check
+                if (has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
                     resource_portfolio_caller::add_button($this);
                 }
             } else {                           /// Make a page and a pop-up window
@@ -126,7 +126,7 @@ function display() {
             print_simple_box(format_text($resource->alltext, $resource->reference, $formatoptions, $course->id),
                     "center", "", "", "20");
 
-            if (true) { //@todo penny replace later with capability check
+            if (has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $this->cm->id))) {
                 resource_portfolio_caller::add_button($this);
             }
             $strlastmodified = get_string("lastmodified");
