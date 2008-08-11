@@ -49,7 +49,7 @@ foreach ($fieldrecords as $fieldrecord) {
     $fields[]= data_get_field($fieldrecord, $data);
 }
 
-$mform = new mod_data_export_form('export.php?d='.$data->id, $fields);
+$mform = new mod_data_export_form('export.php?d='.$data->id, $fields, $cm);
 
 if($mform->is_cancelled()) {
     redirect('view.php?d='.$data->id);

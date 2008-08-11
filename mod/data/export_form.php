@@ -8,10 +8,13 @@ require_once($CFG->libdir . '/csvlib.class.php');
 
 class mod_data_export_form extends moodleform {
     var $_datafields = array();
+    var $_cm;
+
      // @param string $url: the url to post to
      // @param array $datafields: objects in this database
-    function mod_data_export_form($url, $datafields) {
+    function mod_data_export_form($url, $datafields, $cm) {
         $this->_datafields = $datafields;
+        $this->_cm = $cm;
         parent::moodleform($url);
     }
 
@@ -53,7 +56,7 @@ class mod_data_export_form extends moodleform {
         }
         $this->add_checkbox_controller(1, null, null, 1);
         require_once($CFG->libdir . '/portfoliolib.php');
-        if (true) { // @todo penny replace with permissions check
+        if (has_capability('mod/data:exportallentries', get_context_instance(CONTEXT_MODULE, $this->_cm->id))) {
             if ($portfoliooptions = portfolio_instance_select(
                 portfolio_instances(),
                 call_user_func(array('data_portfolio_caller', 'supported_formats')),
