@@ -36,11 +36,9 @@
 class MoodleODSWorkbook {
     var $worksheets = array();
     var $filename;
-    var $send;
 
-    function MoodleODSWorkbook($filename, $send=true) {
+    function MoodleODSWorkbook($filename) {
         $this->filename = $filename;
-        $this->send = $send;
     }
 
     /* Create one Moodle Worksheet
@@ -97,22 +95,15 @@ class MoodleODSWorkbook {
         $files[] = "$dir/META-INF";
 
         $filename = "$dir/result.ods";
-        if (!$this->send) {
-            $filename = $this->filename;
-        }
         zip_files($files, $filename);
 
-        if ($this->send) {
-            $handle = fopen($filename, 'rb');
-            $contents = fread($handle, filesize($filename));
-            fclose($handle);
+        $handle = fopen($filename, 'rb');
+        $contents = fread($handle, filesize($filename));
+        fclose($handle);
 
-            remove_dir($dir); // cleanup the temp directory
+        remove_dir($dir); // cleanup the temp directory
 
-            send_file($contents, $this->filename, 0, 0, true, true, 'application/vnd.oasis.opendocument.spreadsheet');
-            return;
-        }
-        return $this->filename;
+        send_file($contents, $this->filename, 0, 0, true, true, 'application/vnd.oasis.opendocument.spreadsheet');
     }
 
     /* Not required to use
