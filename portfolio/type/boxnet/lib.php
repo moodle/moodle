@@ -8,6 +8,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
     private $ticket;
     private $authtoken;
     private $folders;
+    private $accounttree;
 
     public function prepare_package() {
         return true; // don't do anything else for this plugin, we want to send all files as they are.
@@ -24,7 +25,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
             );
             if (array_key_exists('status', $return) && $return['status'] == 'upload_ok'
                 && array_key_exists('id', $return) && count($return['id']) == 1) {
-                $return['rename'] = $this->boxclient->renameFile($return['id'][array_pop(array_keys($return['id']))], $file->get_filename());
+                $return['rename'] = $this->rename_file($return['id'][array_pop(array_keys($return['id']))], $file->get_filename());
                 $ret[] = $return;
             }
         }
@@ -159,9 +160,9 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
         return $this->ticket;
     }
 
-    private function get_folder_list() {
-        if (!empty($this->folders)) {
-            return $this->folders;
+    private function ensure_account_tree() {
+        if (!empty($this->accounttree)) {
+            return;
         }
         if (empty($this->ticket)
             || empty($this->authtoken)
@@ -170,26 +171,57 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
             portfolio_exporter::raise_error('folderlistfailed', 'portfolio_boxnet');
             return false;
         }
-        $rawfolders = $this->boxclient->getAccountTree();
+        $this->accounttree = $this->boxclient->getAccountTree();
         if ($this->boxclient->isError()) {
             portfolio_exporter::raise_error('folderlistfailed', 'portfolio_boxnet');
         }
-        if (!is_array($rawfolders)) {
+        if (!is_array($this->accounttree)) {
             return false;
         }
+
+
+    }
+
+    private function get_folder_list() {
+        if (!empty($this->folders)) {
+            return $this->folders;
+        }
+        $this->ensure_account_tree();
         $folders = array();
-        foreach ($rawfolders['folder_id'] as $key => $id) {
+        foreach ($this->accounttree['folder_id'] as $key => $id) {
             if (empty($id)) {
                 continue;
             }
-            $name = $rawfolders['folder_name'][$key];
-            if (!empty($rawfolders['shared'][$key])) {
+            $name = $this->accounttree['folder_name'][$key];
+            if (!empty($this->accounttree['shared'][$key])) {
                 $name .= ' (' . get_string('sharedfolder', 'portfolio_boxnet') . ')';
             }
             $folders[$id] = $name;
         }
         $this->folders = $folders;
         return $folders;
+    }
+
+    private function rename_file($fileid, $newname) {
+        // look at moving this to the boxnet client class
+        $this->ensure_account_tree();
+        $count = 1;
+        $bits = explode('.', $newname);
+        $suffix = '';
+        if (count($bits) == 1) {
+            $prefix = $origname;
+        } else {
+            $suffix = '.' . array_pop($bits);
+            $prefix = implode('.', $bits);
+        }
+        while (true) {
+            if (!in_array($newname, $this->accounttree['file_name'])) {
+                return $this->boxclient->renameFile($fileid, $newname);
+            }
+            $newname = $prefix . '(' . $count . ')' . $suffix;
+            $count++;
+        }
+        return false;
     }
 
     public function instance_sanity_check() {
