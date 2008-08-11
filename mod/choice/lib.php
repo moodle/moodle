@@ -745,7 +745,7 @@ function choice_get_response_data($choice, $cm, $groupmode) {
 /**
  * Returns all other caps used in module
  */
-function chice_get_extra_capabilities() {
+function choice_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
 }
 
