@@ -92,7 +92,7 @@
     }
 
 /// Print the form
-
+    $choiceopen = true;
     $timenow = time();
     if ($choice->timeclose !=0) {
         if ($choice->timeopen > $timenow ) {
@@ -101,13 +101,11 @@
             exit;
         } else if ($timenow > $choice->timeclose) {
             print_simple_box(get_string("expired", "choice", userdate($choice->timeclose)), "center");
-            print_footer($course);
-            exit;
+            $choiceopen = false;
         }
     }
 
-    if ( (!$current or $choice->allowupdate) and
-         ($choice->timeclose >= time() or $choice->timeclose == 0) and
+    if ( (!$current or $choice->allowupdate) and $choiceopen and
           has_capability('mod/choice:choose', $context) ) {
     // They haven't made their choice yet or updates allowed and choice is open
 
@@ -155,14 +153,13 @@
 
     if ( $choice->showresults == CHOICE_SHOWRESULTS_ALWAYS or
         ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_ANSWER and $current ) or
-        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
+        ($choice->showresults == CHOICE_SHOWRESULTS_AFTER_CLOSE and !$choiceopen ) )  {
 
         choice_show_results($choice, $course, $cm, $allresponses); //show table with students responses.
 
     } else if (!$choiceformshown) {
         print_simple_box(get_string('noresultsviewable', 'choice'), 'center');
     }
-
 
     print_footer($course);
 
