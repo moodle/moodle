@@ -104,6 +104,7 @@ $string['previous'] = 'Previous';
 $string['redeploy'] = 'Deploy again';
 $string['repository'] = 'IMS repository';
 $string['resource:view'] = 'View resource';
+$string['resource:exportresource'] = 'Export resource';
 $string['resourcedefaulturl'] = 'Default URL';
 $string['resourcetype'] = 'Type of resource';
 $string['resourcetype1'] = 'Reference';

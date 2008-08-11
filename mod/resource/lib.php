@@ -743,11 +743,13 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function check_permissions() {
-        return true;
+        return has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $this->cm->id));
     }
 
     public static function add_button($resource, $fullform=true, $return=false) {
-        // @todo penny can we put the capability check in here?
+        if (!has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $resource->cm->id))) {
+            return;
+        }
         if (!is_callable(array($resource, 'portfolio_prepare_package')) || !is_callable(array($resource, 'portfolio_get_sha1'))) {
             debugging(get_string('portfolionotimplemented', 'resource'));
             return false;
