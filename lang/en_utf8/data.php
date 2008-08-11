@@ -54,6 +54,9 @@ $string['csvwithselecteddelimiter'] = '<acronym title=\"Comma Separated Values\"
 $string['csvimport'] = 'CSV file import';
 $string['data:approve'] = 'Approve unapproved entries';
 $string['data:comment'] = 'Write comments';
+$string['data:exportentry'] = 'Export a database entry';
+$string['data:exportownentry'] = 'Export own database entry';
+$string['data:exportallentries'] = 'Export all database entries';
 $string['data:managecomments'] = 'Manage comments';
 $string['data:manageentries'] = 'Manage entries';
 $string['data:managetemplates'] = 'Manage templates';

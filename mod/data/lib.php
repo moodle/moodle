@@ -2478,8 +2478,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function check_permissions() {
-        // @todo
-        return true;
+        return has_capability('mod/data:exportallentries', get_context_instance(CONTEXT_MODULE, $this->cm->id));
     }
 
     public static function display_name() {
