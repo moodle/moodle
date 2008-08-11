@@ -10,7 +10,8 @@ $p     = optional_param('p', '', PARAM_INT);
 // opened in editor or moodleform
 $env   = optional_param('env', 'form', PARAM_ALPHA);
 // file to download
-$file  = optional_param('file', '', PARAM_URL);
+// TODO: which type should be?
+$file  = optional_param('file', '', PARAM_RAW);
 // rename the file name
 $title = optional_param('title', '', PARAM_FILE);
 $action = optional_param('action', '', PARAM_ALPHA);
@@ -21,7 +22,6 @@ $repo_id = optional_param('repo_id', 1, PARAM_INT);
 // what will happen if user use a fake ctx_id?
 // Think about using $SESSION save it
 $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);
-$itemid  = optional_param('itemid', 0, PARAM_INT);
 $userid  = $USER->id;
 
 if(!$repository = $DB->get_record('repository', array('id'=>$repo_id)))
@@ -67,6 +67,7 @@ if($action == 'list') {
 
 } elseif($action == 'download') {
     $path = $repo->get_file($file, $title);
+    $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
     try {
         $info = move_to_filepool($path, $title, $itemid);
         if($env == 'form'){

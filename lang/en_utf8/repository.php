@@ -1,13 +1,16 @@
 <?php //$Id$
+$string['add'] = 'Add';
 $string['activaterep'] = 'Active repositories';
 $string['back'] = '&lt; Back';
-$string['download'] = 'Download';
 $string['close'] = 'Close';
+$string['download'] = 'Download';
+$string['downloadsucc'] = 'Download Successfully!';
 $string['filename'] = 'Filename';
 $string['filesaved'] = 'File Saved!';
 $string['invalidrepositoryid'] = 'Invalid Repository ID';
 $string['invalidplugin'] = 'Invalid Repository Plug-in';
 $string['manageuserrepository'] = 'Manage individual repository';
+$string['noenter'] = 'Nothing entered';
 $string['plugin'] = 'Repository Plug-ins';
 $string['settings'] = 'Settings';
 $string['openpicker'] = 'Open file picker';
@@ -16,6 +19,7 @@ $string['logout'] = 'Logout';
 $string['loading'] = 'Loading...';
 $string['thumbview'] = 'Thumbnail View';
 $string['search'] = 'Search ';
+$string['searching'] = 'What are you searching?';
 $string['submit'] = 'Submit';
 $string['sync'] = 'Sync';
 $string['title'] = 'Repository File Picker';

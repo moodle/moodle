@@ -45,7 +45,6 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
             return $this->getFrozenHtml();
         } else {
             $strsaved = get_string('filesaved', 'repository');
-            $itemid = substr(hexdec(uniqid()), 0, 9)+rand(1,100);
             if(empty($COURSE->context)) {
                 $ctx = get_context_instance(CONTEXT_SYSTEM);
             } else {
@@ -54,17 +53,16 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
             $ret = get_repository_client($ctx);
             $suffix = $ret['suffix'];
             $str = $this->_getTabs();
-            $str .= '<input type="hidden" value="'.$itemid.'" name="'.$this->_attributes['name'].'" id="'.$this->_attributes['id'].'_'.$suffix.'" />';
+            $str .= '<input type="hidden" value="" name="'.$this->_attributes['name'].'" id="'.$this->_attributes['id'].'_'.$suffix.'" />';
             $id = $this->_attributes['id'];
             $str .= <<<EOD
 <script type="text/javascript">
-function updatefile(){
-    alert('$strsaved');
+function updatefile_$suffix(){
     document.getElementById('repo_info_$suffix').innerHTML = '$strsaved';
 }
 function callpicker_$suffix(){
     var el=document.getElementById('${id}_${suffix}');
-    openpicker_$suffix({"env":"form", 'itemid': $itemid, 'target':el, 'callback':updatefile})
+    openpicker_$suffix({"env":"form", 'target':el, 'callback':updatefile_$suffix})
 }
 </script>
 EOD;

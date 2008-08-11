@@ -395,7 +395,6 @@ function move_to_filepool($path, $name, $itemid) {
     $fs = get_file_storage();
     $browser = get_file_browser();
     if ($file = $fs->create_file_from_pathname($entry, $path)) {
-        $id = json_encode($file->get_itemid());
         $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         return array('url'=>$ret->get_url(),'id'=>$file->get_itemid());
     } else {
@@ -424,6 +423,10 @@ function get_repository_client($context){
     $strdownload  = get_string('download', 'repository');
     $strback      = get_string('back', 'repository');
     $strclose     = get_string('close', 'repository');
+    $strdownload  = get_string('downloadsucc', 'repository');
+    $strnoenter   = get_string('noenter', 'repository');
+    $strsearching = get_string('searching', 'repository');
+    $stradd  = get_string('add', 'repository');
 
     $js = <<<EOD
     <style type="text/css">
@@ -485,7 +488,7 @@ function get_repository_client($context){
                 underlay: 'none',
                 width: '510px',
                 zindex: 666666,
-                xy: [100, 100]
+                xy: ['50%', YAHOO.util.Dom.getDocumentScrollTop()]
             });
             // construct code section
             {
@@ -600,7 +603,10 @@ function get_repository_client($context){
         }
         _client.loading = function(){
             var panel = new YAHOO.util.Element('panel-$suffix');
-            panel.get('element').innerHTML = '<span>$strloading</span>';
+            panel.get('element').innerHTML = '';
+            var content = document.createElement('div');
+            content.innerHTML = '$strloading';
+            panel.get('element').appendChild(content);
         }
         _client.rename = function(oldname, url){
             var panel = new YAHOO.util.Element('panel-$suffix');
@@ -743,15 +749,11 @@ function get_repository_client($context){
         _client.download = function(){
             var title = document.getElementById('newname-$suffix').value;
             var file = document.getElementById('fileurl-$suffix').value;
-            var itemid = 1;
-            if(_client.itemid){
-                itemid = _client.itemid;
-            }
             _client.loading();
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
-                '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='+_client.repositoryid+
-                    '&action=download', 
-                _client.dlfile, _client.postdata({'itemid': itemid, 'env':_client.env, 'file':file, 'title':title}));
+                '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='
+                +_client.repositoryid+'&action=download', 
+                _client.dlfile, _client.postdata({'env':_client.env, 'file':file, 'title':title}));
         }
         _client.login = function(){
             var obj = {};
@@ -814,9 +816,16 @@ function get_repository_client($context){
                     panel.get('element').innerHTML = ret.e;
                     return;
                 }
-                var html = '<h1>Download Successfully!</h1>';
-                html += '<button onclick="repository_client_$suffix.end(\''+ret+'\')">Add!</button>';
-                panel.get('element').innerHTML = html;
+                var title = document.createElement('h1');
+                title.innerHTML = '$strdownload';
+                var btn = document.createElement('button');
+                btn.innerHTML = '$stradd';
+                btn.onclick = function(){
+                    repository_client_$suffix.end(ret);
+                }
+                panel.get('element').innerHTML = '';
+                panel.get('element').appendChild(title);
+                panel.get('element').appendChild(btn);
             }
         }
         // request file list or login
@@ -827,9 +836,9 @@ function get_repository_client($context){
             var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
         }
         _client.search = function(id){
-            var data = window.prompt("What are you searching for?");
-            if(data == null || data == '') {
-                alert('nothing entered');
+            var data = window.prompt("$strsearching");
+            if(data == '') {
+                alert('$strnoenter');
                 return;
             }
             _client.viewbar.set('disabled', false);
@@ -854,9 +863,6 @@ EOD;
             repository_client_$suffix.target = obj.target;
             repository_client_$suffix.instance = new repository_client_$suffix();
             repository_client_$suffix.instance.create_picker();
-            if(obj.itemid){
-                repository_client_$suffix.itemid = obj.itemid;
-            }
             if(obj.callback){
                 repository_client_$suffix.formcallback = obj.callback;
             } else {
