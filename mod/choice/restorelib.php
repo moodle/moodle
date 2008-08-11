@@ -195,8 +195,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
 
     //This function restores the choice_answers
     function choice_answers_restore_mods($choiceid,$info,$restore) {
-
-        global $CFG;
+        global $CFG, $DB;
 
         $status = true;
         if (isset($info['MOD']['#']['ANSWERS']['0']['#']['ANSWER'])) {
@@ -238,7 +237,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
                 }
 
                 //The structure is equal to the db, so insert the choice_answers
-                $newid = insert_record ("choice_answers",$answer);
+                $newid = $DB->insert_record ("choice_answers",$answer);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
