@@ -209,7 +209,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_base {
         $bits = explode('.', $newname);
         $suffix = '';
         if (count($bits) == 1) {
-            $prefix = $origname;
+            $prefix = $newname;
         } else {
             $suffix = '.' . array_pop($bits);
             $prefix = implode('.', $bits);
