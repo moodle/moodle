@@ -60,6 +60,7 @@ $string['creatingconfigfile'] = 'Kreiranje konfiguracione datoteke';
 $string['ctyperecommended'] = 'Instaliranje opcione PHP ekstenzije ctype se strogo preporučuje da bi se unapredilo funkcionisanje sajta, pogotovo ako Vaš sajt podržava ne-latinične jezike.';
 $string['ctyperequired'] = 'PHP ekstenzije ctype je sada obavezna za Moodle, da bi se unapredilo funkcionisanje sajta i da bi se nudila višejezična kompatibilnost.';
 $string['curlrecommended'] = 'Instaliranje opcione Curl biblioteke je vrlo preporučljivo, jer je ona neophodna za uspešno korišćenje funkcija za umrežavanje.';
+$string['curlrequired'] = 'PHP ekstenziju cURL sada je obavezna za Moodle da bi se komuniciralo sa Moodle repozitorijumima';
 $string['customcheck'] = 'Druge provere';
 $string['database'] = 'Baza podataka';
 $string['databasecreationsettings'] = 'Sada je potrebno konfigurisati podešavanja baze podataka u kojoj će se čuvati najveći deo Moodle podataka. Ta baza podataka će biti kreirana automatski prilikom instalacije, sa podešavanjima specificiranim ispod. <br />
