@@ -10,7 +10,7 @@ class zip_packer extends file_packer {
 
     /**
      * Zip files and store the result in file storage
-     * @param array $archivepath=>$pathanme or stored file instance
+     * @param array $files array with zip paths as keys (archivepath=>ospathname or archivepath=>stored_file) 
      * @param int $contextid
      * @param string $filearea
      * @param int $itemid
@@ -49,8 +49,8 @@ class zip_packer extends file_packer {
 
     /**
      * Zip files and store the result in os file
-     * @param array $archivepath=>$pathanme or stored file instance
-     * @param string $archivefile
+     * @param array $files array with zip paths as keys (archivepath=>ospathname or archivepath=>stored_file) 
+     * @param string $archivefile path to target zip file
      * @return bool success
      */
     public function archive_to_pathname($files, $archivefile) {
