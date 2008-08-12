@@ -159,6 +159,7 @@ require_once($CFG->dirroot.'/version.php');
 /// Set version and release
 $INSTALL['version'] = $version;
 $INSTALL['release'] = $release;
+$CFG->release = $release; // needed for environment checks
 
 /// list all supported drivers - unsupported must be installed manually ;-)
 $supported = array (
