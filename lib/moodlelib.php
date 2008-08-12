@@ -6187,8 +6187,8 @@ function check_php_version($version='5.2.4') {
 
       case 'Firefox':   /// Mozilla Firefox browsers
 
-          if (preg_match("/Firefox\/([0-9\.]+)/i", $agent, $match)) {
-              if (version_compare($match[1], $version) >= 0) {
+          if (preg_match("/(Iceweasel|Firefox)\/([0-9\.]+)/i", $agent, $match)) {
+              if (version_compare($match[2], $version) >= 0) {
                   return true;
               }
           }
