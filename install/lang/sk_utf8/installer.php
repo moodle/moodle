@@ -36,8 +36,8 @@ $string['configfilewritten'] = 'súbor config.php bol úspešne vytvorený';
 $string['configurationcompletehead'] = 'Konfigurácia ukončená';
 $string['configurationcompletesub'] = 'Moodle sa pokúsil uložiť súbor s konfiguráciou do koreňového adresára inštalácie Moodle.';
 $string['continue'] = 'Pokračovať';
-$string['ctyperecommended'] = 'Pre zvýšenie výkonu Vašej Moodle inštalácie (najmä v prípade využívania nie latin1 jazykov) je doporučované nainštalovať voliteľnú knižnicu ctype.';
-$string['ctyperequired'] = 'Voliteľná knižnica ctype je odteraz vyžadovaná Moodle pre zvýšenie výkonu Moodle a pre podporu viacjazyčnej kompatibility.';
+$string['ctyperecommended'] = 'Pre zlepšenie výkonu na portáli (najmä pre nie latinkové jazyky) je doporučené nainštalovať voliteľnú knižnicu ctype.';
+$string['ctyperequired'] = 'Voliteľná knižnica ctype je vyžadovaná v Moodle na zlepšenie výkonu na portáli a podporu kompatibility viacerých jazykov.';
 $string['curlrecommended'] = 'Pre beh sieťových funkcionalít (\"Moodle Networking\") je treba nainštalovať voliteľnú knižnicu Curl.';
 $string['customcheck'] = 'Ostatné kontroly';
 $string['database'] = 'Databáza';
@@ -73,6 +73,12 @@ $string['databasesettingssub_mysql'] = '<b>Typ:</b> MySQL<br />
 <b>Používateľ (User):</b> používateľ oprávnený pre prácu s databázou<br />
 <b>Heslo (Password):</b> heslo pre používateľa<br />
 <b>Predpona (Tables Prefix):</b> jednotná predpona názvov všetkých tabuliek, napr. mdl_ (povinné)';
+$string['databasesettingssub_mysqli'] = '<b>Typ:</b> Vylepšené MySQL<br />
+<b>Hostiteľ (Host):</b> eg localhost alebo db.isp.com<br />
+<b>Názov (Name):</b> názov databázy, napr. moodle<br />
+<b>Používateľ (User):</b> používateľ oprávnený pre prácu s databázou<br />
+<b>Heslo (Password):</b> heslo pre používateľa<br />
+<b>Predpona (Tables Prefix):</b> jednotná predpona názvov všetkých tabuliek, napr. mdl_ (voliteľné)';
 $string['databasesettingssub_oci8po'] = '<b>Typ:</b> Oracle<br />
 <b>Hostitel (Host):</b> nepoužité, musí být prázdne<br />
 <b>Názov (Name):</b> daný názov pripojenia tnsnames.ora<br />
@@ -91,6 +97,7 @@ $string['databasesettingssub_postgres7'] = '<b>Typ:</b> PostgreSQL<br />
 <b>Používateľ (User):</b> používateľ oprávnený pre prácu s databázou<br />
 <b>Heslo (Password):</b> heslo pre používateľa<br />
 <b>Predpona (Tables Prefix):</b> jednotná predpona názvov všetkých tabuliek, napr. mdl_ (povinné)';
+$string['databasesettingswillbecreated'] = '<b>Poznámka:</b> inštalátor sa pokúsi vytvoriť databázu automaticky, ak neexistuje.';
 $string['dataroot'] = 'Adresár pre údaje';
 $string['datarooterror'] = '\'Adresár pre údaje\', ktorý ste zadali, nemôže byť nájdený alebo vytvorený. Upravte buď cestu alebo vytvorte ten adresár ručne.';
 $string['dbconnectionerror'] = 'Nemohli sme sa pripojiť k vami zadanej databáze. Prosím skontrolujte nastavenia Vašej databázy.';
@@ -200,6 +207,8 @@ $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Ak ale vo vašej inštalácii Moodle používate IBA jazyky založené na latinke (iso-8859-1), môžete aj ďalej používať súčasne nainštalovanú verziu MySQL 4.1.12 (alebo vyšší).';
 $string['mysql416required'] = 'Minimálnou verziou potrebnou pre Moodle 1.6 -- a pre neskorší bezpečný prevod všetkých údajov do UTF-8 -- je MySQL 4.1.16.';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP nebolo správne nakonfigurované s MySQL rozšírením, a tak nemôže komunikovať s MySQL. Prosím, skontrolujte si Váš php.ini súbor alebo znovu vytvorte PHP.';
+$string['mysqli'] = 'Vylepšené MySQL (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'PHP nebolo správne nakonfigurované s rozšírením MySQLi, aby mohlo komunikovať s MySQL. Skontrolujte svoj súbor php.ini alebo prekompilujte PHP. Rozšírenie MySQLi  nie je dostupné pre PHP 4.';
 $string['name'] = 'Meno';
 $string['next'] = 'Ďalší';
 $string['oci8po'] = 'Oracle (oci8po)';
@@ -220,6 +229,9 @@ $string['phpversionhelp'] = '<p>Moodle si vyžaduje verziu PHP aspoň  4.1.0.</p
 <p>Musíte obnoviť PHP alebo presunúť na hostiteľský počítač s novou verziou PHP!</p>';
 $string['postgres7'] = 'PostgreSQL (postgres7)';
 $string['previous'] = 'Predchádzajúci';
+$string['qtyperqpwillberemoved'] = 'Počas aktualizácie budú odobrané otázky typu RQP. Nemali ste žiadne také, takže by ste nemali zbadať žiadne problémy.';
+$string['qtyperqpwillberemovedanyway'] = 'Počas aktualizácie budú odobrané otázky typu RQP. Vo vašej databáze sa otázky takéhoto typu nachádzajú a nebudú fungovať ak nepreinštalujete program z http://moodle.org/mod/data/view.php?d=13&amp;rid=797 predtým, ako budete pokračovať v aktualizácii.';
+$string['remotedownloaderror'] = 'Stiahnutie komponentu na server zlyhalo, skontrolujte nastavenia proxy, doporučené je PHP rozšírenie cURL. <br /><br />Musíte stiahnuť súbor <a href=\"$a->url\">$a->url</a> manuálne, skopírovať ho do \"$a->dest\" na serveri a rozzipovať ho tam.';
 $string['remotedownloadnotallowed'] = 'Nahrávanie komponentov na server nie je povolené (direktíva allow_url_fopen je v stave \'vypnuté\').<br /><br />Musíte súbor stiahnuť <a href=\"$a->url\">$a->url</a> ručne, skopírovať ho na serveri do umiestnenia \"$a->dest\" a tam ho dekomprimovať.';
 $string['report'] = 'Záznamy';
 $string['restricted'] = 'Obmedzený';
@@ -253,4 +265,5 @@ $string['wrongzipfilename'] = 'Chybné meno súboru ZIP';
 $string['wwwroot'] = 'Web adresa';
 $string['wwwrooterror'] = 'Táto web adresa pravdepodobne nie je platná - táto inštalácia Moodle tu pravdepodobne nie je.';
 $string['xmlrpcrecommended'] = 'Pre beh sieťových funkcionalít (\"Moodle Networking\") je treba nainštalovať voliteľnú knižnicu xlmrpc.';
+$string['ziprequired'] = 'Moodle v súčasnosti vyžaduje PHP zásuvný modul ZIP. Knižnice info-ZIP alebo PclZip už nie sú používané.';
 ?>
