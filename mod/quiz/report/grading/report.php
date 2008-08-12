@@ -76,7 +76,7 @@ class quiz_report extends quiz_default_report {
         
         if (empty($gradeableqs)) {
             print_heading(get_string('noessayquestionsfound', 'quiz'));
-            return false;
+            return true;
         } else if (count($gradeableqs)==1){
             $questionid = array_shift(array_keys($gradeableqs));
         }
