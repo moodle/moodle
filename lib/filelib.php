@@ -646,7 +646,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
     global $CFG, $COURSE, $SESSION;
 
     if ($dontdie) {
-        ignore_user_abort();
+        ignore_user_abort(true);
     }
 
     // MDL-11789, apply $CFG->filelifetime here
@@ -857,7 +857,7 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
     global $CFG, $COURSE, $SESSION;
 
     if ($dontdie) {
-        ignore_user_abort();
+        ignore_user_abort(true);
     }
 
     session_write_close(); // unlock session during fileserving
