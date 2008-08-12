@@ -4201,16 +4201,6 @@ class admin_setting_manageportfolio extends admin_setting {
         return true;
     }
 
-    function get_full_name() {
-        return 's_manageportfolio';
-    }
-
-    function write_setting($data) {
-        $url = $this->baseurl . '&amp;new=' . $data;
-        redirect($url);
-        exit;
-    }
-
     function is_related($query) {
         if (parent::is_related($query)) {
             return true;
@@ -4272,8 +4262,7 @@ class admin_setting_manageportfolio extends admin_setting {
 
         $output .= print_table($table, true);
 
-        //$instancehtml = '<br /><form action="' . $this->baseurl . '" method="post">'
-        $instancehtml = get_string('addnewportfolio', 'portfolio') . ': <select name="s_manageportfolio">';
+        $instancehtml = '<br /><br />' . get_string('addnewportfolio', 'portfolio') . ': <br />';
         $addable = 0;
         foreach ($plugins as $p) {
             if (!portfolio_static_function($p, 'allows_multiple') && in_array($p, $alreadyplugins)) {
@@ -4282,12 +4271,12 @@ class admin_setting_manageportfolio extends admin_setting {
             if (array_key_exists($p, $insane)) {
                 continue;
             }
-            $instancehtml .= '<option value="' . $p . '">' . $p .'</option>' ."\n";
+
+            $instancehtml .= '<a href="' . $this->baseurl . '&amp;new=' . $p . '">' . s($p) . '</a><br />' . "\n";
             $addable++;
         }
 
         if ($addable) {
-            $instancehtml .= '</select><input type="submit" value="' . get_string('add') . '" /></form>';
             $output .= $instancehtml;
         }
         $output .= print_simple_box_end(true);
