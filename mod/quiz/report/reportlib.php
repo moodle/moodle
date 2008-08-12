@@ -57,7 +57,7 @@ function quiz_get_average_grade_for_questions($quiz, $userids){
 function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
     global $CFG;
     $sql = "SELECT qs.question, COUNT(1) AS totalattempts, " .
-            "SUM(qs.event IN (".QUESTION_EVENTS_GRADED.")) AS gradedattempts " .
+            "SUM(CASE WHEN (qs.event IN (".QUESTION_EVENTS_GRADED.")) THEN 1 ELSE 0 END) AS gradedattempts " .
             "FROM " .
             "{$CFG->prefix}quiz_attempts qa, " .
             "{$CFG->prefix}question_sessions qns, " .
