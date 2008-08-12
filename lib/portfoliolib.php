@@ -1496,9 +1496,6 @@ final class portfolio_export_form extends moodleform {
         }
 
         if (array_key_exists('expectedtime', $this->_customdata) && $this->_customdata['expectedtime'] != PORTFOLIO_TIME_LOW) {
-            //$mform->addElement('select', 'wait', get_string('waitlevel_' . $this->_customdata['expectedtime'], 'portfolio'), $options);
-
-
             $radioarray = array();
             $radioarray[] = &MoodleQuickForm::createElement('radio', 'wait', '', get_string('wait', 'portfolio'), 1);
             $radioarray[] = &MoodleQuickForm::createElement('radio', 'wait', '', get_string('dontwait', 'portfolio'),  0);
@@ -2071,6 +2068,10 @@ final class portfolio_exporter {
         print_error($string, $module, $continue, $a);
     }
 
+    /**
+    * cancels a potfolio request and cleans up the tempdata
+    * and redirects the user back to where they started
+    */
     public function cancel_request() {
         if (!isset($this)) {
             return;
@@ -2097,6 +2098,14 @@ final class portfolio_exporter {
         }
     }
 
+    /**
+    * rewakens the data from the database given the id
+    * makes sure to load the requred files with the class definitions
+    *
+    * @param int $id id of data
+    *
+    * @return portfolio_exporter
+    */
     public static function rewaken_object($id) {
         global $DB, $CFG;
         if (!$data = $DB->get_record('portfolio_tempdata', array('id' => $id))) {
@@ -2181,6 +2190,9 @@ final class portfolio_exporter {
 
 }
 
+/**
+* form that just contains the dropdown menu of available instances
+*/
 class portfolio_instance_select extends moodleform {
 
     private $caller;
