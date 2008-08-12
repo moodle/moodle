@@ -63,7 +63,7 @@ function scorm_resize (cwidth, cheight) {
                         
     var totalheighttoc = totalheight+imsnavheight;
     // override total height with configured height if it is smaller
-    if (cheight >= 400 && winheight > cheight) {
+    if (cheight > 0) {
       winheight = cheight;
     }                        
     var toctree = document.getElementById('toctree');
