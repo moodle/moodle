@@ -567,9 +567,16 @@ function get_mimetype_description($mimetype,$capitalise=false) {
  * @param string $path path to file, preferably from moodledata/temp/something; or content of file itself
  * @param string $filename proposed file name when saving file
  * @param bool $path is content of file
+ * @param bool $dontdie - return control to caller afterwards. this is not recommended and only used for cleanup tasks.
+ *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
+ *                        you must detect this case when control is returned using connection_aborted.
  */
-function send_temp_file($path, $filename, $pathisstring=false) {
+function send_temp_file($path, $filename, $pathisstring=false, $dontdie=false) {
     global $CFG;
+
+    if ($dontdie) {
+        ignore_user_abort();
+    }
 
     // close session - not needed anymore
     @session_write_close();
@@ -615,6 +622,9 @@ function send_temp_file($path, $filename, $pathisstring=false) {
         readfile_chunked($path);
     }
 
+    if ($dontdie) {
+        return;
+    }
     die; //no more chars to output
 }
 
@@ -637,9 +647,16 @@ function send_temp_file_finished($path) {
  * @param bool $pathisstring If true (default false), $path is the content to send and not the pathname
  * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
  * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
+ * @param bool $dontdie - return control to caller afterwards. this is not recommended and only used for cleanup tasks.
+ *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
+ *                        you must detect this case when control is returned using connection_aborted.
  */
-function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='') {
+function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='', $dontdie=false) {
     global $CFG, $COURSE, $SESSION;
+
+    if ($dontdie) {
+        ignore_user_abort();
+    }
 
     // MDL-11789, apply $CFG->filelifetime here
     if ($lifetime === 'default') {
@@ -826,6 +843,9 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
             }
         }
     }
+    if ($dontdie) {
+        return;
+    }
     die; //no more chars to output!!!
 }
 
@@ -838,9 +858,16 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
  * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
  * @param string $filename Override filename
  * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
+ * @param bool $dontdie - return control to caller afterwards. this is not recommended and only used for cleanup tasks.
+ *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
+ *                        you must detect this case when control is returned using connection_aborted.
  */
-function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, $filename=null) {
+function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, $filename=null, $dontdie=false) {
     global $CFG, $COURSE, $SESSION;
+
+    if ($dontdie) {
+        ignore_user_abort();
+    }
 
     session_write_close(); // unlock session during fileserving
 
@@ -996,6 +1023,9 @@ function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownl
             while (@ob_end_flush()); //flush the buffers - save memory and disable sid rewrite
             $stored_file->readfile();
         }
+    }
+    if ($dontdie) {
+        return;
     }
     die; //no more chars to output!!!
 }
