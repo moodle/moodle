@@ -613,7 +613,7 @@ function send_temp_file($path, $filename, $pathisstring=false) {
     if ($pathisstring) {
         echo $path;
     } else {
-        readfile_chunked($path);
+        @readfile($path);
     }
 
     die; //no more chars to output
@@ -640,7 +640,9 @@ function send_temp_file_finished($path) {
  * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
  * @param bool $dontdie - return control to caller afterwards. this is not recommended and only used for cleanup tasks.
  *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
- *                        you must detect this case when control is returned using connection_aborted.
+ *                        you must detect this case when control is returned using connection_aborted. Please not that session is closed
+ *                        and should not be reopened.
+ * @return no return or void, script execution stopped unless $dontdie is true
  */
 function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathisstring=false, $forcedownload=false, $mimetype='', $dontdie=false) {
     global $CFG, $COURSE, $SESSION;
@@ -787,7 +789,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
         if ($pathisstring) {
             echo $path;
         } else {
-            readfile_chunked($path);
+            @readfile($path);
         }
     } else {     // Try to put the file through filters
         if ($mimetype == 'text/html') {
@@ -830,7 +832,7 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
             if ($pathisstring) {
                 echo $path;
             }else {
-                readfile_chunked($path);
+                @readfile($path);
             }
         }
     }
@@ -851,7 +853,9 @@ function send_file($path, $filename, $lifetime = 'default' , $filter=0, $pathiss
  * @param string $mimetype Include to specify the MIME type; leave blank to have it guess the type from $filename
  * @param bool $dontdie - return control to caller afterwards. this is not recommended and only used for cleanup tasks.
  *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
- *                        you must detect this case when control is returned using connection_aborted.
+ *                        you must detect this case when control is returned using connection_aborted. Please not that session is closed
+ *                        and should not be reopened.
+ * @return no return or void, script execution stopped unless $dontdie is true
  */
 function send_stored_file($stored_file, $lifetime=86400 , $filter=0, $forcedownload=false, $filename=null, $dontdie=false) {
     global $CFG, $COURSE, $SESSION;
@@ -1157,34 +1161,6 @@ function fulldelete($location) {
         }
     }
     return true;
-}
-
-/**
- * Improves memory consumptions and works around buggy readfile() in PHP 5.0.4 (2MB readfile limit).
- */
-function readfile_chunked($filename, $retbytes=true) {
-    $chunksize = 1*(1024*1024); // 1MB chunks - must be less than 2MB!
-    $buffer = '';
-    $cnt =0;
-    $handle = fopen($filename, 'rb');
-    if ($handle === false) {
-        return false;
-    }
-
-    while (!feof($handle)) {
-        @set_time_limit(60*60); //reset time limit to 60 min - should be enough for 1 MB chunk
-        $buffer = fread($handle, $chunksize);
-        echo $buffer;
-        flush();
-        if ($retbytes) {
-            $cnt += strlen($buffer);
-        }
-    }
-    $status = fclose($handle);
-    if ($retbytes && $status) {
-        return $cnt; // return num. bytes delivered like readfile() does.
-    }
-    return $status;
 }
 
 /**
