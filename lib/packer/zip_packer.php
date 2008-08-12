@@ -40,6 +40,7 @@ class zip_packer extends file_packer {
             $file_record->filepath  = $filepath;
             $file_record->filename  = $filename;
             $file_record->userid    = $userid;
+            $file_record->mimetype  = 'application/zip';
 
             $result = $fs->create_file_from_pathname($file_record, $tmpfile);
         }
