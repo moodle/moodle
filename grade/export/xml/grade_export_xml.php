@@ -24,6 +24,7 @@
 ///////////////////////////////////////////////////////////////////////////
 
 require_once($CFG->dirroot.'/grade/export/lib.php');
+require_once($CFG->libdir.'/filelib.php');
 
 class grade_export_xml extends grade_export {
 
@@ -107,17 +108,8 @@ class grade_export_xml extends grade_export {
         $gui->close();
         $geub->close();
 
-        @header('Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0');
-        @header('Expires: '. gmdate('D, d M Y H:i:s', 0) .' GMT');
-        @header('Pragma: no-cache');
-        header("Content-type: text/xml; charset=UTF-8");
-        header("Content-Disposition: attachment; filename=\"$downloadfilename\"");
-
-        readfile_chunked($tempfilename);
-
-        @unlink($tempfilename);
-
-        exit();
+        @header("Content-type: text/xml; charset=UTF-8");
+        send_temp_file($tempfilename, $downloadfilename, false);
     }
 }
 
