@@ -103,6 +103,7 @@ $string['overriderolesin'] = 'Override roles in $a';
 $string['overrides'] = 'Overrides';
 $string['permissions'] = 'Permissions';
 $string['potentialusers'] = '$a potential users';
+$string['portfolio:export'] = 'Export to portfolios';
 $string['prevent'] = 'Prevent';
 $string['prohibit'] = 'Prohibit';
 $string['question:add'] = 'Add new questions';

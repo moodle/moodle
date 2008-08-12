@@ -239,12 +239,11 @@
         }
     }
 
-    if (empty($userindexpage) && $user->id == $USER->id && !empty($CFG->portfolioenabled)) {
+    if (empty($userindexpage) && $user->id == $USER->id && !empty($CFG->portfolioenabled) && has_capability('moodle/portfolio:export', get_system_context())) {
 
         /// Portfolio tab
         require_once($CFG->libdir . '/portfoliolib.php');
         if (portfolio_instances(true, false)) {
-            // @todo penny permissions check?
             $toprow[] = new tabobject('portfolios', $CFG->wwwroot .'/user/portfolio.php', get_string('portfolios', 'portfolio'));
         }
     }
