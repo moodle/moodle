@@ -75,7 +75,7 @@
                 not_found();
             }
 
-            send_stored_file($file, 10*60, 0, true); // downlaod MUST be forced - security!
+            send_stored_file($file, 10*60, 0, true); // download MUST be forced - security!
 
         } else {
             not_found();
