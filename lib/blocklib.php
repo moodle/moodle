@@ -966,7 +966,7 @@ function blocks_print_adminblock(&$page, &$pageblocks) {
     if (!empty($missingblocks)) {
         $strblocks = '<div class="title"><h2>';
         $strblocks .= get_string('blocks');
-        $strblocks .= '</h2>';
+        $strblocks .= '</h2></div>';
         $stradd    = get_string('add');
         foreach ($missingblocks as $blockid) {
             $block = blocks_get_record($blockid);
