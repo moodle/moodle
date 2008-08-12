@@ -19,11 +19,6 @@ if ($dataid) {
     $exporter = portfolio_exporter::rewaken_object($dataid);
     if ($cancel = optional_param('cancel', 0, PARAM_RAW)) {
         $exporter->cancel_request();
-        /*
-        $returnurl = $exporter->get('caller')->get_return_url();
-        unset($SESSION->portfolio);
-        redirect($returnurl);
-        */
     }
     if (!$exporter->get('instance')) {
         if ($instance = optional_param('instance', '', PARAM_INT)) {
@@ -105,12 +100,6 @@ if (!$exporter->get('instance')) {
     $mform = new portfolio_instance_select('', array('caller' => $exporter->get('caller')));
     if ($mform->is_cancelled()) {
         $exporter->cancel_request();
-        /*
-        $returnurl = $caller->get_return_url();
-        unset($SESSION->portfolio);
-        redirect($returnurl);
-        exit;
-    */
     } else if ($fromform = $mform->get_data()){
         redirect($CFG->wwwroot . '/portfolio/add.php?instance=' . $fromform->instance . '&amp;id=' . $exporter->get('id'));
         exit;

@@ -2,7 +2,7 @@
 require_once($CFG->libdir.'/filelib.php');
 require_once($CFG->dirroot.'/repository/boxnet/boxlibphp5.php');
 
-class portfolio_plugin_boxnet extends portfolio_plugin_base {
+class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
 
     private $boxclient;
     private $ticket;

@@ -155,7 +155,7 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
     }
 
     if (isset($SESSION->portfolioexport)) {
-        print_error('alreadyexporting', 'portfolio');
+        print_error('alreadyexporting', 'portfolio', null, $CFG->wwwroot . '/portfolio/add.php?cancel=1');
     }
 
     if (empty($callbackfile)) {
@@ -890,6 +890,15 @@ abstract class portfolio_plugin_base {
     public abstract function expected_time($callertime);
 
     /**
+    * is this plugin push or pill.
+    * if push, cleanup will be called directly after send_package
+    * if not, cleanup will be called after portfolio/file.php is requested
+    *
+    * @return boolean
+    */
+    public abstract function is_push();
+
+    /**
     * check sanity of plugin
     * if this function returns something non empty, ALL instances of your plugin
     * will be set to invisble and not be able to be set back until it's fixed
@@ -1428,6 +1437,38 @@ abstract class portfolio_plugin_base {
 }
 
 /**
+* class to inherit from for 'push' type plugins
+*/
+abstract class portfolio_plugin_push_base extends portfolio_plugin_base {
+
+    public function is_push() {
+        return true;
+    }
+}
+
+/**
+* class to inherit from for 'pull' type plugins
+*/
+abstract class portfolio_plugin_pull_base extends portfolio_plugin_base {
+
+    private $file;
+
+    public function is_push() {
+        return false;
+    }
+
+
+    /**
+    * before sending the file when the pull is requested, verify the request parameters
+    * these might include a token of some sort of whatever
+    *
+    * @param array request parameters (POST wins over GET)
+    */
+    public abstract function verify_file_request_params($params);
+
+}
+
+/**
 * this is the form that is actually used while exporting.
 * plugins and callers don't get to define their own class
 * as we have to handle form elements from both places
@@ -1698,7 +1739,6 @@ final class portfolio_exporter {
         if (!$alreadystolen && $url = $this->instance->steal_control($stage)) {
             $this->set('stage', $stage);
             $this->save();
-            //$SESSION->portfolio->stagepresteal = $stage;
             redirect($url);
             break;
         }
@@ -1754,8 +1794,6 @@ final class portfolio_exporter {
     */
     public function process_stage_config() {
 
-        //global $SESSION;
-
         $pluginobj = $callerobj = null;
         if ($this->instance->has_export_config()) {
             $pluginobj = $this->instance;
@@ -1789,11 +1827,6 @@ final class portfolio_exporter {
             $mform = new portfolio_export_form('', $customdata);
             if ($mform->is_cancelled()){
                 $this->cancel_request();
-                /*
-                unset($SESSION->portfolio);
-                redirect($this->caller->get_return_url());
-                exit;
-                */
             } else if ($fromform = $mform->get_data()){
                 if (!confirm_sesskey()) {
                     return $this->raise_error('confirmsesskeybad', '', $caller->get_return_url());
@@ -1939,8 +1972,13 @@ final class portfolio_exporter {
     *
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
-    public function process_stage_cleanup() {
+    public function process_stage_cleanup($pullok=false) {
         global $CFG, $DB, $SESSION;
+
+        if (!$pullok && !$this->get('instance')->is_push()) {
+            unset($SESSION->portfolioexport);
+            return true;
+        }
         // @todo maybe add a hook in the plugin(s)
         $DB->delete_records('portfolio_tempdata', array('id' => $this->id));
         $fs = get_file_storage();
@@ -1979,7 +2017,6 @@ final class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the control function is called recursively.
     */
     public function process_stage_finished($queued=false) {
-        //global $SESSION;
         $returnurl = $this->caller->get_return_url();
         $continueurl = $this->instance->get_continue_url();
         $extras = $this->instance->get_extra_finish_options();
@@ -2002,7 +2039,6 @@ final class portfolio_exporter {
             }
         }
         print_footer();
-        //unset($SESSION->portfolio);
         return false;
     }
 
@@ -2024,24 +2060,22 @@ final class portfolio_exporter {
     * error handler - decides whether we're running interactively or not
     * and behaves accordingly
     */
-    public function raise_error($string, $module='moodle', $continue=null) {
+    public function raise_error($string, $module='moodle', $continue=null, $a=null) {
         if (defined('FULLME') && FULLME == 'cron') {
             debugging(get_string($string, $module));
             return false;
         }
         if (isset($this)) {
-            $this->process_stage_cleanup();
+            $this->process_stage_cleanup(true);
         }
-        //global $SESSION;
-        //unset($SESSION->portfolio);
-        print_error($string, $module, $continue);
+        print_error($string, $module, $continue, $a);
     }
 
     public function cancel_request() {
         if (!isset($this)) {
             return;
         }
-        $this->process_stage_cleanup();
+        $this->process_stage_cleanup(true);
         redirect($this->caller->get_return_url());
         exit;
     }
@@ -2066,7 +2100,7 @@ final class portfolio_exporter {
     public static function rewaken_object($id) {
         global $DB, $CFG;
         if (!$data = $DB->get_record('portfolio_tempdata', array('id' => $id))) {
-            portfolio_exporer::raise_error('invalidtempid', 'portfolio');
+            portfolio_exporter::raise_error('invalidtempid', 'portfolio');
         }
         $exporter = unserialize(base64_decode($data->data));
         if ($exporter->instancefile) {
@@ -2121,7 +2155,11 @@ final class portfolio_exporter {
         if (empty($files)) {
             return array();
         }
-        return $files;
+        $returnfiles = array();
+        foreach ($files as $f) {
+            $returnfiles[$f->get_filename()] = $f;
+        }
+        return $returnfiles;
     }
 
     /**

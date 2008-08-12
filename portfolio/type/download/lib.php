@@ -1,10 +1,11 @@
 <?php
 
 require_once($CFG->libdir . '/portfoliolib.php');
+require_once($CFG->libdir . '/packer/zip_packer.php');
 
-class portfolio_plugin_download extends portfolio_plugin_base {
+class portfolio_plugin_download extends portfolio_plugin_pull_base {
 
-    protected $zipfile;
+    protected $file;
     protected $exportconfig;
 
     public static function allows_multiple() {
@@ -16,20 +17,16 @@ class portfolio_plugin_download extends portfolio_plugin_base {
     }
 
     public function prepare_package() {
-        // just zip up whatever files the caller has created for us
-        // and move them to the user's temporary area.
-        $userdir = temp_portfolio_usertemp_directory($this->get('user')->id);
 
-        $newfile = 'portfolio_export_' . time() . '.zip';
-        $files = get_directory_list($tempdir);
-        foreach ($files as $key => $file) {
-            $files[$key] = $tempdir . '/' . $file;
+        $files = $this->exporter->get_tempfiles();
+        $zipper = new zip_packer();
+
+        $filename = 'portfolio-export.zip';
+        if ($newfile = $zipper->archive_to_storage($files, SYSCONTEXTID, 'portfolio_exporter', $this->exporter->get('id'), '/final/', $filename, $this->user->id)) {
+            $this->set('file', $newfile);
+            return true;
         }
-
-        zip_files($files, $userdir . '/' . $newfile);
-        $this->set('zipfile', $newfile);
-
-        return true;
+        return false;
     }
 
     public function send_package() {
@@ -38,18 +35,21 @@ class portfolio_plugin_download extends portfolio_plugin_base {
 
     public function get_extra_finish_options() {
         global $CFG;
-        return array(
-            // @todo this will go through files api later, this is a (nonworking) hack for now.
-            $CFG->wwwroot . '/file.php?file=' . $this->zipfile => get_string('downloadfile', 'portfolio_download'),
-        );
+        return array($CFG->wwwroot . '/portfolio/file.php?id=' . $this->exporter->get('id') => get_string('downloadfile', 'portfolio_download'));
+    }
+
+    public function verify_file_request_params($params) {
+        // for download plugin the only thing we need to verify is that
+        // the logged in user is the same as the exporting user
+        global $USER;
+        if ($USER->id  != $this->user->id) {
+            return false;
+        }
+        return true;
     }
 
     public function get_continue_url() {
         return false;
-    }
-
-    public static function plugin_sanity_check() {
-        return 'notupgradedtousefilesapi';
     }
 }
 

@@ -2,7 +2,7 @@
 
 $string['addnewportfolio'] = 'Add a new portfolio';
 $string['addtoportfolio'] = 'Add to portfolio';
-$string['alreadyexporting'] = 'You already have an active portfolio export in this session. Please complete that first';
+$string['alreadyexporting'] = 'You already have an active portfolio export in this session. Please complete that first, or <a href=\"$a\">click here</a> to cancel it.';
 $string['availableformats'] = 'Available export formats';
 $string['callercouldnotpackage'] = 'Failed to package up your data for export';
 $string['cannotsetvisible'] = 'Cannot set this to visible - the plugin has been completely disabled because of a misconfiguration';
@@ -23,6 +23,8 @@ $string['exportcomplete'] = 'Portfolio export complete!';
 $string['exportqueued'] = 'Portfolio export has been successfully queued for transfer';
 $string['exportedpreviously'] = 'Previous exports';
 $string['failedtosendpackage'] = 'Failed to send your data to the selected portfolio system!';
+$string['filedenied'] = 'Access denied to this file';
+$string['filenotfound'] = 'File not found';
 $string['format_file'] = 'File';
 $string['format_mbkp'] = 'Moodle Backup';
 $string['hidden'] = 'Hidden';
@@ -31,7 +33,7 @@ $string['instanceismisconfigured'] = 'Portfolio instance is misconfigured, skipp
 $string['instancenotsaved'] = 'Failed to save portfolio';
 $string['instancenotdelete'] = 'Failed to delete portfolio';
 $string['instancesaved'] = 'Portfolio saved successfully';
-$string['invalidtempid'] = 'Invalid temporary id';
+$string['invalidtempid'] = 'Invalid export id. maybe it has expired';
 $string['invalidformat'] = 'Something is exporting an invalid format, $a';
 $string['invalidinstance'] = 'Could not find that portfolio instance';
 $string['manageportfolios'] = 'Manage portfolios';
