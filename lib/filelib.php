@@ -567,16 +567,10 @@ function get_mimetype_description($mimetype,$capitalise=false) {
  * @param string $path path to file, preferably from moodledata/temp/something; or content of file itself
  * @param string $filename proposed file name when saving file
  * @param bool $path is content of file
- * @param bool $dontdie - return control to caller afterwards. this is not recommended and only used for cleanup tasks.
- *                        if this is passed as true, ignore_user_abort is called.  if you don't want your processing to continue on cancel,
- *                        you must detect this case when control is returned using connection_aborted.
+ * @return does not return, script terminated
  */
-function send_temp_file($path, $filename, $pathisstring=false, $dontdie=false) {
+function send_temp_file($path, $filename, $pathisstring=false) {
     global $CFG;
-
-    if ($dontdie) {
-        ignore_user_abort();
-    }
 
     // close session - not needed anymore
     @session_write_close();
@@ -584,7 +578,7 @@ function send_temp_file($path, $filename, $pathisstring=false, $dontdie=false) {
     if (!$pathisstring) {
         if (!file_exists($path)) {
             header('HTTP/1.0 404 not found');
-            error(get_string('filenotfound', 'error'), $CFG->wwwroot.'/');
+            print_error('filenotfound', 'error', $CFG->wwwroot.'/');
         }
         // executed after normal finish or abort
         @register_shutdown_function('send_temp_file_finished', $path);
@@ -622,9 +616,6 @@ function send_temp_file($path, $filename, $pathisstring=false, $dontdie=false) {
         readfile_chunked($path);
     }
 
-    if ($dontdie) {
-        return;
-    }
     die; //no more chars to output
 }
 
