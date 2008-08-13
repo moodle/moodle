@@ -143,7 +143,7 @@ define('CONTEXT_GROUP', 60);
 define('CONTEXT_MODULE', 70);
 define('CONTEXT_BLOCK', 80);
 
-// capability risks - see http://docs.moodle.org/en/Hardening_new_Roles_system
+// capability risks - see http://docs.moodle.org/en/Development:Hardening_new_Roles_system
 define('RISK_MANAGETRUST', 0x0001);
 define('RISK_CONFIG',      0x0002);
 define('RISK_XSS',         0x0004);
