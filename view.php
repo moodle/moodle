@@ -1,11 +1,11 @@
-<?PHP // $Id: view.php,v 1.5 2008/03/25 20:19:49 poltawski Exp $
+<?PHP // $Id: view.php,v 1.6 2008/08/13 23:21:14 skodak Exp $
 
-require_once('../../config.php');
+require('../../config.php');
 require_once('lib.php');
 
 $id        = required_param('id', PARAM_INT);           // Course Module ID
 $chapterid = optional_param('chapterid', 0, PARAM_INT); // Chapter ID
-$edit      = optional_param('edit', -1, PARAM_BOOL);     // Edit mode
+$edit      = optional_param('edit', -1, PARAM_BOOL);    // Edit mode
 
 // =========================================================================
 // security checks START - teachers edit; students view
@@ -25,7 +25,13 @@ if (!$book = get_record('book', 'id', $cm->instance)) {
 require_course_login($course, true, $cm);
 
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-$allowedit = has_capability('moodle/course:manageactivities', $context);
+require_capability('mod/book:read', $context);
+
+$allowedit   = has_capability('mod/book:edit', $context);
+$allowimport = has_capability('mod/book:import', $context);
+$allowprint  = has_capability('mod/book:print', $context) and !$book->disableprinting;
+$allowexport = has_capability('mod/book:exportimscp', $context);
+$viewhidden  = has_capability('mod/book:viewhiddenchapters', $context);
 
 if ($allowedit) {
     if ($edit != -1) {
@@ -42,12 +48,12 @@ if ($allowedit) {
 }
 
 /// read chapters
-$select = $allowedit ? "bookid = $book->id" : "bookid = $book->id AND hidden = 0";
+$select = $viewhidden ? "bookid = $book->id" : "bookid = $book->id AND hidden = 0";
 $chapters = get_records_select('book_chapters', $select, 'pagenum', 'id, pagenum, subchapter, title, hidden');
 
 if (!$chapters) {
     if ($allowedit) {
-        redirect('edit.php?id='.$cm->id); //no chapters - add new one
+        redirect('edit.php?cmid='.$cm->id); //no chapters - add new one
         die;
     } else {
         error('Error reading book chapters.');
@@ -77,7 +83,7 @@ unset($id);
 unset($chapterid);
 
 /// chapter is hidden for students
-if (!$allowedit and $chapter->hidden) {
+if (!$viewhidden and $chapter->hidden) {
     error('Error reading book chapters.');
 }
 
@@ -108,7 +114,7 @@ print_header( "$course->shortname: $book->name ($chapter->title)",
               $course->fullname,
               $navigation,
               '',
-              '<style type="text/css">@import url('.$CFG->wwwroot.'/mod/book/book_theme.css);</style>',
+              '',
               true,
               $buttons,
               navmenu($course, $cm)
@@ -151,7 +157,7 @@ if ($nextid) {
 }
 
 /// prepare print icons
-if ($book->disableprinting) {
+if (!$allowprint) {
     $printbook = '';
     $printchapter = '';
 } else {
@@ -160,6 +166,7 @@ if ($book->disableprinting) {
 }
 
 // prepare $toc and $currtitle, $currsubtitle
+$print = 0;
 require('toc.php');
 
 if ($edit) {
@@ -168,10 +175,10 @@ if ($edit) {
     $tocwidth = $CFG->book_tocwidth;
 }
 
-$doimport = ($allowedit and $edit) ? '<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>' : '';
+$doimport = ($allowimport and $edit) ? '<div>(<a href="import.php?id='.$cm->id.'">'.get_string('doimport', 'book').'</a>)</div>' : '';
 
 /// Enable the IMS CP button
-$generateimscp = ($allowedit) ? '<a title="'.get_string('generateimscp', 'book').'" href="generateimscp.php?id='.$cm->id.'"><img class="bigicon" src="pix/generateimscp.gif" height="24" width="24" border="0"></img></a>' : '';
+$generateimscp = ($allowexport) ? '<a title="'.get_string('generateimscp', 'book').'" href="generateimscp.php?id='.$cm->id.'"><img class="bigicon" src="pix/generateimscp.gif" alt="'.get_string('generateimscp', 'book').'"></img></a>' : '';
 
 
 // =====================================================
@@ -179,43 +186,37 @@ $generateimscp = ($allowedit) ? '<a title="'.get_string('generateimscp', 'book')
 // =====================================================
 
 ?>
-<table border="0" cellspacing="0" width="100%" valign="top" cellpadding="2">
+<table class="booktable" width="100%" cellspacing="0" cellpadding="2">
 
 <!-- subchapter title and upper navigation row //-->
 <tr>
-    <td width="<?php echo $tocwidth ?>" valign="bottom">
+    <td style="width:<?php echo $tocwidth ?>px" valign="bottom">
         <?php
         print_string('toc', 'book');
-        if (!empty($doimport)) {
-            echo "<br/>($doimport)";
-        }
+        echo $doimport;
         ?>
     </td>
-    <td valign="top">
-        <table border="0" cellspacing="0" width="100%" valign="top" cellpadding="0">
-        <tr>
-            <td nowrap="nowrap" align="left"><?php echo $printbook.$printchapter.$generateimscp ?></td>
-            <td nowrap ="nowrap" align="right"><?php echo $chnavigation ?></td>
-        </tr>
-        </table>
+    <td>
+        <div class="bookexport"><?php echo $printbook.$printchapter.$generateimscp ?></div>
+        <div class="booknav"><?php echo $chnavigation ?></div>
     </td>
 </tr>
 
 <!-- toc and chapter row //-->
-<tr>
-    <td width="<?php echo $tocwidth ?>" valign="top" align="left">
+<tr class="tocandchapter">
+    <td style="width:<?php echo $tocwidth ?>px" align="left"><div class="clearer">&nbsp;</div>
         <?php
         print_box_start('generalbox');
         echo $toc;
         print_box_end();
         if ($allowedit and $edit) {
-            echo '<font size="1"><br />';
+            echo '<div class="faq">';
             helpbutton('faq', get_string('faq','book'), 'book', true, true);
-            echo '</font>';
+            echo '</div>';
         }
         ?>
     </td>
-    <td valign="top" align="right">
+    <td align="right"><div class="clearer">&nbsp;</div>
         <?php
         print_box_start('generalbox');
         $content = '';
@@ -235,7 +236,7 @@ $generateimscp = ($allowedit) ? '<a title="'.get_string('generateimscp', 'book')
         echo '</div>';
         print_box_end();
         /// lower navigation
-        echo '<p>'.$chnavigation.'</p>';
+        echo '<div class="booknav">'.$chnavigation.'</div>';
         ?>
     </td>
 </tr>

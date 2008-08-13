@@ -1,16 +1,14 @@
-<?PHP // $Id: import.php,v 1.4 2008/03/25 20:19:49 poltawski Exp $
+<?PHP // $Id: import.php,v 1.5 2008/08/13 23:21:13 skodak Exp $
 
-require_once('../../config.php');
+require('../../config.php');
 require_once('lib.php');
+require_once('import_form.php');
 
-$id         = required_param('id', PARAM_INT);           // Course Module ID
-$subchapter = optional_param('subchapter', 0, PARAM_BOOL);
-$cancel     = optional_param('cancel', 0, PARAM_BOOL);
+$id = required_param('id', PARAM_INT);           // Course Module ID
 
 // =========================================================================
 // security checks START - only teachers edit
 // =========================================================================
-require_login();
 
 if (!$cm = get_coursemodule_from_id('book', $id)) {
     error('Course Module ID was incorrect');
@@ -20,8 +18,10 @@ if (!$course = get_record('course', 'id', $cm->course)) {
     error('Course is misconfigured');
 }
 
+require_login($course, false, $cm);
+
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-require_capability('moodle/course:manageactivities', $context);
+require_capability('mod/book:import', $context);
 
 if (!$book = get_record('book', 'id', $cm->instance)) {
     error('Course module is incorrect');
@@ -34,12 +34,6 @@ unset($id);
 // security checks END
 // =========================================================================
 
-///cancel pressed, go back to book
-if ($cancel) {
-    redirect('view.php?id='.$cm->id);
-    die;
-}
-
 ///prepare the page header
 $strbook = get_string('modulename', 'book');
 $strbooks = get_string('modulenameplural', 'book');
@@ -50,22 +44,26 @@ $navlinks[] = array('name' => $strimport, 'link' => '', 'type' => 'title');
 
 $navigation = build_navigation($navlinks, $cm);
 
-print_header("$course->shortname: $book->name", $course->fullname, $navigation);
+$mform = new book_import_form(null, $cm);
+$mform->set_data(array('id'=>$cm->id));
 
-/// If data submitted, then process, store and relink.
-if (($form = data_submitted()) && (confirm_sesskey())) {
-    $form->reference = stripslashes($form->reference);
-    if ($form->reference != '') { //null path is root
-        $form->reference = book_prepare_link($form->reference);
-        if ($form->reference == '') { //evil characters in $ref!
-            error('Invalid character detected in given path!');
-        }
+/// If data submitted, then process and store.
+if ($mform->is_cancelled()) {
+    if (empty($chapter->id)) {
+        redirect("view.php?id=$cm->id");
+    } else {
+        redirect("view.php?id=$cm->id&chapterid=$chapter->id");
     }
+
+} else if ($data = $mform->get_data(false)) {
     $coursebase = $CFG->dataroot.'/'.$book->course;
-    if ($form->reference == '') {
+
+    $reference = book_prepare_link($data->reference);
+
+    if ($reference == '') {
         $base = $coursebase;
     } else {
-        $base = $coursebase.'/'.$form->reference;
+        $base = $coursebase.'/'.$reference;
     }
 
     //prepare list of html files in $refs
@@ -81,14 +79,16 @@ if (($form = data_submitted()) && (confirm_sesskey())) {
         }
         asort($refs);
     } else if (is_file($base)) { //import single file
-        $refs[] = '/'.$form->reference;
+        $refs[] = '/'.$reference;
     } else { //what is it???
         error('Incorrect file/directory specified!');
     }
 
+    print_header("$course->shortname: $book->name", $course->fullname, $navigation);
+
     //import files
-    echo '<center>';
-    echo '<b>'.get_string('importing', 'book').':</b>';
+    print_box_start('generalbox boxaligncenter centerpara');
+    echo '<strong>'.get_string('importing', 'book').':</strong>';
     echo '<table cellpadding="2" cellspacing="2" border="1">';
     book_check_structure($book->id);
     foreach($refs as $ref) {
@@ -102,7 +102,7 @@ if (($form = data_submitted()) && (confirm_sesskey())) {
             $chapter->timecreated = time();
             $chapter->timemodified = time();
             echo "imsrc:".$chapter->importsrc;
-            if (($subchapter) || preg_match('/_sub\.htm/i', $chapter->importsrc)) { //if filename or directory starts with sub_* treat as subdirecotories
+            if (($data->subchapter) || preg_match('/_sub\.htm/i', $chapter->importsrc)) { //if filename or directory starts with sub_* treat as subdirecotories
                 $chapter->subchapter = 1;
             } else {
                 $chapter->subchapter = 0;
@@ -115,63 +115,27 @@ if (($form = data_submitted()) && (confirm_sesskey())) {
         }
     }
     echo '</table><br />';
-    echo '<b>'.get_string('relinking', 'book').':</b>';
+    echo '<strong>'.get_string('relinking', 'book').':</strong>';
     echo '<table cellpadding="2" cellspacing="2" border="1">';
     //relink whole book = all chapters
     book_relink($cm->id, $book->id, $course->id);
     echo '</table><br />';
-    echo '<a href="view.php?id='.$cm->id.'">'.get_string('continue').'</a>';
-    echo '</center>';
-} else {
-/// Otherwise fill and print the form.
-    $strdoimport = get_string('doimport', 'book');
-    $strchoose = get_string('choose');
-    $pageheading = get_string('importingchapters', 'book');
-
-    $icon = '<img align="absmiddle" height="16" width="16" src="icon_chapter.gif" />&nbsp;';
-    print_heading_with_help($pageheading, 'import', 'book', $icon);
-    print_simple_box_start('center', '');
-    ?>
-    <form name="theform" method="post" action="import.php">
-    <table cellpadding="5" align="center">
-    <tr valign="top">
-        <td valign="top" align="right">
-            <b><?php print_string('fileordir', 'book') ?>:</b>
-        </td>
-        <td>
-            <?php
-              echo '<input id="id_reference" name="reference" size="40" value="" />&nbsp;';
-              button_to_popup_window ('/mod/book/coursefiles.php?choose=id_reference&id='.$course->id,
-                                      'coursefiles', $strchoose, 500, 750, $strchoose);
-            ?>
-        </td>
-    </tr>
-    <tr valign="top">
-        <td valign="top" align="right">
-            <b><?php print_string('subchapter', 'book') ?>:</b>
-        </td>
-        <td>
-        <?php
-            echo '<input name="subchapter" type="checkbox" value="1" />';
-        ?>
-        </td>
-    </tr>
-    <tr valign="top">
-        <td valign="top" align="right">&nbsp;</td>
-        <td><p><?php print_string('importinfo', 'book') ?></p></td>
-    </tr>
-    </table>
-    <center>
-        <input type="submit" value="<?php echo $strdoimport ?>" />
-        <input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
-    </center>
-        <input type="hidden" name="id" value="<?php p($cm->id) ?>" />
-        <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" /> 
-    </form>
-
-    <?php
-    print_simple_box_end();
+    print_box_end();
+    print_continue('view.php?id='.$cm->id);
+    print_footer($course);
+    die;
 }
+
+print_header("$course->shortname: $book->name", $course->fullname, $navigation);
+
+$strdoimport = get_string('doimport', 'book');
+$strchoose = get_string('choose');
+$pageheading = get_string('importingchapters', 'book');
+
+$icon = '<img class="icon" src="icon_chapter.gif" alt="" />&nbsp;';
+print_heading_with_help($pageheading, 'import', 'book', $icon);
+
+$mform->display();
 
 print_footer($course);
 

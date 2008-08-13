@@ -1,7 +1,7 @@
-<?PHP // $Id: toc.php,v 1.3 2007/05/20 06:00:30 skodak Exp $
+<?PHP // $Id: toc.php,v 1.4 2008/08/13 23:21:14 skodak Exp $
 
 defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
- 
+
 /// included from mod/book/view.php and print.php
 ///
 /// uses:
@@ -25,10 +25,6 @@ $nch = 0; //chapter number
 $ns = 0;  //subchapter number
 $title = '';
 $first = 1;
-
-if (!isset($print)) {
-    $print = 0;
-}
 
 switch ($book->numbering) {
   case NUM_NONE:
@@ -73,14 +69,14 @@ if ($print) { ///TOC for printing
                 }
             }
             $titles[$ch->id] = $title;
-            $toc .= '<a title="'.htmlspecialchars($title).'" href="#ch'.$ch->id.'">'.$title.'</a>';
+            $toc .= '<a title="'.s($title).'" href="#ch'.$ch->id.'">'.$title.'</a>';
             $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
             $first = 0;
         }
     }
     $toc .= '</ul></li></ul>';
 } else if ($edit) { ///teacher's TOC
-    $toc .= '<font size="-1"><ul>';
+    $toc .= '<ul>';
     $i = 0;
     foreach($chapters as $ch) {
         $i++;
@@ -125,7 +121,7 @@ if ($print) { ///TOC for printing
                 $currsubtitle = '&nbsp;';
             }
         } else {
-            $toc .= '<a title="'.htmlspecialchars($title).'" href="view.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'">'.$title.'</a>';
+            $toc .= '<a title="'.s($title).'" href="view.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'">'.$title.'</a>';
         }
         $toc .=  '&nbsp;&nbsp;';
         if ($i != 1) {
@@ -134,21 +130,21 @@ if ($print) { ///TOC for printing
         if ($i != count($chapters)) {
             $toc .=  ' <a title="'.get_string('down').'" href="move.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;up=0&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/down.gif" height="11" class="iconsmall" alt="'.get_string('down').'" /></a>';
         }
-        $toc .=  ' <a title="'.get_string('edit').'" href="edit.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" class="iconsmall" alt="'.get_string('edit').'" /></a>';
+        $toc .=  ' <a title="'.get_string('edit').'" href="edit.php?cmid='.$cm->id.'&amp;id='.$ch->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" height="11" class="iconsmall" alt="'.get_string('edit').'" /></a>';
         $toc .=  ' <a title="'.get_string('delete').'" href="delete.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/delete.gif" height="11" class="iconsmall" alt="'.get_string('delete').'" /></a>';
         if ($ch->hidden) {
             $toc .= ' <a title="'.get_string('show').'" href="show.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/show.gif" height="11" class="iconsmall" alt="'.get_string('show').'" /></a>';
         } else {
             $toc .= ' <a title="'.get_string('hide').'" href="show.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'&amp;sesskey='.$USER->sesskey.'"><img src="'.$CFG->pixpath.'/t/hide.gif" height="11" class="iconsmall" alt="'.get_string('hide').'" /></a>';
         }
-        $toc .= ' <a title="'.get_string('addafter', 'book').'" href="edit.php?id='.$cm->id.'&amp;pagenum='.$ch->pagenum.'&amp;subchapter='.$ch->subchapter.'"><img src="pix/add.gif" height="11" class="iconsmall" alt="'.get_string('addafter', 'book').'" /></a>';
+        $toc .= ' <a title="'.get_string('addafter', 'book').'" href="edit.php?cmid='.$cm->id.'&amp;pagenum='.$ch->pagenum.'&amp;subchapter='.$ch->subchapter.'"><img src="pix/add.gif" height="11" class="iconsmall" alt="'.get_string('addafter', 'book').'" /></a>';
 
         $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
         $first = 0;
     }
-    $toc .= '</ul></li></ul></font>';
+    $toc .= '</ul></li></ul>';
 } else { //normal students view
-    $toc .= '<font size="-1"><ul>';
+    $toc .= '<ul>';
     foreach($chapters as $ch) {
         $title = trim(strip_tags($ch->title));
         if (!$ch->hidden) {
@@ -177,13 +173,13 @@ if ($print) { ///TOC for printing
                     $currsubtitle = '&nbsp;';
                 }
             } else {
-                $toc .= '<a title="'.htmlspecialchars($title).'" href="view.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'">'.$title.'</a>';
+                $toc .= '<a title="'.s($title).'" href="view.php?id='.$cm->id.'&amp;chapterid='.$ch->id.'">'.$title.'</a>';
             }
             $toc .= (!$ch->subchapter) ? '<ul>' : '</li>';
             $first = 0;
         }
     }
-    $toc .= '</ul></li></ul></font>';
+    $toc .= '</ul></li></ul>';
 }
 
 $toc .= '</div>';

@@ -1,4 +1,4 @@
-<?php // $Id: coursefiles.php,v 1.2 2007/05/20 06:00:26 skodak Exp $
+<?php // $Id: coursefiles.php,v 1.3 2008/08/13 23:21:13 skodak Exp $
 
 //  Manage all uploaded files in a course file area
 
@@ -126,7 +126,7 @@
                     admin_externalpage_print_header($adminroot);
 
                     print_heading(get_string("publicsitefileswarning"), "center", 2);
-                    
+
                 }
 
             } else {
@@ -198,7 +198,7 @@
 
                 echo "<p>$struploadafile ($strmaxsize) --> <b>$wdir</b></p>";
                 echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"coursefiles.php\">";
-                echo "<div>";             
+                echo "<div>";
                 echo "<table><tr><td colspan=\"2\">";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
@@ -211,7 +211,7 @@
                 echo "</div>";
                 echo "</form>";
                 echo "<form action=\"coursefiles.php\" method=\"get\">";
-                echo "<div>";             
+                echo "<div>";
                 echo ' <input type="hidden" name="choose" value="'.$choose.'" />';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";

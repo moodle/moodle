@@ -1,14 +1,10 @@
-<?PHP // $Id: lib.php,v 1.5 2008/07/26 22:58:27 stronk7 Exp $
+<?PHP // $Id: lib.php,v 1.6 2008/08/13 23:21:14 skodak Exp $
 
 define('NUM_NONE',     '0');
 define('NUM_NUMBERS',  '1');
 define('NUM_BULLETS',  '2');
 define('NUM_INDENTED', '3');
 
-
-if (!isset($CFG->book_tocwidth)) {
-    set_config("book_tocwidth", 180);  // default toc width
-}
 
 function book_get_numbering_types() {
     return array (NUM_NONE       => get_string('numbering0', 'book'),
@@ -273,6 +269,7 @@ function book_read_chapter($base, $ref) {
     $contents = fread($handle, filesize($file));
     fclose($handle);
     //extract title
+    $chapter = new object();
     if (preg_match('/<title>([^<]+)<\/title>/i', $contents, $matches)) {
         $chapter->title = $matches[1];
     } else {
@@ -320,7 +317,7 @@ function book_relink($id, $bookid, $courseid) {
     }
     foreach($chapters as $ch) {
         $rel = substr($ch->importsrc, 0, strrpos($ch->importsrc, '/')+1);
-        $base = $coursebase.strtr(urlencode($rel), array("%2F" => "/"));  //for better internationalization (dlnsk) 
+        $base = $coursebase.strtr(urlencode($rel), array("%2F" => "/"));  //for better internationalization (dlnsk)
         $modified = false;
         //image relinking
         if ($ch->importsrc && preg_match_all('/(<img[^>]+src=")([^"]+)("[^>]*>)/i', $ch->content, $images)) {

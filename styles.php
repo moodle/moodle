@@ -1,4 +1,4 @@
-/* $Id: book_theme.css,v 1.2 2007/05/20 06:00:30 skodak Exp $*/
+/* $Id: styles.php,v 1.1 2008/08/13 23:21:13 skodak Exp $*/
 /* later should be defined in themes*/
 
 
@@ -25,9 +25,32 @@ img.bigicon {
   border:0px;
 }
 
+#mod-book-view table.booktable {
+    border:0;
+}
+
+#mod-book-view .bookexport {
+    float:left;
+}
+
+#mod-book-view .booknav {
+    float:right;
+}
+
+#mod-book-view table.booktable tr.tocandchapter {
+    vertical-align:text-top;
+}
+
+#mod-book-view div.faq {
+  font-size: 0.7em;
+}
+ 
 /* == TOC styles == */
 
 /* toc style NONE */
+.book_toc_none {
+  font-size: 0.8em;
+}
 .book_toc_none ul {
     margin-left: 5px;
     padding-left: 0px;
@@ -47,6 +70,9 @@ img.bigicon {
 
 
 /* toc style NUMBERED */
+.book_toc_numbered {
+  font-size: 0.8em;
+}
 .book_toc_numbered ul {
     margin-left: 5px;
     padding-left: 0px;
@@ -66,6 +92,9 @@ img.bigicon {
 
 
 /*toc style BULLETS */
+.book_toc_bullets {
+  font-size: 0.8em;
+}
 .book_toc_bullets ul {
     margin-left: 5px;
     padding-left: 0px;
@@ -85,6 +114,9 @@ img.bigicon {
 
 
 /* toc style INDENTED*/
+.book_toc_indented {
+  font-size: 0.8em;
+}
 .book_toc_indented ul {
     margin-left: 5px;
     padding-left: 0px;

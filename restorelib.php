@@ -1,4 +1,4 @@
-<?PHP // $Id: restorelib.php,v 1.2 2006/03/29 06:21:56 skodak Exp $
+<?PHP // $Id: restorelib.php,v 1.3 2008/08/13 23:21:13 skodak Exp $
     //This php script contains all the stuff to backup/restore
     //book mods
 
@@ -40,6 +40,7 @@
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //Now, build the BOOK record structure
+            $book = new object();
             $book->course = $restore->course_id;
             $book->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $book->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
@@ -101,6 +102,7 @@
             $old_id = backup_todb($sub_info['#']['ID']['0']['#']);
 
             //Now, build the ASSIGNMENT_CHAPTERS record structure
+            $chapter = new object();
             $chapter->bookid = $new_book_id;
             $chapter->pagenum = backup_todb($sub_info['#']['PAGENUM']['0']['#']);
             $chapter->subchapter = backup_todb($sub_info['#']['SUBCHAPTER']['0']['#']);
@@ -149,7 +151,7 @@
                if ($log->cmid) {
                     //Get the new_id of the chapter (to recode the url field)
                     $ch = backup_getid($restore->backup_unique_code,"book_chapters",$log->info);
-                    if ($pag) {
+                    if ($ch) {
                         $log->url = "view.php?id=".$log->cmid."&chapterid=".$ch->new_id;
                         $log->info = $ch->new_id;
                         $status = true;

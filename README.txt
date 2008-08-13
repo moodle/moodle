@@ -1,4 +1,4 @@
-$Id: README.txt,v 1.5 2008/07/22 14:59:13 skodak Exp $
+$Id: README.txt,v 1.6 2008/08/13 23:21:14 skodak Exp $
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -42,7 +42,7 @@ Many ideas and code were taken from other Moodle modules and Moodle itself;-)
 Installation:
     * see http://docs.moodle.org/en/Installing_contributed_modules_or_plugins
 
-List of features - version 1.2:
+List of features - version 1.4:
 
     * easy to use - new teachers can quickly create multipage study materials
     * two levels - only chapters and subchapters
@@ -109,6 +109,12 @@ CHANGELOG:
 == 1.4alpha - 2007/05/20 ====================================================
     * compatible with 1.8
     * export link enabled - thanks Eloy!
+    * no new features
+== 1.5beta - 2008/08/14 ====================================================
+    * compatible with 1.9.1 and above
+    * xhtml strict and css improvements
+    * formslib conversion
+    * capabilities implemented
     * no new features
 
 skodak

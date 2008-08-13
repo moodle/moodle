@@ -1,4 +1,4 @@
-<?PHP // $Id: print.php,v 1.2 2007/05/20 06:00:26 skodak Exp $
+<?PHP // $Id: print.php,v 1.3 2008/08/13 23:21:14 skodak Exp $
 
 require_once('../../config.php');
 require_once('lib.php');
@@ -18,7 +18,7 @@ if (!$course = get_record('course', 'id', $cm->course)) {
 }
 
 require_course_login($course, true, $cm);
- 
+
 if (!$book = get_record('book', 'id', $cm->instance)) {
     error('Course module is incorrect');
 }
@@ -26,6 +26,10 @@ if (!$book = get_record('book', 'id', $cm->instance)) {
 if ($book->disableprinting) {
     error('Printing is disabled');
 }
+
+$context = get_context_instance(CONTEXT_MODULE, $cm->id);
+require_capability('mod/book:read', $context);
+require_capability('mod/book:print', $context);
 
 //check all variables
 if ($chapterid) {
@@ -55,7 +59,7 @@ $strtop   = get_string('top', 'book');
 
 @header('Cache-Control: private, pre-check=0, post-check=0, max-age=0');
 @header('Pragma: no-cache');
-@header('Expires: ');          
+@header('Expires: ');
 @header('Accept-Ranges: none');
 @header('Content-type: text/html; charset=utf-8');
 

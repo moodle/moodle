@@ -1,4 +1,4 @@
-<?PHP // $Id: generateimscp.php,v 1.2 2007/05/20 06:00:26 skodak Exp $
+<?PHP // $Id: generateimscp.php,v 1.3 2008/08/13 23:21:14 skodak Exp $
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -24,14 +24,12 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
-require_once('../../config.php');
+require('../../config.php');
 require_once('lib.php');
-require_once($CFG->dirroot . '/backup/lib.php');
-require_once($CFG->dirroot . '/lib/filelib.php');
+require_once($CFG->dirroot.'/backup/lib.php');
+require_once($CFG->libdir.'/filelib.php');
 
 $id = required_param('id', PARAM_INT);           // Course Module ID
-
-require_login();
 
 if (!$cm = get_coursemodule_from_id('book', $id)) {
     error('Course Module ID was incorrect');
@@ -41,9 +39,12 @@ if (!$course = get_record('course', 'id', $cm->course)) {
     error('Course is misconfigured');
 }
 
+require_login($course, true, $cm);
+
 $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-require_capability('moodle/course:manageactivities', $context);
- 
+require_capability('mod/book:read', $context);
+require_capability('mod/book:exportimscp', $context);
+
 if (!$book = get_record('book', 'id', $cm->instance)) {
     error('Course module is incorrect');
 }
@@ -71,7 +72,7 @@ add_to_log($course->id, 'book', 'generateimscp', 'generateimscp.php?id='.$cm->id
 /// Now delete all the temp dirs
     delete_dir_contents($CFG->dataroot . "/$cm->course/moddata/book/$book->id");
 /// Now serve the file
-    send_file($zipfile, clean_filename($book->name) . '.zip', 86400, 0, false, true);
+    send_temp_file($zipfile, clean_filename($book->name) . '.zip');
 
 /**
  * This function will create the default imsmanifest plus contents for the book chapters passed as array
@@ -192,7 +193,7 @@ $cssresource = '    <resource identifier="RES-' . $book->course . '-'  . $book->
 }
 
 /**
- * This function will create one chaptercontent object, with the contents converted to html and 
+ * This function will create one chaptercontent object, with the contents converted to html and
  * one array of local images to be included
  */
 function chapter2html($chapter, $courseid, $bookid) {
