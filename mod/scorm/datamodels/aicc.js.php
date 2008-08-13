@@ -125,6 +125,8 @@ function AICCapi() {
         cmi.student_data = new Object();
         cmi.student_preference = new Object();
         cmi.interactions = new Object();
+        cmi.evaluation = new Object();
+        cmi.evaluation.comments = new Object();
 
     // Navigation Object
     var nav = new Object();

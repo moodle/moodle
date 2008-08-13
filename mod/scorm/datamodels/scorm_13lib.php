@@ -19,13 +19,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     //
     // Get the current organization infos
     //
-    $organizationsql = '';
     if (!empty($currentorg)) {
         if (($organizationtitle = get_field('scorm_scoes','title','scorm',$scorm->id,'identifier',$currentorg)) != '') {
             $result->toc .= "\t<li>$organizationtitle</li>\n";
             $tocmenus[] = $organizationtitle;
         }
-        $organizationsql = "AND organization='$currentorg'";
     }
     //
     // If not specified retrieve the last attempt number
@@ -34,13 +32,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
     $result->attemptleft = $scorm->maxattempt - $attempt;
-    if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
-        //
+    if ($scoes = scorm_get_scoes($scorm->id, $currentorg)){
+    	//
         // Retrieve user tracking data for each learning object
         // 
-    
         $usertracks = array();
-        $optionaldatas = array();
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
                 if ($usertrack=scorm_get_tracks($sco->id,$user->id,$attempt)) {
@@ -48,9 +44,6 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $usertrack->status = 'notattempted';
                     }
                     $usertracks[$sco->identifier] = $usertrack;
-                }
-                if ($optionaldata = scorm_get_sco($sco->id, SCO_DATA)) {
-                    $optionaldatas[$sco->identifier] = $optionaldata;
                 }
             }
         }
@@ -61,14 +54,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $nextid = 0;
         $findnext = false;
         $parents[$level]='/';
-        foreach ($scoes as $sco) {
+        foreach ($scoes as $pos => $sco) {
             $isvisible = false;
             $sco->title = stripslashes($sco->title);
-            if (isset($optionaldatas[$sco->identifier])) {
-                if (!isset($optionaldatas[$sco->identifier]->isvisible) || 
-                   (isset($optionaldatas[$sco->identifier]->isvisible) && ($optionaldatas[$sco->identifier]->isvisible == 'true'))) {
-                    $isvisible = true;
-                }
+            if (!isset($sco->isvisible) || (isset($sco->isvisible) && ($sco->isvisible == 'true'))) {
+                $isvisible = true;
             }
             if ($parents[$level]!=$sco->parent) {
                 if ($newlevel = array_search($sco->parent,$parents)) {
@@ -100,13 +90,14 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
             if ($isvisible) {
                 $result->toc .= "\t\t<li>";
             }
-            $nextsco = next($scoes);
+            if (isset($scoes[$pos+1])) {
+                $nextsco = $scoes[$pos+1];
+            } else {
+                $nextsco = false;
+            }
             $nextisvisible = false;
-            if (($nextsco !== false) && (isset($optionaldatas[$nextsco->identifier]))) {
-                if (!isset($optionaldatas[$nextsco->identifier]->isvisible) || 
-                   (isset($optionaldatas[$nextsco->identifier]->isvisible) && ($optionaldatas[$nextsco->identifier]->isvisible == 'true'))) {
-                    $nextisvisible = true;
-                }
+            if (!isset($nextsco->isvisible) || (isset($nextsco->isvisible) && ($nextsco->isvisible == 'true'))) {
+                $nextisvisible = true;
             }
             if ($nextisvisible && ($nextsco !== false) && ($sco->parent != $nextsco->parent) && 
                (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
@@ -169,8 +160,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $startbold = '<b>';
                         $endbold = '</b>';
                         $findnext = true;
-                        $shownext = isset($optionaldatas[$sco->identifier]->next) ? $optionaldatas[$sco->identifier]->next : 0;
-                        $showprev = isset($optionaldatas[$sco->identifier]->prev) ? $optionaldatas[$sco->identifier]->prev : 0;
+                        $shownext = isset($sco->next) ? $sco->next : 0;
+                        $showprev = isset($sco->prev) ? $sco->prev : 0;
                     }
                 
                     if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
@@ -244,5 +235,4 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
 
     return $result;
 }
-
 ?>
