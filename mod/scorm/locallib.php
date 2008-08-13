@@ -536,6 +536,8 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     global $CFG;
 
     if ($scorm->updatefreq == UPDATE_EVERYTIME){
+        require_once($CFG->dirroot.'/mod/scorm/lib.php');
+        
         $scorm->instance = $scorm->id;
         scorm_update_instance($scorm);
     }
