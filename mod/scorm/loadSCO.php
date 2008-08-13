@@ -128,7 +128,7 @@
                                                 e.innerHTML = --cSeconds;
                                             } else {
                                                 clearInterval(timer);
-                                                document.body.innerHTML = "Activity loading, please wait ....";
+                                                document.body.innerHTML = "<?php echo get_string('activitypleasewait', 'scorm');?>";
                                                 location = "<?php echo $result ?>";
                                             }
                                         }, 1000);
