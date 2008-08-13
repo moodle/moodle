@@ -43,6 +43,7 @@ class mod_quiz_mod_form extends moodleform_mod {
         $mform->setAdvanced('timelimitgrp', $CFG->quiz_fix_timelimit);
         $mform->setHelpButton('timelimitgrp', array("timelimit", get_string("quiztimer","quiz"), "quiz"));
         $mform->setDefault('timelimit', $CFG->quiz_timelimit);
+        $mform->setDefault('timelimitenable', !empty($CFG->quiz_timelimit));
 
 
         //enforced time delay between quiz attempts add-on
@@ -252,12 +253,10 @@ class mod_quiz_mod_form extends moodleform_mod {
                 }
                 $key++;
             }
-
         }
-        if (empty($default_values['timelimit'])) {
-            $default_values['timelimitenable'] = 0;
-        } else {
-            $default_values['timelimitenable'] = 1;
+
+        if (isset($default_values['timelimit'])) {
+            $default_values['timelimitenable'] = $default_values['timelimit'] > 0;
         }
 
         if (isset($default_values['review'])){
