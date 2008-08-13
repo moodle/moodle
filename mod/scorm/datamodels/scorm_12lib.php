@@ -1,6 +1,18 @@
 <?php // $Id$
 
-function scorm_eval_prerequisites($prerequisites,$usertracks) {
+/**
+* This is really a little language parser for AICC_SCRIPT
+* evaluates the expression and returns a boolean answer
+* see 2.3.2.5.1. Sequencing/Navigation Today  - from the SCORM 1.2 spec (CAM).
+*
+* @param string $prerequisites the aicc_script prerequisites expression
+* @param array  $usertracks the tracked user data of each SCO visited
+* @return boolean
+*/
+function scorm_eval_prerequisites($prerequisites, $usertracks) {
+    
+    // this is really a little language parser - AICC_SCRIPT is the reference 
+    // see 2.3.2.5.1. Sequencing/Navigation Today  - from the SCORM 1.2 spec
     $element = '';
     $stack = array();
     $statuses = array(
@@ -18,138 +30,79 @@ function scorm_eval_prerequisites($prerequisites,$usertracks) {
                 'n' => 'notattempted'
                 );
     $i=0;  
-    while ($i<strlen($prerequisites)) {
-        $symbol = $prerequisites[$i];
-        switch ($symbol) {
-            case '&':
-            case '|':
-                $symbol .= $symbol;
-            case '~':
-            case '(':
-            case ')':
-            case '*':
-                $element = trim($element);
-                
-                if (!empty($element)) {
-                    $element = trim($element);
-                    if (isset($usertracks[$element])) {
-                        $element = '((\''.$usertracks[$element]->status.'\' == \'completed\') || '.
-                                  '(\''.$usertracks[$element]->status.'\' == \'passed\'))'; 
-                    } else if (($operator = strpos($element,'=')) !== false) {
-                        $item = trim(substr($element,0,$operator));
-                        if (!isset($usertracks[$item])) {
-                            return false;
-                        }
-                        
-                        $value = trim(trim(substr($element,$operator+1)),'"');
-                        if (isset($statuses[$value])) {
-                            $status = $statuses[$value];
-                        } else {
-                            return false;
-                        }
-                                              
-                        $element = '(\''.$usertracks[$item]->status.'\' == \''.$status.'\')';
-                    } else if (($operator = strpos($element,'<>')) !== false) {
-                        $item = trim(substr($element,0,$operator));
-                        if (!isset($usertracks[$item])) {
-                            return false;
-                        }
-                        
-                        $value = trim(trim(substr($element,$operator+2)),'"');
-                        if (isset($statuses[$value])) {
-                            $status = $statuses[$value];
-                        } else {
-                            return false;
-                        }
-                        
-                        $element = '(\''.$usertracks[$item]->status.'\' != \''.$status.'\')';
-                    } else if (is_numeric($element)) {
-                        if ($symbol == '*') {
-                            $symbol = '';
-                            $open = strpos($prerequisites,'{',$i);
-                            $opened = 1;
-                            $closed = 0;
-                            for ($close=$open+1; (($opened > $closed) && ($close<strlen($prerequisites))); $close++) { 
-                                 if ($prerequisites[$close] == '}') {
-                                     $closed++;
-                                 } else if ($prerequisites[$close] == '{') {
-                                     $opened++;
-                                 }
-                            } 
-                            $i = $close;
-                            
-                            $setelements = explode(',', substr($prerequisites, $open+1, $close-($open+1)-1));
-                            $settrue = 0;
-                            foreach ($setelements as $setelement) {
-                                if (scorm_eval_prerequisites($setelement,$usertracks)) {
-                                    $settrue++;
-                                }
-                            }
-                            
-                            if ($settrue >= $element) {
-                                $element = 'true'; 
-                            } else {
-                                $element = 'false';
-                            }
-                        }
-                    } else {
-                        return false;
-                    }
-                    
-                    array_push($stack,$element);
-                    $element = '';
-                }
-                if ($symbol == '~') {
-                    $symbol = '!';
-                }
-                if (!empty($symbol)) {
-                    array_push($stack,$symbol);
-                }
-            break;
-            default:
-                $element .= $symbol;
-            break;
-        }
-        $i++;
-    }
-    if (!empty($element)) {
+
+    // expand the amp entities
+    $prerequisites = preg_replace('/&amp;/', '&', $prerequisites);
+    // find all my parsable tokens
+    $prerequisites = preg_replace('/(&|\||\(|\)|\~)/', '\t$1\t', $prerequisites);
+    // expand operators
+    $prerequisites = preg_replace('/&/', '&&', $prerequisites);
+    $prerequisites = preg_replace('/\|/', '||', $prerequisites);
+    // now - grab all the tokens
+    $elements = explode('\t', trim($prerequisites));
+
+    // process each token to build an expression to be evaluated
+    $stack = array();
+    foreach ($elements as $element) {
         $element = trim($element);
-        if (isset($usertracks[$element])) {
-            $element = '((\''.$usertracks[$element]->status.'\' == \'completed\') || '.
-                       '(\''.$usertracks[$element]->status.'\' == \'passed\'))'; 
-        } else if (($operator = strpos($element,'=')) !== false) {
-            $item = trim(substr($element,0,$operator));
-            if (!isset($usertracks[$item])) {
-                return false;
-            }
-            
-            $value = trim(trim(substr($element,$operator+1)),'"');
-            if (isset($statuses[$value])) {
-                $status = $statuses[$value];
-            } else {
-                return false;
-            }
-            
-            $element = '(\''.$usertracks[$item]->status.'\' == \''.$status.'\')';
-        } else if (($operator = strpos($element,'<>')) !== false) {
-            $item = trim(substr($element,0,$operator));
-            if (!isset($usertracks[$item])) {
-                return false;
-            }
-            
-            $value = trim(trim(substr($element,$operator+1)),'"');
-            if (isset($statuses[$value])) {
-                $status = $statuses[$value];
-            } else {
-                return false;
-            }
-            
-            $element = '(\''.$usertracks[$item]->status.'\' != \''.trim($status).'\')';
-        } else {
-            return false;
+        if (empty($element)) {
+            continue;
         }
-        
-        array_push($stack,$element);
+        if (!preg_match('/^(&&|\|\||\(|\))$/', $element)) {
+            // create each individual expression
+            // search for ~ = <> X*{}
+    
+            // sets like 3*{S34, S36, S37, S39}
+            if (preg_match('/^(\d+)\*\{(.+)\}$/', $element, $matches)) {
+                $repeat = $matches[1];
+                $set = explode(',', $matches[2]);
+                $count = 0;
+                foreach ($set as $setelement) {
+                  if (isset($usertracks[$setelement]) &&
+                      ($usertracks[$setelement]->status == 'completed' || $usertracks[$element]->status == 'passed')) {
+                      $count++;
+                  }
+                }
+                if ($count >= $repeat) {
+                    $element = 'true';
+                } else {
+                    $element = 'false';
+                }
+    
+            // ~ Not
+            } else if ($element == '~') {
+                $element = '!';
+    
+            // = | <>
+            } else if (preg_match('/^(.+)(\=|\<\>)(.+)$/', $element, $matches)) {
+                $element = trim($matches[1]);
+                if (isset($usertracks[$element])) {
+                    $value = trim(preg_replace('/(\'|\")/', '', $matches[3]));
+                    if (isset($statuses[$value])) {
+                        $value = $statuses[$value];
+                    }
+                    if ($matches[2] == '<>') {
+                        $oper = '!=';
+                    } else {
+                      $oper = '==';
+                    }
+                    $element = '(\''.$usertracks[$element]->status.'\' '.$oper.' \''.$value.'\')';
+                } else {
+                  $element = 'false';
+                }
+    
+            // everything else must be an element defined like S45 ...
+            } else {
+                if (isset($usertracks[$element]) &&
+                    ($usertracks[$element]->status == 'completed' || $usertracks[$element]->status == 'passed')) {
+                    $element = 'true';
+                } else {
+                    $element = 'false';
+                }
+            }
+    
+        }
+        $stack []= ' '.$element.' ';
     }
     return eval('return '.implode($stack).';');
 }
@@ -173,13 +126,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
     //
     // Get the current organization infos
     //
-    $organizationsql = '';
     if (!empty($currentorg)) {
         if (($organizationtitle = get_field('scorm_scoes','title','scorm',$scorm->id,'identifier',$currentorg)) != '') {
             $result->toc .= "\t<li>$organizationtitle</li>\n";
             $tocmenus[] = $organizationtitle;
         }
-        $organizationsql = "AND organization='$currentorg'";
     }
     //
     // If not specified retrieve the last attempt number
@@ -188,16 +139,14 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $attempt = scorm_get_last_attempt($scorm->id, $user->id);
     }
     $result->attemptleft = $scorm->maxattempt - $attempt;
-    if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
-        // drop keys so that we can access array sequentially
-        $scoes = array_values($scoes); 
+    if ($scoes = scorm_get_scoes($scorm->id, $currentorg)){
         //
         // Retrieve user tracking data for each learning object
         //
         $usertracks = array();
         foreach ($scoes as $sco) {
             if (!empty($sco->launch)) {
-                if ($usertrack=scorm_get_tracks($sco->id,$user->id,$attempt)) {
+                if ($usertrack = scorm_get_tracks($sco->id,$user->id,$attempt)) {
                     if ($usertrack->status == '') {
                         $usertrack->status = 'notattempted';
                     }
@@ -213,18 +162,13 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
         $findnext = false;
         $parents[$level]='/';
         
-        foreach ($scoes as $pos=>$sco) {
+        foreach ($scoes as $pos => $sco) {
             $isvisible = false;
             $sco->title = stripslashes($sco->title);
-            if ($optionaldatas = scorm_get_sco($sco->id, SCO_DATA)) {
-                if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
-                    $isvisible = true;
-                }
-            }
-            else{
+            if (!isset($sco->isvisible) || (isset($sco->isvisible) && ($sco->isvisible == 'true'))) {
                 $isvisible = true;
             }
-            if ($parents[$level]!=$sco->parent) {
+            if ($parents[$level] != $sco->parent) {
                 if ($newlevel = array_search($sco->parent,$parents)) {
                     for ($i=0; $i<($level-$newlevel); $i++) {
                         $result->toc .= "\t\t</ul></li>\n";
@@ -248,7 +192,7 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         $result->toc .= $closelist;
                         $level = $i;
                     }
-                    $parents[$level]=$sco->parent;
+                    $parents[$level] = $sco->parent;
                 }
             }
             if ($isvisible) {
@@ -260,10 +204,8 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                 $nextsco = false;
             }
             $nextisvisible = false;
-            if (($nextsco !== false) && ($optionaldatas = scorm_get_sco($nextsco->id, SCO_DATA))) {
-                if (!isset($optionaldatas->isvisible) || (isset($optionaldatas->isvisible) && ($optionaldatas->isvisible == 'true'))) {
-                    $nextisvisible = true;
-                }
+            if (($nextsco !== false) && (!isset($nextsco->isvisible) || (isset($nextsco->isvisible) && ($nextsco->isvisible == 'true')))) {
+                $nextisvisible = true;
             }
             if ($nextisvisible && ($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
                 $sublist++;
@@ -320,12 +262,11 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                         }
                     }
                     if ($sco->id == $scoid) {
-                        $scodata = scorm_get_sco($sco->id, SCO_DATA);
                         $startbold = '<b>';
                         $endbold = '</b>';
                         $findnext = true;
-                        $shownext = isset($scodata->next) ? $scodata->next : 0;
-                        $showprev = isset($scodata->previous) ? $scodata->previous : 0;
+                        $shownext = isset($sco->next) ? $sco->next : 0;
+                        $showprev = isset($sco->previous) ? $sco->previous : 0;
                     }
                 
                     if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1) && ($nextsco!==false) && (!$findnext)) {
