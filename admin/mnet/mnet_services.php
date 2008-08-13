@@ -53,7 +53,7 @@
                     // We don't have or need a record - do nothing!
                 } else {
                     // We don't need the record - delete it
-                    $DB->delete_records('mnet_host2service', array('hostid', $_POST['hostid'], 'serviceid'=>$key));
+                    $DB->delete_records('mnet_host2service', array('hostid' => $_POST['hostid'], 'serviceid'=>$key));
                 }
             } elseif (false == $host2service && ($publish == 1 || $subscribe == 1)) {
                 $host2service = new stdClass();
