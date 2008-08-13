@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 //
 // Capability definitions for Moodle core.
 //
@@ -780,9 +780,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/question:import' => array(
-
-        'riskbitmask' => RISK_XSS,
-
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -792,7 +790,6 @@ $moodle_capabilities = array(
     ),
 
     'moodle/question:export' => array(
-
         'captype' => 'read',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -802,7 +799,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/question:managecategory' => array(
-
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -812,9 +809,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/question:manage' => array(
-
-        'riskbitmask' => RISK_XSS,
-
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
