@@ -1726,13 +1726,17 @@ class curl_cache {
         if(is_dir($CFG->dataroot.'/repository/cache')) {
             $this->dir = $CFG->dataroot.'/repository/cache/';
         }
+        if (empty($CFG->repository_cache_expire)) {
+            $CFG->repository_cache_expire = 120;
+        } 
     }
     public function get($param){
         global $CFG;
         $filename = md5(serialize($param));
         if(file_exists($this->dir.$filename)) {
             $lasttime = filemtime($this->dir.$filename);
-            if(time()-$lasttime > $CFG->repository_cache_expire) {
+            if(time()-$lasttime > $CFG->repository_cache_expire)
+            {
                 return false;
             } else {
                 $fp = fopen($this->dir.$filename, 'r');
