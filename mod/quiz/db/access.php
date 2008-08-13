@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php  // $Id$
 /**
  * Capability definitions for the quiz module.
  *
@@ -9,7 +9,6 @@ $mod_quiz_capabilities = array(
     // Ability to see that the quiz exists, and the basic information
     // about it, for example the start date and time limit.
     'mod/quiz:view' => array(
-
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -23,7 +22,6 @@ $mod_quiz_capabilities = array(
 
     // Ability to do the quiz as a 'student'.
     'mod/quiz:attempt' => array(
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -33,7 +31,7 @@ $mod_quiz_capabilities = array(
 
     // Edit the quiz settings, add and remove questions.
     'mod/quiz:manage' => array(
-
+        'riskbitmask' => RISK_SPAM,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -44,7 +42,6 @@ $mod_quiz_capabilities = array(
 
     // Preview the quiz.
     'mod/quiz:preview' => array(
-
         'captype' => 'write', // Only just a write.
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -56,7 +53,7 @@ $mod_quiz_capabilities = array(
 
     // Manually grade and comment on student attempts at a question.
     'mod/quiz:grade' => array(
-
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -68,7 +65,7 @@ $mod_quiz_capabilities = array(
 
     // View the quiz reports.
     'mod/quiz:viewreports' => array(
-
+        'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -80,7 +77,7 @@ $mod_quiz_capabilities = array(
 
     // Delete attempts using the overview report.
     'mod/quiz:deleteattempts' => array(
-
+        'riskbitmask' => RISK_DATALOSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
@@ -89,5 +86,4 @@ $mod_quiz_capabilities = array(
         )
     )
 );
-
 ?>
