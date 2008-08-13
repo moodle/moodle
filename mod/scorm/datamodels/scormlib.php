@@ -488,16 +488,12 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                             $newitem->$standarddata = $item->$standarddata;
                         }
                         
-                        $id = 0; 
+                        // Insert the new SCO, and retain the link between the old and new for later adjustment
+                        $id = $DB->insert_record('scorm_scoes',$newitem);
                         if (!empty($olditems) && ($olditemid = scorm_array_search('identifier',$newitem->identifier,$olditems))) {
-                            $newitem->id = $olditemid;
-                            $id = $DB->update_record('scorm_scoes',$newitem);
-                            unset($olditems[$olditemid]);
-                            $DB->delete_records('scorm_scoes_data', array('scoid'=>$olditemid));
-                        } else {
-                            $id = $DB->insert_record('scorm_scoes',$newitem);
+                            $olditems[$olditemid]->newid = $id;
                         }
-
+                        
                         if ($optionaldatas = scorm_optionals_data($item,$standarddatas)) {
                             $data = new stdClass();
                             $data->scoid = $id;
@@ -590,15 +586,18 @@ function scorm_parse_scorm($pkgdir,$scormid) {
             }
             if (!empty($olditems)) {
                 foreach($olditems as $olditem) {
-                   $DB->delete_records('scorm_scoes', array('id'=>$olditem->id));
-                   $DB->delete_records('scorm_scoes_data',array('scoid'=>$olditem->id));
-                   $DB->delete_records('scorm_scoes_track',array('scoid'=>$olditem->id));
-                   $DB->delete_records('scorm_seq_objective', array('scoid'=>$olditem->id));
-                   $DB->delete_records('scorm_seq_mapinfo', array('scoid'=>$olditem->id));
-                   $DB->delete_records('scorm_seq_ruleconds', array('scoid'=>$olditem->id));
-                   $DB->delete_records('scorm_seq_rulecond', array('scoid'=>$olditem->id));
-                   $DB->delete_records('scorm_seq_rolluprule', array('scoid'=>$olditem->id));
-                   $DB->delete_records('scorm_seq_rollupcond', array('scoid'=>$olditem->id));
+                    $DB->delete_records('scorm_scoes', array('id'=>$olditem->id));
+                    $DB->delete_records('scorm_scoes_data',array('scoid'=>$olditem->id));
+                    if (isset($olditem->newid)) {
+                        $DB->set_field('scorm_scoes_track', 'scoid', $olditem->newid, array('scoid' => $olditem->id));
+                    }
+                    $DB->delete_records('scorm_scoes_track',array('scoid'=>$olditem->id));
+                    $DB->delete_records('scorm_seq_objective', array('scoid'=>$olditem->id));
+                    $DB->delete_records('scorm_seq_mapinfo', array('scoid'=>$olditem->id));
+                    $DB->delete_records('scorm_seq_ruleconds', array('scoid'=>$olditem->id));
+                    $DB->delete_records('scorm_seq_rulecond', array('scoid'=>$olditem->id));
+                    $DB->delete_records('scorm_seq_rolluprule', array('scoid'=>$olditem->id));
+                    $DB->delete_records('scorm_seq_rollupcond', array('scoid'=>$olditem->id));
                 }
             }
             $DB->set_field('scorm','version',$scoes->version, array('id'=>$scormid));
