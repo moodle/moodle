@@ -91,7 +91,6 @@ if ($dataid) {
 }
 
 if (!$exporter->get('instance')) {
-    print_object($exporter);
     // we've just arrived but have no instance
     // so retrieve everything from the request,
     // add them as hidden fields in a new form

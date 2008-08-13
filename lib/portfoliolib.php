@@ -2062,7 +2062,10 @@ final class portfolio_exporter {
             debugging(get_string($string, $module));
             return false;
         }
-        if (isset($this)) {
+        if (isset($this) && $this instanceof portfolio_exporter) {
+            // apparently even calling statically (with :: rather than ->
+            // causes $this to be set in some php versions
+            // (assuming this function is called from some other object - wtF?!)
             $this->process_stage_cleanup(true);
         }
         print_error($string, $module, $continue, $a);
