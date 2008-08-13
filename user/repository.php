@@ -35,7 +35,7 @@ include('tabs.php');
 print_heading($configstr);
 print_simple_box_start();
 
-if (!$instances = repository_user_instances($COURSE->context)) {
+if (!$instances = repository_instances($COURSE->context, $USER->id)) {
     print_error('noinstances', 'repository', $CFG->wwwroot . '/user/view.php');
 }
 
@@ -44,9 +44,9 @@ $table->head = array($namestr, $pluginstr, '');
 $table->data = array();
 
 foreach ($instances as $i) {
-    $path = '/repository/'.$i->repositorytype.'/settings.php';
+    $path = '/repository/'.$i->type.'/settings.php';
     $settings = file_exists($CFG->dirroot.$path);
-    $table->data[] = array($i->repositoryname, $i->repositorytype, 
+    $table->data[] = array($i->name, $i->type, 
         $settings ? '<a href="'.$CFG->wwwroot.$path.'">'
             .get_string('settings', 'repository').'</a>' : '');
 }

@@ -5083,5 +5083,97 @@ function print_plugin_tables() {
 }
 
 
+class admin_setting_managerepository extends admin_setting {
+    private $baseurl;
+    function admin_setting_managerepository() {
+        global $CFG;
+        parent::admin_setting('managerepository', get_string('managerepository', 'repository'), '', '');
+        $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/repository.php?sesskey=' . sesskey();
+    }
+ 
+    function get_setting() {
+        return true;
+    }
 
-?>
+    function get_defaultsetting() {
+        return true;
+    }
+
+    function get_full_name() {
+        return 's_managerepository';
+    }
+
+    function write_setting($data) {
+        $url = $this->baseurl . '&amp;new=' . $data;
+        // TODO
+        // Should not use redirect and exit here
+        // Find a better way to do this.
+        // redirect($url);
+        // exit;
+    }
+
+    function is_related($query) {
+        if (parent::is_related($query)) {
+            return true;
+        }
+
+        $textlib = textlib_get_instance();
+        $repositories= get_list_of_plugins('repository');
+        foreach ($repositories as $p) {
+            if (strpos($p, $query) !== false) {
+                return true;
+            }
+        }
+        foreach (repository_instances(get_context_instance(CONTEXT_SYSTEM), null, false) as $instance) {
+            $title = $instance->name;
+            if (strpos($textlib->strtolower($title), $query) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function output_html($data, $query='') {
+        global $CFG, $USER;
+        $output = print_simple_box_start(true);
+        $namestr = get_string('name');
+        $pluginstr = get_string('plugin', 'repository');
+        $plugins = get_list_of_plugins('repository');
+        $instances = repository_instances(get_context_instance(CONTEXT_SYSTEM), null, false);
+        $alreadyplugins = array();
+        $table = new StdClass;
+        $table->head = array($namestr, $pluginstr, '');
+        $table->data = array();
+
+        foreach ($instances as $i) {
+            $row = '';
+            $row .= '<a href="' . $this->baseurl . '&edit=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
+            $row .= '<a href="' . $this->baseurl . '&delete=' .  $i->id . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
+            $row .= ' <a href="' . $this->baseurl . '&hide=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/' . ($i->visible ? 'hide' : 'show') . '.gif" alt="' . get_string($i->visible ? 'hide' : 'show') . '" /></a>' . "\n";
+            $table->data[] = array($i->name, $i->type, $row);
+            if (!in_array($i->type, $alreadyplugins)) {
+                $alreadyplugins[] = $i->name;
+            }
+        }
+
+        $output .= print_table($table, true);
+        $instancehtml = '<div><p>';
+        $addable = 0;
+        $instancehtml .= get_string('add', 'repository');
+        $instancehtml .= '</p>';
+        $addable = 0;
+        foreach ($plugins as $p) {
+            $instancehtml .= '<a href="'.$CFG->wwwroot.'/admin/repository.php?sesskey='.$USER->sesskey.'&new='.$p.'">'.$p.'</a><br/>';
+            $addable++;
+        }
+
+        if ($addable) {
+            $instancehtml .= '</div>';
+            $output .= $instancehtml;
+        }
+
+        $output .= print_simple_box_end(true);
+
+        return highlight($query, $output);
+    }
+}

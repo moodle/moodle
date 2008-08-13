@@ -52,13 +52,12 @@
  */
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
+require_once(dirname(dirname(__FILE__)).'/lib/formslib.php');
 
 abstract class repository {
-    protected $options;
-    public    $name;
-    public    $context;
-    public    $repositoryid;
-    public    $listing;
+    public $id;
+    public $context;
+    public $options;
 
     /**
      * Take an array as a parameter, which contains necessary information
@@ -70,14 +69,16 @@ abstract class repository {
      * @return array the list of files, including meta infomation
      */
     public function __construct($repositoryid, $contextid = SITEID, $options = array()){
-        $this->repositoryid = $repositoryid;
-        $this->context      = get_context_instance_by_id($contextid);
-        $this->options      = array();
+        $this->id = $repositoryid;
+        $this->context = get_context_instance_by_id($contextid);
+        $this->options = array();
         if (is_array($options)) {
-            $options = array_merge(repository_get_option($repositoryid), $options);
-            foreach ($options as $n => $v) {
-                $this->options[$n] = $v;
-            }
+            $options = array_merge($this->get_option(), $options);
+        } else {
+            $options = $this->get_option();
+        }
+        foreach ($options as $n => $v) {
+            $this->options[$n] = $v;
         }
     }
 
@@ -100,6 +101,7 @@ abstract class repository {
     public function __toString() {
         return 'Repository class: '.__CLASS__;
     }
+
     /**
      * Given a URL, get a file from there.
      * @param string $url the url of file
@@ -126,16 +128,6 @@ abstract class repository {
         ));
         return $dir.$file;
     }
-
-    /**
-     * Given a path, and perhaps a search, get a list of files.
-     *
-     * @param string $parent The parent path, this parameter can
-     * a folder name, or a identification of folder
-     * @param string $search The text will be searched.
-     * @return array the list of files, including meta infomation
-     */
-    abstract public function get_listing($parent = '/', $search = '');
 
     /**
      * Print a list or return string
@@ -179,18 +171,51 @@ abstract class repository {
     }
 
     /**
-     * Show the login screen, if required
-     * This is an abstract function, it must be overriden.
-     *
+     * Return data for creating ajax request
+     * @return object
      */
-    abstract public function print_login();
+    public function ajax_info() {
+        global $CFG;
+        $repo = new stdclass;
+        $repo->name = $this->options['name'];
+        $repo->type = $this->options['type'];
+        $repo->id   = $this->options['id'];
+        $repo->icon = $CFG->wwwroot.'/repository/'.$repo->type.'/icon.png';
+        return $repo;
+    }
 
     /**
-     * Show the search screen, if required
-     *
-     * @return null
+     * delete a repository instance
      */
-    abstract public function print_search();
+    public function delete(){
+        global $DB;
+        $DB->delete_records('repository', array('id'=>$this->id));
+        return true;
+    }
+    /**
+     * Hide/Show a repository
+     * @param boolean
+     */
+    public function hide($hide = 'toggle'){
+        global $DB;
+        if ($entry = $DB->get_record('repository', array('id'=>$this->id))) {
+            if ($hide === 'toggle' ) {
+                if (!empty($entry->visible)) {
+                    $entry->visible = 0;
+                } else {
+                    $entry->visible = 1;
+                }
+            } else {
+                if (!empty($hide)) {
+                    $entry->visible = 0;
+                } else {
+                    $entry->visible = 1;
+                }
+            }
+            return $DB->update_record('repository', $entry);
+        }
+        return false;
+    }
 
     /**
      * Cache login details for repositories
@@ -204,8 +229,8 @@ abstract class repository {
         global $DB;
 
         $repository = new stdclass;
-        if (!empty($this->repositoryid)) {
-            $repository->id = $this->repositoryid;
+        if (!empty($this->id)) {
+            $repository->id = $this->id;
         } else {
             $repository->userid         = $userid;
             $repository->repositorytype = $this->type;
@@ -225,6 +250,124 @@ abstract class repository {
     }
 
     /**
+     * Save settings for repository instance
+     * $repo->set_option(array('api_key'=>'f2188bde132', 
+     *                          'name'=>'dongsheng'));
+     *
+     * @param array settings
+     * @return int Id of the record
+     */
+    public function set_option($options = array()){
+        global $DB;
+        if (is_array($options)) {
+            $options = array_merge($this->get_option(), $options);
+        } else {
+            $options = $this->get_option();
+        }
+        $repository = new stdclass;
+        $position = 1;
+        $options   = serialize($options);
+        if ($entry = $DB->get_record('repository', array('id'=>$this->id))) {
+            $field = 'data'.$position;
+            $repository->id = $entry->id;
+            $repository->$field = $options;
+            return $DB->update_record('repository', $repository);
+        }
+        return false;
+    }
+
+    /**
+     * Get settings for repository instance
+     *
+     * @param int repository Id
+     * @return array Settings
+     */
+    public function get_option($config = ''){
+        global $DB;
+        $entry = $DB->get_record('repository', array('id'=>$this->id));
+        if (!empty($entry->visible)) {
+            $ret['visible'] = 1;
+        } else {
+            $ret['visible'] = 0;
+        }
+        $ret['type'] = $entry->repositorytype;
+        $ret['name'] = $entry->repositoryname;
+        $ret['id']   = $entry->id;
+        for ($i=1;$i<6;$i++) {
+            $field = 'data'.$i;
+            $data = unserialize($entry->$field);
+            if (!empty($data)) {
+                if (is_array($data)) {
+                    $ret = array_merge($ret, $data);
+                }
+            }
+        }
+        if (!empty($config)) {
+            return $ret[$config];
+        } else {
+            return $ret;
+        }
+    }
+
+    /**
+     * Given a path, and perhaps a search, get a list of files.
+     *
+     * @param string $parent The parent path, this parameter can
+     * a folder name, or a identification of folder
+     * @param string $search The text will be searched.
+     * @return array the list of files, including meta infomation
+     */
+    abstract public function get_listing($parent = '/', $search = '');
+
+
+    /**
+     * Show the login screen, if required
+     * This is an abstract function, it must be overriden.
+     *
+     */
+    abstract public function print_login();
+
+    /**
+     * Show the search screen, if required
+     *
+     * @return null
+     */
+    abstract public function print_search();
+
+    public static function has_admin_config() {
+        return false;
+    }
+
+    public static function create($type, $userid, $context, $params) {
+        global $CFG, $DB;
+        $params = (array)$params;
+        require_once($CFG->dirroot . '/repository/'. $type . '/repository.class.php');
+        $classname = 'repository_' . $type;
+        if (self::has_admin_config()) {
+            $configs = self::get_option_names();
+            $options = array();
+            foreach ($configs as $config) {
+                $options[$config] = $params[$config];
+            }
+            $record->data1     = serialize($options);
+        }
+        $record = new stdclass;
+        $record->repositoryname = $params['name'];
+        $record->repositorytype = $type;
+        $record->timecreated  = time();
+        $record->timemodified = time();
+        $record->contextid = $context->id;
+        $record->visible   = 1;
+        $record->userid    = $userid;
+        $id = $DB->insert_record('repository', $record);
+        if (!empty($id)) {
+            return $id;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Defines operations that happen occasionally on cron
      *
      */
@@ -241,88 +384,46 @@ abstract class repository {
 class repository_exception extends moodle_exception {
 }
 
-/**
- * Listing object describing a listing of files and directories
- */
-
-abstract class repository_listing {
-}
 
 /**
- * Save settings for repository instance
+ * Return repository instances
  *
- * @param int repository Id
- * @param int from 1 to 5
- * @param array settings
- * @return int Id of the record
+ * @param object context
+ * @param int userid
+ * @param boolean if visible == true, return visible instances only,
+ *                otherwise, return all instances
+ * @return array repository instances
  */
-function repository_set_option($id, $position, $config = array()){
-    global $DB;
-    $repository = new stdclass;
-    $position = (int)$position;
-    $config   = serialize($config);
-    if( $position < 1 || $position > 5){
-        print_error('invalidoption', 'repository', '', $position);
-    }
-    if ($entry = $DB->get_record('repository', array('id'=>$id))) {
-        $option = 'data'.$position;
-        $repository->id = $entry->id;
-        $repository->$option = $config;
-        return $DB->update_record('repository', $repository);
-    }
-    return false;
-}
-
-/**
- * Get settings for repository instance
- *
- * @param int repository Id
- * @return array Settings
- */
-function repository_get_option($id){
-    global $DB;
-    $entry = $DB->get_record('repository', array('id'=>$id));
-    if (!empty($entry->visible)) {
-        $ret['visible'] = 1;
-    } else {
-        $ret['visible'] = 0;
-    }
-    for ($i=1;$i<6;$i++) {
-        $field = 'data'.$i;
-        $data = unserialize($entry->$field);
-        if (!empty($data)) {
-            if (is_array($data)) {
-                $ret = array_merge($ret, $data);
-            }
-        }
-    }
-    return $ret;
-}
-
-/**
- * Get user's repositories
- *
- * @param object context object
- * @return array repository list
- */
-function repository_user_instances($context){
+function repository_instances($context, $userid = null, $visible = true){
     global $DB, $CFG, $USER;
     $params = array();
     $sql = 'SELECT * FROM {repository} r WHERE ';
-    $sql .= ' (r.userid = 0 or r.userid = ?) ';
-    $params[] = $USER->id;
-    if($context->id == SITEID) {
-        $sql .= 'AND (r.contextid = ?)';
-        $params[] = SITEID;
+    if (!empty($userid) && is_numeric($userid)) {
+        $sql .= ' (r.userid = 0 or r.userid = ?) AND ';
+        $params[] = $userid;
+    }
+    if($context->id == SYSCONTEXTID) {
+        $sql .= ' (r.contextid = ?)';
+        $params[] = SYSCONTEXTID;
     } else {
-        $sql .= 'AND (r.contextid = ? or r.contextid = ?)';
-        $params[] = SITEID;
+        $sql .= ' (r.contextid = ? or r.contextid = ?)';
+        $params[] = SYSCONTEXTID;
         $params[] = $context->id;
+    }
+    if($visible == true) {
+        $sql .= ' AND (r.visible = 1)';
     }
     if(!$repos = $DB->get_records_sql($sql, $params)) {
         $repos = array();
     }
-    return $repos;
+    $ret = array();
+    foreach($repos as $repo) {
+        require_once($CFG->dirroot . '/repository/'. $repo->repositorytype 
+            . '/repository.class.php');
+        $classname = 'repository_' . $repo->repositorytype;
+        $ret[] = new $classname($repo->id, $repo->contextid);
+    }
+    return $ret;
 }
 
 /**
@@ -343,28 +444,28 @@ function repository_instance($id){
     return new $classname($instance->id, $instance->contextid);
 }
 
-/**
- * Get list of repository plugin
- *
- * @return array repository plugin list
- */
-function repository_get_plugins(){
+function repository_static_function($plugin, $function) {
     global $CFG;
-    $repo = $CFG->dirroot.'/repository/';
-    $ret = array();
-    if($dir = opendir($repo)){
-        while (false !== ($file = readdir($dir))) {
-            if(is_dir($file) && $file != '.' && $file != '..'
-                && file_exists($repo.$file.'/repository.class.php')){
-                require_once($repo.$file.'/version.php');
-                $ret[] = array('name'=>$plugin->name,
-                        'version'=>$plugin->version,
-                        'path'=>$repo.$file,
-                        'settings'=>file_exists($repo.$file.'/settings.php'));
-            }
-        }
+
+    $pname = null;
+    if (is_object($plugin) || is_array($plugin)) {
+        $plugin = (object)$plugin;
+        $pname = $plugin->name;
+    } else {
+        $pname = $plugin;
     }
-    return $ret;
+
+    $args = func_get_args();
+    if (count($args) <= 2) {
+        $args = array();
+    }
+    else {
+        array_shift($args);
+        array_shift($args);
+    }
+
+    require_once($CFG->dirroot . '/repository/' . $plugin .  '/repository.class.php');
+    return call_user_func_array(array('repository_' . $plugin, $function), $args);
 }
 
 /**
@@ -568,7 +669,7 @@ function get_repository_client($context){
                         var link = document.createElement('a');
                         link.href = '###';
                         link.id = 'repo-call-$suffix-'+repo.id;
-                        link.innerHTML = ' '+repo.repositoryname;
+                        link.innerHTML = ' '+repo.name;
                         link.className = 'repo-name';
                         link.onclick = function(){
                             var re = /repo-call-$suffix-(\d+)/i;
@@ -874,11 +975,10 @@ function get_repository_client($context){
     })();
 EOD;
 
-    $repos = repository_user_instances($context);
+    $repos = repository_instances($context);
     foreach($repos as $repo) {
-        $repo->icon = $CFG->wwwroot.'/repository/'.$repo->repositorytype.'/icon.png';
         $js .= "\r\n";
-        $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo).');'."\n";
+        $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo->ajax_info()).');'."\n";
     }
     $js .= "\r\n";
 
@@ -906,4 +1006,68 @@ EOD;
     </div>
 EOD;
     return array('html'=>$html, 'js'=>$js, 'suffix'=>$suffix);
+}
+
+final class repository_admin_form extends moodleform {
+    protected $instance;
+    protected $plugin;
+
+    public function definition() {
+        global $CFG;
+        // type of plugin, string
+        $this->plugin = $this->_customdata['plugin'];
+        $this->instance = (isset($this->_customdata['instance'])
+                && is_subclass_of($this->_customdata['instance'], 'repository'))
+            ? $this->_customdata['instance'] : null;
+
+        $mform =& $this->_form;
+        $strrequired = get_string('required');
+
+        $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->id : 0);
+        $mform->addElement('hidden', 'new',   $this->plugin);
+        $mform->addElement('hidden', 'plugin', $this->plugin);
+
+        $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
+        $mform->addRule('name', $strrequired, 'required', null, 'client');
+
+        // let the plugin add the fields they want (either statically or not)
+        if (repository_static_function($this->plugin, 'has_admin_config')) {
+            if (!$this->instance) {
+                $result = repository_static_function($this->plugin, 'admin_config_form', $mform);
+            } else {
+                $result = $this->instance->admin_config_form($mform);
+            }
+        }
+
+        // and set the data if we have some.
+        if ($this->instance) {
+            $data = array();
+            $data['name'] = $this->instance->name;
+            foreach ($this->instance->get_option_names() as $config) {
+                $data[$config] = $this->instance->$config;
+            }
+            $this->set_data($data);
+        }
+        $this->add_action_buttons(true, get_string('submit'));
+    }
+
+    public function validation($data) {
+        global $DB;
+
+        $errors = array();
+        if ($DB->count_records('repository', array('repositoryname' => $data['name'], 'repositorytype' => $data['plugin'])) > 1) {
+            $errors = array('name' => get_string('err_uniquename', 'repository'));
+        }
+
+        $pluginerrors = array();
+        if ($this->instance) {
+            //$pluginerrors = $this->instance->admin_config_validation($data);
+        } else {
+            //$pluginerrors = repository_static_function($this->plugin, 'admin_config_validation', $data);
+        }
+        if (is_array($pluginerrors)) {
+            $errors = array_merge($errors, $pluginerrors);
+        }
+        return $errors;
+    }
 }

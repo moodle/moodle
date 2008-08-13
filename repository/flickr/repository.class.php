@@ -13,7 +13,6 @@ require_once($CFG->dirroot.'/repository/flickr/'.'phpFlickr.php');
 class repository_flickr extends repository{
     private $flickr;
     public $photos;
-    public $type = 'flickr';
 
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action, $CFG;
@@ -68,7 +67,7 @@ class repository_flickr extends repository{
 <form id="moodle-repo-login">
 <label for="account">Account (Email)</label><br/>
 <input type='text' name='flickrmail' id='account' />
-<input type='hidden' name='id' value='$this->repositoryid' /><br/>
+<input type='hidden' name='id' value='$this->id' /><br/>
 <input type='checkbox' name='remember' id="keepid" value='true' /> <label for="keepid">Remember? </label>
 <p><input type='button' onclick="repository_client.login()" value="Go" /></p>
 </form>
@@ -87,7 +86,7 @@ EOD;
 
                 $e3->type = 'hidden';
                 $e3->name = 'repo_id';
-                $e3->value = $this->repositoryid;
+                $e3->value = $this->id;
                 $ret['l'] = array($e1, $e2, $e3);
                 return $ret;
             }else{
@@ -156,7 +155,7 @@ EOD;
 EOD;
         $str .= '<div id="paging">';
         for($i=1; $i <= $this->photos['pages']; $i++) {
-            $str .= '<a href="###" onclick="cr('.$this->repositoryid.', '.$i.', 0)">';
+            $str .= '<a href="###" onclick="cr('.$this->id.', '.$i.', 0)">';
             $str .= $i;
             $str .= '</a> ';
         }
@@ -197,5 +196,16 @@ EOD;
             array('url'=>$url, 'file'=>$fp)
         ));
         return $dir.$file;
+    }
+    public static function has_admin_config() {
+        return true;
+    }
+    public function admin_config_form(&$mform) {
+        $strrequired = get_string('required');
+        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'));
+        $mform->addRule('api_key', $strrequired, 'required', null, 'client');
+    }
+    public static function get_option_names(){
+        return array('api_key');
     }
 }

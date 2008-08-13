@@ -12,7 +12,6 @@ require_once($CFG->dirroot.'/repository/boxnet/'.'boxlibphp5.php');
 
 class repository_boxnet extends repository{
     private $box;
-    public $type = 'boxnet';
 
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action;
@@ -23,6 +22,9 @@ class repository_boxnet extends repository{
         // reset session
         $reset = optional_param('reset', 0, PARAM_INT);
         if(!empty($reset)) {
+            // TODO
+            // think about muliti-instance
+            // must improve!
             unset($SESSION->box_token);
         }
         // do login
@@ -58,7 +60,7 @@ class repository_boxnet extends repository{
 
     public function get_login(){
         global $DB;
-        if ($entry = $DB->get_record('repository', array('id'=>$this->repositoryid))) {
+        if ($entry = $DB->get_record('repository', array('id'=>$this->id))) {
             $ret->username = $entry->username;
             $ret->password = $entry->password;
         } else {
@@ -121,7 +123,7 @@ class repository_boxnet extends repository{
                 $str .= '<form id="moodle-repo-login">';
                 $str .= '<input type="hidden" name="ticket" value="'.
                     $t['ticket'].'" />';
-                $str .= '<input type="hidden" name="id" value="'.$this->repositoryid.'" />';
+                $str .= '<input type="hidden" name="id" value="'.$this->id.'" />';
                 $str .= '<label for="box_username">Username: <label><br/>';
                 $str .= '<input type="text" id="box_username" name="username" value="'.$ret->username.'" />';
                 $str .= '<br/>';
@@ -136,7 +138,7 @@ class repository_boxnet extends repository{
 
                     $e2->type = 'hidden';
                     $e2->name = 'repo_id';
-                    $e2->value = $this->repositoryid;
+                    $e2->value = $this->id;
 
                     $e3->label = get_string('username', 'repository_boxnet');
                     $e3->id    = 'box_username';
@@ -161,6 +163,17 @@ class repository_boxnet extends repository{
 
     public function print_search(){
         return false;
+    }
+    public static function has_admin_config() {
+        return true;
+    }
+    public function admin_config_form(&$mform) {
+        $strrequired = get_string('required');
+        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'));
+        $mform->addRule('api_key', $strrequired, 'required', null, 'client');
+    }
+    public static function get_option_names(){
+        return array('api_key');
     }
 }
 

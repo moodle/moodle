@@ -251,7 +251,7 @@
     // Repository Tab
     if ($user->id == $USER->id) {
         require_once($CFG->dirroot . '/repository/lib.php');
-        if (repository_user_instances($COURSE->context)) {
+        if (repository_instances($COURSE->context, $USER->id)) {
             $toprow[] = new tabobject('repositories', $CFG->wwwroot .'/user/repository.php', get_string('repositories', 'repository'));
         }
     }

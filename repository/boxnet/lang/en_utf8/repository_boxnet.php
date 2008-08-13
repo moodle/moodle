@@ -1,4 +1,5 @@
 <?php
+$string['apikey'] = 'API Key';
 $string['repositoryname'] = 'Box.net';
 $string['repositorydesc'] = 'Repository for box.net';
 $string['configplugin'] = 'Box.net configuration';

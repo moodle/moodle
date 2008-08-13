@@ -8,7 +8,6 @@
  */
 
 class repository_local extends repository{
-    public $type = 'local';
 
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action, $CFG;
@@ -16,6 +15,7 @@ class repository_local extends repository{
         // get the parameter from client side
         // $this->context can be used here.
     }
+
     public function print_login($ajax = true){
         global $SESSION;
         // TODO
