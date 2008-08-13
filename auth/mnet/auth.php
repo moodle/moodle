@@ -244,7 +244,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
         // verify the remote host is configured locally before attempting RPC call
-        if (! $remotehost = get_record('mnet_host', 'wwwroot', $remotewwwroot)) {
+        if (! $remotehost = get_record('mnet_host', 'wwwroot', $remotewwwroot, 'deleted', 0)) {
             print_error('notpermittedtoland', 'mnet');
         }
 
@@ -1312,9 +1312,12 @@ class auth_plugin_mnet extends auth_plugin_base {
                 svc.apiversion,
                 h2s.id as h2s_id
             FROM
+                {$CFG->prefix}mnet_host h,
                 {$CFG->prefix}mnet_service svc,
                 {$CFG->prefix}mnet_host2service h2s
             WHERE
+                h.deleted = '0' AND
+                h.id = h2s.hostid AND
                 h2s.hostid = '$mnethostid' AND
                 h2s.serviceid = svc.id AND
                 svc.name = '$servicename' AND
