@@ -164,12 +164,18 @@ if ($hassiteconfig) {
     $ADMIN->add('portfoliosettings', new admin_externalpage('portfoliodelete', get_string('deleteportfolio', 'portfolio'), $url, 'moodle/site:config', true), '', $url);
     $ADMIN->add('portfoliosettings', new admin_externalpage('portfoliocontroller', get_string('manageportfolios', 'portfolio'), $url, 'moodle/site:config', true), '', $url);
 
-    foreach (portfolio_instances() as $portfolio) {
+    foreach (portfolio_instances(false, false) as $portfolio) {
         require_once($CFG->dirroot . '/portfolio/type/' . $portfolio->get('plugin') . '/lib.php');
         $classname = 'portfolio_plugin_' . $portfolio->get('plugin');
         $ADMIN->add(
             'portfoliosettings',
-            new admin_externalpage('portfoliosettings' . $portfolio->get('id'), get_string('configure', 'portfolio') . ' ' . $portfolio->get('name'), $url . '?edit=' . $portfolio->get('id')),
+            new admin_externalpage(
+                'portfoliosettings' . $portfolio->get('id'),
+                get_string('configure', 'portfolio') . ' ' . $portfolio->get('name'),
+                $url . '?edit=' . $portfolio->get('id'),
+                'moodle/site:config',
+                !$portfolio->get('visible')
+            ),
             $portfolio->get('name'),
             $url . ' ?edit=' . $portfolio->get('id')
         );
