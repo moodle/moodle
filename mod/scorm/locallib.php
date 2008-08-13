@@ -223,6 +223,36 @@ function scorm_get_sco($id,$what=SCO_ALL) {
         return false;
     }
 }
+
+/**
+* Returns an object (array) containing all the scoes data related to the given sco ID
+*
+* @param integer $id The sco ID
+* @param integer $organisation an organisation ID - defaults to false if not required
+* @return mixed (false if there are no scoes or an array)
+*/
+
+function scorm_get_scoes($id,$organisation=false) {
+    $organizationsql = '';
+    if (!empty($organisation)) {
+        $organizationsql = "AND organization='$organisation'";
+    }
+    if ($scoes = get_records_select('scorm_scoes',"scorm='$id' $organizationsql order by id ASC")) {
+        // drop keys so that it is a simple array as expected
+        $scoes = array_values($scoes);
+        foreach ($scoes as $sco) {
+            if ($scodatas = get_records('scorm_scoes_data','scoid',$sco->id)) {
+                foreach ($scodatas as $scodata) {
+                    $sco->{$scodata->name} = stripslashes_safe($scodata->value);
+                }
+            }
+        }
+        return $scoes;
+    } else {
+        return false;
+    }
+}
+
 function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
     $id = null;
     if ($track = get_record_select('scorm_scoes_track',"userid='$userid' AND scormid='$scormid' AND scoid='$scoid' AND attempt='$attempt' AND element='$element'")) {

@@ -13,7 +13,7 @@ function scorm_get_element_style(obj, prop, cssProp) {
     return ret;
 }
 
-function scorm_resize () {
+function scorm_resize (cwidth, cheight) {
     var winwidth = 0, winheight = 0;
     if( typeof( window.innerWidth ) == 'number' ) {
         //Non-IE
@@ -62,6 +62,10 @@ function scorm_resize () {
                         bottommargin+10; // +10 to save a minor vertical scroll always present!
                         
     var totalheighttoc = totalheight+imsnavheight;
+    // override total height with configured height if it is smaller
+    if (cheight > 0) {
+      winheight = cheight;
+    }                        
     var toctree = document.getElementById('toctree');
     if (toctree != null){
         var toctreeHeight = toctree.offsetHeight;

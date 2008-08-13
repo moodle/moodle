@@ -1,7 +1,6 @@
 <?PHP  // $Id$
 
 /// This page prints a particular instance of aicc/scorm package
-
     require_once('../../config.php');
     require_once('locallib.php');
 
@@ -124,13 +123,10 @@
     if ($scorm->popup == 1) {
         $bodyscript = 'onunload="main.close();"';
     }
-
     $exitlink = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$scorm->course.'" title="'.$strexit.'">'.$strexit.'</a> ';
-
     print_header($pagetitle, $course->fullname,
                  "$navigation <a $CFG->frametarget href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
                  '', '', true, $exitlink.update_module_button($cm->id, $course->id, $strscorm), '', false, $bodyscript);
-    //if ($sco->scormtype == 'sco') {
 ?>
     <script type="text/javascript" src="request.js"></script>
     <script type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstr.$modestr.$attemptstr ?>"></script>
@@ -138,7 +134,7 @@
     <script type="text/javascript">
     <!--    
         window.onresize = function() {
-            scorm_resize();
+            scorm_resize(<?php echo $scorm->width.", ".$scorm->height; ?>);
         };
     -->  
     </script>
@@ -161,75 +157,41 @@
 <?php  
     if ($scorm->hidetoc == 0) {
 ?>
-
         <div id="tocbox">
-
 <?php
-
         if ($scorm->hidenav ==0){
-
 ?>
-
             <!-- Bottons nav at left-->
-
             <div id="tochead">
-
                 <form name="tochead" method="post" action="player.php?id=<?php echo $cm->id ?>" target="_top">
-
 <?php
-
             $orgstr = '&amp;currentorg='.$currentorg;
-
             if (($scorm->hidenav == 0) && ($sco->previd != 0) && (!isset($sco->previous) || $sco->previous == 0)) {
-                
                 // Print the prev LO button
-
                 $scostr = '&amp;scoid='.$sco->previd;
-
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
-
 ?>
-
                     <input name="prev" type="button" value="<?php print_string('prev','scorm') ?>" onClick="document.location.href=' <?php echo $url; ?> '"/>
-
 <?php
-
             }
-
-            
-
             if (($scorm->hidenav == 0) && ($sco->nextid != 0) && (!isset($sco->next) || $sco->next == 0)) {
-                
                 // Print the next LO button
-
                 $scostr = '&amp;scoid='.$sco->nextid;
-
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
-
 ?>
-
                     <input name="next" type="button" value="<?php print_string('next','scorm') ?>" onClick="document.location.href=' <?php echo $url; ?> '"/>
-
 <?php
-
             }
-
 ?>
-
                 </form>
-
             </div> <!-- tochead -->
-
 <?php
-
         }
 ?>
             <div id="toctree" class="generalbox">
             <?php echo $result->toc; ?>
             </div> <!-- toctree -->
-
         </div> <!--  tocbox -->
-            
 <?php
         $class = ' class="toc"';
     } else {
@@ -267,40 +229,29 @@
         <?php
             $orgstr = '&amp;currentorg='.$currentorg;
             if (($scorm->hidenav == 0) && ($sco->previd != 0) && (!isset($sco->previous) || $sco->previous == 0) && (($scorm->hidetoc == 2) || ($scorm->hidetoc == 1)) ) {
-                
                 // Print the prev LO button
                 $scostr = '&amp;scoid='.$sco->previd;
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
 ?>
-
                     <form name="scormnavprev" method="post" action="player.php?id=<?php echo $cm->id ?>" target="_top" style= "display:inline">
-
                         <input name="prev" type="button" value="<?php print_string('prev','scorm') ?>" onClick="document.location.href=' <?php echo $url; ?> '"/>
-
                     </form>
-
 <?php
             }
             if ($scorm->hidetoc == 2) {
                 echo $result->tocmenu;
             }
             if (($scorm->hidenav == 0) && ($sco->nextid != 0) && (!isset($sco->next) || $sco->next == 0) && (($scorm->hidetoc == 2) || ($scorm->hidetoc == 1))) {
-                
                 // Print the next LO button
                 $scostr = '&amp;scoid='.$sco->nextid;
                 $url = $CFG->wwwroot.'/mod/scorm/player.php?id='.$cm->id.$orgstr.$modestr.$scostr;
 ?>
-
                     <form name="scormnavnext" method="post" action="player.php?id=<?php echo $cm->id ?>" target="_top" style= "display:inline">
-
                         <input name="next" type="button" value="<?php print_string('next','scorm') ?>" onClick="document.location.href=' <?php echo $url; ?> '"/>
-
                     </form>
-
 <?php
             }
         ?>
-
                 </div>
 <?php
         } 
@@ -313,16 +264,13 @@
                 <noscript>
                     <div id="noscript">
                         <?php print_string('noscriptnoscorm','scorm'); // No Martin(i), No Party ;-) ?>
-
                     </div>
                 </noscript>
 <?php
     if ($result->prerequisites) {
         if ($scorm->popup == 0) {
-            echo "                <script type=\"text/javascript\">scorm_resize();</script>\n";
-
+            echo "                <script type=\"text/javascript\">scorm_resize(".$scorm->width.", ".$scorm->height.");</script>\n";
             $fullurl="loadSCO.php?id=".$cm->id.$scoidstr.$modestr;
-
             echo "                <iframe id=\"scoframe1\" class=\"scoframe\" name=\"scoframe1\" src=\"{$fullurl}\"></iframe>\n";   
         } else {
             // Clean the name for the window as IE is fussy
@@ -334,7 +282,7 @@
             ?>
                     <script type="text/javascript">
                     //<![CDATA[
-                    scorm_resize();
+                    scorm_resize(<?php echo $scorm->width.", ". $scorm->height; ?>);
                         function openpopup(url,name,options,width,height) {
                             fullurl = "<?php echo $CFG->wwwroot.'/mod/scorm/' ?>" + url;
                             windowobj = window.open(fullurl,name,options);
