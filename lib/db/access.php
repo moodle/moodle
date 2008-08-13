@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 //
 // Capability definitions for Moodle core.
 //
@@ -832,7 +832,7 @@ $moodle_capabilities = array(
     ),
 
     'moodle/question:managecategory' => array(
-
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -843,7 +843,7 @@ $moodle_capabilities = array(
 
     //new in moodle 1.9
     'moodle/question:add' => array(
-        'riskbitmask' => RISK_SPAM,
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -853,7 +853,7 @@ $moodle_capabilities = array(
         'clonepermissionsfrom' =>  'moodle/question:manage'
     ),
     'moodle/question:editmine' => array(
-        'riskbitmask' => RISK_SPAM,
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -863,7 +863,7 @@ $moodle_capabilities = array(
         'clonepermissionsfrom' =>  'moodle/question:manage'
     ),
     'moodle/question:editall' => array(
-        'riskbitmask' => RISK_SPAM,
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'legacy' => array(
@@ -930,9 +930,7 @@ $moodle_capabilities = array(
 
     // Configure the installed question types.
     'moodle/question:config' => array(
-
         'riskbitmask' => RISK_CONFIG,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(
