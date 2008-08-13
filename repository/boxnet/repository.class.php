@@ -18,44 +18,42 @@ class repository_boxnet extends repository{
         $options['username']   = optional_param('boxusername', '', PARAM_RAW);
         $options['password']   = optional_param('boxpassword', '', PARAM_RAW);
         $options['ticket']     = optional_param('ticket', '', PARAM_RAW);
-        $options['api_key']    = 'dmls97d8j3i9tn7av8y71m9eb55vrtj4';
+        $reset                 = optional_param('reset', 0, PARAM_INT);
+        parent::__construct($repositoryid, $context, $options);
+        $this->api_key = $this->get_option('api_key');
+        $sess_name = 'box_token'.$this->id;
         // reset session
-        $reset = optional_param('reset', 0, PARAM_INT);
         if(!empty($reset)) {
-            // TODO
-            // think about muliti-instance
-            // must improve!
-            unset($SESSION->box_token);
+            unset($SESSION->$sess_name);
         }
         // do login
         if(!empty($options['username'])
                     && !empty($options['password'])
                     && !empty($options['ticket']) )
         {
-            $this->box = new boxclient($options['api_key']);
+            $this->box = new boxclient($this->api_key);
             try{
-                $SESSION->box_token = $this->box->getAuthToken($options['ticket'], 
+                $SESSION->$sess_name = $this->box->getAuthToken($options['ticket'], 
                     $options['username'], $options['password']);
             } catch (repository_exception $e) {
                 throw $e;
             }
         }
         // already logged
-        if(!empty($SESSION->box_token)) {
+        if(!empty($SESSION->$sess_name)) {
             if(empty($this->box)) {
-                $this->box = new boxclient($options['api_key'], $SESSION->box_token);
+                $this->box = new boxclient($this->api_key, $SESSION->$sess_name);
             }
-            $options['auth_token'] = $SESSION->box_token;
+            $this->auth_token = $SESSION->$sess_name;
             if(empty($action)) {
                 $action = 'list';
             }
         } else {
-            $this->box = new boxclient($options['api_key']);
+            $this->box = new boxclient($this->api_key);
             if(!empty($action)) {
                 $action = '';
             }
         }
-        parent::__construct($repositoryid, $context, $options);
     }
 
     public function get_login(){

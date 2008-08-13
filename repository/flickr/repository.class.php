@@ -17,33 +17,34 @@ class repository_flickr extends repository{
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
-        $options['api_key'] = 'bf85ae2b5b105a2c645f32a32cd6ad59';
         $options['secret']  = '7cb2f9d7cf70aebe';
         parent::__construct($repositoryid, $context, $options);
-        $this->flickr = new phpFlickr($this->options['api_key'], $this->options['secret']);
+        $this->api_key = $this->get_option('api_key');
+        $this->flickr = new phpFlickr($this->api_key, $this->options['secret']);
 
         $reset = optional_param('reset', 0, PARAM_INT);
+        $sess_name = 'flickrmail'.$this->id;
         if(!empty($reset)) {
             // logout from flickr
-            unset($SESSION->flickrmail);
-            set_user_preference('flickrmail', '');
+            unset($SESSION->$sess_name);
+            set_user_preference('flickrmail'.$this->id, '');
         }
 
-        if(!empty($SESSION->flickrmail)) {
+        if(!empty($SESSION->$sess_name)) {
             if(empty($action)) {
                 $action = 'list';
             }
         } else {
             // get flickr account
-            $options['flickrmail'] = optional_param('flickrmail', '', PARAM_RAW);
-            if(!empty($options['flickrmail'])) {
-                $people = $this->flickr->people_findByEmail($options['flickrmail']);
+            $account = optional_param('flickrmail', '', PARAM_RAW);
+            if(!empty($account)) {
+                $people = $this->flickr->people_findByEmail($account);
                 if(!empty($people)) {
                     $remember = optional_param('remember', '', PARAM_RAW);
                     if(!empty($remember)) {
-                        set_user_preference('flickrmail', $options['flickrmail']);
+                        set_user_preference('flickrmail'.$this->id, $account);
                     }
-                    $SESSION->flickrmail = $options['flickrmail'];
+                    $SESSION->$sess_name = $account;
                     if(empty($action)) {
                         $action = 'list';
                     }
@@ -51,8 +52,8 @@ class repository_flickr extends repository{
                     throw new repository_exception('invalidemail', 'repository_flickr');
                 }
             } else {
-                if($account = get_user_preferences('flickrmail', '')){
-                    $SESSION->flickrmail = $account;
+                if($account = get_user_preferences('flickrmail'.$this->id, '')){
+                    $SESSION->$sess_name = $account;
                     if(empty($action)) {
                         $action = 'list';
                     }
@@ -62,7 +63,8 @@ class repository_flickr extends repository{
     }
     public function print_login($ajax = true){
         global $SESSION;
-        if(empty($SESSION->flickrmail)) {
+        $sess_name = 'flickrmail'.$this->id;
+        if(empty($SESSION->$sess_name)) {
         $str =<<<EOD
 <form id="moodle-repo-login">
 <label for="account">Account (Email)</label><br/>
@@ -98,7 +100,8 @@ EOD;
     }
     public function get_listing($path = '1', $search = ''){
         global $SESSION;
-        $people = $this->flickr->people_findByEmail($SESSION->flickrmail);
+        $sess_name = 'flickrmail'.$this->id;
+        $people = $this->flickr->people_findByEmail($SESSION->$sess_name);
         $photos_url = $this->flickr->urls_getUserPhotos($people['nsid']);
 
         if(!empty($search)) {
