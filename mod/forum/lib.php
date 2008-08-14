@@ -31,9 +31,9 @@ define ('FORUM_AGGREGATE_SUM', 5);
 
 /**
  * Code to be executed when a module is installed
- */ 
+ */
 function forum_install() {
-    return true; 
+    return true;
 }
 
 
@@ -241,10 +241,10 @@ function forum_get_completion_state($course,$cm,$userid,$type) {
 
     $postcountparams=array('userid'=>$userid,'forumid'=>$forum->id);
     $postcountsql="
-SELECT 
-    COUNT(1) 
-FROM 
-    {forum_posts} fp 
+SELECT
+    COUNT(1)
+FROM
+    {forum_posts} fp
     INNER JOIN {forum_discussions} fd ON fp.discussion=fd.id
 WHERE
     fp.userid=:userid AND fd.forum=:forumid";
@@ -259,7 +259,7 @@ WHERE
         }
     }
     if($forum->completionreplies) {
-        $value = $forum->completionreplies <= 
+        $value = $forum->completionreplies <=
             $DB->get_field_sql( $postcountsql.' AND fp.parent<>0',$postcountparams);
         if($type==COMPLETION_AND) {
             $result=$result && $value;
@@ -276,7 +276,7 @@ WHERE
         }
     }
 
-    return $result; 
+    return $result;
 }
 
 
@@ -532,7 +532,7 @@ function forum_cron() {
                 // Send the post now!
 
                 mtrace('Sending ', '');
-                
+
                 $eventdata = new object();
                 $eventdata->component        = 'mod/forum';
                 $eventdata->name             = 'posts';
@@ -829,7 +829,7 @@ function forum_cron() {
                     // This user DOESN'T want to receive HTML
                     $posthtml = '';
                 }
-            
+
                 $eventdata = new object();
                 $eventdata->component        = 'mod/forum';
                 $eventdata->name             = 'digests';
@@ -1054,17 +1054,57 @@ function forum_user_complete($course, $user, $mod, $forum) {
         $discussions = forum_get_user_involved_discussions($forum->id, $user->id);
 
         foreach ($posts as $post) {
-            if (!isset($discussions[$forum->discussion])) {
+            if (!isset($discussions[$post->discussion])) {
                 continue;
             }
-            $discussion = $discussions[$forum->discussion];
-            forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, false);
-        }
+           $discussion = $discussions[$post->discussion];
 
+            $ratings = null;
+
+            if ($forum->assessed) {
+                if ($scale = make_grades_menu($forum->scale)) {
+                    $ratings =new object();
+                    $ratings->scale = $scale;
+                    $ratings->assesstimestart = $forum->assesstimestart;
+                    $ratings->assesstimefinish = $forum->assesstimefinish;
+                    $ratings->allow = false;
+        }
+ }
+
+            pre_load_all_ratings($cm, $discussion);
+
+            forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, $ratings);
+
+        }
     } else {
         echo "<p>".get_string("noposts", "forum")."</p>";
     }
 }
+
+/**
+ * Preload all ratings of a discussion into course module
+ * Use this function to optimize post display with ratings:
+ * one query only and minimal memory
+ * @param object $cm course module (passed by reference as cache attribut is modified)
+ * @param object $discussion the discussion for which the ratings are cached
+ */
+function pre_load_all_ratings(&$cm, $discussion) {
+    global $CFG,$USER;
+    $cm->cache->ratings = array();
+    $cm->cache->myratings = array();
+    if ($postratings = forum_get_all_discussion_ratings($discussion)) {
+        foreach ($postratings as $pr) {
+            if (!isset($cm->cache->ratings[$pr->postid])) {
+                $cm->cache->ratings[$pr->postid] = array();
+            }
+            $cm->cache->ratings[$pr->postid][$pr->id] = $pr->rating;
+            if ($pr->userid == $USER->id) {
+                $cm->cache->myratings[$pr->postid] = $pr->rating;
+            }
+        }
+    }
+}
+
 
 /**
  *
@@ -4076,7 +4116,7 @@ function forum_delete_discussion($discussion, $fulldelete=false,$course=null,$cm
 
     // Update completion state if we are tracking completion based on number of posts
     $completion=new completion_info($course);
-    if(!$fulldelete && // But don't bother when deleting whole thing 
+    if(!$fulldelete && // But don't bother when deleting whole thing
         $completion->is_enabled($cm)==COMPLETION_TRACKING_AUTOMATIC &&
         ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
         $completion->update_state($cm,COMPLETION_INCOMPLETE,$discussion->userid);
@@ -4128,7 +4168,7 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
 
        // Update completion state if we are tracking completion based on number of posts
        $completion=new completion_info($course);
-       if(!$skipcompletion && // But don't bother when deleting whole thing 
+       if(!$skipcompletion && // But don't bother when deleting whole thing
            $completion->is_enabled($cm)==COMPLETION_TRACKING_AUTOMATIC &&
            ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
            $completion->update_state($cm,COMPLETION_INCOMPLETE,$post->userid);
@@ -5056,25 +5096,10 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
                 echo '<input type="hidden" name="forumid" value="'.$forum->id.'" />';
                 $ratingsformused = true;
             }
-
-            // preload all ratings - one query only and minimal memory
-            $cm->cache->ratings = array();
-            $cm->cache->myratings = array();
-            if ($postratings = forum_get_all_discussion_ratings($discussion)) {
-                foreach ($postratings as $pr) {
-                    if (!isset($cm->cache->ratings[$pr->postid])) {
-                        $cm->cache->ratings[$pr->postid] = array();
-                    }
-                    $cm->cache->ratings[$pr->postid][$pr->id] = $pr->rating;
-                    if ($pr->userid == $USER->id) {
-                        $cm->cache->myratings[$pr->postid] = $pr->rating;
-                    }
-                }
-                unset($postratings);
-            }
-        }
+            pre_load_all_ratings($cm, $discussion);
+        }             
     }
-
+              
 
     $post->forum = $forum->id;   // Add the forum id to the post object, later used by forum_print_post
     $post->forumtype = $forum->type;
@@ -7053,7 +7078,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             portfolio_exporter::raise_error('exoprting whole discussion not implemented - see MDL-15758');
             // @todo see MDL-15758
         } else {
-            
+
             if ($basedir = forum_file_area($this->post)) {
                 //@todo penny fix all this with files api
                 require_once($CFG->dirroot . '/backup/lib.php');
