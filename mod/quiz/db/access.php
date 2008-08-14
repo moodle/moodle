@@ -77,7 +77,6 @@ $mod_quiz_capabilities = array(
 
     // Delete attempts using the overview report.
     'mod/quiz:deleteattempts' => array(
-        'riskbitmask' => RISK_DATALOSS,
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
