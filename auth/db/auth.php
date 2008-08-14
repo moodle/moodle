@@ -420,7 +420,8 @@ class auth_plugin_db extends auth_plugin_base {
             print_error('auth_dbcantconnect','auth');
         } else if ( !$rs->EOF ) {
             while ($rec = $rs->FetchRow()) {
-                array_push($result, $rec->USERNAME);
+                $rec = (object)array_change_key_case((array)$rec , CASE_LOWER);
+                array_push($result, $rec->username);
             }
         }
 
