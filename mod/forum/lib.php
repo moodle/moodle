@@ -946,15 +946,54 @@ function forum_user_complete($course, $user, $mod, $forum) {
         $discussions = forum_get_user_involved_discussions($forum->id, $user->id);
 
         foreach ($posts as $post) {
-            if (!isset($discussions[$forum->discussion])) {
+             if (!isset($discussions[$post->discussion])) {
                 continue;
             }
-            $discussion = $discussions[$forum->discussion];
-            forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, false);
-        }
+            $discussion = $discussions[$post->discussion];
 
+           $ratings = null;
+
+            if ($forum->assessed) {
+                if ($scale = make_grades_menu($forum->scale)) {
+                    $ratings =new object();
+                    $ratings->scale = $scale;
+                    $ratings->assesstimestart = $forum->assesstimestart;
+                    $ratings->assesstimefinish = $forum->assesstimefinish;
+                    $ratings->allow = false;
+        }
+}
+
+            pre_load_all_ratings($cm, $discussion);
+
+            forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, $ratings);
+
+        }
     } else {
         echo "<p>".get_string("noposts", "forum")."</p>";
+    }
+}
+
+/**
+ * Preload all ratings of a discussion into course module
+ * Use this function to optimize post display with ratings:
+ * one query only and minimal memory
+ * @param object $cm course module (passed by reference as cache attribut is modified)
+ * @param object $discussion the discussion for which the ratings are cached
+ */
+function pre_load_all_ratings(&$cm, $discussion) {
+    global $CFG,$USER;
+    $cm->cache->ratings = array();
+    $cm->cache->myratings = array();
+    if ($postratings = forum_get_all_discussion_ratings($discussion)) {
+        foreach ($postratings as $pr) {
+            if (!isset($cm->cache->ratings[$pr->postid])) {
+                $cm->cache->ratings[$pr->postid] = array();
+            }
+            $cm->cache->ratings[$pr->postid][$pr->id] = $pr->rating;
+            if ($pr->userid == $USER->id) {
+                $cm->cache->myratings[$pr->postid] = $pr->rating;
+            }
+        }
     }
 }
 
@@ -4285,7 +4324,7 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
 
     if (!isset($discussion->groupid)) {
         debugging('incorrect discussion parameter', DEBUG_DEVELOPER);
-        return false; 
+        return false;
     }
 
     if (!$cm) {
@@ -4342,7 +4381,7 @@ function forum_user_can_post($forum, $discussion, $user=NULL, $cm=NULL, $course=
             return false;
         }
         return groups_is_member($discussion->groupid);
-    } 
+    }
 }
 
 
@@ -4816,23 +4855,12 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
                 $ratingsformused = true;
             }
 
-            // preload all ratings - one query only and minimal memory
-            $cm->cache->ratings = array();
-            $cm->cache->myratings = array();
-            if ($postratings = forum_get_all_discussion_ratings($discussion)) {
-                foreach ($postratings as $pr) {
-                    if (!isset($cm->cache->ratings[$pr->postid])) {
-                        $cm->cache->ratings[$pr->postid] = array();
-                    }
-                    $cm->cache->ratings[$pr->postid][$pr->id] = $pr->rating;
-                    if ($pr->userid == $USER->id) {
-                        $cm->cache->myratings[$pr->postid] = $pr->rating;
-                    }
-                }
-                unset($postratings);
-            }
+
+            pre_load_all_ratings($cm, $discussion);
         }
+                    
     }
+               
 
 
     $post->forum = $forum->id;   // Add the forum id to the post object, later used by forum_print_post
