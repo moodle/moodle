@@ -1003,7 +1003,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
             && ((has_capability('mod/data:exportentry', $context)
                 || (data_isowner($record->id) && has_capability('mod/data:exportownentry', $context))))) {
             require_once($CFG->libdir . '/portfoliolib.php');
-            $replacement[] = portfolio_add_button('data_portfolio_caller', array('id' => $cm->id, 'record' => $record->id), null, false, true);
+            $replacement[] = portfolio_add_button('data_portfolio_caller', array('id' => $cm->id, 'record' => $record->id), null, PORTFOLIO_ADD_ICON_LINK, null, true);
         } else {
             $replacement[] = '';
         }

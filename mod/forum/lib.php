@@ -3112,7 +3112,8 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $p = array(
             'postid' => $post->id,
         );
-        //$commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
+                            // @todo penny check these arguments when uncommenting
+        //$commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_TEXT_LINK, null, true);
     }
 
     echo '<div class="commands">';
@@ -3880,7 +3881,8 @@ function forum_print_attachments($post, $return=NULL) {
                             'postid' => $post->id,
                             'attachment' => 1,
                         );
-                        //$output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false, true);
+                        // @todo penny check these arguments when uncommenting
+                        //$output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_FORM, null, true);
                     }
                     $output .= "<br />";
 
@@ -3899,7 +3901,8 @@ function forum_print_attachments($post, $return=NULL) {
                                 'postid' => $post->id,
                                 'attachment' => 1,
                             );
-                            //portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', false);
+                            // @todo penny check these arguments when uncommenting
+                            //portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_FORM);
                         }
                         echo '<br />';
                     }

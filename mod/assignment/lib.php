@@ -1715,13 +1715,13 @@ class assignment_base {
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
                 if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $p['file'] = $file->get_id();
-                    $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, false, true);
+                    $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, PORTFOLIO_ADD_ICON_LINK, null, true);
                 }
                 $output .= '<br />';
             }
             if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                 unset($p['file']);// for all files
-                $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, null, true, true);
+                $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, null, PORTFOLIO_ADD_FULL_FORM, null, true);
             }
         }
 

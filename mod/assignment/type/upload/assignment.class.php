@@ -362,13 +362,13 @@ class assignment_upload extends assignment_base {
     
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $p['file'] = $file->get_id();
-                    $output .= portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', false, true);
+                    $output .= portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', PORTFOLIO_ADD_ICON_LINK, null, true);
                 }
                 $output .= '<br />';
             }
             if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
                 unset($p['file']);// for all files
-                $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', true, true);
+                $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', null, null, true);
             }
         }
 

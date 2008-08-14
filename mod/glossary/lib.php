@@ -866,7 +866,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             'id' => $cm->id,
             'entryid' => $entry->id,
         );
-        $return .= portfolio_add_button('glossary_entry_portfolio_caller', $p, false, false, true);
+        $return .= portfolio_add_button('glossary_entry_portfolio_caller', $p, null, PORTFOLIO_ADD_ICON_LINK, null, true);
     }
     $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
 

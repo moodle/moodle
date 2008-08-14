@@ -113,6 +113,34 @@ define('PORTFOLIO_TIME_MODERATE', 'moderate');
 */
 define('PORTFOLIO_TIME_HIGH', 'high');
 
+// ************************************************** //
+// available ways to add the portfolio export to a page
+// ************************************************** //
+
+/**
+* a whole form, containing a drop down menu (where necessary)
+* and a submit button
+*/
+define('PORTFOLIO_ADD_FULL_FORM', 1);
+
+
+/**
+* a whole form, containing a drop down menu (where necessary)
+* but has an icon instead of a button to submit
+*/
+define('PORTFOLIO_ADD_ICON_FORM', 2);
+
+/**
+* just an icon with a link around it (yuk, as will result in a long url
+* only use where necessary)
+*/
+define('PORTFOLIO_ADD_ICON_LINK', 3);
+
+/**
+* just some text with a link around it (yuk, as will result in a long url
+* only use where necessary)
+*/
+define('PORTFOLIO_ADD_TEXT_LINK', 4);
 
 /**
 * entry point to add an 'add to portfolio' button somewhere in moodle
@@ -131,12 +159,14 @@ define('PORTFOLIO_TIME_HIGH', 'high');
 *                                        but more often, the caller is a script.php and the class in a lib.php
 *                                        so you can pass it here if necessary.
 *                                        this path should be relative (ie, not include) dirroot
-* @param boolean $fullform               either display the fullform with the dropmenu of available instances
-*                                        or just a small icon (which will trigger instance selection in a new screen)
-*                                        optional, defaults to true.
+* @param int $format                     format to display the button or form or icon or link.
+*                                        See constants PORTFOLIO_ADD_XXX for more info.
+*                                        optional, defaults to PORTFOLI_ADD_FULL_FORM
+* @param str $addstr                     string to use for the button or icon alt text or link text.
+*                                        this is whole string, not key.  optional, defaults to 'Add to portfolio';
 * @param boolean $return                 whether to echo or return content (optional defaults to false (echo)
 */
-function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null, $fullform=true, $return=false) {
+function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null, $format=PORTFOLIO_ADD_FULL_FORM, $addstr=null, $return=false) {
 
     global $SESSION, $CFG, $COURSE, $USER;
 
@@ -177,7 +207,8 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
 
     $callersupports = call_user_func(array($callbackclass, 'supported_formats'));
 
-    $output = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
+    $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
+    $linkoutput = '<a href="' . $CFG->wwwroot . '/portfolio/add.php?';
     foreach ($callbackargs as $key => $value) {
         if (!empty($value) && !is_string($value) && !is_numeric($value)) {
             $a->key = $key;
@@ -185,11 +216,14 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
             debugging(get_string('nonprimative', 'portfolio', $a));
             return;
         }
-        $output .= "\n" . '<input type="hidden" name="ca_' . $key . '" value="' . $value . '" />';
+        $linkoutput .= 'ca_' . $key . '=' . $value . '&amp;';
+        $formoutput .= "\n" . '<input type="hidden" name="ca_' . $key . '" value="' . $value . '" />';
     }
-    $output .= "\n" . '<input type="hidden" name="callbackfile" value="' . $callbackfile . '" />';
-    $output .= "\n" . '<input type="hidden" name="callbackclass" value="' . $callbackclass . '" />';
-    $output .= "\n" . '<input type="hidden" name="course" value="' . (!empty($COURSE) ? $COURSE->id : 0) . '" />';
+    $formoutput .= "\n" . '<input type="hidden" name="callbackfile" value="' . $callbackfile . '" />';
+    $formoutput .= "\n" . '<input type="hidden" name="callbackclass" value="' . $callbackclass . '" />';
+    $formoutput .= "\n" . '<input type="hidden" name="course" value="' . (!empty($COURSE) ? $COURSE->id : 0) . '" />';
+    $linkoutput .= 'callbackfile=' . $callbackfile . '&amp;callbackclass='
+        . $callbackclass . '&amp;course=' . (!empty($COURSE) ? $COURSE->id : 0);
     $selectoutput = '';
     if (count($instances) == 1) {
         $instance = array_shift($instances);
@@ -203,22 +237,41 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
             debugging(get_string('instancemisconfigured', 'portfolio', get_string($error[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
             return;
         }
-        $output .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
+        $formoutput .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
+        $linkoutput .= '&amp;instance=' . $instance->get('id');
     }
     else {
         $selectoutput = portfolio_instance_select($instances, $callersupports, $callbackclass, 'instance', true);
     }
 
-    if ($fullform) {
-        $output .= $selectoutput;
-        $output .= "\n" . '<input type="submit" value="' . get_string('addtoportfolio', 'portfolio') .'" />';
-    } else {
-        $output .= "\n" . '<input type="image" src="' . $CFG->pixpath . '/t/portfolio.gif" alt=' . get_string('addtoportfolio', 'portfolio') .'" />';
-        //@todo replace this with a little icon
+    if (empty($addstr)) {
+        $addstr = get_string('addtoportfolio', 'portfolio');
     }
-
-    $output .= "\n" . '</form>';
-
+    if (empty($format)) {
+        $format = PORTFOLIO_ADD_FULL_FORM;
+    }
+    switch ($format) {
+        case PORTFOLIO_ADD_FULL_FORM:
+            $formoutput .= $selectoutput;
+            $formoutput .= "\n" . '<input type="submit" value="' . $addstr .'" />';
+            $formoutput .= "\n" . '</form>';
+        break;
+        case PORTFOLIO_ADD_ICON_FORM:
+            $formoutput .= $selectoutput;
+            $formoutput .= "\n" . '<input type="image" src="' . $CFG->pixpath . '/t/portfolio.gif" alt=' . $addstr .'" />';
+            $formoutput .= "\n" . '</form>';
+        break;
+        case PORTFOLIO_ADD_ICON_LINK:
+            $linkoutput .= '"><img src="' . $CFG->pixpath . '/t/portfolio.gif" alt=' . $addstr .'" /></a>';
+        break;
+        case PORTFOLIO_ADD_TEXT_LINK:
+            $linkoutput .= '">' . $addstr .'</a>';
+        break;
+        default:
+            debugging('asdfd');
+            print_error('invalidaddformat', 'portfolio', '', $format);
+    }
+    $output = (in_array($format, array(PORTFOLIO_ADD_FULL_FORM, PORTFOLIO_ADD_ICON_FORM)) ? $formoutput : $linkoutput);
     if ($return) {
         return $output;
     } else {

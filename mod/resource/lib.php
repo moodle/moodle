@@ -746,7 +746,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         return has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $this->cm->id));
     }
 
-    public static function add_button($resource, $fullform=true, $return=false) {
+    public static function add_button($resource, $format=null, $return=false) {
         if (!has_capability('mod/resource:exportresource', get_context_instance(CONTEXT_MODULE, $resource->cm->id))) {
             return;
         }
@@ -754,7 +754,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
             debugging(get_string('portfolionotimplemented', 'resource'));
             return false;
         }
-        return portfolio_add_button('resource_portfolio_caller', array('id' => $resource->cm->instance),  '/mod/resource/lib.php', $fullform, $return);
+        return portfolio_add_button('resource_portfolio_caller', array('id' => $resource->cm->instance),  '/mod/resource/lib.php', $format, null, $return);
     }
 
     public function get_sha1() {

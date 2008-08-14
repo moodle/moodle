@@ -161,7 +161,8 @@
         $p = array(
             'discussionid' => $discussion->id,
         );
-        //$portfolio = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', true, true);
+        // @todo penny check these arguments when uncommenting
+        //$portfolio = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', null, null, true);
     }
     echo '<table width="100%" class="discussioncontrols"><tr><td>';
 
