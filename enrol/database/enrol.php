@@ -84,6 +84,7 @@ function setup_enrolments(&$user) {
                 //$count = 0;
                 $courselist = array();
                 while ($fields_obj = (object)$rs->FetchRow()) {         // Make a nice little array of courses to process
+                    $fields_obj = (object)array_change_key_case((array)$fields_obj , CASE_LOWER);
                     $courselist[] = $fields_obj->enrolremotecoursefield;
                     //$count++;
                 }
@@ -156,7 +157,7 @@ function setup_enrolments(&$user) {
                     if ($role_assignment->enrol == 'database') {
                         //error_log('[ENROL_DB] Removing user from context '.$role_assignment->contextid);
                         role_unassign($role_assignment->roleid, $user->id, '', $role_assignment->contextid);
-                    } 
+                    }
                 }
             }
         } else {
@@ -221,6 +222,7 @@ function sync_enrolments($role = null) {
     $DB->begin_sql();
     $extcourses = array();
     while ($extcourse_obj = (object)$rs->FetchRow()) { // there are more course records
+        $extcourse_obj = (object)array_change_key_case((array)$extcourse_obj , CASE_LOWER);
         $extcourse = $extcourse_obj->{$CFG->enrol_remotecoursefield};
         array_push($extcourses, $extcourse);
 
@@ -274,8 +276,9 @@ function sync_enrolments($role = null) {
             continue;
         }
 
-        // slurp results into an array
+        // slurp results into an array       
         while ($crs_obj = (object)$crs->FetchRow()) {
+            $crs_obj = (object)array_change_key_case((array)$crs_obj , CASE_LOWER);
             array_push($extenrolments, $crs_obj->{$CFG->enrol_remoteuserfield});
         }
         $crs->close(); // release the handle
@@ -302,7 +305,7 @@ function sync_enrolments($role = null) {
             }
             $params['roleid']    = $role->id;
             $params['contextid'] = $context->id;
-            
+
             $to_prune = $DB->get_records_sql("
                              SELECT ra.*
                                FROM {role_assignments} ra
@@ -408,8 +411,8 @@ function sync_enrolments($role = null) {
                 error_log( "Unassigned role {$roleid} from user $user in context $contextid");
             } else {
                 error_log( "Failed unassign role {$roleid} from user $user in context $contextid");
+                }
             }
-        }
         $ers->close(); // release the handle
     }
 
