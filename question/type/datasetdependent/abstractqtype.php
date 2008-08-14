@@ -87,26 +87,6 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         return $str;
     }
 
-    function uses_quizfile($question, $relativefilepath) {
-        // Check whether the specified file is available by any
-        // dataset item on this question...
-        global $CFG, $DB;
-        if ($DB->get_record_sql(" SELECT *
-                 FROM {question_dataset_items} i,
-                      {question_dataset_definitions} d,
-                      {question_datasets} q
-                WHERE i.value = ?
-                  AND d.id = i.definition AND d.type = 2
-                  AND d.id = q.datasetdefinition
-                  AND q.question = ? ", array($relativefilepath, $question->id))) {
-
-            return true;
-        } else {
-            // Make the check of the parent:
-            return parent::uses_quizfile($question, $relativefilepath);
-        }
-    }
-
     function finished_edit_wizard(&$form) {
         return isset($form->backtoquiz);
     }
