@@ -3169,7 +3169,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         $fs = get_file_storage();
         $status = true;
         if ($this->file) {
-            return $fs->get_file($this->file)->get_contenthash();
+            return $fs->get_file_by_id($this->file)->get_contenthash();
         }
         if ($files = $fs->get_area_files($this->assignment->context->id, 'assignment_submission', $this->user->id, '', false)) {
             $sha1s = array();

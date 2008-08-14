@@ -215,7 +215,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
             $prefix = implode('.', $bits);
         }
         while (true) {
-            if (!in_array($newname, $this->accounttree['file_name'])) {
+            if (!array_key_exists('file_name', $this->accounttree) || !in_array($newname, $this->accounttree['file_name'])) {
                 return $this->boxclient->renameFile($fileid, $newname);
             }
             $newname = $prefix . '(' . $count . ')' . $suffix;

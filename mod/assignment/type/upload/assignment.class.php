@@ -361,7 +361,7 @@ class assignment_upload extends assignment_base {
                 }
     
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $p['file'] = $filename;
+                    $p['file'] = $file->get_id();
                     $output .= portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', false, true);
                 }
                 $output .= '<br />';
