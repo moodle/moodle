@@ -2875,17 +2875,18 @@ function get_complete_user_data($field, $value, $mnethostid=null) {
 
     $constraints = $field .' = \''. $value .'\' AND deleted <> \'1\'';
 
-    if (is_null($mnethostid)) {
-        // if null, we restrict to local users
-        // ** testing for local user can be done with
-        //    mnethostid = $CFG->mnet_localhost_id
-        //    or with
-        //    auth != 'mnet'
-        //    but the first one is FAST with our indexes
-        $mnethostid = $CFG->mnet_localhost_id;
+    // If we are loading user data based on anything other than id,
+    // we must also restrict our search based on mnet host.
+    if ($field != 'id') {
+        if (empty($mnethostid)) {
+            // if empty, we restrict to local users
+            $mnethostid = $CFG->mnet_localhost_id;
+        }
     }
-    $mnethostid = (int)$mnethostid;
-    $constraints .= ' AND mnethostid = \''.$mnethostid.'\'';
+    if (!empty($mnethostid)) {
+        $mnethostid = (int)$mnethostid;
+        $constraints .= ' AND mnethostid = ' . $mnethostid;
+    }
 
 /// Get all the basic user data
 
