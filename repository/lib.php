@@ -77,6 +77,7 @@ abstract class repository {
         } else {
             $options = $this->get_option();
         }
+        $this->options = array();
         foreach ($options as $n => $v) {
             $this->options[$n] = $v;
         }
@@ -106,6 +107,7 @@ abstract class repository {
      * Given a URL, get a file from there.
      * @param string $url the url of file
      * @param string $file save location
+     * @see curl package
      */
     public function get_file($url, $file = '') {
         global $CFG;
@@ -174,7 +176,7 @@ abstract class repository {
      * Return data for creating ajax request
      * @return object
      */
-    public function ajax_info() {
+    final public function ajax_info() {
         global $CFG;
         $repo = new stdclass;
         $repo->name = $this->options['name'];
@@ -185,9 +187,45 @@ abstract class repository {
     }
 
     /**
+     * Create an instance for this plug-in
+     * @param string the type of the repository
+     * @param int userid
+     * @param object context
+     * @param array the options for this instance
+     *
+     */
+    final public static function create($type, $userid, $context, $params) {
+        global $CFG, $DB;
+        $params = (array)$params;
+        require_once($CFG->dirroot . '/repository/'. $type . '/repository.class.php');
+        $classname = 'repository_' . $type;
+        if (self::has_admin_config()) {
+            $configs = self::get_option_names();
+            $options = array();
+            foreach ($configs as $config) {
+                $options[$config] = $params[$config];
+            }
+            $record->data1     = serialize($options);
+        }
+        $record = new stdclass;
+        $record->repositoryname = $params['name'];
+        $record->repositorytype = $type;
+        $record->timecreated  = time();
+        $record->timemodified = time();
+        $record->contextid = $context->id;
+        $record->visible   = 1;
+        $record->userid    = $userid;
+        $id = $DB->insert_record('repository', $record);
+        if (!empty($id)) {
+            return $id;
+        } else {
+            return null;
+        }
+    }
+    /**
      * delete a repository instance
      */
-    public function delete(){
+    final public function delete(){
         global $DB;
         $DB->delete_records('repository', array('id'=>$this->id));
         return true;
@@ -196,7 +234,7 @@ abstract class repository {
      * Hide/Show a repository
      * @param boolean
      */
-    public function hide($hide = 'toggle'){
+    final public function hide($hide = 'toggle'){
         global $DB;
         if ($entry = $DB->get_record('repository', array('id'=>$this->id))) {
             if ($hide === 'toggle' ) {
@@ -338,34 +376,6 @@ abstract class repository {
         return false;
     }
 
-    public static function create($type, $userid, $context, $params) {
-        global $CFG, $DB;
-        $params = (array)$params;
-        require_once($CFG->dirroot . '/repository/'. $type . '/repository.class.php');
-        $classname = 'repository_' . $type;
-        if (self::has_admin_config()) {
-            $configs = self::get_option_names();
-            $options = array();
-            foreach ($configs as $config) {
-                $options[$config] = $params[$config];
-            }
-            $record->data1     = serialize($options);
-        }
-        $record = new stdclass;
-        $record->repositoryname = $params['name'];
-        $record->repositorytype = $type;
-        $record->timecreated  = time();
-        $record->timemodified = time();
-        $record->contextid = $context->id;
-        $record->visible   = 1;
-        $record->userid    = $userid;
-        $id = $DB->insert_record('repository', $record);
-        if (!empty($id)) {
-            return $id;
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Defines operations that happen occasionally on cron
@@ -470,6 +480,7 @@ function repository_static_function($plugin, $function) {
 
 /**
  * Move file from download folder to file pool using FILE API
+ * @TODO Need review
  *
  * @param string file path in download folder
  * @param string file name
