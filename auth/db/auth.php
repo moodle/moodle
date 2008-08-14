@@ -176,7 +176,7 @@ class auth_plugin_db extends auth_plugin_base {
             if ($rs = $authdb->Execute($sql)) {
                 if ( !$rs->EOF ) {
                     $fields_obj = rs_fetch_record($rs);
-                    $fields_obj = (object)array_change_key_case((array)$fields_obj , CASE_LOWER);
+                    $fields_obj = (object)array_change_key_case((array)$fields_obj , CASE_LOWER);                 
                     foreach ($selectfields as $localname=>$externalname) {
                         $result[$localname] = $textlib->convert($fields_obj->{$localname}, $this->config->extencoding, 'utf-8');
                      }
@@ -422,7 +422,8 @@ class auth_plugin_db extends auth_plugin_base {
             print_error('auth_dbcantconnect','auth');
         } else if ( !$rs->EOF ) {
             while ($rec = rs_fetch_next_record($rs)) {
-                array_push($result, $rec->USERNAME);
+                $rec = (object)array_change_key_case((array)$rec , CASE_LOWER);
+                array_push($result, $rec->username);
             }
         }
 
