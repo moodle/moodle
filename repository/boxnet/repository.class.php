@@ -21,6 +21,9 @@ class repository_boxnet extends repository{
         $reset                 = optional_param('reset', 0, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);
         $this->api_key = $this->get_option('api_key');
+        if (empty($this->api_key)) {
+            throw new repository_exception('invalidapikey', 'repository_boxnet');
+        }
         $sess_name = 'box_token'.$this->id;
         // reset session
         if(!empty($reset)) {

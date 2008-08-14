@@ -17,10 +17,12 @@ class repository_flickr extends repository{
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
-        $options['secret']  = '7cb2f9d7cf70aebe';
         parent::__construct($repositoryid, $context, $options);
         $this->api_key = $this->get_option('api_key');
-        $this->flickr = new phpFlickr($this->api_key, $this->options['secret']);
+        if (empty($this->api_key)) {
+            throw new repository_exception('invalidapikey', 'repository_flickr');
+        }
+        $this->flickr = new phpFlickr($this->api_key);
 
         $reset = optional_param('reset', 0, PARAM_INT);
         $sess_name = 'flickrmail'.$this->id;
