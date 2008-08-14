@@ -54,6 +54,18 @@ function xmldb_data_upgrade($oldversion=0) {
         upgrade_mod_savepoint($result, 2007101513, 'data');
     }
 
+    if ($result && $oldversion < 2008081400) {
+        if ($datainstances = $DB->get_records('data')) {
+            $pattern = '/\#\#delete\#\#(\s+)\#\#approve\#\#/';
+            $replacement = '##delete##$1##approve##$1##export##';
+            foreach ($datainstances as $data) {
+                $data->listtemplate = preg_replace($pattern, $replacement, $data->listtemplate);
+                $data->singletemplate = preg_replace($pattern, $replacement, $data->singletemplate);
+                $DB->update_record('data', $data);
+            }
+        }
+    }
+
     return $result;
 }
 

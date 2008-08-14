@@ -397,9 +397,9 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
 
         }
         if ($template == 'listtemplate') {
-            $str .= '<tr><td align="center" colspan="2">##edit##  ##more##  ##delete##  ##approve##</td></tr>';
+            $str .= '<tr><td align="center" colspan="2">##edit##  ##more##  ##delete##  ##approve##  ##export##</td></tr>';
         } else if ($template == 'singletemplate') {
-            $str .= '<tr><td align="center" colspan="2">##edit##  ##delete##  ##approve##</td></tr>';
+            $str .= '<tr><td align="center" colspan="2">##edit##  ##delete##  ##approve##  ##export##</td></tr>';
         } else if ($template == 'asearchtemplate') {
             $str .= '<tr><td valign="top" align="right">'.get_string('authorfirstname', 'data').': </td><td>##firstname##</td></tr>';
             $str .= '<tr><td valign="top" align="right">'.get_string('authorlastname', 'data').': </td><td>##lastname##</td></tr>';
@@ -990,13 +990,23 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         }
         $patterns[]='##more##';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id.'"><img src="'.$CFG->pixpath.'/i/search.gif" class="iconsmall" alt="'.get_string('more', 'data').'" title="'.get_string('more', 'data').'" /></a>';
-
         $patterns[]='##moreurl##';
         $replacement[] = $CFG->wwwroot.'/mod/data/view.php?d='.$data->id.'&amp;rid='.$record->id;
 
         $patterns[]='##user##';
         $replacement[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$record->userid.
                                '&amp;course='.$data->course.'">'.fullname($record).'</a>';
+
+        $patterns[]='##export##';
+
+        if (($template == 'singletemplate' || $template == 'listtemplate')
+            && ((has_capability('mod/data:exportentry', $context)
+                || (data_isowner($record->id) && has_capability('mod/data:exportownentry', $context))))) {
+            require_once($CFG->libdir . '/portfoliolib.php');
+            $replacement[] = portfolio_add_button('data_portfolio_caller', array('id' => $cm->id, 'record' => $record->id), null, false, true);
+        } else {
+            $replacement[] = '';
+        }
         
         $patterns[] = '##timeadded##';
         $replacement[] = userdate($record->timecreated); 
@@ -2416,6 +2426,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     private $fieldtypes;
     private $delimiter;
     private $exportdata;
+    private $singlerecord;
 
     public function __construct($callbackargs) {
         global $DB;
@@ -2423,14 +2434,6 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             portfolio_exporter::raise_error('invalidid', 'data');
         }
         $this->data = $DB->get_record('data', array('id' => $this->cm->instance));
-        $this->selectedfields = array();
-        foreach ($callbackargs as $key => $value) {
-            if (strpos($key, 'field_') === 0) {
-                $this->selectedfields[] = substr($key, 6);
-            }
-        }
-        $this->delimiter = array_key_exists('delimiter_name', $callbackargs) ? $callbackargs['delimiter_name'] : null;
-        $this->exporttype = $callbackargs['exporttype'];
         $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$this->cm->instance), 'id');
         // populate objets for this databases fields
         $this->fields = array();
@@ -2439,18 +2442,60 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             $this->fields[] = $tmp;
             $this->fieldtypes[]  = $tmp->type;
         }
-        $this->exportdata = data_get_exportdata($this->cm->instance, $this->fields, $this->selectedfields);
+
+        if (array_key_exists('record', $callbackargs) && !empty($callbackargs['record'])) {
+            //user has selected to export one single entry rather than the whole thing
+            // which is completely different
+            $this->singlerecord = $DB->get_record('data_records', array('id' => $callbackargs['record']));
+            $this->singlerecord->content = $DB->get_records('data_content', array('recordid' => $this->singlerecord->id));
+            $this->exporttype = 'single';
+        } else {
+            // all records as csv or whatever
+            $this->selectedfields = array();
+            foreach ($callbackargs as $key => $value) {
+                if (strpos($key, 'field_') === 0) {
+                    $this->selectedfields[] = substr($key, 6);
+                }
+            }
+            $this->delimiter = array_key_exists('delimiter_name', $callbackargs) ? $callbackargs['delimiter_name'] : null;
+            $this->exporttype = array_key_exists('exporttype', $callbackargs) ? $callbackargs['exporttype'] : 'csv'; //@todo later support more
+            $this->exportdata = data_get_exportdata($this->cm->instance, $this->fields, $this->selectedfields);
+        }
+    }
+
+    public function has_export_config() {
+        // @todo later when we suport exporting to more than just csv, we may need to ask the user here
+        // if we have not already passed it
+        return false;
     }
 
     public function expected_time() {
+        if ($this->exporttype == 'single') {
+            return PORTFOLIO_TIME_LOW;
+        }
         //@todo check number of records maybe
         return PORTFOLIO_TIME_MODERATE;
     }
 
     public function get_sha1() {
+        $loopdata = $this->exportdata;
+        if ($this->exporttype == 'single') {
+            $loopdata = $this->singlerecord;
+        }
         $str = '';
-        foreach ($this->exportdata as $data) {
-            $str .= implode(',', $data);
+        foreach ($loopdata as $data) {
+            if (is_array($data) || is_object($data)) {
+                $testkey = array_pop(array_keys($data));
+                if (is_array($data[$testkey]) || is_object($data[$testkey])) {
+                    foreach ($data as $d) {
+                        $str .= implode(',', (array)$d);
+                    }
+                } else {
+                    $str .= implode(',', (array)$data);
+                }
+            } else {
+                $str .= $data;
+            }
         }
         return sha1($str . ',' . $this->exporttype);
     }
@@ -2461,6 +2506,10 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         $content = '';
         $filename = '';
         switch ($this->exporttype) {
+            case 'single':
+                $content = $this->exportsingle();
+                $filename = clean_filename($this->cm->name . '-entry.html');
+                break;
             case 'csv':
                 $content = data_export_csv($this->exportdata, $this->delimiter, $this->cm->name, $count, true);
                 $filename = clean_filename($this->cm->name . '.csv');
@@ -2473,6 +2522,9 @@ class data_portfolio_caller extends portfolio_module_caller_base {
                 portfolio_exporter::raise_error('notimplemented', 'portfolio');
                 $content = data_export_ods($this->exportdata, $this->cm->name, $count, true);
                 break;
+            default:
+                portfolio_exporter::raise_error('notimplemented', 'portfolio', '', $this->exporttype);
+            break;
         }
         return $this->exporter->write_new_file($content, $filename);
     }
@@ -2494,6 +2546,50 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             require_once($CFG->dirroot . '/mod/data/field/' . $field .'/field.class.php');
             $this->fields[$key] = unserialize(serialize($this->fields[$key]));
         }
+    }
+
+    private function exportsingle() {
+    // Replacing tags
+        $patterns = array();
+        $replacement = array();
+
+    // Then we generate strings to replace for normal tags
+        foreach ($this->fields as $field) {
+            $patterns[]='[['.$field->field->name.']]';
+            if ($field instanceof data_field_file) {
+                // meh, do something special
+                // @todo extract the file and put it in the working directory
+                // and write out the filename here. (files api)
+                $replacement[] = $field->display_browse_field($this->singlerecord->id, 'singletemplate');
+            } else {
+                $replacement[] = $field->display_browse_field($this->singlerecord->id, 'singletemplate');
+            }
+        }
+
+    // Replacing special tags (##Edit##, ##Delete##, ##More##)
+        $patterns[]='##edit##';
+        $patterns[]='##delete##';
+        $patterns[]='##export##';
+        $patterns[]='##more##';
+        $patterns[]='##moreurl##';
+        $patterns[]='##user##';
+        $patterns[]='##approve##';
+        $patterns[]='##comments##';
+        $patterns[] = '##timeadded##';
+        $patterns[] = '##timemodified##';
+        $replacement[] = '';
+        $replacement[] = '';
+        $replacement[] = '';
+        $replacement[] = '';
+        $replacement[] = '';
+        $replacement[] = '';
+        $replacement[] = '';
+        $replacement[] = '';
+        $replacement[] = userdate($this->singlerecord->timecreated);
+        $replacement[] = userdate($this->singlerecord->timemodified);
+
+        // actual replacement of the tags
+        return str_ireplace($patterns, $replacement, $this->data->singletemplate);
     }
 }
 ?>

@@ -226,6 +226,9 @@
             echo '<option value="##edit##">' .get_string('edit', 'data'). ' - ##edit##</option>';
             echo '<option value="##delete##">' .get_string('delete', 'data'). ' - ##delete##</option>';
             echo '<option value="##approve##">' .get_string('approve', 'data'). ' - ##approve##</option>';
+            if ($mode != 'rsstemplate') {
+                echo '<option value="##export##">' .get_string('export', 'data'). ' - ##export##</option>';
+            }
             if ($mode != 'singletemplate') {
                 // more points to single template - not useable there
                 echo '<option value="##more##">' .get_string('more', 'data'). ' - ##more##</option>';
