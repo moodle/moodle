@@ -124,6 +124,14 @@ class question_edit_numerical_form extends question_edit_form {
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
                 }
+            } else {
+                if ($data['fraction'][$key] !=0 || trim($data['feedback'][$key]) != ''){                
+                    $errors["answer[$key]"] = get_string('answermustbenumberorstar', 'qtype_numerical');
+                    $answercount++;
+                    if (trim($data['feedback'][$key]) != ''){
+                        $errors["feedback[$key]"]=get_string('feedback','quiz').'='.htmlspecialchars(trim($data['feedback'][$key]));
+                    }
+                }
             }
         }
         if ($answercount==0){
