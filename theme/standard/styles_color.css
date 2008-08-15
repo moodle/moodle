@@ -433,6 +433,11 @@ table.flexible .r1 {
     background-color: #e99;
 }
 
+#admin-xmldb-index .button,
+#admin-xmldb-index .buttons {
+  color: gray;
+}
+
 /***
  *** Blocks
  ***/
