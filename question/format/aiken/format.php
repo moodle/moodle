@@ -1,9 +1,5 @@
 <?php  // $Id$ 
 
-///
-/// Written by Tom Robb <tom@robb.net> 2 November 2003
-/// 
-
 ////////////////////////////////////////////////////////////////////////////
 /// AIKEN FORMAT
 ///
@@ -24,11 +20,7 @@
 ///Be sure to reword "All of the above" type questions as "All of these" (etc.) so that choices can
 ///  be randomized
 ///
-///This should work on WIN, Mac and Unix although only tested on Mac
-///
 ////////////////////////////////////////////////////////////////////////////
-
-// Based on format.php, included by ../../import.php
 
 class qformat_aiken extends qformat_default {
 
@@ -36,7 +28,6 @@ class qformat_aiken extends qformat_default {
     return true;
   }
 
-//will this override default function?
     function readquestions($lines){
         $questions = array();
         $question = $this->defaultquestion();
@@ -47,7 +38,7 @@ class qformat_aiken extends qformat_default {
             $foundQ = 0;
             for ($i=0; $i < count($newlines);$i++){
                 $nowline = addslashes($newlines[$i]);
-                ///Go through the arrage and build an object called $question
+                ///Go through the array and build an object called $question
                 ///When done, add $question to $questions
                 if (strlen($nowline)< 2) {
                     continue;
