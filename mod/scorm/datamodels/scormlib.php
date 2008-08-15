@@ -601,7 +601,7 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                     delete_records('scorm_seq_ruleconds','scoid',$olditem->id);
                     delete_records('scorm_seq_rulecond','scoid',$olditem->id);
                     delete_records('scorm_seq_rolluprule','scoid',$olditem->id);
-                    delete_records('scorm_seq_rollupcond','scoid',$olditem->id);
+                    delete_records('scorm_seq_rolluprulecond','scoid',$olditem->id);
                 }
             }
             set_field('scorm','version',$scoes->version,'id',$scormid);
