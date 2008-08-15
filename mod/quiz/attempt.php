@@ -177,15 +177,14 @@
     echo '<input type="hidden" name="questionids" value="' .
             implode(',', $attemptobj->get_question_ids($page)) . "\" />\n";
 
+    // End middle column.
+    print_container_end();
+
     // Finish the form
+    echo '</div>';
     echo '</div>';
     echo "</form>\n";
 
-    // End middle column.
-    print_container_end();
-    echo '</div>';
-
-    echo '</div>';
     echo '<div class="clearer"></div>';
 
     // Finish the page
