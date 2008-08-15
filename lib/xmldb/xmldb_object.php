@@ -240,6 +240,7 @@ class xmldb_object {
                 }
             }
             if ($counter != 1) {
+                debugging('The number of tables with previous not set is different from 1', DEBUG_DEVELOPER);
                 $result = false;
             }
         }
@@ -252,6 +253,7 @@ class xmldb_object {
                 }
             }
             if ($counter != 1) {
+                debugging('The number of tables with next not set is different from 1', DEBUG_DEVELOPER);
                 $result = false;
             }
         }
@@ -261,6 +263,7 @@ class xmldb_object {
                 if ($element->getPrevious()) {
                     $i = $this->findObjectInArray($element->getPrevious(), $arr);
                     if ($i === NULL) {
+                        debugging('Table ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" but that other table does not exist.', DEBUG_DEVELOPER);
                         $result = false;
                     }
                 }
@@ -272,6 +275,7 @@ class xmldb_object {
                 if ($element->getNext()) {
                     $i = $this->findObjectInArray($element->getNext(), $arr);
                     if ($i === NULL) {
+                        debugging('Table ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" but that other table does not exist.', DEBUG_DEVELOPER);
                         $result = false;
                     }
                 }
@@ -283,6 +287,7 @@ class xmldb_object {
             foreach($arr as $element) {
                 if (in_array($element->getPrevious(), $existarr)) {
                     $result = false;
+                    debugging('Table ' . $element->getName() . ' says PREVIOUS="' . $element->getPrevious() . '" but another table has already said that!', DEBUG_DEVELOPER);
                 } else {
                     $existarr[] = $element->getPrevious();
                 }
@@ -294,6 +299,7 @@ class xmldb_object {
             foreach($arr as $element) {
                 if (in_array($element->getNext(), $existarr)) {
                     $result = false;
+                    debugging('Table ' . $element->getName() . ' says NEXT="' . $element->getNext() . '" but another table has already said that!', DEBUG_DEVELOPER);
                 } else {
                     $existarr[] = $element->getNext();
                 }
