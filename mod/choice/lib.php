@@ -609,7 +609,7 @@ function choice_get_participants($choiceid) {
 //Returns the users with data in one choice
 //(users with records in choice_responses, students)
 
-    global $CFG;
+    global $DB;
 
     //Get students
     $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id

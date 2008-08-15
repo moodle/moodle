@@ -423,7 +423,7 @@ function glossary_get_participants($glossaryid) {
     //Get students
     $students = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
                                         FROM {user} u, {glossary_entries} g
-                                 WHERE g.glossaryid = : AND u.id = g.userid", array($glossaryid));
+                                 WHERE g.glossaryid = ? AND u.id = g.userid", array($glossaryid));
 
     //Return students array (it contains an array of unique users)
     return $students;
