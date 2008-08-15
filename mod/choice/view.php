@@ -40,8 +40,8 @@
     if ($form = data_submitted() && has_capability('mod/choice:choose', $context)) {
         $timenow = time();
         if (has_capability('mod/choice:deleteresponses', $context)) {
-            if ($action == 'delete') { //some responses need to be deleted
-                choice_delete_responses($attemptids); //delete responses.
+            if ($action == 'delete') { //some responses need to be deleted     
+                choice_delete_responses($attemptids, $choice->id); //delete responses.
                 redirect("view.php?id=$cm->id");
             }
         }
