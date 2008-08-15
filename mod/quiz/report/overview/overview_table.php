@@ -47,7 +47,7 @@ class quiz_report_overview_table extends table_sql {
                 $groupaveragesql = $averagesql." AND qg.userid $g_usql";
                 $groupaverage = $DB->get_record_sql($groupaveragesql, array_merge($params, $g_params));
                 $groupaveragerow = array($namekey => get_string('groupavg', 'grades'),
-                        'sumgrades' => round($groupaverage->grade, $this->quiz->decimalpoints),
+                        'sumgrades' => quiz_format_grade($this->quiz, $groupaverage->grade),
                         'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($groupaverage->grade, $this->quiz->id)));
                 if($this->detailedmarks && $this->qmsubselect) {
                     $avggradebyq = quiz_get_average_grade_for_questions($this->quiz, $this->groupstudents);
@@ -59,7 +59,7 @@ class quiz_report_overview_table extends table_sql {
             list($s_usql, $s_params) = $DB->get_in_or_equal($this->students);
             $overallaverage = $DB->get_record_sql($averagesql." AND qg.userid $s_usql", array_merge($params, $s_params));
             $overallaveragerow = array($namekey => get_string('overallaverage', 'grades'),
-                        'sumgrades' => round($overallaverage->grade, $this->quiz->decimalpoints),
+                        'sumgrades' => quiz_format_grade($this->quiz, $overallaverage->grade),
                         'feedbacktext'=> strip_tags(quiz_report_feedback_for_grade($overallaverage->grade, $this->quiz->id)));
             if($this->detailedmarks && $this->qmsubselect) {
                 $avggradebyq = quiz_get_average_grade_for_questions($this->quiz, $this->students);

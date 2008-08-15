@@ -61,11 +61,11 @@ $bandwidth = $quiz->grade / $bands;
 $bands = ceil($bands);
 $bandlabels = array();
 for ($i=0;$i < $quiz->grade;$i += $bandwidth){
-    $label = number_format($i, $quiz->decimalpoints).' - ';
+    $label = quiz_format_grade($quiz, $i).' - ';
     if ($quiz->grade > $i+$bandwidth){
-        $label .= number_format($i+$bandwidth, $quiz->decimalpoints);
+        $label .= quiz_format_grade($quiz, $i+$bandwidth);
     } else {
-        $label .= number_format($quiz->grade, $quiz->decimalpoints);
+        $label .= quiz_format_grade($quiz, $quiz->grade);
     }
     $bandlabels[] = $label;
 }

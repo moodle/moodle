@@ -562,7 +562,7 @@ class quiz_attempt extends quiz {
         $this->ensure_state_loaded($questionid);
         $options = quiz_get_renderoptions($this->quiz->review, $this->states[$questionid]);
         if ($options->scores) {
-            return round($this->states[$questionid]->last_graded->grade, $this->quiz->decimalpoints);
+            return quiz_format_grade($this->quiz, $this->states[$questionid]->last_graded->grade);
         } else {
             return '';
         }
@@ -648,10 +648,13 @@ class quiz_attempt extends quiz {
         $panel->display();
     }
 
-        /// List of all this user's attempts for people who can see reports.
+    /// List of all this user's attempts for people who can see reports.
     public function links_to_other_attempts($url) {
         $search = '/\battempt=' . $this->attempt->id . '\b/';
         $attempts = quiz_get_user_attempts($this->quiz->id, $this->attempt->userid, 'all');
+        if (count($attempts) <= 1) {
+            return false;
+        }
         $attemptlist = array();
         foreach ($attempts as $at) {
             if ($at->id == $this->attempt->id) {
@@ -705,9 +708,9 @@ class quiz_attempt extends quiz {
         }
         $param = '';
         if ($showall) {
-            $param = '&showall=1';
+            $param = '&amp;showall=1';
         } else if ($page > 0) {
-            $param = '&page=' . $page;
+            $param = '&amp;page=' . $page;
         }
         return $param . $fragment;
     }

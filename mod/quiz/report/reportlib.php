@@ -307,7 +307,7 @@ function quiz_report_scale_sumgrades_as_percentage($rawgrade, $quiz, $round = tr
     if ($quiz->sumgrades) {
         $grade = $rawgrade * 100 / $quiz->sumgrades;
         if ($round) {
-            $grade = number_format($grade, $quiz->decimalpoints);
+            $grade = quiz_format_grade($quiz, $grade);
         }
     } else {
         $grade = 0;

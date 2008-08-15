@@ -278,7 +278,7 @@ class quiz_responses_report extends quiz_default_report {
             
             if ($showgrades) {
                 $columns[] = 'sumgrades';
-                $headers[] = get_string('grade', 'quiz').'/'.$quiz->grade;
+                $headers[] = get_string('grade', 'quiz').'/'.quiz_format_grade($quiz, $quiz->grade);
             }
 
             if ($hasfeedback) {

@@ -1806,6 +1806,15 @@ function question_hash($question) {
     return make_unique_id_code();
 }
 
+/**
+ * Round a grade to to the correct number of decimal places, and format it for display.
+ *
+ * @param object $cmoptions The modules settings, only ->decimalpoints is used.
+ * @param float $grade The grade to round.
+ */
+function question_format_grade($cmoptions, $grade) {
+    return format_float($grade, $cmoptions->decimalpoints);
+}
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
 /**

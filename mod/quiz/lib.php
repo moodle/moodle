@@ -158,7 +158,6 @@ function quiz_delete_instance($id) {
         'quiz_attempts' => 'quiz',
         'quiz_grades' => 'quiz',
         'quiz_question_instances' => 'quiz',
-        'quiz_grades' => 'quiz',
         'quiz_feedback' => 'quizid',
         'quiz' => 'id'
     );
@@ -186,7 +185,6 @@ function quiz_delete_instance($id) {
     return $result;
 }
 
-
 function quiz_user_outline($course, $user, $mod, $quiz) {
     global $DB;
 /// Return a small object with summary information about what a
@@ -195,18 +193,15 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
     if ($grade = $DB->get_record('quiz_grades', array('userid' => $user->id, 'quiz' => $quiz->id))) {
-
         $result = new stdClass;
         if ((float)$grade->grade) {
-            $result->info = get_string('grade').':&nbsp;'.round($grade->grade, $quiz->decimalpoints);
+            $result->info = get_string('grade').':&nbsp;'.quiz_format_grade($quiz, $grade->grade);
         }
         $result->time = $grade->timemodified;
         return $result;
     }
     return NULL;
-
 }
-
 
 function quiz_user_complete($course, $user, $mod, $quiz) {
     global $DB;
@@ -214,15 +209,15 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
 /// a given particular instance of this module, for user activity reports.
 
     if ($attempts = $DB->get_records_select('quiz_attempts', "userid=? AND quiz=?", 'attempt ASC', array($user->id, $quiz->id))) {
-        if ($quiz->grade  and $quiz->sumgrades && $grade = $DB->get_record('quiz_grades', array('userid' => $user->id, 'quiz' => $quiz->id))) {
-            echo get_string('grade').': '.round($grade->grade, $quiz->decimalpoints).'/'.$quiz->grade.'<br />';
+        if ($quiz->grade && $quiz->sumgrades && $grade = quiz_get_best_grade($quiz, $user->id)) {
+            echo get_string('grade') . ': ' . $grade . '/' . $quiz->grade . '<br />';
         }
         foreach ($attempts as $attempt) {
             echo get_string('attempt', 'quiz').' '.$attempt->attempt.': ';
             if ($attempt->timefinish == 0) {
                 print_string('unfinished');
             } else {
-                echo round($attempt->sumgrades, $quiz->decimalpoints).'/'.$quiz->sumgrades;
+                echo quiz_format_grade($quiz, $attempt->sumgrades).'/'.$quiz->sumgrades;
             }
             echo ' - '.userdate($attempt->timemodified).'<br />';
         }
@@ -282,7 +277,8 @@ function quiz_get_user_attempts($quizid, $userid=0, $status = 'finished', $inclu
  *
  * @param int $quizid id of quiz
  * @param int $userid optional user id, 0 means all users
- * @return array array of grades, false if none
+ * @return array array of grades, false if none. These are raw grades. They should
+ * be processed with quiz_format_grade for display.
  */
 function quiz_get_user_grades($quiz, $userid=0) {
     global $CFG, $DB;
@@ -299,6 +295,16 @@ function quiz_get_user_grades($quiz, $userid=0) {
             GROUP BY u.id, g.grade, g.timemodified";
 
     return $DB->get_records_sql($sql, $params);
+}
+
+/**
+ * Round a grade to to the correct number of decimal places, and format it for display.
+ *
+ * @param object $quiz The quiz table row, only $quiz->decimalpoints is used.
+ * @param float $grade The grade to round.
+ */
+function quiz_format_grade($quiz, $grade) {
+    return format_float($grade, $quiz->decimalpoints);
 }
 
 /**

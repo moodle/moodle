@@ -855,7 +855,11 @@ class default_questiontype {
         $grade = '';
         if ($question->maxgrade and $options->scores) {
             if ($cmoptions->optionflags & QUESTION_ADAPTIVE) {
-                $grade = !$isgraded ? '--/' : round($state->last_graded->grade, $cmoptions->decimalpoints).'/';
+                if ($isgraded) {
+                    $grade = question_format_grade($cmoptions, $state->last_graded->grade).'/';
+                } else {
+                    $grade = '--/'; 
+                }
             }
             $grade .= $question->maxgrade;
         }
@@ -937,9 +941,8 @@ class default_questiontype {
                                                 $b.get_string('event'.$st->event, 'quiz').$be,
                                                 $b.s($this->response_summary($question, $st)).$be,
                                                 $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
-                                                $b.round($st->raw_grade, $cmoptions->decimalpoints).$be,
-                                                //$b.round($st->penalty, $cmoptions->decimalpoints).$be,
-                                                $b.round($st->grade, $cmoptions->decimalpoints).$be
+                                                $b.question_format_grade($cmoptions, $st->raw_grade).$be,
+                                                $b.question_format_grade($cmoptions, $st->grade).$be
                                                 );
                     } else {
                         $table->data[] = array (
@@ -989,9 +992,9 @@ class default_questiontype {
             if (question_state_is_graded($state->last_graded)) {
                 // Display the grading details from the last graded state
                 $grade = new stdClass;
-                $grade->cur = round($state->last_graded->grade, $cmoptions->decimalpoints);
+                $grade->cur = question_format_grade($cmoptions, $state->last_graded->grade);
                 $grade->max = $question->maxgrade;
-                $grade->raw = round($state->last_graded->raw_grade, $cmoptions->decimalpoints);
+                $grade->raw = question_format_grade($cmoptions, $state->last_graded->raw_grade);
 
                 // let student know wether the answer was correct
                 $class = question_get_feedback_class($state->last_graded->raw_grade / 

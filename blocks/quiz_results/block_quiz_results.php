@@ -93,15 +93,8 @@ class block_quiz_results extends block_base {
         }
 
         if(!empty($this->config->usegroups)) {
-            // The block was configured to operate in group mode
-            if($course->groupmodeforce) {
-                $groupmode = $course->groupmode;
-            }
-            else {
-                $module = $DB->get_record_sql('SELECT cm.groupmode FROM {modules} m LEFT JOIN {course_modules} cm ON m.id = cm.module WHERE m.name = \'quiz\' AND cm.instance = ?', array($quizid));
-                $groupmode = $module->groupmode;
-            }
-            // The actual groupmode for the quiz is now known to be $groupmode
+            $groupmode = groups_get_activity_groupmode(
+                    get_coursemodule_from_instance('quiz', $quizid, $course->id), $course);
         }
 
         if (has_capability('moodle/site:accessallgroups', $context) && $groupmode == SEPARATEGROUPS) {
@@ -216,10 +209,10 @@ class block_quiz_results extends block_base {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
                     switch($gradeformat) {
                         case B_QUIZRESULTS_GRADE_FORMAT_FRA:
-                            $this->content->text .= (format_float($averagegrade,$quiz->decimalpoints).'/'.$quiz->grade);
+                            $this->content->text .= quiz_format_grade($quiz, $averagegrade).'/'.$quiz->grade;
                         break;
                         case B_QUIZRESULTS_GRADE_FORMAT_ABS:
-                            $this->content->text .= format_float($averagegrade,$quiz->decimalpoints);
+                            $this->content->text .= quiz_format_grade($quiz, $averagegrade);
                         break;
                         default:
                         case B_QUIZRESULTS_GRADE_FORMAT_PCT:
@@ -251,10 +244,10 @@ class block_quiz_results extends block_base {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
                     switch($gradeformat) {
                         case B_QUIZRESULTS_GRADE_FORMAT_FRA:
-                            $this->content->text .= (format_float($averagegrade,$quiz->decimalpoints).'/'.$quiz->grade);
+                            $this->content->text .= quiz_format_grade($quiz, $averagegrade).'/'.$quiz->grade;
                         break;
                         case B_QUIZRESULTS_GRADE_FORMAT_ABS:
-                            $this->content->text .= format_float($averagegrade,$quiz->decimalpoints);
+                            $this->content->text .= quiz_format_grade($quiz, $averagegrade);
                         break;
                         default:
                         case B_QUIZRESULTS_GRADE_FORMAT_PCT:
@@ -350,10 +343,10 @@ class block_quiz_results extends block_base {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
                     switch($gradeformat) {
                         case B_QUIZRESULTS_GRADE_FORMAT_FRA:
-                            $this->content->text .= (format_float($grades[$gradeid]->grade,$quiz->decimalpoints).'/'.$quiz->grade);
+                            $this->content->text .=  quiz_format_grade($quiz, $grades[$gradeid]->grade).'/'.$quiz->grade;
                         break;
                         case B_QUIZRESULTS_GRADE_FORMAT_ABS:
-                            $this->content->text .= format_float($grades[$gradeid]->grade,$quiz->decimalpoints);
+                            $this->content->text .= quiz_format_grade($quiz, $grades[$gradeid]->grade);
                         break;
                         default:
                         case B_QUIZRESULTS_GRADE_FORMAT_PCT:
@@ -391,10 +384,10 @@ class block_quiz_results extends block_base {
                     $this->content->text .= '<tr><td>'.(++$rank).'.</td><td>'.$thisname.'</td><td>';
                     switch($gradeformat) {
                         case B_QUIZRESULTS_GRADE_FORMAT_FRA:
-                            $this->content->text .= (format_float($grades[$gradeid]->grade,$quiz->decimalpoints).'/'.$quiz->grade);
+                            $this->content->text .= quiz_format_grade($quiz, $grades[$gradeid]->grade).'/'.$quiz->grade;
                         break;
                         case B_QUIZRESULTS_GRADE_FORMAT_ABS:
-                            $this->content->text .= format_float($grades[$gradeid]->grade,$quiz->decimalpoints);
+                            $this->content->text .= quiz_format_grade($quiz, $grades[$gradeid]->grade);
                         break;
                         default:
                         case B_QUIZRESULTS_GRADE_FORMAT_PCT:

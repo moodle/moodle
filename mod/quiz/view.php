@@ -239,7 +239,7 @@
 
             if ($markcolumn && $attempt->timefinish > 0) {
                 if ($attemptoptions->scores) {
-                    $row[] = $accessmanager->make_review_link(round($attempt->sumgrades, $quiz->decimalpoints),
+                    $row[] = $accessmanager->make_review_link(quiz_format_grade($quiz, $attempt->sumgrades),
                             $attempt, $canpreview, $attemptoptions);
                 } else {
                     $row[] = '';

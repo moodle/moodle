@@ -166,8 +166,8 @@
         /// Show raw marks only if they are different from the grade (like on the view page.
             if ($quiz->grade != $quiz->sumgrades) {
                 $a = new stdClass;
-                $a->grade = round($attempt->sumgrades, $CFG->quiz_decimalpoints);
-                $a->maxgrade = $quiz->sumgrades;
+                $a->grade = quiz_format_grade($quiz, $attempt->sumgrades);
+                $a->maxgrade = quiz_format_grade($quiz, $attempt->sumgrades);
                 $rows[] = '<tr><th scope="row" class="cell">' . get_string('marks', 'quiz') . '</th><td class="cell">' .
                         get_string('outofshort', 'quiz', $a) . '</td></tr>';
             }
@@ -175,7 +175,7 @@
         /// Now the scaled grade.
             $a = new stdClass;
             $a->grade = '<b>' . $grade . '</b>';
-            $a->maxgrade = $quiz->grade;
+            $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
             $a->percent = '<b>' . round(($attempt->sumgrades/$quiz->sumgrades)*100, 0) . '</b>';
             $rows[] = '<tr><th scope="row" class="cell">' . get_string('grade') . '</th><td class="cell">' .
                     get_string('outofpercent', 'quiz', $a) . '</td></tr>';
@@ -223,7 +223,6 @@
     print_container_end();
     echo '</div>';
 
-    echo '</div>';
     echo '<div class="clearer"></div>';
 
     // Finish the page

@@ -255,7 +255,7 @@ class quiz_statistics_report extends quiz_default_report {
                         $formattedvalue = quiz_report_scale_sumgrades_as_percentage($value, $quiz);
                         break;
                     case 'number_format' :
-                        $formattedvalue = number_format($value, $quiz->decimalpoints).'%';
+                        $formattedvalue = quiz_format_grade($quiz, $value).'%';
                         break;
                     default :
                         $formattedvalue = $value;

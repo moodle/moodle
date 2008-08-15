@@ -381,7 +381,8 @@ function quiz_get_all_question_grades($quiz) {
  *
  * @param object $quiz the quiz object.
  * @param integer $userid the id of the user.
- * @return float the user's current grade for this quiz.
+ * @return float the user's current grade for this quiz, or NULL if this user does
+ * not have a grade on this quiz.
  */
 function quiz_get_best_grade($quiz, $userid) {
     global $DB;
@@ -389,7 +390,7 @@ function quiz_get_best_grade($quiz, $userid) {
 
     // Need to detect errors/no result, without catching 0 scores.
     if (is_numeric($grade)) {
-        return round($grade, $quiz->decimalpoints);
+        return quiz_format_grade($quiz, $grade);
     } else {
         return NULL;
     }
@@ -407,7 +408,7 @@ function quiz_rescale_grade($rawgrade, $quiz, $round = true) {
     if ($quiz->sumgrades) {
         $grade = $rawgrade * $quiz->grade / $quiz->sumgrades;
         if ($round) {
-            $grade = round($grade, $quiz->decimalpoints);
+            $grade = quiz_format_grade($quiz, $grade);
         }
     } else {
         $grade = 0;
