@@ -137,7 +137,6 @@ class auth_plugin_db extends auth_plugin_base {
                 $moodleattributes[$field] = $this->config->{"field_map_$field"};
             }
         }
-        $moodleattributes['username'] = $this->config->fielduser;
         return $moodleattributes;
     }
 
