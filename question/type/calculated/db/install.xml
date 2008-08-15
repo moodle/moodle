@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/calculated/db" VERSION="20060812" COMMENT="XMLDB file for Moodle question/type/calculated">
+<XMLDB PATH="question/type/calculated/db" VERSION="20060812" COMMENT="XMLDB file for Moodle question/type/calculated. This question type also relies on the question_numerical_units table created by the numerical question type, and the tables created by the datasetdependent question type base class.">
   <TABLES>
     <TABLE NAME="question_calculated" COMMENT="Options for questions of type calculated">
       <FIELDS>
