@@ -136,7 +136,7 @@
 
         echo '<br />';
 
-        echo '<form enctype="multipart/form-data" method="post" action="index.php">';
+        echo '<form enctype="multipart/form-data" method="post" action="index.php"><div>';
         echo '<input type="hidden" name="contextid" value="'.$contextid.'" />';
         echo '<input type="hidden" name="filearea" value="'.$filearea.'" />';
         echo '<input type="hidden" name="itemid" value="'.$itemid.'" />';
@@ -273,7 +273,7 @@ function displaydir($file_info) {
 
                 $icon = mimeinfo_from_type("icon", $mimetype);
                 if ($downloadurl = $child_info->get_url(true)) {
-                    $downloadurl = "&nbsp;<a href=\"$downloadurl\"><img src=\"$CFG->pixpath/t/down.gif\" class=\"iconsmall\" alt=\"$strdownload\" />";
+                    $downloadurl = "&nbsp;<a href=\"$downloadurl\" title=\"" . get_string('downloadfile') . "\"><img src=\"$CFG->pixpath/t/down.gif\" class=\"iconsmall\" alt=\"$strdownload\" /></a>";
                 } else {
                     $downloadurl = '';
                 }
@@ -281,7 +281,7 @@ function displaydir($file_info) {
                 if ($viewurl = $child_info->get_url()) {
                     $viewurl = "&nbsp;".link_to_popup_window ($viewurl, "display",
                                                      "<img src=\"$CFG->pixpath/t/preview.gif\" class=\"iconsmall\" alt=\"$strfile\" />&nbsp;",
-                                                     480, 640, null, null, true);
+                                                     480, 640, get_string('viewfileinpopup'), null, true);
                 } else {
                     $viewurl = '';
                 }
