@@ -52,7 +52,6 @@ class question_import_form extends moodleform {
 //--------------------------------------------------------------------------------
         $mform->addElement('header', 'importfileupload', get_string('importfileupload','quiz'));
 
-        $this->set_upload_manager(new upload_manager('newfile', true, false, $COURSE, false, 0, false, true, false));
         $mform->addElement('file', 'newfile', get_string('upload'));
 //--------------------------------------------------------------------------------
         $mform->addElement('submit', 'submitbutton', get_string('uploadthisfile'));
@@ -77,7 +76,9 @@ class question_import_form extends moodleform {
     function get_importfile_name(){
         if ($this->is_submitted() and $this->is_validated()) {
             // return the temporary filename to process
-            return $this->_upload_manager->files['newfile']['tmp_name'];
+            // TODO change this to use the files API properly.
+            return $_FILES['newfile']['tmp_name'];
+//            return $this->_upload_manager->files['newfile']['tmp_name'];
         }else{
             return  NULL;
         }
