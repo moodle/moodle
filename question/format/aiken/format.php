@@ -37,27 +37,27 @@ class qformat_aiken extends qformat_default {
             $newlines = explode($endchar,$line);
             $foundQ = 0;
             for ($i=0; $i < count($newlines);$i++){
-                $nowline = $newlines[$i];
+                $nowline = trim($newlines[$i]);
                 ///Go through the array and build an object called $question
                 ///When done, add $question to $questions
-                if (strlen($nowline)< 2) {
+                if (strlen($nowline) < 2) {
                     continue;
                 }
                 //                This will show everyline when file is being processed
                 //                print("$nowline<br />");
-                $leader = substr(ltrim($nowline),0,2);
-                if (strpos(".A)B)C)D)E)F)G)H)I)J)A.B.C.D.E.F.G.H.I.J.",$leader)>0){
+                $leader = substr($nowline,0,2);
+                if (preg_match('/[A-Z][).]/',$leader)){
                     //trim off the label and space
-                    $question->answer[] = substr($nowline,3);
+                    $question->answer[] = htmlspecialchars(trim(substr($nowline,2)), ENT_NOQUOTES);
                     $question->fraction[] = 0;
                     $question->feedback[] = '';
                     continue;
                 }
                 if ($leader == "AN"){
-                    $ans =  trim(strstr($nowline,":"));
-                    $ans = substr($ans,2,1);
+                    $ans = trim(substr($nowline,strpos($nowline,':') + 1));
+                    $ans = substr($ans,0,1);
                     //A becomes 0 since array starts from 0
-                    $rightans = ord($ans) - 65;
+                    $rightans = ord($ans) - ord('A');
                     $question->fraction[$rightans] = 1;
                     $questions[] = $question;
                     //clear array for next question set
@@ -66,8 +66,8 @@ class qformat_aiken extends qformat_default {
                 } else {
                     //Must be the first line since no leader
                     $question->qtype = MULTICHOICE;
-                    $question->name = substr($nowline,0,50);
-                    $question->questiontext = $nowline;
+                    $question->name = htmlspecialchars(substr($nowline,0,50));
+                    $question->questiontext = htmlspecialchars($nowline);
                     $question->single = 1;
                     $question->feedback[] = "";
                 }
