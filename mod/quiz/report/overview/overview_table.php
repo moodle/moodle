@@ -7,6 +7,7 @@ class quiz_report_overview_table extends table_sql {
     var $candelete;
     var $reporturl;
     var $displayoptions;
+    var $regradedqs = array();
 
     function quiz_report_overview_table($quiz , $qmsubselect, $groupstudents,
                 $students, $detailedmarks, $questions, $candelete, $reporturl, $displayoptions, $context){
@@ -283,23 +284,34 @@ class quiz_report_overview_table extends table_sql {
                         $this->sql->params['qid'.$qid] = $qid;
                     }
                 }
+            } else {
+                //unset any sort columns that sort on question grade as the
+                //grades are not being fetched as fields
+                $sess = &$this->sess;
+                foreach($sess->sortby as $column => $order) {
+                    if (preg_match('/^qsgrade([0-9]+)/', trim($column))){
+                        unset($sess->sortby[$column]);
+                    }
+                }
             }
         }
         parent::query_db($pagesize, $useinitialsbar);
-        if ($this->detailedmarks){
-            //get all the attempt ids we want to display on this page
-            //or to export for download.
-            if (!$this->is_downloading()) {
-                $attemptids = array();
-                foreach ($this->rawdata as $attempt){
-                    if ($attempt->attemptuniqueid > 0){
-                        $attemptids[] = $attempt->attemptuniqueid;
-                    }
+        //get all the attempt ids we want to display on this page
+        //or to export for download.
+        if (!$this->is_downloading()) {
+            $attemptids = array();
+            foreach ($this->rawdata as $attempt){
+                if ($attempt->attemptuniqueid > 0){
+                    $attemptids[] = $attempt->attemptuniqueid;
                 }
-                $this->gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
+            }
+            $this->gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
+            if (has_capability('mod/quiz:grade', $this->context)){
                 $this->regradedqs = quiz_get_regraded_qs($attemptids);
-            } else {
-                $this->gradedstatesbyattempt = quiz_get_newgraded_states($this->sql, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
+            }
+        } else {
+            $this->gradedstatesbyattempt = quiz_get_newgraded_states($this->sql, true, 'qs.id, qs.grade, qs.event, qs.question, qs.attempt');
+            if (has_capability('mod/quiz:grade', $this->context)){
                 $this->regradedqs = quiz_get_regraded_qs($this->sql);
             }
         }

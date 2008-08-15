@@ -82,8 +82,8 @@ class quiz_overview_report extends quiz_default_report {
         $reporturl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $pageoptions);
         $qmsubselect = quiz_report_qm_filter_select($quiz);
 
-        
-        $mform = new mod_quiz_report_overview_settings($reporturl, array('qmsubselect'=> $qmsubselect, 'quiz'=>$quiz, 'currentgroup'=>$currentgroup));
+        $mform = new mod_quiz_report_overview_settings($reporturl, array('qmsubselect'=> $qmsubselect, 'quiz'=>$quiz,
+                                                             'currentgroup'=>$currentgroup, 'context'=>$this->context));
         if ($fromform = $mform->get_data()){
             $regradeall = false;
             $regradealldry = false;
@@ -113,21 +113,22 @@ class quiz_overview_report extends quiz_default_report {
                 $qmfilter = 0;
             }
             $regradefilter = optional_param('regradefilter', 0, PARAM_INT);
-            if ($attemptsmode === null){
-                //default
-                $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
-            } else if ($currentgroup){
-                //default for when a group is selected
-                if ($attemptsmode === null  || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL){
-                    $attemptsmode = QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH;
-                }
-            } else if (!$currentgroup && $course->id == SITEID) {
-                //force report on front page to show all, unless a group is selected.
-                $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
-            }
+
             $detailedmarks = get_user_preferences('quiz_report_overview_detailedmarks', 1);
             $pagesize = get_user_preferences('quiz_report_pagesize', 0);
         }
+        if ($currentgroup){
+            //default for when a group is selected
+            if ($attemptsmode === null  || $attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL){
+                $attemptsmode = QUIZ_REPORT_ATTEMPTS_STUDENTS_WITH;
+            }
+        } else if (!$currentgroup && $course->id == SITEID) {
+            //force report on front page to show all, unless a group is selected.
+            $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
+        } else if ($attemptsmode === null){
+            //default
+            $attemptsmode = QUIZ_REPORT_ATTEMPTS_ALL;
+        } 
         if (!$reviewoptions->scores) {
             $detailedmarks = 0;
         }
@@ -201,45 +202,8 @@ class quiz_overview_report extends quiz_default_report {
         
 
         
-        if (!$table->is_downloading()) { //do not print notices when downloading
-            $countregradeneeded = $this->count_regrade_all_needed($quiz, $groupstudents);
-            //regrade buttons
-            if ($currentgroup){
-                $a= new object();
-                $a->groupname = groups_get_group_name($currentgroup);
-                $a->coursestudents = $COURSE->students;
-                $a->countregradeneeded = $countregradeneeded;
-                $regradealldrydolabel = get_string('regradealldrydogroup', 'quiz_overview', $a);
-                $regradealldrylabel = get_string('regradealldrygroup', 'quiz_overview', $a);
-                $regradealllabel = get_string('regradeallgroup', 'quiz_overview', $a);
-            } else {
-                $regradealldrydolabel = get_string('regradealldrydo', 'quiz_overview', $countregradeneeded);
-                $regradealldrylabel = get_string('regradealldry', 'quiz_overview');
-                $regradealllabel = get_string('regradeall', 'quiz_overview');
-            }
-            if (has_capability('mod/quiz:grade', $this->context)){
-                echo '<div class="mdl-align">';
-                echo '<form action="'.$reporturl->out(true).'">';
-                echo '<div>';
-                echo $reporturl->hidden_params_out(array(), 0, $displayoptions);
-                echo '<input type="submit" name="regradeall" value="'.$regradealllabel.'"/>';
-                echo '<input type="submit" name="regradealldry" value="'.$regradealldrylabel.'"/>';
-                if ($countregradeneeded){
-                    echo '<input type="submit" name="regradealldrydo" value="'.$regradealldrydolabel.'"/>';
-                }
-                echo '</div>';
-                echo '</form>';
-                echo '</div>';
-            }
-        }
+
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)){
-            // Print information on the grading method and whether we are displaying
-            //
-            if (!$table->is_downloading()) { //do not print notices when downloading
-                if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)) {
-                    echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
-                }
-            }
     
     
             $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
@@ -314,7 +278,41 @@ class quiz_overview_report extends quiz_default_report {
             // Define table columns
             $columns = array();
             $headers = array();
-    
+            if (!$table->is_downloading()) { //do not print notices when downloading
+                //regrade buttons
+                if (has_capability('mod/quiz:grade', $this->context)){
+                    $countregradeneeded = $this->count_regrade_all_needed($quiz, $groupstudents);
+                    if ($currentgroup){
+                        $a= new object();
+                        $a->groupname = groups_get_group_name($currentgroup);
+                        $a->coursestudents = $COURSE->students;
+                        $a->countregradeneeded = $countregradeneeded;
+                        $regradealldrydolabel = get_string('regradealldrydogroup', 'quiz_overview', $a);
+                        $regradealldrylabel = get_string('regradealldrygroup', 'quiz_overview', $a);
+                        $regradealllabel = get_string('regradeallgroup', 'quiz_overview', $a);
+                    } else {
+                        $regradealldrydolabel = get_string('regradealldrydo', 'quiz_overview', $countregradeneeded);
+                        $regradealldrylabel = get_string('regradealldry', 'quiz_overview');
+                        $regradealllabel = get_string('regradeall', 'quiz_overview');
+                    }
+                    echo '<div class="mdl-align">';
+                    echo '<form action="'.$reporturl->out(true).'">';
+                    echo '<div>';
+                    echo $reporturl->hidden_params_out(array(), 0, $displayoptions);
+                    echo '<input type="submit" name="regradeall" value="'.$regradealllabel.'"/>';
+                    echo '<input type="submit" name="regradealldry" value="'.$regradealldrylabel.'"/>';
+                    if ($countregradeneeded){
+                        echo '<input type="submit" name="regradealldrydo" value="'.$regradealldrydolabel.'"/>';
+                    }
+                    echo '</div>';
+                    echo '</form>';
+                    echo '</div>';
+                }
+                // Print information on the grading method
+                if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)) {
+                    echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
+                }
+            }
     
             if (!$table->is_downloading() && $candelete) {
                 $columns[]= 'checkbox';
@@ -363,7 +361,7 @@ class quiz_overview_report extends quiz_default_report {
                     $headers[] = $header;
                  }
             }
-            if ($regradedattempts){
+            if (!$table->is_downloading() && has_capability('mod/quiz:grade', $this->context) && $regradedattempts){
                 $columns[] = 'regraded';
                 $headers[] = get_string('regrade', 'quiz_overview');
             }
@@ -403,11 +401,22 @@ class quiz_overview_report extends quiz_default_report {
             $table->out($pagesize, true);
         }
         if (!$table->is_downloading()) {
-            //should be quicker than a COUNT to test if there is at least one record :
+            if ($currentgroup && $groupstudents){
+                list($usql, $params) = $DB->get_in_or_equal($groupstudents);
+                $params[] = $quiz->id;
+                //should be quicker than a COUNT to test if there is at least one record :
+                if ($DB->get_records_select('quiz_grades', "userid $usql AND quiz = ?", $params, '', '*', 0, 1)){
+                     $imageurl = "{$CFG->wwwroot}/mod/quiz/report/overview/overviewgraph.php?id={$quiz->id}&amp;groupid=$currentgroup";
+                     $graphname = get_string('overviewreportgraphgroup', 'quiz_overview', groups_get_group_name($currentgroup));
+                     print_heading($graphname);
+                     echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.$graphname.'" /></div>';
+                }
+            }
             if ($DB->get_records('quiz_grades', array('quiz'=> $quiz->id), '', '*', 0, 1)){
+                 $graphname = get_string('overviewreportgraph', 'quiz_overview');
                  $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
-                 print_heading(get_string('overviewreportgraph', 'quiz_overview'));
-                 echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.get_string('overviewreportgraph', 'quiz_overview').'" /></div>';
+                 print_heading($graphname);
+                 echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.$graphname.'" /></div>';
             }
         }
         return true;
@@ -576,8 +585,8 @@ class quiz_overview_report extends quiz_default_report {
         //recalculate $attempt->sumgrade
         //already updated in regrade_question_in_attempt
         $sql = "UPDATE {quiz_attempts} SET sumgrades= " .
-                    "(SELECT SUM(qs.grade) FROM {question_sessions} qns, {question_states} qs " .
-                        "WHERE qns.newgraded = qs.id AND qns.attemptid = {quiz_attempts}.uniqueid ) WHERE ";
+                    "COALESCE((SELECT SUM(qs.grade) FROM {question_sessions} qns, {question_states} qs " .
+                        "WHERE qns.newgraded = qs.id AND qns.attemptid = {quiz_attempts}.uniqueid ), 0) WHERE ";
         $attemptsql='';
         if (!$attemptids){
             if ($userids){
@@ -601,9 +610,11 @@ class quiz_overview_report extends quiz_default_report {
         if ($attemptids){
             //make sure we fetch all attempts for users to calculate grade.
             //not just those that have changed.
-            $sql = "SELECT qa2.* FROM {quiz_attempts} qa2 WHERE qa2.userid IN (SELECT DISTINCT userid FROM {quiz_attempts} WHERE $attemptsql)";
+            $sql = "SELECT qa2.* FROM {quiz_attempts} qa2 WHERE " .
+                    "qa2.userid IN (SELECT DISTINCT userid FROM {quiz_attempts} WHERE $attemptsql) " .
+                    "AND qa2.timefinish > 0";
         } else {
-            $sql = "SELECT * FROM {quiz_attempts} WHERE $attemptsql";
+            $sql = "SELECT * FROM {quiz_attempts} WHERE $attemptsql AND timefinish > 0";
         }
         if ($attempts = $DB->get_records_sql($sql, $params)) {
             $attemptsbyuser = quiz_report_index_by_keys($attempts, array('userid', 'id'));
