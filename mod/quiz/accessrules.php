@@ -168,11 +168,7 @@ class quiz_access_manager {
         /// Make sure the timer starts just above zero. If $timeleft was <= 0, then
         /// this will just have the effect of causing the quiz to be submitted immediately.
             $timerstartvalue = max($timeleft, 1);
-            print_box_start('', 'quiz-timer-outer');
-            print_heading(get_string('timeleft', 'quiz'), '', 3);
-            echo '<p id="quiz-timer-display"></p>';
-            print_box_end();
-            echo "\n\n", '<script type="text/javascript">';
+            echo '<script type="text/javascript">';
             echo "quiz_timer.initialise('", get_string('timesup','quiz'), "', ", $timerstartvalue, ");";
             echo "</script>\n";
         }
