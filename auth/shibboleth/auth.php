@@ -129,7 +129,6 @@ class auth_plugin_shibboleth extends auth_plugin_base {
                 $moodleattributes[$field] = $configarray["field_map_$field"];
             }
         }
-        $moodleattributes['username'] = $configarray["user_attribute"];
 
         return $moodleattributes;
     }

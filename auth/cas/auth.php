@@ -496,7 +496,6 @@ if ( !is_object($PHPCAS_CLIENT) ) {
                 }
             }
         }
-        $moodleattributes['username'] = $this->config->user_attribute;
         return $moodleattributes;
     }
     /**
