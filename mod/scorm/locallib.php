@@ -462,7 +462,8 @@ function scorm_count_launchable($scormid,$organization='') {
         $sqlorganization = " AND organization=?";
         $params[] = $organization;
     }
-    return $DB->count_records_select('scorm_scoes',"scorm=$scormid $sqlorganization AND launch<>''", $params);
+    $params []= ''; // empty launch
+    return $DB->count_records_select('scorm_scoes',"scorm = ? $sqlorganization AND launch <> ?", $params);
 }
 
 function scorm_get_last_attempt($scormid, $userid) {
@@ -617,12 +618,13 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
           </div>
 <?php
 }
+
 function scorm_simple_play($scorm,$user) {
     global $DB;
 
    $result = false;
   
-   $scoes = $DB->get_records_select('scorm_scoes', 'scorm=? AND launch<>\'\'', array($scorm->id));
+   $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, ''));
    
    if ($scoes && (count($scoes) == 1)) {
        if ($scorm->skipview >= 1) {
