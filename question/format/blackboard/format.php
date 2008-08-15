@@ -14,7 +14,6 @@
  * @subpackage importexport
  */
 require_once ("$CFG->libdir/xmlize.php");
-require_once ("$CFG->libdir/tcpdf/html_entity_decode_php4.php");
 
 class qformat_blackboard extends qformat_default {
 
