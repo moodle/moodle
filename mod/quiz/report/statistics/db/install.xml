@@ -40,7 +40,7 @@
         <FIELD NAME="sd" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" DECIMALS="10" PREVIOUS="discriminativeefficiency" NEXT="facility"/>
         <FIELD NAME="facility" TYPE="number" LENGTH="15" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" DECIMALS="10" PREVIOUS="sd" NEXT="subquestions"/>
         <FIELD NAME="subquestions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="facility" NEXT="maxgrade"/>
-        <FIELD NAME="maxgrade" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="subquestions" NEXT="positions"/>
+        <FIELD NAME="maxgrade" TYPE="number" LENGTH="12" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" DECIMALS="7" PREVIOUS="subquestions" NEXT="positions"/>
         <FIELD NAME="positions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="positions in which this item appears. Only used for random questions." PREVIOUS="maxgrade"/>
       </FIELDS>
       <KEYS>

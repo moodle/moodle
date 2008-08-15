@@ -51,7 +51,16 @@ function xmldb_quizreport_statistics_upgrade($oldversion=0) {
         }
 
     }
-    
+
+    if ($result && $oldversion < 2008081500) {
+    /// Changing type of field maxgrade on table quiz_question_statistics to number
+        $table = new xmldb_table('quiz_question_statistics');
+        $field = new xmldb_field('maxgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'subquestions');
+
+    /// Launch change of type for field maxgrade
+        $dbman->change_field_type($table, $field);
+    }
+
     return $result;
 }
 

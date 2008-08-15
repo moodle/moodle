@@ -401,7 +401,7 @@ class question_shortanswer_qtype extends default_questiontype {
                 // Display the grading details from the last graded state
                 $grade = new stdClass;
                 $grade->cur = question_format_grade($cmoptions, $state->last_graded->grade);
-                $grade->max = $question->maxgrade;
+                $grade->max = question_format_grade($cmoptions, $question->maxgrade);
                 $grade->raw = question_format_grade($cmoptions, $state->last_graded->raw_grade);
 
                 // let student know wether the answer was correct

@@ -188,12 +188,12 @@
         $table->align = array('center', 'left');
         $table->size = array('', '');
         if ($markcolumn) {
-            $table->head[] = get_string('marks', 'quiz') . " / $quiz->sumgrades";
+            $table->head[] = get_string('marks', 'quiz') . ' / ' . quiz_format_grade($quiz, $quiz->sumgrades);
             $table->align[] = 'center';
             $table->size[] = '';
         }
         if ($gradecolumn) {
-            $table->head[] = get_string('grade') . " / $quiz->grade";
+            $table->head[] = get_string('grade') . ' / ' . quiz_format_grade($quiz, $quiz->grade);
             $table->align[] = 'center';
             $table->size[] = '';
         }

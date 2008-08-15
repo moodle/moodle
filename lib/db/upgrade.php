@@ -617,6 +617,56 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2008080701);
     }
 
+/// Changing the type of all the columns that the question bank uses to store grades to be NUMBER(12, 7).
+    if ($result && $oldversion < 2008081500) {
+        $table = new xmldb_table('question');
+        $field = new xmldb_field('defaultgrade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'generalfeedback');
+        $dbman->change_field_type($table, $field);
+        upgrade_main_savepoint($result, 2008081500);
+    }
+
+    if ($result && $oldversion < 2008081501) {
+        $table = new xmldb_table('question');
+        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'defaultgrade');
+        $dbman->change_field_type($table, $field);
+        upgrade_main_savepoint($result, 2008081501);
+    }
+
+    if ($result && $oldversion < 2008081502) {
+        $table = new xmldb_table('question_answers');
+        $field = new xmldb_field('fraction', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'answer');
+        $dbman->change_field_type($table, $field);
+        upgrade_main_savepoint($result, 2008081502);
+    }
+
+    if ($result && $oldversion < 2008081503) {
+        $table = new xmldb_table('question_sessions');
+        $field = new xmldb_field('sumpenalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'newgraded');
+        $dbman->change_field_type($table, $field);
+        upgrade_main_savepoint($result, 2008081503);
+    }
+
+    if ($result && $oldversion < 2008081504) {
+        $table = new xmldb_table('question_states');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'event');
+        $dbman->change_field_type($table, $field);
+        upgrade_main_savepoint($result, 2008081504);
+    }
+
+    if ($result && $oldversion < 2008081505) {
+        $table = new xmldb_table('question_states');
+        $field = new xmldb_field('raw_grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'grade');
+        $dbman->change_field_type($table, $field);
+        upgrade_main_savepoint($result, 2008081505);
+    }
+
+    if ($result && $oldversion < 2008081506) {
+        $table = new xmldb_table('question_states');
+        $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'raw_grade');
+        $dbman->change_field_type($table, $field);
+        upgrade_main_savepoint($result, 2008081506);
+    }
+
     return $result;
 }
 

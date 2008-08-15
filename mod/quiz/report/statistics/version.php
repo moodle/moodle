@@ -1,4 +1,4 @@
 <?php
-$plugin->version  = 2008072801;   // The (date) version of this module
+$plugin->version  = 2008081500;   // The (date) version of this module
 
 ?>

@@ -861,7 +861,7 @@ class default_questiontype {
                     $grade = '--/'; 
                 }
             }
-            $grade .= $question->maxgrade;
+            $grade .= question_format_grade($cmoptions, $question->maxgrade);
         }
 
         $comment = $state->manualcomment;
@@ -993,7 +993,7 @@ class default_questiontype {
                 // Display the grading details from the last graded state
                 $grade = new stdClass;
                 $grade->cur = question_format_grade($cmoptions, $state->last_graded->grade);
-                $grade->max = $question->maxgrade;
+                $grade->max = question_format_grade($cmoptions, $question->maxgrade);
                 $grade->raw = question_format_grade($cmoptions, $state->last_graded->raw_grade);
 
                 // let student know wether the answer was correct
@@ -1018,7 +1018,7 @@ class default_questiontype {
                         if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
                             // A penalty was applied so display it
                             echo ' ';
-                            print_string('gradingdetailspenalty', 'quiz', $state->last_graded->penalty);
+                            print_string('gradingdetailspenalty', 'quiz', question_format_grade($cmoptions, $state->last_graded->penalty));
                         } else {
                             /* No penalty was applied even though the answer was
                             not correct (eg. a syntax error) so tell the student

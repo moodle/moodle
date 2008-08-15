@@ -119,6 +119,56 @@ function xmldb_quiz_upgrade($oldversion=0) {
         upgrade_mod_savepoint($result, 2008081500, 'quiz');
     }
 
+    /// Changing the type of all the columns that store grades to be NUMBER(10, 5) or similar.
+    if ($result && $oldversion < 2008081501) {
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'questions');
+        $dbman->change_field_type($table, $field);
+        upgrade_mod_savepoint($result, 2008081501, 'quiz');
+    }
+
+    if ($result && $oldversion < 2008081502) {
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'sumgrades');
+        $dbman->change_field_type($table, $field);
+        upgrade_mod_savepoint($result, 2008081502, 'quiz');
+    }
+
+    if ($result && $oldversion < 2008081503) {
+        $table = new xmldb_table('quiz_attempts');
+        $field = new xmldb_field('sumgrades', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'attempt');
+        $dbman->change_field_type($table, $field);
+        upgrade_mod_savepoint($result, 2008081503, 'quiz');
+    }
+
+    if ($result && $oldversion < 2008081504) {
+        $table = new xmldb_table('quiz_feedback');
+        $field = new xmldb_field('mingrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'feedbacktext');
+        $dbman->change_field_type($table, $field);
+        upgrade_mod_savepoint($result, 2008081504, 'quiz');
+    }
+
+    if ($result && $oldversion < 2008081505) {
+        $table = new xmldb_table('quiz_feedback');
+        $field = new xmldb_field('maxgrade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'mingrade');
+        $dbman->change_field_type($table, $field);
+        upgrade_mod_savepoint($result, 2008081505, 'quiz');
+    }
+
+    if ($result && $oldversion < 2008081506) {
+        $table = new xmldb_table('quiz_grades');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '10, 5', null, null, null, null, null, null, 'userid');
+        $dbman->change_field_type($table, $field);
+        upgrade_mod_savepoint($result, 2008081506, 'quiz');
+    }
+
+    if ($result && $oldversion < 2008081507) {
+        $table = new xmldb_table('quiz_question_instances');
+        $field = new xmldb_field('grade', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'question');
+        $dbman->change_field_type($table, $field);
+        upgrade_mod_savepoint($result, 2008081507, 'quiz');
+    }
+
     return $result;
 }
 
