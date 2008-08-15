@@ -1,4 +1,6 @@
 <?php
+require_once($CFG->dirroot . '/mod/quiz/lib.php');
+
 define('QUIZ_REPORT_DEFAULT_PAGE_SIZE', 30);
 define('QUIZ_REPORT_DEFAULT_GRADING_PAGE_SIZE', 10);
 
