@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-require_once("$CFG->dirroot/question/format/qti2/qt_common.php");
+require_once("$CFG->dirroot/question/format/qti_two/qt_common.php");
 ////////////////////////////////////////////////////////////////////////////
 /// IMS QTI 2.0 FORMAT
 ///
@@ -680,7 +680,7 @@ function xml_entitize(&$collection) {
             }
         }
         $smarty = new Smarty;
-        $smarty->template_dir = "{$CFG->dirroot}/question/format/qti2/templates";
+        $smarty->template_dir = "{$CFG->dirroot}/question/format/qti_two/templates";
         $smarty->compile_dir  = "$path";
         return $smarty;
     }
