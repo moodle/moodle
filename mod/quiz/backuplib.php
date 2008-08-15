@@ -9,9 +9,9 @@
     //                        (CL,pk->id)
     //                            |
     //           -------------------------------------------------------------------
-    //           |               |                |                |               |
-    //           |          quiz_grades           |     quiz_question_versions     |
-    //           |      (UL,pk->id,fk->quiz)      |      (CL,pk->id,fk->quiz)      |
+    //           |               |                |                                |
+    //           |          quiz_grades           |                                |
+    //           |      (UL,pk->id,fk->quiz)      |                                |
     //           |                                |                                |
     //      quiz_attempts             quiz_question_instances                quiz_feedback
     //  (UL,pk->id,fk->quiz)       (CL,pk->id,fk->quiz,question)         (CL,pk->id,fk->quiz)
@@ -279,8 +279,6 @@
         $status = backup_quiz_question_instances($bf,$preferences,$quiz->id);
         //Now we print to xml quiz_feedback (Course Level)
         $status = backup_quiz_feedback($bf,$preferences,$quiz->id);
-        //Now we print to xml question_versions (Course Level)
-        $status = backup_quiz_question_versions($bf,$preferences,$quiz->id);
         //if we've selected to backup users info, then execute:
         //    - backup_quiz_grades
         //    - backup_quiz_attempts
@@ -376,37 +374,6 @@
         }
         return $status;
     }
-
-    //Backup quiz_question_versions contents (executed from quiz_backup_mods)
-    function backup_quiz_question_versions ($bf,$preferences,$quiz) {
-        global $DB;
-        $status = true;
-
-        $quiz_question_versions = $DB->get_records('quiz_question_versions', array('quiz' =>$quiz),'id');
-        //If there are question_versions
-        if ($quiz_question_versions) {
-            //Write start tag
-            $status = fwrite ($bf,start_tag("QUESTION_VERSIONS",4,true));
-            //Iterate over each question_version
-            foreach ($quiz_question_versions as $que_ver) {
-                //Start question version
-                $status = fwrite ($bf,start_tag("QUESTION_VERSION",5,true));
-                //Print question_version contents
-                fwrite ($bf,full_tag("ID",6,false,$que_ver->id));
-                fwrite ($bf,full_tag("OLDQUESTION",6,false,$que_ver->oldquestion));
-                fwrite ($bf,full_tag("NEWQUESTION",6,false,$que_ver->newquestion));
-                fwrite ($bf,full_tag("ORIGINALQUESTION",6,false,$que_ver->originalquestion));
-                fwrite ($bf,full_tag("USERID",6,false,$que_ver->userid));
-                fwrite ($bf,full_tag("TIMESTAMP",6,false,$que_ver->timestamp));
-                //End question version
-                $status = fwrite ($bf,end_tag("QUESTION_VERSION",5,true));
-            }
-            //Write end tag
-            $status = fwrite ($bf,end_tag("QUESTION_VERSIONS",4,true));
-        }
-        return $status;
-    }
-
 
     //Backup quiz_grades contents (executed from quiz_backup_mods)
     function backup_quiz_grades ($bf,$preferences,$quiz) {

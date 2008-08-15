@@ -448,8 +448,6 @@ function quiz_grade_item_delete($quiz) {
 
 function quiz_get_participants($quizid) {
 /// Returns an array of users who have data in a given quiz
-/// (users with records in quiz_attempts and quiz_question_versions)
-
     global $CFG, $DB;
 
     //Get users from attempts
@@ -459,21 +457,8 @@ function quiz_get_participants($quizid) {
                                     WHERE a.quiz = ? and
                                           u.id = a.userid", array($quizid));
 
-    //Get users from question_versions
-    $us_versions = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
-                                    FROM {user} u,
-                                         {quiz_question_versions} v
-                                    WHERE v.quiz = ? and
-                                          u.id = v.userid", array($quizid));
-
-    //Add us_versions to us_attempts
-    if ($us_versions) {
-        foreach ($us_versions as $us_version) {
-            $us_attempts[$us_version->id] = $us_version;
-        }
-    }
     //Return us_attempts array (it contains an array of unique users)
-    return ($us_attempts);
+    return $us_attempts;
 
 }
 

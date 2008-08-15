@@ -80,7 +80,7 @@
         <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="quiz_question_instances" COMMENT="The grade for a question in a quiz" PREVIOUS="quiz_grades" NEXT="quiz_question_versions">
+    <TABLE NAME="quiz_question_instances" COMMENT="The grade for a question in a quiz" PREVIOUS="quiz_grades" NEXT="quiz_feedback">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="quiz"/>
         <FIELD NAME="quiz" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="question"/>
@@ -93,25 +93,7 @@
         <KEY NAME="question" TYPE="foreign" FIELDS="question" REFTABLE="question" REFFIELDS="id" PREVIOUS="quiz"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="quiz_question_versions" COMMENT="quiz_question_versions table retrofitted from MySQL" PREVIOUS="quiz_question_instances" NEXT="quiz_feedback">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="quiz"/>
-        <FIELD NAME="quiz" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="oldquestion"/>
-        <FIELD NAME="oldquestion" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="quiz" NEXT="newquestion"/>
-        <FIELD NAME="newquestion" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="oldquestion" NEXT="originalquestion"/>
-        <FIELD NAME="originalquestion" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="newquestion" NEXT="userid"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="originalquestion" NEXT="timestamp"/>
-        <FIELD NAME="timestamp" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="userid"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="quiz"/>
-        <KEY NAME="quiz" TYPE="foreign" FIELDS="quiz" REFTABLE="quiz" REFFIELDS="id" PREVIOUS="primary" NEXT="oldquestion"/>
-        <KEY NAME="oldquestion" TYPE="foreign" FIELDS="oldquestion" REFTABLE="question" REFFIELDS="id" PREVIOUS="quiz" NEXT="newquestion"/>
-        <KEY NAME="newquestion" TYPE="foreign" FIELDS="newquestion" REFTABLE="question" REFFIELDS="id" PREVIOUS="oldquestion" NEXT="originalquestion"/>
-        <KEY NAME="originalquestion" TYPE="foreign" FIELDS="originalquestion" REFTABLE="question" REFFIELDS="id" PREVIOUS="newquestion"/>
-      </KEYS>
-    </TABLE>
-    <TABLE NAME="quiz_feedback" COMMENT="Feedback given to students based on their overall score on the test" PREVIOUS="quiz_question_versions" NEXT="quiz_report">
+    <TABLE NAME="quiz_feedback" COMMENT="Feedback given to students based on their overall score on the test" PREVIOUS="quiz_grades" NEXT="quiz_report">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="quizid"/>
         <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="feedbacktext"/>

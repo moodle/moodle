@@ -108,6 +108,17 @@ function xmldb_quiz_upgrade($oldversion=0) {
         upgrade_mod_savepoint($result, 2008072900, 'quiz');
     }
 
+    if ($result && $oldversion < 2008081500) {
+    /// Define table quiz_question_versions to be dropped
+        $table = new xmldb_table('quiz_question_versions');
+
+    /// Launch drop table for quiz_question_versions
+        $dbman->drop_table($table);
+
+    /// quiz savepoint reached
+        upgrade_mod_savepoint($result, 2008081500, 'quiz');
+    }
+
     return $result;
 }
 
