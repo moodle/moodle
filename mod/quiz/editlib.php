@@ -280,7 +280,7 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
         if ($question->qtype == 'description') {
             echo "<input type=\"hidden\" name=\"q$qnum\" value=\"0\" /> \n";
         } else {
-            echo '<input type="text" name="q'.$qnum.'" size="2" value="'.$quiz->grades[$qnum].
+            echo '<input type="text" name="q'.$qnum.'" size="' . ($quiz->decimalpoints + 2) . '" value="'.(0 + $quiz->grades[$qnum]).
              '" tabindex="'.($lastindex+$qno).'" />';
         }
         echo '</td><td align="center">';
@@ -306,8 +306,8 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
     print_string('maximumgrade');
     echo ": </td>";
     echo "<td align=\"left\">\n";
-    echo '<input type="text" name="maxgrade" size="2" tabindex="'.($qno+1)
-     .'" value="'.$quiz->grade.'" />';
+    echo '<input type="text" name="maxgrade" size="' . ($quiz->decimalpoints + 2) . '" tabindex="'.($qno+1)
+     .'" value="'.quiz_format_grade($quiz, $quiz->grade).'" />';
     echo '</td><td align="left">';
     helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
     echo "</td></tr></table>\n";
