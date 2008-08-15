@@ -199,15 +199,15 @@ abstract class repository {
         $params = (array)$params;
         require_once($CFG->dirroot . '/repository/'. $type . '/repository.class.php');
         $classname = 'repository_' . $type;
-        if (self::has_admin_config()) {
-            $configs = self::get_option_names();
+        $record = new stdclass;
+        if (call_user_func($classname . '::has_admin_config')) {
+            $configs = call_user_func($classname . '::get_option_names');
             $options = array();
             foreach ($configs as $config) {
                 $options[$config] = $params[$config];
             }
-            $record->data1     = serialize($options);
+            $record->data1 = serialize($options);
         }
-        $record = new stdclass;
         $record->repositoryname = $params['name'];
         $record->repositorytype = $type;
         $record->timecreated  = time();
