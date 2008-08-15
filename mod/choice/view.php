@@ -41,7 +41,7 @@
         $timenow = time();
         if (has_capability('mod/choice:deleteresponses', $context)) {
             if ($action == 'delete') { //some responses need to be deleted     
-                choice_delete_responses($attemptids); //delete responses.
+                choice_delete_responses($attemptids, $choice->id); //delete responses.
                 redirect("view.php?id=$cm->id");
             }
         }
