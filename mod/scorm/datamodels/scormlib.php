@@ -275,7 +275,11 @@ function scorm_get_manifest($blocks,$scoes) {
                                                 $mapinfos = array();
                                                 foreach ($objective['children'] as $objectiveparam) {
                                                     if ($objectiveparam['name']=='IMSSS:MINNORMALIZEDMEASURE') {
-                                                        $objectivedata->minnormalizedmeasure = $objectiveparam['tagData'];
+                                                        if (isset($objectiveparam['tagData'])) {
+                                                        	$objectivedata->minnormalizedmeasure = $objectiveparam['tagData'];
+                                                        } else {
+                                                            $objectivedata->minnormalizedmeasure = 0;
+                                                        }
                                                     }
                                                     if ($objectiveparam['name']=='IMSSS:MAPINFO') {
                                                         $mapinfo = new stdClass();
