@@ -400,7 +400,7 @@ class quiz_overview_report extends quiz_default_report {
     
             $table->out($pagesize, true);
         }
-        if (!$table->is_downloading()) {
+        if (!$table->is_downloading() && $showgrades) {
             if ($currentgroup && $groupstudents){
                 list($usql, $params) = $DB->get_in_or_equal($groupstudents);
                 $params[] = $quiz->id;
