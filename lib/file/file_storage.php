@@ -353,10 +353,15 @@ class file_storage {
     public function create_file_from_storedfile($file_record, $fid) {
         global $DB;
 
+        if ($fid instanceof stored_file) {
+            $fid = $fid->get_id();
+        }
+
         $file_record = (array)$file_record; // we support arrays too
         unset($file_record['id']);
         unset($file_record['filesize']);
         unset($file_record['contenthash']);
+        unset($file_record['pathnamehash']);
 
         $now = time();
 
