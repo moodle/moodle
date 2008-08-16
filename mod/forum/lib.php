@@ -3961,7 +3961,7 @@ function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
 function forum_add_attachment($post, $cm, $mform, &$message, $remove_previous=true) {
     global $CFG, $DB, $USER;
 
-    //TODO: add message when overriding
+    //TODO: add message when overwriting
 
     $filename = $mform->get_new_filename('attachment');
     $filearea = 'forum_attachment';
