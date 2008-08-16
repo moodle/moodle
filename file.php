@@ -76,7 +76,7 @@
             $fullpath .= '/';
         }
         if (!$file = $fs->get_file_by_hash(sha1($fullpath.'/.'))) {
-            not_found();
+            send_file_not_found();
         }
     }
     // do not serve dirs
@@ -84,7 +84,7 @@
         if (!$file = $fs->get_file_by_hash(sha1($fullpath.'index.html'))) {
             if (!$file = $fs->get_file_by_hash(sha1($fullpath.'index.htm'))) {
                 if (!$file = $fs->get_file_by_hash(sha1($fullpath.'Default.htm'))) {
-                    not_found();
+                    send_file_not_found();
                 }
             }
         }
@@ -96,9 +96,4 @@
     session_write_close(); // unlock session during fileserving
     send_stored_file($file, $lifetime, $CFG->filteruploadedfiles, $forcedownload);
 
-    function not_found() {
-        global $CFG, $COURSE;
-        header('HTTP/1.0 404 not found');
-        print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$COURSE->id); //this is not displayed on IIS??
-    }
 

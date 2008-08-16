@@ -43,13 +43,13 @@
                 }
                 if ($CFG->bloglevel == BLOG_USER_LEVEL) {
                     if ($USER->id != $entry->userid) {
-                        not_found();
+                        send_file_not_found();
                     }
                 }
             }
             $entryid = (int)array_shift($args);
             if (!$entry = $DB->get_record('post', array('module'=>'blog', 'id'=>$entryid))) {
-                not_found();
+                send_file_not_found();
             }
             if ('publishstate' === 'public') {
                 if ($CFG->forcelogin) {
@@ -62,7 +62,7 @@
             } else if ('publishstate' === 'draft') {
                 require_login();
                 if ($USER->id != $entry->userid) {
-                    not_found();
+                    send_file_not_found();
                 }
             }
 
@@ -72,23 +72,23 @@
             $fullpath = $context->id.'blog'.$entryid.$relativepath;
 
             if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-                not_found();
+                send_file_not_found();
             }
 
             send_stored_file($file, 10*60, 0, true); // download MUST be forced - security!
 
         } else {
-            not_found();
+            send_file_not_found();
         }
 
 
     } else if ($context->contextlevel == CONTEXT_USER) {
-        not_found();
+        send_file_not_found();
 
 
     } else if ($context->contextlevel == CONTEXT_COURSECAT) {
         if ($filearea !== 'intro') {
-            not_found();
+            send_file_not_found();
         }
 
         if ($CFG->forcelogin) {
@@ -100,7 +100,7 @@
         $fullpath = $context->id.'intro0'.$relativepath;
 
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->get_filename() == '.') {
-            not_found();
+            send_file_not_found();
         }
 
         session_write_close(); // unlock session during fileserving
@@ -109,7 +109,7 @@
 
     } else if ($context->contextlevel == CONTEXT_COURSE) {
         if ($filearea !== 'intro' and $filearea !== 'backup') {
-            not_found();
+            send_file_not_found();
         }
 
         if (!$course = $DB->get_record('course', array('id'=>$context->instanceid))) {
@@ -129,7 +129,7 @@
         $fullpath = $context->id.'intro0'.$relativepath;
 
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-            not_found();
+            send_file_not_found();
         }
 
         session_write_close(); // unlock session during fileserving
@@ -139,15 +139,15 @@
     } else if ($context->contextlevel == CONTEXT_MODULE) {
         
         if (!$coursecontext = get_context_instance_by_id(get_parent_contextid($context))) {
-            not_found();
+            send_file_not_found();
         }
 
         if (!$course = $DB->get_record('course', array('id'=>$coursecontext->instanceid))) {
-            not_found();
+            send_file_not_found();
         }
         $modinfo = get_fast_modinfo($course);
         if (empty($modinfo->cms[$context->instanceid])) {
-            not_found();
+            send_file_not_found();
         }
 
         $cminfo = $modinfo->cms[$context->instanceid];
@@ -162,20 +162,13 @@
                 }
             }
         }
-        not_found();
+        send_file_not_found();
 
     } else if ($context->contextlevel == CONTEXT_BLOCK) {
         //not supported yet
-        not_found();
+        send_file_not_found();
 
 
     } else {
-        not_found();
-    }
-
-
-    function not_found() {
-        global $CFG;
-        header('HTTP/1.0 404 not found');
-        print_error('filenotfound', 'error', $CFG->wwwroot.'/'); //this is not displayed on IIS??
+        send_file_not_found();
     }

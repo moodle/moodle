@@ -562,6 +562,16 @@ function get_mimetype_description($mimetype,$capitalise=false) {
 }
 
 /**
+ * Reprot file is not found or not accessible
+ * @return does not return, terminates script
+ */
+function send_file_not_found() {
+    global $CFG, $COURSE;
+    header('HTTP/1.0 404 not found');
+    print_error('filenotfound', 'error', $CFG->wwwroot.'/course/view.php?id='.$COURSE->id); //this is not displayed on IIS??
+}
+
+/**
  * Handles the sending of temporary file to user, download is forced.
  * File is deleted after abort or succesful sending.
  * @param string $path path to file, preferably from moodledata/temp/something; or content of file itself
