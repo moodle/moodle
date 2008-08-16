@@ -51,9 +51,6 @@ function xmldb_assignment_upgrade($oldversion) {
 
         $count = $DB->count_records_sql("SELECT 'x' $sqlfrom"); 
 
-        $lastcourse     = 0;
-        $lastassignment = 0;
-
         if ($rs = $DB->get_recordset_sql("SELECT s.id, s.userid, s.teacher, s.assignment, a.course, cm.id AS cmid $sqlfrom")) {
 
             $pbar = new progress_bar('migrateassignmentfiles', 500, true);
@@ -126,31 +123,14 @@ function xmldb_assignment_upgrade($oldversion) {
                     @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment/$submission->userid/responses");
                 }
 
+                // remove dirs if empty
                 @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment/$submission->userid");
-
-                if ($lastassignment and $lastassignment != $submission->assignment) {
-                    @rmdir("$CFG->dataroot/$lastcourse/$CFG->moddata/assignment/$lastassignment");
-                }
-
-                if ($lastcourse and $lastcourse != $submission->course) {
-                    @rmdir("$CFG->dataroot/$lastcourse/$CFG->moddata/assignment");
-                    @rmdir("$CFG->dataroot/$lastcourse/$CFG->moddata");
-                    @rmdir("$CFG->dataroot/$lastcourse");
-                }
-                $lastsubmission = $submission->assignment;
-                $lastcourse     = $submission->course;
-
+                @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment");
+                @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment");
             }
             $DB->set_debug($olddebug); // reset debug level
             $rs->close();
 
-            // cleanup after the last submission
-            if ($lastcourse) {
-                @rmdir("$CFG->dataroot/$lastcourse/$CFG->moddata/assignment/$lastassignment");
-                @rmdir("$CFG->dataroot/$lastcourse/$CFG->moddata/assignment");
-                @rmdir("$CFG->dataroot/$lastcourse/$CFG->moddata");
-                @rmdir("$CFG->dataroot/$lastcourse");
-            }
         }
 
         upgrade_mod_savepoint($result, 2008073000, 'assignment');
