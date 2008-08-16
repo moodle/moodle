@@ -95,6 +95,78 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008072800, 'forum');
     }
 
+    if ($result && $oldversion < 2008081605) {
+
+        /////////////////////////////////////
+        /// new file storage upgrade code ///
+        /////////////////////////////////////
+
+        $fs = get_file_storage();
+
+        $empty = $DB->sql_empty(); // silly oracle empty string handling workaround
+
+        $sqlfrom = "FROM {forum_posts} p
+                    JOIN {forum_discussions} d ON d.id = p.discussion
+                    JOIN {forum} f ON f.id = d.forum
+                    JOIN {modules} m ON m.name = 'forum'
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = f.id)
+                   WHERE p.attachment <> '$empty' AND p.attachment <> '1'
+                ORDER BY f.course, f.id, d.id";
+
+        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
+
+        if ($rs = $DB->get_recordset_sql("SELECT p.*, d.forum, f.course, cm.id AS cmid $sqlfrom")) {
+
+            $pbar = new progress_bar('migrateforumfiles', 500, true);
+
+            $olddebug = $DB->get_debug();
+            $DB->set_debug(false); // lower debug level, there might be very many files
+            $i = 0;
+            foreach ($rs as $post) {
+                $i++;
+                upgrade_set_timeout(60); // set up timeout, may also abort execution
+                $pbar->update($i, $count, "Migrating forum posts - $i/$count.");
+
+                $filepath = "$CFG->dataroot/$post->course/$CFG->moddata/forum/$post->forum/$post->id/$post->attachment";
+                if (!is_readable($filepath)) {
+                    //file missing??
+                    notify("File not readable, skipping: ".$filepath);
+                    $post->attachment = '';
+                    $DB->update_record('forum_posts', $post);
+                    continue;
+                }
+                $context = get_context_instance(CONTEXT_MODULE, $post->cmid);
+
+                $filearea = 'forum_attachment';
+                $filename = clean_param($post->attachment, PARAM_FILE);
+                if ($filename === '') {
+                    notify("Unsupported post filename, skipping: ".$filepath);
+                    $post->attachment = '';
+                    $DB->update_record('forum_posts', $post);
+                    continue;
+                }
+                if (!$fs->file_exists($context->id, $filearea, $post->id, '/', $filename)) {
+                    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$post->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$post->userid);
+                    if ($fs->create_file_from_pathname($file_record, $filepath)) {
+                        $post->attachment = '1';
+                        if ($DB->update_record('forum_posts', $post)) {
+                            unlink($filepath);
+                        }
+                    }
+                }
+
+                // remove dirs if empty
+                @rmdir("$CFG->dataroot/$post->course/$CFG->moddata/forum/$post->forum/$post->id");
+                @rmdir("$CFG->dataroot/$post->course/$CFG->moddata/forum/$post->forum");
+                @rmdir("$CFG->dataroot/$post->course/$CFG->moddata/forum");
+            }
+            $DB->set_debug($olddebug); // reset debug level
+            $rs->close();
+        }
+
+        upgrade_mod_savepoint($result, 2008081605, 'forum');
+    }
+
 
     return $result;
 }

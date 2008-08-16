@@ -454,9 +454,6 @@
             $errordestination = $SESSION->fromurl;
         }
 
-        // TODO add attachment processing
-        //$fromform->attachment = isset($_FILES['attachment']) ? $_FILES['attachment'] : NULL;
-
         trusttext_after_edit($fromform->message, $modcontext);
 
         if ($fromform->edit) {           // Updating a post
@@ -483,7 +480,7 @@
 
             $updatepost = $fromform; //realpost
             $updatepost->forum = $forum->id;
-            if (!forum_update_post($updatepost, $message)) {
+            if (!forum_update_post($updatepost, $mform_post, $message)) {
                 print_error("couldnotupdate", "forum", $errordestination);
             }
 
@@ -526,7 +523,7 @@
             $message = '';
             $addpost=$fromform;
             $addpost->forum=$forum->id;
-            if ($fromform->id = forum_add_new_post($addpost, $message)) {
+            if ($fromform->id = forum_add_new_post($addpost, $mform_post, $message)) {
 
                 $timemessage = 2;
                 if (!empty($message)) { // if we're printing stuff about the file upload
@@ -591,7 +588,7 @@
             $discussion->timeend = $fromform->timeend;
 
             $message = '';
-            if ($discussion->id = forum_add_discussion($discussion, $message)) {
+            if ($discussion->id = forum_add_discussion($discussion, $mform_post, $message)) {
 
                 add_to_log($course->id, "forum", "add discussion",
                         "discuss.php?d=$discussion->id", "$discussion->id", $cm->id);

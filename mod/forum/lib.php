@@ -526,8 +526,8 @@ function forum_cron() {
 
 
                 $postsubject = "$course->shortname: ".format_string($post->subject,true);
-                $posttext = forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto);
-                $posthtml = forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto);
+                $posttext = forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
+                $posthtml = forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto);
 
                 // Send the post now!
 
@@ -807,8 +807,8 @@ function forum_cron() {
 
                         } else {
                             // The full treatment
-                            $posttext .= forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, true);
-                            $posthtml .= forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
+                            $posttext .= forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, true);
+                            $posthtml .= forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
 
                         // Create an array of postid's for this user to mark as read.
                             if (!$CFG->forum_usermarksread) {
@@ -893,13 +893,10 @@ function forum_cron() {
  * @param boolean $bare
  * @return string The email body in plain text format.
  */
-function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
+function forum_make_mail_text($course, $cm, $forum, $discussion, $post, $userfrom, $userto, $bare = false) {
     global $CFG, $USER;
 
     if (!isset($userto->viewfullnames[$forum->id])) {
-        if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-            error('Course Module ID was incorrect');
-        }
         $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
         $viewfullnames = has_capability('moodle/site:viewfullnames', $modcontext, $userto->id);
     } else {
@@ -942,11 +939,8 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
     $posttext .= "---------------------------------------------------------------------\n";
     $posttext .= format_text_email(trusttext_strip($post->message), $post->format);
     $posttext .= "\n\n";
-    if ($post->attachment) {
-        $post->course = $course->id;
-        $post->forum = $forum->id;
-        $posttext .= forum_print_attachments($post, "text");
-    }
+    $posttext .= forum_print_attachments($post, $cm, "text");
+
     if (!$bare && $canreply) {
         $posttext .= "---------------------------------------------------------------------\n";
         $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
@@ -972,7 +966,7 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
  * @param object $userto
  * @return string The email text in HTML format
  */
-function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto) {
+function forum_make_mail_html($course, $cm, $forum, $discussion, $post, $userfrom, $userto) {
     global $CFG;
 
     if ($userto->mailformat != 1) {  // Needs to be HTML
@@ -1005,7 +999,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         $posthtml .= ' &raquo; <a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'">'.
                      format_string($discussion->name,true).'</a></div>';
     }
-    $posthtml .= forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
+    $posthtml .= forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto, false, $canreply, true, false);
 
     if ($canunsubscribe) {
         $posthtml .= '<hr /><div align="center" class="unsubscribelink">
@@ -2759,7 +2753,7 @@ function forum_get_course_forum($courseid, $type) {
 * Given the data about a posting, builds up the HTML to display it and
 * returns the HTML in a string.  This is designed for sending via HTML email.
 */
-function forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $userto,
+function forum_make_mail_post($course, $cm, $forum, $discussion, $post, $userfrom, $userto,
                               $ownpost=false, $reply=false, $link=false, $rate=false, $footer="") {
 
     global $CFG;
@@ -2819,11 +2813,11 @@ function forum_make_mail_post($course, $forum, $discussion, $post, $userfrom, $u
 
     $output .= '</td><td class="content">';
 
-    if ($post->attachment) {
-        $post->course = $course->id;
+    $attachments = forum_print_attachments($post, $cm, 'html');
+    if ($attachments !== '') {
         $output .= '<div class="attachments">';
-        $output .= forum_print_attachments($post, 'html');
-        $output .= "</div>";
+        $output .= $attachments;
+        $output .= '</div>';
     }
 
     $output .= $formattedtext;
@@ -3030,14 +3024,13 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
 
     echo '</td><td class="content">'."\n";
 
-    if ($post->attachment) {
-        echo '<div class="attachments">';
-        $attachedimages = forum_print_attachments($post);
-        echo '</div>';
-    } else {
-        $attachedimages = '';
-    }
+    list($attachments, $attachedimages) = forum_print_attachments($post, $cm, 'separateimages');
 
+    if ($attachments !== '') {
+        echo '<div class="attachments">';
+        echo $attachments;
+        echo '</div>';
+    }
 
     $options = new object();
     $options->para      = false;
@@ -3772,126 +3765,117 @@ function forum_go_back_to($default) {
 }
 
 /**
- * Creates a directory file name, suitable for make_upload_directory()
- */
-function forum_file_area_name($post) {
-    global $CFG, $DB;
-
-    if (!isset($post->forum) or !isset($post->course)) {
-        debugging('missing forum or course', DEBUG_DEVELOPER);
-        if (!$discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion))) {
-            return false;
-        }
-        if (!$forum = $DB->get_record('forum', array('id' => $discussion->forum))) {
-            return false;
-        }
-        $forumid  = $forum->id;
-        $courseid = $forum->course;
-    } else {
-        $forumid  = $post->forum;
-        $courseid = $post->course;
-    }
-
-    return "$courseid/$CFG->moddata/forum/$forumid/$post->id";
-}
-
-/**
- *
- */
-function forum_file_area($post) {
-    return make_upload_directory( forum_file_area_name($post) );
-}
-
-/**
- *
- */
-function forum_delete_old_attachments($post, $exception="") {
-
-/**
- * Deletes all the user files in the attachments area for a post
- * EXCEPT for any file named $exception
- */
-    if ($basedir = forum_file_area($post)) {
-        if ($files = get_directory_list($basedir)) {
-            foreach ($files as $file) {
-                if ($file != $exception) {
-                    unlink("$basedir/$file");
-                    notify("Existing file '$file' has been deleted!");
-                }
-            }
-        }
-        if (!$exception) {  // Delete directory as well, if empty
-            rmdir("$basedir");
-        }
-    }
-}
-
-/**
- * Given a discussion object that is being moved to forumid,
+ * Given a discussion object that is being moved to $forumto,
  * this function checks all posts in that discussion
  * for attachments, and if any are found, these are
  * moved to the new forum directory.
+ *
+ * @param $discussion object
+ * @param int $forumfrom source forum id
+ * @param int $forumto target forum id
+ * @return bool success
  */
-function forum_move_attachments($discussion, $forumid) {
+function forum_move_attachments($discussion, $forumfrom, $forumto) {
+    global $DB;
 
-    global $CFG, $DB;
+    $fs = get_file_storage();
 
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
+    $newcm = get_coursemodule_from_instance('forum', $forumto);
+    $oldcm = get_coursemodule_from_instance('forum', $forumfrom);
 
-    $return = true;
+    $newcontext = get_context_instance(CONTEXT_MODULE, $newcm->id);
+    $oldcontext = get_context_instance(CONTEXT_MODULE, $oldcm->id);
 
-    if ($posts = $DB->get_records_select("forum_posts", "discussion = ? AND attachment <> ''", array($discussion->id))) {
-        foreach ($posts as $oldpost) {
-            $oldpost->course = $discussion->course;
-            $oldpost->forum = $discussion->forum;
-            $oldpostdir = "$CFG->dataroot/".forum_file_area_name($oldpost);
-            if (is_dir($oldpostdir)) {
-                $newpost = $oldpost;
-                $newpost->forum = $forumid;
-                $newpostdir = forum_file_area_name($newpost);
-                // take off the last directory because otherwise we're renaming to a directory that already exists
-                // and this is unhappy in certain situations, eg over an nfs mount and potentially on windows too.
-                make_upload_directory(substr($newpostdir,0,strrpos($newpostdir,'/')));
-                $newpostdir = $CFG->dataroot.'/'.forum_file_area_name($newpost);
-                $files = get_directory_list($oldpostdir); // get it before we rename it.
-                if (! @rename($oldpostdir, $newpostdir)) {
-                    $return = false;
+    // loop through all posts, better not use attachment flag ;-)
+    if ($posts = $DB->get_records('forum_posts', array('discussion'=>$discussion->id))) {
+        foreach ($posts as $post) {
+            if ($oldfiles = $fs->get_area_files($oldcontext->id, 'forum_attachment', $post->id, "id", false)) {
+                foreach ($oldfiles as $oldfile) {
+                    $file_record = new object();
+                    $file_record->contextid = $newcontext->id;
+                    $fs->create_file_from_storedfile($file_record, $oldfile);
                 }
-                foreach ($files as $file) {
-                    clam_change_log($oldpostdir.'/'.$file,$newpostdir.'/'.$file);
+                $fs->delete_area_files($oldcontext->id, 'forum_attachment', $post->id);
+                if ($post->attachment != '1') {
+                    //weird - let's fix it
+                    $post->attachment = '1';
+                    $DB->update_record('forum_posts', $post);
+                }
+            } else {
+                if ($post->attachment != '') {
+                    //weird - let's fix it
+                    $post->attachment = '';
+                    $DB->update_record('forum_posts', $post);
                 }
             }
         }
     }
-    return $return;
+
+    return true;
 }
 
 /**
- * if return=html, then return a html string.
- * if return=text, then return a text-only string.
- * otherwise, print HTML for non-images, and return image HTML
+ * Returns attachments as formated text/html optionally with separate images
+ * @param object $post
+ * @param object $cm
+ * @param string type - html/text/separateimages
+ * @return mixed string or array of (html text withouth images and image HTML)
  */
-function forum_print_attachments($post, $return=NULL) {
+function forum_print_attachments($post, $cm, $type) {
+    global $CFG, $DB;
 
-    global $CFG;
+    if (empty($post->attachment)) {
+        return $type !== 'separateimages' ? '' : array('', '');
+    }
 
-    $filearea = forum_file_area_name($post);
+    if (!in_array($type, array('separateimages', 'html', 'text'))) {
+        return $type !== 'separateimages' ? '' : array('', '');
+    }
 
-    $imagereturn = "";
-    $output = "";
+    if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        return $type !== 'separateimages' ? '' : array('', '');
+    }
+    $strattachment = get_string('attachment', 'forum');
 
-    if ($basedir = forum_file_area($post)) {
-        if ($files = get_directory_list($basedir)) {
-            $strattachment = get_string("attachment", "forum");
-            foreach ($files as $file) {
-                $icon = mimeinfo("icon", $file);
-                $type = mimeinfo("type", $file);
-                $ffurl = get_file_url("$filearea/$file");
-                $image = "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"\" />";
+    $fs = get_file_storage();
+    $browser = get_file_browser();
 
-                if ($return == "html") {
-                    $output .= "<a href=\"$ffurl\">$image</a> ";
-                    $output .= "<a href=\"$ffurl\">$file</a>";
+    $imagereturn = '';
+    $output = '';
+
+
+    if ($files = $fs->get_area_files($context->id, 'forum_attachment', $post->id, "timemodified", false)) {
+        foreach ($files as $file) {
+            $filename = $file->get_filename();
+            $mimetype = $file->get_mimetype();
+            $icon = mimeinfo_from_type('icon', $mimetype);
+            $iconimage = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />';
+            $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/forum_attachment/'.$post->id.'/'.$filename);
+
+            if ($type == 'html') {
+                $output .= "<a href=\"$path\">$iconimage</a> ";
+                $output .= "<a href=\"$path\">$file</a>";
+                if (true) { // 'todo penny replace this with a capability check
+                    require_once($CFG->libdir . '/portfoliolib.php');
+                    $p = array(
+                        'postid' => $post->id,
+                        'attachment' => 1,
+                    );
+                    // @todo penny check these arguments when uncommenting
+                    //$output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_FORM, null, true);
+                }
+                $output .= "<br />";
+
+            } else if ($type == 'text') {
+                $output .= "$strattachment ".s($filename).":\n$path\n";
+
+            } else { //'returnimages'
+                if (in_array($mimetype, array('image/gif', 'image/jpeg', 'image/png'))) {
+                    // Image attachments don't get printed as links
+                    $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
+                } else {
+                    $output .= "<a href=\"$path\">$iconimage</a> ";
+                    $output .= filter_text("<a href=\"$path\">".s($filename)."</a>");
                     if (true) { // 'todo penny replace this with a capability check
                         require_once($CFG->libdir . '/portfoliolib.php');
                         $p = array(
@@ -3901,95 +3885,131 @@ function forum_print_attachments($post, $return=NULL) {
                         // @todo penny check these arguments when uncommenting
                         //$output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_FORM, null, true);
                     }
-                    $output .= "<br />";
-
-                } else if ($return == "text") {
-                    $output .= "$strattachment $file:\n$ffurl\n";
-
-                } else {
-                    if (in_array($type, array('image/gif', 'image/jpeg', 'image/png'))) {    // Image attachments don't get printed as links
-                        $imagereturn .= "<br /><img src=\"$ffurl\" alt=\"\" />";
-                    } else {
-                        echo "<a href=\"$ffurl\">$image</a> ";
-                        echo filter_text("<a href=\"$ffurl\">$file</a>");
-                        if (true) { // 'todo penny replace this with a capability check
-                            require_once($CFG->libdir . '/portfoliolib.php');
-                            $p = array(
-                                'postid' => $post->id,
-                                'attachment' => 1,
-                            );
-                            // @todo penny check these arguments when uncommenting
-                            //portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_FORM);
-                        }
-                        echo '<br />';
-                    }
+                    $output .= '<br />';
                 }
             }
         }
     }
 
-    if ($return) {
+    if ($type !== 'separateimages') {
         return $output;
+
+    } else {
+        return array($output, $imagereturn);
+    }
+}
+
+/**
+ * Serves the forum attachments. Implements needed access control ;-)
+ */
+function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
+    global $CFG, $DB;
+
+    if ($filearea !== 'forum_attachment') {
+        return false;
     }
 
-    return $imagereturn;
+    $postid = (int)array_shift($args);
+
+    if (!$post = $DB->get_record('forum_posts', array('id'=>$postid))) {
+        return false;
+    }
+
+    if (!$discussion = $DB->get_record('forum_discussions', array('id'=>$post->discussion))) {
+        return false;
+    }
+
+    if (!$forum = $DB->get_record('forum', array('id'=>$cminfo->instance))) {
+        return false;
+    }
+
+    $fs = get_file_storage();
+    $relativepath = '/'.implode('/', $args);
+    $fullpath = $context->id.$filearea.$postid.$relativepath;
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+
+    // Make sure groups allow this user to see this file
+    if ($discussion->groupid > 0 and $groupmode = groups_get_activity_groupmode($cminfo, $course)) {   // Groups are being used
+        if (!groups_group_exists($discussion->groupid)) { // Can't find group
+            return false;                           // Be safe and don't send it to anyone
+        }
+
+        if (!groups_is_member($discussion->groupid) and !has_capability('moodle/site:accessallgroups', $context)) {
+            // do not send posts from other groups when in SEPARATEGROUPS or VISIBLEGROUPS
+            return false;
+        }
+    }
+
+    // Make sure we're allowed to see it...
+    if (!forum_user_can_see_post($forum, $discussion, $post, NULL, $cminfo)) {
+        return false;
+    }
+
+
+    // finally send the file
+    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
 }
+
 /**
  * If successful, this function returns the name of the file
  * @param $post is a full post record, including course and forum
  * @param $newfile is a full upload array from $_FILES
  * @param $message is a string to hold the messages.
  */
+function forum_add_attachment($post, $cm, $mform, &$message, $remove_previous=true) {
+    global $CFG, $DB, $USER;
 
-/**
- *
- */
-function forum_add_attachment($post, $inputname,&$message) {
-    global $CFG, $DB;
+    //TODO: add message when overriding
 
-    if (!$forum = $DB->get_record("forum", array("id"=>$post->forum))) {
-        return "";
+    $filename = $mform->get_new_filename('attachment');
+    $filearea = 'forum_attachment';
+
+    if ($filename === false) {
+        return false;
     }
 
-    if (!$course = $DB->get_record("course", array("id"=>$forum->course))) {
-        return "";
+    $fs = get_file_storage();
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+    if ($remove_previous) {
+        $fs->delete_area_files($context->id, $filearea, $post->id);
+        $post->attachment = '';
+        $DB->update_record('forum_posts', $post);
     }
 
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    $um = new upload_manager($inputname,true,false,$course,false,$forum->maxbytes,true,true);
-    $dir = forum_file_area_name($post);
-    if ($um->process_file_uploads($dir)) {
-        $message .= $um->get_errors();
-        return $um->get_new_filename();
+    if ($mform->save_stored_file('attachment', $context->id, $filearea, $post->id, '/', $filename, true, $USER->id)) {
+        $post->attachment = '1';
+        $DB->update_record('forum_posts', $post);
+        return true;
+
+    } else {
+        return false;
     }
-    $message .= $um->get_errors();
-    return null;
 }
 
 /**
  *
  */
-function forum_add_new_post($post,&$message) {
-
+function forum_add_new_post($post, $mform, &$message) {
     global $USER, $CFG, $DB;
 
     $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
     $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
+    $cm         = get_coursemodule_from_instance('forum', $forum->id);
 
     $post->created    = $post->modified = time();
     $post->mailed     = "0";
     $post->userid     = $USER->id;
     $post->attachment = "";
-    $post->forum      = $forum->id;     // speedup
-    $post->course     = $forum->course; // speedup
 
     if (! $post->id = $DB->insert_record("forum_posts", $post)) {
         return false;
     }
 
-    if ($post->attachment = forum_add_attachment($post, 'attachment',$message)) {
-        $DB->set_field("forum_posts", "attachment", $post->attachment, array("id" => $post->id));
-    }
+    forum_add_attachment($post, $cm, $mform, $message, false);
 
     // Update discussion modified date
     $DB->set_field("forum_discussions", "timemodified", $post->modified, array("id" => $post->discussion));
@@ -4005,47 +4025,46 @@ function forum_add_new_post($post,&$message) {
 /**
  *
  */
-function forum_update_post($post,&$message) {
-
+function forum_update_post($post, $mform, &$message) {
     global $USER, $CFG, $DB;
 
-    $forum = $DB->get_record('forum', array('id' => $post->forum));
+    $discussion = $DB->get_record('forum_discussions', array('id' => $post->discussion));
+    $forum      = $DB->get_record('forum', array('id' => $discussion->forum));
+    $cm         = get_coursemodule_from_instance('forum', $forum->id);
 
     $post->modified = time();
 
-    $updatediscussion = new object();
-    $updatediscussion->id           = $post->discussion;
-    $updatediscussion->timemodified = $post->modified; // last modified tracking
-    $updatediscussion->usermodified = $post->userid;   // last modified tracking
-
-    if (!$post->parent) {   // Post is a discussion starter - update discussion title and times too
-        $updatediscussion->name      = $post->subject;
-        $updatediscussion->timestart = $post->timestart;
-        $updatediscussion->timeend   = $post->timeend;
-    }
-
-    if (!$DB->update_record('forum_discussions', $updatediscussion)) {
+    if (!$DB->update_record('forum_posts', $post)) {
         return false;
     }
 
-    if ($newfilename = forum_add_attachment($post, 'attachment',$message)) {
-        $post->attachment = $newfilename;
-    } else {
-        unset($post->attachment);
+    $discussion->timemodified = $post->modified; // last modified tracking
+    $discussion->usermodified = $post->userid;   // last modified tracking
+
+    if (!$post->parent) {   // Post is a discussion starter - update discussion title and times too
+        $discussion->name      = $post->subject;
+        $discussion->timestart = $post->timestart;
+        $discussion->timeend   = $post->timeend;
     }
+
+    if (!$DB->update_record('forum_discussions', $discussion)) {
+        return false;
+    }
+
+    forum_add_attachment($post, $cm, $mform, $message, true);
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
 
-    return $DB->update_record('forum_posts', $post);
+    return true;
 }
 
 /**
  * Given an object containing all the necessary data,
  * create a new discussion and return the id
  */
-function forum_add_discussion($discussion,&$message) {
+function forum_add_discussion($discussion, $mform, &$message) {
     global $USER, $CFG, $DB;
 
     $timenow = time();
@@ -4054,6 +4073,7 @@ function forum_add_discussion($discussion,&$message) {
     // to from the discuss entry.
 
     $forum = $DB->get_record('forum', array('id'=>$discussion->forum));
+    $cm    = get_coursemodule_from_instance('forum', $forum->id);
 
     $post = new object();
     $post->discussion  = 0;
@@ -4074,17 +4094,12 @@ function forum_add_discussion($discussion,&$message) {
         return 0;
     }
 
-    if ($post->attachment = forum_add_attachment($post, 'attachment',$message)) {
-        $DB->set_field("forum_posts", "attachment", $post->attachment, array("id"=>$post->id)); //ignore errors
-    }
-
-    // Now do the main entry for the discussion,
-    // linking to this first post
+    // Now do the main entry for the discussion, linking to this first post
 
     $discussion->firstpost    = $post->id;
     $discussion->timemodified = $timenow;
     $discussion->usermodified = $post->userid;
-    $discussion->userid = $USER->id;
+    $discussion->userid       = $USER->id;
 
     if (! $post->discussion = $DB->insert_record("forum_discussions", $discussion) ) {
         $DB->delete_records("forum_posts", array("id"=>$post->id));
@@ -4097,6 +4112,9 @@ function forum_add_discussion($discussion,&$message) {
         $DB->delete_records("forum_discussions", array("id"=>$post->discussion));
         return 0;
     }
+
+    // save attachment if present
+    forum_add_attachment($post, $cm, $mform, $message, false);
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
@@ -4162,6 +4180,9 @@ function forum_delete_discussion($discussion, $fulldelete=false,$course=null,$cm
  */
 function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompletion=false) {
     global $DB;
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     if ($children!='ignore' && ($childposts = $DB->get_records('forum_posts', array('parent'=>$post->id)))) {
        if ($children) {
            foreach ($childposts as $childpost) {
@@ -4170,33 +4191,33 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
        } else {
            return false;
        }
-   }
-   if ($DB->delete_records("forum_posts", array("id" => $post->id))) {
-       $DB->delete_records("forum_ratings", array("post" => $post->id));
+    }
 
-       forum_tp_delete_read_records(-1, $post->id);
+    //delete ratings
+    $DB->delete_records("forum_ratings", array("post" => $post->id));
 
-       if ($post->attachment) {
-           $discussion = $DB->get_record("forum_discussions", array("id" => $post->discussion));
-           $post->course = $discussion->course;
-           $post->forum  = $discussion->forum;
-           forum_delete_old_attachments($post);
-       }
+    //delete attachments
+    $fs = get_file_storage();
+    $fs->delete_area_files($context->id, 'forum_attachment', $post->id);
 
-   // Just in case we are deleting the last post
-       forum_discussion_update_last_post($post->discussion);
+    if ($DB->delete_records("forum_posts", array("id" => $post->id))) {
 
-       // Update completion state if we are tracking completion based on number of posts
-       $completion=new completion_info($course);
-       if(!$skipcompletion && // But don't bother when deleting whole thing
-           $completion->is_enabled($cm)==COMPLETION_TRACKING_AUTOMATIC &&
-           ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
-           $completion->update_state($cm,COMPLETION_INCOMPLETE,$post->userid);
-       }
+        forum_tp_delete_read_records(-1, $post->id);
 
-       return true;
-   }
-   return false;
+    // Just in case we are deleting the last post
+        forum_discussion_update_last_post($post->discussion);
+
+        // Update completion state if we are tracking completion based on number of posts
+        $completion = new completion_info($course);
+        if(!$skipcompletion && // But don't bother when deleting whole thing
+            $completion->is_enabled($cm)==COMPLETION_TRACKING_AUTOMATIC &&
+            ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
+            $completion->update_state($cm,COMPLETION_INCOMPLETE,$post->userid);
+        }
+
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -5117,9 +5138,9 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
                 $ratingsformused = true;
             }
             pre_load_all_ratings($cm, $discussion);
-        }             
+        }
     }
-              
+
 
     $post->forum = $forum->id;   // Add the forum id to the post object, later used by forum_print_post
     $post->forumtype = $forum->type;
@@ -6457,15 +6478,16 @@ function forum_discussion_update_last_post($discussionid) {
     }
 
 // Use SQL to find the last post for this discussion
-    $sql = 'SELECT id, userid, modified '.
-           'FROM {forum_posts} '.
-           'WHERE discussion=? '.
-           'ORDER BY modified DESC ';
+    $sql = "SELECT id, userid, modified
+              FROM {forum_posts}
+             WHERE discussion=?
+             ORDER BY modified DESC";
 
 // Lets go find the last post
-    if (($lastpost = $DB->get_record_sql($sql, array($discussionid)))) {
+    if (($lastposts = $DB->get_records_sql($sql, array($discussionid), 0, 1))) {
+        $lastpost = reset($lastposts);
         $discussionobject = new Object;
-        $discussionobject->id = $discussionid;
+        $discussionobject->id           = $discussionid;
         $discussionobject->usermodified = $lastpost->userid;
         $discussionobject->timemodified = $lastpost->modified;
         if ($DB->update_record('forum_discussions', $discussionobject)) {
@@ -7072,7 +7094,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             if (!$this->post) {
                 print_error('attachmentsnopost', 'forum');
             }
-            if (!get_directory_list(forum_file_area($this->post))) {
+            if (!get_directory_list(forum_file_area($this->post))) { // TODO: rewrite
                 print_error('noattachments', 'forum');
             }
         }
@@ -7099,7 +7121,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             // @todo see MDL-15758
         } else {
 
-            if ($basedir = forum_file_area($this->post)) {
+            if ($basedir = forum_file_area($this->post)) {// TODO: rewrite
                 //@todo penny fix all this with files api
                 require_once($CFG->dirroot . '/backup/lib.php');
                 $status =  backup_copy_file($basedir, $tempdir);
@@ -7163,7 +7185,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         if ($post->attachment) {
             $post->course = $this->get('course')->id;
             $output .= '<div class="attachments">';
-            if ($basedir = forum_file_area($this->post)) {
+            if ($basedir = forum_file_area($this->post)) { //TODO: rewrite
                 if ($files = get_directory_list($basedir)) {
                     $output .= '<br /><b>' .  get_string('attachments', 'forum') . '</b>:<br /><br />';
                     foreach ($files as $file) {
@@ -7182,7 +7204,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     function get_sha1() {
         if ($this->post) {
             $attachsha1 = '';
-            if ($basedir = forum_file_area($this->post)) {
+            if ($basedir = forum_file_area($this->post)) { //TODO: rewrite
                 $sha1s = array();
                 foreach (get_directory_list($basedir) as $file) {
                     $sha1s[] = sha1_file($basedir . '/' . $file);

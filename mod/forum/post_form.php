@@ -17,9 +17,6 @@ class mod_forum_post_form extends moodleform {
         $post          = $this->_customdata['post']; // hack alert
 
 
-        // the upload manager is used directly in post precessing, moodleform::save_files() is not used yet
-        $this->set_upload_manager(new upload_manager('attachment', true, false, $course, false, $forum->maxbytes, true, true));
-
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
                                                     //later using set_data
         $mform->addElement('text', 'subject', get_string('subject', 'forum'), 'size="48"');

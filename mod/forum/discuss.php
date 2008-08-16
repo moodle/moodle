@@ -64,7 +64,7 @@
             error('Forum not visible', $return);
         }
 
-        if (!forum_move_attachments($discussion, $forumto->id)) {
+        if (!forum_move_attachments($discussion, $forum->id, $forumto->id)) {
             notify("Errors occurred while moving attachment directories - check your file permissions");
         }
         $DB->set_field('forum_discussions', 'forum', $forumto->id, array('id' => $discussion->id));
