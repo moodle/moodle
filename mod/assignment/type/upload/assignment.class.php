@@ -631,7 +631,7 @@ class assignment_upload extends assignment_base {
             return false;
         }
 
-        send_stored_file($file, 0, 0, true); // downlaod MUST be forced - security!
+        send_stored_file($file, 0, 0, true); // download MUST be forced - security!
     }
 
     function finalize() {
