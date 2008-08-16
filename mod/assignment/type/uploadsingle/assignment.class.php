@@ -13,6 +13,8 @@ class assignment_uploadsingle extends assignment_base {
         $fs = get_file_storage();
         $browser = get_file_browser();
 
+        $output = '';
+
         if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
 
             foreach ($files as $file) {

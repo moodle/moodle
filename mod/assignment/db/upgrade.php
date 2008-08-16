@@ -43,17 +43,18 @@ function xmldb_assignment_upgrade($oldversion) {
 
         $fs = get_file_storage();
 
-        $sql = "SELECT s.id, s.userid, s.teacher, s.assignment, a.course
-                  FROM {assignment_submissions} s
-                  JOIN {assignment} a ON a.id = s.assignment
-              ORDER BY a.course, s.assignment";
+        $sqlfrom = "FROM {assignment_submissions} s
+                    JOIN {assignment} a ON a.id = s.assignment
+                    JOIN {modules} m ON m.name = 'assignment'
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = a.id)
+                ORDER BY a.course, s.assignment";
 
-        $count = $DB->count_records_sql($sql); 
+        $count = $DB->count_records_sql("SELECT 'x' $sqlfrom"); 
 
         $lastcourse     = 0;
         $lastassignment = 0;
 
-        if ($rs = $DB->get_recordset_sql($sql)) {
+        if ($rs = $DB->get_recordset_sql("SELECT s.id, s.userid, s.teacher, s.assignment, a.course, cm.id AS cmid $sqlfrom")) {
 
             $pbar = new progress_bar('migrateassignmentfiles', 500, true);
 
@@ -63,12 +64,14 @@ function xmldb_assignment_upgrade($oldversion) {
             foreach ($rs as $submission) {
                 $i++;
                 upgrade_set_timeout(180); // set up timeout, may also abort execution
+                $pbar->update($i, $count, "Migrating assignment submissions - $i/$count.");
+
                 $basepath = "$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment/$submission->userid/";
                 if (!file_exists($basepath)) {
                     //no files
                     continue;
                 }
-                $context = get_context_instance(CONTEXT_MODULE, $submission->assignment);
+                $context = get_context_instance(CONTEXT_MODULE, $submission->cmid);
 
                 // migrate submitted files first
                 $path = $basepath;
@@ -120,10 +123,10 @@ function xmldb_assignment_upgrade($oldversion) {
                         }
                     }
                     unset($items); //release file handles
-                    @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment/$submission->userid/responses/");
+                    @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment/$submission->userid/responses");
                 }
 
-                @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment/$submission->userid/");
+                @rmdir("$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment/$submission->userid");
 
                 if ($lastassignment and $lastassignment != $submission->assignment) {
                     @rmdir("$CFG->dataroot/$lastcourse/$CFG->moddata/assignment/$lastassignment");
@@ -137,7 +140,6 @@ function xmldb_assignment_upgrade($oldversion) {
                 $lastsubmission = $submission->assignment;
                 $lastcourse     = $submission->course;
 
-                $pbar->update($i, $count, "Migrated assignment submissions - $i/$count.");
             }
             $DB->set_debug($olddebug); // reset debug level
             $rs->close();
