@@ -70,7 +70,7 @@ function xmldb_assignment_upgrade($oldversion) {
                 }
                 $context = get_context_instance(CONTEXT_MODULE, $submission->assignment);
 
-                // migrate submitted files fisrt
+                // migrate submitted files first
                 $path = $basepath;
                 $filearea = 'assignment_submission';
                 $items = new DirectoryIterator($path);
