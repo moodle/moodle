@@ -5677,7 +5677,7 @@ function print_error($errorcode, $module='', $link='', $a=NULL) {
         $module = 'error';
     }
 
-    if (!isset($CFG->theme)) {
+    if (!isset($CFG->theme) or !isset($CFG->stylesheets)) {
         // error found before setup.php finished
         _print_early_error($errorcode, $module, $a);
     } else {

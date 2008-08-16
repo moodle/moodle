@@ -29,9 +29,7 @@ $string['cannotaccesspresentsother'] = 'You are not allowed to access presets fr
 $string['cannotadd'] = 'Can not add entries!';
 $string['cannotdeletepreset'] = 'Error deleting a preset!';
 $string['cannotrate'] = 'Rating of items not allowed!';
-$string['cannotupdaterate'] = 'Could not update an old rating ($a[0] = $a[1])';
 $string['cannotunziptopreset'] = 'Cannot unzip to the preset directory';
-$string['cannotinsertrate'] = 'Could not insert a new rating ($a[0] = $a[1])';
 $string['cannotinsertempty'] = 'Could not make an empty record!';
 $string['cancel'] = 'Cancel';
 $string['checkbox'] = 'Checkbox';

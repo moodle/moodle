@@ -16,23 +16,22 @@
 //
 // The commands in here will all be database-neutral,
 // using the methods of database_manager class
+//
+// Please do not forget to use upgrade_set_timeout()
+// before any action that may take longer time to finish.
 
-function xmldb_assignment_upgrade($oldversion=0) {
+function xmldb_assignment_upgrade($oldversion) {
+    global $CFG, $DB;
 
-    global $CFG, $THEME, $DB;
-
+    $dbman = $DB->get_manager();
     $result = true;
 
 //===== 1.9.0 upgrade line ======//
 
     if ($result && $oldversion < 2007101511) {
-        notify('Processing assignment grades, this may take a while if there are many assignments...', 'notifysuccess');
         // change grade typo to text if no grades MDL-13920
         require_once $CFG->dirroot.'/mod/assignment/lib.php';
-        // too much debug output
-        $DB->set_debug(false);
-        assignment_update_grades();
-        $DB->set_debug(true);
+        assignment_upgrade_grades();
         upgrade_mod_savepoint($result, 2007101511, 'assignment');
     }
 
@@ -59,10 +58,11 @@ function xmldb_assignment_upgrade($oldversion=0) {
             $pbar = new progress_bar('migrateassignmentfiles', 500, true);
 
             $olddebug = $DB->get_debug();
-//            $DB->set_debug(false); // lower debug level, there might be many files
+            $DB->set_debug(false); // lower debug level, there might be many files
             $i = 0;
             foreach ($rs as $submission) {
                 $i++;
+                upgrade_set_timeout(180); // set up timeout, may also abort execution
                 $basepath = "$CFG->dataroot/$submission->course/$CFG->moddata/assignment/$submission->assignment/$submission->userid/";
                 if (!file_exists($basepath)) {
                     //no files

@@ -159,6 +159,15 @@ global $HTTPSPAGEREQUIRED;
 /// Load up any configuration from the config table
     $CFG = get_config();
 
+/// Verify upgrade is not running
+    if (isset($CFG->upgraderunning)) {
+        if ($CFG->upgraderunning < time()) {
+            unset_config('upgraderunning');
+        } else {
+            print_error('upgraderunning');
+        }
+    }
+
 /// Turn on SQL logging if required
     if (!empty($CFG->logsql)) {
         $DB->set_logging(true);

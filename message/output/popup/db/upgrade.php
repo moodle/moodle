@@ -32,10 +32,10 @@
  * @package 
  */
 
-function xmldb_message_popup_upgrade($oldversion=0) {
+function xmldb_message_popup_upgrade($oldversion) {
+    global $CFG, $DB;
 
-    global $CFG, $THEME, $DB;
-
+    $dbman = $DB->get_manager();
     $result = true;
 
     if ($result && $oldversion < 2008072401) {

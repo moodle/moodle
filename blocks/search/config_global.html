@@ -107,12 +107,11 @@ $defaultfiletypes = "PDF,TXT,HTML,PPT,XML,DOC,HTM";
             if(isset($CFG->block_search_pdf_to_text_cmd)) {
                 p($CFG->block_search_pdf_to_text_cmd);
             } else {
-                $encoding = ($CFG->unicodedb) ? "-enc UTF-8" : "-enc ISO-8859-1" ;
                 if ($CFG->ostype == 'WINDOWS'){
-                    p("lib/xpdf/win32/pdftotext.exe -eol dos $encoding -q");
+                    p("lib/xpdf/win32/pdftotext.exe -eol dos -enc UTF-8 -q");
                 }
                 else{
-                    p("lib/xpdf/linux/pdftotext $encoding -eol unix -q");
+                    p("lib/xpdf/linux/pdftotext -enc UTF-8 -eol unix -q");
                 }
             } ?>"/><br/><br/>
         </td>

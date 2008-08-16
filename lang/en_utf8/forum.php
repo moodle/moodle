@@ -37,8 +37,6 @@ $string['cannotaddsubscriber'] = 'Could not add subscriber with id $a to this fo
 $string['cannotremovesubscriber'] = 'Could not remove subscriber with id $a from this forum!';
 $string['cannotfindorcreateforum'] = 'Could not find or create a main news forum for the site';
 $string['cannotfindfirstpost'] = 'Could not find the first post in this forum';
-$string['cannotupdaterate'] = 'Could not update an old rating ($a[0] = $a[1])';
-$string['cannotinsertrate'] = 'Could not insert a new rating ($a[0] = $a[1])';
 $string['cannottrack'] = 'Could not stop tracking that forum';
 $string['cleanreadtime'] = 'Mark old posts as read hour';
 $string['completiondiscussions'] = 'User must create discussions:';

@@ -1,11 +1,9 @@
 <?php  // $Id$
 
-function xmldb_quizreport_overview_upgrade($oldversion=0) {
+function xmldb_quizreport_overview_upgrade($oldversion) {
+    global $CFG, $DB;
 
-    global $CFG, $THEME, $DB;
-    
     $dbman = $DB->get_manager();
-
     $result = true;
 
 //===== 1.9.0 upgrade line ======//

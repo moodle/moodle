@@ -33,7 +33,7 @@ if ($frm = data_submitted() and confirm_sesskey()) {
                     $plugin = "auth/$auth";
                     $name   = $matches[1];
                     if (!set_config($name, $value, $plugin)) {
-                        print_error("cannotsaveconfig", 'error', '', array($name, $value, $plugin));
+                        print_error("cannotsaveconfig", 'error', '', (object)array('name'=>$name, 'value'=>$value, 'plugin'=>$plugin));
                     }
                 }
             }

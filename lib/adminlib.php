@@ -26,20 +26,55 @@ require_once($CFG->libdir.'/xmldb/xmldb_statement.php');
 require_once($CFG->libdir.'/xmlize.php');
 require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
 
+global $upgradeloghandle, $upgradelogbuffer;
+
+$upgradeloghandle = false;
+$upgradelogbuffer = '';
+
+
+/**
+ * Upgrade savepoint, marks end of each upgrade block.
+ * It stores new main version, resets upgrade timeout
+ * and abort upgrade if user cancels page loading.
+ *
+ * Please do not make large upgrade blocks with lots of operations,
+ * for example when adding tables keep only one table operation per block.
+ *
+ * @param bool $result false if upgrade step failed, true if completed
+ * @param string or float $version main version
+ * @return void
+ */
 function upgrade_main_savepoint($result, $version) {
     global $CFG;
 
     if ($result) {
         if ($CFG->version >= $version) {
             // something really wrong is going on in main upgrade script
-            print_error('cannotdowngrade', 'debug', '', array($CFG->version, $version));
+            print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$CFG->version, 'newversion'=>$version));
         }
         set_config('version', $version);
     } else {
         notify ("Upgrade savepoint: Error during main upgrade to version $version");
     }
+
+    // reset upgrade timeout to default
+    upgrade_set_timeout();
+
+    // this is a safe place to stop upgrades if user aborts page loading
+    if (connection_aborted()) {
+        die;
+    }
 }
 
+/**
+ * Module upgrade savepoint, marks end of module upgrade blocks
+ * It stores module version, resets upgrade timeout
+ * and abort upgrade if usercancels page loading.
+ *
+ * @param bool $result false if upgrade step failed, true if completed
+ * @param string or float $version main version
+ * @return void
+ */
 function upgrade_mod_savepoint($result, $version, $modname) {
     global $DB;
 
@@ -50,12 +85,47 @@ function upgrade_mod_savepoint($result, $version, $modname) {
     if ($result) {
         if ($module->version >= $version) {
             // something really wrong is going on in upgrade script
-            print_error('cannotdowngrade', 'debug', '', array($module->version, $version));
+            print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$module->version, 'newversion'=>$version));
         }
         $module->verions = $version;
         $DB->update_record('modules', $module);
     } else {
         notify ("Upgrade savepoint: Error during mod upgrade to version $version");
+    }
+
+    // reset upgrade timeout to default
+    upgrade_set_timeout();
+
+    // this is a safe place to stop upgrades if user aborts page loading
+    if (connection_aborted()) {
+        die;
+    }
+}
+
+function upgrade_blocks_savepoint($result, $version, $blockname) {
+    global $DB;
+
+    if (!$block = $DB->get_record('block', array('name'=>$blockname))) {
+        print_error('blocknotexist', 'debug', '', $blockname);
+    }
+
+    if ($result) {
+        if ($block->version >= $version) {
+            // something really wrong is going on in upgrade script
+            print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$block->version, 'newversion'=>$version));
+        }
+        $block->verions = $version;
+        $DB->update_record('block', $block);
+    } else {
+        notify ("Upgrade savepoint: Error during mod upgrade to version $version");
+    }
+
+    // reset upgrade timeout to default
+    upgrade_set_timeout();
+
+    // this is a safe place to stop upgrades if user aborts page loading
+    if (connection_aborted()) {
+        die;
     }
 }
 
@@ -64,10 +134,6 @@ function upgrade_plugin_savepoint($result, $version, $type, $dir) {
 }
 
 function upgrade_backup_savepoint($result, $version) {
-    //TODO
-}
-
-function upgrade_blocks_savepoint($result, $version, $type) {
     //TODO
 }
 
@@ -382,7 +448,7 @@ function upgrade_plugins($type, $dir, $return) {
             }
         } else {
             upgrade_log_start();
-            print_error('cannotdowngrade', 'debug', '', array($CFG->pluginversion, $plugin->version));
+            print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$CFG->pluginversion, 'newversion'=>$plugin->version));
         }
     }
 
@@ -390,14 +456,14 @@ function upgrade_plugins($type, $dir, $return) {
 
     if ($updated_plugins && !$embedded) {
         if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-        print_continue($return);
-        print_footer('none');
-        die;
+            print_continue($return);
+            print_footer('none');
+            die;
         } else if (CLI_UPGRADE && ($interactive > CLI_SEMI )) {
             console_write(STDOUT,'askcontinue');
             if (read_boolean()){
                 return ;
-            }else {
+            } else {
                 console_write(STDERR,'','',false);
             }
         }
@@ -517,7 +583,7 @@ function upgrade_activity_modules($return) {
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE) {
-                    echo '<hr />';
+                       echo '<hr />';
                     }
                 } else {
                     notify('Upgrading '. $module->name .' from '. $currmodule->version .' to '. $module->version .' FAILED!');
@@ -538,16 +604,16 @@ function upgrade_activity_modules($return) {
 
             } else {
                 upgrade_log_start();
-                print_error('cannotdowngrade', 'debug', '', array($currmodule->version, $module->version));
+                print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$currmodule->version, 'newversion'=>$module->version));
             }
 
         } else {    // module not installed yet, so install it
             if (!$updated_modules) {
                 if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                print_header($strmodulesetup, $strmodulesetup,
+                    print_header($strmodulesetup, $strmodulesetup,
                         build_navigation(array(array('name' => $strmodulesetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
-            }
+                }
             }
             upgrade_log_start();
             print_heading($module->name);
@@ -593,7 +659,7 @@ function upgrade_activity_modules($return) {
 
                     notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                     if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
-                    echo '<hr />';
+                       echo '<hr />';
                     }
                 } else {
                     print_error('cannotaddmodule', '', '', $module->name);
@@ -630,9 +696,9 @@ function upgrade_activity_modules($return) {
 
     if ($updated_modules) {
         if (!defined('CLI_UPGRADE')|| !CLI_UPGRADE ) {
-        print_continue($return);
-        print_footer('none');
-        die;
+            print_continue($return);
+            print_footer('none');
+            die;
         } else if ( CLI_UPGRADE && ($interactive > CLI_SEMI) ) {
             console_write(STDOUT,'askcontinue');
             if (read_boolean()){
@@ -794,7 +860,7 @@ function create_admin_user($user_input=NULL) {
         foreach ($adminroles as $adminrole) {
             role_assign($adminrole->id, $user->id, 0, $sitecontext->id);
         }
-        
+
         //set default message preferences
         if (!message_set_default_message_preferences( $user )){
             print_error('cannotsavemessageprefs', 'message');
@@ -808,7 +874,7 @@ function create_admin_user($user_input=NULL) {
         load_all_capabilities();
 
         if (!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
-        redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
+          redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
         }
     } else {
         print_error('cannotcreateadminuser', 'debug');
@@ -819,28 +885,38 @@ function create_admin_user($user_input=NULL) {
 /// upgrade logging functions
 ////////////////////////////////////////////////
 
-$upgradeloghandle = false;
-$upgradelogbuffer = '';
-// I did not find out how to use static variable in callback function,
-// the problem was that I could not flush the static buffer :-(
-global $upgradeloghandle, $upgradelogbuffer;
+/**
+ * Marks start of upgrade, blocks any other access to site.
+ * The upgrade is finished at the end of script or after timeout.
+ */
+function start_upgrade() {
+    global $CFG;
+
+    static $started = false;
+
+    if ($started) {
+        upgrade_set_timeout(120);
+
+    } else {
+        ignore_user_abort(true);
+        register_shutdown_function('upgrade_finished_handler');
+        if ($CFG->version === '') {
+            // db not installed yet
+            $CFG->upgraderunning = time()+300;
+        } else {
+            set_config('upgraderunning', time()+300);
+        }
+        $started = true;
+    }
+}
 
 /**
- * Check if upgrade is already running.
- *
- * If anything goes wrong due to missing call to upgrade_log_finish()
- * just restart the browser.
- *
- * @param string warning message indicating upgrade is already running
- * @param int page reload timeout
+ * Internal function - executed at the very end of each upgrade.
  */
-function upgrade_check_running($message, $timeout) {
-    global $SESSION;
-
-    if (!empty($SESSION->upgraderunning)) {
-        print_header();
-        redirect(me(), $message, $timeout);
-    }
+function upgrade_finished_handler() {
+    upgrade_log_finish();
+    unset_config('upgraderunning');
+    ignore_user_abort(false);
 }
 
 /**
@@ -852,25 +928,20 @@ function upgrade_check_running($message, $timeout) {
  * This function may be called repeatedly.
  */
 function upgrade_log_start() {
-    global $CFG, $upgradeloghandle, $SESSION;
+    global $upgradeloghandle;
 
-    if (!empty($SESSION->upgraderunning)) {
-        return; // logging already started
+    start_upgrade(); // make sure the upgrade is started
+
+    if ($upgradeloghandle and ($upgradeloghandle !== 'error')) {
+        return;
     }
 
-    @ignore_user_abort(true);            // ignore if user stops or otherwise aborts page loading
-    $SESSION->upgraderunning = 1;     // set upgrade indicator
-    if (empty($CFG->dbsessions)) {       // workaround for bug in adodb, db session can not be restarted
-        session_write_close();           // from now on user can reload page - will be displayed warning
-    }
     make_upload_directory('upgradelogs');
     ob_start('upgrade_log_callback', 2); // function for logging to disk; flush each line of text ASAP
-    register_shutdown_function('upgrade_log_finish'); // in case somebody forgets to stop logging
 }
 
 /**
- * Terminate logging of output, flush all data, allow script aborting
- * and reopen session for writing. Function print_error() does terminate the logging too.
+ * Terminate logging of output, flush all data.
  *
  * Please make sure that each upgrade_log_start() is properly terminated by
  * this function or print_error().
@@ -878,11 +949,7 @@ function upgrade_log_start() {
  * This function may be called repeatedly.
  */
 function upgrade_log_finish() {
-    global $CFG, $upgradeloghandle, $upgradelogbuffer, $SESSION;
-
-    if (empty($SESSION->upgraderunning)) {
-        return; // logging already terminated
-    }
+    global $CFG, $upgradeloghandle, $upgradelogbuffer;
 
     @ob_end_flush();
     if ($upgradelogbuffer !== '') {
@@ -893,14 +960,6 @@ function upgrade_log_finish() {
         @fclose($upgradeloghandle);
         $upgradeloghandle = false;
     }
-    @session_start();                // ignore header errors, we only need to reopen session
-
-    $SESSION->upgraderunning = 0; // clear upgrade indicator
-
-    if (connection_aborted()) {
-        die;
-    }
-    @ignore_user_abort(false);
 }
 
 /**
@@ -1658,9 +1717,7 @@ class admin_settingpage extends part_of_admin_tree {
                 $data = $adminroot->errors[$fullname]->data;
             } else {
                 $data = $setting->get_setting();
-                if (is_null($data)) {
-                    $data = $setting->get_defaultsetting();
-                }
+                // do not use defaults if settings not available - upgrdesettings handles the defaults!
             }
             $return .= $setting->output_html($data);
         }
@@ -2237,13 +2294,8 @@ class admin_setting_configmulticheckbox extends admin_setting {
             $default = array();
         }
         if (is_null($data)) {
-            foreach ($default as $value) {
-                if ($value) {
-                    $data[] = $value;
-                }
-            }
+            $data = array();
         }
-
         $options = array();
         $defaults = array();
         foreach($this->choices as $key=>$description) {
@@ -3423,9 +3475,9 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
      *   which identify roles that will be enabled by default. Default is the
      *   student role
      */
-    function admin_setting_pickroles($name, $visiblename, $description,$types=array('moodle/legacy:student')) {
+    function admin_setting_pickroles($name, $visiblename, $description, $types) {
         parent::admin_setting_configmulticheckbox($name, $visiblename, $description, NULL, NULL);
-        $this->types=$types;
+        $this->types = $types;
     }
 
     function load_choices() {
@@ -3450,13 +3502,13 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
     function get_defaultsetting() {
         global $CFG;
         if (empty($CFG->rolesactive)) {
-            return array(0);
+            return null;
         }
         $result = array();
         foreach($this->types as $capability) {
             if ($caproles = get_roles_with_capability($capability, CAP_ALLOW)) {
                 foreach ($caproles as $caprole) {
-                    if(!in_array($caprole->id,$result)) {
+                    if (!in_array($caprole->id, $result)) {
                         $result[] = $caprole->id;
                     }
                 }
@@ -3472,7 +3524,8 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
 class admin_setting_special_gradebookroles extends admin_setting_pickroles {
     function admin_setting_special_gradebookroles() {
         parent::admin_setting_pickroles('gradebookroles', get_string('gradebookroles', 'admin'),
-                                                  get_string('configgradebookroles', 'admin'));
+                                                  get_string('configgradebookroles', 'admin'),
+                                                  array('moodle/legacy:student'));
     }
 }
 
@@ -3501,7 +3554,7 @@ class admin_setting_special_coursemanager extends admin_setting_pickroles {
     function admin_setting_special_coursemanager() {
         parent::admin_setting_pickroles('coursemanager', get_string('coursemanager', 'admin'),
                                                   get_string('configcoursemanager', 'admin'),
-                                                  'moodle/legacy:editingteacher');
+                                                  array('moodle/legacy:editingteacher'));
     }
 }
 
@@ -4674,9 +4727,7 @@ function admin_search_settings_html($query) {
                     $data = $adminroot->errors[$fullname]->data;
                 } else {
                     $data = $setting->get_setting();
-                    if (is_null($data)) {
-                        $data = $setting->get_defaultsetting();
-                    }
+                    // do not use defaults if settings not available - upgrdesettings handles the defaults!
                 }
                 $return .= $setting->output_html($data, $query);
             }
@@ -5090,7 +5141,7 @@ class admin_setting_managerepository extends admin_setting {
         parent::admin_setting('managerepository', get_string('managerepository', 'repository'), '', '');
         $this->baseurl = $CFG->wwwroot . '/' . $CFG->admin . '/repository.php?sesskey=' . sesskey();
     }
- 
+
     function get_setting() {
         return true;
     }

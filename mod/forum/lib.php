@@ -1424,45 +1424,62 @@ function forum_get_user_grades($forum, $userid=0) {
 }
 
 /**
- * Update grades by firing grade_updated event
+ * Update activity grades
  *
- * @param object $forum null means all forums
- * @param int $userid specific user only, 0 mean all
+ * @param object $forum
+ * @param int $userid specific user only, 0 means all
  * @param boolean $nullifnone return null if grade does not exist
  * @return void
  */
-function forum_update_grades($forum=null, $userid=0, $nullifnone=true) {
+function forum_update_grades($forum, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
+    require_once($CFG->libdir.'/gradelib.php');
 
-    if ($forum != null) {
-        require_once($CFG->libdir.'/gradelib.php');
-        if ($grades = forum_get_user_grades($forum, $userid)) {
-            forum_grade_item_update($forum, $grades);
+    if (!$forum->assessed) {
+        forum_grade_item_update($forum);
 
-        } else if ($userid and $nullifnone) {
-            $grade = new object();
-            $grade->userid   = $userid;
-            $grade->rawgrade = NULL;
-            forum_grade_item_update($forum, $grade);
+    } else if ($grades = forum_get_user_grades($forum, $userid)) {
+        forum_grade_item_update($forum, $grades);
 
-        } else {
-            forum_grade_item_update($forum);
-        }
+    } else if ($userid and $nullifnone) {
+        $grade = new object();
+        $grade->userid   = $userid;
+        $grade->rawgrade = NULL;
+        forum_grade_item_update($forum, $grade);
 
     } else {
-        $sql = "SELECT f.*, cm.idnumber as cmidnumber
-                  FROM {forum} f, {course_modules} cm, {modules} m
-                 WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id";
-        if ($rs = $DB->get_recordset_sql($sql)) {
-            foreach ($rs as $forum) {
-                if ($forum->assessed) {
-                    forum_update_grades($forum, 0, false);
-                } else {
-                    forum_grade_item_update($forum);
-                }
-            }
-            $rs->close();
+        forum_grade_item_update($forum);
+    }
+}
+
+/**
+ * Update all grades in gradebook.
+ */
+function forum_upgrade_grades() {
+    global $DB;
+
+    $sql = "SELECT COUNT('x')
+              FROM {forum} f, {course_modules} cm, {modules} m
+             WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id";
+    $count = $DB->count_records_sql($sql);
+
+    $sql = "SELECT f.*, cm.idnumber AS cmidnumber, f.course AS courseid
+              FROM {forum} f, {course_modules} cm, {modules} m
+             WHERE m.name='forum' AND m.id=cm.module AND cm.instance=f.id";
+    if ($rs = $DB->get_recordset_sql($sql)) {
+        // too much debug output
+        $prevdebug = $DB->get_debug();
+        $DB->set_debug(false);
+        $pbar = new progress_bar('forumupgradegrades', 500, true);
+        $i=0;
+        foreach ($rs as $forum) {
+            $i++;
+            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+            forum_update_grades($forum, 0, false);
+            $pbar->update($i, $count, "Updating Forum grades ($i/$count).");
         }
+        $DB->set_debug($prevdebug);
+        $rs->close();
     }
 }
 

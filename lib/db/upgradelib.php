@@ -73,6 +73,7 @@ function upgrade_migrate_files_courses() {
     $i = 0;
     foreach ($rs as $course) {
         $i++;
+        upgrade_set_timeout(60*5); // set up timeout, may also abort execution
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         upgrade_migrate_files_course($context, '/', true);
         $pbar->update($i, $count, "Migrated course files - course $i/$count.");
@@ -102,7 +103,7 @@ function upgrade_migrate_files_course($context, $path, $delete) {
         }
 
         if ($item->isLink()) {
-            // do not delete symbolic links or its children 
+            // do not delete symbolic links or its children
             $delete_this = false;
         } else {
             $delete_this = $delete;
@@ -174,6 +175,8 @@ function upgrade_migrate_files_blog() {
 
     if ($rs = $DB->get_recordset_select('post', "module='blog' AND attachment IS NOT NULL AND attachment <> 1")) {
 
+        upgrade_set_timeout(60*20); // set up timeout, may also abort execution
+
         $pbar = new progress_bar('migrateblogfiles', 500, true);
 
         $olddebug = $DB->get_debug();
@@ -183,9 +186,8 @@ function upgrade_migrate_files_blog() {
             $i++;
             $pathname = "$CFG->dataroot/blog/attachments/$entry->id/$entry->attachment";
             if (!file_exists($pathname)) {
-                // hmm, we could set atatchment NULL here, but it would break badly in concurrent ugprades, disabling for now
-                //$entry->attachment = NULL;
-                //$DB->update_record('post', $entry);
+                $entry->attachment = NULL;
+                $DB->update_record('post', $entry);
                 continue;
             }
 
@@ -204,7 +206,7 @@ function upgrade_migrate_files_blog() {
 
             if (!$fs->file_exists(SYSCONTEXTID, 'blog', $entry->id, '/', $filename)) {
                 $file_record = array('contextid'=>SYSCONTEXTID, 'filearea'=>'blog', 'itemid'=>$entry->id, 'filepath'=>'/', 'filename'=>$filename,
-                                     'timecreated'=>filectime($pathname), 'timemodified'=>filemtime($pathname), 'userid'=>$post->userid);
+                                     'timecreated'=>filectime($pathname), 'timemodified'=>filemtime($pathname), 'userid'=>$entry->userid);
                 $fs->create_file_from_pathname($file_record, $pathname);
             }
             @unlink($pathname);
@@ -217,7 +219,7 @@ function upgrade_migrate_files_blog() {
         $DB->set_debug($olddebug); // reset debug level
         $rs->close();
     }
-    
+
     @rmdir("$CFG->dataroot/blog/attachments/");
     @rmdir("$CFG->dataroot/blog/");
 }

@@ -16,13 +16,14 @@
 //
 // The commands in here will all be database-neutral,
 // using the methods of database_manager class
+//
+// Please do not forget to use upgrade_set_timeout()
+// before any action that may take longer time to finish.
 
-function xmldb_scorm_upgrade($oldversion=0) {
-
-    global $CFG, $THEME, $DB;
+function xmldb_scorm_upgrade($oldversion) {
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-
     $result = true;
 
 //===== 1.9.0 upgrade line ======//
@@ -34,7 +35,7 @@ function xmldb_scorm_upgrade($oldversion=0) {
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'grademethod');
         
         /// Launch add field whatgrade
-        if(!$dbman->field_exists($table,$field)) {
+        if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
         

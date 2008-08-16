@@ -337,9 +337,6 @@
                 $iconpath = $CFG->modpixpath.'/'.$listing->doctype.'/icon.gif';
                 $coursename = get_field('course', 'fullname', 'id', $listing->courseid);
                 $courseword = mb_convert_case(get_string('course', 'moodle'), MB_CASE_LOWER, 'UTF-8');
-                //if ($CFG->unicodedb) {
-                //$listing->title = mb_convert_encoding($listing->title, 'auto', 'UTF8');
-                //}
                 $title_post_processing_function = $listing->doctype.'_link_post_processing';
                 $searchable_instance = $searchables[$listing->doctype];
                 if ($searchable_instance->location == 'internal'){

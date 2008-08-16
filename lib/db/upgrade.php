@@ -15,9 +15,11 @@
 //
 // The commands in here will all be database-neutral,
 // using the methods of database_manager class
+//
+// Please do not forget to use upgrade_set_timeout()
+// before any action that may take longer time to finish.
 
-
-function xmldb_main_upgrade($oldversion=0) {
+function xmldb_main_upgrade($oldversion) {
     global $CFG, $THEME, $USER, $DB;
 
     $result = true;
@@ -29,6 +31,7 @@ function xmldb_main_upgrade($oldversion=0) {
     ////////////////////////////////////////
 
     if ($result && $oldversion < 2008030700) {
+        upgrade_set_timeout(60*20); // this may take a while
 
     /// Define index contextid-lowerboundary (not unique) to be dropped form grade_letters
         $table = new xmldb_table('grade_letters');
@@ -61,6 +64,8 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2008050700) {
+        upgrade_set_timeout(60*20); // this may take a while
+
     /// Fix minor problem caused by MDL-5482.
         require_once($CFG->dirroot . '/question/upgrade.php');
         $result = $result && question_fix_random_question_parents();
@@ -85,6 +90,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2008051201) {
         notify('Increasing size of user idnumber field, this may take a while...', 'notifysuccess');
+        upgrade_set_timeout(60*20); // this may take a while
 
     /// Under MySQL and Postgres... detect old NULL contents and change them by correct empty string. MDL-14859
         if ($CFG->dbfamily == 'mysql' || $CFG->dbfamily == 'postgres') {
@@ -135,6 +141,8 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     if ($result && $oldversion < 2008063001) {
+        upgrade_set_timeout(60*20); // this may take a while
+
         // table to be modified
         $table = new xmldb_table('tag_instance');
         // add field
@@ -262,27 +270,14 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008070701);
     }
-    
-    if ($result && $oldversion < 2008072400) {
-        /// Create the database tables for message_processors and message_providers
-        $table = new xmldb_table('message_providers');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('modulename', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('modulefile', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-        $dbman->create_table($table);
 
+    if ($result && $oldversion < 2008072400) {
+    /// Create the database tables for message_processors
         $table = new xmldb_table('message_processors');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('name', XMLDB_TYPE_CHAR, '166', null, XMLDB_NOTNULL, null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
-
-
-        $provider = new object();
-        $provider->modulename  = 'moodle';
-        $provider->modulefile  = 'index.php';
-        $DB->insert_record('message_providers', $provider);
 
     /// delete old and create new fields
         $table = new xmldb_table('message');
@@ -355,17 +350,17 @@ function xmldb_main_upgrade($oldversion=0) {
         $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'defaultrole');
 
     /// Launch add field enablecompletion
-        if(!$dbman->field_exists($table,$field)) {
+        if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        
+
     /// Define field completion to be added to course_modules
         $table = new xmldb_table('course_modules');
         $field = new xmldb_field('completion');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'groupmembersonly');
 
     /// Launch add field completion
-        if(!$dbman->field_exists($table,$field)) {
+        if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
 
@@ -374,7 +369,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'completion');
 
     /// Launch add field completiongradeitemnumber
-        if(!$dbman->field_exists($table,$field)) {
+        if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
 
@@ -383,7 +378,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $field->set_attributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completiongradeitemnumber');
 
     /// Launch add field completionview
-        if(!$dbman->field_exists($table,$field)) {
+        if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
 
@@ -392,13 +387,13 @@ function xmldb_main_upgrade($oldversion=0) {
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'completionview');
 
     /// Launch add field completionexpected
-        if(!$dbman->field_exists($table,$field)) {
+        if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
 
    /// Define table course_modules_completion to be created
         $table = new xmldb_table('course_modules_completion');
-        if(!$dbman->table_exists($table)) {
+        if (!$dbman->table_exists($table)) {
 
         /// Adding fields to table course_modules_completion
             $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
@@ -407,14 +402,14 @@ function xmldb_main_upgrade($oldversion=0) {
             $table->add_field('completionstate', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
             $table->add_field('viewed', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, null);
             $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-    
+
         /// Adding keys to table course_modules_completion
             $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-    
+
         /// Adding indexes to table course_modules_completion
             $table->add_index('coursemoduleid', XMLDB_INDEX_NOTUNIQUE, array('coursemoduleid'));
             $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, array('userid'));
-    
+
         /// Launch create table for course_modules_completion
             $dbman->create_table($table);
         }
@@ -422,7 +417,7 @@ function xmldb_main_upgrade($oldversion=0) {
         /// Main savepoint reached
         upgrade_main_savepoint($result, 2008072800);
     }
-    
+
     if ($result && $oldversion < 2008073000) {
 
     /// Define table portfolio_log to be created
@@ -602,6 +597,7 @@ function xmldb_main_upgrade($oldversion=0) {
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008080600);
     }
+
     if ($result && $oldversion < 2008080701) {
 
     /// Define field visible to be added to repository
@@ -665,6 +661,15 @@ function xmldb_main_upgrade($oldversion=0) {
         $field = new xmldb_field('penalty', XMLDB_TYPE_NUMBER, '12, 7', null, null, null, null, null, null, 'raw_grade');
         $dbman->change_field_type($table, $field);
         upgrade_main_savepoint($result, 2008081506);
+    }
+
+    if ($result && $oldversion < 2008081600) {
+
+    /// all 1.9 sites and fresh installs must already be unicode, not needed anymore
+        unset_config('unicodedb');
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008081600);
     }
 
     return $result;

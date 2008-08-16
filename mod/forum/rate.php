@@ -71,8 +71,7 @@
                     $oldrating->rating = $rating;
                     $oldrating->time   = time();
                     if (!$DB->update_record('forum_ratings', $oldrating)) {
-                        print_error('cannotupdaterate', 'forum', '',
-                                array($post->id, $rating));
+                        print_error('cannotupdaterate', 'error', '', (object)array('id'=>$post->id, 'rating'=>$rating));
                     }
                     forum_update_grades($forum, $post->userid);
                 }
@@ -85,8 +84,7 @@
                 $newrating->rating = $rating;
 
                 if (! $DB->insert_record('forum_ratings', $newrating)) {
-                    print_error('cannotinsertrate', 'forum', '',
-                            array($postid, $rating));
+                    print_error('cannotinsertrate', 'error', '', (object)array('id'=>$postid, 'rating'=>$rating));
                 }
                 forum_update_grades($forum, $post->userid);
             }

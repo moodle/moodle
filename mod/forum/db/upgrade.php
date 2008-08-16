@@ -16,35 +16,22 @@
 //
 // The commands in here will all be database-neutral,
 // using the methods of database_manager class
+//
+// Please do not forget to use upgrade_set_timeout()
+// before any action that may take longer time to finish.
 
-function xmldb_forum_upgrade($oldversion=0) {
-
-    global $CFG, $THEME, $DB;
+function xmldb_forum_upgrade($oldversion) {
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager(); // loads ddl manager and xmldb classes
-
     $result = true;
-
-/// And upgrade begins here. For each one, you'll need one
-/// block of code similar to the next one. Please, delete
-/// this comment lines once this file start handling proper
-/// upgrade code.
-
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of database_manager methods
-/// }
 
 //===== 1.9.0 upgrade line ======//
 
     if ($result and $oldversion < 2007101511) {
-        notify('Processing forum grades, this may take a while if there are many forums...', 'notifysuccess');
         //MDL-13866 - send forum ratins to gradebook again
         require_once($CFG->dirroot.'/mod/forum/lib.php');
-        // too much debug output
-        $DB->set_debug(false);
-        forum_update_grades();
-        $DB->set_debug(true);
-
+        forum_upgrade_grades();
         upgrade_mod_savepoint($result, 2007101511, 'forum');
     }
 

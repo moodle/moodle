@@ -14,30 +14,20 @@
         die;
     }
 
-/// Turn off time limits and try to flush everything all the time, sometimes upgrades can be slow.
-
-    @set_time_limit(0);
+/// try to flush everything all the time
     @ob_implicit_flush(true);
     while(@ob_end_clean()); // ob_end_flush prevents sending of headers
 
 
-    require_once('../config.php');
-    require_once($CFG->libdir.'/adminlib.php');  // Contains various admin-only functions
-    require_once($CFG->libdir.'/db/upgradelib.php');  // Upgrade-related functions
+    require('../config.php');
+    require_once($CFG->libdir.'/adminlib.php');        // Contains various admin-only functions
 
     $id             = optional_param('id', '', PARAM_TEXT);
     $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
     $confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL);
+    $confirmplugins = optional_param('confirmplugincheck', 0, PARAM_BOOL);
     $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
     $autopilot      = optional_param('autopilot', 0, PARAM_BOOL);
-    $ignoreupgradewarning = optional_param('ignoreupgradewarning', 0, PARAM_BOOL);
-    $confirmplugincheck = optional_param('confirmplugincheck', 0, PARAM_BOOL);
-
-/// check upgrade status first
-    if ($ignoreupgradewarning) {
-        $SESSION->upgraderunning = 0;
-    }
-    upgrade_check_running("Upgrade already running in this session, please wait!<br />Click on the exclamation marks to ignore this warning (<a href=\"index.php?ignoreupgradewarning=1\">!!!</a>).", 10);
 
 /// set install/upgrade autocontinue session flag
     if ($autopilot) {
@@ -49,15 +39,15 @@
     $documentationlink = '<a href="http://docs.moodle.org/en/Installation">Installation docs</a>';
 
     if (ini_get_bool('session.auto_start')) {
-        print_error('phpvaroff', 'debug', '', array('session.auto_start', $documentationlink));
+        print_error('phpvaroff', 'debug', '', (object)array('name'=>'session.auto_start', 'link'=>$documentationlink));
     }
 
     if (ini_get_bool('magic_quotes_runtime')) {
-        print_error('phpvaroff', 'debug', '', array('magic_quotes_runtime', $documentationlink));
+        print_error('phpvaroff', 'debug', '', (object)array('name'=>'magic_quotes_runtime', 'link'=>$documentationlink));
     }
 
     if (!ini_get_bool('file_uploads')) {
-        print_error('phpvaron', 'debug', '', array('file_uploads', $documentationlink));
+        print_error('phpvaron', 'debug', '', (object)array('name'=>'file_uploads', 'link'=>$documentationlink));
     }
 
 /// Check that config.php has been edited
@@ -71,7 +61,7 @@
 
     $dirroot = dirname(realpath("../index.php"));
     if (!empty($dirroot) and $dirroot != $CFG->dirroot) {
-        print_error('fixsetting', 'debug', '', array($CFG->dirroot, $dirroot));
+        print_error('fixsetting', 'debug', '', (object)array('current'=>$CFG->dirroot, 'found'=>$dirroot));
     }
 
 /// Set some necessary variables during set-up to avoid PHP warnings later on this page
@@ -85,9 +75,9 @@
         $CFG->version = "";
     }
 
-    if (is_readable("$CFG->dirroot/version.php")) {
-        include_once("$CFG->dirroot/version.php");              // defines $version
-    }
+    $version = null;
+    $release = null;
+    include("$CFG->dirroot/version.php");       // defines $version and $release
 
     if (!$version or !$release) {
         print_error('withoutversion', 'debug'); // without version, stop
@@ -99,9 +89,7 @@
 
     } else {                                 // Check for missing main tables
         $maintables = true;
-        $mtables = array("config", "course", "course_categories", "course_modules",
-                         "course_sections", "log", "log_display", "modules",
-                         "user");
+        $mtables = array('config', 'course', 'groupings'); // some tables used in 1.9 and 2.0, preferable something from the start and end of install.xml 
         foreach ($mtables as $mtable) {
             if (!in_array($mtable, $tables)) {
                 $maintables = false;
@@ -109,8 +97,10 @@
             }
         }
     }
+    unset($mtables);
+    unset($tables);
 
-    if (! $maintables) {
+    if (!$maintables) {
     /// hide errors from headers in case debug enabled in config.php
         $origdebug = $CFG->debug;
         $CFG->debug = DEBUG_MINIMAL;
@@ -156,9 +146,6 @@
         upgrade_log_start();
         $DB->set_debug(true);
 
-    /// Both old .sql files and new install.xml are supported
-    /// But we prioritise install.xml (XMLDB) if present
-
         if (!$DB->setup_is_unicodedb()) {
             if (!$DB->change_db_encoding()) {
                 // If could not convert successfully, throw error, and prevent installation
@@ -166,15 +153,9 @@
             }
         }
 
-        $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
-
-        // all new installs are in unicode - keep for backwards compatibility and 1.8 upgrade checks
-        set_config('unicodedb', 1);
+        $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml");
 
     /// Continue with the instalation
-        $DB->set_debug(false);
-
-        /// Groups install is now in core above.
 
         // Install the roles system.
         moodle_install_roles();
@@ -183,7 +164,6 @@
         events_update_definition();
 
         // Install core message providers
-        require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
         message_update_providers();
 
         /// This is used to handle any settings that must exist in $CFG but which do not exist in
@@ -201,175 +181,180 @@
         // (this should only have any effect during initial install).
         admin_apply_default_settings(NULL, true);
 
-        notify($strdatabasesuccess, "green");
+        // store main version
+        if (!set_config('version', $version)) {
+            print_error('cannotupdateversion', 'debug');
+        }
+
+        notify($strdatabasesuccess, 'notifysuccess');
+
+        /// do not show certificates in log ;-) 
+        $DB->set_debug(false);
+
+        // hack - set up mnet
         require_once $CFG->dirroot.'/mnet/lib.php';
 
         print_continue('index.php');
         print_footer('none');
+
         die;
     }
 
 
 /// Check version of Moodle code on disk compared with database
 /// and upgrade if possible.
-    require_once("$CFG->dirroot/lib/db/upgrade.php");  # defines new upgrades
 
-    $stradministration = get_string("administration");
+    $stradministration = get_string('administration');
 
-    if ($CFG->version) {
-        if ($version > $CFG->version) {  // upgrade
+    if (empty($CFG->version)) {
+        print_error('missingconfigversion', 'debug');
+    }
 
-        /// If the database is not already Unicode then we do not allow upgrading!
-        /// Instead, we print an error telling them to upgrade to 1.7 first.  MDL-6857
-            if (empty($CFG->unicodedb)) {
-                print_error('unicodeupgradeerror', 'error', '', $version);
-            }
+    if ($version > $CFG->version) {  // upgrade
 
-            $a->oldversion = "$CFG->release ($CFG->version)";
-            $a->newversion = "$release ($version)";
-            $strdatabasechecking = get_string("databasechecking", "", $a);
+        require_once($CFG->libdir.'/db/upgrade.php'); // Defines upgrades
+        require_once($CFG->libdir.'/db/upgradelib.php');   // Upgrade-related functions
 
-            // hide errors from headers in case debug is enabled
-            $origdebug = $CFG->debug;
-            $CFG->debug = DEBUG_MINIMAL;
-            error_reporting($CFG->debug);
+        $a->oldversion = "$CFG->release ($CFG->version)";
+        $a->newversion = "$release ($version)";
+        $strdatabasechecking = get_string("databasechecking", "", $a);
 
-            // logo ut in case we are upgrading from pre 1.9 version in order to prevent
-            // weird session/role problems caused by incorrect data in USER and SESSION
-            if ($CFG->version < 2007101500) {
-                require_logout();
-            }
+        // hide errors from headers in case debug is enabled
+        $origdebug = $CFG->debug;
+        $CFG->debug = DEBUG_MINIMAL;
+        error_reporting($CFG->debug);
 
-            if (empty($confirmupgrade)) {
-                $navigation = build_navigation(array(array('name'=>$strdatabasechecking, 'link'=>null, 'type'=>'misc')));
-                print_header($strdatabasechecking, $stradministration, $navigation,
-                        "", "", false, "&nbsp;", "&nbsp;");
+        // logo ut in case we are upgrading from pre 1.9 version in order to prevent
+        // weird session/role problems caused by incorrect data in USER and SESSION
+        if ($CFG->version < 2007101500) {
+            require_logout();
+        }
 
-                notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=1', 'index.php');
-                print_footer('none');
-                exit;
+        if (empty($confirmupgrade)) {
+            $navigation = build_navigation(array(array('name'=>$strdatabasechecking, 'link'=>null, 'type'=>'misc')));
+            print_header($strdatabasechecking, $stradministration, $navigation,
+                    "", "", false, "&nbsp;", "&nbsp;");
 
-            } else if (empty($confirmrelease)){
-                $strcurrentrelease = get_string("currentrelease");
-                $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
-                print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
-                print_heading("Moodle $release");
-                print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'));
+            notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=1', 'index.php');
+            print_footer('none');
+            exit;
 
-                require_once($CFG->libdir.'/environmentlib.php');
-                print_heading(get_string('environment', 'admin'));
-                if (!check_moodle_environment($release, $environment_results, true)) {
-                    print_box_start('generalbox', 'notice'); // MDL-8330
-                    print_string('langpackwillbeupdated', 'admin');
-                    print_box_end();
-                    notice_yesno(get_string('environmenterrorupgrade', 'admin'),
-                                 'index.php?confirmupgrade=1&confirmrelease=1', 'index.php');
-                } else {
-                    notify(get_string('environmentok', 'admin'), 'notifysuccess');
-                    print_box_start('generalbox', 'notice'); // MDL-8330
-                    print_string('langpackwillbeupdated', 'admin');
-                    print_box_end();
-                    echo '<form action="index.php"><div>';
-                    echo '<input type="hidden" name="confirmupgrade" value="1" />';
-                    echo '<input type="hidden" name="confirmrelease" value="1" />';
-                    echo '</div>';
-                    echo '<div class="continuebutton">';
-                    echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
-                    echo '</form>';
-                }
+        } else if (empty($confirmrelease)){
+            $strcurrentrelease = get_string("currentrelease");
+            $navigation = build_navigation(array(array('name'=>$strcurrentrelease, 'link'=>null, 'type'=>'misc')));
+            print_header($strcurrentrelease, $strcurrentrelease, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+            print_heading("Moodle $release");
+            print_box(get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/en/Release_Notes'));
 
-                print_footer('none');
-                die;
-            } elseif (empty($confirmplugincheck)) {
-                $strplugincheck = get_string('plugincheck');
-                $navigation = build_navigation(array(array('name'=>$strplugincheck, 'link'=>null, 'type'=>'misc')));
-                print_header($strplugincheck, $strplugincheck, $navigation, "", "", false, "&nbsp;", "&nbsp;");
-                print_heading($strplugincheck);
+            require_once($CFG->libdir.'/environmentlib.php');
+            print_heading(get_string('environment', 'admin'));
+            if (!check_moodle_environment($release, $environment_results, true)) {
                 print_box_start('generalbox', 'notice'); // MDL-8330
-                print_string('pluginchecknotice');
+                print_string('langpackwillbeupdated', 'admin');
                 print_box_end();
-                print_plugin_tables();
-                echo "<br />";
-                echo '<div class="continuebutton">';
-                print_single_button('index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1), get_string('reload'), 'get');
-                echo '</div><br />';
+                notice_yesno(get_string('environmenterrorupgrade', 'admin'),
+                             'index.php?confirmupgrade=1&confirmrelease=1', 'index.php');
+            } else {
+                notify(get_string('environmentok', 'admin'), 'notifysuccess');
+                print_box_start('generalbox', 'notice'); // MDL-8330
+                print_string('langpackwillbeupdated', 'admin');
+                print_box_end();
                 echo '<form action="index.php"><div>';
                 echo '<input type="hidden" name="confirmupgrade" value="1" />';
                 echo '<input type="hidden" name="confirmrelease" value="1" />';
-                echo '<input type="hidden" name="confirmplugincheck" value="1" />';
                 echo '</div>';
-                echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="1" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
+                echo '<div class="continuebutton">';
                 echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
                 echo '</form>';
-                print_footer('none');
-                die();
-
-            } else {
-                $strdatabasesuccess  = get_string("databasesuccess");
-                $navigation = build_navigation(array(array('name'=>$strdatabasesuccess, 'link'=>null, 'type'=>'misc')));
-                print_header($strdatabasechecking, $stradministration, $navigation,
-                        "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
-
-            /// return to original debugging level
-                $CFG->debug = $origdebug;
-                error_reporting($CFG->debug);
-                upgrade_log_start();
-
-            /// Upgrade current language pack if we can
-                upgrade_language_pack();
-
-                print_heading($strdatabasechecking);
-                $DB->set_debug(true);
-            /// Launch the old main upgrade (if exists)
-                $status = true;
-                if (function_exists('main_upgrade')) {
-                    $status = main_upgrade($CFG->version);
-                }
-            /// If succesful and exists launch the new main upgrade (XMLDB), called xmldb_main_upgrade
-                if ($status && function_exists('xmldb_main_upgrade')) {
-                    $status = xmldb_main_upgrade($CFG->version);
-                }
-                $DB->set_debug(false);
-            /// If successful, continue upgrading roles and setting everything properly
-                if ($status) {
-                    if (!update_capabilities()) {
-                        print_error('cannotupgradecapabilities', 'debug');
-                    }
-
-                    // Update core events
-                    events_update_definition();
-
-                    // Update core message providers
-                    require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
-                    message_update_providers();
-
-                    if (set_config("version", $version)) {
-                        remove_dir($CFG->dataroot . '/cache', true); // flush cache
-                        notify($strdatabasesuccess, "green");
-                        print_continue("upgradesettings.php");
-                        print_footer('none');
-                        exit;
-                    } else {
-                        print_error('cannotupdateversion', 'debug');
-                    }
-            /// Main upgrade not success
-                } else {
-                    notify('Main Upgrade failed!  See lib/db/upgrade.php');
-                    print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
-                    print_footer('none');
-                    die;
-                }
-                upgrade_log_finish();
             }
-        } else if ($version < $CFG->version) {
+
+            print_footer('none');
+            die;
+        } elseif (empty($confirmplugins)) {
+            $strplugincheck = get_string('plugincheck');
+            $navigation = build_navigation(array(array('name'=>$strplugincheck, 'link'=>null, 'type'=>'misc')));
+            print_header($strplugincheck, $strplugincheck, $navigation, "", "", false, "&nbsp;", "&nbsp;");
+            print_heading($strplugincheck);
+            print_box_start('generalbox', 'notice'); // MDL-8330
+            print_string('pluginchecknotice');
+            print_box_end();
+            print_plugin_tables();
+            echo "<br />";
+            echo '<div class="continuebutton">';
+            print_single_button('index.php', array('confirmupgrade' => 1, 'confirmrelease' => 1), get_string('reload'), 'get');
+            echo '</div><br />';
+            echo '<form action="index.php"><div>';
+            echo '<input type="hidden" name="confirmupgrade" value="1" />';
+            echo '<input type="hidden" name="confirmrelease" value="1" />';
+            echo '<input type="hidden" name="confirmplugincheck" value="1" />';
+            echo '</div>';
+            echo '<div class="continuebutton"><input name="autopilot" id="autopilot" type="checkbox" value="1" /><label for="autopilot">'.get_string('unattendedoperation', 'admin').'</label>';
+            echo '<br /><br /><input type="submit" value="'.get_string('continue').'" /></div>';
+            echo '</form>';
+            print_footer('none');
+            die();
+
+        } else {
+
+            $strdatabasesuccess  = get_string("databasesuccess");
+            $navigation = build_navigation(array(array('name'=>$strdatabasesuccess, 'link'=>null, 'type'=>'misc')));
+            print_header($strdatabasechecking, $stradministration, $navigation,
+                    "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
+
+        /// return to original debugging level
+            $CFG->debug = $origdebug;
+            error_reporting($CFG->debug);
             upgrade_log_start();
-            notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+
+        /// Upgrade current language pack if we can
+            upgrade_language_pack();
+
+            print_heading($strdatabasechecking);
+            $DB->set_debug(true);
+        /// Launch the old main upgrade (if exists)
+            $status = true;
+            if (function_exists('main_upgrade')) {
+                $status = main_upgrade($CFG->version);
+            }
+        /// If succesful and exists launch the new main upgrade (XMLDB), called xmldb_main_upgrade
+            if ($status && function_exists('xmldb_main_upgrade')) {
+                $status = xmldb_main_upgrade($CFG->version);
+            }
+            $DB->set_debug(false);
+        /// If successful, continue upgrading roles and setting everything properly
+            if ($status) {
+                if (!update_capabilities()) {
+                    print_error('cannotupgradecapabilities', 'debug');
+                }
+
+                // Update core events
+                events_update_definition();
+
+                // Update core message providers
+                message_update_providers();
+
+                if (set_config("version", $version)) {
+                    remove_dir($CFG->dataroot . '/cache', true); // flush cache
+                    notify($strdatabasesuccess, "green");
+                    print_continue("upgradesettings.php");
+                    print_footer('none');
+                    exit;
+                } else {
+                    print_error('cannotupdateversion', 'debug');
+                }
+        /// Main upgrade not success
+            } else {
+                notify('Main Upgrade failed!  See lib/db/upgrade.php');
+                print_continue('index.php?confirmupgrade=1&amp;confirmrelease=1&amp;confirmplugincheck=1');
+                print_footer('none');
+                die;
+            }
             upgrade_log_finish();
         }
-    } else {
-        if (!set_config("version", $version)) {
-            print_error('cannotupdateversion', 'debug');
-        }
+    } else if ($version < $CFG->version) {
+        upgrade_log_start();
+        notify("WARNING!!!  The code you are using is OLDER than the version that made these databases!");
+        upgrade_log_finish();
     }
 
 /// Updated human-readable release version if necessary
@@ -379,9 +364,6 @@
             print_error("cannotupdaterelease", 'debug');
         }
     }
-
-/// Groups install/upgrade is now in core above.
-
 
 /// Find and check all main modules and load them up or upgrade them if necessary
 /// first old *.php update and then the new upgrade.php script

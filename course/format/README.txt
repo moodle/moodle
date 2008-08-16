@@ -69,7 +69,7 @@ visit the admin page.
   
   The function must look like:
   
-  function xmldb_format_yourformat_upgrade($oldversion=0) { 
+  function xmldb_format_yourformat_upgrade($oldversion) { 
   ...
   
 * yourformat/version.php

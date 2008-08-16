@@ -323,43 +323,59 @@ function glossary_get_user_grades($glossary, $userid=0) {
 }
 
 /**
- * Update grades by firing grade_updated event
+ * Update activity grades
  *
  * @param object $glossary null means all glossaries
- * @param int $userid specific user only, 0 mean all
+ * @param int $userid specific user only, 0 means all
  */
 function glossary_update_grades($glossary=null, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
-    if ($glossary != null) {
-        if ($grades = glossary_get_user_grades($glossary, $userid)) {
-            glossary_grade_item_update($glossary, $grades);
+    if (!$glossary->assessed) {
+        glossary_grade_item_update($glossary);
 
-        } else if ($userid and $nullifnone) {
-            $grade = new object();
-            $grade->userid   = $userid;
-            $grade->rawgrade = NULL;
-            glossary_grade_item_update($glossary, $grade);
+    } else if ($grades = glossary_get_user_grades($glossary, $userid)) {
+        glossary_grade_item_update($glossary, $grades);
 
-        } else {
-            glossary_grade_item_update($glossary);
-        }
+    } else if ($userid and $nullifnone) {
+        $grade = new object();
+        $grade->userid   = $userid;
+        $grade->rawgrade = NULL;
+        glossary_grade_item_update($glossary, $grade);
 
     } else {
-        $sql = "SELECT g.*, cm.idnumber as cmidnumber
-                  FROM {glossary} g, {course_modules} cm, {modules} m
-                 WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
-        if ($rs = $DB->get_recordset_sql($sql)) {
-            foreach ($rs as $glossary) {
-                if ($glossary->assessed) {
-                    glossary_update_grades($glossary, 0, false);
-                } else {
-                    glossary_grade_item_update($glossary);
-                }
-            }
-            $rs->close();
+        glossary_grade_item_update($glossary);
+    }
+}
+
+/**
+ * Update all grades in gradebook.
+ */
+function glossary_upgrade_grades() {
+    global $DB;
+
+    $sql = "SELECT COUNT('x')
+              FROM {glossary} g, {course_modules} cm, {modules} m
+             WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
+    $count = $DB->count_records_sql($sql);
+
+    $sql = "SELECT g.*, cm.idnumber AS cmidnumber, g.course AS courseid
+              FROM {glossary} g, {course_modules} cm, {modules} m
+             WHERE m.name='glossary' AND m.id=cm.module AND cm.instance=g.id";
+    if ($rs = $DB->get_recordset_sql($sql)) {
+        $prevdebug = $DB->get_debug();
+        $DB->set_debug(false);
+        $pbar = new progress_bar('glossaryupgradegrades', 500, true);
+        $i=0;
+        foreach ($rs as $glossary) {
+            $i++;
+            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+            glossary_update_grades($glossary, 0, false);
+            $pbar->update($i, $count, "Updating Glossary grades ($i/$count).");
         }
+        $DB->set_debug($prevdebug);
+        $rs->close();
     }
 }
 

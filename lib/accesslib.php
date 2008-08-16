@@ -3184,7 +3184,7 @@ function capabilities_cleanup($component, $newcapdef=NULL) {
                 if ($roles = get_roles_with_capability($cachedcap->name)) {
                     foreach($roles as $role) {
                         if (!unassign_capability($cachedcap->name, $role->id)) {
-                            print_error('cannotunassigncap', '', '', array($cachedcap->name, $role->name));
+                            print_error('cannotunassigncap', 'error', '', (object)array('cap'=>$cachedcap->name, 'role'=>$role->name));
                         }
                     }
                 }

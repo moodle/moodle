@@ -819,9 +819,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
         $DB->get_manager()->install_from_xmldb_file("$CFG->libdir/db/install.xml"); //New method
 
-        // all new installs are in unicode - keep for backwards compatibility and 1.8 upgrade checks
-        set_config('unicodedb', 1);
-
         /// Continue with the instalation
 
             // Install the roles system.
@@ -867,12 +864,6 @@ if ( file_exists(dirname(dirname(__FILE__)) . '/config.php')) {
 
     if ($CFG->version) {
         if ($version > $CFG->version) {  // upgrade
-
-            /// If the database is not already Unicode then we do not allow upgrading!
-            /// Instead, we print an error telling them to upgrade to 1.7 first.  MDL-6857
-            if (empty($CFG->unicodedb)) {
-                console_write(STDERR,'unicodeupgradeerror', 'error');
-            }
 
             $a->oldversion = "$CFG->release ($CFG->version)";
             $a->newversion = "$release ($version)";

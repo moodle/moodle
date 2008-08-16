@@ -314,7 +314,7 @@ class page_course extends page_base {
     // Do NOT load up "expensive" resouces (e.g. SQL data) here!
     function init_quick($data) {
         if(empty($data->pageid) && !defined('ADMIN_STICKYBLOCKS')) {
-            print_error('cannotinitpage', '', '', null);
+            print_error('cannotinitpage', 'debug', '', (object)array('name'=>'course', 'id'=>'?'));
         }
         parent::init_quick($data);
     }
@@ -339,7 +339,7 @@ class page_course extends page_base {
         }
 
         if(empty($this->courserecord) && !defined('ADMIN_STICKYBLOCKS')) {
-            print_error('cannotinitpage', '', '', $this->id);
+            print_error('cannotinitpage', 'debug', '', (object)array('name'=>'course', 'id'=>$this->id));
         }
 
         $this->context = get_context_instance(CONTEXT_COURSE, $this->id);
@@ -594,7 +594,7 @@ class page_generic_activity extends page_base {
             print_error('noactivityname', 'debug');
         }
         if (!$this->modulerecord = get_coursemodule_from_instance($this->activityname, $this->id)) {
-            print_error('cannotinitpager', 'debug', '', array($this->activityname, $this->id));
+            print_error('cannotinitpager', 'debug', '', (object)array('name'=>$this->activityname, 'id'=>$this->id));
         }
         $this->courserecord = $DB->get_record('course', array('id'=>$this->modulerecord->course));
         if(empty($this->courserecord)) {
@@ -602,7 +602,7 @@ class page_generic_activity extends page_base {
         }
         $this->activityrecord = $DB->get_record($this->activityname, array('id'=>$this->id));
         if(empty($this->activityrecord)) {
-            print_error('cannotinitpager', 'debug', '', array($this->activityname, $this->id));
+            print_error('cannotinitpager', 'debug', '', (object)array('name'=>$this->activityname, 'id'=>$this->id));
         }
         $this->full_init_done = true;
     }

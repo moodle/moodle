@@ -1,6 +1,6 @@
 <?php  // $Id$
 
-function xmldb_quizreport_statistics_upgrade($oldversion=0) {
+function xmldb_quizreport_statistics_upgrade($oldversion) {
 
     global $DB;
     

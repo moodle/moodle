@@ -16,14 +16,17 @@
 //
 // The commands in here will all be database-neutral,
 // using the methods of database_manager class
+//
+// Please do not forget to use upgrade_set_timeout()
+// before any action that may take longer time to finish.
 
-function xmldb_chat_upgrade($oldversion=0) {
-
-    global $CFG, $THEME, $DB;
+function xmldb_chat_upgrade($oldversion) {
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-
     $result = true;
+
+//===== 1.9.0 upgrade line ======//
 
     if ($result && $oldversion < 2008072400) {
 
@@ -48,10 +51,8 @@ function xmldb_chat_upgrade($oldversion=0) {
         $table->add_index('groupid', XMLDB_INDEX_NOTUNIQUE, array('groupid'));
         $table->add_index('timestamp-chatid', XMLDB_INDEX_NOTUNIQUE, array('timestamp', 'chatid'));
 
-    /// Conditionally launch create table for chat_messages_current
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
+    /// create table for chat_messages_current
+        $dbman->create_table($table);
 
     /// chat savepoint reached
         upgrade_mod_savepoint($result, 2008072400, 'chat');

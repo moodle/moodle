@@ -733,6 +733,7 @@ $string['upgradesure'] = 'Your Moodle files have been changed, and you are about
 Once you do this you can not go back again. <br /><br />
 Please note that this process can take a long time. <br /><br />
 Are you sure you want to upgrade this server to this version?';
+$string['upgradetimedout'] = 'Upgrade timed out, please restart the upgrade.';
 $string['upgradingdata'] = 'Upgrading data';
 $string['upgradinglogs'] = 'Upgrading logs';
 $string['uploaduserspreview'] = 'Upload users preview';

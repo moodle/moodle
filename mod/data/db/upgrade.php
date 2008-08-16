@@ -16,13 +16,14 @@
 //
 // The commands in here will all be database-neutral,
 // using the methods of database_manager class
+//
+// Please do not forget to use upgrade_set_timeout()
+// before any action that may take longer time to finish.
 
-function xmldb_data_upgrade($oldversion=0) {
-
-    global $CFG, $THEME, $DB;
+function xmldb_data_upgrade($oldversion) {
+    global $CFG, $DB;
 
     $dbman = $DB->get_manager();
-
     $result = true;
 
 //===== 1.9.0 upgrade line ======//

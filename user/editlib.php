@@ -100,7 +100,7 @@ function useredit_shared_definition(&$mform) {
     $mform->setType('lastname', PARAM_NOTAGS);
 
     // Do not show email field if change confirmation is pending
-    if ($CFG->emailchangeconfirmation && !empty($user->preference_newemail)) {
+    if (!empty($CFG->emailchangeconfirmation) and !empty($user->preference_newemail)) {
         $notice = get_string('auth_emailchangepending', 'auth', $user);
         $notice .= '<br /><a href="edit.php?cancelemailchange=1&amp;id='.$user->id.'">'
                 . get_string('auth_emailchangecancel', 'auth') . '</a>';
@@ -167,7 +167,7 @@ function useredit_shared_definition(&$mform) {
         $mform->setAdvanced('trackforums');
     }
 
-    if ($CFG->htmleditor) {
+    if (!empty($CFG->htmleditor)) {
         $choices = array();
         $choices['0'] = get_string('texteditor');
         $choices['1'] = get_string('htmleditor');

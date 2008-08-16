@@ -310,43 +310,57 @@ function quiz_format_grade($quiz, $grade) {
 /**
  * Update grades in central gradebook
  *
- * @param object $quiz null means all quizs
- * @param int $userid specific user only, 0 mean all
+ * @param object $quiz
+ * @param int $userid specific user only, 0 means all
  */
-function quiz_update_grades($quiz=null, $userid=0, $nullifnone=true) {
+function quiz_update_grades($quiz, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    require_once($CFG->libdir.'/gradelib.php');
 
-    if ($quiz != null) {
-        if ($grades = quiz_get_user_grades($quiz, $userid)) {
-            quiz_grade_item_update($quiz, $grades);
+    if ($quiz->grade == 0) {
+        quiz_grade_item_update($quiz);
 
-        } else if ($userid and $nullifnone) {
-            $grade = new object();
-            $grade->userid   = $userid;
-            $grade->rawgrade = NULL;
-            quiz_grade_item_update($quiz, $grade);
+    } else if ($grades = quiz_get_user_grades($quiz, $userid)) {
+        quiz_grade_item_update($quiz, $grades);
 
-        } else {
-            quiz_grade_item_update($quiz);
-        }
+    } else if ($userid and $nullifnone) {
+        $grade = new object();
+        $grade->userid   = $userid;
+        $grade->rawgrade = NULL;
+        quiz_grade_item_update($quiz, $grade);
 
     } else {
-        $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
-                  FROM {quiz} a, {course_modules} cm, {modules} m
-                 WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
-        if ($rs = $DB->get_recordset_sql($sql)) {
-            foreach ($rs as $quiz) {
-                if ($quiz->grade != 0) {
-                    quiz_update_grades($quiz, 0, false);
-                } else {
-                    quiz_grade_item_update($quiz);
-                }
-            }
-            $rs->close();
+        quiz_grade_item_update($quiz);
+    }
+}
+    
+/**
+ * Update all grades in gradebook.
+ */
+function quiz_upgrade_grades() {
+    global $DB;
+
+    $sql = "SELECT COUNT('x')
+              FROM {quiz} a, {course_modules} cm, {modules} m
+             WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
+    $count = $DB->count_records_sql($sql);
+
+    $sql = "SELECT a.*, cm.idnumber AS cmidnumber, a.course AS courseid
+              FROM {quiz} a, {course_modules} cm, {modules} m
+             WHERE m.name='quiz' AND m.id=cm.module AND cm.instance=a.id";
+    if ($rs = $DB->get_recordset_sql($sql)) {
+        $prevdebug = $DB->get_debug();
+        $DB->set_debug(false);
+        $pbar = new progress_bar('quizupgradegrades', 500, true);
+        $i=0;
+        foreach ($rs as $quiz) {
+            $i++;
+            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+            quiz_update_grades($quiz, 0, false);
+            $pbar->update($i, $count, "Updating Quiz grades ($i/$count).");
         }
+        $DB->set_debug($prevdebug);
+        $rs->close();
     }
 }
 

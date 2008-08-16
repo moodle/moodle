@@ -798,43 +798,60 @@ function data_get_user_grades($data, $userid=0) {
 }
 
 /**
- * Update grades by firing grade_updated event
+ * Update activity grades
  *
- * @param object $data null means all databases
- * @param int $userid specific user only, 0 mean all
+ * @param object $data
+ * @param int $userid specific user only, 0 means all
  */
-function data_update_grades($data=null, $userid=0, $nullifnone=true) {
+function data_update_grades($data, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
-    if ($data != null) {
-        if ($grades = data_get_user_grades($data, $userid)) {
-            data_grade_item_update($data, $grades);
+    if (!$data->assessed) {
+        data_grade_item_update($data);
 
-        } else if ($userid and $nullifnone) {
-            $grade = new object();
-            $grade->userid   = $userid;
-            $grade->rawgrade = NULL;
-            data_grade_item_update($data, $grade);
+    } else if ($grades = data_get_user_grades($data, $userid)) {
+        data_grade_item_update($data, $grades);
 
-        } else {
-            data_grade_item_update($data);
-        }
+    } else if ($userid and $nullifnone) {
+        $grade = new object();
+        $grade->userid   = $userid;
+        $grade->rawgrade = NULL;
+        data_grade_item_update($data, $grade);
 
     } else {
-        $sql = "SELECT d.*, cm.idnumber as cmidnumber
-                  FROM {data} d, {course_modules} cm, {modules} m
-                 WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id";
-        if ($rs = $DB->get_recordset_sql($sql)) {
-            foreach ($rs as $data) {
-                if ($data->assessed) {
-                    data_update_grades($data, 0, false);
-                } else {
-                    data_grade_item_update($data);
-                }
-            }
-            $rs->close();
+        data_grade_item_update($data);
+    }
+}
+
+/**
+ * Update all grades in gradebook.
+ */
+function data_upgrade_grades() {
+    global $DB;
+
+    $sql = "SELECT COUNT('x')
+              FROM {data} d, {course_modules} cm, {modules} m
+             WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id";
+    $count = $DB->count_records_sql($sql);
+
+    $sql = "SELECT d.*, cm.idnumber AS cmidnumber, d.course AS courseid
+              FROM {data} d, {course_modules} cm, {modules} m
+             WHERE m.name='data' AND m.id=cm.module AND cm.instance=d.id";
+    if ($rs = $DB->get_recordset_sql($sql)) {
+        // too much debug output
+        $prevdebug = $DB->get_debug();
+        $DB->set_debug(false);
+        $pbar = new progress_bar('dataupgradegrades', 500, true);
+        $i=0;
+        foreach ($rs as $data) {
+            $i++;
+            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+            data_update_grades($data, 0, false);
+            $pbar->update($i, $count, "Updating Database grades ($i/$count).");
         }
+        $DB->set_debug($prevdebug);
+        $rs->close();
     }
 }
 

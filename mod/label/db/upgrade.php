@@ -16,22 +16,18 @@
 //
 // The commands in here will all be database-neutral,
 // using the methods of database_manager class
+//
+// Please do not forget to use upgrade_set_timeout()
+// before any action that may take longer time to finish.
 
-function xmldb_label_upgrade($oldversion=0) {
-    global $CFG, $THEME, $DB;
+function xmldb_label_upgrade($oldversion) {
+    global $CFG, $DB;
 
+    $dbman = $DB->get_manager();
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
-/// this comment lines once this file start handling proper
-/// upgrade code.
-
-/// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
-///     $result = result of database_manager methods
-/// }
-
 //===== 1.9.0 upgrade line ======//
+
     if ($oldversion < 2007101510) {
         $sql = "UPDATE {log_display} SET mtable = 'label' WHERE module = 'label'";
         $result = $DB->execute($sql);

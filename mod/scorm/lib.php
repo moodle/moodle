@@ -441,39 +441,54 @@ function scorm_get_user_grades($scorm, $userid=0) {
 /**
  * Update grades in central gradebook
  *
- * @param object $scorm null means all scormbases
+ * @param object $scorm
  * @param int $userid specific user only, 0 mean all
  */
-function scorm_update_grades($scorm=null, $userid=0, $nullifnone=true) {
+function scorm_update_grades($scorm, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    require_once($CFG->libdir.'/gradelib.php');
 
-    if ($scorm != null) {
-        if ($grades = scorm_get_user_grades($scorm, $userid)) {
-            scorm_grade_item_update($scorm, $grades);
+    if ($grades = scorm_get_user_grades($scorm, $userid)) {
+        scorm_grade_item_update($scorm, $grades);
 
-        } else if ($userid and $nullifnone) {
-            $grade = new object();
-            $grade->userid   = $userid;
-            $grade->rawgrade = NULL;
-            scorm_grade_item_update($scorm, $grade);
-
-        } else {
-            scorm_grade_item_update($scorm);
-        }
+    } else if ($userid and $nullifnone) {
+        $grade = new object();
+        $grade->userid   = $userid;
+        $grade->rawgrade = NULL;
+        scorm_grade_item_update($scorm, $grade);
 
     } else {
-        $sql = "SELECT s.*, cm.idnumber as cmidnumber
-                  FROM {scorm} s, {course_modules} cm, {modules} m
-                 WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
-        if ($rs = $DB->get_recordset_sql($sql)) {
-            foreach ($rs as $scorm) {
-                scorm_update_grades($scorm, 0, false);
-            }
-            $rs->close();
+        scorm_grade_item_update($scorm);
+    }
+}
+
+/**
+ * Update all grades in gradebook.
+ */
+function scorm_upgrade_grades() {
+    global $DB;
+
+    $sql = "SELECT COUNT('x')
+              FROM {scorm} s, {course_modules} cm, {modules} m
+             WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
+    $count = $DB->count_records_sql($sql);
+
+    $sql = "SELECT s.*, cm.idnumber AS cmidnumber, s.course AS courseid
+              FROM {scorm} s, {course_modules} cm, {modules} m
+             WHERE m.name='scorm' AND m.id=cm.module AND cm.instance=s.id";
+    if ($rs = $DB->get_recordset_sql($sql)) {
+        $prevdebug = $DB->get_debug();
+        $DB->set_debug(false);
+        $pbar = new progress_bar('scormupgradegrades', 500, true);
+        $i=0;
+        foreach ($rs as $scorm) {
+            $i++;
+            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+            scorm_update_grades($scorm, 0, false);
+            $pbar->update($i, $count, "Updating Scorm grades ($i/$count).");
         }
+        $DB->set_debug($prevdebug);
+        $rs->close();
     }
 }
 

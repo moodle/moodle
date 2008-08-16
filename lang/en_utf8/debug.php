@@ -3,10 +3,11 @@
  * debug information for developer only
  */
 $string['authpluginnotfound'] = 'Authentication plugin $a not found.';
+$string['blocknotexist'] = '$a block doesn\'t exist';
 $string['cannotbenull'] = '$a cannot be null!';
 $string['cannotcreateadminuser'] = 'SERIOUS ERROR: Could not create admin user record !!!';
-$string['cannotdowngrade'] = 'Cannot downgrade from $a[0] to $a[1].';
-$string['cannotinitpage'] = 'Cannot fully initialize page: invalid $a[0] id $a[1]';
+$string['cannotdowngrade'] = 'Cannot downgrade from $a->oldversion to $a->newversion.';
+$string['cannotinitpage'] = 'Cannot fully initialize page: invalid $a->name id $a->id';
 $string['cannotupgradecapabilities'] = 'Had trouble upgrading the core capabilities for the Roles System';
 $string['cannotupdateversion'] = 'Upgrade failed!  (Could not update version in config table)';
 $string['cannotupdaterelease'] = 'ERROR: Could not update release version in database!!';
@@ -21,9 +22,10 @@ $string['dbnotsupport'] = 'Error: Your database ($a) is not yet fully supported 
 $string['dbnotsetup'] = 'Error: Main databases NOT set up successfully';
 $string['doesnotworkwitholdversion'] = 'This script does not work with this old version of Moodle';
 $string['erroroccur'] = 'An error has occurred during this process';
-$string['fixsetting'] = 'Please fix your settings in config.php: <p>You have:</p> <p>\$CFG->dirroot = \"$a[0]\";</p> <p>but it should be:</p> <p>\$CFG->dirroot = \"$a[1]\"</p>';
+$string['fixsetting'] = 'Please fix your settings in config.php: <p>You have:</p> <p>\$CFG->dirroot = \"$a->current\";</p> <p>but it should be:</p> <p>\$CFG->dirroot = \"$a->found\"</p>';
 $string['invalideventdata'] = 'Incorrect eventadata submitted: $a';
 $string['invalidarraysize'] = 'Incorrect size of arrays in params of $a';
+$string['missingconfigversion'] = 'Config table does not contain version, can not continue, sorry.';
 $string['mustbeoveride'] = 'Abstract $a method must be overriden.';
 $string['morethanonerecordinfetch'] = 'Found more than one record in fetch() !';
 $string['noadminrole'] = 'No admin role could be found';
@@ -37,16 +39,13 @@ $string['nopageclass'] = 'Imported $a but found no page classes';
 $string['noreports'] = 'No reports accessible';
 $string['nomodules'] = 'No modules found!!';
 $string['modulenotexist'] = '$a module doesn\'t exist';
-$string['phpvaroff'] = 'The PHP server variable \'$a[0]\' should be Off - $a[1]';
-$string['phpvaron'] = 'The PHP server variable \'$a[0]\' is not turned On - $a[1]';
-$string['prefixcannotbeempty'] = 'Table prefix \"$a[0]\" cannot be empty for your target DB ($a[1])'; // obsoleted 2.0
-$string['prefixlimit'] = 'Table prefix \"$a\" maximum allowed length for Oracle DBs is 2cc.'; // obsoleted in 2.0
-$string['withoutversion'] = 'Main version.php was not readable or specified';
+$string['phpvaroff'] = 'The PHP server variable \'$a->name\' should be Off - $a->link';
+$string['phpvaron'] = 'The PHP server variable \'$a->name\' is not turned On - $a->link';
 $string['sessionmissing'] = '$a object missing from session';
 $string['siteisnotdefined'] = 'Site is not defined!';
 $string['sqlrelyonobsoletetable'] = 'This SQL relies on obsolete table(s): $a!  Your code must be fixed by a developer.';
 $string['upgradefail'] = 'Upgrade failed! see: $a';
-$string['withoutversion'] = 'Main version.php was not readable or specified';
+$string['withoutversion'] = 'Main version.php file is missing, not readable or broken.';
 $string['xmlizeunavailable'] = 'xmlize functions are not available';
 
 ?>

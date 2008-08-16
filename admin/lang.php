@@ -404,7 +404,7 @@
             if ($location || $plugin) {
                 // file in an extra location
                 if ($currentfile != "{$prefix}{$plugin}.php") {
-                    print_error('filemismatch', 'error', '', array($currectfile, $prefix, $plugin));
+                    print_error('filemismatch', 'error', '', (object)array('current'=>$currectfile, 'file'=>$prefix.$plugin.'.php'));
                 }
                 if (!$uselocal) {
                     notify($streditingnoncorelangfile);
@@ -413,7 +413,7 @@
             } else {
                 // file in standard location
                 if ($currentfile != $filename) {
-                    print_error('filemismatch', 'error', '', array($currectfile, $filename, ''));
+                    print_error('filemismatch', 'error', '', (object)array('current'=>$currectfile, 'file'=>$filename.'.php'));
                 }
             }
 
@@ -467,7 +467,7 @@
             if (lang_save_file($saveinto, $currentfile, $newstrings, $uselocal, $packstring)) {
                 notify(get_string("changessaved")." ($saveinto/$currentfile)", "notifysuccess");
             } else {
-                print_error('cannotsavefile', 'error', 'lang.php?mode=compare&amp;currentfile=$currentfile', array($saveinto, $currentfile));
+                print_error('cannotsavefile', 'error', 'lang.php?mode=compare&amp;currentfile=$currentfile', $saveinto.'/'.$currentfile);
             }
             unset($packstring);
         }

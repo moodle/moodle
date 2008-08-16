@@ -64,7 +64,7 @@
             } else if ($rating != $oldrating->rating) {
                 $oldrating->rating = $rating;
                 if (!$DB->update_record('data_ratings', $oldrating)) {
-                    print_error('cannotupdaterate', 'data', '', array($record->id, $rating));
+                    print_error('cannotupdaterate', 'error', '', (object)array('id'=>$record->id, 'rating'=>$rating));
                 }
                 data_update_grades($data, $record->userid);
 
@@ -76,7 +76,7 @@
             $newrating->recordid = $record->id;
             $newrating->rating   = $rating;
             if (! $DB->insert_record('data_ratings', $newrating)) {
-                print_error('cannotinsertrate', 'data', '', array($record->id, $rating));
+                print_error('cannotinsertrate', 'error', '', (object)array('id'=>$record->id, 'rating'=>$rating));
             }
             data_update_grades($data, $record->userid);
         }

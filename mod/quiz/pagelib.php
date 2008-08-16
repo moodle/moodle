@@ -20,7 +20,7 @@ class page_quiz extends page_generic_activity {
 
     function init_quick($data) {
         if(empty($data->pageid)) {
-            print_error('cannotinitpage', '', '', null);
+            print_error('cannotinitpage', 'debug', '', (object)array('name'=>'quiz', 'id'=>'?'));
         }
         $this->activityname = 'quiz';
         parent::init_quick($data);

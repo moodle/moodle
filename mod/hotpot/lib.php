@@ -1256,46 +1256,63 @@ function hotpot_get_user_grades($hotpot, $userid=0) {
 
 /**
  * Update grades in central gradebook
- * this function is called from db/upgrade.php
- *     it is initially called with no arguments, which forces it to get a list of all hotpots
- *     it then iterates through the hotpots, calling itself to create a grade record for each hotpot
- *
- * @param object $hotpot null means all hotpots
+ * @param object $hotpot
  * @param int $userid specific user only, 0 means all users
  */
-function hotpot_update_grades($hotpot=null, $userid=0, $nullifnone=true) {
+function hotpot_update_grades($hotpot, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
-    if (is_null($hotpot)) {
-        // update (=create) grades for all hotpots
-        $sql = "
-            SELECT h.*, cm.idnumber as cmidnumber
-            FROM {hotpot} h, {course_modules} cm, {modules} m
-            WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=h.id"
-        ;
-        if ($rs = $DB->get_recordset_sql($sql)) {
-            foreach ($rs as $hotpot) {
-                hotpot_update_grades($hotpot, 0, false);
-            }
-            $rs->close();
-        }
+    // update (=create) grade for a single hotpot
+    if ($grades = hotpot_get_user_grades($hotpot, $userid)) {
+        hotpot_grade_item_update($hotpot, $grades);
+
+    } else if ($userid && $nullifnone) {
+        // no grades for this user, but we must force the creation of a "null" grade record
+        $grade = new object();
+        $grade->userid   = $userid;
+        $grade->rawgrade = null;
+        hotpot_grade_item_update($hotpot, $grade);
+
     } else {
-        // update (=create) grade for a single hotpot
-        if ($grades = hotpot_get_user_grades($hotpot, $userid)) {
-            hotpot_grade_item_update($hotpot, $grades);
+        // no grades and no userid
+        hotpot_grade_item_update($hotpot);
+    }
+}
 
-        } else if ($userid && $nullifnone) {
-            // no grades for this user, but we must force the creation of a "null" grade record
-            $grade = new object();
-            $grade->userid   = $userid;
-            $grade->rawgrade = null;
-            hotpot_grade_item_update($hotpot, $grade);
+/**
+ * Update all grades in gradebook.
+ * this function is called from db/upgrade.php
+ *     it iterates through the hotpots, calling hotpot_update_grades() to create a grade record for each hotpot
+ */
+function hotpot_upgrade_grades() {
+    global $DB;
 
-        } else {
-            // no grades and no userid
-            hotpot_grade_item_update($hotpot);
+    // upgrade (=create) grades for all hotpots
+    $sql = "
+        SELECT COUNT('x')
+        FROM {hotpot} h, {course_modules} cm, {modules} m
+        WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=h.id";
+    $count = $DB->count_records_sql($sql);
+
+    $sql = "
+        SELECT h.*, cm.idnumber AS cmidnumber
+        FROM {hotpot} h, {course_modules} cm, {modules} m
+        WHERE m.name='hotpot' AND m.id=cm.module AND cm.instance=h.id";
+    if ($rs = $DB->get_recordset_sql($sql)) {
+        // too much debug output
+        $prevdebug = $DB->get_debug();
+        $DB->set_debug(false);
+        $pbar = new progress_bar('hotpotupgradegrades', 500, true);
+        $i=0;
+        foreach ($rs as $hotpot) {
+            $i++;
+            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+            hotpot_update_grades($hotpot, 0, false);
+            $pbar->update($i, $count, "Updating Hotpot grades ($i/$count).");
         }
+        $DB->set_debug($prevdebug);
+        $rs->close();
     }
 }
 
@@ -1479,9 +1496,6 @@ class hotpot_xml_tree {
         if (empty($str)) {
             $this->xml =  array();
         } else {
-            if (empty($CFG->unicodedb)) {
-                $str = utf8_encode($str);
-            }
             $this->xml =  xmlize($str, 0);
         }
         $this->xml_root = $xml_root;
@@ -1492,9 +1506,6 @@ class hotpot_xml_tree {
         eval('$value = &$this->xml'.$this->xml_root.$tags.$more_tags.';');
 
         if (is_string($value)) {
-            if (empty($CFG->unicodedb)) {
-                $value = utf8_decode($value);
-            }
 
             // decode angle brackets
             $value = strtr($value, array('&#x003C;'=>'<', '&#x003E;'=>'>', '&#x0026;'=>'&'));

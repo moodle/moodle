@@ -2212,41 +2212,60 @@ function assignment_get_user_grades($assignment, $userid=0) {
 }
 
 /**
- * Update grades by firing grade_updated event
+ * Update activity grades
  *
- * @param object $assignment null means all assignments
- * @param int $userid specific user only, 0 mean all
+ * @param object $assignment
+ * @param int $userid specific user only, 0 means all
  */
-function assignment_update_grades($assignment=null, $userid=0, $nullifnone=true) {
+function assignment_update_grades($assignment, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
     require_once($CFG->libdir.'/gradelib.php');
 
-    if ($assignment != null) {
-        if ($grades = assignment_get_user_grades($assignment, $userid)) {
-            foreach($grades as $k=>$v) {
-                if ($v->rawgrade == -1) {
-                    $grades[$k]->rawgrade = null;
-                }
+    if ($assignment->grade == 0) {
+        assignment_grade_item_update($assignment);
+
+    } else if ($grades = assignment_get_user_grades($assignment, $userid)) {
+        foreach($grades as $k=>$v) {
+            if ($v->rawgrade == -1) {
+                $grades[$k]->rawgrade = null;
             }
-            assignment_grade_item_update($assignment, $grades);
-        } else {
-            assignment_grade_item_update($assignment);
         }
+        assignment_grade_item_update($assignment, $grades);
 
     } else {
-        $sql = "SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
-                  FROM {assignment} a, {course_modules} cm, {modules} m
-                 WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
-        if ($rs = $DB->get_recordset_sql($sql)) {
-            foreach ($rs as $assignment) {
-                if ($assignment->grade != 0) {
-                    assignment_update_grades($assignment);
-                } else {
-                    assignment_grade_item_update($assignment);
-                }
-            }
-            $rs->close();
+        assignment_grade_item_update($assignment);
+    }
+}
+
+/**
+ * Update all grades in gradebook.
+ */
+function assignment_upgrade_grades() {
+    global $DB;
+
+    $sql = "SELECT COUNT('x')
+              FROM {assignment} a, {course_modules} cm, {modules} m
+             WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
+    $count = $DB->count_records_sql($sql);
+
+    $sql = "SELECT a.*, cm.idnumber AS cmidnumber, a.course AS courseid
+              FROM {assignment} a, {course_modules} cm, {modules} m
+             WHERE m.name='assignment' AND m.id=cm.module AND cm.instance=a.id";
+    if ($rs = $DB->get_recordset_sql($sql)) {
+        // too much debug output
+        $prevdebug = $DB->get_debug();
+        $DB->set_debug(false);
+        $pbar = new progress_bar('assignmentupgradegrades', 500, true);
+        $i=0;
+        foreach ($rs as $assignment) {
+            $i++;
+            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+            assignment_update_grades($assignment);
+            $pbar->update($i, $count, "Updating Assignment grades ($i/$count).");
         }
+        $DB->set_debug($prevdebug);
+        $rs->close();
+        upgrade_set_timeout(); // reset to default timeout
     }
 }
 

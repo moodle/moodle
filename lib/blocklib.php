@@ -1326,7 +1326,7 @@ function upgrade_blocks_plugins($continueto) {
                 }
             } else {
                 upgrade_log_start();
-                print_error('cannotdowngrade', 'debug', '', array($currblock->version, $block->version));
+                print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$currblock->version, 'newversion'=>$block->version));
             }
 
         } else {    // block not installed yet, so install it
@@ -1345,11 +1345,7 @@ function upgrade_blocks_plugins($continueto) {
             if($conflictblock !== false && $conflictblock !== NULL) {
                 // Duplicate block titles are not allowed, they confuse people
                 // AND PHP's associative arrays ;)
-                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-                    print_error('blocknameconflict', '', '', array($block->name, $conflictblock));
-                } else if (CLI_UPGRADE) {
-                    print_error('blocknameconflict', '', '', array($block->name, $conflictblock));
-                }
+                print_error('blocknameconflict', '', '', (object)array('name'=>$block->name, 'conflict'=>$conflictblock));
             }
             if (empty($updated_blocks)) {
                 $strblocksetup    = get_string('blocksetup');

@@ -385,43 +385,57 @@ function lesson_get_user_grades($lesson, $userid=0) {
 /**
  * Update grades in central gradebook
  *
- * @param object $lesson null means all lessons
- * @param int $userid specific user only, 0 mean all
+ * @param object $lesson
+ * @param int $userid specific user only, 0 means all
  */
-function lesson_update_grades($lesson=null, $userid=0, $nullifnone=true) {
+function lesson_update_grades($lesson, $userid=0, $nullifnone=true) {
     global $CFG, $DB;
-    if (!function_exists('grade_update')) { //workaround for buggy PHP versions
-        require_once($CFG->libdir.'/gradelib.php');
-    }
+    require_once($CFG->libdir.'/gradelib.php');
 
-    if ($lesson != null) {
-        if ($grades = lesson_get_user_grades($lesson, $userid)) {
-            lesson_grade_item_update($lesson, $grades);
+    if ($lesson->grade == 0) {
+        lesson_grade_item_update($lesson);
 
-        } else if ($userid and $nullifnone) {
-            $grade = new object();
-            $grade->userid   = $userid;
-            $grade->rawgrade = NULL;
-            lesson_grade_item_update($lesson, $grade);
+    } else if ($grades = lesson_get_user_grades($lesson, $userid)) {
+        lesson_grade_item_update($lesson, $grades);
 
-        } else {
-            lesson_grade_item_update($lesson);
-        }
+    } else if ($userid and $nullifnone) {
+        $grade = new object();
+        $grade->userid   = $userid;
+        $grade->rawgrade = NULL;
+        lesson_grade_item_update($lesson, $grade);
 
     } else {
-        $sql = "SELECT l.*, cm.idnumber as cmidnumber, l.course as courseid
-                  FROM {lesson} l, {course_modules} cm, {modules} m
-                 WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
-        if ($rs = $DB->get_recordset_sql($sql)) {
-            foreach ($rs as $lesson) {
-                if ($lesson->grade != 0) {
-                    lesson_update_grades($lesson, 0, false);
-                } else {
-                    lesson_grade_item_update($lesson);
-                }
-            }
-            $rs->close();
+        lesson_grade_item_update($lesson);
+    }
+}
+
+/**
+ * Update all grades in gradebook.
+ */
+function lesson_upgrade_grades() {
+    global $DB;
+
+    $sql = "SELECT COUNT('x')
+              FROM {lesson} l, {course_modules} cm, {modules} m
+             WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
+    $count = $DB->count_records_sql($sql);
+
+    $sql = "SELECT l.*, cm.idnumber AS cmidnumber, l.course AS courseid
+              FROM {lesson} l, {course_modules} cm, {modules} m
+             WHERE m.name='lesson' AND m.id=cm.module AND cm.instance=l.id";
+    if ($rs = $DB->get_recordset_sql($sql)) {
+        $prevdebug = $DB->get_debug();
+        $DB->set_debug(false);
+        $pbar = new progress_bar('lessonupgradegrades', 500, true);
+        $i=0;
+        foreach ($rs as $lesson) {
+            $i++;
+            upgrade_set_timeout(60*5); // set up timeout, may also abort execution
+            lesson_update_grades($lesson, 0, false);
+            $pbar->update($i, $count, "Updating Lesson grades ($i/$count).");
         }
+        $DB->set_debug($prevdebug);
+        $rs->close();
     }
 }
 
