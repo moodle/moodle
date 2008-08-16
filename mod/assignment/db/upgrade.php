@@ -49,7 +49,7 @@ function xmldb_assignment_upgrade($oldversion) {
                     JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = a.id)
                 ORDER BY a.course, s.assignment";
 
-        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom"); 
+        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
 
         if ($rs = $DB->get_recordset_sql("SELECT s.id, s.userid, s.teacher, s.assignment, a.course, cm.id AS cmid $sqlfrom")) {
 

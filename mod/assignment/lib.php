@@ -1805,7 +1805,7 @@ class assignment_base {
 
             $fs = get_file_storage();
             $browser = get_file_browser();
-    
+
             if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $user->id, "timemodified", false)) {
                 $countfiles = count($files)." ".get_string("uploadedfiles", "assignment");
                 foreach ($files as $file) {
@@ -1962,11 +1962,11 @@ class mod_assignment_upload_file_form extends moodleform {
 
 /// OTHER STANDARD FUNCTIONS ////////////////////////////////////////////////////////
 
-/** 
+/**
  * Code to be executed when a module is installed
- */ 
+ */
 function assignment_install() {
-    return true; 
+    return true;
 }
 
 /**
