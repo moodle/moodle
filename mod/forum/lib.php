@@ -6691,9 +6691,14 @@ function forum_reset_userdata($data) {
         $DB->delete_records_select('forum_discussions', "forum IN ($forumssql)", $params);
 
         // now get rid of all attachments
+        $fs = get_file_storage();
         if ($forums = $DB->get_records_sql($forumssql, $params)) {
             foreach ($forums as $forumid=>$unused) {
-                fulldelete($CFG->dataroot.'/'.$data->courseid.'/moddata/forum/'.$forumid);
+                if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
+                    continue;
+                }
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $fs->delete_area_files($context->id, 'forum_attachment');
             }
         }
 
