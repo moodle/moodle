@@ -98,6 +98,8 @@ $mod_data_capabilities = array(
 
     'mod/data:approve' => array(
 
+        'riskbitmask' => RISK_SPAM,
+
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => array(
