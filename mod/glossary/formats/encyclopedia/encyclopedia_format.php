@@ -46,7 +46,7 @@ function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode
             } else {
                 $align = 'left';
             }
-            glossary_print_entry_attachment($entry,'',$align,false);
+            glossary_print_entry_attachment($entry, $cm, null,$align,false);
         }
         glossary_print_entry_definition($entry);
 

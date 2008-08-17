@@ -57,7 +57,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
         //----Define if the attachment must be showed into a 100% width table
         $attachmentinsidetable = true; //Values: true, false (default true)
         //Call the function
-        glossary_print_entry_attachment($entry,$attachmentformat,$attachmentalign,$attachmentinsidetable);
+        glossary_print_entry_attachment($entry, $cm, $attachmentformat, $attachmentalign, $attachmentinsidetable);
 
         //Line separator to show this template fine. :-)
         echo "<br />\n";

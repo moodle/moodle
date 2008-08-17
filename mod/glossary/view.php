@@ -29,6 +29,7 @@
         if (! $glossary = $DB->get_record("glossary", array("id"=>$cm->instance))) {
             print_error('invalidid', 'glossary');
         }
+
     } else if (!empty($g)) {
         if (! $glossary = $DB->get_record("glossary", array("id"=>$g))) {
             print_error('invalidid', 'glossary');
@@ -52,7 +53,7 @@
 
 /// redirecting if adding a new entry
     if ($tab == GLOSSARY_ADDENTRY_VIEW ) {
-        redirect("edit.php?id=$cm->id&amp;mode=$mode");
+        redirect("edit.php?cmid=$cm->id&amp;mode=$mode");
     }
 
 /// setting the defaut number of entries per page if not set
@@ -316,7 +317,7 @@
     /// End glossary controls
 //        print_box_end(); /// glossarycontrol
         echo '</div>';
-        
+
 //        print_box('&nbsp;', 'clearer');
     }
 
@@ -359,10 +360,8 @@
         echo '<div class="singlebutton glossaryaddentry">';
         echo "<form id=\"newentryform\" method=\"get\" action=\"$CFG->wwwroot/mod/glossary/edit.php\">";
         echo '<div>';
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-        echo '<input type="submit" value="';
-        print_string('addentry', 'glossary');
-        echo '" />';
+        echo "<input type=\"hidden\" name=\"cmid\" value=\"$cm->id\" />";
+        echo '<input type="submit" value="'.get_string('addentry', 'glossary').'" />';
         echo '</div>';
         echo '</form>';
         echo "</div>\n";
@@ -370,9 +369,9 @@
 
     echo '<br />';
 
-    include("tabs.php");
+    require("tabs.php");
 
-    include_once("sql.php");
+    require("sql.php");
 
 /// printing the entries
     $entriesshown = 0;
@@ -389,7 +388,7 @@
         }
 
         //Build paging bar
-        $paging = glossary_get_paging_bar($count, $page, $entriesbypage, "view.php?id=$id&amp;mode=$mode&amp;hook=$hook&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;fullsearch=$fullsearch&amp;",9999,10,'&nbsp;&nbsp;', $specialtext, -1);
+        $paging = glossary_get_paging_bar($count, $page, $entriesbypage, "view.php?id=$id&amp;mode=$mode&amp;hook=".urlencode($hook)."&amp;sortkey=$sortkey&amp;sortorder=$sortorder&amp;fullsearch=$fullsearch&amp;",9999,10,'&nbsp;&nbsp;', $specialtext, -1);
 
         echo '<div class="paging">';
         echo $paging;

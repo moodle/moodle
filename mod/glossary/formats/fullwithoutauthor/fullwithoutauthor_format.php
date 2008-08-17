@@ -21,7 +21,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo '<td class="entryattachment">';
 
         glossary_print_entry_approval($cm, $entry, $mode);
-        glossary_print_entry_attachment($entry,'html','right');
+        glossary_print_entry_attachment($entry, $cm, 'html', 'right');
         echo '</td>';
 
         echo '</tr>';

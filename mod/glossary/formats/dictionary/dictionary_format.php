@@ -8,7 +8,7 @@ function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='
     echo '<tr valign="top">';
     echo '<td class="entry">';
     glossary_print_entry_approval($cm, $entry, $mode);
-    glossary_print_entry_attachment($entry,'html','right');
+    glossary_print_entry_attachment($entry, $cm, 'html', 'right');
     echo '<div class="concept">';
     glossary_print_entry_concept($entry);
     echo ':</div> ';

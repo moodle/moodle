@@ -3,8 +3,6 @@
 /// Library of functions and constants for module glossary
 /// (replace glossary with the name of your module and delete this line)
 
-require_once($CFG->libdir.'/filelib.php');
-
 define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
 define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);
 
@@ -105,59 +103,85 @@ function glossary_update_instance($glossary) {
     return $return;
 }
 
-
+/**
+ * Given an ID of an instance of this module,
+ * this function will permanently delete the instance
+ * and any data that depends on it.
+ * @param int $id glossary id
+ * @return bool success
+ */
 function glossary_delete_instance($id) {
     global $DB;
-/// Given an ID of an instance of this module,
-/// this function will permanently delete the instance
-/// and any data that depends on it.
 
-    if (! $glossary = $DB->get_record("glossary", array("id"=>"$id"))) {
+    if (!$glossary = $DB->get_record('glossary', array('id'=>$id))) {
         return false;
     }
 
-    $result = true;
-
-    # Delete any dependent records here #
-
-    if (! $DB->delete_records("glossary", array("id"=>$glossary->id))) {
-        $result = false;
-    } else {
-        if ($categories = $DB->get_records("glossary_categories", array("glossaryid"=>$glossary->id))) {
-            $cats = "";
-            foreach ( $categories as $cat ) {
-                $cats .= "$cat->id,";
-            }
-            $cats = substr($cats,0,-1);
-            if ($cats) {
-                $DB->delete_records_select("glossary_entries_categories", "categoryid in ($cats)");
-                $DB->delete_records("glossary_categories", array("glossaryid"=>$glossary->id));
-            }
-        }
-        if ( $entries = $DB->get_records("glossary_entries", array("glossaryid"=>$glossary->id))) {
-            $ents = "";
-            foreach ( $entries as $entry ) {
-                if ( $entry->sourceglossaryid ) {
-                    $entry->glossaryid = $entry->sourceglossaryid;
-                    $entry->sourceglossaryid = 0;
-                    $DB->update_record("glossary_entries",$entry);
-                } else {
-                    $ents .= "$entry->id,";
-                }
-            }
-            $ents = substr($ents,0,-1);
-            if ($ents) {
-                $DB->delete_records_select("glossary_comments", "entryid in ($ents)");
-                $DB->delete_records_select("glossary_alias", "entryid in ($ents)");
-                $DB->delete_records_select("glossary_ratings", "entryid in ($ents)");
-            }
-        }
-        glossary_delete_attachments($glossary);
-        $DB->delete_records("glossary_entries", array("glossaryid"=>$glossary->id));
+    if (!$cm = get_coursemodule_from_instance('glossary', $id)) {
+        return false;
     }
+
+    if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        return false;
+    }
+
+    $fs = get_file_storage();
+
+    if ($glossary->mainglossary) {
+        // unexport entries
+        $sql = "SELECT ge.id, ge.sourceglossaryid, cm.id AS sourcecmid
+                  FROM {glossary_entries} ge
+                  JOIN {modules} m ON m.name = 'glossary'
+                  JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = ge.sourceglossaryid)
+                 WHERE ge.glossaryid = ? AND ge.sourceglossaryid > 0";
+
+        if ($exported = $DB->get_records_sql($sql, array($id))) {
+            foreach ($exported as $entry) {
+                $entry->glossaryid = $entry->sourceglossaryid;
+                $entry->sourceglossaryid = 0;
+                $newcontext = get_context_instance(CONTEXT_MODULE, $entry->sourcecmid);
+                if ($oldfiles = $fs->get_area_files($context->id, 'glossary_attachment', $entry->id)) {
+                    foreach ($oldfiles as $oldfile) {
+                        $file_record = new object();
+                        $file_record->contextid = $newcontext->id;
+                        $fs->create_file_from_storedfile($file_record, $oldfile);
+                    }
+                    $fs->delete_area_files($context->id, 'glossary_attachment', $entry->id);
+                    $entry->attachment = '1';
+                } else {
+                    $entry->attachment = '0';
+                }
+                $DB->update_record('glossary_entries', $entry);
+            }
+        }
+    } else {
+        // move exported entries to main glossary
+        $sql = "UPDATE {glossary_entries}
+                   SET sourceglossaryid = 0
+                 WHERE sourceglossaryid = ?";
+        $DB->execute($sql, array($id));
+    }
+
+    // Delete any dependent records
+    $entry_select = "SELECT id FROM {glossary_entries} WHERE glossaryid = ?";
+    $DB->delete_records_select('glossary_comments', "entryid IN ($entry_select)", array($id));
+    $DB->delete_records_select('glossary_alias',    "entryid IN ($entry_select)", array($id));
+    $DB->delete_records_select('glossary_ratings',  "entryid IN ($entry_select)", array($id));
+
+    $category_select = "SELECT id FROM {glossary_categories} WHERE glossaryid = ?";
+    $DB->delete_records_select('glossary_entries_categories', "categoryid IN ($category_select)", array($id));
+    $DB->delete_records('glossary_categories', array('glossaryid'=>$id));
+
+    // delete attachments
+    if ($attachments = $DB->get_records('glossary_entries', array('glossaryid'=>$id, 'attachment'=>'1'), '', 'id')) {
+        foreach ($attachments as $entryid=>$unused) {
+            $fs->delete_area_files($context->id, 'glossary_attachment', $entryid);
+        }
+    }
+
     glossary_grade_item_delete($glossary);
 
-    return $result;
+    return $DB->delete_records('glossary', array('id'=>$id));
 }
 
 function glossary_user_outline($course, $user, $mod, $glossary) {
@@ -851,7 +875,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $mainglossary = $DB->get_record('glossary', array('mainglossary'=>1,'course'=>$course->id));
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
-                $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" class="iconsmall" alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
+                $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$entry->id.'&amp;prevmode='.$mode.'&amp;hook='.urlencode($hook).'"><img src="export.gif" class="iconsmall" alt="'.get_string('exporttomainglossary','glossary').$altsuffix.'" /></a>';
             }
         }
 
@@ -867,11 +891,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
         if ( !$importedentry and (has_capability('mod/glossary:manageentries', $context) or ($entry->userid == $USER->id and ($ineditperiod and has_capability('mod/glossary:write', $context))))) {
             $output = true;
-            $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=$hook\"><img src=\"";
+            $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=".urlencode($hook)."\"><img src=\"";
             $return .= $icon;
             $return .= "\" class=\"iconsmall\" alt=\"" . get_string("delete") .$altsuffix."\" /></a> ";
 
-            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&amp;e=$entry->id&amp;mode=$mode&amp;hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"" . get_string("edit") .$altsuffix. "\" /></a>";
+            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?cmid=$cm->id&amp;id=$entry->id&amp;mode=$mode&amp;hook=".urlencode($hook)."\"><img src=\"$CFG->pixpath/t/edit.gif\" class=\"iconsmall\" alt=\"" . get_string("edit") .$altsuffix. "\" /></a>";
         } elseif ( $importedentry ) {
             $return .= " <font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }
@@ -953,19 +977,15 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
     return $return;
 }
 
-function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$insidetable=true) {
+function glossary_print_entry_attachment($entry, $cm, $format=NULL, $align="right", $insidetable=true) {
 ///   valid format values: html  : Return the HTML link for the attachment as an icon
 ///                        text  : Return the HTML link for tha attachment as text
 ///                        blank : Print the output to the screen
-    global $DB;
-
     if ($entry->attachment) {
-          $glossary = $DB->get_record("glossary", array("id"=>$entry->glossaryid));
-          $entry->course = $glossary->course; //used inside print_attachment
           if ($insidetable) {
               echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\" nowrap=\"nowrap\">\n";
           }
-          echo glossary_print_attachments($entry,$format,$align);
+          echo glossary_print_attachments($entry, $cm, $format, $align);
           if ($insidetable) {
               echo "</td></tr></table>\n";
           }
@@ -1085,194 +1105,129 @@ function glossary_search_entries($searchterms, $glossary, $extended) {
     return glossary_search($course,$searchterms,$extended,$glossary);
 }
 
-function glossary_file_area_name($entry) {
-    global $CFG, $DB;
-//  Creates a directory file name, suitable for make_upload_directory()
-
-    // I'm doing this workaround for make it works for delete_instance also
-    //  (when called from delete_instance, glossary is already deleted so
-    //   getting the course from mdl_glossary does not work)
-    $module = $DB->get_record("modules", array("name"=>"glossary"));
-    $cm = $DB->get_record("course_modules", array("module"=>$module->id, "instance"=>$entry->glossaryid));
-    return "$cm->course/$CFG->moddata/glossary/$entry->glossaryid/$entry->id";
-}
-
-function glossary_file_area($entry) {
-    return make_upload_directory( glossary_file_area_name($entry) );
-}
-
-function glossary_main_file_area($glossary) {
-    $modarea = glossary_mod_file_area($glossary);
-    return "$modarea/$glossary->id";
-}
-
-function glossary_mod_file_area($glossary) {
-    global $CFG;
-
-    return make_upload_directory( "$glossary->course/$CFG->moddata/glossary" );
-}
-
-function glossary_delete_old_attachments($entry, $exception="") {
-// Deletes all the user files in the attachments area for a entry
-// EXCEPT for any file named $exception
-
-    if ($basedir = glossary_file_area($entry)) {
-        if ($files = get_directory_list($basedir)) {
-            foreach ($files as $file) {
-                if ($file != $exception) {
-                    unlink("$basedir/$file");
-//                    notify("Existing file '$file' has been deleted!");
-                }
-            }
-        }
-        if (!$exception) {  // Delete directory as well, if empty
-            rmdir("$basedir");
-        }
-    }
-}
-function glossary_delete_attachments($glossary) {
-    global $DB;
-// Deletes all the user files in the attachments area for the glossary
-    if ( $entries = $DB->get_records("glossary_entries", array("glossaryid"=>$glossary->id))) {
-        $deleted = 0;
-        foreach ($entries as $entry) {
-            if ( $entry->attachment ) {
-                if ($basedir = glossary_file_area($entry)) {
-                    if ($files = get_directory_list($basedir)) {
-                        foreach ($files as $file) {
-                            unlink("$basedir/$file");
-                        }
-                    }
-                    rmdir("$basedir");
-                    $deleted++;
-                }
-            }
-        }
-        if ( $deleted ) {
-            $attachmentdir = glossary_main_file_area($glossary);
-            $glossarydir = glossary_mod_file_area($glossary);
-
-            rmdir("$attachmentdir");
-            if (!$files = get_directory_list($glossarydir) ) {
-                rmdir( "$glossarydir" );
-            }
-        }
-    }
-}
-
-function glossary_copy_attachments($entry, $newentry) {
-/// Given a entry object that is being copied to glossaryid,
-/// this function checks that entry
-/// for attachments, and if any are found, these are
-/// copied to the new glossary directory.
+/**
+ * if return=html, then return a html string.
+ * if return=text, then return a text-only string.
+ * otherwise, print HTML for non-images, and return image HTML
+ *     if attachment is an image, $align set its aligment.
+ * @param object $entry
+ * @param object $cm
+ * @param string $type html, txt, empty
+ * @param string $align left or right
+ * @return image string or nothing depending on $type param
+ */
+function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
     global $CFG, $DB;
 
-    $return = true;
-
-    if ($entries = $DB->get_records_select("glossary_entries", "id = ? AND attachment <> ''", array($entry->id))) {
-        foreach ($entries as $curentry) {
-            $oldentry = new object();
-            $oldentry->id = $entry->id;
-            $oldentry->course = $entry->course;
-            $oldentry->glossaryid = $curentry->glossaryid;
-            $oldentrydir = "$CFG->dataroot/".glossary_file_area_name($oldentry);
-            if (is_dir($oldentrydir)) {
-
-                $newentrydir = glossary_file_area($newentry);
-                if (! copy("$oldentrydir/$newentry->attachment", "$newentrydir/$newentry->attachment")) {
-                    $return = false;
-                }
-            }
-        }
-     }
-    return $return;
-}
-
-function glossary_move_attachments($entry, $glossaryid) {
-/// Given a entry object that is being moved to glossaryid,
-/// this function checks that entry
-/// for attachments, and if any are found, these are
-/// moved to the new glossary directory.
-
-    global $CFG, $DB;
-
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-
-    $return = true;
-
-    if ($entries = $DB->get_records_select("glossary_entries", "glossaryid = ? AND attachment <> ''", array($entry->id))) {
-        foreach ($entries as $entry) {
-            $oldentry = new object();
-            $oldentry->course = $entry->course;
-            $oldentry->glossaryid = $entry->glossaryid;
-            $oldentrydir = "$CFG->dataroot/".glossary_file_area_name($oldentry);
-            if (is_dir($oldentrydir)) {
-                $newentry = $oldentry;
-                $newentry->glossaryid = $glossaryid;
-                $newentrydir = "$CFG->dataroot/".glossary_file_area_name($newentry);
-                $files = get_directory_list($oldentrydir); // get it before we rename it.
-                if (! @rename($oldentrydir, $newentrydir)) {
-                    $return = false;
-                }
-                foreach ($files as $file) {
-                    // this is not tested as I can't find anywhere that calls this function, grepping the source.
-                    clam_change_log($oldentrydir.'/'.$file,$newentrydir.'/'.$file);
-                }
-            }
-        }
-    }
-    return $return;
-}
-
-function glossary_print_attachments($entry, $return=NULL, $align="left") {
-// if return=html, then return a html string.
-// if return=text, then return a text-only string.
-// otherwise, print HTML for non-images, and return image HTML
-//     if attachment is an image, $align set its aligment.
-    global $CFG;
-
-    $newentry = $entry;
-    if ( $newentry->sourceglossaryid ) {
-        $newentry->glossaryid = $newentry->sourceglossaryid;
+    if (!$context = get_context_instance(CONTEXT_MODULE, $cm->id)) {
+        return '';
     }
 
-    $filearea = glossary_file_area_name($newentry);
+    if ($entry->sourceglossaryid == $cm->instance) {
+        if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
+            return '';
+        }
+        $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
 
-    $imagereturn = "";
-    $output = "";
+    } else {
+        $filecontext = $context;
+    }
 
-    if ($basedir = glossary_file_area($newentry)) {
-        if ($files = get_directory_list($basedir)) {
-            $strattachment = get_string("attachment", "glossary");
-            foreach ($files as $file) {
-                $icon = mimeinfo("icon", $file);
-                $ffurl = get_file_url("$filearea/$file");
-                $image = "<img src=\"$CFG->pixpath/f/$icon\" class=\"icon\" alt=\"\" />";
+    $strattachment = get_string('attachment', 'glossary');
 
-                if ($return == "html") {
-                    $output .= "<a href=\"$ffurl\">$image</a> ";
-                    $output .= "<a href=\"$ffurl\">$file</a><br />";
+    $fs = get_file_storage();
+    $browser = get_file_browser();
 
-                } else if ($return == "text") {
-                    $output .= "$strattachment $file:\n$ffurl\n";
+    $imagereturn = '';
+    $output = '';
 
+    if ($files = $fs->get_area_files($filecontext->id, 'glossary_attachment', $entry->id, "timemodified", false)) {
+        foreach ($files as $file) {
+            $filename = $file->get_filename();
+            $mimetype = $file->get_mimetype();
+            $icon = mimeinfo_from_type('icon', $mimetype);
+            $iconimage = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />';
+            $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$context->id.'/glossary_attachment/'.$entry->id.'/'.$filename);
+
+            if ($type == 'html') {
+                $output .= "<a href=\"$path\">$iconimage</a> ";
+                $output .= "<a href=\"$path\">".s($filename)."</a>";
+                $output .= "<br />";
+
+            } else if ($type == 'text') {
+                $output .= "$strattachment ".s($filename).":\n$path\n";
+
+            } else {
+                if (in_array($mimetype, array('image/gif', 'image/jpeg', 'image/png'))) {
+                    // Image attachments don't get printed as links
+                    $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
                 } else {
-                    if ($icon == "image.gif") {    // Image attachments don't get printed as links
-                        $imagereturn .= "<img src=\"$ffurl\" align=\"$align\" alt=\"\" />";
-                    } else {
-                        echo "<a href=\"$ffurl\">$image</a> ";
-                        echo "<a href=\"$ffurl\">$file</a><br />";
-                    }
+                    $output .= "<a href=\"$path\">$iconimage</a> ";
+                    $output .= filter_text("<a href=\"$path\">".s($filename)."</a>");
+                    $output .= '<br />';
                 }
             }
         }
     }
 
-    if ($return) {
+    if ($type) {
         return $output;
+    } else {
+        echo $output;
+        return $imagereturn;
+    }
+}
+
+/**
+ * Serves the glossary attachments. Implements needed access control ;-)
+ */
+function glossary_pluginfile($course, $cminfo, $context, $filearea, $args) {
+    global $CFG, $DB;
+
+    if ($filearea !== 'glossary_attachment') {
+        return false;
     }
 
-    return $imagereturn;
+    if (!$cminfo->uservisible) {
+        return false;
+    }
+
+    $entryid = (int)array_shift($args);
+
+    if (!$entry = $DB->get_record('glossary_entries', array('id'=>$entryid))) {
+        return false;
+    }
+
+    if (!$glossary = $DB->get_record('glossary', array('id'=>$cminfo->instance))) {
+        return false;
+    }
+
+    if ($glossary->defaultapproval and !$entry->approved and !has_capability('mod/glossary:approve', $context)) {
+        return false;
+    }
+
+    if ($entry->glossaryid == $cminfo->instance) {
+        $filecontext = $context;
+
+    } else if ($entry->sourceglossaryid == $cminfo->instance) {
+        if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
+            print_error('invalidcoursemodule');
+        }
+        $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
+
+    } else {
+        return false;
+    }
+
+    $fs = get_file_storage();
+    $relativepath = '/'.implode('/', $args);
+    $fullpath = $filecontext->id.$filearea.$entryid.$relativepath;
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+
+    // finally send the file
+    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
 }
 
 function glossary_print_tabbed_table_end() {
@@ -2240,7 +2195,6 @@ function glossary_reset_gradebook($courseid, $type='') {
  */
 function glossary_reset_userdata($data) {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/filelib.php');
 
     $componentstr = get_string('modulenameplural', 'glossary');
     $status = array();
@@ -2256,6 +2210,8 @@ function glossary_reset_userdata($data) {
 
     $params = array($data->courseid);
 
+    $fs = get_file_storage();
+
     // delete entries if requested
     if (!empty($data->reset_glossary_all)
          or (!empty($data->reset_glossary_types) and in_array('main', $data->reset_glossary_types) and in_array('secondary', $data->reset_glossary_types))) {
@@ -2264,9 +2220,14 @@ function glossary_reset_userdata($data) {
         $DB->delete_records_select('glossary_comments', "entryid IN ($allentriessql)", $params);
         $DB->delete_records_select('glossary_entries', "glossaryid IN ($allglossariessql)", $params);
 
+        // now get rid of all attachments
         if ($glossaries = $DB->get_records_sql($allglossariessql, $params)) {
             foreach ($glossaries as $glossaryid=>$unused) {
-                fulldelete($CFG->dataroot."/$data->courseid/moddata/glossary/$glossaryid");
+                if (!$cm = get_coursemodule_from_instance('glossary', $glossaryid)) {
+                    continue;
+                }
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $fs->delete_area_files($context->id, 'glossary_attachment');
             }
         }
 
@@ -2291,7 +2252,11 @@ function glossary_reset_userdata($data) {
 
             if ($glossaries = $DB->get_records_sql($mainglossariessql, $params)) {
                 foreach ($glossaries as $glossaryid=>$unused) {
-                    fulldelete("$CFG->dataroot/$data->courseid/moddata/glossary/$glossaryid");
+                    if (!$cm = get_coursemodule_from_instance('glossary', $glossaryid)) {
+                        continue;
+                    }
+                    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    $fs->delete_area_files($context->id, 'glossary_attachment');
                 }
             }
 
@@ -2313,7 +2278,11 @@ function glossary_reset_userdata($data) {
 
             if ($glossaries = $DB->get_records_sql($secondaryglossariessql, $params)) {
                 foreach ($glossaries as $glossaryid=>$unused) {
-                    fulldelete("$CFG->dataroot/$data->courseid/moddata/glossary/$glossaryid");
+                    if (!$cm = get_coursemodule_from_instance('glossary', $glossaryid)) {
+                        continue;
+                    }
+                    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    $fs->delete_area_files($context->id, 'glossary_attachment');
                 }
             }
 
@@ -2343,8 +2312,11 @@ function glossary_reset_userdata($data) {
                     $DB->delete_records('glossary_ratings', array('entryid'=>$entry->id));
                     $DB->delete_records('glossary_comments', array('entryid'=>$entry->id));
                     $DB->delete_records('glossary_entries', array('id'=>$entry->id));
-                    fulldelete("$CFG->dataroot/$data->courseid/moddata/glossary/$entry->glossaryid");
-                    $notenrolled[$entry->userid] = true;
+
+                    if ($cm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
+                        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                        $fs->delete_area_files($context->id, 'glossary_attachment', $entry->id);
+                    }
                 }
             }
             $rs->close();
