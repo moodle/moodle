@@ -391,6 +391,14 @@ class assignment_base {
 
         $result = true;
 
+        // now get rid of all attachments
+        $fs = get_file_storage();
+        if ($cm = get_coursemodule_from_instance('assignment', $assignment->id)) {
+            $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+            $fs->delete_area_files($context->id, 'assignment_submission');
+            $fs->delete_area_files($context->id, 'assignment_response');
+        }
+
         if (! $DB->delete_records('assignment_submissions', array('assignment'=>$assignment->id))) {
             $result = false;
         }
@@ -402,6 +410,8 @@ class assignment_base {
         if (! $DB->delete_records('event', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
             $result = false;
         }
+
+
 
         // delete file area with all attachments - ignore errors
         require_once($CFG->libdir.'/filelib.php');
