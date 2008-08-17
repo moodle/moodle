@@ -6625,7 +6625,6 @@ function forum_reset_gradebook($courseid, $type='') {
  */
 function forum_reset_userdata($data) {
     global $CFG, $DB;
-    require_once($CFG->libdir.'/filelib.php');
 
     $componentstr = get_string('modulenameplural', 'forum');
     $status = array();
@@ -6672,6 +6671,18 @@ function forum_reset_userdata($data) {
         $forumssql      = "$allforumssql $typesql";
         $postssql       = "$allpostssql $typesql";
 
+        // now get rid of all attachments
+        $fs = get_file_storage();
+        if ($forums = $DB->get_records_sql($forumssql, $params)) {
+            foreach ($forums as $forumid=>$unused) {
+                if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
+                    continue;
+                }
+                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                $fs->delete_area_files($context->id, 'forum_attachment');
+            }
+        }
+
         // first delete all read flags
         $DB->delete_records_select('forum_read', "forumid IN ($forumssql)", $params);
 
@@ -6689,18 +6700,6 @@ function forum_reset_userdata($data) {
 
         // finally all discussions
         $DB->delete_records_select('forum_discussions', "forum IN ($forumssql)", $params);
-
-        // now get rid of all attachments
-        $fs = get_file_storage();
-        if ($forums = $DB->get_records_sql($forumssql, $params)) {
-            foreach ($forums as $forumid=>$unused) {
-                if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
-                    continue;
-                }
-                $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-                $fs->delete_area_files($context->id, 'forum_attachment');
-            }
-        }
 
         // remove all grades from gradebook
         if (empty($data->reset_gradebook_grades)) {
