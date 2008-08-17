@@ -403,11 +403,11 @@ class assignment_base {
             $result = false;
         }
 
-        if (! $DB->delete_records('assignment', array('id'=>$assignment->id))) {
+        if (! $DB->delete_records('event', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
             $result = false;
         }
 
-        if (! $DB->delete_records('event', array('modulename'=>'assignment', 'instance'=>$assignment->id))) {
+        if (! $DB->delete_records('assignment', array('id'=>$assignment->id))) {
             $result = false;
         }
 
