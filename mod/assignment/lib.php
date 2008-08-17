@@ -1889,7 +1889,6 @@ class assignment_base {
      */
     function reset_userdata($data) {
         global $CFG, $DB;
-        require_once($CFG->libdir.'/filelib.php');
 
         if (!$DB->count_records('assignment', array('course'=>$data->courseid, 'assignmenttype'=>$this->type))) {
             return array(); // no assignments of this type present
@@ -1908,9 +1907,16 @@ class assignment_base {
 
             $DB->delete_records_select('assignment_submissions', "assignment IN ($assignmentssql)", $params);
 
+            // now get rid of all attachments
+            $fs = get_file_storage();
             if ($assignments = $DB->get_records_sql($assignmentssql, $params)) {
                 foreach ($assignments as $assignmentid=>$unused) {
-                    fulldelete($CFG->dataroot.'/'.$data->courseid.'/moddata/assignment/'.$assignmentid);
+                    if (!$cm = get_coursemodule_from_instance('assignment', $assignmentid)) {
+                        continue;
+                    }
+                    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+                    $fs->delete_area_files($context->id, 'assignment_submission');
+                    $fs->delete_area_files($context->id, 'assignment_response');
                 }
             }
 
