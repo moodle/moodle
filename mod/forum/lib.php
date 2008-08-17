@@ -3787,7 +3787,7 @@ function forum_move_attachments($discussion, $forumfrom, $forumto) {
     $oldcontext = get_context_instance(CONTEXT_MODULE, $oldcm->id);
 
     // loop through all posts, better not use attachment flag ;-)
-    if ($posts = $DB->get_records('forum_posts', array('discussion'=>$discussion->id))) {
+    if ($posts = $DB->get_records('forum_posts', array('discussion'=>$discussion->id), '', 'id, attachment')) {
         foreach ($posts as $post) {
             if ($oldfiles = $fs->get_area_files($oldcontext->id, 'forum_attachment', $post->id, "id", false)) {
                 foreach ($oldfiles as $oldfile) {
