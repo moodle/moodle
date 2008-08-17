@@ -3854,7 +3854,7 @@ function forum_print_attachments($post, $cm, $type) {
 
             if ($type == 'html') {
                 $output .= "<a href=\"$path\">$iconimage</a> ";
-                $output .= "<a href=\"$path\">$file</a>";
+                $output .= "<a href=\"$path\">".s($filename)."</a>";
                 if (true) { // 'todo penny replace this with a capability check
                     require_once($CFG->libdir . '/portfoliolib.php');
                     $p = array(
