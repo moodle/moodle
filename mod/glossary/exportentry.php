@@ -17,7 +17,7 @@
     if ( ! $cm ) {
         $PermissionGranted = 0;
     } else {
-        $mainglossary = $DB->get_record('glossary', array('course'=>$cm->course), 'mainglossary',1);
+        $mainglossary = $DB->get_record('glossary', array('course'=>$cm->course, 'mainglossary'=>1));
         if ( ! $mainglossary ) {
             $PermissionGranted = 0;
         }
