@@ -30,9 +30,7 @@ define ('PIX_FILE_UPDATED', 0);
 define ('PIX_FILE_ERROR',   1);
 define ('PIX_FILE_SKIPPED', 2);    
     
-$adminroot = admin_get_root();
-
-admin_externalpage_setup('uploadpictures', $adminroot);
+admin_externalpage_setup('uploadpictures');
 
 require_login();
 
