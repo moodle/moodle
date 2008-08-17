@@ -1905,9 +1905,7 @@ class assignment_base {
                                 WHERE a.course=? AND a.assignmenttype=?";
             $params = array($data->courseid, $this->type);
 
-            $DB->delete_records_select('assignment_submissions', "assignment IN ($assignmentssql)", $params);
-
-            // now get rid of all attachments
+            // now get rid of all submissions and responses
             $fs = get_file_storage();
             if ($assignments = $DB->get_records_sql($assignmentssql, $params)) {
                 foreach ($assignments as $assignmentid=>$unused) {
@@ -1919,6 +1917,8 @@ class assignment_base {
                     $fs->delete_area_files($context->id, 'assignment_response');
                 }
             }
+
+            $DB->delete_records_select('assignment_submissions', "assignment IN ($assignmentssql)", $params);
 
             $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallsubmissions','assignment').': '.$typestr, 'error'=>false);
 
