@@ -247,6 +247,7 @@ $string['configwarning'] = 'Be careful modifying these settings - strange values
 $string['configxmlstrictheaders'] = 'Set to on, each page will be generated using XML http headers and prolog, so browsers will show XHTML errors inline. This is only useful for developers.';
 $string['configzip'] = 'Indicate the location of your zip program (Unix only, optional).  If specified, this will be used to create zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['confirmation'] = 'Confirmation';
+$string['confirmed'] = 'Confirmed';
 $string['confirminstall'] = 'You are about to install language pack ($a), are you sure?';
 $string['cookiehttponly'] = 'Only http cookies';
 $string['cookiesecure'] = 'Secure cookies only';
