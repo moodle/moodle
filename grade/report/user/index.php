@@ -56,7 +56,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
 } else if ($userid == $USER->id and has_capability('moodle/grade:view', $context) and $course->showgrades) {
     //ok - can view own grades
 
-} else if ($has_capability('moodle/grade:viewall', get_context_instance(CONTEXT_USER, $userid)) and $course->showgrades) {
+} else if (has_capability('moodle/grade:viewall', get_context_instance(CONTEXT_USER, $userid)) and $course->showgrades) {
     // ok - can view grades of this user- parent most probably
 
 } else {
