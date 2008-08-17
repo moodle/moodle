@@ -1,9 +1,8 @@
-<?PHP // $Id: show.php,v 1.3 2008/08/13 23:21:14 skodak Exp $
+<?PHP // $Id: show.php,v 1.4 2008/08/17 13:04:56 skodak Exp $
 
 require('teacheraccess.php'); //page only for teachers
 
 ///switch hidden state
-$chapter = new object();
 $chapter->hidden = $chapter->hidden ? 0 : 1;
 
 ///add slashes to all text fields
