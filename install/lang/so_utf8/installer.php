@@ -11,6 +11,7 @@
 
 $string['admindirerror'] = 'Khaanadda Maammulka ee  meesha la dhigey  waa khalad';
 $string['admindirname'] = 'Khaanad Maamul';
+$string['availablelangs'] = 'Boqshadaha luqadaha la heli karo';
 $string['caution'] = 'Taxaddar';
 $string['chooselanguage'] = 'Xolo luqad';
 $string['closewindow'] = 'Daaqaddan xidh';
