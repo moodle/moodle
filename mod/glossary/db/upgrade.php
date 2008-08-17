@@ -60,15 +60,14 @@ function xmldb_glossary_upgrade($oldversion) {
                 $pbar->update($i, $count, "Migrating glossary entries - $i/$count.");
 
                 $filepath = "$CFG->dataroot/$entry->course/$CFG->moddata/glossary/$entry->glossaryid/$entry->id/$entry->attachment";
-                if (!is_readable($filepath)) {
+                if ($entry->sourceglossaryid and !is_readable($filepath)) {
                     //eh - try the second possible location
-                    $filepath2 = $filepath;
                     $filepath = "$CFG->dataroot/$entry->course/$CFG->moddata/glossary/$entry->sourceglossaryid/$entry->id/$entry->attachment";
                     
                 }
                 if (!is_readable($filepath)) {
                     //file missing??
-                    notify("File not readable, skipping: $filepath2 and $filepath");
+                    notify("File not readable, skipping: $filepath");
                     $entry->attachment = '';
                     $DB->update_record('glossary_entries', $entry);
                     continue;
