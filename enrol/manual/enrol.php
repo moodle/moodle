@@ -355,7 +355,7 @@ function cron() {
             }
         }
         $USER = $cronuser;
-        course_setup($course);   // More environment
+        course_setup($SITE);   // More environment
         $rs->close();
     }
 
