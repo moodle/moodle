@@ -66,8 +66,8 @@ class question_edit_multianswer_form extends question_edit_form {
             $mform->addElement('static', 'sub_'.$sub."_".'defaultgrade', get_string('defaultgrade', 'quiz'));
             $mform->setDefault('sub_'.$sub."_".'defaultgrade',$this->questiondisplay->options->questions[$sub]->defaultgrade);
 
-                if ($this->questiondisplay->options->questions[$sub]->qtype =='multichoice'  ) {
-                    $mform->addElement('checkbox', 'sub_'.$sub."_".'layout', get_string('layout', 'quiz')) ;//, $gradeoptions);
+                if ($this->questiondisplay->options->questions[$sub]->qtype =='multichoice'   ) {
+                    $mform->addElement('static', 'sub_'.$sub."_".'layout', get_string('layout', 'quiz'),array('cols'=>60, 'rows'=>1)) ;//, $gradeoptions);
                 }
             foreach ($this->questiondisplay->options->questions[$sub]->answer as $key =>$ans) {
 
@@ -151,7 +151,22 @@ class question_edit_multianswer_form extends question_edit_form {
                     $answercount = 0;
                     $maxgrade = false;
                     $maxfraction = -1;
-
+                    if ($subquestion->qtype == 'multichoice' ) {
+                        $default_values[$prefix.'layout']  = $subquestion->layout ;
+                        switch ($subquestion->layout) {
+                            case '0':
+                                $default_values[$prefix.'layout']= get_string('selectelement', 'qtype_multianswer');
+                                break;
+                            case '1':
+                                $default_values[$prefix.'layout']= get_string('verticallayout', 'qtype_multianswer');
+                                break;                         
+                            case '2':
+                                $default_values[$prefix.'layout']= get_string('horizontallayout', 'qtype_multianswer');
+                                break;
+                            default:
+                                $default_values[$prefix.'layout']= get_string('unknownlayout', 'qtype_multianswer');
+                        } 
+                    }
                     foreach ($subquestion->answer as $key=>$answer) {
                         if ( $subquestion->qtype == 'numerical' && $key == 0 ) {
                             $default_values[$prefix.'tolerance['.$key.']']  = $subquestion->tolerance[0] ;

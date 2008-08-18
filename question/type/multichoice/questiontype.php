@@ -105,6 +105,9 @@ class question_multichoice_qtype extends default_questiontype {
         }
         $options->answers = implode(",",$answers);
         $options->single = $question->single;
+        if(isset($question->layout)){
+             $options->layout = $question->layout;
+        }
         $options->answernumbering = $question->answernumbering;
         $options->shuffleanswers = $question->shuffleanswers;
         $options->correctfeedback = trim($question->correctfeedback);
