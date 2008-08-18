@@ -46,12 +46,11 @@ function xmldb_assignment_upgrade($oldversion) {
         $sqlfrom = "FROM {assignment_submissions} s
                     JOIN {assignment} a ON a.id = s.assignment
                     JOIN {modules} m ON m.name = 'assignment'
-                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = a.id)
-                ORDER BY a.course, s.assignment";
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = a.id)";
 
         $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
 
-        if ($rs = $DB->get_recordset_sql("SELECT s.id, s.userid, s.teacher, s.assignment, a.course, cm.id AS cmid $sqlfrom")) {
+        if ($rs = $DB->get_recordset_sql("SELECT s.id, s.userid, s.teacher, s.assignment, a.course, cm.id AS cmid $sqlfrom ORDER BY a.course, s.assignment")) {
 
             $pbar = new progress_bar('migrateassignmentfiles', 500, true);
 
