@@ -2653,7 +2653,6 @@ function get_roles_with_capability($capability, $permission=NULL, $context='') {
  */
 function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $timeend=0, $hidden=0, $enrol='manual',$timemodified='') {
     global $USER, $CFG, $DB;
-    require_once($CFG->dirroot.'/group/lib.php');
 
 /// Do some data validation
 
