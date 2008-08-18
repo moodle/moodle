@@ -8,11 +8,12 @@ class profile_field_checkbox extends profile_field_base {
      * the corresponding key for the data if it exists
      */
     function profile_field_checkbox($fieldid=0, $userid=0) {
+        global $DB;
         //first call parent constructor
         $this->profile_field_base($fieldid, $userid);
 
         if (!empty($this->field)) {
-            $datafield = get_field('user_info_data', 'data', 'userid', $this->userid, 'fieldid', $this->fieldid);
+            $datafield = $DB->get_field('user_info_data', 'data', array('userid' => $this->userid, 'fieldid' => $this->fieldid));
             if ($datafield !== false) {
                 $this->data = $datafield;
             } else {
