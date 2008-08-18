@@ -4049,13 +4049,18 @@ function get_assignable_roles($context, $field='name', $rolenamedisplay=ROLENAME
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
-    if (!$roles = get_records_sql("SELECT DISTINCT r.*
-                                     FROM {$CFG->prefix}role r,
-                                          {$CFG->prefix}role_assignments ra,
-                                          {$CFG->prefix}role_allow_assign raa
-                                    WHERE ra.userid = $USER->id AND ra.contextid IN ($contexts)
-                                          AND raa.roleid = ra.roleid AND r.id = raa.allowassign
-                                 ORDER BY r.sortorder ASC")) {
+    if (!$roles = get_records_sql("SELECT ro.*
+                                     FROM {$CFG->prefix}role ro,
+                                          (
+                                              SELECT DISTINCT r.id
+                                                FROM {$CFG->prefix}role r,
+                                                     {$CFG->prefix}role_assignments ra,
+                                                     {$CFG->prefix}role_allow_assign raa
+                                               WHERE ra.userid = $USER->id AND ra.contextid IN ($contexts)
+                                                 AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+                                          ) inline_view
+                                    WHERE ro.id = inline_view.id
+                                 ORDER BY ro.sortorder ASC")) {
         return array();
     }
 
@@ -4085,15 +4090,20 @@ function get_assignable_roles_for_switchrole($context, $field='name', $rolenamed
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
-    if (!$roles = get_records_sql("SELECT DISTINCT r.*
-                                     FROM {$CFG->prefix}role r,
-                                          {$CFG->prefix}role_assignments ra,
-                                          {$CFG->prefix}role_allow_assign raa,
-                                          {$CFG->prefix}role_capabilities rc
-                                    WHERE ra.userid = $USER->id AND ra.contextid IN ($contexts)
-                                          AND raa.roleid = ra.roleid AND r.id = raa.allowassign
-                                          AND r.id = rc.roleid AND rc.capability = 'moodle/course:view' AND rc.capability != 'moodle/site:doanything'
-                                 ORDER BY r.sortorder ASC")) {
+    if (!$roles = get_records_sql("SELECT ro.*
+                                     FROM {$CFG->prefix}role ro,
+                                          (
+                                              SELECT DISTINCT r.id
+                                                FROM {$CFG->prefix}role r,
+                                                     {$CFG->prefix}role_assignments ra,
+                                                     {$CFG->prefix}role_allow_assign raa,
+                                                     {$CFG->prefix}role_capabilities rc
+                                               WHERE ra.userid = $USER->id AND ra.contextid IN ($contexts)
+                                                 AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+                                                 AND r.id = rc.roleid AND rc.capability = 'moodle/course:view' AND rc.capability != 'moodle/site:doanything'
+                                          ) inline_view
+                                    WHERE ro.id = inline_view.id
+                                 ORDER BY ro.sortorder ASC")) {
         return array();
     }
 
@@ -4122,13 +4132,18 @@ function get_overridable_roles($context, $field='name', $rolenamedisplay=ROLENAM
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
-    if (!$roles = get_records_sql("SELECT DISTINCT r.*
-                                     FROM {$CFG->prefix}role r,
-                                          {$CFG->prefix}role_assignments ra,
-                                          {$CFG->prefix}role_allow_override rao 
-                                    WHERE ra.userid = $USER->id AND ra.contextid IN ($contexts)
-                                          AND rao.roleid = ra.roleid AND r.id = rao.allowoverride
-                                 ORDER BY r.sortorder ASC")) {
+    if (!$roles = get_records_sql("SELECT ro.*
+                                     FROM {$CFG->prefix}role ro,
+                                          (
+                                              SELECT DISTINCT r.id
+                                                FROM {$CFG->prefix}role r,
+                                                     {$CFG->prefix}role_assignments ra,
+                                                     {$CFG->prefix}role_allow_override rao
+                                               WHERE ra.userid = $USER->id AND ra.contextid IN ($contexts)
+                                                 AND rao.roleid = ra.roleid AND r.id = rao.allowoverride
+                                          ) inline_view
+                                    WHERE ro.id = inline_view.id
+                                 ORDER BY ro.sortorder ASC")) {
         return array();
     }
 
