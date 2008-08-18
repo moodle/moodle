@@ -2052,6 +2052,7 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
         $unmaskjs = '<script type="text/javascript">
 //<![CDATA[
 document.write(\'<span class="unmask"><input id="'.$id.'unmask" value="1" type="checkbox" onclick="unmaskPassword(\\\''.$id.'\\\')"/><label for="'.$id.'unmask">'.addslashes_js($unmask).'<\/label><\/span>\');
+document.getElementById("'.$this->get_id().'").setAttribute("autocomplete", "off");
 //]]>
 </script>';
         return format_admin_setting($this, $this->visiblename,
