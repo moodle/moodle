@@ -272,4 +272,5 @@ $string['wrongzipfilename'] = 'Pogrešan naziv arhive.';
 $string['wwwroot'] = 'Web adresa';
 $string['wwwrooterror'] = 'Navedena \'Web adresa\' se čini nevalidnom - ova Moodle instalacija izgleda nije na njoj. Vrednost navedena ispod je resetovana.';
 $string['xmlrpcrecommended'] = 'Instaliranje opcionog xmlrpc proširenja je korisno za funkcionalnost Moodle umrežavanje.';
+$string['ziprequired'] = 'PHP Ekstenzija Zip sada je obavezna za Moodle, binarne datoteke info-ZIP i biblioteka PclZip više se ne koriste.';
 ?>
