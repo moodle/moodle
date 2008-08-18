@@ -35,7 +35,7 @@ function xmldb_assignment_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2007101511, 'assignment');
     }
 
-    if ($result && $oldversion < 2008073000) {
+    if ($result && $oldversion < 2008081900) {
 
         /////////////////////////////////////
         /// new file storage upgrade code ///
@@ -132,7 +132,7 @@ function xmldb_assignment_upgrade($oldversion) {
 
         }
 
-        upgrade_mod_savepoint($result, 2008073000, 'assignment');
+        upgrade_mod_savepoint($result, 2008081900, 'assignment');
     }
 
     return $result;

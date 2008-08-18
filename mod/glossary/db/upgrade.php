@@ -28,7 +28,7 @@ function xmldb_glossary_upgrade($oldversion) {
 
 //===== 1.9.0 upgrade line ======//
 
-    if ($result && $oldversion < 2008081700) {
+    if ($result && $oldversion < 2008081900) {
 
         /////////////////////////////////////
         /// new file storage upgrade code ///
@@ -100,7 +100,7 @@ function xmldb_glossary_upgrade($oldversion) {
             $rs->close();
         }
 
-        upgrade_mod_savepoint($result, 2008081700, 'glossary');
+        upgrade_mod_savepoint($result, 2008081900, 'glossary');
     }
 
     return $result;

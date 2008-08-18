@@ -95,7 +95,7 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008072800, 'forum');
     }
 
-    if ($result && $oldversion < 2008081605) {
+    if ($result && $oldversion < 2008081900) {
 
         /////////////////////////////////////
         /// new file storage upgrade code ///
@@ -163,7 +163,7 @@ function xmldb_forum_upgrade($oldversion) {
             $rs->close();
         }
 
-        upgrade_mod_savepoint($result, 2008081605, 'forum');
+        upgrade_mod_savepoint($result, 2008081900, 'forum');
     }
 
 
