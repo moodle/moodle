@@ -108,8 +108,10 @@
             } else {
                 $basedir = $CFG->moddata.'/scorm/'.$scorm->id;
             }
-            require_once($CFG->libdir.'/filelib.php');
-            $result = get_file_url($scorm->course .'/'. $basedir .'/'. $launcher);
+            //note: do not convert this to use get_file_url()!
+            //      SCORM does not work without slasharguments anyway and there might be some extra ?xx=yy params
+            //      see MDL-16060
+            $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/'.$basedir.'/'.$launcher;
         }
     }
     
