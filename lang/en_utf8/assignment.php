@@ -8,6 +8,7 @@ $string['allownotes'] = 'Allow notes';
 $string['allowresubmit'] = 'Allow resubmitting';
 $string['alreadygraded'] = 'Your assignment has already been graded and resubmission is not allowed.';
 $string['assignment:exportownsubmission'] = 'Export own submission';
+$string['assignment:exportsubmission'] = 'Export submission';
 $string['assignment:grade'] = 'Grade assignment';
 $string['assignment:submit'] = 'Submit assignment';
 $string['assignment:view'] = 'View assignment';
