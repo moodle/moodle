@@ -42,12 +42,11 @@ function xmldb_glossary_upgrade($oldversion) {
                     JOIN {glossary} g ON g.id = ge.glossaryid
                     JOIN {modules} m ON m.name = 'glossary'
                     JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = g.id)
-                   WHERE ge.attachment <> '$empty' AND ge.attachment <> '1'
-                ORDER BY g.course, g.id";
+                   WHERE ge.attachment <> '$empty' AND ge.attachment <> '1'";
 
         $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
 
-        if ($rs = $DB->get_recordset_sql("SELECT ge.id, ge.userid, ge.attachment, ge.glossaryid, ge.sourceglossaryid, g.course, cm.id AS cmid $sqlfrom")) {
+        if ($rs = $DB->get_recordset_sql("SELECT ge.id, ge.userid, ge.attachment, ge.glossaryid, ge.sourceglossaryid, g.course, cm.id AS cmid $sqlfrom ORDER BY g.course, g.id")) {
 
             $pbar = new progress_bar('migrateglossaryfiles', 500, true);
 
