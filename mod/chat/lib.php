@@ -819,4 +819,91 @@ function chat_get_extra_capabilities() {
     return array('moodle/site:accessallgroups', 'moodle/site:viewfullnames');
 }
 
+require_once($CFG->libdir . '/portfoliolib.php');
+class chat_portfolio_caller extends portfolio_module_caller_base {
+
+    private $chat;
+    private $start;
+    private $end;
+
+    public function __construct($callbackargs) {
+        global $DB, $USER;
+        if (!$this->cm = get_coursemodule_from_id('chat', $callbackargs['id'])) {
+            portfolio_exporter::raise_error('invalidid', 'chat');
+        }
+        $this->chat = $DB->get_record('chat', array('id' => $this->cm->instance));
+        $select = 'chatid = ?';
+        $params = array($this->chat->id);
+        if (array_key_exists('start', $callbackargs) && array_key_exists('end', $callbackargs)
+            && !empty($callbackargs['start']) && !empty($callbackargs['end'])) {
+            $select .= ' AND timestamp >= ? AND timestamp <= ?';
+            $params[] = $callbackargs['start'];
+            $params[] = $callbackargs['end'];
+            $this->start =  $callbackargs['start'];
+            $this->end =  $callbackargs['end'];
+        }
+        $this->messages = $DB->get_records_select(
+                'chat_messages',
+                $select,
+                $params,
+                'timestamp ASC'
+            );
+        $select .= ' AND userid = ?';
+        $params[] = $USER->id;
+        $this->participated = $DB->record_exists_select(
+            'chat_messages',
+            $select,
+            $params
+        );
+    }
+
+    public function expected_time() {
+        return PORTFOLIO_TIME_LOW;
+    }
+
+    public function get_sha1() {
+        $str = '';
+        ksort($this->messages);
+        foreach ($this->messages as $m) {
+            $str .= implode('', (array)$m);
+        }
+        return sha1($str);
+    }
+
+    public function check_permissions() {
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        return has_capability('mod/chat:exportsession', $context)
+            || ($this->participated
+                && has_capability('mod/chat:exportparticipatedsession', $context));
+    }
+
+    public function prepare_package() {
+        $content = '';
+        foreach ($this->messages as $message) {  // We are walking FORWARDS through messages
+            $m = clone $message; // grrrrrr
+            $formatmessage = chat_format_message($m, null, $this->user);
+            if (!isset($formatmessage->html)) {
+                continue;
+            }
+            $content .= $formatmessage->html;
+        }
+        $content = preg_replace('/\<img[^>]*\>/', '', $content);
+
+        return $this->exporter->write_new_file($content, clean_filename($this->cm->name . '-session.html'));
+    }
+
+    public static function display_name() {
+        return get_string('modulename', 'chat');
+    }
+
+    public function get_return_url() {
+        global $CFG;
+
+        return $CFG->wwwroot . '/mod/chat/report.php?id='
+            . $this->cm->id . ((isset($this->start))
+                ? '&start=' . $this->start . '&end=' . $this->end
+                : '');
+    }
+}
+
 ?>

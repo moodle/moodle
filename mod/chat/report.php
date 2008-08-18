@@ -75,6 +75,17 @@
                     echo $formatmessage->html;
                 }
             }
+                if (has_capability('mod/chat:exportsession', $context)
+                    || (array_key_exists($USER->id, $sessionusers)
+                        && has_capability('mod/chat:exportparticipatedsession', $context))) {
+                    require_once($CFG->libdir . '/portfoliolib.php');
+                    $p  = array(
+                        'id'    => $cm->id,
+                        'start' => $start,
+                        'end'   => $end,
+                    );
+                    echo '<br />' . portfolio_add_button('chat_portfolio_caller', $p, '/mod/chat/lib.php', PORTFOLIO_ADD_FULL_FORM, null, true);
+                }
             print_simple_box_end();
         }
 
@@ -180,6 +191,17 @@
 
                 echo '<p align="right">';
                 echo "<a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend\">$strseesession</a>";
+                if (has_capability('mod/chat:exportsession', $context)
+                    || (array_key_exists($USER->id, $sessionusers)
+                        && has_capability('mod/chat:exportparticipatedsession', $context))) {
+                    require_once($CFG->libdir . '/portfoliolib.php');
+                    $p  = array(
+                        'id'    => $cm->id,
+                        'start' => $sessionstart,
+                        'end'   => $sessionend,
+                    );
+                    echo '<br />' . portfolio_add_button('chat_portfolio_caller', $p, '/mod/chat/lib.php', PORTFOLIO_ADD_TEXT_LINK, null, true);
+                }
                 if (has_capability('mod/chat:deletelog', $context)) {
                     echo "<br /><a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend&amp;deletesession=1\">$strdeletesession</a>";
                 }
@@ -193,6 +215,15 @@
         }
         $lasttime = $message->timestamp;
     }
+
+    if (has_capability('mod/chat:exportsession', $context)) {
+        require_once($CFG->libdir . '/portfoliolib.php');
+        $p  = array(
+            'id'    => $cm->id,
+        );
+        echo '<br />' . portfolio_add_button('chat_portfolio_caller', $p, '/mod/chat/lib.php', PORTFOLIO_ADD_FULL_FORM, get_string('addalltoportfolio', 'portfolio'), true);
+    }
+
 
 /// Finish the page
     print_footer($course);
