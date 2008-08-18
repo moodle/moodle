@@ -1380,7 +1380,7 @@ class assignment_base {
      * @return object The updated submission object
      */
     function process_feedback() {
-        global $CFG, $USER;
+        global $CFG, $USER, $DB;
         require_once($CFG->libdir.'/gradelib.php');
 
         if (!$feedback = data_submitted()) {      // No incoming data?
