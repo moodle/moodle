@@ -23,6 +23,7 @@ class MoodleQuickForm_passwordreveal extends MoodleQuickForm_password {
             $revealjs = '<script type="text/javascript">
 //<![CDATA[
 document.write(\'<div class="reveal"><input id="'.$id.'reveal" value="1" type="checkbox" onclick="revealPassword(\\\''.$id.'\\\')"/><label for="'.$id.'reveal">'.addslashes_js($reveal).'<\/label><\/div>\');
+document.getElementById("'.$this->getAttribute('id').'").setAttribute("autocomplete", "off");
 //]]>
 </script>';
             return $this->_getTabs() . '<input' . $this->_getAttrString($this->_attributes) . ' />'.$revealjs;
