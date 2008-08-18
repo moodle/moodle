@@ -1096,7 +1096,7 @@ function get_user_access_sitewide($userid) {
             LEFT OUTER JOIN {$CFG->prefix}role_capabilities rc
                ON (rc.roleid=ra.roleid AND rc.contextid=ra.contextid)
             WHERE ra.userid = $userid AND ctx.contextlevel <= ".CONTEXT_COURSE."
-            ORDER BY ctx.depth, ctx.path";
+            ORDER BY ctx.depth, ctx.path, ra.roleid";
     $rs = get_recordset_sql($sql);
     //
     // raparents collects paths & roles we need to walk up
@@ -1269,19 +1269,26 @@ function load_subcontext($userid, $context, &$accessdata) {
                ON ra.contextid=ctx.id
             WHERE ra.userid = $userid
                   AND (ctx.path = '{$context->path}' OR ctx.path LIKE '{$context->path}/%')
-            ORDER BY ctx.depth, ctx.path";
+            ORDER BY ctx.depth, ctx.path, ra.roleid";
     $rs = get_recordset_sql($sql);
 
-    // 
-    // Read in the RAs
+    //
+    // Read in the RAs, preventing duplicates
     //
     $localroles = array();
+    $lastseen  = '';
     while ($ra = rs_fetch_next_record($rs)) {
         if (!isset($accessdata['ra'][$ra->path])) {
             $accessdata['ra'][$ra->path] = array();
         }
-        array_push($accessdata['ra'][$ra->path], $ra->roleid);
-        array_push($localroles,           $ra->roleid);
+        // only add if is not a repeat caused
+        // by capability join...
+        // (this check is cheaper than in_array())
+        if ($lastseen !== $ra->path.':'.$ra->roleid) {
+            $lastseen = $ra->path.':'.$ra->roleid;
+            array_push($accessdata['ra'][$ra->path], $ra->roleid);
+            array_push($localroles,           $ra->roleid);
+        }
     }
     rs_close($rs);
 
