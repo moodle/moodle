@@ -2,6 +2,7 @@
 
 $string['addnewportfolio'] = 'Add a new portfolio';
 $string['addtoportfolio'] = 'Add to portfolio';
+$string['addalltoportfolio'] = 'Add all to portfolio';
 $string['alreadyexporting'] = 'You already have an active portfolio export in this session. Please complete that first, or <a href=\"$a\">click here</a> to cancel it.';
 $string['availableformats'] = 'Available export formats';
 $string['callercouldnotpackage'] = 'Failed to package up your data for export';
