@@ -110,12 +110,11 @@ function xmldb_forum_upgrade($oldversion) {
                     JOIN {forum} f ON f.id = d.forum
                     JOIN {modules} m ON m.name = 'forum'
                     JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = f.id)
-                   WHERE p.attachment <> '$empty' AND p.attachment <> '1'
-                ORDER BY f.course, f.id, d.id";
+                   WHERE p.attachment <> '$empty' AND p.attachment <> '1'";
 
         $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
 
-        if ($rs = $DB->get_recordset_sql("SELECT p.id, p.attachment, d.forum, f.course, cm.id AS cmid $sqlfrom")) {
+        if ($rs = $DB->get_recordset_sql("SELECT p.id, p.attachment, d.forum, f.course, cm.id AS cmid $sqlfrom ORDER BY f.course, f.id, d.id")) {
 
             $pbar = new progress_bar('migrateforumfiles', 500, true);
 
