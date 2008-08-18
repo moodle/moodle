@@ -2901,6 +2901,8 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $cm->cache->caps['mod/forum:deleteownpost']    = has_capability('mod/forum:deleteownpost', $modcontext);
         $cm->cache->caps['mod/forum:deleteanypost']    = has_capability('mod/forum:deleteanypost', $modcontext);
         $cm->cache->caps['mod/forum:viewanyrating']    = has_capability('mod/forum:viewanyrating', $modcontext);
+        $cm->cache->caps['mod/forum:exportpost']       = has_capability('mod/forum:exportpost', $modcontext);
+        $cm->cache->caps['mod/forum:exportownpost']    = has_capability('mod/forum:exportownpost', $modcontext);
     }
 
     if (!isset($cm->uservisible)) {
@@ -3118,12 +3120,11 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?reply='.$post->id.'">'.$strreply.'</a>';
     }
 
-    if (true) { // @todo penny replace this later with a capability check
+    if ($cm->cache->caps['mod/forum:exportpost'] || ($ownpost && $cm->cache->caps['mod/forum:exportownpost'])) {
         $p = array(
             'postid' => $post->id,
         );
-                            // @todo penny check these arguments when uncommenting
-        //$commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_TEXT_LINK, null, true);
+        $commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_TEXT_LINK, null, true);
     }
 
     echo '<div class="commands">';
@@ -3843,6 +3844,7 @@ function forum_print_attachments($post, $cm, $type) {
     $imagereturn = '';
     $output = '';
 
+    $canexport = (has_capability('mod/forum:exportpost', $context) || ($post->userid == $USER->id && has_capability('mod/forum:exportownpost')));
 
     if ($files = $fs->get_area_files($context->id, 'forum_attachment', $post->id, "timemodified", false)) {
         foreach ($files as $file) {
@@ -3855,14 +3857,13 @@ function forum_print_attachments($post, $cm, $type) {
             if ($type == 'html') {
                 $output .= "<a href=\"$path\">$iconimage</a> ";
                 $output .= "<a href=\"$path\">".s($filename)."</a>";
-                if (true) { // 'todo penny replace this with a capability check
+                if ($canexport) {
                     require_once($CFG->libdir . '/portfoliolib.php');
                     $p = array(
                         'postid' => $post->id,
-                        'attachment' => 1,
+                        'attachment' => $file->get_id(),
                     );
-                    // @todo penny check these arguments when uncommenting
-                    //$output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_FORM, null, true);
+                    $output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_LINK, null, true);
                 }
                 $output .= "<br />";
 
@@ -3873,17 +3874,24 @@ function forum_print_attachments($post, $cm, $type) {
                 if (in_array($mimetype, array('image/gif', 'image/jpeg', 'image/png'))) {
                     // Image attachments don't get printed as links
                     $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
-                } else {
-                    $output .= "<a href=\"$path\">$iconimage</a> ";
-                    $output .= filter_text("<a href=\"$path\">".s($filename)."</a>");
-                    if (true) { // 'todo penny replace this with a capability check
+                    if ($canexport) {
                         require_once($CFG->libdir . '/portfoliolib.php');
                         $p = array(
                             'postid' => $post->id,
-                            'attachment' => 1,
+                            'attachment' => $file->get_id(),
                         );
-                        // @todo penny check these arguments when uncommenting
-                        //$output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_FORM, null, true);
+                        $imagereturn .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_LINK, null, true);
+                    }
+                } else {
+                    $output .= "<a href=\"$path\">$iconimage</a> ";
+                    $output .= filter_text("<a href=\"$path\">".s($filename)."</a>");
+                    if ($canexport) {
+                        require_once($CFG->libdir . '/portfoliolib.php');
+                        $p = array(
+                            'postid' => $post->id,
+                            'attachment' => $file->get_id(),
+                        );
+                        $output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_LINK, null, true);
                     }
                     $output .= '<br />';
                 }
@@ -7068,6 +7076,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     private $forum;
     private $discussion;
     private $attachment;
+    private $files;
 
     function __construct($callbackargs) {
         global $DB;
@@ -7094,14 +7103,17 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         if (!$this->cm = get_coursemodule_from_instance('forum', $this->forum->id)) {
             print_error('invalidcoursemodule');
         }
+        $fs = get_file_storage();
         if ($this->attachment = (array_key_exists('attachment', $callbackargs) ? $callbackargs['attachment'] : false)) {
             if (!$this->post) {
                 print_error('attachmentsnopost', 'forum');
             }
-            if (!get_directory_list(forum_file_area($this->post))) { // TODO: rewrite
+            if (!$f = $fs->get_file_by_id($this->attachment)) {
                 print_error('noattachments', 'forum');
             }
+            $this->files = array($f);
         }
+        $this->files = $fs->get_area_files(get_context_instance(CONTEXT_MODULE, $this->cm->id)->id, 'forum_attachment', $this->post->id, "timemodified", false);
     }
 
     function get_return_url() {
@@ -7124,20 +7136,20 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             portfolio_exporter::raise_error('exoprting whole discussion not implemented - see MDL-15758');
             // @todo see MDL-15758
         } else {
-
-            if ($basedir = forum_file_area($this->post)) {// TODO: rewrite
-                //@todo penny fix all this with files api
-                require_once($CFG->dirroot . '/backup/lib.php');
-                $status =  backup_copy_file($basedir, $tempdir);
-                if ($this->attachment) {
-                    return $status; // all we need to do
+            $status = true;
+            if ($this->files) {
+                foreach ($this->files as $f) {
+                    if ($this->attachment && $f->get_id() != $this->attachment) {
+                        continue; // support multipe files later
+                    }
+                    $status = $status && $this->get('exporter')->copy_existing_file($f);
+                    if ($this->attachment && $f->get_id() == $this->attachment) {
+                        return $status; // all we need to do
+                    }
                 }
             }
             $post = $this->prepare_post($this->post);
-            // @todo penny convert to files api
-            $status = $status && ($handle = fopen($tempdir . '/post.html', 'w'));
-            $status = $status && fwrite($handle, $post);
-            $status = $status && fclose($handle);
+            $status = $status && $this->get('exporter')->write_new_file($post, 'post.html');
             return $status;
         }
     }
@@ -7186,16 +7198,12 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
 
         $output .= $formattedtext;
 
-        if ($post->attachment) {
+        if ($this->files) {
             $post->course = $this->get('course')->id;
             $output .= '<div class="attachments">';
-            if ($basedir = forum_file_area($this->post)) { //TODO: rewrite
-                if ($files = get_directory_list($basedir)) {
-                    $output .= '<br /><b>' .  get_string('attachments', 'forum') . '</b>:<br /><br />';
-                    foreach ($files as $file) {
-                        $output .= clean_filename($file) . '<br />';
-                    }
-                }
+            $output .= '<br /><b>' .  get_string('attachments', 'forum') . '</b>:<br /><br />';
+            foreach ($this->files as $file) {
+                $output .= $file->get_filename() . '<br />';
             }
             $output .= "</div>";
         }
@@ -7208,16 +7216,16 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     function get_sha1() {
         if ($this->post) {
             $attachsha1 = '';
-            if ($basedir = forum_file_area($this->post)) { //TODO: rewrite
+            if ($this->files) {
                 $sha1s = array();
-                foreach (get_directory_list($basedir) as $file) {
-                    $sha1s[] = sha1_file($basedir . '/' . $file);
+                foreach ($this->files as $file) {
+                    if ($this->attachment && $file->get_id() == $this->attachment) {
+                        return $file->get_contenthash(); // all we have to do
+                    }
+                    $sha1s[] = $file->get_contenthash();
                 }
                 asort($sha1s);
                 $attachsha1 =  sha1(implode('', $sha1s));
-                if ($this->attachment) {
-                    return $attachsha1; // all we have to do
-                }
             }
             return sha1($attachsha1 . ',' . $this->post->subject . ',' . $this->post->message);
         }
