@@ -2779,6 +2779,7 @@ function role_assign($roleid, $userid, $groupid, $contextid, $timestart=0, $time
 function role_unassign($roleid=0, $userid=0, $groupid=0, $contextid=0, $enrol=NULL) {
 
     global $USER, $CFG, $DB;
+    require_once($CFG->dirroot.'/group/lib.php');
 
     $success = true;
 
