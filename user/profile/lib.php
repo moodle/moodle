@@ -387,12 +387,25 @@ function profile_display_fields($userid) {
  */
 function profile_signup_fields(&$mform) {
     global $CFG, $DB;
-    
-    if ($fields = $DB->get_records('user_info_field', array('signup'=>1), 'sortorder ASC')) {
+
+     //only retrieve required custom fields (with category information)
+    //results are sort by categories, then by fields
+    $sql = "SELECT uf.id as fieldid, ic.id as categoryid, ic.name as categoryname, uf.datatype
+                FROM ".$CFG->prefix."user_info_field uf
+                JOIN ".$CFG->prefix."user_info_category ic
+                ON uf.categoryid = ic.id AND uf.signup = 1
+                ORDER BY ic.sortorder ASC, uf.sortorder ASC";
+
+    if ( $fields = $DB->get_records_sql($sql)) {
         foreach ($fields as $field) {
+            //check if we change the categories
+            if (!isset($currentcat) || $currentcat != $field->categoryid) {
+                 $currentcat = $field->categoryid;
+                 $mform->addElement('header', 'category_'.$field->categoryid, format_string($field->categoryname));
+            }
             require_once($CFG->dirroot.'/user/profile/field/'.$field->datatype.'/field.class.php');
             $newfield = 'profile_field_'.$field->datatype;
-            $formfield = new $newfield($field->id);
+            $formfield = new $newfield($field->fieldid);
             $formfield->edit_field($mform);
         }
     }
