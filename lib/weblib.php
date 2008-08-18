@@ -1101,7 +1101,16 @@ $targetwindow='self', $selectlabel='', $optionsextra=NULL) {
     }
 
     if ($nothing != '') {
-        $output .= "   <option value=\"javascript:void(0)\">$nothing</option>\n";
+        $selectlabeloption = '';
+        if ($selected=='') {
+            $selectlabeloption = ' selected="selected"';
+        }
+        foreach ($options as $value => $label) {  //if one of the options is the empty value, don't make this the default
+            if ($value == '') {
+                $selected = '';
+            }
+        }
+        $output .= "   <option value=\"javascript:void(0)\"$selectlabeloption>$nothing</option>\n";
     }
 
     $inoptgroup = false;
