@@ -143,7 +143,7 @@ define('CONTEXT_GROUP', 60);
 define('CONTEXT_MODULE', 70);
 define('CONTEXT_BLOCK', 80);
 
-// capability risks - see http://docs.moodle.org/en/Hardening_new_Roles_system
+// capability risks - see http://docs.moodle.org/en/Development:Hardening_new_Roles_system
 define('RISK_MANAGETRUST', 0x0001);
 define('RISK_CONFIG',      0x0002);
 define('RISK_XSS',         0x0004);
@@ -3966,13 +3966,18 @@ function get_assignable_roles($context, $field='name', $rolenamedisplay=ROLENAME
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
-    if (!$roles = $DB->get_records_sql("SELECT DISTINCT r.*
-                                          FROM {role} r,
-                                               {role_assignments} ra,
-                                               {role_allow_assign} raa
-                                         WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                                               AND raa.roleid = ra.roleid AND r.id = raa.allowassign
-                                      ORDER BY r.sortorder ASC", array('userid'=>$USER->id))) {
+    if (!$roles = $DB->get_records_sql("SELECT ro.*
+                                          FROM {role} ro,
+                                               (
+                                                   SELECT DISTINCT r.id
+                                                     FROM {role} r,
+                                                          {role_assignments} ra,
+                                                          {role_allow_assign} raa
+                                                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                                                      AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+                                               ) inline_view
+                                         WHERE ro.id = inline_view.id
+                                      ORDER BY ro.sortorder ASC", array('userid'=>$USER->id))) {
         return array();
     }
 
@@ -4002,15 +4007,20 @@ function get_assignable_roles_for_switchrole($context, $field='name', $rolenamed
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
-    if (!$roles = $DB->get_records_sql("SELECT DISTINCT r.*
-                                          FROM {role} r,
-                                               {role_assignments} ra,
-                                               {role_allow_assign} raa,
-                                               {role_capabilities} rc
-                                         WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                                               AND raa.roleid = ra.roleid AND r.id = raa.allowassign
-                                               AND r.id = rc.roleid AND rc.capability = :viewcap AND rc.capability <> :anythingcap
-                                      ORDER BY r.sortorder ASC", array('userid'=>$USER->id, 'viewcap'=>'moodle/course:view', 'anythingcap'=>'moodle/site:doanything'))) {
+    if (!$roles = $DB->get_records_sql("SELECT ro.*
+                                          FROM {role} ro,
+                                               (
+                                                   SELECT DISTINCT r.id
+                                                     FROM {role} r,
+                                                          {role_assignments} ra,
+                                                          {role_allow_assign} raa,
+                                                          {role_capabilities} rc
+                                                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                                                      AND raa.roleid = ra.roleid AND r.id = raa.allowassign
+                                                      AND r.id = rc.roleid AND rc.capability = :viewcap AND rc.capability <> :anythingcap
+                                               ) inline_view
+                                           WHERE ro.id = inline_view.id
+                                        ORDER BY ro.sortorder ASC", array('userid'=>$USER->id, 'viewcap'=>'moodle/course:view', 'anythingcap'=>'moodle/site:doanything'))) {
         return array();
     }
 
@@ -4033,19 +4043,24 @@ function get_overridable_roles($context, $field='name', $rolenamedisplay=ROLENAM
 
     if (!has_capability('moodle/role:override', $context) and !has_capability('moodle/role:safeoverride', $context)) {
         return array();
-    } 
+    }
 
     $parents = get_parent_contexts($context);
     $parents[] = $context->id;
     $contexts = implode(',' , $parents);
 
-    if (!$roles = $DB->get_records_sql("SELECT DISTINCT r.*
-                                          FROM {role} r,
-                                               {role_assignments} ra,
-                                               {role_allow_override} rao 
-                                         WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
-                                               AND rao.roleid = ra.roleid AND r.id = rao.allowoverride
-                                      ORDER BY r.sortorder ASC", array('userid'=>$USER->id))) {
+    if (!$roles = $DB->get_records_sql("SELECT ro.*
+                                          FROM {role} ro,
+                                               (
+                                                   SELECT DISTINCT r.id
+                                                     FROM {role} r,
+                                                          {role_assignments} ra,
+                                                          {role_allow_override} rao
+                                                    WHERE ra.userid = :userid AND ra.contextid IN ($contexts)
+                                                      AND rao.roleid = ra.roleid AND r.id = rao.allowoverride
+                                               ) inline_view
+                                         WHERE ro.id = inline_view.id
+                                      ORDER BY ro.sortorder ASC", array('userid'=>$USER->id))) {
         return array();
     }
 
