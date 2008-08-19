@@ -38,11 +38,21 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/portfoliolib.php');
 
 class portfolio_plugin_test extends portfolio_plugin_push_base {
-    public function expected_time($callertime){}
-    public function is_push(){}
-    public function prepare_package(){}
-    public function send_package(){}
-    public function get_continue_url(){}
+    public function expected_time($callertime){
+        return $callertime;
+    }
+
+    public function prepare_package() {
+        return true;
+    }
+
+    public function send_package() {
+        return true;
+    }
+
+    public function get_continue_url() {
+        return '';
+    }
 }
 
 class portfolio_caller_test extends portfolio_caller_base {
@@ -82,8 +92,18 @@ class portfolio_caller_test extends portfolio_caller_base {
     }
 }
 
+/**
+ * The following two classes are full mocks: none of their methods do anything, including their constructor.
+ * They can be instantiated directly with no params (new portfolio_caller_test())
+ */
 Mock::generate('portfolio_caller_test', 'mock_caller');
 Mock::generate('portfolio_plugin_test', 'mock_plugin');
+
+/**
+ * Partial mocks work as normal except the methods listed in the 3rd param, which are mocked.
+ * They are instantiated by passing $this to the constructor within the test case class.
+ */
+Mock::generatePartial('portfolio_plugin_test', 'partialmock_plugin', array('send_package'));
 
 class portfoliolib_test extends UnitTestCase {
     public $caller;
@@ -94,10 +114,18 @@ class portfoliolib_test extends UnitTestCase {
         $this->plugin = new mock_plugin();
         $this->caller = new mock_caller();
         $this->exporter = new portfolio_exporter(&$this->plugin, &$this->caller, '', array());
+        $partialplugin = &new partialmock_plugin($this);
+
+        // Write a new text file
+        $this->exporter->save();
+        $this->exporter->write_new_file('Test text', 'test.txt');
     }
 
     function tearDown() {
-
+        global $DB;
+        $DB->delete_records('portfolio_tempdata', array('id' => $this->exporter->get('id')));
+        $fs = get_file_storage();
+        $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->exporter->get('id'));
     }
 
     function test_construct() {
