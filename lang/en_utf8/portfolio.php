@@ -20,6 +20,7 @@ $string['err_uniquename'] = 'Portfolio name must be unique (per plugin)';
 $string['enabled'] = 'Enable portfolios';
 $string['enableddesc'] = 'This will allow administrators to configure remote systems for users to export content to';
 $string['exporting'] = 'Exporting to portfolio';
+$string['exportingcontentfrom'] = 'Exporting content from $a';
 $string['exportcomplete'] = 'Portfolio export complete!';
 $string['exportqueued'] = 'Portfolio export has been successfully queued for transfer';
 $string['exportedpreviously'] = 'Previous exports';

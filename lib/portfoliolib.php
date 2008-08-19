@@ -853,6 +853,14 @@ abstract class portfolio_caller_base {
     * nice name to display to the user about this caller location
     */
     public abstract static function display_name();
+
+    /**
+    * return a string to put at the header summarising this export
+    * by default, just the display name (usually just 'assignment' or something unhelpful
+    */
+    public function heading_summary() {
+        return get_string('exportingcontentfrom', 'portfolio', $this->display_name());
+    }
 }
 
 abstract class portfolio_module_caller_base extends portfolio_caller_base {
@@ -879,6 +887,10 @@ abstract class portfolio_module_caller_base extends portfolio_caller_base {
             $this->course = $DB->get_record('course', array('id' => $this->cm->course));
         }
         return $this->course;
+    }
+
+    public function heading_summary() {
+        return get_string('exportingcontentfrom', 'portfolio', $this->display_name() . ': ' . $this->cm->name);
     }
 }
 
@@ -1938,8 +1950,7 @@ final class portfolio_exporter {
                 $this->instance->set_export_config($pluginbits);
                 return true;
             } else {
-                $this->print_header();
-                print_heading(get_string('configexport' ,'portfolio'));
+                $this->print_header('configexport');
                 print_simple_box_start();
                 $mform->display();
                 print_simple_box_end();
@@ -1978,8 +1989,7 @@ final class portfolio_exporter {
         $strconfirm = get_string('confirmexport', 'portfolio');
         $yesurl = $CFG->wwwroot . '/portfolio/add.php?stage=' . PORTFOLIO_STAGE_QUEUEORWAIT;
         $nourl  = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
-        $this->print_header();
-        print_heading($strconfirm);
+        $this->print_header('confirmexport');
         print_simple_box_start();
         print_heading(get_string('confirmsummary', 'portfolio'), '', 4);
         $mainsummary = array();
@@ -2108,12 +2118,11 @@ final class portfolio_exporter {
         $continueurl = $this->instance->get_continue_url();
         $extras = $this->instance->get_extra_finish_options();
 
-        $this->print_header();
+        $key = 'exportcomplete';
         if ($queued) {
-            print_heading(get_string('exportqueued', 'portfolio'));
-        } else {
-            print_heading(get_string('exportcomplete', 'portfolio'));
+            $key = 'exportqueued';
         }
+        $this->print_header($key, false);
         if ($returnurl) {
             echo '<a href="' . $returnurl . '">' . get_string('returntowhereyouwere', 'portfolio') . '</a><br />';
         }
@@ -2136,11 +2145,20 @@ final class portfolio_exporter {
     * @param string $titlestring key for a portfolio language string
     * @param string $headerstring key for a portfolio language string
     */
-    public function print_header($titlestr='exporting', $headerstr='exporting') {
-        $titlestr = get_string($titlestr, 'portfolio');
-        $headerstr = get_string($headerstr, 'portfolio');
+    public function print_header($headingstr, $summary=true) {
+        $titlestr = get_string('exporting', 'portfolio');
+        $headerstr = get_string('exporting', 'portfolio');
 
         print_header($titlestr, $headerstr, $this->navigation);
+        print_heading(get_string($headingstr, 'portfolio'));
+
+        if (!$summary) {
+            return;
+        }
+
+        print_simple_box_start();
+        echo $this->caller->heading_summary();
+        print_simple_box_end();
     }
 
     /**
@@ -2165,6 +2183,7 @@ final class portfolio_exporter {
             $r = (object)array(
                 'data' => base64_encode(serialize($this)),
                 'expirytime' => time() + (60*60*24),
+                'userid' => $this->user->id,
             );
             $this->id = $DB->insert_record('portfolio_tempdata', $r);
             $this->save(); // call again so that id gets added to the save data.
