@@ -1,9 +1,7 @@
-<?php
-
+<?php // $Id$
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->libdir . '/adminlib.php');
-
 
 $CFG->pagepath = 'admin/managerepositories';
 
@@ -25,6 +23,7 @@ if ($edit) {
 } else if ($new) {
     $pagename = 'repositorynew';
 }
+
 admin_externalpage_setup($pagename);
 require_login(SITEID, false);
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));

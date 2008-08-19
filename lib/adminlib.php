@@ -5190,34 +5190,33 @@ class admin_setting_managerepository extends admin_setting {
         $output = print_simple_box_start(true);
         $namestr = get_string('name');
         $pluginstr = get_string('plugin', 'repository');
+        $stropt = get_string('operation', 'repository');
         $plugins = get_list_of_plugins('repository');
         $instances = repository_instances(get_context_instance(CONTEXT_SYSTEM), null, false);
-        $alreadyplugins = array();
         $table = new StdClass;
-        $table->head = array($namestr, $pluginstr, '');
+        $table->head = array($namestr, $pluginstr, $stropt);
         $table->data = array();
-
         foreach ($instances as $i) {
             $row = '';
             $row .= '<a href="' . $this->baseurl . '&edit=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
             $row .= '<a href="' . $this->baseurl . '&delete=' .  $i->id . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
             $row .= ' <a href="' . $this->baseurl . '&hide=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/' . ($i->visible ? 'hide' : 'show') . '.gif" alt="' . get_string($i->visible ? 'hide' : 'show') . '" /></a>' . "\n";
             $table->data[] = array($i->name, $i->type, $row);
-            if (!in_array($i->type, $alreadyplugins)) {
-                $alreadyplugins[] = $i->name;
-            }
         }
-
         $output .= print_table($table, true);
-        $instancehtml = '<div><p>';
+        $instancehtml = '<div><h3>';
         $addable = 0;
-        $instancehtml .= get_string('add', 'repository');
-        $instancehtml .= '</p>';
+        $instancehtml .= get_string('createrepository', 'repository');
+        $instancehtml .= '</h3><ul>';
         $addable = 0;
         foreach ($plugins as $p) {
-            $instancehtml .= '<a href="'.$CFG->wwwroot.'/admin/repository.php?sesskey='.$USER->sesskey.'&new='.$p.'">'.$p.'</a><br/>';
+            $instancehtml .= '<li><a href="'.$CFG->wwwroot.'/admin/repository.php?sesskey='
+                .$USER->sesskey.'&new='.$p.'">'.get_string('create', 'repository')
+                .' "'.get_string('repositoryname', 'repository_'.$p).'" '
+                .get_string('instance', 'repository').'</a></li>';
             $addable++;
         }
+        $instancehtml .= '</ul>';
 
         if ($addable) {
             $instancehtml .= '</div>';

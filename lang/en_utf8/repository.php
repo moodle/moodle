@@ -1,21 +1,24 @@
 <?php //$Id$
-$string['add'] = 'Add a repository:';
+$string['add'] = 'Add';
 $string['activaterep'] = 'Active repositories';
 $string['back'] = '&lt; Back';
 $string['close'] = 'Close';
 $string['configsaved'] = 'Configuration saved!';
 $string['confirmdelete'] = 'Are you sure to delete this repository - $a?';
+$string['create'] = 'Create';
 $string['createrepository'] = 'Create a repository';
 $string['deleterepository'] = 'Delete this repository';
 $string['download'] = 'Download';
 $string['downloadsucc'] = 'Download Successfully!';
 $string['filename'] = 'Filename';
 $string['filesaved'] = 'File Saved!';
+$string['instance'] = 'instance';
 $string['invalidrepositoryid'] = 'Invalid Repository ID';
 $string['invalidplugin'] = 'Invalid Repository Plug-in';
 $string['manage'] = 'Manage repositories';
 $string['manageuserrepository'] = 'Manage individual repository';
 $string['noenter'] = 'Nothing entered';
+$string['operation'] = 'Operation';
 $string['plugin'] = 'Repository Plug-ins';
 $string['settings'] = 'Settings';
 $string['openpicker'] = 'Open file picker';

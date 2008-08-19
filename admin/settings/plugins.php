@@ -184,10 +184,10 @@ if ($hassiteconfig) {
     // repository setting
     require_once("$CFG->dirroot/repository/lib.php");
     $catname =get_string('repositories', 'repository');
-    $manage = get_string('manage', 'repository');
-    $url = "$CFG->wwwroot/$CFG->admin/repository.php";
+    $managerepo = get_string('manage', 'repository');
+    $url = $CFG->wwwroot.'/'.$CFG->admin.'/repository.php';
     $ADMIN->add('modules', new admin_category('repositorysettings', $catname));
-    $temp = new admin_settingpage('managerepositories', $manage);
+    $temp = new admin_settingpage('managerepositories', $managerepo);
     $temp->add(new admin_setting_managerepository());
     $ADMIN->add('repositorysettings', $temp);
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorynew', 
@@ -199,8 +199,8 @@ if ($hassiteconfig) {
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorycontroller',
         get_string('managerepositories', 'repository'), $url, 'moodle/site:config', true),
         '', $url);
-    foreach (repository_instances(get_context_instance(CONTEXT_SYSTEM), 
-                null, false) as $repository) 
+    foreach (repository_instances(get_context_instance(CONTEXT_SYSTEM), null, false) 
+        as $repository) 
     {
         if ($repository->has_admin_config()) {
             $ADMIN->add('repositorysettings',
