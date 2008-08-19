@@ -346,11 +346,13 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
     $viewresponses = has_capability('mod/choice:readresponses', $context); 
     switch ($forcepublish) {
         case CHOICE_PUBLISH_NAMES:
-                echo '<div id="tablecontainer">';
+            echo '<div id="tablecontainer">';
+            if ($viewresponses) {
                 echo '<form id="attemptsform" method="post" action="'.$_SERVER['PHP_SELF'].'" onsubmit="var menu = document.getElementById(\'menuaction\'); return (menu.options[menu.selectedIndex].value == \'delete\' ? \''.addslashes(get_string('deleteattemptcheck','quiz')).'\' : true);">';
                 echo '<div>';
                 echo '<input type="hidden" name="id" value="'.$cm->id.'" />';
                 echo '<input type="hidden" name="mode" value="overview" />';
+            }
 
             echo "<table cellpadding=\"5\" cellspacing=\"10\" class=\"results names\">";
             echo "<tr>";
@@ -458,9 +460,9 @@ function choice_show_results($choice, $course, $cm, $allresponses, $forcepublish
                 echo '</td><td></td></tr>';
             }
             
-            echo "</table>";
+            echo "</table></div>";
             if ($viewresponses) {
-                echo "</div></form></div>";
+                echo "</form></div>";
             }
             break;
         
