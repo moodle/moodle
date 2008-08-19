@@ -110,7 +110,7 @@ EOD;
             // do searching, if $path is not empty, ignore it.
             $photos = $this->flickr->photos_search(array('user_id'=>$people['nsid'], 'text'=>$search));
         } elseif(!empty($path) && empty($search)) {
-            $photos = $this->flickr->people_getPublicPhotos($people['nsid'], null, 36, $path);
+            $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 36, $path);
         }
 
         $ret = new stdclass;
@@ -126,8 +126,13 @@ EOD;
             if(empty($p['title'])) {
                 $p['title'] = get_string('notitle', 'repository_flickr');
             }
+            if (isset($p['originalformat'])) {
+                $format = $p['originalformat'];
+            } else {
+                $format = 'jpg';
+            }
             $ret->list[] =
-                array('title'=>$p['title'],'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown');
+                array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown');
         }
         if(empty($ret)) {
             throw new repository_exception('nullphotolist', 'repository_flickr');
