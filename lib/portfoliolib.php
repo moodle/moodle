@@ -847,7 +847,7 @@ abstract class portfolio_module_caller_base extends portfolio_caller_base {
 }
 
 /**
-* the base class for portfolio plguins
+* the base class for portfolio plugins
 * all plugins must subclass this.
 */
 abstract class portfolio_plugin_base {
@@ -1727,6 +1727,7 @@ final class portfolio_exporter {
     *
     * @param portfolio_plugin_base subclass $instance portfolio instance (passed by reference)
     * @param portfolio_caller_base subclass $caller portfolio caller (passed by reference)
+    * @param string $callerfile @todo document
     * @param string $navigation result of build_navigation (passed to print_header)
     */
     public function __construct(&$instance, &$caller, $callerfile, $navigation) {
@@ -2156,7 +2157,7 @@ final class portfolio_exporter {
 
     /**
     * rewakens the data from the database given the id
-    * makes sure to load the requred files with the class definitions
+    * makes sure to load the required files with the class definitions
     *
     * @param int $id id of data
     *
