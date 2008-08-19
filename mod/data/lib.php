@@ -2475,13 +2475,13 @@ class data_portfolio_caller extends portfolio_module_caller_base {
                 }
             }
             $this->delimiter = array_key_exists('delimiter_name', $callbackargs) ? $callbackargs['delimiter_name'] : null;
-            $this->exporttype = array_key_exists('exporttype', $callbackargs) ? $callbackargs['exporttype'] : 'csv'; //@todo later support more
+            $this->exporttype = array_key_exists('exporttype', $callbackargs) ? $callbackargs['exporttype'] : 'csv'; //@todo penny later support more
             $this->exportdata = data_get_exportdata($this->cm->instance, $this->fields, $this->selectedfields);
         }
     }
 
     public function has_export_config() {
-        // @todo later when we suport exporting to more than just csv, we may need to ask the user here
+        // @todo penny  later when we suport exporting to more than just csv, we may need to ask the user here
         // if we have not already passed it
         return false;
     }
@@ -2490,7 +2490,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         if ($this->exporttype == 'single') {
             return PORTFOLIO_TIME_LOW;
         }
-        //@todo check number of records maybe
+        //@todo penny check number of records maybe
         return PORTFOLIO_TIME_MODERATE;
     }
 
@@ -2575,7 +2575,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             $patterns[]='[['.$field->field->name.']]';
             if ($field instanceof data_field_file) {
                 // meh, do something special
-                // @todo extract the file and put it in the working directory
+                // @todo penny extract the file and put it in the working directory
                 // and write out the filename here. (files api)
                 $replacement[] = $field->display_browse_field($this->singlerecord->id, 'singletemplate');
             } else {

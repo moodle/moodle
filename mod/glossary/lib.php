@@ -2397,7 +2397,7 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function expected_time() {
-        //@todo check number of records maybe
+        //@todo penny check number of records maybe
         return PORTFOLIO_TIME_MODERATE;
     }
 

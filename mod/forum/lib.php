@@ -7133,7 +7133,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         // a single post, with or without attachment
         // or just an attachment with no post
         if (!$this->post) { // whole discussion
-            throw new portfolio_caller_exception('TODO: exporting whole discussion not implemented - see MDL-15758');
+            throw new portfolio_caller_exception('TODO PENNY: exporting whole discussion not implemented - see MDL-15758');
         } else {
             $status = true;
             if ($this->files) {
@@ -7228,16 +7228,16 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
             }
             return sha1($attachsha1 . ',' . $this->post->subject . ',' . $this->post->message);
         }
-        throw new portfolio_caller_exception('TODO: exporting whole discussion not implemented - see MDL-15758');
+        throw new portfolio_caller_exception('TODO PENNY: exporting whole discussion not implemented - see MDL-15758');
     }
 
     function expected_time() {
-        // @todo check for attachment size
+        // @todo penny check for attachment size
         return PORTFOLIO_TIME_LOW;
     }
 
     function check_permissions() {
-        //@todo
+        //@todo penny
         return true;
     }
 
