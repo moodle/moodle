@@ -90,6 +90,17 @@ define('PORTFOLIO_FORMAT_FILE', 'file');
 */
 define('PORTFOLIO_FORMAT_MBKP', 'mbkp');
 
+/**
+* html - subtype of file
+*/
+define('PORTFOLIO_FORMAT_HTML', 'html');
+
+/**
+* image - subtype of file
+*/
+define('PORTFOLIO_FORMAT_IMAGE', 'image');
+
+
 
 // **** EXPORT TIME LEVELS  **** //
 // these should correspond to a string
@@ -375,10 +386,32 @@ function portfolio_instances($visibleonly=true, $useronly=true) {
 */
 function portfolio_supported_formats() {
     return array(
-        PORTFOLIO_FORMAT_FILE,
+        PORTFOLIO_FORMAT_FILE => 'portfolio_format_file',
         /*PORTFOLIO_FORMAT_MBKP, */ // later
         /*PORTFOLIO_FORMAT_PIOP, */ // also later
     );
+}
+
+function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
+    $allformats = portfolio_supported_formats();
+    $intersection = array();
+    foreach ($callerformats as $cf) {
+        if (!array_key_exists($cf, $allformats)) {
+            debugging(get_string('invalidformat', 'portfolio', $cf));
+            continue;
+        }
+        foreach ($pluginformats as $p => $pf) {
+            if (!array_key_exists($pf, $allformats)) {
+                debugging(get_string('invalidformat', 'portfolio', $pf));
+                unset($pluginformats[$p]); // to avoid the same warning over and over
+                continue;
+            }
+            if ($cf instanceof $pf) {
+                $intersection[] = $cf;
+            }
+        }
+    }
+    return $intersection;
 }
 
 /**
@@ -1857,14 +1890,7 @@ final class portfolio_exporter {
         if ($this->caller->has_export_config()) {
             $callerobj = $this->caller;
         }
-        $formats = array_intersect($this->instance->supported_formats(), $this->caller->supported_formats());
-        $allsupported = portfolio_supported_formats();
-        foreach ($formats as $key => $format) {
-            if (!in_array($format, $allsupported)) {
-                debugging(get_string('invalidformat', 'portfolio', $format));
-                unset($formats[$key]);
-            }
-        }
+        $formats = portfolio_supported_formats_intersect($this->caller->supported_formats(), $this->instance->supported_formats());
         $expectedtime = $this->instance->expected_time($this->caller->expected_time());
         if (count($formats) == 0) {
             // something went wrong, we should not have gotten this far.
@@ -2308,5 +2334,36 @@ function portfolio_cron() {
     // @todo add hooks in the plugins
 }
 
+/**
+* this is just used to find an intersection of supported formats
+* between the caller and portfolio plugins
+*
+* the most basic type - pretty much everything is a subtype
+*/
+class portfolio_format_file {}
+
+/**
+* this is just used to find an intersection of supported formats
+* between the caller and portfolio plugins
+*
+* added for potential flickr plugin
+*/
+class portfolio_format_image extends portfolio_format_file {}
+
+/**
+* this is just used to find an intersection of supported formats
+* between the caller and portfolio plugins
+*
+* in case we want to be really specific.
+*/
+class portfolio_format_html extends portfolio_format_file {}
+
+/**
+* this is just used to find an intersection of supported formats
+* between the caller and portfolio plugins
+*
+* later.... a moodle plugin might support this.
+*/
+class portfolio_format_mbkp extends portfolio_format_file {}
 
 ?>
