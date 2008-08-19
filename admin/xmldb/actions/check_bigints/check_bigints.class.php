@@ -242,7 +242,7 @@ class check_bigints extends XMLDBAction {
                 /// Add to output if we have sentences
                     if ($sqlarr) {
                         $sqlarr = $dbman->generator->getEndedStatements($sqlarr);
-                        $s.= '<code>' . str_replace("\n", implode('<br />', $sqlarr)). '</code><br />';
+                        $s.= '<code>' . str_replace("\n", '<br />', implode('<br />', $sqlarr)). '</code><br />';
                     }
                 }
                 $r.= '        </ul>';
