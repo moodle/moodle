@@ -2379,10 +2379,10 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
     public function __construct($callbackargs) {
         global $DB;
         if (!$this->cm = get_coursemodule_from_id('glossary', $callbackargs['id'])) {
-            portfolio_exporter::raise_error('invalidid', 'glossary');
+            throw new portfolio_caller_exception('invalidid', 'glossary');
         }
         if (!$this->glossary = $DB->get_record('glossary', array('id' => $this->cm->instance))) {
-            portfolio_exporter::raise_error('invalidid', 'glossary');
+            throw new portfolio_caller_exception('invalidid', 'glossary');
         }
         $entries = $DB->get_records('glossary_entries', array('glossaryid' => $this->glossary->id));
         list($where, $params) = $DB->get_in_or_equal(array_keys($entries));
@@ -2446,14 +2446,14 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     public function __construct($callbackargs) {
         global $DB;
         if (!$this->cm = get_coursemodule_from_id('glossary', $callbackargs['id'])) {
-            portfolio_exporter::raise_error('invalidid', 'glossary');
+            throw new portfolio_caller_exception('invalidid', 'glossary');
         }
         if (!$this->glossary = $DB->get_record('glossary', array('id' => $this->cm->instance))) {
-            portfolio_exporter::raise_error('invalidid', 'glossary');
+            throw new portfolio_caller_exception('invalidid', 'glossary');
         }
         if (!array_key_exists('entryid', $callbackargs)
             || !$this->entry = $DB->get_record('glossary_entries', array('id' => $callbackargs['entryid']))) {
-            portfolio_exporter::raise_error('noentry', 'glossary');
+            throw new portfolio_caller_exception('noentry', 'glossary');
         }
     }
 

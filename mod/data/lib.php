@@ -2448,7 +2448,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     public function __construct($callbackargs) {
         global $DB;
         if (!$this->cm = get_coursemodule_from_id('data', $callbackargs['id'])) {
-            portfolio_exporter::raise_error('invalidid', 'data');
+            throw new portfolio_caller_exception('invalidid', 'data');
         }
         $this->data = $DB->get_record('data', array('id' => $this->cm->instance));
         $fieldrecords = $DB->get_records('data_fields', array('dataid'=>$this->cm->instance), 'id');
@@ -2532,15 +2532,15 @@ class data_portfolio_caller extends portfolio_module_caller_base {
                 $filename = clean_filename($this->cm->name . '.csv');
                 break;
             case 'xls':
-                portfolio_exporter::raise_error('notimplemented', 'portfolio');
+                throw new portfolio_caller_exception('notimplemented', 'portfolio', '', 'xls');
                 $content = data_export_xls($this->exportdata, $this->cm->name, $count, true);
                 break;
             case 'ods':
-                portfolio_exporter::raise_error('notimplemented', 'portfolio');
+                throw new portfolio_caller_exception('notimplemented', 'portfolio', '', 'ods');
                 $content = data_export_ods($this->exportdata, $this->cm->name, $count, true);
                 break;
             default:
-                portfolio_exporter::raise_error('notimplemented', 'portfolio', '', $this->exporttype);
+                throw new portfolio_caller_exception('notimplemented', 'portfolio', '', $this->exporttype);
             break;
         }
         return $this->exporter->write_new_file($content, $filename);

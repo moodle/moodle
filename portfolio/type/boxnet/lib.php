@@ -39,7 +39,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         parent::set_export_config($config);
         if (array_key_exists('newfolder', $config) && !empty($config['newfolder'])) {
             if (!$created = $this->boxclient->createFolder($config['newfolder'])) {
-                portfolio_exporter::raise_error('foldercreatefailed', 'portfolio_boxnet');
+                throw new portfolio_plugin_exception('foldercreatefailed', 'portfolio_boxnet');
             }
             $this->folders[$created['folder_id']] = $created['folder_type'];
             parent::set_export_config(array('folder' => $created['folder_id']));
@@ -123,7 +123,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
             return false;
         }
         if (!$this->ensure_ticket()) {
-            portfolio_exporter::raise_error('noticket', 'portfolio_boxnet');
+            throw new portfolio_plugin_exception('noticket', 'portfolio_boxnet');
         }
         $token = $this->get_user_config('authtoken', $this->get('user')->id);
         $ctime= $this->get_user_config('authtokenctime', $this->get('user')->id);
@@ -140,7 +140,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
             return;
         }
         if (!array_key_exists('auth_token', $params) || empty($params['auth_token'])) {
-            portfolio_exporter::raise_error('noauthtoken', 'portfolio_boxnet');
+            throw new portfolio_plugin_exception('noauthtoken', 'portfolio_boxnet');
         }
         $this->authtoken = $params['auth_token'];
         $this->boxclient->auth_token = $this->authtoken;
@@ -154,7 +154,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         $this->boxclient = new boxclient($this->get_config('apikey'), '');
         $ticket_return = $this->boxclient->getTicket();
         if ($this->boxclient->isError() || empty($ticket_return)) {
-            portfolio_exporter::raise_error('noticket', 'portfolio_boxnet');
+            throw new portfolio_plugin_exception('noticket', 'portfolio_boxnet');
         }
         $this->ticket = $ticket_return['ticket'];
         return $this->ticket;
@@ -168,12 +168,12 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
             || empty($this->authtoken)
             || empty($this->boxclient)) {
             // if we don't have these we're pretty much screwed
-            portfolio_exporter::raise_error('folderlistfailed', 'portfolio_boxnet');
+            throw new portfolio_plugin_exception('folderlistfailed', 'portfolio_boxnet');
             return false;
         }
         $this->accounttree = $this->boxclient->getAccountTree();
         if ($this->boxclient->isError()) {
-            portfolio_exporter::raise_error('folderlistfailed', 'portfolio_boxnet');
+            throw new portfolio_plugin_exception('folderlistfailed', 'portfolio_boxnet');
         }
         if (!is_array($this->accounttree)) {
             return false;

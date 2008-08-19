@@ -829,7 +829,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
     public function __construct($callbackargs) {
         global $DB, $USER;
         if (!$this->cm = get_coursemodule_from_id('chat', $callbackargs['id'])) {
-            portfolio_exporter::raise_error('invalidid', 'chat');
+            throw new portfolio_caller_exception('invalidid', 'chat');
         }
         $this->chat = $DB->get_record('chat', array('id' => $this->cm->instance));
         $select = 'chatid = ?';

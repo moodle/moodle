@@ -400,13 +400,14 @@ function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
             debugging(get_string('invalidformat', 'portfolio', $cf));
             continue;
         }
+        $cfobj = new $allformats[$cf]();
         foreach ($pluginformats as $p => $pf) {
             if (!array_key_exists($pf, $allformats)) {
                 debugging(get_string('invalidformat', 'portfolio', $pf));
                 unset($pluginformats[$p]); // to avoid the same warning over and over
                 continue;
             }
-            if ($cf instanceof $pf) {
+            if ($cfobj instanceof $allformats[$pf]) {
                 $intersection[] = $cf;
             }
         }
@@ -430,7 +431,7 @@ function portfolio_instance($instanceid, $record=null) {
         $instance  = $record;
     } else {
         if (!$instance = $DB->get_record('portfolio_instance', array('id' => $instanceid))) {
-            return false; // @todo throw exception?
+            throw new portfolio_exception('invalidinstance', 'portfolio');
         }
     }
     require_once($CFG->dirroot . '/portfolio/type/'. $instance->plugin . '/lib.php');
@@ -715,14 +716,13 @@ abstract class portfolio_caller_base {
     * generic getter for properties belonging to this instance
     * <b>outside</b> the subclasses
     * like name, visible etc.
-    *
-    * @todo  determine what to return in the error case
     */
     public function get($field) {
         if (property_exists($this, $field)) {
             return $this->{$field};
         }
-        return false; // @todo throw exception?
+        $a = (object)array('property' => $field, 'class' => get_class($this));
+        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', $this->get_return_url(), $a);
     }
 
     /**
@@ -730,7 +730,6 @@ abstract class portfolio_caller_base {
     * <b>outside</b> the subclass
     * like name, visible, etc.
     *
-    * @todo  determine what to return in the error case
     */
     public final function set($field, &$value) {
         if (property_exists($this, $field)) {
@@ -738,8 +737,8 @@ abstract class portfolio_caller_base {
             $this->dirty = true;
             return true;
         }
-        return false; // @todo throw exception?
-
+        $a = (object)array('property' => $field, 'class' => get_class($this));
+        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', $this->get_return_url(), $a);
     }
 
     /**
@@ -756,7 +755,8 @@ abstract class portfolio_caller_base {
         );
         foreach ($config as $key => $value) {
             if (!in_array($key, $allowed)) {
-                continue; // @ todo throw exception
+                $a = (object)array('property' => $key, 'class' => get_class($this));
+                throw new portfolio_export_exception($this->get('exporter'), 'invalidexportproperty', 'portfolio', $this->get_return_url(), $a);
             }
             $this->exportconfig[$key] = $value;
         }
@@ -767,7 +767,6 @@ abstract class portfolio_caller_base {
     * subclasses shouldn't need to override this
     *
     * @param string key the config item to fetch
-    * @todo figure out the error cases (item not found or not allowed)
     */
     public final function get_export_config($key) {
         $allowed = array_merge(
@@ -775,10 +774,11 @@ abstract class portfolio_caller_base {
             $this->get_allowed_export_config()
         );
         if (!in_array($key, $allowed)) {
-            return false; // @todo throw exception?
+            $a = (object)array('property' => $key, 'class' => get_class($this));
+            throw new portfolio_export_exception($this->get('exporter'), 'invalidexportproperty', 'portfolio', $this->get_return_url(), $a);
         }
         if (!array_key_exists($key, $this->exportconfig)) {
-            return null; // @todo what to return|
+            return null;
         }
         return $this->exportconfig[$key];
     }
@@ -1078,7 +1078,8 @@ abstract class portfolio_plugin_base {
         );
         foreach ($config as $key => $value) {
             if (!in_array($key, $allowed)) {
-                continue; // @ todo throw exception
+                $a = (object)array('property' => $key, 'class' => get_class($this));
+                throw new portfolio_export_exception($this->get('exporter'), 'invalidexportproperty', 'portfolio', $this->get_return_url(), $a);
             }
             $this->exportconfig[$key] = $value;
         }
@@ -1092,7 +1093,6 @@ abstract class portfolio_plugin_base {
     *
     * @return string config value
     *
-    * @todo figure out the error cases
     */
     public final function get_export_config($key) {
         $allowed = array_merge(
@@ -1100,10 +1100,11 @@ abstract class portfolio_plugin_base {
             $this->get_allowed_export_config()
         );
         if (!in_array($key, $allowed)) {
-            return false; // @todo throw exception?
+            $a = (object)array('property' => $key, 'class' => get_class($this));
+            throw new portfolio_export_exception($this->get('exporter'), 'invalidexportproperty', 'portfolio', $this->get_return_url(), $a);
         }
         if (!array_key_exists($key, $this->exportconfig)) {
-            return null; // @todo what to return|
+            return null;
         }
         return $this->exportconfig[$key];
     }
@@ -1289,7 +1290,7 @@ abstract class portfolio_plugin_base {
         global $DB;
         if (!$record) {
             if (!$record = $DB->get_record('portfolio_instance', array('id' => $instanceid))) {
-                return false; // @todo throw exception?
+                throw new portfolio_exception('invalidinstance', 'portfolio');
             }
         }
         foreach ((array)$record as $key =>$value) {
@@ -1353,7 +1354,8 @@ abstract class portfolio_plugin_base {
                 continue;
             }
             if (!in_array($key, $this->get_allowed_config())) {
-                continue; // @todo throw exception?
+                $a = (object)array('property' => $key, 'class' => get_class($this));
+                throw new portfolio_export_exception($this->get('exporter'), 'invalidconfigproperty', 'portfolio', null, $a);
             }
             if (!isset($this->config->{$key})) {
                 $DB->insert_record('portfolio_instance_config', (object)array(
@@ -1366,7 +1368,6 @@ abstract class portfolio_plugin_base {
             }
             $this->config->{$key} = $value;
         }
-        return true; // @todo - if we're going to change here to throw exceptions, this can change
     }
 
     /**
@@ -1375,17 +1376,16 @@ abstract class portfolio_plugin_base {
     * @param string $key key to fetch
     *
     * @return string the corresponding value
-    *
-    * @todo determine what to return in the error case.
     */
     public final function get_config($key) {
         if (!in_array($key, $this->get_allowed_config())) {
-            return false; // @todo throw exception?
+            $a = (object)array('property' => $key, 'class' => get_class($this));
+            throw new portfolio_export_exception($this->get('exporter'), 'invalidconfigproperty', 'portfolio', null, $a);
         }
         if (isset($this->config->{$key})) {
             return $this->config->{$key};
         }
-        return false; // @todo null?
+        return null;
     }
 
     /**
@@ -1396,7 +1396,6 @@ abstract class portfolio_plugin_base {
     *
     * @return string the corresponding value
     *
-    * @todo determine what to return in the error case
     */
     public final function get_user_config($key, $userid=0) {
         global $DB;
@@ -1407,7 +1406,8 @@ abstract class portfolio_plugin_base {
 
         if ($key != 'visible') { // handled by the parent class
             if (!in_array($key, $this->get_allowed_user_config())) {
-                return false; // @todo throw exception?
+                $a = (object)array('property' => $key, 'class' => get_class($this));
+                throw new portfolio_export_exception($this->get('exporter'), 'invaliduserproperty', 'portfolio', null, $a);
             }
         }
         if (!array_key_exists($userid, $this->userconfig)) {
@@ -1430,7 +1430,6 @@ abstract class portfolio_plugin_base {
     * @param mixed $config array or stdclass containing key/value pairs to set
     * @param integer $userid userid to set config for (defaults to current)
     *
-    * @todo determine what to return in the error case
     */
     public final function set_user_config($config, $userid=0) {
         global $DB;
@@ -1441,7 +1440,8 @@ abstract class portfolio_plugin_base {
 
         foreach ($config as $key => $value) {
             if ($key != 'visible' && !in_array($key, $this->get_allowed_user_config())) {
-                continue; // @todo throw exception?
+                $a = (object)array('property' => $key, 'class' => get_class($this));
+                throw new portfolio_export_exception($this->get('exporter'), 'invaliduserproperty', 'portfolio', null, $a);
             }
             if (!$existing = $DB->get_record('portfolio_instance_user', array('instance'=> $this->id, 'userid' => $userid, 'name' => $key))) {
                 $DB->insert_record('portfolio_instance_user', (object)array(
@@ -1455,7 +1455,6 @@ abstract class portfolio_plugin_base {
             }
             $this->userconfig[$userid]->{$key} = $value;
         }
-        return true; // @todo
 
     }
 
@@ -1464,13 +1463,13 @@ abstract class portfolio_plugin_base {
     * <b>outside</b> the subclasses
     * like name, visible etc.
     *
-    * @todo  determine what to return in the error case
     */
     public final function get($field) {
         if (property_exists($this, $field)) {
             return $this->{$field};
         }
-        return false; // @todo throw exception?
+        $a = (object)array('property' => $field, 'class' => get_class($this));
+        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', $a);
     }
 
     /**
@@ -1478,7 +1477,6 @@ abstract class portfolio_plugin_base {
     * <b>outside</b> the subclass
     * like name, visible, etc.
     *
-    * @todo  determine what to return in the error case
     */
     public final function set($field, $value) {
         if (property_exists($this, $field)) {
@@ -1486,7 +1484,8 @@ abstract class portfolio_plugin_base {
             $this->dirty = true;
             return true;
         }
-        return false; // @todo throw exception?
+        $a = (object)array('property' => $field, 'class' => get_class($this));
+        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', $a);
 
     }
 
@@ -1666,7 +1665,7 @@ final class portfolio_admin_form extends moodleform {
         }
 
         if (isset($result) && is_string($result)) { // something went wrong, stop
-            return $this->raise_error($result, 'portfolio_' . $this->plugin, $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php');
+            throw new portfolio_exception($result, 'portfolio_' . $this->plugin, $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php');
         }
 
         // and set the data if we have some.
@@ -1765,7 +1764,7 @@ final class portfolio_exporter {
     *
     * @param portfolio_plugin_base subclass $instance portfolio instance (passed by reference)
     * @param portfolio_caller_base subclass $caller portfolio caller (passed by reference)
-    * @param string $callerfile @todo document
+    * @param string $callerfile path to callerfile (relative to dataroot)
     * @param string $navigation result of build_navigation (passed to print_header)
     */
     public function __construct(&$instance, &$caller, $callerfile, $navigation) {
@@ -1785,24 +1784,20 @@ final class portfolio_exporter {
     * generic getter for properties belonging to this instance
     * <b>outside</b> the subclasses
     * like name, visible etc.
-    *
-    * @todo  determine what to return in the error case
     */
     public function get($field) {
         if (property_exists($this, $field)) {
             return $this->{$field};
         }
-        return false; // @todo throw exception?
+        $a = (object)array('property' => $field, 'class' => get_class($this));
+        throw new portfolio_export_exception($this, 'invalidproperty', 'portfolio', $a);
     }
 
     /**
     * generic setter for properties belonging to this instance
     * <b>outside</b> the subclass
     * like name, visible, etc.
-    *
-    * @todo  determine what to return in the error case
     */
-
     public function set($field, &$value) {
         if (property_exists($this, $field)) {
             $this->{$field} =& $value;
@@ -1813,7 +1808,8 @@ final class portfolio_exporter {
             $this->dirty = true;
             return true;
         }
-        return false; // @todo throw exception?
+        $a = (object)array('property' => $field, 'class' => get_class($this));
+        throw new portfolio_export_exception($this, 'invalidproperty', 'portfolio', $a);
 
     }
     /**
@@ -1847,12 +1843,21 @@ final class portfolio_exporter {
         );
 
         $function = 'process_stage_' . $functionmap[$stage];
-        if ($this->$function()) {
-            // if we get through here it means control was returned
-            // as opposed to wanting to stop processing
-            // eg to wait for user input.
-            $stage++;
-            return $this->process_stage($stage);
+        try {
+            if ($this->$function()) {
+                // if we get through here it means control was returned
+                // as opposed to wanting to stop processing
+                // eg to wait for user input.
+                $stage++;
+                return $this->process_stage($stage);
+            }
+        } catch (portfolio_caller_exception $e) {
+            portfolio_export_rethrow_exception($this, $e);
+        } catch (portfolio_plugin_exception $e) {
+            portfolio_export_rethrow_exception($this, $e);
+        } catch (Exception $e) {
+            debugging(get_string('thirdpartyexception', 'portfolio', get_class($e)));
+            portfolio_export_rethrow_exception($this, $e);
         }
         $this->save();
         return false;
@@ -1894,7 +1899,7 @@ final class portfolio_exporter {
         $expectedtime = $this->instance->expected_time($this->caller->expected_time());
         if (count($formats) == 0) {
             // something went wrong, we should not have gotten this far.
-            return $this->raise_error('nocommonformats', 'portfolio', get_class($caller));
+            throw new portfolio_export_exception($this, 'nocommonformats', 'portfolio', get_class($this->caller));
         }
         // even if neither plugin or caller wants any config, we have to let the user choose their format, and decide to wait.
         if ($pluginobj || $callerobj || count($formats) > 1 || $expectedtime != PORTFOLIO_TIME_LOW) {
@@ -1911,7 +1916,7 @@ final class portfolio_exporter {
                 $this->cancel_request();
             } else if ($fromform = $mform->get_data()){
                 if (!confirm_sesskey()) {
-                    return $this->raise_error('confirmsesskeybad', '', $caller->get_return_url());
+                    throw new portfolio_export_exception($this, 'confirmsesskeybad', '');
                 }
                 $pluginbits = array();
                 $callerbits = array();
@@ -2041,10 +2046,10 @@ final class portfolio_exporter {
         // the caller is given control to package it up however it wants
         // and then the portfolio plugin is given control to do whatever it wants.
         if (!$this->caller->prepare_package()) {
-            return $this->raise_error('callercouldnotpackage', 'portfolio', $this->caller->get_return_url());
+            throw new portfolio_export_exception($this, 'callercouldnotpackage', 'portfolio');
         }
         if (!$package = $this->instance->prepare_package()) {
-            return $this->raise_error('plugincouldnotpackage', 'portfolio', $this->caller->get_return_url());
+            throw new portfolio_export_exception($this, 'plugincouldnotpackage', 'portfolio');
         }
         return true;
     }
@@ -2077,7 +2082,7 @@ final class portfolio_exporter {
     public function process_stage_send() {
         // send the file
         if (!$this->instance->send_package()) {
-            return $this->raise_error('failedtosendpackage', 'portfolio');
+            throw new portfolio_export_exception($this, 'failedtosendpackage', 'portfolio');
         }
         // log the transfer
         global $DB;
@@ -2139,24 +2144,6 @@ final class portfolio_exporter {
     }
 
     /**
-    * error handler - decides whether we're running interactively or not
-    * and behaves accordingly
-    */
-    public function raise_error($string, $module='moodle', $continue=null, $a=null) {
-        if (defined('FULLME') && FULLME == 'cron') {
-            debugging(get_string($string, $module));
-            return false;
-        }
-        if (isset($this) && $this instanceof portfolio_exporter) {
-            // apparently even calling statically (with :: rather than ->
-            // causes $this to be set in some php versions
-            // (assuming this function is called from some other object - wtF?!)
-            $this->process_stage_cleanup(true);
-        }
-        print_error($string, $module, $continue, $a);
-    }
-
-    /**
     * cancels a potfolio request and cleans up the tempdata
     * and redirects the user back to where they started
     */
@@ -2197,7 +2184,7 @@ final class portfolio_exporter {
     public static function rewaken_object($id) {
         global $DB, $CFG;
         if (!$data = $DB->get_record('portfolio_tempdata', array('id' => $id))) {
-            portfolio_exporter::raise_error('invalidtempid', 'portfolio');
+            throw new portfolio_exception('invalidtempid', 'portfolio');
         }
         $exporter = unserialize(base64_decode($data->data));
         if ($exporter->instancefile) {
@@ -2296,7 +2283,8 @@ class portfolio_instance_select extends moodleform {
             true
         );
         if (empty($options)) {
-            portfolio_exporter::raise_error('noavailableplugins', 'portfolio');
+            debugging('noavailableplugins', 'portfolio');
+            return false;
         }
         $mform =& $this->_form;
         $mform->addElement('select', 'instance', get_string('selectplugin', 'portfolio'), $options);
@@ -2366,4 +2354,62 @@ class portfolio_format_html extends portfolio_format_file {}
 */
 class portfolio_format_mbkp extends portfolio_format_file {}
 
+/**
+* exception to throw during an export - will clean up session and tempdata
+*/
+class portfolio_export_exception extends portfolio_exception {
+
+    /**
+    * constructor.
+    * @param object $exporter instance of portfolio_exporter (will handle null case)
+    * @param string $errorcode language string key
+    * @param string $module language string module (optional, defaults to moodle)
+    * @param string $continue url to continue to (optional, defaults to wwwroot)
+    * @param mixed $a language string data (optional, defaults to  null)
+    */
+    public function __construct($exporter, $errorcode, $module=null, $continue=null, $a=null) {
+        if (!empty($exporter) && $exporter instanceof portfolio_exporter) {
+            if (empty($continue)) {
+                $caller = $exporter->get('caller');
+                if (!empty($caller) && $caller instanceof portfolio_caller_base) {
+                    $continue = $exporter->get('caller')->get_return_url();
+                }
+            }
+            if (!defined('FULLME') || FULLME != 'cron') {
+                $exporter->process_stage_cleanup();
+            }
+        } else {
+            global $SESSION;
+            if (!empty($SESSION->portfolioexport)) {
+                debugging(get_string('exportexceptionnoexporter', 'portfolio'));
+            }
+        }
+        parent::__construct($errorcode, $module, $continue, $a);
+    }
+}
+
+/**
+* exception for callers to throw when they have a problem.
+* usually caught and rethrown as {@see portfolio_export_exception}
+*/
+class portfolio_caller_exception extends portfolio_exception {}
+
+/**
+* top level portfolio exception.
+* sometimes caught and rethrown as {@see portfolio_export_exception}
+*/
+class portfolio_exception extends moodle_exception {}
+
+/**
+* exception for portfolio plugins to throw when they have a problem.
+* usually caught and rethrown as {@see portfolio_export_exception}
+*/
+class portfolio_plugin_exception extends portfolio_exception {}
+
+/**
+* helper function to rethrow a caught portfolio_exception as an export exception
+*/
+function portfolio_export_rethrow_exception($exporter, $e) {
+    throw new portfolio_export_exception($exporter, $e->errorcode, $e->module, $e->link, $e->a);
+}
 ?>

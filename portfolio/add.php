@@ -22,8 +22,10 @@ if ($dataid) {
     }
     if (!$exporter->get('instance')) {
         if ($instance = optional_param('instance', '', PARAM_INT)) {
-            if (!$instance = portfolio_instance($instance)) {
-                $exporter->raise_error('invalidinstance', 'portfolio');
+            try {
+                $instance = portfolio_instance($instance);
+            } catch (portfolio_exception $e) {
+                portfolio_export_rethrow_exception($exporter, $e);
             }
             if ($broken = portfolio_instance_sanity_check($instance)) {
                 print_error(get_string($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin')));
@@ -36,11 +38,13 @@ if ($dataid) {
 } else {
     // we'e just posted here for the first time and have might the instance already
     if ($instance = optional_param('instance', 0, PARAM_INT)) {
-        if (!$instance = portfolio_instance($instance)) {
-            portfolio_exporter::raise_error('invalidinstance', 'portfolio');
+        try {
+            $instance = portfolio_instance($instance);
+        } catch (portfolio_exception $e) {
+            portfolio_export_rethrow_exception($exporter, $e);
         }
         if ($broken = portfolio_instance_sanity_check($instance)) {
-            print_error(get_string($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin')));
+            throw new portfolio_exception($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin'));
         }
         $instance->set('user', $USER);
     } else {
@@ -122,7 +126,11 @@ $alreadystolen = false;
 // for places returning control to pass (rather than PORTFOLIO_STAGE_PACKAGE
 // which is unstable if they can't get to the constant (eg external system)
 if ($postcontrol = optional_param('postcontrol', 0, PARAM_INT)) {
-    $exporter->instance()->post_control($stage, array_merge($_GET, $_POST));
+    try {
+        $exporter->instance()->post_control($stage, array_merge($_GET, $_POST));
+    } catch (portfolio_plugin_exception $e) {
+        portfolio_export_rethrow_exception($exporter, $e);
+    }
     $alreadystolen = true;
 }
 
