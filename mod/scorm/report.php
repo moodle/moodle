@@ -83,7 +83,7 @@
 
             $navlinks = array();
             $navlinks[] = array('name' => $strreport, 'link' => "report.php?id=$cm->id", 'type' => 'title');    
-            $navlinks[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => "report.php?a=$a&user=$user&attempt=$attempt", 'type' => 'title');
+            $navlinks[] = array('name' => "$strattempt $attempt - ".fullname($userdata), 'link' => "report.php?a=$a&amp;user=$user&amp;attempt=$attempt", 'type' => 'title');
             $navlinks[] = array('name' => $sco->title, 'link' => '', 'type' => 'title');
             $navigation = build_navigation($navlinks, $cm);
             
@@ -151,9 +151,9 @@
                     for ($a = 1; $a<=$attempt; $a++) {
                         $row = array();
                         $row[] = print_user_picture($scouser->userid, $course->id, $userdata->picture, false, true);
-                        $row[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$scouser->userid.'&course='.$course->id.'">'.
+                        $row[] = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$scouser->userid.'&amp;course='.$course->id.'">'.
                                  fullname($userdata).'</a>';
-                        $row[] = '<a href="report.php?a='.$scorm->id.'&user='.$scouser->userid.'&attempt='.$a.'">'.$a.'</a>';
+                        $row[] = '<a href="report.php?a='.$scorm->id.'&amp;user='.$scouser->userid.'&amp;attempt='.$a.'">'.$a.'</a>';
                         $select = 'scormid = ? and userid = ? and attempt = ?';
                         $params = array($scorm->id, $scouser->userid, $a);
                         $timetracks = $DB->get_record_select('scorm_scoes_track', $select, $params, 'min(timemodified) as started, max(timemodified) as last');      
@@ -174,7 +174,7 @@
                         print_simple_box_start('center');
                         echo '<div align="center">'."\n";
                         print_user_picture($user, $course->id, $userdata->picture, false, false);
-                        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&course=$course->id\">".
+                        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                              "$userdata->firstname $userdata->lastname</a><br />";
                         echo get_string('attempt','scorm').': '.$attempt;
                         echo '</div>'."\n";
@@ -202,7 +202,7 @@
                                     if ($trackdata->status == '') {
                                         $trackdata->status = 'notattempted';
                                     }
-                                    $detailslink = '<a href="report.php?b='.$sco->id.'&user='.$user.'&attempt='.$attempt.'" title="'.
+                                    $detailslink = '<a href="report.php?b='.$sco->id.'&amp;user='.$user.'&amp;attempt='.$attempt.'" title="'.
                                                     get_string('details','scorm').'">'.get_string('details','scorm').'</a>';
                                 } else {
                                     $trackdata->status = 'notattempted';
@@ -211,7 +211,7 @@
                                 }
                                 $strstatus = get_string($trackdata->status,'scorm');
                                 $row[] = '<img src="'.$scormpixdir.'/'.$trackdata->status.'.gif" alt="'.$strstatus.'" title="'.
-                                         $strstatus.'">&nbsp;'.format_string($sco->title);
+                                         $strstatus.'" />&nbsp;'.format_string($sco->title);
                                 $row[] = get_string($trackdata->status,'scorm');
                                 $row[] = $trackdata->total_time;
                                 $row[] = $score;
@@ -233,10 +233,10 @@
         if (!empty($userdata)) {
             print_simple_box_start('center');
             //print_heading(format_string($sco->title));
-            print_heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&mode=browse&scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>'); 
+            print_heading('<a href="'.$CFG->wwwroot.'/mod/scorm/player.php?a='.$scorm->id.'&amp;mode=browse&amp;scoid='.$sco->id.'" target="_new">'.format_string($sco->title).'</a>'); 
             echo '<div align="center">'."\n";
             print_user_picture($user, $course->id, $userdata->picture, false, false);
-            echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&course=$course->id\">".
+            echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user&amp;course=$course->id\">".
                  "$userdata->firstname $userdata->lastname</a><br />";
             $scoreview = '';
             if ($trackdata = scorm_get_tracks($sco->id,$user,$attempt)) {
@@ -252,7 +252,7 @@
             }
             $strstatus = get_string($trackdata->status,'scorm');
             echo '<img src="'.$scormpixdir.'/'.$trackdata->status.'.gif" alt="'.$strstatus.'" title="'.
-            $strstatus.'">&nbsp;'.$trackdata->total_time.'<br />'.$scoreview.'<br />';
+            $strstatus.'" />&nbsp;'.$trackdata->total_time.'<br />'.$scoreview.'<br />';
             echo '</div>'."\n";
             echo '<hr /><h2>'.get_string('details','scorm').'</h2>';
             
