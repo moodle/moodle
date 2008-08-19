@@ -672,6 +672,34 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008081600);
     }
 
+    if ($result && $oldversion < 2008081900) {
+    /// Define field userid to be added to portfolio_tempdata
+        $table = new xmldb_table('portfolio_tempdata');
+        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null, 'expirytime');
+
+    /// Conditionally launch add field userid
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $DB->set_field('portfolio_tempdata', 'userid', 0);
+    /// now change it to be notnull
+
+    /// Changing nullability of field userid on table portfolio_tempdata to not null
+        $field = new xmldb_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'expirytime');
+
+    /// Launch change of nullability for field userid
+        $dbman->change_field_notnull($table, $field);
+
+    /// Define key userfk (foreign) to be added to portfolio_tempdata
+        $table = new xmldb_table('portfolio_tempdata');
+        $key = new xmldb_key('userfk', XMLDB_KEY_FOREIGN, array('userid'), 'user', array('id'));
+
+    /// Launch add key userfk
+        $dbman->add_key($table, $key);
+
+        upgrade_main_savepoint($result, 2008081900);
+    }
+
     return $result;
 }
 
