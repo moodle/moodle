@@ -128,8 +128,16 @@ class portfoliolib_test extends UnitTestCase {
         $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->exporter->get('id'));
     }
 
-    function test_construct() {
-
+    function test_construct_dupe_instance() {
+        $gotexception = false;
+        try {
+            portfolio_plugin_base::create_instance('download', 'download1', array());
+            portfolio_plugin_base::create_instance('download', 'download2', array());
+        } catch (portfolio_exception $e) {
+            $this->assertEqual('invalidinstance', $e->errorcode);
+            $gotexception = true;
+        }
+        $this->assertTrue($gotexception);
     }
 }
 
