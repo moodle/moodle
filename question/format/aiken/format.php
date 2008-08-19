@@ -36,7 +36,8 @@ class qformat_aiken extends qformat_default {
             $stp = strpos($line,$endchar,0);
             $newlines = explode($endchar,$line);
             $foundQ = 0;
-            for ($i=0; $i < count($newlines);$i++){
+            $linescount = count($newlines);
+            for ($i=0; $i < $linescount; $i++) {
                 $nowline = trim($newlines[$i]);
                 ///Go through the array and build an object called $question
                 ///When done, add $question to $questions
