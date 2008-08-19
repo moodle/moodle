@@ -57,7 +57,8 @@
     </div>
     </form>
 <?php
-    if ($DB->count_records('glossary_entries', array('glossaryid' => $glossary->id)) && true) { // @todo penny capability check
+    // don't need cap check here, we share with the general export.
+    if ($DB->count_records('glossary_entries', array('glossaryid' => $glossary->id))) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $p = array(
             'id' => $cm->id,

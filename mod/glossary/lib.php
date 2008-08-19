@@ -900,7 +900,9 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $return .= " <font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
         }
     }
-    if (true) { // @todo penny add capability check
+    if (has_capability('mod/glossary:exportentry', $context)
+        || ($entry->userid == $USER->id
+            && has_capability('mod/glossary:exportownentry', $context))) {
         require_once($CFG->libdir . '/portfoliolib.php');
         $p = array(
             'id' => $cm->id,
@@ -2428,8 +2430,7 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function check_permissions() {
-        // @todo
-        return true;
+        return has_capability('mod/glossary:export', get_context_instance(CONTEXT_MODULE, $this->cm->id));
     }
 
     public static function display_name() {
@@ -2454,14 +2455,6 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             || !$this->entry = $DB->get_record('glossary_entries', array('id' => $callbackargs['entryid']))) {
             portfolio_exporter::raise_error('noentry', 'glossary');
         }
-        /*
-        $aliases = $DB->get_records('glossary_alias', array('entryid' => $this->entry->id));
-        $categories = $DB->get_records_sql('SELECT ec.entryid, c.name
-            FROM {glossary_entries_categories} ec
-            JOIN {glossary_categories} c
-            ON c.id = ec.categoryid
-            WHERE ec.entryid = ?', array($this->entry->id));
-        */
     }
 
     public function expected_time() {
@@ -2469,8 +2462,9 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function check_permissions() {
-        //@ penny todo
-        return true;
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+        return has_capability('mod/glossary:exportentry', $context)
+            || ($this->entry->userid == $this->user->id && has_capability('mod/glossary:exportownentry', $context));
     }
 
     public static function display_name() {
