@@ -321,7 +321,7 @@ class question_multichoice_qtype extends default_questiontype {
                     format_text($answer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
 
             // Print feedback if feedback is on
-            if (($options->feedback || $options->correct_responses) && ($checked || $options->readonly)) {
+            if (($options->feedback || $options->correct_responses) && $checked) {
                 $a->feedback = format_text($answer->feedback, true, $formatoptions, $cmoptions->course);
             } else {
                 $a->feedback = '';
