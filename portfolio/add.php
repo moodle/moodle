@@ -114,15 +114,18 @@ if (!$exporter->get('instance')) {
     }
 }
 
-$stage = optional_param('stage', PORTFOLIO_STAGE_CONFIG);
+if (!$stage = optional_param('stage', PORTFOLIO_STAGE_CONFIG)) {
+    $stage = $exporter->get('stage');
+}
+
 $alreadystolen = false;
 // for places returning control to pass (rather than PORTFOLIO_STAGE_PACKAGE
 // which is unstable if they can't get to the constant (eg external system)
 if ($postcontrol = optional_param('postcontrol', 0, PARAM_INT)) {
-    $stage = $exporter->get('stage');
     $exporter->instance()->post_control($stage, array_merge($_GET, $_POST));
     $alreadystolen = true;
 }
+
 $exporter->process_stage($stage, $alreadystolen);
 
 ?>

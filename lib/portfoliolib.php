@@ -185,7 +185,10 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
     }
 
     if (isset($SESSION->portfolioexport)) {
-        print_error('alreadyexporting', 'portfolio', null, $CFG->wwwroot . '/portfolio/add.php?cancel=1');
+        $a = new StdClass;
+        $a->cancel = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
+        $a->finish = $CFG->wwwroot . '/portfolio/add.php?id=' . $SESSION->portfolioexport;
+        print_error('alreadyexporting', 'portfolio', null, $a);
     }
 
     if (empty($callbackfile)) {
@@ -1715,6 +1718,8 @@ final class portfolio_exporter {
     public $instancefile;
     public $callerfile;
 
+    private $stage;
+
     /**
     * id of this export
     * matches record in portfolio_tempdata table
@@ -1787,9 +1792,9 @@ final class portfolio_exporter {
     * @return boolean whether or not to process the next stage. this is important as the function is called recursively.
     */
     public function process_stage($stage, $alreadystolen=false) {
+        $this->set('stage', $stage);
+        $this->save();
         if (!$alreadystolen && $url = $this->instance->steal_control($stage)) {
-            $this->set('stage', $stage);
-            $this->save();
             redirect($url);
             break;
         }
