@@ -1272,6 +1272,10 @@ abstract class portfolio_plugin_base {
     * you shouldn't need to override it
     * unless you're doing something really funky
     *
+    * @param string $plugin portfolio plugin to create
+    * @param string $name name of new instance
+    * @param array $config what the admin config form returned
+    *
     * @return object subclass of portfolio_plugin_base
     */
     public static function create_instance($plugin, $name, $config) {
@@ -1280,6 +1284,12 @@ abstract class portfolio_plugin_base {
             'plugin' => $plugin,
             'name'   => $name,
         );
+        if (!portfolio_static_function($plugin, 'allows_multiple')) {
+            // check we don't have one already
+            if ($DB->record_exists('portfolio_instance', array('plugin' => $plugin))) {
+                throw new portfolio_exception('multipledisallowed', 'portfolio', $plugin);
+            }
+        }
         $newid = $DB->insert_record('portfolio_instance', $new);
         require_once($CFG->dirroot . '/portfolio/type/' . $plugin . '/lib.php');
         $classname = 'portfolio_plugin_'  . $plugin;

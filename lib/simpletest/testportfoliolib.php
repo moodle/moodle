@@ -111,9 +111,12 @@ class portfoliolib_test extends UnitTestCase {
     public $exporter;
 
     function setUp() {
+        $u = new StdClass;
+        $u->id = 100000000000;
         $this->plugin = new mock_plugin();
         $this->caller = new mock_caller();
         $this->exporter = new portfolio_exporter(&$this->plugin, &$this->caller, '', array());
+        $this->exporter->set('user', $u);
         $partialplugin = &new partialmock_plugin($this);
 
         // Write a new text file
@@ -134,7 +137,7 @@ class portfoliolib_test extends UnitTestCase {
             portfolio_plugin_base::create_instance('download', 'download1', array());
             portfolio_plugin_base::create_instance('download', 'download2', array());
         } catch (portfolio_exception $e) {
-            $this->assertEqual('invalidinstance', $e->errorcode);
+            $this->assertEqual('multipledisallowed', $e->errorcode);
             $gotexception = true;
         }
         $this->assertTrue($gotexception);

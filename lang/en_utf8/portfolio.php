@@ -48,6 +48,7 @@ $string['invaliduserproperty'] = 'Could not find that user config property ($a->
 $string['invalidconfigproperty'] = 'Could not find that config property ($a->property of $a->class)';
 $string['manageportfolios'] = 'Manage portfolios';
 $string['manageyourportfolios'] = 'Manage your portfolios';
+$string['multipledisallowed'] = 'Trying to create another instance of a plugin that has disallowed multiple instances ($a)';
 $string['noavailableplugins'] = 'Sorry, but there are no available portfolios for you to export to';
 $string['nocallbackfile'] = 'Something in the module you\'re trying to export from is broken - couldn\'t find a required file ($a)';
 $string['nocommonformats'] = 'No common formats between any available portfolio plugin and the calling location $a';
