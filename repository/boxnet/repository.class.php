@@ -106,6 +106,7 @@ class repository_boxnet extends repository{
             }
 
             $ret['list']   = $list;
+            $ret['manage'] = 'http://www.box.net/files';
             $this->listing = $list;
             return $ret;
         } else {

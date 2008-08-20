@@ -118,7 +118,7 @@ EOD;
         }
 
         $ret = new stdclass;
-        $ret->url   = $photos_url;
+        $ret->manage = $photos_url;
         $ret->list  = array();
         $ret->pages = $photos['pages'];
         if(is_int($path) && $path <= $ret->pages) {

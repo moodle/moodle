@@ -31,6 +31,7 @@ class repository_local extends repository{
 
         // this statement tells file picker to load files dramanically.
         $ret->dynload = true;
+        $ret->nologin = true;
 
         // defina upload form in file picker
         // Use ajax upload file

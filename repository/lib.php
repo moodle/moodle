@@ -537,6 +537,7 @@ function get_repository_client($context){
     $strloading   = get_string('loading', 'repository');
     $strthumbview = get_string('thumbview', 'repository');
     $strtitle     = get_string('title', 'repository');
+    $strmgr       = get_string('manageurl', 'repository');
     $strnoenter   = get_string('noenter', 'repository');
     $strsave      = get_string('save', 'repository');
     $strsaved     = get_string('saved', 'repository');
@@ -705,26 +706,7 @@ EOD;
                         }
                         li.appendChild(link);
                         var opt = document.createElement('div');
-                        var search = document.createElement('a');
-                        search.href = '###';
-                        search.innerHTML = '$strsearch';
-                        search.id = 'repo-search-$suffix-'+repo.id;
-                        search.onclick = function() {
-                            var re = /repo-search-$suffix-(\d+)/i;
-                            var id = this.id.match(re);
-                            repository_client_$suffix.search(id[1]);
-                        }
-                        var logout = document.createElement('a');
-                        logout.href = '###';
-                        logout.innerHTML = '$strlogout';
-                        logout.id = 'repo-logout-$suffix-'+repo.id;
-                        logout.onclick = function() {
-                            var re = /repo-logout-$suffix-(\d+)/i;
-                            var id = this.id.match(re);
-                            repository_client_$suffix.req(id[1], 1, 1);
-                        }
-                        opt.appendChild(search);
-                        opt.appendChild(logout);
+                        opt.id = 'repo-opt-$suffix-'+repo.id;
                         li.appendChild(opt);
                         this.appendChild(li);
                         repo = null;
@@ -944,6 +926,7 @@ _client.dynload = function (node, fnLoadComplete){
                 aform.reset();
                 var loading = document.getElementById(u.id+'_loading');
                 loading.innerHTML = '$strsaved';
+                alert('$strsaved');
                 _client.req(_client.repositoryid, '', 0);
             }
         }
@@ -1030,6 +1013,47 @@ _client.dynload = function (node, fnLoadComplete){
                         _client.viewthumb();
                     } else {
                         _client.viewlist();
+                    }
+                    var oDiv = document.getElementById('repo-opt-$suffix-'
+                        +_client.repositoryid);
+                    var search = null;
+                    var logout = null;
+                    var mgr = null;
+                    if(_client.ds.list) {
+                        var search = document.createElement('a');
+                        search.href = '###';
+                        search.innerHTML = '$strsearch ';
+                        search.id = 'repo-search-$suffix-'+_client.repositoryid;
+                        search.onclick = function() {
+                            var re = /repo-search-$suffix-(\d+)/i;
+                            var id = this.id.match(re);
+                            repository_client_$suffix.search(id[1]);
+                        }
+                        var logout = document.createElement('a');
+                        logout.href = '###';
+                        logout.innerHTML = '$strlogout';
+                        logout.id = 'repo-logout-$suffix-'+_client.repositoryid;
+                        logout.onclick = function() {
+                            var re = /repo-logout-$suffix-(\d+)/i;
+                            var id = this.id.match(re);
+                            var oDiv = document.getElementById('repo-opt-$suffix-'+id[1]);
+                            oDiv.innerHTML = '';
+                            repository_client_$suffix.req(id[1], 1, 1);
+                        }
+                    }
+                    if(_client.ds.manage){
+                        var mgr = document.createElement('A');
+                        mgr.innerHTML = '$strmgr ';
+                        mgr.href = _client.ds.manage;
+                        mgr.id = 'repo-mgr-$suffix-'+_client.repositoryid;
+                        mgr.target = "_blank";
+                    }
+                    oDiv.appendChild(search);
+                    if(mgr != null) {
+                        oDiv.appendChild(mgr);
+                    }
+                    if(_client.ds.nologin != true){
+                        oDiv.appendChild(logout);
                     }
                 }
             }
