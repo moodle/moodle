@@ -4043,6 +4043,7 @@ function &get_mailer($action='get') {
  *
  * @uses $CFG
  * @uses $FULLME
+ * @uses $MNETIDPJUMPURL IdentityProvider(IDP) URL user hits to jump to mnet peer.
  * @uses SITEID
  * @param user $user  A {@link $USER} object
  * @param user $from A {@link $USER} object
@@ -4059,7 +4060,7 @@ function &get_mailer($action='get') {
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $replyto='', $replytoname='', $wordwrapwidth=79) {
 
-    global $CFG, $FULLME, $IDPJUMPURL;
+    global $CFG, $FULLME, $MNETIDPJUMPURL;
     static $mnetjumps = array();
 
     if (empty($user)) {
@@ -4092,12 +4093,12 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         require_once($CFG->dirroot.'/mnet/lib.php');
         // Form the request url to hit the idp's jump.php
         if (isset($mnetjumps[$user->mnethostid])) {
-            $IDPJUMPURL = $mnetjumps[$user->mnethostid];
+            $MNETIDPJUMPURL = $mnetjumps[$user->mnethostid];
         } else {
             $idp = mnet_get_peer_host($user->mnethostid);
             $idpjumppath = '/auth/mnet/jump.php';
-            $IDPJUMPURL = $idp->wwwroot . $idpjumppath . '?hostwwwroot=' . $CFG->wwwroot . '&wantsurl=';
-            $mnetjumps[$user->mnethostid] = $IDPJUMPURL;
+            $MNETIDPJUMPURL = $idp->wwwroot . $idpjumppath . '?hostwwwroot=' . $CFG->wwwroot . '&wantsurl=';
+            $mnetjumps[$user->mnethostid] = $MNETIDPJUMPURL;
         }
 
         $messagetext = preg_replace_callback("%($CFG->wwwroot[^[:space:]]*)%",
