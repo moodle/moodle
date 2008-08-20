@@ -1006,6 +1006,12 @@ _client.dynload = function (node, fnLoadComplete){
                     return;
                 }
                 _client.ds = ret;
+                var oDiv = document.getElementById('repo-opt-$suffix-'
+                    +_client.repositoryid);
+                oDiv.innerHTML = '';
+                var search = null;
+                var logout = null;
+                var mgr = null;
                 if(_client.ds.login){
                     _client.print_login();
                 } else if(_client.ds.list) {
@@ -1014,36 +1020,28 @@ _client.dynload = function (node, fnLoadComplete){
                     } else {
                         _client.viewlist();
                     }
-                    var oDiv = document.getElementById('repo-opt-$suffix-'
-                        +_client.repositoryid);
-                    oDiv.innerHTML = '';
-                    var search = null;
-                    var logout = null;
-                    var mgr = null;
-                    if(_client.ds.list) {
-                        var search = document.createElement('a');
-                        search.href = '###';
-                        search.innerHTML = '$strsearch ';
-                        search.id = 'repo-search-$suffix-'+_client.repositoryid;
-                        search.onclick = function() {
-                            var re = /repo-search-$suffix-(\d+)/i;
-                            var id = this.id.match(re);
-                            repository_client_$suffix.search(id[1]);
-                        }
-                        var logout = document.createElement('a');
-                        logout.href = '###';
-                        logout.innerHTML = '$strlogout';
-                        logout.id = 'repo-logout-$suffix-'+_client.repositoryid;
-                        logout.onclick = function() {
-                            var re = /repo-logout-$suffix-(\d+)/i;
-                            var id = this.id.match(re);
-                            var oDiv = document.getElementById('repo-opt-$suffix-'+id[1]);
-                            oDiv.innerHTML = '';
-                            repository_client_$suffix.req(id[1], 1, 1);
-                        }
+                    search = document.createElement('a');
+                    search.href = '###';
+                    search.innerHTML = '$strsearch ';
+                    search.id = 'repo-search-$suffix-'+_client.repositoryid;
+                    search.onclick = function() {
+                        var re = /repo-search-$suffix-(\d+)/i;
+                        var id = this.id.match(re);
+                        repository_client_$suffix.search(id[1]);
+                    }
+                    logout = document.createElement('a');
+                    logout.href = '###';
+                    logout.innerHTML = '$strlogout';
+                    logout.id = 'repo-logout-$suffix-'+_client.repositoryid;
+                    logout.onclick = function() {
+                        var re = /repo-logout-$suffix-(\d+)/i;
+                        var id = this.id.match(re);
+                        var oDiv = document.getElementById('repo-opt-$suffix-'+id[1]);
+                        oDiv.innerHTML = '';
+                        repository_client_$suffix.req(id[1], 1, 1);
                     }
                     if(_client.ds.manage){
-                        var mgr = document.createElement('A');
+                        mgr = document.createElement('A');
                         mgr.innerHTML = '$strmgr ';
                         mgr.href = _client.ds.manage;
                         mgr.id = 'repo-mgr-$suffix-'+_client.repositoryid;

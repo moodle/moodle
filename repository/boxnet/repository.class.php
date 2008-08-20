@@ -92,7 +92,7 @@ class repository_boxnet extends repository{
         return $ret;
     }
     public function get_listing($path = '/', $search = ''){
-        global $CFG;
+        global $CFG, $SESSION;
         $list = array();
         $ret  = array();
         $tree = $this->box->getAccountTree();
@@ -127,6 +127,8 @@ class repository_boxnet extends repository{
             $this->listing = $list;
             return $ret;
         } else {
+            $sess_name = 'box_token'.$this->id;
+            unset($SESSION->$sess_name);
             throw new repository_exception('nullfilelist', 'repository_boxnet');
         }
     }
