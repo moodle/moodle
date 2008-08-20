@@ -90,7 +90,7 @@ class MoodleQuickForm_choosecoursefileorimsrepo extends MoodleQuickForm_group
         $button->updateAttributes($buttonattributes);
 
         /// With repository active, show the button to browse it
-        if ($CFG->repositoryactivate) {
+        if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
             $this->_elements[2] =& MoodleQuickForm::createElement('button', 'imsrepo', get_string('browserepository', 'resource'));
             $imsbutton =& $this->_elements[2];
             $url = "/mod/resource/type/ims/finder.php?directory=&choose=".$choose;
