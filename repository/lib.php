@@ -523,22 +523,31 @@ function move_to_filepool($path, $name, $itemid) {
 function get_repository_client($context){
     global $CFG, $USER;
     $suffix = uniqid();
-    $strsubmit    = get_string('submit', 'repository');
-    $strlistview  = get_string('listview', 'repository');
-    $strthumbview = get_string('thumbview', 'repository');
-    $strsearch    = get_string('search', 'repository');
-    $strlogout    = get_string('logout', 'repository');
-    $strloading   = get_string('loading', 'repository');
-    $strtitle     = get_string('title', 'repository');
     $filename     = get_string('filename', 'repository');
-    $strsync      = get_string('sync', 'repository');
-    $strdownload  = get_string('download', 'repository');
+    $stradd  = get_string('add', 'repository');
     $strback      = get_string('back', 'repository');
     $strclose     = get_string('close', 'repository');
+    $strdownload  = get_string('download', 'repository');
     $strdownload  = get_string('downloadsucc', 'repository');
+    $strdate      = get_string('date', 'repository').': ';
+    $strerror     = get_string('error', 'repository');
+    $strinvalidjson = get_string('invalidjson', 'repository');
+    $strlistview  = get_string('listview', 'repository');
+    $strlogout    = get_string('logout', 'repository');
+    $strloading   = get_string('loading', 'repository');
+    $strthumbview = get_string('thumbview', 'repository');
+    $strtitle     = get_string('title', 'repository');
     $strnoenter   = get_string('noenter', 'repository');
+    $strsave      = get_string('save', 'repository');
+    $strsaved     = get_string('saved', 'repository');
+    $strsaving    = get_string('saving', 'repository');
+    $strsize      = get_string('size', 'repository').': ';
+    $strsync      = get_string('sync', 'repository');
+    $strsearch    = get_string('search', 'repository');
     $strsearching = get_string('searching', 'repository');
-    $stradd  = get_string('add', 'repository');
+    $strsubmit    = get_string('submit', 'repository');
+    $strupload    = get_string('upload', 'repository');
+    $struploading = get_string('uploading', 'repository');
     $css = <<<EOD
     <style type="text/css">
     #list-$suffix{line-height: 1.5em}
@@ -549,6 +558,9 @@ function get_repository_client($context){
     #paging-$suffix{margin:10px 5px; clear:both}
     #paging-$suffix a{padding: 4px; border: 1px solid gray}
     #panel-$suffix{padding:0;margin:0; text-align:left;}
+    p.upload{text-align:right;margin: 5px}
+    p.upload a{font-size: 14px;background: #ccc;color:black;padding: 3px}
+    p.upload a:hover {background: grey;color:white}
     .file_name{color:green;}
     .file_date{color:blue}
     .file_size{color:gray}
@@ -796,6 +808,7 @@ EOD;
                 _client.viewlist();
             }
         }
+        // TODO: add navbar for thumbview
         _client.navbar = function(){
             var str = '';
             str += _client.uploadcontrol();
@@ -840,7 +853,7 @@ EOD;
             return str;
         }
         _client.buildtree = function(node, level){
-            var info = {label:node.title, title:"Date: "+node.date+' '+'Size:'+node.size}; 
+            var info = {label:node.title, title:"$strdate"+node.date+' '+'$strsize'+node.size}; 
             var tmpNode = new YAHOO.widget.TextNode(info, level, false); 
             var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
                 context:tmpNode.labelElId, text:info.title});
@@ -871,7 +884,7 @@ _client.dynload = function (node, fnLoadComplete){
             try {
                 var json = YAHOO.lang.JSON.parse(o.responseText);
             } catch(e) {
-                alert('Invalid JSON String'+o.responseText);
+                alert('$strinvalidjson - '+o.responseText);
             }
             for(k in json.list){
                 _client.buildtree(json.list[k], node);
@@ -879,7 +892,7 @@ _client.dynload = function (node, fnLoadComplete){
             o.argument.fnLoadComplete();
         },
         failure:function(oResponse){
-            alert('Error!');
+            alert('$strerror');
             oResponse.argument.fnLoadComplete();
         },
         argument:{"node":node, "fnLoadComplete": fnLoadComplete},
@@ -918,7 +931,7 @@ _client.dynload = function (node, fnLoadComplete){
             var aform = document.getElementById(u.id);
             var parent = document.getElementById(u.id+'_div');
             var loading = document.createElement('DIV');
-            loading.innerHTML = "uploading...";
+            loading.innerHTML = "$struploading";
             loading.id = u.id+'_loading';
             parent.appendChild(loading);
             conn.setForm(aform, true, true);
@@ -930,7 +943,7 @@ _client.dynload = function (node, fnLoadComplete){
                 var aform = document.getElementById(u.id);
                 aform.reset();
                 var loading = document.getElementById(u.id+'_loading');
-                loading.innerHTML = 'Saved!';
+                loading.innerHTML = '$strsaved';
                 _client.req(_client.repositoryid, '', 0);
             }
         }
@@ -941,7 +954,7 @@ _client.dynload = function (node, fnLoadComplete){
                 str += '<form id="'+_client.ds.upload.id+'" onsubmit="return false">';
                 str += '<label for="'+_client.ds.upload.id+'-file">'+_client.ds.upload.name+'</label>';
                 str += '<input type="file" id="'+_client.ds.upload.id+'-file"/>';
-                str += '<a href="###" onclick="return repository_client_$suffix.upload();">Upload</a>';
+                str += '<p class="upload"><a href="###" onclick="return repository_client_$suffix.upload();">$strupload</a></p>';
                 str += '</form>';
                 str += '</div>';
                 str += '<hr />';
@@ -1003,7 +1016,7 @@ _client.dynload = function (node, fnLoadComplete){
                 try {
                     var ret = YAHOO.lang.JSON.parse(o.responseText);
                 } catch(e) {
-                    alert('Callback: Invalid JSON String'+o.responseText);
+                    alert('$strinvalidjson - '+o.responseText);
                 };
                 if(ret.e){
                     panel.get('element').innerHTML = ret.e;
@@ -1027,7 +1040,7 @@ _client.dynload = function (node, fnLoadComplete){
                 try {
                     var ret = YAHOO.lang.JSON.parse(o.responseText);
                 } catch(e) {
-                    alert('Invalid JSON String'+o.responseText);
+                    alert('$strinvalidjson - '+o.responseText);
                 }
                 if(ret.e){
                     panel.get('element').innerHTML = ret.e;

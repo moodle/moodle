@@ -34,7 +34,7 @@ class repository_local extends repository{
 
         // defina upload form in file picker
         // Use ajax upload file
-        $ret->upload = array('name'=>get_string('attachment: '), 'id'=>'repo-form');
+        $ret->upload = array('name'=>get_string('attachment', 'repository'), 'id'=>'repo-form');
         $ret->list  = array();
 
         // TODO: set path and file area for folders, for example
