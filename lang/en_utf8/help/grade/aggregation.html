@@ -35,17 +35,17 @@ the gradebook administrator. Caution in interpreting these "empty grades" is thu
     <dt>Median of grades</dt>
         <dd>The middle grade (or the mean of the two middle grades) when grades are arranged in order of size. The advantage over the mean is that it is not affected by outliers (grades which are uncommonly far from the mean).</dd>
         <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
-                         <code>0.7 + 0.25 + 1.0 --> 0.25 --> 25/100</code></dd>
+                         <code>0.7; 0.25 ; 1.0 --> 0.70 --> 70/100</code></dd>
     
     <dt>Smallest grade</dt>
         <dd>The result is the smallest grade after normalisation. It is usually used in combination with <em>Aggregate only non-empty grades</em>.</dd>
         <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
-                         <code>min(0.7 + 0.25 + 1.0) = 0.25 --> 25/100</code></dd>
+                         <code>min(0.7 ; 0.25 ; 1.0) = 0.25 --> 25/100</code></dd>
                          
     <dt>Highest grade</dt>
         <dd>The result is the highest grade after normalisation.</dd>
         <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
-                         <code>max(0.7 + 0.25 + 1.0) = 1.0 --> 100/100</code></dd>
+                         <code>max(0.7 ; 0.25 ; 1.0) = 1.0 --> 100/100</code></dd>
     
     <dt>Mode of grades</dt>
         <dd>The mode is the grade that occurs the most frequently. It is more often used for non-numerical grades.
