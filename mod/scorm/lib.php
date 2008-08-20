@@ -494,7 +494,7 @@ function scorm_grade_item_update($scorm, $grades=NULL) {
     $params = array('itemname'=>$scorm->name, 'idnumber'=>$scorm->cmidnumber);
 
     if (($scorm->grademethod % 10) == 0) { // GRADESCOES
-        if ($maxgrade = count_records_select('scorm_scoes',"scorm='$scorm->id' AND launch<>''")) {
+        if ($maxgrade = count_records_select('scorm_scoes',"scorm='$scorm->id' AND launch<>'".sql_empty()."'")) {
             $params['gradetype'] = GRADE_TYPE_VALUE;
             $params['grademax']  = $maxgrade;
             $params['grademin']  = 0;

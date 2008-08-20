@@ -358,7 +358,7 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
     $grademethod = $scorm->grademethod % 10;
 
     foreach ($scoes as $sco) { 
-        if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
+        if ($userdata = scorm_get_tracks($sco->id, $userid, $attempt)) {
             if (($userdata->status == 'completed') || ($userdata->status == 'passed')) {
                 $attemptscore->scoes++;
             }       
@@ -474,7 +474,7 @@ function scorm_count_launchable($scormid,$organization='') {
     if (!empty($organization)) {
         $strorganization = " AND organization='$organization'";
     }
-    return count_records_select('scorm_scoes',"scorm=$scormid$strorganization AND launch<>''");
+    return count_records_select('scorm_scoes',"scorm=$scormid$strorganization AND launch<>'".sql_empty()."'");
 }
 
 function scorm_get_last_attempt($scormid, $userid) {
@@ -630,7 +630,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 function scorm_simple_play($scorm,$user) {
    $result = false;
   
-   $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>\'\'');
+   $scoes = get_records_select('scorm_scoes','scorm='.$scorm->id.' AND launch<>\''.sql_empty().'\'');
    
    if ($scoes && (count($scoes) == 1)) {
        if ($scorm->skipview >= 1) {
