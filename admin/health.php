@@ -525,11 +525,99 @@ class problem_000011 extends problem_base {
             }
             return 'Error counter was cleared.';
         } else {
-            return '<p>Session errors can be caused by:<ul><li>unresolved problem in server software (aka random switching of users),</li><li>blocked or modified cookies,</li><li>deleting of active session files.</li></ul></p><p><a href="'.me().'&resetsesserrorcounter=1">Reset counter.</a></p>';
+            return '<p>Session errors can be caused by:</p><ul>' .
+            '<li>unresolved problem in server software (aka random switching of users),</li>' .
+            '<li>blocked or modified cookies,</li>' .
+            '<li>deleting of active session files.</li>' .
+            '</ul><p><a href="'.me().'&amp;resetsesserrorcounter=1">Reset counter</a></p>';
         }
     }
 }
 
+class problem_000012 extends problem_base {
+    function title() {
+        return 'Random questions data consistency';
+    }
+    function exists() {
+        return record_exists_select('question', "qtype = 'random' AND parent <> id");
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        return '<p>For random questions, question.parent should equal question.id. ' .
+        'There are some questions in your database for which this is not true. ' .
+        'One way that this could have happened is for random questions restored from backup before ' .
+        '<a href="http://tracker.moodle.org/browse/MDL-5482">MDL-5482</a> was fixed.</p>';
+    }
+    function solution() {
+        global $CFG;
+        return '<p>Upgrade to Moodle 1.9.1 or later, or manually execute the SQL</p>' .
+        '<pre>UPDATE ' . $CFG->prefix . 'question SET parent = id WHERE qtype = \'random\' and parent &lt;> id;</pre>';
+    }
+}
+
+class problem_000013 extends problem_base {
+    function title() {
+        return 'Multi-answer questions data consistency';
+    }
+    function exists() {
+        global $CFG;
+        $positionexpr = sql_position(sql_concat("','", "q.id", "','"), 
+                sql_concat("','", "qma.sequence", "','"));
+        return record_exists_sql("
+                SELECT * FROM {$CFG->prefix}question q
+                    JOIN {$CFG->prefix}question_multianswer qma ON $positionexpr > 0
+                WHERE qma.question <> q.parent") ||
+            record_exists_sql("
+                SELECT * FROM {$CFG->prefix}question q
+                    JOIN {$CFG->prefix}question parent_q ON parent_q.id = q.parent
+                WHERE q.category <> parent_q.category");
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        return '<p>For each sub-question whose id is listed in ' .
+        'question_multianswer.sequence, its question.parent field should equal ' .
+        'question_multianswer.question; and each sub-question should be in the same ' .
+        'category as its parent. There are questions in your database for ' .
+        'which this is not the case. One way that this could have happened is ' .
+        'for multi-answer questions restored from backup before ' .
+        '<a href="http://tracker.moodle.org/browse/MDL-14750">MDL-14750</a> was fixed.</p>';
+    }
+    function solution() {
+        return '<p>Upgrade to Moodle 1.9.1 or later, or manually execute the ' .
+        'code in question_multianswer_fix_subquestion_parents_and_categories in ' .
+        '<a href="http://cvs.moodle.org/moodle/question/type/multianswer/db/upgrade.php?revision=1.1.10.2&amp;view=markup">/question/type/multianswer/db/upgrade.php' .
+        'from the 1.9 stable branch</a>.</p>';
+    }
+}
+
+class problem_000014 extends problem_base {
+    function title() {
+        return 'Only multianswer and random questions should be the parent of another question';
+    }
+    function exists() {
+        global $CFG;
+        return record_exists_sql("
+                SELECT * FROM {$CFG->prefix}question q
+                    JOIN {$CFG->prefix}question parent_q ON parent_q.id = q.parent
+                WHERE parent_q.qtype NOT IN ('random', 'multianswer')");
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        return '<p>You have questions that violate this in your databse. ' .
+        'You will need to investigate to determine how this happened.</p>';
+    }
+    function solution() {
+        return '<p>It is impossible to give a solution without knowing more about ' .
+        ' how the problem was caused. You may be able to get help from the ' .
+        '<a href="http://moodle.org/mod/forum/view.php?f=121">Quiz forum</a>.</p>';
+    }
+}
 
 class problem_00000x extends problem_base {
     function title() {
