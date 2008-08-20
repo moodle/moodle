@@ -419,7 +419,7 @@ function scorm_grades($scormid) {
     }
 
     if (($scorm->grademethod % 10) == 0) { // GRADESCOES
-        if (!$return->maxgrade = count_records_select('scorm_scoes',"scorm='$scormid' AND launch<>''")) {
+        if (!$return->maxgrade = count_records_select('scorm_scoes',"scorm='$scormid' AND launch<>'".sql_empty()."'")) {
             return NULL;
         }
     } else {
