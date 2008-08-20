@@ -108,8 +108,7 @@ if (!$exporter->get('instance')) {
         exit;
     }
     else {
-        $exporter->print_header();
-        print_heading(get_string('selectplugin', 'portfolio'));
+        $exporter->print_header('selectplugin');
         print_simple_box_start();
         $mform->display();
         print_simple_box_end();

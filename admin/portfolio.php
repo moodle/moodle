@@ -50,25 +50,21 @@ if (!empty($edit) || !empty($new)) {
         redirect($baseurl);
         exit;
     } else if ($fromform = $mform->get_data()){
-        if (!confirm_sesskey()) {
-            print_error('confirmsesskeybad', '', $baseurl);
+        // unset whatever doesn't belong in fromform
+        foreach (array('edit', 'new', 'plugin', 'sesskey', 'submitbutton') as $key) {
+            unset($fromform->{$key});
         }
         //this branch is where you process validated data.
         if ($edit) {
-            $success = $instance->set_config($fromform);
-            $success = $success && $instance->save();
-        }
-        else {
-            $success = portfolio_static_function($plugin, 'create_instance', $plugin, $fromform->name, $fromform);
-        }
-        if ($success) {
-            $savedstr = get_string('instancesaved', 'portfolio');
-            admin_externalpage_print_header();
-            print_heading($savedstr);
-            redirect($baseurl, $savedstr, 3);
+            $instance->set_config($fromform);
+            $instance->save();
         } else {
-            print_error('instancenotsaved', 'portfolio', $baseurl);
+            portfolio_static_function($plugin, 'create_instance', $plugin, $fromform->name, $fromform);
         }
+        $savedstr = get_string('instancesaved', 'portfolio');
+        admin_externalpage_print_header();
+        print_heading($savedstr);
+        redirect($baseurl, $savedstr, 3);
         exit;
     } else {
         admin_externalpage_print_header();

@@ -176,8 +176,10 @@ define('PORTFOLIO_ADD_TEXT_LINK', 4);
 * @param str $addstr                     string to use for the button or icon alt text or link text.
 *                                        this is whole string, not key.  optional, defaults to 'Add to portfolio';
 * @param boolean $return                 whether to echo or return content (optional defaults to false (echo)
+* @param array $callersupports           if the calling code knows better than the static method on the calling class (supported_formats)
+*                                        eg, if there's a file that might be an image, you can pass it here instead
 */
-function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null, $format=PORTFOLIO_ADD_FULL_FORM, $addstr=null, $return=false) {
+function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null, $format=PORTFOLIO_ADD_FULL_FORM, $addstr=null, $return=false, $callersupports=null) {
 
     global $SESSION, $CFG, $COURSE, $USER;
 
@@ -219,7 +221,9 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
 
     require_once($CFG->dirroot . $callbackfile);
 
-    $callersupports = call_user_func(array($callbackclass, 'supported_formats'));
+    if (empty($callersupports)) {
+        $callersupports = call_user_func(array($callbackclass, 'supported_formats'));
+    }
 
     $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
     $linkoutput = '<a href="' . $CFG->wwwroot . '/portfolio/add.php?';
@@ -241,7 +245,8 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
     $selectoutput = '';
     if (count($instances) == 1) {
         $instance = array_shift($instances);
-        if (count(array_intersect($callersupports,  $instance->supported_formats())) == 0) {
+        $formats = portfolio_supported_formats_intersect($callersupports, $instance->supported_formats());
+        if (count($formats) == 0) {
             // bail. no common formats.
             debugging(get_string('nocommonformats', 'portfolio', $callbackclass));
             return;
@@ -315,7 +320,8 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
     $count = 0;
     $selectoutput = "\n" . '<select name="' . $selectname . '">' . "\n";
     foreach ($instances as $instance) {
-        if (count(array_intersect($callerformats,  $instance->supported_formats())) == 0) {
+        $formats = portfolio_supported_formats_intersect($callerformats, $instance->supported_formats());
+        if (count($formats) == 0) {
             // bail. no common formats.
             continue;
         }
@@ -386,7 +392,9 @@ function portfolio_instances($visibleonly=true, $useronly=true) {
 */
 function portfolio_supported_formats() {
     return array(
-        PORTFOLIO_FORMAT_FILE => 'portfolio_format_file',
+        PORTFOLIO_FORMAT_FILE  => 'portfolio_format_file',
+        PORTFOLIO_FORMAT_IMAGE => 'portfolio_format_image',
+        PORTFOLIO_FORMAT_HTML  => 'portfolio_format_html',
         /*PORTFOLIO_FORMAT_MBKP, */ // later
         /*PORTFOLIO_FORMAT_PIOP, */ // also later
     );
@@ -648,9 +656,9 @@ abstract class portfolio_caller_base {
     protected $exporter;
 
     /**
-    *
+    * this can be overridden in subclasses constructors if they want
     */
-    private $stage;
+    protected $supportedformats;
 
     /**
     * if this caller wants any additional config items
@@ -829,10 +837,15 @@ abstract class portfolio_caller_base {
     * and what the selected portfolio plugin supports
     * will be used
     * use the constants PORTFOLIO_FORMAT_*
+    * if $caller is passed, that can be used for more specific guesses
+    * as this function <b>must</b> be called statically.
     *
     * @return array list of formats
     */
-    public static function supported_formats() {
+    public static function supported_formats($caller=null) {
+        if ($caller && $caller->get('supportedformats')) {
+            return $caller->get('supportedformats');
+        }
         return array(PORTFOLIO_FORMAT_FILE);
     }
 
@@ -1294,13 +1307,6 @@ abstract class portfolio_plugin_base {
         require_once($CFG->dirroot . '/portfolio/type/' . $plugin . '/lib.php');
         $classname = 'portfolio_plugin_'  . $plugin;
         $obj = new $classname($newid);
-        // the form contains extra hidden fields used by the controller and stuff
-        // unset them here to avoid an exception
-        foreach ((array)$config as $key => $value) {
-            if (!in_array($key, $obj->get_allowed_config())) {
-                unset($config->{$key});
-            }
-        }
         $obj->set_config($config);
         return $obj;
     }
@@ -1925,7 +1931,7 @@ final class portfolio_exporter {
         if ($this->caller->has_export_config()) {
             $callerobj = $this->caller;
         }
-        $formats = portfolio_supported_formats_intersect($this->caller->supported_formats(), $this->instance->supported_formats());
+        $formats = portfolio_supported_formats_intersect($this->caller->supported_formats($this->caller), $this->instance->supported_formats());
         $expectedtime = $this->instance->expected_time($this->caller->expected_time());
         if (count($formats) == 0) {
             // something went wrong, we should not have gotten this far.
@@ -2090,7 +2096,7 @@ final class portfolio_exporter {
     public function process_stage_cleanup($pullok=false) {
         global $CFG, $DB, $SESSION;
 
-        if (!$pullok && !$this->get('instance')->is_push()) {
+        if (!$pullok && $this->get('instance') && !$this->get('instance')->is_push()) {
             unset($SESSION->portfolioexport);
             return true;
         }
@@ -2313,7 +2319,7 @@ class portfolio_instance_select extends moodleform {
         $this->caller = $this->_customdata['caller'];
         $options = portfolio_instance_select(
             portfolio_instances(),
-            $this->caller->supported_formats(),
+            $this->caller->supported_formats($this->caller),
             get_class($this->caller),
             'instance',
             true,

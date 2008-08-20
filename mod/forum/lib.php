@@ -3880,7 +3880,12 @@ function forum_print_attachments($post, $cm, $type) {
                             'postid' => $post->id,
                             'attachment' => $file->get_id(),
                         );
-                        $imagereturn .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_LINK, null, true);
+                        $imagereturn .= portfolio_add_button(
+                            'forum_portfolio_caller',
+                            $p, '/mod/forum/lib.php',
+                            PORTFOLIO_ADD_ICON_LINK,
+                            null, true,
+                            array(PORTFOLIO_FORMAT_IMAGE));
                     }
                 } else {
                     $output .= "<a href=\"$path\">$iconimage</a> ";
@@ -7112,6 +7117,9 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
                 print_error('noattachments', 'forum');
             }
             $this->files = array($f);
+            if (in_array($f->get_mimetype(), array('image/gif', 'image/jpeg', 'image/png'))) {
+                $this->supportedformats = array(PORTFOLIO_FORMAT_IMAGE);
+            }
         }
         $this->files = $fs->get_area_files(get_context_instance(CONTEXT_MODULE, $this->cm->id)->id, 'forum_attachment', $this->post->id, "timemodified", false);
     }
