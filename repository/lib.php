@@ -593,7 +593,7 @@ EOD;
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/json/json-min.js"></script>
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/button/button-min.js"></script>
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/selector/selector-beta-min.js"></script>
-    <script>
+    <script type="text/javascript">
 //<![CDATA[
     var repository_client_$suffix = (function() {
         // private static field
