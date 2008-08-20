@@ -686,7 +686,7 @@ class default_questiontype {
     }
     /**
     * Return the actual response to the question in a given state
-    * for the question
+    * for the question.
     *
     * @return mixed           An array containing the response or reponses (multiple answer, match)
     *                         given by the user in a particular attempt.
@@ -939,7 +939,7 @@ class default_questiontype {
                         $table->data[] = array (
                                                 $link,
                                                 $b.get_string('event'.$st->event, 'quiz').$be,
-                                                $b.s($this->response_summary($question, $st)).$be,
+                                                $b.$this->response_summary($question, $st).$be,
                                                 $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
                                                 $b.question_format_grade($cmoptions, $st->raw_grade).$be,
                                                 $b.question_format_grade($cmoptions, $st->grade).$be
@@ -948,7 +948,7 @@ class default_questiontype {
                         $table->data[] = array (
                                                 $link,
                                                 $b.get_string('event'.$st->event, 'quiz').$be,
-                                                $b.s($this->response_summary($question, $st)).$be,
+                                                $b.$this->response_summary($question, $st).$be,
                                                 $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
                                                 );
                     }
@@ -1103,7 +1103,8 @@ class default_questiontype {
     *
     * This function returns a short string of no more than a given length that
     * summarizes the student's response in the given $state. This is used for
-    * example in the response history table
+    * example in the response history table. This string should already be,
+    * for output.
     * @return string         The summary of the student response
     * @param object $question
     * @param object $state   The state whose responses are to be summarized
@@ -1116,9 +1117,9 @@ class default_questiontype {
             $responses = array();
         }
         if (is_array($responses)) {
-            $responses = implode(',', $responses);
+            $responses = implode(',', array_map('s', $responses));
         }
-        return substr($responses, 0, $length);
+        return shorten_text($responses, $length);
     }
 
     /**
