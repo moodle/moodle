@@ -594,6 +594,7 @@ EOD;
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/button/button-min.js"></script>
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/selector/selector-beta-min.js"></script>
     <script>
+//<![CDATA[
     var repository_client_$suffix = (function() {
         // private static field
         var dver = '1.0';
@@ -1125,7 +1126,8 @@ EOD;
             repository_client_$suffix.instance.show();
         }
     }
-    </script>
+//]]>
+</script>
 EOD;
     return array('css'=>$css, 'js'=>$js, 'suffix'=>$suffix);
 }
