@@ -144,5 +144,9 @@
     </head>
     <body onload="doredirect();">
         <p><?php echo get_string('activityloading', 'scorm');?> <span id="countdown"><?php echo $delayseconds ?></span> <?php echo get_string('numseconds');?>. &nbsp; <img src='<?php echo $scormpixdir;?>/wait.gif'><p>
+        <?php if (debugging('',DEBUG_DEVELOPER)) {
+                  add_to_log($course->id, 'scorm', 'launch', 'view.php?id='.$cm->id, $result, $cm->id);
+              }
+        ?>
     </body> 
 </html>
