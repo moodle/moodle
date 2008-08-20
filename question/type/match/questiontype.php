@@ -413,7 +413,7 @@ class question_match_qtype extends default_questiontype {
 
     function response_summary($question, $state, $length=80) {
         // This should almost certainly be overridden
-        return substr(implode(', ', $this->get_actual_response($question, $state)), 0, $length);
+        return shorten_text(implode(', ', $this->get_actual_response($question, $state)), $length);
     }
 
 /// BACKUP FUNCTIONS ////////////////////////////
