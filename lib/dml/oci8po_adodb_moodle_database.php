@@ -182,6 +182,14 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
         return 'dbms_lob.substr(' . $fieldname . ', ' . $numchars . ',1)';
     }
 
+    /**
+     * Returns the SQL for returning searching one string for the location of another.
+     */
+    public function sql_substr($needle, $haystack) {
+        // Implementation using standard SQL.
+        return "INSTR(($haystack), ($needle))";
+    }
+
     public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
         if ($nullablefield) {
             return " $fieldname IS NULL ";                    /// empties in nullable fields are stored as

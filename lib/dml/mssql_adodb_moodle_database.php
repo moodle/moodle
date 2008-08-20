@@ -127,6 +127,14 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         return ' CONVERT(varchar, ' . $fieldname . ', ' . $numchars . ')';
     }
 
+    /**
+     * Returns the SQL for returning searching one string for the location of another.
+     */
+    public function sql_substr($needle, $haystack) {
+        // Implementation using standard SQL.
+        return "CHARINDEX(($needle), ($haystack))";
+    }
+
     public function sql_isempty($tablename, $fieldname, $nullablefield, $textfield) {
         if ($textfield) {
             return $this->sql_compare_text($fieldname)." = '' ";

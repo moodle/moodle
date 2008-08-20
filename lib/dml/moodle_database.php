@@ -1345,6 +1345,20 @@ abstract class moodle_database {
     public abstract function sql_substr();
 
     /**
+     * Returns the SQL for returning searching one string for the location of another.
+     * Note, there is no guarantee which order $needle, $haystack will be in 
+     * the resulting SQL, so when using this method, and both arguments contain
+     * placeholders, you should use named placeholders.
+     * @param string $needle the SQL expression that will be searched for.
+     * @param string $haystack the SQL expression that will be searched in.
+     * @return string the required SQL
+     */
+    public function sql_position($needle, $haystack) {
+        // Implementation using standard SQL.
+        return "POSITION(($needle) IN ($haystack))";
+    }
+
+    /**
      * Returns SQL WHERE conditions.
      *
      * @param array conditions - must not contain numeric indexes

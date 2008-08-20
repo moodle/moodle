@@ -35,6 +35,23 @@ class dml_test extends UnitTestCase {
         $this->tables = array();
     }
 
+    /**
+     * Get a xmldb_table object for testing, deleting any existing table
+     * of the same name, for example if one was left over from a previous test
+     * run that crashed.
+     *
+     * @param database_manager $dbman the database_manager to use.
+     * @param string $tablename the name of the table to create.
+     * @return xmldb_table the table object.
+     */
+    private function get_test_table(database_manager $dbman, $tablename) {
+        $table = new xmldb_table($tablename);
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+        return $table;
+    }
+
     function test_fix_sql_params() {
         $DB = $this->tdb;
 
@@ -147,10 +164,11 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
+        // Need to test with multiple DBs
+        $table = $this->get_test_table($dbman, "testtable");
+
         $original_count = count($DB->get_tables());
 
-        // Need to test with multiple DBs
-        $table = new xmldb_table("testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
@@ -163,7 +181,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, null, null, XMLDB_ENUM, array('test','test2','test3'),null);
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -186,7 +204,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $enumvalues = array('test','test2','test3');
         $table->add_field('enumfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, XMLDB_ENUM, $enumvalues, 'test2');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
@@ -206,7 +224,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
@@ -232,7 +250,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
@@ -261,7 +279,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $this->tdb->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
@@ -418,7 +436,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
@@ -452,7 +470,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, '0');
@@ -522,7 +540,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_index('course', XMLDB_INDEX_NOTUNIQUE, array('course'));
@@ -550,7 +568,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -581,7 +599,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -605,7 +623,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -654,7 +672,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -678,7 +696,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -701,7 +719,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -726,7 +744,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -755,7 +773,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -784,7 +802,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -803,7 +821,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -823,7 +841,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -843,7 +861,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -860,7 +878,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -878,7 +896,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -896,7 +914,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -921,7 +939,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -945,7 +963,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -961,7 +979,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -980,7 +998,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1001,7 +1019,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
         $table->add_field('image', XMLDB_TYPE_BINARY, 'big', null, null, null, null, null, null);
@@ -1025,7 +1043,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1044,7 +1062,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1065,7 +1083,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1089,7 +1107,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
         $table->add_field('image', XMLDB_TYPE_BINARY, 'big', null, null, null, null, null, null);
@@ -1118,7 +1136,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1135,7 +1153,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1154,7 +1172,7 @@ class dml_test extends UnitTestCase {
 
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1175,7 +1193,7 @@ class dml_test extends UnitTestCase {
 
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1195,7 +1213,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1215,7 +1233,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1235,7 +1253,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1254,7 +1272,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1273,7 +1291,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1301,7 +1319,7 @@ class dml_test extends UnitTestCase {
         $DB = $this->tdb;
         $dbman = $DB->get_manager();
 
-        $table = new xmldb_table("testtable");
+        $table = $this->get_test_table($dbman, "testtable");
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
         $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
@@ -1314,6 +1332,14 @@ class dml_test extends UnitTestCase {
 
         $this->assertTrue($DB->delete_records_select('testtable', 'course = ?', array(2)));
         $this->assertEqual(1, $DB->count_records('testtable'));
+    }
+
+    function test_sql_position() {
+        $DB = $this->tdb;
+        $this->assertEqual($DB->get_field_sql(
+                "SELECT " . $DB->sql_position("'ood'", "'Moodle'") . $DB->sql_null_from_clause()), 2); 
+        $this->assertEqual($DB->get_field_sql(
+                "SELECT " . $DB->sql_position("'Oracle'", "'Moodle'") . $DB->sql_null_from_clause()), 0); 
     }
 }
 
