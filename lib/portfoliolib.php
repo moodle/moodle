@@ -1287,13 +1287,20 @@ abstract class portfolio_plugin_base {
         if (!portfolio_static_function($plugin, 'allows_multiple')) {
             // check we don't have one already
             if ($DB->record_exists('portfolio_instance', array('plugin' => $plugin))) {
-                throw new portfolio_exception('multipledisallowed', 'portfolio', $plugin);
+                throw new portfolio_exception('multipledisallowed', 'portfolio', '', $plugin);
             }
         }
         $newid = $DB->insert_record('portfolio_instance', $new);
         require_once($CFG->dirroot . '/portfolio/type/' . $plugin . '/lib.php');
         $classname = 'portfolio_plugin_'  . $plugin;
         $obj = new $classname($newid);
+        // the form contains extra hidden fields used by the controller and stuff
+        // unset them here to avoid an exception
+        foreach ((array)$config as $key => $value) {
+            if (!in_array($key, $obj->get_allowed_config())) {
+                unset($config->{$key});
+            }
+        }
         $obj->set_config($config);
         return $obj;
     }
@@ -1507,7 +1514,7 @@ abstract class portfolio_plugin_base {
             return true;
         }
         $a = (object)array('property' => $field, 'class' => get_class($this));
-        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', $a);
+        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', '', $a);
 
     }
 
