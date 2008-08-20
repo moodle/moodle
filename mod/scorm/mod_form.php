@@ -8,7 +8,9 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         global $CFG, $COURSE, $SCORM_GRADE_METHOD, $SCORM_WHAT_GRADE;
         $mform    =& $this->_form;
-
+        if (isset($CFG->slasharguments) && !$CFG->slasharguments) {
+            $mform->addElement('static', '', '',notify(get_string('slashargs', 'scorm'), 'notifyproblem', 'center', true));
+        }
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
