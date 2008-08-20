@@ -1736,6 +1736,29 @@ function sql_substr() {
     return $db->substr;
 }
 
+    /**
+     * Returns the SQL for returning searching one string for the location of another.
+     * @param string $needle the SQL expression that will be searched for.
+     * @param string $haystack the SQL expression that will be searched in.
+     * @return string the required SQL
+     */
+function sql_position($needle, $haystack) {
+    global $CFG;
+
+    switch ($CFG->dbtype) {
+        case 'mssql':
+        case 'mssql_n':
+        case 'odbc_mssql':
+            return "CHARINDEX(($needle), ($haystack))";
+            break;
+        case 'oci8po':
+            return "INSTR(($haystack), ($needle))";
+            break;
+        default:
+            return "POSITION(($needle) IN ($haystack))";
+    }
+}
+
 /**
  * Returns the SQL text to be used to compare one TEXT (clob) column with
  * one varchar column, because some RDBMS doesn't support such direct
