@@ -1379,9 +1379,10 @@ abstract class portfolio_plugin_base {
         global $DB;
         foreach ($config as $key => $value) {
             // try set it in $this first
-            if ($this->set($key, $value)) {
+            try {
+                $this->set($key, $value);
                 continue;
-            }
+            } catch (portfolio_exception $e) { }
             if (!in_array($key, $this->get_allowed_config())) {
                 $a = (object)array('property' => $key, 'class' => get_class($this));
                 throw new portfolio_export_exception($this->get('exporter'), 'invalidconfigproperty', 'portfolio', null, $a);
