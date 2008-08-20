@@ -2018,6 +2018,27 @@ function sql_order_by_text($fieldname, $numchars=32) {
     }
 }
 
+    /**
+     * Returns the SQL for returning searching one string for the location of another.
+     * @param string $needle the SQL expression that will be searched for.
+     * @param string $haystack the SQL expression that will be searched in.
+     * @return string the required SQL
+     */
+function sql_position($needle, $haystack) {
+    global $CFG;
+
+    switch ($CFG->dbfamily) {
+        case 'mssql':
+            return "CHARINDEX(($needle), ($haystack))";
+            break;
+        case 'oracle':
+            return "INSTR(($haystack), ($needle))";
+            break;
+        default:
+            return "POSITION(($needle) IN ($haystack))";
+    }
+}
+
 /**
  * Returns the SQL to be used in order to CAST one CHAR column to INTEGER.
  *
