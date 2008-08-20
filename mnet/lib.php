@@ -584,14 +584,22 @@ function mnet_get_peer_host ($mnethostid) {
  * log in at their mnet identity provider (if they are not already logged in)
  * before ultimately being directed to the original url.
  *
- * uses global IDPJUMPURL - the url which user should initially be directed to
+ * uses global MNETIDPJUMPURL the url which user should initially be directed to
+ *     MNETIDPJUMPURL is a URL associated with a moodle networking peer when it
+ *     is fulfiling a role as an identity provider (IDP). Different urls for
+ *     different peers, the jumpurl is formed partly from the IDP's webroot, and
+ *     partly from a predefined local path within that webwroot.
+ *     The result of the user hitting MNETIDPJUMPURL is that they will be asked
+ *     to login (at their identity provider (if they aren't already)), mnet
+ *     will prepare the necessary authentication information, then redirect
+ *     them back to somewhere at the content provider(CP) moodle (this moodle)
  * @param array $url array with 2 elements
  *     0 - context the url was taken from, possibly just the url, possibly href="url"
  *     1 - the destination url
  * @return string the url the remote user should be supplied with.
  */
 function mnet_sso_apply_indirection ($url) {
-    global $IDPJUMPURL;
+    global $MNETIDPJUMPURL;
 
     $localpart='';
     $urlparts = parse_url($url[1]);
@@ -606,7 +614,7 @@ function mnet_sso_apply_indirection ($url) {
             $localpart .= '#'.$urlparts['fragment'];
         }
     }
-    $indirecturl = $IDPJUMPURL . urlencode($localpart);
+    $indirecturl = $MNETIDPJUMPURL . urlencode($localpart);
     //If we matched on more than just a url (ie an html link), return the url to an href format
     if ($url[0] != $url[1]) {
         $indirecturl = 'href="'.$indirecturl.'"';
