@@ -185,7 +185,7 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
     /**
      * Returns the SQL for returning searching one string for the location of another.
      */
-    public function sql_substr($needle, $haystack) {
+    public function sql_position($needle, $haystack) {
         // Implementation using standard SQL.
         return "INSTR(($haystack), ($needle))";
     }
