@@ -525,11 +525,200 @@ class problem_000011 extends problem_base {
             }
             return 'Error counter was cleared.';
         } else {
-            return '<p>Session errors can be caused by:<ul><li>unresolved problem in server software (aka random switching of users),</li><li>blocked or modified cookies,</li><li>deleting of active session files.</li></ul></p><p><a href="'.me().'&resetsesserrorcounter=1">Reset counter.</a></p>';
+            return '<p>Session errors can be caused by:</p><ul>' .
+            '<li>unresolved problem in server software (aka random switching of users),</li>' .
+            '<li>blocked or modified cookies,</li>' .
+            '<li>deleting of active session files.</li>' .
+            '</ul><p><a href="'.me().'&amp;resetsesserrorcounter=1">Reset counter</a></p>';
         }
     }
 }
 
+class problem_000012 extends problem_base {
+    function title() {
+        return 'Random questions data consistency';
+    }
+    function exists() {
+        return record_exists_select('question', "qtype = 'random' AND parent <> id");
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        return '<p>For random questions, question.parent should equal question.id. ' .
+        'There are some questions in your database for which this is not true. ' .
+        'One way that this could have happened is for random questions restored from backup before ' .
+        '<a href="http://tracker.moodle.org/browse/MDL-5482">MDL-5482</a> was fixed.</p>';
+    }
+    function solution() {
+        global $CFG;
+        return '<p>Upgrade to Moodle 1.9.1 or later, or manually execute the SQL</p>' .
+        '<pre>UPDATE ' . $CFG->prefix . 'question SET parent = id WHERE qtype = \'random\' and parent &lt;> id;</pre>';
+    }
+}
+
+class problem_000013 extends problem_base {
+    function title() {
+        return 'Multi-answer questions data consistency';
+    }
+    function exists() {
+        global $CFG;
+        $positionexpr = sql_position(sql_concat("','", "q.id", "','"), 
+                sql_concat("','", "qma.sequence", "','"));
+        return record_exists_sql("
+                SELECT * FROM {$CFG->prefix}question q
+                    JOIN {$CFG->prefix}question_multianswer qma ON $positionexpr > 0
+                WHERE qma.question <> q.parent") ||
+            record_exists_sql("
+                SELECT * FROM {$CFG->prefix}question q
+                    JOIN {$CFG->prefix}question parent_q ON parent_q.id = q.parent
+                WHERE q.category <> parent_q.category");
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        return '<p>For each sub-question whose id is listed in ' .
+        'question_multianswer.sequence, its question.parent field should equal ' .
+        'question_multianswer.question; and each sub-question should be in the same ' .
+        'category as its parent. There are questions in your database for ' .
+        'which this is not the case. One way that this could have happened is ' .
+        'for multi-answer questions restored from backup before ' .
+        '<a href="http://tracker.moodle.org/browse/MDL-14750">MDL-14750</a> was fixed.</p>';
+    }
+    function solution() {
+        return '<p>Upgrade to Moodle 1.9.1 or later, or manually execute the ' .
+        'code in question_multianswer_fix_subquestion_parents_and_categories in ' .
+        '<a href="http://cvs.moodle.org/moodle/question/type/multianswer/db/upgrade.php?revision=1.1.10.2&amp;view=markup">/question/type/multianswer/db/upgrade.php' .
+        'from the 1.9 stable branch</a>.</p>';
+    }
+}
+
+class problem_000014 extends problem_base {
+    function title() {
+        return 'Only multianswer and random questions should be the parent of another question';
+    }
+    function exists() {
+        global $CFG;
+        return record_exists_sql("
+                SELECT * FROM {$CFG->prefix}question q
+                    JOIN {$CFG->prefix}question parent_q ON parent_q.id = q.parent
+                WHERE parent_q.qtype NOT IN ('random', 'multianswer')");
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        return '<p>You have questions that violate this in your databse. ' .
+        'You will need to investigate to determine how this happened.</p>';
+    }
+    function solution() {
+        return '<p>It is impossible to give a solution without knowing more about ' .
+        ' how the problem was caused. You may be able to get help from the ' .
+        '<a href="http://moodle.org/mod/forum/view.php?f=121">Quiz forum</a>.</p>';
+    }
+}
+
+class problem_000015 extends problem_base {
+    function title() {
+        return 'Question categories should belong to a valid context';
+    }
+    function exists() {
+        global $CFG;
+        return record_exists_sql("
+            SELECT qc.*, (SELECT COUNT(1) FROM {$CFG->prefix}question q WHERE q.category = qc.id) AS numquestions
+            FROM {$CFG->prefix}question_categories qc
+                LEFT JOIN {$CFG->prefix}context con ON qc.contextid = con.id
+            WHERE con.id IS NULL");
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        global $CFG;
+        $problemcategories = get_records_sql("
+            SELECT qc.id, qc.name, qc.contextid, (SELECT COUNT(1) FROM {$CFG->prefix}question q WHERE q.category = qc.id) AS numquestions
+            FROM {$CFG->prefix}question_categories qc
+                LEFT JOIN {$CFG->prefix}context con ON qc.contextid = con.id
+            WHERE con.id IS NULL
+            ORDER BY numquestions DESC, qc.name");
+        $table = '<table><thead><tr><th>Cat id</th><th>Category name</th>' .
+        "<th>Context id</th><th>Num Questions</th></tr></thead><tbody>\n";
+        $maxnumquestions = 0;
+        if ($problemcategories) {
+            foreach ($problemcategories as $cat) {
+                $table .= "<tr><td>$cat->id/td><td>" . s($cat->name) . "</td><td>" .
+                $cat->contextid ."</td><td>$cat->numquestions</td></tr>\n";
+                if ($maxnumquestions < $cat->numquestions) {
+                    $maxnumquestions = $cat->numquestions;
+                }
+            }
+        }
+        $table .= '</tbody></table>';
+        return '<p>All question categories are linked to a context id, and, ' .
+        'the context they are linked to must exist. The following categories ' .
+        'belong to a non-existant category:</p>' . $table . '<p>Any of these ' .
+        'categories that contain no questions can just be deleted form the database. ' .
+        'Other categories will require more thought.</p>';
+    }
+    function solution() {
+        global $CFG;
+        return '<p>You can delete the empty categories by executing the following SQL:</p><pre>
+DELETE FROM ' . $CFG->prefix . 'question_categories
+WHERE
+    NOT EXIST (SELECT * FROM ' . $CFG->prefix . 'question q WHERE q.category = qc.id)
+AND NOT EXIST (SELECT * FROM ' . $CFG->prefix . 'context context WHERE qc.contextid = con.id)
+        </pre><p>Any remaining categories that contain questions will require more thought. ' .
+        'People in the <a href="http://moodle.org/mod/forum/view.php?f=121">Quiz forum</a> may be able to help.</p>';
+    }
+}
+
+class problem_000016 extends problem_base {
+    function title() {
+        return 'Question categories should belong to the same context as their parent';
+    }
+    function exists() {
+        global $CFG;
+        return record_exists_sql("
+            SELECT parent_qc.id AS parent, child_qc.id AS child, child_qc.contextid
+            FROM {$CFG->prefix}question_categories child_qc
+                JOIN {$CFG->prefix}question_categories parent_qc ON child_qc.parent = parent_qc.id
+            WHERE child_qc.contextid <> parent_qc.contextid");
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        global $CFG;
+        $problemcategories = get_records_sql("
+            SELECT
+                parent_qc.id AS parentid, parent_qc.name AS parentname, parent_qc.contextid AS parentcon,
+                child_qc.id AS childid, child_qc.name AS childname, child_qc.contextid AS childcon
+            FROM {$CFG->prefix}question_categories child_qc
+                JOIN {$CFG->prefix}question_categories parent_qc ON child_qc.parent = parent_qc.id
+            WHERE child_qc.contextid <> parent_qc.contextid");
+        $table = '<table><thead><tr><th colspan="3">Child category</th><th colspan="3">Parent category</th></tr><tr>' .
+        '<th>Id</th><th>Name</th><th>Context id</th>' .
+        '<th>Id</th><th>Name</th><th>Context id</th>' .
+        "</tr></thead><tbody>\n";
+        if ($problemcategories) {
+            foreach ($problemcategories as $cat) {
+                $table .= "<tr><td>$cat->childid/td><td>" . s($cat->childname) .
+                "</td><td>$cat->childcon</td><td>$cat->parentid/td><td>" . s($cat->parentname) .
+                "</td><td>$cat->parentcon</td></tr>\n";
+            }
+        }
+        $table .= '</tbody></table>';
+        return '<p>When one question category is the parent of another, then they ' .
+        'should both belong to the same context. This is not true for the following categories:</p>' .
+        $table;
+    }
+    function solution() {
+        return '<p>An automated solution is difficult. It depends whether the ' .
+        'parent or child category is in the wrong pace.' .
+        'People in the <a href="http://moodle.org/mod/forum/view.php?f=121">Quiz forum</a> may be able to help.</p>';
+    }
+}
 
 class problem_00000x extends problem_base {
     function title() {
