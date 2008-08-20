@@ -35,7 +35,7 @@ the gradebook administrator. Caution in interpreting these "empty grades" is thu
     <dt>Median of grades</dt>
         <dd>The middle grade (or the mean of the two middle grades) when grades are arranged in order of size. The advantage over the mean is that it is not affected by outliers (grades which are uncommonly far from the mean).</dd>
         <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
-                         <code>0.7; 0.25 ; 1.0 --> 0.70 --> 70/100</code></dd>
+                         <code>median(0.7 ; 0.25 ; 1.0) = 0.7 --> 70/100</code></dd>
     
     <dt>Smallest grade</dt>
         <dd>The result is the smallest grade after normalisation. It is usually used in combination with <em>Aggregate only non-empty grades</em>.</dd>
@@ -53,7 +53,7 @@ the gradebook administrator. Caution in interpreting these "empty grades" is thu
                          However it loses its meaning once there is more than one most frequently occurring grade (only one is kept), or when all
                          the grades are different from each other.</dd>
         <dd class="example">A1 70/100, A2 35/50, A3 20/80, A4 10/10, A5 7/10 category max 100:<br />
-                         <code>mode(0.7; 0.7; 0.25; 1.0; 0.7) = 0.7 --> 70/100</code></dd>
+                         <code>mode(0.7 ; 0.7 ; 0.25 ; 1.0 ; 0.7) = 0.7 --> 70/100</code></dd>
     
     <dt>Sum of grades</dt>
         <dd>The sum of all grade values. Scale grades are ignored. This is the only type that does not convert the
