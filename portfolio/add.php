@@ -10,13 +10,14 @@ require_once($CFG->libdir . '/formslib.php');
 $exporter = null;
 $dataid = 0;
 
-if (!$dataid = optional_param('id') ) {
+if (!$dataid = optional_param('id', '', PARAM_INT) ) {
     if (isset($SESSION->portfolioexport)) {
         $dataid = $SESSION->portfolioexport;
     }
 }
 if ($dataid) {
     $exporter = portfolio_exporter::rewaken_object($dataid);
+    $exporter->verify_rewaken();
     if ($cancel = optional_param('cancel', 0, PARAM_RAW)) {
         $exporter->cancel_request();
     }
@@ -32,6 +33,7 @@ if ($dataid) {
             }
             $instance->set('user', $USER);
             $exporter->set('instance', $instance);
+            $exporter->set('sesskey', sesskey());
             $exporter->save();
         }
     }

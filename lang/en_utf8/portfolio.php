@@ -56,6 +56,7 @@ $string['nopermissions'] = 'Sorry but you do not have the required permissions t
 $string['nonprimative'] = 'A non primative value was passed as a callback argument to portfolio_add_button.  Refusing to continue.  The key was $a->key and the value was $a->value';
 $string['notexportable'] = 'Sorry, but the type of content you are trying to export is not exportable';
 $string['notimplemented'] = 'Sorry, but you are trying to export content in some format that is not yet implemented ($a)';
+$string['notyours'] = 'You are trying to resume a portfolio export that doesn\'t belong to you!';
 $string['nouploaddirectory'] = 'Could not create a temporary directory to package your data into';
 $string['portfolio'] = 'Portfolio';
 $string['portfolios'] = 'Portfolios';

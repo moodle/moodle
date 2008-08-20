@@ -1795,6 +1795,8 @@ final class portfolio_exporter {
     */
     private $id;
 
+    private $sesskey;
+
     /**
     * construct a new exporter for use
     *
@@ -1826,7 +1828,7 @@ final class portfolio_exporter {
             return $this->{$field};
         }
         $a = (object)array('property' => $field, 'class' => get_class($this));
-        throw new portfolio_export_exception($this, 'invalidproperty', 'portfolio', $a);
+        throw new portfolio_export_exception($this, 'invalidproperty', 'portfolio', '', $a);
     }
 
     /**
@@ -2306,6 +2308,15 @@ final class portfolio_exporter {
         );
     }
 
+    public function verify_rewaken() {
+        global $USER;
+        if ($this->get('user')->id != $USER->id) {
+            throw new portfolio_exception('notyours', 'portfolio');
+        }
+        if (!confirm_sesskey($this->get('sesskey'))) {
+            throw new portfolio_exception('confirmsesskeybad');
+        }
+    }
 }
 
 /**
