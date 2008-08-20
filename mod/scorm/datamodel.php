@@ -10,7 +10,7 @@
 
 
     if (!empty($id)) {
-        if (! $cm = $DB->get_record("course_modules", array("id"=>$id))) {
+        if (! $cm = get_coursemodule_from_id('scorm', $id)) {
             print_error('invalidcoursemodule');
         }
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
