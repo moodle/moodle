@@ -50,7 +50,7 @@ if(file_exists($CFG->dirroot.'/repository/'.
     die(json_encode($err));
 }
 
-if($action == 'list') {
+if ($action == 'list' || $action == 'search') {
     try {
         if(!empty($p)) {
             echo json_encode($repo->get_listing($p));
@@ -85,7 +85,7 @@ if($action == 'list') {
         $err->e = $e->getMessage();
         die(json_encode($err));
     }
-} else {
+} elseif ($action == 'login') {
     try {
         echo json_encode($repo->print_login());
     } catch (repository_exception $e){

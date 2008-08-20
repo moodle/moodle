@@ -41,6 +41,11 @@ class repository_boxnet extends repository{
             } catch (repository_exception $e) {
                 throw $e;
             }
+            if ($SESSION->$sess_name) {
+                $action = 'list';
+            } else {
+                $action = 'login';
+            }
         }
         // already logged
         if(!empty($SESSION->$sess_name)) {
@@ -53,9 +58,8 @@ class repository_boxnet extends repository{
             }
         } else {
             $this->box = new boxclient($this->api_key);
-            if(!empty($action)) {
-                $action = '';
-            }
+            // print login
+            $action = 'login';
         }
     }
 

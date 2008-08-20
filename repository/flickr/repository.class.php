@@ -47,8 +47,10 @@ class repository_flickr extends repository{
                         set_user_preference('flickrmail'.$this->id, $account);
                     }
                     $SESSION->$sess_name = $account;
-                    if(empty($action)) {
+                    if (empty($account)) {
                         $action = 'list';
+                    } else {
+                        $action = 'login';
                     }
                 } else {
                     throw new repository_exception('invalidemail', 'repository_flickr');
@@ -59,6 +61,8 @@ class repository_flickr extends repository{
                     if(empty($action)) {
                         $action = 'list';
                     }
+                } else {
+                    $action = 'login';
                 }
             }
         }

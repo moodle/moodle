@@ -849,6 +849,11 @@ EOD;
             if(node.children){
                 tmpNode.isLeaf = false;
                 tmpNode.subfolder = node.children;
+                if (node.path) {
+                    tmpNode.path = node.path;
+                } else {
+                    tmpNode.path = '';
+                }
                 for(var c in node.children){
                     _client.buildtree(node.children[c], tmpNode);
                 }
@@ -883,7 +888,7 @@ _client.dynload = function (node, fnLoadComplete){
     // TODO: need to include filepath here
     var trans = YAHOO.util.Connect.asyncRequest('GET', 
         '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='
-            +_client.repositoryid+'&action=list', 
+            +_client.repositoryid+'&p='+node.path+'&action=list', 
         callback);
 }
         _client.viewlist = function(){
@@ -983,7 +988,7 @@ _client.dynload = function (node, fnLoadComplete){
             params['ctx_id'] = $context->id;
             _client.loading();
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
-                '$CFG->wwwroot/repository/ws.php', _client.callback,
+                '$CFG->wwwroot/repository/ws.php?action=sign', _client.callback,
                 _client.postdata(params));
         }
         _client.end = function(str){
@@ -1045,7 +1050,7 @@ _client.dynload = function (node, fnLoadComplete){
             _client.viewbar.set('disabled', false);
             _client.loading();
             _client.repositoryid = id;
-            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
+            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?action=list&ctx_id=$context->id&repo_id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
         }
         _client.search = function(id){
             var data = window.prompt("$strsearching");
@@ -1055,7 +1060,7 @@ _client.dynload = function (node, fnLoadComplete){
             }
             _client.viewbar.set('disabled', false);
             _client.loading();
-            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='+id+'&s='+data+'&env='+_client.env, _client.callback);
+            var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?action=search&ctx_id=$context->id&repo_id='+id+'&s='+data+'&env='+_client.env, _client.callback);
         }
         return _client;
     })();
