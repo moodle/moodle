@@ -6,9 +6,7 @@
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', PARAM_INT);  // sco ID
     $attempt = required_param('attempt', PARAM_INT);  // attempt number
-//    $attempt = $SESSION->scorm_attempt;
-
-
+    
     if (!empty($id)) {
         if (! $cm = get_coursemodule_from_id('scorm', $id)) {
             error("Course Module ID was incorrect");
@@ -65,6 +63,12 @@
                         if ($matched == 'true') {
                             $request = 'adl.nav.request_valid["'.$action.'"] = "'.$valid.'";';
                         }
+                    }
+                }
+                // Log every datamodel update requested
+                if (substr($element,0,15) == 'adl.nav.request' || substr($element,0,3) == 'cmi') {
+                    if (debugging('',DEBUG_DEVELOPER)) {
+                        add_to_log($course->id, 'scorm', 'trk: '.trim($scorm->name).' at: '.$attempt, 'view.php?id='.$cm->id, "$element => $value", $cm->id);
                     }
                 }
             }
