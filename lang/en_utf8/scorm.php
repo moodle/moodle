@@ -128,6 +128,7 @@ $string['scormcourse'] = 'Learning Course';
 $string['scrollbars'] = 'Allow the window to be scrolled';
 $string['sided'] = 'On the left side';
 $string['skipview'] = 'Student skip content structure page';
+$string['slashargs'] = 'WARNING: slash arguments is disabled on this site and objects may not function as expected!';
 $string['stagesize'] = 'Stage size';
 $string['started'] = 'Started on';
 $string['status'] = 'Status';
