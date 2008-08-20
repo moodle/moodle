@@ -101,9 +101,8 @@ class repository_boxnet extends repository{
                 }
             }
 
-            $this->listing = $list;
             $ret['list']   = $list;
-            $ret['dynload'] = true;
+            $this->listing = $list;
             return $ret;
         } else {
             throw new repository_exception('nullfilelist', 'repository_boxnet');

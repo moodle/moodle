@@ -839,22 +839,23 @@ EOD;
             _client.viewmode = 1;
             return str;
         }
-        _client.buildtree = function(node){
-            if(node.subfolder){
-                for(var j in node.subfolder) {
-                    var nodeinfo = {label: node.subfolder[j].title, title: "Date"+node.subfolder[j].date+' '+'Size:'+node.subfolder[j].size}; 
-                    var cNode = new YAHOO.widget.TextNode(nodeinfo, node, false); 
-                    cNode.filename = node.subfolder[j].title;
-                    cNode.value  = node.subfolder[j].source;
-                    if(node.subfolder[j].children){
-                        cNode.subfolder = node.subfolder[j].children;
-                        _client.buildtree(cNode);
-                    } else {
-                        cNode.isLeaf = true;
-                        cNode.onLabelClick = function() {
-                            repository_client_$suffix.rename(this.filename, this.value);
-                        }
-                    }
+        _client.buildtree = function(node, level){
+            var info = {label:node.title, title:"Date: "+node.date+' '+'Size:'+node.size}; 
+            var tmpNode = new YAHOO.widget.TextNode(info, level, false); 
+            var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
+                context:tmpNode.labelElId, text:info.title});
+            tmpNode.filename = node.title;
+            tmpNode.value  = node.source;
+            if(node.children){
+                tmpNode.isLeaf = false;
+                tmpNode.subfolder = node.children;
+                for(var c in node.children){
+                    _client.buildtree(node.children[c], tmpNode);
+                }
+            } else {
+                tmpNode.isLeaf = true;
+                tmpNode.onLabelClick = function() {
+                    repository_client_$suffix.rename(this.filename, this.value);
                 }
             }
         }
@@ -867,7 +868,9 @@ _client.dynload = function (node, fnLoadComplete){
             } catch(e) {
                 alert('Invalid JSON String'+o.responseText);
             }
-            //alert(node);
+            for(k in json.list){
+                _client.buildtree(json.list[k], node);
+            }
             o.argument.fnLoadComplete();
         },
         failure:function(oResponse){
@@ -898,24 +901,7 @@ _client.dynload = function (node, fnLoadComplete){
             } else {
             }
             for(k in list){
-                var el = document.createElement('div');
-                var input = document.createElement('input');
-                var info = {label: list[k].title, title: "Date: "+list[k].date+' '+'Size:'+list[k].size}; 
-                var tmpNode = new YAHOO.widget.TextNode(info, tree.getRoot(), false); 
-                var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
-                    context:tmpNode.labelElId, text:info.title});
-                tmpNode.filename = list[k].title;
-                tmpNode.value  = list[k].source;
-                if(list[k].children){
-                    tmpNode.isLeaf = false;
-                    tmpNode.subfolder = list[k].children;
-                } else {
-                    tmpNode.isLeaf = true;
-                    tmpNode.onLabelClick = function() {
-                        repository_client_$suffix.rename(this.filename, this.value);
-                    }
-                }
-                _client.buildtree(tmpNode);
+                _client.buildtree(list[k], tree.getRoot());
             }
             tree.draw();
             _client.viewmode = 0;
@@ -953,8 +939,8 @@ _client.dynload = function (node, fnLoadComplete){
                 str += '<a href="###" onclick="return repository_client_$suffix.upload();">Upload</a>';
                 str += '</form>';
                 str += '</div>';
+                str += '<hr />';
             }
-            str += '<hr />';
             return str;
         }
         _client.makepage = function(){
