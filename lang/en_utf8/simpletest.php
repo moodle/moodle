@@ -16,6 +16,7 @@ $string['retest'] = 'Re-run the tests';
 $string['retestonlythisfile'] = 'Re-run only this test file.';
 $string['runall'] = 'Run the tests from all the test files.';
 $string['runat'] = 'Run at $a.';
+$string['rundbtests'] = 'Run the database tests too.';
 $string['runonlyfile'] = 'Run only the tests in this file';
 $string['runonlyfolder'] = 'Run only the tests in this folder';
 $string['runtests'] = 'Run tests';
