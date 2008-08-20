@@ -23,6 +23,7 @@ $string['listview'] = 'List View';
 $string['logout'] = 'Logout';
 $string['loading'] = 'Loading...';
 $string['manage'] = 'Manage repositories';
+$string['manageurl'] = 'Manage';
 $string['manageuserrepository'] = 'Manage individual repository';
 $string['noenter'] = 'Nothing entered';
 $string['operation'] = 'Operation';

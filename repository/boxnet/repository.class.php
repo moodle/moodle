@@ -13,6 +13,24 @@ require_once($CFG->dirroot.'/repository/boxnet/'.'boxlibphp5.php');
 class repository_boxnet extends repository{
     private $box;
 
+    public function set_option($options = array()){
+        $ret = parent::set_option($options);
+        if (!empty($options['api_key'])) {
+            set_config('api_key', $options['api_key'], 'boxnet');
+        }
+        return $ret;
+    }
+
+    public function get_option($config = ''){
+        $options = parent::get_option($config);
+        if($config==='api_key'){
+            return get_config('boxnet', 'api_key');
+        } else {
+            $options['api_key'] = get_config('boxnet', 'api_key');
+        }
+        return $options;
+    }
+
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action;
         $options['username']   = optional_param('boxusername', '', PARAM_RAW);
@@ -22,7 +40,6 @@ class repository_boxnet extends repository{
         parent::__construct($repositoryid, $context, $options);
         $this->api_key = $this->get_option('api_key');
         if (empty($this->api_key)) {
-            throw new repository_exception('invalidapikey', 'repository_boxnet');
         }
         $sess_name = 'box_token'.$this->id;
         // reset session
@@ -175,8 +192,12 @@ class repository_boxnet extends repository{
         return true;
     }
     public function admin_config_form(&$mform) {
+        $api_key = get_config('boxnet', 'api_key');
+        if (empty($api_key)) {
+            $api_key = '';
+        }
         $strrequired = get_string('required');
-        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'));
+        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'), array('value'=>$api_key));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
     }
     public static function get_option_names(){

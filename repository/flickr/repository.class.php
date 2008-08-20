@@ -20,7 +20,6 @@ class repository_flickr extends repository{
         parent::__construct($repositoryid, $context, $options);
         $this->api_key = $this->get_option('api_key');
         if (empty($this->api_key)) {
-            throw new repository_exception('invalidapikey', 'repository_flickr');
         }
         $this->flickr = new phpFlickr($this->api_key);
 

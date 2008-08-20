@@ -1016,6 +1016,7 @@ _client.dynload = function (node, fnLoadComplete){
                     }
                     var oDiv = document.getElementById('repo-opt-$suffix-'
                         +_client.repositoryid);
+                    oDiv.innerHTML = '';
                     var search = null;
                     var logout = null;
                     var mgr = null;
