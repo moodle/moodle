@@ -4888,7 +4888,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
             $ctx = $COURSE->context;
         }
         $ret = get_repository_client($ctx);
-        $str .= $ret['html'].$ret['js'];
+        $str .= $ret['css'].$ret['js'];
         $suffix = $ret['suffix'];
         $str .= '<div class="textareaicons">';
         $str .= '<script type="text/javascript">

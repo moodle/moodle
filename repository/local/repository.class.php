@@ -28,7 +28,8 @@ class repository_local extends repository{
     public function get_listing($path = '/', $search = ''){
         global $SESSION;
         $ret = new stdclass;
-        $ret->upload = array('name'=>'attachment', 'id'=>'', 'url'=>'');
+        $ret->dynload = true;
+        $ret->upload = array('name'=>get_string('attachment: '), 'id'=>'repo-form');
         $ret->list  = array();
         // call file api get the list of the file
         $ret->list[] = array('title'=>'title','source'=>'download url', 'thumbnail'=>'url of thumbnail', 'date'=>'', 'size'=>'unknown');

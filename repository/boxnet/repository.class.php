@@ -100,8 +100,10 @@ class repository_boxnet extends repository{
                             'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon', $v));
                 }
             }
+
             $this->listing = $list;
             $ret['list']   = $list;
+            $ret['dynload'] = true;
             return $ret;
         } else {
             throw new repository_exception('nullfilelist', 'repository_boxnet');
@@ -153,7 +155,7 @@ class repository_boxnet extends repository{
                     $e4->name  = 'boxpassword';
 
                     $ret = array();
-                    $ret['l'] = array($e1, $e2, $e3, $e4);
+                    $ret['login'] = array($e1, $e2, $e3, $e4);
                     return $ret;
                 } else {
                     echo $str;

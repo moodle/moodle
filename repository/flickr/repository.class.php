@@ -91,7 +91,7 @@ EOD;
                 $e3->type = 'hidden';
                 $e3->name = 'repo_id';
                 $e3->value = $this->id;
-                $ret['l'] = array($e1, $e2, $e3);
+                $ret['login'] = array($e1, $e2, $e3);
                 return $ret;
             }else{
                 echo $str;

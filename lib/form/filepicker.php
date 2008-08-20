@@ -61,13 +61,17 @@ function updatefile_$suffix(){
     document.getElementById('repo_info_$suffix').innerHTML = '$strsaved';
 }
 function callpicker_$suffix(){
+    document.body.className += ' yui-skin-sam';
+    var picker = document.createElement('DIV');
+    picker.id = 'file-picker-$suffix';
+    document.body.appendChild(picker);
     var el=document.getElementById('${id}_${suffix}');
     openpicker_$suffix({"env":"form", 'target':el, 'callback':updatefile_$suffix})
 }
 </script>
 EOD;
             // $this->_getAttrString($this->_attributes);
-            $str .= '<input value ="'.get_string('openpicker', 'repository').'" type="button" onclick=\'callpicker_'.$suffix.'()\' />'.'<span id="repo_info_'.$suffix.'" style="color:green"></span>'.$ret['html'].$ret['js'];
+            $str .= '<input value ="'.get_string('openpicker', 'repository').'" type="button" onclick=\'callpicker_'.$suffix.'()\' />'.'<span id="repo_info_'.$suffix.'" style="color:green"></span>'.$ret['css'].$ret['js'];
             return $str;
         }
     }

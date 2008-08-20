@@ -208,6 +208,10 @@ $output .= <<<EOF
     function moodlefilemanager(field_name, url, type, win) {
         //alert(id2suffix[tinyMCE.selectedInstance.editorId]);
         var suffix = id2suffix[tinyMCE.selectedInstance.editorId];
+        document.body.className += ' yui-skin-sam';
+        var picker = document.createElement('DIV');
+        picker.id = 'file-picker-'+suffix;
+        document.body.appendChild(picker);
         var el = win.document.getElementById(field_name);
         eval('openpicker_'+suffix+'({"env":"editor","target":el})');
     }

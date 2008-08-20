@@ -539,8 +539,7 @@ function get_repository_client($context){
     $strnoenter   = get_string('noenter', 'repository');
     $strsearching = get_string('searching', 'repository');
     $stradd  = get_string('add', 'repository');
-
-    $js = <<<EOD
+    $css = <<<EOD
     <style type="text/css">
     #list-$suffix{line-height: 1.5em}
     #list-$suffix a{ padding: 3px }
@@ -565,9 +564,14 @@ function get_repository_client($context){
     @import "$CFG->wwwroot/lib/yui/container/assets/skins/sam/container.css";
     @import "$CFG->wwwroot/lib/yui/layout/assets/skins/sam/layout.css";
     @import "$CFG->wwwroot/lib/yui/button/assets/skins/sam/button.css";
+    @import "$CFG->wwwroot/lib/yui/assets/skins/sam/treeview.css";
     </style>
+EOD;
+
+    $js = <<<EOD
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/element/element-beta-min.js"></script>
+    <script type="text/javascript" src="$CFG->wwwroot/lib/yui/treeview/treeview-min.js"></script>
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/dragdrop/dragdrop-min.js"></script>
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/container/container-min.js"></script>
     <script type="text/javascript" src="$CFG->wwwroot/lib/yui/resize/resize-beta-min.js"></script>
@@ -594,16 +598,16 @@ function get_repository_client($context){
             var PANEL_BODY_PADDING = (10*2);
             var btn_list = {label: '$strlistview', value: 'l', checked: true, onclick: {fn: _client.viewlist}};
             var btn_thumb = {label: '$strthumbview', value: 't', onclick: {fn: _client.viewthumb}};
-            var select = new YAHOO.util.Element('select');
-            var list = null;
+            var repo_list = null;
             var resize = null;
             var panel = new YAHOO.widget.Panel('file-picker-$suffix', {
                 draggable: true,
                 close: true,
+                modal: true,
                 underlay: 'none',
                 width: '510px',
                 zindex: 666666,
-                xy: ['50%', YAHOO.util.Dom.getDocumentScrollTop()]
+                xy: [50, Dom.getDocumentScrollTop()+20]
             });
             // construct code section
             {
@@ -637,7 +641,7 @@ function get_repository_client($context){
                     var headerHeight = this.header.offsetHeight; // Content + Padding + Border
                     var bodyHeight = (panelHeight - headerHeight);
                     var bodyContentHeight = (IE_QUIRKS) ? bodyHeight : bodyHeight - PANEL_BODY_PADDING;
-                    YAHOO.util.Dom.setStyle(this.body, 'height', bodyContentHeight + 'px');
+                    Dom.setStyle(this.body, 'height', bodyContentHeight + 'px');
                     if (IE_SYNC) {
                         this.sizeUnderlay();
                         this.syncIframe();
@@ -666,8 +670,8 @@ function get_repository_client($context){
                 panel.render();
                 _client.viewbar.addButtons([btn_list, btn_thumb]);
                 // init repository list
-                list = new YAHOO.util.Element('repo-list-$suffix');
-                list.on('contentReady', function(e){
+                repo_list = new YAHOO.util.Element('repo-list-$suffix');
+                repo_list.on('contentReady', function(e){
                     for(var i=0; i<_client.repos.length; i++) {
                         var repo = _client.repos[i];
                         li = document.createElement('li');
@@ -719,7 +723,8 @@ function get_repository_client($context){
         // public static varible
         _client.repos = [];
         _client.repositoryid = 0;
-        _client.datasource, 
+        // _client.ds save all data received from server side
+        _client.ds = null; 
         _client.viewmode = 0;
         _client.viewbar =null;
         // public static mehtod
@@ -753,14 +758,14 @@ function get_repository_client($context){
             html += '<label for="syncfile">$strsync</label>';
             html += '<input type="checkbox" id="syncfile-$suffix" /><br/>';
             html += '<input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
-            html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownload" />';
             html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a>';
+            html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownload" />';
             html += '</div>';
             panel.get('element').innerHTML = html;
         }
         _client.print_login = function(){
             var panel = new YAHOO.util.Element('panel-$suffix');
-            var data = _client.datasource.l;
+            var data = _client.ds.login;
             var str = '';
             for(var k in data){
                 str += '<p>';
@@ -791,35 +796,41 @@ function get_repository_client($context){
                 _client.viewlist();
             }
         }
-
-        // TODO
-        // If _client.datasource.upload == true
-        // then create a iframe to upload file
-        // We may need a new page named repository/upload.php to process this.
+        _client.navbar = function(){
+            var str = '';
+            str += _client.uploadcontrol();
+            str += _client.makepage();
+            return str;
+        }
         // TODO
         // Improve CSS
-
         _client.viewthumb = function(){
             var panel = new YAHOO.util.Element('panel-$suffix');
             _client.viewbar.check(1);
-            obj = _client.datasource.list;
-            panel.get('element').innerHTML = _client.makepage();
-            for(k in obj){
+            list = _client.ds.list;
+            panel.get('element').innerHTML = _client.navbar();
+            for(k in list){
                 var el = document.createElement('div');
                 el.className='grid';
                 var img = document.createElement('img');
-                img.src = obj[k].thumbnail;
+                img.src = list[k].thumbnail;
                 var input = document.createElement('input');
                 input.type='radio';
-                input.title = obj[k].title;
+                input.title = list[k].title;
                 input.name = 'selected-files';
-                input.value = obj[k].source;
-                input.title = obj[k].title;
-                input.onclick = function(){
-                    repository_client_$suffix.rename(this.title, this.value);
+                input.value = list[k].source;
+                input.title = list[k].title;
+                if(list[k].children){
+                    input.onclick = function(){
+                        alert('this is a dir');
+                    }
+                }else{
+                    input.onclick = function(){
+                        repository_client_$suffix.rename(this.title, this.value);
+                    }
                 }
                 var title = document.createElement('div');
-                title.innerHTML = obj[k].title;
+                title.innerHTML = list[k].title;
                 el.appendChild(img);
                 el.appendChild(input);
                 el.appendChild(title);
@@ -828,53 +839,129 @@ function get_repository_client($context){
             _client.viewmode = 1;
             return str;
         }
+        _client.buildtree = function(node){
+            if(node.subfolder){
+                for(var j in node.subfolder) {
+                    var nodeinfo = {label: node.subfolder[j].title, title: "Date"+node.subfolder[j].date+' '+'Size:'+node.subfolder[j].size}; 
+                    var cNode = new YAHOO.widget.TextNode(nodeinfo, node, false); 
+                    cNode.filename = node.subfolder[j].title;
+                    cNode.value  = node.subfolder[j].source;
+                    if(node.subfolder[j].children){
+                        cNode.subfolder = node.subfolder[j].children;
+                        _client.buildtree(cNode);
+                    } else {
+                        cNode.isLeaf = true;
+                        cNode.onLabelClick = function() {
+                            repository_client_$suffix.rename(this.filename, this.value);
+                        }
+                    }
+                }
+            }
+        }
 
+_client.dynload = function (node, fnLoadComplete){
+    var callback = {
+        success: function(o) {
+            try {
+                var json = YAHOO.lang.JSON.parse(o.responseText);
+            } catch(e) {
+                alert('Invalid JSON String'+o.responseText);
+            }
+            //alert(node);
+            o.argument.fnLoadComplete();
+        },
+        failure:function(oResponse){
+            alert('Error!');
+            oResponse.argument.fnLoadComplete();
+        },
+        argument:{"node":node, "fnLoadComplete": fnLoadComplete},
+        timeout:600
+    }
+    // TODO: need to include filepath here
+    var trans = YAHOO.util.Connect.asyncRequest('GET', 
+        '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='
+            +_client.repositoryid+'&action=list', 
+        callback);
+}
         _client.viewlist = function(){
             var panel = new YAHOO.util.Element('panel-$suffix');
-            var str = '';
             _client.viewbar.check(0);
-            obj = _client.datasource.list;
-            str += _client.makepage();
+            list = _client.ds.list;
+            var str = _client.navbar();
+            str += '<div id="treediv"></div>';
             var re = new RegExp();
             re.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\?\/.=]+$");
-            panel.get('element').innerHTML = '';
-            for(k in obj){
+            panel.get('element').innerHTML = str;
+            var tree = new YAHOO.widget.TreeView('treediv');
+            if(_client.ds.dynload) {
+                tree.setDynamicLoad(_client.dynload, 1);
+            } else {
+            }
+            for(k in list){
                 var el = document.createElement('div');
                 var input = document.createElement('input');
-                input.title = obj[k].title;
-                input.name  = 'selected-files';
-                input.value  = obj[k].source;
-                input.type='radio';
-                input.onclick=function(){
-                    repository_client_$suffix.rename(this.title, this.value);
-                };
-                var desc = document.createElement('span');
-                if(re.test(obj[k].source)) {
-                    desc.innerHTML = '<a class="file_name" href="'+obj[k].source+'">'+obj[k].title+'</a>';
+                var info = {label: list[k].title, title: "Date: "+list[k].date+' '+'Size:'+list[k].size}; 
+                var tmpNode = new YAHOO.widget.TextNode(info, tree.getRoot(), false); 
+                var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
+                    context:tmpNode.labelElId, text:info.title});
+                tmpNode.filename = list[k].title;
+                tmpNode.value  = list[k].source;
+                if(list[k].children){
+                    tmpNode.isLeaf = false;
+                    tmpNode.subfolder = list[k].children;
                 } else {
-                    desc.innerHTML = '<span class="file_name" >'+obj[k].title+'</span>';
+                    tmpNode.isLeaf = true;
+                    tmpNode.onLabelClick = function() {
+                        repository_client_$suffix.rename(this.filename, this.value);
+                    }
                 }
-                var date = document.createElement('div');
-                date.className = 'file_date';
-                date.innerHTML = 'Date: '+obj[k].date;
-                var size = document.createElement('div');
-                size.className = 'file_size';
-                size.innerHTML = 'Size: '+obj[k].size;
-                el.appendChild(input);
-                el.appendChild(desc);
-                el.appendChild(date);
-                el.appendChild(size);
-                panel.get('element').appendChild(el);
+                _client.buildtree(tmpNode);
             }
+            tree.draw();
             _client.viewmode = 0;
             return str;
         }
-        // XXX: An ugly hack to show paging for flickr
+        _client.upload = function(){
+            var u = _client.ds.upload;
+            var conn = YAHOO.util.Connect;
+            var aform = document.getElementById(u.id);
+            var parent = document.getElementById(u.id+'_div');
+            var loading = document.createElement('DIV');
+            loading.innerHTML = "uploading...";
+            loading.id = u.id+'_loading';
+            parent.appendChild(loading);
+            conn.setForm(aform, true, true);
+            conn.asyncRequest('POST', '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='+_client.repositoryid+'&action=upload', _client.upload_cb);
+        }
+        _client.upload_cb = {
+            upload: function(o){
+                var u = _client.ds.upload;
+                var aform = document.getElementById(u.id);
+                aform.reset();
+                var loading = document.getElementById(u.id+'_loading');
+                loading.innerHTML = 'Saved!';
+                _client.req(_client.repositoryid, '', 0);
+            }
+        }
+        _client.uploadcontrol = function() {
+            var str = '';
+            if(_client.ds.upload){
+                str += '<div id="'+_client.ds.upload.id+'_div">';
+                str += '<form id="'+_client.ds.upload.id+'" onsubmit="return false">';
+                str += '<label for="'+_client.ds.upload.id+'-file">'+_client.ds.upload.name+'</label>';
+                str += '<input type="file" id="'+_client.ds.upload.id+'-file"/>';
+                str += '<a href="###" onclick="return repository_client_$suffix.upload();">Upload</a>';
+                str += '</form>';
+                str += '</div>';
+            }
+            str += '<hr />';
+            return str;
+        }
         _client.makepage = function(){
             var str = '';
-            if(_client.datasource.pages){
+            if(_client.ds.pages){
                 str += '<div id="paging-$suffix">';
-                for(var i = 1; i <= _client.datasource.pages; i++) {
+                for(var i = 1; i <= _client.ds.pages; i++) {
                     str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
                     str += String(i);
                     str += '</a> ';
@@ -883,6 +970,7 @@ function get_repository_client($context){
             }
             return str;
         }
+        // send download request
         _client.download = function(){
             var title = document.getElementById('newname-$suffix').value;
             var file = document.getElementById('fileurl-$suffix').value;
@@ -892,24 +980,25 @@ function get_repository_client($context){
                 +_client.repositoryid+'&action=download', 
                 _client.dlfile, _client.postdata({'env':_client.env, 'file':file, 'title':title}));
         }
+        // send login request
         _client.login = function(){
-            var obj = {};
-            var data = _client.datasource.l;
+            var params = {};
+            var data = _client.ds.login;
             for (var k in data) {
                 var el = document.getElementsByName(data[k].name)[0];
-                obj[data[k].name] = '';
+                params[data[k].name] = '';
                 if(el.type == 'checkbox') {
-                    obj[data[k].name] = el.checked;
+                    params[data[k].name] = el.checked;
                 } else {
-                    obj[data[k].name] = el.value;
+                    params[data[k].name] = el.value;
                 }
             }
-            obj['env'] = _client.env;
-            obj['ctx_id'] = $context->id;
+            params['env'] = _client.env;
+            params['ctx_id'] = $context->id;
             _client.loading();
             var trans = YAHOO.util.Connect.asyncRequest('POST', 
                 '$CFG->wwwroot/repository/ws.php', _client.callback,
-                _client.postdata(obj));
+                _client.postdata(params));
         }
         _client.end = function(str){
             _client.target.value = str;
@@ -929,10 +1018,10 @@ function get_repository_client($context){
                     panel.get('element').innerHTML = ret.e;
                     return;
                 }
-                _client.datasource = ret;
-                if(_client.datasource.l){
+                _client.ds = ret;
+                if(_client.ds.login){
                     _client.print_login();
-                } else if(_client.datasource.list) {
+                } else if(_client.ds.list) {
                     if(_client.viewmode) {
                         _client.viewthumb();
                     } else {
@@ -994,14 +1083,14 @@ EOD;
     $js .= "\r\n";
 
     $js .= <<<EOD
-    function openpicker_$suffix(obj) {
+    function openpicker_$suffix(params) {
         if(!repository_client_$suffix.instance) {
-            repository_client_$suffix.env = obj.env;
-            repository_client_$suffix.target = obj.target;
+            repository_client_$suffix.env = params.env;
+            repository_client_$suffix.target = params.target;
             repository_client_$suffix.instance = new repository_client_$suffix();
             repository_client_$suffix.instance.create_picker();
-            if(obj.callback){
-                repository_client_$suffix.formcallback = obj.callback;
+            if(params.callback){
+                repository_client_$suffix.formcallback = params.callback;
             } else {
                 repository_client_$suffix.formcallback = function(){};
             }
@@ -1011,12 +1100,7 @@ EOD;
     }
     </script>
 EOD;
-    $html = <<<EOD
-    <div class='yui-skin-sam'>
-        <div id="file-picker-$suffix"></div>
-    </div>
-EOD;
-    return array('html'=>$html, 'js'=>$js, 'suffix'=>$suffix);
+    return array('css'=>$css, 'js'=>$js, 'suffix'=>$suffix);
 }
 
 final class repository_admin_form extends moodleform {
