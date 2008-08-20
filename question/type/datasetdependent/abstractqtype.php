@@ -82,7 +82,11 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
     function substitute_variables($str, $dataset) {
         foreach ($dataset as $name => $value) {
-            $str = str_replace('{'.$name.'}', $value, $str);
+            if($value < 0 ){
+                $str = str_replace('{'.$name.'}', '('.$value.')', $str);
+            } else {
+                $str = str_replace('{'.$name.'}', $value, $str);
+            }
         }
         return $str;
     }

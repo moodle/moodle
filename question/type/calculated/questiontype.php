@@ -763,10 +763,11 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $delimiter = ': ';
         $virtualqtype = $this->get_virtual_qtype();
         foreach ($answers as $answer) {
-            $formula = $answer->answer;
-            foreach ($data as $name => $value) {
+          //  $formula = $answer->answer;
+            $formula = parent::substitute_variables($answer->answer,$data);
+          /*  foreach ($data as $name => $value) {
                 $formula = str_replace('{'.$name.'}', $value, $formula);
-            }
+            }*/
             $formattedanswer = qtype_calculated_calculate_answer(
                     $answer->answer, $data, $answer->tolerance,
                     $answer->tolerancetype, $answer->correctanswerlength,
