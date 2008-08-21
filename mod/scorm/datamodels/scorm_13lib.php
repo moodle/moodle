@@ -192,6 +192,10 @@ function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='n
                     $nextid = $nextsco->id;
                 }
             }
+            if ($isvisible) {
+                $result->toc .= "\t\t</li> <!-- isvisible close -->";
+            }
+            
         }
         for ($i=0;$i<$level;$i++) {
             $result->toc .= "\t\t</ul></li>\n";

@@ -157,4 +157,6 @@ $string['updatefreq'] = 'Auto-update frequency';
 $string['options'] = 'Options';
 $string['activityloading'] = "You will be automatically redirected to the activity in";  // used in conjunction with numseconds
 $string['activitypleasewait'] = "Activity loading, please wait ....";
+$string['scormloggingon'] = "API Logging is On";
+$string['scormloggingoff'] = "API Logging is Off";
 ?>

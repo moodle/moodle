@@ -199,13 +199,14 @@ function SCORMapi1_3() {
         errorCode = "0";
         if (param == "") {
             if ((!Initialized) && (!Terminated)) {
-                <?php 
-                    if (debugging('',DEBUG_DEVELOPER)) {
-                        echo 'alert("Initialized SCORM 1.3");';
-                    }
-                ?>
                 Initialized = true;
                 errorCode = "0";
+                <?php 
+                    if (debugging('',DEBUG_DEVELOPER)) {
+//                        echo 'alert("Initialized SCORM 1.3");';
+                        echo 'LogAPICall("Initialize", param, "", errorCode);';
+                    }
+                ?>
                 return "true";
             } else {
                 if (Initialized) {
@@ -219,7 +220,8 @@ function SCORMapi1_3() {
         }
         <?php 
             if (debugging('',DEBUG_DEVELOPER)) {
-                echo 'alert("Initialize: "+GetErrorString(errorCode));';
+//                echo 'alert("Initialize: "+GetErrorString(errorCode));';
+                echo 'LogAPICall("Initialize", param, "", errorCode);';
             }
         ?>
         return "false";
@@ -231,7 +233,8 @@ function SCORMapi1_3() {
             if ((Initialized) && (!Terminated)) {
                 <?php 
                     if (debugging('',DEBUG_DEVELOPER)) {
-                        echo 'alert("Terminated SCORM 1.3");';
+//                        echo 'alert("Terminated SCORM 1.3");';
+                        echo 'LogAPICall("Terminate", param, "", 0);';
                     }
                 ?>
                 Initialized = false;
@@ -308,7 +311,8 @@ function SCORMapi1_3() {
                                 errorCode = "0";
                                 <?php 
                                     if (debugging('',DEBUG_DEVELOPER)) {
-                                        echo 'alert("GetValue("+element+") -> "+eval(element));';
+//                                        echo 'alert("GetValue("+element+") -> "+eval(element));';
+                                        echo 'LogAPICall("GetValue", element, eval(element), 0);';
                                     }
                                 ?>
                                 return eval(element);
@@ -372,7 +376,8 @@ function SCORMapi1_3() {
         }
         <?php 
             if (debugging('',DEBUG_DEVELOPER)) {
-                echo 'alert("GetValue("+element+") -> "+GetErrorString(errorCode));';
+//                echo 'alert("GetValue("+element+") -> "+GetErrorString(errorCode));';
+                echo 'LogAPICall("GetValue", element, "", errorCode);';
             }
         ?>
         return "";
@@ -569,7 +574,8 @@ function SCORMapi1_3() {
                                             errorCode = "0";
                                             <?php 
                                                 if (debugging('',DEBUG_DEVELOPER)) {
-                                                    echo 'alert("SetValue("+element+","+value+") -> OK");';
+//                                                    echo 'alert("SetValue("+element+","+value+") -> OK");';
+                                                    echo 'LogAPICall("SetValue", element, value, errorCode);';
                                                 }
                                             ?>
                                             return "true";
@@ -584,7 +590,8 @@ function SCORMapi1_3() {
                                     errorCode = "0"; 
                                     <?php 
                                         if (debugging('',DEBUG_DEVELOPER)) {
-                                            echo 'alert("SetValue("+element+","+value+") -> OK");';
+//                                           echo 'alert("SetValue("+element+","+value+") -> OK");';
+                                            echo 'LogAPICall("SetValue", element, value, errorCode);';
                                         }
                                     ?>
                                     return "true";
@@ -613,7 +620,7 @@ function SCORMapi1_3() {
         }
         <?php 
             if (debugging('',DEBUG_DEVELOPER)) {
-                echo 'alert("SetValue("+element+","+value+") -> "+GetErrorString(errorCode));';
+                echo 'LogAPICall("SetValue", element, value, errorCode);';
             }
         ?>
         return "false";
@@ -626,7 +633,8 @@ function SCORMapi1_3() {
                 result = StoreData(cmi,false);
                 <?php 
                     if (debugging('',DEBUG_DEVELOPER)) {
-                        echo 'alert("Data Commited");';
+                        echo 'LogAPICall("Commit", param, "", 0);';
+                        //echo 'alert("Data Commited");';
                     }
                 ?>
                 return "true";
@@ -642,13 +650,19 @@ function SCORMapi1_3() {
         }
         <?php 
             if (debugging('',DEBUG_DEVELOPER)) {
-                echo 'alert("Commit: "+GetErrorString(errorCode));';
+                echo 'LogAPICall("Commit", param, "", 0);';
+//                echo 'alert("Commit: "+GetErrorString(errorCode));';
             }
         ?>
         return "false";
     }
     
     function GetLastError () {
+     <?php 
+        if (debugging('',DEBUG_DEVELOPER)) {
+            echo 'LogAPICall("GetLastError", "", "", errorCode);';
+        }
+    ?>
         return errorCode;
     }
     
@@ -735,16 +749,36 @@ function SCORMapi1_3() {
                     errorString = "Data Model Dependency Not Established";
                 break;
             }
+            <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("GetErrorString", param,  errorString, 0);';
+            }
+             ?>
             return errorString;
         } else {
-           return "";
+           <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("GetErrorString", param,  "No error string found!", 0);';
+            }
+             ?>
+            return "";
         }
     }
     
     function GetDiagnostic (param) {
         if (diagnostic != "") {
+            <?php 
+                if (debugging('',DEBUG_DEVELOPER)) {
+                    echo 'LogAPICall("GetDiagnostic", param, diagnostic, 0);';
+                }
+            ?>
             return diagnostic;
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("GetDiagnostic", param, param, 0);';
+            }
+        ?>
         return param;
     }
 
@@ -773,9 +807,9 @@ function SCORMapi1_3() {
 
     function AddTime (first, second) {
         <?php 
-            if (debugging('',DEBUG_DEVELOPER)) {
-                echo 'alert("AddTime: "+first+" + "+second);';
-            }
+//            if (debugging('',DEBUG_DEVELOPER)) {
+//                echo 'alert("AddTime: "+first+" + "+second);';
+//            }
         ?>
         var timestring = 'P';
         var matchexpr = /^P((\d+)Y)?((\d+)M)?((\d+)D)?(T((\d+)H)?((\d+)M)?((\d+(\.\d{1,2})?)S)?)?$/;
@@ -880,16 +914,16 @@ function SCORMapi1_3() {
         datastring += '&attempt=<?php echo $attempt ?>';
         datastring += '&scoid=<?php echo $scoid ?>';
         <?php
-            if (debugging('',DEBUG_DEVELOPER)) {
-                echo 'popupwin(datastring);';
-            }
+//            if (debugging('',DEBUG_DEVELOPER)) {
+//                echo 'popupwin(datastring);';
+//            }
         ?>
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
         <?php
-            if (debugging('',DEBUG_DEVELOPER)) {
-                echo 'popupwin(result);';
-            }
+//            if (debugging('',DEBUG_DEVELOPER)) {
+//                echo 'popupwin(result);';
+//            }
         ?>
         results = String(result).split('\n');
         if ((results.length > 2) && (navrequest != '')) {
@@ -911,3 +945,11 @@ function SCORMapi1_3() {
 }
 
 var API_1484_11 = new SCORMapi1_3();
+
+<?php
+// pull in the debugging utilities
+if (debugging('',DEBUG_DEVELOPER)) {
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');
+    echo 'AppendToLog("Moodle SCORM 1.3 API Loaded", 0);';
+}
+ ?>
