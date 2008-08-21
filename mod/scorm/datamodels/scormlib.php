@@ -63,7 +63,7 @@ function scorm_get_manifest($blocks,$scoes) {
                     }
                 break;
                 case 'ORGANIZATIONS':
-                    if (!isset($scoes->defaultorg)) {
+                    if (!isset($scoes->defaultorg) && isset($block['attrs']['DEFAULT'])) {
                         $scoes->defaultorg = addslashes($block['attrs']['DEFAULT']);
                     }
                     $scoes = scorm_get_manifest($block['children'],$scoes);
@@ -489,7 +489,9 @@ function scorm_parse_scorm($pkgdir,$scormid) {
                         $newitem->organization = $organization;
                         $standarddatas = array('parent', 'identifier', 'launch', 'scormtype', 'title');
                         foreach ($standarddatas as $standarddata) {
-                            $newitem->$standarddata = addslashes($item->$standarddata);
+                            if (isset($item->$standarddata)) {
+                                $newitem->$standarddata = addslashes($item->$standarddata);
+                            }
                         }
                         
                         // Insert the new SCO, and retain the link between the old and new for later adjustment

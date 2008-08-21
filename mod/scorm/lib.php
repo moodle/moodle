@@ -85,9 +85,9 @@ function scorm_update_instance($scorm) {
             $scorm->launch = $packagedata->launch;
             $scorm->datadir = $packagedata->datadir;
             $scorm->parse = 1;
-            if (!scorm_external_link($scorm->reference)) {
+            if (!scorm_external_link($scorm->reference) && $scorm->reference[0] != '#') { //dont set md5hash if this is from a repo.
                 $scorm->md5hash = md5_file($CFG->dataroot.'/'.$scorm->course.'/'.$scorm->reference);
-            } else {
+            } elseif($scorm->reference[0] != '#') { //dont set md5hash if this is from a repo.
                 $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
                 $scorm->md5hash = md5_file($scorm->dir.$scorm->datadir.'/'.basename($scorm->reference));
             }

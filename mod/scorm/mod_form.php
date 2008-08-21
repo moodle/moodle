@@ -30,7 +30,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setHelpButton('summary', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
 // Reference
-        $mform->addElement('choosecoursefile', 'reference', get_string('package','scorm'));
+        $mform->addElement('choosecoursefileorimsrepo', 'reference', get_string('package','scorm'));
         $mform->setType('reference', PARAM_RAW);  // We need to find a better PARAM
         $mform->addRule('reference', get_string('required'), 'required');
         $mform->setHelpButton('reference',array('package', get_string('package', 'scorm'), 'scorm'));
