@@ -623,7 +623,7 @@ function scorm_simple_play($scorm,$user) {
 
    $result = false;
   
-   $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, ''));
+   $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, $DB->sql_empty()));
    
    if ($scoes && (count($scoes) == 1)) {
        if ($scorm->skipview >= 1) {

@@ -40,7 +40,7 @@
         if ($sco = scorm_get_sco($scoid)) {
             if ($sco->launch == '') {
                 // Search for the next launchable sco
-                if ($scoes = $DB->get_records_select('scorm_scoes',"scorm = ? AND launch <> ? AND id > ?",array($scorm->id, '', $sco->id), 'id ASC')) {
+                if ($scoes = $DB->get_records_select('scorm_scoes',"scorm = ? AND launch <> ? AND id > ?",array($scorm->id, $DB->sql_empty(), $sco->id), 'id ASC')) {
                     $sco = current($scoes);
                 }
             }
@@ -50,7 +50,7 @@
     // If no sco was found get the first of SCORM package
     //
     if (!isset($sco)) {
-        $scoes = $DB->get_records_select('scorm_scoes',"scorm = ? AND launch <> ?", array($scorm->id, ''),'id ASC');
+        $scoes = $DB->get_records_select('scorm_scoes',"scorm = ? AND launch <> ?", array($scorm->id, $DB->sql_empty()),'id ASC');
         $sco = current($scoes);
     }
 
