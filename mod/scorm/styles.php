@@ -290,3 +290,7 @@
 
 }
 
+a#mod-scorm-log-toggle {
+    font-size: 0.7em;
+    font-weight: bold;
+}

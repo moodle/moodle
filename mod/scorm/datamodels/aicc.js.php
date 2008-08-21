@@ -74,6 +74,7 @@ function AICCapi() {
         'cmi.suspend_data':{'defaultvalue':'<?php echo isset($userdata->{'cmi.suspend_data'})?$userdata->{'cmi.suspend_data'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
         'cmi.launch_data':{'defaultvalue':'<?php echo isset($userdata->datafromlms)?$userdata->datafromlms:'' ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.comments':{'defaultvalue':'<?php echo isset($userdata->{'cmi.comments'})?$userdata->{'cmi.comments'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
+        // deprecated evaluation attributes
         'cmi.evaluation.comments._count':{'defaultvalue':'0', 'mod':'r', 'writeerror':'402'},
         'cmi.evaluation.comments._children':{'defaultvalue':comments_children, 'mod':'r', 'writeerror':'402'},
         'cmi.evaluation.comments.n.content':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
@@ -130,6 +131,7 @@ function AICCapi() {
         cmi.student_data = new Object();
         cmi.student_preference = new Object();
         cmi.interactions = new Object();
+        // deprecated evaluation attributes
         cmi.evaluation = new Object();
         cmi.evaluation.comments = new Object();
 
