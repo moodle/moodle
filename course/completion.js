@@ -1,4 +1,5 @@
-var completion_strsaved;
+var completion_strsaved, completion_strtitley, completion_strtitlen, 
+  completion_stralty, completion_straltn;
 var completion_wwwroot;
 
 function completion_init() { 
@@ -41,9 +42,13 @@ function completion_handle_response(o) {
   // Change image
   if(this.otherState==1) {
     this.image.src=this.image.src.replace(/n\.gif$/,'y.gif');
+    this.image.title=completion_strtitley;
+    this.image.alt=completion_stralty;
     this.otherState=0;
   } else {
     this.image.src=this.image.src.replace(/y\.gif$/,'n.gif');
+    this.image.title=completion_strtitlen;
+    this.image.alt=completion_straltn;
     this.otherState=1;
   }
   // Start animation

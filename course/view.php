@@ -201,7 +201,12 @@
         // Need to do this after the header because it requires the YUI stuff
         // to be loaded already
         print '<script type="text/javascript" src="completion.js"></script>'.
-            '<script type="text/javascript">completion_strsaved="'.get_string('saved','completion').'"</script>';
+            '<script type="text/javascript">completion_strsaved="'.get_string('saved','completion').
+            '"; completion_strtitley="'.get_string('completion-title-manual-y','completion').
+            '"; completion_strtitlen="'.get_string('completion-title-manual-n','completion').
+            '"; completion_stralty="'.get_string('completion-alt-manual-y','completion').
+            '"; completion_straltn="'.get_string('completion-alt-manual-n','completion').
+            '"; </script>';
     }
 
     // Course wrapper start.
