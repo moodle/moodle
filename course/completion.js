@@ -1,4 +1,5 @@
 var completion_strsaved;
+var completion_wwwroot;
 
 function completion_init() { 
   var toggles=YAHOO.util.Dom.getElementsByClassName('togglecompletion', 'form');
@@ -10,9 +11,15 @@ function completion_init() {
 function completion_init_toggle(form) {
   // Store all necessary references for easy access
   var inputs=form.getElementsByTagName('input');
-  form.cmid=inputs[0].value;
-  form.otherState=inputs[1].value;
-  form.image=inputs[2];
+  for(var i=0;i<inputs.length;i++) {
+    switch(inputs[i].name) {
+      case 'id' : form.cmid=inputs[i].value; break;
+      case 'completionstate' : form.otherState=inputs[i].value; break;
+    } 
+    if(inputs[i].type=='image') {
+      form.image=inputs[i];
+    }
+  }
 
   // Create and position 'Saved' text
   var saved=document.createElement('div');
@@ -65,7 +72,12 @@ function completion_handle_failure(o) {
 
 function completion_toggle(e) {
   YAHOO.util.Event.preventDefault(e);
-  YAHOO.util.Connect.asyncRequest('POST','togglecompletion.php',
+  // By setting completion_wwwroot you can cause it to use absolute path 
+  // otherwise script assumes it is called from somewhere in /course
+  var target=completion_wwwroot 
+    ? completion_wwwroot+'/course/togglecompletion.php' 
+    : 'togglecompletion.php';
+  YAHOO.util.Connect.asyncRequest('POST',target,
       {success:completion_handle_response,failure:completion_handle_failure,scope:this},
       'id='+this.cmid+'&completionstate='+this.otherState+'&fromajax=1');
 }

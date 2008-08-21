@@ -1812,7 +1812,9 @@ border-width:0px;
   display:inline;
   position:absolute;
   right:-20px;
-  z-index:10;
+	top:0;
+	z-index:10;
+	padding:0.2em 0;
 }
 #course-view li.activity form.togglecompletion div {
   display:inline;

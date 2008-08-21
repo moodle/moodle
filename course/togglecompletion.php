@@ -52,6 +52,9 @@ $completion->update_state($cm,$targetstate);
 if($fromajax) {
     print 'OK';
 } else {
-    redirect('view.php?id='.$course->id);
+    // In case of use in other areas of code we allow a 'backto' parameter,
+    // otherwise go back to course page
+    $backto=optional_param('backto','view.php?id='.$course->id,PARAM_URL);
+    redirect($backto);
 }
 ?>
