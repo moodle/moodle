@@ -67,12 +67,6 @@ if (!isset($CFG->scorm_windowsettings)) {
     set_config('scorm_windowsettings','0');
 }
 
-//
-// Repository configurations
-//
-$repositoryconfigfile = $CFG->dirroot.'/mod/resource/type/ims/repository_config.php';
-$repositorybrowser = '/mod/resource/type/ims/finder.php';
-
 /// Local Library of functions for module scorm
 
 /**
@@ -662,11 +656,10 @@ function scorm_simple_play($scorm,$user) {
 }
 */
 function scorm_parse($scorm) {
-    global $CFG,$repositoryconfigfile;
+    global $CFG;
 
     if ($scorm->reference[0] == '#') {
-        require_once($repositoryconfigfile);
-        if ($CFG->repositoryactivate) {
+        if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
             $referencedir = $CFG->repository.substr($scorm->reference,1);
         }
     } else {
@@ -683,9 +676,6 @@ function scorm_parse($scorm) {
         $scorm->launch = scorm_parse_aicc($referencedir, $scorm->id);
     } else {
         require_once('datamodels/scormlib.php');
-        if ($scorm->reference[0] == '#') {
-            require_once($repositoryconfigfile);
-        }
         $scorm->launch = scorm_parse_scorm($referencedir,$scorm->id);
     }
     return $scorm->launch;
@@ -767,8 +757,7 @@ function scorm_validate($data) {
     }
 
     if ($reference[0] == '#') {
-        require_once($repositoryconfigfile); // TODO: undefined
-        if ($CFG->repositoryactivate) {
+        if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
             $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
         } else {
             $validation->errors['reference'] = get_string('badpackage','scorm');
@@ -859,8 +848,7 @@ function scorm_check_package($data) {
         if (empty($reference)) {
             $validation = null;
         } else if ($reference[0] == '#') {
-            require_once($repositoryconfigfile); // TODO: undefined
-            if ($CFG->repositoryactivate) {
+            if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
                 $referencefield = $reference.'/imsmanifest.xml';
                 $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
             } else {
@@ -890,8 +878,7 @@ function scorm_check_package($data) {
                 
                 if ($scorm = $DB->get_record('scorm', array('id'=>$scormid))) {
                     if ($scorm->reference[0] == '#') {
-                        require_once($repositoryconfigfile);
-                        if ($CFG->repositoryactivate) {
+                        if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
                             $oldreference = $CFG->repository.substr($scorm->reference,1).'/imsmanifest.xml';
                         } else {
                             $oldreference = $scorm->reference;

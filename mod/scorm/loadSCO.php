@@ -95,7 +95,6 @@
         $result = $launcher;
     } else if ($scorm->reference[0] == '#') {
         // Repository
-        require_once($repositoryconfigfile);
         $result = $CFG->repositorywebroot.substr($scorm->reference,1).'/'.$sco->launch;
     } else {
         if ((basename($scorm->reference) == 'imsmanifest.xml') && scorm_external_link($scorm->reference)) {
