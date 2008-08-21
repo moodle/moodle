@@ -44,6 +44,7 @@ databasesettingssub_postgres7
 databasesettingswillbecreated
 dataroot
 datarooterror
+datarootpublicerror
 dbconnectionerror
 dbcreationerror
 dbhost

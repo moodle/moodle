@@ -582,6 +582,12 @@
         }
     }
 
+/// setup critical warnings before printing admin tree block
+    $insecuredataroot         = is_dataroot_insecure(true);
+    $register_globals_enabled = ini_get_bool('register_globals'); 
+
+    $SESSION->admin_critical_warning = ($register_globals_enabled || $insecuredataroot==INSECURE_DATAROOT_ERROR); 
+
     $adminroot =& admin_get_root();
 
 /// Check if there are any new admin settings which have still yet to be set
@@ -606,12 +612,15 @@
         print_box(get_string("upgrade$CFG->upgrade", "admin", "$CFG->wwwroot/$CFG->admin/upgrade$CFG->upgrade.php"));
     }
 
-    if (ini_get_bool('register_globals')) {
-        print_box(get_string('globalswarning', 'admin'), 'generalbox adminwarning');
+    if ($register_globals_enabled) {
+        print_box(get_string('globalswarning', 'admin'), 'generalbox adminerror');
     }
 
-    if (is_dataroot_insecure()) {
+    if ($insecuredataroot == INSECURE_DATAROOT_WARNING) {
         print_box(get_string('datarootsecuritywarning', 'admin', $CFG->dataroot), 'generalbox adminwarning');
+    } else if ($insecuredataroot == INSECURE_DATAROOT_ERROR) {
+        print_box(get_string('datarootsecurityerror', 'admin', $CFG->dataroot), 'generalbox adminerror');
+        
     }
 
     if (defined('WARN_DISPLAY_ERRORS_ENABLED')) {

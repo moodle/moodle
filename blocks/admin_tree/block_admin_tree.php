@@ -70,6 +70,11 @@ class block_admin_tree extends block_base {
             // show hidden pages in tree if hidden page active
             if ($content->check_access() and (($content->name == $this->section) or !$content->is_hidden())) {
                 $class = ($content->name == $this->section) ? 'link current' : 'link';
+                if ($content->name === 'adminnotifications') {
+                    if (admin_critical_warnings_present()) {
+                        $class .= ' criticalnotification';
+                    }
+                } 
                 if ($content->is_hidden()) {
                     $class .= ' hidden';
                 }

@@ -990,6 +990,7 @@ body#admin-modules table.generaltable td.c0
   margin:auto;
 }
 
+#admin-index .adminerror,
 #admin-index .adminwarning {
   text-align:center;
   border-width: 1px;
@@ -997,6 +998,7 @@ body#admin-modules table.generaltable td.c0
   margin:20px;
 }
 
+#admin-index .adminerror .singlebutton,
 #admin-index .adminwarning .singlebutton,
 #admin-index #layout-table .singlebutton {
   text-align:center;

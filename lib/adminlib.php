@@ -9,6 +9,9 @@
  * @package moodlecore
  */
 
+define('INSECURE_DATAROOT_WARNING', 1);
+define('INSECURE_DATAROOT_ERROR', 2);
+
 function upgrade_main_savepoint($result, $version) {
     global $CFG;
 
@@ -724,12 +727,37 @@ function upgrade_log_callback($string) {
 }
 
 /**
+ * Test if and critical warnings are present
+ * @return bool
+ */
+function admin_critical_warnings_present() {
+    global $SESSION;
+
+    if (!has_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM))) {
+        return 0;
+    }
+
+    if (!isset($SESSION->admin_critical_warning)) {
+        $SESSION->admin_critical_warning = 0;
+        if (ini_get_bool('register_globals')) {
+            $SESSION->admin_critical_warning = 1;
+        } else if (is_dataroot_insecure(true) === INSECURE_DATAROOT_ERROR) {
+            $SESSION->admin_critical_warning = 1;
+        }
+    }
+
+    return $SESSION->admin_critical_warning;
+}
+
+/**
  * Try to verify that dataroot is not accessible from web.
  * It is not 100% correct but might help to reduce number of vulnerable sites.
  *
  * Protection from httpd.conf and .htaccess is not detected properly.
+ * @param bool $fetchtest try to test public access by fetching file
+ * @return mixed empty means secure, INSECURE_DATAROOT_ERROR found a critical problem, INSECURE_DATAROOT_WARNING migth be problematic
  */
-function is_dataroot_insecure() {
+function is_dataroot_insecure($fetchtest=false) {
     global $CFG;
 
     $siteroot = str_replace('\\', '/', strrev($CFG->dirroot.'/')); // win32 backslash workaround
@@ -748,10 +776,83 @@ function is_dataroot_insecure() {
     $siteroot = strrev($siteroot);
     $dataroot = str_replace('\\', '/', $CFG->dataroot.'/');
 
-    if (strpos($dataroot, $siteroot) === 0) {
-        return true;
+    if (strpos($dataroot, $siteroot) !== 0) {
+        return false;
     }
-    return false;
+
+    if (!$fetchtest) {
+        return INSECURE_DATAROOT_WARNING;
+    }
+
+    // now try all methods to fetch a test file using http protocol
+
+    $httpdocroot = str_replace('\\', '/', strrev($CFG->dirroot.'/'));
+    preg_match('|(https?://[^/]+)|i', $CFG->wwwroot, $matches);
+    $httpdocroot = $matches[1];
+    $datarooturl = $httpdocroot.'/'. substr($dataroot, strlen($siteroot));
+    if (make_upload_directory('diag', false) === false) {
+        return INSECURE_DATAROOT_WARNING;
+    }
+    $testfile = $CFG->dataroot.'/diag/public.txt';
+    if (!file_exists($testfile)) {
+        file_put_contents($testfile, 'test file, do not delete');
+    }
+    $teststr = trim(file_get_contents($testfile));
+    if (empty($teststr)) {
+        // hmm, strange
+        return INSECURE_DATAROOT_WARNING;
+    }
+
+    $testurl = $datarooturl.'/diag/public.txt';
+
+    if (extension_loaded('curl') and ($ch = @curl_init($testurl)) !== false) {
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        $data = curl_exec($ch);
+        if (!curl_errno($ch)) {
+            $data = trim($data);
+            if ($data === $teststr) {
+                curl_close($ch);
+                return INSECURE_DATAROOT_ERROR;
+            }
+        }
+        curl_close($ch);
+    }
+
+    if ($data = @file_get_contents($testurl)) {
+        $data = trim($data);
+        if ($data === $teststr) {
+            return INSECURE_DATAROOT_ERROR;
+        }
+    }
+
+    preg_match('|https?://([^/]+)|i', $testurl, $matches);
+    $sitename = $matches[1];
+    $error = 0;
+    if ($fp = @fsockopen($sitename, 80, $error)) {
+        preg_match('|https?://[^/]+(.*)|i', $testurl, $matches);
+        $localurl = $matches[1];
+        $out = "GET $localurl HTTP/1.1\r\n";
+        $out .= "Host: $sitename\r\n";
+        $out .= "Connection: Close\r\n\r\n";
+        fwrite($fp, $out);
+        $data = '';
+        $incoming = false;
+        while (!feof($fp)) {
+            if ($incoming) {
+                $data .= fgets($fp, 1024);
+            } else if (@fgets($fp, 1024) === "\r\n") {
+                $incoming = true;
+            }
+        }
+        fclose($fp);
+        $data = trim($data);
+        if ($data === $teststr) {
+            return INSECURE_DATAROOT_ERROR;
+        }
+    }
+
+    return INSECURE_DATAROOT_WARNING;
 }
 
 /// =============================================================================================================
