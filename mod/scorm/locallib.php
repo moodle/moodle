@@ -206,15 +206,18 @@ function scorm_get_sco($id,$what=SCO_ALL) {
 */
 
 function scorm_get_scoes($id,$organisation=false) {
+    global $DB;
+
     $organizationsql = '';
+    $queryarray = array('scorm'=>$id);
     if (!empty($organisation)) {
-        $organizationsql = "AND organization='$organisation'";
+        $queryarray['organization'] = $organisation;
     }
-    if ($scoes = $DB->get_records_select('scorm_scoes',"scorm='$id' $organizationsql order by id ASC")) {
+    if ($scoes = $DB->get_records('scorm_scoes', $queryarray, 'id ASC')) {
         // drop keys so that it is a simple array as expected
         $scoes = array_values($scoes);
         foreach ($scoes as $sco) {
-            if ($scodatas = $DB->get_records('scorm_scoes_data','scoid',$sco->id)) {
+            if ($scodatas = $DB->get_records('scorm_scoes_data',array('scoid'=>$sco->id))) {
                 foreach ($scodatas as $scodata) {
                     $sco->{$scodata->name} = stripslashes_safe($scodata->value);
                 }
