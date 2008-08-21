@@ -209,7 +209,7 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
             $MNET_REMOTE_CLIENT->touch();
             // Parse the XML
         } elseif ($signature_verified == 0) {
-            $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot, $MNET_REMOTE_CLIENT->application->xmlrpc_server_url);
+            $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot, $MNET_REMOTE_CLIENT->application);
             if($currkey != $certificate) {
                 // Has the server updated its certificate since our last 
                 // handshake?
