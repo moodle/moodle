@@ -4405,6 +4405,18 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                 } else {
                     $status = false;
                }
+               // MDL-14326 remove empty course modules instance's (credit goes to John T. Macklin from Remote Learner)
+               $course_modules_inst_zero = get_records_sql("SELECT id, course, instance
+                                           FROM {$CFG->prefix}course_modules
+                                           WHERE id = '$cm_module->new_id' AND
+                                                 instance = '0'");
+                                                 
+                    if($course_modules_inst_zero){ // Clean up the invalid instances
+                         foreach($course_modules_inst_zero as $course_modules_inst){
+                             delete_records('course_modules', 'id',$course_modules_inst->id);
+                         }
+                    }
+
             }
         /// Finally, calculate modinfo cache.
             rebuild_course_cache($restore->course_id);
