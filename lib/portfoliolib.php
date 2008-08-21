@@ -1505,7 +1505,7 @@ abstract class portfolio_plugin_base {
             return $this->{$field};
         }
         $a = (object)array('property' => $field, 'class' => get_class($this));
-        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', $a);
+        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', null, $a);
     }
 
     /**
@@ -1521,7 +1521,7 @@ abstract class portfolio_plugin_base {
             return true;
         }
         $a = (object)array('property' => $field, 'class' => get_class($this));
-        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', '', $a);
+        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', null, $a);
 
     }
 
@@ -1828,7 +1828,7 @@ final class portfolio_exporter {
             return $this->{$field};
         }
         $a = (object)array('property' => $field, 'class' => get_class($this));
-        throw new portfolio_export_exception($this, 'invalidproperty', 'portfolio', '', $a);
+        throw new portfolio_export_exception($this, 'invalidproperty', 'portfolio', null, $a);
     }
 
     /**
@@ -1847,7 +1847,7 @@ final class portfolio_exporter {
             return true;
         }
         $a = (object)array('property' => $field, 'class' => get_class($this));
-        throw new portfolio_export_exception($this, 'invalidproperty', 'portfolio', $a);
+        throw new portfolio_export_exception($this, 'invalidproperty', 'portfolio', null, $a);
 
     }
     /**
@@ -1937,7 +1937,7 @@ final class portfolio_exporter {
         $expectedtime = $this->instance->expected_time($this->caller->expected_time());
         if (count($formats) == 0) {
             // something went wrong, we should not have gotten this far.
-            throw new portfolio_export_exception($this, 'nocommonformats', 'portfolio', get_class($this->caller));
+            throw new portfolio_export_exception($this, 'nocommonformats', 'portfolio', null, get_class($this->caller));
         }
         // even if neither plugin or caller wants any config, we have to let the user choose their format, and decide to wait.
         if ($pluginobj || $callerobj || count($formats) > 1 || $expectedtime != PORTFOLIO_TIME_LOW) {
@@ -1954,7 +1954,7 @@ final class portfolio_exporter {
                 $this->cancel_request();
             } else if ($fromform = $mform->get_data()){
                 if (!confirm_sesskey()) {
-                    throw new portfolio_export_exception($this, 'confirmsesskeybad', '');
+                    throw new portfolio_export_exception($this, 'confirmsesskeybad');
                 }
                 $pluginbits = array();
                 $callerbits = array();
