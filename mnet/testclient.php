@@ -13,6 +13,10 @@
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once $CFG->dirroot.'/mnet/xmlrpc/client.php';
 
+if ($CFG->mnet_dispatcher_mode === 'off') {
+    print_error('mnetdisabled', 'mnet');
+}
+
 // Site admins only, thanks.
 $context = get_context_instance(CONTEXT_SYSTEM);
 require_capability('moodle/site:config', $context);

@@ -18,6 +18,10 @@ ini_set('display_errors',0);
 require_once $CFG->dirroot.'/mnet/lib.php';
 require_once $CFG->dirroot.'/mnet/remote_client.php';
 
+if ($CFG->mnet_dispatcher_mode === 'off') {
+    print_error('mnetdisabled', 'mnet');
+}
+
 // Content type for output is not html:
 header('Content-type: text/xml; charset=utf-8');
 
