@@ -527,7 +527,7 @@ function get_repository_client($context){
     $stradd  = get_string('add', 'repository');
     $strback      = get_string('back', 'repository');
     $strclose     = get_string('close', 'repository');
-    $strdownload  = get_string('download', 'repository');
+    $strdownbtn   = get_string('download', 'repository');
     $strdownload  = get_string('downloadsucc', 'repository');
     $strdate      = get_string('date', 'repository').': ';
     $strerror     = get_string('error', 'repository');
@@ -756,7 +756,7 @@ _client.rename = function(oldname, url){
     html += '<input type="checkbox" id="syncfile-$suffix" /><br/>';
     html += '<input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
     html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a> ';
-    html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownload" />';
+    html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownbtn" />';
     html += '</div>';
     panel.get('element').innerHTML = html;
 }
@@ -1039,6 +1039,7 @@ _client.callback = {
                 var id = this.id.match(re);
                 var oDiv = document.getElementById('repo-opt-$suffix-'+id[1]);
                 oDiv.innerHTML = '';
+                _client.ds = null;
                 repository_client_$suffix.req(id[1], 1, 1);
             }
             if(_client.ds.manage){
@@ -1087,7 +1088,12 @@ _client.req = function(id, path, reset) {
     _client.viewbar.set('disabled', false);
     _client.loading();
     _client.repositoryid = id;
-    var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?action=list&ctx_id=$context->id&repo_id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
+    if (reset == 1) {
+        action = 'logout';
+    } else {
+        action = 'list';
+    }
+    var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?action='+action+'&ctx_id=$context->id&repo_id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
 }
 _client.search = function(id){
     var data = window.prompt("$strsearching");
@@ -1112,21 +1118,21 @@ EOD;
     $js .= "\r\n";
 
     $js .= <<<EOD
-    function openpicker_$suffix(params) {
-        if(!repository_client_$suffix.instance) {
-            repository_client_$suffix.env = params.env;
-            repository_client_$suffix.target = params.target;
-            repository_client_$suffix.instance = new repository_client_$suffix();
-            repository_client_$suffix.instance.create_picker();
-            if(params.callback){
-                repository_client_$suffix.formcallback = params.callback;
-            } else {
-                repository_client_$suffix.formcallback = function(){};
-            }
+function openpicker_$suffix(params) {
+    if(!repository_client_$suffix.instance) {
+        repository_client_$suffix.env = params.env;
+        repository_client_$suffix.target = params.target;
+        repository_client_$suffix.instance = new repository_client_$suffix();
+        repository_client_$suffix.instance.create_picker();
+        if(params.callback){
+            repository_client_$suffix.formcallback = params.callback;
         } else {
-            repository_client_$suffix.instance.show();
+            repository_client_$suffix.formcallback = function(){};
         }
+    } else {
+        repository_client_$suffix.instance.show();
     }
+}
 //]]>
 </script>
 EOD;
