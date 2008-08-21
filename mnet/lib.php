@@ -442,7 +442,7 @@ function ip_in_range($address, $network, $mask) {
  *                                  constant otherwise
  */
 function mnet_permit_rpc_call($includefile, $functionname, $class=false) {
-    global $CFG, $MNET_REMOTE_CLIENT;
+    global $CFG, $MNET_REMOTE_CLIENT, $DB;
 
     if (file_exists($CFG->dirroot . $includefile)) {
         include_once $CFG->dirroot . $includefile;
