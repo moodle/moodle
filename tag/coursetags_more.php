@@ -13,6 +13,10 @@ $sort = optional_param('sort', 'alpha', PARAM_TEXT); //alpha, date or popularity
 $show = optional_param('show', 'all', PARAM_TEXT); //all, my, official, community or course
 $courseid = optional_param('courseid', 0, PARAM_INT);
 
+if (empty($CFG->usetags)) {
+    print_error('tagsaredisabled', 'tag');
+}
+
 // Some things require logging in
 if ($CFG->forcelogin or $show == 'my') {
     require_login();

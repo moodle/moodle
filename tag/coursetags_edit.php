@@ -14,6 +14,12 @@ $courseid = optional_param('courseid', 0, PARAM_INT);
 $keyword = optional_param('coursetag_new_tag', '', PARAM_TEXT);
 $deltag = optional_param('del_tag', 0, PARAM_INT);
 
+require_login();
+
+if (empty($CFG->usetags)) {
+    print_error('tagsaredisabled', 'tag');
+}
+
 if ($courseid != SITEID) {
     if (! ($course = $DB->get_record('course', array('id' => $courseid), '*')) ) {
         print_error('invalidcourse');

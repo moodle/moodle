@@ -75,8 +75,8 @@ class block_tags extends block_base {
             require_once($CFG->dirroot.'/tag/coursetagslib.php');
 
             // Permissions and page awareness
-            $sitecontext = get_context_instance(CONTEXT_SYSTEM, SITEID);
-            $isguest = has_capability('moodle/legacy:guest', $sitecontext, $USER->id, false);
+            $systemcontext = get_context_instance(CONTEXT_SYSTEM);
+            $isguest = has_capability('moodle/legacy:guest', $systemcontext, $USER->id, false);
             $loggedin = isloggedin() && !$isguest;
             $coursepage = $canedit = false;
             $coursepage = (isset($COURSE->id) && $COURSE->id != SITEID);
@@ -84,7 +84,7 @@ class block_tags extends block_base {
             $sitepage = (isset($COURSE->id) && $COURSE->id == SITEID && !$mymoodlepage);
             $coursecontext = get_context_instance(CONTEXT_COURSE, $COURSE->id);
             if ($coursepage) {
-                $canedit =  has_capability('moodle/tag:create', $sitecontext);
+                $canedit =  has_capability('moodle/tag:create', $systemcontext);
             }
 
             // Check rss feed - temporarily removed until Dublin Core tags added
@@ -237,6 +237,7 @@ class block_tags extends block_base {
                             <div style="display: none;">
                                 <input type="hidden" name="entryid" value="$COURSE->id" />
                                 <input type="hidden" name="userid" value="$USER->id" />
+                                <input type="hidden" name="sesskey" value="$USER->sesskey" />
                             </div>
                             <div><label for="coursetag_new_tag">$tagthisunit</label></div>
                             <div class="coursetag_form_wrapper">

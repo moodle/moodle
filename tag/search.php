@@ -3,12 +3,10 @@
 require_once('../config.php');
 require_once('lib.php');
 require_once('locallib.php');
-require_once($CFG->dirroot.'/lib/weblib.php');
 
-global $CFG;
 require_login();
 
-if( empty($CFG->usetags)) {
+if (empty($CFG->usetags)) {
     print_error('tagsaredisabled', 'tag');
 }
 

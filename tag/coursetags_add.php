@@ -6,12 +6,21 @@
 
 require_once('../config.php');
 
+require_login();
+
+$systemcontext = get_context_instance(CONTEXT_SYSTEM);
+require_capability('moodle/tag:create', $systemcontext);
+
+if (empty($CFG->usetags)) {
+    print_error('tagsaredisabled', 'tag');
+}
+
 $keyword = optional_param('coursetag_new_tag', '', PARAM_TEXT);
 $courseid = optional_param('entryid', 0, PARAM_INT);
 $userid = optional_param('userid', 0, PARAM_INT);
 
 $keyword = trim(strip_tags($keyword)); //better cleanup of user input is done later
-if ($keyword) {
+if ($keyword and confirm_sesskey()) {
 
     require_once($CFG->dirroot.'/tag/coursetagslib.php');
 
