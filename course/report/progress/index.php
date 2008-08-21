@@ -210,7 +210,7 @@ foreach($progress as $user) {
         $a->state=$describe;
         $a->date=$date;
         $a->user=fullname($user);
-        $a->activity=$activity->name;
+        $a->activity=strip_tags($activity->name);
         $fulldescribe=get_string('progress-title','completion',$a);
 
         if($csv) {
