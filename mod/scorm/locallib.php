@@ -384,7 +384,9 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
         break;  
         case GRADESCOES:
             $score = $attemptscore->scoes;
-        break;  
+        break;
+        default:
+            $score = $attemptscore->max;   // Remote Learner GRADEHIGHEST is default
     }
 
     if ($time) {
