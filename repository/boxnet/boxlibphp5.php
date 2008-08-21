@@ -124,7 +124,65 @@ class boxclient {
             throw new repository_exception('invalidtoken', 'repository_boxnet');
         }
     }
+    //
+    function getfiletree($params = array()) {
+        $this->_clearErrors();
+        $params['auth_token'] = $this->auth_token;
+        $params['folder_id']  = 0;
+        $params['api_key']    = $this->api_key;
+        $params['action']     = 'get_account_tree';
+        $params['onelevel']   = 1;
+        $params['params[]']   = 'nozip';
+        if($this->debug){
+            $c = new curl(array('debug'=>true, 'cache'=>true));
+        } else {
+            $c = new curl(array('debug'=>false, 'cache'=>true));
+        }
+        try {
+            $args = array();
+            $xml = $c->get($this->_box_api_url, $params);
+        } catch (Exception $e){
+        }
+        $ret = array();
+        $o = simplexml_load_string($xml);
+        if($o->status == 'listing_ok') {
+            $tree = $o->tree->folder;
+            $this->buildtree($tree, $ret);
+        }
+        return $ret;
+    }
 
+    function buildtree($sax, &$tree){
+        $sax = (array)$sax;
+        foreach($sax as $k=>$v){
+            if($k == 'folders'){
+                $o = $sax[$k];
+                foreach($o->folder as $z){
+                    $tmp = array('title'=>(string)$z->attributes()->name,
+                        'size'=>0, 'date'=>userdate(time()),
+                        'thumbnail'=>'http://www.box.net/img/small_folder_icon.gif');
+                    $tmp['children'] = array();
+                    $this->buildtree($z, $tmp['children']);
+                    $tree[] = $tmp;
+                }
+            } elseif ($k == 'files') {
+                $val = $sax[$k]->file;
+                foreach($val as $file){
+                    $thumbnail = (string)$file->attributes()->thumbnail;
+                    if (!preg_match('#^(?:http://)?([^/]+)#i', $thumbnail)) {
+                        $thumbnail =  'http://www.box.net'.$thumbnail;
+                    }
+                    $tmp = array('title'=>(string)$file->attributes()->file_name,
+                        'size'=>display_size((int)$file->attributes()->size),
+                        'thumbnail'=>$thumbnail,
+                        'date'=>userdate((int)$file->attributes()->updated), 
+                        'source'=>'http://box.net/api/1.0/download/'
+                            .$this->auth_token.'/'.(string)$file->attributes()->id);
+                    $tree[] = $tmp;
+                }
+            }
+        }
+    }
     // Get the file list
     function getAccountTree($params = array()) {
         $params['auth_token'] = $this->auth_token;

@@ -95,37 +95,12 @@ class repository_boxnet extends repository{
         global $CFG, $SESSION;
         $list = array();
         $ret  = array();
-        $tree = $this->box->getAccountTree();
+        $tree = $this->box->getfiletree();
         if(!empty($tree)) {
-            $filenames = $tree['file_name'];
-            $fileids   = $tree['file_id'];
-            $filesizes = $tree['file_size'];
-            $filedates = $tree['file_date'];
-            $fileicon  = $tree['thumbnail'];
-            foreach ($filenames as $n=>$v){
-                // do search
-                if(!empty($search)) {
-                    if(strstr($v, $search) !== false) {
-                        $list[] = array('title'=>$v, 
-                                'size'=>$filesizes[$n],
-                                'date'=>$filedates[$n],
-                                'source'=>'http://box.net/api/1.0/download/'
-                                    .$this->options['auth_token'].'/'.$fileids[$n],
-                                'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon', $v));
-                    }
-                } else {
-                    $list[] = array('title'=>$v, 
-                            'size'=>$filesizes[$n],
-                            'date'=>$filedates[$n],
-                            'source'=>'http://box.net/api/1.0/download/'
-                                .$this->options['auth_token'].'/'.$fileids[$n],
-                            'thumbnail'=>$fileicon[$n]);
-                }
-            }
-
-            $ret['list']   = $list;
+            // TODO: think about how to search
+            $ret['list']   = $tree;
             $ret['manage'] = 'http://www.box.net/files';
-            $this->listing = $list;
+            $this->listing = $tree;
             return $ret;
         } else {
             $sess_name = 'box_token'.$this->id;
