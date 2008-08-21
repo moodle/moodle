@@ -124,7 +124,8 @@ function scorm_update_instance($scorm) {
     }
     
     if ($result = $DB->update_record('scorm', $scorm)) {
-        scorm_grade_item_update($scorm);
+        scorm_grade_item_update(stripslashes_recursive($scorm));
+        //scorm_grade_item_update($scorm);  // John Macklins fix - dont think this is needed
     }
 
     return $result;
@@ -505,8 +506,11 @@ function scorm_grade_item_update($scorm, $grades=NULL) {
         require_once($CFG->libdir.'/gradelib.php');
     }
 
-    $params = array('itemname'=>$scorm->name, 'idnumber'=>$scorm->cmidnumber);
-
+    $params = array('itemname'=>$scorm->name);
+    if (isset($scorm->cmidnumber)) {
+        $params['idnumber'] = $scorm->cmidnumber;
+    }
+    
     if (($scorm->grademethod % 10) == 0) { // GRADESCOES
         if ($maxgrade = $DB->count_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, ''))) {
             $params['gradetype'] = GRADE_TYPE_VALUE;
