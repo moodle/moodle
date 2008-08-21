@@ -159,6 +159,11 @@ class boxclient {
                     @$ret_array['file_keyword'][$i] = $a['attributes']['KEYWORD'];
                     @$ret_array['file_size'][$i] = display_size($a['attributes']['SIZE']);
                     @$ret_array['file_date'][$i] = userdate($a['attributes']['UPDATED']);
+                    if (preg_match('#^(?:http://)?([^/]+)#i', $a['attributes']['THUMBNAIL'])) {
+                        @$ret_array['thumbnail'][$i] =  $a['attributes']['THUMBNAIL'];
+                    } else {
+                        @$ret_array['thumbnail'][$i] =  'http://www.box.net'.$a['attributes']['THUMBNAIL'];
+                    }
                     $entry_count++;
                 }
                 break;

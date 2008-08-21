@@ -101,6 +101,7 @@ class repository_boxnet extends repository{
             $fileids   = $tree['file_id'];
             $filesizes = $tree['file_size'];
             $filedates = $tree['file_date'];
+            $fileicon  = $tree['thumbnail'];
             foreach ($filenames as $n=>$v){
                 // do search
                 if(!empty($search)) {
@@ -118,7 +119,7 @@ class repository_boxnet extends repository{
                             'date'=>$filedates[$n],
                             'source'=>'http://box.net/api/1.0/download/'
                                 .$this->options['auth_token'].'/'.$fileids[$n],
-                            'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon', $v));
+                            'thumbnail'=>$fileicon[$n]);
                 }
             }
 

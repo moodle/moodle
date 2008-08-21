@@ -566,7 +566,6 @@ p.upload a:hover {background: grey;color:white}
 .file_date{color:blue}
 .file_size{color:gray}
 .grid{width:80px; float:left;text-align:center;}
-.grid img{display:block}
 .grid div{width: 80px; height: 36px; overflow: hidden}
 .repo-opt{font-size: 10px;}
 </style>
@@ -688,7 +687,7 @@ function _client(){
         repo_list.on('contentReady', function(e){
             for(var i=0; i<_client.repos.length; i++) {
                 var repo = _client.repos[i];
-                li = document.createElement('li');
+                var li = document.createElement('li');
                 li.id = 'repo-$suffix-'+repo.id;
                 var icon = document.createElement('img');
                 icon.src = repo.icon;
@@ -809,8 +808,11 @@ _client.viewthumb = function(){
     for(k in list){
         var el = document.createElement('div');
         el.className='grid';
+        var frame = document.createElement('DIV');
+        frame.style.textAlign='center';
         var img = document.createElement('img');
         img.src = list[k].thumbnail;
+        frame.appendChild(img);
         var input = document.createElement('input');
         input.type='radio';
         input.title = list[k].title;
@@ -828,13 +830,12 @@ _client.viewthumb = function(){
         }
         var title = document.createElement('div');
         title.innerHTML = list[k].title;
-        el.appendChild(img);
+        el.appendChild(frame);
         el.appendChild(input);
         el.appendChild(title);
         panel.get('element').appendChild(el);
     }
     _client.viewmode = 1;
-    return str;
 }
 _client.buildtree = function(node, level){
     var info = {label:node.title, title:"$strdate"+node.date+' '+'$strsize'+node.size}; 
@@ -1002,7 +1003,7 @@ _client.callback = {
         } catch(e) {
             alert('$strinvalidjson - '+o.responseText);
         };
-        if(ret.e){
+        if(ret && ret.e){
             panel.get('element').innerHTML = ret.e;
             return;
         }
@@ -1067,7 +1068,7 @@ _client.dlfile = {
         } catch(e) {
             alert('$strinvalidjson - '+o.responseText);
         }
-        if(ret.e){
+        if(ret && ret.e){
             panel.get('element').innerHTML = ret.e;
             return;
         }
