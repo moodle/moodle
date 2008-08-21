@@ -51,7 +51,7 @@
     }
 
 /// require login to access notes
-    require_login($course->id);
+    require_login($course);
     add_to_log($courseid, 'notes', 'view', 'index.php?course='.$courseid.'&amp;user='.$userid, 'view notes');
 
 
@@ -77,7 +77,7 @@
 
     $showroles = 1;
     $currenttab = 'notes';
-    require_once($CFG->dirroot .'/user/tabs.php');
+    require($CFG->dirroot .'/user/tabs.php');
 
     $strsitenotes = get_string('sitenotes', 'notes');
     $strcoursenotes = get_string('coursenotes', 'notes');

@@ -4,7 +4,7 @@ require_once('../config.php');
 require_once('lib.php');
 
 // retrieve parameters
-$noteid       = required_param('note', PARAM_INT);
+$noteid = required_param('id', PARAM_INT);
 
 // locate note information
 if (!$note = note_load($noteid)) {
@@ -22,7 +22,7 @@ if (!$course = $DB->get_record('course', array('id'=>$note->courseid))) {
     }
 
 // require login to access notes
-require_login($course->id);
+require_login($course);
 
 // locate context information
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
@@ -41,11 +41,12 @@ if (data_submitted() && confirm_sesskey()) {
         print_error('cannotdeletepost', 'notes', $returnurl);
     }
     redirect($returnurl);
+
 } else {
 // if data was not submitted yet, then show note data with a delete confirmation form
     $strnotes = get_string('notes', 'notes');
-    $optionsyes = array('note'=>$noteid, 'sesskey'=>sesskey());
-    $optionsno = array('course'=>$course->id, 'user'=>$note->userid);
+    $optionsyes = array('id'=>$noteid, 'sesskey'=>sesskey());
+    $optionsno  = array('course'=>$course->id, 'user'=>$note->userid);
 
 // output HTML
     if (has_capability('moodle/course:viewparticipants', $context) || has_capability('moodle/site:viewparticipants', get_context_instance(CONTEXT_SYSTEM))) {
