@@ -74,6 +74,7 @@ databasetype
 databaseuser
 dataroot
 datarooterror
+datarootpublicerror
 dbconnectionerror
 dbcreationerror
 dbhost

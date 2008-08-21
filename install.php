@@ -272,8 +272,12 @@ if ($INSTALL['stage'] == DIRECTORY) {
 
     /// check dataroot
     $CFG->dataroot = $INSTALL['dataroot'];
+    $CFG->wwwroot  = $INSTALL['wwwroot'];
     if (make_upload_directory('sessions', false) === false) {
         $errormsg .= get_string('datarooterror', 'install').'<br />';
+
+    } else if (is_dataroot_insecure(true) == INSECURE_DATAROOT_ERROR) {
+        $errormsg .= get_string('datarootpublicerror', 'install').'<br />';
     }
 
     if (!empty($errormsg)) {

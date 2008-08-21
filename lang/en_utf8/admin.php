@@ -274,6 +274,8 @@ $string['csvdelimiter'] = 'CSV delimiter';
 $string['curlrecommended'] = 'Installing the optional cURL library is highly recommended in order to enable Moodle Networking functionality.';
 $string['curlrequired'] = 'The cURL PHP extension is now required by Moodle, in order to commnunicate with Moodle repositories.';
 $string['customcheck'] = 'Other Checks';
+$string['datarootsecurityerror'] = '<p><strong>SECURITY WARNING!</strong></p><p>Your dataroot directory is in the wrong location and is exposed to the web. This means that all your private files are available to anyone in the world, and some of them could be used by a cracker to obtain unauthorised administrative access to your site!</p>
+<p>You <em>must</em> move dataroot directory ($a) to a new location that is not within your public web directory, and update the <code>\$CFG->dataroot</code> setting in your config.php accordingly.</p>';
 $string['datarootsecuritywarning'] = 'Your site configuration might not be secure. Please make sure that your dataroot directory ($a) is not directly accessible via web.';
 $string['dbmigrate'] = 'Moodle Database Migration';
 $string['dbmigrateconnecerror'] = 'Could not connect to the database specified.';
@@ -386,7 +388,7 @@ $string['gdversion'] = 'GD version';
 $string['generalsettings'] = 'General settings';
 $string['geoipfile'] = 'GeoIP City data file';
 $string['globalsquoteswarning'] = '<p><strong>Security Warning</strong>: to operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.<p/><p>You <em>must</em> set <code>register_globals=off</code> and/or <code>magic_quotes_gpc=on</code>. <br />If possible, you should set <code>register_globals=off</code> to improve general <br /> server security, setting <code>magic_quotes_gpc=on</code> is also recommended.<p/><p>These settings are controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
-$string['globalswarning'] = '<p><strong>Security Warning</strong>: to operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.<p/><p>You <em>must</em> set <code>register_globals=off</code>.<p>This setting is controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
+$string['globalswarning'] = '<p><strong>SECURITY WARNING!</strong></p><p> To operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.</p><p>You <em>must</em> set <code>register_globals=off</code>.</p><p>This setting is controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
 $string['googlemapkey'] = 'Google Maps API key';
 $string['gotofirst'] = 'Go to first missing string';
 $string['gradebook'] = 'Gradebook';

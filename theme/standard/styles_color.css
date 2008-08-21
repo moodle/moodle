@@ -264,6 +264,10 @@ table.formtable tbody th {
   background-color:#FFFFFF;
 }
 
+#admin-index .adminerror {
+  background-color:#ff6666;
+}
+
 body#admin-index .c0 {
   background-color: #FAFAFA;
 }
@@ -373,6 +377,10 @@ table.flexible .r1 {
 
 .block_admin_tree.sideblock .link.current {
   background-color:#EEEEEE;
+}
+
+.block_admin_tree.sideblock .link.criticalnotification {
+  background-color:#ff6666;
 }
 
 .block_admin_tree.sideblock .link.hidden {
