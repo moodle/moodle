@@ -178,13 +178,14 @@ function SCORMapi1_2() {
         errorCode = "0";
         if (param == "") {
             if (!Initialized) {
-                <?php 
-                    if (debugging('',DEBUG_DEVELOPER)) {
-                        echo 'alert("Initialized SCORM 1.2");';
-                    }
-                ?>
                 Initialized = true;
                 errorCode = "0";
+                <?php 
+                    if (debugging('',DEBUG_DEVELOPER)) {
+                        //echo 'alert("Initialized SCORM 1.2");';
+                        echo 'LogAPICall("LMSInitialize", param, "", errorCode);';
+                    }
+                ?>
                 return "true";
             } else {
                 errorCode = "101";
@@ -192,6 +193,11 @@ function SCORMapi1_2() {
         } else {
             errorCode = "201";
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("LMSInitialize", param, "", errorCode);';
+            }
+        ?>
         return "false";
     }
     
@@ -199,11 +205,6 @@ function SCORMapi1_2() {
         errorCode = "0";
         if (param == "") {
             if (Initialized) {
-                <?php 
-                    if (debugging('',DEBUG_DEVELOPER)) {
-                        echo 'alert("Finished SCORM 1.2");';
-                    }
-                ?>
                 Initialized = false;
                 result = StoreData(cmi,true);
                 if (nav.event != '') {
@@ -217,6 +218,12 @@ function SCORMapi1_2() {
                         setTimeout('top.document.location=top.next;',500);
                     }
                 }    
+                <?php 
+                    if (debugging('',DEBUG_DEVELOPER)) {
+                        //echo 'alert("Finished SCORM 1.2");';
+                        echo 'LogAPICall("LMSFinish", param, "", 0);';
+                    }
+                ?>
                 return "true";
             } else {
                 errorCode = "301";
@@ -224,6 +231,11 @@ function SCORMapi1_2() {
         } else {
             errorCode = "201";
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("LMSFinish", param, "", errorCode);';
+            }
+        ?>
         return "false";
     }
     
@@ -246,7 +258,8 @@ function SCORMapi1_2() {
                             errorCode = "0";
                             <?php 
                                 if (debugging('',DEBUG_DEVELOPER)) {
-                                    echo 'alert(element+": "+eval(element));';
+                                   //echo 'alert(element+": "+eval(element));';
+                                    echo 'LogAPICall("LMSGetValue", element, eval(element), 0);';
                                 }
                             ?>
                             return eval(element);
@@ -283,6 +296,11 @@ function SCORMapi1_2() {
         } else {
             errorCode = "301";
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("LMSGetValue", element, "", errorCode);';
+            }
+        ?>
         return "";
     }
     
@@ -350,7 +368,8 @@ function SCORMapi1_2() {
                                         errorCode = "0";
                                         <?php 
                                             if (debugging('',DEBUG_DEVELOPER)) {
-                                                echo 'alert(element+":= "+value);';
+                                                echo 'LogAPICall("LMSSetValue", element, value, errorCode);';
+                                                //echo 'alert(element+":= "+value);';
                                             }
                                         ?>
                                         return "true";
@@ -366,7 +385,8 @@ function SCORMapi1_2() {
                                     errorCode = "0";
                                     <?php 
                                         if (debugging('',DEBUG_DEVELOPER)) {
-                                            echo 'alert(element+":= "+value);';
+                                            echo 'LogAPICall("LMSSetValue", element, value, errorCode);';
+                                            //echo 'alert(element+":= "+value);';
                                         }
                                     ?>
                                     return "true";
@@ -387,6 +407,11 @@ function SCORMapi1_2() {
         } else {
             errorCode = "301";
         }
+       <?php 
+        if (debugging('',DEBUG_DEVELOPER)) {
+            echo 'LogAPICall("LMSSetValue", element, value, errorCode);';
+        }
+        ?>
         return "false";
     }
     
@@ -397,7 +422,8 @@ function SCORMapi1_2() {
                 result = StoreData(cmi,false);
                 <?php 
                     if (debugging('',DEBUG_DEVELOPER)) {
-                        echo 'alert("Data Commited");';
+                        echo 'LogAPICall("Commit", param, "", 0);';
+                        //echo 'alert("Data Commited");';
                     }
                 ?>
                 return "true";
@@ -407,10 +433,20 @@ function SCORMapi1_2() {
         } else {
             errorCode = "201";
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("LMSCommit", param, "", 0);';
+            }
+        ?>
         return "false";
     }
     
     function LMSGetLastError () {
+     <?php 
+        if (debugging('',DEBUG_DEVELOPER)) {
+            echo 'LogAPICall("LMSGetLastError", "", "", errorCode);';
+        }
+    ?>
         return errorCode;
     }
     
@@ -428,8 +464,18 @@ function SCORMapi1_2() {
             errorString["403"] = "Element is read only";
             errorString["404"] = "Element is write only";
             errorString["405"] = "Incorrect data type";
+            <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("LMSGetErrorString", param,  errorString[param], 0);';
+            }
+             ?>
             return errorString[param];
         } else {
+           <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("LMSGetErrorString", param,  "No error string found!", 0);';
+            }
+             ?>
            return "";
         }
     }
@@ -438,6 +484,11 @@ function SCORMapi1_2() {
         if (param == "") {
             param = errorCode;
         }
+        <?php 
+            if (debugging('',DEBUG_DEVELOPER)) {
+                echo 'LogAPICall("LMSGetDiagnostic", param, param, 0);';
+            }
+        ?>
         return param;
     }
 
@@ -571,3 +622,12 @@ function SCORMapi1_2() {
 }
 
 var API = new SCORMapi1_2();
+
+<?php
+// pull in the debugging utilities
+if (debugging('',DEBUG_DEVELOPER)) {
+    include_once($CFG->dirroot.'/mod/scorm/datamodels/debug.js.php');
+    echo 'AppendToLog("Moodle SCORM 1.2 API Loaded", 0);';
+}
+ ?>
+
