@@ -2035,7 +2035,7 @@ function forum_mark_old_posts_as_mailed($endtime, $now=null) {
         return $DB->execute("UPDATE {forum_posts}
                                SET mailed = '1'
                              WHERE (created < ? OR mailnow = 1)
-                                   AND mailed = 0", false, array($endtime));
+                                   AND mailed = 0", array($endtime));
 
     } else {
         return $DB->execute("UPDATE {forum_posts}
@@ -2044,7 +2044,7 @@ function forum_mark_old_posts_as_mailed($endtime, $now=null) {
                                                         FROM {forum_discussions} d
                                                        WHERE d.timestart > ?)
                                    AND (created < ? OR mailnow = 1)
-                                   AND mailed = 0", false, array($now, $endtime));
+                                   AND mailed = 0", array($now, $endtime));
     }
 }
 
