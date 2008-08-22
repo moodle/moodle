@@ -4371,7 +4371,7 @@ class admin_setting_manageportfolio extends admin_setting {
         }
 
         $textlib = textlib_get_instance();
-        $portfolios= get_list_of_plugins('portfolio');
+        $portfolios= get_list_of_plugins('portfolio/type');
         foreach ($portfolios as $p) {
             if (strpos($p, $query) !== false) {
                 return true;
