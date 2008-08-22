@@ -629,8 +629,6 @@ function is_number($value) {
  *
  * A NULL value will delete the entry.
  *
- * No need for get_config because they are usually always available in $CFG
- *
  * @param string $name the key to set
  * @param string $value the value to set (without magic quotes)
  * @param string $plugin (optional) the plugin scope
@@ -694,6 +692,9 @@ function set_config($name, $value, $plugin=NULL) {
  * generating $CFG safely from the database without overwriting
  * existing values.
  *
+ * If called with one parameter, it will load all the config
+ * variables for one pugin, and return them as an object.
+ *
  * If called with 2 parameters it will return a $string single
  * value or false of the value is not found.
  *
@@ -716,12 +717,8 @@ function get_config($plugin=NULL, $name=NULL) {
 
     // the user is after a recordset
     if (!empty($plugin)) {
-        if ($configs = $DB->get_records('config_plugins', array('plugin'=>$plugin), '', 'name,value')) {
-            $configs = (array)$configs;
-            $localcfg = array();
-            foreach ($configs as $config) {
-                $localcfg[$config->name] = $config->value;
-            }
+        $localcfg = $DB->get_records_menu('config_plugins', array('plugin'=>$plugin), '', 'name,value');
+        if (!empty($localcfg)) {
             return (object)$localcfg;
         } else {
             return false;
@@ -5136,9 +5133,10 @@ function places_to_search_for_lang_strings() {
         'enrol_' => array('enrol'),
         'filter_' => array('filter'),
         'format_' => array('course/format'),
+        'quiz_' => array('mod/quiz/report'),
         'qtype_' => array('question/type'),
         'qformat_' => array('question/format'),
-        'report_' => array($CFG->admin.'/report', 'course/report', 'mod/quiz/report'),
+        'report_' => array($CFG->admin.'/report', 'course/report'),
         'repository_'=>array('repository'),
         'resource_' => array('mod/resource/type'),
         'gradereport_' => array('grade/report'),
