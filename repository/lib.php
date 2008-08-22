@@ -350,6 +350,35 @@ abstract class repository {
     /**
      * Given a path, and perhaps a search, get a list of files.
      *
+     * The format of the returned array must be: 
+     * array(
+     *   'manage' => (string) link to file manager,
+     *   'dynload' => (bool) use dynamic loading,
+     *   'nologin' => (bool) requires login,
+     *   'upload' => array( // upload manager
+     *     'name' => (string) label of the form element,
+     *     'id' => (string) id of the form element
+     *   ),
+     *   'list' => array(
+     *     array( // file
+     *       'title' => (string) file name,
+     *       'size' => (int) file size,
+     *       'date' => (string) file last modification, usually userdate(...),
+     *       'thumbnail' => (string) path to thumbnail for the file,
+     *       'source' => (string) path to the file itself
+     *     ),
+     *     array( // subfolder - same as file, but no 'source'
+     *       'title' => (string) folder name,
+     *       'size' => 0,
+     *       'date' => (string) folder last modification, usually userdate(...),
+     *       'thumbnail' => (string) path to thumbnail for the folder,
+     *       'children' => array(
+     *         // content of folder, (files or folders)
+     *       )
+     *     ), 
+     *   )
+     * )
+     *
      * @param string $parent The parent path, this parameter can
      * a folder name, or a identification of folder
      * @param string $search The text will be searched.
