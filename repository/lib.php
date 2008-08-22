@@ -872,7 +872,6 @@ _client.viewthumb = function(ds){
                 if(_client.ds.dynload) {
                     // TODO: get file list dymanically
                 }else{
-                    //_client.test(this.ds);
                     _client.viewthumb(this.ds);
                 }
             });
@@ -886,6 +885,9 @@ _client.viewthumb = function(ds){
     _client.viewmode = 1;
 }
 _client.buildtree = function(node, level){
+    if(node.children){
+        node.title = '<i><u>'+node.title+'</u></i>';
+    }
     var info = {label:node.title, title:"$strdate"+node.date+' '+'$strsize'+node.size}; 
     var tmpNode = new YAHOO.widget.TextNode(info, level, false); 
     var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
@@ -894,7 +896,6 @@ _client.buildtree = function(node, level){
     tmpNode.value  = node.source;
     if(node.children){
         tmpNode.isLeaf = false;
-        tmpNode.subfolder = node.children;
         if (node.path) {
             tmpNode.path = node.path;
         } else {
