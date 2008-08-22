@@ -352,8 +352,9 @@ abstract class repository {
      *
      * The format of the returned array must be: 
      * array(
-     *   'manage' => (string) link to file manager,
+     *   'path' => (string) path for the current folder
      *   'dynload' => (bool) use dynamic loading,
+     *   'manage' => (string) link to file manager,
      *   'nologin' => (bool) requires login,
      *   'upload' => array( // upload manager
      *     'name' => (string) label of the form element,
@@ -362,15 +363,16 @@ abstract class repository {
      *   'list' => array(
      *     array( // file
      *       'title' => (string) file name,
-     *       'size' => (int) file size,
      *       'date' => (string) file last modification time, usually userdate(...),
+     *       'size' => (int) file size,
      *       'thumbnail' => (string) url to thumbnail for the file,
-     *       'source' => (string) url to the file itself
+     *       'source' => plugin-dependent unique path to the file (id, url, path, etc.)
      *     ),
      *     array( // folder - same as file, but no 'source'.
      *       'title' => (string) folder name,
-     *       'size' => 0,
+     *       'path' => (string) path to this folder
      *       'date' => (string) folder last modification time, usually userdate(...),
+     *       'size' => 0,
      *       'thumbnail' => (string) url to thumbnail for the folder,
      *       'children' => array( // an empty folder needs to have 'children' defined, but empty.
      *         // content (files and folders)
