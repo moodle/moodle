@@ -167,6 +167,7 @@ $string['databasetype']='Database type :';
 $string['databaseuser']='Database user :';
 $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
+$string['datarootpublicerror'] = 'The \'Data Directory\' you specified is directly accessible via web, you must use different directory.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
 $string['dbcreationerror'] = 'Database creation error. Could not create the given database name with the settings provided';
 $string['dbhost'] = 'Host Server';
@@ -209,8 +210,8 @@ Make sure the upper/lower case is correct.
 <br />
 <b>Data Directory:</b>
 You need a place where Moodle can save uploaded files.  This
-directory should be readable AND WRITEABLE by the web server user 
-(usually \'nobody\' or \'apache\'), but it should not be accessible 
+directory must be readable AND WRITEABLE by the web server user 
+(usually \'nobody\' or \'apache\'), but it must not be accessible 
 directly via the web.';
 $string['dirroot'] = 'Moodle Directory';
 $string['dirrooterror'] = 'The \'Moodle Directory\' setting seems to be incorrect - we can\'t find a Moodle installation there. The value below has been reset.';
@@ -270,7 +271,7 @@ $string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and 
    <blockquote><div>php_value magic_quotes_gpc On</div></blockquote>
    <blockquote><div>php_value register_globals Off</div></blockquote>
 ';
-$string['globalswarning'] = '<p><strong>Security Warning</strong>: to operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.<p/><p>You <em>must</em> set <code>register_globals=off</code>.<p>This setting is controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
+$string['globalswarning'] = '<p><strong>SECURITY WARNING!</strong></p><p> To operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.</p><p>You <em>must</em> set <code>register_globals=off</code>.</p><p>This setting is controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
 $string['help'] = 'Help';
 $string['iconvrecommended'] = 'Installing the optional ICONV library is highly recommended in order to improve site performance, particularly if your site is supporting non-Latin languages.';
 $string['info'] = 'Information';
