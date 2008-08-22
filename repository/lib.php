@@ -363,17 +363,17 @@ abstract class repository {
      *     array( // file
      *       'title' => (string) file name,
      *       'size' => (int) file size,
-     *       'date' => (string) file last modification, usually userdate(...),
-     *       'thumbnail' => (string) path to thumbnail for the file,
-     *       'source' => (string) path to the file itself
+     *       'date' => (string) file last modification time, usually userdate(...),
+     *       'thumbnail' => (string) url to thumbnail for the file,
+     *       'source' => (string) url to the file itself
      *     ),
-     *     array( // subfolder - same as file, but no 'source'
+     *     array( // folder - same as file, but no 'source'.
      *       'title' => (string) folder name,
      *       'size' => 0,
-     *       'date' => (string) folder last modification, usually userdate(...),
-     *       'thumbnail' => (string) path to thumbnail for the folder,
-     *       'children' => array(
-     *         // content of folder, (files or folders)
+     *       'date' => (string) folder last modification time, usually userdate(...),
+     *       'thumbnail' => (string) url to thumbnail for the folder,
+     *       'children' => array( // an empty folder needs to have 'children' defined, but empty.
+     *         // content (files and folders)
      *       )
      *     ), 
      *   )
