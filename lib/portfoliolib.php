@@ -124,6 +124,11 @@ define('PORTFOLIO_TIME_MODERATE', 'moderate');
 */
 define('PORTFOLIO_TIME_HIGH', 'high');
 
+/**
+* very slow, or immediate transfers not supported
+*/
+define('PORTFOLIO_TIME_FORCEQUEUE', 'queue');
+
 // ************************************************** //
 // available ways to add the portfolio export to a page
 // ************************************************** //
@@ -1558,6 +1563,10 @@ abstract class portfolio_plugin_base {
         $this->dirty = false;
         return true;
     }
+
+    public static function mnet_publishes() {
+        return array();
+    }
 }
 
 /**
@@ -1619,7 +1628,7 @@ final class portfolio_export_form extends moodleform {
             }
         }
 
-        if (array_key_exists('expectedtime', $this->_customdata) && $this->_customdata['expectedtime'] != PORTFOLIO_TIME_LOW) {
+        if (array_key_exists('expectedtime', $this->_customdata) && $this->_customdata['expectedtime'] != PORTFOLIO_TIME_LOW && $this->_customdata['expectedtime'] != PORTFOLIO_TIME_FORCEQUEUE) {
             $radioarray = array();
             $radioarray[] = &MoodleQuickForm::createElement('radio', 'wait', '', get_string('wait', 'portfolio'), 1);
             $radioarray[] = &MoodleQuickForm::createElement('radio', 'wait', '', get_string('dontwait', 'portfolio'),  0);
@@ -1628,7 +1637,11 @@ final class portfolio_export_form extends moodleform {
             $mform->setDefault('wait', 0);
         }
         else {
-            $mform->addElement('hidden', 'wait', 1);
+            if ($this->_customdata['expectedtime'] == PORTFOLIO_TIME_LOW) {
+                $mform->addElement('hidden', 'wait', 1);
+            } else {
+                $mform->addElement('hidden', 'wait', 0);
+            }
         }
 
         if (array_key_exists('plugin', $this->_customdata) && is_object($this->_customdata['plugin'])) {
@@ -1893,6 +1906,8 @@ final class portfolio_exporter {
             portfolio_export_rethrow_exception($this, $e);
         } catch (portfolio_plugin_exception $e) {
             portfolio_export_rethrow_exception($this, $e);
+        } catch (portfolio_export_exception $e) {
+            throw $e;
         } catch (Exception $e) {
             debugging(get_string('thirdpartyexception', 'portfolio', get_class($e)));
             portfolio_export_rethrow_exception($this, $e);
@@ -1940,7 +1955,7 @@ final class portfolio_exporter {
             throw new portfolio_export_exception($this, 'nocommonformats', 'portfolio', null, get_class($this->caller));
         }
         // even if neither plugin or caller wants any config, we have to let the user choose their format, and decide to wait.
-        if ($pluginobj || $callerobj || count($formats) > 1 || $expectedtime != PORTFOLIO_TIME_LOW) {
+        if ($pluginobj || $callerobj || count($formats) > 1 || ($expectedtime != PORTFOLIO_TIME_LOW && $expectedtime != PORTFOLIO_TIME_FORCEQUEUE)) {
             $customdata = array(
                 'instance' => $this->instance,
                 'plugin' => $pluginobj,
@@ -1970,6 +1985,9 @@ final class portfolio_exporter {
                 if ($expectedtime == PORTFOLIO_TIME_LOW) {
                     $pluginbits['wait'] = 1;
                     $pluginbits['hidewait'] = 1;
+                } else if ($expectedtime == PORTFOLIO_TIME_FORCEQUEUE) {
+                    $pluginbits['wait'] = 0;
+                    $pluginbits['hidewait'] = 1;
                 }
                 $callerbits['hideformat'] = $pluginbits['hideformat'] = (count($formats) == 1);
                 $this->caller->set_export_config($callerbits);
@@ -1986,7 +2004,13 @@ final class portfolio_exporter {
         } else {
             $this->noexportconfig = true;
             $format = array_shift($formats);
-            $this->instance->set_export_config(array('hidewait' => 1, 'wait' => 1, 'format' => $format, 'hideformat' => 1));
+            $config = array(
+                'hidewait' => 1,
+                'wait' => (($expectedtime == PORTFOLIO_TIME_LOW) ? 1 : 0),
+                'format' => $format,
+                'hideformat' => 1
+            );
+            $this->instance->set_export_config($config);
             $this->caller->set_export_config(array('format' => $format, 'hideformat' => 1));
             return true;
             // do not break - fall through to confirm
