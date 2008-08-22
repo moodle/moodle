@@ -1503,7 +1503,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         // In manual mode the icon is a toggle form.
                         echo "
 <form class='togglecompletion' method='post' action='togglecompletion.php'><div>";
-                        if(!$shownhelp) {
+                        if(!$shownhelp && !$isediting) {
                             helpbutton('completionicons',get_string('completionicons','completion'),'completion');
                             $shownhelp=true;
                         }
@@ -1515,7 +1515,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     } else {
                         // In auto mode, or when editing, the icon is just an image
                         echo "<span class='autocompletion'>";
-                        if(!$shownhelp) {
+                        if(!$shownhelp && !$isediting) {
                             helpbutton('completionicons',get_string('completionicons','completion'),'completion');
                             $shownhelp=true;
                         }
