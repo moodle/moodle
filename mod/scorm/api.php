@@ -66,6 +66,9 @@
     } else {
         error('Sco not found');
     }
+    if (!$sco = scorm_get_sco($scoid)) {
+        error('Sco not found');
+    }
     $scorm->version = strtolower(clean_param($scorm->version, PARAM_SAFEDIR));   // Just to be safe
     if (file_exists($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php')) {
         include_once($CFG->dirroot.'/mod/scorm/datamodels/'.$scorm->version.'.js.php');
