@@ -77,12 +77,13 @@ class mod_quiz_mod_form extends moodleform_mod {
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'displayhdr', get_string('display', 'form'));
         $perpage = array();
-        for ($i = 0; $i <= 50; ++$i) {
-            $perpage[$i] = $i;
+        $perpage[0] = get_string('never');
+        $perpage[1] = get_string('aftereachquestion', 'quiz');
+        for ($i = 2; $i <= 50; ++$i) {
+            $perpage[$i] = get_string('afternquestions', 'quiz', $i);
         }
-        $perpage[0] = get_string('allinone', 'quiz');
-        $mform->addElement('select', 'questionsperpage', get_string('questionsperpage', 'quiz'), $perpage);
-        $mform->setHelpButton('questionsperpage', array('questionsperpage', get_string('questionsperpage', 'quiz'), 'quiz'));
+        $mform->addElement('select', 'questionsperpage', get_string('newpageevery', 'quiz'), $perpage);
+        $mform->setHelpButton('questionsperpage', array('questionsperpage', get_string('newpageevery', 'quiz'), 'quiz'));
         $mform->setAdvanced('questionsperpage', $CFG->quiz_fix_questionsperpage);
         $mform->setDefault('questionsperpage', $CFG->quiz_questionsperpage);
 

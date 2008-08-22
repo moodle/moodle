@@ -139,17 +139,18 @@
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
+    <td align="right"><b><?php print_string('newpageevery', 'quiz') ?>:</b></td>
     <td>
     <?php
-        $perpage= array();
-        for ($i=0; $i<=50; ++$i) {
-            $perpage[$i] = $i;
+        $perpage = array();
+        $perpage[0] = get_string('never');
+        $perpage[1] = get_string('aftereachquestion', 'quiz');
+        for ($i = 2; $i <= 50; ++$i) {
+            $perpage[$i] = get_string('afternquestions', 'quiz', $i);
         }
-        $perpage[0] = get_string('allinone', 'quiz');
 
         choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
-        helpbutton('questionsperpage', get_string('questionsperpage', 'quiz'), 'quiz');
+        helpbutton('questionsperpage', get_string('newpageevery', 'quiz'), 'quiz');
      ?>
     </td>
   <td align="center">
