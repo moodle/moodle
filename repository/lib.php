@@ -829,11 +829,19 @@ _client.navbar = function(){
 }
 // TODO
 // Improve CSS
-_client.viewthumb = function(){
+_client.viewthumb = function(ds){
     var panel = new YAHOO.util.Element('panel-$suffix');
     _client.viewbar.check(1);
-    list = _client.ds.list;
+    var list = null;
+    var args = arguments.length;
+    if(args == 1){
+        list = ds;
+    } else {
+        // from button
+        list = _client.ds.list;
+    }
     panel.get('element').innerHTML = _client.navbar();
+    var count = 0;
     for(k in list){
         var el = document.createElement('div');
         el.className='grid';
@@ -848,21 +856,30 @@ _client.viewthumb = function(){
         input.name = 'selected-files';
         input.value = list[k].source;
         input.title = list[k].title;
-        if(list[k].children){
-            input.onclick = function(){
-                alert('this is a dir');
-            }
-        }else{
-            input.onclick = function(){
-                repository_client_$suffix.rename(this.title, this.value);
-            }
-        }
+        input.id    = 'id-'+String(count);
         var title = document.createElement('div');
         title.innerHTML = list[k].title;
         el.appendChild(frame);
         el.appendChild(input);
         el.appendChild(title);
         panel.get('element').appendChild(el);
+        if(list[k].children){
+            var el = new YAHOO.util.Element(input.id);
+            el.ds = list[k].children;
+            el.on('click', function(){
+                if(_client.ds.dynload) {
+                    // TODO: get file list dymanically
+                }else{
+                    //_client.test(this.ds);
+                    _client.viewthumb(this.ds);
+                }
+            });
+        } else {
+            input.onclick = function(){
+                repository_client_$suffix.rename(this.title, this.value);
+            }
+        }
+        count++;
     }
     _client.viewmode = 1;
 }
