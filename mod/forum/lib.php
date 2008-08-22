@@ -7245,8 +7245,13 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     }
 
     function check_permissions() {
-        //@todo penny
-        return true;
+        if ($this->post) {
+            $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
+            return (has_capability('mod/forum:exportpost', $context)
+                || ($this->post->userid == $this->user->id
+                    && has_capability('mod/forum:exportownpost', $context)));
+        }
+        throw new portfolio_caller_exception('TODO PENNY: exporting whole discussion not implemented - see MDL-15758');
     }
 
     public static function display_name() {
