@@ -3981,8 +3981,11 @@ table.quizreviewsummary td.cell {
 #mod-quiz-edit .quizquestions h2 {
   margin-top: 0;
 }
-#mod-quiz-edit #showbreaks {
+#mod-quiz-edit #showhidepagingcontrols {
   margin-top: 0.7em;
+}
+#mod-quiz-edit #showhidepagingcontrols .singlebutton {
+  display: inline;
 }
 .quizquestionlistcontrols {
   text-align: center;

@@ -135,7 +135,7 @@ function quiz_update_question_instance($grade, $questionid, $quizid) {
 * @param boolean $showbreaks  Indicates whether the page breaks should be displayed
 * @param boolean $showbreaks  Indicates whether the reorder tool should be displayed
 */
-function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreaks=true, $reordertool=false) {
+function quiz_print_question_list($quiz, moodle_url $pageurl, $allowdelete=true, $showbreaks=true, $reordertool=false) {
     global $USER, $CFG, $QTYPES, $DB;
 
     $strorder = get_string("order");
@@ -318,43 +318,52 @@ function quiz_print_question_list($quiz, $pageurl, $allowdelete=true, $showbreak
     echo '</fieldset>';
     echo "</form>\n";
 
-/// Form to choose to show pagebreaks and to repaginate quiz
-    echo '<form method="post" action="edit.php" id="showbreaks">';
-    echo '<fieldset class="invisiblefieldset">';
-    echo $pageurl->hidden_params_out(array('showbreaks', 'reordertool'));
-    echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-    echo '<input type="hidden" name="showbreaks" value="0" />';
-    echo '<input type="checkbox" name="showbreaks" value="1"';
-    if ($showbreaks) {
-        echo ' checked="checked"';
-    }
-    echo ' onclick="form.submit(); return true;" />';
-    print_string('showbreaks', 'quiz');
+    if (!$quiz->shufflequestions) {
+        echo '<div id="showhidepagingcontrols">';
 
-    if ($showbreaks) {
+    /// Button to show or hide pagebreaks.
+        if ($showbreaks) {
+            $newshowbreaks = 0;
+            $caption = get_string('hidebreaks', 'quiz');
+        } else {
+            $newshowbreaks = 1;
+            $caption = get_string('showbreaks', 'quiz');
+        }
+        print_single_button($pageurl->out(true),
+                array('showbreaks' => $newshowbreaks) + $pageurl->params(), $caption);
+
+        echo ' ';
+
+    /// Button to show or hide the reordering tool.
+        if ($reordertool) {
+            $newreordertool = 0;
+            $caption = get_string('hidereordertool', 'quiz');
+        } else {
+            $newreordertool = 1;
+            $caption = get_string('reordertool', 'quiz');
+        }
+        print_single_button($pageurl->out(true),
+                array('reordertool' => $newreordertool) + $pageurl->params(), $caption);
+        helpbutton('reorderingtool', get_string('reordertool', 'quiz'), 'quiz');
+
+        echo '</div>';
+
+    /// Repaginate form.
+        echo '<form method="post" action="edit.php" id="showbreaks">';
+        echo '<div>';
+        echo $pageurl->hidden_params_out();
+        echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
         $perpage= array();
-        for ($i=0; $i<=50; ++$i) {
+        $perpage[0] = get_string('allinone', 'quiz');
+        for ($i=1; $i<=50; ++$i) {
             $perpage[$i] = $i;
         }
-        $perpage[0] = get_string('allinone', 'quiz');
-        echo '<br />&nbsp;&nbsp;';
-        print_string('repaginate', 'quiz',
-         choose_from_menu($perpage, 'questionsperpage', $quiz->questionsperpage, '', '', '', true));
+        print_string('repaginate', 'quiz', choose_from_menu($perpage, 'questionsperpage',
+                $quiz->questionsperpage, '', '', '', true));
+        echo ' <input type="submit" name="repaginate" value="'. get_string('go') .'" />';
+        echo '</div>';
+        echo '</form>';
     }
-
-    echo '<br /><input type="hidden" name="reordertool" value="0" />';
-    echo '<input type="checkbox" name="reordertool" value="1"';
-    if ($reordertool) {
-        echo ' checked="checked"';
-    }
-    echo ' onclick="form.submit(); return true;" />';
-    print_string('reordertool', 'quiz');
-    echo ' ';
-    helpbutton('reorderingtool', get_string('reordertool', 'quiz'), 'quiz');
-
-    echo '<div class="quizquestionlistcontrols"><input type="submit" name="repaginate" value="'. get_string('go') .'" /></div>';
-    echo '</fieldset>';
-    echo '</form>';
 
     return $sumgrade;
 }
