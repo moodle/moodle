@@ -336,6 +336,9 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
         return NULL;
     }
 
+    // this treatment is necessary as the whatgrade field was not in the DB
+    // and so whatgrade and grademethod are combined in grademethod 10s are whatgrade
+    // and 1s are grademethod
     $grademethod = $scorm->grademethod % 10;
 
     foreach ($scoes as $sco) { 
@@ -388,8 +391,16 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
 }
 
 function scorm_grade_user($scorm, $userid, $time=false) {
-
+    // this treatment is necessary as the whatgrade field was not in the DB
+    // and so whatgrade and grademethod are combined in grademethod 10s are whatgrade
+    // and 1s are grademethod
     $whatgrade = intval($scorm->grademethod / 10);
+
+    // insure we dont grade user beyond $scorm->maxattempt settings
+    $lastattempt = scorm_get_last_attempt($scorm->id, $userid);
+    if($scorm->maxattempt != 0 && $lastattempt >= $scorm->maxattempt){
+        $lastattempt = $scorm->maxattempt;
+    }
 
     switch ($whatgrade) {
         case FIRSTATTEMPT:
@@ -399,7 +410,6 @@ function scorm_grade_user($scorm, $userid, $time=false) {
             return scorm_grade_user_attempt($scorm, $userid, scorm_get_last_attempt($scorm->id, $userid), $time);
         break;
         case HIGHESTATTEMPT:
-            $lastattempt = scorm_get_last_attempt($scorm->id, $userid);
             $maxscore = 0;
             $attempttime = 0;
             for ($attempt = 1; $attempt <= $lastattempt; $attempt++) {
