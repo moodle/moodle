@@ -1814,9 +1814,9 @@ border-width:0px;
   display:inline;
   position:absolute;
   right:-20px;
-	top:0;
-	z-index:10;
-	padding:0.2em 0;
+  top:0;
+  z-index:10;
+  padding:0.2em 0;
 }
 #course-view li.activity form.togglecompletion div {
   display:inline;
@@ -1828,6 +1828,10 @@ border-width:0px;
   padding: 1px 2px;
   background:white;
   font-size:0.85em; 
+}
+#course-view form.togglecompletion img.iconhelp,
+#course-view span.autocompletion img.iconhelp {
+  vertical-align:top;
 }
 
 #course-view ul.section,

@@ -1491,6 +1491,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     }
                 }
                 if($completionicon) {
+                    static $shownhelp=false;
                     $imgsrc=$CFG->pixpath.'/i/completion-'.$completionicon.'.gif';
                     $imgalt=get_string('completion-alt-'.$completionicon,'completion');
                     if($completion==COMPLETION_TRACKING_MANUAL && !$isediting) {
@@ -1501,15 +1502,24 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                             : COMPLETION_COMPLETE; 
                         // In manual mode the icon is a toggle form.
                         echo "
-<form class='togglecompletion' method='post' action='togglecompletion.php'><div>
+<form class='togglecompletion' method='post' action='togglecompletion.php'><div>";
+                        if(!$shownhelp) {
+                            helpbutton('completionicons',get_string('completionicons','completion'),'completion');
+                            $shownhelp=true;
+                        }
+                        echo "
 <input type='hidden' name='id' value='{$mod->id}' />
 <input type='hidden' name='completionstate' value='$newstate' />
 <input type='image' src='$imgsrc' alt='$imgalt' title='$imgtitle' />
 </div></form>";
                     } else {
                         // In auto mode, or when editing, the icon is just an image
-                        echo "
-<span class='autocompletion'><img src='$imgsrc' alt='$imgalt' title='$imgalt' /></span>";
+                        echo "<span class='autocompletion'>";
+                        if(!$shownhelp) {
+                            helpbutton('completionicons',get_string('completionicons','completion'),'completion');
+                            $shownhelp=true;
+                        }
+                        echo "<img src='$imgsrc' alt='$imgalt' title='$imgalt' /></span>";
                     }
                 }
             }
