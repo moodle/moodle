@@ -80,10 +80,10 @@ if ($dataid) {
     }
     require_once($CFG->dirroot . $callbackfile);
     $caller = new $callbackclass($callbackargs);
+    $caller->set('user', $USER);
     if (!$caller->check_permissions()) {
         print_error('nopermissions', 'portfolio', $caller->get_return_url());
     }
-    $caller->set('user', $USER);
 
     // for build navigation
     if (!$course = $caller->get('course')) {
