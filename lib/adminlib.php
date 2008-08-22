@@ -685,9 +685,19 @@ function upgrade_activity_modules($return) {
             unset($defaults);
             include($fullmod .'/defaults.php'); // include here means execute, not library include
             if (!empty($defaults)) {
-                foreach ($defaults as $name => $value) {
-                    if (!isset($CFG->$name)) {
-                        set_config($name, $value);
+                if (!empty($defaults['_use_config_plugins'])) {
+                    unset($defaults['_use_config_plugins']);
+                    $localcfg = get_config($module->name);
+                    foreach ($defaults as $name => $value) {
+                        if (!isset($localcfg->$name)) {
+                            set_config($name, $value, $module->name);
+                        }
+                    }
+                } else {
+                    foreach ($defaults as $name => $value) {
+                        if (!isset($CFG->$name)) {
+                            set_config($name, $value);
+                        }
                     }
                 }
             }
