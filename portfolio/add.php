@@ -7,6 +7,9 @@ if (empty($CFG->portfolioenabled)) {
 
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->libdir . '/formslib.php');
+
+$cancel = optional_param('cancel', 0, PARAM_RAW);
+
 $exporter = null;
 $dataid = 0;
 
@@ -16,11 +19,20 @@ if (!$dataid = optional_param('id', '', PARAM_INT) ) {
     }
 }
 if ($dataid) {
-    $exporter = portfolio_exporter::rewaken_object($dataid);
-    $exporter->verify_rewaken();
-    if ($cancel = optional_param('cancel', 0, PARAM_RAW)) {
+    try {
+        $exporter = portfolio_exporter::rewaken_object($dataid);
+    } catch (portfolio_exception $e) {
+        if ($cancel) {
+            unset($SESSION->portfolioexport);
+            redirect($CFG->wwwroot);
+        } else {
+            throw $e;
+        }
+    }
+    if ($cancel) {
         $exporter->cancel_request();
     }
+    $exporter->verify_rewaken();
     if (!$exporter->get('instance')) {
         if ($instance = optional_param('instance', '', PARAM_INT)) {
             try {
@@ -33,7 +45,6 @@ if ($dataid) {
             }
             $instance->set('user', $USER);
             $exporter->set('instance', $instance);
-            $exporter->set('sesskey', sesskey());
             $exporter->save();
         }
     }
@@ -92,6 +103,7 @@ if ($dataid) {
 
     $exporter = new portfolio_exporter($instance, $caller, $callbackfile, $navigation);
     $exporter->set('user', $USER);
+    $exporter->set('sesskey', sesskey());
     $exporter->save();
     $SESSION->portfolioexport = $exporter->get('id');
 }
