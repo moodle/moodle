@@ -12,6 +12,7 @@ $string['activity'] = 'Activity';
 $string['activityclipboard'] = 'Moving this activity: <b>$a</b>';
 $string['activityiscurrentlyhidden'] = 'Sorry, this activity is currently hidden';
 $string['activitymodule'] = 'Activity module';
+$string['activitymodules'] = 'Activity modules';
 $string['activityreport'] = 'Activity report';
 $string['activityreports'] = 'Activity reports';
 $string['activityselect'] = 'Select this activity to be moved elsewhere';

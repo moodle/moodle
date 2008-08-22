@@ -2,7 +2,7 @@
 
 if ($hassiteconfig) {
 
-    $ADMIN->add('modules', new admin_category('modsettings', get_string('activities')));
+    $ADMIN->add('modules', new admin_category('modsettings', get_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());
     if ($modules = $DB->get_records('modules')) {
         $modulebyname = array();

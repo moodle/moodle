@@ -23,9 +23,7 @@ $ADMIN->add('root', new admin_category('courses', get_string('courses','admin'))
 $ADMIN->add('root', new admin_category('grades', get_string('grades')));
 $ADMIN->add('root', new admin_category('location', get_string('location','admin')));
 $ADMIN->add('root', new admin_category('language', get_string('language')));
-
 $ADMIN->add('root', new admin_category('modules', get_string('plugins', 'admin')));
-
 $ADMIN->add('root', new admin_category('security', get_string('security','admin')));
 $ADMIN->add('root', new admin_category('appearance', get_string('appearance','admin')));
 $ADMIN->add('root', new admin_category('frontpage', get_string('frontpage','admin')));
