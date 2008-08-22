@@ -24,6 +24,8 @@ $settings['number-of-sections'] = 10;
 $settings['number-of-modules'] = 50;
 $settings['questions-per-course'] = 20;
 $settings['questions-per-quiz'] = 5;
+$settings['discussion-per-forum'] = 5;
+$settings['posts-per-forum-discussion'] = 15;
 $settings['entries-per-glossary'] = 1;
 $settings['assignment-grades'] = true;
 $settings['quiz-grades'] = true;
@@ -90,6 +92,10 @@ $arguments = array(
     'help' => 'The number of questions to generate per course. Default=20', 'type'=>'NUMBER', 'default' => 20),
  array('short'=>'qq', 'long' => 'questions-per-quiz',
     'help' => 'The number of questions to assign to each quiz. Default=5', 'type'=>'NUMBER', 'default' => 5),
+ array('short'=>'df', 'long' => 'discussions-per-forum',
+    'help' => 'The number of discussions to generate for each forum. Default=5', 'type'=>'NUMBER', 'default' => 5),
+ array('short'=>'pd', 'long' => 'posts-per-forum-discussion',
+    'help' => 'The number of posts to generate for each forum discussion. Default=15', 'type'=>'NUMBER', 'default' => 15),
 );
 
 // Building the USAGE output of the command line version
@@ -475,6 +481,7 @@ if ($run_script) {
         $quizzes = array();
         $assignments = array();
         $glossaries = array();
+        $forums = array();
 
         if (count($courses) > 0) {
             $libraries = array();
@@ -664,15 +671,23 @@ if ($run_script) {
                             $quiz->instance = $quiz_instance;
                             $quizzes[] = $quiz;
                         } elseif ($moduledata->name == 'assignment') {
-                            $assignment_instance = $DB->get_field('course_modules', 'instance', array('id' => $module->coursemodule));
+                            $assignment_instance = $DB->get_field('course_modules', 'instance',
+                                array('id' => $module->coursemodule));
                             $assignment = $DB->get_record('assignment', array('id' => $assignment_instance));
                             $assignment->instance = $assignment_instance;
                             $assignments[] = $assignment;
                         } elseif ($moduledata->name == 'glossary') {
-                            $glossary_instance = $DB->get_field('course_modules', 'instance', array('id' => $module->coursemodule));
+                            $glossary_instance = $DB->get_field('course_modules', 'instance',
+                                array('id' => $module->coursemodule));
                             $glossary = $DB->get_record('glossary', array('id' => $glossary_instance));
                             $glossary->instance = $glossary_instance;
                             $glossaries[] = $glossary;
+                        } elseif ($moduledata->name == 'forum') {
+                            $forum_instance = $DB->get_field('course_modules', 'instance',
+                                array('id' => $module->coursemodule));
+                            $forum = $DB->get_record('forum', array('id' => $forum_instance));
+                            $forum->instance = $forum_instance;
+                            $forums[] = $forum;
                         }
                     }
                 }
@@ -751,13 +766,15 @@ if ($run_script) {
         /**
          * ROLE ASSIGNMENTS
          */
+        $course_users = array();
         if (count($courses) > 0) {
             verbose("Inserting student->course role assignments...");
             $assigned_count = 0;
             $assigned_users = array();
-            $course_users = array();
 
             foreach ($courses as $courseid) {
+                $course_users[$courseid] = array();
+
                 // Select $students_per_course for assignment to course
                 shuffle($users);
                 $users_to_assign = array_slice($users, 0, $settings['students-per-course']);
@@ -776,6 +793,7 @@ if ($run_script) {
 
                     if ($success) {
                         $assigned_count++;
+                        $course_users[$courseid][] = $random_user;
                         if (!isset($assigned_users[$random_user])) {
                             $assigned_users[$random_user] = 1;
                         } else {
@@ -793,6 +811,77 @@ if ($run_script) {
 
             if (!$settings['quiet']) {
                 echo "$assigned_count user => course role assignments have been correctly performed.{$settings['eolchar']}";
+            }
+        }
+
+        /**
+         * FORUM DISCUSSIONS AND POSTS GENERATION
+         */
+        if (in_array('forum', $settings['modules-list']) &&
+                $settings['discussions-per-forum'] &&
+                $settings['posts-per-forum-discussion']) {
+
+            $discussions_count = 0;
+            $posts_count = 0;
+
+            foreach ($forums as $forum) {
+                $forum_users = $course_users[$forum->course];
+
+                for ($i = 0; $i < $settings['discussions-per-forum']; $i++) {
+                    $mform = new fake_form();
+
+                    require_once($CFG->dirroot.'/mod/forum/lib.php');
+
+                    $discussion = new stdClass();
+                    $discussion->name = 'Test discussion';
+                    $discussion->intro = 'This is just a test forum discussion';
+                    $discussion->format = 1;
+                    $discussion->forum = $forum->id;
+                    $discussion->mailnow = false;
+                    $discussion->course = $forum->course;
+
+                    $message = '';
+                    $super_global_user = clone($USER);
+                    $user_id = $forum_users[array_rand($forum_users)];
+                    $USER = $DB->get_record('user', array('id' => $user_id));
+
+                    if ($discussion_id = forum_add_discussion($discussion, $mform, $message)) {
+                        $discussion = $DB->get_record('forum_discussions', array('id' => $discussion_id));
+                        $discussions_count++;
+
+                        // Add posts to this discussion
+                        $post_ids = array($discussion->firstpost);
+
+                        for ($j = 0; $j < $settings['posts-per-forum-discussion']; $j++) {
+                            $global_user = clone($USER);
+                            $user_id = $forum_users[array_rand($forum_users)];
+                            $USER = $DB->get_record('user', array('id' => $user_id));
+                            $post = new stdClass();
+                            $post->discussion = $discussion_id;
+                            $post->subject = 'Re: test discussion';
+                            $post->message = '<p>Nothing much to say, since this is just a test...</p>';
+                            $post->format = 1;
+                            $post->parent = $post_ids[array_rand($post_ids)];
+
+                            if ($post_ids[] = forum_add_new_post($post, $mform, $message)) {
+                                $posts_count++;
+                            }
+                            $USER = $global_user;
+                        }
+                    }
+
+                    $USER = $super_global_user;
+
+                    if ($forum->type == 'single') {
+                        break;
+                    }
+                }
+            }
+            if ($discussions_count > 0) {
+                echo "$discussions_count forum discussions have been generated.{$settings['eolchar']}";
+            }
+            if ($posts_count > 0) {
+                echo "$posts_count forum posts have been generated.{$settings['eolchar']}";
             }
         }
 
@@ -819,7 +908,9 @@ if ($run_script) {
                     }
                 }
             }
-            echo "$grades_count assignment grades have been generated.{$settings['eolchar']}";
+            if ($grades_count > 0) {
+                echo "$grades_count assignment grades have been generated.{$settings['eolchar']}";
+            }
         }
 
         /**
@@ -844,7 +935,9 @@ if ($run_script) {
                     }
                 }
             }
-            echo "$grades_count quiz grades have been generated.{$settings['eolchar']}";
+            if ($grades_count > 0) {
+                echo "$grades_count quiz grades have been generated.{$settings['eolchar']}";
+            }
         }
 
         /**
@@ -869,7 +962,9 @@ if ($run_script) {
                     }
                 }
             }
-            echo "$entries_count glossary definitions have been generated.{$settings['eolchar']}";
+            if ($entries_count > 0) {
+                echo "$entries_count glossary definitions have been generated.{$settings['eolchar']}";
+            }
         }
 
     }
@@ -983,6 +1078,12 @@ function data_cleanup() {
 
     if ($settings['quiet']) {
         ob_end_clean();
+    }
+}
+
+class fake_form {
+    function get_new_filename($string) {
+        return false;
     }
 }
 ?>
