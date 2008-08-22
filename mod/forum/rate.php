@@ -66,7 +66,7 @@
                 $DB->delete_records('forum_ratings', array('post' => $postid, 'userid' => $USER->id));
                 forum_update_grades($forum, $post->userid);
 
-            } else if ($oldrating = $DB->get_record('forum_ratings', 'userid', $USER->id, 'post', $post->id)) {
+            } else if ($oldrating = $DB->get_record('forum_ratings', array('userid' => $USER->id, 'post' => $post->id))) {
                 if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time   = time();
