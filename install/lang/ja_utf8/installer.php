@@ -101,6 +101,7 @@ $string['databasesettingssub_postgres7'] = '<b>タイプ:</b> PostgreSQL<br />
 $string['databasesettingswillbecreated'] = '<b>メモ:</b> データベースが存在していない場合、インストーラーはデータベースの自動作成を試みます。';
 $string['dataroot'] = 'データディレクトリ';
 $string['datarooterror'] = 'あなたが指定した「データディレクトリ」が見つからないか、作成されませんでした。パスを訂正するか、ディレクトリを手動で作成してください。';
+$string['datarootpublicerror'] = 'あなたが指定した「データディレクトリ」は、ウェブ経由でアクセスすることができます。異なるディレクトリを使用してください。';
 $string['dbconnectionerror'] = 'あなたが指定したデータベースに接続できませんでした。データベース設定を確認してください。';
 $string['dbcreationerror'] = 'データベース作成エラー。設定で指定された名称のデータベースを作成できませんでした。';
 $string['dbhost'] = 'ホストサーバ';
@@ -145,7 +146,7 @@ $string['fileuploads'] = 'ファイルアップロード';
 $string['fileuploadserror'] = 'これは有効にしてください。';
 $string['fileuploadshelp'] = '<p>あなたのサーバでは、ファイルのアップロードができないようです。</p>
 <p>Moodleのインストールは可能ですが、ファイルのアップロードができない場合は、コースファイルやユーザプロファイルのイメージをアップロードすることができません。</p>
-<p>ファイルアップロードを可能にするには、あなた (またはシステム管理者) があなたのシステムのメインphp.iniファイルを編集して、<b>file_uploads</b> を \'1\'にする必要があります。</p>';
+<p>ファイルアップロードを可能にするには、あなた (またはシステム管理者) があなたのシステムのメインphp.iniファイルを編集して、<b>file_uploads</b> を「1」にする必要があります。</p>';
 $string['gdversion'] = 'GDバージョン';
 $string['gdversionerror'] = 'イメージの処理および作成を行うにはGDライブラリが必要です。';
 $string['gdversionhelp'] = '<p>あなたのサーバには、GDがインストールされていないようです。</p>
@@ -219,7 +220,7 @@ $string['password'] = 'パスワード';
 $string['pgsqlextensionisnotpresentinphp'] = 'PHPのPGSQL拡張モジュールが適切に設定されていないため、PostgreSQLと通信できません。あなたのphp.iniファイルをチェックするか、PHPを再コンパイルしてください。';
 $string['php50restricted'] = 'PHP 5.0.x には数多くの既知の問題があります。5.1.x にアップグレードするか、4.3.x または 4.4.x にダウングレードしてください。';
 $string['phpversion'] = 'PHPバージョン';
-$string['phpversionerror'] = 'PHPバージョンは少なくとも 4.3.0 または 5.1.0 をお使いください (5.0.x には既知の多数の問題があります)。'; // TBD
+$string['phpversionerror'] = 'PHPバージョンは少なくとも 4.3.0 または 5.1.0 をお使いください (5.0.x には既知の多数の問題があります)。'; //TBD with Moodle 2.0 dev (Build: 20080821) (2008081900)
 $string['phpversionhelp'] = '<p>Moodleには、少なくとも 4.3.0 または 5.1.0 のPHPバージョンが必要です (5.0.x には既知の多数の問題があります)。</p>
 <p>現在、バージョン $a が動作しています。</p>
 <p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!<br/>
