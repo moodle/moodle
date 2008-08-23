@@ -150,6 +150,7 @@ $string['databasetype'] = 'データベースタイプ :';
 $string['databaseuser'] = 'データベースユーザ :';
 $string['dataroot'] = 'データディレクトリ';
 $string['datarooterror'] = 'あなたが指定した「データディレクトリ」が見つからないか、作成されませんでした。パスを訂正するか、ディレクトリを手動で作成してください。';
+$string['datarootpublicerror'] = 'あなたが指定した「データディレクトリ」は、ウェブ経由でアクセスすることができます。異なるディレクトリを使用してください。';
 $string['dbconnectionerror'] = 'あなたが指定したデータベースに接続できませんでした。データベース設定を確認してください。';
 $string['dbcreationerror'] = 'データベース作成エラー。設定で指定された名称のデータベースを作成できませんでした。';
 $string['dbhost'] = 'ホストサーバ';
@@ -204,13 +205,13 @@ $string['environmentrequireversion'] = 'バージョン $a->needed 以上が必�
 $string['environmentsub'] = 'あなたのシステムに関する様々な要素が、システム要件に合致するか確認しています。';
 $string['environmentxmlerror'] = '環境データ ($a->error_code) の読み込み中にエラーが発生しました。';
 $string['error'] = 'エラー';
-$string['errorsinenvironment'] = '環境エラー';
+$string['errorsinenvironment'] = '環境エラー!';
 $string['fail'] = '失敗';
 $string['fileuploads'] = 'ファイルアップロード';
 $string['fileuploadserror'] = 'これは有効にしてください。';
 $string['fileuploadshelp'] = '<p>あなたのサーバでは、ファイルのアップロードができないようです。</p>
 <p>Moodleのインストールは可能ですが、ファイルのアップロードができない場合は、コースファイルやユーザプロファイルのイメージをアップロードすることができません。</p>
-<p>ファイルアップロードを可能にするには、あなた (またはシステム管理者) があなたのシステムのメインphp.iniファイルを編集して、<b>file_uploads</b> を \'1\'にする必要があります。</p>';
+<p>ファイルアップロードを可能にするには、あなた (またはシステム管理者) があなたのシステムのメインphp.iniファイルを編集して、<b>file_uploads</b> を「1」にする必要があります。</p>';
 $string['gdversion'] = 'GDバージョン';
 $string['gdversionerror'] = 'イメージの処理および作成を行うにはGDライブラリが必要です。';
 $string['gdversionhelp'] = '<p>あなたのサーバには、GDがインストールされていないようです。</p>
@@ -306,7 +307,7 @@ $string['php52versionhelp'] = '<p>Moodleでは、少なくとも5.2.4以上のPH
 <p>現在、あなたはPHPバージョン $a を使用しています。</p>
 <p>あなたは、PHPをアップグレードするか、新しいバージョンのPHPを使用しているホストに移動する必要があります!</p>';
 $string['phpversion'] = 'PHPバージョン';
-$string['phpversionerror'] = 'PHPバージョンは少なくとも 4.3.0 または 5.1.0 をお使いください (5.0.x には既知の多数の問題があります)。'; // TBD
+$string['phpversionerror'] = 'PHPバージョンは少なくとも 4.3.0 または 5.1.0 をお使いください (5.0.x には既知の多数の問題があります)。'; //TBD with Moodle 2.0 dev (Build: 20080821) (2008081900)
 $string['phpversionhelp'] = '<p>Moodleには、少なくとも 4.3.0 または 5.1.0 のPHPバージョンが必要です (5.0.x には既知の多数の問題があります)。</p>
 <p>現在、バージョン $a が動作しています。</p>
 <p>PHPをアップグレードするか、新しいバージョンがインストールされているホストに移動してください!<br/>
