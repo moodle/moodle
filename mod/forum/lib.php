@@ -74,7 +74,9 @@ function forum_add_instance($forum) {
         $discussion->mailnow  = false;
         $discussion->groupid  = -1;
 
-        if (! forum_add_discussion($discussion, $discussion->intro)) {
+        $message = '';
+
+        if (! forum_add_discussion($discussion, null, $message)) {
             error('Could not add the discussion for this forum');
         }
     }
@@ -3971,10 +3973,13 @@ function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
  * @param $newfile is a full upload array from $_FILES
  * @param $message is a string to hold the messages.
  */
-function forum_add_attachment($post, $cm, $mform, &$message, $remove_previous=true) {
+function forum_add_attachment($post, $cm, $mform=null, &$message=null, $remove_previous=true) {
     global $CFG, $DB, $USER;
 
     //TODO: add message when overwriting
+    if (empty($mform)) {
+        return false;
+    }
 
     $filename = $mform->get_new_filename('attachment');
     $filearea = 'forum_attachment';
@@ -4077,7 +4082,7 @@ function forum_update_post($post, $mform, &$message) {
  * Given an object containing all the necessary data,
  * create a new discussion and return the id
  */
-function forum_add_discussion($discussion, $mform, &$message) {
+function forum_add_discussion($discussion, $mform=null, &$message=null) {
     global $USER, $CFG, $DB;
 
     $timenow = time();
