@@ -1,6 +1,6 @@
 <?php
 
-require_once('config.php');
+require_once('../config.php');
 /**
  * SCRIPT CONFIGURATION
  */
@@ -24,8 +24,8 @@ $settings['number-of-sections'] = 10;
 $settings['number-of-modules'] = 50;
 $settings['questions-per-course'] = 20;
 $settings['questions-per-quiz'] = 5;
-$settings['discussion-per-forum'] = 5;
-$settings['posts-per-forum-discussion'] = 15;
+$settings['discussions-per-forum'] = 5;
+$settings['posts-per-discussion'] = 15;
 $settings['entries-per-glossary'] = 1;
 $settings['assignment-grades'] = true;
 $settings['quiz-grades'] = true;
@@ -94,7 +94,7 @@ $arguments = array(
     'help' => 'The number of questions to assign to each quiz. Default=5', 'type'=>'NUMBER', 'default' => 5),
  array('short'=>'df', 'long' => 'discussions-per-forum',
     'help' => 'The number of discussions to generate for each forum. Default=5', 'type'=>'NUMBER', 'default' => 5),
- array('short'=>'pd', 'long' => 'posts-per-forum-discussion',
+ array('short'=>'pd', 'long' => 'posts-per-discussion',
     'help' => 'The number of posts to generate for each forum discussion. Default=15', 'type'=>'NUMBER', 'default' => 15),
 );
 
@@ -819,7 +819,7 @@ if ($run_script) {
          */
         if (in_array('forum', $settings['modules-list']) &&
                 $settings['discussions-per-forum'] &&
-                $settings['posts-per-forum-discussion']) {
+                $settings['posts-per-discussion']) {
 
             $discussions_count = 0;
             $posts_count = 0;
@@ -852,7 +852,7 @@ if ($run_script) {
                         // Add posts to this discussion
                         $post_ids = array($discussion->firstpost);
 
-                        for ($j = 0; $j < $settings['posts-per-forum-discussion']; $j++) {
+                        for ($j = 0; $j < $settings['posts-per-discussion']; $j++) {
                             $global_user = clone($USER);
                             $user_id = $forum_users[array_rand($forum_users)];
                             $USER = $DB->get_record('user', array('id' => $user_id));
