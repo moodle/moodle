@@ -175,7 +175,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 // Update packages timing
         $options = array();
         $options[0]=get_string('never');
-        $options[1]=get_string('onchanges','scorm');
+        // $options[1]=get_string('onchanges','scorm'); - nolonger required, but dont change the sequence
         $options[2]=get_string('everyday','scorm');
         $options[3]=get_string('everytime','scorm');
         $mform->addElement('select', 'updatefreq', get_string('updatefreq', 'scorm'), $options);
