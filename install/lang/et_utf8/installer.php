@@ -100,10 +100,12 @@ $string['environmenterrortodo']='Sa pead lahendama kõik keskkonna probleemid (v
 $string['environmenthead']='Keskkonna kontrollimine...';
 $string['environmentrecommendcustomcheck']='kui see test ebaõnnestub, siis see võib saada potentsiaalseks probleemiks';
 $string['environmentrecommendinstall']='on soovitatav, et oleks installeeritud ja võimaldatud';
+$string['environmentrecommendversion']='versioon $a->needed on soovitatav ja Sinul  töötab $a->current';
 $string['environmentrequirecustomcheck']='see test peab olema edukalt läbitud';
 $string['environmentrequireinstall']='on nõutud, et oleks installeeritud ja võimaldatud';
 $string['environmentrequireversion']='versioon $a->needed on nõutud, Sinul on jooksmas versioon $a->current';
 $string['environmentsub']='Me kontrollime, kas mitmesugused süsteemi komponendid vastavad nõudmistele.';
+$string['environmentxmlerror']='Viga lugedes keskkonna andmeid ($a->error_code)';
 $string['error']='Viga';
 $string['fail']='Fail';
 $string['fileuploads']='Failide üleslaadimine';
@@ -135,6 +137,7 @@ $string['magicquotesruntimehelp']='<p>Magic quotes talitlusaeg peaks olema välj
 <p>Kui sul ei ole ligipääsu oma php.ini failile, siis peaksid lisama järgmise koodi .htaccess nimelisse faili, mis asub sinu Moodle kataloogis:
 <blockquote>php_value magic_quotes_runtime Off</blockquote>
 </p>';
+$string['mbstringrecommended']='Fakultatiivse MBSTRING teegi installeerimine on tugevast soovitatav, et parandada õpikeskkonna jõudlust, eriti kui Su õpikeskkond toetab ka mitteladina tähestikuga keeli (eesti keel ei kasuta ainult ladina tähestikku, seega soovitatav eesti keele toetuse jaoks)';
 $string['memorylimit']='Mälu limiit';
 $string['memorylimiterror']='PHP mälu limiit on seatud päris madalale...sul võib hiljem sellega seoses probleeme tekkida.';
 $string['memorylimithelp']='<p>PHP mälu limiit sinu serveri jaoks on hetkel $a.</p>
@@ -154,6 +157,8 @@ $string['mssql']='SQL*Server (mssql)';
 $string['mssql_n']='SQL*Server UTF-8 toetusega (mssql_n)';
 $string['mssqlextensionisnotpresentinphp']='PHP laiendus MSSQL ei ole korralikult seadistatud, mistõttu ei saa ühenduda SQL*Server\'iga. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
 $string['mysql']='MySQL (mysql)';
+$string['mysql416bypassed']='Kuid, kui Sinu õpikeskkond kasutab AINULT iso-8859-1 (latin) tähestikuga keelt, Sa võid jätkata praegu installeeritud MySQL versiooniga 4.1.12 (või uuem).';
+$string['mysql416required']='MySQL 4.1.16 on minimaalne versioon, mis on nõutud Moodle 1.6 poolt, et tagada kõik andmed saaksid konverteeritud UTF-8 kodeeringusse.';
 $string['mysqlextensionisnotpresentinphp']='PHP ei ole MySQL laiendiga õigesti konfigureeritud, seega ei saa ta MySQL\'ga suhelda. Palun kontrolli oma php.ini faili või kompileeri PHP uuesti.';
 $string['name']='Nimi';
 $string['next']='Järgmine';
@@ -193,6 +198,7 @@ $string['thischarset']='UTF-8';
 $string['thisdirection']='ltr';
 $string['thislanguage']='Eesti';
 $string['unicoderecommended']='Soovitatav on kõikide andmete salvestamine UTF-8\'s (unicode). Uued paigaldamised peaksid olema tehtud andmebaasi, mille vaikimisi kodeering on Unicode. Kui uuendada, siis peaksid teostama UTF-8\'sse üleviimise protsessi (vaata Admin lehte).';
+$string['unicoderequired']='On nõutav, et Sa hoiaksid kõiki andmeid Unicode (UTF-8) kodeeringus. Uued installeerimised peavad olema tehtud andmebaasi, mille vaikekodeering (character set) on Unicode. Kui oled Moodle uuendamisel, siis peaksid teostama UTF-8 migreerimisprotsessi (vaata admin lehte).';
 $string['user']='Kasutaja';
 $string['welcomep10']='$a->installername ($a->installerversion)';
 $string['welcomep20']='Sa näed seda lehte, sest oled edukalt installeerinud ja käivitanud <strong>$a->packname $a->packversion</strong> paketi Sinu arvutis. Õnnitleme!';
