@@ -7,7 +7,7 @@
 // Moodle - Modular Object-Oriented Dynamic Learning Environment         //
 //          http://moodle.com                                            //
 //                                                                       //
-// Copyright (C) 1999 onwards Martin Dougiamas        http://dougiamas.com  //
+// Copyright (C) 1999 onwards Martin Dougiamas     http://dougiamas.com  //
 //           (C) 2001-3001 Eloy Lafuente (stronk7) http://contiento.com  //
 //                                                                       //
 // This program is free software; you can redistribute it and/or modify  //
@@ -525,7 +525,8 @@ function environment_custom_checks($version) {
     $results = array();
 
 /// Get current Moodle version (release) for later compare
-    $current_version = normalize_version($CFG->release);
+    $release = isset($CFG->release) ? $CFG->release : $version; /// In case $CFG fails (at install) use $version
+    $current_version = normalize_version($release);
 
 /// Get the enviroment version we need
     if (!$data = get_environment_for_version($version)) {
