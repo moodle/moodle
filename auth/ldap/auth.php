@@ -57,11 +57,36 @@ class auth_plugin_ldap extends auth_plugin_base {
                 $this->config->{$key} = $value[$this->config->user_type];
             }
         }
-        //hack prefix to objectclass
-        if (empty($this->config->objectclass)) {        // Can't send empty filter
-            $this->config->objectclass='objectClass=*';
-        } else if (stripos($this->config->objectclass, 'objectClass=') !== 0) {
-            $this->config->objectclass = 'objectClass='.$this->config->objectclass;
+
+        // Hack prefix to objectclass
+        if (empty($this->config->objectclass)) {
+            // Can't send empty filter
+            $this->config->objectclass='(objectClass=*)';
+        } else if (stripos($this->config->objectclass, 'objectClass=') === 0) {
+            // Value is 'objectClass=some-string-here', so just add ()
+            // around the value (filter _must_ have them).
+            $this->config->objectclass = '('.$this->config->objectclass.')';
+        } else if (stripos($this->config->objectclass, '(') !== 0) {
+            // Value is 'some-string-not-starting-with-left-parentheses',
+            // which is assumed to be the objectClass matching value.
+            // So build a valid filter with it.
+            $this->config->objectclass = '(objectClass='.$this->config->objectclass.')';
+        } else {
+            // There is an additional possible value
+            // '(some-string-here)', that can be used to specify any
+            // valid filter string, to select subsets of users based
+            // on any criteria. For example, we could select the users
+            // whose objectClass is 'user' and have the
+            // 'enabledMoodleUser' attribute, with something like:
+            //
+            //   (&(objectClass=user)(enabledMoodleUser=1))
+            //
+            // This is only used in the functions that deal with the
+            // whole potential set of users (currently sync_users()
+            // and get_user_list() only).
+            //
+            // In this particular case we don't need to do anything,
+            // so leave $this->config->objectclass as is.
         }
 
     }
@@ -484,7 +509,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         $ldapconnection = $this->ldap_connect();
         $user_dn = $this->ldap_find_userdn($ldapconnection, $extusername);
         $search_attribs = array($this->config->expireattr);
-        $sr = ldap_read($ldapconnection, $user_dn, 'objectclass=*', $search_attribs);
+        $sr = ldap_read($ldapconnection, $user_dn, '(objectClass=*)', $search_attribs);
         if ($sr)  {
             $info = $this->ldap_get_entries($ldapconnection, $sr);
             if (!empty ($info) and !empty($info[0][$this->config->expireattr][0])) {
@@ -580,7 +605,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         //// get user's list from ldap to sql in a scalable fashion
         ////
         // prepare some data we'll need
-        $filter = "(&(".$this->config->user_attribute."=*)(".$this->config->objectclass."))";
+        $filter = '(&('.$this->config->user_attribute.'=*)'.$this->config->objectclass.')';
 
         $contexts = explode(";",$this->config->contexts);
 
@@ -1229,7 +1254,7 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
                 //Update password expiration time, grace logins count
                 $search_attribs = array($this->config->expireattr, 'passwordExpirationInterval','loginGraceLimit' );
-                $sr = ldap_read($ldapconnection, $user_dn, 'objectclass=*', $search_attribs);
+                $sr = ldap_read($ldapconnection, $user_dn, '(objectClass=*)', $search_attribs);
                 if ($sr)  {
                     $info=$this->ldap_get_entries($ldapconnection, $sr);
                     $newattrs = array();
@@ -1676,7 +1701,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         $ldapconnection = $this->ldap_connect();
 
         if ($filter=="*") {
-           $filter = "(&(".$this->config->user_attribute."=*)(".$this->config->objectclass."))";
+           $filter = '(&('.$this->config->user_attribute.'=*)'.$this->config->objectclass.')';
         }
 
         $contexts = explode(";",$this->config->contexts);
@@ -1990,7 +2015,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         set_config('bind_dn', $config->bind_dn, 'auth/ldap');
         set_config('bind_pw', $config->bind_pw, 'auth/ldap');
         set_config('version', $config->version, 'auth/ldap');
-        set_config('objectclass', $config->objectclass, 'auth/ldap');
+        set_config('objectclass', trim($config->objectclass), 'auth/ldap');
         set_config('memberattribute', $config->memberattribute, 'auth/ldap');
         set_config('memberattribute_isdn', $config->memberattribute_isdn, 'auth/ldap');
         set_config('creators', $config->creators, 'auth/ldap');
@@ -2059,7 +2084,7 @@ class auth_plugin_ldap extends auth_plugin_base {
 
         // If UF_DONT_EXPIRE_PASSWD flag is set in user's
         // userAccountControl attribute, the password doesn't expire.
-        $sr = ldap_read($ldapconn, $user_dn, 'objectclass=*',
+        $sr = ldap_read($ldapconn, $user_dn, '(objectClass=*)',
                         array('userAccountControl'));
         if (!$sr) {
             error_log("ldap: error getting userAccountControl for $user_dn");
@@ -2105,7 +2130,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         // details below).
         // ----------------------------------------------------------------
 
-        $sr = ldap_read($ldapconn, ROOTDSE, 'objectclass=*',
+        $sr = ldap_read($ldapconn, ROOTDSE, '(objectClass=*)',
                         array('defaultNamingContext'));
         if (!$sr) {
             error_log("ldap: error querying rootDSE for Active Directory");
@@ -2115,7 +2140,7 @@ class auth_plugin_ldap extends auth_plugin_base {
         $info = $this->ldap_get_entries($ldapconn, $sr);
         $domaindn = $info[0]['defaultNamingContext'][0];
 
-        $sr = ldap_read ($ldapconn, $domaindn, 'objectclass=*',
+        $sr = ldap_read ($ldapconn, $domaindn, '(objectClass=*)',
                          array('maxPwdAge'));
         $info = $this->ldap_get_entries($ldapconn, $sr);
         $maxpwdage = $info[0]['maxPwdAge'][0];
