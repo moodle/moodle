@@ -456,6 +456,13 @@ abstract class moodle_database {
     }
 
     /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return success
+     */
+    public abstract function reset_sequence($table);
+
+    /**
      * Returns sql generator used for db manipulation.
      * Used mostly in upgrade.php scripts.
      * @return object database_manager instance
@@ -1346,7 +1353,7 @@ abstract class moodle_database {
 
     /**
      * Returns the SQL for returning searching one string for the location of another.
-     * Note, there is no guarantee which order $needle, $haystack will be in 
+     * Note, there is no guarantee which order $needle, $haystack will be in
      * the resulting SQL, so when using this method, and both arguments contain
      * placeholders, you should use named placeholders.
      * @param string $needle the SQL expression that will be searched for.

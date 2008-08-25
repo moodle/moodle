@@ -348,4 +348,21 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
 
         return ($returnid ? $id : true);
     }
+
+    /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return bool success
+     */
+    public function reset_sequence($table) {
+        // From http://msdn.microsoft.com/en-us/library/ms176057.aspx
+        if (!$this->get_manager()->table_exists($table)) {
+            return false;
+        }
+        $value = (int)$this->get_field_sql('SELECT MAX(id) FROM {'.$table.'}');
+        if ($value == 0) {
+            $value = 1;
+        }
+        return $this->change_database_structure("DBCC CHECKIDENT ('$this->prefix$table', RESEED, $value)");
+    }
 }

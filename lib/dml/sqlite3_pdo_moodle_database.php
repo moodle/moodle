@@ -323,4 +323,18 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
         }
         return implode('||', $elements);
     }
+
+    /**
+     * Reset a sequence to the id field of a table.
+     * @param string $table name of table
+     * @return bool success
+     */
+    public function reset_sequence($table) {
+        // From http://sqlite.org/autoinc.html
+        if (!$this->get_manager()->table_exists($table)) {
+            return false;
+        }
+        $value = (int)$this->get_field_sql('SELECT MAX(id) FROM {'.$table.'}');
+        return $this->change_database_structure("UPDATE sqlite_sequence SET seq=$value WHERE name='$this->prefix$table'");
+    }
 }
