@@ -906,6 +906,103 @@ if (!is_object($xmldb_key)) {
 
         $this->execute_sql_arr($sqlarr);
     }
+
+    /**
+     * Reads the install.xml files for Moodle core and modules and returns an array of
+     * xmldb_structure object with xmldb_table from these files.
+     * @return xmldb_structure schema from install.xml files
+     */
+    public function get_install_xml_schema() {
+        global $CFG;
+
+        $schema = new xmldb_structure('export');
+        $schema->setVersion($CFG->version);
+        $dbdirs = get_db_directories();
+        foreach ($dbdirs as $dbdir) {
+            $xmldb_file = new xmldb_file($dbdir.'/install.xml');
+            if (!$xmldb_file->fileExists() or !$xmldb_file->loadXMLStructure()) {
+                continue;
+            }
+            $structure = $xmldb_file->getStructure();
+            $tables = $structure->getTables();
+            foreach ($tables as $table) {
+                $table->setPrevious(null);
+                $table->setNext(null);
+                $schema->addTable($table);
+            }
+        }
+        return $schema;
+    }
+    
+    /**
+     * Checks the database schema against a schema specified by an xmldb_structure object
+     * @param xmldb_structure $schema export schema describing all known tables
+     * @return array keyed by table name with array of difference messages as values 
+     */
+    public function check_database_schema(xmldb_structure $schema) {
+        $errors = array();
+
+        $dbtables = $this->mdb->get_tables();
+        $tables   = $schema->getTables();
+
+        //TODO: maybe add several levels error/warning
+
+        // make sure that current and schema tables match exactly
+        foreach ($tables as $table) {
+            $tablename = $table->getName();
+            if (empty($dbtables[$tablename])) {
+                if (!isset($errors[$tablename])) {
+                    $errors[$tablename] = array();
+                }
+                $errors[$tablename][] = "Table $tablename is missing in database."; //TODO: localize
+                continue;
+            }
+
+            // a) check for required fields
+            $dbfields = $this->mdb->get_columns($tablename, false);
+            $fields   = $table->getFields();
+            foreach ($fields as $field) {
+                $fieldname = $field->getName();
+                if (empty($dbfields[$fieldname])) {
+                    if (!isset($errors[$tablename])) {
+                        $errors[$tablename] = array();
+                    }
+                    $errors[$tablename][] = "Field $fieldname is missing in table $tablename.";  //TODO: localize
+                }
+                unset($dbfields[$fieldname]);
+            }
+
+            // b) check for extra fields (indicates unsupported hacks) - modify install.xml if you want the script to continue ;-)
+            foreach ($dbfields as $fieldname=>$info) {
+                if (!isset($errors[$tablename])) {
+                    $errors[$tablename] = array();
+                }
+                $errors[$tablename][] = "Field $fieldname is not expected in table $tablename.";  //TODO: localize
+            }
+            unset($dbtables[$tablename]);
+        }
+
+        // look for unsupported tables - local custom tables should be in /local/db/install.xml ;-)
+        // if there is no prefix, we can not say if tale is ours :-(
+        if ($this->generator->prefix !== '') {
+            foreach ($dbtables as $tablename=>$unused) {
+                if (strpos($tablename, 'pma_') === 0) {
+                    // ignore phpmyadmin tables for now
+                    continue;
+                }
+                if (strpos($tablename, 'test') === 0) {
+                    // ignore broken results of unit tests
+                    continue;
+                }
+                if (!isset($errors[$tablename])) {
+                    $errors[$tablename] = array();
+                }
+                $errors[$tablename][] = "Table $tablename is not expected.";  //TODO: localize
+            }
+        }
+
+        return $errors;
+    }
 }
 
 
