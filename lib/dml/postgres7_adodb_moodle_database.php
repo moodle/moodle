@@ -163,24 +163,34 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
      * @param mixed $params data record as object or array
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
+     * @param bool $customsequence true if 'id' included in $params, disables $returnid
      * @return mixed success or new id
      */
-    public function insert_record_raw($table, $params, $returnid=true, $bulk=false) {
-    /// Postgres doesn't have the concept of primary key built in
-    /// and will return the OID which isn't what we want.
-    /// The efficient and transaction-safe strategy is to
-    /// move the sequence forward first, and make the insert
-    /// with an explicit id.
-
+    public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
             $params = (array)$params;
         }
-        unset($params['id']);
-        if ($returnid) {
-            $this->reads++;
-            $seqname = "{$this->prefix}{$table}_id_seq";
-            if ($nextval = $this->adodb->GenID($seqname)) {
-                $params['id'] = (int)$nextval;
+
+        if ($customsequence) {
+            if (!isset($params['id'])) {
+                return false;
+            }
+            $returnid = false;
+
+        } else {
+            /// Postgres doesn't have the concept of primary key built in
+            /// and will return the OID which isn't what we want.
+            /// The efficient and transaction-safe strategy is to
+            /// move the sequence forward first, and make the insert
+            /// with an explicit id.
+            if ($returnid) {
+                $this->reads++;
+                $seqname = "{$this->prefix}{$table}_id_seq";
+                if ($nextval = $this->adodb->GenID($seqname)) {
+                    $params['id'] = (int)$nextval;
+                }
+            } else {
+                unset($params['id']);
             }
         }
 
@@ -475,5 +485,54 @@ class postgres7_adodb_moodle_database extends adodb_moodle_database {
         $value = (int)$this->get_field_sql('SELECT MAX(id) FROM {'.$table.'}');
         $value++;
         return $this->change_database_structure("ALTER SEQUENCE $this->prefix{$table}_id_seq RESTART WITH $value");
+    }
+
+    /**
+     * Import a record into a table, id field is required.
+     * Basic safety checks only. Lobs are supported.
+     * @param string $table name of database table to be inserted into
+     * @param mixed $dataobject object or array with fields in the record
+     * @return bool success
+     */
+    public function import_record($table, $dataobject) {
+        $dataobject = (object)$dataobject;
+
+        $columns = $this->get_columns($table);
+        $cleaned = array();
+        $blobs   = array();
+
+        foreach ($dataobject as $field=>$value) {
+            if (!isset($columns[$field])) {
+                continue;
+            }
+            $column = $columns[$field];
+            if ($column->meta_type == 'B') {
+                if (!is_null($value)) {
+                    $blobs[$field] = $value;
+                    $cleaned[$field] = '@#BLOB#@';
+                    continue;
+                }
+            }
+            $cleaned[$field] = $value;
+        }
+
+        if (!$this->insert_record_raw($table, $cleaned, false, true, true)) {
+            return false;
+        }
+
+        if (empty($blobs)) {
+            return true;
+        }
+
+    /// We have BLOBs to postprocess
+
+        foreach ($blobs as $key=>$value) {
+            $this->writes++;
+            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id", 'BLOB')) { // adodb does not use bound parameters for blob updates :-(
+                return false;
+            }
+        }
+
+        return true;
     }
 }

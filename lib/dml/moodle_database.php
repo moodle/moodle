@@ -984,9 +984,10 @@ abstract class moodle_database {
      * @param mixed $params data record as object or array
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
+     * @param bool $customsequence true if 'id' included in $params, disables $returnid
      * @return mixed success or new id
      */
-    public abstract function insert_record_raw($table, $params, $returnid=true, $bulk=false);
+    public abstract function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false);
 
     /**
      * Insert a record into a table and return the "id" field if required.
@@ -1000,6 +1001,16 @@ abstract class moodle_database {
      * @return mixed success or new ID
      */
     public abstract function insert_record($table, $dataobject, $returnid=true, $bulk=false);
+
+    /**
+     * Import a record into a table, id field is required.
+     * Safety checks are NOT carried out. Lobs are supported.
+     *
+     * @param string $table name of database table to be inserted into
+     * @param object $dataobject A data object with values for one or more fields in the record
+     * @return bool success
+     */
+    public abstract function import_record($table, $dataobject);
 
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.

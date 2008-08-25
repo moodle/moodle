@@ -238,13 +238,22 @@ abstract class adodb_moodle_database extends moodle_database {
      * @param mixed $params data record as object or array
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
+     * @param bool $customsequence true if 'id' included in $params, disables $returnid
      * @return mixed success or new id
      */
-    public function insert_record_raw($table, $params, $returnid=true, $bulk=false) {
+    public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
             $params = (array)$params;
         }
-        unset($params['id']);
+
+        if ($customsequence) {
+            if (!isset($params['id'])) {
+                return false;
+            }
+            $returnid = false;
+        } else {
+            unset($params['id']);
+        }
 
         if (empty($params)) {
             return false;

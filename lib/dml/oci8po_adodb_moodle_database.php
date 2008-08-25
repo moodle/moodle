@@ -450,13 +450,22 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
      * @param mixed $params data record as object or array
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
+     * @param bool $customsequence true if 'id' included in $params, disables $returnid
      * @return mixed success or new id
      */
-    public function insert_record_raw($table, $params, $returnid=true, $bulk=false) {
+    public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
             $params = (array)$params;
         }
-        unset($params['id']);
+
+        if ($customsequence) {
+            if (!isset($params['id'])) {
+                return false;
+            }
+            $returnid = false;
+        } else {
+            unset($params['id']);
+        }
 
         if ($returnid) {
             $dbman = $this->get_manager();
@@ -630,5 +639,72 @@ class oci8po_adodb_moodle_database extends adodb_moodle_database {
 
         $this->change_database_structure("DROP SEQUENCE $seqname");
         return $this->change_database_structure("CREATE SEQUENCE $seqname START WITH $value INCREMENT BY 1 NOMAXVALUE");
+    }
+
+    /**
+     * Import a record into a table, id field is required.
+     * Basic safety checks only. Lobs are supported.
+     * @param string $table name of database table to be inserted into
+     * @param mixed $dataobject object or array with fields in the record
+     * @return bool success
+     */
+    public function import_record($table, $dataobject) {
+        $dataobject = (object)$dataobject;
+
+        $columns = $this->get_columns($table);
+        $cleaned = array();
+        $blobs = array();
+        $clobs = array();
+
+        foreach ($dataobject as $field=>$value) {
+            if (!isset($columns[$field])) { /// Non-existing table field, skip it
+                continue;
+            }
+        /// Apply Oracle dirty hack to value, to have "correct" empty values for Oracle
+            $value = $this->oracle_dirty_hack($table, $field, $value);
+
+        /// Get column metadata
+            $column = $columns[$field];
+            if ($column->meta_type == 'B') { /// BLOBs columns need to be updated apart
+                if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
+                    $blobs[$field] = $value;
+                    $value = 'empty_blob()'; /// Set the default value to be inserted (preparing lob storage for next update)
+                }
+
+            } else if ($column->meta_type == 'X' && strlen($value) > 4000) { /// CLOB columns need to be updated apart (if lenght > 4000)
+                if (!is_null($value)) {      /// If value not null, add it to the list of BLOBs to update later
+                    $clobs[$field] = $value;
+                    $value = 'empty_clob()'; /// Set the default value to be inserted (preparing lob storage for next update)
+                }
+            }
+
+            $cleaned[$field] = $value;
+        }
+
+        if (!$this->insert_record_raw($table, $cleaned, false, true, true)) {
+            return false;
+        }
+
+        if (empty($blobs) and empty($clobs)) {
+            return true;
+        }
+
+    /// We have BLOBs or CLOBs to postprocess
+
+        foreach ($blobs as $key=>$value) {
+            $this->writes++;
+            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
+                return false;
+            }
+        }
+
+        foreach ($clobs as $key=>$value) {
+            $this->writes++;
+            if (!$this->adodb->UpdateClob($this->prefix.$table, $key, $value, "id = $id")) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

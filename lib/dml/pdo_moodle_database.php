@@ -57,7 +57,7 @@ abstract class pdo_moodle_database extends moodle_database {
     protected function get_dsn() {
         return 'mysql:host='.$this->dbhost.';dbname='.$this->dbname;
     }
-    
+
     /**
      * Returns the driver-dependent connection attributes for PDO based on members stored by connect.
      * Must be called after $dbname, $dbhost, etc. members have been set.
@@ -66,7 +66,7 @@ abstract class pdo_moodle_database extends moodle_database {
     protected function get_pdooptions() {
         return array(PDO::ATTR_PERSISTENT => $this->dbpersist);
     }
-    
+
     protected function configure_dbconnection() {
         ///TODO: not needed preconfigure_dbconnection() stuff for PDO drivers?
     }
@@ -86,7 +86,7 @@ abstract class pdo_moodle_database extends moodle_database {
      * @return string
      */
     public function get_name() {
-        return get_string($this->get_dbtype() . '_pdo', 'install'); 
+        return get_string($this->get_dbtype() . '_pdo', 'install');
     }
 
     /**
@@ -112,7 +112,7 @@ abstract class pdo_moodle_database extends moodle_database {
         } catch(PDOException $ex) {}
         return $result;
     }
-    
+
     /**
      * Returns supported query parameter types
      * @return bitmask
@@ -120,7 +120,7 @@ abstract class pdo_moodle_database extends moodle_database {
     protected function allowed_param_types() {
         return SQL_PARAMS_QM | SQL_PARAMS_NAMED;
     }
-    
+
     /**
      * Returns last error reported by database engine.
      */
@@ -170,7 +170,7 @@ abstract class pdo_moodle_database extends moodle_database {
         }
         echo '<hr />';
     }
-    
+
     /**
      * Do NOT use in code, to be used by database_manager only!
      * @param string $sql query
@@ -201,10 +201,10 @@ abstract class pdo_moodle_database extends moodle_database {
     }
 
     /**
-     * Factory method that creates a recordset for return by a query. The generic pdo_moodle_recordset 
+     * Factory method that creates a recordset for return by a query. The generic pdo_moodle_recordset
      * class should fit most cases, but pdo_moodle_database subclasses can overide this method to return
      * a subclass of pdo_moodle_recordset.
-     * @param object $sth instance of PDOStatement 
+     * @param object $sth instance of PDOStatement
      * @return object instance of pdo_moodle_recordset
      */
     protected function create_recordset($sth) {
@@ -267,7 +267,7 @@ abstract class pdo_moodle_database extends moodle_database {
             return false;
         }
     }
-    
+
     /**
      * Returns the sql statement with clauses to append used to limit a recordset range.
      * @param string $sql the SQL statement to limit.
@@ -334,13 +334,22 @@ abstract class pdo_moodle_database extends moodle_database {
      * @param mixed $params data record as object or array
      * @param bool $returnit return it of inserted record
      * @param bool $bulk true means repeated inserts expected
+     * @param bool $customsequence true if 'id' included in $params, disables $returnid
      * @return mixed success or new id
      */
-    public function insert_record_raw($table, $params, $returnid=true, $bulk=false) {
+    public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false) {
         if (!is_array($params)) {
             $params = (array)$params;
         }
-        unset($params['id']);
+
+        if ($customsequence) {
+            if (!isset($params['id'])) {
+                return false;
+            }
+            $returnid = false;
+        } else {
+            unset($params['id']);
+        }
 
         if (empty($params)) {
             return false;
@@ -364,7 +373,7 @@ abstract class pdo_moodle_database extends moodle_database {
         }
         return false;
     }
-    
+
     /**
      * Insert a record into a table and return the "id" field if required,
      * Some conversions and safety checks are carried out. Lobs are supported.
@@ -409,7 +418,7 @@ abstract class pdo_moodle_database extends moodle_database {
 
         return $this->insert_record_raw($table, $cleaned, $returnid, $bulk);
     }
-    
+
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
@@ -563,5 +572,27 @@ abstract class pdo_moodle_database extends moodle_database {
         } catch(PDOException $ex) {
             return false;
         }
+    }
+
+    /**
+     * Import a record into a table, id field is required.
+     * Basic safety checks only. Lobs are supported.
+     * @param string $table name of database table to be inserted into
+     * @param mixed $dataobject object or array with fields in the record
+     * @return bool success
+     */
+    public function import_record($table, $dataobject) {
+        $dataobject = (object)$dataobject;
+
+        $columns = $this->get_columns($table);
+        $cleaned = array();
+        foreach ($dataobject as $field=>$value) {
+            if (!isset($columns[$field])) {
+                continue;
+            }
+            $cleaned[$field] = $value;
+        }
+
+        return $this->insert_record_raw($table, $cleaned, false, true, true);
     }
 }

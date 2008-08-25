@@ -992,6 +992,53 @@ class dml_test extends UnitTestCase {
 
     }
 
+    public function test_import_record() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $record = (object)array('id'=>666, 'course'=>10);
+        $this->assertTrue($DB->import_record('testtable', $record));
+        $records = $DB->get_records('testtable');
+        $this->assertEqual(1, count($records));
+        $this->assertEqual(10, $records[666]->course);
+
+        $record = (object)array('id'=>13, 'course'=>2);
+        $this->assertTrue($DB->import_record('testtable', $record));
+        $records = $DB->get_records('testtable');
+        $this->assertEqual(2, $records[13]->course);
+    }
+
+    public function test_reset_sequence() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table($dbman, "testtable");
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+        $dbman->create_table($table);
+        $this->tables[$table->getName()] = $table;
+
+        $record = (object)array('id'=>666, 'course'=>10);
+        $DB->import_record('testtable', $record);
+        $DB->delete_records('testtable');
+
+        $this->assertTrue($DB->reset_sequence('testtable'));
+        $this->assertEqual(1, $DB->insert_record('testtable', (object)array('course'=>13)));
+
+        $DB->import_record('testtable', $record);
+        $this->assertTrue($DB->reset_sequence('testtable'));
+        $this->assertEqual(667, $DB->insert_record('testtable', (object)array('course'=>13)));
+    }
+
+
     public function test_insert_record_clob() {
         global $CFG;
 
@@ -1337,9 +1384,9 @@ class dml_test extends UnitTestCase {
     function test_sql_position() {
         $DB = $this->tdb;
         $this->assertEqual($DB->get_field_sql(
-                "SELECT " . $DB->sql_position("'ood'", "'Moodle'") . $DB->sql_null_from_clause()), 2); 
+                "SELECT " . $DB->sql_position("'ood'", "'Moodle'") . $DB->sql_null_from_clause()), 2);
         $this->assertEqual($DB->get_field_sql(
-                "SELECT " . $DB->sql_position("'Oracle'", "'Moodle'") . $DB->sql_null_from_clause()), 0); 
+                "SELECT " . $DB->sql_position("'Oracle'", "'Moodle'") . $DB->sql_null_from_clause()), 0);
     }
 }
 
@@ -1376,8 +1423,10 @@ class moodle_database_for_testing extends moodle_database {
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0){}
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0){}
     public function get_fieldset_sql($sql, array $params=null){}
-    public function insert_record_raw($table, $params, $returnid=true, $bulk=false){}
+    public function insert_record_raw($table, $params, $returnid=true, $bulk=false, $customsequence=false){}
     public function insert_record($table, $dataobject, $returnid=true, $bulk=false){}
+    public function import_record($table, $dataobject){}
+    public function reset_sequence($table){}
     public function update_record_raw($table, $params, $bulk=false){}
     public function update_record($table, $dataobject, $bulk=false){}
     public function set_field_select($table, $newfield, $newvalue, $select, array $params=null){}

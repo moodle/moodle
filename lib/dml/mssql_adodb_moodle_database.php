@@ -365,4 +365,58 @@ class mssql_adodb_moodle_database extends adodb_moodle_database {
         }
         return $this->change_database_structure("DBCC CHECKIDENT ('$this->prefix$table', RESEED, $value)");
     }
+
+
+    /**
+     * Import a record into a table, id field is required.
+     * Basic safety checks only. Lobs are supported.
+     * @param string $table name of database table to be inserted into
+     * @param mixed $dataobject object or array with fields in the record
+     * @return bool success
+     */
+    public function import_record($table, $dataobject) {
+        $dataobject = (object)$dataobject;
+
+        $columns = $this->get_columns($table);
+        $cleaned = array();
+        $blobs = array();
+
+        foreach ($dataobject as $field=>$value) {
+            if (!isset($columns[$field])) { // Non-existing table field, skip it
+                continue;
+            }
+            $column = $columns[$field];
+            if ($column->meta_type == 'B') { // BLOBs (IMAGE) columns need to be updated apart
+                if (!is_null($value)) {      // If value not null, add it to the list of BLOBs to update later
+                    $blobs[$field] = $value;
+                    $value = null;           // Set the default value to be inserted in first instance
+                }
+            } else if ($column->meta_type == 'X') { // MSSQL doesn't cast from int to text, so if text column
+                if (is_numeric($value)) {           // and is numeric value
+                    $value = (string)$value;        // cast to string
+                }
+            }
+
+            $cleaned[$field] = $value;
+        }
+
+        if (!$this->insert_record_raw($table, $cleaned, false, true, true)) {
+            return false;
+        }
+
+        if (empty($blobs)) {
+            return true;
+        }
+
+    /// We have BLOBs to postprocess
+
+        foreach ($blobs as $key=>$value) {
+            $this->writes++;
+            if (!$this->adodb->UpdateBlob($this->prefix.$table, $key, $value, "id = $id")) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

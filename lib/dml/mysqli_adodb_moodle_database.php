@@ -289,4 +289,31 @@ class mysqli_adodb_moodle_database extends adodb_moodle_database {
         $value++;
         return $this->change_database_structure("ALTER TABLE $this->prefix$table AUTO_INCREMENT = $value");
     }
+
+    /**
+     * Import a record into a table, id field is required.
+     * Basic safety checks only. Lobs are supported.
+     * @param string $table name of database table to be inserted into
+     * @param mixed $dataobject object or array with fields in the record
+     * @return bool success
+     */
+    public function import_record($table, $dataobject) {
+        $dataobject = (object)$dataobject;
+
+        if (empty($dataobject->id)) {
+            return false;
+        }
+
+        $columns = $this->get_columns($table);
+        $cleaned = array();
+
+        foreach ($dataobject as $field=>$value) {
+            if (!isset($columns[$field])) {
+                continue;
+            }
+            $cleaned[$field] = $value;
+        }
+
+        return $this->insert_record_raw($table, $cleaned, false, true, true);
+    }
 }
