@@ -111,45 +111,46 @@ class quiz_grading_report extends quiz_default_report {
 
         echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
-        if ($data = data_submitted() && $this->users) {  // post data submitted, process it
-            confirm_sesskey();
-
-            // now go through all of the responses and save them.
-            $allok = true;
-            foreach($data->manualgrades as $uniqueid => $response) {
-                // get our attempt
-                $uniqueid = clean_param($uniqueid, PARAM_INT);
-                list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users));
-
-                if (!$attempt = $DB->get_record_sql("SELECT * FROM {quiz_attempts} " .
-                                "WHERE uniqueid = ? AND " .
-                                "userid $usql AND " .
-                                "quiz=?", array_merge(array($uniqueid), $params, array($quiz->id)))){
-                    error('No such attempt ID exists');
+        if ($data = data_submitted()) {  // post data submitted, process it
+            if (confirm_sesskey() && $this->users){
+    
+                // now go through all of the responses and save them.
+                $allok = true;
+                foreach($data->manualgrades as $uniqueid => $response) {
+                    // get our attempt
+                    $uniqueid = clean_param($uniqueid, PARAM_INT);
+                    list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users));
+    
+                    if (!$attempt = $DB->get_record_sql("SELECT * FROM {quiz_attempts} " .
+                                    "WHERE uniqueid = ? AND " .
+                                    "userid $usql AND " .
+                                    "quiz=?", array_merge(array($uniqueid), $params, array($quiz->id)))){
+                        error('No such attempt ID exists');
+                    }
+    
+                    // Load the state for this attempt (The questions array was created earlier)
+                    $states = get_question_states($questions, $quiz, $attempt);
+                    // The $states array is indexed by question id but because we are dealing
+                    // with only one question there is only one entry in this array
+                    $state = &$states[$question->id];
+    
+                    // the following will update the state and attempt
+                    $error = question_process_comment($question, $state, $attempt, $response['comment'], $response['grade']);
+                    if (is_string($error)) {
+                        notify($error);
+                        $allok = false;
+                    } else if ($state->changed) {
+                        // If the state has changed save it and update the quiz grade
+                        save_question_session($question, $state);
+                        quiz_save_best_grade($quiz, $attempt->userid);
+                    }
                 }
-
-                // Load the state for this attempt (The questions array was created earlier)
-                $states = get_question_states($questions, $quiz, $attempt);
-                // The $states array is indexed by question id but because we are dealing
-                // with only one question there is only one entry in this array
-                $state = &$states[$question->id];
-
-                // the following will update the state and attempt
-                $error = question_process_comment($question, $state, $attempt, $response['comment'], $response['grade']);
-                if (is_string($error)) {
-                    notify($error);
-                    $allok = false;
-                } else if ($state->changed) {
-                    // If the state has changed save it and update the quiz grade
-                    save_question_session($question, $state);
-                    quiz_save_best_grade($quiz, $attempt->userid);
+    
+                if ($allok) {
+                    notify(get_string('changessaved', 'quiz'), 'notifysuccess');
+                } else {
+                    notify(get_string('changessavedwitherrors', 'quiz'), 'notifysuccess');
                 }
-            }
-
-            if ($allok) {
-                notify(get_string('changessaved', 'quiz'), 'notifysuccess');
-            } else {
-                notify(get_string('changessavedwitherrors', 'quiz'), 'notifysuccess');
             }
         }
         $this->viewurl = new moodle_url($CFG->wwwroot.'/mod/quiz/report.php', $viewoptions);
