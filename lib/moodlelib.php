@@ -2831,6 +2831,10 @@ function update_user_record($username, $authplugin) {
     if ($newinfo = $userauth->get_userinfo($username)) {
         $newinfo = truncate_userinfo($newinfo);
         foreach ($newinfo as $key => $value){
+            if ($key === 'username') {
+                // 'username' is not a mapped updateable/lockable field, so skip it.
+                continue;
+            }
             $confval = $userauth->config->{'field_updatelocal_' . $key};
             $lockval = $userauth->config->{'field_lock_' . $key};
             if (empty($confval) || empty($lockval)) {
