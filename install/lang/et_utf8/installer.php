@@ -12,6 +12,7 @@
 $string['admindirerror']='Valitud administreerimiskataloog on vale';
 $string['admindirname']='Administreerimiskataloog';
 $string['admindirsetting']='Mõned vähesed veebihostid kasutavad spetsiaalset URL-i, et anda ligipääs juhtpaneelile. Kahjuks läheb see konflikti Moodle administreerimislehe standardse asukohaga. Sa saad seda viga parandada, kui nimetad oma administreerimiskataloogi ümber. Näiteks: <br /> <br /><b>moodleadmin</b><br /> <br /> See teeb administreerimislingid Moodle\'is korda.';
+$string['admindirsettinghead']='Kataloogi admin seadistamine ...';
 $string['availablelangs']='Saadaval keelepaketid';
 $string['cannotcreatelangdir']='Ei saa luua lang kataloogi';
 $string['cannotcreatetempdir']='Ei saa luua temp kataloogi';
@@ -34,6 +35,7 @@ $string['configfilenotwritten']='Installeerimisskript ei suutnud automaatselt te
 $string['configfilewritten']='config.php on edukalt loodud';
 $string['configurationcomplete']='Seadistamine lõpetatud';
 $string['configurationcompletehead']='Konfigureerimine lõpetatud';
+$string['configurationcompletesub']='Moodle tegi katse salvestada Sinu seadistuse Moodle juurkataloogis asuvasse faili.';
 $string['continue']='Jätka';
 $string['curlrecommended']='Fakultatiivse Curl teegi installeerimine on väga soovitatav, millega võimaldatakse Moodle võrgunduse funktsionaalsus.';
 $string['customcheck']='Muud kontrollid';
