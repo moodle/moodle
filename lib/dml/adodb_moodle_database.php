@@ -241,8 +241,6 @@ abstract class adodb_moodle_database extends moodle_database {
      * @return mixed success or new id
      */
     public function insert_record_raw($table, $params, $returnid=true, $bulk=false) {
-        //TODO: do we want the *_raw() functions being public? I see the benefits but... won't that cause problems. To decide.
-
         if (!is_array($params)) {
             $params = (array)$params;
         }
