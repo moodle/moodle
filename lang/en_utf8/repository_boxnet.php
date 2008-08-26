@@ -9,5 +9,5 @@ $string['saved'] = 'Box.net data saved';
 $string['invalidpassword'] = 'Invalid password';
 $stirng['invalidtoken'] = 'Invalid authentication token';
 $string['nullfilelist'] = 'There are no files in this repository';
-$string['username'] = 'Box.net account: ';
-$string['password'] = 'Box.net password: ';
+$string['username'] = 'Box.net account';
+$string['password'] = 'Box.net password';
