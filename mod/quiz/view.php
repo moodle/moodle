@@ -460,13 +460,13 @@ function make_review_link($linktext, $quiz, $attempt) {
     }
 
     // If the quiz is still open, are reviews allowed?
-    if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
+    if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN & QUIZ_REVIEW_RESPONSES)) {
         // If not, don't link.
         return $linktext;
     }
 
     // If the quiz is closed, are reviews allowed?
-    if (($quiz->timeclose and time() > $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
+    if (($quiz->timeclose and time() > $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES)) {
         // If not, don't link.
         return $linktext;
     }
