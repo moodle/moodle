@@ -63,4 +63,7 @@ form.mform textarea {
   display:inline-block; padding-left:2px;
 }
 
+#course-view li.activity {
+  height:0;
+}
 
