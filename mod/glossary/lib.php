@@ -418,8 +418,11 @@ function glossary_grade_item_update($glossary, $grades=NULL) {
         $params = array('itemname'=>$glossary->name, 'idnumber'=>$glossary->cmidnumber);
     }else{
         // MDL-14303
-        $cm = get_coursemodule_from_instance('glossary', $glossary->id);
-        $params = array('itemname'=>$glossary->name, 'idnumber'=>$cm->id);
+        if ($cm = get_coursemodule_from_instance('glossary', $glossary->id)) {
+            $params = array('itemname'=>$glossary->name, 'idnumber'=>$cm->id);
+        } else {
+            return false;
+        }
     }
 
     if (!$glossary->assessed or $glossary->scale == 0) {
