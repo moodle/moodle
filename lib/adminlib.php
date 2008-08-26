@@ -149,7 +149,7 @@ function drop_plugin_tables($name, $file, $feedback=true) {
     global $CFG, $DB;
 
     // first try normal delete
-    if ($DB->get_manager()->delete_tables_from_xmldb_file($file)) {
+    if (file_exists($file) and $DB->get_manager()->delete_tables_from_xmldb_file($file)) {
         return true;
     }
 
@@ -161,6 +161,10 @@ function drop_plugin_tables($name, $file, $feedback=true) {
     /// Iterate over, fixing id fields as necessary
     foreach ($tables as $table) {
         if (in_array($table, $used_tables)) {
+            continue;
+        }
+
+        if (strpos($table, $name) !== 0) {
             continue;
         }
 
