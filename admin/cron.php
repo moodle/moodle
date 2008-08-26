@@ -252,7 +252,7 @@
     events_cron();
     mtrace('done.');
 
-    if ($CFG->portfolioenabled) {
+    if ($CFG->enableportfolios) {
         // Portfolio cron
         mtrace('Starting the portfolio cron...');
         require_once($CFG->libdir . '/portfoliolib.php');

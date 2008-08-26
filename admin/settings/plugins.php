@@ -148,11 +148,10 @@ if ($hassiteconfig) {
     $manage = get_string('manageportfolios', 'portfolio');
     $url = "$CFG->wwwroot/$CFG->admin/portfolio.php";
 
-    $ADMIN->add('modules', new admin_category('portfoliosettings', $catname));
+    $ADMIN->add('modules', new admin_category('portfoliosettings', $catname, empty($CFG->enableportfolios)));
 
     // jump through hoops to do what we want
     $temp = new admin_settingpage('manageportfolios', get_string('manageportfolios', 'portfolio'));
-    $temp->add(new admin_setting_configcheckbox('portfolioenabled', get_string('enabled', 'portfolio'), get_string('enableddesc', 'portfolio'), false));
     $temp->add(new admin_setting_manageportfolio());
 
     $ADMIN->add('portfoliosettings', $temp);

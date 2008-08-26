@@ -32,6 +32,10 @@ if (!has_capability('moodle/notes:manage', $context)) {
     print_error('nopermissiontodelete', 'notes');
 }
 
+if (empty($CFG->enablenotes)) {
+    print_error('notesdisabled', 'notes');
+}
+
 if (data_submitted() && confirm_sesskey()) {
 //if data was submitted and is valid, then delete note
     $returnurl = $CFG->wwwroot . '/notes/index.php?course=' . $course->id . '&amp;user=' . $note->userid;

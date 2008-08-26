@@ -22,7 +22,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $max_upload_choices[0] = get_string('serverlimit', 'admin');
     $temp->add(new admin_setting_configselect('maxbytes', get_string('maxbytes', 'admin'), get_string('configmaxbytes', 'admin'), 0, $max_upload_choices));
 
-    $temp->add(new admin_setting_configcheckbox('messaging', get_string('messaging', 'admin'), get_string('configmessaging','admin'), 1));
     $temp->add(new admin_setting_configcheckbox('allowobjectembed', get_string('allowobjectembed', 'admin'), get_string('configallowobjectembed', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('enabletrusttext', get_string('enabletrusttext', 'admin'), get_string('configenabletrusttext', 'admin'), 0));
     $temp->add(new admin_setting_configselect('maxeditingtime', get_string('maxeditingtime','admin'), get_string('configmaxeditingtime','admin'), 1800,
@@ -39,13 +38,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
                                               'firstname' => get_string('firstname'))));
     $temp->add(new admin_setting_configcheckbox('extendedusernamechars', get_string('extendedusernamechars', 'admin'), get_string('configextendedusernamechars', 'admin'), 0));
     $temp->add(new admin_setting_configtext('sitepolicy', get_string('sitepolicy', 'admin'), get_string('configsitepolicy', 'admin'), '', PARAM_RAW));
-    $temp->add(new admin_setting_configselect('bloglevel', get_string('bloglevel', 'admin'), get_string('configbloglevel', 'admin'), 4, array(5 => get_string('worldblogs','blog'),
-                                                                                                                                              4 => get_string('siteblogs','blog'),
-                                                                                                                                              3 => get_string('courseblogs','blog'),
-                                                                                                                                              2 => get_string('groupblogs','blog'),
-                                                                                                                                              1 => get_string('personalblogs','blog'),
-                                                                                                                                              0 => get_string('disableblogs','blog'))));
-    $temp->add(new admin_setting_configcheckbox('usetags', get_string('usetags','admin'),get_string('configusetags', 'admin'),'1'));
     $temp->add(new admin_setting_configcheckbox('keeptagnamecase', get_string('keeptagnamecase','admin'),get_string('configkeeptagnamecase', 'admin'),'1'));
     $temp->add(new admin_setting_configcheckbox('cronclionly', get_string('cronclionly', 'admin'), get_string('configcronclionly', 'admin'), 0));
     $temp->add(new admin_setting_configpasswordunmask('cronremotepassword', get_string('cronremotepassword', 'admin'), get_string('configcronremotepassword', 'admin'), ''));

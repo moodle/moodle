@@ -1,4 +1,5 @@
 <?PHP
+$string['configmnet']                   = 'Moodle networking allows communication of this server with other servers or services.';
 $string['xmlrpc-missing']               = 'You must have XML-RPC installed in your PHP build to be able to use this feature.';
 $string['description']                  = 'Description';
 $string['mnet']                         = 'Moodle Networking';

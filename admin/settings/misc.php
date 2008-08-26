@@ -11,7 +11,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $item = new admin_setting_configcheckbox('enablehtmlpurifier', get_string('enablehtmlpurifier', 'admin'), get_string('configenablehtmlpurifier', 'admin'), 0); 
     $item->set_updatedcallback('reset_text_filters_cache');
     $temp->add($item);
-    $temp->add(new admin_setting_configcheckbox('enablegroupings', get_string('enablegroupings', 'admin'), get_string('configenablegroupings', 'admin'), 0));
 
     // Completion system
     require_once($CFG->libdir.'/completionlib.php');

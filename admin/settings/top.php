@@ -18,6 +18,11 @@ $ADMIN->add('root', new admin_externalpage('adminnotifications', get_string('not
  // hidden upgrade script
 $ADMIN->add('root', new admin_externalpage('upgradesettings', get_string('upgradesettings', 'admin'), "$CFG->wwwroot/$CFG->admin/upgradesettings.php", 'moodle/site:config', true));
 
+if ($hassiteconfig) {
+    $optionalsubsystems = new admin_settingpage('optionalsubsystems', get_string('optionalsubsystems', 'admin'));
+    $ADMIN->add('root', $optionalsubsystems);
+}
+
 $ADMIN->add('root', new admin_category('users', get_string('users','admin')));
 $ADMIN->add('root', new admin_category('courses', get_string('courses','admin')));
 $ADMIN->add('root', new admin_category('grades', get_string('grades')));
@@ -28,7 +33,8 @@ $ADMIN->add('root', new admin_category('security', get_string('security','admin'
 $ADMIN->add('root', new admin_category('appearance', get_string('appearance','admin')));
 $ADMIN->add('root', new admin_category('frontpage', get_string('frontpage','admin')));
 $ADMIN->add('root', new admin_category('server', get_string('server','admin')));
-$ADMIN->add('root', new admin_category('mnet', get_string('net','mnet')));
+
+$ADMIN->add('root', new admin_category('mnet', get_string('net','mnet'), (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode === 'off')));
 
 $ADMIN->add('root', new admin_category('reports', get_string('reports')));
 foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
@@ -43,6 +49,7 @@ foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
         // ugly hack for special access control in reports
         switch($plugin) {
             case 'backups': $cap = 'moodle/site:backup'; break;
+            case 'stats': if (empty($CFG->enablestats)) {continue 2;};
             default: $cap = 'moodle/site:viewreports';
         }
         $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php",$cap));

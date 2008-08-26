@@ -93,12 +93,6 @@ $ADMIN->add('server', $temp, 50);
 
 
 
-// "rss" settingpage
-$temp = new admin_settingpage('rss', get_string('rss'));
-$temp->add(new admin_setting_configcheckbox('enablerssfeeds', get_string('enablerssfeeds', 'admin'), get_string('configenablerssfeeds', 'admin'), 0));
-$ADMIN->add('server', $temp);
-
-
 // "debugging" settingpage
 $temp = new admin_settingpage('debugging', get_string('debugging', 'admin'));
 $temp->add(new admin_setting_special_debug());
@@ -110,8 +104,7 @@ $ADMIN->add('server', $temp);
 
 
 // "stats" settingpage
-$temp = new admin_settingpage('stats', get_string('stats'));
-$temp->add(new admin_setting_configcheckbox('enablestats', get_string('enablestats', 'admin'), get_string('configenablestats', 'admin'), 0));
+$temp = new admin_settingpage('stats', get_string('stats'), 'moodle/site:config', empty($CFG->enablestats));
 $temp->add(new admin_setting_configselect('statsfirstrun', get_string('statsfirstrun', 'admin'), get_string('configstatsfirstrun', 'admin'), 'none', array('none' => get_string('none'),
                                                                                                                                                            60*60*24*7 => get_string('numweeks','moodle',1),
                                                                                                                                                            60*60*24*14 => get_string('numweeks','moodle',2),

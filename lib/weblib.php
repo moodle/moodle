@@ -4484,7 +4484,7 @@ has_capability('moodle/course:viewhiddenuserfields', $context)) {
         $output .= '<a href="'.$CFG->wwwroot.'/blog/index.php?userid='.$user->id.'">'.get_string('blogs','blog').'</a><br />';
     }
     //link to notes
-    if (has_capability('moodle/notes:manage', $context) || has_capability('moodle/notes:view', $context)) {
+    if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $context) || has_capability('moodle/notes:view', $context))) {
         $output .= '<a href="'.$CFG->wwwroot.'/notes/index.php?course=' . $course->id. '&amp;user='.$user->id.'">'.get_string('notes','notes').'</a><br />';
     }
 

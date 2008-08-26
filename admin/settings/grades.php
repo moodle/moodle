@@ -14,9 +14,6 @@ if (has_capability('moodle/grade:manage', $systemcontext)
         // new CFG variable for gradebook (what roles to display)
         $temp->add(new admin_setting_special_gradebookroles());
 
-        // enable outcomes checkbox
-        $temp->add(new admin_setting_configcheckbox('enableoutcomes', get_string('enableoutcomes', 'grades'), get_string('configenableoutcomes', 'grades'), 0, PARAM_INT));
-
         $temp->add(new admin_setting_grade_profilereport());
 
         $temp->add(new admin_setting_configselect('grade_aggregationposition', get_string('aggregationposition', 'grades'),
@@ -142,7 +139,7 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
     $scales = new admin_externalpage('scales', get_string('scales'), $CFG->wwwroot.'/grade/edit/scale/index.php', 'moodle/grade:manage');
     $ADMIN->add('grades', $scales);
-    $outcomes = new admin_externalpage('outcomes', get_string('outcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/index.php', 'moodle/grade:manage');
+    $outcomes = new admin_externalpage('outcomes', get_string('outcomes', 'grades'), $CFG->wwwroot.'/grade/edit/outcome/index.php', 'moodle/grade:manage', empty($CFG->enableoutcomes));
     $ADMIN->add('grades', $outcomes);
     $letters = new admin_externalpage('letters', get_string('letters', 'grades'), $CFG->wwwroot.'/grade/edit/letter/edit.php', 'moodle/grade:manageletters');
     $ADMIN->add('grades', $letters);

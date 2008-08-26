@@ -16,6 +16,10 @@ require_login($course->id);
 // to create notes the current user needs a capability
 require_capability('moodle/notes:manage', $context);
 
+if (empty($CFG->enablenotes)) {
+    print_error('notesdisabled', 'notes');
+}
+
 if (!empty($users) && confirm_sesskey()) {
     if (count($users) != count($contents) || count($users) != count($states)) {
         print_error('invalidformdata', '', $CFG->wwwroot.'/user/index.php?id='.$id);
@@ -25,7 +29,7 @@ if (!empty($users) && confirm_sesskey()) {
     $note->courseid = $id;
     $note->format = FORMAT_PLAIN;
     foreach ($users as $k => $v) {
-        if(!$user = $DB->get_record('user', array('id'=>$v)) || empty($contents[$k])) {
+        if (!$user = $DB->get_record('user', array('id'=>$v)) || empty($contents[$k])) {
             continue;
         }
         $note->id = 0;

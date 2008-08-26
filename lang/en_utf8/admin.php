@@ -531,6 +531,7 @@ $string['numberofmissingstrings'] = 'Number of missing strings: $a';
 $string['opensslrecommended'] = 'Installing the optional OpenSSL library is highly recommended -- it enables Moodle Networking functionality.';
 $string['opentogoogle'] = 'Open to Google';
 $string['optionalmaintenancemessage'] = 'Optional maintenance message';
+$string['optionalsubsystems'] = 'Optional subsystems';
 $string['order1'] = 'First';
 $string['order2'] = 'Second';
 $string['order3'] = 'Third';

@@ -188,7 +188,7 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
 
     global $SESSION, $CFG, $COURSE, $USER;
 
-    if (empty($CFG->portfolioenabled)) {
+    if (empty($CFG->enableportfolios)) {
         return;
     }
 
@@ -317,7 +317,7 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
 function portfolio_instance_select($instances, $callerformats, $callbackclass, $selectname='instance', $return=false, $returnarray=false) {
     global $CFG;
 
-    if (empty($CFG->portfolioenabled)) {
+    if (empty($CFG->enableportfolios)) {
         return;
     }
 

@@ -54,6 +54,9 @@
     require_login($course);
     add_to_log($courseid, 'notes', 'view', 'index.php?course='.$courseid.'&amp;user='.$userid, 'view notes');
 
+    if (empty($CFG->enablenotes)) {
+        print_error('notesdisabled', 'notes');
+    }
 
 /// output HTML
     if ($course->id == SITEID) {

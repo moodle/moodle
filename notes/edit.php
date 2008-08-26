@@ -42,6 +42,10 @@
     $context = get_context_instance(CONTEXT_COURSE, $course->id);
     require_capability('moodle/notes:manage', $context);
 
+    if (empty($CFG->enablenotes)) {
+        print_error('notesdisabled', 'notes');
+    }
+
 /// create form
     $noteform = new note_edit_form();
 

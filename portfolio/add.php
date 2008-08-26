@@ -1,7 +1,7 @@
 <?php
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 
-if (empty($CFG->portfolioenabled)) {
+if (empty($CFG->enableportfolios)) {
     print_error('disabled', 'portfolio');
 }
 

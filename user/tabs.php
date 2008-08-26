@@ -59,7 +59,7 @@
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?filtertype=course&amp;filterselect='.$filterselect, get_string('blogs','blog'));
         }
 
-        if (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext)) {
+        if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext))) {
             $toprow[] = new tabobject('notes', $CFG->wwwroot.'/notes/index.php?filtertype=course&amp;filterselect=' . $filterselect, get_string('notes', 'notes'));
         }
 
@@ -171,7 +171,7 @@
             $toprow[] = new tabobject('blogs', $CFG->wwwroot.'/blog/index.php?userid='.$user->id.'&amp;courseid='.$course->id, get_string('blog', 'blog'));
         }
 
-        if (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext)) {
+        if (!empty($CFG->enablenotes) and (has_capability('moodle/notes:manage', $coursecontext) || has_capability('moodle/notes:view', $coursecontext))) {
             $toprow[] = new tabobject('notes', $CFG->wwwroot.'/notes/index.php?course='.$course->id . '&amp;user=' . $user->id, get_string('notes', 'notes'));
         }
 
@@ -239,7 +239,7 @@
         }
     }
 
-    if (empty($userindexpage) && $user->id == $USER->id && !empty($CFG->portfolioenabled) && has_capability('moodle/portfolio:export', get_system_context())) {
+    if (!empty($user) and empty($userindexpage) && $user->id == $USER->id && !empty($CFG->enableportfolios) && has_capability('moodle/portfolio:export', get_system_context())) {
 
         /// Portfolio tab
         require_once($CFG->libdir . '/portfoliolib.php');
@@ -249,15 +249,16 @@
     }
 
     // Repository Tab
-    if ($user->id == $USER->id) {
+    if (!empty($user) and $user->id == $USER->id) {
         require_once($CFG->dirroot . '/repository/lib.php');
-        if (repository_instances($COURSE->context, $USER->id)) {
+        $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
+        if (repository_instances($coursecontext, $USER->id)) {
             $toprow[] = new tabobject('repositories', $CFG->wwwroot .'/user/repository.php', get_string('repositories', 'repository'));
         }
     }
 
     /// Messaging tab
-    if (has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
+    if (!empty($user) and empty($userindexpage) and has_capability('moodle/user:editownmessageprofile', $systemcontext)) {
         $toprow[] = new tabobject('editmessage', $CFG->wwwroot.'/message/edit.php?id='.$user->id.'&amp;course='.$course->id, get_string('editmymessage', 'message'));
     }
 
