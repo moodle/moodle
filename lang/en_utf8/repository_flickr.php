@@ -1,9 +1,9 @@
 <?php
-$string['configplugin'] = 'Flickr configureation';
+$string['configplugin'] = 'Flickr configuration';
 $string['repositoryname'] = 'Flickr';
-$string['repositorydesc'] = 'Repository for flickr.com';
+$string['repositorydesc'] = 'Repository on flickr.com';
 $string['notitle'] = 'notitle';
-$string['username'] = 'Flickr Account:';
+$string['username'] = 'Flickr account email: ';
 $string['remember'] = 'Remember me';
-$string['nullphotolist'] = 'There is no photo belong to this account.';
-$string['invalidemail'] = 'Invalid Flickr email address.';
+$string['nullphotolist'] = 'There are no photos in this account.';
+$string['invalidemail'] = 'Invalid email address for flickr';

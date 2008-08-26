@@ -1,7 +1,7 @@
 <?php // $Id$
-$string['configplugin'] = 'Configuration for local repository';
-$string['repositoryname'] = 'Local Moodle';
-$string['repositorydesc'] = 'Repository for local Moodle';
+$string['configplugin'] = 'Configuration for local file repository';
+$string['repositoryname'] = 'Local Files';
+$string['repositorydesc'] = 'Repository on the local Moodle server';
 $string['notitle'] = 'notitle';
 $string['remember'] = 'Remember me';
-$string['emptyfilelist'] = 'There is no files.';
+$string['emptyfilelist'] = 'There are no files to show';
