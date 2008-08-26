@@ -41,6 +41,6 @@ $string['size'] = 'Size';
 $string['submit'] = 'Submit';
 $string['sync'] = 'Sync';
 $string['title'] = 'Repository file picker';
-$string['thumbview'] = 'View as thumbnails';
+$string['thumbview'] = 'View as icons';
 $string['upload'] = 'Upload this file';
 $string['uploading'] = 'Uploading...';
