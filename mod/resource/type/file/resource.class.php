@@ -136,6 +136,7 @@ class resource_file extends resource_base {
         $alloptions = $RESOURCE_WINDOW_OPTIONS;
 
         if ($resource->forcedownload) {
+            $resource->popup = '';
             $resource->options = 'forcedownload';
 
         } else if ($resource->windowpopup) {
