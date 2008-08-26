@@ -186,6 +186,16 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008082200, 'quiz');
     }
 
+    /// Now that the quiz is no longer responsible for creating all the question
+    /// bank tables, and some of the tables are now the responsibility of the
+    /// datasetdependent question type, which did not have a version.php file before,
+    /// we need to say that these tables are already installed, otherwise XMLDB
+    /// will try to create them again and give an error.
+    if ($result && $oldversion < 2008082600) {
+        set_config('qtype_datasetdependent_version', 2008082600);
+        upgrade_mod_savepoint($result, 2008082600, 'quiz');
+    }
+
     return $result;
 }
 
