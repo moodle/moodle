@@ -2161,12 +2161,36 @@ class admin_setting_configpasswordunmask extends admin_setting_configtext {
         $unmask = get_string('unmaskpassword', 'form');
         $unmaskjs = '<script type="text/javascript">
 //<![CDATA[
-document.write(\'<span class="unmask"><input id="'.$id.'unmask" value="1" type="checkbox" onclick="unmaskPassword(\\\''.$id.'\\\')"/><label for="'.$id.'unmask">'.addslashes_js($unmask).'<\/label><\/span>\');
-document.getElementById("'.$this->get_id().'").setAttribute("autocomplete", "off");
+var is_ie = (navigator.userAgent.toLowerCase().indexOf("msie") != -1);
+
+document.getElementById("'.$id.'").setAttribute("autocomplete", "off");
+
+var unmaskdiv = document.getElementById("'.$id.'unmaskdiv");
+
+var unmaskchb = document.createElement("input");
+unmaskchb.setAttribute("type", "checkbox");
+unmaskchb.setAttribute("id", "'.$id.'unmask");
+unmaskchb.onchange = function() {unmaskPassword("'.$id.'");};
+unmaskdiv.appendChild(unmaskchb);
+
+var unmasklbl = document.createElement("label");
+unmasklbl.innerHTML = "'.addslashes_js($unmask).'";
+if (is_ie) {
+  unmasklbl.setAttribute("htmlFor", "'.$id.'unmask");
+} else {
+  unmasklbl.setAttribute("for", "'.$id.'unmask");
+}
+unmaskdiv.appendChild(unmasklbl);
+
+if (is_ie) {
+  // ugly hack to work around the famous onchange IE bug
+  unmaskchb.onclick = function() {this.blur();};
+  unmaskdiv.onclick = function() {this.blur();};
+}
 //]]>
 </script>';
         return format_admin_setting($this, $this->visiblename,
-                '<div class="form-password"><input type="password" size="'.$this->size.'" id="'.$this->get_id().'" name="'.$this->get_full_name().'" value="'.s($data).'" />'.$unmaskjs.'</div>',
+                '<div class="form-password"><input type="password" size="'.$this->size.'" id="'.$id.'" name="'.$this->get_full_name().'" value="'.s($data).'" /><div class="unmask" id="'.$id.'unmaskdiv"></div>'.$unmaskjs.'</div>',
                 $this->description, true, '', NULL, $query);
     }
 }
