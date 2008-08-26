@@ -40,13 +40,15 @@ if (!empty($edit) || !empty($new)) {
         $instance = repository_instance($edit);
         $configs  = $instance->get_option_names();
         $plugin = $instance->type;
+        $typeid = $instance->typeid;
     } else {
         $plugin = $new;
+        $typeid = $new;
         $instance = null;
     }
     $CFG->pagepath = 'admin/managerepository/' . $plugin;
     // display the edit form for this instance
-    $mform = new repository_admin_form('', array('plugin' => $plugin, 'instance' => $instance));
+    $mform = new repository_admin_form('', array('plugin' => $plugin, 'typeid'=> $typeid, 'instance' => $instance));
     // end setup, begin output
    
     if ($mform->is_cancelled()){

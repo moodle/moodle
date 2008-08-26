@@ -34,11 +34,11 @@ if(!$repository = $DB->get_record('repository', array('id'=>$repo_id)))
 }
 
 if(file_exists($CFG->dirroot.'/repository/'.
-    $repository->repositorytype.'/repository.class.php'))
+    $repository->type.'/repository.class.php'))
 {
     require_once($CFG->dirroot.'/repository/'.
-        $repository->repositorytype.'/repository.class.php');
-    $classname = 'repository_' . $repository->repositorytype;
+        $repository->type.'/repository.class.php');
+    $classname = 'repository_' . $repository->type;
     try{
         $repo = new $classname($repo_id, $ctx_id, array('ajax'=>true));
     } catch (repository_exception $e){

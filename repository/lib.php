@@ -179,9 +179,9 @@ abstract class repository {
     final public function ajax_info() {
         global $CFG;
         $repo = new stdclass;
+        $repo->id   = $this->id;
         $repo->name = $this->options['name'];
         $repo->type = $this->options['type'];
-        $repo->id   = $this->options['id'];
         $repo->icon = $CFG->wwwroot.'/repository/'.$repo->type.'/icon.png';
         return $repo;
     }
@@ -297,21 +297,30 @@ abstract class repository {
      */
     public function set_option($options = array()){
         global $DB;
-        if (is_array($options)) {
-            $options = array_merge($this->get_option(), $options);
-        } else {
-            $options = $this->get_option();
+        $r = new object();
+        $r->id   = $this->id;
+        $r->name = $options['name'];
+        $DB->update_record('repository_instances', $r);
+        unset($options['name']);
+        foreach ($options as $name=>$value) {
+            if ($id = $DB->get_field('repository_instance_config', 'id', array('name'=>$name, 'instanceid'=>$this->id))) {
+                if ($value===null) {
+                    return $DB->delete_records('repository_instance_config', array('name'=>$name, 'instanceid'=>$this->id));
+                } else {
+                    return $DB->set_field('repository_instance_config', 'value', $value, array('id'=>$id));
+                }
+            } else {
+                if ($value===null) {
+                    return true;
+                }
+                $config = new object();
+                $config->instanceid = $this->id;
+                $config->name   = $name;
+                $config->value  = $value;
+                return $DB->insert_record('repository_instance_config', $config);
+            }
         }
-        $repository = new stdclass;
-        $position = 1;
-        $options   = serialize($options);
-        if ($entry = $DB->get_record('repository', array('id'=>$this->id))) {
-            $field = 'data'.$position;
-            $repository->id = $entry->id;
-            $repository->$field = $options;
-            return $DB->update_record('repository', $repository);
-        }
-        return false;
+        return true;
     }
 
     /**
@@ -322,23 +331,13 @@ abstract class repository {
      */
     public function get_option($config = ''){
         global $DB;
-        $entry = $DB->get_record('repository', array('id'=>$this->id));
-        if (!empty($entry->visible)) {
-            $ret['visible'] = 1;
-        } else {
-            $ret['visible'] = 0;
+        $entries = $DB->get_records('repository_instance_config', array('instanceid'=>$this->id));
+        $ret = array();
+        if (empty($entries)) {
+            return $ret;
         }
-        $ret['type'] = $entry->repositorytype;
-        $ret['name'] = $entry->repositoryname;
-        $ret['id']   = $entry->id;
-        for ($i=1;$i<6;$i++) {
-            $field = 'data'.$i;
-            $data = unserialize($entry->$field);
-            if (!empty($data)) {
-                if (is_array($data)) {
-                    $ret = array_merge($ret, $data);
-                }
-            }
+        foreach($entries as $entry){
+            $ret[$entry->name] = $entry->value;
         }
         if (!empty($config)) {
             return $ret[$config];
@@ -438,16 +437,17 @@ class repository_exception extends moodle_exception {
 function repository_instances($context, $userid = null, $visible = true){
     global $DB, $CFG, $USER;
     $params = array();
-    $sql = 'SELECT * FROM {repository} r WHERE ';
+    $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
+    $sql .= 'i.typeid = r.id AND ';
     if (!empty($userid) && is_numeric($userid)) {
-        $sql .= ' (r.userid = 0 or r.userid = ?) AND ';
+        $sql .= ' (i.userid = 0 or i.userid = ?) AND ';
         $params[] = $userid;
     }
     if($context->id == SYSCONTEXTID) {
-        $sql .= ' (r.contextid = ?)';
+        $sql .= ' (i.contextid = ?)';
         $params[] = SYSCONTEXTID;
     } else {
-        $sql .= ' (r.contextid = ? or r.contextid = ?)';
+        $sql .= ' (i.contextid = ? or i.contextid = ?)';
         $params[] = SYSCONTEXTID;
         $params[] = $context->id;
     }
@@ -461,8 +461,12 @@ function repository_instances($context, $userid = null, $visible = true){
     foreach($repos as $repo) {
         require_once($CFG->dirroot . '/repository/'. $repo->repositorytype 
             . '/repository.class.php');
+        $options['visible'] = $repo->visible;
+        $options['name']    = $repo->name;
+        $options['type']    = $repo->repositorytype;
+        $options['typeid']  = $repo->typeid;
         $classname = 'repository_' . $repo->repositorytype;
-        $ret[] = new $classname($repo->id, $repo->contextid);
+        $ret[] = new $classname($repo->id, $repo->contextid, $options);
     }
     return $ret;
 }
@@ -475,14 +479,20 @@ function repository_instances($context, $userid = null, $visible = true){
  */
 function repository_instance($id){
     global $DB, $CFG;
+    $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
+    $sql .= 'i.typeid = r.id AND ';
+    $sql .= 'i.id = '.$id;
 
-    if (!$instance = $DB->get_record('repository', array('id' => $id))) {
+    if(!$instance = $DB->get_record_sql($sql)) {
         return false;
     }
     require_once($CFG->dirroot . '/repository/'. $instance->repositorytype 
         . '/repository.class.php');
     $classname = 'repository_' . $instance->repositorytype;
-    return new $classname($instance->id, $instance->contextid);
+    $options['typeid'] = $instance->typeid;
+    $options['type']   = $instance->repositorytype;
+    $options['name']   = $instance->name;
+    return new $classname($instance->id, $instance->contextid, $options);
 }
 
 function repository_static_function($plugin, $function) {
@@ -587,8 +597,9 @@ function get_repository_client($context){
 #list-$suffix li a:hover{ background: gray; color:white; }
 #repo-list-$suffix .repo-name{}
 #repo-list-$suffix li{margin-bottom: 1em}
-#paging-$suffix{margin:10px 5px; clear:both}
-#paging-$suffix a{padding: 4px; border: 1px solid gray}
+#paging-$suffix{margin:10px 5px; clear:both;}
+#paging-$suffix a{padding: 4px;border: 1px solid #CCC}
+#path-$suffix a{padding: 4px;background: gray}
 #panel-$suffix{padding:0;margin:0; text-align:left;}
 p.upload{text-align:right;margin: 5px}
 p.upload a{font-size: 14px;background: #ccc;color:black;padding: 3px}
@@ -827,6 +838,7 @@ _client.navbar = function(){
     var str = '';
     str += _client.uploadcontrol();
     str += _client.makepage();
+    str += _client.makepath();
     return str;
 }
 // TODO
@@ -1008,6 +1020,21 @@ _client.makepage = function(){
     }
     return str;
 }
+_client.makepath = function(){
+    var str = '';
+    var p = _client.ds.path;
+    if(p && p.length!=0){
+        str += '<div id="path-$suffix">';
+        if(p.path && p.name)
+        for(var i = 0; i < _client.ds.path.length; i++) {
+            str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', "'+_client.ds.path[i].path+'", 0)" href="###">';
+            str += _client.ds.path[i].name;
+            str += '</a> ';
+        }
+        str += '</div>';
+    }
+    return str;
+}
 // send download request
 _client.download = function(){
     var title = document.getElementById('newname-$suffix').value;
@@ -1121,16 +1148,7 @@ _client.dlfile = {
             panel.get('element').innerHTML = ret.e;
             return;
         }
-        var title = document.createElement('h1');
-        title.innerHTML = '$strdownload';
-        var btn = document.createElement('button');
-        btn.innerHTML = '$stradd';
-        btn.onclick = function(){
-            repository_client_$suffix.end(ret);
-        }
-        panel.get('element').innerHTML = '';
-        panel.get('element').appendChild(title);
-        panel.get('element').appendChild(btn);
+        repository_client_$suffix.end(ret);
     }
 }
 // request file list or login
@@ -1197,6 +1215,7 @@ final class repository_admin_form extends moodleform {
         global $CFG;
         // type of plugin, string
         $this->plugin = $this->_customdata['plugin'];
+        $this->typeid = $this->_customdata['typeid'];
         $this->instance = (isset($this->_customdata['instance'])
                 && is_subclass_of($this->_customdata['instance'], 'repository'))
             ? $this->_customdata['instance'] : null;
@@ -1207,6 +1226,7 @@ final class repository_admin_form extends moodleform {
         $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->id : 0);
         $mform->addElement('hidden', 'new',   $this->plugin);
         $mform->addElement('hidden', 'plugin', $this->plugin);
+        $mform->addElement('hidden', 'typeid', $this->typeid);
 
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
         $mform->addRule('name', $strrequired, 'required', null, 'client');
@@ -1225,7 +1245,11 @@ final class repository_admin_form extends moodleform {
             $data = array();
             $data['name'] = $this->instance->name;
             foreach ($this->instance->get_option_names() as $config) {
-                $data[$config] = $this->instance->$config;
+                if (!empty($this->instance->$config)) {
+                    $data[$config] = $this->instance->$config;
+                } else {
+                    $data[$config] = '';
+                }
             }
             $this->set_data($data);
         }
@@ -1236,7 +1260,7 @@ final class repository_admin_form extends moodleform {
         global $DB;
 
         $errors = array();
-        if ($DB->count_records('repository', array('repositoryname' => $data['name'], 'repositorytype' => $data['plugin'])) > 1) {
+        if ($DB->count_records('repository_instances', array('name' => $data['name'], 'typeid' => $data['typeid'])) > 1) {
             $errors = array('name' => get_string('err_uniquename', 'repository'));
         }
 

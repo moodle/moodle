@@ -14,20 +14,21 @@ class repository_boxnet extends repository{
     private $box;
 
     public function set_option($options = array()){
-        $ret = parent::set_option($options);
         if (!empty($options['api_key'])) {
             set_config('api_key', $options['api_key'], 'boxnet');
         }
+        unset($options['api_key']);
+        $ret = parent::set_option($options);
         return $ret;
     }
 
     public function get_option($config = ''){
-        $options = parent::get_option($config);
         if($config==='api_key'){
             return get_config('boxnet', 'api_key');
         } else {
             $options['api_key'] = get_config('boxnet', 'api_key');
         }
+        $options = parent::get_option($config);
         return $options;
     }
 

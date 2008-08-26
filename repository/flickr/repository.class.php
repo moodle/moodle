@@ -14,6 +14,25 @@ class repository_flickr extends repository{
     private $flickr;
     public $photos;
 
+    public function set_option($options = array()){
+        if (!empty($options['api_key'])) {
+            set_config('api_key', $options['api_key'], 'flickr');
+        }
+        unset($options['api_key']);
+        $ret = parent::set_option($options);
+        return $ret;
+    }
+
+    public function get_option($config = ''){
+        if($config==='api_key'){
+            return get_config('flickr', 'api_key');
+        } else {
+            $options['api_key'] = get_config('flickr', 'api_key');
+        }
+        $options = parent::get_option($config);
+        return $options;
+    }
+
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
