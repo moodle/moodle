@@ -200,23 +200,24 @@ abstract class repository {
         require_once($CFG->dirroot . '/repository/'. $type . '/repository.class.php');
         $classname = 'repository_' . $type;
         $record = new stdclass;
+        $repo = $DB->get_record('repository', array('type'=>$type));
+        $record->name = $params['name'];
+        $record->typeid = $repo->id;
+        $record->timecreated  = time();
+        $record->timemodified = time();
+        $record->contextid = $context->id;
+        $record->userid    = $userid;
+        $id = $DB->insert_record('repository_instances', $record);
         if (call_user_func($classname . '::has_admin_config')) {
             $configs = call_user_func($classname . '::get_option_names');
             $options = array();
             foreach ($configs as $config) {
                 $options[$config] = $params[$config];
             }
-            $record->data1 = serialize($options);
         }
-        $record->repositoryname = $params['name'];
-        $record->repositorytype = $type;
-        $record->timecreated  = time();
-        $record->timemodified = time();
-        $record->contextid = $context->id;
-        $record->visible   = 1;
-        $record->userid    = $userid;
-        $id = $DB->insert_record('repository', $record);
         if (!empty($id)) {
+            $instance = repository_instance($id);
+            $instance->set_option($options);
             return $id;
         } else {
             return null;
@@ -227,7 +228,7 @@ abstract class repository {
      */
     final public function delete(){
         global $DB;
-        $DB->delete_records('repository', array('id'=>$this->id));
+        $DB->delete_records('repository_instances', array('id'=>$this->id));
         return true;
     }
     /**
@@ -297,11 +298,13 @@ abstract class repository {
      */
     public function set_option($options = array()){
         global $DB;
-        $r = new object();
-        $r->id   = $this->id;
-        $r->name = $options['name'];
-        $DB->update_record('repository_instances', $r);
-        unset($options['name']);
+        if (!empty($options['name'])) {
+            $r = new object();
+            $r->id   = $this->id;
+            $r->name = $options['name'];
+            $DB->update_record('repository_instances', $r);
+            unset($options['name']);
+        }
         foreach ($options as $name=>$value) {
             if ($id = $DB->get_field('repository_instance_config', 'id', array('name'=>$name, 'instanceid'=>$this->id))) {
                 if ($value===null) {
@@ -798,6 +801,7 @@ _client.rename = function(oldname, url){
     html += '<input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
     html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a> ';
     html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownbtn" />';
+    html += '<input type="button" onclick="repository_client_$suffix.hide()" value="Cancle" />';
     html += '</div>';
     panel.get('element').innerHTML = html;
 }
@@ -1071,6 +1075,10 @@ _client.end = function(str){
     _client.instance.hide();
     _client.viewfiles();
 }
+_client.hide = function(){
+    _client.instance.hide();
+    _client.viewfiles();
+}
 _client.callback = {
     success: function(o) {
         var panel = new YAHOO.util.Element('panel-$suffix');
@@ -1090,7 +1098,7 @@ _client.callback = {
         var search = null;
         var logout = null;
         var mgr = null;
-        if(_client.ds.login){
+        if(_client.ds && _client.ds.login){
             _client.print_login();
         } else if(_client.ds.list) {
             if(_client.viewmode) {
