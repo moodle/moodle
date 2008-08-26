@@ -162,38 +162,6 @@ function xmldb_main_upgrade($oldversion) {
         /// Main savepoint reached
         upgrade_main_savepoint($result, 2008063001);
     }
-    if ($result && $oldversion < 2008063002) {
-
-    /// Define table repository to be created
-        $table = new xmldb_table('repository');
-
-    /// Adding fields to table repository
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
-        $table->add_field('repositoryname', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
-        $table->add_field('repositorytype', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('contextid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
-        $table->add_field('username', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
-        $table->add_field('password', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null);
-        $table->add_field('data1', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('data2', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('data3', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('data4', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('data5', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
-        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0');
-
-    /// Adding keys to table repository
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
-
-    /// Conditionally launch create table for repository
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008063002);
-    }
 
     if ($result && $oldversion < 2008070300) {
         $result = $DB->delete_records_select('role_names', $DB->sql_isempty('role_names', 'name', false, false));
@@ -596,21 +564,6 @@ function xmldb_main_upgrade($oldversion) {
 
     /// Main savepoint reached
         upgrade_main_savepoint($result, 2008080600);
-    }
-
-    if ($result && $oldversion < 2008080701) {
-
-    /// Define field visible to be added to repository
-        $table = new xmldb_table('repository');
-        $field = new xmldb_field('visible', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, null, null, null, null, '1', 'timemodified');
-
-    /// Conditionally launch add field visible
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-    /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008080701);
     }
 
 /// Changing the type of all the columns that the question bank uses to store grades to be NUMBER(12, 7).
