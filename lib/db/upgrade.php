@@ -652,7 +652,7 @@ function xmldb_main_upgrade($oldversion) {
 
         upgrade_main_savepoint($result, 2008081900);
     }
-    if ($result && $oldversion < 2008082600) {
+    if ($result && $oldversion < 2008082602) {
 
     /// Define table repository to be dropped
         $table = new xmldb_table('repository');
@@ -718,7 +718,7 @@ function xmldb_main_upgrade($oldversion) {
         }
 
     /// Main savepoint reached
-        upgrade_main_savepoint($result, 2008082600);
+        upgrade_main_savepoint($result, 2008082602);
     }
 
 
