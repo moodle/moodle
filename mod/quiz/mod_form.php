@@ -9,6 +9,7 @@ class mod_quiz_mod_form extends moodleform_mod {
     function definition() {
 
         global $COURSE, $CFG, $DB;
+        $quizconfig = get_config('quiz');
         $mform    =& $this->_form;
 
 //-------------------------------------------------------------------------------
@@ -44,10 +45,10 @@ class mod_quiz_mod_form extends moodleform_mod {
         $timelimitgrprules['timelimit'][] = array(null, 'numeric', null, 'client');
         $mform->addGroupRule('timelimitgrp', $timelimitgrprules);
         $mform->disabledIf('timelimitgrp', 'timelimitenable');
-        $mform->setAdvanced('timelimitgrp', $CFG->quiz_fix_timelimit);
+        $mform->setAdvanced('timelimitgrp', $quizconfig->fix_timelimit);
         $mform->setHelpButton('timelimitgrp', array("timelimit", get_string("quiztimer","quiz"), "quiz"));
-        $mform->setDefault('timelimit', $CFG->quiz_timelimit);
-        $mform->setDefault('timelimitenable', !empty($CFG->quiz_timelimit));
+        $mform->setDefault('timelimit', $quizconfig->timelimit);
+        $mform->setDefault('timelimitenable', !empty($quizconfig->timelimit));
 
 
         //enforced time delay between quiz attempts add-on
@@ -66,13 +67,13 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'delay1', get_string("delay1", "quiz"), $timedelayoptions);
         $mform->setHelpButton('delay1', array("timedelay1", get_string("delay1", "quiz"), "quiz"));
-        $mform->setAdvanced('delay1', $CFG->quiz_fix_delay1);
-        $mform->setDefault('delay1', $CFG->quiz_delay1);
+        $mform->setAdvanced('delay1', $quizconfig->fix_delay1);
+        $mform->setDefault('delay1', $quizconfig->delay1);
 
         $mform->addElement('select', 'delay2', get_string("delay2", "quiz"), $timedelayoptions);
         $mform->setHelpButton('delay2', array("timedelay2", get_string("delay2", "quiz"), "quiz"));
-        $mform->setAdvanced('delay2', $CFG->quiz_fix_delay2);
-        $mform->setDefault('delay2', $CFG->quiz_delay2);
+        $mform->setAdvanced('delay2', $quizconfig->fix_delay2);
+        $mform->setDefault('delay2', $quizconfig->delay2);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'displayhdr', get_string('display', 'form'));
@@ -84,18 +85,18 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'questionsperpage', get_string('newpageevery', 'quiz'), $perpage);
         $mform->setHelpButton('questionsperpage', array('questionsperpage', get_string('newpageevery', 'quiz'), 'quiz'));
-        $mform->setAdvanced('questionsperpage', $CFG->quiz_fix_questionsperpage);
-        $mform->setDefault('questionsperpage', $CFG->quiz_questionsperpage);
+        $mform->setAdvanced('questionsperpage', $quizconfig->fix_questionsperpage);
+        $mform->setDefault('questionsperpage', $quizconfig->questionsperpage);
 
         $mform->addElement('selectyesno', 'shufflequestions', get_string("shufflequestions", "quiz"));
         $mform->setHelpButton('shufflequestions', array("shufflequestions", get_string("shufflequestions","quiz"), "quiz"));
-        $mform->setAdvanced('shufflequestions', $CFG->quiz_fix_shufflequestions);
-        $mform->setDefault('shufflequestions', $CFG->quiz_shufflequestions);
+        $mform->setAdvanced('shufflequestions', $quizconfig->fix_shufflequestions);
+        $mform->setDefault('shufflequestions', $quizconfig->shufflequestions);
 
         $mform->addElement('selectyesno', 'shuffleanswers', get_string("shufflewithin", "quiz"));
         $mform->setHelpButton('shuffleanswers', array("shufflewithin", get_string("shufflewithin","quiz"), "quiz"));
-        $mform->setAdvanced('shuffleanswers', $CFG->quiz_fix_shuffleanswers);
-        $mform->setDefault('shuffleanswers', $CFG->quiz_shuffleanswers);
+        $mform->setAdvanced('shuffleanswers', $quizconfig->fix_shuffleanswers);
+        $mform->setDefault('shuffleanswers', $quizconfig->shuffleanswers);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'attemptshdr', get_string('attempts', 'quiz'));
@@ -107,31 +108,31 @@ class mod_quiz_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'attempts', get_string("attemptsallowed", "quiz"), $attemptoptions);
         $mform->setHelpButton('attempts', array("attempts", get_string("attemptsallowed","quiz"), "quiz"));
-        $mform->setAdvanced('attempts', $CFG->quiz_fix_attempts);
-        $mform->setDefault('attempts', $CFG->quiz_attempts);
+        $mform->setAdvanced('attempts', $quizconfig->fix_attempts);
+        $mform->setDefault('attempts', $quizconfig->attempts);
 
         $mform->addElement('selectyesno', 'attemptonlast', get_string("eachattemptbuildsonthelast", "quiz"));
         $mform->setHelpButton('attemptonlast', array("repeatattempts", get_string("eachattemptbuildsonthelast", "quiz"), "quiz"));
-        $mform->setAdvanced('attemptonlast', $CFG->quiz_fix_attemptonlast);
-        $mform->setDefault('attemptonlast', $CFG->quiz_attemptonlast);
+        $mform->setAdvanced('attemptonlast', $quizconfig->fix_attemptonlast);
+        $mform->setDefault('attemptonlast', $quizconfig->attemptonlast);
 
         $mform->addElement('selectyesno', 'adaptive', get_string("adaptive", "quiz"));
         $mform->setHelpButton('adaptive', array("adaptive", get_string("adaptive","quiz"), "quiz"));
-        $mform->setAdvanced('adaptive', $CFG->quiz_fix_adaptive);
-        $mform->setDefault('adaptive', $CFG->quiz_optionflags & QUESTION_ADAPTIVE);
+        $mform->setAdvanced('adaptive', $quizconfig->fix_optionflags);
+        $mform->setDefault('adaptive', $quizconfig->optionflags & QUESTION_ADAPTIVE);
 
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'gradeshdr', get_string('grades', 'grades'));
         $mform->addElement('select', 'grademethod', get_string("grademethod", "quiz"), quiz_get_grading_options());
         $mform->setHelpButton('grademethod', array("grademethod", get_string("grademethod","quiz"), "quiz"));
-        $mform->setAdvanced('grademethod', $CFG->quiz_fix_grademethod);
-        $mform->setDefault('grademethod', $CFG->quiz_grademethod);
+        $mform->setAdvanced('grademethod', $quizconfig->fix_grademethod);
+        $mform->setDefault('grademethod', $quizconfig->grademethod);
 
         $mform->addElement('selectyesno', 'penaltyscheme', get_string("penaltyscheme", "quiz"));
         $mform->setHelpButton('penaltyscheme', array("penaltyscheme", get_string("penaltyscheme","quiz"), "quiz"));
-        $mform->setAdvanced('penaltyscheme', $CFG->quiz_fix_penaltyscheme);
-        $mform->setDefault('penaltyscheme', $CFG->quiz_penaltyscheme);
+        $mform->setAdvanced('penaltyscheme', $quizconfig->fix_penaltyscheme);
+        $mform->setDefault('penaltyscheme', $quizconfig->penaltyscheme);
 
         $options = array(
                     0 => '0',
@@ -140,15 +141,15 @@ class mod_quiz_mod_form extends moodleform_mod {
                     3 => '3');
         $mform->addElement('select', 'decimalpoints', get_string("decimaldigits", "quiz"), $options);
         $mform->setHelpButton('decimalpoints', array("decimalpoints", get_string("decimaldigits","quiz"), "quiz"));
-        $mform->setAdvanced('decimalpoints', $CFG->quiz_fix_decimalpoints);
-        $mform->setDefault('decimalpoints', $CFG->quiz_decimalpoints);
+        $mform->setAdvanced('decimalpoints', $quizconfig->fix_decimalpoints);
+        $mform->setDefault('decimalpoints', $quizconfig->decimalpoints);
 
-        $mform->addElement('hidden', 'grade', $CFG->quiz_maximumgrade);
+        $mform->addElement('hidden', 'grade', $quizconfig->maximumgrade);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'reviewoptionshdr', get_string('reviewoptionsheading', 'quiz'));
         $mform->setHelpButton('reviewoptionshdr', array('reviewoptions', get_string('reviewoptionsheading','quiz'), 'quiz'));
-        $mform->setAdvanced('reviewoptionshdr', $CFG->quiz_fix_review);
+        $mform->setAdvanced('reviewoptionshdr', $quizconfig->fix_review);
 
         $immediatelyoptionsgrp=array();
         $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'responsesimmediately', '', get_string('responses', 'quiz'));
@@ -158,12 +159,12 @@ class mod_quiz_mod_form extends moodleform_mod {
         $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'scoreimmediately', '', get_string('scores', 'quiz'));
         $immediatelyoptionsgrp[] = &$mform->createElement('checkbox', 'overallfeedbackimmediately', '', get_string('overallfeedback', 'quiz'));
         $mform->addGroup($immediatelyoptionsgrp, 'immediatelyoptionsgrp', get_string("reviewimmediately", "quiz"), null, false);
-        $mform->setDefault('responsesimmediately', $CFG->quiz_review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_IMMEDIATELY);
-        $mform->setDefault('answersimmediately', $CFG->quiz_review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
-        $mform->setDefault('feedbackimmediately', $CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
-        $mform->setDefault('generalfeedbackimmediately', $CFG->quiz_review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
-        $mform->setDefault('scoreimmediately', $CFG->quiz_review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY);
-        $mform->setDefault('overallfeedbackimmediately', $CFG->quiz_review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+        $mform->setDefault('responsesimmediately', $quizconfig->review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_IMMEDIATELY);
+        $mform->setDefault('answersimmediately', $quizconfig->review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
+        $mform->setDefault('feedbackimmediately', $quizconfig->review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+        $mform->setDefault('generalfeedbackimmediately', $quizconfig->review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+        $mform->setDefault('scoreimmediately', $quizconfig->review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY);
+        $mform->setDefault('overallfeedbackimmediately', $quizconfig->review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
 
         $openoptionsgrp=array();
         $openoptionsgrp[] = &$mform->createElement('checkbox', 'responsesopen', '', get_string('responses', 'quiz'));
@@ -173,12 +174,12 @@ class mod_quiz_mod_form extends moodleform_mod {
         $openoptionsgrp[] = &$mform->createElement('checkbox', 'scoreopen', '', get_string('scores', 'quiz'));
         $openoptionsgrp[] = &$mform->createElement('checkbox', 'overallfeedbackopen', '', get_string('overallfeedback', 'quiz'));
         $mform->addGroup($openoptionsgrp, 'openoptionsgrp', get_string("reviewopen", "quiz"), array(' '), false);
-        $mform->setDefault('responsesopen', $CFG->quiz_review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_OPEN);
-        $mform->setDefault('answersopen', $CFG->quiz_review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_OPEN);
-        $mform->setDefault('feedbackopen', $CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN);
-        $mform->setDefault('generalfeedbackopen', $CFG->quiz_review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_OPEN);
-        $mform->setDefault('scoreopen', $CFG->quiz_review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN);
-        $mform->setDefault('overallfeedbackopen', $CFG->quiz_review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_OPEN);
+        $mform->setDefault('responsesopen', $quizconfig->review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_OPEN);
+        $mform->setDefault('answersopen', $quizconfig->review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_OPEN);
+        $mform->setDefault('feedbackopen', $quizconfig->review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN);
+        $mform->setDefault('generalfeedbackopen', $quizconfig->review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_OPEN);
+        $mform->setDefault('scoreopen', $quizconfig->review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN);
+        $mform->setDefault('overallfeedbackopen', $quizconfig->review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_OPEN);
 
 
         $closedoptionsgrp=array();
@@ -189,32 +190,32 @@ class mod_quiz_mod_form extends moodleform_mod {
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'scoreclosed', '', get_string('scores', 'quiz'));
         $closedoptionsgrp[] = &$mform->createElement('checkbox', 'overallfeedbackclosed', '', get_string('overallfeedback', 'quiz'));
         $mform->addGroup($closedoptionsgrp, 'closedoptionsgrp', get_string("reviewclosed", "quiz"), array(' '), false);
-        $mform->setDefault('responsesclosed', $CFG->quiz_review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_CLOSED);
-        $mform->setDefault('answersclosed', $CFG->quiz_review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_CLOSED);
-        $mform->setDefault('feedbackclosed', $CFG->quiz_review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED);
-        $mform->setDefault('generalfeedbackclosed', $CFG->quiz_review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_CLOSED);
-        $mform->setDefault('scoreclosed', $CFG->quiz_review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED);
-        $mform->setDefault('overallfeedbackclosed', $CFG->quiz_review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_CLOSED);
+        $mform->setDefault('responsesclosed', $quizconfig->review & QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_CLOSED);
+        $mform->setDefault('answersclosed', $quizconfig->review & QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_CLOSED);
+        $mform->setDefault('feedbackclosed', $quizconfig->review & QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED);
+        $mform->setDefault('generalfeedbackclosed', $quizconfig->review & QUIZ_REVIEW_GENERALFEEDBACK & QUIZ_REVIEW_CLOSED);
+        $mform->setDefault('scoreclosed', $quizconfig->review & QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED);
+        $mform->setDefault('overallfeedbackclosed', $quizconfig->review & QUIZ_REVIEW_OVERALLFEEDBACK & QUIZ_REVIEW_CLOSED);
 
 //-------------------------------------------------------------------------------
         $mform->addElement('header', 'security', get_string('security', 'form'));
 
         $mform->addElement('selectyesno', 'popup', get_string("popup", "quiz"));
         $mform->setHelpButton('popup', array("popup", get_string("popup", "quiz"), "quiz"));
-        $mform->setAdvanced('popup', $CFG->quiz_fix_popup);
-        $mform->setDefault('popup', $CFG->quiz_popup);
+        $mform->setAdvanced('popup', $quizconfig->fix_popup);
+        $mform->setDefault('popup', $quizconfig->popup);
 
         $mform->addElement('passwordunmask', 'quizpassword', get_string("requirepassword", "quiz"));
         $mform->setType('quizpassword', PARAM_TEXT);
         $mform->setHelpButton('quizpassword', array("requirepassword", get_string("requirepassword", "quiz"), "quiz"));
-        $mform->setAdvanced('quizpassword', $CFG->quiz_fix_password);
-        $mform->setDefault('quizpassword', $CFG->quiz_password);
+        $mform->setAdvanced('quizpassword', $quizconfig->fix_password);
+        $mform->setDefault('quizpassword', $quizconfig->password);
 
         $mform->addElement('text', 'subnet', get_string("requiresubnet", "quiz"));
         $mform->setType('subnet', PARAM_TEXT);
         $mform->setHelpButton('subnet', array("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"));
-        $mform->setAdvanced('subnet', $CFG->quiz_fix_subnet);
-        $mform->setDefault('subnet', $CFG->quiz_subnet);
+        $mform->setAdvanced('subnet', $quizconfig->fix_subnet);
+        $mform->setDefault('subnet', $quizconfig->subnet);
 
 //-------------------------------------------------------------------------------
         $features = new stdClass;

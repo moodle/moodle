@@ -4,6 +4,7 @@
 
 $string['essayonly'] = 'The following questions need to be graded manually';
 $string['grading'] = 'Manual grading';
+$string['gradingreport'] = 'Manual grading report';
 $string['gradeall'] = 'Grade all $a attempts';
 $string['graded'] = '(graded)';
 $string['gradeungraded'] = 'Grade all $a ungraded attempts';

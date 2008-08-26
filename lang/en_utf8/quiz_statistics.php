@@ -3,6 +3,7 @@
 
 
 $string['statistics'] = 'Statistics';
+$string['statisticsreport'] = 'Statistics report';
 $string['calculatefrom'] = 'Calculate statistics from';
 
 

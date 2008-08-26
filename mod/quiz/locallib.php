@@ -32,16 +32,6 @@ require_once($CFG->libdir  . '/eventslib.php');
 /// Constants ///////////////////////////////////////////////////////////////////
 
 /**#@+
- * Options determining how the grades from individual attempts are combined to give
- * the overall grade for a user
- */
-define("QUIZ_GRADEHIGHEST", "1");
-define("QUIZ_GRADEAVERAGE", "2");
-define("QUIZ_ATTEMPTFIRST", "3");
-define("QUIZ_ATTEMPTLAST",  "4");
-/**#@-*/
-
-/**#@+
  * Constants to describe the various states a quiz attempt can be in.
  */
 define('QUIZ_STATE_DURING', 'during');
@@ -647,17 +637,6 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
             }
             return $maxattempt;
     }
-}
-
-/**
- * @return the options for calculating the quiz grade from the individual attempt grades.
- */
-function quiz_get_grading_options() {
-    return array (
-            QUIZ_GRADEHIGHEST => get_string('gradehighest', 'quiz'),
-            QUIZ_GRADEAVERAGE => get_string('gradeaverage', 'quiz'),
-            QUIZ_ATTEMPTFIRST => get_string('attemptfirst', 'quiz'),
-            QUIZ_ATTEMPTLAST  => get_string('attemptlast', 'quiz'));
 }
 
 /**

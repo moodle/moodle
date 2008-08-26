@@ -94,7 +94,7 @@
     if ($quiz_showbreaks > -1) {
         $thispageurl->param('showbreaks', $quiz_showbreaks);
     } else {
-        $quiz_showbreaks = ($CFG->quiz_questionsperpage < 2) ? 0 : 1;
+        $quiz_showbreaks = get_config('quiz', 'questionsperpage') > 1;
     }
     if ($quiz_reordertool != 0) {
         $thispageurl->param('reordertool', $quiz_reordertool);

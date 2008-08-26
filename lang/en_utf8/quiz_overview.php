@@ -25,6 +25,7 @@ $string['optnoattemptsonly'] = '$a who have not attempted the quiz';
 $string['optonlygradedattempts'] = 'that are graded for each user ($a)';
 $string['optonlyregradedattempts'] = 'that have been regraded / are marked as needing regrading';
 $string['overview'] = 'Grades';
+$string['overviewreport'] = 'Grades report';
 $string['overviewdownload'] = 'Overview download';
 $string['overviewdownload'] = 'Overview download';
 $string['overviewreportgraph'] = 'Overall Number of Students Achieving Grade Ranges';

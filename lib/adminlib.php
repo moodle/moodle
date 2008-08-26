@@ -2557,11 +2557,50 @@ class admin_setting_configselect extends admin_setting {
         return ($this->config_write($this->name, $data) ? '' : get_string('errorsetting', 'admin'));
     }
 
-    function output_html($data, $query='') {
+    /**
+     * Ensure the options are loaded, and generate the HTML for the select
+     * element and any warning message. Separating this out from output_html
+     * makes it easier to subclass this class.
+     *
+     * @param string $data the option to show as selected.
+     * @param string $current the currently selected option in the database, null if none.
+     * @param string $default the default selected option.
+     * @return array the HTML for the select element, and a warning message.
+     */
+    function output_select_html($data, $current, $default, $extraname = '') {
         if (!$this->load_choices() or empty($this->choices)) {
+            return array('', '');
+        }
+
+        $warning = '';
+        if (is_null($current)) {
+            // first run
+        } else if (empty($current) and (array_key_exists('', $this->choices) or array_key_exists(0, $this->choices))) {
+            // no warning
+        } else if (!array_key_exists($current, $this->choices)) {
+            $warning = get_string('warningcurrentsetting', 'admin', s($current));
+            if (!is_null($default) and $data == $current) {
+                $data = $default; // use default instead of first value when showing the form
+            }
+        }
+
+        $selecthtml = '<select id="'.$this->get_id().'" name="'.$this->get_full_name().$extraname.'">';
+        foreach ($this->choices as $key => $value) {
+            // the string cast is needed because key may be integer - 0 is equal to most strings!
+            $selecthtml .= '<option value="'.$key.'"'.((string)$key==$data ? ' selected="selected"' : '').'>'.$value.'</option>';
+        }
+        $selecthtml .= '</select>';
+        return array($selecthtml, $warning);
+    }
+
+    function output_html($data, $query='') {
+        $default = $this->get_defaultsetting();
+        $current = $this->get_setting();
+
+        list($selecthtml, $warning) = $this->output_select_html($data, $current, $default);
+        if (!$selecthtml) {
             return '';
         }
-        $default = $this->get_defaultsetting();
 
         if (!is_null($default) and array_key_exists($default, $this->choices)) {
             $defaultinfo = $this->choices[$default];
@@ -2569,29 +2608,10 @@ class admin_setting_configselect extends admin_setting {
             $defaultinfo = NULL;
         }
 
-        $current = $this->get_setting();
-        $warning = '';
-        if (is_null($current)) {
-            //first run
-        } else if (empty($current) and (array_key_exists('', $this->choices) or array_key_exists(0, $this->choices))) {
-            // no warning
-        } else if (!array_key_exists($current, $this->choices)) {
-            $warning = get_string('warningcurrentsetting', 'admin', s($current));
-            if (!is_null($default) and $data==$current) {
-                $data = $default; // use default instead of first value when showing the form
-            }
-        }
-
-        $return = '<div class="form-select defaultsnext"><select id="'.$this->get_id().'" name="'.$this->get_full_name().'">';
-        foreach ($this->choices as $key => $value) {
-            // the string cast is needed because key may be integer - 0 is equal to most strings!
-            $return .= '<option value="'.$key.'"'.((string)$key==$data ? ' selected="selected"' : '').'>'.$value.'</option>';
-        }
-        $return .= '</select></div>';
+        $return = '<div class="form-select defaultsnext">' . $selecthtml . '</div>';
 
         return format_admin_setting($this, $this->visiblename, $return, $this->description, true, $warning, $defaultinfo, $query);
     }
-
 }
 
 /**
@@ -3626,6 +3646,240 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
             }
         }
         return $result;
+    }
+}
+
+/**
+ * Text field linked to config_plugins for the quiz, with an advanced checkbox.
+ */
+class admin_setting_quiz_text extends admin_setting_configtext {
+    function __construct($name, $visiblename, $description, $defaultsetting, $paramtype) {
+        $this->plugin = 'quiz';
+        parent::admin_setting_configtext($name, $visiblename, $description,
+                $defaultsetting, $paramtype);
+    }
+
+    function get_setting() {
+        $value = parent::get_setting();
+        $fix = $this->config_read('fix_' . $this->name);
+        if (is_null($value) or is_null($fix)) {
+            return NULL;
+        }
+        return array('value' => $value, 'fix' => $fix);
+    }
+
+    function write_setting($data) {
+        $error = parent::write_setting($data['value']);
+        if (!$error) {
+            if (empty($data['fix'])) {
+                $ok = $this->config_write('fix_' . $this->name, 0);
+            } else {
+                $ok = $this->config_write('fix_' . $this->name, 1);
+            }
+            if (!$ok) {
+                $error = get_string('errorsetting', 'admin');
+            }
+        }
+        return $error;
+    }
+
+    function output_html($data, $query='') {
+        $default = $this->get_defaultsetting();
+        $defaultinfo = array();
+        if (isset($this->choices[$default['value']])) {
+            $defaultinfo[] = $default['value'];
+        }
+        if (!empty($default['fix'])) {
+            $defaultinfo[] = get_string('advanced');
+        }
+        $defaultinfo = implode(', ', $defaultinfo);
+
+        $fix = !empty($data['fix']);
+        $return = '<div class="form-text defaultsnext">' . 
+                '<input type="text" size="' . $this->size . '" id="' . $this->get_id() .
+                '" name="' . $this->get_full_name() . '[value]" value="' . s($data['value']) . '" />' .
+                ' <input type="checkbox" class="form-checkbox" id="' .
+                $this->get_id() . '_fix" name="' . $this->get_full_name() .
+                '[fix]" value="1" ' . ($fix ? 'checked="checked"' : '') . ' />' .
+                ' <label for="' . $this->get_id() . '_fix">' .
+                get_string('advanced') . '</label></div>';
+
+        return format_admin_setting($this, $this->visiblename, $return,
+                $this->description, true, '', $defaultinfo, $query);
+    }
+}
+
+/**
+ * Dropdown menu linked to config_plugins for the quiz, with an advanced checkbox.
+ */
+class admin_setting_quiz_combo extends admin_setting_configselect {
+    function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
+        $this->plugin = 'quiz';
+        parent::admin_setting_configselect($name, $visiblename, $description,
+                $defaultsetting, $choices);
+    }
+
+    function get_setting() {
+        $value = parent::get_setting();
+        $fix = $this->config_read('fix_' . $this->name);
+        if (is_null($value) or is_null($fix)) {
+            return NULL;
+        }
+        return array('value' => $value, 'fix' => $fix);
+    }
+
+    function write_setting($data) {
+        $error = parent::write_setting($data['value']);
+        if (!$error) {
+            if (empty($data['fix'])) {
+                $ok = $this->config_write('fix_' . $this->name, 0);
+            } else {
+                $ok = $this->config_write('fix_' . $this->name, 1);
+            }
+            if (!$ok) {
+                $error = get_string('errorsetting', 'admin');
+            }
+        }
+        return $error;
+    }
+
+    function output_html($data, $query='') {
+        $default = $this->get_defaultsetting();
+        $current = $this->get_setting();
+
+        list($selecthtml, $warning) = $this->output_select_html($data['value'],
+                $current['value'], $default['value'], '[value]');
+        if (!$selecthtml) {
+            return '';
+        }
+
+        if (!is_null($default) and array_key_exists($default['value'], $this->choices)) {
+            $defaultinfo = array();
+            if (isset($this->choices[$default['value']])) {
+                $defaultinfo[] = $this->choices[$default['value']];
+            }
+            if (!empty($default['fix'])) {
+                $defaultinfo[] = get_string('advanced');
+            }
+            $defaultinfo = implode(', ', $defaultinfo);
+        } else {
+            $defaultinfo = '';
+        }
+
+        $fix = !empty($data['fix']);
+        $return = '<div class="form-select defaultsnext">' . $selecthtml . 
+                ' <input type="checkbox" class="form-checkbox" id="' .
+                $this->get_id() . '_fix" name="' . $this->get_full_name() .
+                '[fix]" value="1" ' . ($fix ? 'checked="checked"' : '') . ' />' .
+                ' <label for="' . $this->get_id() . '_fix">' .
+                get_string('advanced') . '</label></div>';
+
+        return format_admin_setting($this, $this->visiblename, $return, $this->description, true, $warning, $defaultinfo, $query);
+    }
+}
+
+class admin_setting_quiz_reviewoptions extends admin_setting {
+    private static $times = array(
+            QUIZ_REVIEW_IMMEDIATELY => 'reviewimmediately',
+            QUIZ_REVIEW_OPEN => 'reviewopen',
+            QUIZ_REVIEW_CLOSED => 'reviewclosed');
+    private static $things = array(
+            QUIZ_REVIEW_RESPONSES => 'responses',
+            QUIZ_REVIEW_ANSWERS => 'answers',
+            QUIZ_REVIEW_FEEDBACK => 'feedback',
+            QUIZ_REVIEW_GENERALFEEDBACK => 'generalfeedback',
+            QUIZ_REVIEW_SCORES => 'scores',
+            QUIZ_REVIEW_OVERALLFEEDBACK => 'overallfeedback');
+
+    function __construct($name, $visiblename, $description, $defaultsetting) {
+        $this->plugin = 'quiz';
+        parent::admin_setting($name, $visiblename, $description, $defaultsetting);
+    }
+
+    private function normalise_data($data) {
+        $value = 0;
+        foreach (admin_setting_quiz_reviewoptions::$times as $timemask => $timestring) {
+            foreach (admin_setting_quiz_reviewoptions::$things as $thingmask => $thingstring) {
+                if (!empty($data[$timemask][$thingmask])) {
+                    $value += $timemask & $thingmask;
+                }
+            }
+        }
+        return $value;
+    }
+
+    function get_setting() {
+        $value = $this->config_read($this->name);
+        $fix = $this->config_read('fix_' . $this->name);
+        if (is_null($value) or is_null($fix)) {
+            return NULL;
+        }
+        return array('value' => $value, 'fix' => $fix);
+    }
+
+    function write_setting($data) {
+        if (!isset($data['value'])) {
+            $data['value'] = $this->normalise_data($data);
+        }
+        $ok = $this->config_write($this->name, $data['value']);
+        if ($ok) {
+            if (empty($data['fix'])) {
+                $ok = $this->config_write('fix_' . $this->name, 0);
+            } else {
+                $ok = $this->config_write('fix_' . $this->name, 1);
+            }
+        }
+        if (!$ok) {
+            return get_string('errorsetting', 'admin');
+        }
+        return '';
+    }
+
+    function output_html($data, $query='') {
+        if (!isset($data['value'])) {
+            $data['value'] = $this->normalise_data($data);
+        }
+
+        $return = '<div id="adminquizreviewoptions" class="clearfix">' . "\n";
+        foreach (admin_setting_quiz_reviewoptions::$times as $timemask => $timestring) {
+            $return .= '<div class="group"><div class="fitemtitle">' . get_string($timestring, 'quiz') . "</div>\n";
+            $nameprefix = $this->get_full_name() . '[' . $timemask . ']';
+            $idprefix = $this->get_id(). '_' . $timemask . '_';
+            foreach (admin_setting_quiz_reviewoptions::$things as $thingmask => $thingstring) {
+                $id = $idprefix . $thingmask;
+                $state = '';
+                if ($data['value'] & $timemask & $thingmask) {
+                    $state = 'checked="checked" ';
+                }
+                $return .= '<span><input type="checkbox" name="' .
+                        $nameprefix . '[' . $thingmask . ']" value="1" id="' . $id .
+                        '" ' . $state . '/> <label for="' . $id . '">' . 
+                        get_string($thingstring, 'quiz') . "</label></span>\n";
+            }
+            $return .= "</div>\n";
+        }
+        $return .= "</div>\n";
+
+        $fix = !empty($data['fix']);
+        $return .= '<input type="checkbox" class="form-checkbox" id="' .
+                $this->get_id() . '_fix" name="' . $this->get_full_name() .
+                '[fix]" value="1" ' . ($fix ? 'checked="checked"' : '') . ' />' .
+                ' <label for="' . $this->get_id() . '_fix">' .
+                get_string('advanced') . '</label> ';
+
+        return format_admin_setting($this, $this->visiblename, $return,
+                $this->description, true, '', get_string('everythingon', 'quiz'), $query);
+    }
+}
+
+/**
+ * Specialisation of admin_setting_quiz_combo for easy yes/no choices.
+ */
+class admin_setting_quiz_yesno extends admin_setting_quiz_combo {
+    function __construct($name, $visiblename, $description, $defaultsetting) {
+        $this->plugin = 'quiz';
+        parent::__construct($name, $visiblename, $description,
+                $defaultsetting, array(get_string('no'), get_string('yes')));
     }
 }
 

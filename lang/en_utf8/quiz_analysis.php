@@ -3,6 +3,7 @@
 
 
 $string['analysis'] = 'Item analysis';
+$string['analysisreport'] = 'Item analysis report';
 $string['analysisdownload'] = 'Analysis download';
 $string['analysisoptions'] = 'Analysis options';
 $string['analysistitle'] = 'Item Analysis Table';

@@ -16,6 +16,16 @@ require_once($CFG->libdir.'/eventslib.php');
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
 /**#@+
+ * Options determining how the grades from individual attempts are combined to give
+ * the overall grade for a user
+ */
+define("QUIZ_GRADEHIGHEST", "1");
+define("QUIZ_GRADEAVERAGE", "2");
+define("QUIZ_ATTEMPTFIRST", "3");
+define("QUIZ_ATTEMPTLAST",  "4");
+/**#@-*/
+
+/**#@+
  * The different review options are stored in the bits of $quiz->review
  * These constants help to extract the options
  *
@@ -459,6 +469,16 @@ function quiz_grade_item_delete($quiz) {
     return grade_update('mod/quiz', $quiz->course, 'mod', 'quiz', $quiz->id, 0, NULL, array('deleted'=>1));
 }
 
+/**
+ * @return the options for calculating the quiz grade from the individual attempt grades.
+ */
+function quiz_get_grading_options() {
+    return array (
+            QUIZ_GRADEHIGHEST => get_string('gradehighest', 'quiz'),
+            QUIZ_GRADEAVERAGE => get_string('gradeaverage', 'quiz'),
+            QUIZ_ATTEMPTFIRST => get_string('attemptfirst', 'quiz'),
+            QUIZ_ATTEMPTLAST  => get_string('attemptlast', 'quiz'));
+}
 
 function quiz_get_participants($quizid) {
 /// Returns an array of users who have data in a given quiz

@@ -170,6 +170,22 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008081507, 'quiz');
     }
 
+    /// Move all of the quiz config settings from $CFG to the config_plugins table.
+    if ($result && $oldversion < 2008082200) {
+        foreach (get_object_vars($CFG) as $name => $value) {
+            if (strpos($name, 'quiz_') === 0) {
+                $shortname = substr($name, 5);
+                if ($shortname == 'fix_adaptive') {
+                    // Special case - remove old inconsistency.
+                    $shortname == 'fix_optionflags';
+                }
+                $result = $result && set_config($shortname, $value, 'quiz');
+                $result = $result && unset_config($name);
+            }
+        }
+        upgrade_mod_savepoint($result, 2008082200, 'quiz');
+    }
+
     return $result;
 }
 

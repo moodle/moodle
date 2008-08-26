@@ -3954,27 +3954,36 @@ table.quizreviewsummary td.cell {
   text-align: left;
 }
 
-#mod-quiz-mod #reviewoptionshdr .fitem {
+#mod-quiz-mod #reviewoptionshdr .fitem,
+#adminquizreviewoptions .group {
   float: left;
-  width: 30%;
-  margin-left: 10px;
+  width: 33%;
   clear: none;
 }
-#mod-quiz-mod #reviewoptionshdr .fitemtitle {
+#mod-quiz-mod #reviewoptionshdr .fitem {
+  width: 30%;
+  margin-left: 10px;
+}
+#mod-quiz-mod #reviewoptionshdr .fitemtitle,
+#adminquizreviewoptions .fitemtitle {
   width: 100%;
   font-weight: bold;
   text-align: left;
   height: 2.5em;
- margin-left: 0;
+  margin-left: 0;
 }
 #mod-quiz-mod #reviewoptionshdr fieldset.fgroup {
   width: 100%;
   text-align: left;
- margin-left: 0;
+  margin-left: 0;
 }
-#mod-quiz-mod #reviewoptionshdr fieldset.fgroup span {
+#mod-quiz-mod #reviewoptionshdr fieldset.fgroup span,
+#adminquizreviewoptions span {
   float: left;
   clear: left;
+}
+#adminquizreviewoptions {
+  margin-bottom: 0.5em;
 }
 
 #mod-quiz-edit #page .controls,
