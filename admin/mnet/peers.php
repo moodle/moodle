@@ -96,6 +96,7 @@ if (($form = data_submitted()) && confirm_sesskey()) {
     
         if (isset($form->deleted) && ($form->deleted == '0' || $form->deleted == '1')) {
             $mnet_peer->deleted = $form->deleted;
+            $mnet_peer->updateparams->deleted = $form->deleted;
         }
     
         if (isset($form->public_key)) {
@@ -106,9 +107,10 @@ if (($form = data_submitted()) && confirm_sesskey()) {
             } else {
                 $oldkey = $mnet_peer->public_key;
                 $mnet_peer->public_key = $form->public_key;
-                $mnet_peer->public_key_expires   = $mnet_peer->check_common_name($form->public_key);
+                $mnet_peer->updateparams->public_key = $form->public_key;
+                $mnet_peer->public_key_expires = $mnet_peer->check_common_name($form->public_key);
+                $mnet_peer->updateparams->public_key_expires = $mnet_peer->check_common_name($form->public_key);
                 if ($mnet_peer->public_key_expires == false) {
-                    $mnet_peer->public_key == $oldkey;
                     $errmsg = '<br />';
                     foreach ($mnet_peer->error as $err) {
                         $errmsg .= $err['code'] . ': ' . $err['text'].'<br />';
