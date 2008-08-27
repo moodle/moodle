@@ -5,34 +5,35 @@
     require_once("../config.php");
     require_once("lib.php");
     require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->libdir.'/completionlib.php');
+
+    $add    = optional_param('add', 0, PARAM_ALPHA);
+    $update = optional_param('update', 0, PARAM_INT);
+    $return = optional_param('return', 0, PARAM_BOOL); //return to course/view.php if false or mod/modname/view.php if true
+    $type   = optional_param('type', '', PARAM_ALPHANUM);
 
     require_login();
 
-    $add           = optional_param('add', 0, PARAM_ALPHA);
-    $update        = optional_param('update', 0, PARAM_INT);
-    $return        = optional_param('return', 0, PARAM_BOOL); //return to course/view.php if false or mod/modname/view.php if true
-    $type          = optional_param('type', '', PARAM_ALPHANUM);
-
     if (!empty($add)) {
         $section = required_param('section', PARAM_INT);
-        $course = required_param('course', PARAM_INT);
+        $course  = required_param('course', PARAM_INT);
 
-        if (! $course = $DB->get_record("course", array("id"=>$course))) {
-            print_error("invalidcourseid");
+        if (!$course = $DB->get_record('course', array('id'=>$course))) {
+            print_error('invalidcourseid');
         }
 
         require_login($course);
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         require_capability('moodle/course:manageactivities', $context);
 
-        if (! $module = $DB->get_record("modules", array("name"=>$add))) {
-            print_error("moduledoesnotexist");
+        if (!$module = $DB->get_record('modules', array('name'=>$add))) {
+            print_error('moduledoesnotexist');
         }
 
         $cw = get_course_section($section, $course->id);
 
         if (!course_allowed_module($course, $module->id)) {
-            print_error("moduledisable");
+            print_error('moduledisable');
         }
 
         $cm = null;
@@ -52,8 +53,8 @@
         $form->return           = 0; //must be false if this is an add, go back to course view on cancel
 
         // Turn off default grouping for modules that don't provide group mode
-        if($add=='resource' || $add=='glossary' || $add=='label') {
-            $form->groupingid=0;
+        if ($add=='resource' || $add=='glossary' || $add=='label') {
+            $form->groupingid = 0;
         }
         
         if (!empty($type)) {
@@ -61,14 +62,14 @@
         }
 
         $sectionname = get_section_name($course->format);
-        $fullmodulename = get_string("modulename", $module->name);
+        $fullmodulename = get_string('modulename', $module->name);
 
         if ($form->section && $course->format != 'site') {
             $heading->what = $fullmodulename;
             $heading->to   = "$sectionname $form->section";
-            $pageheading = get_string("addinganewto", "moodle", $heading);
+            $pageheading = get_string('addinganewto', 'moodle', $heading);
         } else {
-            $pageheading = get_string("addinganew", "moodle", $fullmodulename);
+            $pageheading = get_string('addinganew', 'moodle', $fullmodulename);
         }
 
         $CFG->pagepath = 'mod/'.$module->name;
@@ -81,50 +82,50 @@
         $navlinksinstancename = '';
 
     } else if (!empty($update)) {
-        if (! $cm = $DB->get_record("course_modules", array("id"=>$update))) {
-            print_error("cmunknown");
+        if (!$cm = get_coursemodule_from_id('', $update, 0)) {
+            print_error('invalidcoursemodule');
         }
 
-        if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            print_error("invalidcourseid");
+        if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
+            print_error('invalidcourseid');
         }
 
         require_login($course); // needed to setup proper $COURSE
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
         require_capability('moodle/course:manageactivities', $context);
 
-        if (! $module = $DB->get_record("modules", array("id"=>$cm->module))) {
-            print_error("moduledoesnotexist");
+        if (!$module = $DB->get_record('modules', array('id'=>$cm->module))) {
+            print_error('moduledoesnotexist');
         }
 
-        if (! $form = $DB->get_record($module->name, array("id"=>$cm->instance))) {
-            print_error("moduleinstancedoesnotexist");
+        if (!$form = $DB->get_record($module->name, array('id'=>$cm->instance))) {
+            print_error('moduleinstancedoesnotexist');
         }
 
-        if (! $cw = $DB->get_record("course_sections", array("id"=>$cm->section))) {
-            print_error("sectionnotexist");
+        if (!$cw = $DB->get_record('course_sections', array('id'=>$cm->section))) {
+            print_error('sectionnotexist');
         }
 
-        $form->coursemodule     = $cm->id;
-        $form->section          = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
-        $form->visible          = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
-        $form->cmidnumber       = $cm->idnumber;          // The cm IDnumber
-        $form->groupmode        = groups_get_activity_groupmode($cm); // locked later if forced
-        $form->groupingid       = $cm->groupingid;
-        $form->groupmembersonly = $cm->groupmembersonly;
-        $form->course           = $course->id;
-        $form->module           = $module->id;
-        $form->modulename       = $module->name;
-        $form->instance         = $cm->instance;
-        $form->return           = $return;
-        $form->update           = $update;
-        $form->completion       = $cm->completion;
-        $form->completionview   = $cm->completionview;
+        $form->coursemodule       = $cm->id;
+        $form->section            = $cw->section;  // The section number itself - relative!!! (section column in course_sections)
+        $form->visible            = $cm->visible; //??  $cw->visible ? $cm->visible : 0; // section hiding overrides
+        $form->cmidnumber         = $cm->idnumber;          // The cm IDnumber
+        $form->groupmode          = groups_get_activity_groupmode($cm); // locked later if forced
+        $form->groupingid         = $cm->groupingid;
+        $form->groupmembersonly   = $cm->groupmembersonly;
+        $form->course             = $course->id;
+        $form->module             = $module->id;
+        $form->modulename         = $module->name;
+        $form->instance           = $cm->instance;
+        $form->return             = $return;
+        $form->update             = $update;
+        $form->completion         = $cm->completion;
+        $form->completionview     = $cm->completionview;
         $form->completionexpected = $cm->completionexpected;
         $form->completionusegrade = is_null($cm->completiongradeitemnumber) ? 0 : 1;
 
         if ($items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$form->modulename,
-                                           'iteminstance'=>$form->instance, 'courseid'=>$COURSE->id))) {
+                                                 'iteminstance'=>$form->instance, 'courseid'=>$course->id))) {
             // add existing outcomes
             foreach ($items as $item) {
                 if (!empty($item->outcomeid)) {
@@ -152,17 +153,17 @@
         }
 
         $sectionname = get_section_name($course->format);
-        $fullmodulename = get_string("modulename", $module->name);
+        $fullmodulename = get_string('modulename', $module->name);
 
         if ($form->section && $course->format != 'site') {
             $heading->what = $fullmodulename;
             $heading->in   = "$sectionname $cw->section";
-            $pageheading = get_string("updatingain", "moodle", $heading);
+            $pageheading = get_string('updatingain', 'moodle', $heading);
         } else {
-            $pageheading = get_string("updatinga", "moodle", $fullmodulename);
+            $pageheading = get_string('updatinga', 'moodle', $fullmodulename);
         }
 
-        $navlinksinstancename = array('name' => format_string($form->name,true), 'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id", 'type' => 'activityinstance');
+        $navlinksinstancename = array('name' => format_string($form->name, true), 'link' => "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id", 'type' => 'activityinstance');
 
         $CFG->pagepath = 'mod/'.$module->name;
         if (!empty($type)) {
@@ -186,40 +187,41 @@
     if (file_exists($modlib)) {
         include_once($modlib);
     } else {
-        print_error("modulemissingcode", '', '', $modlib);
+        print_error('modulemissingcode', '', '', $modlib);
     }
 
     $mformclassname = 'mod_'.$module->name.'_mod_form';
-    $mform =& new $mformclassname($form->instance, $cw->section, $cm);
+    $mform = new $mformclassname($form->instance, $cw->section, $cm);
     $mform->set_data($form);
 
     if ($mform->is_cancelled()) {
-        if ($return && !empty($cm->id)){
+        if ($return && !empty($cm->id)) {
             redirect("$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id");
         } else {
             redirect("$CFG->wwwroot/course/view.php?id=$course->id#section-".$cw->section);
         }
+
     } else if ($fromform = $mform->get_data()) {
         if (empty($fromform->coursemodule)) { //add
             $cm = null;
-            if (! $course = $DB->get_record("course", array("id"=>$fromform->course))) {
-                print_error("invalidcourseid");
+            if (!$course = $DB->get_record('course', array('id'=>$fromform->course))) {
+                print_error('invalidcourseid');
             }
-            $fromform->instance = '';
+            $fromform->instance     = '';
             $fromform->coursemodule = '';
         } else { //update
-            if (! $cm = $DB->get_record("course_modules", array("id"=>$fromform->coursemodule))) {
-                print_error("cmunknown");
+            if (!$cm = get_coursemodule_from_id('', $fromform->coursemodule, 0)) {
+                print_error('invalidcoursemodule');
             }
 
-            if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-                print_error("invalidcourseid");
+            if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
+                print_error('invalidcourseid');
             }
-            $fromform->instance = $cm->instance;
+            $fromform->instance     = $cm->instance;
             $fromform->coursemodule = $cm->id;
         }
 
-        require_login($course->id); // needed to setup proper $COURSE
+        require_login($course); // needed to setup proper $COURSE
 
         if (!empty($fromform->coursemodule)) {
             $context = get_context_instance(CONTEXT_MODULE, $fromform->coursemodule);
@@ -247,10 +249,10 @@
         }
         
         if (!isset($fromform->completion)) {
-            $fromform->completion=COMPLETION_DISABLED;
+            $fromform->completion = COMPLETION_DISABLED;
         }
         if (!isset($fromform->completionview)) {
-            $fromform->completionview=COMPLETION_VIEW_NOT_REQUIRED;
+            $fromform->completionview = COMPLETION_VIEW_NOT_REQUIRED;
         }
 
         // Convert the 'use grade' checkbox into a grade-item number: 0 if
@@ -265,38 +267,38 @@
                 $fromform->groupmode = $cm->groupmode; // keep original
             }
 
-            $returnfromfunc = $updateinstancefunction($fromform);
-            if (!$returnfromfunc) {
-                print_error('cannotupdatemod', '', 'view.php?id=$course->id', $fromform->modulename);
-            }
-            if (is_string($returnfromfunc)) {
-                //TODO: need more detailed error info
-                print_error('invalidfunction', '', 'view.php?id=$course->id');
-            }
-
-            set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
-            set_coursemodule_groupmode($fromform->coursemodule, $fromform->groupmode);
-            set_coursemodule_groupingid($fromform->coursemodule, $fromform->groupingid);
-            set_coursemodule_groupmembersonly($fromform->coursemodule, $fromform->groupmembersonly);
-
-            require_once($CFG->libdir.'/completionlib.php');
-            $completion=new completion_info($COURSE);
-            if($completion->is_enabled()) {
+            // update course module first
+            $cm->groupmode        = $fromform->groupmode;
+            $cm->groupingid       = $fromform->groupingid;
+            $cm->groupmembersonly = $fromform->groupmembersonly;
+            $completion = new completion_info($course);
+            if ($completion->is_enabled()) {
                 // Handle completion settings. If necessary, wipe existing completion
                 // data first.
-                if(!empty($fromform->completionunlocked)) {
-                    $completion=new completion_info($course);
+                if (!empty($fromform->completionunlocked)) {
+                    $completion = new completion_info($course);
                     $completion->reset_all_state($cm);
                 }
-                set_coursemodule_completion($fromform->coursemodule, $fromform->completion);
-                set_coursemodule_completionview($fromform->coursemodule, $fromform->completionview);
-                set_coursemodule_completionexpected($fromform->coursemodule, $fromform->completionexpected);
-                set_coursemodule_completiongradeitemnumber(
-                        $fromform->coursemodule,$fromform->completiongradeitemnumber);
+
+                $cm->completion                = $fromform->completion;
+                $cm->completiongradeitemnumber = $fromform->completiongradeitemnumber;
+                $cm->completionview            = $fromform->completionview;
+                $cm->completionexpected        = $fromform->completionexpected;
             }
 
+            if (!$DB->update_record('course_modules', $cm)) {
+                print_error('cannotupdatecoursemodule');
+            }
+
+            if (!$updateinstancefunction($fromform, $mform)) {
+                print_error('cannotupdatemod', '', 'view.php?id=$course->id', $fromform->modulename);
+            }
+
+            // make sure visibility is set correctly (in particular in calendar)
+            set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
+
             if (isset($fromform->cmidnumber)) { //label
-                // set cm idnumber
+                // set cm idnumber - uniqueness is already verified by form validation
                 set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
             }
 
@@ -307,46 +309,75 @@
                        "view.php?id=$fromform->coursemodule",
                        "$fromform->instance", $fromform->coursemodule);
 
-        } else if (!empty($fromform->add)){
+        } else if (!empty($fromform->add)) {
 
             if (!empty($course->groupmodeforce) or !isset($fromform->groupmode)) {
                 $fromform->groupmode = 0; // do not set groupmode
             }
 
-            if (!course_allowed_module($course,$fromform->modulename)) {
+            if (!course_allowed_module($course, $fromform->modulename)) {
                 print_error('moduledisable', '', '', $fromform->modulename);
             }
 
-            $returnfromfunc = $addinstancefunction($fromform);
-            if (!$returnfromfunc) {
-                print_error("cannotaddnewmodule", '', "view.php?id=$course->id", $fromform->modulename);
+            // first add course_module record because we need the context
+            $newcm = new object();
+            $newcm->course           = $course->id;
+            $newcm->module           = $fromform->module;
+            $newcm->instance         = 0; // not known yet, will be updated later (this is similar to restore code)
+            $newcm->visible          = $fromform->visible;
+            $newcm->groupmode        = $fromform->groupmode;
+            $newcm->groupingid       = $fromform->groupingid;
+            $newcm->groupmembersonly = $fromform->groupmembersonly;
+            $completion = new completion_info($course);
+            if ($completion->is_enabled()) {
+                $newcm->completion                = $fromform->completion;
+                $newcm->completiongradeitemnumber = $fromform->completiongradeitemnumber;
+                $newcm->completionview            = $fromform->completionview;
+                $newcm->completionexpected        = $fromform->completionexpected;
             }
-            if (is_string($returnfromfunc)) {
-                //TODO: need more detailed error info
-                print_error('invalidfunction', '', 'view.php?id=$course->id');
+
+            if (!$fromform->coursemodule = add_course_module($newcm)) {
+                print_error('cannotaddcoursemodule');
+            }
+
+            $returnfromfunc = $addinstancefunction($fromform, $mform);
+
+            if (!$returnfromfunc or !is_number($returnfromfunc)) {
+                // undo everything we can
+                $modcontext = get_context_instance(COURSE_MODULE, $fromform->coursemodule);
+                $fs = get_file_storage();
+                $fs->delete_area_files($modcontext->id);
+                delete_context(CONTEXT_MODULE, $fromform->coursemodule);
+                $DB->delete_records('course_modules', array('id'=>$fromform->coursemodule));
+
+                if (!is_number($returnfromfunc)) {
+                    print_error('invalidfunction', '', 'view.php?id=$course->id');
+                } else {
+                    print_error('cannotaddnewmodule', '', "view.php?id=$course->id", $fromform->modulename);
+                }
             }
 
             $fromform->instance = $returnfromfunc;
 
+            if (!$DB->set_field('course_modules', 'instance', $returnfromfunc, array('id'=>$fromform->coursemodule))) {
+                print_error('cannotaddcoursemodule');
+            }
+
             // course_modules and course_sections each contain a reference
             // to each other, so we have to update one of them twice.
-
-            if (! $fromform->coursemodule = add_course_module($fromform) ) {
-                print_error("cannotaddcoursemodule");
-            }
-            if (! $sectionid = add_mod_to_section($fromform) ) {
-                print_error("cannotaddcmtosection");
+            if (!$sectionid = add_mod_to_section($fromform)) {
+                print_error('cannotaddcmtosection');
             }
 
-            if (! $DB->set_field("course_modules", "section", $sectionid, array("id"=>$fromform->coursemodule))) {
-                print_error("cannotupdatecm");
+            if (!$DB->set_field('course_modules', 'section', $sectionid, array('id'=>$fromform->coursemodule))) {
+                print_error('cannotupdatecm');
             }
 
             // make sure visibility is set correctly (in particular in calendar)
             set_coursemodule_visible($fromform->coursemodule, $fromform->visible);
 
             if (isset($fromform->cmidnumber)) { //label
-                // set cm idnumber
+                // set cm idnumber - uniqueness is already verified by form validation
                 set_coursemodule_idnumber($fromform->coursemodule, $fromform->cmidnumber);
             }
 
@@ -357,12 +388,12 @@
                        "view.php?id=$fromform->coursemodule",
                        "$fromform->instance", $fromform->coursemodule);
         } else {
-            print_error("invaliddata");
+            print_error('invaliddata');
         }
 
         // sync idnumber with grade_item
         if ($grade_item = grade_item::fetch(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
-                     'iteminstance'=>$fromform->instance, 'itemnumber'=>0, 'courseid'=>$COURSE->id))) {
+                     'iteminstance'=>$fromform->instance, 'itemnumber'=>0, 'courseid'=>$course->id))) {
             if ($grade_item->idnumber != $fromform->cmidnumber) {
                 $grade_item->idnumber = $fromform->cmidnumber;
                 $grade_item->update();
@@ -370,13 +401,13 @@
         }
 
         $items = grade_item::fetch_all(array('itemtype'=>'mod', 'itemmodule'=>$fromform->modulename,
-                                             'iteminstance'=>$fromform->instance, 'courseid'=>$COURSE->id));
+                                             'iteminstance'=>$fromform->instance, 'courseid'=>$course->id));
 
         // create parent category if requested and move to correct parent category
         if ($items and isset($fromform->gradecat)) {
             if ($fromform->gradecat == -1) {
                 $grade_category = new grade_category();
-                $grade_category->courseid = $COURSE->id;
+                $grade_category->courseid = $course->id;
                 $grade_category->fullname = $fromform->name;
                 $grade_category->insert();
                 if ($grade_item) {
@@ -395,7 +426,7 @@
         }
 
         // add outcomes if requested
-        if ($outcomes = grade_outcome::fetch_all_available($COURSE->id)) {
+        if ($outcomes = grade_outcome::fetch_all_available($course->id)) {
             $grade_items = array();
 
             // Outcome grade_item.itemnumber start at 1000, there is nothing above outcomes
@@ -425,7 +456,7 @@
                     $max_itemnumber++;
 
                     $outcome_item = new grade_item();
-                    $outcome_item->courseid     = $COURSE->id;
+                    $outcome_item->courseid     = $course->id;
                     $outcome_item->itemtype     = 'mod';
                     $outcome_item->itemmodule   = $fromform->modulename;
                     $outcome_item->iteminstance = $fromform->instance;
@@ -466,8 +497,8 @@
         }
         require_capability('moodle/course:manageactivities', $context);
 
-        $streditinga = get_string("editinga", "moodle", $fullmodulename);
-        $strmodulenameplural = get_string("modulenameplural", $module->name);
+        $streditinga = get_string('editinga', 'moodle', $fullmodulename);
+        $strmodulenameplural = get_string('modulenameplural', $module->name);
 
         $navlinks = array();
         $navlinks[] = array('name' => $strmodulenameplural, 'link' => "$CFG->wwwroot/mod/$module->name/index.php?id=$course->id", 'type' => 'activity');
@@ -485,11 +516,11 @@
             $overridableroles = get_overridable_roles($context);
             $assignableroles  = get_assignable_roles($context);
             $currenttab = 'update';
-            include_once($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
+            require($CFG->dirroot.'/'.$CFG->admin.'/roles/tabs.php');
         }
         $icon = '<img src="'.$CFG->modpixpath.'/'.$module->name.'/icon.gif" alt=""/>';
 
-        print_heading_with_help($pageheading, "mods", $module->name, $icon);
+        print_heading_with_help($pageheading, 'mods', $module->name, $icon);
         $mform->display();
         print_footer($course);
     }

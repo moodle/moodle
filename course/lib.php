@@ -2252,7 +2252,7 @@ function add_mod_to_section($mod, $beforemod=NULL) {
         } else if ($beforemod) {
             $modarray = explode(",", $section->sequence);
 
-            if ($key = array_keys ($modarray, $beforemod->id)) {
+            if ($key = array_keys($modarray, $beforemod->id)) {
                 $insertarray = array($mod->id, $beforemod->id);
                 array_splice($modarray, $key[0], 1, $insertarray);
                 $newsequence = implode(",", $modarray);
@@ -2285,39 +2285,9 @@ function set_coursemodule_groupmode($id, $groupmode) {
     return $DB->set_field("course_modules", "groupmode", $groupmode, array("id"=>$id));
 }
 
-function set_coursemodule_groupingid($id, $groupingid) {
-    global $DB;
-    return $DB->set_field("course_modules", "groupingid", $groupingid, array("id"=>$id));
-}
-
-function set_coursemodule_groupmembersonly($id, $groupmembersonly) {
-    global $DB;
-    return $DB->set_field("course_modules", "groupmembersonly", $groupmembersonly, array("id"=>$id));
-}
-
 function set_coursemodule_idnumber($id, $idnumber) {
     global $DB;
     return $DB->set_field("course_modules", "idnumber", $idnumber, array("id"=>$id));
-}
-
-function set_coursemodule_completion($id, $completion) {
-    global $DB;
-    return $DB->set_field("course_modules", "completion", $completion, array('id'=>$id));
-}
-
-function set_coursemodule_completionview($id, $completionview) {
-    global $DB;
-    return $DB->set_field("course_modules", "completionview", $completionview, array('id'=>$id));
-}
-
-function set_coursemodule_completiongradeitemnumber($id, $completiongradeitemnumber) {
-    global $DB;
-    return $DB->set_field("course_modules", "completiongradeitemnumber", $completiongradeitemnumber, array('id'=>$id));
-}
-
-function set_coursemodule_completionexpected($id, $completionexpected) {
-    global $DB;
-    return $DB->set_field("course_modules", "completionexpected", $completionexpected, array('id'=>$id));
 }
 
 /**
@@ -2814,7 +2784,7 @@ function print_groupmode_setting($form, $course=NULL) {
     }
     if ($form->coursemodule) {
         if (!$cm = $DB->get_record('course_modules', array('id'=>$form->coursemodule))) {
-            print_error("cmunknown");
+            print_error('invalidcoursemodule');
         }
         $groupmode = groups_get_activity_groupmode($cm);
     } else {
@@ -2848,7 +2818,7 @@ function print_grouping_settings($form, $course=NULL) {
     }
     if ($form->coursemodule) {
         if (!$cm = $DB->get_record('course_modules', array('id'=>$form->coursemodule))) {
-            print_error("cmunknown");
+            print_error('invalidcoursemodule');
         }
     } else {
         $cm = null;
