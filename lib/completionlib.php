@@ -652,7 +652,7 @@ WHERE
         return $result;
     }
 
-    public function inform_grade_changed($cm, &$item, &$grade, $deleted) {
+    public function inform_grade_changed($cm, $item, $grade, $deleted) {
         // Bail out now if completion is not enabled for course-module, grade
         // is not used to compute completion, or this is a different numbered
         // grade
@@ -682,11 +682,11 @@ WHERE
      * <p>
      * (Internal function. Not private, so we can unit-test it.)
      *
-     * @param grade_item &$item
-     * @param grade_grade &$grade
+     * @param grade_item $item
+     * @param grade_grade $grade
      * @return int Completion state e.g. COMPLETION_INCOMPLETE
      */
-    function internal_get_grade_state(&$item, &$grade) {
+    function internal_get_grade_state($item, $grade) {
         if (!$grade) {
             return COMPLETION_INCOMPLETE;
         }
