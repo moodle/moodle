@@ -108,8 +108,9 @@ class completion_info {
      *   for a course-module.
      */
     public function is_enabled($cm=null) {
-        // First check global completion
         global $CFG;
+
+        // First check global completion
         if ($CFG->enablecompletion == COMPLETION_DISABLED) {
             return COMPLETION_DISABLED;
         }
@@ -160,6 +161,7 @@ class completion_info {
      */
     public function update_state($cm, $possibleresult=COMPLETION_UNKNOWN, $userid=0) {
         global $USER, $SESSION;
+
         // Do nothing if completion is not enabled for that activity
         if (!$this->is_enabled($cm)) {
             return;
@@ -186,6 +188,7 @@ class completion_info {
                 default:
                     $this->internal_systemerror("Unexpected manual completion state for {$cm->id}: $possibleresult");
             }
+
         } else {
             // Automatic tracking; get new state
             $newstate = $this->internal_get_state($cm, $userid, $current);
@@ -210,8 +213,9 @@ class completion_info {
      * @return unknown
      */
     function internal_get_state($cm, $userid, $current) {
-        // Get user ID
         global $USER, $DB;
+
+        // Get user ID
         if (!$userid) {
             $userid = $USER->id;
         }
@@ -250,6 +254,7 @@ class completion_info {
                 if ($newstate == COMPLETION_INCOMPLETE) {
                     return COMPLETION_INCOMPLETE;
                 }
+
             } else {
                 $this->internal_systemerror("Cannot find grade item for '{$cm->modname}'
                     cm '{$cm->id}' matching number '{$cm->completiongradeitemnumber}'");
@@ -355,11 +360,12 @@ class completion_info {
      * @param object $cm Activity
      */
     public function reset_all_state($cm) {
+        global $DB;
+
         if ($cm->completion == COMPLETION_TRACKING_MANUAL) {
             $this->delete_all_state($cm);
             return;
         }
-        global $DB;
         // Get current list of users with completion state
         $rs = $DB->get_recordset('course_modules_completion', array('coursemoduleid'=>$cm->id), '', 'userid');
         $keepusers = array();
@@ -400,8 +406,9 @@ class completion_info {
      *   found on the specified course
      */
     public function get_data($cm, $wholecourse=false, $userid=0, $modinfo=null) {
-        // Get user ID
         global $USER, $CFG, $SESSION, $DB;
+
+        // Get user ID
         if (!$userid) {
             $userid = $USER->id;
         }
@@ -475,6 +482,7 @@ class completion_info {
                 $this->internal_systemerror("Unexpected error: course-module {$cm->id} could not be found on course {$this->course->id}");
             }
             return $SESSION->completioncache[$this->course->id][$cm->id];
+
         } else {
             // Get single record
             $data = $DB->get_record('course_modules_completion', array('coursemoduleid'=>$cm->id, 'userid'=>$userid));
@@ -513,6 +521,7 @@ class completion_info {
      */
     function internal_set_data($cm, $data) {
         global $USER, $SESSION, $DB;
+
         if ($data->id) {
             // Has real (nonzero) id meaning that a database row exists
             $DB->update_record('course_modules_completion', $data);
@@ -520,6 +529,7 @@ class completion_info {
             // Didn't exist before, needs creating
             $data->id = $DB->insert_record('course_modules_completion', $data);
         }
+
         if ($data->userid == $USER->id) {
             $SESSION->completioncache[$cm->course][$cm->id] = $data;
         }
@@ -570,6 +580,7 @@ class completion_info {
      */
     function internal_get_tracked_users($sortfirstname, $groupid=0) {
         global $CFG, $DB;
+
         if (!empty($CFG->progresstrackedroles)) {
             $roles = explode(', ', $CFG->progresstrackedroles);
         } else {
@@ -648,6 +659,7 @@ WHERE
         if (!$this->is_enabled($cm) ||
             is_null($cm->completiongradeitemnumber) ||
             $item->itemnumber != $cm->completiongradeitemnumber) {
+
             return;
         }
 
@@ -711,6 +723,7 @@ WHERE
      */
     function internal_systemerror($error) {
         global $CFG;
+
         debugging($error, DEBUG_ALL);
         print_error('err_system', 'completion', $CFG->wwwroot.'/course/view.php?id='.$this->course->id);
     }
