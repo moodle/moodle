@@ -592,7 +592,7 @@ function SCORMapi1_2() {
                 }
             }
             if (cmi.core.lesson_mode == 'browse') {
-                if (datamodel['cmi.core.lesson_status'].defaultvalue == '') {
+                if (datamodel['cmi.core.lesson_status'].defaultvalue == '' && cmi.core.lesson_status == 'not attempted') {
                     cmi.core.lesson_status = 'browsed';
                 }
             }
