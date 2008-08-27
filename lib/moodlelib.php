@@ -286,11 +286,11 @@ define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
 // Used for plugin_supports() to report features that are, or are not, supported by a module.
 
 /** True if module can provide a grade */
-define('FEATURE_GRADE_HAS_GRADE','grade_has_grade');
+define('FEATURE_GRADE_HAS_GRADE', 'grade_has_grade');
 /** True if module has code to track whether somebody viewed it */
-define('FEATURE_COMPLETION_TRACKS_VIEWS','completion_tracks_views');
+define('FEATURE_COMPLETION_TRACKS_VIEWS', 'completion_tracks_views');
 /** True if module has custom completion rules */
-define('FEATURE_COMPLETION_HAS_RULES','completion_has_rules');
+define('FEATURE_COMPLETION_HAS_RULES', 'completion_has_rules');
 
 
 
@@ -6100,31 +6100,41 @@ function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
  * @param string $type Plugin type e.g. 'mod'
  * @param string $name Plugin name
  * @param string $feature Feature code (FEATURE_xx constant)
- * @return Feature result (false if not supported, null if feature is unknown 
- *   [=not supported, usually]; otherwise usually true but may have
- *   other feature-specific value)
+ * @param mixed $default default value if feature support unknown
+ * @return mixed Feature result (false if not supported, null if feature is unknown,
+ *         otherwise usually true but may have other feature-specific value)
  */
-function plugin_supports($type,$name,$feature) {
+function plugin_supports($type, $name, $feature, $default=null) {
     global $CFG;
+
+    $name = clean_param($name, PARAM_SAFEDIR);
+
     switch($type) {
         case 'mod' :
-            $file=$CFG->dirroot.'/mod/'.$name.'/lib.php';
-            $function=$name.'_supports';
+            $file = $CFG->dirroot.'/mod/'.$name.'/lib.php';
+            $function = $name.'_supports';
             break;
         default:
             throw new Exception('Unsupported plugin type ('.$type.')');
     }
 
     // Load library and look for function
-    require_once($file);
-    if(function_exists($function)) {
+    if (file_exists($file)) {
+        require_once($file);
+    }
+    if (function_exists($function)) {
         // Function exists, so just return function result
-        return $function($feature);
+        $supports = $function($feature);
+        if (is_null($supports)) {
+            return $default;
+        } else {
+            return $supports;
+        }
     } else {
         switch($feature) {
             // If some features can also be checked in other ways
             // for legacy support, this could be added here
-            default: return null;
+            default: return $default;
         }
     }
 }
