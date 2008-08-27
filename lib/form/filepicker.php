@@ -73,7 +73,7 @@ function callpicker_$suffix(){
     picker.id = 'file-picker-$suffix';
     document.body.appendChild(picker);
     var el=document.getElementById('${id}_${suffix}');
-    openpicker_$suffix({"env":"form", 'target':el, 'callback':updatefile_$suffix, 'filearea':${filearea}})
+    openpicker_$suffix({"env":"form", 'target':el, 'callback':updatefile_$suffix, 'filearea':"${filearea}"})
 }
 </script>
 EOD;
