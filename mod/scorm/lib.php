@@ -47,6 +47,10 @@ function scorm_add_instance($scorm) {
         if (scorm_external_link($scorm->reference) || ((basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#'))) {
             // Rename temp scorm dir to scorm id
             $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
+            if (file_exists($scorm->dir.'/'.$id)) {
+                //delete directory as it shouldn't exist! - most likely there from an old moodle install with old files in dataroot
+                scorm_delete_files($scorm->dir.'/'.$id);
+            }
             rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$id);
         }
 
