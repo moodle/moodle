@@ -50,8 +50,10 @@
 
         $params = array('currentgroup'=>$currentgroup, 'chatid'=>$chat->id, 'start'=>$start, 'end'=>$end);
 
+        // If the user is allocated to a group, only show messages from people
+        // in the same group, or no group
         if ($currentgroup) {
-            $groupselect = " AND groupid = :currentgroup";
+            $groupselect = " AND (groupid = :currentgroup OR groupid = 0)";
         } else {
             $groupselect = "";
         }
@@ -116,8 +118,10 @@
 
     $params = array('currentgroup'=>$currentgroup, 'chatid'=>$chat->id, 'start'=>$start, 'end'=>$end);
 
+    // If the user is allocated to a group, only show discussions with people in
+    // the same group, or no group
     if (!empty($currentgroup)) {
-        $groupselect = " AND groupid = :currentgroup";
+        $groupselect = " AND (groupid = :currentgroup OR groupid = 0)";
     } else {
         $groupselect = "";
     }
