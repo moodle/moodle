@@ -20,7 +20,7 @@
 class boxclient {
     public $auth_token = '';
 
-    private $_box_api_url = 'http://www.box.net/api/1.0/rest';
+    private $_box_api_url = 'http://box.net/api/1.0/rest';
     private $_box_api_upload_url = 'http://upload.box.net/api/1.0/upload';
     private $_error_code = '';
     private $_error_msg = '';
@@ -144,7 +144,7 @@ class boxclient {
         } catch (Exception $e){
         }
         $ret = array();
-        $o = simplexml_load_string($xml);
+        $o = simplexml_load_string(trim($xml));
         if($o->status == 'listing_ok') {
             $tree = $o->tree->folder;
             $this->buildtree($tree, $ret);

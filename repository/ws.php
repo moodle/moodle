@@ -7,7 +7,7 @@ require_once('../lib/filelib.php');
 require_once('lib.php');
 // set one hour here
 $CFG->repository_cache_expire = 60*60;
-// page
+// page or path
 $p     = optional_param('p', '', PARAM_INT);
 // opened in editor or moodleform
 $env   = optional_param('env', 'form', PARAM_ALPHA);
@@ -24,6 +24,8 @@ $repo_id = optional_param('repo_id', 1, PARAM_INT);
 // what will happen if user use a fake ctx_id?
 // Think about using $SESSION save it
 $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);
+$filearea = optional_param('filearea', 'user_draft', PARAM_RAW);
+$filepath = optional_param('filepath', '/', PARAM_RAW);
 $userid  = $USER->id;
 
 if(!$repository = repository_instance($repo_id))
@@ -71,7 +73,7 @@ if ($action == 'list' || $action == 'search') {
     $path = $repo->get_file($file, $title);
     $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
     try {
-        $info = move_to_filepool($path, $title, $itemid);
+        $info = move_to_filepool($path, $title, $itemid, $filearea, $filepath);
         if($env == 'form'){
             echo json_encode($info['id']);
         } elseif($env == 'editor') {

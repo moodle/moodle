@@ -530,16 +530,18 @@ function repository_static_function($plugin, $function) {
  * @param string file path in download folder
  * @param string file name
  * @param int itemid to identify a file in filepool
+ * @param string file area
+ * @param string filepath in file area
  * @return array information of file in file pool
  */
-function move_to_filepool($path, $name, $itemid) {
+function move_to_filepool($path, $name, $itemid, $filearea = 'user_draft', $filepath = '/') {
     global $DB, $CFG, $USER;
     $context = get_context_instance(CONTEXT_USER, $USER->id);
     $entry = new object();
-    $entry->filearea  = 'user_draft';
+    $entry->filearea  = $filearea;
     $entry->contextid = $context->id;
     $entry->filename  = $name;
-    $entry->filepath  = '/';
+    $entry->filepath  = $filepath;
     $entry->timecreated  = time();
     $entry->timemodified = time();
     if(is_numeric($itemid)) {
@@ -572,7 +574,7 @@ function get_repository_client($context){
     $stradd  = get_string('add', 'repository');
     $strback      = get_string('back', 'repository');
     $strclose     = get_string('close', 'repository');
-    $strdownbtn   = get_string('download', 'repository');
+    $strdownbtn   = get_string('getfile', 'repository');
     $strdownload  = get_string('downloadsucc', 'repository');
     $strdate      = get_string('date', 'repository').': ';
     $strerror     = get_string('error', 'repository');
