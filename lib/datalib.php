@@ -11,7 +11,7 @@
  * @package moodlecore
  */
 
-define('MAX_COURSES_IN_CATEGORY', 10000); // MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!  
+define('MAX_COURSES_IN_CATEGORY', 10000); // MAX_COURSES_IN_CATEGORY * MAX_COURSE_CATEGORIES must not be more than max integer!
 define('MAX_COURSE_CATEGORIES', 10000);
 
 /**
@@ -82,15 +82,15 @@ function setup_DB() {
                 $content = fread($fp, 24);
                 fclose($fp);
                 if((time() - (int)$content) > 600){
-                    @mail($CFG->emailconnectionerrorsto, 
-                        'WARNING: Database connection error: '.$CFG->wwwroot, 
+                    @mail($CFG->emailconnectionerrorsto,
+                        'WARNING: Database connection error: '.$CFG->wwwroot,
                         'Connection error: '.$CFG->wwwroot);
                     $fp = fopen($CFG->dataroot.'/emailcount', 'w');
                     fwrite($fp, time());
                 }
             } else {
-               @mail($CFG->emailconnectionerrorsto, 
-                    'WARNING: Database connection error: '.$CFG->wwwroot, 
+               @mail($CFG->emailconnectionerrorsto,
+                    'WARNING: Database connection error: '.$CFG->wwwroot,
                     'Connection error: '.$CFG->wwwroot);
                $fp = fopen($CFG->dataroot.'/emailcount', 'w');
                fwrite($fp, time());
@@ -1325,7 +1325,7 @@ function get_course_category($catid=0) {
 
 /**
  * Fixes course category and course sortorder, also verifies category and course parents and paths.
- * (circular references are not fixed) 
+ * (circular references are not fixed)
  */
 function fix_course_sortorder() {
     global $DB, $SITE;
@@ -1368,7 +1368,7 @@ function fix_course_sortorder() {
         $defaultcat = reset($topcats);
         foreach ($brokencats as $cat) {
             $topcats[] = $cat;
-        } 
+        }
     }
 
     // now walk recursively the tree and fix any problems found
@@ -1423,7 +1423,7 @@ function fix_course_sortorder() {
             $cat->coursecount = $cat->newcount;
             unset($cat->newcount);
             $DB->update_record_raw('course_categories', $cat, true);
-        } 
+        }
     }
 
     // now make sure that sortorders in course table are withing the category sortorder ranges
@@ -1483,7 +1483,7 @@ function fix_course_sortorder() {
         foreach ($courses as $course) {
             if ($course->sortorder != $cat->sortorder + $i) {
                 $course->sortorder = $cat->sortorder + $i;
-                $DB->update_record_raw('course', $course, true); 
+                $DB->update_record_raw('course', $course, true);
             }
             $i++;
         }
@@ -1691,31 +1691,51 @@ function get_course_mods($courseid) {
 /**
  * Given an id of a course module, finds the coursemodule description
  *
- * @param string $modulename name of module type, eg. resource, assignment,...
+ * @param string $modulename name of module type, eg. resource, assignment,... (optional, slower and less safe if not specified)
  * @param int $cmid course module id (id in course_modules table)
  * @param int $courseid optional course id for extra validation
+ * @param bool $sectionnum include relative section number (0,1,2 ...)
  * @return object course module instance with instance and module name
  */
-function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
+function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=false) {
     global $DB;
 
-    $params = array();
-    $courseselect = "";
+    $params = array('cmid'=>$cmid);
 
-    if ($courseid) {
-        $courseselect = "cm.course = :courseid AND ";
-        $params['courseid'] = $courseid;
+    if (!$modulename) {
+        if (!$modulename = $DB->get_field_sql("SELECT md.name
+                                                 FROM {modules} md
+                                                 JOIN {course_modules} cm ON cm.module = md.id
+                                                WHERE cm.id = :cmid", $params)) {
+            return false;
+        }
     }
-    $params['cmid'] = $cmid;
+
     $params['modulename'] = $modulename;
 
-    return $DB->get_record_sql("SELECT cm.*, m.name, md.name as modname
-                                  FROM {course_modules} cm, {modules} md, {".$modulename."} m
-                                 WHERE $courseselect
-                                       cm.id = :cmid AND
-                                       cm.instance = m.id AND
-                                       md.name = :modulename AND
-                                       md.id = cm.module", $params);
+    $courseselect = "";
+    $sectionfield = "";
+    $sectionjoin  = "";
+
+    if ($courseid) {
+        $courseselect = "AND cm.course = :courseid";
+        $params['courseid'] = $courseid;
+    }
+
+    if ($sectionnum) {
+        $sectionfield = ", cw.section AS sectionnum";
+        $sectionjoin  = "LEFT JOIN {course_sections} cw ON cw.id = cm.section";
+    }
+
+    $sql = "SELECT cm.*, m.name, md.name AS modname $sectionfield
+              FROM {course_modules} cm
+                   JOIN {modules} md ON md.id = cm.module
+                   JOIN {".$modulename."} m ON m.id = cm.instance
+                   $sectionjoin
+             WHERE cm.id = :cmid AND md.name = :modulename
+                   $courseselect";
+
+    return $DB->get_record_sql($sql, $params);
 }
 
 /**
@@ -1724,29 +1744,37 @@ function get_coursemodule_from_id($modulename, $cmid, $courseid=0) {
  * @param string $modulename name of module type, eg. resource, assignment,...
  * @param int $instance module instance number (id in resource, assignment etc. table)
  * @param int $courseid optional course id for extra validation
+ * @param bool $sectionnum include relative section number (0,1,2 ...)
  * @return object course module instance with instance and module name
  */
-function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
+function get_coursemodule_from_instance($modulename, $instance, $courseid=0, $sectionnum=false) {
     global $DB;
 
-    $params = array();
+    $params = array('instance'=>$instance, 'modulename'=>$modulename);
+
     $courseselect = "";
+    $sectionfield = "";
+    $sectionjoin  = "";
 
     if ($courseid) {
-        $courseselect = "cm.course = :courseid AND ";
+        $courseselect = "AND cm.course = :courseid";
         $params['courseid'] = $courseid;
     }
-    $params['instance'] = $instance;
-    $params['modulename'] = $modulename;
 
-    return $DB->get_record_sql("SELECT cm.*, m.name, md.name as modname
-                                  FROM {course_modules} cm, {modules} md, {".$modulename."} m
-                                 WHERE $courseselect
-                                       cm.instance = m.id AND
-                                       md.name = :modulename AND
-                                       md.id = cm.module AND
-                                       m.id = :instance", $params);
+    if ($sectionnum) {
+        $sectionfield = ", cw.section AS sectionnum";
+        $sectionjoin  = "LEFT JOIN {course_sections} cw ON cw.id = cm.section";
+    }
 
+    $sql = "SELECT cm.*, m.name, md.name AS modname $sectionfield
+              FROM {course_modules} cm
+                   JOIN {modules} md ON md.id = cm.module
+                   JOIN {".$modulename."} m ON m.id = cm.instance
+                   $sectionjoin
+             WHERE m.id = :instance AND md.name = :modulename
+                   $courseselect";
+
+    return $DB->get_record_sql($sql, $params);
 }
 
 /**
