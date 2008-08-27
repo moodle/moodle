@@ -391,12 +391,11 @@ class assignment_base {
 
         $result = true;
 
-        // now get rid of all attachments
+        // now get rid of all files
         $fs = get_file_storage();
         if ($cm = get_coursemodule_from_instance('assignment', $assignment->id)) {
             $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-            $fs->delete_area_files($context->id, 'assignment_submission');
-            $fs->delete_area_files($context->id, 'assignment_response');
+            $fs->delete_area_files($context->id);
         }
 
         if (! $DB->delete_records('assignment_submissions', array('assignment'=>$assignment->id))) {

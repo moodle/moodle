@@ -179,6 +179,13 @@ function forum_delete_instance($id) {
         return false;
     }
 
+    // now get rid of all files
+    $fs = get_file_storage();
+    if ($cm = get_coursemodule_from_instance('forum', $forum->id)) {
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        $fs->delete_area_files($context->id);
+    }
+
     $result = true;
 
     if ($discussions = $DB->get_records('forum_discussions', array('forum'=>$forum->id))) {

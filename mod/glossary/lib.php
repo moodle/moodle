@@ -172,12 +172,8 @@ function glossary_delete_instance($id) {
     $DB->delete_records_select('glossary_entries_categories', "categoryid IN ($category_select)", array($id));
     $DB->delete_records('glossary_categories', array('glossaryid'=>$id));
 
-    // delete attachments
-    if ($attachments = $DB->get_records('glossary_entries', array('glossaryid'=>$id, 'attachment'=>'1'), '', 'id')) {
-        foreach ($attachments as $entryid=>$unused) {
-            $fs->delete_area_files($context->id, 'glossary_attachment', $entryid);
-        }
-    }
+    // delete all files
+    $fs->delete_area_files($context->id);
 
     glossary_grade_item_delete($glossary);
 
