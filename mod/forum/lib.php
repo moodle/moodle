@@ -178,19 +178,24 @@ function forum_delete_instance($id) {
     if (!$forum = $DB->get_record('forum', array('id'=>$id))) {
         return false;
     }
+    if (!$cm = get_coursemodule_from_instance('forum', $forum->id)) {
+        return false;
+    }
+    if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
+        return false;
+    }
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
     // now get rid of all files
     $fs = get_file_storage();
-    if ($cm = get_coursemodule_from_instance('forum', $forum->id)) {
-        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
-        $fs->delete_area_files($context->id);
-    }
+    $fs->delete_area_files($context->id);
 
     $result = true;
 
     if ($discussions = $DB->get_records('forum_discussions', array('forum'=>$forum->id))) {
         foreach ($discussions as $discussion) {
-            if (!forum_delete_discussion($discussion, true)) {
+            if (!forum_delete_discussion($discussion, true, $course, $cm, $forum)) {
                 $result = false;
             }
         }
@@ -4153,11 +4158,11 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
  * Deletes a discussion and handles all associated cleanup.
  * @param object $discussion Discussion to delete
  * @param bool $fulldelete True when deleting entire forum
- * @param object $course Course (required if fulldelete is false)
- * @param object $cm Course-module (required if fulldelete is false)
- * @param object $forum Forum (required if fulldelete is false)
+ * @param object $course Course
+ * @param object $cm Course-module
+ * @param object $forum Forum
  */
-function forum_delete_discussion($discussion, $fulldelete=false,$course=null,$cm=null,$forum=null) {
+function forum_delete_discussion($discussion, $fulldelete, $course, $cm, $forum) {
     global $DB;
     $result = true;
 
@@ -4165,7 +4170,7 @@ function forum_delete_discussion($discussion, $fulldelete=false,$course=null,$cm
         foreach ($posts as $post) {
             $post->course = $discussion->course;
             $post->forum  = $discussion->forum;
-            if (! forum_delete_post($post, 'ignore',$course, $cm, $forum,  $fulldelete)) {
+            if (!forum_delete_post($post, 'ignore', $course, $cm, $forum, $fulldelete)) {
                 $result = false;
             }
         }
@@ -4173,16 +4178,18 @@ function forum_delete_discussion($discussion, $fulldelete=false,$course=null,$cm
 
     forum_tp_delete_read_records(-1, -1, $discussion->id);
 
-    if (! $DB->delete_records("forum_discussions", array("id" => "$discussion->id"))) {
+    if (!$DB->delete_records("forum_discussions", array("id"=>$discussion->id))) {
         $result = false;
     }
 
     // Update completion state if we are tracking completion based on number of posts
-    $completion=new completion_info($course);
-    if(!$fulldelete && // But don't bother when deleting whole thing
-        $completion->is_enabled($cm)==COMPLETION_TRACKING_AUTOMATIC &&
-        ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
-        $completion->update_state($cm,COMPLETION_INCOMPLETE,$discussion->userid);
+    // But don't bother when deleting whole thing
+    if (!$fulldelete) {
+        $completion = new completion_info($course);
+        if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC &&
+           ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
+            $completion->update_state($cm, COMPLETION_INCOMPLETE, $discussion->userid);
+        }
     }
 
     return $result;
@@ -4208,7 +4215,7 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
 
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
-    if ($children!='ignore' && ($childposts = $DB->get_records('forum_posts', array('parent'=>$post->id)))) {
+    if ($children != 'ignore' && ($childposts = $DB->get_records('forum_posts', array('parent'=>$post->id)))) {
        if ($children) {
            foreach ($childposts as $childpost) {
                forum_delete_post($childpost, true, $course, $cm, $forum, $skipcompletion);
@@ -4233,11 +4240,14 @@ function forum_delete_post($post, $children, $course, $cm, $forum, $skipcompleti
         forum_discussion_update_last_post($post->discussion);
 
         // Update completion state if we are tracking completion based on number of posts
-        $completion = new completion_info($course);
-        if(!$skipcompletion && // But don't bother when deleting whole thing
-            $completion->is_enabled($cm)==COMPLETION_TRACKING_AUTOMATIC &&
-            ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
-            $completion->update_state($cm,COMPLETION_INCOMPLETE,$post->userid);
+        // But don't bother when deleting whole thing
+
+        if (!$skipcompletion) {
+            $completion = new completion_info($course);
+            if ($completion->is_enabled($cm) == COMPLETION_TRACKING_AUTOMATIC &&
+               ($forum->completiondiscussions || $forum->completionreplies || $forum->completionposts)) {
+                $completion->update_state($cm, COMPLETION_INCOMPLETE, $post->userid);
+            }
         }
 
         return true;
