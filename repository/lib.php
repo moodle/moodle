@@ -368,7 +368,8 @@ abstract class repository {
      *       'date' => (string) file last modification time, usually userdate(...),
      *       'size' => (int) file size,
      *       'thumbnail' => (string) url to thumbnail for the file,
-     *       'source' => plugin-dependent unique path to the file (id, url, path, etc.)
+     *       'source' => plugin-dependent unique path to the file (id, url, path, etc.),
+     *       'url'=> the accessible url of file
      *     ),
      *     array( // folder - same as file, but no 'source'.
      *       'title' => (string) folder name,
@@ -567,7 +568,7 @@ function move_to_filepool($path, $name, $itemid) {
 function get_repository_client($context){
     global $CFG, $USER;
     $suffix = uniqid();
-    $filename     = get_string('filename', 'repository');
+    $strsaveas    = get_string('saveas', 'repository').': ';
     $stradd  = get_string('add', 'repository');
     $strback      = get_string('back', 'repository');
     $strclose     = get_string('close', 'repository');
@@ -604,6 +605,8 @@ function get_repository_client($context){
 #paging-$suffix a{padding: 4px;border: 1px solid #CCC}
 #path-$suffix a{padding: 4px;background: gray}
 #panel-$suffix{padding:0;margin:0; text-align:left;}
+#rename-form{text-align:center}
+#rename-form p{margin: 1em;}
 p.upload{text-align:right;margin: 5px}
 p.upload a{font-size: 14px;background: #ccc;color:black;padding: 3px}
 p.upload a:hover {background: grey;color:white}
@@ -611,7 +614,8 @@ p.upload a:hover {background: grey;color:white}
 .file_date{color:blue}
 .file_size{color:gray}
 .grid{width:80px; float:left;text-align:center;}
-.grid div{width: 80px; height: 36px; overflow: hidden}
+.grid div{width: 80px; overflow: hidden}
+.grid .label{height: 36px}
 .repo-opt{font-size: 10px;}
 </style>
 <style type="text/css">
@@ -793,15 +797,15 @@ _client.loading = function(){
 }
 _client.rename = function(oldname, url){
     var panel = new YAHOO.util.Element('panel-$suffix');
-    var html = '<div>';
-    html += '<label for="newname-$suffix">$filename</label>';
-    html += '<input type="text" id="newname-$suffix" value="'+oldname+'" /><br/>';
-    html += '<label for="syncfile-$suffix">$strsync</label>';
-    html += '<input type="checkbox" id="syncfile-$suffix" /><br/>';
-    html += '<input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
+    var html = '<div id="rename-form">';
+    html += '<p><label for="newname-$suffix">$strsaveas</label>';
+    html += '<input type="text" id="newname-$suffix" value="'+oldname+'" /></p>';
+    html += '<p><label for="syncfile-$suffix">$strsync</label>';
+    html += '<input type="checkbox" id="syncfile-$suffix" /></p>';
+    html += '<p><input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
     html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a> ';
     html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownbtn" />';
-    html += '<input type="button" onclick="repository_client_$suffix.hide()" value="Cancle" />';
+    html += '<input type="button" onclick="repository_client_$suffix.hide()" value="Cancle" /></p>';
     html += '</div>';
     panel.get('element').innerHTML = html;
 }
@@ -867,16 +871,28 @@ _client.viewthumb = function(ds){
         frame.style.textAlign='center';
         var img = document.createElement('img');
         img.src = list[k].thumbnail;
-        frame.appendChild(img);
+        if(list[k].url){
+            var link = document.createElement('A');
+            link.href=list[k].url;
+            link.target='_blank';
+            link.appendChild(img);
+            frame.appendChild(link);
+        }else{
+            frame.appendChild(img);
+        }
         var input = document.createElement('input');
         input.type='radio';
-        input.title = list[k].title;
         input.name = 'selected-files';
         input.value = list[k].source;
         input.title = list[k].title;
         input.id    = 'id-'+String(count);
         var title = document.createElement('div');
-        title.innerHTML = list[k].title;
+        if(list[k].children){
+            title.innerHTML = '<i><u>'+list[k].title+'</i></u>';
+        } else {
+            title.innerHTML = list[k].title;
+        }
+        title.className = 'label';
         el.appendChild(frame);
         el.appendChild(input);
         el.appendChild(title);
@@ -959,8 +975,6 @@ _client.viewlist = function(){
     list = _client.ds.list;
     var str = _client.navbar();
     str += '<div id="treediv"></div>';
-    var re = new RegExp();
-    re.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\?\/.=]+$");
     panel.get('element').innerHTML = str;
     var tree = new YAHOO.widget.TreeView('treediv');
     if(_client.ds.dynload) {

@@ -154,7 +154,7 @@ EOD;
                 $format = 'jpg';
             }
             $ret->list[] =
-                array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown');
+                array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown', 'url'=>$photos_url.$p['id']);
         }
         if(empty($ret)) {
             throw new repository_exception('nullphotolist', 'repository_flickr');
@@ -233,8 +233,12 @@ EOD;
         return true;
     }
     public function admin_config_form(&$mform) {
+        $api_key = get_config('flickr', 'api_key');
+        if (empty($api_key)) {
+            $api_key = '';
+        }
         $strrequired = get_string('required');
-        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'));
+        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'), array('value'=>$api_key));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
     }
     public static function get_option_names(){

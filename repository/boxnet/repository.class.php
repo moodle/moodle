@@ -83,7 +83,7 @@ class repository_boxnet extends repository{
 
     public function get_login(){
         global $DB;
-        if ($entry = $DB->get_record('repository', array('id'=>$this->id))) {
+        if ($entry = $DB->get_record('repository_instances', array('id'=>$this->id))) {
             $ret->username = $entry->username;
             $ret->password = $entry->password;
         } else {
