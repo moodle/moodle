@@ -280,11 +280,11 @@
                         notice("Sorry, but you are not allowed to delete that discussion!",
                                 forum_go_back_to("discuss.php?d=$post->discussion"));
                     }
-                    forum_delete_discussion($discussion,false,$course,$cm,$forum);
+                    forum_delete_discussion($discussion, false, $course, $cm, $forum);
 
                     add_to_log($discussion->course, "forum", "delete discussion",
                                "view.php?id=$cm->id", "$forum->id", $cm->id);
-                    
+
                     redirect("view.php?f=$discussion->forum");
 
                 } else if (forum_delete_post($post, has_capability('mod/forum:deleteanypost', $modcontext),
@@ -403,7 +403,7 @@
 
             add_to_log($discussion->course, "forum", "prune post",
                            "discuss.php?d=$newid", "$post->id", $cm->id);
-            
+
             redirect(forum_go_back_to("discuss.php?d=$newid"));
 
         } else { // User just asked to prune something
@@ -552,10 +552,10 @@
                 }
                 add_to_log($course->id, "forum", "add post",
                           "$discussionurl&amp;parent=$fromform->id", "$fromform->id", $cm->id);
-                
+
                 // Update completion state
                 $completion=new completion_info($course);
-                if($completion->is_enabled($cm) && 
+                if($completion->is_enabled($cm) &&
                     ($forum->completionreplies || $forum->completionposts)) {
                     $completion->update_state($cm,COMPLETION_COMPLETE);
                 }
@@ -747,7 +747,7 @@
 
     } else if (forum_user_has_posted($forum->id, 0, $USER->id)) {
         $subscribe = false;
-        
+
     } else {
         // user not posted yet - use subscription default specified in profile
         $subscribe = !empty($USER->autosubscribe);
