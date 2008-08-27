@@ -41,7 +41,7 @@ if (!empty($instanceid)) {
 }
 
 $context = get_context_instance(CONTEXT_COURSE, $course->id);
-require_login($course->id);
+require_login($course);
 require_capability('moodle/course:update', $context);
 
 
@@ -87,29 +87,29 @@ switch($_SERVER['REQUEST_METHOD']) {
                 break;
 
             case 'resource':
-                if (!$mod = $DB->get_record('course_modules', array('id'=>$id, 'course'=>$course->id))) {
+                if (!$cm = get_coursemodule_from_id('', $id, $course->id)) {
                     error_log('AJAX commands.php: Bad course module ID '.$id);
                     die;
                 }
                 switch ($field) {
                     case 'visible':
-                        set_coursemodule_visible($mod->id, $value);
+                        set_coursemodule_visible($cm->id, $value);
                         break;
 
                     case 'groupmode':
-                        set_coursemodule_groupmode($mod->id, $value);
+                        set_coursemodule_groupmode($cm->id, $value);
                         break;
 
                     case 'indentleft':
-                        if ($mod->indent > 0) {
-                            $mod->indent--;
-                            $DB->update_record('course_modules', $mod);
+                        if ($cm->indent > 0) {
+                            $cm->indent--;
+                            $DB->update_record('course_modules', $cm);
                         }
                         break;
 
                     case 'indentright':
-                        $mod->indent++;
-                        $DB->update_record('course_modules', $mod);
+                        $cm->indent++;
+                        $DB->update_record('course_modules', $cm);
                         break;
 
                     case 'move':
@@ -119,6 +119,7 @@ switch($_SERVER['REQUEST_METHOD']) {
                         }
 
                         if ($beforeid > 0){
+                            $beforemod = get_coursemodule_from_id('', $beforeid, $course->id);
                             $beforemod = $DB->get_record('course_modules', array('id'=>$beforeid));
                         } else {
                             $beforemod = NULL;
@@ -128,7 +129,7 @@ switch($_SERVER['REQUEST_METHOD']) {
                             error_log(serialize($beforemod));
                         }
 
-                        moveto_module($mod, $section, $beforemod);
+                        moveto_module($cm, $section, $beforemod);
                         break;
                 }
                 rebuild_course_cache($course->id);
@@ -157,41 +158,45 @@ switch($_SERVER['REQUEST_METHOD']) {
                 break;
 
             case 'resource':
-                if (!$cm = $DB->get_record('course_modules', array('id'=>$id, 'course'=>$course->id))) {
+                if (!$cm = get_coursemodule_from_id('', $id, $course->id)) {
                     error_log('AJAX rest.php: Bad course module ID '.$id);
                     die;
                 }
-                if (!$mod = $DB->get_record('modules', array('id'=>$cm->module))) {
-                    error_log('AJAX rest.php: Bad module ID '.$cm->module);
-                    die;
-                }
-                $mod->name = clean_param($mod->name, PARAM_SAFEDIR);  // For safety
-                $modlib = "$CFG->dirroot/mod/$mod->name/lib.php";
+                $modlib = "$CFG->dirroot/mod/$cm->modname/lib.php";
 
                 if (file_exists($modlib)) {
                     include_once($modlib);
                 } else {
-                    error_log("Ajax rest.php: This module is missing important code ($modlib)");
+                    error_log("Ajax rest.php: This module is missing mod/$cm->modname/lib.php");
                     die;
                 }
-                $deleteinstancefunction = $mod->name."_delete_instance";
+                $deleteinstancefunction = $cm->modname."_delete_instance";
 
                 // Run the module's cleanup funtion.
                 if (!$deleteinstancefunction($cm->instance)) {
-                    error_log("Ajax rest.php: Could not delete the $mod->name (instance)");
+                    error_log("Ajax rest.php: Could not delete the $cm->modname $cm->name (instance)");
                     die;
                 }
-                // Remove the course_modules entry.
+
+                $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+                // remove all module files in case modules forget to do that
+                $fs = get_file_storage();
+                $fs->delete_area_files($modcontext->id);
+
                 if (!delete_course_module($cm->id)) {
-                    error_log("Ajax rest.php: Could not delete the $mod->modulename (coursemodule)");
-                    die;
+                    error_log("Ajax rest.php: Could not delete the $cm->modname $cm->name (coursemodule)");
+                }
+                // Remove the course_modules entry.
+                if (!delete_mod_from_section($cm->id, $cm->section)) {
+                    error_log("Ajax rest.php: Could not delete the $cm->modname $cm->name from section");
                 }
 
                 rebuild_course_cache($course->id);
 
                 add_to_log($courseid, "course", "delete mod",
                            "view.php?id=$courseid",
-                           "$mod->name $cm->instance", $cm->id);
+                           "$cm->modname $cm->instance", $cm->id);
                 break;
         }
         break;
