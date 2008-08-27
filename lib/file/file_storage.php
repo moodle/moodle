@@ -243,14 +243,17 @@ class file_storage {
     /**
      * Delete all area files (optionally limited by itemid)
      * @param int $contextid
-     * @param string $filearea
+     * @param string $filearea (all areas in context if not specified)
      * @param int $itemid (all files if not specified)
      * @return success
      */
-    public function delete_area_files($contextid, $filearea, $itemid=false) {
+    public function delete_area_files($contextid, $filearea=false, $itemid=false) {
         global $DB;
 
-        $conditions = array('contextid'=>$contextid, 'filearea'=>$filearea);
+        $conditions = array('contextid'=>$contextid);
+        if ($filearea !== false) {
+            $conditions['filearea'] = $filearea;
+        }
         if ($itemid !== false) {
             $conditions['itemid'] = $itemid;
         }
