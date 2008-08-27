@@ -218,7 +218,7 @@ function sync_enrolments($role = null) {
     $extcourses = array();
     while ($extcourse_obj = rs_fetch_next_record($rs)) { // there are more course records
         $extcourse_obj = (object)array_change_key_case((array)$extcourse_obj , CASE_LOWER);
-        $extcourse = $extcourse_obj->{$CFG->enrol_remotecoursefield};
+        $extcourse = $extcourse_obj->{strtolower($CFG->enrol_remotecoursefield)};
         array_push($extcourses, $extcourse);
 
         // does the course exist in moodle already?
@@ -276,7 +276,7 @@ function sync_enrolments($role = null) {
         // slurp results into an array
         while ($crs_obj = rs_fetch_next_record($crs)) {
             $crs_obj = (object)array_change_key_case((array)$crs_obj , CASE_LOWER);
-            array_push($extenrolments, $crs_obj->{$CFG->enrol_remoteuserfield});
+            array_push($extenrolments, $crs_obj->{strtolower($CFG->enrol_remoteuserfield)});
         }
         rs_close($crs); // release the handle
 
