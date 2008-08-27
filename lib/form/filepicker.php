@@ -14,7 +14,13 @@ require_once(dirname(dirname(dirname(__FILE__))) . '/repository/lib.php');
  */
 class MoodleQuickForm_filepicker extends HTML_QuickForm_button
 {
+    var $_filearea;
     var $_helpbutton='';
+    
+    function MoodleQuickForm_filepicker($elementName=null, $value=null, $filearea=null, $attributes=null) {
+        parent::HTML_QuickForm_button($elementName, $value, $attributes);
+        $this->_filearea = $filearea;
+    }
     function setHelpButton($helpbuttonargs, $function='helpbutton'){
         if (!is_array($helpbuttonargs)){
             $helpbuttonargs=array($helpbuttonargs);
@@ -55,6 +61,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
             $str = $this->_getTabs();
             $str .= '<input type="hidden" value="" name="'.$this->_attributes['name'].'" id="'.$this->_attributes['id'].'_'.$suffix.'" />';
             $id = $this->_attributes['id'];
+            $filearea = $this->_filearea;
             $str .= <<<EOD
 <script type="text/javascript">
 function updatefile_$suffix(){
@@ -66,11 +73,12 @@ function callpicker_$suffix(){
     picker.id = 'file-picker-$suffix';
     document.body.appendChild(picker);
     var el=document.getElementById('${id}_${suffix}');
-    openpicker_$suffix({"env":"form", 'target':el, 'callback':updatefile_$suffix})
+    openpicker_$suffix({"env":"form", 'target':el, 'callback':updatefile_$suffix, 'filearea':${filearea}})
 }
 </script>
 EOD;
             // $this->_getAttrString($this->_attributes);
+            $str .= "<input name=\"filearea\" value=\"$filearea\" type=\"hidden\">\n";
             $str .= '<input value ="'.get_string('openpicker', 'repository').'" type="button" onclick=\'callpicker_'.$suffix.'()\' />'.'<span id="repo_info_'.$suffix.'" style="color:green"></span>'.$ret['css'].$ret['js'];
             return $str;
         }

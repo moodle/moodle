@@ -16,7 +16,6 @@ class mod_forum_post_form extends moodleform {
         $forum         = $this->_customdata['forum'];
         $post          = $this->_customdata['post']; // hack alert
 
-
         $mform->addElement('header', 'general', '');//fill in the data depending on page params
                                                     //later using set_data
         $mform->addElement('text', 'subject', get_string('subject', 'forum'), 'size="48"');
@@ -54,9 +53,8 @@ class mod_forum_post_form extends moodleform {
         }
 
         if ($forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
-            $mform->addElement('file', 'attachment', get_string('attachment', 'forum'));
+            $mform->addElement('filepicker', 'attachment', get_string('attachment', 'forum'), 'forum_submission');
             $mform->setHelpButton('attachment', array('attachment', get_string('attachment', 'forum'), 'forum'));
-
         }
 
         if (empty($post->id) && has_capability('moodle/course:manageactivities', $coursecontext)) { // hack alert
