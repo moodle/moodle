@@ -1,5 +1,6 @@
 <?php // $Id$
 
+
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // NOTICE OF COPYRIGHT                                                   //
@@ -33,7 +34,11 @@
  * - datalib.php - functions that access the database.
  * - moodlelib.php - general-purpose Moodle functions.
  * @author Martin Dougiamas
+<<<<<<< weblib.php
  * @version  $Id$
+=======
+ * @version  $Id$
+>>>>>>> 1.970.2.107
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
@@ -4372,7 +4377,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         }
     }
 
-    $output .= '<img class="'.$class.'" src="'.$src.'" alt="'.s($imagealt).'" />';
+    $output .= "<img class=\"$class\" src=\"$src\" height=\"$size\" width=\"$size\" alt=\"".s($imagealt).'"  />';
     if ($link) {
         $output .= '</a>';
     }
