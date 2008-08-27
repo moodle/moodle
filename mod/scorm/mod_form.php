@@ -252,6 +252,22 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         return $errors;
     }
-
+    //need to translate the "options" field.
+    function set_data($default_values) {
+        if (is_object($default_values)) {
+            if (!empty($default_values->options)) {
+                $options = explode(',', $default_values->options);
+                foreach ($options as $option) {
+                    $opt = explode('=', $option);
+                    if (isset($opt[1])) {
+                        $default_values->$opt[0] = $opt[1];
+                    }
+                }
+            }
+            $default_values = (array)$default_values;
+        }
+        $this->data_preprocessing($default_values);
+        parent::set_data($default_values); //never slashed for moodleform_mod
+    }
 }
 ?>
