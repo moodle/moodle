@@ -4426,7 +4426,7 @@ function print_user_picture($user, $courseid, $picture=NULL, $size=0, $return=fa
         }
     }
 
-    $output .= '<img class="'.$class.'" src="'.$src.'" alt="'.s($imagealt).'" />';
+    $output .= "<img class=\"$class\" src=\"$src\" height=\"$size\" width=\"$size\" alt=\"".s($imagealt).'"  />';
     if ($link) {
         $output .= '</a>';
     }
