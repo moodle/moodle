@@ -34,11 +34,7 @@
  * - datalib.php - functions that access the database.
  * - moodlelib.php - general-purpose Moodle functions.
  * @author Martin Dougiamas
-<<<<<<< weblib.php
  * @version  $Id$
-=======
- * @version  $Id$
->>>>>>> 1.970.2.107
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
