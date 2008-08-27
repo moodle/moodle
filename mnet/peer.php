@@ -10,6 +10,8 @@
 
 class mnet_peer {
 
+    //Unless stated otherwise, properties of this object are unescaped, and unsafe to
+    //insert into the db without further processing.
     var $id                 = 0;
     var $wwwroot            = '';
     var $ip_address         = '';
@@ -23,8 +25,12 @@ class mnet_peer {
     var $applicationid      = 1; // Default of 1 == Moodle
     var $keypair            = array();
     var $error              = array();
+    //Object whose properties need to be put into the database:
+    //(properties here are slashescaped)
+    var $updateparams;
 
     function mnet_peer() {
+        $this->updateparams = new stdClass();
         return true;
     }
 
@@ -47,7 +53,8 @@ class mnet_peer {
                 return false;
             }
 
-            $this->name = $wwwroot;
+            $this->name = stripslashes($wwwroot);
+            $this->updateparams->name = $wwwroot;
 
             // TODO: In reality, this will be prohibitively slow... need another
             // default - maybe blank string
@@ -56,12 +63,16 @@ class mnet_peer {
                 $count = preg_match("@<title>(.*)</title>@siU", $homepage, $matches);
                 if ($count > 0) {
                     $this->name = $matches[1];
+                    $this->updateparams->name = addslashes($matches[1]);
                 }
             }
 
-            $this->wwwroot              = $wwwroot;
-            $this->ip_address           = $ip_address;
-            $this->deleted              = 0;
+            $this->wwwroot = stripslashes($wwwroot);
+            $this->updateparams->wwwroot = $wwwroot;
+            $this->ip_address = $ip_address;
+            $this->updateparams->ip_address = $ip_address;
+            $this->deleted = 0;
+            $this->updateparams->deleted = 0;
 
             $this->application = get_record('mnet_application', 'name', $application);
             if (empty($this->application)) {
@@ -69,19 +80,27 @@ class mnet_peer {
             }
 
             $this->applicationid = $this->application->id;
+            $this->updateparams->applicationid = $this->application->id;
 
             if(empty($pubkey)) {
-                $this->public_key           = clean_param(mnet_get_public_key($this->wwwroot, $this->application), PARAM_PEM);
+                $pubkeytemp = clean_param(mnet_get_public_key($this->wwwroot, $this->application), PARAM_PEM);
             } else {
-                $this->public_key           = clean_param($pubkey, PARAM_PEM);
+                $pubkeytemp = clean_param($pubkey, PARAM_PEM);
             }
-            $this->public_key_expires   = $this->check_common_name($this->public_key);
-            $this->last_connect_time    = 0;
-            $this->last_log_id          = 0;
+            $this->public_key_expires = $this->check_common_name($pubkeytemp);
+
             if ($this->public_key_expires == false) {
-                $this->public_key == '';
                 return false;
             }
+            $this->updateparams->public_key_expires = $this->public_key_expires;
+
+            $this->updateparams->public_key = $pubkeytemp;
+            $this->public_key = $pubkeytemp;
+
+            $this->last_connect_time = 0;
+            $this->updateparams->last_connect_time = 0;
+            $this->last_log_id = 0;
+            $this->updateparams->last_log_id = 0;
         }
 
         return true;
@@ -93,11 +112,13 @@ class mnet_peer {
         $users = count_records('user','mnethostid', $this->id);
         if ($users > 0) {
             $this->deleted = 1;
+            $this->updateparams->deleted = 1;
         }
 
         $actions = count_records('mnet_log','hostid', $this->id);
         if ($actions > 0) {
             $this->deleted = 1;
+            $this->updateparams->deleted = 1;
         }
 
         $obj = delete_records('mnet_rpc2host', 'host_id', $this->id);
@@ -156,37 +177,32 @@ class mnet_peer {
     }
 
     function commit() {
-        $obj = new stdClass();
-
-        $obj->wwwroot               = $this->wwwroot;
-        $obj->ip_address            = $this->ip_address;
-        $obj->name                  = $this->name;
-        $obj->public_key            = $this->public_key;
-        $obj->public_key_expires    = $this->public_key_expires;
-        $obj->deleted               = $this->deleted;
-        $obj->last_connect_time     = $this->last_connect_time;
-        $obj->last_log_id           = $this->last_log_id;
-        $obj->force_theme           = $this->force_theme;
-        $obj->theme                 = $this->theme;
-        $obj->applicationid         = $this->applicationid;
+        $obj = $this->updateparams;
 
         if (isset($this->id) && $this->id > 0) {
             $obj->id = $this->id;
-            return update_record('mnet_host', $obj);
+            $dbresult = update_record('mnet_host', $obj);
         } else {
             $this->id = insert_record('mnet_host', $obj);
-            return $this->id > 0;
+            $dbresult = ($this->id > 0);
         }
+        //If the insert/update was successful, clear the parameters that need updating
+        if ($dbresult) {
+            $this->updateparams = new stdClass();
+        }
+        return $dbresult;
     }
 
     function touch() {
         $this->last_connect_time = time();
+        $this->updateparams->last_connect_time = time();
         $this->commit();
     }
 
     function set_name($newname) {
         if (is_string($newname) && strlen($newname <= 80)) {
-            $this->name = $newname;
+            $this->name = stripslashes($newname);
+            $this->updateparams->name = $newname;
             return true;
         }
         return false;
@@ -195,6 +211,7 @@ class mnet_peer {
     function set_applicationid($applicationid) {
         if (is_numeric($applicationid) && $applicationid == intval($applicationid)) {
             $this->applicationid = $applicationid;
+            $this->updateparams->applicationid = $applicationid;
             return true;
         }
         return false;

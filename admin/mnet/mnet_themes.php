@@ -52,7 +52,9 @@
         if (confirm_sesskey()) {
             if ($choose == $unlikely_name) {
                 $mnet_peer->force_theme = 1;
+                $mnet_peer->updateparams->force_theme = 1;
                 $mnet_peer->theme = '';
+                $mnet_peer->updateparams->theme = '';
                 if ($mnet_peer->commit()) {
                     $report = array(get_string('themesaved'), 'informationbox');
                 } else {
@@ -63,7 +65,8 @@
                 $report = array('This theme is not installed!'.'3', 'errorbox');
             } else {
                 $mnet_peer->force_theme = 1;
-                $mnet_peer->theme = addslashes($choose);
+                $mnet_peer->theme = $choose;
+                $mnet_peer->updateparams->theme = addslashes($choose);
                 if ($mnet_peer->commit()) {
                     $report = array(get_string('themesaved').'1', 'informationbox');
                 } else {
