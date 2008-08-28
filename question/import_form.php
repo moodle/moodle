@@ -77,5 +77,14 @@ class question_import_form extends moodleform {
             return  NULL;
         }
     }
+    
+    function get_importfile_realname(){
+        if ($this->is_submitted() and $this->is_validated()) {
+            // return the temporary filename to process
+            return $this->_upload_manager->files['newfile']['name'];
+        }else{
+            return  NULL;
+        }
+    }
 }
 ?>

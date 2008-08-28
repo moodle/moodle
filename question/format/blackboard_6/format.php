@@ -153,6 +153,16 @@ class qformat_blackboard_6 extends qformat_default {
     /// Returns complete file with an array, one item per line
         global $CFG;
         
+        // if the extension is .dat we just return that,
+        // if .zip we unzip the file and get the data
+        $ext = substr($this->realfilename, strpos($this->realfilename,'.'), strlen($this->realfilename)-1);      
+        if ($ext=='.dat') {
+            if (!is_readable($filename)) {
+                error("File is not readable");	
+            }		
+            return file($filename);
+        }	
+        
         $unique_code = time();
         $temp_dir = $CFG->dataroot."/temp/bbquiz_import/".$unique_code;
         $this->temp_dir = $temp_dir;
@@ -313,6 +323,12 @@ function create_raw_question($quest) {
                     case 'Fill in the Blank':
                         // do nothing?
                         break;
+                    case 'Fill in the Blank Plus':
+                        // do nothing?
+                        break;                  
+                    case 'Numeric':
+                        // do nothing?
+                        break;                             
                     default:
                         $bb_choices = $pblock['#']['response_lid'][0]['#']['render_choice'][0]['#']['flow_label'][0]['#']['response_label'];
                         $choices = array();
@@ -343,7 +359,7 @@ function create_raw_question($quest) {
     // there is a section called 'outcomes' that I don't know what to do with
     $resprocessing = $quest['#']['resprocessing'];
     $respconditions = $resprocessing[0]['#']['respcondition'];
-    $reponses = array();
+    $responses = array();
     if ($question->qtype == 'Matching') {
         $this->process_matching_responses($respconditions, $responses);
     }
