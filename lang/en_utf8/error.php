@@ -200,6 +200,7 @@ $string['errorcreatingdirectory'] = 'Error creating directory \"$a\"';
 $string['errorcreatingfile'] = 'Error creating file \"$a\"';
 $string['erroronline'] = 'Error on line $a';
 $string['errorreadingfile'] = 'Error reading file \"$a\"';
+$string['errortoomanylogins'] = 'Error - too many logins';
 $string['errorunzippingfiles'] = 'Error unzipping files';
 $string['expiredkey'] = 'Expired key';
 $string['failtoloadblocks'] = 'One or more blocks are registered in the database, but they all failed to load!';
