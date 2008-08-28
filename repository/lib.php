@@ -199,26 +199,30 @@ abstract class repository {
         $params = (array)$params;
         require_once($CFG->dirroot . '/repository/'. $type . '/repository.class.php');
         $classname = 'repository_' . $type;
-        $record = new stdclass;
-        $repo = $DB->get_record('repository', array('type'=>$type));
-        $record->name = $params['name'];
-        $record->typeid = $repo->id;
-        $record->timecreated  = time();
-        $record->timemodified = time();
-        $record->contextid = $context->id;
-        $record->userid    = $userid;
-        $id = $DB->insert_record('repository_instances', $record);
-        if (call_user_func($classname . '::has_admin_config')) {
-            $configs = call_user_func($classname . '::get_option_names');
-            $options = array();
-            foreach ($configs as $config) {
-                $options[$config] = $params[$config];
+        if ($repo = $DB->get_record('repository', array('type'=>$type))) {
+            $record = new stdclass;
+            $record->name = $params['name'];
+            $record->typeid = $repo->id;
+            $record->timecreated  = time();
+            $record->timemodified = time();
+            $record->contextid = $context->id;
+            $record->userid    = $userid;
+            $id = $DB->insert_record('repository_instances', $record);
+            if (call_user_func($classname . '::has_admin_config')) {
+                $configs = call_user_func($classname . '::get_option_names');
+                $options = array();
+                foreach ($configs as $config) {
+                    $options[$config] = $params[$config];
+                }
             }
-        }
-        if (!empty($id)) {
-            $instance = repository_instance($id);
-            $instance->set_option($options);
-            return $id;
+            if (!empty($id)) {
+                unset($options['name']);
+                $instance = repository_instance($id);
+                $instance->set_option($options);
+                return $id;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
@@ -555,7 +559,11 @@ function move_to_filepool($path, $name, $itemid, $filearea = 'user_draft', $file
     $browser = get_file_browser();
     if ($file = $fs->create_file_from_pathname($entry, $path)) {
         $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-        return array('url'=>$ret->get_url(),'id'=>$file->get_itemid());
+        if(!empty($ret)){
+            return array('url'=>$ret->get_url(),'id'=>$file->get_itemid());
+        } else {
+            return null;
+        }
     } else {
         return null;
     }
@@ -1172,7 +1180,11 @@ _client.dlfile = {
             panel.get('element').innerHTML = ret.e;
             return;
         }
-        repository_client_$suffix.end(ret);
+        if(ret){
+            repository_client_$suffix.end(ret);
+        }else{
+            alert('$strinvalidjson');
+        }
     }
 }
 // request file list or login
