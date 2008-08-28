@@ -54,19 +54,19 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
 require_once(dirname(dirname(__FILE__)).'/lib/formslib.php');
 
+/**
+ *TODO: write comment
+ */
 abstract class repository {
     public $id;
     public $context;
     public $options;
 
     /**
-     * Take an array as a parameter, which contains necessary information
-     * of repository.
-     *
-     * @param string $parent The parent path, this parameter must
-     * not be the folder name, it may be a identification of folder
-     * @param string $search The text will be searched.
-     * @return array the list of files, including meta infomation
+     * TODO: write comment
+     * @param integer $repositoryid
+     * @param integer $contextid
+     * @param array $options
      */
     public function __construct($repositoryid, $contextid = SITEID, $options = array()){
         $this->id = $repositoryid;
@@ -83,10 +83,20 @@ abstract class repository {
         }
     }
 
+    /**
+     * TODO: write comment
+     * @param string $name
+     * @param string $value
+     */
     public function __set($name, $value) {
         $this->options[$name] = $value;
     }
 
+    /**
+     * TODO: write comment
+     * @param <type> $name
+     * @return <type>
+     */
     public function __get($name) {
         if (array_key_exists($name, $this->options)){
             return $this->options[$name];
@@ -95,18 +105,30 @@ abstract class repository {
         return null;
     }
 
+    /**
+     * TODO: write comment
+     * @param <type> $name
+     * @return <type>
+     */
     public function __isset($name) {
         return isset($this->options[$name]);
     }
 
+    /**
+     * TODO: write comment
+     * @return <type>
+     */
     public function __toString() {
         return 'Repository class: '.__CLASS__;
     }
 
     /**
+     * TODO: complete comment
      * Given a URL, get a file from there.
+     * @global object $CFG
      * @param string $url the url of file
      * @param string $file save location
+     * @return <type>
      * @see curl package
      */
     public function get_file($url, $file = '') {
@@ -144,6 +166,12 @@ abstract class repository {
      * @param boolean $print if printing the listing directly
      *
      */
+    /**
+     * TODO: DS: above there is the previous comments, so you can update this one
+     * @param array $listing
+     * @param boolean $print if truee ... if false ...
+     * @return <type>
+     */
     public function print_listing($listing = array(), $print=true) {
         if(empty($listing)){
             $listing = $this->get_listing();
@@ -174,6 +202,7 @@ abstract class repository {
 
     /**
      * Return data for creating ajax request
+     * @global object $CFG
      * @return object
      */
     final public function ajax_info() {
@@ -188,11 +217,13 @@ abstract class repository {
 
     /**
      * Create an instance for this plug-in
-     * @param string the type of the repository
-     * @param int userid
-     * @param object context
-     * @param array the options for this instance
-     *
+     * @global object $CFG
+     * @global object $DB
+     * @param string $type the type of the repository
+     * @param integer $userid the user id
+     * @param object $context the context
+     * @param array $params the options for this instance
+     * @return <type>
      */
     final public static function create($type, $userid, $context, $params) {
         global $CFG, $DB;
@@ -227,17 +258,23 @@ abstract class repository {
             return null;
         }
     }
+
     /**
      * delete a repository instance
+     * @global object $DB
+     * @return <type>
      */
     final public function delete(){
         global $DB;
         $DB->delete_records('repository_instances', array('id'=>$this->id));
         return true;
     }
+
     /**
      * Hide/Show a repository
-     * @param boolean
+     * @global object $DB
+     * @param string $hide
+     * @return <type>
      */
     final public function hide($hide = 'toggle'){
         global $DB;
@@ -262,11 +299,11 @@ abstract class repository {
 
     /**
      * Cache login details for repositories
-     *
+     * @global object $DB
      * @param string $username
      * @param string $password
-     * @param string $userid The id of specific user
-     * @return int Id of the record
+     * @param integer $userid The id of specific user
+     * @return integer Id of the record
      */
     public function store_login($username = '', $password = '', $userid = 1) {
         global $DB;
@@ -289,15 +326,13 @@ abstract class repository {
             $repository->password = $password;
             return $DB->insert_record('repository', $repository);
         }
-        return false;
     }
 
     /**
      * Save settings for repository instance
-     * $repo->set_option(array('api_key'=>'f2188bde132',
-     *                          'name'=>'dongsheng'));
-     *
-     * @param array settings
+     * $repo->set_option(array('api_key'=>'f2188bde132', 'name'=>'dongsheng'));
+     * @global object $DB
+     * @param array $options settings
      * @return int Id of the record
      */
     public function set_option($options = array()){
@@ -332,8 +367,8 @@ abstract class repository {
 
     /**
      * Get settings for repository instance
-     *
-     * @param int repository Id
+     * @global object $DB
+     * @param <type> $config
      * @return array Settings
      */
     public function get_option($config = ''){
@@ -399,17 +434,19 @@ abstract class repository {
     /**
      * Show the login screen, if required
      * This is an abstract function, it must be overriden.
-     *
      */
     abstract public function print_login();
 
     /**
      * Show the search screen, if required
-     *
      * @return null
      */
     abstract public function print_search();
 
+    /**
+     * TODO: write comment
+     * @return <type>
+     */
     public static function has_admin_config() {
         return false;
     }
@@ -417,7 +454,7 @@ abstract class repository {
 
     /**
      * Defines operations that happen occasionally on cron
-     *
+     * @return <type>
      */
     public function cron() {
         return true;
@@ -426,19 +463,19 @@ abstract class repository {
 
 /**
  * exception class for repository api
- *
  */
-
 class repository_exception extends moodle_exception {
 }
 
 
 /**
  * Return repository instances
- *
- * @param object context
- * @param int userid
- * @param boolean if visible == true, return visible instances only,
+ * @global object $DB
+ * @global object $CFG
+ * @global object $USER
+ * @param object $context
+ * @param integer $userid
+ * @param boolean $visible if visible == true, return visible instances only,
  *                otherwise, return all instances
  * @return array repository instances
  */
@@ -481,8 +518,9 @@ function repository_get_instances($context, $userid = null, $visible = true){
 
 /**
  * Get single repository instance
- *
- * @param int repository id
+ * @global object $DB
+ * @global object $CFG
+ * @param integer $id repository id
  * @return object repository instance
  */
 function repository_get_instance($id){
@@ -503,6 +541,13 @@ function repository_get_instance($id){
     return new $classname($instance->id, $instance->contextid, $options);
 }
 
+/**
+ * TODO: write documentation
+ * @global <type> $CFG
+ * @param <type> $plugin
+ * @param <type> $function
+ * @return <type>
+ */
 function repository_static_function($plugin, $function) {
     global $CFG;
 
@@ -530,12 +575,14 @@ function repository_static_function($plugin, $function) {
 /**
  * Move file from download folder to file pool using FILE API
  * @TODO Need review
- *
- * @param string file path in download folder
- * @param string file name
- * @param int itemid to identify a file in filepool
- * @param string file area
- * @param string filepath in file area
+ * @global object $DB
+ * @global object $CFG
+ * @global object $USER
+ * @param string $path file path in download folder
+ * @param string $name file name
+ * @param integer $itemid item id to identify a file in filepool
+ * @param string $filearea file area
+ * @param string $filepath filepath in file area
  * @return array information of file in file pool
  */
 function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_draft', $filepath = '/') {
@@ -571,8 +618,9 @@ function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_dr
 
 /**
  * Return javascript to create file picker to browse repositories
- *
- * @param object context
+ * @global object $CFG
+ * @global object $USER
+ * @param object $context the context
  * @return array
  */
 function repository_get_client($context){
@@ -1243,10 +1291,17 @@ EOD;
     return array('css'=>$css, 'js'=>$js, 'suffix'=>$suffix);
 }
 
+/**
+ * TODO: write comment
+ */
 final class repository_admin_form extends moodleform {
     protected $instance;
     protected $plugin;
 
+    /**
+     * TODO: write comment
+     * @global <type> $CFG
+     */
     public function definition() {
         global $CFG;
         // type of plugin, string
@@ -1292,6 +1347,12 @@ final class repository_admin_form extends moodleform {
         $this->add_action_buttons(true, get_string('submit'));
     }
 
+    /**
+     * TODO: write comment
+     * @global <type> $DB
+     * @param <type> $data
+     * @return <type>
+     */
     public function validation($data) {
         global $DB;
 
