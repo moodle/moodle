@@ -72,8 +72,46 @@ class qformat_blackboard extends qformat_default {
     $this->process_ma($xml, $questions);
     $this->process_fib($xml, $questions);
     $this->process_matching($xml, $questions);
+    $this->process_essay($xml, $questions);
 
     return $questions;
+}
+
+//----------------------------------------
+// Process Essay Questions
+//----------------------------------------
+function process_essay($xml, &$questions ) {
+  
+    if (isset($xml["POOL"]["#"]["QUESTION_ESSAY"])) {
+    	$essayquestions = $xml["POOL"]["#"]["QUESTION_ESSAY"];
+    }
+    else {
+    	return;
+    }	
+    
+    foreach ($essayquestions as $essayquestion) {
+        
+        $question = $this->defaultquestion();
+        
+        $question->qtype = ESSAY;	
+        
+        // determine if the question is already escaped html
+        $ishtml = $essayquestion["#"]["BODY"][0]["#"]["FLAGS"][0]["#"]["ISHTML"][0]["@"]["value"];
+
+        // put questiontext in question object
+        if ($ishtml) {
+            $question->questiontext = html_entity_decode_php4(trim($essayquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
+        }
+        $question->questiontext = addslashes($question->questiontext);
+        
+        // put name in question object
+        $question->name = substr($question->questiontext, 0, 254);
+        $question->answer = '';
+        $question->feedback = '';
+        $question->fraction = 0;
+        
+        $questions[] = $question;
+    } 	
 }
 
 //----------------------------------------
