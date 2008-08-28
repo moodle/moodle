@@ -49,12 +49,8 @@ class repository_local extends repository {
         $filearea = null;
 
         if ($fileinfo = $browser->get_file_info($this->context, $filearea, $itemid, $path, $filename)) {
-            $level = $fileinfo->get_parent();
             $path = array();
-            while ($level) {
-                $path[] = $level->get_visible_name();
-                $level = $level->get_parent();
-            }
+            $path[] = $fileinfo->get_visible_name();
             $ret['path'] = array_reverse($path);
             $ret['list'] = $this->build_tree($fileinfo, $search);
         } else {
