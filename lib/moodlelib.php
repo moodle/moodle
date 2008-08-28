@@ -600,7 +600,18 @@ function clean_param($param, $type) {
     }
 }
 
-
+/**
+ * This function is useful for testing whether something you got back from
+ * the HTML editor actually contains anything. Sometimes the HTML editor
+ * appear to be empty, but actually you get back a <br> tag or something.
+ *
+ * @param string $string a string containing HTML.
+ * @return boolean does the string contain any actual content - that is text,
+ * images, objcts, etc.
+ */
+function html_is_blank($string) {
+    return trim(strip_tags($string, '<img><object><applet><input><select><textarea><hr>')) == '';
+}
 
 /**
  * Set a key in global configuration
