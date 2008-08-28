@@ -720,6 +720,110 @@ class problem_000016 extends problem_base {
     }
 }
 
+class problem_000017 extends problem_base {
+    function title() {
+        return 'Question categories tree structure';
+    }
+    function find_problems() {
+        static $answer = null;
+
+        if (is_null($answer)) {
+            $categories = get_records('question_categories', '', '', 'id');
+
+            // Look for missing parents.
+            $missingparent = array();
+            foreach ($categories as $category) {
+                if ($category->parent != 0 && !array_key_exists($category->parent, $categories)) {
+                    $missingparent[$category->id] = $category;
+                }
+            }
+
+            // Look for loops.
+            $loops = array();
+            while (!empty($categories)) {
+                $current = array_pop($categories);
+                $thisloop = array($current->id => $current);
+                while (true) {
+                    if (isset($thisloop[$current->parent])) {
+                        // Loop detected
+                        $loops[$current->id] = $thisloop;
+                        break;
+                    } else if (!isset($categories[$current->parent])) {
+                        // Got to the top level, or a category we already know is OK.
+                        break;
+                    } else {
+                        // Continue following the path.
+                        $current = $categories[$current->parent];
+                        $thisloop[$current->id] = $current;
+                        unset($categories[$current->id]);
+                    }
+                }
+            }
+
+            $answer = array($missingparent, $loops);
+        }
+
+        return $answer;
+    }
+    function exists() {
+        list($missingparent, $loops) = $this->find_problems();
+        return !empty($missingparent) || !empty($loops);
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        list($missingparent, $loops) = $this->find_problems();
+
+        $description = '<p>The question categories should be arranged into tree ' .
+                ' structures by the question_categories.parent field. Sometimes ' .
+                ' this tree structure gets messed up.</p>';
+
+        if (!empty($missingparent)) {
+            $description .= '<p>The following categories are missing their parents:</p><ul>';
+            foreach ($missingparent as $cat) {
+                $description .= "<li>Category $cat->id: " . s($cat->name) . "</li>\n";
+            }
+            $description .= "</ul>\n";
+        }
+
+        if (!empty($loops)) {
+            $description .= '<p>The following categories form a loop of parents:</p><ul>';
+            foreach ($loops as $loop) {
+                $description .= "<li><ul>\n";
+                foreach ($loop as $cat) {
+                    $description .= "<li>Category $cat->id: " . s($cat->name) . " has parent $cat->parent</li>\n";
+                }
+                $description .= "</ul></li>\n";
+            }
+            $description .= "</ul>\n";
+        }
+
+        return $description;
+    }
+    function solution() {
+        global $CFG;
+        list($missingparent, $loops) = $this->find_problems();
+
+        $solution = '<p>Consider executing the following SQL queries. These fix ' .
+                'the problem by moving some categories to the top level.</p>';
+
+        if (!empty($missingparent)) {
+            $solution .= "<pre>UPDATE " . $CFG->prefix . "question_categories\n" .
+                    "        SET parent = 0\n" .
+                    "        WHERE id IN (" . implode(',', array_keys($missingparent)) . ");</pre>\n";
+        }
+
+        if (!empty($loops)) {
+            $solution .= "<pre>UPDATE " . $CFG->prefix . "question_categories\n" .
+                    "        SET parent = 0\n" .
+                    "        WHERE id IN (" . implode(',', array_keys($loops)) . ");</pre>\n";
+        }
+
+        return $solution;
+    }
+}
+
 class problem_00000x extends problem_base {
     function title() {
         return '';
