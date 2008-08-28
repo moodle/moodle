@@ -272,7 +272,7 @@ abstract class grade_report {
 
         $groupsql      = "";
         $groupwheresql = "";
-        list($usql, $params) = $DB->get_in_or_equal(explode(',', $this->gradebookroles));
+        list($usql, $params) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
         if ($groups) {
             $groupsql      = $this->groupsql;
@@ -281,13 +281,12 @@ abstract class grade_report {
         }
 
         $countsql = "SELECT COUNT(DISTINCT u.id)
-                    FROM {grade_grades} g RIGHT OUTER JOIN
-                         {user} u ON u.id = g.userid
-                         LEFT JOIN {role_assignments} ra ON u.id = ra.userid
-                         $groupsql
-                    WHERE ra.roleid $usql
-                         $groupwheresql
-                    AND ra.contextid ".get_related_contexts_string($this->context);
+                       FROM {user} u
+                            JOIN {role_assignments} ra ON u.id = ra.userid
+                            $groupsql
+                      WHERE ra.roleid $usql AND u.deleted = 0
+                            $groupwheresql
+                            AND ra.contextid ".get_related_contexts_string($this->context);
         return $DB->count_records_sql($countsql, $params);
     }
 
@@ -295,16 +294,14 @@ abstract class grade_report {
      * Sets up this object's group variables, mainly to restrict the selection of users to display.
      */
     protected function setup_groups() {
-        global $CFG;
-
         /// find out current groups mode
         $this->group_selector = groups_print_course_menu($this->course, $this->pbarurl, true);
-        $this->currentgroup = groups_get_course_group($this->course);
+        $this->currentgroup   = groups_get_course_group($this->course);
 
         if ($this->currentgroup) {
-            $this->groupsql = " LEFT JOIN {groups_members} gm ON gm.userid = u.id ";
-            $this->groupwheresql = " AND gm.groupid = ? ";
-            $this->groupwheresql_params = array($this->currentgroup);
+            $this->groupsql             = " JOIN {groups_members} gm ON gm.userid = u.id ";
+            $this->groupwheresql        = " AND gm.groupid = :gr_grpid ";
+            $this->groupwheresql_params = array('gr_grpid'=>$this->currentgroup);
         }
     }
 

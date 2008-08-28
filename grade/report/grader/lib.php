@@ -296,29 +296,27 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * pulls out the userids of the users to be display, and sort them
-     * the right outer join is needed because potentially, it is possible not
-     * to have the corresponding entry in grade_grades table for some users
-     * this is check for user roles because there could be some users with grades
-     * but not supposed to be displayed
+     * pulls out the userids of the users to be display, and sorts them
      */
     public function load_users() {
         global $CFG, $DB;
-        $params = array();
-        list($usql, $gbr_params) = $DB->get_in_or_equal(explode(',', $this->gradebookroles));
+
+        list($usql, $gbr_params) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
         if (is_numeric($this->sortitemid)) {
-            $params = array_merge(array($this->sortitemid), $gbr_params, $this->groupwheresql_params);
-            $sort = "g.finalgrade $this->sortorder";
+            $params = array_merge(array('gitemid'=>$this->sortitemid), $gbr_params, $this->groupwheresql_params);
+            // the MAX() magic is required in order to please PG
+            $sort = "MAX(g.finalgrade) $this->sortorder";
 
             $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
-                      FROM {grade_grades} g RIGHT OUTER JOIN
-                           {user} u ON (u.id = g.userid AND g.itemid = ?)
-                           LEFT JOIN {role_assignments} ra ON u.id = ra.userid
+                      FROM {user} u
+                           JOIN {role_assignments} ra ON ra.userid = u.id
                            $this->groupsql
-                     WHERE ra.roleid in $usql
+                           LEFT JOIN {grade_grades} g ON (g.userid = u.id AND g.itemid = :gitemid)
+                     WHERE ra.roleid $usql AND u.deleted = 0
                            $this->groupwheresql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
+                  GROUP BY u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
                   ORDER BY $sort";
 
         } else {
@@ -333,11 +331,11 @@ class grade_report_grader extends grade_report {
             }
 
             $params = array_merge($gbr_params, $this->groupwheresql_params);
-            $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
+            $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
                       FROM {user} u
                            JOIN {role_assignments} ra ON u.id = ra.userid
                            $this->groupsql
-                     WHERE ra.roleid $usql
+                     WHERE ra.roleid $usql AND u.deleted = 0
                            $this->groupwheresql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                   ORDER BY $sort";
@@ -350,7 +348,7 @@ class grade_report_grader extends grade_report {
             $this->userselect = '';
             $this->users = array();
         } else {
-            list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users));
+            list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users), SQL_PARAMS_NAMED, 'usid0');
             $this->userselect = "AND g.userid $usql";
             $this->userselect_params = $params;
         }
@@ -366,11 +364,11 @@ class grade_report_grader extends grade_report {
         global $CFG, $DB;
 
         // please note that we must fetch all grade_grades fields if we want to contruct grade_grade object from it!
-        $params = array_merge(array($this->courseid), $this->userselect_params);
+        $params = array_merge(array('courseid'=>$this->courseid), $this->userselect_params);
         $sql = "SELECT g.*
                   FROM {grade_items} gi,
                        {grade_grades} g
-                 WHERE g.itemid = gi.id AND gi.courseid = ? {$this->userselect}";
+                 WHERE g.itemid = gi.id AND gi.courseid = :courseid {$this->userselect}";
 
         $userids = array_keys($this->users);
 
@@ -943,10 +941,10 @@ class grade_report_grader extends grade_report {
 
         $totalcount = $this->get_numusers($grouponly);
 
-        list($usql, $roles_params) = $DB->get_in_or_equal(explode(',', $this->gradebookroles));
+        list($usql, $roles_params) = $DB->get_in_or_equal(explode(',', $this->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
         if ($showaverages) {
-            $params = array_merge(array($this->courseid), $roles_params, $groupwheresql_params);
+            $params = array_merge(array('courseid'=>$this->courseid), $roles_params, $groupwheresql_params);
 
             // find sums of all grade items in course
             $SQL = "SELECT g.itemid, SUM(g.finalgrade) AS sum
@@ -955,7 +953,7 @@ class grade_report_grader extends grade_report {
                            JOIN {user} u              ON u.id = g.userid
                            JOIN {role_assignments} ra ON ra.userid = u.id
                            $groupsql
-                     WHERE gi.courseid = ?
+                     WHERE gi.courseid = :courseid
                            AND ra.roleid $usql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                            AND g.finalgrade IS NOT NULL
@@ -982,14 +980,14 @@ class grade_report_grader extends grade_report {
 
             // MDL-10875 Empty grades must be evaluated as grademin, NOT always 0
             // This query returns a count of ungraded grades (NULL finalgrade OR no matching record in grade_grades table)
-            $params = array_merge(array($this->courseid), $roles_params, $groupwheresql_params);
+            $params = array_merge(array('courseid'=>$this->courseid), $roles_params, $groupwheresql_params);
             $SQL = "SELECT gi.id, COUNT(u.id) AS count
                       FROM {grade_items} gi
                            CROSS JOIN {user} u
                            JOIN {role_assignments} ra        ON ra.userid = u.id
                            LEFT OUTER JOIN  {grade_grades} g ON (g.itemid = gi.id AND g.userid = u.id AND g.finalgrade IS NOT NULL)
                            $groupsql
-                     WHERE gi.courseid = ?
+                     WHERE gi.courseid = :courseid
                            AND ra.roleid $usql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
                            AND g.id IS NULL
