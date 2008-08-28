@@ -2418,7 +2418,7 @@ function assignment_print_recent_activity($course, $viewfullnames, $timestart) {
             continue;
         }
 
-        // the act of sumitting of assignemnt may be considered private - only graders will see it if specified
+        // the act of sumbitting of assignment may be considered private - only graders will see it if specified
         if (empty($CFG->assignment_showrecentsubmissions)) {
             if (!array_key_exists($cm->id, $grader)) {
                 $grader[$cm->id] = has_capability('moodle/grade:viewall', get_context_instance(CONTEXT_MODULE, $cm->id));
@@ -2532,9 +2532,8 @@ function assignment_get_recent_mod_activity(&$activities, &$index, $timestart, $
             $show[] = $submission;
             continue;
         }
-
-        // the act of sumitting of assignemnt may be considered private - only graders will see it if specified
-        if (!empty($CFG->assignment_showrecentsubmissions)) {
+        // the act of submitting of assignment may be considered private - only graders will see it if specified
+        if (empty($CFG->assignment_showrecentsubmissions)) {
             if (!$grader) {
                 continue;
             }
