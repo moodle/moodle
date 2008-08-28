@@ -5568,7 +5568,7 @@ class admin_setting_managerepository extends admin_setting {
                 return true;
             }
         }
-        foreach (repository_instances(get_context_instance(CONTEXT_SYSTEM), null, false) as $instance) {
+        foreach (repository_get_instances(get_context_instance(CONTEXT_SYSTEM), null, false) as $instance) {
             $title = $instance->name;
             if (strpos($textlib->strtolower($title), $query) !== false) {
                 return true;
@@ -5584,7 +5584,7 @@ class admin_setting_managerepository extends admin_setting {
         $pluginstr = get_string('plugin', 'repository');
         $stropt = get_string('operation', 'repository');
         $plugins = get_list_of_plugins('repository');
-        $instances = repository_instances(get_context_instance(CONTEXT_SYSTEM), null, false);
+        $instances = repository_get_instances(get_context_instance(CONTEXT_SYSTEM), null, false);
         $table = new StdClass;
         $table->head = array($namestr, $pluginstr, $stropt);
         $table->data = array();

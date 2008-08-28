@@ -194,7 +194,7 @@ if ($hassiteconfig) {
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorycontroller',
         get_string('managerepositories', 'repository'), $url, 'moodle/site:config', true),
         '', $url);
-    foreach (repository_instances(get_context_instance(CONTEXT_SYSTEM), null, false) 
+    foreach (repository_get_instances(get_context_instance(CONTEXT_SYSTEM), null, false)
         as $repository) 
     {
         if ($repository->has_admin_config()) {

@@ -252,7 +252,7 @@
     if (!empty($user) and $user->id == $USER->id) {
         require_once($CFG->dirroot . '/repository/lib.php');
         $coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
-        if (repository_instances($coursecontext, $USER->id)) {
+        if (repository_get_instances($coursecontext, $USER->id)) {
             $toprow[] = new tabobject('repositories', $CFG->wwwroot .'/user/repository.php', get_string('repositories', 'repository'));
         }
     }

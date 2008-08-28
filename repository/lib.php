@@ -294,7 +294,7 @@ abstract class repository {
 
     /**
      * Save settings for repository instance
-     * $repo->set_option(array('api_key'=>'f2188bde132', 
+     * $repo->set_option(array('api_key'=>'f2188bde132',
      *                          'name'=>'dongsheng'));
      *
      * @param array settings
@@ -356,7 +356,7 @@ abstract class repository {
     /**
      * Given a path, and perhaps a search, get a list of files.
      *
-     * The format of the returned array must be: 
+     * The format of the returned array must be:
      * array(
      *   'path' => (string) path for the current folder
      *   'dynload' => (bool) use dynamic loading,
@@ -384,7 +384,7 @@ abstract class repository {
      *       'children' => array( // an empty folder needs to have 'children' defined, but empty.
      *         // content (files and folders)
      *       )
-     *     ), 
+     *     ),
      *   )
      * )
      *
@@ -442,7 +442,7 @@ class repository_exception extends moodle_exception {
  *                otherwise, return all instances
  * @return array repository instances
  */
-function repository_instances($context, $userid = null, $visible = true){
+function repository_get_instances($context, $userid = null, $visible = true){
     global $DB, $CFG, $USER;
     $params = array();
     $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
@@ -467,7 +467,7 @@ function repository_instances($context, $userid = null, $visible = true){
     }
     $ret = array();
     foreach($repos as $repo) {
-        require_once($CFG->dirroot . '/repository/'. $repo->repositorytype 
+        require_once($CFG->dirroot . '/repository/'. $repo->repositorytype
             . '/repository.class.php');
         $options['visible'] = $repo->visible;
         $options['name']    = $repo->name;
@@ -494,7 +494,7 @@ function repository_get_instance($id){
     if(!$instance = $DB->get_record_sql($sql)) {
         return false;
     }
-    require_once($CFG->dirroot . '/repository/'. $instance->repositorytype 
+    require_once($CFG->dirroot . '/repository/'. $instance->repositorytype
         . '/repository.class.php');
     $classname = 'repository_' . $instance->repositorytype;
     $options['typeid'] = $instance->typeid;
@@ -572,8 +572,8 @@ function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_dr
 /**
  * Return javascript to create file picker to browse repositories
  *
- * @param object context 
- * @return array 
+ * @param object context
+ * @return array
  */
 function repository_get_client($context){
     global $CFG, $USER;
@@ -690,11 +690,11 @@ function _client(){
                 layout = new YAHOO.widget.Layout('layout-$suffix', {
                     height: 400, width: 490,
                     units: [
-                        {position: 'top', height: 32, resize: false, 
+                        {position: 'top', height: 32, resize: false,
                         body:'<div class="yui-buttongroup" id="repo-viewbar-$suffix"></div>', gutter: '2'},
-                        {position: 'left', width: 150, resize: true, 
+                        {position: 'left', width: 150, resize: true,
                         body:'<ul id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
-                        {position: 'center', body: '<div id="panel-$suffix"></div>', 
+                        {position: 'center', body: '<div id="panel-$suffix"></div>',
                         scroll: true, gutter: '0 2 0 0' }
                     ]
                 });
@@ -778,7 +778,7 @@ function _client(){
 _client.repos = [];
 _client.repositoryid = 0;
 // _client.ds save all data received from server side
-_client.ds = null; 
+_client.ds = null;
 _client.viewmode = 0;
 _client.viewbar =null;
 
@@ -930,8 +930,8 @@ _client.buildtree = function(node, level){
     if(node.children){
         node.title = '<i><u>'+node.title+'</u></i>';
     }
-    var info = {label:node.title, title:"$strdate"+node.date+' '+'$strsize'+node.size}; 
-    var tmpNode = new YAHOO.widget.TextNode(info, level, false); 
+    var info = {label:node.title, title:"$strdate"+node.date+' '+'$strsize'+node.size};
+    var tmpNode = new YAHOO.widget.TextNode(info, level, false);
     var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
         context:tmpNode.labelElId, text:info.title});
     tmpNode.filename = node.title;
@@ -974,9 +974,9 @@ _client.dynload = function (node, fnLoadComplete){
         timeout:600
     }
     // TODO: need to include filepath here
-    var trans = YAHOO.util.Connect.asyncRequest('GET', 
+    var trans = YAHOO.util.Connect.asyncRequest('GET',
         '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='
-            +_client.repositoryid+'&p='+node.path+'&action=list', 
+            +_client.repositoryid+'&p='+node.path+'&action=list',
         callback);
 }
 _client.viewlist = function(){
@@ -1068,9 +1068,9 @@ _client.download = function(){
     var title = document.getElementById('newname-$suffix').value;
     var file = document.getElementById('fileurl-$suffix').value;
     _client.loading();
-    var trans = YAHOO.util.Connect.asyncRequest('POST', 
+    var trans = YAHOO.util.Connect.asyncRequest('POST',
         '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='
-        +_client.repositoryid+'&action=download', 
+        +_client.repositoryid+'&action=download',
         _client.dlfile, _client.postdata({'env':_client.env, 'file':file, 'title':title}));
 }
 // send login request
@@ -1089,7 +1089,7 @@ _client.login = function(){
     params['env'] = _client.env;
     params['ctx_id'] = $context->id;
     _client.loading();
-    var trans = YAHOO.util.Connect.asyncRequest('POST', 
+    var trans = YAHOO.util.Connect.asyncRequest('POST',
         '$CFG->wwwroot/repository/ws.php?action=sign', _client.callback,
         _client.postdata(params));
 }
@@ -1214,7 +1214,7 @@ return _client;
 })();
 EOD;
 
-    $repos = repository_instances($context);
+    $repos = repository_get_instances($context);
     foreach($repos as $repo) {
         $js .= "\r\n";
         $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo->ajax_info()).');'."\n";

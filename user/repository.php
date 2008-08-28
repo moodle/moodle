@@ -35,7 +35,7 @@ include('tabs.php');
 print_heading($configstr);
 print_simple_box_start();
 
-if (!$instances = repository_instances($COURSE->context, $USER->id)) {
+if (!$instances = repository_get_instances($COURSE->context, $USER->id)) {
     print_error('noinstances', 'repository', $CFG->wwwroot . '/user/view.php');
 }
 
