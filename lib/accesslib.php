@@ -974,8 +974,9 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
         //
         // narrow down where we have the caps to a few contexts
         // this will be a combination of
-        // - categories where we have the rights
-        // - courses    where we have an explicit enrolment OR that have an override
+        // - courses    where user has an explicit enrolment
+        // - courses    that have an override (any status) on that capability
+        // - categories where user has the rights (granted status) on that capability
         //
         $sql = "SELECT ctx.*
                   FROM {context} ctx
@@ -995,11 +996,9 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
         if (count($catpaths)) {
             $cc = count($catpaths);
             for ($n=0;$n<$cc;$n++) {
-                $name = 'cat.'.$n;
-                $catpaths[$n] = "ctx.path LIKE :$name";
-                $params[$name] = "{$catpaths[$n]}/%";
+                $catpaths[$n] = "ctx.path LIKE '{$catpaths[$n]}/%'";
             }
-            $catclause = 'OR (' . implode(' OR ', $catpaths) .')';
+            $catclause = 'WHERE (' . implode(' OR ', $catpaths) .')';
         }
         unset($catpaths);
 
@@ -1008,32 +1007,71 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
             $capany = " OR rc.capability=:doany";
             $params['doany'] = 'moodle/site:doanything';
         }
-        //
-        // Note here that we *have* to have the compound clauses
-        // in the LEFT OUTER JOIN condition for them to return NULL
-        // appropriately and narrow things down...
-        //
-        $sql = "SELECT $coursefields,
-                       ctx.id AS ctxid, ctx.path AS ctxpath,
-                       ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
-                       cc.path AS categorypath
-                  FROM {course} c
-                  JOIN {course_categories} cc
-                       ON c.category=cc.id
-                  JOIN {context} ctx
-                       ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
-                  LEFT OUTER JOIN {role_assignments} ra
-                       ON (ra.contextid=ctx.id AND ra.userid=:userid)
-                  LEFT OUTER JOIN {role_capabilities} rc
-                       ON (rc.contextid=ctx.id AND (rc.capability=:cap $capany))
-                 WHERE ra.id IS NOT NULL
-                       OR rc.id IS NOT NULL
-                       $catclause
-                $sort ";
+
+        /// UNION 3 queries:
+        /// - user role assignments in courses
+        /// - user capability (override - any status) in courses
+        /// - user right (granted status) in categories (optionally executed)
+        /// Enclosing the 3-UNION into an inline_view to avoid column names conflict and making the ORDER BY cross-db
+        /// and to allow selection of TEXT columns in the query (MSSQL and Oracle limitation). MDL-16209
+        $sql = "
+            SELECT $coursefields, ctxid, ctxpath, ctxdepth, ctxlevel, categorypath 
+              FROM (
+                    SELECT c.id,
+                           ctx.id AS ctxid, ctx.path AS ctxpath,
+                           ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
+                           cc.path AS categorypath
+                    FROM {$CFG->prefix}course c
+                    JOIN {$CFG->prefix}course_categories cc
+                      ON c.category=cc.id
+                    JOIN {$CFG->prefix}context ctx
+                      ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+                    JOIN {$CFG->prefix}role_assignments ra
+                      ON (ra.contextid=ctx.id AND ra.userid=:userid)
+                    UNION
+                    SELECT c.id,
+                           ctx.id AS ctxid, ctx.path AS ctxpath,
+                           ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
+                           cc.path AS categorypath
+                    FROM {$CFG->prefix}course c
+                    JOIN {$CFG->prefix}course_categories cc
+                      ON c.category=cc.id
+                    JOIN {$CFG->prefix}context ctx
+                      ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+                    JOIN {$CFG->prefix}role_capabilities rc
+                      ON (rc.contextid=ctx.id AND (rc.capability=:cap $capany)) ";
+
+        if (!empty($catclause)) { /// If we have found the right in categories, add child courses here too
+            $sql .= "
+                    UNION
+                    SELECT c.id,
+                           ctx.id AS ctxid, ctx.path AS ctxpath,
+                           ctx.depth AS ctxdepth, ctx.contextlevel AS ctxlevel,
+                           cc.path AS categorypath
+                    FROM {$CFG->prefix}course c
+                    JOIN {$CFG->prefix}course_categories cc
+                      ON c.category=cc.id
+                    JOIN {$CFG->prefix}context ctx
+                      ON (c.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_COURSE.")
+                    $catclause";
+        }
+
+    /// Close the inline_view and join with courses table to get requested $coursefields
+        $sql .= "
+                ) inline_view
+                INNER JOIN {$CFG->prefix}course c
+                    ON inline_view.id = c.id";
+
+    /// To keep cross-db we need to strip any prefix in the ORDER BY clause for queries using UNION
+        $sql .= "
+                " . preg_replace('/[a-z]+\./i', '', $sort); /// Add ORDER BY clause
+
         $params['userid'] = $userid;
         $params['cap']    = $cap;
         $rs = $DB->get_recordset_sql($sql, $params);
     }
+
+/// Confirm rights (granted capability) for each course returned
     $courses = array();
     $cc = 0; // keep count
     if ($rs) {
