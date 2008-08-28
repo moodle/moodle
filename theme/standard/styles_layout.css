@@ -3309,6 +3309,7 @@ body#user-index .rolesform {
 .picture user,
 .picture teacher {
   width:35px;
+  height: 35px;
   vertical-align:top;
 }
 .modform {
