@@ -91,5 +91,8 @@ $string['tofilecontext'] = 'Write context to file';
 $string['unknown'] = 'Unknown';
 $string['unknownquestiontype'] = 'Unknown question type: $a.';
 $string['unpublished'] = 'unshared';
-$string['yourfileshoulddownload'] = 'Your export file should start to download shortly. If not, please <a href=\"$a\">click here</a>.';
+$string['upgradeproblemcategoryloop'] = 'Problem detected when upgrading question categories. There is a loop in the category tree. The affected category ids are $a.';
+$string['upgradeproblemcouldnotupdatecategory'] = 'Could not update question category $a->name ($a->id).';
+$string['upgradeproblemunknowncategory'] = 'Problem detected when upgrading question categories. Category $a->id refers to parent $a->parent, which does not exist. Parent changed to fix problem.';
+$string['yourfileshoulddownload'] = 'Your export file should start to download shortly. If not, please <a href=\"$a\">click here</a>. Parent changed to fix problem.';
 ?>

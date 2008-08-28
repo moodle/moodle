@@ -169,22 +169,37 @@ function question_cwqpfs_check_children($checkid, $categories, $categorychildpar
     return $tofix;
 }
 
-function question_category_next_parent_in($contextid, $question_categories, $id){
+function question_category_next_parent_in($contextid, $question_categories, $id, $already_seen = array()){
+    // Recursively look for an ancestor category of the given category that
+    // belongs to context $contextid. (In a lot of cases, the parent will be 
+    // the one.) If there is none, return 0, meaning the top level.
+    $already_seen[] = $id;
+
     $nextparent = $question_categories[$id]->parent;
-    if ($nextparent == 0){
+    if ($nextparent == 0) {
+        // Hit the top level, we are done.
         return 0;
-    } elseif (!array_key_exists($nextparent, $question_categories)){
-        //finished searching up the category hierarchy. For some reason
-        //the top level items is not 0. We'll return 0 though.
+    } else if (!array_key_exists($nextparent, $question_categories)) {
+        // The category hierarchy must have been screwed up before, in that
+        // we have run out of categories to search, but without reaching the
+        // top level. Repair the situation by returning 0, meaning top level.
+        notify(get_string('upgradeproblemunknowncategory', 'question', $question_categories[$id]));
         return 0;
-    } elseif ($contextid == $question_categories[$nextparent]->contextid){
+    } else if (in_array($nextparent, $already_seen)) {
+        // The category hierarchy must have been screwed up before, in that
+        // we have just found a loop in the category 'tree'. That should,
+        // of course, be impossible, but it did acutally happen in at least once.
+        // Repair the situation by returning 0, meaning top level.
+        notify(get_string('upgradeproblemcategoryloop', 'question', implode(', ', $already_seen)));
+        return 0;
+    } else if ($contextid == $question_categories[$nextparent]->contextid) {
+        // Found a suitable category, we are done.
         return $nextparent;
     } else {
-        //parent is not in the same context look further up.
-        return question_category_next_parent_in($contextid, $question_categories, $nextparent);
+        // The immediate parent is not in the same context, so look further up.
+        return question_category_next_parent_in($contextid, $question_categories, $nextparent, $already_seen);
     }
 }
-
 
 /**
  * Check that either category parent is 0 or a category shared in the same context.
@@ -196,7 +211,7 @@ function question_category_checking($question_categories){
     foreach ($question_categories as $id => $category){
         $newparents[$id] = question_category_next_parent_in($category->contextid, $question_categories, $id);
     }
-    foreach (array_Keys($question_categories) as $id){
+    foreach (array_keys($question_categories) as $id){
         $question_categories[$id]->parent = $newparents[$id];
     }
     return $question_categories;
@@ -208,7 +223,7 @@ function question_upgrade_context_etc(){
     $result = $result && question_delete_unused_random();
 
     $question_categories = get_records('question_categories');
-    if ($question_categories){
+    if ($question_categories) {
         //prepare content for new db structure
         $tofix = question_cwqpfs_to_update($question_categories);
         foreach ($tofix as $catid => $publish){
@@ -228,7 +243,6 @@ function question_upgrade_context_etc(){
             }
             $question_categories[$id]->contextid = $context->id;
             unset($question_categories[$id]->publish);
-
         }
 
         $question_categories = question_category_checking($question_categories);
@@ -271,12 +285,12 @@ function question_upgrade_context_etc(){
 
 
     /// update table contents with previously calculated new contents.
-    if ($question_categories){
+    if ($question_categories) {
         foreach ($question_categories as $question_category) {
             $question_category->name = addslashes($question_category->name);
             $question_category->info = addslashes($question_category->info);
-            if (!$result = update_record('question_categories', $question_category)){
-                notify('Couldn\'t update question_categories "'. $question_category->name .'"!');
+            if (!$result = $result && update_record('question_categories', $question_category)){
+                notify(get_string('upgradeproblemcouldnotupdatecategory', 'question', $question_category));
             }
         }
     }
@@ -343,7 +357,7 @@ function question_upgrade_context_etc(){
 function question_fix_random_question_parents() {
     global $CFG;
     return execute_sql('UPDATE ' . $CFG->prefix . 'question SET parent = id ' .
-    		"WHERE qtype = 'random' AND parent <> id");
+            "WHERE qtype = 'random' AND parent <> id");
 }
 
 ?>
