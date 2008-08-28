@@ -1118,7 +1118,8 @@ function pre_load_all_ratings(&$cm, $discussion) {
  *
  */
 function forum_print_overview($courses,&$htmlarray) {
-    global $USER, $CFG;
+    global $USER, $CFG, $DB;
+
     $LIKE = $DB->sql_ilike();
 
     if (empty($courses) || !is_array($courses) || count($courses) == 0) {
