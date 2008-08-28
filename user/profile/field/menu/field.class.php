@@ -16,6 +16,9 @@ class profile_field_menu extends profile_field_base {
         /// Param 1 for menu type is the options
         $options = explode("\n", $this->field->param1);
         $this->options = array();
+        if ($this->field->required){
+            $this->options[''] = get_string('choose').'...';
+        }
         foreach($options as $key => $option) {
             $this->options[$key] = format_string($option);//multilang formatting
         }
@@ -40,7 +43,11 @@ class profile_field_menu extends profile_field_base {
      * Overwrites the base class method
      */
     function edit_field_set_default(&$mform) {
-        $defaultkey = (int)array_search($this->field->defaultdata, $this->options);
+        if (FALSE !==array_search($this->field->defaultdata, $this->options)){
+            $defaultkey = (int)array_search($this->field->defaultdata, $this->options);
+        } else {
+            $defaultkey = '';
+        }
         $mform->setDefault($this->inputname, $defaultkey);
     }
 
