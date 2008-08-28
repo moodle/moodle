@@ -276,13 +276,12 @@ class grade_report {
         }
 
         $countsql = "SELECT COUNT(DISTINCT u.id)
-                    FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
-                         {$CFG->prefix}user u ON u.id = g.userid
-                         LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
-                         $groupsql
-                    WHERE ra.roleid in ($this->gradebookroles)
-                         $groupwheresql
-                    AND ra.contextid ".get_related_contexts_string($this->context);
+                       FROM {$CFG->prefix}user u
+                            JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                            $groupsql
+                      WHERE ra.roleid IN ($this->gradebookroles) AND u.deleted = 0
+                            $groupwheresql
+                            AND ra.contextid ".get_related_contexts_string($this->context);
         return count_records_sql($countsql);
     }
 
@@ -297,7 +296,7 @@ class grade_report {
         $this->currentgroup = groups_get_course_group($this->course);
 
         if ($this->currentgroup) {
-            $this->groupsql = " LEFT JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id ";
+            $this->groupsql = " JOIN {$CFG->prefix}groups_members gm ON gm.userid = u.id ";
             $this->groupwheresql = " AND gm.groupid = $this->currentgroup ";
         }
     }

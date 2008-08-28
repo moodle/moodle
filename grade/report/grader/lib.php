@@ -289,26 +289,24 @@ class grade_report_grader extends grade_report {
     }
 
     /**
-     * pulls out the userids of the users to be display, and sort them
-     * the right outer join is needed because potentially, it is possible not
-     * to have the corresponding entry in grade_grades table for some users
-     * this is check for user roles because there could be some users with grades
-     * but not supposed to be displayed
+     * pulls out the userids of the users to be display, and sorts them
      */
     function load_users() {
         global $CFG;
 
         if (is_numeric($this->sortitemid)) {
-            $sort = "g.finalgrade $this->sortorder";
+            // the MAX() magic is required in order to please PG
+            $sort = "MAX(g.finalgrade) $this->sortorder";
 
             $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
-                      FROM {$CFG->prefix}grade_grades g RIGHT OUTER JOIN
-                           {$CFG->prefix}user u ON (u.id = g.userid AND g.itemid = $this->sortitemid)
-                           LEFT JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
+                      FROM {$CFG->prefix}user u
+                           JOIN {$CFG->prefix}role_assignments ra ON ra.userid = u.id
                            $this->groupsql
-                     WHERE ra.roleid in ($this->gradebookroles)
+                           LEFT JOIN {$CFG->prefix}grade_grades g ON (g.userid = u.id AND g.itemid = $this->sortitemid)
+                     WHERE ra.roleid in ($this->gradebookroles) AND u.deleted = 0
                            $this->groupwheresql
                            AND ra.contextid ".get_related_contexts_string($this->context)."
+                  GROUP BY u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
                   ORDER BY $sort";
 
         } else {
@@ -322,7 +320,7 @@ class grade_report_grader extends grade_report {
                     $sort = "u.idnumber $this->sortorder"; break;
             }
 
-            $sql = "SELECT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
+            $sql = "SELECT DISTINCT u.id, u.firstname, u.lastname, u.imagealt, u.picture, u.idnumber
                       FROM {$CFG->prefix}user u
                            JOIN {$CFG->prefix}role_assignments ra ON u.id = ra.userid
                            $this->groupsql
