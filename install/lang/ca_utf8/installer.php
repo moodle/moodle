@@ -222,7 +222,7 @@ $string['password'] = 'Contrasenya';
 $string['pgsqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió PGSQL de manera que pugui comunicar-se amb PostgreSQL. Reviseu el fitxer php.ini o recompileu el PHP.';
 $string['php50restricted'] = 'PHP 5.0 té alguns problemes coneguts. Actualitzeu-vos si us plau a 5.1.x o torneu a 4.3.x o 4.4.x';
 $string['phpversion'] = 'Versió PHP';
-$string['phpversionerror'] = 'La versió del PHP ha de ser com a mínim la 4.1.0';
+$string['phpversionerror'] = 'La versió del PHP ha de ser com a mínim la 4.1.0'; // ORPHANED
 $string['phpversionhelp'] = '<p>Moodle necessita la versió de PHP 4.1.0 o posterior.</p>
 <p>A hores d\'ara esteu utilitzant la versió $a.</p>
 <p>Us caldrà actualitzar el PHP o traslladar Moodle a un ordinador amb una versió de PHP més recent.</p>';
