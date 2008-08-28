@@ -54,16 +54,15 @@ require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
 require_once(dirname(dirname(__FILE__)).'/lib/formslib.php');
 
-/**
- *TODO: write comment
- */
 abstract class repository {
     public $id;
     public $context;
     public $options;
 
     /**
-     * TODO: write comment
+     * 1. Initialize context and options
+     * 2. Accept necessary parameters
+     *
      * @param integer $repositoryid
      * @param integer $contextid
      * @param array $options
@@ -84,18 +83,20 @@ abstract class repository {
     }
 
     /**
-     * TODO: write comment
+     * set options for repository instance
+     *
      * @param string $name
-     * @param string $value
+     * @param mixed $value
      */
     public function __set($name, $value) {
         $this->options[$name] = $value;
     }
 
     /**
-     * TODO: write comment
-     * @param <type> $name
-     * @return <type>
+     * get options for repository instance
+     *
+     * @param string $name
+     * @return mixed
      */
     public function __get($name) {
         if (array_key_exists($name, $this->options)){
@@ -106,16 +107,16 @@ abstract class repository {
     }
 
     /**
-     * TODO: write comment
-     * @param <type> $name
-     * @return <type>
+     * test option name
+     *
+     * @param string name
      */
     public function __isset($name) {
         return isset($this->options[$name]);
     }
 
     /**
-     * TODO: write comment
+     * Return the name of the repository class
      * @return <type>
      */
     public function __toString() {
@@ -123,12 +124,12 @@ abstract class repository {
     }
 
     /**
-     * TODO: complete comment
-     * Given a URL, get a file from there.
+     * Download a file from a given url
+     *
      * @global object $CFG
      * @param string $url the url of file
      * @param string $file save location
-     * @return <type>
+     * @return string the location of the file
      * @see curl package
      */
     public function get_file($url, $file = '') {
@@ -157,19 +158,7 @@ abstract class repository {
      * Print a list or return string
      *
      * @param string $list
-     * $list = array(
-     *            array('title'=>'moodle.txt', 'size'=>12, 'source'=>'url', 'date'=>''),
-     *            array('title'=>'repository.txt', 'size'=>32, 'source'=>'', 'date'=>''),
-     *            array('title'=>'forum.txt', 'size'=>82, 'source'=>'', 'date'=>''),
-     *         );
-     *
-     * @param boolean $print if printing the listing directly
-     *
-     */
-    /**
-     * TODO: DS: above there is the previous comments, so you can update this one
-     * @param array $listing
-     * @param boolean $print if truee ... if false ...
+     * @param boolean $print false, return html, otherwise, print it directly
      * @return <type>
      */
     public function print_listing($listing = array(), $print=true) {
@@ -201,7 +190,7 @@ abstract class repository {
     }
 
     /**
-     * Return data for creating ajax request
+     * Provide repository instance information for Ajax
      * @global object $CFG
      * @return object
      */
@@ -1022,7 +1011,6 @@ _client.dynload = function (node, fnLoadComplete){
         argument:{"node":node, "fnLoadComplete": fnLoadComplete},
         timeout:600
     }
-    // TODO: need to include filepath here
     var trans = YAHOO.util.Connect.asyncRequest('GET',
         '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='
             +_client.repositoryid+'&p='+node.path+'&action=list',
