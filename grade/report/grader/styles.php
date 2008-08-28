@@ -4,6 +4,7 @@
 
 .gradestable th.user img {
     width: 20px;
+    height: 20px;
 }
 
 .gradestable th.user, .gradestable th.range {
