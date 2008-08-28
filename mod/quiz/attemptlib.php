@@ -620,6 +620,11 @@ class quiz_attempt extends quiz {
                 $this->questions, $this->states);
     }
 
+    public function get_question_html_head_contributions($questionid) {
+        return get_html_head_contributions(array($questionid),
+                $this->questions, $this->states);
+    }
+
     public function print_restart_preview_button() {
         global $CFG;
         echo '<div class="controls">';
