@@ -65,9 +65,9 @@ if ($mform->is_cancelled()){
     $newcategory->description = $data->description;
     $newcategory->parent      = $data->parent; // if $id = 0, the new category will be a top-level category
 
-    if (!empty($data->theme) && !empty($CFG->allowcategorythemes)) {
+    if (isset($data->theme) && !empty($CFG->allowcategorythemes)) {
         $newcategory->theme = $data->theme;
-        theme_setup();
+        theme_setup(); /// TODO: Do we really want the theme to be changed here? Doesn't look ok IMO. Eloy - 20080828
     }
 
     if (empty($category) && has_capability('moodle/category:create', $context)) { // Create a new category
