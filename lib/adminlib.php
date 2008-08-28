@@ -2398,13 +2398,19 @@ class admin_setting_configmulticheckbox extends admin_setting {
 
     function get_setting() {
         $result = $this->config_read($this->name);
+
         if (is_null($result)) {
             return NULL;
         }
         if ($result === '') {
             return array();
         }
-        return explode(',', $result);
+        $enabled = explode(',', $result);
+        $setting = array();
+        foreach ($enabled as $option) {
+            $setting[$option] = 1;
+        }
+        return $setting;
     }
 
     function write_setting($data) {
@@ -2437,13 +2443,13 @@ class admin_setting_configmulticheckbox extends admin_setting {
         }
         $options = array();
         $defaults = array();
-        foreach($this->choices as $key=>$description) {
-            if (in_array($key, $data)) {
+        foreach ($this->choices as $key=>$description) {
+            if (!empty($data[$key])) {
                 $checked = 'checked="checked"';
             } else {
                 $checked = '';
             }
-            if (in_array($key,$default)) {
+            if (!empty($default[$key])) {
                 $defaults[] = $description;
             }
 
@@ -2493,7 +2499,7 @@ class admin_setting_configmulticheckbox2 extends admin_setting_configmulticheckb
         foreach ($this->choices as $key=>$unused) {
             $value = array_shift($result);
             if ($value) {
-                $setting[] = $key;
+                $setting[$key] = 1;
             }
         }
         return $setting;
@@ -3660,6 +3666,7 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
 
     function get_defaultsetting() {
         global $CFG;
+
         if (empty($CFG->rolesactive)) {
             return null;
         }
@@ -3667,9 +3674,7 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
         foreach($this->types as $capability) {
             if ($caproles = get_roles_with_capability($capability, CAP_ALLOW)) {
                 foreach ($caproles as $caprole) {
-                    if (!in_array($caprole->id, $result)) {
-                        $result[] = $caprole->id;
-                    }
+                    $result[$caprole->id] = 1;
                 }
             }
         }
@@ -4971,7 +4976,7 @@ function admin_apply_default_settings($node=NULL, $unconditional=true) {
     global $CFG;
 
     if (is_null($node)) {
-        $node =& admin_get_root();
+        $node =& admin_get_root(true, true);
     }
 
     if (is_a($node, 'admin_category')) {

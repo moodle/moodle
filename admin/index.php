@@ -177,14 +177,14 @@
                                                'theme' => 'standardwhite',
                                                'filter_multilang_converted' => 1));
 
-        // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
-        // (this should only have any effect during initial install).
-        admin_apply_default_settings(NULL, true);
-
         // store main version
         if (!set_config('version', $version)) {
             print_error('cannotupdateversion', 'debug');
         }
+
+        // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
+        // (this should only have any effect during initial install).
+        admin_apply_default_settings(NULL, true);
 
         notify($strdatabasesuccess, 'notifysuccess');
 
