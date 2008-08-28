@@ -1730,11 +1730,11 @@ class curl_cache {
     public $dir = '';
     function __construct(){
         global $CFG;
-        if (!file_exists($CFG->dataroot.'/repository/cache')) {
-            mkdir($CFG->dataroot.'/repository/cache/', 0777, true);
+        if (!file_exists($CFG->dataroot.'/cache/repository/')) {
+            mkdir($CFG->dataroot.'/cache/repository/', 0777, true);
         }
-        if(is_dir($CFG->dataroot.'/repository/cache')) {
-            $this->dir = $CFG->dataroot.'/repository/cache/';
+        if(is_dir($CFG->dataroot.'/cache/repository/')) {
+            $this->dir = $CFG->dataroot.'/cache/repository/';
         }
         if (empty($CFG->repository_cache_expire)) {
             $CFG->repository_cache_expire = 120;
@@ -1742,6 +1742,7 @@ class curl_cache {
     }
     public function get($param){
         global $CFG;
+        $this->cleanup($CFG->repository_cache_expire);
         $filename = md5(serialize($param));
         if(file_exists($this->dir.$filename)) {
             $lasttime = filemtime($this->dir.$filename);

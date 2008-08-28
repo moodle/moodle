@@ -32,13 +32,13 @@
  *
  * class repository is an abstract class, some functions must be implemented in subclass.
  *
- * See an example of use of this library in repository/box/repository.class.php
+ * See an example of use of this library in repository/boxnet/repository.class.php
  *
  * A few notes :
  *   // options are stored as serialized format in database
  *   $options = array('api_key'=>'dmls97d8j3i9tn7av8y71m9eb55vrtj4',
  *                  'auth_token'=>'', 'path_root'=>'/');
- *   $repo    = new repository_xxx($options);
+ *   $repo = new repository_xxx($options);
  *   // print login page or a link to redirect to another page
  *   $repo->print_login();
  *   // call get_listing, and print result
@@ -133,11 +133,11 @@ abstract class repository {
      */
     public function get_file($url, $file = '') {
         global $CFG;
-        if (!file_exists($CFG->dataroot.'/repository/download')) {
-            mkdir($CFG->dataroot.'/repository/download/', 0777, true);
+        if (!file_exists($CFG->dataroot.'/temp/download')) {
+            mkdir($CFG->dataroot.'/temp/download/', 0777, true);
         }
-        if(is_dir($CFG->dataroot.'/repository/download')) {
-            $dir = $CFG->dataroot.'/repository/download/';
+        if(is_dir($CFG->dataroot.'/temp/download')) {
+            $dir = $CFG->dataroot.'/temp/download/';
         }
         if(empty($file)) {
             $file = uniqid('repo').'_'.time().'.tmp';
@@ -585,14 +585,14 @@ function repository_static_function($plugin, $function) {
  * @param string $filepath filepath in file area
  * @return array information of file in file pool
  */
-function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_draft', $filepath = '/') {
+function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_draft') {
     global $DB, $CFG, $USER;
     $context = get_context_instance(CONTEXT_USER, $USER->id);
     $entry = new object();
     $entry->filearea  = $filearea;
     $entry->contextid = $context->id;
     $entry->filename  = $name;
-    $entry->filepath  = $filepath;
+    $entry->filepath  = '/'.uniqid().'/';
     $entry->timecreated  = time();
     $entry->timemodified = time();
     if(is_numeric($itemid)) {
@@ -605,6 +605,7 @@ function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_dr
     $fs = get_file_storage();
     $browser = get_file_browser();
     if ($file = $fs->create_file_from_pathname($entry, $path)) {
+        $delete = unlink($path);
         $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         if(!empty($ret)){
             return array('url'=>$ret->get_url(),'id'=>$file->get_itemid());
