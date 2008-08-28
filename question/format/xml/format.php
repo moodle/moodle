@@ -397,10 +397,7 @@ class qformat_xml extends qformat_default {
         $qo->qtype = ESSAY;
 
         // get feedback
-        $qo->feedback = $this->import_text( $question['#']['answer'][0]['#']['feedback'][0]['#']['text'] );        
-
-        // handle answer
-        $answer = $question['#']['answer'][0];
+        $qo->feedback = $this->getpath( $question, array('#','answer',0,'#','feedback',0,'#','text',0,'#'), '', true );       
 
         // get fraction - <fraction> tag is deprecated
         $qo->fraction = $this->getpath( $question, array('@','fraction'), 0 ) / 100;
@@ -929,15 +926,16 @@ class qformat_xml extends qformat_default {
             }
         break;
         case ESSAY:
-            foreach ($question->options->answers as $answer) {
-                $percent = 100 * $answer->fraction;
-                $expout .= "<answer fraction=\"$percent\">\n";
-                $expout .= "    <feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
-                // fraction tag is deprecated
-                // $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
-                $expout .= "</answer>\n";
+            if (!empty($question->options->answers)) {
+                foreach ($question->options->answers as $answer) {
+                    $percent = 100 * $answer->fraction;
+                    $expout .= "<answer fraction=\"$percent\">\n";
+                    $expout .= "    <feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+                    // fraction tag is deprecated
+                    // $expout .= "    <fraction>{$answer->fraction}</fraction>\n";
+                    $expout .= "</answer>\n";
+                }
             }
-            
             break;
         case CALCULATED:
             foreach ($question->options->answers as $answer) {
