@@ -114,59 +114,63 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
         // Insert all the new answers
         foreach ($question->answer as $key => $dataanswer) {
-            if ( !( trim($dataanswer)=='' && $question->fraction[$key]== 0 && trim($question->feedback[$key])=='')) {
-                $answer = new stdClass;
-                $answer->question = $question->id;
-                if (trim($dataanswer) == '*') {
-                    $answer->answer = '*';
-                } else {
-                    $answer->answer = $this->apply_unit($dataanswer, $units);
-                    if ($answer->answer === false) {
-                        $result->notice = get_string('invalidnumericanswer', 'quiz');
-                    }
-                }
-                $answer->fraction = $question->fraction[$key];
-                $answer->feedback = trim($question->feedback[$key]);
+            // Check for, and ingore, completely blank answer from the form.
+            if (trim($dataanswer) == '' && $question->fraction[$key] == 0 &&
+                    html_is_blank($question->feedback[$key])) {
+                continue;
+            }
 
-                if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
-                    $answer->id = $oldanswer->id;
-                    if (! update_record("question_answers", $answer)) {
-                        $result->error = "Could not update quiz answer! (id=$answer->id)";
-                        return $result;
-                    }
-                } else { // This is a completely new answer
-                    if (! $answer->id = insert_record("question_answers", $answer)) {
-                        $result->error = "Could not insert quiz answer!";
-                        return $result;
-                    }
+            $answer = new stdClass;
+            $answer->question = $question->id;
+            if (trim($dataanswer) == '*') {
+                $answer->answer = '*';
+            } else {
+                $answer->answer = $this->apply_unit($dataanswer, $units);
+                if ($answer->answer === false) {
+                    $result->notice = get_string('invalidnumericanswer', 'quiz');
                 }
+            }
+            $answer->fraction = $question->fraction[$key];
+            $answer->feedback = trim($question->feedback[$key]);
 
-                // Set up the options object
-                if (!$options = array_shift($oldoptions)) {
-                    $options = new stdClass;
+            if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                $answer->id = $oldanswer->id;
+                if (! update_record("question_answers", $answer)) {
+                    $result->error = "Could not update quiz answer! (id=$answer->id)";
+                    return $result;
                 }
-                $options->question  = $question->id;
-                $options->answer    = $answer->id;
-                if (trim($question->tolerance[$key]) == '') {
-                    $options->tolerance = '';
-                } else {
-                    $options->tolerance = $this->apply_unit($question->tolerance[$key], $units);
-                    if ($options->tolerance === false) {
-                        $result->notice = get_string('invalidnumerictolerance', 'quiz');
-                    }
+            } else { // This is a completely new answer
+                if (! $answer->id = insert_record("question_answers", $answer)) {
+                    $result->error = "Could not insert quiz answer!";
+                    return $result;
                 }
-                
-                // Save options
-                if (isset($options->id)) { // reusing existing record
-                    if (! update_record('question_numerical', $options)) {
-                        $result->error = "Could not update quiz numerical options! (id=$options->id)";
-                        return $result;
-                    }
-                } else { // new options
-                    if (! insert_record('question_numerical', $options)) {
-                        $result->error = "Could not insert quiz numerical options!";
-                        return $result;
-                    }
+            }
+
+            // Set up the options object
+            if (!$options = array_shift($oldoptions)) {
+                $options = new stdClass;
+            }
+            $options->question  = $question->id;
+            $options->answer    = $answer->id;
+            if (trim($question->tolerance[$key]) == '') {
+                $options->tolerance = '';
+            } else {
+                $options->tolerance = $this->apply_unit($question->tolerance[$key], $units);
+                if ($options->tolerance === false) {
+                    $result->notice = get_string('invalidnumerictolerance', 'quiz');
+                }
+            }
+
+            // Save options
+            if (isset($options->id)) { // reusing existing record
+                if (! update_record('question_numerical', $options)) {
+                    $result->error = "Could not update quiz numerical options! (id=$options->id)";
+                    return $result;
+                }
+            } else { // new options
+                if (! insert_record('question_numerical', $options)) {
+                    $result->error = "Could not insert quiz numerical options!";
+                    return $result;
                 }
             }
         }

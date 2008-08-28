@@ -75,6 +75,9 @@ class question_edit_shortanswer_form extends question_edit_form {
                 if ($data['fraction'][$key] == 1) {
                     $maxgrade = true;
                 }
+            } else if ($data['fraction'][$key] != 0 || !html_is_blank($data['feedback'][$key])) {
+                $errors["answer[$key]"] = get_string('answermustbegiven', 'qtype_shortanswer');
+                $answercount++;
             }
         }
         if ($answercount==0){
