@@ -122,6 +122,7 @@ $string['databasesettingssub_postgres7'] = '<b>Typ:</b> PostgreSQL<br />
 $string['databasesettingswillbecreated'] = '<b>Poznámka:</b> inštalátor sa pokúsi vytvoriť databázu automaticky, ak neexistuje.';
 $string['dataroot'] = 'Adresár pre údaje';
 $string['datarooterror'] = '\'Adresár pre údaje\', ktorý ste zadali, nemôže byť nájdený alebo vytvorený. Upravte buď cestu alebo vytvorte ten adresár ručne.';
+$string['datarootpublicerror'] = 'Adresár \'data\', ktorý ste zvolili, je priamo dostupný z webu. Musíte zvoliť iný adresár.';
 $string['dbconnectionerror'] = 'Nemohli sme sa pripojiť k vami zadanej databáze. Prosím skontrolujte nastavenia Vašej databázy.';
 $string['dbcreationerror'] = 'Chyba pri vytváraní databázy. Ale bolo možné vytvoriť databázu so zadaným menom a jej nastaveniami';
 $string['dbhost'] = 'Hosťovský server';
