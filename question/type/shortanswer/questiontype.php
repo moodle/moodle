@@ -51,31 +51,35 @@ class question_shortanswer_qtype extends default_questiontype {
 
         // Insert all the new answers
         foreach ($question->answer as $key => $dataanswer) {
-            if ($dataanswer != "") {
-                if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
-                    $answer = $oldanswer;
-                    $answer->answer   = trim($dataanswer);
-                    $answer->fraction = $question->fraction[$key];
-                    $answer->feedback = $question->feedback[$key];
-                    if (!$DB->update_record("question_answers", $answer)) {
-                        $result->error = "Could not update quiz answer! (id=$answer->id)";
-                        return $result;
-                    }
-                } else {    // This is a completely new answer
-                    $answer = new stdClass;
-                    $answer->answer   = trim($dataanswer);
-                    $answer->question = $question->id;
-                    $answer->fraction = $question->fraction[$key];
-                    $answer->feedback = $question->feedback[$key];
-                    if (!$answer->id = $DB->insert_record("question_answers", $answer)) {
-                        $result->error = "Could not insert quiz answer!";
-                        return $result;
-                    }
+            // Check for, and ingore, completely blank answer from the form.
+            if (trim($dataanswer) == '' && $question->fraction[$key] == 0 &&
+                    html_is_blank($question->feedback[$key])) {
+                continue;
+            }
+
+            if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
+                $answer = $oldanswer;
+                $answer->answer   = trim($dataanswer);
+                $answer->fraction = $question->fraction[$key];
+                $answer->feedback = $question->feedback[$key];
+                if (!$DB->update_record("question_answers", $answer)) {
+                    $result->error = "Could not update quiz answer! (id=$answer->id)";
+                    return $result;
                 }
-                $answers[] = $answer->id;
-                if ($question->fraction[$key] > $maxfraction) {
-                    $maxfraction = $question->fraction[$key];
+            } else {    // This is a completely new answer
+                $answer = new stdClass;
+                $answer->answer   = trim($dataanswer);
+                $answer->question = $question->id;
+                $answer->fraction = $question->fraction[$key];
+                $answer->feedback = $question->feedback[$key];
+                if (!$answer->id = $DB->insert_record("question_answers", $answer)) {
+                    $result->error = "Could not insert quiz answer!";
+                    return $result;
                 }
+            }
+            $answers[] = $answer->id;
+            if ($question->fraction[$key] > $maxfraction) {
+                $maxfraction = $question->fraction[$key];
             }
         }
 
