@@ -538,7 +538,7 @@ function repository_static_function($plugin, $function) {
  * @param string filepath in file area
  * @return array information of file in file pool
  */
-function move_to_filepool($path, $name, $itemid, $filearea = 'user_draft', $filepath = '/') {
+function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_draft', $filepath = '/') {
     global $DB, $CFG, $USER;
     $context = get_context_instance(CONTEXT_USER, $USER->id);
     $entry = new object();
@@ -575,7 +575,7 @@ function move_to_filepool($path, $name, $itemid, $filearea = 'user_draft', $file
  * @param object context 
  * @return array 
  */
-function get_repository_client($context){
+function repository_get_client($context){
     global $CFG, $USER;
     $suffix = uniqid();
     $strsaveas    = get_string('saveas', 'repository').': ';

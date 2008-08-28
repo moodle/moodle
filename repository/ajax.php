@@ -35,7 +35,7 @@ if(!empty($_GET['create'])) {
   picker.
 
 \*******************************************************/
-$ret = get_repository_client();
+$ret = repository_get_client();
 ?>
 </head>
 <body class=" yui-skin-sam">

@@ -71,7 +71,7 @@ if ($action == 'list' || $action == 'search') {
     $path = $repo->get_file($file, $title);
     $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
     try {
-        $info = move_to_filepool($path, $title, $itemid);
+        $info = repository_move_to_filepool($path, $title, $itemid);
         if($env == 'form'){
             echo json_encode($info['id']);
         } elseif($env == 'editor') {

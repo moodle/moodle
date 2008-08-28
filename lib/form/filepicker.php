@@ -56,7 +56,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
             } else {
                 $ctx = $COURSE->context;
             }
-            $ret = get_repository_client($ctx);
+            $ret = repository_get_client($ctx);
             $suffix = $ret['suffix'];
             $str = $this->_getTabs();
             $str .= '<input type="hidden" value="" name="'.$this->_attributes['name'].'" id="'.$this->_attributes['id'].'_'.$suffix.'" />';
