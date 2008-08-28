@@ -152,6 +152,16 @@ class qformat_blackboard_six extends qformat_default {
     function readdata($filename) {
     /// Returns complete file with an array, one item per line
         global $CFG;
+  
+        // if the extension is .dat we just return that,
+        // if .zip we unzip the file and get the data
+        $ext = substr($this->realfilename, strpos($this->realfilename,'.'), strlen($this->realfilename)-1);      
+        if ($ext=='.dat') {
+            if (!is_readable($filename)) {
+                error("File is not readable");	
+            }		
+            return file($filename);
+        }	  
         
         $unique_code = time();
         $temp_dir = $CFG->dataroot."/temp/bbquiz_import/".$unique_code;

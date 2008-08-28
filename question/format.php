@@ -15,6 +15,7 @@ class qformat_default {
     var $questions = array();
     var $course = NULL;
     var $filename = '';
+    var $realfilename = '';
     var $matchgrades = 'error';
     var $catfromfile = 0;
     var $contextfromfile = 0;
@@ -87,6 +88,15 @@ class qformat_default {
     function setFilename( $filename ) {
         $this->filename = $filename;
     }
+    
+    /** 
+     * set the "real" filename
+     * (this is what the user typed, regardless of wha happened next)
+     * @param string realfilename name of file as typed by user
+     */
+    function setRealfilename( $realfilename ) {
+    	$this->realfilename = $realfilename;
+    }	 
 
     /**
      * set matchgrades

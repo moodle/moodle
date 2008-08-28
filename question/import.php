@@ -92,6 +92,7 @@
         // or one from the filesarea.
         if (!empty($form->choosefile)) {
             $importfile = "{$CFG->dataroot}/{$COURSE->id}/{$form->choosefile}";
+            $realfilename = $form->choosefile;
             if (file_exists($importfile)) {
                 $fileisgood = true;
             } else {
@@ -99,6 +100,7 @@
             }
         } else {
             // must be upload file
+            $realfilename = $import_form->get_importfile_realname();
             if (!$importfile = $import_form->get_importfile_name()) {
                 print_error('uploadproblem', 'moodle');
             }else {
@@ -124,6 +126,7 @@
             $qformat->setContexts($contexts->having_one_edit_tab_cap('import'));
             $qformat->setCourse($COURSE);
             $qformat->setFilename($importfile);
+            $qformat->setRealfilename($realfilename);
             $qformat->setMatchgrades($form->matchgrades);
             $qformat->setCatfromfile(!empty($form->catfromfile));
             $qformat->setContextfromfile(!empty($form->contextfromfile));

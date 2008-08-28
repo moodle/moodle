@@ -83,5 +83,15 @@ class question_import_form extends moodleform {
             return  NULL;
         }
     }
+    
+    function get_importfile_name(){
+        if ($this->is_submitted() and $this->is_validated()) {
+            // return the temporary filename to process
+            // TODO change this to use the files API properly.
+            return $_FILES['newfile']['name'];
+        }else{
+            return  NULL;
+        }
+    }
 }
 ?>
