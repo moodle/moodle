@@ -217,7 +217,7 @@ abstract class repository {
             }
             if (!empty($id)) {
                 unset($options['name']);
-                $instance = repository_instance($id);
+                $instance = repository_get_instance($id);
                 $instance->set_option($options);
                 return $id;
             } else {
@@ -485,7 +485,7 @@ function repository_instances($context, $userid = null, $visible = true){
  * @param int repository id
  * @return object repository instance
  */
-function repository_instance($id){
+function repository_get_instance($id){
     global $DB, $CFG;
     $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
     $sql .= 'i.typeid = r.id AND ';

@@ -43,7 +43,7 @@ $navigation = build_navigation($navlinks);
 print_header("$course->fullname: $fullname: $strplugin", $course->fullname,
              $navigation, "", "", true, "&nbsp;", navmenu($course));
 
-$instance = repository_instance($repositoryid);
+$instance = repository_get_instance($repositoryid);
 $mform = new boxnet_user_form('', array('repositoryid' => $repositoryid, 'userid' => $user->id));
 $box = new repository_boxnet();
 if ($data = data_submitted()){

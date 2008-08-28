@@ -26,7 +26,7 @@ $repo_id = optional_param('repo_id', 1, PARAM_INT);
 $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);
 $userid  = $USER->id;
 
-if(!$repository = repository_instance($repo_id))
+if(!$repository = repository_get_instance($repo_id))
 {
     $err = new stdclass;
     $err->e = get_string('invalidrepositoryid', 'repository');

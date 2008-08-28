@@ -37,7 +37,7 @@ $return = true;
 
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
-        $instance = repository_instance($edit);
+        $instance = repository_get_instance($edit);
         $configs  = $instance->get_option_names();
         $plugin = $instance->type;
         $typeid = $instance->typeid;
@@ -90,12 +90,12 @@ if (!empty($edit) || !empty($new)) {
     if (!confirm_sesskey()) {
         print_error('confirmsesskeybad', '', $baseurl);
     }
-    $instance = repository_instance($hide);
+    $instance = repository_get_instance($hide);
     $instance->hide();
     $return = true;
 } else if (!empty($delete)) {
     admin_externalpage_print_header();
-    $instance = repository_instance($delete);
+    $instance = repository_get_instance($delete);
     if ($sure) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
