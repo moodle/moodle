@@ -4,7 +4,6 @@ define('NO_MOODLE_COOKIES', true);
 
 require_once('../../config.php');
 
-$courseid = optional_param('course', 0, PARAM_INT);
 $editorlanguage = optional_param('editorlanguage', 'en_utf8', PARAM_ALPHANUMEXT);
 
 $SESSION->lang = $editorlanguage;
@@ -168,19 +167,19 @@ $output = <<<EOF
         entity_encoding: "raw",
         language: "$editorlanguage",
         directionality: "$directionality",
-        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodlenolink,dragmath,nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
+        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,,searchreplace,paste,standardmenu,directionality,fullscreen,moodlenolink,dragmath,nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
         plugin_insertdate_dateFormat : "$strdate",
         plugin_insertdate_timeFormat : "$strtime",
+        theme_advanced_font_sizes: "1,2,3,4,5,6,7",
         theme_advanced_layout_manager: "SimpleLayout",
         theme_advanced_toolbar_align : "left",
         theme_advanced_buttons1: "fontselect,fontsizeselect,formatselect,styleselect",
         theme_advanced_buttons1_add: "|,undo,redo,|,search,replace,spellchecker,|,fullscreen",
         theme_advanced_buttons2: "bold,italic,underline,strikethrough,sub,sup,|,justifyleft,justifycenter,justifyright,justifyfull,|,cite,abbr,acronym",
         theme_advanced_buttons2_add: "|,selectall,cleanup,removeformat,pastetext,pasteword,|,forecolor,backcolor,|,ltr,rtl",
-        theme_advanced_buttons3: "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,insertdate,inserttime,|,emoticons,image,media,dragmath,advhr,nonbreaking,charmap",
+        theme_advanced_buttons3: "bullist,numlist,outdent,indent,|,link,unlink,moodlenolink,anchor,|,insertdate,inserttime,|,emoticons,image,,dragmath,advhr,nonbreaking,charmap",
         theme_advanced_buttons3_add: "|,table,insertlayer,styleprops,visualchars,|,code,preview",
         theme_advanced_fonts: "Trebuchet=Trebuchet MS,Verdana,Arial,Helvetica,sans-serif;Arial=arial,helvetica,sans-serif;Courier New=courier new,courier,monospace;Georgia=georgia,times new roman,times,serif;Tahoma=tahoma,arial,helvetica,sans-serif;Times New Roman=times new roman,times,serif;Verdana=verdana,arial,helvetica,sans-serif;Impact=impact;Wingdings=wingdings", 
-        moodleimage_course_id: $courseid,
         theme_advanced_resize_horizontal: true,
         theme_advanced_resizing: true,
         theme_advanced_toolbar_location : "top",
@@ -201,8 +200,14 @@ $output .= <<<EOF
         var prevOnSubmit = document.getElementById(id).form.onsubmit;
         document.getElementById(id).form.onsubmit = function() { 
             tinyMCE.triggerSave(); 
-            prevOnSubmit(); 
-            prevOnSubmit = null;
+            var ret = true;
+            if (prevOnSubmit()) {
+              ret = true;
+              prevOnSubmit = null;
+            } else {
+              ret = false;
+            }
+            return ret;
         };
     }
     function moodlefilemanager(field_name, url, type, win) {
