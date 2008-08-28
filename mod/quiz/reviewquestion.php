@@ -87,18 +87,10 @@
 
     $strquizzes = get_string('modulenameplural', 'quiz');
 
-    print_header();
-
-    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
-
-/// Print heading
-    print_heading(format_string($question->name));
-
     $question->maxgrade = get_field('quiz_question_instances', 'grade', 'quiz', $quiz->id, 'question', $question->id);
     // Some of the questions code is optimised to work with several questions
     // at once so it wants the question to be in an array. 
-    $key = $question->id;
-    $questions[$key] = &$question;
+    $questions = array($question->id => &$question);
     // Add additional questiontype specific information to the question objects.
     if (!get_question_options($questions)) {
         error("Unable to load questiontype specific question information");
@@ -114,7 +106,17 @@
     $options->validation = ($state->event == QUESTION_EVENTVALIDATE);
     $options->history = (has_capability('mod/quiz:viewreports', $context) and !$attempt->preview) ? 'all' : 'graded';
 
-/// Print infobox
+    $questionids = array($question->id);
+    $states = array($question->id => &$state);
+    $headtags = get_html_head_contributions($questionids, $questions, $states);
+    print_header('', '', '', '', $headtags);
+
+    echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
+
+/// Print heading
+    print_heading(format_string($question->name));
+
+    /// Print infobox
     $table->align  = array("right", "left");
     if ($attempt->userid <> $USER->id) {
         // Print user picture and name
