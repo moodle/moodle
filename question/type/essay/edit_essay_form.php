@@ -31,7 +31,7 @@ class question_edit_essay_form extends question_edit_form {
     }
 
     function set_data($question) {
-        if (isset($question->options) && isset($question->options->answers)) {
+        if (!empty($question->options) && !empty($question->options->answers)) {      	
             $answer = reset($question->options->answers);
             $question->feedback = $answer->feedback;
         }
