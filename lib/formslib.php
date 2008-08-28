@@ -1303,7 +1303,7 @@ function validate_' . $this->_formName . '_' . $elementName . '(element) {
   var _qfGroups = {};
   var _qfMsg = \'\';
   var frm = element.parentNode;
-  while (frm && frm.nodeName != "FORM") {
+  while (frm && frm.nodeName.toUpperCase() != "FORM") {
     frm = frm.parentNode;
   }
 ' . join("\n", $jsArr) . '
@@ -1801,20 +1801,18 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
 
         if (isset($this->_advancedElements[$name])){
+            require_js(array('yui_yahoo', 'yui_event'));
             // this is tricky - the first submit button on form is "clicked" if user presses enter
             // we do not want to "submit" using advanced button if javascript active
-            $showtext="'".get_string('showadvanced', 'form')."'";
-            $hidetext="'".get_string('hideadvanced', 'form')."'";
-            //onclick returns false so if js is on then page is not submitted.
-            $onclick = 'return showAdvancedOnClick(this, '.$hidetext.', '.$showtext.');';
-            $button_js = '<input name="'.$elementName.'" value="'.$buttonlabel.'" type="button" onclick="'.$onclick.'" />';
             $button_nojs = '<input name="'.$elementName.'" value="'.$buttonlabel.'" type="submit" />';
-            $button = '<script type="text/javascript">
-//<![CDATA[
-document.write("'.addslashes_js($button_js).'")
-//]]>
-</script><noscript><div style="display:inline">'.$button_nojs.'</div></noscript>';  // the extra div should fix xhtml validation
-            
+
+            $buttonlabel = addslashes_js($buttonlabel);
+            $showtext = addslashes_js(get_string('showadvanced', 'form'));
+            $hidetext = addslashes_js(get_string('hideadvanced', 'form'));
+            $button = '<script id="' . $name . '_script" type="text/javascript">' . "
+showAdvancedInit('{$name}_script', '$elementName', '$buttonlabel', '$hidetext', '$showtext');
+" . '</script><noscript><div style="display:inline">'.$button_nojs.'</div></noscript>';  // the extra div should fix xhtml validation
+
             $header_html = str_replace('{button}', $button, $header_html);
         } else {
             $header_html = str_replace('{button}', '', $header_html);
