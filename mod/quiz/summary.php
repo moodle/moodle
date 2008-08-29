@@ -86,7 +86,12 @@ foreach ($attemptobj->get_question_iterator() as $number => $question) {
     if ($question->length == 0) {
         continue;
     }
-    $row = array('<a href="' . $attemptobj->attempt_url($question->id) . '">' . $number . '</a>',
+    $flag = '';
+    if ($attemptobj->is_question_flagged($question->id)) {
+        $flag = ' <img src="' . $CFG->pixpath . '/i/flagged.png" alt="' .
+                get_string('flagged', 'question') . '" class="questionflag" />';
+    }
+    $row = array('<a href="' . $attemptobj->attempt_url($question->id) . '">' . $number . $flag . '</a>',
             get_string($attemptobj->get_question_status($question->id), 'quiz'));
     if ($scorescolumn) {
         $row[] = $attemptobj->get_question_score($question->id);
