@@ -738,6 +738,19 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008082700);
     }
 
+    if ($result && $oldversion < 2008082900) {
+
+    /// Changing precision of field parent_type on table mnet_rpc to (20)
+        $table = new xmldb_table('mnet_rpc');
+        $field = new xmldb_field('parent_type', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, null, null, null, 'xmlrpc_path');
+
+    /// Launch change of precision for field parent_type
+        $dbman->change_field_precision($table, $field);
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008082900);
+    }
+
     return $result;
 }
 
