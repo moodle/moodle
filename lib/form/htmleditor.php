@@ -11,13 +11,13 @@ require_once("$CFG->libdir/form/textarea.php");
 class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
     var $_type;
     var $_canUseHtmlEditor;
-    var $_options=array('canUseHtmlEditor'=>'detect','rows'=>10, 'cols'=>45, 'width'=>0,'height'=>0, 'course'=>0);
+    var $_options=array('canUseHtmlEditor'=>'detect','rows'=>10, 'cols'=>45, 'width'=>0,'height'=>0, 'filearea'=>'');
     function MoodleQuickForm_htmleditor($elementName=null, $elementLabel=null, $options=array(), $attributes=null){
         parent::MoodleQuickForm_textarea($elementName, $elementLabel, $attributes);
         // set the options, do not bother setting bogus ones
         if (is_array($options)) {
             foreach ($options as $name => $value) {
-                if (isset($this->_options[$name])) {
+                if (array_key_exists($name, $this->_options)) {
                     if (is_array($value) && is_array($this->_options[$name])) {
                         $this->_options[$name] = @array_merge($this->_options[$name], $value);
                     } else {
@@ -69,6 +69,7 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
             return $this->getFrozenHtml();
         } else {
             return $this->_getTabs() .
+                    '<input type="hidden" name="filearea" value="'. $this->_options['filearea'] .'">'."\n".
                     print_textarea($this->_canUseHtmlEditor,
                                     $this->_options['rows'],
                                     $this->_options['cols'],
@@ -78,7 +79,7 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
                                     preg_replace("/(\r\n|\n|\r)/", '&#010;',$this->getValue()),
                                     $this->_options['course'],
                                     true,
-                                    $this->getAttribute('id'));//.$script;
+                                    $this->getAttribute('id'));
         }
     } //end func toHtml
 
