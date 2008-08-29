@@ -631,8 +631,7 @@ class quiz_attempt extends quiz {
     }
 
     public function get_question_html_head_contributions($questionid) {
-        $question_array = array($questionid);
-        return get_html_head_contributions($question_array,
+        return get_html_head_contributions(array($questionid),
                 $this->questions, $this->states);
     }
 
