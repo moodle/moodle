@@ -205,6 +205,67 @@ class generator {
         return $users;
     }
 
+    public function generate_data() {
+        set_time_limit($this->get('time_limit'));
+
+        // Process tiny data set
+        $tiny = $this->get('tiny');
+        if (!empty($tiny)) {
+            $this->verbose("Generating a tiny data set: 1 student in 1 course with 1 module in 1 section...");
+            $this->set('number_of_courses',1);
+            $this->set('number_of_students',1);
+            $this->set('number_of_modules',1);
+            $this->set('number_of_sections',1);
+            $this->set('assignment_grades',false);
+            $this->set('quiz_grades',false);
+            $this->set('students_per_course',1);
+            $this->set('questions_per_course',1);
+            $this->set('questions_per_quiz',1);
+        }
+
+        if ($this->get('pre_cleanup')) {
+            $this->verbose("Deleting previous test data...");
+
+            $this->data_cleanup();
+
+            if (!$this->get('quiet')) {
+                echo "Previous test data has been deleted.{$this->eolchar}";
+            }
+        }
+
+
+        if (!$this->get('no_data')) {
+            $users = $this->generate_users();
+            $courses = $this->generate_courses();
+            $modules = $this->generate_modules($courses);
+            $questions = $this->generate_questions($courses, $modules);
+            $course_users = $this->generate_role_assignments($users, $courses);
+            $this->generate_forum_posts($course_users, $modules);
+            $this->generate_grades($course_users, $courses, $modules);
+            $this->generate_module_content($course_users, $courses, $modules);
+        }
+
+        if ($this->get('post_cleanup')) {
+            if (!$this->get('quiet')) {
+                echo "Removing generated data..." . $this->eolchar;
+            }
+            $this->data_cleanup();
+            if (!$this->get('quiet')) {
+                echo "Generated data has been deleted." . $this->eolchar;
+            }
+        }
+
+        /**
+         * FINISHING SCRIPT
+         */
+        $stoptimer = time()+microtime();
+        $timer = round($stoptimer-$this->starttimer,4);
+        if (!$this->get('quiet')) {
+            echo "End of script! ($timer seconds taken){$this->eolchar}";
+        }
+
+    }
+
     public function generate_courses() {
         global $DB;
 
@@ -254,7 +315,16 @@ class generator {
 
         $this->verbose("Generating " . $this->get('number_of_sections')." sections with "
             .$this->get('number_of_modules')." modules in each section, for each course...");
-        $modules = $DB->get_records('modules');
+
+        list($modules_list_sql, $modules_params) =
+            $DB->get_in_or_equal($this->get('modules_list'), SQL_PARAMS_NAMED, 'param0000', true);
+
+        list($modules_ignored_sql, $ignore_params) =
+            $DB->get_in_or_equal($this->modules_to_ignore, SQL_PARAMS_NAMED, 'param2000', false);
+
+        $wheresql = "name $modules_list_sql AND name $modules_ignored_sql";
+        $modules = $DB->get_records_select('modules', $wheresql,
+            array_merge($modules_params, $ignore_params));
 
         foreach ($modules as $key => $module) {
             $module->count = 0;
@@ -697,7 +767,7 @@ class generator {
         /**
          * ASSIGNMENT GRADES GENERATION
          */
-        if ($this->get('assignment_grades')) {
+        if ($this->get('assignment_grades') && isset($modules['assignment'])) {
             $grades_count = 0;
             foreach ($course_users as $userid => $courses) {
                 foreach ($modules['assignment'] as $assignment) {
@@ -725,7 +795,7 @@ class generator {
         /**
          * QUIZ GRADES GENERATION
          */
-        if ($this->get('quiz_grades')) {
+        if ($this->get('quiz_grades') && isset($modules['quiz'])) {
             $grades_count = 0;
             foreach ($course_users as $userid => $courses) {
                 foreach ($modules['quiz'] as $quiz) {
@@ -888,67 +958,6 @@ class generator {
         if ($this->get('quiet')) {
             ob_end_clean();
         }
-    }
-
-    public function generate_data() {
-        set_time_limit($this->get('time_limit'));
-
-        // Process tiny data set
-        $tiny = $this->get('tiny');
-        if (!empty($tiny)) {
-            $this->verbose("Generating a tiny data set: 1 student in 1 course with 1 module in 1 section...");
-            $this->set('number_of_courses',1);
-            $this->set('number_of_students',1);
-            $this->set('number_of_modules',1);
-            $this->set('number_of_sections',1);
-            $this->set('assignment_grades',false);
-            $this->set('quiz_grades',false);
-            $this->set('students_per_course',1);
-            $this->set('questions_per_course',1);
-            $this->set('questions_per_quiz',1);
-        }
-
-        if ($this->get('pre_cleanup')) {
-            $this->verbose("Deleting previous test data...");
-
-            $this->data_cleanup();
-
-            if (!$this->get('quiet')) {
-                echo "Previous test data has been deleted.{$this->eolchar}";
-            }
-        }
-
-
-        if (!$this->get('no_data')) {
-            $users = $this->generate_users();
-            $courses = $this->generate_courses();
-            $modules = $this->generate_modules($courses);
-            $questions = $this->generate_questions($courses, $modules);
-            $course_users = $this->generate_role_assignments($users, $courses);
-            $this->generate_forum_posts($course_users, $modules);
-            $this->generate_grades($course_users, $courses, $modules);
-            $this->generate_module_content($course_users, $courses, $modules);
-        }
-
-        if ($this->get('post_cleanup')) {
-            if (!$this->get('quiet')) {
-                echo "Removing generated data..." . $this->eolchar;
-            }
-            $this->data_cleanup();
-            if (!$this->get('quiet')) {
-                echo "Generated data has been deleted." . $this->eolchar;
-            }
-        }
-
-        /**
-         * FINISHING SCRIPT
-         */
-        $stoptimer = time()+microtime();
-        $timer = round($stoptimer-$this->starttimer,4);
-        if (!$this->get('quiet')) {
-            echo "End of script! ($timer seconds taken){$this->eolchar}";
-        }
-
     }
 
     public function get($setting) {
@@ -1153,7 +1162,7 @@ class generator_form extends moodleform {
             $options = null;
             $htmloptions = null;
 
-            $label = ucfirst(str_replace('-', ' ', $setting->long));
+            $label = ucfirst(str_replace('_', ' ', $setting->long));
             if (!empty($setting->type) && $setting->type == 'mod1,mod2...') {
                 $type = 'select';
                 $options = $generator->modules_list;

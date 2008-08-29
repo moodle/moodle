@@ -109,8 +109,16 @@ class portfoliolib_test extends UnitTestCase {
     public $caller;
     public $plugin;
     public $exporter;
+    public $original_db;
 
     function setUp() {
+        global $DB, $CFG;
+        $this->original_db = clone($DB);
+
+        $class = get_class($DB);
+        $DB = new $class();
+        $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, true, 'tst_');
+
         $u = new StdClass;
         $u->id = 100000000000;
         $this->plugin = new mock_plugin();
@@ -132,6 +140,9 @@ class portfoliolib_test extends UnitTestCase {
 
         $settings = array('no_data' => 1, 'post_cleanup' => 1, 'database_prefix' => 'tst_', 'quiet' => 1);
         generator_generate_data($settings);
+
+        // Restore original DB
+        $DB = $this->original_db;
     }
 
     function test_construct_dupe_instance() {

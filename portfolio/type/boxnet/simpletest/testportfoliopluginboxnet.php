@@ -8,10 +8,16 @@ Mock::generatePartial('portfolio_plugin_boxnet', 'mock_boxnetplugin', array('ens
 
 class testPortfolioPluginBoxnet extends portfoliolib_test {
     public function setUp() {
+        global $DB;
+
         parent::setUp();
         $this->plugin = &new mock_boxnetplugin($this);
         $this->plugin->boxclient = new mock_boxclient();
-        $settings = array('tiny' => 1, 'quiet' => 1, 'database_prefix' => 'tst_', 'pre_cleanup' => 1);
+
+        $settings = array('tiny' => 1, 'quiet' => 1, 'database_prefix' => 'tst_', 'pre_cleanup' => 1,
+                          'modules_list' => array('glossary'), 'entries_per_glossary' => 20,
+                          'number_of_students' => 5, 'students_per_course' => 5, 'number_of_sections' => 1,
+                          'number_of_modules' => 1, 'questions_per_course' => 0);
         generator_generate_data($settings);
     }
 
@@ -19,7 +25,15 @@ class testPortfolioPluginBoxnet extends portfoliolib_test {
         parent::tearDown();
     }
 
+    public function test_caller_glossary() {
+        global $DB;
+        $glossaries = $DB->get_records('glossary');
+        print_object($glossaries);
+    }
+
     public function test_something() {
+        global $DB;
+
         $ticket = md5(rand(0,873907));
         $authtoken = 'ezfoeompplpug3ofii4nud0d8tvg96e0';
 
