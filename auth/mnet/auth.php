@@ -163,8 +163,13 @@ class auth_plugin_mnet extends auth_plugin_base {
 
     /**
      * Starts an RPC jump session and returns the jump redirect URL.
+     *
+     * @param int $mnethostid id of the mnet host to jump to
+     * @param string $wantsurl url to redirect to after the jump (usually on remote system)
+     * @param boolean $wantsurlbackhere defaults to false, means that the remote system should bounce us back here
+     *                                  rather than somewhere inside *its* wwwroot
      */
-    function start_jump_session($mnethostid, $wantsurl) {
+    function start_jump_session($mnethostid, $wantsurl, $wantsurlbackhere=false) {
         global $CFG, $USER, $MNET, $DB;
         require_once $CFG->dirroot . '/mnet/xmlrpc/client.php';
 
@@ -223,6 +228,9 @@ class auth_plugin_mnet extends auth_plugin_base {
         //$transport = mnet_get_protocol($mnet_peer->transport);
         $wantsurl = urlencode($wantsurl);
         $url = "{$mnet_peer->wwwroot}{$mnet_peer->application->sso_land_url}?token={$mnet_session->token}&idp={$MNET->wwwroot}&wantsurl={$wantsurl}";
+        if ($wantsurlbackhere) {
+            $url .= '&remoteurl=1';
+        }
 
         return $url;
     }

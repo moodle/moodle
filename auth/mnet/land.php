@@ -26,6 +26,7 @@ if (!is_enabled_auth('mnet')) {
 $token         = required_param('token',    PARAM_BASE64);
 $remotewwwroot = required_param('idp',      PARAM_URL);
 $wantsurl      = required_param('wantsurl', PARAM_LOCALURL);
+$wantsremoteurl = optional_param('remoteurl', false, PARAM_BOOL);
 
 // confirm the MNET session
 $mnetauth = get_auth_plugin('mnet');
@@ -40,6 +41,9 @@ if (!empty($localuser->mnet_foreign_host_array)) {
 }
 
 // redirect
+if ($wantsremoteurl) {
+    redirect($remotewwwroot . $wantsurl);
+}
 redirect($CFG->wwwroot . $wantsurl);
 
 ?>
