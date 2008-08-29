@@ -844,13 +844,16 @@ _client.loading = function(){
     content.innerHTML = '$strloading';
     panel.get('element').appendChild(content);
 }
-_client.rename = function(oldname, url){
+_client.rename = function(oldname, url, icon){
     var panel = new YAHOO.util.Element('panel-$suffix');
     var html = '<div id="rename-form">';
+    html += '<p><img src="'+icon+'" /></p>';
     html += '<p><label for="newname-$suffix">$strsaveas</label>';
     html += '<input type="text" id="newname-$suffix" value="'+oldname+'" /></p>';
+    /**
     html += '<p><label for="syncfile-$suffix">$strsync</label> ';
     html += '<input type="checkbox" id="syncfile-$suffix" /></p>';
+    */
     html += '<p><input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
     html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a> ';
     html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownbtn" />';
@@ -949,8 +952,9 @@ _client.viewthumb = function(ds){
             var el = new YAHOO.util.Element(link.id);
             el.title = list[k].title;
             el.value = list[k].source;
+            el.icon  = list[k].thumbnail;
             el.on('click', function(){
-                repository_client_$suffix.rename(this.title, this.value);
+                repository_client_$suffix.rename(this.title, this.value, this.icon);
             });
         }
         count++;
@@ -966,6 +970,7 @@ _client.buildtree = function(node, level){
         context:tmpNode.labelElId, text:info.title});
     tmpNode.filename = node.title;
     tmpNode.value  = node.source;
+    tmpNode.icon = node.thumbnail;
     if(node.children){
         tmpNode.isLeaf = false;
         if (node.path) {
@@ -979,7 +984,7 @@ _client.buildtree = function(node, level){
     } else {
         tmpNode.isLeaf = true;
         tmpNode.onLabelClick = function() {
-            repository_client_$suffix.rename(this.filename, this.value);
+            repository_client_$suffix.rename(this.filename, this.value, this.icon);
         }
     }
 }
