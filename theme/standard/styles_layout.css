@@ -4172,6 +4172,11 @@ table.quizreviewsummary td.cell {
 #quiznavigation .qnbutton.thispage {
   background: #eee;
 }
+#quiznavigation .qnbutton.flagged {
+  background-repeat: no-repeat;
+  background-image: url(pix/flaggedquestionnav.png);
+  background-position: top right;
+}
 #quiznavigation .othernav {
   clear: both;
 }
