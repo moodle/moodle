@@ -13,7 +13,8 @@
       <div class="grade">
         <?php echo get_string('marks', 'quiz').': '.$grade; ?>
       </div>
-    <?php } ?>
+    <?php }
+    $this->print_question_flag($question, $state, $options->flags); ?>
   </div>
   <div class="content">
     <?php $this->print_question_formulation_and_controls($question, $state, $cmoptions, $options);

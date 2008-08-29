@@ -94,17 +94,24 @@ define('QUESTION_PREVIEW_POPUP_OPTIONS', 'scrollbars=yes,resizable=yes,width=700
  * is how question is Moodle always worked before version 1.5
  */
 define('QUESTION_ADAPTIVE', 1);
+/**#@-*/
 
-/**
- * options used in forms that move files.
- *
+/**#@+
+ * Options used in forms that move files.
  */
 define('QUESTION_FILENOTHINGSELECTED', 0);
 define('QUESTION_FILEDONOTHING', 1);
 define('QUESTION_FILECOPY', 2);
 define('QUESTION_FILEMOVE', 3);
 define('QUESTION_FILEMOVELINKSONLY', 4);
+/**#@-*/
 
+/**#@+
+ * Options for whether flags are shown/editable when rendering questions.
+ */
+define('QUESTION_FLAGSHIDDEN', 0);
+define('QUESTION_FLAGSSHOWN', 1);
+define('QUESTION_FLAGSEDITABLE', 2);
 /**#@-*/
 
 /// QTYPES INITIATION //////////////////
@@ -909,7 +916,7 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
 
     // The question field must be listed first so that it is used as the
     // array index in the array returned by $DB->get_records_sql
-    $statefields = 'n.questionid as question, s.*, n.sumpenalty, n.manualcomment';
+    $statefields = 'n.questionid as question, s.*, n.sumpenalty, n.manualcomment, n.flagged, n.id as questionsessionid';
     // Load the newest states for the questions
     $sql = "SELECT $statefields
               FROM {question_states} s, {question_sessions} n
@@ -1816,6 +1823,34 @@ function question_format_grade($cmoptions, $grade) {
     return format_float($grade, $cmoptions->decimalpoints);
 }
 
+/**
+ * @return string An inline script that creates a JavaScript object storing
+ * various strings and bits of configuration that the scripts in qengine.js need
+ * to get from PHP.
+ */
+function question_init_qenginejs_script() {
+    global $CFG;
+
+    // Get the properties we want into a PHP array first, becase that is easier
+    // to build.
+    $config = array(
+        'pixpath' => $CFG->pixpath,
+        'wwwroot' => $CFG->wwwroot,
+        'flagtooltip' => get_string('clicktoflag', 'question'),
+        'unflagtooltip' => get_string('clicktounflag', 'question'),
+        'flaggedalt' => get_string('flagged', 'question'),
+        'unflaggedalt' => get_string('notflagged', 'question'),
+    );
+
+    // Then generate the script tag.
+    $script = '<script type="text/javascript">qengine_config = {' . "\n";
+    foreach ($config as $property => $value) {
+        $script .= "    $property: '" . addslashes_js($value) . "',\n";
+    }
+    $script .= "};</script>\n";
+    return $script;
+}
+
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
 /**
  * Get the HTML that needs to be included in the head tag when the
@@ -1830,15 +1865,23 @@ function question_format_grade($cmoptions, $grade) {
  * @return string some HTML code that can go inside the head tag.
  */
 function get_html_head_contributions($questionlist, &$questions, &$states) {
-    global $QTYPES;
+    global $CFG, $QTYPES;
 
-    $contributions = array();
+    // The question engine's own JavaScript.
+    require_js(array('yui_yahoo','yui_event', 'yui_connection'));
+    require_js($CFG->wwwroot . '/question/qengine.js');
+
+    // An inline script to record various lang strings, etc. that qengine.js needs.
+    $contributions = array(question_init_qenginejs_script());
+
+    // Anything that questions on this page need.
     foreach ($questionlist as $questionid) {
         $question = $questions[$questionid];
         $contributions = array_merge($contributions,
                 $QTYPES[$question->qtype]->get_html_head_contributions(
                 $question, $states[$questionid]));
     }
+
     return implode("\n", array_unique($contributions));
 }
 
@@ -2507,6 +2550,33 @@ function question_get_real_state($state){
         $realstate->answer = $matches[2];
         return $realstate;
     }
+}
+
+/**
+ * Update the flagged state of a particular question session.
+ *
+ * @param integer $sessionid question_session id.
+ * @param boolean $newstate the new state for the flag.
+ * @return boolean success or failure.
+ */
+function question_update_flag($sessionid, $newstate) {
+    global $DB;
+    return $DB->set_field('question_sessions', 'flagged', $newstate, array('id' => $sessionid));
+}
+
+/**
+ * @param integer $attemptid the question_attempt id.
+ * @param integer $questionid the question id.
+ * @param integer $sessionid the question_session id.
+ * @param object $user a user, or null to use $USER.
+ * @return string that needs to be sent to question/toggleflag.php for it to work.
+ */
+function question_get_toggleflag_checksum($attemptid, $questionid, $sessionid, $user = null) {
+    if (is_null($user)) {
+        global $USER;
+        $user = $USER;
+    }
+    return md5($attemptid . "_" . $user->secret . "_" . $questionid . "_" . $sessionid);
 }
 
 ?>

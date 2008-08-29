@@ -721,6 +721,22 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008082602);
     }
 
+    if ($result && $oldversion < 2008082700) {
+    /// Add a new column to the question sessions table to record whether a
+    /// question has been flagged.
+
+    /// Define field flagged to be added to question_sessions
+        $table = new xmldb_table('question_sessions');
+        $field = new xmldb_field('flagged', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null, null, '0', 'manualcomment');
+
+    /// Conditionally launch add field flagged
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008082700);
+    }
 
     return $result;
 }

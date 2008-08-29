@@ -68,10 +68,13 @@
         $quiz->review = $CFG->quiz_review;
         require_login($courseid, false);
         $quiz->course = $courseid;
+        $context = get_context_instance(CONTEXT_COURSE, $courseid);
     } else if (!$quiz = $DB->get_record('quiz', array('id' => $quizid))) {
         print_error('invalidquizid', 'quiz', '', $quizid);
     } else {
-        require_login($quiz->course, false, get_coursemodule_from_instance('quiz', $quizid, $quiz->course));
+        $cm = get_coursemodule_from_instance('quiz', $quizid, $quiz->course);
+        require_login($quiz->course, false, $cm);
+        $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
 
@@ -187,7 +190,7 @@
     }
 
     // TODO: should not use quiz-specific function here
-    $options = quiz_get_renderoptions($quiz->review, $curstate);
+    $options = quiz_get_renderoptions($quiz, $attempt, $context, $curstate);
 
     // Fill in the correct responses (unless the question is in readonly mode)
     if ($fillcorrect && !$options->readonly) {

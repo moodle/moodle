@@ -879,7 +879,69 @@ class default_questiontype {
         include "$CFG->dirroot/question/type/question.html";
     }
 
-    /*
+    /**
+     * Render the question flag, assuming $flagsoption allows it. You will probably
+     * never need to override this method.
+     *
+     * @param object $question the question
+     * @param object $state its current state
+     * @param integer $flagsoption the option that says whether flags should be displayed.
+     */
+    protected function print_question_flag($question, $state, $flagsoption) {
+        global $CFG;
+        switch ($flagsoption) {
+            case QUESTION_FLAGSSHOWN:
+                $flagcontent = $this->get_question_flag_tag($state->flagged);
+                break;
+            case QUESTION_FLAGSEDITABLE:
+                $id = $question->name_prefix . '_flagged';
+                if ($state->flagged) {
+                    $checked = 'checked="checked" ';
+                } else {
+                    $checked = '';
+                }
+                $qsid = $state->questionsessionid;
+                $aid = $state->attempt;
+                $qid = $state->question;
+                $checksum = question_get_toggleflag_checksum($aid, $qid, $qsid);
+                $postdata = "qsid=$qsid&amp;aid=$aid&amp;qid=$qid&amp;checksum=$checksum&amp;sesskey=" . sesskey();
+                $flagcontent = '<input type="checkbox" id="' . $id . '" name="' . $id .
+                        '" value="1" ' . $checked . ' />' . 
+                        '<label for="' . $id . '">' . $this->get_question_flag_tag(
+                        $state->flagged, $id . 'img') . '</label>' .
+                        "\n" . '<script type="text/javascript">question_flag_changer.init_flag(' .
+                        "'$id', '$postdata');</script>";
+                break;
+            default:
+                $flagcontent = '';
+        }
+        if ($flagcontent) {
+            echo '<div class="questionflag">' . $flagcontent . "</div>\n";
+        }
+    }
+
+    /**
+     * Work out the actual img tag needed for the flag
+     *
+     * @param boolean $flagged whether the question is currently flagged.
+     * @param string $id an id to be added as an attribute to the img (optional). 
+     * @return string the img tag.
+     */
+    protected function get_question_flag_tag($flagged, $id = '') {
+        global $CFG;
+        if ($id) {
+            $id = 'id="' . $id . '" ';
+        }
+        if ($flagged) {
+            $img = 'flagged.png';
+        } else {
+            $img = 'unflagged.png';
+        }
+        return '<img ' . $id . 'src="' . $CFG->pixpath . '/i/' . $img .
+                '" alt="' . get_string('flagthisquestion', 'question') . '" />';
+    }
+
+    /**
      * Print history of responses
      *
      * Used by print_question()

@@ -753,13 +753,36 @@ function quiz_question_preview_button($quiz, $question) {
 }
 
 /**
+ * @param object $attempt the attempt.
+ * @param object $context the quiz context.
+ * @return integer whether flags should be shown/editable to the current user for this attempt.
+ */
+function quiz_get_flag_option($attempt, $context) {
+    global $USER;
+    static $flagmode = null;
+    if (is_null($flagmode)) {
+        if (!has_capability('moodle/question:flag', $context)) {
+            $flagmode = QUESTION_FLAGSHIDDEN;
+        } else if ($attempt->userid == $USER->id) {
+            $flagmode = QUESTION_FLAGSEDITABLE;
+        } else {
+            $flagmode = QUESTION_FLAGSSHOWN;
+        }
+    }
+    return $flagmode;
+}
+
+/**
  * Determine render options
  *
  * @param int $reviewoptions
  * @param object $state
  */
-function quiz_get_renderoptions($reviewoptions, $state) {
+function quiz_get_renderoptions($quiz, $attempt, $context, $state) {
+    $reviewoptions = $quiz->review;
     $options = new stdClass;
+
+    $options->flags = quiz_get_flag_option($attempt, $context);
 
     // Show the question in readonly (review) mode if the question is in
     // the closed state
@@ -791,15 +814,18 @@ function quiz_get_renderoptions($reviewoptions, $state) {
  *
  * @param object $quiz the quiz instance.
  * @param object $attempt the attempt in question.
- * @param $context the roles and permissions context,
- *          normally the context for the quiz module instance.
+ * @param $context the quiz module context.
  *
  * @return object an object with boolean fields responses, scores, feedback,
  *          correct_responses, solutions and general feedback
  */
-function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
+function quiz_get_reviewoptions($quiz, $attempt, $context) {
+    global $USER;
+
     $options = new stdClass;
     $options->readonly = true;
+
+    $options->flags = quiz_get_flag_option($attempt, $context);
 
     // Provide the links to the question review and comment script
     if (!empty($attempt->id)) {
@@ -807,12 +833,12 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
     }
 
     // Show a link to the comment box only for closed attempts
-    if ($attempt->timefinish && !is_null($context) && has_capability('mod/quiz:grade', $context)) {
+    if ($attempt->timefinish && has_capability('mod/quiz:grade', $context)) {
         $options->questioncommentlink = '/mod/quiz/comment.php';
     }
 
     // Whether to display a response history.
-    $canviewreports = !is_null($context) && has_capability('mod/quiz:viewreports', $context);
+    $canviewreports = has_capability('mod/quiz:viewreports', $context);
     $options->history = ($canviewreports && !$attempt->preview) ? 'all' : 'graded';
 
     if ($canviewreports && has_capability('moodle/grade:viewhidden', $context) && !$attempt->preview) {
@@ -867,7 +893,7 @@ function quiz_get_reviewoptions($quiz, $attempt, $context=null) {
  *          at least one of the attempts, the other showing which options are true
  *          for all attempts.
  */
-function quiz_get_combined_reviewoptions($quiz, $attempts, $context=null) {
+function quiz_get_combined_reviewoptions($quiz, $attempts, $context) {
     $fields = array('readonly', 'scores', 'feedback', 'correct_responses', 'solutions', 'generalfeedback', 'overallfeedback');
     $someoptions = new stdClass;
     $alloptions = new stdClass;

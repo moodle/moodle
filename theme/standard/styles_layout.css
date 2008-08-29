@@ -2623,6 +2623,15 @@ body.notes .notesgroup {
 .que .info div {
   margin-left: 1em;
 }
+.que .info .questionflag {
+  margin-top: 1em;
+  margin-right: 1em;
+  text-align: center;
+}
+.que .info .questionflag .jsworking {
+  position: absolute;
+  visibility: hidden;
+}
 .que .content {
   float: left;
   margin: 0;

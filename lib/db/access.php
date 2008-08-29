@@ -1002,8 +1002,20 @@ $moodle_capabilities = array(
         )
     ),
 
-    'moodle/site:doclinks' => array(
+    // While attempting questions, the ability to flag particular questions for later reference.
+    'moodle/question:flag' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'legacy' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'coursecreator' => CAP_ALLOW,
+            'admin' => CAP_ALLOW
+        )
+    ),
 
+    'moodle/site:doclinks' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_SYSTEM,
         'legacy' => array(

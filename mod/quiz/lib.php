@@ -1257,6 +1257,7 @@ function quiz_get_extra_capabilities() {
         'moodle/question:movemine',
         'moodle/question:moveall',
         'moodle/question:managecategory',
+        'moodle/question:flag',
     );
 }
 

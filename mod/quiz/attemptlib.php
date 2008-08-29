@@ -497,7 +497,7 @@ class quiz_attempt extends quiz {
      * @return object the render options for this user on this attempt.
      */
     public function get_render_options($state) {
-        return quiz_get_renderoptions($this->quiz->review, $state);
+        return quiz_get_renderoptions($this->quiz, $this->attempt, $this->context, $state);
     }
 
     /**
@@ -534,7 +534,7 @@ class quiz_attempt extends quiz {
             case QUESTION_EVENTCLOSEANDGRADE:
             case QUESTION_EVENTCLOSE:
             case QUESTION_EVENTMANUALGRADE:
-                $options = quiz_get_renderoptions($this->quiz->review, $this->states[$questionid]);
+                $options = $this->get_render_options($this->states[$questionid]);
                 if ($options->scores) {
                     return question_get_feedback_class($state->last_graded->raw_grade /
                             $this->questions[$questionid]->maxgrade);
@@ -552,6 +552,16 @@ class quiz_attempt extends quiz {
     }
 
     /**
+     * @param integer $questionid question id of a question that belongs to this quiz.
+     * @return boolean whether this question hss been flagged by the attempter.
+     */
+    public function is_question_flagged($questionid) {
+        $this->ensure_state_loaded($questionid);
+        $state = $this->states[$questionid];
+        return $state->flagged;
+    }
+
+    /**
      * Return the grade obtained on a particular question, if the user is permitted to see it.
      * You must previously have called load_question_states to load the state data about this question.
      *
@@ -560,7 +570,7 @@ class quiz_attempt extends quiz {
      */
     public function get_question_score($questionid) {
         $this->ensure_state_loaded($questionid);
-        $options = quiz_get_renderoptions($this->quiz->review, $this->states[$questionid]);
+        $options = $this->get_render_options($this->quiz->review, $this->states[$questionid]);
         if ($options->scores) {
             return quiz_format_grade($this->quiz, $this->states[$questionid]->last_graded->grade);
         } else {
@@ -803,12 +813,20 @@ abstract class quiz_nav_panel_base {
 
     abstract protected function get_end_bits();
 
-    protected function get_question_state($question) {
-        $state = 'todo'; // TODO MDL-15653
+    protected function get_question_state_classes($question) {
+        // The current status of the question.
+        $classes = $this->attemptobj->get_question_status($question->id);
+
+        // Plus a marker for the current page.
         if ($question->_page == $this->page) {
-            $state .= ' thispage';
+            $classes .= ' thispage';
         }
-        return $state;
+
+        // Plus a marker for flagged questions.
+        if ($this->attemptobj->is_question_flagged($question->id)) {
+            $classes .= ' flagged';
+        }
+        return $classes;
     }
 
     public function display() {
@@ -833,7 +851,7 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
         }
         return '<input type="submit" name="gotopage' . $question->_page .
                 '" value="' . $number . '" class="qnbutton ' .
-                $this->get_question_state($question) . '"' . $onclick . '/>';
+                $this->get_question_state_classes($question) . '"' . $onclick . '/>';
     }
 
     protected function get_end_bits() {
@@ -853,7 +871,7 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
 
     protected function get_question_button($number, $question) {
         return '<a href="' . $this->attemptobj->review_url($question->id) .
-                '" class="qnbutton ' . $this->get_question_state($question) .
+                '" class="qnbutton ' . $this->get_question_state_classes($question) .
                 '">' . $number . '</a>';
     }
 

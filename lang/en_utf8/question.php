@@ -44,6 +44,8 @@ $string['categorycurrent'] = 'Current Category';
 $string['categorycurrentuse'] = 'Use This Category';
 $string['categorymoveto'] = 'Save in Category';
 $string['changepublishstatuscat'] = '<a href=\"$a->caturl\">Category \"$a->name\"</a> in course \"$a->coursename\" will have it\'s sharing status changed from <strong>$a->changefrom to $a->changeto</strong>.';
+$string['clicktoflag'] = 'Click to flag this question';
+$string['clicktounflag'] = 'Click to un-flag this question';
 $string['cwrqpfs'] = 'Random questions selecting questions from sub categories.';
 $string['cwrqpfsinfo'] = '<p>During the upgrade to Moodle 1.9 we will separate question categories into
 different contexts. Some question categories and questions on your site will have to have their sharing
@@ -86,6 +88,8 @@ $string['exporterror'] = 'Errors occur during exporting!';
 $string['filesareasite']= 'the site files area';
 $string['filesareacourse']= 'the course files area';
 $string['filestomove']= 'Move / copy files to $a?';
+$string['flagged'] = 'Flagged';
+$string['flagthisquestion'] = 'Flag this question';
 $string['formquestionnotinids'] = 'Form contained question that is not in questionids';
 $string['fractionsnomax'] = 'One of the answers should have a score of 100%% so it is possible to get full marks for this question.';
 $string['getcategoryfromfile'] = 'Get category from file';
@@ -123,6 +127,7 @@ $string['nopermissionadd'] = 'You don\'t have permission to add questions here.'
 $string['noprobs'] = 'No problems found in your question database.';
 $string['notenoughdatatoeditaquestion'] = 'Neither a question id, nor a category id and question type, was specified.';
 $string['notenoughdatatomovequestions'] = 'You need to provide the question ids of questions you want to move.';
+$string['notflagged'] = 'Not flagged';
 $string['novirtualquestiontype'] = 'No virtual question type for question type $a';
 $string['parenthesisinproperstart'] = 'Parenthesis before ** is not properly started in $a**';
 $string['parenthesisinproperclose'] = 'Parenthesis before ** is not properly closed in $a**';
