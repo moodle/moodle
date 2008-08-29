@@ -616,6 +616,7 @@ function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_dr
 function repository_get_client($context){
     global $CFG, $USER;
     $suffix = uniqid();
+    $sesskey = sesskey();
     $strsaveas    = get_string('saveas', 'repository').': ';
     $stradd  = get_string('add', 'repository');
     $strback      = get_string('back', 'repository');
@@ -848,7 +849,7 @@ _client.rename = function(oldname, url){
     var html = '<div id="rename-form">';
     html += '<p><label for="newname-$suffix">$strsaveas</label>';
     html += '<input type="text" id="newname-$suffix" value="'+oldname+'" /></p>';
-    html += '<p><label for="syncfile-$suffix">$strsync</label>';
+    html += '<p><label for="syncfile-$suffix">$strsync</label> ';
     html += '<input type="checkbox" id="syncfile-$suffix" /></p>';
     html += '<p><input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
     html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a> ';
@@ -1002,10 +1003,14 @@ _client.dynload = function (node, fnLoadComplete){
         argument:{"node":node, "fnLoadComplete": fnLoadComplete},
         timeout:600
     }
-    var trans = YAHOO.util.Connect.asyncRequest('GET',
-        '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='
-            +_client.repositoryid+'&p='+node.path+'&action=list',
-        callback);
+    var params = [];
+    params['p']=node.path;
+    params['env']=_client.env;
+    params['sesskey']='$sesskey';
+    params['ctx_id']=$context->id;
+    params['repo_id']=_client.repositoryid;
+    var trans = YAHOO.util.Connect.asyncRequest('POST',
+        '$CFG->wwwroot/repository/ws.php?action=list', callback, _client.postdata(params));
 }
 _client.viewlist = function(){
     _client.viewmode = 0;
@@ -1026,15 +1031,14 @@ _client.viewlist = function(){
 }
 _client.upload = function(){
     var u = _client.ds.upload;
-    var conn = YAHOO.util.Connect;
     var aform = document.getElementById(u.id);
     var parent = document.getElementById(u.id+'_div');
     var loading = document.createElement('DIV');
     loading.innerHTML = "$struploading";
     loading.id = u.id+'_loading';
     parent.appendChild(loading);
-    conn.setForm(aform, true, true);
-    conn.asyncRequest('POST', '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='+_client.repositoryid+'&action=upload', _client.upload_cb);
+    YAHOO.util.Connect.setForm(aform, true, true);
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->wwwroot/repository/ws.php?action=upload&sesskey=$sesskey&ctx_id=$context->id&repo_id='+_client.repositoryid, _client.upload_cb);
 }
 _client.upload_cb = {
     upload: function(o){
@@ -1117,14 +1121,19 @@ _client.download = function(){
     var title = document.getElementById('newname-$suffix').value;
     var file = document.getElementById('fileurl-$suffix').value;
     _client.loading();
+    var params = [];
+    params['env']=_client.env;
+    params['file']=file;
+    params['title']=title;
+    params['sesskey']='$sesskey';
+    params['ctx_id']=$context->id;
+    params['repo_id']=_client.repositoryid;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->wwwroot/repository/ws.php?ctx_id=$context->id&repo_id='
-        +_client.repositoryid+'&action=download',
-        _client.dlfile, _client.postdata({'env':_client.env, 'file':file, 'title':title}));
+        '$CFG->wwwroot/repository/ws.php?action=download', _client.dlfile, _client.postdata(params));
 }
 // send login request
 _client.login = function(){
-    var params = {};
+    var params = [];
     var data = _client.ds.login;
     for (var k in data) {
         var el = document.getElementsByName(data[k].name)[0];
@@ -1137,10 +1146,10 @@ _client.login = function(){
     }
     params['env'] = _client.env;
     params['ctx_id'] = $context->id;
+    params['sesskey']= '$sesskey';
     _client.loading();
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->wwwroot/repository/ws.php?action=sign', _client.callback,
-        _client.postdata(params));
+        '$CFG->wwwroot/repository/ws.php?action=sign', _client.callback, _client.postdata(params));
 }
 _client.end = function(str){
     if(_client.env=='form'){
@@ -1250,7 +1259,15 @@ _client.req = function(id, path, reset) {
     } else {
         action = 'list';
     }
-    var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?action='+action+'&ctx_id=$context->id&repo_id='+id+'&p='+path+'&reset='+reset+'&env='+_client.env, _client.callback);
+    var params = [];
+    params['p'] = path;
+    params['reset']=reset;
+    params['env']=_client.env;
+    params['action']=action;
+    params['sesskey']='$sesskey';
+    params['ctx_id']=$context->id;
+    params['repo_id']=id;
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->wwwroot/repository/ws.php?action='+action, _client.callback, _client.postdata(params));
 }
 _client.search = function(id){
     var data = window.prompt("$strsearching");
@@ -1260,7 +1277,13 @@ _client.search = function(id){
     }
     _client.viewbar.set('disabled', false);
     _client.loading();
-    var trans = YAHOO.util.Connect.asyncRequest('GET', '$CFG->wwwroot/repository/ws.php?action=search&ctx_id=$context->id&repo_id='+id+'&s='+data+'&env='+_client.env, _client.callback);
+    var params = [];
+    params['s']=data;
+    params['env']=_client.env;
+    params['sesskey']='$sesskey';
+    params['ctx_id']=$context->id;
+    params['repo_id']=id;
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->wwwroot/repository/ws.php?action=search', _client.callback, _client.postdata(params));
 }
 
 return _client;

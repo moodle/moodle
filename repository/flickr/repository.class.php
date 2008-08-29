@@ -100,13 +100,13 @@ class repository_flickr extends repository{
 EOD;
             if($ajax){
                 $ret = array();
-                $e1->label = get_string('username', 'repository_flickr');
+                $e1->label = get_string('username', 'repository_flickr').': ';
                 $e1->id    = 'account';
                 $e1->type = 'text';
                 $e1->name = 'flickrmail';
 
                 $e2->id   = 'keepid';
-                $e2->label = get_string('remember', 'repository_flickr');
+                $e2->label = get_string('remember', 'repository_flickr').' ';
                 $e2->type = 'checkbox';
                 $e2->name = 'remember';
 

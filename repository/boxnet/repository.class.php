@@ -101,6 +101,7 @@ class repository_boxnet extends repository{
             // TODO: think about how to search
             $ret['list']   = $tree;
             $ret['manage'] = 'http://www.box.net/files';
+            $ret['path'] = array(array('name'=>'Root','path'=>null));
             $this->listing = $tree;
             return $ret;
         } else {
@@ -143,13 +144,13 @@ class repository_boxnet extends repository{
                     $e2->name = 'repo_id';
                     $e2->value = $this->id;
 
-                    $e3->label = get_string('username', 'repository_boxnet');
+                    $e3->label = get_string('username', 'repository_boxnet').': ';
                     $e3->id    = 'box_username';
                     $e3->type  = 'text';
                     $e3->name  = 'boxusername';
                     $e3->value = $ret->username;
                     
-                    $e4->label = get_string('password', 'repository_boxnet');
+                    $e4->label = get_string('password', 'repository_boxnet').': ';
                     $e4->id    = 'box_password';
                     $e4->type  = 'password';
                     $e4->name  = 'boxpassword';
