@@ -1564,6 +1564,13 @@ abstract class portfolio_plugin_base {
         return true;
     }
 
+    /**
+    * perform any required cleanup functions
+    */
+    public function cleanup() {
+        return true;
+    }
+
     public static function mnet_publishes() {
         return array();
     }
@@ -1584,7 +1591,7 @@ abstract class portfolio_plugin_push_base extends portfolio_plugin_base {
 */
 abstract class portfolio_plugin_pull_base extends portfolio_plugin_base {
 
-    private $file;
+    protected $file;
 
     public function is_push() {
         return false;
@@ -1598,6 +1605,23 @@ abstract class portfolio_plugin_pull_base extends portfolio_plugin_base {
     * @param array request parameters (POST wins over GET)
     */
     public abstract function verify_file_request_params($params);
+
+    /**
+    * called from portfolio/file.php
+    * this function sends the stored file out to the browser
+    * the default is to just use send_stored_file,
+    * but other implementations might do something different
+    * for example, send back the file base64 encoded and encrypted
+    * mahara does this but in the response to an xmlrpc request
+    * rather than through file.php
+    */
+    public function send_file() {
+        $file = $this->get('file');
+        if (!($file instanceof stored_file)) {
+            throw new portfolio_export_exception($this->get('exporter'), 'filenotfound', 'portfolio');
+        }
+        send_stored_file($file, 0, 0, true, null, true);
+    }
 
 }
 
@@ -1899,8 +1923,12 @@ final class portfolio_exporter {
                 // if we get through here it means control was returned
                 // as opposed to wanting to stop processing
                 // eg to wait for user input.
+                $this->save();
                 $stage++;
                 return $this->process_stage($stage);
+            } else {
+                $this->save();
+                return false;
             }
         } catch (portfolio_caller_exception $e) {
             portfolio_export_rethrow_exception($this, $e);
@@ -1912,8 +1940,6 @@ final class portfolio_exporter {
             debugging(get_string('thirdpartyexception', 'portfolio', get_class($e)));
             portfolio_export_rethrow_exception($this, $e);
         }
-        $this->save();
-        return false;
     }
 
     /**
@@ -2126,7 +2152,7 @@ final class portfolio_exporter {
             unset($SESSION->portfolioexport);
             return true;
         }
-        // @todo maybe add a hook in the plugin(s)
+        $this->get('instance')->cleanup();
         $DB->delete_records('portfolio_tempdata', array('id' => $this->id));
         $fs = get_file_storage();
         $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->id);
@@ -2389,15 +2415,13 @@ function portfolio_handle_event($eventdata) {
 function portfolio_cron() {
     global $DB;
 
-    if ($expired = $DB->get_records_select('portfolio_tempdata', 'expirytime < ?', array(time()))) {
+    if ($expired = $DB->get_records_select('portfolio_tempdata', 'expirytime < ?', array(time()), '', 'id')) {
         foreach ($expired as $d) {
-            $DB->delete_records('portfolio_tempdata', array('id' => $d->id));
-            $fs = get_file_storage();
-            $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $d->id);
+            $e = portfolio_exporter::rewaken_object($d);
+            $e->process_stage_cleanup(true);
         }
     }
-
-    // @todo add hooks in the plugins
+    // @todo add hooks in the plugins - either per instance or per plugin
 }
 
 /**

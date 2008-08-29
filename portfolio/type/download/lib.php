@@ -5,7 +5,6 @@ require_once($CFG->libdir . '/packer/zip_packer.php');
 
 class portfolio_plugin_download extends portfolio_plugin_pull_base {
 
-    protected $file;
     protected $exportconfig;
 
     public static function allows_multiple() {

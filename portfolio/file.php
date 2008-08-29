@@ -16,12 +16,7 @@ if (!$exporter->get('instance')->verify_file_request_params(array_merge($_GET, $
     throw new portfolio_export_exception($exporter, 'filedenied', 'portfolio');
 }
 
-$file = $exporter->get('instance')->get('file');
-if (!($file instanceof stored_file)) {
-    throw new portfolio_export_exception($exporter, 'filenotfound', 'portfolio');
-}
-
-send_stored_file($file, 0, 0, true, null, true);
+$exporter->get('instance')->send_file();
 $exporter->process_stage_cleanup(true);
-
+exit;
 ?>
