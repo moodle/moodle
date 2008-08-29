@@ -62,7 +62,11 @@ class message_output_popup extends message_output{
         return true;
     }
     
-    public function process_form(&$form, &$preferences){
+    function config_form($preferences){
+        return true;
+    }
+    
+    public function process_form($form, &$preferences){
         return true;
     }
     public function load_data(&$preferences, $userid){

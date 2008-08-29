@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php   // $Id$
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -32,9 +32,8 @@
  * @package
  */
 
-require_once('../config.php');
 
-require_once($CFG->dirroot.'/message/edit_form.php');
+require_once('../config.php');
 require_once($CFG->libdir.'/messagelib.php');
 
 
@@ -90,20 +89,65 @@ if ($user->id == $USER->id) {
     }
 }
 
+//save new preferences if data was submited
+if ( ($form = data_submitted()) && confirm_sesskey()) {
+    $preferences = array();
 
-//retrieve preferences from db
+    /// Set the overall preferences
+    $preferences['message_showmessagewindow'] = $form->showmessagewindow?1:0;
+    $preferences['message_blocknoncontacts']  = $form->blocknoncontacts?1:0;
+    $preferences['message_beepnewmessage']    = $form->beepnewmessage?1:0;
+    $preferences['message_noframesjs']        = $form->noframesjs?1:0;
+    
+    /// Set all the preferences for all the message providers
+    $providers = message_get_my_providers();
+    foreach ( $providers as $providerid => $provider){
+        foreach (array('loggedin', 'loggedoff') as $state){
+            $linepref = '';
+            foreach ($form->{$provider->component.'_'.$provider->name.'_'.$state} as $process=>$one){                
+                if ($linepref == ''){ 
+                    $linepref = $process;
+                } else { 
+                    $linepref .= ','.$process;
+                }
+            }
+            $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
+        }
+    }
+    /// Set all the processor options as well
+    $processors = $DB->get_records('message_processors');
+    foreach ( $processors as $processorid => $processor){
+        $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
+        if ( is_readable($processorfile) ) {
+            include_once( $processorfile );
+            
+            $processclass = 'message_output_' . $processor->name;                
+            if ( class_exists($processclass) ){                    
+                $pclass = new $processclass();
+                $pclass->process_form($form, $preferences);                    
+            } else{ 
+                error('Error calling defined processor');
+            }
+        }
+    }
+    /// Save all the new preferences to the database
+    if (!set_user_preferences( $preferences, $user->id ) ){
+        error('Error updating user message preferences');
+    }
+    
+    redirect("$CFG->wwwroot/message/edit.php?id=$user->id&course=$course->id");
+}
+
+//load preferences so show
 $preferences = new object();
-$preferences->id = $user->id;
 
 //get the message general preferences
 $preferences->showmessagewindow =  get_user_preferences( 'message_showmessagewindow', '', $user->id);
 $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $user->id);
 $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
 $preferences->noframesjs        =  get_user_preferences( 'message_noframesjs', '', $user->id);
-
-// Get all the known providers
+//get providers preferences
 $providers = message_get_my_providers();
-
 foreach ( $providers as $providerid => $provider){
     foreach (array('loggedin', 'loggedoff') as $state){
         $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$provider->name.'_'.$state, '', $user->id);
@@ -113,7 +157,7 @@ foreach ( $providers as $providerid => $provider){
         $lineprefarray = explode(',', $linepref);
         $preferences->{$provider->component.'_'.$provider->name.'_'.$state} = array();
         foreach ($lineprefarray as $pref){
-            $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$provider->component.'_'.$provider->name.'_'.$state.'_'.$pref] = 1;
+            $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$pref] = 1;
         }
     }
 }
@@ -133,65 +177,6 @@ foreach ( $processors as $processorid => $processor){
         }
     }
 }
-
-
-//create form
-$userform = new user_edit_form();
-$userform->set_data($preferences);
-
-if ($messageconf = $userform->get_data()) {
-
-    add_to_log($course->id, 'message', 'update', "edit.php?id=$user->id&course=$course->id", '');
-
-    $preferences = array();
-
-/// Set the overall preferences
-    $preferences['message_showmessagewindow'] = $messageconf->showmessagewindow?1:0;
-    $preferences['message_blocknoncontacts']  = $messageconf->blocknoncontacts?1:0;
-    $preferences['message_beepnewmessage']    = $messageconf->beepnewmessage?1:0;
-    $preferences['message_noframesjs']        = $messageconf->noframesjs?1:0;
-
-/// Set all the preferences for all the message providers
-    foreach ( $providers as $providerid => $provider){
-        foreach (array('loggedin', 'loggedoff') as $state){
-            $linepref = '';
-            foreach ($messageconf->{$provider->component.'_'.$provider->name.'_'.$state} as $process=>$one){
-                $parray = explode( '_', $process);
-                if ($linepref == ''){ 
-                    $linepref = $parray[2];
-                } else { 
-                    $linepref .= ','.$parray[2];
-                }
-            }
-            $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
-        }
-    }
-
-/// Set all the processor options as well
-    $processors = $DB->get_records('message_processors');
-    foreach ( $processors as $processorid => $processor){
-        $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/lib.php';
-        if ( is_readable($processorfile) ) {
-            include_once( $processorfile );
-            
-            $processclass = 'message_output_' . $processor->name;                
-            if ( class_exists($processclass) ){                    
-                $pclass = new $processclass();
-                $pclass->process_form($messageconf, $preferences);                    
-            } else{ 
-                error('Error calling defined processor');
-            }
-        }
-    }
-
-/// Save all the new preferences to the database
-    if (!set_user_preferences( $preferences, $user->id ) ){
-        error('Error updating user message preferences');
-    }
-
-    redirect("$CFG->wwwroot/message/edit.php?id=$user->id&course=$course->id");
-}
-
 
 /// Display page header
 $streditmymessage = get_string('editmymessage', 'message');
@@ -219,12 +204,68 @@ $showroles = 1;
 $currenttab = 'editmessage';
 require('../user/tabs.php');
 
-notify('WARNING: This interface is still under construction!');
+echo '<form method="post" action="'.$CFG->wwwroot.'/message/edit.php">';
+echo '<table width="80%" class="userinfobox">';
+echo '<tr><td colspan="2"><h3>'.get_string('private_config', 'message').'</h3></td></tr>';
+echo '<tr><td>'.get_string('showmessagewindow', 'message').'</td><td><input type="checkbox" name="showmessagewindow" '.($preferences->showmessagewindow==1?" checked=\"checked\"":"").' /></td></tr>';
+echo '<tr><td>'.get_string('blocknoncontacts', 'message').'</td><td><input type="checkbox" name="blocknoncontacts" '.($preferences->blocknoncontacts==1?" checked=\"checked\"":"").' /></td></tr>';
+echo '<tr><td>'.get_string('beepnewmessage', 'message').'</td><td><input type="checkbox" name="beepnewmessage" '.($preferences->beepnewmessage==1?" checked=\"checked\"":"").' /></td></tr>';
+echo '<tr><td>'.get_string('noframesjs', 'message').'</td><td><input type="checkbox" name="noframesjs" '.($preferences->noframesjs==1?" checked=\"checked\"":"").' /></td></tr>';
+echo '</table>';
 
-/// Finally display THE form
-$userform->display();
+//output settings table
+echo '<table width="80%" class="userinfobox">';
+echo '<tr><td><h3>Message Sources</h3></td></tr>'."\n";
+$providers = message_get_my_providers();
+$processors = $DB->get_records('message_processors');
+$number_procs = count($processors);
+echo '<tr><td>'; echo '<table cellpadding="2"><tr><td>&nbsp;</td>'."\n";
+foreach ( $processors as $processorid => $processor){
+    echo '<td align="center" style="width:120px">'.get_string($processor->name, 'messageprocessor_'.$processor->name).'</td>';
+}
+echo '</tr>';
+foreach ( $providers as $providerid => $provider){
+    $providername = get_string('messageprovider:'.$provider->name, $provider->component);
+    echo '<tr><td align="right">'.$providername.'</td><td colspan="'.$number_procs.'"></td></tr>'."\n";
+    foreach (array('loggedin', 'loggedoff') as $state){
+        $state_res = get_string($state, 'message');
+        echo '<tr><td align="right">'.$state_res.'</td>'."\n";
+        foreach ( $processors as $processorid => $processor){
+            $checked = $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name]==1?" checked=\"checked\"":"";            
+            echo '<td align="center"><input type="checkbox" name="'.$provider->component.'_'.$provider->name.'_'.$state.'['.$processor->name.']" '.$checked.' /></td>'."\n";
+        }
+        echo '</tr>'."\n";
+    }
+}
+echo '</table>';
+echo '</td></tr></table>';
+
+//
+echo '<table width="80%" class="userinfobox">';
+echo '<tr><td colspan="2"><h3>'.get_string('processor_config', 'message').'</h3></td></tr>'."\n";
+//get a listing of all the message processors
+$processors = $DB->get_records('message_processors');
+foreach ( $processors as $processorid => $processor){
+    $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';    
+    if ( is_readable($processorfile) ) {        
+        include_once( $processorfile );                
+        $processclass = 'message_output_' . $processor->name;                
+        if (class_exists($processclass)) {                    
+            $pclass = new $processclass();
+            $pclass->config_form($preferences); 
+        } else{ 
+            error('Error calling defined processor');
+        }
+    }
+}
+echo '</table>';
+echo '<p><input type="hidden" name="sesskey" value="'.sesskey().'" /> </p>';
+echo '<div style="text-align:center"><input name="submit" value="'. get_string('updatemyprofile') .'" type="submit" /></div>';
+
+echo "</form>";
 
 /// and proper footer
 print_footer($course);
 
 ?>
+

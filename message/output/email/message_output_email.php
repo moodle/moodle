@@ -82,11 +82,11 @@ class message_output_email extends message_output {
      * Creates necessary fields in the messaging config form.
      * @param object $mform preferences form class
      */
-    function config_form(&$mform){
-        $mform->addElement('static', 'email_labelemail', get_string('processortag', 'message').'Email ', '');
-        $mform->addElement('text', 'email_email', get_string('email'));
-        $mform->setAdvanced('email_labelemail');
-        $mform->setAdvanced('email_email');
+    function config_form($preferences){               
+        $dest = get_string('email', 'messageprocessor_email');
+        echo '<tr><td colspan="2"><b>'.get_string('processortag', 'message').$dest.'</b></td></tr>'."\n";
+        echo '<tr><td align="right">'.get_string('email').'</td><td><input name="email_email" value="'.$preferences->email_email.'" /></td></tr>'."\n";
+        return true;
     }
 
     /**
@@ -94,7 +94,7 @@ class message_output_email extends message_output {
      * @param object $mform preferences form class
      * @param array $preferences preferences array 
      */
-    function process_form(&$form, &$preferences){
+    function process_form($form, &$preferences){
         $preferences['message_processor_email_email'] = $form->email_email;
     }
 

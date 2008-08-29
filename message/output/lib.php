@@ -37,7 +37,7 @@
  */
 abstract class message_output {        
     public abstract function send_message($message);
-    public abstract function process_form(&$form, &$preferences);
+    public abstract function process_form($form, &$preferences);
     public abstract function load_data(&$preferences, $userid);
 }
 

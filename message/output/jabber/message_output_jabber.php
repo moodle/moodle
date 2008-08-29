@@ -110,11 +110,11 @@ class message_output_jabber extends message_output {
      * Creates necessary fields in the messaging config form.
      * @param object $mform preferences form class
      */
-    function config_form(&$mform){
-        $mform->addElement('static', 'jabber_labeljabber', get_string('processortag', 'message').'Jabber ', '');
-        $mform->addElement('text', 'jabber_jabberid', 'jabber ID');
-        $mform->setAdvanced('jabber_labeljabber');
-        $mform->setAdvanced('jabber_jabberid');
+    function config_form($preferences){
+        $dest = get_string('jabber', 'messageprocessor_jabber');
+        echo '<tr><td colspan="2"><b>'.get_string('processortag', 'message').$dest.'</b></td></tr>'."\n";
+        echo '<tr><td align="right">Jabber ID</td><td><input name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" /></td></tr>'."\n";
+        return true;
     }
 
     /**
@@ -122,7 +122,7 @@ class message_output_jabber extends message_output {
      * @param object $mform preferences form class
      * @param array $preferences preferences array 
      */
-    function process_form(&$form, &$preferences){
+    function process_form($form, &$preferences){
         $preferences['message_processor_jabber_jabberid'] = $form->jabber_jabberid;
     }
 
