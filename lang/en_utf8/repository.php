@@ -30,6 +30,7 @@ $string['noenter'] = 'Nothing entered';
 $string['operation'] = 'Operation';
 $string['openpicker'] = 'Open file picker';
 $string['plugin'] = 'Repository plug-ins';
+$string['preview'] = 'Preview';
 $string['repository'] = 'Repository';
 $string['repositories'] = 'Repositories';
 $string['save'] = 'Save';
