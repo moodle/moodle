@@ -26,6 +26,7 @@ class quiz_responses_report extends quiz_default_report {
         $fakeattempt = new stdClass();
         $fakeattempt->preview = false;
         $fakeattempt->timefinish = $quiz->timeopen;
+        $fakeattempt->userid = 0;
         $reviewoptions = quiz_get_reviewoptions($quiz, $fakeattempt, $context);
         $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
 
