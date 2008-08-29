@@ -138,7 +138,7 @@ class file_storage {
      * @param bool $includedirs
      * @return array of stored_files
      */
-    public function get_area_files($contextid, $filearea, $itemid=false, $sort="itemid, filepath, filename", $inludedirs=true) {
+    public function get_area_files($contextid, $filearea, $itemid=false, $sort="itemid, filepath, filename", $includedirs=true) {
         global $DB;
 
         $conditions = array('contextid'=>$contextid, 'filearea'=>$filearea);
@@ -149,7 +149,7 @@ class file_storage {
         $result = array();
         $file_records = $DB->get_records('files', $conditions, $sort);
         foreach ($file_records as $file_record) {
-            if (!$inludedirs and $file_record->filename === '.') {
+            if (!$includedirs and $file_record->filename === '.') {
                 continue;
             }
             $result[] = new stored_file($this, $file_record);
@@ -164,11 +164,11 @@ class file_storage {
      * @param int $itemid
      * @param int $filepath directory path
      * @param bool $recursive include all subdirectories
-     * @param bool $includedirs inlcude files and directories
+     * @param bool $includedirs include files and directories
      * @param string $sort
      * @return array of stored_files
      */
-    public function get_directory_files($contextid, $filearea, $itemid, $filepath, $recursive=false, $inludedirs=true, $sort="filepath, filename") {
+    public function get_directory_files($contextid, $filearea, $itemid, $filepath, $recursive=false, $includedirs=true, $sort="filepath, filename") {
         global $DB;
 
         if (!$directory = $this->get_file($contextid, $filearea, $itemid, $filepath, '.')) {
@@ -177,7 +177,7 @@ class file_storage {
 
         if ($recursive) {
 
-            $dirs = $inludedirs ? "" : "AND filename <> '.'";
+            $dirs = $includedirs ? "" : "AND filename <> '.'";
             $length = textlib_get_instance()->strlen($filepath);
 
             $sql = "SELECT *
@@ -207,7 +207,7 @@ class file_storage {
 
             $length = textlib_get_instance()->strlen($filepath);
 
-            if ($inludedirs) {
+            if ($includedirs) {
                 $sql = "SELECT *
                           FROM {files}
                          WHERE contextid = :contextid AND filearea = :filearea
