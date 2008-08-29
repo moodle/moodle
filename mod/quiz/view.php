@@ -298,11 +298,12 @@
             if ($moreattempts) {
                 $a = new stdClass;
                 $a->method = quiz_get_grading_option_name($quiz->grademethod);
-                $a->mygrade = $mygrade;
-                $a->quizgrade = $quiz->grade;
+                $a->mygrade = quiz_format_grade($quiz, $mygrade);
+                $a->quizgrade = quiz_format_grade($quiz, $quiz->grade);
                 $resultinfo .= print_heading(get_string('gradesofar', 'quiz', $a), '', 2, 'main', true);
             } else {
-                $resultinfo .= print_heading(get_string('yourfinalgradeis', 'quiz', "$mygrade / $quiz->grade"), '', 2, 'main', true);
+                $a = quiz_format_grade($quiz, $mygrade) . '/' . format_grade($quiz, $quiz->grade);
+                $resultinfo .= print_heading(get_string('yourfinalgradeis', 'quiz', $a), '', 2, 'main', true);
                 if ($mygradeoverridden) {
                     $resultinfo .= '<p class="overriddennotice">'.get_string('overriddennotice', 'grades')."</p>\n";
                 }
