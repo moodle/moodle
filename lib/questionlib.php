@@ -1829,7 +1829,7 @@ function question_format_grade($cmoptions, $grade) {
  *
  * @return string some HTML code that can go inside the head tag.
  */
-function get_html_head_contributions(&$questionlist, &$questions, &$states) {
+function get_html_head_contributions($questionlist, &$questions, &$states) {
     global $QTYPES;
 
     $contributions = array();
