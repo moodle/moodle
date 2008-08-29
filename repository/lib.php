@@ -641,6 +641,7 @@ function repository_get_client($context){
     $strsearch    = get_string('search', 'repository');
     $strsearching = get_string('searching', 'repository');
     $strsubmit    = get_string('submit', 'repository');
+    $strpreview   = get_string('preview', 'repository');
     $strupload    = get_string('upload', 'repository');
     $struploading = get_string('uploading', 'repository');
     $css = <<<EOD
@@ -932,7 +933,9 @@ _client.viewthumb = function(ds){
         if(list[k].children){
             title.innerHTML = '<i><u>'+list[k].title+'</i></u>';
         } else {
-            title.innerHTML = list[k].title;
+            if(list[k].url)
+                title.innerHTML = '<p><a target="_blank" href="'+list[k].url+'">$strpreview</a></p>';
+            title.innerHTML += list[k].title;
         }
         title.className = 'label';
         el.appendChild(frame);
