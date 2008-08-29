@@ -1046,3 +1046,6 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
     error('table_column() was removed, please use new ddl functions');
 }
 
+function use_html_editor($name='', $editorhidebuttons='', $id='') {
+    error('use_html_editor() not available anymore');
+}
