@@ -4,7 +4,7 @@ require_once($CFG->dirroot.'/repository/boxnet/boxlibphp5.php');
 
 class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
 
-    private $boxclient;
+    public $boxclient;
     private $ticket;
     private $authtoken;
     private $folders;

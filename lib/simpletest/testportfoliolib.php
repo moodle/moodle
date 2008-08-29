@@ -129,13 +129,17 @@ class portfoliolib_test extends UnitTestCase {
         $DB->delete_records('portfolio_tempdata', array('id' => $this->exporter->get('id')));
         $fs = get_file_storage();
         $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->exporter->get('id'));
+
+        $settings = array('no_data' => 1, 'post_cleanup' => 1, 'database_prefix' => 'tst_', 'quiet' => 1);
+        generator_generate_data($settings);
     }
 
     function test_construct_dupe_instance() {
         $gotexception = false;
         try {
-            portfolio_plugin_base::create_instance('download', 'download1', array());
-            portfolio_plugin_base::create_instance('download', 'download2', array());
+            $plugin1 = portfolio_plugin_base::create_instance('download', 'download1', array());
+            $plugin2 = portfolio_plugin_base::create_instance('download', 'download2', array());
+            $test1 = new portfolio_plugin_download($plugin1->get('id'));
         } catch (portfolio_exception $e) {
             $this->assertEqual('multipledisallowed', $e->errorcode);
             $gotexception = true;

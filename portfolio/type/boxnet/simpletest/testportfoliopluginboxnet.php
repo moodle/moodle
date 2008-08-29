@@ -1,6 +1,7 @@
 <?php // $Id$
 require_once($CFG->libdir.'/simpletest/testportfoliolib.php');
 require_once($CFG->dirroot.'/portfolio/type/boxnet/lib.php');
+require_once($CFG->dirroot.'/admin/generator.php');
 
 Mock::generate('boxclient', 'mock_boxclient');
 Mock::generatePartial('portfolio_plugin_boxnet', 'mock_boxnetplugin', array('ensure_ticket', 'ensure_account_tree'));
@@ -10,6 +11,8 @@ class testPortfolioPluginBoxnet extends portfoliolib_test {
         parent::setUp();
         $this->plugin = &new mock_boxnetplugin($this);
         $this->plugin->boxclient = new mock_boxclient();
+        $settings = array('tiny' => 1, 'quiet' => 1, 'database_prefix' => 'tst_', 'pre_cleanup' => 1);
+        generator_generate_data($settings);
     }
 
     public function tearDown() {
