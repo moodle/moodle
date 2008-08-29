@@ -23,7 +23,7 @@ class mod_forum_post_form extends moodleform {
         $mform->addRule('subject', get_string('required'), 'required', null, 'client');
         $mform->addRule('subject', get_string('maximumchars', '', 255), 'maxlength', 255, 'client'); 
 
-        $mform->addElement('htmleditor', 'message', get_string('message', 'forum'), array('cols'=>50, 'rows'=>30));
+        $mform->addElement('htmleditor', 'message', get_string('message', 'forum'), array('cols'=>50, 'rows'=>30, 'filearea'=>'forumpost'));
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('message', array('reading', 'writing', 'questions', 'richtext'), false, 'editorhelpbutton');
@@ -53,7 +53,7 @@ class mod_forum_post_form extends moodleform {
         }
 
         if ($forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
-            $mform->addElement('filepicker', 'attachment', get_string('attachment', 'forum'), 'forum_submission');
+            $mform->addElement('filepicker', 'attachment', get_string('attachment', 'forum'), 'forumpost');
             $mform->setHelpButton('attachment', array('attachment', get_string('attachment', 'forum'), 'forum'));
         }
 
