@@ -69,7 +69,7 @@ class MoodleQuickForm_htmleditor extends MoodleQuickForm_textarea{
             return $this->getFrozenHtml();
         } else {
             return $this->_getTabs() .
-                    '<input type="hidden" name="filearea" value="'. $this->_options['filearea'] .'">'."\n".
+                    '<input type="hidden" name="filearea" value="'. $this->_options['filearea'] .'" />'."\n".
                     print_textarea($this->_canUseHtmlEditor,
                                     $this->_options['rows'],
                                     $this->_options['cols'],
