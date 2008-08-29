@@ -53,10 +53,10 @@ class block_course_list extends block_list {
                 if (has_capability('moodle/course:update', get_context_instance(CONTEXT_SYSTEM)) || empty($CFG->block_course_list_hideallcourseslink)) {
                     $this->content->footer = "<a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a> ...";
                 }
-                $this->get_remote_courses();
-                if ($this->content->items) { // make sure we don't return an empty list
-                    return $this->content;
-                }
+            }
+            $this->get_remote_courses();
+            if ($this->content->items) { // make sure we don't return an empty list
+                return $this->content;
             }
         }
 
