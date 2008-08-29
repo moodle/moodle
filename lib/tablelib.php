@@ -752,7 +752,8 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function print_initials_bar(){
-        if($this->use_initials && isset($this->columns['fullname'])) {
+        if (($this->sess->i_last || $this->sess->i_first || $this->use_initials) 
+                    && isset($this->columns['fullname'])) {
 
             $strall = get_string('all');
             $alpha  = explode(',', get_string('alphabet'));
@@ -798,10 +799,7 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function print_nothing_to_display(){
-        if ($this->get_initial_first()||$this->get_initial_last()){
-            // Do we need to print initial bars?
-            $this->print_initials_bar();
-        }
+        $this->print_initials_bar();
 
         print_heading(get_string('nothingtodisplay'));
     }
