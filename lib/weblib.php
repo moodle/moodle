@@ -2610,7 +2610,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
  *
  * @param mixed $lib - string or array of strings
  *                     string(s) should be the shortname for the library or the
- *                     full path to the library file.
+ *                     full URL (which will probably start with $CFG->wwwroot) to the library file.
  * @param int $extracthtml Do not set this parameter usually (leave 0), only
  *                     weblib should set this to 1 or 2 in print_header function.
  * @return mixed No return value, except when using $extracthtml it returns the html code.
