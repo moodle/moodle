@@ -91,7 +91,7 @@
     if ($attemptobj->has_capability('mod/quiz:viewreports')) {
         $attemptlist = $attemptobj->links_to_other_attempts(
                 'reviewquestion.php?attempt=' . $attemptobj->get_attemptid() .
-                '&question=' . $questionid);
+                '&amp;question=' . $questionid);
         if ($attemptlist) {
             $rows[] = '<tr><th scope="row" class="cell">' . get_string('attempts', 'quiz') .
                     '</th><td class="cell">' . $attemptlist . '</td></tr>';
