@@ -597,7 +597,7 @@ function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_dr
         $delete = unlink($path);
         $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
         if(!empty($ret)){
-            return array('url'=>$ret->get_url(),'id'=>$file->get_itemid());
+            return array('url'=>$ret->get_url(),'id'=>$file->get_itemid(), 'file'=>$file->get_filename());
         } else {
             return null;
         }
@@ -799,7 +799,7 @@ function _client(){
                 link.onclick = function(){
                     var re = /repo-call-$suffix-(\d+)/i;
                     var id = this.id.match(re);
-                    repository_client_$suffix.req(id[1], 1, 0);
+                    repository_client_$suffix.req(id[1], '', 0);
                 }
                 li.appendChild(link);
                 var opt = document.createElement('div');
@@ -891,15 +891,15 @@ _client.viewfiles = function(){
     }
 }
 _client.navbar = function(){
-    var str = '';
-    str += _client.uploadcontrol();
-    str += _client.makepage();
-    str += _client.makepath();
-    return str;
+    var panel = new YAHOO.util.Element('panel-$suffix');
+    panel.get('element').innerHTML = _client.uploadcontrol();
+    panel.get('element').innerHTML += _client.makepage();
+    _client.makepath();
 }
 // TODO
 // Improve CSS
 _client.viewthumb = function(ds){
+    _client.viewmode = 1;
     var panel = new YAHOO.util.Element('panel-$suffix');
     _client.viewbar.check(1);
     var list = null;
@@ -910,7 +910,7 @@ _client.viewthumb = function(ds){
         // from button
         list = _client.ds.list;
     }
-    panel.get('element').innerHTML = _client.navbar();
+    _client.navbar();
     var count = 0;
     for(k in list){
         var el = document.createElement('div');
@@ -919,21 +919,11 @@ _client.viewthumb = function(ds){
         frame.style.textAlign='center';
         var img = document.createElement('img');
         img.src = list[k].thumbnail;
-        if(list[k].url){
-            var link = document.createElement('A');
-            link.href=list[k].url;
-            link.target='_blank';
-            link.appendChild(img);
-            frame.appendChild(link);
-        }else{
-            frame.appendChild(img);
-        }
-        var input = document.createElement('input');
-        input.type='radio';
-        input.name = 'selected-files';
-        input.value = list[k].source;
-        input.title = list[k].title;
-        input.id    = 'id-'+String(count);
+        var link = document.createElement('A');
+        link.href='###';
+        link.id = 'img-id-'+String(count);
+        link.appendChild(img);
+        frame.appendChild(link);
         var title = document.createElement('div');
         if(list[k].children){
             title.innerHTML = '<i><u>'+list[k].title+'</i></u>';
@@ -942,27 +932,28 @@ _client.viewthumb = function(ds){
         }
         title.className = 'label';
         el.appendChild(frame);
-        el.appendChild(input);
         el.appendChild(title);
         panel.get('element').appendChild(el);
         if(list[k].children){
-            var el = new YAHOO.util.Element(input.id);
+            var el = new YAHOO.util.Element(link.id);
             el.ds = list[k].children;
             el.on('click', function(){
-                if(_client.ds.dynload) {
+                if(_client.ds.dynload){
                     // TODO: get file list dymanically
                 }else{
                     _client.viewthumb(this.ds);
                 }
             });
         } else {
-            input.onclick = function(){
+            var el = new YAHOO.util.Element(link.id);
+            el.title = list[k].title;
+            el.value = list[k].source;
+            el.on('click', function(){
                 repository_client_$suffix.rename(this.title, this.value);
-            }
+            });
         }
         count++;
     }
-    _client.viewmode = 1;
 }
 _client.buildtree = function(node, level){
     if(node.children){
@@ -1017,12 +1008,12 @@ _client.dynload = function (node, fnLoadComplete){
         callback);
 }
 _client.viewlist = function(){
+    _client.viewmode = 0;
     var panel = new YAHOO.util.Element('panel-$suffix');
     _client.viewbar.check(0);
     list = _client.ds.list;
-    var str = _client.navbar();
-    str += '<div id="treediv"></div>';
-    panel.get('element').innerHTML = str;
+    _client.navbar();
+    panel.get('element').innerHTML += '<div id="treediv"></div>';
     var tree = new YAHOO.widget.TreeView('treediv');
     if(_client.ds.dynload) {
         tree.setDynamicLoad(_client.dynload, 1);
@@ -1032,8 +1023,6 @@ _client.viewlist = function(){
         _client.buildtree(list[k], tree.getRoot());
     }
     tree.draw();
-    _client.viewmode = 0;
-    return str;
 }
 _client.upload = function(){
     var u = _client.ds.upload;
@@ -1086,19 +1075,42 @@ _client.makepage = function(){
     return str;
 }
 _client.makepath = function(){
-    var str = '';
+    if(_client.viewmode == 0) {
+        return;
+    }
+    var panel = new YAHOO.util.Element('panel-$suffix');
     var p = _client.ds.path;
     if(p && p.length!=0){
-        str += '<div id="path-$suffix">';
-        if(p.path && p.name)
+        var oDiv = document.createElement('DIV');
+        oDiv.id = "path-$suffix";
+        panel.get('element').appendChild(oDiv);
         for(var i = 0; i < _client.ds.path.length; i++) {
-            str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', "'+_client.ds.path[i].path+'", 0)" href="###">';
-            str += _client.ds.path[i].name;
-            str += '</a> ';
+            if(_client.ds.dynload){
+                var str = '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', "'+_client.ds.path[i].path+'", 0)" href="###">';
+                str += _client.ds.path[i].name;
+                str += '</a> ';
+                //oDiv.innerHTML += str;
+            }else{
+                var link = document.createElement('A');
+                link.href = "###";
+                link.innerHTML = _client.ds.path[i].name;
+                link.id = 'path-'+i+'-el';
+                var sep = document.createElement('SPAN');
+                sep.innerHTML = ' / ';
+                panel.get('element').appendChild(link);
+                panel.get('element').appendChild(sep);
+                var el = new YAHOO.util.Element(link.id);
+                //el.ds = list[k].children;
+                el.on('click', function(){
+                    if(_client.ds.dynload) {
+                        // TODO: get file list dymanically
+                    }else{
+                        // TODO: try to find children
+                    }
+                });
+            }
         }
-        str += '</div>';
     }
-    return str;
 }
 // send download request
 _client.download = function(){
@@ -1131,8 +1143,12 @@ _client.login = function(){
         _client.postdata(params));
 }
 _client.end = function(str){
-    _client.target.value = str;
-    _client.formcallback();
+    if(_client.env=='form'){
+        _client.target.value = str['id'];
+    }else{
+        _client.target.value = str['url'];
+    }
+    _client.formcallback(str['file']);
     _client.instance.hide();
     _client.viewfiles();
 }
@@ -1263,6 +1279,11 @@ function openpicker_$suffix(params) {
     if(!repository_client_$suffix.instance) {
         repository_client_$suffix.env = params.env;
         repository_client_$suffix.target = params.target;
+        if(params.type){
+            repository_client_$suffix.filetype = params.filetype;
+        } else {
+            repository_client_$suffix.filetype = 'all';
+        }
         repository_client_$suffix.instance = new repository_client_$suffix();
         repository_client_$suffix.instance.create_picker();
         if(params.callback){

@@ -73,9 +73,9 @@ if ($action == 'list' || $action == 'search') {
     try {
         $info = repository_move_to_filepool($path, $title, $itemid);
         if($env == 'form'){
-            echo json_encode($info['id']);
+            echo json_encode($info);
         } elseif($env == 'editor') {
-            echo json_encode($info['url']);
+            echo json_encode($info);
         } else {
         }
     } catch (repository_exception $e){
