@@ -36,7 +36,7 @@ class quiz {
     protected $context;
     protected $questionids; // All question ids in order that they appear in the quiz.
     protected $pagequestionids; // array page no => array of questionids on the page in order.
-    
+
     // Fields set later if that data is needed.
     protected $questions = null;
     protected $accessmanager = null;
@@ -134,7 +134,7 @@ class quiz {
     }
 
     /**
-     * @return boolean wether the current user is someone who previews the quiz, 
+     * @return boolean wether the current user is someone who previews the quiz,
      * rather than attempting it.
      */
     public function is_preview_user() {
@@ -150,7 +150,7 @@ class quiz {
     public function get_num_pages() {
         return count($this->pagequestionids);
     }
-    
+
 
     /**
      * @param int $page page number
@@ -184,7 +184,7 @@ class quiz {
     }
 
     /**
-     * Return the list of question ids for either a given page of the quiz, or for the 
+     * Return the list of question ids for either a given page of the quiz, or for the
      * whole quiz.
      *
      * @param mixed $page string 'all' or integer page number.
@@ -354,7 +354,7 @@ class quiz {
 
     /**
      * @return string the layout of this quiz. Used by number_questions to
-     * work out which questions are on which pages. 
+     * work out which questions are on which pages.
      */
     protected function get_layout_string() {
         return $this->quiz->questions;
@@ -463,7 +463,7 @@ class quiz_attempt extends quiz {
     /**
      * Is this a student dealing with their own attempt/teacher previewing,
      * or someone with 'mod/quiz:viewreports' reviewing someone elses attempt.
-     * 
+     *
      * @return boolean whether this situation should be treated as someone looking at their own
      * attempt. The distinction normally only matters when an attempt is being reviewed.
      */
@@ -471,7 +471,7 @@ class quiz_attempt extends quiz {
         global $USER;
         return $this->attempt->userid == $USER->id &&
                 (!$this->is_preview_user() || $this->attempt->preview);
-        
+
     }
 
     public function get_question_state($questionid) {
@@ -621,7 +621,8 @@ class quiz_attempt extends quiz {
     }
 
     public function get_question_html_head_contributions($questionid) {
-        return get_html_head_contributions(array($questionid),
+        $question_array = array($questionid);
+        return get_html_head_contributions($question_array,
                 $this->questions, $this->states);
     }
 
@@ -682,7 +683,7 @@ class quiz_attempt extends quiz {
 
     /**
      * @return string the layout of this quiz. Used by number_questions to
-     * work out which questions are on which pages. 
+     * work out which questions are on which pages.
      */
     protected function get_layout_string() {
         return $this->attempt->layout;
