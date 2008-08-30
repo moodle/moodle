@@ -75,7 +75,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      * @return string driver-dependent DSN
      */
     protected function get_dsn() {
-        return 'sqlite:' . $this->get_dbfilepath();
+        return 'sqlite:'.$this->get_dbfilepath();
     }
 
     /**
@@ -88,19 +88,19 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      */
     public function get_dbfilepath() {
         global $CFG;
-        if(!empty($this->dboptions['file'])) {
+        if (!empty($this->dboptions['file'])) {
             return $this->dboptions['file'];
         }
-        if($this->dbhost && $this->dbhost != 'localhost') {
+        if ($this->dbhost && $this->dbhost != 'localhost') {
             $path = $this->dbhost;
         } else {
             $path = $CFG->dataroot;
         }
-        $path = ltrim($path, '\\/') . '/';
-        if(!empty($this->dbuser)) {
-            $path .= $this->dbuser . '_';
+        $path = rtrim($path, '\\/').'/';
+        if (!empty($this->dbuser)) {
+            $path .= $this->dbuser.'_';
         }
-        $path .= $this->dbname . '_' . md5($this->dbpass) . $this->database_file_extension;
+        $path .= $this->dbname.'_'.md5($this->dbpass).$this->database_file_extension;
         return $path;
     }
 
@@ -110,8 +110,8 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      */
     public function get_tables() {
         $tables = array();
-        $sql = 'SELECT name FROM sqlite_master WHERE type="table" ORDER BY name';
-        if($this->debug) {
+        $sql = 'SELECT name FROM sqlite_master WHERE type="table" UNION ALL SELECT name FROM sqlite_temp_master WHERE type="table" ORDER BY name';
+        if ($this->debug) {
             $this->debug_query($sql);
         }
         $rstables = $this->pdb->query($sql);
@@ -132,16 +132,16 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      */
     public function get_indexes($table) {
         $indexes = array();
-        $sql = 'PRAGMA index_list('. $this->prefix . $table . ')';
-        if($this->debug) {
+        $sql = 'PRAGMA index_list('.$this->prefix.$table.')';
+        if ($this->debug) {
             $this->debug_query($sql);
         }
         $rsindexes = $this->pdb->query($sql);
         foreach($rsindexes as $index) {
             $unique = (boolean)$index['unique'];
             $index = $index['name'];
-            $sql = 'PRAGMA index_info("' . $index . '")';
-            if($this->debug) {
+            $sql = 'PRAGMA index_info("'.$index.'")';
+            if ($this->debug) {
                 $this->debug_query($sql);
             }
             $rscolumns = $this->pdb->query($sql);
@@ -167,19 +167,19 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
             return $this->columns[$table];
         }
         // get table's CREATE TABLE command (we'll need it for autoincrement fields)
-        $sql = 'SELECT sql FROM sqlite_master WHERE type="table" AND tbl_name="'. $this->prefix . $table . '"';
-        if($this->debug) {
+        $sql = 'SELECT sql FROM sqlite_master WHERE type="table" AND tbl_name="'.$this->prefix.$table.'"';
+        if ($this->debug) {
             $this->debug_query($sql);
         }
         $createsql = $this->pdb->query($sql)->fetch();
-        if(!$createsql) {
+        if (!$createsql) {
             return false;
         }
         $createsql = $createsql['sql'];
 
         $columns = array();
-        $sql = 'PRAGMA table_info("'. $this->prefix . $table . '")';
-        if($this->debug) {
+        $sql = 'PRAGMA table_info("'. $this->prefix.$table.'")';
+        if ($this->debug) {
             $this->debug_query($sql);
         }
         $rscolumns = $this->pdb->query($sql);
@@ -196,10 +196,10 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
             );
             $type = explode('(', $row['type']);
             $columninfo['type'] = strtolower($type[0]);
-            if(count($type) > 1) {
+            if (count($type) > 1) {
                 $size = explode(',', trim($type[1], ')'));
                 $columninfo['max_length'] = $size[0];
-                if(count($size) > 1) {
+                if (count($size) > 1) {
                     $columninfo['scale'] = $size[1];
                 }
             }
@@ -207,7 +207,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
             // datatype in the CREATE TABLE command. We try to guess which type is used here
             switch(substr($columninfo['type'], 0, 3)) {
                 case 'int': // int integer
-                    if($columninfo['primary_key'] && preg_match('/' . $columninfo['name'] . '\W*integer\W*primary\W*key\W*autoincrement/im', $createsql)) {
+                    if ($columninfo['primary_key'] && preg_match('/'.$columninfo['name'].'\W+integer\W+primary\W+key\W+autoincrement/im', $createsql)) {
                         $columninfo['meta_type'] = 'R';
                         $columninfo['auto_increment'] = true;
                     } else {
@@ -222,6 +222,16 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
                     break;
                 case 'var': // varchar
                 case 'cha': // char
+                    $columninfo['meta_type'] = 'C';
+                    break;
+                case 'enu': // enums
+                    if (preg_match('|'.$columninfo['name'].'\W+in\W+\(/\*liststart\*/(.*?)/\*listend\*/\)|im', $createsql, $tmp)) {
+                        $tmp = explode(',', $tmp[1]);
+                        foreach($tmp as $value) {
+                            $columninfo['enums'][] = trim($value, '\'"');
+                        }
+                        unset($tmp);
+                    }
                     $columninfo['meta_type'] = 'C';
                     break;
                 case 'tex': // text
@@ -246,6 +256,10 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
                     $columninfo['meta_type'] = 'D';
                     break;
             }
+            if ($columninfo['has_default'] && ($columninfo['meta_type'] == 'X' || $columninfo['meta_type']== 'C')) {
+                // trim extra quotes from text default values
+                $columninfo['default_value'] = substr($columninfo['default_value'], 1, -1);
+            }
             $columns[$columninfo['name']] = new database_column_info($columninfo);
         }
 
@@ -261,10 +275,10 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      * @return string the SQL statement with limiting clauses
      */
     protected function get_limit_clauses($sql, $limitfrom=0, $limitnum=0) {
-        if($limitnum) {
-            $sql .= ' LIMIT ' . $limitnum;
-            if($limitfrom) {
-                $sql .= ' OFFSET ' . $limitfrom;
+        if ($limitnum) {
+            $sql .= ' LIMIT '.$limitnum;
+            if ($limitfrom) {
+                $sql .= ' OFFSET '.$limitfrom;
             }
         }
         return $sql;
@@ -318,7 +332,7 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
         // Add items to the array on the fly, walking it
         // _backwards_ splicing the elements in. The loop definition
         // should skip first and last positions.
-        for ($n=count($elements)-1; $n > 0 ; $n--) {
+        for ($n=count($elements)-1; $n > 0; $n--) {
             array_splice($elements, $n, 0, $separator);
         }
         return implode('||', $elements);

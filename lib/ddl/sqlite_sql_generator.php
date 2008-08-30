@@ -52,14 +52,8 @@ class sqlite_sql_generator extends sql_generator {
     public $sequence_name = 'INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL'; //Particular name for inline sequences in this generator
     public $unsigned_allowed = false;    // To define in the generator must handle unsigned information
 
+    public $enum_inline_code = true; //Does the generator need to add inline code in the column definition
     public $enum_extra_code = false; //Does the generator need to add extra code to generate code for the enums in the table
-
-    public $add_after_clause = true; // Does the generator need to add the after clause for fields
-
-    public $concat_character = null; //Characters to be used as concatenation operator. If not defined
-                                  //MySQL CONCAT function will be use
-
-    public $alter_column_sql = 'ALTER TABLE TABLENAME MODIFY COLUMN COLUMNSPECS'; //The SQL template to alter columns
 
     public $drop_index_sql = 'ALTER TABLE TABLENAME DROP INDEX INDEXNAME'; //SQL sentence to drop one index
                                                                //TABLENAME, INDEXNAME are dinamically replaced
@@ -168,12 +162,113 @@ class sqlite_sql_generator extends sql_generator {
     }
 
     /**
+     * Function to emulate full ALTER TABLE which SQLite does not support.
+     * The function can be used to drop a column ($xmldb_delete_field != null and
+     * $xmldb_add_field == null), add a column ($xmldb_delete_field == null and
+     * $xmldb_add_field != null), change/rename a column ($xmldb_delete_field == null
+     * and $xmldb_add_field == null).
+     * @param xmldb_table $xmldb_table table to change
+     * @param xmldb_field $xmldb_add_field column to create/modify (full specification is required)
+     * @param xmldb_field $xmldb_delete_field column to delete/modify (only name field is required)
+     * @return array of strings (SQL statements to alter the table structure)
+     */
+    protected function getAlterTableSchema($xmldb_table, $xmldb_add_field=NULL, $xmldb_delete_field=NULL) {
+    /// Get the quoted name of the table and field
+        $tablename = $this->getTableName($xmldb_table);
+
+        $oldname = $xmldb_delete_field ? $xmldb_delete_field->getName() : NULL;
+        $newname = $xmldb_add_field ? $xmldb_add_field->getName() : NULL;
+        if($xmldb_delete_field) {
+            $xmldb_table->deleteField($oldname);
+        }
+        if($xmldb_add_field) {
+            $xmldb_table->addField($xmldb_add_field);
+        }
+        if($oldname) {
+            // alter indexes
+            $indexes = $xmldb_table->getIndexes();
+            foreach($indexes as $index) {
+                $fields = $index->getFields();
+                $i = array_search($oldname, $fields);
+                if($i!==FALSE) {
+                    if($newname) {
+                        $fields[$i] = $newname;
+                    } else {
+                        unset($fields[$i]);
+                    }
+                    $xmldb_table->deleteIndex($index->getName());
+                    if(count($fields)) {
+                        $index->setFields($fields);
+                        $xmldb_table->addIndex($index);
+                    }
+                }
+            }
+            // alter keys
+            $keys = $xmldb_table->getKeys();
+            foreach($keys as $key) {
+                $fields = $key->getFields();
+                $reffields = $key->getRefFields();
+                $i = array_search($oldname, $fields);
+                if($i!==FALSE) {
+                    if($newname) {
+                        $fields[$i] = $newname;
+                    } else {
+                        unset($fields[$i]);
+                        unset($reffields[$i]);
+                    }
+                    $xmldb_table->deleteKey($key->getName());
+                    if(count($fields)) {
+                        $key->setFields($fields);
+                        $key->setRefFields($fields);
+                        $xmldb_table->addkey($key);
+                    }
+                }
+            }
+        }
+        // prepare data copy
+        $fields = $xmldb_table->getFields();
+        foreach ($fields as $key => $field) {
+            $fieldname = $field->getName();
+            if($fieldname == $newname && $oldname && $oldname != $newname) {
+                // field rename operation
+                $fields[$key] = $this->getEncQuoted($oldname) . ' AS ' . $this->getEncQuoted($newname);
+            } else {
+                $fields[$key] = $this->getEncQuoted($field->getName());
+            }
+        }
+        $fields = implode(',', $fields);
+        $results[] = 'BEGIN TRANSACTION';
+        $results[] = 'CREATE TEMPORARY TABLE temp_data AS SELECT * FROM ' . $tablename;
+        $results[] = 'DROP TABLE ' . $tablename;
+        $results = array_merge($results, $this->getCreateTableSQL($xmldb_table));
+        $results[] = 'INSERT INTO ' . $tablename . ' SELECT ' . $fields . ' FROM temp_data';
+        $results[] = 'DROP TABLE temp_data';
+        $results[] = 'COMMIT';
+        return $results;
+    }
+    
+    /**
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to alter the field in the table
+     */
+    public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
+        return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
+    }
+    
+    /**
+     * Given one xmldb_table and one xmldb_key, return the SQL statements needded to add the key to the table
+     * note that undelying indexes will be added as parametrised by $xxxx_keys and $xxxx_index parameters
+     */
+    public function getAddKeySQL($xmldb_table, $xmldb_key) {
+        $xmldb_table->addKey($xmldb_key);
+        return $this->getAlterTableSchema($xmldb_table);
+    }
+
+    /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to create its enum
      * (usually invoked from getModifyEnumSQL()
      */
     public function getCreateEnumSQL($xmldb_table, $xmldb_field) {
-    /// For MySQL, just alter the field
-        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+        return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
     }
 
     /**
@@ -181,8 +276,7 @@ class sqlite_sql_generator extends sql_generator {
      * (usually invoked from getModifyEnumSQL()
      */
     public function getDropEnumSQL($xmldb_table, $xmldb_field) {
-    /// For MySQL, just alter the field
-        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+        return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
     }
 
     /**
@@ -190,9 +284,7 @@ class sqlite_sql_generator extends sql_generator {
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getCreateDefaultSQL($xmldb_table, $xmldb_field) {
-    /// Just a wrapper over the getAlterFieldSQL() function for MySQL that
-    /// is capable of handling defaults
-        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+        return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
     }
 
     /**
@@ -201,37 +293,72 @@ class sqlite_sql_generator extends sql_generator {
      * SQLite is pretty diferent from the standard to justify this oveloading
      */
     public function getRenameFieldSQL($xmldb_table, $xmldb_field, $newname) {
-
-    // TODO: Add code to rename column
-
-    /// Need a clone of xmldb_field to perform the change leaving original unmodified
-        $xmldb_field_clone = clone($xmldb_field);
-
-    /// Change the name of the field to perform the change
-        $xmldb_field_clone->setName($xmldb_field_clone->getName() . ' ' . $newname);
-
-        $fieldsql = $this->getFieldSQL($xmldb_field_clone);
-
-        $sql = 'ALTER TABLE ' . $this->getTableName($xmldb_table) . ' CHANGE ' . $fieldsql;
-
-        return array($sql);
+        $oldfield = clone($xmldb_field);
+        $xmldb_field->setName($newname);
+        return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $oldfield);
     }
 
+    /**
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to rename the index in the table
+     */
+    function getRenameIndexSQL($xmldb_table, $xmldb_index, $newname) {
+    /// Get the real index name
+        $dbindexname = $this->mdb->get_manager()->find_index_name($xmldb_table, $xmldb_index);
+        $xmldb_index->setName($newname);
+        $results = array('DROP INDEX ' . $dbindexname);
+        $results = array_merge($results, $this->getCreateIndexSQL($xmldb_table, $xmldb_index));
+        return $results;
+    }
+
+    /**
+     * Given one xmldb_table and one xmldb_key, return the SQL statements needded to rename the key in the table
+     * Experimental! Shouldn't be used at all!
+     */
+    public function getRenameKeySQL($xmldb_table, $xmldb_key, $newname) {
+        $xmldb_table->deleteKey($xmldb_key->getName());
+        $xmldb_key->setName($newname);
+        $xmldb_table->addkey($xmldb_key);
+        return $this->getAlterTableSchema($xmldb_table);
+    }
+
+    /**
+     * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop the field from the table
+     */
+    public function getDropFieldSQL($xmldb_table, $xmldb_field) {
+        return $this->getAlterTableSchema($xmldb_table, NULL, $xmldb_field);
+    }
+
+    /**
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to drop the index from the table
+     */
+    public function getDropIndexSQL($xmldb_table, $xmldb_index) {
+        $xmldb_table->deleteIndex($xmldb_index->getName());
+        return $this->getAlterTableSchema($xmldb_table);
+    }
+
+    /**
+     * Given one xmldb_table and one xmldb_index, return the SQL statements needded to drop the index from the table
+     */
+    public function getDropKeySQL($xmldb_table, $xmldb_key) {
+        $xmldb_table->deleteKey($xmldb_key->getName());
+        return $this->getAlterTableSchema($xmldb_table);
+    }
+    
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needded to drop its default
      * (usually invoked from getModifyDefaultSQL()
      */
     public function getDropDefaultSQL($xmldb_table, $xmldb_field) {
-    /// Just a wrapper over the getAlterFieldSQL() function for MySQL that
-    /// is capable of handling defaults
-        return $this->getAlterFieldSQL($xmldb_table, $xmldb_field);
+        return $this->getAlterTableSchema($xmldb_table, $xmldb_field, $xmldb_field);
     }
 
     /**
      * Given one XMLDB Field, return its enum SQL
      */
     public function getEnumSQL($xmldb_field) {
-        return 'enum';
+        // Enum values are between /*LISTSTART*/ and /*LISTEND*/ so that
+        // get_columns can easily find them
+        return 'enum CHECK (' . $this->getEncQuoted($xmldb_field->getName()) . ' IN (/*LISTSTART*/' . implode(',', $xmldb_field->getEnumValues()) . '/*LISTEND*/))';
     }
 
     /**
@@ -247,14 +374,27 @@ class sqlite_sql_generator extends sql_generator {
      * Optionally the function allows one xmldb_field to be specified in
      * order to return only the check constraints belonging to one field.
      * Each element contains the name of the constraint and its description
-     * If no check constraints are found, returns an empty array
-     * MySQL doesn't have check constraints in this implementation, but
-     * we return them based on the enum fields in the table
+     * If no check constraints are found, returns an empty array.
      */
     public function getCheckConstraintsFromDB($xmldb_table, $xmldb_field = null) {
-
-        // TODO: add code for constraints
-        return array();
+        $tablename = $xmldb_table->getName($xmldb_table);
+        // Fetch all the columns in the table
+        if (!$columns = $this->mdb->get_columns($tablename, false)) {
+            return array();
+        }
+        $results = array();
+        $filter = $xmldb_field ? $xmldb_field->getName() : NULL;
+        // Iterate over columns searching for enums
+        foreach ($columns as $key => $column) {
+            // Enum found, let's add it to the constraints list
+            if (!empty($column->enums) && (!$filter || $column->name == $filter)) {
+                    $result = new object;
+                    $result->name = $key;
+                    $result->description = implode(', ', $column->enums);
+                    $results[$key] = $result;
+            }
+        }
+        return $results;
     }
 
     /**

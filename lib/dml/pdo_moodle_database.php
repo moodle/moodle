@@ -183,6 +183,7 @@ abstract class pdo_moodle_database extends moodle_database {
                 $this->debug_query($sql);
             }
             $this->pdb->exec($sql);
+            $this->reset_columns();
             return true;
         } catch (PDOException $ex) {
             $this->lastError = $ex->getMessage();
@@ -404,9 +405,14 @@ abstract class pdo_moodle_database extends moodle_database {
                 $value = (int)$value; // prevent "false" problems
             }
             if (!empty($column->enums)) {
-                if (!in_array((string)$value, $column->enums)) {
-                    debugging('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
-                    return false;
+                // workaround for problem with wrong enums
+                if (is_null($value) and !$column->not_null) {
+                    // ok - nulls allowed
+                } else {
+                    if (!in_array((string)$value, $column->enums)) {
+                        debugging('Enum value '.s($value).' not allowed in field '.$field.' table '.$table.'.');
+                        return false;
+                    }
                 }
             }
             $cleaned[$field] = $value;
