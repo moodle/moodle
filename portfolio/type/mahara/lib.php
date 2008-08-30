@@ -263,13 +263,23 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
             $transferid = $DB->get_field('portfolio_mahara_queue', 'transferid', array('token' => $token));
             $exporter = portfolio_exporter::rewaken_object($transferid);
         } catch (portfolio_exception $e) {
-            return false; // @todo penny figure out what mnet wants in the error case
+            exit(mnet_server_fault(8010, 'invalid transfer id'));
         }
         if ($exporter->get('instance')->get_config('mnethostid') != $MNET_REMOTE_CLIENT->id) {
-            return false; // @todo penny complain loudly here.. some other  host is trying to talk to us
+            exit(mnet_server_fault(8011, "remote host didn't match saved host"));
         }
         global $CFG;
-        $contents = base64_encode($exporter->get('instance')->get('file')->get_content());
+        try {
+            $i = $exporter->get('instance');
+            $f = $i->get('file');
+            if (empty($f)) {
+                exit(mnet_server_fault(8012, 'could not find file in transfer object - weird error'));
+            }
+            $c = $f->get_content();
+            $contents = base64_encode($c);
+        } catch (Exception $e) {
+            exit(mnet_server_fault(8013, 'could not get file to send'));
+        }
         $exporter->process_stage_cleanup(true);
         return $contents;
     }
