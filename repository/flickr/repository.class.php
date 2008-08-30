@@ -16,7 +16,7 @@ class repository_flickr extends repository{
 
     public function set_option($options = array()){
         if (!empty($options['api_key'])) {
-            set_config('api_key', $options['api_key'], 'flickr');
+            set_config('api_key', trim($options['api_key']), 'flickr');
         }
         unset($options['api_key']);
         $ret = parent::set_option($options);
@@ -25,9 +25,9 @@ class repository_flickr extends repository{
 
     public function get_option($config = ''){
         if($config==='api_key'){
-            return get_config('flickr', 'api_key');
+            return trim(get_config('flickr', 'api_key'));
         } else {
-            $options['api_key'] = get_config('flickr', 'api_key');
+            $options['api_key'] = trim(get_config('flickr', 'api_key'));
         }
         $options = parent::get_option($config);
         return $options;

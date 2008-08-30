@@ -15,7 +15,7 @@ class repository_boxnet extends repository{
 
     public function set_option($options = array()){
         if (!empty($options['api_key'])) {
-            set_config('api_key', $options['api_key'], 'boxnet');
+            set_config('api_key', trim($options['api_key']), 'boxnet');
         }
         unset($options['api_key']);
         $ret = parent::set_option($options);
@@ -24,9 +24,9 @@ class repository_boxnet extends repository{
 
     public function get_option($config = ''){
         if($config==='api_key'){
-            return get_config('boxnet', 'api_key');
+            return trim(get_config('boxnet', 'api_key'));
         } else {
-            $options['api_key'] = get_config('boxnet', 'api_key');
+            $options['api_key'] = trim(get_config('boxnet', 'api_key'));
         }
         $options = parent::get_option($config);
         return $options;
