@@ -38,7 +38,19 @@
 //
 // For further documentation, visit http://docs.moodle.org/en/DDL_functions
 
-// DEPRECATED - to be removed soon
+/// Add required XMLDB constants
+require_once($CFG->libdir.'/xmldb/xmldb_constants.php');
 
+/// Add required XMLDB DB classes
+require_once($CFG->libdir.'/xmldb/xmldb_object.php');
+require_once($CFG->libdir.'/xmldb/xmldb_file.php');
+require_once($CFG->libdir.'/xmldb/xmldb_structure.php');
+require_once($CFG->libdir.'/xmldb/xmldb_table.php');
+require_once($CFG->libdir.'/xmldb/xmldb_field.php');
+require_once($CFG->libdir.'/xmldb/xmldb_key.php');
+require_once($CFG->libdir.'/xmldb/xmldb_index.php');
+require_once($CFG->libdir.'/xmldb/xmldb_statement.php');
 
-?>
+require_once($CFG->libdir.'/ddl/sql_generator.php');
+require_once($CFG->libdir.'/ddl/database_manager.php');
+

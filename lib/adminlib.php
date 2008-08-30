@@ -9,22 +9,10 @@
  * @package moodlecore
  */
 
-/// Add required XMLDB constants
-require_once($CFG->libdir.'/xmldb/xmldb_constants.php');
-
-/// Add required XMLDB DB classes
-require_once($CFG->libdir.'/xmldb/xmldb_object.php');
-require_once($CFG->libdir.'/xmldb/xmldb_file.php');
-require_once($CFG->libdir.'/xmldb/xmldb_structure.php');
-require_once($CFG->libdir.'/xmldb/xmldb_table.php');
-require_once($CFG->libdir.'/xmldb/xmldb_field.php');
-require_once($CFG->libdir.'/xmldb/xmldb_key.php');
-require_once($CFG->libdir.'/xmldb/xmldb_index.php');
-require_once($CFG->libdir.'/xmldb/xmldb_statement.php');
-
-/// Add other libraries
+/// Add libraries
+require_once($CFG->libdir.'/ddllib.php');
 require_once($CFG->libdir.'/xmlize.php');
-require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
+require_once($CFG->libdir.'/messagelib.php');      // Messagelib functions
 
 global $upgradeloghandle, $upgradelogbuffer;
 
