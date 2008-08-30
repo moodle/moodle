@@ -494,22 +494,42 @@ function mnet_permit_rpc_call($includefile, $functionname, $class=false) {
             return RPC_NOSUCHCLASS;
         }
 
-        $object = new $class();
+        $object = false;
+        $static = false;
 
-        if (!method_exists($object, $functionname)) {
-            // Generate error response - unable to locate method
-            return RPC_NOSUCHMETHOD;
+        try {
+            // @todo set here whatever we can to ensure that errors cause exceptions :(
+            // see MDL-16175 - long term solution is teaching the dispatcher about:
+            // a: the difference between static and class methods
+            // b: object constructor arguments
+            $object = @new $class();
+            if (!method_exists($object, $functionname)) {
+                // Generate error response - unable to locate method
+                return RPC_NOSUCHMETHOD;
+            }
+
+            if (!method_exists($object, 'mnet_publishes')) {
+                // Generate error response - the class doesn't publish
+                // *any* methods, because it doesn't have an mnet_publishes
+                // method
+                return RPC_FORBIDDENMETHOD;
+            }
+
+            // Get the list of published services - initialise method array
+            $servicelist = $object->mnet_publishes();
+        }
+        catch (Exception $e) {
+            if (method_exists($class, $functionname)) {
+                // static... don't try to instantiate it.
+                if (!method_exists($class, 'mnet_publishes')) {
+                    return RPC_FORBIDDENMETHOD;
+                } else {
+                    $servicelist = call_user_func(array($class, 'mnet_publishes'));
+                }
+                $static = $class;
+            }
         }
 
-        if (!method_exists($object, 'mnet_publishes')) {
-            // Generate error response - the class doesn't publish
-            // *any* methods, because it doesn't have an mnet_publishes
-            // method
-            return RPC_FORBIDDENMETHOD;
-        }
-
-        // Get the list of published services - initialise method array
-        $servicelist = $object->mnet_publishes();
         $methodapproved = false;
 
         // If the method is in the list of approved methods, set the
@@ -527,6 +547,8 @@ function mnet_permit_rpc_call($includefile, $functionname, $class=false) {
 
         // Stash the object so we can call the method on it later
         $MNET_REMOTE_CLIENT->object_to_call($object);
+        $MNET_REMOTE_CLIENT->static_location($static);
+
     // WE'RE LOOKING AT A FUNCTION
     } else {
         if (!function_exists($functionname)) {

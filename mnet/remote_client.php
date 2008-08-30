@@ -12,8 +12,9 @@ class mnet_remote_client extends mnet_peer {
 
     // If the remote client is trying to execute a method on an object instead
     // of just a function, we'll instantiate the proper class and store it in
-    // this 'object_to_call' property.
+    // this 'object_to_call' property, or 'static_location' if it wants to be called statically
     var $object_to_call         = false;
+    var $static_location        = false;
     var $request_was_encrypted  = false;
     var $request_was_signed     = false;
 
@@ -27,6 +28,10 @@ class mnet_remote_client extends mnet_peer {
 
     function object_to_call($object) {
         $this->object_to_call = $object;
+    }
+
+    function static_location($location) {
+        $this->static_location = $location;
     }
 
     function plaintext_is_ok() {

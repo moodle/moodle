@@ -282,6 +282,12 @@ function get_db_directories() {
         }
     }
 
+    if ($plugins = get_list_of_plugins('portfolio/type', 'db')) {
+        foreach ($plugins as $plugin) {
+            $dbdirs[] = $CFG->dirroot . '/portfolio/type/' . $plugin . '/db';
+        }
+    }
+
 /// Local database changes, if the local folder exists.
     if (file_exists($CFG->dirroot . '/local')) {
         $dbdirs[] = $CFG->dirroot.'/local/db';

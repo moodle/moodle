@@ -314,10 +314,12 @@ function mnet_server_fault_xml($code, $text, $privatekey = null) {
 function mnet_server_dummy_method($methodname, $argsarray, $functionname) {
     global $MNET_REMOTE_CLIENT;
     
-    if (!is_object($MNET_REMOTE_CLIENT->object_to_call)) {
-        return @call_user_func_array($functionname, $argsarray);
-    } else {
+    if (is_object($MNET_REMOTE_CLIENT->object_to_call)) {
         return @call_user_method_array($functionname, $MNET_REMOTE_CLIENT->object_to_call, $argsarray);
+    } else if (!empty($MNET_REMOTE_CLIENT->static_location)) {
+        return @call_user_func_array(array($MNET_REMOTE_CLIENT->static_location, $functionname), $argsarray);
+    } else {
+        return @call_user_func_array($functionname, $argsarray);
     }
 }
 
@@ -469,6 +471,21 @@ function mnet_server_dispatch($payload) {
         } else {
             // Generate error response - unable to locate function
             exit(mnet_server_fault(703, 'nosuchfunction'));
+        }
+
+    } else if ($callstack[0] == 'portfolio') {
+        // Break out the callstack into its elements
+        list($base, $plugin, $filename, $methodname) = $callstack;
+
+        if ($filename == 'lib.php') {
+            $pluginclass = 'portfolio_plugin_' . $plugin;
+            $includefile = '/portfolio/type/'.$plugin.'/lib.php';
+            $response    = mnet_server_invoke_method($includefile, $methodname, $method, $payload, $pluginclass);
+            $response = mnet_server_prepare_response($response);
+            echo $response;
+        } else {
+            // Generate error response - unable to locate function
+            exit(mnet_server_fault(7012, 'nosuchfunction'));
         }
 
     ////////////////////////////////////// STRICT MOD/*
