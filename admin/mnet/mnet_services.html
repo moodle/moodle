@@ -44,7 +44,7 @@ print_simple_box_start("center", "");
             echo $breakstring;
 ?>
     <input type="hidden" name="exists[<?php echo  $version['serviceid']; ?>]" value="1" />
-<?php if ($name == 'pf_out') { // see MDL-16269 ?>
+<?php if ($name == 'pf') { // see MDL-16269 ?>
     <input type="hidden" name="publish[<?php echo $version['serviceid']; ?>]" value="0" />
 <?php } else { ?>
     <input type="checkbox" name="publish[<?php echo $version['serviceid']; ?>]" <?php echo (!empty($version['I_publish']))? 'checked="checked" ': '' ; ?>/>
