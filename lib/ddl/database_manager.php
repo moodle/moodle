@@ -914,6 +914,7 @@ if (!is_object($xmldb_key)) {
      */
     public function get_install_xml_schema() {
         global $CFG;
+        require_once($CFG->libdir.'/adminlib.php');
 
         $schema = new xmldb_structure('export');
         $schema->setVersion($CFG->version);

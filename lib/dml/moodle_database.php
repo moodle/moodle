@@ -471,8 +471,7 @@ abstract class moodle_database {
         global $CFG;
 
         if (!$this->database_manager) {
-            require_once($CFG->libdir.'/adminlib.php');
-            require_once($CFG->libdir.'/ddl/database_manager.php');
+            require_once($CFG->libdir.'/ddllib.php');
 
             $classname = $this->get_dbfamily().'_sql_generator';
             require_once("$CFG->libdir/ddl/$classname.php");
