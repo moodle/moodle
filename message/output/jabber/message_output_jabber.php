@@ -39,8 +39,8 @@ define("JABBER_PASSWORD","");
 
 define("RUN_TIME",15);  // set a maximum run time of 15 seconds
 
-require_once('../config.php'); //included from messagelib (how to fix?)
 require_once($CFG->dirroot.'/message/output/lib.php');
+require_once($CFG->dirroot.'/message/output/jabber/jabberclass/class_Jabber.php');
 
 class JabberMessenger {
     function JabberMessenger(&$jab, $message) {
@@ -50,13 +50,20 @@ class JabberMessenger {
         $this->countdown = 0;
     }
     // called when a connection to the Jabber server is established
-    function handleConnected() {
+    function handleConnected() {        
         $this->jab->login(JABBER_USERNAME,JABBER_PASSWORD);
     }
     // called after a login to indicate the the login was successful
     function handleAuthenticated() {
+        global $DB;        
         $userfrom = $DB->get_record('user', array('id' => $this->message->useridfrom));
-        $this->jab->message("lfrodrigues@gmail.com","chat",NULL,fullname($userfrom)."(SITENAME) says: ".$this->message->fullmessage);
+        $userto = $DB->get_record('user', array('id' => $this->message->useridto));            
+        
+        $jabberdest = get_user_preferences('message_processor_jabber_jabberid', $userto->email , $userto->id);
+        if (empty($jabberdest)){
+            $jabberdest = $userto->email;
+        }
+        $this->jab->message($jabberdest,"chat",NULL,fullname($userfrom)." says: ".$this->message->fullmessage);
         $this->jab->terminated = true;
     }
     // called after a login to indicate that the login was NOT successful
@@ -75,17 +82,17 @@ class message_output_jabber extends message_output {
      * @return true if ok, false if error
      */
     function send_message($message){
-
-        require_once("jabberclass/class_Jabber.php");
-
-        $jab = new Jabber( false );
+        
+        //jabber object
+        $jab = new Jabber(True);
         // create an instance of our event handler class
         $test = new JabberMessenger($jab, $message);
+        
         // set handlers for the events we wish to be notified about
         $jab->set_handler("connected",$test,"handleConnected");
         $jab->set_handler("authenticated",$test,"handleAuthenticated");
         $jab->set_handler("authfailure",$test,"handleAuthFailure");
-
+        
         if (!$jab->connect(JABBER_SERVER)) {
             return false;
         }
@@ -94,14 +101,6 @@ class message_output_jabber extends message_output {
         // don't way for events
         $jab->execute(-1,RUN_TIME);
         $jab->disconnect();
-
-
-        $f = fopen('/tmp/event_jabber', 'a+');
-        fwrite($f, date('l dS \of F Y h:i:s A')."\n");
-        fwrite($f, "from: $message->userfromid\n");
-        fwrite($f, "userto: $message->usertoid\n");
-        fwrite($f, "subject: $message->subject\n");
-        fclose($f);
 
         return true;
     }
@@ -136,4 +135,27 @@ class message_output_jabber extends message_output {
     }
 
 }
+
+/*
+ * 
+ *         $f = fopen('/tmp/event_jabberx', 'a+');
+        fwrite($f, date('l dS \of F Y h:i:s A')."\n");
+        fwrite($f, "from: $message->userfromid\n");
+        fwrite($f, "userto: $message->usertoid\n");
+        fwrite($f, "subject: $message->subject\n");
+        fclose($f);
+
+
+$savemessage = new object();
+    $savemessage->useridfrom        = 3;
+    $savemessage->useridto          = 2;
+    $savemessage->subject           = 'IM';
+    $savemessage->fullmessage       = 'full';
+    $savemessage->timecreated       = time();
+
+
+$a = new message_output_jabber();
+
+$a->send_message($savemessage);
+* */
 ?>
