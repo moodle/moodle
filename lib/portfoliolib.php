@@ -2404,8 +2404,8 @@ function portfolio_handle_event($eventdata) {
     $exporter = portfolio_exporter::rewaken_object($eventdata);
     $exporter->process_stage_package();
     $exporter->process_stage_send();
-    $exporter->process_stage_cleanup();
     $exporter->save();
+    $exporter->process_stage_cleanup();
     return true;
 }
 
