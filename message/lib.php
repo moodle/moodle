@@ -946,92 +946,19 @@ function message_format_message(&$message, &$user, $format='', $keywords='', $cl
  */
 function message_post_message($userfrom, $userto, $message, $format, $messagetype) {
     global $CFG, $SITE, $USER, $DB;
-
-/// Set up current language to suit the receiver of the message
-    $savelang = $USER->lang;
-    
-    if (!empty($userto->lang)) {
-        $USER->lang = $userto->lang;
-    }
     
     $eventdata = new object();
-    $eventdata->modulename       = 'moodle';
+    $eventdata->component        = 'message';
+    $eventdata->name             = 'instantmessage';
     $eventdata->userfrom         = $userfrom;
     $eventdata->userto           = $userto;
-    $eventdata->subject          = "MESSAGE";
+    $eventdata->subject          = "IM";
     $eventdata->fullmessage      = $message;
     $eventdata->fullmessageformat = FORMAT_PLAIN;
     $eventdata->fullmessagehtml  = '';
     $eventdata->smallmessage     = ''; 
-    events_trigger('message_send', $eventdata);
+    return events_trigger('message_send', $eventdata);
 
-
-/// Save the new message in the database
-
-    $savemessage = NULL;
-    $savemessage->useridfrom    = $userfrom->id;
-    $savemessage->useridto      = $userto->id;
-    $savemessage->message       = $message;
-    $savemessage->format        = $format;
-    $savemessage->timecreated   = time();
-    $savemessage->messagetype   = 'direct';
-
-    if ($CFG->messaging) {
-        //if (!$savemessage->id = $DB->insert_record('message', $savemessage)) {
-        //    return false;
-        //}
-        $emailforced = false;
-    } else { // $CFG->messaging is not on, we need to force sending of emails
-        $emailforced = true;
-        $savemessage->id = true; 
-    }
-
-/// Check to see if anything else needs to be done with it
-
-    $preference = (object)get_user_preferences(NULL, NULL, $userto->id);
-
-    if ($emailforced || (!isset($preference->message_emailmessages) || $preference->message_emailmessages)) {  // Receiver wants mail forwarding
-        if (!isset($preference->message_emailtimenosee)) {
-            $preference->message_emailtimenosee = 10;
-        }
-        if (!isset($preference->message_emailformat)) {
-            $preference->message_emailformat = FORMAT_HTML;
-        }
-        if ($emailforced || (time() - $userto->lastaccess) > ((int)$preference->message_emailtimenosee * 60)) { // Long enough
-
-            $tagline = get_string('emailtagline', 'message', $SITE->shortname);
-
-            $messagesubject = preg_replace('/\s+/', ' ', strip_tags($message)); // make sure it's all on one line
-            $messagesubject = message_shorten_message($messagesubject, 30).'...';
-
-            $messagetext = format_text_email($message, $format).
-                           "\n\n--\n".$tagline."\n"."$CFG->wwwroot/message/index.php?popup=1";
-
-            if (isset($preference->message_emailformat) and $preference->message_emailformat == FORMAT_HTML) {
-                $messagehtml  = format_text($message, $format);
-                // MDL-10294, do not print link if messaging is disabled
-                if ($CFG->messaging) {
-                    $messagehtml .= '<hr /><p><a href="'.$CFG->wwwroot.'/message/index.php?popup=1">'.$tagline.'</a></p>';
-                }
-            } else {
-                $messagehtml = NULL;
-            }
-
-            if (!empty($preference->message_emailaddress)) {
-                $userto->email = $preference->message_emailaddress;   // Use custom messaging address
-            }
-
-            if (email_to_user($userto, $userfrom, $messagesubject, $messagetext, $messagehtml)) {
-                $CFG->messagewasjustemailed = true;
-            }
-
-            sleep(3);
-        }
-    }
-
-    $USER->lang = $savelang;  // restore original language
-
-    return $savemessage->id;
 }
 
 
@@ -1089,6 +1016,39 @@ function message_print_contactlist_user($contact, $incontactlist = true){
     echo '</td>';
     echo '<td class="link">&nbsp;'.$strcontact.$strblock.'&nbsp;'.$strhistory.'</td>';
     echo '</tr>';
+}
+
+function message_get_popup_messages($destuserid, $fromuserid=NULL){
+    global $DB;
+    
+    $processor = $DB->get_record('message_processors', array('name' => 'popup'));
+
+    $messagesproc = $DB->get_records('message_working', array('processorid'=>$processor->id));
+
+    //for every message to process check if it's for current user and process
+    $messages = array();
+    foreach ($messagesproc as $msgp){
+        $query = array('id'=>$msgp->unreadmessageid, 'useridto'=>$destuserid);
+        if ($fromuserid){
+            $query['useridfrom'] = $fromuserid;
+        }
+        if ($message = $DB->get_record('message', $query)){
+            $messages[] = $message;
+            /// Move the entry to the other table
+            $message->timeread = time();
+            $messageid = $message->id;
+            unset($message->id);
+        
+            //delete what we've processed and check if can move message
+            $DB->delete_records('message_working', array('id' => $msgp->id));
+            if ( $DB->count_records('message_working', array('unreadmessageid'=>$messageid)) == 0){
+                if ($DB->insert_record('message_read', $message)) {
+                    $DB->delete_records('message', array('id' => $messageid));
+                }
+            }
+        }
+    }
+    return $messages;
 }
 
 ?>

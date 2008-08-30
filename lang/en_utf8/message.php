@@ -83,6 +83,6 @@ $string['noframesjs'] = 'No frames and JavaScript';
 $string['providerstag'] = 'Source: ';
 $string['processortag'] = 'Destination: ';
 $string['cannotsavemessageprefs'] = 'Could not save user messaging preferences';
-
+$string['messageprovider:instantmessage'] = 'User to User Instant Message';
 
 ?>

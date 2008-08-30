@@ -1,6 +1,7 @@
 <?php // $Id$
 
     require('../config.php');
+    require('lib.php');
 
     define('MESSAGE_DEFAULT_REFRESH', 5);
 
@@ -47,6 +48,38 @@
     @ob_implicit_flush(true);
     @ob_end_flush();
 
+    /*Get still to be read message, use message/lib.php funtion*/
+    $messages = message_get_popup_messages($USER->id, $userid);     
+        if ($messages ) {
+        foreach ($messages as $message) {
+            $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
+
+            $options = new object();
+            $options->para = false;
+            $options->newlines = true;
+            if ($message->format == FORMAT_HTML){
+                $printmessage = format_text($message->fullmessagehtml, $message->format, $options, 0);                
+            } else{
+                $printmessage = format_text($message->fullmessage, $message->format, $options, 0);
+            }
+            $printmessage = '<div class="message other"><span class="author">'.s($userfullname).'</span> '.
+                '<span class="time">['.$time.']</span>: '.
+                '<span class="content">'.$printmessage.'</span></div>';
+            $printmessage = addslashes_js($printmessage);  // So Javascript can write it
+            echo "parent.messages.document.write('".$printmessage."');\n";            
+        }
+        if (get_user_preferences('message_beepnewmessage', 0)) {
+            $playbeep = true;
+        }
+        echo 'parent.messages.scroll(1,5000000);'."\n";
+        echo 'parent.send.focus();'."\n";
+        $wait = MESSAGE_DEFAULT_REFRESH;
+    } else {
+        if ($wait < 300) {                     // Until the wait is five minutes
+            $wait = ceil(1.2 * (float)$wait);  // Exponential growth
+        }
+    }
+    /* old code to be deleted
     if ($messages = $DB->get_records('message', array('useridto'=>$USER->id, 'useridfrom'=>$userid), 'timecreated')) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
@@ -80,7 +113,7 @@
             $wait = ceil(1.2 * (float)$wait);  // Exponential growth
         }
     }
-
+*/
     echo '-->'."\n";
     echo '</script>'."\n";
     echo '</head>'."\n";

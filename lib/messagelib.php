@@ -57,7 +57,7 @@ function message_send_handler($eventdata){
     } else {
         $userstate = 'loggedin';
     }
-
+    
 /// Create the message object
     $savemessage = new object();
     $savemessage->useridfrom        = $eventdata->userfrom->id;
@@ -95,9 +95,8 @@ function message_send_handler($eventdata){
 
     } else {                        // Process the message
     /// Store unread message just in case we can not send it
-        $savemessage->id = $DB->insert_record('message', $savemessage);
-
-
+        $savemessage->id = $DB->insert_record('message', $savemessage);        
+        
     /// Try to deliver the message to each processor
         $processorlist = explode(',', $processor);
         foreach ($processorlist as $procname) {

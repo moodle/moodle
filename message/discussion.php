@@ -197,7 +197,7 @@
     $options = new object();
     $options->para = false;
     $options->newlines = true;
-
+    
     $params = array('uid1'=>$USER->id ,'userid1'=>$userid, 'start1'=>$start, 'uid2'=>$USER->id ,'userid2'=>$userid, 'start2'=>$start);
     if ($newonly) {
         $lastsql1 = " AND timecreated > :last1";
@@ -209,6 +209,7 @@
         $lastsql2 = "";
     }
 
+    //LR: change here the way to
     if ($messages = $DB->get_records_select('message_read', "(useridto = :uid1 AND useridfrom = :userid1 AND timeread > :start1 $lastsql1) OR (useridto = :userid2 AND useridfrom = :uid2 AND timeread > :start2 $lastsql2)", $params)) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
@@ -219,7 +220,11 @@
                 $fullname = $userfullname;
             }
 
-            $printmessage = format_text($message->message, $message->format, $options, 0);
+            if ($message->format == FORMAT_HTML){
+                $printmessage = format_text($message->fullmessagehtml, $message->format, $options, 0);                
+            } else{
+                $printmessage = format_text($message->fullmessage, $message->format, $options, 0);
+            }
             $printmessage = '<div class="message other"><span class="author">'.$fullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
@@ -236,8 +241,12 @@
     if ($messages = $DB->get_records_select('message', "useridto = :userid1 AND useridfrom = :uid1 $lastsql1", $params)) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
-
-            $printmessage = format_text($message->message, $message->format, $options, 0);
+            
+            if ($message->format == FORMAT_HTML){
+                $printmessage = format_text($message->fullmessagehtml, $message->format, $options, 0);                
+            } else{
+                $printmessage = format_text($message->fullmessage, $message->format, $options, 0);
+            }
             $printmessage = '<div class="message other"><span class="author">'.$mefullname.'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
@@ -250,7 +259,35 @@
             $allmessages[$sortkey] = $printmessage;
         }
     }
-
+    /*Get still to be read message, use message/lib.php funtion*/
+    $messages = message_get_popup_messages($USER->id, $userid); 
+    if ($messages) {
+        foreach ($messages as $message) {
+            $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
+            
+            if ($message->format == FORMAT_HTML){
+                $printmessage = format_text($message->fullmessagehtml, $message->format, $options, 0);                
+            } else{
+                $printmessage = format_text($message->fullmessage, $message->format, $options, 0);
+            }
+            $printmessage = '<div class="message other"><span class="author">'.$userfullname.'</span> '.
+                '<span class="time">['.$time.']</span>: '.
+                '<span class="content">'.$printmessage.'</span></div>';
+            $i=0;
+            $sortkey = $message->timecreated."$i"; // we need string bacause we would run out of int range
+            while (array_key_exists($sortkey, $allmessages)) {
+                $i++;
+                $sortkey = $message->timecreated."$i";
+            }
+            $allmessages[$sortkey] = $printmessage;
+            
+            if ($message->timecreated < $start) {
+                $start = $message->timecreated; // move start back so that we see all current history
+            }
+        }
+        $playbeep = true;
+    }
+    /* old code, to be deleted
     if ($messages = $DB->get_records_select('message', "useridto = :uid2 AND useridfrom = userid2 $lastsql2", $params)) {
         foreach ($messages as $message) {
             $time = userdate($message->timecreated, get_string('strftimedatetimeshort'));
@@ -280,7 +317,7 @@
             }
         }
         $playbeep = true;
-    }
+    }*/
 
     krsort($allmessages);
 

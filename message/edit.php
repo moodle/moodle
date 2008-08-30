@@ -142,7 +142,7 @@ if ( ($form = data_submitted()) && confirm_sesskey()) {
 $preferences = new object();
 
 //get the message general preferences
-$preferences->showmessagewindow =  get_user_preferences( 'message_showmessagewindow', '', $user->id);
+$preferences->showmessagewindow =  get_user_preferences( 'message_showmessagewindow', 1, $user->id);
 $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $user->id);
 $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
 $preferences->noframesjs        =  get_user_preferences( 'message_noframesjs', '', $user->id);
