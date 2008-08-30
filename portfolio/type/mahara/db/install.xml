@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="portfolio/type/mahara/db" VERSION="20080827" COMMENT="XMLDB file for Moodle portfolio/type/mahara"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="portfolio_mahara_queue" COMMENT="maps mahara tokens to transfer ids">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="transferid"/>
+        <FIELD NAME="transferid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" COMMENT="fk to portfolio_tempdata.id" PREVIOUS="id" NEXT="token"/>
+        <FIELD NAME="token" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" ENUM="false" COMMENT="the token mahara sent us to use for this transfer." PREVIOUS="transferid"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" NEXT="transferfk"/>
+        <KEY NAME="transferfk" TYPE="foreign" FIELDS="transferid" REFTABLE="portfolio_tempdata" REFFIELDS="id" COMMENT="fk to portfolio_tempdata" PREVIOUS="primary"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="tokenidx" UNIQUE="false" FIELDS="token" COMMENT="index for token field (used for lookups)"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
