@@ -3582,10 +3582,10 @@ class admin_setting_special_calendar_weekend extends admin_setting {
         $settings = array();
         for ($i=0; $i<7; $i++) {
             if ($result & (1 << $i)) {
-                $setting[] = $i;
+                $settings[] = $i;
             }
         }
-        return $setting;
+        return $settings;
     }
 
     function write_setting($data) {
