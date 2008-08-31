@@ -69,6 +69,17 @@ function install_group_db() {
 
     /// 5) Add one UNIQUE index on groups_members (groupid, userid)
 
+    // first remove duplicates
+    $sql = "SELECT cm1.id
+              FROM {$CFG->prefix}groups_members cm1, {$CFG->prefix}groups_members cm2
+             WHERE cm1.groupid = cm2.groupid AND cm1.userid = cm2.userid AND cm1.id <> cm2.id
+          ORDER BY cm1.id DESC";
+
+    while ($duplicates = get_records_sql($sql, 0, 1)) {
+        $first = reset($duplicates);
+        delete_records('groups_members', 'id', $first->id);
+    }
+
     /// Define index groupid-courseid (unique) to be added to groups_members
     $table = new XMLDBTable('groups_members');
     $index = new XMLDBIndex('groupid-courseid');
@@ -174,20 +185,20 @@ function install_group_db() {
         $rec->action = 'view';
         $rec->mtable = 'groups';
         $rec->field  = 'name';
-        $result = insert_record('log_display', $rec);
+        $result = $result && insert_record('log_display', $rec);
     }
 
     /// 11) PERFORM ALL THE NEEDED MOVEMENTS OF DATA
     
     $db->debug = false; // suppressing because there can be too many
     /// a) get the current groups, foreach one add an entry in groups_courses_groups
-    if ($oldgroups = get_records('groups')) {
+    if ($result and $oldgroups = get_records('groups')) {
         foreach ($oldgroups as $oldgroup) {
             $rec = new Object();
             $rec->courseid = $oldgroup->courseid;
             $rec->groupid = $oldgroup->id;
             $rec->timeadded = $oldgroup->timemodified; // I think this is not needed since the field is gone?
-            insert_record('groups_courses_groups', $rec);
+            $result = $result && insert_record('groups_courses_groups', $rec);
         }
     }
     $db->debug = true;
