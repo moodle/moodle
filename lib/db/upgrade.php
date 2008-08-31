@@ -23,7 +23,7 @@ function xmldb_main_upgrade($oldversion=0) {
 
     $result = true;
 
-    if ($oldversion < 2006100401) {
+    if ($result && $oldversion < 2006100401) {
         /// Only for those tracking Moodle 1.7 dev, others will have these dropped in moodle_install_roles()
         if (!empty($CFG->rolesactive)) {
             drop_table(new XMLDBTable('user_students'));
@@ -35,7 +35,7 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2006100401);
     }
 
-    if ($oldversion < 2006100601) {         /// Disable the exercise module because it's unmaintained
+    if ($result && $oldversion < 2006100601) {         /// Disable the exercise module because it's unmaintained
         if ($module = get_record('modules', 'name', 'exercise')) {
             if ($module->visible) {
                 // Hide/disable the module entry
@@ -54,7 +54,7 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2006100601);
     }
 
-    if ($oldversion < 2006101001) {         /// Disable the LAMS module by default (if it is installed)
+    if ($result && $oldversion < 2006101001) {         /// Disable the LAMS module by default (if it is installed)
         if (count_records('modules', 'name', 'lams') && !count_records('lams')) {
             set_field('modules', 'visible', 0, 'name', 'lams');  // Disable it by default
         }
@@ -123,7 +123,7 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2006112200);
     }
 
-    if ($oldversion < 2006120300) {    /// Delete guest course section settings
+    if ($result && $oldversion < 2006120300) {    /// Delete guest course section settings
         // following code can be executed repeatedly, such as when upgrading from 1.7.x - it is ok
         if ($guest = get_record('user', 'username', 'guest')) {
             execute_sql("DELETE FROM {$CFG->prefix}course_display where userid=$guest->id", true);
@@ -132,7 +132,7 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2006120300);
     }
 
-    if ($oldversion < 2006120400) {    /// Remove secureforms config setting
+    if ($result && $oldversion < 2006120400) {    /// Remove secureforms config setting
         execute_sql("DELETE FROM {$CFG->prefix}config where name='secureforms'", true);
 
         upgrade_main_savepoint($result, 2006120400);
@@ -151,7 +151,7 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
     // Move the auth plugin settings into the config_plugin table
-    if ($oldversion < 2007010300) {
+    if ($result && $oldversion < 2007010300) {
         if ($CFG->auth == 'email') {
             set_config('registerauth', 'email');
         } else {
@@ -188,7 +188,7 @@ function xmldb_main_upgrade($oldversion=0) {
         upgrade_main_savepoint($result, 2007010300);
     }
 
-    if ($oldversion < 2007010301) {
+    if ($result && $oldversion < 2007010301) {
         //
         // Core MNET tables
         //
@@ -1677,16 +1677,33 @@ function xmldb_main_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2007081302) {
 
-        if (table_exists(new XMLDBTable('groups_groupings'))) {
-    /// IF 'groups_groupings' table exists, this is for 1.8.* only.
+        $table = new XMLDBTable('groups');
+        $field = new XMLDBField('password');
+
+        if (field_exists($table, $field)) { 
+    /// 1.7.*/1.6.*/1.5.* - create 'groupings' and 'groupings_groups' + rename password to enrolmentkey
+    /// or second run after fixing structure broken from 1.8.x
+            $result = $result && upgrade_17_groups();
+
+        } else if (table_exists(new XMLDBTable('groups_groupings'))) {
+    /// ELSE 'groups_groupings' table exists, this is 1.8.* properly upgraded
             $result = $result && upgrade_18_groups();
 
         } else {
-    /// ELSE, 1.7.*/1.6.*/1.5.* - create 'groupings' and 'groupings_groups' + rename password to enrolmentkey
-            $result = $result && upgrade_17_groups();
+    /// broken groups, failed 1.8.x upgrade
+            upgrade_18_broken_groups();
+            notify('Warning: failed groups upgrade detected! Unfortunately this problem '.
+                   'can not be fixed automatically. Mapping of groups to courses was lost, '.
+                   'you can either revert to backup from 1.7.x and run ugprade again or '. 
+                   'continue and fill in the missing course ids into groups table manually.');
+            $result = false;
         }
 
-    /// For both 1.8.* and 1.7.*/1.6.*..
+        upgrade_main_savepoint($result, 2007081302);
+    }
+
+    if ($result && $oldversion < 2007081303) {
+    /// Common groups upgrade for 1.8.* and 1.7.*/1.6.*..
 
         // delete not used fields
         $table = new XMLDBTable('groups');
@@ -1723,7 +1740,7 @@ function xmldb_main_upgrade($oldversion=0) {
         $key->setAttributes(XMLDB_KEY_FOREIGN, array('groupingid'), 'groupings', array('id'));
         $result = $result && add_key($table, $key);
 
-        upgrade_main_savepoint($result, 2007081302);
+        upgrade_main_savepoint($result, 2007081303);
     }
 
     if ($result && $oldversion < 2007082300) {
@@ -2354,7 +2371,7 @@ function xmldb_main_upgrade($oldversion=0) {
     }
 
 
-    if ($oldversion < 2007100300) {
+    if ($result && $oldversion < 2007100300) {
     /// MNET stuff for roaming theme
     /// Define field force_theme to be added to mnet_host
         $table = new XMLDBTable('mnet_host');

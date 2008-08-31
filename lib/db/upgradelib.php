@@ -332,6 +332,32 @@ function upgrade_17_groups() {
 }
 
 /**
+ * Try to fix broken groups from 1.8 - at least partially
+ */
+function upgrade_18_broken_groups() {
+    global $db;
+
+/// Undo password -> enrolmentkey
+    $table = new XMLDBTable('groups');
+    $field = new XMLDBField('enrolmentkey');
+    $field->setAttributes(XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, null, 'description');
+    rename_field($table, $field, 'password');
+
+
+/// Readd courseid field
+    $table = new XMLDBTable('groups');
+    $field = new XMLDBField('courseid');
+    $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'id');
+    add_field($table, $field);
+
+/// and courseid key
+    $table = new XMLDBTable('groups');
+    $key = new XMLDBKey('courseid');
+    $key->setAttributes(XMLDB_KEY_FOREIGN, array('courseid'), 'course', array('id'));
+    add_key($table, $key);
+}
+
+/**
  * Drop, add fields and rename tables for groups upgrade from 1.8.*
  * @param XMLDBTable $table 'groups_groupings' table object.
  */
