@@ -28,6 +28,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 unset($CFG);  // Ignore this line
+$CFG = new stdClass();
 
 //=========================================================================
 // 1. DATABASE SETUP
@@ -171,10 +172,10 @@ $CFG->admin = 'admin';
 // This setting will prevent the 'My Courses' page being displayed when a student
 // logs in. The site front page will always show the same (logged-out) view.
 //     $CFG->disablemycourses = true;
-// 
-// If this setting is set to true, then Moodle will track the IP of the 
-// current user to make sure it hasn't changed during a session.  This 
-// will prevent the possibility of sessions being hijacked via XSS, but it 
+//
+// If this setting is set to true, then Moodle will track the IP of the
+// current user to make sure it hasn't changed during a session.  This
+// will prevent the possibility of sessions being hijacked via XSS, but it
 // may break things for users coming using proxies that change all the time,
 // like AOL.
 //      $CFG->tracksessionip = true;
@@ -186,17 +187,17 @@ $CFG->admin = 'admin';
 //      $CFG->bounceratio = .20;
 // The next lines are needed both for bounce handling and any other email to module processing.
 // mailprefix must be EXACTLY four characters.
-// Uncomment and customise this block for Postfix 
+// Uncomment and customise this block for Postfix
 //      $CFG->mailprefix = 'mdl+'; // + is the separator for Exim and Postfix.
-//      $CFG->mailprefix = 'mdl-'; // - is the separator for qmail 
+//      $CFG->mailprefix = 'mdl-'; // - is the separator for qmail
 //      $CFG->maildomain = 'youremaildomain.com';
 //
-// The following setting will tell Moodle to respect your PHP session 
+// The following setting will tell Moodle to respect your PHP session
 // settings. Use this if you want to control session configuration
-// from php.ini, httpd.conf or .htaccess files. 
+// from php.ini, httpd.conf or .htaccess files.
 //      $CFG->respectsessionsettings = true;
 //
-// This setting will cause the userdate() function not to fix %d in 
+// This setting will cause the userdate() function not to fix %d in
 // date strings, and just let them show with a zero prefix.
 //      $CFG->nofixday = true;
 //
@@ -215,12 +216,12 @@ $CFG->admin = 'admin';
 // Custom scripts should not include config.php
 // Warning: Replacing standard moodle scripts may pose security risks and/or may not
 // be compatible with upgrades. Use this option only if you are aware of the risks
-// involved. 
+// involved.
 // Specify the full directory path to the custom scripts
 //      $CFG->customscripts = '/home/example/customscripts';
 //
-// Performance profiling 
-// 
+// Performance profiling
+//
 //   If you set Debug to "Yes" in the Configuration->Variables page some
 //   performance profiling data will show up on your footer (in default theme).
 //   With these settings you get more granular control over the capture
@@ -239,7 +240,7 @@ $CFG->admin = 'admin';
 //   define('MDL_PERFTOFOOT', true);
 //
 // Force displayed usernames
-//   A little hack to anonymise user names for all students.  If you set these 
+//   A little hack to anonymise user names for all students.  If you set these
 //   then all non-teachers will always see these for every person.
 //       $CFG->forcefirstname = 'Bruce';
 //       $CFG->forcelastname  = 'Simpson';
@@ -258,7 +259,7 @@ $CFG->admin = 'admin';
 //     $CFG->apacheloguser = 0; // Turn this feature off. Default value.
 //     $CFG->apacheloguser = 1; // Log user id.
 //     $CFG->apacheloguser = 2; // Log full name in cleaned format. ie, Darth Vader will be displayed as darth_vader.
-//     $CFG->apacheloguser = 3; // Log username. 
+//     $CFG->apacheloguser = 3; // Log username.
 // To get the values logged in Apache's log, add to your httpd.conf
 // the following statements. In the General part put:
 //     LogFormat "%h %l %{MOODLEUSER}n %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\"" moodleformat
@@ -267,14 +268,14 @@ $CFG->admin = 'admin';
 // CAUTION: Use of this option will expose usernames in the Apache log,
 // If you are going to publish your log, or the output of your web stats analyzer
 // this will weaken the security of your website.
-// 
-// Email database connection errors to someone.  If Moodle cannot connect to the 
+//
+// Email database connection errors to someone.  If Moodle cannot connect to the
 // database, then email this address with a notice.
 //
 //     $CFG->emailconnectionerrorsto = 'your@emailaddress.com';
-// 
+//
 // NOTE: if you are using custompix in your theme, see /fixpix.php.
-// 
+//
 // special magic evil developer only wanting to edit the xmldb files manually
 // AND don't use the XMLDBEditor nor the prev/next stuff at all (Mahara and others)
 // Uncomment these if you're lazy like Penny
