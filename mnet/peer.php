@@ -28,6 +28,16 @@ class mnet_peer {
         return true;
     }
 
+    /*
+     * Fetch information about a peer identified by wwwroot
+     * If information does not preexist in db, collect it together based on
+     * supplied information
+     *
+     * @param string $wwwroot - address of peer whose details we want
+     * @param string $pubkey - to use if we add a record to db for new peer
+     * @param int $application - table id - what kind of peer are we talking to
+     * @return bool - indication of success or failure
+     */
     function bootstrap($wwwroot, $pubkey = null, $application) {
         global $DB;
 
@@ -220,6 +230,12 @@ class mnet_peer {
         return false;
     }
 
+    /** 
+     * Load information from db about an mnet peer into this object's properties
+     * 
+     * @param string $wwwroot - address of peer whose details we want to load
+     * @return bool - indication of success or failure
+     */ 
     function set_wwwroot($wwwroot) {
         global $CFG, $DB;
 
