@@ -46,9 +46,6 @@ class repository_local extends repository {
 
         // no login required
         $ret['nologin'] = true;
-        // define upload form in file picker
-        // Use ajax upload file
-        $ret['upload'] = array('name'=>get_string('attachment', 'repository'), 'id'=>'repo-form');
         // todo: link to file manager  
         $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
        
