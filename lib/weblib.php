@@ -5694,19 +5694,22 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  *
  * @uses $SESSION
  * @uses $CFG
- * @param string $errorcode The name of the string from error.php to print
+ * @param string $errorcode The name of the string from error.php (or other specified file) to print
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
+ * @return does not return, terminates script
  */
-function print_error ($errorcode, $module='', $link='', $a=NULL) {
-
+function print_error($errorcode, $module='error', $link='', $a=NULL) {
     global $CFG, $SESSION, $THEME;
 
-    if (empty($module) || $module == 'moodle' || $module == 'core') {
+    if (empty($module) || $module === 'moodle' || $module === 'core') {
         $module = 'error';
-        $modulelink = 'moodle';
-    } else {
-        $modulelink = $module;
+    }
+
+    $message = get_string($errorcode, $module, $a);
+    if ($module === 'error' and strpos($message, '[[') === 0) {
+        //search in moodle file if error specified - needed for backwards compatibility
+        $message = get_string($errorcode, 'moodle', $a);
     }
 
     if (empty($link) and !defined('ADMIN_EXT_HEADER_PRINTED')) {
@@ -5726,12 +5729,16 @@ function print_error ($errorcode, $module='', $link='', $a=NULL) {
         $errordocroot = 'http://docs.moodle.org';
     }
 
-    $message = get_string($errorcode, $module, $a);
-
     if (defined('FULLME') && FULLME == 'cron') {
         // Errors in cron should be mtrace'd.
         mtrace($message);
         die;
+    }
+
+    if ($module === 'error') {
+        $modulelink = 'moodle';
+    } else {
+        $modulelink = $module;
     }
 
     $message = clean_text('<p class="errormessage">'.$message.'</p>'.
