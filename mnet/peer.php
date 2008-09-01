@@ -45,57 +45,57 @@ class mnet_peer {
             $wwwroot = substr($wwwroot, 0, -1);
         }
 
-        if ( ! $this->set_wwwroot($wwwroot) ) {
-            $hostname = mnet_get_hostname_from_uri($wwwroot);
+        // If a peer record already exists for this address,
+        // load that info and return
+        if ($this->set_wwwroot($wwwroot)) {
+            return true;
+        }
 
-            // Get the IP address for that host - if this fails, it will
-            // return the hostname string
-            $ip_address = gethostbyname($hostname);
+        $hostname = mnet_get_hostname_from_uri($wwwroot);
+        // Get the IP address for that host - if this fails, it will return the hostname string
+        $ip_address = gethostbyname($hostname);
 
-            // Couldn't find the IP address?
-            if ($ip_address === $hostname && !preg_match('/^\d+\.\d+\.\d+.\d+$/',$hostname)) {
-                $this->error[] = array('code' => 2, 'text' => get_string("noaddressforhost", 'mnet'));
-                return false;
-            }
+        // Couldn't find the IP address?
+        if ($ip_address === $hostname && !preg_match('/^\d+\.\d+\.\d+.\d+$/',$hostname)) {
+            $this->error[] = array('code' => 2, 'text' => get_string("noaddressforhost", 'mnet'));
+            return false;
+        }
 
-            $this->name = $wwwroot;
+        $this->name = $wwwroot;
 
-            // TODO: In reality, this will be prohibitively slow... need another
-            // default - maybe blank string
-            $homepage = download_file_content($wwwroot);
-            if (!empty($homepage)) {
-                $count = preg_match("@<title>(.*)</title>@siU", $homepage, $matches);
-                if ($count > 0) {
-                    $this->name = $matches[1];
-                }
-            }
-
-            $this->wwwroot              = $wwwroot;
-            $this->ip_address           = $ip_address;
-            $this->deleted              = 0;
-
-            $this->application = $DB->get_record('mnet_application', array('name'=>$application));
-            if (empty($this->application)) {
-                $this->application = $DB->get_record('mnet_application', array('name'=>'moodle'));
-            }
-
-            $this->applicationid = $this->application->id;
-
-            if(empty($pubkey)) {
-                $this->public_key           = clean_param(mnet_get_public_key($this->wwwroot, $this->application), PARAM_PEM);
-            } else {
-                $this->public_key           = clean_param($pubkey, PARAM_PEM);
-            }
-            $this->public_key_expires   = $this->check_common_name($this->public_key);
-            $this->last_connect_time    = 0;
-            $this->last_log_id          = 0;
-            if ($this->public_key_expires == false) {
-                $this->public_key == '';
-                return false;
+        // TODO: In reality, this will be prohibitively slow... need another
+        // default - maybe blank string
+        $homepage = download_file_content($wwwroot);
+        if (!empty($homepage)) {
+            $count = preg_match("@<title>(.*)</title>@siU", $homepage, $matches);
+            if ($count > 0) {
+                $this->name = $matches[1];
             }
         }
 
-        return true;
+        $this->wwwroot              = $wwwroot;
+        $this->ip_address           = $ip_address;
+        $this->deleted              = 0;
+
+        $this->application = $DB->get_record('mnet_application', array('name'=>$application));
+        if (empty($this->application)) {
+            $this->application = $DB->get_record('mnet_application', array('name'=>'moodle'));
+        }
+
+        $this->applicationid = $this->application->id;
+
+        if(empty($pubkey)) {
+            $this->public_key           = clean_param(mnet_get_public_key($this->wwwroot, $this->application), PARAM_PEM);
+        } else {
+            $this->public_key           = clean_param($pubkey, PARAM_PEM);
+        }
+        $this->public_key_expires   = $this->check_common_name($this->public_key);
+        $this->last_connect_time    = 0;
+        $this->last_log_id          = 0;
+        if ($this->public_key_expires == false) {
+            $this->public_key == '';
+            return false;
+        }
     }
 
     function delete() {
