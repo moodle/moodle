@@ -77,6 +77,10 @@ if ($p_secret !== false) {
         notice(get_string('emailpasswordsent', '', $a), $changepasswordurl);
 
     } else {
+        if (!empty($user) and strlen($p_secret) === 15) {
+            // somebody probably tries to hack in by guessing secret - stop them!
+            $DB->set_field('user', 'secret', '', array('id'=>$user->id));
+        }
         print_header($strforgotten, $strforgotten, $navigation);
         print_error('forgotteninvalidurl');
     }
