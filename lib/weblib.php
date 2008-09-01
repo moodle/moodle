@@ -5697,19 +5697,20 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @param string $errorcode The name of the string from error.php (or other specified file) to print
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
+ * @param array $extralocations An array of strings with other locations to look for string files
  * @return does not return, terminates script
  */
-function print_error($errorcode, $module='error', $link='', $a=NULL) {
+function print_error($errorcode, $module='error', $link='', $a=NULL, $extralocations=NULL) {
     global $CFG, $SESSION, $THEME;
 
     if (empty($module) || $module === 'moodle' || $module === 'core') {
         $module = 'error';
     }
 
-    $message = get_string($errorcode, $module, $a);
+    $message = get_string($errorcode, $module, $a, $extralocations);
     if ($module === 'error' and strpos($message, '[[') === 0) {
         //search in moodle file if error specified - needed for backwards compatibility
-        $message = get_string($errorcode, 'moodle', $a);
+        $message = get_string($errorcode, 'moodle', $a, $extralocations);
     }
 
     if (empty($link) and !defined('ADMIN_EXT_HEADER_PRINTED')) {
