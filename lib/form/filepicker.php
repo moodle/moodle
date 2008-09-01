@@ -64,8 +64,8 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
             $filearea = $this->_filearea;
             $str .= <<<EOD
 <script type="text/javascript">
-function updatefile_$suffix(){
-    document.getElementById('repo_info_$suffix').innerHTML = '$strsaved';
+function updatefile_$suffix(str){
+    document.getElementById('repo_info_$suffix').innerHTML = str;
 }
 function callpicker_$suffix(){
     document.body.className += ' yui-skin-sam';
