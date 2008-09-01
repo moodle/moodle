@@ -5548,7 +5548,7 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @param object $a Extra words and phrases that might be required in the error string
  * @return terminates script, does not return!
  */
-function print_error($errorcode, $module='', $link='', $a=NULL) {
+function print_error($errorcode, $module='error', $link='', $a=NULL) {
     global $CFG, $UNITTEST;
 
     // If unittest running, throw exception instead
@@ -5581,13 +5581,17 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
         $DB->set_debug(0);
     }
 
-    if ($module == 'error') {
+    if ($module === 'error') {
         $modulelink = 'moodle';
     } else {
         $modulelink = $module;
     }
 
     $message = get_string($errorcode, $module, $a);
+    if ($module === 'error' and strpos($message, '[[') === 0) {
+        //search in moodle file if error specified - needed for backwards compatibility
+        $message = get_string($errorcode, 'moodle', $a);
+    }
 
     if (defined('FULLME') && FULLME == 'cron') {
         // Errors in cron should be mtrace'd.
@@ -5664,7 +5668,12 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
  * This function is used if fatal error occures before the themes are fully initialised (eg. in lib/setup.php)
  */
 function _print_early_error($errorcode, $module, $a) {
-    $message = clean_text(get_string($errorcode, $module, $a));
+    $message = get_string($errorcode, $module, $a);
+    if ($module === 'error' and strpos($message, '[[') === 0) {
+        //search in moodle file if error specified - needed for backwards compatibility
+        $message = get_string($errorcode, 'moodle', $a);
+    }
+    $message = clean_text($message);
 
     // In the name of protocol correctness, monitoring and performance
     // profiling, set the appropriate error headers for machine comsumption
