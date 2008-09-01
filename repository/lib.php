@@ -621,6 +621,7 @@ function repository_get_client($context){
     $stradd  = get_string('add', 'repository');
     $strback      = get_string('back', 'repository');
     $strclose     = get_string('close', 'repository');
+    $strcopying   = get_string('copying', 'repository');
     $strdownbtn   = get_string('getfile', 'repository');
     $strdownload  = get_string('downloadsucc', 'repository');
     $strdate      = get_string('date', 'repository').': ';
@@ -839,11 +840,23 @@ _client.postdata = function(obj) {
     }
     return str;
 }
-_client.loading = function(){
+_client.loading = function(type, name){
     var panel = new YAHOO.util.Element('panel-$suffix');
     panel.get('element').innerHTML = '';
     var content = document.createElement('div');
-    content.innerHTML = '$strloading';
+    content.style.textAlign='center';
+    var para = document.createElement('P');
+    var img = document.createElement('IMG');
+    if(type=='load'){
+    img.src = '$CFG->pixpath/i/loading.gif';
+    para.innerHTML = '$strloading';
+    }else{
+    img.src = '$CFG->pixpath/i/progressbar.gif';
+    para.innerHTML = '$strcopying '+name;
+    }
+    content.appendChild(para);
+    content.appendChild(img);
+    //content.innerHTML = '';
     panel.get('element').appendChild(content);
 }
 _client.rename = function(oldname, url, icon){
@@ -1057,7 +1070,7 @@ _client.upload_cb = {
         var loading = document.getElementById(u.id+'_loading');
         loading.innerHTML = '$strsaved';
         alert('$strsaved');
-        _client.req(_client.repositoryid, '', 0);
+        //_client.req(_client.repositoryid, '', 0);
     }
 }
 _client.uploadcontrol = function() {
@@ -1119,7 +1132,7 @@ _client.makepath = function(){
 _client.download = function(){
     var title = document.getElementById('newname-$suffix').value;
     var file = document.getElementById('fileurl-$suffix').value;
-    _client.loading();
+    _client.loading('download', title);
     var params = [];
     params['env']=_client.env;
     params['file']=file;
@@ -1146,7 +1159,7 @@ _client.login = function(){
     params['env'] = _client.env;
     params['ctx_id'] = $context->id;
     params['sesskey']= '$sesskey';
-    _client.loading();
+    _client.loading('load');
     var trans = YAHOO.util.Connect.asyncRequest('POST',
         '$CFG->wwwroot/repository/ws.php?action=sign', _client.callback, _client.postdata(params));
 }
@@ -1251,7 +1264,7 @@ _client.dlfile = {
 // request file list or login
 _client.req = function(id, path, reset) {
     _client.viewbar.set('disabled', false);
-    _client.loading();
+    _client.loading('load');
     _client.repositoryid = id;
     if (reset == 1) {
         action = 'logout';
@@ -1275,7 +1288,7 @@ _client.search = function(id){
         return;
     }
     _client.viewbar.set('disabled', false);
-    _client.loading();
+    _client.loading('load');
     var params = [];
     params['s']=data;
     params['env']=_client.env;

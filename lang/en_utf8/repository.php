@@ -4,6 +4,7 @@ $string['activaterep'] = 'Active repositories';
 $string['attachment'] = 'Attachment';
 $string['back'] = '&lt; Back';
 $string['close'] = 'Close';
+$string['copying'] = 'Copying';
 $string['configsaved'] = 'Configuration saved!';
 $string['confirmdelete'] = 'Are you sure you want to delete this repository - $a?';
 $string['create'] = 'Create';
