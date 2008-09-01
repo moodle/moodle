@@ -26,19 +26,21 @@ $repo_id = optional_param('repo_id', 1, PARAM_INT);
 $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);
 $userid  = $USER->id;
 
-if(!$repository = repository_get_instance($repo_id))
-{
+$sql = 'SELECT i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id='.$repo_id.' AND i.typeid=r.id';
+if(!$repository = $DB->get_record_sql($sql)) {
     $err = new stdclass;
     $err->e = get_string('invalidrepositoryid', 'repository');
     die(json_encode($err));
+} else {
+    $type = $repository->type;
 }
 
 if(file_exists($CFG->dirroot.'/repository/'.
-    $repository->type.'/repository.class.php'))
+    $type.'/repository.class.php'))
 {
     require_once($CFG->dirroot.'/repository/'.
-        $repository->type.'/repository.class.php');
-    $classname = 'repository_' . $repository->type;
+        $type.'/repository.class.php');
+    $classname = 'repository_' . $type;
     try{
         $repo = new $classname($repo_id, $ctx_id, array('ajax'=>true));
     } catch (repository_exception $e){
@@ -90,6 +92,14 @@ if ($action == 'list' || $action == 'search') {
 } elseif ($action == 'login') {
     try {
         echo json_encode($repo->print_login());
+    } catch (repository_exception $e){
+        $err = new stdclass;
+        $err->e = $e->getMessage();
+        die(json_encode($err));
+    }
+} elseif ($action == 'upload') {
+    try {
+        echo json_encode($repo->get_listing());
     } catch (repository_exception $e){
         $err = new stdclass;
         $err->e = $e->getMessage();

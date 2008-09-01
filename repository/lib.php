@@ -607,6 +607,51 @@ function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_dr
 }
 
 /**
+ * Save file to local filesystem pool
+ * @param string $elname name of element
+ * @param int $contextid
+ * @param string $filearea
+ * @param string $filepath
+ * @param string $filename - use specified filename, if not specified name of uploaded file used
+ * @param bool $override override file if exists
+ * @param int $userid
+ * @return mixed stored_file object or false if error; may throw exception if duplicate found
+ */
+function repository_store_to_filepool($elname, $filearea='user_draft', $filepath='/') {
+    global $USER;
+    if (!isset($_FILES[$elname])) {
+        return false;
+    }
+
+    $filename = $_FILES[$elname]['name'];
+    $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
+    $fs = get_file_storage();
+    $browser = get_file_browser();
+
+    if ($file = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
+        if ($override) {
+            $file->delete();
+        } else {
+            return false;
+        }
+    }
+
+    $file_record = new object();
+    $file_record->contextid = $context->id;
+    $file_record->filearea  = $filearea;
+    $file_record->itemid    = $itemid;
+    $file_record->filepath  = $filepath;
+    $file_record->filename  = $filename;
+    $file_record->userid    = $USER->id;
+
+    $file = $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
+    $info = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
+    $ret = array('url'=>$info->get_url(),'id'=>$itemid, 'file'=>$file->get_filename());
+    return $ret;
+}
+
+/**
  * Return javascript to create file picker to browse repositories
  * @global object $CFG
  * @global object $USER
@@ -1060,17 +1105,29 @@ _client.upload = function(){
     loading.id = u.id+'_loading';
     parent.appendChild(loading);
     YAHOO.util.Connect.setForm(aform, true, true);
-    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->wwwroot/repository/ws.php?action=upload&sesskey=$sesskey&ctx_id=$context->id&repo_id='+_client.repositoryid, _client.upload_cb);
+    var trans = YAHOO.util.Connect.asyncRequest('POST',
+        '$CFG->wwwroot/repository/ws.php?action=upload&sesskey=$sesskey&ctx_id=$context->id&repo_id='
+            +_client.repositoryid,
+        _client.upload_cb);
 }
 _client.upload_cb = {
     upload: function(o){
-        var u = _client.ds.upload;
-        var aform = document.getElementById(u.id);
-        aform.reset();
-        var loading = document.getElementById(u.id+'_loading');
-        loading.innerHTML = '$strsaved';
-        alert('$strsaved');
-        //_client.req(_client.repositoryid, '', 0);
+        try {
+            var ret = YAHOO.lang.JSON.parse(o.responseText);
+        } catch(e) {
+            alert('$strinvalidjson - '+o.responseText);
+        }
+        if(ret && ret.e){
+            var panel = new YAHOO.util.Element('panel-$suffix');
+            panel.get('element').innerHTML = ret.e;
+            return;
+        }
+        if(ret){
+            alert('$strsaved');
+            repository_client_$suffix.end(ret);
+        }else{
+            alert('$strinvalidjson');
+        }
     }
 }
 _client.uploadcontrol = function() {
@@ -1078,12 +1135,11 @@ _client.uploadcontrol = function() {
     if(_client.ds.upload){
         str += '<div id="'+_client.ds.upload.id+'_div">';
         str += '<form id="'+_client.ds.upload.id+'" onsubmit="return false">';
-        str += '<label for="'+_client.ds.upload.id+'-file">'+_client.ds.upload.name+'</label>';
-        str += '<input type="file" id="'+_client.ds.upload.id+'-file"/>';
+        str += '<label for="'+_client.ds.upload.id+'-file">'+_client.ds.upload.label+'</label>';
+        str += '<input type="file" id="'+_client.ds.upload.id+'-file" name="repo_upload_file" />';
         str += '<p class="upload"><a href="###" onclick="return repository_client_$suffix.upload();">$strupload</a></p>';
         str += '</form>';
         str += '</div>';
-        str += '<hr />';
     }
     return str;
 }
