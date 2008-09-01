@@ -671,6 +671,7 @@ function repository_get_client($context){
     $strdownload  = get_string('downloadsucc', 'repository');
     $strdate      = get_string('date', 'repository').': ';
     $strerror     = get_string('error', 'repository');
+    $strfilenotnull = get_string('filenotnull', 'repository');
     $strinvalidjson = get_string('invalidjson', 'repository');
     $strlistview  = get_string('listview', 'repository');
     $strlogout    = get_string('logout', 'repository');
@@ -1100,15 +1101,26 @@ _client.upload = function(){
     var u = _client.ds.upload;
     var aform = document.getElementById(u.id);
     var parent = document.getElementById(u.id+'_div');
-    var loading = document.createElement('DIV');
-    loading.innerHTML = "$struploading";
-    loading.id = u.id+'_loading';
-    parent.appendChild(loading);
-    YAHOO.util.Connect.setForm(aform, true, true);
-    var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->wwwroot/repository/ws.php?action=upload&sesskey=$sesskey&ctx_id=$context->id&repo_id='
-            +_client.repositoryid,
-        _client.upload_cb);
+    var d = document.getElementById(_client.ds.upload.id+'-file');
+    if(d.value!='' && d.value!=null){
+        var container = document.createElement('DIV');
+        container.id = u.id+'_loading';
+        container.style.textAlign='center';
+        var img = document.createElement('IMG');
+        img.src = '$CFG->pixpath/i/progressbar.gif';
+        var para = document.createElement('p');
+        para.innerHTML = '$struploading';
+        container.appendChild(para);
+        container.appendChild(img);
+        parent.appendChild(container);
+        YAHOO.util.Connect.setForm(aform, true, true);
+        var trans = YAHOO.util.Connect.asyncRequest('POST',
+            '$CFG->wwwroot/repository/ws.php?action=upload&sesskey=$sesskey&ctx_id=$context->id&repo_id='
+                +_client.repositoryid,
+            _client.upload_cb);
+    }else{
+        alert('$strfilenotnull');
+    }
 }
 _client.upload_cb = {
     upload: function(o){
