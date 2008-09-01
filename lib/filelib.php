@@ -59,6 +59,36 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
+ * Finds occurences of a link to "draftfile.php" in text and replaces the 
+ * address based on passed information. Matching is performed using the given 
+ * current itemid, contextid and filearea and $CFG->wwwroot. This function 
+ * replaces all the urls for one file. If more than one files were sent, it 
+ * must be called once for each file.
+ *
+ * @uses $CFG
+ *
+ * @param $text string text to modify
+ * @param $contextid int context that the file should be assigned to
+ * @param $filepath string filepath under which the file should be saved
+ * @param $filearea string filearea into which the file should be saved
+ * @param $itemid int the itemid of the file
+ * @param $currentcontextid int the current contextid of the file
+ * @param $currentfilearea string the current filearea of the file (defaults
+ *   to "user_draft")
+ * @return string modified $text, or null if an error occured.
+ */
+function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $currentcontextid, $currentfilearea = 'userdraft') {
+    global $CFG;
+
+    //TODO: complete, test and adjust if the filearea is removed from the url.
+
+    $re = $CFG->wwwroot .'\/draftfile.php\/'. $currentcontextid .'\/'. $currentfilearea .'\/'. $itemid .'\/(?[A-Fa-f0-9]+)\/([.]+)/';
+    $newurl = $CFG->wwwroot .'/userfile.php/'. $contextid .'/'. $filearea .'/'. $itemid .'/'. $filepath .'/\0';
+    
+    return preg_replace($re, $newurl, $text);
+}
+
+/**
  * Fetches content of file from Internet (using proxy if defined). Uses cURL extension if present.
  * Due to security concerns only downloads from http(s) sources are supported.
  *
