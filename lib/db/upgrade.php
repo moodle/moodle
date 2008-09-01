@@ -751,6 +751,88 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008082900);
     }
 
+    if ($result && $oldversion < 2008090108) {
+        $repo = new object();
+        $repo->type      = 'upload';
+        $repo->visible   = 1;
+        $repo->sortorder = 1;
+        if (!$DB->record_exists('repository', array('type'=>'upload'))) {
+            $typeid = $DB->insert_record('repository', $repo);
+        }else{
+            $record = $DB->get_record('repository', array('type'=>'upload'));
+            $typeid = $record->id;
+        }
+        if (!$DB->record_exists('repository_instances', array('typeid'=>$typeid))) {
+            $instance = new object();
+            $instance->name      = 'Upload instance';
+            $instance->typeid    = $typeid;
+            $instance->userid    = 0;
+            $instance->contextid = SITEID;
+            $instance->timecreated  = time();
+            $instance->timemodified = time();
+            $result = $result && $DB->insert_record('repository_instances', $instance);
+        }
+        $repo->type      = 'local';
+        $repo->visible   = 1;
+        $repo->sortorder = 1;
+        if (!$DB->record_exists('repository', array('type'=>'local'))) {
+            $typeid = $DB->insert_record('repository', $repo);
+        }else{
+            $record = $DB->get_record('repository', array('type'=>'local'));
+            $typeid = $record->id;
+        }
+        if (!$DB->record_exists('repository_instances', array('typeid'=>$typeid))) {
+            $instance = new object();
+            $instance->name      = 'Local Moodle';
+            $instance->typeid    = $typeid;
+            $instance->userid    = 0;
+            $instance->contextid = SITEID;
+            $instance->timecreated  = time();
+            $instance->timemodified = time();
+            $result = $result && $DB->insert_record('repository_instances', $instance);
+        }
+        $repo->type      = 'boxnet';
+        $repo->visible   = 1;
+        $repo->sortorder = 1;
+        if (!$DB->record_exists('repository', array('type'=>'boxnet'))) {
+            $typeid = $DB->insert_record('repository', $repo);
+        }else{
+            $record = $DB->get_record('repository', array('type'=>'local'));
+            $typeid = $record->id;
+        }
+        if (!$DB->record_exists('repository_instances', array('typeid'=>$typeid))) {
+            $instance = new object();
+            $instance->name      = 'Box.net';
+            $instance->typeid    = $typeid;
+            $instance->userid    = 0;
+            $instance->contextid = SITEID;
+            $instance->timecreated  = time();
+            $instance->timemodified = time();
+            $result = $result && $DB->insert_record('repository_instances', $instance);
+        }
+        $repo->type      = 'flickr';
+        $repo->visible   = 1;
+        $repo->sortorder = 1;
+        if (!$DB->record_exists('repository', array('type'=>'flickr'))) {
+            $typeid = $DB->insert_record('repository', $repo);
+        }else{
+            $record = $DB->get_record('repository', array('type'=>'local'));
+            $typeid = $record->id;
+        }
+        if (!$DB->record_exists('repository_instances', array('typeid'=>$typeid))) {
+            $instance = new object();
+            $instance->name      = 'Flickr!';
+            $instance->typeid    = $typeid;
+            $instance->userid    = 0;
+            $instance->contextid = SITEID;
+            $instance->timecreated  = time();
+            $instance->timemodified = time();
+            $result = $result && $DB->insert_record('repository_instances', $instance);
+        }
+
+        upgrade_main_savepoint($result, 2008090108);
+    }
+
     return $result;
 }
 
