@@ -23,6 +23,7 @@ $string['exporting'] = 'Exporting to portfolio';
 $string['exportingcontentfrom'] = 'Exporting content from $a';
 $string['exportcomplete'] = 'Portfolio export complete!';
 $string['exportqueued'] = 'Portfolio export has been successfully queued for transfer';
+$string['exportqueuedforced'] = 'Portfolio export has been successfully queued for transfer (the remote system has enforced queued transfers)';
 $string['exportedpreviously'] = 'Previous exports';
 $string['exportexceptionnoexporter'] = 'A portfolio_export_exception was thrown with an active session but no exporter object';
 $string['failedtosendpackage'] = 'Failed to send your data to the selected portfolio system!';

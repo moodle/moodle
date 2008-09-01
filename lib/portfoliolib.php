@@ -1825,6 +1825,8 @@ final class portfolio_exporter {
 
     private $stage;
 
+    private $forcequeue;
+
     /**
     * id of this export
     * matches record in portfolio_tempdata table
@@ -2014,6 +2016,7 @@ final class portfolio_exporter {
                 } else if ($expectedtime == PORTFOLIO_TIME_FORCEQUEUE) {
                     $pluginbits['wait'] = 0;
                     $pluginbits['hidewait'] = 1;
+                    $this->forcequeue = true;
                 }
                 $callerbits['hideformat'] = $pluginbits['hideformat'] = (count($formats) == 1);
                 $this->caller->set_export_config($callerbits);
@@ -2038,6 +2041,9 @@ final class portfolio_exporter {
             );
             $this->instance->set_export_config($config);
             $this->caller->set_export_config(array('format' => $format, 'hideformat' => 1));
+            if ($expectedtime == PORTFOLIO_TIME_FORCEQUEUE) {
+                $this->forcequeue = true;
+            }
             return true;
             // do not break - fall through to confirm
         }
@@ -2197,6 +2203,9 @@ final class portfolio_exporter {
         $key = 'exportcomplete';
         if ($queued) {
             $key = 'exportqueued';
+            if ($this->forcequeue) {
+                $key = 'exportqueuedforced';
+            }
         }
         $this->print_header($key, false);
         if ($returnurl) {
