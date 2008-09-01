@@ -7227,6 +7227,9 @@ function address_in_subnet($addr, $subnetstr) {
         $subnet = trim($subnet);
         if (strpos($subnet, '/') !== false) { /// type 1
             list($ip, $mask) = explode('/', $subnet);
+            if ($mask === '') {
+                $mask = 32;
+            }
             $mask = 0xffffffff << (32 - $mask);
             $found = ((ip2long($addr) & $mask) == (ip2long($ip) & $mask));
         } else if (strpos($subnet, '-') !== false)  {/// type 3
@@ -7239,7 +7242,10 @@ function address_in_subnet($addr, $subnetstr) {
                         $subnetrange[0] <= $lastaddrpart && $lastaddrpart <= $subnetrange[1]);
             }
         } else { /// type 2
-            $found = (strpos($addr, $subnet) === 0);
+            if ($subnet[strlen($subnet) - 1] != '.') {
+                $subnet .= '.';
+            }
+            $found = (strpos($addr . '.', $subnet) === 0);
         }
 
         if ($found) {
