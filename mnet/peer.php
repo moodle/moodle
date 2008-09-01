@@ -98,32 +98,42 @@ class mnet_peer {
         }
     }
 
+    /*
+     * Process request to delete mnet peer
+     * This includes deleting current sessions, and rpc2host records.
+     * If the peer has been actively used, we mark the peer as deleted,
+     * otherwise it is actually deleted
+     * @return bool - success
+     */
     function delete() {
         global $DB;
+        $markasdeleted = false;
 
-        if ($this->deleted) return true;
-
-        $users = $DB->count_records('user', array('mnethostid'=>$this->id));
-        if ($users > 0) {
-            $this->deleted = 1;
+        if ($this->deleted) {
+            return true;
         }
 
-        $actions = $DB->count_records('mnet_log', array('hostid'=>$this->id));
-        if ($actions > 0) {
-            $this->deleted = 1;
+        // If users have sso'd from this mnet peer, need to retain the peer info
+        $numusers = $DB->count_records('user', array('mnethostid'=>$this->id));
+        if ($numusers > 0) {
+            $markasdeleted = true;
+        }
+
+        //If there are items in the log, need to retain peer info
+        $numactions = $DB->count_records('mnet_log', array('hostid'=>$this->id));
+        if ($numactions > 0) {
+            $markasdeleted = true;
         }
 
         $obj = $DB->delete_records('mnet_rpc2host', array('host_id'=>$this->id));
 
         $this->delete_all_sessions();
 
-        // If we don't have any activity records for which the mnet_host table
-        // provides a foreign key, then we can delete the record. Otherwise, we
-        // just mark it as deleted.
-        if (0 == $this->deleted) {
-            $DB->delete_records('mnet_host', array("id"=>$this->id));
+        if ($markasdeleted) {
+            $this->deleted = 1;
+            return $this->commit();
         } else {
-            $this->commit();
+            return $DB->delete_records('mnet_host', array("id"=>$this->id));
         }
     }
 
