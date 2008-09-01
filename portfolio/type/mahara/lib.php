@@ -154,7 +154,10 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         $client->add_param($this->token);
         $client->add_param($this->get('user')->username);
         $client->add_param($this->resolve_format());
-        $client->add_param(array('filesmanifest' => $this->filesmanifest));
+        $client->add_param(array(
+            'filesmanifest' => $this->filesmanifest,
+            'zipfilesha1'   => $this->get('file')->get_contenthash()
+        ));
         $client->add_param($this->get_export_config('wait'));
         $this->ensure_mnethost();
         if (!$client->send($this->mnethost)) {
