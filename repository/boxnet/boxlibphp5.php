@@ -125,7 +125,7 @@ class boxclient {
         }
     }
     //
-    function getfiletree($params = array()) {
+    function getfiletree($path, $params = array()) {
         $this->_clearErrors();
         $params['auth_token'] = $this->auth_token;
         $params['folder_id']  = 0;
@@ -154,13 +154,15 @@ class boxclient {
 
     function buildtree($sax, &$tree){
         $sax = (array)$sax;
+        $count = 0;
         foreach($sax as $k=>$v){
             if($k == 'folders'){
                 $o = $sax[$k];
                 foreach($o->folder as $z){
                     $tmp = array('title'=>(string)$z->attributes()->name,
                         'size'=>0, 'date'=>userdate(time()),
-                        'thumbnail'=>'http://www.box.net/img/small_folder_icon.gif');
+                        'thumbnail'=>'http://www.box.net/img/small_folder_icon.gif',
+                        'path'=>array('name'=>(string)$z->attributes()->name, 'path'=>(int)$z->attributes()->id));
                     $tmp['children'] = array();
                     $this->buildtree($z, $tmp['children']);
                     $tree[] = $tmp;
@@ -177,10 +179,12 @@ class boxclient {
                         'thumbnail'=>$thumbnail,
                         'date'=>userdate((int)$file->attributes()->updated), 
                         'source'=>'http://box.net/api/1.0/download/'
-                            .$this->auth_token.'/'.(string)$file->attributes()->id);
+                            .$this->auth_token.'/'.(string)$file->attributes()->id,
+                        'url'=>(string)$file->attributes()->shared_link);
                     $tree[] = $tmp;
                 }
             }
+            $count++;
         }
     }
     // Get the file list

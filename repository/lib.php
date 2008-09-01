@@ -653,7 +653,8 @@ function repository_get_client($context){
 #repo-list-$suffix li{margin-bottom: 1em}
 #paging-$suffix{margin:10px 5px; clear:both;}
 #paging-$suffix a{padding: 4px;border: 1px solid #CCC}
-#path-$suffix a{padding: 4px;background: gray}
+#path-$suffix{margin: 4px;border-bottom: 1px dotted gray;}
+#path-$suffix a{padding: 4px;}
 #panel-$suffix{padding:0;margin:0; text-align:left;}
 #rename-form{text-align:center}
 #rename-form p{margin: 1em;}
@@ -1097,30 +1098,20 @@ _client.makepath = function(){
         oDiv.id = "path-$suffix";
         panel.get('element').appendChild(oDiv);
         for(var i = 0; i < _client.ds.path.length; i++) {
-            if(_client.ds.dynload){
-                var str = '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', "'+_client.ds.path[i].path+'", 0)" href="###">';
-                str += _client.ds.path[i].name;
-                str += '</a> ';
-                //oDiv.innerHTML += str;
-            }else{
-                var link = document.createElement('A');
-                link.href = "###";
-                link.innerHTML = _client.ds.path[i].name;
-                link.id = 'path-'+i+'-el';
-                var sep = document.createElement('SPAN');
-                sep.innerHTML = ' / ';
-                panel.get('element').appendChild(link);
-                panel.get('element').appendChild(sep);
-                var el = new YAHOO.util.Element(link.id);
-                //el.ds = list[k].children;
-                el.on('click', function(){
-                    if(_client.ds.dynload) {
-                        // TODO: get file list dymanically
-                    }else{
-                        // TODO: try to find children
-                    }
-                });
-            }
+            var link = document.createElement('A');
+            link.href = "###";
+            link.innerHTML = _client.ds.path[i].name;
+            link.id = 'path-'+i+'-el';
+            var sep = document.createElement('SPAN');
+            sep.innerHTML = '/';
+            oDiv.appendChild(link);
+            oDiv.appendChild(sep);
+            var el = new YAHOO.util.Element(link.id);
+            el.id = _client.repositoryid;
+            el.path = _client.ds.path[i].path;
+            el.on('click', function(){
+                repository_client_$suffix.req(this.id, this.path, 0);
+            });
         }
     }
 }

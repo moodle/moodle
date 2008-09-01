@@ -96,12 +96,12 @@ class repository_boxnet extends repository{
         global $CFG, $SESSION;
         $list = array();
         $ret  = array();
-        $tree = $this->box->getfiletree();
+        $tree = $this->box->getfiletree($path);
         if(!empty($tree)) {
             // TODO: think about how to search
             $ret['list']   = $tree;
             $ret['manage'] = 'http://www.box.net/files';
-            $ret['path'] = array(array('name'=>'Root','path'=>null));
+            $ret['path'] = array(array('name'=>'Root', 'path'=>0));
             $this->listing = $tree;
             return $ret;
         } else {
