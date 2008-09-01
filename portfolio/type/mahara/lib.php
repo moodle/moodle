@@ -136,13 +136,17 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         return false;
     }
 
-    public function send_package() {
-        global $CFG;
+    private function ensure_environment() {
         global $MNET;
         if (empty($MNET)) {
             $MNET = new mnet_environment();
             $MNET->init();
         } // no idea why this happens :(
+    }
+
+    public function send_package() {
+        global $CFG;
+        $this->ensure_environment();
         // send the 'content_ready' request to mahara
         require_once($CFG->dirroot . '/mnet/xmlrpc/client.php');
         $client = new mnet_xmlrpc_client();
@@ -150,7 +154,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         $client->add_param($this->token);
         $client->add_param($this->get('user')->username);
         $client->add_param($this->resolve_format());
-        $client->add_param($this->filesmanifest);
+        $client->add_param(array('filesmanifest' => $this->filesmanifest));
         $client->add_param($this->get_export_config('wait'));
         $this->ensure_mnethost();
         if (!$client->send($this->mnethost)) {
@@ -171,7 +175,13 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
 
     public function get_continue_url() {
         $this->ensure_mnethost();
-        return $this->hostrecord->wwwroot . '/artefact/file/'; // @todo penny this might change later when we change formats.
+        $this->ensure_environment();
+        $mnetauth = get_auth_plugin('mnet');
+        $remoteurl = '/artefact/file/';// @todo penny this might change later when we change formats.
+        if (!$url = $mnetauth->start_jump_session($this->get_config('mnethostid'), $remoteurl)) {
+            return false;
+        }
+        return $url;
     }
 
     public function steal_control($stage) {
@@ -260,7 +270,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     public static function fetch_file($token) {
         global $DB, $MNET_REMOTE_CLIENT;;
         try {
-            $transferid = $DB->get_field('portfolio_mahara_queue', 'transferid', array('token' => $token));
+            if (!$transferid = $DB->get_field('portfolio_mahara_queue', 'transferid', array('token' => $token))) {
+                exit(mnet_server_fault(8009, 'could not find token'));
+            }
             $exporter = portfolio_exporter::rewaken_object($transferid);
         } catch (portfolio_exception $e) {
             exit(mnet_server_fault(8010, 'invalid transfer id'));
@@ -301,16 +313,6 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
             }
         }
     }
-
-/*
-    public function __wakeup() {
-        global $CFG;
-        if (empty($CFG)) {
-            return; // too early
-        }
-        require_once($CFG->dirroot . '/mnet/lib.php');
-    }
-*/
 }
 
 ?>
