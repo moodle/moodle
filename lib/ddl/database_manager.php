@@ -264,10 +264,6 @@ class database_manager {
      */
     public function find_key_name(xmldb_table $xmldb_table, xmldb_key $xmldb_key) {
 
-if (!is_object($xmldb_key)) {
-    var_dump($xmldb_table);
-    debugging('grrr');
-}
         $keycolumns = $xmldb_key->getFields();
 
     /// Get list of keys in table
