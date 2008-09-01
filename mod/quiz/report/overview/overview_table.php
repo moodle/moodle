@@ -27,7 +27,7 @@ class quiz_report_overview_table extends table_sql {
         global $CFG, $DB;
         if ($this->rawdata) {
             // Define some things we need later to process raw data from db.
-            $this->strtimeformat = get_string('strftimedatetime');
+            $this->strtimeformat = str_replace(',', '', get_string('strftimedatetime'));
             parent::build_table();
             //end of adding data from attempts data to table / download
             //now add averages at bottom of table :
