@@ -21,8 +21,6 @@ class quiz_report_responses_table extends table_sql {
     }
     function build_table(){
         if ($this->rawdata) {
-            // Define some things we need later to process raw data from db.
-            $this->strtimeformat = get_string('strftimedatetime');
             parent::build_table();
         }
     }
@@ -149,7 +147,7 @@ class quiz_report_responses_table extends table_sql {
             $questionid = $matches[1];
             $question = $this->questions[$questionid];
             $responses =  get_question_actual_response($question, $statesforattempt[$questionid]);
-            $response = (!empty($responses)? implode(', ',$responses) : '-');
+            $response = (!empty($responses)? implode('; ',$responses) : '-');
             $grade = $statesforattempt[$questionid]->last_graded->grade
                             / $this->questions[$questionid]->maxgrade;
             if (!$this->is_downloading()) {
