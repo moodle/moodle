@@ -18,6 +18,7 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button
     var $_helpbutton='';
     
     function MoodleQuickForm_filepicker($elementName=null, $value=null, $filearea=null, $attributes=null) {
+        HTML_QuickForm_input::HTML_QuickForm_input($elementName, $value, $attributes); // Set label cause button doesn't
         parent::HTML_QuickForm_button($elementName, $value, $attributes);
         $this->_filearea = $filearea;
     }
