@@ -5546,9 +5546,10 @@ function print_scale_menu_helpbutton($courseid, $scale, $return=false) {
  * @param string $module name of module
  * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
  * @param object $a Extra words and phrases that might be required in the error string
+ * @param array $extralocations An array of strings with other locations to look for string files
  * @return terminates script, does not return!
  */
-function print_error($errorcode, $module='error', $link='', $a=NULL) {
+function print_error($errorcode, $module='error', $link='', $a=NULL, $extralocations=NULL) {
     global $CFG, $UNITTEST;
 
     // If unittest running, throw exception instead
@@ -5564,16 +5565,16 @@ function print_error($errorcode, $module='error', $link='', $a=NULL) {
 
     if (!isset($CFG->theme) or !isset($CFG->stylesheets)) {
         // error found before setup.php finished
-        _print_early_error($errorcode, $module, $a);
+        _print_early_error($errorcode, $module, $a, $extralocations);
     } else {
-        _print_normal_error($errorcode, $module, $a, $link, debug_backtrace());
+        _print_normal_error($errorcode, $module, $a, $link, debug_backtrace(), null, $extralocations);
     }
 }
 
 /**
  * Internal function - do not use directly!!
  */
-function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debuginfo=null, $showerrordebugwarning=false) {
+function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debuginfo=null, $extralocations=null, $showerrordebugwarning=false) {
     global $CFG, $SESSION, $THEME, $DB;
 
     if ($DB) {
@@ -5587,10 +5588,10 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
         $modulelink = $module;
     }
 
-    $message = get_string($errorcode, $module, $a);
+    $message = get_string($errorcode, $module, $a, $extralocations);
     if ($module === 'error' and strpos($message, '[[') === 0) {
         //search in moodle file if error specified - needed for backwards compatibility
-        $message = get_string($errorcode, 'moodle', $a);
+        $message = get_string($errorcode, 'moodle', $a, $extralocations);
     }
 
     if (defined('FULLME') && FULLME == 'cron') {
@@ -5667,11 +5668,11 @@ function _print_normal_error($errorcode, $module, $a, $link, $backtrace, $debugi
  * Internal function - do not use directly!!
  * This function is used if fatal error occures before the themes are fully initialised (eg. in lib/setup.php)
  */
-function _print_early_error($errorcode, $module, $a) {
-    $message = get_string($errorcode, $module, $a);
+function _print_early_error($errorcode, $module, $a, $extralocations=NULL) {
+    $message = get_string($errorcode, $module, $a, $extralocations);
     if ($module === 'error' and strpos($message, '[[') === 0) {
         //search in moodle file if error specified - needed for backwards compatibility
-        $message = get_string($errorcode, 'moodle', $a);
+        $message = get_string($errorcode, 'moodle', $a, $extralocations);
     }
     $message = clean_text($message);
 

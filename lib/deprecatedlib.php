@@ -573,7 +573,7 @@ function error($message, $link='') {
         throw new moodle_exception('notlocalisederrormessage', 'error', $link, $message);
     }
 
-    _print_normal_error('notlocalisederrormessage', 'error', $message, $link, debug_backtrace(), null, true); // show debug warning
+    _print_normal_error('notlocalisederrormessage', 'error', $message, $link, debug_backtrace(), null, null, true); // show debug warning
 }
 
 
