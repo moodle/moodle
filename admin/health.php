@@ -645,13 +645,9 @@ class problem_000015 extends problem_base {
             ORDER BY numquestions DESC, qc.name");
         $table = '<table><thead><tr><th>Cat id</th><th>Category name</th>' .
         "<th>Context id</th><th>Num Questions</th></tr></thead><tbody>\n";
-        $maxnumquestions = 0;
         foreach ($problemcategories as $cat) {
-            $table .= "<tr><td>$cat->id/td><td>" . s($cat->name) . "</td><td>" .
+            $table .= "<tr><td>$cat->id</td><td>" . s($cat->name) . "</td><td>" .
             $cat->contextid ."</td><td>$cat->numquestions</td></tr>\n";
-            if ($maxnumquestions < $cat->numquestions) {
-                $maxnumquestions = $cat->numquestions;
-            }
         }
         $table .= '</tbody></table>';
         return '<p>All question categories are linked to a context id, and, ' .
@@ -663,10 +659,10 @@ class problem_000015 extends problem_base {
     function solution() {
         global $CFG;
         return '<p>You can delete the empty categories by executing the following SQL:</p><pre>
-DELETE FROM ' . $CFG->prefix . 'question_categories
+DELETE FROM ' . $CFG->prefix . 'question_categories qc
 WHERE
-    NOT EXIST (SELECT * FROM ' . $CFG->prefix . 'question q WHERE q.category = qc.id)
-AND NOT EXIST (SELECT * FROM ' . $CFG->prefix . 'context context WHERE qc.contextid = con.id)
+    NOT EXISTS (SELECT * FROM ' . $CFG->prefix . 'question q WHERE q.category = qc.id)
+AND NOT EXISTS (SELECT * FROM ' . $CFG->prefix . 'context con WHERE qc.contextid = con.id)
         </pre><p>Any remaining categories that contain questions will require more thought. ' .
         'People in the <a href="http://moodle.org/mod/forum/view.php?f=121">Quiz forum</a> may be able to help.</p>';
     }
@@ -701,8 +697,8 @@ class problem_000016 extends problem_base {
         '<th>Id</th><th>Name</th><th>Context id</th>' .
         "</tr></thead><tbody>\n";
         foreach ($problemcategories as $cat) {
-            $table .= "<tr><td>$cat->childid/td><td>" . s($cat->childname) .
-            "</td><td>$cat->childcon</td><td>$cat->parentid/td><td>" . s($cat->parentname) .
+            $table .= "<tr><td>$cat->childid</td><td>" . s($cat->childname) .
+            "</td><td>$cat->childcon</td><td>$cat->parentid</td><td>" . s($cat->parentname) .
             "</td><td>$cat->parentcon</td></tr>\n";
         }
         $table .= '</tbody></table>';
