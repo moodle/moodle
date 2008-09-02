@@ -28,7 +28,8 @@ class repository_upload extends repository {
             return $this->info;
         }else{
             $ret = array();
-            $ret['nologin'] = true;
+            $ret['nologin']  = true;
+            $ret['nosearch'] = true;
             // define upload form in file picker
             $ret['upload'] = array('label'=>get_string('attachment', 'repository'), 'id'=>'repo-form');
             $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
@@ -55,6 +56,9 @@ class repository_upload extends repository {
 
     // empty function is necessary to make it possible to edit the name of the repository
     public function admin_config_form(&$mform) {
+    }
+    public function get_name(){
+        return get_string('repositoryname', 'repository_upload');;
     }
 }
 ?>

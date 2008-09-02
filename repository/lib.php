@@ -80,6 +80,7 @@ abstract class repository {
         foreach ($options as $n => $v) {
             $this->options[$n] = $v;
         }
+        $this->name = $this->get_name();
     }
 
     /**
@@ -188,6 +189,22 @@ abstract class repository {
             return $str;
         }
     }
+    public function get_name(){
+        global $DB;
+        // We always verify instance id from database,
+        // so we always know repository name before init
+        // a repository, so we don't enquery repository
+        // name from database again here.
+        if (isset($this->options['name'])) {
+            return $this->options['name'];
+        } else {
+            if ( $repo = $DB->get_record('repository_instances', array('id'=>$this->id)) ) {
+                return $repo->name;
+            } else {
+                return '';
+            }
+        }
+    }
 
     /**
      * Provide repository instance information for Ajax
@@ -198,7 +215,7 @@ abstract class repository {
         global $CFG;
         $repo = new stdclass;
         $repo->id   = $this->id;
-        $repo->name = $this->options['name'];
+        $repo->name = $this->get_name();
         $repo->type = $this->options['type'];
         $repo->icon = $CFG->wwwroot.'/repository/'.$repo->type.'/icon.png';
         return $repo;
@@ -386,6 +403,7 @@ abstract class repository {
      *   'dynload' => (bool) use dynamic loading,
      *   'manage' => (string) link to file manager,
      *   'nologin' => (bool) requires login,
+     *   'nosearch' => (bool) no search link,
      *   'upload' => array( // upload manager
      *     'name' => (string) label of the form element,
      *     'id' => (string) id of the form element
@@ -1300,7 +1318,9 @@ _client.callback = {
                 mgr.id = 'repo-mgr-$suffix-'+_client.repositoryid;
                 mgr.target = "_blank";
             }
-            oDiv.appendChild(search);
+            if(_client.ds.nosearch != true){
+                oDiv.appendChild(search);
+            }
             if(mgr != null) {
                 oDiv.appendChild(mgr);
             }

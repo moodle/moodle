@@ -176,5 +176,8 @@ class repository_local extends repository {
     // empty function is necessary to make it possible to edit the name of the repository
     public function admin_config_form(&$mform) {
     }
+    public function get_name(){
+        return get_string('repositoryname', 'repository_local');;
+    }
 }
 ?>
