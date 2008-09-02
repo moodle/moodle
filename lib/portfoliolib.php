@@ -1734,10 +1734,8 @@ final class portfolio_admin_form extends moodleform {
             }
         }
 
-
-        if (isset($result) && is_string($result)) { // something went wrong, stop
-            $mform->addElement('static', 'insane', '', get_string($result, 'portfolio_' . $this->plugin)); //, get_string($result, 'portfolio_' . $this->plugin));
-            //throw new portfolio_exception($result, 'portfolio_' . $this->plugin, $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php');
+        if (isset($result) && is_string($result)) { // something went wrong, warn...
+            $mform->addElement('warning', 'insane', null, get_string($result, 'portfolio_' . $this->plugin));
         }
 
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
