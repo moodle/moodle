@@ -47,16 +47,13 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         }
         $mform->addElement('select', 'mnethostid', get_string('mnethost', 'portfolio_mahara'), $hosts);
         $mform->addRule('mnethostid', $strrequired, 'required', null, 'client');
-        if ($errorcode = self::plugin_sanity_check()) {
-            return $errorcode; // processing stops when we return a string.
-        }
-        if (!empty($this) && $errorcode = $this->instance_sanity_check()) {
-            return $errorcode;
-        }
     }
 
     public function instance_sanity_check() {
         // make sure the host record exists since we don't have referential integrity
+        if (!is_enabled_auth('mnet')) {
+            return PORTFOLIO_MAHARA_ERR_NOMNETAUTH;
+        }
         try {
             $this->ensure_mnethost();
         }
@@ -82,9 +79,6 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         }
         if (!self::get_mnet_hosts()) {
             $errorcode =  PORTFOLIO_MAHARA_ERR_NOHOSTS;
-        }
-        if (!empty($errorcode)) { // disable the plugins // @todo
-            $DB->set_field('portfolio_instance', 'visible', 0, array('plugin' => 'mahara'));
         }
         return $errorcode;
     }
