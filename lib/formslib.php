@@ -540,44 +540,89 @@ class moodleform {
     /**
      * Save file to local filesystem pool
      * @param string $elname name of element
-     * @param int $contextid
-     * @param string $filearea
-     * @param string $filepath
-     * @param string $filename - use specified filename, if not specified name of uploaded file used
+     * @param int $newcontextid
+     * @param string $newfilearea
+     * @param string $newfilepath
+     * @param string $newfilename - use specified filename, if not specified name of uploaded file used
      * @param bool $override override file if exists
-     * @param int $userid
+     * @param int $newuserid - new userid if required
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
-    function save_stored_file($elname, $contextid, $filearea, $itemid, $filepath, $filename=null, $override=false, $userid=null) {
+    function save_stored_file($elname, $newcontextid, $newfilearea, $newitemid, $newfilepath, 
+                              $newfilename=null, $override=false, $newuserid=null) {
+
+        global $USER;
+
         if (!$this->is_submitted() or !$this->is_validated()) {
             return false;
         }
 
-        if (!isset($_FILES[$elname])) {
-            return false;
+        if (empty($newuserid)) {
+            $newuserid = $USER->id;
         }
 
-        $filename = is_null($filename) ? $_FILES[$elname]['name'] : $filename;
+        if (isset($_FILES[$elname])) {
+            $filename = is_null($newfilename) ? $_FILES[$elname]['name'] : $newfilename;
 
-        $fs = get_file_storage();
+            $fs = get_file_storage();
 
-        if ($file = $fs->get_file($contextid, $filearea, $itemid, $filepath, $filename)) {
-            if ($override) {
-                $file->delete();
-            } else {
+            if ($file = $fs->get_file($newcontextid, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
+                if ($override) {
+                    $file->delete();
+                } else {
+                    return false;
+                }
+            }
+
+            $file_record = new object();
+            $file_record->contextid = $newcontextid;
+            $file_record->filearea  = $newfilearea;
+            $file_record->itemid    = $newitemid;
+            $file_record->filepath  = $newfilepath;
+            $file_record->filename  = $newfilename;
+            $file_record->userid    = $newuserid;
+
+            return $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
+
+        } else if (isset($this->exportValues[$elname])) {    // Submitted data contains itemid in user's draft_area
+            
+            $itemid = $this->exportValues[$elname];
+
+            if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
                 return false;
             }
+
+            if (!$files = get_area_files($context->id, 'user_draft', $itemid, 'itemid, filepath, filename', false)) {
+                return false;
+            }
+
+            $file = array_pop($files);   // Get the one and only item out of the array
+            
+            $params = $file->get_params();
+
+            $fs = get_file_storage();
+
+            $newrecord = new object();
+            $newrecord->contextid = $newcontextid;
+            $newrecord->filearea = $newfilearea;
+            $newrecord->itemid = $newitemid;
+            $newrecord->filepath = $newfilepath;
+            $newrecord->filename = ($newfilename ? $newfilename : $params['filename']);
+
+            $newrecord->timecreated = $file->get_timecreated();
+            $newrecord->timemodified = $file->get_timemodified();
+            $newrecord->mimetype = $file->get_mimetype();
+            $newrecord->userid = $file->get_userid();
+
+            if (!$newfile = $this->create_file_from_storedfile($newrecord, $file->get_id)) {
+                return false;
+            }
+
+            $file->delete();
+            return $newfile;
         }
 
-        $file_record = new object();
-        $file_record->contextid = $contextid;
-        $file_record->filearea  = $filearea;
-        $file_record->itemid    = $itemid;
-        $file_record->filepath  = $filepath;
-        $file_record->filename  = $filename;
-        $file_record->userid    = $userid;
-
-        return $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
+        return false;
     }
 
     /**
