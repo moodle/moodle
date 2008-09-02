@@ -89,48 +89,6 @@ function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $cu
 }
 
 /**
- * Moves a file from user_draft filearea to it's final filearea and changes
- * it's itemid if desired.
- *
- * @param object $context current context of the file
- * @param int $itemid current itemid
- * @param string $filename name of the file
- * @param string $filepath path of the file (should usually be '/')
- * @param string $newfilearea destination filearea
- * @param object $newcontext new context of the file
- * @param int $newitemid new itemid (if null, keeps current)
- * @param string $newfilename new file name (if null, keeps current)
- * @param string $newfilepath new file path (if null, keeps current)
- */
-function move_file_to_final_destination($context, $itemid, $filename, $filepath, $newfilearea, $newcontext, $newitemid = null, $newfilename = null, $newfilepath = null) {
-    
-    $fb = get_file_browser();
-    $file = $fb->get_file_info($context, 'user_draft', $itemid, $filepath, $filename);
-    $fid = $file->get_id(); // todo: this doesn't work. silly me can't figure out where to get file id.
-
-    // create a new file, based on $file
-    $fs = get_file_storage();
-    $newrecord = new object();
-    $newrecord->contextid = ($newcontext ? $newcontext->id : $context->id);
-    $newrecord->filearea = $newfilearea;
-    $newrecord->itemid = ($newitemid ? $newitemid : $itemid);
-    $newrecord->filepath = ($newfilepath ? $newfilepath : $filepath);
-    $newrecord->filename = ($newfilename ? $newfilename : $filename);
-    
-    $newrecord->timecreated = $file->get_timecreated();
-    $newrecord->timemodified = $file->get_timemodified();
-    $newrecord->mimetype = $file->get_mimetype();
-    $newrecord->userid = $file->get_userid();
-
-    if ($newfile = $finalfile->create_file_from_storedfile($newrecord, $fid)) {
-        // delete original file from user_draft
-        $file->delete();
-        // todo: return file_info for the new file.
-        return true;
-    }
-}
-
-/**
  * Fetches content of file from Internet (using proxy if defined). Uses cURL extension if present.
  * Due to security concerns only downloads from http(s) sources are supported.
  *
