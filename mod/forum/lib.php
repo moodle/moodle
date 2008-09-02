@@ -7203,8 +7203,14 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     }
 
     function get_navigation() {
+        global $CFG;
+
         $navlinks = array();
-        $navlinks[] = array('name' => format_string($this->discussion->name), 'link' => 'discuss.php?d=' . $this->discussion->id, 'type' => 'title');
+        $navlinks[] = array(
+            'name' => format_string($this->discussion->name),
+            'link' => $CFG->wwwroot . '/mod/forum/discuss.php?d=' . $this->discussion->id,
+            'type' => 'title'
+        );
         return array($navlinks, $this->cm);
     }
 
