@@ -2008,8 +2008,8 @@ function forum_get_all_user_ratings($userid, $discussions) {
     }
 
     $sql = "SELECT r.id, r.userid, p.id AS postid, r.rating
-                              FROM {$CFG->prefix}forum_ratings r,
-                                   {$CFG->prefix}forum_posts p
+                              FROM {forum_ratings} r,
+                                   {forum_posts} p
                              WHERE r.post = p.id AND p.userid = :userid";
 
 
