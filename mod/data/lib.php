@@ -2577,6 +2577,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
                 // meh, do something special
                 // @todo penny extract the file and put it in the working directory
                 // and write out the filename here. (files api)
+                debugging('FIXME: data module is exporting a field that needs updating to support new files api!');
                 $replacement[] = $field->display_browse_field($this->singlerecord->id, 'singletemplate');
             } else {
                 $replacement[] = $field->display_browse_field($this->singlerecord->id, 'singletemplate');
