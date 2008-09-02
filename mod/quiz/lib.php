@@ -213,12 +213,32 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
     return NULL;
 }
 
+/**
+ * Get the best current grade for a particular user in a quiz.
+ *
+ * @param object $quiz the quiz object.
+ * @param integer $userid the id of the user.
+ * @return float the user's current grade for this quiz, or NULL if this user does
+ * not have a grade on this quiz.
+ */
+function quiz_get_best_grade($quiz, $userid) {
+    global $DB;
+    $grade = $DB->get_field('quiz_grades', 'grade', array('quiz' => $quiz->id, 'userid' => $userid));
+
+    // Need to detect errors/no result, without catching 0 scores.
+    if (is_numeric($grade)) {
+        return quiz_format_grade($quiz, $grade);
+    } else {
+        return NULL;
+    }
+}
+
 function quiz_user_complete($course, $user, $mod, $quiz) {
     global $DB;
 /// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
 
-    if ($attempts = $DB->get_records_select('quiz_attempts', "userid=? AND quiz=?", 'attempt ASC', array($user->id, $quiz->id))) {
+    if ($attempts = $DB->get_records_select('quiz_attempts', "userid=? AND quiz=?",  array($user->id, $quiz->id), 'attempt ASC')) {
         if ($quiz->grade && $quiz->sumgrades && $grade = quiz_get_best_grade($quiz, $user->id)) {
             echo get_string('grade') . ': ' . $grade . '/' . $quiz->grade . '<br />';
         }
