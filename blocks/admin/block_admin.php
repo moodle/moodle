@@ -186,11 +186,16 @@ class block_admin extends block_list {
             }
         }
 
+    /// Repository Account
+        if ($course->id !== SITEID) {
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/repository/manage.php?id='.$USER->id.'&amp;course='.$course->id.'&amp;context=course">'.get_string('repositories').'</a>';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/repository.png" alt=""/>';
+        }
 
     /// Manage files
         if ($course->id !== SITEID and has_capability('moodle/course:managefiles', $context)) {
             $this->content->items[]='<a href="'.$CFG->wwwroot.'/files/index.php?id='.$this->instance->pageid.'">'.get_string('files').'</a>';
-            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/files.gif" class="icon" alt="" />';
+            $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/files.gif" class="icon" alt=""/>';
         }
 
     /// Authorize hooks

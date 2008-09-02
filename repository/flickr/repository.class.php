@@ -232,16 +232,18 @@ EOD;
     public static function has_admin_config() {
         return true;
     }
+
     public function admin_config_form(&$mform) {
         $api_key = get_config('flickr', 'api_key');
         if (empty($api_key)) {
             $api_key = '';
         }
         $strrequired = get_string('required');
-        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'), array('value'=>$api_key));
+        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'), array('value'=>$api_key,'size' => '40'));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
     }
-    public static function get_option_names(){
+    public static function get_admin_option_names(){
         return array('api_key');
     }
+
 }

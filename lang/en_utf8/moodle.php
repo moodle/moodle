@@ -1253,6 +1253,7 @@ $string['rename'] = 'Rename';
 $string['renamefileto'] = 'Rename <b>$a</b> to';
 $string['report'] = 'Report';
 $string['reports'] = 'Reports';
+$string['repositories'] = 'Repositories';
 $string['requestcourse'] = 'Request a course';
 $string['requestedby'] = 'Requested by';
 $string['requestreason'] = 'Reason for course request';

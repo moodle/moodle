@@ -50,7 +50,7 @@ class repository_upload extends repository {
         return true;
     }
 
-    public static function get_option_names() {
+    public static function get_admin_option_names() {
         return array();
     }
 

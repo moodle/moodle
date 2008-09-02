@@ -34,11 +34,7 @@
  *
  * See an example of use of this library in repository/boxnet/repository.class.php
  *
- * A few notes :
- *   // options are stored as serialized format in database
- *   $options = array('api_key'=>'dmls97d8j3i9tn7av8y71m9eb55vrtj4',
- *                  'auth_token'=>'', 'path_root'=>'/');
- *   $repo = new repository_xxx($options);
+ * A few notes:
  *   // print login page or a link to redirect to another page
  *   $repo->print_login();
  *   // call get_listing, and print result
@@ -53,6 +49,356 @@
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once(dirname(dirname(__FILE__)).'/lib/filelib.php');
 require_once(dirname(dirname(__FILE__)).'/lib/formslib.php');
+
+/**
+ * A repository_type is a repository plug-in. It can be Box.net, Flick-r, ...
+ * A repository type can be edited, sorted and hidden. It is mandatory for an
+ * administrator to create a repository type in order to be able to create
+ * some instances of this type.
+ *
+ * Coding note:
+ * - a repository_type object is mapped to the "repository" database table
+ * - "typename" attibut maps the "type" database field. It is unique.
+ * - general "options" for a repository type are saved in the config_plugin table
+ * - TODO: when you delete a repository, all instances are deleted
+ * - When you create a type for a plugin that can't have multiple instances, a
+ *   instance is automatically created.
+ */
+class repository_type {
+
+
+    /**
+     * Type name (no whitespace) - A type name is unique
+     * Note: for a user-friendly type name see get_readablename()
+     * @var String
+     */
+    private $_typename;
+
+
+    /**
+     * Options of this type
+     * They are general options that any instance of this type would share
+     * e.g. API key
+     * These options are saved in config_plugin table
+     * @var array
+     */
+   private $_options;
+
+
+    /**
+     * Is the repository type visible or hidden
+     * If false (hidden): no instances can be created, edited, deleted, showned , used...
+     * @var boolean
+     */
+   private $_visible;
+
+
+    /**
+     * 0 => not ordered, 1 => first position, 2 => second position...
+     * A not order type would appear in first position (should never happened)
+     * @var integer
+     */
+    private $_sortorder;
+
+    /**
+     * repository_type constructor
+     * @global <type> $CFG
+     * @param integer $typename
+     * @param array $typeoptions
+     * @param boolean $visible
+     * @param integer $sortorder (don't really need set, it will be during create() call)
+     */
+    public function __construct($typename = '', $typeoptions = array(), $visible = true, $sortorder = 0){
+        global $CFG;
+
+        //set type attributs
+        $this->_typename = $typename;
+        $this->_visible = $visible;
+        $this->_sortorder = $sortorder;
+        
+        //set options attribut
+        $this->_options = array();
+        //check that the type can be setup
+        if (repository_static_function($typename,"has_admin_config")){
+            $options = repository_static_function($typename,'get_admin_option_names');
+            //set the type options
+            foreach ($options as $config) {
+                if (array_key_exists($config,$typeoptions)){
+                        $this->_options[$config] = $typeoptions[$config];
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the type name (no whitespace)
+     * For a human readable name, use get_readablename()
+     * @return String the type name
+     */
+    public function get_typename(){
+        return $this->_typename;
+    }
+
+    /**
+     * Return a human readable and user-friendly type name
+     * @return string user-friendly type name
+     */
+    public function get_readablename(){
+        return get_string('repositoryname','repository_'.$this->_typename);
+    }
+
+    /**
+     * Return general options
+     * @return array the general options
+     */
+    public function get_options(){
+        return $this->_options;
+    }
+
+    /**
+     * Return visibility
+     * @return boolean
+     */
+    public function get_visible(){
+        return $this->_visible;
+    }
+
+    /**
+     * Return order / position of display in the file picker
+     * @return integer
+     */
+    public function get_sortorder(){
+        return $this->_sortorder;
+    }
+
+    /**
+     * Create a repository type (the type name must not already exist)
+     * @global object $DB
+     */
+    public function create(){
+        global $DB;
+
+        //check that $type has been set
+        $timmedtype = trim($this->_typename);
+        if (empty($timmedtype)) {
+             throw new repository_exception('emptytype', 'repository');
+        }
+
+        //set sortorder as the last position in the list
+        if (!isset($this->_sortorder) || $this->_sortorder == 0 ){
+            $sql = "SELECT MAX(sortorder) FROM {repository}";
+            $this->_sortorder = 1 + $DB->get_field_sql($sql);
+        }
+
+        //only create a new type if it doesn't already exist
+        $existingtype = $DB->get_record('repository', array('type'=>$this->_typename));
+        if(!$existingtype){
+           //create the type
+           $newtype = new stdclass;
+           $newtype->type = $this->_typename;
+           $newtype->visible = $this->_visible;
+           $newtype->sortorder = $this->_sortorder;
+           $DB->insert_record('repository', $newtype);
+
+           //save the options in DB
+           $this->update_options();
+        }
+        else {
+            throw new repository_exception('existingrepository', 'repository');
+        }
+    }
+
+
+    /**
+     * Update plugin options into the config_plugin table
+     * @param array $options
+     * @return boolean
+     */
+    public function update_options($options = null){
+        if (!empty($options)){
+            $this->_options = $options;
+        }
+
+        foreach ($this->_options as $name => $value) {
+            set_config($name,$value,$this->_typename);
+        }
+
+        return true;
+    }
+
+    /**
+     * Update visible database field with the value given as parameter
+     * or with the visible value of this object
+     * This function is private.
+     * For public access, have a look to switch_and_update_visibility()
+     * @global object $DB
+     * @param boolean $visible
+     * @return boolean
+     */
+    private function update_visible($visible = null){
+        global $DB;
+
+        if (!empty($visible)){
+            $this->_visible = $visible;
+        }
+        else if (!isset($this->_visible)){
+            throw new repository_exception('updateemptyvisible', 'repository');
+        }
+
+        return $DB->set_field('repository', 'visible', $this->_visible, array('type'=>$this->_typename));
+    }
+
+    /**
+     * Update database sortorder field with the value given as parameter
+     * or with the sortorder value of this object
+     * This function is private.
+     * For public access, have a look to move_order()
+     * @global object $DB
+     * @param integer $sortorder
+     * @return boolean
+     */
+    private function update_sortorder($sortorder = null){
+        global $DB;
+
+        if (!empty($sortorder) && $sortorder!=0){
+            $this->_sortorder = $sortorder;
+        }
+        //if sortorder is not set, we set it as the ;ast position in the list
+        else if (!isset($this->_sortorder) || $this->_sortorder == 0 ){
+            $sql = "SELECT MAX(sortorder) FROM {repository}";
+            $this->_sortorder = 1 + $DB->get_field_sql($sql);
+        }
+
+        return $DB->set_field('repository', 'sortorder', $this->_sortorder, array('type'=>$this->_typename));
+    }
+
+    /**
+     * Change order of the type with its adjacent upper or downer type
+     * (database fields are updated)
+     * Algorithm details:
+     * 1. retrieve all types in an array. This array is sorted by sortorder,
+     * and the array keys start from 0 to X (incremented by 1)
+     * 2. switch sortorder values of this type and its adjacent type
+     * @global object $DB
+     * @param string $move "up" or "down"
+     */
+    public function move_order($move) {
+        global $DB;
+        //retrieve all types
+        $types = repository_get_types();
+
+        //retrieve this type into the returned array
+         $i = 0;
+        while (!isset($indice) && $i<count($types)){
+            if ($types[$i]->get_typename() == $this->_typename){
+                $indice = $i;
+            }
+            $i++;
+        }
+
+        //retrieve adjacent indice
+        switch ($move) {
+            case "up":
+                $adjacentindice = $indice - 1;
+                break;
+            case "down":
+                $adjacentindice = $indice + 1;
+                break;
+            default:
+                throw new repository_exception('movenotdefined', 'repository');
+        }
+
+        //switch sortorder of this type and the adjacent type
+        //TODO: we could reset sortorder for all types. This is not as good in performance term, but
+        //that prevent from wrong behaviour on a screwed database. As performance are not important in this particular case
+        //it worth to change the algo.
+        if ($adjacentindice>=0 && !empty($types[$adjacentindice])){
+            $DB->set_field('repository', 'sortorder', $this->_sortorder, array('type'=>$types[$adjacentindice]->get_typename()));
+            $this->update_sortorder($types[$adjacentindice]->get_sortorder());
+        }
+    }
+
+    /**
+     * 1. Switch the visibility OFF if it's ON, and ON if it's OFF.
+     * 2. Update the type
+     * @return <type>
+     */
+    public function switch_and_update_visibility(){
+        $this->_visible = !$this->_visible;
+        return $this->update_visible();
+    }
+
+
+    /**
+     * Delete a repository_type - DO NOT CALL IT TILL THE TODO IS DONE
+     * TODO: delete all instances for this type
+     * @global object $DB
+     * @return boolean
+     */
+    public function delete(){
+        global $DB;
+        return $DB->delete_records('repository', array('type' => $this->_typename));
+    }
+}
+
+/**
+ * Return a type for a given type name.
+ * @global object $DB
+ * @param string $typename the type name
+ * @return integer
+ */
+function repository_get_type_by_typename($typename){
+    global $DB;
+
+    if(!$record = $DB->get_record('repository',array('type' => $typename))) {
+        return false;
+    }
+
+    return new repository_type($typename, (array)get_config($typename), $record->visible, $record->sortorder);
+}
+
+/**
+ * Return a type for a given type id.
+ * @global object $DB
+ * @param string $typename the type name
+ * @return integer
+ */
+function repository_get_type_by_id($id){
+    global $DB;
+
+    if(!$record = $DB->get_record('repository',array('id' => $id))) {
+        return false;
+    }
+
+    return new repository_type($record->type, (array)get_config($record->type), $record->visible, $record->sortorder);
+}
+
+/**
+ * Return all repository types ordered by sortorder
+ * first type in returnedarray[0], second type in returnedarray[1], ...
+ * @global object $DB
+ * @return array Repository types
+ */
+function repository_get_types(){
+    global $DB;
+
+    $types = array();
+
+    if($records = $DB->get_records('repository',null,'sortorder')) {
+        foreach($records as $type) {
+            $typename = $type->type;
+            $visible = $type->visible;
+            $sortorder = $type->sortorder;
+            $types[] = new repository_type($typename, (array)get_config($typename), $visible, $sortorder);
+        }
+    }
+
+    return $types;
+}
+
+/**
+ *TODO: write comment
+ */
 
 abstract class repository {
     public $id;
@@ -245,8 +591,8 @@ abstract class repository {
             $record->contextid = $context->id;
             $record->userid    = $userid;
             $id = $DB->insert_record('repository_instances', $record);
-            if (call_user_func($classname . '::has_admin_config')) {
-                $configs = call_user_func($classname . '::get_option_names');
+            if (call_user_func($classname . '::has_instance_config')) {
+                $configs = call_user_func($classname . '::get_instance_option_names');
                 $options = array();
                 foreach ($configs as $config) {
                     $options[$config] = $params[$config];
@@ -451,20 +797,56 @@ abstract class repository {
     abstract public function print_search();
 
     /**
-     * TODO: write comment
-     * @return <type>
-     */
-    public static function has_admin_config() {
-        return false;
-    }
-
-
-    /**
      * Defines operations that happen occasionally on cron
      * @return <type>
      */
     public function cron() {
         return true;
+    }
+
+    /**
+     * Return true if the plugin type has at least one general option field
+     * By default: false
+     * @return boolean
+     */
+    public static function has_admin_config() {
+        return false;
+    }
+
+    /**
+     * Return true if a plugin instance has at least one config field
+     * By default: false
+     * @return boolean
+     */
+    public static function has_instance_config() {
+        return false;
+    }
+
+    /**
+     * Return true if the plugin can have multiple instances
+     * By default: false
+     * @return boolean
+     */
+    public static function has_multiple_instances(){
+        return false;
+    }
+
+    /**
+     * Return names of the general options
+     * By default: no general option name
+     * @return array
+     */
+    public static function get_admin_option_names(){
+        return array();
+    }
+
+    /**
+     * Return names of the instance options
+     * By default: no instance option name
+     * @return array
+     */
+    public static function get_instance_option_names(){
+        return array();
     }
 }
 
@@ -484,9 +866,10 @@ class repository_exception extends moodle_exception {
  * @param integer $userid
  * @param boolean $visible if visible == true, return visible instances only,
  *                otherwise, return all instances
+ * @param string $type a type name to retrieve
  * @return array repository instances
  */
-function repository_get_instances($context, $userid = null, $visible = true){
+function repository_get_instances($context, $userid = null, $visible = true, $type=null){
     global $DB, $CFG, $USER;
     $params = array();
     $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
@@ -505,6 +888,10 @@ function repository_get_instances($context, $userid = null, $visible = true){
     }
     if($visible == true) {
         $sql .= ' AND (r.visible = 1)';
+    }
+    if(isset($type)) {
+        $sql .= ' AND (r.type = ?)';
+        $params[] = $type;
     }
     if(!$repos = $DB->get_records_sql($sql, $params)) {
         $repos = array();
@@ -553,10 +940,19 @@ function repository_get_instance($id){
  * @global <type> $CFG
  * @param <type> $plugin
  * @param <type> $function
+ * @param type $nocallablereturnvalue default value if function not found
+ *             it's mostly used when you don't want to display an error but
+ *             return a boolean
  * @return <type>
  */
 function repository_static_function($plugin, $function) {
     global $CFG;
+
+    //check that the plugin exists
+    $typedirectory = $CFG->dirroot . '/repository/'. $plugin . '/repository.class.php';
+        if (!file_exists($typedirectory)) {
+            throw new repository_exception('invalidplugin', 'repository');
+    }
 
     $pname = null;
     if (is_object($plugin) || is_array($plugin)) {
@@ -575,7 +971,7 @@ function repository_static_function($plugin, $function) {
         array_shift($args);
     }
 
-    require_once($CFG->dirroot . '/repository/' . $plugin .  '/repository.class.php');
+    require_once($typedirectory);
     return call_user_func_array(array('repository_' . $plugin, $function), $args);
 }
 
@@ -1427,7 +1823,7 @@ EOD;
 /**
  * TODO: write comment
  */
-final class repository_admin_form extends moodleform {
+final class repository_instance_form extends moodleform {
     protected $instance;
     protected $plugin;
 
@@ -1456,19 +1852,20 @@ final class repository_admin_form extends moodleform {
         $mform->addRule('name', $strrequired, 'required', null, 'client');
 
         // let the plugin add the fields they want (either statically or not)
-        if (repository_static_function($this->plugin, 'has_admin_config')) {
+        if (repository_static_function($this->plugin, 'has_instance_config')) {
             if (!$this->instance) {
-                $result = repository_static_function($this->plugin, 'admin_config_form', $mform);
+                $result = repository_static_function($this->plugin, 'instance_config_form', $mform);
             } else {
-                $result = $this->instance->admin_config_form($mform);
+                $result = $this->instance->instance_config_form($mform);
             }
         }
 
         // and set the data if we have some.
+        //var_dump($this);
         if ($this->instance) {
             $data = array();
             $data['name'] = $this->instance->name;
-            foreach ($this->instance->get_option_names() as $config) {
+            foreach ($this->instance->get_instance_option_names() as $config) {
                 if (!empty($this->instance->$config)) {
                     $data[$config] = $this->instance->$config;
                 } else {
@@ -1505,4 +1902,149 @@ final class repository_admin_form extends moodleform {
         }
         return $errors;
     }
+}
+
+
+/**
+ * Display a form with the general option fields of a type
+ */
+final class repository_admin_form extends moodleform {
+    protected $instance;
+    protected $plugin;
+
+    /**
+     * Definition of the moodleform
+     * @global object $CFG
+     */
+    public function definition() {
+        global $CFG;
+        // type of plugin, string
+        $this->plugin = $this->_customdata['plugin'];
+        $this->instance = (isset($this->_customdata['instance'])
+                && is_a($this->_customdata['instance'], 'repository_type'))
+            ? $this->_customdata['instance'] : null;
+
+        $mform =& $this->_form;
+        $strrequired = get_string('required');
+       
+        $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->get_typename() : 0);
+        $mform->addElement('hidden', 'new',   $this->plugin);
+        $mform->addElement('hidden', 'plugin', $this->plugin);
+
+        // let the plugin add the fields they want (either statically or not)
+        if (repository_static_function($this->plugin, 'has_admin_config')) {
+            if (!$this->instance) {
+                $result = repository_static_function($this->plugin, 'admin_config_form', $mform);
+            } else {
+                  $classname = 'repository_' . $this->instance->get_typename();
+                  $result = call_user_func(array($classname,'admin_config_form'),$mform);
+            }
+        }
+
+        // and set the data if we have some.
+        if ($this->instance) {
+            $data = array();
+            $option_names = call_user_func(array($classname,'get_admin_option_names'));
+            $instanceoptions = $this->instance->get_options();
+            foreach ($option_names as $config) {
+                if (!empty($instanceoptions[$config])) {
+                    $data[$config] = $instanceoptions[$config];
+                } else {
+                    $data[$config] = '';
+                }
+            }
+            $this->set_data($data);
+        }
+
+        $this->add_action_buttons(true, get_string('submit'));
+    }
+
+}
+
+
+/**
+ * Display a repository instance list (with edit/delete/create links)
+ * @global object $CFG
+ * @global object $USER
+ * @param object $context the context for which we display the instance
+ * @param boolean $admin if true, so the form is been called by an administration
+ *                       page, only one type would be displayed
+ * @param string $typename if set, we display only one type of instance
+ */
+function repository_display_instances_list($context, $admin = false, $typename = null){
+       global $CFG, $USER;
+        if ($admin) {
+            $baseurl = $CFG->wwwroot . '/admin/repositoryinstance.php?sesskey=' . sesskey();
+            $type = repository_get_type_by_typename($typename);
+
+        }
+        $output = print_simple_box_start(true);
+        $output .= "<div ><h2 style='text-align: center'>" . get_string('instances', 'repository') . "</h2></div>";
+
+        $namestr = get_string('name');
+        $pluginstr = get_string('plugin', 'repository');
+        $stropt = get_string('operation', 'repository');
+        $updown = get_string('updown', 'repository');
+        $plugins = get_list_of_plugins('repository');
+        $instances = repository_get_instances($context,null,true,$typename);
+        $instancesnumber = count($instances);
+        $alreadyplugins = array();
+        $table = new StdClass;
+        $table->head = array($namestr, $pluginstr, $stropt);
+        $table->align = array('left', 'left', 'center');
+        $table->data = array();
+        $updowncount=1;
+        foreach ($instances as $i) {
+            $row = '';
+            $row .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
+            $row .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
+            //$row .= ' <a href="' . $baseurl . '&amp;type='.$typename.'&amp;hide=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/' . ($i->visible ? 'hide' : 'show') . '.gif" alt="' . get_string($i->visible ? 'hide' : 'show') . '" /></a>' . "\n";
+
+            $table->data[] = array($i->name, $type->get_readablename(),$row);
+            if (!in_array($i->name, $alreadyplugins)) {
+                $alreadyplugins[] = $i->name;
+            }
+        }
+        $output .= print_table($table, true);
+        $instancehtml = '<div><h3>';
+        $addable = 0;
+        $instancehtml .= get_string('createrepository', 'repository');
+        $instancehtml .= '</h3><ul>';
+        $addable = 0;
+
+        //if no type is set, we can create all type of instance
+        if (!$typename) {
+            foreach ($plugins as $p) {
+                if (!in_array($p, $alreadyplugins)) {
+                   if (repository_static_function($p->get_typename(), 'has_multiple_instances')){
+                        $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$p.'">'.get_string('create', 'repository')
+                            .' "'.get_string('repositoryname', 'repository_'.$p).'" '
+                            .get_string('instance', 'repository').'</a></li>';
+                        $addable++;
+                    }
+                }
+            }
+        }
+        //create a unique type of instance
+        else {
+            if (repository_static_function($typename, 'has_multiple_instances')){
+                $addable = 1;
+                $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$typename.'">'.get_string('create', 'repository')
+                                  .' "'.get_string('repositoryname', 'repository_'.$typename).'" '
+                                  .get_string('instance', 'repository').'</a></li>';
+            }
+        }
+
+        $instancehtml .= '</ul>';
+
+        if ($addable) {
+            $instancehtml .= '</div>';
+            $output .= $instancehtml;
+        }
+
+        $output .= print_simple_box_end(true);
+
+        //print the list + creation links
+        print($output);
+
 }

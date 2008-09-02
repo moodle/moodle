@@ -165,10 +165,10 @@ class repository_local extends repository {
     }
 
     public static function has_admin_config() {
-        return true;
+        return false;
     }
 
-    public static function get_option_names() {
+    public static function get_admin_option_names() {
         // todo: add dynamic loading threshold
         return array();
     }

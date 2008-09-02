@@ -194,14 +194,17 @@ if ($hassiteconfig) {
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorycontroller',
         get_string('managerepositories', 'repository'), $url, 'moodle/site:config', true),
         '', $url);
-    foreach (repository_get_instances(get_context_instance(CONTEXT_SYSTEM), null, false)
-        as $repository) 
+    foreach (repository_get_types()
+        as $repositorytype)
     {
-        if ($repository->has_admin_config()) {
+      //display setup page for plugins with: general options or instance options or multiple instances
+      if (repository_static_function($repositorytype->get_typename(), 'has_admin_config')
+          || repository_static_function($repositorytype->get_typename(), 'has_instance_config')
+          || repository_static_function($repositorytype->get_typename(), 'has_multiple_instances')) {
             $ADMIN->add('repositorysettings',
-                new admin_externalpage('repositorysettings'.$repository->id, 
-                        $repository->name,
-                        $url . '?edit=' . $repository->id),
+                new admin_externalpage('repositorysettings'.$repositorytype->get_typename(),
+                        $repositorytype->get_readablename(),
+                        $url . '?edit=' . $repositorytype->get_typename()),
                         'moodle/site:config');
         }
     }

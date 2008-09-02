@@ -3722,7 +3722,7 @@ class admin_setting_quiz_text extends admin_setting_configtext {
         $defaultinfo = implode(', ', $defaultinfo);
 
         $fix = !empty($data['fix']);
-        $return = '<div class="form-text defaultsnext">' . 
+        $return = '<div class="form-text defaultsnext">' .
                 '<input type="text" size="' . $this->size . '" id="' . $this->get_id() .
                 '" name="' . $this->get_full_name() . '[value]" value="' . s($data['value']) . '" />' .
                 ' <input type="checkbox" class="form-checkbox" id="' .
@@ -3794,7 +3794,7 @@ class admin_setting_quiz_combo extends admin_setting_configselect {
         }
 
         $fix = !empty($data['fix']);
-        $return = '<div class="form-select defaultsnext">' . $selecthtml . 
+        $return = '<div class="form-select defaultsnext">' . $selecthtml .
                 ' <input type="checkbox" class="form-checkbox" id="' .
                 $this->get_id() . '_fix" name="' . $this->get_full_name() .
                 '[fix]" value="1" ' . ($fix ? 'checked="checked"' : '') . ' />' .
@@ -3880,7 +3880,7 @@ class admin_setting_quiz_reviewoptions extends admin_setting {
                 }
                 $return .= '<span><input type="checkbox" name="' .
                         $nameprefix . '[' . $thingmask . ']" value="1" id="' . $id .
-                        '" ' . $state . '/> <label for="' . $id . '">' . 
+                        '" ' . $state . '/> <label for="' . $id . '">' .
                         get_string($thingstring, 'quiz') . "</label></span>\n";
             }
             $return .= "</div>\n";
@@ -5567,8 +5567,8 @@ class admin_setting_managerepository extends admin_setting {
                 return true;
             }
         }
-        foreach (repository_get_instances(get_context_instance(CONTEXT_SYSTEM), null, false) as $instance) {
-            $title = $instance->name;
+        foreach (repository_get_types() as $instance) {
+            $title = $instance->get_typename();
             if (strpos($textlib->strtolower($title), $query) !== false) {
                 return true;
             }
@@ -5580,32 +5580,67 @@ class admin_setting_managerepository extends admin_setting {
         global $CFG, $USER;
         $output = print_simple_box_start(true);
         $namestr = get_string('name');
-        $pluginstr = get_string('plugin', 'repository');
         $stropt = get_string('operation', 'repository');
+        $updown = get_string('updown', 'repository');
         $plugins = get_list_of_plugins('repository');
-        $instances = repository_get_instances(get_context_instance(CONTEXT_SYSTEM), null, false);
+        $instances = repository_get_types();
+        $instancesnumber = count($instances);
+        $alreadyplugins = array();
         $table = new StdClass;
-        $table->head = array($namestr, $pluginstr, $stropt);
+        $table->head = array($namestr, $updown, $stropt);
+        $table->align = array('left', 'center', 'center');
         $table->data = array();
+        $updowncount=1;
         foreach ($instances as $i) {
             $row = '';
-            $row .= '<a href="' . $this->baseurl . '&edit=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
-            $row .= '<a href="' . $this->baseurl . '&delete=' .  $i->id . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
-            $row .= ' <a href="' . $this->baseurl . '&hide=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/' . ($i->visible ? 'hide' : 'show') . '.gif" alt="' . get_string($i->visible ? 'hide' : 'show') . '" /></a>' . "\n";
-            $table->data[] = array($i->name, $i->type, $row);
+            //display edit link only if you can config the type or its instances
+            if ( repository_static_function($i->get_typename(), 'has_admin_config')
+                 || repository_static_function($i->get_typename(), 'has_instance_config')
+                 || repository_static_function($i->get_typename(), 'has_multiple_instances')) {
+                $row .= '<a href="' . $this->baseurl . '&edit=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
+            }
+            $row .= '<a href="' . $this->baseurl . '&delete=' .  $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
+            $row .= ' <a href="' . $this->baseurl . '&hide=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/' . ($i->get_visible() ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get_visible() ? 'hide' : 'show') . '" /></a>' . "\n";
+            
+             // display up/down link
+            $updown = '';
+            
+                if ($updowncount > 1) {
+                    $updown .= "<a href=\"$this->baseurl&amp;move=up&amp;type=".$i->get_typename()."\">";
+                    $updown .= "<img src=\"{$CFG->pixpath}/t/up.gif\" alt=\"up\" /></a>&nbsp;";
+                }
+                else {
+                    $updown .= "<img src=\"{$CFG->pixpath}/spacer.gif\" class=\"icon\" alt=\"\" />&nbsp;";
+                }
+                if ($updowncount < count($instances)) {
+                    $updown .= "<a href=\"$this->baseurl&amp;move=down&amp;type=".$i->get_typename()."\">";
+                    $updown .= "<img src=\"{$CFG->pixpath}/t/down.gif\" alt=\"down\" /></a>";
+                }
+                else {
+                    $updown .= "<img src=\"{$CFG->pixpath}/spacer.gif\" class=\"icon\" alt=\"\" />";
+                }
+               
+                $updowncount++;
+               
+            $table->data[] = array($i->get_readablename(), $updown,$row);
+            if (!in_array($i->get_typename(), $alreadyplugins)) {
+                $alreadyplugins[] = $i->get_typename();
+            }
         }
         $output .= print_table($table, true);
         $instancehtml = '<div><h3>';
         $addable = 0;
-        $instancehtml .= get_string('createrepository', 'repository');
+        $instancehtml .= get_string('addplugin', 'repository');
         $instancehtml .= '</h3><ul>';
         $addable = 0;
         foreach ($plugins as $p) {
-            $instancehtml .= '<li><a href="'.$CFG->wwwroot.'/admin/repository.php?sesskey='
-                .$USER->sesskey.'&new='.$p.'">'.get_string('create', 'repository')
-                .' "'.get_string('repositoryname', 'repository_'.$p).'" '
-                .get_string('instance', 'repository').'</a></li>';
-            $addable++;
+            if (!in_array($p, $alreadyplugins)) {
+                $instancehtml .= '<li><a href="'.$CFG->wwwroot.'/admin/repository.php?sesskey='
+                    .$USER->sesskey.'&new='.$p.'">'.get_string('add', 'repository')
+                    .' "'.get_string('repositoryname', 'repository_'.$p).'" '
+                    .'</a></li>';
+                $addable++;
+            }
         }
         $instancehtml .= '</ul>';
 

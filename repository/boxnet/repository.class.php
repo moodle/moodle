@@ -168,20 +168,41 @@ class repository_boxnet extends repository{
     public function print_search(){
         return false;
     }
+
     public static function has_admin_config() {
         return true;
     }
+
+    public static function has_instance_config() {
+        return true;
+    }
+
+    public static function has_multiple_instances(){
+        return true;
+    }
+
+    public static function get_admin_option_names(){
+        return array('api_key');
+    }
+
+    public static function get_instance_option_names(){
+        return array('share_url');
+    }
+
     public function admin_config_form(&$mform) {
+        $public_account = get_config('boxnet', 'public_account');
         $api_key = get_config('boxnet', 'api_key');
         if (empty($api_key)) {
             $api_key = '';
         }
         $strrequired = get_string('required');
-        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'), array('value'=>$api_key));
+        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'), array('value'=>$api_key,'size' => '40'));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
     }
-    public static function get_option_names(){
-        return array('api_key');
+
+    public function instance_config_form(&$mform) {
+        $share_url = get_config('boxnet', 'share_url');
+        $mform->addElement('text', 'share_url', get_string('shareurl', 'repository_boxnet'), array('value'=>$share_url));
     }
 }
 
