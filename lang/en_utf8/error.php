@@ -38,7 +38,6 @@ $string['errorcreatingdirectory'] = 'Error creating directory \"$a\"';
 $string['errorcreatingfile'] = 'Error creating file \"$a\"';
 $string['erroronline'] = 'Error on line $a';
 $string['errorreadingfile'] = 'Error reading file \"$a\"';
-$string['errortoomanylogins'] = 'Error - too many logins';
 $string['errorunzippingfiles'] = 'Error unzipping files';
 $string['fieldrequired'] = '\"$a\" is a required field';
 $string['filenotfound'] = 'Sorry, the requested file could not be found';
