@@ -84,4 +84,7 @@ EOD;
             return $str;
         }
     }
+    function exportValue(&$submitValues, $assoc = false) {
+        return array($this->_attributes['name'] => $submitValues[$this->_attributes['name']]);
+    }
 }
