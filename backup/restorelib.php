@@ -4412,14 +4412,14 @@ define('RESTORE_GROUPS_GROUPINGS', 3);
                     $status = false;
                }
                // MDL-14326 remove empty course modules instance's (credit goes to John T. Macklin from Remote Learner)
-               $course_modules_inst_zero = get_records_sql("SELECT id, course, instance
-                                           FROM {$CFG->prefix}course_modules
-                                           WHERE id = '$cm_module->new_id' AND
-                                                 instance = '0'");
+               $course_modules_inst_zero = $DB->get_records_sql(
+                                        "SELECT id, course, instance
+                                           FROM {course_modules}
+                                          WHERE id = ? AND instance = 0", array($cm_module->new_id));
                                                  
                     if($course_modules_inst_zero){ // Clean up the invalid instances
                          foreach($course_modules_inst_zero as $course_modules_inst){
-                             delete_records('course_modules', 'id',$course_modules_inst->id);
+                             $DB->delete_records('course_modules', array('id'=>$course_modules_inst->id));
                          }
                     }
 
