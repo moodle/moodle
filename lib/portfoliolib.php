@@ -1725,9 +1725,6 @@ final class portfolio_admin_form extends moodleform {
         $mform->addElement('hidden', 'new',   $this->plugin);
         $mform->addElement('hidden', 'plugin', $this->plugin);
 
-        $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
-        $mform->addRule('name', $strrequired, 'required', null, 'client');
-
         // let the plugin add the fields they want (either statically or not)
         if (portfolio_static_function($this->plugin, 'has_admin_config')) {
             if (!$this->instance) {
@@ -1737,9 +1734,15 @@ final class portfolio_admin_form extends moodleform {
             }
         }
 
+
         if (isset($result) && is_string($result)) { // something went wrong, stop
-            throw new portfolio_exception($result, 'portfolio_' . $this->plugin, $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php');
+            $mform->addElement('static', 'insane', '', get_string($result, 'portfolio_' . $this->plugin)); //, get_string($result, 'portfolio_' . $this->plugin));
+            //throw new portfolio_exception($result, 'portfolio_' . $this->plugin, $CFG->wwwroot . '/' . $CFG->admin . '/portfolio.php');
         }
+
+        $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
+        $mform->addRule('name', $strrequired, 'required', null, 'client');
+
 
         // and set the data if we have some.
         if ($this->instance) {
