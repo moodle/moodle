@@ -6,6 +6,10 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
 
     private $flickr;
 
+    public static function get_name() {
+        return get_string('pluginname', 'portfolio_flickr');
+    }
+
     public function prepare_package() {
         $this->flickr = new phpFlickr($this->get_config('apikey'), $this->get_config('sharedsecret'));
         return true; // don't do anything else for this plugin, we want to send all files as they are.

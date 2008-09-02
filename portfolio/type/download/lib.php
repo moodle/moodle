@@ -7,6 +7,10 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
 
     protected $exportconfig;
 
+    public static function get_name() {
+        return get_string('pluginname', 'portfolio_download');
+    }
+
     public static function allows_multiple() {
         return false;
     }

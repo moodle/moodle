@@ -10,6 +10,10 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     private $folders;
     private $accounttree;
 
+    public static function get_name() {
+        return get_string('pluginname', 'portfolio_boxnet');
+    }
+
     public function prepare_package() {
         return true; // don't do anything else for this plugin, we want to send all files as they are.
     }

@@ -20,6 +20,10 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     private $sendtype; // whatever mahara has said it can handle (immediate or queued)
     private $filesmanifest; // manifest of files to send to mahara (set during prepare_package and sent later)
 
+    public static function get_name() {
+        return get_string('pluginname', 'portfolio_mahara');
+    }
+
     public static function get_allowed_config() {
         return array('mnethostid');
     }

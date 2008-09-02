@@ -11,6 +11,7 @@ $string['noauthtoken'] = 'Could not retrieve an authentication token for use in 
 $string['noticket'] = 'Could not retrieve a ticket from box.net to begin the authentication session';
 $string['notarget'] = 'You must specify either an existing folder or a new folder to upload into';
 $string['password'] = 'Your box.net password (will not be stored)';
+$string['pluginname'] = 'Box.net internet storage';
 $string['sharedfolder'] = 'Shared';
 $string['targetfolder'] = 'Target folder';
 $string['username'] = 'Your box.net username (will not be stored)';

@@ -1017,6 +1017,8 @@ abstract class portfolio_plugin_base {
     */
     public abstract function is_push();
 
+    public static abstract function get_name();
+
     /**
     * check sanity of plugin
     * if this function returns something non empty, ALL instances of your plugin
@@ -1734,7 +1736,7 @@ final class portfolio_admin_form extends moodleform {
             }
         }
 
-        if (is_array($insane)) {
+        if (isset($insane) && is_array($insane)) {
             $insane = array_shift($insane);
         }
         if (isset($insane) && is_string($insane)) { // something went wrong, warn...
@@ -1752,7 +1754,10 @@ final class portfolio_admin_form extends moodleform {
                 $data[$config] = $this->instance->get_config($config);
             }
             $this->set_data($data);
+        } else {
+            $this->set_data(array('name' => portfolio_static_function($this->plugin, 'get_name')));
         }
+
         $this->add_action_buttons(true, get_string('save', 'portfolio'));
     }
 
@@ -2162,7 +2167,10 @@ final class portfolio_exporter {
             unset($SESSION->portfolioexport);
             return true;
         }
-        $this->get('instance')->cleanup();
+        if ($this->get('instance')) {
+            // might not be set - before export really starts
+            $this->get('instance')->cleanup();
+        }
         $DB->delete_records('portfolio_tempdata', array('id' => $this->id));
         $fs = get_file_storage();
         $fs->delete_area_files(SYSCONTEXTID, 'portfolio_exporter', $this->id);

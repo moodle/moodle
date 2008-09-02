@@ -15,4 +15,5 @@ $string['pf_description'] = 'Allow users to push Moodle content to this host<br 
                                  '<ul><li><em>Dependency</em>: You must also <strong>publish</strong> the SSO (Identify Provider) service to $a.</li>' .
                                  '<li><em>Dependency</em>: You must also <strong>subscribe</strong> to the SSO (Service Provider) service on $a</li>' .
                                  '<li><em>Dependency</em>: You must also enable the mnet authentication plugin.</li></ul><br />';
+$string['pluginname'] = 'Mahara ePortfolio';
 ?>

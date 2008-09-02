@@ -4699,7 +4699,7 @@ class admin_setting_manageportfolio extends admin_setting {
                 $row .= ' <a href="' . $this->baseurl . '&hide=' . $i->get('id') . '"><img src="' . $CFG->pixpath . '/t/'
                     . ($i->get('visible') ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get('visible') ? 'hide' : 'show') . '" /></a>' . "\n";
             }
-            $table->data[] = array($i->get('name'), $i->get('plugin'), $row);
+            $table->data[] = array($i->get('name'), $i->get_name() . ' (' . $i->get('plugin') . ')', $row);
             if (!in_array($i->get('plugin'), $alreadyplugins)) {
                 $alreadyplugins[] = $i->get('plugin');
             }
@@ -4717,7 +4717,7 @@ class admin_setting_manageportfolio extends admin_setting {
                 continue;
             }
 
-            $instancehtml .= '<a href="' . $this->baseurl . '&amp;new=' . $p . '">' . s($p) . '</a><br />' . "\n";
+            $instancehtml .= '<a href="' . $this->baseurl . '&amp;new=' . $p . '">' . portfolio_static_function($p, 'get_name') . ' (' . s($p) . ')' . '</a><br />' . "\n";
             $addable++;
         }
 
