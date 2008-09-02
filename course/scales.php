@@ -29,7 +29,7 @@
     print_header($strscales);
 
     if ($scaleid) {
-        if ($scale = get_record("scale", 'id', $scaleid)) {
+        if ($scale = $DB->get_record("scale", array('id'=>$scaleid))) {
             if ($scale->courseid == 0 || $scale->courseid == $course->id) {
 
                 $scalemenu = make_menu_from_list($scale->scale);
