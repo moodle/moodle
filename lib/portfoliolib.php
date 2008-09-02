@@ -2467,6 +2467,12 @@ class portfolio_format_html extends portfolio_format_file {}
 class portfolio_format_mbkp extends portfolio_format_file {}
 
 /**
+* top level portfolio exception.
+* sometimes caught and rethrown as {@see portfolio_export_exception}
+*/
+class portfolio_exception extends moodle_exception {}
+
+/**
 * exception to throw during an export - will clean up session and tempdata
 */
 class portfolio_export_exception extends portfolio_exception {
@@ -2505,12 +2511,6 @@ class portfolio_export_exception extends portfolio_exception {
 * usually caught and rethrown as {@see portfolio_export_exception}
 */
 class portfolio_caller_exception extends portfolio_exception {}
-
-/**
-* top level portfolio exception.
-* sometimes caught and rethrown as {@see portfolio_export_exception}
-*/
-class portfolio_exception extends moodle_exception {}
 
 /**
 * exception for portfolio plugins to throw when they have a problem.
