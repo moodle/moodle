@@ -15,10 +15,12 @@ class MoodleQuickForm_warning extends HTML_QuickForm_static{
      * @var string
      */
     var $_helpbutton='';
+    var $_class='';
 
-    function MoodleQuickForm_warning($elementName=null, $elementLabel=null, $text=null) {
-        parent::HTML_QuickForm_static($elementName, $elementLabel, $text);
+    function MoodleQuickForm_warning($elementName=null, $elementClass='formwarning', $text=null) {
+        parent::HTML_QuickForm_static($elementName, null, $text);
         $this->_type = 'warning';
+        $this->_class = $elementClass;
     }
 
     /**
@@ -44,7 +46,7 @@ class MoodleQuickForm_warning extends HTML_QuickForm_static{
     }
 
     function toHtml() {
-        return notify($this->_text, 'formwarning', 'center', true);
+        return notify($this->_text, $this->_class, 'center', true);
     }
 
     /**
