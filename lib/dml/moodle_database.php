@@ -1,6 +1,7 @@
 <?php  //$Id$
 
 require_once($CFG->libdir.'/dml/database_column_info.php');
+require_once($CFG->libdir.'/dml/moodle_recordset.php');
 
 /// GLOBAL CONSTANTS /////////////////////////////////////////////////////////
 
@@ -86,16 +87,23 @@ abstract class moodle_database {
     }
 
     /**
-     * Loads and returns a driver instance with the specified type and library.
+     * Loads and returns a database instance with the specified type and library.
      * @param string $type database type of the driver (mysql, postgres7, mssql, etc)
-     * @param string $library database library of the driver (adodb, pdo, etc)
-     * @return moodle_database driver object
+     * @param string $library database library of the driver (adodb, pdo, native, etc)
+     * @return moodle_database driver object or null if error
      */
-    public static function get_driver($type, $library = 'adodb') {
+    public static function get_driver_instance($type, $library) {
         global $CFG;
-        $classname = $type . '_' . $library . '_moodle_database';
-        require_once ("$CFG->libdir/dml/$classname.php");
-        return new $classname ();
+
+        $classname = $type.'_'.$library.'_moodle_database';
+        $libfile   = "$CFG->libdir/dml/$classname.php";
+
+        if (!file_exists($libfile)) {
+            return null;
+        }
+
+        require_once($libfile);
+        return new $classname();
     }
 
     /**

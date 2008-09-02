@@ -127,6 +127,7 @@ global $HTTPSPAGEREQUIRED;
 /// Load up standard libraries
     require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings
     require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
+    require_once($CFG->libdir .'/dmllib.php');          // Database access
     require_once($CFG->libdir .'/datalib.php');         // Legacy lib with a big-mix of functions.
     require_once($CFG->libdir .'/accesslib.php');       // Access control functions
     require_once($CFG->libdir .'/deprecatedlib.php');   // Deprecated functions included for backward compatibility

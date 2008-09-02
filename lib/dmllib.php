@@ -35,3 +35,95 @@
 ///     http://docs.moodle.org/en/DML_functions
 /// (feel free to modify, improve and document such page, thanks!)
 
+require_once($CFG->libdir.'/dml/moodle_database.php');
+
+/**
+ * Sets up global $DB moodle_database instance
+ * @return void
+ */
+function setup_DB() {
+    global $CFG, $DB;
+
+    if (isset($DB)) {
+        return;
+    }
+
+    if (!isset($CFG->dbuser)) {
+        $CFG->dbuser = '';
+    }
+
+    if (!isset($CFG->dbpass)) {
+        $CFG->dbpass = '';
+    }
+
+    if (!isset($CFG->dbname)) {
+        $CFG->dbname = '';
+    }
+
+    if (!isset($CFG->dbpersist)) {
+        $CFG->dbpersist = false;
+    }
+
+    if (!isset($CFG->dblibrary)) {
+        $CFG->dblibrary = 'adodb';
+    }
+
+    if (!isset($CFG->dboptions)) {
+        $CFG->dboptions = array();
+    }
+
+    $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+
+    $CFG->dbfamily = $DB->get_dbfamily(); // TODO: BC only for now
+
+    $driverstatus = $DB->driver_installed();
+
+    if ($driverstatus !== true) {
+        print_error('dbdriverproblem', 'error', '', $driverstatus);
+    }
+
+    if (debugging('', DEBUG_ALL)) {
+        // catch errors
+        ob_start();
+    } else {
+        $prevdebug = error_reporting(0);
+    }
+    if (!$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix, $CFG->dboptions)) {
+        if (debugging('', DEBUG_ALL)) {
+            if ($dberr = ob_get_contents()) {
+                $dberr = '<p><em>'.$dberr.'</em></p>';
+            }
+            ob_end_clean();
+        } else {
+            $dberr = '';
+        }
+        if (empty($CFG->noemailever) and !empty($CFG->emailconnectionerrorsto)) {
+            if (file_exists($CFG->dataroot.'/emailcount')){
+                $fp = fopen($CFG->dataroot.'/emailcount', 'r');
+                $content = fread($fp, 24);
+                fclose($fp);
+                if((time() - (int)$content) > 600){
+                    @mail($CFG->emailconnectionerrorsto,
+                        'WARNING: Database connection error: '.$CFG->wwwroot,
+                        'Connection error: '.$CFG->wwwroot);
+                    $fp = fopen($CFG->dataroot.'/emailcount', 'w');
+                    fwrite($fp, time());
+                }
+            } else {
+               @mail($CFG->emailconnectionerrorsto,
+                    'WARNING: Database connection error: '.$CFG->wwwroot,
+                    'Connection error: '.$CFG->wwwroot);
+               $fp = fopen($CFG->dataroot.'/emailcount', 'w');
+               fwrite($fp, time());
+            }
+        }
+        print_error('dbconnectionfailed', 'error', '', $dberr);
+    }
+    if (debugging('', DEBUG_ALL)) {
+        ob_end_clean();
+    } else {
+        error_reporting($prevdebug);
+    }
+
+    return true;
+}

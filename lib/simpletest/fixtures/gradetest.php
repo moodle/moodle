@@ -87,7 +87,7 @@ class grade_test extends UnitTestCase {
 
         if (is_null(grade_test::$db)) {
             $this->realdb = $DB;
-            grade_test::$db = moodle_database::get_driver($CFG->dbtype, $CFG->dblibrary);
+            grade_test::$db = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
             grade_test::$db->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, "tst_", $CFG->dboptions);
         }
 
