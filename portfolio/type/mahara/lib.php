@@ -2,6 +2,7 @@
 
 define('PORTFOLIO_MAHARA_ERR_NETWORKING_OFF', 'err_networkingoff');
 define('PORTFOLIO_MAHARA_ERR_NOHOSTS', 'err_nomnethosts');
+define('PORTFOLIO_MAHARA_ERR_INVALIDHOST', 'err_invalidhost');
 
 require_once($CFG->dirroot . '/lib/portfoliolib.php');
 require_once($CFG->dirroot . '/mnet/lib.php');
@@ -38,12 +39,6 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     }
 
     public function admin_config_form(&$mform) {
-        if ($errorcode = self::plugin_sanity_check()) {
-            return $errorcode; // processing stops when we return a string.
-        }
-        if (!empty($this) && $errorcode = $this->instance_sanity_check()) {
-            return $errorcode;
-        }
         $strrequired = get_string('required');
         $hosts = self::get_mnet_hosts(); // this is called by sanity check but it's ok because it's cached
         foreach ($hosts as $host) {
@@ -51,13 +46,31 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         }
         $mform->addElement('select', 'mnethostid', get_string('mnethost', 'portfolio_mahara'), $hosts);
         $mform->addRule('mnethostid', $strrequired, 'required', null, 'client');
+        if ($errorcode = self::plugin_sanity_check()) {
+            return $errorcode; // processing stops when we return a string.
+        }
+        if (!empty($this) && $errorcode = $this->instance_sanity_check()) {
+            return $errorcode;
+        }
     }
 
+    public function instance_sanity_check() {
+        // make sure the host record exists since we don't have referential integrity
+        try {
+            $this->ensure_mnethost();
+        }
+        catch (portfolio_exception $e) {
+            return PORTFOLIO_MAHARA_ERR_INVALIDHOST;
+        }
+        // make sure we have the right services
+        $hosts = $this->get_mnet_hosts();
+        if (!array_key_exists($this->get_config('mnethostid'), $hosts)) {
+            return PORTFOLIO_MAHARA_ERR_INVALIDHOST;
+        }
+        return 0;
+    }
 
     public static function plugin_sanity_check() {
-        /* @todo more here like
-            - check for services in the plugins that are configured
-        */
         global $CFG, $DB;
         $errorcode = 0;
         if (!isset($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode != 'strict') {
@@ -249,7 +262,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
             return;
         }
         global $DB;
-        $this->hostrecord = $DB->get_record('mnet_host', array('id' => $this->get_config('mnethostid')));
+        if (!$this->hostrecord = $DB->get_record('mnet_host', array('id' => $this->get_config('mnethostid')))) {
+            throw new portfolio_plugin_exception(PORTFOLIO_MAHARA_ERR_INVALIDHOST, 'portfolio_mahara');
+        }
         $this->mnethost = new mnet_peer();
         $this->mnethost->set_wwwroot($this->hostrecord->wwwroot);
     }
