@@ -698,12 +698,12 @@ class file_storage {
      * @param int $draftfileid file id of the draft file
      * @param object $context new context of the file
      * @param string $filearea destination filearea
-     * @param int $itemid new itemid (if null, keeps current)
-     * @param string $filepath new file path (if null, keeps current)
+     * @param int $itemid new itemid
+     * @param string $filepath new file path
      * @param string $filename new file name (if null, keeps current)
      * @return new stored_file
      */
-    function move_to_final_destination($draftfileid, $context, $filearea, $itemid = null, $filepath = null, $filename = null) {
+    function move_to_final_destination($draftfileid, $context, $filearea, $itemid, $filepath, $filename = null) {
 
         if (!$file = $this->get_file_by_id($draftfileid)) {
             return false;
@@ -715,8 +715,8 @@ class file_storage {
         $newrecord = new object();
         $newrecord->contextid = $context->id;
         $newrecord->filearea = $filearea;
-        $newrecord->itemid = ($itemid ? $itemid : $params['itemid']);
-        $newrecord->filepath = ($filepath ? $filepath : $params['filepath']);
+        $newrecord->itemid = $itemid;
+        $newrecord->filepath = $filepath;
         $newrecord->filename = ($filename ? $filename : $params['filename']);
             
         $newrecord->timecreated = $file->get_timecreated();
