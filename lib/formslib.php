@@ -548,7 +548,7 @@ class moodleform {
      * @param int $newuserid - new userid if required
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
-    function save_stored_file($elname, $newcontextid, $newfilearea, $newitemid, $newfilepath, 
+    function save_stored_file($elname, $newcontextid, $newfilearea, $newitemid, $newfilepath,
                               $newfilename=null, $override=false, $newuserid=null) {
 
         global $USER;
@@ -585,7 +585,7 @@ class moodleform {
             return $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
 
         } else if (isset($this->exportValues[$elname])) {    // Submitted data contains itemid in user's draft_area
-            
+
             $itemid = $this->exportValues[$elname];
 
             if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
@@ -597,7 +597,7 @@ class moodleform {
             }
 
             $file = array_pop($files);   // Get the one and only item out of the array
-            
+
             $params = $file->get_params();
 
             $fs = get_file_storage();
@@ -1801,6 +1801,8 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
 
         'static'=>"\n\t\t".'<div class="fitem {advanced}"><div class="fitemtitle"><div class="fstaticlabel"><label>{label}<!-- BEGIN required -->{req}<!-- END required -->{advancedimg} {help}</label></div></div><div class="felement fstatic <!-- BEGIN error --> error<!-- END error -->"><!-- BEGIN error --><span class="error">{error}</span><br /><!-- END error -->{element}&nbsp;</div></div>',
 
+'warning'=>"\n\t\t".'<div class="fitem {advanced}">{element}</div>',
+
         'nodisplay'=>'');
 
         parent::HTML_QuickForm_Renderer_Tableless();
@@ -1887,7 +1889,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         //check if this is a group element first
         if (($this->_inGroup) and !empty($this->_groupElementTemplate)) {
         	// so it gets substitutions for *each* element
-            $html = $this->_groupTemplates[$element->getName()];	
+            $html = $this->_groupTemplates[$element->getName()];
         }
         elseif (method_exists($element, 'getElementTemplateType')){
             $html = $this->_elementTemplates[$element->getElementTemplateType()];
@@ -2045,4 +2047,5 @@ MoodleQuickForm::registerElementType('submit', "$CFG->libdir/form/submit.php", '
 MoodleQuickForm::registerElementType('questioncategory', "$CFG->libdir/form/questioncategory.php", 'MoodleQuickForm_questioncategory');
 MoodleQuickForm::registerElementType('advcheckbox', "$CFG->libdir/form/advcheckbox.php", 'MoodleQuickForm_advcheckbox');
 MoodleQuickForm::registerElementType('recaptcha', "$CFG->libdir/form/recaptcha.php", 'MoodleQuickForm_recaptcha');
+MoodleQuickForm::registerElementType('warning', "$CFG->libdir/form/warning.php", 'MoodleQuickForm_warning');
 ?>

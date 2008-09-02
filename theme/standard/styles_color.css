@@ -648,7 +648,7 @@ table.minicalendar {
 
 /* .content should match the body background, sides are white. */
 #course-view .weeks .content ,
-#course-view .topics .content, 
+#course-view .topics .content,
 #course-view .weeks .section,
 #course-view .topics .section {
   background: #FAFAFA;
@@ -745,11 +745,11 @@ td.grade div.overridden {
 }
 
 .grade-report-grader table#user-grades td.cell span.gradepass {
-  background-color: #C2EBBD; 
+  background-color: #C2EBBD;
 }
 
 .grade-report-grader table#user-grades td.cell span.gradefail {
-  background-color: #EBC4BD; 
+  background-color: #EBC4BD;
 }
 
 /* grade edit */
@@ -1156,4 +1156,13 @@ form.mform .fdescription.required {
 }
 form.mform .required .fgroup span label {
   color:#000;
+}
+
+form.mform .formwarning {
+    background-color: red;
+    color: yellow;
+    margin-top: 15px;
+    padding: 10px 0px 10px 0px;
+    font-size: 110%;
+    font-weight: bold;
 }
