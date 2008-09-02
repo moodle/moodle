@@ -104,25 +104,31 @@ abstract class database_exporter {
      * @see $check_schema is true), queries the database and calls
      * appropiate callbacks.
      *
-     * @exception export_exception if any checking (e.g. database schema) fails
+     * @exception dbtransfer_exception if any checking (e.g. database schema) fails
      *
      * @param string $description a user description of the data.
      */
     public function export_database($description=null) {
         global $CFG;
 
-        if ($this->check_schema and $this->manager->check_database_schema($this->schema)) {
-            //TODO put message in error lang
-            throw new export_exception('XMLDB schema does not match database schema.');
+        if ($this->check_schema and $errors = $this->manager->check_database_schema($this->schema)) {
+            $details = '';
+            foreach ($errors as $table=>$items) {
+                $details .= '<div>'.get_string('table').' '.$table.':';
+                $details .= '<ul>';
+                foreach ($items as $item) {
+                    $details .= '<li>'.$item.'</li>';
+                }
+                $details .= '</ul></div>';
+            }
+            throw new dbtransfer_exception('exportschemaexception', $details);
         }
         $tables = $this->schema->getTables();
         $this->begin_database_export($CFG->version, $CFG->release, date('c'), $description);
         foreach ($tables as $table) {
             $rs = $this->mdb->get_recordset_sql('SELECT * FROM {'.$table->getName().'}');
-            //TODO remove this when dml will have exceptions
             if (!$rs) {
-                //TODO put message in error lang
-                throw new export_exception('An error occured while reading the database.');
+                throw new ddl_table_missing_exception($table->getName());
             }
             $this->begin_table_export($table);
             foreach ($rs as $row) {

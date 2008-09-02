@@ -361,6 +361,7 @@ $string['errors'] = 'Errors';
 $string['errorsetting'] = 'Could not save setting:';
 $string['errorwithsettings'] = 'Some settings were not changed due to an error.';
 $string['experimental'] = 'Experimental';
+$string['experimentalsettings'] = 'Experimental settings';
 $string['extendedusernamechars'] = 'Allow extended characters in usernames';
 $string['filecreated'] = 'New file created';
 $string['filestoredin'] = 'Save file into folder :';

@@ -39,29 +39,29 @@ abstract class xml_database_importer extends database_importer {
         switch ($tag) {
             case 'moodle_database' :
                 if (empty($attributes['version']) || empty($attributes['timestamp'])) {
-                    throw new import_exception('Missing tag attribute in data file.');
+                    throw new dbtransfer_exception('malformedxmlexception');
                 }
                 $this->begin_database_import($attributes['version'], $attributes['timestamp']);
                 break;
             case 'table' :
                 if (isset($this->current_table)) {
-                    throw new import_exception('Unexpected tag in data file.');
+                    throw new dbtransfer_exception('malformedxmlexception');
                 }
                 if (empty($attributes['name']) || empty($attributes['schemaHash'])) {
-                    throw new import_exception('Missing tag attribute in data file.');
+                    throw new dbtransfer_exception('malformedxmlexception');
                 }
                 $this->current_table = $attributes['name'];
                 $this->begin_table_import($this->current_table, $attributes['schemaHash']);
                 break;
             case 'record' :
                 if (isset($this->current_row) || !isset($this->current_table)) {
-                    throw new import_exception('Unexpected tag in data file.');
+                    throw new dbtransfer_exception('malformedxmlexception');
                 }
                 $this->current_row = new object();
                 break;
             case 'field' :
                 if (isset($this->current_field) || !isset($this->current_row)) {
-                    throw new import_exception('Unexpected tag in data file.');
+                    throw new dbtransfer_exception('malformedxmlexception');
                 }
                 $this->current_field = $attributes['name'];
                 $this->current_data = '';
@@ -72,8 +72,7 @@ abstract class xml_database_importer extends database_importer {
                 }
                 break;
             default :
-                //TODO localize
-                throw new import_exception('XML content not valid for import operation.');
+                throw new dbtransfer_exception('malformedxmlexception');
         }
     }
 
@@ -113,8 +112,7 @@ abstract class xml_database_importer extends database_importer {
                 break;
 
             default :
-                //TODO put message in error lang
-                throw new import_exception('XML content not valid for import operation.');
+                throw new dbtransfer_exception('malformedxmlexception');
         }
     }
 

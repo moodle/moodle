@@ -57,7 +57,7 @@ class database_importer {
      * operation, before any database changes are made. It will check the database
      * schema if @see check_schema is true
      *
-     * @exception import_exception if any checking (e.g. database schema, Moodle
+     * @exception dbtransfer_exception if any checking (e.g. database schema, Moodle
      * version) fails
      *
      * @param float $version the version of the system which generated the data
@@ -73,13 +73,21 @@ class database_importer {
         }
 
         if (round($version, 2) !== round($CFG->version, 2)) { // version might be in decimal format too
-            //TODO put message in error lang
-            throw new import_exception('Current Moodle version does not match exported Moodle version.');
+            $a = (object)array('schemaver'=>$version, 'currentver'=>$CFG->version);
+            throw new dbtransfer_exception('importversionmismatchexception', $a);
         }
 
-        if ($this->check_schema && $this->manager->check_database_schema($this->schema)) {
-            //TODO put message in error lang
-            throw new import_exception('XMLDB schema does not match database schema.');
+        if ($this->check_schema and $errors = $this->manager->check_database_schema($this->schema)) {
+            $details = '';
+            foreach ($errors as $table=>$items) {
+                $details .= '<div>'.get_string('table').' '.$table.':';
+                $details .= '<ul>';
+                foreach ($items as $item) {
+                    $details .= '<li>'.$item.'</li>';
+                }
+                $details .= '</ul></div>';
+            }
+            throw new dbtransfer_exception('importschemaexception', $details);
         }
         $this->mdb->begin_sql();
     }
@@ -88,7 +96,7 @@ class database_importer {
      * Callback function. Should be called only once per table import operation,
      * before any table changes are made. It will delete all table data.
      *
-     * @exception import_exception an unknown table import is attempted
+     * @exception dbtransfer_exception an unknown table import is attempted
      * @exception ddl_table_missing_exception if the table is missing
      *
      * @param string $tablename - the name of the table that will be imported
@@ -97,16 +105,13 @@ class database_importer {
      */
     public function begin_table_import($tablename, $schemaHash) {
         if (!$table = $this->schema->getTable($tablename)) {
-            //TODO put message in error lang
-            throw new import_exception('Unknown table in import data');
+            throw new dbtransfer_exception('unknowntableexception', $tablename);
         }
         if ($schemaHash != $table->getHash()) {
-            throw new import_exception('XMLDB schema does not match database schema.');
+            throw new dbtransfer_exception('differenttableexception', $tablename);
         }
         // this should not happen, unless someone drops tables after import started
         if (!$this->manager->table_exists($table)) {
-            // in the future, missing tables will be recreated with
-            //$this->manager->create_table($table);
             throw new ddl_table_missing_exception($tablename);
         }
         $this->mdb->delete_records($tablename);

@@ -7,15 +7,15 @@ class database_mover extends database_exporter {
     /**
      * Object constructor.
      *
-     * @param moodle_database $mdb_target Connection to the target database (a
-     * @see moodle_database object).
      * @param moodle_database $mdb Connection to the source database (a
+     * @see moodle_database object).
+     * @param moodle_database $mdb_target Connection to the target database (a
      * @see moodle_database object).
      * @param boolean $check_schema - whether or not to check that XML database
      * schema matches the RDBMS database schema before exporting (used by
      * @see export_database).
      */
-    public function __construct(moodle_database $mdb_target, moodle_database $mdb_source, $check_schema=true) {
+    public function __construct(moodle_database $mdb_source, moodle_database $mdb_target, $check_schema=true) {
         parent::__construct($mdb_source, $check_schema);
         $this->importer = new database_importer($mdb_target, $check_schema);
     }

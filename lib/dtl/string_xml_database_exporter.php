@@ -26,7 +26,7 @@ class string_xml_database_exporter extends xml_database_exporter {
      * Specific implementation for memory exporting the database: it clear the buffer
      * and calls superclass @see database_exporter::export_database().
      *
-     * @exception export_exception if any checking (e.g. database schema) fails
+     * @exception dbtransfer_exception if any checking (e.g. database schema) fails
      * @param string $description a user description of the data.
      * @return void
      */

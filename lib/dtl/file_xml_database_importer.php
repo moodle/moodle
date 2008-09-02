@@ -10,7 +10,7 @@ class file_xml_database_importer extends xml_database_importer {
     /**
      * Object constructor.
      *
-     * @param string $filepath - path to the XML data file. Use null for PHP
+     * @param string $filepath - path to the XML data file. Use 'php://input' for PHP
      * input stream.
      * @param moodle_database $mdb Connection to the target database
      * @see xml_database_importer::__construct()
@@ -18,9 +18,6 @@ class file_xml_database_importer extends xml_database_importer {
      * @see xml_database_importer::__construct()
      */
     public function __construct($filepath, moodle_database $mdb, $check_schema=true) {
-        if (is_null($filepath)) {
-            $filepath = 'php://input';
-        }
         $this->filepath = $filepath;
         parent::__construct($mdb, $check_schema);
     }
@@ -35,8 +32,7 @@ class file_xml_database_importer extends xml_database_importer {
         $parser = $this->get_parser();
         while ($data = fread($file, 65536)) {
             if (!xml_parse($parser, $data, feof($file))) {
-                //TODO localize
-                throw new import_exception("XML data not well-formed.");
+                throw new dbtransfer_exception('malformedxmlexception');
             }
         }
         xml_parser_free($parser);

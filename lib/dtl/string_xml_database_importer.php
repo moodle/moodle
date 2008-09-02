@@ -29,8 +29,7 @@ class string_xml_database_importer extends xml_database_importer {
     public function import_database() {
         $parser = $this->get_parser();
         if (!xml_parse($parser, $this->data, true)) {
-            //TODO localize
-            throw new import_exception("XML data not well-formed.");
+            throw new dbtransfer_exception('malformedxmlexception');
         }
         xml_parser_free($parser);
     }

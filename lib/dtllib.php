@@ -41,23 +41,16 @@ require_once($CFG->libdir.'/dtl/file_xml_database_importer.php');
 require_once($CFG->libdir.'/dtl/string_xml_database_importer.php');
 
 /**
- * Exception class for export operations.
+ * Exception class for db transfer
  * @see moodle_exception
- * TODO subclass for specific purposes
  */
-class export_exception extends moodle_exception {
-    function __construct($errorcode, $a=null, $debuginfo=null) {
-        parent::__construct($errorcode, '', '', $a, $debuginfo);
+class dbtransfer_exception extends moodle_exception {
+    function __construct($errorcode, $a=null, $link='', $debuginfo=null) {
+        global $CFG;
+        if (empty($link)) {
+            $link = "$CFG->wwwroot/$CFG->admin/";
+        }
+        parent::__construct($errorcode, 'dbtransfer', $link, $a, $debuginfo);
     }
 }
 
-/**
- * Exception class for import operations.
- * @see moodle_exception
- * TODO subclass for specific purposes
- */
-class import_exception extends moodle_exception {
-    function __construct($errorcode, $a=null, $debuginfo=null) {
-        parent::__construct($errorcode, '', '', $a, $debuginfo);
-    }
-}

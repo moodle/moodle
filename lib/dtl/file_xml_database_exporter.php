@@ -12,7 +12,7 @@ class file_xml_database_exporter extends xml_database_exporter {
     /**
      * Object constructor.
      *
-     * @param string $filepath - path to the XML data file. Use null for PHP
+     * @param string $filepath - path to the XML data file. Use 'php://output' for PHP
      * output stream.
      * @param moodle_database $mdb Connection to the source database
      * @see xml_database_exporter::__construct()
@@ -20,9 +20,6 @@ class file_xml_database_exporter extends xml_database_exporter {
      * @see xml_database_exporter::__construct()
      */
     public function __construct($filepath, moodle_database $mdb, $check_schema=true) {
-        if (is_null($filepath)) {
-            $filepath = 'php://output';
-        }
         parent::__construct($mdb, $check_schema);
         $this->filepath = $filepath;
     }
@@ -38,7 +35,7 @@ class file_xml_database_exporter extends xml_database_exporter {
      * Specific implementation for file exporting the database: it opens output stream, calls
      * superclass @see database_exporter::export_database() and closes output stream.
      *
-     * @exception export_exception if any checking (e.g. database schema) fails
+     * @exception dbtransfer_exception if any checking (e.g. database schema) fails
      *
      * @param string $description a user description of the data.
      */
