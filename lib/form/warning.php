@@ -20,6 +20,9 @@ class MoodleQuickForm_warning extends HTML_QuickForm_static{
     function MoodleQuickForm_warning($elementName=null, $elementClass='formwarning', $text=null) {
         parent::HTML_QuickForm_static($elementName, null, $text);
         $this->_type = 'warning';
+        if (is_null($elementClass)) {
+            $elementClass = 'formwarning';
+        }
         $this->_class = $elementClass;
     }
 
