@@ -936,7 +936,7 @@ function forum_user_outline($course, $user, $mod, $forum) {
  *
  */
 function forum_user_complete($course, $user, $mod, $forum) {
-    global $CFG;
+    global $CFG,$USER;
 
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
 
@@ -945,13 +945,30 @@ function forum_user_complete($course, $user, $mod, $forum) {
         }
         $discussions = forum_get_user_involved_discussions($forum->id, $user->id);
 
+        // preload all user ratings for these discussions - one query only and minimal memory
+        $cm->cache->ratings = array();
+        $cm->cache->myratings = array();
+        if ($postratings = forum_get_all_user_ratings($user->id, $discussions)) {
+            foreach ($postratings as $pr) {
+                if (!isset($cm->cache->ratings[$pr->postid])) {
+                    $cm->cache->ratings[$pr->postid] = array();
+                }
+                $cm->cache->ratings[$pr->postid][$pr->id] = $pr->rating;
+
+                if ($pr->userid == $USER->id) {
+                    $cm->cache->myratings[$pr->postid] = $pr->rating;
+                }
+            }
+            unset($postratings);
+        }
+
         foreach ($posts as $post) {
-             if (!isset($discussions[$post->discussion])) {
+            if (!isset($discussions[$post->discussion])) {
                 continue;
             }
             $discussion = $discussions[$post->discussion];
-
-           $ratings = null;
+            
+            $ratings = null;
 
             if ($forum->assessed) {
                 if ($scale = make_grades_menu($forum->scale)) {
@@ -960,10 +977,8 @@ function forum_user_complete($course, $user, $mod, $forum) {
                     $ratings->assesstimestart = $forum->assesstimestart;
                     $ratings->assesstimefinish = $forum->assesstimefinish;
                     $ratings->allow = false;
-        }
-}
-
-            pre_load_all_ratings($cm, $discussion);
+                }
+            }
 
             forum_print_post($post, $discussion, $forum, $cm, $course, false, false, false, $ratings);
 
@@ -973,29 +988,6 @@ function forum_user_complete($course, $user, $mod, $forum) {
     }
 }
 
-/**
- * Preload all ratings of a discussion into course module
- * Use this function to optimize post display with ratings:
- * one query only and minimal memory
- * @param object $cm course module (passed by reference as cache attribut is modified)
- * @param object $discussion the discussion for which the ratings are cached
- */
-function pre_load_all_ratings(&$cm, $discussion) {
-    global $CFG,$USER;
-    $cm->cache->ratings = array();
-    $cm->cache->myratings = array();
-    if ($postratings = forum_get_all_discussion_ratings($discussion)) {
-        foreach ($postratings as $pr) {
-            if (!isset($cm->cache->ratings[$pr->postid])) {
-                $cm->cache->ratings[$pr->postid] = array();
-            }
-            $cm->cache->ratings[$pr->postid][$pr->id] = $pr->rating;
-            if ($pr->userid == $USER->id) {
-                $cm->cache->myratings[$pr->postid] = $pr->rating;
-            }
-        }
-    }
-}
 
 /**
  *
@@ -1835,6 +1827,41 @@ function forum_get_all_discussion_ratings($discussion) {
                                    {$CFG->prefix}forum_posts p
                              WHERE r.post = p.id AND p.discussion = $discussion->id
                              ORDER BY p.id ASC");
+}
+
+/**
+ * Returns a list of ratings for one specific user for all posts in discussion
+ * @global object $CFG
+ * @param object $discussions the discussions for which we return all ratings
+ * @param int $userid the user for who we return all ratings
+ * @return object
+ */
+function forum_get_all_user_ratings($userid, $discussions) {
+    global $CFG;
+
+
+    foreach ($discussions as $discussion) {
+     if (!isset($discussionsid)){
+         $discussionsid = $discussion->id;
+     }
+     else {
+         $discussionsid .= ",".$discussion->id;
+     }
+    }
+
+    $sql = "SELECT r.id, r.userid, p.id AS postid, r.rating
+                              FROM {$CFG->prefix}forum_ratings r,
+                                   {$CFG->prefix}forum_posts p
+                             WHERE r.post = p.id AND p.userid = $userid";
+    //postgres compability
+    if (!isset($discussionsid)) {
+       $sql .=" AND p.discussion IN (".$discussionsid.")";
+    }
+    $sql .=" ORDER BY p.id ASC";
+
+    return get_records_sql($sql);
+    
+
 }
 
 /**
@@ -4855,12 +4882,25 @@ function forum_print_discussion($course, $cm, $forum, $discussion, $post, $mode,
                 $ratingsformused = true;
             }
 
-
-            pre_load_all_ratings($cm, $discussion);
+            // preload all ratings - one query only and minimal memory
+            $cm->cache->ratings = array();
+            $cm->cache->myratings = array();
+            if ($postratings = forum_get_all_discussion_ratings($discussion)) {
+                foreach ($postratings as $pr) {
+                    if (!isset($cm->cache->ratings[$pr->postid])) {
+                        $cm->cache->ratings[$pr->postid] = array();
+                    }
+                    $cm->cache->ratings[$pr->postid][$pr->id] = $pr->rating;
+                    if ($pr->userid == $USER->id) {
+                        $cm->cache->myratings[$pr->postid] = $pr->rating;
+                    }
+                }
+                unset($postratings);
+            }
         }
-                    
+
     }
-               
+
 
 
     $post->forum = $forum->id;   // Add the forum id to the post object, later used by forum_print_post
