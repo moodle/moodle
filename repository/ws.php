@@ -26,7 +26,7 @@ $repo_id = optional_param('repo_id', 1, PARAM_INT);
 $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);
 $userid  = $USER->id;
 
-$sql = 'SELECT i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id='.$repo_id.' AND i.typeid=r.id';
+$sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id='.$repo_id.' AND i.typeid=r.id';
 if(!$repository = $DB->get_record_sql($sql)) {
     $err = new stdclass;
     $err->e = get_string('invalidrepositoryid', 'repository');
@@ -42,7 +42,7 @@ if(file_exists($CFG->dirroot.'/repository/'.
         $type.'/repository.class.php');
     $classname = 'repository_' . $type;
     try{
-        $repo = new $classname($repo_id, $ctx_id, array('ajax'=>true));
+        $repo = new $classname($repo_id, $ctx_id, array('ajax'=>true, 'name'=>$repository->name));
     } catch (repository_exception $e){
         $err = new stdclass;
         $err->e = $e->getMessage();
