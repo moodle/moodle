@@ -17,11 +17,11 @@ class MoodleQuickForm_warning extends HTML_QuickForm_static{
     var $_helpbutton='';
     var $_class='';
 
-    function MoodleQuickForm_warning($elementName=null, $elementClass='formwarning', $text=null) {
+    function MoodleQuickForm_warning($elementName=null, $elementClass='notifyproblem', $text=null) {
         parent::HTML_QuickForm_static($elementName, null, $text);
         $this->_type = 'warning';
         if (is_null($elementClass)) {
-            $elementClass = 'formwarning';
+            $elementClass = 'notifyproblem';
         }
         $this->_class = $elementClass;
     }

@@ -1158,11 +1158,3 @@ form.mform .required .fgroup span label {
   color:#000;
 }
 
-form.mform .formwarning {
-    background-color: red;
-    color: yellow;
-    margin-top: 15px;
-    padding: 10px 0px 10px 0px;
-    font-size: 110%;
-    font-weight: bold;
-}
