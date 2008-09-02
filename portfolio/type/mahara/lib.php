@@ -3,6 +3,7 @@
 define('PORTFOLIO_MAHARA_ERR_NETWORKING_OFF', 'err_networkingoff');
 define('PORTFOLIO_MAHARA_ERR_NOHOSTS', 'err_nomnethosts');
 define('PORTFOLIO_MAHARA_ERR_INVALIDHOST', 'err_invalidhost');
+define('PORTFOLIO_MAHARA_ERR_NOMNETAUTH', 'err_nomnetauth');
 
 require_once($CFG->dirroot . '/lib/portfoliolib.php');
 require_once($CFG->dirroot . '/mnet/lib.php');
@@ -75,6 +76,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         $errorcode = 0;
         if (!isset($CFG->mnet_dispatcher_mode) || $CFG->mnet_dispatcher_mode != 'strict') {
             $errorcode =  PORTFOLIO_MAHARA_ERR_NETWORKING_OFF;
+        }
+        if (!is_enabled_auth('mnet')) {
+            $errorcode = PORTFOLIO_MAHARA_ERR_NOMNETAUTH;
         }
         if (!self::get_mnet_hosts()) {
             $errorcode =  PORTFOLIO_MAHARA_ERR_NOHOSTS;
