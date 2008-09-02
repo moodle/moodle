@@ -2132,7 +2132,7 @@ function question_make_default_categories($contexts) {
 function get_categories_for_contexts($contexts, $sortorder = 'parent, sortorder, name ASC') {
     global $DB;
     return $DB->get_records_sql("
-            SELECT *, (SELECT count(1) FROM {question} q
+            SELECT c.*, (SELECT count(1) FROM {question} q
                         WHERE c.id = q.category AND q.hidden='0' AND q.parent='0') AS questioncount
               FROM {question_categories} c
              WHERE c.contextid IN ($contexts)
