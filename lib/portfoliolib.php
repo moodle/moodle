@@ -1215,8 +1215,6 @@ abstract class portfolio_plugin_base {
     * or editing an existing one (non statically)
     *
     * @param moodleform $mform passed by reference, add elements to it.
-    * @return mixed - if a string is returned, it means the plugin cannot create an instance
-    *                 and the string is an error code
     */
     public function admin_config_form(&$mform) {}
 
@@ -1728,14 +1726,19 @@ final class portfolio_admin_form extends moodleform {
         // let the plugin add the fields they want (either statically or not)
         if (portfolio_static_function($this->plugin, 'has_admin_config')) {
             if (!$this->instance) {
-                $result = portfolio_static_function($this->plugin, 'admin_config_form', $mform);
+                $insane = portfolio_instance_sanity_check($this->instance);
+                portfolio_static_function($this->plugin, 'admin_config_form', $mform);
             } else {
-                $result = $this->instance->admin_config_form($mform);
+                $insane = portfolio_plugin_sanity_check($this->plugin);
+                $this->instance->admin_config_form($mform);
             }
         }
 
-        if (isset($result) && is_string($result)) { // something went wrong, warn...
-            $mform->addElement('warning', 'insane', null, get_string($result, 'portfolio_' . $this->plugin));
+        if (is_array($insane)) {
+            $insane = array_shift($insane);
+        }
+        if (isset($insane) && is_string($insane)) { // something went wrong, warn...
+            $mform->addElement('warning', 'insane', null, get_string($insane, 'portfolio_' . $this->plugin));
         }
 
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
