@@ -7152,14 +7152,15 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     private $forum;
     private $discussion;
     private $attachment;
-    private $files;
+    private $postfiles;
+    private $allfiles;
 
     function __construct($callbackargs) {
         global $DB;
 
         if (array_key_exists('postid', $callbackargs)) {
             if (!$this->post = $DB->get_record('forum_posts', array('id' => $callbackargs['postid']))) {
-                print_error('invalidpostid', 'forum');
+                throw new portfolio_caller_exception('invalidpostid', 'forum');
             }
         }
         $dparams = array();
@@ -7168,31 +7169,37 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         } else if ($this->post) {
             $dbparams = array('id' => $this->post->discussion);
         } else {
-            print_error('mustprovidediscussionorpost', 'forum');
+            throw new portfolio_caller_exception('mustprovidediscussionorpost', 'forum');
         }
         if (!$this->discussion = $DB->get_record('forum_discussions', $dbparams)) {
-            print_error('invaliddiscussionid', 'forum');
+            throw new portfolio_caller_exception('invaliddiscussionid', 'forum');
         }
         if (!$this->forum = $DB->get_record('forum', array('id' => $this->discussion->forum))) {
-            print_error('invalidforumid', 'forum');
+            throw new portfolio_caller_exception('invalidforumid', 'forum');
         }
         if (!$this->cm = get_coursemodule_from_instance('forum', $this->forum->id)) {
-            print_error('invalidcoursemodule');
+            throw new portfolio_caller_exception('invalidcoursemodule');
         }
         $fs = get_file_storage();
         if ($this->attachment = (array_key_exists('attachment', $callbackargs) ? $callbackargs['attachment'] : false)) {
             if (!$this->post) {
-                print_error('attachmentsnopost', 'forum');
+                throw new portfolio_caller_exception('attachmentsnopost', 'forum');
             }
             if (!$f = $fs->get_file_by_id($this->attachment)) {
                 print_error('noattachments', 'forum');
             }
-            $this->files = array($f);
+            $this->postfiles = array($f);
             if (in_array($f->get_mimetype(), array('image/gif', 'image/jpeg', 'image/png'))) {
                 $this->supportedformats = array(PORTFOLIO_FORMAT_IMAGE);
             }
+        } elseif ($this->post) {
+            $this->postfiles = $fs->get_area_files(get_context_instance(CONTEXT_MODULE, $this->cm->id)->id, 'forum_attachment', $this->post->id, "timemodified", false);
+        } else {
+            $this->posts = forum_get_all_discussion_posts($this->discussion->id, 'p.created ASC');
+            foreach ($this->posts as $post) {
+                $this->allfiles[$post->id] = $fs->get_area_files(get_context_instance(CONTEXT_MODULE, $this->cm->id)->id, 'forum_attachment', $post->id, "timemodified", false);
+            }
         }
-        $this->files = $fs->get_area_files(get_context_instance(CONTEXT_MODULE, $this->cm->id)->id, 'forum_attachment', $this->post->id, "timemodified", false);
     }
 
     function get_return_url() {
@@ -7218,26 +7225,37 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
         // a single post, with or without attachment
         // or just an attachment with no post
         if (!$this->post) { // whole discussion
-            throw new portfolio_caller_exception('TODO PENNY: exporting whole discussion not implemented - see MDL-15758');
+            $content = '';
+            foreach ($this->posts as $post) {
+                $content .= '<br /><br />' . $this->prepare_post($post);
+                $this->copy_files($this->allfiles[$post->id]);
+            }
+            $this->get('exporter')->write_new_file($content, 'discussion.html');
         } else {
-            $status = true;
-            if ($this->files) {
-                foreach ($this->files as $f) {
-                    if ($this->attachment && $f->get_id() != $this->attachment) {
-                        continue; // support multipe files later
-                    }
-                    $status = $status && $this->get('exporter')->copy_existing_file($f);
-                    if ($this->attachment && $f->get_id() == $this->attachment) {
-                        return $status; // all we need to do
-                    }
-                }
+            $this->copy_files($this->postfiles, $this->attachment);
+            if ($this->attachment) {
+                return true; // all we need to do
             }
             $post = $this->prepare_post($this->post);
-            $status = $status && $this->get('exporter')->write_new_file($post, 'post.html');
-            return $status;
+            $this->get('exporter')->write_new_file($post, 'post.html');
         }
+        return true;
     }
 
+    private function copy_files($files, $justone=false) {
+        if (empty($files)) {
+            return;
+        }
+        foreach ($files as $f) {
+            if ($justone && $f->get_id() != $justone) {
+                continue; // support multipe files later
+            }
+            $this->get('exporter')->copy_existing_file($f);
+            if ($justone && $f->get_id() == $justone) {
+                return true; // all we need to do
+            }
+        }
+    }
     /**
     * this is a very cut down version of what is in forum_make_mail_post
     */
@@ -7282,11 +7300,16 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
 
         $output .= $formattedtext;
 
-        if ($this->files) {
+        if (!empty($this->postfiles)) {
+            $attachments = $this->postfiles;
+        } else if (!empty($this->allfiles) && array_key_exists($post->userid, $this->allfiles)) {
+            $attachments = $this->allfiles[$post->userid];
+        }
+        if (!empty($attachments)) {
             $post->course = $this->get('course')->id;
             $output .= '<div class="attachments">';
             $output .= '<br /><b>' .  get_string('attachments', 'forum') . '</b>:<br /><br />';
-            foreach ($this->files as $file) {
+            foreach ($attachments as $file) {
                 $output .= $file->get_filename() . '<br />';
             }
             $output .= "</div>";
@@ -7299,21 +7322,31 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
 
     function get_sha1() {
         if ($this->post) {
-            $attachsha1 = '';
-            if ($this->files) {
-                $sha1s = array();
-                foreach ($this->files as $file) {
-                    if ($this->attachment && $file->get_id() == $this->attachment) {
-                        return $file->get_contenthash(); // all we have to do
-                    }
-                    $sha1s[] = $file->get_contenthash();
-                }
-                asort($sha1s);
-                $attachsha1 =  sha1(implode('', $sha1s));
-            }
+            $attachsha1 = $this->files_sha1($this->postfiles, $this->attachment);
             return sha1($attachsha1 . ',' . $this->post->subject . ',' . $this->post->message);
+        } else {
+            $sha1s = array();
+            foreach ($this->posts as $post) {
+                $sha1s[] = $this->files_sha1($this->allfiles[$post->id]);
+                $sha1s[] = sha1($post->subject . ',' . $post->message);
+            }
+            return sha1(implode(',', $sha1s));
         }
-        throw new portfolio_caller_exception('TODO PENNY: exporting whole discussion not implemented - see MDL-15758');
+    }
+
+    function files_sha1($files, $justone=false) {
+        if (empty($files)) {
+            return;
+        }
+        $sha1s = array();
+        foreach ($files as $file) {
+            if ($justone && $file->get_id() == $justone) {
+                return $file->get_contenthash(); // all we have to do
+            }
+            $sha1s[] = $file->get_contenthash();
+        }
+        asort($sha1s);
+        return sha1(implode('', $sha1s));
     }
 
     function expected_time() {
@@ -7322,13 +7355,13 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     }
 
     function check_permissions() {
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
         if ($this->post) {
-            $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
             return (has_capability('mod/forum:exportpost', $context)
                 || ($this->post->userid == $this->user->id
                     && has_capability('mod/forum:exportownpost', $context)));
         }
-        throw new portfolio_caller_exception('TODO PENNY: exporting whole discussion not implemented - see MDL-15758');
+        return has_capability('mod/forum:exportdiscussion', $context);
     }
 
     public static function display_name() {
