@@ -1079,6 +1079,7 @@ function repository_get_client($context){
     $strsaveas    = get_string('saveas', 'repository').': ';
     $stradd  = get_string('add', 'repository');
     $strback      = get_string('back', 'repository');
+    $strcancel    = get_string('cancel');
     $strclose     = get_string('close', 'repository');
     $strcopying   = get_string('copying', 'repository');
     $strdownbtn   = get_string('getfile', 'repository');
@@ -1333,7 +1334,7 @@ _client.rename = function(oldname, url, icon){
     html += '<p><input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
     html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a> ';
     html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownbtn" />';
-    html += '<input type="button" onclick="repository_client_$suffix.hide()" value="Cancle" /></p>';
+    html += '<input type="button" onclick="repository_client_$suffix.hide()" value="$strcancel" /></p>';
     html += '</div>';
     panel.get('element').innerHTML = html;
 }
