@@ -146,6 +146,7 @@ $string['questionsmovedto'] = 'Questions still in use moved to "$a" in the paren
 $string['questionsrescuedfrom'] = 'Questions saved from context $a.';
 $string['questionsrescuedfrominfo'] = 'These questions (some of which may be hidden) where saved when context $a was deleted because they are still used by some quizzes or other activities.';
 $string['questionuse'] = 'Use question in this activity';
+$string['saveflags'] = 'Save the state of the flags';
 $string['shareincontext'] = 'Share in context for $a';
 $string['tofilecategory'] = 'Write category to file';
 $string['tofilecontext'] = 'Write context to file';

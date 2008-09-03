@@ -40,7 +40,7 @@
         }
     }
 
-/// load the questions and states needed by this page.
+/// Load the questions and states needed by this page.
     if ($showall) {
         $questionids = $attemptobj->get_question_ids();
     } else {
@@ -48,6 +48,15 @@
     } 
     $attemptobj->load_questions($questionids);
     $attemptobj->load_question_states($questionids);
+
+/// Save the flag states, if they are being changed.
+    if ($options->flags == QUESTION_FLAGSEDITABLE && optional_param('savingflags', false, PARAM_BOOL)) {
+        confirm_sesskey();
+        $formdata = data_submitted();
+
+        question_save_flags($formdata, $attemptid, $questionids);
+        redirect($attemptobj->review_url(0, $page, $showall));
+    }
 
 /// Log this review.
     add_to_log($attemptobj->get_courseid(), 'quiz', 'review', 'review.php?attempt=' .
@@ -199,7 +208,14 @@
 
 /// Summary table end ==============================================================================
 
-/// Print all the questions
+/// Form for saving flags if necessary.
+    if ($options->flags == QUESTION_FLAGSEDITABLE) {
+        echo '<form action="' . $attemptobj->review_url(0, $page, $showall) .
+                '" method="post"><div>';
+        echo '<input type="hidden" name="sesskey" value="' . sesskey() . '" />';
+    }
+
+/// Print all the questions.
     if ($showall) {
         $thispage = 'all';
         $lastpage = true;
@@ -209,6 +225,18 @@
     }
     foreach ($attemptobj->get_question_ids($thispage) as $id) {
         $attemptobj->print_question($id);
+    }
+
+/// Close form if we opened it.
+    if ($options->flags == QUESTION_FLAGSEDITABLE) {
+        echo '<div class="submitbtns">' . "\n" .
+                '<input type="submit" id="savingflagssubmit" name="savingflags" value="' .
+                get_string('saveflags', 'question') . '" />' .
+                "</div>\n" .
+                "\n</div></form>\n" .
+                '<script type="text/javascript">' .
+                "\nquestion_flag_changer.init_flag_save_form('savingflagssubmit');\n" .
+                "</script>\n";
     }
 
 /// Print a link to the next page.

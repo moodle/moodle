@@ -3915,6 +3915,7 @@ body#mod-forum-search .introcontent {
 #mod-quiz-attempt .submitbtns,
 #mod-quiz-review .submitbtns {
   text-align: left;
+  margin-top: 1.5em;
 }
 #mod-quiz-summary .submitbtns {
   margin-top: 1.5em;

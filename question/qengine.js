@@ -27,6 +27,12 @@ question_flag_changer = {
         YAHOO.util.Event.addListener(image, 'click', this.flag_state_change);
     },
 
+    init_flag_save_form: function(submitbuttonid) {
+        // With JS on, we just want to remove all visible traces of the form.
+        var button = document.getElementById(submitbuttonid);
+        button.parentNode.removeChild(button);
+    },
+
     flag_state_change: function(e) {
         var image = e.target ? e.target : e.srcElement;
         var input = image.statestore;

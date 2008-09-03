@@ -1780,16 +1780,31 @@ function question_make_name_prefix($id) {
 }
 
 /**
-* Extract question id from the prefix of form element names
-*
-* @return integer      The question id
-* @param string $name  The name that contains a prefix that was
-*                      constructed with {@link question_make_name_prefix()}
-*/
+ * Extract question id from the prefix of form element names
+ *
+ * @return integer      The question id
+ * @param string $name  The name that contains a prefix that was
+ *                      constructed with {@link question_make_name_prefix()}
+ */
 function question_get_id_from_name_prefix($name) {
-    if (!preg_match('/^resp([0-9]+)_/', $name, $matches))
+    if (!preg_match('/^resp([0-9]+)_/', $name, $matches)) {
         return false;
+    }
     return (integer) $matches[1];
+}
+
+/**
+ * Extract question id from the prefix of form element names
+ *
+ * @return integer      The question id
+ * @param string $name  The name that contains a prefix that was
+ *                      constructed with {@link question_make_name_prefix()}
+ */
+function question_id_and_key_from_post_name($name) {
+    if (!preg_match('/^resp([0-9]+)_(.*)$/', $name, $matches)) {
+        return array(false, false);
+    }
+    return array((integer) $matches[1], $matches[2]);
 }
 
 /**
@@ -2575,6 +2590,34 @@ function question_get_real_state($state){
 function question_update_flag($sessionid, $newstate) {
     global $DB;
     return $DB->set_field('question_sessions', 'flagged', $newstate, array('id' => $sessionid));
+}
+
+/**
+ * Update the flagged state of all the questions in an attempt, where a new .
+ *
+ * @param integer $sessionid question_session id.
+ * @param boolean $newstate the new state for the flag.
+ * @return boolean success or failure.
+ */
+function question_save_flags($formdata, $attemptid, $questionids) {
+    global $DB;
+    $donequestionids = array();
+    foreach ($formdata as $postvariable => $value) {
+        list($qid, $key) = question_id_and_key_from_post_name($postvariable);
+        if ($qid !== false && in_array($qid, $questionids)) {
+            if ($key == '_flagged') {
+                $DB->set_field('question_sessions', 'flagged', !empty($value),
+                        array('attemptid' => $attemptid, 'questionid' => $qid));
+                $donequestionids[$qid] = 1;
+            }
+        }
+    }
+    foreach ($questionids as $qid) {
+        if (!isset($donequestionids[$qid])) {
+            $DB->set_field('question_sessions', 'flagged', 0,
+                    array('attemptid' => $attemptid, 'questionid' => $qid));
+        }
+    }
 }
 
 /**
