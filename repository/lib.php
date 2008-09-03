@@ -115,7 +115,7 @@ class repository_type {
         $this->_typename = $typename;
         $this->_visible = $visible;
         $this->_sortorder = $sortorder;
-        
+
         //set options attribut
         $this->_options = array();
         //check that the type can be setup
@@ -337,6 +337,13 @@ class repository_type {
      */
     public function delete(){
         global $DB;
+
+        //delete all instances of this type
+        $instances = repository_get_instances(null,null,false,$this->_typename);
+        foreach($instances as $instance){
+            $instance->delete();
+        }
+
         return $DB->delete_records('repository', array('type' => $this->_typename));
     }
 }
@@ -386,10 +393,7 @@ function repository_get_types(){
 
     if($records = $DB->get_records('repository',null,'sortorder')) {
         foreach($records as $type) {
-            $typename = $type->type;
-            $visible = $type->visible;
-            $sortorder = $type->sortorder;
-            $types[] = new repository_type($typename, (array)get_config($typename), $visible, $sortorder);
+            $types[] = new repository_type($type->type, (array)get_config($type->type), $type->visible, $type->sortorder);
         }
     }
 
@@ -864,29 +868,31 @@ class repository_exception extends moodle_exception {
  * @global object $USER
  * @param object $context
  * @param integer $userid
- * @param boolean $visible if visible == true, return visible instances only,
+ * @param boolean $onlyvisible if visible == true, return visible instances only,
  *                otherwise, return all instances
  * @param string $type a type name to retrieve
  * @return array repository instances
  */
-function repository_get_instances($context, $userid = null, $visible = true, $type=null){
+function repository_get_instances($context=null, $userid = null, $onlyvisible = true, $type=null){
     global $DB, $CFG, $USER;
     $params = array();
     $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
-    $sql .= 'i.typeid = r.id AND ';
+    $sql .= 'i.typeid = r.id ';
     if (!empty($userid) && is_numeric($userid)) {
-        $sql .= ' (i.userid = 0 or i.userid = ?) AND ';
+        $sql .= ' AND (i.userid = 0 or i.userid = ?)';
         $params[] = $userid;
     }
-    if($context->id == SYSCONTEXTID) {
-        $sql .= ' (i.contextid = ?)';
-        $params[] = SYSCONTEXTID;
-    } else {
-        $sql .= ' (i.contextid = ? or i.contextid = ?)';
-        $params[] = SYSCONTEXTID;
-        $params[] = $context->id;
+    if (!empty($context)){
+        if($context->id == SYSCONTEXTID) {
+            $sql .= ' AND (i.contextid = ?)';
+            $params[] = SYSCONTEXTID;
+        } else {
+            $sql .= ' AND (i.contextid = ? or i.contextid = ?)';
+            $params[] = SYSCONTEXTID;
+            $params[] = $context->id;
+        }
     }
-    if($visible == true) {
+    if($onlyvisible == true) {
         $sql .= ' AND (r.visible = 1)';
     }
     if(isset($type)) {
@@ -1878,7 +1884,7 @@ final class repository_instance_form extends moodleform {
             }
             $this->set_data($data);
         }
-        $this->add_action_buttons(true, get_string('submit'));
+        $this->add_action_buttons(true, get_string('save','repository'));
     }
 
     /**
@@ -1960,7 +1966,7 @@ final class repository_admin_form extends moodleform {
             $this->set_data($data);
         }
 
-        $this->add_action_buttons(true, get_string('submit'));
+        $this->add_action_buttons(true, get_string('save','repository'));
     }
 
 }
@@ -2032,7 +2038,7 @@ function repository_display_instances_list($context, $admin = false, $typename =
         //create a unique type of instance
         else {
             if (repository_static_function($typename, 'has_multiple_instances')){
-                $addable = 1;
+                $addable = 1;               
                 $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$typename.'">'.get_string('create', 'repository')
                                   .' "'.get_string('repositoryname', 'repository_'.$typename).'" '
                                   .get_string('instance', 'repository').'</a></li>';
