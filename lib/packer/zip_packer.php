@@ -371,4 +371,23 @@ class zip_packer extends file_packer {
         $ziparch->close();
         return $processed;
     }
+
+    /**
+     * Returns array of info about all files in archive
+     * @return array of file infos
+     */
+    public function list_files($archivefile) {
+        if (!is_string($archivefile)) {
+            return $archivefile->list_files();
+        }
+
+        $ziparch = new zip_archive();
+        if (!$ziparch->open($archivefile, file_archive::OPEN)) {
+            return false;
+        }
+        $list = $ziparch->list_files();
+        $ziparch->close();
+        return $list;
+    }
+
 }

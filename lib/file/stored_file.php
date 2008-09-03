@@ -109,7 +109,17 @@ class stored_file {
     }
 
     /**
-     * Unzip file to given file path (real OS filesystem), existing files are overwrited
+     * List contents of archive
+     * @param object $file_packer
+     * @return array of file infos
+     */
+    public function list_files(file_packer $packer) {
+        $archivefile = $this->get_content_file_location();
+        return $packer->list_files($archivefile);
+    }
+
+    /**
+     * Extract file to given file path (real OS filesystem), existing files are overwrited
      * @param object $file_packer
      * @param string $pathname target directory
      * @return mixed list of processed files; false if error
@@ -120,7 +130,7 @@ class stored_file {
     }
 
     /**
-     * Unzip file to given file path (real OS filesystem), existing files are overwrited
+     * Extract file to given file path (real OS filesystem), existing files are overwrited
      * @param object $file_packer
      * @param int $contextid
      * @param string $filearea
@@ -135,9 +145,9 @@ class stored_file {
     }
 
     /**
-     * Add file/directory into zip archive
-     * @param object $ziparchive
-     * @param string $archivepath pathname in zip archive
+     * Add file/directory into archive
+     * @param object $filearch
+     * @param string $archivepath pathname in archive
      * @return bool success
      */
     public function archive_file(file_archive $filearch, $archivepath) {

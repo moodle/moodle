@@ -44,4 +44,9 @@ abstract class file_packer {
      */
     public abstract function extract_to_storage($archivefile, $contextid, $filearea, $itemid, $pathbase, $userid=null);
 
+    /**
+     * Returns array of info about all files in archive
+     * @return array of file infos
+     */
+    public abstract function list_files($archivefile);
 }
