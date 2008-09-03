@@ -138,7 +138,6 @@ foreach($submittedquestionids as $id) {
     if ($actions[$id]->event == QUESTION_EVENTSUBMIT) {
         $nexturl = $attemptobj->attempt_url($id);
     }
-    
 
     $state = $attemptobj->get_question_state($id);
     if (question_process_responses($attemptobj->get_question($id),
