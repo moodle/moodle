@@ -471,7 +471,6 @@ class quiz_attempt extends quiz {
         global $USER;
         return $this->attempt->userid == $USER->id &&
                 (!$this->is_preview_user() || $this->attempt->preview);
-
     }
 
     public function get_question_state($questionid) {
