@@ -61,6 +61,7 @@
     }
 
 /// Print the page header
+    require_js($CFG->wwwroot . '/mod/quiz/quiz.js');
     $headtags = $attemptobj->get_html_head_contributions($page);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {
         $accessmanager->setup_secure_page($course->shortname.': '.format_string($quiz->name), $headtags);
