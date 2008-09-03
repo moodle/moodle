@@ -5578,7 +5578,7 @@ class admin_setting_managerepository extends admin_setting {
 
     function output_html($data, $query='') {
         global $CFG, $USER;
-        $output = print_simple_box_start(true);
+        $output = print_box_start('','',true);
         $namestr = get_string('name');
         $stropt = get_string('operation', 'repository');
         $updown = get_string('updown', 'repository');
@@ -5597,10 +5597,10 @@ class admin_setting_managerepository extends admin_setting {
             if ( repository_static_function($i->get_typename(), 'has_admin_config')
                  || repository_static_function($i->get_typename(), 'has_instance_config')
                  || repository_static_function($i->get_typename(), 'has_multiple_instances')) {
-                $row .= '<a href="' . $this->baseurl . '&edit=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
+                $row .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
             }
-            $row .= '<a href="' . $this->baseurl . '&delete=' .  $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
-            $row .= ' <a href="' . $this->baseurl . '&hide=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/' . ($i->get_visible() ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get_visible() ? 'hide' : 'show') . '" /></a>' . "\n";
+            $row .= '<a href="' . $this->baseurl . '&amp;delete=' .  $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
+            $row .= ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/' . ($i->get_visible() ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get_visible() ? 'hide' : 'show') . '" /></a>' . "\n";
             
              // display up/down link
             $updown = '';
@@ -5636,21 +5636,19 @@ class admin_setting_managerepository extends admin_setting {
         foreach ($plugins as $p) {
             if (!in_array($p, $alreadyplugins)) {
                 $instancehtml .= '<li><a href="'.$CFG->wwwroot.'/admin/repository.php?sesskey='
-                    .$USER->sesskey.'&new='.$p.'">'.get_string('add', 'repository')
+                    .$USER->sesskey.'&amp;new='.$p.'">'.get_string('add', 'repository')
                     .' "'.get_string('repositoryname', 'repository_'.$p).'" '
                     .'</a></li>';
                 $addable++;
             }
         }
         $instancehtml .= '</ul>';
-
-        if ($addable) {
-            $instancehtml .= '</div>';
+        $instancehtml .= '</div>';
+        if ($addable) {    
             $output .= $instancehtml;
         }
 
-        $output .= print_simple_box_end(true);
-
+        $output .= print_box_end(true);
         return highlight($query, $output);
     }
 }
