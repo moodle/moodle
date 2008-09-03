@@ -4472,14 +4472,17 @@ function forum_get_subscribe_link($forum, $context, $messages = array(), $cantac
         $link = '';
 
         if ($fakelink) {
-            $link .= '<script type="text/javascript">';
-            $link .= '//<![CDATA['."\n";
-            $link .= 'document.getElementById("subscriptionlink").innerHTML = "<a title=\"' . $linktitle . '\" href=\"' . $CFG->wwwroot .
-               '/mod/forum/subscribe.php?id=' . $forum->id . $backtoindexlink.'\">' . $linktext . '<\/a>";';
-            $link .= '//]]>';
-            $link .= '</script>';
-            // use <noscript> to print button in case javascript is not enabled
-            $link .= '<noscript>';
+            $link .= <<<EOD
+<script type="text/javascript">
+//<![CDATA[
+var subs_link = document.getElementById("subscriptionlink");
+if(subs_link){
+    subs_link.innerHTML = "<a title=\"$linktitle\" href='$CFG->wwwroot/mod/forum/subscribe.php?id={$forum->id}{$backtoindexlink}'>$linktext<\/a>";
+}
+//]]>
+</script>
+<noscript>
+EOD;
         }
         $options ['id'] = $forum->id;
         $link .= print_single_button($CFG->wwwroot . '/mod/forum/subscribe.php',
@@ -4517,11 +4520,11 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
 
     if (forum_tp_is_tracked($forum)) {
         $linktitle = $strnotrackforum;
-        $linktext = $strtrackforum;
+        $linktext = $strnotrackforum;
     } else {
         $linktitle = $strtrackforum;
-        $linktext = $strnotrackforum;
-    }
+        $linktext = $strtrackforum;
+    } 
 
     $link = '';
     if ($fakelink) {
