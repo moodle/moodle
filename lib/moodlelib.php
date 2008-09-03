@@ -270,7 +270,7 @@ define ('BLOG_GLOBAL_LEVEL', 5);
 
 ///Tag constants///
 /**
- * To prevent problems with multibytes strings, this should not exceed the
+ * To prevent problems with multibytes strings,Flag updating in nav not working on the review page. this should not exceed the
  * length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
  * TODO: this is not correct, varchar(255) are 255 unicode chars ;-)
  */
@@ -5212,10 +5212,17 @@ or
  *
  * @uses $CFG
  * @param string $identifier The key identifier for the localized string
- * @param string $module The module where the key identifier is stored, usually expressed as the filename in the language pack without the .php on the end but can also be written as mod/forum or grade/export/xls.  If none is specified then moodle.php is used. 
+ * @param string $module The module where the key identifier is stored,
+ *      usually expressed as the filename in the language pack without the
+ *      .php on the end but can also be written as mod/forum or grade/export/xls.
+ *      If none is specified then moodle.php is used. 
  * @param mixed $a An object, string or number that can be used
- * within translation strings
- * @param array $extralocations An array of strings with other locations to look for string files
+ *      within translation strings
+ * @param array $extralocations DEPRICATED. An array of strings with other
+ *      locations to look for string files. This used to be used by plugins so
+ *      they could package their language strings in the plugin folder, however,
+ *      There is now a better way to achieve this. See 
+ *      http://docs.moodle.org/en/Development:Places_to_search_for_lang_strings.
  * @return string The localized string.
  */
 function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
@@ -5278,7 +5285,13 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
 /// Define the two or three major locations of language strings for this module
     $locations = array();
 
-    if (!empty($extralocations)) {   // Calling code has a good idea where to look
+    if (!empty($extralocations)) {
+        // This is an old, deprecated mechanism that predates the
+        // places_to_search_for_lang_strings mechanism that comes later in 
+        // this function. So tell people who use it to change.
+        debugging('The fourth, $extralocations parameter to get_string is deprecated. ' .
+                'See http://docs.moodle.org/en/Development:Places_to_search_for_lang_strings ' .
+                'for a better way to package language strings with your plugin.', DEBUG_DEVELOPER);
         if (is_array($extralocations)) {
             $locations += $extralocations;
         } else if (is_string($extralocations)) {
