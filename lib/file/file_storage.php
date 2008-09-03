@@ -580,6 +580,68 @@ class file_storage {
     }
 
     /**
+     * Move one or more files from a given itemid location in the current user's draft files 
+     * to a new filearea.  Note that you can't rename files using this function.
+     * @param int $itemid  - existing itemid in user draft_area with one or more files
+     * @param int $newcontextid  - the new contextid to move files to
+     * @param string $newfilearea  - the new filearea to move files to
+     * @param string $newfilepath  - the new path to move all files to
+     * @param bool $overwrite  - overwrite files from the destination if they exist
+     * @param int $newuserid  - new userid if required
+     * @return mixed stored_file object or false if error; may throw exception if duplicate found
+     * @return array(contenthash, filesize, newfile)
+     */
+    public function move_draft_to_final($itemid, $newcontextid, $newfilearea, $newitemid, 
+                                        $newfilepath='/', $overwrite=false) {
+
+        global $USER;
+
+    /// Get files from the draft area 
+        if (!$usercontext = get_context_instance(CONTEXT_USER, $USER->id)) {
+            return false;
+        }
+        if (!$files = $this->get_area_files($usercontext->id, 'user_draft', $itemid, 'filename', false)) {
+            return false;
+        }
+
+    /// Process each file in turn 
+
+        $returnfiles = array();
+        foreach ($files as $file) {
+
+        /// Delete any existing files in destination if required
+            if ($oldfile = $this->get_file($newcontextid, $newfilearea, $newitemid, 
+                                           $newfilepath, $file->get_filename())) {
+                if ($overwrite) {
+                    $oldfile->delete();
+                } else {
+                    continue;   // Can't overwrite the existing file so skip it
+                }
+            }
+
+        /// Create the new file
+            $newrecord = new object();
+            $newrecord->contextid    = $newcontextid;
+            $newrecord->filearea     = $newfilearea;
+            $newrecord->itemid       = $newitemid;
+            $newrecord->filepath     = $newfilepath;
+            $newrecord->filename     = $file->get_filename();
+            $newrecord->timecreated  = $file->get_timecreated();
+            $newrecord->timemodified = $file->get_timemodified();
+            $newrecord->mimetype     = $file->get_mimetype();
+            $newrecord->userid       = $file->get_userid();
+
+            if ($newfile = $this->create_file_from_storedfile($newrecord, $file->get_id())) {
+                $file->delete();
+                $returnfiles[] = $newfile;
+            }
+        }
+
+        return $returnfiles;
+    }
+
+
+    /**
      * Add file content to sha1 pool
      * @param string $pathname path to file
      * @param string sha1 hash of content if known (performance only)

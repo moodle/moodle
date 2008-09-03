@@ -544,12 +544,12 @@ class moodleform {
      * @param string $newfilearea
      * @param string $newfilepath
      * @param string $newfilename - use specified filename, if not specified name of uploaded file used
-     * @param bool $override override file if exists
+     * @param bool $overwrite  - overwrite file if exists
      * @param int $newuserid - new userid if required
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
     function save_stored_file($elname, $newcontextid, $newfilearea, $newitemid, $newfilepath='/',
-                              $newfilename=null, $override=false, $newuserid=null) {
+                              $newfilename=null, $overwrite=false, $newuserid=null) {
 
         global $USER;
 
@@ -567,7 +567,7 @@ class moodleform {
             $fs = get_file_storage();
 
             if ($file = $fs->get_file($newcontextid, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
-                if ($override) {
+                if ($overwrite) {
                     $file->delete();
                 } else {
                     return false;
@@ -584,49 +584,20 @@ class moodleform {
 
             return $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
 
-        } else if (!empty($this->_form->_submitValues[$elname])) {    // Submit data has itemid in user's draft_area
+        } else {   // We check if the file has been uploaded already into the user's draft area
 
-            $itemid = $this->_form->_submitValues[$elname];
+            $values = $this->get_data();
 
-            if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
-                return false;
+            if (!empty($values->$elname)) { 
+
+                $itemid = $values->$elname;
+
+                $fs = get_file_storage();
+
+                $newfiles = $fs->move_draft_to_final($itemid, $newcontextid, $newfilearea, $newitemid, $newfilepath, $overwrite);
+
+                return array_pop($newfiles);
             }
-
-            $fs = get_file_storage();
-
-        /// Delete any existing files in destination if required
-            if ($file = $fs->get_file($newcontextid, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
-                if ($override) {
-                    $file->delete();
-                } else {
-                    return false;
-                }
-            }
-
-        /// Get files from the draft area (even though we know there can be only one)
-            if (!$files = $fs->get_area_files($context->id, 'user_draft', $itemid, 'filename', false)) {
-                return false;
-            }
-
-            $file = array_pop($files);   // There will be only one file
-
-            $newrecord = new object();
-            $newrecord->contextid    = $newcontextid;
-            $newrecord->filearea     = $newfilearea;
-            $newrecord->itemid       = $newitemid;
-            $newrecord->filepath     = $newfilepath;
-            $newrecord->filename     = ($newfilename ? $newfilename : $file->get_filename());
-            $newrecord->timecreated  = $file->get_timecreated();
-            $newrecord->timemodified = $file->get_timemodified();
-            $newrecord->mimetype     = $file->get_mimetype();
-            $newrecord->userid       = $file->get_userid();
-
-            if (!$newfile = $fs->create_file_from_storedfile($newrecord, $file->get_id())) {
-                return false;
-            }
-
-            $file->delete();
-            return $newfile;
         }
 
         return false;
