@@ -201,11 +201,13 @@ $output .= <<<EOF
         document.getElementById(id).form.onsubmit = function() { 
             tinyMCE.triggerSave(); 
             var ret = true;
-            if ((prevOnSubmit != undefined) && prevOnSubmit()) {
-              ret = true;
-              prevOnSubmit = null;
-            } else {
-              ret = false;
+            if (prevOnSubmit != undefined) {
+              if (prevOnSubmit()) {
+                ret = true;
+                prevOnSubmit = null;
+              } else {
+                ret = false;
+              }
             }
             return ret;
         };
