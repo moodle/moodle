@@ -5578,7 +5578,7 @@ class admin_setting_managerepository extends admin_setting {
 
     function output_html($data, $query='') {
         global $CFG, $USER;
-        $output = print_box_start('','',true);
+        $output = print_box_start('generalbox','',true);
         $namestr = get_string('name');
         $stropt = get_string('operation', 'repository');
         $updown = get_string('updown', 'repository');
@@ -5601,10 +5601,10 @@ class admin_setting_managerepository extends admin_setting {
             }
             $row .= '<a href="' . $this->baseurl . '&amp;delete=' .  $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
             $row .= ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/' . ($i->get_visible() ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get_visible() ? 'hide' : 'show') . '" /></a>' . "\n";
-            
+
              // display up/down link
             $updown = '';
-            
+
                 if ($updowncount > 1) {
                     $updown .= "<a href=\"$this->baseurl&amp;move=up&amp;type=".$i->get_typename()."\">";
                     $updown .= "<img src=\"{$CFG->pixpath}/t/up.gif\" alt=\"up\" /></a>&nbsp;";
@@ -5619,9 +5619,9 @@ class admin_setting_managerepository extends admin_setting {
                 else {
                     $updown .= "<img src=\"{$CFG->pixpath}/spacer.gif\" class=\"icon\" alt=\"\" />";
                 }
-               
+
                 $updowncount++;
-               
+
             $table->data[] = array($i->get_readablename(), $updown,$row);
             if (!in_array($i->get_typename(), $alreadyplugins)) {
                 $alreadyplugins[] = $i->get_typename();
@@ -5644,7 +5644,7 @@ class admin_setting_managerepository extends admin_setting {
         }
         $instancehtml .= '</ul>';
         $instancehtml .= '</div>';
-        if ($addable) {    
+        if ($addable) {
             $output .= $instancehtml;
         }
 

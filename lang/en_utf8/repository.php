@@ -1,11 +1,14 @@
 <?php //$Id$
+$string['activerepository'] = 'Active repository plugins';
 $string['add'] = 'Add';
 $string['addplugin'] = 'Add a repository plugin';
 $string['activaterep'] = 'Active repositories';
 $string['attachment'] = 'Attachment';
 $string['back'] = '&lt; Back';
+$string['cacheexpire'] = 'Cache expire';
 $string['close'] = 'Close';
 $string['copying'] = 'Copying';
+$string['configcacheexpire'] = 'Configurate the cache expired time.';
 $string['configsaved'] = 'Configuration saved!';
 $string['confirmdelete'] = 'Are you sure you want to delete this repository - $a?';
 $string['confirmremove'] = 'Are you sure you want to remove this repository plugin - $a?';
