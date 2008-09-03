@@ -5,12 +5,17 @@ question_flag_changer = {
     flag_state_listeners: new Object(),
 
     init_flag: function(checkboxid, postdata) {
-        // Convert the checkbox to a hidden input.
-        var input = document.getElementById(checkboxid);
-        var state = input.checked;
-        input.ajaxpostdata = postdata;
-        input.value = state ? 1 : 0;
+        // Create a hidden input - you can't just repurpose the old checkbox, IE
+        // does not cope - and put it in place of the checkbox.
+        var checkbox = document.getElementById(checkboxid);
+        var input = document.createElement('input');
         input.type = 'hidden';
+        checkbox.parentNode.appendChild(input);
+        checkbox.parentNode.removeChild(checkbox);
+        input.id = checkbox.id;
+        input.name = checkbox.name;
+        input.value = checkbox.checked ? 1 : 0;
+        input.ajaxpostdata = postdata;
 
         // Create an image input to replace the img tag.
         var image = document.createElement('input');
@@ -19,7 +24,7 @@ question_flag_changer = {
         question_flag_changer.update_image(image);
         input.parentNode.appendChild(image);
 
-        // Remove the label element.
+        // Remove the label.
         var label = document.getElementById(checkboxid + 'label');
         label.parentNode.removeChild(label);
 
