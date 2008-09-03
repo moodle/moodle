@@ -21,6 +21,7 @@ $string['emptytype'] = 'Cannot create repository type: type name is empty';
 $string['error'] = 'An unknown error occurred!';
 $string['existingrepository'] = 'This repository already exists';
 $string['filename'] = 'Filename';
+$string['filenotnull'] = 'You must select a file to upload.';
 $string['filesaved'] = 'The file has been saved';
 $string['getfile'] = 'Select this file';
 $string['instance'] = 'instance';

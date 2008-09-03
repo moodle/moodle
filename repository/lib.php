@@ -1108,20 +1108,16 @@ function repository_get_client($context){
     $struploading = get_string('uploading', 'repository');
     $css = <<<EOD
 <style type="text/css">
-#list-$suffix{line-height: 1.5em}
-#list-$suffix a{ padding: 3px }
-#list-$suffix li a:hover{ background: gray; color:white; }
-#repo-list-$suffix ul{list-style-type:none;}
-#repo-list-$suffix li{margin-bottom: 1em;}
-#paging-$suffix{margin:10px 5px; clear:both;}
-#paging-$suffix a{padding: 4px;border: 1px solid #CCC}
-#path-$suffix{margin: 4px;border-bottom: 1px dotted gray;}
-#path-$suffix a{padding: 4px;}
-#panel-$suffix{padding:0;margin:0; text-align:left;}
-#rename-form{text-align:center}
-#rename-form p{margin: 1em;}
-p.upload{text-align:right;margin: 5px}
-p.upload a{font-size: 14px;background: #ccc;color:black;padding: 3px}
+.repo-list{list-style-type:none;padding:0}
+.repo-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
+.paging{margin:10px 5px; clear:both;}
+.paging a{padding: 4px;border: 1px solid #CCC}
+.repo-path{margin: 4px;border-bottom: 1px dotted gray;}
+.repo-path a{padding: 4px;}
+.rename-form{text-align:center}
+.rename-form p{margin: 1em;}
+.upload-form{margin: 2em 0;text-align:center}
+p.upload a{font-size: 14px;background: #ccc;color:white;padding: 5px}
 p.upload a:hover {background: grey;color:white}
 .file_name{color:green;}
 .file_date{color:blue}
@@ -1130,9 +1126,8 @@ p.upload a:hover {background: grey;color:white}
 .grid div{width: 80px; overflow: hidden}
 .grid .label{height: 36px}
 .repo-opt{font-size: 10px;}
-#file-picker-$suffix{
-font-size:12px;
-}
+#panel-$suffix{padding:0;margin:0; text-align:left;}
+#file-picker-$suffix{font-size:12px;}
 </style>
 <style type="text/css">
 @import "$CFG->wwwroot/lib/yui/resize/assets/skins/sam/resize.css";
@@ -1197,7 +1192,7 @@ function _client(){
                         {position: 'top', height: 32, resize: false,
                         body:'<div class="yui-buttongroup" id="repo-viewbar-$suffix"></div>', gutter: '2'},
                         {position: 'left', width: 150, resize: true,
-                        body:'<ul id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
+                        body:'<ul class="repo-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
                         {position: 'center', body: '<div id="panel-$suffix"></div>',
                         scroll: true, gutter: '0 2 0 0' }
                     ]
@@ -1323,7 +1318,7 @@ _client.loading = function(type, name){
 }
 _client.rename = function(oldname, url, icon){
     var panel = new YAHOO.util.Element('panel-$suffix');
-    var html = '<div id="rename-form">';
+    var html = '<div class="rename-form">';
     html += '<p><img src="'+icon+'" /></p>';
     html += '<p><label for="newname-$suffix">$strsaveas</label>';
     html += '<input type="text" id="newname-$suffix" value="'+oldname+'" /></p>';
@@ -1561,7 +1556,7 @@ _client.upload_cb = {
 _client.uploadcontrol = function() {
     var str = '';
     if(_client.ds.upload){
-        str += '<div id="'+_client.ds.upload.id+'_div">';
+        str += '<div id="'+_client.ds.upload.id+'_div" class="upload-form">';
         str += '<form id="'+_client.ds.upload.id+'" onsubmit="return false">';
         str += '<label for="'+_client.ds.upload.id+'-file">'+_client.ds.upload.label+'</label>';
         str += '<input type="file" id="'+_client.ds.upload.id+'-file" name="repo_upload_file" />';
@@ -1574,7 +1569,7 @@ _client.uploadcontrol = function() {
 _client.makepage = function(){
     var str = '';
     if(_client.ds.pages){
-        str += '<div id="paging-$suffix">';
+        str += '<div class="paging" id="paging-$suffix">';
         for(var i = 1; i <= _client.ds.pages; i++) {
             str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
             str += String(i);
@@ -1593,6 +1588,7 @@ _client.makepath = function(){
     if(p && p.length!=0){
         var oDiv = document.createElement('DIV');
         oDiv.id = "path-$suffix";
+        oDiv.className = "repo-path";
         panel.get('element').appendChild(oDiv);
         for(var i = 0; i < _client.ds.path.length; i++) {
             var link = document.createElement('A');
