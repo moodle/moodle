@@ -5,30 +5,35 @@ question_flag_changer = {
     flag_state_listeners: new Object(),
 
     init_flag: function(checkboxid, postdata) {
-        // Convert the checkbox to an image input.
+        // Convert the checkbox to a hidden input.
         var input = document.getElementById(checkboxid);
         var state = input.checked;
         input.ajaxpostdata = postdata;
-        input.flaggedstate = state;
-        input.type = 'image';
+        input.value = state ? 1 : 0;
+        input.type = 'hidden';
 
-        // Set up the correct image, alt and title.
-        question_flag_changer.update_image(input);
+        // Create an image input to replace the img tag.
+        var image = document.createElement('input');
+        image.type = 'image';
+        image.statestore = input;
+        question_flag_changer.update_image(image);
+        input.parentNode.appendChild(image);
 
         // Remove the label element.
         var label = document.getElementById(checkboxid + 'label');
         label.parentNode.removeChild(label);
 
         // Add the event handler.
-        YAHOO.util.Event.addListener(input, 'click', this.flag_state_change);
+        YAHOO.util.Event.addListener(image, 'click', this.flag_state_change);
     },
 
     flag_state_change: function(e) {
-        var input = e.target ? e.target : e.srcElement;
-        input.flaggedstate = !input.flaggedstate;
-        question_flag_changer.update_image(input);
+        var image = e.target ? e.target : e.srcElement;
+        var input = image.statestore;
+        input.value = 1 - input.value;
+        question_flag_changer.update_image(image);
         var postdata = input.ajaxpostdata
-        if (input.flaggedstate) {
+        if (input.value == 1) {
             postdata += '&newstate=1'
         } else {
             postdata += '&newstate=0'
@@ -38,15 +43,15 @@ question_flag_changer = {
         YAHOO.util.Event.preventDefault(e);
     },
 
-    update_image: function(input) {
-        if (input.flaggedstate) {
-            input.src = qengine_config.pixpath + '/i/flagged.png';
-            input.alt = qengine_config.flaggedalt;
-            input.title = qengine_config.unflagtooltip;
+    update_image: function(image) {
+        if (image.statestore.value == 1) {
+            image.src = qengine_config.pixpath + '/i/flagged.png';
+            image.alt = qengine_config.flaggedalt;
+            image.title = qengine_config.unflagtooltip;
         } else {
-            input.src = qengine_config.pixpath + '/i/unflagged.png';
-            input.alt = qengine_config.unflaggedalt;
-            input.title = qengine_config.flagtooltip;
+            image.src = qengine_config.pixpath + '/i/unflagged.png';
+            image.alt = qengine_config.unflaggedalt;
+            image.title = qengine_config.flagtooltip;
         }
     },
 
@@ -68,7 +73,7 @@ question_flag_changer = {
         if (!question_flag_changer.flag_state_listeners.hasOwnProperty(key)) {
             return;
         }
-        var newstate = input.flaggedstate;
+        var newstate = input.value == 1;
         for (var i = 0; i < question_flag_changer.flag_state_listeners[key].length; i++) {
             question_flag_changer.flag_state_listeners[key][i].flag_state_changed(newstate);
         }

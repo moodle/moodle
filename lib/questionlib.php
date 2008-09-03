@@ -982,6 +982,7 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
             $states[$i]->penalty = 0;
             $states[$i]->sumpenalty = 0;
             $states[$i]->manualcomment = '';
+            $states[$i]->flagged = 0;
 
             // Prevent further changes to the session from incrementing the
             // sequence number
@@ -1109,8 +1110,13 @@ function restore_question_state(&$question, &$state) {
 */
 function save_question_session($question, $state) {
     global $QTYPES, $DB;
+
     // Check if the state has changed
     if (!$state->changed && isset($state->id)) {
+        if (isset($state->newflaggedstate) &&  $state->flagged != $state->newflaggedstate) {
+            // If this fails, don't worry too much, it is not critical data.
+            question_update_flag($state->questionsessionid, $state->newflaggedstate);
+        }
         return $state->id;
     }
     // Set the legacy answer field
@@ -1129,6 +1135,7 @@ function save_question_session($question, $state) {
 
     // create or update the session
     if (!$session = $DB->get_record('question_sessions', array('attemptid' => $state->attempt, 'questionid' => $question->id))) {
+        $session = new stdClass;
         $session->attemptid = $state->attempt;
         $session->questionid = $question->id;
         $session->newest = $state->id;
@@ -1137,8 +1144,9 @@ function save_question_session($question, $state) {
         $session->newgraded = $state->id;
         $session->sumpenalty = $state->sumpenalty;
         $session->manualcomment = $state->manualcomment;
+        $session->flagged = !empty($state->newflaggedstate);
         if (!$DB->insert_record('question_sessions', $session)) {
-            print_error('cannotinsert', 'question');
+            return false;
         }
     } else {
         $session->newest = $state->id;
@@ -1150,16 +1158,19 @@ function save_question_session($question, $state) {
         } else {
             $session->manualcomment = $session->manualcomment;
         }
-        $DB->update_record('question_sessions', $session);
+        $session->flagged = !empty($state->newflaggedstate);
+        if (!$DB->update_record('question_sessions', $session)) {
+            return false;
+        }
     }
 
     unset($state->answer);
 
     // Save the question type specific state information and responses
-    if (!$QTYPES[$question->qtype]->save_session_and_responses(
-     $question, $state)) {
+    if (!$QTYPES[$question->qtype]->save_session_and_responses($question, $state)) {
         return false;
     }
+
     // Reset the changed flag
     $state->changed = false;
     return $state->id;
@@ -1231,7 +1242,6 @@ function question_extract_responses($questions, $formdata, $defaultevent=QUESTIO
             } else {
                 $actions[$quid]->event = $defaultevent;
             }
-
             // Update the state with the new response
             $actions[$quid]->responses[$key] = $response;
 
@@ -1435,8 +1445,10 @@ function question_process_responses($question, &$state, $action, $cmoptions, &$a
         $action->responses = array('' => '');
     }
 
+    $state->newflaggedstate = !empty($action->responses['_flagged']);
+
     // make sure these are gone!
-    unset($action->responses['submit'], $action->responses['validate']);
+    unset($action->responses['submit'], $action->responses['validate'], $action->responses['_flagged']);
 
     // Check the question session is still open
     if (question_state_is_closed($state)) {
@@ -1477,6 +1489,9 @@ function question_process_responses($question, &$state, $action, $cmoptions, &$a
     $newstate->changed = true; // will assure that it gets saved to the database
     $newstate->last_graded = clone($state->last_graded);
     $newstate->timestamp = $action->timestamp;
+    $newstate->newflaggedstate = $state->newflaggedstate;
+    $newstate->flagged = $state->flagged;
+    $newstate->questionsessionid = $state->questionsessionid;
     $state = $newstate;
 
     // Set the event to the action we will perform. The question type specific
