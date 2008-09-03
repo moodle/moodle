@@ -1124,10 +1124,14 @@ p.upload a:hover {background: grey;color:white}
 .file_size{color:gray}
 .grid{width:80px; float:left;text-align:center;}
 .grid div{width: 80px; overflow: hidden}
-.grid .label{height: 36px}
+.grid p{margin:0;padding:0;background: #FFFFCC}
+.grid .label{height:48px}
+.grid span{background: #EEF9EB;color:gray}
 .repo-opt{font-size: 10px;}
 #panel-$suffix{padding:0;margin:0; text-align:left;}
 #file-picker-$suffix{font-size:12px;}
+#file-picker-$suffix a{color: #336699}
+#file-picker-$suffix a:hover{background:#003366;color:white}
 </style>
 <style type="text/css">
 @import "$CFG->wwwroot/lib/yui/resize/assets/skins/sam/resize.css";
@@ -1406,7 +1410,7 @@ _client.viewthumb = function(ds){
         } else {
             if(list[k].url)
                 title.innerHTML = '<p><a target="_blank" href="'+list[k].url+'">$strpreview</a></p>';
-            title.innerHTML += list[k].title;
+            title.innerHTML += '<span>'+list[k].title+"</span>";
         }
         title.className = 'label';
         el.appendChild(frame);
@@ -1767,6 +1771,8 @@ _client.search = function(id){
     var data = window.prompt("$strsearching");
     if(data == '') {
         alert('$strnoenter');
+        return;
+    }else if(data == null){
         return;
     }
     _client.viewbar.set('disabled', false);
