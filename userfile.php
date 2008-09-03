@@ -44,7 +44,7 @@
     switch ($filearea) {
         case 'private': $itemid = 0; $forcedownload = true; break;
         case 'draft'  : $itemid = (int)array_shift($args); break;
-        default:        not_found();
+        default:        send_file_not_found();
     }
 
     $relativepath = '/'.implode('/', $args);
@@ -55,7 +55,7 @@
     $fullpath = $context->id.$filearea.$itemid.$relativepath;
 
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->get_filename() == '.') {
-        not_found();
+        send_file_not_found();
     }
 
     // ========================================
@@ -63,9 +63,3 @@
     // ========================================
     session_write_close(); // unlock session during fileserving
     send_stored_file($file, 0, false, $forcedownload);
-
-    function not_found() {
-        global $CFG;
-        header('HTTP/1.0 404 not found');
-        print_error('filenotfound', 'error', $CFG->wwwroot.'/'); //this is not displayed on IIS??
-    }
