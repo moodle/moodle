@@ -1110,8 +1110,8 @@ function repository_get_client($context){
 #list-$suffix{line-height: 1.5em}
 #list-$suffix a{ padding: 3px }
 #list-$suffix li a:hover{ background: gray; color:white; }
-#repo-list-$suffix .repo-name{}
-#repo-list-$suffix li{margin-bottom: 1em}
+#repo-list-$suffix ul{list-style-type:none;}
+#repo-list-$suffix li{margin-bottom: 1em;}
 #paging-$suffix{margin:10px 5px; clear:both;}
 #paging-$suffix a{padding: 4px;border: 1px solid #CCC}
 #path-$suffix{margin: 4px;border-bottom: 1px dotted gray;}
@@ -1129,10 +1129,11 @@ p.upload a:hover {background: grey;color:white}
 .grid div{width: 80px; overflow: hidden}
 .grid .label{height: 36px}
 .repo-opt{font-size: 10px;}
+#file-picker-$suffix{
+font-size:12px;
+}
 </style>
 <style type="text/css">
-@import "$CFG->wwwroot/lib/yui/reset-fonts-grids/reset-fonts-grids.css";
-@import "$CFG->wwwroot/lib/yui/reset/reset-min.css";
 @import "$CFG->wwwroot/lib/yui/resize/assets/skins/sam/resize.css";
 @import "$CFG->wwwroot/lib/yui/container/assets/skins/sam/container.css";
 @import "$CFG->wwwroot/lib/yui/layout/assets/skins/sam/layout.css";
@@ -1350,7 +1351,7 @@ _client.print_login = function(){
             field_id = ' id="'+data[k].id+'"';
         }
         if (data[k].label) {
-            str += '<label'+lable_id+'>'+data[k].label+'</label>';
+            str += '<label'+lable_id+'>'+data[k].label+'</label><br/>';
         }
         if(data[k].value){
             field_value = ' value="'+data[k].value+'"';
