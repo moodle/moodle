@@ -150,7 +150,7 @@ class edit_table extends XMLDBAction {
         $b .= '</p>';
         $o .= $b;
 
-        require("$CFG->libdir/ddl/sql_generator.php");
+        require_once("$CFG->libdir/ddl/sql_generator.php");
         $reserved_words = sql_generator::getAllReservedWords();
 
     /// Delete any 'changeme' field/key/index

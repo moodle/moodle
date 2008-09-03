@@ -147,7 +147,7 @@ class edit_xml_file extends XMLDBAction {
             /// Join all the reserved words into one big array
             /// Calculate list of available SQL generators
 
-                require("$CFG->libdir/ddl/sql_generator.php");
+                require_once("$CFG->libdir/ddl/sql_generator.php");
                 $reserved_words = sql_generator::getAllReservedWords();
 
             /// Add the tables list
