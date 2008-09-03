@@ -1839,11 +1839,13 @@ function question_init_qenginejs_script() {
     );
 
     // Then generate the script tag.
-    $script = '<script type="text/javascript">qengine_config = {' . "\n";
+    $lines = array();
     foreach ($config as $property => $value) {
-        $script .= "    $property: '" . addslashes_js($value) . "',\n";
+        $lines[] = '    ' . $property . ': "' . addslashes_js($value) . '"';
     }
-    $script .= "};</script>\n";
+    $script = '<script type="text/javascript">qengine_config = {' . "\n" . 
+            implode(",\n", $lines) .
+            "\n};</script>\n";
     return $script;
 }
 
