@@ -420,7 +420,6 @@ class embedded_cloze_qtype extends default_questiontype {
                     echo $feedbackimg;
                     break;
                 case 'multichoice':
-             //    echo "<p>layout <pre>".$wrapped->options->layout;print_r($wrapped->options);echo "</pre><p>";
                  if ($wrapped->options->layout == 0 ){
                       $outputoptions = '<option></option>'; // Default empty option
                       foreach ($answers as $mcanswer) {
@@ -447,8 +446,6 @@ class embedded_cloze_qtype extends default_questiontype {
                         }
                         echo $feedbackimg;
                     }else if ($wrapped->options->layout == 1 || $wrapped->options->layout == 2){
-              //          echo "vertical";
-              //   echo "<p>answers <pre>";print_r($answers);echo "</pre><p>";
                         $ordernumber=0;
                         $anss =  Array();
                         foreach ($answers as $mcanswer) {
@@ -463,7 +460,6 @@ class embedded_cloze_qtype extends default_questiontype {
                             }
                             $a = new stdClass;
                             $a->id   = $question->name_prefix . $mcanswer->id;
-                          //  echo "aid ".$a->id ;
                             $a->class = '';
                             $a->feedbackimg = '';
         
