@@ -173,11 +173,12 @@ $attemptobj->load_question_states();
 $success = true;
 $attempt = $attemptobj->get_attempt();
 foreach ($attemptobj->get_questions() as $id => $question) {
+    $state = $attemptobj->get_question_state($id);
     $action = new stdClass;
     $action->event = QUESTION_EVENTCLOSE;
-    $action->responses = $attemptobj->get_question_state($id)->responses;
-    $action->timestamp = $attemptobj->get_question_state($id)->timestamp;
-    $state = $attemptobj->get_question_state($id);
+    $action->responses = $state->responses;
+    $action->responses['_flagged'] = $state->flagged;
+    $action->timestamp = $state->timestamp;
     if (question_process_responses($attemptobj->get_question($id),
             $state, $action, $attemptobj->get_quiz(), $attempt)) {
         save_question_session($attemptobj->get_question($id), $state);
