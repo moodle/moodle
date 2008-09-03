@@ -184,8 +184,7 @@ class quiz_access_manager {
     /**
      * Print a button to start a quiz attempt, with an appropriate javascript warning,
      * depending on the access restrictions. The link will pop up a 'secure' window, if
-     * necessary. The button will initially be hidden, with JavaScript to reveal it, and
-     * a noscript tag saying that the quiz requires JavaScript.
+     * necessary.
      *
      * @param boolean $canpreview whether this user can preview. This affects whether they must
      * use a secure window.
@@ -202,9 +201,7 @@ class quiz_access_manager {
         }
 
     /// Show the start button, in a div that is initially hidden.
-        require_js('yui_yahoo');
-        require_js('yui_event');
-        echo '<div id="quizstartbuttondiv" style="display: none;">';
+        echo '<div id="quizstartbuttondiv">';
         if ($this->securewindow_required($canpreview)) {
             $this->_securewindowrule->print_start_attempt_button($buttontext, $strconfirmstartattempt);
         } else {
@@ -213,19 +210,6 @@ class quiz_access_manager {
                     $buttontext, 'post', '', false, '', false, $strconfirmstartattempt);
         }
         echo "</div>\n";
-
-    /// JavaScript to reveal the button.
-        echo '<script type="text/javascript">' . "\n";
-        echo "YAHOO.util.Event.onContentReady(\n";
-        echo "'quizstartbuttondiv', function() {\n";
-        echo "document.getElementById('quizstartbuttondiv').style.cssText = '';\n";
-        echo "});\n";
-        echo "</script>\n";
-
-    /// A noscript tag to explains that the quiz only works with JavaScript enabled.
-        echo '<noscript>';
-        print_heading(get_string('noscript', 'quiz'));
-        echo "</noscript>\n";
     }
 
     /**
@@ -682,11 +666,13 @@ class securewindow_access_rule extends quiz_access_rule_base {
     private $windowoptions = "left=0, top=0, height='+window.screen.height+', width='+window.screen.width+', channelmode=yes, fullscreen=yes, scrollbars=yes, resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, menubar=no";
 
     /**
-     * Output the start attempt button.
+     * Output the start attempt button. The button will initially be hidden,
+     * with JavaScript to reveal it, and a noscript tag saying that the quiz
+     * requires JavaScript.
      *
      * @param string $buttontext the desired button caption.
-     * @param string $strconfirmstartattempt optional message to diplay in a JavaScript altert
-     * before the button submits.
+     * @param string $strconfirmstartattempt optional message to diplay in
+     * a JavaScript altert before the button submits.
      */
     public function print_start_attempt_button($buttontext, $strconfirmstartattempt) {
         global $CFG, $SESSION;
@@ -699,11 +685,22 @@ class securewindow_access_rule extends quiz_access_rule_base {
             $attempturl = $SESSION->sid_process_url($attempturl);
         }
 
-        echo '<input type="button" value="' . s($buttontext) . '" onclick="javascript:';
+        echo '<input id="quizstartbuttondiv" type="button" value="' .
+                s($buttontext) . '" style="display: none;" onclick="javascript:';
         if ($strconfirmstartattempt) {
             echo "if (confirm('" . addslashes_js($strconfirmstartattempt) . "')) ";
         }
         echo "window.open('$attempturl', '$window', '$this->windowoptions');", '" />';
+
+    /// JavaScript to reveal the button.
+        echo '<script type="text/javascript">' . "\n";
+        echo "document.getElementById('quizstartbutton').style.cssText = '';\n";
+        echo "</script>\n";
+
+    /// A noscript tag to explains that this quiz only works with JavaScript enabled.
+        echo '<noscript>';
+        print_heading(get_string('noscript', 'quiz'));
+        echo "</noscript>\n";
     }
 
     /**

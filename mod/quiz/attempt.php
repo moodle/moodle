@@ -121,19 +121,6 @@
     echo '<form id="responseform" method="post" action="', $attemptobj->processattempt_url(),
             '" enctype="multipart/form-data"' .
             ' onclick="this.autocomplete=\'off\'" onkeypress="return check_enter(event);">', "\n";
-    if($attemptobj->get_quiz()->timelimit > 0) {
-        // Make sure javascript is enabled for time limited quizzes
-        ?>
-        <script type="text/javascript">
-            // Do nothing, but you have to have a script tag before a noscript tag.
-        </script>
-        <noscript>
-        <div>
-        <?php print_heading(get_string('noscript', 'quiz')); ?>
-        </div>
-        </noscript>
-        <?php
-    }
     echo '<div>';
 
 /// Print the navigation panel in a left column.
