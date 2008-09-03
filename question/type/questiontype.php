@@ -907,7 +907,7 @@ class default_questiontype {
                 $postdata = "qsid=$qsid&amp;aid=$aid&amp;qid=$qid&amp;checksum=$checksum&amp;sesskey=" . sesskey();
                 $flagcontent = '<input type="checkbox" id="' . $id . '" name="' . $id .
                         '" value="1" ' . $checked . ' />' . 
-                        '<label for="' . $id . '">' . $this->get_question_flag_tag(
+                        '<label id="' . $id . 'label" for="' . $id . '">' . $this->get_question_flag_tag(
                         $state->flagged, $id . 'img') . '</label>' .
                         "\n" . '<script type="text/javascript">question_flag_changer.init_flag(' .
                         "'$id', '$postdata');</script>";
