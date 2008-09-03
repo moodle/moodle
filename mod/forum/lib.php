@@ -4030,12 +4030,7 @@ function forum_add_attachment($post, $cm, $mform=null, &$message=null, $remove_p
         return false;
     }
 
-    $filename = $mform->get_new_filename('attachment');
     $filearea = 'forum_attachment';
-
-    if ($filename === false) {
-        return false;
-    }
 
     $fs = get_file_storage();
 
@@ -4047,7 +4042,7 @@ function forum_add_attachment($post, $cm, $mform=null, &$message=null, $remove_p
         $DB->update_record('forum_posts', $post);
     }
 
-    if ($mform->save_stored_file('attachment', $context->id, $filearea, $post->id, '/', $filename, true, $USER->id)) {
+    if ($mform->save_stored_file('attachment', $context->id, $filearea, $post->id, '/', null, true, $USER->id)) {
         $post->attachment = '1';
         $DB->update_record('forum_posts', $post);
         return true;
