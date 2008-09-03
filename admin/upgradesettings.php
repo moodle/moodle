@@ -63,10 +63,6 @@ echo '<div class="form-buttons"><input class="form-submit" type="submit" value="
 echo '</div>';
 echo '</form>';
 
-if (!empty($CFG->adminusehtmleditor)) {
-    use_html_editor();
-}
-
 print_footer();
 
 ?>

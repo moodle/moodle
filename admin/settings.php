@@ -163,10 +163,6 @@ if (empty($SITE->fullname)) {
     echo '</tr></table>';
 }
 
-if (!empty($CFG->adminusehtmleditor)) {
-    use_html_editor();
-}
-
 print_footer();
 
 ?>

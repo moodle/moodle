@@ -59,10 +59,6 @@
         echo '</div>';
         echo '</form>';
         echo '</div>';
-
-        if ($usehtmleditor) { 
-            use_html_editor();
-        }
     }
 
     admin_externalpage_print_footer();

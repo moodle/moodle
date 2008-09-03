@@ -500,10 +500,6 @@
         include_once('manage.html');
         print_simple_box_end();
 
-        if ($usehtmleditor) {
-            use_html_editor('description');
-        }
-
     } else {
 
         print_heading_with_help(get_string('roles', 'role'), 'roles');

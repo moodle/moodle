@@ -1674,10 +1674,6 @@ function question_print_comment_box($question, $state, $attempt, $url) {
    echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
    echo '<input type="submit" name="submit" value="'.get_string('save', 'quiz').'" />';
    echo '</form>';
-
-   if ($usehtmleditor) {
-       use_html_editor();
-   }
 }
 
 /**

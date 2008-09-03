@@ -519,9 +519,6 @@
             }
             else {
                 include('event_new.html');
-                if ($usehtmleditor) {
-                    use_html_editor("description");
-                }
             }
 
         break;
