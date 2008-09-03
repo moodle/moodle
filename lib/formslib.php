@@ -548,7 +548,7 @@ class moodleform {
      * @param int $newuserid - new userid if required
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      */
-    function save_stored_file($elname, $newcontextid, $newfilearea, $newitemid, $newfilepath,
+    function save_stored_file($elname, $newcontextid, $newfilearea, $newitemid, $newfilepath='/',
                               $newfilename=null, $override=false, $newuserid=null) {
 
         global $USER;
@@ -584,37 +584,44 @@ class moodleform {
 
             return $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
 
-        } else if (isset($this->exportValues[$elname])) {    // Submitted data contains itemid in user's draft_area
+        } else if (!empty($this->_form->_submitValues[$elname])) {    // Submit data has itemid in user's draft_area
 
-            $itemid = $this->exportValues[$elname];
+            $itemid = $this->_form->_submitValues[$elname];
 
             if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
                 return false;
             }
 
-            if (!$files = get_area_files($context->id, 'user_draft', $itemid, 'itemid, filepath, filename', false)) {
+            $fs = get_file_storage();
+
+        /// Delete any existing files in destination if required
+            if ($file = $fs->get_file($newcontextid, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
+                if ($override) {
+                    $file->delete();
+                } else {
+                    return false;
+                }
+            }
+
+        /// Get files from the draft area (even though we know there can be only one)
+            if (!$files = $fs->get_area_files($context->id, 'user_draft', $itemid, 'filename', false)) {
                 return false;
             }
 
-            $file = array_pop($files);   // Get the one and only item out of the array
-
-            $params = $file->get_params();
-
-            $fs = get_file_storage();
+            $file = array_pop($files);   // There will be only one file
 
             $newrecord = new object();
-            $newrecord->contextid = $newcontextid;
-            $newrecord->filearea = $newfilearea;
-            $newrecord->itemid = $newitemid;
-            $newrecord->filepath = $newfilepath;
-            $newrecord->filename = ($newfilename ? $newfilename : $params['filename']);
-
-            $newrecord->timecreated = $file->get_timecreated();
+            $newrecord->contextid    = $newcontextid;
+            $newrecord->filearea     = $newfilearea;
+            $newrecord->itemid       = $newitemid;
+            $newrecord->filepath     = $newfilepath;
+            $newrecord->filename     = ($newfilename ? $newfilename : $file->get_filename());
+            $newrecord->timecreated  = $file->get_timecreated();
             $newrecord->timemodified = $file->get_timemodified();
-            $newrecord->mimetype = $file->get_mimetype();
-            $newrecord->userid = $file->get_userid();
+            $newrecord->mimetype     = $file->get_mimetype();
+            $newrecord->userid       = $file->get_userid();
 
-            if (!$newfile = $this->create_file_from_storedfile($newrecord, $file->get_id)) {
+            if (!$newfile = $fs->create_file_from_storedfile($newrecord, $file->get_id())) {
                 return false;
             }
 
