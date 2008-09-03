@@ -417,6 +417,7 @@ class embedded_cloze_qtype extends default_questiontype {
                     echo $feedbackimg;
                     break;
                 case 'multichoice':
+                 if ($wrapped->options->layout == 0 ){
                     $outputoptions = '<option></option>'; // Default empty option
                     foreach ($answers as $mcanswer) {
                         $selected = '';
@@ -441,6 +442,98 @@ class embedded_cloze_qtype extends default_questiontype {
                         echo "<img src=\"$CFG->pixpath/i/feedback.gif\" alt=\"$feedback\" />";
                     }
                     echo $feedbackimg;
+                    }else if ($wrapped->options->layout == 1 || $wrapped->options->layout == 2){
+                        $ordernumber=0;
+                        $anss =  Array();
+                        foreach ($answers as $mcanswer) {
+                            $ordernumber++;
+                            $checked = '';
+                            $chosen = false;
+                            $type = 'type="radio"';
+                            $name   = "name=\"{$inputname}\"";
+                            if ($response == $mcanswer->id) {
+                                $checked = 'checked="checked"';
+                                $chosen = true;
+                            }
+                            $a = new stdClass;
+                            $a->id   = $question->name_prefix . $mcanswer->id;
+                            $a->class = '';
+                            $a->feedbackimg = '';
+        
+                    // Print the control
+                    $a->control = "<input $readonly id=\"$a->id\" $name $checked $type value=\"$mcanswer->id\" />";
+                if ($options->correct_responses && $mcanswer->fraction > 0) {
+                    $a->class = question_get_feedback_class(1);
+                }
+                if (($options->feedback && $chosen) || $options->correct_responses) {
+                    if ($type == ' type="checkbox" ') {
+                        $a->feedbackimg = question_get_feedback_image($mcanswer->fraction > 0 ? 1 : 0, $chosen && $options->feedback);
+                    } else {
+                        $a->feedbackimg = question_get_feedback_image($mcanswer->fraction, $chosen && $options->feedback);
+                    }
+                }
+    
+                // Print the answer text
+                $a->text = '<span class="anun">' . $ordernumber . '<span class="anumsep">.</span></span> ' .
+                        format_text($mcanswer->answer, FORMAT_MOODLE, $formatoptions, $cmoptions->course);
+    
+                // Print feedback if feedback is on
+                if (($options->feedback || $options->correct_responses) && ($checked )) { //|| $options->readonly
+                    $a->feedback = format_text($mcanswer->feedback, true, $formatoptions, $cmoptions->course);
+                } else {
+                    $a->feedback = '';
+                }
+    
+                    $anss[] = clone($a);
+                }
+                ?>
+            <?php    if ($wrapped->options->layout == 1 ){
+            ?>
+                  <table class="answer">
+                    <?php $row = 1; foreach ($anss as $answer) { ?>
+                      <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
+                        <td class="c0 control">
+                          <?php echo $answer->control; ?>
+                        </td>
+                        <td class="c1 text <?php echo $answer->class ?>">
+                          <label for="<?php echo $answer->id ?>">
+                            <?php echo $answer->text; ?>
+                            <?php echo $answer->feedbackimg; ?>
+                          </label>
+                        </td>
+                        <td class="c0 feedback">
+                          <?php echo $answer->feedback; ?>
+                        </td>
+                      </tr>
+                    <?php } ?>
+                  </table>
+                  <?php }else  if ($wrapped->options->layout == 2 ){
+                    ?>
+           
+                  <table class="answer">
+                      <tr class="<?php echo 'r'.$row = $row ? 0 : 1; ?>">
+                    <?php $row = 1; foreach ($anss as $answer) { ?>
+                        <td class="c0 control">
+                          <?php echo $answer->control; ?>
+                        </td>
+                        <td class="c1 text <?php echo $answer->class ?>">
+                          <label for="<?php echo $answer->id ?>">
+                            <?php echo $answer->text; ?>
+                            <?php echo $answer->feedbackimg; ?>
+                          </label>
+                        </td>
+                        <td class="c0 feedback">
+                          <?php echo $answer->feedback; ?>
+                        </td>
+                    <?php } ?>
+                      </tr>
+                  </table>
+                  <?php }  
+                        
+                    }else {
+                        echo "no valid layout";
+                    }
+                    
                     break;
                 default:
                     $a = new stdClass;
@@ -787,7 +880,7 @@ define("NUMERICAL_ABS_ERROR_MARGIN", 6);
 
 // Remaining ANSWER regexes
 define("ANSWER_TYPE_DEF_REGEX",
-       '(NUMERICAL|NM)|(MULTICHOICE|MC)|(SHORTANSWER|SA|MW)');
+       '(NUMERICAL|NM)|(MULTICHOICE|MC)|(MULTICHOICE_V|MCV)|(MULTICHOICE_H|MCH)|(SHORTANSWER|SA|MW)');
 define("ANSWER_START_REGEX",
        '\{([0-9]*):(' . ANSWER_TYPE_DEF_REGEX . '):');
 
@@ -802,8 +895,10 @@ define("ANSWER_REGEX",
 define("ANSWER_REGEX_NORM", 1);
 define("ANSWER_REGEX_ANSWER_TYPE_NUMERICAL", 3);
 define("ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE", 4);
-define("ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER", 5);
-define("ANSWER_REGEX_ALTERNATIVES", 6);
+define("ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_REGULAR", 5);
+define("ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_HORIZONTAL", 6);
+define("ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER", 7);
+define("ANSWER_REGEX_ALTERNATIVES", 8);
 
 function qtype_multianswer_extract_question($text) {
     $question = new stdClass;
@@ -832,6 +927,23 @@ function qtype_multianswer_extract_question($text) {
             $wrapped->correctfeedback = '';
             $wrapped->partiallycorrectfeedback = '';
             $wrapped->incorrectfeedback = '';
+            $wrapped->layout = 0;
+        } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_REGULAR])) {
+            $wrapped->qtype = 'multichoice';
+            $wrapped->single = 1;
+            $wrapped->answernumbering = 0;
+            $wrapped->correctfeedback = '';
+            $wrapped->partiallycorrectfeedback = '';
+            $wrapped->incorrectfeedback = '';
+            $wrapped->layout = 1;
+        } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE_HORIZONTAL])) {
+            $wrapped->qtype = 'multichoice';
+            $wrapped->single = 1;
+            $wrapped->answernumbering = 0;
+            $wrapped->correctfeedback = '';
+            $wrapped->partiallycorrectfeedback = '';
+            $wrapped->incorrectfeedback = '';
+            $wrapped->layout = 2;
         } else {
             print_error('unknownquestiontype', 'question', '', $answerregs[2]);
             return false;
