@@ -800,12 +800,24 @@ abstract class quiz_nav_panel_base {
     }
 
     protected function get_question_buttons() {
-        $html = '<div class="qn_buttons">';
+        $html = '<div class="qn_buttons">' . "\n";
         foreach ($this->attemptobj->get_question_iterator() as $number => $question) {
-            $html .= $this->get_question_button($number, $question);
+            $html .= $this->get_question_button($number, $question) . "\n" .
+                    $this->get_button_update_script($question) . "\n";
         }
-        $html .= '</div>';
+        $html .= "</div>\n";
         return $html;
+    }
+
+    protected function get_button_id($question) {
+        // The id to put on the button element in the HTML.
+        return 'quiznavbutton' . $question->id;
+    }
+
+    protected function get_button_update_script($question) {
+        return '<script type="text/javascript">' .
+                "\nquiz_init_nav_button('" . $this->get_button_id($question) . "', " .
+                $question->id . ")\n</script>\n";
     }
 
     abstract protected function get_question_button($number, $question);
@@ -830,8 +842,8 @@ abstract class quiz_nav_panel_base {
 
     public function display() {
         $strquiznavigation = get_string('quiznavigation', 'quiz');
-        $content = $this->get_question_buttons() . '<div class="othernav">' .
-                $this->get_end_bits() . '</div>';
+        $content = $this->get_question_buttons() . "\n" . '<div class="othernav">' .
+                "\n" . $this->get_end_bits() . "\n</div>\n";
         print_side_block($strquiznavigation, $content, NULL, NULL, '', array('id' => 'quiznavigation'), $strquiznavigation);
     }
 }
@@ -850,7 +862,8 @@ class quiz_attempt_nav_panel extends quiz_nav_panel_base {
         }
         return '<input type="submit" name="gotopage' . $question->_page .
                 '" value="' . $number . '" class="qnbutton ' .
-                $this->get_question_state_classes($question) . '"' . $onclick . '/>';
+                $this->get_question_state_classes($question) . '" id="' .
+                $this->get_button_id($question) . '" ' . $onclick . '/>';
     }
 
     protected function get_end_bits() {
@@ -870,8 +883,8 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
 
     protected function get_question_button($number, $question) {
         return '<a href="' . $this->attemptobj->review_url($question->id) .
-                '" class="qnbutton ' . $this->get_question_state_classes($question) .
-                '">' . $number . '</a>';
+                '" class="qnbutton ' . $this->get_question_state_classes($question) . '" id="' .
+                $this->get_button_id($question) . '">' . $number . '</a>';
     }
 
     protected function get_end_bits() {

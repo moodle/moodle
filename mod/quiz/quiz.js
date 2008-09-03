@@ -19,6 +19,7 @@ function check_enter(e) {
     }
 }
 
+// Code for updating the countdown timer that is used on timed quizzes.
 quiz_timer = {
     // The outer div, so we can get at it to move it when the page scrolls.
     timerouter: null,
@@ -141,6 +142,25 @@ quiz_timer = {
 
         // Arrange for this method to be called again soon.
         quiz_timer.timeoutid = setTimeout(quiz_timer.update_time, quiz_timer.updatedelay);
+    }
+};
+
+// Code for updating the navigation panel. At the moment it only updates
+// the flagged states of questions. This is a constructor, it takes 
+function quiz_init_nav_button(buttonid, questionid) {
+    var button = document.getElementById(buttonid);
+    button.stateupdater = new quiz_nav_updater(button, questionid);
+}
+
+function quiz_nav_updater(element, questionid) {
+    this.element = element;
+    question_flag_changer.add_flag_state_listener(questionid, this);
+};
+
+quiz_nav_updater.prototype.flag_state_changed = function(newstate) {
+    this.element.className = this.element.className.replace(/\s*\bflagged\b\s*/, ' ');
+    if (newstate) {
+        this.element.className += ' flagged';
     }
 };
 
