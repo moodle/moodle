@@ -108,7 +108,7 @@ class repository_type {
      * @param boolean $visible
      * @param integer $sortorder (don't really need set, it will be during create() call)
      */
-    public function __construct($typename = '', $typeoptions = array(), $visible = true, $sortorder = 0){
+    public function __construct($typename = '', $typeoptions = array(), $visible = false, $sortorder = 0){
         global $CFG;
 
         //set type attributs
@@ -607,7 +607,7 @@ abstract class repository {
             $id = $DB->insert_record('repository_instances', $record);
             $options = array();
             if (call_user_func($classname . '::has_instance_config')) {
-                $configs = call_user_func($classname . '::get_instance_option_names');                
+                $configs = call_user_func($classname . '::get_instance_option_names');
                 foreach ($configs as $config) {
                     $options[$config] = $params[$config];
                 }
@@ -1952,7 +1952,6 @@ final class repository_admin_form extends moodleform {
         $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->get_typename() : 0);
         $mform->addElement('hidden', 'new',   $this->plugin);
         $mform->addElement('hidden', 'plugin', $this->plugin);
-
         // let the plugin add the fields they want (either statically or not)
         if (repository_static_function($this->plugin, 'has_admin_config')) {
             if (!$this->instance) {
@@ -2008,7 +2007,11 @@ function repository_display_instances_list($context, $admin = false, $typename =
         $stropt = get_string('operation', 'repository');
         $updown = get_string('updown', 'repository');
         $plugins = get_list_of_plugins('repository');
-        $instances = repository_get_instances($context,null,true,$typename);
+        //retrieve list of instances. In administration context we want to display all
+        //instances even if the type is not visible. In course/user context we
+        //want to display only visible instances. The repository_get_instances()
+        //third parameter displays only visible type.
+        $instances = repository_get_instances($context,null,!$admin,$typename);
         $instancesnumber = count($instances);
         $alreadyplugins = array();
         $table = new StdClass;
@@ -2023,6 +2026,13 @@ function repository_display_instances_list($context, $admin = false, $typename =
             //$row .= ' <a href="' . $baseurl . '&amp;type='.$typename.'&amp;hide=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/' . ($i->visible ? 'hide' : 'show') . '.gif" alt="' . get_string($i->visible ? 'hide' : 'show') . '" /></a>' . "\n";
 
             $table->data[] = array($i->name, $type->get_readablename(),$row);
+            //display a grey row if the type is defined as not visible
+            if (isset($type) && !$type->get_visible()){
+                $table->rowclass[] = 'dimmed_text';
+            } else{
+                $table->rowclass[] = '';
+            }
+
             if (!in_array($i->name, $alreadyplugins)) {
                 $alreadyplugins[] = $i->name;
             }
@@ -2050,7 +2060,7 @@ function repository_display_instances_list($context, $admin = false, $typename =
         //create a unique type of instance
         else {
             if (repository_static_function($typename, 'has_multiple_instances')){
-                $addable = 1;               
+                $addable = 1;
                 $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$typename.'">'.get_string('create', 'repository')
                                   .' "'.get_string('repositoryname', 'repository_'.$typename).'" '
                                   .get_string('instance', 'repository').'</a></li>';
