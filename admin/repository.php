@@ -92,7 +92,10 @@ if (!empty($edit) || !empty($new)) {
 
         //display instances list and creation form
         if ($edit){
-            repository_display_instances_list(get_context_instance(CONTEXT_SYSTEM), true, $edit);
+             if (repository_static_function($edit,"has_instance_config")
+                 || repository_static_function($edit,"has_multiple_instances")){
+                repository_display_instances_list(get_context_instance(CONTEXT_SYSTEM), true, $edit);
+           }
         }
 
     }
