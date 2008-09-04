@@ -181,8 +181,7 @@
         $markcolumn = $gradecolumn && ($quiz->grade != $quiz->sumgrades);
         $overallstats = $alloptions->scores;
 
-        $feedbackcolumn = quiz_has_feedback($quiz->id);
-        $overallfeedback = $feedbackcolumn && $alloptions->overallfeedback;
+        $feedbackcolumn = quiz_has_feedback($quiz->id) && $alloptions->overallfeedback;
 
         // Prepare table header
         $table->class = 'generaltable quizattemptsummary';
@@ -330,7 +329,7 @@
             $resultinfo .= print_heading(get_string('comment', 'quiz'), '', 3, 'main', true);
             $resultinfo .= '<p class="quizteacherfeedback">'.$gradebookfeedback."</p>\n";
         }
-        if ($overallfeedback) {
+        if ($feedbackcolumn) {
             $resultinfo .= print_heading(get_string('overallfeedback', 'quiz'), '', 3, 'main', true);
             $resultinfo .= '<p class="quizgradefeedback">'.quiz_feedback_for_grade($mygrade, $quiz->id)."</p>\n";
         }
