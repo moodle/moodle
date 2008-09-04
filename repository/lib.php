@@ -60,7 +60,8 @@ require_once(dirname(dirname(__FILE__)).'/lib/formslib.php');
  * - a repository_type object is mapped to the "repository" database table
  * - "typename" attibut maps the "type" database field. It is unique.
  * - general "options" for a repository type are saved in the config_plugin table
- * - TODO: when you delete a repository, all instances are deleted
+ * - when you delete a repository, all instances are deleted, and general
+ *   options are also deleted from database
  * - When you create a type for a plugin that can't have multiple instances, a
  *   instance is automatically created.
  */
@@ -340,8 +341,8 @@ class repository_type {
 
 
     /**
-     * Delete a repository_type - DO NOT CALL IT TILL THE TODO IS DONE
-     * TODO: delete all instances for this type
+     * Delete a repository_type (general options are removed from config_plugin
+     * table, and all instances are deleted)
      * @global object $DB
      * @return boolean
      */
@@ -352,6 +353,11 @@ class repository_type {
         $instances = repository_get_instances(null,null,false,$this->_typename);
         foreach($instances as $instance){
             $instance->delete();
+        }
+
+        //delete all general options
+        foreach ($this->_options as $name => $value){
+            set_config($name, null, $this->_typename);
         }
 
         return $DB->delete_records('repository', array('type' => $this->_typename));
@@ -549,6 +555,12 @@ abstract class repository {
             return $str;
         }
     }
+
+    /**
+     * TODO: write documentation here
+     * @global <type> $DB
+     * @return <type>
+     */
     public function get_name(){
         global $DB;
         // We always verify instance id from database,
