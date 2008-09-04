@@ -11,7 +11,7 @@ $string['copying'] = 'Copying';
 $string['configcacheexpire'] = 'Configurate the cache expired time (in minutes).';
 $string['configsaved'] = 'Configuration saved!';
 $string['confirmdelete'] = 'Are you sure you want to delete this repository - $a?';
-$string['confirmremove'] = 'Are you sure you want to remove this repository plugin and <strong style=color:red>all of its instances</strong> - $a?';
+$string['confirmremove'] = 'Are you sure you want to remove this repository plugin, its options and <strong style=color:red>all of its instances</strong> - $a?';
 $string['create'] = 'Create';
 $string['createrepository'] = 'Create a repository instance';
 $string['createinstance'] = 'Create a repository instance';
