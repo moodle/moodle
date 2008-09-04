@@ -585,6 +585,7 @@ class file_storage {
      * @param int $itemid  - existing itemid in user draft_area with one or more files
      * @param int $newcontextid  - the new contextid to move files to
      * @param string $newfilearea  - the new filearea to move files to
+     * @param int $newitemid - the new itemid to use (this is ignored and automatically set to 0 when moving to a user's user_private area)
      * @param string $newfilepath  - the new path to move all files to
      * @param bool $overwrite  - overwrite files from the destination if they exist
      * @param int $newuserid  - new userid if required
@@ -602,6 +603,11 @@ class file_storage {
         }
         if (!$files = $this->get_area_files($usercontext->id, 'user_draft', $itemid, 'filename', false)) {
             return false;
+        }
+
+        $newcontext = get_context_instance_by_id($newcontextid);
+        if (($newcontext->contextlevel == CONTEXT_USER) && ($newfilearea == 'user_private')) {
+            $newitemid = 0;
         }
 
     /// Process each file in turn 
