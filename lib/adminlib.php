@@ -5623,6 +5623,14 @@ class admin_setting_managerepository extends admin_setting {
                 $updowncount++;
 
             $table->data[] = array($i->get_readablename(), $updown,$row);
+
+            //display a grey row if the type is defined as not visible
+            if (!$i->get_visible()){
+                $table->rowclass[] = 'dimmed_text';
+            } else{
+                $table->rowclass[] = '';
+            }
+
             if (!in_array($i->get_typename(), $alreadyplugins)) {
                 $alreadyplugins[] = $i->get_typename();
             }

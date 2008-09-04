@@ -59,6 +59,6 @@ $string['submit'] = 'Submit';
 $string['sync'] = 'Sync';
 $string['title'] = 'Repository file picker';
 $string['thumbview'] = 'View as icons';
-$string['updown'] = 'Up/Down';
+$string['updown'] = 'Display order';
 $string['upload'] = 'Upload this file';
 $string['uploading'] = 'Uploading...';
