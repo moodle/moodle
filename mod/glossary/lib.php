@@ -2386,7 +2386,7 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
         $entries = $DB->get_records('glossary_entries', array('glossaryid' => $this->glossary->id));
         list($where, $params) = $DB->get_in_or_equal(array_keys($entries));
 
-        $aliases = $DB->get_records_select('glossary_alias', 'entryid' . $where, $params);
+        $aliases = $DB->get_records_select('glossary_alias', 'entryid ' . $where, $params);
         $categoryentries = $DB->get_records_sql('SELECT ec.entryid, c.name FROM {glossary_entries_categories} ec
             JOIN {glossary_categories} c
             ON c.id = ec.categoryid

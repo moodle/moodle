@@ -1819,7 +1819,7 @@ final class portfolio_user_form extends moodleform {
 *
 * Class that handles the various stages of the actual export
 */
-final class portfolio_exporter {
+class portfolio_exporter {
 
     private $currentstage;
     private $caller;

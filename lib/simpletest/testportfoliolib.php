@@ -53,6 +53,10 @@ class portfolio_plugin_test extends portfolio_plugin_push_base {
     public function get_continue_url() {
         return '';
     }
+
+    public static function get_name() {
+        return '';
+    }
 }
 
 class portfolio_caller_test extends portfolio_caller_base {
