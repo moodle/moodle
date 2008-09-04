@@ -1052,6 +1052,18 @@ table.quizreviewsummary td.cell {
     background:yellow;
 }
 
+#quiznavigation .qnbutton {
+  color: #00f;
+  border-color: gray;
+  background-color: white;
+}
+#quiznavigation .qnbutton:hover {
+  color: #f00;
+}
+#quiznavigation .qnbutton.thispage {
+  background-color: #eee;
+}
+
 /***
  *** Modules: Resource
  ***/

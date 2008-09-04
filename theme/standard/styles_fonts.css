@@ -997,6 +997,15 @@ body#mod-forum-index .generalbox .cell {
  *** Modules: Quiz
  ***/
 
+#quiznavigation .qnbutton {
+  font: inherit;
+  line-height: 1.5em;
+  font-weight: bold;
+}
+#quiznavigation .qnbutton:hover {
+  text-decoration: underline;
+}
+
 /***
  *** Modules: Resource
  ***/

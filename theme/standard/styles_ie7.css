@@ -56,3 +56,6 @@ form.mform textarea {
 form.mform .fcheckbox input {
   margin-left: -3px;
 }
+#mod-quiz-review #middle-column {
+  height: 1%;
+}

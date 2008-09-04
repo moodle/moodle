@@ -1235,6 +1235,7 @@ a.skip:focus, a.skip:active {
 .skip-block-to, #maincontent {
   display: block;
   height: 1px;
+  overflow: hidden;
 }
 
 .sideblock {
@@ -3920,6 +3921,9 @@ body#mod-forum-search .introcontent {
 #mod-quiz-summary .submitbtns {
   margin-top: 1.5em;
 }
+#mod-quiz-summary #content {
+  text-align: center;
+}
 #mod-quiz-summary .questionflag {
   width: 16px;
   height: 16px;
@@ -4150,29 +4154,27 @@ table.quizreviewsummary td.cell {
   text-align: center;
   margin: 6px 0;
 }
-
+#mod-quiz-attempt #left-column,
+#mod-quiz-review #left-column {
+  padding-top: 1px;
+}
 #quiznavigation .qnbutton {
+  display: block;
   float: left;
   width: 1.5em;
   height: 1.5em;
+  overflow: hidden;
   margin: 0.3em 0.3em 0.3em 0;
-  border: 1px solid grey;
-  background: white;
-  font-weight: bold;
+  padding: 0;
+  border: 1px solid gray;
+  background: white no-repeat top right;
   text-align: center;
   vertical-align: middle;
-}
-#quiznavigation .qnbutton:hover {
-  background: silver;
-  text-decoration: underline;
-}
-#quiznavigation .qnbutton.thispage {
-  background: #eee;
+  cursor: pointer;
+  white-space: normal;
 }
 #quiznavigation .qnbutton.flagged {
-  background-repeat: no-repeat;
   background-image: url(pix/flaggedquestionnav.png);
-  background-position: top right;
 }
 #quiznavigation .othernav {
   clear: both;

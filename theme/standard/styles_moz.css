@@ -339,3 +339,11 @@ body#course-user .section {
   -moz-border-radius-bottomright:15px;
 }
 
+
+/***
+ *** Modules: Quiz
+ ***/
+
+#quiznavigation .qnbutton {
+  -moz-box-sizing: content-box;
+}
