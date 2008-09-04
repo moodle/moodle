@@ -885,6 +885,152 @@ function get_question_options(&$questions) {
 }
 
 /**
+ * Load the basic state information for 
+ *
+ * @param integer $attemptid the attempt id to load the states for.
+ * @return array an array of state data from the database, you will subsequently
+ *      need to call question_load_states to get fully loaded states that can be
+ *      used by the question types. The states here should be sufficient for 
+ *      basic tasks like rendering navigation.
+ */
+function question_preload_states($attemptid) {
+    global $DB;
+
+    // The questionid field must be listed first so that it is used as the
+    // array index in the array returned by $DB->get_records_sql
+    $statefields = 'n.questionid as question, s.*, n.sumpenalty, n.manualcomment, n.flagged, n.id as questionsessionid';
+
+    // Load the newest states for the questions
+    $sql = "SELECT $statefields
+              FROM {question_states} s, {question_sessions} n
+             WHERE s.id = n.newest AND n.attemptid = ?";
+    $states = $DB->get_records_sql($sql, array($attemptid));
+    if (!$states) {
+        return false;
+    }
+
+    // Load the newest graded states for the questions
+    $sql = "SELECT $statefields
+              FROM {question_states} s, {question_sessions} n
+             WHERE s.id = n.newgraded AND n.attemptid = ?";
+    $gradedstates = $DB->get_records_sql($sql, array($attemptid));
+
+    // Hook the two together.
+    foreach ($states as $questionid => $state) {
+        $states[$questionid]->_partiallyloaded = true;
+        if ($gradedstates[$questionid]) {
+            $gradedstates[$questionid]->_partiallyloaded = true;
+            $states[$questionid]->last_graded = $gradedstates[$questionid];
+        } else {
+            $states[$questionid]->last_graded = clone($states[$questionid]);
+        }
+    }
+
+    return $states;
+}
+
+/**
+ * Finish loading the question states that were extracted from the database with
+ * question_preload_states, creating new states for any question where there
+ * is not a state in the database.
+ *
+ * @param array $questions the questions to load state for.
+ * @param array $states the partially loaded states.
+ * @param object $cmoptions options from the module we are loading the states for. E.g. $quiz.
+ * @param object $attempt The attempt for which the question sessions are
+ *      to be restored or created.
+ * @param mixed either the id of a previous attempt, if this attmpt is
+ *      building on a previous one, or false for a clean attempt.
+ * @return array the fully loaded states.
+ */
+function question_load_states(&$questions, &$states, $cmoptions, $attempt, $lastattemptid = false) {
+    global $QTYPES, $DB;
+
+    // loop through all questions and set the last_graded states
+    foreach (array_keys($questions) as $qid) {
+        if (isset($states[$qid])) {
+            restore_question_state($questions[$qid], $states[$qid]);
+            if (isset($states[$qid]->_partiallyloaded)) {
+                unset($states[$qid]->_partiallyloaded);
+            }
+            if (isset($states[$qid]->lastgraded->_partiallyloaded)) {
+                restore_question_state($questions[$qid], $states[$qid]->lastgraded);
+                unset($states[$qid]->lastgraded->_partiallyloaded);
+            }
+        } else {
+            // If the new attempt is to be based on a previous attempt get it and clean things
+            // Having lastattemptid filled implies that (should we double check?):
+            //    $attempt->attempt > 1 and $cmoptions->attemptonlast and !$attempt->preview
+            if ($lastattemptid) {
+                // find the responses from the previous attempt and save them to the new session
+
+                // Load the last graded state for the question
+                $statefields = 'n.questionid as question, s.*, n.sumpenalty';
+                $sql = "SELECT $statefields
+                          FROM {question_states} s, {question_sessions} n
+                         WHERE s.id = n.newgraded
+                               AND n.attemptid = ?
+                               AND n.questionid = ?";
+                if (!$laststate = $DB->get_record_sql($sql, array($lastattemptid, $qid))) {
+                    // Only restore previous responses that have been graded
+                    continue;
+                }
+                // Restore the state so that the responses will be restored
+                restore_question_state($questions[$qid], $laststate);
+                $states[$qid] = clone($laststate);
+                unset($states[$qid]->id);
+            } else {
+                // create a new empty state
+                $states[$qid] = new object;
+                $states[$qid]->question = $qid;
+                $states[$qid]->responses = array('' => '');
+                $states[$qid]->raw_grade = 0;
+            }
+
+            // now fill/overide initial values
+            $states[$qid]->attempt = $attempt->uniqueid;
+            $states[$qid]->seq_number = 0;
+            $states[$qid]->timestamp = $attempt->timestart;
+            $states[$qid]->event = ($attempt->timefinish) ? QUESTION_EVENTCLOSE : QUESTION_EVENTOPEN;
+            $states[$qid]->grade = 0;
+            $states[$qid]->penalty = 0;
+            $states[$qid]->sumpenalty = 0;
+            $states[$qid]->manualcomment = '';
+            $states[$qid]->flagged = 0;
+
+            // Prevent further changes to the session from incrementing the
+            // sequence number
+            $states[$qid]->changed = true;
+
+            if ($lastattemptid) {
+                // prepare the previous responses for new processing
+                $action = new stdClass;
+                $action->responses = $laststate->responses;
+                $action->timestamp = $laststate->timestamp;
+                $action->event = QUESTION_EVENTSAVE; //emulate save of questions from all pages MDL-7631
+
+                // Process these responses ...
+                question_process_responses($questions[$qid], $states[$qid], $action, $cmoptions, $attempt);
+
+                // Fix for Bug #5506: When each attempt is built on the last one,
+                // preserve the options from any previous attempt.
+                if ( isset($laststate->options) ) {
+                    $states[$qid]->options = $laststate->options;
+                }
+            } else {
+                // Create the empty question type specific information
+                if (!$QTYPES[$questions[$qid]->qtype]->create_session_and_responses(
+                        $questions[$qid], $states[$qid], $cmoptions, $attempt)) {
+                    return false;
+                }
+            }
+            $states[$qid]->last_graded = clone($states[$qid]);
+        }
+    }
+    return $states;
+}
+
+/**
 * Loads the most recent state of each question session from the database
 * or create new one.
 *
@@ -908,111 +1054,18 @@ function get_question_options(&$questions) {
 *                         building on a previous one, or false for a clean attempt.
 */
 function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid = false) {
-    global $CFG, $QTYPES, $DB;
-
     // get the question ids
     $ids = array_keys($questions);
-    $questionlist = implode(',', $ids);
 
-    // The question field must be listed first so that it is used as the
-    // array index in the array returned by $DB->get_records_sql
-    $statefields = 'n.questionid as question, s.*, n.sumpenalty, n.manualcomment, n.flagged, n.id as questionsessionid';
-    // Load the newest states for the questions
-    $sql = "SELECT $statefields
-              FROM {question_states} s, {question_sessions} n
-             WHERE s.id = n.newest
-                   AND n.attemptid = ?
-                   AND n.questionid IN ($questionlist)";
-    $states = $DB->get_records_sql($sql, array($attempt->uniqueid));
-
-    // Load the newest graded states for the questions
-    $sql = "SELECT $statefields
-              FROM {question_states} s, {question_sessions} n
-             WHERE s.id = n.newgraded
-                   AND n.attemptid = ?
-                   AND n.questionid IN ($questionlist)";
-    $gradedstates = $DB->get_records_sql($sql, array($attempt->uniqueid));
-
-    // loop through all questions and set the last_graded states
-    foreach ($ids as $i) {
-        if (isset($states[$i])) {
-            restore_question_state($questions[$i], $states[$i]);
-            if (isset($gradedstates[$i])) {
-                restore_question_state($questions[$i], $gradedstates[$i]);
-                $states[$i]->last_graded = $gradedstates[$i];
-            } else {
-                $states[$i]->last_graded = clone($states[$i]);
-            }
-        } else {
-            // If the new attempt is to be based on a previous attempt get it and clean things
-            // Having lastattemptid filled implies that (should we double check?):
-            //    $attempt->attempt > 1 and $cmoptions->attemptonlast and !$attempt->preview
-            if ($lastattemptid) {
-                // find the responses from the previous attempt and save them to the new session
-
-                // Load the last graded state for the question
-                $statefields = 'n.questionid as question, s.*, n.sumpenalty';
-                $sql = "SELECT $statefields
-                          FROM {question_states} s, {question_sessions} n
-                         WHERE s.id = n.newgraded
-                               AND n.attemptid = ?
-                               AND n.questionid = ?";
-                if (!$laststate = $DB->get_record_sql($sql, array($lastattemptid, $i))) {
-                    // Only restore previous responses that have been graded
-                    continue;
-                }
-                // Restore the state so that the responses will be restored
-                restore_question_state($questions[$i], $laststate);
-                $states[$i] = clone($laststate);
-                unset($states[$i]->id);
-            } else {
-                // create a new empty state
-                $states[$i] = new object;
-                $states[$i]->question = $i;
-                $states[$i]->responses = array('' => '');
-                $states[$i]->raw_grade = 0;
-            }
-
-            // now fill/overide initial values
-            $states[$i]->attempt = $attempt->uniqueid;
-            $states[$i]->seq_number = 0;
-            $states[$i]->timestamp = $attempt->timestart;
-            $states[$i]->event = ($attempt->timefinish) ? QUESTION_EVENTCLOSE : QUESTION_EVENTOPEN;
-            $states[$i]->grade = 0;
-            $states[$i]->penalty = 0;
-            $states[$i]->sumpenalty = 0;
-            $states[$i]->manualcomment = '';
-            $states[$i]->flagged = 0;
-
-            // Prevent further changes to the session from incrementing the
-            // sequence number
-            $states[$i]->changed = true;
-
-            if ($lastattemptid) {
-                // prepare the previous responses for new processing
-                $action = new stdClass;
-                $action->responses = $laststate->responses;
-                $action->timestamp = $laststate->timestamp;
-                $action->event = QUESTION_EVENTSAVE; //emulate save of questions from all pages MDL-7631
-
-                // Process these responses ...
-                question_process_responses($questions[$i], $states[$i], $action, $cmoptions, $attempt);
-
-                // Fix for Bug #5506: When each attempt is built on the last one,
-                // preserve the options from any previous attempt.
-                if ( isset($laststate->options) ) {
-                    $states[$i]->options = $laststate->options;
-                }
-            } else {
-                // Create the empty question type specific information
-                if (!$QTYPES[$questions[$i]->qtype]->create_session_and_responses(
-                        $questions[$i], $states[$i], $cmoptions, $attempt)) {
-                    return false;
-                }
-            }
-            $states[$i]->last_graded = clone($states[$i]);
-        }
+    // Preload the states.
+    $states = question_preload_states($attempt->uniqueid);
+    if (!$states) {
+        $states = array();
     }
+
+    // Then finish the job.
+    question_load_states($questions, $states, $cmoptions, $attempt, $lastattemptid);
+
     return $states;
 }
 

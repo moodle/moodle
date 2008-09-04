@@ -74,7 +74,7 @@ class quiz {
         $this->number_questions();
     }
 
-    /**
+   /**
      * Load some or all of the queestions for this quiz.
      *
      * @param array $questionids question ids of the questions to load. null for all.
@@ -396,6 +396,7 @@ class quiz_attempt extends quiz {
         }
         parent::__construct($quiz, $cm, $course);
         $this->preload_questions();
+        $this->preload_question_states();
     }
 
     // Functions for loading more data =====================================================
@@ -413,10 +414,21 @@ class quiz_attempt extends quiz {
             $this->ensure_question_loaded($id);
             $questionstoprocess[$id] = $this->questions[$id];
         }
-        if (!$newstates = get_question_states($questionstoprocess, $this->quiz, $this->attempt)) {
+        if (!$newstates = question_load_states($questionstoprocess, $this->states,
+                $this->quiz, $this->attempt)) {
             throw new moodle_quiz_exception($this, 'cannotrestore');
         }
-        $this->states = $newstates + $this->states;
+    }
+
+    
+    public function preload_question_states() {
+        if (empty($this->questionids)) {
+            throw new moodle_quiz_exception($this, 'noquestions', $this->edit_url());
+        }
+        $this->states = question_preload_states($this->attempt->uniqueid);
+        if (!$this->states) {
+            $this->states = array();
+        }
     }
 
     public function load_specific_question_state($questionid, $stateid) {
@@ -520,7 +532,6 @@ class quiz_attempt extends quiz {
      * open|saved|closed|correct|partiallycorrect|incorrect.
      */
     public function get_question_status($questionid) {
-        $this->ensure_state_loaded($questionid);
         $state = $this->states[$questionid];
         switch ($state->event) {
             case QUESTION_EVENTOPEN:
@@ -555,7 +566,6 @@ class quiz_attempt extends quiz {
      * @return boolean whether this question hss been flagged by the attempter.
      */
     public function is_question_flagged($questionid) {
-        $this->ensure_state_loaded($questionid);
         $state = $this->states[$questionid];
         return $state->flagged;
     }
@@ -568,7 +578,6 @@ class quiz_attempt extends quiz {
      * @return string the formatted grade, to the number of decimal places specified by the quiz.
      */
     public function get_question_score($questionid) {
-        $this->ensure_state_loaded($questionid);
         $options = $this->get_render_options($this->states[$questionid]);
         if ($options->scores) {
             return quiz_format_grade($this->quiz, $this->states[$questionid]->last_graded->grade);
@@ -684,7 +693,7 @@ class quiz_attempt extends quiz {
     // Private methods =====================================================================
     // Check that the state of a particular question is loaded, and if not throw an exception.
     private function ensure_state_loaded($id) {
-        if (!array_key_exists($id, $this->states)) {
+        if (!array_key_exists($id, $this->states) || isset($this->states[$id]->_partiallyloaded)) {
             throw new moodle_quiz_exception($this, 'statenotloaded', $id);
         }
     }

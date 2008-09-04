@@ -134,8 +134,7 @@
         // Record the question id in the moodle session
         $SESSION->quizpreview->questionid = $id;
         // Create an empty session for the question
-        if (!$newstates =
-         get_question_states($questions, $quiz, $attempt)) {
+        if (!$newstates = get_question_states($questions, $quiz, $attempt)) {
             print_error('newattemptfail', 'quiz');
         }
         $SESSION->quizpreview->states = array($newstates);
