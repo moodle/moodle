@@ -1146,6 +1146,7 @@ p.upload a:hover {background: grey;color:white}
 .repo-opt{font-size: 10px;}
 #panel-$suffix{padding:0;margin:0; text-align:left;}
 #file-picker-$suffix{font-size:12px;}
+#file-picker-$suffix strong{background:#FFFFCC}
 #file-picker-$suffix a{color: #336699}
 #file-picker-$suffix a:hover{background:#003366;color:white}
 </style>
@@ -1329,7 +1330,7 @@ _client.loading = function(type, name){
     para.innerHTML = '$strloading';
     }else{
     img.src = '$CFG->pixpath/i/progressbar.gif';
-    para.innerHTML = '$strcopying '+name;
+    para.innerHTML = '$strcopying <strong>'+name+'</strong>';
     }
     content.appendChild(para);
     content.appendChild(img);
