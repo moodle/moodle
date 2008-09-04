@@ -69,12 +69,12 @@ function get_file_url($path, $options=null, $type='coursefile') {
  * @see file_storage::move_draft_to_final()
  *
  * @param $text string text to modify
- * @param $contextid int context that the file should be assigned to
- * @param $filepath string filepath under which the file should be saved
- * @param $filearea string filearea into which the file should be saved
- * @param $itemid int the itemid of the file
- * @param $currentcontextid int the current contextid of the file
- * @param $currentfilearea string the current filearea of the file (defaults
+ * @param $contextid int context that the files should be assigned to
+ * @param $filepath string filepath under which the files should be saved
+ * @param $filearea string filearea into which the files should be saved
+ * @param $itemid int the itemid to assign to the files
+ * @param $currentcontextid int the current contextid of the files
+ * @param $currentfilearea string the current filearea of the files (defaults
  *   to "user_draft")
  * @param $overwrite bool wether the files should overwrite existing files
  * @return string modified $text, or null if an error occured.
@@ -83,25 +83,32 @@ function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $cu
     global $CFG;
 
     $context = get_context_instance_by_id($contextid);
+    $currentcontext = get_context_instance_by_id($currentcontextid);
     $fs = get_file_storage();
 
-    $re = '|'. preg_quote($CFG->wwwroot) .'/draftfile.php/'. $currentcontextid .'/'. $currentfilearea .'/([0-9]+)/(?:[A-Fa-f0-9]+)/([^"]+)|';
+    //using $currentcontextid in here ensures that we're only matching files belonging to current user.
+    $re = '|'. preg_quote($CFG->wwwroot) .'/draftfile.php/'. $currentcontextid .'/'. $currentfilearea .'/([0-9]+)/(?:[A-Fa-f0-9]+)/(?:[^"]+)|';
     $matches = array();
     if (!preg_match_all($re, $text, $matches, PREG_SET_ORDER)) {
         return $text; // no draftfile url in text.
     }
 
     foreach($matches as $file) {
-        if ($newfiles = $fs->move_draft_to_final($file[1], $contextid, $filearea, $itemid, $filepath, $overwrite)) {
+        $currenturl = $file[0];
+        $currentitemid = $file[1];
+        //if any of these are needed, the corresponding '?:' need to be removed from the regexp .. and array index adjusted.
+        //$currentfilepath = $file[2];
+        //$currentfilename = $file[3];
+
+        if ($newfiles = $fs->move_draft_to_final($currentitemid, $contextid, $filearea, $itemid, $filepath, $overwrite)) {
             foreach($newfiles as $newfile) {
-                if ($context->contextlevel == 'CONTEXT_USER') {
-                    //TODO: get the good url for userfile.php
-                    //$newurl = $CFG->wwwroot .'/userfile.php/'. $contextid .'/'. $filearea .'/'. $itemid;
+                if ($context->contextlevel == CONTEXT_USER) {
+                    $newurl = $CFG->wwwroot .'/userfile.php/'. $contextid .'/'. $filearea .'/'. $newfile->get_filename();
                 } else {
                     $newurl = $CFG->wwwroot .'/pluginfile.php/'. $contextid .'/'. $filearea .'/'. $itemid . $newfile->get_filepath() . $newfile->get_filename();
                 }
                 if ($newurl) { // can be removed whenever userfile.php newurl is properly built
-                    $text = str_replace('"'. $file[0] .'"', '"'. $newurl .'"', $text);
+                    $text = str_replace('"'. $currenturl .'"', '"'. $newurl .'"', $text);
                 }
             }
         } // else file not found, wrong file, or string is just not a file so we leave it alone.
