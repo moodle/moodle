@@ -43,7 +43,6 @@
 
     switch ($filearea) {
         case 'private': $itemid = 0; $forcedownload = true; break;
-        case 'draft'  : $itemid = (int)array_shift($args); break;
         default:        send_file_not_found();
     }
 
