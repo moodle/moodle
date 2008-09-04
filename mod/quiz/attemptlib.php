@@ -414,7 +414,7 @@ class quiz_attempt extends quiz {
             $this->ensure_question_loaded($id);
             $questionstoprocess[$id] = $this->questions[$id];
         }
-        if (!$newstates = question_load_states($questionstoprocess, $this->states,
+        if (!question_load_states($questionstoprocess, $this->states,
                 $this->quiz, $this->attempt)) {
             throw new moodle_quiz_exception($this, 'cannotrestore');
         }

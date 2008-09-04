@@ -919,10 +919,8 @@ function question_preload_states($attemptid) {
     foreach ($states as $questionid => $state) {
         $states[$questionid]->_partiallyloaded = true;
         if ($gradedstates[$questionid]) {
-            $gradedstates[$questionid]->_partiallyloaded = true;
             $states[$questionid]->last_graded = $gradedstates[$questionid];
-        } else {
-            $states[$questionid]->last_graded = clone($states[$questionid]);
+            $states[$questionid]->last_graded->_partiallyloaded = true;
         }
     }
 
@@ -935,13 +933,13 @@ function question_preload_states($attemptid) {
  * is not a state in the database.
  *
  * @param array $questions the questions to load state for.
- * @param array $states the partially loaded states.
+ * @param array $states the partially loaded states this array is updated.
  * @param object $cmoptions options from the module we are loading the states for. E.g. $quiz.
  * @param object $attempt The attempt for which the question sessions are
  *      to be restored or created.
  * @param mixed either the id of a previous attempt, if this attmpt is
  *      building on a previous one, or false for a clean attempt.
- * @return array the fully loaded states.
+ * @return true or false for success or failure.
  */
 function question_load_states(&$questions, &$states, $cmoptions, $attempt, $lastattemptid = false) {
     global $QTYPES, $DB;
@@ -953,9 +951,13 @@ function question_load_states(&$questions, &$states, $cmoptions, $attempt, $last
             if (isset($states[$qid]->_partiallyloaded)) {
                 unset($states[$qid]->_partiallyloaded);
             }
-            if (isset($states[$qid]->lastgraded->_partiallyloaded)) {
-                restore_question_state($questions[$qid], $states[$qid]->lastgraded);
-                unset($states[$qid]->lastgraded->_partiallyloaded);
+            if (isset($states[$qid]->last_graded)) {
+                restore_question_state($questions[$qid], $states[$qid]->last_graded);
+                if (isset($states[$qid]->last_graded->_partiallyloaded)) {
+                    unset($states[$qid]->last_graded->_partiallyloaded);
+                }
+            } else {
+                $states[$qid]->last_graded = clone($states[$qid]);
             }
         } else {
             // If the new attempt is to be based on a previous attempt get it and clean things
@@ -1027,7 +1029,7 @@ function question_load_states(&$questions, &$states, $cmoptions, $attempt, $last
             $states[$qid]->last_graded = clone($states[$qid]);
         }
     }
-    return $states;
+    return true;
 }
 
 /**
@@ -1054,9 +1056,6 @@ function question_load_states(&$questions, &$states, $cmoptions, $attempt, $last
 *                         building on a previous one, or false for a clean attempt.
 */
 function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid = false) {
-    // get the question ids
-    $ids = array_keys($questions);
-
     // Preload the states.
     $states = question_preload_states($attempt->uniqueid);
     if (!$states) {
@@ -1064,7 +1063,9 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
     }
 
     // Then finish the job.
-    question_load_states($questions, $states, $cmoptions, $attempt, $lastattemptid);
+    if (!question_load_states($questions, $states, $cmoptions, $attempt, $lastattemptid)) {
+        return false;
+    }
 
     return $states;
 }
