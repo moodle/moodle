@@ -3153,11 +3153,11 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         global $DB, $CFG;
 
         if (! $this->cm = get_coursemodule_from_id('assignment', $callbackargs['assignmentid'])) {
-            print_error('invalidcoursemodule');
+            throw new portfolio_caller_exception('invalidcoursemodule');
         }
 
         if (! $assignment = $DB->get_record("assignment", array("id"=>$this->cm->instance))) {
-            print_error('invalidid', 'assignment');
+            throw new portfolio_caller_exception('invalidid', 'assignment');
         }
 
         $this->assignmentfile = $CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php';
@@ -3165,7 +3165,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         $assignmentclass = "assignment_$assignment->assignmenttype";
         $this->assignment= new $assignmentclass($this->cm->id, $assignment, $this->cm);
         if (!$this->assignment->portfolio_exportable()) {
-            print_error('notexportable', 'portfolio', $this->get_return_url());
+            throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
         }
         $this->userid = $callbackargs['userid'];
         $this->file = (array_key_exists('file', $callbackargs)) ? $callbackargs['file'] : null;

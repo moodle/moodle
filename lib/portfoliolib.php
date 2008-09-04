@@ -206,7 +206,7 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
         $a = new StdClass;
         $a->cancel = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
         $a->finish = $CFG->wwwroot . '/portfolio/add.php?id=' . $SESSION->portfolioexport;
-        print_error('alreadyexporting', 'portfolio', null, $a);
+        throw new portfolio_exception('alreadyexporting', 'portfolio', null, $a);
     }
 
     if (empty($callbackfile)) {
@@ -292,8 +292,7 @@ function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null,
             $linkoutput .= '">' . $addstr .'</a>';
         break;
         default:
-            debugging('asdfd');
-            print_error('invalidaddformat', 'portfolio', '', $format);
+            debugging(get_string('invalidaddformat', 'portfolio', $format));
     }
     $output = (in_array($format, array(PORTFOLIO_ADD_FULL_FORM, PORTFOLIO_ADD_ICON_FORM)) ? $formoutput : $linkoutput);
     if ($return) {

@@ -715,7 +715,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         global $CFG;
         global $DB;
         if (!array_key_exists('id', $callbackargs) || !$this->cm = get_coursemodule_from_instance('resource', $callbackargs['id'])) {
-            print_error('invalidid');
+            throw new portfolio_caller_exception('invalidid');
         }
         $this->cm->type = $DB->get_field('resource', 'type', array('id' => $this->cm->instance));
         $resourceclass = 'resource_'. $this->cm->type;
