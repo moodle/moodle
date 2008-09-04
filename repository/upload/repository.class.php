@@ -47,7 +47,7 @@ class repository_upload extends repository {
     }
 
     public static function has_admin_config() {
-        return true;
+        return false;
     }
 
     public static function get_admin_option_names() {
