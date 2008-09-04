@@ -156,6 +156,9 @@ function quiz_get_latest_attempt_by_user($quizid, $userid) {
 function quiz_load_attempt($attemptid) {
     global $DB;
     $attempt = $DB->get_record('quiz_attempts', array('id' => $attemptid));
+    if (!$attempt) {
+        return false;
+    }
 
     if (!$DB->record_exists('question_sessions', array('attemptid' => $attempt->uniqueid))) {
     /// this attempt has not yet been upgraded to the new model
