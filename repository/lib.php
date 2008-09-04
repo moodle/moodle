@@ -1975,7 +1975,7 @@ final class repository_admin_form extends moodleform {
 
         $mform =& $this->_form;
         $strrequired = get_string('required');
-       
+
         $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->get_typename() : 0);
         $mform->addElement('hidden', 'new',   $this->plugin);
         $mform->addElement('hidden', 'plugin', $this->plugin);
@@ -2027,11 +2027,16 @@ function repository_display_instances_list($context, $admin = false, $typename =
 
         }
         $output = print_simple_box_start(true);
-        $output .= "<div ><h2 style='text-align: center'>" . get_string('instances', 'repository') . "</h2></div>";
+
+        if ($admin) {
+             $output .= "<div ><h2 style='text-align: center'>" . get_string('siteinstances', 'repository') . " ";
+        }
+        $output .= "</h2></div>";
 
         $namestr = get_string('name');
         $pluginstr = get_string('plugin', 'repository');
-        $stropt = get_string('operation', 'repository');
+        $settingsstr = get_string('settings');
+        $deletestr = get_string('delete');
         $updown = get_string('updown', 'repository');
         $plugins = get_list_of_plugins('repository');
         //retrieve list of instances. In administration context we want to display all
@@ -2042,17 +2047,18 @@ function repository_display_instances_list($context, $admin = false, $typename =
         $instancesnumber = count($instances);
         $alreadyplugins = array();
         $table = new StdClass;
-        $table->head = array($namestr, $pluginstr, $stropt);
-        $table->align = array('left', 'left', 'center');
+        $table->head = array($namestr, $pluginstr, $deletestr, $settingsstr);
+        $table->align = array('left', 'left', 'center','center');
         $table->data = array();
         $updowncount=1;
         foreach ($instances as $i) {
-            $row = '';
-            $row .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
-            $row .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
-            //$row .= ' <a href="' . $baseurl . '&amp;type='.$typename.'&amp;hide=' . $i->id . '"><img src="' . $CFG->pixpath . '/t/' . ($i->visible ? 'hide' : 'show') . '.gif" alt="' . get_string($i->visible ? 'hide' : 'show') . '" /></a>' . "\n";
+            $settings = '';
+            $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
+            $delete = '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
 
-            $table->data[] = array($i->name, $type->get_readablename(),$row);
+            $table->data[] = array($i->name, $type->get_readablename(), $delete, $settings);
+
+
             //display a grey row if the type is defined as not visible
             if (isset($type) && !$type->get_visible()){
                 $table->rowclass[] = 'dimmed_text';
@@ -2065,14 +2071,14 @@ function repository_display_instances_list($context, $admin = false, $typename =
             }
         }
         $output .= print_table($table, true);
-        $instancehtml = '<div><h3>';
-        $addable = 0;
-        $instancehtml .= get_string('createrepository', 'repository');
-        $instancehtml .= '</h3><ul>';
+        $instancehtml = '<div>';
         $addable = 0;
 
         //if no type is set, we can create all type of instance
         if (!$typename) {
+            $instancehtml .= '<h3>';
+            $instancehtml .= get_string('createrepository', 'repository');
+            $instancehtml .= '</h3><ul>';
             foreach ($plugins as $p) {
                 if (!in_array($p, $alreadyplugins)) {
                    if (repository_static_function($p->get_typename(), 'has_multiple_instances')){
@@ -2083,18 +2089,19 @@ function repository_display_instances_list($context, $admin = false, $typename =
                     }
                 }
             }
+             $instancehtml .= '</ul>';
         }
         //create a unique type of instance
         else {
             if (repository_static_function($typename, 'has_multiple_instances')){
                 $addable = 1;
-                $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$typename.'">'.get_string('create', 'repository')
-                                  .' "'.get_string('repositoryname', 'repository_'.$typename).'" '
-                                  .get_string('instance', 'repository').'</a></li>';
+                $instancehtml .= "<form action='".$baseurl."&amp;new=".$typename."' method='post'>
+                                  <p style='text-align:center'><input type='submit' value='".get_string('createinstance', 'repository')."'/></p>
+                                  </form>";
             }
         }
 
-        $instancehtml .= '</ul>';
+
 
         if ($addable) {
             $instancehtml .= '</div>';

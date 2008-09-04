@@ -5580,27 +5580,30 @@ class admin_setting_managerepository extends admin_setting {
         global $CFG, $USER;
         $output = print_box_start('generalbox','',true);
         $namestr = get_string('name');
-        $stropt = get_string('operation', 'repository');
-        $updown = get_string('updown', 'repository');
+        $settingsstr = get_string('settings');
+        $updownstr = get_string('updown', 'repository');
+        $hiddenstr = get_string('hiddenshow', 'repository');
+        $deletestr = get_string('delete');
         $plugins = get_list_of_plugins('repository');
         $instances = repository_get_types();
         $instancesnumber = count($instances);
         $alreadyplugins = array();
         $table = new StdClass;
-        $table->head = array($namestr, $updown, $stropt);
-        $table->align = array('left', 'center', 'center');
+        $table->head = array($namestr, $updownstr, $hiddenstr, $deletestr, $settingsstr);
+        $table->align = array('left', 'center', 'center','center','center');
         $table->data = array();
         $updowncount=1;
         foreach ($instances as $i) {
-            $row = '';
+            $settings = '';
             //display edit link only if you can config the type or its instances
             if ( repository_static_function($i->get_typename(), 'has_admin_config')
                  || repository_static_function($i->get_typename(), 'has_instance_config')
                  || repository_static_function($i->get_typename(), 'has_multiple_instances')) {
-                $row .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/edit.gif" alt="' . get_string('edit') . '" /></a>' . "\n";
+                $settings .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '">'. $settingsstr .'</a>' . "\n";
             }
-            $row .= '<a href="' . $this->baseurl . '&amp;delete=' .  $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/delete.gif" alt="' . get_string('delete') . '" /></a>' . "\n";
-            $row .= ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/t/' . ($i->get_visible() ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get_visible() ? 'hide' : 'show') . '" /></a>' . "\n";
+            $delete = '<a href="' . $this->baseurl . '&amp;delete=' .  $i->get_typename() . '">' . $deletestr . '</a>' . "\n";
+            
+            $hiddenshow = ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/i/' . ($i->get_visible() ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get_visible() ? 'hide' : 'show') . '" /></a>' . "\n";
 
              // display up/down link
             $updown = '';
@@ -5622,7 +5625,7 @@ class admin_setting_managerepository extends admin_setting {
 
                 $updowncount++;
 
-            $table->data[] = array($i->get_readablename(), $updown,$row);
+            $table->data[] = array($i->get_readablename(), $updown, $hiddenshow, $delete, $settings);
 
             //display a grey row if the type is defined as not visible
             if (!$i->get_visible()){
