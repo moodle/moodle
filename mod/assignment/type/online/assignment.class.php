@@ -270,13 +270,13 @@ class assignment_online extends assignment_base {
         return true;
     }
 
-    function portfolio_get_sha1() {
-        $submission = $this->get_submission();
+    function portfolio_get_sha1($userid=0) {
+        $submission = $this->get_submission($userid);
         return sha1(format_text($submission->data1, $submission->data2));
     }
 
-    function portfolio_prepare_package($exporter) {
-        $submission = $this->get_submission();
+    function portfolio_prepare_package($exporter, $userid=0) {
+        $submission = $this->get_submission($userid);
         return $exporter->write_new_file(format_text($submission->data1, $submission->data2), 'assignment.html');
     }
 }

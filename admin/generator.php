@@ -81,6 +81,8 @@ class generator {
              array('short'=>'mods', 'long' => 'modules_list',
                    'help' => 'The list of modules you want to generate', 'default' => $this->modules_list,
                    'type' => 'mod1,mod2...'),
+             array('short'=>'at', 'long' => 'assignment_type',
+                   'help' => 'The specific type of assignment you want to generate. Defaults to random', 'default' => 'random'),
              array('short'=>'ag', 'long' => 'assignment_grades',
                    'help' => 'Generate random grades for each student/assignment tuple', 'default' => true),
              array('short'=>'qg', 'long' => 'quiz_grades',
@@ -269,7 +271,7 @@ class generator {
     public function generate_courses() {
         global $DB;
 
-        $this->verbose("Generating {$this->get('number_of_courses')} courses...");
+        $this->verbose("Generating " . $this->get('number_of_courses')." courses...");
         $base_course = new stdClass();
         $next_course_id = $DB->get_field_sql("SELECT MAX(id) FROM {course}") + 1;
 
@@ -288,7 +290,6 @@ class generator {
             $newcourse->fullname = "Test course $next_course_id";
             $newcourse->shortname = "Test $next_course_id";
             $newcourse->idnumber = $this->get('data_prefix') . $next_course_id;
-
             if (!$course = create_course($newcourse)) {
                 $this->verbose("Error inserting a new course in the database!");
                 if (!$this->get('ignore_errors')) {
@@ -394,7 +395,12 @@ class generator {
                         switch ($moduledata->name) {
                             case 'assignment':
                                 $module->description = $description;
-                                $module->assignmenttype = $assignment_types[rand(0, count($assignment_types) - 1)];
+                                if ($this->get('assignment_type') == 'random') {
+                                    $module->assignmenttype = $assignment_types[rand(0, count($assignment_types) - 1)];
+                                } else {
+                                    $module->assignmenttype = $this->get('assignment_type');
+                                }
+
                                 $module->timedue = mktime() + 89487321;
                                 $module->grade = rand(50,100);
                                 break;
@@ -617,7 +623,9 @@ class generator {
                         if (!quiz_add_quiz_question($questions[$quiz->course][$random]->id, $quiz)) {
 
                             // Could not add question to quiz!! report error
-                            echo "WARNING: Could not add question id $random to quiz id $quiz->id{$this->eolchar}";
+                            if (!$this->get('quiet')) {
+                                echo "WARNING: Could not add question id $random to quiz id $quiz->id{$this->eolchar}";
+                            }
                         } else {
                             $this->verbose("Adding question id $random to quiz id $quiz->id.");
                             $questions_added[] = $random;
@@ -762,33 +770,36 @@ class generator {
     }
 
     public function generate_grades($course_users, $courses, $modules) {
-        global $CFG, $DB;
+        global $CFG, $DB, $USER;
 
         /**
          * ASSIGNMENT GRADES GENERATION
          */
         if ($this->get('assignment_grades') && isset($modules['assignment'])) {
             $grades_count = 0;
-            foreach ($course_users as $userid => $courses) {
-                foreach ($modules['assignment'] as $assignment) {
-                    if (in_array($assignment->course, $courses)) {
-                        $maxgrade = $assignment->grade;
-                        $random_grade = rand(0, $maxgrade);
-                        $grade = new stdClass();
-                        $grade->assignment = $assignment->id;
-                        $grade->userid = $userid;
-                        $grade->grade = $random_grade;
-                        $grade->rawgrade = $random_grade;
-                        $grade->teacher = $USER->id;
-                        $DB->insert_record('assignment_submissions', $grade);
-                        grade_update('mod/assignment', $courseid, 'mod', 'assignment', $assignment->id, 0, $grade);
-                        $this->verbose("A grade ($random_grade) has been given to user $userid for assignment $assignment->id");
-                        $grades_count++;
+            foreach ($course_users as $courseid => $userid_array) {
+                foreach ($userid_array as $userid) {
+                    foreach ($modules['assignment'] as $assignment) {
+                        if (in_array($assignment->course, $courses)) {
+                            $maxgrade = $assignment->grade;
+                            $random_grade = rand(0, $maxgrade);
+                            $grade = new stdClass();
+                            $grade->assignment = $assignment->id;
+                            $grade->userid = $userid;
+                            $grade->grade = $random_grade;
+                            $grade->rawgrade = $random_grade;
+                            $grade->teacher = $USER->id;
+                            $DB->insert_record('assignment_submissions', $grade);
+                            grade_update('mod/assignment', $assignment->course, 'mod', 'assignment', $assignment->id, 0, $grade);
+                            $this->verbose("A grade ($random_grade) has been given to user $userid "
+                                        . "for assignment $assignment->id");
+                            $grades_count++;
+                        }
                     }
                 }
             }
             if ($grades_count > 0) {
-                echo "$grades_count assignment grades have been generated.{$this->eolchar}";
+                $this->verbose("$grades_count assignment grades have been generated.{$this->eolchar}");
             }
         }
 
@@ -814,7 +825,7 @@ class generator {
                     }
                 }
             }
-            if ($grades_count > 0) {
+            if ($grades_count > 0 && !$this->get('quiet')) {
                 echo "$grades_count quiz grades have been generated.{$this->eolchar}";
             }
         }

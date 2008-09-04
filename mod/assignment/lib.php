@@ -3174,7 +3174,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
     public function prepare_package() {
         global $CFG;
         if (is_callable(array($this->assignment, 'portfolio_prepare_package'))) {
-            return $this->assignment->portfolio_prepare_package($this->exporter);
+            return $this->assignment->portfolio_prepare_package($this->exporter, $this->user->id);
         }
         $fs = get_file_storage();
         $status = true;
@@ -3189,7 +3189,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
     public function get_sha1() {
         global $CFG;
         if (is_callable(array($this->assignment, 'portfolio_get_sha1'))) {
-            return $this->assignment->portfolio_get_sha1();
+            return $this->assignment->portfolio_get_sha1($this->user->id);
         }
 
         // default ...
@@ -3198,7 +3198,8 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if ($this->file) {
             return $fs->get_file_by_id($this->file)->get_contenthash();
         }
-        if ($files = $fs->get_area_files($this->assignment->context->id, 'assignment_submission', $this->user->id, '', false)) {
+        if ($files = $fs->get_area_files($this->assignment->context->id,
+                'assignment_submission', $this->user->id, '', false)) {
             $sha1s = array();
             foreach ($files as $file) {
                 $sha1s[] = $file->get_contenthash();
