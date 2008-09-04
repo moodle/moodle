@@ -175,6 +175,8 @@
         // Work out which columns we need, taking account what data is available in each attempt.
         list($someoptions, $alloptions) = quiz_get_combined_reviewoptions($quiz, $attempts, $context);
 
+        $attemptcolumn = $quiz->attempts != 1;
+
         $gradecolumn = $someoptions->scores && $quiz->grade && $quiz->sumgrades;
         $markcolumn = $gradecolumn && ($quiz->grade != $quiz->sumgrades);
         $overallstats = $alloptions->scores;
@@ -184,9 +186,17 @@
 
         // Prepare table header
         $table->class = 'generaltable quizattemptsummary';
-        $table->head = array(get_string('attempt', 'quiz'), get_string('timecompleted', 'quiz'));
-        $table->align = array('center', 'left');
-        $table->size = array('', '');
+        $table->head = array();
+        $table->align = array();
+        $table->size = array();
+        if ($attemptcolumn) {
+            $table->head[] = get_string('attempt', 'quiz');
+            $table->align[] = 'center';
+            $table->size[] = '';
+        }
+        $table->head[] = get_string('timecompleted', 'quiz') . ' / ' . quiz_format_grade($quiz, $quiz->sumgrades);
+        $table->align[] = 'left';
+        $table->size[] = '';
         if ($markcolumn) {
             $table->head[] = get_string('marks', 'quiz') . ' / ' . quiz_format_grade($quiz, $quiz->sumgrades);
             $table->align[] = 'center';
@@ -197,6 +207,9 @@
             $table->align[] = 'center';
             $table->size[] = '';
         }
+        $table->head[] = get_string('review', 'quiz');
+        $table->align[] = 'center';
+        $table->size[] = '';
         if ($feedbackcolumn) {
             $table->head[] = get_string('feedback', 'quiz');
             $table->align[] = 'left';
@@ -214,10 +227,12 @@
             $row = array();
 
             // Add the attempt number, making it a link, if appropriate.
-            if ($attempt->preview) {
-                $row[] = $accessmanager->make_review_link(get_string('preview', 'quiz'), $attempt, $canpreview, $attemptoptions);
-            } else {
-                $row[] = $accessmanager->make_review_link($attempt->attempt, $attempt, $canpreview, $attemptoptions);
+            if ($attemptcolumn) {
+                if ($attempt->preview) {
+                    $row[] = get_string('preview', 'quiz');
+                } else {
+                    $row[] = $attempt->attempt;
+                }
             }
 
             // prepare strings for time taken and date completed
@@ -239,8 +254,7 @@
 
             if ($markcolumn && $attempt->timefinish > 0) {
                 if ($attemptoptions->scores) {
-                    $row[] = $accessmanager->make_review_link(quiz_format_grade($quiz, $attempt->sumgrades),
-                            $attempt, $canpreview, $attemptoptions);
+                    $row[] = quiz_format_grade($quiz, $attempt->sumgrades);
                 } else {
                     $row[] = '';
                 }
@@ -258,11 +272,13 @@
                         $table->rowclass[$attempt->attempt] = 'bestrow';
                     }
 
-                    $row[] = $accessmanager->make_review_link($formattedgrade, $attempt, $canpreview, $attemptoptions);
+                    $row[] = $formattedgrade;
                 } else {
                     $row[] = '';
                 }
             }
+
+            $row[] = $accessmanager->make_review_link($attempt, $canpreview, $attemptoptions);
 
             if ($feedbackcolumn && $attempt->timefinish > 0) {
                 if ($attemptoptions->overallfeedback) {

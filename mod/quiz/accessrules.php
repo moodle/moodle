@@ -319,37 +319,57 @@ class quiz_access_manager {
      * @param object $attempt the attempt object
      * @return string some HTML, the $linktext either unmodified or wrapped in a link to the review page.
      */
-    public function make_review_link($linktext, $attempt, $canpreview, $reviewoptions) {
+    public function make_review_link($attempt, $canpreview, $reviewoptions) {
         global $CFG;
 
     /// If review of responses is not allowed, or the attempt is still open, don't link.
-        if (!$reviewoptions->responses || !$attempt->timefinish) {
-            return $linktext;
+        if (!$attempt->timefinish) {
+            return '';
         }
+        if (!$reviewoptions->responses) {
+            $message = $this->cannot_review_message($reviewoptions, true);
+            if ($message) {
+                return '<span class="noreviewmessage">' . $message . '</span>';
+            } else {
+                return '';
+            }
+        }
+
+        $linktext = get_string('review', 'quiz');
 
     /// It is OK to link, does it need to be in a secure window?
         if ($this->securewindow_required($canpreview)) {
             return $this->_securewindowrule->make_review_link($linktext, $attempt->id);
         } else {
-            return '<a href="' . $this->_quizobj->review_url($attempt->id) . '">' . $linktext . '</a>';
+            return '<a href="' . $this->_quizobj->review_url($attempt->id) . '" title="' .
+                    get_string('reviewthisattempt', 'quiz') . '">' . $linktext . '</a>';
         }
     }
+
     /**
      * If $reviewoptions->responses is false, meaning that students can't review this
      * attempt at the moment, return an appropriate string explaining why.
      *
      * @param object $reviewoptions as obtained from quiz_get_reviewoptions.
+     * @param boolean $short if true, return a shorter string.
      * @return string an appropraite message.
      */
-    public function cannot_review_message($reviewoptions) {
+    public function cannot_review_message($reviewoptions, $short = false) {
         $quiz = $this->_quizobj->get_quiz();
+        if ($short) {
+            $langstrsuffix = 'short';
+            $dateformat = get_string('strftimedatetimeshort', 'langconfig');
+        } else {
+            $langstrsuffix = '';
+            $dateformat = '';
+        }
         if ($reviewoptions->quizstate == QUIZ_STATE_IMMEDIATELY) {
             return '';
         } else if ($reviewoptions->quizstate == QUIZ_STATE_OPEN && $quiz->timeclose &&
                     ($quiz->review & QUIZ_REVIEW_CLOSED & QUIZ_REVIEW_RESPONSES)) {
-            return get_string('noreviewuntil', 'quiz', userdate($quiz->timeclose));
+            return get_string('noreviewuntil' . $langstrsuffix, 'quiz', userdate($quiz->timeclose, $dateformat));
         } else {
-            return get_string('noreview', 'quiz');
+            return get_string('noreview' . $langstrsuffix, 'quiz');
         }
     }
 }
@@ -711,7 +731,7 @@ class securewindow_access_rule extends quiz_access_rule_base {
      * @return string HTML for the link.
      */
     public function make_review_link($linktext, $attemptid) {
-        return link_to_popup_window($this->_quizobj->review_url($attemptid),
+        return button_to_popup_window($this->_quizobj->review_url($attemptid),
                 'quizpopup', $linktext, '', '', '', $this->windowoptions, true);
     }
 

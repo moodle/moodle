@@ -1,7 +1,8 @@
 <?php  // $Id$
 /**
- * This page prints a review of a particular question attempt
- *
+ * This page allows the teacher to enter a manual grade for a particular question.
+ * This page is expected to only be used in a popup window.
+ *  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package quiz
  */
@@ -12,15 +13,7 @@
     $attemptid =required_param('attempt', PARAM_INT); // attempt id
     $questionid =required_param('question', PARAM_INT); // question id
 
-    if (! $attempt = $DB->get_record('quiz_attempts', array('uniqueid' => $attemptid))) {
-        print_error('invalidattemptid', 'quiz');
-    }
-    if (! $quiz = $DB->get_record('quiz', array('id' => $attempt->quiz))) {
-        print_error('invalidcoursemodule');
-    }
-    if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
-        print_error('coursemisconf');
-    }
+    $attemptobj = new quiz_attempt($attemptid);
 
     // Teachers are only allowed to comment and grade on closed attempts
     if (!($attempt->timefinish > 0)) {

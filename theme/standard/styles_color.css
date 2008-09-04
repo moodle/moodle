@@ -1036,6 +1036,9 @@ table.message_search_results td {
 table.quizattemptsummary .bestrow td {
     background-color: #e8e8e8;
 }
+table.quizattemptsummary .noreviewmessage {
+    color: gray;
+}
 
 #mod-quiz-attempt #quiz-timer-outer {
     border-color: #dddddd;
