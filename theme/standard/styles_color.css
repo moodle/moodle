@@ -1055,13 +1055,37 @@ table.quizreviewsummary td.cell {
 #quiznavigation .qnbutton {
   color: #00f;
   border-color: gray;
-  background-color: white;
+  background-color: #ddd;
 }
 #quiznavigation .qnbutton:hover {
   color: #f00;
 }
 #quiznavigation .qnbutton.thispage {
-  background-color: #eee;
+  border-color: black;
+}
+#quiznavigation .qnbutton.open {
+  background-color: white;
+}
+#quiznavigation .qnbutton.flagged {
+  background-image: url(pix/flaggedquestionnav.png);
+}
+#quiznavigation .qnbutton.correct.flagged {
+  background-image: url(pix/flaggedcorrectquestionnav.png);
+}
+#quiznavigation .qnbutton.partiallycorrect.flagged {
+  background-image: url(pix/flaggedpartialquestionnav.png);
+}
+#quiznavigation .qnbutton.incorrect.flagged {
+  background-image: url(pix/flaggedincorrectquestionnav.png);
+}
+#quiznavigation .qnbutton.correct {
+  background-image: url(pix/correctquestionnav.png);
+}
+#quiznavigation .qnbutton.partiallycorrect {
+  background-image: url(pix/partialquestionnav.png);
+}
+#quiznavigation .qnbutton.incorrect {
+  background-image: url(pix/incorrectquestionnav.png);
 }
 
 /***

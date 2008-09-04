@@ -4167,14 +4167,11 @@ table.quizreviewsummary td.cell {
   margin: 0.3em 0.3em 0.3em 0;
   padding: 0;
   border: 1px solid gray;
-  background: white no-repeat top right;
+  background: #eee no-repeat top right;
   text-align: center;
   vertical-align: middle;
   cursor: pointer;
   white-space: normal;
-}
-#quiznavigation .qnbutton.flagged {
-  background-image: url(pix/flaggedquestionnav.png);
 }
 #quiznavigation .othernav {
   clear: both;
