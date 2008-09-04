@@ -17,10 +17,13 @@ $display = true; // fall through to normal display
 
 $pagename = 'repositorycontroller';
 
+if ($edit){
+    $pagename = 'repositoryinstanceedit';
+}else
 if ($delete) {
     $pagename = 'repositorydelete';
 } else if ($new) {
-    $pagename = 'repositorynew';
+    $pagename = 'repositoryinstancenew';
 }
 
 admin_externalpage_setup($pagename);

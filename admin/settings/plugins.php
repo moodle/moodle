@@ -189,13 +189,19 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configtext('repository_cache_expire', get_string('cacheexpire', 'repository'), get_string('configcacheexpire', 'repository'), 120));
     $ADMIN->add('repositorysettings', $temp);
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorynew',
-        get_string('createrepository', 'repository'), $url, 'moodle/site:config', true),
+        get_string('addplugin', 'repository'), $url, 'moodle/site:config', true),
         '', $url);
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorydelete',
         get_string('deleterepository', 'repository'), $url, 'moodle/site:config', true),
         '', $url);
     $ADMIN->add('repositorysettings', new admin_externalpage('repositorycontroller',
         get_string('managerepositories', 'repository'), $url, 'moodle/site:config', true),
+        '', $url);
+    $ADMIN->add('repositorysettings', new admin_externalpage('repositoryinstancenew',
+        get_string('createrepository', 'repository'), $url, 'moodle/site:config', true),
+        '', $url);
+    $ADMIN->add('repositorysettings', new admin_externalpage('repositoryinstanceedit',
+        get_string('editrepositoryinstance', 'repository'), $url, 'moodle/site:config', true),
         '', $url);
     foreach (repository_get_types()
         as $repositorytype)
