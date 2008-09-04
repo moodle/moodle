@@ -36,14 +36,19 @@
         print_error('invalidarguments');
     }
 
-    $userid = $context->instanceid;
-    if ($USER->id != $userid) {
-        print_error('invaliduserid');
-    }
-
     switch ($filearea) {
-        case 'private': $itemid = 0; $forcedownload = true; break;
-        default:        send_file_not_found();
+        case 'user_private':
+            $userid = $context->instanceid;
+            if ($USER->id != $userid) {
+                print_error('invaliduserid');
+            }
+            // fallthrough
+        case 'user_profile':
+            $itemid = 0;
+            $forcedownload = true;
+            break;
+        default:
+            send_file_not_found();
     }
 
     $relativepath = '/'.implode('/', $args);
