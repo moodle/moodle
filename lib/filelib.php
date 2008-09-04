@@ -94,7 +94,6 @@ function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $cu
     foreach($matches as $file) {
         if ($newfiles = $fs->move_draft_to_final($file[1], $contextid, $filearea, $itemid, $filepath, $overwrite)) {
             foreach($newfiles as $newfile) {
-                var_dump($newfile);
                 if ($context->contextlevel == 'CONTEXT_USER') {
                     //TODO: get the good url for userfile.php
                     //$newurl = $CFG->wwwroot .'/userfile.php/'. $contextid .'/'. $filearea .'/'. $itemid;
