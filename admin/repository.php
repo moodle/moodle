@@ -52,11 +52,10 @@ if (!empty($edit) || !empty($new)) {
     // display the edit form for this instance
     $mform = new repository_admin_form('', array('plugin' => $plugin, 'instance' => $repositorytype));
     // end setup, begin output
-   
     if ($mform->is_cancelled()){
         redirect($baseurl);
         exit;
-    } else if ($fromform = $mform->get_data()){
+    } else if ($fromform = $mform->get_data() || (!empty($new) && !repository_static_function($new,"has_admin_config"))){
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
@@ -71,7 +70,6 @@ if (!empty($edit) || !empty($new)) {
             $type->create();
             $success = true;
             $data = data_submitted();
-            
         }
         if ($success) {
             $savedstr = get_string('configsaved', 'repository');
