@@ -18,10 +18,13 @@ if (!$dataid = optional_param('id', '', PARAM_INT) ) {
         $dataid = $SESSION->portfolioexport;
     }
 }
+
 if ($dataid) {
     try {
         $exporter = portfolio_exporter::rewaken_object($dataid);
     } catch (portfolio_exception $e) {
+        // this can happen in some cases, a cancel request is sent when something is already broken
+        // so process it elegantly and move on.
         if ($cancel) {
             unset($SESSION->portfolioexport);
             redirect($CFG->wwwroot);
@@ -32,6 +35,7 @@ if ($dataid) {
     if ($cancel) {
         $exporter->cancel_request();
     }
+    // verify we still belong to the correct user and session
     $exporter->verify_rewaken();
     if (!$exporter->get('instance')) {
         if ($instance = optional_param('instance', '', PARAM_INT)) {
@@ -41,7 +45,7 @@ if ($dataid) {
                 portfolio_export_rethrow_exception($exporter, $e);
             }
             if ($broken = portfolio_instance_sanity_check($instance)) {
-                print_error(get_string($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin')));
+                throw new portfolio_export_exception($exporter, $broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin'));
             }
             $instance->set('user', $USER);
             $exporter->set('instance', $instance);
@@ -51,11 +55,9 @@ if ($dataid) {
 } else {
     // we'e just posted here for the first time and have might the instance already
     if ($instance = optional_param('instance', 0, PARAM_INT)) {
-        try {
-            $instance = portfolio_instance($instance);
-        } catch (portfolio_exception $e) {
-            portfolio_export_rethrow_exception($exporter, $e);
-        }
+        // this can throw exceptions but there's no point catching and rethrowing here
+        // as the exporter isn't created yet.
+        $instance = portfolio_instance($instance);
         if ($broken = portfolio_instance_sanity_check($instance)) {
             throw new portfolio_exception($broken[$instance->get('id')], 'portfolio_' . $instance->get('plugin'));
         }
@@ -82,7 +84,7 @@ if ($dataid) {
     $caller = new $callbackclass($callbackargs);
     $caller->set('user', $USER);
     if (!$caller->check_permissions()) {
-        print_error('nopermissions', 'portfolio', $caller->get_return_url());
+        throw new portfolio_caller_exception('nopermissions', 'portfolio', $caller->get_return_url());
     }
 
     // for build navigation
@@ -92,9 +94,9 @@ if ($dataid) {
 
     if (!empty($course) && is_numeric($course)) {
         $course = $DB->get_record('course', array('id' => $course), 'id,shortname,fullname');
-        // this is yuk but used in build_navigation
     }
 
+    // this is yuk but used in build_navigation
     $COURSE = $course;
 
     list($extranav, $cm) = $caller->get_navigation();
@@ -147,6 +149,7 @@ if ($postcontrol = optional_param('postcontrol', 0, PARAM_INT)) {
     $alreadystolen = true;
 }
 
+// actually do the work now..
 $exporter->process_stage($stage, $alreadystolen);
 
 ?>
