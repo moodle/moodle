@@ -108,7 +108,7 @@ class repository_type {
      * @param boolean $visible
      * @param integer $sortorder (don't really need set, it will be during create() call)
      */
-    public function __construct($typename = '', $typeoptions = array(), $visible = true, $sortorder = 0){
+    public function __construct($typename = '', $typeoptions = array(), $visible = false, $sortorder = 0){
         global $CFG;
 
         //set type attributs
