@@ -870,6 +870,33 @@ abstract class repository {
 class repository_exception extends moodle_exception {
 }
 
+/**
+ * Check context
+ * @param int $ctx_id
+ * @return boolean
+ */
+function repository_check_context($ctx_id){
+    global $USER;
+    $context = get_context_instance_by_id($ctx_id);
+    $level = $context->contextlevel;
+    if ($level == CONTEXT_COURSE) {
+        if (!has_capability('moodle/course:view', $context)) {
+            return false;
+        } else {
+            return true;
+        }
+    } elseif ($level == CONTEXT_USER) {
+        $c = get_context_instance(CONTEXT_USER, $USER->id);
+        if ($c->id == $ctx_id) {
+            return true;
+        } else {
+            return false;
+        }
+    } elseif ($level == CONTEXT_SYSTEM) {
+        // it is always ok in system level
+    }
+    return false;
+}
 
 /**
  * Return repository instances

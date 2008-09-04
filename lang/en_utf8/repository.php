@@ -39,6 +39,7 @@ $string['loading'] = 'Loading...';
 $string['manage'] = 'Manage repositories';
 $string['manageurl'] = 'Manage';
 $string['manageuserrepository'] = 'Manage individual repository';
+$string['nopermissiontoaccess'] = 'No permission to access this repository';
 $string['noenter'] = 'Nothing entered';
 $string['operation'] = 'Operation';
 $string['openpicker'] = 'Choose a file...';

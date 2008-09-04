@@ -35,6 +35,12 @@ if(!$repository = $DB->get_record_sql($sql)) {
     $type = $repository->type;
 }
 
+if (!repository_check_context($ctx_id)) {
+    $err = new stdclass;
+    $err->e = get_string('nopermissiontoaccess', 'repository');
+    die(json_encode($err));
+}
+
 if(file_exists($CFG->dirroot.'/repository/'.
     $type.'/repository.class.php'))
 {
