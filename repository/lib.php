@@ -202,6 +202,16 @@ class repository_type {
 
            //save the options in DB
            $this->update_options();
+
+           //if the plugin type has no multiple and no instance config so it wont
+           //be possible for the administrator to create a instance
+           //in this case we need to create an instance
+           if (!repository_static_function($this->_typename,"has_instance_config")
+           && !repository_static_function($this->_typename,"has_multiple_instances")){
+              $instanceoptions = array();
+              $instanceoptions['name'] = $this->_typename;
+              repository_static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
+           }
         }
         else {
             throw new repository_exception('existingrepository', 'repository');
@@ -595,9 +605,9 @@ abstract class repository {
             $record->contextid = $context->id;
             $record->userid    = $userid;
             $id = $DB->insert_record('repository_instances', $record);
+            $options = array();
             if (call_user_func($classname . '::has_instance_config')) {
-                $configs = call_user_func($classname . '::get_instance_option_names');
-                $options = array();
+                $configs = call_user_func($classname . '::get_instance_option_names');                
                 foreach ($configs as $config) {
                     $options[$config] = $params[$config];
                 }
