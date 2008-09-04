@@ -145,9 +145,9 @@ quiz_timer = {
     }
 };
 
-// Code for updating the navigation panel. At the moment it only updates
-// the flagged states of questions. This is a constructor, it takes 
+// Initialise a button on the navigation panel.
 function quiz_init_nav_button(buttonid, questionid) {
+    // Arrange to be notified if the flagged state changes.
     var button = document.getElementById(buttonid);
     button.stateupdater = new quiz_nav_updater(button, questionid);
 }
