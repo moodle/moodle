@@ -107,7 +107,6 @@
 
 /// Start the main column.
     echo '<div id="middle-column">';
-    print_container_start();
     echo skip_main_destination();
 
 /// Summary table start ============================================================================
@@ -249,7 +248,6 @@
     echo "</div>";
 
     // End middle column.
-    print_container_end();
     echo '</div>';
 
     echo '<div class="clearer"></div>';
