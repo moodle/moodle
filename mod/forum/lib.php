@@ -3969,7 +3969,8 @@ function forum_print_attachments($post, $cm, $type) {
 function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
     global $CFG, $DB;
 
-    if ($filearea !== 'forum_attachment') {
+    $fileareas = array('forum_attachment', 'forum_post');
+    if (!in_array($filearea, $fileareas)) {
         return false;
     }
 
@@ -4053,7 +4054,24 @@ function forum_add_attachment($post, $cm, $mform=null, &$message=null, $remove_p
 }
 
 /**
- *
+ * Relinks urls linked to draftfile.php in $post->message.
+ */
+function forum_relink_inline_attachments($post, $cm){
+    global $DB;
+    
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+    $authorcontext = get_context_instance(CONTEXT_USER, $post->userid);
+
+    if ($post->message = file_rewrite_urls($post->message, $context->id, '/', 'forum_post', $post->id, $authorcontext->id)) {
+      $DB->set_field("forum_posts", "message", $post->message, array("id" => $post->id));
+      return true;
+    } else {
+      return false;
+    }
+}
+
+/**
+ * Add a new post in an existing discussion.
  */
 function forum_add_new_post($post, $mform, &$message) {
     global $USER, $CFG, $DB;
@@ -4071,6 +4089,7 @@ function forum_add_new_post($post, $mform, &$message) {
         return false;
     }
 
+    forum_relink_inline_attachments($post, $cm);   
     forum_add_attachment($post, $cm, $mform, $message, false);
 
     // Update discussion modified date
@@ -4085,7 +4104,7 @@ function forum_add_new_post($post, $mform, &$message) {
 }
 
 /**
- *
+ * Update a post
  */
 function forum_update_post($post, $mform, &$message) {
     global $USER, $CFG, $DB;
@@ -4113,6 +4132,7 @@ function forum_update_post($post, $mform, &$message) {
         return false;
     }
 
+    forum_relink_inline_attachments($post, $cm);
     forum_add_attachment($post, $cm, $mform, $message, true);
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
@@ -4175,7 +4195,7 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
         return 0;
     }
 
-    // save attachment if present
+    forum_relink_inline_attachments($post, $cm);
     forum_add_attachment($post, $cm, $mform, $message, false);
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {

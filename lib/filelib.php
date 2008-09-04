@@ -66,6 +66,7 @@ function get_file_url($path, $options=null, $type='coursefile') {
  * must be called once for each file.
  *
  * @uses $CFG
+ * @see file_storage::move_draft_to_final()
  *
  * @param $text string text to modify
  * @param $contextid int context that the file should be assigned to
@@ -75,17 +76,38 @@ function get_file_url($path, $options=null, $type='coursefile') {
  * @param $currentcontextid int the current contextid of the file
  * @param $currentfilearea string the current filearea of the file (defaults
  *   to "user_draft")
+ * @param $overwrite bool wether the files should overwrite existing files
  * @return string modified $text, or null if an error occured.
  */
-function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $currentcontextid, $currentfilearea = 'userdraft') {
+function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $currentcontextid, $currentfilearea = 'user_draft', $overwrite = false) {
     global $CFG;
 
-    //TODO: complete, test and adjust if the filearea is removed from the url.
+    $context = get_context_instance_by_id($contextid);
+    $fs = get_file_storage();
 
-    $re = $CFG->wwwroot .'\/draftfile.php\/'. $currentcontextid .'\/'. $currentfilearea .'\/'. $itemid .'\/(?[A-Fa-f0-9]+)\/([.]+)/';
-    $newurl = $CFG->wwwroot .'/userfile.php/'. $contextid .'/'. $filearea .'/'. $itemid .'/'. $filepath .'/\0';
-    
-    return preg_replace($re, $newurl, $text);
+    $re = '|'. preg_quote($CFG->wwwroot) .'/draftfile.php/'. $currentcontextid .'/'. $currentfilearea .'/([0-9]+)/(?:[A-Fa-f0-9]+)/([^"]+)|';
+    $matches = array();
+    if (!preg_match_all($re, $text, $matches, PREG_SET_ORDER)) {
+        return $text; // no draftfile url in text.
+    }
+
+    foreach($matches as $file) {
+        if ($newfiles = $fs->move_draft_to_final($file[1], $contextid, $filearea, $itemid, $filepath, $overwrite)) {
+            foreach($newfiles as $newfile) {
+                var_dump($newfile);
+                if ($context->contextlevel == 'CONTEXT_USER') {
+                    //TODO: get the good url for userfile.php
+                    //$newurl = $CFG->wwwroot .'/userfile.php/'. $contextid .'/'. $filearea .'/'. $itemid;
+                } else {
+                    $newurl = $CFG->wwwroot .'/pluginfile.php/'. $contextid .'/'. $filearea .'/'. $itemid . $newfile->get_filepath() . $newfile->get_filename();
+                }
+                if ($newurl) { // can be removed whenever userfile.php newurl is properly built
+                    $text = str_replace('"'. $file[0] .'"', '"'. $newurl .'"', $text);
+                }
+            }
+        } // else file not found, wrong file, or string is just not a file so we leave it alone.
+    }
+    return $text;
 }
 
 /**
