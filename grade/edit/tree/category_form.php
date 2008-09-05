@@ -130,7 +130,7 @@ class edit_category_form extends moodleform {
 
         if ($coefstring !== '') {
             $mform->addElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
-            $mform->setHelpButton('aggregationcoef', array('aggregationcoef', get_string('aggregationcoef', 'grades'), 'grade'), true);
+            $mform->setHelpButton('aggregationcoef', array('aggregationcoefweight', get_string('aggregationcoef', 'grades'), 'grade'), true);
         }
 
 /// user preferences
