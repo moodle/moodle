@@ -76,43 +76,60 @@ function get_file_url($path, $options=null, $type='coursefile') {
  * @param $currentcontextid int the current contextid of the files
  * @param $currentfilearea string the current filearea of the files (defaults
  *   to "user_draft")
- * @param $overwrite bool wether the files should overwrite existing files
  * @return string modified $text, or null if an error occured.
  */
-function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $currentcontextid, $currentfilearea = 'user_draft', $overwrite = false) {
+function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $currentcontextid, $currentfilearea = 'user_draft') {
     global $CFG;
 
     $context = get_context_instance_by_id($contextid);
     $currentcontext = get_context_instance_by_id($currentcontextid);
     $fs = get_file_storage();
 
-    //using $currentcontextid in here ensures that we're only matching files belonging to current user.
-    $re = '|'. preg_quote($CFG->wwwroot) .'/draftfile.php/'. $currentcontextid .'/'. $currentfilearea .'/([0-9]+)/(?:[A-Fa-f0-9]+)/(?:[^"]+)|';
+    //TODO: make sure this won't match wrong stuff, as much as possible
+    //Using $currentcontextid in here ensures that we're only matching files belonging to current user.
+    //{wwwroot}/draftfile.php/{currentcontextid}/{currentfilearea}/{itemid}{/filepath}/{filename}
+    //filepath is optional, everything else is guaranteed to be there.
+    $re = '|'. preg_quote($CFG->wwwroot) .'/draftfile.php/'. $currentcontextid .'/'. $currentfilearea .'/([0-9]+)(/[A-Fa-f0-9]+)?/([^\'^"^\>]+)|';
     $matches = array();
     if (!preg_match_all($re, $text, $matches, PREG_SET_ORDER)) {
-        return $text; // no draftfile url in text.
+        return $text; // no draftfile url in text, no replacement necessary.
     }
 
+    $replacedfiles = array();
     foreach($matches as $file) {
+
         $currenturl = $file[0];
         $currentitemid = $file[1];
-        //if any of these are needed, the corresponding '?:' need to be removed from the regexp .. and array index adjusted.
-        //$currentfilepath = $file[2];
-        //$currentfilename = $file[3];
+        if (!empty($file[2])) {
+            $currentfilepath = $file[2];
+        }
+        $currentfilepath .= '/';
+        $currentfilename = $file[3];
 
-        if ($newfiles = $fs->move_draft_to_final($currentitemid, $contextid, $filearea, $itemid, $filepath, $overwrite)) {
+        $fs->get_pathname_hash($currentcontextid, $currentfilearea, $currentitemid, $currentfilepath, $currentfilename);
+        if ($existingfile = $fs->get_file($currentcontextid, $currentfilearea, $currentitemid, $currentfilepath, $currentfilename)) {
+            //TODO:  if ($existingfile->get_contenthash()) is *not* the same as uploaded file, use itemid as path. Otherwise, keep going, it will work as expected.
+        }
+
+        if ($newfiles = $fs->move_draft_to_final($currentitemid, $contextid, $filearea, $itemid, $filepath, false)) {
             foreach($newfiles as $newfile) {
+                if (in_array($newfile, $replacedfiles)) {
+                    // if a file is being used more than once, all occurences will be replaced the first time, so ignore it when it comes back.
+                    // ..it wouldn't be in user_draft anymore anyway!
+                    continue;
+                }
+                $replacedfiles[] = $newfile;
                 if ($context->contextlevel == CONTEXT_USER) {
-                    $newurl = $CFG->wwwroot .'/userfile.php/'. $contextid .'/'. $filearea .'/'. $newfile->get_filename();
+                    $newurl = $CFG->wwwroot .'/userfile.php/'. $contextid .'/'. $filearea . $newfile->get_filepath() . $newfile->get_filename();
                 } else {
                     $newurl = $CFG->wwwroot .'/pluginfile.php/'. $contextid .'/'. $filearea .'/'. $itemid . $newfile->get_filepath() . $newfile->get_filename();
                 }
-                if ($newurl) { // can be removed whenever userfile.php newurl is properly built
-                    $text = str_replace('"'. $currenturl .'"', '"'. $newurl .'"', $text);
-                }
+                $text = str_replace('"'. $currenturl .'"', '"'. $newurl .'"', $text);
             }
         } // else file not found, wrong file, or string is just not a file so we leave it alone.
+
     }
+    
     return $text;
 }
 

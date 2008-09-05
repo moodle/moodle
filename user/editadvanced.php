@@ -124,6 +124,11 @@
             $usercreated = false;
         }
 
+        $usercontext = get_context_instance(CONTEXT_USER, $usernew->id);
+        if ($usernew->description = file_rewrite_urls($usernew->description, $usercontext->id, '/gudu/', 'user_profile', 0, $usercontext->id)) {
+          $DB->set_field("user", "description", $usernew->description, array("id" => $usernew->id));
+        }
+
         //update preferences
         useredit_update_user_preference($usernew);
 
