@@ -1088,7 +1088,7 @@ function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_dr
  * @param int $userid
  * @return mixed stored_file object or false if error; may throw exception if duplicate found
  */
-function repository_store_to_filepool($elname, $filearea='user_draft', $filepath='/') {
+function repository_store_to_filepool($elname, $filearea='user_draft', $filepath='/', $override = false) {
     global $USER;
     if (!isset($_FILES[$elname])) {
         return false;
