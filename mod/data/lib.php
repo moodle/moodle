@@ -2466,6 +2466,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             $this->singlerecord = $DB->get_record('data_records', array('id' => $callbackargs['record']));
             $this->singlerecord->content = $DB->get_records('data_content', array('recordid' => $this->singlerecord->id));
             $this->exporttype = 'single';
+            $this->supportedformats = array(PORTFOLIO_FORMAT_HTML);
         } else {
             // all records as csv or whatever
             $this->selectedfields = array();

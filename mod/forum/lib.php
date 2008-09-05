@@ -7209,9 +7209,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
                 throw new portfolio_caller_exception('noattachments', 'forum');
             }
             $this->postfiles = array($f);
-            if (in_array($f->get_mimetype(), array('image/gif', 'image/jpeg', 'image/png'))) {
-                $this->supportedformats = array(PORTFOLIO_FORMAT_IMAGE);
-            }
+            $this->supportedformats = array(portfolio_format_from_file($f));
         } elseif ($this->post) {
             $this->postfiles = $fs->get_area_files(get_context_instance(CONTEXT_MODULE, $this->cm->id)->id, 'forum_attachment', $this->post->id, "timemodified", false);
         } else {

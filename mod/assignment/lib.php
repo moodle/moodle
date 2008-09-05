@@ -3166,9 +3166,13 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if (!$this->assignment->portfolio_exportable()) {
             throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
         }
-        global $USER;
-        $this->userid = $USER->id;
-        $this->file = (array_key_exists('file', $callbackargs)) ? $callbackargs['file'] : null;
+        if (array_key_exists('file', $callbackargs)) {
+            $fs = get_file_storage();
+            $this->file = $fs->get_file_by_id($callbackargs['file']);
+            $this->supportedformats = array(portfolio_format_from_file($this->file));
+        } else if (is_callable(array($this->assignment, 'portfolio_supported_formats'))) {
+            $this->supportedformats = $this->assignment->portfolio_supported_formats();
+        }
     }
 
     public function prepare_package() {
@@ -3193,11 +3197,10 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         }
 
         // default ...
-        $fs = get_file_storage();
-        $status = true;
         if ($this->file) {
-            return $fs->get_file_by_id($this->file)->get_contenthash();
+            return $this->file->get_contenthash();
         }
+        $fs = get_file_storage();
         if ($files = $fs->get_area_files($this->assignment->context->id,
                 'assignment_submission', $this->user->id, '', false)) {
             $sha1s = array();

@@ -279,6 +279,10 @@ class assignment_online extends assignment_base {
         $submission = $this->get_submission($userid);
         return $exporter->write_new_file(format_text($submission->data1, $submission->data2), 'assignment.html');
     }
+
+    function portfolio_supported_formats() {
+        return array(PORTFOLIO_FORMAT_HTML);
+    }
 }
 
 class mod_assignment_online_edit_form extends moodleform {

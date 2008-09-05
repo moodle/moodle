@@ -6,6 +6,10 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
 
     private $flickr;
 
+    public static function supported_formats() {
+        return array(PORTFOLIO_FORMAT_IMAGE);
+    }
+
     public static function get_name() {
         return get_string('pluginname', 'portfolio_flickr');
     }

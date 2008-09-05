@@ -855,6 +855,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
             $select,
             $params
         );
+        $this->supportedformats = array(PORTFOLIO_FORMAT_HTML);
     }
 
     public function expected_time() {

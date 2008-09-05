@@ -2454,6 +2454,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
             || !$this->entry = $DB->get_record('glossary_entries', array('id' => $callbackargs['entryid']))) {
             throw new portfolio_caller_exception('noentry', 'glossary');
         }
+        $this->supportedformats = array(PORTFOLIO_FORMAT_HTML);
     }
 
     public function expected_time() {

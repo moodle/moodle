@@ -100,6 +100,15 @@ define('PORTFOLIO_FORMAT_HTML', 'html');
 */
 define('PORTFOLIO_FORMAT_IMAGE', 'image');
 
+/**
+* video - subtype of file
+*/
+define('PORTFOLIO_FORMAT_VIDEO', 'video');
+
+/**
+* text - subtype of file
+*/
+define('PORTFOLIO_FORMAT_TEXT', 'text');
 
 
 // **** EXPORT TIME LEVELS  **** //
@@ -399,11 +408,59 @@ function portfolio_supported_formats() {
         PORTFOLIO_FORMAT_FILE  => 'portfolio_format_file',
         PORTFOLIO_FORMAT_IMAGE => 'portfolio_format_image',
         PORTFOLIO_FORMAT_HTML  => 'portfolio_format_html',
+        PORTFOLIO_FORMAT_TEXT  => 'portfolio_format_text',
+        PORTFOLIO_FORMAT_VIDEO => 'portfolio_format_video',
         /*PORTFOLIO_FORMAT_MBKP, */ // later
         /*PORTFOLIO_FORMAT_PIOP, */ // also later
     );
 }
 
+/**
+* this function returns the revelant portfolio export format
+* which is used to determine which portfolio plugins can be used
+* for exporting this content
+* according to the mime type of the given file
+* this only works when exporting exactly <b>one</b> file
+*
+* @param stored_file $file file to check mime type for
+* @return string the format constant (see PORTFOLIO_FORMAT_XXX constants)
+*/
+function portfolio_format_from_file($file) {
+    static $alreadymatched;
+    if (empty($alreadymatched)) {
+        $alreadymatched = array();
+    }
+    if (!($file instanceof stored_file)) {
+        throw new portfolio_exception('invalidfileargument', 'portfolio');
+    }
+    $mimetype = $file->get_mimetype();
+    if (array_key_exists($mimetype, $alreadymatched)) {
+        return $alreadymatched[$mimetype];
+    }
+    $allformats = portfolio_supported_formats();
+    foreach ($allformats as $format => $classname) {
+        $supportedmimetypes = call_user_func(array($classname, 'mimetypes'));
+        if (!is_array($supportedmimetypes)) {
+            debugging("one of the portfolio format classes, $classname, said it supported something funny for mimetypes, should have been array...");
+            debugging(print_r($supportedmimetypes, true));
+            continue;
+        }
+        if (in_array($mimetype, $supportedmimetypes)) {
+            $alreadymatched[$mimetype] = $format;
+            return $format;
+        }
+    }
+    return PORTFOLIO_FORMAT_FILE; // base case for files...
+}
+
+/**
+* walks both the caller formats and portfolio plugin formats
+* and looks for matches (walking the hierarchy as well)
+* and returns the intersection
+*
+* @param array $callerformats formats the caller supports
+* @param array $pluginformats formats the portfolio plugin supports
+*/
 function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
     $allformats = portfolio_supported_formats();
     $intersection = array();
@@ -847,11 +904,16 @@ abstract class portfolio_caller_base {
     * @return array list of formats
     */
     public static function supported_formats($caller=null) {
-        if ($caller && $caller->get('supportedformats')) {
-            return $caller->get('supportedformats');
+        if ($caller && $formats = $caller->get('supportedformats')) {
+            if (is_array($formats)) {
+                return $formats;
+            }
+            debugging(get_class($caller) . ' has set a non array value of member variable supported formats - working around but should be fixed in code');
+            return array($formats);
         }
         return array(PORTFOLIO_FORMAT_FILE);
     }
+
 
     /**
     * this is the "return to where you were" url
@@ -2505,7 +2567,11 @@ function portfolio_cron() {
 *
 * the most basic type - pretty much everything is a subtype
 */
-class portfolio_format_file {}
+class portfolio_format_file {
+    public static function mimetypes() {
+        return array(null);
+    }
+}
 
 /**
 * this is just used to find an intersection of supported formats
@@ -2513,7 +2579,11 @@ class portfolio_format_file {}
 *
 * added for potential flickr plugin
 */
-class portfolio_format_image extends portfolio_format_file {}
+class portfolio_format_image extends portfolio_format_file {
+    public static function mimetypes() {
+        return mimeinfo_from_icon('type', 'image.gif', true);
+    }
+}
 
 /**
 * this is just used to find an intersection of supported formats
@@ -2521,7 +2591,31 @@ class portfolio_format_image extends portfolio_format_file {}
 *
 * in case we want to be really specific.
 */
-class portfolio_format_html extends portfolio_format_file {}
+class portfolio_format_html extends portfolio_format_file {
+    public static function mimetypes() {
+        return array('text/html');
+    }
+}
+
+/**
+* I guess there could be a youtube/google video plugin
+* and anyway, the flickr plugin can support it already
+*/
+class portfolio_format_video extends portfolio_format_file {
+    public static function mimetypes() {
+        return mimeinfo_from_icon('type', 'video.gif', true);
+    }
+}
+
+/**
+* class for plain text format.. not sure why we would need this yet
+* but since resource module wants to export it... we can
+*/
+class portfolio_format_text extends portfolio_format_file {
+    public static function mimetypes() {
+        return array('text/plain');
+    }
+}
 
 /**
 * this is just used to find an intersection of supported formats

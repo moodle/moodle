@@ -722,6 +722,16 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         $this->resourcefile = $CFG->dirroot.'/mod/resource/type/'.$this->cm->type.'/resource.class.php';
         require_once($this->resourcefile);
         $this->resource= new $resourceclass($this->cm->id);
+        // this is kind of yuk... but there's just not good enough OO here
+        $format = PORTFOLIO_FORMAT_FILE;
+        switch ($this->cm->type) {
+            case 'html':
+                $format = PORTFOLIO_FORMAT_HTML;
+            case 'text':
+                $format = PORTFOLIO_FORMAT_TEXT;
+            case 'file':
+                // $format = portfolio_format_from_mimetype($something); // change after we switch upload type resources over to new files api.
+        }
     }
 
     public function __wakeup() {
@@ -734,7 +744,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function expected_time() {
-        // @todo penny check filesize if the type is uploadey
+        // @todo penny check filesize if the type is uploadey (not implemented yet)
         return PORTFOLIO_TIME_LOW;
     }
 
