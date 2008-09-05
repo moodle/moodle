@@ -3,11 +3,6 @@
     require_once('config.php');
     require_once('lib/filelib.php');
 
-    require_login();
-    if (isguestuser()) {
-        print_error('noguest');
-    }
-
     // disable moodle specific debug messages
     disable_debugging();
 
@@ -36,23 +31,53 @@
         print_error('invalidarguments');
     }
 
+    $userid = $context->instanceid;
+    if ($USER->id != $userid) {
+        print_error('invaliduserid');
+    }
+
     switch ($filearea) {
-        case 'user_private':
-            $userid = $context->instanceid;
-            if ($USER->id != $userid) {
-                print_error('invaliduserid');
-            }
-            // fallthrough
         case 'user_profile':
+            if (!empty($CFG->forceloginforprofiles)) {
+                require_login();
+                if (isguestuser()) {
+                    print_error('noguest');
+                }
+                $user = $DB->get_record("user", array("id"=>$userid));
+                $usercontext   = get_context_instance(CONTEXT_USER, $user->id);
+                if (!isteacherinanycourse()
+                    and !isteacherinanycourse($user->id)
+                    and !has_capability('moodle/user:viewdetails', $usercontext)) {
+                    print_error('usernotavailable');
+                }
+                //TODO: find a way to get $coursecontext .. or equivalent check.
+                //if (!has_capability('moodle/user:viewdetails', $coursecontext) &&
+                //    !has_capability('moodle/user:viewdetails', $usercontext)) {
+                //    print_error('cannotviewprofile');
+                //}
+                //if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
+                //    print_error('notenrolledprofile');
+                //}
+                //if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
+                //    print_error('groupnotamember');
+                //}
+            }
+            $itemid = 0;
+            $forcedownload = true;
+            break;
+        case 'user_private':
+            require_login();
+            if (isguestuser()) {
+                print_error('noguest');
+            }
             $itemid = 0;
             $forcedownload = true;
             break;
         default:
             send_file_not_found();
     }
-
+    
     $relativepath = '/'.implode('/', $args);
-
 
     $fs = get_file_storage();
 
