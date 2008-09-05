@@ -3914,7 +3914,13 @@ function forum_print_attachments($post, $cm, $type) {
                         'postid' => $post->id,
                         'attachment' => $file->get_id(),
                     );
-                    $output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_LINK, null, true);
+                    $output .= portfolio_add_button(
+                        'forum_portfolio_caller',
+                        $p, '/mod/forum/lib.php',
+                        PORTFOLIO_ADD_ICON_LINK,
+                        null, true,
+                        array(portfolio_format_from_file($file))
+                    );
                 }
                 $output .= "<br />";
 
@@ -3936,7 +3942,8 @@ function forum_print_attachments($post, $cm, $type) {
                             $p, '/mod/forum/lib.php',
                             PORTFOLIO_ADD_ICON_LINK,
                             null, true,
-                            array(PORTFOLIO_FORMAT_IMAGE));
+                            array(portfolio_format_from_file($file))
+                        );
                     }
                 } else {
                     $output .= "<a href=\"$path\">$iconimage</a> ";
@@ -3947,7 +3954,13 @@ function forum_print_attachments($post, $cm, $type) {
                             'postid' => $post->id,
                             'attachment' => $file->get_id(),
                         );
-                        $output .= portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_ICON_LINK, null, true);
+                        $output .= portfolio_add_button(
+                            'forum_portfolio_caller',
+                            $p, '/mod/forum/lib.php',
+                            PORTFOLIO_ADD_ICON_LINK,
+                            null, true,
+                            array(portfolio_format_from_file($file))
+                        );
                     }
                     $output .= '<br />';
                 }
