@@ -1821,18 +1821,54 @@ final class portfolio_user_form extends moodleform {
 */
 class portfolio_exporter {
 
-    private $currentstage;
+    /**
+    * the caller object used during the export
+    */
     private $caller;
+
+    /** the portfolio plugin instanced used during the export
+    */
     private $instance;
+
+    /**
+    * if there has been no config form displayed to the user
+    */
     private $noconfig;
+
+    /**
+    * the navigation to display on the wizard screens
+    * built from build_navigation
+    */
     private $navigation;
+
+    /**
+    * the user currently exporting content
+    * always $USER, but more conveniently placed here
+    */
     private $user;
 
+    /** the file to include that contains the class defintion
+    * of the portfolio instance plugin
+    * used to re-waken the object after sleep
+    */
     public $instancefile;
+
+    /**
+    * the file to include that contains the class definition
+    * of the caller object
+    * used to re-waken the object after sleep
+    */
     public $callerfile;
 
+    /**
+    * the current stage of the export
+    */
     private $stage;
 
+    /**
+    * whether something (usually the portfolio plugin)
+    * has forced queuing
+    */
     private $forcequeue;
 
     /**
@@ -1842,7 +1878,16 @@ class portfolio_exporter {
     */
     private $id;
 
+    /**
+    * the session key during the export
+    * used to avoid hijacking transfers
+    */
     private $sesskey;
+
+    /**
+    * array of stages that have had the portfolio plugin already steal control from them
+    */
+    private $alreadystolen;
 
     /**
     * construct a new exporter for use
@@ -1863,6 +1908,7 @@ class portfolio_exporter {
         $this->stage = PORTFOLIO_STAGE_CONFIG;
         $this->navigation = $navigation;
         $this->caller->set('exporter', $this);
+        $this->alreadystolen = array();
     }
 
     /*
@@ -1907,8 +1953,15 @@ class portfolio_exporter {
     */
     public function process_stage($stage, $alreadystolen=false) {
         $this->set('stage', $stage);
+        if ($alreadystolen) {
+            $this->alreadystolen[$stage] = true;
+        } else {
+            if (!array_key_exists($stage, $this->alreadystolen)) {
+                $this->alreadystolen[$stage] = false;
+            }
+        }
         $this->save();
-        if (!$alreadystolen && $url = $this->instance->steal_control($stage)) {
+        if (!$this->alreadystolen[$stage] && $url = $this->instance->steal_control($stage)) {
             redirect($url);
             break;
         }
@@ -2298,6 +2351,7 @@ class portfolio_exporter {
     */
     public static function rewaken_object($id) {
         global $DB, $CFG;
+        require_once($CFG->libdir . '/filelib.php');
         if (!$data = $DB->get_record('portfolio_tempdata', array('id' => $id))) {
             throw new portfolio_exception('invalidtempid', 'portfolio');
         }
