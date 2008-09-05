@@ -606,7 +606,7 @@ class file_storage {
         }
 
         $newcontext = get_context_instance_by_id($newcontextid);
-        if (($newcontext->contextlevel == CONTEXT_USER) && ($newfilearea == 'user_private')) {
+        if (($newcontext->contextlevel == CONTEXT_USER) && ($newfilearea != 'user_draft')) {
             $newitemid = 0;
         }
 
