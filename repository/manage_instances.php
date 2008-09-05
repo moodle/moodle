@@ -10,7 +10,7 @@ $new     = optional_param('new', '', PARAM_FORMAT);
 $delete  = optional_param('delete', 0, PARAM_INT);
 $sure    = optional_param('sure', '', PARAM_ALPHA);
 $contextid = optional_param('contextid', 0, PARAM_INT);
-
+//$userid = optional_param('userid', 0, PARAM_INT);
 $display = true; // fall through to normal display
 
 if ($edit){
@@ -40,6 +40,14 @@ if ($context->contextlevel == CONTEXT_COURSE) {
         print_error('invalidcourseid');
     }
 }
+else {
+    $pagename = get_string("personalrepositories",'repository');
+     //is the user looking at its own repository instances
+    if ($USER->id != $context->instanceid){
+        print_error('notyourinstances', 'repository');
+    }
+     $user = $USER;
+}
 
 $baseurl    = $CFG->wwwroot . '/repository/manage_instances.php?contextid=' . $contextid . '&amp;sesskey='. sesskey();
 
@@ -68,10 +76,17 @@ if (!empty($course)) {
                         'type' => 'misc');
     $navlinks[] = array('name' => $pagename,
                         'link' => null,
-                        'type' => 'misc');
-    $title = $pagename;
+                        'type' => 'misc');    
     $fullname = $course->fullname;
 }
+else {
+    $fullname = fullname($user);
+    $strrepos = get_string('repositories', 'repository');
+    $navlinks[] = array('name' => $fullname, 'link' => $CFG->wwwroot . '/user/view.php?id=' . $user->id, 'type' => 'misc');
+    $navlinks[] = array('name' => $strrepos, 'link' => null, 'type' => 'misc');
+}
+
+$title = $pagename;
 $navigation = build_navigation($navlinks);
 
 //display page header

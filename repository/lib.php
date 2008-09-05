@@ -1,4 +1,5 @@
-<?php // $Id$
+<?php
+ // $Id$
 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
@@ -350,7 +351,7 @@ class repository_type {
         global $DB;
 
         //delete all instances of this type
-        $instances = repository_get_instances(null,null,false,$this->_typename);
+        $instances = repository_get_instances(array(),null,false,$this->_typename);
         foreach($instances as $instance){
             $instance->delete();
         }
@@ -916,14 +917,14 @@ function repository_check_context($ctx_id){
  * @global object $DB
  * @global object $CFG
  * @global object $USER
- * @param object $context
+ * @param object $contexts contexts for which the instances are set
  * @param integer $userid
  * @param boolean $onlyvisible if visible == true, return visible instances only,
  *                otherwise, return all instances
  * @param string $type a type name to retrieve
  * @return array repository instances
  */
-function repository_get_instances($context=null, $userid = null, $onlyvisible = true, $type=null, $nositeinstances=false){
+function repository_get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null){
     global $DB, $CFG, $USER;
     $params = array();
     $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
@@ -932,20 +933,19 @@ function repository_get_instances($context=null, $userid = null, $onlyvisible = 
         $sql .= ' AND (i.userid = 0 or i.userid = ?)';
         $params[] = $userid;
     }
-    if (!empty($context)){
-        if($context->id == SYSCONTEXTID) {
-            $sql .= ' AND (i.contextid = ?)';
-            $params[] = SYSCONTEXTID;
+    foreach ($contexts as $context) {
+        if (empty($firstcontext)){
+            $firstcontext = true;
+            $sql .= ' AND ((i.contextid = ?)';
         } else {
-            if ($nositeinstances) {
-                $sql .= ' AND i.contextid = ?';
-            } else {
-                $sql .= ' AND (i.contextid = ? or i.contextid = ?)';
-                $params[] = SYSCONTEXTID;
-            }
-            $params[] = $context->id;
+            $sql .= ' OR (i.contextid = ?)';
         }
+        $params[] = $context->id;
     }
+    if ($firstcontext) {
+       $sql .=')';
+    }
+  
     if($onlyvisible == true) {
         $sql .= ' AND (r.visible = 1)';
     }
@@ -1853,7 +1853,7 @@ return _client;
 })();
 EOD;
 
-    $repos = repository_get_instances($context);
+    $repos = repository_get_instances(array($context,get_system_context()));
     foreach($repos as $repo) {
         $js .= "\r\n";
         $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo->ajax_info()).');'."\n";
@@ -2049,7 +2049,7 @@ function repository_display_instances_list($context, $typename = null){
           $baseurl = $CFG->wwwroot . '/repository/manage_instances.php?contextid=' . $context->id . '&amp;sesskey=' . sesskey();
 
         }
-        
+
         $namestr = get_string('name');
         $pluginstr = get_string('plugin', 'repository');
         $settingsstr = get_string('settings');
@@ -2061,7 +2061,7 @@ function repository_display_instances_list($context, $typename = null){
         //want to display only visible instances, but for every type types. The repository_get_instances()
         //third parameter displays only visible type. The fifth parameter is a trick that return
         //instances of the $context + systemcontext.
-        $instances = repository_get_instances($context,null,!$admin,$typename, !$admin);
+        $instances = repository_get_instances(array($context),null,!$admin,$typename);
         $instancesnumber = count($instances);
         $alreadyplugins = array();
         $table = new StdClass;
