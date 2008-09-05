@@ -923,7 +923,7 @@ function repository_check_context($ctx_id){
  * @param string $type a type name to retrieve
  * @return array repository instances
  */
-function repository_get_instances($context=null, $userid = null, $onlyvisible = true, $type=null, $nositeinstances=true){
+function repository_get_instances($context=null, $userid = null, $onlyvisible = true, $type=null, $nositeinstances=false){
     global $DB, $CFG, $USER;
     $params = array();
     $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
