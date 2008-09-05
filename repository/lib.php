@@ -1046,19 +1046,19 @@ function repository_static_function($plugin, $function) {
  * @param string $name file name
  * @param integer $itemid item id to identify a file in filepool
  * @param string $filearea file area
- * @param string $filepath filepath in file area
  * @return array information of file in file pool
  */
 function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_draft') {
     global $DB, $CFG, $USER;
     $context = get_context_instance(CONTEXT_USER, $USER->id);
+    $now = time();
     $entry = new object();
     $entry->filearea  = $filearea;
     $entry->contextid = $context->id;
     $entry->filename  = $name;
     $entry->filepath  = '/'.uniqid().'/';
-    $entry->timecreated  = time();
-    $entry->timemodified = time();
+    $entry->timecreated  = $now;
+    $entry->timemodified = $now;
     if(is_numeric($itemid)) {
         $entry->itemid = $itemid;
     } else {
@@ -1084,21 +1084,21 @@ function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_dr
 /**
  * Save file to local filesystem pool
  * @param string $elname name of element
- * @param int $contextid
  * @param string $filearea
  * @param string $filepath
  * @param string $filename - use specified filename, if not specified name of uploaded file used
  * @param bool $override override file if exists
- * @param int $userid
  * @return mixed stored_file object or false if error; may throw exception if duplicate found
  */
-function repository_store_to_filepool($elname, $filearea='user_draft', $filepath='/', $override = false) {
+function repository_store_to_filepool($elname, $filearea='user_draft', $filepath='/', $filename = '', $override = false) {
     global $USER;
     if (!isset($_FILES[$elname])) {
         return false;
     }
 
-    $filename = $_FILES[$elname]['name'];
+    if (!$filename) {
+        $filename = $_FILES[$elname]['name'];
+    }
     $context = get_context_instance(CONTEXT_USER, $USER->id);
     $itemid = (int)substr(hexdec(uniqid()), 0, 9)+rand(1,100);
     $fs = get_file_storage();
