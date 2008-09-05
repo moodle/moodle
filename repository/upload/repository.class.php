@@ -13,7 +13,8 @@ class repository_upload extends repository {
         global $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
         if($action=='upload'){
-            $this->info = repository_store_to_filepool('repo_upload_file');
+            $filepath = '/'.uniqid().'/';
+            $this->info = repository_store_to_filepool('repo_upload_file', 'user_draft', $filepath);
         }
     }
 
