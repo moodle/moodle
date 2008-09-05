@@ -906,6 +906,7 @@ function repository_check_context($ctx_id){
         }
     } elseif ($level == CONTEXT_SYSTEM) {
         // it is always ok in system level
+        return true;
     }
     return false;
 }
@@ -1166,6 +1167,7 @@ function repository_get_client($context){
 <style type="text/css">
 .repo-list{list-style-type:none;padding:0}
 .repo-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
+.repo-name{display:block;padding: 3px;margin-bottom: 5px}
 .paging{margin:10px 5px; clear:both;}
 .paging a{padding: 4px;border: 1px solid #CCC}
 .repo-path{margin: 4px;border-bottom: 1px dotted gray;}
@@ -1183,7 +1185,7 @@ p.upload a:hover {background: grey;color:white}
 .grid p{margin:0;padding:0;background: #FFFFCC}
 .grid .label{height:48px}
 .grid span{background: #EEF9EB;color:gray}
-.repo-opt{font-size: 10px;}
+.repo-opt a{font-size: 12px;background: #FFFFCC;padding: 0 3px}
 #panel-$suffix{padding:0;margin:0; text-align:left;}
 #file-picker-$suffix{font-size:12px;}
 #file-picker-$suffix strong{background:#FFFFCC}
@@ -1237,7 +1239,6 @@ function _client(){
         close: true,
         modal: true,
         underlay: 'none',
-        width: '510px',
         zindex: 666666,
         xy: [50, Dom.getDocumentScrollTop()+20]
     });
@@ -1248,11 +1249,11 @@ function _client(){
         panel.beforeRenderEvent.subscribe(function() {
             Event.onAvailable('layout-$suffix', function() {
                 layout = new YAHOO.widget.Layout('layout-$suffix', {
-                    height: 400, width: 490,
+                    height: 480, width: 630,
                     units: [
                         {position: 'top', height: 32, resize: false,
                         body:'<div class="yui-buttongroup" id="repo-viewbar-$suffix"></div>', gutter: '2'},
-                        {position: 'left', width: 150, resize: true,
+                        {position: 'left', width: 200, resize: true,
                         body:'<ul class="repo-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
                         {position: 'center', body: '<div id="panel-$suffix"></div>',
                         scroll: true, gutter: '0 2 0 0' }
@@ -1312,17 +1313,17 @@ function _client(){
                 icon.src = repo.icon;
                 icon.width = '16';
                 icon.height = '16';
-                li.appendChild(icon);
                 var link = document.createElement('a');
                 link.href = '###';
                 link.id = 'repo-call-$suffix-'+repo.id;
-                link.innerHTML = ' '+repo.name;
+                link.appendChild(icon);
                 link.className = 'repo-name';
                 link.onclick = function(){
                     var re = /repo-call-$suffix-(\d+)/i;
                     var id = this.id.match(re);
                     repository_client_$suffix.req(id[1], '', 0);
                 }
+                link.innerHTML += ' '+repo.name;
                 li.appendChild(link);
                 var opt = document.createElement('div');
                 opt.id = 'repo-opt-$suffix-'+repo.id;
@@ -1734,6 +1735,7 @@ _client.callback = {
         var oDiv = document.getElementById('repo-opt-$suffix-'
             +_client.repositoryid);
         oDiv.innerHTML = '';
+        oDiv.className = "repo-opt";
         var search = null;
         var logout = null;
         var mgr = null;
@@ -1747,7 +1749,7 @@ _client.callback = {
             }
             search = document.createElement('a');
             search.href = '###';
-            search.innerHTML = '$strsearch ';
+            search.innerHTML = '$strsearch';
             search.id = 'repo-search-$suffix-'+_client.repositoryid;
             search.onclick = function() {
                 var re = /repo-search-$suffix-(\d+)/i;
@@ -1768,7 +1770,7 @@ _client.callback = {
             }
             if(_client.ds.manage){
                 mgr = document.createElement('A');
-                mgr.innerHTML = '$strmgr ';
+                mgr.innerHTML = '$strmgr';
                 mgr.href = _client.ds.manage;
                 mgr.id = 'repo-mgr-$suffix-'+_client.repositoryid;
                 mgr.target = "_blank";
