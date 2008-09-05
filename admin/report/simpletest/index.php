@@ -101,7 +101,7 @@ if (!is_null($path)) {
     $formheader = get_string('rununittests', $langfile);
 }
 // Print the form for adjusting options.
-print_box_start('generalbox boxwidthwide');
+print_box_start('generalbox boxwidthwide boxaligncenter');
 echo '<form method="get" action="index.php">';
 echo '<fieldset class="invisiblefieldset">';
 print_heading($formheader);
