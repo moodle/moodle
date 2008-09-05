@@ -1,6 +1,7 @@
 <?php
 
-$string['apikey'] = 'API key (you need to get this from Box.net)';
+$string['apikey'] = 'API key';
+$string['apikeyhelp'] = 'You need to get this by signing up to enabled.box.net and adding an application.  The callback url must be yourwwwroot/portfolio/add.php?postcontrol=1';
 $string['err_noapikey'] = 'There is no API Key configured for this plugin.  You can get one of these from http://enabled.box.net';
 $string['existingfolder'] = 'Exiting folder to put file(s) into';
 $string['folderclash'] = 'The folder you asked to create already exists!';

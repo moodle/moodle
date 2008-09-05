@@ -114,8 +114,15 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     }
 
     public function admin_config_form(&$mform) {
+        global $CFG;
         $strrequired = get_string('required');
         $mform->addElement('text', 'apikey', get_string('apikey', 'portfolio_boxnet'));
+        $helpparams = array(
+            'boxnet_apikey',
+            get_string('apikeyhelp', 'portfolio_boxnet'),
+            'portfolio',
+        );
+        $mform->setHelpButton('apikey', $helpparams);
         $mform->addRule('apikey', $strrequired, 'required', null, 'client');
     }
 
