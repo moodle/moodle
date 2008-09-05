@@ -1714,6 +1714,7 @@ _client.end = function(str){
         _client.target.value = str['id'];
     }else{
         _client.target.value = str['url'];
+        _client.target.onchange();
     }
     _client.formcallback(str['file']);
     _client.instance.hide();
