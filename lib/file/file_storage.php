@@ -394,7 +394,7 @@ class file_storage {
 
             if ($key == 'filepath') {
                 $value = clean_param($value, PARAM_PATH);
-                if (strpos($value, '/') !== 0 or strpos($value, '/') !== strlen($value)-1) {
+                if (strpos($value, '/') !== 0 or strrpos($value, '/') !== strlen($value)-1) {
                     // path must start and end with '/'
                     throw new file_exception('storedfileproblem', 'Invalid file path');
                 }
@@ -621,6 +621,7 @@ class file_storage {
                 if ($overwrite) {
                     $oldfile->delete();
                 } else {
+                    $returnfiles[] = $oldfile;
                     continue;   // Can't overwrite the existing file so skip it
                 }
             }
