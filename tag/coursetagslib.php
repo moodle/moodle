@@ -357,25 +357,32 @@ function coursetag_store_keywords($tags, $courseid, $userid=0, $tagtype='officia
     global $CFG;
 
     if (is_array($tags) and !empty($tags)) {
-
-        //tag_set_add('course', $courseid, $tags, $userid);
-        //if ($tagtype == 'official') {
-        //    $tags_ids = tag_get_id($tags);
-        //}
-
         foreach($tags as $tag) {
             $tag = trim($tag);
             if (strlen($tag) > 0) {
-                tag_set_add('course', $courseid, $tag, $userid);
-                if ($myurl) {
-                    $url = $myurl.'?query='.urlencode($tag);
+                //tag_set_add('course', $courseid, $tag, $userid); //deletes official tags
+
+                //add tag if does not exist
+                if (!$tagid = tag_get_id($tag)) {
+                    $tag_id_array = tag_add(array($tag), $tagtype);
+                    $tagid = $tag_id_array[moodle_strtolower($tag)];
                 }
+                //ordering
+                $ordering = 0;
+                if ($current_ids = tag_get_tags_ids('course', $courseid)) {
+                    end($current_ids);
+                    $ordering = key($current_ids) + 1;
+                }
+                //set type
+                tag_type_set($tagid, $tagtype);
+
+                //tag_instance entry
+                tag_assign('course', $courseid, $tagid, $ordering, $userid);
+
+                //logging - note only for user added tags
                 if ($tagtype == 'default' and $myurl != '') {
-                    // log the tagging request - note only for user added tags
+                    $url = $myurl.'?query='.urlencode($tag);
                     add_to_log($courseid, 'coursetags', 'add', $url, 'Course tagged');
-                }
-                if ($tagtype == 'official') {
-                    tag_type_set(tag_get_id($tag), $tagtype);
                 }
             }
         }

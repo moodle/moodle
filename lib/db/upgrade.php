@@ -154,10 +154,14 @@ function xmldb_main_upgrade($oldversion) {
         // modify index
         $index = new xmldb_index('itemtype-itemid-tagid');
         $index->set_attributes(XMLDB_INDEX_UNIQUE, array('itemtype', 'itemid', 'tagid'));
-        $dbman->drop_index($table, $index);
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
         $index = new xmldb_index('itemtype-itemid-tagid-tiuserid');
         $index->set_attributes(XMLDB_INDEX_UNIQUE, array('itemtype', 'itemid', 'tagid', 'tiuserid'));
-        $dbman->add_index($table, $index);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
 
         /// Main savepoint reached
         upgrade_main_savepoint($result, 2008063001);

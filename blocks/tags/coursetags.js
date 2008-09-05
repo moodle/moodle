@@ -45,10 +45,11 @@ function ctags_getKeywords() {
     }
   }
   document.forms['coursetag'].coursetag_sug_keyword.value = sug_disp;
-  if (!sug.length || input == sug_disp)
+  if (!sug.length || input == sug_disp) {
     document.getElementById('coursetag_sug_btn').style.display = "none";
-  else
+  } else {
     document.getElementById('coursetag_sug_btn').style.display = "block";
+  }
 }
 
 function ctags_setKeywords() {

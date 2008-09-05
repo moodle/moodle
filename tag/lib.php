@@ -63,10 +63,9 @@ define('TAG_RELATED_CORRELATED', 2);
  * @param int $record_id the id of the record to tag
  * @param array $tags the array of tags to set on the record. If
  *     given an empty array, all tags will be removed.
- * @param int $userid optional only required for course tagging
  * @return void
  */
-function tag_set($record_type, $record_id, $tags, $userid = 0) {
+function tag_set($record_type, $record_id, $tags) {
 
     static $in_recursion_semaphore = false; // this is to prevent loops when tagging a tag
     if ( $record_type == 'tag' && !$in_recursion_semaphore) {
@@ -109,7 +108,7 @@ function tag_set($record_type, $record_id, $tags, $userid = 0) {
             $tag_current_id = $new_tag[$clean_tag];
         }
 
-        tag_assign($record_type, $record_id, $tag_current_id, $ordering, $userid);
+        tag_assign($record_type, $record_id, $tag_current_id, $ordering);
 
         // if we are tagging a tag (adding a manually-assigned related tag), we
         // need to create the opposite relationship as well.
@@ -128,18 +127,17 @@ function tag_set($record_type, $record_id, $tags, $userid = 0) {
  *     'user' for users, etc.
  * @param int $record_id the id of the record to tag
  * @param string $tag the tag to add
- * @param int $userid optional only required for course tagging
  * @return void
  */
-function tag_set_add($record_type, $record_id, $tag, $userid = 0) {
+function tag_set_add($record_type, $record_id, $tag) {
 
     $new_tags = array();
-    foreach( tag_get_tags($record_type, $record_id, NULL, $userid) as $current_tag ) {
+    foreach( tag_get_tags($record_type, $record_id) as $current_tag ) {
         $new_tags[] = $current_tag->rawname;
     }
     $new_tags[] = $tag;
 
-    return tag_set($record_type, $record_id, $new_tags, $userid);
+    return tag_set($record_type, $record_id, $new_tags);
 }
 
 /**
@@ -550,10 +548,10 @@ function tag_delete_instance($record_type, $record_id, $tagid) {
         if (!$DB->record_exists_sql("SELECT * ".
                                       "FROM {tag} tg ".
                                      "WHERE tg.id = ? AND ( tg.tagtype = 'official' OR ".
-                                        "EXISTS (SELECT 1 
-                                                   FROM {tag_instance} ti 
-                                                  WHERE ti.tagid = ?) )", 
-                                     array($tagid, $tagid))) { 
+                                        "EXISTS (SELECT 1
+                                                   FROM {tag_instance} ti
+                                                  WHERE ti.tagid = ?) )",
+                                     array($tagid, $tagid))) {
             return tag_delete($tagid);
         }
     } else {
@@ -592,7 +590,7 @@ function tag_display_name($tagobject, $html=TAG_RETURN_HTML) {
         return $tagname;
     } else { // TAG_RETURN_HTML
         return htmlspecialchars($tagname);
-    } 
+    }
 }
 
 /**
@@ -801,7 +799,7 @@ function tag_compute_correlations($min_correlation=2) {
 
         // query that counts how many times any tag appears together in items
         // with the tag passed as argument ($tag_id)
-        $query = "SELECT tb.tagid 
+        $query = "SELECT tb.tagid
                     FROM {tag_instance} ta JOIN {tag_instance} tb ON ta.itemid = tb.itemid
                    WHERE ta.tagid = ? AND tb.tagid <> ?
                 GROUP BY tb.tagid

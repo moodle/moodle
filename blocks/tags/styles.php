@@ -62,7 +62,7 @@
     padding-top: 4px;
 }
 
-/* Styles for edit_tags.php */
+/* Styles for coursetag_edit.php */
 
 .coursetag_edit_centered {
     position: relative;
@@ -93,7 +93,7 @@
     display: none;
 }
 
-/* Styles for more_tags.php */
+/* Styles for coursetag_more.php */
 
 .coursetag_more_title {
     margin: 30px 30px -25px 30px;

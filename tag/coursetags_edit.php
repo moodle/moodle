@@ -43,12 +43,7 @@ if ($data = data_submitted()) {
         if (trim(strip_tags($keyword))) {
             $myurl = 'tag/search.php';
             $keywords = explode(',', $keyword);
-            try {
-                coursetag_store_keywords($keywords, $courseid, $USER->id, 'default', $myurl);
-            }
-            catch (Exception $e) {
-                notice($e->getmessage());
-            }
+            coursetag_store_keywords($keywords, $courseid, $USER->id, 'default', $myurl);
         }
         // delete personal tag
         if ($deltag > 0) {
