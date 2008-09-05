@@ -3278,20 +3278,19 @@ function print_context_name($context, $withprefix = true, $short = false) {
             break;
 
         case CONTEXT_COURSE: // 1 to 1 to course cat
-            if ($course = $DB->get_record('course', array('id'=>$context->instanceid))) {
-                if ($withprefix){
-                    if ($context->instanceid == SITEID) {
-                        $name = get_string('site').': ';
-                    } else {
+            if ($context->instanceid == SITEID) {
+                $name = get_string('frontpage', 'admin');
+            } else {
+                if ($course = $DB->get_record('course', array('id'=>$context->instanceid))) {
+                    if ($withprefix){
                         $name = get_string('course').': ';
                     }
+                    if (!$short){
+                        $name .= format_string($course->shortname);
+                    } else {
+                        $name .= format_string($course->fullname);
+                   }
                 }
-                if ($short){
-                    $name .=format_string($course->shortname);
-                } else {
-                    $name .=format_string($course->fullname);
-               }
-
             }
             break;
 
