@@ -43,6 +43,8 @@ class mnet_encxml_parser {
         $this->payload_encrypted = false;
         $this->cipher            = array();
         $this->error             = array();
+        $this->remoteerror       = null;
+        $this->errorstarted      = false;
         return true;
     }
 
@@ -113,6 +115,10 @@ class mnet_encxml_parser {
             }
         }
 
+        if (!empty($this->remoteerror)) {
+            return false;
+        }
+
         if (count($this->cipher) > 0) {
             $this->cipher = array_values($this->cipher);
             $this->payload_encrypted = true;
@@ -166,6 +172,8 @@ class mnet_encxml_parser {
                 $this->cipher[$this->tag_number] = '';
                 $handler = 'parse_cipher';
                 break;
+            case 'FAULT':
+                $handler = 'parse_fault';
             default:
                 break;
         }
@@ -264,7 +272,27 @@ class mnet_encxml_parser {
      * @return  bool            True
      */
     function discard_data($parser, $data) {
-        // Not interested
+        if (!$this->errorstarted) {
+            // Not interested
+            return true;
+        }
+        $data = trim($data);
+        if (isset($this->errorstarted->faultstringstarted) && !empty($data)) {
+            $this->remoteerror .= ', message: ' . $data;
+        } else if (isset($this->errorstarted->faultcodestarted)) {
+            $this->remoteerror = 'code: ' . $data;
+            unset($this->errorstarted->faultcodestarted);
+        } else if ($data == 'faultCode') {
+            $this->errorstarted->faultcodestarted = true;
+        } else if ($data == 'faultString') {
+            $this->errorstarted->faultstringstarted = true;
+        }
+        return true;
+
+    }
+
+    function parse_fault($parser, $data) {
+        $this->errorstarted = new StdClass;
         return true;
     }
 

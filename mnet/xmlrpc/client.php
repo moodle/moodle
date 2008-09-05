@@ -249,8 +249,9 @@ class mnet_xmlrpc_client {
             }
 
         } else {
-
-            if (! empty($crypt_parser->error)) {
+            if (! empty($crypt_parser->remoteerror)) {
+                $this->error[] = '4: remote server error: ' . $crypt_parser->remoteerror;
+            } else if (! empty($crypt_parser->error)) {
                 $crypt_parser_error = $crypt_parser->error[0];
 
                 $message = '3:XML Parse error in payload: '.$crypt_parser_error['string']."\n";
