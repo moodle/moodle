@@ -186,9 +186,9 @@ class block_admin extends block_list {
             }
         }
 
-    /// Repository Account
-        if ($course->id !== SITEID) {
-            $this->content->items[]='<a href="'.$CFG->wwwroot.'/repository/manage.php?id='.$USER->id.'&amp;course='.$course->id.'&amp;context=course">'.get_string('repositories').'</a>';
+    /// Repository Instances
+        if ($course->id !== SITEID && has_capability('moodle/course:update', $context)) {
+            $this->content->items[]='<a href="'.$CFG->wwwroot.'/repository/manage_instances.php?contextid='.$context->id.'">'.get_string('repositories').'</a>';
             $this->content->icons[]='<img src="'.$CFG->pixpath.'/i/repository.png" alt=""/>';
         }
 

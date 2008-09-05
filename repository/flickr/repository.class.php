@@ -233,6 +233,14 @@ EOD;
         return true;
     }
 
+    public static function has_multiple_instances() {
+        return true;
+    }
+
+    public static function has_instance_config() {
+        return false;
+    }
+
     public function admin_config_form(&$mform) {
         $api_key = get_config('flickr', 'api_key');
         if (empty($api_key)) {

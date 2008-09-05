@@ -5599,11 +5599,16 @@ class admin_setting_managerepository extends admin_setting {
             if ( repository_static_function($i->get_typename(), 'has_admin_config')
                  || repository_static_function($i->get_typename(), 'has_instance_config')
                  || repository_static_function($i->get_typename(), 'has_multiple_instances')) {
-                $settings .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '">'. $settingsstr .'</a>' . "\n";
+                $settings .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '">'
+                              . $settingsstr .'</a>' . "\n";
             }
-            $delete = '<a href="' . $this->baseurl . '&amp;delete=' .  $i->get_typename() . '">' . $deletestr . '</a>' . "\n";
+            $delete = '<a href="' . $this->baseurl . '&amp;delete=' .  $i->get_typename() . '">'
+                        . $deletestr . '</a>' . "\n";
             
-            $hiddenshow = ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_typename() . '"><img src="' . $CFG->pixpath . '/i/' . ($i->get_visible() ? 'hide' : 'show') . '.gif" alt="' . get_string($i->get_visible() ? 'hide' : 'show') . '" /></a>' . "\n";
+            $hiddenshow = ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_typename() . '">'
+                          .'<img src="' . $CFG->pixpath . '/i/' . ($i->get_visible() ? 'hide' : 'show') . '.gif"'
+                              .' alt="' . get_string($i->get_visible() ? 'hide' : 'show') . '" />'
+                          .'</a>' . "\n";
 
              // display up/down link
             $updown = '';

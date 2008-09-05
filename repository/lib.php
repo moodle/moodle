@@ -923,7 +923,7 @@ function repository_check_context($ctx_id){
  * @param string $type a type name to retrieve
  * @return array repository instances
  */
-function repository_get_instances($context=null, $userid = null, $onlyvisible = true, $type=null){
+function repository_get_instances($context=null, $userid = null, $onlyvisible = true, $type=null, $nositeinstances=true){
     global $DB, $CFG, $USER;
     $params = array();
     $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
@@ -937,8 +937,12 @@ function repository_get_instances($context=null, $userid = null, $onlyvisible = 
             $sql .= ' AND (i.contextid = ?)';
             $params[] = SYSCONTEXTID;
         } else {
-            $sql .= ' AND (i.contextid = ? or i.contextid = ?)';
-            $params[] = SYSCONTEXTID;
+            if ($nositeinstances) {
+                $sql .= ' AND i.contextid = ?';
+            } else {
+                $sql .= ' AND (i.contextid = ? or i.contextid = ?)';
+                $params[] = SYSCONTEXTID;
+            }
             $params[] = $context->id;
         }
     }
@@ -1899,6 +1903,7 @@ final class repository_instance_form extends moodleform {
         // type of plugin, string
         $this->plugin = $this->_customdata['plugin'];
         $this->typeid = $this->_customdata['typeid'];
+        $this->contextid = $this->_customdata['contextid'];
         $this->instance = (isset($this->_customdata['instance'])
                 && is_subclass_of($this->_customdata['instance'], 'repository'))
             ? $this->_customdata['instance'] : null;
@@ -1910,6 +1915,7 @@ final class repository_instance_form extends moodleform {
         $mform->addElement('hidden', 'new',   $this->plugin);
         $mform->addElement('hidden', 'plugin', $this->plugin);
         $mform->addElement('hidden', 'typeid', $this->typeid);
+        $mform->addElement('hidden', 'contextid', $this->contextid);
 
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
         $mform->addRule('name', $strrequired, 'required', null, 'client');
@@ -1924,7 +1930,6 @@ final class repository_instance_form extends moodleform {
         }
 
         // and set the data if we have some.
-        //var_dump($this);
         if ($this->instance) {
             $data = array();
             $data['name'] = $this->instance->name;
@@ -2017,7 +2022,6 @@ final class repository_admin_form extends moodleform {
             }
             $this->set_data($data);
         }
-
         $this->add_action_buttons(true, get_string('save','repository'));
     }
 
@@ -2029,24 +2033,23 @@ final class repository_admin_form extends moodleform {
  * @global object $CFG
  * @global object $USER
  * @param object $context the context for which we display the instance
- * @param boolean $admin if true, so the form is been called by an administration
- *                       page, only one type would be displayed
  * @param string $typename if set, we display only one type of instance
  */
-function repository_display_instances_list($context, $admin = false, $typename = null){
+function repository_display_instances_list($context, $typename = null){
        global $CFG, $USER;
-        if ($admin) {
+
+        $output = print_box_start('generalbox','',true);
+        //if the context is SYSTEM, so we call it from administration page
+        $admin = ($context->id == SYSCONTEXTID) ? true : false;
+        if($admin) {
             $baseurl = $CFG->wwwroot . '/admin/repositoryinstance.php?sesskey=' . sesskey();
-            $type = repository_get_type_by_typename($typename);
-
-        }
-        $output = print_simple_box_start(true);
-
-        if ($admin) {
              $output .= "<div ><h2 style='text-align: center'>" . get_string('siteinstances', 'repository') . " ";
-        }
-        $output .= "</h2></div>";
+             $output .= "</h2></div>";
+        } else {
+          $baseurl = $CFG->wwwroot . '/repository/manage_instances.php?contextid=' . $context->id . '&amp;sesskey=' . sesskey();
 
+        }
+        
         $namestr = get_string('name');
         $pluginstr = get_string('plugin', 'repository');
         $settingsstr = get_string('settings');
@@ -2054,10 +2057,11 @@ function repository_display_instances_list($context, $admin = false, $typename =
         $updown = get_string('updown', 'repository');
         $plugins = get_list_of_plugins('repository');
         //retrieve list of instances. In administration context we want to display all
-        //instances even if the type is not visible. In course/user context we
-        //want to display only visible instances. The repository_get_instances()
-        //third parameter displays only visible type.
-        $instances = repository_get_instances($context,null,!$admin,$typename);
+        //instances of a type, even if this type is not visible. In course/user context we
+        //want to display only visible instances, but for every type types. The repository_get_instances()
+        //third parameter displays only visible type. The fifth parameter is a trick that return
+        //instances of the $context + systemcontext.
+        $instances = repository_get_instances($context,null,!$admin,$typename, !$admin);
         $instancesnumber = count($instances);
         $alreadyplugins = array();
         $table = new StdClass;
@@ -2070,8 +2074,8 @@ function repository_display_instances_list($context, $admin = false, $typename =
             $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
             $delete = '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
 
+            $type = repository_get_type_by_id($i->typeid);
             $table->data[] = array($i->name, $type->get_readablename(), $delete, $settings);
-
 
             //display a grey row if the type is defined as not visible
             if (isset($type) && !$type->get_visible()){
@@ -2094,14 +2098,15 @@ function repository_display_instances_list($context, $admin = false, $typename =
             $instancehtml .= get_string('createrepository', 'repository');
             $instancehtml .= '</h3><ul>';
             foreach ($plugins as $p) {
-                if (!in_array($p, $alreadyplugins)) {
-                   if (repository_static_function($p->get_typename(), 'has_multiple_instances')){
-                        $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$p.'">'.get_string('create', 'repository')
-                            .' "'.get_string('repositoryname', 'repository_'.$p).'" '
-                            .get_string('instance', 'repository').'</a></li>';
-                        $addable++;
-                    }
-                }
+                   $type = repository_get_type_by_typename($p);
+                   if ($type->get_visible()) {
+                       if (repository_static_function($p, 'has_multiple_instances')){
+                            $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$p.'">'.get_string('create', 'repository')
+                                .' "'.get_string('repositoryname', 'repository_'.$p).'" '
+                                .get_string('instance', 'repository').'</a></li>';
+                            $addable++;
+                        }
+                   }
             }
              $instancehtml .= '</ul>';
         }
@@ -2115,16 +2120,13 @@ function repository_display_instances_list($context, $admin = false, $typename =
             }
         }
 
-
-
         if ($addable) {
             $instancehtml .= '</div>';
             $output .= $instancehtml;
         }
 
-        $output .= print_simple_box_end(true);
+        $output .= print_box_end(true);
 
         //print the list + creation links
         print($output);
-
 }

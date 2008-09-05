@@ -51,11 +51,12 @@ if (!empty($edit) || !empty($new)) {
     $CFG->pagepath = 'admin/managerepository/' . $plugin;
     // display the edit form for this instance
     $mform = new repository_admin_form('', array('plugin' => $plugin, 'instance' => $repositorytype));
+    $fromform = $mform->get_data();
     // end setup, begin output
     if ($mform->is_cancelled()){
         redirect($baseurl);
         exit;
-    } else if ($fromform = $mform->get_data() || (!empty($new) && !repository_static_function($new,"has_admin_config"))){
+    } else if (!empty($fromform) || (!empty($new) && !repository_static_function($new,"has_admin_config"))){
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
@@ -92,7 +93,7 @@ if (!empty($edit) || !empty($new)) {
         if ($edit){
              if (repository_static_function($edit,"has_instance_config")
                  || repository_static_function($edit,"has_multiple_instances")){
-                repository_display_instances_list(get_context_instance(CONTEXT_SYSTEM), true, $edit);
+                repository_display_instances_list(get_context_instance(CONTEXT_SYSTEM), $edit);
            }
         }
 

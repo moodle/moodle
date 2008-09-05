@@ -13,6 +13,8 @@ $sure    = optional_param('sure', '', PARAM_ALPHA);
 $move    = optional_param('move', '', PARAM_ALPHA);
 $type    = optional_param('type', '', PARAM_ALPHA);
 
+$context = get_context_instance(CONTEXT_SYSTEM);
+
 $display = true; // fall through to normal display
 
 $pagename = 'repositorycontroller';
@@ -57,7 +59,7 @@ if (!empty($edit) || !empty($new)) {
     }
 
     // display the edit form for this instance
-    $mform = new repository_instance_form('', array('plugin' => $plugin, 'typeid' => $typeid,'instance' => $instance));
+    $mform = new repository_instance_form('', array('plugin' => $plugin, 'typeid' => $typeid,'instance' => $instance, 'contextid' => $context->id));
     // end setup, begin output
 
     if ($mform->is_cancelled()){
