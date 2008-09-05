@@ -101,7 +101,7 @@ if (!is_null($path)) {
     $formheader = get_string('rununittests', $langfile);
 }
 // Print the form for adjusting options.
-print_simple_box_start('center', '70%');
+print_box_start('generalbox boxwidthwide');
 echo '<form method="get" action="index.php">';
 echo '<fieldset class="invisiblefieldset">';
 print_heading($formheader);
@@ -116,7 +116,7 @@ echo '<p>'; print_checkbox('rundbtests', 1, $rundbtests, get_string('rundbtests'
 echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
 echo '</fieldset>';
 echo '</form>';
-print_simple_box_end();
+print_box_end();
 
 // Footer.
 admin_externalpage_print_footer();
