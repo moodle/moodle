@@ -1706,7 +1706,6 @@ class assignment_base {
 
         if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
             $p = array(
-                'userid' => $userid,
                 'assignmentid' => $this->cm->id,
             );
             foreach ($files as $file) {
@@ -3167,7 +3166,8 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if (!$this->assignment->portfolio_exportable()) {
             throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
         }
-        $this->userid = $callbackargs['userid'];
+        global $USER;
+        $this->userid = $USER->id;
         $this->file = (array_key_exists('file', $callbackargs)) ? $callbackargs['file'] : null;
     }
 
