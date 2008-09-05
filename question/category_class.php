@@ -237,7 +237,7 @@ class question_category_object {
         foreach ($this->editlists as $context => $list){
             $listhtml = $list->to_html(0, array('str'=>$this->str));
             if ($listhtml){
-                print_box_start('boxwidthwide boxaligncenter generalbox questioncatategories contextlevel' . $list->context->contextlevel);
+                print_box_start('boxwidthwide boxaligncenter generalbox questioncategories contextlevel' . $list->context->contextlevel);
                 print_heading(get_string('questioncatsfor', 'question', print_context_name(get_context_instance_by_id($context))), '', 3);
                 echo $listhtml;
                 print_box_end();
