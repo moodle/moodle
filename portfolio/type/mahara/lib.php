@@ -304,10 +304,14 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         try {
             $i = $exporter->get('instance');
             $f = $i->get('file');
-            if (empty($f)) {
+            if (empty($f) || !($f instanceof stored_file)) {
                 exit(mnet_server_fault(8012, 'could not find file in transfer object - weird error'));
             }
-            $c = $f->get_content();
+            try {
+                $c = $f->get_content();
+            } catch (file_exception $e) {
+                exit(mnet_server_fault(8013, 'found file object but couldn\'t get contents - weird error: ' . $e->getMessage()));
+            }
             $contents = base64_encode($c);
         } catch (Exception $e) {
             exit(mnet_server_fault(8013, 'could not get file to send'));
