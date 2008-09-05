@@ -462,7 +462,7 @@ class file_storage {
 
         $file_record->filename = clean_param($file_record->filename, PARAM_FILE);
         if ($file_record->filename === '') {
-            // path must start and end with '/'
+            // filename must not be empty
             throw new file_exception('storedfileproblem', 'Invalid file name');
         }
 
