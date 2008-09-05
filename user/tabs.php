@@ -93,7 +93,7 @@
         $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
         $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
 
-        if ($user->id == $USER->id || has_capability('moodle/user:viewdetails', $coursecontext) || has_capability('moodle/user:viewdetails', $personalcontext) ) { 
+        if ($user->id == $USER->id || has_capability('moodle/user:viewdetails', $coursecontext) || has_capability('moodle/user:viewdetails', $personalcontext) ) {
             $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, get_string('profile'));
         }
 
@@ -253,9 +253,11 @@
         require_once($CFG->dirroot . '/repository/lib.php');
         //$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $usercontext = get_context_instance(CONTEXT_USER,$user->id);
-        if (repository_get_instances($usercontext, $USER->id)) {
+
+        //if (repository_get_instances($usercontext, $USER->id)) {
             $toprow[] = new tabobject('repositories', $CFG->wwwroot .'/repository/manage_instances.php?contextid='.$usercontext->id, get_string('repositories', 'repository'));
-        }
+        //}
+
     }
 
     /// Messaging tab
@@ -272,7 +274,7 @@
         $tabs = array($toprow);
     }
 
-    if ($currenttab == 'editprofile' && ($user->id == $USER->id) && user_not_fully_set_up($USER)) {  
+    if ($currenttab == 'editprofile' && ($user->id == $USER->id) && user_not_fully_set_up($USER)) {
         /// We're being forced here to fix profile
       notify(get_string('moreprofileinfoneeded'));
     } else {
