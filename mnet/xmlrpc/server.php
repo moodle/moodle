@@ -240,6 +240,7 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
  *
  * @param  int    $code   The ID code of the error message
  * @param  string $text   The array-key of the error message in the lang file
+ *                        or the full string (will be detected by the function
  * @param  string $param  The $a param for the error message in the lang file
  * @return string $text   The text of the error message
  */
@@ -250,8 +251,12 @@ function mnet_server_fault($code, $text, $param = null) {
     }
     $code = intval($code);
 
-    $text = get_string($text, 'mnet', $param);
-    return mnet_server_fault_xml($code, $text);
+    $string = get_string($text, 'mnet', $param);
+    if (strpos($string, '[[') === 0) {
+        $string = $text;
+    }
+
+    return mnet_server_fault_xml($code, $string);
 }
 
 /**
