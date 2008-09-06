@@ -375,8 +375,7 @@ class generator {
             $DB->get_in_or_equal($this->modules_to_ignore, SQL_PARAMS_NAMED, 'param2000', false);
 
         $wheresql = "name $modules_list_sql AND name $modules_ignored_sql";
-        $modules = $DB->get_records_select('modules', $wheresql,
-            array_merge($modules_params, $ignore_params));
+        $modules = $DB->get_records_select('modules', $wheresql, array_merge($modules_params, $ignore_params));
 
         foreach ($modules as $key => $module) {
             $module->count = 0;
@@ -1230,6 +1229,10 @@ function generator_generate_data($settings) {
 class fake_form {
     function get_new_filename($string) {
         return false;
+    }
+
+    function save_stored_file() {
+        return true;
     }
 }
 
