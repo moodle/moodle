@@ -13,8 +13,6 @@ class postgres7_adodb_moodle_database_test extends dbspecific_test {
     function test_ilike() {
         $DB = $this->tdb;
 
-        $id = $DB->insert_record('testtable', array('name' => 'SuperDuperREcord'));
-
         $sql = "SELECT 'SuperDuperRecord' " . $DB->sql_ilike() . " '%per%' AS result";
         $record = $DB->get_record_sql($sql);
         $this->assertEqual('t', $record->result);

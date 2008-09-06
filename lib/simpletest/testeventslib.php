@@ -75,7 +75,7 @@ class sample_handler_class {
 }
 
 class eventslib_test extends UnitTestCase {
-
+    private $realdb;
     /**
      * Create temporary entries in the database for these tests.
      * These tests have to work no matter the data currently in the database
@@ -83,6 +83,15 @@ class eventslib_test extends UnitTestCase {
      * data have to be artificially inseminated (:-) in the DB.
      */
     function setUp() {
+        // Set global category settings to -1 (not force)
+        global $CFG, $DB;
+
+        if (is_null($DB)) {
+            $this->realdb = $DB;
+            $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+            $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->prefix);
+        }
+
         events_uninstall('unittest');
         sample_function_handler('reset');
         sample_handler_class::static_method('reset');
@@ -123,6 +132,7 @@ class eventslib_test extends UnitTestCase {
      * Tests the update of event handlers from file
      */
     function test__events_update_definition__update() {
+        global $DB;
         // first modify directly existing handler
         $handler = $DB->get_record('events_handlers', array('handlermodule'=>'unittest', 'eventname'=>'test_instant'));
 
