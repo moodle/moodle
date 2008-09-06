@@ -32,7 +32,7 @@ class generator {
                            'choice' =>              array('required' => false, 'toclean' => true),
                            'config' =>              array('required' => true,  'toclean' => false),
                            'config_plugins' =>      array('required' => true,  'toclean' => false),
-                           'context' =>             array('required' => true,  'toclean' => false),
+                           'context' =>             array('required' => true,  'toclean' => true),
                            'course' =>              array('required' => true,  'toclean' => true, 'wheresql' => 'sortorder > 1'),
                            'course_categories' =>   array('required' => true,  'toclean' => true, 'wheresql' => 'id > 1'),
                            'course_modules' =>      array('required' => true,  'toclean' => true),
@@ -145,9 +145,11 @@ class generator {
                    'help' => 'The number of posts to generate for each forum discussion. Default=15',
                    'type'=>'NUMBER', 'default' => 15),
             );
+
         foreach ($arguments as $args_array) {
             $this->settings[$args_array['long']] = new generator_argument($args_array);
         }
+
         foreach ($settings as $setting => $value) {
             $this->settings[$setting]->value = $value;
         }
@@ -1223,6 +1225,7 @@ class generator_web extends generator {
 
 function generator_generate_data($settings) {
     $generator = new generator($settings);
+    $generator->do_generation = true;
     $generator->generate_data();
 }
 
