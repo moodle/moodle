@@ -258,7 +258,7 @@ class file_browser {
             } else {
                 $fileinfofunction = $modname.'_get_file_info';
                 if (function_exists($fileinfofunction)) {
-                    return $fileinfofunction($course, $cm, $context, $filearea);
+                    return $fileinfofunction($course, $cm, $context, $filearea, $itemid);
                 }
             }
         }
