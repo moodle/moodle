@@ -1015,7 +1015,7 @@ function get_user_courses_bycap($userid, $cap, $accessdata, $doanything, $sort='
         /// Enclosing the 3-UNION into an inline_view to avoid column names conflict and making the ORDER BY cross-db
         /// and to allow selection of TEXT columns in the query (MSSQL and Oracle limitation). MDL-16209
         $sql = "
-            SELECT $coursefields, ctxid, ctxpath, ctxdepth, ctxlevel, categorypath 
+            SELECT $coursefields, ctxid, ctxpath, ctxdepth, ctxlevel, categorypath
               FROM (
                     SELECT c.id,
                            ctx.id AS ctxid, ctx.path AS ctxpath,
@@ -1936,6 +1936,7 @@ function create_context($contextlevel, $instanceid) {
     $basedepth = 1;
 
     $result = true;
+    $error_message = null;
 
     switch ($contextlevel) {
         case CONTEXT_COURSECAT:
@@ -1961,6 +1962,7 @@ function create_context($contextlevel, $instanceid) {
                 }
             } else {
                 // incorrect category id
+                $error_message = "incorrect course category id ($instanceid)";
                 $result = false;
             }
             break;
@@ -1991,6 +1993,7 @@ function create_context($contextlevel, $instanceid) {
                 return false;
             } else {
                 // incorrect course id
+                $error_message = "incorrect course id ($instanceid)";
                 $result = false;
             }
             break;
@@ -2011,10 +2014,12 @@ function create_context($contextlevel, $instanceid) {
                     $basedepth = $parent->depth;
                 } else {
                     // course does not exist - modules can not exist without a course
+                    $error_message = "course does not exist ($cm->course) - modules can not exist without a course";
                     $result = false;
                 }
             } else {
                 // cm does not exist
+                $error_message = "cm with id $instanceic does not exist";
                 $result = false;
             }
             break;
@@ -2038,10 +2043,12 @@ function create_context($contextlevel, $instanceid) {
                     $basedepth = $parent->depth;
                 } else {
                     // parent course does not exist - course blocks can not exist without a course
+                    $error_message = 'parent course does not exist - course blocks can not exist without a course';
                     $result = false;
                 }
             } else {
                 // block does not exist
+                $error_message = 'block does not exist';
                 $result = false;
             }
             break;
@@ -2065,7 +2072,8 @@ function create_context($contextlevel, $instanceid) {
     } else {
         debugging('Error: could not insert new context level "'.
                   s($contextlevel).'", instance "'.
-                  s($instanceid).'".');
+                  s($instanceid).'". ' . $error_message);
+
         return false;
     }
 }
@@ -4004,7 +4012,7 @@ function get_assignable_roles($context, $field='name', $rolenamedisplay=ROLENAME
 
     if (!has_capability('moodle/role:assign', $context)) {
         return array();
-    } 
+    }
 
     $parents = get_parent_contexts($context);
     $parents[] = $context->id;
@@ -4045,7 +4053,7 @@ function get_assignable_roles_for_switchrole($context, $field='name', $rolenamed
 
     if (!has_capability('moodle/role:assign', $context)) {
         return array();
-    } 
+    }
 
     $parents = get_parent_contexts($context);
     $parents[] = $context->id;
@@ -5246,7 +5254,7 @@ function build_context_path($force=false) {
         $updatesql = "UPDATE {context}
                          SET path  = (SELECT path FROM {context_temp} WHERE id = {context}.id),
                              depth = (SELECT depth FROM {context_temp} WHERE id = {context}.id)
-                         WHERE id IN (SELECT id FROM mdl_context_temp)";    
+                         WHERE id IN (SELECT id FROM mdl_context_temp)";
     }
 
     // Top level categories
