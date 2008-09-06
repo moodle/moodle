@@ -25,7 +25,7 @@ class file_storage {
 
     /**
      * Returns location of filedir (file pool)
-     * @return string pathname 
+     * @return string pathname
      */
     public function get_filedir() {
         return $this->filedir;
@@ -433,6 +433,37 @@ class file_storage {
      * Add new local file
      * @param mixed $file_record object or array describing file
      * @param string $path path to file or content of file
+     * @param array $options @see download_file_content() options
+     * @return object stored_file instance
+     */
+    public function create_file_from_url($file_record, $url, $options=null) {
+        $file_record = (object)$file_record; // we support arrays too
+
+        $headers        = isset($options['headers'])        ? $options['headers'] : null;
+        $postdata       = isset($options['postdata'])       ? $options['postdata'] : null;
+        $fullresponse   = isset($options['fullresponse'])   ? $options['fullresponse'] : false;
+        $timeout        = isset($options['timeout'])        ? $options['timeout'] : 300;
+        $connecttimeout = isset($options['connecttimeout']) ? $options['connecttimeout'] : 20;
+        $skipcertverify = isset($options['skipcertverify']) ? $options['skipcertverify'] : false;
+
+        // TODO: it might be better to add a new option to file file content to temp file,
+        //       the problem here is that the size of file is limited by available memory
+
+        $content = download_file_content($url, $headers, $postdata, $fullresponse, $timeout, $connecttimeout, $skipcertverify);
+
+        if (!isset($file_record->filename)) {
+            $parts = explode('/', $url);
+            $filename = array_pop($parts);
+            $file_record->filename = clean_param($filename, PARAM_FILE);
+        }
+
+        return $this->create_file_from_string($file_record, $content);
+    }
+
+    /**
+     * Add new local file
+     * @param mixed $file_record object or array describing file
+     * @param string $path path to file or content of file
      * @return object stored_file instance
      */
     public function create_file_from_pathname($file_record, $pathname) {
@@ -580,7 +611,7 @@ class file_storage {
     }
 
     /**
-     * Move one or more files from a given itemid location in the current user's draft files 
+     * Move one or more files from a given itemid location in the current user's draft files
      * to a new filearea.  Note that you can't rename files using this function.
      * @param int $itemid  - existing itemid in user draft_area with one or more files
      * @param int $newcontextid  - the new contextid to move files to
@@ -592,12 +623,12 @@ class file_storage {
      * @return mixed stored_file object or false if error; may throw exception if duplicate found
      * @return array(contenthash, filesize, newfile)
      */
-    public function move_draft_to_final($itemid, $newcontextid, $newfilearea, $newitemid, 
+    public function move_draft_to_final($itemid, $newcontextid, $newfilearea, $newitemid,
                                         $newfilepath='/', $overwrite=false) {
 
         global $USER;
 
-    /// Get files from the draft area 
+    /// Get files from the draft area
         if (!$usercontext = get_context_instance(CONTEXT_USER, $USER->id)) {
             return false;
         }
@@ -610,13 +641,13 @@ class file_storage {
             $newitemid = 0;
         }
 
-    /// Process each file in turn 
+    /// Process each file in turn
 
         $returnfiles = array();
         foreach ($files as $file) {
 
         /// Delete any existing files in destination if required
-            if ($oldfile = $this->get_file($newcontextid, $newfilearea, $newitemid, 
+            if ($oldfile = $this->get_file($newcontextid, $newfilearea, $newitemid,
                                            $newfilepath, $file->get_filename())) {
                 if ($overwrite) {
                     $oldfile->delete();
