@@ -50,6 +50,17 @@ class file_info_course extends file_info {
             }
         }
 
+        $modinfo = get_fast_modinfo($this->course);
+        foreach ($modinfo->cms as $cminfo) {
+            if (empty($cminfo->uservisible)) {
+                continue;
+            }
+            $modcontext = get_context_instance(CONTEXT_MODULE, $cminfo->id);
+            if ($child = $this->browser->get_file_info($modcontext)) {
+                $children[] = $child;
+            }
+        }
+
         return $children;
     }
 

@@ -1,6 +1,7 @@
 <?php  //$Id$
 
 require_once("$CFG->libdir/file/file_info.php");
+require_once("$CFG->libdir/file/file_info_module.php");
 require_once("$CFG->libdir/file/file_info_stored.php");
 require_once("$CFG->libdir/file/file_info_system.php");
 require_once("$CFG->libdir/file/file_info_user.php");
@@ -23,7 +24,7 @@ class file_browser {
      * @return object file_info object or null if not found or access not allowed
      */
     public function get_file_info($context, $filearea=null, $itemid=null, $filepath=null, $filename=null) {
-        global $USER, $CFG, $DB;
+        global $USER, $CFG, $DB, $COURSE;
 
         $fs = get_file_storage();
 
@@ -117,12 +118,13 @@ class file_browser {
                     }
                     // TODO: localise
                     return new file_info_stored($this, $context, $storedfile, $urlbase, 'Category introduction files', false, true, true);
-
                 }
             }
 
         } else if ($context->contextlevel == CONTEXT_COURSE) {
-            if (!$course = $DB->get_record('course', array('id'=>$context->instanceid))) {
+            if ($context->instanceid == $COURSE->id) {
+                $course = $COURSE;
+            } else if (!$course = $DB->get_record('course', array('id'=>$context->instanceid))) {
                 return null;
             }
 
@@ -198,7 +200,67 @@ class file_browser {
             }
 
         } else if ($context->contextlevel == CONTEXT_MODULE) {
-            //TODO
+            if (!$cm = get_coursemodule_from_id('', $context->instanceid)) {
+                return null;
+            }
+
+            if ($cm->course == $COURSE->id) {
+                $course = $COURSE;
+            } else if (!$course = $DB->get_record('course', array('id'=>$cm->course))) {
+                return null;
+            }
+
+            $modinfo = get_fast_modinfo($course);
+
+            if (empty($modinfo->cms[$cm->id]->uservisible)) {
+                return null;
+            }
+
+            $modname = $modinfo->cms[$cm->id]->modname;
+
+            $libfile = "$CFG->dirroot/mod/$modname/lib.php";
+            if (!file_exists($libfile)) {
+                return null;
+            }
+            require_once($libfile);
+
+            $fileinfofunction = $modname.'_get_file_areas';
+            if (function_exists($fileinfofunction)) {
+                $areas = $fileinfofunction($course, $cm, $context);
+            } else {
+                return null;
+            }
+            if (is_null($filearea) or is_null($itemid)) {
+                return new file_info_module($this, $course, $cm, $context, $areas);
+                
+            } else if (!isset($areas[$filearea])) {
+                return null; 
+
+            } else if ($filearea === $modname.'_intro') {
+                if (!has_capability('moodle/course:managefiles', $context)) {
+                    return null;
+                }
+
+                $filepath = is_null($filepath) ? '/' : $filepath;
+                $filename = is_null($filename) ? '.' : $filename;
+
+                $urlbase = $CFG->wwwroot.'/pluginfile.php';
+                if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+                    if ($filepath === '/' and $filename === '.') {
+                        $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                    } else {
+                        // not found
+                        return null;
+                    }
+                }
+                return new file_info_stored($this, $context, $storedfile, $urlbase, $areas[$filearea], false, true, true);
+
+            } else {
+                $fileinfofunction = $modname.'_get_file_info';
+                if (function_exists($fileinfofunction)) {
+                    return $fileinfofunction($course, $cm, $context, $filearea);
+                }
+            }
         }
 
         return null;

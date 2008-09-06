@@ -3977,6 +3977,17 @@ function forum_print_attachments($post, $cm, $type) {
 }
 
 /**
+ * Lists all browsable file areas
+ */
+function forum_get_file_areas($course, $cm, $context) {
+    $areas = array();
+    if (has_capability('moodle/course:managefiles', $context)) {
+        $areas['forum_intro'] = 'Forum introduction files'; // TODO: localise
+    }
+    return $areas;
+}
+
+/**
  * Serves the forum attachments. Implements needed access control ;-)
  */
 function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {

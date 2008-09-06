@@ -22,7 +22,7 @@ class file_info_module extends file_info {
     }
 
     public function get_visible_name() {
-        return $this->cm->name.' ('.$this->cm->modname.')';
+        return $this->cm->name.' ('.get_string('modulename', $this->cm->modname).')';
     }
 
     public function is_writable() {
