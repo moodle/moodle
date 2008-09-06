@@ -29,7 +29,7 @@
     }
 
     $contextid = (int)array_shift($args);
-    $itemid    = (int)array_shift($args);
+    $filearea = array_shift($args);
 
     $context = get_context_instance_by_id($contextid);
     if ($context->contextlevel != CONTEXT_USER) {
@@ -41,11 +41,17 @@
         print_error('invaliduserid');
     }
 
+    switch ($filearea) {
+        case 'user_draft'  : $itemid = (int)array_shift($args); break;
+        default:        send_file_not_found();
+    }
+
     $relativepath = '/'.implode('/', $args);
+
 
     $fs = get_file_storage();
 
-    $fullpath = $context->id.'user_draft'.$itemid.$relativepath;
+    $fullpath = $context->id.$filearea.$itemid.$relativepath;
 
     if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->get_filename() == '.') {
         send_file_not_found();
