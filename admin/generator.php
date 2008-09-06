@@ -22,22 +22,62 @@ class generator {
                                   'survey' => 'survey',
                                   'wiki' => 'wiki',
                                   'workshop' => 'workshop');
-    public $tables = array('user', 'course', 'modules', 'course_modules', 'chat', 'choice', 'context',
-                        'course_sections', 'data', 'forum', 'glossary', 'label', 'lesson', 'question',
-                        'quiz', 'resource', 'survey', 'wiki', 'workshop', 'course_categories',
-                        'role_capabilities', 'config_plugins', 'block', 'message', 'groups', 'block_pinned',
-                        'log', 'grade_items', 'forum_discussions', 'event', 'lesson_default', 'grade_categories',
-                        'assignment', 'role_assignments', 'block_instance', 'forum_posts');
+
+    public $tables = array('assignment' =>          array('required' => false, 'toclean' => true),
+                           'block' =>               array('required' => true,  'toclean' => false),
+                           'block_instance' =>      array('required' => true,  'toclean' => true),
+                           'block_pinned' =>        array('required' => true,  'toclean' => true),
+                           'capabilities' =>        array('required' => true,  'toclean' => false),
+                           'chat' =>                array('required' => false, 'toclean' => true),
+                           'choice' =>              array('required' => false, 'toclean' => true),
+                           'config' =>              array('required' => true,  'toclean' => false),
+                           'config_plugins' =>      array('required' => true,  'toclean' => false),
+                           'context' =>             array('required' => true,  'toclean' => false),
+                           'course' =>              array('required' => true,  'toclean' => true, 'wheresql' => 'sortorder > 1'),
+                           'course_categories' =>   array('required' => true,  'toclean' => true, 'wheresql' => 'id > 1'),
+                           'course_modules' =>      array('required' => true,  'toclean' => true),
+                           'course_sections' =>     array('required' => true,  'toclean' => true),
+                           'data' =>                array('required' => false, 'toclean' => true),
+                           'event' =>               array('required' => true,  'toclean' => true),
+                           'forum' =>               array('required' => false, 'toclean' => true),
+                           'forum_discussions' =>   array('required' => false, 'toclean' => true),
+                           'forum_posts' =>         array('required' => false, 'toclean' => true),
+                           'glossary' =>            array('required' => false, 'toclean' => true),
+                           'glossary_formats' =>    array('required' => false, 'toclean' => false),
+                           'grade_categories' =>    array('required' => true,  'toclean' => true),
+                           'grade_items' =>         array('required' => true,  'toclean' => true),
+                           'groups' =>              array('required' => true,  'toclean' => true),
+                           'label' =>               array('required' => false, 'toclean' => true),
+                           'lesson' =>              array('required' => false, 'toclean' => true),
+                           'lesson_default' =>      array('required' => false, 'toclean' => true),
+                           'log' =>                 array('required' => true,  'toclean' => true),
+                           'log_display' =>         array('required' => true,  'toclean' => true),
+                           'message' =>             array('required' => false, 'toclean' => true),
+                           'modules' =>             array('required' => true,  'toclean' => true),
+                           'question' =>            array('required' => false, 'toclean' => true),
+                           'quiz' =>                array('required' => false, 'toclean' => true),
+                           'resource' =>            array('required' => true,  'toclean' => true),
+                           'role' =>                array('required' => true,  'toclean' => false),
+                           'role_allow_assign' =>   array('required' => true,  'toclean' => false),
+                           'role_allow_override' => array('required' => true,  'toclean' => false),
+                           'role_assignments' =>    array('required' => true,  'toclean' => true),
+                           'role_capabilities' =>   array('required' => true,  'toclean' => true),
+                           'survey' =>              array('required' => false, 'toclean' => true),
+                           'user' =>                array('required' => true,  'toclean' => true, 'wheresql' => 'id > 2'),
+                           'wiki' =>                array('required' => false, 'toclean' => true)
+                           );
+    public $missing_tables = array();
 
     public $settings = array();
     public $eolchar = '<br />';
-
+    public $do_generation = false;
     public $starttime;
+    public $original_db;
 
     public function __construct($settings = array(), $generate=false) {
-        global $CFG;
+        global $CFG, $DB;
 
-        $this->starttimer = time()+microtime();
+        $this->starttime = time()+microtime();
 
         $arguments = array(
              array('short'=>'u', 'long'=>'username',
@@ -49,7 +89,7 @@ class generator {
                    'type'=>'STRING', 'default' => 'test_'),
              array('short'=>'P', 'long' => 'database_prefix',
                    'help' => 'Database prefix to use: tables must already exist or the script will abort!',
-                   'type'=>'STRING', 'default' => $CFG->prefix),
+                   'type'=>'STRING', 'default' => 'tst_'),
              array('short'=>'c', 'long' => 'pre_cleanup', 'help' => 'Delete previously generated data'),
              array('short'=>'C', 'long' => 'post_cleanup',
                    'help' => 'Deletes all generated data at the end of the script (for benchmarking of generation only)'),
@@ -82,7 +122,9 @@ class generator {
                    'help' => 'The list of modules you want to generate', 'default' => $this->modules_list,
                    'type' => 'mod1,mod2...'),
              array('short'=>'at', 'long' => 'assignment_type',
-                   'help' => 'The specific type of assignment you want to generate. Defaults to random', 'default' => 'random'),
+                   'help' => 'The specific type of assignment you want to generate. Defaults to random',
+                   'default' => 'random',
+                   'type' => 'STRING'),
              array('short'=>'ag', 'long' => 'assignment_grades',
                    'help' => 'Generate random grades for each student/assignment tuple', 'default' => true),
              array('short'=>'qg', 'long' => 'quiz_grades',
@@ -113,6 +155,12 @@ class generator {
         if ($generate) {
             $this->generate_data();
         }
+
+        $this->original_db = clone($DB);
+
+        $class = get_class($DB);
+        $DB = new $class();
+        $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, true, $this->get('database_prefix'));
     }
 
     public function generate_users() {
@@ -208,6 +256,10 @@ class generator {
     }
 
     public function generate_data() {
+        if (!$this->do_generation) {
+            return false;
+        }
+
         set_time_limit($this->get('time_limit'));
 
         // Process tiny data set
@@ -227,7 +279,6 @@ class generator {
 
         if ($this->get('pre_cleanup')) {
             $this->verbose("Deleting previous test data...");
-
             $this->data_cleanup();
 
             if (!$this->get('quiet')) {
@@ -261,7 +312,7 @@ class generator {
          * FINISHING SCRIPT
          */
         $stoptimer = time()+microtime();
-        $timer = round($stoptimer-$this->starttimer,4);
+        $timer = round($stoptimer-$this->starttime,4);
         if (!$this->get('quiet')) {
             echo "End of script! ($timer seconds taken){$this->eolchar}";
         }
@@ -867,26 +918,28 @@ class generator {
      * exist.
      */
     public function check_test_tables() {
-        global $CFG;
+        global $CFG, $DB;
 
-        sort($this->tables);
-        $CFG->prefix = $this->get('database_prefix');
+        ksort($this->tables);
         // Check that all required tables exist
 
         $table_errors = array();
 
-        foreach ($this->tables as $table) {
+        foreach ($this->tables as $table => $tabledata) {
             require_once($CFG->libdir . '/ddllib.php');
             $dbman = $DB->get_manager();
             $xmltable = new XMLDBTable($table);
             if (!$dbman->table_exists($xmltable)) {
-                $table_errors[] = $this->get('database_prefix') . $table;
+                if ($tabledata['required']) {
+                    $table_errors[] = $this->get('database_prefix') . $table;
+                }
+                $this->missing_tables[] = $table;
             }
         }
 
         if (!empty($table_errors) && !$this->get('quiet')) {
             if (!$this->get('quiet')) {
-                echo "The following tables do not exist in the database:" . $this->eolchar;
+                echo "The following required tables do not exist in the database:" . $this->eolchar;
                 foreach ($table_errors as $table) {
                     echo "    $table" . $this->eolchar;
                 }
@@ -924,11 +977,19 @@ class generator {
         }
 
         // Truncate test tables if a specific db prefix was given
-        if (!is_null($this->get('database_prefix')) && isset($tables)) {
-            foreach ($tables as $table_name) {
+        if (!is_null($this->get('database_prefix')) && isset($this->tables)) {
+            foreach ($this->tables as $table_name => $tabledata) {
                 // Don't empty a few tables
-                if (!in_array($table_name, array('modules', 'block'))) {
-                    if ($DB->delete_records($table_name)) {
+                if (!in_array($table_name, array('modules', 'block')) &&
+                            $tabledata['toclean'] &&
+                            !in_array($table_name, $this->missing_tables)) {
+                    // Leave the frontpage course
+                    $conditions = 'id > 0';
+                    if (!empty($tabledata['wheresql'])) {
+                        $conditions .= " AND {$tabledata['wheresql']} ";
+                    }
+
+                    if ($DB->delete_records_select($table_name, $conditions)) {
                         $this->verbose("Truncated table $table_name");
                     } else {
                         $this->verbose("Could not truncate table $table_name");
@@ -939,7 +1000,12 @@ class generator {
                 }
             }
 
-        } else { // Delete records in normal tables if no specific db prefix was given
+        } else {
+            echo "BOOH";
+        }
+        /** Following code has been commented for security reasons
+
+        else { // Delete records in normal tables if no specific db prefix was given
             $courses = $DB->get_records_select('course', "idnumber LIKE ?",
                 array($this->get('data_prefix').'%'), null, 'id');
 
@@ -965,6 +1031,8 @@ class generator {
                 }
             }
         }
+
+        */
 
         if ($this->get('quiet')) {
             ob_end_clean();
@@ -1043,7 +1111,7 @@ class generator_cli extends generator {
             die();
 
         } else {
-
+            $this->do_generation = true;
             $settings = $this->_arguments($settings);
             $argscount = 0;
 
@@ -1128,6 +1196,8 @@ class generator_web extends generator {
         print_heading("Data generator: web interface");
         $mform = new generator_form();
 
+        $this->do_generation = optional_param('do_generation', false, PARAM_BOOL);
+
         if ($data = $mform->get_data(false)) {
             foreach ($this->settings as $setting) {
                 if (isset($data->{$setting->long})) {
@@ -1140,6 +1210,7 @@ class generator_web extends generator {
         if (!has_capability('moodle/site:doanything', $systemcontext)) {
             // If not logged in, give link to login page for current site
             notify("You must be logged in as administrator before using this script.");
+            print_footer();
             require_login();
         } else {
             $mform->display();
@@ -1167,6 +1238,7 @@ class generator_form extends moodleform {
         global $generator;
         $mform =& $this->_form;
         $mform->addElement('hidden', 'web_interface', 1);
+        $mform->addElement('hidden', 'do_generation', 1);
 
         foreach ($generator->settings as $setting) {
             $type = 'advcheckbox';

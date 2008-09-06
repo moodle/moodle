@@ -36,6 +36,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 require_once($CFG->libdir . '/portfoliolib.php');
+require_once($CFG->dirroot . '/admin/generator.php');
 
 class portfolio_plugin_test extends portfolio_plugin_push_base {
     public function expected_time($callertime){
