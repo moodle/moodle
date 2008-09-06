@@ -360,7 +360,8 @@ class file_storage {
             $fid = $fid->get_id();
         }
 
-        $file_record = (array)$file_record; // we support arrays too
+        $file_record = (array)$file_record; // we support arrays too, do not modify the submitted record!
+
         unset($file_record['id']);
         unset($file_record['filesize']);
         unset($file_record['contenthash']);
@@ -437,6 +438,8 @@ class file_storage {
      * @return object stored_file instance
      */
     public function create_file_from_url($file_record, $url, $options=null) {
+
+        $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
         $file_record = (object)$file_record; // we support arrays too
 
         $headers        = isset($options['headers'])        ? $options['headers'] : null;
@@ -469,6 +472,7 @@ class file_storage {
     public function create_file_from_pathname($file_record, $pathname) {
         global $DB;
 
+        $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
         $file_record = (object)$file_record; // we support arrays too
 
         // validate all parameters, we do not want any rubbish stored in database, right?
@@ -544,6 +548,7 @@ class file_storage {
     public function create_file_from_string($file_record, $content) {
         global $DB;
 
+        $file_record = (array)$file_record;  //do not modify the submitted record, this cast unlinks objects
         $file_record = (object)$file_record; // we support arrays too
 
         // validate all parameters, we do not want any rubbish stored in database, right?
