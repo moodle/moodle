@@ -2019,7 +2019,7 @@ function create_context($contextlevel, $instanceid) {
                 }
             } else {
                 // cm does not exist
-                $error_message = "cm with id $instanceic does not exist";
+                $error_message = "cm with id $instanceid does not exist";
                 $result = false;
             }
             break;
