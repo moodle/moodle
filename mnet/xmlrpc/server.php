@@ -166,8 +166,21 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
                 $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
                 if ($isOpen) {
                     // It's an older code, sir, but it checks out
-                    $push_current_key = true;
-                    break;
+
+                    // The peer used one of our public keys that have expired, we will return a
+                    // signed/encrypted error message containing our new public key
+                    // Sign message with our old key, and encrypt to the peer's private key.
+
+                    // Fabricate 'was_signed'
+                    // Set here so that we sign the response containing the new public key.
+                    $MNET_REMOTE_CLIENT->was_signed();
+
+                    // 'Was_encrypted' is mostly true
+                    // Set here so that the response is encrypted to the remote peer's private key.
+                    $MNET_REMOTE_CLIENT->was_encrypted();
+
+                    // nb 'srvr_fault_xml' used to avoid use of get_string on our new public_key
+                    exit(mnet_server_fault_xml(7025, $MNET->public_key, $keyresource));
                 }
             }
         }
@@ -189,14 +202,6 @@ function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
     }
 
     unset($payload);
-
-    // if the peer used one of our public keys that have expired, we will
-    // return a signed/encrypted error message with our new public key 
-    if($push_current_key) {
-        // NOTE: Here, we use the 'mnet_server_fault_xml' to avoid
-        // get_string being called on our public_key
-        exit(mnet_server_fault_xml(7025, $MNET->public_key, $keyresource));
-    }
 
     /**
      * Get the certificate (i.e. public key) from the remote server.
