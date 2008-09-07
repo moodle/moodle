@@ -21,6 +21,7 @@ $string['allowsdiscussions'] = 'This forum allows each person to start one discu
 $string['allsubscribe'] = 'Subscribe to all forums';
 $string['allunsubscribe'] = 'Unsubscribe from all forums';
 $string['anyfile'] = 'Any file';
+$string['areaintro'] = 'Forum introdution';
 $string['attachment'] = 'Attachment';
 $string['attachments'] = 'Attachments';
 $string['attachmentnopost'] = 'You cannot export attachments without a post id';
