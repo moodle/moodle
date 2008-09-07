@@ -199,7 +199,7 @@ function mnet_server_check_signature($plaintextmessage) {
             }
             // If we did manage to re-key, try to verify the signature again using the new public key.
             $certificate = $MNET_REMOTE_CLIENT->public_key;
-            $signature_verified = openssl_verify($payload, base64_decode($sig_parser->signature), $certificate);
+            $signature_verified = openssl_verify($payload, $signature, $certificate);
         }
     }
 
