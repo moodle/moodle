@@ -187,20 +187,26 @@ function mnet_server_check_signature($plaintextmessage) {
 
     // Does the signature match the data and the public cert?
     $signature_verified = openssl_verify($payload, $signature, $certificate);
+    if ($signature_verified == 0) {
+        // $signature was not generated for $payload using $certificate
+        // Get the key the remote peer is currently publishing:
+        $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot, $MNET_REMOTE_CLIENT->application);
+        // If the key the remote peer is currently publishing is different to $certificate
+        if($currkey != $certificate) {
+            // If we can't get the server's new key through trusted means
+            if(!$MNET_REMOTE_CLIENT->refresh_key()){
+                exit(mnet_server_fault(7026, 'verifysignature-invalid'));
+            }
+            // If we did manage to re-key, try to verify the signature again.
+            $signature_verified = openssl_verify($payload, base64_decode($sig_parser->signature), $certificate);
+        }
+    }
+
     if ($signature_verified == 1) {
         $MNET_REMOTE_CLIENT->was_signed();
         $MNET_REMOTE_CLIENT->touch();
     } elseif ($signature_verified == 0) {
-        $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot, $MNET_REMOTE_CLIENT->application);
-        if($currkey != $certificate) {
-            // Has the server updated its certificate since our last
-            // handshake?
-            if(!$MNET_REMOTE_CLIENT->refresh_key()) {
-                exit(mnet_server_fault(7026, 'verifysignature-invalid'));
-            }
-        } else {
-            exit(mnet_server_fault(710, 'verifysignature-invalid'));
-        }
+        exit(mnet_server_fault(710, 'verifysignature-invalid'));
     } else {
         exit(mnet_server_fault(711, 'verifysignature-error'));
     }
