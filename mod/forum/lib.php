@@ -3993,6 +3993,26 @@ function forum_get_file_areas($course, $cm, $context) {
 function forum_pluginfile($course, $cminfo, $context, $filearea, $args) {
     global $CFG, $DB;
 
+    if (!$cminfo->uservisible) {
+        return false;
+    }
+
+    if ($filearea === 'forum_intro') {
+        // all users may access it
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'forum_intro0'.$relativepath;
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+
+        // finally send the file
+        send_stored_file($file, $lifetime, 0);
+    }
+
     $fileareas = array('forum_attachment', 'forum_post');
     if (!in_array($filearea, $fileareas)) {
         return false;
