@@ -197,7 +197,8 @@ function mnet_server_check_signature($plaintextmessage) {
             if(!$MNET_REMOTE_CLIENT->refresh_key()){
                 exit(mnet_server_fault(7026, 'verifysignature-invalid'));
             }
-            // If we did manage to re-key, try to verify the signature again.
+            // If we did manage to re-key, try to verify the signature again using the new public key.
+            $certificate = $MNET_REMOTE_CLIENT->public_key;
             $signature_verified = openssl_verify($payload, base64_decode($sig_parser->signature), $certificate);
         }
     }
