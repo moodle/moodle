@@ -8,6 +8,7 @@ require_once("$CFG->libdir/file/file_info_user.php");
 require_once("$CFG->libdir/file/file_info_coursecat.php");
 require_once("$CFG->libdir/file/file_info_course.php");
 require_once("$CFG->libdir/file/file_info_coursefile.php");
+require_once("$CFG->libdir/file/virtual_root_file.php");
 
 /**
  * Main interface for browsing of file tree (local files, areas, virtual files, etc.).
@@ -57,7 +58,7 @@ class file_browser {
 
                     if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath, $USER->id);
+                            $storedfile = new virtual_root_file($context->id, $filearea, 0);
                         } else {
                             // not found
                             return null;
@@ -110,7 +111,7 @@ class file_browser {
                     $urlbase = $CFG->wwwroot.'/pluginfile.php';
                     if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                            $storedfile = new virtual_root_file($context->id, $filearea, 0);
                         } else {
                             // not found
                             return null;
@@ -152,7 +153,7 @@ class file_browser {
                     $urlbase = $CFG->wwwroot.'/pluginfile.php';
                     if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                            $storedfile = new virtual_root_file($context->id, $filearea, 0);
                         } else {
                             // not found
                             return null;
@@ -169,7 +170,7 @@ class file_browser {
                     $urlbase = $CFG->wwwroot.'/pluginfile.php';
                     if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                            $storedfile = new virtual_root_file($context->id, $filearea, 0);
                         } else {
                             // not found
                             return null;
@@ -188,7 +189,7 @@ class file_browser {
 
                     if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
-                            $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                            $storedfile = new virtual_root_file($context->id, $filearea, 0);
                         } else {
                             // not found
                             return null;
@@ -247,7 +248,7 @@ class file_browser {
                 $urlbase = $CFG->wwwroot.'/pluginfile.php';
                 if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
                     if ($filepath === '/' and $filename === '.') {
-                        $storedfile = $fs->create_directory($context->id, $filearea, 0, $filepath);
+                        $storedfile = new virtual_root_file($context->id, $filearea, 0);
                     } else {
                         // not found
                         return null;

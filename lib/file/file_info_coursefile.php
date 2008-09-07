@@ -14,7 +14,7 @@ class file_info_coursefile extends file_info_stored {
             return null;
         }
 
-        if ($this->lf->get_filename() === '.') {
+        if ($this->lf->is_directory()) {
             return null;
         }
 
@@ -28,8 +28,8 @@ class file_info_coursefile extends file_info_stored {
     }
 
     public function get_children() {
-        if ($this->lf->get_filename() !== '.') {
-            return array(); //not a dir
+        if (!$this->lf->is_directory()) {
+            return array();
         }
         return $this->browser->build_coursefile_children($this->context, $this->lf->get_filepath());
     }

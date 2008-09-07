@@ -102,23 +102,19 @@ class file_info_stored extends file_info {
     }
 
     public function is_directory() {
-        if (!$this->lf) {
-            return true;
-        }
-
-        return ($this->lf->get_filename() === '.');
+        return $this->lf->is_directory();
     }
 
     public function get_children() {
-        if ($this->lf->get_filename() !== '.') {
-            return array(); //not a dir
+        if (!$this->lf->is_directory()) {
+            return array();
         }
         return $this->browser->build_stored_file_children($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $this->lf->get_filepath(),
                                                          $this->urlbase, $this->areavisiblename, $this->itemidused, $this->readaccess, $this->writeaccess);
     }
 
     public function get_parent() {
-        if ($this->lf->get_filename() !== '.') {
+        if (!$this->lf->is_directory()) {
             return $this->browser->get_file_info($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $this->lf->get_filepath(), '.');
         }
 
@@ -141,7 +137,7 @@ class file_info_stored extends file_info {
     }
 
     public function create_directory($newdirname, $userid=null) {
-        if (!$this->is_writable() or $this->lf->get_filename() !== '.') {
+        if (!$this->is_writable() or !$this->lf->is_directory()) {
             return null;
         }
 
@@ -162,7 +158,7 @@ class file_info_stored extends file_info {
 
 
     public function create_file_from_string($newfilename, $content, $userid=null) {
-        if (!$this->is_writable() or $this->lf->get_filename() !== '.') {
+        if (!$this->is_writable() or !$this->lf->is_directory()) {
             return null;
         }
 
@@ -194,7 +190,7 @@ class file_info_stored extends file_info {
     }
 
     public function create_file_from_pathname($newfilename, $pathname, $userid=null) {
-        if (!$this->is_writable() or $this->lf->get_filename() !== '.') {
+        if (!$this->is_writable() or !$this->lf->is_directory()) {
             return null;
         }
 
@@ -258,7 +254,7 @@ class file_info_stored extends file_info {
     }
 
     public function delete() {
-        if (!$this->lf or !$this->is_writable()) {
+        if (!$this->is_writable()) {
             return false;
         }
 
