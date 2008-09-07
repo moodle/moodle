@@ -1461,7 +1461,7 @@ function get_my_remotecourses($userid=0) {
         $userid = $USER->id;
     }
 
-    $sql = "SELECT c.remoteid, c.shortname, c.fullname,
+    $sql = "SELECT c.id, c.remoteid, c.shortname, c.fullname,
                    c.hostid, c.summary, c.cat_name,
                    h.name AS hostname
             FROM   {$CFG->prefix}mnet_enrol_course c
