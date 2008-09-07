@@ -1088,7 +1088,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         $mnetsessions = $DB->get_records('mnet_session', array('userid' => $userid, 'useragent' => $useragent));
 
         if (false == $mnetsessions) {
-            $returnstring .= "Could find no remote sessions\n$sql\n";
+            $returnstring .= "Could find no remote sessions\n";
             $mnetsessions = array();
         }
 
