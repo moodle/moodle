@@ -30,6 +30,10 @@ class file_info_user extends file_info {
         return fullname($this->user, true);
     }
 
+    public function is_writable() {
+        return false;
+    }
+
     public function is_directory() {
         return true;
     }
