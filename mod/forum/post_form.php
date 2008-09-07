@@ -53,7 +53,7 @@ class mod_forum_post_form extends moodleform {
         }
 
         if ($forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
-            $mform->addElement('filepicker', 'attachment', get_string('attachment', 'forum'), 'forum_attachment');
+            $mform->addElement('filepicker', 'attachment', get_string('attachment', 'forum'));
             $mform->setHelpButton('attachment', array('attachment', get_string('attachment', 'forum'), 'forum'));
         }
 
