@@ -1122,6 +1122,7 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (isset($MNET_REMOTE_CLIENT) && isset($MNET_REMOTE_CLIENT->id)) {
             $start = ob_start();
 
+            // Save current session and cookie-use status
             $cookieuse = ini_get('session.use_cookies');
             ini_set('session.use_cookies', false);
             $sesscache = $_SESSION;
