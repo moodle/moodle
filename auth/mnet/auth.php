@@ -1136,7 +1136,7 @@ class auth_plugin_mnet extends auth_plugin_base {
 
             $uc = ini_get('session.use_cookies');
             ini_set('session.use_cookies', false);
-            $sesscache = clone($_SESSION);
+            $sesscache = $_SESSION;
             $sessidcache = session_id();
             session_write_close();
             unset($_SESSION);
@@ -1155,7 +1155,7 @@ class auth_plugin_mnet extends auth_plugin_base {
             session_name('MoodleSession'.$CFG->sessioncookie);
             session_id($sessidcache);
             session_start();
-            $_SESSION = clone($sesscache);
+            $_SESSION = $sesscache;
             session_write_close();
 
             $end = ob_end_clean();
