@@ -40,7 +40,7 @@ class file_info_stored extends file_info {
             $dir = array_pop($dir);
             if ($dir === '') {
                 if ($this->itemidused) {
-                    return $this->itemid;
+                    return $this->lf->get_itemid();
                 } else {
                     return $this->areavisiblename;
                 }
