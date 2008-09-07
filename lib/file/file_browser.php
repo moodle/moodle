@@ -74,9 +74,13 @@ class file_browser {
                     }
                     $urlbase = $CFG->wwwroot.'/draftfile.php';
                     if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
-                        return null;
+                        if ($filepath === '/' and $filename === '.') {
+                            $storedfile = new virtual_root_file($context->id, $filearea, $itemid);
+                        } else {
+                            // not found
+                            return null;
+                        }
                     }
-                    //something must create the top most directory
                     // TODO: localise
                     return new file_info_stored($this, $context, $storedfile, $urlbase, 'Draft file area', true, true, true);
                 }
