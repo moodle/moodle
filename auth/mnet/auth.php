@@ -1087,23 +1087,19 @@ class auth_plugin_mnet extends auth_plugin_base {
 
         $mnetsessions = $DB->get_records('mnet_session', array('userid' => $userid, 'useragent' => $useragent));
 
-        // If we are being executed from a remote machine (client) we don't have
-        // to kill the moodle session on that machine.
-        if (isset($MNET_REMOTE_CLIENT) && isset($MNET_REMOTE_CLIENT->id)) {
-            $excludeid = $MNET_REMOTE_CLIENT->id;
-        } else {
-            $excludeid = -1;
-        }
-
         if (false == $mnetsessions) {
             $returnstring .= "Could find no remote sessions\n$sql\n";
             $mnetsessions = array();
         }
 
         foreach($mnetsessions as $mnetsession) {
+            // If this script is being executed by a remote peer, that means the user has clicked
+            // logout on that peer, and the session on that peer can be deleted natively.
+            // Skip over it.
+            if (isset($MNET_REMOTE_CLIENT->id) && ($mnetsession->mnethostid == $MNET_REMOTE_CLIENT->id)) {
+                continue;
+            }
             $returnstring .=  "Deleting session\n";
-
-            if ($mnetsession->mnethostid == $excludeid) continue;
 
             $mnet_peer = new mnet_peer();
             $mnet_peer->set_id($mnetsession->mnethostid);
