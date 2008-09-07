@@ -65,8 +65,7 @@ class file_browser {
                         }
                     }
                     $urlbase = $CFG->wwwroot.'/userfile.php';
-                    // TODO: localise
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Personal files', false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserpersonal', 'repository'), false, true, true);
 
                 } else if ($filearea == 'user_draft') {
                     if (empty($itemid)) {
@@ -81,8 +80,7 @@ class file_browser {
                             return null;
                         }
                     }
-                    // TODO: localise
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Draft file area', true, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserdraft', 'repository'), true, true, true);
                 }
             }
 
@@ -121,8 +119,7 @@ class file_browser {
                             return null;
                         }
                     }
-                    // TODO: localise
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Category introduction files', false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areacategoryintro', 'repository'), false, true, true);
                 }
             }
 
@@ -163,8 +160,7 @@ class file_browser {
                             return null;
                         }
                     }
-                    // TODO: localise
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Course introduction files', false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areacourseintro', 'repository'), false, true, true);
 
                 } else if ($filearea == 'course_backup') {
                     if (!has_capability('moodle/site:backup', $context) and !has_capability('moodle/site:restore', $context)) {
@@ -183,8 +179,7 @@ class file_browser {
 
                     $downloadable = has_capability('moodle/site:backupdownload', $context);
                     $uploadable   = has_capability('moodle/site:backupupload', $context);
-                    // TODO: localise
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, 'Backup files', false, $downloadable, $uploadable);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areabackup', 'repository'), false, $downloadable, $uploadable);
 
                 } else if ($filearea == 'course_content') {
                     if (!has_capability('moodle/course:managefiles', $context)) {

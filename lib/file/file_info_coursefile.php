@@ -4,7 +4,7 @@ class file_info_coursefile extends file_info_stored {
     public function __construct($browser, $context, $storedfile) {
         global $CFG;
         $urlbase = $CFG->wwwroot.'/file.php';
-        parent::__construct($browser, $context, $storedfile, $urlbase, 'Course files', false, true, true); // TODO: localise
+        parent::__construct($browser, $context, $storedfile, $urlbase, get_string('coursefiles'), false, true, true);
     }
 
     public function get_url($forcedownload=false, $https=false) {

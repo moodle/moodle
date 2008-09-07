@@ -14,7 +14,7 @@ class file_info_system extends file_info {
     }
 
     public function get_visible_name() {
-        return 'Root'; // TODO: fix & localise
+        return get_string('arearoot', 'repository');
     }
 
     public function is_writable() {
