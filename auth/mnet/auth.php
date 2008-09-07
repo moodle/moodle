@@ -1134,14 +1134,14 @@ class auth_plugin_mnet extends auth_plugin_base {
         if (isset($MNET_REMOTE_CLIENT) && isset($MNET_REMOTE_CLIENT->id)) {
             $start = ob_start();
 
-            $uc = ini_get('session.use_cookies');
+            $cookieuse = ini_get('session.use_cookies');
             ini_set('session.use_cookies', false);
             $sesscache = $_SESSION;
             $sessidcache = session_id();
+
+            // Replace existing mnet session with user session & unset
             session_write_close();
             unset($_SESSION);
-
-
             session_id($mnetsession->session_id);
             session_start();
             session_unregister("USER");
@@ -1150,8 +1150,8 @@ class auth_plugin_mnet extends auth_plugin_base {
             $_SESSION = array();
             session_write_close();
 
-
-            ini_set('session.use_cookies', $uc);
+            // Restore previous info
+            ini_set('session.use_cookies', $cookieuse);
             session_name('MoodleSession'.$CFG->sessioncookie);
             session_id($sessidcache);
             session_start();
