@@ -1180,55 +1180,82 @@ function glossary_print_attachments($entry, $cm, $type=NULL, $align="left") {
 }
 
 /**
+ * Lists all browsable file areas
+ */
+function glossary_get_file_areas($course, $cm, $context) {
+    $areas = array();
+    if (has_capability('moodle/course:managefiles', $context)) {
+        $areas['glossary_intro'] = get_string('areaintro', 'glossary');
+    }
+    return $areas;
+}
+
+/**
  * Serves the glossary attachments. Implements needed access control ;-)
  */
 function glossary_pluginfile($course, $cminfo, $context, $filearea, $args) {
     global $CFG, $DB;
 
-    if ($filearea !== 'glossary_attachment') {
-        return false;
-    }
-
     if (!$cminfo->uservisible) {
         return false;
     }
 
-    $entryid = (int)array_shift($args);
+    if ($filearea === 'glossary_intro') {
+        // all users may access it
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'glossary_intro0'.$relativepath;
 
-    if (!$entry = $DB->get_record('glossary_entries', array('id'=>$entryid))) {
-        return false;
-    }
-
-    if (!$glossary = $DB->get_record('glossary', array('id'=>$cminfo->instance))) {
-        return false;
-    }
-
-    if ($glossary->defaultapproval and !$entry->approved and !has_capability('mod/glossary:approve', $context)) {
-        return false;
-    }
-
-    if ($entry->glossaryid == $cminfo->instance) {
-        $filecontext = $context;
-
-    } else if ($entry->sourceglossaryid == $cminfo->instance) {
-        if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
-            print_error('invalidcoursemodule');
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
         }
-        $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
 
-    } else {
-        return false;
+        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+
+        // finally send the file
+        send_stored_file($file, $lifetime, 0);
+
+    } else if ($filearea === 'glossary_attachment') {
+        $entryid = (int)array_shift($args);
+
+        if (!$entry = $DB->get_record('glossary_entries', array('id'=>$entryid))) {
+            return false;
+        }
+
+        if (!$glossary = $DB->get_record('glossary', array('id'=>$cminfo->instance))) {
+            return false;
+        }
+
+        if ($glossary->defaultapproval and !$entry->approved and !has_capability('mod/glossary:approve', $context)) {
+            return false;
+        }
+
+        if ($entry->glossaryid == $cminfo->instance) {
+            $filecontext = $context;
+
+        } else if ($entry->sourceglossaryid == $cminfo->instance) {
+            if (!$maincm = get_coursemodule_from_instance('glossary', $entry->glossaryid)) {
+                print_error('invalidcoursemodule');
+            }
+            $filecontext = get_context_instance(CONTEXT_MODULE, $maincm->id);
+
+        } else {
+            return false;
+        }
+
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $filecontext->id.$filearea.$entryid.$relativepath;
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        // finally send the file
+        send_stored_file($file, 0, 0, true); // download MUST be forced - security!
     }
 
-    $fs = get_file_storage();
-    $relativepath = '/'.implode('/', $args);
-    $fullpath = $filecontext->id.$filearea.$entryid.$relativepath;
-    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
-        return false;
-    }
-
-    // finally send the file
-    send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+    return false;
 }
 
 function glossary_print_tabbed_table_end() {
