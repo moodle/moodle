@@ -59,6 +59,47 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
+ * Converts absolute links in text and moves draft files.
+ * @param int $draftitemid
+ * @param string $text usually html text with embedded links to draft area
+ * @param int $contextid
+ * @param string $filearea
+ * @param int $itemid
+ * @param boolean $https force https
+ * @return string text with relative links starting with @@PLUGINFILE@@
+ */
+function file_convert_draftarea($text, $draftitemid, $contextid, $filearea, $itemid, $https=false) {
+    global $CFG, $USER;
+
+    if ($CFG->slasharguments) {
+        $draftbase = "$CFG->wwwroot/draftfile.php/user_draft/$draftitemid/";
+    } else {
+        $draftbase = "$CFG->wwwroot/draftfile.php?file=/user_draft/$draftitemid/";
+    }
+
+    if ($https) {
+        $draftbase = str_replace('http://', 'https://', $draftbase);
+    }
+
+    // replace absolute links
+    $text = str_ireplace($draftbase, '@@PLUGINFILE@@/');
+
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+
+    // move draft files
+    $fs = get_file_storage();
+    if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id', 'false')) {
+        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
+        foreach ($files as $file) {
+            $fs->create_file_from_stored($file_record, $file);
+            $file->delete();
+        }
+    }
+
+    return $text;
+}
+
+/**
  * Finds occurences of a link to "draftfile.php" in text and replaces the 
  * address based on passed information. Matching is performed using the given 
  * current itemid, contextid and filearea and $CFG->wwwroot. This function 
