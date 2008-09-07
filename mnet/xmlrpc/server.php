@@ -125,114 +125,113 @@ $response = mnet_server_dispatch($payload);
  */
 function mnet_server_strip_wrappers($HTTP_RAW_POST_DATA) {
     global $MNET, $MNET_REMOTE_CLIENT;
-    if (isset($_SERVER)) {
-
-        $crypt_parser = new mnet_encxml_parser();
-        $crypt_parser->parse($HTTP_RAW_POST_DATA);
-
-        // Make sure we know who we're talking to
-        $host_record_exists = $MNET_REMOTE_CLIENT->set_wwwroot($crypt_parser->remote_wwwroot);
-
-        if (false == $host_record_exists) {
-            exit(mnet_server_fault(7020, 'wrong-wwwroot', $crypt_parser->remote_wwwroot));
-        }
-
-        if ($crypt_parser->payload_encrypted) {
-
-            $key  = array_pop($crypt_parser->cipher);  // This key is Symmetric
-            $data = array_pop($crypt_parser->cipher);
-
-            $crypt_parser->free_resource();
-
-            $payload          = '';    // Initialize payload var
-            $push_current_key = false; // True if we need to push a fresh key to the peer
-
-            //                                          &$payload
-            $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $MNET->get_private_key());
-
-            if (!$isOpen) {
-                // Decryption failed... let's try our archived keys
-                $openssl_history = get_config('mnet', 'openssl_history');
-                if(empty($openssl_history)) {
-                    $openssl_history = array();
-                    set_config('openssl_history', serialize($openssl_history), 'mnet');
-                } else {
-                    $openssl_history = unserialize($openssl_history);
-                }
-                foreach($openssl_history as $keyset) {
-                    $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
-                    $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
-                    if ($isOpen) {
-                        // It's an older code, sir, but it checks out
-                        $push_current_key = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!$isOpen) {
-                exit(mnet_server_fault(7023, 'encryption-invalid'));
-            }
-
-            if (strpos(substr($payload, 0, 100), '<signedMessage>')) {
-                $MNET_REMOTE_CLIENT->was_signed();
-                $sig_parser = new mnet_encxml_parser();
-                $sig_parser->parse($payload);
-            } else {
-                exit(mnet_server_fault(7022, 'verifysignature-error'));
-            }
-
-        } else {
-            exit(mnet_server_fault(7024, 'payload-not-encrypted'));
-        }
-
-        unset($payload);
-
-        // if the peer used one of our public keys that have expired, we will
-        // return a signed/encrypted error message with our new public key 
-        if($push_current_key) {
-            // NOTE: Here, we use the 'mnet_server_fault_xml' to avoid
-            // get_string being called on our public_key
-            exit(mnet_server_fault_xml(7025, $MNET->public_key, $keyresource));
-        }
-
-        /**
-         * Get the certificate (i.e. public key) from the remote server.
-         */
-        $certificate = $MNET_REMOTE_CLIENT->public_key;
-
-        if ($certificate == false) {
-            exit(mnet_server_fault(709, 'nosuchpublickey'));
-        }
-
-        $payload = base64_decode($sig_parser->data_object);
-
-        // Does the signature match the data and the public cert?
-        $signature_verified = openssl_verify($payload, base64_decode($sig_parser->signature), $certificate);
-        if ($signature_verified == 1) {
-            $MNET_REMOTE_CLIENT->touch();
-            // Parse the XML
-        } elseif ($signature_verified == 0) {
-            $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot, $MNET_REMOTE_CLIENT->application);
-            if($currkey != $certificate) {
-                // Has the server updated its certificate since our last 
-                // handshake?
-                if(!$MNET_REMOTE_CLIENT->refresh_key()) {
-                    exit(mnet_server_fault(7026, 'verifysignature-invalid'));
-                }
-            } else {
-                exit(mnet_server_fault(710, 'verifysignature-invalid'));
-            }
-        } else {
-            exit(mnet_server_fault(711, 'verifysignature-error'));
-        }
-
-        $sig_parser->free_resource();
-
-        return $payload;
-    } else {
+    if (!isset($_SERVER)) {
         exit(mnet_server_fault(712, "phperror"));
     }
+
+    $crypt_parser = new mnet_encxml_parser();
+    $crypt_parser->parse($HTTP_RAW_POST_DATA);
+
+    // Make sure we know who we're talking to
+    $host_record_exists = $MNET_REMOTE_CLIENT->set_wwwroot($crypt_parser->remote_wwwroot);
+
+    if (false == $host_record_exists) {
+        exit(mnet_server_fault(7020, 'wrong-wwwroot', $crypt_parser->remote_wwwroot));
+    }
+
+    if ($crypt_parser->payload_encrypted) {
+
+        $key  = array_pop($crypt_parser->cipher);  // This key is Symmetric
+        $data = array_pop($crypt_parser->cipher);
+
+        $crypt_parser->free_resource();
+
+        $payload          = '';    // Initialize payload var
+        $push_current_key = false; // True if we need to push a fresh key to the peer
+
+        //                                          &$payload
+        $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $MNET->get_private_key());
+
+        if (!$isOpen) {
+            // Decryption failed... let's try our archived keys
+            $openssl_history = get_config('mnet', 'openssl_history');
+            if(empty($openssl_history)) {
+                $openssl_history = array();
+                set_config('openssl_history', serialize($openssl_history), 'mnet');
+            } else {
+                $openssl_history = unserialize($openssl_history);
+            }
+            foreach($openssl_history as $keyset) {
+                $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
+                $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
+                if ($isOpen) {
+                    // It's an older code, sir, but it checks out
+                    $push_current_key = true;
+                    break;
+                }
+            }
+        }
+
+        if (!$isOpen) {
+            exit(mnet_server_fault(7023, 'encryption-invalid'));
+        }
+
+        if (strpos(substr($payload, 0, 100), '<signedMessage>')) {
+            $MNET_REMOTE_CLIENT->was_signed();
+            $sig_parser = new mnet_encxml_parser();
+            $sig_parser->parse($payload);
+        } else {
+            exit(mnet_server_fault(7022, 'verifysignature-error'));
+        }
+
+    } else {
+        exit(mnet_server_fault(7024, 'payload-not-encrypted'));
+    }
+
+    unset($payload);
+
+    // if the peer used one of our public keys that have expired, we will
+    // return a signed/encrypted error message with our new public key 
+    if($push_current_key) {
+        // NOTE: Here, we use the 'mnet_server_fault_xml' to avoid
+        // get_string being called on our public_key
+        exit(mnet_server_fault_xml(7025, $MNET->public_key, $keyresource));
+    }
+
+    /**
+     * Get the certificate (i.e. public key) from the remote server.
+     */
+    $certificate = $MNET_REMOTE_CLIENT->public_key;
+
+    if ($certificate == false) {
+        exit(mnet_server_fault(709, 'nosuchpublickey'));
+    }
+
+    $payload = base64_decode($sig_parser->data_object);
+
+    // Does the signature match the data and the public cert?
+    $signature_verified = openssl_verify($payload, base64_decode($sig_parser->signature), $certificate);
+    if ($signature_verified == 1) {
+        $MNET_REMOTE_CLIENT->touch();
+        // Parse the XML
+    } elseif ($signature_verified == 0) {
+        $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot, $MNET_REMOTE_CLIENT->application);
+        if($currkey != $certificate) {
+            // Has the server updated its certificate since our last
+            // handshake?
+            if(!$MNET_REMOTE_CLIENT->refresh_key()) {
+                exit(mnet_server_fault(7026, 'verifysignature-invalid'));
+            }
+        } else {
+            exit(mnet_server_fault(710, 'verifysignature-invalid'));
+        }
+    } else {
+        exit(mnet_server_fault(711, 'verifysignature-error'));
+    }
+
+    $sig_parser->free_resource();
+
+    return $payload;
 }
 
 /**
