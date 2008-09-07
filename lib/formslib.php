@@ -187,7 +187,7 @@ class moodleform {
     }
 
     /**
-     * Internal method. Validates all uploaded files.
+     * Internal method. Validates all old-style uploaded files.
      */
     function _validate_files(&$files) {
         global $CFG, $COURSE;
@@ -388,7 +388,7 @@ class moodleform {
                 $file_val = false;
             }
 
-            $data = $mform->exportValues(null, false);
+            $data = $mform->exportValues();
             $moodle_val = $this->validation($data, $files);
             if ((is_array($moodle_val) && count($moodle_val)!==0)) {
                 // non-empty array means errors
@@ -487,6 +487,8 @@ class moodleform {
      * @return mixed false in case of failure, string if ok
      */
     function get_new_filename($elname=null) {
+        global $USER;
+
         if (!$this->is_submitted() or !$this->is_validated()) {
             return false;
         }
@@ -498,6 +500,28 @@ class moodleform {
             reset($_FILES);
             $elname = key($_FILES);
         }
+
+        if (empty($elname)) {
+            return false;
+        }
+
+        $element = $this->_form->getElement($elname);
+
+        if ($element instanceof MoodleQuickForm_filepicker) {
+            $values = $this->_form->exportValues($elname);
+            if (empty($values[$elname])) {
+                return false;
+            }
+            $draftid = $values[$elname];
+            $fs = get_file_storage();
+            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+                return false;
+            }
+            $file = reset($files);
+            return $file->get_filename();
+        }
+
         if (!isset($_FILES[$elname])) {
             return false;
         }
@@ -513,11 +537,9 @@ class moodleform {
      * @return bool success
      */
     function save_file($elname, $pathname, $override=false) {
-        if (!$this->is_submitted() or !$this->is_validated()) {
-            return false;
-        }
+        global $USER;
 
-        if (!isset($_FILES[$elname])) {
+        if (!$this->is_submitted() or !$this->is_validated()) {
             return false;
         }
 
@@ -530,11 +552,29 @@ class moodleform {
                 return false;
             }
         }
-        if (!copy($_FILES[$elname]['tmp_name'], $pathname)) {
-            return false;
+
+        $element = $this->_form->getElement($elname);
+
+        if ($element instanceof MoodleQuickForm_filepicker) {
+            $values = $this->_form->exportValues($elname);
+            if (empty($values[$elname])) {
+                return false;
+            }
+            $draftid = $values[$elname];
+            $fs = get_file_storage();
+            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+                return false;
+            }
+            $file = reset($files);
+
+            return $file->copy_content_to($pathname);
+
+        } else if (isset($_FILES[$elname])) {
+            return copy($_FILES[$elname]['tmp_name'], $pathname);
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -550,7 +590,6 @@ class moodleform {
      */
     function save_stored_file($elname, $newcontextid, $newfilearea, $newitemid, $newfilepath='/',
                               $newfilename=null, $overwrite=false, $newuserid=null) {
-
         global $USER;
 
         if (!$this->is_submitted() or !$this->is_validated()) {
@@ -561,43 +600,50 @@ class moodleform {
             $newuserid = $USER->id;
         }
 
-        if (isset($_FILES[$elname])) {
-            $filename = is_null($newfilename) ? $_FILES[$elname]['name'] : $newfilename;
+        $element = $this->_form->getElement($elname);
+        $fs = get_file_storage();
 
-            $fs = get_file_storage();
+        if ($element instanceof MoodleQuickForm_filepicker) {
+            $values = $this->_form->exportValues($elname);
+            if (empty($values[$elname])) {
+                return false;
+            }
+            $draftid = $values[$elname];
+            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+                return false;
+            }
+            $file = reset($files);
+            if (is_null($newfilename)) {
+                $newfilename = $file->get_filename();
+            }
 
-            if ($file = $fs->get_file($newcontextid, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
-                if ($overwrite) {
-                    $file->delete();
-                } else {
-                    return false;
+            if ($overwrite) {
+                if ($oldfile = $fs->get_file($newcontextid, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
+                    if (!$oldfile->delete()) {
+                        return false;
+                    }
                 }
             }
 
-            $file_record = new object();
-            $file_record->contextid = $newcontextid;
-            $file_record->filearea  = $newfilearea;
-            $file_record->itemid    = $newitemid;
-            $file_record->filepath  = $newfilepath;
-            $file_record->filename  = $newfilename;
-            $file_record->userid    = $newuserid;
+            $file_record = array('contextid'=>$newcontextid, 'filearea'=>$newfilearea, 'itemid'=>$newitemid,
+                                 'filepath'=>$newfilepath, 'filename'=>$newfilename, 'userid'=>$newuserid);
+            return $fs->create_file_from_storedfile($file_record, $file);
 
-            return $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
+        } else if (isset($_FILES[$elname])) {
+            $filename = is_null($newfilename) ? $_FILES[$elname]['name'] : $newfilename;
 
-        } else {   // We check if the file has been uploaded already into the user's draft area
-
-            $values = $this->get_data();
-
-            if (!empty($values->$elname)) { 
-
-                $itemid = $values->$elname;
-
-                $fs = get_file_storage();
-
-                $newfiles = $fs->move_draft_to_final($itemid, $newcontextid, $newfilearea, $newitemid, $newfilepath, $overwrite);
-
-                return array_pop($newfiles);
+            if ($overwrite) {
+                if ($oldfile = $fs->get_file($newcontextid, $newfilearea, $newitemid, $newfilepath, $newfilename)) {
+                    if (!$oldfile->delete()) {
+                        return false;
+                    }
+                }
             }
+
+            $file_record = array('contextid'=>$newcontextid, 'filearea'=>$newfilearea, 'itemid'=>$newitemid,
+                                 'filepath'=>$newfilepath, 'filename'=>$newfilename, 'userid'=>$newuserid);
+            return $fs->create_file_from_pathname($file_record, $_FILES[$elname]['tmp_name']);
         }
 
         return false;
@@ -609,15 +655,34 @@ class moodleform {
      * @return mixed false in case of failure, string if ok
      */
     function get_file_content($elname) {
+        global $USER;
+
         if (!$this->is_submitted() or !$this->is_validated()) {
             return false;
         }
 
-        if (!isset($_FILES[$elname])) {
-            return false;
+        $element = $this->_form->getElement($elname);
+
+        if ($element instanceof MoodleQuickForm_filepicker) {
+            $values = $this->_form->exportValues($elname);
+            if (empty($values[$elname])) {
+                return false;
+            }
+            $draftid = $values[$elname];
+            $fs = get_file_storage();
+            $context = get_context_instance(CONTEXT_USER, $USER->id);
+            if (!$files = $fs->get_area_files($context->id, 'user_draft', $draftid, 'id DESC', false)) {
+                return false;
+            }
+            $file = reset($files);
+
+            return $file->get_content();
+
+        } else if (isset($_FILES[$elname])) {
+            return file_get_contents($_FILES[$elname]['tmp_name']);
         }
 
-        return file_get_contents($_FILES[$elname]['tmp_name']);
+        return false;
     }
 
     /**
@@ -1229,7 +1294,8 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
                 if (PEAR::isError($value)) {
                     return $value;
                 }
-                $unfiltered[$elementName] = $value;
+                //oh, stock QuickFOrm was returning array of arrays!
+                $unfiltered = HTML_QuickForm::arrayMerge($unfiltered, $value);
             }
         }
 
