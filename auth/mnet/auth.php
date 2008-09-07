@@ -1084,14 +1084,8 @@ class auth_plugin_mnet extends auth_plugin_base {
         $userid = $DB->get_field('user', 'id', array('mnethostid'=>$CFG->mnet_localhost_id, 'username'=>$username));
 
         $returnstring = '';
-        $sql = "
-            select
-                *
-            from
-                {mnet_session} s
-            where
-                s.userid     = ? AND
-                s.useragent  = ?";
+
+        $mnetsessions = $DB->get_records('mnet_session', array('userid' => $userid, 'useragent' => $useragent));
 
         // If we are being executed from a remote machine (client) we don't have
         // to kill the moodle session on that machine.
@@ -1100,8 +1094,6 @@ class auth_plugin_mnet extends auth_plugin_base {
         } else {
             $excludeid = -1;
         }
-
-        $mnetsessions = $DB->get_records_sql($sql, array($userid, $useragent));
 
         if (false == $mnetsessions) {
             $returnstring .= "Could find no remote sessions\n$sql\n";
