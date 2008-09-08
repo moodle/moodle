@@ -5,9 +5,9 @@ require_once("HTML/QuickForm/button.php");
 require_once(dirname(dirname(dirname(__FILE__))) . '/repository/lib.php');
 
 /**
- * HTML class for a button type element
+ * HTML class for a single filepicker element (based on button)
  *
- * @author       Dongsheng Cai <dongsheng@cvs.moodle.org>
+ * @author       Moodle.com
  * @version      1.0
  * @since        Moodle 2.0
  * @access       public
@@ -52,21 +52,24 @@ class MoodleQuickForm_filepicker extends HTML_QuickForm_button {
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
         } else {
+            $currentvalue = $this->getValue();
+
             $strsaved = get_string('filesaved', 'repository');
-
             if (empty($COURSE->context)) {
-                $ctx = get_context_instance(CONTEXT_SYSTEM);
+                $context = get_context_instance(CONTEXT_SYSTEM);
             } else {
-                $ctx = $COURSE->context;
+                $context = $COURSE->context;
             }
-            $ret = repository_get_client($ctx);
+            $repository_info = repository_get_client($context);
+            $suffix = $repository_info['suffix'];
 
-            $suffix = $ret['suffix'];
             $id     = $this->_attributes['id'];
             $elname = $this->_attributes['name'];
 
             $str = $this->_getTabs();
-            $str .= '<input type="hidden" name="'.$elname.'" id="'.$id.'_'.$suffix.'" value="" />';
+            $str .= '<input type="hidden" value="'.$currentvalue.'" name="'.$this->_attributes['name'].'" id="'.$this->_attributes['id'].'_'.$suffix.'" />';
+            $id = $this->_attributes['id'];
+
             $str .= <<<EOD
 <script type="text/javascript">
 function updatefile_$suffix(str){
@@ -82,8 +85,7 @@ function callpicker_$suffix(){
 }
 </script>
 EOD;
-            // $this->_getAttrString($this->_attributes);
-            $str .= '<input value ="'.get_string('openpicker', 'repository').'" type="button" onclick=\'callpicker_'.$suffix.'()\' />'.'<span id="repo_info_'.$suffix.'" style="color:green"></span>'.$ret['css'].$ret['js'];
+            $str .= '<input value ="'.get_string('openpicker', 'repository').'" type="button" onclick=\'callpicker_'.$suffix.'()\' />'.'<span id="repo_info_'.$suffix.'" class="notifysuccess">'.$currentvalue.'</span>'.$repository_info['css'].$repository_info['js'];
             return $str;
         }
     }
