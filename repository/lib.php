@@ -590,7 +590,7 @@ abstract class repository {
         $repo->id   = $this->id;
         $repo->name = $this->get_name();
         $repo->type = $this->options['type'];
-        $repo->icon = $CFG->wwwroot.'/repository/'.$repo->type.'/icon.png';
+        $repo->icon = $CFG->httpswwwroot.'/repository/'.$repo->type.'/icon.png';
         return $repo;
     }
 
@@ -1197,26 +1197,26 @@ p.upload a:hover {background: grey;color:white}
 #file-picker-$suffix a:hover{background:#003366;color:white}
 </style>
 <style type="text/css">
-@import "$CFG->wwwroot/lib/yui/resize/assets/skins/sam/resize.css";
-@import "$CFG->wwwroot/lib/yui/container/assets/skins/sam/container.css";
-@import "$CFG->wwwroot/lib/yui/layout/assets/skins/sam/layout.css";
-@import "$CFG->wwwroot/lib/yui/button/assets/skins/sam/button.css";
-@import "$CFG->wwwroot/lib/yui/assets/skins/sam/treeview.css";
+@import "$CFG->httpswwwroot/lib/yui/resize/assets/skins/sam/resize.css";
+@import "$CFG->httpswwwroot/lib/yui/container/assets/skins/sam/container.css";
+@import "$CFG->httpswwwroot/lib/yui/layout/assets/skins/sam/layout.css";
+@import "$CFG->httpswwwroot/lib/yui/button/assets/skins/sam/button.css";
+@import "$CFG->httpswwwroot/lib/yui/assets/skins/sam/treeview.css";
 </style>
 EOD;
 
     $js = <<<EOD
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/element/element-beta-min.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/treeview/treeview-min.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/container/container-min.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/resize/resize-beta-min.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/layout/layout-beta-min.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/connection/connection-min.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/json/json-min.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/button/button-min.js"></script>
-<script type="text/javascript" src="$CFG->wwwroot/lib/yui/selector/selector-beta-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/element/element-beta-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/treeview/treeview-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/dragdrop/dragdrop-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/container/container-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/resize/resize-beta-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/layout/layout-beta-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/connection/connection-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/json/json-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/button/button-min.js"></script>
+<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/selector/selector-beta-min.js"></script>
 <script type="text/javascript">
 //<![CDATA[
 var repository_client_$suffix = (function() {
@@ -1555,7 +1555,7 @@ _client.dynload = function (node, fnLoadComplete){
     params['ctx_id']=$context->id;
     params['repo_id']=_client.repositoryid;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->wwwroot/repository/ws.php?action=list', callback, _client.postdata(params));
+        '$CFG->httpswwwroot/repository/ws.php?action=list', callback, _client.postdata(params));
 }
 _client.viewlist = function(){
     _client.viewmode = 0;
@@ -1592,7 +1592,7 @@ _client.upload = function(){
         parent.appendChild(container);
         YAHOO.util.Connect.setForm(aform, true, true);
         var trans = YAHOO.util.Connect.asyncRequest('POST',
-            '$CFG->wwwroot/repository/ws.php?action=upload&sesskey=$sesskey&ctx_id=$context->id&repo_id='
+            '$CFG->httpswwwroot/repository/ws.php?action=upload&sesskey=$sesskey&ctx_id=$context->id&repo_id='
                 +_client.repositoryid,
             _client.upload_cb);
     }else{
@@ -1687,7 +1687,7 @@ _client.download = function(){
     params['ctx_id']=$context->id;
     params['repo_id']=_client.repositoryid;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->wwwroot/repository/ws.php?action=download', _client.dlfile, _client.postdata(params));
+        '$CFG->httpswwwroot/repository/ws.php?action=download', _client.dlfile, _client.postdata(params));
 }
 // send login request
 _client.login = function(){
@@ -1707,7 +1707,7 @@ _client.login = function(){
     params['sesskey']= '$sesskey';
     _client.loading('load');
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->wwwroot/repository/ws.php?action=sign', _client.callback, _client.postdata(params));
+        '$CFG->httpswwwroot/repository/ws.php?action=sign', _client.callback, _client.postdata(params));
 }
 _client.end = function(str){
     if(_client.env=='form'){
@@ -1829,7 +1829,7 @@ _client.req = function(id, path, reset) {
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=id;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->wwwroot/repository/ws.php?action='+action, _client.callback, _client.postdata(params));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.callback, _client.postdata(params));
 }
 _client.search = function(id){
     var data = window.prompt("$strsearching");
@@ -1847,7 +1847,7 @@ _client.search = function(id){
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=id;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->wwwroot/repository/ws.php?action=search', _client.callback, _client.postdata(params));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action=search', _client.callback, _client.postdata(params));
 }
 
 return _client;
@@ -2043,11 +2043,11 @@ function repository_display_instances_list($context, $typename = null){
         //if the context is SYSTEM, so we call it from administration page
         $admin = ($context->id == SYSCONTEXTID) ? true : false;
         if($admin) {
-            $baseurl = $CFG->wwwroot . '/admin/repositoryinstance.php?sesskey=' . sesskey();
+            $baseurl = $CFG->httpswwwroot . '/admin/repositoryinstance.php?sesskey=' . sesskey();
              $output .= "<div ><h2 style='text-align: center'>" . get_string('siteinstances', 'repository') . " ";
              $output .= "</h2></div>";
         } else {
-          $baseurl = $CFG->wwwroot . '/repository/manage_instances.php?contextid=' . $context->id . '&amp;sesskey=' . sesskey();
+          $baseurl = $CFG->httpswwwroot . '/repository/manage_instances.php?contextid=' . $context->id . '&amp;sesskey=' . sesskey();
 
         }
 
