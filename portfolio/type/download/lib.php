@@ -25,7 +25,8 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
         $zipper = new zip_packer();
 
         $filename = 'portfolio-export.zip';
-        if ($newfile = $zipper->archive_to_storage($files, SYSCONTEXTID, 'portfolio_exporter', $this->exporter->get('id'), '/final/', $filename, $this->user->id)) {
+        list ($contextid, $filearea, $itemid) = $this->get('exporter')->get_base_filearea();
+        if ($newfile = $zipper->archive_to_storage($files, $contextid, $filearea, $itemid, '/final/', $filename, $this->user->id)) {
             $this->set('file', $newfile);
             return true;
         }
