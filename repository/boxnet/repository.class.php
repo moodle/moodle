@@ -32,6 +32,16 @@ class repository_boxnet extends repository{
         return $options;
     }
 
+    public function global_search(){
+        global $SESSION;
+        $sess_name = 'box_token'.$this->id;
+        if (empty($SESSION->$sess_name)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action;
         $options['username']   = optional_param('boxusername', '', PARAM_RAW);

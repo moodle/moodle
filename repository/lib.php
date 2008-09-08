@@ -824,6 +824,14 @@ abstract class repository {
     abstract public function print_search();
 
     /**
+     * is it possible to do glboal search?
+     * @return boolean
+     */
+    public function global_search(){
+        return false;
+    }
+
+    /**
      * Defines operations that happen occasionally on cron
      * @return <type>
      */
@@ -1195,6 +1203,8 @@ p.upload a:hover {background: grey;color:white}
 #file-picker-$suffix strong{background:#FFFFCC}
 #file-picker-$suffix a{color: #336699}
 #file-picker-$suffix a:hover{background:#003366;color:white}
+#repo-viewbar-$suffix{width:300px;float:left}
+#search-div-$suffix{float:right}
 </style>
 <style type="text/css">
 @import "$CFG->httpswwwroot/lib/yui/resize/assets/skins/sam/resize.css";
@@ -1256,7 +1266,7 @@ function _client(){
                     height: 480, width: 630,
                     units: [
                         {position: 'top', height: 32, resize: false,
-                        body:'<div class="yui-buttongroup" id="repo-viewbar-$suffix"></div>', gutter: '2'},
+                        body:'<div class="yui-buttongroup" id="repo-viewbar-$suffix"></div><div id="search-div-$suffix"></div>', gutter: '2'},
                         {position: 'left', width: 200, resize: true,
                         body:'<ul class="repo-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
                         {position: 'center', body: '<div id="panel-$suffix"></div>',
@@ -1334,6 +1344,51 @@ function _client(){
                 li.appendChild(opt);
                 this.appendChild(li);
                 repo = null;
+                var searchbar = new YAHOO.util.Element('search-div-$suffix');
+                searchbar.get('element').innerHTML = '<label for="search-input-$suffix">Search: </label><input id="search-input-$suffix" /><button id="search-btn-$suffix">Go!</button>';
+                var searchbtn = new YAHOO.util.Element('search-btn-$suffix');
+                searchbtn.callback = {
+                    success: function(o) {
+                        var panel = new YAHOO.util.Element('panel-$suffix');
+                        try {
+                            if(!o.responseText){
+                                var panel = new YAHOO.util.Element('panel-$suffix');
+                                panel.get('element').innerHTML = 'no';
+                                return;
+                            }
+                            var json = YAHOO.lang.JSON.parse(o.responseText);
+                        } catch(e) {
+                            alert('$strinvalidjson - '+o.responseText);
+                        }
+                        _client.ds = {};
+                        if(!json.list || json.list.length<1){
+                            var panel = new YAHOO.util.Element('panel-$suffix');
+                            panel.get('element').innerHTML = 'no';
+                            return;
+                        }
+                        _client.ds.list = json.list;
+                        if(_client.ds.list) {
+                            if(_client.viewmode) {
+                                _client.viewthumb();
+                            } else {
+                                _client.viewlist();
+                            }
+                        }
+                    }
+                }
+                searchbtn.on('click', function(e){
+                    var input_ctl = new YAHOO.util.Element('search-input-$suffix');
+                    var keyword = input_ctl.get('value');
+                    var params = [];
+                    params['s'] = keyword;
+                    params['env']=_client.env;
+                    params['action']='gsearch';
+                    params['sesskey']='$sesskey';
+                    params['ctx_id']=$context->id;
+                    _client.loading('load');
+                    var trans = YAHOO.util.Connect.asyncRequest('POST',
+                        '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.callback, _client.postdata(params));
+                });
             }
             });
     }

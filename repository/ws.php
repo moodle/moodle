@@ -26,6 +26,32 @@ $repo_id = optional_param('repo_id', 1, PARAM_INT);
 $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);
 $userid  = $USER->id;
 
+if (!repository_check_context($ctx_id)) {
+    $err = new stdclass;
+    $err->e = get_string('nopermissiontoaccess', 'repository');
+    die(json_encode($err));
+}
+
+// do global search
+if($action=='gsearch'){
+    $repos = repository_get_instances(array(get_context_instance_by_id($ctx_id), get_system_context()));
+    $list = array();
+    foreach($repos as $repo){
+        if ($repo->global_search()) {
+            try {
+                $ret = $repo->get_listing(null, $search);
+                $tmp = array_merge($list, $ret->list);
+                $list = $tmp;
+            } catch (repository_exception $e) {
+                $err = new stdclass;
+                $err->e = $e->getMessage();
+                die(json_encode($err));
+            }
+        }
+    }
+    die(json_encode(array('list'=>$list)));
+}
+
 $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id='.$repo_id.' AND i.typeid=r.id';
 if(!$repository = $DB->get_record_sql($sql)) {
     $err = new stdclass;
@@ -33,12 +59,6 @@ if(!$repository = $DB->get_record_sql($sql)) {
     die(json_encode($err));
 } else {
     $type = $repository->type;
-}
-
-if (!repository_check_context($ctx_id)) {
-    $err = new stdclass;
-    $err->e = get_string('nopermissiontoaccess', 'repository');
-    die(json_encode($err));
 }
 
 if(file_exists($CFG->dirroot.'/repository/'.

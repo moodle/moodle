@@ -33,6 +33,17 @@ class repository_flickr extends repository{
         return $options;
     }
 
+    public function global_search(){
+        global $SESSION;
+        $sess_name = 'flickrmail'.$this->id;
+        if (empty($SESSION->$sess_name)) {
+            return $sess_name;
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public function __construct($repositoryid, $context = SITEID, $options = array()){
         global $SESSION, $action, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
