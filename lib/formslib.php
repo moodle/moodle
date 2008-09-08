@@ -175,7 +175,7 @@ class moodleform {
         // the _qf__.$this->_formname serves as a marker that form was actually submitted
         if (array_key_exists('_qf__'.$this->_formname, $submission) and $submission['_qf__'.$this->_formname] == 1) {
             if (!confirm_sesskey()) {
-                print_error('invalidseeky');
+                print_error('invalidsesskey');
             }
             $files = $_FILES;
         } else {

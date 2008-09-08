@@ -269,7 +269,6 @@ $string['invalidrequest'] = 'Invalid request';
 $string['invalidrole'] = 'Invalid role';
 $string['invalidroleid'] = 'Invalid role ID';
 $string['invalidscaleid'] = 'Incorrect scale id';
-$string['invalidseeky'] = 'Incorrect sesskey submitted, form not accepted!';
 $string['invalidsesskey'] = 'Incorrect sesskey submitted, form not accepted!';
 $string['invalidsection'] = 'Course module record contains invalid section';
 $string['invalidshortname'] = 'That\'s an invalid short course name';
