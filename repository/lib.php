@@ -25,6 +25,20 @@
 ///////////////////////////////////////////////////////////////////////////
 
 /**
+ * About repository/lib.php:
+ * two main classes:
+ * 1. repository_type => a repository plugin, You can activate a plugin into
+ * Moodle. You also can set some general settings/options for this type of repository.
+ * All instances would share the same options (for example: a API key for the connection
+ * to the repository)
+ * 2. repository => an instance of a plugin. You can also call it an access or
+ * an account. An instance has specific settings (for example: a public url) and a specific
+ * name. That's this name which is displayed in the file picker.
+ */
+
+
+
+/**
  * This is the base class of the repository class
  *
  * To use repository plugin, you need to create a new folder under repository/, named as the remote
@@ -953,7 +967,7 @@ function repository_get_instances($contexts=array(), $userid = null, $onlyvisibl
     if ($firstcontext) {
        $sql .=')';
     }
-  
+
     if($onlyvisible == true) {
         $sql .= ' AND (r.visible = 1)';
     }
@@ -1369,7 +1383,7 @@ function _client(){
             });
             var repo_kit_div = new YAHOO.util.Element('repo-kit-$suffix');
             repo_kit_div.get('element').innerHTML = '<button id="repo-kit-ccacle-$suffix">$strccache</button>';
-            var repo_kit_ccache = new YAHOO.util.Element('repo-kit-ccacle-$suffix');      
+            var repo_kit_ccache = new YAHOO.util.Element('repo-kit-ccacle-$suffix');
             repo_kit_ccache.callback = {
                 success: function(o) {
                     var panel = new YAHOO.util.Element('panel-$suffix');
@@ -2147,8 +2161,7 @@ function repository_display_instances_list($context, $typename = null){
         //retrieve list of instances. In administration context we want to display all
         //instances of a type, even if this type is not visible. In course/user context we
         //want to display only visible instances, but for every type types. The repository_get_instances()
-        //third parameter displays only visible type. The fifth parameter is a trick that return
-        //instances of the $context + systemcontext.
+        //third parameter displays only visible type.
         $instances = repository_get_instances(array($context),null,!$admin,$typename);
         $instancesnumber = count($instances);
         $alreadyplugins = array();
@@ -2187,7 +2200,7 @@ function repository_display_instances_list($context, $typename = null){
             $instancehtml .= '</h3><ul>';
             foreach ($plugins as $p) {
                    $type = repository_get_type_by_typename($p);
-                   if ($type->get_visible()) {
+                   if (!empty($type) && $type->get_visible()) {
                        if (repository_static_function($p, 'has_multiple_instances')){
                             $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$p.'">'.get_string('create', 'repository')
                                 .' "'.get_string('repositoryname', 'repository_'.$p).'" '
