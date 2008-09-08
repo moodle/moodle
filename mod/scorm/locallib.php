@@ -1029,4 +1029,78 @@ function scorm_get_count_users($scormid, $groupingid=null) {
     return(count_records_sql($sql));
 }
 
+ /**
+* Build up the JavaScript representation of an array element
+*
+* @param string $sversion SCORM API version
+* @param array $userdata User track data
+* @param string $element_name Name of array element to get values for
+* @param array $children list of sub elements of this array element that also need instantiating
+* @return None
+*/   
+function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $children) {
+    // reconstitute comments_from_learner and comments_from_lms
+    $current = '';
+    $count = 0;
+    
+    // filter out the ones we want
+    $element_list = array();
+    foreach($userdata as $element => $value){
+        if (substr($element,0,strlen($element_name)) == $element_name) {
+            $element_list[$element] = $value;
+        }
+    }
+    
+    // sort elements in .n array order
+    uksort($element_list, "scorm_element_cmp");
+    
+    // generate JavaScript
+    foreach($element_list as $element => $value){
+        if ($sversion == 'scorm_13') {
+            $element = preg_replace('/\.(\d+)\./', ".N\$1.", $element);
+            preg_match('/\.(N\d+)\./', $element, $matches);
+        } else {
+            $element = preg_replace('/\.(\d+)\./', "_\$1.", $element);
+            preg_match('/\_(\d+)\./', $element, $matches);
+        }
+        if (count($matches) > 0 && $current != $matches[1]) {
+            $current = $matches[1];            
+            $count++;
+            $end = strpos($element,$matches[1])+strlen($matches[1]);
+            $subelement = substr($element,0,$end);
+            echo '    '.$subelement." = new Object();\n";
+            // now add the children
+            foreach ($children as $child) {
+                echo '    '.$subelement.".".$child." = new Object();\n";
+                echo '    '.$subelement.".".$child."._children = ".$child."_children;\n";
+            }
+        }
+        echo '    '.$element.' = \''.$value."';\n";
+    }
+    if ($count > 0) {
+        echo '    '.$element_name.'._count = '.$count.";\n";
+    }
+}
+
+/**
+* Build up the JavaScript representation of an array element
+*
+* @param string $a left array element
+* @param string $b right array element
+* @return comparator - 0,1,-1
+*/   
+function scorm_element_cmp($a, $b) {
+    preg_match('/(\d+)\./', $a, $matches);
+    $left = intval($matches[1]);
+    preg_match('/(\d+)\./', $b, $matches);
+    $right = intval($matches[1]);
+    if ($left < $right) {
+        return -1; // smaller
+    } elseif ($left > $right) {
+        return 1;  // bigger
+    } else {
+        return 0;  // equal to
+    }
+}
+
 ?>
