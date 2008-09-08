@@ -1542,8 +1542,8 @@
                                                    AND itemtype = 'mod'")) {
             foreach ($grade_items as $grade_item) {
                 // get module information
-                // if no user data selected, we do not backup categories
-                if (!backup_userdata_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
+                // if some activities not selected, we do not backup categories at all
+                if (!backup_mod_selected($preferences,$grade_item->itemmodule,$grade_item->iteminstance)) {
                     $backupall = false;
                     break;
                 }
@@ -2132,7 +2132,8 @@
                                                 {$CFG->prefix}backup_ids bi
                                            WHERE gm.groupid = $groupid
                                              AND bi.backup_code = $preferences->backup_unique_code
-                                             AND bi.table_name = 'user'");
+                                             AND bi.table_name = 'user'
+                                             AND bi.old_id = gm.userid");
 
         //Pring groups_members header
         if ($groups_members) {
