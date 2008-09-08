@@ -380,7 +380,7 @@ function quiz_get_all_question_grades($quiz) {
  * @return float the rescaled grade.
  */
 function quiz_rescale_grade($rawgrade, $quiz, $round = true) {
-    if ($quiz->sumgrades) {
+    if ($quiz->sumgrades != 0) {
         $grade = $rawgrade * $quiz->grade / $quiz->sumgrades;
         if ($round) {
             $grade = quiz_format_grade($quiz, $grade);
