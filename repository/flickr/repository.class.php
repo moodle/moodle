@@ -37,7 +37,6 @@ class repository_flickr extends repository{
         global $SESSION;
         $sess_name = 'flickrmail'.$this->id;
         if (empty($SESSION->$sess_name)) {
-            return $sess_name;
             return false;
         } else {
             return true;
@@ -146,14 +145,14 @@ EOD;
             $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 36, $path);
         }
 
-        $ret = new stdclass;
-        $ret->manage = $photos_url;
-        $ret->list  = array();
-        $ret->pages = $photos['pages'];
-        if(is_int($path) && $path <= $ret->pages) {
-            $ret->page = $path;
+        $ret = array();
+        $ret['manage'] = $photos_url;
+        $ret['list']  = array();
+        $ret['pages'] = $photos['pages'];
+        if(is_int($path) && $path <= $ret['pages']) {
+            $ret['page'] = $path;
         } else {
-            $ret->page = 1;
+            $ret['page'] = 1;
         }
         foreach ($photos['photo'] as $p) {
             if(empty($p['title'])) {
@@ -164,7 +163,7 @@ EOD;
             } else {
                 $format = 'jpg';
             }
-            $ret->list[] =
+            $ret['list'][] =
                 array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown', 'url'=>$photos_url.$p['id']);
         }
         if(empty($ret)) {

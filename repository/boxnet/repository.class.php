@@ -106,6 +106,28 @@ class repository_boxnet extends repository{
         global $CFG, $SESSION;
         $list = array();
         $ret  = array();
+        if (!empty($search)) {
+            $tree = $this->box->getAccountTree();
+            if (!empty($tree)) {
+                $filenames = $tree['file_name'];
+                $fileids   = $tree['file_id'];
+                $filesizes = $tree['file_size'];
+                $filedates = $tree['file_date'];
+                $fileicon  = $tree['thumbnail'];
+                foreach ($filenames as $n=>$v){
+                    if(strstr($v, $search) !== false) {
+                        $list[] = array('title'=>$v, 
+                                'size'=>$filesizes[$n],
+                                'date'=>$filedates[$n],
+                                'source'=>'http://box.net/api/1.0/download/'
+                                    .$this->options['auth_token'].'/'.$fileids[$n],
+                                'thumbnail'=>$CFG->pixpath.'/f/'.mimeinfo('icon', $v));
+                    }
+                }
+            }
+            $ret['list'] = $list;
+            return $ret;
+        }
         $tree = $this->box->getfiletree($path);
         if(!empty($tree)) {
             // TODO: think about how to search

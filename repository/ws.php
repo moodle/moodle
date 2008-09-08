@@ -32,6 +32,9 @@ if (!repository_check_context($ctx_id)) {
     die(json_encode($err));
 }
 
+function attach_repository_id(&$value, $key, $id){
+    $value['repo_id'] = $id;
+}
 // do global search
 if($action=='gsearch'){
     $repos = repository_get_instances(array(get_context_instance_by_id($ctx_id), get_system_context()));
@@ -40,7 +43,8 @@ if($action=='gsearch'){
         if ($repo->global_search()) {
             try {
                 $ret = $repo->get_listing(null, $search);
-                $tmp = array_merge($list, $ret->list);
+                array_walk($ret['list'], 'attach_repository_id', $repo->id);
+                $tmp = array_merge($list, $ret['list']);
                 $list = $tmp;
             } catch (repository_exception $e) {
                 $err = new stdclass;

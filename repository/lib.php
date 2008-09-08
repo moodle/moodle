@@ -1345,7 +1345,7 @@ function _client(){
                 this.appendChild(li);
                 repo = null;
                 var searchbar = new YAHOO.util.Element('search-div-$suffix');
-                searchbar.get('element').innerHTML = '<label for="search-input-$suffix">Search: </label><input id="search-input-$suffix" /><button id="search-btn-$suffix">Go!</button>';
+                searchbar.get('element').innerHTML = '<label for="search-input-$suffix">$strsearch: </label><input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
                 var searchbtn = new YAHOO.util.Element('search-btn-$suffix');
                 searchbtn.callback = {
                     success: function(o) {
@@ -1373,12 +1373,14 @@ function _client(){
                             } else {
                                 _client.viewlist();
                             }
+                            var input_ctl = new YAHOO.util.Element('search-input-$suffix');
+                            input_ctl.get('element').value='';
                         }
                     }
                 }
+                searchbtn.input_ctl = new YAHOO.util.Element('search-input-$suffix');
                 searchbtn.on('click', function(e){
-                    var input_ctl = new YAHOO.util.Element('search-input-$suffix');
-                    var keyword = input_ctl.get('value');
+                    var keyword = this.input_ctl.get('value');
                     var params = [];
                     params['s'] = keyword;
                     params['env']=_client.env;
@@ -1437,9 +1439,10 @@ _client.loading = function(type, name){
     //content.innerHTML = '';
     panel.get('element').appendChild(content);
 }
-_client.rename = function(oldname, url, icon){
+_client.rename = function(oldname, url, icon, repo_id){
     var panel = new YAHOO.util.Element('panel-$suffix');
     var html = '<div class="rename-form">';
+    _client.repositoryid=repo_id;
     html += '<p><img src="'+icon+'" /></p>';
     html += '<p><label for="newname-$suffix">$strsaveas</label>';
     html += '<input type="text" id="newname-$suffix" value="'+oldname+'" /></p>';
@@ -1548,8 +1551,9 @@ _client.viewthumb = function(ds){
             el.title = list[k].title;
             el.value = list[k].source;
             el.icon  = list[k].thumbnail;
+            el.repo_id = list[k].repo_id;
             el.on('click', function(){
-                repository_client_$suffix.rename(this.title, this.value, this.icon);
+                repository_client_$suffix.rename(this.title, this.value, this.icon, this.repo_id);
             });
         }
         count++;
@@ -1563,6 +1567,11 @@ _client.buildtree = function(node, level){
     var tmpNode = new YAHOO.widget.TextNode(info, level, false);
     var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
         context:tmpNode.labelElId, text:info.title});
+    if(node.repo_id){
+        tmpNode.repo_id=node.repo_id;
+    }else{
+        tmpNode.repo_id=_client.repositoryid;
+    }
     tmpNode.filename = node.title;
     tmpNode.value  = node.source;
     tmpNode.icon = node.thumbnail;
@@ -1579,7 +1588,7 @@ _client.buildtree = function(node, level){
     } else {
         tmpNode.isLeaf = true;
         tmpNode.onLabelClick = function() {
-            repository_client_$suffix.rename(this.filename, this.value, this.icon);
+            repository_client_$suffix.rename(this.filename, this.value, this.icon, this.repo_id);
         }
     }
 }
