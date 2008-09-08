@@ -1836,7 +1836,7 @@ function print_category_info($category, $depth, $files = false) {
         if ($depth) {
             $indent = $depth*30;
             $rows = count($courses) + 1;
-            echo '<td rowspan="'.$rows.'" valign="top" width="'.$indent.'">';
+            echo '<td class="category indentation" rowspan="'.$rows.'" valign="top">';
             print_spacer(10, $indent);
             echo '</td>';
         }
@@ -1883,7 +1883,7 @@ function print_category_info($category, $depth, $files = false) {
 
         if ($depth) {
             $indent = $depth*20;
-            echo '<td valign="top" width="'.$indent.'">';
+            echo '<td class="category indentation" valign="top">';
             print_spacer(10, $indent);
             echo '</td>';
         }
