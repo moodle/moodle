@@ -249,14 +249,12 @@
     }
 
     // Repository Tab
-    if (!empty($user) and $user->id == $USER->id) {
+    if (!empty($user) and $user->id == $USER->id) {        
         require_once($CFG->dirroot . '/repository/lib.php');
-        //$coursecontext = get_context_instance(CONTEXT_COURSE, $course->id);
         $usercontext = get_context_instance(CONTEXT_USER,$user->id);
-
-        //if (repository_get_instances($usercontext, $USER->id)) {
+        if (!empty($usercontext) && $usercontext->contextlevel == CONTEXT_USER) {
             $toprow[] = new tabobject('repositories', $CFG->wwwroot .'/repository/manage_instances.php?contextid='.$usercontext->id, get_string('repositories', 'repository'));
-        //}
+        }
 
     }
 

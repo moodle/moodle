@@ -76,3 +76,4 @@ $string['typenotvisible'] = 'Type not visible';
 $string['updown'] = 'Display order';
 $string['upload'] = 'Upload this file';
 $string['uploading'] = 'Uploading...';
+$string['wrongcontext'] = 'You cannot access to this context';

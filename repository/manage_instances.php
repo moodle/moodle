@@ -46,6 +46,9 @@ else {
     if ($USER->id != $context->instanceid){
         print_error('notyourinstances', 'repository');
     }
+    if ($context->contextlevel != CONTEXT_USER){
+        print_error('wrongcontext', 'repository');
+    }
      $user = $USER;
 }
 
