@@ -515,9 +515,6 @@ function question_showbank_actions($pageurl, $cm){
  * category      Chooses the category
  * displayoptions Sets display options
  *
- * @author Martin Dougiamas and many others. This has recently been extensively
- *         rewritten by Gustav Delius and other members of the Serving Mathematics project
- *         {@link http://maths.york.ac.uk/serving_maths}
  * @param moodle_url $pageurl object representing this pages url.
  */
 function question_showbank($tabname, $contexts, $pageurl, $cm, $page, $perpage, $sortorder, $sortorderdecoded, $cat, $recurse, $showhidden, $showquestiontext){
