@@ -166,6 +166,22 @@ function xmldb_forum_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008081900, 'forum');
     }
 
+    if ($result && $oldversion < 2008090800) {
+
+    /// Define field maxattachments to be added to forum
+        $table = new xmldb_table('forum');
+        $field = new xmldb_field('maxattachments', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '1', 'maxbytes');
+
+    /// Conditionally launch add field maxattachments
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// forum savepoint reached
+        upgrade_mod_savepoint($result, 2008090800, 'forum');
+    }
+
+
 
     return $result;
 }

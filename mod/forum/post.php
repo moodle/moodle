@@ -441,10 +441,13 @@
     }
     $modcontext = get_context_instance(CONTEXT_MODULE, $cm->id);
 
+    if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field to the forum table
+        $forum->maxattachments = 3;
+    }
+
     $mform_post = new mod_forum_post_form('post.php', array('course'=>$course, 'cm'=>$cm, 'coursecontext'=>$coursecontext, 'modcontext'=>$modcontext, 'forum'=>$forum, 'post'=>$post));
 
     if ($fromform = $mform_post->get_data()) {
-
 
         require_login($course, false, $cm);
 
@@ -753,6 +756,26 @@
         $subscribe = !empty($USER->autosubscribe);
     }
 
+    $defaultattachments = array();
+
+    if ($forum->maxattachments) {
+        for ($i=0; $i<$forum->maxattachments; $i++) {
+            $defaultattachments['attachment'.$i] = '';
+        }
+    
+        if (!empty($post->attachment)) {   // We already have some attachments, so show them
+            $fs = get_file_storage();
+    
+            $i = 0;
+            if ($files = $fs->get_area_files($modcontext->id, 'forum_attachment', $post->id, "timemodified ASC", false)) {
+                foreach ($files as $file) {
+                    $defaultattachments['attachment'.$i] = $file->get_filename();
+                    $i++;
+                }
+            }
+        }
+    }
+
     // HACK ALERT: this is very wrong, the defaults should be always initialized before calling $mform->get_data() !!!
     $mform_post->set_data(array(    'general'=>$heading,
                                         'subject'=>$post->subject,
@@ -762,9 +785,11 @@
                                         'userid'=>$post->userid,
                                         'parent'=>$post->parent,
                                         'discussion'=>$post->discussion,
-                                        'course'=>$course->id)+
+                                        'course'=>$course->id) +
 
-                                        $page_params+
+                                        $defaultattachments +
+
+                                        $page_params +
 
                                 (isset($post->format)?array(
                                         'format'=>$post->format):

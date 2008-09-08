@@ -23,6 +23,10 @@ $settings->add(new admin_setting_configtext('forum_manydiscussions', get_string(
 $settings->add(new admin_setting_configselect('forum_maxbytes', get_string('maxattachmentsize', 'forum'),
                    get_string('configmaxbytes', 'forum'), 512000, get_max_upload_sizes($CFG->maxbytes)));
 
+// Default number of attachments allowed per post in all forums
+$settings->add(new admin_setting_configtext('forum_maxattachments', get_string('maxattachments', 'forum'),
+                   get_string('configmaxattachments', 'forum'), 1, PARAM_INT));
+
 // Default whether user needs to mark a post as read
 $settings->add(new admin_setting_configcheckbox('forum_trackreadposts', get_string('trackforum', 'forum'),
                    get_string('configtrackreadposts', 'forum'), 1));

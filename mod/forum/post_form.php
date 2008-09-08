@@ -52,9 +52,11 @@ class mod_forum_post_form extends moodleform {
             $mform->setHelpButton('subscribemessage', array('subscription', get_string('subscription', 'forum'), 'forum'));
         }
 
-        if ($forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
-            $mform->addElement('filepicker', 'attachment', get_string('attachment', 'forum'));
-            $mform->setHelpButton('attachment', array('attachment', get_string('attachment', 'forum'), 'forum'));
+        if (!empty($forum->maxattachments) && $forum->maxbytes != 1 && has_capability('mod/forum:createattachment', $modcontext))  {  //  1 = No attachments at all
+            for ($i=0; $i<$forum->maxattachments; $i++) {
+                $mform->addElement('filepicker', 'attachment'.$i, get_string('attachment', 'forum'));
+                $mform->setHelpButton('attachment'.$i, array('attachment2', get_string('attachment', 'forum'), 'forum'));
+            }
         }
 
         if (empty($post->id) && has_capability('moodle/course:manageactivities', $coursecontext)) { // hack alert

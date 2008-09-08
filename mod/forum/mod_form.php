@@ -54,6 +54,11 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->setHelpButton('maxbytes', array('maxattachmentsize', get_string('maxattachmentsize', 'forum'), 'forum'));
         $mform->setDefault('maxbytes', $CFG->forum_maxbytes);
 
+        $choices = array(0,1,2,3,4,5,6,7,8,9);
+        $mform->addElement('select', 'maxattachments', get_string('maxattachments', 'forum'), $choices);
+        $mform->setHelpButton('maxattachments', array('maxattachments', get_string('maxattachments', 'forum'), 'forum'));
+        $mform->setDefault('maxattachments', $CFG->forum_maxattachments);
+
         if ($CFG->enablerssfeeds && isset($CFG->forum_enablerssfeeds) && $CFG->forum_enablerssfeeds) {
 //-------------------------------------------------------------------------------
             $mform->addElement('header', '', get_string('rss'));
