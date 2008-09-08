@@ -55,6 +55,11 @@ if($action=='gsearch'){
     }
     die(json_encode(array('list'=>$list)));
 }
+if ($action=='ccache') {
+    $cache = new curl_cache;
+    $cache->refresh();
+    die(get_string('cachecleared', 'repository'));
+}
 
 $sql = 'SELECT i.name, i.typeid, r.type FROM {repository} r, {repository_instances} i WHERE i.id='.$repo_id.' AND i.typeid=r.id';
 if(!$repository = $DB->get_record_sql($sql)) {

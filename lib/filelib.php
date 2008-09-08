@@ -1862,9 +1862,9 @@ class curl_cache {
         } 
     }
     public function get($param){
-        global $CFG;
+        global $CFG, $USER;
         $this->cleanup($CFG->repository_cache_expire);
-        $filename = md5(serialize($param));
+        $filename = 'u'.$USER->id.'_'.md5(serialize($param));
         if(file_exists($this->dir.$filename)) {
             $lasttime = filemtime($this->dir.$filename);
             if(time()-$lasttime > $CFG->repository_cache_expire)
@@ -1880,7 +1880,8 @@ class curl_cache {
         return false;
     }
     public function set($param, $val){
-        $filename = md5(serialize($param));
+        global $CFG, $USER;
+        $filename = 'u'.$USER->id.'_'.md5(serialize($param));
         $fp = fopen($this->dir.$filename, 'w');
         fwrite($fp, serialize($val));
         fclose($fp);
@@ -1891,6 +1892,23 @@ class curl_cache {
                 if(!is_dir($file) && $file != '.' && $file != '..') {
                     $lasttime = @filemtime($this->dir.$file);
                     if(time() - $lasttime > $expire){
+                        @unlink($this->dir.$file);
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * delete current user's cache file
+     *
+     * @return null
+     */
+    public function refresh(){
+        global $CFG, $USER;
+        if($dir = opendir($this->dir)){
+            while (false !== ($file = readdir($dir))) {
+                if(!is_dir($file) && $file != '.' && $file != '..') {
+                    if(strpos($file, 'u'.$USER->id.'_')!==false){
                         @unlink($this->dir.$file);
                     }
                 }

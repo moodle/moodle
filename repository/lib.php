@@ -1150,6 +1150,7 @@ function repository_get_client($context){
     $strback      = get_string('back', 'repository');
     $strcancel    = get_string('cancel');
     $strclose     = get_string('close', 'repository');
+    $strccache    = get_string('cleancache', 'repository');
     $strcopying   = get_string('copying', 'repository');
     $strdownbtn   = get_string('getfile', 'repository');
     $strdownload  = get_string('downloadsucc', 'repository');
@@ -1268,7 +1269,7 @@ function _client(){
                         {position: 'top', height: 32, resize: false,
                         body:'<div class="yui-buttongroup" id="repo-viewbar-$suffix"></div><div id="search-div-$suffix"></div>', gutter: '2'},
                         {position: 'left', width: 200, resize: true,
-                        body:'<ul class="repo-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
+                        body:'<ul class="repo-list" id="repo-list-$suffix"></ul><div id="repo-kit-$suffix"></div>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
                         {position: 'center', body: '<div id="panel-$suffix"></div>',
                         scroll: true, gutter: '0 2 0 0' }
                     ]
@@ -1319,6 +1320,71 @@ function _client(){
         // init repository list
         repo_list = new YAHOO.util.Element('repo-list-$suffix');
         repo_list.on('contentReady', function(e){
+            var searchbar = new YAHOO.util.Element('search-div-$suffix');
+            searchbar.get('element').innerHTML = '<label for="search-input-$suffix">$strsearch: </label><input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
+            var searchbtn = new YAHOO.util.Element('search-btn-$suffix');
+            searchbtn.callback = {
+                success: function(o) {
+                    var panel = new YAHOO.util.Element('panel-$suffix');
+                    try {
+                        if(!o.responseText){
+                            var panel = new YAHOO.util.Element('panel-$suffix');
+                            panel.get('element').innerHTML = 'no';
+                            return;
+                        }
+                        var json = YAHOO.lang.JSON.parse(o.responseText);
+                    } catch(e) {
+                        alert('$strinvalidjson - '+o.responseText);
+                    }
+                    _client.ds = {};
+                    if(!json.list || json.list.length<1){
+                        var panel = new YAHOO.util.Element('panel-$suffix');
+                        panel.get('element').innerHTML = 'no';
+                        return;
+                    }
+                    _client.ds.list = json.list;
+                    if(_client.ds.list) {
+                        if(_client.viewmode) {
+                            _client.viewthumb();
+                        } else {
+                            _client.viewlist();
+                        }
+                        var input_ctl = new YAHOO.util.Element('search-input-$suffix');
+                        input_ctl.get('element').value='';
+                    }
+                }
+            }
+            searchbtn.input_ctl = new YAHOO.util.Element('search-input-$suffix');
+            searchbtn.on('click', function(e){
+                var keyword = this.input_ctl.get('value');
+                var params = [];
+                params['s'] = keyword;
+                params['env']=_client.env;
+                params['action']='gsearch';
+                params['sesskey']='$sesskey';
+                params['ctx_id']=$context->id;
+                _client.loading('load');
+                var trans = YAHOO.util.Connect.asyncRequest('POST',
+                    '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.callback, _client.postdata(params));
+            });
+            var repo_kit_div = new YAHOO.util.Element('repo-kit-$suffix');
+            repo_kit_div.get('element').innerHTML = '<button id="repo-kit-ccacle-$suffix">$strccache</button>';
+            var repo_kit_ccache = new YAHOO.util.Element('repo-kit-ccacle-$suffix');      
+            repo_kit_ccache.callback = {
+                success: function(o) {
+                    var panel = new YAHOO.util.Element('panel-$suffix');
+                    panel.get('element').innerHTML = "<h1>"+o.responseText+"</h1>";
+                }
+            }
+            repo_kit_ccache.on('click', function(e){
+                var params = [];
+                params['env']=_client.env;
+                params['sesskey']='$sesskey';
+                params['ctx_id']=$context->id;
+                _client.loading('load');
+                var trans = YAHOO.util.Connect.asyncRequest('POST',
+                    '$CFG->httpswwwroot/repository/ws.php?action=ccache', this.callback, _client.postdata(params));
+            });
             for(var i=0; i<_client.repos.length; i++) {
                 var repo = _client.repos[i];
                 var li = document.createElement('li');
@@ -1344,53 +1410,6 @@ function _client(){
                 li.appendChild(opt);
                 this.appendChild(li);
                 repo = null;
-                var searchbar = new YAHOO.util.Element('search-div-$suffix');
-                searchbar.get('element').innerHTML = '<label for="search-input-$suffix">$strsearch: </label><input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
-                var searchbtn = new YAHOO.util.Element('search-btn-$suffix');
-                searchbtn.callback = {
-                    success: function(o) {
-                        var panel = new YAHOO.util.Element('panel-$suffix');
-                        try {
-                            if(!o.responseText){
-                                var panel = new YAHOO.util.Element('panel-$suffix');
-                                panel.get('element').innerHTML = 'no';
-                                return;
-                            }
-                            var json = YAHOO.lang.JSON.parse(o.responseText);
-                        } catch(e) {
-                            alert('$strinvalidjson - '+o.responseText);
-                        }
-                        _client.ds = {};
-                        if(!json.list || json.list.length<1){
-                            var panel = new YAHOO.util.Element('panel-$suffix');
-                            panel.get('element').innerHTML = 'no';
-                            return;
-                        }
-                        _client.ds.list = json.list;
-                        if(_client.ds.list) {
-                            if(_client.viewmode) {
-                                _client.viewthumb();
-                            } else {
-                                _client.viewlist();
-                            }
-                            var input_ctl = new YAHOO.util.Element('search-input-$suffix');
-                            input_ctl.get('element').value='';
-                        }
-                    }
-                }
-                searchbtn.input_ctl = new YAHOO.util.Element('search-input-$suffix');
-                searchbtn.on('click', function(e){
-                    var keyword = this.input_ctl.get('value');
-                    var params = [];
-                    params['s'] = keyword;
-                    params['env']=_client.env;
-                    params['action']='gsearch';
-                    params['sesskey']='$sesskey';
-                    params['ctx_id']=$context->id;
-                    _client.loading('load');
-                    var trans = YAHOO.util.Connect.asyncRequest('POST',
-                        '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.callback, _client.postdata(params));
-                });
             }
             });
     }
