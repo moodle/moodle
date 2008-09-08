@@ -682,7 +682,7 @@ function glossary_print_entry_default ($entry) {
 function  glossary_print_entry_concept($entry) {
     $options = new object();
     $options->para = false;
-    $text = format_text(print_heading($entry->concept, '', 3, 'nolink', true), FORMAT_MOODLE, $options);
+    $text = format_text(print_heading('<span class="nolink">' . $entry->concept . '</span>', '', 3, 'nolink', true), FORMAT_MOODLE, $options);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
