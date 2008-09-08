@@ -943,6 +943,29 @@ body#admin-modules table.generaltable td.c0
   margin-top: 1em;
 }
 
+#admin-report-capability-index .rolecaps th {
+  text-align: left;
+}
+#admin-report-capability-index #settingsform {
+  text-align: left;
+}
+#admin-report-capability-index #settingsform h2 {
+    margin-top: 0;
+}
+#admin-report-capability-index #settingsform p {
+  margin-bottom: 0;
+}
+#admin-report-capability-index #settingsform #menucapability,
+#admin-report-capability-index #settingsform #capabilitysearchui {
+  width: 100%;
+}
+#admin-report-capability-index #settingsform #capabilitysearch {
+  width: 30em;
+}
+#admin-report-capability-index h3 {
+  margin-bottom: 0;
+}
+
 #admin-roles-allowassign .buttons,
 #admin-roles-allowoverride .buttons,
 #admin-roles-manage .buttons,
