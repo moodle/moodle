@@ -58,6 +58,7 @@ $string['invalidipformat'] = 'Invalid IP address format';
 $string['invalidmd5'] = 'Invalid md5';
 $string['invalidrequest'] = 'Invalid request';
 $string['invalidrole'] = 'Invalid role';
+$string['invalidsesskey'] = 'Incorrect sesskey submitted, form not accepted!';
 $string['invalidurl'] = 'Invalid URL';
 $string['iplookupfailed'] = 'Cannot find geo information about this IP address $a';
 $string['iplookupprivate'] = 'Cannot display lookup of private IP address';
