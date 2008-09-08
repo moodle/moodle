@@ -165,7 +165,7 @@
 
         // Install core message providers
         message_update_providers();
-	message_update_providers('message');
+        message_update_providers('message');
 
         /// This is used to handle any settings that must exist in $CFG but which do not exist in
         /// admin_get_root()/$ADMIN as admin_setting objects (there are some exceptions).
