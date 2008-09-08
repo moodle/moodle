@@ -612,7 +612,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 
 ?>
             <div class="scorm-center">
-               <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php?scoid=<?php echo $sco->id ?>&amp;id=<?php echo $cm->id ?>&amp;currentorg=<?php echo $orgidentifier ?>">
+               <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php">
               <?php
                   if ($scorm->hidebrowse == 0) {
                       print_string('mode','scorm');
@@ -630,8 +630,8 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
                   }
               ?>
               <br />
+              <input type="hidden" name="scoid"/>
               <input type="hidden" name="id" value="<?php echo $cm->id ?>"/>
-              <input type="hidden" name="scoid" value="<?php echo $sco->id ?>"/>
               <input type="hidden" name="currentorg" value="<?php echo $orgidentifier ?>" />
               <input type="submit" value="<?php print_string('enter','scorm') ?>" />
               </form>
