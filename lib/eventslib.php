@@ -49,7 +49,8 @@ function events_load_def($component) {
         
         } else if ($compparts[0] == 'gradereport') {
             $defpath = $CFG->dirroot.'/grade/report/'.$compparts[1].'/db/events.php'; 
-        
+        } else if ($compparts[0] == 'portfolio'){
+            $defpath = $CFG->dirroot.'/portfolio/type/'.$compparts[1].'/db/events.php';
         } else {
             $defpath = $CFG->dirroot.'/'.$component.'/db/events.php';
         }
