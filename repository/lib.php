@@ -1627,8 +1627,8 @@ _client.viewlist = function(){
     _client.viewbar.check(0);
     list = _client.ds.list;
     _client.navbar();
-    panel.get('element').innerHTML += '<div id="treediv"></div>';
-    var tree = new YAHOO.widget.TreeView('treediv');
+    panel.get('element').innerHTML += '<div id="treediv-$suffix"></div>';
+    var tree = new YAHOO.widget.TreeView('treediv-$suffix');
     if(_client.ds.dynload) {
         tree.setDynamicLoad(_client.dynload, 1);
     } else {
