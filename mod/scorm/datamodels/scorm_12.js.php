@@ -1,4 +1,6 @@
 <?php
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+    
     if (isset($userdata->status)) {
         if ($userdata->status == '') {
             $userdata->entry = 'ab-initio';
@@ -137,31 +139,8 @@ function SCORMapi1_2() {
     }
 
 <?php
-    $current_objective = '';
-    $count = 0;
-    $objectives = '';
-    foreach($userdata as $element => $value){
-        if (substr($element,0,14) == 'cmi.objectives') {
-            $element = preg_replace('/\.(\d+)\./', "_\$1.", $element);
-            preg_match('/\_(\d+)\./', $element, $matches);
-            if (count($matches) > 0 && $current_objective != $matches[1]) {
-                $current_objective = $matches[1];
-                $count++;
-                $end = strpos($element,$matches[1])+strlen($matches[1]);
-                $subelement = substr($element,0,$end);
-                echo '    '.$subelement." = new Object();\n";
-                echo '    '.$subelement.".score = new Object();\n";
-                echo '    '.$subelement.".score._children = score_children;\n";
-                echo '    '.$subelement.".score.raw = '';\n";
-                echo '    '.$subelement.".score.min = '';\n";
-                echo '    '.$subelement.".score.max = '';\n";
-            }
-            echo '    '.$element.' = \''.$value."';\n";
-        }
-    }
-    if ($count > 0) {
-        echo '    cmi.objectives._count = '.$count.";\n";
-    }
+     // reconstitute objectives
+    scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.objectives', array('score'));
 ?>
 
     if (cmi.core.lesson_status == '') {
@@ -246,8 +225,8 @@ function SCORMapi1_2() {
                 elementmodel = String(element).replace(expression,'.n.');
                 if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
                     if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
-                            element = String(element).replace(expression, "_$1.");
-                            elementIndexes = element.split('.');
+                        element = String(element).replace(expression, "_$1.");
+                        elementIndexes = element.split('.');
                         subelement = 'cmi';
                         i = 1;
                         while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
