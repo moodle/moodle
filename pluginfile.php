@@ -87,7 +87,7 @@
 
 
     } else if ($context->contextlevel == CONTEXT_COURSECAT) {
-        if ($filearea !== 'intro') {
+        if ($filearea !== 'coursecat_intro') {
             send_file_not_found();
         }
 
@@ -97,7 +97,7 @@
         }
 
         $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'intro0'.$relativepath;
+        $fullpath = $context->id.'coursecat_intro0'.$relativepath;
 
         if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->get_filename() == '.') {
             send_file_not_found();
@@ -108,36 +108,82 @@
 
 
     } else if ($context->contextlevel == CONTEXT_COURSE) {
-        if ($filearea !== 'intro' and $filearea !== 'backup') {
-            send_file_not_found();
-        }
-
         if (!$course = $DB->get_record('course', array('id'=>$context->instanceid))) {
             print_error('invalidcourseid');
         }
 
-        if ($filearea === 'backup') {
+        if ($filearea === 'course_backup') {
             require_login($course);
             require_capability('moodle/site:backupdownload', $context);
-        } else {
+
+            $relativepath = '/'.implode('/', $args);
+            $fullpath = $context->id.'course_backup0'.$relativepath;
+
+            if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+                send_file_not_found();
+            }
+
+            session_write_close(); // unlock session during fileserving
+            send_stored_file($file, 0, 0, true);
+
+        } else if ($filearea === 'course_intro') {
             if ($CFG->forcelogin) {
                 require_login();
             }
-        }
 
-        $relativepath = '/'.implode('/', $args);
-        $fullpath = $context->id.'intro0'.$relativepath;
+            $relativepath = '/'.implode('/', $args);
+            $fullpath = $context->id.'course_intro0'.$relativepath;
 
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+                send_file_not_found();
+            }
+
+            session_write_close(); // unlock session during fileserving
+            send_stored_file($file, 60*60, 0, false); // TODO: change timeout?
+
+        } else if ($filearea === 'user_profile') {
+            $userid = (int)array_shift($args);
+            $usercontext = get_context_instance(CONTEXT_USER, $userid);
+
+            if (!empty($CFG->forceloginforprofiles)) {
+                require_login();
+                if (isguestuser()) {
+                    print_error('noguest');
+                }
+
+                if (!isteacherinanycourse()
+                    and !isteacherinanycourse($userid)
+                    and !has_capability('moodle/user:viewdetails', $usercontext)) {
+                    print_error('usernotavailable');
+                }
+                if (!has_capability('moodle/user:viewdetails', $context) &&
+                    !has_capability('moodle/user:viewdetails', $usercontext)) {
+                    print_error('cannotviewprofile');
+                }
+                if (!has_capability('moodle/course:view', $context, $userid, false)) {
+                    print_error('notenrolledprofile');
+                }
+                if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                    print_error('groupnotamember');
+                }
+            }
+
+            $relativepath = '/'.implode('/', $args);
+            $fullpath = $usercontext->id.'user_profile0'.$relativepath;
+
+            if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+                send_file_not_found();
+            }
+
+            session_write_close(); // unlock session during fileserving
+            send_stored_file($file, 0, 0, true); // must force download - security!
+
+        } else {
             send_file_not_found();
         }
 
-        session_write_close(); // unlock session during fileserving
-        send_stored_file($file, 60*60, 0, $forcedownload);
-
-
     } else if ($context->contextlevel == CONTEXT_MODULE) {
-        
+
         if (!$coursecontext = get_context_instance_by_id(get_parent_contextid($context))) {
             send_file_not_found();
         }

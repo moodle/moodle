@@ -32,47 +32,40 @@
     }
 
     $userid = $context->instanceid;
-    if ($USER->id != $userid) {
-        print_error('invaliduserid');
-    }
 
     switch ($filearea) {
         case 'user_profile':
-            if (!empty($CFG->forceloginforprofiles)) {
-                require_login();
-                if (isguestuser()) {
-                    print_error('noguest');
-                }
-                $user = $DB->get_record("user", array("id"=>$userid));
-                $usercontext   = get_context_instance(CONTEXT_USER, $user->id);
-                if (!isteacherinanycourse()
-                    and !isteacherinanycourse($user->id)
-                    and !has_capability('moodle/user:viewdetails', $usercontext)) {
-                    print_error('usernotavailable');
-                }
-                //TODO: find a way to get $coursecontext .. or equivalent check.
-                //if (!has_capability('moodle/user:viewdetails', $coursecontext) &&
-                //    !has_capability('moodle/user:viewdetails', $usercontext)) {
-                //    print_error('cannotviewprofile');
-                //}
-                //if (!has_capability('moodle/course:view', $coursecontext, $user->id, false)) {
-                //    print_error('notenrolledprofile');
-                //}
-                //if (groups_get_course_groupmode($course) == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $coursecontext)) {
-                //    print_error('groupnotamember');
-                //}
-            }
-            $itemid = 0;
-            $forcedownload = true;
-            break;
-        case 'user_private':
             require_login();
             if (isguestuser()) {
                 print_error('noguest');
             }
+
+            // access controll here must match user edit forms
+            if ($userid == $USER->id) {
+                 if (!has_capability('moodle/user:editownprofile', get_context_instance(CONTEXT_SYSTEM))) {
+                    send_file_not_found();
+                 }
+            } else { 
+                if (!has_capability('moodle/user:editprofile', $context) and !has_capability('moodle/user:update', $context)) {
+                    send_file_not_found();
+                }
+            }
             $itemid = 0;
             $forcedownload = true;
             break;
+
+        case 'user_private':
+            require_login();
+            if (isguestuser()) {
+                send_file_not_found();
+            }
+            if ($USER->id != $userid) {
+                send_file_not_found();
+            }
+            $itemid = 0;
+            $forcedownload = true;
+            break;
+
         default:
             send_file_not_found();
     }

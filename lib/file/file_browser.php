@@ -36,20 +36,36 @@ class file_browser {
             //TODO: question files browsing
 
         } else if ($context->contextlevel == CONTEXT_USER) {
-            // access control: only own files
-            if ($context->instanceid != $USER->id) {
+
+            if ($context->instanceid == $USER->id) {
+                $user = $USER;
+            } else {
+                $user = $DB->get_record('user', array('id'=>$context->instanceid));
+            }
+
+            if (isguestuser($user)) {
                 return null;
             }
 
-            if (!is_null($filearea) and !in_array($filearea, array('user_private', 'user_draft'))) {
-                // file area does not exist, sorry
+            if ($user->deleted) {
                 return null;
             }
 
             if (is_null($filearea)) {
+                // access control: list areas only for myself
+                if ($context->instanceid != $USER->id) {
+                    return null;
+                }
+
                 return new file_info_user($this, $context);
+
             } else {
                 if ($filearea == 'user_private') {
+                    // access control: only my files for now, nobody else
+                    if ($context->instanceid != $USER->id) {
+                        return null;
+                    }
+
                     if (is_null($itemid)) {
                         return new file_info_user($this, $context);
                     }
@@ -67,9 +83,46 @@ class file_browser {
                     $urlbase = $CFG->wwwroot.'/userfile.php';
                     return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserpersonal', 'repository'), false, true, true);
 
-                } else if ($filearea == 'user_draft') {
-                    if (empty($itemid)) {
+                } else if ($filearea == 'user_profile') {
+                    if (is_null($itemid)) {
                         return new file_info_user($this, $context);
+                    }
+
+                    // access controll here must match user edit forms
+                    if ($user->id == $USER->id) {
+                         if (!has_capability('moodle/user:editownprofile', get_context_instance(CONTEXT_SYSTEM))) {
+                            return null;
+                         }
+                    } else {
+                        if (!has_capability('moodle/user:editprofile', $context) and !has_capability('moodle/user:update', $context)) {
+                            return null;
+                        }
+                    }
+
+                    $filepath = is_null($filepath) ? '/' : $filepath;
+                    $filename = is_null($filename) ? '.' : $filename;
+
+                    if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+                        if ($filepath === '/' and $filename === '.') {
+                            $storedfile = new virtual_root_file($context->id, $filearea, 0);
+                        } else {
+                            // not found
+                            return null;
+                        }
+                    }
+                    $urlbase = $CFG->wwwroot.'/userfile.php';
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserprofile', 'repository'), false, true, true);
+
+
+                } else if ($filearea == 'user_draft') {
+                    // access control: only my files
+                    if ($context->instanceid != $USER->id) {
+                        return null;
+                    }
+
+                    if (empty($itemid)) {
+                        // do not browse itemids - you most know the draftid to see what is there
+                        return null;
                     }
                     $urlbase = $CFG->wwwroot.'/draftfile.php';
                     if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
@@ -232,9 +285,9 @@ class file_browser {
             }
             if (is_null($filearea) or is_null($itemid)) {
                 return new file_info_module($this, $course, $cm, $context, $areas);
-                
+
             } else if (!isset($areas[$filearea])) {
-                return null; 
+                return null;
 
             } else if ($filearea === $modname.'_intro') {
                 if (!has_capability('moodle/course:managefiles', $context)) {

@@ -41,8 +41,19 @@ class file_info_user extends file_info {
     public function get_children() {
         global $USER, $CFG;
 
-        // only current user for now
-        return array($this->browser->get_file_info(get_context_instance(CONTEXT_USER, $USER->id), 'user_private', 0));
+        $children = array();
+
+        if ($child = $this->browser->get_file_info(get_context_instance(CONTEXT_USER, $USER->id), 'user_private', 0)) {
+            $children[] = $child;
+        }
+
+        if ($child = $this->browser->get_file_info(get_context_instance(CONTEXT_USER, $USER->id), 'user_profile', 0)) {
+            $children[] = $child;
+        }
+
+        // do not list user_draft here - it is browsable only if you know the draft itemid ;-)
+
+        return $children;
     }
 
     public function get_parent() {

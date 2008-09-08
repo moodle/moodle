@@ -9,6 +9,7 @@ $string['areacourseintro'] = 'Course introduction';
 $string['arearoot'] = 'System';
 $string['areauserdraft'] = 'Drafts';
 $string['areauserpersonal'] = 'Personal';
+$string['areauserprofile'] = 'Profile';
 $string['attachment'] = 'Attachment';
 $string['back'] = '&lt; Back';
 $string['cacheexpire'] = 'Cache expire';
