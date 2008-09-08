@@ -1551,7 +1551,11 @@ _client.viewthumb = function(ds){
             el.title = list[k].title;
             el.value = list[k].source;
             el.icon  = list[k].thumbnail;
-            el.repo_id = list[k].repo_id;
+            if(list[k].repo_id){
+                el.repo_id = list[k].repo_id;
+            }else{
+                el.repo_id = _client.repositoryid;
+            }
             el.on('click', function(){
                 repository_client_$suffix.rename(this.title, this.value, this.icon, this.repo_id);
             });
