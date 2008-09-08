@@ -2124,7 +2124,8 @@
                                                   FROM {groups_members} gm, {backup_ids} bi
                                                  WHERE gm.groupid = ?
                                                        AND bi.backup_code = ?
-                                                       AND bi.table_name = 'user'", array($groupid, $preferences->backup_unique_code));
+                                                       AND bi.table_name = 'user'
+                                                       AND bi.old_id = gm.userid", array($groupid, $preferences->backup_unique_code));
 
         //Pring groups_members header
         if ($groups_members) {
