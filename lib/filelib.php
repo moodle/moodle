@@ -126,10 +126,10 @@ function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $cu
     $currentcontext = get_context_instance_by_id($currentcontextid);
     $fs = get_file_storage();
 
-    //TODO: make sure this won't match wrong stuff, as much as possible
-    //Using $currentcontextid in here ensures that we're only matching files belonging to current user.
-    //{wwwroot}/draftfile.php/{currentcontextid}/{currentfilearea}/{itemid}{/filepath}/{filename}
-    //filepath is optional, everything else is guaranteed to be there.
+    //Make sure this won't match wrong stuff, as much as possible (can probably be improved)
+    // * using $currentcontextid in here ensures that we're only matching files belonging to current user
+    // * placeholders: {wwwroot}/draftfile.php/{currentcontextid}/{currentfilearea}/{itemid}{/filepath}/{filename}
+    // * filepath is optional, everything else is guaranteed to be there.
     $re = '|'. preg_quote($CFG->wwwroot) .'/draftfile.php/'. $currentcontextid .'/'. $currentfilearea .'/([0-9]+)(/[A-Fa-f0-9]+)?/([^\'^"^\>]+)|';
     $matches = array();
     if (!preg_match_all($re, $text, $matches, PREG_SET_ORDER)) {
@@ -147,9 +147,11 @@ function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $cu
         $currentfilepath .= '/';
         $currentfilename = $file[3];
 
-        $fs->get_pathname_hash($currentcontextid, $currentfilearea, $currentitemid, $currentfilepath, $currentfilename);
-        if ($existingfile = $fs->get_file($currentcontextid, $currentfilearea, $currentitemid, $currentfilepath, $currentfilename)) {
-            //TODO:  if ($existingfile->get_contenthash()) is *not* the same as uploaded file, use itemid as path. Otherwise, keep going, it will work as expected.
+        // if a new upload has the same file path/name as an existing file, but different content, we put it in a distinct path.
+        $existingfile = $fs->get_file($currentcontextid, $currentfilearea, $currentitemid, $currentfilepath, $currentfilename);
+        $uploadedfile = $fs->get_file($contextid, $filearea, $itemid, $filepath, $currentfilename);
+        if ($existingfile->get_contenthash() != $uploadedfile->get_contenthash()) {
+            $filepath .= $currentitemid .'/';
         }
 
         if ($newfiles = $fs->move_draft_to_final($currentitemid, $contextid, $filearea, $itemid, $filepath, false)) {
@@ -168,9 +170,8 @@ function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $cu
                 $text = str_replace('"'. $currenturl .'"', '"'. $newurl .'"', $text);
             }
         } // else file not found, wrong file, or string is just not a file so we leave it alone.
-
+        
     }
-    
     return $text;
 }
 
