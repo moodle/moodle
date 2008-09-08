@@ -33,34 +33,11 @@ $ADMIN->add('root', new admin_category('security', get_string('security','admin'
 $ADMIN->add('root', new admin_category('appearance', get_string('appearance','admin')));
 $ADMIN->add('root', new admin_category('frontpage', get_string('frontpage','admin')));
 $ADMIN->add('root', new admin_category('server', get_string('server','admin')));
-
 $ADMIN->add('root', new admin_category('mnet', get_string('net','mnet'), (isset($CFG->mnet_dispatcher_mode) and $CFG->mnet_dispatcher_mode === 'off')));
-
 $ADMIN->add('root', new admin_category('reports', get_string('reports')));
-foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
-    $settingsfile = "$CFG->dirroot/$CFG->admin/report/$plugin/settings.php";
-    if (file_exists($settingsfile)) {
-        include($settingsfile);
-    } else {
-        $reportname = get_string($plugin, 'report_' . $plugin);
-        if ($reportname[1] == '[') {
-            $reportname = get_string($plugin, 'admin');
-        }
-        // ugly hack for special access control in reports
-        switch($plugin) {
-            case 'backups': $cap = 'moodle/site:backup'; break;
-            case 'stats': if (empty($CFG->enablestats)) {continue 2;};
-            default: $cap = 'moodle/site:viewreports';
-        }
-        $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php",$cap));
-    }
-}
-
-$ADMIN->add('root', new admin_category('misc', get_string('miscellaneous')));
-
+$ADMIN->add('root', new admin_category('development', get_string('development', 'admin')));
 // hidden unsupported category
 $ADMIN->add('root', new admin_category('unsupported', get_string('unsupported', 'admin'), true));
-
 // hidden search script
 $ADMIN->add('root', new admin_externalpage('search', get_string('searchresults'), "$CFG->wwwroot/$CFG->admin/search.php", 'moodle/site:config', true));
 

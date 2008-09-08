@@ -33,6 +33,8 @@ if ($hassiteconfig) {
         }
     }
 
+    // hidden script for converting journals to online assignments (or something like that) linked from elsewhere
+    $ADMIN->add('modsettings', new admin_externalpage('oacleanup', 'Online Assignment Cleanup', $CFG->wwwroot.'/'.$CFG->admin.'/oacleanup.php', 'moodle/site:config', true));
 
     $ADMIN->add('modules', new admin_category('blocksettings', get_string('blocks')));
     $ADMIN->add('blocksettings', new admin_page_manageblocks());

@@ -4950,6 +4950,22 @@ function &admin_get_root($reload=false, $requirefulltree=true) {
                 include($file);
             }
         }
+
+        // Add all the report plugings. Do this last so they can choose where in the tree
+        // they want to be added.
+        foreach (get_list_of_plugins($CFG->admin.'/report') as $plugin) {
+            $settingsfile = "$CFG->dirroot/$CFG->admin/report/$plugin/settings.php";
+            if (file_exists($settingsfile)) {
+                include($settingsfile);
+            } else {
+                $reportname = get_string($plugin, 'report_' . $plugin);
+                if ($reportname[1] == '[') {
+                    $reportname = get_string($plugin, 'admin');
+                }
+                $ADMIN->add('reports', new admin_externalpage('report'.$plugin, $reportname, "$CFG->wwwroot/$CFG->admin/report/$plugin/index.php",'moodle/site:viewreports'));
+            }
+        }
+
         if (file_exists($CFG->dirroot.'/local/settings.php')) {
             include_once($CFG->dirroot.'/local/settings.php');
         }
