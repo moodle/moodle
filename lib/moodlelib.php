@@ -240,6 +240,11 @@ define('PARAM_PEM',      0x10000);
  */
 define('PARAM_BASE64',   0x20000);
 
+/**
+ * PARAM_CAPABILITY - A capability name, like 'moodle/role:manage'. Actually
+ * checked against the list of capabilties in the database.
+ */
+define('PARAM_CAPABILITY',   0x40000);
 
 /// Page types ///
 /**
@@ -596,6 +601,13 @@ function clean_param($param, $type) {
             }
             if ($result) {
                 return implode(',', $result);
+            } else {
+                return '';
+            }
+
+        case PARAM_CAPABILITY:
+            if (is_valid_capability($param)) {
+                return $param;
             } else {
                 return '';
             }

@@ -356,20 +356,8 @@ function has_capability($capability, $context, $userid=NULL, $doanything=true) {
 
 /// Some sanity checks
     if (debugging('',DEBUG_DEVELOPER)) {
-        static $capsnames = null; // one request per page only
-
-        if (is_null($capsnames)) {
-            if ($caps = $DB->get_records('capabilities', null, '', 'id, name')) {
-                $capsnames = array();
-                foreach ($caps as $cap) {
-                    $capsnames[$cap->name] = true;
-                }
-            }
-        }
-        if ($capsnames) { // ignore if can not fetch caps
-            if (!isset($capsnames[$capability])) {
-                debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
-            }
+        if (!is_valid_capability($capability)) {
+            debugging('Capability "'.$capability.'" was not found! This should be fixed in code.');
         }
         if (!is_bool($doanything)) {
             debugging('Capability parameter "doanything" is wierd ("'.$doanything.'"). This should be fixed in code.');
@@ -3663,6 +3651,17 @@ function get_related_contexts_string($context) {
     } else {
         return (' ='.$context->id);
     }
+}
+
+function is_valid_capability($capabilityname) {
+    static $capsnames = null; // one request per page only
+
+    if (is_null($capsnames)) {
+        global $DB;
+        $capsnames = $DB->get_records_menu('capabilities', null, '', 'name, 1');
+    }
+
+    return array_key_exists($capabilityname, $capsnames);
 }
 
 /**
