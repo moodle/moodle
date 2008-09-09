@@ -156,7 +156,7 @@
 
 /// Print the controls across the top
 
-    if (true) { // @todo penny replace with capability check later
+    if (has_capability('mod/forum:exportdiscussion', $modcontext)) {
 
         $p = array(
             'discussionid' => $discussion->id,
