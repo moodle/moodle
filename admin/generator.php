@@ -9,20 +9,21 @@ require_once($CFG->dirroot .'/mod/resource/lib.php');
 class generator {
     public $modules_to_ignore = array('hotpot', 'lams', 'journal', 'scorm', 'exercise', 'dialogue');
     public $modules_list = array('forum' => 'forum',
-                                  'assignment' => 'assignment',
-                                  'data' => 'data',
-                                  'glossary' => 'glossary',
-                                  'quiz' => 'quiz',
-                                  'comments' => 'comments',
-                                  'feedback' => 'feedback',
-                                  'label' => 'label',
-                                  'lesson' => 'lesson',
-                                  'chat' => 'chat',
-                                  'choice' => 'choice',
-                                  'resource' => 'resource',
-                                  'survey' => 'survey',
-                                  'wiki' => 'wiki',
-                                  'workshop' => 'workshop');
+                                 'assignment' => 'assignment',
+                                 'chat' => 'chat',
+                                 'data' => 'data',
+                                 'glossary' => 'glossary',
+                                 'quiz' => 'quiz',
+                                 'comments' => 'comments',
+                                 'feedback' => 'feedback',
+                                 'label' => 'label',
+                                 'lesson' => 'lesson',
+                                 'chat' => 'chat',
+                                 'choice' => 'choice',
+                                 'resource' => 'resource',
+                                 'survey' => 'survey',
+                                 'wiki' => 'wiki',
+                                 'workshop' => 'workshop');
 
     public $tables = array('assignment' =>          array('required' => false, 'toclean' => true),
                            'block' =>               array('required' => true,  'toclean' => false),
@@ -30,6 +31,8 @@ class generator {
                            'block_pinned' =>        array('required' => true,  'toclean' => true),
                            'capabilities' =>        array('required' => true,  'toclean' => false),
                            'chat' =>                array('required' => false, 'toclean' => true),
+                           'chat_messages' =>       array('required' => false, 'toclean' => true),
+                           'chat_users' =>          array('required' => false, 'toclean' => true),
                            'choice' =>              array('required' => false, 'toclean' => true),
                            'config' =>              array('required' => true,  'toclean' => false),
                            'config_plugins' =>      array('required' => true,  'toclean' => false),
@@ -154,6 +157,9 @@ class generator {
              array('short'=>'drs', 'long' => 'database_records_per_student',
                    'help' => 'The number of records to generate for each student/database tuple. Default=1',
                    'type'=>'NUMBER', 'default' => 1),
+             array('short'=>'mc', 'long' => 'messages_per_chat',
+                   'help' => 'The number of messages to generate for each chat module. Default=10',
+                   'type'=>'NUMBER', 'default' => 10),
             );
 
         foreach ($arguments as $args_array) {
@@ -970,6 +976,42 @@ class generator {
                 $datacount = count($modules['data']);
                 echo "$fields_count database fields have been generated for each of the "
                    . "$datacount generated databases.{$this->eolchar}";
+            }
+            $result = true;
+        }
+
+        $messages_count = 0;
+        if (!empty($modules['chat']) && $this->get('messages_per_chat')) {
+
+            // Insert all users into chat_users table, then a message from each user
+            foreach ($modules['chat'] as $chat) {
+
+                foreach ($course_users as $courseid => $users_array) {
+
+                    foreach ($users_array as $userid) {
+                        if ($messages_count < $this->get('messages_per_chat')) {
+                            $chat_user = new stdClass();
+                            $chat_user->chatid = $chat->id;
+                            $chat_user->userid = $userid;
+                            $chat_user->course = $courseid;
+                            $DB->insert_record('chat_users', $chat_user);
+
+                            $chat_message = new stdClass();
+                            $chat_message->chatid = $chat->id;
+                            $chat_message->userid = $userid;
+                            $chat_message->message = "Hi, everyone!";
+                            $DB->insert_record('chat_messages', $chat_message);
+
+                            $messages_count++;
+                        }
+                    }
+                }
+            }
+
+            if ($messages_count > 0 && !$this->get('quiet')) {
+                $datacount = count($modules['chat']);
+                echo "$messages_count messages have been generated for each of the "
+                   . "$datacount generated chats.{$this->eolchar}";
             }
             $result = true;
         }
