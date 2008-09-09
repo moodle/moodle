@@ -1707,6 +1707,7 @@ class assignment_base {
         if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
             $p = array(
                 'assignmentid' => $this->cm->id,
+                'userid'       => $USER->id,
             );
             foreach ($files as $file) {
                 $filename = $file->get_filename();
@@ -3145,7 +3146,6 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
 
     private $assignment;
     private $assignmentfile;
-    private $userid;
     private $file;
     private $files;
 
@@ -3160,10 +3160,16 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('invalidid', 'assignment');
         }
 
+        if (!array_key_exists('userid', $callbackargs)) {
+            throw new portfolio_caller_exception('invaliduserid', 'assignment');
+        }
+        if (!$this->user = $DB->get_record('user', array('id' => $callbackargs['userid']))) {
+            throw new portfolio_caller_exception('invaliduserid', 'assignment');
+        }
         $this->assignmentfile = $CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php';
         require_once($this->assignmentfile);
         $assignmentclass = "assignment_$assignment->assignmenttype";
-        $this->assignment= new $assignmentclass($this->cm->id, $assignment, $this->cm);
+        $this->assignment = new $assignmentclass($this->cm->id, $assignment, $this->cm);
         if (!$this->assignment->portfolio_exportable()) {
             throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
         }
@@ -3211,7 +3217,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function expected_time() {
-        if (is_callable(array($this->assignmnet, 'portfolio_get_expected_time'))) {
+        if (is_callable(array($this->assignment, 'portfolio_get_expected_time'))) {
             return $this->assignment->portfolio_get_expected_time();
         }
         if (is_array($this->files)) {

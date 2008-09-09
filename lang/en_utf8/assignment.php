@@ -89,6 +89,7 @@ $string['itemstocount'] = 'Count';
 $string['invalidid'] = 'assignment ID was incorrect';
 $string['invalidassignment'] = 'incorrect assignment';
 $string['invalidtype']= 'Incorrect assignment type';
+$string['invaliduserid'] = 'Invalid user ID';
 $string['late'] = '$a late';
 $string['maximumgrade'] = 'Maximum grade';
 $string['maximumsize'] = 'Maximum size';

@@ -344,6 +344,7 @@ class assignment_upload extends assignment_base {
         if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
             $p = array(
                 'assignmentid' => $this->cm->id,
+                'userid'       => $USER->id,
             );
             foreach ($files as $file) {
                 $filename = $file->get_filename();
