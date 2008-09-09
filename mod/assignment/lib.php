@@ -3147,6 +3147,7 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
     private $assignmentfile;
     private $userid;
     private $file;
+    private $files;
 
     public function __construct($callbackargs) {
         global $DB, $CFG;
@@ -3167,10 +3168,14 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
         }
         if (array_key_exists('file', $callbackargs)) {
-            $fs = get_file_storage();
             $this->file = $fs->get_file_by_id($callbackargs['file']);
+            $this->files = array($this->file);
             $this->supportedformats = array(portfolio_format_from_file($this->file));
-        } else if (is_callable(array($this->assignment, 'portfolio_supported_formats'))) {
+        } else {
+            $fs = get_file_storage();
+            $this->files = $fs->get_area_files($this->assignment->context->id, 'assignment_submission', $this->user->id, '', false);
+        }
+        if (empty($this->supportedformats) && is_callable(array($this->assignment, 'portfolio_supported_formats'))) {
             $this->supportedformats = $this->assignment->portfolio_supported_formats();
         }
     }
@@ -3180,14 +3185,10 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if (is_callable(array($this->assignment, 'portfolio_prepare_package'))) {
             return $this->assignment->portfolio_prepare_package($this->exporter, $this->user->id);
         }
-        $fs = get_file_storage();
-        $status = true;
-        if ($files = $fs->get_area_files($this->assignment->context->id, 'assignment_submission', $this->user->id, '', false)) {
-            foreach ($files as $file) {
-                $status = $status && $this->exporter->copy_existing_file($file);
-            }
+        foreach ($this->files as $file) {
+            $this->exporter->copy_existing_file($file);
         }
-        return $status;
+        return true;
     }
 
     public function get_sha1() {
@@ -3200,21 +3201,23 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if ($this->file) {
             return $this->file->get_contenthash();
         }
-        $fs = get_file_storage();
-        if ($files = $fs->get_area_files($this->assignment->context->id,
-                'assignment_submission', $this->user->id, '', false)) {
-            $sha1s = array();
-            foreach ($files as $file) {
-                $sha1s[] = $file->get_contenthash();
-            }
-            asort($sha1s);
+        $sha1s = array();
+        foreach ($this->files as $file) {
+            $sha1s[] = $file->get_contenthash();
         }
+        asort($sha1s);
         return sha1(implode('', $sha1s));
 
     }
 
     public function expected_time() {
-        return PORTFOLIO_TIME_MODERATE; // @TODO check uploaded file size
+        if (is_callable(array($this->assignmnet, 'portfolio_get_expected_time'))) {
+            return $this->assignment->portfolio_get_expected_time();
+        }
+        if (is_array($this->files)) {
+            return portfolio_expected_time_file($this->files);
+        }
+        return PORTFOLIO_TIME_LOW;
     }
 
     public function check_permissions() {

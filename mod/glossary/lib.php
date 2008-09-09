@@ -2423,8 +2423,7 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function expected_time() {
-        //@todo penny check number of records maybe
-        return PORTFOLIO_TIME_MODERATE;
+        return portfolio_expected_time_db(count($this->exportdata['entries']));
     }
 
     public function get_sha1() {

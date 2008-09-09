@@ -2491,8 +2491,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         if ($this->exporttype == 'single') {
             return PORTFOLIO_TIME_LOW;
         }
-        //@todo penny check number of records maybe
-        return PORTFOLIO_TIME_MODERATE;
+        return portfolio_expected_time_db(count($this->exportdata));
     }
 
     public function get_sha1() {

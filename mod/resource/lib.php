@@ -745,6 +745,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
 
     public function expected_time() {
         // @todo penny check filesize if the type is uploadey (not implemented yet)
+        // like this: return portfolio_expected_time_file($this->file); // or whatever
         return PORTFOLIO_TIME_LOW;
     }
 

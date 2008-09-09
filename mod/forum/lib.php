@@ -7231,6 +7231,7 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     private $attachment;
     private $postfiles;
     private $allfiles;
+    private $posts;
 
     function __construct($callbackargs) {
         global $DB;
@@ -7425,8 +7426,21 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     }
 
     function expected_time() {
-        // @todo penny check for attachment size
-        return PORTFOLIO_TIME_LOW;
+        // default...
+        $time = PORTFOLIO_TIME_LOW; // generally just means one post with no attachments
+        if ($this->postfiles) {
+            $time = portfolio_expected_time_file($this->postfiles);
+        } else if ($this->allfiles) {
+            // we have something two dimensional...
+            $files = array();
+            foreach ($this->allfiles as $post => $postfiles) {
+                $files = array_merge($files, $postfiles);
+            }
+            $time = portfolio_expected_time_file($files);
+        } else if ($this->posts) {
+            $time = portfolio_expected_time_db(count($this->posts));
+        }
+        return $time;
     }
 
     function check_permissions() {

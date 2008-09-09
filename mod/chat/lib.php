@@ -859,7 +859,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function expected_time() {
-        return PORTFOLIO_TIME_LOW;
+        return portfolio_expected_time_db(count($this->messages));
     }
 
     public function get_sha1() {
