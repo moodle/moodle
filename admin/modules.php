@@ -208,10 +208,9 @@
 
         $delete = "<a href=\"modules.php?delete=$module->name&amp;sesskey=$USER->sesskey\">$strdelete</a>";
 
-        if (file_exists("$CFG->dirroot/mod/$module->name/settings.php")) {
+        if (file_exists("$CFG->dirroot/mod/$module->name/settings.php") ||
+                file_exists("$CFG->dirroot/mod/$module->name/settingstree.php")) {
             $settings = "<a href=\"settings.php?section=modsetting$module->name\">$strsettings</a>";
-        } else if (file_exists("$CFG->dirroot/mod/$module->name/config.html")) {
-            $settings = "<a href=\"module.php?module=$module->name\">$strsettings</a>";
         } else {
             $settings = "";
         }
