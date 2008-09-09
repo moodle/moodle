@@ -27,7 +27,7 @@ class repository_local extends repository {
     }
 
     private function _encode_path($filearea, $path, $visiblename) {
-        return array(serialize(array($filearea, $path)), $visiblename);
+        return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
     }
 
     private function _decode_path($path) {
@@ -46,7 +46,7 @@ class repository_local extends repository {
 
         // no login required
         $ret['nologin'] = true;
-        // todo: link to file manager  
+        // todo: link to file manager
         $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
        
         $browser = get_file_browser();
@@ -55,7 +55,7 @@ class repository_local extends repository {
         $filearea = null;
         $path = '/';
 
-        if ($encodedpath != '') { 
+        if ($encodedpath != '') {
             list($filearea, $path) = $this->_decode_path($encodedpath);
         }
         
@@ -70,7 +70,7 @@ class repository_local extends repository {
                 $level = $fileinfo->get_parent();
                 while ($level) {
                     $params = $level->get_params();
-                    $ret['path'][] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $ret['path'] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
                     $level = $level->get_parent();
                 }
             }
@@ -86,7 +86,7 @@ class repository_local extends repository {
         // (like loading just a part of the sub-tree) can come later.
         // if ($count > $config_thresold) {
         //    $ret['dynload'] = true;
-        //} else {             
+        //} else {
         $ret['dynload'] = false;
         //}
 
@@ -128,7 +128,7 @@ class repository_local extends repository {
                 $level = $child->get_parent();
                 while ($level) {
                     $params = $level->get_params();
-                    $path[] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $path = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
                     $level = $level->get_parent();
                 }
                 
