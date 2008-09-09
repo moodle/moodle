@@ -1244,6 +1244,10 @@ EOD;
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/selector/selector-beta-min.js"></script>
 <script type="text/javascript">
 //<![CDATA[
+var active_instance = null;
+function repository_callback(id){
+    active_instance.req(id, '', 0);
+}
 var repository_client_$suffix = (function() {
 // private static field
 var dver = '1.0';
@@ -1490,26 +1494,35 @@ _client.rename = function(oldname, url, icon, repo_id){
     html += '</div>';
     panel.get('element').innerHTML = html;
 }
+_client.popup = function(url){
+    active_instance = repository_client_$suffix;
+    _client.win = window.open(url,'repo_auth', 'location=0,status=0,scrollbars=0,width=500,height=300');
+    return false;
+}
 _client.print_login = function(){
     var panel = new YAHOO.util.Element('panel-$suffix');
     var data = _client.ds.login;
     var str = '';
     for(var k in data){
         str += '<p>';
-        var lable_id = '';
-        var field_id = '';
-        var field_value = '';
-        if(data[k].id){
-            lable_id = ' for="'+data[k].id+'"';
-            field_id = ' id="'+data[k].id+'"';
+        if(data[k].type=='popup'){
+            str += '<a href="###" onclick="repository_client_$suffix.popup(\''+data[k].url+'\')">test</a>';
+        }else{
+            var lable_id = '';
+            var field_id = '';
+            var field_value = '';
+            if(data[k].id){
+                lable_id = ' for="'+data[k].id+'"';
+                field_id = ' id="'+data[k].id+'"';
+            }
+            if (data[k].label) {
+                str += '<label'+lable_id+'>'+data[k].label+'</label><br/>';
+            }
+            if(data[k].value){
+                field_value = ' value="'+data[k].value+'"';
+            }
+            str += '<input type="'+data[k].type+'"'+' name="'+data[k].name+'"'+field_id+field_value+' />';
         }
-        if (data[k].label) {
-            str += '<label'+lable_id+'>'+data[k].label+'</label><br/>';
-        }
-        if(data[k].value){
-            field_value = ' value="'+data[k].value+'"';
-        }
-        str += '<input type="'+data[k].type+'"'+' name="'+data[k].name+'"'+field_id+field_value+' />';
         str += '</p>';
     }
     str += '<p><input type="button" onclick="repository_client_$suffix.login()" value="$strsubmit" /></p>';
