@@ -703,7 +703,7 @@ class grade_report_grader extends grade_report {
 
             if ($showuseridnumber) {
                 $studentshtml .= '<th class="header c'.$columncount++.' useridnumber" onclick="set_row(this.parentNode.rowIndex);">'.
-                        $user->idnumber.'</a></th>';
+                        $user->idnumber.'</th>';
             }
 
             foreach ($this->gtree->items as $itemid=>$unused) {
