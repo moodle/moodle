@@ -186,10 +186,12 @@ class portfolio_exporter {
                 $this->alreadystolen[$stage] = false;
             }
         }
-        $this->save();
         if (!$this->alreadystolen[$stage] && $url = $this->instance->steal_control($stage)) {
+            $this->save();
             redirect($url);
             break;
+        } else {
+            $this->save();
         }
 
         $waiting = $this->instance->get_export_config('wait');
