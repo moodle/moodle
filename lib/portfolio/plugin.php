@@ -644,7 +644,10 @@ abstract class portfolio_plugin_base {
             return true;
         }
         $a = (object)array('property' => $field, 'class' => get_class($this));
-        throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', null, $a);
+        if ($this->get('exporter')) {
+            throw new portfolio_export_exception($this->get('exporter'), 'invalidproperty', 'portfolio', null, $a);
+        }
+        throw new portfolio_exception('invalidproperty', 'portfolio', null, $a); // this happens outside export (eg admin settings)
 
     }
 
