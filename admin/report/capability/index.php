@@ -46,7 +46,6 @@ add_to_log(SITEID, "admin", "report capability", "report/capability/index.php?ca
 
 // Print the header.
 admin_externalpage_setup('reportcapability');
-$strtitle = get_string('capabilityreport', 'report_capability');
 admin_externalpage_print_header();
 
 // Prepare the list of capabilites to choose from
