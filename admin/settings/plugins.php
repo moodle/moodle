@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-if ($hassiteconfig) {
+if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) {
 
     $ADMIN->add('modules', new admin_category('modsettings', get_string('activitymodules')));
     $ADMIN->add('modsettings', new admin_page_managemods());
@@ -154,7 +154,33 @@ if ($hassiteconfig) {
 
     // jump through hoops to do what we want
     $temp = new admin_settingpage('manageportfolios', get_string('manageportfolios', 'portfolio'));
+    $temp->add(new admin_setting_heading('manageportfolios', get_string('activeportfolios', 'portfolio'), ''));
     $temp->add(new admin_setting_manageportfolio());
+    $temp->add(new admin_setting_heading('manageportfolioscommon', get_string('commonsettings', 'admin'), get_string('commonsettingsdesc', 'portfolio')));
+    $fileinfo = portfolio_filesize_info(); // make sure this is defined in one place since its used inside portfolio too to detect insane settings
+    $fileoptions = $fileinfo['options'];
+    $temp->add(new admin_setting_configselect(
+        'portfolio_moderate_filesize_threshold',
+        get_string('moderatefilesizethreshold', 'portfolio'),
+        get_string('moderatefilesizethresholddesc', 'portfolio'),
+        $fileinfo['moderate'], $fileoptions));
+    $temp->add(new admin_setting_configselect(
+        'portfolio_high_filesize_threshold',
+        get_string('highfilesizethreshold', 'portfolio'),
+        get_string('highfilesizethresholddesc', 'portfolio'),
+        $fileinfo['high'], $fileoptions));
+
+    $temp->add(new admin_setting_configtext(
+        'portfolio_moderate_db_threshold',
+        get_string('moderatedbsizethreshold', 'portfolio'),
+        get_string('moderatedbsizethresholddesc', 'portfolio'),
+        20, PARAM_INTEGER, 3));
+
+    $temp->add(new admin_setting_configtext(
+        'portfolio_high_db_threshold',
+        get_string('highdbsizethreshold', 'portfolio'),
+        get_string('highdbsizethresholddesc', 'portfolio'),
+        50, PARAM_INTEGER, 3));
 
     $ADMIN->add('portfoliosettings', $temp);
     $ADMIN->add('portfoliosettings', new admin_externalpage('portfolionew', get_string('addnewportfolio', 'portfolio'), $url, 'moodle/site:config', true), '', $url);
@@ -217,6 +243,23 @@ if ($hassiteconfig) {
                         $repositorytype->get_readablename(),
                         $url . '?edit=' . $repositorytype->get_typename()),
                         'moodle/site:config');
+        }
+    }
+
+    // Question type settings.
+    $ADMIN->add('modules', new admin_category('qtypesettings', get_string('questiontypes', 'admin')));
+    $ADMIN->add('qtypesettings', new admin_page_manageqtypes());
+    require_once($CFG->libdir . '/questionlib.php');
+    global $QTYPES;
+    foreach ($QTYPES as $qtype) {
+        $settingsfile = $qtype->plugin_dir() . '/settings.php';
+        if (file_exists($settingsfile)) {
+            $settings = new admin_settingpage('qtypesetting' . $qtype->name(),
+                    $qtype->local_name(), 'moodle/question:config');
+            if ($ADMIN->fulltree) {
+                include($settingsfile);
+            }
+            $ADMIN->add('qtypesettings', $settings);
         }
     }
 }

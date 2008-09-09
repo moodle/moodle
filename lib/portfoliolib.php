@@ -615,5 +615,92 @@ function portfolio_export_rethrow_exception($exporter, $exception) {
     throw new portfolio_export_exception($exporter, $exception->errorcode, $exception->module, $exception->link, $exception->a);
 }
 
+/**
+* try and determine expected_time for purely file based exports
+* or exports that might include large file attachments.
+*
+* @param mixed $totest - either an array of stored_file objects or a single stored_file object
+*
+* @return constant PORTFOLIO_TIME_XXX
+*/
+function portfolio_expected_time_file($totest) {
+    global $CFG;
+    if ($totest instanceof stored_file) {
+        $totest = array($totest);
+    }
+    $size = 0;
+    foreach ($totest as $file) {
+        if (!($file instanceof stored_file)) {
+            debugging('something weird passed to portfolio_expected_time_file - not stored_file object');
+            debugging(print_r($file, true));
+            continue;
+        }
+        $size += $file->get_filesize();
+    }
+
+    $fileinfo = portfolio_filesize_info();
+
+    $moderate = $high = 0; // avoid warnings
+
+    foreach (array('moderate', 'high') as $setting) {
+        $settingname = 'portfolio_' . $setting . '_filesize_threshold';
+        if (empty($CFG->{$settingname}) || !array_key_exists($CFG->{$settingname}, $fileinfo['options'])) {
+            debugging("weird or unset admin value for $settingname, using default instead");
+            $$setting = $fileinfo[$setting];
+        } else {
+            $$setting = $CFG->{$settingname};
+        }
+    }
+
+    if ($size < $moderate) {
+        return PORTFOLIO_TIME_LOW;
+    } else if ($size < $high) {
+        return PORTFOLIO_TIME_MODERATE;
+    }
+    return PORTFOLIO_TIME_HIGH;
+}
+
+
+/**
+* the default filesizes and threshold information for file based transfers
+* this shouldn't need to be used outside the admin pages and the portfolio code
+*/
+function portfolio_filesize_info() {
+    $filesizes = array();
+    $sizelist = array(10240, 51200, 102400, 512000, 1048576, 2097152, 5242880, 10485760, 20971520, 52428800);
+    foreach ($sizelist as $size) {
+        $filesizes[$size] = display_size($size);
+    }
+    return array(
+        'options' => $filesizes,
+        'moderate' => 1048576,
+        'high'     => 5242880,
+    );
+}
+
+/**
+* try and determine expected_time for purely database based exports
+* or exports that might include large parts of a database
+*
+* @param integer $recordcount - number of records trying to export
+*
+* @return constant PORTFOLIO_TIME_XXX
+*/
+function portfolio_expected_time_db($recordcount) {
+    global $CFG;
+
+    if (empty($CFG->portfolio_moderate_dbsize_threshold)) {
+        set_config('portfolio_moderate_dbsize_threshold', 10);
+    }
+    if (empty($CFG->portfolio_high_dbsize_threshold)) {
+        set_config('portfolio_high_dbsize_threshold', 50);
+    }
+    if ($recordcount < $CFG->portfolio_moderate_dbsize_threshold) {
+        return PORTFOLIO_TIME_LOW;
+    } else if ($recordcount < $CFG->portfolio_high_dbsize_threshold) {
+        return PORTFOLIO_TIME_MODERATE;
+    }
+    return PORTFOLIO_TIME_HIGH;
+}
 
 ?>

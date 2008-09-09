@@ -4282,6 +4282,42 @@ class admin_page_manageblocks extends admin_externalpage {
 }
 
 /**
+ * Question type manage page
+ */
+class admin_page_manageqtypes extends admin_externalpage {
+    function __construct() {
+        global $CFG;
+        parent::__construct('manageqtypes', get_string('manageqtypes', 'admin'), "$CFG->wwwroot/$CFG->admin/qtypes.php");
+    }
+
+    function search($query) {
+        global $CFG;
+        if ($result = parent::search($query)) {
+            return $result;
+        }
+
+        $found = false;
+        $textlib = textlib_get_instance();
+        require_once($CFG->libdir . '/questionlib.php');
+        global $QTYPES;
+        foreach ($QTYPES as $qtype) {
+            if (strpos($textlib->strtolower($qtype->local_name()), $query) !== false) {
+                $found = true;
+                break;
+            }
+        }
+        if ($found) {
+            $result = new object();
+            $result->page     = $this;
+            $result->settings = array();
+            return array($this->name => $result);
+        } else {
+            return array();
+        }
+    }
+}
+
+/**
  * Special class for authentication administration.
  */
 class admin_setting_manageauths extends admin_setting {
@@ -4707,7 +4743,7 @@ class admin_setting_manageportfolio extends admin_setting {
 
         $output .= print_table($table, true);
 
-        $instancehtml = '<br /><br />' . get_string('addnewportfolio', 'portfolio') . ': <br />';
+        $instancehtml = '<br /><br />' . get_string('addnewportfolio', 'portfolio') . ': <br /><br />';
         $addable = 0;
         foreach ($plugins as $p) {
             if (!portfolio_static_function($p, 'allows_multiple') && in_array($p, $alreadyplugins)) {
@@ -4730,7 +4766,6 @@ class admin_setting_manageportfolio extends admin_setting {
     }
 
 }
-
 
 /**
  * Initialise admin page - this function does require login and permission
