@@ -165,7 +165,10 @@ class portfoliolib_test extends UnitTestCase {
 }
 
 // Load tests for various modules
-require_once($CFG->dirroot . '/mod/forum/simpletest/test_forum_portfolio_callers.php');
-require_once($CFG->dirroot . '/mod/glossary/simpletest/test_glossary_portfolio_callers.php');
-require_once($CFG->dirroot . '/mod/assignment/simpletest/test_assignment_portfolio_callers.php');
+foreach (get_list_of_plugins('mod') as $module) {
+    $modtest = $CFG->dirroot . '/mod/' . $module . '/simpletest/test_' . $module . '_portfolio_callers.php';
+    if (file_exists($modtest)) {
+        require_once($modtest);
+    }
+}
 ?>

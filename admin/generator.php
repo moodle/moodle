@@ -944,7 +944,7 @@ class generator {
                 $type = $database_field_types[array_rand($database_field_types)];
                 require_once($CFG->dirroot.'/mod/data/field/'.$type.'/field.class.php');
                 $newfield = 'data_field_'.$type;
-                $newfield = $newfield(0, $data, true);
+                $newfield = new $newfield(0, $data, true);
                 $fields[] = $newfield;
             }
 
@@ -1293,6 +1293,10 @@ class fake_form {
 
     function save_stored_file() {
         return true;
+    }
+
+    function get_data() {
+        return array();
     }
 }
 
