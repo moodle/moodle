@@ -239,11 +239,16 @@ class boxclient {
         $params['auth_token'] =  $this->auth_token;
         $params['api_key']    = $this->api_key;
         $params['action']     = 'create_folder';
-        //Set to '0' by default. Change to create within sub-folder.
-        $params['parent_id']  = 0; 
         $params['name']       = $new_folder_name;
-        //Set to '1' by default. Set to '0' to make folder private.
-        $params['share']      = 1; 
+        $defaults = array(
+            'parent_id'  => 0, //Set to '0' by default. Change to create within sub-folder.
+            'share'     => 1, //Set to '1' by default. Set to '0' to make folder private.
+        );
+        foreach ($defaults as $key => $value) {
+            if (!array_key_exists($key, $params)) {
+                $params[$key] = $value;
+            }
+        }
 
         $ret_array = array();
         $data = $this->makeRequest('action=create_folder', $params);
