@@ -1689,7 +1689,7 @@ function print_question_icon($question, $return = false) {
     global $QTYPES, $CFG;
 
     if (array_key_exists($question->qtype, $QTYPES)) {
-        $namestr = $QTYPES[$question->qtype]->menu_name();
+        $namestr = $QTYPES[$question->qtype]->local_name();
     } else {
         $namestr = 'missingtype';
     }
