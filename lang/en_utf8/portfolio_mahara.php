@@ -16,4 +16,9 @@ $string['pf_description'] = 'Allow users to push Moodle content to this host<br 
                                  '<li><em>Dependency</em>: You must also <strong>subscribe</strong> to the SSO (Service Provider) service on $a</li>' .
                                  '<li><em>Dependency</em>: You must also enable the mnet authentication plugin.</li></ul><br />';
 $string['pluginname'] = 'Mahara ePortfolio';
+$string['mnet_notoken'] = 'Could not find token matching this transfer';
+$string['mnet_noid'] = 'Could not find the matching transfer record for this token';
+$string['mnet_wronghost'] = 'Remote host did not match the transfer record for this token';
+$string['mnet_nofile'] = 'Could not find file in transfer object - weird error';
+$string['mnet_nofilecontents'] = 'Found file in transfer object, but could not get contents - weird error: $a';
 ?>

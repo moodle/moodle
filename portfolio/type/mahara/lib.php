@@ -19,6 +19,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     private $token; // during-transfer token
     private $sendtype; // whatever mahara has said it can handle (immediate or queued)
     private $filesmanifest; // manifest of files to send to mahara (set during prepare_package and sent later)
+    private $totalsize; // total size of all included files added together
 
     public static function get_name() {
         return get_string('pluginname', 'portfolio_mahara');
@@ -135,11 +136,14 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
 
     public function prepare_package() {
         $files = $this->exporter->get_tempfiles();
+        $this->totalsize = 0;
         foreach ($files as $f) {
             $this->filesmanifest[$f->get_contenthash()] = array(
                 'filename' => $f->get_filename(),
                 'sha1'     => $f->get_contenthash(),
+                'size'     => $f->get_filesize(),
             );
+            $this->totalsize += $f->get_filesize();
         }
         $zipper = new zip_packer();
 
@@ -171,7 +175,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         $client->add_param($this->resolve_format());
         $client->add_param(array(
             'filesmanifest' => $this->filesmanifest,
-            'zipfilesha1'   => $this->get('file')->get_contenthash()
+            'zipfilesha1'   => $this->get('file')->get_contenthash(),
+            'zipfilesize'   => $this->get('file')->get_filesize(),
+            'totalsize'     => $this->totalsize,
         ));
         $client->add_param($this->get_export_config('wait'));
         $this->ensure_mnethost();
@@ -188,6 +194,8 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         if (!$response->status) {
             throw new portfolio_export_exception($this->get('exporter'), 'failedtoping', 'portfolio_mahara');
         }
+        // @todo penny we should check $response->type here, it will tell us  'queued' or 'complete'
+        // and we might want to tell the user if it's queued.
         return true;
     }
 
@@ -291,30 +299,30 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         global $DB, $MNET_REMOTE_CLIENT;;
         try {
             if (!$transferid = $DB->get_field('portfolio_mahara_queue', 'transferid', array('token' => $token))) {
-                exit(mnet_server_fault(8009, 'could not find token'));
+                exit(mnet_server_fault(8009, get_string('mnet_notoken', 'portfolio_mahara')));
             }
             $exporter = portfolio_exporter::rewaken_object($transferid);
         } catch (portfolio_exception $e) {
-            exit(mnet_server_fault(8010, 'invalid transfer id'));
+            exit(mnet_server_fault(8010, get_string('mnet_noid', 'portfolio_mahara')));
         }
         if ($exporter->get('instance')->get_config('mnethostid') != $MNET_REMOTE_CLIENT->id) {
-            exit(mnet_server_fault(8011, "remote host didn't match saved host"));
+            exit(mnet_server_fault(8011, get_string('mnet_wronghost', 'portfolio_mahara')));
         }
         global $CFG;
         try {
             $i = $exporter->get('instance');
             $f = $i->get('file');
             if (empty($f) || !($f instanceof stored_file)) {
-                exit(mnet_server_fault(8012, 'could not find file in transfer object - weird error'));
+                exit(mnet_server_fault(8012, get_string('mnet_nofile', 'portfolio_mahara')));
             }
             try {
                 $c = $f->get_content();
             } catch (file_exception $e) {
-                exit(mnet_server_fault(8013, 'found file object but couldn\'t get contents - weird error: ' . $e->getMessage()));
+                exit(mnet_server_fault(8013, get_string('mnet_nofilecontents', 'portfolio_mahara', $e->getMessage())));
             }
             $contents = base64_encode($c);
         } catch (Exception $e) {
-            exit(mnet_server_fault(8013, 'could not get file to send'));
+            exit(mnet_server_fault(8013, get_string('mnet_nofile', 'portfolio_mahara')));
         }
         $exporter->process_stage_cleanup(true);
         return $contents;
