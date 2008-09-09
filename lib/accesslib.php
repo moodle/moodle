@@ -1665,7 +1665,7 @@ function load_temp_role($context, $roleid, $accessdata) {
             $k = "{$rd->path}:{$roleid}";
             $accessdata['rdef'][$k][$rd->capability] = $rd->permission;
         }
-        $rs-close();
+        $rs->close();
     }
 
     //
