@@ -107,6 +107,13 @@ class portfolio_exporter {
     private $alreadystolen;
 
     /**
+    * files that the exporter has written to this temp area
+    * keep track of this in case of duplicates within one export
+    * see MDL-16390
+    */
+    private $newfilehashes;
+
+    /**
     * construct a new exporter for use
     *
     * @param portfolio_plugin_base subclass $instance portfolio instance (passed by reference)
@@ -126,6 +133,7 @@ class portfolio_exporter {
         $this->navigation = $navigation;
         $this->caller->set('exporter', $this);
         $this->alreadystolen = array();
+        $this->newfilehashes = array();
     }
 
     /*
@@ -621,10 +629,15 @@ class portfolio_exporter {
     * @return new stored_file object
     */
     public function copy_existing_file($oldfile) {
+        if (array_key_exists($oldfile->get_contenthash(), $this->newfilehashes)) {
+            return $this->newfilehashes[$oldfile->get_contenthash()];
+        }
         $fs = get_file_storage();
         $file_record = $this->new_file_record_base($oldfile->get_filename());
         try {
-            return $fs->create_file_from_storedfile($file_record, $oldfile->get_id());
+            $newfile = $fs->create_file_from_storedfile($file_record, $oldfile->get_id());
+            $this->newfilehashes[$newfile->get_contenthash()] = $newfile;
+            return $newfile;
         } catch (file_exception $e) {
             return false;
         }
