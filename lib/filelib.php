@@ -150,7 +150,7 @@ function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $cu
         // if a new upload has the same file path/name as an existing file, but different content, we put it in a distinct path.
         $existingfile = $fs->get_file($currentcontextid, $currentfilearea, $currentitemid, $currentfilepath, $currentfilename);
         $uploadedfile = $fs->get_file($contextid, $filearea, $itemid, $filepath, $currentfilename);
-        if ($existingfile->get_contenthash() != $uploadedfile->get_contenthash()) {
+        if ($existingfile && $uploadedfile && ($existingfile->get_contenthash() != $uploadedfile->get_contenthash())) {
             $filepath .= $currentitemid .'/';
         }
 
