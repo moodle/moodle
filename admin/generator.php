@@ -10,6 +10,7 @@ class generator {
     public $modules_to_ignore = array('hotpot', 'lams', 'journal', 'scorm', 'exercise', 'dialogue');
     public $modules_list = array('forum' => 'forum',
                                   'assignment' => 'assignment',
+                                  'data' => 'data',
                                   'glossary' => 'glossary',
                                   'quiz' => 'quiz',
                                   'comments' => 'comments',
@@ -144,6 +145,12 @@ class generator {
              array('short'=>'pd', 'long' => 'posts_per_discussion',
                    'help' => 'The number of posts to generate for each forum discussion. Default=15',
                    'type'=>'NUMBER', 'default' => 15),
+             array('short'=>'fd', 'long' => 'fields_per_database',
+                   'help' => 'The number of fields to generate for each database. Default=4',
+                   'type'=>'NUMBER', 'default' => 4),
+             array('short'=>'drs', 'long' => 'database_records_per_student',
+                   'help' => 'The number of records to generate for each student/database tuple. Default=1',
+                   'type'=>'NUMBER', 'default' => 1),
             );
 
         foreach ($arguments as $args_array) {
@@ -460,6 +467,10 @@ class generator {
                                 $module->intro = $description;
                                 $module->schedule = 1;
                                 $module->chattime = 60 * 60 * 4;
+                                break;
+                            case 'data':
+                                $module->intro = $description;
+                                $module->name = 'test';
                                 break;
                             case 'choice':
                                 $module->text = $content;
@@ -886,6 +897,7 @@ class generator {
 
     public function generate_module_content($course_users, $courses, $modules) {
         global $USER, $DB, $CFG;
+        $result = null;
 
         $entries_count = 0;
         if ($this->get('entries_per_glossary') && !empty($modules['glossary'])) {
@@ -909,9 +921,54 @@ class generator {
             if ($entries_count > 0 && !$this->get('quiet')) {
                 echo "$entries_count glossary definitions have been generated.{$this->eolchar}";
             }
-            return true;
+            $result = true;
         }
-        return null;
+
+        $fields_count = 0;
+        if ($this->get('fields_per_database') && $this->get('database_records_per_student')) {
+            $database_field_types = array('checkbox',
+                                          'date',
+                                          'file',
+                                          'latlong',
+                                          'menu',
+                                          'multimenu',
+                                          'number',
+                                          'picture',
+                                          'radiobutton',
+                                          'text',
+                                          'textarea',
+                                          'url');
+
+            $fields = array();
+            for ($i = 0; $i < $this->get('fields_per_database'); $i++) {
+                $type = $database_field_types[array_rand($database_field_types)];
+                require_once($CFG->dirroot.'/mod/data/field/'.$type.'/field.class.php');
+                $newfield = 'data_field_'.$type;
+                $newfield = $newfield(0, $data, true);
+                $fields[] = $newfield;
+            }
+
+            foreach ($modules['data'] as $data) {
+
+                // Generate fields for each database (same fields for all, no arguing)
+                for ($i = 0; $i < $this->get('fields_per_database'); $i++) {
+
+                }
+
+                // Generate database records for each student, if needed
+                for ($i = 0; $i < $this->get('database_records_per_student'); $i++) {
+
+                }
+            }
+            if ($fields_count > 0 && !$this->get('quiet')) {
+                $datacount = count($modules['data']);
+                echo "$fields_count database fields have been generated for each of the "
+                   . "$datacount generated databases.{$this->eolchar}";
+            }
+            $result = true;
+        }
+
+        return $result;
     }
 
     /**
