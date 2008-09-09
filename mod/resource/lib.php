@@ -732,6 +732,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
             case 'file':
                 // $format = portfolio_format_from_mimetype($something); // change after we switch upload type resources over to new files api.
         }
+        $this->supportedformats = array($format);
     }
 
     public function __wakeup() {
