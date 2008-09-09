@@ -62,7 +62,7 @@ img.grouppicture {
   border:#888
 }
 
-body {
+body, body#tinymce {
   background-color:#FAFAFA;
   color:#000;
 }
