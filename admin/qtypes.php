@@ -10,6 +10,7 @@
     require_login();
     $systemcontext = get_context_instance(CONTEXT_SYSTEM);
     require_capability('moodle/question:config', $systemcontext);
+    $canviewreports = has_capability('moodle/site:viewreports', $systemcontext);
 
     admin_externalpage_setup('manageqtypes');
 
@@ -179,8 +180,12 @@
             } else {
                 $strcount = $counts[$qtypename]->numquestions;
             }
-            $row[] = '<a href="' . admin_url('/report/questioninstances/index.php?qtype=' . $qtypename) .
-                    '">' . $strcount . '</a>';
+            if ($canviewreports) {
+                $row[] = '<a href="' . admin_url('/report/questioninstances/index.php?qtype=' . $qtypename) .
+                        '">' . $strcount . '</a>';
+            } else {
+                $strcount;
+            }
         } else {
             $row[] = 0;
         }
