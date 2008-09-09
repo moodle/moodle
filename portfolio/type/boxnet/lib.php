@@ -15,6 +15,14 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     }
 
     public function prepare_package() {
+        // if we need to create the folder, do it now
+        if ($newfolder = $this->get_export_config('newfolder')) {
+            if (!$created = $this->boxclient->createFolder($newfolder, array('share' => 0))) {
+                throw new portfolio_plugin_exception('foldercreatefailed', 'portfolio_boxnet');
+            }
+            $this->folders[$created['folder_id']] = $created['folder_type'];
+            $this->set_export_config(array('folder' => $created['folder_id']));
+        }
         return true; // don't do anything else for this plugin, we want to send all files as they are.
     }
 
@@ -24,7 +32,8 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
             $return = $this->boxclient->uploadFile(
                 array(
                     'file'      => $file,
-                    'folder_id' => $this->get_export_config('folder')
+                    'folder_id' => $this->get_export_config('folder'),
+                    'share'     => 0,
                 )
             );
             if (array_key_exists('status', $return) && $return['status'] == 'upload_ok'
@@ -39,21 +48,15 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         return is_array($ret) && !empty($ret);
     }
 
-    public function set_export_config($config) {
-        parent::set_export_config($config);
-        if (array_key_exists('newfolder', $config) && !empty($config['newfolder'])) {
-            if (!$created = $this->boxclient->createFolder($config['newfolder'])) {
-                throw new portfolio_plugin_exception('foldercreatefailed', 'portfolio_boxnet');
-            }
-            $this->folders[$created['folder_id']] = $created['folder_type'];
-            parent::set_export_config(array('folder' => $created['folder_id']));
-        }
-    }
-
     public function get_export_summary() {
         $allfolders = $this->get_folder_list();
+        if ($newfolder = $this->get_export_config('newfolder')) {
+            $foldername = $newfolder . ' (' . get_string('tobecreated', 'portfolio_boxnet') . ')';
+        } else {
+            $foldername = $allfolders[$this->get_export_config('folder')];
+        }
         return array(
-            get_string('targetfolder', 'portfolio_boxnet') => $allfolders[$this->get_export_config('folder')]
+            get_string('targetfolder', 'portfolio_boxnet') => $foldername
         );
     }
 

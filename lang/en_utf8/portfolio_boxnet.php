@@ -15,6 +15,7 @@ $string['password'] = 'Your box.net password (will not be stored)';
 $string['pluginname'] = 'Box.net internet storage';
 $string['sharedfolder'] = 'Shared';
 $string['targetfolder'] = 'Target folder';
+$string['tobecreated'] = 'To be created';
 $string['username'] = 'Your box.net username (will not be stored)';
 
 ?>
