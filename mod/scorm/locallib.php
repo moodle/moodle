@@ -1,5 +1,7 @@
 <?php  // $Id$
 
+require_once("$CFG->dirroot/mod/scorm/lib.php");
+
 /// Constants and settings for module scorm
 define('UPDATE_NEVER', '0');
 define('UPDATE_ONCHANGE', '1');
@@ -14,121 +16,128 @@ define('GRADESCOES', '0');
 define('GRADEHIGHEST', '1');
 define('GRADEAVERAGE', '2');
 define('GRADESUM', '3');
-$SCORM_GRADE_METHOD = array (GRADESCOES => get_string('gradescoes', 'scorm'),
-                             GRADEHIGHEST => get_string('gradehighest', 'scorm'),
-                             GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
-                             GRADESUM => get_string('gradesum', 'scorm'));
 
 define('HIGHESTATTEMPT', '0');
 define('AVERAGEATTEMPT', '1');
 define('FIRSTATTEMPT', '2');
 define('LASTATTEMPT', '3');
-$SCORM_WHAT_GRADE = array (HIGHESTATTEMPT => get_string('highestattempt', 'scorm'),
-                           AVERAGEATTEMPT => get_string('averageattempt', 'scorm'),
-                           FIRSTATTEMPT => get_string('firstattempt', 'scorm'),
-                           LASTATTEMPT => get_string('lastattempt', 'scorm'));
 
-$SCORM_POPUP_OPTIONS = array('resizable'=>1, 
-                             'scrollbars'=>1, 
-                             'directories'=>0, 
-                             'location'=>0,
-                             'menubar'=>0, 
-                             'toolbar'=>0, 
-                             'status'=>0);
-$stdoptions = '';
-foreach ($SCORM_POPUP_OPTIONS as $popupopt => $value) {
-    $stdoptions .= $popupopt.'='.$value;
-    if ($popupopt != 'status') {
-        $stdoptions .= ',';
-    }
-}
-
-if (!isset($CFG->scorm_maxattempts)) {
-    set_config('scorm_maxattempts','6');
-}
-
-if (!isset($CFG->scorm_frameheight)) {
-    set_config('scorm_frameheight','500');
-}
-
-if (!isset($CFG->scorm_framewidth)) {
-    set_config('scorm_framewidth','100%');
-}
-
-if (!isset($CFG->scorm_updatetime)) {
-    set_config('scorm_updatetime','2');
-}
-
-if (!isset($CFG->scorm_advancedsettings)) {
-    set_config('scorm_advancedsettings','0');
-}
-
-if (!isset($CFG->scorm_windowsettings)) {
-    set_config('scorm_windowsettings','0');
-}
 
 /// Local Library of functions for module scorm
 
 /**
-* This function will permanently delete the given
-* directory and all files and subdirectories.
-*
-* @param string $directory The directory to remove
-* @return boolean
-*/
-function scorm_delete_files($directory) {
-    if (is_dir($directory)) {
-        $files=scandir($directory);
-        set_time_limit(0);
-        foreach($files as $file) {
-            if (($file != '.') && ($file != '..')) {
-                if (!is_dir($directory.'/'.$file)) {
-                    unlink($directory.'/'.$file);
+ * Extracts scrom package, sets up all variables.
+ * Called whenever scorm changes
+ * @param object $scorm instance - fields are updated and changes saved into database
+ * @param bool $full force full update if true
+ * @return void
+ */
+function scorm_parse($scorm, $full) {
+    global $CFG, $DB;
+
+    if (!isset($scorm->cmid)) {
+        $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+        $scorm->cmid = $cm->id;
+    }
+    $context = get_context_instance(CONTEXT_MODULE, $scorm->cmid);
+    $newhash = $scorm->sha1hash;
+
+    if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
+
+        $fs = get_file_storage();
+        $packagefile = false;
+
+        if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
+            if ($packagefile = $fs->get_file($context->id, 'scorm_package', 0, '/', $scorm->reference)) {
+                $newhash = $packagefile->get_contenthash();
+            } else {
+                $newhash = null;
+            }
+        } else {
+            if (!$CFG->scorm_allowtypelocalsync) {
+                // sorry - localsync disabled
+                return;
+            }
+            if ($scorm->reference !== '' and (!$full or $scorm->sha1hash !== sha1($scorm->reference))) {
+                $fs->delete_area_files($context->id, 'scorm_package');
+                $file_record = array('contextid'=>$context->id, 'filearea'=>'scorm_package', 'itemid'=>0, 'filepath'=>'/');
+                if ($packagefile = $fs->create_file_from_url($file_record, $scorm->reference)) {
+                    $newhash = sha1($scorm->reference);
                 } else {
-                    scorm_delete_files($directory.'/'.$file);
+                    $newhash = null;
                 }
             }
         }
-        rmdir($directory);
-        return true;
-    }
-    return false;
-}
 
-/**
-* Create a new temporary subdirectory with a random name in the given path
-*
-* @param string $strpath The scorm data directory
-* @return string/boolean
-*/
-function scorm_tempdir($strPath)
-{
-    global $CFG;
-
-    if (is_dir($strPath)) {
-        do {
-            // Create a random string of 8 chars
-            $randstring = NULL;
-            $lchar = '';
-            $len = 8;
-            for ($i=0; $i<$len; $i++) {
-                $char = chr(rand(48,122));
-                while (!ereg('[a-zA-Z0-9]', $char)){
-                    if ($char == $lchar) continue;
-                        $char = chr(rand(48,90));
+        if ($packagefile) {
+            if (!$full and $packagefile and $scorm->sha1hash === $newhash) {
+                if (strpos($scorm->version, 'SCORM') !== false) {
+                    if ($fs->get_file($context->id, 'scorm_content', 0, '/', 'imsmanifest.xml')) {
+                        // no need to update
+                        return;
                     }
-                    $randstring .= $char;
-                    $lchar = $char;
-            } 
-            $datadir='/'.$randstring;
-        } while (file_exists($strPath.$datadir));
-        mkdir($strPath.$datadir, $CFG->directorypermissions);
-        @chmod($strPath.$datadir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
-        return $strPath.$datadir;
+                } else if (strpos($scorm->version, 'AICC') !== false) {
+                    // TODO: add more sanity checks - something really exists in scorm_content area
+                    return;
+                }
+            }
+
+            // now extract files
+            $fs->delete_area_files($context->id, 'scorm_content');
+
+            $packer = get_file_packer('application/zip');
+            $packagefile->extract_to_storage($packer, $context->id, 'scorm_content', 0, '/');
+
+        } else if (!$full) {
+            return;
+        }
+
+
+        if ($manifest = $fs->get_file($context->id, 'scorm_content', 0, '/', 'imsmanifest.xml')) {
+            require_once("$CFG->dirroot/mod/scorm/datamodels/scormlib.php");
+            // SCORM
+            if (!scorm_parse_scorm($scorm, $manifest)) {
+                $scorm->version = 'ERROR';
+            }
+        } else {
+            require_once("$CFG->dirroot/mod/scorm/datamodels/aicclib.php");
+            // AICC
+            if (!scorm_parse_aicc($scorm)) {
+                $scorm->version = 'ERROR';
+            }
+        }
+
+    } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL and $CFG->scorm_allowtypeexternal) {
+        if (!$full and $scorm->sha1hash === sha1($scorm->reference)) {
+            return;
+        }
+        require_once("$CFG->dirroot/mod/scorm/datamodels/scormlib.php");
+        // SCORM only, AICC can not be external
+        if (!scorm_parse_scorm($scorm, $scorm->reference)) {
+            $scorm->version = 'ERROR';
+        }
+        $newhash = sha1($scorm->reference);
+
+    } else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY and !empty($CFG->repositoryactivate) and $CFG->scorm_allowtypeimsrepository) {
+        if (!$full and $scorm->sha1hash === sha1($scorm->reference)) {
+            return;
+        }
+        require_once("$CFG->dirroot/mod/scorm/datamodels/scormlib.php");
+        if (!scorm_parse_scorm($scorm, $CFG->repository.substr($scorm->reference,1).'/imsmanifest.xml')) {
+            $scorm->version = 'ERROR';
+        }
+        $newhash = sha1($scorm->reference);
+
     } else {
-        return false;
+        // sorry, disabled type
+        return;
     }
+
+    $scorm->revision++;
+    $scorm->sha1hash = $newhash;
+    $DB->update_record('scorm', $scorm);
 }
+
 
 function scorm_array_search($item, $needle, $haystacks, $strict=false) {
     if (!empty($haystacks)) {
@@ -189,7 +198,7 @@ function scorm_get_sco($id,$what=SCO_ALL) {
                 $sco->{$scodata->name} = $scodata->value;
             }
         } else if (($what != SCO_ONLY) && (!($scodatas = $DB->get_records('scorm_scoes_data', array('scoid'=>$id))))) {
-            $sco->parameters = ''; 
+            $sco->parameters = '';
         }
         return $sco;
     } else {
@@ -247,10 +256,10 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
         $track->timemodified = time();
         $id = $DB->insert_record('scorm_scoes_track',$track);
     }
-    
+
     // MDL-9552, update the gradebook everything raw score is sent
     // Scoring by learning objects also needs to be included in the gradebook update
-    if (strstr($element, '.score.raw') || 
+    if (strstr($element, '.score.raw') ||
         (($element == 'cmi.core.lesson_status' || $element == 'cmi.completion_status') && ($track->value == 'completed' || $track->value == 'passed'))) {
         $scorm = $DB->get_record('scorm', array('id' => $scormid));
         $grademethod = $scorm->grademethod % 10;
@@ -259,7 +268,7 @@ function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
             scorm_update_grades($scorm, $userid);
         }
     }
-    
+
     return $id;
 }
 
@@ -276,7 +285,7 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
     }
     if ($tracks = $DB->get_records('scorm_scoes_track', array('userid'=>$userid, 'scoid'=>$scoid, 'attempt'=>$attempt),'element ASC')) {
         $usertrack->userid = $userid;
-        $usertrack->scoid = $scoid; 
+        $usertrack->scoid = $scoid;
         // Defined in order to unify scorm1.2 and scorm2004
         $usertrack->score_raw = '';
         $usertrack->status = '';
@@ -291,27 +300,27 @@ function scorm_get_tracks($scoid,$userid,$attempt='') {
                 case 'cmi.completion_status':
                     if ($track->value == 'not attempted') {
                         $track->value = 'notattempted';
-                    }       
+                    }
                     $usertrack->status = $track->value;
-                break;  
+                break;
                 case 'cmi.core.score.raw':
                 case 'cmi.score.raw':
                     $usertrack->score_raw = $track->value;
-                break;  
+                break;
                 case 'cmi.core.session_time':
                 case 'cmi.session_time':
                     $usertrack->session_time = $track->value;
-                break;  
+                break;
                 case 'cmi.core.total_time':
                 case 'cmi.total_time':
                     $usertrack->total_time = $track->value;
-                break;  
-            }       
+                break;
+            }
             if (isset($track->timemodified) && ($track->timemodified > $usertrack->timemodified)) {
                 $usertrack->timemodified = $track->timemodified;
-            }       
+            }
         }
-        if (is_array($usertrack)) {       
+        if (is_array($usertrack)) {
             ksort($usertrack);
         }
         return $usertrack;
@@ -330,13 +339,13 @@ function scorm_get_user_data($userid) {
 
 function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
     global $DB;
-    $attemptscore = NULL; 
+    $attemptscore = NULL;
     $attemptscore->scoes = 0;
     $attemptscore->values = 0;
     $attemptscore->max = 0;
     $attemptscore->sum = 0;
     $attemptscore->lastmodify = 0;
-    
+
     if (!$scoes = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id))) {
         return NULL;
     }
@@ -346,11 +355,11 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
     // and 1s are grademethod
     $grademethod = $scorm->grademethod % 10;
 
-    foreach ($scoes as $sco) { 
+    foreach ($scoes as $sco) {
         if ($userdata=scorm_get_tracks($sco->id, $userid,$attempt)) {
             if (($userdata->status == 'completed') || ($userdata->status == 'passed')) {
                 $attemptscore->scoes++;
-            }       
+            }
             if (!empty($userdata->score_raw)) {
                 $attemptscore->values++;
                 $attemptscore->sum += $userdata->score_raw;
@@ -360,23 +369,23 @@ function scorm_grade_user_attempt($scorm, $userid, $attempt=1, $time=false) {
                 } else {
                     $attemptscore->lastmodify = 0;
                 }
-            }       
-        }       
+            }
+        }
     }
     switch ($grademethod) {
         case GRADEHIGHEST:
             $score = $attemptscore->max;
-        break;  
+        break;
         case GRADEAVERAGE:
             if ($attemptscore->values > 0) {
                 $score = $attemptscore->sum/$attemptscore->values;
             } else {
                 $score = 0;
-            }       
-        break;  
+            }
+        break;
         case GRADESUM:
             $score = $attemptscore->sum;
-        break;  
+        break;
         case GRADESCOES:
             $score = $attemptscore->scoes;
         break;
@@ -410,7 +419,7 @@ function scorm_grade_user($scorm, $userid, $time=false) {
     switch ($whatgrade) {
         case FIRSTATTEMPT:
             return scorm_grade_user_attempt($scorm, $userid, 1, $time);
-        break;    
+        break;
         case LASTATTEMPT:
             return scorm_grade_user_attempt($scorm, $userid, scorm_get_last_attempt($scorm->id, $userid), $time);
         break;
@@ -502,7 +511,7 @@ function scorm_course_format_display($user,$course) {
 
     echo '<div class="mod-scorm">';
     if ($scorms = get_all_instances_in_course('scorm', $course)) {
-        // The module SCORM activity with the least id is the course  
+        // The module SCORM activity with the least id is the course
         $scorm = current($scorms);
         if (! $cm = get_coursemodule_from_instance('scorm', $scorm->id, $course->id)) {
             print_error('invalidcoursemodule');
@@ -528,7 +537,7 @@ function scorm_course_format_display($user,$course) {
                 $headertext .= '<td class="reportlink">'.get_string('noreports','scorm');
             }
             $colspan = ' colspan="2"';
-        } 
+        }
         $headertext .= '</td></tr><tr><td'.$colspan.'>'.format_text(get_string('summary').':<br />'.$scorm->summary).'</td></tr></table>';
         print_simple_box($headertext,'','100%');
         scorm_view_display($user, $scorm, 'view.php?id='.$course->id, $cm, '100%');
@@ -546,11 +555,8 @@ function scorm_course_format_display($user,$course) {
 function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
     global $CFG, $DB;
 
-    if ($scorm->updatefreq == UPDATE_EVERYTIME){
-        require_once($CFG->dirroot.'/mod/scorm/lib.php');
-
-        $scorm->instance = $scorm->id;
-        scorm_update_instance($scorm);
+    if ($scorm->updatefreq == UPDATE_EVERYTIME) {
+        scorm_parse($scorm, false);
     }
 
     $organization = optional_param('organization', '', PARAM_INT);
@@ -637,9 +643,9 @@ function scorm_simple_play($scorm,$user) {
     global $DB;
 
    $result = false;
-  
+
    $scoes = $DB->get_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, $DB->sql_empty()));
-   
+
    if ($scoes && (count($scoes) == 1)) {
        if ($scorm->skipview >= 1) {
            $sco = current($scoes);
@@ -675,356 +681,26 @@ function scorm_simple_play($scorm,$user) {
     return $result;
 }
 */
-function scorm_parse($scorm) {
-    global $CFG;
-
-    if ($scorm->reference[0] == '#') {
-        if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
-            $referencedir = $CFG->repository.substr($scorm->reference,1);
-        }
-    } else {
-        if ((!scorm_external_link($scorm->reference)) && (basename($scorm->reference) == 'imsmanifest.xml')) {
-            $referencedir = $CFG->dataroot.'/'.$scorm->course.'/'.$scorm->datadir;
-        } else {
-            $referencedir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm/'.$scorm->id;
-        }
-    }
-
-    // Parse scorm manifest
-    if ($scorm->pkgtype == 'AICC') {
-        require_once('datamodels/aicclib.php');
-        $scorm->launch = scorm_parse_aicc($referencedir, $scorm->id);
-    } else {
-        require_once('datamodels/scormlib.php');
-        $scorm->launch = scorm_parse_scorm($referencedir,$scorm->id);
-    }
-    return $scorm->launch;
-}
-
-/**
-* Given a manifest path, this function will check if the manifest is valid
-*
-* @param string $manifest The manifest file
-* @return object
-*/
-function scorm_validate_manifest($manifest) {
-    $validation = new stdClass();
-    if (is_file($manifest)) {
-        $validation->result = true;
-    } else {
-        $validation->result = false;
-        $validation->errors['reference'] = get_string('nomanifest','scorm');
-    }
-    return $validation;
-}
-
-/**
-* Given a aicc package directory, this function will check if the course structure is valid
-*
-* @param string $packagedir The aicc package directory path
-* @return object
-*/
-function scorm_validate_aicc($packagedir) {
-    $validation = new stdClass();
-    $validation->result = false;
-    if (is_dir($packagedir)) {
-        if ($handle = opendir($packagedir)) {
-            while (($file = readdir($handle)) !== false) {
-                $ext = substr($file,strrpos($file,'.'));
-                if (strtolower($ext) == '.cst') {
-                    $validation->result = true;
-                    break;
-                }
-            }
-            closedir($handle);
-        }
-    }
-    if ($validation->result == false) {
-        $validation->errors['reference'] = get_string('nomanifest','scorm');
-    }
-    return $validation;
-}
-
-
-function scorm_validate($data) {
-    global $CFG, $DB;
-
-    $validation = new stdClass();
-    $validation->errors = array();
-
-    if (!isset($data['course']) || empty($data['course'])) {
-        $validation->errors['reference'] = get_string('missingparam','scorm');
-        $validation->result = false;
-        return $validation;
-    }
-    $courseid = $data['course'];                  // Course Module ID
-
-    if (!isset($data['reference']) || empty($data['reference'])) {
-        $validation->errors['reference'] = get_string('packagefile','scorm');
-        $validation->result = false;
-        return $validation;
-    }
-    $reference = $data['reference'];              // Package/manifest path/location
-
-    $scormid = $data['instance'];                 // scorm ID 
-    $scorm = new stdClass();
-    if (!empty($scormid)) {
-        if (!$scorm = $DB->get_record('scorm', array('id'=>$scormid))) {
-            $validation->errors['reference'] = get_string('missingparam','scorm');
-            $validation->result = false;
-            return $validation;
-        }
-    }
-
-    if ($reference[0] == '#') {
-        if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
-            $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
-        } else {
-            $validation->errors['reference'] = get_string('badpackage','scorm');
-            $validation->result = false;
-            return $validation;
-        }
-    } else if (!scorm_external_link($reference)) {
-        $reference = $CFG->dataroot.'/'.$courseid.'/'.$reference;
-    }
-
-    // Create a temporary directory to unzip package or copy manifest and validate package
-    $tempdir = '';
-    $scormdir = '';
-    if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
-        if ($tempdir = scorm_tempdir($scormdir)) {
-            $localreference = $tempdir.'/'.basename($reference);
-            copy ("$reference", $localreference);
-            if (!is_file($localreference)) {
-                $validation->errors['reference'] = get_string('badpackage','scorm');
-                $validation->result = false;
-            } else {
-                $ext = strtolower(substr(basename($localreference),strrpos(basename($localreference),'.')));
-                switch ($ext) {
-                    case '.pif':
-                    case '.zip':
-                        if (!unzip_file($localreference, $tempdir, false)) {
-                            $validation->errors['reference'] = get_string('unziperror','scorm');
-                            $validation->result = false;
-                        } else {
-                            unlink ($localreference);
-                            if (is_file($tempdir.'/imsmanifest.xml')) {
-                                $validation = scorm_validate_manifest($tempdir.'/imsmanifest.xml');
-                                $validation->pkgtype = 'SCORM';
-                            } else {
-                                $validation = scorm_validate_aicc($tempdir);
-                                if (($validation->result == 'regular') || ($validation->result == 'found')) {
-                                    $validation->pkgtype = 'AICC';
-                                } else {
-                                    $validation->errors['reference'] = get_string('nomanifest','scorm');
-                                    $validation->result = false;
-                                }
-                            }
-                        }
-                    break;
-                    case '.xml':
-                        if (basename($localreference) == 'imsmanifest.xml') {
-                            $validation = scorm_validate_manifest($localreference);
-                        } else {
-                            $validation->errors['reference'] = get_string('nomanifest','scorm');
-                            $validation->result = false;
-                        }
-                    break;
-                    default: 
-                        $validation->errors['reference'] = get_string('badpackage','scorm');
-                        $validation->result = false;
-                    break;
-                }
-            }
-            if (is_dir($tempdir)) {
-            // Delete files and temporary directory
-                scorm_delete_files($tempdir);
-            }
-        } else {
-            $validation->errors['reference'] = get_string('packagedir','scorm');
-            $validation->result = false;
-        }
-    } else {
-        $validation->errors['reference'] = get_string('datadir','scorm');
-        $validation->result = false;
-    }
-    return $validation;
-}
-
-function scorm_check_package($data) {
-    global $CFG, $COURSE, $DB;
-
-    $courseid = $data->course;                  // Course Module ID
-    $reference = $data->reference;              // Package path
-    $scormid = $data->instance;                 // scorm ID 
-
-    $validation = new stdClass();
-
-    if (!empty($courseid) && !empty($reference)) {
-        $externalpackage = scorm_external_link($reference);
-
-        $validation->launch = 0;
-        $referencefield = $reference;
-        if (empty($reference)) {
-            $validation = null;
-        } else if ($reference[0] == '#') {
-            if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
-                $referencefield = $reference.'/imsmanifest.xml';
-                $reference = $CFG->repository.substr($reference,1).'/imsmanifest.xml';
-            } else {
-                $validation = null;
-            }
-        } else if (!$externalpackage) {
-            $reference = $CFG->dataroot.'/'.$courseid.'/'.$reference;
-        }
-
-        if (!empty($scormid)) {  
-        //
-        // SCORM Update
-        //
-            if ((!empty($validation)) && (is_file($reference) || $externalpackage)){
-                
-                if (!$externalpackage) {
-                    $mdcheck = md5_file($reference);
-                } else if ($externalpackage){
-                    if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
-                        if ($tempdir = scorm_tempdir($scormdir)) {
-                            copy ("$reference", $tempdir.'/'.basename($reference));
-                            $mdcheck = md5_file($tempdir.'/'.basename($reference));
-                            scorm_delete_files($tempdir);
-                        }
-                    }
-                }
-                
-                if ($scorm = $DB->get_record('scorm', array('id'=>$scormid))) {
-                    if ($scorm->reference[0] == '#') {
-                        if (isset($CFG->repositoryactivate) && $CFG->repositoryactivate) {
-                            $oldreference = $CFG->repository.substr($scorm->reference,1).'/imsmanifest.xml';
-                        } else {
-                            $oldreference = $scorm->reference;
-                        }
-                    } else if (!scorm_external_link($scorm->reference)) {
-                        $oldreference = $CFG->dataroot.'/'.$courseid.'/'.$scorm->reference;
-                    } else {
-                        $oldreference = $scorm->reference;
-                    }
-                    $validation->launch = $scorm->launch;
-                    if ((($oldreference == $reference) && ($mdcheck != $scorm->md5hash)) || ($oldreference != $reference)) {
-                        // This is a new or a modified package
-                        $validation->launch = 0;
-                    } else {
-                    // Old package already validated
-                        if (strpos($scorm->version,'AICC') !== false) {
-                            $validation->pkgtype = 'AICC';
-                        } else {
-                            $validation->pkgtype = 'SCORM';
-                        }
-                    }
-                } else {
-                    $validation = null;
-                }
-            } else {
-                $validation = null;
-            }
-        }
-        //$validation->launch = 0;
-        if (($validation != null) && ($validation->launch == 0)) {
-        //
-        // Package must be validated
-        //
-            $ext = strtolower(substr(basename($reference),strrpos(basename($reference),'.')));
-            $tempdir = '';
-            switch ($ext) {
-                case '.pif':
-                case '.zip':
-                // Create a temporary directory to unzip package and validate package
-                    $scormdir = '';
-                    if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
-                        if ($tempdir = scorm_tempdir($scormdir)) {
-                            copy ("$reference", $tempdir.'/'.basename($reference));
-                            unzip_file($tempdir.'/'.basename($reference), $tempdir, false);
-                            if (!$externalpackage) {
-                                unlink ($tempdir.'/'.basename($reference));
-                            }
-                            if (is_file($tempdir.'/imsmanifest.xml')) {
-                                $validation = scorm_validate_manifest($tempdir.'/imsmanifest.xml');
-                                $validation->pkgtype = 'SCORM';
-                            } else {
-                                $validation = scorm_validate_aicc($tempdir);
-                                $validation->pkgtype = 'AICC';
-                            }
-                        } else {
-                            $validation = null;
-                        }
-                    } else {
-                        $validation = null;
-                    }
-                break;
-                case '.xml':
-                    if (basename($reference) == 'imsmanifest.xml') {
-                        if ($externalpackage) {
-                            if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
-                                if ($tempdir = scorm_tempdir($scormdir)) {
-                                    copy ("$reference", $tempdir.'/'.basename($reference));
-                                    if (is_file($tempdir.'/'.basename($reference))) {
-                                        $validation = scorm_validate_manifest($tempdir.'/'.basename($reference));
-                                    } else {
-                                        $validation = null;
-                                    }
-                                }
-                            }
-                        } else {
-                            $validation = scorm_validate_manifest($reference);
-                        }
-                        $validation->pkgtype = 'SCORM';
-                    } else {
-                        $validation = null;
-                    }
-                break;
-                default: 
-                    $validation = null;
-                break;
-            }
-            if ($validation == null) {
-                if (is_dir($tempdir)) {
-                // Delete files and temporary directory
-                    scorm_delete_files($tempdir);
-                }
-            } else {
-                if (($ext == '.xml') && (!$externalpackage)) {
-                    $validation->datadir = dirname($referencefield);
-                } else {
-                    $validation->datadir = substr($tempdir,strlen($scormdir));
-                }
-                $validation->launch = 0;
-            }
-        }
-    } else {
-        $validation = null;
-    }
-    return $validation;
-}
-
 
 function scorm_get_count_users($scormid, $groupingid=null) {
     global $CFG, $DB;
-    
+
     if (!empty($CFG->enablegroupings) && !empty($groupingid)) {
         $sql = "SELECT COUNT(DISTINCT st.userid)
                 FROM {scorm_scoes_track} st
                     INNER JOIN {groups_members} gm ON st.userid = gm.userid
-                    INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid 
+                    INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid
                 WHERE st.scormid = ? AND gg.groupingid = ?
                 ";
         $params = array($scormid, $groupingid);
     } else {
         $sql = "SELECT COUNT(DISTINCT st.userid)
-                FROM {scorm_scoes_track} st 
+                FROM {scorm_scoes_track} st
                 WHERE st.scormid = ?
                 ";
         $params = array($scormid);
     }
-    
+
     return ($DB->count_records_sql($sql, $params));
 }
 

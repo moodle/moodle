@@ -456,161 +456,165 @@ function scorm_get_manifest($blocks,$scoes) {
     return $scoes;
 }
 
-function scorm_parse_scorm($pkgdir,$scormid) {
+function scorm_parse_scorm($scorm, $manifest) {
     global $CFG, $DB;
+
+    // load manifest into string
+    if ($manifest instanceof stored_file) {
+        $xmltext = $manifest->get_content();
+    } else {
+        require_once "$CFG->libdir/filelib.php";
+        $xmltext = download_file_content($manifest);
+    }
     
     $launch = 0;
-    $manifestfile = $pkgdir.'/imsmanifest.xml';
 
-    if (is_file($manifestfile)) {
-    
-        $xmltext = file_get_contents($manifestfile);
+    $pattern = '/&(?!\w{2,6};)/';
+    $replacement = '&amp;';
+    $xmltext = preg_replace($pattern, $replacement, $xmltext);
 
-        $pattern = '/&(?!\w{2,6};)/';
-        $replacement = '&amp;';
-        $xmltext = preg_replace($pattern, $replacement, $xmltext);
-
-        $objXML = new xml2Array();
-        $manifests = $objXML->parse($xmltext);
+    $objXML = new xml2Array();
+    $manifests = $objXML->parse($xmltext);
 //print_object($manifests); 
-        $scoes = new stdClass();
-        $scoes->version = '';
-        $scoes = scorm_get_manifest($manifests,$scoes);
+    $scoes = new stdClass();
+    $scoes->version = '';
+    $scoes = scorm_get_manifest($manifests,$scoes);
 //print_object($scoes);
-        if (count($scoes->elements) > 0) {
-            $olditems = $DB->get_records('scorm_scoes', array('scorm'=>$scormid));
-            foreach ($scoes->elements as $manifest => $organizations) {
-                foreach ($organizations as $organization => $items) {
-                    foreach ($items as $identifier => $item) {
-                        // This new db mngt will support all SCORM future extensions
-                        $newitem = new stdClass(); 
-                        $newitem->scorm = $scormid;
-                        $newitem->manifest = $manifest;
-                        $newitem->organization = $organization;
-                        $standarddatas = array('parent', 'identifier', 'launch', 'scormtype', 'title');
-                        foreach ($standarddatas as $standarddata) {
-                            if (isset($item->$standarddata)) {
-                                $newitem->$standarddata = $item->$standarddata;
+    if (count($scoes->elements) > 0) {
+        $olditems = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id));
+        foreach ($scoes->elements as $manifest => $organizations) {
+            foreach ($organizations as $organization => $items) {
+                foreach ($items as $identifier => $item) {
+                    // This new db mngt will support all SCORM future extensions
+                    $newitem = new stdClass(); 
+                    $newitem->scorm = $scorm->id;
+                    $newitem->manifest = $manifest;
+                    $newitem->organization = $organization;
+                    $standarddatas = array('parent', 'identifier', 'launch', 'scormtype', 'title');
+                    foreach ($standarddatas as $standarddata) {
+                        if (isset($item->$standarddata)) {
+                            $newitem->$standarddata = $item->$standarddata;
+                        }
+                    }
+                    
+                    // Insert the new SCO, and retain the link between the old and new for later adjustment
+                    $id = $DB->insert_record('scorm_scoes',$newitem);
+                    if (!empty($olditems) && ($olditemid = scorm_array_search('identifier',$newitem->identifier,$olditems))) {
+                        $olditems[$olditemid]->newid = $id;
+                    }
+                    
+                    if ($optionaldatas = scorm_optionals_data($item,$standarddatas)) {
+                        $data = new stdClass();
+                        $data->scoid = $id;
+                        foreach ($optionaldatas as $optionaldata) {
+                            if (isset($item->$optionaldata)) {
+                                $data->name =  $optionaldata;
+                                $data->value = $item->$optionaldata;
+                                $dataid = $DB->insert_record('scorm_scoes_data',$data);
                             }
                         }
-                        
-                        // Insert the new SCO, and retain the link between the old and new for later adjustment
-                        $id = $DB->insert_record('scorm_scoes',$newitem);
-                        if (!empty($olditems) && ($olditemid = scorm_array_search('identifier',$newitem->identifier,$olditems))) {
-                            $olditems[$olditemid]->newid = $id;
-                        }
-                        
-                        if ($optionaldatas = scorm_optionals_data($item,$standarddatas)) {
-                            $data = new stdClass();
-                            $data->scoid = $id;
-                            foreach ($optionaldatas as $optionaldata) {
-                                if (isset($item->$optionaldata)) {
-                                    $data->name =  $optionaldata;
-                                    $data->value = $item->$optionaldata;
-                                    $dataid = $DB->insert_record('scorm_scoes_data',$data);
+                    }
+
+                    if (isset($item->sequencingrules)) {
+                        foreach($item->sequencingrules as $sequencingrule) {
+                            $rule = new stdClass();
+                            $rule->scoid = $id;
+                            $rule->ruletype = $sequencingrule->type;
+                            $rule->conditioncombination = $sequencingrule->conditioncombination;
+                            $rule->action = $sequencingrule->action;
+                            $ruleid = $DB->insert_record('scorm_seq_ruleconds',$rule);
+                            if (isset($sequencingrule->ruleconditions)) {
+                                foreach($sequencingrule->ruleconditions as $rulecondition) {
+                                    $rulecond = new stdClass();
+                                    $rulecond->scoid = $id;
+                                    $rulecond->ruleconditionsid = $ruleid;
+                                    $rulecond->referencedobjective = $rulecondition->referencedobjective;
+                                    $rulecond->measurethreshold = $rulecondition->measurethreshold;
+                                    $rulecond->cond = $rulecondition->cond;
+                                    $rulecondid = $DB->insert_record('scorm_seq_rulecond',$rulecond);
                                 }
                             }
-                        }
+                        }                        
+                    }
+                    
+                    if (isset($item->rolluprules)) {
+                        foreach($item->rolluprules as $rolluprule) {
+                            $rollup = new stdClass();
+                            $rollup->scoid =  $id;
+                            $rollup->childactivityset = $rolluprule->childactivityset;
+                            $rollup->minimumcount = $rolluprule->minimumcount;
+                            $rollup->minimumpercent = $rolluprule->minimumpercent;
+                            $rollup->rollupruleaction = $rolluprule->rollupruleaction;
+                            $rollup->conditioncombination = $rolluprule->conditioncombination;
 
-                        if (isset($item->sequencingrules)) {
-                            foreach($item->sequencingrules as $sequencingrule) {
-                                $rule = new stdClass();
-                                $rule->scoid = $id;
-                                $rule->ruletype = $sequencingrule->type;
-                                $rule->conditioncombination = $sequencingrule->conditioncombination;
-                                $rule->action = $sequencingrule->action;
-                                $ruleid = $DB->insert_record('scorm_seq_ruleconds',$rule);
-                                if (isset($sequencingrule->ruleconditions)) {
-                                    foreach($sequencingrule->ruleconditions as $rulecondition) {
-                                        $rulecond = new stdClass();
-                                        $rulecond->scoid = $id;
-                                        $rulecond->ruleconditionsid = $ruleid;
-                                        $rulecond->referencedobjective = $rulecondition->referencedobjective;
-                                        $rulecond->measurethreshold = $rulecondition->measurethreshold;
-                                        $rulecond->cond = $rulecondition->cond;
-                                        $rulecondid = $DB->insert_record('scorm_seq_rulecond',$rulecond);
-                                    }
+                            $rollupruleid = $DB->insert_record('scorm_seq_rolluprule',$rollup);
+                            if (isset($rollup->conditions)) {
+                                foreach($rollup->conditions as $condition){
+                                    $cond = new stdClass();
+                                    $cond->scoid = $rollup->scoid;
+                                    $cond->rollupruleid = $rollupruleid;
+                                    $cond->operator = $condition->operator;
+                                    $cond->cond = $condition->cond;
+                                    $conditionid = $DB->insert_record('scorm_seq_rolluprulecond',$cond);
                                 }
-                            }                        
-                        }
-                        
-                        if (isset($item->rolluprules)) {
-                            foreach($item->rolluprules as $rolluprule) {
-                                $rollup = new stdClass();
-                                $rollup->scoid =  $id;
-                                $rollup->childactivityset = $rolluprule->childactivityset;
-                                $rollup->minimumcount = $rolluprule->minimumcount;
-                                $rollup->minimumpercent = $rolluprule->minimumpercent;
-                                $rollup->rollupruleaction = $rolluprule->rollupruleaction;
-                                $rollup->conditioncombination = $rolluprule->conditioncombination;
+                            }
+                        } 
+                    }
 
-                                $rollupruleid = $DB->insert_record('scorm_seq_rolluprule',$rollup);
-                                if (isset($rollup->conditions)) {
-                                    foreach($rollup->conditions as $condition){
-                                        $cond = new stdClass();
-                                        $cond->scoid = $rollup->scoid;
-                                        $cond->rollupruleid = $rollupruleid;
-                                        $cond->operator = $condition->operator;
-                                        $cond->cond = $condition->cond;
-                                        $conditionid = $DB->insert_record('scorm_seq_rolluprulecond',$cond);
-                                    }
-                                }
-                            } 
-                        }
-
-                        if (isset($item->objectives)) {
-                            foreach($item->objectives as $objective) {
-                                $obj = new stdClass();
-                                $obj->scoid = $id;
-                                $obj->primaryobj = $objective->primaryobj;
-                                $obj->satisfiedbumeasure = $objective->satisfiedbymeasure;
-                                $obj->objectiveid = $objective->objectiveid;
-                                $obj->minnormalizedmeasure = $objective->minnormalizedmeasure; 
-                                $objectiveid = $DB->insert_record('scorm_seq_objective',$obj);
-                                if (isset($objective->mapinfos)) {
+                    if (isset($item->objectives)) {
+                        foreach($item->objectives as $objective) {
+                            $obj = new stdClass();
+                            $obj->scoid = $id;
+                            $obj->primaryobj = $objective->primaryobj;
+                            $obj->satisfiedbumeasure = $objective->satisfiedbymeasure;
+                            $obj->objectiveid = $objective->objectiveid;
+                            $obj->minnormalizedmeasure = $objective->minnormalizedmeasure; 
+                            $objectiveid = $DB->insert_record('scorm_seq_objective',$obj);
+                            if (isset($objective->mapinfos)) {
 //print_object($objective->mapinfos);
-                                    foreach($objective->mapinfos as $objmapinfo) {
-                                        $mapinfo = new stdClass();
-                                        $mapinfo->scoid = $id;
-                                        $mapinfo->objectiveid = $objectiveid;
-                                        $mapinfo->targetobjectiveid = $objmapinfo->targetobjectiveid;
-                                        $mapinfo->readsatisfiedstatus = $objmapinfo->readsatisfiedstatus;
-                                        $mapinfo->writesatisfiedstatus = $objmapinfo->writesatisfiedstatus;
-                                        $mapinfo->readnormalizedmeasure = $objmapinfo->readnormalizedmeasure;
-                                        $mapinfo->writenormalizedmeasure = $objmapinfo->writenormalizedmeasure;
-                                        $mapinfoid = $DB->insert_record('scorm_seq_mapinfo',$mapinfo);
-                                    }
+                                foreach($objective->mapinfos as $objmapinfo) {
+                                    $mapinfo = new stdClass();
+                                    $mapinfo->scoid = $id;
+                                    $mapinfo->objectiveid = $objectiveid;
+                                    $mapinfo->targetobjectiveid = $objmapinfo->targetobjectiveid;
+                                    $mapinfo->readsatisfiedstatus = $objmapinfo->readsatisfiedstatus;
+                                    $mapinfo->writesatisfiedstatus = $objmapinfo->writesatisfiedstatus;
+                                    $mapinfo->readnormalizedmeasure = $objmapinfo->readnormalizedmeasure;
+                                    $mapinfo->writenormalizedmeasure = $objmapinfo->writenormalizedmeasure;
+                                    $mapinfoid = $DB->insert_record('scorm_seq_mapinfo',$mapinfo);
                                 }
                             }
                         }
+                    }
 //print_object($item);
-                        if (($launch == 0) && ((empty($scoes->defaultorg)) || ($scoes->defaultorg == $identifier))) {
-                            $launch = $id;
-                        }
+                    if (($launch == 0) && ((empty($scoes->defaultorg)) || ($scoes->defaultorg == $identifier))) {
+                        $launch = $id;
                     }
                 }
             }
-            if (!empty($olditems)) {
-                foreach($olditems as $olditem) {
-                    $DB->delete_records('scorm_scoes', array('id'=>$olditem->id));
-                    $DB->delete_records('scorm_scoes_data',array('scoid'=>$olditem->id));
-                    if (isset($olditem->newid)) {
-                        $DB->set_field('scorm_scoes_track', 'scoid', $olditem->newid, array('scoid' => $olditem->id));
-                    }
-                    $DB->delete_records('scorm_scoes_track',array('scoid'=>$olditem->id));
-                    $DB->delete_records('scorm_seq_objective', array('scoid'=>$olditem->id));
-                    $DB->delete_records('scorm_seq_mapinfo', array('scoid'=>$olditem->id));
-                    $DB->delete_records('scorm_seq_ruleconds', array('scoid'=>$olditem->id));
-                    $DB->delete_records('scorm_seq_rulecond', array('scoid'=>$olditem->id));
-                    $DB->delete_records('scorm_seq_rolluprule', array('scoid'=>$olditem->id));
-                    $DB->delete_records('scorm_seq_rolluprulecond', array('scoid'=>$olditem->id));
-                }
-            }
-            $DB->set_field('scorm','version',$scoes->version, array('id'=>$scormid));
         }
-    } 
+        if (!empty($olditems)) {
+            foreach($olditems as $olditem) {
+                $DB->delete_records('scorm_scoes', array('id'=>$olditem->id));
+                $DB->delete_records('scorm_scoes_data',array('scoid'=>$olditem->id));
+                if (isset($olditem->newid)) {
+                    $DB->set_field('scorm_scoes_track', 'scoid', $olditem->newid, array('scoid' => $olditem->id));
+                }
+                $DB->delete_records('scorm_scoes_track',array('scoid'=>$olditem->id));
+                $DB->delete_records('scorm_seq_objective', array('scoid'=>$olditem->id));
+                $DB->delete_records('scorm_seq_mapinfo', array('scoid'=>$olditem->id));
+                $DB->delete_records('scorm_seq_ruleconds', array('scoid'=>$olditem->id));
+                $DB->delete_records('scorm_seq_rulecond', array('scoid'=>$olditem->id));
+                $DB->delete_records('scorm_seq_rolluprule', array('scoid'=>$olditem->id));
+                $DB->delete_records('scorm_seq_rolluprulecond', array('scoid'=>$olditem->id));
+            }
+        }
+        $scorm->version = $scoes->version;
+    }
     
-    return $launch;
+    $scorm->launch = $launch;
+
+    return true;
 }
 
 function scorm_optionals_data($item, $standarddata) {

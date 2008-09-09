@@ -2,7 +2,7 @@
 
     require_once("../../config.php");
     require_once('locallib.php');
-    
+
     $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
     $a = optional_param('a', '', PARAM_INT);         // scorm ID
     $scoid = required_param('scoid', PARAM_INT);     // sco ID
@@ -33,7 +33,7 @@
         print_error('missingparameter');
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course, false, $cm);
 
     if ($usertrack = scorm_get_tracks($scoid,$USER->id,$attempt)) {
         if ((isset($usertrack->{'cmi.exit'}) && ($usertrack->{'cmi.exit'} != 'time-out')) || ($scorm->version != "SCORM_1.3")) {
@@ -58,7 +58,7 @@
         $userdata->credit = 'credit';
     } else {
         $userdata->credit = 'no-credit';
-    }    
+    }
     if ($scodatas = scorm_get_sco($scoid, SCO_DATA)) {
         foreach ($scodatas as $key => $value) {
             $userdata->$key = addslashes_js($value);

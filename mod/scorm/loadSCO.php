@@ -2,8 +2,8 @@
     require_once('../../config.php');
     require_once('locallib.php');
 
-    $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
-    $a = optional_param('a', '', PARAM_INT);         // scorm ID
+    $id    = optional_param('id', '', PARAM_INT);    // Course Module ID, or
+    $a     = optional_param('a', '', PARAM_INT);     // scorm ID
     $scoid = required_param('scoid', PARAM_INT);     // sco ID
 
     $delayseconds = 2;  // Delay time before sco launch, used to give time to browser to define API
@@ -33,6 +33,9 @@
     }
 
     require_login($course->id, false, $cm);
+
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
     if (!empty($scoid)) {
     //
     // Direct SCO request
@@ -60,7 +63,7 @@
        $value = 'completed';
        $result = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
     }
-    
+
     //
     // Forge SCO URL
     //
@@ -76,7 +79,7 @@
             $sco->parameters = substr($sco->parameters,1);
         }
     }
-    
+
     if ($version == 'AICC') {
         if (isset($sco->parameters) && (!empty($sco->parameters))) {
             $sco->parameters = '&'. $sco->parameters;
@@ -89,31 +92,26 @@
             $launcher = $sco->launch;
         }
     }
-    
+
     if (scorm_external_link($sco->launch)) {
-        // Remote learning activity
+        //TODO: does this happen?
         $result = $launcher;
-    } else if ($scorm->reference[0] == '#') {
+
+    } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL) {
+        // Remote learning activity
+        $result = dirname($scorm->reference).'/'.$launcher;
+
+    } else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY) {
         // Repository
-        $result = $CFG->repositorywebroot.substr($scorm->reference,1).'/'.$sco->launch;
-    } else {
-        if ((basename($scorm->reference) == 'imsmanifest.xml') && scorm_external_link($scorm->reference)) {
-            // Remote manifest
-            $result = dirname($scorm->reference).'/'.$launcher;
-        } else {
-            // Moodle internal package/manifest or remote (auto-imported) package
-            if (basename($scorm->reference) == 'imsmanifest.xml') {
-                $basedir = dirname($scorm->reference);
-            } else {
-                $basedir = $CFG->moddata.'/scorm/'.$scorm->id;
-            }
-            //note: do not convert this to use get_file_url()!
-            //      SCORM does not work without slasharguments anyway and there might be some extra ?xx=yy params
-            //      see MDL-16060
-            $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/'.$basedir.'/'.$launcher;
-        }
+        $result = $CFG->repositorywebroot.substr($scorm->reference, 1).'/'.$sco->launch;
+
+    } else if ($scorm->scormtype === SCORM_TYPE_LOCAL or $scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
+        //note: do not convert this to use get_file_url()!
+        //      SCORM does not work without slasharguments anyway and there might be some extra ?xx=yy params
+        //      see MDL-16060
+        $result = "$CFG->wwwroot/pluginfile.php/$context->id/scorm_content/$scorm->revision/$launcher";
     }
-    
+
     $scormpixdir = $CFG->modpixpath.'/scorm/pix';
 ?>
 <html>
@@ -134,11 +132,11 @@
                                             }
                                         }, 1000);
         }
-        //]]>         
+        //]]>
         </script>
         <noscript>
             <meta http-equiv="refresh" content="<?php echo $delayseconds ?>;url=<?php echo $result ?>" />
-        </noscript> 
+        </noscript>
     </head>
     <body onload="doredirect();">
         <p><?php echo get_string('activityloading', 'scorm');?> <span id="countdown"><?php echo $delayseconds ?></span> <?php echo get_string('numseconds');?>. &nbsp; <img src='<?php echo $scormpixdir;?>/wait.gif'><p>
@@ -146,5 +144,5 @@
                   add_to_log($course->id, 'scorm', 'launch', 'view.php?id='.$cm->id, $result, $cm->id);
               }
         ?>
-    </body> 
+    </body>
 </html>

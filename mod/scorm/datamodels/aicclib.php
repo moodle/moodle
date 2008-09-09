@@ -90,49 +90,57 @@ function scorm_forge_cols_regexp($columns,$remodule='(".*")?,') {
     return $regexp;
 }
 
-function scorm_parse_aicc($pkgdir,$scormid) {
+
+function scorm_parse_aicc($scorm) {
     global $DB;
+
+    if (!isset($scorm->cmid)) {
+        $cm = get_coursemodule_from_instance('scorm', $scorm->id);
+        $scorm->cmid = $cm->id;
+    }
+    $context = get_context_instance(COURSE_MODULE, $scorm->cmid);
+
+    $fs = get_file_storage();
+
+    $files = $fs->get_area_files($context->id, 'scorm_content', 0, '', false);
+
 
     $version = 'AICC';
     $ids = array();
     $courses = array();
     $extaiccfiles = array('crs','des','au','cst','ort','pre','cmp');
-    if ($handle = opendir($pkgdir)) {
-        while (($file = readdir($handle)) !== false) {
-            if ($file[0] != '.') {
-                $ext = substr($file,strrpos($file,'.'));
-                $extension = strtolower(substr($ext,1));
-                if (in_array($extension,$extaiccfiles)) {
-                    $id = strtolower(basename($file,$ext));
-                    $ids[$id]->$extension = $file;
-                }
-            }
+
+    foreach ($files as $file) {
+        $filename = $file->get_filename();
+        $ext = substr($filename,strrpos($filename,'.'));
+        $extension = strtolower(substr($ext,1));
+        if (in_array($extension,$extaiccfiles)) {
+            $id = strtolower(basename($filename,$ext));
+            $ids[$id]->$extension = $file;
         }
-        closedir($handle);
     }
+
     foreach ($ids as $courseid => $id) {
         if (isset($id->crs)) {
-            if (is_file($pkgdir.'/'.$id->crs)) {
-                $rows = file($pkgdir.'/'.$id->crs);
-                foreach ($rows as $row) {
-                    if (preg_match("/^(.+)=(.+)$/",$row,$matches)) {
-                        switch (strtolower(trim($matches[1]))) {
-                            case 'course_id':
-                                $courses[$courseid]->id = trim($matches[2]);
-                            break;
-                            case 'course_title':
-                                $courses[$courseid]->title = trim($matches[2]);
-                            break;
-                            case 'version':
-                                $courses[$courseid]->version = 'AICC_'.trim($matches[2]);
-                            break;
-                        }
+            $rows = $id->crs->get_content();
+            foreach ($rows as $row) {
+                if (preg_match("/^(.+)=(.+)$/",$row,$matches)) {
+                    switch (strtolower(trim($matches[1]))) {
+                        case 'course_id':
+                            $courses[$courseid]->id = trim($matches[2]);
+                        break;
+                        case 'course_title':
+                            $courses[$courseid]->title = trim($matches[2]);
+                        break;
+                        case 'version':
+                            $courses[$courseid]->version = 'AICC_'.trim($matches[2]);
+                        break;
                     }
                 }
             }
         }
         if (isset($id->des)) {
-            $rows = file($pkgdir.'/'.$id->des);
+            $rows = $id->des->get_content();
             $columns = scorm_get_aicc_columns($rows[0]);
             $regexp = scorm_forge_cols_regexp($columns->columns);
             for ($i=1;$i<count($rows);$i++) {
@@ -145,7 +153,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             }
         }
         if (isset($id->au)) {
-            $rows = file($pkgdir.'/'.$id->au);
+            $rows = $id->au->get_content();
             $columns = scorm_get_aicc_columns($rows[0]);
             $regexp = scorm_forge_cols_regexp($columns->columns);
             for ($i=1;$i<count($rows);$i++) {
@@ -158,7 +166,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             }
         }
         if (isset($id->cst)) {
-            $rows = file($pkgdir.'/'.$id->cst);
+            $rows = $id->cst->get_content();
             $columns = scorm_get_aicc_columns($rows[0],'block');
             $regexp = scorm_forge_cols_regexp($columns->columns,'(.+)?,');
             for ($i=1;$i<count($rows);$i++) {
@@ -172,7 +180,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             }
         }
         if (isset($id->ort)) {
-            $rows = file($pkgdir.'/'.$id->ort);
+            $rows = $id->ort->get_content();
             $columns = scorm_get_aicc_columns($rows[0],'course_element');
             $regexp = scorm_forge_cols_regexp($columns->columns,'(.+)?,');
             for ($i=1;$i<count($rows);$i++) {
@@ -186,7 +194,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             }
         }
         if (isset($id->pre)) {
-            $rows = file($pkgdir.'/'.$id->pre);
+            $rows = $id->pre->get_content();
             $columns = scorm_get_aicc_columns($rows[0],'structure_element');
             $regexp = scorm_forge_cols_regexp($columns->columns,'(.+),');
             for ($i=1;$i<count($rows);$i++) {
@@ -196,19 +204,19 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             }
         }
         if (isset($id->cmp)) {
-            $rows = file($pkgdir.'/'.$id->cmp);
+            $rows = $id->cmp->get_content();
         }
     }
     //print_r($courses);
 
-    $oldscoes = $DB->get_records('scorm_scoes', array('scorm'=>$scormid));
+    $oldscoes = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id));
     
     $launch = 0;
     if (isset($courses)) {
         foreach ($courses as $course) {
             $sco = new object();
             $sco->identifier = $course->id;
-            $sco->scorm = $scormid;
+            $sco->scorm = $scorm->id;
             $sco->organization = '';
             $sco->title = $course->title;
             $sco->parent = '/';
@@ -216,7 +224,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             $sco->scormtype = '';
 
             //print_r($sco);
-            if ($ss = $DB->get_record('scorm_scoes', array('scorm'=>$scormid,'identifier'=>$sco->identifier))) {
+            if ($ss = $DB->get_record('scorm_scoes', array('scorm'=>$scorm->id,'identifier'=>$sco->identifier))) {
                 $id = $ss->id;
                 $DB->update_record('scorm_scoes',$sco);
                 unset($oldscoes[$id]);
@@ -231,7 +239,7 @@ function scorm_parse_aicc($pkgdir,$scormid) {
                 foreach($course->elements as $element) {
                     unset($sco);
                     $sco->identifier = $element->system_id;
-                    $sco->scorm = $scormid;
+                    $sco->scorm = $scorm->id;
                     $sco->organization = $course->id;
                     $sco->title = $element->title;
                  
@@ -302,8 +310,12 @@ function scorm_parse_aicc($pkgdir,$scormid) {
             $DB->delete_records('scorm_scoes_track', array('scoid'=>$oldsco->id));
         }
     }
-    $DB->set_field('scorm','version','AICC', array('id'=>$scormid));
-    return $launch;
+
+    $scorm->version = 'AICC';
+
+    $scorm->launch = $launch;
+
+    return true;
 }
 
 function scorm_get_toc($user,$scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$attempt='',$play=false) {

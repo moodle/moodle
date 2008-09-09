@@ -5,10 +5,22 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 class mod_scorm_mod_form extends moodleform_mod {
 
     function definition() {
+        global $CFG;
 
-        global $CFG, $COURSE, $SCORM_GRADE_METHOD, $SCORM_WHAT_GRADE;
-        $mform    =& $this->_form;
-        if (isset($CFG->slasharguments) && !$CFG->slasharguments) {
+        $mform = $this->_form;
+
+        $SCORM_GRADE_METHOD = array (GRADESCOES => get_string('gradescoes', 'scorm'),
+                                     GRADEHIGHEST => get_string('gradehighest', 'scorm'),
+                                     GRADEAVERAGE => get_string('gradeaverage', 'scorm'),
+                                     GRADESUM => get_string('gradesum', 'scorm'));
+
+        $SCORM_WHAT_GRADE = array (HIGHESTATTEMPT => get_string('highestattempt', 'scorm'),
+                                   AVERAGEATTEMPT => get_string('averageattempt', 'scorm'),
+                                   FIRSTATTEMPT => get_string('firstattempt', 'scorm'),
+                                   LASTATTEMPT => get_string('lastattempt', 'scorm'));
+
+
+        if (!$CFG->slasharguments) {
             $mform->addElement('static', '', '',notify(get_string('slashargs', 'scorm'), 'notifyproblem', 'center', true));
         }
 //-------------------------------------------------------------------------------
@@ -29,11 +41,34 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addRule('summary', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('summary', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
+// Scorm types
+        $options = array(SCORM_TYPE_LOCAL => get_string('typelocal', 'scorm'));
+
+        if ($CFG->scorm_allowtypeexternal) {
+            $options[SCORM_TYPE_EXTERNAL] = get_string('typeexternal', 'scorm');
+        }
+
+        if ($CFG->scorm_allowtypelocalsync) {
+            $options[SCORM_TYPE_LOCALSYNC] = get_string('typelocalsync', 'scorm');
+        }
+
+        if (!empty($CFG->repositoryactivate) and $CFG->scorm_allowtypeimsrepository) {
+            $options[SCORM_TYPE_IMSREPOSITORY] = get_string('typeimsrepository', 'scorm');
+        }
+
+        $mform->addElement('select', 'scormtype', get_string('scormtype', 'scorm'), $options);
+
 // Reference
-        $mform->addElement('choosecoursefileorimsrepo', 'reference', get_string('package','scorm'));
-        $mform->setType('reference', PARAM_RAW);  // We need to find a better PARAM
-        $mform->addRule('reference', get_string('required'), 'required');
-        $mform->setHelpButton('reference',array('package', get_string('package', 'scorm'), 'scorm'));
+        if (count($options) > 1) {
+            $mform->addElement('text', 'packageurl', get_string('url', 'scorm'), array('size'=>60));
+            $mform->setType('packageurl', PARAM_RAW);
+            $mform->setHelpButton('packageurl', array('packagefile', get_string('package', 'scorm'), 'scorm'));
+            $mform->disabledIf('packageurl', 'scormtype', 'eq', SCORM_TYPE_LOCAL);
+        }
+
+// New local package upload
+        $mform->addElement('file', 'packagefile', get_string('package','scorm'));
+        $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
 
 //-------------------------------------------------------------------------------
 // Other Settings
@@ -41,7 +76,7 @@ class mod_scorm_mod_form extends moodleform_mod {
 
 // Grade Method
         $mform->addElement('select', 'grademethod', get_string('grademethod', 'scorm'), $SCORM_GRADE_METHOD);
-        $mform->setHelpButton('grademethod', array('grademethod',get_string('grademethod', 'scorm'),'scorm'));
+        $mform->setHelpButton('grademethod', array('grademethod', get_string('grademethod', 'scorm'),'scorm'));
         $mform->setDefault('grademethod', 0);
 
 // Maximum Grade
@@ -50,7 +85,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
         $mform->addElement('select', 'maxgrade', get_string('maximumgrade'), $grades);
         $mform->setDefault('maxgrade', 0);
-        $mform->disabledIf('maxgrade', 'grademethod','eq',GRADESCOES);
+        $mform->disabledIf('maxgrade', 'grademethod','eq', GRADESCOES);
 
 // Attempts
         $mform->addElement('static', '', '' ,'<hr />');
@@ -99,12 +134,12 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->addElement('static', 'stagesize', get_string('stagesize','scorm'));
         $mform->setHelpButton('stagesize', array('stagesize',get_string('stagesize', 'scorm'), 'scorm'));
 // Width
-        $mform->addElement('text', 'width', get_string('width','scorm'),'maxlength="5" size="5"');
+        $mform->addElement('text', 'width', get_string('width','scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('width', $CFG->scorm_framewidth);
         $mform->setType('width', PARAM_INT);
-        
+
 // Height
-        $mform->addElement('text', 'height', get_string('height','scorm'),'maxlength="5" size="5"');
+        $mform->addElement('text', 'height', get_string('height','scorm'), 'maxlength="5" size="5"');
         $mform->setDefault('height', $CFG->scorm_frameheight);
         $mform->setType('height', PARAM_INT);
 
@@ -112,7 +147,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $options = array();
         $options[0] = get_string('iframe', 'scorm');
         $options[1] = get_string('popup', 'scorm');
-        $mform->addElement('select', 'popup', get_string('display','scorm'), $options);
+        $mform->addElement('select', 'popup', get_string('display', 'scorm'), $options);
         $mform->setDefault('popup', 0);
         $mform->setAdvanced('popup');
 
@@ -211,7 +246,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             foreach ($options as $option) {
                 list($element,$value) = explode('=',$option);
                 $element = trim($element);
-                $default_values[$element] = trim($value); 
+                $default_values[$element] = trim($value);
             }
         }
         if (isset($default_values['grademethod'])) {
@@ -228,7 +263,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $coursescorm = current($scorms);
         if (($COURSE->format == 'scorm') && ((count($scorms) == 0) || ($default_values['instance'] == $coursescorm->id))) {
             $default_values['redirect'] = 'yes';
-            $default_values['redirecturl'] = '../course/view.php?id='.$default_values['course'];    
+            $default_values['redirecturl'] = '../course/view.php?id='.$default_values['course'];
         } else {
             $default_values['redirect'] = 'no';
             $default_values['redirecturl'] = '../mod/scorm/view.php?id='.$default_values['coursemodule'];
@@ -244,30 +279,88 @@ class mod_scorm_mod_form extends moodleform_mod {
     function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        $validate = scorm_validate($data);
+        $type = $data['scormtype'];
 
-        if (!$validate->result) {
-            $errors = $errors + $validate->errors;
+        if ($type === SCORM_TYPE_LOCAL) {
+            if (!empty($data['update'])) {
+                //ok, not required
+
+            } else if (empty($files['packagefile'])) {
+                $errors['packagefile'] = get_string('required');
+
+            } else {
+                $packer = get_file_packer('application/zip');
+
+                $filelist = $packer->list_files($files['packagefile']);
+                if (!is_array($filelist)) {
+                    $errors['packagefile'] = 'Incorrect file package - not an archive'; //TODO: localise
+                } else {
+                    $manifestpresent = false;
+                    $aiccfound       = false;
+                    foreach ($filelist as $info) {
+                        if ($info->pathname == 'imsmanifest.xml') {
+                            $manifestpresent = true;
+                            break;
+                        }
+                        if (preg_match('/\.cst$/', $info->pathname)) {
+                            $aiccfound = true;
+                            break;
+                        }
+                    }
+                    if (!$manifestpresent and !$aiccfound) {
+                        $errors['packagefile'] = 'Incorrect file package - missing imsmanifest.xml or AICC structure'; //TODO: localise
+                    }
+                }
+            }
+
+        } else if ($type === SCORM_TYPE_EXTERNAL) {
+            $reference = $data['packageurl'];
+            if (!preg_match('/(http:\/\/|https:\/\/|www).*\/imsmanifest.xml$/i', $reference)) {
+                $errors['packageurl'] = get_string('required'); // TODO: improve help
+            }
+
+        } else if ($type === 'packageurl') {
+            $reference = $data['reference'];
+            if (!preg_match('/(http:\/\/|https:\/\/|www).*(\.zip|\.pif)$/i', $reference)) {
+                $errors['packageurl'] = get_string('required'); // TODO: improve help
+            }
+
+        } else if ($type === SCORM_TYPE_IMSREPOSITORY) {
+            $reference = $data['packageurl'];
+            if (stripos($reference, '#') !== 0) {
+                $errors['packageurl'] = get_string('required');
+            }
         }
 
         return $errors;
     }
-    //need to translate the "options" field.
+
+    //need to translate the "options" and "reference" field.
     function set_data($default_values) {
-        if (is_object($default_values)) {
-            if (!empty($default_values->options)) {
-                $options = explode(',', $default_values->options);
-                foreach ($options as $option) {
-                    $opt = explode('=', $option);
-                    if (isset($opt[1])) {
-                        $default_values->$opt[0] = $opt[1];
-                    }
+        $default_values = (array)$default_values;
+
+        if (isset($default_values['scormtype']) and isset($default_values['reference'])) {
+            switch ($default_values['scormtype']) {
+                case SCORM_TYPE_LOCALSYNC :
+                case SCORM_TYPE_EXTERNAL:
+                case SCORM_TYPE_IMSREPOSITORY:
+                    $default_values['packageurl'] = $default_values['reference'];
+            }
+        }
+        unset($default_values['reference']);
+
+        if (!empty($default_values['options'])) {
+            $options = explode(',', $default_values['options']);
+            foreach ($options as $option) {
+                $opt = explode('=', $option);
+                if (isset($opt[1])) {
+                    $default_values[$opt][0] = $opt[1];
                 }
             }
-            $default_values = (array)$default_values;
         }
+
         $this->data_preprocessing($default_values);
-        parent::set_data($default_values); //never slashed for moodleform_mod
+        parent::set_data($default_values);
     }
 }
 ?>

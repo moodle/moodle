@@ -1,6 +1,6 @@
 <?php  //$Id$
 
-// This file keeps track of upgrades to 
+// This file keeps track of upgrades to
 // the scorm module
 //
 // Sometimes, changes between versions involve
@@ -33,15 +33,207 @@ function xmldb_scorm_upgrade($oldversion) {
         $table = new xmldb_table('scorm');
         $field = new xmldb_field('whatgrade');
         $field->set_attributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'grademethod');
-        
+
         /// Launch add field whatgrade
         if (!$dbman->field_exists($table,$field)) {
             $dbman->add_field($table, $field);
         }
-        
+
         upgrade_mod_savepoint($result, 2008073000, 'scorm');
     }
-    
+
+     if ($result && $oldversion < 2008082500) {
+
+    /// Define field scormtype to be added to scorm
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('scormtype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, 'local', 'name');
+
+    /// Launch add field scormtype
+        $dbman->add_field($table, $field);
+
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008082500, 'scorm');
+    }
+
+    if ($result && $oldversion < 2008090300) {
+
+    /// Define field sha1hash to be added to scorm
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('sha1hash', XMLDB_TYPE_CHAR, '40', null, null, null, null, null, null, 'updatefreq');
+
+    /// Launch add field sha1hash
+        $dbman->add_field($table, $field);
+
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008090300, 'scorm');
+    }
+
+    if ($result && $oldversion < 2008090301) {
+
+    /// Define field revision to be added to scorm
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('revision', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'md5hash');
+
+    /// Launch add field revision
+        $dbman->add_field($table, $field);
+
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008090301, 'scorm');
+    }
+
+    if ($result && $oldversion < 2008090302) {
+        $sql = "UPDATE {scorm}
+                   SET scormtype = 'external'
+                 WHERE reference LIKE ? OR reference LIKE ? OR reference LIKE ?";
+        $DB->execute($sql, array('http://%imsmanifest.xml', 'https://%imsmanifest.xml', 'www.%imsmanifest.xml'));
+
+        $sql = "UPDATE {scorm}
+                   SET scormtype = 'localsync'
+                 WHERE reference LIKE ? OR reference LIKE ? OR reference LIKE ?
+                       OR reference LIKE ? OR reference LIKE ? OR reference LIKE ?";
+        $DB->execute($sql, array('http://%.zip', 'https://%.zip', 'www.%.zip', 'http://%.pif', 'https://%.pif', 'www.%.pif'));
+
+        $sql = "UPDATE {scorm} SET scormtype = 'imsrepository' WHERE reference LIKE ?";
+        $DB->execute($sql, array('#%'));
+
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008090302, 'scorm');
+    }
+
+    if ($result && $oldversion < 2008090303) {
+        //remove obsoleted config settings
+        unset_config('scorm_advancedsettings');
+        unset_config('scorm_windowsettings');
+
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008090303, 'scorm');
+    }
+
+    if ($result && $oldversion < 2008090304) {
+
+        /////////////////////////////////////
+        /// new file storage upgrade code ///
+        /////////////////////////////////////
+
+        function scorm_migrate_content_files($context, $base, $path) {
+            global $CFG;
+
+            $fullpathname = $base.$path;
+            $fs           = get_file_storage();
+            $filearea     = 'scorm_content';
+            $items        = new DirectoryIterator($fullpathname);
+
+            foreach ($items as $item) {
+                if ($item->isDot()) {
+                    unset($item); // release file handle
+                    continue;
+                }
+
+                if ($item->isLink()) {
+                    // do not follow symlinks - they were never supported in moddata, sorry
+                    unset($item); // release file handle
+                    continue;
+                }
+
+                if ($item->isFile()) {
+                    if (!$item->isReadable()) {
+                        notify(" File not readable, skipping: ".$fullpathname.$item->getFilename());
+                        unset($item); // release file handle
+                        continue;
+                    }
+
+                    $filepath    = clean_param($path, PARAM_PATH);
+                    $filename    = clean_param($item->getFilename(), PARAM_FILE);
+                    $oldpathname = $fullpathname.$item->getFilename();
+
+                    if ($filename === '') {
+                        continue;
+                        unset($item); // release file handle
+                    }
+
+                    if (!$fs->file_exists($context->id, $filearea, '0', $filepath, $filename)) {
+                        $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>0, 'filepath'=>$filepath, 'filename'=>$filename,
+                                             'timecreated'=>$item->getCTime(), 'timemodified'=>$item->getMTime());
+                        unset($item); // release file handle
+                        if ($fs->create_file_from_pathname($file_record, $oldpathname)) {
+                            @unlink($oldpathname);
+                        }
+                    } else {
+                        unset($item); // release file handle
+                    }
+
+                } else {
+                    //migrate recursively all subdirectories
+                    $oldpathname = $fullpathname.$item->getFilename().'/';
+                    $subpath     = $path.$item->getFilename().'/';
+                    unset($item);  // release file handle
+                    scorm_migrate_content_files($context, $base, $subpath);
+                    @rmdir($oldpathname); // deletes dir if empty
+                }
+            }
+            unset($items); //release file handles
+        }
+
+        $fs = get_file_storage();
+
+        $sqlfrom = "FROM {scorm} s
+                    JOIN {modules} m ON m.name = 'scorm'
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = s.id)";
+
+        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
+
+        if ($rs = $DB->get_recordset_sql("SELECT s.id, s.scormtype, s.reference, s.course, cm.id AS cmid $sqlfrom ORDER BY s.course, s.id")) {
+
+            $pbar = new progress_bar('migratescormfiles', 500, true);
+
+            $olddebug = $DB->get_debug();
+            $DB->set_debug(false); // lower debug level, there might be many files
+            $i = 0;
+            foreach ($rs as $scorm) {
+                $i++;
+                upgrade_set_timeout(180); // set up timeout, may also abort execution
+                $pbar->update($i, $count, "Migrating scorm files - $i/$count.");
+
+                $context       = get_context_instance(CONTEXT_MODULE, $scorm->cmid);
+                $coursecontext = get_context_instance(CONTEXT_COURSE, $scorm->course);
+
+                // first copy local packages if found - do not delete in case they are shared ;-)
+                if ($scorm->scormtype === 'local' and preg_match('/.*(\.zip|\.pif)$/i', $scorm->reference)) {
+                    $packagefile = '/'.clean_param($scorm->reference, PARAM_PATH);
+                    $pathnamehash = sha1($coursecontext->id.'course_content0'.$packagefile);
+                    if ($file = $fs->get_file_by_hash($pathnamehash)) {
+                        $file_record = array('scontextid'=>$context->id, 'filearea'=>'scorm_pacakge',
+                                             'itemid'=>0, 'filepath'=>'/');
+                        $packagefile = $fs->create_file_from_storedfile($file_record, $file);
+                        $scorm->reference = $packagefile->get_filename();
+                    } else {
+                        $scorm->reference = '';
+                    }
+                    $DB->update_record('scorm', $scorm);
+                }
+
+                // now migrate the extracted package
+                $basepath = "$CFG->dataroot/$scorm->course/$CFG->moddata/scorm/$scorm->id";
+                if (!is_dir($basepath)) {
+                    //no files?
+                    continue;
+                }
+
+                scorm_migrate_content_files($context, $basepath, '/');
+
+                // remove dirs if empty
+                @rmdir("$CFG->dataroot/$scorm->course/$CFG->moddata/scorm/$scorm->id/");
+                @rmdir("$CFG->dataroot/$scorm->course/$CFG->moddata/scorm/");
+                @rmdir("$CFG->dataroot/$scorm->course/$CFG->moddata/");
+            }
+            $DB->set_debug($olddebug); // reset debug level
+            $rs->close();
+        }
+
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008090304, 'scorm');
+    }
+
     return $result;
 }
 

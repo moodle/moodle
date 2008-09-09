@@ -1,72 +1,93 @@
 <?php  // $Id$
 
+define('SCORM_TYPE_LOCAL', 'local');
+define('SCORM_TYPE_LOCALSYNC', 'localsync');
+define('SCORM_TYPE_EXTERNAL', 'external');
+define('SCORM_TYPE_IMSREPOSITORY', 'imsrepository');
+
+
 /**
 * Given an object containing all the necessary data,
 * (defined by the form in mod_form.php) this function
 * will create a new instance and return the id number
 * of the new instance.
 *
-* @param mixed $scorm Form data
-* @return int
+* @param object $scorm Form data
+* @param object $mform
+* @return int new instance id
 */
-//require_once('locallib.php');
-function scorm_add_instance($scorm) {
+
+function scorm_add_instance($scorm, $mform=null) {
     global $CFG, $DB;
 
     require_once('locallib.php');
 
-    if (($packagedata = scorm_check_package($scorm)) != null) {
-        $scorm->pkgtype = $packagedata->pkgtype;
-        $scorm->datadir = $packagedata->datadir;
-        $scorm->launch = $packagedata->launch;
-        $scorm->parse = 1;
+    $cmid       = $scorm->coursemodule;
+    $cmidnumber = $scorm->cmidnumber;
+    $courseid   = $scorm->course;
 
-        $scorm->timemodified = time();
-        if (!scorm_external_link($scorm->reference)) {
-            $scorm->md5hash = md5_file($CFG->dataroot.'/'.$scorm->course.'/'.$scorm->reference);
-        } else {
-            $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
-            $scorm->md5hash = md5_file($scorm->dir.$scorm->datadir.'/'.basename($scorm->reference));
-        }
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
 
-        $scorm = scorm_option2text($scorm);
-        $scorm->width = str_replace('%','',$scorm->width);
-        $scorm->height = str_replace('%','',$scorm->height);
+    $scorm = scorm_option2text($scorm);
+    $scorm->width  = (int)str_replace('%', '', $scorm->width);
+    $scorm->height = (int)str_replace('%', '', $scorm->height);
 
-        //sanitize submitted values a bit
-        $scorm->width = clean_param($scorm->width, PARAM_INT);
-        $scorm->height = clean_param($scorm->height, PARAM_INT);
-
-        if (!isset($scorm->whatgrade)) {
-            $scorm->whatgrade = 0;
-        }
-        $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
-
-        $id = $DB->insert_record('scorm', $scorm);
-
-        if (scorm_external_link($scorm->reference) || ((basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#'))) {
-            // Rename temp scorm dir to scorm id
-            $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
-            if (file_exists($scorm->dir.'/'.$id)) {
-                //delete directory as it shouldn't exist! - most likely there from an old moodle install with old files in dataroot
-                scorm_delete_files($scorm->dir.'/'.$id);
-            }
-            rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$id);
-        }
-
-        // Parse scorm manifest
-        if ($scorm->parse == 1) {
-            $scorm->id = $id;
-            $scorm->launch = scorm_parse($scorm);
-            $DB->set_field('scorm', 'launch', $scorm->launch, array('id'=>$scorm->id));
-        }
-
-        scorm_grade_item_update($scorm);
-
-        return $id;
-    } else {
-        print_error('badpackage','scorm');
+    if (!isset($scorm->whatgrade)) {
+        $scorm->whatgrade = 0;
     }
+    $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
+
+    if (!$id = $DB->insert_record('scorm', $scorm)) {
+        return false;
+    }
+
+/// update course module record - from now on this instance properly exists and all function may be used
+    if (!$DB->set_field('course_modules', 'instance', $id, array('id'=>$cmid))) {
+        print_error('cannotaddcoursemodule');
+    }
+
+/// reload scorm instance
+    $scorm = $DB->get_record('scorm', array('id'=>$id));
+
+/// store the package and verify
+    if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
+        if ($mform) {
+            $filename = $mform->get_new_filename('packagefile');
+            if ($filename !== false) {
+                $fs = get_file_storage();
+                $fs->delete_area_files($context->id, 'scorm_package');
+                $mform->save_stored_file('packagefile', $context->id, 'scorm_package', 0, '/', $filename);
+                $scorm->reference = $filename;
+            }
+        }
+
+    } else if ($scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
+        $scorm->reference = $scorm->packageurl;
+
+    } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL) {
+        $scorm->reference = $scorm->packageurl;
+
+    } else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY) {
+        $scorm->reference = $scorm->packageurl;
+
+    } else {
+        return false;
+    }
+
+    // save reference
+    $DB->update_record('scorm', $scorm);
+
+
+/// extra fields required in grade related functions
+    $scorm->course     = $courseid;
+    $scorm->cmidnumber = $cmidnumber;
+    $scorm->cmid       = $cmid;
+
+    scorm_parse($scorm, true);
+
+    scorm_grade_item_update($scorm);
+
+    return $scorm->id;
 }
 
 /**
@@ -74,65 +95,73 @@ function scorm_add_instance($scorm) {
 * (defined by the form in mod_form.php) this function
 * will update an existing instance with new data.
 *
-* @param mixed $scorm Form data
-* @return int
+* @param object $scorm Form data
+* @param object $mform
+* @return bool success
 */
-function scorm_update_instance($scorm) {
+function scorm_update_instance($scorm, $mform=null) {
     global $CFG, $DB;
 
     require_once('locallib.php');
 
-    $scorm->parse = 0;
-    if (($packagedata = scorm_check_package($scorm)) != null) {
-        $scorm->pkgtype = $packagedata->pkgtype;
-        if ($packagedata->launch == 0) {
-            $scorm->launch = $packagedata->launch;
-            $scorm->datadir = $packagedata->datadir;
-            $scorm->parse = 1;
-            if (!scorm_external_link($scorm->reference) && $scorm->reference[0] != '#') { //dont set md5hash if this is from a repo.
-                $scorm->md5hash = md5_file($CFG->dataroot.'/'.$scorm->course.'/'.$scorm->reference);
-            } elseif($scorm->reference[0] != '#') { //dont set md5hash if this is from a repo.
-                $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
-                $scorm->md5hash = md5_file($scorm->dir.$scorm->datadir.'/'.basename($scorm->reference));
-            }
-        }
-    }
+    $cmid       = $scorm->coursemodule;
+    $cmidnumber = $scorm->cmidnumber;
+    $courseid   = $scorm->course;
 
-    $scorm->timemodified = time();
     $scorm->id = $scorm->instance;
 
+    $context = get_context_instance(CONTEXT_MODULE, $cmid);
+
+    if ($scorm->scormtype === SCORM_TYPE_LOCAL) {
+        if ($mform) {
+            $filename = $mform->get_new_filename('packagefile');
+            if ($filename !== false) {
+                $scorm->reference = $filename;
+                $fs = get_file_storage();
+                $fs->delete_area_files($context->id, 'scorm_package');
+                $mform->save_stored_file('packagefile', $context->id, 'scorm_package', 0, '/', $filename);
+            }
+        }
+
+    } else if ($scorm->scormtype === SCORM_TYPE_LOCALSYNC) {
+        $scorm->reference = $scorm->packageurl;
+
+    } else if ($scorm->scormtype === SCORM_TYPE_EXTERNAL) {
+        $scorm->reference = $scorm->packageurl;
+
+    } else if ($scorm->scormtype === SCORM_TYPE_IMSREPOSITORY) {
+        $scorm->reference = $scorm->packageurl;
+
+    } else {
+        return false;
+    }
+
     $scorm = scorm_option2text($scorm);
-    $scorm->width = str_replace('%','',$scorm->width);
-    $scorm->height = str_replace('%','',$scorm->height);
+    $scorm->width        = (int)str_replace('%','',$scorm->width);
+    $scorm->height       = (int)str_replace('%','',$scorm->height);
+    $scorm->timemodified = time();
 
     if (!isset($scorm->whatgrade)) {
         $scorm->whatgrade = 0;
     }
-    $scorm->grademethod = ($scorm->whatgrade * 10) + $scorm->grademethod;
+    $scorm->grademethod  = ($scorm->whatgrade * 10) + $scorm->grademethod;
 
-    // Check if scorm manifest needs to be reparsed
-    if ($scorm->parse == 1) {
-        $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
-        if (is_dir($scorm->dir.'/'.$scorm->id)) {
-            scorm_delete_files($scorm->dir.'/'.$scorm->id);
-        }
-        if (isset($scorm->datadir) && ($scorm->datadir != $scorm->id) && 
-           (scorm_external_link($scorm->reference) || ((basename($scorm->reference) != 'imsmanifest.xml') && ($scorm->reference[0] != '#')))) {
-            rename($scorm->dir.$scorm->datadir,$scorm->dir.'/'.$scorm->id);
-        }
-
-        $scorm->launch = scorm_parse($scorm);
-    } else {
-        $oldscorm = $DB->get_record('scorm', array('id'=>$scorm->id));
-        $scorm->reference = $oldscorm->reference; // This fix a problem with Firefox when the teacher choose Cancel on overwrite question
-    }
-    
-    if ($result = $DB->update_record('scorm', $scorm)) {
-        scorm_grade_item_update(stripslashes_recursive($scorm));
-        //scorm_grade_item_update($scorm);  // John Macklins fix - dont think this is needed
+    if (!$DB->update_record('scorm', $scorm)) {
+        return false;
     }
 
-    return $result;
+    $scorm = $DB->get_record('scorm', array('id'=>$scorm->id));
+
+/// extra fields required in grade related functions
+    $scorm->course   = $courseid;
+    $scorm->idnumber = $cmidnumber;
+    $scorm->cmid     = $cmid;
+
+    scorm_parse($scorm, (bool)$scorm->updatefreq);
+
+    scorm_grade_item_update($scorm);
+
+    return true;
 }
 
 /**
@@ -152,13 +181,6 @@ function scorm_delete_instance($id) {
 
     $result = true;
 
-    $scorm->dir = $CFG->dataroot.'/'.$scorm->course.'/moddata/scorm';
-    if (is_dir($scorm->dir.'/'.$scorm->id)) {
-        // Delete any dependent files
-        require_once('locallib.php');
-        scorm_delete_files($scorm->dir.'/'.$scorm->id);
-    }
-
     // Delete any dependent records
     if (! $DB->delete_records('scorm_scoes_track', array('scormid'=>$scorm->id))) {
         $result = false;
@@ -168,7 +190,7 @@ function scorm_delete_instance($id) {
             if (! $DB->delete_records('scorm_scoes_data', array('scoid'=>$sco->id))) {
                 $result = false;
             }
-        } 
+        }
         $DB->delete_records('scorm_scoes', array('scorm'=>$scorm->id));
     } else {
         $result = false;
@@ -197,10 +219,10 @@ function scorm_delete_instance($id) {
     }
     if (! $DB->delete_records('scorm_sequencing_ruleconditions', array('scormid'=>$scorm->id))) {
         $result = false;
-    }*/     
+    }*/
 
     scorm_grade_item_delete($scorm);
-  
+
     return $result;
 }
 
@@ -211,11 +233,11 @@ function scorm_delete_instance($id) {
 *
 * @param int $course Course id
 * @param int $user User id
-* @param int $mod  
+* @param int $mod
 * @param int $scorm The scorm id
 * @return mixed
 */
-function scorm_user_outline($course, $user, $mod, $scorm) { 
+function scorm_user_outline($course, $user, $mod, $scorm) {
     global $CFG;
     require_once('locallib.php');
 
@@ -230,7 +252,7 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
 *
 * @param int $course Course id
 * @param int $user User id
-* @param int $mod  
+* @param int $mod
 * @param int $scorm The scorm id
 * @return boolean
 */
@@ -244,7 +266,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
     $lastmodify = 0;
     $sometoreport = false;
     $report = '';
-    
+
     if ($orgs = $DB->get_records('scorm_scoes', array('scorm'=>$scorm->id, 'organization'=>'', 'launch'=>''),'id','id,identifier,title')) {
         if (count($orgs) <= 1) {
             unset($orgs);
@@ -263,7 +285,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                 $conditions['scorm'] = $scorm->id;
             if ($scoes = $DB->get_records('scorm_scoes', $conditions, "id ASC")){
                 // drop keys so that we can access array sequentially
-                $scoes = array_values($scoes); 
+                $scoes = array_values($scoes);
                 $level=0;
                 $sublist=1;
                 $parents[$level]='/';
@@ -336,7 +358,7 @@ function scorm_user_complete($course, $user, $mod, $scorm) {
                                 }
                             }
                             $report .= "\t\t\t</ul></li>\n";
-                        } 
+                        }
                     } else {
                         $report .= "&nbsp;$sco->title</li>\n";
                     }
@@ -380,7 +402,8 @@ function scorm_cron () {
     require_once('locallib.php');
 
     $sitetimezone = $CFG->timezone;
-    /// Now see if there are any digest mails waiting to be sent, and if we should send them
+    /// Now see if there are any scorm updates to be done
+
     if (!isset($CFG->scorm_updatetimelast)) {    // To catch the first time
         set_config('scorm_updatetimelast', 0);
     }
@@ -395,11 +418,8 @@ function scorm_cron () {
         mtrace('Updating scorm packages which require daily update');//We are updating
 
         $scormsupdate = $DB->get_records('scorm', array('updatefreq'=>UPDATE_EVERYDAY));
-        if (!empty($scormsupdate)) {
-            foreach($scormsupdate as $scormupdate) {
-                $scormupdate->instance = $scormupdate->id;
-                $id = scorm_update_instance($scormupdate);
-            }
+        foreach($scormsupdate as $scormupdate) {
+            scorm_parse($scormupdate, true);
         }
     }
 
@@ -514,7 +534,7 @@ function scorm_grade_item_update($scorm, $grades=NULL) {
     if (isset($scorm->cmidnumber)) {
         $params['idnumber'] = $scorm->cmidnumber;
     }
-    
+
     if (($scorm->grademethod % 10) == 0) { // GRADESCOES
         if ($maxgrade = $DB->count_records_select('scorm_scoes', 'scorm = ? AND launch <> ?', array($scorm->id, $DB->sql_empty()))) {
             $params['gradetype'] = GRADE_TYPE_VALUE;
@@ -559,7 +579,14 @@ function scorm_get_post_actions() {
 }
 
 function scorm_option2text($scorm) {
-    global $SCORM_POPUP_OPTIONS;
+    $SCORM_POPUP_OPTIONS = array('resizable'=>1,
+                                 'scrollbars'=>1,
+                                 'directories'=>0,
+                                 'location'=>0,
+                                 'menubar'=>0,
+                                 'toolbar'=>0,
+                                 'status'=>0);
+
     if (isset($scorm->popup)) {
         if ($scorm->popup == 1) {
             $optionlist = array();
@@ -569,11 +596,11 @@ function scorm_option2text($scorm) {
                 } else {
                     $optionlist[] = $name.'=0';
                 }
-            }       
+            }
             $scorm->options = implode(',', $optionlist);
         } else {
             $scorm->options = '';
-        } 
+        }
     } else {
         $scorm->popup = 0;
         $scorm->options = '';
@@ -654,6 +681,133 @@ function scorm_reset_userdata($data) {
  */
 function scorm_get_extra_capabilities() {
     return array('moodle/site:accessallgroups');
+}
+
+/**
+ * Lists all file areas current user may browse
+ */
+function scorm_get_file_areas($course, $cm, $context) {
+    $areas = array();
+    if (has_capability('moodle/course:managefiles', $context)) {
+        $areas['scorm_intro']   = get_string('areaintro', 'scorm');
+        $areas['scorm_content'] = get_string('areacontent', 'scorm');
+        $areas['scorm_package'] = get_string('areapackage', 'scorm');
+    }
+    return $areas;
+}
+
+/**
+ * File browsing support
+ */
+function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea, $itemid, $filepath, $filename) {
+    global $CFG;
+
+    if (!has_capability('moodle/course:managefiles', $context)) {
+        return null;
+    }
+
+    // no writing for now!
+
+    $fs = get_file_storage();
+
+    if ($filearea === 'scorm_content') {
+
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+    
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+            } else {
+                // not found
+                return null;
+            }
+        }
+        class scorm_package_file_info extends file_info_stored {
+            public function get_parent() {
+                if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
+                    return $this->browser->get_file_info($this->context);
+                }
+                return parent::get_parent();
+            }
+            public function get_visible_name() {
+                if ($this->lf->get_filepath() === '/' and $this->lf->get_filename() === '.') {
+                    return $this->areavisiblename;
+                }
+                return parent::get_visible_name();
+            }
+        }
+        return new scorm_package_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, false);
+
+    } else if ($filearea === 'scorm_package') {
+        $filepath = is_null($filepath) ? '/' : $filepath;
+        $filename = is_null($filename) ? '.' : $filename;
+    
+        $urlbase = $CFG->wwwroot.'/pluginfile.php';
+        if (!$storedfile = $fs->get_file($context->id, $filearea, 0, $filepath, $filename)) {
+            if ($filepath === '/' and $filename === '.') {
+                $storedfile = new virtual_root_file($context->id, $filearea, 0);
+            } else {
+                // not found
+                return null;
+            }
+        }
+        return new file_info_stored($browser, $context, $storedfile, $urlbase, $areas[$filearea], false, true, false);
+    }
+
+    // scorm_intro handled in file_browser
+
+    return false;
+}
+
+/**
+ * Serves scorm content, introduction images and packages. Implements needed access control ;-)
+ */
+function scorm_pluginfile($course, $cminfo, $context, $filearea, $args) {
+    global $CFG;
+
+    if (!$cminfo->uservisible) {
+        return false; // probably hidden
+    }
+
+    $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+
+    if ($filearea === 'scorm_intro') {
+        // all users may access it
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'scorm_intro0'.$relativepath;
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+    } else if ($filearea === 'scorm_content') {
+        $revision = (int)array_shift($args); // prevents caching problems - ignored here
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'scorm_content0'.$relativepath;
+        // TODO: add any other access restrictions here if needed!
+
+    } else if ($filearea === 'scorm_package') {
+        if (!has_capability('moodle/course:manageactivities', $context)) {
+            return false;
+        }
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'scorm_package0'.$relativepath;
+        $lifetime = 0; // no caching here
+
+    } else {
+        return false;
+    }
+
+    $fs = get_file_storage();
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+
+    // finally send the file
+    send_stored_file($file, $lifetime, 0, false);
 }
 
 ?>
