@@ -62,7 +62,7 @@ case 'ccache':
     //clean cache
     $cache = new curl_cache;
     $cache->refresh();
-    die(get_string('cachecleared', 'repository'));
+    $action = 'list';
     break;
 }
 

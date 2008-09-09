@@ -142,7 +142,7 @@ EOD;
             // do searching, if $path is not empty, ignore it.
             $photos = $this->flickr->photos_search(array('user_id'=>$people['nsid'], 'text'=>$search));
         } elseif(!empty($path) && empty($search)) {
-            $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 36, $path);
+            $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 25, $path);
         }
 
         $ret = array();

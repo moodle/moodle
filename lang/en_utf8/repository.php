@@ -58,6 +58,7 @@ $string['openpicker'] = 'Choose a file...';
 $string['personalrepositories'] = 'Personal repositories';
 $string['plugin'] = 'Repository plug-ins';
 $string['preview'] = 'Preview';
+$string['refresh'] = 'Refresh';
 $string['removed'] = 'Repository removed';
 $string['repository'] = 'Repository';
 $string['repositorycourse'] = 'Course repositories';

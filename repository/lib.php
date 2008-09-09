@@ -1171,6 +1171,7 @@ function repository_get_client($context){
     $strdate      = get_string('date', 'repository').': ';
     $strerror     = get_string('error', 'repository');
     $strfilenotnull = get_string('filenotnull', 'repository');
+    $strrefresh   = get_string('refresh', 'repository');
     $strinvalidjson = get_string('invalidjson', 'repository');
     $strlistview  = get_string('listview', 'repository');
     $strlogout    = get_string('logout', 'repository');
@@ -1212,7 +1213,6 @@ p.upload a:hover {background: grey;color:white}
 .grid p{margin:0;padding:0;background: #FFFFCC}
 .grid .label{height:48px}
 .grid span{background: #EEF9EB;color:gray}
-.repo-opt a{font-size: 12px;background: #FFFFCC;padding: 0 3px}
 #panel-$suffix{padding:0;margin:0; text-align:left;}
 #file-picker-$suffix{font-size:12px;}
 #file-picker-$suffix strong{background:#FFFFCC}
@@ -1220,6 +1220,7 @@ p.upload a:hover {background: grey;color:white}
 #file-picker-$suffix a:hover{background:#003366;color:white}
 #repo-viewbar-$suffix{width:300px;float:left}
 #search-div-$suffix{float:right}
+#repo-tb-$suffix{padding: .8em;background: #FFFFCC;color:white;text-align:center}
 </style>
 <style type="text/css">
 @import "$CFG->httpswwwroot/lib/yui/resize/assets/skins/sam/resize.css";
@@ -1287,7 +1288,7 @@ function _client(){
                         {position: 'top', height: 32, resize: false,
                         body:'<div class="yui-buttongroup" id="repo-viewbar-$suffix"></div><div id="search-div-$suffix"></div>', gutter: '2'},
                         {position: 'left', width: 200, resize: true,
-                        body:'<ul class="repo-list" id="repo-list-$suffix"></ul><div id="repo-kit-$suffix"></div>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
+                        body:'<ul class="repo-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
                         {position: 'center', body: '<div id="panel-$suffix"></div>',
                         scroll: true, gutter: '0 2 0 0' }
                     ]
@@ -1339,7 +1340,7 @@ function _client(){
         repo_list = new YAHOO.util.Element('repo-list-$suffix');
         repo_list.on('contentReady', function(e){
             var searchbar = new YAHOO.util.Element('search-div-$suffix');
-            searchbar.get('element').innerHTML = '<label for="search-input-$suffix">$strsearch: </label><input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
+            searchbar.get('element').innerHTML = '<input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
             var searchbtn = new YAHOO.util.Element('search-btn-$suffix');
             searchbtn.callback = {
                 success: function(o) {
@@ -1385,24 +1386,6 @@ function _client(){
                 var trans = YAHOO.util.Connect.asyncRequest('POST',
                     '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.callback, _client.postdata(params));
             });
-            var repo_kit_div = new YAHOO.util.Element('repo-kit-$suffix');
-            repo_kit_div.get('element').innerHTML = '<button id="repo-kit-ccacle-$suffix">$strccache</button>';
-            var repo_kit_ccache = new YAHOO.util.Element('repo-kit-ccacle-$suffix');
-            repo_kit_ccache.callback = {
-                success: function(o) {
-                    var panel = new YAHOO.util.Element('panel-$suffix');
-                    panel.get('element').innerHTML = "<h1>"+o.responseText+"</h1>";
-                }
-            }
-            repo_kit_ccache.on('click', function(e){
-                var params = [];
-                params['env']=_client.env;
-                params['sesskey']='$sesskey';
-                params['ctx_id']=$context->id;
-                _client.loading('load');
-                var trans = YAHOO.util.Connect.asyncRequest('POST',
-                    '$CFG->httpswwwroot/repository/ws.php?action=ccache', this.callback, _client.postdata(params));
-            });
             for(var i=0; i<_client.repos.length; i++) {
                 var repo = _client.repos[i];
                 var li = document.createElement('li');
@@ -1423,9 +1406,6 @@ function _client(){
                 }
                 link.innerHTML += ' '+repo.name;
                 li.appendChild(link);
-                var opt = document.createElement('div');
-                opt.id = 'repo-opt-$suffix-'+repo.id;
-                li.appendChild(opt);
                 this.appendChild(li);
                 repo = null;
             }
@@ -1536,14 +1516,60 @@ _client.viewfiles = function(){
         _client.viewlist();
     }
 }
-_client.navbar = function(){
+_client.print_header = function(){
     var panel = new YAHOO.util.Element('panel-$suffix');
-    panel.get('element').innerHTML = _client.uploadcontrol();
-    panel.get('element').innerHTML += _client.makepage();
+    var str = '';
+    str += '<div id="repo-tb-$suffix"></div>';
+    str += _client.uploadcontrol();
+    panel.set('innerHTML', str);
     _client.makepath();
 }
-// TODO
-// Improve CSS
+_client.print_footer = function(){
+    var panel = new YAHOO.util.Element('panel-$suffix');
+    panel.get('element').innerHTML += _client.makepage();
+    panel.get('element').innerHTML += _client.uploadcontrol();
+    var oDiv = document.getElementById('repo-tb-$suffix');
+    if(!_client.ds.nosearch){
+        var search = document.createElement('A');
+        search.href = '###';
+        search.innerHTML = '<img src="$CFG->pixpath/a/search.png" /> $strsearch';
+        oDiv.appendChild(search);
+        search.onclick = function() {
+            repository_client_$suffix.search(repository_client_$suffix.repositoryid);
+        }
+    }
+    // weather we use cache for this instance, this button will reload listing anyway
+    var ccache = document.createElement('A');
+    ccache.href = '###';
+    ccache.innerHTML = '<img src="$CFG->pixpath/a/refresh.png" /> $strrefresh';
+    oDiv.appendChild(ccache);
+    ccache.onclick = function() {
+        var params = [];
+        params['env']=_client.env;
+        params['sesskey']='$sesskey';
+        params['ctx_id']=$context->id;
+        params['repo_id']=repository_client_$suffix.repositoryid;
+        _client.loading('load');
+        var trans = YAHOO.util.Connect.asyncRequest('POST',
+            '$CFG->httpswwwroot/repository/ws.php?action=ccache', repository_client_$suffix.req_cb, _client.postdata(params));
+    }
+    if(_client.ds.manage){
+        var mgr = document.createElement('A');
+        mgr.innerHTML = '<img src="$CFG->pixpath/a/setting.png" /> $strmgr';
+        mgr.href = _client.ds.manage;
+        mgr.target = "_blank";
+        oDiv.appendChild(mgr);
+    }
+    if(!_client.ds.nologin){
+        var logout = document.createElement('A');
+        logout.href = '###';
+        logout.innerHTML = '<img src="$CFG->pixpath/a/logout.png" /> $strlogout';
+        oDiv.appendChild(logout);
+        logout.onclick = function() {
+            repository_client_$suffix.req(repository_client_$suffix.repositoryid, 1, 1);
+        }
+    }
+}
 _client.viewthumb = function(ds){
     _client.viewmode = 1;
     var panel = new YAHOO.util.Element('panel-$suffix');
@@ -1556,7 +1582,7 @@ _client.viewthumb = function(ds){
         // from button
         list = _client.ds.list;
     }
-    _client.navbar();
+    _client.print_header();
     var count = 0;
     for(k in list){
         var el = document.createElement('div');
@@ -1583,31 +1609,36 @@ _client.viewthumb = function(ds){
         el.appendChild(title);
         panel.get('element').appendChild(el);
         if(list[k].children){
-            var el = new YAHOO.util.Element(link.id);
-            el.ds = list[k].children;
-            el.on('click', function(){
-                if(_client.ds.dynload){
-                    // TODO: get file list dymanically
-                }else{
-                    _client.viewthumb(this.ds);
-                }
+            var folder = new YAHOO.util.Element(link.id);
+            folder.ds = list[k].children;
+            folder.on('contentReady', function(){
+                this.on('click', function(){
+                    if(_client.ds.dynload){
+                        // TODO: get file list dymanically
+                    }else{
+                        _client.viewthumb(this.ds);
+                    }
+                });
             });
         } else {
-            var el = new YAHOO.util.Element(link.id);
-            el.title = list[k].title;
-            el.value = list[k].source;
-            el.icon  = list[k].thumbnail;
+            var file = new YAHOO.util.Element(link.id);
+            file.title = list[k].title;
+            file.value = list[k].source;
+            file.icon  = list[k].thumbnail;
             if(list[k].repo_id){
-                el.repo_id = list[k].repo_id;
+                file.repo_id = list[k].repo_id;
             }else{
-                el.repo_id = _client.repositoryid;
+                file.repo_id = _client.repositoryid;
             }
-            el.on('click', function(){
-                repository_client_$suffix.rename(this.title, this.value, this.icon, this.repo_id);
+            file.on('contentReady', function(){
+                this.on('click', function(){
+                    repository_client_$suffix.rename(this.title, this.value, this.icon, this.repo_id);
+                });
             });
         }
         count++;
     }
+    _client.print_footer();
 }
 _client.buildtree = function(node, level){
     if(node.children){
@@ -1676,7 +1707,7 @@ _client.viewlist = function(){
     var panel = new YAHOO.util.Element('panel-$suffix');
     _client.viewbar.check(0);
     list = _client.ds.list;
-    _client.navbar();
+    _client.print_header();
     panel.get('element').innerHTML += '<div id="treediv-$suffix"></div>';
     var tree = new YAHOO.widget.TreeView('treediv-$suffix');
     if(_client.ds.dynload) {
@@ -1687,6 +1718,7 @@ _client.viewlist = function(){
         _client.buildtree(list[k], tree.getRoot());
     }
     tree.draw();
+    _client.print_footer();
 }
 _client.upload = function(){
     var u = _client.ds.upload;
@@ -1801,19 +1833,21 @@ _client.download = function(){
     params['ctx_id']=$context->id;
     params['repo_id']=_client.repositoryid;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->httpswwwroot/repository/ws.php?action=download', _client.dlfile, _client.postdata(params));
+        '$CFG->httpswwwroot/repository/ws.php?action=download', _client.download_cb, _client.postdata(params));
 }
 // send login request
 _client.login = function(){
     var params = [];
     var data = _client.ds.login;
     for (var k in data) {
-        var el = document.getElementsByName(data[k].name)[0];
-        params[data[k].name] = '';
-        if(el.type == 'checkbox') {
-            params[data[k].name] = el.checked;
-        } else {
-            params[data[k].name] = el.value;
+        if(data[k].type!='popup'){
+            var el = document.getElementsByName(data[k].name)[0];
+            params[data[k].name] = '';
+            if(el.type == 'checkbox') {
+                params[data[k].name] = el.checked;
+            } else {
+                params[data[k].name] = el.value;
+            }
         }
     }
     params['env'] = _client.env;
@@ -1821,7 +1855,7 @@ _client.login = function(){
     params['sesskey']= '$sesskey';
     _client.loading('load');
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->httpswwwroot/repository/ws.php?action=sign', _client.callback, _client.postdata(params));
+        '$CFG->httpswwwroot/repository/ws.php?action=sign', _client.req_cb, _client.postdata(params));
 }
 _client.end = function(str){
     if(_client.env=='form'){
@@ -1837,93 +1871,6 @@ _client.end = function(str){
 _client.hide = function(){
     _client.instance.hide();
     _client.viewfiles();
-}
-_client.callback = {
-    success: function(o) {
-        var panel = new YAHOO.util.Element('panel-$suffix');
-        try {
-            var ret = YAHOO.lang.JSON.parse(o.responseText);
-        } catch(e) {
-            alert('$strinvalidjson - '+o.responseText);
-        };
-        if(ret && ret.e){
-            panel.get('element').innerHTML = ret.e;
-            return;
-        }
-        _client.ds = ret;
-        var oDiv = document.getElementById('repo-opt-$suffix-'
-            +_client.repositoryid);
-        oDiv.innerHTML = '';
-        oDiv.className = "repo-opt";
-        var search = null;
-        var logout = null;
-        var mgr = null;
-        if(_client.ds && _client.ds.login){
-            _client.print_login();
-        } else if(_client.ds.list) {
-            if(_client.viewmode) {
-                _client.viewthumb();
-            } else {
-                _client.viewlist();
-            }
-            search = document.createElement('a');
-            search.href = '###';
-            search.innerHTML = '$strsearch';
-            search.id = 'repo-search-$suffix-'+_client.repositoryid;
-            search.onclick = function() {
-                var re = /repo-search-$suffix-(\d+)/i;
-                var id = this.id.match(re);
-                repository_client_$suffix.search(id[1]);
-            }
-            logout = document.createElement('a');
-            logout.href = '###';
-            logout.innerHTML = '$strlogout';
-            logout.id = 'repo-logout-$suffix-'+_client.repositoryid;
-            logout.onclick = function() {
-                var re = /repo-logout-$suffix-(\d+)/i;
-                var id = this.id.match(re);
-                var oDiv = document.getElementById('repo-opt-$suffix-'+id[1]);
-                oDiv.innerHTML = '';
-                _client.ds = null;
-                repository_client_$suffix.req(id[1], 1, 1);
-            }
-            if(_client.ds.manage){
-                mgr = document.createElement('A');
-                mgr.innerHTML = '$strmgr';
-                mgr.href = _client.ds.manage;
-                mgr.id = 'repo-mgr-$suffix-'+_client.repositoryid;
-                mgr.target = "_blank";
-            }
-            if(_client.ds.nosearch != true){
-                oDiv.appendChild(search);
-            }
-            if(mgr != null) {
-                oDiv.appendChild(mgr);
-            }
-            if(_client.ds.nologin != true){
-                oDiv.appendChild(logout);
-            }
-        }
-    }
-}
-_client.dlfile = {
-    success: function(o) {
-        var panel = new YAHOO.util.Element('panel-$suffix');
-        try {
-            var ret = YAHOO.lang.JSON.parse(o.responseText);
-        } catch(e) {
-            alert('$strinvalidjson - '+o.responseText);
-        }
-        if(ret && ret.e){
-            panel.get('element').innerHTML = ret.e;
-            return;
-        }
-        if(ret){
-            repository_client_$suffix.end(ret);
-        }else{
-            alert('$strinvalidjson');
-        }
-    }
 }
 // request file list or login
 _client.req = function(id, path, reset) {
@@ -1943,7 +1890,7 @@ _client.req = function(id, path, reset) {
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=id;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.callback, _client.postdata(params));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.req_cb, _client.postdata(params));
 }
 _client.search = function(id){
     var data = window.prompt("$strsearching");
@@ -1961,7 +1908,52 @@ _client.search = function(id){
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=id;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action=search', _client.callback, _client.postdata(params));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action=search', _client.req_cb, _client.postdata(params));
+}
+_client.req_cb = {
+    success: function(o) {
+        var panel = new YAHOO.util.Element('panel-$suffix');
+        try {
+            var ret = YAHOO.lang.JSON.parse(o.responseText);
+        } catch(e) {
+            alert('$strinvalidjson - '+o.responseText);
+        };
+        if(ret && ret.e){
+            panel.get('element').innerHTML = ret.e;
+            return;
+        }
+        _client.ds = ret;
+        if(!_client.ds){
+            return;
+        }else if(_client.ds && _client.ds.login){
+            _client.print_login();
+        } else if(_client.ds.list) {
+            if(_client.viewmode) {
+                _client.viewthumb();
+            } else {
+                _client.viewlist();
+            }
+        }
+    }
+}
+_client.download_cb = {
+    success: function(o) {
+        var panel = new YAHOO.util.Element('panel-$suffix');
+        try {
+            var ret = YAHOO.lang.JSON.parse(o.responseText);
+        } catch(e) {
+            alert('$strinvalidjson - '+o.responseText);
+        }
+        if(ret && ret.e){
+            panel.get('element').innerHTML = ret.e;
+            return;
+        }
+        if(ret){
+            repository_client_$suffix.end(ret);
+        }else{
+            alert('$strinvalidjson');
+        }
+    }
 }
 
 return _client;
