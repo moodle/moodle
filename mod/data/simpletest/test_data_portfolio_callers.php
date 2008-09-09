@@ -10,6 +10,7 @@ class testDataPortfolioCallers extends portfoliolib_test {
     public $module_type = 'data';
     public $modules = array();
     public $entries = array();
+    public $caller_single;
     public $caller;
 
     public function setUp() {
@@ -33,13 +34,26 @@ class testDataPortfolioCallers extends portfoliolib_test {
         $first_module = reset($this->modules);
         $cm = get_coursemodule_from_instance($this->module_type, $first_module->id);
 
+        $fields = $DB->get_records('data_fields', array('dataid' => $first_module->id));
+        $recordid = data_add_record($first_module);
+        foreach ($fields as $field) {
+            $content->recordid = $recordid;
+            $content->fieldid = $field->id;
+            $content->content = 'test content';
+            $content->content1 = 'test content 1';
+            $content->content2 = 'test content 2';
+            $DB->insert_record('data_content',$content);
+        }
+
         // Callback args required: id, record, delimiter_name, exporttype
 
-        $callbackargs = array('assignmentid' => $cm->id, 'userid' => $USER->id);
-        $this->caller = new assignment_portfolio_caller($callbackargs);
+        $callbackargs = array('id' => $cm->id, 'record' => $recordid);
+        $this->caller_single = new data_portfolio_caller($callbackargs);
+        $this->caller_single->set('exporter', new mock_exporter());
+
+        unset($callbackargs['record']);
+        $this->caller = new data_portfolio_caller($callbackargs);
         $this->caller->set('exporter', new mock_exporter());
-        $user = $DB->get_record('user', array('id' => $first_submission->userid));
-        $this->caller->set('user', $user);
     }
 
     public function tearDown() {
@@ -50,6 +64,10 @@ class testDataPortfolioCallers extends portfoliolib_test {
         $sha1 = $this->caller->get_sha1();
         $this->caller->prepare_package();
         $this->assertEqual($sha1, $this->caller->get_sha1());
+
+        $sha1 = $this->caller_single->get_sha1();
+        $this->caller_single->prepare_package();
+        $this->assertEqual($sha1, $this->caller_single->get_sha1());
     }
 
 }

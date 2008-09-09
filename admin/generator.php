@@ -925,7 +925,7 @@ class generator {
         }
 
         $fields_count = 0;
-        if ($this->get('fields_per_database') && $this->get('database_records_per_student')) {
+        if (!empty($modules['data']) && $this->get('fields_per_database') && $this->get('database_records_per_student')) {
             $database_field_types = array('checkbox',
                                           'date',
                                           'file',
@@ -939,16 +939,19 @@ class generator {
                                           'textarea',
                                           'url');
 
+
             $fields = array();
-            for ($i = 0; $i < $this->get('fields_per_database'); $i++) {
-                $type = $database_field_types[array_rand($database_field_types)];
-                require_once($CFG->dirroot.'/mod/data/field/'.$type.'/field.class.php');
-                $newfield = 'data_field_'.$type;
-                $newfield = new $newfield(0, $data, true);
-                $fields[] = $newfield;
-            }
 
             foreach ($modules['data'] as $data) {
+
+                for ($i = 0; $i < $this->get('fields_per_database'); $i++) {
+                    $type = $database_field_types[array_rand($database_field_types)];
+                    require_once($CFG->dirroot.'/mod/data/field/'.$type.'/field.class.php');
+                    $newfield = 'data_field_'.$type;
+                    $newfield = new $newfield(0, $data, true);
+                    $fields[$data->id][] = $newfield;
+                    $newfield->insert_field();
+                }
 
                 // Generate fields for each database (same fields for all, no arguing)
                 for ($i = 0; $i < $this->get('fields_per_database'); $i++) {
