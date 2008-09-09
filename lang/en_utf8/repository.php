@@ -17,7 +17,7 @@ $string['cachecleared'] = 'Cached files are removed';
 $string['close'] = 'Close';
 $string['cleancache'] = 'Clean my cache files';
 $string['copying'] = 'Copying';
-$string['configcacheexpire'] = 'Configurate the cache expired time (in minutes).';
+$string['configcacheexpire'] = 'The amount of time that file listings are cached locally (in seconds) when browsing external repositories.';
 $string['configsaved'] = 'Configuration saved!';
 $string['confirmdelete'] = 'Are you sure you want to delete this repository - $a?';
 $string['confirmremove'] = 'Are you sure you want to remove this repository plugin, its options and <strong style=color:red>all of its instances</strong> - $a?';
