@@ -477,7 +477,7 @@ function question_showbank_actions($pageurl, $cm){
                     foreach ($questionlist as $questionid) {
                         question_require_capability_on($questionid, 'edit');
                         if ($DB->record_exists('quiz_question_instances', array('question' => $questionid))) {
-                            if (!$DB->set_field('question', 'hidden', 1, array('id', $questionid))) {
+                            if (!$DB->set_field('question', 'hidden', 1, array('id' => $questionid))) {
                                 question_require_capability_on($questionid, 'edit');
                                 print_error('cannothidequestion', 'question');
                             }
