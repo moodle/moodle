@@ -1,5 +1,6 @@
 <?php
 
+$string['activeportfolios'] = 'Active portfolios';
 $string['addnewportfolio'] = 'Add a new portfolio';
 $string['addtoportfolio'] = 'Add to portfolio';
 $string['addalltoportfolio'] = 'Add all to portfolio';
@@ -13,6 +14,7 @@ $string['confirmexport'] = 'Please confirm this export';
 $string['confirmsummary'] = 'Summary of your export';
 $string['configure'] = 'Configure';
 $string['continuetoportfolio'] = 'Continue to your portfolio';
+$string['commonsettingsdesc'] = '<p>Whether a transfer is considered to take a \'Moderate\' or \'High\' amount of time changes whether the user is able to wait for the transfer to complete or not.</p><p>Sizes up to the \'Moderate\' threshold just happen immediately without the user being asked, and \'Moderate\' and \'High\' transfers mean they are offered the option but warned it might take some time.</p><p>Additionally, some portfolio plugins might ignore this option completely and force all transfers to be queued.</p>';
 $string['deleteportfolio'] = 'Delete portfolio instance';
 $string['disabled'] = 'Sorry, but portfolio exports are not enabled in this site';
 $string['dontwait'] = 'Don\'t wait';
@@ -36,6 +38,10 @@ $string['format_mbkp'] = 'Moodle Backup Format';
 $string['format_video'] = 'Video';
 $string['format_text'] = 'Plain Text';
 $string['hidden'] = 'Hidden';
+$string['highfilesizethreshold'] = 'High transfer filesize';
+$string['highfilesizethresholddesc'] = 'Filesizes over this threshold will be considered to take a high amount of time to transfer';
+$string['highdbsizethreshold'] = 'High transfer dbsize';
+$string['highdbsizethresholddesc'] = 'Number of db records over which will be considered to take a high amount of time to transfer';
 $string['instancedeleted'] = 'Portfolio deleted successfully';
 $string['instanceismisconfigured'] = 'Portfolio instance is misconfigured, skipping.  Error was: $a';
 $string['instancenotsaved'] = 'Failed to save portfolio';
@@ -52,6 +58,10 @@ $string['invaliduserproperty'] = 'Could not find that user config property ($a->
 $string['invalidconfigproperty'] = 'Could not find that config property ($a->property of $a->class)';
 $string['manageportfolios'] = 'Manage portfolios';
 $string['manageyourportfolios'] = 'Manage your portfolios';
+$string['moderatefilesizethreshold'] = 'Moderate transfer filesize';
+$string['moderatefilesizethresholddesc'] = 'Filesizes over this threshold will be considered to take a moderate amount of time to transfer';
+$string['moderatedbsizethreshold'] = 'Moderate transfer dbsize';
+$string['moderatedbsizethresholddesc'] = 'Number of db records over which will be considered to take a moderate amount of time to transfer';
 $string['multipledisallowed'] = 'Trying to create another instance of a plugin that has disallowed multiple instances ($a)';
 $string['noavailableplugins'] = 'Sorry, but there are no available portfolios for you to export to';
 $string['nocallbackfile'] = 'Something in the module you\'re trying to export from is broken - couldn\'t find a required file ($a)';
