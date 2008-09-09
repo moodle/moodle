@@ -236,8 +236,12 @@ class question_edit_form extends moodleform {
         }
 
         // Remove unnecessary trailing 0s form grade fields.
-        $question->defaultgrade = 0 + $question->defaultgrade;
-        $question->penalty = 0 + $question->penalty;
+        if (isset($question->defaultgrade)) {
+            $question->defaultgrade = 0 + $question->defaultgrade;
+        }
+        if (isset($question->penalty)) {
+            $question->penalty = 0 + $question->penalty;
+        }
 
         // Set any options.
         $extra_question_fields = $QTYPES[$question->qtype]->extra_question_fields();
