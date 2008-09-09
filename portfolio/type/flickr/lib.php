@@ -23,6 +23,10 @@ class portfolio_plugin_flickr extends portfolio_plugin_push_base {
 
     }
 
+    public static function allows_multiple() {
+        return false;
+    }
+
     public function get_continue_url() {
         return 'http://www.flickr.com/files#0:f:' . $this->get_export_config('folder');
     }
