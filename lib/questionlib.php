@@ -162,7 +162,7 @@ require_once("$CFG->dirroot/question/type/questiontype.php");
 // Load the questiontype.php file for each question type
 // These files in turn call question_register_questiontype()
 // with a new instance of each qtype class.
-$qtypenames= get_list_of_plugins('question/type');
+$qtypenames = get_list_of_plugins('question/type');
 foreach($qtypenames as $qtypename) {
     // Instanciates all plug-in question types
     $qtypefilepath= "$CFG->dirroot/question/type/$qtypename/questiontype.php";
@@ -1681,8 +1681,9 @@ function question_apply_penalty_and_timelimit(&$question, &$state, $attempt, $cm
 /**
 * Print the icon for the question type
 *
-* @param object $question  The question object for which the icon is required
-* @param boolean $return   If true the functions returns the link as a string
+* @param object $question The question object for which the icon is required
+*       only $question->qtype is used.
+* @param boolean $return If true the functions returns the link as a string
 */
 function print_question_icon($question, $return = false) {
     global $QTYPES, $CFG;
