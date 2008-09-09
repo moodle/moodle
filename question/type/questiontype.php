@@ -204,14 +204,6 @@ class default_questiontype {
     }
 
     /**
-     *
-     *
-     * @param $question
-     */
-    function set_default_options(&$question) {
-    }
-
-    /**
     * Saves or updates a question after editing by a teacher
     *
     * Given some question info and some data about the answers
