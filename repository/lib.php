@@ -415,14 +415,18 @@ function repository_get_type_by_id($id){
  * Return all repository types ordered by sortorder
  * first type in returnedarray[0], second type in returnedarray[1], ...
  * @global object $DB
+ * @param boolean $visible can return types by visiblity, return all types if null
  * @return array Repository types
  */
-function repository_get_types(){
+function repository_get_types($visible=null){
     global $DB;
 
     $types = array();
-
-    if($records = $DB->get_records('repository',null,'sortorder')) {
+    $params = null;
+    if (!empty($visible)) {
+        $params = array('visible' => $visible);
+    }
+    if($records = $DB->get_records('repository',$params,'sortorder')) {
         foreach($records as $type) {
             $types[] = new repository_type($type->type, (array)get_config($type->type), $type->visible, $type->sortorder);
         }
@@ -933,6 +937,22 @@ function repository_check_context($ctx_id){
         return true;
     }
     return false;
+}
+
+/**
+ * Return all types that you a user can create/edit and which are also visible
+ * Note: Mostly used in order to know if at least one editable type has been set
+ * @return array types
+ */
+function repository_get_editable_types(){
+    $types= repository_get_types(true);
+    $editabletypes = array();
+    foreach ($types as $type){
+         if (repository_static_function($type->get_typename(), 'has_multiple_instances')) {
+            $editabletypes[]=$type;
+        }
+    }
+    return $editabletypes;
 }
 
 /**
