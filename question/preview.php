@@ -77,8 +77,6 @@
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     }
 
-
-
     if ($maxgrade = $DB->get_field('quiz_question_instances', 'grade', array('quiz' => $quiz->id, 'question' => $id))) {
         $questions[$id]->maxgrade = $maxgrade;
     } else {
@@ -137,6 +135,7 @@
         if (!$newstates = get_question_states($questions, $quiz, $attempt)) {
             print_error('newattemptfail', 'quiz');
         }
+        $newstates[$id]->questionsessionid = 0;
         $SESSION->quizpreview->states = array($newstates);
         $states =& $SESSION->quizpreview->states;
         $historylength = 0;
