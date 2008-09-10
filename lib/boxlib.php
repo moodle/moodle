@@ -346,7 +346,7 @@ class boxclient {
         foreach ($data as $a) {
             switch ($a['tag']) {
                 case 'STATUS':
-                    if ($a['value'] == 'e_rename_node') {
+                    if ($a['value'] == 's_rename_node') {
                         return true;
                     }
             }
