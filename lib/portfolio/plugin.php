@@ -722,6 +722,17 @@ abstract class portfolio_plugin_pull_base extends portfolio_plugin_base {
         return false;
     }
 
+    /**
+    * the base part of the download file url to pull files from
+    * your plugin might need to add &foo=bar on the end
+    * {@see verify_file_request_params}
+    *
+    * @return string the url
+    */
+    public function get_base_file_url() {
+        global $CFG;
+        return $CFG->wwwroot . '/portfolio/file.php?id=' . $this->exporter->get('id');
+    }
 
     /**
     * before sending the file when the pull is requested, verify the request parameters
