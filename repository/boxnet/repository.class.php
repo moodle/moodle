@@ -8,7 +8,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-require_once($CFG->dirroot.'/repository/boxnet/'.'boxlibphp5.php');
+require_once($CFG->libdir.'/boxlib.php');
 
 class repository_boxnet extends repository{
     private $box;
@@ -187,8 +187,11 @@ class repository_boxnet extends repository{
                     $e4->type  = 'password';
                     $e4->name  = 'boxpassword';
 
+                    $e5->type = 'popup';
+                    $e5->url = 'http://dongsheng.moodle.com/m20/repository/callback.php';
+
                     $ret = array();
-                    $ret['login'] = array($e1, $e2, $e3, $e4);
+                    $ret['login'] = array($e1, $e2, $e3, $e4, $e5);
                     return $ret;
                 } else {
                     echo $str;

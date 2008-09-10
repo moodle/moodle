@@ -262,11 +262,19 @@ class boxclient {
                 break;
 
             case 'FOLDER_NAME':
-                $ret_array['folder_type'] = $a['value'];
+                $ret_array['folder_name'] = $a['value'];
+                break;
+
+            case 'FOLDER_TYPE_ID':
+                $ret_array['folder_type_id'] = $a['value'];
                 break;
 
             case 'SHARED':
-                $ret_array['shared'] = $a['value'];
+                if(!empty($a['value'])){
+                    $ret_array['shared'] = $a['value'];
+                }else{
+                    $ret_array['shared'] = false;
+                }
                 break;
             case 'PASSWORD':
                 $ret_array['password'] = $a['value'];

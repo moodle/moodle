@@ -1,6 +1,6 @@
 <?php
 require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->dirroot.'/repository/boxnet/boxlibphp5.php');
+require_once($CFG->libdir.'/boxlib.php');
 
 class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
 
