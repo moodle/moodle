@@ -814,7 +814,7 @@ function xmldb_main_upgrade($oldversion) {
                 // Special case - this is something different from a plugin version number.
                 continue;
             }
-            if (preg_match('/^\d{10}$/', $value)) {
+            if (!preg_match('/^\d{10}$/', $value)) {
                 // Extra safety check, skip anything that does not look like a Moodle
                 // version number (10 digits).
                 continue;
