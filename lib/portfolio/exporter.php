@@ -50,7 +50,7 @@ class portfolio_exporter {
     /**
     * if there has been no config form displayed to the user
     */
-    private $noconfig;
+    private $noexportconfig;
 
     /**
     * the navigation to display on the wizard screens
