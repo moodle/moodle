@@ -730,7 +730,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
             case 'text':
                 $format = PORTFOLIO_FORMAT_TEXT;
             case 'file':
-                // $format = portfolio_format_from_mimetype($something); // change after we switch upload type resources over to new files api.
+                // $format = portfolio_format_from_file($file); // change after we switch upload type resources over to new files api.
         }
         $this->supportedformats = array($format);
     }
@@ -766,7 +766,11 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
             debugging(get_string('portfolionotimplemented', 'resource'));
             return false;
         }
-        return portfolio_add_button('resource_portfolio_caller', array('id' => $resource->cm->instance),  '/mod/resource/lib.php', $format, null, $return);
+        $callersupports = array();
+        if ($resource->cm->type == 'file') {
+            // $callersupports = array(portfolio_format_from_file($file);
+        }
+        return portfolio_add_button('resource_portfolio_caller', array('id' => $resource->cm->instance),  '/mod/resource/lib.php', $format, null, $return, $callersupports);
     }
 
     public function get_sha1() {
