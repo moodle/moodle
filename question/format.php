@@ -485,9 +485,13 @@ class qformat_default {
      */
     function defaultquestion() {
         global $CFG;
+        static $defaultshuffleanswers = null;
+        if (is_null($defaultshuffleanswers)) {
+            $defaultshuffleanswers = get_config('quiz', 'shuffleanswers');
+        }
 
         $question = new stdClass();
-        $question->shuffleanswers = $CFG->quiz_shuffleanswers;
+        $question->shuffleanswers = $defaultshuffleanswers;
         $question->defaultgrade = 1;
         $question->image = "";
         $question->usecase = 0;

@@ -65,7 +65,7 @@
     if (empty($quizid)) {
         $quiz = new cmoptions;
         $quiz->id = 0;
-        $quiz->review = $CFG->quiz_review;
+        $quiz->review = get_config('quiz', 'review');
         require_login($courseid, false);
         $quiz->course = $courseid;
         $context = get_context_instance(CONTEXT_COURSE, $courseid);
