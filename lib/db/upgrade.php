@@ -799,6 +799,32 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008090108);
     }
 
+    // MDL-16411 Move all plugintype_pluginname_version values from config to config_plugins.
+    if ($result && $oldversion < 2008091000) {
+        foreach (get_object_vars($CFG) as $name => $value) {
+            if (substr($name, strlen($name) - 8) !== '_version') {
+                continue;
+            }
+            $pluginname = substr($name, 0, strlen($name) - 8);
+            if (!strpos($pluginname, '_')) {
+                // Skip things like backup_version that don't contain an extra _
+                continue;
+            }
+            if ($pluginname == 'enrol_ldap_version') {
+                // Special case - this is something different from a plugin version number.
+                continue;
+            }
+            if (preg_match('/^\d{10}$/', $value)) {
+                // Extra safety check, skip anything that does not look like a Moodle
+                // version number (10 digits).
+                continue;
+            }
+            $result = $result && set_config('version', $value, $pluginname);
+            $result = $result && unset_config($name);
+        }
+        upgrade_main_savepoint($result, 2008091000);
+    }
+
     return $result;
 }
 

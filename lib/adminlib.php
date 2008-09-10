@@ -120,7 +120,28 @@ function upgrade_blocks_savepoint($result, $version, $blockname) {
 }
 
 function upgrade_plugin_savepoint($result, $version, $type, $dir) {
-    //TODO
+    if ($result) {
+        $fullname = $type . '_' . $dir;
+        $installedversion = get_config($fullname, 'version');
+        if ($installedversion >= $version) {
+            // Something really wrong is going on in the upgrade script
+            $a = new stdClass;
+            $a->oldversion = $installedversion;
+            $a->newversion = $version;
+            print_error('cannotdowngrade', 'debug', '', $a);
+        }
+        set_config('version', $version, $fullname);
+    } else {
+        notify ("Upgrade savepoint: Error during mod upgrade to version $version");
+    }
+
+    // Reset upgrade timeout to default
+    upgrade_set_timeout();
+
+    // This is a safe place to stop upgrades if user aborts page loading
+    if (connection_aborted()) {
+        die;
+    }
 }
 
 function upgrade_backup_savepoint($result, $version) {
@@ -344,16 +365,17 @@ function upgrade_plugins($type, $dir, $return) {
         }
 
         $plugin->name = $plug;   // The name MUST match the directory
+        $plugin->fullname = $type.'_'.$plug;   // The name MUST match the directory
 
-        $pluginversion = $type.'_'.$plug.'_version';
+        $installedversion = get_config($plugin->fullname, 'version');
 
-        if (!isset($CFG->$pluginversion)) {
-            set_config($pluginversion, 0);
+        if ($installedversion === false) {
+            set_config('version', 0, $plugin->fullname);
         }
 
-        if ($CFG->$pluginversion == $plugin->version) {
+        if ($installedversion == $plugin->version) {
             // do nothing
-        } else if ($CFG->$pluginversion < $plugin->version) {
+        } else if ($installedversion < $plugin->version) {
             if (!$updated_plugins && !$embedded) {
                 print_header($strpluginsetup, $strpluginsetup,
                         build_navigation(array(array('name' => $strpluginsetup, 'link' => null, 'type' => 'misc'))), '',
@@ -367,7 +389,7 @@ function upgrade_plugins($type, $dir, $return) {
             }
             @set_time_limit(0);  // To allow slow databases to complete the long SQL
 
-            if ($CFG->$pluginversion == 0) {    // It's a new install of this plugin
+            if ($installedversion == 0) {    // It's a new install of this plugin
             /// Both old .sql files and new install.xml are supported
             /// but we priorize install.xml (XMLDB) if present
                 if (file_exists($fullplug . '/db/install.xml')) {
@@ -380,7 +402,7 @@ function upgrade_plugins($type, $dir, $return) {
             /// Continue with the instalation, roles and other stuff
                 if ($status) {
                 /// OK so far, now update the plugins record
-                    set_config($pluginversion, $plugin->version);
+                    set_config('version', $plugin->version, $plugin->fullname);
 
                 /// Install capabilities
                     if (!update_capabilities($type.'/'.$plug)) {
@@ -393,8 +415,8 @@ function upgrade_plugins($type, $dir, $return) {
                     message_update_providers($type.'/'.$plug);
 
                 /// Run local install function if there is one
-                    if (is_readable($fullplug .'/lib.php')) {
-                        include_once($fullplug .'/lib.php');
+                    if (is_readable($fullplug . '/lib.php')) {
+                        include_once($fullplug . '/lib.php');
                         $installfunction = $plugin->name.'_install';
                         if (function_exists($installfunction)) {
                             if (! $installfunction() ) {
@@ -408,16 +430,14 @@ function upgrade_plugins($type, $dir, $return) {
                     notify('Installing '. $plugin->name .' FAILED!');
                 }
             } else {                            // Upgrade existing install
-            /// Run de old and new upgrade functions for the module
-                $newupgrade_function = 'xmldb_' . $type.'_'.$plugin->name .'_upgrade';
-
-            /// Then, the new function if exists and the old one was ok
+            /// Run the upgrade function for the plugin.
+                $newupgrade_function = 'xmldb_' .$plugin->fullname .'_upgrade';
                 $newupgrade_status = true;
                 if ($newupgrade && function_exists($newupgrade_function)) {
                     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
                         $DB->set_debug(true);
                     }
-                    $newupgrade_status = $newupgrade_function($CFG->$pluginversion);
+                    $newupgrade_status = $newupgrade_function($installedversion);
                 } else if ($newupgrade) {
                     notify ('Upgrade function ' . $newupgrade_function . ' was not available in ' .
                              $fullplug . '/db/upgrade.php');
@@ -428,7 +448,7 @@ function upgrade_plugins($type, $dir, $return) {
             /// Now analyze upgrade results
                 if ($newupgrade_status) {    // No upgrading failed
                 /// OK so far, now update the plugins record
-                    set_config($pluginversion, $plugin->version);
+                    set_config('version', $plugin->version, $plugin->fullname);
                     if (!update_capabilities($type.'/'.$plug)) {
                         print_error('cannotupdateplugincap', '', '', $plugin->name);
                     }
@@ -440,7 +460,7 @@ function upgrade_plugins($type, $dir, $return) {
 
                     notify(get_string('modulesuccess', '', $plugin->name), 'notifysuccess');
                 } else {
-                    notify('Upgrading '. $plugin->name .' from '. $CFG->$pluginversion .' to '. $plugin->version .' FAILED!');
+                    notify('Upgrading '. $plugin->name .' from '. $installedversion .' to '. $plugin->version .' FAILED!');
                 }
             }
             if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
@@ -448,7 +468,7 @@ function upgrade_plugins($type, $dir, $return) {
             }
         } else {
             upgrade_log_start();
-            print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$CFG->pluginversion, 'newversion'=>$plugin->version));
+            print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$installedversion, 'newversion'=>$plugin->version));
         }
     }
 
