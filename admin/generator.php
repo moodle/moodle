@@ -128,6 +128,10 @@ class generator {
              array('short'=>'mods', 'long' => 'modules_list',
                    'help' => 'The list of modules you want to generate', 'default' => $this->modules_list,
                    'type' => 'mod1,mod2...'),
+             array('short'=>'rt', 'long' => 'resource_type',
+                   'help' => 'The specific type of resource you want to generate. Defaults to random',
+                   'default' => 'random',
+                   'type' => 'STRING'),
              array('short'=>'at', 'long' => 'assignment_type',
                    'help' => 'The specific type of assignment you want to generate. Defaults to random',
                    'default' => 'random',
@@ -498,6 +502,7 @@ class generator {
                                 $module->intro = $description;
                                 $module->type = $forum_types[rand(0, count($forum_types) - 1)];
                                 $module->forcesubscribe = rand(0, 1);
+                                $module->format = 1;
                                 break;
                             case 'glossary':
                                 $module->intro = $description;
@@ -526,7 +531,12 @@ class generator {
                                 $module->quizpassword = '';
                                 break;
                             case 'resource':
-                                $module->type = $resource_types[rand(0, count($resource_types) - 1)];
+                                if ($this->get('resource_type') == 'random') {
+                                    $module->type = $resource_types[rand(0, count($resource_types) - 1)];
+                                } else {
+                                    $module->type = $this->get('resource_type');
+                                }
+
                                 $module->alltext = $content;
                                 $module->summary = $description;
                                 $module->windowpopup = rand(0,1);
@@ -551,34 +561,6 @@ class generator {
                                 break;
                             case 'wiki':
                                 $module->summary = $description;
-                                break;
-                            case 'workshop':
-                                $module->description = $description;
-                                $module->submissionstartminute = rand(1,59);
-                                $module->submissionstarthour = rand(1,23);
-                                $module->submissionstartday = rand(1,27);
-                                $module->submissionstartmonth = rand(1,11);
-                                $module->submissionstartyear = rand(2007,2011);
-                                $module->assessmentstartminute = rand(1,59);
-                                $module->assessmentstarthour = rand(1,23);
-                                $module->assessmentstartday = rand(1,27);
-                                $module->assessmentstartmonth = rand(1,11);
-                                $module->assessmentstartyear = rand(2007,2011);
-                                $module->submissionendminute = rand(1,59);
-                                $module->submissionendhour = rand(1,23);
-                                $module->submissionendday = rand(1,27);
-                                $module->submissionendmonth = rand(1,11);
-                                $module->submissionendyear = rand(2007,2011);
-                                $module->assessmentendminute = rand(1,59);
-                                $module->assessmentendhour = rand(1,23);
-                                $module->assessmentendday = rand(1,27);
-                                $module->assessmentendmonth = rand(1,11);
-                                $module->assessmentendyear = rand(2007,2011);
-                                $module->releaseminute = rand(1,59);
-                                $module->releasehour = rand(1,23);
-                                $module->releaseday = rand(1,27);
-                                $module->releasemonth = rand(1,11);
-                                $module->releaseyear = rand(2007,2011);
                                 break;
                         }
 
@@ -861,6 +843,7 @@ class generator {
                             $grade->grade = $random_grade;
                             $grade->rawgrade = $random_grade;
                             $grade->teacher = $USER->id;
+                            $grade->submissioncomment = 'comment';
                             $DB->insert_record('assignment_submissions', $grade);
                             grade_update('mod/assignment', $assignment->course, 'mod', 'assignment', $assignment->id, 0, $grade);
                             $this->verbose("A grade ($random_grade) has been given to user $userid "
