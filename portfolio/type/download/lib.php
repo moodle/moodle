@@ -11,13 +11,6 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
         return get_string('pluginname', 'portfolio_download');
     }
 
-    public function steal_control($stage) {
-        if ($stage == PORTFOLIO_STAGE_FINISHED) {
-            return $this->get_base_file_url();
-        }
-        return false;
-    }
-
     public static function allows_multiple() {
         return false;
     }
@@ -44,6 +37,11 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
             return true;
         }
         return false;
+    }
+
+    public function get_extra_finish_options() {
+        global $CFG;
+        return array($this->get_base_file_url() => get_string('downloadfile', 'portfolio_download'));
     }
 
     public function send_package() {
