@@ -1718,7 +1718,8 @@ class assignment_base {
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
                 if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     $p['file'] = $file->get_id();
-                    $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, PORTFOLIO_ADD_ICON_LINK, null, true);
+                    $formats = array(portfolio_format_from_file($file));
+                    $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, PORTFOLIO_ADD_ICON_LINK, null, true, $formats);
                 }
                 $output .= '<br />';
             }
@@ -3173,12 +3174,12 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         if (!$this->assignment->portfolio_exportable()) {
             throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
         }
+        $fs = get_file_storage();
         if (array_key_exists('file', $callbackargs)) {
             $this->file = $fs->get_file_by_id($callbackargs['file']);
             $this->files = array($this->file);
             $this->supportedformats = array(portfolio_format_from_file($this->file));
         } else {
-            $fs = get_file_storage();
             $this->files = $fs->get_area_files($this->assignment->context->id, 'assignment_submission', $this->user->id, '', false);
         }
         if (empty($this->supportedformats) && is_callable(array($this->assignment, 'portfolio_supported_formats'))) {
