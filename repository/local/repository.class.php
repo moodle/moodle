@@ -60,8 +60,8 @@ class repository_local extends repository {
         }
         
         $count = 0;
-
-        if ($fileinfo = $browser->get_file_info($this->context, $filearea, $itemid, $path, $filename)) {
+        
+        if ($fileinfo = $browser->get_file_info(get_system_context(), $filearea, $itemid, $path, $filename)) {
             $ret['path'] = array();
             $params = $fileinfo->get_params();
             $filearea = $params['filearea'];
