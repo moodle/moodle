@@ -2166,6 +2166,49 @@ function question_category_select_menu($contexts, $top = false, $currentcat = 0,
 }
 
 /**
+ * @param integer $contextid a context id.
+ * @return object the default question category for that context, or false if none.
+ */
+function question_get_default_category($contextid) {
+    global $DB;
+    $category = $DB->get_records('question_categories', array('contextid' => $contextid),'id','*',0,1);
+    if (!empty($category)) {
+        return reset($category);
+    } else {
+        return false;
+    }
+}
+
+/**
+ * @param object $context a context
+ * @return string A URL for editing questions in this context.
+ */
+function question_edit_url($context) {
+    global $CFG, $SITE;
+    if (!has_any_capability(question_get_question_capabilities(), $context)) {
+        return false;
+    }
+    $baseurl = $CFG->wwwroot . '/question/edit.php?';
+    $defaultcategory = question_get_default_category($context->id);
+    if ($defaultcategory) {
+        $baseurl .= 'cat=' . $defaultcategory->id . '&amp;';
+    }
+    switch ($context->contextlevel) {
+        case CONTEXT_SYSTEM:
+            return $baseurl . 'courseid=' . $SITE->id;
+        case CONTEXT_COURSECAT:
+            // This is nasty, becuase we can only edit questions in a course
+            // context at the moment, so for now we just return false.
+            return false;
+        case CONTEXT_COURSE:
+            return $baseurl . 'courseid=' . $context->instanceid;
+        case CONTEXT_MODULE:
+            return $baseurl . 'cmid=' . $context->instanceid;
+    }
+    
+}
+
+/**
 * Gets the default category in the most specific context.
 * If no categories exist yet then default ones are created in all contexts.
 *
@@ -2192,7 +2235,7 @@ function question_make_default_categories($contexts) {
                 print_error('cannotcreatedefaultcat', '', '', print_context_name($context));
             }
         } else {
-            $category = $DB->get_record('question_categories', array('contextid' => $context->id),'*',true);
+            $category = question_get_default_category($context->id);
         }
 
         if ($context->contextlevel == CONTEXT_COURSE){
@@ -2447,6 +2490,32 @@ class context_to_string_translator{
 
 }
 
+/**
+ * @return array all the capabilities that relate to accessing particular questions.
+ */
+function question_get_question_capabilities() {
+    return array(
+        'moodle/question:add',
+        'moodle/question:editmine',
+        'moodle/question:editall',
+        'moodle/question:viewmine',
+        'moodle/question:viewall',
+        'moodle/question:usemine',
+        'moodle/question:useall',
+        'moodle/question:movemine',
+        'moodle/question:moveall',
+    );
+}
+
+/**
+ * @return array all the question bank capabilities.
+ */
+function question_get_all_capabilities() {
+    $caps = question_get_question_capabilities();
+    $caps[] = 'moodle/question:managecategory';
+    $caps[] = 'moodle/question:flag';
+    return $caps;
+}
 
 /**
  * Check capability on category

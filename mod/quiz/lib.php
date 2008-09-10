@@ -1262,23 +1262,12 @@ function quiz_supports($feature) {
 }
 
 /**
- * Returns all other caps used in module
+ * @return array all other caps used in module
  */
 function quiz_get_extra_capabilities() {
-    return array(
-        'moodle/site:accessallgroups',
-        'moodle/question:add',
-        'moodle/question:editmine',
-        'moodle/question:editall',
-        'moodle/question:viewmine',
-        'moodle/question:viewall',
-        'moodle/question:usemine',
-        'moodle/question:useall',
-        'moodle/question:movemine',
-        'moodle/question:moveall',
-        'moodle/question:managecategory',
-        'moodle/question:flag',
-    );
+    $caps = question_get_all_capabilities();
+    $caps[] = 'moodle/site:accessallgroups';
+    return $caps;
 }
 
 ?>
