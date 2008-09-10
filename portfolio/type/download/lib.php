@@ -11,6 +11,13 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
         return get_string('pluginname', 'portfolio_download');
     }
 
+    public function steal_control($stage) {
+        if ($stage == PORTFOLIO_STAGE_FINISHED) {
+            return $this->get_base_file_url();
+        }
+        return false;
+    }
+
     public static function allows_multiple() {
         return false;
     }
@@ -22,6 +29,12 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
     public function prepare_package() {
 
         $files = $this->exporter->get_tempfiles();
+
+        if (count($files) == 1) {
+            $this->set('file', array_shift($files));
+            return true;
+        }
+
         $zipper = new zip_packer();
 
         $filename = 'portfolio-export.zip';
@@ -35,11 +48,6 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
 
     public function send_package() {
         return true;
-    }
-
-    public function get_extra_finish_options() {
-        global $CFG;
-        return array($CFG->wwwroot . '/portfolio/file.php?id=' . $this->exporter->get('id') => get_string('downloadfile', 'portfolio_download'));
     }
 
     public function verify_file_request_params($params) {
