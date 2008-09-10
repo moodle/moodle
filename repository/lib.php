@@ -1680,6 +1680,7 @@ _client.buildtree = function(node, level){
     tmpNode.filename = node.title;
     tmpNode.value  = node.source;
     tmpNode.icon = node.thumbnail;
+    tmpNode.path = node.path;
     if(node.children){
         tmpNode.isLeaf = false;
         if (node.path) {
