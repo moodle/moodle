@@ -432,7 +432,7 @@ function repository_get_types(){
 }
 
 /**
- *TODO: write comment
+ * The base class for all repository plugins
  */
 
 abstract class repository {
@@ -506,7 +506,8 @@ abstract class repository {
     }
 
     /**
-     * Download a file from a given url
+     * Download a file, this function can be overridden by
+     * subclass.
      *
      * @global object $CFG
      * @param string $url the url of file
@@ -537,7 +538,7 @@ abstract class repository {
     }
 
     /**
-     * Print a list or return string
+     * Print a list or return formatted string, can be overridden by subclass
      *
      * @param string $list
      * @param boolean $print false, return html, otherwise, print it directly
@@ -572,7 +573,7 @@ abstract class repository {
     }
 
     /**
-     * TODO: write documentation here
+     * Return the name of this instance, can be overridden.
      * @global <type> $DB
      * @return <type>
      */
@@ -1019,7 +1020,7 @@ function repository_get_instance($id){
 }
 
 /**
- * TODO: write documentation
+ * call a static function
  * @global <type> $CFG
  * @param <type> $plugin
  * @param <type> $function
@@ -1060,7 +1061,6 @@ function repository_static_function($plugin, $function) {
 
 /**
  * Move file from download folder to file pool using FILE API
- * @TODO Need review
  * @global object $DB
  * @global object $CFG
  * @global object $USER
@@ -1193,6 +1193,20 @@ function repository_get_client($context){
     $struploading = get_string('uploading', 'repository');
     $css = <<<EOD
 <style type="text/css">
+#panel-$suffix{padding:0;margin:0; text-align:left;}
+#file-picker-$suffix{font-size:12px;}
+#file-picker-$suffix strong{background:#FFFFCC}
+#file-picker-$suffix a{color: #336699}
+#file-picker-$suffix a:hover{background:#003366;color:white}
+#repo-viewbar-$suffix{width:300px;float:left}
+#search-div-$suffix{float:right}
+#repo-tb-$suffix{padding: .8em;background: #FFFFCC;color:white;text-align:center}
+</style>
+EOD;
+
+    if (!isset($CFG->repo_yui_loaded)) {
+        $css .= <<<EOD
+<style type="text/css">
 .repo-list{list-style-type:none;padding:0}
 .repo-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
 .repo-name{display:block;padding: 3px;margin-bottom: 5px}
@@ -1213,14 +1227,6 @@ p.upload a:hover {background: grey;color:white}
 .grid p{margin:0;padding:0;background: #FFFFCC}
 .grid .label{height:48px}
 .grid span{background: #EEF9EB;color:gray}
-#panel-$suffix{padding:0;margin:0; text-align:left;}
-#file-picker-$suffix{font-size:12px;}
-#file-picker-$suffix strong{background:#FFFFCC}
-#file-picker-$suffix a{color: #336699}
-#file-picker-$suffix a:hover{background:#003366;color:white}
-#repo-viewbar-$suffix{width:300px;float:left}
-#search-div-$suffix{float:right}
-#repo-tb-$suffix{padding: .8em;background: #FFFFCC;color:white;text-align:center}
 </style>
 <style type="text/css">
 @import "$CFG->httpswwwroot/lib/yui/resize/assets/skins/sam/resize.css";
@@ -1243,6 +1249,13 @@ EOD;
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/json/json-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/button/button-min.js"></script>
 <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/selector/selector-beta-min.js"></script>
+EOD;
+        $CFG->repo_yui_loaded = true;
+    } else {
+        $js = '';
+    }
+
+$js .= <<<EOD
 <script type="text/javascript">
 //<![CDATA[
 var active_instance = null;
