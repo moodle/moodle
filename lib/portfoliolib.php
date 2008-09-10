@@ -38,150 +38,248 @@ require_once($CFG->libdir . '/portfolio/plugin.php');      // the base classes f
 require_once($CFG->libdir . '/portfolio/caller.php');      // the base classes for calling code
 
 /**
-* Entry point to add an 'add to portfolio' button to a page somewhere in moodle
+* use this to add a portfolio button or icon or form to a page
 *
-* This function does not check permissions. the caller must check permissions first.
+* These class methods do not check permissions. the caller must check permissions first.
 * Later, during the export process, the caller class is instantiated and the check_permissions method is called
-* This does <b>not</b> happen in this function - you are responsible for it.
 *
-* @param string $callbackclass           name of the class containing the callback functions
-*                                        activity modules should ALWAYS use their name_portfolio_caller
-*                                        other locations must use something unique
-* @param mixed $callbackargs             this can be an array or hash of arguments to pass
-*                                        back to the callback functions (passed by reference)
-*                                        these MUST be primatives to be added as hidden form fields.
-*                                        and the values get cleaned to PARAM_ALPHAEXT or PARAM_NUMBER or PARAM_PATH
-* @param string $callbackfile            this can be autodetected if it's in the same file as your caller,
-*                                        but more often, the caller is a script.php and the class in a lib.php
-*                                        so you can pass it here if necessary.
-*                                        this path should be relative (ie, not include) dirroot, eg '/mod/forum/lib.php'
-* @param int $format                     format to display the button or form or icon or link.
-*                                        See constants PORTFOLIO_ADD_XXX for more info.
-*                                        optional, defaults to PORTFOLI_ADD_FULL_FORM
-* @param str $addstr                     string to use for the button or icon alt text or link text.
-*                                        this is whole string, not key.  optional, defaults to 'Add to portfolio';
-* @param boolean $return                 whether to echo or return content (optional defaults to false (echo)
-* @param array $callersupports           if the calling code knows better than the static method on the calling class (supported_formats)
-*                                        eg, if there's a file that might be an image, you can pass it here instead
-*                                        {@see portfolio_format_from_file} for how to get the appropriate formats to pass here.
+* This class can be used like this:
+* $button = new portfolio_add_button();
+* $button->set_callback_options('name_of_caller_class', array('id' => 6), '/your/mod/lib.php');
+* $button->render(PORTFOLIO_ADD_FULL_FORM, get_string('addeverythingtoportfolio', 'yourmodule'));
+*
+* or like this:
+* $button = new portfolio_add_button(array('callbackclass' => 'name_of_caller_class', 'callbackargs' => array('id' => 6), 'callbackfile' => '/your/mod/lib.php'));
+* $somehtml .= $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
+*
+* See http://docs.moodle.org/en/Development:Adding_a_Portfolio_Button_to_a_page for more information
 */
-function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null, $format=PORTFOLIO_ADD_FULL_FORM, $addstr=null, $return=false, $callersupports=null) {
+class portfolio_add_button {
 
-    global $SESSION, $CFG, $COURSE, $USER;
+    private $callbackclass;
+    private $callbackargs;
+    private $callbackfile;
+    private $formats;
+    private $instances;
 
-    if (empty($CFG->enableportfolios)) {
-        return;
+    /**
+    * constructor. either pass the options here or set them using the helper methods.
+    * generally the code will be clearer if you use the helper methods.
+    *
+    * @param array $options keyed array of options:
+    *                       key 'callbackclass': name of the caller class (eg forum_portfolio_caller')
+    *                       key 'callbackargs': the array of callback arguments your caller class wants passed to it in the constructor
+    *                       key 'callbackfile': the file containing the class definition of your caller class.
+    *                       See set_callback_options for more information on these three.
+    *                       key 'formats': an array of PORTFOLIO_FORMATS this caller will support
+    *                       See set_formats for more information on this.
+    */
+    public function __construct($options=null) {
+        global $SESSION;
+        if (isset($SESSION->portfolioexport)) {
+            $a = new StdClass;
+            $a->cancel = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
+            $a->finish = $CFG->wwwroot . '/portfolio/add.php?id=' . $SESSION->portfolioexport;
+            throw new portfolio_button_exception('alreadyexporting', 'portfolio', null, $a);
+        }
+        if (empty($options)) {
+            return true;
+        }
+        foreach ((array)$options as $key => $value) {
+            if (!in_array($key, $constructoroptions)) {
+                throw new portfolio_button_exception('invalidbuttonproperty', 'portfolio', $key);
+            }
+            $this->{$key} = $value;
+        }
+        $this->instances = portfolio_instances();
     }
 
-    if (!$instances = portfolio_instances()) {
-        return;
+    /*
+    * @param string $class   name of the class containing the callback functions
+    *                        activity modules should ALWAYS use their name_portfolio_caller
+    *                        other locations must use something unique
+    * @param mixed $argarray this can be an array or hash of arguments to pass
+    *                        back to the callback functions (passed by reference)
+    *                        these MUST be primatives to be added as hidden form fields.
+    *                        and the values get cleaned to PARAM_ALPHAEXT or PARAM_NUMBER or PARAM_PATH
+    * @param string $file    this can be autodetected if it's in the same file as your caller,
+    *                        but often, the caller is a script.php and the class in a lib.php
+    *                        so you can pass it here if necessary.
+    *                        this path should be relative (ie, not include) dirroot, eg '/mod/forum/lib.php'
+    */
+    public function set_callback_options($class, array $argarray, $file=null) {
+        global $CFG;
+        if (empty($file)) {
+            $backtrace = debug_backtrace();
+            if (!array_key_exists(0, $backtrace) || !array_key_exists('file', $backtrace[0]) || !is_readable($backtrace[0]['file'])) {
+                throw new portfolio_button_exception('nocallbackfile', 'portfolio');
+            }
+
+            $file = substr($backtrace[0]['file'], strlen($CFG->dirroot));
+        } else if (!is_readable($CFG->dirroot . $file)) {
+            throw new portfolio_button_exception('nocallbackfile', 'portfolio', $file);
+        }
+        $this->callbackfile = $file;
+        require_once($CFG->dirroot . $file);
+        if (!class_exists($class)) {
+            throw new portfolio_button_exception('nocallbackclass', 'portfolio', $class);
+        }
+        $this->callbackclass = $class;
+        $this->callbackargs = $argarray;
     }
 
-    if (defined('PORTFOLIO_INTERNAL')) {
-        // something somewhere has detected a risk of this being called during inside the preparation
-        // eg forum_print_attachments
-        return;
+    /*
+    * @param array $formats if the calling code knows better than the static method on the calling class (supported_formats)
+    *                       eg, if it's going to be a single file, or if you know it's HTML, you can pass it here instead
+    *                       this is almost always the case so you should always use this.
+    *                       {@see portfolio_format_from_file} for how to get the appropriate formats to pass here for uploaded files.
+    */
+    public function set_formats($formats=null) {
+        if (is_string($formats)) {
+            $formats = array($formats);
+        }
+        if (empty($formats)) {
+            if (empty($this->callbackclass)) {
+                throw new portfolio_button_exception('noformatsorclass', 'portfolio');
+            }
+            $formats = call_user_func(array($this->callbackclass, 'supported_formats'));
+        }
+        $this->formats = $formats;
     }
 
-    if (isset($SESSION->portfolioexport)) {
-        $a = new StdClass;
-        $a->cancel = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
-        $a->finish = $CFG->wwwroot . '/portfolio/add.php?id=' . $SESSION->portfolioexport;
-        throw new portfolio_exception('alreadyexporting', 'portfolio', null, $a);
+    /*
+    * echo the form/button/icon/text link to the page
+    *
+    * @param int $format format to display the button or form or icon or link.
+    *                    See constants PORTFOLIO_ADD_XXX for more info.
+    *                    optional, defaults to PORTFOLI_ADD_FULL_FORM
+    * @param str $addstr string to use for the button or icon alt text or link text.
+    *                    this is whole string, not key.  optional, defaults to 'Add to portfolio';
+    */
+    public function render($format=null, $addstr=null) {
+        echo $this->tohtml($format, $addstr);
     }
 
-    if (empty($callbackfile)) {
-        $backtrace = debug_backtrace();
-        if (!array_key_exists(0, $backtrace) || !array_key_exists('file', $backtrace[0]) || !is_readable($backtrace[0]['file'])) {
-            debugging(get_string('nocallbackfile', 'portfolio'));
+    /*
+    * returns the form/button/icon/text link as html
+    *
+    * @param int $format format to display the button or form or icon or link.
+    *                    See constants PORTFOLIO_ADD_XXX for more info.
+    *                    optional, defaults to PORTFOLI_ADD_FULL_FORM
+    * @param str $addstr string to use for the button or icon alt text or link text.
+    *                    this is whole string, not key.  optional, defaults to 'Add to portfolio';
+    */
+    public function to_html($format=null, $addstr=null) {
+        global $CFG, $COURSE;
+        if (!$this->is_renderable()) {
             return;
         }
-
-        $callbackfile = substr($backtrace[0]['file'], strlen($CFG->dirroot));
-    } else {
-        if (!is_readable($CFG->dirroot . $callbackfile)) {
-            debugging(get_string('nocallbackfile', 'portfolio'));
-            return;
+        if (empty($this->callbackclass) || $this->callbackfile) {
+            throw new portfolio_button_exception('mustcallsetcallbackoptions', 'portfolio');
         }
-    }
-
-    require_once($CFG->dirroot . $callbackfile);
-
-    if (empty($callersupports)) {
-        $callersupports = call_user_func(array($callbackclass, 'supported_formats'));
-    }
-
-    $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
-    $linkoutput = '<a href="' . $CFG->wwwroot . '/portfolio/add.php?';
-    foreach ($callbackargs as $key => $value) {
-        if (!empty($value) && !is_string($value) && !is_numeric($value)) {
-            $a->key = $key;
-            $a->value = print_r($value, true);
-            debugging(get_string('nonprimative', 'portfolio', $a));
-            return;
+        if (empty($this->formats)) {
+            // use the caller defaults
+            $this->set_formats();
         }
-        $linkoutput .= 'ca_' . $key . '=' . $value . '&amp;';
-        $formoutput .= "\n" . '<input type="hidden" name="ca_' . $key . '" value="' . $value . '" />';
-    }
-    $formoutput .= "\n" . '<input type="hidden" name="callbackfile" value="' . $callbackfile . '" />';
-    $formoutput .= "\n" . '<input type="hidden" name="callbackclass" value="' . $callbackclass . '" />';
-    $formoutput .= "\n" . '<input type="hidden" name="course" value="' . (!empty($COURSE) ? $COURSE->id : 0) . '" />';
-    $linkoutput .= 'callbackfile=' . $callbackfile . '&amp;callbackclass='
-        . $callbackclass . '&amp;course=' . (!empty($COURSE) ? $COURSE->id : 0);
-    $selectoutput = '';
-    if (count($instances) == 1) {
-        $instance = array_shift($instances);
-        $formats = portfolio_supported_formats_intersect($callersupports, $instance->supported_formats());
-        if (count($formats) == 0) {
-            // bail. no common formats.
-            debugging(get_string('nocommonformats', 'portfolio', $callbackclass));
-            return;
+        $formoutput = '<form method="post" action="' . $CFG->wwwroot . '/portfolio/add.php" id="portfolio-add-button">' . "\n";
+        $linkoutput = '<a href="' . $CFG->wwwroot . '/portfolio/add.php?';
+        foreach ($this->callbackargs as $key => $value) {
+            if (!empty($value) && !is_string($value) && !is_numeric($value)) {
+                $a->key = $key;
+                $a->value = print_r($value, true);
+                debugging(get_string('nonprimative', 'portfolio', $a));
+                return;
+            }
+            $linkoutput .= 'ca_' . $key . '=' . $value . '&amp;';
+            $formoutput .= "\n" . '<input type="hidden" name="ca_' . $key . '" value="' . $value . '" />';
         }
-        if ($error = portfolio_instance_sanity_check($instance)) {
-            // bail, plugin is misconfigured
-            debugging(get_string('instancemisconfigured', 'portfolio', get_string($error[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
-            return;
+        $formoutput .= "\n" . '<input type="hidden" name="callbackfile" value="' . $this->callbackfile . '" />';
+        $formoutput .= "\n" . '<input type="hidden" name="callbackclass" value="' . $this->callbackclass . '" />';
+        $formoutput .= "\n" . '<input type="hidden" name="course" value="' . (!empty($COURSE) ? $COURSE->id : 0) . '" />';
+        $linkoutput .= 'callbackfile=' . $this->callbackfile . '&amp;callbackclass='
+            . $this->callbackclass . '&amp;course=' . (!empty($COURSE) ? $COURSE->id : 0);
+        $selectoutput = '';
+        if (count($this->instances) == 1) {
+            $instance = array_shift($this->instances);
+            $formats = portfolio_supported_formats_intersect($this->formats, $instance->supported_formats());
+            if (count($formats) == 0) {
+                // bail. no common formats.
+                debugging(get_string('nocommonformats', 'portfolio', $this->callbackclass));
+                return;
+            }
+            if ($error = portfolio_instance_sanity_check($instance)) {
+                // bail, plugin is misconfigured
+                debugging(get_string('instancemisconfigured', 'portfolio', get_string($error[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
+                return;
+            }
+            $formoutput .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
+            $linkoutput .= '&amp;instance=' . $instance->get('id');
         }
-        $formoutput .= "\n" . '<input type="hidden" name="instance" value="' . $instance->get('id') . '" />';
-        $linkoutput .= '&amp;instance=' . $instance->get('id');
-    }
-    else {
-        $selectoutput = portfolio_instance_select($instances, $callersupports, $callbackclass, 'instance', true);
-    }
+        else {
+            $selectoutput = portfolio_instance_select($this->instances, $this->formats, $this->callbackclass, 'instance', true);
+        }
 
-    if (empty($addstr)) {
-        $addstr = get_string('addtoportfolio', 'portfolio');
-    }
-    if (empty($format)) {
-        $format = PORTFOLIO_ADD_FULL_FORM;
-    }
-    switch ($format) {
-        case PORTFOLIO_ADD_FULL_FORM:
-            $formoutput .= $selectoutput;
-            $formoutput .= "\n" . '<input type="submit" value="' . $addstr .'" />';
-            $formoutput .= "\n" . '</form>';
-        break;
-        case PORTFOLIO_ADD_ICON_FORM:
-            $formoutput .= $selectoutput;
-            $formoutput .= "\n" . '<input type="image" src="' . $CFG->pixpath . '/t/portfolio.gif" alt=' . $addstr .'" />';
-            $formoutput .= "\n" . '</form>';
-        break;
-        case PORTFOLIO_ADD_ICON_LINK:
-            $linkoutput .= '"><img src="' . $CFG->pixpath . '/t/portfolio.gif" alt=' . $addstr .'" /></a>';
-        break;
-        case PORTFOLIO_ADD_TEXT_LINK:
-            $linkoutput .= '">' . $addstr .'</a>';
-        break;
-        default:
-            debugging(get_string('invalidaddformat', 'portfolio', $format));
-    }
-    $output = (in_array($format, array(PORTFOLIO_ADD_FULL_FORM, PORTFOLIO_ADD_ICON_FORM)) ? $formoutput : $linkoutput);
-    if ($return) {
+        if (empty($addstr)) {
+            $addstr = get_string('addtoportfolio', 'portfolio');
+        }
+        if (empty($format)) {
+            $format = PORTFOLIO_ADD_FULL_FORM;
+        }
+        switch ($format) {
+            case PORTFOLIO_ADD_FULL_FORM:
+                $formoutput .= $selectoutput;
+                $formoutput .= "\n" . '<input type="submit" value="' . $addstr .'" />';
+                $formoutput .= "\n" . '</form>';
+            break;
+            case PORTFOLIO_ADD_ICON_FORM:
+                $formoutput .= $selectoutput;
+                $formoutput .= "\n" . '<input type="image" src="' . $CFG->pixpath . '/t/portfolio.gif" alt=' . $addstr .'" />';
+                $formoutput .= "\n" . '</form>';
+            break;
+            case PORTFOLIO_ADD_ICON_LINK:
+                $linkoutput .= '"><img src="' . $CFG->pixpath . '/t/portfolio.gif" alt=' . $addstr .'" /></a>';
+            break;
+            case PORTFOLIO_ADD_TEXT_LINK:
+                $linkoutput .= '">' . $addstr .'</a>';
+            break;
+            default:
+                debugging(get_string('invalidaddformat', 'portfolio', $format));
+        }
+        $output = (in_array($format, array(PORTFOLIO_ADD_FULL_FORM, PORTFOLIO_ADD_ICON_FORM)) ? $formoutput : $linkoutput);
         return $output;
-    } else {
-        echo $output;
     }
-    return true;
+
+    /**
+    * does some internal checks
+    * these are not errors, just situations
+    * where it's not appropriate to add the button
+    */
+    private function is_renderable() {
+        global $CFG;
+        if (empty($CFG->enableportfolios)) {
+            return false;
+        }
+        if (defined('PORTFOLIO_INTERNAL')) {
+            // something somewhere has detected a risk of this being called during inside the preparation
+            // eg forum_print_attachments
+            return false;
+        }
+        if (!$this->instances) {
+            return false;
+        }
+        return true;
+    }
+}
+
+
+function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null, $format=PORTFOLIO_ADD_FULL_FORM, $addstr=null, $return=false, $callersupports=null) {
+    $button = new portfolio_add_button();
+    $button->set_callback_options($callbackclass, $callbackargs, $callbackfile);
+    $button->set_formats($callersupports);
+    if ($return) {
+        return $button->to_html($format, $addstr);
+    }
+    $button->render();
 }
 
 /**
