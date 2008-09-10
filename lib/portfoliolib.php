@@ -82,6 +82,7 @@ class portfolio_add_button {
             $a->finish = $CFG->wwwroot . '/portfolio/add.php?id=' . $SESSION->portfolioexport;
             throw new portfolio_button_exception('alreadyexporting', 'portfolio', null, $a);
         }
+        $this->instances = portfolio_instances();
         if (empty($options)) {
             return true;
         }
@@ -91,7 +92,6 @@ class portfolio_add_button {
             }
             $this->{$key} = $value;
         }
-        $this->instances = portfolio_instances();
     }
 
     /*
@@ -157,7 +157,7 @@ class portfolio_add_button {
     *                    this is whole string, not key.  optional, defaults to 'Add to portfolio';
     */
     public function render($format=null, $addstr=null) {
-        echo $this->tohtml($format, $addstr);
+        echo $this->to_html($format, $addstr);
     }
 
     /*
@@ -174,8 +174,8 @@ class portfolio_add_button {
         if (!$this->is_renderable()) {
             return;
         }
-        if (empty($this->callbackclass) || $this->callbackfile) {
-            throw new portfolio_button_exception('mustcallsetcallbackoptions', 'portfolio');
+        if (empty($this->callbackclass) || empty($this->callbackfile)) {
+            throw new portfolio_button_exception('mustsetcallbackoptions', 'portfolio');
         }
         if (empty($this->formats)) {
             // use the caller defaults
@@ -264,7 +264,7 @@ class portfolio_add_button {
             // eg forum_print_attachments
             return false;
         }
-        if (!$this->instances) {
+        if (empty($this->instances) || count($this->instances) == 0) {
             return false;
         }
         return true;
