@@ -1520,14 +1520,13 @@ _client.print_header = function(){
     var panel = new YAHOO.util.Element('panel-$suffix');
     var str = '';
     str += '<div id="repo-tb-$suffix"></div>';
-    str += _client.uploadcontrol();
     panel.set('innerHTML', str);
     _client.makepath();
 }
 _client.print_footer = function(){
     var panel = new YAHOO.util.Element('panel-$suffix');
-    panel.get('element').innerHTML += _client.makepage();
     panel.get('element').innerHTML += _client.uploadcontrol();
+    panel.get('element').innerHTML += _client.makepage();
     var oDiv = document.getElementById('repo-tb-$suffix');
     if(!_client.ds.nosearch){
         var search = document.createElement('A');
@@ -1814,8 +1813,10 @@ _client.makepath = function(){
             var el = new YAHOO.util.Element(link.id);
             el.id = _client.repositoryid;
             el.path = _client.ds.path[i].path;
-            el.on('click', function(){
-                repository_client_$suffix.req(this.id, this.path, 0);
+            el.on('contentReady', function(){
+                this.on('click', function(){
+                    repository_client_$suffix.req(this.id, this.path, 0);
+                })
             });
         }
     }
