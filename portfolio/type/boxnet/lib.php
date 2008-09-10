@@ -61,9 +61,6 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     }
 
     public function get_continue_url() {
-        // @todo this was a *guess* based on what urls I got clicking around the interface.
-        // the #0:f:<folderid> part seems fragile...
-        // but I couldn't find a documented permalink scheme.
         return 'http://box.net/files#0:f:' . $this->get_export_config('folder');
     }
 
