@@ -5655,10 +5655,12 @@ class admin_setting_managerepository extends admin_setting {
             }
             $delete = '<a href="' . $this->baseurl . '&amp;delete=' .  $i->get_typename() . '">'
                         . $deletestr . '</a>' . "\n";
-            
+
+            $hidetitle = $i->get_visible() ? get_string('clicktohide', 'repository') : get_string('clicktoshow', 'repository');
             $hiddenshow = ' <a href="' . $this->baseurl . '&amp;hide=' . $i->get_typename() . '">'
                           .'<img src="' . $CFG->pixpath . '/i/' . ($i->get_visible() ? 'hide' : 'show') . '.gif"'
-                              .' alt="' . get_string($i->get_visible() ? 'hide' : 'show') . '" />'
+                              .' alt="' . $hidetitle . '" '
+                              .' title="' . $hidetitle . '" />'
                           .'</a>' . "\n";
 
              // display up/down link
