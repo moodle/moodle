@@ -189,7 +189,7 @@
 
         $remotehost = $DB->get_record_sql($sql, array($user->mnethostid));
 
-        echo '<p class="errorboxcontent">'.get_string('remote'.$remotehost->application.'user')." <br />\n";
+        echo '<p class="errorboxcontent">'.get_string('remoteappuser', $remotehost->application)." <br />\n";
         if ($USER->id == $user->id) {
             if ($remotehost->application =='moodle') {
                 echo "Remote {$remotehost->display_name}: <a href=\"{$remotehost->wwwroot}/user/edit.php\">{$remotehost->name}</a> ".get_string('editremoteprofile')." </p>\n";
