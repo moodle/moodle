@@ -275,6 +275,38 @@ class portfolio_add_button {
         }
         return true;
     }
+
+    /**
+     * Getter for $format property
+     * @return array
+     */
+    public function get_formats() {
+        return $this->formats;
+    }
+
+    /**
+     * Getter for $callbackargs property
+     * @return array
+     */
+    public function get_callbackargs() {
+        return $this->callbackargs;
+    }
+
+    /**
+     * Getter for $callbackfile property
+     * @return array
+     */
+    public function get_callbackfile() {
+        return $this->callbackfile;
+    }
+
+    /**
+     * Getter for $callbackclass property
+     * @return array
+     */
+    public function get_callbackclass() {
+        return $this->callbackclass;
+    }
 }
 
 
