@@ -2191,7 +2191,7 @@ function question_edit_url($context) {
     $baseurl = $CFG->wwwroot . '/question/edit.php?';
     $defaultcategory = question_get_default_category($context->id);
     if ($defaultcategory) {
-        $baseurl .= 'cat=' . $defaultcategory->id . '&amp;';
+        $baseurl .= 'cat=' . $defaultcategory->id . ',' . $context->id . '&amp;';
     }
     switch ($context->contextlevel) {
         case CONTEXT_SYSTEM:

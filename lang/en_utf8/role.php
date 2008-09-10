@@ -25,6 +25,7 @@ $string['category:create'] = 'Create categories';
 $string['category:delete'] = 'Delete categories';
 $string['category:update'] = 'Update categories';
 $string['category:visibility'] = 'See hidden categories';
+$string['context'] = 'Context';
 $string['course:activityvisibility'] = 'Hide/show activities';
 $string['course:bulkmessaging'] = 'Send a message to many people';
 $string['course:create'] = 'Create courses';
