@@ -227,7 +227,13 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         }
         while (true) {
             if (!array_key_exists('file_name', $this->accounttree) || !in_array($newname, $this->accounttree['file_name'])) {
-                return $this->boxclient->renameFile($fileid, $newname);
+                for ($i = 0; $i < 2; $i++) {
+                    if ($this->boxclient->renameFile($fileid, $newname)) {
+                        return true;
+                    }
+                }
+                debugging("tried three times to rename file and failed");
+                return false;
             }
             $newname = $prefix . '(' . $count . ')' . $suffix;
             $count++;
