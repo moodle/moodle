@@ -1,5 +1,10 @@
 <?php
 /**
+ * Modified by Dongsheng Cai <dongsheng@moodle.com>
+ * @version: $Id$
+ */
+
+/**
  * Box REST Client Library for PHP5 Developers
  *
  *
@@ -10,11 +15,6 @@
  * copyright Box.net 2007
  * Available for use and distribution under GPL-license
  * Go to http://www.gnu.org/licenses/gpl-3.0.txt for full text
- */
-
-/**
- * Modified by Dongsheng Cai <dongsheng@cvs.moodle.org>
- *
  */
 
 class boxclient {

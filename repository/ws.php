@@ -106,6 +106,8 @@ case 'login':
     }
     break;
 case 'callback':
+    // call opener window to refresh repository
+    // the callback url should be something like this:
     // http://xx.moodle.com/repository/ws.php?action=callback&repo_id=1&sid=xxx
     // sid is the attached auth token from external source
     $js  =<<<EOD

@@ -1211,49 +1211,43 @@ function repository_get_client($context){
     $strpreview   = get_string('preview', 'repository');
     $strupload    = get_string('upload', 'repository');
     $struploading = get_string('uploading', 'repository');
-    $css = <<<EOD
-<style type="text/css">
-#panel-$suffix{padding:0;margin:0; text-align:left;}
-#file-picker-$suffix{font-size:12px;}
-#file-picker-$suffix strong{background:#FFFFCC}
-#file-picker-$suffix a{color: #336699}
-#file-picker-$suffix a:hover{background:#003366;color:white}
-#repo-viewbar-$suffix{width:300px;float:left}
-#search-div-$suffix{float:right}
-#repo-tb-$suffix{padding: .8em;background: #FFFFCC;color:white;text-align:center}
-</style>
-EOD;
-
+    $css = '';
     if (!isset($CFG->repo_yui_loaded)) {
         $css .= <<<EOD
-<style type="text/css">
-.repo-list{list-style-type:none;padding:0}
-.repo-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
-.repo-name{display:block;padding: 3px;margin-bottom: 5px}
-.paging{margin:10px 5px; clear:both;}
-.paging a{padding: 4px;border: 1px solid #CCC}
-.repo-path{margin: 4px;border-bottom: 1px dotted gray;}
-.repo-path a{padding: 4px;}
-.rename-form{text-align:center}
-.rename-form p{margin: 1em;}
-.upload-form{margin: 2em 0;text-align:center}
-p.upload a{font-size: 14px;background: #ccc;color:white;padding: 5px}
-p.upload a:hover {background: grey;color:white}
-.file_name{color:green;}
-.file_date{color:blue}
-.file_size{color:gray}
-.grid{width:80px; float:left;text-align:center;}
-.grid div{width: 80px; overflow: hidden}
-.grid p{margin:0;padding:0;background: #FFFFCC}
-.grid .label{height:48px}
-.grid span{background: #EEF9EB;color:gray}
-</style>
 <style type="text/css">
 @import "$CFG->httpswwwroot/lib/yui/resize/assets/skins/sam/resize.css";
 @import "$CFG->httpswwwroot/lib/yui/container/assets/skins/sam/container.css";
 @import "$CFG->httpswwwroot/lib/yui/layout/assets/skins/sam/layout.css";
 @import "$CFG->httpswwwroot/lib/yui/button/assets/skins/sam/button.css";
 @import "$CFG->httpswwwroot/lib/yui/assets/skins/sam/treeview.css";
+</style>
+<style type="text/css">
+.file-picker{font-size:12px;}
+.file-picker strong{background:#FFFFCC}
+.file-picker a{color: #336699}
+.file-picker a:hover{background:#003366;color:white}
+.fp-panel{padding:0;margin:0; text-align:left;}
+.fp-searchbar{float:right}
+.fp-viewbar{width:300px;float:left}
+.fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center}
+.fp-toolbar a{padding: 0 5px}
+.fp-list{list-style-type:none;padding:0}
+.fp-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
+.fp-repo-name{display:block;padding: 3px;margin-bottom: 5px}
+.fp-pathbar{margin: 4px;border-bottom: 1px dotted gray;}
+.fp-pathbar a{padding: 4px;}
+.fp-rename-form{text-align:center}
+.fp-rename-form p{margin: 1em;}
+.fp-upload-form{margin: 2em 0;text-align:center}
+.fp-upload-btn a{font-size: 14px;background: #ccc;color:white;padding: 5px}
+.fp-upload-btn a:hover {background: grey;color:white}
+.fp-paging{margin:10px 5px; clear:both;text-align:center}
+.fp-paging a{padding: 4px;border: 1px solid #CCC}
+.fp-grid{width:80px; float:left;text-align:center;}
+.fp-grid div{width: 80px; overflow: hidden}
+.fp-grid p{margin:0;padding:0;background: #FFFFCC}
+.fp-grid .label{height:48px}
+.fp-grid span{background: #EEF9EB;color:gray}
 </style>
 EOD;
 
@@ -1301,7 +1295,7 @@ function _client(){
     var btn_thumb = {label: '$strthumbview', value: 't', onclick: {fn: _client.viewthumb}};
     var repo_list = null;
     var resize = null;
-    var panel = new YAHOO.widget.Panel('file-picker-$suffix', {
+    var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
         draggable: true,
         close: true,
         modal: true,
@@ -1311,18 +1305,18 @@ function _client(){
     });
     // construct code section
     {
-        panel.setHeader('$strtitle');
-        panel.setBody('<div id="layout-$suffix"></div>');
-        panel.beforeRenderEvent.subscribe(function() {
+        filepicker.setHeader('$strtitle');
+        filepicker.setBody('<div id="layout-$suffix"></div>');
+        filepicker.beforeRenderEvent.subscribe(function() {
             Event.onAvailable('layout-$suffix', function() {
                 layout = new YAHOO.widget.Layout('layout-$suffix', {
                     height: 480, width: 630,
                     units: [
                         {position: 'top', height: 32, resize: false,
-                        body:'<div class="yui-buttongroup" id="repo-viewbar-$suffix"></div><div id="search-div-$suffix"></div>', gutter: '2'},
+                        body:'<div class="yui-buttongroup fp-viewbar" id="repo-viewbar-$suffix"></div><div class="fp-searchbar" id="search-div-$suffix"></div>', gutter: '2'},
                         {position: 'left', width: 200, resize: true,
-                        body:'<ul class="repo-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
-                        {position: 'center', body: '<div id="panel-$suffix"></div>',
+                        body:'<ul class="fp-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
+                        {position: 'center', body: '<div class="fp-panel" id="panel-$suffix"></div>',
                         scroll: true, gutter: '0 2 0 0' }
                     ]
                 });
@@ -1350,7 +1344,7 @@ function _client(){
             layout.set('width', (args.width - PANEL_BODY_PADDING));
             layout.resize();
 
-        }, panel, true);
+        }, filepicker, true);
         _client.viewbar = new YAHOO.widget.ButtonGroup({
             id: 'btngroup-$suffix',
             name: 'buttons',
@@ -1360,14 +1354,14 @@ function _client(){
     }
     // public method
     this.show = function(){
-        panel.show();
+        filepicker.show();
     }
     this.hide = function(){
-        panel.hide();
+        filepicker.hide();
     }
     this.create_picker = function(){
         // display UI
-        panel.render();
+        filepicker.render();
         _client.viewbar.addButtons([btn_list, btn_thumb]);
         // init repository list
         repo_list = new YAHOO.util.Element('repo-list-$suffix');
@@ -1380,7 +1374,6 @@ function _client(){
                     var panel = new YAHOO.util.Element('panel-$suffix');
                     try {
                         if(!o.responseText){
-                            var panel = new YAHOO.util.Element('panel-$suffix');
                             panel.get('element').innerHTML = 'no';
                             return;
                         }
@@ -1390,7 +1383,6 @@ function _client(){
                     }
                     _client.ds = {};
                     if(!json.list || json.list.length<1){
-                        var panel = new YAHOO.util.Element('panel-$suffix');
                         panel.get('element').innerHTML = 'no';
                         return;
                     }
@@ -1431,7 +1423,7 @@ function _client(){
                 link.href = '###';
                 link.id = 'repo-call-$suffix-'+repo.id;
                 link.appendChild(icon);
-                link.className = 'repo-name';
+                link.className = 'fp-repo-name';
                 link.onclick = function(){
                     var re = /repo-call-$suffix-(\d+)/i;
                     var id = this.id.match(re);
@@ -1491,7 +1483,7 @@ _client.loading = function(type, name){
 }
 _client.rename = function(oldname, url, icon, repo_id){
     var panel = new YAHOO.util.Element('panel-$suffix');
-    var html = '<div class="rename-form">';
+    var html = '<div class="fp-rename-form">';
     _client.repositoryid=repo_id;
     html += '<p><img src="'+icon+'" /></p>';
     html += '<p><label for="newname-$suffix">$strsaveas</label>';
@@ -1552,7 +1544,7 @@ _client.viewfiles = function(){
 _client.print_header = function(){
     var panel = new YAHOO.util.Element('panel-$suffix');
     var str = '';
-    str += '<div id="repo-tb-$suffix"></div>';
+    str += '<div class="fp-toolbar" id="repo-tb-$suffix"></div>';
     panel.set('innerHTML', str);
     _client.makepath();
 }
@@ -1618,7 +1610,7 @@ _client.viewthumb = function(ds){
     var count = 0;
     for(k in list){
         var el = document.createElement('div');
-        el.className='grid';
+        el.className='fp-grid';
         var frame = document.createElement('DIV');
         frame.style.textAlign='center';
         var img = document.createElement('img');
@@ -1800,11 +1792,11 @@ _client.upload_cb = {
 _client.uploadcontrol = function() {
     var str = '';
     if(_client.ds.upload){
-        str += '<div id="'+_client.ds.upload.id+'_div" class="upload-form">';
+        str += '<div id="'+_client.ds.upload.id+'_div" class="fp-upload-form">';
         str += '<form id="'+_client.ds.upload.id+'" onsubmit="return false">';
         str += '<label for="'+_client.ds.upload.id+'-file">'+_client.ds.upload.label+'</label>';
         str += '<input type="file" id="'+_client.ds.upload.id+'-file" name="repo_upload_file" />';
-        str += '<p class="upload"><a href="###" onclick="return repository_client_$suffix.upload();">$strupload</a></p>';
+        str += '<p class="fp-upload-btn"><a href="###" onclick="return repository_client_$suffix.upload();">$strupload</a></p>';
         str += '</form>';
         str += '</div>';
     }
@@ -1813,7 +1805,7 @@ _client.uploadcontrol = function() {
 _client.makepage = function(){
     var str = '';
     if(_client.ds.pages){
-        str += '<div class="paging" id="paging-$suffix">';
+        str += '<div class="fp-paging" id="paging-$suffix">';
         for(var i = 1; i <= _client.ds.pages; i++) {
             str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
             str += String(i);
@@ -1832,7 +1824,7 @@ _client.makepath = function(){
     if(p && p.length!=0){
         var oDiv = document.createElement('DIV');
         oDiv.id = "path-$suffix";
-        oDiv.className = "repo-path";
+        oDiv.className = "fp-pathbar";
         panel.get('element').appendChild(oDiv);
         for(var i = 0; i < _client.ds.path.length; i++) {
             var link = document.createElement('A');

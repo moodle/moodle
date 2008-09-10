@@ -79,6 +79,7 @@ function callpicker_$suffix(){
     document.body.className += ' yui-skin-sam';
     var picker = document.createElement('DIV');
     picker.id = 'file-picker-$suffix';
+    picker.className = "file-picker";
     document.body.appendChild(picker);
     var el=document.getElementById('${id}_${suffix}');
     openpicker_$suffix({"env":"form", 'target':el, 'callback':updatefile_$suffix})

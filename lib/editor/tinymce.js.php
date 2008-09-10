@@ -221,6 +221,7 @@ $output .= <<<EOF
         var suffix = id2suffix[tinyMCE.selectedInstance.editorId];
         document.body.className += ' yui-skin-sam';
         var picker = document.createElement('DIV');
+        picker.className = "file-picker";
         picker.id = 'file-picker-'+suffix;
         document.body.appendChild(picker);
         var el = win.document.getElementById(field_name);
