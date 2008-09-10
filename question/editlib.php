@@ -844,27 +844,25 @@ class question_edit_contexts{
 //this determines which contexts' categories are available. At least one
 //page is displayed if user has one of the capability on at least one context
 $QUESTION_EDITTABCAPS = array(
-                            'editq' => array('moodle/question:add',
-                                'moodle/question:editmine',
-                                'moodle/question:editall',
-                                'moodle/question:viewmine',
-                                'moodle/question:viewall',
-                                'moodle/question:usemine',
-                                'moodle/question:useall',
-                                'moodle/question:movemine',
-                                'moodle/question:moveall'),
-                            'questions'=>array('moodle/question:add',
-                                'moodle/question:editmine',
-                                'moodle/question:editall',
-                                'moodle/question:viewmine',
-                                'moodle/question:viewall',
-                                'moodle/question:movemine',
-                                'moodle/question:moveall'),
-                           'categories'=>array('moodle/question:managecategory'),
-                           'import'=>array('moodle/question:add'),
-                           'export'=>array('moodle/question:viewall', 'moodle/question:viewmine'));
-
-
+        'editq' => array('moodle/question:add',
+            'moodle/question:editmine',
+            'moodle/question:editall',
+            'moodle/question:viewmine',
+            'moodle/question:viewall',
+            'moodle/question:usemine',
+            'moodle/question:useall',
+            'moodle/question:movemine',
+            'moodle/question:moveall'),
+        'questions'=>array('moodle/question:add',
+            'moodle/question:editmine',
+            'moodle/question:editall',
+            'moodle/question:viewmine',
+            'moodle/question:viewall',
+            'moodle/question:movemine',
+            'moodle/question:moveall'),
+        'categories'=>array('moodle/question:managecategory'),
+        'import'=>array('moodle/question:add'),
+        'export'=>array('moodle/question:viewall', 'moodle/question:viewmine'));
 
 /**
  * Make sure user is logged in as required in this context.
