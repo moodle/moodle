@@ -144,6 +144,12 @@ class portfolio_add_button {
             }
             $formats = call_user_func(array($this->callbackclass, 'supported_formats'));
         }
+        $allformats = portfolio_supported_formats();
+        foreach ($formats as $f) {
+            if (!array_key_exists($f, $allformats)) {
+                throw new portfolio_button_exception('invalidformat', 'portfolio', $f);
+            }
+        }
         $this->formats = $formats;
     }
 
