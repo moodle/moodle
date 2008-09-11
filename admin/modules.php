@@ -138,8 +138,8 @@
             }
 
             // And the module configuration records
-            if (!$DB->execute("DELETE FROM {config} WHERE name LIKE ?", array("{$module->name}_%"))) {
-                notify("Error occurred while deleting the $strmodulename records from the config table");
+            if (!unset_all_config_for_plugin($module->name)) {
+                notify(get_string('errordeletingconfig', 'admin', $strmodulename));
             }
 
             // cleanup the gradebook

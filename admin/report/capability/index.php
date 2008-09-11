@@ -144,7 +144,8 @@ if ($capability) {
     }
 
     // Print the report heading.
-    print_heading(get_string('reportforcapability', 'report_capability', get_capability_string($capability)));
+    print_heading(get_string('reportforcapability', 'report_capability', get_capability_string($capability)),
+            '', 2, 'main', false, 'report');
     if (count($cleanedroleids) != count($allroles)) {
         $rolenames = array();
         foreach ($cleanedroleids as $roleid) {

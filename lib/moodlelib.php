@@ -775,18 +775,31 @@ function get_config($plugin=NULL, $name=NULL) {
  * @param string $name the key to set
  * @param string $plugin (optional) the plugin scope
  * @uses $CFG
- * @return bool
+ * @return boolean whether the operation succeeded.
  */
 function unset_config($name, $plugin=NULL) {
     global $CFG, $DB;
 
-    unset($CFG->$name);
-
     if (empty($plugin)) {
+        unset($CFG->$name);
         return $DB->delete_records('config', array('name'=>$name));
     } else {
         return $DB->delete_records('config_plugins', array('name'=>$name, 'plugin'=>$plugin));
     }
+}
+
+/**
+ * Remove all the config variables for a given plugin.
+ *
+ * @param string $plugin a plugin, for example 'quiz' or 'qtype_multichoice';
+ * @return boolean whether the operation succeeded.
+ */
+function unset_all_config_for_plugin($plugin) {
+    global $DB;
+    $success = true;
+    $success = $success && $DB->delete_records('config_plugins', array('plugin' => $plugin));
+    $success = $success && $DB->delete_records_select('config', 'name LIKE ?', array($plugin . '_%'));
+    return $success;
 }
 
 /**

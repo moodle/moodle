@@ -3812,7 +3812,7 @@ function print_headline($text, $size=2, $return=false) {
  * @param string $align The alignment of the printed paragraph of text
  * @param int $size The size to set the font for text display.
  */
-function print_heading($text, $align='', $size=2, $class='main', $return=false) {
+function print_heading($text, $align='', $size=2, $class='main', $return=false, $id='') {
     global $verbose;
     if ($align) {
         $align = ' style="text-align:'.$align.';"';
@@ -3820,8 +3820,11 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false) 
     if ($class) {
         $class = ' class="'.$class.'"';
     }
+    if ($id) {
+        $id = ' id="'.$id.'"';
+    }
     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-    $output = "<h$size $align $class>".stripslashes_safe($text)."</h$size>";
+    $output = "<h$size $align $class $id>".stripslashes_safe($text)."</h$size>";
     } else if ( CLI_UPGRADE ) {
         $output = stripslashes_safe($text);
         if ($size == 1) {
