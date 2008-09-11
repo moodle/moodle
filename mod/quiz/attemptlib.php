@@ -539,6 +539,7 @@ class quiz_attempt extends quiz {
 
             case QUESTION_EVENTSAVE:
             case QUESTION_EVENTGRADE:
+            case QUESTION_EVENTSUBMIT:
                 return 'answered';
 
             case QUESTION_EVENTCLOSEANDGRADE:
