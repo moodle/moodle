@@ -20,7 +20,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
             if (!$created = $this->boxclient->createFolder($newfolder, array('share' => 0))) {
                 throw new portfolio_plugin_exception('foldercreatefailed', 'portfolio_boxnet');
             }
-            $this->folders[$created['folder_id']] = $created['folder_type'];
+            $this->folders[$created['folder_id']] = $created['folder_name'];
             $this->set_export_config(array('folder' => $created['folder_id']));
         }
         return true; // don't do anything else for this plugin, we want to send all files as they are.
@@ -189,8 +189,6 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         if (!is_array($this->accounttree)) {
             return false;
         }
-
-
     }
 
     private function get_folder_list() {
