@@ -205,11 +205,11 @@ class repository_boxnet extends repository{
     }
 
     public static function has_instance_config() {
-        return true;
+        return false;
     }
 
     public static function has_multiple_instances(){
-        return true;
+        return false;
     }
 
     public static function get_admin_option_names(){
@@ -232,8 +232,8 @@ class repository_boxnet extends repository{
     }
 
     public function instance_config_form(&$mform) {
-        $share_url = get_config('boxnet', 'share_url');
-        $mform->addElement('text', 'share_url', get_string('shareurl', 'repository_boxnet'), array('value'=>$share_url));
+        //$share_url = get_config('boxnet', 'share_url');
+        $mform->addElement('text', 'share_url', get_string('shareurl', 'repository_boxnet'));
     }
 }
 

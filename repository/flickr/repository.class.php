@@ -217,18 +217,41 @@ class repository_flickr extends repository{
     }
 
     public static function has_instance_config() {
-        return false;
+        return true;
+    }
+
+    public function instance_config_form(&$mform) {
+        $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr'));
+        //$mform->addRule('email_address', get_string('required'), 'required', null, 'client');
+    }
+
+    public static function get_instance_option_names(){
+        return array('email_address');
     }
 
     public function admin_config_form(&$mform) {
         $api_key = get_config('flickr', 'api_key');
+        $secret = get_config('flickr', 'secret');
+        $callbackurl = get_config('flickr', 'callbackurl');
         if (empty($api_key)) {
             $api_key = '';
         }
+        if (empty($secret)) {
+            $secret = '';
+        }
+        if (empty($callbackurl)) {
+            $callbackurl = '';
+        }
         $strrequired = get_string('required');
-        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_boxnet'), array('value'=>$api_key,'size' => '40'));
+        $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr'), array('value'=>$api_key,'size' => '40'));
+        $mform->addElement('text', 'secret', get_string('secret', 'repository_flickr'), array('value'=>$secret,'size' => '40'));
+        $mform->addElement('text', 'callbackurl', get_string('callbackurl', 'repository_flickr'), array('value'=>$callbackurl,'size' => '40'));
+
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
+        $mform->addRule('secret', $strrequired, 'required', null, 'client');
+        $mform->addRule('callbackurl', $strrequired, 'required', null, 'client');
     }
+
     public static function get_admin_option_names(){
         return array('api_key');
     }
