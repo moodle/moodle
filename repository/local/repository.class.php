@@ -107,7 +107,8 @@ class repository_local extends repository {
      */
     private function build_tree($fileinfo, $search, $dynamicmode, &$list) {
         global $CFG;
-           
+
+        $filecount = 0;
         $children = $fileinfo->get_children();
 
         foreach ($children as $child) {
@@ -143,11 +144,15 @@ class repository_local extends repository {
                     if ($search && stristr($tmp['title'], $search) !== false) {
                         $_search = false;
                     }
-                    $filecount = $this->build_tree($child, $_search, $dynamicmode, $tmp['children']);
+                    if ( $_filecount = $this->build_tree($child, $_search, $dynamicmode, $tmp['children']) ) {
+                        $tmp['expanded'] = 1;
+                    }
+
                 //}
                 
-                if (!$search || $filecount || (stristr($tmp['title'], $search) !== false)) {
+                if (!$search || $_filecount || (stristr($tmp['title'], $search) !== false)) {
                     $list[] = $tmp;
+                    $filecount += $_filecount;
                 }
 
             } else { // not a directory
@@ -162,10 +167,11 @@ class repository_local extends repository {
                     'source' => $child->get_url(),
                     'thumbnail' => $CFG->pixpath .'/f/'. mimeinfo_from_type("icon", $filetype)
                 );
+                $filecount++;
             }
         }
 
-        return $list;
+        return $filecount;
     }
 
     public function print_listing() {
