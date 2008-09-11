@@ -54,46 +54,42 @@ class repository_local extends repository {
         $filename = null;
         $filearea = null;
         $path = '/';
+        $ret['dynload'] = false;
 
-        if ($encodedpath != '') {
-            list($filearea, $path) = $this->_decode_path($encodedpath);
-        }
-        
-        $count = 0;
-        
+        /// useful only if dynamic mode can be worked out.
+        //if ($encodedpath != '') {
+        //    list($filearea, $path) = $this->_decode_path($encodedpath);
+        //}
+
         if ($fileinfo = $browser->get_file_info(get_system_context(), $filearea, $itemid, $path, $filename)) {
             $ret['path'] = array();
             $params = $fileinfo->get_params();
             $filearea = $params['filearea'];
+            //todo: fix this call, and similar ones here and in build_tree - encoding path works only for real folders
             $ret['path'][] = $this->_encode_path($filearea, $path, $fileinfo->get_visible_name());
             if ($fileinfo->is_directory()) {
                 $level = $fileinfo->get_parent();
                 while ($level) {
                     $params = $level->get_params();
-                    $ret['path'] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $ret['path'][] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
                     $level = $level->get_parent();
                 }
             }
-            $ret['list'] = $this->build_tree($fileinfo, $search); //, $ret['path']);
+            $filecount = $this->build_tree($fileinfo, $search, $ret['dynload'], $ret['list']);
             $ret['path'] = array_reverse($ret['path']);
         } else {
             // throw some "context/filearea/item/path/file not found" exception?
         }
 
-        // this statement tells the file picker to load files dynamically (don't send the content of directories)
-        // todo: add a thresold, where the picker automatically uses the dynamic mode - if there are too many files in
-        // sub-directories - this should be calculated with a quick query, for the whole tree. Better optimizations
-        // (like loading just a part of the sub-tree) can come later.
-        // if ($count > $config_thresold) {
-        //    $ret['dynload'] = true;
-        //} else {
-        $ret['dynload'] = false;
-        //}
-
         if (empty($ret['list'])) {
             throw new repository_exception('emptyfilelist', 'repository_local');
         } else {
-            return $ret;
+            // if using dynamic mode, only the subfolder needs be returned.
+            //if ($loadroot) {
+                return $ret;
+            //} else {
+            //    return $ret['list'];
+            //}
         }
     }
 
@@ -103,18 +99,17 @@ class repository_local extends repository {
      *
      * @param $fileinfo an object returned by file_browser::get_file_info()
      * @param $search searched string
-     * @param $path path to prepend to current element
-     * @param $currentcount (in recursion) current number of elements, triggers dynamic mode if there's more than thresold.
-     * @returns array describing the files under the passed $fileinfo 
+     * @param $dynamicmode bool no recursive call is done when in dynamic mode
+     * @param $list - the array containing the files under the passed $fileinfo
+     * @returns int the number of files found
      *
      * todo: take $search into account, and respect a threshold for dynamic loading
      */
-    private function build_tree($fileinfo, $search) { //, $path, &$currentcount) {
+    private function build_tree($fileinfo, $search, $dynamicmode, &$list) {
         global $CFG;
            
         $children = $fileinfo->get_children();
 
-        $list = array();
         foreach ($children as $child) {
             $filename = $child->get_visible_name();
             $filesize = $child->get_filesize();
@@ -128,7 +123,7 @@ class repository_local extends repository {
                 $level = $child->get_parent();
                 while ($level) {
                     $params = $level->get_params();
-                    $path = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
+                    $path[] = $this->_encode_path($params['filearea'], $params['filepath'], $level->get_visible_name());
                     $level = $level->get_parent();
                 }
                 
@@ -139,10 +134,27 @@ class repository_local extends repository {
                     'path' => array_reverse($path),
                     'thumbnail' => $CFG->pixpath .'/f/folder.gif'
                 );
-                $tmp['children'] = $this->build_tree($child, $search);
-                $list[] = $tmp;
+
+                //if ($dynamicmode && $child->is_writable()) {
+                //    $tmp['children'] = array();
+                //} else {
+                    // if folder name matches search, we send back all files contained.
+                    $_search = $search;
+                    if ($search && stristr($tmp['title'], $search) !== false) {
+                        $_search = false;
+                    }
+                    $filecount = $this->build_tree($child, $_search, $dynamicmode, $tmp['children']);
+                //}
+                
+                if (!$search || $filecount || (stristr($tmp['title'], $search) !== false)) {
+                    $list[] = $tmp;
+                }
 
             } else { // not a directory
+                // skip the file, if we're in search mode and it's not a match
+                if ($search && (stristr($filename, $search) === false)) {
+                    continue;
+                }
                 $list[] = array(
                     'title' => $filename,
                     'size' => $filesize,
