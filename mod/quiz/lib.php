@@ -740,7 +740,7 @@ function quiz_print_recent_mod_activity($activity, $courseid, $detail, $modnames
 
 /**
  * Pre-process the quiz options form data, making any necessary adjustments.
- * Called by add/update instance in this file, and the save code in admin/module.php.
+ * Called by add/update instance in this file.
  *
  * @param object $quiz The variables set on the form.
  */
