@@ -903,11 +903,9 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         || ($entry->userid == $USER->id
             && has_capability('mod/glossary:exportownentry', $context))) {
         require_once($CFG->libdir . '/portfoliolib.php');
-        $p = array(
-            'id' => $cm->id,
-            'entryid' => $entry->id,
-        );
-        $return .= portfolio_add_button('glossary_entry_portfolio_caller', $p, null, PORTFOLIO_ADD_ICON_LINK, null, true);
+        $button = new portfolio_add_button();
+        $button->set_callback_options('glossary_entry_portfolio_caller',  array('id' => $cm->id, 'entryid' => $entry->id));
+        $return .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
     }
     $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
 
@@ -2402,9 +2400,15 @@ class glossary_csv_portfolio_caller extends portfolio_module_caller_base {
     private $glossary;
     private $exportdata;
 
-    public function __construct($callbackargs) {
+    public static function expected_callbackargs() {
+        return array(
+            'id' => true,
+        );
+    }
+
+    public function load_data() {
         global $DB;
-        if (!$this->cm = get_coursemodule_from_id('glossary', $callbackargs['id'])) {
+        if (!$this->cm = get_coursemodule_from_id('glossary', $this->id)) {
             throw new portfolio_caller_exception('invalidid', 'glossary');
         }
         if (!$this->glossary = $DB->get_record('glossary', array('id' => $this->cm->instance))) {
@@ -2467,18 +2471,29 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
 
     private $glossary;
     private $entry;
+    protected $entryid;
 
-    public function __construct($callbackargs) {
+    public static function expected_callbackargs() {
+        return array(
+            'entryid' => true,
+            'id'      => true,
+        );
+    }
+
+    public function load_data() {
         global $DB;
-        if (!$this->cm = get_coursemodule_from_id('glossary', $callbackargs['id'])) {
+        if (!$this->cm = get_coursemodule_from_id('glossary', $this->id)) {
             throw new portfolio_caller_exception('invalidid', 'glossary');
         }
         if (!$this->glossary = $DB->get_record('glossary', array('id' => $this->cm->instance))) {
             throw new portfolio_caller_exception('invalidid', 'glossary');
         }
-        if (!array_key_exists('entryid', $callbackargs)
-            || !$this->entry = $DB->get_record('glossary_entries', array('id' => $callbackargs['entryid']))) {
-            throw new portfolio_caller_exception('noentry', 'glossary');
+        if ($this->entryid) {
+            if (!$this->entry = $DB->get_record('glossary_entries', array('id' => $this->entryid))) {
+                throw new portfolio_caller_exception('noentry', 'glossary');
+            }
+            // in case we don't have USER this will make the entry be printed
+            $this->entry->approved = true;
         }
         $this->supportedformats = array(PORTFOLIO_FORMAT_HTML);
     }
@@ -2498,11 +2513,10 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function prepare_package() {
-        // in case we don't have USER this will make the entry be printed
-        $this->entry->approved = true;
         define('PORTFOLIO_INTERNAL', true);
         ob_start();
-        glossary_print_entry($this->get('course'), $this->cm, $this->glossary, $this->entry, null, null, false);
+        $entry = clone $this->entry;
+        glossary_print_entry($this->get('course'), $this->cm, $this->glossary, $entry, null, null, false);
         $content = ob_get_clean();
         return $this->exporter->write_new_file($content, clean_filename($this->entry->concept) . '.html');
     }

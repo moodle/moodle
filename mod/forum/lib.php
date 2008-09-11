@@ -3175,7 +3175,12 @@ function forum_print_post($post, $discussion, $forum, &$cm, $course, $ownpost=fa
         $p = array(
             'postid' => $post->id,
         );
-        $commands[] = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', PORTFOLIO_ADD_TEXT_LINK, null, true);
+        $button = new portfolio_add_button();
+        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id));
+        if (empty($attachments)) {
+            $button->set_formats(PORTFOLIO_FORMAT_HTML);
+        }
+        $commands[] = $button->to_html(PORTFOLIO_ADD_TEXT_LINK);
     }
 
     echo '<div class="commands">';
@@ -3898,6 +3903,8 @@ function forum_print_attachments($post, $cm, $type) {
     $canexport = (has_capability('mod/forum:exportpost', $context) || ($post->userid == $USER->id && has_capability('mod/forum:exportownpost')));
 
     if ($files = $fs->get_area_files($context->id, 'forum_attachment', $post->id, "timemodified", false)) {
+        require_once($CFG->libdir . '/portfoliolib.php');
+        $button = new portfolio_add_button();
         foreach ($files as $file) {
             $filename = $file->get_filename();
             $mimetype = $file->get_mimetype();
@@ -3909,18 +3916,9 @@ function forum_print_attachments($post, $cm, $type) {
                 $output .= "<a href=\"$path\">$iconimage</a> ";
                 $output .= "<a href=\"$path\">".s($filename)."</a>";
                 if ($canexport) {
-                    require_once($CFG->libdir . '/portfoliolib.php');
-                    $p = array(
-                        'postid' => $post->id,
-                        'attachment' => $file->get_id(),
-                    );
-                    $output .= portfolio_add_button(
-                        'forum_portfolio_caller',
-                        $p, '/mod/forum/lib.php',
-                        PORTFOLIO_ADD_ICON_LINK,
-                        null, true,
-                        array(portfolio_format_from_file($file))
-                    );
+                    $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()));
+                    $button->set_formats(portfolio_format_from_file($file));
+                    $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
                 $output .= "<br />";
 
@@ -3932,35 +3930,17 @@ function forum_print_attachments($post, $cm, $type) {
                     // Image attachments don't get printed as links
                     $imagereturn .= "<br /><img src=\"$path\" alt=\"\" />";
                     if ($canexport) {
-                        require_once($CFG->libdir . '/portfoliolib.php');
-                        $p = array(
-                            'postid' => $post->id,
-                            'attachment' => $file->get_id(),
-                        );
-                        $imagereturn .= portfolio_add_button(
-                            'forum_portfolio_caller',
-                            $p, '/mod/forum/lib.php',
-                            PORTFOLIO_ADD_ICON_LINK,
-                            null, true,
-                            array(portfolio_format_from_file($file))
-                        );
+                        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()));
+                        $button->set_formats(portfolio_format_from_file($file));
+                        $imagereturn .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                     }
                 } else {
                     $output .= "<a href=\"$path\">$iconimage</a> ";
                     $output .= filter_text("<a href=\"$path\">".s($filename)."</a>");
                     if ($canexport) {
-                        require_once($CFG->libdir . '/portfoliolib.php');
-                        $p = array(
-                            'postid' => $post->id,
-                            'attachment' => $file->get_id(),
-                        );
-                        $output .= portfolio_add_button(
-                            'forum_portfolio_caller',
-                            $p, '/mod/forum/lib.php',
-                            PORTFOLIO_ADD_ICON_LINK,
-                            null, true,
-                            array(portfolio_format_from_file($file))
-                        );
+                        $button->set_callback_options('forum_portfolio_caller', array('postid' => $post->id, 'attachment' => $file->get_id()));
+                        $button->set_formats(portfolio_format_from_file($file));
+                        $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                     }
                     $output .= '<br />';
                 }
@@ -7225,44 +7205,64 @@ function forum_get_extra_capabilities() {
 require_once($CFG->libdir . '/portfoliolib.php');
 class forum_portfolio_caller extends portfolio_module_caller_base {
 
+    protected $postid;
+    protected $discussionid;
+    protected $attachment;
+
     private $post;
     private $forum;
     private $discussion;
-    private $attachment;
     private $postfiles;
     private $allfiles;
     private $posts;
 
+    public static function expected_callbackargs() {
+        return array(
+            'postid'       => false,
+            'discussionid' => false,
+            'attachment'   => false,
+        );
+    }
+
     function __construct($callbackargs) {
+        parent::__construct($callbackargs);
+        if (!$this->postid && !$this->discussionid) {
+            throw new portfolio_caller_exception('mustprovidediscussionorpost', 'forum');
+        }
+    }
+
+    public function load_data() {
         global $DB;
 
-        if (array_key_exists('postid', $callbackargs)) {
-            if (!$this->post = $DB->get_record('forum_posts', array('id' => $callbackargs['postid']))) {
+        if ($this->postid) {
+            if (!$this->post = $DB->get_record('forum_posts', array('id' => $this->postid))) {
                 throw new portfolio_caller_exception('invalidpostid', 'forum');
             }
         }
+
         $dparams = array();
-        if (array_key_exists('discussionid', $callbackargs)) {
-            $dbparams = array('id' => $callbackargs['discussionid']);
+        if ($this->discussionid) {
+            $dbparams = array('id' => $this->discussionid);
         } else if ($this->post) {
             $dbparams = array('id' => $this->post->discussion);
         } else {
             throw new portfolio_caller_exception('mustprovidediscussionorpost', 'forum');
         }
+
         if (!$this->discussion = $DB->get_record('forum_discussions', $dbparams)) {
             throw new portfolio_caller_exception('invaliddiscussionid', 'forum');
         }
+
         if (!$this->forum = $DB->get_record('forum', array('id' => $this->discussion->forum))) {
             throw new portfolio_caller_exception('invalidforumid', 'forum');
         }
+
         if (!$this->cm = get_coursemodule_from_instance('forum', $this->forum->id)) {
             throw new portfolio_caller_exception('invalidcoursemodule');
         }
+
         $fs = get_file_storage();
-        if ($this->attachment = (array_key_exists('attachment', $callbackargs) ? $callbackargs['attachment'] : false)) {
-            if (!$this->post) {
-                throw new portfolio_caller_exception('attachmentsnopost', 'forum');
-            }
+        if ($this->attachment) {
             if (!$f = $fs->get_file_by_id($this->attachment)) {
                 throw new portfolio_caller_exception('noattachments', 'forum');
             }

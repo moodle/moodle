@@ -1705,10 +1705,7 @@ class assignment_base {
         $found = false;
 
         if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
-            $p = array(
-                'assignmentid' => $this->cm->id,
-                'userid'       => $USER->id,
-            );
+            $button = new portfolio_add_button();
             foreach ($files as $file) {
                 $filename = $file->get_filename();
                 $found = true;
@@ -1717,15 +1714,16 @@ class assignment_base {
                 $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
                 if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $p['file'] = $file->get_id();
-                    $formats = array(portfolio_format_from_file($file));
-                    $output .= portfolio_add_button('assignment_portfolio_caller', $p, null, PORTFOLIO_ADD_ICON_LINK, null, true, $formats);
+                    $button->set_formats(portfolio_format_from_file($file));
+                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'file' => $file->get_id()));
+                    $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
                 $output .= '<br />';
             }
-            if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                unset($p['file']);// for all files
-                $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, null, PORTFOLIO_ADD_FULL_FORM, null, true);
+            if (count($files) > 1  && $this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
+                $button->set_formats(PORTFOLIO_PORMAT_FILE);
+                $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id));
+                $output .= '<br />'  . $button->to_html();
             }
         }
 
@@ -3147,13 +3145,20 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
 
     private $assignment;
     private $assignmentfile;
-    private $file;
     private $files;
+    protected $fileid;
 
-    public function __construct($callbackargs) {
+    public static function expected_callbackargs() {
+        return array(
+            'id'     => true,
+            'fileid' => false,
+        );
+    }
+
+    public function load_data() {
         global $DB, $CFG;
 
-        if (! $this->cm = get_coursemodule_from_id('assignment', $callbackargs['assignmentid'])) {
+        if (! $this->cm = get_coursemodule_from_id('assignment', $this->id)) {
             throw new portfolio_caller_exception('invalidcoursemodule');
         }
 
@@ -3161,26 +3166,26 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
             throw new portfolio_caller_exception('invalidid', 'assignment');
         }
 
-        if (!array_key_exists('userid', $callbackargs)) {
-            throw new portfolio_caller_exception('invaliduserid', 'assignment');
-        }
-        if (!$this->user = $DB->get_record('user', array('id' => $callbackargs['userid']))) {
-            throw new portfolio_caller_exception('invaliduserid', 'assignment');
-        }
         $this->assignmentfile = $CFG->dirroot . '/mod/assignment/type/' . $assignment->assignmenttype . '/assignment.class.php';
         require_once($this->assignmentfile);
         $assignmentclass = "assignment_$assignment->assignmenttype";
+
         $this->assignment = new $assignmentclass($this->cm->id, $assignment, $this->cm);
+
         if (!$this->assignment->portfolio_exportable()) {
             throw new portfolio_caller_exception('notexportable', 'portfolio', $this->get_return_url());
         }
+
         $fs = get_file_storage();
-        if (array_key_exists('file', $callbackargs)) {
-            $this->file = $fs->get_file_by_id($callbackargs['file']);
-            $this->files = array($this->file);
-            $this->supportedformats = array(portfolio_format_from_file($this->file));
+        if ($this->fileid) {
+            $f = $fs->get_file_by_id($this->fileid);
+            $this->files = array($f);
         } else {
             $this->files = $fs->get_area_files($this->assignment->context->id, 'assignment_submission', $this->user->id, '', false);
+        }
+        if (is_array($this->files) && count($this->files) == 1) {
+            $f = array_values($this->files);
+            $this->supportedformats = array(portfolio_format_from_file($f[0]));
         }
         if (empty($this->supportedformats) && is_callable(array($this->assignment, 'portfolio_supported_formats'))) {
             $this->supportedformats = $this->assignment->portfolio_supported_formats();
@@ -3202,11 +3207,6 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         global $CFG;
         if (is_callable(array($this->assignment, 'portfolio_get_sha1'))) {
             return $this->assignment->portfolio_get_sha1($this->user->id);
-        }
-
-        // default ...
-        if ($this->file) {
-            return $this->file->get_contenthash();
         }
         $sha1s = array();
         foreach ($this->files as $file) {

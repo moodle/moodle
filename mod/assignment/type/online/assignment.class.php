@@ -103,11 +103,9 @@ class assignment_online extends assignment_base {
                 print_box_start('generalbox boxwidthwide boxaligncenter', 'online');
                 if ($submission && has_capability('mod/assignment:exportownsubmission', $this->context)) {
                     echo format_text($submission->data1, $submission->data2);
-                    $p = array(
-                        'userid' => $USER->id,
-                        'assignmentid' => $this->cm->id,
-                    );
-                    portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php');
+                    $button = new portfolio_add_button();
+                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/lib.php');
+                    $button->render();
                 } else if (!has_capability('mod/assignment:submit', $context)) { //fix for #4604
                     echo '<div style="text-align:center">'. get_string('guestnosubmit', 'assignment').'</div>';
                 } else if ($this->isopen()){    //fix for #4206

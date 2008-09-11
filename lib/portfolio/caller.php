@@ -64,6 +64,21 @@ abstract class portfolio_caller_base {
     */
     protected $supportedformats;
 
+
+    public function __construct($callbackargs) {
+        $expected = call_user_func(array(get_class($this), 'expected_callbackargs'));
+        foreach ($expected as $key => $required) {
+            if (!array_key_exists($key, $callbackargs)) {
+                if ($required) {
+                    $a = (object)array('key' => $key, 'class' => get_class($this));
+                    throw new portfolio_caller_exception('missingcallbackarg', 'portfolio', null, $a);
+                }
+                continue;
+            }
+            $this->{$key} = $callbackargs[$key];
+        }
+    }
+
     /**
     * if this caller wants any additional config items
     * they should be defined here.
@@ -281,6 +296,11 @@ abstract class portfolio_caller_base {
     public function heading_summary() {
         return get_string('exportingcontentfrom', 'portfolio', $this->display_name());
     }
+
+    public abstract function load_data();
+
+    public static abstract function expected_callbackargs();
+
 }
 
 /**
@@ -300,6 +320,12 @@ abstract class portfolio_module_caller_base extends portfolio_caller_base {
     * $this->cm = get_coursemodule_from_instance('forum', $this->forum->id);
     */
     protected $cm;
+
+    /**
+    *
+    * int cmid
+    */
+    protected $id;
 
     /**
     * stdclass course object

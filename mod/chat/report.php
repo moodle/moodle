@@ -81,12 +81,14 @@
                     || (array_key_exists($USER->id, $sessionusers)
                         && has_capability('mod/chat:exportparticipatedsession', $context))) {
                     require_once($CFG->libdir . '/portfoliolib.php');
-                    $p  = array(
+                    $buttonoptions  = array(
                         'id'    => $cm->id,
                         'start' => $start,
                         'end'   => $end,
                     );
-                    echo '<br />' . portfolio_add_button('chat_portfolio_caller', $p, '/mod/chat/lib.php', PORTFOLIO_ADD_FULL_FORM, null, true);
+                    $button = new portfolio_add_button();
+                    $button->set_callback_options('chat_portfolio_caller', $buttonoptions, '/mod/chat/lib.php');
+                    $button->render();
                 }
             print_simple_box_end();
         }
@@ -199,12 +201,14 @@
                     || (array_key_exists($USER->id, $sessionusers)
                         && has_capability('mod/chat:exportparticipatedsession', $context))) {
                     require_once($CFG->libdir . '/portfoliolib.php');
-                    $p  = array(
+                    $buttonoptions  = array(
                         'id'    => $cm->id,
                         'start' => $sessionstart,
                         'end'   => $sessionend,
                     );
-                    echo '<br />' . portfolio_add_button('chat_portfolio_caller', $p, '/mod/chat/lib.php', PORTFOLIO_ADD_TEXT_LINK, null, true);
+                    $button = new portfolio_add_button();
+                    $button->set_callback_options('chat_portfolio_caller', $buttonoptions, '/mod/chat/lib.php');
+                    $button->render(PORTFOLIO_ADD_TEXT_LINK);
                 }
                 if (has_capability('mod/chat:deletelog', $context)) {
                     echo "<br /><a href=\"report.php?id=$cm->id&amp;start=$sessionstart&amp;end=$sessionend&amp;deletesession=1\">$strdeletesession</a>";
@@ -222,10 +226,9 @@
 
     if (has_capability('mod/chat:exportsession', $context)) {
         require_once($CFG->libdir . '/portfoliolib.php');
-        $p  = array(
-            'id'    => $cm->id,
-        );
-        echo '<br />' . portfolio_add_button('chat_portfolio_caller', $p, '/mod/chat/lib.php', PORTFOLIO_ADD_FULL_FORM, get_string('addalltoportfolio', 'portfolio'), true);
+        $button = new portfolio_add_button();
+        $button->set_callback_options('chat_portfolio_caller', array('id' => $cm->id), '/mod/chat/lib.php');
+        $button->render(null, get_string('addalltoportfolio', 'portfolio'));
     }
 
 

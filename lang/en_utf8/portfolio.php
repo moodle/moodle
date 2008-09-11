@@ -59,6 +59,7 @@ $string['invalidconfigproperty'] = 'Could not find that config property ($a->pro
 $string['invalidbuttonproperty'] = 'Could not find that property ($a) of portfolio_button';
 $string['manageportfolios'] = 'Manage portfolios';
 $string['manageyourportfolios'] = 'Manage your portfolios';
+$string['missingcallbackarg'] = 'Missing callback argument $a->arg for class $a->class';
 $string['moderatefilesizethreshold'] = 'Moderate transfer filesize';
 $string['moderatefilesizethresholddesc'] = 'Filesizes over this threshold will be considered to take a moderate amount of time to transfer';
 $string['moderatedbsizethreshold'] = 'Moderate transfer dbsize';

@@ -124,6 +124,12 @@ class portfolio_add_button {
         if (!class_exists($class)) {
             throw new portfolio_button_exception('nocallbackclass', 'portfolio', $class);
         }
+
+        // this will throw exceptions
+        // but should not actually do anything other than verify callbackargs
+        $test = new $class($argarray);
+        unset($test);
+
         $this->callbackclass = $class;
         $this->callbackargs = $argarray;
     }
@@ -307,17 +313,6 @@ class portfolio_add_button {
     public function get_callbackclass() {
         return $this->callbackclass;
     }
-}
-
-
-function portfolio_add_button($callbackclass, $callbackargs, $callbackfile=null, $format=PORTFOLIO_ADD_FULL_FORM, $addstr=null, $return=false, $callersupports=null) {
-    $button = new portfolio_add_button();
-    $button->set_callback_options($callbackclass, $callbackargs, $callbackfile);
-    $button->set_formats($callersupports);
-    if ($return) {
-        return $button->to_html($format, $addstr);
-    }
-    $button->render();
 }
 
 /**

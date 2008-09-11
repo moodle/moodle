@@ -1020,7 +1020,10 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
             && ((has_capability('mod/data:exportentry', $context)
                 || (data_isowner($record->id) && has_capability('mod/data:exportownentry', $context))))) {
             require_once($CFG->libdir . '/portfoliolib.php');
-            $replacement[] = portfolio_add_button('data_portfolio_caller', array('id' => $cm->id, 'record' => $record->id), null, PORTFOLIO_ADD_ICON_LINK, null, true);
+            $button = new portfolio_add_button();
+            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id, 'record' => $record->id));
+            $button->set_formats(PORTFOLIO_FORMAT_HTML);
+            $replacement[] = $button->to_html(PORTFOLIO_ADD_ICON_LINK);
         } else {
             $replacement[] = '';
         }
@@ -2436,18 +2439,42 @@ function data_get_exportdata($dataid, $fields, $selectedfields) {
 require_once($CFG->libdir . '/portfoliolib.php');
 class data_portfolio_caller extends portfolio_module_caller_base {
 
+    protected $recordid;
+    protected $exporttype;
+    protected $delimiter_name;
+
     private $data;
     private $selectedfields;
-    private $exporttype;
     private $fields;
     private $fieldtypes;
-    private $delimiter;
     private $exportdata;
     private $singlerecord;
 
+    public static function expected_callbackargs() {
+        return array(
+            'id'             => true,
+            'recordid'       => false,
+            'delimiter_name' => false,
+            'exporttype'     => false,
+        );
+    }
+
     public function __construct($callbackargs) {
+        parent::__construct($callbackargs);
+        if (empty($this->exporttype)) {
+            $this->exporttype = 'csv';
+        }
+        $this->selectedfields = array();
+        foreach ($callbackargs as $key => $value) {
+            if (strpos($key, 'field_') === 0) {
+                $this->selectedfields[] = substr($key, 6);
+            }
+        }
+    }
+
+    public function load_data() {
         global $DB;
-        if (!$this->cm = get_coursemodule_from_id('data', $callbackargs['id'])) {
+        if (!$this->cm = get_coursemodule_from_id('data', $this->id)) {
             throw new portfolio_caller_exception('invalidid', 'data');
         }
         $this->data = $DB->get_record('data', array('id' => $this->cm->instance));
@@ -2460,23 +2487,15 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             $this->fieldtypes[]  = $tmp->type;
         }
 
-        if (array_key_exists('record', $callbackargs) && !empty($callbackargs['record'])) {
+        if ($this->recordid) {
             //user has selected to export one single entry rather than the whole thing
             // which is completely different
-            $this->singlerecord = $DB->get_record('data_records', array('id' => $callbackargs['record']));
+            $this->singlerecord = $DB->get_record('data_records', array('id' => $this->recordid));
             $this->singlerecord->content = $DB->get_records('data_content', array('recordid' => $this->singlerecord->id));
             $this->exporttype = 'single';
             $this->supportedformats = array(PORTFOLIO_FORMAT_HTML);
         } else {
             // all records as csv or whatever
-            $this->selectedfields = array();
-            foreach ($callbackargs as $key => $value) {
-                if (strpos($key, 'field_') === 0) {
-                    $this->selectedfields[] = substr($key, 6);
-                }
-            }
-            $this->delimiter = array_key_exists('delimiter_name', $callbackargs) ? $callbackargs['delimiter_name'] : null;
-            $this->exporttype = array_key_exists('exporttype', $callbackargs) ? $callbackargs['exporttype'] : 'csv'; //@todo penny later support more
             $this->exportdata = data_get_exportdata($this->cm->instance, $this->fields, $this->selectedfields);
         }
     }
@@ -2528,7 +2547,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
                 $filename = clean_filename($this->cm->name . '-entry.html');
                 break;
             case 'csv':
-                $content = data_export_csv($this->exportdata, $this->delimiter, $this->cm->name, $count, true);
+                $content = data_export_csv($this->exportdata, $this->delimiter_name, $this->cm->name, $count, true);
                 $filename = clean_filename($this->cm->name . '.csv');
                 break;
             case 'xls':

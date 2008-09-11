@@ -342,10 +342,7 @@ class assignment_upload extends assignment_base {
         $browser = get_file_browser();
 
         if ($files = $fs->get_area_files($this->context->id, 'assignment_submission', $userid, "timemodified", false)) {
-            $p = array(
-                'assignmentid' => $this->cm->id,
-                'userid'       => $USER->id,
-            );
+            $button = new portfolio_add_button();
             foreach ($files as $file) {
                 $filename = $file->get_filename();
                 $mimetype = $file->get_mimetype();
@@ -361,15 +358,16 @@ class assignment_upload extends assignment_base {
                 }
     
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $p['file'] = $file->get_id();
-                    $formats = array(portfolio_format_from_file($file));
-                    $output .= portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', PORTFOLIO_ADD_ICON_LINK, null, true, $formats);
+                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'file' => file->get_id()), '/mod/assignment/lib.php');
+                    $button->set_formats(portfolio_format_from_file($file));
+                    $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
                 $output .= '<br />';
             }
-            if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                unset($p['file']);// for all files
-                $output .= '<br />' . portfolio_add_button('assignment_portfolio_caller', $p, '/mod/assignment/lib.php', null, null, true);
+            if (count($files) > 1 && has_capability('mod/assignment:exportownsubmission', $this->context)) {
+                $button->set_formats(PORTFOLIO_FORMAT_FILE);
+                $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/lib.php');
+                $output .= $button->to_html();
             }
         }
 

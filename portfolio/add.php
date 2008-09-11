@@ -83,6 +83,7 @@ if ($dataid) {
     require_once($CFG->dirroot . $callbackfile);
     $caller = new $callbackclass($callbackargs);
     $caller->set('user', $USER);
+    $caller->load_data();
     if (!$caller->check_permissions()) {
         throw new portfolio_caller_exception('nopermissions', 'portfolio', $caller->get_return_url());
     }

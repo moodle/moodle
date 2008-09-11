@@ -60,10 +60,9 @@
     // don't need cap check here, we share with the general export.
     if ($DB->count_records('glossary_entries', array('glossaryid' => $glossary->id))) {
         require_once($CFG->libdir . '/portfoliolib.php');
-        $p = array(
-            'id' => $cm->id,
-        );
-        portfolio_add_button('glossary_csv_portfolio_caller', $p, '/mod/glossary/lib.php');
+        $button = new portfolio_add_button();
+        $button->set_callback_options('glossary_csv_portfolio_caller', array('id' => $cm->id), '/mod/glossary/lib.php');
+        $button->render();
     }
     print_box_end();
     print_footer($course);

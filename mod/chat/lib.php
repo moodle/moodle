@@ -823,24 +823,30 @@ require_once($CFG->libdir . '/portfoliolib.php');
 class chat_portfolio_caller extends portfolio_module_caller_base {
 
     private $chat;
-    private $start;
-    private $end;
+    protected $start;
+    protected $end;
 
-    public function __construct($callbackargs) {
-        global $DB, $USER;
-        if (!$this->cm = get_coursemodule_from_id('chat', $callbackargs['id'])) {
+    public static function expected_callbackargs() {
+        return array(
+            'id'    => true,
+            'start' => false,
+            'end'   => false,
+        );
+    }
+
+    public function load_data() {
+        global $DB;
+
+        if (!$this->cm = get_coursemodule_from_id('chat', $this->id)) {
             throw new portfolio_caller_exception('invalidid', 'chat');
         }
         $this->chat = $DB->get_record('chat', array('id' => $this->cm->instance));
         $select = 'chatid = ?';
         $params = array($this->chat->id);
-        if (array_key_exists('start', $callbackargs) && array_key_exists('end', $callbackargs)
-            && !empty($callbackargs['start']) && !empty($callbackargs['end'])) {
+        if ($this->start && $this->end) {
             $select .= ' AND timestamp >= ? AND timestamp <= ?';
-            $params[] = $callbackargs['start'];
-            $params[] = $callbackargs['end'];
-            $this->start =  $callbackargs['start'];
-            $this->end =  $callbackargs['end'];
+            $params[] = $this->start;
+            $params[] = $this->end;
         }
         $this->messages = $DB->get_records_select(
                 'chat_messages',
@@ -849,13 +855,16 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
                 'timestamp ASC'
             );
         $select .= ' AND userid = ?';
-        $params[] = $USER->id;
+        $params[] = $this->user->id;
         $this->participated = $DB->record_exists_select(
             'chat_messages',
             $select,
             $params
         );
-        $this->supportedformats = array(PORTFOLIO_FORMAT_HTML);
+    }
+
+    public static function supported_formats($caller) {
+        return array(PORTFOLIO_FORMAT_HTML);
     }
 
     public function expected_time() {

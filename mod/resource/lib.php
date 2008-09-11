@@ -711,10 +711,15 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
     private $resource;
     private $resourcefile;
 
-    public function __construct($callbackargs) {
-        global $CFG;
-        global $DB;
-        if (!array_key_exists('id', $callbackargs) || !$this->cm = get_coursemodule_from_instance('resource', $callbackargs['id'])) {
+    public static function expected_callbackargs() {
+        return array(
+            'id' => true,
+        );
+    }
+
+    public function load_data() {
+        global $CFG, $DB;
+        if (!$this->cm = get_coursemodule_from_instance('resource', $this->id)) {
             throw new portfolio_caller_exception('invalidid');
         }
         $this->cm->type = $DB->get_field('resource', 'type', array('id' => $this->cm->instance));
@@ -722,9 +727,13 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         $this->resourcefile = $CFG->dirroot.'/mod/resource/type/'.$this->cm->type.'/resource.class.php';
         require_once($this->resourcefile);
         $this->resource= new $resourceclass($this->cm->id);
+        $this->supportedformats = array(self::type_to_format($this->cm->type));
+    }
+
+    public static function type_to_format($type) {
         // this is kind of yuk... but there's just not good enough OO here
         $format = PORTFOLIO_FORMAT_FILE;
-        switch ($this->cm->type) {
+        switch ($type) {
             case 'html':
                 $format = PORTFOLIO_FORMAT_HTML;
             case 'text':
@@ -732,7 +741,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
             case 'file':
                 // $format = portfolio_format_from_file($file); // change after we switch upload type resources over to new files api.
         }
-        $this->supportedformats = array($format);
+        return $format;
     }
 
     public function __wakeup() {
@@ -766,11 +775,17 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
             debugging(get_string('portfolionotimplemented', 'resource'));
             return false;
         }
-        $callersupports = array();
+        $callersupports = array(self::type_to_format($resource->cm->type));
         if ($resource->cm->type == 'file') {
             // $callersupports = array(portfolio_format_from_file($file);
         }
-        return portfolio_add_button('resource_portfolio_caller', array('id' => $resource->cm->instance),  '/mod/resource/lib.php', $format, null, $return, $callersupports);
+        $button = new portfolio_add_button();
+        $button->set_callback_options('resource_portfolio_caller', array('id' => $resource->cm->instance),  '/mod/resource/lib.php');
+        $button->set_formats($callersupports);
+        if ($return) {
+            return $button->to_html($format);
+        }
+        $button->render($format);
     }
 
     public function get_sha1() {

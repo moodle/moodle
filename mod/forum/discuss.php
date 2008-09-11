@@ -156,13 +156,6 @@
 
 /// Print the controls across the top
 
-    if (has_capability('mod/forum:exportdiscussion', $modcontext)) {
-
-        $p = array(
-            'discussionid' => $discussion->id,
-        );
-        $portfolio = portfolio_add_button('forum_portfolio_caller', $p, '/mod/forum/lib.php', null, null, true);
-    }
     echo '<table width="100%" class="discussioncontrols"><tr><td>';
 
     // groups selector not needed here
@@ -171,8 +164,11 @@
     forum_print_mode_form($discussion->id, $displaymode);
     echo "</td><td>";
 
-    if (isset($portfolio)) {
-        echo $portfolio . '</td><td>';
+    if (has_capability('mod/forum:exportdiscussion', $modcontext)) {
+        $button = new portfolio_add_button();
+        $button->set_callback_options('forum_portfolio_caller', array('discussionid' => $discussion->id), '/mod/forum/lib.php');
+        $button->render();
+        echo '</td><td>';
     }
 
     if ($forum->type != 'single'
