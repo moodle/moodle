@@ -75,7 +75,7 @@ class portfolio_add_button {
     *                       See set_formats for more information on this.
     */
     public function __construct($options=null) {
-        global $SESSION;
+        global $SESSION, $CFG;
         if (isset($SESSION->portfolioexport)) {
             $a = new StdClass;
             $a->cancel = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
