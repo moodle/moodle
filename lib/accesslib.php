@@ -4273,6 +4273,10 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
     // Prepare query clauses
     //
     $wherecond = array();
+
+    // Non-deleted users. We never return deleted users.
+    $wherecond['nondeleted'] = 'u.deleted = 0';
+
     /// Groups
     if ($groups) {
         if (is_array($groups)) {
@@ -4354,6 +4358,7 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
 
             return $DB->get_records_sql("SELECT $fields
                                            FROM {user} u
+                                          WHERE u.deleted = 0
                                        ORDER BY $sort",
                                        $limitfrom, $limitnum);
         }
@@ -4385,10 +4390,6 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                                 $sscondhiddenra
                           ) ra ON ra.userid = u.id
                     $uljoin ";
-        $where  = " WHERE u.deleted = 0 ";
-        if (count(array_keys($wherecond))) {
-            $where .= ' AND ' . implode(' AND ', array_values($wherecond));
-        }
         return $DB->get_records_sql($select.$from.$where.$sortby, null, $limitfrom, $limitnum);
     }
 
@@ -4467,10 +4468,6 @@ function get_users_by_capability($context, $capability, $fields='', $sort='',
                JOIN {user} u
                  ON ra.userid=u.id
                $uljoin ";
-    $where  = "WHERE u.deleted = 0 ";
-    if (count(array_keys($wherecond))) {
-        $where .= ' AND ' . implode(' AND ', array_values($wherecond));
-    }
 
     // Each user's entries MUST come clustered together
     // and RAs ordered in depth DESC - the role/cap resolution
