@@ -17,7 +17,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     public function prepare_package() {
         // if we need to create the folder, do it now
         if ($newfolder = $this->get_export_config('newfolder')) {
-            if (!$created = $this->boxclient->createFolder($newfolder, array('share' => 0))) {
+            if (!$created = $this->boxclient->createFolder($newfolder, array('share' => $this->get_export_config('sharefolder')))) {
                 throw new portfolio_plugin_exception('foldercreatefailed', 'portfolio_boxnet');
             }
             $this->folders[$created['folder_id']] = $created['folder_name'];
@@ -33,7 +33,7 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
                 array(
                     'file'      => $file,
                     'folder_id' => $this->get_export_config('folder'),
-                    'share'     => 0,
+                    'share'     => $this->get_export_config('sharefile'),
                 )
             );
             if (array_key_exists('status', $return) && $return['status'] == 'upload_ok'
@@ -85,13 +85,15 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     }
 
     public function get_allowed_export_config() {
-        return array('folder', 'newfolder');
+        return array('folder', 'newfolder', 'sharefile', 'sharefolder');
     }
 
     public function export_config_form(&$mform) {
         $folders = $this->get_folder_list();
         $strrequired = get_string('required');
+        $mform->addElement('checkbox', 'plugin_sharefile', get_string('sharefile', 'portfolio_boxnet'));
         $mform->addElement('text', 'plugin_newfolder', get_string('newfolder', 'portfolio_boxnet'));
+        $mform->addElement('checkbox', 'plugin_sharefolder', get_string('sharefolder', 'portfolio_boxnet'));
         if (empty($folders)) {
             $mform->addRule('plugin_newfolder', $strrequired, 'required', null, 'client');
         }
