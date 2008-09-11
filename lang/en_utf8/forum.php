@@ -32,6 +32,7 @@ $string['bynameondate'] = 'by $a->name - $a->date';
 $string['cannotviewpostyet'] = 'You cannot read other students questions in this discussion yet because you haven\'t posted';
 $string['cannotadddiscussion'] = 'Adding discussions to this forum requires group membership.';
 $string['cannotadddiscussionall'] = 'You do not have permission to add a new discussion topic for all participants.';
+$string['cannotdeleteforummodule'] = 'You can not delete the forum module.';
 $string['cannotsubscribe'] = 'Sorry, but you must be a group member to subscribe.';
 $string['cannotunsubscribe'] = 'Could not unsubscribe you from that forum';
 $string['cannotaddsubscriber'] = 'Could not add subscriber with id $a to this forum!';

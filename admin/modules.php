@@ -87,7 +87,7 @@
         } else {  // Delete everything!!
 
             if ($delete == "forum") {
-                print_error("cannotdeleteforummudule", 'forum');
+                print_error("cannotdeleteforummodule", 'forum');
             }
 
             if (!$module = $DB->get_record("modules", array("name"=>$delete))) {
