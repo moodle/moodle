@@ -4564,14 +4564,12 @@ class admin_setting_managefilters extends admin_setting {
         // associated modules
         $installedfilters = array();
         $filtersettings_new = array();
-        $filtersettings_old = array();
         $filterlocations = array('mod','filter');
         foreach ($filterlocations as $filterlocation) {
             $plugins = get_list_of_plugins($filterlocation);
             foreach ($plugins as $plugin) {
                 $pluginpath = "$CFG->dirroot/$filterlocation/$plugin/filter.php";
                 $settingspath_new = "$CFG->dirroot/$filterlocation/$plugin/filtersettings.php";
-                $settingspath_old = "$CFG->dirroot/$filterlocation/$plugin/filterconfig.html";
                 if (is_readable($pluginpath)) {
                     $name = trim(get_string("filtername", $plugin));
                     if (empty($name) or ($name == '[[filtername]]')) {
@@ -4581,8 +4579,6 @@ class admin_setting_managefilters extends admin_setting {
                     $installedfilters["$filterlocation/$plugin"] = $name;
                     if (is_readable($settingspath_new)) {
                         $filtersettings_new[] = "$filterlocation/$plugin";
-                    } else if (is_readable($settingspath_old)) {
-                        $filtersettings_old[] = "$filterlocation/$plugin";
                     }
                 }
             }
@@ -4672,8 +4668,6 @@ class admin_setting_managefilters extends admin_setting {
             $settings = '';
             if (in_array($path, $filtersettings_new)) {
                 $settings = "<a href=\"settings.php?section=filtersetting".str_replace('/', '',$path)."\">$strsettings</a>";
-            } else if (in_array($path, $filtersettings_old)) {
-                $settings = "<a href=\"filter.php?filter=".urlencode($path)."\">$strsettings</a>";
             }
 
             // write data into the table object
