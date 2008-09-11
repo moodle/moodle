@@ -30,11 +30,8 @@ class testAssignmentPortfolioCallers extends portfoliolib_test {
         $submissions = $DB->get_records('assignment_submissions', array('assignment' => $first_module->id));
         $first_submission = reset($submissions);
 
-        $callbackargs = array('assignmentid' => $cm->id, 'userid' => $USER->id);
-        $this->caller = new assignment_portfolio_caller($callbackargs);
-        $this->caller->set('exporter', new mock_exporter());
-        $user = $DB->get_record('user', array('id' => $first_submission->userid));
-        $this->caller->set('user', $user);
+        $callbackargs = array('id' => $cm->id);
+        $this->caller = parent::setup_caller('assignment_portfolio_caller', array('id' => $cm->id), $first_submission->userid);
     }
 
     public function tearDown() {

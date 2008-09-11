@@ -44,10 +44,7 @@ class testForumPortfolioCallers extends portfoliolib_test {
         $first_post = reset($posts);
 
         $callbackargs = array('postid' => $first_post->id, 'discussionid' => $first_discussion->id);
-        $this->caller = new forum_portfolio_caller($callbackargs);
-        $this->caller->set('exporter', new mock_exporter());
-        $user = $DB->get_record('user', array('id' => $first_post->userid));
-        $this->caller->set('user', $user);
+        $this->caller = parent::setup_caller('forum_portfolio_caller', $callbackargs, $first_post->userid);
     }
 
     public function tearDown() {

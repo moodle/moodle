@@ -33,10 +33,9 @@ class testGlossaryPortfolioCallers extends portfoliolib_test {
         $first_entry = reset($this->entries);
 
         $callbackargs = array('id' => $cm->id, 'entryid' => $first_entry->id);
-        $this->entry_caller = new glossary_entry_portfolio_caller($callbackargs);
-        $this->entry_caller->set('exporter', new mock_exporter());
-        $this->csv_caller = new glossary_csv_portfolio_caller($callbackargs);
-        $this->csv_caller->set('exporter', new mock_exporter());
+        $this->entry_caller = parent::setup_caller('glossary_entry_portfolio_caller', $callbackargs);
+
+        $this->csv_caller = parent::setup_caller('glossary_csv_portfolio_caller', $callbackargs);
     }
 
     public function tearDown() {

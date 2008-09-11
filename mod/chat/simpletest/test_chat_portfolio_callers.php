@@ -29,12 +29,7 @@ class testChatPortfolioCallers extends portfoliolib_test {
         $cm = get_coursemodule_from_instance($this->module_type, $first_module->id);
         $userid = $DB->get_field('chat_users', 'userid', array('chatid' => $first_module->id));
 
-        $callbackargs = array('id' => $cm->id);
-        $this->caller = new chat_portfolio_caller($callbackargs);
-        $this->caller->set('exporter', new mock_exporter());
-
-        $user = $DB->get_record('user', array('id' => $userid));
-        $this->caller->set('user', $user);
+        $this->caller = parent::setup_caller('chat_portfolio_caller', array('id' => $cm->id), $userid);
     }
 
     public function tearDown() {

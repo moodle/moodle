@@ -46,14 +46,8 @@ class testDataPortfolioCallers extends portfoliolib_test {
         }
 
         // Callback args required: id, record, delimiter_name, exporttype
-
-        $callbackargs = array('id' => $cm->id, 'record' => $recordid);
-        $this->caller_single = new data_portfolio_caller($callbackargs);
-        $this->caller_single->set('exporter', new mock_exporter());
-
-        unset($callbackargs['record']);
-        $this->caller = new data_portfolio_caller($callbackargs);
-        $this->caller->set('exporter', new mock_exporter());
+        $this->caller_single = parent::setup_caller('data_portfolio_caller', array('id' => $cm->id, 'record' => $recordid));
+        $this->caller = parent::setup_caller('data_portfolio_caller', array('id' => $cm->id));
     }
 
     public function tearDown() {

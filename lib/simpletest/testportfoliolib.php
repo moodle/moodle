@@ -95,6 +95,14 @@ class portfolio_caller_test extends portfolio_caller_base {
     public static function display_name() {
         return "Test caller subclass";
     }
+
+    public function load_data() {
+
+    }
+
+    public static function expected_callbackargs() {
+        return array();
+    }
 }
 
 /**
@@ -161,6 +169,30 @@ class portfoliolib_test extends UnitTestCase {
             $gotexception = true;
         }
         $this->assertTrue($gotexception);
+    }
+
+    /**
+    * does everything we need to set up a new caller
+    * so each subclass doesn't have to implement this
+    *
+    * @param string $class name of caller class to generate (this class def must be already loaded)
+    * @param array $callbackargs the arguments to pass the constructor of the caller
+    * @param int $userid a userid the subclass has generated
+    *
+    * @return portfolio_caller_base subclass
+    */
+    protected function setup_caller($class, $callbackargs, $user=null) {
+        global $DB;
+        $caller = new $class($callbackargs);
+        $caller->set('exporter', new mock_exporter());
+        if (is_numeric($user)) {
+            $user = $DB->get_record('user', array('id' => $user));
+        }
+        if (is_object($user)) {
+            $caller->set('user', $user);
+        }
+        $caller->load_data();
+        return $caller;
     }
 }
 
