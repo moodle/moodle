@@ -4082,6 +4082,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         return false;
     }
 
+    if (!empty($user->deleted)) {
+        // do not mail delted users
+        return false;
+    }
+
     if (!empty($CFG->noemailever)) {
         // hidden setting for development sites, set in config.php if needed
         return true;
