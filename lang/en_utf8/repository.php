@@ -60,6 +60,7 @@ $string['openpicker'] = 'Choose a file...';
 $string['personalrepositories'] = 'Personal repositories';
 $string['plugin'] = 'Repository plug-ins';
 $string['preview'] = 'Preview';
+$string['popup'] = 'Open a popup window to login';
 $string['refresh'] = 'Refresh';
 $string['removed'] = 'Repository removed';
 $string['repository'] = 'Repository';

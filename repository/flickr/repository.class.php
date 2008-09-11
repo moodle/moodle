@@ -35,8 +35,7 @@ class repository_flickr extends repository{
 
     public function global_search(){
         global $SESSION;
-        $sess_name = 'flickrmail'.$this->id;
-        if (empty($SESSION->$sess_name)) {
+        if (empty($this->token)) {
             return false;
         } else {
             return true;
@@ -47,86 +46,60 @@ class repository_flickr extends repository{
         global $SESSION, $action, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);
+
+        $this->setting = 'flickr_';
+
         $this->api_key = $this->get_option('api_key');
-        if (empty($this->api_key)) {
-        }
-        $this->flickr = new phpFlickr($this->api_key);
+        //TODO: put secret into database
+        $this->secret = '';
+
+        $this->token = get_user_preferences($this->setting, '');
+        $this->nsid  = get_user_preferences($this->setting.'_nsid', '');
+
+        $this->flickr = new phpFlickr($this->api_key, $this->secret, $this->token);
 
         $reset = optional_param('reset', 0, PARAM_INT);
-        $sess_name = 'flickrmail'.$this->id;
+        if(empty($this->token)){
+            $frob  = optional_param('frob', '', PARAM_RAW);
+            if(!empty($frob)){
+                $auth_info = $this->flickr->auth_getToken($frob);
+                $this->token = $auth_info['token'];
+                $this->nsid  = $auth_info['user']['nsid'];
+                set_user_preference($this->setting, $auth_info['token']);
+                set_user_preference($this->setting.'_nsid', $auth_info['user']['nsid']);
+                $this->perm  = $auth_info['token'];
+            }else{
+                $action = 'login';
+            }
+        }
         if(!empty($reset)) {
-            // logout from flickr
-            unset($SESSION->$sess_name);
-            set_user_preference('flickrmail'.$this->id, '');
+            set_user_preference($this->setting, '');
+            set_user_preference($this->setting.'_nsid', '');
+            $this->token = '';
+            $this->nsid  = '';
+            $action = 'login';
         }
 
-        if(!empty($SESSION->$sess_name)) {
-            if(empty($action)) {
+        if(!empty($this->token)) {
+            if(empty($action)){
                 $action = 'list';
             }
         } else {
-            // get flickr account
-            $account = optional_param('flickrmail', '', PARAM_RAW);
-            if(!empty($account)) {
-                $people = $this->flickr->people_findByEmail($account);
-                if(!empty($people)) {
-                    $remember = optional_param('remember', '', PARAM_RAW);
-                    if(!empty($remember)) {
-                        set_user_preference('flickrmail'.$this->id, $account);
-                    }
-                    $SESSION->$sess_name = $account;
-                    if (empty($account)) {
-                        $action = 'list';
-                    } else {
-                        $action = 'login';
-                    }
-                } else {
-                    throw new repository_exception('invalidemail', 'repository_flickr');
-                }
-            } else {
-                if($account = get_user_preferences('flickrmail'.$this->id, '')){
-                    $SESSION->$sess_name = $account;
-                    if(empty($action)) {
-                        $action = 'list';
-                    }
-                } else {
-                    $action = 'login';
-                }
-            }
+            $action = 'login';
         }
     }
     public function print_login($ajax = true){
         global $SESSION;
-        $sess_name = 'flickrmail'.$this->id;
-        if(empty($SESSION->$sess_name)) {
-        $str =<<<EOD
-<form id="moodle-repo-login">
-<label for="account">Account (Email)</label><br/>
-<input type='text' name='flickrmail' id='account' />
-<input type='hidden' name='id' value='$this->id' /><br/>
-<input type='checkbox' name='remember' id="keepid" value='true' /> <label for="keepid">Remember? </label>
-<p><input type='button' onclick="repository_client.login()" value="Go" /></p>
-</form>
-EOD;
+        if(!empty($this->token)){
+        }
+        if(empty($this->token)) {
             if($ajax){
                 $ret = array();
-                $e1->label = get_string('username', 'repository_flickr').': ';
-                $e1->id    = 'account';
-                $e1->type = 'text';
-                $e1->name = 'flickrmail';
-
-                $e2->id   = 'keepid';
-                $e2->label = get_string('remember', 'repository_flickr').' ';
-                $e2->type = 'checkbox';
-                $e2->name = 'remember';
-
-                $e3->type = 'hidden';
-                $e3->name = 'repo_id';
-                $e3->value = $this->id;
-                $ret['login'] = array($e1, $e2, $e3);
+                $popup_btn = new stdclass;
+                $popup_btn->type = 'popup';
+                $popup_btn->url = $this->flickr->auth();
+                $ret['login'] = array($popup_btn);
                 return $ret;
-            }else{
-                echo $str;
             }
         } else {
             return $this->get_listing();
@@ -134,17 +107,24 @@ EOD;
     }
     public function get_listing($path = '1', $search = ''){
         global $SESSION;
-        $sess_name = 'flickrmail'.$this->id;
-        $people = $this->flickr->people_findByEmail($SESSION->$sess_name);
-        $photos_url = $this->flickr->urls_getUserPhotos($people['nsid']);
+        $nsid = get_user_preferences($this->setting.'_nsid', '');
+        $photos_url = $this->flickr->urls_getUserPhotos($nsid);
 
         if(!empty($search)) {
-            // do searching, if $path is not empty, ignore it.
-            $photos = $this->flickr->photos_search(array('user_id'=>$people['nsid'], 'text'=>$search));
+            $photos = $this->flickr->photos_search(array(
+                'per_page'=>25,
+                'page'=>$path,
+                'extras'=>'original_format',
+                'text'=>$search
+                ));
         } elseif(!empty($path) && empty($search)) {
-            $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 25, $path);
+            $photos = $this->flickr->photos_search(array(
+                'user_id'=>$nsid,
+                'per_page'=>25,
+                'page'=>$path,
+                'extras'=>'original_format'
+                ));
         }
-
         $ret = array();
         $ret['manage'] = $photos_url;
         $ret['list']  = array();
@@ -154,17 +134,19 @@ EOD;
         } else {
             $ret['page'] = 1;
         }
-        foreach ($photos['photo'] as $p) {
-            if(empty($p['title'])) {
-                $p['title'] = get_string('notitle', 'repository_flickr');
+        if(!empty($photos['photo'])){
+            foreach ($photos['photo'] as $p) {
+                if(empty($p['title'])) {
+                    $p['title'] = get_string('notitle', 'repository_flickr');
+                }
+                if (isset($p['originalformat'])) {
+                    $format = $p['originalformat'];
+                } else {
+                    $format = 'jpg';
+                }
+                $ret['list'][] =
+                    array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown', 'url'=>$photos_url.$p['id']);
             }
-            if (isset($p['originalformat'])) {
-                $format = $p['originalformat'];
-            } else {
-                $format = 'jpg';
-            }
-            $ret['list'][] =
-                array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown', 'url'=>$photos_url.$p['id']);
         }
         if(empty($ret)) {
             throw new repository_exception('nullphotolist', 'repository_flickr');
@@ -189,19 +171,6 @@ EOD;
                 $str .= "<br/>";
             }
         }
-        $str .= <<<EOD
-<style type='text/css'>
-#paging{margin-top: 10px; clear:both}
-#paging a{padding: 4px; border: 1px solid gray}
-</style>
-EOD;
-        $str .= '<div id="paging">';
-        for($i=1; $i <= $this->photos['pages']; $i++) {
-            $str .= '<a href="###" onclick="cr('.$this->id.', '.$i.', 0)">';
-            $str .= $i;
-            $str .= '</a> ';
-        }
-        $str .= '</div>';
         echo $str;
     }
     public function print_search(){
@@ -244,7 +213,7 @@ EOD;
     }
 
     public static function has_multiple_instances() {
-        return true;
+        return false;
     }
 
     public static function has_instance_config() {

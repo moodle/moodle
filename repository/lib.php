@@ -1209,6 +1209,7 @@ function repository_get_client($context){
     $strsearching = get_string('searching', 'repository');
     $strsubmit    = get_string('submit', 'repository');
     $strpreview   = get_string('preview', 'repository');
+    $strpopup     = get_string('popup', 'repository');
     $strupload    = get_string('upload', 'repository');
     $struploading = get_string('uploading', 'repository');
     $css = '';
@@ -1243,6 +1244,8 @@ function repository_get_client($context){
 .fp-upload-btn a:hover {background: grey;color:white}
 .fp-paging{margin:10px 5px; clear:both;text-align:center}
 .fp-paging a{padding: 4px;border: 1px solid #CCC}
+.fp-popup{text-align:center}
+.fp-popup a{font-size: 24px}
 .fp-grid{width:80px; float:left;text-align:center;}
 .fp-grid div{width: 80px; overflow: hidden}
 .fp-grid p{margin:0;padding:0;background: #FFFFCC}
@@ -1508,11 +1511,13 @@ _client.print_login = function(){
     var panel = new YAHOO.util.Element('panel-$suffix');
     var data = _client.ds.login;
     var str = '';
+    var has_pop = false;
     for(var k in data){
-        str += '<p>';
         if(data[k].type=='popup'){
-            str += '<a href="###" onclick="repository_client_$suffix.popup(\''+data[k].url+'\')">test</a>';
+            str += '<p class="fp-popup"><a href="###" onclick="repository_client_$suffix.popup(\''+data[k].url+'\')">$strpopup</a></p>';
+            has_pop = true;
         }else{
+            str += '<p>';
             var lable_id = '';
             var field_id = '';
             var field_value = '';
@@ -1527,10 +1532,12 @@ _client.print_login = function(){
                 field_value = ' value="'+data[k].value+'"';
             }
             str += '<input type="'+data[k].type+'"'+' name="'+data[k].name+'"'+field_id+field_value+' />';
+            str += '</p>';
         }
-        str += '</p>';
     }
-    str += '<p><input type="button" onclick="repository_client_$suffix.login()" value="$strsubmit" /></p>';
+    if(!has_pop){
+        str += '<p><input type="button" onclick="repository_client_$suffix.login()" value="$strsubmit" /></p>';
+    }
     panel.get('element').innerHTML = str;
 }
 

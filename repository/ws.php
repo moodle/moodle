@@ -15,6 +15,7 @@ $file  = optional_param('file', '', PARAM_RAW);
 $title = optional_param('title', '', PARAM_FILE);
 $action = optional_param('action', '', PARAM_ALPHA);
 $search = optional_param('s', '', PARAM_CLEANHTML);
+$callback = optional_param('callback', '', PARAM_CLEANHTML);
 // repository ID
 $repo_id = optional_param('repo_id', 1, PARAM_INT);
 $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);
@@ -95,6 +96,21 @@ if(file_exists($CFG->dirroot.'/repository/'.
     die(json_encode($err));
 }
 
+if (!empty($callback)) {
+    // call opener window to refresh repository
+    // the callback url should be something like this:
+    // http://xx.moodle.com/repository/ws.php?callback=yes&repo_id=1&sid=xxx
+    // sid is the attached auth token from external source
+    $js  =<<<EOD
+<html><head><script type="text/javascript">
+window.opener.repository_callback($repo_id);
+window.close();
+</script><body></body></html>
+EOD;
+    echo $js;
+    die;
+}
+
 switch ($action) {
 case 'login':
     try {
@@ -104,17 +120,6 @@ case 'login':
         $err->e = $e->getMessage();
         die(json_encode($err));
     }
-    break;
-case 'callback':
-    // call opener window to refresh repository
-    // the callback url should be something like this:
-    // http://xx.moodle.com/repository/ws.php?action=callback&repo_id=1&sid=xxx
-    // sid is the attached auth token from external source
-    $js  =<<<EOD
-<html><head><script type="text/javascript">
-window.opener.repository_callback($repo_id);
-</script><body></body></html>
-EOD;
     break;
 case 'list':
 case 'search':

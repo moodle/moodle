@@ -1,4 +1,15 @@
 <?php
+/**
+ * Modified by Dongsheng Cai <dongsheng@cvs.moodle.org>
+ * ChangeLog:
+ *   1. Remove PEAR HTTP LIB, use curl.class.php (created by myself)
+ *   2. Remove PEAR DB LIB
+ *   3. Remove all cache code, it will implement in curl class.
+ *   4. Clean up session code
+ *
+ * @version $Id$
+ *
+ */
 /* phpFlickr Class 2.2.0
  * Written by Dan Coulter (dan@dancoulter.com)
  * Sourceforge Project Page: http://www.sourceforge.net/projects/phpflickr/
@@ -12,15 +23,6 @@
  *
  *   Please submit all problems or questions to the Help Forum on my project page:
  *     http://sourceforge.net/forum/forum.php?forum_id=469652
- *
- */
-/**
- * Modified by Dongsheng Cai <dongsheng@cvs.moodle.org>
- * ChangeLog:
- *   1. Remove PEAR HTTP LIB, use curl.class.php (created by myself)
- *   2. Remove PEAR DB LIB
- *   3. Remove all cache code, it will implement in curl class.
- *   4. Clean up session code
  *
  */
 
@@ -50,15 +52,16 @@ class phpFlickr {
      * of your table.
      */
 
-    function __construct ($api_key, $secret = NULL, $die_on_error = false)
+    function __construct ($api_key, $secret = NULL, $token = '')
     {
         global $CFG;
         //The API Key must be set before any calls can be made.  You can
         //get your own at http://www.flickr.com/services/api/misc.api_keys.html
         $this->api_key = $api_key;
         $this->secret = $secret;
-        $this->die_on_error = $die_on_error;
+        $this->die_on_error = false;
         $this->service = "flickr";
+        $this->token = $token;
         //Find the PHP version and store it for future reference
         $this->php_version = explode("-", phpversion());
         $this->php_version = explode(".", $this->php_version[0]);
@@ -67,7 +70,6 @@ class phpFlickr {
 
     function request ($command, $args = array())
     {
-        global $SESSION;
         //Sends a request to Flickr's REST endpoint via POST.
         if (substr($command,0,7) != "flickr.") {
             $command = "flickr." . $command;
@@ -77,8 +79,8 @@ class phpFlickr {
         $args = array_merge(array("method" => $command, "format" => "php_serial", "api_key" => $this->api_key), $args);
         if (!empty($this->token)) {
             $args = array_merge($args, array("auth_token" => $this->token));
-        } elseif (!empty($SESSION->phpFlickr_auth_token)) {
-            $args = array_merge($args, array("auth_token" => $SESSION->phpFlickr_auth_token));
+        } elseif (!empty($this->token)) {
+            $args = array_merge($args, array("auth_token" => $this->token));
         }
         ksort($args);
         $auth_sig = "";
@@ -187,35 +189,15 @@ class phpFlickr {
 
     function auth ($perms = "read", $remember_uri = true)
     {
-        global $SESSION;
         // Redirects to Flickr's authentication piece if there is no valid token.
         // If remember_uri is set to false, the callback script (included) will
         // redirect to its default page.
-
-        if (empty($SESSION->phpFlickr_auth_token) && empty($this->token)) {
-            if ($remember_uri) {
-                $redirect = $_SERVER['REQUEST_URI'];
-            }
-            //$api_sig = md5($this->secret . "api_key" . $this->api_key . "extra" . $redirect . "perms" . $perms);
-            $api_sig = md5($this->secret . "api_key" . $this->api_key . "perms" . $perms);
-            if ($this->service == "23") {
-                header("Location: http://www.23hq.com/services/auth/?api_key=" . $this->api_key . "&extra=" . $redirect . "&perms=" . $perms . "&api_sig=". $api_sig);
-            } else {
-                $url = 'http://www.flickr.com/services/auth/?api_key=' . $this->api_key . "&perms=" .  $perms . '&api_sig='. $api_sig;
-                echo '<a href="'.$url.'">Authentication</a>';
-            }
-            //exit;
-        } else {
-            $tmp = $this->die_on_error;
-            $this->die_on_error = false;
-            $rsp = $this->auth_checkToken();
-            if ($this->error_code !== false) {
-                unset($SESSION->phpFlickr_auth_token);
-                $this->auth($perms, $remember_uri);
-            }
-            $this->die_on_error = $tmp;
-            return $rsp['perms'];
+        if ($remember_uri) {
+            $redirect = $_SERVER['REQUEST_URI'];
         }
+        $api_sig = md5($this->secret . "api_key" . $this->api_key . "perms" . $perms);
+        $url = 'http://www.flickr.com/services/auth/?api_key=' . $this->api_key . "&perms=" .  $perms . '&api_sig='. $api_sig;
+        return $url;
     }
 
     /*******************************
@@ -279,10 +261,9 @@ class phpFlickr {
 
     function auth_getToken ($frob)
     {
-        global $SESSION;
         /* http://www.flickr.com/services/api/flickr.auth.getToken.html */
         $this->request('flickr.auth.getToken', array('frob'=>$frob));
-        $SESSION->phpFlickr_auth_token = $this->parsed_response['auth']['token'];
+        $this->token = $this->parsed_response['auth']['token'];
         return $this->parsed_response ? $this->parsed_response['auth'] : false;
     }
 
