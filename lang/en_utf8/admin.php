@@ -732,6 +732,7 @@ $string['unicoderecommended'] = 'Storing all your data in Unicode (UTF-8) is rec
 $string['unicoderequired'] = 'It is required that you store all your data in Unicode format (UTF-8). New installations must be performed into databases that have their default character set as Unicode.  If you are upgrading, you should perform the UTF-8 migration process (see the Admin page).';
 $string['uninstall'] = 'Uninstall selected language pack';
 $string['uninstallconfirm'] = 'You are about to completely uninstall language pack $a, are you sure?';
+$string['uninstallqtype'] = 'Uninstall this question type.';
 $string['unsupported'] = 'Unsupported';
 $string['updateaccounts'] = 'Update existing accounts';
 $string['updatecomponent'] = 'Update Component';

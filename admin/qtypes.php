@@ -137,7 +137,7 @@
             }
             if ($canviewreports) {
                 $row[] = '<a href="' . admin_url('/report/questioninstances/index.php?qtype=' . $qtypename) .
-                        '">' . $strcount . '</a>';
+                        '" title="' . get_string('showdetails', 'admin') . '">' . $strcount . '</a>';
             } else {
                 $strcount;
             }
@@ -198,7 +198,8 @@
             $row[] = '';
         } else {
             $row[] = '<a href="' . admin_url('qtypes.php?delete=' . $qtypename .
-                    '&amp;sesskey=' . sesskey()) . '">' . get_string('delete') . '</a>';
+                    '&amp;sesskey=' . sesskey()) . '" title="' .
+                    get_string('uninstallqtype', 'admin') . '">' . get_string('delete') . '</a>';
         }
 
         // Settings link, if available.
