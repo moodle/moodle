@@ -1689,6 +1689,9 @@ _client.buildtree = function(node, level){
     tmpNode.icon = node.thumbnail;
     tmpNode.path = node.path;
     if(node.children){
+        if(node.expanded){
+            tmpNode.expand();
+        }
         tmpNode.isLeaf = false;
         if (node.path) {
             tmpNode.path = node.path;
