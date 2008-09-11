@@ -117,8 +117,12 @@ class flexible_table {
         return $this->download;
     }
     
-    function export_class_instance(){
-        if (is_null($this->exportclass) && !empty($this->download)){
+    function export_class_instance(&$exportclass=null){
+        if (!is_null($exportclass)){
+            $this->started_output = true;
+            $this->exportclass =& $exportclass;
+            $this->exportclass->table =& $this;
+        } elseif (is_null($this->exportclass) && !empty($this->download)){
             $classname = 'table_'.$this->download.'_export_format';
             $this->exportclass = new $classname($this);
             if (!$this->exportclass->document_started()){
@@ -752,7 +756,7 @@ class flexible_table {
      * This function is not part of the public api.
      */
     function print_initials_bar(){
-        if (($this->sess->i_last || $this->sess->i_first || $this->use_initials) 
+        if ((!empty($this->sess->i_last) || !empty($this->sess->i_first) || $this->use_initials) 
                     && isset($this->columns['fullname'])) {
 
             $strall = get_string('all');
@@ -1417,6 +1421,7 @@ class table_xhtml_export_format extends table_default_export_format_parent{
 
 <html xmlns="http://www.w3.org/1999/xhtml"
   xml:lang="en" lang="en">
+<head>
 <style type="text/css">/*<![CDATA[*/
 
 .flexible th {
@@ -1460,10 +1465,14 @@ h1, h2{
 .bold {
 font-weight:bold;
 }
-
+.mdl-align {
+    text-align:center;
+}
 
 
 /*]]>*/</style>
+<title>$filename</title>
+</head>
 <body>
 EOF;
         $this->documentstarted = true;
@@ -1491,7 +1500,7 @@ EOF;
         $this->table->finish_html();
     }
     function finish_document(){
-        echo '</body>';
+        echo "</body>\n</html>";
         exit;
     }
 }

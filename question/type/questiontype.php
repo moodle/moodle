@@ -44,12 +44,24 @@ class default_questiontype {
     }
 
     /**
-     * The name this question should appear as in the create new question
-     * dropdown.
+     * Returns a list of other question types that this one requires in order to
+     * work. For example, the calculated question type is a subclass of the
+     * numerical question type, which is a subclass of the shortanswer question
+     * type; and the randomsamatch question type requires the shortanswer type
+     * to be installed.
      *
-     * @return mixed the desired string, or false to hide this question type in the menu.
+     * @return array any other question types that this one relies on. An empty
+     * array if none.
      */
-    function menu_name() {
+    function requires_qtypes() {
+        return array();
+    }
+
+    /**
+     * @return string the name of this question type in the user's language.
+     * You should not need to override this method, the default behaviour should be fine.
+     */
+    function local_name() {
         $name = $this->name();
         $menu_name = get_string($name, 'qtype_' . $name);
         if ($menu_name[0] == '[') {
@@ -61,10 +73,31 @@ class default_questiontype {
     }
 
     /**
+     * The name this question should appear as in the create new question
+     * dropdown. Override this method to return false if you don't want your
+     * question type to be createable, for example if it is an abstract base type,
+     * otherwise, you should not need to override this method.
+     *
+     * @return mixed the desired string, or false to hide this question type in the menu.
+     */
+    function menu_name() {
+        return $this->local_name();
+    }
+
+    /**
      * @return boolean true if this question can only be graded manually.
      */
     function is_manual_graded() {
         return false;
+    }
+
+    /**
+     * @return boolean true if a table analyzing responses should be shown in
+     * the quiz statistics report. Usually if a question is manually graded
+     * then this analysis table won't be a good idea.
+     */
+    function show_analysis_of_responses() {
+        return !$this->is_manual_graded();
     }
 
     /**
@@ -74,6 +107,18 @@ class default_questiontype {
         return true;
     }
 
+    /**
+     * @param question record.
+     * @param integer subqid this is the id of the subquestion. Usually the id
+     * of the question record of the question record but this is dependent on
+     * the question type. Not relevant to some question types.
+     * @return whether the teacher supplied responses can include wildcards. Can
+     * more than one answer be equivalent to one teacher supplied response.
+     */
+    function has_wildcards_in_responses($question, $subqid) {
+        return false;
+    }
+    
     /**
      * @return whether the question_answers.answer field needs to have
      * restore_decode_content_links_worker called on it.
@@ -666,6 +711,20 @@ class default_questiontype {
             return null;
         }
     }
+    /**
+     * The difference between this method an get_all_responses is that this
+     * method is not passed a state object. It is the possible answers to a
+     * question no matter what the state.
+     * This method is not called for random questions.
+     * @return array of possible answers.
+     */
+    function get_possible_responses(&$question) {
+        static $responses = array();
+        if (!isset($responses[$question->id])){
+            $responses[$question->id] = $this->get_all_responses($question, new object());
+        }
+        return array($question->id => $responses[$question->id]->responses);
+    }
     
     /**
      * @param object $question
@@ -697,6 +756,33 @@ class default_questiontype {
            $responses[] = '';
        }
        return $responses;
+    }
+
+    function get_actual_response_details($question, $state) {
+        $response = array_shift($this->get_actual_response($question, $state));
+        $teacherresponses = $this->get_possible_responses($question, $state);
+        //only one response
+        list($tsubqid, $tresponses) = each($teacherresponses);
+        $responsedetail = new object();
+        $responsedetail->subqid = $tsubqid;
+        $responsedetail->response = $response;
+        if ($aid = $this->check_response($question, $state)){
+            $responsedetail->aid = $aid;
+        } else {
+            foreach ($tresponses as $aid => $tresponse){
+                if ($tresponse->answer == $response){
+                    $responsedetail->aid = $aid;
+                    break;
+                }
+            }
+        }
+        if (isset($responsedetail->aid)){
+            $responsedetail->credit = $tresponses[$aid]->credit;
+        } else {
+            $responsedetail->aid = 0;
+            $responsedetail->credit = 0;
+        }
+        return array($responsedetail);
     }
 
     // ULPGC ecastro

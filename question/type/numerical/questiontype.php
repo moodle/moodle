@@ -25,6 +25,14 @@ class question_numerical_qtype extends question_shortanswer_qtype {
     function name() {
         return 'numerical';
     }
+    
+    function has_wildcards_in_responses() {
+        return true;
+    }
+
+    function requires_qtypes() {
+        return array('shortanswer');
+    }
 
     function get_question_options(&$question) {
         // Get the question answers and their respective tolerances

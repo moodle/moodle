@@ -9,6 +9,7 @@ class qstats{
     var $questions;
     var $subquestions = array();
     var $randomselectors = array();
+    var $responses = array();
     
     function qstats($questions, $s, $sumgradesavg){
         $this->s = $s;
@@ -75,7 +76,6 @@ class qstats{
     }
 
     function _secondary_states_walker($state, &$stats){
-        global $QTYPES;
         $gradedifference = ($state->grade - $stats->gradeaverage);
         $othergradedifference = (($state->sumgrades - $state->grade) - $stats->othergradeaverage);
         $overallgradedifference = $state->sumgrades - $this->sumgradesavg;
@@ -87,9 +87,49 @@ class qstats{
         $stats->covariancemaxsum += $sortedgradedifference * $sortedothergradedifference;
         $stats->covariancewithoverallgradesum += $gradedifference * $overallgradedifference;
 
+        if ($stats->subquestion){
+            $question =& $this->subquestions[$stats->questionid];
+        } else {
+            $question =& $this->questions[$stats->questionid];
+        }
+        $this->_process_actual_responses($question, $state);
 
     }
 
+    function add_response_detail_to_array($responsedetail){
+        $responsedetail->rcount = 1;
+        if (isset($this->responses[$responsedetail->subqid])){
+            if (isset($this->responses[$responsedetail->subqid][$responsedetail->aid])){
+                if (isset($this->responses[$responsedetail->subqid][$responsedetail->aid][$responsedetail->response])){
+                    $this->responses[$responsedetail->subqid][$responsedetail->aid][$responsedetail->response]->rcount++;
+                } else {
+                    $this->responses[$responsedetail->subqid][$responsedetail->aid][$responsedetail->response] = $responsedetail;
+                }
+            } else {
+                $this->responses[$responsedetail->subqid][$responsedetail->aid] = array($responsedetail->response => $responsedetail);
+            }
+        } else {
+            $this->responses[$responsedetail->subqid] = array();
+            $this->responses[$responsedetail->subqid][$responsedetail->aid] = array($responsedetail->response => $responsedetail);
+        }
+    }
+
+    /** 
+     * Get the data for the individual question response analysis table.
+     */
+    function _process_actual_responses($question, $state){
+        global $QTYPES;
+        if ($question->qtype != 'random' && 
+                $QTYPES[$question->qtype]->show_analysis_of_responses()){
+            $restoredstate = clone($state);
+            restore_question_state($question, $restoredstate);
+            $responsedetails = $QTYPES[$question->qtype]->get_actual_response_details($question, $restoredstate);
+            foreach ($responsedetails as $responsedetail){
+                $responsedetail->questionid = $question->id;
+                $this->add_response_detail_to_array($responsedetail);
+            }
+        }
+    }
 
     function _initial_question_walker(&$stats){
         $stats->gradeaverage = $stats->totalgrades / $stats->s;
@@ -129,6 +169,8 @@ class qstats{
     }
     
     function process_states(){
+        global $DB;
+        set_time_limit(0);
         $subquestionstats = array();
         foreach ($this->states as $state){
             $this->_initial_states_walker($state, $this->questions[$state->question]->_stats);
@@ -162,6 +204,7 @@ class qstats{
         foreach (array_keys($this->subquestions) as $qid){
             $this->subquestions[$qid]->_stats = $subquestionstats[$qid];
             $this->subquestions[$qid]->_stats->questionid = $qid;
+            $this->subquestions[$qid]->maxgrade = $this->subquestions[$qid]->_stats->maxgrade;
             $this->_initial_question_walker($this->subquestions[$qid]->_stats);
             if ($subquestionstats[$qid]->differentweights){
                 notify(get_string('erroritemappearsmorethanoncewithdifferentweight', 'quiz_statistics', $this->subquestions[$qid]->name));
@@ -220,6 +263,7 @@ class qstats{
                 $this->questions[$qid]->_stats->effectiveweight = null;
             }
         }
+        $this->responses = quiz_report_unindex($this->responses);
     }
     /**
      * Needed by quiz stats calculations.

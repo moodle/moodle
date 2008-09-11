@@ -148,6 +148,13 @@ class question_match_qtype extends default_questiontype {
 
     function restore_session_and_responses(&$question, &$state) {
         global $DB;
+        static $subquestions = array();
+        if (!isset($subquestions[$question->id])){
+            if (!$subquestions[$question->id] = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC')) {
+               notify('Error: Missing subquestions!');
+               return false;
+            }
+        }
         // The serialized format for matching questions is a comma separated
         // list of question answer pairs (e.g. 1-1,2-3,3-2), where the ids of
         // both refer to the id in the table question_match_sub.
@@ -155,17 +162,14 @@ class question_match_qtype extends default_questiontype {
         $responses = array_map(create_function('$val',
          'return explode("-", $val);'), $responses);
 
-        if (!$questions = $DB->get_records('question_match_sub', array('question' => $question->id), 'id ASC')) {
-           notify('Error: Missing subquestions!');
-           return false;
-        }
+
 
         // Restore the previous responses and place the questions into the state options
         $state->responses = array();
         $state->options->subquestions = array();
         foreach ($responses as $response) {
             $state->responses[$response[0]] = $response[1];
-            $state->options->subquestions[$response[0]] = $questions[$response[0]];
+            $state->options->subquestions[$response[0]] = clone($subquestions[$question->id][$response[0]]);
         }
 
         foreach ($state->options->subquestions as $key => $subquestion) {
@@ -406,6 +410,21 @@ class question_match_qtype extends default_questiontype {
         return $result;
     }
 
+    function get_possible_responses(&$question) {
+        $answers = array();
+        if (is_array($question->options->subquestions)) {
+            foreach ($question->options->subquestions as $subqid => $answer) {
+                if ($answer->questiontext) {
+                    $r = new stdClass;
+                    $r->answer = $answer->questiontext . ": " . $answer->answertext;
+                    $r->credit = 1;
+                    $answers[$subqid] = array($answer->id =>$r);
+                }
+            }
+        }
+        return $answers;
+    }
+    
     // ULPGC ecastro
     function get_actual_response($question, $state) {
        $subquestions = &$state->options->subquestions;
@@ -420,7 +439,33 @@ class question_match_qtype extends default_questiontype {
        }
        return $results;
    }
-
+   
+   function get_actual_response_details($question, $state) {
+        $responses = $this->get_actual_response($question, $state);
+        $teacherresponses = $this->get_possible_responses($question, $state);
+        //only one response
+        $responsedetails =array();
+        foreach ($responses as $tsubqid => $response){
+            $responsedetail = new object();
+            $responsedetail->subqid = $tsubqid;
+            $responsedetail->response = $response;
+            foreach ($teacherresponses[$tsubqid] as $aid => $tresponse){
+                if ($tresponse->answer == $response){
+                    $responsedetail->aid = $aid;
+                    break;
+                }
+            }
+            if (isset($responsedetail->aid)){
+                $responsedetail->credit = $teacherresponses[$tsubqid][$aid]->credit;
+            } else {
+                $responsedetail->aid = 0;
+                $responsedetail->credit = 0;
+            }
+            $responsedetails[] = $responsedetail;
+        }
+        return $responsedetails;
+    }
+    
     function response_summary($question, $state, $length=80) {
         return shorten_text(implode(', ', $this->get_actual_response($question, $state)), $length);
     }

@@ -49,8 +49,7 @@ $string['erroritemappearsmorethanoncewithdifferentweight'] = 'Question ($a) appe
 $string['lastcalculated'] = 'Last calculated $a->lastcalculated ago there have been $a->count attempts since then.';
 $string['recalculatenow'] = 'Recalculate now';
 $string['detailedanalysis'] = 'More detailed analysis of the responses to this question';
-$string['errordeletingquizstats'] = 'Error deleting old quiz_statistics records.';
-$string['errordeletingqstats'] = 'Error deleting old quiz_question_statistics records.';
+$string['errordeleting'] = 'Error deleting old $a records.';
 $string['questionname'] = 'Question Name';
 $string['questiontype'] = 'Question Type';
 $string['positions'] = 'Position(s)';
@@ -59,4 +58,12 @@ $string['questioninformation'] = 'Question information';
 $string['questionstatistics'] = 'Question statistics';
 $string['analysisofresponses'] = 'Analysis of responses';
 $string['statisticsreportgraph'] = 'Statistics for question positions';
+$string['response'] = 'Answer';
+$string['optiongrade'] = 'Partial credit';
+$string['count'] = 'Count';
+$string['frequency'] = 'Frequency';
+$string['backtoquizreport'] = 'Back to main statistics report page.';
+$string['analysisofresponsesfor'] = 'Analysis of responses for $a.';
+$string['downloadeverything'] = 'Download full report as';
+
 ?>

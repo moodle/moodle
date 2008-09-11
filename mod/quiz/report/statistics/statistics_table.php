@@ -78,18 +78,7 @@ class quiz_report_statistics_table extends flexible_table {
 
         $this->collapsible(true);
 
-/*        $this->column_suppress('picture');
-        $this->column_suppress('fullname');
-        $this->column_suppress('idnumber');
 
-        $this->no_sorting('feedbacktext');
-
-        $this->column_class('picture', 'picture');
-        $this->column_class('lastname', 'bold');
-        $this->column_class('firstname', 'bold');
-        $this->column_class('fullname', 'bold');
-        $this->column_class('sumgrades', 'bold');*/
-        
 
         $this->set_attribute('id', 'questionstatistics');
         $this->set_attribute('class', 'generaltable generalbox boxaligncenter');
@@ -124,7 +113,7 @@ class quiz_report_statistics_table extends flexible_table {
         return quiz_question_action_icons($this->quiz, $this->cmid, $question, $this->baseurl);
     }
     function col_qtype($question){
-        return $question->qtype;
+        return get_string($question->qtype,'quiz');
     }
     function col_intended_weight($question){
         return quiz_report_scale_sumgrades_as_percentage($question->_stats->maxgrade, $this->quiz);

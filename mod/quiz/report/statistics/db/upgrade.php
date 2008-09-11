@@ -61,6 +61,62 @@ function xmldb_quizreport_statistics_upgrade($oldversion) {
         $dbman->change_field_type($table, $field);
     }
 
+    if ($result && $oldversion < 2008082600) {
+
+    /// Define table quiz_question_response_stats to be created
+        $table = new xmldb_table('quiz_question_response_stats');
+
+    /// Adding fields to table quiz_question_response_stats
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null);
+        $table->add_field('quizstatisticsid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('questionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+        $table->add_field('anssubqid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->add_field('response', XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null);
+        $table->add_field('rcount', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, null, null, null, null, null);
+        $table->add_field('credit', XMLDB_TYPE_NUMBER, '15, 5', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null);
+
+    /// Adding keys to table quiz_question_response_stats
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
+
+    /// Conditionally launch create table for quiz_question_response_stats
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+
+    }
+    if ($result && $oldversion < 2008090500) {
+        //delete all cached results first
+        $result = $result && $DB->delete_records('quiz_statistics');
+        $result = $result && $DB->delete_records('quiz_question_statistics');
+        $result = $result && $DB->delete_records('quiz_question_response_stats');
+        if ($result){
+        /// Define field anssubqid to be dropped from quiz_question_response_stats
+            $table = new xmldb_table('quiz_question_response_stats');
+            $field = new xmldb_field('anssubqid');
+    
+        /// Conditionally launch drop field subqid
+            if ($dbman->field_exists($table, $field)) {
+                $dbman->drop_field($table, $field);
+            }
+    
+        /// Define field subqid to be added to quiz_question_response_stats
+            $field = new xmldb_field('subqid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'questionid');
+    
+        /// Conditionally launch add field subqid
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+    
+        /// Define field aid to be added to quiz_question_response_stats
+            $field = new xmldb_field('aid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'subqid');
+    
+        /// Conditionally launch add field aid
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+        }
+    }
     return $result;
 }
 

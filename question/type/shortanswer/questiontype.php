@@ -22,6 +22,10 @@ class question_shortanswer_qtype extends default_questiontype {
         return 'shortanswer';
     }
 
+    function has_wildcards_in_responses($question, $subqid) {
+        return true;
+    }
+
     function get_question_options(&$question) {
         global $DB;
         // Get additional information from database

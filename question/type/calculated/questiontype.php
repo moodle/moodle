@@ -18,6 +18,14 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         return 'calculated';
     }
 
+    function has_wildcards_in_responses($question, $subqid) {
+        return true;
+    }
+
+    function requires_qtypes() {
+        return array('numerical');
+    }
+
     function get_question_options(&$question) {
         // First get the datasets and default options
          global $CFG, $DB;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20080728" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
+<XMLDB PATH="mod/quiz/report/statistics/db" VERSION="20080908" COMMENT="XMLDB file for Moodle mod/quiz/report/statistics"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../../lib/xmldb/xmldb.xsd"
 >
@@ -27,7 +27,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="quiz_question_statistics" COMMENT="Default comment for the table, please edit me" PREVIOUS="quiz_statistics">
+    <TABLE NAME="quiz_question_statistics" COMMENT="Default comment for the table, please edit me" PREVIOUS="quiz_statistics" NEXT="quiz_question_response_stats">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="quizstatisticsid"/>
         <FIELD NAME="quizstatisticsid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="questionid"/>
@@ -42,6 +42,21 @@
         <FIELD NAME="subquestions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="facility" NEXT="maxgrade"/>
         <FIELD NAME="maxgrade" TYPE="number" LENGTH="12" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" DECIMALS="7" PREVIOUS="subquestions" NEXT="positions"/>
         <FIELD NAME="positions" TYPE="text" LENGTH="medium" NOTNULL="false" SEQUENCE="false" ENUM="false" COMMENT="positions in which this item appears. Only used for random questions." PREVIOUS="maxgrade"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="quiz_question_response_stats" COMMENT="Quiz question responses." PREVIOUS="quiz_question_statistics">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="quizstatisticsid"/>
+        <FIELD NAME="quizstatisticsid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="questionid"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="quizstatisticsid" NEXT="subqid"/>
+        <FIELD NAME="subqid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="questionid" NEXT="aid"/>
+        <FIELD NAME="aid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="subqid" NEXT="response"/>
+        <FIELD NAME="response" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="aid" NEXT="rcount"/>
+        <FIELD NAME="rcount" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="response" NEXT="credit"/>
+        <FIELD NAME="credit" TYPE="number" LENGTH="15" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" ENUM="false" DECIMALS="5" PREVIOUS="rcount"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

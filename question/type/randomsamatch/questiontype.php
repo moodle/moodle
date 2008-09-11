@@ -19,6 +19,10 @@ class question_randomsamatch_qtype extends question_match_qtype {
         return 'randomsamatch';
     }
 
+    function requires_qtypes() {
+        return array('shortanswer');
+    }
+
     function is_usable_by_random() {
         return false;
     }
@@ -174,6 +178,7 @@ class question_randomsamatch_qtype extends question_match_qtype {
     function restore_session_and_responses(&$question, &$state) {
         global $DB;
         global $QTYPES;
+        static $wrappedquestions = array();
         if (empty($state->responses[''])) {
             $question->questiontext = "Insufficient selection options are
              available for this question, therefore it is not available in  this
@@ -188,29 +193,33 @@ class question_randomsamatch_qtype extends question_match_qtype {
             // Restore the previous responses
             $state->responses = array();
             foreach ($responses as $response) {
-                $state->responses[$response[0]] = $response[1];
-                if (!$wrappedquestion = $DB->get_record('question', array('id' => $response[0]))) {
-                    notify("Couldn't get question (id=$response[0])!");
-                    return false;
-                }
-                if (!$QTYPES[$wrappedquestion->qtype]
-                 ->get_question_options($wrappedquestion)) {
-                    notify("Couldn't get question options (id=$response[0])!");
-                    return false;
-                }
-
-                // Now we overwrite the $question->options->answers field to only
-                // *one* (the first) correct answer. This loop can be deleted to
-                // take all answers into account (i.e. put them all into the
-                // drop-down menu.
-                $foundcorrect = false;
-                foreach ($wrappedquestion->options->answers as $answer) {
-                    if ($foundcorrect || $answer->fraction != 1.0) {
-                        unset($wrappedquestion->options->answers[$answer->id]);
-                    } else if (!$foundcorrect) {
-                        $foundcorrect = true;
+                $wqid = $response[0];
+                $state->responses[$wqid] = $response[1];
+                if (!isset($wrappedquestions[$wqid])){
+                    if (!$wrappedquestions[$wqid] = $DB->get_record('question', array('id' => $wqid))) {
+                        notify("Couldn't get question (id=$wqid)!");
+                        return false;
+                    }
+                    if (!$QTYPES[$wrappedquestions[$wqid]->qtype]
+                     ->get_question_options($wrappedquestions[$wqid])) {
+                        notify("Couldn't get question options (id=$response[0])!");
+                        return false;
+                    }
+    
+                    // Now we overwrite the $question->options->answers field to only
+                    // *one* (the first) correct answer. This loop can be deleted to
+                    // take all answers into account (i.e. put them all into the
+                    // drop-down menu.
+                    $foundcorrect = false;
+                    foreach ($wrappedquestions[$wqid]->options->answers as $answer) {
+                        if ($foundcorrect || $answer->fraction != 1.0) {
+                            unset($wrappedquestions[$wqid]->options->answers[$answer->id]);
+                        } else if (!$foundcorrect) {
+                            $foundcorrect = true;
+                        }
                     }
                 }
+                $wrappedquestion = clone($wrappedquestions[$wqid]);
 
                 if (!$QTYPES[$wrappedquestion->qtype]
                  ->restore_session_and_responses($wrappedquestion, $state)) {
@@ -272,6 +281,61 @@ class question_randomsamatch_qtype extends question_match_qtype {
         $result->responses = $answers;
         return $result;
     }
+    /**
+     * The difference between this method an get_all_responses is that this
+     * method is not passed a state object. It is the possible answers to a
+     * question no matter what the state.
+     * This method is not called for random questions.
+     * @return array of possible answers.
+     */
+    function get_possible_responses(&$question) {
+        global $QTYPES;
+        static $answers = array();
+        if (!isset($answers[$question->id])){
+            if ($question->options->subcats) {
+                // recurse into subcategories
+                $categorylist = question_categorylist($question->category);
+            } else {
+                $categorylist = $question->category;
+            }
+    
+            $question->options->subquestions = $this->get_sa_candidates($categorylist);
+            foreach ($question->options->subquestions as $key => $wrappedquestion) {
+                if (!$QTYPES[$wrappedquestion->qtype]
+                 ->get_question_options($wrappedquestion)) {
+                    return false;
+                }
+    
+                // Now we overwrite the $question->options->answers field to only
+                // *one* (the first) correct answer. This loop can be deleted to
+                // take all answers into account (i.e. put them all into the
+                // drop-down menu.
+                $foundcorrect = false;
+                foreach ($wrappedquestion->options->answers as $answer) {
+                    if ($foundcorrect || $answer->fraction != 1.0) {
+                        unset($wrappedquestion->options->answers[$answer->id]);
+                    } else if (!$foundcorrect) {
+                        $foundcorrect = true;
+                    }
+                }
+            }
+            $answers[$question->id] = array();
+            if (is_array($question->options->subquestions)) {
+                foreach ($question->options->subquestions as $subqid => $answer) {
+                    if ($answer->questiontext) {
+                        $ans = array_shift($answer->options->answers);
+                        $answer->answertext = $ans->answer ;
+                        $r = new stdClass;
+                        $r->answer = $answer->questiontext . ": " . $answer->answertext;
+                        $r->credit = 1;
+                        $answers[$question->id][$subqid] = array($ans->id => $r);
+                    }
+                }
+            }
+        }
+        return $answers[$question->id];
+    }
+
     /**
      * @param object $question
      * @return mixed either a integer score out of 1 that the average random

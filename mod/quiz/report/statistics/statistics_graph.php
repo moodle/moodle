@@ -27,7 +27,7 @@ if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being use
     $groups = false;
 }
 if ($quizstatistics->groupid){
-    if (!in_array($quizstatistics->groupid, $groups)){
+    if (!in_array($quizstatistics->groupid, array_keys($groups))){
         print_error('groupnotamember', 'group');
     }
 }
@@ -47,8 +47,10 @@ $line->parameter['legend_border'] = 'black';
 $line->parameter['legend_offset'] = 4;
 
 
-$line->parameter['bar_size']    = 1.2; 
-$line->parameter['bar_spacing'] = 10; 
+$line->parameter['bar_size']    = 1; 
+
+$line->parameter['zero_axis']        = 'grayEE';
+
 
 $fieldstoplot = array('facility' => get_string('facility', 'quiz_statistics'), 'discriminativeefficiency' => get_string('discriminative_efficiency', 'quiz_statistics'));
 $fieldstoplotfactor = array('facility' => 100, 'discriminativeefficiency' => 1);
@@ -60,26 +62,40 @@ foreach (array_keys($fieldstoplot) as $fieldtoplot){
             array('colour' => graph_get_new_colour(), 'bar' => 'fill', 'shadow_offset' => 1, 'legend' => $fieldstoplot[$fieldtoplot]);
 }
 foreach ($questionstatistics as $questionstatistic){
-    $line->x_data[] = $questions[$questionstatistic->questionid]->number;
+    $line->x_data[$questions[$questionstatistic->questionid]->number] = $questions[$questionstatistic->questionid]->number;
     foreach (array_keys($fieldstoplot) as $fieldtoplot){
         $value = !is_null($questionstatistic->$fieldtoplot)?$questionstatistic->$fieldtoplot:0;
         $value = $value * $fieldstoplotfactor[$fieldtoplot];
         $line->y_data[$fieldtoplot][$questions[$questionstatistic->questionid]->number] = $value;
     }
 }
+foreach (array_keys($line->y_data) as $fieldtoplot){
+    ksort($line->y_data[$fieldtoplot]);
+    $line->y_data[$fieldtoplot] = array_values($line->y_data[$fieldtoplot]);
+}
 ksort($line->x_data);
+$line->x_data = array_values($line->x_data);
 $max = 0;
 $min = 0;
 foreach (array_keys($fieldstoplot) as $fieldtoplot){
     ksort($line->y_data[$fieldtoplot]);
     $line->y_data[$fieldtoplot] = array_values($line->y_data[$fieldtoplot]);
     $max = (max($line->y_data[$fieldtoplot])> $max)? max($line->y_data[$fieldtoplot]): $max;
-    $min = (min($line->y_data[$fieldtoplot])> $min)? min($line->y_data[$fieldtoplot]): $min;
+    $min = (min($line->y_data[$fieldtoplot])< $min)? min($line->y_data[$fieldtoplot]): $min;
 }
 $line->y_order = array_keys($fieldstoplot);
 
+$gridresolution = 10;
 
-$line->parameter['y_min_left'] = $min;  // start at 0
+$max = ceil($max / $gridresolution) * $gridresolution;
+$min = floor($min / $gridresolution) * $gridresolution;
+
+$gridlines = ceil(($max - $min) / $gridresolution);
+
+
+$line->parameter['y_axis_gridlines'] = $gridlines+1;
+
+$line->parameter['y_min_left'] = $min;
 $line->parameter['y_max_left'] = $max;
 $line->parameter['y_decimal_left'] = 0; 
 

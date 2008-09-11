@@ -22,6 +22,21 @@ class embedded_cloze_qtype extends default_questiontype {
     function name() {
         return 'multianswer';
     }
+    
+    function has_wildcards_in_responses($question, $subqid) {
+        global $QTYPES;
+        foreach ($question->options->questions as $subq){
+            if ($subq->id == $subqid){
+                return $QTYPES[$subq->qtype]->has_wildcards_in_responses($subq, $subqid);
+            }
+        }
+        notify('Could not find sub question!');
+        return true;
+    }
+
+    function requires_qtypes() {
+        return array('shortanswer', 'numerical', 'multichoice');
+    }
 
     function get_question_options(&$question) {
         global $QTYPES, $DB;
@@ -231,6 +246,36 @@ class embedded_cloze_qtype extends default_questiontype {
         }
         }
         return $responses;
+    }
+
+    function get_possible_responses(&$question) {
+        global $QTYPES;
+        $responses = array();
+        foreach($question->options->questions as $key => $wrapped) {
+            if ($wrapped != ''){
+                if ($correct = $QTYPES[$wrapped->qtype]->get_possible_responses($wrapped)) {
+                    $responses += $correct;
+                } else {
+                    // if there is no correct answer to this subquestion then there
+                    // can not be a correct answer to the whole question either, so
+                    // we have to return null.
+                    return null;
+                }
+            }
+        }
+        return $responses;
+    }
+    function get_actual_response_details($question, $state){
+        global $QTYPES;
+        $details = array();
+        foreach($question->options->questions as $key => $wrapped) {
+            if ($wrapped != ''){
+                $stateforquestion = clone($state);
+                $stateforquestion->responses[''] = $state->responses[$key];
+                $details = array_merge($details, $QTYPES[$wrapped->qtype]->get_actual_response_details($wrapped, $stateforquestion));
+            }
+        }
+        return $details;
     }
 
     function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {

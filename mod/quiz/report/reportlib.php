@@ -46,14 +46,27 @@ function quiz_get_newgraded_states($attemptidssql, $idxattemptq = true, $fields=
         return $gradedstates;
     }
 }
-function quiz_report_index_by_keys($datum, $keys){
+/**
+ * Takes an array of objects and constructs a multidimensional array keyed by
+ * the keys it finds on the object.
+ * @param array $datum an array of objects with properties on the object
+ * including the keys passed as the next param.
+ * @param array $keys Array of strings with the names of the properties on the
+ * objects in datum that you want to index the multidimensional array by.
+ * @param boolean $keysunique If there is not only one object for each
+ * combination of keys you are using you should set $keysunique to true.
+ * Otherwise all the object will be added to a zero based array. So the array
+ * returned will have count($keys) + 1 indexs.
+ * @return array multidimensional array properly indexed.
+ */
+function quiz_report_index_by_keys($datum, $keys, $keysunique=true){
     if (!$datum){
         return $datum;
     }
     $key = array_shift($keys);
     $datumkeyed = array();
     foreach ($datum as $data){
-        if ($keys){
+        if ($keys || !$keysunique){
             $datumkeyed[$data->{$key}][]= $data;
         } else {
             $datumkeyed[$data->{$key}]= $data;
@@ -61,12 +74,25 @@ function quiz_report_index_by_keys($datum, $keys){
     }
     if ($keys){
         foreach ($datumkeyed as $datakey => $datakeyed){
-            $datumkeyed[$datakey] = quiz_report_index_by_keys($datakeyed, $keys);
+            $datumkeyed[$datakey] = quiz_report_index_by_keys($datakeyed, $keys, $keysunique);
         }
     }
     return $datumkeyed;
 }
-
+function quiz_report_unindex($datum){
+    if (!$datum){
+        return $datum;
+    }
+    $datumunkeyed = array();
+    foreach ($datum as $value){
+        if (is_array($value)){
+            $datumunkeyed = array_merge($datumunkeyed, quiz_report_unindex($value));
+        } else {
+            $datumunkeyed[] = $value;
+        }
+    }
+    return $datumunkeyed;
+}
 function quiz_get_regraded_qs($attemptidssql, $limitfrom=0, $limitnum=0){
     global $CFG, $DB;
     if ($attemptidssql && is_array($attemptidssql)){
@@ -306,13 +332,13 @@ function quiz_report_feedback_for_grade($grade, $quizid) {
 }
 
 function quiz_report_scale_sumgrades_as_percentage($rawgrade, $quiz, $round = true) {
-    if ($quiz->sumgrades) {
+    if ($quiz->sumgrades != 0) {
         $grade = $rawgrade * 100 / $quiz->sumgrades;
         if ($round) {
             $grade = quiz_format_grade($quiz, $grade);
         }
     } else {
-        $grade = 0;
+        return '';
     }
     return $grade.'%';
 }
