@@ -10,7 +10,8 @@ class testForumPortfolioCallers extends portfoliolib_test {
     public $module_type = 'forum';
     public $modules = array();
     public $entries = array();
-    public $caller;
+    public $postcaller;
+    public $discussioncaller;
 
     public function setUp() {
         global $DB, $USER;
@@ -44,7 +45,11 @@ class testForumPortfolioCallers extends portfoliolib_test {
         $first_post = reset($posts);
 
         $callbackargs = array('postid' => $first_post->id, 'discussionid' => $first_discussion->id);
-        $this->caller = parent::setup_caller('forum_portfolio_caller', $callbackargs, $first_post->userid);
+        $this->postcaller = parent::setup_caller('forum_portfolio_caller', $callbackargs, $first_post->userid);
+
+        unset($callbackargs['postid']);
+        $this->discussioncaller = parent::setup_caller('forum_portfolio_caller', $callbackargs, $first_post->userid);
+
     }
 
     public function tearDown() {
@@ -52,9 +57,13 @@ class testForumPortfolioCallers extends portfoliolib_test {
     }
 
     public function test_caller_sha1() {
-        $sha1 = $this->caller->get_sha1();
-        $this->caller->prepare_package();
-        $this->assertEqual($sha1, $this->caller->get_sha1());
+        $sha1 = $this->postcaller->get_sha1();
+        $this->postcaller->prepare_package();
+        $this->assertEqual($sha1, $this->postcaller->get_sha1());
+
+        $sha1 = $this->discussioncaller->get_sha1();
+        $this->discussioncaller->prepare_package();
+        $this->assertEqual($sha1, $this->discussioncaller->get_sha1());
     }
 
 }
