@@ -213,7 +213,7 @@ class repository_flickr extends repository{
     }
 
     public static function has_multiple_instances() {
-        return false;
+        return true;
     }
 
     public static function has_instance_config() {
@@ -222,7 +222,7 @@ class repository_flickr extends repository{
 
     public function instance_config_form(&$mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr'));
-        //$mform->addRule('email_address', get_string('required'), 'required', null, 'client');
+        $mform->addRule('email_address', get_string('required'), 'required', null, 'client');
     }
 
     public static function get_instance_option_names(){
