@@ -4199,7 +4199,7 @@ table.quizreviewsummary td.cell {
   overflow: hidden;
   margin: 0.3em 0.3em 0.3em 0;
   padding: 0;
-  border: 1px solid gray;
+  border: 1px solid #bbb;
   background: #eee no-repeat top right;
   text-align: center;
   vertical-align: middle;

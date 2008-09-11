@@ -891,9 +891,10 @@ class quiz_review_nav_panel extends quiz_nav_panel_base {
     }
 
     protected function get_question_button($number, $question) {
+        $strstate = get_string($this->attemptobj->get_question_status($question->id), 'quiz');
         return '<a href="' . $this->attemptobj->review_url($question->id) .
                 '" class="qnbutton ' . $this->get_question_state_classes($question) . '" id="' .
-                $this->get_button_id($question) . '">' . $number . '</a>';
+                $this->get_button_id($question) . '" title="' . $strstate . '">' . $number . '<span class="accesshide">(' . $strstate . '</span></a>';
     }
 
     protected function get_end_bits() {

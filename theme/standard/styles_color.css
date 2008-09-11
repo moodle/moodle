@@ -387,7 +387,9 @@ table.flexible .r1 {
   color:#999999;
 }
 
-
+#admin-qtypes .disabled {
+  color: gray;
+}
 #admin-lang .translator {
   border-color: #dddddd;
 }
@@ -1057,7 +1059,7 @@ table.quizreviewsummary td.cell {
 
 #quiznavigation .qnbutton {
   color: #00f;
-  border-color: gray;
+  border-color: #bbb;
   background-color: #ddd;
 }
 #quiznavigation .qnbutton:hover {
@@ -1069,26 +1071,14 @@ table.quizreviewsummary td.cell {
 #quiznavigation .qnbutton.open {
   background-color: white;
 }
-#quiznavigation .qnbutton.flagged {
-  background-image: url(pix/flaggedquestionnav.png);
-}
-#quiznavigation .qnbutton.correct.flagged {
-  background-image: url(pix/flaggedcorrectquestionnav.png);
-}
-#quiznavigation .qnbutton.partiallycorrect.flagged {
-  background-image: url(pix/flaggedpartialquestionnav.png);
-}
-#quiznavigation .qnbutton.incorrect.flagged {
-  background-image: url(pix/flaggedincorrectquestionnav.png);
-}
 #quiznavigation .qnbutton.correct {
-  background-image: url(pix/correctquestionnav.png);
+  background-color: #cfc;
 }
 #quiznavigation .qnbutton.partiallycorrect {
-  background-image: url(pix/partialquestionnav.png);
+  background-color: #ffa;
 }
 #quiznavigation .qnbutton.incorrect {
-  background-image: url(pix/incorrectquestionnav.png);
+  background-color: #fcc;
 }
 
 /***
