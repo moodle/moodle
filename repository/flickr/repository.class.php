@@ -18,7 +18,11 @@ class repository_flickr extends repository{
         if (!empty($options['api_key'])) {
             set_config('api_key', trim($options['api_key']), 'flickr');
         }
+        if (!empty($options['secret'])) {
+            set_config('secret', trim($options['secret']), 'flickr');
+        }
         unset($options['api_key']);
+        unset($options['secret']);
         $ret = parent::set_option($options);
         return $ret;
     }
@@ -26,8 +30,11 @@ class repository_flickr extends repository{
     public function get_option($config = ''){
         if($config==='api_key'){
             return trim(get_config('flickr', 'api_key'));
+        } elseif ($config ==='secret') {
+            return trim(get_config('flickr', 'secret'));
         } else {
             $options['api_key'] = trim(get_config('flickr', 'api_key'));
+            $options['secret']  = trim(get_config('flickr', 'secret'));
         }
         $options = parent::get_option($config);
         return $options;
@@ -50,8 +57,7 @@ class repository_flickr extends repository{
         $this->setting = 'flickr_';
 
         $this->api_key = $this->get_option('api_key');
-        //TODO: put secret into database
-        $this->secret = '';
+        $this->secret  = $this->get_option('secret');
 
         $this->token = get_user_preferences($this->setting, '');
         $this->nsid  = get_user_preferences($this->setting.'_nsid', '');
@@ -213,7 +219,7 @@ class repository_flickr extends repository{
     }
 
     public static function has_multiple_instances() {
-        return true;
+        return false;
     }
 
     public static function has_instance_config() {
@@ -230,8 +236,9 @@ class repository_flickr extends repository{
     }
 
     public function admin_config_form(&$mform) {
+        global $CFG;
         $api_key = get_config('flickr', 'api_key');
-        $secret = get_config('flickr', 'secret');
+        $secret  = get_config('flickr', 'secret');
         $callbackurl = get_config('flickr', 'callbackurl');
         if (empty($api_key)) {
             $api_key = '';
@@ -240,20 +247,19 @@ class repository_flickr extends repository{
             $secret = '';
         }
         if (empty($callbackurl)) {
-            $callbackurl = '';
+            $callbackurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&repo_id=';
         }
         $strrequired = get_string('required');
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr'), array('value'=>$api_key,'size' => '40'));
         $mform->addElement('text', 'secret', get_string('secret', 'repository_flickr'), array('value'=>$secret,'size' => '40'));
-        $mform->addElement('text', 'callbackurl', get_string('callbackurl', 'repository_flickr'), array('value'=>$callbackurl,'size' => '40'));
+        $mform->addElement('static', 'callbackurl', get_string('callbackurl', 'repository_flickr'), $callbackurl);
 
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
         $mform->addRule('secret', $strrequired, 'required', null, 'client');
-        $mform->addRule('callbackurl', $strrequired, 'required', null, 'client');
     }
 
     public static function get_admin_option_names(){
-        return array('api_key');
+        return array('api_key', 'secret');
     }
 
 }
