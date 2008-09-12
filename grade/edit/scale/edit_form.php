@@ -141,9 +141,13 @@ class edit_scale_form extends moodleform {
                 }
             }
 
-            $options = explode(',', $data['scale']);
-            if (count($options) < 2) {
+            if (empty($data['scale'])) {
                 $errors['scale'] = get_string('error');
+            } else {
+                $options = explode(',', $data['scale']);
+                if (count($options) < 1) {   // single-item scales are allowed, see MDL-16474
+                    $errors['scale'] = get_string('error');
+                }
             }
         }
 
