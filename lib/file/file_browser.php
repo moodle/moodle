@@ -43,7 +43,8 @@ class file_browser {
                 $user = $DB->get_record('user', array('id'=>$context->instanceid));
             }
 
-            if (isguestuser($user)) {
+            if (isguestuser($user) or empty($user->id)) {
+                // no guests or not logged in users here
                 return null;
             }
 
