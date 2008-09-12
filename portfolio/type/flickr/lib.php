@@ -1,6 +1,6 @@
 <?php
 require_once($CFG->libdir.'/filelib.php');
-require_once($CFG->dirroot.'/repository/flickr/phpFlickr.php');
+require_once($CFG->libdir.'/flickrlib.php');
 
 class portfolio_plugin_flickr extends portfolio_plugin_push_base {
 

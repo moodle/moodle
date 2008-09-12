@@ -1,14 +1,14 @@
 <?php
 /**
  * repository_flickr class
- * This is a subclass of repository class
+ * This plugin is used to access user's private flickr repository
  *
- * @author Dongsheng Cai
- * @version 0.1 dev
+ * @author Dongsheng Cai <dongsheng@moodle.com>
+ * @version $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
-require_once($CFG->dirroot.'/repository/flickr/'.'phpFlickr.php');
+require_once($CFG->libdir.'/flickrlib.php');
 
 class repository_flickr extends repository{
     private $flickr;
@@ -161,27 +161,10 @@ class repository_flickr extends repository{
         }
     }
     public function print_listing(){
-        if(empty($this->photos)){
-            $this->get_listing();
-        }
-        $str = '';
-        $str .= '<h2>Account: <span>'.$this->photos['a'].'</span></h2>';
-        foreach ((array)$this->photos['photo'] as $photo) {
-            $str .= "<a href='".$this->photos['url'].$photo[id]."'>";
-            $str .= "<img border='0' alt='$photo[title]' ".
-                "src=" . $photo['thumbnail'] . ">";
-            $str .= "</a>";
-            $i++;
-
-            if ($i % 4 == 0) {
-                $str .= "<br/>";
-            }
-        }
-        echo $str;
+        return false;
     }
     public function print_search(){
-        echo '<input type="text" name="Search" value="search terms..." size="40" class="right"/>';
-        return true;
+        return false;
     }
     public function get_file($photo_id, $file = ''){
         global $CFG;
