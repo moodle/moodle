@@ -829,6 +829,15 @@ abstract class repository {
      */
     abstract public function get_listing($parent = '/', $search = '');
 
+    /**
+     * Search
+     * @return mixed, see get_listing()
+     */
+    public function search(){
+        $search = optional_param('s', '', PARAM_CLEANHTML);
+        return $this->get_listing(null, $search);
+    }
+
 
     /**
      * Show the login screen, if required
@@ -1236,21 +1245,21 @@ function repository_get_client($context){
 .fp-searchbar{float:right}
 .fp-viewbar{width:300px;float:left}
 .fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center}
-.fp-toolbar a{padding: 0 5px}
+.fp-toolbar a{padding: 0 .5em}
 .fp-list{list-style-type:none;padding:0}
 .fp-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
-.fp-repo-name{display:block;padding: 3px;margin-bottom: 5px}
-.fp-pathbar{margin: 4px;border-bottom: 1px dotted gray;}
-.fp-pathbar a{padding: 4px;}
+.fp-repo-name{display:block;padding: .5em;margin-bottom: .5em}
+.fp-pathbar{margin: .4em;border-bottom: 1px dotted gray;}
+.fp-pathbar a{padding: .4em;}
 .fp-rename-form{text-align:center}
 .fp-rename-form p{margin: 1em;}
 .fp-upload-form{margin: 2em 0;text-align:center}
-.fp-upload-btn a{font-size: 14px;background: #ccc;color:white;padding: 5px}
+.fp-upload-btn a{font-size: 1.5em;background: #ccc;color:white;padding: .5em}
 .fp-upload-btn a:hover {background: grey;color:white}
-.fp-paging{margin:10px 5px; clear:both;text-align:center}
-.fp-paging a{padding: 4px;border: 1px solid #CCC}
+.fp-paging{margin:1em .5em; clear:both;text-align:center;line-height: 2.5em;}
+.fp-paging a{padding: .5em;border: 1px solid #CCC}
 .fp-popup{text-align:center}
-.fp-popup a{font-size: 24px}
+.fp-popup a{font-size: 3em}
 .fp-grid{width:80px; float:left;text-align:center;}
 .fp-grid div{width: 80px; overflow: hidden}
 .fp-grid p{margin:0;padding:0;background: #FFFFCC}

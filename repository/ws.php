@@ -14,7 +14,6 @@ $file  = optional_param('file', '', PARAM_RAW);
 // rename the file name
 $title = optional_param('title', '', PARAM_FILE);
 $action = optional_param('action', '', PARAM_ALPHA);
-$search = optional_param('s', '', PARAM_CLEANHTML);
 $callback = optional_param('callback', '', PARAM_CLEANHTML);
 // repository ID
 $repo_id = optional_param('repo_id', 1, PARAM_INT);
@@ -124,13 +123,19 @@ case 'login':
         die(json_encode($err));
     }
     break;
-case 'list':
 case 'search':
+    try {
+        echo json_encode($repo->search());
+    } catch (repository_exception $e) {
+        $err = new stdclass;
+        $err->e = $e->getMessage();
+        die(json_encode($err));
+    }
+    break;
+case 'list':
     try {
         if(!empty($p)) {
             echo json_encode($repo->get_listing($p));
-        } else if(!empty($search)) {
-            echo json_encode($repo->get_listing('', $search));
         } else {
             echo json_encode($repo->get_listing());
         }

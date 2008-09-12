@@ -36,7 +36,6 @@ class repository_flickr_public extends repository{
     }
 
     public function global_search(){
-        global $SESSION;
         if (empty($this->flickr_account)) {
             return false;
         } else {
@@ -45,7 +44,7 @@ class repository_flickr_public extends repository{
     }
 
     public function __construct($repositoryid, $context = SITEID, $options = array()){
-        global $SESSION, $action, $CFG;
+        global $action, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);
         $this->api_key = $this->get_option('api_key');
@@ -73,7 +72,6 @@ class repository_flickr_public extends repository{
         }
     }
     public function print_login($ajax = true){
-        global $SESSION;
         if(empty($this->flickr_account)) {
             if($ajax){
                 $ret = array();
@@ -94,17 +92,46 @@ class repository_flickr_public extends repository{
             return $this->get_listing();
         }
     }
+    public function search(){
+        $people = $this->flickr->people_findByEmail($this->flickr_account);
+        $tag    = optional_param('tag', '', PARAM_CLEANHTML);
+        $search = optional_param('s', '', PARAM_CLEANHTML);
+        if(!empty($tag)){
+            $photos = $this->flickr->photos_search(array(
+                'tags'=>$tag
+                ));
+        } else {
+            $photos = $this->flickr->photos_search(array(
+                'user_id'=>$people['nsid'],
+                'text'=>$search));
+        }
+        $ret = array();
+        $ret['list']  = array();
+        $ret['nologin'] = true;
+        $ret['pages'] = $photos['pages'];
+        foreach ($photos['photo'] as $p) {
+            if(empty($p['title'])) {
+                $p['title'] = get_string('notitle', 'repository_flickr_public');
+            }
+            if (isset($p['originalformat'])) {
+                $format = $p['originalformat'];
+            } else {
+                $format = 'jpg';
+            }
+            $ret['list'][] =
+                array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown', 'url'=>'http://www.flickr.com/photos/'.$p['owner'].'/'.$p['id']);
+        }
+        if(empty($ret)) {
+            throw new repository_exception('nullphotolist', 'repository_flickr_public');
+        } else {
+            return $ret;
+        }
+    }
     public function get_listing($path = '1', $search = ''){
-        global $SESSION;
         $people = $this->flickr->people_findByEmail($this->flickr_account);
         $photos_url = $this->flickr->urls_getUserPhotos($people['nsid']);
 
-        if(!empty($search)) {
-            // do searching, if $path is not empty, ignore it.
-            $photos = $this->flickr->photos_search(array('user_id'=>$people['nsid'], 'text'=>$search));
-        } elseif(!empty($path) && empty($search)) {
-            $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 25, $path);
-        }
+        $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 25, $path);
 
         $ret = array();
         $ret['manage'] = $photos_url;
@@ -139,7 +166,8 @@ class repository_flickr_public extends repository{
     }
     public function print_search(){
         parent::print_search();
-        echo '<input type="text" name="s" />';
+        echo '<label>Keyword: </label><input type="text" name="s" /><br />';
+        echo '<label>Tag: </label><input type="text" name="tag" /><br />';
         return true;
     }
     public function get_file($photo_id, $file = ''){
