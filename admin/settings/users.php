@@ -6,7 +6,9 @@ if ($hassiteconfig
  or has_capability('moodle/site:uploadusers', $systemcontext)
  or has_capability('moodle/user:create', $systemcontext)
  or has_capability('moodle/user:update', $systemcontext)
- or has_capability('moodle/user:delete', $systemcontext)) { // speedup for non-admins, add all caps used on this page
+ or has_capability('moodle/user:delete', $systemcontext)
+ or has_capability('moodle/role:manage', $systemcontext)
+ or has_capability('moodle/role:assign', $systemcontext)) { // speedup for non-admins, add all caps used on this page
 
 
     $ADMIN->add('users', new admin_category('authsettings', get_string('authentication','admin')));
@@ -78,8 +80,8 @@ if ($hassiteconfig
 
     // stuff under the "roles" subcategory
     $ADMIN->add('users', new admin_category('roles', get_string('permissions', 'role')));
-    $ADMIN->add('roles', new admin_externalpage('defineroles', get_string('defineroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/manage.php"));
-    $ADMIN->add('roles', new admin_externalpage('assignroles', get_string('assignglobalroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=".$systemcontext->id));
+    $ADMIN->add('roles', new admin_externalpage('defineroles', get_string('defineroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/manage.php", 'moodle/role:manage'));
+    $ADMIN->add('roles', new admin_externalpage('assignroles', get_string('assignglobalroles', 'role'), "$CFG->wwwroot/$CFG->admin/roles/assign.php?contextid=".$systemcontext->id, 'moodle/role:assign'));
 
 
     // "userpolicies" settingpage
