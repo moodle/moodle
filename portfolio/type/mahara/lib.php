@@ -318,6 +318,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         } catch (Exception $e) {
             exit(mnet_server_fault(8013, get_string('mnet_nofile', 'portfolio_mahara')));
         }
+        $exporter->log_transfer();
         $exporter->process_stage_cleanup(true);
         return $contents;
     }
