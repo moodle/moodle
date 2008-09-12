@@ -289,7 +289,7 @@ class assignment_upload extends assignment_base {
                 $icon = mimeinfo_from_type('icon', $mimetype);
                 $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img class="icon" src="'.$CFG->pixpath.'/f/'.$icon.'" alt="'.$icon.'" />'.s($filename).'</a>&nbsp;';
-    
+
             }
 
         }
@@ -349,16 +349,16 @@ class assignment_upload extends assignment_base {
                 $icon = mimeinfo_from_type('icon', $mimetype);
                 $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
-    
+
                 if ($candelete) {
                     $delurl  = "$CFG->wwwroot/mod/assignment/delete.php?id={$this->cm->id}&amp;file=".rawurlencode($filename)."&amp;userid={$submission->userid}&amp;mode=$mode&amp;offset=$offset";
-    
+
                     $output .= '<a href="'.$delurl.'">&nbsp;'
                               .'<img title="'.$strdelete.'" src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="" /></a> ';
                 }
-    
+
                 if (has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'file' => file->get_id()), '/mod/assignment/lib.php');
+                    $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'file' => $file->get_id()), '/mod/assignment/lib.php');
                     $button->set_formats(portfolio_format_from_file($file));
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
