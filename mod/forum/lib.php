@@ -7301,16 +7301,14 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
                 $content .= '<br /><br />' . $this->prepare_post($post);
                 $this->copy_files($this->allfiles[$post->id]);
             }
-            $this->get('exporter')->write_new_file($content, 'discussion.html');
-        } else {
-            $this->copy_files($this->postfiles, $this->attachment);
-            if ($this->attachment) {
-                return true; // all we need to do
-            }
-            $post = $this->prepare_post($this->post);
-            $this->get('exporter')->write_new_file($post, 'post.html');
+            return $this->get('exporter')->write_new_file($content, 'discussion.html');
         }
-        return true;
+        $this->copy_files($this->postfiles, $this->attachment);
+        if ($this->attachment) {
+            return; // all we need to do
+        }
+        $post = $this->prepare_post($this->post);
+        $this->get('exporter')->write_new_file($post, 'post.html');
     }
 
     private function copy_files($files, $justone=false) {

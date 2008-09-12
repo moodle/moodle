@@ -426,11 +426,22 @@ class portfolio_exporter {
         // now we've agreed on a format,
         // the caller is given control to package it up however it wants
         // and then the portfolio plugin is given control to do whatever it wants.
-        if (!$this->caller->prepare_package()) {
-            throw new portfolio_export_exception($this, 'callercouldnotpackage', 'portfolio');
+        try {
+            $this->caller->prepare_package();
+        } catch (portfolio_exception $e) {
+            throw new portfolio_export_exception($this, 'callercouldnotpackage', 'portfolio', null, $e->getMessage());
         }
-        if (!$package = $this->instance->prepare_package()) {
-            throw new portfolio_export_exception($this, 'plugincouldnotpackage', 'portfolio');
+        catch (file_exception $e) {
+            throw new portfolio_export_exception($this, 'callercouldnotpackage', 'portfolio', null, $e->getMessage());
+        }
+        try {
+            $this->instance->prepare_package();
+        }
+        catch (portfolio_exception $e) {
+            throw new portfolio_export_exception($this, 'plugincouldnotpackage', 'portfolio', null, $e->getMessage());
+        }
+        catch (file_exception $e) {
+            throw new portfolio_export_exception($this, 'plugincouldnotpackage', 'portfolio', null, $e->getMessage());
         }
         return true;
     }
@@ -465,8 +476,13 @@ class portfolio_exporter {
     */
     public function process_stage_send() {
         // send the file
-        if (!$this->instance->send_package()) {
-            throw new portfolio_export_exception($this, 'failedtosendpackage', 'portfolio');
+        try {
+            $this->instance->send_package();
+        }
+        catch (portfolio_plugin_exception $e) {
+            // not catching anything more general here. plugins with dependencies on other libraries that throw exceptions should catch and rethrow.
+            // eg curl exception
+            throw new portfolio_export_exception($this, 'failedtosendpackage', 'portfolio', null, $e->getMessage());
         }
         // log the transfer
         global $DB;
@@ -493,7 +509,7 @@ class portfolio_exporter {
         $extras = $this->instance->get_extra_finish_options();
 
         $key = 'exportcomplete';
-        if ($queued) {
+        if ($queued || $this->forcequeue) {
             $key = 'exportqueued';
             if ($this->forcequeue) {
                 $key = 'exportqueuedforced';
@@ -658,6 +674,17 @@ class portfolio_exporter {
         $fs = get_file_storage();
         $file_record = $this->new_file_record_base($name);
         return $fs->create_file_from_string($file_record, $content);
+    }
+
+    public function zip_tempfiles($filename='portfolio-export.zip', $filepath='/final/') {
+        $zipper = new zip_packer();
+
+        list ($contextid, $filearea, $itemid) = array_values($this->get_base_filearea());
+        if ($newfile = $zipper->archive_to_storage($files, $contextid, $filearea, $itemid, $filepath, $filename, $this->user->id)) {
+            return $newfile;
+        }
+        return false;
+
     }
 
     /**

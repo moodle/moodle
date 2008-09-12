@@ -3200,7 +3200,6 @@ class assignment_portfolio_caller extends portfolio_module_caller_base {
         foreach ($this->files as $file) {
             $this->exporter->copy_existing_file($file);
         }
-        return true;
     }
 
     public function get_sha1() {

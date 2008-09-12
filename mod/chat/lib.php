@@ -899,7 +899,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
         }
         $content = preg_replace('/\<img[^>]*\>/', '', $content);
 
-        return $this->exporter->write_new_file($content, clean_filename($this->cm->name . '-session.html'));
+        $this->exporter->write_new_file($content, clean_filename($this->cm->name . '-session.html'));
     }
 
     public static function display_name() {

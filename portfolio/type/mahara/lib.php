@@ -145,14 +145,8 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
             );
             $this->totalsize += $f->get_filesize();
         }
-        $zipper = new zip_packer();
 
-        $filename = 'portfolio-export.zip';
-        if ($newfile = $zipper->archive_to_storage($files, SYSCONTEXTID, 'portfolio_exporter', $this->exporter->get('id'), '/final/', $filename, $this->user->id)) {
-            $this->set('file', $newfile);
-            return true;
-        }
-        return false;
+        $this->set('file', $this->exporter->zip_tempfiles());  // this will throw a file_exception which the exporter catches separately.
     }
 
     private function ensure_environment() {
@@ -194,9 +188,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
         if (!$response->status) {
             throw new portfolio_export_exception($this->get('exporter'), 'failedtoping', 'portfolio_mahara');
         }
-        // @todo penny we should check $response->type here, it will tell us  'queued' or 'complete'
-        // and we might want to tell the user if it's queued.
-        return true;
+        if ($response->type =='queued') {
+            $this->exporter->set('forcequeue', true);
+        }
     }
 
     public function get_continue_url() {

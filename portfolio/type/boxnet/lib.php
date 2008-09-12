@@ -23,11 +23,10 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
             $this->folders[$created['folder_id']] = $created['folder_name'];
             $this->set_export_config(array('folder' => $created['folder_id']));
         }
-        return true; // don't do anything else for this plugin, we want to send all files as they are.
+        // don't do anything else for this plugin, we want to send all files as they are.
     }
 
     public function send_package() {
-        $ret = array();
         foreach ($this->exporter->get_tempfiles() as $file) {
             $return = $this->boxclient->uploadFile(
                 array(
@@ -38,14 +37,13 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
             );
             if (array_key_exists('status', $return) && $return['status'] == 'upload_ok'
                 && array_key_exists('id', $return) && count($return['id']) == 1) {
-                $return['rename'] = $this->rename_file($return['id'][array_pop(array_keys($return['id']))], $file->get_filename());
-                $ret[] = $return;
+                $this->rename_file($return['id'][array_pop(array_keys($return['id']))], $file->get_filename());
+                // if this fails, the file was sent but not renamed - this triggers a warning but is not fatal.
             }
         }
         if ($this->boxclient->isError()) {
-            return false;
+            throw new portfolio_plugin_exception('sendfailed', 'portfolio_boxnet', $this->boxclient->getErrorMsg());
         }
-        return is_array($ret) && !empty($ret);
     }
 
     public function get_export_summary() {

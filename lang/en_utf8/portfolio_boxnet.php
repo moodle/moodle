@@ -19,5 +19,6 @@ $string['sharefolder'] = 'Share this new folder?';
 $string['targetfolder'] = 'Target folder';
 $string['tobecreated'] = 'To be created';
 $string['username'] = 'Your box.net username (will not be stored)';
+$string['sendfailed'] = 'Failed to send content to box.net: $a';
 
 ?>

@@ -25,18 +25,9 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
 
         if (count($files) == 1) {
             $this->set('file', array_shift($files));
-            return true;
+        } else {
+            $this->set('file', $this->exporter->zip_tempfiles());  // this will throw a file_exception which the exporter catches separately.
         }
-
-        $zipper = new zip_packer();
-
-        $filename = 'portfolio-export.zip';
-        list ($contextid, $filearea, $itemid) = array_values($this->get('exporter')->get_base_filearea());
-        if ($newfile = $zipper->archive_to_storage($files, $contextid, $filearea, $itemid, '/final/', $filename, $this->user->id)) {
-            $this->set('file', $newfile);
-            return true;
-        }
-        return false;
     }
 
     public function get_extra_finish_options() {
@@ -44,9 +35,7 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
         return array($this->get_base_file_url() => get_string('downloadfile', 'portfolio_download'));
     }
 
-    public function send_package() {
-        return true;
-    }
+    public function send_package() {}
 
     public function verify_file_request_params($params) {
         // for download plugin the only thing we need to verify is that
@@ -63,4 +52,3 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
     }
 }
 
-?>
