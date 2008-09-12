@@ -245,14 +245,19 @@
         require_once($CFG->libdir . '/portfoliolib.php');
         if (portfolio_instances(true, false)) {
             $toprow[] = new tabobject('portfolios', $CFG->wwwroot .'/user/portfolio.php', get_string('portfolios', 'portfolio'));
+            $inactive = array('portfolios');
+            $activetwo = array('portfolios');
+            $secondrow[] = new tabobject('configure', $CFG->wwwroot . '/user/portfolio.php', get_string('configure', 'portfolio'));
+            $secondrow[] = new tabobject('logs', $CFG->wwwroot . '/user/portfoliologs.php', get_string('logs', 'portfolio'));
         }
     }
 
     // Repository Tab
-    if (!empty($user) and $user->id == $USER->id) {        
+    if (!empty($user) and $user->id == $USER->id) {
         require_once($CFG->dirroot . '/repository/lib.php');
         $usercontext = get_context_instance(CONTEXT_USER,$user->id);
-        if (!empty($usercontext) && $usercontext->contextlevel == CONTEXT_USER) {
+        $editabletypes = repository_get_editable_types();
+        if (!empty($usercontext) && $usercontext->contextlevel == CONTEXT_USER && !empty($editabletypes)) {
             $toprow[] = new tabobject('repositories', $CFG->wwwroot .'/repository/manage_instances.php?contextid='.$usercontext->id, get_string('repositories', 'repository'));
         }
 
