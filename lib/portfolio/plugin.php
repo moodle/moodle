@@ -757,6 +757,7 @@ abstract class portfolio_plugin_pull_base extends portfolio_plugin_base {
             throw new portfolio_export_exception($this->get('exporter'), 'filenotfound', 'portfolio');
         }
         send_stored_file($file, 0, 0, true, null, true);
+        $this->get('exporter')->log_transfer();
     }
 
 }

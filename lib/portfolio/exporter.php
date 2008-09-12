@@ -484,7 +484,19 @@ class portfolio_exporter {
             // eg curl exception
             throw new portfolio_export_exception($this, 'failedtosendpackage', 'portfolio', null, $e->getMessage());
         }
-        // log the transfer
+        // only log push types, pull happens in send_file
+        if ($this->get('instance')->is_push()) {
+            $this->log_transfer();
+        }
+        return true;
+    }
+
+    /**
+    * log the transfer
+    * this should only be called after the file has been sent
+    * either via push, or sent from a pull request.
+    */
+    public function log_transfer() {
         global $DB;
         $l = array(
             'userid'         => $this->user->id,
@@ -495,7 +507,6 @@ class portfolio_exporter {
             'time'           => time(),
         );
         $DB->insert_record('portfolio_log', $l);
-        return true;
     }
 
     /**
@@ -627,14 +638,17 @@ class portfolio_exporter {
     *
     * checks to make sure it belongs to the same user and session as is currently in use.
     *
+    * @param boolean $readonly if we're reawakening this for a user to just display in the log view, don't verify the sessionkey
+    *                          when continuing transfers, you must pass false here.
+    *
     * @throws portfolio_exception
     */
-    public function verify_rewaken() {
+    public function verify_rewaken($readonly=false) {
         global $USER;
         if ($this->get('user')->id != $USER->id) {
             throw new portfolio_exception('notyours', 'portfolio');
         }
-        if (!confirm_sesskey($this->get('sesskey'))) {
+        if (!$readonly && !confirm_sesskey($this->get('sesskey'))) {
             throw new portfolio_exception('confirmsesskeybad');
         }
     }
@@ -676,6 +690,14 @@ class portfolio_exporter {
         return $fs->create_file_from_string($file_record, $content);
     }
 
+    /**
+    * zips all files in the temporary directory
+    *
+    * @param string $filename name of resulting zipfile (optional, defaults to portfolio-export.zip
+    * @param string $filepath subpath in the filearea (optional, defaults to final)
+    *
+    * @return stored_file resulting stored_file object
+    */
     public function zip_tempfiles($filename='portfolio-export.zip', $filepath='/final/') {
         $zipper = new zip_packer();
 
