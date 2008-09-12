@@ -840,7 +840,12 @@ abstract class repository {
      * Show the search screen, if required
      * @return null
      */
-    abstract public function print_search();
+    public function print_search() {
+        echo '<input type="hidden" name="repo_id" value="'.$this->id.'" />';
+        echo '<input type="hidden" name="ctx_id" value="'.$this->context->id.'" />';
+        echo '<input type="hidden" name="seekey" value="'.sesskey().'" />';
+        return true;
+    }
 
     /**
      * is it possible to do glboal search?
@@ -1929,23 +1934,57 @@ _client.req = function(id, path, reset) {
     params['repo_id']=id;
     var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.req_cb, _client.postdata(params));
 }
-_client.search = function(id){
-    var data = window.prompt("$strsearching");
-    if(data == '') {
-        alert('$strnoenter');
-        return;
-    }else if(data == null){
-        return;
+_client.search_form_cb = {
+    success: function(o) {
+        var el = document.getElementById('fp-search-dlg');
+        if(el){
+            el.innerHTML = '';
+        } else {
+            var el = document.createElement('DIV');
+            el.id = 'fp-search-dlg';
+        }
+        var div1 = document.createElement('DIV');
+        div1.className = 'hd';
+        div1.innerHTML = "$strsearching";
+        var div2 = document.createElement('DIV');
+        div2.className = 'bd';
+        var sform = document.createElement('FORM');
+        sform.method = 'POST';
+        sform.id = "fp-search-form";
+        sform.action = '$CFG->wwwroot/repository/ws.php?action=search';
+        sform.innerHTML = o.responseText;
+        div2.appendChild(sform);
+        el.appendChild(div1);
+        el.appendChild(div2);
+        document.body.appendChild(el);
+        var dlg = new YAHOO.widget.Dialog("fp-search-dlg",{
+            postmethod: 'async',
+            width : "30em",
+            fixedcenter : true,
+            zindex: 666667,
+            visible : false, 
+            constraintoviewport : true,
+            buttons : [ { text:"Submit",handler: function(){
+                _client.viewbar.set('disabled', false);
+                _client.loading('load');
+                YAHOO.util.Connect.setForm('fp-search-form', false, false);
+                this.cancel();
+                var trans = YAHOO.util.Connect.asyncRequest('POST',
+                    '$CFG->httpswwwroot/repository/ws.php?action=search&env='+_client.env, _client.req_cb);
+            },isDefault:true }, 
+            {text:"Cancel",handler:function(){this.cancel()}}]
+        });
+        dlg.render();
+        dlg.show();
     }
-    _client.viewbar.set('disabled', false);
-    _client.loading('load');
+}
+_client.search = function(id){
     var params = [];
-    params['s']=data;
     params['env']=_client.env;
     params['sesskey']='$sesskey';
     params['ctx_id']=$context->id;
     params['repo_id']=id;
-    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action=search', _client.req_cb, _client.postdata(params));
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action=searchform', _client.search_form_cb, _client.postdata(params));
 }
 _client.req_cb = {
     success: function(o) {

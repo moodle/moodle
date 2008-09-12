@@ -113,11 +113,12 @@ class repository_flickr extends repository{
     }
     public function get_listing($path = '1', $search = ''){
         global $SESSION;
-        $nsid = get_user_preferences($this->setting.'_nsid', '');
+        $nsid = get_user_preferences($this->setting.'_nsid');
         $photos_url = $this->flickr->urls_getUserPhotos($nsid);
 
         if(!empty($search)) {
             $photos = $this->flickr->photos_search(array(
+                'user_id'=>$nsid,
                 'per_page'=>25,
                 'page'=>$path,
                 'extras'=>'original_format',
@@ -164,7 +165,9 @@ class repository_flickr extends repository{
         return false;
     }
     public function print_search(){
-        return false;
+        echo '<input name="s" value="" />';
+        parent::print_search();
+        return true;
     }
     public function get_file($photo_id, $file = ''){
         global $CFG;

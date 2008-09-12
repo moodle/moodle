@@ -112,6 +112,9 @@ EOD;
 }
 
 switch ($action) {
+case 'searchform':
+    $repo->print_search();
+    break;
 case 'login':
     try {
         echo json_encode($repo->print_login());

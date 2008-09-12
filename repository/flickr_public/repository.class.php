@@ -54,7 +54,9 @@ class repository_flickr_public extends repository{
         $this->flickr_account = $this->get_option('public_account');
 
         if(!empty($this->flickr_account)) {
-            $action = 'list';
+            if(empty($action)){
+                $action = 'list';
+            }
         } else {
             $account = optional_param('flickr_account', '', PARAM_RAW);
             if(!empty($account)) {
@@ -136,7 +138,9 @@ class repository_flickr_public extends repository{
         return false;
     }
     public function print_search(){
-        return false;
+        parent::print_search();
+        echo '<input type="text" name="s" />';
+        return true;
     }
     public function get_file($photo_id, $file = ''){
         global $CFG;
