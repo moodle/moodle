@@ -46,7 +46,11 @@ class login_signup_form extends moodleform {
         $country = array_merge($default_country, $country);
         $mform->addElement('select', 'country', get_string('country'), $country);
         $mform->addRule('country', get_string('missingcountry'), 'required', null, 'client');
-        $mform->setDefault('country', '');
+        if ( !empty($CFG->country) ){
+            $mform->setDefault('country', $CFG->country);
+        } else {
+            $mform->setDefault('country', '');
+        }
 
         // buttons
         $this->add_action_buttons(true, get_string('createaccount'));
