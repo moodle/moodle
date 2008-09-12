@@ -4581,16 +4581,14 @@ function print_group_picture($group, $courseid, $large=false, $return=false, $li
     }
     if ($large) {
         $file = 'f1';
-        $size = 100;
     } else {
         $file = 'f2';
-        $size = 35;
     }
     if ($group->picture) {  // Print custom group picture
         require_once($CFG->libdir.'/filelib.php');
         $grouppictureurl = get_file_url($group->id.'/'.$file.'.jpg', null, 'usergroup');
         $output .= '<img class="grouppicture" src="'.$grouppictureurl.'"'.
-            ' style="width:'.$size.'px;height:'.$size.'px;" alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
+            ' alt="'.s(get_string('group').' '.$group->name).'" title="'.s($group->name).'"/>';
     }
     if ($link or has_capability('moodle/site:accessallgroups', $context)) {
         $output .= '</a>';
