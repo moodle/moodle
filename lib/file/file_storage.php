@@ -616,6 +616,120 @@ class file_storage {
     }
 
     /**
+     * Creates new image file from existing.
+     * @param mixed $file_record object or array describing new file
+     * @param mixed file id or stored file object
+     * @param int $newwidth in pixels
+     * @param int $newheight in pixels
+     * @param bool $keepaspectratio
+     * @param int $quality depending on image type 0-100 for jpeg, 0-9 (0 means no comppression) for png
+     * @return object stored_file instance
+     */
+    public function convert_image($file_record, $fid, $newwidth=null, $newheight=null, $keepaspectratio=true, $quality=null) {
+        global $DB;
+
+        if ($fid instanceof stored_file) {
+            $fid = $fid->get_id();
+        }
+
+        $file_record = (array)$file_record; // we support arrays too, do not modify the submitted record!
+
+        if (!$file = $this->get_file_by_id($fid)) { // make sure file really exists and we we correct data
+            throw new file_exception('storedfileproblem', 'File does not exist');
+        }
+
+        if (!$imageinfo = $file->get_imageinfo()) {
+            throw new file_exception('storedfileproblem', 'File is not an image');
+        }
+
+        if (!isset($file_record['filename'])) {
+            $file_record['filename'] == $file->get_filename();
+        }
+
+        if (!isset($file_record['mimetype'])) {
+            $file_record['mimetype'] = mimeinfo('type', $file_record['filename']);
+        }
+
+        $width    = $imageinfo['width'];
+        $height   = $imageinfo['height'];
+        $mimetype = $imageinfo['mimetype'];
+
+        if ($keepaspectratio) {
+            if (0 >= $newwidth and 0 >= $newheight) {
+                // no sizes specified
+                $newwidth  = $width;
+                $newheight = $height;
+
+            } else if (0 < $newwidth and 0 < $newheight) {
+                $xheight = ($newwidth*($height/$width));
+                if ($xheight < $newheight) {
+                    $newheight = (int)$xheight;
+                } else {
+                    $newwidth = (int)($newheight*($width/$height));
+                }
+
+            } else if (0 < $newwidth) {
+                $newheight = (int)($newwidth*($height/$width));
+
+            } else { //0 < $newheight
+                $newwidth = (int)($newheight*($width/$height));
+            }
+
+        } else {
+            if (0 >= $newwidth) {
+                $newwidth = $width;
+            }
+            if (0 >= $newheight) {
+                $newheight = $height;
+            }
+        }
+
+        $img = imagecreatefromstring($file->get_content());
+        if ($height != $newheight or $width != $newwidth) {
+            $newimg = imagecreatetruecolor($newwidth, $newheight);
+            if (!imagecopyresized($newimg, $img, 0, 0, 0, 0, $newwidth, $newheight, $width, $height)) {
+                // weird
+                throw new file_exception('storedfileproblem', 'Can not resize image');
+            }
+            imagedestroy($img);
+            $img = $newimg;
+        }
+
+        ob_start();
+        switch ($file_record['mimetype']) {
+            case 'image/gif':
+                imagegif($img);
+                break;
+
+            case 'image/jpeg':
+                if (is_null($quality)) {
+                    imagejpeg($img);
+                } else {
+                    imagejpeg($img, NULL, $quality);
+                }
+                break;
+
+            case 'image/png':
+                $quality = int($quality);
+                imagepng($img, NULL, $quality, NULL);
+                break;
+
+            default:
+                throw new file_exception('storedfileproblem', 'Unsupported mime type');
+        }
+
+        $content = ob_get_contents();
+        ob_end_clean();
+        imagedestroy($img);
+
+        if (!$content) {
+            throw new file_exception('storedfileproblem', 'Can not convert image');
+        }
+
+        return $this->create_file_from_string($file_record, $content);
+    }
+
+    /**
      * Move one or more files from a given itemid location in the current user's draft files
      * to a new filearea.  Note that you can't rename files using this function.
      * @param int $itemid  - existing itemid in user draft_area with one or more files

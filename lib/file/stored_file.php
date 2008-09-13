@@ -162,6 +162,43 @@ class stored_file {
         }
     }
 
+    /**
+     * Returns information about image,
+     * information is determined from the file content
+     * @return mixed array with width, height and mimetype; false if not an image
+     */
+    public function get_imageinfo() {
+        if (!$imageinfo = getimagesize($this->get_content_file_location())) {
+            return false;
+        }
+        $image = array('width'=>$imageinfo[0], 'height'=>$imageinfo[1], 'mimetype'=>image_type_to_mime_type($imageinfo[2]));
+        if (empty($image['width']) or empty($image['height']) or empty($image['mimetype'])) {
+            // gd can not parse it, sorry
+            return false;
+        }
+        return $image;
+    }
+
+    /**
+     * Verifies the file is a valid web image - gif, png and jpeg only.
+     * It should be ok to serve this image from server without any other security workarounds.
+     * @return bool true if file ok
+     */
+    public function is_valid_image() {
+        $mimetype = $this->get_mimetype();
+        if ($mimetype !== 'image/gif' and $mimetype !== 'image/jpeg' and $mimetype !== 'image/png') {
+            return false;
+        }
+        if (!$info = $this->get_imageinfo()) {
+            return false;
+        }
+        if ($info['mimetype'] !== $mimetype) {
+            return false;
+        }
+        // ok, GD likes this image
+        return true;
+    }
+
     public function get_contextid() {
         return $this->file_record->contextid;
     }
