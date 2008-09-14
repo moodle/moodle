@@ -7,12 +7,14 @@
 /// THERE SHOULD BE NO NEED TO MODIFY THIS FILE!!  USE CONFIG.PHP INSTEAD.
 
 
-    $lifetime  = 600;                                   // Seconds to cache this stylesheet
     define('NO_MOODLE_COOKIES', true);                  // session not used here
+    define('NO_UPGRADE_CHECK', true);                   // ignore upgrade check
+
     require_once("../../config.php");                   // Load up the Moodle libraries
     $themename = basename(dirname(__FILE__));           // Name of the folder we are in
     $forceconfig = optional_param('forceconfig', '', PARAM_FILE);   // Get config from this theme
     $lang        = optional_param('lang', '', PARAM_FILE);          // Look for styles in this language
+    $lifetime    = 1800;                                   // Seconds to cache this stylesheet
 
     style_sheet_setup(time(), $lifetime, $themename, $forceconfig, $lang);
    

@@ -4,6 +4,7 @@
        /// that should be called on every page
 
     define('NO_MOODLE_COOKIES', true);
+    define('NO_UPGRADE_CHECK', true);
 
     include('../config.php');
 

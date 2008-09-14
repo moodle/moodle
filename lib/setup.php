@@ -160,8 +160,8 @@ global $HTTPSPAGEREQUIRED;
 /// Load up any configuration from the config table
     $CFG = get_config();
 
-/// Verify upgrade is not running
-    if (isset($CFG->upgraderunning)) {
+/// Verify upgrade is not running unless we are in a script that needs to execute in any case
+    if (!defined('NO_UPGRADE_CHECK') and isset($CFG->upgraderunning)) {
         if ($CFG->upgraderunning < time()) {
             unset_config('upgraderunning');
         } else {
