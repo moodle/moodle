@@ -77,7 +77,7 @@ function upgrade_mod_savepoint($result, $version, $modname) {
             // something really wrong is going on in upgrade script
             print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$module->version, 'newversion'=>$version));
         }
-        $module->verions = $version;
+        $module->version = $version;
         $DB->update_record('modules', $module);
     } else {
         notify ("Upgrade savepoint: Error during mod upgrade to version $version");
@@ -104,7 +104,7 @@ function upgrade_blocks_savepoint($result, $version, $blockname) {
             // something really wrong is going on in upgrade script
             print_error('cannotdowngrade', 'debug', '', (object)array('oldversion'=>$block->version, 'newversion'=>$version));
         }
-        $block->verions = $version;
+        $block->version = $version;
         $DB->update_record('block', $block);
     } else {
         notify ("Upgrade savepoint: Error during mod upgrade to version $version");
