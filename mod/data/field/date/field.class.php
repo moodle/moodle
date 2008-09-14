@@ -34,10 +34,6 @@ class data_field_date extends data_field_base {
     var $month = 0;
     var $year  = 0;
 
-    function data_field_date($field=0, $data=0) {
-        parent::data_field_base($field, $data);
-    }
-
     function display_add_field($recordid=0) {
         global $DB;
 

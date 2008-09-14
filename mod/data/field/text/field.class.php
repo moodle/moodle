@@ -26,10 +26,6 @@ class data_field_text extends data_field_base {
 
     var $type = 'text';
 
-    function data_field_text($field=0, $data=0) {
-        parent::data_field_base($field, $data);
-    }
-    
     function display_search_field($value = '') {
         return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';   
     }

@@ -26,10 +26,6 @@ class data_field_checkbox extends data_field_base {
 
     var $type = 'checkbox';
 
-    function data_field_checkbox($field=0, $data=0) {
-        parent::data_field_base($field, $data);
-    }
-
     function display_add_field($recordid=0) {
         global $CFG, $DB;
 

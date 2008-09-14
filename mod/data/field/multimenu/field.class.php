@@ -26,11 +26,6 @@ class data_field_multimenu extends data_field_base {
 
     var $type = 'multimenu';
 
-    function data_field_multimenu($field=0, $data=0) {
-        parent::data_field_base($field, $data);
-    }
-
-
     function display_add_field($recordid=0) {
         global $DB;
 

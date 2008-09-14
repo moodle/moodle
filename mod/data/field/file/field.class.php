@@ -25,47 +25,44 @@
 class data_field_file extends data_field_base {
     var $type = 'file';
 
-    function data_field_file($field=0, $data=0) {
-        parent::data_field_base($field, $data);
-    }
-
     function display_add_field($recordid=0) {
         global $CFG, $DB;
+
+        $file        = false;
+        $content     = false;
+        $displayname = '';
+        $fs = get_file_storage();
         if ($recordid){
             if ($content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-                $contents[0] = $content->content;
-                $contents[1] = $content->content1;
-            } else {
-                $contents[0] = '';
-                $contents[1] = '';
+                if (!empty($content->content)) {
+                    if ($file = $FS->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+                        if (empty($content->content1)) {
+                            $displayname = $file->get_filename();
+                        } else {
+                            $displayname = $content->content1;
+                        }
+                    }
+                }
             }
-            $src         = empty($contents[0]) ? '' : $contents[0];
-            $name        = empty($contents[1]) ? $src : $contents[1];
-            $displayname = empty($contents[1]) ? '' : $contents[1];
-            require_once($CFG->libdir.'/filelib.php');
-            $source = get_file_url($this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid);
-        } else {
-            $src = '';
-            $name = '';
-            $displayname = '';
-            $source = '';
         }
-        $str = '<div title="' . s($this->field->description) . '">';
+
+        $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
         $str .= '<input type="hidden" name ="field_'.$this->field->id.'_file" value="fakevalue" />';
-        $str .= get_string('file','data'). ' <input type="file" name ="field_'.$this->field->id.'" id="field_'.
+        $str .= get_string('file','data').' <input type="file" name ="field_'.$this->field->id.'" id="field_'.
                             $this->field->id.'" title="'.s($this->field->description).'" /><br />';
-        $str .= get_string('optionalfilename','data').' <input type="text" name="field_' .$this->field->id.'_filename"
+        $str .= get_string('optionalfilename','data').' <input type="text" name="field_'.$this->field->id.'_filename"
                             id="field_'.$this->field->id.'_filename" value="'.s($displayname).'" /><br />';
-        $str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.s($this->field->param3).'" />';
+        //$str .= '<input type="hidden" name="MAX_FILE_SIZE" value="'.s($this->field->param3).'" />';
         $str .= '</fieldset>';
         $str .= '</div>';
-        if ($recordid and isset($content) and !empty($content->content)) {
-            // Print icon
-            require_once($CFG->libdir.'/filelib.php');
-            $icon = mimeinfo('icon', $src);
+        if ($file) {
+            // Print icon if file already exists
+            $browser = get_file_browser();
+            $icon    = mimeinfo_from_type('icon', $file->get_mimetype());
+            $src     = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', $this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
             $str .= '<img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.
-                    '<a href="'.$source.'/'.$src.'" >'.$name.'</a>';
+                    '<a href="'.$src.'" >'.s($file->get_filename()).'</a>';
         }
         return $str;
     }
@@ -93,20 +90,27 @@ class data_field_file extends data_field_base {
         global $CFG, $DB;
 
         if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
-            return false;
+            return '';
         }
-        $width = $this->field->param1 ? ' width = "'.s($this->field->param1).'" ':' ';
-        $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
+
         if (empty($content->content)) {
             return '';
         }
-        require_once($CFG->libdir.'/filelib.php');
-        $src  = $content->content;
-        $name = empty($content->content1) ? $src : $content->content1;
-        $source = get_file_url($this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid);
-        $icon = mimeinfo('icon', $src);
+
+        $fs      = get_file_storage();
+        $browser = get_file_browser();
+        if (!$file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+            return '';
+        }
+
+        $name   = empty($content->content1) ? $file->get_filename() : $content->content1;
+        $icon   = mimeinfo_from_type('icon', $file->get_mimetype());
+        $src    = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/data_content/'.$content->id.'/'.$file->get_filename());
+        $width  = $this->field->param1 ? ' width  = "'.s($this->field->param1).'" ':' ';
+        $height = $this->field->param2 ? ' height = "'.s($this->field->param2).'" ':' ';
+
         $str = '<img src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />&nbsp;'.
-                        '<a href="'.$source.'/'.$src.'" >'.$name.'</a>';
+               '<a href="'.$src.'" >'.s($name).'</a>';
         return $str;
     }
 
@@ -115,34 +119,32 @@ class data_field_file extends data_field_base {
     function update_content($recordid, $value, $name) {
         global $CFG, $DB;
 
-        if (!$oldcontent = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+        if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
         // Quickly make one now!
-            $oldcontent = new object;
-            $oldcontent->fieldid = $this->field->id;
-            $oldcontent->recordid = $recordid;
-            if ($oldcontent->id = $DB->insert_record('data_content', $oldcontent)) {
+            $content = new object();
+            $content->fieldid  = $this->field->id;
+            $content->recordid = $recordid;
+            if ($id = $DB->insert_record('data_content', $content)) {
                 print_error('cannotinsertempty', 'data');
             }
+            $content = $DB->get_record('data_content', array('id'=>$id));
         }
-        $content = new object;
-        $content->id = $oldcontent->id;
-        $names = explode('_',$name);
+
+        $names = explode('_', $name);
         switch ($names[2]) {
             case 'file':
                 // file just uploaded
-#                $course = get_course('course', 'id', $this->data->course);
-                $filename = $_FILES[$names[0].'_'.$names[1]];
-                $filename = $filename['name'];
-                $dir = $this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id.'/'.$recordid;
-                // only use the manager if file is present, to avoid "are you sure you selected a file to upload" msg
+                $tmpfile = $_FILES[$names[0].'_'.$names[1]];
+                $filename = $tmpfile['name'];
+                $pathanme = $tmpfile['tmp_name'];
                 if ($filename){
-                    require_once($CFG->libdir.'/uploadlib.php');
-                    // FIX ME: $course not defined here
-                    $um = new upload_manager($names[0].'_'.$names[1],true,false,$this->data->course,false,$this->field->param3);
-                    if ($um->process_file_uploads($dir)) {
-                        $newfile_name = $um->get_new_filename();
-                        $content->content = $newfile_name;
-                        $DB->update_record('data_content',$content);
+                    $fs = get_file_storage();
+                    // TODO: uploaded file processing will be in file picker ;-)
+                    $fs->delete_area_files($this->context->id, 'data_content', $content->id);
+                    $file_record = array('contextid'=>$this->context->id, 'filearea'=>'data_content', 'itemid'=>$content->id, 'filepath'=>'/', 'filename'=>$filename);
+                    if ($file = $fs->create_file_from_pathname($file_record, $pathanme)) {
+                        $content->content = $file->get_filename();
+                        $DB->update_record('data_content', $content);
                     }
                 }
                 break;
@@ -170,6 +172,10 @@ class data_field_file extends data_field_base {
 
     function text_export_supported() {
         return false;
+    }
+
+    function file_ok($path) {
+        return true;
     }
 
 }

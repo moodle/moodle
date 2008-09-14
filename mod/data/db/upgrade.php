@@ -40,7 +40,7 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2007101512, 'data');
     }
 
-    if ($result && $oldversion <  2007101513) {
+    if ($result && $oldversion < 2007101513) {
         // Upgrade all the data->notification currently being
         // NULL to 0
         $sql = "UPDATE {data} SET notification=0 WHERE notification IS NULL";
@@ -56,15 +56,97 @@ function xmldb_data_upgrade($oldversion) {
     }
 
     if ($result && $oldversion < 2008081400) {
-        if ($datainstances = $DB->get_records('data')) {
+        if ($rs = $DB->get_recordset('data')) {
             $pattern = '/\#\#delete\#\#(\s+)\#\#approve\#\#/';
             $replacement = '##delete##$1##approve##$1##export##';
-            foreach ($datainstances as $data) {
+            foreach ($rs as $data) {
                 $data->listtemplate = preg_replace($pattern, $replacement, $data->listtemplate);
                 $data->singletemplate = preg_replace($pattern, $replacement, $data->singletemplate);
                 $DB->update_record('data', $data);
             }
+            $rs->close();
         }
+        upgrade_mod_savepoint($result, 2008081400, 'data');
+    }
+
+    if ($result && $oldversion < 2008091400) {
+
+        /////////////////////////////////////
+        /// new file storage upgrade code ///
+        /////////////////////////////////////
+
+        $fs = get_file_storage();
+
+        $empty = $DB->sql_empty(); // silly oracle empty string handling workaround
+
+        $sqlfrom = "FROM {data_content} c
+                    JOIN {data_fields} f     ON f.id = c.fieldid
+                    JOIN {data_records} r    ON r.id = c.recordid
+                    JOIN {data} d            ON d.id = r.dataid
+                    JOIN {modules} m         ON m.name = 'data'
+                    JOIN {course_modules} cm ON (cm.module = m.id AND cm.instance = d.id)
+                   WHERE c.content <> '$empty' AND c.content IS NOT NULL
+                         AND (f.type = 'file' OR f.type = 'picture')";
+
+        $count = $DB->count_records_sql("SELECT COUNT('x') $sqlfrom");
+
+        if ($rs = $DB->get_recordset_sql("SELECT c.id, f.type, r.dataid, c.recordid, f.id AS fieldid, r.userid, c.content, c.content1, d.course, r.userid, cm.id AS cmid $sqlfrom ORDER BY d.course, d.id")) {
+
+            $pbar = new progress_bar('migratedatafiles', 500, true);
+
+            $olddebug = $DB->get_debug();
+            $DB->set_debug(false); // lower debug level, there might be very many files
+            $i = 0;
+            foreach ($rs as $content) {
+                $i++;
+                upgrade_set_timeout(60); // set up timeout, may also abort execution
+                $pbar->update($i, $count, "Migrating data entries - $i/$count.");
+
+                $filepath = "$CFG->dataroot/$content->course/$CFG->moddata/data/$content->dataid/$content->fieldid/$content->recordid/$content->content";
+                $context = get_context_instance(CONTEXT_MODULE, $content->cmid);
+
+                if (!file_exists($filepath)) {
+                    continue;
+                }
+
+                $filearea = 'data_content';
+                $oldfilename = $content->content;
+                $filename    = clean_param($oldfilename, PARAM_FILE);
+                if ($filename === '') {
+                    continue;
+                }
+                if (!$fs->file_exists($context->id, $filearea, $content->id, '/', $filename)) {
+                    $file_record = array('contextid'=>$context->id, 'filearea'=>$filearea, 'itemid'=>$content->id, 'filepath'=>'/', 'filename'=>$filename, 'userid'=>$content->userid);
+                    if ($fs->create_file_from_pathname($file_record, $filepath)) {
+                        unlink($filepath);
+                        if ($oldfilename !== $filename) {
+                            // update filename if needed
+                            $DB->set_field('data_content', 'content', $filename, array('id'=>$content->id));
+                        }
+                        if ($content->type == 'picture') {
+                            // migrate thumb
+                            $filepath = "$CFG->dataroot/$content->course/$CFG->moddata/data/$content->dataid/$content->fieldid/$content->recordid/thumb/$content->content";
+                            if (!$fs->file_exists($context->id, $filearea, $content->id, '/', 'thumb_'.$filename)) {
+                                $file_record['filename'] = 'thumb_'.$file_record['filename'];
+                                $fs->create_file_from_pathname($file_record, $filepath);
+                                unlink($filepath);
+                            }
+                        }
+                    }
+                }
+
+                // remove dirs if empty
+                @rmdir("$CFG->dataroot/$content->course/$CFG->moddata/data/$content->dataid/$content->fieldid/$content->recordid/thumb");
+                @rmdir("$CFG->dataroot/$content->course/$CFG->moddata/data/$content->dataid/$content->fieldid/$content->recordid");
+                @rmdir("$CFG->dataroot/$content->course/$CFG->moddata/data/$content->dataid/$content->fieldid");
+                @rmdir("$CFG->dataroot/$content->course/$CFG->moddata/data/$content->dataid");
+                @rmdir("$CFG->dataroot/$content->course/$CFG->moddata/data");
+                @rmdir("$CFG->dataroot/$content->course/$CFG->moddata");
+            }
+            $DB->set_debug($olddebug); // reset debug level
+            $rs->close();
+        }
+        upgrade_mod_savepoint($result, 2008091400, 'data');
     }
 
     return $result;

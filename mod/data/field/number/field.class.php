@@ -25,10 +25,6 @@
 class data_field_number extends data_field_base {
     var $type = 'number';
 
-    function data_field_number($field=0, $data=0) {
-        parent::data_field_base($field, $data);
-    }
-
     function update_content($recordid, $value, $name='') {
         global $DB;
 

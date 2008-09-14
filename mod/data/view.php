@@ -130,7 +130,7 @@
         $search = '';
         $vals = array();
         $fields = $DB->get_records('data_fields', array('dataid'=>$data->id));
-        
+
         //Added to ammend paging error. This error would occur when attempting to go from one page of advanced
         //search results to another.  All fields were reset in the page transfer, and there was no way of determining
         //whether or not the user reset them.  This would cause a blank search to execute whenever the user attempted
@@ -141,10 +141,10 @@
         //execution falls through to the second condition below, allowing paging to be set to true.
         //Paging remains true and keeps getting passed though the URL until a new search is performed
         //(even if page 0 is revisited).
-        //A false $paging flag generates advanced search results based on the fields input by the user. 
+        //A false $paging flag generates advanced search results based on the fields input by the user.
         //A true $paging flag generates davanced search results from the $SESSION global.
         //(See lines 147-158)
-        
+
         $paging = optional_param('paging', NULL, PARAM_BOOL);
         if($page == 0 && !isset($paging)) {
             $paging = false;
@@ -154,7 +154,7 @@
         }
         if (!empty($fields)) {
             foreach($fields as $field) {
-                $searchfield = data_get_field_from_id($field->id, $data);
+                $searchfield = data_get_field_from_id($field, $data);
                 //Get field data to build search sql with.  If paging is false, get from user.
                 //If paging is true, get data from $search_array which is obtained from the $SESSION (see line 116).
                 if(!$paging) {
@@ -369,12 +369,12 @@
 
     if ($mode == 'asearch') {
         $maxcount = 0;
-        
+
     } else {
     /// Approve any requested records
         $params = array(); // named params array
 
-        $approvecap = has_capability('mod/data:approve', $context); 
+        $approvecap = has_capability('mod/data:approve', $context);
 
         if ($approve && confirm_sesskey() && $approvecap) {
             if ($approverecord = $DB->get_record('data_records', array('id'=>$approve))) {   // Need to check this is valid
@@ -387,7 +387,7 @@
                 }
             }
         }
-    
+
         // Check the number of entries required against the number of entries already made (doesn't apply to teachers)
         $requiredentries_allowed = true;
         $numentries = data_numentries($data);
@@ -564,7 +564,7 @@
         }
 
     /// Get the actual records
-        
+
         if (!$records = $DB->get_records_sql($sqlselect, $params, $page * $nowperpage, $nowperpage)) {
             // Nothing to show!
             if ($record) {         // Something was requested so try to show that at least (bug 5132)
@@ -596,7 +596,7 @@
                 $a->num = $totalcount;
                 $a->max = $maxcount;
                 $a->reseturl = "view.php?id=$cm->id&amp;mode=$mode&amp;search=&amp;advanced=0";
-                notify(get_string('foundrecords', 'data', $a), 'notifysuccess'); 
+                notify(get_string('foundrecords', 'data', $a), 'notifysuccess');
             }
 
             if ($mode == 'single') {                  // Single template
@@ -635,7 +635,7 @@
 
         }
     }
-    
+
     $search = trim($search);
     if (empty($records)) {
         $records = array();

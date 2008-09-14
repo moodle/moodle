@@ -35,7 +35,7 @@ define ('DATA_TIMEMODIFIED', -4);
 define ('DATA_CAP_EXPORT', 'mod/data:viewalluserpresets');
 // Users having assigned the default role "Non-editing teacher" can export database records
 // Using the mod/data capability "viewalluserpresets" existing in Moodle 1.9.x.
-// In Moodle >= 2, new roles may be introduced and used instead. 
+// In Moodle >= 2, new roles may be introduced and used instead.
 
 class data_field_base {     // Base class for Database Field Types (see field/*/field.class.php)
 
@@ -46,9 +46,11 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     var $iconwidth = 16;    // Width of the icon for this fieldtype
     var $iconheight = 16;   // Width of the icon for this fieldtype
 
+    var $cm;                // course module or cmifno
+    var $context;           // activity context
 
 // Constructor function
-    function data_field_base($field=0, $data=0) {   // Field or data or both, each can be id or object
+    function __construct($field=0, $data=0, $cm=0) {   // Field or data or both, each can be id or object
         global $DB;
 
         if (empty($field) && empty($data)) {
@@ -80,9 +82,17 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
             }
         }
 
+        if ($cm) {
+            $this->cm = $cm;
+        } else {
+            $this->cm = get_coursemodule_from_instance('data', $this->data->id);
+        }
+
         if (empty($this->field)) {         // We need to define some default values
             $this->define_default_field();
         }
+
+        $this->context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
     }
 
 
@@ -165,8 +175,8 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         global $DB;
 
         if (!empty($this->field->id)) {
-            $DB->delete_records('data_fields', array('id'=>$this->field->id));
             $this->delete_content();
+            $DB->delete_records('data_fields', array('id'=>$this->field->id));
         }
         return true;
     }
@@ -268,29 +278,22 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     function delete_content($recordid=0) {
         global $DB;
 
-        $this->delete_content_files($recordid);
-
         if ($recordid) {
-            return $DB->delete_records('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid));
+            $conditions = array('fieldid'=>$this->field->id, 'recordid'=>$recordid);
         } else {
-            return $DB->delete_records('data_content', array('fieldid'=>$this->field->id));
-        }
-    }
-
-// Deletes any files associated with this field
-    function delete_content_files($recordid='') {
-        global $CFG;
-
-        require_once($CFG->libdir.'/filelib.php');
-
-        $dir = $CFG->dataroot.'/'.$this->data->course.'/'.$CFG->moddata.'/data/'.$this->data->id.'/'.$this->field->id;
-        if ($recordid) {
-            $dir .= '/'.$recordid;
+            $conditions = array('fieldid'=>$this->field->id);
         }
 
-        return fulldelete($dir);
-    }
+        if ($rs = $DB->get_recordset('data_content', $conditions)) {
+            $fs = get_file_storage();
+            foreach ($rs as $content) {
+                $fs->delete_area_files($this->context->id, 'data_content', $content->id);
+            }
+            $rs->close();
+        }
 
+        return $DB->delete_records('data_content', $conditions);
+    }
 
 // Check if a field from an add form is empty
     function notemptyfield($value, $name) {
@@ -332,18 +335,21 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         return $str;
     }
 
-//  Per default, it is assumed that fields support text exporting. Override this (return false) on fields not supporting text exporting. 
+//  Per default, it is assumed that fields support text exporting. Override this (return false) on fields not supporting text exporting.
     function text_export_supported() {
         return true;
     }
 
-//  Per default, return the record's text value only from the "content" field. Override this in fields class if necesarry. 
+//  Per default, return the record's text value only from the "content" field. Override this in fields class if necesarry.
     function export_text_value($record) {
         if ($this->text_export_supported()) {
             return $record->content;
         }
     }
 
+    function file_ok($relativepath) {
+        return false;
+    }
 }
 
 
@@ -379,7 +385,7 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
                 //    $str .= ' for="[['.$field->name.'#id]]"';
                 //}
                 //$str .= '>'.$field->name.'</label>';
-                
+
             //} else {
                 $str .= $field->name.': ';
             //}
@@ -546,35 +552,37 @@ function data_get_field_new($type, $data) {
  * invoke plugin methods                                                *
  * input: $param $field - record from db                                *
  ************************************************************************/
-function data_get_field($field, $data) {
+function data_get_field($field, $data, $cm=null) {
     global $CFG;
 
     if ($field) {
         require_once('field/'.$field->type.'/field.class.php');
         $newfield = 'data_field_'.$field->type;
-        $newfield = new $newfield($field, $data);
+        $newfield = new $newfield($field, $data, $cm);
         return $newfield;
     }
 }
 
 
-/***************************************************************************
- * given record id, returns true if the record belongs to the current user *
- * input @param $rid - record id                                           *
- * output bool                                                             *
- ***************************************************************************/
-function data_isowner($rid){
+/**
+ * Given record object (or id), returns true if the record belongs to the current user
+ * @param mixed $rid - record object or id
+ * @return bool
+ */
+function data_isowner($record) {
     global $USER, $DB;
 
-    if (empty($USER->id)) {
+    if (!isloggedin()) {
         return false;
     }
 
-    if ($record = $DB->get_record('data_records', array('id'=>$rid))) {
-        return ($record->userid == $USER->id);
+    if (!is_object($record)) {
+        if (!$record = $DB->get_record('data_records', array('id'=>$record))) {
+            return false;
+        }
     }
 
-    return false;
+    return ($record->userid == $USER->id);
 }
 
 /***********************************************************************
@@ -598,7 +606,7 @@ function data_atmaxentries($data){
  * output int                                                         *
  **********************************************************************/
 function data_numentries($data){
-    global $USER, $CFG, $DB;
+    global $USER, $DB;
     $sql = 'SELECT COUNT(*) FROM {data_records} WHERE dataid=? AND userid=?';
     return $DB->count_records_sql($sql, array($data->id, $USER->id));
 }
@@ -659,7 +667,7 @@ function data_tags_check($dataid, $template) {
  * Adds an instance of a data                                           *
  ************************************************************************/
 function data_add_instance($data) {
-    global $CFG, $DB;
+    global $DB;
 
     if (empty($data->assessed)) {
         $data->assessed = 0;
@@ -680,7 +688,7 @@ function data_add_instance($data) {
  * updates an instance of a data                                        *
  ************************************************************************/
 function data_update_instance($data) {
-    global $CFG, $DB;
+    global $DB;
 
     $data->timemodified = time();
     $data->id           = $data->instance;
@@ -707,38 +715,36 @@ function data_update_instance($data) {
  * deletes an instance of a data                                        *
  ************************************************************************/
 function data_delete_instance($id) {    // takes the dataid
-    global $CFG, $DB;
+    global $DB;
 
-    if (! $data = $DB->get_record('data', array('id'=>$id))) {
+    if (!$data = $DB->get_record('data', array('id'=>$id))) {
         return false;
     }
 
-    // Delete all the associated information
+    $cm = get_coursemodule_from_instance('data', $data->id);
+    $context = get_context_instance(CONTEXT_MODULE, $cm->id);
+
+/// Delete all the associated information
+
+    // files
+    $fs = get_file_storage();
+    $fs->delete_area_files($context->id, 'data_content');
 
     // get all the records in this data
-    $sql = 'SELECT c.* FROM {data_records} r LEFT JOIN {data_content} c ON c.recordid = r.id WHERE r.dataid =?';
+    $sql = "SELECT r.id
+              FROM {data_records} r
+             WHERE r.dataid = ?";
 
-    if ($contents = $DB->get_records_sql($sql, array($id))){
-
-        foreach($contents as $content){
-
-            $field = $DB->get_record('data_fields', array('id'=>$content->fieldid));
-            if ($g = data_get_field($field, $data)){
-                $g->delete_content_files($id, $content->recordid, $content->content);
-            }
-            //delete the content itself
-            $DB->delete_records('data_content', array('id'=>$content->id));
-        }
-    }
+    $DB->delete_records_select('data_content', "recordid IN ($sql)", array($id));
 
     // delete all the records and fields
     $DB->delete_records('data_records', array('dataid'=>$id));
     $DB->delete_records('data_fields', array('dataid'=>$id));
 
     // Delete the instance itself
-
     $result = $DB->delete_records('data', array('id'=>$id));
 
+    // cleanup gradebook
     data_grade_item_delete($data);
 
     return $result;
@@ -748,7 +754,7 @@ function data_delete_instance($id) {    // takes the dataid
  * returns a summary of data activity of this user                      *
  ************************************************************************/
 function data_user_outline($course, $user, $mod, $data) {
-    global $CFG, $DB;
+    global $DB;
 
     if ($countrecords = $DB->count_records('data_records', array('dataid'=>$data->id, 'userid'=>$user->id))) {
         $result = new object();
@@ -781,7 +787,7 @@ function data_user_complete($course, $user, $mod, $data) {
  * @return array array of grades, false if none
  */
 function data_get_user_grades($data, $userid=0) {
-    global $CFG, $DB;
+    global $DB;
 
     $user = $userid ? "AND u.id = :userid" : "";
     $params = array('userid'=>$userid, 'dataid'=>$data->id);
@@ -908,7 +914,7 @@ function data_grade_item_delete($data) {
 function data_get_participants($dataid) {
 // Returns the users with data in one data
 // (users with records in data_records, data_comments and data_ratings)
-    global $CFG, $DB;
+    global $DB;
 
     $records = $DB->get_records_sql("SELECT DISTINCT u.id, u.id
                                        FROM {user} u, {data_records} r
@@ -924,17 +930,17 @@ function data_get_participants($dataid) {
 
     $participants = array();
 
-    if ($records){
+    if ($records) {
         foreach ($records as $record) {
             $participants[$record->id] = $record;
         }
     }
-    if ($comments){
+    if ($comments) {
         foreach ($comments as $comment) {
             $participants[$comment->id] = $comment;
         }
     }
-    if ($ratings){
+    if ($ratings) {
         foreach ($ratings as $rating) {
             $participants[$rating->id] = $rating;
         }
@@ -1027,9 +1033,9 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
         } else {
             $replacement[] = '';
         }
-        
+
         $patterns[] = '##timeadded##';
-        $replacement[] = userdate($record->timecreated); 
+        $replacement[] = userdate($record->timecreated);
 
         $patterns[] = '##timemodified##';
         $replacement [] = userdate($record->timemodified);
@@ -1093,7 +1099,7 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
  ************************************************************************/
 function data_print_preference_form($data, $perpage, $search, $sort='', $order='ASC', $search_array = '', $advanced = 0, $mode= ''){
     global $CFG, $DB;
-    
+
     $cm = get_coursemodule_from_instance('data', $data->id);
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     echo '<br /><div class="datapreferences">';
@@ -1169,7 +1175,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $checked = '';
     }
     print '
-            
+
         <script type="text/javascript">
         //<![CDATA[
         <!-- Start
@@ -1202,10 +1208,10 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     echo '&nbsp;<input type="hidden" name="advanced" value="0" />';
     echo '&nbsp;<input type="checkbox" id="advancedcheckbox" name="advanced" value="1" '.$checked.' onchange="showHideAdvSearch(this.checked);" /><label for="advancedcheckbox">'.get_string('advancedsearch', 'data').'</label>';
     echo '&nbsp;<input type="submit" value="'.get_string('savesettings','data').'" />';
-    
+
     echo '<br />';
     echo '<div class="dataadvancedsearch" id="data_adv_form" style="display: ';
-    
+
     if ($advanced) {
         echo 'inline';
     }
@@ -1214,7 +1220,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
     }
     echo ';margin-left:auto;margin-right:auto;" >';
     echo '<table class="boxaligncenter">';
-    
+
     // print ASC or DESC
     echo '<tr><td colspan="2">&nbsp;</td></tr>';
     $i = 0;
@@ -1406,17 +1412,17 @@ function data_print_rating_menu($recordid, $userid, $scale) {
     choose_from_menu($scale, $recordid, $rating->rating, "$strrate...", '', -999);
 }
 
-
+/**
+ * Returns a list of ratings for a particular post - sorted.
+ */
 function data_get_ratings($recordid, $sort="u.firstname ASC") {
-// Returns a list of ratings for a particular post - sorted.
-    global $CFG, $DB;
+    global  $DB;
 
     return $DB->get_records_sql("SELECT u.*, r.rating
                                    FROM {data_ratings} r, {user} u
                                   WHERE r.recordid = ? AND r.userid = u.id
                                ORDER BY $sort", array($recordid));
 }
-
 
 // prints all comments + a text box for adding additional comment
 function data_print_comments($data, $record, $page=0, $mform=false) {
@@ -2025,7 +2031,7 @@ class PresetImporter {
 
                 if (array_key_exists($cid, $preservedfields)){
                     print_error('notinjectivemap', 'data');
-                } 
+                }
                 else $preservedfields[$cid] = true;
             }
 
@@ -2116,7 +2122,7 @@ class PresetImporter {
 
         if (strstr($this->folder, '/temp/')) {
         // Removes the temporary files
-            clean_preset($this->folder); 
+            clean_preset($this->folder);
         }
 
         return true;
@@ -2434,6 +2440,97 @@ function data_get_exportdata($dataid, $fields, $selectedfields) {
     }
     $line--;
     return $exportdata;
+}
+
+/**
+ * Lists all browsable file areas
+ */
+function data_get_file_areas($course, $cm, $context) {
+    $areas = array();
+    if (has_capability('moodle/course:managefiles', $context)) {
+        $areas['data_intro'] = get_string('areaintro', 'data');
+    }
+    return $areas;
+}
+
+/**
+ * Serves the data attachments. Implements needed access control ;-)
+ */
+function data_pluginfile($course, $cminfo, $context, $filearea, $args) {
+    global $CFG, $DB;
+
+    if (!$cminfo->uservisible) {
+        return false;
+    }
+
+    if ($filearea === 'data_intro') {
+        // all users may access it
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'data_intro0'.$relativepath;
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        $lifetime = isset($CFG->filelifetime) ? $CFG->filelifetime : 86400;
+
+        // finally send the file
+        send_stored_file($file, $lifetime, 0);
+
+    } else if ($filearea === 'data_content') {
+        $contentid = (int)array_shift($args);
+
+        if (!$content = $DB->get_record('data_content', array('id'=>$contentid))) {
+            return false;
+        }
+
+        if (!$field = $DB->get_record('data_fields', array('id'=>$content->fieldid))) {
+            return false;
+        }
+
+        if (!$record = $DB->get_record('data_records', array('id'=>$content->recordid))) {
+            return false;
+        }
+
+        if (!$data = $DB->get_record('data', array('id'=>$field->dataid))) {
+            return false;
+        }
+
+        //check if approved
+        if (!$record->approved and !data_isowner($record) and !has_capability('mod/data:approve', $context)) {
+            return false;
+        }
+
+        // group access
+        if ($record->groupid) {
+            $groupmode = groups_get_activity_groupmode($cminfo, $course);
+            if ($groupmode == SEPARATEGROUPS and !has_capability('moodle/site:accessallgroups', $context)) {
+                if (!groups_is_member($record->groupid)) {
+                    return false;
+                }
+            }
+        }
+
+        $fieldobj = data_get_field($field, $data, $cminfo);
+
+        $relativepath = '/'.implode('/', $args);
+        $fullpath = $context->id.'data_content'.$content->id.$relativepath;
+
+        if (!$fieldobj->file_ok($relativepath)) {
+            return false;
+        }
+
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            return false;
+        }
+
+        // finally send the file
+        send_stored_file($file, 0, 0, true); // download MUST be forced - security!
+    }
+
+    return false;
 }
 
 require_once($CFG->libdir . '/portfoliolib.php');
