@@ -88,14 +88,36 @@ class quiz_report_statistics_table extends flexible_table {
 
 
     function col_name($question){
-        if (!$this->is_downloading() && $question->qtype!='random'){
-            $tooltip = get_string('detailedanalysis', 'quiz_statistics');
-            $url = $this->baseurl .'&amp;qid='.$question->id;
-            return "<a title=\"$tooltip\" href=\"$url\">".$question->name."</a>";
+        if (!$this->is_downloading()){
+            if ($question->qtype!='random'){
+                $tooltip = get_string('detailedanalysis', 'quiz_statistics');
+                $url = $this->baseurl .'&amp;qid='.$question->id;
+                $html = "<a title=\"$tooltip\" href=\"$url\">".$question->name."</a>";
+            } else {
+                $html = $question->name;
+            }
+            if ($this->is_dubious_question($question)){
+                return "<div class=\"dubious\">$html</div>";
+            } else {
+                return $html;
+            }
         } else {
             return $question->name;
         }
 
+    }
+
+    /**
+     * @param object question the question object with a property _stats which
+     * includes all the stats for the question.
+     * @return boolean is this question possibly not pulling it's weight?
+     */
+    function is_dubious_question($question){
+        if (!is_numeric($question->_stats->discriminativeefficiency)){
+            return false;
+        } else {
+            return $question->_stats->discriminativeefficiency < 15;
+        }
     }
     
     function col_icon($question){
