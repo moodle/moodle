@@ -1714,15 +1714,15 @@ class assignment_base {
                 $path = $browser->encodepath($CFG->wwwroot.'/pluginfile.php', '/'.$this->context->id.'/assignment_submission/'.$userid.'/'.$filename);
                 $output .= '<a href="'.$path.'" ><img src="'.$CFG->pixpath.'/f/'.$icon.'" class="icon" alt="'.$icon.'" />'.s($filename).'</a>';
                 if ($this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                    $button->set_formats(portfolio_format_from_file($file));
                     $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id, 'file' => $file->get_id()));
+                    $button->set_formats(portfolio_format_from_file($file));
                     $output .= $button->to_html(PORTFOLIO_ADD_ICON_LINK);
                 }
                 $output .= '<br />';
             }
             if (count($files) > 1  && $this->portfolio_exportable() && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                $button->set_formats(PORTFOLIO_PORMAT_FILE);
                 $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id));
+                $button->set_formats(PORTFOLIO_PORMAT_FILE);
                 $output .= '<br />'  . $button->to_html();
             }
         }

@@ -76,6 +76,7 @@ $string['noavailableplugins'] = 'Sorry, but there are no available portfolios fo
 $string['nocallbackfile'] = 'Something in the module you\'re trying to export from is broken - couldn\'t find a required file ($a)';
 $string['nocallbackclass'] = 'Could not find the callback class to use ($a)';
 $string['nocommonformats'] = 'No common formats between any available portfolio plugin and the calling location $a';
+$string['noclassbeforeformats'] = 'You must set the callback class before calling set_formats in portfolio_button';
 $string['nopermissions'] = 'Sorry but you do not have the required permissions to export files from this area';
 $string['nonprimative'] = 'A non primative value was passed as a callback argument to portfolio_add_button.  Refusing to continue.  The key was $a->key and the value was $a->value';
 $string['notexportable'] = 'Sorry, but the type of content you are trying to export is not exportable';

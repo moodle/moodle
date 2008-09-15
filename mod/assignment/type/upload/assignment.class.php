@@ -365,8 +365,8 @@ class assignment_upload extends assignment_base {
                 $output .= '<br />';
             }
             if (count($files) > 1 && has_capability('mod/assignment:exportownsubmission', $this->context)) {
-                $button->set_formats(PORTFOLIO_FORMAT_FILE);
                 $button->set_callback_options('assignment_portfolio_caller', array('id' => $this->cm->id), '/mod/assignment/lib.php');
+                $button->set_formats(PORTFOLIO_FORMAT_FILE);
                 $output .= $button->to_html();
             }
         }

@@ -135,6 +135,12 @@ class portfolio_add_button {
     }
 
     /*
+    * sets the available export formats for this content
+    * this function will also poll the static function in the caller class
+    * and make sure we're not overriding a format that has nothing to do with mimetypes
+    * eg if you pass IMAGE here but the caller can export LEAP it will keep LEAP as well.
+    * see portfolio_most_specific_formats for more information
+    *
     * @param array $formats if the calling code knows better than the static method on the calling class (supported_formats)
     *                       eg, if it's going to be a single file, or if you know it's HTML, you can pass it here instead
     *                       this is almost always the case so you should always use this.
@@ -145,18 +151,13 @@ class portfolio_add_button {
             $formats = array($formats);
         }
         if (empty($formats)) {
-            if (empty($this->callbackclass)) {
-                throw new portfolio_button_exception('noformatsorclass', 'portfolio');
-            }
-            $formats = call_user_func(array($this->callbackclass, 'supported_formats'));
+            $formats = array();
         }
-        $allformats = portfolio_supported_formats();
-        foreach ($formats as $f) {
-            if (!array_key_exists($f, $allformats)) {
-                throw new portfolio_button_exception('invalidformat', 'portfolio', $f);
-            }
+        if (empty($this->callbackclass)) {
+            throw new portfolio_button_exception('noclassbeforeformats', 'portfolio');
         }
-        $this->formats = $formats;
+        $callerformats = call_user_func(array($this->callbackclass, 'supported_formats'));
+        $this->formats = portfolio_most_specific_formats($formats, $callerformats);
     }
 
     /*
@@ -497,6 +498,35 @@ function portfolio_supported_formats_intersect($callerformats, $pluginformats) {
         }
     }
     return $intersection;
+}
+
+/**
+* return the combination of the two arrays of formats with duplicates in terms of specificity removed
+* use case: a module is exporting a single file, so the general formats would be FILE and MBKP
+*           while the specific formats would be the specific subclass of FILE based on mime (say IMAGE)
+*           and this function would return IMAGE and MBKP
+*
+* @param array $specificformats array of more specific formats (eg based on mime detection)
+* @param array $generalformats  array of more general formats (usually more supported)
+*
+* @return array merged formats with dups removed
+*/
+function portfolio_most_specific_formats($specificformats, $generalformats) {
+    $allformats = portfolio_supported_formats();
+    foreach ($specificformats as $f) {
+        // look for something less specific and remove it, ie outside of the inheritance tree of the current formats.
+        if (!array_key_exists($f, $allformats)) {
+            throw new portfolio_button_exception('invalidformat', 'portfolio', $f);
+        }
+        $fobj = new $allformats[$f];
+        foreach ($generalformats as $key => $cf) {
+            $cfclass = $allformats[$cf];
+            if ($fobj instanceof $cfclass) {
+                unset($generalformats[$cf]);
+            }
+        }
+    }
+    return array_merge(array_values($specificformats), array_values($generalformats));
 }
 
 /**

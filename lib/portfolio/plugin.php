@@ -440,7 +440,7 @@ abstract class portfolio_plugin_base {
     * and should call parent::__construct afterwards
     *
     * @param int $instanceid id of plugin instance to construct
-    * @param mixed $record stdclass object or named array - use this is you already have the record to avoid another query
+    * @param mixed $record stdclass object or named array - use this i you already have the record to avoid another query
     *
     * @return object subclass of portfolio_plugin_base
     */
