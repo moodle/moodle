@@ -192,7 +192,7 @@ function xmldb_quiz_upgrade($oldversion) {
     /// we need to say that these tables are already installed, otherwise XMLDB
     /// will try to create them again and give an error.
     if ($result && $oldversion < 2008082600) {
-        set_config('qtype_datasetdependent_version', 2008082600);
+        set_config('version', 2008082600, 'qtype_datasetdependent');
         upgrade_mod_savepoint($result, 2008082600, 'quiz');
     }
 
