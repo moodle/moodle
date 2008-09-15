@@ -15,6 +15,10 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
     }
 
     public function prepare_package() {
+        // don't do anything for this plugin, we want to send all files as they are.
+    }
+
+    public function send_package() {
         // if we need to create the folder, do it now
         if ($newfolder = $this->get_export_config('newfolder')) {
             if (!$created = $this->boxclient->createFolder($newfolder, array('share' => $this->get_export_config('sharefolder')))) {
@@ -23,10 +27,6 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
             $this->folders[$created['folder_id']] = $created['folder_name'];
             $this->set_export_config(array('folder' => $created['folder_id']));
         }
-        // don't do anything else for this plugin, we want to send all files as they are.
-    }
-
-    public function send_package() {
         foreach ($this->exporter->get_tempfiles() as $file) {
             $return = $this->boxclient->uploadFile(
                 array(
