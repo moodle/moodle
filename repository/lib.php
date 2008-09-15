@@ -838,6 +838,25 @@ abstract class repository {
         return $this->get_listing(null, $search);
     }
 
+    /**
+     * Logout from repository instance
+     * By default, this function will return a login form
+     *
+     * @return string
+     */
+    public function logout(){
+        return $this->print_login();
+    }
+
+    /**
+     * To check whether the user is logged in.
+     *
+     * @return boolean
+     */
+    public function check_login(){
+        return true;
+    }
+
 
     /**
      * Show the login screen, if required

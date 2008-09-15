@@ -106,9 +106,24 @@ EOD;
 
 /// These actions all occur on the currently active repository instance
     switch ($action) {
-        case 'searchform':
-            $repo->print_search();
-            break;
+        case 'sign':
+        case 'list':
+            if ($repo->check_login()) {
+                try {
+                    if (!empty($p)) {
+                        echo json_encode($repo->get_listing($p));
+                    } else {
+                        echo json_encode($repo->get_listing());
+                    }
+                } catch (repository_exception $e) {
+                    $err = new stdclass;
+                    $err->e = $e->getMessage();
+                    die(json_encode($err));
+                }
+                break;
+            } else {
+                $action = 'login';
+            }
         case 'login':
             try {
                 echo json_encode($repo->print_login());
@@ -118,22 +133,15 @@ EOD;
                 die(json_encode($err));
             }
             break;
+        case 'logout':
+            echo json_encode($repo->logout());
+            break;
+        case 'searchform':
+            $repo->print_search();
+            break;
         case 'search':
             try {
                 echo json_encode($repo->search());
-            } catch (repository_exception $e) {
-                $err = new stdclass;
-                $err->e = $e->getMessage();
-                die(json_encode($err));
-            }
-            break;
-        case 'list':
-            try {
-                if (!empty($p)) {
-                    echo json_encode($repo->get_listing($p));
-                } else {
-                    echo json_encode($repo->get_listing());
-                }
             } catch (repository_exception $e) {
                 $err = new stdclass;
                 $err->e = $e->getMessage();

@@ -14,6 +14,44 @@ class repository_flickr extends repository{
     private $flickr;
     public $photos;
 
+    public function __construct($repositoryid, $context = SITEID, $options = array()){
+        global $SESSION, $CFG;
+        $options['page']    = optional_param('p', 1, PARAM_INT);
+        parent::__construct($repositoryid, $context, $options);
+
+        $this->setting = 'flickr_';
+
+        $this->api_key = $this->get_option('api_key');
+        $this->secret  = $this->get_option('secret');
+
+        $this->token = get_user_preferences($this->setting, '');
+        $this->nsid  = get_user_preferences($this->setting.'_nsid', '');
+
+        $this->flickr = new phpFlickr($this->api_key, $this->secret, $this->token);
+
+        if(empty($this->token)){
+            $frob  = optional_param('frob', '', PARAM_RAW);
+            if(!empty($frob)){
+                $auth_info = $this->flickr->auth_getToken($frob);
+                $this->token = $auth_info['token'];
+                $this->nsid  = $auth_info['user']['nsid'];
+                set_user_preference($this->setting, $auth_info['token']);
+                set_user_preference($this->setting.'_nsid', $auth_info['user']['nsid']);
+                $this->perm  = $auth_info['token'];
+            }
+        }
+
+    }
+    public function check_login(){
+        return !empty($this->token);
+    }
+    public function logout(){
+        set_user_preference($this->setting, '');
+        set_user_preference($this->setting.'_nsid', '');
+        $this->token = '';
+        $this->nsid  = '';
+        return $this->print_login();
+    }
     public function set_option($options = array()){
         if (!empty($options['api_key'])) {
             set_config('api_key', trim($options['api_key']), 'flickr');
@@ -48,67 +86,15 @@ class repository_flickr extends repository{
             return true;
         }
     }
-
-    public function __construct($repositoryid, $context = SITEID, $options = array()){
-        global $SESSION, $action, $CFG;
-        $options['page']    = optional_param('p', 1, PARAM_INT);
-        parent::__construct($repositoryid, $context, $options);
-
-        $this->setting = 'flickr_';
-
-        $this->api_key = $this->get_option('api_key');
-        $this->secret  = $this->get_option('secret');
-
-        $this->token = get_user_preferences($this->setting, '');
-        $this->nsid  = get_user_preferences($this->setting.'_nsid', '');
-
-        $this->flickr = new phpFlickr($this->api_key, $this->secret, $this->token);
-
-        $reset = optional_param('reset', 0, PARAM_INT);
-        if(empty($this->token)){
-            $frob  = optional_param('frob', '', PARAM_RAW);
-            if(!empty($frob)){
-                $auth_info = $this->flickr->auth_getToken($frob);
-                $this->token = $auth_info['token'];
-                $this->nsid  = $auth_info['user']['nsid'];
-                set_user_preference($this->setting, $auth_info['token']);
-                set_user_preference($this->setting.'_nsid', $auth_info['user']['nsid']);
-                $this->perm  = $auth_info['token'];
-            }else{
-                $action = 'login';
-            }
-        }
-        if(!empty($reset)) {
-            set_user_preference($this->setting, '');
-            set_user_preference($this->setting.'_nsid', '');
-            $this->token = '';
-            $this->nsid  = '';
-            $action = 'login';
-        }
-
-        if(!empty($this->token)) {
-            if(empty($action)){
-                $action = 'list';
-            }
-        } else {
-            $action = 'login';
-        }
-    }
     public function print_login($ajax = true){
         global $SESSION;
-        if(!empty($this->token)){
-        }
-        if(empty($this->token)) {
-            if($ajax){
-                $ret = array();
-                $popup_btn = new stdclass;
-                $popup_btn->type = 'popup';
-                $popup_btn->url = $this->flickr->auth();
-                $ret['login'] = array($popup_btn);
-                return $ret;
-            }
-        } else {
-            return $this->get_listing();
+        if($ajax){
+            $ret = array();
+            $popup_btn = new stdclass;
+            $popup_btn->type = 'popup';
+            $popup_btn->url = $this->flickr->auth();
+            $ret['login'] = array($popup_btn);
+            return $ret;
         }
     }
     public function get_listing($path = '1', $search = ''){

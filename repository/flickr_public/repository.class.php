@@ -44,7 +44,7 @@ class repository_flickr_public extends repository{
     }
 
     public function __construct($repositoryid, $context = SITEID, $options = array()){
-        global $action, $CFG;
+        global $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);
         $this->api_key = $this->get_option('api_key');
@@ -52,44 +52,32 @@ class repository_flickr_public extends repository{
 
         $this->flickr_account = $this->get_option('email_address');
 
-        if(!empty($this->flickr_account)) {
-            if(empty($action)){
-                $action = 'list';
-            }
-        } else {
-            $account = optional_param('flickr_account', '', PARAM_RAW);
-            if(!empty($account)) {
-                $people = $this->flickr->people_findByEmail($account);
-                if(!empty($people)) {
-                    $this->flickr_account = $account;
-                    $action = 'list';
-                } else {
-                    throw new repository_exception('invalidemail', 'repository_flickr_public');
-                }
+        $account = optional_param('flickr_account', '', PARAM_RAW);
+        if(!empty($account)) {
+            $people = $this->flickr->people_findByEmail($account);
+            if(!empty($people)) {
+                $this->flickr_account = $account;
             } else {
-                $action = 'login';
+                throw new repository_exception('invalidemail', 'repository_flickr_public');
             }
         }
     }
+    public function check_login(){
+        return !empty($this->flickr_account);
+    }
     public function print_login($ajax = true){
-        if(empty($this->flickr_account)) {
-            if($ajax){
-                $ret = array();
-                $e1->label = get_string('username', 'repository_flickr_public').': ';
-                $e1->id    = 'account';
-                $e1->type = 'text';
-                $e1->name = 'flickr_account';
+        if($ajax){
+            $ret = array();
+            $e1->label = get_string('username', 'repository_flickr_public').': ';
+            $e1->id    = 'account';
+            $e1->type = 'text';
+            $e1->name = 'flickr_account';
 
-                $e2->type = 'hidden';
-                $e2->name = 'repo_id';
-                $e2->value = $this->id;
-                $ret['login'] = array($e1, $e2);
-                return $ret;
-            }else{
-                echo $str;
-            }
-        } else {
-            return $this->get_listing();
+            $e2->type = 'hidden';
+            $e2->name = 'repo_id';
+            $e2->value = $this->id;
+            $ret['login'] = array($e1, $e2);
+            return $ret;
         }
     }
     public function search(){
