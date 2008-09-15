@@ -71,9 +71,8 @@ class question_dataset_dependent_questiontype extends default_questiontype {
         global $DB;
         $responses = 'dataset'.$state->options->datasetitem.'-'.
          $state->responses[''];
-
         // Set the legacy answer field
-        if (!$DB->set_field('question_states', 'answer', $responses, array('id', $state->id))) {
+        if (!$DB->set_field('question_states', 'answer', $responses, array('id'=> $state->id))) {
             return false;
         }
         return true;
