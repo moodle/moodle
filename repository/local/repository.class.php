@@ -144,6 +144,7 @@ class repository_local extends repository {
                     if ($search && stristr($tmp['title'], $search) !== false) {
                         $_search = false;
                     }
+                    $tmp['children'] = array();
                     $_filecount = $this->build_tree($child, $_search, $dynamicmode, $tmp['children']);
                     if ($search && $_filecount) {
                         $tmp['expanded'] = 1;
