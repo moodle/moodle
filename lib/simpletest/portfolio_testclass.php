@@ -105,6 +105,20 @@ class portfolio_caller_test extends portfolio_caller_base {
     }
 }
 
+class portfolio_exporter_test extends portfolio_exporter {
+    public function write_new_file($content, $name) {
+
+    }
+
+    public function copy_existing_file($oldfile) {
+
+    }
+
+    public function get_tempfiles() {
+
+    }
+}
+
 /**
  * The following two classes are full mocks: none of their methods do anything, including their constructor.
  * They can be instantiated directly with no params (new portfolio_caller_test())
@@ -117,11 +131,11 @@ Mock::generate('portfolio_plugin_test', 'mock_plugin');
  * They are instantiated by passing $this to the constructor within the test case class.
  */
 Mock::generatePartial('portfolio_plugin_test', 'partialmock_plugin', array('send_package'));
-Mock::generatePartial('portfolio_exporter', 'partialmock_exporter', array('process_stage_confirm',
-                                                                          'process_stage_cleanup',
-                                                                          'log_transfer',
-                                                                          'save',
-                                                                          'rewaken_object'));
+Mock::generatePartial('portfolio_exporter_test', 'partialmock_exporter', array('process_stage_confirm',
+                                                                               'process_stage_cleanup',
+                                                                               'log_transfer',
+                                                                               'save',
+                                                                               'rewaken_object'));
 
 
 // Generate a mock class for each plugin subclass present
