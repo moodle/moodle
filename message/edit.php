@@ -230,8 +230,14 @@ foreach ( $providers as $providerid => $provider){
     foreach (array('loggedin', 'loggedoff') as $state){
         $state_res = get_string($state, 'message');
         echo '<tr><td align="right">'.$state_res.'</td>'."\n";
-        foreach ( $processors as $processorid => $processor){
-            $checked = $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name]==1?" checked=\"checked\"":"";            
+        foreach ( $processors as $processorid => $processor) {
+            if (!isset($preferences->{$provider->component.'_'.$provider->name.'_'.$state})) {
+                $checked = '';
+            } else if (!isset($preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name])) {
+                $checked = '';
+            } else {
+                $checked = $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name]==1?" checked=\"checked\"":"";            
+            }
             echo '<td align="center"><input type="checkbox" name="'.$provider->component.'_'.$provider->name.'_'.$state.'['.$processor->name.']" '.$checked.' /></td>'."\n";
         }
         echo '</tr>'."\n";

@@ -40,39 +40,7 @@ define("JABBER_PASSWORD","");
 define("RUN_TIME",15);  // set a maximum run time of 15 seconds
 
 require_once($CFG->dirroot.'/message/output/lib.php');
-require_once($CFG->dirroot.'/message/output/jabber/jabberclass/class_Jabber.php');
-
-class JabberMessenger {
-    function JabberMessenger(&$jab, $message) {
-        $this->jab = &$jab;
-        $this->message = $message;
-        $this->first_roster_update = true;
-        $this->countdown = 0;
-    }
-    // called when a connection to the Jabber server is established
-    function handleConnected() {        
-        $this->jab->login(JABBER_USERNAME,JABBER_PASSWORD);
-    }
-    // called after a login to indicate the the login was successful
-    function handleAuthenticated() {
-        global $DB;        
-        $userfrom = $DB->get_record('user', array('id' => $this->message->useridfrom));
-        $userto = $DB->get_record('user', array('id' => $this->message->useridto));            
-        
-        $jabberdest = get_user_preferences('message_processor_jabber_jabberid', $userto->email , $userto->id);
-        if (empty($jabberdest)){
-            $jabberdest = $userto->email;
-        }
-        $this->jab->message($jabberdest,"chat",NULL,fullname($userfrom)." says: ".$this->message->fullmessage);
-        $this->jab->terminated = true;
-    }
-    // called after a login to indicate that the login was NOT successful
-    function handleAuthFailure($code,$error) {
-        // set terminated to TRUE in the Jabber class to tell it to exit
-        $this->jab->terminated = true;
-    }
-}
-
+require_once($CFG->libdir.'/jabber/XMPP/XMPP.php');
 
 class message_output_jabber extends message_output {
     
@@ -82,26 +50,31 @@ class message_output_jabber extends message_output {
      * @return true if ok, false if error
      */
     function send_message($message){
+        global $DB;
         
-        //jabber object
-        $jab = new Jabber(True);
-        // create an instance of our event handler class
-        $test = new JabberMessenger($jab, $message);
-        
-        // set handlers for the events we wish to be notified about
-        $jab->set_handler("connected",$test,"handleConnected");
-        $jab->set_handler("authenticated",$test,"handleAuthenticated");
-        $jab->set_handler("authfailure",$test,"handleAuthFailure");
-        
-        if (!$jab->connect(JABBER_SERVER)) {
+        if (!$userfrom = $DB->get_record('user', array('id' => $message->useridfrom))) {
             return false;
         }
+        if (!$userto = $DB->get_record('user', array('id' => $this->message->useridto))) {
+            return false;
+        }
+        if (!$jabberaddress = get_user_preferences('message_processor_jabber_jabberid', $userto->email, $userto->id)) {
+            $jabberaddress = $userto->email;
+        }
+        $jabbermessage = fullname($userfrom).': '.$message->fullmessage;
 
-        // now, tell the Jabber class to begin its execution loop
-        // don't way for events
-        $jab->execute(-1,RUN_TIME);
-        $jab->disconnect();
+        $conection = new XMPPHP_XMPP(JABBER_SERVER, 5222, JABBER_USERNAME, JABBER_PASSWORD, 'moodle', JABBER_SERVER);
 
+        try {
+            $conn->connect();
+            $conn->processUntil('session_start');
+            $conn->presence();
+            $conn->message($jabberaddress, $jabbermessage);
+            $conn->disconnect();
+        } catch(XMPPHP_Exception $e) {
+            return false;
+        }
+        
         return true;
     }
 
