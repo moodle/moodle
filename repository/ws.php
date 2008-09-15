@@ -2,9 +2,7 @@
 
 /// The Web service script that is called from the filepicker front end
 
-    set_time_limit(0);
-    header("Cache-Control: no-cache, must-revalidate");
-    header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+
     require_once('../config.php');
     require_once('../lib/filelib.php');
     require_once('lib.php');
@@ -19,6 +17,9 @@
     $repo_id = optional_param('repo_id', 1, PARAM_INT);       // repository ID
     $callback = optional_param('callback', '', PARAM_CLEANHTML);
 
+/// Headers to make it not cacheable
+    header("Cache-Control: no-cache, must-revalidate");
+    header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 
 /// Check permissions
     if (! (isloggedin() && repository_check_context($ctx_id)) ) {
@@ -26,6 +27,9 @@
         $err->e = get_string('nopermissiontoaccess', 'repository');
         die(json_encode($err));
     }
+
+/// Wait as long as it takes for this script to finish
+    set_time_limit(0);
 
 /// Check for actions that do not need repository ID
     switch ($action) {
