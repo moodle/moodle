@@ -245,10 +245,13 @@
         require_once($CFG->libdir . '/portfoliolib.php');
         if (portfolio_instances(true, false)) {
             $toprow[] = new tabobject('portfolios', $CFG->wwwroot .'/user/portfolio.php', get_string('portfolios', 'portfolio'));
-            $inactive = array('portfolios');
-            $activetwo = array('portfolios');
-            $secondrow[] = new tabobject('configure', $CFG->wwwroot . '/user/portfolio.php', get_string('configure', 'portfolio'));
-            $secondrow[] = new tabobject('logs', $CFG->wwwroot . '/user/portfoliologs.php', get_string('logs', 'portfolio'));
+            if (in_array($currenttab, array('portfolioconf', 'portfoliologs'))) {
+                $inactive = array('portfolios');
+                $activetwo = array('portfolios');
+                $secondrow = array();
+                $secondrow[] = new tabobject('portfolioconf', $CFG->wwwroot . '/user/portfolio.php', get_string('configure', 'portfolio'));
+                $secondrow[] = new tabobject('portfoliologs', $CFG->wwwroot . '/user/portfoliologs.php', get_string('logs', 'portfolio'));
+            }
         }
     }
 

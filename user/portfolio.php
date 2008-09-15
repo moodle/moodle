@@ -37,7 +37,7 @@ $navigation = build_navigation($navlinks);
 print_header("$course->fullname: $fullname: $strportfolios", $course->fullname,
              $navigation, "", "", true, "&nbsp;", navmenu($course));
 
-$currenttab = 'portfolios';
+$currenttab = 'portfolioconf';
 $showroles = 1;
 include('tabs.php');
 
