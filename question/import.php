@@ -19,7 +19,6 @@
 
    // get display strings
     $txt = new stdClass();
-    $txt->importerror = get_string('importerror','quiz');
     $txt->importquestions = get_string("importquestions", "quiz");
 
     list($catid, $catcontext) = explode(',', $pagevars['cat']);
@@ -134,17 +133,17 @@
 
             // Do anything before that we need to
             if (! $qformat->importpreprocess()) {
-                error($txt->importerror, $thispageurl->out());
+                print_error('importerror', 'quiz', $thispageurl->out());
             }
 
             // Process the uploaded file
             if (! $qformat->importprocess()) {
-                error($txt->importerror, $thispageurl->out());
+                print_error('importerror', 'quiz', $thispageurl->out());
             }
 
             // In case anything needs to be done after
             if (! $qformat->importpostprocess()) {
-                error($txt->importerror, $thispageurl->out());
+                print_error('importerror', 'quiz', $thispageurl->out());
             }
 
             echo "<hr />";
