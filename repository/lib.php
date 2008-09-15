@@ -1943,6 +1943,7 @@ _client.login = function() {
         }
     }
     params['env'] = _client.env;
+    params['repo_id'] = _client.repositoryid;
     params['ctx_id'] = $context->id;
     params['sesskey']= '$sesskey';
     _client.loading('load');
@@ -1965,18 +1966,17 @@ _client.hide = function() {
     _client.viewfiles();
 }
 // request file list or login
-_client.req = function(id, path, reset) {
+_client.req = function(id, path, logout) {
     _client.viewbar.set('disabled', false);
     _client.loading('load');
     _client.repositoryid = id;
-    if (reset == 1) {
+    if (logout == 1) {
         action = 'logout';
     } else {
         action = 'list';
     }
     var params = [];
     params['p'] = path;
-    params['reset']=reset;
     params['env']=_client.env;
     params['action']=action;
     params['sesskey']='$sesskey';

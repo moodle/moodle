@@ -68,15 +68,11 @@ class repository_flickr_public extends repository{
     public function print_login($ajax = true){
         if($ajax){
             $ret = array();
-            $e1->label = get_string('username', 'repository_flickr_public').': ';
-            $e1->id    = 'account';
-            $e1->type = 'text';
-            $e1->name = 'flickr_account';
-
-            $e2->type = 'hidden';
-            $e2->name = 'repo_id';
-            $e2->value = $this->id;
-            $ret['login'] = array($e1, $e2);
+            $email_field->label = get_string('username', 'repository_flickr_public').': ';
+            $email_field->id    = 'account';
+            $email_field->type = 'text';
+            $email_field->name = 'flickr_account';
+            $ret['login'] = array($email_field);
             return $ret;
         }
     }

@@ -144,27 +144,23 @@ class repository_boxnet extends repository{
         $t = $this->box->getTicket();
         $ret = $this->get_login();
         if ($this->options['ajax']) {
-            $e1->type = 'hidden';
-            $e1->name = 'ticket';
-            $e1->value = $t['ticket'];
+            $ticket_field->type = 'hidden';
+            $ticket_field->name = 'ticket';
+            $ticket_field->value = $t['ticket'];
 
-            $e2->type = 'hidden';
-            $e2->name = 'repo_id';
-            $e2->value = $this->id;
-
-            $e3->label = get_string('username', 'repository_boxnet').': ';
-            $e3->id    = 'box_username';
-            $e3->type  = 'text';
-            $e3->name  = 'boxusername';
-            $e3->value = $ret->username;
+            $user_field->label = get_string('username', 'repository_boxnet').': ';
+            $user_field->id    = 'box_username';
+            $user_field->type  = 'text';
+            $user_field->name  = 'boxusername';
+            $user_field->value = $ret->username;
             
-            $e4->label = get_string('password', 'repository_boxnet').': ';
-            $e4->id    = 'box_password';
-            $e4->type  = 'password';
-            $e4->name  = 'boxpassword';
+            $passwd_field->label = get_string('password', 'repository_boxnet').': ';
+            $passwd_field->id    = 'box_password';
+            $passwd_field->type  = 'password';
+            $passwd_field->name  = 'boxpassword';
 
             $ret = array();
-            $ret['login'] = array($e1, $e2, $e3, $e4);
+            $ret['login'] = array($ticket_field, $user_field, $passwd_field);
             return $ret;
         }
     }
