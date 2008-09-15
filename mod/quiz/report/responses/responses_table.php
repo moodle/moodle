@@ -21,6 +21,7 @@ class quiz_report_responses_table extends table_sql {
     }
     function build_table(){
         if ($this->rawdata) {
+            $this->strtimeformat = str_replace(',', ' ', get_string('strftimedatetime'));
             parent::build_table();
         }
     }
