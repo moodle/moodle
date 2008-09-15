@@ -106,16 +106,55 @@ class portfolio_caller_test extends portfolio_caller_base {
 }
 
 class portfolio_exporter_test extends portfolio_exporter {
-    public function write_new_file($content, $name) {
+    private $files;
 
+    public function write_new_file($content, $name) {
+        if (empty($this->files)) {
+            $this->files = array();
+        }
+        $this->files[] = new portfolio_fake_file($content, $name);
     }
 
     public function copy_existing_file($oldfile) {
-
+        throw new portfolio_exception('notimplemented', 'portfolio', 'files api test');
     }
 
     public function get_tempfiles() {
+        return $this->files;
+    }
 
+    public function zip_tempfiles() {
+        return new portfolio_fake_file('fake content zipfile', 'portfolio-export.zip');
+    }
+}
+
+/**
+* this should be REMOVED when we have proper faking of the files api
+*/
+class portfolio_fake_file {
+
+    private $name;
+    private $content;
+    private $hash;
+    private $size;
+
+    public function __construct($content, $name) {
+        $this->content = $content;
+        $this->name = $name;
+        $this->hash = sha1($content);
+        $this->size = strlen($content);
+    }
+
+    public function get_contenthash() {
+        return $this->hash;
+    }
+
+    public function get_filename() {
+        return $this->name;
+    }
+
+    public function get_filesize() {
+        return $this->size;
     }
 }
 
@@ -205,7 +244,7 @@ class portfoliolib_test extends UnitTestCase {
     protected function setup_caller($class, $callbackargs, $user=null) {
         global $DB;
         $caller = new $class($callbackargs);
-        $caller->set('exporter', new mock_exporter());
+        $caller->set('exporter', new partialmock_exporter(&$this));
         if (is_numeric($user)) {
             $user = $DB->get_record('user', array('id' => $user));
         }
@@ -226,9 +265,10 @@ class portfoliolib_test extends UnitTestCase {
                 $plugin = new $plugin_class(&$this);
 
                 // Create a new fake exporter
-                $exporter = new partialmock_exporter(&$this);
+                $exporter = $this->caller->get('exporter'); // new partialmock_exporter(&$this);
                 $exporter->set('caller', $this->caller);
                 $exporter->set('instance', $plugin);
+                $exporter->set('user', $this->caller->get('user'));
 
                 $exception = false;
                 try {
