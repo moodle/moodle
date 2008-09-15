@@ -30,9 +30,7 @@ class quiz_overview_report extends quiz_default_report {
         $fakeattempt->userid = 0;
         $reviewoptions = quiz_get_reviewoptions($quiz, $fakeattempt, $this->context);
         $showgrades = ($quiz->grade  !== 0) && ($quiz->sumgrades !== 0) && $reviewoptions->scores;
-        echo '<pre>';
-        var_dump(compact('showgrades', 'quiz'));
-        echo '</pre>';
+
         $download = optional_param('download', '', PARAM_ALPHA);
         
         /// find out current groups mode
