@@ -42,7 +42,7 @@ $line->parameter['y_label_angle'] = 90;
 $line->parameter['x_label_angle'] = 0;
 $line->parameter['x_axis_angle'] = 60;
 
-$line->parameter['legend']        = 'outside-top';
+$line->parameter['legend']        = 'outside-right';
 $line->parameter['legend_border'] = 'black';
 $line->parameter['legend_offset'] = 4;
 
