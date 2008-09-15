@@ -32,6 +32,8 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addRule('intro', get_string('required'), 'required', null, 'client');
         $mform->setHelpButton('intro', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
 
+        $mform->addElement('format', 'format', get_string('format'));
+
         $options = array();
         $options[0] = get_string('no');
         $options[1] = get_string('yesforever', 'forum');
