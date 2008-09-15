@@ -98,7 +98,7 @@ class repository_type {
      * These options are saved in config_plugin table
      * @var array
      */
-   private $_options;
+    private $_options;
 
 
     /**
@@ -106,7 +106,7 @@ class repository_type {
      * If false (hidden): no instances can be created, edited, deleted, showned , used...
      * @var boolean
      */
-   private $_visible;
+    private $_visible;
 
 
     /**
@@ -124,7 +124,7 @@ class repository_type {
      * @param boolean $visible
      * @param integer $sortorder (don't really need set, it will be during create() call)
      */
-    public function __construct($typename = '', $typeoptions = array(), $visible = false, $sortorder = 0){
+    public function __construct($typename = '', $typeoptions = array(), $visible = false, $sortorder = 0) {
         global $CFG;
 
         //set type attributs
@@ -135,12 +135,12 @@ class repository_type {
         //set options attribut
         $this->_options = array();
         //check that the type can be setup
-        if (repository_static_function($typename,"has_admin_config")){
+        if (repository_static_function($typename,"has_admin_config")) {
             $options = repository_static_function($typename,'get_admin_option_names');
             //set the type options
             foreach ($options as $config) {
-                if (array_key_exists($config,$typeoptions)){
-                        $this->_options[$config] = $typeoptions[$config];
+                if (array_key_exists($config,$typeoptions)) {
+                    $this->_options[$config] = $typeoptions[$config];
                 }
             }
         }
@@ -151,7 +151,7 @@ class repository_type {
      * For a human readable name, use get_readablename()
      * @return String the type name
      */
-    public function get_typename(){
+    public function get_typename() {
         return $this->_typename;
     }
 
@@ -159,7 +159,7 @@ class repository_type {
      * Return a human readable and user-friendly type name
      * @return string user-friendly type name
      */
-    public function get_readablename(){
+    public function get_readablename() {
         return get_string('repositoryname','repository_'.$this->_typename);
     }
 
@@ -167,7 +167,7 @@ class repository_type {
      * Return general options
      * @return array the general options
      */
-    public function get_options(){
+    public function get_options() {
         return $this->_options;
     }
 
@@ -175,7 +175,7 @@ class repository_type {
      * Return visibility
      * @return boolean
      */
-    public function get_visible(){
+    public function get_visible() {
         return $this->_visible;
     }
 
@@ -183,7 +183,7 @@ class repository_type {
      * Return order / position of display in the file picker
      * @return integer
      */
-    public function get_sortorder(){
+    public function get_sortorder() {
         return $this->_sortorder;
     }
 
@@ -191,45 +191,44 @@ class repository_type {
      * Create a repository type (the type name must not already exist)
      * @global object $DB
      */
-    public function create(){
+    public function create() {
         global $DB;
 
         //check that $type has been set
         $timmedtype = trim($this->_typename);
         if (empty($timmedtype)) {
-             throw new repository_exception('emptytype', 'repository');
+            throw new repository_exception('emptytype', 'repository');
         }
 
         //set sortorder as the last position in the list
-        if (!isset($this->_sortorder) || $this->_sortorder == 0 ){
+        if (!isset($this->_sortorder) || $this->_sortorder == 0 ) {
             $sql = "SELECT MAX(sortorder) FROM {repository}";
             $this->_sortorder = 1 + $DB->get_field_sql($sql);
         }
 
         //only create a new type if it doesn't already exist
         $existingtype = $DB->get_record('repository', array('type'=>$this->_typename));
-        if(!$existingtype){
-           //create the type
-           $newtype = new stdclass;
-           $newtype->type = $this->_typename;
-           $newtype->visible = $this->_visible;
-           $newtype->sortorder = $this->_sortorder;
-           $DB->insert_record('repository', $newtype);
+        if (!$existingtype) {
+            //create the type
+            $newtype = new stdclass;
+            $newtype->type = $this->_typename;
+            $newtype->visible = $this->_visible;
+            $newtype->sortorder = $this->_sortorder;
+            $DB->insert_record('repository', $newtype);
 
-           //save the options in DB
-           $this->update_options();
+            //save the options in DB
+            $this->update_options();
 
-           //if the plugin type has no multiple and no instance config so it wont
-           //be possible for the administrator to create a instance
-           //in this case we need to create an instance
-           if (!repository_static_function($this->_typename,"has_instance_config")
-           && !repository_static_function($this->_typename,"has_multiple_instances")){
-              $instanceoptions = array();
-              $instanceoptions['name'] = $this->_typename;
-              repository_static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
-           }
-        }
-        else {
+            //if the plugin type has no multiple and no instance config so it wont
+            //be possible for the administrator to create a instance
+            //in this case we need to create an instance
+            if (!repository_static_function($this->_typename,"has_instance_config")
+                    && !repository_static_function($this->_typename,"has_multiple_instances")) {
+                $instanceoptions = array();
+                $instanceoptions['name'] = $this->_typename;
+                repository_static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
+            }
+        } else {
             throw new repository_exception('existingrepository', 'repository');
         }
     }
@@ -240,8 +239,8 @@ class repository_type {
      * @param array $options
      * @return boolean
      */
-    public function update_options($options = null){
-        if (!empty($options)){
+    public function update_options($options = null) {
+        if (!empty($options)) {
             $this->_options = $options;
         }
 
@@ -261,13 +260,13 @@ class repository_type {
      * @param boolean $visible
      * @return boolean
      */
-    private function update_visible($visible = null){
+    private function update_visible($visible = null) {
         global $DB;
 
-        if (!empty($visible)){
+        if (!empty($visible)) {
             $this->_visible = $visible;
         }
-        else if (!isset($this->_visible)){
+        else if (!isset($this->_visible)) {
             throw new repository_exception('updateemptyvisible', 'repository');
         }
 
@@ -283,14 +282,14 @@ class repository_type {
      * @param integer $sortorder
      * @return boolean
      */
-    private function update_sortorder($sortorder = null){
+    private function update_sortorder($sortorder = null) {
         global $DB;
 
-        if (!empty($sortorder) && $sortorder!=0){
+        if (!empty($sortorder) && $sortorder!=0) {
             $this->_sortorder = $sortorder;
         }
         //if sortorder is not set, we set it as the ;ast position in the list
-        else if (!isset($this->_sortorder) || $this->_sortorder == 0 ){
+        else if (!isset($this->_sortorder) || $this->_sortorder == 0 ) {
             $sql = "SELECT MAX(sortorder) FROM {repository}";
             $this->_sortorder = 1 + $DB->get_field_sql($sql);
         }
@@ -310,35 +309,35 @@ class repository_type {
      */
     public function move_order($move) {
         global $DB;
-        //retrieve all types
-        $types = repository_get_types();
 
-        //retrieve this type into the returned array
-         $i = 0;
-        while (!isset($indice) && $i<count($types)){
-            if ($types[$i]->get_typename() == $this->_typename){
+        $types = repository_get_types();    // retrieve all types
+
+    /// retrieve this type into the returned array
+        $i = 0;
+        while (!isset($indice) && $i<count($types)) {
+            if ($types[$i]->get_typename() == $this->_typename) {
                 $indice = $i;
             }
             $i++;
         }
 
-        //retrieve adjacent indice
+    /// retrieve adjacent indice
         switch ($move) {
             case "up":
                 $adjacentindice = $indice - 1;
-                break;
+            break;
             case "down":
                 $adjacentindice = $indice + 1;
-                break;
+            break;
             default:
-                throw new repository_exception('movenotdefined', 'repository');
+            throw new repository_exception('movenotdefined', 'repository');
         }
 
         //switch sortorder of this type and the adjacent type
         //TODO: we could reset sortorder for all types. This is not as good in performance term, but
         //that prevent from wrong behaviour on a screwed database. As performance are not important in this particular case
         //it worth to change the algo.
-        if ($adjacentindice>=0 && !empty($types[$adjacentindice])){
+        if ($adjacentindice>=0 && !empty($types[$adjacentindice])) {
             $DB->set_field('repository', 'sortorder', $this->_sortorder, array('type'=>$types[$adjacentindice]->get_typename()));
             $this->update_sortorder($types[$adjacentindice]->get_sortorder());
         }
@@ -349,7 +348,7 @@ class repository_type {
      * 2. Update the type
      * @return <type>
      */
-    public function switch_and_update_visibility(){
+    public function switch_and_update_visibility() {
         $this->_visible = !$this->_visible;
         return $this->update_visible();
     }
@@ -361,17 +360,17 @@ class repository_type {
      * @global object $DB
      * @return boolean
      */
-    public function delete(){
+    public function delete() {
         global $DB;
 
         //delete all instances of this type
         $instances = repository_get_instances(array(),null,false,$this->_typename);
-        foreach($instances as $instance){
+        foreach ($instances as $instance) {
             $instance->delete();
         }
 
         //delete all general options
-        foreach ($this->_options as $name => $value){
+        foreach ($this->_options as $name => $value) {
             set_config($name, null, $this->_typename);
         }
 
@@ -385,10 +384,10 @@ class repository_type {
  * @param string $typename the type name
  * @return integer
  */
-function repository_get_type_by_typename($typename){
+function repository_get_type_by_typename($typename) {
     global $DB;
 
-    if(!$record = $DB->get_record('repository',array('type' => $typename))) {
+    if (!$record = $DB->get_record('repository',array('type' => $typename))) {
         return false;
     }
 
@@ -401,10 +400,10 @@ function repository_get_type_by_typename($typename){
  * @param string $typename the type name
  * @return integer
  */
-function repository_get_type_by_id($id){
+function repository_get_type_by_id($id) {
     global $DB;
 
-    if(!$record = $DB->get_record('repository',array('id' => $id))) {
+    if (!$record = $DB->get_record('repository',array('id' => $id))) {
         return false;
     }
 
@@ -418,7 +417,7 @@ function repository_get_type_by_id($id){
  * @param boolean $visible can return types by visiblity, return all types if null
  * @return array Repository types
  */
-function repository_get_types($visible=null){
+function repository_get_types($visible=null) {
     global $DB;
 
     $types = array();
@@ -426,7 +425,7 @@ function repository_get_types($visible=null){
     if (!empty($visible)) {
         $params = array('visible' => $visible);
     }
-    if($records = $DB->get_records('repository',$params,'sortorder')) {
+    if ($records = $DB->get_records('repository',$params,'sortorder')) {
         foreach($records as $type) {
             $types[] = new repository_type($type->type, (array)get_config($type->type), $type->visible, $type->sortorder);
         }
@@ -452,7 +451,7 @@ abstract class repository {
      * @param integer $contextid
      * @param array $options
      */
-    public function __construct($repositoryid, $contextid = SITEID, $options = array()){
+    public function __construct($repositoryid, $contextid = SITEID, $options = array()) {
         $this->id = $repositoryid;
         $this->context = get_context_instance_by_id($contextid);
         $this->options = array();
@@ -485,7 +484,7 @@ abstract class repository {
      * @return mixed
      */
     public function __get($name) {
-        if (array_key_exists($name, $this->options)){
+        if (array_key_exists($name, $this->options)) {
             return $this->options[$name];
         }
         trigger_error('Undefined property: '.$name, E_USER_NOTICE);
@@ -524,20 +523,20 @@ abstract class repository {
         if (!file_exists($CFG->dataroot.'/temp/download')) {
             mkdir($CFG->dataroot.'/temp/download/', 0777, true);
         }
-        if(is_dir($CFG->dataroot.'/temp/download')) {
+        if (is_dir($CFG->dataroot.'/temp/download')) {
             $dir = $CFG->dataroot.'/temp/download/';
         }
-        if(empty($file)) {
+        if (empty($file)) {
             $file = uniqid('repo').'_'.time().'.tmp';
         }
-        if(file_exists($dir.$file)){
+        if (file_exists($dir.$file)) {
             $file = uniqid('m').$file;
         }
         $fp = fopen($dir.$file, 'w');
         $c = new curl;
         $c->download(array(
-            array('url'=>$url, 'file'=>$fp)
-        ));
+                    array('url'=>$url, 'file'=>$fp)
+                    ));
         return $dir.$file;
     }
 
@@ -549,7 +548,7 @@ abstract class repository {
      * @return <type>
      */
     public function print_listing($listing = array(), $print=true) {
-        if(empty($listing)){
+        if (empty($listing)) {
             $listing = $this->get_listing();
         }
         if (empty($listing)) {
@@ -557,7 +556,7 @@ abstract class repository {
         } else {
             $count = 0;
             $str = '<table>';
-            foreach ($listing as $v){
+            foreach ($listing as $v) {
                 $str .= '<tr id="entry_'.$count.'">';
                 $str .= '<td><input type="checkbox" /></td>';
                 $str .= '<td>'.$v['name'].'</td>';
@@ -568,7 +567,7 @@ abstract class repository {
             }
             $str .= '</table>';
         }
-        if ($print){
+        if ($print) {
             echo $str;
             return null;
         } else {
@@ -581,7 +580,7 @@ abstract class repository {
      * @global <type> $DB
      * @return <type>
      */
-    public function get_name(){
+    public function get_name() {
         global $DB;
         // We always verify instance id from database,
         // so we always know repository name before init
@@ -662,7 +661,7 @@ abstract class repository {
      * @global object $DB
      * @return <type>
      */
-    final public function delete(){
+    final public function delete() {
         global $DB;
         $DB->delete_records('repository_instances', array('id'=>$this->id));
         return true;
@@ -674,7 +673,7 @@ abstract class repository {
      * @param string $hide
      * @return <type>
      */
-    final public function hide($hide = 'toggle'){
+    final public function hide($hide = 'toggle') {
         global $DB;
         if ($entry = $DB->get_record('repository', array('id'=>$this->id))) {
             if ($hide === 'toggle' ) {
@@ -733,8 +732,9 @@ abstract class repository {
      * @param array $options settings
      * @return int Id of the record
      */
-    public function set_option($options = array()){
+    public function set_option($options = array()) {
         global $DB;
+
         if (!empty($options['name'])) {
             $r = new object();
             $r->id   = $this->id;
@@ -769,14 +769,14 @@ abstract class repository {
      * @param <type> $config
      * @return array Settings
      */
-    public function get_option($config = ''){
+    public function get_option($config = '') {
         global $DB;
         $entries = $DB->get_records('repository_instance_config', array('instanceid'=>$this->id));
         $ret = array();
         if (empty($entries)) {
             return $ret;
         }
-        foreach($entries as $entry){
+        foreach($entries as $entry) {
             $ret[$entry->name] = $entry->value;
         }
         if (!empty($config)) {
@@ -833,7 +833,7 @@ abstract class repository {
      * Search
      * @return mixed, see get_listing()
      */
-    public function search(){
+    public function search() {
         $search = optional_param('s', '', PARAM_CLEANHTML);
         return $this->get_listing(null, $search);
     }
@@ -860,7 +860,7 @@ abstract class repository {
      * is it possible to do glboal search?
      * @return boolean
      */
-    public function global_search(){
+    public function global_search() {
         return false;
     }
 
@@ -895,7 +895,7 @@ abstract class repository {
      * By default: false
      * @return boolean
      */
-    public static function has_multiple_instances(){
+    public static function has_multiple_instances() {
         return false;
     }
 
@@ -904,7 +904,7 @@ abstract class repository {
      * By default: no general option name
      * @return array
      */
-    public static function get_admin_option_names(){
+    public static function get_admin_option_names() {
         return array();
     }
 
@@ -913,7 +913,7 @@ abstract class repository {
      * By default: no instance option name
      * @return array
      */
-    public static function get_instance_option_names(){
+    public static function get_instance_option_names() {
         return array();
     }
 }
@@ -929,24 +929,26 @@ class repository_exception extends moodle_exception {
  * @param int $ctx_id
  * @return boolean
  */
-function repository_check_context($ctx_id){
+function repository_check_context($ctx_id) {
     global $USER;
+
     $context = get_context_instance_by_id($ctx_id);
     $level = $context->contextlevel;
+
     if ($level == CONTEXT_COURSE) {
         if (!has_capability('moodle/course:view', $context)) {
             return false;
         } else {
             return true;
         }
-    } elseif ($level == CONTEXT_USER) {
+    } else if ($level == CONTEXT_USER) {
         $c = get_context_instance(CONTEXT_USER, $USER->id);
         if ($c->id == $ctx_id) {
             return true;
         } else {
             return false;
         }
-    } elseif ($level == CONTEXT_SYSTEM) {
+    } else if ($level == CONTEXT_SYSTEM) {
         // it is always ok in system level
         return true;
     }
@@ -958,11 +960,11 @@ function repository_check_context($ctx_id){
  * Note: Mostly used in order to know if at least one editable type has been set
  * @return array types
  */
-function repository_get_editable_types(){
+function repository_get_editable_types() {
     $types= repository_get_types(true);
     $editabletypes = array();
-    foreach ($types as $type){
-         if (repository_static_function($type->get_typename(), 'has_multiple_instances')) {
+    foreach ($types as $type) {
+        if (repository_static_function($type->get_typename(), 'has_multiple_instances')) {
             $editabletypes[]=$type;
         }
     }
@@ -981,17 +983,20 @@ function repository_get_editable_types(){
  * @param string $type a type name to retrieve
  * @return array repository instances
  */
-function repository_get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null){
+function repository_get_instances($contexts=array(), $userid = null, $onlyvisible = true, $type=null) {
     global $DB, $CFG, $USER;
+
     $params = array();
     $sql = 'SELECT i.*, r.type AS repositorytype, r.sortorder, r.visible FROM {repository} r, {repository_instances} i WHERE ';
     $sql .= 'i.typeid = r.id ';
+
     if (!empty($userid) && is_numeric($userid)) {
         $sql .= ' AND (i.userid = 0 or i.userid = ?)';
         $params[] = $userid;
     }
+
     foreach ($contexts as $context) {
-        if (empty($firstcontext)){
+        if (empty($firstcontext)) {
             $firstcontext = true;
             $sql .= ' AND ((i.contextid = ?)';
         } else {
@@ -999,25 +1004,28 @@ function repository_get_instances($contexts=array(), $userid = null, $onlyvisibl
         }
         $params[] = $context->id;
     }
+
     if ($firstcontext) {
-       $sql .=')';
+        $sql .=')';
     }
 
-    if($onlyvisible == true) {
+    if ($onlyvisible == true) {
         $sql .= ' AND (r.visible = 1)';
     }
-    if(isset($type)) {
+
+    if (isset($type)) {
         $sql .= ' AND (r.type = ?)';
         $params[] = $type;
     }
     $sql .= ' order by r.sortorder, i.name';
-    if(!$repos = $DB->get_records_sql($sql, $params)) {
+
+    if (!$repos = $DB->get_records_sql($sql, $params)) {
         $repos = array();
     }
+
     $ret = array();
-    foreach($repos as $repo) {
-        require_once($CFG->dirroot . '/repository/'. $repo->repositorytype
-            . '/repository.class.php');
+    foreach ($repos as $repo) {
+        require_once($CFG->dirroot . '/repository/'. $repo->repositorytype.'/repository.class.php');
         $options['visible'] = $repo->visible;
         $options['name']    = $repo->name;
         $options['type']    = $repo->repositorytype;
@@ -1035,7 +1043,7 @@ function repository_get_instances($contexts=array(), $userid = null, $onlyvisibl
  * @param integer $id repository id
  * @return object repository instance
  */
-function repository_get_instance($id){
+function repository_get_instance($id) {
     global $DB, $CFG;
     $sql = 'SELECT i.*, r.type AS repositorytype, r.visible FROM {repository} r, {repository_instances} i WHERE ';
     $sql .= 'i.typeid = r.id AND ';
@@ -1045,7 +1053,7 @@ function repository_get_instance($id){
         return false;
     }
     require_once($CFG->dirroot . '/repository/'. $instance->repositorytype
-        . '/repository.class.php');
+            . '/repository.class.php');
     $classname = 'repository_' . $instance->repositorytype;
     $options['typeid'] = $instance->typeid;
     $options['type']   = $instance->repositorytype;
@@ -1068,8 +1076,8 @@ function repository_static_function($plugin, $function) {
 
     //check that the plugin exists
     $typedirectory = $CFG->dirroot . '/repository/'. $plugin . '/repository.class.php';
-        if (!file_exists($typedirectory)) {
-            throw new repository_exception('invalidplugin', 'repository');
+    if (!file_exists($typedirectory)) {
+        throw new repository_exception('invalidplugin', 'repository');
     }
 
     $pname = null;
@@ -1127,7 +1135,7 @@ function repository_move_to_filepool($path, $name, $itemid, $filearea = 'user_dr
     if ($file = $fs->create_file_from_pathname($entry, $path)) {
         $delete = unlink($path);
         $ret = $browser->get_file_info($context, $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $file->get_filename());
-        if(!empty($ret)){
+        if(!empty($ret)) {
             return array('url'=>$ret->get_url(),'id'=>$file->get_itemid(), 'file'=>$file->get_filename());
         } else {
             return null;
@@ -1189,7 +1197,7 @@ function repository_store_to_filepool($elname, $filearea='user_draft', $filepath
  * @param object $context the context
  * @return array
  */
-function repository_get_client($context){
+function repository_get_client($context) {
     global $CFG, $USER;
     $suffix = uniqid();
     $sesskey = sesskey();
@@ -1229,230 +1237,230 @@ function repository_get_client($context){
     $css = '';
     if (!isset($CFG->repo_yui_loaded)) {
         $css .= <<<EOD
-<style type="text/css">
-@import "$CFG->httpswwwroot/lib/yui/resize/assets/skins/sam/resize.css";
-@import "$CFG->httpswwwroot/lib/yui/container/assets/skins/sam/container.css";
-@import "$CFG->httpswwwroot/lib/yui/layout/assets/skins/sam/layout.css";
-@import "$CFG->httpswwwroot/lib/yui/button/assets/skins/sam/button.css";
-@import "$CFG->httpswwwroot/lib/yui/assets/skins/sam/treeview.css";
-</style>
-<style type="text/css">
-.file-picker{font-size:12px;}
-.file-picker strong{background:#FFFFCC}
-.file-picker a{color: #336699}
-.file-picker a:hover{background:#003366;color:white}
-.fp-panel{padding:0;margin:0; text-align:left;}
-.fp-searchbar{float:right}
-.fp-viewbar{width:300px;float:left}
-.fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center}
-.fp-toolbar a{padding: 0 .5em}
-.fp-list{list-style-type:none;padding:0}
-.fp-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
-.fp-repo-name{display:block;padding: .5em;margin-bottom: .5em}
-.fp-pathbar{margin: .4em;border-bottom: 1px dotted gray;}
-.fp-pathbar a{padding: .4em;}
-.fp-rename-form{text-align:center}
-.fp-rename-form p{margin: 1em;}
-.fp-upload-form{margin: 2em 0;text-align:center}
-.fp-upload-btn a{font-size: 1.5em;background: #ccc;color:white;padding: .5em}
-.fp-upload-btn a:hover {background: grey;color:white}
-.fp-paging{margin:1em .5em; clear:both;text-align:center;line-height: 2.5em;}
-.fp-paging a{padding: .5em;border: 1px solid #CCC}
-.fp-popup{text-align:center}
-.fp-popup a{font-size: 3em}
-.fp-grid{width:80px; float:left;text-align:center;}
-.fp-grid div{width: 80px; overflow: hidden}
-.fp-grid p{margin:0;padding:0;background: #FFFFCC}
-.fp-grid .label{height:48px}
-.fp-grid span{background: #EEF9EB;color:gray}
-</style>
-EOD;
+            <style type="text/css">
+            @import "$CFG->httpswwwroot/lib/yui/resize/assets/skins/sam/resize.css";
+        @import "$CFG->httpswwwroot/lib/yui/container/assets/skins/sam/container.css";
+        @import "$CFG->httpswwwroot/lib/yui/layout/assets/skins/sam/layout.css";
+        @import "$CFG->httpswwwroot/lib/yui/button/assets/skins/sam/button.css";
+        @import "$CFG->httpswwwroot/lib/yui/assets/skins/sam/treeview.css";
+        </style>
+            <style type="text/css">
+            .file-picker{font-size:12px;}
+        .file-picker strong{background:#FFFFCC}
+        .file-picker a{color: #336699}
+        .file-picker a:hover{background:#003366;color:white}
+        .fp-panel{padding:0;margin:0; text-align:left;}
+        .fp-searchbar{float:right}
+        .fp-viewbar{width:300px;float:left}
+        .fp-toolbar{padding: .8em;background: #FFFFCC;color:white;text-align:center}
+        .fp-toolbar a{padding: 0 .5em}
+        .fp-list{list-style-type:none;padding:0}
+        .fp-list li{border-bottom:1px dotted gray;margin-bottom: 1em;}
+        .fp-repo-name{display:block;padding: .5em;margin-bottom: .5em}
+        .fp-pathbar{margin: .4em;border-bottom: 1px dotted gray;}
+        .fp-pathbar a{padding: .4em;}
+        .fp-rename-form{text-align:center}
+        .fp-rename-form p{margin: 1em;}
+        .fp-upload-form{margin: 2em 0;text-align:center}
+        .fp-upload-btn a{font-size: 1.5em;background: #ccc;color:white;padding: .5em}
+        .fp-upload-btn a:hover {background: grey;color:white}
+        .fp-paging{margin:1em .5em; clear:both;text-align:center;line-height: 2.5em;}
+        .fp-paging a{padding: .5em;border: 1px solid #CCC}
+        .fp-popup{text-align:center}
+        .fp-popup a{font-size: 3em}
+        .fp-grid{width:80px; float:left;text-align:center;}
+        .fp-grid div{width: 80px; overflow: hidden}
+        .fp-grid p{margin:0;padding:0;background: #FFFFCC}
+        .fp-grid .label{height:48px}
+        .fp-grid span{background: #EEF9EB;color:gray}
+        </style>
+            EOD;
 
-    $js = <<<EOD
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/element/element-beta-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/treeview/treeview-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/dragdrop/dragdrop-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/container/container-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/resize/resize-beta-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/layout/layout-beta-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/connection/connection-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/json/json-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/button/button-min.js"></script>
-<script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/selector/selector-beta-min.js"></script>
-EOD;
+        $js = <<<EOD
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/element/element-beta-min.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/treeview/treeview-min.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/dragdrop/dragdrop-min.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/container/container-min.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/resize/resize-beta-min.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/layout/layout-beta-min.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/connection/connection-min.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/json/json-min.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/button/button-min.js"></script>
+            <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/selector/selector-beta-min.js"></script>
+            EOD;
         $CFG->repo_yui_loaded = true;
     } else {
         $js = '';
     }
 
-$js .= <<<EOD
-<script type="text/javascript">
-//<![CDATA[
-var active_instance = null;
-function repository_callback(id){
-    active_instance.req(id, '', 0);
-}
-var repository_client_$suffix = (function() {
-// private static field
-var dver = '1.0';
-// private static methods
-function alert_version(){
-    alert(dver);
-}
-function _client(){
-    // public varible
-    this.name = 'repository_client_$suffix';
-    // private varible
-    var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, layout = null, resize = null;
-    var IE_QUIRKS = (YAHOO.env.ua.ie && document.compatMode == "BackCompat");
-    var IE_SYNC = (YAHOO.env.ua.ie == 6 || (YAHOO.env.ua.ie == 7 && IE_QUIRKS));
-    var PANEL_BODY_PADDING = (10*2);
-    var btn_list = {label: '$strlistview', value: 'l', checked: true, onclick: {fn: _client.viewlist}};
-    var btn_thumb = {label: '$strthumbview', value: 't', onclick: {fn: _client.viewthumb}};
-    var repo_list = null;
-    var resize = null;
-    var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
-        draggable: true,
-        close: true,
-        modal: true,
-        underlay: 'none',
-        zindex: 666666,
-        xy: [50, Dom.getDocumentScrollTop()+20]
-    });
-    // construct code section
-    {
-        filepicker.setHeader('$strtitle');
-        filepicker.setBody('<div id="layout-$suffix"></div>');
-        filepicker.beforeRenderEvent.subscribe(function() {
+    $js .= <<<EOD
+        <script type="text/javascript">
+        //<![CDATA[
+        var active_instance = null;
+    function repository_callback(id) {
+        active_instance.req(id, '', 0);
+    }
+    var repository_client_$suffix = (function() {
+            // private static field
+            var dver = '1.0';
+            // private static methods
+            function alert_version() {
+            alert(dver);
+            }
+            function _client() {
+            // public varible
+            this.name = 'repository_client_$suffix';
+            // private varible
+            var Dom = YAHOO.util.Dom, Event = YAHOO.util.Event, layout = null, resize = null;
+            var IE_QUIRKS = (YAHOO.env.ua.ie && document.compatMode == "BackCompat");
+            var IE_SYNC = (YAHOO.env.ua.ie == 6 || (YAHOO.env.ua.ie == 7 && IE_QUIRKS));
+            var PANEL_BODY_PADDING = (10*2);
+            var btn_list = {label: '$strlistview', value: 'l', checked: true, onclick: {fn: _client.viewlist}};
+            var btn_thumb = {label: '$strthumbview', value: 't', onclick: {fn: _client.viewthumb}};
+            var repo_list = null;
+            var resize = null;
+            var filepicker = new YAHOO.widget.Panel('file-picker-$suffix', {
+draggable: true,
+close: true,
+modal: true,
+underlay: 'none',
+zindex: 666666,
+xy: [50, Dom.getDocumentScrollTop()+20]
+});
+// construct code section
+{
+    filepicker.setHeader('$strtitle');
+    filepicker.setBody('<div id="layout-$suffix"></div>');
+    filepicker.beforeRenderEvent.subscribe(function() {
             Event.onAvailable('layout-$suffix', function() {
                 layout = new YAHOO.widget.Layout('layout-$suffix', {
-                    height: 480, width: 630,
-                    units: [
-                        {position: 'top', height: 32, resize: false,
-                        body:'<div class="yui-buttongroup fp-viewbar" id="repo-viewbar-$suffix"></div><div class="fp-searchbar" id="search-div-$suffix"></div>', gutter: '2'},
-                        {position: 'left', width: 200, resize: true,
-                        body:'<ul class="fp-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
-                        {position: 'center', body: '<div class="fp-panel" id="panel-$suffix"></div>',
-                        scroll: true, gutter: '0 2 0 0' }
-                    ]
-                });
+height: 480, width: 630,
+units: [
+{position: 'top', height: 32, resize: false,
+body:'<div class="yui-buttongroup fp-viewbar" id="repo-viewbar-$suffix"></div><div class="fp-searchbar" id="search-div-$suffix"></div>', gutter: '2'},
+{position: 'left', width: 200, resize: true,
+body:'<ul class="fp-list" id="repo-list-$suffix"></ul>', gutter: '0 5 0 2', minWidth: 150, maxWidth: 300 },
+{position: 'center', body: '<div class="fp-panel" id="panel-$suffix"></div>',
+scroll: true, gutter: '0 2 0 0' }
+]
+});
                 layout.render();
+                });
             });
-        });
-        resize = new YAHOO.util.Resize('file-picker-$suffix', {
-            handles: ['br'],
-            autoRatio: true,
-            status: true,
-            minWidth: 380,
-            minHeight: 400
-        });
-        resize.on('resize', function(args) {
-            var panelHeight = args.height;
-            var headerHeight = this.header.offsetHeight; // Content + Padding + Border
-            var bodyHeight = (panelHeight - headerHeight);
-            var bodyContentHeight = (IE_QUIRKS) ? bodyHeight : bodyHeight - PANEL_BODY_PADDING;
-            Dom.setStyle(this.body, 'height', bodyContentHeight + 'px');
-            if (IE_SYNC) {
-                this.sizeUnderlay();
-                this.syncIframe();
-            }
-            layout.set('height', bodyContentHeight);
-            layout.set('width', (args.width - PANEL_BODY_PADDING));
-            layout.resize();
+resize = new YAHOO.util.Resize('file-picker-$suffix', {
+handles: ['br'],
+autoRatio: true,
+status: true,
+minWidth: 380,
+minHeight: 400
+});
+resize.on('resize', function(args) {
+        var panelHeight = args.height;
+        var headerHeight = this.header.offsetHeight; // Content + Padding + Border
+        var bodyHeight = (panelHeight - headerHeight);
+        var bodyContentHeight = (IE_QUIRKS) ? bodyHeight : bodyHeight - PANEL_BODY_PADDING;
+        Dom.setStyle(this.body, 'height', bodyContentHeight + 'px');
+        if (IE_SYNC) {
+        this.sizeUnderlay();
+        this.syncIframe();
+        }
+        layout.set('height', bodyContentHeight);
+        layout.set('width', (args.width - PANEL_BODY_PADDING));
+        layout.resize();
 
         }, filepicker, true);
-        _client.viewbar = new YAHOO.widget.ButtonGroup({
-            id: 'btngroup-$suffix',
-            name: 'buttons',
-            disabled: true,
-            container: 'repo-viewbar-$suffix'
-            });
-    }
-    // public method
-    this.show = function(){
-        filepicker.show();
-    }
-    this.hide = function(){
-        filepicker.hide();
-    }
-    this.create_picker = function(){
-        // display UI
-        filepicker.render();
-        _client.viewbar.addButtons([btn_list, btn_thumb]);
-        // init repository list
-        repo_list = new YAHOO.util.Element('repo-list-$suffix');
-        repo_list.on('contentReady', function(e){
+_client.viewbar = new YAHOO.widget.ButtonGroup({
+id: 'btngroup-$suffix',
+name: 'buttons',
+disabled: true,
+container: 'repo-viewbar-$suffix'
+});
+}
+// public method
+this.show = function() {
+    filepicker.show();
+}
+this.hide = function() {
+    filepicker.hide();
+}
+this.create_picker = function() {
+    // display UI
+    filepicker.render();
+    _client.viewbar.addButtons([btn_list, btn_thumb]);
+    // init repository list
+    repo_list = new YAHOO.util.Element('repo-list-$suffix');
+    repo_list.on('contentReady', function(e) {
             var searchbar = new YAHOO.util.Element('search-div-$suffix');
             searchbar.get('element').innerHTML = '<input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
             var searchbtn = new YAHOO.util.Element('search-btn-$suffix');
             searchbtn.callback = {
-                success: function(o) {
-                    var panel = new YAHOO.util.Element('panel-$suffix');
-                    try {
-                        if(!o.responseText){
-                            panel.get('element').innerHTML = 'no';
-                            return;
-                        }
-                        var json = YAHOO.lang.JSON.parse(o.responseText);
-                    } catch(e) {
-                        alert('$strinvalidjson - '+o.responseText);
-                    }
-                    _client.ds = {};
-                    if(!json.list || json.list.length<1){
-                        panel.get('element').innerHTML = 'no';
-                        return;
-                    }
-                    _client.ds.list = json.list;
-                    if(_client.ds.list) {
-                        if(_client.viewmode) {
-                            _client.viewthumb();
-                        } else {
-                            _client.viewlist();
-                        }
-                        var input_ctl = new YAHOO.util.Element('search-input-$suffix');
-                        input_ctl.get('element').value='';
-                    }
-                }
-            }
-            searchbtn.input_ctl = new YAHOO.util.Element('search-input-$suffix');
-            searchbtn.on('click', function(e){
-                var keyword = this.input_ctl.get('value');
-                var params = [];
-                params['s'] = keyword;
-                params['env']=_client.env;
-                params['action']='gsearch';
-                params['sesskey']='$sesskey';
-                params['ctx_id']=$context->id;
-                _client.loading('load');
-                var trans = YAHOO.util.Connect.asyncRequest('POST',
-                    '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.callback, _client.postdata(params));
-            });
-            for(var i=0; i<_client.repos.length; i++) {
-                var repo = _client.repos[i];
-                var li = document.createElement('li');
-                li.id = 'repo-$suffix-'+repo.id;
-                var icon = document.createElement('img');
-                icon.src = repo.icon;
-                icon.width = '16';
-                icon.height = '16';
-                var link = document.createElement('a');
-                link.href = '###';
-                link.id = 'repo-call-$suffix-'+repo.id;
-                link.appendChild(icon);
-                link.className = 'fp-repo-name';
-                link.onclick = function(){
-                    var re = /repo-call-$suffix-(\d+)/i;
-                    var id = this.id.match(re);
-                    repository_client_$suffix.req(id[1], '', 0);
-                }
-                link.innerHTML += ' '+repo.name;
-                li.appendChild(link);
-                this.appendChild(li);
-                repo = null;
-            }
-            });
+success: function(o) {
+var panel = new YAHOO.util.Element('panel-$suffix');
+try {
+if(!o.responseText) {
+panel.get('element').innerHTML = 'no';
+return;
+}
+var json = YAHOO.lang.JSON.parse(o.responseText);
+} catch(e) {
+alert('$strinvalidjson - '+o.responseText);
+}
+_client.ds = {};
+if(!json.list || json.list.length<1) {
+panel.get('element').innerHTML = 'no';
+return;
+}
+_client.ds.list = json.list;
+if(_client.ds.list) {
+    if(_client.viewmode) {
+        _client.viewthumb();
+    } else {
+        _client.viewlist();
     }
+    var input_ctl = new YAHOO.util.Element('search-input-$suffix');
+    input_ctl.get('element').value='';
+}
+}
+}
+searchbtn.input_ctl = new YAHOO.util.Element('search-input-$suffix');
+searchbtn.on('click', function(e) {
+        var keyword = this.input_ctl.get('value');
+        var params = [];
+        params['s'] = keyword;
+        params['env']=_client.env;
+        params['action']='gsearch';
+        params['sesskey']='$sesskey';
+        params['ctx_id']=$context->id;
+        _client.loading('load');
+        var trans = YAHOO.util.Connect.asyncRequest('POST',
+            '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.callback, _client.postdata(params));
+        });
+for(var i=0; i<_client.repos.length; i++) {
+    var repo = _client.repos[i];
+    var li = document.createElement('li');
+    li.id = 'repo-$suffix-'+repo.id;
+    var icon = document.createElement('img');
+    icon.src = repo.icon;
+    icon.width = '16';
+    icon.height = '16';
+    var link = document.createElement('a');
+    link.href = '###';
+    link.id = 'repo-call-$suffix-'+repo.id;
+    link.appendChild(icon);
+    link.className = 'fp-repo-name';
+    link.onclick = function() {
+        var re = /repo-call-$suffix-(\d+)/i;
+        var id = this.id.match(re);
+        repository_client_$suffix.req(id[1], '', 0);
+    }
+    link.innerHTML += ' '+repo.name;
+    li.appendChild(link);
+    this.appendChild(li);
+    repo = null;
+}
+});
+}
 }
 
 // public static varible
@@ -1479,26 +1487,26 @@ _client.postdata = function(obj) {
     }
     return str;
 }
-_client.loading = function(type, name){
+_client.loading = function(type, name) {
     var panel = new YAHOO.util.Element('panel-$suffix');
     panel.get('element').innerHTML = '';
     var content = document.createElement('div');
     content.style.textAlign='center';
     var para = document.createElement('P');
     var img = document.createElement('IMG');
-    if(type=='load'){
-    img.src = '$CFG->pixpath/i/loading.gif';
-    para.innerHTML = '$strloading';
+    if(type=='load') {
+        img.src = '$CFG->pixpath/i/loading.gif';
+        para.innerHTML = '$strloading';
     }else{
-    img.src = '$CFG->pixpath/i/progressbar.gif';
-    para.innerHTML = '$strcopying <strong>'+name+'</strong>';
+        img.src = '$CFG->pixpath/i/progressbar.gif';
+        para.innerHTML = '$strcopying <strong>'+name+'</strong>';
     }
     content.appendChild(para);
     content.appendChild(img);
     //content.innerHTML = '';
     panel.get('element').appendChild(content);
 }
-_client.rename = function(oldname, url, icon, repo_id){
+_client.rename = function(oldname, url, icon, repo_id) {
     var panel = new YAHOO.util.Element('panel-$suffix');
     var html = '<div class="fp-rename-form">';
     _client.repositoryid=repo_id;
@@ -1506,9 +1514,9 @@ _client.rename = function(oldname, url, icon, repo_id){
     html += '<p><label for="newname-$suffix">$strsaveas</label>';
     html += '<input type="text" id="newname-$suffix" value="'+oldname+'" /></p>';
     /**
-    html += '<p><label for="syncfile-$suffix">$strsync</label> ';
-    html += '<input type="checkbox" id="syncfile-$suffix" /></p>';
-    */
+      html += '<p><label for="syncfile-$suffix">$strsync</label> ';
+      html += '<input type="checkbox" id="syncfile-$suffix" /></p>';
+     */
     html += '<p><input type="hidden" id="fileurl-$suffix" value="'+url+'" />';
     html += '<a href="###" onclick="repository_client_$suffix.viewfiles()">$strback</a> ';
     html += '<input type="button" onclick="repository_client_$suffix.download()" value="$strdownbtn" />';
@@ -1516,18 +1524,18 @@ _client.rename = function(oldname, url, icon, repo_id){
     html += '</div>';
     panel.get('element').innerHTML = html;
 }
-_client.popup = function(url){
+_client.popup = function(url) {
     active_instance = repository_client_$suffix;
     _client.win = window.open(url,'repo_auth', 'location=0,status=0,scrollbars=0,width=500,height=300');
     return false;
 }
-_client.print_login = function(){
+_client.print_login = function() {
     var panel = new YAHOO.util.Element('panel-$suffix');
     var data = _client.ds.login;
     var str = '';
     var has_pop = false;
-    for(var k in data){
-        if(data[k].type=='popup'){
+    for(var k in data) {
+        if(data[k].type=='popup') {
             str += '<p class="fp-popup"><a href="###" onclick="repository_client_$suffix.popup(\''+data[k].url+'\')">$strpopup</a></p>';
             has_pop = true;
         }else{
@@ -1535,46 +1543,46 @@ _client.print_login = function(){
             var lable_id = '';
             var field_id = '';
             var field_value = '';
-            if(data[k].id){
+            if(data[k].id) {
                 lable_id = ' for="'+data[k].id+'"';
                 field_id = ' id="'+data[k].id+'"';
             }
             if (data[k].label) {
                 str += '<label'+lable_id+'>'+data[k].label+'</label><br/>';
             }
-            if(data[k].value){
+            if(data[k].value) {
                 field_value = ' value="'+data[k].value+'"';
             }
             str += '<input type="'+data[k].type+'"'+' name="'+data[k].name+'"'+field_id+field_value+' />';
             str += '</p>';
         }
     }
-    if(!has_pop){
+    if(!has_pop) {
         str += '<p><input type="button" onclick="repository_client_$suffix.login()" value="$strsubmit" /></p>';
     }
     panel.get('element').innerHTML = str;
 }
 
-_client.viewfiles = function(){
+_client.viewfiles = function() {
     if(_client.viewmode) {
         _client.viewthumb();
     } else {
         _client.viewlist();
     }
 }
-_client.print_header = function(){
+_client.print_header = function() {
     var panel = new YAHOO.util.Element('panel-$suffix');
     var str = '';
     str += '<div class="fp-toolbar" id="repo-tb-$suffix"></div>';
     panel.set('innerHTML', str);
     _client.makepath();
 }
-_client.print_footer = function(){
+_client.print_footer = function() {
     var panel = new YAHOO.util.Element('panel-$suffix');
     panel.get('element').innerHTML += _client.uploadcontrol();
     panel.get('element').innerHTML += _client.makepage();
     var oDiv = document.getElementById('repo-tb-$suffix');
-    if(!_client.ds.nosearch){
+    if(!_client.ds.nosearch) {
         var search = document.createElement('A');
         search.href = '###';
         search.innerHTML = '<img src="$CFG->pixpath/a/search.png" /> $strsearch';
@@ -1596,16 +1604,16 @@ _client.print_footer = function(){
         params['repo_id']=repository_client_$suffix.repositoryid;
         _client.loading('load');
         var trans = YAHOO.util.Connect.asyncRequest('POST',
-            '$CFG->httpswwwroot/repository/ws.php?action=ccache', repository_client_$suffix.req_cb, _client.postdata(params));
+                '$CFG->httpswwwroot/repository/ws.php?action=ccache', repository_client_$suffix.req_cb, _client.postdata(params));
     }
-    if(_client.ds.manage){
+    if(_client.ds.manage) {
         var mgr = document.createElement('A');
         mgr.innerHTML = '<img src="$CFG->pixpath/a/setting.png" /> $strmgr';
         mgr.href = _client.ds.manage;
         mgr.target = "_blank";
         oDiv.appendChild(mgr);
     }
-    if(!_client.ds.nologin){
+    if(!_client.ds.nologin) {
         var logout = document.createElement('A');
         logout.href = '###';
         logout.innerHTML = '<img src="$CFG->pixpath/a/logout.png" /> $strlogout';
@@ -1615,13 +1623,13 @@ _client.print_footer = function(){
         }
     }
 }
-_client.viewthumb = function(ds){
+_client.viewthumb = function(ds) {
     _client.viewmode = 1;
     var panel = new YAHOO.util.Element('panel-$suffix');
     _client.viewbar.check(1);
     var list = null;
     var args = arguments.length;
-    if(args == 1){
+    if(args == 1) {
         list = ds;
     } else {
         // from button
@@ -1629,7 +1637,7 @@ _client.viewthumb = function(ds){
     }
     _client.print_header();
     var count = 0;
-    for(k in list){
+    for(k in list) {
         var el = document.createElement('div');
         el.className='fp-grid';
         var frame = document.createElement('DIV');
@@ -1642,7 +1650,7 @@ _client.viewthumb = function(ds){
         link.appendChild(img);
         frame.appendChild(link);
         var title = document.createElement('div');
-        if(list[k].children){
+        if(list[k].children) {
             title.innerHTML = '<i><u>'+list[k].title+'</i></u>';
         } else {
             if(list[k].url)
@@ -1653,47 +1661,47 @@ _client.viewthumb = function(ds){
         el.appendChild(frame);
         el.appendChild(title);
         panel.get('element').appendChild(el);
-        if(list[k].children){
+        if(list[k].children) {
             var folder = new YAHOO.util.Element(link.id);
             folder.ds = list[k].children;
-            folder.on('contentReady', function(){
-                this.on('click', function(){
-                    if(_client.ds.dynload){
+            folder.on('contentReady', function() {
+                    this.on('click', function() {
+                        if(_client.ds.dynload) {
                         // TODO: get file list dymanically
-                    }else{
+                        }else{
                         _client.viewthumb(this.ds);
-                    }
-                });
-            });
+                        }
+                        });
+                    });
         } else {
             var file = new YAHOO.util.Element(link.id);
             file.title = list[k].title;
             file.value = list[k].source;
             file.icon  = list[k].thumbnail;
-            if(list[k].repo_id){
+            if(list[k].repo_id) {
                 file.repo_id = list[k].repo_id;
             }else{
                 file.repo_id = _client.repositoryid;
             }
-            file.on('contentReady', function(){
-                this.on('click', function(){
-                    repository_client_$suffix.rename(this.title, this.value, this.icon, this.repo_id);
-                });
-            });
+            file.on('contentReady', function() {
+                    this.on('click', function() {
+                        repository_client_$suffix.rename(this.title, this.value, this.icon, this.repo_id);
+                        });
+                    });
         }
         count++;
     }
     _client.print_footer();
 }
-_client.buildtree = function(node, level){
-    if(node.children){
+_client.buildtree = function(node, level) {
+    if(node.children) {
         node.title = '<i><u>'+node.title+'</u></i>';
     }
     var info = {label:node.title, title:"$strdate"+node.date+' '+'$strsize'+node.size};
     var tmpNode = new YAHOO.widget.TextNode(info, level, false);
     var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
-        context:tmpNode.labelElId, text:info.title});
-    if(node.repo_id){
+context:tmpNode.labelElId, text:info.title});
+    if(node.repo_id) {
         tmpNode.repo_id=node.repo_id;
     }else{
         tmpNode.repo_id=_client.repositoryid;
@@ -1702,8 +1710,8 @@ _client.buildtree = function(node, level){
     tmpNode.value  = node.source;
     tmpNode.icon = node.thumbnail;
     tmpNode.path = node.path;
-    if(node.children){
-        if(node.expanded){
+    if(node.children) {
+        if(node.expanded) {
             tmpNode.expand();
         }
         tmpNode.isLeaf = false;
@@ -1712,7 +1720,7 @@ _client.buildtree = function(node, level){
         } else {
             tmpNode.path = '';
         }
-        for(var c in node.children){
+        for(var c in node.children) {
             _client.buildtree(node.children[c], tmpNode);
         }
     } else {
@@ -1722,25 +1730,25 @@ _client.buildtree = function(node, level){
         }
     }
 }
-_client.dynload = function (node, fnLoadComplete){
+_client.dynload = function (node, fnLoadComplete) {
     var callback = {
-        success: function(o) {
-            try {
-                var json = YAHOO.lang.JSON.parse(o.responseText);
-            } catch(e) {
-                alert('$strinvalidjson - '+o.responseText);
-            }
-            for(k in json.list){
-                _client.buildtree(json.list[k], node);
-            }
-            o.argument.fnLoadComplete();
-        },
-        failure:function(oResponse){
+success: function(o) {
+             try {
+                 var json = YAHOO.lang.JSON.parse(o.responseText);
+             } catch(e) {
+                 alert('$strinvalidjson - '+o.responseText);
+             }
+             for(k in json.list) {
+                 _client.buildtree(json.list[k], node);
+             }
+             o.argument.fnLoadComplete();
+         },
+failure:function(oResponse) {
             alert('$strerror');
             oResponse.argument.fnLoadComplete();
         },
-        argument:{"node":node, "fnLoadComplete": fnLoadComplete},
-        timeout:600
+argument:{"node":node, "fnLoadComplete": fnLoadComplete},
+         timeout:600
     }
     var params = [];
     params['p']=node.path;
@@ -1749,9 +1757,9 @@ _client.dynload = function (node, fnLoadComplete){
     params['ctx_id']=$context->id;
     params['repo_id']=_client.repositoryid;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->httpswwwroot/repository/ws.php?action=list', callback, _client.postdata(params));
+            '$CFG->httpswwwroot/repository/ws.php?action=list', callback, _client.postdata(params));
 }
-_client.viewlist = function(){
+_client.viewlist = function() {
     _client.viewmode = 0;
     var panel = new YAHOO.util.Element('panel-$suffix');
     _client.viewbar.check(0);
@@ -1763,18 +1771,18 @@ _client.viewlist = function(){
         tree.setDynamicLoad(_client.dynload, 1);
     } else {
     }
-    for(k in list){
+    for(k in list) {
         _client.buildtree(list[k], tree.getRoot());
     }
     tree.draw();
     _client.print_footer();
 }
-_client.upload = function(){
+_client.upload = function() {
     var u = _client.ds.upload;
     var aform = document.getElementById(u.id);
     var parent = document.getElementById(u.id+'_div');
     var d = document.getElementById(_client.ds.upload.id+'-file');
-    if(d.value!='' && d.value!=null){
+    if(d.value!='' && d.value!=null) {
         var container = document.createElement('DIV');
         container.id = u.id+'_loading';
         container.style.textAlign='center';
@@ -1787,36 +1795,36 @@ _client.upload = function(){
         parent.appendChild(container);
         YAHOO.util.Connect.setForm(aform, true, true);
         var trans = YAHOO.util.Connect.asyncRequest('POST',
-            '$CFG->httpswwwroot/repository/ws.php?action=upload&sesskey=$sesskey&ctx_id=$context->id&repo_id='
+                '$CFG->httpswwwroot/repository/ws.php?action=upload&sesskey=$sesskey&ctx_id=$context->id&repo_id='
                 +_client.repositoryid,
-            _client.upload_cb);
+                _client.upload_cb);
     }else{
         alert('$strfilenotnull');
     }
 }
 _client.upload_cb = {
-    upload: function(o){
-        try {
-            var ret = YAHOO.lang.JSON.parse(o.responseText);
-        } catch(e) {
-            alert('$strinvalidjson - '+o.responseText);
+upload: function(o) {
+            try {
+                var ret = YAHOO.lang.JSON.parse(o.responseText);
+            } catch(e) {
+                alert('$strinvalidjson - '+o.responseText);
+            }
+            if(ret && ret.e) {
+                var panel = new YAHOO.util.Element('panel-$suffix');
+                panel.get('element').innerHTML = ret.e;
+                return;
+            }
+            if(ret) {
+                alert('$strsaved');
+                repository_client_$suffix.end(ret);
+            }else{
+                alert('$strinvalidjson');
+            }
         }
-        if(ret && ret.e){
-            var panel = new YAHOO.util.Element('panel-$suffix');
-            panel.get('element').innerHTML = ret.e;
-            return;
-        }
-        if(ret){
-            alert('$strsaved');
-            repository_client_$suffix.end(ret);
-        }else{
-            alert('$strinvalidjson');
-        }
-    }
 }
 _client.uploadcontrol = function() {
     var str = '';
-    if(_client.ds.upload){
+    if(_client.ds.upload) {
         str += '<div id="'+_client.ds.upload.id+'_div" class="fp-upload-form">';
         str += '<form id="'+_client.ds.upload.id+'" onsubmit="return false">';
         str += '<label for="'+_client.ds.upload.id+'-file">'+_client.ds.upload.label+'</label>';
@@ -1827,9 +1835,9 @@ _client.uploadcontrol = function() {
     }
     return str;
 }
-_client.makepage = function(){
+_client.makepage = function() {
     var str = '';
-    if(_client.ds.pages){
+    if(_client.ds.pages) {
         str += '<div class="fp-paging" id="paging-$suffix">';
         for(var i = 1; i <= _client.ds.pages; i++) {
             str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
@@ -1840,13 +1848,13 @@ _client.makepage = function(){
     }
     return str;
 }
-_client.makepath = function(){
+_client.makepath = function() {
     if(_client.viewmode == 0) {
         return;
     }
     var panel = new YAHOO.util.Element('panel-$suffix');
     var p = _client.ds.path;
-    if(p && p.length!=0){
+    if(p && p.length!=0) {
         var oDiv = document.createElement('DIV');
         oDiv.id = "path-$suffix";
         oDiv.className = "fp-pathbar";
@@ -1863,16 +1871,16 @@ _client.makepath = function(){
             var el = new YAHOO.util.Element(link.id);
             el.id = _client.repositoryid;
             el.path = _client.ds.path[i].path;
-            el.on('contentReady', function(){
-                this.on('click', function(){
-                    repository_client_$suffix.req(this.id, this.path, 0);
-                })
-            });
+            el.on('contentReady', function() {
+                    this.on('click', function() {
+                        repository_client_$suffix.req(this.id, this.path, 0);
+                        })
+                    });
         }
     }
 }
 // send download request
-_client.download = function(){
+_client.download = function() {
     var title = document.getElementById('newname-$suffix').value;
     var file = document.getElementById('fileurl-$suffix').value;
     _client.loading('download', title);
@@ -1884,14 +1892,14 @@ _client.download = function(){
     params['ctx_id']=$context->id;
     params['repo_id']=_client.repositoryid;
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->httpswwwroot/repository/ws.php?action=download', _client.download_cb, _client.postdata(params));
+            '$CFG->httpswwwroot/repository/ws.php?action=download', _client.download_cb, _client.postdata(params));
 }
 // send login request
-_client.login = function(){
+_client.login = function() {
     var params = [];
     var data = _client.ds.login;
     for (var k in data) {
-        if(data[k].type!='popup'){
+        if(data[k].type!='popup') {
             var el = document.getElementsByName(data[k].name)[0];
             params[data[k].name] = '';
             if(el.type == 'checkbox') {
@@ -1906,10 +1914,10 @@ _client.login = function(){
     params['sesskey']= '$sesskey';
     _client.loading('load');
     var trans = YAHOO.util.Connect.asyncRequest('POST',
-        '$CFG->httpswwwroot/repository/ws.php?action=sign', _client.req_cb, _client.postdata(params));
+            '$CFG->httpswwwroot/repository/ws.php?action=sign', _client.req_cb, _client.postdata(params));
 }
-_client.end = function(str){
-    if(_client.env=='form'){
+_client.end = function(str) {
+    if(_client.env=='form') {
         _client.target.value = str['id'];
     }else{
         _client.target.value = str['url'];
@@ -1919,7 +1927,7 @@ _client.end = function(str){
     _client.instance.hide();
     _client.viewfiles();
 }
-_client.hide = function(){
+_client.hide = function() {
     _client.instance.hide();
     _client.viewfiles();
 }
@@ -1944,50 +1952,50 @@ _client.req = function(id, path, reset) {
     var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.req_cb, _client.postdata(params));
 }
 _client.search_form_cb = {
-    success: function(o) {
-        var el = document.getElementById('fp-search-dlg');
-        if(el){
-            el.innerHTML = '';
-        } else {
-            var el = document.createElement('DIV');
-            el.id = 'fp-search-dlg';
-        }
-        var div1 = document.createElement('DIV');
-        div1.className = 'hd';
-        div1.innerHTML = "$strsearching";
-        var div2 = document.createElement('DIV');
-        div2.className = 'bd';
-        var sform = document.createElement('FORM');
-        sform.method = 'POST';
-        sform.id = "fp-search-form";
-        sform.action = '$CFG->wwwroot/repository/ws.php?action=search';
-        sform.innerHTML = o.responseText;
-        div2.appendChild(sform);
-        el.appendChild(div1);
-        el.appendChild(div2);
-        document.body.appendChild(el);
-        var dlg = new YAHOO.widget.Dialog("fp-search-dlg",{
-            postmethod: 'async',
-            width : "30em",
-            fixedcenter : true,
-            zindex: 666667,
-            visible : false, 
-            constraintoviewport : true,
-            buttons : [ { text:"Submit",handler: function(){
-                _client.viewbar.set('disabled', false);
-                _client.loading('load');
-                YAHOO.util.Connect.setForm('fp-search-form', false, false);
-                this.cancel();
-                var trans = YAHOO.util.Connect.asyncRequest('POST',
-                    '$CFG->httpswwwroot/repository/ws.php?action=search&env='+_client.env, _client.req_cb);
-            },isDefault:true }, 
-            {text:"Cancel",handler:function(){this.cancel()}}]
-        });
-        dlg.render();
-        dlg.show();
-    }
+success: function(o) {
+             var el = document.getElementById('fp-search-dlg');
+             if(el) {
+                 el.innerHTML = '';
+             } else {
+                 var el = document.createElement('DIV');
+                 el.id = 'fp-search-dlg';
+             }
+             var div1 = document.createElement('DIV');
+             div1.className = 'hd';
+             div1.innerHTML = "$strsearching";
+             var div2 = document.createElement('DIV');
+             div2.className = 'bd';
+             var sform = document.createElement('FORM');
+             sform.method = 'POST';
+             sform.id = "fp-search-form";
+             sform.action = '$CFG->wwwroot/repository/ws.php?action=search';
+             sform.innerHTML = o.responseText;
+             div2.appendChild(sform);
+             el.appendChild(div1);
+             el.appendChild(div2);
+             document.body.appendChild(el);
+             var dlg = new YAHOO.widget.Dialog("fp-search-dlg",{
+postmethod: 'async',
+width : "30em",
+fixedcenter : true,
+zindex: 666667,
+visible : false, 
+constraintoviewport : true,
+buttons : [ { text:"Submit",handler: function() {
+_client.viewbar.set('disabled', false);
+_client.loading('load');
+YAHOO.util.Connect.setForm('fp-search-form', false, false);
+this.cancel();
+var trans = YAHOO.util.Connect.asyncRequest('POST',
+    '$CFG->httpswwwroot/repository/ws.php?action=search&env='+_client.env, _client.req_cb);
+},isDefault:true }, 
+{text:"Cancel",handler:function() {this.cancel()}}]
+});
+dlg.render();
+dlg.show();
 }
-_client.search = function(id){
+}
+_client.search = function(id) {
     var params = [];
     params['env']=_client.env;
     params['sesskey']='$sesskey';
@@ -1996,78 +2004,78 @@ _client.search = function(id){
     var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action=searchform', _client.search_form_cb, _client.postdata(params));
 }
 _client.req_cb = {
-    success: function(o) {
-        var panel = new YAHOO.util.Element('panel-$suffix');
-        try {
-            var ret = YAHOO.lang.JSON.parse(o.responseText);
-        } catch(e) {
-            alert('$strinvalidjson - '+o.responseText);
-        };
-        if(ret && ret.e){
-            panel.get('element').innerHTML = ret.e;
-            return;
-        }
-        _client.ds = ret;
-        if(!_client.ds){
-            return;
-        }else if(_client.ds && _client.ds.login){
-            _client.print_login();
-        } else if(_client.ds.list) {
-            if(_client.viewmode) {
-                _client.viewthumb();
-            } else {
-                _client.viewlist();
-            }
-        }
-    }
+success: function(o) {
+             var panel = new YAHOO.util.Element('panel-$suffix');
+             try {
+                 var ret = YAHOO.lang.JSON.parse(o.responseText);
+             } catch(e) {
+                 alert('$strinvalidjson - '+o.responseText);
+             };
+             if(ret && ret.e) {
+                 panel.get('element').innerHTML = ret.e;
+                 return;
+             }
+             _client.ds = ret;
+             if(!_client.ds) {
+                 return;
+             }else if(_client.ds && _client.ds.login) {
+                 _client.print_login();
+             } else if(_client.ds.list) {
+                 if(_client.viewmode) {
+                     _client.viewthumb();
+                 } else {
+                     _client.viewlist();
+                 }
+             }
+         }
 }
 _client.download_cb = {
-    success: function(o) {
-        var panel = new YAHOO.util.Element('panel-$suffix');
-        try {
-            var ret = YAHOO.lang.JSON.parse(o.responseText);
-        } catch(e) {
-            alert('$strinvalidjson - '+o.responseText);
-        }
-        if(ret && ret.e){
-            panel.get('element').innerHTML = ret.e;
-            return;
-        }
-        if(ret){
-            repository_client_$suffix.end(ret);
-        }else{
-            alert('$strinvalidjson');
-        }
-    }
+success: function(o) {
+             var panel = new YAHOO.util.Element('panel-$suffix');
+             try {
+                 var ret = YAHOO.lang.JSON.parse(o.responseText);
+             } catch(e) {
+                 alert('$strinvalidjson - '+o.responseText);
+             }
+             if(ret && ret.e) {
+                 panel.get('element').innerHTML = ret.e;
+                 return;
+             }
+             if(ret) {
+                 repository_client_$suffix.end(ret);
+             }else{
+                 alert('$strinvalidjson');
+             }
+         }
 }
 
 return _client;
 })();
 EOD;
 
-    $repos = repository_get_instances(array($context,get_system_context()));
-    foreach($repos as $repo) {
-        $js .= "\r\n";
-        $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo->ajax_info()).');'."\n";
-    }
+$repos = repository_get_instances(array($context,get_system_context()));
+foreach ($repos as $repo) {
     $js .= "\r\n";
+    $js .= 'repository_client_'.$suffix.'.repos.push('.json_encode($repo->ajax_info()).');'."\n";
+}
+$js .= "\r\n";
 
-    $js .= <<<EOD
+$js .= <<<EOD
 function openpicker_$suffix(params) {
     if(!repository_client_$suffix.instance) {
         repository_client_$suffix.env = params.env;
         repository_client_$suffix.target = params.target;
-        if(params.type){
+        if(params.type) {
             repository_client_$suffix.filetype = params.filetype;
         } else {
             repository_client_$suffix.filetype = 'all';
         }
         repository_client_$suffix.instance = new repository_client_$suffix();
         repository_client_$suffix.instance.create_picker();
-        if(params.callback){
+        if(params.callback) {
             repository_client_$suffix.formcallback = params.callback;
         } else {
-            repository_client_$suffix.formcallback = function(){};
+            repository_client_$suffix.formcallback = function() {};
         }
     } else {
         repository_client_$suffix.instance.show();
@@ -2076,7 +2084,7 @@ function openpicker_$suffix(params) {
 //]]>
 </script>
 EOD;
-    return array('css'=>$css, 'js'=>$js, 'suffix'=>$suffix);
+return array('css'=>$css, 'js'=>$js, 'suffix'=>$suffix);
 }
 
 /**
@@ -2195,8 +2203,8 @@ final class repository_admin_form extends moodleform {
             if (!$this->instance) {
                 $result = repository_static_function($this->plugin, 'admin_config_form', $mform);
             } else {
-                  $classname = 'repository_' . $this->instance->get_typename();
-                  $result = call_user_func(array($classname,'admin_config_form'),$mform);
+                $classname = 'repository_' . $this->instance->get_typename();
+                $result = call_user_func(array($classname,'admin_config_form'),$mform);
             }
         }
 
@@ -2216,7 +2224,6 @@ final class repository_admin_form extends moodleform {
         }
         $this->add_action_buttons(true, get_string('save','repository'));
     }
-
 }
 
 
@@ -2227,97 +2234,97 @@ final class repository_admin_form extends moodleform {
  * @param object $context the context for which we display the instance
  * @param string $typename if set, we display only one type of instance
  */
-function repository_display_instances_list($context, $typename = null){
-       global $CFG, $USER;
+function repository_display_instances_list($context, $typename = null) {
+    global $CFG, $USER;
 
-        $output = print_box_start('generalbox','',true);
-        //if the context is SYSTEM, so we call it from administration page
-        $admin = ($context->id == SYSCONTEXTID) ? true : false;
-        if($admin) {
-            $baseurl = $CFG->httpswwwroot . '/admin/repositoryinstance.php?sesskey=' . sesskey();
-             $output .= "<div ><h2 style='text-align: center'>" . get_string('siteinstances', 'repository') . " ";
-             $output .= "</h2></div>";
+    $output = print_box_start('generalbox','',true);
+    //if the context is SYSTEM, so we call it from administration page
+    $admin = ($context->id == SYSCONTEXTID) ? true : false;
+    if ($admin) {
+        $baseurl = $CFG->httpswwwroot . '/admin/repositoryinstance.php?sesskey=' . sesskey();
+        $output .= "<div ><h2 style='text-align: center'>" . get_string('siteinstances', 'repository') . " ";
+        $output .= "</h2></div>";
+    } else {
+        $baseurl = $CFG->httpswwwroot . '/repository/manage_instances.php?contextid=' . $context->id . '&amp;sesskey=' . sesskey();
+    }
+
+    $namestr = get_string('name');
+    $pluginstr = get_string('plugin', 'repository');
+    $settingsstr = get_string('settings');
+    $deletestr = get_string('delete');
+    $updown = get_string('updown', 'repository');
+    $plugins = get_list_of_plugins('repository');
+    //retrieve list of instances. In administration context we want to display all
+    //instances of a type, even if this type is not visible. In course/user context we
+    //want to display only visible instances, but for every type types. The repository_get_instances()
+    //third parameter displays only visible type.
+    $instances = repository_get_instances(array($context),null,!$admin,$typename);
+    $instancesnumber = count($instances);
+    $alreadyplugins = array();
+
+    $table = new StdClass;
+    $table->head = array($namestr, $pluginstr, $deletestr, $settingsstr);
+    $table->align = array('left', 'left', 'center','center');
+    $table->data = array();
+
+    $updowncount = 1;
+
+    foreach ($instances as $i) {
+        $settings = '';
+        $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
+        $delete = '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
+
+        $type = repository_get_type_by_id($i->typeid);
+        $table->data[] = array($i->name, $type->get_readablename(), $delete, $settings);
+
+        //display a grey row if the type is defined as not visible
+        if (isset($type) && !$type->get_visible()) {
+            $table->rowclass[] = 'dimmed_text';
         } else {
-          $baseurl = $CFG->httpswwwroot . '/repository/manage_instances.php?contextid=' . $context->id . '&amp;sesskey=' . sesskey();
-
+            $table->rowclass[] = '';
         }
 
-        $namestr = get_string('name');
-        $pluginstr = get_string('plugin', 'repository');
-        $settingsstr = get_string('settings');
-        $deletestr = get_string('delete');
-        $updown = get_string('updown', 'repository');
-        $plugins = get_list_of_plugins('repository');
-        //retrieve list of instances. In administration context we want to display all
-        //instances of a type, even if this type is not visible. In course/user context we
-        //want to display only visible instances, but for every type types. The repository_get_instances()
-        //third parameter displays only visible type.
-        $instances = repository_get_instances(array($context),null,!$admin,$typename);
-        $instancesnumber = count($instances);
-        $alreadyplugins = array();
-        $table = new StdClass;
-        $table->head = array($namestr, $pluginstr, $deletestr, $settingsstr);
-        $table->align = array('left', 'left', 'center','center');
-        $table->data = array();
-        $updowncount=1;
-        foreach ($instances as $i) {
-            $settings = '';
-            $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
-            $delete = '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
+        if (!in_array($i->name, $alreadyplugins)) {
+            $alreadyplugins[] = $i->name;
+        }
+    }
+    $output .= print_table($table, true);
+    $instancehtml = '<div>';
+    $addable = 0;
 
-            $type = repository_get_type_by_id($i->typeid);
-            $table->data[] = array($i->name, $type->get_readablename(), $delete, $settings);
-
-            //display a grey row if the type is defined as not visible
-            if (isset($type) && !$type->get_visible()){
-                $table->rowclass[] = 'dimmed_text';
-            } else{
-                $table->rowclass[] = '';
-            }
-
-            if (!in_array($i->name, $alreadyplugins)) {
-                $alreadyplugins[] = $i->name;
+    //if no type is set, we can create all type of instance
+    if (!$typename) {
+        $instancehtml .= '<h3>';
+        $instancehtml .= get_string('createrepository', 'repository');
+        $instancehtml .= '</h3><ul>';
+        foreach ($plugins as $p) {
+            $type = repository_get_type_by_typename($p);
+            if (!empty($type) && $type->get_visible()) {
+                if (repository_static_function($p, 'has_multiple_instances')) {
+                    $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$p.'">'.get_string('create', 'repository')
+                        .' "'.get_string('repositoryname', 'repository_'.$p).'" '
+                        .get_string('instance', 'repository').'</a></li>';
+                    $addable++;
+                }
             }
         }
-        $output .= print_table($table, true);
-        $instancehtml = '<div>';
-        $addable = 0;
+        $instancehtml .= '</ul>';
 
-        //if no type is set, we can create all type of instance
-        if (!$typename) {
-            $instancehtml .= '<h3>';
-            $instancehtml .= get_string('createrepository', 'repository');
-            $instancehtml .= '</h3><ul>';
-            foreach ($plugins as $p) {
-                   $type = repository_get_type_by_typename($p);
-                   if (!empty($type) && $type->get_visible()) {
-                       if (repository_static_function($p, 'has_multiple_instances')){
-                            $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$p.'">'.get_string('create', 'repository')
-                                .' "'.get_string('repositoryname', 'repository_'.$p).'" '
-                                .get_string('instance', 'repository').'</a></li>';
-                            $addable++;
-                        }
-                   }
-            }
-             $instancehtml .= '</ul>';
+    } else if (repository_static_function($typename, 'has_multiple_instances')) {   //create a unique type of instance
+            $addable = 1;
+            $instancehtml .= "<form action='".$baseurl."&amp;new=".$typename."' method='post'>
+                <p style='text-align:center'><input type='submit' value='".get_string('createinstance', 'repository')."'/></p>
+                </form>";
         }
-        //create a unique type of instance
-        else {
-            if (repository_static_function($typename, 'has_multiple_instances')){
-                $addable = 1;
-                $instancehtml .= "<form action='".$baseurl."&amp;new=".$typename."' method='post'>
-                                  <p style='text-align:center'><input type='submit' value='".get_string('createinstance', 'repository')."'/></p>
-                                  </form>";
-            }
-        }
+    }
 
-        if ($addable) {
-            $instancehtml .= '</div>';
-            $output .= $instancehtml;
-        }
+    if ($addable) {
+        $instancehtml .= '</div>';
+        $output .= $instancehtml;
+    }
 
-        $output .= print_box_end(true);
+    $output .= print_box_end(true);
 
-        //print the list + creation links
-        print($output);
+    //print the list + creation links
+    print($output);
 }
