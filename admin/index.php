@@ -224,6 +224,7 @@
         $origdebug = $CFG->debug;
         $CFG->debug = DEBUG_MINIMAL;
         error_reporting($CFG->debug);
+        $CFG->xmlstrictheaders = false;
 
         // logo ut in case we are upgrading from pre 1.9 version in order to prevent
         // weird session/role problems caused by incorrect data in USER and SESSION
@@ -333,7 +334,7 @@
 
                 // Update core message providers
                 message_update_providers();
-		message_update_providers('message');
+                message_update_providers('message');
 
                 if (set_config("version", $version)) {
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
@@ -366,6 +367,10 @@
             print_error("cannotupdaterelease", 'debug');
         }
     }
+
+    // Turn off xmlstrictheaders during upgrade.
+    $origxmlstrictheaders = !empty($CFG->xmlstrictheaders);
+    $CFG->xmlstrictheaders = false;
 
 /// Find and check all main modules and load them up or upgrade them if necessary
 /// first old *.php update and then the new upgrade.php script
@@ -435,6 +440,9 @@
     upgrade_log_finish();
 
     unset($SESSION->installautopilot);
+
+    // Turn xmlstrictheaders back on now.
+    $CFG->xmlstrictheaders = $origxmlstrictheaders;
 
 /// Set up the blank site - to be customized later at the end of install.
     if (! $site = get_site()) {
