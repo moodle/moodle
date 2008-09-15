@@ -28,7 +28,7 @@ class page_my_moodle extends page_base {
 
     function print_header($title) {
 
-        global $USER;
+        global $USER, $CFG;
 
         $replacements = array(
                               '%fullname%' => get_string('mymoodle','my')
@@ -46,7 +46,17 @@ class page_my_moodle extends page_base {
         $navigation = build_navigation($navlinks);
         
         $loggedinas = user_login_string($site);
-        print_header($title, $header,$navigation,'','',true, $button, $loggedinas);
+
+        if (empty($CFG->langmenu)) {
+            $langmenu = '';
+        } else {
+            $currlang = current_language();
+            $langs = get_list_of_languages();
+            $langlabel = get_accesshide(get_string('language'));
+            $langmenu = popup_form($CFG->wwwroot .'/my/index.php?lang=', $langs, 'chooselang', $currlang, '', '', '', true, 'self', $langlabel);
+        }
+
+        print_header($title, $header,$navigation,'','',true, $button, $loggedinas.$langmenu);
 
     }
     
