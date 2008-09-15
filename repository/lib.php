@@ -873,6 +873,20 @@ abstract class repository {
     }
 
     /**
+     * function which is run when a type is created
+     * This should be a function from a type, but as I plugin wrtie, only write
+     * a class extended from repository class, the init() for type has been placed
+     * into the repository.
+     */
+    public static function type_init(){
+
+    }
+
+    public static function add_unremovable_instances(){
+
+    }
+
+    /**
      * Return true if the plugin type has at least one general option field
      * By default: false
      * @return boolean
@@ -1005,8 +1019,8 @@ function repository_get_instances($contexts=array(), $userid = null, $onlyvisibl
         $params[] = $context->id;
     }
 
-    if ($firstcontext) {
-        $sql .=')';
+    if (!empty($firstcontext)) {
+       $sql .=')';
     }
 
     if ($onlyvisible == true) {
@@ -1274,7 +1288,7 @@ function repository_get_client($context) {
         .fp-grid .label{height:48px}
         .fp-grid span{background: #EEF9EB;color:gray}
         </style>
-            EOD;
+EOD;
 
         $js = <<<EOD
             <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/yahoo-dom-event/yahoo-dom-event.js"></script>
@@ -1288,7 +1302,7 @@ function repository_get_client($context) {
             <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/json/json-min.js"></script>
             <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/button/button-min.js"></script>
             <script type="text/javascript" src="$CFG->httpswwwroot/lib/yui/selector/selector-beta-min.js"></script>
-            EOD;
+EOD;
         $CFG->repo_yui_loaded = true;
     } else {
         $js = '';
@@ -2314,8 +2328,7 @@ function repository_display_instances_list($context, $typename = null) {
             $addable = 1;
             $instancehtml .= "<form action='".$baseurl."&amp;new=".$typename."' method='post'>
                 <p style='text-align:center'><input type='submit' value='".get_string('createinstance', 'repository')."'/></p>
-                </form>";
-        }
+                </form>";     
     }
 
     if ($addable) {

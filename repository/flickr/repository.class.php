@@ -209,7 +209,7 @@ class repository_flickr extends repository{
     }
 
     public static function has_instance_config() {
-        return true;
+        return false;
     }
 
     public function instance_config_form(&$mform) {
@@ -224,17 +224,24 @@ class repository_flickr extends repository{
     public function admin_config_form(&$mform) {
         global $CFG;
         $api_key = get_config('flickr', 'api_key');
-        $secret  = get_config('flickr', 'secret');
-        $callbackurl = get_config('flickr', 'callbackurl');
+        $secret = get_config('flickr', 'secret');
+
+        //retrieve the flickr instances
+        $instances = repository_get_instances(array(),null,false,"flickr");
+        if (empty($instances)){
+            $callbackurl = get_string("callbackwarning","repository_flickr");
+        }
+        else {
+             $callbackurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&repo_id='.$instances[0]->id;
+        }
+
         if (empty($api_key)) {
             $api_key = '';
         }
         if (empty($secret)) {
             $secret = '';
         }
-        if (empty($callbackurl)) {
-            $callbackurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&repo_id=';
-        }
+
         $strrequired = get_string('required');
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr'), array('value'=>$api_key,'size' => '40'));
         $mform->addElement('text', 'secret', get_string('secret', 'repository_flickr'), array('value'=>$secret,'size' => '40'));
