@@ -10,7 +10,7 @@ $string['categorycurrentuse'] = 'Use This Category';
 $string['categorymoveto'] = 'Save in Category';
 $string['changepublishstatuscat'] = '<a href=\"$a->caturl\">Category \"$a->name\"</a> in course \"$a->coursename\" will have it\'s sharing status changed from <strong>$a->changefrom to $a->changeto</strong>.';
 $string['cwrqpfs'] = 'Random questions selecting questions from sub categories.';
-$string['cwrqpfsinfo'] = '<p>During the upgrade to Moodle 1.9 we will seperate question categories into
+$string['cwrqpfsinfo'] = '<p>During the upgrade to Moodle 1.9 we will separate question categories into
 different contexts. Some question categories and questions on your site will have to have their sharing
 status changed. This is necessary in the rare case that one or more \'random\' questions in a quiz are set up to select from a mixture of
 shared and unshared categories (as is the case on this site). This happens when a \'random\' question is set to select
@@ -83,7 +83,7 @@ $string['questioncatsfor'] = 'Question Categories for \'$a\'';
 $string['questiondoesnotexist'] = 'This question does not exist';
 $string['questionsmovedto'] = 'Questions still in use moved to "$a" in the parent course category.';
 $string['questionsrescuedfrom'] = 'Questions saved from context $a.';
-$string['questionsrescuedfrominfo'] = 'These questions (some of which may be hidden) where saved when context $a was deleted because they are still used by some quizzes or other activities.';
+$string['questionsrescuedfrominfo'] = 'These questions (some of which may be hidden) were saved when context $a was deleted because they are still used by some quizzes or other activities.';
 $string['questionuse'] = 'Use question in this activity';
 $string['shareincontext'] = 'Share in context for $a';
 $string['tofilecategory'] = 'Write category to file';
