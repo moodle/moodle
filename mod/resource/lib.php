@@ -727,6 +727,9 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         $this->resourcefile = $CFG->dirroot.'/mod/resource/type/'.$this->cm->type.'/resource.class.php';
         require_once($this->resourcefile);
         $this->resource= new $resourceclass($this->cm->id);
+        if (!is_callable(array($resource, 'portfolio_prepare_package')) || !is_callable(array($resource, 'portfolio_get_sha1'))) {
+            throw new portfolio_exception('portfolionotimplemented', 'resource', null, $this->cm->type);
+        }
         $this->supportedformats = array(self::type_to_format($this->cm->type));
     }
 

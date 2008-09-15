@@ -28,7 +28,7 @@ class testResourcePortfolioCallers extends portfoliolib_test {
         $first_module = reset($this->modules);
         $cm = get_coursemodule_from_instance($this->module_type, $first_module->id);
 
-        $this->caller = parent::setup_caller('resource_portfolio_caller', array('id' => $cm->id));
+        $this->caller = parent::setup_caller('resource_portfolio_caller', array('id' => $cm->instance));
     }
 
     public function tearDown() {
