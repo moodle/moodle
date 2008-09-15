@@ -9,10 +9,6 @@ body, td, li, input, select {
     font-size : 13px;
 }
 
-body {
-    margin : 5px;
-}
-
 th {
   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
   font-size: 11px;
@@ -41,11 +37,8 @@ h1 {
     font-weight: bold;
 }
 
-h2, .heading-with-help {
+h2 {
     font-size:1.15em;
-}
-.heading-with-help h2 {
-    font-size:1.0em;
 }
 h3 {
     font-size:1.1em;
