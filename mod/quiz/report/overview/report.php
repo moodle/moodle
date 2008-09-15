@@ -29,8 +29,10 @@ class quiz_overview_report extends quiz_default_report {
         $fakeattempt->timefinish = $quiz->timeopen;
         $fakeattempt->userid = 0;
         $reviewoptions = quiz_get_reviewoptions($quiz, $fakeattempt, $this->context);
-        $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
-
+        $showgrades = ($quiz->grade  !== 0) && ($quiz->sumgrades !== 0) && $reviewoptions->scores;
+        echo '<pre>';
+        var_dump(compact('showgrades', 'quiz'));
+        echo '</pre>';
         $download = optional_param('download', '', PARAM_ALPHA);
         
         /// find out current groups mode
@@ -206,9 +208,6 @@ class quiz_overview_report extends quiz_default_report {
 
         if (!$nostudents || ($attemptsmode == QUIZ_REPORT_ATTEMPTS_ALL)){
     
-    
-            $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
-            $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
     
     
             // Construct the SQL
