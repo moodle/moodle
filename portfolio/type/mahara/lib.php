@@ -189,7 +189,7 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
             throw new portfolio_export_exception($this->get('exporter'), 'failedtoping', 'portfolio_mahara');
         }
         if ($response->type =='queued') {
-            $this->exporter->set('forcequeue', true);
+            $this->exporter->set_forcequeue();
         }
     }
 

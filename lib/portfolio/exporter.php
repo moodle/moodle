@@ -170,6 +170,16 @@ class portfolio_exporter {
     }
 
     /**
+    * sets this export to force queued
+    * sometimes plugins need to set this randomly
+    * if an external system changes its mind
+    * about what's supported
+    */
+    public function set_forcequeue() {
+        $this->forcequeue = true;
+    }
+
+    /**
     * process the given stage calling whatever functions are necessary
     *
     * @param int $stage (see PORTFOLIO_STAGE_* constants)
