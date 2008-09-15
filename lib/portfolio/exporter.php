@@ -702,7 +702,7 @@ class portfolio_exporter {
         $zipper = new zip_packer();
 
         list ($contextid, $filearea, $itemid) = array_values($this->get_base_filearea());
-        if ($newfile = $zipper->archive_to_storage($files, $contextid, $filearea, $itemid, $filepath, $filename, $this->user->id)) {
+        if ($newfile = $zipper->archive_to_storage($this->get_tempfiles(), $contextid, $filearea, $itemid, $filepath, $filename, $this->user->id)) {
             return $newfile;
         }
         return false;

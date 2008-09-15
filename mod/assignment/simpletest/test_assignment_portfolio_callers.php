@@ -1,5 +1,5 @@
 <?php // $Id$
-require_once($CFG->libdir.'/simpletest/testportfoliolib.php');
+require_once($CFG->libdir.'/simpletest/portfolio_testclass.php');
 require_once($CFG->dirroot.'/mod/assignment/lib.php');
 require_once($CFG->dirroot.'/admin/generator.php');
 
@@ -17,7 +17,7 @@ class testAssignmentPortfolioCallers extends portfoliolib_test {
 
         parent::setUp();
 
-        $settings = array('quiet' => 1, 'database_prefix' => 'tst_', 'pre_cleanup' => 1,
+        $settings = array('quiet' => 1, 'pre_cleanup' => 1,
                           'modules_list' => array($this->module_type), 'assignment_grades' => true,
                           'assignment_type' => 'online',
                           'number_of_students' => 5, 'students_per_course' => 5, 'number_of_sections' => 1,
@@ -30,7 +30,6 @@ class testAssignmentPortfolioCallers extends portfoliolib_test {
         $submissions = $DB->get_records('assignment_submissions', array('assignment' => $first_module->id));
         $first_submission = reset($submissions);
 
-        $callbackargs = array('id' => $cm->id);
         $this->caller = parent::setup_caller('assignment_portfolio_caller', array('id' => $cm->id), $first_submission->userid);
     }
 
@@ -44,5 +43,8 @@ class testAssignmentPortfolioCallers extends portfoliolib_test {
         $this->assertEqual($sha1, $this->caller->get_sha1());
     }
 
+    public function test_caller_with_plugins() {
+        parent::test_caller_with_plugins();
+    }
 }
 ?>

@@ -1,5 +1,5 @@
 <?php // $Id$
-require_once($CFG->libdir.'/simpletest/testportfoliolib.php');
+require_once($CFG->libdir.'/simpletest/portfolio_testclass.php');
 require_once($CFG->dirroot.'/mod/glossary/lib.php');
 require_once($CFG->dirroot.'/admin/generator.php');
 
@@ -19,7 +19,7 @@ class testGlossaryPortfolioCallers extends portfoliolib_test {
 
         parent::setUp();
 
-        $settings = array('tiny' => 1, 'quiet' => 1, 'database_prefix' => 'tst_', 'pre_cleanup' => 1,
+        $settings = array('tiny' => 1, 'quiet' => 1, 'pre_cleanup' => 1,
                           'modules_list' => array('glossary'), 'entries_per_glossary' => 20,
                           'number_of_students' => 5, 'students_per_course' => 5, 'number_of_sections' => 1,
                           'number_of_modules' => 1, 'questions_per_course' => 0);
@@ -52,6 +52,10 @@ class testGlossaryPortfolioCallers extends portfoliolib_test {
         $csv_sha1 = $this->csv_caller->get_sha1();
         $this->csv_caller->prepare_package();
         $this->assertEqual($csv_sha1, $this->csv_caller->get_sha1());
+    }
+
+    public function test_caller_with_plugins() {
+        parent::test_caller_with_plugins();
     }
 }
 ?>

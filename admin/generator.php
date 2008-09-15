@@ -25,56 +25,6 @@ class generator {
                                  'wiki' => 'wiki',
                                  'workshop' => 'workshop');
 
-    public $tables = array('assignment' =>          array('required' => false, 'toclean' => true),
-                           'block' =>               array('required' => true,  'toclean' => false),
-                           'block_instance' =>      array('required' => true,  'toclean' => true),
-                           'block_pinned' =>        array('required' => true,  'toclean' => true),
-                           'capabilities' =>        array('required' => true,  'toclean' => false),
-                           'chat' =>                array('required' => false, 'toclean' => true),
-                           'chat_messages' =>       array('required' => false, 'toclean' => true),
-                           'chat_users' =>          array('required' => false, 'toclean' => true),
-                           'choice' =>              array('required' => false, 'toclean' => true),
-                           'config' =>              array('required' => true,  'toclean' => false),
-                           'config_plugins' =>      array('required' => true,  'toclean' => false),
-                           'context' =>             array('required' => true,  'toclean' => true),
-                           'course' =>              array('required' => true,  'toclean' => true, 'wheresql' => 'sortorder > 1'),
-                           'course_categories' =>   array('required' => true,  'toclean' => true, 'wheresql' => 'id > 1'),
-                           'course_modules' =>      array('required' => true,  'toclean' => true),
-                           'course_sections' =>     array('required' => true,  'toclean' => true),
-                           'data' =>                array('required' => false, 'toclean' => true),
-                           'data_content' =>        array('required' => false, 'toclean' => true),
-                           'data_fields' =>         array('required' => false, 'toclean' => true),
-                           'data_records' =>        array('required' => false, 'toclean' => true),
-                           'event' =>               array('required' => true,  'toclean' => true),
-                           'forum' =>               array('required' => false, 'toclean' => true),
-                           'forum_discussions' =>   array('required' => false, 'toclean' => true),
-                           'forum_posts' =>         array('required' => false, 'toclean' => true),
-                           'glossary' =>            array('required' => false, 'toclean' => true),
-                           'glossary_formats' =>    array('required' => false, 'toclean' => false),
-                           'grade_categories' =>    array('required' => true,  'toclean' => true),
-                           'grade_items' =>         array('required' => true,  'toclean' => true),
-                           'groups' =>              array('required' => true,  'toclean' => true),
-                           'label' =>               array('required' => false, 'toclean' => true),
-                           'lesson' =>              array('required' => false, 'toclean' => true),
-                           'lesson_default' =>      array('required' => false, 'toclean' => true),
-                           'log' =>                 array('required' => true,  'toclean' => true),
-                           'log_display' =>         array('required' => true,  'toclean' => true),
-                           'message' =>             array('required' => false, 'toclean' => true),
-                           'modules' =>             array('required' => true,  'toclean' => true),
-                           'question' =>            array('required' => false, 'toclean' => true),
-                           'quiz' =>                array('required' => false, 'toclean' => true),
-                           'resource' =>            array('required' => true,  'toclean' => true),
-                           'role' =>                array('required' => true,  'toclean' => false),
-                           'role_allow_assign' =>   array('required' => true,  'toclean' => false),
-                           'role_allow_override' => array('required' => true,  'toclean' => false),
-                           'role_assignments' =>    array('required' => true,  'toclean' => true),
-                           'role_capabilities' =>   array('required' => true,  'toclean' => true),
-                           'survey' =>              array('required' => false, 'toclean' => true),
-                           'user' =>                array('required' => true,  'toclean' => true, 'wheresql' => 'id > 2'),
-                           'wiki' =>                array('required' => false, 'toclean' => true)
-                           );
-    public $missing_tables = array();
-
     public $settings = array();
     public $eolchar = '<br />';
     public $do_generation = false;
@@ -91,9 +41,6 @@ class generator {
                    'help' => 'Your moodle username', 'type'=>'STRING', 'default' => ''),
              array('short'=>'pw', 'long'=>'password',
                    'help' => 'Your moodle password', 'type'=>'STRING', 'default' => ''),
-             array('short'=>'p', 'long'=>'data_prefix',
-                   'help' => 'An optional prefix prepended to the unique identifiers of the generated data. Default=test_',
-                   'type'=>'STRING', 'default' => 'test_'),
              array('short'=>'P', 'long' => 'database_prefix',
                    'help' => 'Database prefix to use: tables must already exist or the script will abort!',
                    'type'=>'STRING', 'default' => 'tst_'),
@@ -244,8 +191,7 @@ class generator {
 
             $user = new stdClass();
             $user->firstname = trim(ucfirst(strtolower($firstname)));
-            $user->username = $this->get('data_prefix') . strtolower(substr($firstname, 0, 7)
-                . substr($lastname, 0, 7)) . $next_user_id++;
+            $user->username = strtolower(substr($firstname, 0, 7) . substr($lastname, 0, 7)) . $next_user_id++;
             $user->lastname = $lastname;
             $user->email = $user->username . '@example.com';
             $user->mnethostid = 1;
@@ -362,7 +308,7 @@ class generator {
             $newcourse = fullclone($base_course);
             $newcourse->fullname = "Test course $next_course_id";
             $newcourse->shortname = "Test $next_course_id";
-            $newcourse->idnumber = $this->get('data_prefix') . $next_course_id;
+            $newcourse->idnumber = $next_course_id;
             if (!$course = create_course($newcourse)) {
                 $this->verbose("Error inserting a new course in the database!");
                 if (!$this->get('ignore_errors')) {
@@ -564,7 +510,7 @@ class generator {
                                 break;
                         }
 
-                        $module->name = $this->get('data_prefix') . ucfirst($moduledata->name) . ' ' . $moduledata->count++;
+                        $module->name = ucfirst($moduledata->name) . ' ' . $moduledata->count++;
 
                         $module->course = $courseid;
                         $module->section = $i;
@@ -940,7 +886,8 @@ class generator {
                     $type = $database_field_types[array_rand($database_field_types)];
                     require_once($CFG->dirroot.'/mod/data/field/'.$type.'/field.class.php');
                     $newfield = 'data_field_'.$type;
-                    $newfield = new $newfield(0, $data, true);
+                    $cm = get_coursemodule_from_instance('data', $data->id);
+                    $newfield = new $newfield(0, $data, $cm);
                     $fields[$data->id][] = $newfield;
                     $newfield->insert_field();
                 }
@@ -1002,45 +949,6 @@ class generator {
         return $result;
     }
 
-    /**
-     * If an alternate DB prefix was given, we need to check that the appropriate tables
-     * exist.
-     */
-    public function check_test_tables() {
-        global $CFG, $DB;
-
-        ksort($this->tables);
-        // Check that all required tables exist
-
-        $table_errors = array();
-
-        foreach ($this->tables as $table => $tabledata) {
-            require_once($CFG->libdir . '/ddllib.php');
-            $dbman = $DB->get_manager();
-            $xmltable = new XMLDBTable($table);
-            if (!$dbman->table_exists($xmltable)) {
-                if ($tabledata['required']) {
-                    $table_errors[] = $this->get('database_prefix') . $table;
-                }
-                $this->missing_tables[] = $table;
-            }
-        }
-
-        if (!empty($table_errors) && !$this->get('quiet')) {
-            if (!$this->get('quiet')) {
-                echo "The following required tables do not exist in the database:" . $this->eolchar;
-                foreach ($table_errors as $table) {
-                    echo "    $table" . $this->eolchar;
-                }
-                echo "Please create these tables or choose a different database prefix before running "
-                    ."this script with these parameters again." . $this->eolchar;
-            }
-            if (!$this->get('ignore_errors')) {
-                die();
-            }
-        }
-
-    }
 
     /**
      * If verbose is switched on, prints a string terminated by the global eolchar string.
@@ -1052,11 +960,10 @@ class generator {
         }
     }
 
+
     /**
-     * Attempts to delete all generated test data. A few conditions are required for this to be successful:
-     *   1. If a database-prefix has been given, tables with this prefix must exist
-     *   2. If a data prefix has been given (e.g. test_), test data must contain this prefix in their unique identifiers (not PKs)
-     * The first method is safest, because it will not interfere with existing tables, but you have to create all the tables yourself.
+     * Attempts to delete all generated test data.
+     * WARNING: THIS WILL COMPLETELY MESS UP A "REAL" SITE, AND IS INTENDED ONLY FOR DEVELOPMENT PURPOSES
      */
     function data_cleanup() {
         global $DB;
@@ -1065,63 +972,7 @@ class generator {
             ob_start();
         }
 
-        // Truncate test tables if a specific db prefix was given
-        if (!is_null($this->get('database_prefix')) && isset($this->tables)) {
-            foreach ($this->tables as $table_name => $tabledata) {
-                // Don't empty a few tables
-                if (!in_array($table_name, array('modules', 'block')) &&
-                            $tabledata['toclean'] &&
-                            !in_array($table_name, $this->missing_tables)) {
-                    // Leave the frontpage course
-                    $conditions = 'id > 0';
-                    if (!empty($tabledata['wheresql'])) {
-                        $conditions .= " AND {$tabledata['wheresql']} ";
-                    }
-
-                    if ($DB->delete_records_select($table_name, $conditions)) {
-                        $this->verbose("Truncated table $table_name");
-                    } else {
-                        $this->verbose("Could not truncate table $table_name");
-                        if (!$this->get('ignore_errors')) {
-                            die();
-                        }
-                    }
-                }
-            }
-
-        } else {
-            echo "BOOH";
-        }
-        /** Following code has been commented for security reasons
-
-        else { // Delete records in normal tables if no specific db prefix was given
-            $courses = $DB->get_records_select('course', "idnumber LIKE ?",
-                array($this->get('data_prefix').'%'), null, 'id');
-
-            if (is_array($courses) && count($courses) > 0) {
-                foreach ($courses as $course) {
-                    if (!delete_course($course->id, false)) {
-                        $this->verbose("Could not delete course $course->id or some of "
-                            ."its associated records from the database.");
-                        if (!$this->get('ignore_errors')) {
-                            die();
-                        }
-                    } else {
-                        $this->verbose("Deleted course $course->id and all associated records from the database.");
-                    }
-                }
-            }
-
-            $this->verbose("Deleting test users (permanently)...");
-            if (!$DB->delete_records_select('user', "username LIKE ?", array($this->get('data_prefix').'%'))) {
-                $this->verbose("Error deleting users from the database");
-                if (!$this->get('ignore_errors')) {
-                    die();
-                }
-            }
-        }
-
-        */
+        // TODO Cleanup code
 
         if ($this->get('quiet')) {
             ob_end_clean();
@@ -1169,6 +1020,7 @@ class generator_cli extends generator {
 
         // Building the USAGE output of the command line version
         $help = "Moodle Data Generator. Generates Data for Moodle sites. Good for benchmarking and other tests.\n\n"
+              . "FOR DEVELOPMENT PURPOSES ONLY! DO NOT USE ON A PRODUCTION SITE!\n\n"
               . "Usage: {$settings[0]}; [OPTION] ...\n"
               . "Options:\n"
               . "  -h,    -?, -help, --help               This output\n";
@@ -1283,6 +1135,9 @@ class generator_web extends generator {
     public function display() {
         print_header("Data generator");
         print_heading("Data generator: web interface");
+        print_heading("FOR DEVELOPMENT PURPOSES ONLY. DO NOT USE ON A PRODUCTION SITE!", '', 3);
+        print_heading("Your database contents will probably be massacred. You have been warned", '', 5);
+
         $mform = new generator_form();
 
         $this->do_generation = optional_param('do_generation', false, PARAM_BOOL);

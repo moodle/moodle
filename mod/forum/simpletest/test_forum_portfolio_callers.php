@@ -1,5 +1,5 @@
 <?php // $Id$
-require_once($CFG->libdir.'/simpletest/testportfoliolib.php');
+require_once($CFG->libdir.'/simpletest/portfolio_testclass.php');
 require_once($CFG->dirroot.'/mod/forum/lib.php');
 require_once($CFG->dirroot.'/admin/generator.php');
 
@@ -20,7 +20,7 @@ class testForumPortfolioCallers extends portfoliolib_test {
 
         $settings = array('quiet' => 1,
                           'verbose' => 0,
-                          'database_prefix' => 'tst_',
+
                           'pre_cleanup' => 0,
                           'post_cleanup' => 0,
                           'modules_list' => array($this->module_type),
@@ -66,5 +66,8 @@ class testForumPortfolioCallers extends portfoliolib_test {
         $this->assertEqual($sha1, $this->discussioncaller->get_sha1());
     }
 
+    public function test_caller_with_plugins() {
+        parent::test_caller_with_plugins();
+    }
 }
 ?>
