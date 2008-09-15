@@ -9,10 +9,6 @@ body, td, li, input, select {
     font-size : 13px;
 }
 
-body {
-    margin : 5px;
-}
-
 th {
   font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
   font-size: 11px;
