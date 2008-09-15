@@ -50,7 +50,7 @@ class repository_flickr_public extends repository{
         $this->api_key = $this->get_option('api_key');
         $this->flickr = new phpFlickr($this->api_key);
 
-        $this->flickr_account = $this->get_option('public_account');
+        $this->flickr_account = $this->get_option('email_address');
 
         if(!empty($this->flickr_account)) {
             if(empty($action)){
@@ -210,7 +210,16 @@ class repository_flickr_public extends repository{
     }
 
     public static function has_instance_config() {
-        return false;
+        return true;
+    }
+
+    public function instance_config_form(&$mform) {
+        $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
+        //$mform->addRule('email_address', get_string('required'), 'required', null, 'client');
+    }
+
+    public static function get_instance_option_names() {
+        return array('email_address');
     }
 
     public function admin_config_form(&$mform) {
@@ -220,11 +229,15 @@ class repository_flickr_public extends repository{
         }
         $strrequired = get_string('required');
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr_public'), array('value'=>$api_key,'size' => '40'));
-        $mform->addElement('text', 'public_account', get_string('public_account', 'repository_flickr_public'), array('size' => '40'));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
     }
-    public static function get_admin_option_names(){
-        return array('api_key', 'public_account');
+
+    public static function get_admin_option_names() {
+        return array('api_key');
+    }
+
+    public static function type_init() {
+        //here we create a default instances for this type
     }
 
 }
