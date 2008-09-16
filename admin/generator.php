@@ -3,6 +3,10 @@ require_once(dirname(__FILE__).'/../config.php');
 require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->dirroot .'/course/lib.php');
 require_once($CFG->dirroot .'/mod/resource/lib.php');
+
+define('GENERATOR_RANDOM', 0);
+define('GENERATOR_SEQUENCE', 1);
+
 /**
  * Controller class for data generation
  */
@@ -24,6 +28,15 @@ class generator {
                                  'survey' => 'survey',
                                  'wiki' => 'wiki',
                                  'workshop' => 'workshop');
+
+    public $resource_types = array('text', 'file', 'html', 'repository', 'directory', 'ims');
+    public $glossary_formats = array('continuous', 'encyclopedia', 'entrylist', 'faq', 'fullwithauthor', 'fullwithoutauthor', 'dictionary');
+    public $assignment_types = array('upload', 'uploadsingle', 'online', 'offline');
+    public $forum_types = array('single', 'eachuser', 'qanda', 'general');
+
+    public $resource_type_counter = 0;
+    public $assignment_type_counter = 0;
+    public $forum_type_counter = 0;
 
     public $settings = array();
     public $eolchar = '<br />';
@@ -76,13 +89,21 @@ class generator {
                    'help' => 'The list of modules you want to generate', 'default' => $this->modules_list,
                    'type' => 'mod1,mod2...'),
              array('short'=>'rt', 'long' => 'resource_type',
-                   'help' => 'The specific type of resource you want to generate. Defaults to random',
-                   'default' => 'random',
-                   'type' => 'STRING'),
+                   'help' => 'The specific type of resource you want to generate. Defaults to all',
+                   'default' => $this->resource_types,
+                   'type' => 'SELECT'),
              array('short'=>'at', 'long' => 'assignment_type',
-                   'help' => 'The specific type of assignment you want to generate. Defaults to random',
-                   'default' => 'random',
-                   'type' => 'STRING'),
+                   'help' => 'The specific type of assignment you want to generate. Defaults to all',
+                   'default' => $this->assignment_types,
+                   'type' => 'SELECT'),
+             array('short'=>'ft', 'long' => 'forum_type',
+                   'help' => 'The specific type of forum you want to generate. Defaults to all',
+                   'default' => $this->forum_types,
+                   'type' => 'SELECT'),
+             array('short'=>'gf', 'long' => 'glossary_format',
+                   'help' => 'The specific format of glossary you want to generate. Defaults to all',
+                   'default' => $this->glossary_formats,
+                   'type' => 'SELECT'),
              array('short'=>'ag', 'long' => 'assignment_grades',
                    'help' => 'Generate random grades for each student/assignment tuple', 'default' => true),
              array('short'=>'qg', 'long' => 'quiz_grades',
@@ -360,12 +381,6 @@ class generator {
         array_shift($modules);
         array_unshift($modules, $first_module);
 
-        $resource_types = array('text', 'file', 'html', 'repository', 'directory', 'ims');
-        $glossary_formats = array('continuous', 'encyclopedia', 'entrylist', 'faq', 'fullwithauthor',
-            'fullwithoutauthor', 'dictionary');
-        $assignment_types = array('upload', 'uploadsingle', 'online', 'offline');
-        $forum_types = array('single', 'eachuser', 'qanda', 'general');
-
         $modules_array = array();
 
         if (count($courses) > 0) {
@@ -409,16 +424,13 @@ class generator {
                                      . "its speed and ease of use being affected dramatically.";
                         $content = 'Very useful content, I am sure you would agree';
 
+                        $module_type_index = 0;
+
                         // Special module-specific config
                         switch ($moduledata->name) {
                             case 'assignment':
                                 $module->description = $description;
-                                if ($this->get('assignment_type') == 'random') {
-                                    $module->assignmenttype = $assignment_types[rand(0, count($assignment_types) - 1)];
-                                } else {
-                                    $module->assignmenttype = $this->get('assignment_type');
-                                }
-
+                                $module->assignmenttype = $this->get_module_type('assignment');
                                 $module->timedue = mktime() + 89487321;
                                 $module->grade = rand(50,100);
                                 break;
@@ -446,13 +458,13 @@ class generator {
                                 break;
                             case 'forum':
                                 $module->intro = $description;
-                                $module->type = $forum_types[rand(0, count($forum_types) - 1)];
+                                $module->type = $this->get_module_type('forum');
                                 $module->forcesubscribe = rand(0, 1);
                                 $module->format = 1;
                                 break;
                             case 'glossary':
                                 $module->intro = $description;
-                                $module->displayformat = $glossary_formats[rand(0, count($glossary_formats) - 1)];
+                                $module->displayformat = $this->glossary_formats[rand(0, count($this->glossary_formats) - 1)];
                                 $module->cmidnumber = rand(0,999999);
                                 break;
                             case 'label':
@@ -477,12 +489,7 @@ class generator {
                                 $module->quizpassword = '';
                                 break;
                             case 'resource':
-                                if ($this->get('resource_type') == 'random') {
-                                    $module->type = $resource_types[rand(0, count($resource_types) - 1)];
-                                } else {
-                                    $module->type = $this->get('resource_type');
-                                }
-
+                                $module->type = $this->get_module_type('resource');
                                 $module->alltext = $content;
                                 $module->summary = $description;
                                 $module->windowpopup = rand(0,1);
@@ -994,6 +1001,35 @@ class generator {
             return false;
         }
     }
+
+    public function get_module_type($modulename) {
+        $return_val = false;
+
+        $type = $this->get($modulename.'_type');
+
+        if (is_object($type) && isset($type->type) && isset($type->options)) {
+
+            if ($type->type == GENERATOR_RANDOM) {
+                $return_val = $type->options[array_rand($type->options)];
+
+            } elseif ($type->type == GENERATOR_SEQUENCE) {
+                $return_val = $type->options[$this->{$modulename.'_type_counter'}];
+                $this->{$modulename.'_type_counter'}++;
+
+                if ($this->{$modulename.'_type_counter'} == count($type->options)) {
+                    $this->{$modulename.'_type_counter'} = 0;
+                }
+            }
+
+        } elseif (is_array($type)) {
+            $return_val = $type[array_rand($type)];
+
+        } elseif (is_string($type)) {
+            $return_val = $type;
+        }
+
+        return $return_val;
+    }
 }
 
 class generator_argument {
@@ -1070,7 +1106,7 @@ class generator_cli extends generator {
 
                 if (!is_null($value)) {
 
-                    if (!empty($argument->type) && $argument->type == 'mod1,mod2...') {
+                    if (!empty($argument->type) && ($argument->type == 'mod1,mod2...' || $argument->type == 'SELECT')) {
                         $value = explode(',', $value);
                     }
 
@@ -1202,6 +1238,13 @@ class generator_form extends moodleform {
             if (!empty($setting->type) && $setting->type == 'mod1,mod2...') {
                 $type = 'select';
                 $options = $generator->modules_list;
+                $htmloptions = array('multiple' => 'multiple');
+            } elseif (!empty($setting->type) && $setting->type == 'SELECT') {
+                $type = 'select';
+                $options = array();
+                foreach ($setting->default as $option) {
+                    $options[$option] = $option;
+                }
                 $htmloptions = array('multiple' => 'multiple');
             } elseif (!empty($setting->type)) {
                 $type = 'text';

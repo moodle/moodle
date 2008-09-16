@@ -16,12 +16,16 @@ class testAssignmentPortfolioCallers extends portfoliolib_test {
         global $DB, $USER;
 
         parent::setUp();
+        $assignment_types = new stdClass();
+        $assignment_types->type = GENERATOR_SEQUENCE;
+        $assignment_types->options = array('upload');
 
-        $settings = array('quiet' => 1, 'pre_cleanup' => 1,
+        $settings = array('quiet' => 1,
                           'modules_list' => array($this->module_type), 'assignment_grades' => true,
-                          'assignment_type' => 'online',
+                          'assignment_type' => $assignment_types,
                           'number_of_students' => 5, 'students_per_course' => 5, 'number_of_sections' => 1,
-                          'number_of_modules' => 1, 'questions_per_course' => 0);
+                          'number_of_modules' => 3, 'questions_per_course' => 0);
+
         generator_generate_data($settings);
 
         $this->modules = $DB->get_records($this->module_type);

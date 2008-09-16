@@ -1,5 +1,5 @@
 <?php // $Id$
-require_once($CFG->libdir.'/simpletest/testportfoliolib.php');
+require_once($CFG->libdir.'/simpletest/portfolio_testclass.php');
 require_once($CFG->dirroot.'/mod/resource/lib.php');
 require_once($CFG->dirroot.'/admin/generator.php');
 
@@ -17,10 +17,15 @@ class testResourcePortfolioCallers extends portfoliolib_test {
 
         parent::setUp();
 
+        $resource_type = new stdClass();
+        $resource_type->type = GENERATOR_SEQUENCE;
+        $resource_type->options = array('file', 'text', 'html');
+
         $settings = array('quiet' => 1, 'pre_cleanup' => 1,
                           'modules_list' => array($this->module_type),
+                          'resource_type' => $resource_type,
                           'number_of_students' => 15, 'students_per_course' => 15, 'number_of_sections' => 1,
-                          'number_of_modules' => 1, 'messages_per_resource' => 15);
+                          'number_of_modules' => 3);
 
         generator_generate_data($settings);
 
