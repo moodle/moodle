@@ -41,7 +41,7 @@ class question_dataset_dependent_definitions_form extends moodleform {
                 $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer->answer);
             }
         }else{
-            foreach ($SESSION->datasetdependent->questionform->answers as $answer){
+            foreach ($SESSION->calculated->questionform->answers as $answer){
                 $mandatorydatasets += $this->qtypeobj->find_dataset_names($answer);
             }
         }

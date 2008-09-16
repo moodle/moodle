@@ -34,7 +34,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $this->qtypeobj =& $QTYPES[$this->question->qtype];
         //get the dataset defintions for this question
         if (empty($question->id)) {
-            $this->datasetdefs = $this->qtypeobj->get_dataset_definitions($question->id, $SESSION->datasetdependent->definitionform->dataset);
+            $this->datasetdefs = $this->qtypeobj->get_dataset_definitions($question->id, $SESSION->calculated->definitionform->dataset);
         } else {
             if (empty($question->options)) {
                 $this->get_question_options($question);
