@@ -3873,7 +3873,7 @@ function forum_move_attachments($discussion, $forumfrom, $forumto) {
  * @return mixed string or array of (html text withouth images and image HTML)
  */
 function forum_print_attachments($post, $cm, $type) {
-    global $CFG, $DB;
+    global $CFG, $DB, $USER;
 
     if (empty($post->attachment)) {
         return $type !== 'separateimages' ? '' : array('', '');
