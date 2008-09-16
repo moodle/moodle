@@ -134,7 +134,7 @@ class repository_flickr_public extends repository {
 
     public function print_search() {
         parent::print_search();
-        echo '<label>Tag: </label><input type="text" name="tag" /><br />';
+        echo '<label>Tag: </label><br /><input type="text" name="tag" /><br />';
         return true;
     }
 

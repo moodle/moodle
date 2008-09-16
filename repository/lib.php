@@ -38,29 +38,6 @@
 
 
 
-/**
- * This is the base class of the repository class
- *
- * To use repository plugin, you need to create a new folder under repository/, named as the remote
- * repository, the subclass must be defined in  the name
-
- *
- * class repository is an abstract class, some functions must be implemented in subclass.
- *
- * See an example of use of this library in repository/boxnet/repository.class.php
- *
- * A few notes:
- *   // print login page or a link to redirect to another page
- *   $repo->print_login();
- *   // call get_listing, and print result
- *   $repo->print_listing();
- *   // print a search box
- *   $repo->print_search();
- *
- * @version 1.0 dev
- * @package repository
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- */
 require_once(dirname(dirname(__FILE__)) . '/config.php');
 require_once(dirname(dirname(__FILE__)) . '/lib/filelib.php');
 require_once(dirname(dirname(__FILE__)) . '/lib/formslib.php');
@@ -437,9 +414,29 @@ function repository_get_types($visible=null) {
 }
 
 /**
- * The base class for all repository plugins
+ * This is the base class of the repository class
+ *
+ * To use repository plugin, see:
+ * http://docs.moodle.org/en/Development:Repository_How_to_Create_Plugin
+ *
+ * class repository is an abstract class, some functions must be implemented in subclass.
+ *
+ * See an example: repository/boxnet/repository.class.php
+ *
+ * A few notes:
+ *   // for ajax file picker, this will print a json string to tell file picker
+ *   // how to build a login form
+ *   $repo->print_login();
+ *   // for ajax file picker, this will return a files list.
+ *   $repo->get_listing();
+ *   // this function will be used for non-javascript version.
+ *   $repo->print_listing();
+ *   // print a search box
+ *   $repo->print_search();
+ *
+ * @package repository
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-
 abstract class repository {
     public $id;
     public $context;
@@ -879,7 +876,7 @@ abstract class repository {
         echo '<input type="hidden" name="repo_id" value="'.$this->id.'" />';
         echo '<input type="hidden" name="ctx_id" value="'.$this->context->id.'" />';
         echo '<input type="hidden" name="seekey" value="'.sesskey().'" />';
-        echo '<input name="s" value="" />';
+        echo '<label>'.get_string('keyword', 'repository').': </label><br/><input name="s" value="" /><br/>';
         return true;
     }
 

@@ -1,11 +1,9 @@
 <?php // $Id$
-
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 //       Don't modify this file unless you know how it works             //
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
-
 /**
  * Return javascript to create file picker to browse repositories
  * @global object $CFG
@@ -17,8 +15,8 @@ function repository_get_client($context) {
     global $CFG, $USER;
     $suffix = uniqid();
     $sesskey = sesskey();
-    $strsaveas    = get_string('saveas', 'repository').': ';
-    $stradd  = get_string('add', 'repository');
+    // language string
+    $stradd       = get_string('add', 'repository');
     $strback      = get_string('back', 'repository');
     $strcancel    = get_string('cancel');
     $strclose     = get_string('close', 'repository');
@@ -39,6 +37,7 @@ function repository_get_client($context) {
     $strmgr       = get_string('manageurl', 'repository');
     $strnoenter   = get_string('noenter', 'repository');
     $strsave      = get_string('save', 'repository');
+    $strsaveas    = get_string('saveas', 'repository').': ';
     $strsaved     = get_string('saved', 'repository');
     $strsaving    = get_string('saving', 'repository');
     $strsize      = get_string('size', 'repository').': ';
