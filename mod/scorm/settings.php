@@ -21,5 +21,8 @@ $settings->add(new admin_setting_configcheckbox('scorm_allowtypelocalsync', get_
 $settings->add(new admin_setting_configcheckbox('scorm_allowtypeimsrepository', get_string('allowtypeimsrepository', 'scorm'),
                    '', 0));
 
+$settings->add(new admin_setting_configcheckbox('scorm_allowapidebug', get_string('allowapidebug', 'scorm'),
+                   '', 0));
 
-
+$settings->add(new admin_setting_configtext('scorm_apidebugmask', get_string('apidebugmask', 'scorm'),
+                   '', '.*'));

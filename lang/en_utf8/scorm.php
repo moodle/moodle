@@ -4,6 +4,8 @@
 
 $string['activation'] = 'Activation';
 $string['advanced'] = 'Parameters';
+$string['allowapidebug'] = 'Activate API debug and tracing (set the capture mask with apidebugmask)';
+$string['apidebugmask'] = 'API debug capture mask (simple regex on &lt;username&gt;:&lt;activityname&gt;)';
 $string['allowtypeexternal'] = 'Enable external package type';
 $string['allowtypeimsrepository'] = 'Enable IMS package type';
 $string['allowtypelocalsync'] = 'Enable downloaded package type';

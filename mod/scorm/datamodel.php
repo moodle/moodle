@@ -69,7 +69,7 @@
                 }
 //                // Log every datamodel update requested
 //                if (substr($element,0,15) == 'adl.nav.request' || substr($element,0,3) == 'cmi') {
-//                    if (debugging('',DEBUG_DEVELOPER)) {
+//                    if (scorm_debugging($scorm)) {
 //                        add_to_log($course->id, 'scorm', 'trk: '.trim($scorm->name).' at: '.$attempt, 'view.php?id='.$cm->id, "$element => $value", $cm->id);
 //                    }
 //                }

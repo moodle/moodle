@@ -896,4 +896,26 @@ function scorm_get_attempt_count($user, $scorm) {
     }
     return $attemptcount;
 }
+
+/**
+* Figure out with this is a debug situation
+*
+* @param object $scorm a moodle scrom object - mdl_scorm
+* @return boolean - debugging true/false
+*/   
+function scorm_debugging($scorm) {
+    global $CFG, $USER;
+    if (!$CFG->scorm_allowapidebug) {
+        return false;
+    }
+    $identifier = $USER->username.':'.$scorm->name;
+    $test = $CFG->scorm_apidebugmask;
+    // check the regex is only a short list of safe characters
+    if (!preg_match('/^[\w\s\*\.\?\+\:\_\\\]+$/', $test)) {
+        return false;
+    }
+    $res = false;
+    eval('$res = preg_match(\'/^'.$test.'/\', $identifier) ? true : false;');
+    return $res;
+}
 ?>
