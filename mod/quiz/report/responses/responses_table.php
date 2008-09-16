@@ -156,14 +156,16 @@ class quiz_report_responses_table extends table_sql {
                 $format_options->para = false;
                 $format_options->noclean = true;
                 $format_options->newlines = false;
-                if ($grade<= 0) {
-                    $qclass = 'uncorrect';
-                } elseif ($grade == 1) {
-                    $qclass = 'correct';
+                $qclass = question_get_feedback_class($grade);
+                $feedbackimg = question_get_feedback_image($grade);
+                $questionclass = "que {$question->qtype}";
+                $response = format_text($response, FORMAT_MOODLE, $format_options);
+                if ($response){
+                    return "<span class=\"$questionclass\"><span class=\"$qclass\">".$response."</span></span>$feedbackimg";
                 } else {
-                    $qclass = 'partialcorrect';
-                }          
-                return '<span class="'.$qclass.'">'.format_text($response, FORMAT_MOODLE, $format_options).'</span>';
+                    return '';
+                }
+                
             } else {
                 return $response;
             }

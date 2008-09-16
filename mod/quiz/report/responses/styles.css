@@ -21,14 +21,3 @@ body#mod-quiz-report table#attempts .numcol {
   vertical-align : middle !important;
 }
 
-body#mod-quiz-report table#attempts .uncorrect {
-  background-color:#FF9090;
-}
-
-body#mod-quiz-report table#attempts .correct {
-  background-color:#90FF90;
-}
-
-body#mod-quiz-report table#attempts .partialcorrect {
-  background-color:#FFFF90;
-}
