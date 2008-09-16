@@ -82,7 +82,11 @@
 
     // Print the main part of the page
     print_heading(format_string($scorm->name));
-    print_box(format_text($scorm->summary), 'generalbox', 'intro');
+    $attemptstatus = '';
+    if($scorm->displayattemptstatus == 1) {
+        $attemptstatus = scorm_get_attempt_status($USER,$scorm);
+    }
+    print_simple_box(format_text($scorm->summary).$attemptstatus, 'center', '70%', '', 5, 'generalbox', 'intro');
     scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
     print_footer($course);
 ?>

@@ -103,6 +103,34 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setHelpButton('maxattempt', array('maxattempt',get_string('maximumattempts', 'scorm'), 'scorm'));
         $mform->setDefault('maxattempt', 1);
 
+// Display attempt status
+        $mform->addElement('selectyesno', 'displayattemptstatus', get_string('displayattemptstatus', 'scorm'));
+        $mform->setHelpButton('displayattemptstatus', array('displayattemptstatus',get_string('displayattemptstatus', 'scorm'), 'scorm'));
+        $mform->setDefault('displayattemptstatus', 1);
+
+// Display course structure
+        $mform->addElement('selectyesno', 'displaycoursestructure', get_string('displaycoursestructure', 'scorm'));
+        $mform->setHelpButton('displaycoursestructure', array('displaycoursestructure',get_string('displaycoursestructure', 'scorm'), 'scorm'));
+        $mform->setDefault('displaycoursestructure', 1);
+
+// Force completed
+        $mform->addElement('selectyesno', 'forcecompleted', get_string('forcecompleted', 'scorm'));
+        $mform->setHelpButton('forcecompleted', array('forcecompleted',get_string('forcecompleted', 'scorm'), 'scorm'));
+        $mform->setDefault('forcecompleted', 0);
+        $mform->setAdvanced('forcecompleted');
+
+// Force new attempt
+        $mform->addElement('selectyesno', 'forcenewattempt', get_string('forcenewattempt', 'scorm'));
+        $mform->setHelpButton('forcenewattempt', array('forcenewattempt',get_string('forcenewattempt', 'scorm'), 'scorm'));
+        $mform->setDefault('forcenewattempt', 0);
+        $mform->setAdvanced('forcenewattempt');
+        
+// Last attempt lock - lock the enter button after the last available attempt has been made
+        $mform->addElement('selectyesno', 'lastattemptlock', get_string('lastattemptlock', 'scorm'));
+        $mform->setHelpButton('lastattemptlock', array('lastattemptlock',get_string('lastattemptlock', 'scorm'), 'scorm'));
+        $mform->setDefault('lastattemptlock', 0);
+        $mform->setAdvanced('lastattemptlock');
+        
 // What Grade
         $mform->addElement('select', 'whatgrade', get_string('whatgrade', 'scorm'), $SCORM_WHAT_GRADE);
         $mform->disabledIf('whatgrade', 'maxattempt','eq',1);

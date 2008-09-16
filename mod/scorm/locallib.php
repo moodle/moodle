@@ -238,10 +238,28 @@ function scorm_get_scoes($id,$organisation=false) {
     }
 }
 
-function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value) {
+function scorm_insert_track($userid,$scormid,$scoid,$attempt,$element,$value,$forcecompleted=false) {
     global $DB;
 
     $id = null;
+
+    if ($forcecompleted) {
+        //TODO - this could be broadened to encompass SCORM 2004 in future
+        if (($element == 'cmi.core.lesson_status') && ($value == 'incomplete')) {
+            if ($track = $DB->get_record_select('scorm_scoes_track','userid=? AND scormid=? AND scoid=? AND attempt=? AND element=\'cmi.core.score.raw\'', array($userid, $scormid, $scoid, $attempt))) {
+                $value = 'completed';
+            }
+        }
+        if ($element == 'cmi.core.score.raw') {
+            if ($tracktest = $DB->get_record_select('scorm_scoes_track','userid=? AND scormid=? AND scoid=? AND attempt=? AND element=\'cmi.core.lesson_status\'', array($userid, $scormid, $scoid, $attempt))) {
+                if ($tracktest->value == "incomplete") {
+                    $tracktest->value = "completed";
+                    $idtest = $DB->update_record('scorm_scoes_track',$tracktest);
+                }
+            }
+        }
+    }
+
     if ($track = $DB->get_record('scorm_scoes_track',array('userid'=>$userid, 'scormid'=>$scormid, 'scoid'=>$scoid, 'attempt'=>$attempt, 'element'=>$element))) {
         $track->value = $value;
         $track->timemodified = time();
@@ -499,6 +517,8 @@ function scorm_get_last_attempt($scormid, $userid) {
         } else {
             return $lastattempt->a;
         }
+    } else {
+        return false;
     }
 }
 
@@ -561,10 +581,12 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 
     $organization = optional_param('organization', '', PARAM_INT);
 
-    print_simple_box_start('center',$boxwidth);
+    if($scorm->displaycoursestructure == 1) {
+        print_simple_box_start('center',$boxwidth);
 ?>
         <div class="structurehead"><?php print_string('contents','scorm') ?></div>
 <?php
+    }
     if (empty($organization)) {
         $organization = $scorm->launch;
     }
@@ -607,9 +629,18 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
 
     $result = scorm_get_toc($user,$scorm,'structlist',$orgidentifier);
     $incomplete = $result->incomplete;
-    echo $result->toc;
-    print_simple_box_end();
 
+    // do we want the TOC to be displayed?
+    if($scorm->displaycoursestructure == 1) {
+        echo $result->toc;
+        print_simple_box_end();
+    }
+    
+    // is this the first attempt ?
+    $attemptcount = scorm_get_attempt_count($user, $scorm);
+    
+    // do not give the player launch FORM if the SCORM object is locked after the final attempt
+    if ($scorm->lastattemptlock == 0 || $result->attemptleft > 0) {
 ?>
             <div class="scorm-center">
                <form id="theform" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/player.php">
@@ -621,11 +652,15 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
                   } else {
                       echo '<input type="hidden" name="mode" value="normal" />'."\n";
                   }
-                  if (($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
+                  if ($scorm->forcenewattempt == 1) {
+                      if ($incomplete === false) {
+                          echo '<input type="hidden" name="newattempt" value="on" />'."\n";
+                      }
+                  } elseif ($attemptcount != 0 && ($incomplete === false) && (($result->attemptleft > 0)||($scorm->maxattempt == 0))) {
 ?>
-                  <br />
-                  <input type="checkbox" id="a" name="newattempt" />
-                  <label for="a"><?php print_string('newattempt','scorm') ?></label>
+                      <br />
+                      <input type="checkbox" id="a" name="newattempt" />
+                      <label for="a"><?php print_string('newattempt','scorm') ?></label>
 <?php
                   }
               ?>
@@ -637,6 +672,7 @@ function scorm_view_display ($user, $scorm, $action, $cm, $boxwidth='') {
               </form>
           </div>
 <?php
+    }
 }
 
 function scorm_simple_play($scorm,$user) {
@@ -776,5 +812,88 @@ function scorm_element_cmp($a, $b) {
     } else {
         return 0;  // equal to
     }
+}
+
+/**
+* Generate the user attempt status string
+*
+* @param object $user Current context user
+* @param object $scorm a moodle scrom object - mdl_scorm
+* @return string - Attempt status string
+*/   
+function scorm_get_attempt_status($user, $scorm) {
+    global $DB;
+    
+    $attempts = $DB->get_records_select('scorm_scoes_track',"element='cmi.core.score.raw' AND userid=? AND scormid=?", array($user->id, $scorm->id),'attempt','attempt AS attemptnumber, value AS grade');
+    if(empty($attempts)) {
+        $attemptcount = 0;
+    } else {
+        $attemptcount = count($attempts);
+    }
+    
+    $result = '<p>'.get_string('noattemptsallowed', 'scorm').': ';
+    if ($scorm->maxattempt > 0) {
+        $result .= $scorm->maxattempt . '<BR>';
+    } else {
+        $result .= get_string('unlimited').'<BR>';
+    }
+    $result .= get_string('noattemptsmade', 'scorm').': ' . $attemptcount . '<BR>';
+
+    $gradereported = 0;
+    $gradesum = 0;
+    switch ($scorm->grademethod) {
+        case GRADEHIGHEST:
+           $grademethod = get_string('gradehighest', 'scorm');
+        break;
+        case GRADEAVERAGE:
+           $grademethod = get_string('gradeaverage', 'scorm');
+        break;
+        case GRADESUM:
+           $grademethod = get_string('gradesum', 'scorm');
+        break;
+        case GRADESCOES:
+           $grademethod = get_string('gradescoes', 'scorm');
+        break;
+    }
+    
+    if(!empty($attempts)) {
+        foreach($attempts as $attempt) {
+            $gradereported = scorm_grade_user_attempt($scorm, $user->id, $attempt->attemptnumber);
+            $result .= get_string('gradeforattempt', 'scorm').' ' . $attempt->attemptnumber . ': ' . $attempt->grade .'%<BR>';
+        }
+    }
+
+    $result .= get_string('grademethod', 'scorm'). ': ' . $grademethod;
+    if(empty($attempts)) {
+        $result .= '<BR>' . get_string('gradereported','scorm') . ': ' . get_string('none') . '<BR>';
+    } else {
+        $result .= '<BR>' . get_string('gradereported','scorm') . ': ' . $gradereported . ($scorm->grademethod == GRADESCOES ? '' : '%') .'<BR>';
+    }
+    $result .= '</p>';
+    if ($attemptcount >= $scorm->maxattempt and $scorm->maxattempt > 0) {
+        $result .= '<p><font color="#cc0000">'.get_string('exceededmaxattempts','scorm').'</font></p>';
+    }
+    return $result;
+}
+
+/**
+* Get SCORM attempt count
+*
+* @param object $user Current context user
+* @param object $scorm a moodle scrom object - mdl_scorm
+* @return int - no. of attempts so far
+*/   
+function scorm_get_attempt_count($user, $scorm) {
+    global $DB;
+    $attemptcount = 0;
+    $element = 'cmi.core.score.raw';
+    if ($scorm->version == 'scorm1_3') {
+        $element = 'cmi.score.raw';
+    }
+    $attempts = $DB->get_records_select('scorm_scoes_track',"element=? AND userid=? AND scormid=?", array($element, $user->id, $scorm->id),'attempt','attempt AS attemptnumber, value AS grade');
+    if(!empty($attempts)) {
+        $attemptcount = count($attempts);
+    }
+    return $attemptcount;
 }
 ?>

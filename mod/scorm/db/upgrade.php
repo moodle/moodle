@@ -234,6 +234,36 @@ function xmldb_scorm_upgrade($oldversion) {
         upgrade_mod_savepoint($result, 2008090304, 'scorm');
     }
 
+
+    if ($result && $oldversion < 2008090305) {
+
+    /// Define new fields forcecompleted, forcenewattempt, displayattemptstatus, and displaycoursestructure to be added to scorm
+        $table = new xmldb_table('scorm');
+        $field = new xmldb_field('forcecompleted', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '0', 'maxattempt');
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('forcenewattempt', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '0', 'forcecompleted');
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('lastattemptlock', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '0', 'forcenewattempt');
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('displayattemptstatus', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '1', 'lastattemptlock');
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('displaycoursestructure', XMLDB_TYPE_INTEGER, '1', null, null, null, null, null, '1', 'displayattemptstatus');
+        if (!$dbman->field_exists($table,$field)) {
+            $dbman->add_field($table, $field);
+        }
+        
+    /// scorm savepoint reached
+        upgrade_mod_savepoint($result, 2008090305, 'scorm');
+    }
+    
     return $result;
 }
 
