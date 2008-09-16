@@ -191,7 +191,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
             'portfoliosettings',
             new admin_externalpage(
                 'portfoliosettings' . $portfolio->get('id'),
-                get_string('configure', 'portfolio') . ' ' . $portfolio->get('name'),
+                $portfolio->get('name'),
                 $url . '?edit=' . $portfolio->get('id'),
                 'moodle/site:config',
                 !$portfolio->get('visible')
