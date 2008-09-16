@@ -29,7 +29,7 @@ if ($dataid) {
             unset($SESSION->portfolioexport);
             redirect($CFG->wwwroot);
         } else {
-            throw $e;
+            portfolio_exporter::print_expired_export();
         }
     }
     if ($cancel) {
@@ -53,6 +53,10 @@ if ($dataid) {
         }
     }
 } else {
+
+    if (empty($_GET) && empty($_POST)) {
+        portfolio_exporter::print_expired_export();
+    }
     // we'e just posted here for the first time and have might the instance already
     if ($instance = optional_param('instance', 0, PARAM_INT)) {
         // this can throw exceptions but there's no point catching and rethrowing here
@@ -66,8 +70,12 @@ if ($dataid) {
         $instance = null;
     }
 
-    $callbackfile = required_param('callbackfile', PARAM_PATH);
-    $callbackclass = required_param('callbackclass', PARAM_ALPHAEXT);
+    $callbackfile = optional_param('callbackfile', null, PARAM_PATH);
+    $callbackclass = optional_param('callbackclass', null, PARAM_ALPHAEXT);
+
+    if (empty($callbackfile) || empty($callbackclass)) {
+        portfolio_exporter::print_expired_export();
+    }
 
     $callbackargs = array();
     foreach (array_keys(array_merge($_GET, $_POST)) as $key) {

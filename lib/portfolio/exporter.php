@@ -760,6 +760,19 @@ class portfolio_exporter {
         );
     }
 
+    /** wrapper function to print a friendly error to users
+    *
+    * this is generally caused by them hitting an expired transfer
+    * through the usage of the backbutton
+    */
+    public static function print_expired_export() {
+        $title = get_string('exportexpired', 'portfolio');
+        print_header($title, $title);
+        notify(get_string('exportexpireddesc', 'portfolio'));
+        print_footer();
+        exit;
+    }
+
 }
 
 ?>
