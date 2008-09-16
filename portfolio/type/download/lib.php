@@ -1,7 +1,6 @@
 <?php
 
 require_once($CFG->libdir . '/portfoliolib.php');
-require_once($CFG->libdir . '/packer/zip_packer.php');
 
 class portfolio_plugin_download extends portfolio_plugin_pull_base {
 
@@ -30,10 +29,19 @@ class portfolio_plugin_download extends portfolio_plugin_pull_base {
         }
     }
 
+    public function steal_control($stage) {
+        if ($stage == PORTFOLIO_STAGE_FINISHED) {
+            global $CFG;
+            return $CFG->wwwroot . '/portfolio/type/download/file.php?id=' . $this->get('exporter')->get('id');
+        }
+    }
+
+    /*
     public function get_extra_finish_options() {
         global $CFG;
         return array($this->get_base_file_url() => get_string('downloadfile', 'portfolio_download'));
     }
+    */
 
     public function send_package() {}
 
