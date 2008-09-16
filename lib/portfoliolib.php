@@ -798,8 +798,12 @@ function portfolio_cron() {
 
     if ($expired = $DB->get_records_select('portfolio_tempdata', 'expirytime < ?', array(time()), '', 'id')) {
         foreach ($expired as $d) {
-            $e = portfolio_exporter::rewaken_object($d);
-            $e->process_stage_cleanup(true);
+            try {
+                $e = portfolio_exporter::rewaken_object($d->id);
+                $e->process_stage_cleanup(true);
+            } catch (Exception $e) {
+                mtrade('Exception thrown in portfolio cron while cleaning up ' . $d->id . ': ' . $e->getMessage());
+            }
         }
     }
 }
