@@ -187,7 +187,7 @@ foreach ($portfolio_plugins as $plugin) {
 require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->dirroot . '/admin/generator.php');
 
-class portfoliolib_test extends UnitTestCase {
+class portfoliolib_test extends MoodleUnitTestCase {
     public $tables = array();
 
     function setUp() {

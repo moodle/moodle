@@ -37,8 +37,8 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/mod/data/preset_class.php');
 
-class data_preset_test extends UnitTestCase {
-    
+class data_preset_test extends MoodleUnitTestCase {
+
     function setUp() {
     }
 
@@ -47,15 +47,15 @@ class data_preset_test extends UnitTestCase {
 
     function test_address_in_subnet() {
     }
-    
+
     /**
-     * Modifies $_SERVER['HTTP_USER_AGENT'] manually to check if check_browser_version 
+     * Modifies $_SERVER['HTTP_USER_AGENT'] manually to check if check_browser_version
      * works as expected.
      */
     function test_check_browser_version()
     {
     }
-    
+
     function test_optional_param()
     {
     }

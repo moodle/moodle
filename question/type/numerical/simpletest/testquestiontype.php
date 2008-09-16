@@ -14,16 +14,16 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/question/type/numerical/questiontype.php');
 
-class question_numerical_qtype_test extends UnitTestCase {
-    var $tolerance = 0.00000001;        
+class question_numerical_qtype_test extends MoodleUnitTestCase {
+    var $tolerance = 0.00000001;
     var $qtype;
-    
+
     function setUp() {
         $this->qtype = new question_numerical_qtype();
     }
-    
+
     function tearDown() {
-        $this->qtype = null;   
+        $this->qtype = null;
     }
 
     function test_name() {
@@ -129,7 +129,7 @@ class question_numerical_qtype_test extends UnitTestCase {
             (object) array('unit' => 'mm', 'multiplier' => 1000),
             (object) array('unit' => 'inch', 'multiplier' => 1.0/0.0254)
         );
-        
+
         $this->assertWithinMargin($this->qtype->apply_unit('1', $units), 1, $this->tolerance);
         $this->assertWithinMargin($this->qtype->apply_unit('1.0', $units), 1, $this->tolerance);
         $this->assertWithinMargin($this->qtype->apply_unit('-1e0', $units), -1, $this->tolerance);

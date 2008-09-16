@@ -14,15 +14,15 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/question/type/questiontype.php');
 
-class question_shortanswer_qtype_test extends UnitTestCase {
+class question_shortanswer_qtype_test extends MoodleUnitTestCase {
     var $qtype;
-    
+
     function setUp() {
         $this->qtype = new question_shortanswer_qtype();
     }
-    
+
     function tearDown() {
-        $this->qtype = null;   
+        $this->qtype = null;
     }
 
     function test_name() {

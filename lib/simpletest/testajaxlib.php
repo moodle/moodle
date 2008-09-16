@@ -39,14 +39,14 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once($CFG->libdir . '/moodlelib.php');
 require_once($CFG->libdir . '/ajax/ajaxlib.php');
 
-class ajaxlib_test extends UnitTestCase {
-    
+class ajaxlib_test extends MoodleUnitTestCase {
+
     var $user_agents = array(
             'MSIE' => array(
                 '5.5' => array('Windows 2000' => 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)'),
                 '6.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)'),
                 '7.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; YPC 3.0.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)')
-            ),  
+            ),
             'Firefox' => array(
                 '1.0.6'   => array('Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6'),
                 '1.5'     => array('Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; nl; rv:1.8) Gecko/20051107 Firefox/1.5'),
@@ -64,14 +64,14 @@ class ajaxlib_test extends UnitTestCase {
                                 'Debian Linux' => 'Opera/9.01 (X11; Linux i686; U; en)')
             )
         );
-    
+
     function setUp() {
     }
 
     function tearDown() {
     }
 
-    /** 
+    /**
      * Uses the array of user agents to test ajax_lib::ajaxenabled
      */
     function test_ajaxenabled()
@@ -79,60 +79,60 @@ class ajaxlib_test extends UnitTestCase {
         global $CFG, $USER;
         $CFG->enableajax = true;
         $USER->ajax      = true;
-        
+
         // Should be true
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];
         $this->assertTrue(ajaxenabled());
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['1.5']['Windows XP'];
         $this->assertTrue(ajaxenabled());
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['2.0']['Mac OS X'];
         $this->assertTrue(ajaxenabled());
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Opera']['9.0']['Windows XP'];
         $this->assertTrue(ajaxenabled());
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['6.0']['Windows XP SP2'];
         $this->assertTrue(ajaxenabled());
-        
+
         // Should be false
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['1.0.6']['Windows XP'];
-        $this->assertFalse(ajaxenabled());        
-        
+        $this->assertFalse(ajaxenabled());
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['312']['Mac OS X'];
         $this->assertFalse(ajaxenabled());
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Opera']['8.51']['Windows XP'];
         $this->assertFalse(ajaxenabled());
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['5.5']['Windows 2000'];
         $this->assertFalse(ajaxenabled());
-        
+
         // Test array of tested browsers
         $tested_browsers = array('MSIE' => 6.0, 'Gecko' => 20061111);
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];
         $this->assertTrue(ajaxenabled($tested_browsers));
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['7.0']['Windows XP SP2'];
         $this->assertTrue(ajaxenabled($tested_browsers));
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['2.0']['Mac OS X'];
         $this->assertFalse(ajaxenabled($tested_browsers));
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Opera']['9.0']['Windows XP'];
         $this->assertFalse(ajaxenabled($tested_browsers));
-        
+
         $tested_browsers = array('Safari' => 412, 'Opera' => 9.0);
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];
         $this->assertFalse(ajaxenabled($tested_browsers));
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['7.0']['Windows XP SP2'];
         $this->assertFalse(ajaxenabled($tested_browsers));
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['2.0']['Mac OS X'];
         $this->assertTrue(ajaxenabled($tested_browsers));
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Opera']['9.0']['Windows XP'];
         $this->assertTrue(ajaxenabled($tested_browsers));
     }

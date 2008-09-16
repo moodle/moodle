@@ -12,13 +12,13 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-class code_test extends UnitTestCase {
+class code_test extends MoodleUnitTestCase {
     var $allok = array();
-    
+
     var $badstrings;
     var $extensions_to_ignore = array('exe', 'gif', 'ico', 'jpg', 'png', 'ttf');
     var $ignore_folders = array();
-    
+
     function test_dnc() {
         global $CFG;
         $regexp = '/\.(' . implode('|', $this->extensions_to_ignore) . ')$/';
@@ -35,7 +35,7 @@ class code_test extends UnitTestCase {
             }
         }
     }
-    
+
     function search_file_for_dnc($filepath) {
         $content = file_get_contents($filepath);
         foreach ($this->badstrings as $description => $badstring) {

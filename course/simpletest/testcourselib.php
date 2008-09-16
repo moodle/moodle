@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/course/lib.php');
 global $DB;
 Mock::generate(get_class($DB), 'mockDB');
 
-class courselib_test extends UnitTestCase {
+class courselib_test extends MoodleUnitTestCase {
     var $realDB;
 
     function setUp() {

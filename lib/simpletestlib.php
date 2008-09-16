@@ -1,9 +1,9 @@
 <?php // $Id$
 /**
  * Utility functions to make unit testing easier.
- * 
+ *
  * These functions, particularly the the database ones, are quick and
- * dirty methods for getting things done in test cases. None of these 
+ * dirty methods for getting things done in test cases. None of these
  * methods should be used outside test code.
  *
  * @copyright &copy; 2006 The Open University
@@ -23,15 +23,15 @@ require_once($CFG->libdir . '/simpletestlib/mock_objects.php');
 
 /**
  * Recursively visit all the files in the source tree. Calls the callback
- * function with the pathname of each file found. 
- * 
- * @param $path the folder to start searching from. 
+ * function with the pathname of each file found.
+ *
+ * @param $path the folder to start searching from.
  * @param $callback the function to call with the name of each file found.
  * @param $fileregexp a regexp used to filter the search (optional).
- * @param $exclude If true, pathnames that match the regexp will be ingored. If false, 
+ * @param $exclude If true, pathnames that match the regexp will be ingored. If false,
  *     only files that match the regexp will be included. (default false).
  * @param array $ignorefolders will not go into any of these folders (optional).
- */ 
+ */
 function recurseFolders($path, $callback, $fileregexp = '/.*/', $exclude = false, $ignorefolders = array()) {
     $files = scandir($path);
 
@@ -146,6 +146,36 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
         }
         return 'Actual object does not have all the same fields with the same values as the expected object (' .
                 implode(', ', $mismatches) . ').';
+    }
+}
+
+class MoodleUnitTestCase extends UnitTestCase {
+    public function __construct($label = false) {
+        parent::UnitTestCase($label);
+        global $CFG, $DB;
+
+        if (empty($CFG->unittest_prefix)) {
+            print_error("prefixnotset", 'simpletest');
+        }
+
+        if (!$DB->table_exists('user')) {
+            print_error('tablesnotsetup', 'simpletest');
+        }
+    }
+
+    public function setUp() {
+        parent::setUp();
+    }
+
+    public function tearDown() {
+        parent::tearDown();
+    }
+
+    /**
+     * This will execute once all the tests have been run. It should delete the text file holding info about database contents prior to the tests
+     */
+    public function __destruct() {
+
     }
 }
 

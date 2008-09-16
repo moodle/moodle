@@ -12,7 +12,7 @@ require_once($CFG->libdir . '/mathslib.php');
  * @author Petr Skoda (skodak)
  * @version $Id$
  */
-class mathsslib_test extends UnitTestCase {
+class mathsslib_test extends MoodleUnitTestCase {
 
     /**
      * Tests the basic formula evaluation

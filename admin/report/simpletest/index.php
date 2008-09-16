@@ -27,6 +27,8 @@ $showpasses = optional_param('showpasses', false, PARAM_BOOL);
 $showsearch = optional_param('showsearch', false, PARAM_BOOL);
 $rundbtests = optional_param('rundbtests', false, PARAM_BOOL);
 $thorough = optional_param('thorough', false, PARAM_BOOL);
+$addconfigprefix = optional_param('addconfigprefix', false, PARAM_RAW);
+$setuptesttables = optional_param('setuptesttables', false, PARAM_BOOL);
 
 global $UNITTEST;
 $UNITTEST = new object();
@@ -35,6 +37,82 @@ $UNITTEST = new object();
 admin_externalpage_setup('reportsimpletest');
 $strtitle = get_string('unittests', $langfile);
 admin_externalpage_print_header();
+
+$baseurl = $CFG->wwwroot . '/admin/report/simpletest/index.php';
+
+// Add unittest prefix to config.php if needed
+if ($addconfigprefix && !isset($CFG->unittest_prefix)) {
+    // Open config file, search for $CFG->prefix and append a new line under it
+    $handle = fopen($CFG->dirroot.'/config.php', 'r+');
+
+    $new_file = '';
+
+    while (!feof($handle)) {
+        $line = fgets($handle, 4096);
+        $prefix_line = null;
+
+        if (preg_match('/CFG\-\>prefix/', $line, $matches)) {
+            $prefix_line = "\$CFG->unittest_prefix = '$addconfigprefix';\n";
+        }
+
+        $new_file .= $line;
+        $new_file .= $prefix_line;
+    }
+
+    fclose($handle);
+    $handle = fopen($CFG->dirroot.'/config.php', 'w');
+    fwrite($handle, $new_file);
+    fclose($handle);
+    $CFG->unittest_prefix = $addconfigprefix;
+}
+
+if (empty($CFG->unittest_prefix)) {
+    // TODO replace error with proper admin dialog
+    print_box_start('generalbox', 'notice');
+    echo '<p>'.get_string("prefixnotset", 'simpletest').'</p>';
+    echo '<form method="post" action="'.$baseurl.'">
+            <table class="generaltable">
+                <tr>
+                    <th class="header"><label for="prefix">'.get_string('prefix', 'simpletest').'</label></th>
+                    <td class="cell"><input type="text" size="5" name="addconfigprefix" id="prefix" value="tst_" /></td>
+                    <td class="cell"><input type="submit" value="'.get_string('addconfigprefix', 'simpletest').'" /></td>
+                </tr>
+            </table>
+          </form>';
+    print_box_end();
+    admin_externalpage_print_footer();
+    exit();
+}
+
+$test_tables = $DB->get_tables($CFG->unittest_prefix);
+$real_tables = $DB->get_tables();
+
+// Build test tables if requested and needed
+if ($setuptesttables) {
+    $version = null;
+    $release = null;
+    include("$CFG->dirroot/version.php");       // defines $version and $release
+
+    $real_db = clone($DB);
+    $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+    $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittest_prefix);
+
+    // Drop all tables first if they exist
+    $manager = $DB->get_manager();
+    foreach ($test_tables as $table) {
+        $manager->drop_table($table);
+    }
+
+    upgrade_db($version, $release, true);
+    $DB = $real_db;
+}
+
+if (empty($test_tables['config'])) {
+    // TODO replace error with proper admin dialog
+    notice_yesno(get_string('tablesnotsetup', 'simpletest'), $baseurl . '?setuptesttables=1', $baseurl);
+    admin_externalpage_print_footer();
+    exit();
+}
 
 if (!is_null($path)) {
     // Create the group of tests.

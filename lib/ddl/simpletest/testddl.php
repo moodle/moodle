@@ -11,7 +11,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir . '/adminlib.php');
 
-class ddl_test extends UnitTestCase {
+class ddl_test extends MoodleUnitTestCase {
     private $tables = array();
     private $tdb;
 

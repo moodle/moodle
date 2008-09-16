@@ -39,7 +39,7 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->dirroot . '/mod/forum/lib.php');
 
-class modforumlib_test extends UnitTestCase {
+class modforumlib_test extends MoodleUnitTestCase {
 
     function setUp() {
     }

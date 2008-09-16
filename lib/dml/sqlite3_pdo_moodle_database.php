@@ -108,8 +108,13 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
-    public function get_tables() {
+    public function get_tables($prefix=null) {
         $tables = array();
+
+        if (is_null($prefix)) {
+            $prefix = $this->prefix;
+        }
+
         $sql = 'SELECT name FROM sqlite_master WHERE type="table" UNION ALL SELECT name FROM sqlite_temp_master WHERE type="table" ORDER BY name';
         if ($this->debug) {
             $this->debug_query($sql);
@@ -118,8 +123,8 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
         foreach ($rstables as $table) {
             $table = $table['name'];
             $table = strtolower($table);
-            if (empty($this->prefix) || strpos($table, $this->prefix) === 0) {
-                $table = substr($table, strlen($this->prefix));
+            if (empty($prefix) || strpos($table, $prefix) === 0) {
+                $table = substr($table, strlen($prefix));
                 $tables[$table] = $table;
             }
         }

@@ -1,6 +1,6 @@
 <?php
 
-class dbspecific_test extends UnitTestCase {
+class dbspecific_test extends MoodleUnitTestCase {
     protected $tables = array();
     protected $tdb;
     protected $data;

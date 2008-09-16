@@ -39,14 +39,14 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir . '/moodlelib.php');
 
-class moodlelib_test extends UnitTestCase {
-    
+class moodlelib_test extends MoodleUnitTestCase {
+
     var $user_agents = array(
             'MSIE' => array(
                 '5.5' => array('Windows 2000' => 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT 5.0)'),
                 '6.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)'),
                 '7.0' => array('Windows XP SP2' => 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; YPC 3.0.1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)')
-            ),  
+            ),
             'Firefox' => array(
                 '1.0.6'   => array('Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.10) Gecko/20050716 Firefox/1.0.6'),
                 '1.5'     => array('Windows XP' => 'Mozilla/5.0 (Windows; U; Windows NT 5.1; nl; rv:1.8) Gecko/20051107 Firefox/1.5'),
@@ -64,7 +64,7 @@ class moodlelib_test extends UnitTestCase {
                                 'Debian Linux' => 'Opera/9.01 (X11; Linux i686; U; en)')
             )
         );
-        
+
     function setUp() {
     }
 
@@ -103,45 +103,45 @@ class moodlelib_test extends UnitTestCase {
         $this->assertFalse(address_in_subnet('  2.3.234.1  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
         $this->assertFalse(address_in_subnet('  3.3.3.7  ', '  123.121.234.1  , 1.1.1.1/16,2.2.,3.3.3.3-6  '));
     }
-    
+
     /**
-     * Modifies $_SERVER['HTTP_USER_AGENT'] manually to check if check_browser_version 
+     * Modifies $_SERVER['HTTP_USER_AGENT'] manually to check if check_browser_version
      * works as expected.
      */
     function test_check_browser_version()
     {
         global $CFG;
-        
-        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['2.0']['Mac OS X'];        
+
+        $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Safari']['2.0']['Mac OS X'];
         $this->assertTrue(check_browser_version('Safari', '312'));
         $this->assertFalse(check_browser_version('Safari', '500'));
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Opera']['9.0']['Windows XP'];
         $this->assertTrue(check_browser_version('Opera', '8.0'));
         $this->assertFalse(check_browser_version('Opera', '10.0'));
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['MSIE']['6.0']['Windows XP SP2'];
         $this->assertTrue(check_browser_version('MSIE', '5.0'));
         $this->assertFalse(check_browser_version('MSIE', '7.0'));
-        
+
         $_SERVER['HTTP_USER_AGENT'] = $this->user_agents['Firefox']['2.0']['Windows XP'];
         $this->assertTrue(check_browser_version('Firefox', '1.5'));
-        $this->assertFalse(check_browser_version('Firefox', '3.0'));        
+        $this->assertFalse(check_browser_version('Firefox', '3.0'));
     }
-    
+
     function test_optional_param()
     {
-        $_POST['username'] = 'post_user';   
+        $_POST['username'] = 'post_user';
         $_GET['username'] = 'get_user';
         $this->assertEqual(optional_param('username', 'default_user'), 'post_user');
-        
+
         unset($_POST['username']);
         $this->assertEqual(optional_param('username', 'default_user'), 'get_user');
-        
+
         unset($_GET['username']);
         $this->assertEqual(optional_param('username', 'default_user'), 'default_user');
     }
-    
+
     /**
      * Used by {@link optional_param()} and {@link required_param()} to
      * clean the variables and/or cast to specific types, based on
@@ -176,12 +176,12 @@ class moodlelib_test extends UnitTestCase {
     {
         global $CFG;
         // Test unknown parameter type
-        
+
         // Test Raw param
-        $this->assertEqual(clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_RAW), 
+        $this->assertEqual(clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_RAW),
             '#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)');
-        
-        $this->assertEqual(clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_CLEAN), 
+
+        $this->assertEqual(clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_CLEAN),
             '#()*#,9789\\\'\".,');
 
         // Test PARAM_URL and PARAM_LOCALURL a bit
@@ -215,7 +215,7 @@ class moodlelib_test extends UnitTestCase {
         $this->assertFalse(make_user_directory('string', true));
         $this->assertFalse(make_user_directory(false, true));
         $this->assertFalse(make_user_directory(true, true));
-        
+
     }
 }
 
