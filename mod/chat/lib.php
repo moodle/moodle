@@ -863,7 +863,7 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
         );
     }
 
-    public static function supported_formats($caller) {
+    public static function supported_formats() {
         return array(PORTFOLIO_FORMAT_HTML);
     }
 
