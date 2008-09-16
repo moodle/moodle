@@ -766,9 +766,11 @@ class portfolio_exporter {
     * through the usage of the backbutton
     */
     public static function print_expired_export() {
+        global $CFG;
         $title = get_string('exportexpired', 'portfolio');
-        print_header($title, $title);
+        print_header($title, $title, build_navigation(get_string('exportexpired', 'portfolio')));
         notify(get_string('exportexpireddesc', 'portfolio'));
+        print_continue($CFG->wwwroot);
         print_footer();
         exit;
     }
