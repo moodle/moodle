@@ -141,15 +141,19 @@ class quiz_report_responses_table extends table_sql {
             if ($attempt->uniqueid == 0) {
                 return '-';
             }
-            if (!isset($states[$attempt->uniqueid])){
-                $states[$attempt->uniqueid] = get_question_states($this->questions, $this->quiz, $attempt);
-            }
-            $statesforattempt = $states[$attempt->uniqueid];
             $questionid = $matches[1];
+            if (isset($this->gradedstatesbyattempt[$attempt->uniqueid][$questionid])){
+                $stateforqinattempt = $this->gradedstatesbyattempt[$attempt->uniqueid][$questionid];
+            } else {
+                return '-';
+            }
+            
             $question = $this->questions[$questionid];
-            $responses =  get_question_actual_response($question, $statesforattempt[$questionid]);
+            restore_question_state($question, $stateforqinattempt);
+            
+            $responses =  get_question_actual_response($question, $stateforqinattempt);
             $response = (!empty($responses)? implode('; ',$responses) : '-');
-            $grade = $statesforattempt[$questionid]->last_graded->grade
+            $grade = $stateforqinattempt->grade
                             / $this->questions[$questionid]->maxgrade;
             if (!$this->is_downloading()) {
                 $format_options = new stdClass;
@@ -210,6 +214,18 @@ class quiz_report_responses_table extends table_sql {
                 }
         }
         parent::query_db($pagesize, $useinitialsbar);
+        $qsfields = 'qs.id, qs.grade, qs.event, qs.question, qs.answer, qs.attempt';
+        if (!$this->is_downloading()) {
+            $attemptids = array();
+            foreach ($this->rawdata as $attempt){
+                if ($attempt->uniqueid > 0){
+                    $attemptids[] = $attempt->uniqueid;
+                }
+            }
+            $this->gradedstatesbyattempt = quiz_get_newgraded_states($attemptids, true, $qsfields);
+        } else {
+            $this->gradedstatesbyattempt = quiz_get_newgraded_states($this->sql, true, $qsfields);
+        }
     }
 }
 ?>
