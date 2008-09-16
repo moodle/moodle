@@ -564,7 +564,11 @@ class portfolio_exporter {
         $headerstr = get_string('exporting', 'portfolio');
 
         print_header($titlestr, $headerstr, $this->navigation);
-        print_heading(get_string($headingstr, 'portfolio'));
+        $hstr = get_string($headingstr, 'portfolio');
+        if (strpos($hstr, '[[') === 0) {
+            $hstr = $headingstr;
+        }
+        print_heading($hstr);
 
         if (!$summary) {
             return;
