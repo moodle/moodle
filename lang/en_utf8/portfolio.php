@@ -50,6 +50,21 @@ $string['highfilesizethreshold'] = 'High transfer filesize';
 $string['highfilesizethresholddesc'] = 'Filesizes over this threshold will be considered to take a high amount of time to transfer';
 $string['highdbsizethreshold'] = 'High transfer dbsize';
 $string['highdbsizethresholddesc'] = 'Number of db records over which will be considered to take a high amount of time to transfer';
+$string['insanesubject'] = 'Some portfolio instances automatically disabled';
+$string['insanebody'] = 'Hi!  You are receiving this message as an administrator of $a->sitename.
+
+Some portfolio plugin instances have been automatically disabled due to misconfigurations.  This means that users can not currently export content to these portfolios.
+
+The list of portfolio plugin instances that have been disabled is:
+
+$a->textlist
+
+This should be corrected as soon as possible, by visiting $a->fixurl.
+';
+$string['insanebodyhtml'] = '<p>Hi! You are receiving this message as an administrator of $a->sitename.</p>
+$a->htmllist
+<p>This should be corrected as soon as possible, by visiting <a href=\"$a->fixurl\">the portfolio configuration pages</a></p>';
+$string['insanebodysmall'] = 'Hi!  You are receiving this message as an administrator of $a->sitename.  Some portfolio plugin instances have been automatically disabled due to misconfigurations.  This means that users can not currently export content to these portfolios.  This should be corrected as soon as possible, by visiting $a->fixurl.';
 $string['instancedeleted'] = 'Portfolio deleted successfully';
 $string['instanceismisconfigured'] = 'Portfolio instance is misconfigured, skipping.  Error was: $a';
 $string['instancenotsaved'] = 'Failed to save portfolio';
@@ -85,20 +100,22 @@ $string['nopermissions'] = 'Sorry but you do not have the required permissions t
 $string['nonprimative'] = 'A non primative value was passed as a callback argument to portfolio_add_button.  Refusing to continue.  The key was $a->key and the value was $a->value';
 $string['notexportable'] = 'Sorry, but the type of content you are trying to export is not exportable';
 $string['notimplemented'] = 'Sorry, but you are trying to export content in some format that is not yet implemented ($a)';
+$string['notyetselected'] = 'Not yet selected';
 $string['notyours'] = 'You are trying to resume a portfolio export that doesn\'t belong to you!';
 $string['nouploaddirectory'] = 'Could not create a temporary directory to package your data into';
 $string['portfolio'] = 'Portfolio';
 $string['portfolios'] = 'Portfolios';
 $string['plugin'] = 'Portfolio Plugin';
 $string['plugincouldnotpackage'] = 'Failed to package up your data for export: original error was $a';
+$string['pluginismisconfigured'] = 'Portfolio plugin is misconfigured, skipping.  Error was: $a';
 $string['queuesummary'] = 'Currently queued transfers';
 $string['returntowhereyouwere'] = 'Return to where you were';
 $string['save'] = 'Save';
 $string['selectedformat'] = 'Selected export format';
 $string['selectedwait'] = 'Selected to wait?';
 $string['selectplugin'] = 'Select portfolio plugin to export to';
-$string['someinstancesdisabled'] = 'Some configured plugin instances have been disabled either because they are misconfigured or rely on something else that is';
-$string['somepluginsdisabled']  = 'Some entire plugins have been disabled because they are either misconfigured or rely on something else that is:';
+$string['someinstancesdisabled'] = 'Some configured portfolio plugin instances have been disabled either because they are misconfigured or rely on something else that is';
+$string['somepluginsdisabled']  = 'Some entire portfolio plugins have been disabled because they are either misconfigured or rely on something else that is:';
 $string['sure'] = 'Are you sure you want to delete \'$a\'?  This cannot be undone.';
 $string['thirdpartyexception'] = 'A third party exception was thrown during portfolio export ($a). Caught and rethrown but this should really be fixed';
 $string['transfertime'] = 'Transfer time';

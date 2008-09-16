@@ -5195,6 +5195,9 @@ class admin_setting_manageportfolio extends admin_setting {
         $instances = portfolio_instances(false, false);
         $alreadyplugins = array();
 
+        // to avoid notifications being sent out while admin is editing the page
+        define('ADMIN_EDITING_PORTFOLIO', true);
+
         $insane = portfolio_plugin_sanity_check($plugins);
         $insaneinstances = portfolio_instance_sanity_check($instances);
 

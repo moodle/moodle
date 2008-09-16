@@ -371,6 +371,8 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
     }
 
     $insane = portfolio_instance_sanity_check();
+    $pinsane = portfolio_plugin_sanity_check();
+
     $count = 0;
     $selectoutput = "\n" . '<select name="' . $selectname . '">' . "\n";
     foreach ($instances as $instance) {
@@ -381,7 +383,11 @@ function portfolio_instance_select($instances, $callerformats, $callbackclass, $
         }
         if (array_key_exists($instance->get('id'), $insane)) {
             // bail, plugin is misconfigured
-            debugging(get_string('instancemisconfigured', 'portfolio', get_string($insane[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
+            debugging(get_string('instanceismisconfigured', 'portfolio', get_string($insane[$instance->get('id')], 'portfolio_' . $instance->get('plugin'))));
+            continue;
+        } else if (array_key_exists($instance->get('plugin'), $pinsane)) {
+            // bail, plugin is misconfigured
+            debugging(get_string('pluginismisconfigured', 'portfolio', get_string($pinsane[$instance->get('plugin')], 'portfolio_' . $instance->get('plugin'))));
             continue;
         }
         $count++;
@@ -651,6 +657,7 @@ function portfolio_plugin_sanity_check($plugins=null) {
     list($where, $params) = $DB->get_in_or_equal(array_keys($insane));
     $where = ' plugin ' . $where;
     $DB->set_field_select('portfolio_instance', 'visible', 0, $where, $params);
+    portfolio_insane_notify_admins($insane);
     return $insane;
 }
 
@@ -691,6 +698,7 @@ function portfolio_instance_sanity_check($instances=null) {
     list ($where, $params) = $DB->get_in_or_equal(array_keys($insane));
     $where = ' id ' . $where;
     $DB->set_field_select('portfolio_instance', 'visible', 0, $where, $params);
+    portfolio_insane_notify_admins($insane, true);
     return $insane;
 }
 
@@ -897,6 +905,61 @@ function portfolio_expected_time_db($recordcount) {
         return PORTFOLIO_TIME_MODERATE;
     }
     return PORTFOLIO_TIME_HIGH;
+}
+
+function portfolio_insane_notify_admins($insane, $instances=false) {
+
+    global $CFG;
+
+    if (defined('ADMIN_EDITING_PORTFOLIO')) {
+        return true;
+    }
+
+    $admins = get_admins();
+
+    if (empty($admins)) {
+        return;
+    }
+    if ($instances) {
+        $instances = portfolio_instances(false, false);
+    }
+
+    $site = get_site();
+
+    $a = new StdClass;
+    $a->sitename = $site->fullname;
+    $a->fixurl   = $CFG->wwwroot . '/admin/settings.php?section=manageportfolios';
+    $a->htmllist = portfolio_report_insane($insane, $instances, true);
+    $a->textlist = '';
+
+    foreach ($insane as $k => $reason) {
+        if ($instances) {
+            $a->textlist = $instances[$k]->get('name') . ': ' . $reason . "\n";
+        } else {
+            $a->textlist = $k . ': ' . $reason . "\n";
+        }
+    }
+
+    $subject   = get_string('insanesubject', 'portfolio');
+    $plainbody = get_string('insanebody', 'portfolio', $a);
+    $htmlbody  = get_string('insanebodyhtml', 'portfolio', $a);
+    $smallbody = get_string('insanebodysmall', 'portfolio', $a);
+
+    foreach ($admins as $admin) {
+        $eventdata = new object();
+        $eventdata->modulename = 'portfolio';
+        $eventdata->component = 'portfolio';
+        $eventdata->name = 'notices';
+        $eventdata->userfrom = $admin;
+        $eventdata->userto = $admin;
+        $eventdata->subject = $subject;
+        $eventdata->fullmessage = $plainbody;
+        $eventdata->fullmessageformat = FORMAT_PLAIN;
+        $eventdata->fullmessagehtml = $htmlbody;
+        $eventdata->smallmessage = $smallbody;
+        error_log(print_r($eventdata, true));
+        events_trigger('message_send', $eventdata);
+    }
 }
 
 ?>
