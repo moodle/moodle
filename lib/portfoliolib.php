@@ -189,7 +189,7 @@ class portfolio_add_button {
     */
     public function to_html($format=null, $addstr=null) {
         if ($this->alreadyexporting) {
-            return $this->already_exporting($format);
+            return $this->already_exporting($format, $addstr);
         }
         global $CFG, $COURSE;
         if (!$this->is_renderable()) {
@@ -323,25 +323,28 @@ class portfolio_add_button {
         return $this->callbackclass;
     }
 
-    private function already_exporting($format) {
+    private function already_exporting($format, $addstr) {
         global $CFG;
         $url  = $CFG->wwwroot . '/portfolio/already.php';
         $icon = $CFG->pixpath . '/t/portfoliono.gif';
         $alt  = get_string('alreadyalt', 'portfolio');
-        $text = get_string('alreadytext', 'portfolio');
         if (empty($format)) {
             $format = PORTFOLIO_ADD_FULL_FORM;
+        }
+        if (empty($addstr)) {
+            $addstr = get_string('addtoportfolio', 'portfolio');
         }
         switch ($format) {
             case PORTFOLIO_ADD_FULL_FORM:
                 return '<form action="' . $url . '">' . "\n"
-                    . '<input type="submit" value="' . $text . '" />' . "\n"
+                    . '<input type="submit" value="' . $addstr . '" />' . "\n"
+                    . '<img src="' . $icon . '" alt="' . $alt . '" />' . "\n"
                     . ' </form>';
             case PORTFOLIO_ADD_ICON_FORM:
             case PORTFOLIO_ADD_ICON_LINK:
                 return '<a href="' . $url . '"><img src="' . $icon . '" alt="' . $alt . '" /></a>';
             case PORTFOLIO_ADD_TEXT_LINK:
-                return '<a href="' . $url . '">' . $text . '</a>';
+                return '<a href="' . $url . '">' . $addstr . '(!) </a>';
             default:
                 debugging(get_string('invalidaddformat', 'portfolio', $format));
         }

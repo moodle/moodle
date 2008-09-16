@@ -2,7 +2,6 @@
 
 $string['activeportfolios'] = 'Active portfolios';
 $string['alreadyalt'] = 'Already exporting - please click here to resolve this transfer';
-$string['alreadytext'] = 'Add to portfolio - needs attention';
 $string['addnewportfolio'] = 'Add a new portfolio';
 $string['addtoportfolio'] = 'Add to portfolio';
 $string['addalltoportfolio'] = 'Add all to portfolio';
