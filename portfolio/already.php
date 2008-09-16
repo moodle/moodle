@@ -27,7 +27,7 @@ if ($dataid) {
         $exporter->verify_rewaken();
         $table->data[] = array(
             $exporter->get('caller')->display_name(),
-            $exporter->get('instance')->get('name'),
+            ($exporter->get('instance') ? $exporter->get('instance')->get('name') : get_string('notyetselected', 'portfolio')),
             $exporter->get('caller')->heading_summary(),
         );
     } catch (portfolio_exception $e) { }
