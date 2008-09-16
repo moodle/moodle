@@ -32,7 +32,7 @@
  * @package 
  */
 
-require_once('../config.php'); //included from messagelib (how to fix?)
+require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php'); //included from messagelib (how to fix?)
 require_once($CFG->dirroot.'/message/output/lib.php');
 
 class message_output_popup extends message_output{
