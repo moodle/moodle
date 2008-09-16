@@ -438,7 +438,7 @@ abstract class moodle_database {
      * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
-    public abstract function get_tables($prefix=null);
+    public abstract function get_tables();
 
     /**
      * Return table indexes - everything lowercased

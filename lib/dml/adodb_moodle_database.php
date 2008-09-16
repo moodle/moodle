@@ -93,18 +93,14 @@ abstract class adodb_moodle_database extends moodle_database {
      * Return tables in database WITHOUT current prefix
      * @return array of table names in lowercase and without prefix
      */
-    public function get_tables($prefix=null) {
+    public function get_tables() {
         $metatables = $this->adodb->MetaTables();
         $tables = array();
 
-        if (is_null($prefix)) {
-            $prefix = $this->prefix;
-        }
-
         foreach ($metatables as $table) {
             $table = strtolower($table);
-            if (empty($prefix) || strpos($table, $prefix) === 0) {
-                $tablename = substr($table, strlen($prefix));
+            if (empty($this->prefix) || strpos($table, $this->prefix) === 0) {
+                $tablename = substr($table, strlen($this->prefix));
                 $tables[$tablename] = $tablename;
             }
         }
