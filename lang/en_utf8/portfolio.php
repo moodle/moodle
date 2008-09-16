@@ -1,10 +1,13 @@
 <?php
 
 $string['activeportfolios'] = 'Active portfolios';
+$string['alreadyalt'] = 'Already exporting - please click here to resolve this transfer';
+$string['alreadytext'] = 'Add to portfolio - needs attention';
 $string['addnewportfolio'] = 'Add a new portfolio';
 $string['addtoportfolio'] = 'Add to portfolio';
 $string['addalltoportfolio'] = 'Add all to portfolio';
-$string['alreadyexporting'] = 'You already have an active portfolio export in this session. Please <a href=\"$a->finish\">complete that first</a>, or <a href=\"$a->cancel\">click here</a> to cancel it.';
+$string['activeexport'] = 'Resolve active export';
+$string['alreadyexporting'] = 'You already have an active portfolio export in this session. Before continuing, you must either complete this export, or cancel it.  Would you like to continue it? (No will cancel it)';
 $string['availableformats'] = 'Available export formats';
 $string['callercouldnotpackage'] = 'Failed to package up your data for export: original error was $a';
 $string['cannotsetvisible'] = 'Cannot set this to visible - the plugin has been completely disabled because of a misconfiguration';

@@ -56,6 +56,7 @@ require_once($CFG->libdir . '/portfolio/caller.php');      // the base classes f
 */
 class portfolio_add_button {
 
+    private $alreadyexporting;
     private $callbackclass;
     private $callbackargs;
     private $callbackfile;
@@ -77,10 +78,8 @@ class portfolio_add_button {
     public function __construct($options=null) {
         global $SESSION, $CFG;
         if (isset($SESSION->portfolioexport)) {
-            $a = new StdClass;
-            $a->cancel = $CFG->wwwroot . '/portfolio/add.php?cancel=1';
-            $a->finish = $CFG->wwwroot . '/portfolio/add.php?id=' . $SESSION->portfolioexport;
-            throw new portfolio_button_exception('alreadyexporting', 'portfolio', null, $a);
+            $this->alreadyexporting = true;
+            return;
         }
         $this->instances = portfolio_instances();
         if (empty($options)) {
@@ -108,6 +107,9 @@ class portfolio_add_button {
     *                        this path should be relative (ie, not include) dirroot, eg '/mod/forum/lib.php'
     */
     public function set_callback_options($class, array $argarray, $file=null) {
+        if ($this->alreadyexporting) {
+            return;
+        }
         global $CFG;
         if (empty($file)) {
             $backtrace = debug_backtrace();
@@ -147,6 +149,9 @@ class portfolio_add_button {
     *                       {@see portfolio_format_from_file} for how to get the appropriate formats to pass here for uploaded files.
     */
     public function set_formats($formats=null) {
+        if ($this->alreadyexporting) {
+            return;
+        }
         if (is_string($formats)) {
             $formats = array($formats);
         }
@@ -183,6 +188,9 @@ class portfolio_add_button {
     *                    this is whole string, not key.  optional, defaults to 'Add to portfolio';
     */
     public function to_html($format=null, $addstr=null) {
+        if ($this->alreadyexporting) {
+            return $this->already_exporting($format);
+        }
         global $CFG, $COURSE;
         if (!$this->is_renderable()) {
             return;
@@ -313,6 +321,30 @@ class portfolio_add_button {
      */
     public function get_callbackclass() {
         return $this->callbackclass;
+    }
+
+    private function already_exporting($format) {
+        global $CFG;
+        $url  = $CFG->wwwroot . '/portfolio/already.php';
+        $icon = $CFG->pixpath . '/t/portfoliono.gif';
+        $alt  = get_string('alreadyalt', 'portfolio');
+        $text = get_string('alreadytext', 'portfolio');
+        if (empty($format)) {
+            $format = PORTFOLIO_ADD_FULL_FORM;
+        }
+        switch ($format) {
+            case PORTFOLIO_ADD_FULL_FORM:
+                return '<form action="' . $url . '">' . "\n"
+                    . '<input type="submit" value="' . $text . '" />' . "\n"
+                    . ' </form>';
+            case PORTFOLIO_ADD_ICON_FORM:
+            case PORTFOLIO_ADD_ICON_LINK:
+                return '<a href="' . $url . '"><img src="' . $icon . '" alt="' . $alt . '" /></a>';
+            case PORTFOLIO_ADD_TEXT_LINK:
+                return '<a href="' . $url . '">' . $text . '</a>';
+            default:
+                debugging(get_string('invalidaddformat', 'portfolio', $format));
+        }
     }
 }
 
