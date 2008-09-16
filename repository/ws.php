@@ -16,6 +16,7 @@
     $ctx_id  = optional_param('ctx_id', SITEID, PARAM_INT);   // context ID
     $repo_id = optional_param('repo_id', 1, PARAM_INT);       // repository ID
     $callback = optional_param('callback', '', PARAM_CLEANHTML);
+    $search_text = optional_param('s', '', PARAM_CLEANHTML);
 
 /// Headers to make it not cacheable
     header("Cache-Control: no-cache, must-revalidate");
@@ -40,7 +41,7 @@
             foreach($repos as $repo){
                 if ($repo->global_search()) {
                     try {
-                        $ret = $repo->get_listing(null, $search);
+                        $ret = $repo->search($search_text);
                         array_walk($ret['list'], 'repository_attach_id', $repo->id);  // See function below
                         $tmp = array_merge($list, $ret['list']);
                         $list = $tmp;
@@ -141,7 +142,7 @@ EOD;
             break;
         case 'search':
             try {
-                echo json_encode($repo->search());
+                echo json_encode($repo->search($search_text));
             } catch (repository_exception $e) {
                 $err = new stdclass;
                 $err->e = $e->getMessage();

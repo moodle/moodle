@@ -10,24 +10,12 @@
 
 require_once($CFG->libdir.'/flickrlib.php');
 
-/**
- *
- */
 class repository_flickr extends repository {
     private $flickr;
     public $photos;
 
-    /**
-     *
-     * @global <type> $SESSION
-     * @global <type> $CFG
-     * @param <type> $repositoryid
-     * @param <type> $context
-     * @param <type> $options
-     */
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION, $CFG;
-
         $options['page']    = optional_param('p', 1, PARAM_INT);
         parent::__construct($repositoryid, $context, $options);
 
@@ -41,32 +29,19 @@ class repository_flickr extends repository {
 
         $this->flickr = new phpFlickr($this->api_key, $this->secret, $this->token);
 
-        if (empty($this->token)) {
-            $frob  = optional_param('frob', '', PARAM_RAW);
-            if (!empty($frob)) {
-                $auth_info = $this->flickr->auth_getToken($frob);
-                $this->token = $auth_info['token'];
-                $this->nsid  = $auth_info['user']['nsid'];
-                set_user_preference($this->setting, $auth_info['token']);
-                set_user_preference($this->setting.'_nsid', $auth_info['user']['nsid']);
-                $this->perm  = $auth_info['token'];
-            }
+        $frob  = optional_param('frob', '', PARAM_RAW);
+        if (empty($this->token) && !empty($frob)) {
+            $auth_info = $this->flickr->auth_getToken($frob);
+            $this->token = $auth_info['token'];
+            $this->nsid  = $auth_info['user']['nsid'];
+            set_user_preference($this->setting, $auth_info['token']);
+            set_user_preference($this->setting.'_nsid', $auth_info['user']['nsid']);
         }
 
     }
-
-    /**
-     *
-     * @return <type>
-     */
     public function check_login() {
         return !empty($this->token);
     }
-
-    /**
-     *
-     * @return <type>
-     */
     public function logout() {
         set_user_preference($this->setting, '');
         set_user_preference($this->setting.'_nsid', '');
@@ -74,12 +49,6 @@ class repository_flickr extends repository {
         $this->nsid  = '';
         return $this->print_login();
     }
-
-    /**
-     *
-     * @param <type> $options
-     * @return <type>
-     */
     public function set_option($options = array()) {
         if (!empty($options['api_key'])) {
             set_config('api_key', trim($options['api_key']), 'flickr');
@@ -93,11 +62,6 @@ class repository_flickr extends repository {
         return $ret;
     }
 
-    /**
-     *
-     * @param <type> $config
-     * @return <type>
-     */
     public function get_option($config = '') {
         if ($config==='api_key') {
             return trim(get_config('flickr', 'api_key'));
@@ -111,31 +75,15 @@ class repository_flickr extends repository {
         return $options;
     }
 
-    /**
-     *
-     * @global <type> $SESSION
-     * @return <type>
-     */
     public function global_search() {
-        global $SESSION;
-
         if (empty($this->token)) {
             return false;
         } else {
             return true;
         }
     }
-
-    /**
-     *
-     * @global <type> $SESSION
-     * @param <type> $ajax
-     * @return <type>
-     */
     public function print_login($ajax = true) {
-        global $SESSION;
-
-        if($ajax){
+        if ($ajax) {
             $ret = array();
             $popup_btn = new stdclass;
             $popup_btn->type = 'popup';
@@ -144,48 +92,20 @@ class repository_flickr extends repository {
             return $ret;
         }
     }
-
-    /**
-     *
-     * @global <type> $SESSION
-     * @param <type> $path
-     * @param <type> $search
-     * @return <type>
-     */
-    public function get_listing($path = '1', $search = '') {
-        global $SESSION;
-
-        $nsid = get_user_preferences($this->setting.'_nsid');
-        $photos_url = $this->flickr->urls_getUserPhotos($nsid);
-
-        if (!empty($search)) {
-            $photos = $this->flickr->photos_search(array(
-                'user_id'=>$nsid,
-                'per_page'=>25,
-                'page'=>$path,
-                'extras'=>'original_format',
-                'text'=>$search
-                ));
-        } elseif (!empty($path) && empty($search)) {
-            $photos = $this->flickr->photos_search(array(
-                'user_id'=>$nsid,
-                'per_page'=>25,
-                'page'=>$path,
-                'extras'=>'original_format'
-                ));
-        }
+    private function build_list($photos, $path = 1) {
+        $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
         $ret = array();
         $ret['manage'] = $photos_url;
         $ret['list']  = array();
         $ret['pages'] = $photos['pages'];
-        if (is_int($path) && $path <= $ret['pages']) {
+        if(is_int($path) && $path <= $ret['pages']) {
             $ret['page'] = $path;
         } else {
             $ret['page'] = 1;
         }
         if (!empty($photos['photo'])) {
             foreach ($photos['photo'] as $p) {
-                if (empty($p['title'])) {
+                if(empty($p['title'])) {
                     $p['title'] = get_string('notitle', 'repository_flickr');
                 }
                 if (isset($p['originalformat'])) {
@@ -193,52 +113,45 @@ class repository_flickr extends repository {
                 } else {
                     $format = 'jpg';
                 }
-                $ret['list'][] =
-                    array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'), 'date'=>'', 'size'=>'unknown', 'url'=>$photos_url.$p['id']);
+                $ret['list'][] = array('title'=>$p['title'].'.'.$format,'source'=>$p['id'],
+                    'id'=>$p['id'],'thumbnail'=>$this->flickr->buildPhotoURL($p, 'Square'),
+                    'date'=>'', 'size'=>'unknown', 'url'=>$photos_url.$p['id']);
             }
         }
-        if (empty($ret)) {
-            throw new repository_exception('nullphotolist', 'repository_flickr');
-        } else {
-            return $ret;
-        }
+        return $ret;
     }
+    public function search($search_text) {
+        $photos = $this->flickr->photos_search(array(
+            'user_id'=>$this->nsid,
+            'per_page'=>25,
+            'extras'=>'original_format',
+            'text'=>$search_text
+            ));
+        return $this->build_list($photos);
+    }
+    public function get_listing($path = '1') {
+        $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
 
-    /**
-     *
-     * @return <type>
-     */
+        $photos = $this->flickr->photos_search(array(
+            'user_id'=>$this->nsid,
+            'per_page'=>25,
+            'page'=>$path,
+            'extras'=>'original_format'
+            ));
+        return $this->build_list($photos, $path);
+    }
     public function print_listing() {
         return false;
     }
-
-    /**
-     *
-     * @return <type>
-     */
-    public function print_search() {
-        echo '<input name="s" value="" />';
-        parent::print_search();
-        return true;
-    }
-
-    /**
-     *
-     * @global <type> $CFG
-     * @param <type> $photo_id
-     * @param <type> $file
-     * @return <type>
-     */
     public function get_file($photo_id, $file = '') {
         global $CFG;
-
         $result = $this->flickr->photos_getSizes($photo_id);
         $url = '';
-        if (!empty($result[4])) {
+        if(!empty($result[4])) {
             $url = $result[4]['source'];
-        } elseif (!empty($result[3])) {
+        } elseif(!empty($result[3])) {
             $url = $result[3]['source'];
-        } elseif (!empty($result[2])) {
+        } elseif(!empty($result[2])) {
             $url = $result[2]['source'];
         }
         if (!file_exists($CFG->dataroot.'/repository/download')) {
@@ -248,10 +161,10 @@ class repository_flickr extends repository {
             $dir = $CFG->dataroot.'/repository/download/';
         }
 
-        if (empty($file)) {
+        if(empty($file)) {
             $file = $photo_id.'_'.time().'.jpg';
         }
-        if (file_exists($dir.$file)) {
+        if(file_exists($dir.$file)) {
             $file = uniqid('m').$file;
         }
         $fp = fopen($dir.$file, 'w');
@@ -261,56 +174,29 @@ class repository_flickr extends repository {
         ));
         return $dir.$file;
     }
-
-    /**
-     *
-     * @return <type>
-     */
     public static function has_admin_config() {
         return true;
     }
 
-    /**
-     *
-     * @return <type>
-     */
     public static function has_multiple_instances() {
         return false;
     }
 
-    /**
-     *
-     * @return <type>
-     */
     public static function has_instance_config() {
         return false;
     }
 
-    /**
-     *
-     * @param <type> $
-     */
     public function instance_config_form(&$mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr'));
         $mform->addRule('email_address', get_string('required'), 'required', null, 'client');
     }
 
-    /**
-     *
-     * @return <type>
-     */
     public static function get_instance_option_names() {
         return array('email_address');
     }
 
-    /**
-     *
-     * @global <type> $CFG
-     * @param <type> $
-     */
     public function admin_config_form(&$mform) {
         global $CFG;
-        
         $api_key = get_config('flickr', 'api_key');
         $secret = get_config('flickr', 'secret');
 
@@ -339,10 +225,6 @@ class repository_flickr extends repository {
         $mform->addRule('secret', $strrequired, 'required', null, 'client');
     }
 
-    /**
-     *
-     * @return <type> 
-     */
     public static function get_admin_option_names() {
         return array('api_key', 'secret');
     }

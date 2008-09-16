@@ -796,6 +796,7 @@ abstract class repository {
      *   'manage' => (string) link to file manager,
      *   'nologin' => (bool) requires login,
      *   'nosearch' => (bool) no search link,
+     *   'search_result' => (bool) this list is a searching result,
      *   'upload' => array( // upload manager
      *     'name' => (string) label of the form element,
      *     'id' => (string) id of the form element
@@ -827,15 +828,19 @@ abstract class repository {
      * @param string $search The text will be searched.
      * @return array the list of files, including meta infomation
      */
-    abstract public function get_listing($parent = '/', $search = '');
+    abstract public function get_listing($parent = '/');
 
     /**
-     * Search
+     * Search files in repository
+     * When doing global search, $search_text will be used as
+     * keyword. 
+     *
      * @return mixed, see get_listing()
      */
-    public function search() {
-        $search = optional_param('s', '', PARAM_CLEANHTML);
-        return $this->get_listing(null, $search);
+    public function search($search_text) {
+        $list = array();
+        $list['list'] = array();
+        return false;
     }
 
     /**
@@ -872,6 +877,7 @@ abstract class repository {
         echo '<input type="hidden" name="repo_id" value="'.$this->id.'" />';
         echo '<input type="hidden" name="ctx_id" value="'.$this->context->id.'" />';
         echo '<input type="hidden" name="seekey" value="'.sesskey().'" />';
+        echo '<input name="s" value="" />';
         return true;
     }
 
@@ -2011,7 +2017,7 @@ success: function(o) {
 postmethod: 'async',
 width : "30em",
 fixedcenter : true,
-zindex: 666667,
+zindex: 766667,
 visible : false, 
 constraintoviewport : true,
 buttons : [ { text:"Submit",handler: function() {

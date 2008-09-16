@@ -9,7 +9,7 @@
 
 class repository_local extends repository {
 
-    public function __construct($repositoryid, $context = SITEID, $options = array()){
+    public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
         // TODO:
@@ -38,6 +38,10 @@ class repository_local extends repository {
             $path = $file[1];
         }
         return array('filearea' => $filearea, 'path' => $path);
+    }
+
+    public function search($search_text) {
+        return $this->get_listing('', $search_text);
     }
 
     public function get_listing($encodedpath = '', $search = '') {
@@ -178,10 +182,6 @@ class repository_local extends repository {
 
     public function print_listing() {
         // will be used in non-javascript file picker
-    }
-
-    public function print_search() {
-        return true;
     }
 
     public static function has_admin_config() {
