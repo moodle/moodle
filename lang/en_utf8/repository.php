@@ -61,6 +61,7 @@ $string['personalrepositories'] = 'Personal repositories';
 $string['plugin'] = 'Repository plug-ins';
 $string['preview'] = 'Preview';
 $string['popup'] = 'Open a popup window to login';
+$string['readonlyinstance'] = 'You cannot edit/delete a read-only instance';
 $string['refresh'] = 'Refresh';
 $string['removed'] = 'Repository removed';
 $string['repository'] = 'Repository';

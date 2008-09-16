@@ -10,19 +10,15 @@ $new     = optional_param('new', '', PARAM_FORMAT);
 $hide    = optional_param('hide', 0, PARAM_INT);
 $delete  = optional_param('delete', 0, PARAM_INT);
 $sure    = optional_param('sure', '', PARAM_ALPHA);
-$move    = optional_param('move', '', PARAM_ALPHA);
-$type    = optional_param('type', '', PARAM_ALPHA);
+$type    = optional_param('type', '', PARAM_ALPHAEXT);
 
 $context = get_context_instance(CONTEXT_SYSTEM);
-
-$display = true; // fall through to normal display
 
 $pagename = 'repositorycontroller';
 
 if ($edit){
     $pagename = 'repositoryinstanceedit';
-}else
-if ($delete) {
+} else if ($delete) {
     $pagename = 'repositorydelete';
 } else if ($new) {
     $pagename = 'repositoryinstancenew';
@@ -47,6 +43,10 @@ $return = true;
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
         $instance = repository_get_instance($edit);
+        //if you try to edit an instance set as readonly, display an error message
+        if ($instance->readonly) {
+            throw new repository_exception('readonlyinstance', 'repository');
+        }
         $instancetype = repository_get_type_by_id($instance->typeid);
         $classname = 'repository_' . $instancetype->get_typename();
         $configs  = $instance->get_instance_option_names();
@@ -109,6 +109,10 @@ if (!empty($edit) || !empty($new)) {
 } else if (!empty($delete)) { 
     admin_externalpage_print_header();
     $instance = repository_get_instance($delete);
+    //if you try to delete an instance set as readonly, display an error message
+    if ($instance->readonly) {
+            throw new repository_exception('readonlyinstance', 'repository');
+     }
     if ($sure) {
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);

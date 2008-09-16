@@ -825,6 +825,23 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008091000);
     }
 
+    //Add a readonly field to the repository_instances table
+    //in order to support instance created automatically by a repository plugin
+     if ($result && $oldversion < 2008091611) {
+
+    /// Define field readonly to be added to repository_instances
+        $table = new xmldb_table('repository_instances');
+        $field = new xmldb_field('readonly', XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'timemodified');
+
+    /// Conditionally launch add field readonly
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008091611);
+    }
+
     return $result;
 }
 

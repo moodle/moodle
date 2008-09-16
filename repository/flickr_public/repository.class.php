@@ -43,10 +43,10 @@ class repository_flickr_public extends repository {
         }
     }
 
-    public function __construct($repositoryid, $context = SITEID, $options = array()) {
+    public function __construct($repositoryid, $context = SITEID, $options = array(), $readonly=0) {
         global $CFG;
         $options['page'] = optional_param('p', 1, PARAM_INT);
-        parent::__construct($repositoryid, $context, $options);
+        parent::__construct($repositoryid, $context, $options,$readonly);
         $this->api_key = $this->get_option('api_key');
         $this->flickr = new phpFlickr($this->api_key);
         $this->flickr_account = $this->get_option('email_address');
@@ -182,7 +182,7 @@ class repository_flickr_public extends repository {
 
     public function instance_config_form(&$mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
-        //$mform->addRule('email_address', get_string('required'), 'required', null, 'client');
+        $mform->addRule('email_address', get_string('required'), 'required', null, 'client');
     }
 
     public static function get_instance_option_names() {
@@ -203,8 +203,15 @@ class repository_flickr_public extends repository {
         return array('api_key');
     }
 
-    public static function type_init() {
+
+    public static function plugin_init() {
         //here we create a default instances for this type
+        repository_static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => 'default instance','email_address' => null),1);
+        //create(0, get_system_context(), array('name' => 'default instance'),1);
+        /*
+        $success = repository_static_function($plugin, 'create', $plugin, 0, get_context_instance_by_id($contextid), $fromform);
+        $defaultinstance = new repository ();
+         * */
     }
 
 }

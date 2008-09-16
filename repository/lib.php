@@ -207,6 +207,10 @@ class repository_type {
                 $instanceoptions['name'] = $this->_typename;
                 repository_static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
             }
+
+            //run init function
+            repository_static_function($this->_typename,"plugin_init");
+
         } else {
             throw new repository_exception('existingrepository', 'repository');
         }
@@ -441,6 +445,7 @@ abstract class repository {
     public $id;
     public $context;
     public $options;
+    public $readonly;
 
     /**
      * 1. Initialize context and options
@@ -450,9 +455,10 @@ abstract class repository {
      * @param integer $contextid
      * @param array $options
      */
-    public function __construct($repositoryid, $contextid = SITEID, $options = array()) {
+    public function __construct($repositoryid, $contextid = SITEID, $options = array(), $readonly = 0) {
         $this->id = $repositoryid;
         $this->context = get_context_instance_by_id($contextid);
+        $this->readonly = $readonly;
         $this->options = array();
         if (is_array($options)) {
             $options = array_merge($this->get_option(), $options);
@@ -621,7 +627,7 @@ abstract class repository {
      * @param array $params the options for this instance
      * @return <type>
      */
-    final public static function create($type, $userid, $context, $params) {
+    final public static function create($type, $userid, $context, $params, $readonly=0) {
         global $CFG, $DB;
         $params = (array)$params;
         require_once($CFG->dirroot . '/repository/'. $type . '/repository.class.php');
@@ -633,6 +639,7 @@ abstract class repository {
             $record->timecreated  = time();
             $record->timemodified = time();
             $record->contextid = $context->id;
+            $record->readonly = $readonly;
             $record->userid    = $userid;
             $id = $DB->insert_record('repository_instances', $record);
             $options = array();
@@ -902,7 +909,7 @@ abstract class repository {
      * a class extended from repository class, the init() for type has been placed
      * into the repository.
      */
-    public static function type_init(){
+    public static function plugin_init(){
 
     }
 
@@ -1069,7 +1076,7 @@ function repository_get_instances($contexts=array(), $userid = null, $onlyvisibl
         $options['type']    = $repo->repositorytype;
         $options['typeid']  = $repo->typeid;
         $classname = 'repository_' . $repo->repositorytype;
-        $ret[] = new $classname($repo->id, $repo->contextid, $options);
+        $ret[] = new $classname($repo->id, $repo->contextid, $options, $repo->readonly);
     }
     return $ret;
 }
@@ -1096,7 +1103,7 @@ function repository_get_instance($id) {
     $options['typeid'] = $instance->typeid;
     $options['type']   = $instance->repositorytype;
     $options['name']   = $instance->name;
-    return new $classname($instance->id, $instance->contextid, $options);
+    return new $classname($instance->id, $instance->contextid, $options, $instance->readonly);
 }
 
 /**
@@ -1412,8 +1419,11 @@ function repository_display_instances_list($context, $typename = null) {
 
     foreach ($instances as $i) {
         $settings = '';
-        $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
-        $delete = '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
+        $delete = '';
+        if (!$i->readonly) {
+            $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
+            $delete .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
+        }
 
         $type = repository_get_type_by_id($i->typeid);
         $table->data[] = array($i->name, $type->get_readablename(), $delete, $settings);
