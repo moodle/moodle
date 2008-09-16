@@ -162,7 +162,7 @@ class quiz_report_responses_table extends table_sql {
                 $format_options->newlines = false;
                 $qclass = question_get_feedback_class($grade);
                 $feedbackimg = question_get_feedback_image($grade);
-                $questionclass = "que {$question->qtype}";
+                $questionclass = "que";
                 $response = format_text($response, FORMAT_MOODLE, $format_options);
                 if ($response){
                     return "<span class=\"$questionclass\"><span class=\"$qclass\">".$response."</span></span>$feedbackimg";
