@@ -1027,8 +1027,17 @@ function data_print_template($template, $records, $data, $search='',$page=0, $re
                 || (data_isowner($record->id) && has_capability('mod/data:exportownentry', $context))))) {
             require_once($CFG->libdir . '/portfoliolib.php');
             $button = new portfolio_add_button();
-            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id, 'record' => $record->id));
-            $button->set_formats(PORTFOLIO_FORMAT_HTML);
+            $button->set_callback_options('data_portfolio_caller', array('id' => $cm->id, 'recordid' => $record->id));
+            $formats = array(PORTFOLIO_FORMAT_HTML);
+            if (count($fields) == 1) {
+                $ftmp = array_values($fields);
+                $singlefield = $ftmp[0];
+                if (is_callable(array($singlefield, 'get_file'))) { // TODO this used to be if ($singlefield instanceof data_field_file) { - see  MDL-16493
+                    $f = $singlefield->get_file($record->id);
+                    $formats= array(portfolio_format_from_file($f));
+                }
+            }
+            $button->set_formats($formats);
             $replacement[] = $button->to_html(PORTFOLIO_ADD_ICON_LINK);
         } else {
             $replacement[] = '';
@@ -2546,6 +2555,7 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     private $fieldtypes;
     private $exportdata;
     private $singlerecord;
+    private $singlefield;
 
     public static function expected_callbackargs() {
         return array(
@@ -2590,7 +2600,19 @@ class data_portfolio_caller extends portfolio_module_caller_base {
             $this->singlerecord = $DB->get_record('data_records', array('id' => $this->recordid));
             $this->singlerecord->content = $DB->get_records('data_content', array('recordid' => $this->singlerecord->id));
             $this->exporttype = 'single';
-            $this->supportedformats = array(PORTFOLIO_FORMAT_HTML);
+            $formats = array(PORTFOLIO_FORMAT_HTML);
+            if (count($this->fields) == 1) {
+                $ftmp = array_values($this->fields);
+                $singlefield = $ftmp[0];
+                if (is_callable(array($singlefield, 'get_file'))) { // TODO This used to be if ($singlefield instanceof data_field_file) { see MDL-16493
+                    $f = $singlefield->get_file($this->singlerecord->id);
+                    $formats= array(portfolio_format_from_file($f));
+                    $this->exporttype = 'singlefile';
+                    $this->singlefield = $singlefield;
+                    $this->singlefile = $this->singlefield->get_file($this->singlerecord->id);
+                }
+            }
+            $this->supportedformats = $formats;
         } else {
             // all records as csv or whatever
             $this->exportdata = data_get_exportdata($this->cm->instance, $this->fields, $this->selectedfields);
@@ -2611,6 +2633,9 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public function get_sha1() {
+        if ($this->exporttype == 'singlefile') {
+            return $this->singlefile->get_contenthash();
+        }
         $loopdata = $this->exportdata;
         if ($this->exporttype == 'single') {
             $loopdata = $this->singlerecord;
@@ -2639,6 +2664,8 @@ class data_portfolio_caller extends portfolio_module_caller_base {
         $content = '';
         $filename = '';
         switch ($this->exporttype) {
+            case 'singlefile':
+                return $this->get('exporter')->copy_existing_file($this->singlefile);
             case 'single':
                 $content = $this->exportsingle();
                 $filename = clean_filename($this->cm->name . '-entry.html');
@@ -2682,19 +2709,21 @@ class data_portfolio_caller extends portfolio_module_caller_base {
     }
 
     private function exportsingle() {
+        global $DB;
     // Replacing tags
         $patterns = array();
         $replacement = array();
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
 
     // Then we generate strings to replace for normal tags
         foreach ($this->fields as $field) {
             $patterns[]='[['.$field->field->name.']]';
-            if ($field instanceof data_field_file) {
-                // meh, do something special
-                // @todo penny extract the file and put it in the working directory
-                // and write out the filename here. (files api)
-                debugging('FIXME: data module is exporting a field that needs updating to support new files api!');
-                $replacement[] = $field->display_browse_field($this->singlerecord->id, 'singletemplate');
+            if (is_callable(array($field, 'get_file'))) { // TODO this used to be if ($field instanceof data_field_file) { - see  MDL-16493
+                if (!$file = $field->get_file($this->singlerecord->id)) {
+                    continue; // probably left empty
+                }
+                $replacement[] = $file->get_filename();
+                $this->get('exporter')->copy_existing_file($file);
             } else {
                 $replacement[] = $field->display_browse_field($this->singlerecord->id, 'singletemplate');
             }

@@ -68,6 +68,23 @@ class data_field_picture extends data_field_base {
         return $str;
     }
 
+    // TODO delete this function and instead subclass data_field_file - see MDL-16493
+
+    function get_file($recordid, $content=null) {
+        global $DB;
+        if (empty($content)) {
+            if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+                return null;
+            }
+        }
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+            return null;
+        }
+
+        return $file;
+    }
+
     function display_search_field($value = '') {
         return '<input type="text" size="16" name="f_'.$this->field->id.'" value="'.$value.'" />';
     }

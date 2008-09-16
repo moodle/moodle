@@ -86,6 +86,21 @@ class data_field_file extends data_field_base {
         return optional_param('f_'.$this->field->id, '', PARAM_NOTAGS);
     }
 
+    function get_file($recordid, $content=null) {
+        global $DB;
+        if (empty($content)) {
+            if (!$content = $DB->get_record('data_content', array('fieldid'=>$this->field->id, 'recordid'=>$recordid))) {
+                return null;
+            }
+        }
+        $fs = get_file_storage();
+        if (!$file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+            return null;
+        }
+
+        return $file;
+    }
+
     function display_browse_field($recordid, $template) {
         global $CFG, $DB;
 
@@ -97,9 +112,8 @@ class data_field_file extends data_field_base {
             return '';
         }
 
-        $fs      = get_file_storage();
         $browser = get_file_browser();
-        if (!$file = $fs->get_file($this->context->id, 'data_content', $content->id, '/', $content->content)) {
+        if (!$file = $this->get_file($recordid, $content)) {
             return '';
         }
 
