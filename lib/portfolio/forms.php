@@ -134,15 +134,10 @@ final class portfolio_admin_form extends moodleform {
         $mform->addElement('hidden', 'new',   $this->plugin);
         $mform->addElement('hidden', 'plugin', $this->plugin);
 
-        // let the plugin add the fields they want (either statically or not)
-        if (portfolio_static_function($this->plugin, 'has_admin_config')) {
-            if (!$this->instance) {
-                $insane = portfolio_instance_sanity_check($this->instance);
-                portfolio_static_function($this->plugin, 'admin_config_form', $mform);
-            } else {
-                $insane = portfolio_plugin_sanity_check($this->plugin);
-                $this->instance->admin_config_form($mform);
-            }
+        if (!$this->instance) {
+            $insane = portfolio_instance_sanity_check($this->instance);
+        } else {
+            $insane = portfolio_plugin_sanity_check($this->plugin);
         }
 
         if (isset($insane) && is_array($insane)) {
@@ -155,6 +150,14 @@ final class portfolio_admin_form extends moodleform {
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
         $mform->addRule('name', $strrequired, 'required', null, 'client');
 
+        // let the plugin add the fields they want (either statically or not)
+        if (portfolio_static_function($this->plugin, 'has_admin_config')) {
+            if (!$this->instance) {
+                portfolio_static_function($this->plugin, 'admin_config_form', $mform);
+            } else {
+                $this->instance->admin_config_form($mform);
+            }
+        }
 
         // and set the data if we have some.
         if ($this->instance) {
