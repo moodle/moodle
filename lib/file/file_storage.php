@@ -710,7 +710,7 @@ class file_storage {
                 break;
 
             case 'image/png':
-                $quality = int($quality);
+                $quality = (int)$quality;
                 imagepng($img, NULL, $quality, NULL);
                 break;
 
