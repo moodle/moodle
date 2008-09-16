@@ -188,35 +188,6 @@ require_once($CFG->libdir . '/portfoliolib.php');
 require_once($CFG->dirroot . '/admin/generator.php');
 
 class portfoliolib_test extends MoodleUnitTestCase {
-    public $tables = array();
-
-    function setUp() {
-        global $DB, $CFG;
-
-        $this->tables = $DB->get_tables();
-
-        foreach ($this->tables as $key => $table) {
-            if ($table == 'sessions2') {
-                unset($this->tables[$key]);
-                continue;
-            }
-
-            if ($max_id = $DB->get_field_sql("SELECT MAX(id) FROM {$CFG->prefix}{$table}")) {
-                $this->tables[$table] = $max_id;
-            } else {
-                $this->tables[$table] = 0;
-            }
-        }
-    }
-
-    function tearDown() {
-        global $DB;
-
-        // Truncate all data created during unit tests
-        foreach ($this->tables as $table => $max_pk) {
-            $DB->delete_records_select($table, "id > $max_pk");
-        }
-    }
 
     function test_construct_dupe_instance() {
         $gotexception = false;

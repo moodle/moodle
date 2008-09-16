@@ -29,6 +29,7 @@ $rundbtests = optional_param('rundbtests', false, PARAM_BOOL);
 $thorough = optional_param('thorough', false, PARAM_BOOL);
 $addconfigprefix = optional_param('addconfigprefix', false, PARAM_RAW);
 $setuptesttables = optional_param('setuptesttables', false, PARAM_BOOL);
+$droptesttables = optional_param('droptesttables', false, PARAM_BOOL);
 
 global $UNITTEST;
 $UNITTEST = new object();
@@ -84,18 +85,16 @@ if (empty($CFG->unittest_prefix)) {
     exit();
 }
 
-$test_tables = $DB->get_tables($CFG->unittest_prefix);
-$real_tables = $DB->get_tables();
+$real_db = clone($DB);
+$DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittest_prefix);
+$test_tables = $DB->get_tables();
 
 // Build test tables if requested and needed
 if ($setuptesttables) {
     $version = null;
     $release = null;
     include("$CFG->dirroot/version.php");       // defines $version and $release
-
-    $real_db = clone($DB);
-    $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
-    $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittest_prefix);
 
     // Drop all tables first if they exist
     $manager = $DB->get_manager();
@@ -104,15 +103,25 @@ if ($setuptesttables) {
     }
 
     upgrade_db($version, $release, true);
-    $DB = $real_db;
+}
+
+if ($droptesttables) {
+    $manager = $DB->get_manager();
+    foreach ($test_tables as $table) {
+        $manager->drop_table($table);
+    }
+    $test_tables = $DB->get_tables();
 }
 
 if (empty($test_tables['config'])) {
     // TODO replace error with proper admin dialog
     notice_yesno(get_string('tablesnotsetup', 'simpletest'), $baseurl . '?setuptesttables=1', $baseurl);
+    $DB = $real_db;
     admin_externalpage_print_footer();
     exit();
 }
+
+$DB = $real_db;
 
 if (!is_null($path)) {
     // Create the group of tests.

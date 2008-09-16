@@ -150,25 +150,58 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
 }
 
 class MoodleUnitTestCase extends UnitTestCase {
+    public $real_db;
+    public $tables = array();
+
     public function __construct($label = false) {
         parent::UnitTestCase($label);
+
+    }
+
+    public function setUp() {
         global $CFG, $DB;
+        parent::setUp();
+
+        $this->real_db = $DB;
 
         if (empty($CFG->unittest_prefix)) {
             print_error("prefixnotset", 'simpletest');
         }
 
-        if (!$DB->table_exists('user')) {
+        $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+        $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittest_prefix);
+        $manager = $DB->get_manager();
+
+        if (!$manager->table_exists('user')) {
             print_error('tablesnotsetup', 'simpletest');
+        }
+
+        $this->tables = $DB->get_tables();
+
+        foreach ($this->tables as $key => $table) {
+            if ($table == 'sessions2') {
+                unset($this->tables[$key]);
+                continue;
+            }
+
+            if ($max_id = $DB->get_field_sql("SELECT MAX(id) FROM {$CFG->prefix}{$table}")) {
+                $this->tables[$table] = $max_id;
+            } else {
+                $this->tables[$table] = 0;
+            }
         }
     }
 
-    public function setUp() {
-        parent::setUp();
-    }
-
     public function tearDown() {
+        global $DB;
         parent::tearDown();
+
+        // Truncate all data created during unit tests
+        foreach ($this->tables as $table => $max_pk) {
+            $DB->delete_records_select($table, "id > $max_pk");
+        }
+
+        $DB = $this->real_db;
     }
 
     /**

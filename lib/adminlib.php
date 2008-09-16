@@ -39,6 +39,11 @@ function upgrade_db($version, $release, $unittest=false) {
     $autopilot      = optional_param('autopilot', $unittest, PARAM_BOOL);
     $setuptesttables= optional_param('setuptesttables', $unittest, PARAM_BOOL);
 
+    $return_url = "$CFG->wwwroot/$CFG->admin/index.php";
+    if ($unittest) {
+        $return_url = "$CFG->wwwroot/$CFG->admin/report/simpletest/index.php";
+    }
+
     /// Check if the main tables have been installed yet or not.
     if (!$tables = $DB->get_tables() ) {    // No tables yet at all.
         $maintables = false;
@@ -330,67 +335,67 @@ function upgrade_db($version, $release, $unittest=false) {
 
 /// Find and check all main modules and load them up or upgrade them if necessary
 /// first old *.php update and then the new upgrade.php script
-    upgrade_activity_modules("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_activity_modules($return_url);  // Return here afterwards
 
 /// Check all questiontype plugins and upgrade if necessary
 /// first old *.php update and then the new upgrade.php script
 /// It is important that this is done AFTER the quiz module has been upgraded
-    upgrade_plugins('qtype', 'question/type', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_plugins('qtype', 'question/type', $return_url);  // Return here afterwards
 
 /// Upgrade backup/restore system if necessary
 /// first old *.php update and then the new upgrade.php script
     require_once("$CFG->dirroot/backup/lib.php");
-    upgrade_backup_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_backup_db($return_url);  // Return here afterwards
 
 /// Upgrade blocks system if necessary
 /// first old *.php update and then the new upgrade.php script
     require_once("$CFG->dirroot/lib/blocklib.php");
-    upgrade_blocks_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_blocks_db($return_url);  // Return here afterwards
 
 /// Check all blocks and load (or upgrade them if necessary)
 /// first old *.php update and then the new upgrade.php script
-    upgrade_blocks_plugins("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_blocks_plugins($return_url);  // Return here afterwards
 
 /// Check all enrolment plugins and upgrade if necessary
 /// first old *.php update and then the new upgrade.php script
-    upgrade_plugins('enrol', 'enrol', "$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_plugins('enrol', 'enrol', $return_url);  // Return here afterwards
 
 /// Check all auth plugins and upgrade if necessary
-    upgrade_plugins('auth','auth',"$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('auth','auth',$return_url);
 
 /// Check all course formats and upgrade if necessary
-    upgrade_plugins('format','course/format',"$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('format','course/format',$return_url);
 
 /// Check for local database customisations
 /// first old *.php update and then the new upgrade.php script
     require_once("$CFG->dirroot/lib/locallib.php");
-    upgrade_local_db("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_local_db($return_url);  // Return here afterwards
 
 /// Check for changes to RPC functions
     require_once("$CFG->dirroot/$CFG->admin/mnet/adminlib.php");
-    upgrade_RPC_functions("$CFG->wwwroot/$CFG->admin/index.php");  // Return here afterwards
+    upgrade_RPC_functions($return_url);  // Return here afterwards
 
 /// Upgrade all plugins for gradebook
-    upgrade_plugins('gradeexport', 'grade/export', "$CFG->wwwroot/$CFG->admin/index.php");
-    upgrade_plugins('gradeimport', 'grade/import', "$CFG->wwwroot/$CFG->admin/index.php");
-    upgrade_plugins('gradereport', 'grade/report', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('gradeexport', 'grade/export', $return_url);
+    upgrade_plugins('gradeimport', 'grade/import', $return_url);
+    upgrade_plugins('gradereport', 'grade/report', $return_url);
 
 /// Check all message output plugins and upgrade if necessary
-    upgrade_plugins('message','message/output',"$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('message','message/output',$return_url);
 
 /// Check all admin report plugins and upgrade if necessary
-    upgrade_plugins('report', $CFG->admin.'/report', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('report', $CFG->admin.'/report', $return_url);
 
 /// Check all quiz report plugins and upgrade if necessary
-    upgrade_plugins('quizreport', 'mod/quiz/report', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('quizreport', 'mod/quiz/report', $return_url);
 
 /// Check all portfolio plugins and upgrade if necessary
-    upgrade_plugins('portfolio', 'portfolio/type', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('portfolio', 'portfolio/type', $return_url);
 
 /// Check all progress tracker plugins and upgrade if necessary
-    upgrade_plugins('trackerexport', 'tracker/export', "$CFG->wwwroot/$CFG->admin/index.php");
-    upgrade_plugins('trackerimport', 'tracker/import', "$CFG->wwwroot/$CFG->admin/index.php");
-    upgrade_plugins('trackerreport', 'tracker/report', "$CFG->wwwroot/$CFG->admin/index.php");
+    upgrade_plugins('trackerexport', 'tracker/export', $return_url);
+    upgrade_plugins('trackerimport', 'tracker/import', $return_url);
+    upgrade_plugins('trackerreport', 'tracker/report', $return_url);
 
 /// just make sure upgrade logging is properly terminated
     upgrade_log_finish();
