@@ -45,7 +45,7 @@ class generator {
     public $original_db;
 
     public function __construct($settings = array(), $generate=false) {
-        global $CFG, $DB;
+        global $CFG;
 
         $this->starttime = time()+microtime();
 
@@ -145,7 +145,10 @@ class generator {
         if ($generate) {
             $this->generate_data();
         }
+    }
 
+    public function connect() {
+        global $DB, $CFG;
         $this->original_db = clone($DB);
 
         $class = get_class($DB);
@@ -1121,6 +1124,8 @@ class generator_cli extends generator {
                 die();
             }
         }
+
+        $this->connect();
     }
 
     public function generate_data() {
@@ -1167,6 +1172,22 @@ class generator_cli extends generator {
 
 class generator_web extends generator {
     public $eolchar = '<br />';
+    public $mform;
+
+    public function setup() {
+        $this->mform = new generator_form();
+
+        $this->do_generation = optional_param('do_generation', false, PARAM_BOOL);
+
+        if ($data = $this->mform->get_data(false)) {
+            foreach ($this->settings as $setting) {
+                if (isset($data->{$setting->long})) {
+                    $this->set($setting->long, $data->{$setting->long});
+                }
+            }
+        }
+        $this->connect();
+    }
 
     public function display() {
         print_header("Data generator");
@@ -1174,17 +1195,6 @@ class generator_web extends generator {
         print_heading("FOR DEVELOPMENT PURPOSES ONLY. DO NOT USE ON A PRODUCTION SITE!", '', 3);
         print_heading("Your database contents will probably be massacred. You have been warned", '', 5);
 
-        $mform = new generator_form();
-
-        $this->do_generation = optional_param('do_generation', false, PARAM_BOOL);
-
-        if ($data = $mform->get_data(false)) {
-            foreach ($this->settings as $setting) {
-                if (isset($data->{$setting->long})) {
-                    $this->set($setting->long, $data->{$setting->long});
-                }
-            }
-        }
 
         $systemcontext = get_context_instance(CONTEXT_SYSTEM);
         if (!has_capability('moodle/site:doanything', $systemcontext)) {
@@ -1193,7 +1203,7 @@ class generator_web extends generator {
             print_footer();
             require_login();
         } else {
-            $mform->display();
+            $this->mform->display();
         }
     }
 
@@ -1276,6 +1286,7 @@ if (isset($argv) && isset($argc)) {
     $generator->generate_data();
 } elseif($web_interface) {
     $generator = new generator_web();
+    $generator->setup();
     $generator->display();
     $generator->generate_data();
 }
