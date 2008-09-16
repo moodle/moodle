@@ -2509,7 +2509,7 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     }
 
     public static function display_name() {
-        return get_string('modname', 'glossary');
+        return get_string('modulename', 'glossary');
     }
 
     public function prepare_package() {
