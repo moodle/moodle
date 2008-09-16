@@ -7,6 +7,7 @@ require_once($CFG->libdir . '/filelib.php');
 $id = required_param('id', PARAM_INT);
 
 $exporter = portfolio_exporter::rewaken_object($id);
+$exporter->verify_rewaken();
 
 if ($exporter->get('instance')->is_push()) {
     throw new portfolio_export_exception($exporter, 'filedenied', 'portfolio');
