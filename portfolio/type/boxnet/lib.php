@@ -50,8 +50,10 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
         $allfolders = $this->get_folder_list();
         if ($newfolder = $this->get_export_config('newfolder')) {
             $foldername = $newfolder . ' (' . get_string('tobecreated', 'portfolio_boxnet') . ')';
-        } else {
+        } elseif ($this->get_export_config('folder')) {
             $foldername = $allfolders[$this->get_export_config('folder')];
+        } else {
+            $foldername = '';
         }
         return array(
             get_string('targetfolder', 'portfolio_boxnet') => $foldername
@@ -88,25 +90,15 @@ class portfolio_plugin_boxnet extends portfolio_plugin_push_base {
 
     public function export_config_form(&$mform) {
         $folders = $this->get_folder_list();
-        $strrequired = get_string('required');
         $mform->addElement('checkbox', 'plugin_sharefile', get_string('sharefile', 'portfolio_boxnet'));
         $mform->addElement('text', 'plugin_newfolder', get_string('newfolder', 'portfolio_boxnet'));
         $mform->addElement('checkbox', 'plugin_sharefolder', get_string('sharefolder', 'portfolio_boxnet'));
-        if (empty($folders)) {
-            $mform->addRule('plugin_newfolder', $strrequired, 'required', null, 'client');
-        }
-        else {
-            $mform->addElement('select', 'plugin_folder', get_string('existingfolder', 'portfolio_boxnet'), $folders);
-        }
+        $folders[0] = '----';
+        ksort($folders);
+        $mform->addElement('select', 'plugin_folder', get_string('existingfolder', 'portfolio_boxnet'), $folders);
     }
 
     public function export_config_validation($data) {
-        if ((!array_key_exists('plugin_folder', $data) || empty($data['plugin_folder']))
-            && (!array_key_exists('plugin_newfolder', $data) || empty($data['plugin_newfolder']))) {
-            return array(
-                'plugin_folder' => get_string('notarget', 'portfolio_boxnet'),
-                'plugin_newfolder' => get_string('notarget', 'portfolio_boxnet'));
-        }
         $allfolders = $this->get_folder_list();
         if (in_array($data['plugin_newfolder'], $allfolders)) {
             return array('plugin_newfolder' => get_string('folderclash', 'portfolio_boxnet'));
