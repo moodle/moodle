@@ -26,13 +26,17 @@ function xmldb_qtype_calculated_upgrade($oldversion) {
     $dbman = $DB->get_manager();
     $result = true;
 
-/// And upgrade begins here. For each one, you'll need one 
-/// block of code similar to the next one. Please, delete 
-/// this comment lines once this file start handling proper
-/// upgrade code.
+    // MDL-16505.
+    if ($result && $oldversion < 2008091700) { //New version in version.php
+        if (get_config('qtype_datasetdependent', 'version')) {
+            $result = $result && unset_config('version', 'qtype_datasetdependent');
+        }
+        upgrade_plugin_savepoint($result, 2008091700, 'qtype', 'calculated');
+    }
 
 /// if ($result && $oldversion < YYYYMMDD00) { //New version in version.php
 ///     $result = result of database_manager methods
+///     upgrade_plugin_savepoint($result, YYYYMMDD00, 'qtype', 'calculated');
 /// }
 
     return $result;
