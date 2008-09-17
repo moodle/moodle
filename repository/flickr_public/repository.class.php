@@ -197,6 +197,7 @@ class repository_flickr_public extends repository {
         $strrequired = get_string('required');
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr_public'), array('value'=>$api_key,'size' => '40'));
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
+        $mform->addElement('static', null, '',  get_string('information','repository_flickr_public'));
     }
 
     public static function get_admin_option_names() {
@@ -205,13 +206,8 @@ class repository_flickr_public extends repository {
 
 
     public static function plugin_init() {
-        //here we create a default instances for this type
+        //here we create a default instance for this type
         repository_static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => 'default instance','email_address' => null),1);
-        //create(0, get_system_context(), array('name' => 'default instance'),1);
-        /*
-        $success = repository_static_function($plugin, 'create', $plugin, 0, get_context_instance_by_id($contextid), $fromform);
-        $defaultinstance = new repository ();
-         * */
     }
 
 }

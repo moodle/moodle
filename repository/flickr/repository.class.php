@@ -200,14 +200,7 @@ class repository_flickr extends repository {
         $api_key = get_config('flickr', 'api_key');
         $secret = get_config('flickr', 'secret');
 
-        //retrieve the flickr instances
-        $instances = repository_get_instances(array(),null,false,"flickr");
-        if (empty($instances)) {
-            $callbackurl = get_string("callbackwarning","repository_flickr");
-        }
-        else {
-             $callbackurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&repo_id='.$instances[0]->id;
-        }
+        
 
         if (empty($api_key)) {
             $api_key = '';
@@ -215,11 +208,32 @@ class repository_flickr extends repository {
         if (empty($secret)) {
             $secret = '';
         }
+/*
+        $noticetext = get_string('notice', 'repository_flickr');
+        //$noticetext = 'a[';
+        //var_dump($noticetext);
+        if (strpos($noticetext, '[')==0) {
+            $mform->addElement('static', 'notice', '<strong>'.get_string('notice', 'repository').'</strong>', '<i>'.$noticetext.'</i>');
+        }
+ * */
+
+        
 
         $strrequired = get_string('required');
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr'), array('value'=>$api_key,'size' => '40'));
         $mform->addElement('text', 'secret', get_string('secret', 'repository_flickr'), array('value'=>$secret,'size' => '40'));
-        $mform->addElement('static', 'callbackurl', get_string('callbackurl', 'repository_flickr'), $callbackurl);
+
+        //retrieve the flickr instances
+        $instances = repository_get_instances(array(),null,false,"flickr");
+        if (empty($instances)) {
+            $callbackurl = get_string("callbackwarning","repository_flickr");
+             $mform->addElement('static', null, '',  $callbackurl);
+        }
+        else {
+             $callbackurl = $CFG->wwwroot.'/repository/ws.php?callback=yes&amp;repo_id='.$instances[0]->id;
+              $mform->addElement('static', 'callbackurl', '', get_string('callbackurltext', 'repository_flickr', $callbackurl));
+        }
+       
 
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
         $mform->addRule('secret', $strrequired, 'required', null, 'client');
