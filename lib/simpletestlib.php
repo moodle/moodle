@@ -186,7 +186,7 @@ class MoodleUnitTestCase extends UnitTestCase {
                 continue;
             }
 
-            if ($max_id = $DB->get_field_sql("SELECT MAX(id) FROM {$CFG->prefix}{$table}")) {
+            if ($max_id = $DB->get_field_sql("SELECT MAX(id) FROM {$CFG->unittest_prefix}{$table}")) {
                 $this->tables[$table] = $max_id;
             } else {
                 $this->tables[$table] = 0;
