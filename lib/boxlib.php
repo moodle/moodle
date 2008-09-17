@@ -256,29 +256,31 @@ class boxclient {
             return false;
         }
         foreach ($data as $a) {
-            switch ($a['tag']) {
-            case 'FOLDER_ID':
-                $ret_array['folder_id'] = $a['value'];
-                break;
+            if (!empty($a['value']) {
+                switch ($a['tag']) {
 
-            case 'FOLDER_NAME':
-                $ret_array['folder_name'] = $a['value'];
-                break;
+                case 'FOLDER_ID':
+                    $ret_array['folder_id'] = $a['value'];
+                    break;
 
-            case 'FOLDER_TYPE_ID':
-                $ret_array['folder_type_id'] = $a['value'];
-                break;
+                case 'FOLDER_NAME':
+                    $ret_array['folder_name'] = $a['value'];
+                    break;
 
-            case 'SHARED':
-                if(!empty($a['value'])){
+                case 'FOLDER_TYPE_ID':
+                    $ret_array['folder_type_id'] = $a['value'];
+                    break;
+
+                case 'SHARED':
                     $ret_array['shared'] = $a['value'];
-                }else{
-                    $ret_array['shared'] = false;
+                    break;
+
+                case 'PASSWORD':
+                    $ret_array['password'] = $a['value'];
+                    break;
                 }
-                break;
-            case 'PASSWORD':
-                $ret_array['password'] = $a['value'];
-                break;
+            } else {
+                $ret_array[strtolower($a['tag'])] = null;
             }
         }
         return $ret_array;
