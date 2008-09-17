@@ -7214,9 +7214,11 @@ EOT;
         } else {
             $percent = $cur / $total;
         }
+        /**
         if ($percent != 1 && ($this->lastcall->time + $this->minimum_time) > microtime(true)){
             return;
         }
+        */
         $es = $this->estimate(microtime(true), $percent);
         $this->_update($percent, $msg, $es);
     }
