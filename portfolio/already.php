@@ -17,7 +17,7 @@ if (!$dataid = optional_param('id', '', PARAM_INT) ) {
 $table = new StdClass;
 $table->head = array(
     get_string('displayarea', 'portfolio'),
-    get_string('plugin', 'portfolio'),
+    get_string('destination', 'portfolio'),
     get_string('displayinfo', 'portfolio'),
 );
 $table->data = array();
