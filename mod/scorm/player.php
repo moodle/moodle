@@ -289,7 +289,7 @@
             ?>
                     <script type="text/javascript">
                     //<![CDATA[
-                    scorm_resize(<?php echo $scorm->width.", ". $scorm->height; ?>);
+                        scorm_resize(<?php echo $scorm->width.", ". $scorm->height; ?>);
                         function openpopup(url,name,options,width,height) {
                             fullurl = "<?php echo $CFG->wwwroot.'/mod/scorm/' ?>" + url;
                             windowobj = window.open(fullurl,name,options);
