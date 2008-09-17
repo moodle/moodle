@@ -256,7 +256,7 @@ class boxclient {
             return false;
         }
         foreach ($data as $a) {
-            if (!empty($a['value']) {
+            if (!empty($a['value'])) {
                 switch ($a['tag']) {
 
                 case 'FOLDER_ID':
