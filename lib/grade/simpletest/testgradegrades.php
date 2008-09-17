@@ -58,7 +58,7 @@ class grade_grade_test extends grade_test {
         $this->assertTrue(method_exists($grade_grade, 'insert'));
 
         $grade_grade->itemid = $this->grade_items[0]->id;
-        $grade_grade->userid = 1;
+        $grade_grade->userid = 10;
         $grade_grade->rawgrade = 88;
         $grade_grade->rawgrademax = 110;
         $grade_grade->rawgrademin = 18;
@@ -117,7 +117,7 @@ class grade_grade_test extends grade_test {
         $this->assertEqual(40, grade_grade::standardise_score(50, 30, 80, 0, 100));
     }
 
-    
+
     /*
      * Disabling this test: the set_locked() arguments have been modified, rendering these tests useless until they are re-written
 

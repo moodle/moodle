@@ -37,21 +37,10 @@ if (!defined('MOODLE_INTERNAL')) {
 
 require_once($CFG->libdir . '/portfoliolib.php');
 
-class portfoliolibaddbutton_test extends MoodleMoodleUnitTestCase {
-
-    function setUp() {
-        global $DB, $CFG;
-    }
-
-    function tearDown() {
-        global $DB;
-    }
-
-    function test_addbutton() {
-
-    }
+class portfoliolibaddbutton_test extends MoodleUnitTestCase {
 
     function test_set_formats() {
+
         $button = new portfolio_add_button();
         $button->set_callback_options('assignment_portfolio_caller', array('id' => 6), '/mod/assignment/lib.php');
         $formats = array(PORTFOLIO_FORMAT_FILE, PORTFOLIO_FORMAT_IMAGE);

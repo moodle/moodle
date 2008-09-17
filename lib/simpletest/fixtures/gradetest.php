@@ -51,17 +51,12 @@ Mock::generate('grade_outcome', 'mock_grade_outcome');
  */
 class grade_test extends MoodleUnitTestCase {
 
-    /**
-     * Each database table receives a number of test entries. These are saved as
-     * arrays of stcClass objects available to this class. This means that
-     * every test has access to these test data. The order of the following array is
-     * crucial, because of the interrelationships between objects.
-     */
-    public $tables = array('grade_categories',
+    public $grade_tables = array('grade_categories',
                         'scale',
                         'grade_items',
                         'grade_grades',
                         'grade_outcomes');
+
 
     public $grade_items = array();
     public $grade_categories = array();
@@ -72,9 +67,6 @@ class grade_test extends MoodleUnitTestCase {
     public $activities = array();
     public $courseid = 1;
     public $userid = 1;
-
-    public static $db = null;
-    public $realdb;
     public $dbmanager;
 
     /**
@@ -82,18 +74,10 @@ class grade_test extends MoodleUnitTestCase {
      * These tests have to work on a brand new site.
      */
     function setUp() {
-        // Set global category settings to -1 (not force)
         global $CFG, $DB;
-
-        if (is_null(grade_test::$db)) {
-            $this->realdb = $DB;
-            grade_test::$db = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
-            grade_test::$db->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, "tst_", $CFG->dboptions);
-        }
-
-        $DB = grade_test::$db;
         $this->dbmanager = $DB->get_manager();
 
+        parent::setup();
         $CFG->grade_droplow = -1;
         $CFG->grade_keephigh = -1;
         $CFG->grade_aggregation = -1;
@@ -109,7 +93,7 @@ class grade_test extends MoodleUnitTestCase {
             die("Could not create all the test tables!");
         }
 
-        foreach ($this->tables as $table) {
+        foreach ($this->grade_tables as $table) {
             $function = "load_$table";
             $this->$function();
         }
@@ -632,11 +616,10 @@ class grade_test extends MoodleUnitTestCase {
      */
     function tearDown() {
         // delete the contents of tables before the test run - the unit test might fail on fatal error and the data would not be deleted!
-        foreach ($this->tables as $table) {
+        foreach ($this->grade_tables as $table) {
             unset($this->$table);
         }
-        global $DB;
-        $DB = $this->realdb;
+        parent::tearDown();
     }
 
     /**
@@ -1377,7 +1360,7 @@ class grade_test extends MoodleUnitTestCase {
         }
 
         $grade = new stdClass();
-        $grade->itemid = $this->grade_items[7]->id;
+        $grade->itemid = $this->grade_items[8]->id;
         $grade->userid = 3;
         $grade->rawgrade = 100;
         $grade->finalgrade = 100;

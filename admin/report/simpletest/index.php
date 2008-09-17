@@ -20,6 +20,7 @@ require_login();
 require_capability('moodle/site:config', get_context_instance(CONTEXT_SYSTEM));
 
 $langfile = 'simpletest';
+$unittest = true;
 
 // CGI arguments
 $path = optional_param('path', null, PARAM_PATH);
@@ -29,6 +30,7 @@ $rundbtests = optional_param('rundbtests', false, PARAM_BOOL);
 $thorough = optional_param('thorough', false, PARAM_BOOL);
 $addconfigprefix = optional_param('addconfigprefix', false, PARAM_RAW);
 $setuptesttables = optional_param('setuptesttables', false, PARAM_BOOL);
+$continuesetuptesttables = optional_param('continuesetuptesttables', false, PARAM_BOOL);
 $droptesttables = optional_param('droptesttables', false, PARAM_BOOL);
 
 global $UNITTEST;
@@ -85,21 +87,52 @@ if (empty($CFG->unittest_prefix)) {
     exit();
 }
 
+// Temporarily override $DB and $CFG for a fresh install on the unit test prefix
 $real_db = clone($DB);
+$real_cfg = clone($CFG);
+$CFG = new stdClass();
+$CFG->dbhost = $real_cfg->dbhost;
+$CFG->dbtype = $real_cfg->dbtype;
+$CFG->dblibrary = $real_cfg->dblibrary;
+$CFG->dbuser = $real_cfg->dbuser;
+$CFG->dbpass = $real_cfg->dbpass;
+$CFG->dbname = $real_cfg->dbname;
+$CFG->dbpersist = $real_cfg->dbpersist;
+$CFG->unittest_prefix = $real_cfg->unittest_prefix;
+$CFG->wwwroot   = $real_cfg->wwwroot;
+$CFG->dirroot   = $real_cfg->dirroot;
+$CFG->libdir  = $real_cfg->libdir;
+$CFG->dataroot   = $real_cfg->dataroot;
+$CFG->admin     = $real_cfg->admin;
+$CFG->release     = $real_cfg->release;
+$CFG->config_php_settings     = $real_cfg->config_php_settings;
+$CFG->frametarget     = $real_cfg->frametarget;
+$CFG->footer     = $real_cfg->footer;
+
 $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
 $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittest_prefix);
+
+if ($config = $DB->get_records('config')) {
+    foreach ($config as $conf) {
+        $CFG->{$conf->name} = $conf->value;
+    }
+}
+
 $test_tables = $DB->get_tables();
 
 // Build test tables if requested and needed
-if ($setuptesttables) {
+if ($setuptesttables || $continuesetuptesttables) {
     $version = null;
     $release = null;
     include("$CFG->dirroot/version.php");       // defines $version and $release
 
-    // Drop all tables first if they exist
-    $manager = $DB->get_manager();
-    foreach ($test_tables as $table) {
-        $manager->drop_table($table);
+    if (!$continuesetuptesttables) {
+        // Drop all tables first if they exist
+        $manager = $DB->get_manager();
+        foreach ($test_tables as $table) {
+            $xmldbtable = new xmldb_table($table);
+            $manager->drop_table($xmldbtable);
+        }
     }
 
     upgrade_db($version, $release, true);
@@ -108,7 +141,8 @@ if ($setuptesttables) {
 if ($droptesttables) {
     $manager = $DB->get_manager();
     foreach ($test_tables as $table) {
-        $manager->drop_table($table);
+        $xmldbtable = new xmldb_table($table);
+        $manager->drop_table($xmldbtable);
     }
     $test_tables = $DB->get_tables();
 }
@@ -122,6 +156,7 @@ if (empty($test_tables['config'])) {
 }
 
 $DB = $real_db;
+$CFG = $real_cfg;
 
 if (!is_null($path)) {
     // Create the group of tests.

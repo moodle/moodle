@@ -18,7 +18,6 @@ class testGlossaryPortfolioCallers extends portfoliolib_test {
         global $DB;
 
         parent::setUp();
-
         $settings = array('tiny' => 1, 'quiet' => 1, 'pre_cleanup' => 1,
                           'modules_list' => array('glossary'), 'entries_per_glossary' => 20,
                           'number_of_students' => 5, 'students_per_course' => 5, 'number_of_sections' => 1,

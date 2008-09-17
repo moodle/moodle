@@ -29,8 +29,12 @@ define('INSECURE_DATAROOT_ERROR', 2);
  * @param string $release
  * @param bool   $unittest If true, bypasses a bunch of confirmation screens
  */
-function upgrade_db($version, $release, $unittest=false) {
-    global $CFG, $DB, $SESSION;
+function upgrade_db($version, $release) {
+    global $CFG, $DB, $SESSION, $unittest;
+
+    if (empty($unittest)) {
+        $unittest = false;
+    }
 
     $confirmupgrade = optional_param('confirmupgrade', $unittest, PARAM_BOOL);
     $confirmrelease = optional_param('confirmrelease', $unittest, PARAM_BOOL);
@@ -38,10 +42,16 @@ function upgrade_db($version, $release, $unittest=false) {
     $agreelicense   = optional_param('agreelicense', $unittest, PARAM_BOOL);
     $autopilot      = optional_param('autopilot', $unittest, PARAM_BOOL);
     $setuptesttables= optional_param('setuptesttables', $unittest, PARAM_BOOL);
+    $continuesetuptesttables= optional_param('continuesetuptesttables', $unittest, PARAM_BOOL);
 
     $return_url = "$CFG->wwwroot/$CFG->admin/index.php";
     if ($unittest) {
-        $return_url = "$CFG->wwwroot/$CFG->admin/report/simpletest/index.php";
+        $return_url = "$CFG->wwwroot/$CFG->admin/report/simpletest/index.php?continuesetuptesttables=".$continuesetuptesttables;
+    }
+
+    /// set install/upgrade autocontinue session flag
+    if ($autopilot) {
+        $SESSION->installautopilot = $autopilot;
     }
 
     /// Check if the main tables have been installed yet or not.
@@ -144,6 +154,7 @@ function upgrade_db($version, $release, $unittest=false) {
             print_error('cannotupdateversion', 'debug');
         }
 
+
         // Write default settings unconditionally (i.e. even if a setting is already set, overwrite it)
         // (this should only have any effect during initial install).
         admin_apply_default_settings(NULL, true);
@@ -156,7 +167,7 @@ function upgrade_db($version, $release, $unittest=false) {
         // hack - set up mnet
         require_once $CFG->dirroot.'/mnet/lib.php';
 
-        print_continue('index.php');
+        print_continue('index.php?continuesetuptesttables='.$setuptesttables);
         print_footer('none');
 
         die;
@@ -405,86 +416,100 @@ function upgrade_db($version, $release, $unittest=false) {
     // Turn xmlstrictheaders back on now.
     $CFG->xmlstrictheaders = $origxmlstrictheaders;
 
-/// Set up the blank site - to be customized later at the end of install.
-    if (! $site = get_site()) {
-        // We are about to create the site "course"
-        require_once($CFG->libdir.'/blocklib.php');
-
-        $newsite = new object();
-        $newsite->fullname = "";
-        $newsite->shortname = "";
-        $newsite->summary = NULL;
-        $newsite->newsitems = 3;
-        $newsite->numsections = 0;
-        $newsite->category = 0;
-        $newsite->format = 'site';  // Only for this course
-        $newsite->teacher = get_string("defaultcourseteacher");
-        $newsite->teachers = get_string("defaultcourseteachers");
-        $newsite->student = get_string("defaultcoursestudent");
-        $newsite->students = get_string("defaultcoursestudents");
-        $newsite->timemodified = time();
-
-        if (!$newid = $DB->insert_record('course', $newsite)) {
-            print_error('cannotsetupsite', 'error');
+    if (!$unittest) {
+    /// Set up the blank site - to be customized later at the end of install.
+        if (! $site = get_site()) {
+            build_course_site();
+            redirect('index.php?continuesetuptesttables='.$continuesetuptesttables);
         }
-        // make sure course context exists
-        get_context_instance(CONTEXT_COURSE, $newid);
 
-        // Site created, add blocks for it
-        $page = page_create_object(PAGE_COURSE_VIEW, $newid);
-        blocks_repopulate_page($page); // Return value not checked because you can always edit later
+        // initialise default blocks on admin and site page if needed
+        if (empty($CFG->adminblocks_initialised)) {
+            require_once("$CFG->dirroot/$CFG->admin/pagelib.php");
+            require_once($CFG->libdir.'/blocklib.php');
+            page_map_class(PAGE_ADMIN, 'page_admin');
+            $page = page_create_object(PAGE_ADMIN, 0); // there must be some id number
+            blocks_repopulate_page($page);
 
-        // create default course category
-        $cat = get_course_category();
-
-        redirect('index.php');
-    }
-
-    // initialise default blocks on admin and site page if needed
-    if (empty($CFG->adminblocks_initialised)) {
-        require_once("$CFG->dirroot/$CFG->admin/pagelib.php");
-        require_once($CFG->libdir.'/blocklib.php');
-        page_map_class(PAGE_ADMIN, 'page_admin');
-        $page = page_create_object(PAGE_ADMIN, 0); // there must be some id number
-        blocks_repopulate_page($page);
-
-        //add admin_tree block to site if not already present
-        if ($admintree = $DB->get_record('block', array('name'=>'admin_tree'))) {
-            $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
-            $pageblocks=blocks_get_by_page($page);
-            blocks_execute_action($page, $pageblocks, 'add', (int)$admintree->id, false, false);
-            if ($admintreeinstance = $DB->get_record('block_instance', array('pagetype'=>$page->type, 'pageid'=>SITEID, 'blockid'=>$admintree->id))) {
+            //add admin_tree block to site if not already present
+            if ($admintree = $DB->get_record('block', array('name'=>'admin_tree'))) {
+                $page = page_create_object(PAGE_COURSE_VIEW, SITEID);
                 $pageblocks=blocks_get_by_page($page);
-                blocks_execute_action($page, $pageblocks, 'moveleft', $admintreeinstance, false, false);
+                blocks_execute_action($page, $pageblocks, 'add', (int)$admintree->id, false, false);
+                if ($admintreeinstance = $DB->get_record('block_instance', array('pagetype'=>$page->type, 'pageid'=>SITEID, 'blockid'=>$admintree->id))) {
+                    $pageblocks=blocks_get_by_page($page);
+                    blocks_execute_action($page, $pageblocks, 'moveleft', $admintreeinstance, false, false);
+                }
+            }
+
+            set_config('adminblocks_initialised', 1);
+        }
+
+    /// Define the unique site ID code if it isn't already
+        if (empty($CFG->siteidentifier)) {    // Unique site identification code
+            set_config('siteidentifier', random_string(32).$_SERVER['HTTP_HOST']);
+        }
+
+    /// ugly hack - if mnet is not initialised include the mnet lib, it adds needed mnet records and configures config options
+    ///             we should not do such crazy stuff in lib functions!!!
+        if (empty($CFG->mnet_localhost_id)) {
+            require_once $CFG->dirroot.'/mnet/lib.php';
+        }
+
+    /// Check if the guest user exists.  If not, create one.
+        if (!$DB->record_exists('user', array('username'=>'guest'))) {
+            if (! $guest = create_guest_record()) {
+                notify("Could not create guest user record !!!");
             }
         }
 
-        set_config('adminblocks_initialised', 1);
-    }
-
-/// Define the unique site ID code if it isn't already
-    if (empty($CFG->siteidentifier)) {    // Unique site identification code
-        set_config('siteidentifier', random_string(32).$_SERVER['HTTP_HOST']);
-    }
-
-/// ugly hack - if mnet is not initialised include the mnet lib, it adds needed mnet records and configures config options
-///             we should not do such crazy stuff in lib functions!!!
-    if (empty($CFG->mnet_localhost_id)) {
-        require_once $CFG->dirroot.'/mnet/lib.php';
-    }
-
-/// Check if the guest user exists.  If not, create one.
-    if (!$DB->record_exists('user', array('username'=>'guest'))) {
-        if (! $guest = create_guest_record()) {
-            notify("Could not create guest user record !!!");
+    /// Set up the admin user
+        if (empty($CFG->rolesactive)) {
+            build_context_path(); // just in case - should not be needed
+            create_admin_user();
         }
-    }
-
-/// Set up the admin user
-    if (empty($CFG->rolesactive)) {
-        build_context_path(); // just in case - should not be needed
+    } else {
+        build_site_course();
+        create_guest_record();
         create_admin_user();
+        redirect($return_url);
     }
+}
+
+function build_site_course() {
+    global $CFG, $DB;
+
+    $continuesetuptesttables= optional_param('continuesetuptesttables', $unittest, PARAM_BOOL);
+
+    // We are about to create the site "course"
+    require_once($CFG->libdir.'/blocklib.php');
+
+    $newsite = new object();
+    $newsite->fullname = "";
+    $newsite->shortname = "";
+    $newsite->summary = NULL;
+    $newsite->newsitems = 3;
+    $newsite->numsections = 0;
+    $newsite->category = 0;
+    $newsite->format = 'site';  // Only for this course
+    $newsite->teacher = get_string("defaultcourseteacher");
+    $newsite->teachers = get_string("defaultcourseteachers");
+    $newsite->student = get_string("defaultcoursestudent");
+    $newsite->students = get_string("defaultcoursestudents");
+    $newsite->timemodified = time();
+
+    if (!$newid = $DB->insert_record('course', $newsite)) {
+        print_error('cannotsetupsite', 'error');
+    }
+    // make sure course context exists
+    get_context_instance(CONTEXT_COURSE, $newid);
+
+    // Site created, add blocks for it
+    $page = page_create_object(PAGE_COURSE_VIEW, $newid);
+    blocks_repopulate_page($page); // Return value not checked because you can always edit later
+
+    // create default course category
+    $cat = get_course_category();
 
 }
 
@@ -965,7 +990,7 @@ function upgrade_plugins($type, $dir, $return) {
  */
 function upgrade_activity_modules($return) {
 
-    global $CFG, $interactive, $DB;
+    global $CFG, $interactive, $DB, $unittest;
 
     if (!$mods = get_list_of_plugins('mod') ) {
         print_error('nomodules', 'debug');
@@ -1095,7 +1120,7 @@ function upgrade_activity_modules($return) {
 
         } else {    // module not installed yet, so install it
             if (!$updated_modules) {
-                if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
+                if ((!defined('CLI_UPGRADE') || !CLI_UPGRADE) && !$unittest) {
                     print_header($strmodulesetup, $strmodulesetup,
                         build_navigation(array(array('name' => $strmodulesetup, 'link' => null, 'type' => 'misc'))), '',
                         upgrade_get_javascript(), false, '&nbsp;', '&nbsp;');
@@ -1386,7 +1411,7 @@ function create_admin_user($user_input=NULL) {
  * The upgrade is finished at the end of script or after timeout.
  */
 function start_upgrade() {
-    global $CFG;
+    global $CFG, $DB;
 
     static $started = false;
 
@@ -1396,7 +1421,7 @@ function start_upgrade() {
     } else {
         ignore_user_abort(true);
         register_shutdown_function('upgrade_finished_handler');
-        if ($CFG->version === '') {
+        if ($CFG->version === '' || !$DB->get_manager()->table_exists(new xmldb_table('config'))) {
             // db not installed yet
             $CFG->upgraderunning = time()+300;
         } else {

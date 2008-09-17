@@ -172,6 +172,8 @@ class MoodleUnitTestCase extends UnitTestCase {
         $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittest_prefix);
         $manager = $DB->get_manager();
 
+        $tables = $DB->get_tables();
+
         if (!$manager->table_exists('user')) {
             print_error('tablesnotsetup', 'simpletest');
         }

@@ -189,6 +189,10 @@ require_once($CFG->dirroot . '/admin/generator.php');
 
 class portfoliolib_test extends MoodleUnitTestCase {
 
+    function setup() {
+        parent::setup();
+    }
+
     function test_construct_dupe_instance() {
         $gotexception = false;
         try {

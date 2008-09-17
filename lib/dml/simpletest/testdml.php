@@ -8,7 +8,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-class dml_test extends MoodleUnitTestCase {
+class dml_test extends UnitTestCase {
     private $tables = array();
     private $tdb;
     private $data;

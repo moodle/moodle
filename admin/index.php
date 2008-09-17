@@ -23,16 +23,6 @@
     require_once($CFG->libdir.'/adminlib.php');        // Contains various admin-only functions
 
     $id             = optional_param('id', '', PARAM_TEXT);
-    $confirmupgrade = optional_param('confirmupgrade', 0, PARAM_BOOL);
-    $confirmrelease = optional_param('confirmrelease', 0, PARAM_BOOL);
-    $confirmplugins = optional_param('confirmplugincheck', 0, PARAM_BOOL);
-    $agreelicense   = optional_param('agreelicense', 0, PARAM_BOOL);
-    $autopilot      = optional_param('autopilot', 0, PARAM_BOOL);
-
-/// set install/upgrade autocontinue session flag
-    if ($autopilot) {
-        $SESSION->installautopilot = $autopilot;
-    }
 
 /// Check some PHP server settings
 

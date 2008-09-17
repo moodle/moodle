@@ -35,7 +35,7 @@ if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
 
-require_once($CFG->dirroot . '/mod/data/preset_class.php');
+require_once($CFG->dirroot . '/mod/data/lib.php');
 
 class data_preset_test extends MoodleUnitTestCase {
 
