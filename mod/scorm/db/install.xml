@@ -16,7 +16,7 @@
         <FIELD NAME="maxgrade" TYPE="float" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="version" NEXT="grademethod"/>
         <FIELD NAME="grademethod" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="maxgrade" NEXT="whatgrade"/>
         <FIELD NAME="whatgrade" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="grademethod" NEXT="maxattempt"/>
-        <FIELD NAME="maxattempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="whatgrade" NEXT="forcenewattempt"/>
+        <FIELD NAME="maxattempt" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="whatgrade" NEXT="forcecompleted"/>
         <FIELD NAME="forcecompleted" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" DEFAULT="1" SEQUENCE="false" ENUM="false" PREVIOUS="maxattempt" NEXT="forcenewattempt"/>
         <FIELD NAME="forcenewattempt" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="forcecompleted" NEXT="lastattemptlock"/>
         <FIELD NAME="lastattemptlock" TYPE="int" LENGTH="1" NOTNULL="true" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" ENUM="false" PREVIOUS="forcenewattempt" NEXT="displayattemptstatus"/>
