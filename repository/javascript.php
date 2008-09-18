@@ -483,10 +483,19 @@ _client.viewthumb = function(ds) {
         if(list[k].children) {
             var folder = new YAHOO.util.Element(link.id);
             folder.ds = list[k].children;
+            folder.path = list[k].path;
             folder.on('contentReady', function() {
                 this.on('click', function() {
                     if(_client.ds.dynload) {
-                    // TODO: get file list dymanically
+                        var params = [];
+                        params['p'] = this.path;
+                        params['env'] = _client.env;
+                        params['repo_id'] = _client.repositoryid;
+                        params['ctx_id'] = $context->id;
+                        params['sesskey']= '$sesskey';
+                        _client.loading('load');
+                        var trans = YAHOO.util.Connect.asyncRequest('POST',
+                                '$CFG->httpswwwroot/repository/ws.php?action=list', _client.req_cb, _client.postdata(params));
                     }else{
                         _client.viewthumb(this.ds);
                     }
@@ -556,6 +565,7 @@ _client.dynload = function (node, fnLoadComplete) {
                  var json = YAHOO.lang.JSON.parse(o.responseText);
              } catch(e) {
                  alert('$strinvalidjson - |dynload| -'+o.responseText);
+                 return;
              }
              for(k in json.list) {
                  _client.buildtree(json.list[k], node);
