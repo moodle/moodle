@@ -904,13 +904,9 @@ abstract class repository {
     }
 
     /**
-     * function which is run when a type is created
-     * This should be a function from a type, but as I plugin wrtie, only write
-     * a class extended from repository class, the init() for type has been placed
-     * into the repository.
+     * function which is run when the type is created (moodle administrator add the plugin)
      */
     public static function plugin_init(){
-
     }
 
     /**

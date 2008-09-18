@@ -280,7 +280,7 @@ class repository_flickr_public extends repository {
     }
 
     /**
-     * 
+     * is run when moodle administrator add the plugin
      */
     public static function plugin_init() {
         //here we create a default instance for this type
