@@ -7485,17 +7485,43 @@ function unzip_show_status ($list,$removepath) {
  *
  * @return string The remote IP address
  */
- function getremoteaddr() {
-    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-        return cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
+function getremoteaddr() {
+    global $CFG;
+
+    switch ($CFG->getremoteaddr) {
+        case 3:
+            if (!empty($_SERVER['REMOTE_ADDR'])) {
+                return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
+            }
+            break;
+        case 2:
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                return cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
+            }
+            if (!empty($_SERVER['REMOTE_ADDR'])) {
+                return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
+            }
+            break;
+        case 1:
+            if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
+            }
+            if (!empty($_SERVER['REMOTE_ADDR'])) {
+                return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
+            }
+            break;
+        case 0:
+        default:
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                return cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
+            }
+            if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
+            }
+            if (!empty($_SERVER['REMOTE_ADDR'])) {
+                return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
+            }
     }
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
-    }
-    if (!empty($_SERVER['REMOTE_ADDR'])) {
-        return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
-    }
-    return '';
 }
 
 /**
