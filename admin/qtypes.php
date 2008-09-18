@@ -146,9 +146,9 @@
         }
 
         // Question version number.
-        $versionfield = 'qtype_' . $qtypename . '_version';
-        if (isset($CFG->$versionfield)) {
-            $row[] = $CFG->$versionfield;
+        $version = get_config('qtype_' . $qtypename, 'version');
+        if ($version) {
+            $row[] = $version;
         } else {
             $row[] = '<span class="disabled">' . get_string('nodatabase', 'admin') . '</span>';
         }
