@@ -657,7 +657,6 @@ function portfolio_plugin_sanity_check($plugins=null) {
     list($where, $params) = $DB->get_in_or_equal(array_keys($insane));
     $where = ' plugin ' . $where;
     $DB->set_field_select('portfolio_instance', 'visible', 0, $where, $params);
-    portfolio_insane_notify_admins($insane);
     return $insane;
 }
 
