@@ -3426,7 +3426,7 @@ function delete_course($courseorid, $showfeedback = true) {
         $courseid = $courseorid;
         if (!$course = $DB->get_record('course', array('id'=>$courseid))) {
             return false;
-        } 
+        }
     }
 
     // frontpage course can not be deleted!!
@@ -5245,13 +5245,13 @@ or
  * @param string $module The module where the key identifier is stored,
  *      usually expressed as the filename in the language pack without the
  *      .php on the end but can also be written as mod/forum or grade/export/xls.
- *      If none is specified then moodle.php is used. 
+ *      If none is specified then moodle.php is used.
  * @param mixed $a An object, string or number that can be used
  *      within translation strings
  * @param array $extralocations DEPRICATED. An array of strings with other
  *      locations to look for string files. This used to be used by plugins so
  *      they could package their language strings in the plugin folder, however,
- *      There is now a better way to achieve this. See 
+ *      There is now a better way to achieve this. See
  *      http://docs.moodle.org/en/Development:Places_to_search_for_lang_strings.
  * @return string The localized string.
  */
@@ -5277,7 +5277,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     if ($module == '') {
         $module = 'moodle';
     }
-    
+
 /// If the "module" is actually a pathname, then automatically derive the proper module name
     if (strpos($module, '/') !== false) {
         $modulepath = split('/', $module);
@@ -5287,23 +5287,23 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
             case 'mod':
                 $module = $modulepath[1];
             break;
-    
+
             case 'blocks':
             case 'block':
                 $module = 'block_'.$modulepath[1];
             break;
-    
+
             case 'enrol':
                 $module = 'enrol_'.$modulepath[1];
             break;
-    
+
             case 'format':
                 $module = 'format_'.$modulepath[1];
             break;
-    
+
             case 'grade':
                 $module = 'grade'.$modulepath[1].'_'.$modulepath[2];
-            break; 
+            break;
         }
     }
 
@@ -5317,7 +5317,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
 
     if (!empty($extralocations)) {
         // This is an old, deprecated mechanism that predates the
-        // places_to_search_for_lang_strings mechanism that comes later in 
+        // places_to_search_for_lang_strings mechanism that comes later in
         // this function. So tell people who use it to change.
         debugging('The fourth, $extralocations parameter to get_string is deprecated. ' .
                 'See http://docs.moodle.org/en/Development:Places_to_search_for_lang_strings ' .
@@ -6206,13 +6206,13 @@ function check_php_version($version='5.2.4') {
 }
 
 /**
- * Checks to see if is the browser operating system matches the specified 
+ * Checks to see if is the browser operating system matches the specified
  * brand.
- * 
+ *
  * Known brand: 'Windows','Linux','Macintosh','SGI','SunOS','HP-UX'
  *
  * @uses $_SERVER
- * @param string $brand The operating system identifier being tested 
+ * @param string $brand The operating system identifier being tested
  * @return bool true if the given brand below to the detected operating system
  */
  function check_browser_operating_system($brand) {
@@ -6223,8 +6223,8 @@ function check_php_version($version='5.2.4') {
     if (preg_match("/$brand/i", $_SERVER['HTTP_USER_AGENT'])) {
         return true;
     }
-     
-    return false;  
+
+    return false;
  }
 
 /**
@@ -6491,7 +6491,7 @@ function moodle_needs_upgrading() {
  * Sets maximum expected time needed for upgrade task.
  * Please always make sure that upgrade will not run longer!
  *
- * The script may be automatically aborted if upgrade times out.  
+ * The script may be automatically aborted if upgrade times out.
  *
  * @param int $max_execution_time in seconds (can not be less than 60 s)
  * @return void
@@ -6503,8 +6503,8 @@ function upgrade_set_timeout($max_execution_time=300) {
         $upgraderunning = get_config(null, 'upgraderunning');
     } else {
         $upgraderunning = $CFG->upgraderunning;
-    } 
-    
+    }
+
     if (!$upgraderunning) {
         // upgrade not running or aborted
         print_error('upgradetimedout', 'admin', "$CFG->wwroot/$CFG->admin/");
@@ -7367,7 +7367,7 @@ function remoteip_in_list($list){
         if (address_in_subnet($client_ip, $subnet)) {
             $inlist = true;
             break;
-        } 
+        }
     }
     return $inlist;
 }
@@ -7380,7 +7380,7 @@ function remoteip_in_list($list){
 function getremoteaddr() {
     global $CFG;
 
-    switch ($CFG->getremoteaddr) {
+    switch ($CFG->getremoteaddrconf) {
         case 3:
             if (!empty($_SERVER['REMOTE_ADDR'])) {
                 return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
