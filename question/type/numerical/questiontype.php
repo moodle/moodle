@@ -124,7 +124,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
             $answer = new stdClass;
             $answer->question = $question->id;
-            if (trim($dataanswer) == '*') {
+            if (trim($dataanswer) === '*') {
                 $answer->answer = '*';
             } else {
                 $answer->answer = $this->apply_unit($dataanswer, $units);
@@ -252,7 +252,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
      */
     function test_response(&$question, &$state, $answer) {
         // Deal with the match anything answer.
-        if ($answer->answer == '*') {
+        if ($answer->answer === '*') {
             return true;
         }
 
