@@ -7488,7 +7488,7 @@ function unzip_show_status ($list,$removepath) {
 function getremoteaddr() {
     global $CFG;
 
-    switch ($CFG->getremoteaddr) {
+    switch ($CFG->getremoteaddrconf)) {
         case 3:
             if (!empty($_SERVER['REMOTE_ADDR'])) {
                 return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
