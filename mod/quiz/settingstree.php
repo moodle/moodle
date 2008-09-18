@@ -8,6 +8,7 @@
  */
 
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/mod/quiz/settingslib.php');
 
 // First get a list of quiz reports with there own settings pages. If there none,
 // we use a simpler overall menu structure.
@@ -39,7 +40,7 @@ $quizsettings = new admin_settingpage('modsettingquiz', $pagetitle, 'moodle/site
 $quizsettings->add(new admin_setting_heading('quizintro', '', get_string('configintro', 'quiz')));
 
 // timelimit
-$quizsettings->add(new admin_setting_quiz_text('timelimit',
+$quizsettings->add(new admin_setting_text_with_advanced('quiz/timelimit',
         get_string('timelimit', 'quiz'), get_string('configtimelimit', 'quiz'),
         array('value' => '0', 'fix' => false), PARAM_INT));
 
@@ -57,10 +58,10 @@ for($i=2; $i<=7; $i++) {
      $seconds = $i*86400;
      $timedelayoptions[$seconds] = get_string('numdays', '', $i);
 }
-$quizsettings->add(new admin_setting_quiz_combo('delay1',
+$quizsettings->add(new admin_setting_combo_with_advanced('quiz/delay1',
         get_string('delay1', 'quiz'), get_string('configdelay1', 'quiz'),
         array('value' => 0, 'fix' => false), $timedelayoptions));
-$quizsettings->add(new admin_setting_quiz_combo('delay2',
+$quizsettings->add(new admin_setting_combo_with_advanced('quiz/delay2',
         get_string('delay2', 'quiz'), get_string('configdelay2', 'quiz'),
         array('value' => 0, 'fix' => false), $timedelayoptions));
 
@@ -71,17 +72,17 @@ $perpage[1] = get_string('aftereachquestion', 'quiz');
 for ($i = 2; $i <= 50; ++$i) {
     $perpage[$i] = get_string('afternquestions', 'quiz', $i);
 }
-$quizsettings->add(new admin_setting_quiz_combo('questionsperpage',
+$quizsettings->add(new admin_setting_combo_with_advanced('quiz/questionsperpage',
         get_string('newpageevery', 'quiz'), get_string('confignewpageevery', 'quiz'),
         array('value' => 1, 'fix' => false), $perpage));
 
 // shufflequestions
-$quizsettings->add(new admin_setting_quiz_yesno('shufflequestions',
+$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/shufflequestions',
         get_string('shufflequestions', 'quiz'), get_string('configshufflequestions', 'quiz'),
         array('value' => 0, 'fix' => false)));
 
 // shuffleanswers
-$quizsettings->add(new admin_setting_quiz_yesno('shuffleanswers',
+$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/shuffleanswers',
         get_string('shufflewithin', 'quiz'), get_string('configshufflewithin', 'quiz'),
         array('value' => 1, 'fix' => false)));
 
@@ -90,33 +91,31 @@ $options = array(get_string('unlimited'));
 for ($i = 1; $i <= 6; $i++) {
     $options[$i] = $i;
 }
-$quizsettings->add(new admin_setting_quiz_combo('attempts',
+$quizsettings->add(new admin_setting_combo_with_advanced('quiz/attempts',
         get_string('attemptsallowed', 'quiz'), get_string('configattemptsallowed', 'quiz'),
         array('value' => 0, 'fix' => false), $options));
 
 // attemptonlast
-$quizsettings->add(new admin_setting_quiz_yesno('attemptonlast',
+$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/attemptonlast',
         get_string('eachattemptbuildsonthelast', 'quiz'), get_string('configeachattemptbuildsonthelast', 'quiz'),
         array('value' => 0, 'fix' => false)));
 
 // optionflags
-$quizsettings->add(new admin_setting_quiz_yesno('optionflags',
+$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/optionflags',
         get_string('adaptive', 'quiz'), get_string('configadaptive', 'quiz'),
         array('value' => 1, 'fix' => false)));
 
 // maximumgrade
-$maxgradesetting = new admin_setting_configtext('maximumgrade',
-        get_string('maximumgrade'), get_string('configmaximumgrade', 'quiz'), 10, PARAM_INT);
-$maxgradesetting->plugin = 'quiz';
-$quizsettings->add($maxgradesetting);
+$quizsettings->add(new admin_setting_configtext('quiz/maximumgrade',
+        get_string('maximumgrade'), get_string('configmaximumgrade', 'quiz'), 10, PARAM_INT));
 
 // grademethod
-$quizsettings->add(new admin_setting_quiz_combo('grademethod',
+$quizsettings->add(new admin_setting_combo_with_advanced('quiz/grademethod',
         get_string('grademethod', 'quiz'), get_string('configgrademethod', 'quiz'),
         array('value' => QUIZ_GRADEHIGHEST, 'fix' => false), quiz_get_grading_options()));
 
 // penaltyscheme
-$quizsettings->add(new admin_setting_quiz_yesno('penaltyscheme',
+$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/penaltyscheme',
         get_string('penaltyscheme', 'quiz'), get_string('configpenaltyscheme', 'quiz'),
         array('value' => 1, 'fix' => false)));
 
@@ -125,27 +124,27 @@ $options = array();
 for ($i = 0; $i <= 5; $i++) {
     $options[$i] = $i;
 }
-$quizsettings->add(new admin_setting_quiz_combo('decimalpoints',
+$quizsettings->add(new admin_setting_combo_with_advanced('quiz/decimalpoints',
         get_string('decimaldigits', 'quiz'), get_string('configdecimaldigits', 'quiz'),
         array('value' => 2, 'fix' => false), $options));
 
 // review
-$quizsettings->add(new admin_setting_quiz_reviewoptions('review',
+$quizsettings->add(new admin_setting_quiz_reviewoptions('quiz/review',
         get_string('reviewoptions', 'quiz'), get_string('configreviewoptions', 'quiz'),
         array('value' => 0x3fffffff, 'fix' => false)));
 
 // popup
-$quizsettings->add(new admin_setting_quiz_yesno('popup',
+$quizsettings->add(new admin_setting_yesno_with_advanced('quiz/popup',
         get_string('popup', 'quiz'), get_string('configpopup', 'quiz'),
         array('value' => 0, 'fix' => false)));
 
 // quizpassword
-$quizsettings->add(new admin_setting_quiz_text('password',
+$quizsettings->add(new admin_setting_text_with_advanced('quiz/password',
         get_string('requirepassword', 'quiz'), get_string('configrequirepassword', 'quiz'),
         array('value' => '', 'fix' => false), PARAM_TEXT));
 
 // subnet
-$quizsettings->add(new admin_setting_quiz_text('subnet',
+$quizsettings->add(new admin_setting_text_with_advanced('quiz/subnet',
         get_string('requiresubnet', 'quiz'), get_string('configrequiresubnet', 'quiz'),
         array('value' => '', 'fix' => false), PARAM_TEXT));
 
