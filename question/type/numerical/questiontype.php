@@ -122,7 +122,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
 
             $answer = new stdClass;
             $answer->question = $question->id;
-            if (trim($dataanswer) == '*') {
+            if (trim($dataanswer) === '*') {
                 $answer->answer = '*';
             } else {
                 $answer->answer = $this->apply_unit($dataanswer, $units);
@@ -215,6 +215,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
         for ($i = 0; $i < $n; $i++) {
             // Discard any unit which doesn't specify the unit or the multiplier
             if (!empty($question->multiplier[$i]) && !empty($question->unit[$i])) {
+                $units[$i] = new stdClass;
                 $units[$i]->question = $question->id;
                 $units[$i]->multiplier = $this->apply_unit($question->multiplier[$i], array());
                 $units[$i]->unit = $question->unit[$i];
@@ -274,7 +275,7 @@ class question_numerical_qtype extends question_shortanswer_qtype {
      */
     function test_response(&$question, &$state, $answer) {
         // Deal with the match anything answer.
-        if ($answer->answer == '*') {
+        if ($answer->answer === '*') {
             return true;
         }
 
