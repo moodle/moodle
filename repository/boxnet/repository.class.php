@@ -161,7 +161,7 @@ class repository_boxnet extends repository {
         return false;
     }
 
-    public static function get_admin_option_names() {
+    public static function get_type_option_names() {
         return array('api_key');
     }
 

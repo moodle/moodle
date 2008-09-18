@@ -193,7 +193,7 @@ class repository_flickr_public extends repository {
         $mform->addElement('static', null, '',  get_string('information','repository_flickr_public'));
     }
 
-    public static function get_admin_option_names() {
+    public static function get_type_option_names() {
         return array('api_key');
     }
 

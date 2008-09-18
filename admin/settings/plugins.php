@@ -232,7 +232,7 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
         as $repositorytype)
     {
       //display setup page for plugins with: general options or multiple instances
-      $adminconfignames = repository_static_function($repositorytype->get_typename(), 'get_admin_option_names');
+      $adminconfignames = repository_static_function($repositorytype->get_typename(), 'get_type_option_names');
       if (!empty($adminconfignames)
           || repository_static_function($repositorytype->get_typename(), 'has_multiple_instances')) {
             $ADMIN->add('repositorysettings',

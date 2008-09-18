@@ -222,7 +222,7 @@ class repository_flickr extends repository {
         $mform->addRule('secret', $strrequired, 'required', null, 'client');
     }
 
-    public static function get_admin_option_names() {
+    public static function get_type_option_names() {
         return array('api_key', 'secret');
     }
 

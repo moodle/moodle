@@ -113,7 +113,7 @@ class repository_type {
 
         //set options attribut
         $this->_options = array();
-        $options = repository_static_function($typename,'get_admin_option_names');
+        $options = repository_static_function($typename,'get_type_option_names');
         //check that the type can be setup
         if (!empty($options)) {
             //set the type options
@@ -941,7 +941,7 @@ abstract class repository {
      * By default: no general option name
      * @return array
      */
-    public static function get_admin_option_names() {
+    public static function get_type_option_names() {
         return array();
     }
 
@@ -1347,7 +1347,7 @@ final class repository_admin_form extends moodleform {
         // and set the data if we have some.
         if ($this->instance) {
             $data = array();
-            $option_names = call_user_func(array($classname,'get_admin_option_names'));
+            $option_names = call_user_func(array($classname,'get_type_option_names'));
             $instanceoptions = $this->instance->get_options();
             foreach ($option_names as $config) {
                 if (!empty($instanceoptions[$config])) {

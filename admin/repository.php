@@ -41,7 +41,7 @@ if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
         $repositorytype = repository_get_type_by_typename($edit);
         $classname = 'repository_' . $repositorytype->get_typename();
-        $configs = call_user_func(array($classname,'get_admin_option_names'));
+        $configs = call_user_func(array($classname,'get_type_option_names'));
         $plugin = $repositorytype->get_typename();
     } else {
         $plugin = $new;
@@ -56,7 +56,7 @@ if (!empty($edit) || !empty($new)) {
     //detect if we create a new type without config (in this case if don't want to display a setting page during creation)
     $createnewtype = false;
     if (!empty($new)) {
-        $adminconfignames = repository_static_function($new, 'get_admin_option_names');
+        $adminconfignames = repository_static_function($new, 'get_type_option_names');
         $createnewtype = empty($adminconfignames);
     }
     // end setup, begin output

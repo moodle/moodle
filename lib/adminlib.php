@@ -6155,7 +6155,7 @@ class admin_setting_managerepository extends admin_setting {
         foreach ($instances as $i) {
             $settings = '';
             //display edit link only if you can config the type or if it has multiple instances
-            $adminconfignames = repository_static_function($i->get_typename(), 'get_admin_option_names');
+            $adminconfignames = repository_static_function($i->get_typename(), 'get_type_option_names');
             if ( !empty($adminconfignames)
                  || repository_static_function($i->get_typename(), 'has_multiple_instances')) {
                 $settings .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '">'
