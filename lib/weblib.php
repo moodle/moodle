@@ -719,17 +719,24 @@ function button_to_popup_window ($url, $name=null, $linkname=null,
 /**
  * Prints a simple button to close a window
  * @param string $name name of the window to close
- * @param boolean $return whether this function should return a string or output it
+ * @param boolean $return whether this function should return a string or output it.
+ * @param boolean $reloadopener if true, clicking the button will also reload
+ *      the page that opend this popup window.
  * @return string if $return is true, nothing otherwise
  */
-function close_window_button($name='closewindow', $return=false) {
+function close_window_button($name='closewindow', $return=false, $reloadopener = false) {
     global $CFG;
+
+    $js = 'self.close();';
+    if ($reloadopener) {
+        $js = 'window.opener.location.reload(1);' . $js;
+    }
 
     $output = '';
 
     $output .= '<div class="closewindow">' . "\n";
     $output .= '<form action="#"><div>';
-    $output .= '<input type="button" onclick="self.close();" value="'.get_string($name).'" />';
+    $output .= '<input type="button" onclick="' . $js . '" value="'.get_string($name).'" />';
     $output .= '</div></form>';
     $output .= '</div>' . "\n";
 
