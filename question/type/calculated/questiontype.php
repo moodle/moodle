@@ -1041,8 +1041,12 @@ class question_calculated_qtype extends default_questiontype {
                     $answer->answer, $data, $answer->tolerance,
                     $answer->tolerancetype, $answer->correctanswerlength,
                     $answer->correctanswerformat, $unit);
-              eval('$answer->answer = '.$formula.';') ;
-            $virtualqtype->get_tolerance_interval($answer);
+                    if ( $formula === '*'){
+                        $answer->min = '' ;
+                    }else {
+                        eval('$answer->answer = '.$formula.';') ;
+                        $virtualqtype->get_tolerance_interval($answer);
+                    } 
             if ($answer->min === '') {
                 // This should mean that something is wrong
                 $stranswers .= " -$formattedanswer->answer".'<br/><br/>';
@@ -1161,6 +1165,8 @@ class question_calculated_qtype extends default_questiontype {
         /// Calculate the correct answer
         if (empty($formula)) {
             $str = '';
+        } else if ($formula === '*'){
+            $str = '*';
         } else {
             eval('$str = '.$formula.';');
         }
