@@ -79,9 +79,9 @@ class mnet_environment {
             $hostobject->wwwroot            = '';
             $hostobject->ip_address         = '';
             $hostobject->public_key         = '';
-            $hostobject->public_key_expires = '';
-            $hostobject->last_connect_time  = '0';
-            $hostobject->last_log_id        = '0';
+            $hostobject->public_key_expires = 0;
+            $hostobject->last_connect_time  = 0;
+            $hostobject->last_log_id        = 0;
             $hostobject->deleted            = 0;
             $hostobject->name               = 'All Hosts';
 
