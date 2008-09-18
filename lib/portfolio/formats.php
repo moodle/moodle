@@ -65,7 +65,10 @@ class portfolio_format_html extends portfolio_format_file {
 */
 class portfolio_format_video extends portfolio_format_file {
     public static function mimetypes() {
-        return mimeinfo_from_icon('type', 'video.gif', true);
+        return array_merge(
+                mimeinfo_from_icon('type', 'video.gif', true),
+                mimeinfo_from_icon('type', 'avi.gif', true)
+               );
     }
 }
 
