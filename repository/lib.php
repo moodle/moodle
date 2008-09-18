@@ -1306,7 +1306,7 @@ final class repository_instance_form extends moodleform {
 /**
  * Display a form with the general option fields of a type
  */
-final class repository_admin_form extends moodleform {
+final class repository_type_form extends moodleform {
     protected $instance;
     protected $plugin;
 

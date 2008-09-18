@@ -50,7 +50,7 @@ if (!empty($edit) || !empty($new)) {
     }
     $CFG->pagepath = 'admin/managerepository/' . $plugin;
     // display the edit form for this instance
-    $mform = new repository_admin_form('', array('plugin' => $plugin, 'instance' => $repositorytype));
+    $mform = new repository_type_form('', array('plugin' => $plugin, 'instance' => $repositorytype));
     $fromform = $mform->get_data();
 
     //detect if we create a new type without config (in this case if don't want to display a setting page during creation)
