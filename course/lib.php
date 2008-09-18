@@ -1919,8 +1919,20 @@ function print_course($course) {
                                      true, '', 'r.sortorder ASC, u.lastname ASC', $canseehidden);
             if (is_array($rusers) && count($rusers)) {
                 $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
+
+                /// Rename some of the role names if needed
+                if (isset($context)) {
+                    $aliasnames = get_records('role_names', 'contextid', $context->id,'','roleid,contextid,name');
+                }
+
                 foreach ($rusers as $teacher) {
                     $fullname = fullname($teacher, $canviewfullnames);
+
+                    /// Apply role names
+                    if (isset($aliasnames[$teacher->roleid])) {
+                        $teacher->rolename = $aliasnames[$teacher->roleid]->name;
+                    }
+
                     $namesarray[] = format_string($teacher->rolename)
                         . ': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.SITEID.'">'
                         . $fullname . '</a>';
