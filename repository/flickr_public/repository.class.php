@@ -240,7 +240,7 @@ class repository_flickr_public extends repository {
     }
 
     /**
-     *
+     * Add Instance settings input to Moodle form
      * @param <type> $
      */
     public function instance_config_form(&$mform) {
@@ -249,7 +249,7 @@ class repository_flickr_public extends repository {
     }
 
     /**
-     *
+     * Names of the instance settings
      * @return <type>
      */
     public static function get_instance_option_names() {
@@ -257,7 +257,7 @@ class repository_flickr_public extends repository {
     }
 
     /**
-     *
+     * Add Plugin settings input to Moodle form
      * @param <type> $
      */
     public function type_config_form(&$mform) {
@@ -272,7 +272,7 @@ class repository_flickr_public extends repository {
     }
 
     /**
-     *
+     * Names of the plugin settings
      * @return <type>
      */
     public static function get_type_option_names() {

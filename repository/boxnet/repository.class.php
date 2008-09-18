@@ -17,7 +17,7 @@ class repository_boxnet extends repository {
     private $box;
 
     /**
-     *
+     * Constructor
      * @global <type> $SESSION
      * @param <type> $repositoryid
      * @param <type> $context
@@ -216,7 +216,7 @@ class repository_boxnet extends repository {
     }
 
     /**
-     *
+     * Names of the plugin settings
      * @return <type>
      */
     public static function get_type_option_names() {
@@ -224,7 +224,7 @@ class repository_boxnet extends repository {
     }
 
     /**
-     *
+     * Add Plugin settings input to Moodle form
      * @param <type> $
      */
     public function type_config_form(&$mform) {

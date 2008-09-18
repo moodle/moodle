@@ -70,6 +70,7 @@ class repository_upload extends repository {
      *
      */
     public function print_listing() {
+         // will be used in non-javascript file picker
     }
 
     /**

@@ -250,7 +250,7 @@ class repository_flickr extends repository {
     }
 
     /**
-     *
+     * Add Plugin settings input to Moodle form
      * @global <type> $CFG
      * @param <type> $
      */
@@ -286,7 +286,7 @@ class repository_flickr extends repository {
     }
 
     /**
-     *
+     * Names of the plugin settings
      * @return <type>
      */
     public static function get_type_option_names() {
