@@ -2371,9 +2371,9 @@ class admin_setting {
 
     /**
      * Constructor
-     * @param $name string unique ascii name
-     * @param $visiblename string localised name
-     * @param strin $description localised long description
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
+     * @param string $visiblename localised name
+     * @param string $description localised long description
      * @param mixed $defaultsetting string or array depending on implementation
      */
     function admin_setting($name, $visiblename, $description, $defaultsetting) {
@@ -2536,7 +2536,7 @@ class admin_setting {
 class admin_setting_heading extends admin_setting {
     /**
      * not a setting, just text
-     * @param string $name of setting
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $heading heading
      * @param string $information text in box
      */
@@ -2579,7 +2579,7 @@ class admin_setting_configtext extends admin_setting {
 
     /**
      * config text contructor
-     * @param string $name of setting
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string $defaultsetting
@@ -2681,7 +2681,7 @@ class admin_setting_configtextarea extends admin_setting_configtext {
 class admin_setting_configpasswordunmask extends admin_setting_configtext {
     /**
      * Constructor
-     * @param string $name of setting
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string $defaultsetting default password
@@ -2735,7 +2735,7 @@ if (is_ie) {
 class admin_setting_configfile extends admin_setting_configtext {
     /**
      * Constructor
-     * @param string $name of setting
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string $defaultdirectory default directory location
@@ -2819,7 +2819,7 @@ class admin_setting_configcheckbox extends admin_setting {
 
     /**
      * Constructor
-     * @param string $name of setting
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string $defaultsetting
@@ -2879,7 +2879,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
 
     /**
      * Constructor
-     * @param string $name of setting
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param array $defaultsetting array of selected
@@ -3062,7 +3062,7 @@ class admin_setting_configselect extends admin_setting {
 
     /**
      * Constructor
-     * @param string $name of setting
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param string $defaultsetting
@@ -3184,7 +3184,7 @@ class admin_setting_configselect extends admin_setting {
 class admin_setting_configmultiselect extends admin_setting_configselect {
     /**
      * Constructor
-     * @param string $name of setting
+     * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param array $defaultsetting array of selected items
