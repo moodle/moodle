@@ -546,7 +546,7 @@ class quiz_attempt extends quiz {
             case QUESTION_EVENTCLOSE:
             case QUESTION_EVENTMANUALGRADE:
                 $options = $this->get_render_options($this->states[$questionid]);
-                if ($options->scores) {
+                if ($options->scores && $this->questions[$questionid]->maxgrade > 0) {
                     return question_get_feedback_class($state->last_graded->raw_grade /
                             $this->questions[$questionid]->maxgrade);
                 } else {
