@@ -971,7 +971,12 @@ body#admin-modules table.generaltable td.c0
 #admin-report-questioninstances-index #settingsform p {
   margin-bottom: 0;
 }
-
+#admin-report-questioninstances-index #settingsform p {
+  margin-bottom: 0;
+}
+#admin-qtypes .cell.c4 {
+  font-size: 0.7em;
+}
 #admin-roles-allowassign .buttons,
 #admin-roles-allowoverride .buttons,
 #admin-roles-manage .buttons,
