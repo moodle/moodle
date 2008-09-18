@@ -34,6 +34,7 @@ function repository_get_client($context) {
     $strloading   = get_string('loading', 'repository');
     $strthumbview = get_string('thumbview', 'repository');
     $strtitle     = get_string('title', 'repository');
+    $strnoresult  = get_string('noresult', 'repository');
     $strmgr       = get_string('manageurl', 'repository');
     $strnoenter   = get_string('noenter', 'repository');
     $strsave      = get_string('save', 'repository');
@@ -209,22 +210,23 @@ this.create_picker = function() {
         var searchbar = new YAHOO.util.Element('search-div-$suffix');
         searchbar.get('element').innerHTML = '<input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
         var searchbtn = new YAHOO.util.Element('search-btn-$suffix');
-        searchbtn.callback = {
+        searchbtn.callback={
             success: function(o) {
                 var panel = new YAHOO.util.Element('panel-$suffix');
-                try {
                 if(!o.responseText) {
-                panel.get('element').innerHTML = 'no';
-                return;
+                    panel.get('element').innerHTML = '$strnoresult';
+                    return;
                 }
-                var json = YAHOO.lang.JSON.parse(o.responseText);
+                try {
+                    var json = YAHOO.lang.JSON.parse(o.responseText);
                 } catch(e) {
-                alert('$strinvalidjson - '+o.responseText);
+                    alert('$strinvalidjson - |search_cb| -'+o.responseText);
+                    return;
                 }
-                _client.ds = {};
-                if(!json.list || json.list.length<1) {
-                panel.get('element').innerHTML = 'no';
-                return;
+                _client.ds={};
+                if(!json.list || json.list.length<1){
+                    panel.get('element').innerHTML = '$strnoresult';
+                    return;
                 }
                 _client.ds.list = json.list;
                 if(_client.ds.list) {
@@ -517,7 +519,7 @@ _client.buildtree = function(node, level) {
     var info = {label:node.title, title:"$strdate"+node.date+' '+'$strsize'+node.size};
     var tmpNode = new YAHOO.widget.TextNode(info, level, false);
     var tooltip = new YAHOO.widget.Tooltip(tmpNode.labelElId, {
-context:tmpNode.labelElId, text:info.title});
+        context:tmpNode.labelElId, text:info.title});
     if(node.repo_id) {
         tmpNode.repo_id=node.repo_id;
     }else{
@@ -553,7 +555,7 @@ _client.dynload = function (node, fnLoadComplete) {
              try {
                  var json = YAHOO.lang.JSON.parse(o.responseText);
              } catch(e) {
-                 alert('$strinvalidjson - '+o.responseText);
+                 alert('$strinvalidjson - |dynload| -'+o.responseText);
              }
              for(k in json.list) {
                  _client.buildtree(json.list[k], node);
@@ -561,11 +563,10 @@ _client.dynload = function (node, fnLoadComplete) {
              o.argument.fnLoadComplete();
         },
         failure:function(oResponse) {
-            alert('$strerror');
+            alert('$strerror - |dynload| -');
             oResponse.argument.fnLoadComplete();
         },
-        argument:{"node":node, "fnLoadComplete": fnLoadComplete},
-        timeout:600
+        argument:{"node":node, "fnLoadComplete": fnLoadComplete}
     }
     var params = [];
     params['p']=node.path;
@@ -624,7 +625,7 @@ upload: function(o) {
         try {
             var ret = YAHOO.lang.JSON.parse(o.responseText);
         } catch(e) {
-            alert('$strinvalidjson - '+o.responseText);
+            alert('$strinvalidjson - |upload| -'+o.responseText);
         }
         if(ret && ret.e) {
             var panel = new YAHOO.util.Element('panel-$suffix');
@@ -634,8 +635,6 @@ upload: function(o) {
         if(ret) {
             alert('$strsaved');
             repository_client_$suffix.end(ret);
-        }else{
-            alert('$strinvalidjson');
         }
     }
 }
@@ -828,7 +827,7 @@ success: function(o) {
      try {
          var ret = YAHOO.lang.JSON.parse(o.responseText);
      } catch(e) {
-         alert('$strinvalidjson - '+o.responseText);
+         alert('$strinvalidjson - |req_cb| -'+o.responseText);
      };
      if(ret && ret.e) {
          panel.get('element').innerHTML = ret.e;
@@ -854,7 +853,7 @@ success: function(o) {
      try {
          var ret = YAHOO.lang.JSON.parse(o.responseText);
      } catch(e) {
-         alert('$strinvalidjson - '+o.responseText);
+         alert('$strinvalidjson - |download_cb| -'+o.responseText);
      }
      if(ret && ret.e) {
          panel.get('element').innerHTML = ret.e;
@@ -862,8 +861,6 @@ success: function(o) {
      }
      if(ret) {
          repository_client_$suffix.end(ret);
-     }else{
-         alert('$strinvalidjson');
      }
 }
 }

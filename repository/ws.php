@@ -8,7 +8,7 @@
     require_once('lib.php');
 
 /// Parameters
-    $p     = optional_param('p', '', PARAM_INT);              // page or path
+    $p     = optional_param('p', '', PARAM_RAW);              // page or path
     $env   = optional_param('env', 'form', PARAM_ALPHA);      // opened in editor or moodleform
     $file  = optional_param('file', '', PARAM_RAW);           // file to download
     $title = optional_param('title', '', PARAM_FILE);         // new file name
