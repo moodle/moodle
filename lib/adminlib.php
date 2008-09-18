@@ -419,7 +419,7 @@ function upgrade_db($version, $release) {
     if (!$unittest) {
     /// Set up the blank site - to be customized later at the end of install.
         if (! $site = get_site()) {
-            build_course_site();
+            build_site_course();
             redirect('index.php?continuesetuptesttables='.$continuesetuptesttables);
         }
 
