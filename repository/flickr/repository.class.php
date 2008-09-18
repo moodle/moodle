@@ -175,25 +175,10 @@ class repository_flickr extends repository {
         return $dir.$file;
     }
 
-    public static function has_multiple_instances() {
-        return false;
-    }
-
-    public function instance_config_form(&$mform) {
-        $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr'));
-        $mform->addRule('email_address', get_string('required'), 'required', null, 'client');
-    }
-
-    public static function get_instance_option_names() {
-        return array('email_address');
-    }
-
     public function type_config_form(&$mform) {
         global $CFG;
         $api_key = get_config('flickr', 'api_key');
         $secret = get_config('flickr', 'secret');
-
-        
 
         if (empty($api_key)) {
             $api_key = '';
@@ -217,7 +202,6 @@ class repository_flickr extends repository {
               $mform->addElement('static', 'callbackurl', '', get_string('callbackurltext', 'repository_flickr', $callbackurl));
         }
        
-
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
         $mform->addRule('secret', $strrequired, 'required', null, 'client');
     }

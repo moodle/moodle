@@ -6154,10 +6154,10 @@ class admin_setting_managerepository extends admin_setting {
         $updowncount=1;
         foreach ($instances as $i) {
             $settings = '';
-            //display edit link only if you can config the type or if it has multiple instances
-            $adminconfignames = repository_static_function($i->get_typename(), 'get_type_option_names');
-            if ( !empty($adminconfignames)
-                 || repository_static_function($i->get_typename(), 'has_multiple_instances')) {
+            //display edit link only if you can config the type or if it has multiple instances (e.g. has instance config)
+            $typeoptionnames = repository_static_function($i->get_typename(), 'get_type_option_names');
+            $instanceoptionnames = repository_static_function($i->get_typename(), 'get_instance_option_names');
+            if ( !empty($typeoptionnames) || !empty($instanceoptionnames)) {
                 $settings .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '">'
                               . $settingsstr .'</a>' . "\n";
             }

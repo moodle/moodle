@@ -98,7 +98,8 @@ if (!empty($edit) || !empty($new)) {
 
         //display instances list and creation form
         if ($edit){
-             if (repository_static_function($edit,"has_multiple_instances")){
+             $instanceoptionnames = repository_static_function($edit, 'get_instance_option_names');
+             if (!empty($instanceoptionnames)){
                 repository_display_instances_list(get_context_instance(CONTEXT_SYSTEM), $edit);
            }
         }

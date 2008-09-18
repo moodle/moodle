@@ -157,16 +157,8 @@ class repository_boxnet extends repository {
         }
     }
 
-    public static function has_multiple_instances() {
-        return false;
-    }
-
     public static function get_type_option_names() {
         return array('api_key');
-    }
-
-    public static function get_instance_option_names() {
-        return array('share_url');
     }
 
     public function type_config_form(&$mform) {
@@ -182,7 +174,6 @@ class repository_boxnet extends repository {
     }
 
     public function instance_config_form(&$mform) {
-        //$share_url = get_config('boxnet', 'share_url');
         $mform->addElement('text', 'share_url', get_string('shareurl', 'repository_boxnet'));
     }
 }

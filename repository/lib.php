@@ -198,10 +198,11 @@ class repository_type {
             //save the options in DB
             $this->update_options();
 
-            //if the plugin type has no multiple so it wont
+            //if the plugin type has no multiple instance (e.g. has no instance option name) so it wont
             //be possible for the administrator to create a instance
             //in this case we need to create an instance
-            if (!repository_static_function($this->_typename,"has_multiple_instances")) {
+            $instanceoptionnames = repository_static_function($this->_typename, 'get_instance_option_names');
+            if (empty($instanceoptionnames)) {
                 $instanceoptions = array();
                 $instanceoptions['name'] = $this->_typename;
                 repository_static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
@@ -642,12 +643,11 @@ abstract class repository {
             $record->userid    = $userid;
             $id = $DB->insert_record('repository_instances', $record);
             $options = array();
-            if (call_user_func($classname . '::has_multiple_instances')) {
-                $configs = call_user_func($classname . '::get_instance_option_names');
-                foreach ($configs as $config) {
-                    $options[$config] = $params[$config];
-                }
+            $configs = call_user_func($classname . '::get_instance_option_names');
+            foreach ($configs as $config) {
+                $options[$config] = $params[$config];
             }
+            
             if (!empty($id)) {
                 unset($options['name']);
                 $instance = repository_get_instance($id);
@@ -928,15 +928,6 @@ abstract class repository {
     }
 
     /**
-     * Return true if the plugin can have multiple instances
-     * By default: false
-     * @return boolean
-     */
-    public static function has_multiple_instances() {
-        return false;
-    }
-
-    /**
      * Return names of the general options
      * By default: no general option name
      * @return array
@@ -1001,7 +992,8 @@ function repository_get_editable_types() {
     $types= repository_get_types(true);
     $editabletypes = array();
     foreach ($types as $type) {
-        if (repository_static_function($type->get_typename(), 'has_multiple_instances')) {
+        $instanceoptionnames = repository_static_function($type->get_typename(), 'get_instance_option_names');
+        if (!empty($instanceoptionnames)) {
             $editabletypes[]=$type;
         }
     }
@@ -1439,7 +1431,8 @@ function repository_display_instances_list($context, $typename = null) {
         foreach ($plugins as $p) {
             $type = repository_get_type_by_typename($p);
             if (!empty($type) && $type->get_visible()) {
-                if (repository_static_function($p, 'has_multiple_instances')) {
+                $instanceoptionnames = repository_static_function($p, 'get_instance_option_names');
+                if (!empty($instanceoptionnames)) {
                     $instancehtml .= '<li><a href="'.$baseurl.'&amp;new='.$p.'">'.get_string('create', 'repository')
                         .' "'.get_string('repositoryname', 'repository_'.$p).'" '
                         .get_string('instance', 'repository').'</a></li>';
@@ -1449,11 +1442,14 @@ function repository_display_instances_list($context, $typename = null) {
         }
         $instancehtml .= '</ul>';
 
-    } else if (repository_static_function($typename, 'has_multiple_instances')) {   //create a unique type of instance
+    } else {
+        $instanceoptionnames = repository_static_function($typename, 'get_instance_option_names');
+        if (!empty($instanceoptionnames)) {   //create a unique type of instance
             $addable = 1;
             $instancehtml .= "<form action='".$baseurl."&amp;new=".$typename."' method='post'>
                 <p style='text-align:center'><input type='submit' value='".get_string('createinstance', 'repository')."'/></p>
                 </form>";     
+        }
     }
 
     if ($addable) {

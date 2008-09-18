@@ -169,10 +169,6 @@ class repository_flickr_public extends repository {
         return $dir.$file;
     }
 
-    public static function has_multiple_instances() {
-        return true;
-    }
-
     public function instance_config_form(&$mform) {
         $mform->addElement('text', 'email_address', get_string('emailaddress', 'repository_flickr_public'));
         $mform->addRule('email_address', get_string('required'), 'required', null, 'client');

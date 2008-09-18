@@ -231,10 +231,10 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     foreach (repository_get_types()
         as $repositorytype)
     {
-      //display setup page for plugins with: general options or multiple instances
-      $adminconfignames = repository_static_function($repositorytype->get_typename(), 'get_type_option_names');
-      if (!empty($adminconfignames)
-          || repository_static_function($repositorytype->get_typename(), 'has_multiple_instances')) {
+      //display setup page for plugins with: general options or multiple instances (e.g. has instance config)
+      $typeoptionnames = repository_static_function($repositorytype->get_typename(), 'get_type_option_names');
+      $instanceoptionnames = repository_static_function($repositorytype->get_typename(), 'get_instance_option_names');
+      if (!empty($typeoptionnames) || !empty($instanceoptionnames)) {
             $ADMIN->add('repositorysettings',
                 new admin_externalpage('repositorysettings'.$repositorytype->get_typename(),
                         $repositorytype->get_readablename(),
