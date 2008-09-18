@@ -71,6 +71,10 @@ function upgrade_db($version, $release) {
     unset($mtables);
     unset($tables);
 
+    if ($unittest && $autopilot) {
+        echo upgrade_get_javascript();
+    }
+
     if (!$maintables) {
     /// hide errors from headers in case debug enabled in config.php
         $origdebug = $CFG->debug;
@@ -109,8 +113,12 @@ function upgrade_db($version, $release) {
         $strdatabasesetup    = get_string("databasesetup");
         $strdatabasesuccess  = get_string("databasesuccess");
         $navigation = build_navigation(array(array('name'=>$strdatabasesetup, 'link'=>null, 'type'=>'misc')));
-        print_header($strdatabasesetup, $strdatabasesetup, $navigation,
+
+        if (!$unittest) {
+            print_header($strdatabasesetup, $strdatabasesetup, $navigation,
                         "", upgrade_get_javascript(), false, "&nbsp;", "&nbsp;");
+        }
+
     /// return to original debugging level
         $CFG->debug = $origdebug;
         error_reporting($CFG->debug);
@@ -477,7 +485,7 @@ function upgrade_db($version, $release) {
 }
 
 function build_site_course() {
-    global $CFG, $DB;
+    global $CFG, $DB, $unittest;
 
     $continuesetuptesttables= optional_param('continuesetuptesttables', $unittest, PARAM_BOOL);
 
@@ -1345,7 +1353,7 @@ function upgrade_get_javascript() {
 }
 
 function create_admin_user($user_input=NULL) {
-    global $CFG, $USER, $DB;
+    global $CFG, $USER, $DB, $unittest;
 
     if (empty($CFG->rolesactive)) {   // No admin user yet.
 
@@ -1373,29 +1381,33 @@ function create_admin_user($user_input=NULL) {
             print_error('invaliduserid');
         }
 
-        // Assign the default admin roles to the new user.
-        if (!$adminroles = get_roles_with_capability('moodle/legacy:admin', CAP_ALLOW)) {
-            print_error('noadminrole', 'message');
-        }
-        $sitecontext = get_context_instance(CONTEXT_SYSTEM);
-        foreach ($adminroles as $adminrole) {
-            role_assign($adminrole->id, $user->id, 0, $sitecontext->id);
-        }
+        if (!$unittest) {
+            // Assign the default admin roles to the new user.
+            if (!$adminroles = get_roles_with_capability('moodle/legacy:admin', CAP_ALLOW)) {
+                print_error('noadminrole', 'message');
+            }
 
-        //set default message preferences
-        if (!message_set_default_message_preferences( $user )){
-            print_error('cannotsavemessageprefs', 'message');
-        }
+            $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+            foreach ($adminroles as $adminrole) {
+                role_assign($adminrole->id, $user->id, 0, $sitecontext->id);
+            }
 
-        set_config('rolesactive', 1);
+            //set default message preferences
+            if (!message_set_default_message_preferences( $user )){
+                print_error('cannotsavemessageprefs', 'message');
+            }
 
-        // Log the user in.
-        $USER = get_complete_user_data('username', 'admin');
-        $USER->newadminuser = 1;
-        load_all_capabilities();
+            // Log the user in.
+            set_config('rolesactive', 1);
+            $USER = get_complete_user_data('username', 'admin');
+            $USER->newadminuser = 1;
+            load_all_capabilities();
 
-        if (!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
-          redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
+            if (!defined('CLI_UPGRADE')||!CLI_UPGRADE) {
+              redirect("$CFG->wwwroot/user/editadvanced.php?id=$user->id");  // Edit thyself
+            }
+        } else {
+            redirect("$CFG->wwwroot/admin/report/simpletest/index.php?testtablesok=1");
         }
     } else {
         print_error('cannotcreateadminuser', 'debug');

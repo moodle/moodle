@@ -32,6 +32,7 @@ $addconfigprefix = optional_param('addconfigprefix', false, PARAM_RAW);
 $setuptesttables = optional_param('setuptesttables', false, PARAM_BOOL);
 $continuesetuptesttables = optional_param('continuesetuptesttables', false, PARAM_BOOL);
 $droptesttables = optional_param('droptesttables', false, PARAM_BOOL);
+$testtablesok = optional_param('testtablesok', false, PARAM_BOOL);
 
 global $UNITTEST;
 $UNITTEST = new object();
@@ -40,6 +41,10 @@ $UNITTEST = new object();
 admin_externalpage_setup('reportsimpletest');
 $strtitle = get_string('unittests', $langfile);
 admin_externalpage_print_header();
+
+if ($testtablesok) {
+    print_heading(get_string('testtablesok', 'simpletest'));
+}
 
 $baseurl = $CFG->wwwroot . '/admin/report/simpletest/index.php';
 
@@ -98,13 +103,14 @@ $CFG->dbuser              = $real_cfg->dbuser;
 $CFG->dbpass              = $real_cfg->dbpass;
 $CFG->dbname              = $real_cfg->dbname;
 $CFG->dbpersist           = $real_cfg->dbpersist;
-$CFG->unittestprefix     = $real_cfg->unittestprefix;
+$CFG->unittestprefix      = $real_cfg->unittestprefix;
 $CFG->wwwroot             = $real_cfg->wwwroot;
 $CFG->dirroot             = $real_cfg->dirroot;
 $CFG->libdir              = $real_cfg->libdir;
 $CFG->dataroot            = $real_cfg->dataroot;
 $CFG->admin               = $real_cfg->admin;
 $CFG->release             = $real_cfg->release;
+$CFG->version             = $real_cfg->version;
 $CFG->config_php_settings = $real_cfg->config_php_settings;
 $CFG->frametarget         = $real_cfg->frametarget;
 $CFG->framename           = $real_cfg->framename;
@@ -114,7 +120,7 @@ $CFG->debug               = $real_cfg->debug;
 $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
 $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittestprefix);
 
-if ($config = $DB->get_records('config')) {
+if ($DB->get_manager()->table_exists(new xmldb_table('config')) && $config = $DB->get_records('config')) {
     foreach ($config as $conf) {
         $CFG->{$conf->name} = $conf->value;
     }
