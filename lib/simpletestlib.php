@@ -169,6 +169,7 @@ class MoodleUnitTestCase extends UnitTestCase {
         global $DB, $CFG;
         $this->pkfile = $CFG->dataroot.'/testtablespks.csv';
         $this->cfg = $CFG;
+        $this->setup();
 
         $tables = $DB->get_tables();
 
@@ -274,6 +275,7 @@ class MoodleUnitTestCase extends UnitTestCase {
         $CFG = $this->cfg;
         $this->truncate_test_tables($this->get_table_data($this->pkfile));
         fulldelete($this->pkfile);
+        $this->tearDown();
     }
 }
 
