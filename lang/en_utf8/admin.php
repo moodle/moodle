@@ -136,6 +136,7 @@ $string['configfrontpageloggedin'] = 'The items selected above will be displayed
 $string['configfullnamedisplay'] = 'This defines how names are shown when they are displayed in full. For most mono-lingual sites the most efficient setting is the default \"First name + Surname\", but you may choose to hide surnames altogether, or to leave it up to the current language pack to decide (some languages have different conventions).';
 $string['configgdversion'] = 'Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don\'t change this unless you really know what you\'re doing.';
 $string['configgeoipfile'] = 'Location of GeoIP City binary data file. This file is not part of Moodle distribution and must be obtained separately from <a href=\"http://www.maxmind.com/\">MaxMind</a>. You can either buy a commercial version or use the free version.<br />Simply download <a href=\"http://www.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz\" >http://www.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz</a> and extract it into \"$a\" directory on your server.';
+$string['configgetremoteaddrconf'] = 'If your server is behind a reverse proxy, you can change this setting to use a different header a the IP address to log.';
 $string['configgooglemapkey'] = 'You need to enter a special key to use Google Maps for IP address lookup visualization. You can obtain the key free of charge at <a href=\"http://code.google.com/apis/maps/signup.html\" >http://code.google.com/apis/maps/signup.html</a>.<br />Your web site URL is: $a';
 $string['configgradebookroles'] = 'This setting allows you to control who appears on the gradebook.  Users need to have at least one of these roles in a course to be shown in the gradebook for that course.';
 $string['configgradeexport'] = 'Choose which gradebook export formats are your primary methods for exporting grades.  Chosen plugins will then set and use a \"last exported\" field for every grade.  For example, this might result in exported records being identified as being \"new\" or \"updated\".  If you are not sure about this then leave everything unchecked.';
@@ -398,6 +399,7 @@ $string['fullnamedisplay'] = 'Full Name Format';
 $string['gdversion'] = 'GD version';
 $string['generalsettings'] = 'General settings';
 $string['geoipfile'] = 'GeoIP City data file';
+$string['getremoteaddrconf'] = 'Logged IP address source';
 $string['globalsquoteswarning'] = '<p><strong>Security Warning</strong>: to operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.<p/><p>You <em>must</em> set <code>register_globals=off</code> and/or <code>magic_quotes_gpc=on</code>. <br />If possible, you should set <code>register_globals=off</code> to improve general <br /> server security, setting <code>magic_quotes_gpc=on</code> is also recommended.<p/><p>These settings are controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
 $string['globalswarning'] = '<p><strong>SECURITY WARNING!</strong></p><p> To operate properly, Moodle requires <br />that you make certain changes to your current PHP settings.</p><p>You <em>must</em> set <code>register_globals=off</code>.</p><p>This setting is controlled by editing your <code>php.ini</code>, Apache/IIS <br />configuration or <code>.htaccess</code> file.</p>';
 $string['googlemapkey'] = 'Google Maps API key';
@@ -648,6 +650,7 @@ $string['requiredtemplate'] = 'Required. You may use template syntax here (%%l =
 $string['requires'] = 'Requires';
 $string['restrictbydefault'] = 'Restrict modules by default';
 $string['restrictmodulesfor'] = 'Restrict modules for';
+$string['reverseproxy'] = 'Reverse proxy';
 $string['riskconfig'] = 'Users could change site configuration and behaviour';
 $string['riskconfigshort'] = 'Configuration risk';
 $string['riskmanagetrust'] = 'Users could change trust settings of other users';
