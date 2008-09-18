@@ -47,17 +47,6 @@ class repository_upload extends repository {
         return true;
     }
 
-    public static function has_admin_config() {
-        return false;
-    }
-
-    public static function get_admin_option_names() {
-        return array();
-    }
-
-    // empty function is necessary to make it possible to edit the name of the repository
-    public function admin_config_form(&$mform) {
-    }
     public function get_name(){
         return get_string('repositoryname', 'repository_upload');;
     }
