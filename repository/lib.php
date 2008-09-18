@@ -831,7 +831,6 @@ abstract class repository {
      *
      * @param string $parent The parent path, this parameter can
      * a folder name, or a identification of folder
-     * @param string $search The text will be searched.
      * @return array the list of files, including meta infomation
      */
     abstract public function get_listing($parent = '/');
@@ -873,7 +872,9 @@ abstract class repository {
      * Show the login screen, if required
      * This is an abstract function, it must be overriden.
      */
-    abstract public function print_login();
+    public function print_login(){
+        return $this->get_listing();
+    }
 
     /**
      * Show the search screen, if required
