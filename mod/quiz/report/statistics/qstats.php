@@ -55,6 +55,12 @@ class qstats{
         if ($this->states === false){
             print_error('errorstatisticsquestions', 'quiz_statistics');
         }
+        // Nasty hack fix for MDL-16567 - TODO a proper fix.
+        foreach ($this->states as $id => $state) {
+            if (!isset($this->questions[$state->question])) {
+                unset($this->states[$id]);
+            }
+        }
     }
     
     function _initial_states_walker($state, &$stats, $positionstat = true){
