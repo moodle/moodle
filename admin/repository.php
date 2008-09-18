@@ -52,11 +52,18 @@ if (!empty($edit) || !empty($new)) {
     // display the edit form for this instance
     $mform = new repository_admin_form('', array('plugin' => $plugin, 'instance' => $repositorytype));
     $fromform = $mform->get_data();
+
+    //detect if we create a new type without config (in this case if don't want to display a setting page during creation)
+    $createnewtype = false;
+    if (!empty($new)) {
+        $adminconfignames = repository_static_function($new, 'get_admin_option_names');
+        $createnewtype = empty($adminconfignames);
+    }
     // end setup, begin output
     if ($mform->is_cancelled()){
         redirect($baseurl);
         exit;
-    } else if (!empty($fromform) || (!empty($new) && !repository_static_function($new,"has_admin_config"))){
+    } else if (!empty($fromform) || $createnewtype){
         if (!confirm_sesskey()) {
             print_error('confirmsesskeybad', '', $baseurl);
         }
@@ -91,8 +98,7 @@ if (!empty($edit) || !empty($new)) {
 
         //display instances list and creation form
         if ($edit){
-             if (repository_static_function($edit,"has_instance_config")
-                 || repository_static_function($edit,"has_multiple_instances")){
+             if (repository_static_function($edit,"has_multiple_instances")){
                 repository_display_instances_list(get_context_instance(CONTEXT_SYSTEM), $edit);
            }
         }

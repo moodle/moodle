@@ -6154,9 +6154,9 @@ class admin_setting_managerepository extends admin_setting {
         $updowncount=1;
         foreach ($instances as $i) {
             $settings = '';
-            //display edit link only if you can config the type or its instances
-            if ( repository_static_function($i->get_typename(), 'has_admin_config')
-                 || repository_static_function($i->get_typename(), 'has_instance_config')
+            //display edit link only if you can config the type or if it has multiple instances
+            $adminconfignames = repository_static_function($i->get_typename(), 'get_admin_option_names');
+            if ( !empty($adminconfignames)
                  || repository_static_function($i->get_typename(), 'has_multiple_instances')) {
                 $settings .= '<a href="' . $this->baseurl . '&amp;edit=' . $i->get_typename() . '">'
                               . $settingsstr .'</a>' . "\n";

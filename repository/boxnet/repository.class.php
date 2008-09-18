@@ -157,14 +157,6 @@ class repository_boxnet extends repository {
         }
     }
 
-    public static function has_admin_config() {
-        return true;
-    }
-
-    public static function has_instance_config() {
-        return false;
-    }
-
     public static function has_multiple_instances() {
         return false;
     }

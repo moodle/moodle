@@ -168,15 +168,8 @@ class repository_flickr_public extends repository {
 
         return $dir.$file;
     }
-    public static function has_admin_config() {
-        return true;
-    }
 
     public static function has_multiple_instances() {
-        return true;
-    }
-
-    public static function has_instance_config() {
         return true;
     }
 

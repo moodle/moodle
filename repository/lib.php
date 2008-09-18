@@ -113,9 +113,9 @@ class repository_type {
 
         //set options attribut
         $this->_options = array();
+        $options = repository_static_function($typename,'get_admin_option_names');
         //check that the type can be setup
-        if (repository_static_function($typename,"has_admin_config")) {
-            $options = repository_static_function($typename,'get_admin_option_names');
+        if (!empty($options)) {
             //set the type options
             foreach ($options as $config) {
                 if (array_key_exists($config,$typeoptions)) {
@@ -198,11 +198,10 @@ class repository_type {
             //save the options in DB
             $this->update_options();
 
-            //if the plugin type has no multiple and no instance config so it wont
+            //if the plugin type has no multiple so it wont
             //be possible for the administrator to create a instance
             //in this case we need to create an instance
-            if (!repository_static_function($this->_typename,"has_instance_config")
-                    && !repository_static_function($this->_typename,"has_multiple_instances")) {
+            if (!repository_static_function($this->_typename,"has_multiple_instances")) {
                 $instanceoptions = array();
                 $instanceoptions['name'] = $this->_typename;
                 repository_static_function($this->_typename, 'create', $this->_typename, 0, get_system_context(), $instanceoptions);
@@ -643,7 +642,7 @@ abstract class repository {
             $record->userid    = $userid;
             $id = $DB->insert_record('repository_instances', $record);
             $options = array();
-            if (call_user_func($classname . '::has_instance_config')) {
+            if (call_user_func($classname . '::has_multiple_instances')) {
                 $configs = call_user_func($classname . '::get_instance_option_names');
                 foreach ($configs as $config) {
                     $options[$config] = $params[$config];
@@ -914,26 +913,18 @@ abstract class repository {
 
     }
 
-    public static function add_unremovable_instances(){
-
-    }
-
     /**
-     * Return true if the plugin type has at least one general option field
-     * By default: false
-     * @return boolean
+     * Edit/Create Admin Settings Moodle form
+     * @param object $ Moodle form (passed by reference)
      */
-    public static function has_admin_config() {
-        return false;
+     public function admin_config_form(&$mform) {
     }
-
-    /**
-     * Return true if a plugin instance has at least one config field
-     * By default: false
-     * @return boolean
+    
+      /**
+     * Edit/Create Instance Settings Moodle form
+     * @param object $ Moodle form (passed by reference)
      */
-    public static function has_instance_config() {
-        return false;
+     public function instance_config_form(&$mform) {
     }
 
     /**
@@ -1269,15 +1260,13 @@ final class repository_instance_form extends moodleform {
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
         $mform->addRule('name', $strrequired, 'required', null, 'client');
 
-        // let the plugin add the fields they want (either statically or not)
-        if (repository_static_function($this->plugin, 'has_instance_config')) {
-            if (!$this->instance) {
-                $result = repository_static_function($this->plugin, 'instance_config_form', $mform);
-            } else {
-                $result = $this->instance->instance_config_form($mform);
-            }
+        //add fields
+       if (!$this->instance) {
+            $result = repository_static_function($this->plugin, 'instance_config_form', $mform);
+        } else {
+            $result = $this->instance->instance_config_form($mform);
         }
-
+        
         // and set the data if we have some.
         if ($this->instance) {
             $data = array();
@@ -1347,14 +1336,12 @@ final class repository_admin_form extends moodleform {
         $mform->addElement('hidden', 'edit',  ($this->instance) ? $this->instance->get_typename() : 0);
         $mform->addElement('hidden', 'new',   $this->plugin);
         $mform->addElement('hidden', 'plugin', $this->plugin);
-        // let the plugin add the fields they want (either statically or not)
-        if (repository_static_function($this->plugin, 'has_admin_config')) {
-            if (!$this->instance) {
+        // let the plugin add its specific fields
+        if (!$this->instance) {
                 $result = repository_static_function($this->plugin, 'admin_config_form', $mform);
             } else {
                 $classname = 'repository_' . $this->instance->get_typename();
                 $result = call_user_func(array($classname,'admin_config_form'),$mform);
-            }
         }
 
         // and set the data if we have some.

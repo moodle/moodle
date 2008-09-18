@@ -174,15 +174,8 @@ class repository_flickr extends repository {
         ));
         return $dir.$file;
     }
-    public static function has_admin_config() {
-        return true;
-    }
 
     public static function has_multiple_instances() {
-        return false;
-    }
-
-    public static function has_instance_config() {
         return false;
     }
 
@@ -208,16 +201,6 @@ class repository_flickr extends repository {
         if (empty($secret)) {
             $secret = '';
         }
-/*
-        $noticetext = get_string('notice', 'repository_flickr');
-        //$noticetext = 'a[';
-        //var_dump($noticetext);
-        if (strpos($noticetext, '[')==0) {
-            $mform->addElement('static', 'notice', '<strong>'.get_string('notice', 'repository').'</strong>', '<i>'.$noticetext.'</i>');
-        }
- * */
-
-        
 
         $strrequired = get_string('required');
         $mform->addElement('text', 'api_key', get_string('apikey', 'repository_flickr'), array('value'=>$api_key,'size' => '40'));
