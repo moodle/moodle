@@ -389,29 +389,33 @@ class quiz_grading_report extends quiz_default_report {
 
                 $options = quiz_get_reviewoptions($quiz, $attempt, $context);
                 unset($options->questioncommentlink);
-                $copy = $state->manualcomment;
-                $state->manualcomment = '';
-
                 $options->readonly = 1;
 
-                $gradedclass = question_state_is_graded($state)?' class="highlightgraded" ':'';
-                $gradedstring = question_state_is_graded($state)?(' '.get_string('graded','quiz_grading')):'';
+                if (question_state_is_graded($state)) {
+                    $gradedclass = ' class="highlightgraded" ';
+                    $gradedstring = ' ' . get_string('graded','quiz_grading');
+                } else {
+                    $gradedclass = '';
+                    $gradedstring = '';
+                }
                 $a = new object();
                 $a->fullname = fullname($attempt, true);
                 $a->attempt = $attempt->attempt;
 
                 // print the user name, attempt count, the question, and some more hidden fields
                 echo '<div class="boxaligncenter" width="80%" style="clear:left;padding:15px;">';
-                echo "<span$gradedclass>".get_string('gradingattempt','quiz_grading', $a);
-                echo $gradedstring."</span>";
+                echo "<span$gradedclass>" . get_string('gradingattempt', 'quiz_grading', $a);
+                echo $gradedstring . '</span>';
 
+                // Print the question, without showing any previous comment.
+                $copy = $state->manualcomment;
+                $state->manualcomment = '';
                 print_question($question, $state, '', $quiz, $options);
 
-                $prefix         = "manualgrades[$attempt->uniqueid]";
-                $grade          = round($state->last_graded->grade, 3);
+                // The print the comment and grade fields, putting back the previous comment.
                 $state->manualcomment = $copy;
-
-                include($CFG->dirroot . '/question/comment.html');
+                question_print_comment_fields($question, $state,
+                        'manualgrades[' . $attempt->uniqueid . ']', $quiz);
 
                 echo '</div>';
             }

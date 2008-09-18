@@ -20,10 +20,6 @@
 /// Check login.
     require_login($attemptobj->get_courseid(), false, $attemptobj->get_cm());
 
-/// Create an object to manage all the other (non-roles) access rules.
-    $accessmanager = $attemptobj->get_access_manager(time());
-    $options = $attemptobj->get_review_options();
-
 /// Permissions checks for normal users who do not have quiz:viewreports capability.
     if (!$attemptobj->has_capability('mod/quiz:viewreports')) {
     /// Can't review during the attempt - send them back to the attempt page.
@@ -38,7 +34,8 @@
         }
     /// Can't review unless Students may review -> Responses option is turned on.
         if (!$options->responses) {
-            notify($accessmanager->cannot_review_message($options));
+            $accessmanager = $attemptobj->get_access_manager(time());
+            notify($accessmanager->cannot_review_message($attemptobj->get_review_options()));
             close_window_button();
         }
     }

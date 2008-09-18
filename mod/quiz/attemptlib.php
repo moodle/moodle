@@ -447,6 +447,11 @@ class quiz_attempt extends quiz {
         return $this->attempt->id;
     }
 
+    /** @return integer the attempt unique id. */
+    public function get_uniqueid() {
+        return $this->attempt->uniqueid;
+    }
+
     /** @return object the row from the quiz_attempts table. */
     public function get_attempt() {
         return $this->attempt;
@@ -689,6 +694,37 @@ class quiz_attempt extends quiz {
             }
         }
         return implode(', ', $attemptlist);
+    }
+
+    // Methods for processing manual comments ==============================================
+    // I am not sure it is a good idea to have update methods here - this class is only
+    // about getting data out of the question engine, and helping to display it, apart from
+    // this.
+    public function process_comment($questionid, $comment, $grade) {
+        $this->ensure_question_loaded($questionid);
+        $this->ensure_state_loaded($questionid);
+        $state = $this->states[$questionid];
+
+        $error = question_process_comment($this->questions[$questionid],
+                $state, $this->attempt, $comment, $grade);
+
+        // If the state was update (successfully), save the changes.
+        if (!is_string($error) && $state->changed) {
+            if (!save_question_session($this->questions[$questionid], $state)) {
+                $error = get_string('errorudpatingquestionsession', 'quiz');
+            }
+            if (!quiz_save_best_grade($this->quiz, $this->attempt->userid)) {
+                $error = get_string('errorudpatingbestgrade', 'quiz');
+            }
+        }
+        return $error;
+    }
+
+    public function question_print_comment_fields($questionid, $prefix) {
+        $this->ensure_question_loaded($questionid);
+        $this->ensure_state_loaded($questionid);
+        question_print_comment_fields($this->questions[$questionid],
+                $this->states[$questionid], $prefix, $this->quiz);
     }
 
     // Private methods =====================================================================

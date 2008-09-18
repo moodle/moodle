@@ -74,6 +74,7 @@ $string['errordeletingquestionsfromcategory'] = 'Error deleting questions from c
 $string['errorduringpre'] = 'Error occurred during pre-processing!';
 $string['errorduringproc'] = 'Error occurred during processing!';
 $string['errorduringpost'] = 'Error occurred during post-processing!';
+$string['errorduringregrade'] = 'Could not regrade question $a->qid, going to state $a->stateid.';
 $string['errorfilecannotbecopied'] = 'Error cannot copy file $a.';
 $string['errorfilecannotbemoved'] = 'Error cannot move file $a.';
 $string['errorfileschanged'] = 'Error files linked to from questions have changed since form was displayed.';

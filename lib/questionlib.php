@@ -895,6 +895,8 @@ function get_question_options(&$questions) {
  */
 function question_preload_states($attemptid) {
     global $DB;
+    // Note, changes here probably also need to be reflected in
+    // regrade_question_in_attempt and question_load_specific_state.
 
     // The questionid field must be listed first so that it is used as the
     // array index in the array returned by $DB->get_records_sql
@@ -1082,7 +1084,8 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
 function question_load_specific_state($question, $cmoptions, $attempt, $stateid) {
     global $DB, $QUESTION_EVENTS_GRADED;
     // Load specified states for the question.
-    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment
+    // sess.sumpenalty is probably wrong here shoul really be a sum of penalties from before the one we are asking for.
+    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment, sess.flagged, sess.id as questionsessionid
               FROM {question_states} st, {question_sessions} sess
              WHERE st.id = ?
                AND st.attempt = ?
@@ -1097,7 +1100,7 @@ function question_load_specific_state($question, $cmoptions, $attempt, $stateid)
 
     // Load the most recent graded states for the questions before the specified one.
     list($eventinsql, $params) = $DB->get_in_or_equal($QUESTION_EVENTS_GRADED);
-    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment
+    $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment, sess.flagged, sess.id as questionsessionid
               FROM {question_states} st, {question_sessions} sess
              WHERE st.seq_number <= ?
                AND st.attempt = ?
@@ -1381,13 +1384,9 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
         $attempt->sumgrades -= $states[count($states)-1]->grade;
 
         // Initialise the replaystate
-        $state = clone($states[0]);
-        $state->manualcomment = $DB->get_field('question_sessions', 'manualcomment',
-                array('attemptid'=> $attempt->uniqueid, 'questionid'=>$question->id));
-        restore_question_state($question, $state);
-        $state->sumpenalty = 0.0;
-        $replaystate = clone($state);
-        $replaystate->last_graded = $state;
+        $replaystate = question_load_specific_state($question, $cmoptions, $attempt, $states[0]->id);
+        $replaystate->sumpenalty = 0;
+        $replaystate->last_graded->sumpenalty = 0;
 
         $changed = false;
         for($j = 1; $j < count($states); $j++) {
@@ -1397,9 +1396,8 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             $action->timestamp = $states[$j]->timestamp;
 
             // Change event to submit so that it will be reprocessed
-            if (QUESTION_EVENTCLOSE == $states[$j]->event
-                    or QUESTION_EVENTGRADE == $states[$j]->event
-                    or QUESTION_EVENTCLOSEANDGRADE == $states[$j]->event) {
+            if (in_array($states[$j]->event, array(QUESTION_EVENTCLOSE,
+                    QUESTION_EVENTGRADE, QUESTION_EVENTCLOSEANDGRADE))) {
                 $action->event = QUESTION_EVENTSUBMIT;
 
             // By default take the event that was saved in the database
@@ -1431,8 +1429,11 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
             } else {
                 // Reprocess (regrade) responses
                 if (!question_process_responses($question, $replaystate,
-                        $action, $cmoptions, $attempt)) {
-                    $verbose && notify("Couldn't regrade state #{$state->id}!");
+                        $action, $cmoptions, $attempt) && $verbose) {
+                    $a = new stdClass;
+                    $a->qid = $question->id;
+                    $a->stateid = $states[$j]->id;
+                    notify(get_string('errorduringregrade', 'question', $a));
                 }
                 // We need rounding here because grades in the DB get truncated
                 // e.g. 0.33333 != 0.3333333, but we want them to be equal here
@@ -1440,6 +1441,13 @@ function regrade_question_in_attempt($question, $attempt, $cmoptions, $verbose=f
                         or (round((float)$replaystate->penalty, 5) != round((float)$states[$j]->penalty, 5))
                         or (round((float)$replaystate->grade, 5) != round((float)$states[$j]->grade, 5))) {
                     $changed = true;
+                }
+                // If this was previously a closed state, and it has been knoced back to
+                // graded, then fix up the state again.
+                if ($replaystate->event == QUESTION_EVENTGRADE &&
+                        ($states[$j]->event == QUESTION_EVENTCLOSE ||
+                        $states[$j]->event == QUESTION_EVENTCLOSEANDGRADE)) {
+                    $replaystate->event = $states[$j]->event;
                 }
             }
 
@@ -1731,19 +1739,26 @@ function get_question_image($question) {
     return $img;
 }
 
-function question_print_comment_box($question, $state, $attempt, $url) {
-   global $CFG;
-
-   $prefix = 'response';
-   $usehtmleditor = can_use_html_editor();
-   $grade = round($state->last_graded->grade, 3);
-   echo '<form method="post" action="'.$url.'">';
-   include($CFG->dirroot.'/question/comment.html');
-   echo '<input type="hidden" name="attempt" value="'.$attempt->uniqueid.'" />';
-   echo '<input type="hidden" name="question" value="'.$question->id.'" />';
-   echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
-   echo '<input type="submit" name="submit" value="'.get_string('save', 'quiz').'" />';
-   echo '</form>';
+function question_print_comment_fields($question, $state, $prefix, $cmoptions) {
+    $idprefix = preg_replace('/[^-_a-zA-Z0-9]/', '', $prefix);
+    $grade = question_format_grade($cmoptions, $state->last_graded->grade);
+    $maxgrade = question_format_grade($cmoptions, $question->maxgrade);
+    $fieldsize = strlen($maxgrade) - 1;
+    echo '<table class="que comment">' . "\n";
+    echo '<tr valign="top">' . "\n";
+    echo '<th><label for="' . $idprefix . '_comment_box">' .
+            get_string('comment', 'quiz') . "</label></th>\n";
+    echo '<td>';
+    print_textarea(can_use_html_editor(), 15, 60, 630, 300, $prefix . '[comment]',
+            $state->manualcomment, 0, false, $idprefix . '_comment_box');
+    echo "</td>\n";
+    echo "</tr>\n";
+    echo '<tr valign="top">' . "\n";
+    echo '<th><label for="' .  $idprefix . '_grade_field">' . get_string('grade', 'quiz') . "</label></th>\n";
+    echo '<td><input type="text" name="' . $prefix . '[grade]" size="' . $fieldsize .
+            '" id="' . $idprefix . '_grade_field" value="' . $grade . '" />/' . $maxgrade . "</td>\n";
+    echo "</tr>\n";
+    echo "</table>\n";
 }
 
 /**
@@ -1788,7 +1803,7 @@ function question_process_comment($question, &$state, &$attempt, $comment, $grad
     }
 
     // Update the state if either the score has changed, or this is the first
-    // manual grade event and there is actually a grade of comment to process.
+    // manual grade event and there is actually a grade or comment to process.
     // We don't need to store the modified state in the database, we just need
     // to set the $state->changed flag.
     if (abs($state->last_graded->grade - $grade) > 0.002 ||
