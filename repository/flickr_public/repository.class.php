@@ -284,7 +284,7 @@ class repository_flickr_public extends repository {
      */
     public static function plugin_init() {
         //here we create a default instance for this type
-        repository_static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => 'default instance','email_address' => null),1);
+        repository_static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => get_string('repositoryname', 'repository_public'),'email_address' => null),1);
     }
 
 }
