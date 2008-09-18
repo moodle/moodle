@@ -172,10 +172,6 @@ class repository_boxnet extends repository {
         $mform->addRule('api_key', $strrequired, 'required', null, 'client');
         $mform->addElement('static', null, '',  get_string('information','repository_boxnet'));
     }
-
-    public function instance_config_form(&$mform) {
-        $mform->addElement('text', 'share_url', get_string('shareurl', 'repository_boxnet'));
-    }
 }
 
 ?>
