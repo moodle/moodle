@@ -84,6 +84,7 @@
     require_capability('moodle/site:config', $context);
 
 /// check that site is properly customized
+    $site = get_site();
     if (empty($site->shortname)) {
         // probably new installation - lets return to frontpage after this step
         // remove settings that we want uninitialised
