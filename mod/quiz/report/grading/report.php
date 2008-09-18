@@ -113,14 +113,14 @@ class quiz_grading_report extends quiz_default_report {
 
         if ($data = data_submitted()) {  // post data submitted, process it
             if (confirm_sesskey() && $this->users){
-    
+
                 // now go through all of the responses and save them.
                 $allok = true;
                 foreach($data->manualgrades as $uniqueid => $response) {
                     // get our attempt
                     $uniqueid = clean_param($uniqueid, PARAM_INT);
                     list($usql, $params) = $DB->get_in_or_equal(array_keys($this->users));
-    
+
                     if (!$attempt = $DB->get_record_sql("SELECT * FROM {quiz_attempts} " .
                                     "WHERE uniqueid = ? AND " .
                                     "userid $usql AND " .
@@ -145,7 +145,7 @@ class quiz_grading_report extends quiz_default_report {
                         quiz_save_best_grade($quiz, $attempt->userid);
                     }
                 }
-    
+
                 if ($allok) {
                     notify(get_string('changessaved', 'quiz'), 'notifysuccess');
                 } else {
@@ -285,6 +285,7 @@ class quiz_grading_report extends quiz_default_report {
 
         // get the attempts and process them
         if ($attempts = $DB->get_records_sql($select.$from.$where.$sort, $params, $table->get_page_start(), $table->get_page_size())) {
+            echo '<div id="tablecontainer">';
             // grade all link
             $links = "<strong><a href=\"report.php?mode=grading&amp;gradeall=1&amp;q=$quiz->id&amp;questionid=$question->id\">".get_string('gradeall', 'quiz_grading', $totalattempts).'</a></strong>';
             if ($ungraded>0){
@@ -320,7 +321,6 @@ class quiz_grading_report extends quiz_default_report {
             $table->add_separator();
             $table->add_data_keyed(array('grade'=> $links));
             // print everything here
-            echo '<div id="tablecontainer">';
             $table->print_html();
             echo '</div>';
         } else {
@@ -339,7 +339,7 @@ class quiz_grading_report extends quiz_default_report {
         global $CFG, $DB;
 
         // TODO get the context, and put in proper roles an permissions checks.
-        $context = NULL;
+        $context = get_context_instance(CONTEXT_MODULE, $this->cm->id);
 
         $questions[$question->id] = &$question;
         $usehtmleditor = can_use_html_editor();
@@ -417,10 +417,6 @@ class quiz_grading_report extends quiz_default_report {
             }
             echo '<div class="boxaligncenter"><input type="submit" value="'.get_string('savechanges').'" /></div>'.
                 '</form>';
-
-            if ($usehtmleditor) {
-                use_html_editor();
-            }
         } else {
             notify(get_string('noattemptstoshow', 'quiz'));
         }
