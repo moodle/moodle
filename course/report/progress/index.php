@@ -113,7 +113,7 @@ if(!$csv) {
             get_string('firstname').' / <a href="./?course='.$course->id.'">'.
             get_string('lastname').'</a>';
     } else {
-        print '<a href="./?course='.$course->id.'&sort=firstname">'.
+        print '<a href="./?course='.$course->id.'&amp;sort=firstname">'.
             get_string('firstname').'</a> / '.
             get_string('lastname');
     }
