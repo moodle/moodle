@@ -182,7 +182,7 @@ class repository_flickr_public extends repository {
         return array('email_address');
     }
 
-    public function admin_config_form(&$mform) {
+    public function type_config_form(&$mform) {
         $api_key = get_config('flickr_public', 'api_key');
         if (empty($api_key)) {
             $api_key = '';

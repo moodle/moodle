@@ -917,7 +917,7 @@ abstract class repository {
      * Edit/Create Admin Settings Moodle form
      * @param object $ Moodle form (passed by reference)
      */
-     public function admin_config_form(&$mform) {
+     public function type_config_form(&$mform) {
     }
     
       /**
@@ -1338,10 +1338,10 @@ final class repository_admin_form extends moodleform {
         $mform->addElement('hidden', 'plugin', $this->plugin);
         // let the plugin add its specific fields
         if (!$this->instance) {
-                $result = repository_static_function($this->plugin, 'admin_config_form', $mform);
+                $result = repository_static_function($this->plugin, 'type_config_form', $mform);
             } else {
                 $classname = 'repository_' . $this->instance->get_typename();
-                $result = call_user_func(array($classname,'admin_config_form'),$mform);
+                $result = call_user_func(array($classname,'type_config_form'),$mform);
         }
 
         // and set the data if we have some.
