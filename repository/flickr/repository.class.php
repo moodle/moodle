@@ -10,10 +10,21 @@
 
 require_once($CFG->libdir.'/flickrlib.php');
 
+/**
+ *
+ */
 class repository_flickr extends repository {
     private $flickr;
     public $photos;
 
+    /**
+     *
+     * @global <type> $SESSION
+     * @global <type> $CFG
+     * @param <type> $repositoryid
+     * @param <type> $context
+     * @param <type> $options
+     */
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION, $CFG;
         $options['page']    = optional_param('p', 1, PARAM_INT);
@@ -39,9 +50,19 @@ class repository_flickr extends repository {
         }
 
     }
+
+    /**
+     *
+     * @return <type>
+     */
     public function check_login() {
         return !empty($this->token);
     }
+
+    /**
+     *
+     * @return <type>
+     */
     public function logout() {
         set_user_preference($this->setting, '');
         set_user_preference($this->setting.'_nsid', '');
@@ -49,6 +70,12 @@ class repository_flickr extends repository {
         $this->nsid  = '';
         return $this->print_login();
     }
+
+    /**
+     *
+     * @param <type> $options
+     * @return <type>
+     */
     public function set_option($options = array()) {
         if (!empty($options['api_key'])) {
             set_config('api_key', trim($options['api_key']), 'flickr');
@@ -62,6 +89,11 @@ class repository_flickr extends repository {
         return $ret;
     }
 
+    /**
+     *
+     * @param <type> $config
+     * @return <type>
+     */
     public function get_option($config = '') {
         if ($config==='api_key') {
             return trim(get_config('flickr', 'api_key'));
@@ -75,6 +107,10 @@ class repository_flickr extends repository {
         return $options;
     }
 
+    /**
+     *
+     * @return <type>
+     */
     public function global_search() {
         if (empty($this->token)) {
             return false;
@@ -82,6 +118,12 @@ class repository_flickr extends repository {
             return true;
         }
     }
+
+    /**
+     *
+     * @param <type> $ajax
+     * @return <type>
+     */
     public function print_login($ajax = true) {
         if ($ajax) {
             $ret = array();
@@ -92,6 +134,13 @@ class repository_flickr extends repository {
             return $ret;
         }
     }
+
+    /**
+     *
+     * @param <type> $photos
+     * @param <type> $path
+     * @return <type>
+     */
     private function build_list($photos, $path = 1) {
         $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
         $ret = array();
@@ -120,6 +169,12 @@ class repository_flickr extends repository {
         }
         return $ret;
     }
+
+    /**
+     *
+     * @param <type> $search_text
+     * @return <type>
+     */
     public function search($search_text) {
         $photos = $this->flickr->photos_search(array(
             'user_id'=>$this->nsid,
@@ -129,6 +184,12 @@ class repository_flickr extends repository {
             ));
         return $this->build_list($photos);
     }
+
+    /**
+     *
+     * @param <type> $path
+     * @return <type>
+     */
     public function get_listing($path = '1') {
         $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
 
@@ -140,9 +201,22 @@ class repository_flickr extends repository {
             ));
         return $this->build_list($photos, $path);
     }
+
+    /**
+     *
+     * @return <type>
+     */
     public function print_listing() {
         return false;
     }
+
+    /**
+     *
+     * @global <type> $CFG
+     * @param <type> $photo_id
+     * @param <type> $file
+     * @return <type>
+     */
     public function get_file($photo_id, $file = '') {
         global $CFG;
         $result = $this->flickr->photos_getSizes($photo_id);
@@ -175,6 +249,11 @@ class repository_flickr extends repository {
         return $dir.$file;
     }
 
+    /**
+     *
+     * @global <type> $CFG
+     * @param <type> $
+     */
     public function type_config_form(&$mform) {
         global $CFG;
         $api_key = get_config('flickr', 'api_key');
@@ -206,8 +285,11 @@ class repository_flickr extends repository {
         $mform->addRule('secret', $strrequired, 'required', null, 'client');
     }
 
+    /**
+     *
+     * @return <type>
+     */
     public static function get_type_option_names() {
         return array('api_key', 'secret');
     }
-
 }

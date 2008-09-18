@@ -10,9 +10,19 @@
 
 require_once($CFG->libdir.'/boxlib.php');
 
+/**
+ *
+ */
 class repository_boxnet extends repository {
     private $box;
 
+    /**
+     *
+     * @global <type> $SESSION
+     * @param <type> $repositoryid
+     * @param <type> $context
+     * @param <type> $options
+     */
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION;
         $options['username']   = optional_param('boxusername', '', PARAM_RAW);
@@ -43,17 +53,32 @@ class repository_boxnet extends repository {
         }
     }
 
+    /**
+     *
+     * @global <type> $SESSION
+     * @return <type>
+     */
     public function check_login() {
         global $SESSION;
         return !empty($SESSION->{$this->sess_name});
     }
 
+    /**
+     *
+     * @global <type> $SESSION
+     * @return <type>
+     */
     public function logout() {
         global $SESSION;
         unset($SESSION->{$this->sess_name});
         return $this->print_login();
     }
 
+    /**
+     *
+     * @param <type> $options
+     * @return <type>
+     */
     public function set_option($options = array()) {
         if (!empty($options['api_key'])) {
             set_config('api_key', trim($options['api_key']), 'boxnet');
@@ -63,6 +88,11 @@ class repository_boxnet extends repository {
         return $ret;
     }
 
+    /**
+     *
+     * @param <type> $config
+     * @return <type>
+     */
     public function get_option($config = '') {
         if($config==='api_key') {
             return trim(get_config('boxnet', 'api_key'));
@@ -73,6 +103,11 @@ class repository_boxnet extends repository {
         return $options;
     }
 
+    /**
+     *
+     * @global <type> $SESSION
+     * @return <type>
+     */
     public function global_search() {
         global $SESSION;
         if (empty($SESSION->{$this->sess_name})) {
@@ -82,6 +117,11 @@ class repository_boxnet extends repository {
         }
     }
 
+    /**
+     *
+     * @global <type> $DB
+     * @return <type>
+     */
     public function get_login() {
         global $DB;
         if ($entry = $DB->get_record('repository_instances', array('id'=>$this->id))) {
@@ -93,6 +133,13 @@ class repository_boxnet extends repository {
         }
         return $ret;
     }
+
+    /**
+     *
+     * @global <type> $CFG
+     * @param <type> $search_text
+     * @return <type>
+     */
     public function search($search_text) {
         global $CFG;
         $list = array();
@@ -118,6 +165,13 @@ class repository_boxnet extends repository {
         $ret['list'] = $list;
         return $ret;
     }
+
+    /**
+     *
+     * @global <type> $CFG
+     * @param <type> $path
+     * @return <type>
+     */
     public function get_listing($path = '/'){
         global $CFG;
         $list = array();
@@ -132,6 +186,10 @@ class repository_boxnet extends repository {
         return $ret;
     }
 
+    /**
+     *
+     * @return <type>
+     */
     public function print_login(){
         $t = $this->box->getTicket();
         $ret = $this->get_login();
@@ -157,10 +215,18 @@ class repository_boxnet extends repository {
         }
     }
 
+    /**
+     *
+     * @return <type>
+     */
     public static function get_type_option_names() {
         return array('api_key');
     }
 
+    /**
+     *
+     * @param <type> $
+     */
     public function type_config_form(&$mform) {
         $public_account = get_config('boxnet', 'public_account');
         $api_key = get_config('boxnet', 'api_key');
@@ -173,5 +239,4 @@ class repository_boxnet extends repository {
         $mform->addElement('static', null, '',  get_string('information','repository_boxnet'));
     }
 }
-
 ?>

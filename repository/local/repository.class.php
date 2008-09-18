@@ -7,8 +7,20 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
+/**
+ *
+ */
 class repository_local extends repository {
 
+    /**
+     *
+     * @global <type> $SESSION
+     * @global <type> $action
+     * @global <type> $CFG
+     * @param <type> $repositoryid
+     * @param <type> $context
+     * @param <type> $options
+     */
     public function __construct($repositoryid, $context = SITEID, $options = array()) {
         global $SESSION, $action, $CFG;
         parent::__construct($repositoryid, $context, $options);
@@ -19,6 +31,12 @@ class repository_local extends repository {
         // You can use $_FILES to find that file
     }
 
+    /**
+     *
+     * @global <type> $SESSION
+     * @param <type> $ajax
+     * @return <type>
+     */
     public function print_login($ajax = true) {
         global $SESSION;
         // TODO
@@ -26,10 +44,22 @@ class repository_local extends repository {
         return $this->get_listing();
     }
 
+    /**
+     *
+     * @param <type> $filearea
+     * @param <type> $path
+     * @param <type> $visiblename
+     * @return <type>
+     */
     private function _encode_path($filearea, $path, $visiblename) {
         return array('path'=>serialize(array($filearea, $path)), 'name'=>$visiblename);
     }
 
+    /**
+     *
+     * @param <type> $path
+     * @return <type>
+     */
     private function _decode_path($path) {
         $filearea = '';
         $path = '';
@@ -40,10 +70,22 @@ class repository_local extends repository {
         return array('filearea' => $filearea, 'path' => $path);
     }
 
+    /**
+     *
+     * @param <type> $search_text
+     * @return <type>
+     */
     public function search($search_text) {
         return $this->get_listing('', $search_text);
     }
 
+    /**
+     *
+     * @global <type> $CFG
+     * @param <type> $encodedpath
+     * @param <type> $search
+     * @return <type>
+     */
     public function get_listing($encodedpath = '', $search = '') {
         global $CFG;
         $ret = array();
@@ -180,10 +222,17 @@ class repository_local extends repository {
         return $filecount;
     }
 
+    /**
+     *
+     */
     public function print_listing() {
         // will be used in non-javascript file picker
     }
- 
+
+    /**
+     *
+     * @return <type>
+     */
     public function get_name(){
         return get_string('repositoryname', 'repository_local');;
     }
