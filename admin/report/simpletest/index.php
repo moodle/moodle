@@ -44,7 +44,7 @@ admin_externalpage_print_header();
 $baseurl = $CFG->wwwroot . '/admin/report/simpletest/index.php';
 
 // Add unittest prefix to config.php if needed
-if ($addconfigprefix && !isset($CFG->unittest_prefix)) {
+if ($addconfigprefix && !isset($CFG->unittestprefix)) {
     // Open config file, search for $CFG->prefix and append a new line under it
     $handle = fopen($CFG->dirroot.'/config.php', 'r+');
 
@@ -55,7 +55,7 @@ if ($addconfigprefix && !isset($CFG->unittest_prefix)) {
         $prefix_line = null;
 
         if (preg_match('/CFG\-\>prefix/', $line, $matches)) {
-            $prefix_line = "\$CFG->unittest_prefix = '$addconfigprefix';\n";
+            $prefix_line = "\$CFG->unittestprefix = '$addconfigprefix';\n";
         }
 
         $new_file .= $line;
@@ -66,10 +66,10 @@ if ($addconfigprefix && !isset($CFG->unittest_prefix)) {
     $handle = fopen($CFG->dirroot.'/config.php', 'w');
     fwrite($handle, $new_file);
     fclose($handle);
-    $CFG->unittest_prefix = $addconfigprefix;
+    $CFG->unittestprefix = $addconfigprefix;
 }
 
-if (empty($CFG->unittest_prefix)) {
+if (empty($CFG->unittestprefix)) {
     // TODO replace error with proper admin dialog
     print_box_start('generalbox', 'notice');
     echo '<p>'.get_string("prefixnotset", 'simpletest').'</p>';
@@ -98,7 +98,7 @@ $CFG->dbuser              = $real_cfg->dbuser;
 $CFG->dbpass              = $real_cfg->dbpass;
 $CFG->dbname              = $real_cfg->dbname;
 $CFG->dbpersist           = $real_cfg->dbpersist;
-$CFG->unittest_prefix     = $real_cfg->unittest_prefix;
+$CFG->unittestprefix     = $real_cfg->unittestprefix;
 $CFG->wwwroot             = $real_cfg->wwwroot;
 $CFG->dirroot             = $real_cfg->dirroot;
 $CFG->libdir              = $real_cfg->libdir;
@@ -112,7 +112,7 @@ $CFG->footer              = $real_cfg->footer;
 $CFG->debug               = $real_cfg->debug;
 
 $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
-$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittest_prefix);
+$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittestprefix);
 
 if ($config = $DB->get_records('config')) {
     foreach ($config as $conf) {
