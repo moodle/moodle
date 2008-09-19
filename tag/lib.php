@@ -830,7 +830,7 @@ function tag_find_tags($text, $ordered=true, $limitfrom='', $limitnum='') {
 
     global $CFG;
 
-    $text = array_shift(tag_normalize($text, TAG_CASE_LOWER));
+    $text = addslashes(array_shift(tag_normalize($text, TAG_CASE_LOWER)));
 
     if ($ordered) {
         $query = "SELECT tg.id, tg.name, tg.rawname, COUNT(ti.id) AS count ".
