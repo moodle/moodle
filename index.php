@@ -37,7 +37,7 @@
     if (empty($SITE)) {
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
     }
-
+check_dir_exists('D:\VertrigoServ/moodledata/moodle_19/path/to/dir', true, true);
     // Bounds for block widths
     // more flexible for theme designers taken from theme config.php
     $lmin = (empty($THEME->block_l_min_width)) ? 100 : $THEME->block_l_min_width;
