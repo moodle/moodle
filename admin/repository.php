@@ -91,8 +91,14 @@ if (!empty($edit) || !empty($new)) {
     } else {
         admin_externalpage_print_header();
         print_heading(get_string('configplugin', 'repository_'.$plugin));
-        $typeoptionnames = repository_static_function($edit, 'get_type_option_names');
-        if (!empty($typeoptionnames)){
+        $displaysettingform = true;
+        if ($edit) {
+            $typeoptionnames = repository_static_function($edit, 'get_type_option_names');
+            if (empty($typeoptionnames)) {
+                $displaysettingform = false;
+            }
+        }
+        if ($displaysettingform){
             print_simple_box_start();
             $mform->display();
             print_simple_box_end();
