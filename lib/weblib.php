@@ -2737,19 +2737,64 @@ function get_require_js_code($loadlibs) {
  * @param string $function the name of the JavaScript function to call.
  * @param array $args an optional list of arguments to the function call.
  * @param boolean $return if true, return the HTML code, otherwise output it.
+ * @return mixed string if $return is true, otherwise nothing.
  */
 function print_js_call($function, $args = array(), $return = false) {
     $quotedargs = array();
     foreach ($args as $arg) {
-        if (is_number($arg)) {
-            $quotedargs[] = $arg;
-        } else {
-            $quotedargs[] = "'" . addslashes_js($arg) . "'";
-        }
+        $quotedargs[] = "'" . addslashes_js($arg) . "'";
     }
     $html = '';
     $html .= '<script type="text/javascript">//<![CDATA[' . "\n";
     $html .= $function . '(' . implode(', ', $quotedargs) . ");\n";
+    $html .= "//]]></script>\n";
+    if ($return) {
+        return $html;
+    } else {
+        echo $html;
+    }
+}
+
+/**
+ * Sometimes you need access to some values in your JavaScript that you can only
+ * get from PHP code. You can handle this by generating your JS in PHP, but a
+ * better idea is to write static javascrip code that reads some configuration
+ * variable, and then just output the configuration variables from PHP using
+ * this function.
+ *
+ * For example, look at the code in question_init_qenginejs_script() in 
+ * lib/questionlib.php. It writes out a bunch of $settings like
+ * 'pixpath' => $CFG->pixpath, with $prefix = 'qengine_config'. This gets output
+ * in print_header, then the code in question/qengine.js can access these variables
+ * as qengine_config.pixpath, and so on.
+ *
+ * This method will also work without a prefix, but it is better to avoid that
+ * we don't want to add more things than necessary to the global JavaScript scope.
+ *
+ * This method automatically wrapps the values in quotes, and addslashes_js them.
+ *
+ * @param array $settings the values you want to write out, as variablename => value.
+ * @param string $prefix a namespace prefix to use in the JavaScript.
+ * @param boolean $return if true, return the HTML code, otherwise output it.
+ * @return mixed string if $return is true, otherwise nothing.
+ */
+function print_js_config($settings = array(), $prefix='', $return = false) {
+    $html = '';
+    $html .= '<script type="text/javascript">//<![CDATA[' . "\n";
+
+    // Have to treat the prefix and no prefix cases separately.
+    if ($prefix) {
+        // Recommended way, only one thing in global scope.
+        $html .= 'qengine_config = ' . json_encode($settings) . "\n";
+
+    } else {
+        // Old fashioned way.
+        foreach ($settings as $name => $value) {
+            $html .= $name . " = '" . addslashes_js($value) . "'\n";
+        }
+    }
+
+    // Finish off and return/output.
     $html .= "//]]></script>\n";
     if ($return) {
         return $html;
