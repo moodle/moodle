@@ -91,9 +91,12 @@ if (!empty($edit) || !empty($new)) {
     } else {
         admin_externalpage_print_header();
         print_heading(get_string('configplugin', 'repository_'.$plugin));
-        print_simple_box_start();
-        $mform->display();
-        print_simple_box_end();
+        $typeoptionnames = repository_static_function($edit, 'get_type_option_names');
+        if (!empty($typeoptionnames)){
+            print_simple_box_start();
+            $mform->display();
+            print_simple_box_end();
+        }
         $return = false;
 
         //display instances list and creation form
