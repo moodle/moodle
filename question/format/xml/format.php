@@ -692,8 +692,10 @@ class qformat_xml extends qformat_default {
     function writetext( $raw, $ilev=0, $short=true) {
         $indent = str_repeat( "  ",$ilev );
 
-        // encode the text to 'disguise' HTML content 
-        $raw = htmlspecialchars( $raw );
+        // if required add CDATA tags
+        if (!empty($raw) and (htmlspecialchars($raw)!=$raw)) {
+            $raw = "<![CDATA[$raw]]>";
+        }
 
         if ($short) {
             $xml = "$indent<text>$raw</text>\n";
