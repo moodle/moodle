@@ -1248,26 +1248,36 @@ final class repository_instance_form extends moodleform {
         $mform->addElement('text', 'name', get_string('name'), 'maxlength="100" size="30"');
         $mform->addRule('name', $strrequired, 'required', null, 'client');
 
-        //add fields
-       if (!$this->instance) {
-            $result = repository_static_function($this->plugin, 'instance_config_form', $mform);
-        } else {
-            $result = $this->instance->instance_config_form($mform);
-        }
-        
-        // and set the data if we have some.
-        if ($this->instance) {
-            $data = array();
-            $data['name'] = $this->instance->name;
-            foreach ($this->instance->get_instance_option_names() as $config) {
-                if (!empty($this->instance->$config)) {
-                    $data[$config] = $this->instance->$config;
-                } else {
-                    $data[$config] = '';
-                }
+        if (!$this->instance->readonly) {
+            //add fields
+            if (!$this->instance) {
+                $result = repository_static_function($this->plugin, 'instance_config_form', $mform);
+            } else {
+                $result = $this->instance->instance_config_form($mform);
             }
-            $this->set_data($data);
+
+            // and set the data if we have some.
+            if ($this->instance) {
+                $data = array();
+                $data['name'] = $this->instance->name;
+                foreach ($this->instance->get_instance_option_names() as $config) {
+                    if (!empty($this->instance->$config)) {
+                        $data[$config] = $this->instance->$config;
+                     } else {
+                        $data[$config] = '';
+                     }
+                }
+                $this->set_data($data);
+            }
         }
+        else {
+             if ($this->instance) {
+                $data = array();
+                $data['name'] = $this->instance->name;
+                $this->set_data($data);
+             }
+        }
+
         $this->add_action_buttons(true, get_string('save','repository'));
     }
 
@@ -1396,8 +1406,8 @@ function repository_display_instances_list($context, $typename = null) {
     foreach ($instances as $i) {
         $settings = '';
         $delete = '';
+        $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
         if (!$i->readonly) {
-            $settings .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;edit=' . $i->id . '">' . $settingsstr . '</a>' . "\n";
             $delete .= '<a href="' . $baseurl . '&amp;type='.$typename.'&amp;delete=' .  $i->id . '">' . $deletestr . '</a>' . "\n";
         }
 

@@ -43,10 +43,6 @@ $return = true;
 if (!empty($edit) || !empty($new)) {
     if (!empty($edit)) {
         $instance = repository_get_instance($edit);
-        //if you try to edit an instance set as readonly, display an error message
-        if ($instance->readonly) {
-            throw new repository_exception('readonlyinstance', 'repository');
-        }
         $instancetype = repository_get_type_by_id($instance->typeid);
         $classname = 'repository_' . $instancetype->get_typename();
         $configs  = $instance->get_instance_option_names();
@@ -72,8 +68,10 @@ if (!empty($edit) || !empty($new)) {
         if ($edit) {
             $settings = array();
             $settings['name'] = $fromform->name;
-            foreach($configs as $config) {
-                $settings[$config] = $fromform->$config;
+            if (!$instance->readonly) {
+                foreach($configs as $config) {
+                    $settings[$config] = $fromform->$config;
+                }
             }
             $success = $instance->set_option($settings);
         } else {
