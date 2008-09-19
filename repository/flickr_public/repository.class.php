@@ -120,19 +120,39 @@ class repository_flickr_public extends repository {
      * @return <type>
      */
     public function search($search_text) {
+        global $SESSION;
         $people = $this->flickr->people_findByEmail($this->flickr_account);
+        $sess_tag = 'flickr_public_'.$this->id.'_tag';
+        $sess_text = 'flickr_public_'.$this->id.'_text';
         $this->nsid = $people['nsid'];
         $tag = optional_param('tag', '', PARAM_CLEANHTML);
+        $is_paging = optional_param('search_paging', '', PARAM_RAW);
+        $page = 1;
+        if (!empty($is_paging)) {
+            $page = optional_param('p', '', PARAM_INT);
+            if (!empty($SESSION->$sess_tag)) {
+                $tag = $SESSION->$sess_tag;
+            }
+            if (!empty($SESSION->$sess_text)) {
+                $search_text = $SESSION->$sess_text;
+            }
+        }
         if (!empty($tag)) {
             $photos = $this->flickr->photos_search(array(
-                'tags'=>$tag
+                'tags'=>$tag,
+                'page'=>$page
                 ));
+            $SESSION->$sess_tag = $tag;
+
         } else {
             $photos = $this->flickr->photos_search(array(
                 'user_id'=>$this->nsid,
                 'text'=>$search_text));
+            $SESSION->$sess_text = $search_text;
         }
-        return $this->build_list($photos);
+        $ret = array();
+        $ret['search_result']  = true;
+        return $this->build_list($photos, $page, &$ret);
     }
 
     /**
@@ -144,8 +164,9 @@ class repository_flickr_public extends repository {
         $people = $this->flickr->people_findByEmail($this->flickr_account);
         $this->nsid = $people['nsid'];
         $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 25, $path);
+        $ret = array();
 
-        return $this->build_list($photos, $path);
+        return $this->build_list($photos, $path, &$ret);
     }
 
     /**
@@ -154,9 +175,8 @@ class repository_flickr_public extends repository {
      * @param <type> $path
      * @return <type>
      */
-    private function build_list($photos, $path = 1) {
+    private function build_list($photos, $path = 1, $ret) {
         $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
-        $ret = array();
         $ret['manage'] = $photos_url;
         $ret['list']  = array();
         $ret['pages'] = $photos['pages'];
@@ -284,7 +304,7 @@ class repository_flickr_public extends repository {
      */
     public static function plugin_init() {
         //here we create a default instance for this type
-        repository_static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => get_string('repositoryname', 'repository_public'),'email_address' => null),1);
+        repository_static_function('flickr_public','create', 'flickr_public', 0, get_system_context(), array('name' => get_string('repositoryname', 'repository_flickr_public'),'email_address' => null),1);
     }
 
 }

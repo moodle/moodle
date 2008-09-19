@@ -407,7 +407,7 @@ _client.print_footer = function() {
         search.innerHTML = '<img src="$CFG->pixpath/a/search.png" /> $strsearch';
         oDiv.appendChild(search);
         search.onclick = function() {
-            repository_client_$suffix.search(repository_client_$suffix.repositoryid);
+            repository_client_$suffix.search_form(repository_client_$suffix.repositoryid);
         }
     }
     // weather we use cache for this instance, this button will reload listing anyway
@@ -666,13 +666,31 @@ _client.makepage = function() {
     if(_client.ds.pages) {
         str += '<div class="fp-paging" id="paging-$suffix">';
         for(var i = 1; i <= _client.ds.pages; i++) {
-            str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
+            if(!_client.ds.search_result){ 
+                    str += '<a onclick="repository_client_$suffix.req('+_client.repositoryid+', '+i+', 0)" href="###">';
+            } else {
+                    str += '<a onclick="repository_client_$suffix.search_paging('+_client.repositoryid+', '+i+')" href="###">';
+            }
             str += String(i);
             str += '</a> ';
         }
         str += '</div>';
     }
     return str;
+}
+_client.search_paging = function(id, path) {
+    _client.viewbar.set('disabled', false);
+    _client.loading('load');
+    _client.repositoryid = id;
+    var params = [];
+    params['p'] = path;
+    params['env']=_client.env;
+    params['action']='search';
+    params['search_paging']='true';
+    params['sesskey']='$sesskey';
+    params['ctx_id']=$context->id;
+    params['repo_id']=id;
+    var trans = YAHOO.util.Connect.asyncRequest('POST', '$CFG->httpswwwroot/repository/ws.php?action='+action, _client.req_cb, _client.postdata(params));
 }
 _client.makepath = function() {
     if(_client.viewmode == 0) {
@@ -823,7 +841,7 @@ success: function(o) {
     dlg.show();
 }
 }
-_client.search = function(id) {
+_client.search_form = function(id) {
     var params = [];
     params['env']=_client.env;
     params['sesskey']='$sesskey';
