@@ -860,9 +860,8 @@ abstract class quiz_nav_panel_base {
     }
 
     protected function get_button_update_script($question) {
-        return '<script type="text/javascript">' .
-                "\nquiz_init_nav_button('" . $this->get_button_id($question) . "', " .
-                $question->id . ")\n</script>\n";
+        return print_js_call('quiz_init_nav_button',
+                array($this->get_button_id($question), $question->id), true);
     }
 
     abstract protected function get_question_button($number, $question);

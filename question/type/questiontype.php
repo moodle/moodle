@@ -986,9 +986,8 @@ class default_questiontype {
                 $flagcontent = '<input type="checkbox" id="' . $id . '" name="' . $id .
                         '" value="1" ' . $checked . ' />' . 
                         '<label id="' . $id . 'label" for="' . $id . '">' . $this->get_question_flag_tag(
-                        $state->flagged, $id . 'img') . '</label>' .
-                        "\n" . '<script type="text/javascript">question_flag_changer.init_flag(' .
-                        "'$id', '$postdata');</script>";
+                        $state->flagged, $id . 'img') . '</label>' . "\n" .
+                        print_js_call('question_flag_changer.init_flag', array($id, $postdata), true);
                 break;
             default:
                 $flagcontent = '';
