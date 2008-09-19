@@ -6,6 +6,12 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 
+function init_quiz_form() {
+    var responseform = document.getElementById('responseform');
+    responseform.setAttribute('autocomplete', 'off');
+    YAHOO.util.Event.addListener(responseform, 'keypress', check_enter);
+}
+
 /* Use this in an onkeypress handler, to stop enter submitting the forum unless you
 are actually on the submit button. Don't stop the user typing things in text areas. */
 function check_enter(e) {

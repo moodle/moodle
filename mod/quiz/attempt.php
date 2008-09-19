@@ -80,6 +80,7 @@
 /// Print the quiz page ////////////////////////////////////////////////////////
 
     // Print the page header
+    require_js(array('yui_yahoo','yui_event'));
     require_js($CFG->wwwroot . '/mod/quiz/quiz.js');
     $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
     $headtags = $attemptobj->get_html_head_contributions($page);
@@ -119,9 +120,9 @@
 
     // Start the form
     echo '<form id="responseform" method="post" action="', $attemptobj->processattempt_url(),
-            '" enctype="multipart/form-data"' .
-            ' onclick="this.autocomplete=\'off\'" onkeypress="return check_enter(event);">', "\n";
+            '" enctype="multipart/form-data">', "\n";
     echo '<div>';
+    print_js_call('init_quiz_form');
 
 /// Print the navigation panel in a left column.
     print_container_start();
