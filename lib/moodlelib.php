@@ -7021,11 +7021,11 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
         } else {
             umask(0000);
             if ($recursive) {
-            /// PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
-                $dir = str_replace('\\', '/', $dir); //windows compatibility
             /// We are going to make it recursive under $CFG->dataroot only
             /// (will help sites running open_basedir security and others)
                 $dir = str_replace($CFG->dataroot . '/', '', $dir);
+            /// PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
+                $dir = str_replace('\\', '/', $dir); //windows compatibility
                 $dirs = explode('/', $dir); /// Extract path parts
             /// Iterate over each part with start point $CFG->dataroot
                 $dir = $CFG->dataroot . '/';
