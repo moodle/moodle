@@ -2725,6 +2725,38 @@ function get_require_js_code($loadlibs) {
     return $output;
 }
 
+/**
+ * Generate the HTML for calling a javascript funtion. You often need to do this
+ * if you have your javascript in an external file, and need to call one function
+ * to initialise it.
+ *
+ * You can pass in an optional list of arguments, which should be strings or
+ * numbers. Numeric arguments are used unmodified. String arguments automatically
+ * have addslashes_js called on them, and are wrapped in quotes for you.
+ *
+ * @param string $function the name of the JavaScript function to call.
+ * @param array $args an optional list of arguments to the function call.
+ * @param boolean $return if true, return the HTML code, otherwise output it.
+ */
+function print_js_call($function, $args = array(), $return = false) {
+    $quotedargs = array();
+    foreach ($args as $arg) {
+        if (is_number($arg)) {
+            $quotedargs[] = $arg;
+        } else {
+            $quotedargs[] = "'" . addslashes_js($arg) . "'";
+        }
+    }
+    $html = '';
+    $html .= '<script type="text/javascript">//<![CDATA[' . "\n";
+    $html .= $function . '(' . implode(', ', $quotedargs) . ");\n";
+    $html .= "//]]></script>\n";
+    if ($return) {
+        return $html;
+    } else {
+        echo $html;
+    }
+}
 
 /**
  * Debugging aid: serve page as 'application/xhtml+xml' where possible,
