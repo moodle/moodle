@@ -338,8 +338,8 @@ EOT;
      */
     /*
     function cron() {
-        if (SHOWCOURSETAGS) {
-            global $CFG;
+        global $CFG;
+        if ($CFG->block_tags_showcoursetags) {
             require_once($CFG->dirroot.'/tag/coursetagslib.php');
             return coursetag_rss_feeds();
         } else {
