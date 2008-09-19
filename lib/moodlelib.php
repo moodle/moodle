@@ -154,8 +154,8 @@ define('PARAM_FILE',     0x0010);
 define('PARAM_TAG',   0x0011);
 
 /**
- * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.) 	 
- */ 	 
+ * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.)
+ */
 define('PARAM_TAGLIST',   0x0012);
 
 /**
@@ -259,9 +259,9 @@ define ('BLOG_GLOBAL_LEVEL', 5);
 /**
  * Tag constanst
  */
-//To prevent problems with multibytes strings, this should not exceed the 
+//To prevent problems with multibytes strings, this should not exceed the
 //length of "varchar(255) / 3 (bytes / utf-8 character) = 85".
-define('TAG_MAX_LENGTH', 50); 
+define('TAG_MAX_LENGTH', 50);
 
 /**
  * Password policy constants
@@ -570,7 +570,7 @@ function clean_param($param, $type) {
             }
 
         case PARAM_TAG:
-            //as long as magic_quotes_gpc is used, a backslash will be a 
+            //as long as magic_quotes_gpc is used, a backslash will be a
             //problem, so remove *all* backslash.
             $param = str_replace('\\', '', $param);
             //convert many whitespace chars into one
@@ -580,19 +580,19 @@ function clean_param($param, $type) {
             return $param;
 
 
-        case PARAM_TAGLIST:      
-            $tags = explode(',', $param);   
-            $result = array();      
-            foreach ($tags as $tag) {   
-                $res = clean_param($tag, PARAM_TAG);    
-                if ($res != '') {   
-                    $result[] = $res;   
-                }   
-            }   
-            if ($result) {      
-                return implode(',', $result);   
-            } else {    
-                return '';      
+        case PARAM_TAGLIST:
+            $tags = explode(',', $param);
+            $result = array();
+            foreach ($tags as $tag) {
+                $res = clean_param($tag, PARAM_TAG);
+                if ($res != '') {
+                    $result[] = $res;
+                }
+            }
+            if ($result) {
+                return implode(',', $result);
+            } else {
+                return '';
             }
 
         default:                 // throw error, switched parameters in optional_param or another serious problem
@@ -1965,12 +1965,12 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
     // Fetch the course context, and prefetch its child contexts
     if (!isset($COURSE->context)) {
         if ( ! $COURSE->context = get_context_instance(CONTEXT_COURSE, $COURSE->id) ) {
-            print_error('nocontext');        
+            print_error('nocontext');
         }
     }
     if ($COURSE->id == SITEID) {
         /// Eliminate hidden site activities straight away
-        if (!empty($cm) && !$cm->visible 
+        if (!empty($cm) && !$cm->visible
             && !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
             redirect($CFG->wwwroot, get_string('activityiscurrentlyhidden'));
         }
@@ -2012,7 +2012,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
             switch ($COURSE->guest) {    /// Check course policy about guest access
 
-                case 1:    /// Guests always allowed 
+                case 1:    /// Guests always allowed
                     if (!has_capability('moodle/course:view', $COURSE->context)) {    // Prohibited by capability
                         print_header_simple();
                         notice(get_string('guestsnotallowed', '', format_string($COURSE->fullname)), "$CFG->wwwroot/login/index.php");
@@ -2062,7 +2062,7 @@ function require_login($courseorid=0, $autologinguest=true, $cm=null, $setwantsu
 
         /// Make sure they can read this activity too, if specified
 
-            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) { 
+            if (!empty($cm) and !$cm->visible and !has_capability('moodle/course:viewhiddenactivities', $COURSE->context)) {
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             user_accesstime_log($COURSE->id); /// Access granted, update lastaccess times
@@ -3157,7 +3157,7 @@ function authenticate_user_login($username, $password) {
  * Call to complete the user login process after authenticate_user_login()
  * has succeeded. It will setup the $USER variable and other required bits
  * and pieces.
- * 
+ *
  * NOTE:
  * - It will NOT log anything -- up to the caller to decide what to log.
  *
@@ -3169,7 +3169,7 @@ function authenticate_user_login($username, $password) {
  */
 function complete_user_login($user) {
     global $CFG, $USER;
-    
+
     $USER = $user; // this is required because we need to access preferences here!
 
     reload_user_preferences();
@@ -3472,7 +3472,7 @@ function delete_course($courseorid, $showfeedback = true) {
         $courseid = $courseorid;
         if (!$course = get_record('course', 'id', $courseid)) {
             return false;
-        } 
+        }
     }
 
     // frontpage course can not be deleted!!
@@ -4571,7 +4571,7 @@ function email_welcome_message_to_user($course, $user=NULL) {
     /// If you don't want a welcome message sent, then make the message string blank.
     if (!empty($message)) {
         $subject = get_string('welcometocourse', '', format_string($course->fullname));
-    
+
         if (! $teacher = get_teacher($course->id)) {
             $teacher = get_admin();
         }
@@ -4626,7 +4626,7 @@ function make_user_directory($userid, $test=false) {
 
     // Generate a two-level path for the userid. First level groups them by slices of 1000 users, second level is userid
     $level1 = floor($userid / 1000) * 1000;
-    
+
     $userdir = "user/$level1/$userid";
     if ($test) {
         return $CFG->dataroot . '/' . $userdir;
@@ -4640,20 +4640,20 @@ function make_user_directory($userid, $test=false) {
  *
  * @param bool $only_non_empty Only return directories that contain files
  * @param bool $legacy Search for user directories in legacy location (dataroot/users/userid) instead of (dataroot/user/section/userid)
- * @return array An associative array: userid=>array(basedir => $basedir, userfolder => $userfolder) 
+ * @return array An associative array: userid=>array(basedir => $basedir, userfolder => $userfolder)
  */
 function get_user_directories($only_non_empty=true, $legacy=false) {
     global $CFG;
 
     $rootdir = $CFG->dataroot."/user";
-    
+
     if ($legacy) {
-        $rootdir = $CFG->dataroot."/users"; 
+        $rootdir = $CFG->dataroot."/users";
     }
     $dirlist = array();
 
-    //Check if directory exists 
-    if (check_dir_exists($rootdir, true)) { 
+    //Check if directory exists
+    if (check_dir_exists($rootdir, true)) {
         if ($legacy) {
             if ($userlist = get_directory_list($rootdir, '', true, true, false)) {
                 foreach ($userlist as $userid) {
@@ -4661,7 +4661,7 @@ function get_user_directories($only_non_empty=true, $legacy=false) {
                 }
             } else {
                 notify("no directories found under $rootdir");
-            } 
+            }
         } else {
             if ($grouplist =get_directory_list($rootdir, '', true, true, false)) { // directories will be in the form 0, 1000, 2000 etc...
                 foreach ($grouplist as $group) {
@@ -4671,7 +4671,7 @@ function get_user_directories($only_non_empty=true, $legacy=false) {
                         }
                     }
                 }
-            } 
+            }
         }
     } else {
         notify("$rootdir does not exist!");
@@ -5224,7 +5224,7 @@ or
  *
  * @uses $CFG
  * @param string $identifier The key identifier for the localized string
- * @param string $module The module where the key identifier is stored, usually expressed as the filename in the language pack without the .php on the end but can also be written as mod/forum or grade/export/xls.  If none is specified then moodle.php is used. 
+ * @param string $module The module where the key identifier is stored, usually expressed as the filename in the language pack without the .php on the end but can also be written as mod/forum or grade/export/xls.  If none is specified then moodle.php is used.
  * @param mixed $a An object, string or number that can be used
  * within translation strings
  * @param array $extralocations An array of strings with other locations to look for string files
@@ -5253,7 +5253,7 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
     if ($module == '') {
         $module = 'moodle';
     }
-    
+
 /// If the "module" is actually a pathname, then automatically derive the proper module name
     if (strpos($module, '/') !== false) {
         $modulepath = split('/', $module);
@@ -5263,23 +5263,23 @@ function get_string($identifier, $module='', $a=NULL, $extralocations=NULL) {
             case 'mod':
                 $module = $modulepath[1];
             break;
-    
+
             case 'blocks':
             case 'block':
                 $module = 'block_'.$modulepath[1];
             break;
-    
+
             case 'enrol':
                 $module = 'enrol_'.$modulepath[1];
             break;
-    
+
             case 'format':
                 $module = 'format_'.$modulepath[1];
             break;
-    
+
             case 'grade':
                 $module = 'grade'.$modulepath[1].'_'.$modulepath[2];
-            break; 
+            break;
         }
     }
 
@@ -6136,13 +6136,13 @@ function check_php_version($version='4.1.0') {
 }
 
 /**
- * Checks to see if is the browser operating system matches the specified 
+ * Checks to see if is the browser operating system matches the specified
  * brand.
- * 
+ *
  * Known brand: 'Windows','Linux','Macintosh','SGI','SunOS','HP-UX'
  *
  * @uses $_SERVER
- * @param string $brand The operating system identifier being tested 
+ * @param string $brand The operating system identifier being tested
  * @return bool true if the given brand below to the detected operating system
  */
  function check_browser_operating_system($brand) {
@@ -6153,8 +6153,8 @@ function check_php_version($version='4.1.0') {
     if (preg_match("/$brand/i", $_SERVER['HTTP_USER_AGENT'])) {
         return true;
     }
-     
-    return false;  
+
+    return false;
  }
 
 /**
@@ -6657,7 +6657,7 @@ function random_string ($length=15) {
  * @param string $text - text to be shortened
  * @param int $ideal - ideal string length
  * @param boolean $exact if false, $text will not be cut mid-word
- * @return string $truncate - shortened string 
+ * @return string $truncate - shortened string
  */
 
 function shorten_text($text, $ideal=30, $exact = false) {
@@ -6669,7 +6669,7 @@ function shorten_text($text, $ideal=30, $exact = false) {
     if (strlen(preg_replace('/<.*?>/', '', $text)) <= $ideal) {
         return $text;
     }
-            
+
     // splits all html-tags to scanable lines
     preg_match_all('/(<.+?>)?([^<>]*)/s', $text, $lines, PREG_SET_ORDER);
 
@@ -6725,7 +6725,7 @@ function shorten_text($text, $ideal=30, $exact = false) {
             $truncate .= $line_matchings[2];
             $total_length += $content_length;
         }
-                
+
         // if the maximum length is reached, get off the loop
         if($total_length >= $ideal) {
             break;
@@ -6746,7 +6746,7 @@ function shorten_text($text, $ideal=30, $exact = false) {
                 }
             }
 		}
-        
+
 		if (isset($breakpos)) {
             // ...and cut the text in this position
             $truncate = substr($truncate, 0, $breakpos);
@@ -7932,11 +7932,11 @@ function check_dir_exists($dir, $create=false, $recursive=false) {
         } else {
             umask(0000);
             if ($recursive) {
-            /// PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
-                $dir = str_replace('\\', '/', $dir); //windows compatibility
             /// We are going to make it recursive under $CFG->dataroot only
             /// (will help sites running open_basedir security and others)
                 $dir = str_replace($CFG->dataroot . '/', '', $dir);
+            /// PHP 5.0 has recursive mkdir parameter, but 4.x does not :-(
+                $dir = str_replace('\\', '/', $dir); //windows compatibility
                 $dirs = explode('/', $dir); /// Extract path parts
             /// Iterate over each part with start point $CFG->dataroot
                 $dir = $CFG->dataroot . '/';
@@ -8210,7 +8210,7 @@ function object_array_unique($array, $keep_key_assoc = true) {
 
 /**
  * Returns the language string for the given plugin.
- * 
+ *
  * @param string $plugin the plugin code name
  * @param string $type the type of plugin (mod, block, filter)
  * @return string The plugin language string
@@ -8219,7 +8219,7 @@ function get_plugin_name($plugin, $type='mod') {
     $plugin_name = '';
 
     switch ($type) {
-        case 'mod': 
+        case 'mod':
             $plugin_name = get_string('modulename', $plugin);
             break;
         case 'blocks':
@@ -8230,14 +8230,14 @@ function get_plugin_name($plugin, $type='mod') {
                 } else {
                     $plugin_name = "[[$plugin]]";
                 }
-            } 
+            }
             break;
         case 'filter':
             $plugin_name = trim(get_string('filtername', $plugin));
             if (empty($plugin_name) or ($plugin_name == '[[filtername]]')) {
                 $textlib = textlib_get_instance();
                 $plugin_name = $textlib->strtotitle($plugin);
-            } 
+            }
             break;
         default:
             $plugin_name = $plugin;
@@ -8251,7 +8251,7 @@ function get_plugin_name($plugin, $type='mod') {
  * Is a userid the primary administrator?
  *
  * @param $userid int id of user to check
- * @return boolean 
+ * @return boolean
  */
 function is_primary_admin($userid){
     $primaryadmin =  get_admin();
