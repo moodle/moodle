@@ -38,6 +38,7 @@ class qstats{
     }
     function get_records($quizid, $currentgroup, $groupstudents, $allattempts){
         global $DB;
+        list($qsql, $qparams) = $DB->get_in_or_equal(array_keys($this->questions), SQL_PARAMS_NAMED, 'q0000');
         list($fromqa, $whereqa, $qaparams) = quiz_report_attempts_sql($quizid, $currentgroup, $groupstudents, $allattempts);
         $sql = 'SELECT qs.id, ' .
             'qs.question, ' .
@@ -49,17 +50,12 @@ class qstats{
             '{question_states} qs, '.
             $fromqa.' '.
             'WHERE ' .$whereqa.
+            'AND qs.question '.$qsql.' '.
             'AND qns.attemptid = qa.uniqueid '.
             'AND qns.newgraded = qs.id';
-        $this->states = $DB->get_records_sql($sql, $qaparams);
+        $this->states = $DB->get_records_sql($sql, $qaparams + $qparams);
         if ($this->states === false){
             print_error('errorstatisticsquestions', 'quiz_statistics');
-        }
-        // Nasty hack fix for MDL-16567 - TODO a proper fix.
-        foreach ($this->states as $id => $state) {
-            if (!isset($this->questions[$state->question])) {
-                unset($this->states[$id]);
-            }
         }
     }
     
