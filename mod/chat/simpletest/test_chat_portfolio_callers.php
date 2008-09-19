@@ -32,10 +32,6 @@ class testChatPortfolioCallers extends portfoliolib_test {
         $this->caller = parent::setup_caller('chat_portfolio_caller', array('id' => $cm->id), $userid);
     }
 
-    public function tearDown() {
-        parent::tearDown();
-    }
-
     public function test_caller_sha1() {
         $sha1 = $this->caller->get_sha1();
         $this->caller->prepare_package();

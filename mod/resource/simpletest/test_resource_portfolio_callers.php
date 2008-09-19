@@ -19,7 +19,7 @@ class testResourcePortfolioCallers extends portfoliolib_test {
 
         $resource_type = new stdClass();
         $resource_type->type = GENERATOR_SEQUENCE;
-        $resource_type->options = array('file', 'text', 'html');
+        $resource_type->options = array('text', 'html');
 
         $settings = array('quiet' => 1, 'pre_cleanup' => 1,
                           'modules_list' => array($this->module_type),

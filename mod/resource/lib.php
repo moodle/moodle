@@ -103,7 +103,7 @@ class resource_base {
         $morenavlinks = array($this->strresources   => 'index.php?id='.$this->course->id,
                                  $this->resource->name => '');
 
-        $PAGE->print_header($this->course->shortname.': %fullname%', $morenavlinks, "", "", 
+        $PAGE->print_header($this->course->shortname.': %fullname%', $morenavlinks, "", "",
                             update_module_button($this->cm->id, $this->course->id, $this->strresource));
 
         echo '<table id="layout-table"><tr>';
@@ -728,6 +728,7 @@ class resource_portfolio_caller extends portfolio_module_caller_base {
         require_once($this->resourcefile);
         $this->resource= new $resourceclass($this->cm->id);
         if (!is_callable(array($this->resource, 'portfolio_prepare_package')) || !is_callable(array($this->resource, 'portfolio_get_sha1'))) {
+            debug_print_backtrace();
             throw new portfolio_exception('portfolionotimplemented', 'resource', null, $this->cm->type);
         }
         $this->supportedformats = array(self::type_to_format($this->cm->type));

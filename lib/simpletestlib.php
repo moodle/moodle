@@ -150,7 +150,6 @@ class CheckSpecifiedFieldsExpectation extends SimpleExpectation {
 }
 
 class MoodleUnitTestCase extends UnitTestCase {
-    public $real_db;
     public $tables = array();
     public $pkfile;
     public $cfg;
@@ -189,7 +188,9 @@ class MoodleUnitTestCase extends UnitTestCase {
                 }
             }
             if (!file_put_contents($this->pkfile, $tabledata)) {
-                throw new moodle_exception('testtablescsvfileunwritable', 'error');
+                $a = new stdClass();
+                $a->filename = $this->pkfile;
+                throw new moodle_exception('testtablescsvfileunwritable', 'simpletest', '', $a);
             }
         }
     }
@@ -205,7 +206,7 @@ class MoodleUnitTestCase extends UnitTestCase {
 
         foreach ($tables as $table) {
             if ($table != 'sessions2' && isset($tabledata[$table])) {
-                $DB->delete_records_select($table, "id > ?", array($tabledata[$table]));
+                // $DB->delete_records_select($table, "id > ?", array($tabledata[$table]));
             }
         }
     }
@@ -227,7 +228,10 @@ class MoodleUnitTestCase extends UnitTestCase {
             }
             return $tabledata;
         } else {
-            throw new moodle_exception('testtablescsvfilemissing', 'error');
+            $a = new stdClass();
+            $a->filename = $this->pkfile;
+            debug_print_backtrace();
+            throw new moodle_exception('testtablescsvfilemissing', 'simpletest', '', $a);
             return false;
         }
     }
@@ -238,22 +242,8 @@ class MoodleUnitTestCase extends UnitTestCase {
      * TODO Improve detection of incorrectly built DB test tables (e.g. detect version discrepancy and offer to upgrade/rebuild)
      */
     public function setUp() {
-        global $CFG, $DB;
         parent::setUp();
-
-        $this->real_db = $DB;
-
-        if (empty($CFG->unittestprefix)) {
-            print_error("prefixnotset", 'simpletest');
-        }
-
-        $DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
-        $DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittestprefix);
-        $manager = $DB->get_manager();
-
-        if (!$manager->table_exists('user')) {
-            print_error('tablesnotsetup', 'simpletest');
-        }
+        UnitTestDB::instantiate();
     }
 
     /**
@@ -261,9 +251,8 @@ class MoodleUnitTestCase extends UnitTestCase {
      */
     public function tearDown() {
         global $DB;
+        $DB->cleanup();
         parent::tearDown();
-
-        $DB = $this->real_db;
     }
 
     /**
@@ -271,12 +260,204 @@ class MoodleUnitTestCase extends UnitTestCase {
      * It should also detect if data is missing from the original tables.
      */
     public function __destruct() {
-        global $CFG;
+        global $CFG, $DB;
+
         $CFG = $this->cfg;
-        $this->truncate_test_tables($this->get_table_data($this->pkfile));
-        fulldelete($this->pkfile);
         $this->tearDown();
+        UnitTestDB::restore();
+        fulldelete($this->pkfile);
     }
 }
 
+/**
+ * This is a Database Engine proxy class: It replaces the global object $DB with itself through a call to the
+ * static instantiate() method, and restores the original global $DB through restore().
+ * Internally, it routes all calls to $DB to a real instance of the database engine (aggregated as a member variable),
+ * except those that are defined in this proxy class. This makes it possible to add extra code to the database engine
+ * without subclassing it.
+ */
+class UnitTestDB {
+    public static $DB;
+    private static $real_db;
+
+    public $table_data = array();
+
+    public function __construct() {
+
+    }
+
+    /**
+     * Call this statically to connect to the DB using the unittest prefix, instantiate
+     * the unit test db, store it as a member variable, instantiate $this and use it as the new global $DB.
+     */
+    public static function instantiate() {
+        global $CFG, $DB;
+        UnitTestDB::$real_db = clone($DB);
+
+        if (empty($CFG->unittestprefix)) {
+            print_error("prefixnotset", 'simpletest');
+        }
+
+        UnitTestDB::$DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+        UnitTestDB::$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittestprefix);
+        $manager = UnitTestDB::$DB->get_manager();
+
+        if (!$manager->table_exists('user')) {
+            print_error('tablesnotsetup', 'simpletest');
+        }
+
+        $DB = new UnitTestDB();
+    }
+
+    public function __call($method, $args) {
+        // Set args to null if they don't exist (up to 10 args should do)
+        if (!method_exists($this, $method)) {
+            return call_user_func_array(array(UnitTestDB::$DB, $method), $args);
+        } else {
+            call_user_func_array(array($this, $method), $args);
+        }
+    }
+
+    public function __get($variable) {
+        return UnitTestDB::$DB->$variable;
+    }
+
+    public function __set($variable, $value) {
+        UnitTestDB::$DB->$variable = $value;
+    }
+
+    public function __isset($variable) {
+        return isset(UnitTestDB::$DB->$variable);
+    }
+
+    public function __unset($variable) {
+        unset(UnitTestDB::$DB->$variable);
+    }
+
+    /**
+     * Overriding insert_record to keep track of the ids inserted during unit tests, so that they can be deleted afterwards
+     */
+    public function insert_record($table, $dataobject, $returnid=true, $bulk=false) {
+        global $DB;
+        $id = UnitTestDB::$DB->insert_record($table, $dataobject, $returnid, $bulk);
+        $this->table_data[$table][] = $id;
+        return $id;
+    }
+
+    /**
+     * Overriding update_record: If we are updating a record that was NOT inserted by unit tests,
+     * throw an exception and cancel update.
+     * @throws moodle_exception If trying to update a record not inserted by unit tests.
+     */
+    public function update_record($table, $dataobject, $bulk=false) {
+        global $DB;
+        if (empty($this->table_data[$table]) || !in_array($dataobject->id, $this->table_data[$table])) {
+            return UnitTestDB::$DB->update_record($table, $dataobject, $bulk);
+            // $a = new stdClass();
+            // $a->id = $dataobject->id;
+            // $a->table = $table;
+            // debug_print_backtrace();
+            // throw new moodle_exception('updatingnoninsertedrecord', 'simpletest', '', $a);
+        } else {
+            return UnitTestDB::$DB->update_record($table, $dataobject, $bulk);
+        }
+    }
+
+    /**
+     * Overriding delete_record: If we are deleting a record that was NOT inserted by unit tests,
+     * throw an exception and cancel delete.
+     * @throws moodle_exception If trying to delete a record not inserted by unit tests.
+     */
+    public function delete_records($table, array $conditions=null) {
+        global $DB;
+        $a = new stdClass();
+        $a->table = $table;
+
+        // Get ids matching conditions
+        if (!$ids_to_delete = $DB->get_field($table, 'id', $conditions)) {
+            return UnitTestDB::$DB->delete_records($table, $conditions);
+        }
+
+        $proceed_with_delete = true;
+
+        if (!is_array($ids_to_delete)) {
+            $ids_to_delete = array($ids_to_delete);
+        }
+
+        foreach ($ids_to_delete as $id) {
+            if (!in_array($id, $this->table_data[$table])) {
+                $proceed_with_delete = false;
+                $a->id = $id;
+                break;
+            }
+        }
+
+        if ($proceed_with_delete) {
+            return UnitTestDB::$DB->delete_records($table, $conditions);
+        } else {
+            debug_print_backtrace();
+            throw new moodle_exception('deletingnoninsertedrecord', 'simpletest', '', $a);
+        }
+    }
+
+    /**
+     * Overriding delete_records_select: If we are deleting a record that was NOT inserted by unit tests,
+     * throw an exception and cancel delete.
+     * @throws moodle_exception If trying to delete a record not inserted by unit tests.
+     */
+    public function delete_records_select($table, $select, array $params=null) {
+        global $DB;
+        $a = new stdClass();
+        $a->table = $table;
+
+        // Get ids matching conditions
+        if (!$ids_to_delete = $DB->get_field_select($table, 'id', $select, $params)) {
+            return UnitTestDB::$DB->delete_records_select($table, $select, $params);
+        }
+
+        $proceed_with_delete = true;
+
+        foreach ($ids_to_delete as $id) {
+            if (!in_array($id, $this->table_data[$table])) {
+                $proceed_with_delete = false;
+                $a->id = $id;
+                break;
+            }
+        }
+
+        if ($proceed_with_delete) {
+            return UnitTestDB::$DB->delete_records_select($table, $select, $params);
+        } else {
+            debug_print_backtrace();
+            throw new moodle_exception('deletingnoninsertedrecord', 'simpletest', '', $a);
+        }
+    }
+
+    /**
+     * Removes from the test DB all the records that were inserted during unit tests,
+     */
+    public function cleanup() {
+        global $DB;
+        foreach ($this->table_data as $table => $ids) {
+            foreach ($ids as $id) {
+                $DB->delete_records($table, array('id' => $id));
+            }
+        }
+    }
+
+    /**
+     * Restores the global $DB object.
+     */
+    public static function restore() {
+        global $DB;
+        $DB = UnitTestDB::$real_db;
+    }
+
+    public function get_field($table, $return, array $conditions) {
+        if (!is_array($conditions)) {
+            debug_print_backtrace();
+        }
+        return UnitTestDB::$DB->get_field($table, $return, $conditions);
+    }
+}
 ?>
