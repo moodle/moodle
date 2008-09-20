@@ -83,29 +83,15 @@ class question_dataset_dependent_questiontype extends default_questiontype {
 
     function substitute_variables($str, $dataset) {
         foreach ($dataset as $name => $value) {
+            if($value < 0 ){
+                $str = str_replace('{'.$name.'}', '('.$value.')', $str);
+            } else {
             $str = str_replace('{'.$name.'}', $value, $str);
         }
-        return $str;
-    }
 
-    function uses_quizfile($question, $relativefilepath) {
-        // Check whether the specified file is available by any
-        // dataset item on this question...
-        global $CFG;
-        if (get_record_sql(" SELECT *
-                 FROM {$CFG->prefix}question_dataset_items i,
-                      {$CFG->prefix}question_dataset_definitions d,
-                      {$CFG->prefix}question_datasets q
-                WHERE i.value = '$relativefilepath'
-                  AND d.id = i.definition AND d.type = 2
-                  AND d.id = q.datasetdefinition
-                  AND q.question = $question->id ")) {
 
-            return true;
-        } else {
-            // Make the check of the parent:
-            return parent::uses_quizfile($question, $relativefilepath);
         }
+        return $str;
     }
 
     function finished_edit_wizard(&$form) {
