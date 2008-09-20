@@ -758,16 +758,17 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $delimiter = ': ';
         $virtualqtype = $this->get_virtual_qtype();
         foreach ($answers as $answer) {
-            $formula = $answer->answer;
-            foreach ($data as $name => $value) {
-                $formula = str_replace('{'.$name.'}', $value, $formula);
-            }
+            $formula = parent::substitute_variables($answer->answer,$data);
             $formattedanswer = qtype_calculated_calculate_answer(
                     $answer->answer, $data, $answer->tolerance,
                     $answer->tolerancetype, $answer->correctanswerlength,
                     $answer->correctanswerformat, $unit);
-              eval('$answer->answer = '.$formula.';') ;                   
-            $virtualqtype->get_tolerance_interval($answer);
+                    if ( $formula === '*'){
+                        $answer->min = '' ;
+                    }else {
+                        eval('$answer->answer = '.$formula.';') ;                   
+                        $virtualqtype->get_tolerance_interval($answer);
+                    } 
             if ($answer->min === '') {
                 // This should mean that something is wrong
                 $stranswers .= " -$formattedanswer->answer".'<br/><br/>';                
@@ -873,6 +874,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         /// Calculate the correct answer
         if (empty($formula)) {
             $str = '';
+        } else if ($formula === '*'){
+            $str = '*';
         } else {
             eval('$str = '.$formula.';');
         }
