@@ -82,7 +82,8 @@ class question_dataset_dependent_questiontype extends default_questiontype {
             if($value < 0 ){
                 $str = str_replace('{'.$name.'}', '('.$value.')', $str);
             } else {
-            $str = str_replace('{'.$name.'}', $value, $str);
+                $str = str_replace('{'.$name.'}', $value, $str);
+            }
         }
         return $str;
     }
