@@ -364,11 +364,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $numericalquestion = fullclone($question);
         foreach ($numericalquestion->options->answers as $key => $answer) {
           $answer = fullclone($numericalquestion->options->answers[$key]);
-            $correctanswer = qtype_calculated_calculate_answer(
-                 $answer->answer, $state->options->dataset, $answer->tolerance,
-                 $answer->tolerancetype, $answer->correctanswerlength,
-                 $answer->correctanswerformat, $unit);
-           $numericalquestion->options->answers[$key]->answer = $correctanswer->answer;
+            $numericalquestion->options->answers[$key]->answer = $this->substitute_variables($answer->answer,
+             $state->options->dataset);
         }
         $numericalquestion->questiontext = parent::substitute_variables(
         $numericalquestion->questiontext, $state->options->dataset);
@@ -476,8 +473,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
     function custom_generator_tools_part(&$mform, $idx, $j){
 
         $minmaxgrp = array();
-        $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_datasetdependent'), 'size="8"');
-        $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_datasetdependent'), 'size="8"');
+        $minmaxgrp[] =& $mform->createElement('text', "calcmin[$idx]", get_string('calcmin', 'qtype_datasetdependent'));
+        $minmaxgrp[] =& $mform->createElement('text', "calcmax[$idx]", get_string('calcmax', 'qtype_datasetdependent'));
         $mform->addGroup($minmaxgrp, 'minmaxgrp', get_string('minmax', 'qtype_datasetdependent'), ' - ', false);
         $mform->setType("calcmin[$idx]", PARAM_NUMBER);
         $mform->setType("calcmax[$idx]", PARAM_NUMBER);
@@ -671,7 +668,6 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
                         } else {
                             $datasetitem->value = '';
                         }
-                        //pp  echo "<pre>"; print_r( $datasetitem );
                         if (!insert_record('question_dataset_items', $datasetitem)) {
                             error("Error: Unable to insert new dataset item");
                         }                        
@@ -737,7 +733,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             } else {
                 $strheader .= $delimiter.$answer->answer;
             }
-            $delimiter = '<br/><br/>';
+            $delimiter = '<br/><br/><br/>';
         }
         return $strheader;
     }
@@ -751,7 +747,7 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
             $unit = '';
         }
 
-        $answers = $question->options->answers;
+        $answers = fullclone($question->options->answers);
         $stranswers = '';
         $strmin = get_string('min', 'quiz');
         $strmax = get_string('max', 'quiz');
@@ -759,26 +755,32 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         $delimiter = ': ';
         $virtualqtype = $this->get_virtual_qtype();
         foreach ($answers as $answer) {
-            $formula = $answer->answer;
-            foreach ($data as $name => $value) {
-                $formula = str_replace('{'.$name.'}', $value, $formula);
-            }
-            $calculated = qtype_calculated_calculate_answer(
+            $formula = parent::substitute_variables($answer->answer,$data);
+            $formattedanswer = qtype_calculated_calculate_answer(
                     $answer->answer, $data, $answer->tolerance,
                     $answer->tolerancetype, $answer->correctanswerlength,
                     $answer->correctanswerformat, $unit);
-            $calculated->tolerance = $answer->tolerance;
-            $calculated->tolerancetype = $answer->tolerancetype;
-            $calculated->correctanswerlength = $answer->correctanswerlength;
-            $calculated->correctanswerformat = $answer->correctanswerformat;
-            $virtualqtype->get_tolerance_interval($calculated);
-            if ($calculated->min === '') {
+                    if ( $formula === '*'){
+                        $answer->min = '' ;
+                    }else {
+              eval('$answer->answer = '.$formula.';') ;                   
+            $virtualqtype->get_tolerance_interval($answer);
+                    } 
+            if ($answer->min === '') {
                 // This should mean that something is wrong
-                $stranswers .= " -$calculated->answer".'<br/><br/>';                
+                $stranswers .= " -$formattedanswer->answer".'<br/><br/>';                
             } else {
-                $stranswers .= $formula.' = '.$calculated->answer.'<br/>' ;
-                $stranswers .= $strmin. $delimiter.$calculated->min.'---';
-                $stranswers .= $strmax.$delimiter.$calculated->max;
+                $stranswers .= $formula.' = '.$formattedanswer->answer.'<br/>' ;
+                $stranswers .= $strmin. $delimiter.$answer->min.'---';
+                $stranswers .= $strmax.$delimiter.$answer->max;
+                $stranswers .='<br/>';
+                $correcttrue->correct = $formattedanswer->answer ;
+                $correcttrue->true = $answer->answer ;
+                if ($formattedanswer->answer < $answer->min || $formattedanswer->answer > $answer->max){ 
+                    $stranswers .=get_string('trueansweroutsidelimits','qtype_calculated',$correcttrue);//<span class="error">ERROR True answer '..' outside limits</span>';
+            } else {
+                    $stranswers .=get_string('trueanswerinsidelimits','qtype_calculated',$correcttrue);//' True answer :'.$calculated->trueanswer.' inside limits';
+                }                
                 $stranswers .='<br/>';
             }
         }
@@ -869,6 +871,8 @@ class question_calculated_qtype extends question_dataset_dependent_questiontype 
         /// Calculate the correct answer
         if (empty($formula)) {
             $str = '';
+        } else if ($formula === '*'){
+            $str = '*';
         } else {
             eval('$str = '.$formula.';');
         }
@@ -1088,8 +1092,12 @@ function qtype_calculated_calculate_answer($formula, $individualdata,
     $answer = $QTYPES['calculated']->substitute_variables($formula, $individualdata);
     if ('1' == $answerformat) { /* Answer is to have $answerlength decimals */
         /*** Adjust to the correct number of decimals ***/
-
-        $calculated->answer = round($answer, $answerlength);
+        if (stripos($answer,'e')>0 ){
+            $answerlengthadd = strlen($answer)-stripos($answer,'e');
+        }else {
+            $answerlengthadd = 0 ;
+        }
+        $calculated->answer = round(floatval($answer), $answerlength+$answerlengthadd);
 
         if ($answerlength) {
             /* Try to include missing zeros at the end */
