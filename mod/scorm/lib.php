@@ -738,7 +738,7 @@ function scorm_get_file_info($browser, $areas, $course, $cm, $context, $filearea
                 return parent::get_visible_name();
             }
         }
-        return new scorm_package_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, false);
+        return new scorm_package_file_info($browser, $context, $storedfile, $urlbase, $areas[$filearea], true, true, false, false);
 
     } else if ($filearea === 'scorm_package') {
         $filepath = is_null($filepath) ? '/' : $filepath;

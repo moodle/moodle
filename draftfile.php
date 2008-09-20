@@ -42,8 +42,11 @@
     }
 
     switch ($filearea) {
-        case 'user_draft'  : $itemid = (int)array_shift($args); break;
-        default:        send_file_not_found();
+        case 'user_draft':
+            $itemid = (int)array_shift($args);
+            break;
+        default:
+            send_file_not_found();
     }
 
     $relativepath = '/'.implode('/', $args);

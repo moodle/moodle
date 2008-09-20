@@ -82,7 +82,7 @@ class file_browser {
                         }
                     }
                     $urlbase = $CFG->wwwroot.'/userfile.php';
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserpersonal', 'repository'), false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserpersonal', 'repository'), false, true, true, false);
 
                 } else if ($filearea == 'user_profile') {
                     if (is_null($itemid)) {
@@ -112,7 +112,7 @@ class file_browser {
                         }
                     }
                     $urlbase = $CFG->wwwroot.'/userfile.php';
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserprofile', 'repository'), false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserprofile', 'repository'), false, true, true, false);
 
 
                 } else if ($filearea == 'user_draft') {
@@ -126,6 +126,10 @@ class file_browser {
                         return null;
                     }
                     $urlbase = $CFG->wwwroot.'/draftfile.php';
+
+                    $filepath = is_null($filepath) ? '/' : $filepath;
+                    $filename = is_null($filename) ? '.' : $filename;
+
                     if (!$storedfile = $fs->get_file($context->id, $filearea, $itemid, $filepath, $filename)) {
                         if ($filepath === '/' and $filename === '.') {
                             $storedfile = new virtual_root_file($context->id, $filearea, $itemid);
@@ -134,7 +138,7 @@ class file_browser {
                             return null;
                         }
                     }
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserdraft', 'repository'), true, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areauserdraft', 'repository'), true, true, true, true);
                 }
             }
 
@@ -173,7 +177,7 @@ class file_browser {
                             return null;
                         }
                     }
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areacategoryintro', 'repository'), false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areacategoryintro', 'repository'), false, true, true, false);
                 }
             }
 
@@ -214,7 +218,7 @@ class file_browser {
                             return null;
                         }
                     }
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areacourseintro', 'repository'), false, true, true);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areacourseintro', 'repository'), false, true, true, false);
 
                 } else if ($filearea == 'course_backup') {
                     if (!has_capability('moodle/site:backup', $context) and !has_capability('moodle/site:restore', $context)) {
@@ -233,7 +237,7 @@ class file_browser {
 
                     $downloadable = has_capability('moodle/site:backupdownload', $context);
                     $uploadable   = has_capability('moodle/site:backupupload', $context);
-                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areabackup', 'repository'), false, $downloadable, $uploadable);
+                    return new file_info_stored($this, $context, $storedfile, $urlbase, get_string('areabackup', 'repository'), false, $downloadable, $uploadable, false);
 
                 } else if ($filearea == 'course_content') {
                     if (!has_capability('moodle/course:managefiles', $context)) {
@@ -307,7 +311,7 @@ class file_browser {
                         return null;
                     }
                 }
-                return new file_info_stored($this, $context, $storedfile, $urlbase, $areas[$filearea], false, true, true);
+                return new file_info_stored($this, $context, $storedfile, $urlbase, $areas[$filearea], false, true, true, false);
 
             } else {
                 $fileinfofunction = $modname.'_get_file_info';
@@ -329,7 +333,7 @@ class file_browser {
 
         $storedfiles = $fs->get_directory_files($context->id, $filearea, $itemid, $filepath, false, true, "filepath, filename");
         foreach ($storedfiles as $file) {
-            $result[] = new file_info_stored($this, $context, $file, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess);
+            $result[] = new file_info_stored($this, $context, $file, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess, false);
         }
 
         return $result;

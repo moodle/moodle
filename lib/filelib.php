@@ -59,17 +59,58 @@ function get_file_url($path, $options=null, $type='coursefile') {
 }
 
 /**
+ * Returns empty user upload draft area information
+ * @return array with area info 
+ */
+function get_new_draftarea() {
+    global $DB, $USER;
+
+    if (isguestuser() or !isloggedin()) {
+        print_error('noguest');
+    }
+
+    $contextid = get_context_instance(CONTEXT_USER, $USER->id)->id;
+    $filearea  = 'user_draft';
+
+    $fs = get_file_storage();
+    $draftitemid = rand(1, 999999999);
+    while ($files = $fs->get_area_files($contextid, $filearea, $draftitemid)) {
+        $draftitemid = rand(1, 999999999);
+    }
+
+    return array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$draftitemid);
+}
+
+/**
  * Converts absolute links in text and moves draft files.
  * @param int $draftitemid
- * @param string $text usually html text with embedded links to draft area
  * @param int $contextid
  * @param string $filearea
  * @param int $itemid
+ * @param string $text usually html text with embedded links to draft area
  * @param boolean $https force https
  * @return string text with relative links starting with @@PLUGINFILE@@
  */
-function file_convert_draftarea($text, $draftitemid, $contextid, $filearea, $itemid, $https=false) {
+function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $text=null, $https=false) {
     global $CFG, $USER;
+
+    /// move draft files first
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+
+    $fs = get_file_storage();
+    if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id', 'false')) {
+        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
+        foreach ($files as $file) {
+            $fs->create_file_from_stored($file_record, $file);
+            $file->delete();
+        }
+    }
+
+    if (is_null($text)) {
+        return null;
+    }
+
+    /// relink embedded files if text submitted - no absolute links allowed!
 
     if ($CFG->slasharguments) {
         $draftbase = "$CFG->wwwroot/draftfile.php/user_draft/$draftitemid/";
@@ -81,20 +122,7 @@ function file_convert_draftarea($text, $draftitemid, $contextid, $filearea, $ite
         $draftbase = str_replace('http://', 'https://', $draftbase);
     }
 
-    // replace absolute links
     $text = str_ireplace($draftbase, '@@PLUGINFILE@@/');
-
-    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-
-    // move draft files
-    $fs = get_file_storage();
-    if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id', 'false')) {
-        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
-        foreach ($files as $file) {
-            $fs->create_file_from_stored($file_record, $file);
-            $file->delete();
-        }
-    }
 
     return $text;
 }

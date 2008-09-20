@@ -7,8 +7,9 @@ class file_info_stored extends file_info {
     protected $itemidused;
     protected $readaccess;
     protected $writeaccess;
+    protected $areaonly;
 
-    public function __construct($browser, $context, $storedfile, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess) {
+    public function __construct($browser, $context, $storedfile, $urlbase, $areavisiblename, $itemidused, $readaccess, $writeaccess, $areaonly) {
         parent::__construct($browser, $context);
 
         $this->lf              = $storedfile;
@@ -17,6 +18,7 @@ class file_info_stored extends file_info {
         $this->itemidused      = $itemidused;
         $this->readaccess      = $readaccess;
         $this->writeaccess     = $writeaccess;
+        $this->areaonly        = $areaonly;
     }
 
     public function get_params() {
@@ -39,7 +41,9 @@ class file_info_stored extends file_info {
             $dir = explode('/', $dir);
             $dir = array_pop($dir);
             if ($dir === '') {
-                if ($this->itemidused) {
+                if ($this->areaonly) {
+                    return $this->areavisiblename;
+                } else if ($this->itemidused) {
                     return $this->lf->get_itemid();
                 } else {
                     return $this->areavisiblename;
@@ -110,20 +114,23 @@ class file_info_stored extends file_info {
             return array();
         }
         return $this->browser->build_stored_file_children($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $this->lf->get_filepath(),
-                                                         $this->urlbase, $this->areavisiblename, $this->itemidused, $this->readaccess, $this->writeaccess);
+                                                          $this->urlbase, $this->areavisiblename, $this->itemidused, $this->readaccess, $this->writeaccess,
+                                                          $this->areaonly);
     }
 
     public function get_parent() {
-        if (!$this->lf->is_directory()) {
-            return $this->browser->get_file_info($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $this->lf->get_filepath(), '.');
-        }
-
-        if ($this->lf->get_filepath() === '/') {
-            if ($this->itemidused) {
+        if ($this->lf->get_filepath() === '/' and $this->lf->is_directory()) {
+            if ($this->areaonly) {
+                return null;
+            } else if ($this->itemidused) {
                 return $this->browser->get_file_info($this->context, $this->lf->get_filearea(), $this->lf->get_itemid());
             } else {
                 return $this->browser->get_file_info($this->context, $this->lf->get_filearea());
             }
+        }
+
+        if (!$this->lf->is_directory()) {
+            return $this->browser->get_file_info($this->context, $this->lf->get_filearea(), $this->lf->get_itemid(), $this->lf->get_filepath(), '.');
         }
 
         $filepath = $this->lf->get_filepath();
