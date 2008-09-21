@@ -51,14 +51,61 @@ $string['databasesettingssub'] = '<b>Tipo:</b> mysql ou postgres7<br />
 <b>Usuário:</b> nome de usuário da base de dados<br />
 <b>Senha:</b> senha da base de dados<br />
 <b>Prefixo das tabelas:</b> prefixo opcional a ser utilizado no nome das tabelas';
+$string['databasesettingssub_mssql'] = '<b>Tipo:</b> Servidor SQL (não UTF-8) <b><font color=\"red\">Experimental! (não deve ser usado em produção)</font></b><br />
+<b>Host:</b> ex. localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, ex. moodle<br />
+<b>Usuário:</b> nome de usuário da base de dados<br />
+<b>Senha:</b> senha da base de dados<br />
+<b>Prefixo das tabelas:</b> prefixo a ser utilizado no nome das tabelas (obrigatório)';
+$string['databasesettingssub_mssql_n'] = '<b>Tipo:</b> Servidor SQL (UTF-8 habilitado)<br />
+<b>Host:</b> ex. localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, ex. moodle<br />
+<b>Usuário:</b> nome de usuário da base de dados<br />
+<b>Senha:</b> senha da base de dados<br />
+<b>Prefixo das tabelas:</b> prefixo a ser utilizado no nome das tabelas (obrigatório)';
+$string['databasesettingssub_mysql'] = '<b>Tipo:</b> MySQL <br />
+<b>Host:</b> ex. localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, ex. moodle<br />
+<b>Usuário:</b> nome de usuário da base de dados<br />
+<b>Senha:</b> senha da base de dados<br />
+<b>Prefixo das tabelas:</b> prefixo a ser utilizado no nome das tabelas (opcional)';
+$string['databasesettingssub_mysqli'] = '<b>Tipo:</b> MySQL aperfeiçoado <br />
+<b>Host:</b> ex. localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, ex. moodle<br />
+<b>Usuário:</b> nome de usuário da base de dados<br />
+<b>Senha:</b> senha da base de dados<br />
+<b>Prefixo das tabelas:</b> prefixo a ser utilizado no nome das tabelas (opcional)';
+$string['databasesettingssub_oci8po'] = '<b>Tipo:</b> Oracle<br />
+<b>Host:</b> não é utilizado, deve ser deixado em branco<br />
+<b>Nome:</b> nome da conexão tnsnames.ora<br />
+<b>Usuário:</b> nome de usuário da base de dados<br />
+<b>Senha:</b> senha da base de dados<br />
+<b>Prefixo das tabelas:</b> prefixo a ser utilizado no nome das tabelas (opcional)';
+$string['databasesettingssub_odbc_mssql'] = '<b>Tipo:</b> Servidor SQL (em ODBC) <b><font color=\"red\">Experimental! (não use em produção)</font></b><br/>
+<b>Host:</b> nome do DSN no painel de controle do ODBC<br/>
+<b>Nome:</b> nome da base de dados, ex. moodle<br />
+<b>Usuário:</b> nome de usuário da base de dados<br />
+<b>Senha:</b> senha da base de dados<br />
+<b>Prefixo das tabelas:</b> prefixo a ser utilizado no nome das tabelas (obrigatório)';
+$string['databasesettingssub_postgres7'] = '<b>Tipo:</b> PostgreSQL <br />
+<b>Host:</b> ex. localhost ou db.isp.com<br />
+<b>Nome:</b> nome da base de dados, ex. moodle<br />
+<b>Usuário:</b> nome de usuário da base de dados<br />
+<b>Senha:</b> senha da base de dados<br />
+<b>Prefixo das tabelas:</b> prefixo a ser utilizado no nome das tabelas (obrigatório)';
+$string['databasesettingswillbecreated'] = '<b>Nota:</b> O instalador tentará criar o banco de dados automaticamente se não existir.';
 $string['dataroot'] = 'Diretório Data';
 $string['datarooterror'] = 'O \'Diretório Data\' indicado não foi encontrado e não foi possível criar um novo diretório. Corrija a indicação do percurso ou crie o diretório manualmente.';
+$string['datarootpublicerror'] = 'O diretório de dados que você indicou é acessível no web, è melhor escolher um outro diretório.';
 $string['dbconnectionerror'] = 'Não foi possível fazer a conexão com a base de dados indicada. Controle as configurações da base de dados.';
 $string['dbcreationerror'] = 'Erro de ciação de base de dados. Não foi possível criar o nome da base de dados indicado com os parâmetros fornecidos.';
 $string['dbhost'] = 'Servidor hospedeiro';
 $string['dbprefix'] = 'Prefixo das tabelas';
 $string['dbtype'] = 'Tipo';
 $string['dbwrongencoding'] = 'A base de dados selecionada usa uma codificação que não é recomendável($a). É melhor usar uma codificação Unicode (UTF-8). Você pode saltar este teste clicando \"Saltar teste de codificação da base de dados\", mas é possível que se apresentem problemas no futuro.';
+$string['dbwronghostserver'] = 'Você deve seguir regras de host como explicado acima.';
+$string['dbwrongnlslang'] = 'A variável de ambiente NLS_LANG em seu servidor web deve usar o conjunto de caracteres AL32UTF8. Veja a documentação do PHP sobre como configurar OCI8.';
+$string['dbwrongprefix'] = 'Você deve seguir regras de prefixos de tabela como explicado acima.';
 $string['directorysettingshead'] = 'Confirme os percursos de acesso desta instalação de Moodle';
 $string['directorysettingssub'] = '<b>Endereço Web:</b>
 Especifique o endereço web completo em que Moodle pode ser acessado. Se o acesso é múltiplo, escolha o endereço mais fácil para os alunos. Não inclua uma barra final no endereço.
@@ -69,7 +116,7 @@ Especifique o percurso completo de acesso ao diretório de instalação. Atenç�
 <br />
 <br />
 <b>Diretório de dados:</b>
-Especifique um diretório para que o Moodle possa salvar arquivos carregados no servidor. Este diretório deve ter permissões de leitura e escritura pelo usuário do servidor web (normalmente \'nobody\' ou \'apache\'), mas não deve ter acesso livre via web.';
+Especifique um diretório para que o Moodle possa salvar arquivos carregados no servidor. Este diretório deve ter permissões de leitura e escrita pelo usuário do servidor web (normalmente \'nobody\' ou \'apache\'), mas não deve ter acesso livre via web.';
 $string['dirroot'] = 'Diretório Moodle';
 $string['dirrooterror'] = 'A configuração do percurso de acesso ao Diretório Moodle parece errada - não foi possível encontrar uma instalação de Moodle neste endereço. O valor abaixo foi reconfigurado.';
 $string['download'] = 'Download';
@@ -97,7 +144,7 @@ $string['fileuploadshelp'] = '<p>Parece que o envio de documentos a este servido
 $string['gdversion'] = 'Versão do gd';
 $string['gdversionerror'] = 'A library GD';
 $string['gdversionhelp'] = '<p>Parece que o seu servidor não tem o GD instalado.</p>
-<p>GD é uma library de PHP necessária à elaboração de imagens como os fotos do perfil do usuário e os gráficos de estatísticas. O Moodle funciona sem o GD mas a elaboração de imagens não será possível.</p>
+<p>GD é uma biblioteca de PHP necessária à elaboração de imagens como as fotos do perfil do usuário e os gráficos de estatísticas. O Moodle funciona sem o GD mas a elaboração de imagens não será possível.</p>
 <p>Para adicionar o GD ao PHP em Unix, compile o PHP usando o parâmetro --with-gd .</p>
 <p>Em Windows edite php.ini and cancele o comentário à linha que se refere a php_gd2.dll.</p>';
 $string['globalsquotes'] = 'Tratamento de Globais sem Segurança';
@@ -111,7 +158,7 @@ $string['globalsquoteshelp'] = '<p>Não é aconselhável habilitar Register Glob
 <p>Se você não tem acesso ao seu php.ini, adicione a seguinte linha de código no arquivo .htaccess do diretório principal do seu Moodle:
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
-</p> ';
+</p>';
 $string['help'] = 'Ajuda';
 $string['iconvrecommended'] = 'Instalar ICONV library é altamente recomendável para aumentar a performance do site, especialmente quando o site suporta o uso de idiomas não-latinos';
 $string['info'] = 'Informação';
@@ -124,11 +171,11 @@ $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Isto deveria estar desativado';
 $string['magicquotesruntimehelp'] = '<p> A runtime Magic Quotes  deve ser desativada para que Moodle funcione corretamente.</p>
 
-<p>Normalmente esta runtime já é desativada ... controle o parâmetro <b>magic_quotes_runtime</b> no seu arquivo php.ini .</p>
+<p>Normalmente esta runtime já é desativada... controle o parâmetro <b>magic_quotes_runtime</b> no seu arquivo php.ini .</p>
 
 <p>Se você não tem acesso ao arquivo php.ini , adicione a seguinte linha no código de um arquivo chamado .htaccess no diretório Moodle:
 <blockquote>php_value magic_quotes_runtime Off</blockquote>
-</p> ';
+</p>';
 $string['mbstringrecommended'] = 'A instalação da MBSTRING library é altamente recomendável para melhorar a performanse do site, especialmente se o seu site suporta idiomas não-latinos.';
 $string['memorylimit'] = 'Limite de Memória';
 $string['memorylimiterror'] = 'A configuração do limite da memória do PHP está muito baixa ... isto pode causar problemas no futuro.';
@@ -144,24 +191,37 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózin
 <li>Em alguns servidores é possível fazer esta mudança criando um arquivo .htaccess no diretório Moodle. O arquivo deve conter a seguinte expressão:
 <p><blockquote>php_value memory_limit 40M</blockquote></p>
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário cancelar o arquivo .htaccess .</p>
-</li></ol> ';
+</li></ol>';
 $string['missingrequiredfield'] = 'Faltam informações obrigatórias';
 $string['moodledocslink'] = 'Documentação de Moodle relativa a esta página';
+$string['mssql'] = 'Servidor SQL (mssql)';
+$string['mssql_n'] = 'Servidor SQL com suporte a UTF-8 (mssql_n)';
+$string['mssqlextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão MSSQL para que possa se comunicar com o servidor SQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP.';
+$string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Entretanto, se o seu site usa apenas idiomas iso-8859-1 (latin), você pode continuar a usar a sua base de dados atual MySQL 4.1.12 (ou superior).';
 $string['mysql416required'] = 'MySQL 4.1.16 é a versão mínima necessária para ainstalação de Moodle 1.6 em modo que os daados possam ser convertidos para UTF-8.';
-$string['mysqlextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão MySQL e não pode comunicar com a base de dados. Controle o seu php.ini ou faça a recompilação do PHP.';
+$string['mysqlextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão MySQL para que possa se comunicar com MySQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP.';
+$string['mysqli'] = 'MySQL aperfeiçoado (mysqli)';
+$string['mysqliextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão MySQLi para que possa se comunicar com MySQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP. A extensão MySQL não está disponível para PHP 4.';
 $string['name'] = 'Nome';
 $string['next'] = 'Próximo';
+$string['oci8po'] = 'Oracle (oci8po)';
+$string['ociextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão OCI8 para que possa se comunicar com Oracle. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP.';
+$string['odbc_mssql'] = 'Servidor SQL em ODBC (odbc_mssql)';
+$string['odbcextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão ODBC para que possa se comunicar com o servidor SQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP.';
 $string['ok'] = 'OK';
 $string['pass'] = 'OK';
 $string['password'] = 'Senha';
+$string['pgsqlextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão PGSQL para que possa se comunicar com PstgreSQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP.';
 $string['php50restricted'] = 'O PHP 5.0.x apresenta muitos problemas conhecidos, faça o upgrade para a versão 5.1.x ou faça o downgrade para a versão 4.3.x ou 4.4.x';
 $string['phpversion'] = 'Versão do PHP';
 $string['phpversionerror'] = 'A versão do PHP não deve ser inferior a 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterior.</p>
 <p>A sua versão é $a</p>
 <p>Atualize a versão do PHP!</p>';
+$string['postgres7'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterior.</p> <p>A sua versão é $a</p> <p>Atualize a versão do PHP!</p> PostgreSQL (postgres7)';
 $string['previous'] = 'Anterior';
+$string['remotedownloaderror'] = 'O download do componente falhou, por favor verifique as configurações do proxy. A extensão cURL do PHP é altamente recomendada.<br /><br />Você precisar baixar o <a href=\"$a->url\">arquivo</a> manualmente, copiar para \"$a->dest\" e descompactar lá.';
 $string['remotedownloadnotallowed'] = 'Não é permitido baixar componentes no seu servidor (allow_url_fopen está desabilitado).).<br /><br />Você deve baixar o arquivo <a href=\"$a->url\">$a->url</a> manualmente, copiar em \"$a->dest\" no seu servidor e descomprimir o arquivo nesta posição.';
 $string['report'] = 'Relatório';
 $string['restricted'] = 'Restringido';
@@ -173,7 +233,6 @@ $string['safemodehelp'] = '<p>Moodle pode ter alguns problemas quando o safe mod
 $string['sessionautostart'] = 'Início da sessão automático';
 $string['sessionautostarterror'] = 'Isto deve estar ativado';
 $string['sessionautostarthelp'] = '<p>Moodle requer o suporte a sessões e não funciona sem isto.</p>
-
 <p>As sessões podem se habilitadas no arquivo php.ini ... controle o parâmetro session.auto_start .</p>';
 $string['skipdbencodingtest'] = 'Saltar Teste de Codificação da Base de Dados';
 $string['status'] = 'Status';
@@ -185,7 +244,7 @@ $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Se você chegou nesta página, o pacote <strong>$a->packname $a->packversion</strong> foi instalado. Parabéns!';
 $string['welcomep30'] = 'Esta versão do <strong>$a->installername</strong> inclui as aplicações para a criação de um ambiente em que <strong>Moodle</strong> possa operar:';
 $string['welcomep40'] = 'O pacote inclui também o <strong>Moodle $a->moodlerelease ($a->moodleversion)</strong>.';
-$string['welcomep50'] = 'O uso das aplicações incluídas neste pacote é regulamentado pelas respectivas licenças. O instaldor completo <strong>$a->installername</strong> é <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> e é distribuído com uma licença <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
+$string['welcomep50'] = 'O uso das aplicações incluídas neste pacote é regulamentado pelas respectivas licenças. O instalador completo <strong>$a->installername</strong> é <a href=\"http://www.opensource.org/docs/definition_plain.html\">open source</a> e é distribuído com uma licença <a href=\"http://www.gnu.org/copyleft/gpl.html\">GPL</a>.';
 $string['welcomep60'] = 'As seguinte páginas guiam passo a passo a configuração de <strong>Moodle</strong> no seu computador. Você pode usar a configuração padrão ou alterá-las de acordo com as suas necessidades.';
 $string['welcomep70'] = 'Clicar o botão \"Próxima\" abaixo para continuar a configuração de <strong>Moodle</strong>.';
 $string['wrongdestpath'] = 'Percurso do destino errado';
