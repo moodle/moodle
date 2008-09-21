@@ -119,6 +119,14 @@ class virtual_root_file {
         return false;
     }
 
+    /**
+     * Returns parent directory
+     * @return object stored_file
+     */
+    public function get_parent_directory() {
+        return null;
+    }
+
     public function get_contextid() {
         return $this->contextid;
     }

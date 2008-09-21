@@ -199,6 +199,30 @@ class stored_file {
         return true;
     }
 
+    /**
+     * Returns parent directory, creates missing parents if needed
+     * @return object stored_file
+     */
+    public function get_parent_directory() {
+        if ($this->file_record->filepath === '/' and $this->file_record->filename === '.') {
+            //root dir does not have parent
+            return null;
+        }
+
+        if ($this->file_record->filename !== '.') {
+            return $this->fs->create_directory($this->file_record->contextid, $this->file_record->filearea, $this->file_record->itemid, $this->file_record->filepath);
+        }
+
+        $filepath = $this->file_record->filepath;
+        $filepath = trim($filepath, '/');
+        $dirs = explode('/', $filepath);
+        array_pop($dirs);
+        $filepath = implode('/', $dirs);
+        $filepath = ($filepath === '') ? '/' : "/$filepath/";
+
+        return $this->fs->create_directory($this->file_record->contextid, $this->file_record->filearea, $this->file_record->itemid, $filepath);
+    }
+
     public function get_contextid() {
         return $this->file_record->contextid;
     }
