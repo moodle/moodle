@@ -226,6 +226,55 @@ function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $s
 }
 
 /**
+ * Returns description of upload error
+ * @param int $errorcode found in $_FILES['filename.ext']['error']
+ * @return error description string, '' if ok
+ */
+function file_get_upload_error($errorcode) {
+    
+    switch ($errorcode) {
+    case 0: // UPLOAD_ERR_OK - no error
+        $errmessage = '';
+        break;
+        
+    case 1: // UPLOAD_ERR_INI_SIZE
+        $errmessage = get_string('uploadserverlimit');
+        break;
+        
+    case 2: // UPLOAD_ERR_FORM_SIZE
+        $errmessage = get_string('uploadformlimit');
+        break;
+        
+    case 3: // UPLOAD_ERR_PARTIAL
+        $errmessage = get_string('uploadpartialfile');
+        break;
+        
+    case 4: // UPLOAD_ERR_NO_FILE
+        $errmessage = get_string('uploadnofilefound');
+        break;
+        
+    // Note: there is no error with a value of 5
+
+    case 6: // UPLOAD_ERR_NO_TMP_DIR
+        $errmessage = get_string('uploadnotempdir');
+        break;
+
+    case 7: // UPLOAD_ERR_CANT_WRITE
+        $errmessage = get_string('uploadcantwrite');
+        break;
+
+    case 8: // UPLOAD_ERR_EXTENSION
+        $errmessage = get_string('uploadextension');
+        break;
+
+    default:
+        $errmessage = get_string('uploadproblem');
+    }
+
+    return $errmessage;
+}
+
+/**
  * Finds occurences of a link to "draftfile.php" in text and replaces the
  * address based on passed information. Matching is performed using the given
  * current itemid, contextid and filearea and $CFG->wwwroot. This function

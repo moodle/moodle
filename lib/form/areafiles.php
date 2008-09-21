@@ -7,11 +7,13 @@ class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
     protected $_options    = array('subdirs'=>0, 'maxbytes'=>0);
 
     function MoodleQuickForm_areafiles($elementName=null, $elementLabel=null, $options=null) {
+        global $CFG;
+
         if (!empty($options['subdirs'])) {
             $this->_options['subdirs'] = 1;
         }
         if (!empty($options['maxbytes'])) {
-            $this->_options['maxbytes'] = $options['maxbytes'];
+            $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel);
     }
@@ -37,7 +39,8 @@ class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
     }
 
     function setMaxbytes($maxbytes) {
-        $this->_options['maxbytes'] = $maxbytes;
+        global $CFG;
+        $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $maxbytes);
     }
 
     function getSubdirs() {
@@ -90,6 +93,7 @@ class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
         $id          = $this->_attributes['id'];
         $elname      = $this->_attributes['name'];
         $subdirs     = $this->_options['subdirs'];
+        $maxbytes    = $this->_options['maxbytes'];
         $draftitemid = $this->getValue();
 
         if (empty($draftitemid)) {
@@ -99,7 +103,7 @@ class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
             $draftitemid = $this->getValue();
         }
 
-        $editorurl = "$CFG->wwwroot/files/draftfiles.php?itemid=$draftitemid&amp;subdirs=$subdirs";
+        $editorurl = "$CFG->wwwroot/files/draftfiles.php?itemid=$draftitemid&amp;subdirs=$subdirs&amp;maxbytes=$maxbytes";
 
         $str = $this->_getTabs();
         $str .= '<input type="hidden" name="'.$elname.'" value="'.$draftitemid.'" />';

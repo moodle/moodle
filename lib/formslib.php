@@ -26,7 +26,7 @@ require_once 'HTML/QuickForm.php';
 require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';
 
-require_once $CFG->libdir.'/uploadlib.php'; // TODO: remove
+require_once $CFG->libdir.'/filelib.php';
 
 /**
  * Callback called when PEAR throws an error
@@ -215,42 +215,8 @@ class moodleform {
                 continue;
             }
 
-            if ($file['error'] > 0) {
-                switch ($file['error']) {
-                case 1: // UPLOAD_ERR_INI_SIZE
-                    $errmessage = get_string('uploadserverlimit');
-                    break;
-
-                case 2: // UPLOAD_ERR_FORM_SIZE
-                    $errmessage = get_string('uploadformlimit');
-                    break;
-
-                case 3: // UPLOAD_ERR_PARTIAL
-                    $errmessage = get_string('uploadpartialfile');
-                    break;
-
-                case 4: // UPLOAD_ERR_NO_FILE
-                    $errmessage = get_string('uploadnofilefound');
-                    break;
-
-                // Note: there is no error with a value of 5
-
-                case 6: // UPLOAD_ERR_NO_TMP_DIR
-                    $errmessage = get_string('uploadnotempdir');
-                    break;
-
-                case 7: // UPLOAD_ERR_CANT_WRITE
-                    $errmessage = get_string('uploadcantwrite');
-                    break;
-
-                case 8: // UPLOAD_ERR_EXTENSION
-                    $errmessage = get_string('uploadextension');
-                    break;
-
-                default:
-                    $errmessage = get_string('uploadproblem', $file['name']);
-                }
-                $errors[$elname] = $errmessage;
+            if (!empty($file['error'])) {
+                $errors[$elname] = file_get_upload_error($file['error']);
                 unset($_FILES[$elname]);
                 continue;
             }
