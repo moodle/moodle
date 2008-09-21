@@ -170,4 +170,9 @@ class virtual_root_file {
     public function get_contenthash() {
         return sha1('');
     }
+
+    public function get_pathnamehash() {
+        return sha1($this->get_contextid().$this->get_filearea().$this->get_itemid().$this->get_filepath().$this->get_filename());
+    }
+
 }
