@@ -1,0 +1,3 @@
+Version 1.1.0
+* First changelog entry
+* added de_du
