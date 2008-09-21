@@ -88,11 +88,12 @@ function file_get_new_draftitemid() {
  * @param int $contextid
  * @param string $filearea
  * @param int $itemid
+ * @param bool subdirs allow directory structure
  * @param string $text usually html text with embedded links to draft area
  * @param boolean $forcehttps force https
  * @return string text with relative links starting with @@PLUGINFILE@@
  */
-function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $text=null, $forcehttps=false) {
+function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $subdirs=false, $text=null, $forcehttps=false) {
     global $CFG, $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
@@ -104,6 +105,9 @@ function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $
         $file_record = array('contextid'=>$usercontext->id, 'filearea'=>'user_draft', 'itemid'=>$draftitemid);
         if ($files = $fs->get_area_files($contextid, $filearea, $itemid)) {
             foreach ($files as $file) {
+                if (!$subdirs and $file->get_filepath() !== '/') {
+                    continue;
+                }
                 $fs->create_file_from_storedfile($file_record, $file);
             }
         }
@@ -118,9 +122,9 @@ function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $
     /// relink embedded files - editor can not handle @@PLUGINFILE@@ !
 
     if ($CFG->slasharguments) {
-        $draftbase = "$CFG->wwwroot/draftfile.php/user_draft/$draftitemid/";
+        $draftbase = "$CFG->wwwroot/draftfile.php/$usercontext->id/user_draft/$draftitemid/";
     } else {
-        $draftbase = "$CFG->wwwroot/draftfile.php?file=/user_draft/$draftitemid/";
+        $draftbase = "$CFG->wwwroot/draftfile.php?file=/$usercontext->id/user_draft/$draftitemid/";
     }
 
     if ($forcehttps) {
@@ -138,11 +142,12 @@ function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $
  * @param int $contextid
  * @param string $filearea
  * @param int $itemid
+ * @param bool subdirs allow directory structure
  * @param string $text usually html text with embedded links to draft area
  * @param boolean $forcehttps force https
  * @return string text with relative links starting with @@PLUGINFILE@@
  */
-function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $text=null, $forcehttps=false) {
+function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $subdirs=false, $text=null, $forcehttps=false) {
     global $CFG, $USER;
 
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
@@ -160,6 +165,9 @@ function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $t
         $fs->delete_area_files($contextid, $filearea, $itemid);
         $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
         foreach ($draftfiles as $file) {
+            if (!$subdirs and $file->get_filepath() !== '/') {
+                continue;
+            }
             $fs->create_file_from_storedfile($file_record, $file);
         }
 
@@ -167,6 +175,9 @@ function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $t
         // we have to merge old and new files - we want to keep file ids for files that were not changed
         $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
         foreach ($draftfiles as $file) {
+            if (!$subdirs and $file->get_filepath() !== '/') {
+                continue;
+            }
             $newhash = sha1($contextid.$filearea.$itemid.$file->get_filepath().$file->get_filename());
             if (isset($oldfiles[$newhash])) {
                 $oldfile = $oldfiles[$newhash];
@@ -200,9 +211,9 @@ function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $t
     /// relink embedded files if text submitted - no absolute links allowed in database!
 
     if ($CFG->slasharguments) {
-        $draftbase = "$CFG->wwwroot/draftfile.php/user_draft/$draftitemid/";
+        $draftbase = "$CFG->wwwroot/draftfile.php/$usercontext->id/user_draft/$draftitemid/";
     } else {
-        $draftbase = "$CFG->wwwroot/draftfile.php?file=/user_draft/$draftitemid/";
+        $draftbase = "$CFG->wwwroot/draftfile.php?file=/$usercontext->id/user_draft/$draftitemid/";
     }
 
     if ($forcehttps) {

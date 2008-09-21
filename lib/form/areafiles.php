@@ -4,10 +4,12 @@ require_once('HTML/QuickForm/element.php');
 
 class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
     protected $_helpbutton = '';
-    protected $_options    = null;
+    protected $_options    = array('subdirs'=>0);
 
-    function MoodleQuickForm_files($elementName=null, $elementLabel=null, $options=null) {
-        $this->_options = $options;
+    function MoodleQuickForm_areafiles($elementName=null, $elementLabel=null, $options=null) {
+        if (!empty($options['subdirs'])) {
+            $this->_options['subdirs'] = 1;
+        }
         parent::HTML_QuickForm_element($elementName, $elementLabel);
     }
 
@@ -66,9 +68,9 @@ class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
             return $this->getFrozenHtml();
         }
 
-        $id     = $this->_attributes['id'];
-        $elname = $this->_attributes['name'];
-
+        $id          = $this->_attributes['id'];
+        $elname      = $this->_attributes['name'];
+        $subdirs     = $this->_options['subdirs'];
         $draftitemid = $this->getValue();
 
         if (empty($draftitemid)) {
@@ -78,7 +80,7 @@ class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
             $draftitemid = $this->getValue();
         }
 
-        $editorurl = "$CFG->wwwroot/files/draftfiles.php?itemid=$draftitemid";
+        $editorurl = "$CFG->wwwroot/files/draftfiles.php?itemid=$draftitemid&amp;subdirs=$subdirs";
 
         $str = $this->_getTabs();
         $str .= '<input type="hidden" name="'.$elname.'" value="'.$draftitemid.'" />';
