@@ -3,8 +3,6 @@
     require('../config.php');
     require_once($CFG->libdir.'/filelib.php');
 
-    $contextid  = required_param('contextid', PARAM_INT);
-    $filearea   = required_param('filearea', PARAM_ALPHAEXT);
     $itemid     = required_param('itemid', PARAM_INT);
 
     $filepath   = optional_param('filepath', '/', PARAM_PATH);
@@ -13,14 +11,17 @@
     $newdirname = optional_param('newdirname', '', PARAM_FILE);
     $delete     = optional_param('delete', 0, PARAM_BOOL);
 
-    if (!$context = get_context_instance_by_id($contextid)) {
-        print_error('invalidcontext');
-    }
-
     require_login();
     if (isguestuser()) {
         print_error('noguest');
     }
+
+    if (!$context = get_context_instance(CONTEXT_USER, $USER->id)) {
+        print_error('invalidcontext');
+    }
+
+    $contextid = $context->id;
+    $filearea  = 'user_draft';
 
     $browser = get_file_browser();
 
@@ -47,7 +48,7 @@
         if ($newdir_info = $file_info->create_directory($newdirname, $USER->id)) {
             $params = $newdir_info->get_params_rawencoded();
             $params = implode('&amp;', $params);
-            redirect("areafiles.php?$params");
+            redirect("draftfiles.php?$params");
         } else {
             $error = "Could not create new dir"; // TODO: localise
         }
@@ -61,7 +62,7 @@
                 if ($newfile = $file_info->create_file_from_pathname($newfilename, $_FILES['newfile']['tmp_name'], $USER->id)) {
                     $params = $file_info->get_params_rawencoded();
                     $params = implode('&amp;', $params);
-                    redirect("areafiles.php?$params");
+                    redirect("draftfiles.php?$params");
 
                 } else {
                     $error = "Could not create upload file"; // TODO: localise
@@ -83,7 +84,7 @@
             $optionsyes['delete'] = 1;
             $optionsyes['sesskey'] = sesskey();
 
-            notice_yesno (get_string('deletecheckfiles'), 'areafiles.php', 'areafiles.php', $optionsyes, $optionsno, 'post', 'get');
+            notice_yesno (get_string('deletecheckfiles'), 'draftfiles.php', 'draftfiles.php', $optionsyes, $optionsno, 'post', 'get');
             print_footer('empty');
             die;
         }
@@ -94,7 +95,7 @@
             }
             $params = $parent_info->get_params_rawencoded();
             $params = implode('&amp;', $params);
-            redirect("areafiles.php?$params", $error);
+            redirect("draftfiles.php?$params", $error);
         }
     }
 
@@ -110,7 +111,7 @@
 
     if ($file_info and $file_info->is_directory() and $file_info->is_writable()) {
 
-        echo '<form enctype="multipart/form-data" method="post" action="areafiles.php"><div>';
+        echo '<form enctype="multipart/form-data" method="post" action="draftfiles.php"><div>';
         echo '<input type="hidden" name="contextid" value="'.$contextid.'" />';
         echo '<input type="hidden" name="filearea" value="'.$filearea.'" />';
         echo '<input type="hidden" name="itemid" value="'.$itemid.'" />';
@@ -121,7 +122,7 @@
         echo '<input type="submit" value="'.get_string('uploadafile').'" />';
         echo '</div></form>';
 
-        echo '<form action="areafiles.php" method="post"><div>';
+        echo '<form action="draftfiles.php" method="post"><div>';
         echo '<input type="hidden" name="contextid" value="'.$contextid.'" />';
         echo '<input type="hidden" name="filearea" value="'.$filearea.'" />';
         echo '<input type="hidden" name="itemid" value="'.$itemid.'" />';
@@ -163,7 +164,7 @@ function displaydir($file_info) {
         $params = implode('&amp;', $params);
 
         echo '<div class="folder">';
-        echo '<a href="areafiles.php?'.$params.'"><img src="'.$CFG->pixpath.'/f/parent.gif" class="icon" alt="" />&nbsp;'.get_string('parentfolder').'</a>';
+        echo '<a href="draftfiles.php?'.$params.'"><img src="'.$CFG->pixpath.'/f/parent.gif" class="icon" alt="" />&nbsp;'.get_string('parentfolder').'</a>';
         echo '</div>';
     }
 
@@ -181,9 +182,9 @@ function displaydir($file_info) {
             if ($child_info->is_directory()) {
 
                 echo '<div class="folder">';
-                echo "<a href=\"areafiles.php?$params\"><img src=\"$CFG->pixpath/f/folder.gif\" class=\"icon\" alt=\"$strfolder\" />&nbsp;".s($filename)."</a>";
+                echo "<a href=\"draftfiles.php?$params\"><img src=\"$CFG->pixpath/f/folder.gif\" class=\"icon\" alt=\"$strfolder\" />&nbsp;".s($filename)."</a>";
                 if ($parentwritable) {
-                    echo "<a href=\"areafiles.php?$params&amp;sesskey=".sesskey()."&amp;delete=1\"><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a>";
+                    echo "<a href=\"draftfiles.php?$params&amp;sesskey=".sesskey()."&amp;delete=1\"><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a>";
                 }
                 echo '</div>';
 
@@ -198,7 +199,7 @@ function displaydir($file_info) {
                          480, 640, get_string('viewfileinpopup'), null, true);
                 }
                 if ($parentwritable) {
-                    echo "<a href=\"areafiles.php?$params&amp;sesskey=".sesskey()."&amp;delete=1\"><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a>";;
+                    echo "<a href=\"draftfiles.php?$params&amp;sesskey=".sesskey()."&amp;delete=1\"><img src=\"$CFG->pixpath/t/delete.gif\" class=\"iconsmall\" alt=\"$strdelete\" /></a>";;
                 }
                 echo '</div>';
             }

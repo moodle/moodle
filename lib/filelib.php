@@ -60,12 +60,13 @@ function get_file_url($path, $options=null, $type='coursefile') {
 
 /**
  * Returns empty user upload draft area information
- * @return array with area info 
+ * @return int draftareaid
  */
-function get_new_draftarea() {
+function file_get_new_draftitemid() {
     global $DB, $USER;
 
     if (isguestuser() or !isloggedin()) {
+        // guests and not-logged-in users can not be allowed to upload anything!
         print_error('noguest');
     }
 
@@ -78,39 +79,43 @@ function get_new_draftarea() {
         $draftitemid = rand(1, 999999999);
     }
 
-    return array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$draftitemid);
+    return $draftitemid;
 }
 
 /**
- * Converts absolute links in text and moves draft files.
- * @param int $draftitemid
+ * Creates new draft area if not exists yet and copies files there
+ * @param int &$draftitemid
  * @param int $contextid
  * @param string $filearea
  * @param int $itemid
  * @param string $text usually html text with embedded links to draft area
- * @param boolean $https force https
+ * @param boolean $forcehttps force https
  * @return string text with relative links starting with @@PLUGINFILE@@
  */
-function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $text=null, $https=false) {
+function file_prepare_draftarea(&$draftitemid, $contextid, $filearea, $itemid, $text=null, $forcehttps=false) {
     global $CFG, $USER;
 
-    /// move draft files first
     $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
-
     $fs = get_file_storage();
-    if ($files = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id', 'false')) {
-        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
-        foreach ($files as $file) {
-            $fs->create_file_from_stored($file_record, $file);
-            $file->delete();
+
+    if (empty($draftitemid)) {
+        // create a new area and copy existing files into
+        $draftitemid = file_get_new_draftitemid();
+        $file_record = array('contextid'=>$usercontext->id, 'filearea'=>'user_draft', 'itemid'=>$draftitemid);
+        if ($files = $fs->get_area_files($contextid, $filearea, $itemid)) {
+            foreach ($files as $file) {
+                $fs->create_file_from_storedfile($file_record, $file);
+            }
         }
+    } else {
+        // nothing to do
     }
 
     if (is_null($text)) {
         return null;
     }
 
-    /// relink embedded files if text submitted - no absolute links allowed!
+    /// relink embedded files - editor can not handle @@PLUGINFILE@@ !
 
     if ($CFG->slasharguments) {
         $draftbase = "$CFG->wwwroot/draftfile.php/user_draft/$draftitemid/";
@@ -118,7 +123,89 @@ function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $t
         $draftbase = "$CFG->wwwroot/draftfile.php?file=/user_draft/$draftitemid/";
     }
 
-    if ($https) {
+    if ($forcehttps) {
+        $draftbase = str_replace('http://', 'https://', $draftbase);
+    }
+
+    $text = str_replace('@@PLUGINFILE@@/', $draftbase);
+
+    return $text;
+}
+
+/**
+ * Converts absolute links in text and merges draft files to target area.
+ * @param int $draftitemid
+ * @param int $contextid
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $text usually html text with embedded links to draft area
+ * @param boolean $forcehttps force https
+ * @return string text with relative links starting with @@PLUGINFILE@@
+ */
+function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $text=null, $forcehttps=false) {
+    global $CFG, $USER;
+
+    $usercontext = get_context_instance(CONTEXT_USER, $USER->id);
+    $fs = get_file_storage();
+
+    $draftfiles = $fs->get_area_files($usercontext->id, 'user_draft', $draftitemid, 'id');
+    $oldfiles   = $fs->get_area_files($contextid, $filearea, $itemid, 'id');
+
+    if (count($draftfiles) < 2) {
+        // means there are no files - one file means root dir only ;-)
+        $fs->delete_area_files($contextid, $filearea, $itemid);
+
+    } else if (count($oldfiles) < 2) {
+        // there were no files before - one file means root dir only ;-)
+        $fs->delete_area_files($contextid, $filearea, $itemid);
+        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
+        foreach ($draftfiles as $file) {
+            $fs->create_file_from_storedfile($file_record, $file);
+        }
+
+    } else {
+        // we have to merge old and new files - we want to keep file ids for files that were not changed
+        $file_record = array('contextid'=>$contextid, 'filearea'=>$filearea, 'itemid'=>$itemid);
+        foreach ($draftfiles as $file) {
+            $newhash = sha1($contextid.$filearea.$itemid.$file->get_filepath().$file->get_filename());
+            if (isset($oldfiles[$newhash])) {
+                $oldfile = $oldfiles[$newhash];
+                unset($oldfiles[$newhash]); // do not delete afterwards
+
+                if (!$file->is_directory()) {
+                    if ($file->get_contenthash() === $oldfile->get_contenthash()) {
+                        // file was not changed at all
+                        continue;
+                    } else {
+                        // file changed, delete the original
+                        $oldfile->delete();
+                    }
+                }
+            }
+            $fs->create_file_from_storedfile($file_record, $file);
+        }
+        // cleanup deleted files and dirs
+        foreach ($oldfiles as $file) {
+            $file->delete();
+        }
+    }
+
+    // purge the draft area
+    $fs->delete_area_files($usercontext->id, 'user_draft', $draftitemid);
+
+    if (is_null($text)) {
+        return null;
+    }
+
+    /// relink embedded files if text submitted - no absolute links allowed in database!
+
+    if ($CFG->slasharguments) {
+        $draftbase = "$CFG->wwwroot/draftfile.php/user_draft/$draftitemid/";
+    } else {
+        $draftbase = "$CFG->wwwroot/draftfile.php?file=/user_draft/$draftitemid/";
+    }
+
+    if ($forcehttps) {
         $draftbase = str_replace('http://', 'https://', $draftbase);
     }
 
@@ -128,10 +215,10 @@ function file_convert_draftarea($draftitemid, $contextid, $filearea, $itemid, $t
 }
 
 /**
- * Finds occurences of a link to "draftfile.php" in text and replaces the 
- * address based on passed information. Matching is performed using the given 
- * current itemid, contextid and filearea and $CFG->wwwroot. This function 
- * replaces all the urls for one file. If more than one files were sent, it 
+ * Finds occurences of a link to "draftfile.php" in text and replaces the
+ * address based on passed information. Matching is performed using the given
+ * current itemid, contextid and filearea and $CFG->wwwroot. This function
+ * replaces all the urls for one file. If more than one files were sent, it
  * must be called once for each file.
  *
  * @uses $CFG
@@ -198,7 +285,7 @@ function file_rewrite_urls($text, $contextid, $filepath, $filearea, $itemid, $cu
                 $text = str_replace('"'. $currenturl .'"', '"'. $newurl .'"', $text);
             }
         } // else file not found, wrong file, or string is just not a file so we leave it alone.
-        
+
     }
     return $text;
 }
@@ -1887,7 +1974,7 @@ class curl_cache {
         }
         if (empty($CFG->repository_cache_expire)) {
             $CFG->repository_cache_expire = 120;
-        } 
+        }
     }
     public function get($param){
         global $CFG, $USER;
