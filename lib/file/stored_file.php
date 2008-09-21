@@ -250,4 +250,8 @@ class stored_file {
     public function get_contenthash() {
         return $this->file_record->contenthash;
     }
+
+    public function get_pathnamehash() {
+        return $this->file_record->pathnamehash;
+    }
 }
