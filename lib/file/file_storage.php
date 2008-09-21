@@ -136,7 +136,7 @@ class file_storage {
      * @param int $itemid (all files if not specified)
      * @param string $sort
      * @param bool $includedirs
-     * @return array of stored_files
+     * @return array of stored_files indexed by pathanmehash
      */
     public function get_area_files($contextid, $filearea, $itemid=false, $sort="itemid, filepath, filename", $includedirs=true) {
         global $DB;
@@ -152,7 +152,7 @@ class file_storage {
             if (!$includedirs and $file_record->filename === '.') {
                 continue;
             }
-            $result[] = new stored_file($this, $file_record);
+            $result[$file_record->pathnamehash] = new stored_file($this, $file_record);
         }
         return $result;
     }
@@ -166,7 +166,7 @@ class file_storage {
      * @param bool $recursive include all subdirectories
      * @param bool $includedirs include files and directories
      * @param string $sort
-     * @return array of stored_files
+     * @return array of stored_files indexed by pathanmehash
      */
     public function get_directory_files($contextid, $filearea, $itemid, $filepath, $recursive=false, $includedirs=true, $sort="filepath, filename") {
         global $DB;
@@ -194,9 +194,9 @@ class file_storage {
             $file_records = $DB->get_records_sql($sql, $params);
             foreach ($file_records as $file_record) {
                 if ($file_record->filename == '.') {
-                    $dirs[] = new stored_file($this, $file_record);
+                    $dirs[$file_record->pathnamehash] = new stored_file($this, $file_record);
                 } else {
-                    $files[] = new stored_file($this, $file_record);
+                    $files[$file_record->pathnamehash] = new stored_file($this, $file_record);
                 }
             }
             $result = array_merge($dirs, $files);
@@ -221,7 +221,7 @@ class file_storage {
                     if (substr_count($file_record->filepath, '/') !== $reqlevel) {
                         continue;
                     }
-                    $result[] = new stored_file($this, $file_record);
+                    $result[$file_record->pathnamehash] = new stored_file($this, $file_record);
                 }
             }
 
@@ -233,7 +233,7 @@ class file_storage {
 
             $file_records = $DB->get_records_sql($sql, $params);
             foreach ($file_records as $file_record) {
-                $result[] = new stored_file($this, $file_record);
+                $result[$file_record->pathnamehash] = new stored_file($this, $file_record);
             }
         }
 
@@ -414,6 +414,18 @@ class file_storage {
 
         $newrecord->pathnamehash = $this->get_pathname_hash($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->filename);
 
+        if ($newrecord->filename === '.') {
+            // special case - only this function supports directories ;-)
+            $directory = $this->create_directory($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
+            // update the existing directory with the new data
+            $newrecord->id = $directory->get_id();
+            if (!$DB->update_record('files', $newrecord)) {
+                throw new stored_file_creation_exception($newrecord->contextid, $newrecord->filearea, $newrecord->itemid,
+                                                         $newrecord->filepath, $newrecord->filename);
+            }
+            return new stored_file($this, $newrecord);
+        }
+
         try {
             $newrecord->id = $DB->insert_record('files', $newrecord);
         } catch (database_exception $e) {
@@ -422,7 +434,7 @@ class file_storage {
 
         if (!$newrecord->id) {
             throw new stored_file_creation_exception($newrecord->contextid, $newrecord->filearea, $newrecord->itemid,
-                                                    $newrecord->filepath, $newrecord->filename);
+                                                     $newrecord->filepath, $newrecord->filename);
         }
 
         $this->create_directory($newrecord->contextid, $newrecord->filearea, $newrecord->itemid, $newrecord->filepath, $newrecord->userid);
