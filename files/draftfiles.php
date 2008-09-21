@@ -60,7 +60,6 @@
         } else {
             $file = $_FILES['newfile'];
             $newfilename = clean_param($file['name'], PARAM_FILE);
-            // TODO: some better error handling or use some upload manager
             if (is_uploaded_file($_FILES['newfile']['tmp_name'])) {
                 if ($existingfile = $fs->get_file($contextid, $filearea, $itemid, $filepath, $newfilename)) {
                     $existingfile->delete();
