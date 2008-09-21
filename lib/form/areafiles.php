@@ -4,11 +4,14 @@ require_once('HTML/QuickForm/element.php');
 
 class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
     protected $_helpbutton = '';
-    protected $_options    = array('subdirs'=>0);
+    protected $_options    = array('subdirs'=>0, 'maxbytes'=>0);
 
     function MoodleQuickForm_areafiles($elementName=null, $elementLabel=null, $options=null) {
         if (!empty($options['subdirs'])) {
             $this->_options['subdirs'] = 1;
+        }
+        if (!empty($options['maxbytes'])) {
+            $this->_options['maxbytes'] = $options['maxbytes'];
         }
         parent::HTML_QuickForm_element($elementName, $elementLabel);
     }
@@ -27,6 +30,22 @@ class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
 
     function getValue() {
         return $this->getAttribute('value');
+    }
+
+    function getMaxbytes() {
+        return $this->_options['maxbytes'];
+    }
+
+    function setMaxbytes($maxbytes) {
+        $this->_options['maxbytes'] = $maxbytes;
+    }
+
+    function getSubdirs() {
+        return $this->_options['subdirs'];
+    }
+
+    function setSubdirs($allow) {
+        $this->_options['subdirs'] = $allow;
     }
 
     function setHelpButton($_helpbuttonargs, $function='_helpbutton') {
