@@ -12,7 +12,6 @@
     disable_debugging();
 
     $relativepath = get_file_argument('draftfile.php');
-    $forcedownload = optional_param('forcedownload', 0, PARAM_BOOL);
 
     // relative path must start with '/'
     if (!$relativepath) {
@@ -64,4 +63,4 @@
     // finally send the file
     // ========================================
     session_write_close(); // unlock session during fileserving
-    send_stored_file($file, 0, false, $forcedownload);
+    send_stored_file($file, 0, false, true); // force download - security first!
