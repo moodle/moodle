@@ -1,2 +1,0 @@
-Put your own report template in this directory.
-Every file here will be priorized over the same file in the default_template-directory.
