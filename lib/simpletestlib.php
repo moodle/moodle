@@ -153,6 +153,7 @@ class MoodleUnitTestCase extends UnitTestCase {
     public $tables = array();
     public $pkfile;
     public $cfg;
+    public $DB;
 
     /**
      * In the constructor, record the max(id) of each test table into a csv file.
@@ -163,12 +164,12 @@ class MoodleUnitTestCase extends UnitTestCase {
      */
     public function __construct($label = false) {
         parent::UnitTestCase($label);
-
         // MDL-16483 Get PKs and save data to text file
         global $DB, $CFG;
         $this->pkfile = $CFG->dataroot.'/testtablespks.csv';
         $this->cfg = $CFG;
-        $this->setup();
+
+        UnitTestDB::instantiate();
 
         $tables = $DB->get_tables();
 
@@ -244,6 +245,8 @@ class MoodleUnitTestCase extends UnitTestCase {
     public function setUp() {
         parent::setUp();
         UnitTestDB::instantiate();
+        global $DB;
+        $this->DB =& $DB;
     }
 
     /**
@@ -251,6 +254,9 @@ class MoodleUnitTestCase extends UnitTestCase {
      */
     public function tearDown() {
         global $DB;
+        if (empty($DB)) {
+            $DB = $this->DB;
+        }
         $DB->cleanup();
         parent::tearDown();
     }
@@ -282,10 +288,6 @@ class UnitTestDB {
 
     public $table_data = array();
 
-    public function __construct() {
-
-    }
-
     /**
      * Call this statically to connect to the DB using the unittest prefix, instantiate
      * the unit test db, store it as a member variable, instantiate $this and use it as the new global $DB.
@@ -298,8 +300,11 @@ class UnitTestDB {
             print_error("prefixnotset", 'simpletest');
         }
 
-        UnitTestDB::$DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
-        UnitTestDB::$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittestprefix);
+        if (empty(UnitTestDB::$DB)) {
+            UnitTestDB::$DB = moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
+            UnitTestDB::$DB->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->dbpersist, $CFG->unittestprefix);
+        }
+
         $manager = UnitTestDB::$DB->get_manager();
 
         if (!$manager->table_exists('user')) {
@@ -352,12 +357,12 @@ class UnitTestDB {
     public function update_record($table, $dataobject, $bulk=false) {
         global $DB;
         if (empty($this->table_data[$table]) || !in_array($dataobject->id, $this->table_data[$table])) {
-            return UnitTestDB::$DB->update_record($table, $dataobject, $bulk);
-            // $a = new stdClass();
-            // $a->id = $dataobject->id;
-            // $a->table = $table;
-            // debug_print_backtrace();
-            // throw new moodle_exception('updatingnoninsertedrecord', 'simpletest', '', $a);
+            // return UnitTestDB::$DB->update_record($table, $dataobject, $bulk);
+            $a = new stdClass();
+            $a->id = $dataobject->id;
+            $a->table = $table;
+            debug_print_backtrace();
+            throw new moodle_exception('updatingnoninsertedrecord', 'simpletest', '', $a);
         } else {
             return UnitTestDB::$DB->update_record($table, $dataobject, $bulk);
         }
@@ -368,7 +373,7 @@ class UnitTestDB {
      * throw an exception and cancel delete.
      * @throws moodle_exception If trying to delete a record not inserted by unit tests.
      */
-    public function delete_records($table, array $conditions=null) {
+    public function delete_records($table, array $conditions=array()) {
         global $DB;
         $a = new stdClass();
         $a->table = $table;
@@ -385,7 +390,7 @@ class UnitTestDB {
         }
 
         foreach ($ids_to_delete as $id) {
-            if (!in_array($id, $this->table_data[$table])) {
+            if (empty($this->table_data[$table]) || !in_array($id, $this->table_data[$table])) {
                 $proceed_with_delete = false;
                 $a->id = $id;
                 break;

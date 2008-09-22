@@ -4066,7 +4066,7 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null, $
     if (!isset($forum->maxattachments)) {  // TODO - delete this once we add a field to the forum table
         $forum->maxattachments = 3;
     }
-    
+
     for ($i=0; $i<$forum->maxattachments; $i++) {
         $elementname = 'attachment'.$i;
         if (empty($values->$elementname)) {         // Nothing defined
@@ -4089,7 +4089,7 @@ function forum_add_attachment($post, $forum, $cm, $mform=null, &$message=null, $
  */
 function forum_relink_inline_attachments($post, $forum, $cm){
     global $DB;
-    
+
     $context = get_context_instance(CONTEXT_MODULE, $cm->id);
     $authorcontext = get_context_instance(CONTEXT_USER, $post->userid);
 
@@ -4120,7 +4120,7 @@ function forum_add_new_post($post, $mform, &$message) {
         return false;
     }
 
-    forum_relink_inline_attachments($post, $forum, $cm);   
+    forum_relink_inline_attachments($post, $forum, $cm);
     forum_add_attachment($post, $forum, $cm, $mform, $message, false);
 
     // Update discussion modified date
@@ -4226,8 +4226,10 @@ function forum_add_discussion($discussion, $mform=null, &$message=null) {
         return 0;
     }
 
-    forum_relink_inline_attachments($post, $forum, $cm);
-    forum_add_attachment($post, $forum, $cm, $mform, $message, false);
+    if (!empty($cm->id)) {
+        forum_relink_inline_attachments($post, $forum, $cm);
+        forum_add_attachment($post, $forum, $cm, $mform, $message, false);
+    }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
@@ -4570,7 +4572,7 @@ function forum_get_tracking_link($forum, $messages=array(), $fakelink=true) {
     } else {
         $linktitle = $strtrackforum;
         $linktext = $strtrackforum;
-    } 
+    }
 
     $link = '';
     if ($fakelink) {

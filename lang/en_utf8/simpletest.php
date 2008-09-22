@@ -31,6 +31,7 @@ $string['showsearch'] = 'Show the search for test files.';
 $string['stacktrace'] = 'Stack trace:';
 $string['summary'] = '{$a->run}/{$a->total} test cases complete: <strong>{$a->passes}</strong> passes, <strong>{$a->fails}</strong> fails and <strong>{$a->exceptions}</strong> exceptions.';
 $string['tablesnotsetup'] = 'Unit test tables are not yet built. Do you want to build them now?.';
+$string['testtablesok'] = 'The test DB tables were successfully installed.';
 $string['testtablescsvfileunwritable'] = 'The test tables CSV file is not writable ($a->filename)';
 $string['thorough'] = 'Run a thorough test (may be slow).';
 $string['updatingnoninsertedrecord'] = 'Trying to update a record that was not inserted by these unit tests (id $a->id in table $a->table).';
