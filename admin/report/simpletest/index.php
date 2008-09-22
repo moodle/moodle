@@ -30,6 +30,7 @@ $rundbtests = optional_param('rundbtests', false, PARAM_BOOL);
 $thorough = optional_param('thorough', false, PARAM_BOOL);
 $addconfigprefix = optional_param('addconfigprefix', false, PARAM_RAW);
 $setuptesttables = optional_param('setuptesttables', false, PARAM_BOOL);
+$upgradetesttables = optional_param('upgradetesttables', false, PARAM_BOOL);
 $continuesetuptesttables = optional_param('continuesetuptesttables', false, PARAM_BOOL);
 $droptesttables = optional_param('droptesttables', false, PARAM_BOOL);
 $testtablesok = optional_param('testtablesok', false, PARAM_BOOL);
@@ -93,6 +94,8 @@ if (empty($CFG->unittestprefix)) {
 }
 
 // Temporarily override $DB and $CFG for a fresh install on the unit test prefix
+$real_version = $CFG->version;
+
 $real_db = clone($DB);
 $real_cfg = clone($CFG);
 $CFG = new stdClass();
@@ -124,17 +127,28 @@ if ($DB->get_manager()->table_exists(new xmldb_table('config')) && $config = $DB
     foreach ($config as $conf) {
         $CFG->{$conf->name} = $conf->value;
     }
+    $testtablesok = true;
 }
 
 $test_tables = $DB->get_tables();
 
-// Build test tables if requested and needed
-if ($setuptesttables || $continuesetuptesttables) {
+// Test DB upgrade
+if (!$upgradetesttables && $real_version != $CFG->version) {
+    notice_yesno(get_string('testtablesneedupgrade', 'simpletest'), $baseurl . '?upgradetesttables=1', $baseurl);
+    $DB->dispose();
+    $DB = $real_db;
+    admin_externalpage_print_footer();
+    exit();
+}
+
+// Build/upgrade test tables if requested and needed
+if ($setuptesttables || $continuesetuptesttables || $upgradetesttables) {
+
     $version = null;
     $release = null;
     include("$CFG->dirroot/version.php");       // defines $version and $release
 
-    if (!$continuesetuptesttables) {
+    if (!$continuesetuptesttables && !$upgradetesttables) {
         // Drop all tables first if they exist
         $manager = $DB->get_manager();
         foreach ($test_tables as $table) {
@@ -153,6 +167,7 @@ if ($droptesttables) {
         $manager->drop_table($xmldbtable);
     }
     $test_tables = $DB->get_tables();
+    $testtablesok = false;
 }
 
 if (empty($test_tables['config'])) {
@@ -163,6 +178,7 @@ if (empty($test_tables['config'])) {
     exit();
 }
 
+$DB->dispose();
 $DB = $real_db;
 $CFG = $real_cfg;
 
@@ -246,6 +262,23 @@ echo '<p>'; print_checkbox('rundbtests', 1, $rundbtests, get_string('rundbtests'
 echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
 echo '</fieldset>';
 echo '</form>';
+
+if ($testtablesok) {
+    echo '<form method="get" action="index.php">';
+    echo '<fieldset class="invisiblefieldset">';
+    echo '<input type="hidden" name="droptesttables" value="1" />';
+    echo '<input type="submit" value="' . get_string('droptesttables', 'simpletest') . '" />';
+    echo '</fieldset>';
+    echo '</form>';
+
+    echo '<form method="get" action="index.php">';
+    echo '<fieldset class="invisiblefieldset">';
+    echo '<input type="hidden" name="setuptesttables" value="1" />';
+    echo '<input type="submit" value="' . get_string('reinstalltesttables', 'simpletest') . '" />';
+    echo '</fieldset>';
+    echo '</form>';
+}
+
 print_box_end();
 
 // Footer.

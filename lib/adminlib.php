@@ -36,17 +36,18 @@ function upgrade_db($version, $release) {
         $unittest = false;
     }
 
-    $confirmupgrade = optional_param('confirmupgrade', $unittest, PARAM_BOOL);
-    $confirmrelease = optional_param('confirmrelease', $unittest, PARAM_BOOL);
-    $confirmplugins = optional_param('confirmplugincheck', $unittest, PARAM_BOOL);
-    $agreelicense   = optional_param('agreelicense', $unittest, PARAM_BOOL);
-    $autopilot      = optional_param('autopilot', $unittest, PARAM_BOOL);
-    $setuptesttables= optional_param('setuptesttables', $unittest, PARAM_BOOL);
-    $continuesetuptesttables= optional_param('continuesetuptesttables', $unittest, PARAM_BOOL);
+    $confirmupgrade          = optional_param('confirmupgrade', $unittest, PARAM_BOOL);
+    $confirmrelease          = optional_param('confirmrelease', $unittest, PARAM_BOOL);
+    $confirmplugins          = optional_param('confirmplugincheck', $unittest, PARAM_BOOL);
+    $agreelicense            = optional_param('agreelicense', $unittest, PARAM_BOOL);
+    $autopilot               = optional_param('autopilot', $unittest, PARAM_BOOL);
+    $setuptesttables         = optional_param('setuptesttables', false, PARAM_BOOL);
+    $continuesetuptesttables = optional_param('continuesetuptesttables', false, PARAM_BOOL);
+    $upgradetesttables       = optional_param('upgradetesttables', false, PARAM_BOOL);
 
     $return_url = "$CFG->wwwroot/$CFG->admin/index.php";
     if ($unittest) {
-        $return_url = "$CFG->wwwroot/$CFG->admin/report/simpletest/index.php?continuesetuptesttables=".$continuesetuptesttables;
+        $return_url = "$CFG->wwwroot/$CFG->admin/report/simpletest/index.php?continuesetuptesttables=$continuesetuptesttables&amp;upgradetesttables=$upgradetesttables";
     }
 
     /// set install/upgrade autocontinue session flag
@@ -175,7 +176,7 @@ function upgrade_db($version, $release) {
         // hack - set up mnet
         require_once $CFG->dirroot.'/mnet/lib.php';
 
-        print_continue('index.php?continuesetuptesttables='.$setuptesttables);
+        print_continue("index.php?continuesetuptesttables=$setuptesttables&amp;upgradetesttables=$upgradetesttables");
         print_footer('none');
 
         die;
@@ -319,7 +320,12 @@ function upgrade_db($version, $release) {
                 if (set_config("version", $version)) {
                     remove_dir($CFG->dataroot . '/cache', true); // flush cache
                     notify($strdatabasesuccess, "green");
-                    print_continue("upgradesettings.php");
+
+                    if ($unittest) {
+                        print_continue("index.php?testtablesok=1");
+                    } else {
+                        print_continue("upgradesettings.php");
+                    }
                     print_footer('none');
                     exit;
                 } else {
@@ -428,7 +434,7 @@ function upgrade_db($version, $release) {
     /// Set up the blank site - to be customized later at the end of install.
         if (! $site = get_site()) {
             build_site_course();
-            redirect('index.php?continuesetuptesttables='.$continuesetuptesttables);
+            redirect("index.php?continuesetuptesttables=$continuesetuptesttables&amp;upgradetesttables=$upgradetesttables");
         }
 
         // initialise default blocks on admin and site page if needed
