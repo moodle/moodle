@@ -1254,7 +1254,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
     if (abs($timezone) > 13) {   /// Server time
         if ($fixday) {
             $datestring = strftime($formatnoday, $date);
-            $daystring  = str_replace(' 0', '', strftime(' %d', $date));
+            $daystring  = str_replace(array(' 0', ' '), '', strftime(' %d', $date));
             $datestring = str_replace('DD', $daystring, $datestring);
         } else {
             $datestring = strftime($format, $date);
