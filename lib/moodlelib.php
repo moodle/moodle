@@ -1263,7 +1263,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         $date += (int)($timezone * 3600);
         if ($fixday) {
             $datestring = gmstrftime($formatnoday, $date);
-            $daystring  = str_replace(' 0', '', gmstrftime(' %d', $date));
+            $daystring  = str_replace(array(' 0', ' '), '', gmstrftime(' %d', $date));
             $datestring = str_replace('DD', $daystring, $datestring);
         } else {
             $datestring = gmstrftime($format, $date);
