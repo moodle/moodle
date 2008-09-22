@@ -1,0 +1,136 @@
+/* Copyright (c) 2006 Yahoo! Inc. All rights reserved. */
+
+/* first or middle sibling, no children */
+.ygtvtn {
+    background: url(img/tn.gif) 0 0 no-repeat;
+    width:17px;
+    height:22px;
+}
+
+/* first or middle sibling, collapsable */
+.ygtvtm {
+    background: url(img/tm.gif) 0 0 no-repeat;
+    width:34px;
+    height:22px; cursor:pointer
+}
+
+/* first or middle sibling, collapsable, hover */
+.ygtvtmh {
+    background: url(img/tmh.gif) 0 0 no-repeat;
+    width:34px;
+    height:22px;
+    cursor:pointer
+}
+
+/* first or middle sibling, expandable */
+.ygtvtp {
+    background: url(img/tp.gif) 0 0 no-repeat;
+    width:34px;
+    height:22px;
+    cursor:pointer
+}
+
+/* first or middle sibling, expandable, hover */
+.ygtvtph {
+    background: url(img/tph.gif) 0 0 no-repeat;
+    width:34px;
+    height:22px;
+    cursor:pointer
+}
+
+/* last sibling, no children */
+.ygtvln {
+    background: url(img/ln.gif) 0 0 no-repeat;
+    width:17px;
+    height:22px;
+}
+
+/* Last sibling, collapsable */
+.ygtvlm {
+    background: url(img/lm.gif) 0 0 no-repeat;
+
+   width:34px;
+   height:22px;
+   cursor:pointer
+}
+
+/* Last sibling, collapsable, hover */
+.ygtvlmh {
+    background: url(img/lmh.gif) 0 0 no-repeat;
+    width:34px;
+    height:22px;
+    cursor:pointer
+}
+
+/* Last sibling, expandable */
+.ygtvlp {
+    background: url(img/lp.gif) 0 0 no-repeat;
+    width:34px;
+    height:22px;
+    cursor:pointer
+}
+
+/* Last sibling, expandable, hover */
+.ygtvlph {
+    background: url(img/lph.gif) 0 0 no-repeat;
+    width:34px;
+    height:22px;
+    cursor:pointer
+}
+
+/* Loading icon */
+.ygtvloading {
+    background: url(img/loading.gif) 0 0 no-repeat;
+    width:16px;
+    height:22px;
+}
+
+/* the style for the empty cells that are used for rendering the depth
+ * of the node */
+.ygtvdepthcell {
+    background: url(img/vline.gif) 0 0 no-repeat;
+    width:17px;
+    height:22px;
+}
+
+.ygtvblankdepthcell {
+    width:17px;
+    height:22px;
+}
+
+/* the style of the div around each node */
+.ygtvitem { }
+
+.ygtvitem table{
+    margin-bottom:0;
+}
+.ygtvitem td {
+    border:none;padding:0;
+}
+
+
+
+/* the style of the div around each node's collection of children */
+.ygtvchildren { }
+* html .ygtvchildren {
+    height:1%;
+}
+
+/* the style of the text label in ygTextNode */
+.ygtvlabel, .ygtvlabel:link, .ygtvlabel:visited, .ygtvlabel:hover {
+ margin-left:2px;
+ text-decoration: none;
+}
+
+#expandcontractdiv {
+    border:1px dotted #dedede;
+    background-color:#EBE4F2;
+    margin:0 0 .5em 0;
+    padding:0.4em;
+}
+
+#weightstree {
+    background: #fff;
+    padding:1em;
+    margin-top:1em;
+}

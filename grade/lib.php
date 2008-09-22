@@ -79,15 +79,15 @@ class graded_users_iterator {
             return false;
         }
 
-        list($gradebookroles_sql, $params) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles));
+        list($gradebookroles_sql, $params) = $DB->get_in_or_equal(explode(',', $CFG->gradebookroles), SQL_PARAMS_NAMED, 'grbr0');
 
         $relatedcontexts = get_related_contexts_string(get_context_instance(CONTEXT_COURSE, $this->course->id));
 
         if ($this->groupid) {
             $groupsql = "INNER JOIN {groups_members} gm ON gm.userid = u.id";
-            $groupwheresql = "AND gm.groupid = ?";
+            $groupwheresql = "AND gm.groupid = :groupid";
             // $params contents: gradebookroles
-            $params[] = $this->groupid;
+            $params['groupid'] = $this->groupid;
         } else {
             $groupsql = "";
             $groupwheresql = "";
@@ -126,7 +126,7 @@ class graded_users_iterator {
 
         if (!empty($this->grade_items)) {
             $itemids = array_keys($this->grade_items);
-            list($itemidsql, $grades_params) = $DB->get_in_or_equal($itemids);
+            list($itemidsql, $grades_params) = $DB->get_in_or_equal($itemids, SQL_PARAMS_NAMED, 'items0');
             $params = array_merge($params, $grades_params);
 
             // $params contents: gradebookroles, groupid (for $groupwheresql) and itemids
@@ -453,6 +453,14 @@ function print_grade_plugin_selector($courseid, $active_type, $active_plugin, $r
             $count++;
         }
 
+        if (has_capability('moodle/grade:manage', $context)) {
+            $url = 'edit/weights/index.php?id='.$courseid;
+            if ($active_type == 'edit' and $active_plugin == 'weights' ) {
+                $active = $url;
+            }
+            $menu[$url] = get_string('weights', 'grades');
+            $count++;
+        }
     }
 
 /// finally print/return the popup form
