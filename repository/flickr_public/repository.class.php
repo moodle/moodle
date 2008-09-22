@@ -83,9 +83,15 @@ class repository_flickr_public extends repository {
             $people = $this->flickr->people_findByEmail($account);
             if (!empty($people)) {
                 $this->flickr_account = $account;
+                set_user_preference('flickr_mail_'.$this->id, $account);
             } else {
                 throw new repository_exception('invalidemail', 'repository_flickr_public');
             }
+        }
+
+        $user_mail = get_user_preferences('flickr_mail_'.$this->id, '');
+        if (empty($this->flickr_account) && !empty($user_mail)) {
+            $this->flickr_account = $user_mail;
         }
     }
 
@@ -112,6 +118,15 @@ class repository_flickr_public extends repository {
             $ret['login'] = array($email_field);
             return $ret;
         }
+    }
+
+    /**
+     *
+     * @return <type>
+     */
+    public function logout() {
+        set_user_preference('flickr_mail_'.$this->id, '');
+        return $this->print_login();
     }
 
     /**
