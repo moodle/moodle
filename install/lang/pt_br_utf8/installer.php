@@ -36,6 +36,10 @@ $string['configfilewritten'] = 'config.php foi criado com sucesso';
 $string['configurationcompletehead'] = 'Configuração completada';
 $string['configurationcompletesub'] = 'Moodle tentou salvar a sua configuração em um arquivo na área principal (root) da sua instalação do Moodle';
 $string['continue'] = 'Continuar';
+$string['ctyperecommended'] = 'Instalar a extensão ctype opcional do PHP para melhorar a performance do site, especialmente se são utilizados idiomas não latinos';
+$string['ctyperequired'] = 'A extensão ctype do PHP ´necessária para melhorar a performance e a compatibilidade com funcionalidades multi-lingua.';
+$string['curlrecommended'] = 'Instalar a biblioteca opcional cURL é altamente recomendável para permitir a ativação de Redes Moodle';
+$string['customcheck'] = 'Outros controles';
 $string['database'] = 'Base de dados';
 $string['databasecreationsettingshead'] = 'Agora você precisa configurar a base de dados que será criada automaticamente pelo instalador com os valores especificados abaixo.';
 $string['databasecreationsettingssub'] = '<b>Tipo:</b> definido como \"mysql\" pelo instalador<br />
@@ -127,8 +131,10 @@ $string['downloadlanguagenotneeded'] = 'Você pode continuar a instalação usan
 $string['downloadlanguagesub'] = 'Você pode indicar um idioma a ser instalado para que o processo continue com o uso deste idioma.<br /><br /> Se não for possível baixar o pacote do idioma, a instalação vai continuar em Inglês. (Depois da instalação é possível acrescentar outros pacotes de idioma)';
 $string['environmenterrortodo'] = 'Você deve resolver os problemas indicados acima antes de instalar esta versão de Moodle.';
 $string['environmenthead'] = 'Verificando o ambiente ...';
-$string['environmentrecommendinstall'] = 'é recomendado como instalado/habilitado';
+$string['environmentrecommendcustomcheck'] = 'Se esse teste falhar, será indício de um possível problema';
+$string['environmentrecommendinstall'] = 'recomendado como instalado/habilitado';
 $string['environmentrecommendversion'] = 'a versão $a->needed é recomendada e você está usando a versão $a->current';
+$string['environmentrequirecustomcheck'] = 'Este teste deve funcionar';
 $string['environmentrequireinstall'] = 'deve ser instalado/habilitado';
 $string['environmentrequireversion'] = 'a versão $a->needed é necessária e você está usando a versão $a->current';
 $string['environmentsub'] = 'Verificando se componentes do seu sistema são compatíveis com os requisitos de sistema';
@@ -159,6 +165,7 @@ $string['globalsquoteshelp'] = '<p>Não é aconselhável habilitar Register Glob
 <blockquote>php_value magic_quotes_gpc On</blockquote>
 <blockquote>php_value register_globals Off</blockquote>
 </p>';
+$string['globalswarning'] = '<p><strong>Aviso de segurança</strong>: para operar propriamente, Moodle requer <br /> que você faça certas mudanças nas configurações atuais do seu PHP.<p/><p>Você <em>deve</em> ajustar<code>register_globals=off</code>.<p>Essa configuração é controlada editando a configuração de <code>php.ini</code>, Apache/IIS <br /> ou <code>.htaccess</code> file.</p>';
 $string['help'] = 'Ajuda';
 $string['iconvrecommended'] = 'Instalar ICONV library é altamente recomendável para aumentar a performance do site, especialmente quando o site suporta o uso de idiomas não-latinos';
 $string['info'] = 'Informação';
@@ -199,7 +206,7 @@ $string['mssql_n'] = 'Servidor SQL com suporte a UTF-8 (mssql_n)';
 $string['mssqlextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão MSSQL para que possa se comunicar com o servidor SQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP.';
 $string['mysql'] = 'MySQL (mysql)';
 $string['mysql416bypassed'] = 'Entretanto, se o seu site usa apenas idiomas iso-8859-1 (latin), você pode continuar a usar a sua base de dados atual MySQL 4.1.12 (ou superior).';
-$string['mysql416required'] = 'MySQL 4.1.16 é a versão mínima necessária para ainstalação de Moodle 1.6 em modo que os daados possam ser convertidos para UTF-8.';
+$string['mysql416required'] = 'MySQL 4.1.16 é a versão mínima necessária para ainstalação de Moodle 1.6 em modo que os dados possam ser convertidos para UTF-8.';
 $string['mysqlextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão MySQL para que possa se comunicar com MySQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP.';
 $string['mysqli'] = 'MySQL aperfeiçoado (mysqli)';
 $string['mysqliextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão MySQLi para que possa se comunicar com MySQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP. A extensão MySQL não está disponível para PHP 4.';
@@ -210,6 +217,7 @@ $string['ociextensionisnotpresentinphp'] = 'O PHP não foi configurado corretame
 $string['odbc_mssql'] = 'Servidor SQL em ODBC (odbc_mssql)';
 $string['odbcextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão ODBC para que possa se comunicar com o servidor SQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP.';
 $string['ok'] = 'OK';
+$string['opensslrecommended'] = 'É altamente recomendável a instalação da biblioteca OpenSSL, que é opcional, isto permite a funcionalidade Moodle em Rede.';
 $string['pass'] = 'OK';
 $string['password'] = 'Senha';
 $string['pgsqlextensionisnotpresentinphp'] = 'O PHP não foi configurado corretamente com a extensão PGSQL para que possa se comunicar com PstgreSQL. Por favor, verifique o seu arquivo php.ini ou faça a recompilação do PHP.';
@@ -221,6 +229,8 @@ $string['phpversionhelp'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterio
 <p>Atualize a versão do PHP!</p>';
 $string['postgres7'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterior.</p> <p>A sua versão é $a</p> <p>Atualize a versão do PHP!</p> PostgreSQL (postgres7)';
 $string['previous'] = 'Anterior';
+$string['qtyperqpwillberemoved'] = 'Durante a migração, o tipo de questão RQP será removido. Como você não estava usando este tipo de questão então não terá problemas.';
+$string['qtyperqpwillberemovedanyway'] = 'Durante a migração, as questões do tipo RQP serão removidas. Você tem algumas questões RQP no seu banco de dados e elas não funcionarão a menos que você reinstale o código de http://moodle.org/mod/data/view.php?d=13&amp;rid=797 antes de continuar a migração.';
 $string['remotedownloaderror'] = 'O download do componente falhou, por favor verifique as configurações do proxy. A extensão cURL do PHP é altamente recomendada.<br /><br />Você precisar baixar o <a href=\"$a->url\">arquivo</a> manualmente, copiar para \"$a->dest\" e descompactar lá.';
 $string['remotedownloadnotallowed'] = 'Não é permitido baixar componentes no seu servidor (allow_url_fopen está desabilitado).).<br /><br />Você deve baixar o arquivo <a href=\"$a->url\">$a->url</a> manualmente, copiar em \"$a->dest\" no seu servidor e descomprimir o arquivo nesta posição.';
 $string['report'] = 'Relatório';
@@ -230,6 +240,7 @@ $string['safemodeerror'] = 'Moodle pode ter problemas se a modalidade segura est
 $string['safemodehelp'] = '<p>Moodle pode ter alguns problemas quando o safe mode está ativado. Provavelmente não será possível criar novos arquivos.</p>
 <p>O safe mode normalmente é ativado apenas por serviços de web hosting públicos paranóicos por segurança, é possível que você tenha que escolher um outro serviço de webhosting para o seu site.</p>
 <p>Você pode continuar a instalação mas provavelmente outros problemas surgirão.</p>';
+$string['serverchecks'] = 'Verificações do servidor';
 $string['sessionautostart'] = 'Início da sessão automático';
 $string['sessionautostarterror'] = 'Isto deve estar ativado';
 $string['sessionautostarthelp'] = '<p>Moodle requer o suporte a sessões e não funciona sem isto.</p>
@@ -239,6 +250,8 @@ $string['status'] = 'Status';
 $string['thischarset'] = 'UTF-8';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Português - Brasil';
+$string['unicoderecommended'] = 'É recomendado que todos os dados sejam armazenados em Unicode (UTF-8). Instalações novas devem ser construídas em banco de dados que tenham o seu conjunto de caracteres padrão em Unicode. Se você está migrando, você deverá executar o processo de migração para o UTF-8. (veja a página do Admin)';
+$string['unicoderequired'] = 'É obrigatório que você guarde todos os seus dados no formato Unicode (UTF-8). Instalações novas devem ser construidas em banco de dados que tenham o seu conjunto de caracteres padrão em Unicode. Se você está migrando, você deverá executar o processo de migração para o UTF-8. (veja a página do Admin)';
 $string['user'] = 'Usuário';
 $string['welcomep10'] = '$a->installername ($a->installerversion)';
 $string['welcomep20'] = 'Se você chegou nesta página, o pacote <strong>$a->packname $a->packversion</strong> foi instalado. Parabéns!';
@@ -252,4 +265,6 @@ $string['wrongsourcebase'] = 'URL do recurso errado';
 $string['wrongzipfilename'] = 'Nome do arquivo ZIP errado';
 $string['wwwroot'] = 'Endereço web';
 $string['wwwrooterror'] = 'Este endereço web não está correto - a instalação do Moodle não foi encontrada.';
+$string['xmlrpcrecommended'] = 'Instalar a extensão opcional xmlrpc é útil para a funcionalidade Moodle Networking.';
+$string['ziprequired'] = 'A extensão Zip do PHP é necessária. Binários infoZIP ou PclZip não são mais utilizados.';
 ?>
