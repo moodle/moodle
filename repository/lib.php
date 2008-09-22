@@ -801,7 +801,6 @@ abstract class repository {
      *   'manage' => (string) link to file manager,
      *   'nologin' => (bool) requires login,
      *   'nosearch' => (bool) no search link,
-     *   'search_result' => (bool) this list is a searching result,
      *   'upload' => array( // upload manager
      *     'name' => (string) label of the form element,
      *     'id' => (string) id of the form element

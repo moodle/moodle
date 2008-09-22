@@ -151,7 +151,6 @@ class repository_flickr_public extends repository {
             $SESSION->$sess_text = $search_text;
         }
         $ret = array();
-        $ret['search_result']  = true;
         return $this->build_list($photos, $page, &$ret);
     }
 

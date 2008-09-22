@@ -142,7 +142,9 @@ EOD;
             break;
         case 'search':
             try {
-                echo json_encode($repo->search($search_text));
+                $search_result = $repo->search($search_text);
+                $search_result['search_result'] = true;
+                echo json_encode($search_result);
             } catch (repository_exception $e) {
                 $err = new stdclass;
                 $err->e = $e->getMessage();
