@@ -210,6 +210,20 @@ this.create_picker = function() {
         var searchbar = new YAHOO.util.Element('search-div-$suffix');
         searchbar.get('element').innerHTML = '<input id="search-input-$suffix" /><button id="search-btn-$suffix">$strsearch</button>';
         var searchbtn = new YAHOO.util.Element('search-btn-$suffix');
+        var input_ctl = new YAHOO.util.Element('search-input-$suffix');
+        searchbtn.fnSearch = function(e) {
+            var el = new YAHOO.util.Element('search-input-$suffix')
+            var keyword = el.get('value');
+            var params = [];
+            params['s'] = keyword;
+            params['env']=_client.env;
+            params['action']='gsearch';
+            params['sesskey']='$sesskey';
+            params['ctx_id']=$context->id;
+            _client.loading('load');
+            var trans = YAHOO.util.Connect.asyncRequest('POST',
+                '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.callback, _client.postdata(params));
+        }
         searchbtn.callback={
             success: function(o) {
                 var panel = new YAHOO.util.Element('panel-$suffix');
@@ -240,18 +254,12 @@ this.create_picker = function() {
                 }
             }
         }
-        searchbtn.input_ctl = new YAHOO.util.Element('search-input-$suffix');
-        searchbtn.on('click', function(e) {
-            var keyword = this.input_ctl.get('value');
-            var params = [];
-            params['s'] = keyword;
-            params['env']=_client.env;
-            params['action']='gsearch';
-            params['sesskey']='$sesskey';
-            params['ctx_id']=$context->id;
-            _client.loading('load');
-            var trans = YAHOO.util.Connect.asyncRequest('POST',
-                '$CFG->httpswwwroot/repository/ws.php?action=gsearch', this.callback, _client.postdata(params));
+        searchbtn.on('contentReady', function() {
+            searchbtn.on('click', this.fnSearch, this.input_ctl);
+        });
+        input_ctl.on('contentReady', function() {
+            var k1 = new YAHOO.util.KeyListener(document, {keys:13}, {fn:function(){this.fnSearch()},scope:searchbtn, correctScope: true});
+            k1.enable();
         });
         for(var i=0; i<_client.repos.length; i++) {
             var repo = _client.repos[i];
