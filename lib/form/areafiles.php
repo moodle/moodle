@@ -6,16 +6,19 @@ class MoodleQuickForm_areafiles extends HTML_QuickForm_element {
     protected $_helpbutton = '';
     protected $_options    = array('subdirs'=>0, 'maxbytes'=>0);
 
-    function MoodleQuickForm_areafiles($elementName=null, $elementLabel=null, $options=null) {
+    function MoodleQuickForm_areafiles($elementName=null, $elementLabel=null, $options=null, $attributes=null) {
         global $CFG;
 
-        if (!empty($options['subdirs'])) {
-            $this->_options['subdirs'] = 1;
+        $options = (array)$options;
+        foreach ($options as $name=>$value) {
+            if (array_key_exists($name, $this->_options)) {
+                $this->_options[$name] = $value;
+            }
         }
         if (!empty($options['maxbytes'])) {
             $this->_options['maxbytes'] = get_max_upload_file_size($CFG->maxbytes, $options['maxbytes']);
         }
-        parent::HTML_QuickForm_element($elementName, $elementLabel);
+        parent::HTML_QuickForm_element($elementName, $elementLabel, $attributes);
     }
 
     function setName($name) {
