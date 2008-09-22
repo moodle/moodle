@@ -165,7 +165,11 @@ class quiz_report_responses_table extends table_sql {
                 $questionclass = "que";
                 $response = format_text($response, FORMAT_MOODLE, $format_options);
                 if ($response){
-                    return "<span class=\"$questionclass\"><span class=\"$qclass\">".$response."</span></span>$feedbackimg";
+                    if (question_state_is_graded($stateforqinattempt)){
+                        return "<span class=\"$questionclass\"><span class=\"$qclass\">".$response."</span></span>$feedbackimg";
+                    } else {
+                        return $response;
+                    }
                 } else {
                     return '';
                 }
