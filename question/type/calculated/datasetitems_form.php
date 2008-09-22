@@ -22,6 +22,10 @@ class question_dataset_dependent_items_form extends moodleform {
     public $regenerate;
 
     public $noofitems;
+    
+    public $outsidelimit = false ;
+    
+    public $commentanswers = array();
     /**
      * Add question-type specific form fields.
      *
@@ -82,10 +86,43 @@ class question_dataset_dependent_items_form extends moodleform {
             $mform->addElement('static', "divider[$j]", '', '<hr />');
             $j++;
         }
+        $mform->addElement('header', 'updateanswershdr', get_string('answerstoleranceparam', 'qtype_datasetdependent'));
+        $mform->addElement('submit', 'updateanswers', get_string('updatetolerancesparam', 'qtype_datasetdependent'));
+        $mform->setAdvanced('updateanswers',true);
 
-        if ('' != $strquestionlabel){
-            $mform->addElement('static', 'answercomment['.($this->noofitems+1).']', $strquestionlabel);
-        }
+        $answers = fullclone($this->question->options->answers);
+        $key1 =1;
+        foreach ($answers as $key => $answer) {
+            if ('' === $answer->answer){
+            }else if ('*' === $answer->answer){
+                $mform->addElement('static', 'answercomment['.($this->noofitems+$key1).']', $answer->answer);
+                $mform->addElement('hidden', 'tolerance['.$key.']', '');
+                $mform->setAdvanced('tolerance['.$key.']',true);
+                $mform->addElement('hidden', 'tolerancetype['.$key.']', '');
+                $mform->setAdvanced('tolerancetype['.$key.']',true);
+                $mform->addElement('hidden', 'correctanswerlength['.$key.']', '');
+                $mform->setAdvanced('correctanswerlength['.$key.']',true);
+                $mform->addElement('hidden', 'correctanswerformat['.$key.']', '');
+                $mform->setAdvanced('correctanswerformat['.$key.']',true);
+            }else {
+                $mform->addElement('static', 'answercomment['.($this->noofitems+$key1).']', $answer->answer);
+                $mform->addElement('text', 'tolerance['.$key.']', get_string('tolerance', 'qtype_calculated'));
+                $mform->setAdvanced('tolerance['.$key.']',true);
+                $mform->addElement('select', 'tolerancetype['.$key.']', get_string('tolerancetype', 'quiz'), $this->qtypeobj->tolerance_types());
+                $mform->setAdvanced('tolerancetype['.$key.']',true);
+        
+                $mform->addElement('select', 'correctanswerlength['.$key.']', get_string('correctanswershows', 'qtype_calculated'), range(0, 9));
+                $mform->setAdvanced('correctanswerlength['.$key.']',true);
+        
+                $answerlengthformats = array('1' => get_string('decimalformat', 'quiz'), '2' => get_string('significantfiguresformat', 'quiz'));
+                $mform->addElement('select', 'correctanswerformat['.$key.']', get_string('correctanswershowsformat', 'qtype_calculated'), $answerlengthformats);
+                $mform->setAdvanced('correctanswerformat['.$key.']',true);
+                $mform->addElement('static', 'dividertolerance', '', '<hr />');
+                $mform->setAdvanced('dividertolerance',true);
+            }
+            $key1++;
+        }    
+
         $addremoveoptions = Array();
         $addremoveoptions['1']='1';
         for ($i=10; $i<=100 ; $i+=10){
@@ -108,7 +145,7 @@ class question_dataset_dependent_items_form extends moodleform {
         $addgrp[] =& $mform->createElement('select', "selectadd", get_string('additem', 'qtype_datasetdependent'), $addremoveoptions);
         $addgrp[] = & $mform->createElement('static',"stat","Items",get_string('item(s)', 'qtype_datasetdependent'));
         $mform->addGroup($addgrp, 'addgrp', '', '   ', false);
-         $mform->addElement('static', "divideradd", '', '');
+        $mform->addElement('static', "divideradd", '', '');
     //     $mform->closeHeaderBefore('divideradd');
         if ($this->noofitems > 0) {
             $mform->addElement('header', 'additemhdr', get_string('delete', 'moodle'));
@@ -142,12 +179,15 @@ class question_dataset_dependent_items_form extends moodleform {
                 $repeated[] =& $mform->addElement('static', "answercomment[$i]", $strquestionlabel);
             }
         }
-
+      //  if ($this->outsidelimit){
+            $mform->addElement('static','outsidelimit','','');
+      //  }
 //------------------------------------------------------------------------------------------------------------------------------
         //non standard name for button element needed so not using add_action_buttons
+        if ( !($this->noofitems==0) ){
         $mform->addElement('submit', 'backtoquiz', get_string('savechanges'));
         $mform->closeHeaderBefore('backtoquiz');
-
+        }
         //hidden elements
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
@@ -170,7 +210,25 @@ class question_dataset_dependent_items_form extends moodleform {
 
     function set_data($question){
         $formdata = array();
-
+        if (isset($question->options)){
+            $answers = $question->options->answers;
+            if (count($answers)) {
+               // $key = 0;
+                       //  echo"<p> set data answers outside <pre>"; print_r($answers);echo"</pre></p>";
+                foreach ($answers as $key => $answer){
+                  //  $default_values['answers['.$key.']'] = $answer->answer;
+                  //  $default_values['fraction['.$key.']'] = $answer->fraction;
+                   //     echo"<p> set data answers $key <pre>"; print_r($answer);echo"</pre></p>";
+                  
+                    $formdata['tolerance['.$key.']'] = $answer->tolerance;
+                    $formdata['tolerancetype['.$key.']'] = $answer->tolerancetype;
+                    $formdata['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
+                    $formdata['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
+                 //   $default_values['feedback['.$key.']'] = $answer->feedback;
+                   // $key++;
+                }
+            }
+}
         //fill out all data sets and also the fields for the next item to add.
         $j = $this->noofitems * count($this->datasetdefs);
         for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--){
@@ -184,7 +242,18 @@ class question_dataset_dependent_items_form extends moodleform {
                 }
                 $j--;
             }
-            $formdata['answercomment['.$itemnumber.']'] = $this->qtypeobj->comment_on_datasetitems($this->question, $data, $itemnumber);
+            $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$question->options->answers, $data, $itemnumber);
+              //   echo"<p> comment outside <pre>"; print_r($comment);echo"</pre></p>";
+            if ($comment->outsidelimit) {
+                 $this->outsidelimit=$comment->outsidelimit ;
+              //   echo"<p> comment outside $comment->outsidelimit</p>";
+            }
+            $totalcomment='';
+            foreach ($question->options->answers as $key => $answer) {
+                $totalcomment .= $comment->stranswers[$key].'<br/>';
+            }
+
+            $formdata['answercomment['.$itemnumber.']'] = $totalcomment ;
         }
 
         $formdata['nextpageparam[forceregeneration]'] = $this->regenerate;
@@ -222,8 +291,20 @@ class question_dataset_dependent_items_form extends moodleform {
 
         }
         //default answercomment will get ignored if answer element is not in the form.
-        $formdata['answercomment['.($this->noofitems+1).']'] = $this->qtypeobj->comment_on_datasetitems($this->question, $data, ($this->noofitems+1));
+            $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$question->options->answers, $data, ($this->noofitems+1));
+            if ($comment->outsidelimit) {
+                 $this->outsidelimit=$comment->outsidelimit ;
+              //   echo"<p> comment outside $comment->outsidelimit</p>";
+            }
+            $key1 = 1;
+            foreach ($question->options->answers as $key => $answer) {
+                $formdata['answercomment['.($this->noofitems+$key1).']'] = $comment->stranswers[$key];
+                $key1++;
+            }
 
+        if ($this->outsidelimit){
+            $formdata['outsidelimit']= '<span class="error">'.get_string('oneanswertrueansweroutsidelimits', 'qtype_datasetdependent').'</span>';
+        }
         $formdata = $this->qtypeobj->custom_generator_set_data($this->datasetdefs, $formdata);
 
         parent::set_data((object)($formdata + (array)$question));
@@ -231,8 +312,12 @@ class question_dataset_dependent_items_form extends moodleform {
 
     function validation($data, $files) {
         $errors = array();
-        if (isset($data['backtoquiz']) && ($this->noofitems==0)){
+        if (isset($data['backtoquiz']) && ($this->noofitems==0) ){
             $errors['warning'] = get_string('warning', 'mnet');
+        } 
+        if ($this->outsidelimit){
+         //   if(!isset($errors['warning'])) $errors['warning']=' ';
+          // $errors['outsidelimits'] = get_string('oneanswertrueansweroutsidelimits','qtype_calculated');
         }
         return $errors;
     }
