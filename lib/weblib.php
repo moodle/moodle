@@ -6015,10 +6015,12 @@ function editortogglebutton($id) {
 function editorshortcutshelpbutton() {
 
     global $CFG;
-    $imagetext = '<img src="' . $CFG->httpswwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
+    //TODO: detect current editor and print correct info
+/*    $imagetext = '<img src="' . $CFG->httpswwwroot . '/lib/editor/htmlarea/images/kbhelp.gif" alt="'.
         get_string('editorshortcutkeys').'" class="iconkbhelp" />';
 
-    return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);
+    return helpbutton('editorshortcuts', get_string('editorshortcutkeys'), 'moodle', true, false, '', true, $imagetext);*/
+    return '';
 }
 
 /**
