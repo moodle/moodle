@@ -6356,27 +6356,7 @@ function ini_get_bool($ini_get_arg) {
  * Get the list of available HTML editors
  */
 function get_available_html_editors() {
-    global $CFG;
-    static $editors = null;
-
-    if ($editors != null) {
-        return $editors;
-    }
-
-    $editors = array();
-
-    $dir = opendir($CFG->libdir .'/editor');
-    while (($file = readdir($dir)) !== false) {
-        if ($file != '.' and $file != '..') {
-            $path_file = $CFG->libdir ."/editor/{$file}";
-            if (is_dir($path_file) and file_exists($path_file .'.js.php')) {
-                $editors[] = $file;
-            }
-        }
-    }
-    closedir($dir);
-
-    return $editors;
+    return array('tinymce'=>'TinyMCE');
 }
 
 /**

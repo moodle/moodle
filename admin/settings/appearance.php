@@ -51,11 +51,8 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
 
     $temp = new admin_settingpage('htmleditorsettings', get_string('htmleditorsettings', 'admin'));
 
-    $htmleditors = array();
-    foreach (get_available_html_editors() as $editor) {
-        //$htmleditors[$editor] = get_string($editor, 'admin');
-        $htmleditors[$editor] = $editor;
-    }
+    $htmleditors = get_available_html_editors();
+
     $temp->add(new admin_setting_configselect('defaulthtmleditor', get_string('defaulthtmleditor', 'admin'), null, 'tinymce', $htmleditors));
     $temp->add(new admin_setting_configcheckbox('htmleditor', get_string('usehtmleditor', 'admin'), get_string('confightmleditor','admin'), 1));
     $temp->add(new admin_setting_emoticons());
