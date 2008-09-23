@@ -1,3 +1,3 @@
 <?PHP // $Id$ 
-$string['email'] = 'e-mail';
+$string['email'] = 'Email';
 ?>

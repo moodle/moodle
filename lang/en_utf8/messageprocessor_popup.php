@@ -1,3 +1,3 @@
 <?PHP // $Id$ 
-$string['popup'] = 'Html Im Window';
+$string['popup'] = 'Popup window';
 ?>

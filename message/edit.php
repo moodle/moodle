@@ -205,17 +205,21 @@ $currenttab = 'editmessage';
 require('../user/tabs.php');
 
 echo '<form method="post" action="'.$CFG->wwwroot.'/message/edit.php">';
-echo '<table width="80%" class="userinfobox">';
+
+echo '<div class="generalbox">';
+echo '<table>';
 echo '<tr><td colspan="2"><h3>'.get_string('private_config', 'message').'</h3></td></tr>';
 echo '<tr><td>'.get_string('showmessagewindow', 'message').'</td><td><input type="checkbox" name="showmessagewindow" '.($preferences->showmessagewindow==1?" checked=\"checked\"":"").' /></td></tr>';
 echo '<tr><td>'.get_string('blocknoncontacts', 'message').'</td><td><input type="checkbox" name="blocknoncontacts" '.($preferences->blocknoncontacts==1?" checked=\"checked\"":"").' /></td></tr>';
 echo '<tr><td>'.get_string('beepnewmessage', 'message').'</td><td><input type="checkbox" name="beepnewmessage" '.($preferences->beepnewmessage==1?" checked=\"checked\"":"").' /></td></tr>';
 echo '<tr><td>'.get_string('noframesjs', 'message').'</td><td><input type="checkbox" name="noframesjs" '.($preferences->noframesjs==1?" checked=\"checked\"":"").' /></td></tr>';
 echo '</table>';
+echo '</div>';
 
 //output settings table
-echo '<table width="80%" class="userinfobox">';
-echo '<tr><td><h3>Message Sources</h3></td></tr>'."\n";
+echo '<div class="generalbox">';
+echo '<table>';
+echo '<tr><td><h3>'.get_string('providers_config', 'message').'</h3></td></tr>'."\n";
 $providers = message_get_my_providers();
 $processors = $DB->get_records('message_processors');
 $number_procs = count($processors);
@@ -224,6 +228,11 @@ foreach ( $processors as $processorid => $processor){
     echo '<td align="center" style="width:120px">'.get_string($processor->name, 'messageprocessor_'.$processor->name).'</td>';
 }
 echo '</tr>';
+
+///  TODO:  (from martin)
+///         1) Can we show the popuyp first (it's the default and always there)
+///         2) Can we NOT show plugins here unless they have been configured in the section below
+
 foreach ( $providers as $providerid => $provider){
     $providername = get_string('messageprovider:'.$provider->name, $provider->component);
     echo '<tr><td align="right">'.$providername.'</td><td colspan="'.$number_procs.'"></td></tr>'."\n";
@@ -245,12 +254,17 @@ foreach ( $providers as $providerid => $provider){
 }
 echo '</table>';
 echo '</td></tr></table>';
+echo '</div>';
 
-//
-echo '<table width="80%" class="userinfobox">';
+echo '<div class="generalbox">';
+echo '<table>';
 echo '<tr><td colspan="2"><h3>'.get_string('processor_config', 'message').'</h3></td></tr>'."\n";
 //get a listing of all the message processors
 $processors = $DB->get_records('message_processors');
+
+///  TODO:  (from martin)
+///         1) For email plugin, if the email is blank can we make it default to profile email address?   Show this to use by adding "Default: martin@moodle.com" after the actual field for setting a new one.
+
 foreach ( $processors as $processorid => $processor){
     $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';    
     if ( is_readable($processorfile) ) {        
@@ -265,6 +279,8 @@ foreach ( $processors as $processorid => $processor){
     }
 }
 echo '</table>';
+echo '</div>';
+
 echo '<p><input type="hidden" name="sesskey" value="'.sesskey().'" /> </p>';
 echo '<div style="text-align:center"><input name="submit" value="'. get_string('updatemyprofile') .'" type="submit" /></div>';
 
@@ -274,4 +290,3 @@ echo "</form>";
 print_footer($course);
 
 ?>
-

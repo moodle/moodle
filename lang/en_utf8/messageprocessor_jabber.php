@@ -1,3 +1,3 @@
 <?PHP // $Id$ 
-$string['jabber'] = 'Jabber Im';
+$string['jabber'] = 'Jabber message';
 ?>
