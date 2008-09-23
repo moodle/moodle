@@ -73,6 +73,7 @@ class question_dataset_dependent_items_form extends moodleform {
         }
 //------------------------------------------------------------------------------------------------------------------------------
         $mform->addElement('submit', 'updatedatasets', get_string('updatedatasetparam', 'qtype_datasetdependent'));
+        $mform->registerNoSubmitButton('updatedatasets');
         $mform->addElement('header', 'additemhdr', get_string('itemtoadd', 'qtype_datasetdependent'));
         $idx = 1;
         $j = (($this->noofitems) * count($this->datasetdefs))+1;
@@ -89,7 +90,8 @@ class question_dataset_dependent_items_form extends moodleform {
         $mform->addElement('header', 'updateanswershdr', get_string('answerstoleranceparam', 'qtype_datasetdependent'));
         $mform->addElement('submit', 'updateanswers', get_string('updatetolerancesparam', 'qtype_datasetdependent'));
         $mform->setAdvanced('updateanswers',true);
-
+        $mform->registerNoSubmitButton('updateanswers');
+ 
         $answers = fullclone($this->question->options->answers);
         $key1 =1;
         foreach ($answers as $key => $answer) {
@@ -210,28 +212,39 @@ class question_dataset_dependent_items_form extends moodleform {
 
     function set_data($question){
         $formdata = array();
+        $fromform = new stdClass();
         if (isset($question->options)){
             $answers = $question->options->answers;
             if (count($answers)) {
-               // $key = 0;
-                       //  echo"<p> set data answers outside <pre>"; print_r($answers);echo"</pre></p>";
+                if ( optional_param('updateanswers', '', PARAM_RAW) != '' || optional_param('updatedatasets', '', PARAM_RAW) != ''){
+                    foreach ($answers as $key => $answer){
+                        $fromform->tolerance[$key]= $this->_form->getElementValue('tolerance['.$key.']');
+                        $answer->tolerance = $fromform->tolerance[$key];
+                        $fromform->tolerancetype[$key]= $this->_form->getElementValue('tolerancetype['.$key.']');
+                        if( is_array($fromform->tolerancetype[$key])) $fromform->tolerancetype[$key]= $fromform->tolerancetype[$key][0];
+                        $answer->tolerancetype = $fromform->tolerancetype[$key];
+                        $fromform->correctanswerlength[$key]= $this->_form->getElementValue('correctanswerlength['.$key.']');
+                        if( is_array($fromform->correctanswerlength[$key])) $fromform->correctanswerlength[$key]= $fromform->correctanswerlength[$key][0];
+                        $answer->correctanswerlength = $fromform->correctanswerlength[$key];
+                        $fromform->correctanswerformat[$key]= $this->_form->getElementValue('correctanswerformat['.$key.']');
+                        if( is_array($fromform->correctanswerformat[$key])) $fromform->correctanswerformat[$key]= $fromform->correctanswerformat[$key][0];
+                        $answer->correctanswerformat = $fromform->correctanswerformat[$key];
+                    }
+                    $this->qtypeobj->save_question_calculated($question,$fromform); 
+                }else {             
                 foreach ($answers as $key => $answer){
-                  //  $default_values['answers['.$key.']'] = $answer->answer;
-                  //  $default_values['fraction['.$key.']'] = $answer->fraction;
-                   //     echo"<p> set data answers $key <pre>"; print_r($answer);echo"</pre></p>";
                   
                     $formdata['tolerance['.$key.']'] = $answer->tolerance;
                     $formdata['tolerancetype['.$key.']'] = $answer->tolerancetype;
                     $formdata['correctanswerlength['.$key.']'] = $answer->correctanswerlength;
                     $formdata['correctanswerformat['.$key.']'] = $answer->correctanswerformat;
-                 //   $default_values['feedback['.$key.']'] = $answer->feedback;
-                   // $key++;
-                }
+               }
             }
-}
+        }
+    }
         //fill out all data sets and also the fields for the next item to add.
         $j = $this->noofitems * count($this->datasetdefs);
-        for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--){
+         for ($itemnumber = $this->noofitems; $itemnumber >= 1; $itemnumber--){
             $data = array();
             foreach ($this->datasetdefs as $defid => $datasetdef){
                 if (isset($datasetdef->items[$itemnumber])){
@@ -242,11 +255,9 @@ class question_dataset_dependent_items_form extends moodleform {
                 }
                 $j--;
             }
-            $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$question->options->answers, $data, $itemnumber);
-              //   echo"<p> comment outside <pre>"; print_r($comment);echo"</pre></p>";
-            if ($comment->outsidelimit) {
+            $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$answers, $data, $itemnumber);
+             if ($comment->outsidelimit) {
                  $this->outsidelimit=$comment->outsidelimit ;
-              //   echo"<p> comment outside $comment->outsidelimit</p>";
             }
             $totalcomment='';
             foreach ($question->options->answers as $key => $answer) {
@@ -265,7 +276,11 @@ class question_dataset_dependent_items_form extends moodleform {
         if ($this->qtypeobj->supports_dataset_item_generation()) {
             $itemnumber = $this->noofitems+1;
             foreach ($this->datasetdefs as $defid => $datasetdef){
+                if( optional_param('updatedatasets', '', PARAM_RAW) == '' && optional_param('updateanswers', '', PARAM_RAW)== ''){
                 $formdata["number[$j]"] = $this->qtypeobj->generate_dataset_item($datasetdef->options);
+            }else {
+                $formdata["number[$j]"] = $this->_form->getElementValue("number[$j]") ;
+            }
                 $formdata["definition[$j]"] = $defid;
                 $formdata["itemid[$j]"] =
                         isset($datasetdef->items[$itemnumber])?$datasetdef->items[$itemnumber]->id:0;
@@ -276,7 +291,7 @@ class question_dataset_dependent_items_form extends moodleform {
 
         //existing records override generated data depending on radio element
         $j = $this->noofitems * count($this->datasetdefs)+1;
-        if (!$this->regenerate){
+        if (!$this->regenerate && (optional_param('updatedatasets', '', PARAM_RAW) == '' && optional_param('updateanswers', '', PARAM_RAW)== '')){
             $idx = 1;
             $itemnumber = $this->noofitems+1;
             foreach ($this->datasetdefs as $defid => $datasetdef){
@@ -291,10 +306,9 @@ class question_dataset_dependent_items_form extends moodleform {
 
         }
         //default answercomment will get ignored if answer element is not in the form.
-            $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$question->options->answers, $data, ($this->noofitems+1));
+            $comment = $this->qtypeobj->comment_on_datasetitems($question->id,$answers, $data, ($this->noofitems+1));
             if ($comment->outsidelimit) {
                  $this->outsidelimit=$comment->outsidelimit ;
-              //   echo"<p> comment outside $comment->outsidelimit</p>";
             }
             $key1 = 1;
             foreach ($question->options->answers as $key => $answer) {
@@ -317,7 +331,7 @@ class question_dataset_dependent_items_form extends moodleform {
         } 
         if ($this->outsidelimit){
          //   if(!isset($errors['warning'])) $errors['warning']=' ';
-          // $errors['outsidelimits'] = get_string('oneanswertrueansweroutsidelimits','qtype_calculated');
+           $errors['outsidelimits'] = get_string('oneanswertrueansweroutsidelimits','qtype_calculated');
         }
         return $errors;
     }
