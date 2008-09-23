@@ -289,8 +289,9 @@ EOT;
             '.$coursetagscript.'
             '.$inputscript.'
         //]]>
-    </script>
-    <script src="'.$CFG->wwwroot.'/blocks/tags/coursetags.js" type="text/javascript"></script>';
+    </script>';
+
+    require_js($CFG->wwwroot . '/blocks/tags/coursetags.js');
 
     return $str;
 }

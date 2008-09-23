@@ -200,13 +200,14 @@
         require_js(array('yui_yahoo','yui_event','yui_connection','yui_dom'));
         // Need to do this after the header because it requires the YUI stuff
         // to be loaded already
-        print '<script type="text/javascript" src="completion.js"></script>'.
-            '<script type="text/javascript">completion_strsaved="'.get_string('saved','completion').
-            '"; completion_strtitley="'.get_string('completion-title-manual-y','completion').
-            '"; completion_strtitlen="'.get_string('completion-title-manual-n','completion').
-            '"; completion_stralty="'.get_string('completion-alt-manual-y','completion').
-            '"; completion_straltn="'.get_string('completion-alt-manual-n','completion').
-            '"; </script>';
+        require_js($CFG->wwwroot . '/course/completion.js');
+        print_js_config(array(
+            'completion_strsaved' => get_string('saved','completion'),
+            'completion_strtitley' => get_string('completion-title-manual-y','completion'),
+            'completion_strtitlen' => get_string('completion-title-manual-n','completion'),
+            'completion_stralty' => get_string('completion-alt-manual-y','completion'),
+            'completion_straltn' => get_string('completion-alt-manual-n','completion'),
+        ));
     }
 
     // Course wrapper start.
@@ -247,8 +248,7 @@
         // At the bottom because we want to process sections and activities
         // after the relevant html has been generated. We're forced to do this
         // because of the way in which lib/ajax/ajaxcourse.js is written.
-        echo '<script type="text/javascript" ';
-        echo "src=\"{$CFG->wwwroot}/lib/ajax/ajaxcourse.js\"></script>\n";
+        require_js($CFG->wwwroot . '/lib/ajax/ajaxcourse.js');
 
         $COURSE->javascriptportal->print_javascript($course->id);
     }

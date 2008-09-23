@@ -191,9 +191,9 @@ if (!empty($studentsperpage)) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
-$reporthtml = '<script src="functions.js" type="text/javascript"></script>';
+require_js('functions.js');
 
-$reporthtml .= '<div id="grader_report_message"></div>' . "\n";
+$reporthtml = '<div id="grader_report_message"></div>' . "\n";
 $reporthtml .= '<table id="user-grades" class="gradestable flexible boxaligncenter generaltable">';
 $reporthtml .= '<thead>';
 $reporthtml .= $report->get_headerhtml();

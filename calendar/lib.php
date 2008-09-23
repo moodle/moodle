@@ -1197,8 +1197,8 @@ function calendar_session_vars($course=null) {
 }
 
 function calendar_overlib_html() {
-    return '<div id="overDiv" style="position: absolute; visibility: hidden; z-index:1000;"></div>'
-          .'<script type="text/javascript" src="'.CALENDAR_URL.'overlib.cfg.php"></script>';
+    require_js(CALENDAR_URL . 'overlib.cfg.php');
+    return '<div id="overDiv" style="position: absolute; visibility: hidden; z-index:1000;"></div>';
 }
 
 function calendar_set_referring_course($courseid) {
