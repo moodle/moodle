@@ -48,6 +48,7 @@ $string['invalidrepositoryid'] = 'Invalid repository ID';
 $string['invalidplugin'] = 'Invalid repository plug-in';
 $string['invalidjson'] = 'Invalid JSON string';
 $string['listview'] = 'View as list';
+$string['login'] = 'Login';
 $string['logout'] = 'Logout';
 $string['loading'] = 'Loading...';
 $string['manage'] = 'Manage repositories';

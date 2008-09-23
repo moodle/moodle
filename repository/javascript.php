@@ -30,6 +30,7 @@ function repository_get_client($context) {
     $strrefresh   = get_string('refresh', 'repository');
     $strinvalidjson = get_string('invalidjson', 'repository');
     $strlistview  = get_string('listview', 'repository');
+    $strlogin     = get_string('login', 'repository');
     $strlogout    = get_string('logout', 'repository');
     $strloading   = get_string('loading', 'repository');
     $strthumbview = get_string('thumbview', 'repository');
@@ -83,7 +84,6 @@ function repository_get_client($context) {
 .fp-paging{margin:1em .5em; clear:both;text-align:center;line-height: 2.5em;}
 .fp-paging a{padding: .5em;border: 1px solid #CCC}
 .fp-popup{text-align:center}
-.fp-popup a{font-size: 3em}
 .fp-grid{width:80px; float:left;text-align:center;}
 .fp-grid div{width: 80px; overflow: hidden}
 .fp-grid p{margin:0;padding:0;background: #FFFFCC}
@@ -361,7 +361,9 @@ _client.print_login = function() {
     var has_pop = false;
     for(var k in data) {
         if(data[k].type=='popup') {
-            str += '<p class="fp-popup"><a href="###" onclick="repository_client_$suffix.popup(\''+data[k].url+'\')">$strpopup</a></p>';
+            str += '<p class="fp-popup">$strpopup</p>';
+            str += '<p class="fp-popup"><button onclick="repository_client_$suffix.popup(\''+data[k].url+'\')">$strlogin</button>';
+            str += '</p>';
             has_pop = true;
         }else if(data[k].type=='textarea') {
             str += '<p><textarea id="'+data[k].id+'" name="'+data[k].name+'"></textarea></p>';
