@@ -7377,43 +7377,29 @@ function remoteip_in_list($list){
  *
  * @return string The remote IP address
  */
+define('GETREMOTEADDR_SKIP_HTTP_CLIENT_IP', '1');
+define('GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR', '2');
 function getremoteaddr() {
     global $CFG;
 
-    switch ($CFG->getremoteaddrconf) {
-        case 3:
-            if (!empty($_SERVER['REMOTE_ADDR'])) {
-                return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
-            }
-            break;
-        case 2:
-            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-                return cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
-            }
-            if (!empty($_SERVER['REMOTE_ADDR'])) {
-                return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
-            }
-            break;
-        case 1:
-            if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
-            }
-            if (!empty($_SERVER['REMOTE_ADDR'])) {
-                return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
-            }
-            break;
-        case 0:
-        default:
-            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-                return cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
-            }
-            if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
-            }
-            if (!empty($_SERVER['REMOTE_ADDR'])) {
-                return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
-            }
+    if (empty($CFG->getremoteaddrconf)) {
+        // This will happen, for example, before just after the upgrade, as the
+        // user is redirected to the admin screen.
+        $variablestoskip = 0;
+    } else {
+        $variablestoskip = $CFG->getremoteaddrconf;
     }
+    if (!($variablestoskip & GETREMOTEADDR_SKIP_HTTP_CLIENT_IP)) {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
+        }
+    }
+    if (!($variablestoskip & GETREMOTEADDR_SKIP_HTTP_X_FORWARDED_FOR)) {
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
+        }
+    }
+    return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
 }
 
 /**
