@@ -155,7 +155,7 @@ $output = <<<EOF
         entity_encoding: "raw",
         language: "$editorlanguage",
         directionality: "$directionality",
-        plugins: "spellchecker,emoticons,paste,standardmenu,directionality,contextmenu"
+        plugins: "spellchecker,emoticons,paste,directionality,contextmenu"
     });
     tinyMCE.init({
         mode: "textareas",
@@ -171,7 +171,7 @@ $output = <<<EOF
         entity_encoding: "raw",
         language: "$editorlanguage",
         directionality: "$directionality",
-        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,standardmenu,directionality,fullscreen,moodlenolink,dragmath,nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
+        plugins: "safari,spellchecker,table,style,layer,advhr,advimage,advlink,emoticons,inlinepopups,media,searchreplace,paste,directionality,fullscreen,moodlenolink,dragmath,nonbreaking,contextmenu,insertdatetime,save,iespell,preview,print,noneditable,visualchars,xhtmlxtras,template,pagebreak",
         plugin_insertdate_dateFormat : "$strdate",
         plugin_insertdate_timeFormat : "$strtime",
         theme_advanced_font_sizes: "1,2,3,4,5,6,7",
