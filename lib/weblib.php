@@ -2742,7 +2742,7 @@ function get_require_js_code($loadlibs) {
 function print_js_call($function, $args = array(), $return = false) {
     $quotedargs = array();
     foreach ($args as $arg) {
-        $quotedargs[] = "'" . addslashes_js($arg) . "'";
+        $quotedargs[] = json_encode($arg);
     }
     $html = '';
     $html .= '<script type="text/javascript">//<![CDATA[' . "\n";
@@ -2785,12 +2785,12 @@ function print_js_config($settings = array(), $prefix='', $return = false) {
     // Have to treat the prefix and no prefix cases separately.
     if ($prefix) {
         // Recommended way, only one thing in global scope.
-        $html .= 'qengine_config = ' . json_encode($settings) . "\n";
+        $html .= 'var $name = ' . json_encode($settings) . "\n";
 
     } else {
         // Old fashioned way.
         foreach ($settings as $name => $value) {
-            $html .= $name . " = '" . addslashes_js($value) . "'\n";
+            $html .= "var " . $name . " = '" . addslashes_js($value) . "'\n";
         }
     }
 

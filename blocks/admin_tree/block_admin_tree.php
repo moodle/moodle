@@ -18,7 +18,7 @@ class block_admin_tree extends block_base {
         $this->tempcontent = '';
         $this->section = (isset($PAGE->section) ? $PAGE->section : '');
         $this->pathtosection = array();
-        $this->expandjavascript = '';
+        $this->expandnodes = array();
     }
 
     function applicable_formats() {
@@ -37,8 +37,8 @@ class block_admin_tree extends block_base {
         global $CFG;
         $strfolderopened = s(get_string('folderopened'));
 
-        $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a href="#" onclick="menu_toggle(\''.$this->divcounter.'\');return false">';
-        $this->tempcontent .= '<span id="vh_div'.$this->divcounter.'indicator"><img src="'.$CFG->pixpath.'/i/open.gif" alt="'.$strfolderopened.'" /></span> ';
+        $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a name="d'.$this->divcounter.'">';
+        $this->tempcontent .= '<img id="vh_div'.$this->divcounter.'indicator" src="'.$CFG->pixpath.'/i/open.gif" alt="'.$strfolderopened.'" /> ';
         $this->tempcontent .= $visiblename.'</a></div><div id="vh_div'.$this->divcounter.'">'."\n";
         $this->currentdepth++;
         $this->divcounter++;
@@ -52,7 +52,7 @@ class block_admin_tree extends block_base {
     function create_item($visiblename,$link,$icon,$class) {
         global $CFG;
         $this->tempcontent .= '<div class="depth'.$this->currentdepth.'"><a class="'.$class.'" href="'.$link.'"><img src="'.$icon.'" alt="" />'.
-                               $visiblename.'</a></div>'."\n";
+                $visiblename.'</a></div>'."\n";
     }
 
     function build_tree (&$content) {
@@ -86,7 +86,7 @@ class block_admin_tree extends block_base {
                 // check if the category we're currently printing is a parent category for the current page; if it is, we
                 // make a note (in the javascript) that it has to be expanded after the page has loaded
                 if ($this->section != '' and $this->pathtosection[count($this->pathtosection) - 1] == $content->name) {
-                    $this->expandjavascript .= 'expand('.$this->divcounter.');'."\n";
+                    $this->expandnodes[] = $this->divcounter;
                     array_pop($this->pathtosection);
                 }
 
@@ -104,7 +104,6 @@ class block_admin_tree extends block_base {
     }
 
     function get_content() {
-
         global $CFG;
 
         if ($this->content !== NULL) {
@@ -127,100 +126,30 @@ class block_admin_tree extends block_base {
 
         // we need to do this instead of $this->build_tree($adminroot) because the top-level folder
         // is redundant (and ideally ignored). (the top-level folder is "administration".)
-
         $entries = array_keys($adminroot->children);
-
         asort($entries);
-
         foreach ($entries as $entry) {
             $this->build_tree($adminroot->children[$entry]);
         }
 
         if ($this->tempcontent !== '') {
-            $closedimg = '<img src="'.$CFG->pixpath.'/i/closed.gif" alt="'.s(get_string('folderclosed')).'" />';
-            $openedimg = '<img src="'.$CFG->pixpath.'/i/open.gif" alt="'.s(get_string('folderopened')).'" />';
-
+            require_js(array('yui_yahoo','yui_event'));
+            require_js($CFG->wwwroot . '/blocks/admin_tree/admintree.js');
             $this->content = new object();
-            $this->content->text  = '
-<script type="text/javascript">
-//<![CDATA[
-var vh_numdivs = '.($this->divcounter - 1).';
-var parkplatz  = new Array();
-for (var i=1; i<=vh_numdivs; i++) {
-    parkplatz[i] = null;
-}
-
-function menu_toggle(i) {
-    i = parseInt(i);
-    if (parkplatz[i] === null) {
-        collapse(i);
-    } else {
-        expand(i);
-    }
-}
-
-function collapse(i) {
-    if (parkplatz[i] !== null) {
-        return;
-    }
-    var obj = document.getElementById("vh_div"+String(i));
-    if (obj === null) {
-        return;
-    }
-    var nothing = document.createElement("span");
-    nothing.setAttribute("id", "vh_div"+String(i));
-    parkplatz[i] = obj;
-    obj.parentNode.replaceChild(nothing, obj);
-    var icon = document.getElementById("vh_div"+String(i)+"indicator");
-    icon.innerHTML = "'.addslashes_js($closedimg).'";
-}
-
-function expand(i) {
-    if (parkplatz[i] === null) {
-        return;
-    }
-    var nothing = document.getElementById("vh_div"+String(i));
-    var obj = parkplatz[i];
-    parkplatz[i] = null;
-    nothing.parentNode.replaceChild(obj, nothing);
-    var icon = document.getElementById("vh_div"+String(i)+"indicator");
-    icon.innerHTML = "'.addslashes_js($openedimg).'";
-}
-
-function expandall() {
-    for (i=1; i<=vh_numdivs; i++) {
-        expand(i);
-    }
-}
-
-function collapseall() {
-    for (var i=vh_numdivs; i>0; i--) {
-        collapse(i);
-    }
-}
-
-//]]>
-</script>
-<div class="admintree">
-
-'.$this->tempcontent.'
-
-</div>
-<script type="text/javascript">
-//<![CDATA[
-collapseall();
-'.$this->expandjavascript.';
-//]]>
-</script>';
+            $this->content->text = '<div class="admintree">' . $this->tempcontent . "</div>\n";
+            $this->content->text .= print_js_call('admin_tree.init',
+                    array($this->divcounter - 1, $this->expandnodes, $CFG->pixpath,
+                    get_string('folderopened'), get_string('folderclosed')), true);
 
             // only do search if you have moodle/site:config
             if (has_capability('moodle/site:config',get_context_instance(CONTEXT_SYSTEM)) ) {
-                $this->content->footer = '<div class="adminsearchform">'.
-                                     '<form action="'.$CFG->wwwroot.'/'.$CFG->admin.'/search.php" method="get"><div>'.
-                                     '<label for="query" class="accesshide">'.get_string('searchinsettings', 'admin').'</label>'.
-                                     '<input type="text" name="query" id="query" size="8" value="'.s($adminroot->search).'" />'.
-                                     '<input type="submit" value="'.get_string('search').'" /></div>'.
-                                     '</form></div>';
+                $this->content->footer =
+                        '<div class="adminsearchform">'.
+                        '<form action="'.$CFG->wwwroot.'/'.$CFG->admin.'/search.php" method="get"><div>'.
+                        '<label for="query" class="accesshide">'.get_string('searchinsettings', 'admin').'</label>'.
+                        '<input type="text" name="query" id="query" size="8" value="'.s($adminroot->search).'" />'.
+                        '<input type="submit" value="'.get_string('search').'" /></div>'.
+                        '</form></div>';
             } else {
                 $this->content->footer = '';
             }
@@ -230,8 +159,6 @@ collapseall();
         }
 
         return $this->content;
-
     }
 }
-
 ?>
