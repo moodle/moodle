@@ -178,8 +178,8 @@
     if (isset($vars)) {
         foreach ($vars as $key => $value) {
             // htmlentities breaks non-ascii chars
-            $adv->key = stripslashes($value);
-            //$adv->$key = stripslashes(htmlentities($value));
+            $adv->key = $value;
+            //$adv->$key = htmlentities($value);
         }
     }
     ?>
@@ -187,7 +187,7 @@
     <?php
     if (!$advanced) {
     ?>
-        <input type="text" name="query_string" length="50" value="<?php print stripslashes($query_string) ?>" />
+        <input type="text" name="query_string" length="50" value="<?php p($query_string) ?>" />
         &nbsp;<input type="submit" value="<?php print_string('search', 'search') ?>" /> &nbsp;
         <a href="query.php?a=1"><?php print_string('advancedsearch', 'search') ?></a> |
         <a href="stats.php"><?php print_string('statistics', 'search') ?></a>
@@ -310,7 +310,7 @@
 
         print "<br />";
 
-        print $hit_count.' '.get_string('resultsreturnedfor', 'search') . " '".stripslashes($query_string)."'.";
+        print $hit_count.' '.get_string('resultsreturnedfor', 'search') . " '".s($query_string)."'.";
         print "<br />";
 
         if ($hit_count > 0) {
