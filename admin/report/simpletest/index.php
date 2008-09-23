@@ -52,43 +52,53 @@ $baseurl = $CFG->wwwroot . '/admin/report/simpletest/index.php';
 // Add unittest prefix to config.php if needed
 if ($addconfigprefix && !isset($CFG->unittestprefix)) {
     // Open config file, search for $CFG->prefix and append a new line under it
-    $handle = fopen($CFG->dirroot.'/config.php', 'r+');
+    if ($handle = @fopen($CFG->dirroot.'/config.php', 'r+')) {
 
-    $new_file = '';
+        $new_file = '';
 
-    while (!feof($handle)) {
-        $line = fgets($handle, 4096);
-        $prefix_line = null;
+        while (!feof($handle)) {
+            $line = fgets($handle, 4096);
+            $prefix_line = null;
 
-        if (preg_match('/CFG\-\>prefix/', $line, $matches)) {
-            $prefix_line = "\$CFG->unittestprefix = '$addconfigprefix';\n";
+            if (preg_match('/CFG\-\>prefix/', $line, $matches)) {
+                $prefix_line = "\$CFG->unittestprefix = '$addconfigprefix';\n";
+            }
+
+            $new_file .= $line;
+            $new_file .= $prefix_line;
         }
 
-        $new_file .= $line;
-        $new_file .= $prefix_line;
+        fclose($handle);
+        $handle = fopen($CFG->dirroot.'/config.php', 'w');
+        fwrite($handle, $new_file);
+        fclose($handle);
+        $CFG->unittestprefix = $addconfigprefix;
+    } else {
+        notify(get_string('confignonwritable', 'simpletest'));
+        die();
     }
-
-    fclose($handle);
-    $handle = fopen($CFG->dirroot.'/config.php', 'w');
-    fwrite($handle, $new_file);
-    fclose($handle);
-    $CFG->unittestprefix = $addconfigprefix;
 }
 
 if (empty($CFG->unittestprefix)) {
     // TODO replace error with proper admin dialog
+
     print_box_start('generalbox', 'notice');
-    echo '<p>'.get_string("prefixnotset", 'simpletest').'</p>';
-    echo '<form method="post" action="'.$baseurl.'">
-            <table class="generaltable">
-                <tr>
-                    <th class="header"><label for="prefix">'.get_string('prefix', 'simpletest').'</label></th>
-                    <td class="cell"><input type="text" size="5" name="addconfigprefix" id="prefix" value="tst_" /></td>
-                    <td class="cell"><input type="submit" value="'.get_string('addconfigprefix', 'simpletest').'" /></td>
-                </tr>
-            </table>
-          </form>';
+    if (is_writable($CFG->dirroot.'/config.php')) {
+        echo '<p>'.get_string("prefixnotset", 'simpletest').'</p>';
+        echo '<form method="post" action="'.$baseurl.'">
+                <table class="generaltable">
+                    <tr>
+                        <th class="header"><label for="prefix">'.get_string('prefix', 'simpletest').'</label></th>
+                        <td class="cell"><input type="text" size="5" name="addconfigprefix" id="prefix" value="tst_" /></td>
+                        <td class="cell"><input type="submit" value="'.get_string('addconfigprefix', 'simpletest').'" /></td>
+                    </tr>
+                </table>
+              </form>';
+    } else {
+        notify(get_string('confignonwritable', 'simpletest'));
+    }
     print_box_end();
+
     admin_externalpage_print_footer();
     exit();
 }
@@ -248,9 +258,9 @@ if (!is_null($path)) {
 }
 // Print the form for adjusting options.
 print_box_start('generalbox boxwidthwide boxaligncenter');
+print_heading($formheader);
 echo '<form method="get" action="index.php">';
 echo '<fieldset class="invisiblefieldset">';
-print_heading($formheader);
 echo '<p>'; print_checkbox('showpasses', 1, $showpasses, get_string('showpasses', $langfile)); echo '</p>';
 echo '<p>'; print_checkbox('showsearch', 1, $showsearch, get_string('showsearch', $langfile)); echo '</p>';
 echo '<p>'; print_checkbox('thorough', 1, $thorough, get_string('thorough', $langfile)); echo '</p>';
@@ -262,24 +272,28 @@ echo '<p>'; print_checkbox('rundbtests', 1, $rundbtests, get_string('rundbtests'
 echo '<input type="submit" value="' . get_string('runtests', $langfile) . '" />';
 echo '</fieldset>';
 echo '</form>';
+print_box_end();
 
+print_box_start('generalbox boxwidthwide boxaligncenter');
 if ($testtablesok) {
-    echo '<form method="get" action="index.php">';
+    print_heading(get_string('testdboperations', 'simpletest'));
+    echo '<p>'.get_string('unittestprefixsetting', 'simpletest', $CFG).'</p>';
+    echo '<form style="display:inline" method="get" action="index.php">';
     echo '<fieldset class="invisiblefieldset">';
     echo '<input type="hidden" name="droptesttables" value="1" />';
     echo '<input type="submit" value="' . get_string('droptesttables', 'simpletest') . '" />';
     echo '</fieldset>';
     echo '</form>';
 
-    echo '<form method="get" action="index.php">';
+    echo '<form style="display:inline" method="get" action="index.php">';
     echo '<fieldset class="invisiblefieldset">';
     echo '<input type="hidden" name="setuptesttables" value="1" />';
     echo '<input type="submit" value="' . get_string('reinstalltesttables', 'simpletest') . '" />';
     echo '</fieldset>';
     echo '</form>';
 }
-
 print_box_end();
+
 
 // Footer.
 admin_externalpage_print_footer();

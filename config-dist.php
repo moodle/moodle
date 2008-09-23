@@ -54,6 +54,7 @@ $CFG->dbname    = 'moodle';      // database name, eg moodle
 $CFG->dbuser    = 'username';    // your database username
 $CFG->dbpass    = 'password';    // your database password
 $CFG->prefix    = 'mdl_';        // Prefix to use for all table names
+// $CFG->unittest_prefix = 'tst_'; // Prefix used for unit test tables. Needs to be un-commented for test tables installation to proceed
 
 $CFG->dbpersist = false;         // Should database connections be reused?
                  // "false" is the most stable setting

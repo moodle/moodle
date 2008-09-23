@@ -4,6 +4,8 @@
 
 $string['all'] = 'ALL';
 $string['addconfigprefix'] = 'Add prefix to config file';
+$string['confignonwritable'] = 'The file config.php is not writeable by the web server. Either change its permissions, or edit it with the appropriate user account, and add the following line before the closing php tag: <br />
+\$CFG->unittestprefix = \'tst_\' // Change tst_ to a prefix of your choice, different from \$CFG->prefix';
 $string['deletingnoninsertedrecord'] = 'Trying to delete a record that was not inserted by these unit tests (id $a->id in table $a->table).';
 $string['deletingnoninsertedrecords'] = 'Trying to delete records that were not inserted by these unit tests (from table $a->table).';
 $string['droptesttables'] = 'Drop test tables';
@@ -34,6 +36,7 @@ $string['showsearch'] = 'Show the search for test files.';
 $string['stacktrace'] = 'Stack trace:';
 $string['summary'] = '{$a->run}/{$a->total} test cases complete: <strong>{$a->passes}</strong> passes, <strong>{$a->fails}</strong> fails and <strong>{$a->exceptions}</strong> exceptions.';
 $string['tablesnotsetup'] = 'Unit test tables are not yet built. Do you want to build them now?.';
+$string['testdboperations'] = 'Test Database operations';
 $string['testtablesneedupgrade'] = 'The test DB tables need to be upgraded. Do you wish to proceed with the upgrade now?';
 $string['testtablesok'] = 'The test DB tables were successfully installed.';
 $string['testtablescsvfileunwritable'] = 'The test tables CSV file is not writable ($a->filename)';
@@ -41,6 +44,7 @@ $string['thorough'] = 'Run a thorough test (may be slow).';
 $string['updatingnoninsertedrecord'] = 'Trying to update a record that was not inserted by these unit tests (id $a->id in table $a->table).';
 $string['uncaughtexception'] = 'Uncaught exception [{$a->getMessage()}] in [{$a->getFile()}:{$a->getLine()}] TESTS ABORTED.';
 $string['unittests'] = 'Unit tests';
+$string['unittestprefixsetting'] = 'Unit test prefix: <strong>$CFG->unittestprefix</strong> (Edit config.php to modify this).';
 $string['version'] = 'Using <a href=\"http://sourceforge.net/projects/simpletest/\">SimpleTest</a> version $a.';
 
 ?>
