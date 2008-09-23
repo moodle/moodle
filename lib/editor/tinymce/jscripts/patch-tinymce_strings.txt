@@ -1,0 +1,55 @@
+--- /home/mathieu/public_html/tinymce/jscripts/tiny_mce/tiny_mce_popup.js	2008-09-09 16:05:32.000000000 +0800
++++ tiny_mce_popup.js	2008-09-23 11:20:13.000000000 +0800
+@@ -99,10 +99,12 @@
+ 	},
+ 
+ 	requireLangPack : function() {
+-		var u = this.getWindowArg('plugin_url') || this.getWindowArg('theme_url');
++        var u = tinyMCE.settings['document_base_url'];
++        var p = this.getWindowArg('plugin_url') || this.getWindowArg('theme_url');
+ 
+ 		if (u && this.editor.settings.language) {
+-			u += '/langs/' + this.editor.settings.language + '_dlg.js';
++            l = tinyMCE.settings['language'];
++            u += '/lib/editor/tinymce/strings.php?lang='+l+'&dlg=1&context=' + p;
+ 
+ 			if (!tinymce.ScriptLoader.isDone(u)) {
+ 				document.write('<script type="text/javascript" src="' + tinymce._addVer(u) + '"></script>');
+--- /home/mathieu/public_html/tinymce/jscripts/tiny_mce/tiny_mce_src.js	2008-09-17 13:56:56.000000000 +0800
++++ tiny_mce_src.js	2008-09-23 11:23:24.000000000 +0800
+@@ -6241,7 +6241,8 @@
+ 			var u, s = tinymce.EditorManager.settings;
+ 
+ 			if (s && s.language) {
+-				u = this.urls[n] + '/langs/' + s.language + '.js';
++                l = tinyMCE.settings['language'];
++                u = tinyMCE.settings['document_base_url'] + '/lib/editor/tinymce/strings.php?lang='+l+'&dlg=0&context=' + this.urls[n];
+ 
+ 				if (!tinymce.dom.Event.domLoaded && !s.strict_mode)
+ 					tinymce.ScriptLoader.load(u);
+@@ -6347,8 +6348,10 @@
+ 			// If page not loaded and strict mode isn't enabled then load them
+ 			if (!Event.domLoaded && !s.strict_loading_mode) {
+ 				// Load language
+-				if (s.language)
+-					sl.add(tinymce.baseURL + '/langs/' + s.language + '.js');
++				if (s.language) {
++                    l = tinyMCE.settings['language'];
++                    sl.add(tinyMCE.settings['document_base_url'] + '/lib/editor/tinymce/strings.php?lang='+l+'&dlg=0');
++                }
+ 
+ 				// Load theme
+ 				if (s.theme && s.theme.charAt(0) != '-' && !ThemeManager.urls[s.theme])
+@@ -6864,8 +6867,10 @@
+ 
+ 			// Load scripts
+ 			function loadScripts() {
+-				if (s.language)
+-					sl.add(tinymce.baseURL + '/langs/' + s.language + '.js');
++				if (s.language) {
++                    l = tinyMCE.settings['language'];
++                    sl.add(tinyMCE.settings['document_base_url'] + '/lib/editor/tinymce/strings.php?lang='+l+'&dlg=0');
++                }
+ 
+ 				if (s.theme.charAt(0) != '-' && !ThemeManager.urls[s.theme])
+ 					ThemeManager.load(s.theme, 'themes/' + s.theme + '/editor_template' + tinymce.suffix + '.js');
