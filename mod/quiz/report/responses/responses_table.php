@@ -1,4 +1,5 @@
 <?php  // $Id$
+define ('QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY', 150);
 
 class quiz_report_responses_table extends table_sql {
 
@@ -165,6 +166,13 @@ class quiz_report_responses_table extends table_sql {
                 $questionclass = "que";
                 $response = format_text($response, FORMAT_MOODLE, $format_options);
                 if ($response){
+                    if (strlen($response) > QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY){
+                        $response = shorten_text($response, QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY);
+                    }
+                    $response = link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
+                        $attempt->attempt . '&amp;question=' . $question->id,
+                        'reviewquestion', $response, 450, 650, get_string('reviewresponse', 'quiz'),
+                        'none', true);
                     if (question_state_is_graded($stateforqinattempt)){
                         return "<span class=\"$questionclass\"><span class=\"$qclass\">".$response."</span></span>$feedbackimg";
                     } else {
