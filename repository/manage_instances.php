@@ -9,6 +9,7 @@
     $delete  = optional_param('delete', 0, PARAM_INT);
     $sure    = optional_param('sure', '', PARAM_ALPHA);
     $contextid = optional_param('contextid', 0, PARAM_INT);
+    $usercourseid = optional_param('usercourseid', SITEID, PARAM_INT);  // Extra: used for user context only
 
     if ($edit){
         $pagename = 'repositoryinstanceedit';
@@ -89,6 +90,15 @@
 
 /// Display page header
     print_header($title, $fullname, $navigation);
+
+    if ($context->contextlevel == CONTEXT_USER) {
+        if ( !$course = $DB->get_record('course', array('id'=>$usercourseid))) {
+            print_error('invalidcourseid');
+        }
+        $currenttab = 'repositories';
+        include($CFG->dirroot.'/user/tabs.php');
+    }
+
     print_heading($pagename);
 
     $return = true;
