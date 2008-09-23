@@ -68,7 +68,6 @@ function process_essay($xml, &$questions ) {
         if ($ishtml) {
             $question->questiontext = html_entity_decode_php4(trim($essayquestion["#"]["BODY"][0]["#"]["TEXT"][0]["#"]));
         }
-        $question->questiontext = addslashes($question->questiontext);
         
         // put name in question object
         $question->name = substr($question->questiontext, 0, 254);
