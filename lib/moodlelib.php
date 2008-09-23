@@ -4110,7 +4110,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         $mail->From     = $CFG->noreplyaddress;
         $mail->FromName = $from;
     } else if ($usetrueaddress and $from->maildisplay) {
-        $mail->From     = stripslashes($from->email);
+        $mail->From     = $from->email;
         $mail->FromName = fullname($from);
     } else {
         $mail->From     = $CFG->noreplyaddress;
@@ -4126,7 +4126,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 
     $mail->Subject = substr($subject, 0, 900);
 
-    $mail->AddAddress(stripslashes($user->email), fullname($user) );
+    $mail->AddAddress($user->email, fullname($user) );
 
     $mail->WordWrap = $wordwrapwidth;                   // set word wrap
 
