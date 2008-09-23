@@ -93,12 +93,6 @@ if ($user->id == $USER->id) {
 if ( ($form = data_submitted()) && confirm_sesskey()) {
     $preferences = array();
 
-    /// Set the overall preferences
-    $preferences['message_showmessagewindow'] = $form->showmessagewindow?1:0;
-    $preferences['message_blocknoncontacts']  = $form->blocknoncontacts?1:0;
-    $preferences['message_beepnewmessage']    = $form->beepnewmessage?1:0;
-    $preferences['message_noframesjs']        = $form->noframesjs?1:0;
-    
     /// Set all the preferences for all the message providers
     $providers = message_get_my_providers();
     foreach ( $providers as $providerid => $provider){
@@ -114,6 +108,7 @@ if ( ($form = data_submitted()) && confirm_sesskey()) {
             $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
         }
     }
+
     /// Set all the processor options as well
     $processors = $DB->get_records('message_processors');
     foreach ( $processors as $processorid => $processor){
@@ -141,11 +136,6 @@ if ( ($form = data_submitted()) && confirm_sesskey()) {
 //load preferences so show
 $preferences = new object();
 
-//get the message general preferences
-$preferences->showmessagewindow =  get_user_preferences( 'message_showmessagewindow', 1, $user->id);
-$preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $user->id);
-$preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
-$preferences->noframesjs        =  get_user_preferences( 'message_noframesjs', '', $user->id);
 //get providers preferences
 $providers = message_get_my_providers();
 foreach ( $providers as $providerid => $provider){
@@ -204,22 +194,12 @@ $showroles = 1;
 $currenttab = 'editmessage';
 require('../user/tabs.php');
 
-echo '<form method="post" action="'.$CFG->wwwroot.'/message/edit.php">';
-
-echo '<div class="generalbox">';
-echo '<table>';
-echo '<tr><td colspan="2"><h3>'.get_string('private_config', 'message').'</h3></td></tr>';
-echo '<tr><td>'.get_string('showmessagewindow', 'message').'</td><td><input type="checkbox" name="showmessagewindow" '.($preferences->showmessagewindow==1?" checked=\"checked\"":"").' /></td></tr>';
-echo '<tr><td>'.get_string('blocknoncontacts', 'message').'</td><td><input type="checkbox" name="blocknoncontacts" '.($preferences->blocknoncontacts==1?" checked=\"checked\"":"").' /></td></tr>';
-echo '<tr><td>'.get_string('beepnewmessage', 'message').'</td><td><input type="checkbox" name="beepnewmessage" '.($preferences->beepnewmessage==1?" checked=\"checked\"":"").' /></td></tr>';
-echo '<tr><td>'.get_string('noframesjs', 'message').'</td><td><input type="checkbox" name="noframesjs" '.($preferences->noframesjs==1?" checked=\"checked\"":"").' /></td></tr>';
-echo '</table>';
-echo '</div>';
+echo '<form class="mform" method="post" action="'.$CFG->wwwroot.'/message/edit.php">';
 
 //output settings table
-echo '<div class="generalbox">';
+echo '<fieldset id="providers" class="clearfix">';
+echo '<legend class="ftoggler">'.get_string('providers_config', 'message').'</legend>';
 echo '<table>';
-echo '<tr><td><h3>'.get_string('providers_config', 'message').'</h3></td></tr>'."\n";
 $providers = message_get_my_providers();
 $processors = $DB->get_records('message_processors');
 $number_procs = count($processors);
@@ -254,11 +234,8 @@ foreach ( $providers as $providerid => $provider){
 }
 echo '</table>';
 echo '</td></tr></table>';
-echo '</div>';
+echo '</fieldset>';
 
-echo '<div class="generalbox">';
-echo '<table>';
-echo '<tr><td colspan="2"><h3>'.get_string('processor_config', 'message').'</h3></td></tr>'."\n";
 //get a listing of all the message processors
 $processors = $DB->get_records('message_processors');
 
@@ -278,8 +255,6 @@ foreach ( $processors as $processorid => $processor){
         }
     }
 }
-echo '</table>';
-echo '</div>';
 
 echo '<p><input type="hidden" name="sesskey" value="'.sesskey().'" /> </p>';
 echo '<div style="text-align:center"><input name="submit" value="'. get_string('updatemyprofile') .'" type="submit" /></div>';

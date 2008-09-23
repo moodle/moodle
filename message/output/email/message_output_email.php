@@ -83,10 +83,10 @@ class message_output_email extends message_output {
      * @param object $mform preferences form class
      */
     function config_form($preferences){               
-        $dest = get_string('email', 'messageprocessor_email');
-        echo '<tr><td colspan="2"><b>'.get_string('processortag', 'message').$dest.'</b></td></tr>'."\n";
-        echo '<tr><td align="right">'.get_string('email').'</td><td><input name="email_email" value="'.$preferences->email_email.'" /></td></tr>'."\n";
-        return true;
+        echo '<fieldset id="messageprocessor_email" class="clearfix">';
+        echo '<legend class="ftoggler">'.get_string('email', 'messageprocessor_email').'</legend>';
+        echo get_string('email').': <input name="email_email" value="'.$preferences->email_email.'" />';
+        echo '</fieldset>';
     }
 
     /**

@@ -2569,6 +2569,10 @@ body#message-send td.fixeditor {
   text-align:center;
 }
 
+body#message-edit fieldset {
+  padding: 20px;
+}
+
 /***
  *** Notes
  ***/

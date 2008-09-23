@@ -45,7 +45,7 @@ class message_output_popup extends message_output{
      * @param object $message the message to be sent
      * @return true if ok, false if error
      */
-    public function send_message($message){
+    public function send_message($message) {
         global $DB;
         
         //put the process record into db
@@ -62,14 +62,30 @@ class message_output_popup extends message_output{
         return true;
     }
     
-    function config_form($preferences){
-        return true;
+    function config_form($preferences) {
+        echo '<fieldset id="messageprocessor_popup" class="clearfix">';
+        echo '<legend class="ftoggler">'.get_string('popup', 'messageprocessor_popup').'</legend>';
+        echo '<table>';
+        echo '<tr><td>'.get_string('showmessagewindow', 'message').'</td><td><input type="checkbox" name="showmessagewindow" '.($preferences->showmessagewindow==1?" checked=\"checked\"":"").' /></td></tr>';
+        echo '<tr><td>'.get_string('blocknoncontacts', 'message').'</td><td><input type="checkbox" name="blocknoncontacts" '.($preferences->blocknoncontacts==1?" checked=\"checked\"":"").' /></td></tr>';
+        echo '<tr><td>'.get_string('beepnewmessage', 'message').'</td><td><input type="checkbox" name="beepnewmessage" '.($preferences->beepnewmessage==1?" checked=\"checked\"":"").' /></td></tr>';
+        echo '<tr><td>'.get_string('noframesjs', 'message').'</td><td><input type="checkbox" name="noframesjs" '.($preferences->noframesjs==1?" checked=\"checked\"":"").' /></td></tr>';
+        echo '</table>';
+        echo '</fieldset>';
     }
     
-    public function process_form($form, &$preferences){
+    public function process_form($form, &$preferences) {
+        $preferences['message_showmessagewindow'] = $form->showmessagewindow?1:0;
+        $preferences['message_blocknoncontacts']  = $form->blocknoncontacts?1:0;
+        $preferences['message_beepnewmessage']    = $form->beepnewmessage?1:0;
+        $preferences['message_noframesjs']        = $form->noframesjs?1:0;
         return true;
     }
-    public function load_data(&$preferences, $userid){
+    public function load_data(&$preferences, $userid) {
+        $preferences->showmessagewindow =  get_user_preferences( 'message_showmessagewindow', 1, $user->id);
+        $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $user->id);
+        $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
+        $preferences->noframesjs        =  get_user_preferences( 'message_noframesjs', '', $user->id);
         return true;
     }
 }
