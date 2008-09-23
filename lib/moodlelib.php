@@ -7789,19 +7789,6 @@ function custom_script_path($urlpath='') {
 }
 
 /**
- * Wrapper function to load necessary editor scripts
- * to $CFG->editorsrc array. Params can be coursei id
- * or associative array('courseid' => value, 'name' => 'editorname').
- * @uses $CFG
- * @param mixed $args Courseid or associative array.
- */
-function loadeditor($args) {
-    global $CFG;
-    include($CFG->libdir .'/editorlib.php');
-    return editorObject::loadeditor($args);
-}
-
-/**
  * Returns whether or not the user object is a remote MNET user. This function
  * is in moodlelib because it does not rely on loading any of the MNET code.
  *

@@ -2,7 +2,7 @@
 
 define('NO_MOODLE_COOKIES', true);
 
-require_once('../../config.php');
+require_once('../../../config.php');
 
 $editorlanguage = optional_param('editorlanguage', 'en_utf8', PARAM_ALPHANUMEXT);
 
@@ -192,7 +192,7 @@ $output = <<<EOF
 
 EOF;
 // the xhtml ruleset must be the last one - no comma at the end of the file
-$output .= file_get_contents('tinymce/xhtml_ruleset.txt');
+$output .= file_get_contents('xhtml_ruleset.txt');
 $output .= <<<EOF
     });
 

@@ -45,7 +45,7 @@ class htmlEditor {
                 $editorlanguage = current_language();
                 $configuration[] = $CFG->httpswwwroot ."/lib/editor/tinymce/jscripts/tiny_mce/tiny_mce.js";
                 //$configuration[] = $CFG->httpswwwroot ."/lib/editor/tinymce/jscripts/tiny_mce/tiny_mce_src.js";
-                $configuration[] = $CFG->httpswwwroot ."/lib/editor/tinymce.js.php?course=$courseid&amp;editorlanguage=$editorlanguage";
+                $configuration[] = $CFG->httpswwwroot ."/lib/editor/tinymce/tinymce.js.php?course=$courseid&amp;editorlanguage=$editorlanguage";
                 $configured['tinymce'] = true;
                 break;
 
