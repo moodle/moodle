@@ -1,4 +1,7 @@
 <?php
+
+    die('TODO implement moodle integration using CFG->aspell see MDL-16639');
+
 	// General settings
 	$config['general.engine'] = 'GoogleSpell';
 	//$config['general.engine'] = 'PSpell';

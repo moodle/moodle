@@ -68,10 +68,6 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp->add(new admin_setting_configtext('editorfontsize', get_string('editorfontsize', 'admin'), get_string('edhelpfontsize'), '', PARAM_NOTAGS));
     $temp->add(new admin_setting_special_editorfontlist());
     $temp->add(new admin_setting_configcheckbox('editorkillword', get_string('editorkillword', 'admin'), get_string('edhelpcleanword'), 1));
-    if (!empty($CFG->aspellpath)) { // make aspell settings disappear if path isn't set
-      $temp->add(new admin_setting_configcheckbox('editorspelling', get_string('editorspelling', 'admin'), get_string('editorspellinghelp', 'admin'), 0));
-      $temp->add(new admin_setting_special_editordictionary());
-    }
     $temp->add(new admin_setting_special_editorhidebuttons());
     $ADMIN->add('htmleditor', $temp);
 */

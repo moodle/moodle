@@ -842,6 +842,14 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint($result, 2008091611);
     }
 
+    if ($result && $oldversion < 2008092300) {
+        unset_config('editorspelling');
+        unset_config('editordictionary');
+    /// Main savepoint reached
+        upgrade_main_savepoint($result, 2008092300);
+    }
+
+
     return $result;
 }
 

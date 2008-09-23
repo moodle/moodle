@@ -6577,53 +6577,6 @@ function print_side_block_end($attributes = array(), $title='') {
 }
 
 
-/**
- * Prints out code needed for spellchecking.
- * Original idea by Ludo (Marc Alier).
- *
- * Opening CDATA and <script> are output by weblib::use_html_editor()
- * @uses $CFG
- * @param boolean $usehtmleditor Normally set by $CFG->htmleditor, can be overriden here
- * @param boolean $return If false, echos the code instead of returning it
- * @todo Find out if lib/editor/htmlarea/htmlarea.class.php::print_speller_code() is still used, and delete if not
- */
-function print_speller_code ($usehtmleditor=false, $return=false) {
-    global $CFG;
-    $str = '';
-
-    if(!$usehtmleditor) {
-        $str .= 'function openSpellChecker() {'."\n";
-        $str .= "\tvar speller = new spellChecker();\n";
-        $str .= "\tspeller.popUpUrl = \"" . $CFG->httpswwwroot ."/lib/speller/spellchecker.html\";\n";
-        $str .= "\tspeller.spellCheckScript = \"". $CFG->httpswwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
-        $str .= "\tspeller.spellCheckAll();\n";
-        $str .= '}'."\n";
-    } else {
-        $str .= "function spellClickHandler(editor, buttonId) {\n";
-        $str .= "\teditor._textArea.value = editor.getHTML();\n";
-        $str .= "\tvar speller = new spellChecker( editor._textArea );\n";
-        $str .= "\tspeller.popUpUrl = \"" . $CFG->httpswwwroot ."/lib/speller/spellchecker.html\";\n";
-        $str .= "\tspeller.spellCheckScript = \"". $CFG->httpswwwroot ."/lib/speller/server-scripts/spellchecker.php\";\n";
-        $str .= "\tspeller._moogle_edit=1;\n";
-        $str .= "\tspeller._editor=editor;\n";
-        $str .= "\tspeller.openChecker();\n";
-        $str .= '}'."\n";
-    }
-
-    if ($return) {
-        return $str;
-    }
-    echo $str;
-}
-
-/**
- * Print button for spellchecking when editor is disabled
- */
-function print_speller_button () {
-    echo '<input type="button" value="Check spelling" onclick="openSpellChecker();" />'."\n";
-}
-
-
 function page_id_and_class(&$getid, &$getclass) {
     // Create class and id for this page
     global $CFG, $ME;

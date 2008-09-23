@@ -6,10 +6,6 @@
         die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
     }
 
-    if (!empty($CFG->aspellpath)) {      // Enable global access to spelling feature.
-        echo '<script type="text/javascript" src="'.$CFG->httpswwwroot.'/lib/speller/spellChecker.js"></script>'."\n";
-    }
-
     if (!empty($CFG->editorsrc) ) {
         foreach ( $CFG->editorsrc as $scriptsource ) {
             echo '<script type="text/javascript" src="'. $scriptsource .'"></script>'."\n";
