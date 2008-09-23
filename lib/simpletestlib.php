@@ -259,6 +259,10 @@ class MoodleUnitTestCase extends UnitTestCase {
         }
         $DB->cleanup();
         parent::tearDown();
+
+        // Output buffering
+        ob_end_flush();
+        ob_start();
     }
 
     /**
@@ -356,7 +360,7 @@ class UnitTestDB {
      */
     public function update_record($table, $dataobject, $bulk=false) {
         global $DB;
-        if (empty($this->table_data[$table]) || !in_array($dataobject->id, $this->table_data[$table])) {
+        if ((empty($this->table_data[$table]) || !in_array($dataobject->id, $this->table_data[$table])) && !($table == 'course_categories' && $dataobject->id == 1)) {
             // return UnitTestDB::$DB->update_record($table, $dataobject, $bulk);
             $a = new stdClass();
             $a->id = $dataobject->id;
@@ -375,6 +379,8 @@ class UnitTestDB {
      */
     public function delete_records($table, array $conditions=array()) {
         global $DB;
+        $tables_to_ignore = array('context_temp');
+
         $a = new stdClass();
         $a->table = $table;
 
@@ -390,7 +396,7 @@ class UnitTestDB {
         }
 
         foreach ($ids_to_delete as $id) {
-            if (empty($this->table_data[$table]) || !in_array($id, $this->table_data[$table])) {
+            if (!in_array($table, $tables_to_ignore) && (empty($this->table_data[$table]) || !in_array($id, $this->table_data[$table]))) {
                 $proceed_with_delete = false;
                 $a->id = $id;
                 break;
