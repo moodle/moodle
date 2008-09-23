@@ -287,7 +287,7 @@ function quiz_report_grade_bands($bandwidth, $bands, $quizid, $userids=array()){
     unset($data[$bands]);
     return $data;
 }
-function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter){
+function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter, $highlight=true){
     if ($quiz->attempts == 1) {//only one attempt allowed on this quiz
         return "<p>".get_string('onlyoneattemptallowed', "quiz_overview")."</p>";
     } else if (!$qmsubselect){
@@ -295,8 +295,11 @@ function quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)
     } else if ($qmfilter){
         return "<p>".get_string('showinggraded', "quiz_overview")."</p>";
     }else {
-        return "<p>".get_string('showinggradedandungraded', "quiz_overview",
-                ('<span class="highlight">'.quiz_get_grading_option_name($quiz->grademethod).'</span>'))."</p>";
+        $a = quiz_get_grading_option_name($quiz->grademethod);
+        if ($highlight){
+            $a = '<span class="highlight">'.$a.'</span>';
+        }
+        return "<p>".get_string('showinggradedandungraded', "quiz_overview", $a)."</p>";
     }
 }
 
