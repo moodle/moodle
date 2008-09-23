@@ -247,7 +247,7 @@
                                             $value .= $datarow;
                                             next($datarows);
                                         }
-                                        $value = rawurlencode(stripslashes($value));
+                                        $value = rawurlencode($value);
                                         $id = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attempt, $element, $value);
                                     }
                                 }
