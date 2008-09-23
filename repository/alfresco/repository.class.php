@@ -24,15 +24,18 @@ class repository_alfresco extends repository {
         $this->sess_name = 'alfresco_ticket_'.$this->id;
         $this->username   = optional_param('al_username', '', PARAM_RAW);
         $this->password   = optional_param('al_password', '', PARAM_RAW);
-        if ( empty($SESSION->{$this->sess_name}) &&
-            !empty($this->username) && !empty($this->password)) {
-            $this->ticket = $this->repo->authenticate($this->username, $this->password);
-            $SESSION->{$this->sess_name} = $this->ticket;	
-        } else {
-            $this->ticket = $SESSION->{$this->sess_name}; 	
+        try{
+            if ( empty($SESSION->{$this->sess_name}) && !empty($this->username) && !empty($this->password)) {
+                $this->ticket = $this->repo->authenticate($this->username, $this->password);
+                $SESSION->{$this->sess_name} = $this->ticket;	
+            } else {
+                $this->ticket = $SESSION->{$this->sess_name}; 	
+            }
+            $this->sess = $this->repo->createSession($this->ticket);
+            $this->store = new SpacesStore($this->sess);
+        } catch (Exception $e) {
+            $this->logout();
         }
-        $this->sess = $this->repo->createSession($this->ticket);
-        $this->store = new SpacesStore($this->sess);
         $this->current_node = null;
     }
     public function print_login() {
@@ -125,10 +128,10 @@ class repository_alfresco extends repository {
         }
 
         if (empty($file)) {
-            $file = $photo_id.'_'.time().'.jpg';
+            $file = $uuid.'_'.time();
         }
         if (file_exists($dir.$file)) {
-            $file = uniqid('m').$file;
+            $file = uniqid('al_').$file;
         }
         $fp = fopen($dir.$file, 'w');
         $c = new curl;
@@ -138,13 +141,31 @@ class repository_alfresco extends repository {
 
     public function print_search() {
         parent::print_search();
+        echo '<label>Space: </label><br /><select name="space">';
+        foreach ($this->sess->stores as $v) {	
+            echo '<option ';
+            if ($v->__toString() === 'workspace://SpacesStore') {
+                echo 'selected ';
+            }
+            echo 'value="';
+            echo $v->__toString().'">';
+            echo $v->__toString();
+            echo '</option>';
+        }
+        echo '</select>';
         return true;
     }
 
     public function search($search_text) {
         global $CFG;
+        $space = optional_param('space', 'workspace://SpacesStore', PARAM_RAW);
+        $currentStore = $this->sess->getStoreFromString($space);	
+        $nodes = $this->sess->query($currentStore, $search_text);
         $ret = array();
         $ret['list'] = array();
+        foreach($nodes as $v) {
+            $ret['list'][] = array('title'=>$v->cm_name, 'source'=>$v->id);
+        }
         return $ret;
     }
 
