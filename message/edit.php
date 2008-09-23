@@ -199,23 +199,22 @@ echo '<form class="mform" method="post" action="'.$CFG->wwwroot.'/message/edit.p
 //output settings table
 echo '<fieldset id="providers" class="clearfix">';
 echo '<legend class="ftoggler">'.get_string('providers_config', 'message').'</legend>';
-echo '<table>';
 $providers = message_get_my_providers();
 $processors = $DB->get_records('message_processors');
 $number_procs = count($processors);
-echo '<tr><td>'; echo '<table cellpadding="2"><tr><td>&nbsp;</td>'."\n";
+echo '<table cellpadding="2"><tr><td>&nbsp;</td>'."\n";
 foreach ( $processors as $processorid => $processor){
-    echo '<td align="center" style="width:120px">'.get_string($processor->name, 'messageprocessor_'.$processor->name).'</td>';
+    echo '<th align="center">'.get_string($processor->name, 'messageprocessor_'.$processor->name).'</th>';
 }
 echo '</tr>';
 
 ///  TODO:  (from martin)
 ///         1) Can we show the popuyp first (it's the default and always there)
-///         2) Can we NOT show plugins here unless they have been configured in the section below
+///         2) Can we perhaps NOT show plugins here unless they have been configured in the section below
 
 foreach ( $providers as $providerid => $provider){
     $providername = get_string('messageprovider:'.$provider->name, $provider->component);
-    echo '<tr><td align="right">'.$providername.'</td><td colspan="'.$number_procs.'"></td></tr>'."\n";
+    echo '<tr><th align="right">'.$providername.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
     foreach (array('loggedin', 'loggedoff') as $state){
         $state_res = get_string($state, 'message');
         echo '<tr><td align="right">'.$state_res.'</td>'."\n";
@@ -233,7 +232,6 @@ foreach ( $providers as $providerid => $provider){
     }
 }
 echo '</table>';
-echo '</td></tr></table>';
 echo '</fieldset>';
 
 //get a listing of all the message processors

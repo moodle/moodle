@@ -2573,6 +2573,11 @@ body#message-edit fieldset {
   padding: 20px;
 }
 
+body#message-edit th {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 /***
  *** Notes
  ***/
