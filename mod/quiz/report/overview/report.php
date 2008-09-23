@@ -23,13 +23,13 @@ class quiz_overview_report extends quiz_default_report {
         $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         // Work out some display options - whether there is feedback, and whether scores should be shown.
-        $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
+        $hasfeedback = quiz_has_feedback($quiz);
         $fakeattempt = new stdClass();
         $fakeattempt->preview = false;
         $fakeattempt->timefinish = $quiz->timeopen;
         $fakeattempt->userid = 0;
         $reviewoptions = quiz_get_reviewoptions($quiz, $fakeattempt, $this->context);
-        $showgrades = ($quiz->grade  !== 0) && ($quiz->sumgrades !== 0) && $reviewoptions->scores;
+        $showgrades = quiz_has_grades($quiz) && $reviewoptions->scores;
 
         $download = optional_param('download', '', PARAM_ALPHA);
         
@@ -402,15 +402,14 @@ class quiz_overview_report extends quiz_default_report {
             if ($currentgroup && $groupstudents){
                 list($usql, $params) = $DB->get_in_or_equal($groupstudents);
                 $params[] = $quiz->id;
-                //should be quicker than a COUNT to test if there is at least one record :
-                if ($DB->get_records_select('quiz_grades', "userid $usql AND quiz = ?", $params, '', '*', 0, 1)){
+                if ($DB->record_exists_select('quiz_grades', "userid $usql AND quiz = ?", $params)) {
                      $imageurl = "{$CFG->wwwroot}/mod/quiz/report/overview/overviewgraph.php?id={$quiz->id}&amp;groupid=$currentgroup";
                      $graphname = get_string('overviewreportgraphgroup', 'quiz_overview', groups_get_group_name($currentgroup));
                      print_heading($graphname);
                      echo '<div class="mdl-align"><img src="'.$imageurl.'" alt="'.$graphname.'" /></div>';
                 }
             }
-            if ($DB->get_records('quiz_grades', array('quiz'=> $quiz->id), '', '*', 0, 1)){
+            if ($DB->record_exists('quiz_grades', array('quiz'=> $quiz->id))){
                  $graphname = get_string('overviewreportgraph', 'quiz_overview');
                  $imageurl = $CFG->wwwroot.'/mod/quiz/report/overview/overviewgraph.php?id='.$quiz->id;
                  print_heading($graphname);

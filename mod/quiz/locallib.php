@@ -420,14 +420,16 @@ function quiz_feedback_for_grade($grade, $quizid) {
  * @param integer $quizid the id of the quiz object.
  * @return boolean Whether this quiz has any non-blank feedback text.
  */
-function quiz_has_feedback($quizid) {
+function quiz_has_feedback($quiz) {
     global $DB;
     static $cache = array();
-    if (!array_key_exists($quizid, $cache)) {
-        $cache[$quizid] = $DB->record_exists_select('quiz_feedback',
-                "quizid = ? AND " . $DB->sql_isnotempty('quiz_feedback', 'feedbacktext', false, true), array($quizid));
+    if (!array_key_exists($quiz->id, $cache)) {
+        $cache[$quiz->id] = quiz_has_grades($quiz) &&
+                $DB->record_exists_select('quiz_feedback', "quizid = ? AND " .
+                    $DB->sql_isnotempty('quiz_feedback', 'feedbacktext', false, true),
+                array($quiz->id));
     }
-    return $cache[$quizid];
+    return $cache[$quiz->id];
 }
 
 /**

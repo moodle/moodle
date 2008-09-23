@@ -18,7 +18,9 @@ class simple_rules_test extends MoodleUnitTestCase {
     function test_num_attempts_access_rule() {
         $quiz = new stdClass;
         $quiz->attempts = 3;
-        $rule = new num_attempts_access_rule($quiz, 0);
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
+        $rule = new num_attempts_access_rule($quizobj, 0);
         $attempt = new stdClass;
 
         $this->assertEqual($rule->description(), get_string('attemptsallowedn', 'quiz', 3));
@@ -42,7 +44,9 @@ class simple_rules_test extends MoodleUnitTestCase {
         $attempt = new stdClass;
 
         $quiz->subnet = getremoteaddr();
-        $rule = new ipaddress_access_rule($quiz, 0);
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
+        $rule = new ipaddress_access_rule($quizobj, 0);
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->description());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -50,7 +54,9 @@ class simple_rules_test extends MoodleUnitTestCase {
         $this->assertFalse($rule->time_left($attempt, 1));
 
         $quiz->subnet = '0.0.0.0';
-        $rule = new ipaddress_access_rule($quiz, 0);
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
+        $rule = new ipaddress_access_rule($quizobj, 0);
         $this->assertTrue($rule->prevent_access());
         $this->assertFalse($rule->description());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -61,7 +67,9 @@ class simple_rules_test extends MoodleUnitTestCase {
     function test_time_limit_access_rule() {
         $quiz = new stdClass;
         $quiz->timelimit = 60;
-        $rule = new time_limit_access_rule($quiz, 10000);
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
+        $rule = new time_limit_access_rule($quizobj, 10000);
         $attempt = new stdClass;
 
         $this->assertEqual($rule->description(), get_string('quiztimelimit', 'quiz', format_time(3600)));
@@ -82,9 +90,12 @@ class open_close_date_access_rule_test extends MoodleUnitTestCase {
         $quiz = new stdClass;
         $quiz->timeopen = 0;
         $quiz->timeclose = 0;
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
         $attempt = new stdClass;
+        $attempt->preview = 0;
 
-        $rule = new open_close_date_access_rule($quiz, 10000);
+        $rule = new open_close_date_access_rule($quizobj, 10000);
         $this->assertFalse($rule->description());
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -92,7 +103,7 @@ class open_close_date_access_rule_test extends MoodleUnitTestCase {
         $this->assertFalse($rule->time_left($attempt, 10000));
         $this->assertFalse($rule->time_left($attempt, 0));
 
-        $rule = new open_close_date_access_rule($quiz, 0);
+        $rule = new open_close_date_access_rule($quizobj, 0);
         $this->assertFalse($rule->description());
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -104,16 +115,19 @@ class open_close_date_access_rule_test extends MoodleUnitTestCase {
         $quiz = new stdClass;
         $quiz->timeopen = 10000;
         $quiz->timeclose = 0;
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
         $attempt = new stdClass;
+        $attempt->preview = 0;
 
-        $rule = new open_close_date_access_rule($quiz, 9999);
+        $rule = new open_close_date_access_rule($quizobj, 9999);
         $this->assertEqual($rule->description(), array(get_string('quiznotavailable', 'quiz', userdate(10000))));
         $this->assertEqual($rule->prevent_access(), get_string('notavailable', 'quiz'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
         $this->assertFalse($rule->time_left($attempt, 0));
 
-        $rule = new open_close_date_access_rule($quiz, 10000);
+        $rule = new open_close_date_access_rule($quizobj, 10000);
         $this->assertEqual($rule->description(), array(get_string('quizopenedon', 'quiz', userdate(10000))));
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -125,9 +139,12 @@ class open_close_date_access_rule_test extends MoodleUnitTestCase {
         $quiz = new stdClass;
         $quiz->timeopen = 0;
         $quiz->timeclose = 20000;
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
         $attempt = new stdClass;
+        $attempt->preview = 0;
 
-        $rule = new open_close_date_access_rule($quiz, 20000);
+        $rule = new open_close_date_access_rule($quizobj, 20000);
         $this->assertEqual($rule->description(), array(get_string('quizcloseson', 'quiz', userdate(20000))));
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -137,7 +154,7 @@ class open_close_date_access_rule_test extends MoodleUnitTestCase {
         $this->assertEqual($rule->time_left($attempt, 20000), 0);
         $this->assertEqual($rule->time_left($attempt, 20100), -100);
 
-        $rule = new open_close_date_access_rule($quiz, 20001);
+        $rule = new open_close_date_access_rule($quizobj, 20001);
         $this->assertEqual($rule->description(), array(get_string('quizclosed', 'quiz', userdate(20000))));
         $this->assertEqual($rule->prevent_access(), get_string('notavailable', 'quiz'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -152,29 +169,32 @@ class open_close_date_access_rule_test extends MoodleUnitTestCase {
         $quiz = new stdClass;
         $quiz->timeopen = 10000;
         $quiz->timeclose = 20000;
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
         $attempt = new stdClass;
+        $attempt->preview = 0;
 
-        $rule = new open_close_date_access_rule($quiz, 9999);
+        $rule = new open_close_date_access_rule($quizobj, 9999);
         $this->assertEqual($rule->description(), array(get_string('quiznotavailable', 'quiz', userdate(10000))));
         $this->assertEqual($rule->prevent_access(), get_string('notavailable', 'quiz'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
 
-        $rule = new open_close_date_access_rule($quiz, 10000);
+        $rule = new open_close_date_access_rule($quizobj, 10000);
         $this->assertEqual($rule->description(), array(get_string('quizopenedon', 'quiz', userdate(10000)),
                 get_string('quizcloseson', 'quiz', userdate(20000))));
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
 
-        $rule = new open_close_date_access_rule($quiz, 20000);
+        $rule = new open_close_date_access_rule($quizobj, 20000);
         $this->assertEqual($rule->description(), array(get_string('quizopenedon', 'quiz', userdate(10000)),
                 get_string('quizcloseson', 'quiz', userdate(20000))));
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
         $this->assertFalse($rule->is_finished(0, $attempt));
 
-        $rule = new open_close_date_access_rule($quiz, 20001);
+        $rule = new open_close_date_access_rule($quizobj, 20001);
         $this->assertEqual($rule->description(), array(get_string('quizclosed', 'quiz', userdate(20000))));
         $this->assertEqual($rule->prevent_access(), get_string('notavailable', 'quiz'));
         $this->assertFalse($rule->prevent_new_attempt(0, $attempt));
@@ -194,10 +214,12 @@ class inter_attempt_delay_access_rule_test extends MoodleUnitTestCase {
         $quiz->delay1 = 1000;
         $quiz->delay2 = 0;
         $quiz->timeclose = 0;
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
         $attempt = new stdClass;
         $attempt->timefinish = 10000;
 
-        $rule = new inter_attempt_delay_access_rule($quiz, 10000);
+        $rule = new inter_attempt_delay_access_rule($quizobj, 10000);
         $this->assertFalse($rule->description());
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->is_finished(0, $attempt));
@@ -221,10 +243,12 @@ class inter_attempt_delay_access_rule_test extends MoodleUnitTestCase {
         $quiz->delay1 = 0;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
         $attempt = new stdClass;
         $attempt->timefinish = 10000;
 
-        $rule = new inter_attempt_delay_access_rule($quiz, 10000);
+        $rule = new inter_attempt_delay_access_rule($quizobj, 10000);
         $this->assertFalse($rule->description());
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->is_finished(0, $attempt));
@@ -251,10 +275,12 @@ class inter_attempt_delay_access_rule_test extends MoodleUnitTestCase {
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 0;
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
         $attempt = new stdClass;
         $attempt->timefinish = 10000;
 
-        $rule = new inter_attempt_delay_access_rule($quiz, 10000);
+        $rule = new inter_attempt_delay_access_rule($quizobj, 10000);
         $this->assertFalse($rule->description());
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->is_finished(0, $attempt));
@@ -289,10 +315,12 @@ class inter_attempt_delay_access_rule_test extends MoodleUnitTestCase {
         $quiz->delay1 = 2000;
         $quiz->delay2 = 1000;
         $quiz->timeclose = 15000;
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
         $attempt = new stdClass;
         $attempt->timefinish = 13000;
 
-        $rule = new inter_attempt_delay_access_rule($quiz, 10000);
+        $rule = new inter_attempt_delay_access_rule($quizobj, 10000);
         $this->assertFalse($rule->description());
         $this->assertFalse($rule->prevent_access());
         $this->assertFalse($rule->is_finished(0, $attempt));
@@ -307,7 +335,7 @@ class inter_attempt_delay_access_rule_test extends MoodleUnitTestCase {
         $attempt->timefinish = 14001;
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt), get_string('youcannotwait', 'quiz'));
 
-        $rule = new inter_attempt_delay_access_rule($quiz, 15000);
+        $rule = new inter_attempt_delay_access_rule($quizobj, 15000);
         $attempt->timefinish = 13000;
         $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
         $attempt->timefinish = 13001;
@@ -317,7 +345,7 @@ class inter_attempt_delay_access_rule_test extends MoodleUnitTestCase {
         $attempt->timefinish = 14001;
         $this->assertEqual($rule->prevent_new_attempt(2, $attempt), get_string('youcannotwait', 'quiz'));
 
-        $rule = new inter_attempt_delay_access_rule($quiz, 15001);
+        $rule = new inter_attempt_delay_access_rule($quizobj, 15001);
         $attempt->timefinish = 13000;
         $this->assertFalse($rule->prevent_new_attempt(1, $attempt));
         $attempt->timefinish = 13001;
@@ -333,7 +361,9 @@ class password_access_rule_test extends MoodleUnitTestCase {
     function test_password_access_rule() {
         $quiz = new stdClass;
         $quiz->password = 'frog';
-        $rule = new password_access_rule($quiz, 0);
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
+        $rule = new password_access_rule($quizobj, 0);
         $attempt = new stdClass;
 
         $this->assertFalse($rule->prevent_access());
@@ -351,7 +381,11 @@ class password_access_rule_test extends MoodleUnitTestCase {
         $quiz->id = -1; // So as not to interfere with any real quizzes.
         $quiz->intro = 'SOME INTRO TEXT';
         $quiz->password = 'frog';
-        $rule = new password_access_rule($quiz, 0);
+        $quiz->questions = '';
+        $cm = new stdClass;
+        $cm->id = 666;
+        $quizobj = new quiz($quiz, $cm, null, false);
+        $rule = new password_access_rule($quizobj, 0);
 
         $rule->clear_access_allowed(-1);
         $_POST['cancelpassword'] = false;
@@ -385,7 +419,9 @@ class securewindow_access_rule_test extends MoodleUnitTestCase {
     function test_securewindow_access_rule() {
         $quiz = new stdClass;
         $quiz->popup = 1;
-        $rule = new securewindow_access_rule($quiz, 0);
+        $quiz->questions = '';
+        $quizobj = new quiz($quiz, null, null);
+        $rule = new securewindow_access_rule($quizobj, 0);
         $attempt = new stdClass;
 
         $this->assertFalse($rule->prevent_access());

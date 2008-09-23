@@ -166,7 +166,7 @@
 /// Show scores (if the user is allowed to see scores at the moment).
     $grade = quiz_rescale_grade($attempt->sumgrades, $quiz);
     if ($options->scores) {
-        if ($quiz->grade and $quiz->sumgrades) {
+        if (quiz_has_grades($quiz)) {
             if($overtime) {
                 $result->sumgrades = "0";
                 $result->grade = "0.0";

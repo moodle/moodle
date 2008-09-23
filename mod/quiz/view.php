@@ -177,11 +177,11 @@
 
         $attemptcolumn = $quiz->attempts != 1;
 
-        $gradecolumn = $someoptions->scores && $quiz->grade && $quiz->sumgrades;
+        $gradecolumn = $someoptions->scores && quiz_has_grades($quiz);
         $markcolumn = $gradecolumn && ($quiz->grade != $quiz->sumgrades);
         $overallstats = $alloptions->scores;
 
-        $feedbackcolumn = quiz_has_feedback($quiz->id) && $alloptions->overallfeedback;
+        $feedbackcolumn = quiz_has_feedback($quiz) && $alloptions->overallfeedback;
 
         // Prepare table header
         $table->class = 'generaltable quizattemptsummary';
@@ -306,7 +306,7 @@
         print_heading(get_string("nomoreattempts", "quiz"));
     }
 
-    if ($numattempts && $quiz->sumgrades && !is_null($mygrade)) {
+    if ($numattempts && $gradecolumn && !is_null($mygrade)) {
         $resultinfo = '';
 
         if ($overallstats) {

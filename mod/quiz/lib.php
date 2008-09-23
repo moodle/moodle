@@ -214,6 +214,18 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 }
 
 /**
+ * Is this a graded quiz? If this method returns true, you can assume that 
+ * $quiz->grade and $quiz->sumgrades are non-zero (for example, if you want to
+ * divide by them).
+ *
+ * @param object $quiz a row from the quiz table.
+ * @return boolean whether this is a graded quiz.
+ */
+function quiz_has_grades($quiz) {
+    return $quiz->grade != 0 && $quiz->sumgrades != 0;
+}
+
+/**
  * Get the best current grade for a particular user in a quiz.
  *
  * @param object $quiz the quiz object.
@@ -239,7 +251,7 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
 /// a given particular instance of this module, for user activity reports.
 
     if ($attempts = $DB->get_records_select('quiz_attempts', "userid=? AND quiz=?",  array($user->id, $quiz->id), 'attempt ASC')) {
-        if ($quiz->grade && $quiz->sumgrades && $grade = quiz_get_best_grade($quiz, $user->id)) {
+        if (quiz_has_grades($quiz) && $grade = quiz_get_best_grade($quiz, $user->id)) {
             echo get_string('grade') . ': ' . $grade . '/' . $quiz->grade . '<br />';
         }
         foreach ($attempts as $attempt) {

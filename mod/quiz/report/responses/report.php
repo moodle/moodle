@@ -22,13 +22,13 @@ class quiz_responses_report extends quiz_default_report {
         $context = get_context_instance(CONTEXT_MODULE, $cm->id);
 
         // Work out some display options - whether there is feedback, and whether scores should be shown.
-        $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
+        $hasfeedback = quiz_has_feedback($quiz);
         $fakeattempt = new stdClass();
         $fakeattempt->preview = false;
         $fakeattempt->timefinish = $quiz->timeopen;
         $fakeattempt->userid = 0;
         $reviewoptions = quiz_get_reviewoptions($quiz, $fakeattempt, $context);
-        $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
+        $showgrades = quiz_has_grades($quiz) && $reviewoptions->scores;
 
         $download = optional_param('download', '', PARAM_ALPHA);
 
@@ -171,8 +171,8 @@ class quiz_responses_report extends quiz_default_report {
             }
     
     
-            $showgrades = $quiz->grade && $quiz->sumgrades && $reviewoptions->scores;
-            $hasfeedback = quiz_has_feedback($quiz->id) && $quiz->grade > 1.e-7 && $quiz->sumgrades > 1.e-7;
+            $showgrades = quiz_has_grades($quiz) && $reviewoptions->scores;
+            $hasfeedback = quiz_has_feedback($quiz);
     
     
             // Construct the SQL

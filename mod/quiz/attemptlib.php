@@ -49,12 +49,15 @@ class quiz {
      * @param object $quiz the row from the quiz table.
      * @param object $cm the course_module object for this quiz.
      * @param object $course the row from the course table for the course we belong to.
+     * @param boolean $getcontext intended for testing - stops the constructor getting the context.
      */
-    function __construct($quiz, $cm, $course) {
+    function __construct($quiz, $cm, $course, $getcontext = true) {
         $this->quiz = $quiz;
         $this->cm = $cm;
         $this->course = $course;
-        $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        if ($getcontext && !empty($cm->id)) {
+            $this->context = get_context_instance(CONTEXT_MODULE, $cm->id);
+        }
         $this->determine_layout();
     }
 
