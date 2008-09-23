@@ -5,7 +5,7 @@ require('lib.php');
 
 require_login();
 
-if (isguest()) {
+if (isguestuser()) {
     redirect($CFG->wwwroot);
 }
 
@@ -15,34 +15,9 @@ if (empty($CFG->messaging)) {
 
 if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTEM))) {
 
-//    if ($USER->
-
-/// Don't use print_header, for more speed
-    $stylesheetshtml = '';
-    foreach ($CFG->stylesheets as $stylesheet) {
-        $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
-    }
-
-/// Select direction
-    if ( get_string('thisdirection') == 'rtl' ) {
-        $direction = ' dir="rtl"';
-    } else {
-        $direction = ' dir="ltr"';
-    }
-
-    @header('Content-Type: text/html; charset=utf-8');
-    echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'."\n";
-    echo "<html $direction xmlns=\"http://www.w3.org/1999/xhtml\">\n<head>\n";
-    echo '<meta http-equiv="content-type" content="text/html; charset=utf-8" />';
-    echo $stylesheetshtml;
-
-    include($CFG->javascript);
-
-    require_once($CFG->libdir .'/editor/htmlEditor.class.php');
-    $htmlEditorObject = new htmlEditor();
-    echo $htmlEditorObject->configure();
-
-    echo '<title> </title></head>';
+/// (Don't use print_header, for more speed)
+/// ehm - we have to use print_header() or else this breaks after any minor change in print_header()!
+    print_header();
 
 /// Script parameters
     $userid   = required_param('id', PARAM_INT);
@@ -58,6 +33,7 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     if ($contact = $DB->get_record('message_contacts', array('userid'=>$user->id, 'contactid'=>$USER->id))) {
         if ($contact->blocked and !has_capability('moodle/site:readallmessages', get_context_instance(CONTEXT_SYSTEM))) {
             print_heading(get_string('userisblockingyou', 'message'));
+            print_footer('empty');
             exit;
         }
     }
@@ -66,11 +42,10 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
     if (!empty($userpreferences['message_blocknoncontacts'])) {  // User is blocking non-contacts
         if (empty($contact)) {   // We are not a contact!
             print_heading(get_string('userisblockingyounoncontact', 'message'));
+            print_footer('empty');
             exit;
         }
     }
-
-    echo '<body class="message course-1" id="message-send">';
 
     if ($message!='' and confirm_sesskey()) {   /// Current user has just sent a message
 
@@ -129,6 +104,6 @@ if (has_capability('moodle/site:sendmessage', get_context_instance(CONTEXT_SYSTE
       "\n//]]>".
       "\n</script>";
 
-    echo '</body></html>';
+    print_footer('empty');
 }
 ?>
