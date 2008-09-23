@@ -27,6 +27,7 @@ require_once 'HTML/QuickForm/DHTMLRulesTableless.php';
 require_once 'HTML/QuickForm/Renderer/Tableless.php';
 
 require_once $CFG->libdir.'/filelib.php';
+require_once $CFG->libdir.'/uploadlib.php'; // TODO: remove
 
 /**
  * Callback called when PEAR throws an error
