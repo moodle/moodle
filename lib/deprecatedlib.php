@@ -772,6 +772,14 @@ function rename_index($table, $index, $newname) {
 /// removed functions ////
 //////////////////////////
 
+function stripslashes_safe($mixed) {
+    error('stripslashes_safe() not available anymore');
+}
+
+function stripslashes_recursive($var) {
+    error('stripslashes_recursive() not available anymore');
+}
+
 function addslashes_object($dataobject) {
     error('addslashes() not available anymore');
 }

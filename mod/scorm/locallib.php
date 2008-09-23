@@ -228,7 +228,7 @@ function scorm_get_scoes($id,$organisation=false) {
         foreach ($scoes as $sco) {
             if ($scodatas = $DB->get_records('scorm_scoes_data',array('scoid'=>$sco->id))) {
                 foreach ($scodatas as $scodata) {
-                    $sco->{$scodata->name} = stripslashes_safe($scodata->value);
+                    $sco->{$scodata->name} = $scodata->value;
                 }
             }
         }

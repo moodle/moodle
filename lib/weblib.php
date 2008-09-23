@@ -125,7 +125,7 @@ function s($var, $strip=false) {
     }
 
     if ($strip) {
-        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars(stripslashes_safe($var)));
+        return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var));
     } else {
         return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars($var));
     }
@@ -470,79 +470,6 @@ function data_submitted() {
     } else {
         return (object)$_POST;
     }
-}
-
-/**
- * Moodle replacement for php stripslashes() function,
- * works also for objects and arrays.
- *
- * The standard php stripslashes() removes ALL backslashes
- * even from strings - so  C:\temp becomes C:temp - this isn't good.
- * This function should work as a fairly safe replacement
- * to be called on quoted AND unquoted strings (to be sure)
- *
- * @param mixed something to remove unsafe slashes from
- * @return mixed
- */
-function stripslashes_safe($mixed) {
-    // there is no need to remove slashes from int, float and bool types
-    if (empty($mixed)) {
-        //nothing to do...
-    } else if (is_string($mixed)) {
-        if (ini_get_bool('magic_quotes_sybase')) { //only unescape single quotes
-            $mixed = str_replace("''", "'", $mixed);
-        } else { //the rest, simple and double quotes and backslashes
-            $mixed = str_replace("\\'", "'", $mixed);
-            $mixed = str_replace('\\"', '"', $mixed);
-            $mixed = str_replace('\\\\', '\\', $mixed);
-        }
-    } else if (is_array($mixed)) {
-        foreach ($mixed as $key => $value) {
-            $mixed[$key] = stripslashes_safe($value);
-        }
-    } else if (is_object($mixed)) {
-        $vars = get_object_vars($mixed);
-        foreach ($vars as $key => $value) {
-            $mixed->$key = stripslashes_safe($value);
-        }
-    }
-
-    return $mixed;
-}
-
-/**
- * Recursive implementation of stripslashes()
- *
- * This function will allow you to strip the slashes from a variable.
- * If the variable is an array or object, slashes will be stripped
- * from the items (or properties) it contains, even if they are arrays
- * or objects themselves.
- *
- * @param mixed the variable to remove slashes from
- * @return mixed
- */
-function stripslashes_recursive($var) {
-    if (is_object($var)) {
-        $new_var = new object();
-        $properties = get_object_vars($var);
-        foreach($properties as $property => $value) {
-            $new_var->$property = stripslashes_recursive($value);
-        }
-
-    } else if(is_array($var)) {
-        $new_var = array();
-        foreach($var as $property => $value) {
-            $new_var[$property] = stripslashes_recursive($value);
-        }
-
-    } else if(is_string($var)) {
-        $new_var = stripslashes($var);
-
-    } else {
-        $new_var = $var;
-    }
-
-    return $new_var;
 }
 
 /**
@@ -3908,9 +3835,9 @@ function print_heading($text, $align='', $size=2, $class='main', $return=false, 
         $id = ' id="'.$id.'"';
     }
     if (!defined('CLI_UPGRADE') || !CLI_UPGRADE ) {
-    $output = "<h$size $align $class $id>".stripslashes_safe($text)."</h$size>";
+    $output = "<h$size $align $class $id>".$text."</h$size>";
     } else if ( CLI_UPGRADE ) {
-        $output = stripslashes_safe($text);
+        $output = $text;
         if ($size == 1) {
             $output = '=>'.$output;
         } else if ($size == 2) {
