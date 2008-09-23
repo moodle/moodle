@@ -1926,9 +1926,6 @@ function question_format_grade($cmoptions, $grade) {
  */
 function question_init_qenginejs_script() {
     global $CFG;
-
-    // Get the properties we want into a PHP array first, becase that is easier
-    // to build.
     $config = array(
         'pixpath' => $CFG->pixpath,
         'wwwroot' => $CFG->wwwroot,
@@ -1937,16 +1934,7 @@ function question_init_qenginejs_script() {
         'flaggedalt' => get_string('flagged', 'question'),
         'unflaggedalt' => get_string('notflagged', 'question'),
     );
-
-    // Then generate the script tag.
-    $lines = array();
-    foreach ($config as $property => $value) {
-        $lines[] = '    ' . $property . ': "' . addslashes_js($value) . '"';
-    }
-    $script = '<script type="text/javascript">qengine_config = {' . "\n" . 
-            implode(",\n", $lines) .
-            "\n};</script>\n";
-    return $script;
+    return print_js_config($config, 'qengine_config', true);
 }
 
 /// FUNCTIONS THAT SIMPLY WRAP QUESTIONTYPE METHODS //////////////////////////////////
