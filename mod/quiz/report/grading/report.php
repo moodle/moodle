@@ -160,8 +160,6 @@ class quiz_grading_report extends quiz_default_report {
             groups_print_activity_menu($this->cm, $this->viewurl->out(false, array('userid'=>0, 'attemptid'=>0)));
         }
 
-        echo '<div class="quizattemptcounts">' . quiz_num_attempt_summary($quiz, $cm, true, $currentgroup) . '</div>';
-
         if(empty($this->users)) {
             if ($currentgroup){
                 notify(get_string('nostudentsingroup'));
@@ -438,17 +436,16 @@ class quiz_grading_report extends quiz_default_report {
                 '{quiz_attempts} qa ';
         $params = array();
 
-        if (($wantstateevent|| $gradenextungraded || $gradeungraded) && $questionid){
-            $from .= "LEFT JOIN {question_sessions} qns " .
-                    "ON (qns.attemptid = qa.uniqueid AND qns.questionid = ?) ";
-            $params[] = $questionid;
-            $from .=  "LEFT JOIN  {question_states} qs " .
-                    "ON (qs.id = qns.newgraded AND qs.question = ?) ";
-            $params[] = $questionid;
-        }
+        $from .= "LEFT JOIN {question_sessions} qns " .
+                "ON (qns.attemptid = qa.uniqueid AND qns.questionid = ?) ";
+        $params[] = $questionid;
+        $from .=  "LEFT JOIN  {question_states} qs " .
+                "ON (qs.id = qns.newest AND qs.question = ?) ";
+        $params[] = $questionid;
+
         list($usql, $u_params) = $DB->get_in_or_equal(array_keys($this->users));
         if ($gradenextungraded || $gradeungraded) { // get ungraded attempts
-            $where = "WHERE u.id $usql AND qs.event NOT IN (".QUESTION_EVENTS_GRADED.') ';
+            $where = "WHERE u.id $usql AND qs.event IN (".QUESTION_EVENTS_GRADED.")";
             $params = array_merge($params, $u_params);
         } else if ($userid) { // get all the attempts for a specific user
             $where = 'WHERE u.id=?';
@@ -460,6 +457,8 @@ class quiz_grading_report extends quiz_default_report {
             $where  = "WHERE u.id $usql ";
             $params = array_merge($params, $u_params);
         }
+        
+        $where .= ' AND qs.event IN ('.QUESTION_EVENTS_CLOSED_OR_GRADED.')';
 
         $where .= ' AND u.id = qa.userid AND qa.quiz = ?';
         $params[] = $quizid;

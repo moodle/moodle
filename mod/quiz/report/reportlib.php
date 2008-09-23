@@ -26,7 +26,7 @@ function quiz_get_newgraded_states($attemptidssql, $idxattemptq = true, $fields=
                 "{question_sessions} qns, " .
                 "{question_states} qs " .
                 "WHERE qns.attemptid $usql AND " .
-                "qns.newgraded = qs.id";
+                "qns.newest = qs.id";
         $gradedstates = $DB->get_records_sql($gradedstatesql, $params);
     } else if ($attemptidssql && is_object($attemptidssql)){
         $gradedstatesql = "SELECT $fields FROM " .
@@ -35,7 +35,7 @@ function quiz_get_newgraded_states($attemptidssql, $idxattemptq = true, $fields=
                 "{question_states} qs " .
                 "WHERE qns.attemptid = qa.uniqueid AND " .
                 $attemptidssql->where." AND ".
-                "qns.newgraded = qs.id";
+                "qns.newest = qs.id";
         $gradedstates = $DB->get_records_sql($gradedstatesql, $attemptidssql->params);
     } else {
         return array();
@@ -135,10 +135,10 @@ function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
     $params = array($quiz->id);
     list($u_sql, $u_params) = $DB->get_in_or_equal($userids);
     list($q_sql, $q_params) = $DB->get_in_or_equal($questionids);
-
+    
     $params = array_merge($params, $u_params, $q_params);
     $sql = "SELECT qs.question, COUNT(1) AS totalattempts,
-            SUM(CASE WHEN (qs.event IN (".QUESTION_EVENTS_GRADED.")) THEN 1 ELSE 0 END) AS gradedattempts
+            SUM(CASE WHEN (qs.event IN(".QUESTION_EVENTS_GRADED.")) THEN 1 ELSE 0 END) AS gradedattempts
             FROM
             {quiz_attempts} qa,
             {question_sessions} qns,
@@ -147,7 +147,8 @@ function quiz_get_total_qas_graded_and_ungraded($quiz, $questionids, $userids){
             qa.quiz = ? AND
             qa.userid $u_sql AND
             qns.attemptid = qa.uniqueid AND
-            qns.newgraded = qs.id AND
+            qns.newest = qs.id AND
+            qs.event IN (".QUESTION_EVENTS_CLOSED_OR_GRADED.") AND
             qs.question $q_sql
             GROUP BY qs.question";
     return $DB->get_records_sql($sql, $params);

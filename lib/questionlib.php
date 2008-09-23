@@ -37,9 +37,14 @@ define('QUESTION_EVENTMANUALGRADE', '9');   // Grade was entered by teacher
 define('QUESTION_EVENTS_GRADED', QUESTION_EVENTGRADE.','.
                     QUESTION_EVENTCLOSEANDGRADE.','.
                     QUESTION_EVENTMANUALGRADE);
-global $QUESTION_EVENTS_GRADED;
-$QUESTION_EVENTS_GRADED = array(QUESTION_EVENTGRADE, QUESTION_EVENTCLOSEANDGRADE,
-        QUESTION_EVENTMANUALGRADE);
+
+
+define('QUESTION_EVENTS_CLOSED', QUESTION_EVENTCLOSE.','.
+                    QUESTION_EVENTCLOSEANDGRADE.','.
+                    QUESTION_EVENTMANUALGRADE);
+
+define('QUESTION_EVENTS_CLOSED_OR_GRADED', QUESTION_EVENTGRADE.','.
+                    QUESTION_EVENTS_CLOSED);
 
 /**#@-*/
 
@@ -1082,7 +1087,7 @@ function get_question_states(&$questions, $cmoptions, $attempt, $lastattemptid =
  * @return object the requested state. False on error.
  */
 function question_load_specific_state($question, $cmoptions, $attempt, $stateid) {
-    global $DB, $QUESTION_EVENTS_GRADED;
+    global $DB;
     // Load specified states for the question.
     // sess.sumpenalty is probably wrong here shoul really be a sum of penalties from before the one we are asking for.
     $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment, sess.flagged, sess.id as questionsessionid
@@ -1099,7 +1104,6 @@ function question_load_specific_state($question, $cmoptions, $attempt, $stateid)
     restore_question_state($question, $state);
 
     // Load the most recent graded states for the questions before the specified one.
-    list($eventinsql, $params) = $DB->get_in_or_equal($QUESTION_EVENTS_GRADED);
     $sql = 'SELECT st.*, sess.sumpenalty, sess.manualcomment, sess.flagged, sess.id as questionsessionid
               FROM {question_states} st, {question_sessions} sess
              WHERE st.seq_number <= ?
@@ -1107,10 +1111,9 @@ function question_load_specific_state($question, $cmoptions, $attempt, $stateid)
                AND sess.attemptid = st.attempt
                AND st.question = ?
                AND sess.questionid = st.question
-               AND st.event ' . $eventinsql .
+               AND st.event IN ('.QUESTION_EVENTS_GRADED.') '.
            'ORDER BY st.seq_number DESC';
-    $gradedstates = $DB->get_records_sql($sql, array_merge(
-            array($state->seq_number, $attempt->id, $question->id), $params), 0, 1);
+    $gradedstates = $DB->get_records_sql($sql, array($state->seq_number, $attempt->id, $question->id), 0, 1);
     if (empty($gradedstates)) {
         $state->last_graded = clone($state);
     } else {
@@ -1240,8 +1243,11 @@ function save_question_session($question, $state) {
 * @param object $state
 */
 function question_state_is_graded($state) {
-    $gradedevents = explode(',', QUESTION_EVENTS_GRADED);
-    return (in_array($state->event, $gradedevents));
+    static $question_events_graded = array();
+    if (!$question_events_graded){
+        $question_events_graded = explode(',', QUESTION_EVENTS_GRADED);
+    }
+    return (in_array($state->event, $question_events_graded));
 }
 
 /**
@@ -1251,9 +1257,11 @@ function question_state_is_graded($state) {
 * @param object $state
 */
 function question_state_is_closed($state) {
-    return ($state->event == QUESTION_EVENTCLOSE
-        or $state->event == QUESTION_EVENTCLOSEANDGRADE
-        or $state->event == QUESTION_EVENTMANUALGRADE);
+    static $question_events_closed = array();
+    if (!$question_events_closed){
+        $question_events_closed = explode(',', QUESTION_EVENTS_CLOSED);
+    }
+    return (in_array($state->event, $question_events_closed));
 }
 
 
