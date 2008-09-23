@@ -6000,13 +6000,6 @@ function emoticonhelpbutton($form, $field, $return = false) {
 }
 
 /**
- * Print a button to toggle the html editor.
- */
-function editortogglebutton($id) {
-
-}
-
-/**
  * Print a help button.
  *
  * Prints a special help button for html editors (htmlarea in this case)
