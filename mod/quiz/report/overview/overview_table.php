@@ -226,10 +226,21 @@ class quiz_report_overview_table extends table_sql {
                         $grade = '<del>'.$oldgrade.'</del><br />'.
                                 $newgrade;
                     }
-                    return link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
+                    $linktopopup = link_to_popup_window('/mod/quiz/reviewquestion.php?attempt=' .
                             $attempt->attempt . '&amp;question=' . $question->id,
                             'reviewquestion', $grade, 450, 650, get_string('reviewresponse', 'quiz'),
                             'none', true);
+                    if (($this->questions[$questionid]->maxgrade != 0)){
+                        $fractionofgrade = $stateforqinattempt->grade
+                                        / $this->questions[$questionid]->maxgrade;
+                        $qclass = question_get_feedback_class($fractionofgrade);
+                        $feedbackimg = question_get_feedback_image($fractionofgrade);
+                        $questionclass = "que";
+                        return "<span class=\"$questionclass\"><span class=\"$qclass\">".$linktopopup."</span></span>$feedbackimg";
+                    } else {
+                        return $linktopopup;
+                    }
+                    
                 } else {
                     return $grade;
                 }
