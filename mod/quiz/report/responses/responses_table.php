@@ -152,20 +152,18 @@ class quiz_report_responses_table extends table_sql {
             $question = $this->questions[$questionid];
             restore_question_state($question, $stateforqinattempt);
             
-            $responses =  get_question_actual_response($question, $stateforqinattempt);
-            $response = (!empty($responses)? implode('; ',$responses) : '-');
-            $grade = $stateforqinattempt->grade
-                            / $this->questions[$questionid]->maxgrade;
+            if ($responses =  get_question_actual_response($question, $stateforqinattempt)){
+                $response = (!empty($responses)? implode('; ',$responses) : '-');
+            } else {
+                $response = '';
+            }
             if (!$this->is_downloading()) {
-                $format_options = new stdClass;
-                $format_options->para = false;
-                $format_options->noclean = true;
-                $format_options->newlines = false;
-                $qclass = question_get_feedback_class($grade);
-                $feedbackimg = question_get_feedback_image($grade);
-                $questionclass = "que";
-                $response = format_text($response, FORMAT_MOODLE, $format_options);
                 if ($response){
+                    $format_options = new stdClass;
+                    $format_options->para = false;
+                    $format_options->noclean = true;
+                    $format_options->newlines = false;
+                    $response = format_text($response, FORMAT_MOODLE, $format_options);
                     if (strlen($response) > QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY){
                         $response = shorten_text($response, QUIZ_REPORT_RESPONSES_MAX_LEN_TO_DISPLAY);
                     }
@@ -173,7 +171,13 @@ class quiz_report_responses_table extends table_sql {
                         $attempt->attempt . '&amp;question=' . $question->id,
                         'reviewquestion', $response, 450, 650, get_string('reviewresponse', 'quiz'),
                         'none', true);
-                    if (question_state_is_graded($stateforqinattempt)){
+                    if (question_state_is_graded($stateforqinattempt)
+                                && ($this->questions[$questionid]->maxgrade != 0)){
+                        $grade = $stateforqinattempt->grade
+                                        / $this->questions[$questionid]->maxgrade;
+                        $qclass = question_get_feedback_class($grade);
+                        $feedbackimg = question_get_feedback_image($grade);
+                        $questionclass = "que";
                         return "<span class=\"$questionclass\"><span class=\"$qclass\">".$response."</span></span>$feedbackimg";
                     } else {
                         return $response;
