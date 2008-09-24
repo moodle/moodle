@@ -72,6 +72,14 @@ class HTMLPurifier_HTMLModule
     public $info_attr_transform_post = array();
     
     /**
+     * List of HTMLPurifier_Injector to be performed during well-formedness fixing.
+     * An injector will only be invoked if all of it's pre-requisites are met;
+     * if an injector fails setup, there will be no error; it will simply be
+     * silently disabled.
+     */
+    public $info_injector = array();
+    
+    /**
      * Boolean flag that indicates whether or not getChildDef is implemented.
      * For optimization reasons: may save a call to a function. Be sure
      * to set it if you do implement getChildDef(), otherwise it will have
@@ -222,5 +230,14 @@ class HTMLPurifier_HTMLModule
         }
         return $ret;
     }
+    
+    /**
+     * Lazy load construction of the module after determining whether
+     * or not it's needed, and also when a finalized configuration object
+     * is available.
+     * @param $config Instance of HTMLPurifier_Config
+     */
+    public function setup($config) {}
+    
 }
 

@@ -58,26 +58,42 @@ abstract class HTMLPurifier_Injector
      * Prepares the injector by giving it the config and context objects:
      * this allows references to important variables to be made within
      * the injector. This function also checks if the HTML environment
-     * will work with the Injector: if p tags are not allowed, the
-     * Auto-Paragraphing injector should not be enabled.
+     * will work with the Injector (see checkNeeded()).
      * @param $config Instance of HTMLPurifier_Config
      * @param $context Instance of HTMLPurifier_Context
      * @return Boolean false if success, string of missing needed element/attribute if failure
      */
     public function prepare($config, $context) {
         $this->htmlDefinition = $config->getHTMLDefinition();
-        // perform $needed checks
-        foreach ($this->needed as $element => $attributes) {
-            if (is_int($element)) $element = $attributes;
-            if (!isset($this->htmlDefinition->info[$element])) return $element;
-            if (!is_array($attributes)) continue;
-            foreach ($attributes as $name) {
-                if (!isset($this->htmlDefinition->info[$element]->attr[$name])) return "$element.$name";
-            }
-        }
+        // Even though this might fail, some unit tests ignore this and
+        // still test checkNeeded, so be careful. Maybe get rid of that
+        // dependency.
+        $result = $this->checkNeeded($config);
+        if ($result !== false) return $result;
         $this->currentNesting =& $context->get('CurrentNesting');
         $this->inputTokens    =& $context->get('InputTokens');
         $this->inputIndex     =& $context->get('InputIndex');
+        return false;
+    }
+    
+    /**
+     * This function checks if the HTML environment
+     * will work with the Injector: if p tags are not allowed, the
+     * Auto-Paragraphing injector should not be enabled.
+     * @param $config Instance of HTMLPurifier_Config
+     * @param $context Instance of HTMLPurifier_Context
+     * @return Boolean false if success, string of missing needed element/attribute if failure
+     */
+    public function checkNeeded($config) {
+        $def = $config->getHTMLDefinition();
+        foreach ($this->needed as $element => $attributes) {
+            if (is_int($element)) $element = $attributes;
+            if (!isset($def->info[$element])) return $element;
+            if (!is_array($attributes)) continue;
+            foreach ($attributes as $name) {
+                if (!isset($def->info[$element]->attr[$name])) return "$element.$name";
+            }
+        }
         return false;
     }
     

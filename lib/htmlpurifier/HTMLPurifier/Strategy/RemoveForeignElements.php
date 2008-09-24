@@ -101,7 +101,7 @@ class HTMLPurifier_Strategy_RemoveForeignElements extends HTMLPurifier_Strategy
                     // invalid tag, generate HTML representation and insert in
                     if ($e) $e->send(E_WARNING, 'Strategy_RemoveForeignElements: Foreign element to text');
                     $token = new HTMLPurifier_Token_Text(
-                        $generator->generateFromToken($token, $config, $context)
+                        $generator->generateFromToken($token)
                     );
                 } else {
                     // check if we need to destroy all of the tag's children

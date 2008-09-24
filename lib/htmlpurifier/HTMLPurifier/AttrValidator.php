@@ -43,8 +43,8 @@ class HTMLPurifier_AttrValidator
         // DEFINITION CALL
         $d_defs = $definition->info_global_attr;
         
-        // reference attributes for easy manipulation
-        $attr =& $token->attr;
+        // don't update token until the very end, to ensure an atomic update
+        $attr = $token->attr;
         
         // do global transformations (pre)
         // nothing currently utilizes this
@@ -138,6 +138,8 @@ class HTMLPurifier_AttrValidator
             $attr = $transform->transform($o = $attr, $config, $context);
             if ($e && ($attr != $o)) $e->send(E_NOTICE, 'AttrValidator: Attributes transformed', $o, $attr);
         }
+        
+        $token->attr = $attr;
         
         // destroy CurrentToken if we made it ourselves
         if (!$current_token) $context->destroy('CurrentToken');

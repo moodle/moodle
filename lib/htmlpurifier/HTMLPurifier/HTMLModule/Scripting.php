@@ -20,7 +20,7 @@ class HTMLPurifier_HTMLModule_Scripting extends HTMLPurifier_HTMLModule
     public $content_sets = array('Block' => 'script | noscript', 'Inline' => 'script | noscript');
     public $safe = false;
     
-    public function __construct() {
+    public function setup($config) {
         // TODO: create custom child-definition for noscript that
         // auto-wraps stray #PCDATA in a similar manner to 
         // blockquote's custom definition (we would use it but

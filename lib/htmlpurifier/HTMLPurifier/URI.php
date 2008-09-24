@@ -128,6 +128,17 @@ class HTMLPurifier_URI
             $this->path = ''; // just to be safe
         }
         
+        // qf = query and fragment
+        $qf_encoder = new HTMLPurifier_PercentEncoder($chars_pchar . '/?');
+        
+        if (!is_null($this->query)) {
+            $this->query = $qf_encoder->encode($this->query);
+        }
+        
+        if (!is_null($this->fragment)) {
+            $this->fragment = $qf_encoder->encode($this->fragment);
+        }
+        
         return true;
         
     }

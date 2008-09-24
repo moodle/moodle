@@ -18,6 +18,11 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
         $this->embedsResource = (bool) $embeds_resource;
     }
     
+    public function make($string) {
+        $embeds = (bool) $string;
+        return new HTMLPurifier_AttrDef_URI($embeds);
+    }
+    
     public function validate($uri, $config, $context) {
         
         if ($config->get('URI', 'Disable')) return false;
@@ -50,6 +55,10 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
             $result = $scheme_obj->validate($uri, $config, $context);
             if (!$result) break;
             
+            // Post chained filtering
+            $result = $uri_def->postFilter($uri, $config, $context);
+            if (!$result) break;
+            
             // survived gauntlet
             $ok = true;
             
@@ -59,18 +68,7 @@ class HTMLPurifier_AttrDef_URI extends HTMLPurifier_AttrDef
         if (!$ok) return false;
         
         // back to string
-        $result = $uri->toString();
-        
-        // munge entire URI if necessary
-        if (
-            !is_null($uri->host) && // indicator for authority
-            !empty($scheme_obj->browsable) &&
-            !is_null($munge = $config->get('URI', 'Munge'))
-        ) {
-            $result = str_replace('%s', rawurlencode($result), $munge);
-        }
-        
-        return $result;
+        return $uri->toString();
         
     }
     

@@ -20,18 +20,15 @@ class HTMLPurifier_Printer
      * Initialize $generator.
      */
     public function __construct() {
-        $this->generator = new HTMLPurifier_Generator();
     }
     
     /**
      * Give generator necessary configuration if possible
      */
     public function prepareGenerator($config) {
-        // hack for smoketests/configForm.php
         $all = $config->getAll();
-        if (empty($all['HTML'])) return;
         $context = new HTMLPurifier_Context();
-        $this->generator->generateFromTokens(array(), $config, $context);
+        $this->generator = new HTMLPurifier_Generator($config, $context);
     }
     
     /**

@@ -20,7 +20,7 @@ class HTMLPurifier_Config
     /**
      * HTML Purifier's version
      */
-    public $version = '3.1.0';
+    public $version = '3.1.1';
     
     /**
      * Bool indicator whether or not to automatically finalize 
@@ -125,7 +125,7 @@ class HTMLPurifier_Config
                 E_USER_WARNING);
             return;
         }
-        if ($this->def->info[$namespace][$key]->class == 'alias') {
+        if (isset($this->def->info[$namespace][$key]->isAlias)) {
             $d = $this->def->info[$namespace][$key];
             trigger_error('Cannot get value from aliased directive, use real name ' . $d->namespace . '.' . $d->name,
                 E_USER_ERROR);
@@ -196,40 +196,48 @@ class HTMLPurifier_Config
                 E_USER_WARNING);
             return;
         }
-        if ($this->def->info[$namespace][$key]->class == 'alias') {
+        $def = $this->def->info[$namespace][$key];
+        
+        if (isset($def->isAlias)) {
             if ($from_alias) {
                 trigger_error('Double-aliases not allowed, please fix '.
                     'ConfigSchema bug with' . "$namespace.$key", E_USER_ERROR);
                 return;
             }
-            $this->set($new_ns = $this->def->info[$namespace][$key]->namespace,
-                       $new_dir = $this->def->info[$namespace][$key]->name,
+            $this->set($new_ns  = $def->namespace,
+                       $new_dir = $def->name,
                        $value, true);
             trigger_error("$namespace.$key is an alias, preferred directive name is $new_ns.$new_dir", E_USER_NOTICE);
             return;
         }
+        
+        // Raw type might be negative when using the fully optimized form
+        // of stdclass, which indicates allow_null == true
+        $rtype = is_int($def) ? $def : $def->type;
+        if ($rtype < 0) {
+            $type = -$rtype;
+            $allow_null = true;
+        } else {
+            $type = $rtype;
+            $allow_null = isset($def->allow_null);
+        }
+        
         try {
-            $value = $this->parser->parse(
-                        $value,
-                        $type = $this->def->info[$namespace][$key]->type,
-                        $this->def->info[$namespace][$key]->allow_null
-                     );
+            $value = $this->parser->parse($value, $type, $allow_null);
         } catch (HTMLPurifier_VarParserException $e) {
-            trigger_error('Value for ' . "$namespace.$key" . ' is of invalid type, should be ' . $type, E_USER_WARNING);
+            trigger_error('Value for ' . "$namespace.$key" . ' is of invalid type, should be ' . HTMLPurifier_VarParser::getTypeName($type), E_USER_WARNING);
             return;
         }
-        if (is_string($value)) {
+        if (is_string($value) && is_object($def)) {
             // resolve value alias if defined
-            if (isset($this->def->info[$namespace][$key]->aliases[$value])) {
-                $value = $this->def->info[$namespace][$key]->aliases[$value];
+            if (isset($def->aliases[$value])) {
+                $value = $def->aliases[$value];
             }
-            if ($this->def->info[$namespace][$key]->allowed !== true) {
-                // check to see if the value is allowed
-                if (!isset($this->def->info[$namespace][$key]->allowed[$value])) {
-                    trigger_error('Value not supported, valid values are: ' .
-                        $this->_listify($this->def->info[$namespace][$key]->allowed), E_USER_WARNING);
-                    return;
-                }
+            // check to see if the value is allowed
+            if (isset($def->allowed) && !isset($def->allowed[$value])) {
+                trigger_error('Value not supported, valid values are: ' .
+                    $this->_listify($def->allowed), E_USER_WARNING);
+                return;
             }
         }
         $this->conf[$namespace][$key] = $value;
@@ -386,7 +394,7 @@ class HTMLPurifier_Config
                     if (isset($blacklisted_directives["$ns.$directive"])) continue;
                     if (!isset($allowed_directives["$ns.$directive"]) && !isset($allowed_ns[$ns])) continue;
                 }
-                if ($def->class == 'alias') continue;
+                if (isset($def->isAlias)) continue;
                 if ($directive == 'DefinitionID' || $directive == 'DefinitionRev') continue;
                 $ret[] = array($ns, $directive);
             }

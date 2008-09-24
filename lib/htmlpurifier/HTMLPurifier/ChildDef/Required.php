@@ -55,10 +55,7 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
         $escape_invalid_children = $config->get('Core', 'EscapeInvalidChildren');
         
         // generator
-        static $gen = null;
-        if ($gen === null) {
-            $gen = new HTMLPurifier_Generator($config, $context);
-        }
+        $gen = new HTMLPurifier_Generator($config, $context);
         
         foreach ($tokens_of_children as $token) {
             if (!empty($token->is_whitespace)) {
@@ -83,7 +80,7 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
                         $result[] = $token;
                     } elseif ($pcdata_allowed && $escape_invalid_children) {
                         $result[] = new HTMLPurifier_Token_Text(
-                            $gen->generateFromToken($token, $config)
+                            $gen->generateFromToken($token)
                         );
                     }
                     continue;
@@ -94,7 +91,7 @@ class HTMLPurifier_ChildDef_Required extends HTMLPurifier_ChildDef
             } elseif ($pcdata_allowed && $escape_invalid_children) {
                 $result[] =
                     new HTMLPurifier_Token_Text(
-                        $gen->generateFromToken( $token, $config )
+                        $gen->generateFromToken($token)
                     );
             } else {
                 // drop silently

@@ -9,7 +9,7 @@ class HTMLPurifier_HTMLModule_Edit extends HTMLPurifier_HTMLModule
     
     public $name = 'Edit';
     
-    public function __construct() {
+    public function setup($config) {
         $contents = 'Chameleon: #PCDATA | Inline ! #PCDATA | Flow';
         $attr = array(
             'cite' => 'URI',

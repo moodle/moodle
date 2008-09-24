@@ -111,7 +111,8 @@ class HTMLPurifier_ConfigSchema_Validator
         if (!is_null($d->allowed) || !empty($d->valueAliases)) {
             // allowed and valueAliases require that we be dealing with
             // strings, so check for that early.
-            if (!isset(HTMLPurifier_VarParser::$stringTypes[$d->type])) {
+            $d_int = HTMLPurifier_VarParser::$types[$d->type];
+            if (!isset(HTMLPurifier_VarParser::$stringTypes[$d_int])) {
                 $this->error('type', 'must be a string type when used with allowed or value aliases');
             }
         }

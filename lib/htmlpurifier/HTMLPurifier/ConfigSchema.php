@@ -12,7 +12,33 @@ class HTMLPurifier_ConfigSchema {
     public $defaults = array();
     
     /**
-     * Definition of the directives.
+     * Definition of the directives. The structure of this is:
+     * 
+     *  array(
+     *      'Namespace' => array(
+     *          'Directive' => new stdclass(),
+     *      )
+     *  )
+     * 
+     * The stdclass may have the following properties:
+     * 
+     *  - If isAlias isn't set:
+     *      - type: Integer type of directive, see HTMLPurifier_VarParser for definitions
+     *      - allow_null: If set, this directive allows null values
+     *      - aliases: If set, an associative array of value aliases to real values
+     *      - allowed: If set, a lookup array of allowed (string) values
+     *  - If isAlias is set:
+     *      - namespace: Namespace this directive aliases to
+     *      - name: Directive name this directive aliases to
+     * 
+     * In certain degenerate cases, stdclass will actually be an integer. In
+     * that case, the value is equivalent to an stdclass with the type
+     * property set to the integer. If the integer is negative, type is
+     * equal to the absolute value of integer, and allow_null is true.
+     * 
+     * This class is friendly with HTMLPurifier_Config. If you need introspection
+     * about the schema, you're better of using the ConfigSchema_Interchange,
+     * which uses more memory but has much richer information.
      */
     public $info = array();
     
@@ -20,15 +46,6 @@ class HTMLPurifier_ConfigSchema {
      * Application-wide singleton
      */
     static protected $singleton;
-    
-    /**
-     * Variable parser.
-     */
-    protected $parser;
-    
-    public function __construct() {
-        $this->parser = new HTMLPurifier_VarParser_Flexible();
-    }
     
     /**
      * Unserializes the default ConfigSchema.
@@ -62,11 +79,11 @@ class HTMLPurifier_ConfigSchema {
      * @param $allow_null Whether or not to allow null values
      */
     public function add($namespace, $name, $default, $type, $allow_null) {
-        $default = $this->parser->parse($default, $type, $allow_null);
-        $this->info[$namespace][$name] = new HTMLPurifier_ConfigDef_Directive();
-        $this->info[$namespace][$name]->type = $type;
-        $this->info[$namespace][$name]->allow_null = $allow_null;
-        $this->defaults[$namespace][$name]   = $default;
+        $obj = new stdclass();
+        $obj->type = is_int($type) ? $type : HTMLPurifier_VarParser::$types[$type];
+        if ($allow_null) $obj->allow_null = true;
+        $this->info[$namespace][$name] = $obj;
+        $this->defaults[$namespace][$name] = $default;
     }
     
     /**
@@ -90,6 +107,9 @@ class HTMLPurifier_ConfigSchema {
      * @param $aliases Hash of aliased values to the real alias
      */
     public function addValueAliases($namespace, $name, $aliases) {
+        if (!isset($this->info[$namespace][$name]->aliases)) {
+            $this->info[$namespace][$name]->aliases = array();
+        }
         foreach ($aliases as $alias => $real) {
             $this->info[$namespace][$name]->aliases[$alias] = $real;
         }
@@ -104,7 +124,6 @@ class HTMLPurifier_ConfigSchema {
      * @param $allowed Lookup array of allowed values
      */
     public function addAllowedValues($namespace, $name, $allowed) {
-        $type = $this->info[$namespace][$name]->type;
         $this->info[$namespace][$name]->allowed = $allowed;
     }
     
@@ -116,7 +135,26 @@ class HTMLPurifier_ConfigSchema {
      * @param $new_name Directive that the alias will be to
      */
     public function addAlias($namespace, $name, $new_namespace, $new_name) {
-        $this->info[$namespace][$name] = new HTMLPurifier_ConfigDef_DirectiveAlias($new_namespace, $new_name);
+        $obj = new stdclass;
+        $obj->namespace = $new_namespace;
+        $obj->name = $new_name;
+        $obj->isAlias = true;
+        $this->info[$namespace][$name] = $obj;
+    }
+    
+    /**
+     * Replaces any stdclass that only has the type property with type integer.
+     */
+    public function postProcess() {
+        foreach ($this->info as $namespace => $info) {
+            foreach ($info as $directive => $v) {
+                if (count((array) $v) == 1) {
+                    $this->info[$namespace][$directive] = $v->type;
+                } elseif (count((array) $v) == 2 && isset($v->allow_null)) {
+                    $this->info[$namespace][$directive] = -$v->type;
+                }
+            }
+        }
     }
     
     // DEPRECATED METHODS
@@ -124,7 +162,6 @@ class HTMLPurifier_ConfigSchema {
     /** @see HTMLPurifier_ConfigSchema->set() */
     public static function define($namespace, $name, $default, $type, $description) {
         HTMLPurifier_ConfigSchema::deprecated(__METHOD__);
-        // process modifiers (OPTIMIZE!)
         $type_values = explode('/', $type, 2);
         $type = $type_values[0];
         $modifier = isset($type_values[1]) ? $type_values[1] : false;
@@ -168,7 +205,8 @@ class HTMLPurifier_ConfigSchema {
     /** @deprecated, use HTMLPurifier_VarParser->parse() */
     public function validate($a, $b, $c = false) {
         trigger_error("HTMLPurifier_ConfigSchema->validate deprecated, use HTMLPurifier_VarParser->parse instead", E_USER_NOTICE);
-        return $this->parser->parse($a, $b, $c);
+        $parser = new HTMLPurifier_VarParser();
+        return $parser->parse($a, $b, $c);
     }
     
     /**

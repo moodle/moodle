@@ -35,7 +35,7 @@ class HTMLPurifier_HTMLModule_Tidy extends HTMLPurifier_HTMLModule
      * @todo Wildcard matching and error reporting when an added or
      *       subtracted fix has no effect.
      */
-    public function construct($config) {
+    public function setup($config) {
         
         // create fixes, initialize fixesForLevel
         $fixes = $this->makeFixes();

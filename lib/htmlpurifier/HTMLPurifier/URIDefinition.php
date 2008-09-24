@@ -5,6 +5,7 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
     
     public $type = 'URI';
     protected $filters = array();
+    protected $postFilters = array();
     protected $registeredFilters = array();
     
     /**
@@ -27,6 +28,7 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
         $this->registerFilter(new HTMLPurifier_URIFilter_DisableExternalResources());
         $this->registerFilter(new HTMLPurifier_URIFilter_HostBlacklist());
         $this->registerFilter(new HTMLPurifier_URIFilter_MakeAbsolute());
+        $this->registerFilter(new HTMLPurifier_URIFilter_Munge());
     }
     
     public function registerFilter($filter) {
@@ -34,8 +36,13 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
     }
     
     public function addFilter($filter, $config) {
-        $filter->prepare($config);
-        $this->filters[$filter->name] = $filter;
+        $r = $filter->prepare($config);
+        if ($r === false) return; // null is ok, for backwards compat
+        if ($filter->post) {
+            $this->postFilters[$filter->name] = $filter;
+        } else {
+            $this->filters[$filter->name] = $filter;
+        }
     }
     
     protected function doSetup($config) {
@@ -66,8 +73,16 @@ class HTMLPurifier_URIDefinition extends HTMLPurifier_Definition
     }
     
     public function filter(&$uri, $config, $context) {
-        foreach ($this->filters as $name => $x) {
-            $result = $this->filters[$name]->filter($uri, $config, $context);
+        foreach ($this->filters as $name => $f) {
+            $result = $f->filter($uri, $config, $context);
+            if (!$result) return false;
+        }
+        return true;
+    }
+    
+    public function postFilter(&$uri, $config, $context) {
+        foreach ($this->postFilters as $name => $f) {
+            $result = $f->filter($uri, $config, $context);
             if (!$result) return false;
         }
         return true;

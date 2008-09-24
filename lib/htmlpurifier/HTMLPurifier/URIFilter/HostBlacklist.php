@@ -6,6 +6,7 @@ class HTMLPurifier_URIFilter_HostBlacklist extends HTMLPurifier_URIFilter
     protected $blacklist = array();
     public function prepare($config) {
         $this->blacklist = $config->get('URI', 'HostBlacklist');
+        return true;
     }
     public function filter(&$uri, $config, $context) {
         foreach($this->blacklist as $blacklisted_host_fragment) {

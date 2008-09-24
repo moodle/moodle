@@ -43,6 +43,7 @@ class HTMLPurifier_ConfigSchema_Builder_ConfigSchema
                 );
             }
         }
+        $schema->postProcess();
         return $schema;
     }
     

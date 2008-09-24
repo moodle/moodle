@@ -4,7 +4,6 @@
  * Abstract base token class that all others inherit from.
  */
 class HTMLPurifier_Token {
-    public $type; /**< Type of node to bypass <tt>is_a()</tt>. */
     public $line; /**< Line number node was on in source document. Null if unknown. */
     
     /**

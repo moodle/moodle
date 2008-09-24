@@ -11,14 +11,15 @@ class HTMLPurifier_URIFilter_MakeAbsolute extends HTMLPurifier_URIFilter
         $def = $config->getDefinition('URI');
         $this->base = $def->base;
         if (is_null($this->base)) {
-            trigger_error('URI.MakeAbsolute is being ignored due to lack of value for URI.Base configuration', E_USER_ERROR);
-            return;
+            trigger_error('URI.MakeAbsolute is being ignored due to lack of value for URI.Base configuration', E_USER_WARNING);
+            return false;
         }
         $this->base->fragment = null; // fragment is invalid for base URI
         $stack = explode('/', $this->base->path);
         array_pop($stack); // discard last segment
         $stack = $this->_collapseStack($stack); // do pre-parsing
         $this->basePathStack = $stack;
+        return true;
     }
     public function filter(&$uri, $config, $context) {
         if (is_null($this->base)) return true; // abort early

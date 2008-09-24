@@ -16,7 +16,6 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
             'cursive' => true
         );
         
-        $string = $this->parseCDATA($string);
         // assume that no font names contain commas in them
         $fonts = explode(',', $string);
         $final = '';
@@ -35,13 +34,40 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
                 $quote = $font[0];
                 if ($font[$length - 1] !== $quote) continue;
                 $font = substr($font, 1, $length - 2);
-                // double-backslash processing is buggy
-                $font = str_replace("\\$quote", $quote, $font); // de-escape quote
-                $font = str_replace("\\\n", "\n", $font);       // de-escape newlines
+                
+                $new_font = '';
+                for ($i = 0, $c = strlen($font); $i < $c; $i++) {
+                    if ($font[$i] === '\\') {
+                        $i++;
+                        if ($i >= $c) {
+                            $new_font .= '\\';
+                            break;
+                        }
+                        if (ctype_xdigit($font[$i])) {
+                            $code = $font[$i];
+                            for ($a = 1, $i++; $i < $c && $a < 6; $i++, $a++) {
+                                if (!ctype_xdigit($font[$i])) break;
+                                $code .= $font[$i];
+                            }
+                            // We have to be extremely careful when adding
+                            // new characters, to make sure we're not breaking
+                            // the encoding.
+                            $char = HTMLPurifier_Encoder::unichr(hexdec($code));
+                            if (HTMLPurifier_Encoder::cleanUTF8($char) === '') continue;
+                            $new_font .= $char;
+                            if ($i < $c && trim($font[$i]) !== '') $i--;
+                            continue;
+                        }
+                        if ($font[$i] === "\n") continue;
+                    }
+                    $new_font .= $font[$i];
+                }
+                
+                $font = $new_font;
             }
             // $font is a pure representation of the font name
             
-            if (ctype_alnum($font)) {
+            if (ctype_alnum($font) && $font !== '') {
                 // very simple font, allow it in unharmed
                 $final .= $font . ', ';
                 continue;
@@ -50,8 +76,8 @@ class HTMLPurifier_AttrDef_CSS_FontFamily extends HTMLPurifier_AttrDef
             // complicated font, requires quoting
             
             // armor single quotes and new lines
+            $font = str_replace("\\", "\\\\", $font);
             $font = str_replace("'", "\\'", $font);
-            $font = str_replace("\n", "\\\n", $font);
             $final .= "'$font', ";
         }
         $final = rtrim($final, ', ');

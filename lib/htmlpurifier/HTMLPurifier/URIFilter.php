@@ -20,9 +20,14 @@ abstract class HTMLPurifier_URIFilter
     public $name;
     
     /**
+     * True if this filter should be run after scheme validation.
+     */
+    public $post = false;
+    
+    /**
      * Performs initialization for the filter
      */
-    public function prepare($config) {}
+    public function prepare($config) {return true;}
     
     /**
      * Filter a URI object

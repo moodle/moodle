@@ -221,15 +221,35 @@ class HTMLPurifier_HTMLModuleManager
             $modules[] = 'Proprietary';
         }
         
+        // add SafeObject/Safeembed modules
+        if ($config->get('HTML', 'SafeObject')) {
+            $modules[] = 'SafeObject';
+        }
+        if ($config->get('HTML', 'SafeEmbed')) {
+            $modules[] = 'SafeEmbed';
+        }
+        
         foreach ($modules as $module) {
             $this->processModule($module);
+            $this->modules[$module]->setup($config);
         }
         
         foreach ($this->doctype->tidyModules as $module) {
             $this->processModule($module);
-            if (method_exists($this->modules[$module], 'construct')) {
-                $this->modules[$module]->construct($config);
+            $this->modules[$module]->setup($config);
+        }
+        
+        // prepare any injectors
+        foreach ($this->modules as $module) {
+            $n = array();
+            foreach ($module->info_injector as $i => $injector) {
+                if (!is_object($injector)) {
+                    $class = "HTMLPurifier_Injector_$injector";
+                    $injector = new $class;
+                }
+                $n[$injector->name] = $injector;
             }
+            $module->info_injector = $n;
         }
         
         // setup lookup table based on all valid modules

@@ -77,6 +77,11 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
     public $info_content_sets = array();
     
     /**
+     * Indexed list of HTMLPurifier_Injector to be used.
+     */
+    public $info_injector = array();
+    
+    /**
      * Doctype object
      */
     public $doctype;
@@ -186,17 +191,21 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
         $this->doctype = $this->manager->doctype;
         
         foreach ($this->manager->modules as $module) {
-            foreach($module->info_tag_transform         as $k => $v) {
+            foreach($module->info_tag_transform as $k => $v) {
                 if ($v === false) unset($this->info_tag_transform[$k]);
                 else $this->info_tag_transform[$k] = $v;
             }
-            foreach($module->info_attr_transform_pre    as $k => $v) {
+            foreach($module->info_attr_transform_pre as $k => $v) {
                 if ($v === false) unset($this->info_attr_transform_pre[$k]);
                 else $this->info_attr_transform_pre[$k] = $v;
             }
-            foreach($module->info_attr_transform_post   as $k => $v) {
+            foreach($module->info_attr_transform_post as $k => $v) {
                 if ($v === false) unset($this->info_attr_transform_post[$k]);
                 else $this->info_attr_transform_post[$k] = $v;
+            }
+            foreach ($module->info_injector as $k => $v) {
+                if ($v === false) unset($this->info_injector[$k]);
+                else $this->info_injector[$k] = $v;
             }
         }
         
@@ -356,6 +365,14 @@ class HTMLPurifier_HTMLDefinition extends HTMLPurifier_Definition
             }
         }
         
+        // setup injectors -----------------------------------------------------
+        foreach ($this->info_injector as $i => $injector) {
+            if ($injector->checkNeeded($config) !== false) {
+                // remove injector that does not have it's required
+                // elements/attributes present, and is thus not needed.
+                unset($this->info_injector[$i]);
+            }
+        }
     }
     
     /**

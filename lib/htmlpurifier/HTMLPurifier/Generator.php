@@ -35,8 +35,7 @@ class HTMLPurifier_Generator
      * @param $config Instance of HTMLPurifier_Config
      * @param $context Instance of HTMLPurifier_Context
      */
-    public function __construct($config = null, $context = null) {
-        if (!$config) $config = HTMLPurifier_Config::createDefault();
+    public function __construct($config, $context) {
         $this->config = $config;
         $this->_scriptFix = $config->get('Output', 'CommentScriptContents');
         $this->_def = $config->getHTMLDefinition();
