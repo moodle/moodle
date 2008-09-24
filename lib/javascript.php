@@ -6,7 +6,7 @@
         die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
     }
 
-    if (!empty($CFG->editorsrc) ) {
+    if (can_use_html_editor() && !empty($CFG->editorsrc)) {
         foreach ( $CFG->editorsrc as $scriptsource ) {
             echo '<script type="text/javascript" src="'. $scriptsource .'"></script>'."\n";
         }
@@ -40,25 +40,8 @@ function openpopup(url,name,options,fullscreen) {
   windowobj.focus();
   return false;
 }
-
-function uncheckall() {
-  void(d=document);
-  void(el=d.getElementsByTagName('INPUT'));
-  for(i=0;i<el.length;i++) {
-    void(el[i].checked=0);
-  }
-}
-
-function checkall() {
-  void(d=document);
-  void(el=d.getElementsByTagName('INPUT'));
-  for(i=0;i<el.length;i++) {
-    void(el[i].checked=1);
-  }
-}
-
-function inserttext(text) {
 <?php
+    echo "function inserttext(text) {\n";
     if (!empty($SESSION->inserttextform)) {
         $insertfield = "opener.document.forms['$SESSION->inserttextform'].$SESSION->inserttextfield";
         echo "  if(!opener.document.forms['$SESSION->inserttextform']){";
@@ -76,49 +59,21 @@ function inserttext(text) {
     echo "    $insertfield.value  += text;\n";
     echo "  }\n";
     echo "  $insertfield.focus();\n";
-?>
-}
-<?php if (!empty($focus)) {
-    if(($pos = strpos($focus, '.')) !== false) {
-        //old style focus using form name - no allowed inXHTML Strict
-        $topelement = substr($focus, 0, $pos);
-        echo "addonload(function() { if(document.$topelement) document.$focus.focus(); });\n";
-    } else {
-        //focus element with given id
-        echo "addonload(function() { if(el = document.getElementById('$focus')) el.focus(); });\n";
-    }
-    $focus=false; // Prevent themes from adding it to body tag which breaks addonload(), MDL-10249
-} ?>
+    echo "}\n";
 
-function getElementsByClassName(oElm, strTagName, oClassNames){
-	var arrElements = (strTagName == "*" && oElm.all)? oElm.all : oElm.getElementsByTagName(strTagName);
-	var arrReturnElements = new Array();
-	var arrRegExpClassNames = new Array();
-	if(typeof oClassNames == "object"){
-		for(var i=0; i<oClassNames.length; i++){
-			arrRegExpClassNames.push(new RegExp("(^|\\s)" + oClassNames[i].replace(/\-/g, "\\-") + "(\\s|$)"));
-		}
-	}
-	else{
-		arrRegExpClassNames.push(new RegExp("(^|\\s)" + oClassNames.replace(/\-/g, "\\-") + "(\\s|$)"));
-	}
-	var oElement;
-	var bMatchesAll;
-	for(var j=0; j<arrElements.length; j++){
-		oElement = arrElements[j];
-		bMatchesAll = true;
-		for(var k=0; k<arrRegExpClassNames.length; k++){
-			if(!arrRegExpClassNames[k].test(oElement.className)){
-				bMatchesAll = false;
-				break;
-			}
-		}
-		if(bMatchesAll){
-			arrReturnElements.push(oElement);
-		}
-	}
-	return (arrReturnElements)
-}
-var id2suffix = {};
-//]]>
-</script>
+    if (!empty($focus)) {
+        if(($pos = strpos($focus, '.')) !== false) {
+            //old style focus using form name - no allowed inXHTML Strict
+            $topelement = substr($focus, 0, $pos);
+            echo "addonload(function() { if(document.$topelement) document.$focus.focus(); });\n";
+        } else {
+            //focus element with given id
+            echo "addonload(function() { if(el = document.getElementById('$focus')) el.focus(); });\n";
+        }
+        $focus=false; // Prevent themes from adding it to body tag which breaks addonload(), MDL-10249
+    }
+
+    echo "var id2suffix = {};\n";
+    echo "//]]>\n";
+    echo "</script>\n";
+?>
