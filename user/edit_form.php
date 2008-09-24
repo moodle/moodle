@@ -109,6 +109,13 @@ class user_edit_form extends moodleform {
             $errors['email'] = get_string('toomanybounces');
         }
 
+        if (!empty($CFG->verifychangedemail) and !isset($errors['email']) and !has_capability('moodle/user:update', get_context_instance(CONTEXT_SYSTEM))) {
+            $errorstr = email_is_not_allowed($usernew->email);
+            if ($errorstr !== false) {
+                $errors['email'] = $errorstr;
+            }
+        }
+
         /// Next the customisable profile fields
         $errors += profile_validation($usernew, $files);
 
