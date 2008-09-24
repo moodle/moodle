@@ -41,6 +41,7 @@ function SCORMapi1_2() {
     score_children = 'raw, min, max';
     comments_children = 'content, location, time';
     objectives_children = 'id, score, status';
+    correct_responses_children = 'pattern';
     student_data_children = 'mastery_score, max_time_allowed, time_limit_action';
     student_preference_children = 'audio, language, speed, text';
     interactions_children = 'id, objectives, time, type, correct_responses, weighting, student_response, result, latency';
@@ -141,8 +142,9 @@ function SCORMapi1_2() {
 <?php
      // reconstitute objectives
     scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.objectives', array('score'));
-?>
-
+    scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.interactions', array('objectives', 'correct_responses'));
+    ?>
+    
     if (cmi.core.lesson_status == '') {
         cmi.core.lesson_status = 'not attempted';
     } 

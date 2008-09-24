@@ -752,7 +752,10 @@ function scorm_get_count_users($scormid, $groupingid=null) {
 function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $children) {
     // reconstitute comments_from_learner and comments_from_lms
     $current = '';
+    $current_subelement = '';
+    $current_sub = '';
     $count = 0;
+    $count_sub = 0;
     
     // filter out the ones we want
     $element_list = array();
@@ -768,15 +771,21 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
     // generate JavaScript
     foreach($element_list as $element => $value){
         if ($sversion == 'scorm_13') {
-            $element = preg_replace('/\.(\d+)\./', ".N\$1.", $element);
+            $element = preg_replace('/.*?\.(\d+)\./', ".N\$1.", $element);
             preg_match('/\.(N\d+)\./', $element, $matches);
         } else {
-            $element = preg_replace('/\.(\d+)\./', "_\$1.", $element);
+            $element = preg_replace('/.*?\.(\d+)\./', "_\$1.", $element);
             preg_match('/\_(\d+)\./', $element, $matches);
         }
         if (count($matches) > 0 && $current != $matches[1]) {
+            if ($count_sub > 0) {
+                echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+            }
             $current = $matches[1];            
             $count++;
+            $current_subelement = '';
+            $current_sub = '';
+            $count_sub = 0;
             $end = strpos($element,$matches[1])+strlen($matches[1]);
             $subelement = substr($element,0,$end);
             echo '    '.$subelement." = new Object();\n";
@@ -786,7 +795,42 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
                 echo '    '.$subelement.".".$child."._children = ".$child."_children;\n";
             }
         }
+        
+        // now - flesh out the second level elements if there are any
+        if ($sversion == 'scorm_13') {
+            $element = preg_replace('/.*?\.N\d+\..*?\.(\d+)\./', ".N\$1.", $element);
+            preg_match('/.*?\.N\d+\.(.*?)\.(N\d+)\./', $element, $matches);
+        } else {
+            $element = preg_replace('/.*?\_\d+\..*?\.(\d+)\./', "_\$1.", $element);
+            preg_match('/.*?\_\d+\.(.*?)\_(\d+)\./', $element, $matches);
+        }
+        
+        // check the sub element type
+        if (count($matches) > 0 && $current_subelement != $matches[1]) {
+            if ($count_sub > 0) {
+                echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
+            }
+            $current_subelement = $matches[1];
+            $current_sub = '';
+            $count_sub = 0;
+            $end = strpos($element,$matches[1])+strlen($matches[1]);
+            $subelement = substr($element,0,$end);
+            echo '    '.$subelement." = new Object();\n";
+        }
+        
+        // now check the subelement subscript
+        if (count($matches) > 0 && $current_sub != $matches[2]) {
+            $current_sub = $matches[2];            
+            $count_sub++;
+            $end = strrpos($element,$matches[2])+strlen($matches[2]);
+            $subelement = substr($element,0,$end);
+            echo '    '.$subelement." = new Object();\n";
+        }
+        
         echo '    '.$element.' = \''.$value."';\n";
+    }
+    if ($count_sub > 0) {
+        echo '    '.$element_name.'_'.$current.'.'.$current_subelement.'._count = '.$count_sub.";\n";
     }
     if ($count > 0) {
         echo '    '.$element_name.'._count = '.$count.";\n";
@@ -801,15 +845,36 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
 * @return comparator - 0,1,-1
 */   
 function scorm_element_cmp($a, $b) {
-    preg_match('/(\d+)\./', $a, $matches);
+    preg_match('/.*?(\d+)\./', $a, $matches);
     $left = intval($matches[1]);
-    preg_match('/(\d+)\./', $b, $matches);
+    preg_match('/.?(\d+)\./', $b, $matches);
     $right = intval($matches[1]);
     if ($left < $right) {
         return -1; // smaller
     } elseif ($left > $right) {
         return 1;  // bigger
     } else {
+        // look for a second level qualifier eg cmi.interactions_0.correct_responses_0.pattern
+        if (preg_match('/.*?(\d+)\.(.*?)\.(\d+)\./', $a, $matches)) {
+            $leftterm = intval($matches[2]);
+            $left = intval($matches[3]);
+            if (preg_match('/.*?(\d+)\.(.*?)\.(\d+)\./', $b, $matches)) {
+                $rightterm = intval($matches[2]);
+                $right = intval($matches[3]);
+                if ($leftterm < $rightterm) {
+                    return -1; // smaller
+                } elseif ($leftterm > $rightterm) {
+                    return 1;  // bigger
+                } else {
+                    if ($left < $right) {
+                        return -1; // smaller
+                    } elseif ($left > $right) {
+                        return 1;  // bigger
+                    }
+                }
+            }
+        }
+        // fall back for no second level matches or second level matches are equal
         return 0;  // equal to
     }
 }
