@@ -165,7 +165,7 @@ class quiz_responses_report extends quiz_default_report {
             // Print information on the grading method and whether we are displaying
             //
             if (!$table->is_downloading()) { //do not print notices when downloading
-                if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter, false)) {
+                if ($strattempthighlight = quiz_report_highlighting_grading_method($quiz, $qmsubselect, $qmfilter)) {
                     echo '<div class="quizattemptcounts">' . $strattempthighlight . '</div>';
                 }
             }
