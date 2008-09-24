@@ -1084,7 +1084,10 @@ table.quizreviewsummary td.cell {
 #mod-quiz-report .dubious{
   background-color: #fcc;
 }
-
+#mod-quiz-report .highlight{
+  border :medium solid yellow;
+  background-color:lightYellow;
+}
 /***
  *** Modules: Resource
  ***/
