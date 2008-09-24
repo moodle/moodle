@@ -189,7 +189,7 @@ class repository_flickr_public extends repository {
      * @param <type> $path
      * @return <type>
      */
-    private function build_list($photos, $path = 1, $ret) {
+    private function build_list($photos, $path = 1, &$ret) {
         $photos_url = $this->flickr->urls_getUserPhotos($this->nsid);
         $ret['manage'] = $photos_url;
         $ret['list']  = array();
