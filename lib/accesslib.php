@@ -5467,8 +5467,13 @@ function context_moved($context, $newparent) {
     execute_sql($sql,false);
 
     $len = strlen($frompath);
+    /// MDL-16655 - Substring MSSQL function *requires* 3rd parameter
+    $substr3rdparam = '';
+    if ($CFG->dbfamily == 'mssql') {
+        $substr3rdparam = ', len(path)';
+    }
     $sql = "UPDATE {$CFG->prefix}context
-            SET path = ".sql_concat("'$newpath'", 'SUBSTR(path, '.$len.' +1)')."
+            SET path = ".sql_concat("'$newpath'", sql_substr() .'(path, '.$len.' +1'.$substr3rdparam.')')."
                 $setdepth
             WHERE path LIKE '{$frompath}/%'";
     execute_sql($sql,false);
