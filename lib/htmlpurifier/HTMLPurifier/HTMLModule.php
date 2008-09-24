@@ -219,5 +219,14 @@ class HTMLPurifier_HTMLModule
         }
         return $ret;
     }
+    
+    /**
+     * Lazy load construction of the module after determining whether
+     * or not it's needed, and also when a finalized configuration object
+     * is available.
+     * @param $config Instance of HTMLPurifier_Config
+     */
+    function setup($config) {}
+    
 }
 

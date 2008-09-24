@@ -11,7 +11,7 @@ class HTMLPurifier_HTMLModule_Tables extends HTMLPurifier_HTMLModule
     
     var $name = 'Tables';
     
-    function HTMLPurifier_HTMLModule_Tables() {
+    function setup($config) {
         
         $this->addElement('caption', true, false, 'Inline', 'Common');
         

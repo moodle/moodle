@@ -10,7 +10,7 @@ class HTMLPurifier_HTMLModule_Target extends HTMLPurifier_HTMLModule
     
     var $name = 'Target';
     
-    function HTMLPurifier_HTMLModule_Target() {
+    function setup($config) {
         $elements = array('a');
         foreach ($elements as $name) {
             $e =& $this->addBlankElement($name);

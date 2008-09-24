@@ -11,7 +11,7 @@ class HTMLPurifier_HTMLModule_Hypertext extends HTMLPurifier_HTMLModule
     
     var $name = 'Hypertext';
     
-    function HTMLPurifier_HTMLModule_Hypertext() {
+    function setup($config) {
         $a =& $this->addElement(
             'a', true, 'Inline', 'Inline', 'Common',
             array(

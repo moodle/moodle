@@ -22,7 +22,7 @@
  */
 
 /*
-    HTML Purifier 2.1.4 - Standards Compliant HTML Filtering
+    HTML Purifier 2.1.5 - Standards Compliant HTML Filtering
     Copyright (C) 2006-2007 Edward Z. Yang
 
     This library is free software; you can redistribute it and/or
@@ -83,7 +83,7 @@ since 2.0.0.
 class HTMLPurifier
 {
     
-    var $version = '2.1.4';
+    var $version = '2.1.5';
     
     var $config;
     var $filters = array();

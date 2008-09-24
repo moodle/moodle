@@ -17,6 +17,7 @@ require_once 'HTMLPurifier/AttrDef/CSS/Percentage.php';
 require_once 'HTMLPurifier/AttrDef/CSS/TextDecoration.php';
 require_once 'HTMLPurifier/AttrDef/CSS/URI.php';
 require_once 'HTMLPurifier/AttrDef/Enum.php';
+require_once 'HTMLPurifier/AttrDef/Switch.php';
 
 HTMLPurifier_ConfigSchema::define(
     'CSS', 'DefinitionRev', 1, 'int', '
@@ -24,6 +25,20 @@ HTMLPurifier_ConfigSchema::define(
     Revision identifier for your custom definition. See
     %HTML.DefinitionRev for details. This directive has been available
     since 2.0.0.
+</p>
+');
+
+HTMLPurifier_ConfigSchema::define(
+    'CSS', 'MaxImgLength', '1200px', 'string/null', '
+<p>
+ This parameter sets the maximum allowed length on <code>img</code> tags,
+ effectively the <code>width</code> and <code>height</code> properties.
+ Only absolute units of measurement (in, pt, pc, mm, cm) and pixels (px) are allowed. This is
+ in place to prevent imagecrash attacks, disable with null at your own risk.
+ This directive is similar to %HTML.MaxImgLength, and both should be
+ concurrently edited, although there are
+ subtle differences in the input format (the CSS max is a number with
+ a unit).
 </p>
 ');
 
@@ -117,7 +132,7 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         $this->info['border-left-width'] = 
         $this->info['border-right-width'] = new HTMLPurifier_AttrDef_CSS_Composite(array(
             new HTMLPurifier_AttrDef_Enum(array('thin', 'medium', 'thick')),
-            new HTMLPurifier_AttrDef_CSS_Length(true) //disallow negative
+            new HTMLPurifier_AttrDef_CSS_Length('0') //disallow negative
         ));
         
         $this->info['border-width'] = new HTMLPurifier_AttrDef_CSS_Multiple($border_width);
@@ -143,7 +158,7 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         $this->info['line-height'] = new HTMLPurifier_AttrDef_CSS_Composite(array(
             new HTMLPurifier_AttrDef_Enum(array('normal')),
             new HTMLPurifier_AttrDef_CSS_Number(true), // no negatives
-            new HTMLPurifier_AttrDef_CSS_Length(true),
+            new HTMLPurifier_AttrDef_CSS_Length('0'),
             new HTMLPurifier_AttrDef_CSS_Percentage(true)
         ));
         
@@ -165,7 +180,7 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
         $this->info['padding-bottom'] = 
         $this->info['padding-left'] = 
         $this->info['padding-right'] = new HTMLPurifier_AttrDef_CSS_Composite(array(
-            new HTMLPurifier_AttrDef_CSS_Length(true),
+            new HTMLPurifier_AttrDef_CSS_Length('0'),
             new HTMLPurifier_AttrDef_CSS_Percentage(true)
         ));
         
@@ -176,14 +191,25 @@ class HTMLPurifier_CSSDefinition extends HTMLPurifier_Definition
             new HTMLPurifier_AttrDef_CSS_Percentage()
         ));
         
-        $this->info['width'] =
-        $this->info['height'] =
-        new HTMLPurifier_AttrDef_CSS_DenyElementDecorator(
-        new HTMLPurifier_AttrDef_CSS_Composite(array(
-            new HTMLPurifier_AttrDef_CSS_Length(true),
+        $trusted_wh = new HTMLPurifier_AttrDef_CSS_Composite(array(
+            new HTMLPurifier_AttrDef_CSS_Length('0'),
             new HTMLPurifier_AttrDef_CSS_Percentage(true),
             new HTMLPurifier_AttrDef_Enum(array('auto'))
-        )), 'img');
+        ));
+        $max = $config->get('CSS', 'MaxImgLength');
+        $this->info['width'] =
+        $this->info['height'] =
+            $max === null ?
+            $trusted_wh : 
+            new HTMLPurifier_AttrDef_Switch('img',
+                // For img tags:
+                new HTMLPurifier_AttrDef_CSS_Composite(array(
+                    new HTMLPurifier_AttrDef_CSS_Length('0', $max),
+                    new HTMLPurifier_AttrDef_Enum(array('auto'))
+                )),
+                // For everyone else:
+                $trusted_wh
+            );
         
         $this->info['text-decoration'] = new HTMLPurifier_AttrDef_CSS_TextDecoration();
         

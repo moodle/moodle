@@ -18,6 +18,11 @@ class HTMLPurifier_AttrDef_CSS_Number extends HTMLPurifier_AttrDef
         $this->non_negative = $non_negative;
     }
     
+    /**
+     * @warning Some contexts do not pass $config, $context. These
+     *          variables should not be used without checking HTMLPurifier_Length.
+     *          This might not work properly in PHP4.
+     */
     function validate($number, $config, &$context) {
         
         $number = $this->parseCDATA($number);

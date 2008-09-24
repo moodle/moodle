@@ -11,7 +11,7 @@ class HTMLPurifier_HTMLModule_Ruby extends HTMLPurifier_HTMLModule
     
     var $name = 'Ruby';
     
-    function HTMLPurifier_HTMLModule_Ruby() {
+    function setup($config) {
         $this->addElement('ruby', true, 'Inline',
             'Custom: ((rb, (rt | (rp, rt, rp))) | (rbc, rtc, rtc?))',
             'Common');

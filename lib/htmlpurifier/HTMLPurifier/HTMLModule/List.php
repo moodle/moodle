@@ -21,7 +21,7 @@ class HTMLPurifier_HTMLModule_List extends HTMLPurifier_HTMLModule
     
     var $content_sets = array('Flow' => 'List');
     
-    function HTMLPurifier_HTMLModule_List() {
+    function setup($config) {
         $this->addElement('ol', true, 'List', 'Required: li', 'Common');
         $this->addElement('ul', true, 'List', 'Required: li', 'Common');
         $this->addElement('dl', true, 'List', 'Required: dt | dd', 'Common');

@@ -342,13 +342,12 @@ class HTMLPurifier_HTMLModuleManager
         
         foreach ($modules as $module) {
             $this->processModule($module);
+            $this->modules[$module]->setup($config);
         }
         
         foreach ($this->doctype->tidyModules as $module) {
             $this->processModule($module);
-            if (method_exists($this->modules[$module], 'construct')) {
-                $this->modules[$module]->construct($config);
-            }
+            $this->modules[$module]->setup($config);
         }
         
         // setup lookup table based on all valid modules

@@ -22,7 +22,7 @@ class HTMLPurifier_HTMLModule_Text extends HTMLPurifier_HTMLModule
         'Flow' => 'Heading | Block | Inline'
     );
     
-    function HTMLPurifier_HTMLModule_Text() {
+    function setup($config) {
         
         // Inline Phrasal -------------------------------------------------
         $this->addElement('abbr',    true, 'Inline', 'Inline', 'Common');

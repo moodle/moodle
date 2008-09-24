@@ -15,7 +15,7 @@ class HTMLPurifier_HTMLModule_Bdo extends HTMLPurifier_HTMLModule
         'I18N' => array('dir' => false)
     );
     
-    function HTMLPurifier_HTMLModule_Bdo() {
+    function setup($config) {
         $bdo =& $this->addElement(
             'bdo', true, 'Inline', 'Inline', array('Core', 'Lang'),
             array(

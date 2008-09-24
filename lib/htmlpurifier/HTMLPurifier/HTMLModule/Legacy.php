@@ -25,7 +25,7 @@ class HTMLPurifier_HTMLModule_Legacy extends HTMLPurifier_HTMLModule
     
     var $name = 'Legacy';
     
-    function HTMLPurifier_HTMLModule_Legacy() {
+    function setup($config) {
         
         $this->addElement('basefont', true, 'Inline', 'Empty', false, array(
             'color' => 'Color',
