@@ -65,7 +65,7 @@ class grade_report_grader_ajax extends grade_report_grader {
      * @param int $sortitemid The id of the grade_item by which to sort the table
      */
     function grade_report_grader_ajax($courseid, $gpr, $context, $page=null, $sortitemid=null) {
-        parent::grade_report_grader($courseid, $gpr, $context, $page, $sortitemid);
+        parent::__construct($courseid, $gpr, $context, $page, $sortitemid);
     }
     
     /**
