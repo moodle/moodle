@@ -166,7 +166,7 @@ class repository_flickr_public extends repository {
             $SESSION->$sess_text = $search_text;
         }
         $ret = array();
-        return $this->build_list($photos, $page, &$ret);
+        return $this->build_list($photos, $page, $ret);
     }
 
     /**
@@ -180,7 +180,7 @@ class repository_flickr_public extends repository {
         $photos = $this->flickr->people_getPublicPhotos($people['nsid'], 'original_format', 25, $path);
         $ret = array();
 
-        return $this->build_list($photos, $path, &$ret);
+        return $this->build_list($photos, $path, $ret);
     }
 
     /**
