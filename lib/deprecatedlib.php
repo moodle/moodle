@@ -857,7 +857,7 @@ function get_field_sql($sql) {
 }
 
 function delete_records_select($table, $select='') {
-    delete_records_select('get_field_sql() not available anymore');
+    error('get_field_sql() not available anymore');
 }
 
 
