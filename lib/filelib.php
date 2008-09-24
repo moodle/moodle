@@ -1642,32 +1642,30 @@ class curl {
                 $this->cache = new curl_cache;
             }
         }
-        if (!empty($options['proxy'])) {
-            if (!empty($CFG->proxyhost)) {
-                if (empty($CFG->proxyport)) {
-                    $this->proxy_host = $CFG->proxyhost;
+        if (!empty($CFG->proxyhost)) {
+            if (empty($CFG->proxyport)) {
+                $this->proxy_host = $CFG->proxyhost;
+            } else {
+                $this->proxy_host = $CFG->proxyhost.':'.$CFG->proxyport;
+            }
+            if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
+                $this->proxy_auth = $CFG->proxyuser.':'.$CFG->proxypassword;
+                $this->setopt(array(
+                            'proxyauth'=> CURLAUTH_BASIC | CURLAUTH_NTLM,
+                            'proxyuserpwd'=>$this->proxy_auth));
+            }
+            if (!empty($CFG->proxytype)) {
+                if ($CFG->proxytype == 'SOCKS5') {
+                    $this->proxy_type = CURLPROXY_SOCKS5;
                 } else {
-                    $this->proxy_host = $CFG->proxyhost.':'.$CFG->proxyport;
+                    $this->proxy_type = CURLPROXY_HTTP;
+                    $this->setopt(array('httpproxytunnel'=>true));
                 }
-                if (!empty($CFG->proxyuser) and !empty($CFG->proxypassword)) {
-                    $this->proxy_auth = $CFG->proxyuser.':'.$CFG->proxypassword;
-                    $this->setopt(array(
-                                'proxyauth'=> CURLAUTH_BASIC | CURLAUTH_NTLM,
-                                'proxyuserpwd'=>$this->proxy_auth));
-                }
-                if (!empty($CFG->proxytype)) {
-                    if ($CFG->proxytype == 'SOCKS5') {
-                        $this->proxy_type = CURLPROXY_SOCKS5;
-                    } else {
-                        $this->proxy_type = CURLPROXY_HTTP;
-                        $this->setopt(array('httpproxytunnel'=>true));
-                    }
-                    $this->setopt(array('proxytype'=>$this->proxy_type));
-                }
+                $this->setopt(array('proxytype'=>$this->proxy_type));
             }
-            if (!empty($this->proxy_host)) {
-                $this->proxy = array('proxy'=>$this->proxy_host);
-            }
+        }
+        if (!empty($this->proxy_host)) {
+            $this->proxy = array('proxy'=>$this->proxy_host);
         }
     }
     public function resetopt(){
