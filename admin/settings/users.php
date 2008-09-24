@@ -27,6 +27,7 @@ if ($hassiteconfig
                                                 get_string('authinstructions', 'auth'), ''));
     $temp->add(new admin_setting_configtext('allowemailaddresses', get_string('allowemailaddresses', 'admin'), get_string('configallowemailaddresses', 'admin'), '', PARAM_NOTAGS));
     $temp->add(new admin_setting_configtext('denyemailaddresses', get_string('denyemailaddresses', 'admin'), get_string('configdenyemailaddresses', 'admin'), '', PARAM_NOTAGS));
+    $temp->add(new admin_setting_configcheckbox('verifychangedemail', get_string('verifychangedemail', 'admin'), get_string('configverifychangedemail', 'admin'), 1));
     
     $temp->add(new admin_setting_configtext('recaptchapublickey', get_string('recaptchapublickey', 'admin'), get_string('configrecaptchapublickey', 'admin'), '', PARAM_NOTAGS));
     $temp->add(new admin_setting_configtext('recaptchaprivatekey', get_string('recaptchaprivatekey', 'admin'), get_string('configrecaptchaprivatekey', 'admin'), '', PARAM_NOTAGS));
