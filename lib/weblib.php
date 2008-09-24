@@ -2010,6 +2010,7 @@ function purify_html($text) {
         $config->set('HTML', 'Doctype', 'XHTML 1.0 Transitional');
         $config->set('Cache', 'SerializerPath', $cachedir);
         $config->set('URI', 'AllowedSchemes', array('http'=>1, 'https'=>1, 'ftp'=>1, 'irc'=>1, 'nntp'=>1, 'news'=>1, 'rtsp'=>1, 'teamspeak'=>1, 'gopher'=>1, 'mms'=>1));
+        $config->set('Attr', 'AllowedFrameTargets', array('_blank'));
         $purifier = new HTMLPurifier($config);
     }
     return $purifier->purify($text);
