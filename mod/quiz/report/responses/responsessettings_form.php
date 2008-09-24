@@ -14,7 +14,11 @@ class mod_quiz_report_responses_settings extends moodleform {
             $a = new object();
             $a->coursestudent = $COURSE->students;
             $a->groupname = groups_get_group_name($this->_customdata['currentgroup']);
-            $studentsstring = get_string('studentingroup', 'quiz_overview', $a);
+            if (20 < strlen($a->groupname)){
+                $studentsstring = get_string('studentingrouplong', 'quiz_overview', $a);
+            } else {
+                $studentsstring = get_string('studentingroup', 'quiz_overview', $a);
+            }
         }
         $options = array();
         if (!$this->_customdata['currentgroup']){
