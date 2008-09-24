@@ -175,8 +175,11 @@ function check_entry($form, $course) {
 
         redirect($destination);
 
+    } else if (!isset($CFG->enrol_manual_showhint) or $CFG->enrol_manual_showhint) {
+        $this->errormsg = get_string('enrolmentkeyhint', '', substr($course->password, 0, 1));
+
     } else {
-        $this->errormsg = get_string('enrolmentkeyhint', '', substr($course->password,0,1));
+        $this->errormsg = get_string('enrolmentkeyerror', 'enrol_manual');
     }
 }
 
@@ -214,6 +217,10 @@ function config_form($frm) {
 
     if (!isset( $frm->enrol_manual_keyholderrole )) {
         $frm->enrol_manual_keyholderrole = '';
+    }
+
+    if (!isset($frm->enrol_manual_showhint)) {
+        $frm->enrol_manual_showhint = 1;
     }
 
     include ("$CFG->dirroot/enrol/manual/config.html");
