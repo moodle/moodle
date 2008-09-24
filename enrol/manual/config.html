@@ -17,5 +17,19 @@
     </td>
 </tr>
 
+<tr>
+    <td align="right">enrol_manual_showhint:</td>
+    <td>
+<?php
+    $choices = array();
+    $choices['0'] = get_string('no');
+    $choices['1'] = get_string('yes');
+    choose_from_menu ($choices, 'enrol_manual_showhint', $frm->enrol_manual_showhint, '');
+?>
+    </td><td>
+    <?php  print_string('enrol_manual_showhint', 'enrol_manual') ?>
+    </td>
+</tr>
+
 
 </table>
