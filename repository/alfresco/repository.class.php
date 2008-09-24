@@ -87,9 +87,13 @@ class repository_alfresco extends repository {
         global $CFG;
 
         $ret = array();
-        $ret['manage'] = $CFG->wwwroot .'/files/index.php'; // temporary
         $ret['dynload'] = true;
         $ret['list'] = array();
+        $url = $this->alfresco_url;
+        $pattern = '#^(.*)api#';
+        preg_match($pattern, $url, $matches);
+        $ret['manage'] = $matches[1].'faces/jsp/dashboards/container.jsp';
+
         $ret['path'] = array(array('name'=>'Root', 'path'=>''));
 
         if (empty($uuid)) {
