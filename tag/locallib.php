@@ -18,46 +18,36 @@
 function tag_print_cloud($nr_of_tags=150, $return=false) {
 
     global $CFG;
-    
+
     $can_manage_tags = has_capability('moodle/tag:manage', get_context_instance(CONTEXT_SYSTEM));
 
-    if ( !$tagcloud = get_records_sql('SELECT tg.rawname, tg.id, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag '.
+    if ( !$tagsincloud = get_records_sql('SELECT tg.rawname, tg.id, tg.name, tg.tagtype, COUNT(ti.id) AS count, tg.flag '.
         'FROM '. $CFG->prefix .'tag_instance ti INNER JOIN '. $CFG->prefix .'tag tg ON tg.id = ti.tagid '.
         'WHERE ti.itemtype != \'tag\' '.
         'GROUP BY tg.id, tg.rawname, tg.name, tg.flag, tg.tagtype '.
         'ORDER BY count DESC, tg.name ASC', 0, $nr_of_tags) ) {
-        $tagcloud = array();
+        $tagsincloud = array();
     }
 
-    $totaltags  = count($tagcloud);
-    $currenttag = 0;
-    $size = 20;
-    $lasttagct = -1;
+    $tagkeys = array_keys($tagsincloud);
+    $firsttagkey = $tagkeys[0];
+    $maxcount = $tagsincloud[$firsttagkey]->count;
 
     $etags = array();
-    foreach ($tagcloud as $tag) {
 
-        $currenttag++;
-
-        if ($currenttag == 1) {
-            $lasttagct = $tag->count;
-            $size = 20;
-        } else if ($tag->count != $lasttagct) {
-            $lasttagct = $tag->count;
-            $size = 20 - ( (int)((($currenttag - 1) / $totaltags) * 20) );
-        }
-
+    foreach ($tagsincloud as $tag) {
+        $size = (int) (( $tag->count / $maxcount) * 20);
         $tag->class = "$tag->tagtype s$size";
         $etags[] = $tag;
     }
 
-    usort($etags, "tag_cloud_sort"); 
+    usort($etags, "tag_cloud_sort");
     $output = '';
     $output .= "\n<ul class='tag_cloud inline-list'>\n";
     foreach ($etags as $tag) {
         if ($tag->flag > 0 && $can_manage_tags) {
-            $tagname =  '<span class="flagged-tag">'. tag_display_name($tag) .'</span>';
-        } else { 
+            $tagname = '<span class="flagged-tag">'. tag_display_name($tag) .'</span>';
+        } else {
             $tagname = tag_display_name($tag);
         }
 
