@@ -51,9 +51,6 @@
     echo "<tr><td><strong>";
     echo get_string("pagecontents", "lesson").":</strong><br />\n";
     print_textarea($usehtmleditor, 25,70, 0, 0, "contents");
-    if ($usehtmleditor) {
-        use_html_editor("contents");
-    }
     echo "</td></tr>\n";
     echo "<tr><td>\n";
     echo "<div class=\"boxaligncenter addform\"><input name=\"layout\" type=\"checkbox\" value=\"1\" checked=\"checked\" />";
@@ -65,7 +62,7 @@
     for ($i = 0; $i < $lesson->maxanswers; $i++) {
         $iplus1 = $i + 1;
         echo "<tr><td><strong>".get_string("description", "lesson")." $iplus1:</strong><br />\n";
-        print_textarea(false, 10, 70, 630, 300, "answer[$i]");  // made the default set to off also removed use_html_editor(); line from down below, which made all textareas turn into html editors
+        print_textarea(false, 10, 70, 630, 300, "answer[$i]");
         echo "</td></tr>\n";
         echo "<tr><td><strong>".get_string("jump", "lesson")." $iplus1:</strong> \n";
         if ($i) {

@@ -1588,9 +1588,6 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
      print_textarea($usehtmleditor, $rows, $cols, 680, 400, "content", $oldtext);
      echo '</td></tr></table>';
 
-     if ($usehtmleditor) {
-        use_html_editor("content");
-     }
      $o .= ob_get_contents();     
      ob_end_clean();     
 

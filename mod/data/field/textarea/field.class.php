@@ -91,9 +91,6 @@ class data_field_textarea extends data_field_base {
 
 
     function print_after_form() {
-        if (can_use_html_editor()) {
-            use_html_editor('field_' . $this->field->id, '', 'field_' . $this->field->id);
-        }
     }
 
 

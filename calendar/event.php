@@ -376,9 +376,6 @@
 
             echo '<div class="header">'.get_string('editevent', 'calendar').'</div>';
             include('event_edit.html');
-            if ($usehtmleditor) {
-                use_html_editor("description");
-            }
         break;
 
         case 'new':

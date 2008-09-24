@@ -115,9 +115,6 @@
     echo "<tr><td><b>";
     echo get_string("pagecontents", "lesson").":</b><br />\n";
     print_textarea($usehtmleditor, 25, 70, 630, 400, "contents", $page->contents);
-    if ($usehtmleditor) {
-        use_html_editor("contents");
-    }
     echo "</td></tr>\n";
     $n = 0;
     switch ($page->qtype) {
@@ -176,7 +173,6 @@
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
-                            use_html_editor("answer[$n]"); // switch on the editor
                         } else {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" />";
@@ -192,7 +188,6 @@
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
-                            use_html_editor("answer[$n]"); // switch on the editor
                         } else {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" />";
@@ -209,7 +204,6 @@
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
-                            use_html_editor("answer[$n]"); // switch on the editor
                         } else {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" />";
@@ -225,7 +219,6 @@
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
-                            use_html_editor("response[$n]"); // switch on the editor
                         } else {
                             echo " [<label for=\"responseeditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                                 "<input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" />";
@@ -247,7 +240,6 @@
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
-                        use_html_editor("answer[$n]"); // switch on the editor
                     } else {
                         if ($page->qtype != LESSON_SHORTANSWER and $page->qtype != LESSON_NUMERICAL) {
                             echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
@@ -268,7 +260,6 @@
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
-                        use_html_editor("response[$n]"); // switch on the editor
                     } else {
                         echo " [<label for=\"responseeditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" />";
@@ -286,7 +277,6 @@
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
-                        use_html_editor("answer[$n]"); // switch on the editor
                     } else {
                         echo " [<label for=\"answereditor[$n]\">".get_string("useeditor", "lesson")."</label>: ".
                             "<input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" />";

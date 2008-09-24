@@ -170,7 +170,6 @@
     echo '<div>';
     if ($usehtmleditor) {
         print_textarea(true, 8, 34, 100, 100, 'message', $refreshedmessage);
-        use_html_editor('message', 'formatblock subscript superscript copy cut paste clean undo redo justifyleft justifycenter justifyright justifyfull lefttoright righttoleft insertorderedlist insertunorderedlist outdent indent inserthorizontalrule createanchor nolink inserttable');
         echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
     } else {
         print_textarea(false, 8, 50, 0, 0, 'message', $refreshedmessage);

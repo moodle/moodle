@@ -307,15 +307,6 @@
     print_simple_box_end();
     echo '</div>';
     echo '</form>';
-    if ($usehtmleditor) {
-        use_html_editor('template');
-        if ($mode == 'listtemplate'){
-            use_html_editor('listtemplateheader');
-            use_html_editor('listtemplatefooter');
-        } else if ($mode == 'rsstemplate'){
-            use_html_editor('rsstitletemplate');
-        }
-    }
 
 /// Finish the page
     print_footer($course);

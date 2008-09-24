@@ -988,10 +988,6 @@ class assignment_base {
 
         echo '</table>';
 
-        if (!$disabled and $this->usehtmleditor) {
-            use_html_editor();
-        }
-
         print_footer('none');
     }
 
