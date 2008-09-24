@@ -12,7 +12,7 @@
 $string['admindirerror'] = 'A megadott rendszergazdakönyvtár hibás';
 $string['admindirname'] = 'Rendszergazdakönyvtár';
 $string['admindirsettinghead'] = 'A rendszergazdakönyvtár beállítása...';
-$string['admindirsettingsub'] = 'Nagyon kevés kiszolgálónál használatos az /admin mint a vezérlőpanel vagy egyéb elérésére szolgáló külön URL. Sajnos ez ütközik a Moodle rendszergazdai oldalainak szokásos helyével. Ha telepítésében átnevezi a könyvtárat és az új nevet ide helyezi, a hiba megoldódik. Például: <br /> <br /><b>moodleadmin</b>.<br /> <br /> Ezzel a rendszergazdai ugrópontok a Moodle-ban rendbe tehetők.';
+$string['admindirsettingsub'] = 'Nagyon kevés kiszolgálónál használatos az /admin mint a vezérlőpanel vagy egyéb elérésére szolgáló külön URL. Ez ütközik a Moodle rendszergazda-oldalainak szokásos helyével. Ha telepítésében átnevezi a könyvtárat és az új nevet ide helyezi, a hiba megoldódik. Például: <br /> <br /><b>moodleadmin</b>.<br /> <br /> Ezzel a Moodle-ban rendbe tehetők a rendszergazda-ugrópontok.';
 $string['bypassed'] = 'Kihagyva';
 $string['cannotcreatelangdir'] = 'Nem hozható létre a lang könyvtár.';
 $string['cannotcreatetempdir'] = 'Nem hozható létre a temp könyvtár.';
@@ -55,6 +55,7 @@ $string['databasesettingssub_postgres7'] = '<b>Típus: </b> PostgreSQL<br /><b>G
 $string['databasesettingswillbecreated'] = '<b>Megjegyzés:</b> A telepítő megpróbálja automatikusan létrehozni az adatbázist, ha az nem létezik.';
 $string['dataroot'] = 'Adatkönyvtár';
 $string['datarooterror'] = 'A megadott \'Adatkönyvtár\' nem létezik, vagy nem sikerült létrehozni. Módosítsa az útvonalat vagy hozza létre a könyvtárat.';
+$string['datarootpublicerror'] = 'A megadott adatkönyvtár a netről közvetlenül elérhető, adjon meg egy másik könyvtárat.';
 $string['dbconnectionerror'] = 'Nem sikerült a megadott adatbázishoz csatlakozni. Ellenőrizze adatbázisának beállításait.';
 $string['dbcreationerror'] = 'Hiba az adatbázis létrehozása közben. A megadott beállításokkal nem lehetett létrehozni az adatbázis nevét.';
 $string['dbhost'] = 'Gazdagép szervere';
@@ -97,6 +98,7 @@ $string['globalsquoteserror'] = 'Javítsa ki a PHP beállításait: kapcsolja ki
 $string['globalsquoteshelp'] = '<p>Nem ajánlott egyszerre kikapcsolt Magic Quotes GPC-t bekapcsolt Register Globals mellett használni.</p><p>A javasolt beállítás: <b>magic_quotes_gpc = On</b> és <b>register_globals = Off</b> a php.ini állományban. </p><p>Ha nem érhető el a php.ini állománya, próbálja meg az alábbi sort beszúrni a Moodle-könyvtárában lévő .htaccess állományba: <blockquote>><div>php_value magic_quotes_gpc On></div></blockquote> <blockquote>><div>php_value register_globals Off></div></blockquote> </p>';
 $string['globalswarning'] = '<p><strong>Biztonsági figyelmezetés</strong>: a megfelelő működéshez a Moodle <br />bizonyos módosításokat ír elő az adott PHP-beállításokban.<p/><p>A <em>beállítandó</em> érték: <code>register_globals=off</code>. <p>Ezek a beállítások a <code>php.ini</code>, az Apache/IIS <br />beállításával vagy a <code>.htaccess</code>-állomány szerkesztésével módosíthatók.</p>';
 $string['help'] = 'Súgó';
+$string['iconvrecommended'] = 'Ajánlatos telepíteni az opcionális ctype PHP-bővítést a portál teljesítményének növelése érdekében, különösen abban az esetben, ha a portál támogatja nem latin nyelvek használatát.';
 $string['iconvrecommended'] = 'A portál teljesítményének növelése érdekében ajánlatos telepíteni az opcionális ICONV-könyvtárat, különösen akkor, ha a portál támogatja nemlatin nyelvek használatát.';
 $string['info'] = 'Információ';
 $string['installation'] = 'Telepítés';
@@ -175,4 +177,5 @@ $string['wrongzipfilename'] = 'Hibás a tömörített állomány neve.';
 $string['wwwroot'] = 'Webcím';
 $string['wwwrooterror'] = 'A webcím nem érvényes - a Moodle mostani telepítése nincs a megadott címen. Az alábbi értéket visszaállítottuk.';
 $string['xmlrpcrecommended'] = 'A külön elérhető xmlrpc-bővítés telepítése kifejezetten ajánlott a hálózati Moodle használatához.';
+$string['ziprequired'] = 'A Moodle a Zip PHP bővítést igényli, az info-ZIP bináris állományokra vagy a PclZip könyvtárra már nincs szükség.';
 ?>
