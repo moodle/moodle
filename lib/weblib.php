@@ -2041,6 +2041,40 @@ function replace_smilies(&$text) {
 }
 
 /**
+ * This code is called from help.php to inject a list of smilies into the
+ * emoticons help file.
+ *
+ * @return string HTML for a list of smilies.
+ */
+function get_emoticons_list_for_help_file(){
+    global $CFG, $SESSION;
+    if (empty($CFG->emoticons)) {
+        return '';
+    }
+
+    require_js(array('yui_yahoo', 'yui_event'));
+    $items = explode('{;}', $CFG->emoticons);
+    $output = '<ul id="emoticonlist">';
+    foreach ($items as $item) {
+        $item = explode('{:}', $item);
+        $output .= '<li><img src="' . $CFG->pixpath.'/s/' . $item[1] . '.gif" alt="' .
+                $item[0] . '" /><code>' . $item[0] . '</code></li>';
+    }
+    $output .= '</ul>';
+    if (!empty($SESSION->inserttextform)) {
+        $formname = $SESSION->inserttextform;
+        $fieldname = $SESSION->inserttextfield;
+    } else {
+        $formname = 'theform';
+        $fieldname = 'message';
+    }
+    
+    $output .= print_js_call('emoticons_help.init', array($formname, $fieldname, 'emoticonlist'), true);
+    return $output;
+
+}
+
+/**
  * Given plain text, makes it into HTML as nicely as possible.
  * May contain HTML tags already
  *
@@ -2716,12 +2750,12 @@ function print_js_config($settings = array(), $prefix='', $return = false) {
     // Have to treat the prefix and no prefix cases separately.
     if ($prefix) {
         // Recommended way, only one thing in global scope.
-        $html .= 'var $name = ' . json_encode($settings) . "\n";
+        $html .= "var $prefix = " . json_encode($settings) . "\n";
 
     } else {
         // Old fashioned way.
         foreach ($settings as $name => $value) {
-            $html .= "var " . $name . " = '" . addslashes_js($value) . "'\n";
+            $html .= "var $name = '" . addslashes_js($value) . "'\n";
         }
     }
 
@@ -5797,9 +5831,9 @@ function editorhelpbutton(){
                 $urlparams[] = "module$i=".urlencode($item[2]);
             }
             $titles[] = trim($item[1], ". \t");
-        }elseif (is_string($item)){
+        } else if (is_string($item)) {
             $urlparams[] = "button$i=".urlencode($item);
-            switch ($item){
+            switch ($item) {
                 case 'reading' :
                     $titles[] = get_string("helpreading");
                     break;
@@ -5809,13 +5843,13 @@ function editorhelpbutton(){
                 case 'questions' :
                     $titles[] = get_string("helpquestions");
                     break;
-                case 'emoticons' :
+                case 'emoticons2' :
                     $titles[] = get_string("helpemoticons");
                     break;
-                case 'richtext' :
+                case 'richtext2' :
                     $titles[] = get_string('helprichtext');
                     break;
-                case 'text' :
+                case 'text2' :
                     $titles[] = get_string('helptext');
                     break;
                 default :

@@ -1,17 +1,15 @@
 <?php  /// $Id$
+/// Load up any required Javascript libraries
 
-       /// Load up any required Javascript libraries
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
 
-    if (!defined('MOODLE_INTERNAL')) {
-        die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+if (can_use_html_editor() && !empty($CFG->editorsrc)) {
+    foreach ( $CFG->editorsrc as $scriptsource ) {
+        echo '<script type="text/javascript" src="'. $scriptsource .'"></script>'."\n";
     }
-
-    if (can_use_html_editor() && !empty($CFG->editorsrc)) {
-        foreach ( $CFG->editorsrc as $scriptsource ) {
-            echo '<script type="text/javascript" src="'. $scriptsource .'"></script>'."\n";
-        }
-    }
-
+}
 ?>
 <!--<style type="text/css">/*<![CDATA[*/ body{behavior:url(<?php echo $CFG->httpswwwroot ?>/lib/csshover.htc);} /*]]>*/</style>-->
 
@@ -30,40 +28,19 @@ setTimeout('fix_column_widths()', 20);
 </script>
 <script type="text/javascript">
 //<![CDATA[
+var id2suffix = {};
 <?php
-    echo "function inserttext(text) {\n";
-    if (!empty($SESSION->inserttextform)) {
-        $insertfield = "opener.document.forms['$SESSION->inserttextform'].$SESSION->inserttextfield";
-        echo "  if(!opener.document.forms['$SESSION->inserttextform']){";
+if (!empty($focus)) {
+    if(($pos = strpos($focus, '.')) !== false) {
+        //old style focus using form name - no allowed inXHTML Strict
+        $topelement = substr($focus, 0, $pos);
+        echo "addonload(function() { if(document.$topelement) document.$focus.focus(); });\n";
     } else {
-        $insertfield = "opener.document.forms['theform'].message";
-        echo "  if(!opener.document.forms['theform']){";
+        //focus element with given id
+        echo "addonload(function() { if(el = document.getElementById('$focus')) el.focus(); });\n";
     }
-    echo "    return;";
-    echo "  }";
-    echo "  text = ' ' + text + ' ';\n";
-    echo "  if ( $insertfield.createTextRange && $insertfield.caretPos) {\n";
-    echo "    var caretPos = $insertfield.caretPos;\n";
-    echo "    caretPos.text = caretPos.text.charAt(caretPos.text.length - 1) == ' ' ? text + ' ' : text;\n";
-    echo "  } else {\n";
-    echo "    $insertfield.value  += text;\n";
-    echo "  }\n";
-    echo "  $insertfield.focus();\n";
-    echo "}\n";
-
-    if (!empty($focus)) {
-        if(($pos = strpos($focus, '.')) !== false) {
-            //old style focus using form name - no allowed inXHTML Strict
-            $topelement = substr($focus, 0, $pos);
-            echo "addonload(function() { if(document.$topelement) document.$focus.focus(); });\n";
-        } else {
-            //focus element with given id
-            echo "addonload(function() { if(el = document.getElementById('$focus')) el.focus(); });\n";
-        }
-        $focus=false; // Prevent themes from adding it to body tag which breaks addonload(), MDL-10249
-    }
-
-    echo "var id2suffix = {};\n";
-    echo "//]]>\n";
-    echo "</script>\n";
+    $focus = false; // Prevent themes from adding it to body tag which breaks addonload(), MDL-10249
+}
 ?>
+//]]>
+</script>

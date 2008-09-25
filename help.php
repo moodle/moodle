@@ -142,7 +142,7 @@ if(preg_match('~^(.*?)<title>(.*?)</title>(.*)$~s',$output,$matches)) {
 
 // use ##emoticons_html## to replace the emoticons documentation
 if(preg_match('~(##emoticons_html##)~', $output, $matches)) {
-    $output = preg_replace('~(##emoticons_html##)~', get_emoticons_html(), $output);
+    $output = preg_replace('~(##emoticons_html##)~', get_emoticons_list_for_help_file(), $output);
 }
 
 // Do the main output.
@@ -162,29 +162,6 @@ echo '<p class="helpindex"><a href="help.php?file=index.html">'. get_string('hel
 
 $CFG->docroot = '';   // We don't want a doc link here
 print_footer('none');
-
-// Utility function =================================================================
-
-function get_emoticons_html(){
-    global $CFG;
-    $output = '';
-    $emoticonstring = $CFG->emoticons;
-    $output .= '<ul>';
-    if ($emoticonstring) {
-        $items = explode('{;}', $CFG->emoticons);
-        foreach ($items as $item) {
-            $item = explode('{:}', $item);
-            $emoticons[$item[0]] = $item[1];
-            $output .= '<li><a href="javascript:inserttext(\''.$item[0].'\')"><img src="'.
-                $CFG->pixpath.'/s/'.$item[1].'.gif" alt="'.$item[0].'" /></a>'.' <code>'.$item[0].
-                '</code></li>';
-        }
-
-    }
-    $output .= '</ul>';
-    return $output;
-
-}
 
 function file_exists_and_readable($filepath) {
     return file_exists($filepath) and is_file($filepath) and is_readable($filepath);
