@@ -297,7 +297,7 @@ class quiz_responses_report extends quiz_default_report {
     
             // Load the question type specific information
             if (!get_question_options($questions)) {
-                print_error('Could not load question options');
+                print_error('cannotloadoptions', 'quiz_responses');
             }
     
             $table->define_columns($columns);
