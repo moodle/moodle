@@ -2358,6 +2358,8 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
 
     $meta .= "\n".require_js('',1);
 
+    $meta .= standard_js_config();
+
 /// Set up some navigation variables
 
     if (is_newnav($navigation)){
@@ -2729,6 +2731,22 @@ function print_js_config($settings = array(), $prefix='', $return = false) {
     } else {
         echo $html;
     }
+}
+
+/**
+ * This function generates the code that defines the standard moodle_cfg object.
+ * This object has a number of fields that are values that various pieces of
+ * JavaScript code need access too. For example $CFG->wwwroot and $CFG->pixpath.
+ *
+ * @return string a <script> tag that defines the moodle_cfg object.
+ */
+function standard_js_config() {
+    global $CFG;
+    return print_js_config(array(
+        'wwwroot' => $CFG->httpswwwroot, // Yes, really.
+        'pixpath' => $CFG->pixpath,
+        'modpixpath' => $CFG->modpixpath,
+    ), 'moodle_cfg', true);
 }
 
 /**
