@@ -9,7 +9,6 @@
  * @return string
  */
 function ajax_get_lib($libname) {
-
     global $CFG;
     $libpath = '';
     $external_yui = false;
@@ -66,18 +65,21 @@ function ajax_get_lib($libname) {
             include($CFG->libdir.'/yui/version.php');
             $libpath = 'http://yui.yahooapis.com/'.$yuiversion.'/build/'.substr($translatelist[$libname], 9);
         } else {
-            $libpath = $CFG->wwwroot . $translatelist[$libname];
+            $libpath = $CFG->httpswwwroot . $translatelist[$libname];
         }
 
-    } else {
+    } else if (preg_match('/^https?:/', $libname)) {
         $libpath = $libname;
+
+    } else {
+        $libpath = $CFG->httpswwwroot . '/' . $libname;
     }
 
     // Make sure the file exists if it is local.
     if ($external_yui === false) {
-        $testpath = str_replace($CFG->wwwroot, $CFG->dirroot, $libpath);
+        $testpath = str_replace($CFG->httpswwwroot, $CFG->dirroot, $libpath);
         if (!file_exists($testpath)) {
-            error('require_js: '.$libpath.' - file not found.');
+            throw new moodle_exception('unknownjsinrequirejs', '', '', $libpath);
         }
     }
 

@@ -2004,7 +2004,6 @@ function replace_smilies(&$text) {
         }
     }
 
-
     if (empty($img[$lang])) {  /// After the first time this is not run again
         $e[$lang] = array();
         $img[$lang] = array();
@@ -2554,28 +2553,30 @@ function print_header ($title='', $heading='', $navigation='', $focus='',
  * Used to include JavaScript libraries.
  *
  * When the $lib parameter is given, the function will ensure that the
- * named library is loaded onto the page - either in the HTML <head>,
- * just after the header, or at an arbitrary later point in the page,
- * depending on where this function is called.
+ * named library or libraries is loaded onto the page - either in the
+ * HTML <head>, just after the header, or at an arbitrary later point in
+ * the page, depending on where this function is called.
  *
  * Libraries will not be included more than once, so this works like
  * require_once in PHP.
  *
- * There are two special-case calls to this function which are both used only
- * by weblib print_header:
+ * There are two special-case calls to this function from print_header which are
+ * internal to weblib and use the second $extracthtmlparameter:
  * $extracthtml = 1: this is used before printing the header.
- *    It returns the script tag code that should go inside the <head>.
+ *      It returns the script tag code that should go inside the <head>.
  * $extracthtml = 2: this is used after printing the header and handles any
- *    require_js calls that occurred within the header itself.
+ *      require_js calls that occurred within the header itself.
  *
- * @param mixed $lib - string or array of strings
- *                     string(s) should be the shortname for the library or the
- *                     full URL (which will probably start with $CFG->wwwroot) to the library file.
- * @param int $extracthtml Do not set this parameter usually (leave 0), only
- *                     weblib should set this to 1 or 2 in print_header function.
- * @return mixed No return value, except when using $extracthtml it returns the html code.
+ * @param mixed $lib The library or libraries to load (a string or array of strings)
+ *      There are three way to specify the library:
+ *      1. a shorname like 'yui_yahoo'. The list of recognised values is in lib/ajax/ajaxlib.php
+ *      2. the path to the library relative to wwwroot, for example 'lib/javascript-static.js'
+ *      3. (legacy) a full URL like $CFG->wwwroot . '/lib/javascript-static.js'.
+ * @param int $extracthtml Private. For internal weblib use only.
+ * @return mixed No return value (except when doing the internal $extracthtml
+ *      calls, when it returns html code).
  */
-function require_js($lib,$extracthtml=0) {
+function require_js($lib, $extracthtml = 0) {
     global $CFG;
     static $loadlibs = array();
 
