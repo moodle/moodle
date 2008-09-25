@@ -23,7 +23,7 @@ class editcategory_form extends moodleform {
             $themes += get_list_of_themes();
             $mform->addElement('select', 'theme', get_string('forcetheme'), $themes);
         }
-        $mform->setHelpButton('description', array('writing', 'richtext'), false, 'editorhelpbutton');
+        $mform->setHelpButton('description', array('writing', 'richtext2'), false, 'editorhelpbutton');
         
         $mform->addElement('hidden', 'id', null);
         $mform->addElement('hidden', 'categoryadd', 0);

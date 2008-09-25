@@ -3,7 +3,7 @@ require_once('../../config.php');
 $topics = array();
 $titles = array();
 for ($i=1; ; $i++){
-    $button = optional_param("button$i", '', PARAM_ALPHAEXT);
+    $button = optional_param("button$i", '', PARAM_ALPHANUMEXT);
     if ($button){
         switch ($button){
             case 'reading' :
@@ -16,12 +16,27 @@ for ($i=1; ; $i++){
                 $topics[$i] = helplink('questions', get_string('helpquestions'));
                 break;
             case 'emoticons' :
+                debugging("You are referring to the old help file 'emoticons'. " .
+                        "This was renamed to 'emoticons2' becuase of MDL-13233. " .
+                        "Please update your code.", DEBUG_DEVELOPER);
+                // Fall through.
+            case 'emoticons2' :
                 $topics[$i] = helplink('emoticons2', get_string('helpemoticons'));
                 break;
             case 'richtext' :
+                debugging("You are referring to the old help file 'richtext'. " .
+                        "This was renamed to 'richtext2' becuase of MDL-13233. " .
+                        "Please update your code.", DEBUG_DEVELOPER);
+                // Fall through.
+            case 'richtext2' :
                 $topics[$i] = helplink('richtext2', get_string('helprichtext'));
                 break;
             case 'text' :
+                debugging("You are referring to the old help file 'text'. " .
+                        "This was renamed to 'text2' becuase of MDL-13233. " .
+                        "Please update your code.", DEBUG_DEVELOPER);
+                // Fall through.
+            case 'text2' :
                 $topics[$i] = helplink('text2', get_string('helptext'));
                 break;
             default :

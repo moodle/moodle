@@ -11,7 +11,7 @@ class user_message_form extends moodleform {
 
         $mform->addElement('textarea', 'messagebody', get_string('messagebody'), array('rows'=>15, 'cols'=>60));
         $mform->addRule('messagebody', '', 'required', null, 'client');
-        $mform->setHelpButton('messagebody', array('writing', 'reading', 'questions', 'richtext'), false, 'editorhelpbutton');
+        $mform->setHelpButton('messagebody', array('writing', 'reading', 'questions', 'richtext2'), false, 'editorhelpbutton');
         $mform->addElement('format', 'format', get_string('format'));
 
         $this->add_action_buttons();

@@ -26,7 +26,7 @@ class mod_forum_post_form extends moodleform {
         $mform->addElement('htmleditor', 'message', get_string('message', 'forum'), array('cols'=>50, 'rows'=>30, 'filearea'=>'forumpost'));
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
-        $mform->setHelpButton('message', array('reading', 'writing', 'questions', 'richtext'), false, 'editorhelpbutton');
+        $mform->setHelpButton('message', array('reading', 'writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
 
         $mform->addElement('format', 'format', get_string('format'));
 

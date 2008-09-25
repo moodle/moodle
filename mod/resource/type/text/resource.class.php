@@ -167,7 +167,7 @@ function setup_elements(&$mform) {
 
     $mform->addElement('textarea', 'alltext', get_string('fulltext', 'resource'), array('cols'=>85, 'rows'=>30));
     $mform->setType('alltext', PARAM_RAW);
-    $mform->setHelpButton('alltext', array('reading', 'writing', 'richtext'), false, 'editorhelpbutton');
+    $mform->setHelpButton('alltext', array('reading', 'writing', 'richtext2'), false, 'editorhelpbutton');
     $mform->addRule('alltext', get_string('required'), 'required', null, 'client');
 
     $mform->addElement('format', 'reference', get_string('format'), null, false);

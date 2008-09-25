@@ -30,7 +30,7 @@ class mod_forum_mod_form extends moodleform_mod {
         $mform->addElement('htmleditor', 'intro', get_string('forumintro', 'forum'));
         $mform->setType('intro', PARAM_RAW);
         $mform->addRule('intro', get_string('required'), 'required', null, 'client');
-        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext'), false, 'editorhelpbutton');
+        $mform->setHelpButton('intro', array('writing', 'questions', 'richtext2'), false, 'editorhelpbutton');
 
         $mform->addElement('format', 'format', get_string('format'));
 

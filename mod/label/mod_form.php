@@ -10,7 +10,7 @@ class mod_label_mod_form extends moodleform_mod {
         $mform->addElement('htmleditor', 'content', get_string('labeltext', 'label'), array('size'=>'64'));
         $mform->setType('content', PARAM_RAW);
         $mform->addRule('content', get_string('required'), 'required', null, 'client');
-        $mform->setHelpButton('content', array('questions', 'richtext'), false, 'editorhelpbutton');
+        $mform->setHelpButton('content', array('questions', 'richtext2'), false, 'editorhelpbutton');
 
         $features = array('groups'=>false, 'groupings'=>false, 'groupmembersonly'=>true,
                           'outcomes'=>false, 'gradecat'=>false, 'idnumber'=>false);
