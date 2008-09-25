@@ -208,7 +208,7 @@ function wiki_print_recent_activity($course, $isteacher, $timestart) {
     }
     print_headline(get_string('updatedwikipages', 'wiki').':', 3);
     foreach ($wikis as $wiki) {
-        print_recent_activity_note($wiki->time, $wiki, s($wiki->pagename),
+        print_recent_activity_note($wiki->time, $wiki, $wiki->pagename,
                                    $CFG->wwwroot.'/mod/wiki/'.$wiki->url);
     }
 
