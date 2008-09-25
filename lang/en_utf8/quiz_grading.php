@@ -2,7 +2,10 @@
       // quiz_grading.php - created with Moodle 1.7 beta + (2006101003)
 
 
+$string['cannotloadquestioninfo'] = 'Unable to load questiontype specific question information';
 $string['essayonly'] = 'The following questions need to be graded manually';
+$string['invalidquestionid'] = 'Gradeable question with id $a not found';
+$string['invalidattemptid'] = 'No such attempt ID exists';
 $string['grading'] = 'Manual grading';
 $string['gradingreport'] = 'Manual grading report';
 $string['gradeall'] = 'Grade all $a attempts';

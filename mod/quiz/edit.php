@@ -107,7 +107,7 @@
 
     // Get the course object and related bits.
     if (! $course = $DB->get_record('course', array('id' => $quiz->course))) {
-        error("This course doesn't exist");
+        print_error('invalidcourseid', 'error');
     }
 
     // Log this visit.
@@ -141,7 +141,7 @@
             // Avoid duplicate page breaks
             $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
             if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
-                error('Could not save question list');
+                print_error('cannotsavequestion', 'quiz');
             }
             $significantchangemade = true;
         }
@@ -158,7 +158,7 @@
             // Avoid duplicate page breaks
             $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
             if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
-                error('Could not save question list');
+                print_error('cannotsavequestion', 'quiz');
             }
             $significantchangemade = true;
         }
@@ -186,7 +186,7 @@
         $randomcount = required_param('randomcount', PARAM_INT);
         // load category
         if (! $category = $DB->get_record('question_categories', array('id' => $categoryid))) {
-            error('Category ID is incorrect');
+            print_error('invalidcategoryid', 'error');
         }
         $catcontext = get_context_instance_by_id($category->contextid);
         require_capability('moodle/question:useall', $catcontext);
@@ -221,7 +221,7 @@
                 $question->qtype = RANDOM;
                 $question = $QTYPES[RANDOM]->save_question($question, $form, $course);
                 if(!isset($question->id)) {
-                    error('Could not insert new random question!');
+                    print_error('cannotinsertrandomquestion', 'quiz');
                 }
                 quiz_add_quiz_question($question->id, $quiz);
             }
@@ -234,12 +234,12 @@
         if ($questionsperpage != $quiz->questionsperpage) {
             $quiz->questionsperpage = $questionsperpage;
             if (!$DB->set_field('quiz', 'questionsperpage', $quiz->questionsperpage, array('id' => $quiz->id))) {
-                error('Could not save number of questions per page');
+                print_error('cannotsavenumberofquestion', 'quiz');
             }
         }
         $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
         if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->id))) {
-            error('Could not save layout');
+            print_error('cannotsavelayout', 'quiz');
         }
         $significantchangemade = true;
     }
@@ -288,7 +288,7 @@
                 $quiz->questions = str_replace(',0,0', ',0', $quiz->questions);
             }
             if (!$DB->set_field('quiz', 'questions', $quiz->questions, array('id' => $quiz->instance))) {
-                error('Could not save question list');
+                print_error('cannotsavequestion', 'quiz');
             }
         }
 
@@ -296,7 +296,7 @@
         $maxgrade = optional_param('maxgrade', -1, PARAM_NUMBER);
         if ($maxgrade >= 0) {
             if (!quiz_set_grade($maxgrade, $quiz)) {
-                error('Could not set a new maximum grade for the quiz');
+                print_error('cannotsetgrade', 'quiz');
             }
         }
         $significantchangemade = true;
@@ -342,7 +342,7 @@
 
         $sumgrades = quiz_print_question_list($quiz,  $thispageurl, false, $quiz_showbreaks, $quiz_reordertool);
         if (!$DB->set_field('quiz', 'sumgrades', $sumgrades, array('id' => $quiz->instance))) {
-            error('Failed to set sumgrades');
+            print_error('cannotsetsumgrades', 'quiz');
         }
 
         print_box_end();
@@ -369,7 +369,7 @@
 
     $sumgrades = quiz_print_question_list($quiz, $thispageurl, true, $quiz_showbreaks, $quiz_reordertool);
     if (!$DB->set_field('quiz', 'sumgrades', $sumgrades, array('id' => $quiz->instance))) {
-        error('Failed to set sumgrades');
+        print_error('cannotsetsumgrades', 'quiz');
     }
 
     print_box_end();

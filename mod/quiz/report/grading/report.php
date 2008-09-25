@@ -87,7 +87,7 @@ class quiz_grading_report extends quiz_default_report {
 
         if (!empty($questionid)) {
             if (!isset($gradeableqs[$questionid])){
-                error("Gradeable question with id $questionid not found");
+                print_error('invalidquestionid', 'quiz_grading', '', $questionid);
             } else {
                 $question =& $gradeableqs[$questionid];
             }
@@ -101,7 +101,7 @@ class quiz_grading_report extends quiz_default_report {
             // We need to add additional questiontype specific information to
             // the question objects.
             if (!get_question_options($questions)) {
-                error("Unable to load questiontype specific question information");
+                print_error('cannotloadquestioninfo', 'quiz_grading');
             }
             // This will have extended the question object so that it now holds
             // all the information about the questions that may be needed later.
@@ -125,7 +125,7 @@ class quiz_grading_report extends quiz_default_report {
                                     "WHERE uniqueid = ? AND " .
                                     "userid $usql AND " .
                                     "quiz=?", array_merge(array($uniqueid), $params, array($quiz->id)))){
-                        error('No such attempt ID exists');
+                        print_error('invalidattemptid', 'quiz_grading');
                     }
     
                     // Load the state for this attempt (The questions array was created earlier)
