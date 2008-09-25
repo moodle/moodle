@@ -71,7 +71,7 @@ class course_edit_form extends moodleform {
             $mform->addElement('hidden', 'category', null);
         }
         $mform->setHelpButton('category', array('coursecategory', get_string('category')));
-        $mform->setDefault('category', $category->id);
+        $mform->setDefault('category', $CFG->course_category);
         $mform->setType('category', PARAM_INT);
 
         $mform->addElement('text','fullname', get_string('fullnamecourse'),'maxlength="254" size="50"');
@@ -113,13 +113,13 @@ class course_edit_form extends moodleform {
         }
         $mform->addElement('select', 'format', get_string('format'), $formcourseformats);
         $mform->setHelpButton('format', array('courseformats', get_string('courseformats')), true);
-        $mform->setDefault('format', 'weeks');
+        $mform->setDefault('format', $CFG->course_format);
 
         for ($i=1; $i<=52; $i++) {
           $sectionmenu[$i] = "$i";
         }
         $mform->addElement('select', 'numsections', get_string('numberweeks'), $sectionmenu);
-        $mform->setDefault('numsections', 10);
+        $mform->setDefault('numsections', $CFG->course_numsections);
 
         $mform->addElement('date_selector', 'startdate', get_string('startdate'));
         $mform->setHelpButton('startdate', array('coursestartdate', get_string('startdate')), true);
@@ -130,24 +130,25 @@ class course_edit_form extends moodleform {
         $choices['1'] = get_string('hiddensectionsinvisible');
         $mform->addElement('select', 'hiddensections', get_string('hiddensections'), $choices);
         $mform->setHelpButton('hiddensections', array('coursehiddensections', get_string('hiddensections')), true);
-        $mform->setDefault('hiddensections', 0);
+        $mform->setDefault('hiddensections', $CFG->course_hiddensections);
 
         $options = range(0, 10);
         $mform->addElement('select', 'newsitems', get_string('newsitemsnumber'), $options);
         $mform->setHelpButton('newsitems', array('coursenewsitems', get_string('newsitemsnumber')), true);
-        $mform->setDefault('newsitems', 5);
+        $mform->setDefault('newsitems', $CFG->course_newsitems);
 
         $mform->addElement('selectyesno', 'showgrades', get_string('showgrades'));
         $mform->setHelpButton('showgrades', array('coursegrades', get_string('grades')), true);
-        $mform->setDefault('showgrades', 1);
+        $mform->setDefault('showgrades', $CFG->course_showgrades);
 
         $mform->addElement('selectyesno', 'showreports', get_string('showreports'));
         $mform->setHelpButton('showreports', array('coursereports', get_string('activityreport')), true);
-        $mform->setDefault('showreports', 0);
+        $mform->setDefault('showreports', $CFG->course_showreports);
 
         $choices = get_max_upload_sizes($CFG->maxbytes);
         $mform->addElement('select', 'maxbytes', get_string('maximumupload'), $choices);
         $mform->setHelpButton('maxbytes', array('courseuploadsize', get_string('maximumupload')), true);
+        $mform->setDefault('maxbytes', $CFG->course_maxbytes);
 
         if (!empty($CFG->allowcoursethemes)) {
             $themes=array();
@@ -162,7 +163,7 @@ class course_edit_form extends moodleform {
         if ($disable_meta === false) {
             $mform->addElement('select', 'metacourse', get_string('managemeta'), $meta);
             $mform->setHelpButton('metacourse', array('metacourse', get_string('metacourse')), true);
-            $mform->setDefault('metacourse', 0);
+            $mform->setDefault('metacourse', $CFG->course_metacourse);
         } else {
             // no metacourse element - we do not want to change it anyway!
             $mform->addElement('static', 'nometacourse', get_string('managemeta'),
@@ -187,6 +188,7 @@ class course_edit_form extends moodleform {
         $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string('enrolname', "enrol_$CFG->enrol").')'), $choices);
         $mform->addElement('select', 'enrol', get_string('enrolmentplugins'), $choices);
         $mform->setHelpButton('enrol', array('courseenrolmentplugins', get_string('enrolmentplugins')), true);
+        $mform->setDefault('enrol', $CFG->course_enrol);
 
 
         $roles = get_assignable_roles($context);
@@ -219,7 +221,7 @@ class course_edit_form extends moodleform {
         $radio[] = &MoodleQuickForm::createElement('radio', 'enrollable', null, get_string('enroldate'), 2);
         $mform->addGroup($radio, 'enrollable', get_string('enrollable'), ' ', false);
         $mform->setHelpButton('enrollable', array('courseenrollable2', get_string('enrollable')), true);
-        $mform->setDefault('enrollable', 1);
+        $mform->setDefault('enrollable', $CFG->course_enrollable);
 
         $enroldatestartgrp = array();
         $enroldatestartgrp[] = &MoodleQuickForm::createElement('date_selector', 'enrolstartdate');
@@ -244,7 +246,7 @@ class course_edit_form extends moodleform {
             $periodmenu[$seconds] = get_string('numdays', '', $i);
         }
         $mform->addElement('select', 'enrolperiod', get_string('enrolperiod'), $periodmenu);
-        $mform->setDefault('enrolperiod', 0);
+        $mform->setDefault('enrolperiod', $CFG->course_enrolperiod);
 
 
 //--------------------------------------------------------------------------------
@@ -255,11 +257,11 @@ class course_edit_form extends moodleform {
         $choices['1'] = get_string('yes');
         $mform->addElement('select', 'expirynotify', get_string('notify'), $choices);
         $mform->setHelpButton('expirynotify', array('expirynotify', get_string('expirynotify')), true);
-        $mform->setDefault('expirynotify', 0);
+        $mform->setDefault('expirynotify', $CFG->course_expirynotify);
 
         $mform->addElement('select', 'notifystudents', get_string('expirynotifystudents'), $choices);
         $mform->setHelpButton('notifystudents', array('expirynotifystudents', get_string('expirynotifystudents')), true);
-        $mform->setDefault('notifystudents', 0);
+        $mform->setDefault('notifystudents', $CFG->course_notifystudents);
 
         $thresholdmenu=array();
         for ($i=1; $i<=30; $i++) {
@@ -268,7 +270,7 @@ class course_edit_form extends moodleform {
         }
         $mform->addElement('select', 'expirythreshold', get_string('expirythreshold'), $thresholdmenu);
         $mform->setHelpButton('expirythreshold', array('expirythreshold', get_string('expirythreshold')), true);
-        $mform->setDefault('expirythreshold', 10 * 86400);
+        $mform->setDefault('expirythreshold', $CFG->course_expirythreshold);
 
 //--------------------------------------------------------------------------------
         $mform->addElement('header','', get_string('groups', 'group'));
@@ -279,14 +281,14 @@ class course_edit_form extends moodleform {
         $choices[VISIBLEGROUPS] = get_string('groupsvisible', 'group');
         $mform->addElement('select', 'groupmode', get_string('groupmode'), $choices);
         $mform->setHelpButton('groupmode', array('groupmode', get_string('groupmode')), true);
-        $mform->setDefault('groupmode', 0);
+        $mform->setDefault('groupmode', $CFG->course_groupmode);
 
         $choices = array();
         $choices['0'] = get_string('no');
         $choices['1'] = get_string('yes');
         $mform->addElement('select', 'groupmodeforce', get_string('force'), $choices);
         $mform->setHelpButton('groupmodeforce', array('groupmodeforce', get_string('groupmodeforce')), true);
-        $mform->setDefault('groupmodeforce', 0);
+        $mform->setDefault('groupmodeforce', $CFG->course_groupmodeforce);
 
         if (!empty($CFG->enablegroupings)) {
             //default groupings selector
@@ -303,11 +305,12 @@ class course_edit_form extends moodleform {
         $choices['1'] = get_string('courseavailable');
         $mform->addElement('select', 'visible', get_string('availability'), $choices);
         $mform->setHelpButton('visible', array('courseavailability', get_string('availability')), true);
-        $mform->setDefault('visible', 1);
+        $mform->setDefault('visible', $CFG->course_visible);
 
         $mform->addElement('passwordunmask', 'enrolpassword', get_string('enrolmentkey'), 'size="25"');
         $mform->setHelpButton('enrolpassword', array('enrolmentkey', get_string('enrolmentkey')), true);
         $mform->setDefault('enrolpassword', '');
+        $mform->setDefault('enrolpassword', $CFG->course_enrolpassword);
         $mform->setType('enrolpassword', PARAM_RAW);
 
         $choices = array();
@@ -316,7 +319,7 @@ class course_edit_form extends moodleform {
         $choices['2'] = get_string('guestskey');
         $mform->addElement('select', 'guest', get_string('opentoguests'), $choices);
         $mform->setHelpButton('guest', array('guestaccess', get_string('opentoguests')), true);
-        $mform->setDefault('guest', 0);
+        $mform->setDefault('guest', $CFG->course_guest);
         
         // If we are creating a course, its enrol method isn't yet chosen, BUT the site has a default enrol method which we can use here
         $enrol_object = $CFG;
@@ -349,6 +352,7 @@ class course_edit_form extends moodleform {
         $languages[''] = get_string('forceno');
         $languages += get_list_of_languages();
         $mform->addElement('select', 'lang', get_string('forcelanguage'), $languages);
+        $mform->setDefault('lang', $CFG->course_lang);
 
 //--------------------------------------------------------------------------------
         require_once($CFG->libdir.'/completionlib.php');
@@ -356,7 +360,7 @@ class course_edit_form extends moodleform {
             $mform->addElement('header','', get_string('progress','completion'));
             $mform->addElement('select', 'enablecompletion', get_string('completion','completion'), 
                 array(0=>get_string('completiondisabled','completion'), 1=>get_string('completionenabled','completion')));
-            $mform->setDefault('enablecompletion',1);
+            $mform->setDefault('enablecompletion', $CFG->course_enablecompletion);
         } else {
             $mform->addElement('hidden', 'enablecompletion');
             $mform->setDefault('enablecompletion',0);

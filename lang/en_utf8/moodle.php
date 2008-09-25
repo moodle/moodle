@@ -301,6 +301,7 @@ $string['courserestore'] = 'Course restore';
 $string['courses'] = 'Courses';
 $string['coursescategory'] = 'Courses in the same category';
 $string['coursesmovedout'] = 'Courses moved out from $a';
+$string['coursesettings'] = 'Course default settings';
 $string['coursespending'] = 'Courses pending approval';
 $string['coursestaught'] = 'Courses I have taught';
 $string['courseupdates'] = 'Course updates';

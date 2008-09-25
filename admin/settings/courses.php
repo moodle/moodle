@@ -11,13 +11,115 @@ if ($hassiteconfig
 
     $ADMIN->add('courses', new admin_enrolment_page());
 
-    // "courserequests" settingpage
+/// Course Default Settings Page
+    ///main course settings
+    $temp = new admin_settingpage('coursesettings', get_string('coursesettings'));
+    $temp->add(new admin_settings_coursecat_select('course_category', get_string('category'), '', 1));
+    $courseformats = get_list_of_plugins('course/format');
+    $formcourseformats = array();
+    foreach ($courseformats as $courseformat) {
+        $formcourseformats["$courseformat"] = get_string("format$courseformat","format_$courseformat");
+        if ($formcourseformats["$courseformat"]=="[[format$courseformat]]") {
+            $formcourseformats["$courseformat"] = get_string("format$courseformat");
+        }
+    }
+    $temp->add(new admin_setting_configselect('course_format', get_string('format'), get_string('courseformats'), key($formcourseformats),$formcourseformats));
+    for ($i=1; $i<=52; $i++) {
+        $sectionmenu[$i] = "$i";
+    }
+    $temp->add(new admin_setting_configselect('course_numsections', get_string('numberweeks'), '', 1,$sectionmenu));
+    $choices = array();
+    $choices['0'] = get_string('hiddensectionscollapsed');
+    $choices['1'] = get_string('hiddensectionsinvisible');
+    $temp->add(new admin_setting_configselect('course_hiddensections', get_string('hiddensections'), '', 0,$choices));
+    $options = range(0, 10);
+    $temp->add(new admin_setting_configselect('course_newsitems', get_string('newsitemsnumber'), '', 5,$options));
+    $temp->add(new admin_setting_configselect('course_showgrades', get_string('showgrades'), get_string('grades'), 1,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $temp->add(new admin_setting_configselect('course_showreports', get_string('showreports'), get_string('activityreport'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $choices = get_max_upload_sizes($CFG->maxbytes);
+    $temp->add(new admin_setting_configselect('course_maxbytes', get_string('maximumupload'), '', key($choices),$choices));
+    $temp->add(new admin_setting_configselect('course_metacourse', get_string('metacourse'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    
+    ///enrolement course settings
+    $temp->add(new admin_setting_heading('enrolhdr', get_string('enrolments'), ''));
+    require_once($CFG->dirroot.'/enrol/enrol.class.php');
+    $choices = array();
+    $modules = explode(',', $CFG->enrol_plugins_enabled);
+    foreach ($modules as $module) {
+        $name = get_string('enrolname', "enrol_$module");
+        $plugin = enrolment_factory::factory($module);
+        if (method_exists($plugin, 'print_entry')) {
+            $choices[$name] = $module;
+        }
+    }
+    asort($choices);
+    $choices = array_flip($choices);
+    $choices = array_merge(array('' => get_string('sitedefault').' ('.get_string('enrolname', "enrol_$CFG->enrol").')'), $choices);
+    $temp->add(new admin_setting_configselect('course_enrol', get_string('enrolmentplugins'), '', key($choices),$choices));
+    $choices = array(0 => get_string('no'), 1 => get_string('yes'), 2 => get_string('enroldate'));
+    $temp->add(new admin_setting_configselect('course_enrollable', get_string('enrollable'), '', 1,$choices));
+    $periodmenu=array();
+    $periodmenu[0] = get_string('unlimited');
+    for ($i=1; $i<=365; $i++) {
+        $seconds = $i * 86400;
+        $periodmenu[$seconds] = get_string('numdays', '', $i);
+    }
+    $temp->add(new admin_setting_configselect('course_enrolperiod', get_string('enrolperiod'), '', 0,$periodmenu));
+    
+    ///
+    $temp->add(new admin_setting_heading('expirynotifyhdr', get_string('expirynotify'), ''));
+    $temp->add(new admin_setting_configselect('course_expirynotify', get_string('notify'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $temp->add(new admin_setting_configselect('course_notifystudents', get_string('expirynotifystudents'), '', 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+    $thresholdmenu=array();
+    for ($i=1; $i<=30; $i++) {
+        $seconds = $i * 86400;
+        $thresholdmenu[$seconds] = get_string('numdays', '', $i);
+    }
+    $temp->add(new admin_setting_configselect('course_expirythreshold', get_string('expirythreshold'), '', 10 * 86400,$thresholdmenu));
+
+
+    $temp->add(new admin_setting_heading('groups', get_string('groups', 'group'), ''));
+    $choices = array();
+    $choices[NOGROUPS] = get_string('groupsnone', 'group');
+    $choices[SEPARATEGROUPS] = get_string('groupsseparate', 'group');
+    $choices[VISIBLEGROUPS] = get_string('groupsvisible', 'group');
+    $temp->add(new admin_setting_configselect('course_groupmode', get_string('groupmode'), '', key($choices),$choices));
+    $temp->add(new admin_setting_configselect('course_groupmodeforce', get_string('force'), get_string('groupmodeforce'), 0,array(0 => get_string('no'), 1 => get_string('yes'))));
+
+
+    $temp->add(new admin_setting_heading('availability', get_string('availability'), ''));
+    $choices = array();
+    $choices['0'] = get_string('courseavailablenot');
+    $choices['1'] = get_string('courseavailable');
+    $temp->add(new admin_setting_configselect('course_visible', get_string('visible'), '', 1,$choices));
+    $temp->add(new admin_setting_configpasswordunmask('course_enrolpassword', get_string('enrolmentkey'), '',''));
+    $choices = array();
+    $choices['0'] = get_string('guestsno');
+    $choices['1'] = get_string('guestsyes');
+    $choices['2'] = get_string('guestskey');
+    $temp->add(new admin_setting_configselect('course_guest', get_string('opentoguests'), '', 0,$choices));
+
+
+    $temp->add(new admin_setting_heading('language', get_string('language'), ''));
+    $languages=array();
+    $languages[''] = get_string('forceno');
+    $languages += get_list_of_languages();
+    $temp->add(new admin_setting_configselect('course_lang', get_string('forcelanguage'), '', 0,$languages));
+
+    if(completion_info::is_enabled_for_site()) {
+        $temp->add(new admin_setting_heading('progress', get_string('progress','completion'), ''));
+        $temp->add(new admin_setting_configselect('course_enablecompletion', get_string('completion','completion'), '',
+            1,array(0 => get_string('completiondisabled','completion'), 1 => get_string('completionenabled','completion'))));
+    }
+    $ADMIN->add('courses', $temp);
+
+/// "courserequests" settingpage
     $temp = new admin_settingpage('courserequest', get_string('courserequest'));
     $temp->add(new admin_setting_configcheckbox('enablecourserequests', get_string('enablecourserequests', 'admin'), get_string('configenablecourserequests', 'admin'), 0));
     $temp->add(new admin_settings_coursecat_select('defaultrequestcategory', get_string('defaultrequestcategory', 'admin'), get_string('configdefaultrequestcategory', 'admin'), 1));
     $ADMIN->add('courses', $temp);
 
-    // "backups" settingpage
+/// "backups" settingpage
     if (!empty($CFG->backup_version)) {
         $temp = new admin_settingpage('backups', get_string('backups','admin'), 'moodle/site:backup');
         $temp->add(new admin_setting_configcheckbox('backup/backup_sche_modules', get_string('includemodules'), get_string('backupincludemoduleshelp'), 0));
