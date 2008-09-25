@@ -164,9 +164,9 @@ session.bug_compat_warn = 0</pre>
       <pre>
 DirectoryIndex index.php index.html index.htm
 
-&lt;IfDefine APACHE2>
+&lt;IfDefine APACHE2&gt;
      <b>AcceptPathInfo</b> on
-&lt;/IfDefine>
+&lt;/IfDefine&gt;
 
 php_flag magic_quotes_gpc 1
 php_flag magic_quotes_runtime 0
@@ -215,18 +215,18 @@ php_value post_max_size 2M</pre>
     <p>Here are some example Unix command lines for MySQL: </p>
     <pre>
 # mysql -u root -p
-> CREATE DATABASE moodle; 
-> GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
+&gt; CREATE DATABASE moodle; 
+&gt; GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
         TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
-> quit 
+&gt; quit 
 # mysqladmin -p reload</pre>
 
     <p>And some example command lines for PostgreSQL: </p>
     <pre>
 # su - postgres
-> psql -c "create user moodleuser createdb;" template1
-> psql -c "create database moodle;" -U moodleuser template1
-> psql -c "alter user moodleuser nocreatedb;" template1</pre>
+&gt; psql -c "create user moodleuser createdb;" template1
+&gt; psql -c "create database moodle;" -U moodleuser template1
+&gt; psql -c "alter user moodleuser nocreatedb;" template1</pre>
   </div>
   <p>&nbsp;</p>
   
