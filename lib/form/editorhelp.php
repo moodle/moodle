@@ -16,13 +16,13 @@ for ($i=1; ; $i++){
                 $topics[$i] = helplink('questions', get_string('helpquestions'));
                 break;
             case 'emoticons' :
-                $topics[$i] = helplink('emoticons', get_string('helpemoticons'));
+                $topics[$i] = helplink('emoticons2', get_string('helpemoticons'));
                 break;
             case 'richtext' :
-                $topics[$i] = helplink('richtext', get_string('helprichtext'));
+                $topics[$i] = helplink('richtext2', get_string('helprichtext'));
                 break;
             case 'text' :
-                $topics[$i] = helplink('text', get_string('helptext'));
+                $topics[$i] = helplink('text2', get_string('helptext'));
                 break;
             default :
                 print_error('unknownhelp', '', '', $item);

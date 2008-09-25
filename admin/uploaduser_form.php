@@ -212,7 +212,7 @@ class admin_uploaduser_form2 extends moodleform {
 
         $mform->addElement('htmleditor', 'description', get_string('userdescription'));
         $mform->setType('description', PARAM_CLEAN);
-        $mform->setHelpButton('description', array('text', get_string('helptext')));
+        $mform->setHelpButton('description', array('text2', get_string('helptext')));
         $mform->setAdvanced('description');
 
         $mform->addElement('text', 'url', get_string('webpage'), 'maxlength="255" size="50"');

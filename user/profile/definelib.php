@@ -32,7 +32,7 @@ class profile_define_base {
         $form->setType('name', PARAM_MULTILANG);
 
         $form->addElement('htmleditor', 'description', get_string('profiledescription', 'admin'));
-        $form->setHelpButton('description', array('text', get_string('helptext')));
+        $form->setHelpButton('description', array('text2', get_string('helptext')));
 
         $form->addElement('selectyesno', 'required', get_string('profilerequired', 'admin'));
 

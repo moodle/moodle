@@ -100,7 +100,7 @@ class course_edit_form extends moodleform {
         $mform->setType('idnumber', PARAM_RAW);
 
         $mform->addElement('htmleditor','summary', get_string('summary'), array('rows'=> '10', 'cols'=>'65'));
-        $mform->setHelpButton('summary', array('text', get_string('helptext')), true);
+        $mform->setHelpButton('summary', array('text2', get_string('helptext')), true);
         $mform->setType('summary', PARAM_RAW);
 
         $courseformats = get_list_of_plugins('course/format');
