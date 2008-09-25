@@ -8,7 +8,7 @@
      */
     function signup_captcha_enabled() {
         global $CFG;
-        return isset($CFG->recaptchapublickey) && isset($CFG->recaptchaprivatekey) && get_config('auth/email', 'recaptcha');
+        return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && get_config('auth/email', 'recaptcha');
     }
     
     require_once('signup_form.php');
