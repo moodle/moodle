@@ -771,10 +771,10 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
     // generate JavaScript
     foreach($element_list as $element => $value){
         if ($sversion == 'scorm_13') {
-            $element = preg_replace('/.*?\.(\d+)\./', ".N\$1.", $element);
+            $element = preg_replace('/\.(\d+)\./', ".N\$1.", $element);
             preg_match('/\.(N\d+)\./', $element, $matches);
         } else {
-            $element = preg_replace('/.*?\.(\d+)\./', "_\$1.", $element);
+            $element = preg_replace('/\.(\d+)\./', "_\$1.", $element);
             preg_match('/\_(\d+)\./', $element, $matches);
         }
         if (count($matches) > 0 && $current != $matches[1]) {
@@ -798,10 +798,10 @@ function scorm_reconstitute_array_element($sversion, $userdata, $element_name, $
         
         // now - flesh out the second level elements if there are any
         if ($sversion == 'scorm_13') {
-            $element = preg_replace('/.*?\.N\d+\..*?\.(\d+)\./', ".N\$1.", $element);
+            $element = preg_replace('/(.*?\.N\d+\..*?)\.(\d+)\./', "\$1.N\$2.", $element);
             preg_match('/.*?\.N\d+\.(.*?)\.(N\d+)\./', $element, $matches);
         } else {
-            $element = preg_replace('/.*?\_\d+\..*?\.(\d+)\./', "_\$1.", $element);
+            $element = preg_replace('/(.*?\_\d+\..*?)\.(\d+)\./', "\$1_\$2.", $element);
             preg_match('/.*?\_\d+\.(.*?)\_(\d+)\./', $element, $matches);
         }
         
