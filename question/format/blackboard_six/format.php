@@ -158,7 +158,7 @@ class qformat_blackboard_six extends qformat_default {
         $ext = substr($this->realfilename, strpos($this->realfilename,'.'), strlen($this->realfilename)-1);      
         if ($ext=='.dat') {
             if (!is_readable($filename)) {
-                error("File is not readable");	
+                print_error('filenotreadable', 'error');	
             }		
             return file($filename);
         }	  

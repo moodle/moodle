@@ -110,8 +110,7 @@ class qformat_qti_two extends qformat_default {
     function importpreprocess() {
         global $CFG;
 
-        error("Sorry, importing this format is not yet implemented!",
-            "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
+        print_error('cannotimportformat', 'question', "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
     }
 
     function exportpreprocess() {
@@ -241,7 +240,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
 
         // create a directory for the exports (if not already existing)
         if (!$export_dir = make_upload_directory($this->question_get_export_dir().'/'.$this->filename)) {
-              error( get_string('cannotcreatepath','quiz',$export_dir) );
+              print_error('cannotcreatepath', 'quiz', '', $export_dir);
         }
         $path = $CFG->dataroot.'/'.$this->question_get_export_dir().'/'.$this->filename;
 
@@ -273,13 +272,13 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $expout = $smarty->fetch('imsmanifest.tpl');
         $filepath = $path.'/imsmanifest.xml';
         if (empty($expout)) {
-            error("Unkown error - empty imsmanifest.xml");
+            print_error('emptyxml', 'question');
         }
         if (!$fh=fopen($filepath,"w")) {
-            error("Cannot open for writing: $filepath");
+            print_error('cannotopenforwriting', 'question', '', $filepath);
         }
         if (!fwrite($fh, $expout)) {
-            error("Cannot write exported questions to $filepath");
+            print_error('cannotwriteto', 'question', '', $filepath);
         }
         fclose($fh);
 
@@ -294,10 +293,10 @@ function handle_questions_media(&$questions, $path, $courseid) {
 
             $filepath = $path.'/'.$this->get_assesment_item_id($question) . ".xml";
             if (!$fh=fopen($filepath,"w")) {
-                error("Cannot open for writing: $filepath");
+                print_error('cannotopenforwriting', 'question', '', $filepath);
             }
             if (!fwrite($fh, $expout)) {
-                error("Cannot write exported questions to $filepath");
+                print_error('cannotwriteto', 'question', '', $filepath);
             }
             fclose($fh);
 
@@ -331,13 +330,13 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $this->xml_entitize($result);
         $this->xml_entitize($submiturl);
         if (! $this->exportpreprocess(0, $course)) {   // Do anything before that we need to
-            error("Error occurred during pre-processing!", $redirect);
+            print_error('errorpreprocess', 'question', $redirect);
         }
         if (! $this->exportprocess_quiz($quiz, $questions, $result, $submiturl, $course)) {         // Process the export data
-            error("Error occurred during processing!", $redirect);
+            print_error('errorprocess','question', $redirect);
         }
         if (! $this->exportpostprocess()) {                    // In case anything needs to be done after
-            error("Error occurred during post-processing!", $redirect);
+            print_error('errorpostprocess', 'question', $redirect);
         }
 
     }
@@ -676,7 +675,7 @@ function xml_entitize(&$collection) {
         $path = $CFG->dataroot."/smarty_c";
         if (!is_dir($path)) {
             if (!mkdir($path, $CFG->directorypermissions)) {
-              error("Cannot create path: $path");
+              print_error('cannotcreatepath', 'question', '', $path);
             }
         }
         $smarty = new Smarty;
