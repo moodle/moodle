@@ -6,7 +6,7 @@ global $DB;
 // Get course
 $course=$DB->get_record('course',array('id'=>required_param('course',PARAM_INT)));
 if(!$course) {
-    error('Specified course not found');    
+    print_error('invalidcourseid');    
 }
 
 // Sort (default lastname, optionally firstname)

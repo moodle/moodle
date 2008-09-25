@@ -13,27 +13,27 @@ switch($targetstate) {
     case COMPLETION_INCOMPLETE:
         break;
     default:
-        error('Unsupported completion state');
+        print_error('unsupportedstate');
 }
 $fromajax=optional_param('fromajax',0,PARAM_INT);
 
 function error_or_ajax($message) {
     global $fromajax;
     if($fromajax) {
-        print $message;
+        print get_string($message, 'error');
         exit;
     } else {
-        error($message);
+        print_error($message);
     }
 }
 
 // Get course-modules entry
 if(!($cm=$DB->get_record('course_modules',array('id'=>$cmid)))) {
-    error_or_ajax('Activity ID unknown');
+    error_or_ajax('invalidactivityid');
 }
 
 if(!($course=$DB->get_record('course',array('id'=>$cm->course)))) {
-    error_or_ajax('Missing course (database corrupt?)');
+    error_or_ajax('invalidcourseid');
 }
 
 // Check user is logged in
@@ -41,7 +41,7 @@ require_login($course);
 
 // Check completion state is manual
 if($cm->completion!=COMPLETION_TRACKING_MANUAL) {
-    error_or_ajax('Activity does not provide manual completion tracking');
+    error_or_ajax('cannotmanualctrack');
 }
 
 // Now change state

@@ -100,7 +100,7 @@
         require_once('delete_category_form.php');
 
         if (!$deletecat = $DB->get_record('course_categories', array('id'=>$delete))) {
-            error('Incorrect category id', 'index.php');
+            print_error('invalidcategoryid');
         }
 
         $heading = get_string('deletecategory', '', format_string($deletecat->name));

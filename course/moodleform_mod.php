@@ -249,7 +249,7 @@ class moodleform_mod extends moodleform {
             $matches=array();
             if (!preg_match('/^mod_([^_]+)_mod_form$/', $this->_formname, $matches)) {
                 debugging('Use $modname parameter or rename form to mod_xx_mod_form, where xx is name of your module');
-                error('Unknown module name for form');
+                print_error('unknownmodulename');
             }
             $modname=$matches[1];
         }
