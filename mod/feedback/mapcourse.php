@@ -18,7 +18,7 @@
     $courseid = optional_param('courseid', false, PARAM_INT);
     
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
-        error('no sesskey defined');
+        print_error('invalidsesskey');
     }
     
     // $SESSION->feedback->current_tab = 'mapcourse';
@@ -26,15 +26,15 @@
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
     
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     }
     $capabilities = feedback_load_capabilities($cm->id);
@@ -53,7 +53,7 @@
                   FROM {feedback_sitecourse_map}
                  WHERE feedbackid = ? AND courseid = ?";
         if (!$DB->get_records_sql($sql, array($map->feedbackid, $map->courseid)) && !$DB->insert_record('feedback_sitecourse_map', $map)) {
-            error("Database problem, unable to map feedback = $feedback->id to course = $course->id");
+            print_error('cannotmapfeedback', 'feedback');
         }
     }
     

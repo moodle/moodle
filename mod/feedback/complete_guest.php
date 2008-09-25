@@ -23,7 +23,7 @@
     $highlightrequired = false;
 
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
-        error('no sesskey defined');
+        print_error('invalidsesskey');
     }
     
     //if the use hit enter into a textfield so the form should not submit
@@ -46,7 +46,7 @@
             $gonextpage = false;
             $gopreviouspage = true;
         }else {
-            error('parameter (gopage) required');
+            print_error('parameters_missing', 'feedback');
         }
     }else {
         $gonextpage = $gopreviouspage = false;
@@ -55,15 +55,15 @@
 
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
      
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            error("Course is misconfigured");
+            print_error('coursemisconf');
         }
      
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     }
 
@@ -73,12 +73,12 @@
     if($feedback->anonymous == FEEDBACK_ANONYMOUS_YES) {
         $capabilities->complete = true;
     }else {
-        error(get_string('feedback_is_not_for_anonymous'));
+        print_error('feedback_is_not_for_anonymous', 'feedback');
     }
     
     //check whether the user has a session
     if(!isset($USER->sesskey) OR !$USER->sesskey) {
-        error('error');
+        print_error('error');
     }
     
     //check whether the feedback is located and! started from the mainsite
@@ -95,7 +95,7 @@
     }
     
     if(!$capabilities->complete) {
-        error(get_string('error'));
+        print_error('error');
     }
 
     
@@ -144,7 +144,9 @@
     if($feedback_can_submit) {
         //preserving the items
         if($preservevalues == 1){
-            if(!$SESSION->feedback->is_started == true)error('error', $CFG->wwwroot.'/course/view.php?id='.$course->id);
+            if (!$SESSION->feedback->is_started == true) {
+                print_error('error', 'error', $CFG->wwwroot.'/course/view.php?id='.$course->id);
+            }
             //check, if all required items have a value
             if(feedback_check_values($_POST, $startitempos, $lastitempos)) {
                 $userid = $USER->id; //arb
@@ -158,7 +160,7 @@
                     if(isset($lastpage)) {
                         $gopage = $lastpage;
                     }else {
-                        error('parameter failed');
+                        print_error('parameters_missing', 'feedback');
                     }
                 }
             }else {
@@ -167,7 +169,7 @@
                 if(isset($lastpage)) {
                     $gopage = $lastpage;
                 }else {
-                    error('parameter failed');
+                    print_error('parameters_missing', 'feedback');
                 }
             }
         }

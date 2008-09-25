@@ -15,7 +15,7 @@
     $id = required_param('id', PARAM_INT);
 
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
-        error('no sesskey defined');
+        print_error('invalidsesskey');
     }
     
     $do_show = optional_param('do_show', 'edit', PARAM_ALPHA);
@@ -30,15 +30,15 @@
  
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
      
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            error("Course is misconfigured");
+            print_error('coursemisconf');
         }
      
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     }
     $capabilities = feedback_load_capabilities($cm->id);
@@ -46,7 +46,7 @@
     require_login($course->id, true, $cm);
     
     if(!$capabilities->edititems){
-        error(get_string('error'));
+        print_error('error');
     }
 
     //move up/down items
@@ -88,7 +88,7 @@
     if(isset($create_template_formdata->savetemplate) && $create_template_formdata->savetemplate == 1) {
         //check the capabilities to create templates
         if(!$capabilities->createprivatetemplate AND !$capabilities->createpublictemplate) {
-            error('saving templates is not allowed');
+            print_error('cannotsavetempl', 'feedback');
         }
         if(trim($create_template_formdata->templatename) == '')
         {
