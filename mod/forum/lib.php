@@ -4081,7 +4081,7 @@ function forum_post_subscription($post) {
 
     $info = new object();
     $info->name  = fullname($USER);
-    $info->forum = $forum->name;
+    $info->forum = format_string($forum->name);
 
     if (!empty($post->subscribe)) {
         forum_subscribe($USER->id, $post->forum);
