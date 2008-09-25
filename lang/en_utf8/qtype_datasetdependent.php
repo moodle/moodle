@@ -1,5 +1,6 @@
 <?php
 $string['additem'] = 'Add Item';
+$string['answerstoleranceparam'] = 'Answers tolerance parameters';
 $string['atleastonerealdataset']='There should be at least one real dataset in question text';
 $string['atleastonewildcard']='There should be at least one wild card in answer formula or question text';
 $string['calcdistribution'] = 'Distribution';
@@ -34,12 +35,14 @@ $string['newlocal1'] = 'a literal from a new set of literals that will only be u
 $string['newlocal2'] = 'a file  from a new set of files that will only be used by this question';
 $string['newlocal3'] = 'a link from a new set of links that will only be used by this question';
 $string['nodataset'] = 'nothing - it is not a wild card';
+$string['oneanswertrueansweroutsidelimits'] = 'At least one correct answer outside the true value limits.<br/>Modify the answers tolerance settings available as Advanced parameters';   
 $string['param'] = 'Param {<strong>$a</strong>}';
 $string['replacewithrandom'] = 'Replace with a random value';
 $string['reuseifpossible'] = 'reuse previous value if available';
 $string['sharedwildcard']='Shared wild card';
 $string['sharedwildcards']='Shared wild cards';
 $string['uniform'] = 'Uniform';
+$string['updatetolerancesparam'] = 'Update the answers tolerance parameters';
 $string['updatedatasetparam'] = 'Update the datasets parameters';
 $string['youmustaddatleastoneitem'] = 'You must add at least one dataset item before you can save this question.';
 ?>
