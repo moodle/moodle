@@ -72,19 +72,19 @@ The sun rises in the east.{T}
 </pre>
 
 <p><u>Matching:</u><br />
-    Matching pairs begin with an equal sign (=) and are separated by this symbol "->". There must be at least three matching pairs.</p>
+    Matching pairs begin with an equal sign (=) and are separated by this symbol "-&gt;". There must be at least three matching pairs.</p>
 <pre>
 Matching Question. {
-    =subquestion1 -> subanswer1
-    =subquestion2 -> subanswer2
-    =subquestion3 -> subanswer3
+    =subquestion1 -&gt; subanswer1
+    =subquestion2 -&gt; subanswer2
+    =subquestion3 -&gt; subanswer3
 }
 
 Match the following countries with their corresponding capitals. {
-    =Canada -> Ottawa
-    =Italy  -> Rome
-    =Japan  -> Tokyo
-    =India  -> New Delhi
+    =Canada -&gt; Ottawa
+    =Italy  -&gt; Rome
+    =Japan  -&gt; Tokyo
+    =India  -&gt; New Delhi
 }
 </pre>
     <p>Matching questions do not support feedback or percentage answer weights.</p>
@@ -278,23 +278,23 @@ up to the next modifier or the end of the file will be added to the specified ca
 category modifier the category specified on the import screen will be used. Note that for this to work
 the <b>from file:</b> box must be ticked on the import screen.</p>
 
-<p>To include a category modifier include a line like this (with a blank line before and after):
+<p>To include a category modifier include a line like this (with a blank line before and after):</p>
 
 <pre>
 $CATEGORY: tom/dick/harry
 </pre>
 
-or simply
+<p>or simply</p>
 
 <pre>
 $CATEGORY: mycategory
 </pre>
 
-...the first example specifies a path of nested categories. In this cae the questions will go into <i>harry</i>. The 
+<p>...the first example specifies a path of nested categories. In this cae the questions will go into <i>harry</i>. The 
 categories are created if they do not exist.</p>
 
-<p><u>Other Options:</u><br />
+<p>Other Options:<br />
     Short Answer questions can be made case sensitive by changing &quot;0&quot; to &quot;1&quot; in the following line:<br />
     <tt>$question-&gt;usecase = 0;  // Ignore case</tt></p>
-<p></p>
+
 

@@ -14,19 +14,19 @@ the gradebook administrator. Caution in interpreting these "empty grades" is thu
     <dt>Mean of grades</dt>        
     <dd>The sum of all grades divided by the total number of grades.</dd>
     <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
-                     <code>(0.7 + 0.25 + 1.0)/3 = 0.65 --> 65/100</code></dd>
+                     <code>(0.7 + 0.25 + 1.0)/3 = 0.65 --&gt; 65/100</code></dd>
                      
     <dt>Weighted mean</dt>
         <dd>Each grade item can be given a weight, which is then used in the arithmetic mean aggregation to influence
                          the importance of each item in the overall mean.</dd>
         <dd class="example">A1 70/100 weight 10, A2 20/80 weight 5, A3
-                         10/10 weight 3, category max 100:<br /><code>(0.7*10 + 0.25*5 + 1.0*3)/18 = 0.625 --> 62.5/100</code></dd>
+                         10/10 weight 3, category max 100:<br /><code>(0.7*10 + 0.25*5 + 1.0*3)/18 = 0.625 --&gt; 62.5/100</code></dd>
     
     <dt>Simple weighted mean</dt>
         <dd>The difference from <em>Weighted mean</em> is that weight is calculated as <em>Maximum grade</em> - <em>Minimum grade</em>
                          for each item. 100 point assignment has weight 100, 10 point assignment has weight 10.</dd>
         <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
-                         <code>(0.7*100 + 0.25*80 + 1.0*10)/190 = 0.526 --> 52.6/100</code></dd>
+                         <code>(0.7*100 + 0.25*80 + 1.0*10)/190 = 0.526 --&gt; 52.6/100</code></dd>
     
     <dt>Mean of grades (with extra credits)</dt>
         <dd>Arithmetic mean with a twist. An old, now unsupported aggregation strategy provided here only
@@ -35,17 +35,17 @@ the gradebook administrator. Caution in interpreting these "empty grades" is thu
     <dt>Median of grades</dt>
         <dd>The middle grade (or the mean of the two middle grades) when grades are arranged in order of size. The advantage over the mean is that it is not affected by outliers (grades which are uncommonly far from the mean).</dd>
         <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
-                         <code>median(0.7 ; 0.25 ; 1.0) = 0.7 --> 70/100</code></dd>
+                         <code>median(0.7 ; 0.25 ; 1.0) = 0.7 --&gt; 70/100</code></dd>
     
     <dt>Smallest grade</dt>
         <dd>The result is the smallest grade after normalisation. It is usually used in combination with <em>Aggregate only non-empty grades</em>.</dd>
         <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
-                         <code>min(0.7 ; 0.25 ; 1.0) = 0.25 --> 25/100</code></dd>
+                         <code>min(0.7 ; 0.25 ; 1.0) = 0.25 --&gt; 25/100</code></dd>
                          
     <dt>Highest grade</dt>
         <dd>The result is the highest grade after normalisation.</dd>
         <dd class="example">A1 70/100, A2 20/80, A3 10/10, category max 100:<br />
-                         <code>max(0.7 ; 0.25 ; 1.0) = 1.0 --> 100/100</code></dd>
+                         <code>max(0.7 ; 0.25 ; 1.0) = 1.0 --&gt; 100/100</code></dd>
     
     <dt>Mode of grades</dt>
         <dd>The mode is the grade that occurs the most frequently. It is more often used for non-numerical grades.
@@ -53,7 +53,7 @@ the gradebook administrator. Caution in interpreting these "empty grades" is thu
                          However it loses its meaning once there is more than one most frequently occurring grade (only one is kept), or when all
                          the grades are different from each other.</dd>
         <dd class="example">A1 70/100, A2 35/50, A3 20/80, A4 10/10, A5 7/10 category max 100:<br />
-                         <code>mode(0.7 ; 0.7 ; 0.25 ; 1.0 ; 0.7) = 0.7 --> 70/100</code></dd>
+                         <code>mode(0.7 ; 0.7 ; 0.25 ; 1.0 ; 0.7) = 0.7 --&gt; 70/100</code></dd>
     
     <dt>Sum of grades</dt>
         <dd>The sum of all grade values. Scale grades are ignored. This is the only type that does not convert the
