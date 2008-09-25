@@ -5856,7 +5856,7 @@ function editorhelpbutton(){
  * @return string
  * @todo Finish documenting this function
  */
-function helpbutton ($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false,
+function helpbutton($page, $title, $module='moodle', $image=true, $linktext=false, $text='', $return=false,
                      $imagetext='') {
     global $CFG, $COURSE;
 
@@ -5864,7 +5864,7 @@ function helpbutton ($page, $title, $module='moodle', $image=true, $linktext=fal
     //$text option won't work properly because the text needs to be always cleaned and,
     // when cleaned... html tags always break, so it's unusable.
     if ( isset($text) && $text!='') {
-      debugging('Warning: it\'s not recommended to use $text parameter in helpbutton ($page=' . $page . ', $module=' . $module . ') function', DEBUG_DEVELOPER);
+        debugging('Warning: it\'s not recommended to use $text parameter in helpbutton ($page=' . $page . ', $module=' . $module . ') function', DEBUG_DEVELOPER);
     }
 
     // fix for MDL-7734
@@ -5872,6 +5872,16 @@ function helpbutton ($page, $title, $module='moodle', $image=true, $linktext=fal
         $forcelang = $COURSE->lang;
     } else {
         $forcelang = '';
+    }
+
+    // Catch references to the old text.html and emoticons.html help files that
+    // were renamed in MDL-13233.
+    if (in_array($page, array('text', 'emoticons', 'richtext'))) {
+        $oldname = $page;
+        $page .= '2';
+        debugging("You are referring to the old help file '$oldname'. " .
+                "This was renamed to '$page' becuase of MDL-13233. " .
+                "Please update your code.", DEBUG_DEVELOPER);
     }
 
     if ($module == '') {
