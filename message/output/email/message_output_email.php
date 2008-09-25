@@ -82,10 +82,14 @@ class message_output_email extends message_output {
      * Creates necessary fields in the messaging config form.
      * @param object $mform preferences form class
      */
-    function config_form($preferences){               
+    function config_form($preferences){ 
+        global $USER;
         echo '<fieldset id="messageprocessor_email" class="clearfix">';
         echo '<legend class="ftoggler">'.get_string('email', 'messageprocessor_email').'</legend>';
         echo get_string('email').': <input name="email_email" value="'.$preferences->email_email.'" />';
+        if (!isset($preferences->email_email) || $preferences->email_email==''){
+            echo ' default: '.$USER->email;
+        }
         echo '</fieldset>';
     }
 
