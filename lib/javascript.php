@@ -30,16 +30,6 @@ setTimeout('fix_column_widths()', 20);
 </script>
 <script type="text/javascript">
 //<![CDATA[
-function openpopup(url,name,options,fullscreen) {
-  fullurl = "<?php echo $CFG->httpswwwroot ?>" + url;
-  windowobj = window.open(fullurl,name,options);
-  if (fullscreen) {
-     windowobj.moveTo(0,0);
-     windowobj.resizeTo(screen.availWidth,screen.availHeight);
-  }
-  windowobj.focus();
-  return false;
-}
 <?php
     echo "function inserttext(text) {\n";
     if (!empty($SESSION->inserttextform)) {
