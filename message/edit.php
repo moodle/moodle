@@ -214,7 +214,8 @@ echo '</tr>';
 
 foreach ( $providers as $providerid => $provider){
     $providername = get_string('messageprovider:'.$provider->name, $provider->component);
-    echo '<tr><th align="right">'.$providername.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
+    $helpbtn = helpbutton(str_replace('/', '_', $provider->component).'_'.$provider->name, $providername, "messaging", true, false, '', true);
+    echo '<tr><th align="right">'.$providername.$helpbtn.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
     foreach (array('loggedin', 'loggedoff') as $state){
         $state_res = get_string($state, 'message');
         echo '<tr><td align="right">'.$state_res.'</td>'."\n";
@@ -236,9 +237,6 @@ echo '</fieldset>';
 
 //get a listing of all the message processors
 $processors = $DB->get_records('message_processors');
-
-///  TODO:  (from martin)
-///         1) For email plugin, if the email is blank can we make it default to profile email address?   Show this to use by adding "Default: martin@moodle.com" after the actual field for setting a new one.
 
 foreach ( $processors as $processorid => $processor){
     $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';    
