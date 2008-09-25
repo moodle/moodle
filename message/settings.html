@@ -1,5 +1,8 @@
 <form id="message_settings" action="index.php" method="post">
-<div><input type="hidden" name="tab" value="settings" /></div>
+<div>
+    <input type="hidden" name="tab" value="settings" />
+    <input type="hidden" name="sesskey" value="<?php echo sesskey() ?>" />
+</div>
 
 
 <table cellpadding="5"  class="message_form boxaligncenter">

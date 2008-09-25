@@ -205,7 +205,7 @@ function message_print_search() {
 function message_print_settings() {
     global $USER;
 
-    if ($frm = data_submitted()) {
+    if ($frm = data_submitted() and confirm_sesskey()) {
 
         $pref = array();
         $pref['message_showmessagewindow'] = (isset($frm->showmessagewindow)) ? '1' : '0';
