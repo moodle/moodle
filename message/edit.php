@@ -43,7 +43,7 @@ $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
 $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
 if (!$course = $DB->get_record('course', array('id' => $course))) {
-    error('Course ID was incorrect');
+    print_error('invalidcourseid');
 }
 
 if ($course->id != SITEID) {
@@ -62,7 +62,7 @@ if (isguestuser()) {
 }
 
 if (!$user = $DB->get_record('user', array('id' => $userid))) {
-    error('User ID was incorrect');
+    print_error('invaliduserid');
 }
 
 $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
@@ -121,13 +121,13 @@ if ( ($form = data_submitted()) && confirm_sesskey()) {
                 $pclass = new $processclass();
                 $pclass->process_form($form, $preferences);                    
             } else{ 
-                error('Error calling defined processor');
+                print_error('errorcallingprocessor', 'message');
             }
         }
     }
     /// Save all the new preferences to the database
     if (!set_user_preferences( $preferences, $user->id ) ){
-        error('Error updating user message preferences');
+        print_error('cannotupdateusermsgpref');
     }
     
     redirect("$CFG->wwwroot/message/edit.php?id=$user->id&course=$course->id");
@@ -163,7 +163,7 @@ foreach ( $processors as $processorid => $processor){
             $pclass = new $processclass();
             $pclass->load_data($preferences, $user->id);                    
         } else{ 
-            error('Error calling defined processor');
+            print_error('errorcallingprocessor', 'message');
         }
     }
 }
@@ -249,7 +249,7 @@ foreach ( $processors as $processorid => $processor){
             $pclass = new $processclass();
             $pclass->config_form($preferences); 
         } else{ 
-            error('Error calling defined processor');
+            print_error('errorcallingprocessor', 'message');
         }
     }
 }

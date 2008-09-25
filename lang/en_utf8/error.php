@@ -139,6 +139,7 @@ $string['cannotupdaterole'] = 'Cannot update role!';
 $string['cannotupdatemod'] = 'Could not update $a';
 $string['cannotupdatemodcap'] = 'Could not update $a capabilities!';
 $string['cannotupdateuser'] = 'Updating user failed';
+$string['cannotupdateusermsgpref'] = 'Updating user failed';
 $string['cannotupdateuseronexauth'] = 'Failed to update user data on external auth: $a. See the server logs for more details.';
 $string['cannotupdatepasswordonextauth'] = 'Failed to update password on external auth: $a. See the server logs for more details.';
 $string['cannotupdateplugincap'] = 'Could not update $a capabilities!';

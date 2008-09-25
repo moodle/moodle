@@ -18,6 +18,7 @@ $string['context'] = 'context';
 $string['disabled'] = 'Messaging is disabled on this site';
 $string['deletemessagesdays'] = 'Number of days before old messages are automatically deleted';
 $string['discussion'] = 'Discussion';
+$string['errorcallingprocessor'] = 'Error calling defined processor';
 $string['emailmessages'] = 'Email messages when I am offline';
 $string['emailtagline'] = 'This email is a copy of a message sent to you at \"$a\"';
 $string['emptysearchstring'] = 'You must search for something';
