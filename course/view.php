@@ -200,7 +200,7 @@
         require_js(array('yui_yahoo','yui_event','yui_connection','yui_dom'));
         // Need to do this after the header because it requires the YUI stuff
         // to be loaded already
-        require_js($CFG->wwwroot . '/course/completion.js');
+        require_js('course/completion.js');
         print_js_config(array(
             'completion_strsaved' => get_string('saved','completion'),
             'completion_strtitley' => get_string('completion-title-manual-y','completion'),
@@ -248,7 +248,7 @@
         // At the bottom because we want to process sections and activities
         // after the relevant html has been generated. We're forced to do this
         // because of the way in which lib/ajax/ajaxcourse.js is written.
-        require_js($CFG->wwwroot . '/lib/ajax/ajaxcourse.js');
+        require_js('lib/ajax/ajaxcourse.js');
 
         $COURSE->javascriptportal->print_javascript($course->id);
     }

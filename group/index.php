@@ -12,11 +12,8 @@ require_once('../config.php');
 require_once('lib.php');
 require_once($CFG->libdir.'/json/JSON.php');
 
-require_js('yui_yahoo');
-require_js('yui_dom');
-require_js('yui_utilities');
-require_js('yui_connection');
-require_js($CFG->wwwroot.'/group/clientlib.js');
+require_js(array('yui_yahoo', 'yui_dom', 'yui_utilities', 'yui_connection'));
+require_js('group/clientlib.js');
 
 $courseid = required_param('id', PARAM_INT);
 $groupid  = optional_param('group', false, PARAM_INT);

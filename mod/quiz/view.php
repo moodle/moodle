@@ -70,8 +70,7 @@
     if ($accessmanager->securewindow_required($canpreview)) {
         $bodytags = 'onload="popupchecker(\'' . get_string('popupblockerwarning', 'quiz') . '\');"';
     }
-    require_js('yui_yahoo');
-    require_js('yui_event');
+    require_js(array('yui_yahoo', 'yui_event'));
     $PAGE->print_header($course->shortname.': %fullname%','',$bodytags);
 
 /// Print any blocks on the left of the page.

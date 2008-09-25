@@ -1963,7 +1963,7 @@ function get_html_head_contributions($questionlist, &$questions, &$states) {
 
     // The question engine's own JavaScript.
     require_js(array('yui_yahoo','yui_event', 'yui_connection'));
-    require_js($CFG->wwwroot . '/question/qengine.js');
+    require_js('question/qengine.js');
 
     // An inline script to record various lang strings, etc. that qengine.js needs.
     $contributions = array(question_init_qenginejs_script());

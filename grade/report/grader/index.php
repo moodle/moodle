@@ -191,7 +191,7 @@ if (!empty($studentsperpage)) {
     print_paging_bar($numusers, $report->page, $studentsperpage, $report->pbarurl);
 }
 
-require_js('functions.js');
+require_js('grade/report/grader/functions.js');
 
 $reporthtml = '<div id="grader_report_message"></div>' . "\n";
 $reporthtml .= '<table id="user-grades" class="gradestable flexible boxaligncenter generaltable">';

@@ -2,10 +2,7 @@
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))) . '/config.php');
 require_once($CFG->libdir . '/portfoliolib.php');
-require_js(array(
-    'yui_yahoo',
-    'yui_dom',
-));
+require_js(array('yui_yahoo', 'yui_dom'));
 $id = required_param('id', PARAM_INT);
 
 $exporter = portfolio_exporter::rewaken_object($id);

@@ -81,7 +81,7 @@
 
     // Print the page header
     require_js(array('yui_yahoo','yui_event'));
-    require_js($CFG->wwwroot . '/mod/quiz/quiz.js');
+    require_js('mod/quiz/quiz.js');
     $title = get_string('attempt', 'quiz', $attemptobj->get_attempt_number());
     $headtags = $attemptobj->get_html_head_contributions($page);
     if ($accessmanager->securewindow_required($attemptobj->is_preview_user())) {

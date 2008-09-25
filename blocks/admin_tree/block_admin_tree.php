@@ -134,7 +134,7 @@ class block_admin_tree extends block_base {
 
         if ($this->tempcontent !== '') {
             require_js(array('yui_yahoo','yui_event'));
-            require_js($CFG->wwwroot . '/blocks/admin_tree/admintree.js');
+            require_js('blocks/admin_tree/admintree.js');
             $this->content = new object();
             $this->content->text = '<div class="admintree">' . $this->tempcontent . "</div>\n";
             $this->content->text .= print_js_call('admin_tree.init',

@@ -39,7 +39,7 @@ if (empty($cleanedroleids)) {
 
 // Include the required JavaScript.
 require_js(array('yui_yahoo','yui_event'));
-require_js($CFG->wwwroot . '/admin/report/capability/script.js');
+require_js('admin/report/capability/script.js');
 
 // Log.
 add_to_log(SITEID, "admin", "report capability", "report/capability/index.php?capability=$capability", $capability);

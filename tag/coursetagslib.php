@@ -291,7 +291,7 @@ EOT;
         //]]>
     </script>';
 
-    require_js($CFG->wwwroot . '/blocks/tags/coursetags.js');
+    require_js('blocks/tags/coursetags.js');
 
     return $str;
 }
