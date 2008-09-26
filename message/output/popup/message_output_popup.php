@@ -82,10 +82,10 @@ class message_output_popup extends message_output{
         return true;
     }
     public function load_data(&$preferences, $userid) {
-        $preferences->showmessagewindow =  get_user_preferences( 'message_showmessagewindow', 1, $user->id);
-        $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $user->id);
-        $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $user->id);
-        $preferences->noframesjs        =  get_user_preferences( 'message_noframesjs', '', $user->id);
+        $preferences->showmessagewindow =  get_user_preferences( 'message_showmessagewindow', 1, $userid);
+        $preferences->blocknoncontacts  =  get_user_preferences( 'message_blocknoncontacts', '', $userid);
+        $preferences->beepnewmessage    =  get_user_preferences( 'message_beepnewmessage', '', $userid);
+        $preferences->noframesjs        =  get_user_preferences( 'message_noframesjs', '', $userid);
         return true;
     }
 }
