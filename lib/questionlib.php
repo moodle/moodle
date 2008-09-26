@@ -315,28 +315,33 @@ function question_context_has_any_questions($context) {
  * @return object ->gradeoptionsfull full array ->gradeoptions +ve only
  */
 function get_grade_options() {
-    // define basic array of grades
+    // define basic array of grades. This list comprises all fractions of the form:
+    // a. p/q for q <= 6, 0 <= p <= q
+    // b. p/10 for 0 <= p <= 10
+    // c. 1/q for 1 <= q <= 10
+    // d. 1/20
     $grades = array(
-        1,
-        0.9,
-        0.8,
-        0.75,
-        0.70,
-        0.66666,
-        0.60,
-        0.50,
-        0.40,
-        0.33333,
-        0.30,
-        0.25,
-        0.20,
-        0.16666,
-        0.142857,
-        0.125,
-        0.11111,
-        0.10,
-        0.05,
-        0);
+        1.0000000,
+        0.9000000,
+        0.8333333,
+        0.8000000,
+        0.7500000,
+        0.7000000,
+        0.6666667,
+        0.6000000,
+        0.5000000,
+        0.4000000,
+        0.3333333,
+        0.3000000,
+        0.2500000,
+        0.2000000,
+        0.1666667,
+        0.1428571,
+        0.1250000,
+        0.1111111,
+        0.1000000,
+        0.0500000,
+        0.0000000);
 
     // iterate through grades generating full range of options
     $gradeoptionsfull = array();
