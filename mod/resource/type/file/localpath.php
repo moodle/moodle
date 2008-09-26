@@ -49,8 +49,8 @@
            onClick="return set_value(getElementById('myform').myfile.value)">
     <input type="button" value="<?php print_string('cancel') ?>" 
            onClick="window.close()">
-    </form>
     </fieldset>
+    </form>
     </div>
 <?php
     print_footer('empty');
