@@ -3360,22 +3360,23 @@ function check_password_policy($password, &$errmsg) {
     $textlib = textlib_get_instance();
     $errmsg = '';
     if ($textlib->strlen($password) < $CFG->minpasswordlength) {
-        $errmsg = get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength);
+        $errmsg .= '<div>'. get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength) .'</div>';
 
-    } else if (preg_match_all('/[[:digit:]]/u', $password, $matches) < $CFG->minpassworddigits) {
-        $errmsg = get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits);
+    }
+    if (preg_match_all('/[[:digit:]]/u', $password, $matches) < $CFG->minpassworddigits) {
+        $errmsg .= '<div>'. get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits) .'</div>';
 
-    } else if (preg_match_all('/[[:lower:]]/u', $password, $matches) < $CFG->minpasswordlower) {
-        $errmsg = get_string('errorminpasswordlower', 'auth', $CFG->minpasswordlower);
+    }
+    if (preg_match_all('/[[:lower:]]/u', $password, $matches) < $CFG->minpasswordlower) {
+        $errmsg .= '<div>'. get_string('errorminpasswordlower', 'auth', $CFG->minpasswordlower) .'</div>';
 
-    } else if (preg_match_all('/[[:upper:]]/u', $password, $matches) < $CFG->minpasswordupper) {
-        $errmsg = get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper);
+    }
+    if (preg_match_all('/[[:upper:]]/u', $password, $matches) < $CFG->minpasswordupper) {
+        $errmsg .= '<div>'. get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper) .'</div>';
 
-    } else if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
-        $errmsg = get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
-
-    } else if ($password == 'admin' or $password == 'password') {
-        $errmsg = get_string('unsafepassword');
+    }
+    if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
+        $errmsg .= '<div>'. get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum) .'</div>';
     }
 
     if ($errmsg == '') {
