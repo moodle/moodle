@@ -405,7 +405,7 @@ function quiz_set_grade($newgrade, &$quiz) {
                 WHERE quiz = $quiz->id
         ", false);
 
-        // Update the quiz_grades table.
+        // Update the quiz_feedback table.
         $success = $success && execute_sql("
                 UPDATE {$CFG->prefix}quiz_feedback
                 SET mingrade = $factor * mingrade, maxgrade = $factor * maxgrade
