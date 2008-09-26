@@ -25,8 +25,8 @@ class user_bulk_action_form extends moodleform {
             $actions[5] = get_string('download', 'admin');
         }
         if (has_capability('moodle/role:assign', $syscontext)){
-        	$actions[6] = get_string('enrolmultipleusers', 'admin');
-        }		
+            $actions[6] = get_string('enrolmultipleusers', 'admin');
+        }
         $objs = array();
         $objs[] =& $mform->createElement('select', 'action', null, $actions);
         $objs[] =& $mform->createElement('submit', 'doaction', get_string('go'));

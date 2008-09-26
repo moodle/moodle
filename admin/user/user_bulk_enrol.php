@@ -6,7 +6,7 @@ require_once('../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 $processed = optional_param('processed', '', PARAM_CLEAN);
 $sort = optional_param('sort', 'fullname', PARAM_ALPHA); //Sort by full name
-$dir  = optional_param('dir', 'asc', PARAM_ALPHA);		 //Order to sort (ASC)
+$dir  = optional_param('dir', 'asc', PARAM_ALPHA);       //Order to sort (ASC)
 
 admin_externalpage_setup('userbulk');
 require_capability('moodle/user:delete', get_context_instance(CONTEXT_SYSTEM));
@@ -15,9 +15,9 @@ $return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 if (empty($SESSION->bulk_users)) { 
     redirect($return);
 }
-$users = $SESSION->bulk_users; 	//Get users to display
-$usertotal = get_users(false); 	//Total number of users registered
-$usercount = count($users);		//number of users
+$users = $SESSION->bulk_users; //Get users to display
+$usertotal = get_users(false); //Total number of users registered
+$usercount = count($users);    //number of users
 
 admin_externalpage_print_header();
 
@@ -48,7 +48,7 @@ $table->width = "95%";
 $columns = array('fullname');
 foreach ($courses as $v)
 {
-	$columns[] = $v->shortname;
+    $columns[] = $v->shortname;
 }
 
 //Print columns headers from table
@@ -72,28 +72,28 @@ if(!empty($processed)) {
   
     for ( $i = 0; $i < $total; $i++ )
     {
-    	$param = "selected".$i;
+        $param = "selected".$i;
         $info = optional_param($param, '', PARAM_CLEAN);
         /**
          * user id:    ids[0]
          * course id:  ids[1]
          * enrol stat: ids[2]
          */
-    	$ids = explode(',', $info);
+        $ids = explode(',', $info);
         if(!empty($ids[2])) {
-    		$context = get_context_instance(CONTEXT_COURSE, $ids[1]);
+            $context = get_context_instance(CONTEXT_COURSE, $ids[1]);
             if( role_assign(5, $ids[0], 0, $context->id) ) {
                 continue;
             }
-    	} else {
-    		if( empty($ids[1] ) ) {
-    			continue;
+        } else {
+            if( empty($ids[1] ) ) {
+                continue;
             }
             $context = get_context_instance(CONTEXT_COURSE, $ids[1]);
             if( role_unassign(5, $ids[0], 0, $context->id) ) {
                 continue;
             }
-    	}  	
+        }
     }
     redirect($return, get_string('changessaved'));
 }
@@ -119,27 +119,27 @@ foreach($users as $user)
     $temparray = array (
         '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.SITEID.'">'.$user->fullname.'</a>'   
     );
-	$mycourses = get_my_courses($user->id);
-	$i = 1;
-	foreach($courses as $acourse)
-	{
+    $mycourses = get_my_courses($user->id);
+    $i = 1;
+    foreach($courses as $acourse)
+    {
         $temparray[$i] = '';
-		if(isset($mycourses[$acourse->id])) {
+        if(isset($mycourses[$acourse->id])) {
             // already enrolled
             $temparray[$i] .= '<input type="hidden" id="ck-'.$count.'" name="unselected'.$count.
                 '" value="'.$user->id.','.$acourse->id.',1" />';
-			$temparray[$i] .= "<input type='checkbox' id='ck-".$count.
+            $temparray[$i] .= "<input type='checkbox' id='ck-".$count.
                 "-c' checked='yes' onclick='toggleck(\"".
                 $count."\",".$user->id.",".$acourse->id.",false)' />";
-		} else {
+        } else {
             // unenrol
-			$temparray[$i] .= '<input type="checkbox" name="selected'.
+            $temparray[$i] .= '<input type="checkbox" name="selected'.
                 $count.'" value="'.$user->id.','.$acourse->id.','.true.'" />';
-		}
-		$i++;
-		$count++;
-	}
-	$table->data[] = $temparray;
+        }
+        $i++;
+        $count++;
+    }
+    $table->data[] = $temparray;
 }
 print_heading("$usercount / $usertotal ".get_string('users'));
 print_table($table);
