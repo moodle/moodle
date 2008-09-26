@@ -26,7 +26,7 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
     $dbman = $DB->get_manager();
     $result = true;
 
-//===== 1.9.0 upgrade line ======//
+    //===== 1.9.0 upgrade line ======//
 
     if ($result && $oldversion < 2008020500 && is_enabled_enrol('authorize')) {
         require_once($CFG->dirroot.'/enrol/authorize/localfuncs.php');
@@ -34,6 +34,44 @@ function xmldb_enrol_authorize_upgrade($oldversion) {
             notify("You are using the authorize.net enrolment plugin for payment handling but cUrl is not available.
                     PHP must be compiled with cURL+SSL support (--with-curl --with-openssl)");
         }
+    }
+
+    if ($result && $oldversion < 2008092700) {
+        /// enrol_authorize.transid
+        /// Define index transid (not unique) to be dropped form enrol_authorize
+        $table = new xmldb_table('enrol_authorize');
+        $index = new xmldb_index('transid', XMLDB_INDEX_NOTUNIQUE, array('transid'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        /// Changing precision of field transid on table enrol_authorize to (20)
+        $table = new xmldb_table('enrol_authorize');
+        $field = new xmldb_field('transid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'userid');
+        $dbman->change_field_precision($table, $field);
+
+        /// Launch add index transid again
+        $table = new xmldb_table('enrol_authorize');
+        $index = new xmldb_index('transid', XMLDB_INDEX_NOTUNIQUE, array('transid'));
+        $dbman->add_index($table, $index);
+
+        /// enrol_authorize_refunds.transid
+        /// Define index transid (not unique) to be dropped form enrol_authorize_refunds
+        $table = new xmldb_table('enrol_authorize_refunds');
+        $index = new xmldb_index('transid', XMLDB_INDEX_NOTUNIQUE, array('transid'));
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+
+        /// Changing precision of field transid on table enrol_authorize_refunds to (20)
+        $table = new xmldb_table('enrol_authorize_refunds');
+        $field = new xmldb_field('transid', XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null, null, '0', 'amount');
+        $dbman->change_field_precision($table, $field);
+
+        /// Launch add index transid again
+        $table = new xmldb_table('enrol_authorize_refunds');
+        $index = new xmldb_index('transid', XMLDB_INDEX_NOTUNIQUE, array('transid'));
+        $dbman->add_index($table, $index);
     }
 
     return $result;
