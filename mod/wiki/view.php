@@ -327,7 +327,7 @@
         $currenttab = '';
         foreach ($tabs as $tab) {
             $tabname = get_string("tab$tab", 'wiki');
-            $row[] = new tabobject($tabname, $ewbase.'&amp;page='.$tab.'/'.$ewiki_id, $tabname);
+            $row[] = new tabobject($tabname, $ewbase.'&amp;page='.$tab.'/'.s($ewiki_id), $tabname);
             if ($ewiki_action == "$tab" or in_array($page, $specialpages)) {
                 $currenttab = $tabname;
             }
