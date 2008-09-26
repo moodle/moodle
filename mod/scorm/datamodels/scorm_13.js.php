@@ -52,6 +52,7 @@ function SCORMapi1_3() {
     comments_children = 'comment, timestamp, location';
     score_children = 'max, raw, scaled, min';
     objectives_children = 'progress_measure, completion_status, success_status, description, score, id';
+    correct_responses_children = 'pattern';
     student_data_children = 'mastery_score, max_time_allowed, time_limit_action';
     student_preference_children = 'audio_level, audio_captioning, delivery_speed, language';
     interactions_children = 'id, type, objectives, timestamp, correct_responses, weighting, learner_response, result, latency, description';
@@ -164,6 +165,7 @@ function SCORMapi1_3() {
 <?php
     // reconstitute objectives, comments_from_learner and comments_from_lms
     scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.objectives', array('score'));
+    scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.interactions', array('objectives', 'correct_responses'));
     scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.comments_from_learner', array());
     scorm_reconstitute_array_element($scorm->version, $userdata, 'cmi.comments_from_lms', array());
 ?>
