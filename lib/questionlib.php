@@ -300,9 +300,10 @@ function question_context_has_any_questions($context) {
 function get_grade_options() {
     // define basic array of grades
     $grades = array(
-        1,
-        0.9,
-        0.8,
+        1.00,
+        0.90,
+        0.83333,
+        0.80,
         0.75,
         0.70,
         0.66666,
