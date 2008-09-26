@@ -197,6 +197,10 @@ function wiki_print_recent_activity($course, $isteacher, $timestart) {
             continue;
         }
 
+    /// Process log->url and rebuild it here to properly clean the pagename - MDL-15896
+        $extractedpage = preg_replace('/^.*&page=/', '', $log->url);
+        $log->url = preg_replace('/page=.*$/', 'page='.urlencode($extractedpage), $log->url);
+
         $wikis[$log->info] = wiki_log_info($log);
         $wikis[$log->info]->pagename = $log->info;
         $wikis[$log->info]->time = $log->time;
