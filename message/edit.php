@@ -26,238 +26,244 @@
 /**
  * Edit user message preferences
  *
- * @author Luis Rodrigues
+ * @author Luis Rodrigues and Martin Dougiamas
  * @version  $Id$
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package
  */
 
 
-require_once('../config.php');
-require_once($CFG->libdir.'/messagelib.php');
+    require_once('../config.php');
+    require_once($CFG->libdir.'/messagelib.php');
 
+    $userid = optional_param('id', $USER->id, PARAM_INT);    // user id
+    $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
 
-httpsrequired();
+    if (!$course = $DB->get_record('course', array('id' => $course))) {
+        print_error('invalidcourseid');
+    }
 
-$userid = optional_param('id', $USER->id, PARAM_INT);    // user id
-$course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
+    if ($course->id != SITEID) {
+        require_login($course);
 
-if (!$course = $DB->get_record('course', array('id' => $course))) {
-    print_error('invalidcourseid');
-}
-
-if ($course->id != SITEID) {
-    require_login($course);
-} else { 
-    if (!isloggedin()) {
-        if (empty($SESSION->wantsurl)) {
-            $SESSION->wantsurl = $CFG->httpswwwroot.'/message/edit.php';
+    } else { 
+        if (!isloggedin()) {
+            if (empty($SESSION->wantsurl)) {
+                $SESSION->wantsurl = $CFG->httpswwwroot.'/message/edit.php';
+            }
+            redirect($CFG->httpswwwroot.'/login/index.php');
         }
-        redirect($CFG->httpswwwroot.'/login/index.php');
     }
-}
 
-if (isguestuser()) {
-    print_error('guestnoeditmessage', 'message');
-}
-
-if (!$user = $DB->get_record('user', array('id' => $userid))) {
-    print_error('invaliduserid');
-}
-
-$systemcontext   = get_context_instance(CONTEXT_SYSTEM);
-$personalcontext = get_context_instance(CONTEXT_USER, $user->id);
-$coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
-
-
-// check access control
-if ($user->id == $USER->id) {
-    //editing own message profile
-    require_capability('moodle/user:editownmessageprofile', $systemcontext);
-
-} else {
-    // teachers, parents, etc.
-    require_capability('moodle/user:editmessageprofile', $personalcontext);
-    // no editing of guest user account
-    if (isguestuser($user->id)) {
-        print_error('guestnoeditmessageother', 'message');
+    if (isguestuser()) {
+        print_error('guestnoeditmessage', 'message');
     }
-    // no editing of primary admin!
-    $mainadmin = get_admin();
-    if ($user->id == $mainadmin->id) {
-        print_error('adminprimarynoedit');
-    }
-}
 
-//save new preferences if data was submited
-if ( ($form = data_submitted()) && confirm_sesskey()) {
-    $preferences = array();
+    if (!$user = $DB->get_record('user', array('id' => $userid))) {
+        print_error('invaliduserid');
+    }
+
+    $systemcontext   = get_context_instance(CONTEXT_SYSTEM);
+    $personalcontext = get_context_instance(CONTEXT_USER, $user->id);
+    $coursecontext   = get_context_instance(CONTEXT_COURSE, $course->id);
+
+
+    // check access control
+    if ($user->id == $USER->id) {
+        //editing own message profile
+        require_capability('moodle/user:editownmessageprofile', $systemcontext);
+
+    } else {
+        // teachers, parents, etc.
+        require_capability('moodle/user:editmessageprofile', $personalcontext);
+        // no editing of guest user account
+        if (isguestuser($user->id)) {
+            print_error('guestnoeditmessageother', 'message');
+        }
+        // no editing of primary admin!
+        $mainadmin = get_admin();
+        if ($user->id == $mainadmin->id) {
+            print_error('adminprimarynoedit');
+        }
+    }
+
+/// Save new preferences if data was submited
+
+    if (($form = data_submitted()) && confirm_sesskey()) {
+        $preferences = array();
 
     /// Set all the preferences for all the message providers
+        $providers = message_get_my_providers();
+        foreach ( $providers as $providerid => $provider){
+            foreach (array('loggedin', 'loggedoff') as $state){
+                $linepref = '';
+                foreach ($form->{$provider->component.'_'.$provider->name.'_'.$state} as $process=>$one){                
+                    if ($linepref == ''){ 
+                        $linepref = $process;
+                    } else { 
+                        $linepref .= ','.$process;
+                    }
+                }
+                $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
+            }
+        }
+
+    /// Set all the processor options as well
+        $processors = $DB->get_records('message_processors');
+        foreach ( $processors as $processorid => $processor){
+            $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
+            if ( is_readable($processorfile) ) {
+                include_once( $processorfile );
+
+                $processclass = 'message_output_' . $processor->name;                
+                if ( class_exists($processclass) ){                    
+                    $pclass = new $processclass();
+                    $pclass->process_form($form, $preferences);                    
+                } else{ 
+                    print_error('errorcallingprocessor', 'message');
+                }
+            }
+        }
+
+    /// Save all the new preferences to the database
+        if (!set_user_preferences( $preferences, $user->id ) ){
+            print_error('cannotupdateusermsgpref');
+        }
+
+        redirect("$CFG->wwwroot/message/edit.php?id=$user->id&course=$course->id");
+    }
+
+/// Load preferences 
+    $preferences = new object();
+
+/// Get providers preferences
     $providers = message_get_my_providers();
     foreach ( $providers as $providerid => $provider){
         foreach (array('loggedin', 'loggedoff') as $state){
-            $linepref = '';
-            foreach ($form->{$provider->component.'_'.$provider->name.'_'.$state} as $process=>$one){                
-                if ($linepref == ''){ 
-                    $linepref = $process;
-                } else { 
-                    $linepref .= ','.$process;
-                }
+            $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$provider->name.'_'.$state, '', $user->id);
+            if ($linepref == ''){ 
+                continue;
             }
-            $preferences['message_provider_'.$provider->component.'_'.$provider->name.'_'.$state] = $linepref;
+            $lineprefarray = explode(',', $linepref);
+            $preferences->{$provider->component.'_'.$provider->name.'_'.$state} = array();
+            foreach ($lineprefarray as $pref){
+                $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$pref] = 1;
+            }
         }
     }
 
-    /// Set all the processor options as well
+/// For every processors put its options on the form (need to get function from processor's lib.php)
     $processors = $DB->get_records('message_processors');
-    foreach ( $processors as $processorid => $processor){
+    foreach ( $processors as $processorid => $processor){    
         $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
         if ( is_readable($processorfile) ) {
-            include_once( $processorfile );
-            
+            include_once( $processorfile );        
             $processclass = 'message_output_' . $processor->name;                
             if ( class_exists($processclass) ){                    
                 $pclass = new $processclass();
-                $pclass->process_form($form, $preferences);                    
+                $pclass->load_data($preferences, $user->id);                    
             } else{ 
                 print_error('errorcallingprocessor', 'message');
             }
         }
     }
-    /// Save all the new preferences to the database
-    if (!set_user_preferences( $preferences, $user->id ) ){
-        print_error('cannotupdateusermsgpref');
-    }
-    
-    redirect("$CFG->wwwroot/message/edit.php?id=$user->id&course=$course->id");
-}
-
-//load preferences so show
-$preferences = new object();
-
-//get providers preferences
-$providers = message_get_my_providers();
-foreach ( $providers as $providerid => $provider){
-    foreach (array('loggedin', 'loggedoff') as $state){
-        $linepref = get_user_preferences('message_provider_'.$provider->component.'_'.$provider->name.'_'.$state, '', $user->id);
-        if ($linepref == ''){ 
-            continue;
-        }
-        $lineprefarray = explode(',', $linepref);
-        $preferences->{$provider->component.'_'.$provider->name.'_'.$state} = array();
-        foreach ($lineprefarray as $pref){
-            $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$pref] = 1;
-        }
-    }
-}
-
-//for every processors put its options on the form (need to get funcion from processor's lib.php)
-$processors = $DB->get_records('message_processors');
-foreach ( $processors as $processorid => $processor){    
-    $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';
-    if ( is_readable($processorfile) ) {
-        include_once( $processorfile );        
-        $processclass = 'message_output_' . $processor->name;                
-        if ( class_exists($processclass) ){                    
-            $pclass = new $processclass();
-            $pclass->load_data($preferences, $user->id);                    
-        } else{ 
-            print_error('errorcallingprocessor', 'message');
-        }
-    }
-}
 
 /// Display page header
-$streditmymessage = get_string('editmymessage', 'message');
-$strparticipants  = get_string('participants');
-$userfullname     = fullname($user, true);
+    $streditmymessage = get_string('editmymessage', 'message');
+    $strparticipants  = get_string('participants');
+    $userfullname     = fullname($user, true);
 
-$navlinks = array();
-if (has_capability('moodle/course:viewparticipants', $coursecontext) || 
-    has_capability('moodle/site:viewparticipants', $systemcontext)) {
-    $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
-}
-$navlinks[] = array('name' => $userfullname,
-                    'link' => "view.php?id=$user->id&amp;course=$course->id",
-                    'type' => 'misc');
-$navlinks[] = array('name' => $streditmymessage, 'link' => null, 'type' => 'misc');
-$navigation = build_navigation($navlinks);
+    $navlinks = array();
+    if (has_capability('moodle/course:viewparticipants', $coursecontext) || 
+        has_capability('moodle/site:viewparticipants', $systemcontext)) {
+        $navlinks[] = array('name' => $strparticipants, 'link' => "index.php?id=$course->id", 'type' => 'misc');
+    }
+    $navlinks[] = array('name' => $userfullname,
+                        'link' => "view.php?id=$user->id&amp;course=$course->id",
+                        'type' => 'misc');
+    $navlinks[] = array('name' => $streditmymessage, 'link' => null, 'type' => 'misc');
+    $navigation = build_navigation($navlinks);
 
-if ($course->id != SITEID) {
-    print_header("$course->shortname: $streditmymessage", "$course->fullname: $streditmymessage", $navigation);
-} else {
-    print_header("$course->shortname: $streditmymessage", $course->fullname, $navigation);
-}
+    if ($course->id != SITEID) {
+        print_header("$course->shortname: $streditmymessage", "$course->fullname: $streditmymessage", $navigation);
+    } else {
+        print_header("$course->shortname: $streditmymessage", $course->fullname, $navigation);
+    }
+
 /// Print tabs at the top
-$showroles = 1;
-$currenttab = 'editmessage';
-require('../user/tabs.php');
+    $showroles = 1;
+    $currenttab = 'editmessage';
+    require('../user/tabs.php');
 
-echo '<form class="mform" method="post" action="'.$CFG->wwwroot.'/message/edit.php">';
+/// Start the form.  We're not using mform here because of our special formatting needs ...
+    echo '<form class="mform" method="post" action="'.$CFG->wwwroot.'/message/edit.php">';
 
-//output settings table
-echo '<fieldset id="providers" class="clearfix">';
-echo '<legend class="ftoggler">'.get_string('providers_config', 'message').'</legend>';
-$providers = message_get_my_providers();
-$processors = $DB->get_records('message_processors');
-$number_procs = count($processors);
-echo '<table cellpadding="2"><tr><td>&nbsp;</td>'."\n";
-foreach ( $processors as $processorid => $processor){
-    echo '<th align="center">'.get_string($processor->name, 'messageprocessor_'.$processor->name).'</th>';
-}
-echo '</tr>';
+/// Settings table...
+    echo '<fieldset id="providers" class="clearfix">';
+    echo '<legend class="ftoggler">'.get_string('providers_config', 'message').'</legend>';
+    $providers = message_get_my_providers();
+    $processors = $DB->get_records('message_processors');
+    $number_procs = count($processors);
+    echo '<table cellpadding="2"><tr><td>&nbsp;</td>'."\n";
+    foreach ( $processors as $processorid => $processor){
+        echo '<th align="center">'.get_string($processor->name, 'messageprocessor_'.$processor->name).'</th>';
+    }
+    echo '</tr>';
 
-///  TODO:  (from martin)
-///         1) Can we show the popuyp first (it's the default and always there)
-///         2) Can we perhaps NOT show plugins here unless they have been configured in the section below
-
-foreach ( $providers as $providerid => $provider){
-    $providername = get_string('messageprovider:'.$provider->name, $provider->component);
-    $helpbtn = helpbutton(str_replace('/', '_', $provider->component).'_'.$provider->name, $providername, "messaging", true, false, '', true);
-    echo '<tr><th align="right">'.$providername.$helpbtn.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
-    foreach (array('loggedin', 'loggedoff') as $state){
-        $state_res = get_string($state, 'message');
-        echo '<tr><td align="right">'.$state_res.'</td>'."\n";
-        foreach ( $processors as $processorid => $processor) {
-            if (!isset($preferences->{$provider->component.'_'.$provider->name.'_'.$state})) {
-                $checked = '';
-            } else if (!isset($preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name])) {
-                $checked = '';
-            } else {
-                $checked = $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name]==1?" checked=\"checked\"":"";            
+    foreach ( $providers as $providerid => $provider){
+        $providername = get_string('messageprovider:'.$provider->name, $provider->component);
+        $helpbtn = helpbutton(str_replace('/', '_', $provider->component).'_'.$provider->name, $providername, "messaging", true, false, '', true);
+        echo '<tr><th align="right">'.$providername.$helpbtn.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
+        foreach (array('loggedin', 'loggedoff') as $state){
+            $state_res = get_string($state, 'message');
+            echo '<tr><td align="right">'.$state_res.'</td>'."\n";
+            foreach ( $processors as $processorid => $processor) {
+                if (!isset($preferences->{$provider->component.'_'.$provider->name.'_'.$state})) {
+                    $checked = '';
+                } else if (!isset($preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name])) {
+                    $checked = '';
+                } else {
+                    $checked = $preferences->{$provider->component.'_'.$provider->name.'_'.$state}[$processor->name]==1?" checked=\"checked\"":"";            
+                }
+                echo '<td align="center"><input type="checkbox" name="'.$provider->component.'_'.$provider->name.'_'.$state.'['.$processor->name.']" '.$checked.' /></td>'."\n";
             }
-            echo '<td align="center"><input type="checkbox" name="'.$provider->component.'_'.$provider->name.'_'.$state.'['.$processor->name.']" '.$checked.' /></td>'."\n";
-        }
-        echo '</tr>'."\n";
-    }
-}
-echo '</table>';
-echo '</fieldset>';
-
-//get a listing of all the message processors
-$processors = $DB->get_records('message_processors');
-
-foreach ( $processors as $processorid => $processor){
-    $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';    
-    if ( is_readable($processorfile) ) {        
-        include_once( $processorfile );                
-        $processclass = 'message_output_' . $processor->name;                
-        if (class_exists($processclass)) {                    
-            $pclass = new $processclass();
-            $pclass->config_form($preferences); 
-        } else{ 
-            print_error('errorcallingprocessor', 'message');
+            echo '</tr>'."\n";
         }
     }
-}
+    echo '</table>';
+    echo '</fieldset>';
 
-echo '<p><input type="hidden" name="sesskey" value="'.sesskey().'" /> </p>';
-echo '<div style="text-align:center"><input name="submit" value="'. get_string('updatemyprofile') .'" type="submit" /></div>';
+/// Show all the message processors
+    $processors = $DB->get_records('message_processors');
 
-echo "</form>";
+    foreach ($processors as $processorid => $processor) {
+        $processorfile = $CFG->dirroot. '/message/output/'.$processor->name.'/message_output_'.$processor->name.'.php';    
+        if (is_readable($processorfile)) {        
+            include_once($processorfile);                
+            $processclass = 'message_output_' . $processor->name;                
 
-/// and proper footer
-print_footer($course);
+            if (class_exists($processclass)) {                    
+                $pclass = new $processclass();
+                echo '<fieldset id="messageprocessor_'.$processor->name.'" class="clearfix">';
+                echo '<legend class="ftoggler">'.get_string($processor->name, 'messageprocessor_'.$processor->name).'</legend>';
+
+                echo $pclass->config_form($preferences); 
+
+                echo '</fieldset>';
+
+            } else{ 
+                print_error('errorcallingprocessor', 'message');
+            }
+        }
+    }
+
+    echo '<div><input type="hidden" name="sesskey" value="'.sesskey().'" /></div>';
+    echo '<div style="text-align:center"><input name="submit" value="'. get_string('updatemyprofile') .'" type="submit" /></div>';
+
+    echo "</form>";
+
+
+/// Finish with a footer
+    print_footer($course);
 
 ?>

@@ -83,10 +83,7 @@ class message_output_jabber extends message_output {
      * @param object $mform preferences form class
      */
     function config_form($preferences){
-        echo '<fieldset id="messageprocessor_email" class="clearfix">';
-        echo '<legend class="ftoggler">'.get_string('jabber', 'messageprocessor_jabber').'</legend>';
-        echo get_string('jabberid', 'messageprocessor_jabber').': <input name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
-        echo '</fieldset>';
+        return get_string('jabberid', 'messageprocessor_jabber').': <input size="30" name="jabber_jabberid" value="'.$preferences->jabber_jabberid.'" />';
     }
 
     /**
