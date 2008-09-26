@@ -1,6 +1,10 @@
 #!/usr/bin/php
 <?php
 
+if (isset($_SERVER['REMOTE_ADDR'])) { // if the script is accessed via the web.
+    exit;
+}
+
 $sec = time();
 
 /**
@@ -30,7 +34,8 @@ define('MOODLE_CVSHEAD_PATH', '/home/mathieu/workspace/head');
 // code in Moodle. Note that languages without an existing folder are 
 // ignored if they are not in this array.
 $langmatches = array(
-    'sr' => 'sr_lt',
+    'nb' => 'no',
+    //'sr' => 'sr_lt', // ignore the Serbian translation
     'zh' => 'zh_tw',
 );
 
@@ -43,7 +48,7 @@ if (isset($_SERVER['REMOTE_ADDR'])) { // if the script is accessed via the web.
 }
 
 // Do it.
-import_language_files();
+build_language_files();
 
 /****************************************************************************
  * Everything's a function.
@@ -93,8 +98,12 @@ function read_language_file($lang) {
     }
     if (file_exists($langfile)) {
         include($langfile);
-    } 
-    return $string;
+    }
+    $encodedstrings = array();
+    foreach($string as $key => $value) {
+        $encodedstrings[strtr($key, array('\\\'' =>'\\\'', '\'' => '\\\''))] = strtr($value, array('\\\'' =>'\\\'', '\'' => '\\\''));
+    }
+    return $encodedstrings;
 }
 
 /** 
@@ -111,18 +120,23 @@ function write_language_file($lang, $langdata) {
     }
 
     $file = fopen(find_language_file($lang), 'w');
-    fwrite($file, "<?php\n");
-    fwrite($file, "/* Note to translators: this file was automatically imported from TinyMCE's \n * translations. Any change to an automatically imported string will be overwritten \n * the next time the import script is run. */\n");
+    fwrite($file, "<?php // \$Id\$\n      // tinymce.php - created by the automatic import script\n\n\n");
+    //fwrite($file, "/* Note to translators: this file was automatically imported from TinyMCE's \n * translations. Any change to an automatically imported string will be overwritten \n * the next time the import script is run. */\n");
 
     foreach ($langdata as $id => $line) {
-        // the next two lines are there to make you enjoy how php deals with backslashes
-        $line = preg_replace_callback('/\\\\u([0-9A-F]{4})/', 'unichr', $line); // we're matching something like \u00E9
-        // we're only escaping single quotes, but we gotta prevent escaping those that have already been escaped.
-        fwrite($file, '$string[\''. $id ."']='". strtr($line, array('\\\'' => '\\\'', '\'' => '\\\'', '%' => '%%', '$' => '\$')) ."';\n"); 
+        fwrite($file, '$string[\''. $id ."'] = '". $line ."';\n");
     }
 
-    fwrite($file, "?>");
+    fwrite($file, "\n?>\n");
     fclose($file);
+}
+
+function encode_text($text) {
+    // the next two lines are there to make you enjoy how php deals with backslashes
+    $text = preg_replace_callback('/\\\\u([0-9A-F]{4})/', 'unichr', $text); // we're matching something like \u00E9
+    // we're only escaping single quotes, but we gotta prevent escaping those that have already been escaped.
+    $text = strtr($text, array('\\\'' => '\\\'', '\'' => '\\\'', '%' => '%%', '$' => '\$'));
+    return $text;
 }
 
 /**
@@ -151,7 +165,7 @@ function unichr($c) {
     return $s;
 }
 
-function import_language_files() {
+function build_language_files() {
     // build file list
     $languagefiles = array();
     $langfolders = array(
@@ -174,6 +188,15 @@ function import_language_files() {
         }
     }
 
+    // process English first - it's necessary to compare other languages later on
+    import_language_files($languagefiles);
+
+    global $sec;
+    print("\nIt is suggested you run this script twice. This will include() \nthe generated files once and detect parse errors before you \ncommit the files and wreach havoc on every Moodle site out there. \n\nReally. \n\nIt's quick (this script only took ". (time() - $sec) ." seconds to run), so do it!\n\nThe english translation file was only saved in HEAD. You will need \nto copy it to any other necessary checkout manually.\n\n");
+}
+
+function import_language_files($languagefiles) {
+
     // process the files and import strings
     foreach ($languagefiles as $currentlang => $filepaths) {
 
@@ -184,7 +207,7 @@ function import_language_files() {
             continue;
         }
 
-        print($filename .' - ');
+        print($currentlang .' - ');
 
         if (!empty($strings)) {
             print('loaded '. count($strings) .' current strings - ');
@@ -193,6 +216,7 @@ function import_language_files() {
         }
 
         $importedstrings = 0;
+        $addedstrings = 0;
         foreach ($filepaths as $currentpath => $moduletypes) {
             foreach ($moduletypes as $moduletype => $filenames) {
                 foreach ($filenames as $filename) {
@@ -232,7 +256,17 @@ function import_language_files() {
                             if (!empty($moduletype)) {
                                 $modulestring = $moduletype .'/';
                             }
-                            $strings[$modulestring . $section . $subsection . $stringid] = $stringvalue;
+
+                            $key = $modulestring . $section . $subsection . $stringid;
+                            $value = encode_text($stringvalue);
+
+                            // we're only adding new strings. No removals, no updates.
+                            if (!array_key_exists($key, $strings)) {
+                                $strings[$key] = $value;
+                                //echo "added $key:$value\n";
+                                $addedstrings++;
+                            }
+                            
                             $importedstrings++;
 
                         } else { // wrong line !?
@@ -246,11 +280,8 @@ function import_language_files() {
         }
 
         write_language_file($currentlang, $strings);
-        print("imported $importedstrings strings.\n");
+        print("imported $importedstrings strings, added $addedstrings.\n");
     }
-    global $sec;
-    print("\nIt is suggested you run this script twice. This will include() \nthe generated files once and detect parse errors before you \ncommit the files and wreach havoc on every Moodle site out there. \n\nReally. \n\nIt's quick (this script only took ". (time() - $sec) ." seconds to run), so do it!\n\nThe english translation file was only saved in head. You will need \n\nto copy it to any other necessary checkout manually.\n\n");
 }
-
 
 ?>
