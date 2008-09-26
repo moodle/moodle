@@ -417,7 +417,8 @@
     }
 
 /// print UI now
-
+    require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
+    require_js($CFG->admin . '/roles/roles.js');
     admin_externalpage_print_header();
 
     $currenttab = 'manage';

@@ -15,7 +15,7 @@
     <input type="hidden" name="courseid" value="<?php p($courseid) ?>" />
     </fieldset>
 
-    <table class="rolecap">
+    <table class="rolecap" id="overriderolestable">
         <tr>
             <th class="name" align="left" scope="col"><?php print_string('capability','role') ?></th>
             <th class="inherit" scope="col"><?php p($strinherit); ?></th>
@@ -149,6 +149,11 @@
     <?php
     if ($safeoverridenotice) {
         echo '<div class="sefeoverridenotice">'.$strsafewarning.'</div>';
+    }
+
+    if (count($capabilities) > 12) {
+        print_js_call('cap_table_filter.init',
+                array('overriderolestable', get_string('search'), get_string('clear')));
     }
     ?> 
 

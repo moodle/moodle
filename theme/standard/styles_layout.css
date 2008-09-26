@@ -1009,6 +1009,14 @@ body#admin-modules table.generaltable td.c0
   margin-left:auto;
   margin-right:auto;
 }
+.capabilitysearchui {
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
+}
+table.rolecap .hiddenrow {
+  display: none;
+}
 
 .rolecap .inherit,
 .rolecap .allow,

@@ -95,7 +95,7 @@
     $strprohibit = get_string('prohibit','role');
 ?>
 
-<table class="rolecap">
+<table class="rolecap" id="managerolestable">
 
 <tr>
 <th class="name" align="left" scope="col"><?php print_string('capability','role') ?></th>
@@ -214,6 +214,10 @@ foreach ($capabilities as $capability) {
 <input type="submit" value="<?php p($submitlabel) ?>" />
 <input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
 </div>
-<?php } ?>
+<?php }
+
+print_js_call('cap_table_filter.init',
+        array('managerolestable', get_string('search'), get_string('clear')));
+?>
 
 </form>

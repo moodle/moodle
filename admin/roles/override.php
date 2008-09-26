@@ -146,7 +146,8 @@
 
 
 /// Print the header and tabs
-
+    require_js(array('yui_yahoo', 'yui_dom', 'yui_event'));
+    require_js($CFG->admin . '/roles/roles.js');
     if ($context->contextlevel == CONTEXT_USER) {
         $navlinks = array();
         /// course header

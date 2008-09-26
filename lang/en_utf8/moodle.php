@@ -232,6 +232,7 @@ $string['clammovedfilebasic'] = 'The file has been moved to a quarantine directo
 $string['clamquarantinedirfailed'] = 'Could not move the file into your specified quarantine directory, $a. You need to fix this as files are being deleted if they\'re found to be infected.';
 $string['clamunknownerror'] = 'There was an unknown error with clam.';
 $string['cleaningtempdata'] = 'Cleaning temp data';
+$string['clear'] = 'Clear';
 $string['clicktochange'] = 'Click to change';
 $string['clickhere'] = 'Click here ...';
 $string['closewindow'] = 'Close this window';
