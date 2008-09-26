@@ -134,12 +134,12 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
     $strgetanothercaptcha = get_string('getanothercaptcha', 'auth');
     $strgetanaudiocaptcha = get_string('getanaudiocaptcha', 'auth');
     $strgetanimagecaptcha = get_string('getanimagecaptcha', 'auth');
-    
-    $return = '<script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script> 
-	<noscript>
+
+    $return = get_require_js_code(array($server . '/challenge?k=' . $pubkey . $errorpart)); 
+    $return .= '<noscript>
         <div id="recaptcha_widget_noscript">
         <div id="recaptcha_image_noscript"><img src="' . $image_url . '" alt="reCAPTCHA"/></div>';
-    
+
     if ($error == 'incorrect-captcha-sol') {
         $return .= '<div class="recaptcha_only_if_incorrect_sol" style="color:red">' . $strincorrectpleasetryagain . '</div>';
     }

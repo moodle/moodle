@@ -1543,7 +1543,7 @@ function file_modify_html_header($text) {
     $filters = explode(",", $CFG->textfilters);
     if (in_array('filter/mediaplugin', $filters)) {
         // this script is needed by most media filter plugins.
-        $ufo = "\n".'<script type="text/javascript" src="'.$CFG->wwwroot.'/lib/ufo.js"></script>'."\n";
+        $ufo = get_require_js_code(array($CFG->wwwroot . '/lib/ufo.js'));
     } else {
         $ufo = '';
     }

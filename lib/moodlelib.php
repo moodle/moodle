@@ -7520,8 +7520,9 @@ function message_popup_window() {
                 if (get_user_preferences('message_showmessagewindow', 1) == 1) {
                     if ($DB->count_records_select('message', 'useridto = ? AND timecreated > ?', array($USER->id, $USER->message_lastpopup))) {
                         $USER->message_lastpopup = time();
-                        return '<script type="text/javascript">'."\n//<![CDATA[\n openpopup('/message/index.php', 'message',
-                        'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\n//]]>\n</script>";
+                        return print_js_call('openpopup', array('/message/index.php', 'message',
+                                'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500',
+                                0), true);
                     }
                 }
             }
