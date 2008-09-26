@@ -19,15 +19,15 @@
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
      
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            error("Course is misconfigured");
+            print_error('coursemisconf');
         }
      
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     }
     $capabilities = feedback_load_capabilities($cm->id);
@@ -35,7 +35,7 @@
     require_login($course->id, true, $cm);
     
     if(!$capabilities->viewreports){
-        error(get_string('error'));
+        print_error('error');
     }
 
     //buffering any output
@@ -59,7 +59,7 @@
     
     //get the questions (item-names)
     if(!$items = $DB->get_records('feedback_item', array('feedback'=>$feedback->id, 'hasvalue'=>1), 'position')) {
-        error(get_string('no_items_available_yet', 'feedback'), $CFG->wwwroot.'/mod/feedback/view.php?id='.$id);
+        print_error('no_items_available_yet', 'feedback', $CFG->wwwroot.'/mod/feedback/view.php?id='.$id);
         exit;
     }
 

@@ -5,20 +5,20 @@
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
      
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            error("Course is misconfigured");
+            print_error('coursemisconf');
         }
      
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     }
     
     if(!isset($SESSION->feedback->item->captcha)) {
-        error('not allowed');
+        print_error('captchanotset', 'feedback');
     }
 
     $height = 40;

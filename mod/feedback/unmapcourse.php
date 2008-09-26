@@ -16,21 +16,21 @@
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
 
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            error("Course is misconfigured");
+            print_error('coursemisconf');
         }
         
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     }
     $capabilities = feedback_load_capabilities($cm->id);
     
     if (!$capabilities->mapcourse) {
-        error ('access not allowed');
+        print_error('invalidaccess');
     }
 
 
@@ -40,7 +40,7 @@
     if ($DB->delete_records('feedback_sitecourse_map', array('id'=>$cmapid))) {
         redirect (htmlspecialchars('mapcourse.php?id='.$id));
     } else {
-        error('Database problem, unable to unmap');
+        print_error('cannotunmap', 'feedback');
     }
 
 ?>

@@ -17,20 +17,20 @@
     $action = optional_param('action', false, PARAM_ALPHA);
 
     if(($formdata = data_submitted()) AND !confirm_sesskey()) {
-        error('no sesskey defined');
+        print_error('invalidsesskey');
     }
     
     if ($id) {
         if (! $cm = get_coursemodule_from_id('feedback', $id)) {
-            error("Course Module ID was incorrect");
+            print_error('invalidcoursemodule');
         }
      
         if (! $course = $DB->get_record("course", array("id"=>$cm->course))) {
-            error("Course is misconfigured");
+            print_error('coursemisconf');
         }
      
         if (! $feedback = $DB->get_record("feedback", array("id"=>$cm->instance))) {
-            error("Course module is incorrect");
+            print_error('invalidcoursemodule');
         }
     }
     $capabilities = feedback_load_capabilities($cm->id);
@@ -38,7 +38,7 @@
     require_login($course->id, true, $cm);
     
     if(!$capabilities->edititems){
-        error('this action is not allowed');
+        print_error('invalidaction');
     }
     
     unset($filename);
@@ -57,10 +57,10 @@
     // process if we are happy file is ok
     if (isset($filename)) { 
         if(!is_file($filename) OR !is_readable($filename)) {
-            error('file not found or not readable');
+            print_error('filenotreadable');
         }
         if(!$xmldata = feedback_load_xml_data($filename)) {
-            error('failed to loading xml', 'edit.php?id='.$id);
+            print_error('cannotloadxml', 'feedback', 'edit.php?id='.$id);
         }
         
         $importerror = feedback_import_loaded_data($xmldata, $feedback->id);

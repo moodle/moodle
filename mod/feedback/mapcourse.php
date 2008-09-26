@@ -42,7 +42,7 @@
     require_login($course->id, true, $cm);
     
     if (!$capabilities->mapcourse) {
-        error ('access not allowed');
+        print_error('invalidaccess');
     }
     
     if ($coursefilter) {
