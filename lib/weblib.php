@@ -2721,6 +2721,33 @@ function print_js_call($function, $args = array(), $return = false) {
 }
 
 /**
+ * Generate the HTML for calling a javascript funtion after a time delay.
+ * In other respects, this function is the same as print_js_call.
+ *
+ * @param integer $delay the desired delay in seconds.
+ * @param string $function the name of the JavaScript function to call.
+ * @param array $args an optional list of arguments to the function call.
+ * @param boolean $return if true, return the HTML code, otherwise output it.
+ * @return mixed string if $return is true, otherwise nothing.
+ */
+function print_delayed_js_call($delay, $function, $args = array(), $return = false) {
+    $quotedargs = array();
+    foreach ($args as $arg) {
+        $quotedargs[] = json_encode($arg);
+    }
+    $html = '';
+    $html .= '<script type="text/javascript">//<![CDATA[' . "\n";
+    $html .= 'setTimeout(function() {' . $function . '(' .
+            implode(', ', $quotedargs) . ');}, ' . ($delay * 1000) . ");\n";
+    $html .= "//]]></script>\n";
+    if ($return) {
+        return $html;
+    } else {
+        echo $html;
+    }
+}
+
+/**
  * Sometimes you need access to some values in your JavaScript that you can only
  * get from PHP code. You can handle this by generating your JS in PHP, but a
  * better idea is to write static javascrip code that reads some configuration
@@ -6144,7 +6171,7 @@ function redirect($url, $message='', $delay=-1) {
         @header('Location: '.$url);
         //another way for older browsers and already sent headers (eg trailing whitespace in config.php)
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
-        echo '<script type="text/javascript">'. "\n" .'//<![CDATA['. "\n". "location.replace('".addslashes_js($url)."');". "\n". '//]]>'. "\n". '</script>';   // To cope with Mozilla bug
+        print_js_call('document.location.replace', array($url));
         die;
     }
 
@@ -6164,17 +6191,7 @@ function redirect($url, $message='', $delay=-1) {
     echo '</div>';
 
     if (!$errorprinted) {
-?>
-<script type="text/javascript">
-//<![CDATA[
-
-  function redirect() {
-      document.location.replace('<?php echo addslashes_js($url) ?>');
-  }
-  setTimeout("redirect()", <?php echo ($delay * 1000) ?>);
-//]]>
-</script>
-<?php
+        print_delayed_js_call($delay, 'document.location.replace', array($url));
     }
 
     $CFG->docroot = false; // to prevent the link to moodle docs from being displayed on redirect page.

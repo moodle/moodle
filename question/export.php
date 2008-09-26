@@ -118,17 +118,8 @@
         } else {
             $efile = get_file_url($filename, null, 'questionfile');
             echo '<p><div class="boxaligncenter">' .
-                    get_string('yourfileshoulddownload', 'question', $efile) . '</a></div></p>';
-            echo '
-<script type="text/javascript">
-//<![CDATA[
-
-  function redirect() {
-      document.location.replace("' .  addslashes_js($efile) . '");
-  }
-  setTimeout("redirect()", 1000);
-//]]>
-</script>';
+                    get_string('yourfileshoulddownload', 'question', $efile) . '</div></p>';
+            print_delayed_js_call(1, 'document.location.replace', array($efile));
         }
 
         print_continue('edit.php?' . $thispageurl->get_query_string());

@@ -168,9 +168,7 @@ class quiz_access_manager {
         /// Make sure the timer starts just above zero. If $timeleft was <= 0, then
         /// this will just have the effect of causing the quiz to be submitted immediately.
             $timerstartvalue = max($timeleft, 1);
-            echo '<script type="text/javascript">';
-            echo "quiz_timer.initialise('", get_string('timesup','quiz'), "', ", $timerstartvalue, ");";
-            echo "</script>\n";
+            print_js_call('quiz_timer.initialise', array(get_string('timesup','quiz'), $timerstartvalue));
         }
     }
 
@@ -232,9 +230,7 @@ class quiz_access_manager {
                 $delay = 0;
             }
             print_box_end();
-            echo '<script type="text/javascript">';
-            echo 'quiz_secure_window.close(', addslashes_js(htmlspecialchars($url)), ', ', $delay, ')';
-            echo '</script>';
+            print_js_call('quiz_secure_window.close', array($url, $delay));
             print_footer('empty');
             die();
         } else {

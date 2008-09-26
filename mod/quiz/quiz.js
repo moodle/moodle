@@ -185,7 +185,7 @@ quiz_secure_window = {
             document.captureEvents(Event.MOUSEDOWN);
         }
         document.onmousedown = quiz_secure_window.intercept_click;
-        document.oncontextmenu = new Function("alert(quiz_secure_window.protection_message); return false")
+        document.oncontextmenu = function() {alert(quiz_secure_window.protection_message); return false;};
     },
 
     // Code for secure window. This used to be in protect_js.php. I don't understand it,
@@ -213,7 +213,7 @@ quiz_secure_window = {
             quiz_secure_window.close_next_url = url;
         }
         if (delay > 0) {
-            setTimeout('quiz_close_securewindow("", 0)', delay*1000);
+            setTimeout(function() {quiz_secure_window.close('eval (x)', 0);}, delay*1000);
         } else {
             if (window.opener) {
                 window.opener.document.location.reload();
