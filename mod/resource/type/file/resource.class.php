@@ -135,7 +135,7 @@ class resource_file extends resource_base {
         global $RESOURCE_WINDOW_OPTIONS;
         $alloptions = $RESOURCE_WINDOW_OPTIONS;
 
-        if ($resource->forcedownload) {
+        if (!empty($resource->forcedownload)) {
             $resource->popup = '';
             $resource->options = 'forcedownload';
 
@@ -269,13 +269,15 @@ class resource_file extends resource_base {
         if (!empty($resource->alltext)) {
             $parray = explode(',', $resource->alltext);
             foreach ($parray as $fieldstring) {
-                $field = explode('=', $fieldstring);
-                $querys[] = urlencode($field[1]).'='.urlencode($this->parameters[$field[0]]['value']);
+                list($moodleparam, $urlname) = explode('=', $fieldstring);
+                $value = urlencode($this->parameters[$moodleparam]['value']);
+                $querys[urlencode($urlname)] = $value;
+                $querysbits[] = urlencode($urlname) . '=' . $value;
             }
             if ($isteamspeak) {
-                $querystring = implode('?', $querys);
+                $querystring = implode('?', $querysbits);
             } else {
-                $querystring = implode('&amp;', $querys);
+                $querystring = implode('&amp;', $querysbits);
             }
         }
 
@@ -311,7 +313,7 @@ class resource_file extends resource_base {
         } else {   // Normal uploaded file
             $forcedownloadsep = '?';
             if ($resource->options == 'forcedownload') {
-                $querys[] = 'forcedownload=1';
+                $querys['forcedownload'] = '1';
             }
             $fullurl = get_file_url($course->id.'/'.$resource->reference, $querys);
         }
