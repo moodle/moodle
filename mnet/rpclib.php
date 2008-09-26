@@ -15,26 +15,26 @@ function mnet_concatenate_strings_RPC_OK() {
 
 function mnet_publishes() {
     $servicelist = array();
-        $service['name']             = 'sso';
-            $function['name']        = 'mnet_concatenate_strings';
+    $service['name']             = 'sso';
+    $function['name']        = 'mnet_concatenate_strings';
 
-                // first argument
-                $argument['type']    = 'string';
-                $argument['default'] = '';
-            $function['arguments'][] = $argument;
+    // first argument
+    $argument['type']    = 'string';
+    $argument['default'] = '';
+    $function['arguments'][] = $argument;
 
-                // second argument
-                $argument['type']    = 'string';
-                $argument['default'] = '';
-            $function['arguments'][] = $argument;
+    // second argument
+    $argument['type']    = 'string';
+    $argument['default'] = '';
+    $function['arguments'][] = $argument;
 
-                // third argument
-                $argument['type']    = 'string';
-                $argument['default'] = '';
-            $function['arguments'][] = $argument;
-        
-            $function['description'] = get_string($function['name'], 'mnet');
-        $service['functions'][]      = $function;
+    // third argument
+    $argument['type']    = 'string';
+    $argument['default'] = '';
+    $function['arguments'][] = $argument;
+
+    $function['description'] = get_string($function['name'], 'mnet');
+    $service['functions'][]      = $function;
     $servicelist[]                   = $service;
 
     return $servicelist;
