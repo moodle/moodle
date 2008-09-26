@@ -1899,7 +1899,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         //adding stuff to place holders in template
         //check if this is a group element first
         if (($this->_inGroup) and !empty($this->_groupElementTemplate)) {
-        	// so it gets substitutions for *each* element
+            // so it gets substitutions for *each* element
             $html = $this->_groupTemplates[$element->getName()];
         }
         elseif (method_exists($element, 'getElementTemplateType')){
