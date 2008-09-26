@@ -97,19 +97,7 @@ if(!empty($processed)) {
     }
     redirect($return, get_string('changessaved'));
 }
-echo  <<<EOD
-<script type="text/javascript">
-function toggleck(id, uid, cid) {
-    var el = document.getElementById('ck-'+id);
-    if(!document.getElementById('ck-'+id+'-c').checked) {
-        el.name  = 'selected'+id;
-        el.value = uid+','+cid+',0';
-    } else {
-        el.name  = 'unselected';
-    }
-}
-</script>
-EOD;
+
 //Form beginning  
 echo '<form id="multienrol" name="multienrol" method="post" action="user_bulk_enrol.php">';
 echo '<input type="hidden" name="processed" value="yes" />';
@@ -120,23 +108,16 @@ foreach($users as $user)
         '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.SITEID.'">'.$user->fullname.'</a>'   
     );
     $mycourses = get_my_courses($user->id);
-    $i = 1;
     foreach($courses as $acourse)
     {
-        $temparray[$i] = '';
-        if(isset($mycourses[$acourse->id])) {
-            // already enrolled
-            $temparray[$i] .= '<input type="hidden" id="ck-'.$count.'" name="unselected'.$count.
-                '" value="'.$user->id.','.$acourse->id.',1" />';
-            $temparray[$i] .= "<input type='checkbox' id='ck-".$count.
-                "-c' checked='yes' onclick='toggleck(\"".
-                $count."\",".$user->id.",".$acourse->id.",false)' />";
-        } else {
-            // unenrol
-            $temparray[$i] .= '<input type="checkbox" name="selected'.
-                $count.'" value="'.$user->id.','.$acourse->id.','.true.'" />';
+        $state = '';
+        if (isset($mycourses[$acourse->id])) {
+            $state = 'checked="checked"';
         }
-        $i++;
+        $temparray[] = '<input type="hidden" name="selected' . $count .
+                '" value="' . $user->id . ',' . $acourse->id . ',0" />' .
+                '<input type="checkbox" name="selected' . $count .
+                '" value="' . $user->id . ',' . $acourse->id . ',1" ' . $state . '/>';
         $count++;
     }
     $table->data[] = $temparray;
@@ -144,7 +125,7 @@ foreach($users as $user)
 print_heading("$usercount / $usertotal ".get_string('users'));
 print_table($table);
 echo '<div class="continuebutton">';
-echo '<input type="submit" name="multienrolsubmit" value="save changes">';
+echo '<input type="submit" name="multienrolsubmit" value="save changes" />';
 echo '</div>';
 echo '</form>';
 
