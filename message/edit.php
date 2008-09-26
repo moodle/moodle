@@ -212,7 +212,14 @@
 
     foreach ( $providers as $providerid => $provider){
         $providername = get_string('messageprovider:'.$provider->name, $provider->component);
-        $helpbtn = helpbutton(str_replace('/', '_', $provider->component).'_'.$provider->name, $providername, "messaging", true, false, '', true);
+
+    /// TODO XXX: This is only a quick hack ... helpfile locations should be provided as part of the provider definition
+        if ($provider->component == 'moodle') {
+            $helpbtn = helpbutton('moodle_'.$provider->name, $providername, 'message', true, false, '', true);
+        } else {
+            $helpbtn = helpbutton('message_'.$provider->name, $providername, basename($provider->component), true, false, '', true);
+        }
+
         echo '<tr><th align="right">'.$providername.$helpbtn.'</th><td colspan="'.$number_procs.'"></td></tr>'."\n";
         foreach (array('loggedin', 'loggedoff') as $state){
             $state_res = get_string($state, 'message');
