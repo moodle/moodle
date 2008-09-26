@@ -206,6 +206,10 @@ function wiki_print_recent_activity($course, $isteacher, $timestart) {
         //Obtain the visible property from the instance
         $modvisible = instance_is_visible($log->module,$tempmod);
 
+    /// Process log->url and rebuild it here to properly clean the pagename - MDL-15896
+        $extractedpage = preg_replace('/^.*&page=/', '', $log->url);
+        $log->url = preg_replace('/page=.*$/', 'page='.urlencode($extractedpage), $log->url);
+
         //Only if the mod is visible
         if ($modvisible) {
             $wikis[$log->info] = wiki_log_info($log);
