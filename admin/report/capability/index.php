@@ -77,7 +77,7 @@ choose_from_menu($capabilitychoices, 'capability', $capability, 'choose', '', ''
 echo '<p><label for="menuroles"> ' . get_string('roleslabel', 'report_capability') . '</label></p>';
 choose_from_menu($rolechoices, 'roles[]', $selectedroleids, '', '', '', false, false, 0, '', true, true);
 echo '<p><input type="submit" id="settingssubmit" value="' . get_string('getreport', 'report_capability') . '" /></p>';
-echo '<script type="text/javascript">capability_report.cap_filter_init("' . get_string('search') . '");</script>';
+print_js_call('capability_report.cap_filter_init', array(get_string('search')));
 echo '</form>';
 print_box_end();
 
