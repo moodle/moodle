@@ -34,24 +34,18 @@ class MoodleQuickForm_textarea extends HTML_QuickForm_textarea{
         } else {
             $helpbuttonargs = $helpbuttonargs;
         }
-        print_object($helpbuttonargs); // DONOTCOMMIT
-        debugging("'$function'", DEBUG_DEVELOPER); // DONOTCOMMIT
         //we do this to to return html instead of printing it
         //without having to specify it in every call to make a button.
         if ('helpbutton' == $function){
-                debugging("'tadpole'", DEBUG_DEVELOPER); // DONOTCOMMIT
             $defaultargs = array('', '', 'moodle', true, false, '', true);
             $helpbuttonargs = $helpbuttonargs + $defaultargs ;
             if (in_array($helpbuttonargs[0], array('emoticons2', 'text2', 'richtext2'))) {
-                debugging("'frog'", DEBUG_DEVELOPER); // DONOTCOMMIT
                 $SESSION->inserttextform = $this->_formid;
                 $SESSION->inserttextfield = $this->getAttribute('name');
             }
         } else if ('editorhelpbutton' == $function) {
-                debugging("'eft'", DEBUG_DEVELOPER); // DONOTCOMMIT
             $specialhelp = array_intersect($helpbuttonargs, array('emoticons2', 'text2', 'richtext2'));
             if (!empty($specialhelp)) {
-                debugging("'newt'", DEBUG_DEVELOPER); // DONOTCOMMIT
                 $SESSION->inserttextform = $this->_formid;
                 $SESSION->inserttextfield = $this->getAttribute('name');
             }
