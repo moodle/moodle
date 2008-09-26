@@ -151,6 +151,8 @@ if ($formdata = $mform->is_cancelled()) {
     $renameerrors = 0;
     $usersskipped = 0;
 
+    $forcechangepassword = 0;
+
     // caches
     $ccache    = array(); // course cache - do not fetch all courses here, we  will not probably use them all anyway!
     $rolecache = array(); // roles lookup cache
@@ -202,6 +204,9 @@ if ($formdata = $mform->is_cancelled()) {
                 if ($key == 'password') {
                     if ($value !== '') {
                         $user->password = hash_internal_user_password($value);
+                        if (!empty($CFG->passwordpolicy) and !check_password_policy($value, $errmsg)) {
+                            $forcechangepassword++;
+                        }
                     }
                 } else {
                     $user->$key = $value;
@@ -436,6 +441,9 @@ if ($formdata = $mform->is_cancelled()) {
                             continue;
                         } else if (!empty($user->password)) {
                             $upt->track('password', get_string('updated'));
+                            if ($forcechangepassword) {
+                                set_user_preference('auth_forcepasswordchange', 1, $existinguser->id);
+                            }
                         }
                     }
                     if ((array_key_exists($column, $existinguser) and array_key_exists($column, $user)) or in_array($column, $PRF_FIELDS)) {
@@ -538,6 +546,9 @@ if ($formdata = $mform->is_cancelled()) {
                     set_user_preference('create_password', 1, $user->id);
                     set_user_preference('auth_forcepasswordchange', 1, $user->id);
                     $upt->track('password', get_string('new'));
+                }
+                if ($forcechangepassword) {
+                    set_user_preference('auth_forcepasswordchange', 1, $user->id);
                 }
             } else {
                 // Record not added -- possibly some other error
@@ -709,6 +720,7 @@ if ($formdata = $mform->is_cancelled()) {
     if ($usersskipped) {
         echo get_string('usersskipped', 'admin').': '.$usersskipped.'<br />';
     }
+    echo get_string('usersweakpassword', 'admin').': '.$forcechangepassword.'<br />';
     echo get_string('errors', 'admin').': '.$userserrors.'</p>';
     print_box_end();
 
