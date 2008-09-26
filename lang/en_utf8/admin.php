@@ -742,6 +742,7 @@ $string['userrenamed'] = 'User renamed';
 $string['users'] = 'Users';
 $string['userscreated'] = 'Users created';
 $string['usersdeleted'] = 'Users deleted';
+$string['usersweakpassword'] = 'Users having a weak password';
 $string['usersrenamed'] = 'Users renamed';
 $string['usersskipped'] = 'Users skipped';
 $string['usersupdated'] = 'Users updated';
