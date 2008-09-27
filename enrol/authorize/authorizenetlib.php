@@ -295,7 +295,7 @@ function authorize_action(&$order, &$message, &$extra, $action=AN_ACTION_NONE, $
     $responsecode = intval($response[0]);
     if ($responsecode == AN_APPROVED || $responsecode == AN_REVIEW)
     {
-        $transid = intval($response[6]);
+        $transid = floatval($response[6]);
         if ($test || $transid == 0) {
             return $responsecode; // don't update original transaction in test mode.
         }
