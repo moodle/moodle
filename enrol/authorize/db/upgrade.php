@@ -59,6 +59,46 @@ function xmldb_enrol_authorize_upgrade($oldversion=0) {
         }
     }
 
+    if ($result && $oldversion < 2006112902) {
+        /// enrol_authorize.transid
+        /// Define index transid (not unique) to be dropped form enrol_authorize
+        $table = new XMLDBTable('enrol_authorize');
+        $index = new XMLDBIndex('transid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('transid'));
+        drop_index($table, $index);
+
+        /// Changing precision of field transid on table enrol_authorize to (20)
+        $table = new XMLDBTable('enrol_authorize');
+        $field = new XMLDBField('transid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'userid');
+        change_field_precision($table, $field);
+
+        /// Launch add index transid again
+        $table = new XMLDBTable('enrol_authorize');
+        $index = new XMLDBIndex('transid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('transid'));
+        add_index($table, $index);
+
+        /// enrol_authorize_refunds.transid
+        /// Define index transid (not unique) to be dropped form enrol_authorize_refunds
+        $table = new XMLDBTable('enrol_authorize_refunds');
+        $index = new XMLDBIndex('transid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('transid'));
+        drop_index($table, $index);
+
+        /// Changing precision of field transid on table enrol_authorize_refunds to (20)
+        $table = new XMLDBTable('enrol_authorize_refunds');
+        $field = new XMLDBField('transid');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '20', XMLDB_UNSIGNED, null, null, null, null, '0', 'amount');
+        change_field_precision($table, $field);
+
+        /// Launch add index transid again
+        $table = new XMLDBTable('enrol_authorize_refunds');
+        $index = new XMLDBIndex('transid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('transid'));
+        add_index($table, $index);
+    }
+
     return $result;
 }
 

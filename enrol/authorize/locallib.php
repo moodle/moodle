@@ -561,7 +561,7 @@ function authorize_get_status_action($order)
 
     $canmanage = has_capability('enrol/authorize:managepayments', get_context_instance(CONTEXT_COURSE, $order->courseid));
 
-    if (intval($order->transid) == 0) { // test transaction or new order
+    if (floatval($order->transid) == 0) { // test transaction or new order
         if ($order->timecreated < $newordertime) {
             if ($canmanage) {
                 $ret->actions = array(ORDER_DELETE);
