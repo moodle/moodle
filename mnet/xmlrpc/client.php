@@ -125,7 +125,7 @@ class mnet_xmlrpc_client {
         global $CFG, $MNET, $DB;
 
 
-        if (!$this->permission_to_call($mnet_peer) {
+        if (!$this->permission_to_call($mnet_peer)) {
             return false;
         }
 

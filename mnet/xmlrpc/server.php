@@ -48,11 +48,11 @@ $MNET_REMOTE_CLIENT = new mnet_remote_client();
 $plaintextmessage = mnet_server_strip_encryption($HTTP_RAW_POST_DATA);
 $xmlrpcrequest = mnet_server_strip_signature($plaintextmessage);
 
-if($this->pushkey == true) {
+if($MNET_REMOTE_CLIENT->pushkey == true) {
     // The peer used one of our older public keys, we will return a
     // signed/encrypted error message containing our new public key
     // Sign message with our old key, and encrypt to the peer's private key.
-    exit(mnet_server_fault_xml(7025, $MNET->public_key, $this->useprivatekey));
+    exit(mnet_server_fault_xml(7025, $MNET->public_key, $MNET_REMOTE_CLIENT->useprivatekey));
 }
 // Have a peek at what the request would be if we were to process it
 $params = xmlrpc_decode_request($xmlrpcrequest, $method);
