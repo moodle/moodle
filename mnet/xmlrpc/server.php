@@ -36,20 +36,56 @@ if (!empty($CFG->mnet_rpcdebug)) {
     trigger_error($HTTP_RAW_POST_DATA);
 }
 
+if (!isset($_SERVER)) {
+    exit(mnet_server_fault(712, "phperror"));
+}
+
+
 // New global variable which ONLY gets set in this server page, so you know that
 // if you've been called by a remote Moodle, this should be set:
 $MNET_REMOTE_CLIENT = new mnet_remote_client();
 
-$plaintextmessage = mnet_server_decrypt_data($HTTP_RAW_POST_DATA);
-$xmlrpcrequest = mnet_server_check_signature($plaintextmessage);
+$plaintextmessage = mnet_server_strip_encryption($HTTP_RAW_POST_DATA);
+$xmlrpcrequest = mnet_server_strip_signature($plaintextmessage);
+
+if($this->pushkey == true) {
+    // The peer used one of our older public keys, we will return a
+    // signed/encrypted error message containing our new public key
+    // Sign message with our old key, and encrypt to the peer's private key.
+    exit(mnet_server_fault_xml(7025, $MNET->public_key, $this->useprivatekey));
+}
+// Have a peek at what the request would be if we were to process it
+$params = xmlrpc_decode_request($xmlrpcrequest, $method);
+
+// One of three conditions need to be met before we continue processing this request:
+// 1. Request is properly encrypted and signed
+// 2. Request is for a keyswap (we don't mind enencrypted or unsigned requests for a public key)
+// 3. Request is properly signed and we're happy with it being unencrypted
+if ((($MNET_REMOTE_CLIENT->request_was_encrypted == true) && ($MNET_REMOTE_CLIENT->signatureok == true))
+    || (($method == 'system.keyswap') || ($method == 'system/keyswap'))
+    || (($MNET_REMOTE_CLIENT->signatureok == true) && ($MNET_REMOTE_CLIENT->plaintext_is_ok() == true))) {
+    $response = mnet_server_dispatch($xmlrpcrequest);
+} else {
+    if (($MNET_REMOTE_CLIENT->request_was_encrypted == false) && ($MNET_REMOTE_CLIENT->plaintext_is_ok() == false)) {
+        exit(mnet_server_fault(7021, 'forbidden-transport'));
+    }
+
+    if ($MNET_REMOTE_CLIENT->request_was_signed == false) {
+        // Request was not signed
+        exit(mnet_server_fault(711, 'verifysignature-error'));
+    }
+
+    if ($MNET_REMOTE_CLIENT->signatureok == false) {
+        // We were unable to verify the signature
+        exit(mnet_server_fault(710, 'verifysignature-invalid'));
+    }
+}
+
 
 if (!empty($CFG->mnet_rpcdebug)) {
     trigger_error("XMLRPC Payload");
     trigger_error(print_r($xmlrpcrequest,1));
 }
-
-// Parse and action the XML-RPC payload
-$response = mnet_server_dispatch($xmlrpcrequest);
 
 /**
  * -----XML-Envelope---------------------------------
@@ -76,19 +112,19 @@ $response = mnet_server_dispatch($xmlrpcrequest);
  *
  */
 
-/* Decrypt supplied data using our private key.
+/* Strip encryption envelope (if present) and decrypt data
  *
  * @param string $HTTP_RAW_POST_DATA The XML that the client sent
- * @return string XML envelope containing XMLRPC request and remote peer signature
+ * @return string XML with any encryption envolope removed
  */
-function mnet_server_decrypt_data($HTTP_RAW_POST_DATA) {
+function mnet_server_strip_encryption($HTTP_RAW_POST_DATA) {
     global $MNET, $MNET_REMOTE_CLIENT;
-    if (!isset($_SERVER)) {
-        exit(mnet_server_fault(712, "phperror"));
-    }
-
     $crypt_parser = new mnet_encxml_parser();
     $crypt_parser->parse($HTTP_RAW_POST_DATA);
+
+    if (!$crypt_parser->payload_encrypted) {
+        return $HTTP_RAW_POST_DATA;
+    }
 
     // Make sure we know who we're talking to
     $host_record_exists = $MNET_REMOTE_CLIENT->set_wwwroot($crypt_parser->remote_wwwroot);
@@ -97,23 +133,6 @@ function mnet_server_decrypt_data($HTTP_RAW_POST_DATA) {
         exit(mnet_server_fault(7020, 'wrong-wwwroot', $crypt_parser->remote_wwwroot));
     }
 
-    if (!$crypt_parser->payload_encrypted) {
-        //In most situations payload_unencrypted represents an error
-        $params = xmlrpc_decode_request($HTTP_RAW_POST_DATA, $method);
-        if (($method != 'system.keyswap')
-        && ($method != 'system/keyswap')
-        && ($MNET_REMOTE_CLIENT->plaintext_is_ok() == false)) {
-            exit(mnet_server_fault(7021, 'forbidden-transport'));
-        }
-        // Looks like plaintext is ok. It is assumed that a plaintext call:
-        //   1. Came from a trusted host on your local network
-        //   2. Is *not* from a Moodle - otherwise why skip encryption/signing?
-        //   3. Is free to execute ANY function in Moodle
-        //   4. Cannot execute any methods (as it can't instantiate a class first)
-        // To execute a method, you'll need to create a wrapper function that first
-        // instantiates the class, and then calls the method.
-        return $HTTP_RAW_POST_DATA;
-    }
     // This key is symmetric, and is itself encrypted. Can be decrypted using our private key
     $key  = array_pop($crypt_parser->cipher);
     // This data is symmetrically encrypted, can be decrypted using the above key
@@ -124,66 +143,65 @@ function mnet_server_decrypt_data($HTTP_RAW_POST_DATA) {
 
     //                                          &$payload
     $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $MNET->get_private_key());
+    if ($isOpen) {
+        $MNET_REMOTE_CLIENT->was_encrypted();
+        return $payload;
+    }
 
-    if (!$isOpen) {
-        // Decryption failed... let's try our archived keys
-        $openssl_history = get_config('mnet', 'openssl_history');
-        if(empty($openssl_history)) {
-            $openssl_history = array();
-            set_config('openssl_history', serialize($openssl_history), 'mnet');
-        } else {
-            $openssl_history = unserialize($openssl_history);
-        }
-        foreach($openssl_history as $keyset) {
-            $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
-            $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
-            if ($isOpen) {
-                // It's an older code, sir, but it checks out
+    // Decryption failed... let's try our archived keys
+    $openssl_history = get_config('mnet', 'openssl_history');
+    if(empty($openssl_history)) {
+        $openssl_history = array();
+        set_config('openssl_history', serialize($openssl_history), 'mnet');
+    } else {
+        $openssl_history = unserialize($openssl_history);
+    }
+    foreach($openssl_history as $keyset) {
+        $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
+        $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
+        if ($isOpen) {
+            // It's an older code, sir, but it checks out
 
-                // The peer used one of our public keys that have expired, we will return a
-                // signed/encrypted error message containing our new public key
-                // Sign message with our old key, and encrypt to the peer's private key.
-
-                // Fabricate 'was_signed'
-                // Set here so that we sign the response containing the new public key.
-                $MNET_REMOTE_CLIENT->was_signed();
-
-                // 'Was_encrypted' is mostly true
-                // Set here so that the response is encrypted to the remote peer's private key.
-                $MNET_REMOTE_CLIENT->was_encrypted();
-
-                // nb 'srvr_fault_xml' used to avoid use of get_string on our new public_key
-                exit(mnet_server_fault_xml(7025, $MNET->public_key, $keyresource));
-            }
+            $MNET_REMOTE_CLIENT->was_encrypted();
+            $MNET_REMOTE_CLIENT->encrypted_to($keyresource);
+            $MNET_REMOTE_CLIENT->set_pushkey();
+            return $payload;
         }
     }
 
-    if (!$isOpen) {
-        exit(mnet_server_fault(7023, 'encryption-invalid'));
-    }
-    $MNET_REMOTE_CLIENT->was_encrypted();
-    return $payload;
+    //If after all that we still couldn't decrypt the message, error out.
+    exit(mnet_server_fault(7023, 'encryption-invalid'));
 }
 
-/* Check signature for supplied message using our record of remote peer's public key.
+/* Strip signature envelope (if present), try to verify any signature using our record of remote peer's public key.
  *
  * @param string $plaintextmessage XML envelope containing XMLRPC request and signature
  * @return string XMLRPC request
  */
-function mnet_server_check_signature($plaintextmessage) {
+function mnet_server_strip_signature($plaintextmessage) {
     global $MNET, $MNET_REMOTE_CLIENT;
     $sig_parser = new mnet_encxml_parser();
     $sig_parser->parse($plaintextmessage);
 
-    // Get our record of the peer's public key
-    $certificate = $MNET_REMOTE_CLIENT->public_key;
-
-    if ($certificate == false) {
-        exit(mnet_server_fault(709, 'nosuchpublickey'));
+    if ($sig_parser->signature == '') {
+        return $plaintextmessage;
     }
+
+    // Record that the request was signed in some way
+    $MNET_REMOTE_CLIENT->was_signed();
+
+    // Load any information we have about this mnet peer
+    $MNET_REMOTE_CLIENT->set_wwwroot($crypt_parser->remote_wwwroot);
 
     $payload = base64_decode($sig_parser->data_object);
     $signature = base64_decode($sig_parser->signature);
+    $certificate = $MNET_REMOTE_CLIENT->public_key;
+
+    // If we don't have any certificate for the host, but don't try to check the signature
+    // Just return the parsed request
+    if ($certificate == false) {
+        return $payload;
+    }
 
     // Does the signature match the data and the public cert?
     $signature_verified = openssl_verify($payload, $signature, $certificate);
@@ -193,10 +211,8 @@ function mnet_server_check_signature($plaintextmessage) {
         $currkey = mnet_get_public_key($MNET_REMOTE_CLIENT->wwwroot, $MNET_REMOTE_CLIENT->application);
         // If the key the remote peer is currently publishing is different to $certificate
         if($currkey != $certificate) {
-            // If we can't get the server's new key through trusted means
-            if(!$MNET_REMOTE_CLIENT->refresh_key()){
-                exit(mnet_server_fault(7026, 'verifysignature-invalid'));
-            }
+            // Try and get the server's new key through trusted means
+            $MNET_REMOTE_CLIENT->refresh_key();
             // If we did manage to re-key, try to verify the signature again using the new public key.
             $certificate = $MNET_REMOTE_CLIENT->public_key;
             $signature_verified = openssl_verify($payload, $signature, $certificate);
@@ -204,12 +220,8 @@ function mnet_server_check_signature($plaintextmessage) {
     }
 
     if ($signature_verified == 1) {
-        $MNET_REMOTE_CLIENT->was_signed();
+        $MNET_REMOTE_CLIENT->signature_verified();
         $MNET_REMOTE_CLIENT->touch();
-    } elseif ($signature_verified == 0) {
-        exit(mnet_server_fault(710, 'verifysignature-invalid'));
-    } else {
-        exit(mnet_server_fault(711, 'verifysignature-error'));
     }
 
     $sig_parser->free_resource();

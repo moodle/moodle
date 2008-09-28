@@ -17,13 +17,32 @@ class mnet_remote_client extends mnet_peer {
     var $static_location        = false;
     var $request_was_encrypted  = false;
     var $request_was_signed     = false;
+    var $signatureok = false; // True if we have successfully verified that the request was signed by an established peer
+    var $pushkey = false; // True if we need to tell the remote peer about our current public key
+    var $useprivatekey = ''; // The private key we should use to sign pushkey response
 
     function was_encrypted() {
         $this->request_was_encrypted  = true;
     }
 
+    /* Record private key to use in pushkey response
+     * Called when we have decrypted a request using an old (but still acceptable) keypair
+     * @param $keyresource the private key we should use to sign the response.
+     */
+    function encrypted_to($keyresource) {
+        $this->useprivatekey = $keyresource;
+    }
+
+    function set_pushkey() {
+        $this->pushkey = true;
+    }
+
     function was_signed() {
         $this->request_was_signed  = true;
+    }
+
+    function signature_verified() {
+        $this->signatureok = true;
     }
 
     function object_to_call($object) {
