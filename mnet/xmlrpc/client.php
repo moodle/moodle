@@ -190,10 +190,10 @@ class mnet_xmlrpc_client {
         $crypt_parser->free_resource();
 
         // Initialize payload var
-        $payload = '';
+        $decryptedenvelope = '';
 
-        //                                          &$payload
-        $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $MNET->get_private_key());
+        //                                          &$decryptedenvelope
+        $isOpen = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $MNET->get_private_key());
 
         if (!$isOpen) {
             // Decryption failed... let's try our archived keys
@@ -206,7 +206,7 @@ class mnet_xmlrpc_client {
             }
             foreach($openssl_history as $keyset) {
                 $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
-                $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
+                $isOpen      = openssl_open(base64_decode($data), $decryptedenvelope, base64_decode($key), $keyresource);
                 if ($isOpen) {
                     // It's an older code, sir, but it checks out
                     break;
@@ -220,11 +220,11 @@ class mnet_xmlrpc_client {
             return false;
         }
 
-        if (strpos(substr($payload, 0, 100), '<signedMessage>')) {
+        if (strpos(substr($decryptedenvelope, 0, 100), '<signedMessage>')) {
             $sig_parser = new mnet_encxml_parser();
-            $sig_parser->parse($payload);
+            $sig_parser->parse($decryptedenvelope);
         } else {
-            $this->error[] = '2:Payload not signed: '.$payload;
+            $this->error[] = '2:Payload not signed: ' . $decryptedenvelope;
             return false;
         }
 
