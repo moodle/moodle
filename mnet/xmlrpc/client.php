@@ -124,10 +124,6 @@ class mnet_xmlrpc_client {
     function send($mnet_peer) {
         global $CFG, $MNET, $DB;
 
-        $this->uri = $mnet_peer->wwwroot . $mnet_peer->application->xmlrpc_server_url;
-
-        // Initialize with the target URL
-        $ch = curl_init($this->uri);
 
         if (!$this->permission_to_call($mnet_peer) {
             return false;
@@ -137,23 +133,18 @@ class mnet_xmlrpc_client {
         $this->signedrequest = mnet_sign_message($this->requesttext);
         $this->encryptedrequest = mnet_encrypt_message($this->signedrequest, $mnet_peer->public_key);
 
-        curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Moodle');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->encryptedrequest);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: text/xml charset=UTF-8"));
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        $httprequest = $this->prepare_http_request($mnet_peer);
+        curl_setopt($httprequest, CURLOPT_POSTFIELDS, $this->encryptedrequest);
 
         $timestamp_send    = time();
-        $this->rawresponse = curl_exec($ch);
+        $this->rawresponse = curl_exec($httprequest);
         $timestamp_receive = time();
 
         if ($this->rawresponse === false) {
-            $this->error[] = curl_errno($ch) .':'. curl_error($ch);
+            $this->error[] = curl_errno($httprequest) .':'. curl_error($httprequest);
             return false;
         }
+        curl_close($httprequest);
 
         $mnet_peer->touch();
 
@@ -254,7 +245,6 @@ class mnet_xmlrpc_client {
 
         $this->xmlrpcresponse = base64_decode($sig_parser->data_object);
         $this->response       = xmlrpc_decode($this->xmlrpcresponse);
-        curl_close($ch);
 
         // xmlrpc errors are pushed onto the $this->error stack
         if (is_array($this->response) && array_key_exists('faultCode', $this->response)) {
@@ -342,6 +332,27 @@ class mnet_xmlrpc_client {
                          $this->method.' on host '.
                          $mnet_peer->wwwroot;
         return false;
+    }
+
+    /**
+     * Generate a curl handle and prepare it for sending to an mnet host
+     *
+     * @param object $mnet_peer A mnet_peer object with details of the remote host the request will be sent to
+     * @return cURL handle - the almost-ready-to-send http request
+     */
+    function prepare_http_request ($mnet_peer) {
+        $this->uri = $mnet_peer->wwwroot . $mnet_peer->application->xmlrpc_server_url;
+
+        // Initialize request the target URL
+        $httprequest = curl_init($this->uri);
+        curl_setopt($httprequest, CURLOPT_TIMEOUT, $this->timeout);
+        curl_setopt($httprequest, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($httprequest, CURLOPT_POST, true);
+        curl_setopt($httprequest, CURLOPT_USERAGENT, 'Moodle');
+        curl_setopt($httprequest, CURLOPT_HTTPHEADER, array("Content-Type: text/xml charset=UTF-8"));
+        curl_setopt($httprequest, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($httprequest, CURLOPT_SSL_VERIFYHOST, 0);
+        return $httprequest;
     }
 }
 ?>
