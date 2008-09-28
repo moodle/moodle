@@ -2695,9 +2695,8 @@ function get_require_js_code($loadlibs) {
  * if you have your javascript in an external file, and need to call one function
  * to initialise it.
  *
- * You can pass in an optional list of arguments, which should be strings or
- * numbers. Numeric arguments are used unmodified. String arguments automatically
- * have addslashes_js called on them, and are wrapped in quotes for you.
+ * You can pass in an optional list of arguments, which are properly escaped for
+ * you using the json_encode function.
  *
  * @param string $function the name of the JavaScript function to call.
  * @param array $args an optional list of arguments to the function call.
