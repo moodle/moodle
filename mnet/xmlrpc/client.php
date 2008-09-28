@@ -160,53 +160,9 @@ class mnet_xmlrpc_client {
         $crypt_parser = new mnet_encxml_parser();
         $crypt_parser->parse($this->rawresponse);
 
-        if ($crypt_parser->payload_encrypted) {
-
-            $key  = array_pop($crypt_parser->cipher);
-            $data = array_pop($crypt_parser->cipher);
-
-            $crypt_parser->free_resource();
-
-            // Initialize payload var
-            $payload = '';
-
-            //                                          &$payload
-            $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $MNET->get_private_key());
-
-            if (!$isOpen) {
-                // Decryption failed... let's try our archived keys
-                $openssl_history = get_config('mnet', 'openssl_history');
-                if(empty($openssl_history)) {
-                    $openssl_history = array();
-                    set_config('openssl_history', serialize($openssl_history), 'mnet');
-                } else {
-                    $openssl_history = unserialize($openssl_history);
-                }
-                foreach($openssl_history as $keyset) {
-                    $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
-                    $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
-                    if ($isOpen) {
-                        // It's an older code, sir, but it checks out
-                        break;
-                    }
-                }
-            }
-
-            if (!$isOpen) {
-                trigger_error("None of our keys could open the payload from host {$mnet_peer->wwwroot} with id {$mnet_peer->id}.");
-                $this->error[] = '3:No key match';
-                return false;
-            }
-
-            if (strpos(substr($payload, 0, 100), '<signedMessage>')) {
-                $sig_parser = new mnet_encxml_parser();
-                $sig_parser->parse($payload);
-            } else {
-                $this->error[] = '2:Payload not signed: '.$payload;
-                return false;
-            }
-
-        } else {
+        // If we couldn't parse the message, or it doesn't seem to have encrypted contents,
+        // give the most specific error msg available & return
+        if (!$crypt_parser->payload_encrypted) {
             if (! empty($crypt_parser->remoteerror)) {
                 $this->error[] = '4: remote server error: ' . $crypt_parser->remoteerror;
             } else if (! empty($crypt_parser->error)) {
@@ -225,6 +181,50 @@ class mnet_xmlrpc_client {
             }
 
             $crypt_parser->free_resource();
+            return false;
+        }
+
+        $key  = array_pop($crypt_parser->cipher);
+        $data = array_pop($crypt_parser->cipher);
+
+        $crypt_parser->free_resource();
+
+        // Initialize payload var
+        $payload = '';
+
+        //                                          &$payload
+        $isOpen = openssl_open(base64_decode($data), $payload, base64_decode($key), $MNET->get_private_key());
+
+        if (!$isOpen) {
+            // Decryption failed... let's try our archived keys
+            $openssl_history = get_config('mnet', 'openssl_history');
+            if(empty($openssl_history)) {
+                $openssl_history = array();
+                set_config('openssl_history', serialize($openssl_history), 'mnet');
+            } else {
+                $openssl_history = unserialize($openssl_history);
+            }
+            foreach($openssl_history as $keyset) {
+                $keyresource = openssl_pkey_get_private($keyset['keypair_PEM']);
+                $isOpen      = openssl_open(base64_decode($data), $payload, base64_decode($key), $keyresource);
+                if ($isOpen) {
+                    // It's an older code, sir, but it checks out
+                    break;
+                }
+            }
+        }
+
+        if (!$isOpen) {
+            trigger_error("None of our keys could open the payload from host {$mnet_peer->wwwroot} with id {$mnet_peer->id}.");
+            $this->error[] = '3:No key match';
+            return false;
+        }
+
+        if (strpos(substr($payload, 0, 100), '<signedMessage>')) {
+            $sig_parser = new mnet_encxml_parser();
+            $sig_parser->parse($payload);
+        } else {
+            $this->error[] = '2:Payload not signed: '.$payload;
             return false;
         }
 
