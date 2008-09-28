@@ -252,32 +252,32 @@ class mnet_xmlrpc_client {
             // The faultString is the new key - let's save it and try again
             // The re_key attribute stops us from getting into a loop
             if($this->response['faultCode'] == 7025 && empty($mnet_peer->re_key)) {
-                $record                     = new stdClass();
-                $record->id                 = $mnet_peer->id;
-                if($this->response['faultString'] == clean_param($this->response['faultString'], PARAM_PEM)) {
-                    $record->public_key         = $this->response['faultString'];
-                    $details                    = openssl_x509_parse($record->public_key);
-                    if(is_array($details) && isset($details['validTo_time_t'])) {
-                        $record->public_key_expires = $details['validTo_time_t'];
-                        $DB->update_record('mnet_host', $record);
-                        $mnet_peer2 = new mnet_peer();
-                        $mnet_peer2->set_id($record->id);
-                        $mnet_peer2->re_key = true;
-                        $this->send($mnet_peer2);
-                    } else {
-                        $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'];
-                    }
-                } else {
+                // If the new certificate doesn't come thru clean_param() unmolested, error out
+                if($this->response['faultString'] != clean_param($this->response['faultString'], PARAM_PEM)) {
                     $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'];
                 }
-            } else {
-                if (!empty($CFG->mnet_rpcdebug)) {
-                    $guidance = get_string('error'.$this->response['faultCode'], 'mnet');
-                } else {
-                    $guidance = '';
+                $record                     = new stdClass();
+                $record->id                 = $mnet_peer->id;
+                $record->public_key         = $this->response['faultString'];
+                $details                    = openssl_x509_parse($record->public_key);
+                if(!isset($details['validTo_time_t'])) {
+                    $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'];
                 }
-                $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'] ."\n".$guidance;
+                $record->public_key_expires = $details['validTo_time_t'];
+                $DB->update_record('mnet_host', $record);
+
+                // Create a new peer object populated with the new info & try re-sending the request
+                $rekeyed_mnet_peer = new mnet_peer();
+                $rekeyed_mnet_peer->set_id($record->id);
+                $rekeyed_mnet_peer->re_key = true;
+                return $this->send($rekeyed_mnet_peer);
             }
+            if (!empty($CFG->mnet_rpcdebug)) {
+                $guidance = get_string('error'.$this->response['faultCode'], 'mnet');
+            } else {
+                $guidance = '';
+            }
+            $this->error[] = $this->response['faultCode'] . " : " . $this->response['faultString'] ."\n".$guidance;
         }
         return empty($this->error);
     }
