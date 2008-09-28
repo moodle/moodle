@@ -129,49 +129,10 @@ class mnet_xmlrpc_client {
         // Initialize with the target URL
         $ch = curl_init($this->uri);
 
-        $system_methods = array('system/listMethods', 'system/methodSignature', 'system/methodHelp', 'system/listServices');
-
-        if (in_array($this->method, $system_methods) ) {
-
-            // Executing any system method is permitted.
-
-        } else {
-            $id_list = $mnet_peer->id;
-            if (!empty($CFG->mnet_all_hosts_id)) {
-                $id_list .= ', '.$CFG->mnet_all_hosts_id;
-            }
-
-            // At this point, we don't care if the remote host implements the 
-            // method we're trying to call. We just want to know that:
-            // 1. The method belongs to some service, as far as OUR host knows
-            // 2. We are allowed to subscribe to that service on this mnet_peer
-
-            // Find methods that we subscribe to on this host
-            $sql = "
-                SELECT
-                    *
-                FROM
-                    {mnet_rpc} r,
-                    {mnet_service2rpc} s2r,
-                    {mnet_host2service} h2s
-                WHERE
-                    r.xmlrpc_path = ? AND
-                    s2r.rpcid = r.id AND
-                    s2r.serviceid = h2s.serviceid AND
-                    h2s.subscribe = '1' AND
-                    h2s.hostid in ({$id_list})";
-
-            $permission = $DB->get_record_sql($sql, array($this->method));
-            if ($permission == false) {
-                global $USER;
-                $this->error[] = '7:User with ID '. $USER->id .
-                                 ' attempted to call unauthorised method '.
-                                 $this->method.' on host '.
-                                 $mnet_peer->wwwroot;
-                return false;
-            }
-
+        if (!$this->permission_to_call($mnet_peer) {
+            return false;
         }
+
         $this->requesttext = xmlrpc_encode_request($this->method, $this->params, array("encoding" => "utf-8"));
         $this->signedrequest = mnet_sign_message($this->requesttext);
         $this->encryptedrequest = mnet_encrypt_message($this->signedrequest, $mnet_peer->public_key);
@@ -329,6 +290,58 @@ class mnet_xmlrpc_client {
             }
         }
         return empty($this->error);
+    }
+
+    /**
+     * Check that we are permitted to call method on specified peer
+     *
+     * @param object $mnet_peer A mnet_peer object with details of the remote host we're connecting to
+     * @return bool True if we permit calls to method on specified peer, False otherwise.
+     */
+
+    function permission_to_call($mnet_peer) {
+        global $DB, $CFG;
+
+        // Executing any system method is permitted.
+        $system_methods = array('system/listMethods', 'system/methodSignature', 'system/methodHelp', 'system/listServices');
+        if (in_array($this->method, $system_methods) ) {
+            return true;
+        }
+
+        $id_list = $mnet_peer->id;
+        if (!empty($CFG->mnet_all_hosts_id)) {
+            $id_list .= ', '.$CFG->mnet_all_hosts_id;
+        }
+        // At this point, we don't care if the remote host implements the
+        // method we're trying to call. We just want to know that:
+        // 1. The method belongs to some service, as far as OUR host knows
+        // 2. We are allowed to subscribe to that service on this mnet_peer
+
+        // Find methods that we subscribe to on this host
+        $sql = "
+            SELECT
+                *
+            FROM
+                {mnet_rpc} r,
+                {mnet_service2rpc} s2r,
+                {mnet_host2service} h2s
+            WHERE
+                r.xmlrpc_path = ? AND
+                s2r.rpcid = r.id AND
+                s2r.serviceid = h2s.serviceid AND
+                h2s.subscribe = '1' AND
+                h2s.hostid in ({$id_list})";
+
+        $permission = $DB->get_record_sql($sql, array($this->method));
+        if ($permission == true) {
+            return true;
+        }
+        global $USER;
+        $this->error[] = '7:User with ID '. $USER->id .
+                         ' attempted to call unauthorised method '.
+                         $this->method.' on host '.
+                         $mnet_peer->wwwroot;
+        return false;
     }
 }
 ?>
