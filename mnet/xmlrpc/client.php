@@ -173,17 +173,14 @@ class mnet_xmlrpc_client {
 
         }
         $this->requesttext = xmlrpc_encode_request($this->method, $this->params, array("encoding" => "utf-8"));
-        $rq = $this->requesttext;
-        $rq = mnet_sign_message($this->requesttext);
-        $this->signedrequest = $rq;
-        $rq = mnet_encrypt_message($rq, $mnet_peer->public_key);
-        $this->encryptedrequest = $rq;
+        $this->signedrequest = mnet_sign_message($this->requesttext);
+        $this->encryptedrequest = mnet_encrypt_message($this->signedrequest, $mnet_peer->public_key);
 
         curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Moodle');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $rq);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $this->encryptedrequest);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: text/xml charset=UTF-8"));
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
