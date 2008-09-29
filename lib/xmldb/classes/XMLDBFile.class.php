@@ -74,11 +74,11 @@ class XMLDBFile extends XMLDBObject {
     function validateXMLStructure() {
 
     /// Going to perform complete DOM schema validation
-        if (extension_loaded('dom')) {
+        if (extension_loaded('dom') && method_exists(new DOMDocument(), 'load')) {
         /// Let's capture errors
-        if (function_exists('libxml_use_internal_errors')) {
-            libxml_use_internal_errors(true); // This function is PHP5 only (MDL-8730)
-        }
+            if (function_exists('libxml_use_internal_errors')) {
+                libxml_use_internal_errors(true); // This function is PHP5 only (MDL-8730)
+            }
 
         /// Create and load XML file
             $parser = new DOMDocument();
@@ -100,7 +100,7 @@ class XMLDBFile extends XMLDBObject {
             /// Add errors to structure
                 $structure->errormsg = 'XML Error: ';
                 foreach ($errors as $error) {
-                    $structure->errormsg .= sprintf("%s at line %d. ", 
+                    $structure->errormsg .= sprintf("%s at line %d. ",
                                                      trim($error->message, "\n\r\t ."),
                                                      $error->line);
                 }
