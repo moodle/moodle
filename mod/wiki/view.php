@@ -264,8 +264,14 @@
 
     $strwikis = get_string("modulenameplural", "wiki");
     $strwiki  = get_string("modulename", "wiki");
-    
-    $navigation = build_navigation('', $cm);
+
+    $navlinks = array();
+/// Add page name if not main page
+    if ($ewiki_title != $wiki->name) {
+        $navlinks[] = array('name' => format_string($ewiki_title), 'link' => '', 'type' => 'title');
+    }
+
+    $navigation = build_navigation($navlinks, $cm);
     print_header_simple($ewiki_title?$ewiki_title:format_string($wiki->name), "", $navigation,
                 "", "", $cacheme, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
