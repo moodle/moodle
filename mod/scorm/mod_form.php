@@ -5,7 +5,7 @@ require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 class mod_scorm_mod_form extends moodleform_mod {
 
     function definition() {
-        global $CFG;
+        global $CFG, $COURSE;
 
         $mform = $this->_form;
 
@@ -67,6 +67,8 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
 
 // New local package upload
+        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $COURSE->maxbytes);
+        $mform->setMaxFileSize($maxbytes);
         $mform->addElement('file', 'packagefile', get_string('package','scorm'));
         $mform->disabledIf('packagefile', 'scormtype', 'noteq', SCORM_TYPE_LOCAL);
 
