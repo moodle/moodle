@@ -103,7 +103,9 @@ if ($rs = $DB->get_recordset_sql($sql, $params)) {
         if (!array_key_exists($row->groupid, $members[$row->groupingid])) {
             $members[$row->groupingid][$row->groupid] = array();
         }
-        $members[$row->groupingid][$row->groupid][] = $user;
+        if(isset($user->id)){
+           $members[$row->groupingid][$row->groupid][] = $user;
+        }
     }
     $rs->close();
 }
