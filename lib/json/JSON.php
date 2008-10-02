@@ -666,7 +666,7 @@ class Services_JSON
                                 // element in an associative array,
                                 // for now
                                 $parts = array();
-                                
+
                                 if (preg_match('/^\s*(["\'].*[^\\\]["\'])\s*:\s*(\S.*),?$/Uis', $slice, $parts)) {
                                     // "name":value pair
                                     $key = $this->decode($parts[1]);
@@ -802,5 +802,22 @@ if (class_exists('PEAR_Error')) {
     }
 
 }
-    
+
+// Future-friendly json_encode
+if( !function_exists('json_encode') ) {
+	function json_encode($data) {
+        $json = new Services_JSON();
+        return( $json->encode($data) );
+    }
+}
+
+// Future-friendly json_decode
+if( !function_exists('json_decode') ) {
+	function json_decode($data) {
+        $json = new Services_JSON();
+        return( $json->decode($data) );
+    }
+}
+
+
 ?>
