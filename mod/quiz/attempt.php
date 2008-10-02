@@ -420,7 +420,7 @@
     $headtags = get_html_head_contributions($pagequestions, $questions, $states);
     if (!empty($popup)) {
         define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
-        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', $headtags, false, '', '', false, '');
+        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', $headtags, false, '', '', false, ' class="securewindow"');
         include('protect_js.php');
     } else {
         $strupdatemodule = has_capability('moodle/course:manageactivities', $coursecontext)

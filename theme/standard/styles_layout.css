@@ -3807,6 +3807,10 @@ body#mod-quiz-view .generalbox#feedback .overriddennotice {
 #mod-quiz-attempt #timer .generalbox {
   width:150px
 }
+#mod-quiz-attempt.securewindow .que {
+    margin-left: 155px;
+    margin-right: 155px;
+}
 
 #mod-quiz-attempt #timer {
   position:absolute;
