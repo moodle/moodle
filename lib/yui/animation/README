@@ -1,0 +1,71 @@
+Animation Release Notes
+
+*** version 2.6.0 ***
+* ColorAnim updated to use getAncestorBy 
+
+*** version 2.5.2 ***
+* no change
+
+*** version 2.5.1 ***
+* no change
+
+*** version 2.5.0 ***
+* replace toString overrides with static NAME property
+
+*** version 2.4.0 ***
+* calling stop() on an non-animated Anim no longer fires onComplete
+
+*** version 2.3.1 ***
+* no change
+
+*** version 2.3.0 ***
+
+* duration of zero now executes 1 frame animation
+* added setEl() method to enable reuse
+* fixed stop() for multiple animations
+
+*** version 2.3.0 ***
+* duration of zero now executes 1 frame animation
+* added setEl() method to enable reuse
+* fixed stop() for multiple animations
+
+*** version 2.2.2 ***
+* no change
+
+*** version 2.2.1 ***
+* no change
+
+*** version 2.2.0 ***
+* Fixed AnimMgr.stop() when called without tween
+
+*** version 0.12.2 ***
+* raised AnimMgr.fps to 1000
+
+*** version 0.12.1 ***
+* minified version no longer strips line breaks
+
+*** version 0.12.0 ***
+* added boolean finish argument to Anim.stop()
+
+*** version 0.11.3 ***
+* no changes
+
+*** version 0.11.1 ***
+* changed "prototype" shorthand to "proto" (workaround firefox < 1.5 scoping
+bug)
+
+*** version 0.11.0 ***
+* ColorAnim subclass added
+* Motion and Scroll now inherit from ColorAnim
+* getDefaultUnit method added
+* defaultUnit and defaultUnits deprecated
+* getDefault and setDefault methods deprecated
+
+*** version 0.10.0 ***
+* Scroll now handles relative ("by") animation correctly
+* Now converts "auto" values of "from" to appropriate initial values
+
+*** version 0.9.0 ***
+* Initial release
+
+

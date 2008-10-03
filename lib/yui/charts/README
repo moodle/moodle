@@ -1,0 +1,38 @@
+YUI Library - Charts - Release Notes
+2.6.0
+  * Fixed bug in which an empty series definition caused charts to ignore styles.
+  * Fixed bug in which additions to Object.prototype cause SWFObject embed to fail
+  * refreshData is now a public method
+  * Fixed bug in which TimeAxis bounds calculation fails when polling. 
+  * Added new optional altText attribute.
+  * Moved _initialized flag from Charts to FlashAdapter.
+  * Fixed bug in which changes in the dom (e.g. display property of chart) would cause the chart to erase. New known issue added. (see known issues section)
+  * Added support for marker labels on PieSeries. Default is percentage values. May be customized with labelFunction property.
+  * New Chart Types: StackedColumnChart and StackedBarChart.
+  * Fixed bug in which charts delivered in an iframe from a different domain failed to render in Firefox.
+  * contentReady event now fires after the dataSource is available. In some rare cases it may not be backwards compatible. If you need the event to fire earlier, you can revert back to the previous code. (see version 2.5.2)
+  
+2.5.2
+  * Support for legends
+  * New series styles connectPoints, connectDiscontinuousPoints, and discontinuousDashLength
+  * dataTipFunction, xAxisLabelFunction, and yAxisLabelFunction attributes now support function references
+  * Added destroy() function.
+  * Changed majorTicks and minorTicks substyle "position" to "display". New option "none" will hide ticks.
+  * When polling is enabled, the chart now makes an immediate request instead of waiting for the first interval.
+  * Includes ActionScript source files and sample Ant build file.
+
+2.5.1
+  * No changes
+
+2.5.0
+  * Added lineSize style to series styles
+  * Added showLabels substyle to xAxis and yAxis styles
+  * Added more descriptive local content warning for ExternalInterface failure
+  * Improved minor unit calculation
+  * Fixed animation and marker positioning bugs
+  * Fixed bug that caused series definition update to fail
+  * Fixed bug that caused setting hex color values with # symbol to fail
+  * Added initialization flag to ensure DataSource doesn't receive multiple requests during initialization.
+
+2.4.0
+  * Experimental release

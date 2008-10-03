@@ -1,0 +1,22 @@
+**** version 2.6.0 ***
+    Bug Fix:
+        * 2216246 - Reset fails to reset Constraints
+
+**** version 2.5.2 ***
+
+    Bug Fixes:
+        * 1839205 - [SF 1927495 ] crop area moves outside of the image
+
+
+**** version 2.5.1 ***
+    Fixed Issues dealing with mask resize and keeping crop interface inside of crop region
+
+    Bug Fixes:
+        * 1770394 - [SF 1900953 ] Ratio doesn't work
+        * 1776164 - [SF 1903193 ] Several issues with the crop window
+        * 1779430 - [SF 1904258 ] Initial CSS size isn't checked
+    
+
+**** version 2.5.0 ***
+
+Initial Release

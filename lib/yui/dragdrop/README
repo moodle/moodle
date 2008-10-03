@@ -1,0 +1,180 @@
+Drag and Drop Release Notes
+
+2.6.0
+    * Fixed issue with loop when mouseup occured outside of an iframe in Internet Explorer
+    * Added useShim flag to DragDropMgr to place a shim over the page during a drag operation.
+        It must be set by hand to be backward compatible. This will allow a draggable element
+        to pass over things like an IFRAME without interrupting the drag movement.
+            YAHOO.util.DDM.useShim = true;
+
+2.5.2
+    * Fixed iframe src attribute for DDProxy (SSL Error in IE6)
+    * Fixed typos in documentation
+    * Fixed potential Stack Overflow with mousedown threshold
+
+2.5.1
+    * No change
+
+2.5.0
+    * Added CustomEvents in addition to method overrides
+        (See API Docs for more information)
+    * Added an IFRAME element to the proxy div (only in IE) to keep select
+        elements and other object from bleeding through
+
+2.4.0
+  * Added configuration option called "dragOnly". If dragOnly is set to true,
+    all event in the fireEvents method will not fire. These events are:
+        onInvalidDrop
+        b4DragOut & onDragOut
+        onDragEnter
+        b4DragOver & onDragOver
+        b4DragDrop & onDragDrop
+    This config option should be used to drag elements that have no need for
+        drop interaction. They are elements that just need to move.
+
+2.3.1
+  * No change
+
+2.3.0
+  * YAHOO.util.DragDropMgr.stopDrag is now public, and can be used to cancel
+    a drag in progress.  An optional "silent" flag was added to skip the
+    onMouseUp and endDrag functions when needed (eliminating the need to
+    supply mouseup page coordinates to these functions).
+  * DDProxy: the position of the proxy is not set before the drag is confirmed,
+    preventing auto-scroll from distrupting the user experience.
+  * Modified the default proxy so that IE properly registers the proxy as
+    the event target during the drag.
+  * If a dd instance is created using a dom reference rather than an id, that
+    reference is stored and used throughout making it possible to control
+    instances outside the current window.
+  * The document mousemove listener no longer returns true.
+
+2.2.2
+  * No change
+
+2.2.1
+
+  * Added YAHOO.util.DragDropMgr.interactionInfo, which is
+    a repository of interaction information accumulated during
+    the current event loop result, and accessible from the
+    handlers for the events.
+  * The region for the dragged element is now cached while
+    processing the drag and drop events
+  * List example supports moving an item to an empty list
+  * Fixed missing html tags in the examples
+  * The debug version now works when included before the logger is included.
+
+2.2.0
+
+  * onMouseDown event is executed before element positions are calculated
+  * refreshCache refreshes everything if groups array is not provided
+  * setX/setYConstraint doesn't fail when presented ints cast as strings
+
+0.12.2
+
+  * No change
+
+0.12.1
+
+  * Added a STRICT_INTERSECT drag and drop interaction mode.  This alters the
+    behavior of DDM::getBestMatch.  INTERSECT mode first tests the cursor
+    location, and if it is over the target that target wins, otherwise it
+    tests the overlap of the elements.  STRICT_INTERSECT mode tests only 
+    the overlap, the largest overlap wins.
+
+  * getBestMatch will work for targeted elements that have no overlap.
+
+0.12.0
+
+   * The logic to determine if a drag should be initiated has been isolated
+     to the clickValidator method.  This method can be overridden to provide
+     custom valdiation logic.  For example, it is possible to specify hotspots
+     of any dimension or shape.  The provided example shows how to make only
+     a circular region in the middle of the element initiate a drag.
+
+   * Added a new drag and drop event: onInvalidDrop.  This is executed when
+     the dragged element in dropped in a location without a target.  Previously
+     this condition could only detected by implementing handlers for three 
+     other events.
+
+   * Now accepts an element reference in lieu of an id.  Ids will
+     be generated if the element does not have one.
+
+   * Fixed horizontal autoscroll when scrollTop is zero.
+
+   * Added hasOuterHandles property to bypass the isOverTarget check in the
+     mousedown validation routine.  Fixes setOuterHandleElId.
+
+0.11.4
+
+   * YAHOO.util.DragDropMgr.swapNode now handles adjacent nodes properly
+   
+   * Fixed missing variable declarations
+
+0.11.3
+ 
+   * Fixed a JavaScript error that would be generated when trying to implement
+     DDProxy using the default settings and a tiny element.
+
+   * Fixed an error that resulted when constraints were applied to DragDrop 
+     instances.
+
+0.11.2
+
+   * Drag and drop will no longer interfere with selecting text on elements
+     that are not involved in drag and drop.
+
+   * The shared drag and drop proxy element now resizes correctly when autoResize
+     is enabled.
+
+0.11.1
+
+   * Fixes an issue where the setXY cache could get out of sync if the element's
+     offsetParent is changed during onDragDrop.
+
+0.11.0
+
+   * The Dom.util.setXY calculation for the initial placement of the dragged
+     element is cached during the drag, enhancing the drag performance.
+
+   * DDProxy no longer enforces having a single proxy element for all instances.
+     dragElId can be set in the config object in the constructor.  If the
+     element already exists it will use that element, otherwise a new one will
+     be created with that id.
+
+   * DDProxy->borderWidth has been removed. The value is calculated on the fly
+     instead.
+
+   * Added DragDrop->clearTicks and DragDrop->clearConstraints
+
+   * All drag and drop constructors now have an additional, optional parameter
+     call "config".  It is an object that can contain properties for a
+     number of configuration settings.
+
+   * Drag and drop will not be disabled for elements that cannot have their
+     location determined.
+
+   * isLegalTarget won't return dd objects that are not targetable.
+
+   * Added DragDrop->removeFromGroup.
+
+   * Constraints are now applied properly when determining which drag and drop
+     events should fire.
+
+
+0.10.0
+
+   * Improved the performance when in intersect mode
+
+   * It was possible for the drag and drop initialization to be skipped
+     for very slow loading pages.  This was fixed.
+
+   * New methods to exclude regions within your drag and drop element: 
+     addInvalidHandleId(), addInvalidHandleClass()
+
+   * Added an onAvailable handler that is executed after the initial state is set.
+
+   * Drag and drop is more forgiving when the implementer attempts to create the
+     instance prior to the element being in the document, but after the window
+     load event has fired.
+

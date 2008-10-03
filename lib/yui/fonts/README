@@ -1,0 +1,50 @@
+YUI Library - Fonts - Release Notes
+
+Version 2.6.0
+
+   * Added font reduction and face restatement for select, input, button, and textarea
+   * Comments and formatting updates.
+   * KNOWN ISSUE: 
+     In IE8 Beta 2, user-initiated Text Size adjustment does not work because our keyword
+     filters to IE do not reach IE8. Note that Zoom works, providing users a resize option.
+
+Version 2.5.2
+
+  * Added comments regarding font shorthand filter for IE in Quirks Mode.
+
+Version 2.5.1
+
+  * No changes.
+
+Version 2.5.0
+
+  * No changes.
+
+Version 2.4.0
+
+  * Rechanged core line-height from 1.22 to 1.231, sans units.
+  * Updated line-height value for monospcaed elements. 
+
+Version 2.3.0
+
+  * Updated %-to-px conversion charted for increased accuracy
+    across browsers
+  * Move body line-height away from * wildcard selector. Now it is
+    part of the initial BODY rule set.
+  * Changed core lineheight from 1.22em to 1.231 (no units)
+  * Changed code,pre to not use font-property shorthand syntax
+  * Tweaked the sizing fix for monospace font size (pre,code...)
+  * Added "kbd,samp,tt" as new selectors for monospaced font stuff
+  * Added line-height:99% to keep monospaced font the right height
+
+Version 2.2.0 - 2.2.2
+
+  * No changes.
+
+Version 0.10.1 - 0.12.2
+
+  * No changes.
+
+Version 0.10.0
+
+  * Initial release.

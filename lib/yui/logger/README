@@ -1,0 +1,116 @@
+Logger Release Notes
+
+*** version 2.6.0 ***
+
+* LogWriter source member typo fix
+* LogReader pause(), resume() work when footerEnabled = false
+* Console logging in Safari now receives full message
+* Invalid markup in VERBOSE_TEMPLATE corrected, space re-added after category
+* Corrected problem where messages containing { content } were getting destroyed
+
+
+*** version 2.5.2 ***
+
+* No changes.
+
+
+*** version 2.5.1 ***
+
+* Support object introspection to Firebug.
+* Better performance when rendering messages to LogReader.
+
+
+
+*** version 2.5.0 ***
+
+* No changes.
+
+
+
+*** version 2.4.0 ***
+
+* Global window error event no longer being handled by default. Implemented
+ handleWindowErrors() and unhandleWindowErrors().
+
+
+
+*** version 2.3.1 ***
+
+* No changes.
+
+
+
+**** version 2.3.0 ****
+
+* Applied new skinning model.
+* Logger singleton no longer clobbers itself.
+* Fixed issues when setting LogReader property footerEnabled to false.
+
+
+
+**** version 2.2.2 ****
+
+* No changes.
+
+
+
+*** version 2.2.1 ***
+
+* Updated default ".yui-log-hd h4" font-size to "107%".
+* Fixed synchronicity issue with pause()/resume() calls and the corresponding
+LogReader button state.
+* Better support for "\n" newlines in log messages, while wrapping long lines in
+verboseOutput mode.
+* Added draggable and outputBuffer properties to LogReader.
+* Added showCategory(), hideCategory(), showSource(), hideSource(), and
+clearConsole() methods to LogReader.
+* Support for multiple freestanding LogReader instances.
+* Improved type checking with YAHOO.lang.
+
+
+
+**** version 2.2.0 ***
+
+* Implemented expand() and collapse() in LogReader class.
+* Better internal browser detection.
+
+
+
+*** version 0.12.2 ***
+
+* No changes.
+
+
+
+**** version 0.12.1 ***
+
+* Fixed issues with setting LogReader's "bottom" property.
+
+
+
+*** version 0.12.0 ***
+
+* Added method formatMsg(oLogMsg) to support custom formatting of log messages
+for output to a LogReader.
+
+
+
+*** version 0.11.3 ***
+
+* The Logger static method enableFirebug() has been RENAMED to
+enableBrowserConsole().
+* The Logger static method disableFirebug() has been RENAMED to
+disableBrowserConsole().
+* By default, the Logger will not automatically output to Firebug or Safari's
+JavaScript console. To enable this feature, implementers should now explicitly
+call YAHOO.widget.Logger.enableBrowserConsole().
+* Implementers may now cap the size of the YAHOO.widget.Logger stack by setting
+the property YAHOO.widget.Logger.maxStackEntries.
+* Implementers may now control the number of items displayed in each console by
+setting the LogReader properties thresholdMax and thresholdMin.
+
+
+
+*** version 0.11.0 ***
+
+* Initial release

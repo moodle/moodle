@@ -1,0 +1,32 @@
+YUI Library - Reset+Fonts+Grids (RFG) - Release Notes
+
+*** NOTE ***
+
+This document is not updated with each release.  Changes to
+the reset-fonts-grids.css source are noted in the README
+file for each component that comprises this aggregate:
+
+reset/README
+fonts/README
+grids/README
+
+************
+
+Version 2.3.1
+
+  * Fixed bug in Grids. See Grids 2.3.1 README for info.
+
+Version 2.3.0
+
+  * Changes to all three components.
+
+Version 2.2.0 - 2.2.2
+
+  * No changes.
+
+Version 0.12.0
+
+  * Initial release.
+  
+  * This file is a convenience file containing an in-order 
+    concatonation of Reset, Fonts, and Grids.

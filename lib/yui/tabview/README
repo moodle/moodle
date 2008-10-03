@@ -1,0 +1,51 @@
+TabView Release Notes
+
+*** version 2.6.0 ***
+* activeIndex and activeTab sync issue fixed
+* activeIndex change events mapped to activeTab (and vice-versa)
+
+*** version 2.5.2 ***
+* no change
+
+*** version 2.5.1 ***
+* no change
+
+*** version 2.5.0 ***
+* moved Tab default "title" attribute to static Tab.TITLE 
+
+*** version 2.4.0 ***
+* no change
+
+*** version 2.3.1 ***
+* removed Xoutline from tabview-core.css
+
+** version 2.3.0 ***
+* no longer firing tabChange if already selected
+* multiple clicks no longer trigger extra xhr if in progress
+* now using existing href for Tab href attribute
+* CLASSNAME now added if not present on tabview element
+
+*** version 2.2.2 ***
+
+* no change
+
+
+*** version 2.2.1 ***
+* no change
+
+*** version 2.2.0 ***
+* Element broken out into seperate pkg
+  NOTE: new dependency required - element-beta.js
+
+*** version 0.12.2 ***
+* var Tab is now private
+* fixed Element.configureAttribute
+
+*** version 0.12.1 ***
+* tabs.css renamed to tabview.css
+* calls to "set" now queued so they can be made before "contentReady"
+
+
+*** version 0.12.0 ***
+* TabView widget introduced
+* Note: border_tabs.css included as basic skin to enable "tabs" look

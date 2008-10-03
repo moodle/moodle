@@ -1,0 +1,58 @@
+/*
+Copyright (c) 2008, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.6.0
+*/
+.yui-navset .yui-nav li a,
+.yui-navset .yui-content {
+    border:1px solid #000;  /* label and content borders */
+}
+
+.yui-navset .yui-nav .selected a,
+.yui-navset .yui-nav a:hover,
+.yui-navset .yui-content {
+    background-color:#f6f7ee; /* active tab, tab hover, and content bgcolor */
+}
+
+.yui-navset .yui-nav li em { padding:.5em; } /* tab padding */
+
+/* defaults to orientation "top" */
+.yui-navset .yui-nav .selected a, 
+.yui-navset .yui-navset-top .yui-nav .selected a { 
+    border-width:1px 1px 0; /* no bottom border for active tab */
+    padding:0 0 1px; /* to match height of other tabs */
+}
+.yui-navset .yui-content,
+.yui-navset .yui-navset-top .yui-content {
+    margin:-1px 0 0; /* for active tab overlap */
+}
+
+/* overrides for other orientations */
+.yui-navset .yui-navset-bottom .yui-nav .selected a,
+.yui-navset-bottom .yui-nav .selected a {
+    border-width:0 1px 1px; /* no top border for active tab */
+    padding:1px 0 0; /* to match height of other tabs */
+}
+.yui-navset .yui-navset-bottom .yui-content,
+.yui-navset-bottom .yui-content {
+    margin:0 0 -1px; /* for active tab overlap */
+}
+.yui-navset .yui-navset-left .yui-nav li.selected a,
+.yui-navset-left .yui-nav li.selected a {
+    border-width:1px 0 1px 1px; /* no right border for active tab */
+    padding:0 1px 0 0; /* to match width of other tabs */
+}
+.yui-navset .yui-navset-left .yui-content,
+.yui-navset-left .yui-content {
+    margin:0 0 0 -1px; /* for active tab overlap */
+}
+.yui-navset .yui-navset-right .yui-nav li.selected a,
+.yui-navset-right .yui-nav li.selected a {
+    border-width:1px 1px 1px 0; /* no left border for active tab */
+    padding:0 0 0 1px; /* to match width of other tabs */
+}
+
+.yui-navset-right .yui-content {
+    margin:0 -1px 0 0; /* for active tab overlap */
+}

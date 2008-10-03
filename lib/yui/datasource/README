@@ -1,0 +1,140 @@
+DataSource Release Notes
+
+**** version 2.6.0 ****
+
+* GA release.
+* The DataSource class has been refactored into a DataSourceBase base class and
+the subclasses LocalDataSource, FunctionDataSource, XHRDataSource, and
+ScriptNodeDataSource. While backward compatibility of the YAHOO.util.DataSource
+constructor has been maintained, implementers should be aware that calling
+new YAHOO.util.DataSource() now actually returns one of these
+subclasses. Implementers can alternatively call a subclass constructor directly.
+The DataSource constructor returns one of the subclasses based on the oLiveData
+passed to it, or the dataType config value. This class-based architecture no
+longer meaningfully supports swapping data types on the fly.
+* Empty responses of TYPE_FLAT no longer return empty string results.
+* Parsing of totalRecords is no longer supported as a top-leval schema value.
+Implementers should access this value of using a metaField.
+* XML parsing has been updated for support of CDATA sections and long text values
+split into multiple nodes.
+* Now passing oCallback object to doBeforeCallback() and doBeforeParseData() methods.
+* YAHOO.util.Date now supports strftime formatting.
+
+**** version 2.5.2 ****
+
+* No changes.
+
+**** version 2.5.1 ****
+
+* Replaced custom function parsing with parsed/walked value locators for
+    responseSchema.resultsList, .fields, etc
+* Added metaFields to responseSchema to capture arbitrary response data
+
+**** version 2.5.0 ****
+
+* doBeforeCallback() - The second argument is now oFullResponse rather than oRawResponse.
+* handleResponse() -
+      o oCallback is now an object literal pointing to success and failure
+      handlers and can contain scope and argument values.
+      o The oCaller argument is now deprecated.
+      o When callback function is passed oRequest and oParsedResponse values,
+      the oParsedResponse object now consistently returns the following values:
+            + tId (Number)
+            + results (Array)
+            + error (Boolean)
+            + totalResults (Number) (when available)
+* makeConnection() -
+      o oCallback is now an object literal pointing to success and failure
+      handlers and can contain scope and argument values.
+      o The oCaller argument is now deprecated.
+* parseArrayData() - The second argument is now oFullResponse rather than oRawResponse.
+* parseHTMLTableData() - The second argument is now oFullResponse rather than oRawResponse.
+* parseJsonData() - The second argument is now oFullResponse rather than oRawResponse.
+* parseTextData() - The second argument is now oFullResponse rather than oRawResponse.
+* parseXMLData() - The second argument is now oFullResponse rather than oRawResponse.
+* sendRequest() -
+      o oCallback is now an object literal pointing to success and failure
+      handlers and can contain scope and argument values.
+      o The oCaller argument is now deprecated.
+* setInterval() -
+      o oCallback is now an object literal pointing to success and failure
+      handlers and can contain scope and argument values.
+      o The oCaller argument is now deprecated.
+* cacheRequestEvent - oArgs.caller is now deprecated in favor of oCallback object literal.
+* dataErrorEvent - oArgs.caller is now deprecated in favor of oCallback object literal.
+* getCachedResponseEvent - oArgs.caller is now deprecated in favor of oCallback object literal.
+* requestEvent - oArgs.caller is now deprecated in favor of oCallback object literal.
+* responseCacheEvent - oArgs.caller is now deprecated in favor of oCallback object literal.
+* responseEvent - oArgs.caller is now deprecated in favor of oCallback object literal.
+* responseParseEvent - oArgs.caller is now deprecated in favor of oCallback object literal.
+
+
+
+**** version 2.4.0 ****
+
+* Support for YUI JSON Utility.
+
+* Implemented setInterval(), clearInterval(), and clearAllIntervals() for polling.
+
+* Text data parsing algorithm now tolerates newlines within and at the end of data.
+
+
+
+**** version 2.3.1 ****
+
+* No changes.
+
+
+
+**** version 2.3.0 ****
+
+* DataSource requests over XHR no longer automatically insert a "?" in the URIs
+between the host and the query. Implementers should explicitly include the
+question mark if it is required by your server. Please refer to the DataTable XHR
+examples for implementation details.
+
+* DataSource provides the following static type conversion methods:
+DataSource.parseDate(), DataSource.parseNumber(), and DataSource.parseString().
+These are executed in the scope of the DataSource instance.
+
+* DataSource now supports the following values for the property xhrConnMode:
+    "queueRequests"
+    "allowAll"
+    "cancelStaleRequests"
+    "ignoreStaleResponses"
+
+* Added property connMethodPost to support POST requests.
+
+* The parsed response object passed to the callback function now has the
+following properties:
+    tId {Number} Unique transaction ID
+    results {Array} Array of parsed data results
+    error {Boolean} True if there was an error
+
+
+
+**** version 2.2.2 ***
+
+* No changes.
+
+
+
+**** version 2.2.1 ***
+
+* Fixed parseTextData() to longer reverse-order data or truncate first record.
+* Fixed bug where data values of 0 (zero) were being converted to empty string.
+* Fixed erroneous undefined values created by parseDataArray().
+* Callback functions now receive an additional argument in the form of a boolean
+to indicate data error.
+* Support for nested JSON data.
+* Support for responseShema.fields.converter to take string response and custom
+convert data type.
+* Added static converter methods YAHOO.util.DataSource.convertNumber and
+YAHOO.util.DataSource.convertDate.
+* Improved type checking with YAHOO.lang.
+
+
+
+**** version 2.2.0 ***
+
+* Beta release.

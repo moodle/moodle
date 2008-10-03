@@ -1,0 +1,211 @@
+TreeView - Release Notes
+
+2.6.0
+  * Keyboard Navigation
+  * Delegated event listeners replace the inline listeners
+  * Tree serialization/deserialization
+  * Build tree from existing markup
+  * Node click and dblclick events
+  * DateNode (calendar control integration)
+  * Editable node labels (double-click to edit the label)
+  * render/destroy methods
+
+2.5.2
+  * Made CSS adjustments to work with base.css
+
+2.5.1
+  * No change
+
+2.5.0
+  * Added isLeaf property to Node that allows dynamically loaded trees to
+    have nodes that are not dynamically loaded (without configuring dynamic
+    load for each individual dynamic node, which was the requirement previously).  
+    If set to true, dynamic loading will be disabled for the node and it 
+    will always have the leaf node presentation (rather than the expand icon).
+  * Made CSS adjustments to work with base.css
+  * HTMLNode: removed unused property 'content', and documented the correct
+    property 'html'.
+
+2.4.0
+  * added TreeView getNodeByElement, which will return a YAHOO.widget.Node 
+    reference for any ancestor HTML element of a node in the tree.
+  * Added 'title' property to TextNode
+  * Added treeview/tooltip example
+  * Passing a null or invalid animation type to setExpandAnim/setCollapseAnim
+    will turn off animation for the tree.
+  * Spacer style set to 12px width to fix layout inside overflow containers.
+  * Fixed removeAll() when executed on the root node.
+  * TextNode's href property is now escaped.
+  * The 'expanded' property in a node's constructor now works for dynamically
+    loaded nodes.
+
+2.3.1
+
+  * The "expand" event no longer fires twice for dynamically loaded nodes.
+
+  * Added setHtml() to HTMLNode, which will synchronize the html and data
+    properties, as well as the content of the node if it has been rendered.
+
+2.3.0
+
+  * The image preload feature was restored.
+
+  * Added the new skin
+
+  * Leaf nodes created with expanded=true have the child div hidden initially
+    to work around an IE rendering issue.
+
+2.2.2
+
+  * No change
+
+2.2.1
+
+  * Fixed the default value in the documentation for the nowrap property in Node
+    (the default value is false).
+
+2.2.0
+
+  * Node::insertAfter properly nulls the nextSibling attribute when the
+    inserted before the firstChild.
+
+  * MenuNodes inserted at the root level will no longer lose the menu behavior.
+
+  * TextNode::setUpLabel sets the data.label property as well as the label property.
+
+  * TaskNode example: made the logger optional, and moved the creation of the logger
+    instance to the proper location.
+
+  * TaskNodes added to a node that is in a fully selected state will update the
+    parent to a partially selected state.
+
+  * TaskNode example fixed to propagate the labelClick event
+
+
+0.12.2
+
+  * removeChildren will now work properly on the root node.
+
+0.12.1
+
+  * Added custom events for expandComplete and collapseComplete.  These events are
+    needed in situations where the implementer needs to resize or reposition 
+    something based on the new offset.
+
+  * Added a "nowrap" property to Node, and set the default to false.  Specifies
+    whether or not the content area of the node should be allowed to wrap
+    naturally.
+
+  * Added additional HTML elements to preserve the tree presentation when constrained
+    by a parent element.
+
+0.12.0
+
+  * TreeView now augments EventProvider, and has custom events for expand,
+    collapse, animStart, animComplete, and labelClick.  Existing implementations
+    using abstract methods for these events (if they exist) will still work.
+    New events can be plugged into the tree by the Node implementation.  For
+    example, TaskNode adds a checkClick event.  EventProvider makes it safe
+    to do this because implementing code can call subscribe() prior to the
+    event creation.
+
+  * YAHOO.util.Event is now a requirement for the widget
+
+  * TreeView::removeChildren no longer expands and collapses the node.
+
+  * Documented the moveComplete property
+
+  * createElement("DIV") changed to createElement("div")
+
+0.11.4
+
+   * Fixed a javascript error on the HTML node example page.
+
+0.11.3
+
+   * popNode now clears the tree, previousSibling, nextSibling, and parent
+     properties of the node that is being removed from the tree.
+
+   * Fixed the paths to the images in the tree.css file that is included in
+     build/assets.
+
+0.11.0
+
+   * Added TreeView -> popNode, which differs from removeNode in that the
+     node's children are preserved so the entire branch can be re-inserted
+     into another part of the tree, or another tree.
+
+   * Added TreeView -> getNodesByProperty, which differs from 
+     getNodeByProperty by returning an array of all nodes that have the
+     specified property rather than just the first one.
+
+   * Added Node -> insertBefore, insertAfter, and appendTo.  These method
+     can be used to reorganize the tree.
+
+   * removeChildren properly resets the node icon when executed against a 
+     collpased node.
+     
+   * Moved depth assignment from the constructor to appendChild so that the
+     value is set properly if the node is moved within the tree.
+
+   * Fixed broken loop in removeChildren.
+
+   * RootNode -> loadComplete calls tree.draw for hot-wiring the dynamic load
+     feature for the top level nodes.
+
+   * The treeview constructor will accept an element instead of an id.
+
+0.10.0
+
+   * If the child collection changes prior to a refresh(), the icon is now
+     changed appropriately.
+
+   * Added TreeView removeChildren(node).  This will recursively purge the node's
+     children, and reset its dynamic load state.  
+
+   * previousSibling and nextSibling are now adjusted correctly when a
+     node is deleted.
+
+   * expand()/collapse() now will not expand/collapse the node if false is
+     returned from the onExpand/onCollapse event handlers.
+
+   * The onExpand and onCollapse events now fire before the node is expanded
+     or collapsed so that the implementer can modify the node's child collection
+     prior to display.
+
+   * The childrenRendered property previous was used to indicate both that
+     a dynamically loaded node has received its data, and also to indicate
+     that the children html has been created.  This has been split into
+     two properties.  dynamicLoadComplete and childrenRendered.
+
+   * Implemented the renderHidden flag.  If set to true, the html for the entire
+     tree will be created when tree.draw() is called, not just the html for the
+     visible nodes.
+
+   * Added an onLabelClick listener to TextNode
+
+   * TreeView.removeNode no longer automatically refreshes the tree.  It has an
+     optional parameter to perform the refresh.
+
+   * removeNode can now be executed on nodes that have not been rendered.
+
+   * You can now delete top-level nodes.
+
+   * Added onCheckClick listener to the TaskNode example
+
+   * Added Node.iconMode, which is a property that configures the way 
+     dynamically loaded nodes are displayed when they are expanded and contain 
+     no children.
+
+   * TreeView/Node.setDynamicLoad now accepts an optional second parameter to 
+     set the iconMode property.
+
+   * Fixed an issue in the TaskNode.js example that prevented setting the checked
+     state of a node through the constructor.
+
+   * Fixed an issue in HTMLNode that caused rendering issues when hasIcon was 
+     set to true.
+
+   * Added TreeView.removeNode
+
+   * Added Node.refresh
