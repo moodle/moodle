@@ -10,7 +10,7 @@
  */
 require_once('../config.php');
 require_once('lib.php');
-require_once($CFG->libdir.'/json/JSON.php');
+require_once($CFG->libdir.'/pear/HTML/AJAX/JSON.php');
 
 require_js('yui_yahoo');
 require_js('yui_dom');
@@ -61,8 +61,7 @@ switch ($action) {
                 $roles[]=$shortroledata;
             }
         }
-        $json = new Services_JSON();
-        echo $json->encode($roles);
+        echo json_encode($roles);
         die;  // Client side JavaScript takes it from here.
 
     case 'deletegroup':
@@ -209,11 +208,11 @@ if ($sel_groupid) {
                 echo '<option value="'.$member->id.'">'.fullname($member, true).'</option>';
                 $atleastonemember = true;
             }
-            echo '</optgroup>';        
+            echo '</optgroup>';
         }
-    } 
+    }
 }
-    
+
 if (!$atleastonemember) {
     // Print an empty option to avoid the XHTML error of having an empty select element
     echo '<option>&nbsp;</option>';

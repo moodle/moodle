@@ -1,5 +1,17 @@
 <?php
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+/**
+ * This is an embedded version of HTML_AJAX_JSON since it has yet to have
+ * a PEAR release it has been renamed to HTML_AJAX_JSON so no problems
+ * will be caused by an eventual release
+ * Feel free to report bugs against it to HTML_AJAX
+ *
+ * SVN Rev: $Id$
+ */
+
+/**
+ * Needed for compat functions
+ */
+require_once 'HTML/AJAX.php';
 
 /**
  * Converts to and from JSON format.
@@ -46,48 +58,47 @@
  * DAMAGE.
  *
  * @category
- * @package     Services_JSON
+ * @package     HTML_AJAX_JSON
  * @author      Michal Migurski <mike-json@teczno.com>
  * @author      Matt Knapp <mdknapp[at]gmail[dot]com>
  * @author      Brett Stimmerman <brettstimmerman[at]gmail[dot]com>
  * @copyright   2005 Michal Migurski
- * @version     CVS: $Id$
  * @license     http://www.opensource.org/licenses/bsd-license.php
  * @link        http://pear.php.net/pepr/pepr-proposal-show.php?id=198
  */
 
 /**
- * Marker constant for Services_JSON::decode(), used to flag stack state
+ * Marker constant for HTML_AJAX_JSON::decode(), used to flag stack state
  */
 define('SERVICES_JSON_SLICE',   1);
 
 /**
- * Marker constant for Services_JSON::decode(), used to flag stack state
+ * Marker constant for HTML_AJAX_JSON::decode(), used to flag stack state
  */
 define('SERVICES_JSON_IN_STR',  2);
 
 /**
- * Marker constant for Services_JSON::decode(), used to flag stack state
+ * Marker constant for HTML_AJAX_JSON::decode(), used to flag stack state
  */
 define('SERVICES_JSON_IN_ARR',  3);
 
 /**
- * Marker constant for Services_JSON::decode(), used to flag stack state
+ * Marker constant for HTML_AJAX_JSON::decode(), used to flag stack state
  */
 define('SERVICES_JSON_IN_OBJ',  4);
 
 /**
- * Marker constant for Services_JSON::decode(), used to flag stack state
+ * Marker constant for HTML_AJAX_JSON::decode(), used to flag stack state
  */
 define('SERVICES_JSON_IN_CMT', 5);
 
 /**
- * Behavior switch for Services_JSON::decode()
+ * Behavior switch for HTML_AJAX_JSON::decode()
  */
 define('SERVICES_JSON_LOOSE_TYPE', 16);
 
 /**
- * Behavior switch for Services_JSON::decode()
+ * Behavior switch for HTML_AJAX_JSON::decode()
  */
 define('SERVICES_JSON_SUPPRESS_ERRORS', 32);
 
@@ -97,8 +108,8 @@ define('SERVICES_JSON_SUPPRESS_ERRORS', 32);
  * Brief example of use:
  *
  * <code>
- * // create a new instance of Services_JSON
- * $json = new Services_JSON();
+ * // create a new instance of HTML_AJAX_JSON
+ * $json = new HTML_AJAX_JSON();
  *
  * // convert a complexe value to JSON notation, and send it to the browser
  * $value = array('foo', 'bar', array(1, 2, 'baz'), array(3, array(4)));
@@ -112,7 +123,7 @@ define('SERVICES_JSON_SUPPRESS_ERRORS', 32);
  * $value = $json->decode($input);
  * </code>
  */
-class Services_JSON
+class HTML_AJAX_JSON
 {
    /**
     * constructs a new JSON instance
@@ -130,7 +141,7 @@ class Services_JSON
     *                                   bubble up with an error, so all return values
     *                                   from encode() should be checked with isError()
     */
-    function Services_JSON($use = 0)
+    function HTML_AJAX_JSON($use = 0)
     {
         $this->use = $use;
     }
@@ -149,9 +160,8 @@ class Services_JSON
     function utf162utf8($utf16)
     {
         // oh please oh please oh please oh please oh please
-        if(function_exists('mb_convert_encoding')) {
+        if(function_exists('mb_convert_encoding'))
             return mb_convert_encoding($utf16, 'UTF-8', 'UTF-16');
-        }
 
         $bytes = (ord($utf16{0}) << 8) | ord($utf16{1});
 
@@ -193,9 +203,8 @@ class Services_JSON
     function utf82utf16($utf8)
     {
         // oh please oh please oh please oh please oh please
-        if(function_exists('mb_convert_encoding')) {
+        if(function_exists('mb_convert_encoding'))
             return mb_convert_encoding($utf8, 'UTF-16', 'UTF-8');
-        }
 
         switch(strlen($utf8)) {
             case 1:
@@ -227,7 +236,7 @@ class Services_JSON
     * encodes an arbitrary variable into JSON format
     *
     * @param    mixed   $var    any number, boolean, string, array, or object to be encoded.
-    *                           see argument 1 to Services_JSON() above for array-parsing behavior.
+    *                           see argument 1 to HTML_AJAX_JSON() above for array-parsing behavior.
     *                           if var is a strng, note that encode() always expects it
     *                           to be in ASCII or UTF-8 format!
     *
@@ -380,11 +389,9 @@ class Services_JSON
                                             array_keys($var),
                                             array_values($var));
 
-                    foreach($properties as $property) {
-                        if(Services_JSON::isError($property)) {
+                    foreach($properties as $property)
+                        if(HTML_AJAX_JSON::isError($property))
                             return $property;
-                        }
-                    }
 
                     return '{' . join(',', $properties) . '}';
                 }
@@ -392,11 +399,9 @@ class Services_JSON
                 // treat it like a regular array
                 $elements = array_map(array($this, 'encode'), $var);
 
-                foreach($elements as $element) {
-                    if(Services_JSON::isError($element)) {
+                foreach($elements as $element)
+                    if(HTML_AJAX_JSON::isError($element))
                         return $element;
-                    }
-                }
 
                 return '[' . join(',', $elements) . ']';
 
@@ -407,18 +412,16 @@ class Services_JSON
                                         array_keys($vars),
                                         array_values($vars));
 
-                foreach($properties as $property) {
-                    if(Services_JSON::isError($property)) {
+                foreach($properties as $property)
+                    if(HTML_AJAX_JSON::isError($property))
                         return $property;
-                    }
-                }
 
                 return '{' . join(',', $properties) . '}';
 
             default:
                 return ($this->use & SERVICES_JSON_SUPPRESS_ERRORS)
                     ? 'null'
-                    : new Services_JSON_Error(gettype($var)." can not be encoded as JSON string");
+                    : new HTML_AJAX_JSON_Error(gettype($var)." can not be encoded as JSON string");
         }
     }
 
@@ -435,9 +438,8 @@ class Services_JSON
     {
         $encoded_value = $this->encode($value);
 
-        if(Services_JSON::isError($encoded_value)) {
+        if(HTML_AJAX_JSON::isError($encoded_value))
             return $encoded_value;
-        }
 
         return $this->encode(strval($name)) . ':' . $encoded_value;
     }
@@ -476,7 +478,7 @@ class Services_JSON
     *
     * @return   mixed   number, boolean, string, array, or object
     *                   corresponding to given JSON input string.
-    *                   See argument 1 to Services_JSON() above for object-output behavior.
+    *                   See argument 1 to HTML_AJAX_JSON() above for object-output behavior.
     *                   Note that decode() always returns strings
     *                   in ASCII or UTF-8 format!
     * @access   public
@@ -496,8 +498,6 @@ class Services_JSON
                 return null;
 
             default:
-                $m = array();
-
                 if (is_numeric($str)) {
                     // Lookie-loo, it's a number
 
@@ -665,8 +665,6 @@ class Services_JSON
                                 // out the property name and set an
                                 // element in an associative array,
                                 // for now
-                                $parts = array();
-
                                 if (preg_match('/^\s*(["\'].*[^\\\]["\'])\s*:\s*(\S.*),?$/Uis', $slice, $parts)) {
                                     // "name":value pair
                                     $key = $this->decode($parts[1]);
@@ -698,10 +696,9 @@ class Services_JSON
 
                         } elseif (($chrs{$c} == $top['delim']) &&
                                  ($top['what'] == SERVICES_JSON_IN_STR) &&
-                                 ((strlen(substr($chrs, 0, $c)) - strlen(rtrim(substr($chrs, 0, $c), '\\'))) % 2 != 1)) {
+                                 (($chrs{$c - 1} != '\\') ||
+                                 ($chrs{$c - 1} == '\\' && $chrs{$c - 2} == '\\'))) {
                             // found a quote, we're in a string, and it's not escaped
-                            // we know that it's not escaped becase there is _not_ an
-                            // odd number of backslashes at the end of the string so far
                             array_pop($stk);
                             //print("Found end of string at {$c}: ".substr($chrs, $top['where'], (1 + 1 + $c - $top['where']))."\n");
 
@@ -765,7 +762,7 @@ class Services_JSON
      */
     function isError($data, $code = null)
     {
-        if (class_exists('pear')) {
+        if (HTML_AJAX_class_exists('pear', false)) {
             return PEAR::isError($data, $code);
         } elseif (is_object($data) && (get_class($data) == 'services_json_error' ||
                                  is_subclass_of($data, 'services_json_error'))) {
@@ -776,11 +773,11 @@ class Services_JSON
     }
 }
 
-if (class_exists('PEAR_Error')) {
+if (HTML_AJAX_class_exists('pear_error', false)) {
 
-    class Services_JSON_Error extends PEAR_Error
+    class HTML_AJAX_JSON_Error extends PEAR_Error
     {
-        function Services_JSON_Error($message = 'unknown error', $code = null,
+        function HTML_AJAX_JSON_Error($message = 'unknown error', $code = null,
                                      $mode = null, $options = null, $userinfo = null)
         {
             parent::PEAR_Error($message, $code, $mode, $options, $userinfo);
@@ -792,9 +789,9 @@ if (class_exists('PEAR_Error')) {
     /**
      * @todo Ultimately, this class shall be descended from PEAR_Error
      */
-    class Services_JSON_Error
+    class HTML_AJAX_JSON_Error
     {
-        function Services_JSON_Error($message = 'unknown error', $code = null,
+        function HTML_AJAX_JSON_Error($message = 'unknown error', $code = null,
                                      $mode = null, $options = null, $userinfo = null)
         {
 
@@ -806,7 +803,7 @@ if (class_exists('PEAR_Error')) {
 // Future-friendly json_encode
 if( !function_exists('json_encode') ) {
 	function json_encode($data) {
-        $json = new Services_JSON();
+        $json = new HTML_AJAX_JSON();
         return( $json->encode($data) );
     }
 }
@@ -814,9 +811,9 @@ if( !function_exists('json_encode') ) {
 // Future-friendly json_decode
 if( !function_exists('json_decode') ) {
 	function json_decode($data) {
-        $json = new Services_JSON();
+        $json = new HTML_AJAX_JSON();
         return( $json->decode($data) );
     }
 }
-
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 ?>
