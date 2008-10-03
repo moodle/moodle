@@ -4,14 +4,14 @@
  *
  * @copyright &copy; 2006 The Open University
  * @author N.D.Freear AT open.ac.uk
- * @author J.White AT open.ac.uk 
+ * @author J.White AT open.ac.uk
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package groups
  */
 require_once('../config.php');
 require_once('lib.php');
 require_once($CFG->libdir.'/moodlelib.php');
-require_once($CFG->libdir.'/json/JSON.php');
+require_once($CFG->libdir.'/pear/HTML/AJAX/JSON.php');
 
 require_js('yui_yahoo');
 require_js('yui_dom');
@@ -79,8 +79,7 @@ if ($success) {
                 $groupids = groups_get_groups_in_grouping($groupingid);
             }
             $group_names = groups_groupids_to_group_names($groupids);
-            $json = new Services_JSON();
-            echo $json->encode($group_names);
+            echo json_encode($group_names);
             die;  // Client side JavaScript takes it from here.
 
         case 'ajax_getmembersingroup':
@@ -88,8 +87,7 @@ if ($success) {
 
             if ($memberids = groups_get_members($groupid)) {
                 $member_names = groups_userids_to_user_names($memberids, $courseid);
-                $json = new Services_JSON();
-                echo $json->encode($member_names);
+                echo json_encode($member_names);
             }
             die;  // Client side JavaScript takes it from here.
 
@@ -153,16 +151,16 @@ if ($success) {
     $strparticipants = get_string('participants');
 
     print_header("$course->shortname: $strgroups home", //TODO: home
-                 $course->fullname, 
+                 $course->fullname,
                  "<a href=\"$CFG->wwwroot/course/view.php?id=$courseid\">$course->shortname</a> ".
                  "-> <a href=\"$CFG->wwwroot/user/index.php?id=$courseid\">$strparticipants</a> ".
                  "-> $strgroups", '', '', true, '', user_login_string($course, $USER));
 
     $usehtmleditor = false;
     //TODO: eventually we'll implement all buttons, meantime hide the ones we haven't finished.
-    $shownotdone  = false; 
+    $shownotdone  = false;
     $disabled = 'disabled="disabled"';
-    
+
     // Pre-disable buttons based on URL variables
     if (!empty($groupingid) && $groupingid > -1) {
         $showeditgroupsettingsform_disabled = '';
@@ -172,34 +170,34 @@ if ($success) {
         $printerfriendly_disabled = '';
         $showcreategroupform_disabled = '';
     } else {
-        $showeditgroupsettingsform_disabled = $disabled; 
-        $showeditgroupingsettingsform_disabled = $disabled; 
+        $showeditgroupsettingsform_disabled = $disabled;
+        $showeditgroupingsettingsform_disabled = $disabled;
         $deletegroup_disabled = $disabled;
         $deletegrouping_disabled = $disabled;
         $printerfriendly_disabled = $disabled;
         $showcreategroupform_disabled = $disabled;
     }
-    
+
     if ($groupingid == -1 && groups_count_groups_in_grouping(GROUP_NOT_IN_GROUPING, $courseid) > 0) {
         $printerfriendly_disabled = '';
     }
 
     if (!empty($groupid)) {
         $showaddmembersform_disabled = '';
-        $showeditgroupsettingsform_disabled = ''; 
+        $showeditgroupsettingsform_disabled = '';
         $deletegroup_disabled = '';
     } else {
         $deletegroup_disabled = $disabled;
-        $showeditgroupsettingsform_disabled = $disabled; 
-        $showaddmembersform_disabled = $disabled; 
+        $showeditgroupsettingsform_disabled = $disabled;
+        $showaddmembersform_disabled = $disabled;
     }
-    
+
     print_heading(format_string($course->shortname) .' '.$strgroups, 'center', 3);
     echo '<form id="groupeditform" action="index.php" method="post">'."\n";
     echo '<div>'."\n";
     echo '<input type="hidden" name="id" value="' . $courseid . '" />'."\n";
 
-/*    
+/*
 <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
 <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
 <input type="hidden" name="roleid" value="<?php p($roleid) ?>" />
@@ -223,16 +221,16 @@ if (empty($CFG->enablegroupings)) {
         //NOTE, only show the pseudo-grouping if it has groups.
         $groupingids[] = GROUP_NOT_IN_GROUPING;
     }
-    
+
     $sel_groupingid = -1;
 
-    if ($groupingids) {    
+    if ($groupingids) {
         // Put the groupings into a hash and sort them
         foreach($groupingids as $id) {
             $listgroupings[$id] = groups_get_grouping_displayname($id, $courseid);
         }
         natcasesort($listgroupings);
-        
+
         // Print out the HTML
         $count = 1;
         foreach($listgroupings as $id => $name) {
@@ -250,29 +248,29 @@ if (empty($CFG->enablegroupings)) {
 
     echo '</select>'."\n";
 
-    
+
     echo '<p><input type="submit" name="act_updategroups" id="updategroups" value="'
             . get_string('showgroupsingrouping', 'group') . '" /></p>'."\n";
     echo '<p><input type="submit" ' . $showeditgroupingsettingsform_disabled . ' name="act_showgroupingsettingsform" id="showeditgroupingsettingsform" value="'
             . get_string('editgroupingsettings', 'group') . '" /></p>'."\n";
-    
+
     if ($shownotdone) {
         echo '<p><input type="submit" '.$disabled.' name="act_showgroupingpermsform" '
                 . 'id="showeditgroupingpermissionsform" value="'
                 . get_string('editgroupingpermissions', 'group') . '" /></p>'."\n";
-    } 
-    
+    }
+
     echo '<p><input type="submit" ' . $deletegrouping_disabled . ' name="act_deletegrouping" id="deletegrouping" value="'
             . get_string('deletegrouping', 'group') . '" /></p>'."\n";
     echo '<p><input type="submit" name="act_showcreategroupingform" id="showcreategroupingform" value="'
             . get_string('creategrouping', 'group') . '" /></p>'."\n";
-    
+
     if ($shownotdone) {
     echo '<p><input type="submit" '.$disabled.' name="act_createautomaticgroupingform" '
-            . 'id="showcreateautomaticgroupingform" value="' 
+            . 'id="showcreateautomaticgroupingform" value="'
             . get_string('createautomaticgrouping', 'group') . '" /></p>'."\n";
     }
-    
+
     echo '<p><input type="submit" ' . $printerfriendly_disabled . ' name="act_printerfriendly" id="printerfriendly" value="'
             . get_string('printerfriendly', 'group') . '" /></p>'."\n";
     echo "</td>\n";
@@ -295,7 +293,7 @@ if (empty($CFG->enablegroupings)) {
     if ($groupids) {
         // Put the groups into a hash and sort them
         $group_names = groups_groupids_to_group_names($groupids);
-        
+
         // Print out the HTML
         $count = 1;
         foreach ($group_names as $group) {
@@ -307,11 +305,11 @@ if (empty($CFG->enablegroupings)) {
             echo "<option value=\"{$group->id}\"$select title=\"{$group->name}\">{$group->name}</option>\n";
             $count++;
         }
-    } else { 
+    } else {
         // Print an empty option to avoid the XHTML error of having an empty select element
         echo '<option>&nbsp;</option>';
     }
-    
+
     echo '</select>'."\n";
     echo '<p><input type="submit" name="act_updatemembers" id="updatemembers" value="'
             . get_string('showmembersforgroup', 'group') . '" /></p>'."\n";
@@ -319,7 +317,7 @@ if (empty($CFG->enablegroupings)) {
             . get_string('editgroupsettings', 'group') . '" /></p>'."\n";
     echo '<p><input type="submit" '. $deletegroup_disabled . ' name="act_deletegroup" onclick="onDeleteGroup()" id="deletegroup" value="'
             . get_string('deleteselectedgroup', 'group') . '" /></p>'."\n";
-    
+
     if ($shownotdone) {
         echo '<p><input type="submit" '.$disabled.' name="act_removegroup" '
                 . 'id="removegroup" value="' . get_string('removegroupfromselectedgrouping', 'group') . '" /></p>'."\n";
@@ -331,13 +329,13 @@ if (empty($CFG->enablegroupings)) {
             . get_string('creategroup', 'group') . '" /></p>'."\n";
     echo '<p><input type="submit" name="act_printerfriendly" id="printerfriendly" value="'
             . get_string('printerfriendly', 'group') . '" /></p>'."\n";
-} else {    
+} else {
     echo '<p><input type="submit" ' . $showcreategroupform_disabled . ' name="act_showcreategroupform" id="showcreategroupform" value="'
             . get_string('creategroupinselectedgrouping', 'group') . '" /></p>'."\n";
-    
+
     echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
             . get_string('createorphangroup', 'group') . '" /></p>'."\n";
-        
+
     if ($shownotdone) {
         echo '<p><input type="submit" '.$disabled.' name="act_addgroupstogroupingform" '
                 . 'id="showaddgroupstogroupingform" value="' . get_string('addgroupstogrouping', 'group') . '" /></p>'."\n";
@@ -350,11 +348,11 @@ if (empty($CFG->enablegroupings)) {
     //NOTE: the SELECT was, multiple="multiple" name="user[]" - not used and breaks onclick.
     echo '<select name="user" id="members" size="15" class="select"'."\n";
     echo ' onclick="window.status=this.options[this.selectedIndex].title;" onmouseout="window.status=\'\';">'."\n";
-    
+
     if (isset($sel_groupid)) {
         $userids = groups_get_members($sel_groupid);
     }
-    if (isset($userids)) { //&& is_array($userids)        
+    if (isset($userids)) { //&& is_array($userids)
         // Put the groupings into a hash and sort them
         $user_names = groups_userids_to_user_names($userids, $courseid);
         if(empty($user_names)) {
@@ -364,18 +362,18 @@ if (empty($CFG->enablegroupings)) {
                 echo "<option value=\"{$user->id}\" title=\"{$user->name}\">{$user->name}</option>\n";
             }
         }
-    } else { 
+    } else {
         // Print an empty option to avoid the XHTML error of having an empty select element
         echo '<option>&nbsp;</option>';
     }
-    
+
     echo '</select>'."\n";
 
     if ($shownotdone) {
         echo '<p><input type="submit" '.$disabled.' name="act_removemembers" '
                 . 'id="removemembers" value="' . get_string('removeselectedusers', 'group') . '"/></p>'."\n";
     }
-    
+
     echo '<p><input type="submit" ' . $showaddmembersform_disabled . ' name="act_showaddmembersform" '
             . 'id="showaddmembersform" value="' . get_string('adduserstogroup', 'group'). '" /></p>'."\n";
     echo '</td>'."\n";
@@ -385,7 +383,7 @@ if (empty($CFG->enablegroupings)) {
     //<input type="hidden" name="rand" value="om" />
     echo '</div>'."\n";
     echo '</form>'."\n";
-    
+
     echo '<script type="text/javascript">'."\n";
     echo '//<![CDATA['."\n";
     echo 'var groupsCombo = new UpdatableGroupsCombo("'.$CFG->wwwroot.'", '.$course->id.');'."\n";
